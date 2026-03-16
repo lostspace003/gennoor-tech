@@ -3,6 +3,7 @@ import { Inter, Plus_Jakarta_Sans } from 'next/font/google'
 import '@/styles/globals.css'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+import CareerCommandCenter from '@/components/CareerCommandCenter'
 import { siteConfig, BLOB_URL } from '@/lib/site-config'
 
 const inter = Inter({
@@ -97,6 +98,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <CareerCommandCenter />
         </div>
       </body>
     </html>
