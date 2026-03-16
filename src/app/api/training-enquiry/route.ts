@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { sendTrainingEnquiryEmail } from '@/lib/email-service'
 import { trackEvent, trackException, initAppInsights } from '@/lib/analytics'
+import { saveEnquiry } from '@/lib/azure-storage'
 
 export async function POST(request: Request) {
   try {
@@ -32,6 +33,13 @@ export async function POST(request: Request) {
       trainingFor: trainingFor || '', teamSize: teamSize || '',
       timeline: timeline || '', programTitle: programTitle || '',
       programType: programType || '',
+    })
+
+    // Save to Azure Table Storage
+    const leadScore = timeline === 'immediate' || timeline === '1-month' ? 'HOT' : timeline === '2-months' ? 'WARM' : 'COLD'
+    await saveEnquiry('TrainingEnquiry', {
+      name, email, phone, company, designation, trainingFor, teamSize,
+      timeline, message, programTitle, programType, leadScore, timestamp,
     })
 
     // Send emails using the email service

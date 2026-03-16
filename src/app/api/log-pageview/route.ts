@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { trackPageView, initAppInsights } from '@/lib/analytics'
+import { savePageView } from '@/lib/azure-storage'
 
 export async function POST(request: Request) {
   try {
@@ -15,6 +16,9 @@ export async function POST(request: Request) {
       city,
       timestamp,
     })
+
+    // Save to Azure Table Storage
+    await savePageView({ page, url, referrer, userAgent, ip, country, city })
 
     return NextResponse.json({ ok: true })
   } catch {

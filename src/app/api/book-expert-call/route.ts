@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/email-service'
 import { trackEvent, trackException, initAppInsights } from '@/lib/analytics'
+import { saveEnquiry } from '@/lib/azure-storage'
 
 export async function POST(request: Request) {
   try {
@@ -25,6 +26,12 @@ export async function POST(request: Request) {
     trackEvent('ExpertCallBooking', {
       name, email, company: company || '', designation: designation || '',
       whatsappCountry: whatsappCountry || '', programTitle: programTitle || '',
+    })
+
+    // Save to Azure Table Storage
+    await saveEnquiry('ExpertCallBooking', {
+      name, email, whatsapp, whatsappCountry, company, designation,
+      message, programTitle, timestamp,
     })
 
     // Send confirmation email to user

@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer'
 import { readFile } from 'fs/promises'
 import path from 'path'
+import { downloadPdfFromBlob } from '@/lib/azure-storage'
 
 // Email configuration interface
 interface EmailConfig {
@@ -88,17 +89,33 @@ export async function sendEmail(config: EmailConfig) {
   }
 }
 
-// Helper function to attach PDF
+// Helper function to attach PDF - tries Azure Blob first, falls back to local filesystem
 export async function attachPDF(filename: string, filepath: string) {
   try {
+    // Try Azure Blob Storage first
+    if (process.env.AZURE_STORAGE_CONNECTION_STRING) {
+      // Convert local path to blob path
+      // e.g. "public/Gennoor-Bootcamp-Brochures/file.pdf" -> "bootcamp-brochures/file.pdf"
+      // e.g. "public/Gennoor-Tech-Course-TOCs/file.pdf" -> "course-tocs/file.pdf"
+      let blobPath = filepath
+      if (filepath.includes('Gennoor-Bootcamp-Brochures')) {
+        blobPath = `bootcamp-brochures/${path.basename(filepath)}`
+      } else if (filepath.includes('Gennoor-Tech-Course-TOCs')) {
+        blobPath = `course-tocs/${path.basename(filepath)}`
+      } else if (filepath.includes('certificates')) {
+        blobPath = `certificates/${path.basename(filepath)}`
+      }
+
+      const content = await downloadPdfFromBlob(blobPath)
+      if (content) {
+        return { filename, content, contentType: 'application/pdf' }
+      }
+    }
+
+    // Fallback to local filesystem (for development)
     const fullPath = path.join(process.cwd(), filepath)
     const content = await readFile(fullPath)
-
-    return {
-      filename,
-      content,
-      contentType: 'application/pdf',
-    }
+    return { filename, content, contentType: 'application/pdf' }
   } catch (error) {
     console.error(`Failed to attach PDF ${filename}:`, error)
     return null

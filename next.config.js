@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
-  serverExternalPackages: ['applicationinsights'],
+  serverExternalPackages: ['applicationinsights', '@azure/data-tables', '@azure/storage-blob'],
   images: {
     remotePatterns: [
       {

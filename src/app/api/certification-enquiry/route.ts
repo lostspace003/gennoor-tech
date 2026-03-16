@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/email-service'
 import { trackEvent, trackException, initAppInsights } from '@/lib/analytics'
+import { saveEnquiry } from '@/lib/azure-storage'
 
 export async function POST(request: Request) {
   try {
@@ -33,6 +34,13 @@ export async function POST(request: Request) {
       selectedCertification: selectedCertification || '',
       currentLevel: currentLevel || '', targetDate: targetDate || '',
       trainingMode: trainingMode || '', leadScore,
+    })
+
+    // Save to Azure Table Storage
+    await saveEnquiry('CertificationEnquiry', {
+      name, email, phone, company, designation, certifications,
+      selectedCertification, currentLevel, targetDate, trainingMode,
+      message, leadScore, timestamp,
     })
 
     // Send confirmation email to user
