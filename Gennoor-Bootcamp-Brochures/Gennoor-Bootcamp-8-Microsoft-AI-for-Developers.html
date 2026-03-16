@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Microsoft AI — Gennoor Tech</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sora:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+  :root{--blue:#2563EB;--amber:#F59E0B;--navy:#0C1426;--charcoal:#2D3748;--gray:#4A5568;--light:#F8FAFC;--lightgray:#94A3B8;--white:#FFF;--msblue:#0078D4}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;color:var(--charcoal);background:var(--white);-webkit-print-color-adjust:exact;print-color-adjust:exact;text-align:justify}
+  .page{width:210mm;min-height:297mm;padding:0;page-break-after:always;position:relative;overflow:hidden}
+  .page:last-child{page-break-after:auto}
+  .cover{background:var(--navy);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:38mm 20mm;position:relative}
+  .cover::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 25% 25%,rgba(0,120,212,.12) 0%,transparent 55%),radial-gradient(ellipse at 75% 75%,rgba(245,158,11,.07) 0%,transparent 55%)}
+  .cover *{position:relative;z-index:1}
+  .badge{display:inline-block;border:1px solid rgba(107,143,204,.3);color:#6B8FCC;font-size:9px;letter-spacing:3px;text-transform:uppercase;padding:6px 20px;border-radius:20px;margin-bottom:28px;font-family:'Sora',sans-serif}
+  .cover h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:38px;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:8px}
+  .cover h1 span{color:var(--amber)}
+  .cover .subtitle{font-size:15px;color:#6B8FCC;font-weight:400;margin-bottom:35px;font-family:'Sora',sans-serif}
+  .meta-row{display:flex;gap:28px;justify-content:center;margin-top:25px}
+  .meta-item{text-align:center}
+  .meta-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:800;color:var(--white)}
+  .meta-label{font-size:9px;color:#6B8FCC;letter-spacing:1px;text-transform:uppercase;margin-top:3px}
+  .amber-line{width:60px;height:3px;background:var(--amber);border-radius:2px;margin:18px auto}
+  .cp{padding:18mm 20mm}
+  .ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid #E2E8F0}
+  .ph .ls{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700}
+  .ph .pt{font-family:'Sora',sans-serif;font-size:8px;color:var(--lightgray);letter-spacing:2px;text-transform:uppercase}
+  h2{font-family:'Plus Jakarta Sans',sans-serif;font-size:21px;font-weight:800;color:var(--charcoal);margin-bottom:5px;text-align:left}
+  h2 span{color:var(--blue)}
+  h3{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;color:var(--charcoal);margin-bottom:5px;text-align:left}
+  .ss{font-size:10px;color:var(--lightgray);margin-bottom:14px;line-height:1.6}
+  .hb{background:linear-gradient(135deg,rgba(0,120,212,.06),rgba(245,158,11,.04));border:1px solid rgba(0,120,212,.12);border-radius:10px;padding:13px 16px;margin:12px 0}
+  .hb p{font-size:9.5px;color:var(--gray);line-height:1.7}
+  .hb strong{color:var(--msblue)}
+  .cg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+  .cd{background:var(--light);border-radius:8px;padding:12px 14px;border-left:3px solid var(--msblue)}
+  .cd.a{border-left-color:var(--amber)}
+  .cd h4{font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5px;font-weight:700;color:var(--charcoal);margin-bottom:3px;text-align:left}
+  .cd p{font-size:8.5px;color:var(--gray);line-height:1.6}
+  .wg{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:9px;margin:10px 0}
+  .wc{text-align:center;padding:12px 7px;background:var(--light);border-radius:8px}
+  .wc .wi{font-size:24px;margin-bottom:5px}
+  .wc h4{font-family:'Plus Jakarta Sans',sans-serif;font-size:9px;font-weight:700;color:var(--charcoal);margin-bottom:2px}
+  .wc p{font-size:7px;color:var(--lightgray);line-height:1.4}
+  .or{display:flex;align-items:flex-start;gap:9px;margin-bottom:8px}
+  .on{width:24px;height:24px;min-width:24px;border-radius:50%;background:var(--msblue);color:var(--white);display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;font-size:9px;font-weight:800}
+  .ot{font-size:9.5px;color:var(--gray);line-height:1.5;padding-top:2px}
+  .ot strong{color:var(--charcoal)}
+  .db{margin-bottom:14px;page-break-inside:avoid}
+  .dh{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+  .dn{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:800;color:var(--white)}
+  .dn.b{background:var(--msblue)}.dn.am{background:var(--amber)}
+  .dt{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;color:var(--charcoal)}
+  .ds{font-size:7.5px;color:var(--lightgray);letter-spacing:1px;text-transform:uppercase}
+  .sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-left:47px}
+  .se{background:var(--light);border-radius:6px;padding:10px 12px}
+  .sl{font-size:7.5px;color:var(--msblue);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+  .se h5{font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:700;color:var(--charcoal);margin-bottom:4px;text-align:left}
+  .se ul{list-style:none;padding:0}
+  .se ul li{font-size:8.5px;color:var(--gray);line-height:1.7;padding-left:9px;position:relative}
+  .se ul li::before{content:'·';position:absolute;left:0;color:var(--msblue);font-weight:900;font-size:12px;line-height:1;top:2px}
+  .ts{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
+  .tb{background:var(--light);border:1px solid #E2E8F0;border-radius:20px;padding:3px 9px;font-size:7.5px;color:var(--gray);font-weight:500}
+  .pf{position:absolute;bottom:12mm;left:20mm;right:20mm;display:flex;justify-content:space-between;font-size:7px;color:var(--lightgray)}
+  .ctp{background:var(--navy);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40mm 30mm;position:relative}
+  .ctp::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 50% 30%,rgba(0,120,212,.08) 0%,transparent 60%)}
+  .ctp *{position:relative;z-index:1}
+  .ci{color:#8FA3BA;font-size:12px;margin:5px 0}.ci a{color:#8FA3BA;text-decoration:none}
+  .fn{margin-top:12px;background:var(--light);border-radius:7px;padding:9px 14px;font-size:8.5px;color:var(--gray);line-height:1.6}
+  .fn strong{color:var(--msblue)}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="page cover">
+  <svg width="95" height="95" viewBox="0 0 130 130" style="margin-bottom:10px"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+  <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;margin-bottom:3px"><span style="color:#A0B4CC">G</span><span style="color:#7B9BC5">e</span><span style="color:#3B82F6">nn</span><span style="color:#EAB308">oo</span><span style="color:#7B9BC5">r</span><span style="color:#8FA3BA"> Tech</span></div>
+  <div style="font-family:'Sora',sans-serif;font-size:8px;color:#6B8FCC;letter-spacing:3px;font-variant:small-caps;margin-bottom:22px">train. innovate. build.</div>
+  <div class="badge">5-Day Technical Bootcamp · 40 Hours</div>
+  <h1>Microsoft AI<br><span>for Developers</span></h1>
+  <p class="subtitle">Azure AI Foundry, Azure OpenAI, Copilot Studio, and the complete Microsoft AI stack</p>
+  <div class="amber-line"></div>
+  <div class="meta-row">
+    <div class="meta-item"><div class="meta-val">5</div><div class="meta-label">Days</div></div>
+    <div class="meta-item"><div class="meta-val">40</div><div class="meta-label">Hours</div></div>
+    <div class="meta-item"><div class="meta-val">22+</div><div class="meta-label">Hands-On Labs</div></div>
+    <div class="meta-item"><div class="meta-val">7</div><div class="meta-label">AI Projects</div></div>
+  </div>
+  <div style="position:absolute;bottom:25mm;left:0;right:0;text-align:center;font-size:8px;color:#4A6080">www.gennoor.com · training@gennoor.com</div>
+</div>
+
+<!-- PAGE 2: OVERVIEW -->
+<div class="page cp">
+  <div class="ph"><div class="ls"><span style="color:#2D3748">G</span><span style="color:#3D5278">e</span><span style="color:#2563EB">nn</span><span style="color:#D69E2E">oo</span><span style="color:#4A6080">r</span><span style="color:#4A5568"> Tech</span></div><div class="pt">Microsoft AI for Developers</div></div>
+  <h2>Course <span>Overview</span></h2>
+  <p class="ss">This 5-day hands-on bootcamp covers the entire Microsoft AI ecosystem — from Azure AI Foundry (the new unified platform) and Azure OpenAI through Copilot Studio, AI Search, Document Intelligence, and Power Platform AI. Developers build 7 production-ready AI solutions using Microsoft's integrated stack, learning to leverage the platform's unique advantages for enterprise deployment, security, and governance.</p>
+
+  <div class="hb"><p><strong>The deepest Microsoft AI bootcamp available.</strong> This isn't a survey course — it's a hands-on engineering program that covers every major Microsoft AI service in depth. You'll build with Azure AI Foundry and Azure OpenAI, deploy agents via Copilot Studio, implement RAG with AI Search, process documents with Document Intelligence, and automate workflows with Power Platform AI — all integrated into cohesive enterprise solutions. Delivered by a Microsoft Certified Trainer with 16+ active Microsoft certifications.</p></div>
+
+  <h2 style="margin-top:18px">Who Is <span>This For?</span></h2>
+  <div class="wg">
+    <div class="wc"><div class="wi">👨‍💻</div><h4>Azure Developers</h4><p>Developers building AI solutions on the Microsoft stack</p></div>
+    <div class="wc"><div class="wi">🏗️</div><h4>.NET / Python Devs</h4><p>Engineers integrating Azure AI into existing applications</p></div>
+    <div class="wc"><div class="wi">⚙️</div><h4>Power Platform Devs</h4><p>Makers adding AI to Power Apps, Automate, and BI</p></div>
+    <div class="wc"><div class="wi">🔧</div><h4>Cloud Architects</h4><p>Architects designing Microsoft AI solutions at scale</p></div>
+  </div>
+
+  <h2 style="margin-top:18px">Learning <span>Outcomes</span></h2>
+  <div style="margin-top:8px">
+    <div class="or"><div class="on">1</div><div class="ot"><strong>Master Azure OpenAI Service</strong> — deploy models, implement chat completions, function calling, streaming, embeddings, and content safety filters</div></div>
+    <div class="or"><div class="on">2</div><div class="ot"><strong>Build with Azure AI Foundry</strong> — create AI projects, deploy prompt flows, evaluate models, and manage the end-to-end AI development lifecycle</div></div>
+    <div class="or"><div class="on">3</div><div class="ot"><strong>Implement enterprise RAG</strong> — Azure AI Search with semantic ranking, hybrid search, vectorization, and integration with Azure OpenAI for grounded responses</div></div>
+    <div class="or"><div class="on">4</div><div class="ot"><strong>Deploy Copilot Studio agents</strong> — build custom agents with topics, plugins, Dataverse connectors, Power Automate flows, and MCP server integration</div></div>
+    <div class="or"><div class="on">5</div><div class="ot"><strong>Process documents with AI</strong> — Azure Document Intelligence for forms, invoices, IDs, receipts, and custom document models with Azure AI Vision</div></div>
+    <div class="or"><div class="on">6</div><div class="ot"><strong>Automate with Power Platform AI</strong> — AI Builder in Power Apps, intelligent automation with Power Automate, and Copilot in Power BI</div></div>
+  </div>
+
+  <h2 style="margin-top:16px"><span>Prerequisites</span></h2>
+  <p class="ss" style="margin-bottom:0">Python or C# programming experience, basic Azure familiarity (portal, resource groups), REST API knowledge. An Azure subscription with OpenAI access is recommended (trial accounts work for labs).</p>
+
+  <div class="pf"><span>© 2026 Gennoor Tech Private Limited</span><span>www.gennoor.com</span><span>Page 2</span></div>
+</div>
+
+<!-- PAGE 3: DAY 1 & 2 -->
+<div class="page cp">
+  <div class="ph"><div class="ls"><span style="color:#2D3748">G</span><span style="color:#3D5278">e</span><span style="color:#2563EB">nn</span><span style="color:#D69E2E">oo</span><span style="color:#4A6080">r</span><span style="color:#4A5568"> Tech</span></div><div class="pt">Course Curriculum</div></div>
+  <h2>5-Day <span>Curriculum</span></h2>
+  <p class="ss">Entirely hands-on with Azure portal and SDK labs. Schedule and session order are fully customizable based on your organization's needs and time zones.</p>
+
+  <div class="db"><div class="dh"><div class="dn b">01</div><div><div class="dt">Azure OpenAI Service — From Setup to Production</div><div class="ds">Live Coding + Hands-On Labs</div></div></div>
+    <div class="sg"><div class="se"><div class="sl">Session A</div><h5>Azure OpenAI Fundamentals</h5><ul><li>Azure OpenAI vs OpenAI: enterprise security, compliance, SLAs</li><li>Deploying GPT-4o, GPT-4 Turbo, and embedding models</li><li>Chat Completions API: system prompts, temperature, tokens</li><li>Lab: Deploy Azure OpenAI and build your first chat application</li><li>Content Safety filters and Responsible AI configuration</li></ul></div>
+    <div class="se"><div class="sl">Session B</div><h5>Advanced Azure OpenAI Patterns</h5><ul><li>Function calling and tool use with Azure OpenAI</li><li>Streaming responses and async patterns</li><li>Embeddings: text-embedding-ada-002 and text-embedding-3</li><li>Lab: Build a function-calling assistant that queries APIs</li><li>Lab: Build a semantic search engine with Azure OpenAI embeddings</li></ul></div></div>
+  </div>
+
+  <div class="db"><div class="dh"><div class="dn am">02</div><div><div class="dt">Azure AI Foundry & RAG with AI Search</div><div class="ds">Hands-On Labs + Architecture Workshop</div></div></div>
+    <div class="sg"><div class="se"><div class="sl">Session A</div><h5>Azure AI Foundry Platform</h5><ul><li>AI Foundry: projects, connections, deployments, evaluations</li><li>Prompt Flow: building, testing, and deploying prompt chains</li><li>Model catalog: Azure OpenAI, Hugging Face, Meta models</li><li>Lab: Build and deploy a prompt flow for document summarization</li><li>Lab: Evaluate model performance with AI Foundry metrics</li></ul></div>
+    <div class="se"><div class="sl">Session B</div><h5>RAG with Azure AI Search</h5><ul><li>Azure AI Search: indexes, skillsets, semantic ranking</li><li>Integrated vectorization with Azure OpenAI embeddings</li><li>Hybrid search: keyword + vector + semantic reranking</li><li>Lab: Build a RAG pipeline — ingest documents, index, and query</li><li>Lab: Build an enterprise knowledge assistant with citation tracking</li></ul></div></div>
+  </div>
+
+  <div class="pf"><span>© 2026 Gennoor Tech Private Limited</span><span>www.gennoor.com</span><span>Page 3</span></div>
+</div>
+
+<!-- PAGE 4: DAY 3, 4, 5 -->
+<div class="page cp">
+  <div class="ph"><div class="ls"><span style="color:#2D3748">G</span><span style="color:#3D5278">e</span><span style="color:#2563EB">nn</span><span style="color:#D69E2E">oo</span><span style="color:#4A6080">r</span><span style="color:#4A5568"> Tech</span></div><div class="pt">Course Curriculum</div></div>
+
+  <div class="db"><div class="dh"><div class="dn b">03</div><div><div class="dt">Copilot Studio, Agents & MCP Integration</div><div class="ds">Hands-On Labs + Agent Development Workshop</div></div></div>
+    <div class="sg"><div class="se"><div class="sl">Session A</div><h5>Microsoft Copilot Studio Deep Dive</h5><ul><li>Copilot Studio architecture: topics, entities, plugins</li><li>Building custom agents with generative AI capabilities</li><li>Connecting to Dataverse, SharePoint, and external APIs</li><li>Lab: Build a customer service agent with knowledge grounding</li><li>Lab: Build an HR policy assistant with document search</li></ul></div>
+    <div class="se"><div class="sl">Session B</div><h5>MCP Servers & Enterprise Agent Patterns</h5><ul><li>Model Context Protocol: tools, resources, prompts</li><li>Building MCP servers with Python and FastAPI for Copilot Studio</li><li>Azure AI Agent Service for multi-agent orchestration</li><li>Lab: Build an MCP server connecting Copilot to Azure SQL</li><li>Lab: Deploy an agent with Power Automate approval workflows</li></ul></div></div>
+  </div>
+
+  <div class="db"><div class="dh"><div class="dn am">04</div><div><div class="dt">Document Intelligence, Vision & Cognitive Services</div><div class="ds">Hands-On Labs + Industry Projects</div></div></div>
+    <div class="sg"><div class="se"><div class="sl">Session A</div><h5>Azure Document Intelligence</h5><ul><li>Prebuilt models: invoices, receipts, IDs, business cards</li><li>Custom models: training with your own document types</li><li>Layout analysis: tables, key-value pairs, handwriting</li><li>Lab: Build an invoice processing pipeline</li><li>Lab: Build a KYC document extraction system for banking</li></ul></div>
+    <div class="se"><div class="sl">Session B</div><h5>Azure AI Vision & Speech</h5><ul><li>Azure AI Vision: image analysis, OCR, face detection</li><li>Custom Vision: train image classifiers for domain-specific tasks</li><li>Azure Speech: speech-to-text, text-to-speech, translation</li><li>Lab: Build a product quality inspection system with Custom Vision</li><li>Lab: Build a multilingual voice assistant with Speech + OpenAI</li></ul></div></div>
+  </div>
+
+  <div class="db"><div class="dh"><div class="dn b">05</div><div><div class="dt">Power Platform AI, Semantic Kernel & Capstone</div><div class="ds">Capstone Project + Architecture Review + Presentations</div></div></div>
+    <div class="sg"><div class="se"><div class="sl">Session A</div><h5>Power Platform AI & Semantic Kernel</h5><ul><li>AI Builder: document processing, text recognition, prediction</li><li>Copilot in Power BI: natural language queries, smart narratives</li><li>Semantic Kernel: plugins, planners, memory for .NET and Python</li><li>Lab: Build an AI-powered Power App with AI Builder</li><li>Lab: Build a planning agent with Semantic Kernel + Azure OpenAI</li></ul></div>
+    <div class="se"><div class="sl">Session B</div><h5>Capstone: Enterprise Microsoft AI Solution</h5><ul><li>Team project: End-to-end Microsoft AI solution</li><li>Azure OpenAI + AI Search + Copilot Studio + Power Platform</li><li>Architecture review: security, networking, cost, governance</li><li>Team presentations and expert feedback</li><li>Microsoft AI certification paths and next steps</li></ul></div></div>
+  </div>
+
+  <div class="fn"><strong>Flexible & Customizable:</strong> Session order, timing, depth, and industry focus can be tailored to your organization's specific requirements. Content is regularly updated to reflect the latest Microsoft AI developments.</div>
+
+  <div class="pf"><span>© 2026 Gennoor Tech Private Limited</span><span>www.gennoor.com</span><span>Page 4</span></div>
+</div>
+
+<!-- PAGE 5: TOOLS, CERT, FOUNDER -->
+<div class="page cp">
+  <div class="ph"><div class="ls"><span style="color:#2D3748">G</span><span style="color:#3D5278">e</span><span style="color:#2563EB">nn</span><span style="color:#D69E2E">oo</span><span style="color:#4A6080">r</span><span style="color:#4A5568"> Tech</span></div><div class="pt">Tools, Certification & Delivery</div></div>
+  <h2>Microsoft AI Services <span>Covered</span></h2>
+  <p class="ss">All services used hands-on with Azure portal and SDK labs</p>
+  <div class="ts"><span class="tb">Azure OpenAI Service</span><span class="tb">Azure AI Foundry</span><span class="tb">Azure AI Search</span><span class="tb">Microsoft Copilot Studio</span><span class="tb">Azure Document Intelligence</span><span class="tb">Azure AI Vision</span><span class="tb">Azure Speech</span><span class="tb">AI Builder</span><span class="tb">Semantic Kernel</span><span class="tb">Power Automate</span><span class="tb">Power BI + Copilot</span><span class="tb">Dataverse</span><span class="tb">MCP Servers</span><span class="tb">Azure AI Agent Service</span><span class="tb">Content Safety</span></div>
+
+  <h2 style="margin-top:14px">What You <span>Take Home</span></h2>
+  <div class="cg" style="margin-top:8px">
+    <div class="cd"><h4>🚀 7 AI Projects</h4><p>Complete code — chat app, RAG assistant, Copilot agent, MCP server, document pipeline, vision system, Semantic Kernel agent</p></div>
+    <div class="cd a"><h4>📐 Azure AI Architecture Guide</h4><p>Reference architecture patterns for enterprise AI: networking, security, RBAC, private endpoints, cost optimization</p></div>
+    <div class="cd"><h4>🔧 Deployment Templates</h4><p>ARM/Bicep templates for Azure OpenAI, AI Search, and Cognitive Services deployment with best practices</p></div>
+    <div class="cd a"><h4>📋 Microsoft AI Decision Tree</h4><p>Framework for choosing between Azure OpenAI, Copilot Studio, AI Builder, and custom development for each use case</p></div>
+  </div>
+
+  <h2 style="margin-top:14px">Certification of <span>Completion</span></h2>
+  <div style="display:flex;gap:12px;margin-top:8px">
+    <div style="flex:1;background:linear-gradient(135deg,rgba(0,120,212,.05),rgba(245,158,11,.03));border:1px solid rgba(0,120,212,.12);border-radius:9px;padding:12px 14px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <svg width="28" height="28" viewBox="0 0 130 130"><circle cx="105.8" cy="84" r="5" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="5" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="5" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="5" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="5" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="5" fill="#2563EB"/><circle cx="20" cy="65" r="5" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="5" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="5" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="5" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="5" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="5" fill="#2563EB"/><circle cx="80" cy="65" r="5" fill="#F59E0B"/><circle cx="95" cy="65" r="5" fill="#F59E0B"/><circle cx="110" cy="65" r="5" fill="#2563EB"/></svg>
+        <h3 style="margin:0;font-size:12px">Gennoor Tech — Certificate of Completion</h3>
+      </div>
+      <p style="font-size:9px;color:var(--gray);line-height:1.7">Upon completing all 5 days (40 hours), each participant receives a <strong style="color:var(--msblue)">Gennoor Tech Certificate of Completion</strong> in <strong>"Microsoft AI for Developers"</strong>. Digitally signed by the Founder & Director. Validates proficiency in Azure OpenAI, AI Foundry, Copilot Studio, AI Search, Document Intelligence, and enterprise Microsoft AI architecture.</p>
+    </div>
+    <div style="flex:.6;background:var(--light);border-radius:9px;padding:12px 14px">
+      <h4 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:9.5px;font-weight:700;color:var(--charcoal);margin-bottom:6px;text-align:left">Recommended Microsoft Certifications</h4>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="background:white;border:1px solid #E2E8F0;border-radius:5px;padding:4px 8px"><div style="font-size:8px;font-weight:700;color:var(--msblue)">Microsoft AI-103</div><div style="font-size:7px;color:var(--lightgray)">Azure AI App & Agent Developer Associate</div></div>
+        <div style="background:white;border:1px solid #E2E8F0;border-radius:5px;padding:4px 8px"><div style="font-size:8px;font-weight:700;color:var(--msblue)">Microsoft AB-100</div><div style="font-size:7px;color:var(--lightgray)">Agentic AI Business Solutions Architect</div></div>
+        <div style="background:white;border:1px solid #E2E8F0;border-radius:5px;padding:4px 8px"><div style="font-size:8px;font-weight:700;color:var(--msblue)">AI-3026</div><div style="font-size:7px;color:var(--lightgray)">Develop AI Agents on Azure</div></div>
+        <div style="background:white;border:1px solid #E2E8F0;border-radius:5px;padding:4px 8px"><div style="font-size:8px;font-weight:700;color:var(--msblue)">AI-050</div><div style="font-size:7px;color:var(--lightgray)">Develop Generative AI Solutions</div></div>
+      </div>
+    </div>
+  </div>
+
+  <h2 style="margin-top:14px">Designed & Delivered <span>By</span></h2>
+  <div class="hb" style="padding:12px 16px;margin-top:6px">
+    <h3 style="margin-bottom:2px;font-size:13px">Jalal Ahmed Khan</h3>
+    <p style="font-size:8.5px;color:var(--msblue);margin-bottom:6px;font-weight:600">Founder & Director, Gennoor Tech Private Limited</p>
+    <div style="display:flex;gap:16px;margin-top:4px">
+      <div style="flex:1"><p style="font-size:8.5px;color:var(--gray);line-height:1.7"><strong style="color:var(--charcoal)">Microsoft Certified Trainer (MCT)</strong> since 2022 with <strong style="color:var(--charcoal)">16+ active Microsoft certifications</strong> including AB-100, AB-730, AB-731, AI-103, AI-300, AZ-400, AZ-204, AZ-305, PL-400, PL-200, and PL-300. Delivered 80+ Microsoft AI training programs for enterprise clients including Microsoft, EY, IBM, Boeing, and MCIT Saudi Arabia.</p></div>
+      <div style="flex:.55"><p style="font-size:8.5px;color:var(--gray);line-height:1.7">Built and open-sourced the <strong style="color:var(--charcoal)">Azure SQL MCP Server</strong> for Copilot Studio and production Copilot agents with Dataverse integration. Senior AI Consultant with 14+ years experience across 6+ countries. <strong style="color:var(--charcoal)">M.E. Mechanical Engineering</strong>, Mumbai University.</p></div>
+    </div>
+  </div>
+
+  <div style="margin-top:10px;background:var(--light);border-radius:7px;padding:9px 16px;display:flex;gap:16px">
+    <div style="font-size:9px;color:var(--charcoal);font-weight:600;min-width:90px;font-family:'Plus Jakarta Sans',sans-serif">Delivery Options</div>
+    <div style="font-size:8.5px;color:var(--gray);line-height:1.6">🏢 <strong>On-Site</strong> — customized at your office &nbsp;|&nbsp; 💻 <strong>Virtual Live</strong> — interactive via Teams/Zoom &nbsp;|&nbsp; 🌍 <strong>International</strong> — GCC, Africa, APAC, UK</div>
+  </div>
+
+  <div class="pf"><span>© 2026 Gennoor Tech Private Limited</span><span>www.gennoor.com</span><span>Page 5</span></div>
+</div>
+
+<!-- PAGE 6: CONTACT -->
+<div class="page ctp">
+  <svg width="85" height="85" viewBox="0 0 130 130" style="margin-bottom:12px"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+  <h2 style="color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;margin-bottom:6px;text-align:center">Ready to Build with<br>Microsoft AI?</h2>
+  <div class="amber-line"></div>
+  <p style="color:#6B8FCC;font-size:12px;margin-bottom:28px;line-height:1.6;text-align:center">Contact us to discuss a customized bootcamp<br>for your organization or register for the next open batch.</p>
+  <div class="ci">🌐  <a href="https://www.gennoor.com">www.gennoor.com</a></div>
+  <div class="ci">✉  <a href="/cdn-cgi/l/email-protection#98fdf6e9edf1eae1d8fffdf6f6f7f7eab6fbf7f5"><span class="__cf_email__" data-cfemail="81e4eff0f4e8f3f8c1e6e4efefeeeef3afe2eeec">training@gennoor.com</span></a></div>
+  <div class="ci">📱  +91 9326 352 241</div>
+  <div class="ci">🔗  <a href="https://www.linkedin.com/company/gennoor-tech-private-limited/">linkedin.com/company/gennoor-tech-private-limited</a></div>
+  <div class="ci">▶  <a href="https://www.youtube.com/@GennoorTech">YouTube — @GennoorTech</a></div>
+  <div style="margin-top:30px">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700"><span style="color:#A0B4CC">G</span><span style="color:#7B9BC5">e</span><span style="color:#3B82F6">nn</span><span style="color:#EAB308">oo</span><span style="color:#7B9BC5">r</span><span style="color:#8FA3BA"> Tech</span></div>
+    <div style="font-family:'Sora',sans-serif;font-size:8px;color:#6B8FCC;letter-spacing:3px;font-variant

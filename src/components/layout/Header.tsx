@@ -1,0 +1,204 @@
+'use client'
+
+import { useState, useEffect, useRef } from 'react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { Menu, X, ChevronDown } from 'lucide-react'
+import { siteConfig } from '@/lib/site-config'
+import { cn } from '@/lib/utils'
+
+export default function Header() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null)
+  const pathname = usePathname()
+  const navRef = useRef<HTMLElement>(null)
+
+  // Close dropdown when clicking outside or pressing Escape
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        setOpenDropdown(null)
+        setIsMenuOpen(false)
+      }
+    }
+
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpenDropdown(null)
+        setIsMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('keydown', handleEscapeKey)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEscapeKey)
+    }
+  }, [])
+
+  // Close dropdown when route changes
+  useEffect(() => {
+    setOpenDropdown(null)
+    setIsMenuOpen(false)
+  }, [pathname])
+
+  const toggleDropdown = (name: string) => {
+    setOpenDropdown(openDropdown === name ? null : name)
+  }
+
+  return (
+    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+      <nav ref={navRef} className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex h-20 items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center group">
+            {/* Text Only - No Icon */}
+            <div className="flex items-baseline space-x-2">
+              <span className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-primary-600 to-secondary-500 bg-clip-text text-transparent group-hover:from-primary-500 group-hover:to-secondary-400 transition-all duration-300">
+                Gennoor
+              </span>
+              <span className="text-2xl lg:text-3xl font-bold text-gray-800">
+                Tech
+              </span>
+            </div>
+          </Link>
+
+          {/* Desktop Navigation - Added margin-left for spacing */}
+          <div className="hidden lg:flex lg:items-center lg:space-x-1 lg:ml-16">
+            {siteConfig.navigation.main.map((item) => (
+              <div key={item.name} className="relative">
+                {item.children ? (
+                  <button
+                    onClick={() => toggleDropdown(item.name)}
+                    className={cn(
+                      'nav-link px-3 py-2 flex items-center space-x-1',
+                      pathname.startsWith(item.href) && 'text-primary-600'
+                    )}
+                  >
+                    <span>{item.name}</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                ) : (
+                  <Link
+                    href={item.href}
+                    className={cn(
+                      'nav-link px-3 py-2',
+                      pathname === item.href && 'text-primary-600'
+                    )}
+                  >
+                    {item.name}
+                  </Link>
+                )}
+
+                {/* Dropdown Menu */}
+                {item.children && openDropdown === item.name && (
+                  <div className="absolute left-0 mt-2 w-64 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                    <div className="py-1">
+                      {item.children.map((child) => (
+                        <Link
+                          key={child.name}
+                          href={child.href}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          onClick={() => setOpenDropdown(null)}
+                        >
+                          {child.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Right side buttons */}
+          <div className="flex items-center space-x-4">
+            {/* CTA Button - Desktop */}
+            <Link
+              href="/contact#book"
+              className="hidden lg:inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors whitespace-nowrap"
+            >
+              Book a Call
+            </Link>
+
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="lg:hidden p-2 rounded-md hover:bg-gray-100"
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div className="lg:hidden py-4 border-t border-gray-200">
+            <div className="space-y-1">
+              {siteConfig.navigation.main.map((item) => (
+                <div key={item.name}>
+                  {item.children ? (
+                    <>
+                      <button
+                        onClick={() => toggleDropdown(item.name)}
+                        className={cn(
+                          'w-full text-left px-3 py-2 nav-link flex items-center justify-between',
+                          pathname.startsWith(item.href) && 'text-primary-600'
+                        )}
+                      >
+                        <span>{item.name}</span>
+                        <ChevronDown
+                          className={cn(
+                            'h-4 w-4 transition-transform',
+                            openDropdown === item.name && 'rotate-180'
+                          )}
+                        />
+                      </button>
+                      {openDropdown === item.name && (
+                        <div className="pl-6 space-y-1">
+                          {item.children.map((child) => (
+                            <Link
+                              key={child.name}
+                              href={child.href}
+                              className="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600"
+                              onClick={() => {
+                                setIsMenuOpen(false)
+                                setOpenDropdown(null)
+                              }}
+                            >
+                              {child.name}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        'block px-3 py-2 nav-link',
+                        pathname === item.href && 'text-primary-600'
+                      )}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                  )}
+                </div>
+              ))}
+              <Link
+                href="/contact#book"
+                className="block mx-3 mt-4 px-6 py-2.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg text-center transition-colors whitespace-nowrap"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Book a Call
+              </Link>
+            </div>
+          </div>
+        )}
+      </nav>
+    </header>
+  )
+}

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Development Framework — Gennoor Tech</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sora:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+  :root{--blue:#2563EB;--amber:#F59E0B;--navy:#0C1426;--charcoal:#2D3748;--gray:#4A5568;--light:#F8FAFC;--lightgray:#94A3B8;--white:#FFF}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;color:var(--charcoal);background:var(--white);-webkit-print-color-adjust:exact;print-color-adjust:exact;text-align:justify}
+  .page{width:210mm;min-height:297mm;padding:0;page-break-after:always;position:relative;overflow:hidden}
+  .page:last-child{page-break-after:auto}
+  .cover{background:var(--navy);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:38mm 20mm;position:relative}
+  .cover::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 25% 25%,rgba(37,99,235,.1) 0%,transparent 55%),radial-gradient(ellipse at 75% 75%,rgba(245,158,11,.07) 0%,transparent 55%)}
+  .cover *{position:relative;z-index:1}
+  .badge{display:inline-block;border:1px solid rgba(107,143,204,.3);color:#6B8FCC;font-size:9px;letter-spacing:3px;text-transform:uppercase;padding:6px 20px;border-radius:20px;margin-bottom:28px;font-family:'Sora',sans-serif}
+  .cover h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:38px;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:8px}
+  .cover h1 span{color:var(--amber)}
+  .cover .subtitle{font-size:15px;color:#6B8FCC;font-weight:400;margin-bottom:35px;font-family:'Sora',sans-serif}
+  .meta-row{display:flex;gap:28px;justify-content:center;margin-top:25px}
+  .meta-item{text-align:center}
+  .meta-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:800;color:var(--white)}
+  .meta-label{font-size:9px;color:#6B8FCC;letter-spacing:1px;text-transform:uppercase;margin-top:3px}
+  .amber-line{width:60px;height:3px;background:var(--amber);border-radius:2px;margin:18px auto}
+  .cp{padding:18mm 20mm}
+  .ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid #E2E8F0}
+  .ph .ls{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700}
+  .ph .pt{font-family:'Sora',sans-serif;font-size:8px;color:var(--lightgray);letter-spacing:2px;text-transform:uppercase}
+  h2{font-family:'Plus Jakarta Sans',sans-serif;font-size:21px;font-weight:800;color:var(--charcoal);margin-bottom:5px;text-align:left}
+  h2 span{color:var(--blue)}
+  h3{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;color:var(--charcoal);margin-bottom:5px;text-align:left}
+  .ss{font-size:10px;color:var(--lightgray);margin-bottom:14px;line-height:1.6}
+  .hb{background:linear-gradient(135deg,rgba(37,99,235,.06),rgba(245,158,11,.04));border:1px solid rgba(37,99,235,.1);border-radius:10px;padding:13px 16px;margin:12px 0}
+  .hb p{font-size:9.5px;color:var(--gray);line-height:1.7}
+  .hb strong{color:var(--blue)}
+  .cg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+  .cd{background:var(--light);border-radius:8px;padding:12px 14px;border-left:3px solid var(--blue)}
+  .cd.a{border-left-color:var(--amber)}
+  .cd h4{font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5px;font-weight:700;color:var(--charcoal);margin-bottom:3px;text-align:left}
+  .cd p{font-size:8.5px;color:var(--gray);line-height:1.6}
+  .wg{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:9px;margin:10px 0}
+  .wc{text-align:center;padding:12px 7px;background:var(--light);border-radius:8px}
+  .wc .wi{font-size:24px;margin-bottom:5px}
+  .wc h4{font-family:'Plus Jakarta Sans',sans-serif;font-size:9px;font-weight:700;color:var(--charcoal);margin-bottom:2px}
+  .wc p{font-size:7px;color:var(--lightgray);line-height:1.4}
+  .or{display:flex;align-items:flex-start;gap:9px;margin-bottom:8px}
+  .on{width:24px;height:24px;min-width:24px;border-radius:50%;background:var(--blue);color:var(--white);display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;font-size:9px;font-weight:800}
+  .ot{font-size:9.5px;color:var(--gray);line-height:1.5;padding-top:2px}
+  .ot strong{color:var(--charcoal)}
+  .db{margin-bottom:14px;page-break-inside:avoid}
+  .dh{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+  .dn{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:800;color:var(--white)}
+  .dn.b{background:var(--blue)}.dn.am{background:var(--amber)}
+  .dt{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;color:var(--charcoal)}
+  .ds{font-size:7.5px;color:var(--lightgray);letter-spacing:1px;text-transform:uppercase}
+  .sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-left:47px}
+  .se{background:var(--light);border-radius:6px;padding:10px 12px}
+  .sl{font-size:7.5px;color:var(--blue);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+  .se h5{font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:700;color:var(--charcoal);margin-bottom:4px;text-align:left}
+  .se ul{list-style:none;padding:0}
+  .se ul li{font-size:8.5px;color:var(--gray);line-height:1.7;padding-left:9px;position:relative}
+  .se ul li::before{content:'·';position:absolute;left:0;color:var(--blue);font-weight:900;font-size:12px;line-height:1;top:2px}
+  .ts{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
+  .tb{background:var(--light);border:1px solid #E2E8F0;border-radius:20px;padding:3px 9px;font-size:7.5px;color:var(--gray);font-weight:500}
+  .pf{position:absolute;bottom:12mm;left:20mm;right:20mm;display:flex;justify-content:space-between;font-size:7px;color:var(--lightgray)}
+  .ctp{background:var(--navy);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40mm 30mm;position:relative}
+  .ctp::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 50% 30%,rgba(37,99,235,.06) 0%,transparent 60%)}
+  .ctp *{position:relative;z-index:1}
+  .ci{color:#8FA3BA;font-size:12px;margin:5px 0}.ci a{color:#8FA3BA;text-decoration:none}
+  .fn{margin-top:12px;background:var(--light);border-radius:7px;padding:9px 14px;font-size:8.5px;color:var(--gray);line-height:1.6}
+  .fn strong{color:var(--blue)}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="page cover">
+  <svg width="95" height="95" viewBox="0 0 130 130" style="margin-bottom:10px"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+  <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;margin-bottom:3px"><span style="color:#A0B4CC">G</span><span style="color:#7B9BC5">e</span><span style="color:#3B82F6">nn</span><span style="color:#EAB308">oo</span><span style="color:#7B9BC5">r</span><span style="color:#8FA3BA"> Tech</span></div>
+  <div style="font-family:'Sora',sans-serif;font-size:8px;color:#6B8FCC;letter-spacing:3px;font-variant:small-caps;margin-bottom:22px">train. innovate. build.</div>
+  <div class="badge">5-Day Developer Bootcamp · 40 Hours</div>
+  <h1>AI Development<br><span>Framework</span></h1>
+  <p class="subtitle">Build production AI apps with LangChain, FastAPI, Streamlit, RAG & Agents</p>
+  <div class="amber-line"></div>
+  <div class="meta-row">
+    <div class="meta-item"><div class="meta-val">5</div><div class="meta-label">Days</div></div>
+    <div class="meta-item"><div class="meta-val">40</div><div class="meta-label">Hours</div></div>
+    <div class="meta-item"><div class="meta-val">10+</div><div class="meta-label">Frameworks</div></div>
+    <div class="meta-item"><div class="meta-val">6</div><div class="meta-label">AI Apps Built</div></div>
+  </div>
+  <div style="position:absolute;bottom:25mm;left:0;right:0;text-align:center;font-size:8px;color:#4A6080">www.gennoor.com · training@gennoor.com</div>
+</div>
+
+<!-- PAGE 2: OVERVIEW -->
+<div class="page cp">
+  <div class="ph"><div class="ls"><span style="color:#2D3748">G</span><span style="color:#3D5278">e</span><span style="color:#2563EB">nn</span><span style="color:#D69E2E">oo</span><span style="color:#4A6080">r</span><span style="color:#4A5568"> Tech</span></div><div class="pt">AI Development Framework</div></div>
+  <h2>Course <span>Overview</span></h2>
+  <p class="ss">This 5-day hands-on developer bootcamp covers the modern AI application development stack — from LLM APIs and orchestration frameworks through RAG pipelines, AI agents, and full-stack deployment. Participants build 6 production-ready AI applications using LangChain, Semantic Kernel, Hugging Face, FastAPI, Streamlit, Gradio, and enterprise cloud platforms. Every framework is compared head-to-head so developers can make informed architecture decisions.</p>
+
+  <div class="hb"><p><strong>The AI framework landscape is overwhelming. This bootcamp makes it clear.</strong> You'll build the same app in multiple frameworks, understand the tradeoffs, and leave with the ability to pick the right tool for any AI project. From simple chatbot APIs to multi-agent RAG systems to full-stack AI-powered web apps — all with production patterns, not toy examples.</p></div>
+
+  <h2 style="margin-top:18px">Who Is <span>This For?</span></h2>
+  <div class="wg">
+    <div class="wc"><div class="wi">👨‍💻</div><h4>Python Developers</h4><p>Backend engineers adding AI capabilities to applications</p></div>
+    <div class="wc"><div class="wi">🌐</div><h4>Full-Stack Engineers</h4><p>Developers building end-to-end AI-powered products</p></div>
+    <div class="wc"><div class="wi">🏗️</div><h4>AI Engineers</h4><p>Engineers evaluating and selecting AI frameworks</p></div>
+    <div class="wc"><div class="wi">⚙️</div><h4>Platform Teams</h4><p>Teams building internal AI platforms and tooling</p></div>
+  </div>
+
+  <h2 style="margin-top:18px">Learning <span>Outcomes</span></h2>
+  <div style="margin-top:8px">
+    <div class="or"><div class="on">1</div><div class="ot"><strong>Build with LLM APIs</strong> — integrate Azure OpenAI, Claude API, Gemini API, and open-source models (Ollama) into applications with proper error handling and streaming</div></div>
+    <div class="or"><div class="on">2</div><div class="ot"><strong>Master AI orchestration frameworks</strong> — build with LangChain, LangGraph, Semantic Kernel, and CrewAI — understand when to use each and framework migration patterns</div></div>
+    <div class="or"><div class="on">3</div><div class="ot"><strong>Implement production RAG</strong> — chunking strategies, embedding models, vector databases (FAISS, Chroma, Azure AI Search), hybrid search, and reranking</div></div>
+    <div class="or"><div class="on">4</div><div class="ot"><strong>Build AI-powered web apps</strong> — full-stack development with FastAPI backends, Streamlit and Gradio frontends, WebSocket streaming, and authentication</div></div>
+    <div class="or"><div class="on">5</div><div class="ot"><strong>Design AI agents and automation</strong> — tool-calling agents, MCP servers, multi-agent systems, and workflow automation with N8N and Power Automate</div></div>
+    <div class="or"><div class="on">6</div><div class="ot"><strong>Deploy and scale AI apps</strong> — Docker containerization, cloud deployment (Azure, AWS), API rate limiting, caching, monitoring, and cost optimization</div></div>
+  </div>
+
+  <h2 style="margin-top:16px"><span>Prerequisites</span></h2>
+  <p class="ss" style="margin-bottom:0">Python programming (intermediate), experience with REST APIs and JSON, basic Git knowledge. Familiarity with at least one web framework (Flask, Django, or FastAPI) is helpful.</p>
+
+  <div class="pf"><span>© 2026 Gennoor Tech Private Limited</span><span>www.gennoor.com</span><span>Page 2</span></div>
+</div>
+
+<!-- PAGE 3: DAY 1 & 2 -->
+<div class="page cp">
+  <div class="ph"><div class="ls"><span style="color:#2D3748">G</span><span style="color:#3D5278">e</span><span style="color:#2563EB">nn</span><span style="color:#D69E2E">oo</span><span style="color:#4A6080">r</span><span style="color:#4A5568"> Tech</span></div><div class="pt">Course Curriculum</div></div>
+  <h2>5-Day <span>Curriculum</span></h2>
+  <p class="ss">Entirely hands-on — every session builds a working application. Schedule and session order are fully customizable based on your organization's needs and time zones.</p>
+
+  <div class="db"><div class="dh"><div class="dn b">01</div><div><div class="dt">LLM APIs & Prompt Engineering for Developers</div><div class="ds">Live Coding + Hands-On Labs</div></div></div>
+    <div class="sg"><div class="se"><div class="sl">Session A</div><h5>Working with LLM APIs</h5><ul><li>Azure OpenAI API: chat completions, streaming, function calling</li><li>Anthropic Claude API: messages, tools, long-context patterns</li><li>Google Gemini API: multimodal inputs, grounding</li><li>Lab: Build a multi-provider LLM gateway with fallback logic</li><li>Open-source models via Ollama: Llama, Mistral, Qwen locally</li></ul></div>
+    <div class="se"><div class="sl">Session B</div><h5>Advanced Prompt Engineering in Code</h5><ul><li>System prompts, structured outputs (JSON mode), guardrails</li><li>Prompt templates, chaining, and dynamic few-shot selection</li><li>Token management, cost tracking, and rate limit handling</li><li>Lab: Build a document analysis API with structured JSON output</li><li>Lab: Build a code review assistant with streaming responses</li></ul></div></div>
+  </div>
+
+  <div class="db"><div class="dh"><div class="dn am">02</div><div><div class="dt">LangChain, Semantic Kernel & Orchestration</div><div class="ds">Live Coding + Framework Comparison Labs</div></div></div>
+    <div class="sg"><div class="se"><div class="sl">Session A</div><h5>LangChain & LangGraph Deep Dive</h5><ul><li>LangChain: chains, prompts, output parsers, memory</li><li>LangChain tools: web search, database, API connectors</li><li>LangGraph: stateful graph workflows, conditional routing</li><li>Lab: Build a research assistant with LangChain + tools</li><li>Lab: Build a multi-step approval workflow with LangGraph</li></ul></div>
+    <div class="se"><div class="sl">Session B</div><h5>Semantic Kernel, CrewAI & Comparison</h5><ul><li>Semantic Kernel: plugins, planners, .NET and Python SDKs</li><li>CrewAI: multi-agent crews, roles, tasks, delegation</li><li>AutoGen: multi-agent conversation patterns</li><li>Lab: Build the same app in LangChain vs Semantic Kernel</li><li>Framework decision matrix: when to use which and why</li></ul></div></div>
+  </div>
+
+  <div class="pf"><span>© 2026 Gennoor Tech Private Limited</span><span>www.gennoor.com</span><span>Page 3</span></div>
+</div>
+
+<!-- PAGE 4: DAY 3, 4, 5 -->
+<div class="page cp">
+  <div class="ph"><div class="ls"><span style="color:#2D3748">G</span><span style="color:#3D5278">e</span><span style="color:#2563EB">nn</span><span style="color:#D69E2E">oo</span><span style="color:#4A6080">r</span><span style="color:#4A5568"> Tech</span></div><div class="pt">Course Curriculum</div></div>
+
+  <div class="db"><div class="dh"><div class="dn b">03</div><div><div class="dt">RAG Pipelines & Vector Databases</div><div class="ds">Live Coding + Hands-On Labs + Architecture Design</div></div></div>
+    <div class="sg"><div class="se"><div class="sl">Session A</div><h5>RAG Architecture & Implementation</h5><ul><li>RAG fundamentals: chunking, embedding, indexing, retrieval</li><li>Chunking strategies: fixed, recursive, semantic, document-aware</li><li>Embedding models: OpenAI, Cohere, open-source (sentence-transformers)</li><li>Lab: Build a RAG pipeline for enterprise document Q&A</li><li>Lab: Compare chunking strategies on the same dataset</li></ul></div>
+    <div class="se"><div class="sl">Session B</div><h5>Vector Databases & Hybrid Search</h5><ul><li>FAISS, Chroma, Pinecone, Weaviate — comparison and selection</li><li>Azure AI Search: hybrid search, semantic ranking, filters</li><li>Reranking with Cohere and cross-encoders</li><li>Lab: Build a hybrid search RAG system with Azure AI Search</li><li>Lab: Build a multi-document chat with citation tracking</li></ul></div></div>
+  </div>
+
+  <div class="db"><div class="dh"><div class="dn am">04</div><div><div class="dt">Full-Stack AI Apps — FastAPI, Streamlit & Gradio</div><div class="ds">Live Coding + Hands-On Labs + Deployment</div></div></div>
+    <div class="sg"><div class="se"><div class="sl">Session A</div><h5>FastAPI for AI Backends</h5><ul><li>FastAPI: async endpoints, WebSocket streaming, background tasks</li><li>Authentication, rate limiting, and API key management</li><li>MCP Server development: tools, resources, prompts protocol</li><li>Lab: Build a production AI API with FastAPI + Docker</li><li>Lab: Build an MCP server connecting AI to a SQL database</li></ul></div>
+    <div class="se"><div class="sl">Session B</div><h5>Streamlit, Gradio & Frontend Integration</h5><ul><li>Streamlit: rapid AI app prototyping with chat interfaces</li><li>Gradio: model demos, file upload, multimodal interfaces</li><li>Connecting frontends to FastAPI backends</li><li>Lab: Build a document Q&A app with Streamlit + RAG backend</li><li>Lab: Build a multimodal AI demo with Gradio (image + text)</li></ul></div></div>
+  </div>
+
+  <div class="db"><div class="dh"><div class="dn b">05</div><div><div class="dt">Agents, Automation & Capstone Deployment</div><div class="ds">Capstone Project + Architecture Review + Presentations</div></div></div>
+    <div class="sg"><div class="se"><div class="sl">Session A</div><h5>AI Agents & Workflow Automation</h5><ul><li>Tool-calling agents with function calling and MCP</li><li>Multi-agent collaboration with CrewAI and LangGraph</li><li>Workflow automation: N8N, Power Automate, Copilot Studio</li><li>Lab: Build an automated research-to-report agent pipeline</li><li>Lab: Connect AI agents to enterprise systems via MCP</li></ul></div>
+    <div class="se"><div class="sl">Session B</div><h5>Capstone: Full-Stack AI Application</h5><ul><li>Team project: Design and build a complete AI application</li><li>Backend (FastAPI) + Frontend (Streamlit) + RAG + Agent</li><li>Docker containerization and cloud deployment</li><li>Monitoring, logging, and cost optimization patterns</li><li>Team presentations, architecture review, and next steps</li></ul></div></div>
+  </div>
+
+  <div class="fn"><strong>Flexible & Customizable:</strong> Session order, timing, depth, and industry focus can be tailored to your organization's specific requirements. Content is regularly updated to reflect the latest AI developments.</div>
+
+  <div class="pf"><span>© 2026 Gennoor Tech Private Limited</span><span>www.gennoor.com</span><span>Page 4</span></div>
+</div>
+
+<!-- PAGE 5: TOOLS, CERT, FOUNDER -->
+<div class="page cp">
+  <div class="ph"><div class="ls"><span style="color:#2D3748">G</span><span style="color:#3D5278">e</span><span style="color:#2563EB">nn</span><span style="color:#D69E2E">oo</span><span style="color:#4A6080">r</span><span style="color:#4A5568"> Tech</span></div><div class="pt">Tools, Certification & Delivery</div></div>
+  <h2>Tools & Frameworks <span>Covered</span></h2>
+  <p class="ss">All frameworks used hands-on with live coding and comparative labs</p>
+  <div class="ts"><span class="tb">LangChain</span><span class="tb">LangGraph</span><span class="tb">Semantic Kernel</span><span class="tb">CrewAI</span><span class="tb">AutoGen</span><span class="tb">Hugging Face</span><span class="tb">FastAPI</span><span class="tb">Streamlit</span><span class="tb">Gradio</span><span class="tb">MCP Servers</span><span class="tb">Azure OpenAI</span><span class="tb">Claude API</span><span class="tb">Gemini API</span><span class="tb">Ollama</span><span class="tb">FAISS / Chroma</span><span class="tb">Azure AI Search</span><span class="tb">N8N</span><span class="tb">Docker</span><span class="tb">Python</span></div>
+
+  <h2 style="margin-top:14px">What You <span>Take Home</span></h2>
+  <div class="cg" style="margin-top:8px">
+    <div class="cd"><h4>🚀 6 AI Applications</h4><p>Complete source code — LLM gateway, research assistant, RAG Q&A app, MCP server, Streamlit app, multi-agent pipeline</p></div>
+    <div class="cd a"><h4>📐 Framework Decision Matrix</h4><p>Detailed comparison: LangChain vs Semantic Kernel vs CrewAI vs AutoGen — features, performance, ecosystem, enterprise fit</p></div>
+    <div class="cd"><h4>🔧 AI App Starter Templates</h4><p>Production-ready boilerplate for FastAPI + LangChain + Docker, Streamlit + RAG, and MCP server projects</p></div>
+    <div class="cd a"><h4>📋 Architecture Patterns Guide</h4><p>Reference for RAG patterns, agent architectures, API design, caching, streaming, and cost optimization strategies</p></div>
+  </div>
+
+  <h2 style="margin-top:14px">Certification of <span>Completion</span></h2>
+  <div style="display:flex;gap:12px;margin-top:8px">
+    <div style="flex:1;background:linear-gradient(135deg,rgba(37,99,235,.04),rgba(245,158,11,.03));border:1px solid rgba(37,99,235,.12);border-radius:9px;padding:12px 14px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <svg width="28" height="28" viewBox="0 0 130 130"><circle cx="105.8" cy="84" r="5" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="5" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="5" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="5" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="5" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="5" fill="#2563EB"/><circle cx="20" cy="65" r="5" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="5" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="5" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="5" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="5" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="5" fill="#2563EB"/><circle cx="80" cy="65" r="5" fill="#F59E0B"/><circle cx="95" cy="65" r="5" fill="#F59E0B"/><circle cx="110" cy="65" r="5" fill="#2563EB"/></svg>
+        <h3 style="margin:0;font-size:12px">Gennoor Tech — Certificate of Completion</h3>
+      </div>
+      <p style="font-size:9px;color:var(--gray);line-height:1.7">Upon completing all 5 days (40 hours), each participant receives a <strong style="color:var(--blue)">Gennoor Tech Certificate of Completion</strong> in <strong>"AI Development Framework"</strong>. Digitally signed by the Founder & Director. Validates proficiency in AI orchestration frameworks, RAG implementation, full-stack AI app development, agent design, and production deployment.</p>
+    </div>
+    <div style="flex:.6;background:var(--light);border-radius:9px;padding:12px 14px">
+      <h4 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:9.5px;font-weight:700;color:var(--charcoal);margin-bottom:6px;text-align:left">Recommended Next Certifications</h4>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="background:white;border:1px solid #E2E8F0;border-radius:5px;padding:4px 8px"><div style="font-size:8px;font-weight:700;color:var(--blue)">Microsoft AB-100</div><div style="font-size:7px;color:var(--lightgray)">Agentic AI Business Solutions Architect</div></div>
+        <div style="background:white;border:1px solid #E2E8F0;border-radius:5px;padding:4px 8px"><div style="font-size:8px;font-weight:700;color:var(--blue)">Microsoft AI-103</div><div style="font-size:7px;color:var(--lightgray)">Azure AI App & Agent Developer Associate</div></div>
+        <div style="background:white;border:1px solid #E2E8F0;border-radius:5px;padding:4px 8px"><div style="font-size:8px;font-weight:700;color:var(--blue)">AI-3026</div><div style="font-size:7px;color:var(--lightgray)">Develop AI Agents on Azure</div></div>
+        <div style="background:white;border:1px solid #E2E8F0;border-radius:5px;padding:4px 8px"><div style="font-size:8px;font-weight:700;color:var(--blue)">GitHub GH-300</div><div style="font-size:7px;color:var(--lightgray)">GitHub Copilot Certification</div></div>
+      </div>
+    </div>
+  </div>
+
+  <h2 style="margin-top:14px">Designed & Delivered <span>By</span></h2>
+  <div class="hb" style="padding:12px 16px;margin-top:6px">
+    <h3 style="margin-bottom:2px;font-size:13px">Jalal Ahmed Khan</h3>
+    <p style="font-size:8.5px;color:var(--blue);margin-bottom:6px;font-weight:600">Founder & Director, Gennoor Tech Private Limited</p>
+    <div style="display:flex;gap:16px;margin-top:4px">
+      <div style="flex:1"><p style="font-size:8.5px;color:var(--gray);line-height:1.7"><strong style="color:var(--charcoal)">AB-100 Certified Agentic AI Architect</strong>, Senior AI Consultant, and Microsoft Certified Trainer (MCT) with 14+ years of experience. Built and open-sourced MCP servers, RAG pipelines, and multi-agent systems. Delivered AI development programs for EY, Boeing, IBM, Microsoft, and 80+ organizations across 6+ countries.</p></div>
+      <div style="flex:.55"><p style="font-size:8.5px;color:var(--gray);line-height:1.7"><strong style="color:var(--charcoal)">16+ active Microsoft certifications</strong> including AI-103, AZ-400, AI-300, PL-400, GH-300, and GH-900. GitHub projects include Azure SQL MCP Server, prompt engineering labs, and banking document pipelines. <strong style="color:var(--charcoal)">M.E. Mechanical Engineering</strong>, Mumbai University.</p></div>
+    </div>
+  </div>
+
+  <div style="margin-top:10px;background:var(--light);border-radius:7px;padding:9px 16px;display:flex;gap:16px">
+    <div style="font-size:9px;color:var(--charcoal);font-weight:600;min-width:90px;font-family:'Plus Jakarta Sans',sans-serif">Delivery Options</div>
+    <div style="font-size:8.5px;color:var(--gray);line-height:1.6">🏢 <strong>On-Site</strong> — customized at your office &nbsp;|&nbsp; 💻 <strong>Virtual Live</strong> — interactive via Teams/Zoom &nbsp;|&nbsp; 🌍 <strong>International</strong> — GCC, Africa, APAC, UK</div>
+  </div>
+
+  <div class="pf"><span>© 2026 Gennoor Tech Private Limited</span><span>www.gennoor.com</span><span>Page 5</span></div>
+</div>
+
+<!-- PAGE 6: CONTACT -->
+<div class="page ctp">
+  <svg width="85" height="85" viewBox="0 0 130 130" style="margin-bottom:12px"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+  <h2 style="color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;margin-bottom:6px;text-align:center">Ready to Build<br>AI Applications?</h2>
+  <div class="amber-line"></div>
+  <p style="color:#6B8FCC;font-size:12px;margin-bottom:28px;line-height:1.6;text-align:center">Contact us to discuss a customized bootcamp<br>for your organization or register for the next open batch.</p>
+  <div class="ci">🌐  <a href="https://www.gennoor.com">www.gennoor.com</a></div>
+  <div class="ci">✉  <a href="/cdn-cgi/l/email-protection#a4c1cad5d1cdd6dde4c3c1cacacbcbd68ac7cbc9"><span class="__cf_email__" data-cfemail="71141f00041803083116141f1f1e1e035f121e1c">training@gennoor.com</span></a></div>
+  <div class="ci">📱  +91 9326 352 241</div>
+  <div class="ci">🔗  <a href="https://www.linkedin.com/company/gennoor-tech-private-limited/">linkedin.com/company/gennoor-tech-private-limited</a></div>
+  <div class="ci">▶  <a href="https://www.youtube.com/@GennoorTech">YouTube — @GennoorTech</a></div>
+  <div style="margin-top:30px">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700"><span style="color:#A0B4CC">G</span><span style="color:#7B9BC5">e</span><span style="color:#3B82F6">nn</span><span style="color:#EAB308">oo</span><span style="color:#7B9BC5">r</span><span style="color:#8FA3BA"> Tech</span></div>
+    <div style="font-family:'Sora',sans-serif;font-size:8px;color:#6B8FCC;letter-spacing:3px;font-variant

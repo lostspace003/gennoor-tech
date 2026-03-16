@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="440" viewBox="0 0 280 220">
+  <rect width="280" height="220" fill="#FFFFFF"/>
+  <circle cx="177.1" cy="94" r="6.5" fill="#2563EB"/>
+  <circle cx="162.8" cy="112.3" r="6.5" fill="#2563EB"/>
+  <circle cx="142" cy="122.6" r="6.5" fill="#2563EB"/>
+  <circle cx="118.7" cy="122.8" r="6.5" fill="#2563EB"/>
+  <circle cx="97.7" cy="112.8" r="6.5" fill="#2563EB"/>
+  <circle cx="83.2" cy="94.7" r="6.5" fill="#2563EB"/>
+  <circle cx="78" cy="72" r="6.5" fill="#2563EB"/>
+  <circle cx="83.2" cy="49.3" r="6.5" fill="#2563EB"/>
+  <circle cx="97.7" cy="31.2" r="6.5" fill="#2563EB"/>
+  <circle cx="118.7" cy="21.2" r="6.5" fill="#2563EB"/>
+  <circle cx="142" cy="21.4" r="6.5" fill="#2563EB"/>
+  <circle cx="162.8" cy="31.7" r="6.5" fill="#2563EB"/>
+  <circle cx="148" cy="72" r="6.5" fill="#F59E0B"/>
+  <circle cx="165" cy="72" r="6.5" fill="#F59E0B"/>
+  <circle cx="182" cy="72" r="6.5" fill="#2563EB"/>
+  <text x="140" y="164" text-anchor="middle" font-family="'Plus Jakarta Sans',Helvetica,Arial,sans-serif" font-size="28" font-weight="700" letter-spacing="0.5"><tspan fill="#2D3748">Ge</tspan><tspan fill="#2563EB">nn</tspan><tspan fill="#F59E0B">oo</tspan><tspan fill="#2563EB">r</tspan><tspan fill="#4A5568"> Tech</tspan></text>
+  <text x="140" y="184" text-anchor="middle" font-family="'Sora',Helvetica,Arial,sans-serif" font-size="10" font-weight="400" fill="#AAAAAA" letter-spacing="3" style="font-variant:small-caps">train. innovate. build.</text>
+</svg>

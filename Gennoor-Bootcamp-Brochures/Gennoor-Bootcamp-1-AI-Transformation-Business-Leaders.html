@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Transformation for Business Leaders — Gennoor Tech</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sora:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --blue: #2563EB;
+    --amber: #F59E0B;
+    --navy: #0C1426;
+    --charcoal: #2D3748;
+    --gray: #4A5568;
+    --light: #F8FAFC;
+    --lightgray: #94A3B8;
+    --white: #FFFFFF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body { 
+    font-family: 'Inter', sans-serif; 
+    color: var(--charcoal);
+    background: var(--white);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    text-align: justify;
+  }
+
+  /* ═══ PAGE SYSTEM ═══ */
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 0;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+  }
+  .page:last-child { page-break-after: auto; }
+
+  /* ═══ PAGE 1: COVER ═══ */
+  .cover {
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40mm 20mm;
+    position: relative;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 30% 20%, rgba(37,99,235,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(245,158,11,0.06) 0%, transparent 60%);
+  }
+  .cover * { position: relative; z-index: 1; }
+  .cover .badge {
+    display: inline-block;
+    border: 1px solid rgba(107,143,204,0.3);
+    color: #6B8FCC;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 6px 20px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+    font-family: 'Sora', sans-serif;
+  }
+  .cover h1 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 38px;
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .cover h1 span { color: var(--amber); }
+  .cover .subtitle {
+    font-size: 16px;
+    color: #6B8FCC;
+    font-weight: 400;
+    margin-bottom: 40px;
+    font-family: 'Sora', sans-serif;
+  }
+  .cover .meta-row {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    margin-top: 30px;
+  }
+  .cover .meta-item {
+    text-align: center;
+  }
+  .cover .meta-val {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--white);
+  }
+  .cover .meta-label {
+    font-size: 10px;
+    color: #6B8FCC;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .cover .logo-bar {
+    position: absolute;
+    bottom: 25mm;
+    left: 0; right: 0;
+    text-align: center;
+  }
+  .cover .logo-text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .cover .tagline {
+    font-family: 'Sora', sans-serif;
+    font-size: 8px;
+    color: #6B8FCC;
+    letter-spacing: 3px;
+    font-variant: small-caps;
+    margin-top: 4px;
+  }
+  .amber-line {
+    width: 60px;
+    height: 3px;
+    background: var(--amber);
+    border-radius: 2px;
+    margin: 20px auto;
+  }
+
+  /* ═══ CONTENT PAGES ═══ */
+  .content-page {
+    padding: 18mm 20mm;
+  }
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #E2E8F0;
+  }
+  .page-header .logo-sm {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .page-header .page-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 8px;
+    color: var(--lightgray);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--charcoal);
+    margin-bottom: 6px;
+  }
+  h2 span { color: var(--blue); }
+  h3 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 8px;
+  }
+  .section-sub {
+    font-size: 11px;
+    color: var(--lightgray);
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  /* Cards */
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 16px 0;
+  }
+  .card-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+  .card {
+    background: var(--light);
+    border-radius: 10px;
+    padding: 16px 18px;
+    position: relative;
+    border-left: 3px solid var(--blue);
+  }
+  .card.amber { border-left-color: var(--amber); }
+  .card h4 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 6px;
+  }
+  .card p, .card li {
+    font-size: 9.5px;
+    color: var(--gray);
+    line-height: 1.6;
+  }
+  .card ul {
+    list-style: none;
+    padding: 0;
+  }
+  .card ul li::before {
+    content: '→ ';
+    color: var(--blue);
+    font-weight: 600;
+  }
+  .card.amber ul li::before { color: var(--amber); }
+
+  /* Day blocks */
+  .day-block {
+    margin-bottom: 18px;
+    page-break-inside: avoid;
+  }
+  .day-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .day-num {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--white);
+  }
+  .day-num.blue { background: var(--blue); }
+  .day-num.amber { background: var(--amber); }
+  .day-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--charcoal);
+  }
+  .day-subtitle {
+    font-size: 9px;
+    color: var(--lightgray);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .session-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-left: 54px;
+  }
+  .session {
+    background: var(--light);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .session-label {
+    font-size: 8px;
+    color: var(--blue);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .session h5 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 6px;
+  }
+  .session ul {
+    list-style: none;
+    padding: 0;
+  }
+  .session ul li {
+    font-size: 9px;
+    color: var(--gray);
+    line-height: 1.75;
+    padding-left: 10px;
+    position: relative;
+  }
+  .session ul li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--blue);
+    font-weight: 900;
+    font-size: 14px;
+    line-height: 1;
+    top: 2px;
+  }
+
+  /* Who section */
+  .who-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .who-card {
+    text-align: center;
+    padding: 16px 10px;
+    background: var(--light);
+    border-radius: 10px;
+  }
+  .who-icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+  .who-card h4 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 4px;
+  }
+  .who-card p {
+    font-size: 8px;
+    color: var(--lightgray);
+    line-height: 1.4;
+  }
+
+  /* Outcomes */
+  .outcome-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .outcome-num {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+  }
+  .outcome-text {
+    font-size: 10.5px;
+    color: var(--gray);
+    line-height: 1.5;
+    padding-top: 4px;
+  }
+  .outcome-text strong { color: var(--charcoal); }
+
+  /* Footer */
+  .page-footer {
+    position: absolute;
+    bottom: 12mm;
+    left: 20mm;
+    right: 20mm;
+    display: flex;
+    justify-content: space-between;
+    font-size: 7px;
+    color: var(--lightgray);
+  }
+
+  /* Contact page */
+  .contact-page {
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40mm 30mm;
+    position: relative;
+  }
+  .contact-page::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 50% 30%, rgba(37,99,235,0.06) 0%, transparent 60%);
+  }
+  .contact-page * { position: relative; z-index: 1; }
+  .contact-item {
+    color: #8FA3BA;
+    font-size: 12px;
+    margin: 6px 0;
+    font-family: 'Inter', sans-serif;
+  }
+  .contact-item a { color: #8FA3BA; text-decoration: none; }
+
+  /* Highlight box */
+  .highlight-box {
+    background: linear-gradient(135deg, rgba(37,99,235,0.06), rgba(245,158,11,0.04));
+    border: 1px solid rgba(37,99,235,0.1);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin: 16px 0;
+  }
+  .highlight-box p {
+    font-size: 10.5px;
+    color: var(--gray);
+    line-height: 1.7;
+  }
+  .highlight-box strong { color: var(--blue); }
+
+  .tools-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .tool-badge {
+    background: var(--light);
+    border: 1px solid #E2E8F0;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 8.5px;
+    color: var(--gray);
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- PAGE 1: COVER                              -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="page cover">
+  <!-- Logo Icon -->
+  <svg width="100" height="100" viewBox="0 0 130 130" style="margin-bottom: 20px;">
+    <circle cx="105.8" cy="84.0" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/>
+    <circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/>
+    <circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/>
+    <circle cx="20.0" cy="65.0" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/>
+    <circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/>
+    <circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/>
+    <circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/>
+    <circle cx="110" cy="65" r="6" fill="#2563EB"/>
+  </svg>
+  
+  <!-- Company name with gradient -->
+  <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 4px;">
+    <span style="color:#A0B4CC">G</span><span style="color:#7B9BC5">e</span><span style="color:#3B82F6">nn</span><span style="color:#EAB308">oo</span><span style="color:#7B9BC5">r</span><span style="color:#8FA3BA"> Tech</span>
+  </div>
+  <div style="font-family: 'Sora', sans-serif; font-size: 8px; color: #6B8FCC; letter-spacing: 3px; font-variant: small-caps; margin-bottom: 25px;">train. innovate. build.</div>
+  
+  <div class="badge">5-Day Executive Bootcamp · 40 Hours</div>
+  
+  <h1>AI Transformation<br>for <span>Business Leaders</span></h1>
+  <p class="subtitle">Strategic AI adoption for CXOs, managers, and decision-makers</p>
+  
+  <div class="amber-line"></div>
+  
+  <div class="meta-row">
+    <div class="meta-item">
+      <div class="meta-val">5</div>
+      <div class="meta-label">Days</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-val">40</div>
+      <div class="meta-label">Hours</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-val">0</div>
+      <div class="meta-label">Coding Required</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-val">15+</div>
+      <div class="meta-label">Live Demos</div>
+    </div>
+  </div>
+  
+  <div class="logo-bar">
+    <div style="font-size: 8px; color: #4A6080;">www.gennoor.com · training@gennoor.com</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- PAGE 2: OVERVIEW & WHO IS THIS FOR         -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="page content-page">
+  <div class="page-header">
+    <div class="logo-sm"><span style="color:#2D3748">G</span><span style="color:#3D5278">e</span><span style="color:#2563EB">nn</span><span style="color:#D69E2E">oo</span><span style="color:#4A6080">r</span><span style="color:#4A5568"> Tech</span></div>
+    <div class="page-title">AI Transformation for Business Leaders</div>
+  </div>
+
+  <h2>Course <span>Overview</span></h2>
+  <p class="section-sub">This 5-day executive bootcamp equips business leaders with the strategic understanding, practical vocabulary, and hands-on experience to drive AI transformation in their organizations — without writing a single line of code.</p>
+
+  <div class="highlight-box">
+    <p><strong>This is not a technical course.</strong> It's a strategic leadership program designed for executives who need to make AI decisions — not build AI systems. You'll leave with a clear AI roadmap, ROI framework, and the confidence to lead your organization's AI journey.</p>
+  </div>
+
+  <h2 style="margin-top: 25px;">Who Is <span>This For?</span></h2>
+  <div class="who-grid">
+    <div class="who-card">
+      <div class="who-icon">👔</div>
+      <h4>C-Suite Executives</h4>
+      <p>CEOs, CTOs, CIOs, CDOs making AI investment decisions</p>
+    </div>
+    <div class="who-card">
+      <div class="who-icon">📊</div>
+      <h4>Business Managers</h4>
+      <p>Department heads driving digital transformation</p>
+    </div>
+    <div class="who-card">
+      <div class="who-icon">🏛️</div>
+      <h4>Government Leaders</h4>
+      <p>Officials leading national AI capacity building</p>
+    </div>
+    <div class="who-card">
+      <div class="who-icon">📋</div>
+      <h4>Strategy & PMO</h4>
+      <p>Project managers, analysts, and consultants</p>
+    </div>
+  </div>
+
+  <h2 style="margin-top: 25px;">Learning <span>Outcomes</span></h2>
+  <div style="margin-top: 12px;">
+    <div class="outcome-row">
+      <div class="outcome-num">1</div>
+      <div class="outcome-text"><strong>Understand the AI landscape</strong> — distinguish between Machine Learning, Deep Learning, Generative AI, and Agentic AI with clarity</div>
+    </div>
+    <div class="outcome-row">
+      <div class="outcome-num">2</div>
+      <div class="outcome-text"><strong>Evaluate AI opportunities</strong> — identify high-impact use cases in your industry using structured discovery frameworks</div>
+    </div>
+    <div class="outcome-row">
+      <div class="outcome-num">3</div>
+      <div class="outcome-text"><strong>Build business cases for AI</strong> — create ROI models, risk assessments, and stakeholder alignment strategies</div>
+    </div>
+    <div class="outcome-row">
+      <div class="outcome-num">4</div>
+      <div class="outcome-text"><strong>Use AI tools hands-on</strong> — experience Microsoft 365 Copilot, ChatGPT, Claude, Gemini, and Copilot Studio through live demos</div>
+    </div>
+    <div class="outcome-row">
+      <div class="outcome-num">5</div>
+      <div class="outcome-text"><strong>Lead AI transformation</strong> — draft your organization's AI adoption roadmap with governance, ethics, and change management built in</div>
+    </div>
+    <div class="outcome-row">
+      <div class="outcome-num">6</div>
+      <div class="outcome-text"><strong>Navigate responsible AI</strong> — understand bias, privacy, compliance, and responsible AI principles for enterprise deployment</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>© 2026 Gennoor Tech Private Limited</span>
+    <span>www.gennoor.com</span>
+    <span>Page 2</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- PAGE 3: DAY 1 & DAY 2                      -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="page content-page">
+  <div class="page-header">
+    <div class="logo-sm"><span style="color:#2D3748">G</span><span style="color:#3D5278">e</span><span style="color:#2563EB">nn</span><span style="color:#D69E2E">oo</span><span style="color:#4A6080">r</span><span style="color:#4A5568"> Tech</span></div>
+    <div class="page-title">Course Curriculum</div>
+  </div>
+
+  <h2>5-Day <span>Curriculum</span></h2>
+  <p class="section-sub">Interactive format with live demos, case studies, group exercises, and Q&A. Schedule and session order are fully customizable based on your organization's needs and time zones.</p>
+
+  <!-- DAY 1 -->
+  <div class="day-block">
+    <div class="day-header">
+      <div class="day-num blue">01</div>
+      <div>
+        <div class="day-title">The AI Landscape — Foundations & Business Context</div>
+        <div class="day-subtitle">Lecture + Live Demos + Group Discussion</div>
+      </div>
+    </div>
+    <div class="session-grid">
+      <div class="session">
+        <div class="session-label">Session A</div>
+        <h5>Understanding AI, ML & Deep Learning</h5>
+        <ul>
+          <li>What is AI? — Separating hype from reality</li>
+          <li>Machine Learning vs Deep Learning vs GenAI</li>
+          <li>How LLMs actually work (without the math)</li>
+          <li>Demo: ChatGPT, Claude, Gemini side-by-side</li>
+          <li>The AI value chain for business</li>
+        </ul>
+      </div>
+      <div class="session">
+        <div class="session-label">Session B</div>
+        <h5>AI in Your Industry — Use Cases & Impact</h5>
+        <ul>
+          <li>AI use cases across BFSI, Government, Healthcare, Energy, Education</li>
+          <li>Case Study: MCIT Saudi Arabia AI Leadership Program</li>
+          <li>Case Study: Banking AI transformation</li>
+          <li>Group Exercise: Identify 5 AI opportunities in your organization</li>
+          <li>Framework: AI Opportunity Assessment Canvas</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAY 2 -->
+  <div class="day-block">
+    <div class="day-header">
+      <div class="day-num amber">02</div>
+      <div>
+        <div class="day-title">Generative AI & Copilot — Hands-On for Leaders</div>
+        <div class="day-subtitle">Live Demos + Hands-On Labs + Workshop</div>
+      </div>
+    </div>
+    <div class="session-grid">
+      <div class="session">
+        <div class="session-label">Session A</div>
+        <h5>Generative AI Tools for Business</h5>
+        <ul>
+          <li>Prompt engineering for non-technical users</li>
+          <li>Hands-On: Microsoft 365 Copilot (Word, Excel, PowerPoint, Teams)</li>
+          <li>Hands-On: ChatGPT for business analysis</li>
+          <li>Hands-On: Claude for document analysis & strategy</li>
+          <li>Hands-On: Google Gemini for research</li>
+        </ul>
+      </div>
+      <div class="session">
+        <div class="session-label">Session B</div>
+        <h5>Copilot Studio & No-Code AI Agents</h5>
+        <ul>
+          <li>What are AI Agents? Why every business needs them</li>
+          <li>Demo: Microsoft Copilot Studio — build a customer service agent</li>
+          <li>Demo: Power Automate with AI Builder</li>
+          <li>Workshop: Design your first AI agent workflow (no code)</li>
+          <li>Comparing platforms: Microsoft vs Google vs AWS vs open source</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>© 2026 Gennoor Tech Private Limited</span>
+    <span>www.gennoor.com</span>
+    <span>Page 3</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- PAGE 4: DAY 3 & DAY 4                      -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="page content-page">
+  <div class="page-header">
+    <div class="logo-sm"><span style="color:#2D3748">G</span><span style="color:#3D5278">e</span><span style="color:#2563EB">nn</span><span style="color:#D69E2E">oo</span><span style="color:#4A6080">r</span><span style="color:#4A5568"> Tech</span></div>
+    <div class="page-title">Course Curriculum</div>
+  </div>
+
+  <!-- DAY 3 -->
+  <div class="day-block">
+    <div class="day-header">
+      <div class="day-num blue">03</div>
+      <div>
+        <div class="day-title">Agentic AI & the Future — What Leaders Must Know</div>
+        <div class="day-subtitle">Demos + Case Studies + Group Exercise</div>
+      </div>
+    </div>
+    <div class="session-grid">
+      <div class="session">
+        <div class="session-label">Session A</div>
+        <h5>Agentic AI — The Next Frontier</h5>
+        <ul>
+          <li>What is Agentic AI? How it differs from chatbots</li>
+          <li>Multi-agent systems, MCP Servers, and tool use</li>
+          <li>Demo: AI agents that book meetings, process claims, analyze reports</li>
+          <li>Industry examples: Banking fraud agents, Government citizen service bots</li>
+          <li>The business case for autonomous AI workflows</li>
+        </ul>
+      </div>
+      <div class="session">
+        <div class="session-label">Session B</div>
+        <h5>Cloud AI Platforms — Azure, AWS & GCP for Decision-Makers</h5>
+        <ul>
+          <li>Azure AI portfolio (OpenAI, AI Foundry, Cognitive Services)</li>
+          <li>AWS AI portfolio (Bedrock, SageMaker, Lex)</li>
+          <li>Google Cloud AI (Vertex AI, Gemini, Document AI)</li>
+          <li>How to evaluate cloud AI vendors for your organization</li>
+          <li>Total cost of ownership: Build vs Buy vs Partner</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAY 4 -->
+  <div class="day-block">
+    <div class="day-header">
+      <div class="day-num amber">04</div>
+      <div>
+        <div class="day-title">AI Strategy, Governance & Responsible AI</div>
+        <div class="day-subtitle">Frameworks + Workshop + Group Activity</div>
+      </div>
+    </div>
+    <div class="session-grid">
+      <div class="session">
+        <div class="session-label">Session A</div>
+        <h5>Building Your AI Strategy</h5>
+        <ul>
+          <li>AI maturity assessment — where is your organization today?</li>
+          <li>Discovery → Design → Pilot → Scale framework</li>
+          <li>ROI modeling for AI initiatives</li>
+          <li>Stakeholder alignment & change management</li>
+          <li>Workshop: Draft your 12-month AI roadmap</li>
+        </ul>
+      </div>
+      <div class="session">
+        <div class="session-label">Session B</div>
+        <h5>Responsible AI & Governance</h5>
+        <ul>
+          <li>AI ethics, bias detection, and fairness principles</li>
+          <li>Data privacy & compliance (GDPR, regional regulations)</li>
+          <li>Microsoft Responsible AI framework</li>
+          <li>AI governance structures for enterprises</li>
+          <li>Risk management: deepfakes, hallucinations, and misuse</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAY 5 -->
+  <div class="day-block">
+    <div class="day-header">
+      <div class="day-num blue">05</div>
+      <div>
+        <div class="day-title">AI Adoption Playbook — Your Organization's Action Plan</div>
+        <div class="day-subtitle">Capstone Workshop + Presentations + Wrap-Up</div>
+      </div>
+    </div>
+    <div class="session-grid">
+      <div class="session">
+        <div class="session-label">Session A</div>
+        <h5>Capstone: Build Your AI Transformation Plan</h5>
+        <ul>
+          <li>Team exercise: Complete AI adoption roadmap</li>
+          <li>Prioritize top 3 AI use cases with business impact</li>
+          <li>Define KPIs, success metrics, and milestones</li>
+          <li>Budget planning & vendor selection criteria</li>
+          <li>Change management & communication plan</li>
+        </ul>
+      </div>
+      <div class="session">
+        <div class="session-label">Session B</div>
+        <h5>Presentations & Next Steps</h5>
+        <ul>
+          <li>Team presentations of AI transformation plans</li>
+          <li>Peer review and expert feedback</li>
+          <li>Resources: reading list, communities, certifications</li>
+          <li>Microsoft AI certifications roadmap (AB-730, AB-731)</li>
+          <li>Post-bootcamp support & follow-up plan</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 14px; background: var(--light); border-radius: 8px; padding: 10px 16px; font-size: 9px; color: var(--gray); line-height: 1.6;">
+    <strong style="color: var(--blue);">Flexible & Customizable:</strong> Session order, timing, depth, and industry focus can be tailored to your organization's specific requirements. Content is regularly updated to reflect the latest AI developments.
+  </div>
+
+  <div class="page-footer">
+    <span>© 2026 Gennoor Tech Private Limited</span>
+    <span>www.gennoor.com</span>
+    <span>Page 4</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- PAGE 5: TOOLS, DELIVERABLES, TRAINER       -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="page content-page">
+  <div class="page-header">
+    <div class="logo-sm"><span style="color:#2D3748">G</span><span style="color:#3D5278">e</span><span style="color:#2563EB">nn</span><span style="color:#D69E2E">oo</span><span style="color:#4A6080">r</span><span style="color:#4A5568"> Tech</span></div>
+    <div class="page-title">Tools & Deliverables</div>
+  </div>
+
+  <h2>Tools & Platforms <span>Covered</span></h2>
+  <p class="section-sub">All demonstrated live — no coding required from participants</p>
+  <div class="tools-strip">
+    <span class="tool-badge">Microsoft 365 Copilot</span>
+    <span class="tool-badge">Microsoft Copilot Studio</span>
+    <span class="tool-badge">ChatGPT / GPT-4o</span>
+    <span class="tool-badge">Claude (Anthropic)</span>
+    <span class="tool-badge">Google Gemini</span>
+    <span class="tool-badge">Power Automate + AI Builder</span>
+    <span class="tool-badge">Azure OpenAI (demo)</span>
+    <span class="tool-badge">Amazon Bedrock (demo)</span>
+    <span class="tool-badge">Google Vertex AI (demo)</span>
+    <span class="tool-badge">Power BI + Copilot</span>
+  </div>
+
+  <h2 style="margin-top: 18px;">What You <span>Take Home</span></h2>
+  <div class="card-grid" style="margin-top: 10px;">
+    <div class="card">
+      <h4>📋 AI Roadmap Template</h4>
+      <p>12-month AI adoption plan customized for your organization during the capstone workshop</p>
+    </div>
+    <div class="card amber">
+      <h4>📊 ROI Calculator</h4>
+      <p>Excel-based AI ROI model with pre-built formulas for common enterprise use cases</p>
+    </div>
+    <div class="card">
+      <h4>🎯 Use Case Library</h4>
+      <p>50+ AI use cases across BFSI, Government, Healthcare, Energy, Education & IT sectors</p>
+    </div>
+    <div class="card amber">
+      <h4>📝 Governance Toolkit</h4>
+      <p>Responsible AI policy templates, risk assessment checklists, and compliance guides</p>
+    </div>
+  </div>
+
+  <!-- CERTIFICATION -->
+  <h2 style="margin-top: 18px;">Certification of <span>Completion</span></h2>
+  <div style="display: flex; gap: 14px; margin-top: 10px;">
+    <div style="flex: 1; background: linear-gradient(135deg, rgba(37,99,235,0.04), rgba(245,158,11,0.03)); border: 1px solid rgba(37,99,235,0.12); border-radius: 10px; padding: 14px 16px;">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+        <svg width="36" height="36" viewBox="0 0 130 130">
+          <circle cx="105.8" cy="84" r="5" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="5" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="5" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="5" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="5" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="5" fill="#2563EB"/><circle cx="20" cy="65" r="5" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="5" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="5" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="5" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="5" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="5" fill="#2563EB"/><circle cx="80" cy="65" r="5" fill="#F59E0B"/><circle cx="95" cy="65" r="5" fill="#F59E0B"/><circle cx="110" cy="65" r="5" fill="#2563EB"/>
+        </svg>
+        <h3 style="margin: 0; font-size: 14px;">Gennoor Tech — Certificate of Completion</h3>
+      </div>
+      <p style="font-size: 10px; color: var(--gray); line-height: 1.7; text-align: justify;">Upon successful completion of all 5 days (40 hours), each participant receives a <strong style="color: var(--blue);">Gennoor Tech Certificate of Completion</strong> in <strong>"AI Transformation for Business Leaders"</strong>. The certificate includes participant name, course title, duration, date, and is digitally signed by the Founder & Director. It validates the participant's understanding of AI strategy, governance, and tools for enterprise adoption.</p>
+    </div>
+    <div style="flex: 0.7; background: var(--light); border-radius: 12px; padding: 18px 20px;">
+      <h4 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 700; color: var(--charcoal); margin-bottom: 8px;">Recommended Next Certifications</h4>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="background: white; border: 1px solid #E2E8F0; border-radius: 6px; padding: 6px 10px;">
+          <div style="font-size: 9px; font-weight: 700; color: var(--blue);">Microsoft AB-730</div>
+          <div style="font-size: 8px; color: var(--lightgray);">AI Business Professional</div>
+        </div>
+        <div style="background: white; border: 1px solid #E2E8F0; border-radius: 6px; padding: 6px 10px;">
+          <div style="font-size: 9px; font-weight: 700; color: var(--blue);">Microsoft AB-731</div>
+          <div style="font-size: 8px; color: var(--lightgray);">AI Transformation Leader</div>
+        </div>
+        <div style="background: white; border: 1px solid #E2E8F0; border-radius: 6px; padding: 6px 10px;">
+          <div style="font-size: 9px; font-weight: 700; color: var(--blue);">Microsoft AI-901</div>
+          <div style="font-size: 8px; color: var(--lightgray);">Azure AI Fundamentals (New 2026)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DESIGNED & DELIVERED BY -->
+  <h2 style="margin-top: 16px;">Designed & Delivered <span>By</span></h2>
+  <div class="highlight-box" style="padding: 14px 18px; margin-top: 8px;">
+    <h3 style="margin-bottom: 2px; font-size: 14px;">Jalal Ahmed Khan</h3>
+    <p style="font-size: 9px; color: var(--blue); margin-bottom: 8px; font-weight: 600;">Founder & Director, Gennoor Tech Private Limited</p>
+    <div style="display: flex; gap: 20px; margin-top: 6px;">
+      <div style="flex: 1;">
+        <p style="font-size: 9px; color: var(--gray); line-height: 1.7; text-align: justify;"><strong style="color: var(--charcoal);">Senior AI Consultant</strong> and <strong style="color: var(--charcoal);">Microsoft Certified Trainer (MCT)</strong> with 14+ years of experience. Delivered the 10-day AI Leadership Mastery program for 50+ C-suite executives at MCIT Saudi Arabia aligned with Vision 2030. Trained teams at Microsoft, EY, IBM, Boeing, Saudi Aramco, HDFC Bank, and 80+ organizations across 6+ countries.</p>
+      </div>
+      <div style="flex: 0.6;">
+        <p style="font-size: 9px; color: var(--gray); line-height: 1.7; text-align: justify;"><strong style="color: var(--charcoal);">16+ active Microsoft certifications</strong> including AB-100 (Agentic AI Business Solutions Architect), AI-103, AZ-400, AI-300, PL-400, and GitHub certifications. <strong style="color: var(--charcoal);">M.E. Mechanical Engineering</strong>, Mumbai University. International delivery across GCC, Africa, APAC, and UK.</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 14px; background: var(--light); border-radius: 8px; padding: 12px 18px; display: flex; gap: 20px;">
+    <div style="font-size: 10px; color: var(--charcoal); font-weight: 600; min-width: 100px; font-family: 'Plus Jakarta Sans', sans-serif;">Delivery Options</div>
+    <div style="font-size: 9.5px; color: var(--gray); line-height: 1.6;">🏢 <strong>On-Site</strong> — customized at your office &nbsp;&nbsp;|&nbsp;&nbsp; 💻 <strong>Virtual Live</strong> — interactive via Teams/Zoom &nbsp;&nbsp;|&nbsp;&nbsp; 🌍 <strong>International</strong> — GCC, Africa, APAC, UK with multilingual support</div>
+  </div>
+
+  <div class="page-footer">
+    <span>© 2026 Gennoor Tech Private Limited</span>
+    <span>www.gennoor.com</span>
+    <span>Page 5</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- PAGE 6: CONTACT / CTA                      -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="page contact-page">
+  <svg width="90" height="90" viewBox="0 0 130 130" style="margin-bottom: 20px;">
+    <circle cx="105.8" cy="84.0" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/>
+    <circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/>
+    <circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/>
+    <circle cx="20.0" cy="65.0" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/>
+    <circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/>
+    <circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/>
+    <circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/>
+    <circle cx="110" cy="65" r="6" fill="#2563EB"/>
+  </svg>
+
+  <h2 style="color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 28px; margin-bottom: 6px;">Ready to Lead Your<br>AI Transformation?</h2>
+  <div class="amber-line"></div>
+  <p style="color: #6B8FCC; font-size: 13px; margin-bottom: 35px; line-height: 1.6;">Contact us to discuss a customized bootcamp<br>for your organization or register for the next open batch.</p>
+
+  <div class="contact-item">🌐  <a href="https://www.gennoor.com">www.gennoor.com</a></div>
+  <div class="contact-item">✉  <a href="/cdn-cgi/l/email-protection#7c19120d09150e053c1b19121213130e521f1311"><span class="__cf_email__" data-cfemail="0d68637c78647f744d6a68636362627f236e6260">training@gennoor.com</span></a></div>
+  <div class="contact-item">📱  +91 9326 352 241</div>
+  <div class="contact-item">🔗  <a href="https://www.linkedin.com/company/gennoor-tech-private-limited/">linkedin.com/company/gennoor-tech-private-limited</a></div>
+  <div class="contact-item">▶  <a href="https://www.youtube.com/@GennoorTech">YouTube — @GennoorTech</a></div>
+
+  <div style="margin-top: 40px;">
+    <div class="logo-text" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 700;">
+      <span style="color:#A0B4CC">G</span><span style="color:#7B9BC5">e</span><span style="color:#3B82F6">nn</span><span style="color:#EAB308">oo</span><span style="color:#7B9BC5">r</span><span style="color:#8FA3BA"> Tech</span>
+    </div>
+    <div style="font-family: 'Sora', sans-serif; font-size: 8px; color: #6B8FCC; letter-spacing: 3px; font-variant: small-caps; margin-top: 6px;">train. innovate. build.</
