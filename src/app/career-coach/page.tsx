@@ -273,8 +273,15 @@ export default function CareerCoachPage() {
         const formData = new FormData()
         formData.append('file', file)
         const res = await fetch('/api/extract-text', { method: 'POST', body: formData })
-        const data = await res.json()
+        const raw = await res.text()
+        let data: any
+        try {
+          data = JSON.parse(raw)
+        } catch {
+          throw new Error('Server returned an invalid response. The PDF may be too large or corrupted. Try a smaller file or paste text manually.')
+        }
         if (!res.ok) throw new Error(data.error || 'Extraction failed')
+        if (!data.text?.trim()) throw new Error('No text could be extracted. Try pasting your resume text directly into the form.')
         applyAutoFill(data.text)
       }
     } catch (err: any) {
