@@ -51,6 +51,8 @@ export const siteConfig = {
           { name: 'Client Testimonials', href: '/portfolio/testimonials' },
         ]
       },
+      { name: 'Blog', href: '/resources/blog' },
+      { name: 'Webinars', href: '/webinars' },
       { name: 'Contact', href: '/contact' },
     ],
 

@@ -130,28 +130,48 @@ export default function ContactPage() {
               </ol>
             </div>
 
-            {/* Pricing context */}
-            <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-              <h3 className="font-semibold text-gray-900 mb-3">Engagement Models</h3>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li className="flex justify-between">
-                  <span>Corporate Training</span>
-                  <span className="font-medium text-gray-900">Custom Quote</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>AI Strategy Workshop</span>
-                  <span className="font-medium text-gray-900">Custom Quote</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>PoC Development</span>
-                  <span className="font-medium text-gray-900">Custom Quote</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>Advisory Retainer</span>
-                  <span className="font-medium text-gray-900">Custom Quote</span>
-                </li>
-              </ul>
-              <p className="text-xs text-gray-500 mt-3">All pricing is tailored to scope, team size, and duration. Share your requirements and we&apos;ll prepare a detailed proposal.</p>
+            {/* How we work */}
+            <div className="bg-gradient-to-br from-primary-50 to-blue-50 rounded-xl p-6 border border-primary-100">
+              <h3 className="font-semibold text-gray-900 mb-4">How We Work</h3>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Corporate Training</p>
+                  <p className="text-xs text-gray-600">2–10 day programs tailored to your team&apos;s level and goals</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">AI Strategy Workshop</p>
+                  <p className="text-xs text-gray-600">1–2 day intensive sessions for leadership alignment</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">PoC Development</p>
+                  <p className="text-xs text-gray-600">4–8 week sprints from prototype to production-ready demo</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Advisory Retainer</p>
+                  <p className="text-xs text-gray-600">Ongoing monthly guidance for AI initiatives</p>
+                </div>
+              </div>
+              <div className="mt-4 pt-4 border-t border-primary-100">
+                <p className="text-sm font-medium text-gray-900 mb-3">For a quote, let&apos;s connect</p>
+                <div className="space-y-2">
+                  <a
+                    href="https://www.linkedin.com/in/jalal-khan-b8319955/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2.5 px-4 py-2.5 bg-[#0A66C2] text-white text-sm font-medium rounded-lg hover:bg-[#004182] transition-colors"
+                  >
+                    <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    Connect on LinkedIn
+                  </a>
+                  <a
+                    href="mailto:contact@gennoor.com"
+                    className="flex items-center gap-2.5 px-4 py-2.5 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                  >
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                    contact@gennoor.com
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
 

@@ -124,12 +124,10 @@ export default function CareerCoachPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Upload state
-  const [uploadMode, setUploadMode] = useState<'file' | 'url'>('file')
   const [isExtracting, setIsExtracting] = useState(false)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const [uploadedFileName, setUploadedFileName] = useState('')
-  const [urlInput, setUrlInput] = useState('')
   const [showAutoFillReview, setShowAutoFillReview] = useState(false)
   const [autoFilledKeys, setAutoFilledKeys] = useState<string[]>([])
   const [showLinkedInTip, setShowLinkedInTip] = useState(false)
@@ -197,8 +195,6 @@ export default function CareerCoachPage() {
     setElapsed(0)
     setUploadedFile(null)
     setUploadedFileName('')
-    setUrlInput('')
-    setUploadMode('file')
     setIsExtracting(false)
     setIsAnalyzing(false)
     setShowAutoFillReview(false)
@@ -319,77 +315,6 @@ export default function CareerCoachPage() {
       setError(err.message || 'Failed to extract text from document')
       setUploadedFileName('')
       setUploadedFile(null)
-    } finally {
-      setIsExtracting(false)
-      setIsAnalyzing(false)
-    }
-  }
-
-  const handleUrlExtract = async () => {
-    const url = urlInput.trim()
-    if (!url) { setError('Please enter a URL.'); return }
-    try { new URL(url) } catch { setError('Please enter a valid URL (e.g., https://github.com/username).'); return }
-
-    if (/linkedin\.com/i.test(url)) {
-      setError('LinkedIn blocks direct scraping. Please export your LinkedIn profile as PDF and upload it instead.')
-      setShowLinkedInTip(true)
-      return
-    }
-
-    setIsExtracting(true)
-    setIsAnalyzing(false)
-    setError('')
-    setUploadedFileName(url)
-
-    try {
-      const res = await fetch('/api/extract-url', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url }),
-      })
-      const raw = await res.text()
-      let data: any
-      try { data = JSON.parse(raw) } catch { throw new Error('Server returned an invalid response.') }
-      if (!res.ok) throw new Error(data.error || 'URL extraction failed')
-      if (!data.text?.trim()) throw new Error('No text could be extracted from this URL.')
-
-      // Send extracted text to LLM
-      setIsExtracting(false)
-      setIsAnalyzing(true)
-
-      if (!selectedAgent || !agent) throw new Error('No agent selected.')
-
-      const fieldDefs = agent.fields.map(f => ({
-        key: f.key, label: f.label, required: !!f.required, type: f.type,
-      }))
-
-      const extractRes = await fetch('/api/extract-fields', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: data.text, fields: fieldDefs, agentName: agent.name }),
-      })
-      const extractRaw = await extractRes.text()
-      let extractData: any
-      try { extractData = JSON.parse(extractRaw) } catch { throw new Error('AI returned an invalid response.') }
-      if (!extractRes.ok) throw new Error(extractData.error || 'AI extraction failed')
-
-      const filled: Record<string, string> = extractData.fields || {}
-      const filledKeys = Object.keys(filled)
-
-      if (filledKeys.length === 0) {
-        const firstTextarea = agent.fields.find(f => f.type === 'textarea')
-        if (firstTextarea) {
-          setFields(prev => ({ ...prev, [firstTextarea.key]: data.text.slice(0, 4000) }))
-          setAutoFilledKeys([firstTextarea.key])
-        }
-      } else {
-        setFields(prev => ({ ...prev, ...filled }))
-        setAutoFilledKeys(filledKeys)
-      }
-      setShowAutoFillReview(true)
-    } catch (err: any) {
-      setError(err.message || 'Failed to extract from URL')
-      setUploadedFileName('')
     } finally {
       setIsExtracting(false)
       setIsAnalyzing(false)
@@ -732,23 +657,6 @@ export default function CareerCoachPage() {
             {/* Step 1: Document Upload / URL */}
             {status === 'idle' && !showAutoFillReview && (
               <div className="rounded-xl border-2 border-dashed border-gray-300 bg-white overflow-hidden transition-colors">
-                {/* Mode Tabs */}
-                <div className="flex border-b border-gray-200 bg-gray-50">
-                  <button
-                    onClick={() => setUploadMode('file')}
-                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold transition-colors ${uploadMode === 'file' ? 'text-primary-700 bg-white border-b-2 border-primary-500' : 'text-dark-400 hover:text-dark-600'}`}
-                  >
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
-                    Upload File
-                  </button>
-                  <button
-                    onClick={() => setUploadMode('url')}
-                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold transition-colors ${uploadMode === 'url' ? 'text-primary-700 bg-white border-b-2 border-primary-500' : 'text-dark-400 hover:text-dark-600'}`}
-                  >
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                    Paste URL
-                  </button>
-                </div>
 
                 <input
                   ref={fileInputRef}
@@ -769,7 +677,7 @@ export default function CareerCoachPage() {
                   </div>
 
                 /* Success State */
-                ) : uploadedFileName && !urlInput ? (
+                ) : uploadedFileName ? (
                   <div className="flex flex-col items-center gap-2 py-6">
                     <div className="flex items-center gap-2 text-green-700">
                       <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
@@ -779,7 +687,7 @@ export default function CareerCoachPage() {
                   </div>
 
                 /* File Upload Mode */
-                ) : uploadMode === 'file' ? (
+                ) : (
                   <div
                     onDragOver={e => e.preventDefault()}
                     onDrop={handleDrop}
@@ -818,38 +726,6 @@ export default function CareerCoachPage() {
                       )}
                     </div>
                     <p className="text-[10px] text-dark-300">or drag & drop here • skip to fill manually</p>
-                  </div>
-
-                /* URL Mode */
-                ) : (
-                  <div className="flex flex-col gap-4 py-6 px-6">
-                    <div className="text-center">
-                      <p className="text-sm font-semibold text-dark-700">Paste a URL to extract information</p>
-                      <p className="text-xs text-dark-400 mt-1">Works with GitHub profiles, portfolios, job postings & more</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <input
-                        type="url"
-                        value={urlInput}
-                        onChange={e => setUrlInput(e.target.value)}
-                        placeholder="https://github.com/username or https://..."
-                        className="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-dark-700 placeholder-dark-300 focus:border-primary-400 focus:ring-1 focus:ring-primary-400 outline-none"
-                        onKeyDown={e => { if (e.key === 'Enter') handleUrlExtract() }}
-                      />
-                      <button
-                        onClick={handleUrlExtract}
-                        className="rounded-lg bg-primary-600 px-5 py-2 text-sm font-medium text-white hover:bg-primary-700 transition-colors whitespace-nowrap"
-                      >
-                        Extract
-                      </button>
-                    </div>
-                    <div className="flex items-start gap-2 rounded-lg bg-amber-50 border border-amber-200 p-3">
-                      <svg className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
-                      <p className="text-xs text-amber-700">
-                        <span className="font-semibold">LinkedIn URLs won't work</span> — LinkedIn blocks automated access. Use LinkedIn's built-in "Save to PDF" feature instead.
-                        {' '}<button onClick={() => setShowLinkedInTip(true)} className="text-amber-800 underline font-semibold hover:text-amber-900">See how</button>
-                      </p>
-                    </div>
                   </div>
                 )}
               </div>
@@ -1331,7 +1207,7 @@ export default function CareerCoachPage() {
 
             <div className="px-6 py-4 border-t border-gray-100 bg-gray-50">
               <button
-                onClick={() => { setShowLinkedInTip(false); setUploadMode('file'); fileInputRef.current?.click() }}
+                onClick={() => { setShowLinkedInTip(false); fileInputRef.current?.click() }}
                 className="w-full rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
               >
                 Got it — Upload LinkedIn PDF
