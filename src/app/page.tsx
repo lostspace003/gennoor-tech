@@ -3,6 +3,7 @@ import TrustedBy from '@/components/home/TrustedBy'
 import ServicePillars from '@/components/home/ServicePillars'
 import Metrics from '@/components/home/Metrics'
 import Testimonials from '@/components/home/Testimonials'
+import LatestBlog from '@/components/home/LatestBlog'
 import CTASection from '@/components/home/CTASection'
 
 export default function HomePage() {
@@ -22,6 +23,9 @@ export default function HomePage() {
 
       {/* Testimonials */}
       <Testimonials />
+
+      {/* Latest Blog */}
+      <LatestBlog />
 
       {/* Final CTA */}
       <CTASection />
