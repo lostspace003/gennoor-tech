@@ -123,12 +123,15 @@ export default function CareerCoachPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Upload state
+  const [uploadMode, setUploadMode] = useState<'file' | 'url'>('file')
   const [isExtracting, setIsExtracting] = useState(false)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const [uploadedFileName, setUploadedFileName] = useState('')
+  const [urlInput, setUrlInput] = useState('')
   const [showAutoFillReview, setShowAutoFillReview] = useState(false)
   const [autoFilledKeys, setAutoFilledKeys] = useState<string[]>([])
+  const [showLinkedInTip, setShowLinkedInTip] = useState(false)
 
   // Validation & review
   const [validationErrors, setValidationErrors] = useState<string[]>([])
@@ -187,9 +190,12 @@ export default function CareerCoachPage() {
     setElapsed(0)
     setUploadedFile(null)
     setUploadedFileName('')
+    setUrlInput('')
+    setUploadMode('file')
     setIsExtracting(false)
     setIsAnalyzing(false)
     setShowAutoFillReview(false)
+    setShowLinkedInTip(false)
     setAutoFilledKeys([])
     setValidationErrors([])
     setShowReviewModal(false)
@@ -306,6 +312,77 @@ export default function CareerCoachPage() {
       setError(err.message || 'Failed to extract text from document')
       setUploadedFileName('')
       setUploadedFile(null)
+    } finally {
+      setIsExtracting(false)
+      setIsAnalyzing(false)
+    }
+  }
+
+  const handleUrlExtract = async () => {
+    const url = urlInput.trim()
+    if (!url) { setError('Please enter a URL.'); return }
+    try { new URL(url) } catch { setError('Please enter a valid URL (e.g., https://github.com/username).'); return }
+
+    if (/linkedin\.com/i.test(url)) {
+      setError('LinkedIn blocks direct scraping. Please export your LinkedIn profile as PDF and upload it instead.')
+      setShowLinkedInTip(true)
+      return
+    }
+
+    setIsExtracting(true)
+    setIsAnalyzing(false)
+    setError('')
+    setUploadedFileName(url)
+
+    try {
+      const res = await fetch('/api/extract-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url }),
+      })
+      const raw = await res.text()
+      let data: any
+      try { data = JSON.parse(raw) } catch { throw new Error('Server returned an invalid response.') }
+      if (!res.ok) throw new Error(data.error || 'URL extraction failed')
+      if (!data.text?.trim()) throw new Error('No text could be extracted from this URL.')
+
+      // Send extracted text to LLM
+      setIsExtracting(false)
+      setIsAnalyzing(true)
+
+      if (!selectedAgent || !agent) throw new Error('No agent selected.')
+
+      const fieldDefs = agent.fields.map(f => ({
+        key: f.key, label: f.label, required: !!f.required, type: f.type,
+      }))
+
+      const extractRes = await fetch('/api/extract-fields', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: data.text, fields: fieldDefs, agentName: agent.name }),
+      })
+      const extractRaw = await extractRes.text()
+      let extractData: any
+      try { extractData = JSON.parse(extractRaw) } catch { throw new Error('AI returned an invalid response.') }
+      if (!extractRes.ok) throw new Error(extractData.error || 'AI extraction failed')
+
+      const filled: Record<string, string> = extractData.fields || {}
+      const filledKeys = Object.keys(filled)
+
+      if (filledKeys.length === 0) {
+        const firstTextarea = agent.fields.find(f => f.type === 'textarea')
+        if (firstTextarea) {
+          setFields(prev => ({ ...prev, [firstTextarea.key]: data.text.slice(0, 4000) }))
+          setAutoFilledKeys([firstTextarea.key])
+        }
+      } else {
+        setFields(prev => ({ ...prev, ...filled }))
+        setAutoFilledKeys(filledKeys)
+      }
+      setShowAutoFillReview(true)
+    } catch (err: any) {
+      setError(err.message || 'Failed to extract from URL')
+      setUploadedFileName('')
     } finally {
       setIsExtracting(false)
       setIsAnalyzing(false)
@@ -508,13 +585,27 @@ export default function CareerCoachPage() {
           {/* Left: Upload + Input + Results */}
           <div className="lg:col-span-2 space-y-6">
 
-            {/* Step 1: Document Upload */}
+            {/* Step 1: Document Upload / URL */}
             {status === 'idle' && !showAutoFillReview && (
-              <div
-                onDragOver={e => e.preventDefault()}
-                onDrop={handleDrop}
-                className={`rounded-xl border-2 border-dashed ${uploadedFileName ? 'border-green-300 bg-green-50' : 'border-gray-300 bg-white'} p-6 text-center transition-colors hover:border-primary-300 hover:bg-primary-50/30`}
-              >
+              <div className="rounded-xl border-2 border-dashed border-gray-300 bg-white overflow-hidden transition-colors">
+                {/* Mode Tabs */}
+                <div className="flex border-b border-gray-200 bg-gray-50">
+                  <button
+                    onClick={() => setUploadMode('file')}
+                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold transition-colors ${uploadMode === 'file' ? 'text-primary-700 bg-white border-b-2 border-primary-500' : 'text-dark-400 hover:text-dark-600'}`}
+                  >
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+                    Upload File
+                  </button>
+                  <button
+                    onClick={() => setUploadMode('url')}
+                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold transition-colors ${uploadMode === 'url' ? 'text-primary-700 bg-white border-b-2 border-primary-500' : 'text-dark-400 hover:text-dark-600'}`}
+                  >
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                    Paste URL
+                  </button>
+                </div>
+
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -522,44 +613,99 @@ export default function CareerCoachPage() {
                   className="hidden"
                   onChange={e => { if (e.target.files?.[0]) handleFileUpload(e.target.files[0]) }}
                 />
+
+                {/* Loading State */}
                 {(isExtracting || isAnalyzing) ? (
-                  <div className="flex flex-col items-center gap-3 py-2">
+                  <div className="flex flex-col items-center gap-3 py-8">
                     <span className="h-8 w-8 animate-spin rounded-full border-3 border-primary-600 border-t-transparent" />
                     <p className="text-sm font-medium text-dark-600">
                       {isAnalyzing ? '🤖 AI is analyzing your document and filling fields...' : `Extracting text from ${uploadedFileName}...`}
                     </p>
-                    {isAnalyzing && (
-                      <p className="text-xs text-dark-400">This may take a few seconds</p>
-                    )}
+                    {isAnalyzing && <p className="text-xs text-dark-400">This may take a few seconds</p>}
                   </div>
-                ) : uploadedFileName ? (
-                  <div className="flex flex-col items-center gap-2 py-2">
+
+                /* Success State */
+                ) : uploadedFileName && !urlInput ? (
+                  <div className="flex flex-col items-center gap-2 py-6">
                     <div className="flex items-center gap-2 text-green-700">
                       <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                       <span className="text-sm font-semibold">{uploadedFileName} — extracted successfully</span>
                     </div>
-                    <button onClick={() => fileInputRef.current?.click()} className="text-xs text-primary-600 hover:underline">
-                      Upload a different file
-                    </button>
+                    <button onClick={() => fileInputRef.current?.click()} className="text-xs text-primary-600 hover:underline">Upload a different file</button>
                   </div>
-                ) : (
-                  <div className="flex flex-col items-center gap-3 py-2">
+
+                /* File Upload Mode */
+                ) : uploadMode === 'file' ? (
+                  <div
+                    onDragOver={e => e.preventDefault()}
+                    onDrop={handleDrop}
+                    className="flex flex-col items-center gap-3 py-6 px-4 hover:bg-primary-50/30 transition-colors"
+                  >
                     <div className="rounded-full bg-primary-100 p-3">
                       <svg className="h-6 w-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                       </svg>
                     </div>
-                    <div>
-                      <p className="text-sm font-semibold text-dark-700">Upload your resume or document</p>
-                      <p className="text-xs text-dark-400 mt-1">PDF or TXT — we'll auto-fill the form for you</p>
+                    <div className="text-center">
+                      <p className="text-sm font-semibold text-dark-700">
+                        {selectedAgent === 'profile_optimizer' ? 'Upload your LinkedIn Profile PDF' : 'Upload your resume or document'}
+                      </p>
+                      <p className="text-xs text-dark-400 mt-1">
+                        {selectedAgent === 'profile_optimizer'
+                          ? 'LinkedIn PDF recommended for best results'
+                          : 'PDF or TXT — AI will auto-fill the form for you'}
+                      </p>
                     </div>
-                    <button
-                      onClick={() => fileInputRef.current?.click()}
-                      className="rounded-lg bg-primary-600 px-5 py-2 text-sm font-medium text-white hover:bg-primary-700 transition-colors"
-                    >
-                      Choose File
-                    </button>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => fileInputRef.current?.click()}
+                        className="rounded-lg bg-primary-600 px-5 py-2 text-sm font-medium text-white hover:bg-primary-700 transition-colors"
+                      >
+                        Choose File
+                      </button>
+                      {selectedAgent === 'profile_optimizer' && (
+                        <button
+                          onClick={() => setShowLinkedInTip(true)}
+                          className="relative rounded-full w-7 h-7 flex items-center justify-center bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors text-xs font-bold"
+                          title="How to export LinkedIn PDF"
+                        >
+                          i
+                        </button>
+                      )}
+                    </div>
                     <p className="text-[10px] text-dark-300">or drag & drop here • skip to fill manually</p>
+                  </div>
+
+                /* URL Mode */
+                ) : (
+                  <div className="flex flex-col gap-4 py-6 px-6">
+                    <div className="text-center">
+                      <p className="text-sm font-semibold text-dark-700">Paste a URL to extract information</p>
+                      <p className="text-xs text-dark-400 mt-1">Works with GitHub profiles, portfolios, job postings & more</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <input
+                        type="url"
+                        value={urlInput}
+                        onChange={e => setUrlInput(e.target.value)}
+                        placeholder="https://github.com/username or https://..."
+                        className="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-dark-700 placeholder-dark-300 focus:border-primary-400 focus:ring-1 focus:ring-primary-400 outline-none"
+                        onKeyDown={e => { if (e.key === 'Enter') handleUrlExtract() }}
+                      />
+                      <button
+                        onClick={handleUrlExtract}
+                        className="rounded-lg bg-primary-600 px-5 py-2 text-sm font-medium text-white hover:bg-primary-700 transition-colors whitespace-nowrap"
+                      >
+                        Extract
+                      </button>
+                    </div>
+                    <div className="flex items-start gap-2 rounded-lg bg-amber-50 border border-amber-200 p-3">
+                      <svg className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
+                      <p className="text-xs text-amber-700">
+                        <span className="font-semibold">LinkedIn URLs won't work</span> — LinkedIn blocks automated access. Use LinkedIn's built-in "Save to PDF" feature instead.
+                        {' '}<button onClick={() => setShowLinkedInTip(true)} className="text-amber-800 underline font-semibold hover:text-amber-900">See how</button>
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>
@@ -892,6 +1038,63 @@ export default function CareerCoachPage() {
                   Confirm & Run
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* LinkedIn PDF Export Tip Modal */}
+      {showLinkedInTip && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setShowLinkedInTip(false)} />
+          <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden animate-slideUp">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-blue-50">
+              <div className="flex items-center gap-3">
+                <div className="rounded-full bg-blue-100 p-2">
+                  <svg className="h-5 w-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" /></svg>
+                </div>
+                <h3 className="text-base font-bold text-blue-800">How to Export LinkedIn Profile as PDF</h3>
+              </div>
+              <button
+                onClick={() => setShowLinkedInTip(false)}
+                className="rounded-full p-1.5 text-blue-500 hover:bg-blue-100 transition-colors"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+
+            <div className="px-6 py-5 space-y-4">
+              <div className="flex items-start gap-3">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center">1</span>
+                <p className="text-sm text-dark-600">Go to <span className="font-semibold">linkedin.com</span> and open <span className="font-semibold">your profile page</span></p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center">2</span>
+                <p className="text-sm text-dark-600">Click the <span className="font-semibold">"More"</span> button (three dots <span className="font-mono bg-gray-100 px-1 rounded">...</span>) below your profile photo</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center">3</span>
+                <p className="text-sm text-dark-600">Select <span className="font-semibold">"Save to PDF"</span> from the dropdown menu</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center">4</span>
+                <p className="text-sm text-dark-600">A PDF of your full profile will download — <span className="font-semibold">upload it here</span> and our AI will extract all your information</p>
+              </div>
+
+              <div className="rounded-lg bg-green-50 border border-green-200 p-3 mt-2">
+                <p className="text-xs text-green-700">
+                  <span className="font-semibold">Why LinkedIn PDF?</span> It contains your complete profile — headline, about, experience, skills, education, certifications — all in a structured format that our AI can read perfectly.
+                </p>
+              </div>
+            </div>
+
+            <div className="px-6 py-4 border-t border-gray-100 bg-gray-50">
+              <button
+                onClick={() => { setShowLinkedInTip(false); setUploadMode('file'); fileInputRef.current?.click() }}
+                className="w-full rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
+              >
+                Got it — Upload LinkedIn PDF
+              </button>
             </div>
           </div>
         </div>
