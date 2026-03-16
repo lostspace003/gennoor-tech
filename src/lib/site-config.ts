@@ -1,5 +1,6 @@
 // Azure Blob Storage base URL for all static assets
-export const BLOB_URL = process.env.NEXT_PUBLIC_BLOB_URL || 'https://stgennoortech.blob.core.windows.net/media'
+// Media served through our secured proxy route — blob storage is private
+export const BLOB_URL = process.env.NEXT_PUBLIC_BLOB_URL || '/media'
 
 export const siteConfig = {
   name: 'Gennoor Tech',
