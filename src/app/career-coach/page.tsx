@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 
 const API = process.env.NEXT_PUBLIC_CAREER_API_URL || 'https://ca-gennoor-career.kindbeach-fe39b6f0.centralindia.azurecontainerapps.io'
@@ -633,6 +634,15 @@ export default function CareerCoachPage() {
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
         <div className="container py-16">
           <div className="text-center mb-12">
+            <div className="mb-4">
+              <Image
+                src="/logos/bot-avatar-96.png"
+                alt="AI Career Coach"
+                width={64}
+                height={64}
+                className="rounded-full mx-auto shadow-lg ring-2 ring-primary-100"
+              />
+            </div>
             <div className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-1.5 text-sm font-medium text-primary-700 mb-4">
               Powered by LangGraph + GPT-4o
             </div>
@@ -701,9 +711,15 @@ export default function CareerCoachPage() {
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
           </button>
           <div className="flex items-center gap-3">
-            <span className="text-2xl">{agent!.icon}</span>
+            <Image
+              src="/logos/bot-avatar-48.png"
+              alt="AI Career Coach"
+              width={40}
+              height={40}
+              className="rounded-full shadow-sm ring-1 ring-gray-200"
+            />
             <div>
-              <h2 className="text-xl font-bold text-dark-800">{agent!.name}</h2>
+              <h2 className="text-xl font-bold text-dark-800">{agent!.icon} {agent!.name}</h2>
               <p className="text-sm text-dark-400">{agent!.desc}</p>
             </div>
           </div>
@@ -750,7 +766,7 @@ export default function CareerCoachPage() {
                   <div className="flex flex-col items-center gap-3 py-8">
                     <span className="h-8 w-8 animate-spin rounded-full border-3 border-primary-600 border-t-transparent" />
                     <p className="text-sm font-medium text-dark-600">
-                      {isAnalyzing ? '🤖 AI is analyzing your document and filling fields...' : `Extracting text from ${uploadedFileName}...`}
+                      {isAnalyzing ? 'AI is analyzing your document and filling fields...' : `Extracting text from ${uploadedFileName}...`}
                     </p>
                     {isAnalyzing && <p className="text-xs text-dark-400">This may take a few seconds</p>}
                   </div>
