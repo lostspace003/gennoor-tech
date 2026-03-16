@@ -40,7 +40,7 @@ jobs:
           cp -r public deploy/public
 
       - name: Upload build artifact
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         uses: actions/upload-artifact@v4
         with:
           name: deploy-package
@@ -50,7 +50,7 @@ jobs:
   # ── Stage 2: Deploy to Production (only on main push, after build passes) ──
   deploy:
     needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     environment: production
     steps:
