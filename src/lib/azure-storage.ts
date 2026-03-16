@@ -157,6 +157,63 @@ export async function uploadToBlob(
   }
 }
 
+// ── Career Coach Sessions ───────────────────────────────────────────────────
+
+export interface CareerSessionRecord {
+  partitionKey: string   // 'CareerSession'
+  rowKey: string         // session ID
+  agentId: string
+  agentName: string
+  inputFields: string    // JSON of field key-value pairs
+  aiResults: string      // JSON of agent results
+  resumeFileName?: string
+  resumeBlobPath?: string
+  status: string         // 'submitted' | 'completed' | 'error'
+  timestamp: string
+}
+
+// Save a career coach session (inputs + results)
+export async function saveCareerSession(data: {
+  sessionId: string
+  agentId: string
+  agentName: string
+  inputFields: Record<string, string>
+  aiResults?: Record<string, string>
+  resumeFileName?: string
+  resumeBlobPath?: string
+  status: string
+}): Promise<void> {
+  try {
+    const client = getTableClient('CareerSessions')
+    const entity: CareerSessionRecord = {
+      partitionKey: 'CareerSession',
+      rowKey: data.sessionId,
+      agentId: data.agentId,
+      agentName: data.agentName,
+      inputFields: JSON.stringify(data.inputFields),
+      aiResults: JSON.stringify(data.aiResults || {}),
+      resumeFileName: data.resumeFileName || '',
+      resumeBlobPath: data.resumeBlobPath || '',
+      status: data.status,
+      timestamp: new Date().toISOString(),
+    }
+    await client.upsertEntity(entity, 'Replace')
+    console.log(`Career session saved: ${data.sessionId}`)
+  } catch (error) {
+    console.error('Failed to save career session:', error)
+  }
+}
+
+// Upload resume to blob storage and return the blob path
+export async function uploadResume(
+  sessionId: string,
+  fileName: string,
+  content: Buffer
+): Promise<string | null> {
+  const blobName = `career-resumes/${sessionId}/${fileName}`
+  return uploadToBlob('media', blobName, content, 'application/pdf')
+}
+
 // ── Query Helpers ───────────────────────────────────────────────────────────
 
 // Get all enquiries by type
