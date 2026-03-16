@@ -168,7 +168,8 @@ export interface CareerSessionRecord {
   aiResults: string      // JSON of agent results
   resumeFileName?: string
   resumeBlobPath?: string
-  status: string         // 'submitted' | 'completed' | 'error'
+  contactInfo?: string   // JSON: { name, email, whatsapp }
+  status: string         // 'submitted' | 'completed' | 'downloaded' | 'error'
   timestamp: string
 }
 
@@ -181,6 +182,7 @@ export async function saveCareerSession(data: {
   aiResults?: Record<string, string>
   resumeFileName?: string
   resumeBlobPath?: string
+  contactInfo?: { name: string; email: string; whatsapp: string }
   status: string
 }): Promise<void> {
   try {
@@ -194,6 +196,7 @@ export async function saveCareerSession(data: {
       aiResults: JSON.stringify(data.aiResults || {}),
       resumeFileName: data.resumeFileName || '',
       resumeBlobPath: data.resumeBlobPath || '',
+      contactInfo: data.contactInfo ? JSON.stringify(data.contactInfo) : '',
       status: data.status,
       timestamp: new Date().toISOString(),
     }

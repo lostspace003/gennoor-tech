@@ -13,6 +13,8 @@ export async function POST(req: NextRequest) {
       const agentName = formData.get('agentName') as string
       const inputFields = JSON.parse(formData.get('inputFields') as string || '{}')
       const aiResults = JSON.parse(formData.get('aiResults') as string || '{}')
+      const contactInfoRaw = formData.get('contactInfo') as string | null
+      const contactInfo = contactInfoRaw ? JSON.parse(contactInfoRaw) : undefined
       const status = formData.get('status') as string || 'submitted'
       const file = formData.get('resume') as File | null
 
@@ -34,6 +36,7 @@ export async function POST(req: NextRequest) {
         aiResults,
         resumeFileName,
         resumeBlobPath,
+        contactInfo,
         status,
       })
 
@@ -50,6 +53,7 @@ export async function POST(req: NextRequest) {
       aiResults: data.aiResults || {},
       resumeFileName: data.resumeFileName || '',
       resumeBlobPath: data.resumeBlobPath || '',
+      contactInfo: data.contactInfo,
       status: data.status || 'completed',
     })
 
