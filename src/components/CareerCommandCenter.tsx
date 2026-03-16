@@ -30,7 +30,7 @@ export default function CareerCommandCenter() {
         href="/career-coach"
         onClick={() => setShowPulse(false)}
         className="relative flex items-center gap-2 rounded-full bg-gradient-to-r from-primary-600 to-accent-600 px-5 py-3 text-white shadow-2xl transition-all duration-300 hover:scale-105 animate-glow-pulse"
-        aria-label="Open Career Command Center"
+        aria-label="Open Career Assistant Agent"
       >
         {showPulse && (
           <span className="absolute -top-1 -right-1 flex h-4 w-4">
