@@ -160,3 +160,38 @@ input[type="range"]::-moz-range-thumb {
     transform: translateY(0);
   }
 }
+
+/* Career Coach floating button animations */
+@keyframes agent-bounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-8px) rotate(-5deg); }
+  50% { transform: translateY(-4px) rotate(5deg); }
+  75% { transform: translateY(-10px) rotate(-3deg); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3), 0 0 10px rgba(13, 148, 136, 0.2); }
+  50% { box-shadow: 0 4px 30px rgba(37, 99, 235, 0.5), 0 0 20px rgba(13, 148, 136, 0.35); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-agent-bounce {
+  animation: agent-bounce 2s ease-in-out infinite;
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 2.5s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 4s linear infinite;
+}
+
+/* Slide-up for banners and modals */
+.animate-slideUp {
+  animation: modalSlideUp 0.3s ease-out;
+}
