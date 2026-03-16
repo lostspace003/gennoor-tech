@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 
 export default function CareerCommandCenter() {
@@ -13,19 +12,7 @@ export default function CareerCommandCenter() {
   }, [])
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center">
-      {/* Bouncing bot avatar */}
-      <div className="animate-agent-bounce mb-1 drop-shadow-lg select-none pointer-events-none">
-        <Image
-          src="/logos/bot-avatar-48.png"
-          alt="AI Career Coach"
-          width={36}
-          height={36}
-          className="rounded-full"
-        />
-      </div>
-
-      {/* Main button with glow */}
+    <div className="fixed bottom-6 right-6 z-50">
       <Link
         href="/career-coach"
         onClick={() => setShowPulse(false)}
@@ -38,13 +25,11 @@ export default function CareerCommandCenter() {
             <span className="relative inline-flex h-4 w-4 rounded-full bg-secondary-500" />
           </span>
         )}
-        <Image
-          src="/logos/bot-avatar-48.png"
-          alt=""
-          width={20}
-          height={20}
-          className="rounded-full"
-        />
+        <span className="h-5 w-5 flex items-center justify-center">
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </span>
         <span className="text-sm font-semibold">AI Career Coach</span>
       </Link>
     </div>
