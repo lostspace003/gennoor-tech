@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { Award, Download, ExternalLink, Shield, Trophy, BookOpen } from 'lucide-react'
 import { certifications, getCertificationsByCategory, microsoftLearnStats, mctStatus } from '@/data/certifications'
+import { BLOB_URL } from '@/lib/site-config'
 
 export const metadata: Metadata = {
   title: 'Certifications & Credentials',
@@ -52,7 +53,7 @@ export default function CertificationsPage() {
                 </div>
               </div>
               <a
-                href="/certificates/0-mct-certifcate.pdf"
+                href={`${BLOB_URL}/certificates/0-mct-certifcate.pdf`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center bg-white border-2 border-primary-600 text-primary-600 rounded-lg px-6 py-3 shadow-lg hover:bg-primary-50 transition-colors"

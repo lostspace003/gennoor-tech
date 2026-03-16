@@ -17,6 +17,12 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'stgennoortech.blob.core.windows.net',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
   turbopack: {

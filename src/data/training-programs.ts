@@ -1,3 +1,5 @@
+import { BLOB_URL } from '@/lib/site-config'
+
 export interface TrainingProgram {
   id: string
   title: string
@@ -31,9 +33,9 @@ export const bootcamps: TrainingProgram[] = [
       'Change Management',
       'Risk & Governance'
     ],
-    htmlFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-1-AI-Transformation-Business-Leaders.html?v=1773462701727',
-    pdfFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-1-AI-Transformation-Business-Leaders.pdf',
-    docFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-1-AI-Transformation-Business-Leaders.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-1-AI-Transformation-Business-Leaders.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-1-AI-Transformation-Business-Leaders.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-1-AI-Transformation-Business-Leaders.docx`,
     technology: 'Cross-Platform',
     certification: 'No',
     industry: 'Cross-Industry'
@@ -52,9 +54,9 @@ export const bootcamps: TrainingProgram[] = [
       'Copilot Studio',
       'Custom AI Assistants'
     ],
-    htmlFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-2-GenAI-Copilot-Mastery.html?v=1773462701727',
-    docFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-2-GenAI-Copilot-Mastery.docx',
-    pdfFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-2-GenAI-Copilot-Mastery.pdf',
+    htmlFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-2-GenAI-Copilot-Mastery.html?v=1773462701727`,
+    docFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-2-GenAI-Copilot-Mastery.docx`,
+    pdfFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-2-GenAI-Copilot-Mastery.pdf`,
     technology: 'Microsoft',
     certification: 'Yes',
     industry: 'Cross-Industry'
@@ -73,9 +75,9 @@ export const bootcamps: TrainingProgram[] = [
       'Multi-Agent Systems',
       'Production Deployment'
     ],
-    htmlFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-3-Agentic-AI-Engineering.html?v=1773462701727',
-    docFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-3-Agentic-AI-Engineering.docx',
-    pdfFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-3-Agentic-AI-Engineering.pdf',
+    htmlFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-3-Agentic-AI-Engineering.html?v=1773462701727`,
+    docFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-3-Agentic-AI-Engineering.docx`,
+    pdfFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-3-Agentic-AI-Engineering.pdf`,
     technology: 'Open Source',
     certification: 'Yes',
     industry: 'Technology'
@@ -94,9 +96,9 @@ export const bootcamps: TrainingProgram[] = [
       'Feature Engineering',
       'Model Deployment'
     ],
-    htmlFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-4-Data-Science-Machine-Learning.html?v=1773462701727',
-    pdfFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-4-Data-Science-Machine-Learning.pdf',
-    docFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-4-Data-Science-Machine-Learning.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-4-Data-Science-Machine-Learning.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-4-Data-Science-Machine-Learning.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-4-Data-Science-Machine-Learning.docx`,
     technology: 'Cross-Platform',
     certification: 'No',
     industry: 'Cross-Industry'
@@ -115,9 +117,9 @@ export const bootcamps: TrainingProgram[] = [
       'Computer Vision',
       'Transfer Learning'
     ],
-    htmlFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-5-Deep-Learning-Computer-Vision.html?v=1773462701727',
-    pdfFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-5-Deep-Learning-Computer-Vision.pdf',
-    docFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-5-Deep-Learning-Computer-Vision.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-5-Deep-Learning-Computer-Vision.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-5-Deep-Learning-Computer-Vision.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-5-Deep-Learning-Computer-Vision.docx`,
     technology: 'Open Source',
     certification: 'No',
     industry: 'Technology'
@@ -136,9 +138,9 @@ export const bootcamps: TrainingProgram[] = [
       'Monitoring & Observability',
       'Kubernetes & Docker'
     ],
-    htmlFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-6-Production-AI-MLOps.html?v=1773462701727',
-    docFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-6-Production-AI-MLOps.docx',
-    pdfFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-6-Production-AI-MLOps.pdf',
+    htmlFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-6-Production-AI-MLOps.html?v=1773462701727`,
+    docFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-6-Production-AI-MLOps.docx`,
+    pdfFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-6-Production-AI-MLOps.pdf`,
     technology: 'Multi-Cloud',
     certification: 'No',
     industry: 'Technology'
@@ -157,9 +159,9 @@ export const bootcamps: TrainingProgram[] = [
       'Vector Databases',
       'RAG Architecture'
     ],
-    htmlFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-7-AI-Development-Framework.html?v=1773462701727',
-    docFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-7-AI-Development-Framework.docx',
-    pdfFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-7-AI-Development-Framework.pdf',
+    htmlFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-7-AI-Development-Framework.html?v=1773462701727`,
+    docFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-7-AI-Development-Framework.docx`,
+    pdfFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-7-AI-Development-Framework.pdf`,
     technology: 'Open Source',
     certification: 'No',
     industry: 'Technology'
@@ -178,9 +180,9 @@ export const bootcamps: TrainingProgram[] = [
       'Cognitive Services',
       'Responsible AI'
     ],
-    htmlFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-8-Microsoft-AI-for-Developers.html?v=1773462701727',
-    pdfFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-8-Microsoft-AI-for-Developers.pdf',
-    docFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-8-Microsoft-AI-for-Developers.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-8-Microsoft-AI-for-Developers.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-8-Microsoft-AI-for-Developers.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-8-Microsoft-AI-for-Developers.docx`,
     technology: 'Microsoft',
     certification: 'Yes',
     industry: 'Cross-Industry'
@@ -199,9 +201,9 @@ export const bootcamps: TrainingProgram[] = [
       'BigQuery ML',
       'TensorFlow on GCP'
     ],
-    htmlFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-9-AI-on-Google-Cloud.html?v=1773462701727',
-    docFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-9-AI-on-Google-Cloud.docx',
-    pdfFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-9-AI-on-Google-Cloud.pdf',
+    htmlFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-9-AI-on-Google-Cloud.html?v=1773462701727`,
+    docFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-9-AI-on-Google-Cloud.docx`,
+    pdfFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-9-AI-on-Google-Cloud.pdf`,
     technology: 'Google Cloud',
     certification: 'Yes',
     industry: 'Cross-Industry'
@@ -220,9 +222,9 @@ export const bootcamps: TrainingProgram[] = [
       'Comprehend',
       'Bedrock'
     ],
-    htmlFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-10-AI-on-AWS.html?v=1773462701727',
-    docFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-10-AI-on-AWS.docx',
-    pdfFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-10-AI-on-AWS.pdf',
+    htmlFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-10-AI-on-AWS.html?v=1773462701727`,
+    docFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-10-AI-on-AWS.docx`,
+    pdfFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-10-AI-on-AWS.pdf`,
     technology: 'AWS',
     certification: 'Yes',
     industry: 'Cross-Industry'
@@ -241,9 +243,9 @@ export const bootcamps: TrainingProgram[] = [
       'Tool Integration',
       'Exam Preparation'
     ],
-    htmlFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-11-AB100-Certification-Prep.html?v=1773462701727',
-    docFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-11-AB100-Certification-Prep.docx',
-    pdfFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-11-AB100-Certification-Prep.pdf',
+    htmlFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-11-AB100-Certification-Prep.html?v=1773462701727`,
+    docFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-11-AB100-Certification-Prep.docx`,
+    pdfFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-11-AB100-Certification-Prep.pdf`,
     technology: 'Cross-Platform',
     certification: 'Yes',
     industry: 'Technology'
@@ -262,9 +264,9 @@ export const bootcamps: TrainingProgram[] = [
       'Function Calling',
       'Production Best Practices'
     ],
-    htmlFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-12-Development-using-Claude-AI.html?v=1773462701727',
-    pdfFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-12-Development-using-Claude-AI.pdf',
-    docFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-12-Development-using-Claude-AI.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-12-Development-using-Claude-AI.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-12-Development-using-Claude-AI.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-12-Development-using-Claude-AI.docx`,
     technology: 'Claude/Anthropic',
     certification: 'No',
     industry: 'Technology'
@@ -283,9 +285,9 @@ export const bootcamps: TrainingProgram[] = [
       'Advanced RAG Systems',
       'Production Deployment'
     ],
-    htmlFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-13-Azure-AI-Foundry-Semantic-Kernel.html?v=1773462701727',
-    pdfFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-13-Azure-AI-Foundry-Semantic-Kernel.pdf',
-    docFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-13-Azure-AI-Foundry-Semantic-Kernel.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-13-Azure-AI-Foundry-Semantic-Kernel.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-13-Azure-AI-Foundry-Semantic-Kernel.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-13-Azure-AI-Foundry-Semantic-Kernel.docx`,
     technology: 'Microsoft Azure',
     certification: 'AI-103 Aligned',
     industry: 'Technology'
@@ -304,9 +306,9 @@ export const bootcamps: TrainingProgram[] = [
       '100% Hands-On Labs',
       'All Exam Vouchers Included'
     ],
-    htmlFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-14-Microsoft-Applied-Skills.html?v=1773462701727',
-    docFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-14-Microsoft-Applied-Skills.docx',
-    pdfFile: '/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-14-Microsoft-Applied-Skills.pdf',
+    htmlFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-14-Microsoft-Applied-Skills.html?v=1773462701727`,
+    docFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-14-Microsoft-Applied-Skills.docx`,
+    pdfFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-14-Microsoft-Applied-Skills.pdf`,
     technology: 'Microsoft Azure',
     certification: 'Yes',
     industry: 'Cross-Industry'
@@ -328,9 +330,9 @@ export const courses: TrainingProgram[] = [
       'Risk Management',
       'Governance'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/01-AI-Transformation-Business-Leaders.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/01-AI-Transformation-Business-Leaders.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/01-AI-Transformation-Business-Leaders.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/01-AI-Transformation-Business-Leaders.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/01-AI-Transformation-Business-Leaders.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/01-AI-Transformation-Business-Leaders.docx`,
     technology: 'Cross-Platform',
     certification: 'No',
     industry: 'Cross-Industry'
@@ -349,9 +351,9 @@ export const courses: TrainingProgram[] = [
       'Custom Copilots',
       'Productivity Optimization'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/02-Generative-AI-Copilot-Mastery.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/02-Generative-AI-Copilot-Mastery.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/02-Generative-AI-Copilot-Mastery.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/02-Generative-AI-Copilot-Mastery.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/02-Generative-AI-Copilot-Mastery.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/02-Generative-AI-Copilot-Mastery.docx`,
     technology: 'Microsoft',
     certification: 'No',
     industry: 'Cross-Industry'
@@ -370,9 +372,9 @@ export const courses: TrainingProgram[] = [
       'Multi-Agent Systems',
       'Production Deployment'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/03-Agentic-AI-Engineering.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/03-Agentic-AI-Engineering.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/03-Agentic-AI-Engineering.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/03-Agentic-AI-Engineering.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/03-Agentic-AI-Engineering.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/03-Agentic-AI-Engineering.docx`,
     technology: 'Open Source',
     certification: 'Yes',
     industry: 'Technology'
@@ -391,9 +393,9 @@ export const courses: TrainingProgram[] = [
       'Model Training',
       'Evaluation Metrics'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/04-Data-Science-Machine-Learning.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/04-Data-Science-Machine-Learning.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/04-Data-Science-Machine-Learning.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/04-Data-Science-Machine-Learning.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/04-Data-Science-Machine-Learning.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/04-Data-Science-Machine-Learning.docx`,
     technology: 'Cross-Platform',
     certification: 'No',
     industry: 'Cross-Industry'
@@ -412,9 +414,9 @@ export const courses: TrainingProgram[] = [
       'Object Detection',
       'Image Segmentation'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/05-Deep-Learning-Computer-Vision.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/05-Deep-Learning-Computer-Vision.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/05-Deep-Learning-Computer-Vision.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/05-Deep-Learning-Computer-Vision.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/05-Deep-Learning-Computer-Vision.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/05-Deep-Learning-Computer-Vision.docx`,
     technology: 'Open Source',
     certification: 'No',
     industry: 'Technology'
@@ -433,9 +435,9 @@ export const courses: TrainingProgram[] = [
       'Monitoring',
       'Scalability'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/06-Production-AI-MLOps.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/06-Production-AI-MLOps.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/06-Production-AI-MLOps.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/06-Production-AI-MLOps.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/06-Production-AI-MLOps.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/06-Production-AI-MLOps.docx`,
     technology: 'Multi-Cloud',
     certification: 'No',
     industry: 'Technology'
@@ -454,9 +456,9 @@ export const courses: TrainingProgram[] = [
       'RAG Systems',
       'API Integration'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/07-AI-Development-Framework.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/07-AI-Development-Framework.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/07-AI-Development-Framework.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/07-AI-Development-Framework.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/07-AI-Development-Framework.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/07-AI-Development-Framework.docx`,
     technology: 'Open Source',
     certification: 'No',
     industry: 'Technology'
@@ -475,9 +477,9 @@ export const courses: TrainingProgram[] = [
       'Cognitive Services',
       'Semantic Kernel'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/08-Microsoft-AI-for-Developers.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/08-Microsoft-AI-for-Developers.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/08-Microsoft-AI-for-Developers.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/08-Microsoft-AI-for-Developers.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/08-Microsoft-AI-for-Developers.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/08-Microsoft-AI-for-Developers.docx`,
     technology: 'Microsoft',
     certification: 'Yes',
     industry: 'Cross-Industry'
@@ -496,9 +498,9 @@ export const courses: TrainingProgram[] = [
       'BigQuery ML',
       'AI Platform'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/09-AI-on-Google-Cloud.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/09-AI-on-Google-Cloud.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/09-AI-on-Google-Cloud.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/09-AI-on-Google-Cloud.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/09-AI-on-Google-Cloud.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/09-AI-on-Google-Cloud.docx`,
     technology: 'Google Cloud',
     certification: 'Yes',
     industry: 'Cross-Industry'
@@ -517,9 +519,9 @@ export const courses: TrainingProgram[] = [
       'Rekognition',
       'Comprehend'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/10-AI-on-AWS.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/10-AI-on-AWS.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/10-AI-on-AWS.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/10-AI-on-AWS.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/10-AI-on-AWS.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/10-AI-on-AWS.docx`,
     technology: 'AWS',
     certification: 'Yes',
     industry: 'Cross-Industry'
@@ -538,9 +540,9 @@ export const courses: TrainingProgram[] = [
       'Key Concepts',
       'Tips & Strategies'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/11-AB100-Certification-Prep.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/11-AB100-Certification-Prep.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/11-AB100-Certification-Prep.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/11-AB100-Certification-Prep.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/11-AB100-Certification-Prep.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/11-AB100-Certification-Prep.docx`,
     technology: 'Cross-Platform',
     certification: 'Yes',
     industry: 'Technology'
@@ -559,9 +561,9 @@ export const courses: TrainingProgram[] = [
       'Best Practices',
       'Use Cases'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/12-Development-using-Claude-AI.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/12-Development-using-Claude-AI.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/12-Development-using-Claude-AI.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/12-Development-using-Claude-AI.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/12-Development-using-Claude-AI.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/12-Development-using-Claude-AI.docx`,
     technology: 'Claude/Anthropic',
     certification: 'No',
     industry: 'Technology'
@@ -580,9 +582,9 @@ export const courses: TrainingProgram[] = [
       'Change Management',
       'ROI Measurement'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/13-Executive-AI-Leadership.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/13-Executive-AI-Leadership.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/13-Executive-AI-Leadership.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/13-Executive-AI-Leadership.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/13-Executive-AI-Leadership.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/13-Executive-AI-Leadership.docx`,
     technology: 'Cross-Platform',
     certification: 'No',
     industry: 'Cross-Industry'
@@ -601,9 +603,9 @@ export const courses: TrainingProgram[] = [
       'Cognitive Services',
       'AI-901 Exam Prep'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/14-Azure-AI-Fundamentals.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/14-Azure-AI-Fundamentals.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/14-Azure-AI-Fundamentals.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/14-Azure-AI-Fundamentals.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/14-Azure-AI-Fundamentals.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/14-Azure-AI-Fundamentals.docx`,
     technology: 'Microsoft',
     certification: 'AI-901',
     industry: 'Cross-Industry'
@@ -622,9 +624,9 @@ export const courses: TrainingProgram[] = [
       'GitHub Copilot',
       'Power Platform'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/15-Microsoft-Copilot-Mastery.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/15-Microsoft-Copilot-Mastery.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/15-Microsoft-Copilot-Mastery.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/15-Microsoft-Copilot-Mastery.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/15-Microsoft-Copilot-Mastery.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/15-Microsoft-Copilot-Mastery.docx`,
     technology: 'Microsoft',
     certification: 'No',
     industry: 'Cross-Industry'
@@ -643,9 +645,9 @@ export const courses: TrainingProgram[] = [
       'AI Builder',
       'Dataverse'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/16-Power-Platform-AI.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/16-Power-Platform-AI.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/16-Power-Platform-AI.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/16-Power-Platform-AI.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/16-Power-Platform-AI.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/16-Power-Platform-AI.docx`,
     technology: 'Microsoft',
     certification: 'Yes',
     industry: 'Cross-Industry'
@@ -664,9 +666,9 @@ export const courses: TrainingProgram[] = [
       'Few-Shot Learning',
       'Advanced Techniques'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/17-Prompt-Engineering-Masterclass.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/17-Prompt-Engineering-Masterclass.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/17-Prompt-Engineering-Masterclass.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/17-Prompt-Engineering-Masterclass.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/17-Prompt-Engineering-Masterclass.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/17-Prompt-Engineering-Masterclass.docx`,
     technology: 'Cross-Platform',
     certification: 'No',
     industry: 'Cross-Industry'
@@ -685,9 +687,9 @@ export const courses: TrainingProgram[] = [
       'Documentation',
       'Best Practices'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/18-GitHub-Copilot-for-Developers.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/18-GitHub-Copilot-for-Developers.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/18-GitHub-Copilot-for-Developers.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/18-GitHub-Copilot-for-Developers.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/18-GitHub-Copilot-for-Developers.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/18-GitHub-Copilot-for-Developers.docx`,
     technology: 'Microsoft',
     certification: 'No',
     industry: 'Technology'
@@ -706,9 +708,9 @@ export const courses: TrainingProgram[] = [
       'Retrieval Optimization',
       'Hybrid Search'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/19-RAG-Engineering.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/19-RAG-Engineering.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/19-RAG-Engineering.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/19-RAG-Engineering.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/19-RAG-Engineering.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/19-RAG-Engineering.docx`,
     technology: 'Open Source',
     certification: 'No',
     industry: 'Technology'
@@ -727,9 +729,9 @@ export const courses: TrainingProgram[] = [
       'Privacy',
       'Compliance'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/20-AI-Security-Responsible-AI.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/20-AI-Security-Responsible-AI.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/20-AI-Security-Responsible-AI.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/20-AI-Security-Responsible-AI.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/20-AI-Security-Responsible-AI.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/20-AI-Security-Responsible-AI.docx`,
     technology: 'Cross-Platform',
     certification: 'No',
     industry: 'Cross-Industry'
@@ -748,9 +750,9 @@ export const courses: TrainingProgram[] = [
       'Customer Analytics',
       'Regulatory Compliance'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/21-AI-for-BFSI.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/21-AI-for-BFSI.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/21-AI-for-BFSI.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/21-AI-for-BFSI.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/21-AI-for-BFSI.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/21-AI-for-BFSI.docx`,
     technology: 'Cross-Platform',
     certification: 'No',
     industry: 'BFSI'
@@ -769,9 +771,9 @@ export const courses: TrainingProgram[] = [
       'Policy Analytics',
       'Digital Governance'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/22-AI-for-Government.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/22-AI-for-Government.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/22-AI-for-Government.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/22-AI-for-Government.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/22-AI-for-Government.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/22-AI-for-Government.docx`,
     technology: 'Cross-Platform',
     certification: 'No',
     industry: 'Government'
@@ -790,9 +792,9 @@ export const courses: TrainingProgram[] = [
       'LoRA & QLoRA',
       'Deployment Strategies'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/23-Fine-Tuning-Custom-LLMs.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/23-Fine-Tuning-Custom-LLMs.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/23-Fine-Tuning-Custom-LLMs.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/23-Fine-Tuning-Custom-LLMs.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/23-Fine-Tuning-Custom-LLMs.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/23-Fine-Tuning-Custom-LLMs.docx`,
     technology: 'Open Source',
     certification: 'No',
     industry: 'Technology'
@@ -811,9 +813,9 @@ export const courses: TrainingProgram[] = [
       'Custom Functions',
       'Enterprise Deployment'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/24-N8N-AI-Workflow-Automation.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/24-N8N-AI-Workflow-Automation.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/24-N8N-AI-Workflow-Automation.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/24-N8N-AI-Workflow-Automation.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/24-N8N-AI-Workflow-Automation.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/24-N8N-AI-Workflow-Automation.docx`,
     technology: 'Open Source',
     certification: 'No',
     industry: 'Cross-Industry'
@@ -832,9 +834,9 @@ export const courses: TrainingProgram[] = [
       'Multi-turn Conversations',
       'Voice Integration'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/25-Conversational-AI-Chatbots.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/25-Conversational-AI-Chatbots.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/25-Conversational-AI-Chatbots.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/25-Conversational-AI-Chatbots.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/25-Conversational-AI-Chatbots.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/25-Conversational-AI-Chatbots.docx`,
     technology: 'Cross-Platform',
     certification: 'No',
     industry: 'Cross-Industry'
@@ -853,9 +855,9 @@ export const courses: TrainingProgram[] = [
       'Performance Testing',
       'Bias Detection'
     ],
-    htmlFile: '/Gennoor-Tech-Course-TOCs/26-AI-Testing-Quality-Assurance.html?v=1773462701727',
-    pdfFile: '/Gennoor-Tech-Course-TOCs/26-AI-Testing-Quality-Assurance.pdf',
-    docFile: '/Gennoor-Tech-Course-TOCs/26-AI-Testing-Quality-Assurance.docx',
+    htmlFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/26-AI-Testing-Quality-Assurance.html?v=1773462701727`,
+    pdfFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/26-AI-Testing-Quality-Assurance.pdf`,
+    docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/26-AI-Testing-Quality-Assurance.docx`,
     technology: 'Cross-Platform',
     certification: 'No',
     industry: 'Technology'

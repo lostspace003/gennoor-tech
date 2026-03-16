@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { ArrowRight, Play, Volume2, VolumeX } from 'lucide-react'
-import { siteConfig } from '@/lib/site-config'
+import { siteConfig, BLOB_URL } from '@/lib/site-config'
 import { useEffect, useState, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import VideoModal from '@/components/VideoModal'
@@ -142,7 +142,7 @@ export default function HeroSection() {
                         {/* Video thumbnail image */}
                         <div className="relative aspect-video">
                           <img
-                            src="/videos/intro-video-poster.jpg"
+                            src={`${BLOB_URL}/videos/intro-video-poster.jpg`}
                             alt="Gennoor Tech Introduction Video"
                             className="w-full h-full object-cover"
                           />
@@ -204,8 +204,8 @@ export default function HeroSection() {
       <VideoModal
         isOpen={isModalOpen}
         onClose={closeVideoModal}
-        videoSrc="/videos/gennoor-intro-video.mp4"
-        posterSrc="/videos/intro-video-poster.jpg"
+        videoSrc={`${BLOB_URL}/videos/gennoor-intro-video.mp4`}
+        posterSrc={`${BLOB_URL}/videos/intro-video-poster.jpg`}
         enableSlidePause={false}
       />
     </section>

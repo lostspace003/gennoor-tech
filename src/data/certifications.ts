@@ -1,3 +1,5 @@
+import { BLOB_URL } from '@/lib/site-config'
+
 export interface Certification {
   id: string
   name: string
@@ -23,7 +25,7 @@ export const certifications: Certification[] = [
     dateEarned: 'Since 2022 (Annual Renewal)',
     description: 'Elite status authorizing delivery of official Microsoft training worldwide. Requires proven technical expertise, instructional excellence, and annual renewal based on student feedback.',
     skills: ['Official Microsoft Training', 'Enterprise Education', 'Technical Leadership', 'Curriculum Development', 'Global Delivery'],
-    pdfPath: '/certificates/0-mct-certifcate.pdf'
+    pdfPath: `${BLOB_URL}/certificates/0-mct-certifcate.pdf`
   },
   // AI Transformation & Leadership
   {
@@ -34,7 +36,7 @@ export const certifications: Certification[] = [
     category: 'AI Transformation',
     description: 'Leading AI transformation initiatives across organizations',
     skills: ['AI Strategy', 'Change Management', 'Digital Transformation'],
-    pdfPath: '/certificates/10-ab731.pdf'
+    pdfPath: `${BLOB_URL}/certificates/10-ab731.pdf`
   },
   {
     id: 'ab-730',
@@ -44,7 +46,7 @@ export const certifications: Certification[] = [
     category: 'AI Transformation',
     description: 'Business-focused AI implementation and strategy',
     skills: ['AI ROI', 'Business Strategy', 'AI Governance'],
-    pdfPath: '/certificates/11-ab730.pdf'
+    pdfPath: `${BLOB_URL}/certificates/11-ab730.pdf`
   },
   {
     id: 'ab-100',
@@ -55,7 +57,7 @@ export const certifications: Certification[] = [
     dateEarned: 'March 2026',
     description: 'Designing and architecting agentic AI solutions for enterprises',
     skills: ['Multi-Agent Systems', 'AI Orchestration', 'Enterprise Architecture'],
-    pdfPath: '/certificates/5-ab100.pdf'
+    pdfPath: `${BLOB_URL}/certificates/5-ab100.pdf`
   },
 
   // Expert Level
@@ -67,7 +69,7 @@ export const certifications: Certification[] = [
     category: 'Expert',
     description: 'Designing and implementing DevOps practices',
     skills: ['CI/CD', 'Azure DevOps', 'Infrastructure as Code', 'Git'],
-    pdfPath: '/certificates/3-az400.pdf'
+    pdfPath: `${BLOB_URL}/certificates/3-az400.pdf`
   },
 
   // Associate Level
@@ -79,7 +81,7 @@ export const certifications: Certification[] = [
     category: 'Associate',
     description: 'Building generative apps, multistep reasoning workflows, and production-ready agents with multi-agent orchestration (Replaces AI-103)',
     skills: ['Azure OpenAI', 'Microsoft Foundry', 'Multi-Agent Systems', 'RAG Patterns', 'Agentic AI'],
-    pdfPath: '/certificates/6-ai103.pdf'
+    pdfPath: `${BLOB_URL}/certificates/6-ai103.pdf`
   },
   {
     id: 'pl-400',
@@ -89,7 +91,7 @@ export const certifications: Certification[] = [
     category: 'Associate',
     description: 'Designing, developing, and deploying Power Platform solutions',
     skills: ['Power Apps', 'Power Automate', 'Dataverse', 'PCF'],
-    pdfPath: '/certificates/2-pl400.pdf'
+    pdfPath: `${BLOB_URL}/certificates/2-pl400.pdf`
   },
   {
     id: 'pl-200',
@@ -99,7 +101,7 @@ export const certifications: Certification[] = [
     category: 'Associate',
     description: 'Configuring Power Platform solutions for organizations',
     skills: ['Model-driven Apps', 'Canvas Apps', 'Power BI', 'Business Process Flows'],
-    pdfPath: '/certificates/14-pl200.pdf'
+    pdfPath: `${BLOB_URL}/certificates/14-pl200.pdf`
   },
   {
     id: 'pl-100',
@@ -109,7 +111,7 @@ export const certifications: Certification[] = [
     category: 'Associate',
     description: 'Building Power Platform applications',
     skills: ['Canvas Apps', 'Model-driven Apps', 'Power Automate', 'Dataverse'],
-    pdfPath: '/certificates/15-pl100.pdf'
+    pdfPath: `${BLOB_URL}/certificates/15-pl100.pdf`
   },
   {
     id: 'ai-300',
@@ -119,7 +121,7 @@ export const certifications: Certification[] = [
     category: 'Associate',
     description: 'Deploy, operationalize, and maintain ML and generative AI solutions in production (Replaces AI-300)',
     skills: ['MLOps', 'Azure ML', 'Model Deployment', 'CI/CD for ML', 'Model Monitoring'],
-    pdfPath: '/certificates/4-ai300.pdf'
+    pdfPath: `${BLOB_URL}/certificates/4-ai300.pdf`
   },
   {
     id: 'az-204',
@@ -129,7 +131,7 @@ export const certifications: Certification[] = [
     category: 'Associate',
     description: 'Developing solutions for Microsoft Azure',
     skills: ['Azure Functions', 'App Service', 'Storage', 'Azure AD'],
-    pdfPath: '/certificates/7-az204.pdf'
+    pdfPath: `${BLOB_URL}/certificates/7-az204.pdf`
   },
 
   // Fundamentals
@@ -141,7 +143,7 @@ export const certifications: Certification[] = [
     category: 'Fundamentals',
     description: 'Understanding AI concepts, Microsoft Foundry, and generative AI capabilities (Replaces AI-901)',
     skills: ['AI Concepts', 'Microsoft Foundry', 'Generative AI', 'Prompt Engineering', 'Responsible AI'],
-    pdfPath: '/certificates/12-ai901.pdf'
+    pdfPath: `${BLOB_URL}/certificates/12-ai901.pdf`
   },
   {
     id: 'ab-900',
@@ -151,7 +153,7 @@ export const certifications: Certification[] = [
     category: 'Fundamentals',
     description: 'Configure, secure, and support AI-powered Microsoft 365 environments',
     skills: ['Microsoft 365 Copilot', 'Agent Services', 'AI Security', 'Copilot Administration'],
-    pdfPath: '/certificates/16-ab900.pdf'
+    pdfPath: `${BLOB_URL}/certificates/16-ab900.pdf`
   },
   {
     id: 'pl-900',
@@ -161,7 +163,7 @@ export const certifications: Certification[] = [
     category: 'Fundamentals',
     description: 'Understanding the capabilities of Power Platform',
     skills: ['Power Apps Basics', 'Power Automate', 'Power BI', 'Power Virtual Agents'],
-    pdfPath: '/certificates/13-pl900.pdf'
+    pdfPath: `${BLOB_URL}/certificates/13-pl900.pdf`
   },
 
   // GitHub Certifications
@@ -173,7 +175,7 @@ export const certifications: Certification[] = [
     category: 'GitHub',
     description: 'Core concepts of GitHub and version control',
     skills: ['Git', 'GitHub', 'Version Control', 'Collaboration'],
-    pdfPath: '/certificates/9-github-foundations.pdf'
+    pdfPath: `${BLOB_URL}/certificates/9-github-foundations.pdf`
   },
   {
     id: 'gh-300',
@@ -183,7 +185,7 @@ export const certifications: Certification[] = [
     category: 'GitHub',
     description: 'Using GitHub Copilot for AI-powered development',
     skills: ['AI Coding', 'Copilot', 'Code Generation', 'Productivity'],
-    pdfPath: '/certificates/8-github-copilot.pdf'
+    pdfPath: `${BLOB_URL}/certificates/8-github-copilot.pdf`
   },
 
   // Applied Skills
@@ -195,7 +197,7 @@ export const certifications: Certification[] = [
     category: 'Applied Skills',
     description: 'Building AI-powered chat solutions for business workflows',
     skills: ['Conversational AI', 'Business Automation', 'Chatbots'],
-    pdfPath: '/certificates/1-applied-skill=streamline-business-workflows-with-Ai-chat.pdf'
+    pdfPath: `${BLOB_URL}/certificates/1-applied-skill=streamline-business-workflows-with-Ai-chat.pdf`
   },
   // Add more Applied Skills certifications as needed
 ]

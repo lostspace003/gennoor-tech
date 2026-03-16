@@ -1,3 +1,6 @@
+// Azure Blob Storage base URL for all static assets
+export const BLOB_URL = process.env.NEXT_PUBLIC_BLOB_URL || 'https://stgennoortech.blob.core.windows.net/media'
+
 export const siteConfig = {
   name: 'Gennoor Tech',
   tagline: 'Enterprise AI Training & Solutions',
