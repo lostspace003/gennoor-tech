@@ -98,74 +98,7 @@ const COLORS: Record<string, { bg: string; border: string; text: string; light: 
   pink:   { bg: 'bg-pink-50',   border: 'border-pink-200',   text: 'text-pink-700',   light: 'bg-pink-100',   bar: 'bg-pink-500' },
 }
 
-// ── Document Extraction ──────────────────────────────────────────────────
-
-function extractSections(text: string): Record<string, string> {
-  const sections: Record<string, string> = {}
-  const lines = text.split('\n')
-  let currentSection = 'header'
-  let currentContent: string[] = []
-
-  const keywords: Record<string, string[]> = {
-    summary: ['summary', 'about', 'profile', 'objective', 'professional summary'],
-    experience: ['experience', 'work history', 'employment', 'professional experience', 'work experience'],
-    skills: ['skills', 'technical skills', 'core competencies', 'expertise', 'technologies'],
-    education: ['education', 'qualifications', 'academic'],
-    certifications: ['certifications', 'certificates', 'licenses', 'credentials'],
-    achievements: ['achievements', 'accomplishments', 'awards', 'honors', 'key achievements'],
-    projects: ['projects', 'portfolio', 'key projects'],
-  }
-
-  for (const line of lines) {
-    const trimmed = line.trim().toLowerCase().replace(/[:\-–—]/g, '').trim()
-    let matched = false
-    for (const [section, kws] of Object.entries(keywords)) {
-      if (kws.some(k => trimmed === k || (trimmed.length < 40 && trimmed.startsWith(k)))) {
-        if (currentContent.length > 0) sections[currentSection] = currentContent.join('\n').trim()
-        currentSection = section
-        currentContent = []
-        matched = true
-        break
-      }
-    }
-    if (!matched) currentContent.push(line)
-  }
-  if (currentContent.length > 0) sections[currentSection] = currentContent.join('\n').trim()
-  return sections
-}
-
-function autoFillFromText(agentId: string, text: string): Record<string, string> {
-  const sections = extractSections(text)
-  const filled: Record<string, string> = {}
-
-  switch (agentId) {
-    case 'profile_optimizer':
-      filled.headline = sections.header?.split('\n').find(l => l.trim().length > 5 && l.trim().length < 120) || ''
-      filled.about = sections.summary || ''
-      filled.experience = sections.experience || ''
-      filled.skills = sections.skills || ''
-      break
-    case 'career_strategist':
-      filled.current_role = sections.header?.split('\n').find(l => l.trim().length > 3 && l.trim().length < 100) || ''
-      filled.skills = sections.skills || ''
-      filled.certifications = sections.certifications || ''
-      filled.achievements = sections.achievements || ''
-      break
-    case 'interview_coach':
-      filled.resume = text.slice(0, 4000)
-      break
-    case 'content_generator':
-      filled.expertise = sections.skills?.split('\n')[0] || ''
-      filled.topics = sections.skills || ''
-      break
-    case 'skill_navigator':
-      filled.current_skills = sections.skills || ''
-      filled.experience_level = (sections.header?.split('\n') || []).find(l => /\d+\s*(year|yr)/i.test(l)) || ''
-      break
-  }
-
-  return Object.fromEntries(Object.entries(filled).filter(([, v]) => v.trim()))
-}
+// ── Document Extraction (LLM-powered) ───────────────────────────────────
 
 function generateSessionId() {
   return `cs-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
@@ -191,6 +124,7 @@ export default function CareerCoachPage() {
 
   // Upload state
   const [isExtracting, setIsExtracting] = useState(false)
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const [uploadedFileName, setUploadedFileName] = useState('')
   const [showAutoFillReview, setShowAutoFillReview] = useState(false)
@@ -253,6 +187,8 @@ export default function CareerCoachPage() {
     setElapsed(0)
     setUploadedFile(null)
     setUploadedFileName('')
+    setIsExtracting(false)
+    setIsAnalyzing(false)
     setShowAutoFillReview(false)
     setAutoFilledKeys([])
     setValidationErrors([])
@@ -295,11 +231,13 @@ export default function CareerCoachPage() {
     }
 
     setIsExtracting(true)
+    setIsAnalyzing(false)
     setError('')
     setUploadedFileName(file.name)
     setUploadedFile(file)
 
     try {
+      // Step 1: Extract raw text from file
       let text = ''
       if (ext === 'txt') {
         text = await file.text()
@@ -318,32 +256,60 @@ export default function CareerCoachPage() {
         if (!data.text?.trim()) throw new Error('No text could be extracted. Try pasting text directly.')
         text = data.text
       }
-      applyAutoFill(text)
+
+      // Step 2: Send to LLM for intelligent field extraction
+      setIsExtracting(false)
+      setIsAnalyzing(true)
+
+      if (!selectedAgent || !agent || !text.trim()) {
+        throw new Error('No agent selected or empty text.')
+      }
+
+      const fieldDefs = agent.fields.map(f => ({
+        key: f.key,
+        label: f.label,
+        required: !!f.required,
+        type: f.type,
+      }))
+
+      const extractRes = await fetch('/api/extract-fields', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, fields: fieldDefs, agentName: agent.name }),
+      })
+
+      const extractRaw = await extractRes.text()
+      let extractData: any
+      try {
+        extractData = JSON.parse(extractRaw)
+      } catch {
+        throw new Error('AI returned an invalid response. Please try again or fill the form manually.')
+      }
+      if (!extractRes.ok) throw new Error(extractData.error || 'AI extraction failed')
+
+      const filled: Record<string, string> = extractData.fields || {}
+      const filledKeys = Object.keys(filled)
+
+      if (filledKeys.length === 0) {
+        // Fallback: put raw text in the first textarea field
+        const firstTextarea = agent.fields.find(f => f.type === 'textarea')
+        if (firstTextarea) {
+          setFields(prev => ({ ...prev, [firstTextarea.key]: text.slice(0, 4000) }))
+          setAutoFilledKeys([firstTextarea.key])
+        }
+      } else {
+        setFields(prev => ({ ...prev, ...filled }))
+        setAutoFilledKeys(filledKeys)
+      }
+      setShowAutoFillReview(true)
     } catch (err: any) {
       setError(err.message || 'Failed to extract text from document')
       setUploadedFileName('')
       setUploadedFile(null)
     } finally {
       setIsExtracting(false)
+      setIsAnalyzing(false)
     }
-  }
-
-  const applyAutoFill = (text: string) => {
-    if (!selectedAgent || !text.trim()) return
-    const filled = autoFillFromText(selectedAgent, text)
-    const filledKeys = Object.keys(filled)
-    if (filledKeys.length === 0) {
-      const firstTextarea = agent?.fields.find(f => f.type === 'textarea')
-      if (firstTextarea) {
-        setFields(prev => ({ ...prev, [firstTextarea.key]: text.slice(0, 4000) }))
-        setAutoFilledKeys([firstTextarea.key])
-      }
-    } else {
-      setFields(prev => ({ ...prev, ...filled }))
-      setAutoFilledKeys(filledKeys)
-    }
-    // Show review popup
-    setShowAutoFillReview(true)
   }
 
   const handleDrop = (e: React.DragEvent) => {
@@ -556,10 +522,15 @@ export default function CareerCoachPage() {
                   className="hidden"
                   onChange={e => { if (e.target.files?.[0]) handleFileUpload(e.target.files[0]) }}
                 />
-                {isExtracting ? (
+                {(isExtracting || isAnalyzing) ? (
                   <div className="flex flex-col items-center gap-3 py-2">
                     <span className="h-8 w-8 animate-spin rounded-full border-3 border-primary-600 border-t-transparent" />
-                    <p className="text-sm font-medium text-dark-600">Extracting text from {uploadedFileName}...</p>
+                    <p className="text-sm font-medium text-dark-600">
+                      {isAnalyzing ? '🤖 AI is analyzing your document and filling fields...' : `Extracting text from ${uploadedFileName}...`}
+                    </p>
+                    {isAnalyzing && (
+                      <p className="text-xs text-dark-400">This may take a few seconds</p>
+                    )}
                   </div>
                 ) : uploadedFileName ? (
                   <div className="flex flex-col items-center gap-2 py-2">
