@@ -12,7 +12,7 @@ env:
   NODE_VERSION: '20.x'
 
 jobs:
-  # ── Stage 1: Build & Validate (runs on staging, PRs, and main) ──
+  # ── Build & Validate (runs on all branches) ──
   build:
     runs-on: ubuntu-latest
     steps:
@@ -32,46 +32,32 @@ jobs:
         env:
           NEXT_PUBLIC_BLOB_URL: "/media"
 
+      # Only deploy on main branch (push or manual trigger)
       - name: Prepare deployment package
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: |
           mkdir -p deploy
           cp -r .next/standalone/. deploy/
           cp -r .next/static deploy/.next/static
           cp -r public deploy/public
-
-      - name: Upload build artifact
-        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-        uses: actions/upload-artifact@v4
-        with:
-          name: deploy-package
-          path: deploy/
-          retention-days: 1
-
-  # ── Stage 2: Deploy to Production (only on main push, after build passes) ──
-  deploy:
-    needs: build
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: deploy-package
-          path: deploy/
+          echo "Deploy package contents:"
+          ls -la deploy/.next/ || echo "No .next dir!"
 
       - name: Azure Login
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Deploy to Azure Web App
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           package: deploy
 
       - name: Health check
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: |
           echo "Waiting for deployment to stabilize..."
           sleep 30
