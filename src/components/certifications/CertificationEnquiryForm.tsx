@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { X, Send, Loader2, CheckCircle } from 'lucide-react'
 import PhoneInput from '@/components/ui/PhoneInput'
+import EmailOTP from '@/components/EmailOTP'
 
 interface CertificationEnquiryFormProps {
   isOpen?: boolean
@@ -31,6 +32,11 @@ export default function CertificationEnquiryForm({
   })
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [emailVerified, setEmailVerified] = useState(false)
+
+  useEffect(() => {
+    setEmailVerified(false)
+  }, [formData.email])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -130,6 +136,7 @@ export default function CertificationEnquiryForm({
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 />
+                <EmailOTP email={formData.email} onVerified={() => setEmailVerified(true)} verified={emailVerified} />
               </div>
             </div>
 
@@ -288,7 +295,7 @@ export default function CertificationEnquiryForm({
             )}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !emailVerified}
               className="flex-1 px-4 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
               {loading ? (

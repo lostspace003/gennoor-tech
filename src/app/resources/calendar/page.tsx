@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import EmailOTP from '@/components/EmailOTP'
 import {
   Calendar,
   Clock,
@@ -167,6 +168,12 @@ export default function BookingCalendarPage() {
   const [reqEmail, setReqEmail] = useState('')
   const [reqWhatsapp, setReqWhatsapp] = useState('')
   const [reqMessage, setReqMessage] = useState('')
+  const [emailVerified, setEmailVerified] = useState(false)
+  const [reqEmailVerified, setReqEmailVerified] = useState(false)
+
+  /* reset verified states when emails change */
+  useEffect(() => { setEmailVerified(false) }, [email])
+  useEffect(() => { setReqEmailVerified(false) }, [reqEmail])
 
   /* detect timezone on mount */
   useEffect(() => {
@@ -507,6 +514,7 @@ export default function BookingCalendarPage() {
                           placeholder="Your email"
                           className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
+                        <EmailOTP email={reqEmail} onVerified={() => setReqEmailVerified(true)} verified={reqEmailVerified} compact />
                         <input
                           type="tel" value={reqWhatsapp} onChange={e => setReqWhatsapp(e.target.value)}
                           placeholder="WhatsApp number (optional)"
@@ -520,7 +528,7 @@ export default function BookingCalendarPage() {
                         <div className="flex gap-2">
                           <button
                             type="submit"
-                            disabled={requestStatus === 'submitting'}
+                            disabled={requestStatus === 'submitting' || !reqEmailVerified}
                             className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
                           >
                             {requestStatus === 'submitting' ? 'Sending...' : 'Send Request'}
@@ -585,6 +593,7 @@ export default function BookingCalendarPage() {
                   placeholder="you@example.com"
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
+                <EmailOTP email={email} onVerified={() => setEmailVerified(true)} verified={emailVerified} />
               </div>
 
               {/* whatsapp */}
@@ -633,7 +642,7 @@ export default function BookingCalendarPage() {
               {/* submit */}
               <button
                 type="submit"
-                disabled={!selectedDate || !selectedSlot || status === 'submitting'}
+                disabled={!selectedDate || !selectedSlot || !emailVerified || status === 'submitting'}
                 className="w-full rounded-lg bg-primary-600 py-3 text-white font-medium hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {status === 'submitting' ? (

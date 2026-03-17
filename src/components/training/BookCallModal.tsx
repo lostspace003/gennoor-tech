@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { X, Send, Loader2, CheckCircle, Phone } from 'lucide-react'
 import PhoneInput from '@/components/ui/PhoneInput'
+import EmailOTP from '@/components/EmailOTP'
 
 interface BookCallModalProps {
   isOpen: boolean
@@ -22,6 +23,11 @@ export default function BookCallModal({ isOpen, onClose, programTitle }: BookCal
   })
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [emailVerified, setEmailVerified] = useState(false)
+
+  useEffect(() => {
+    setEmailVerified(false)
+  }, [formData.email])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -154,6 +160,8 @@ export default function BookCallModal({ isOpen, onClose, programTitle }: BookCal
                     />
                   </div>
 
+                  <EmailOTP email={formData.email} onVerified={() => setEmailVerified(true)} verified={emailVerified} />
+
                   <PhoneInput
                     label="WhatsApp Number *"
                     id="bc-whatsapp"
@@ -215,7 +223,7 @@ export default function BookCallModal({ isOpen, onClose, programTitle }: BookCal
                   </button>
                   <button
                     type="submit"
-                    disabled={loading || !formData.whatsapp}
+                    disabled={loading || !formData.whatsapp || !emailVerified}
                     className="flex-1 px-4 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                   >
                     {loading ? (

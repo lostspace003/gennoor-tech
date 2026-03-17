@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Mail, MapPin, Clock, Send, CheckCircle } from 'lucide-react'
+import EmailOTP from '@/components/EmailOTP'
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -16,6 +17,11 @@ export default function ContactPage() {
   })
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
+  const [emailVerified, setEmailVerified] = useState(false)
+
+  useEffect(() => {
+    setEmailVerified(false)
+  }, [formData.email])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -212,6 +218,7 @@ export default function ContactPage() {
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       placeholder="you@company.com"
                     />
+                    <EmailOTP email={formData.email} onVerified={() => setEmailVerified(true)} verified={emailVerified} />
                   </div>
                 </div>
 
@@ -298,7 +305,7 @@ export default function ContactPage() {
 
                 <button
                   type="submit"
-                  disabled={status === 'submitting'}
+                  disabled={status === 'submitting' || !emailVerified}
                   className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {status === 'submitting' ? (

@@ -1,14 +1,20 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { blogPosts, blogCategories } from '@/data/blog-posts'
 import { CheckCircle } from 'lucide-react'
+import EmailOTP from '@/components/EmailOTP'
 
 export default function BlogPage() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [email, setEmail] = useState('')
   const [subscribed, setSubscribed] = useState(false)
+  const [emailVerified, setEmailVerified] = useState(false)
+
+  useEffect(() => {
+    setEmailVerified(false)
+  }, [email])
 
   const filtered = activeCategory
     ? blogPosts.filter(p => p.category === activeCategory)
@@ -174,8 +180,9 @@ export default function BlogPage() {
                   <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="Your email"
                     className="flex-1 sm:w-56 px-4 py-2.5 rounded-lg text-sm focus:outline-none"
                     style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.1)' }} />
-                  <button type="submit" className="shrink-0 px-5 py-2.5 font-semibold text-sm rounded-lg transition-colors"
-                    style={{ backgroundColor: '#4f46e5', color: '#ffffff' }}>
+                  <EmailOTP email={email} onVerified={() => setEmailVerified(true)} verified={emailVerified} compact />
+                  <button type="submit" disabled={!emailVerified} className="shrink-0 px-5 py-2.5 font-semibold text-sm rounded-lg transition-colors"
+                    style={{ backgroundColor: '#4f46e5', color: '#ffffff', opacity: !emailVerified ? 0.5 : 1 }}>
                     Subscribe
                   </button>
                 </form>

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 import { User, Target, Mic, PenTool, Compass, Zap } from 'lucide-react'
+import EmailOTP from '@/components/EmailOTP'
 
 const API = process.env.NEXT_PUBLIC_CAREER_API_URL || 'https://ca-gennoor-career.kindbeach-fe39b6f0.centralindia.azurecontainerapps.io'
 
@@ -151,6 +152,9 @@ export default function CareerCoachPage() {
   const [downloadContact, setDownloadContact] = useState({ name: '', email: '', whatsapp: '' })
   const [downloadErrors, setDownloadErrors] = useState<string[]>([])
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false)
+  const [dlEmailVerified, setDlEmailVerified] = useState(false)
+
+  useEffect(() => { setDlEmailVerified(false) }, [downloadContact.email])
 
   // Session
   const [sessionId] = useState(generateSessionId)
@@ -1140,6 +1144,9 @@ export default function CareerCoachPage() {
                   disabled={isGeneratingPdf}
                 />
                 {downloadErrors.includes('email') && <p className="text-xs text-red-500 mt-1">Valid email is required</p>}
+                <div className="mt-2">
+                  <EmailOTP email={downloadContact.email} onVerified={() => setDlEmailVerified(true)} verified={dlEmailVerified} compact />
+                </div>
               </div>
 
               <div>
@@ -1161,7 +1168,7 @@ export default function CareerCoachPage() {
             <div className="px-6 py-4 border-t border-gray-100 bg-gray-50">
               <button
                 onClick={handleDownloadPdf}
-                disabled={isGeneratingPdf}
+                disabled={isGeneratingPdf || !dlEmailVerified}
                 className="w-full rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-700 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
               >
                 {isGeneratingPdf ? (
