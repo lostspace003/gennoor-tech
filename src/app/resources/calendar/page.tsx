@@ -406,6 +406,50 @@ export default function BookingCalendarPage() {
               </div>
             </div>
 
+            {/* timezone — shown before time slots so user sets tz first */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+              <div className="flex items-center gap-2 mb-3">
+                <Globe className="h-5 w-5 text-primary-600" />
+                <h2 className="text-lg font-semibold text-gray-900">Your Timezone</h2>
+              </div>
+
+              {!showTzPicker ? (
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-700">{timezone}</span>
+                  <button
+                    onClick={() => setShowTzPicker(true)}
+                    className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+                  >
+                    Change
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <select
+                    value={timezone}
+                    onChange={e => {
+                      setTimezone(e.target.value)
+                      setShowTzPicker(false)
+                      setSelectedSlot(null) // reset slot when tz changes
+                    }}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    {COMMON_TIMEZONES.map(tz => (
+                      <option key={tz} value={tz}>
+                        {tz.replace(/_/g, ' ')}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={() => setShowTzPicker(false)}
+                    className="text-xs text-gray-500 hover:text-gray-700"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
+            </div>
+
             {/* time-slot card */}
             {selectedDate && (
               <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
@@ -506,49 +550,6 @@ export default function BookingCalendarPage() {
                 )}
               </div>
             )}
-
-            {/* timezone */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center gap-2 mb-3">
-                <Globe className="h-5 w-5 text-primary-600" />
-                <h2 className="text-lg font-semibold text-gray-900">Timezone</h2>
-              </div>
-
-              {!showTzPicker ? (
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-700">{timezone}</span>
-                  <button
-                    onClick={() => setShowTzPicker(true)}
-                    className="text-sm text-primary-600 hover:text-primary-700 font-medium"
-                  >
-                    Change
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <select
-                    value={timezone}
-                    onChange={e => {
-                      setTimezone(e.target.value)
-                      setShowTzPicker(false)
-                    }}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  >
-                    {COMMON_TIMEZONES.map(tz => (
-                      <option key={tz} value={tz}>
-                        {tz.replace(/_/g, ' ')}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={() => setShowTzPicker(false)}
-                    className="text-xs text-gray-500 hover:text-gray-700"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              )}
-            </div>
           </div>
 
           {/* ─── RIGHT: Details form ─── */}
