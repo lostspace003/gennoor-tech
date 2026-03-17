@@ -100,7 +100,7 @@ export async function POST(request: Request) {
                 </tr>
                 <tr>
                   <td style="padding: 3px 0;">WhatsApp:</td>
-                  <td><a href="https://wa.me/919819358703" style="color: #2563eb; text-decoration: none;">+91 9819358703</a></td>
+                  <td><a href="https://wa.me/919326352241" style="color: #2563eb; text-decoration: none;">+91 9326352241</a></td>
                 </tr>
                 <tr>
                   <td style="padding: 3px 0;">Website:</td>

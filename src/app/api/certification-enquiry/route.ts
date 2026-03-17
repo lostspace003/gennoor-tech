@@ -102,11 +102,11 @@ export async function POST(request: Request) {
                 </tr>
                 <tr>
                   <td>Phone:</td>
-                  <td><a href="tel:+919819358703" style="color: #2563eb;">+91 9819358703</a></td>
+                  <td><a href="tel:+919326352241" style="color: #2563eb;">+91 9326352241</a></td>
                 </tr>
                 <tr>
                   <td>WhatsApp:</td>
-                  <td><a href="https://wa.me/919819358703" style="color: #2563eb;">+91 9819358703</a></td>
+                  <td><a href="https://wa.me/919326352241" style="color: #2563eb;">+91 9326352241</a></td>
                 </tr>
               </table>
             </div>

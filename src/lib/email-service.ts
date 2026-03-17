@@ -228,11 +228,11 @@ export async function sendTrainingEnquiryEmail(data: {
             </tr>
             <tr>
               <td style="padding: 5px 0;">📱 Phone:</td>
-              <td><a href="tel:+919819358703" style="color: #667eea;">+91 9819358703</a></td>
+              <td><a href="tel:+919326352241" style="color: #667eea;">+91 9326352241</a></td>
             </tr>
             <tr>
               <td style="padding: 5px 0;">💬 WhatsApp:</td>
-              <td><a href="https://wa.me/919819358703" style="color: #667eea;">+91 9819358703</a></td>
+              <td><a href="https://wa.me/919326352241" style="color: #667eea;">+91 9326352241</a></td>
             </tr>
             <tr>
               <td style="padding: 5px 0;">🌐 Website:</td>
