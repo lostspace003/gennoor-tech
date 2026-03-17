@@ -33,8 +33,18 @@ export default function LatestBlog() {
               href={`/resources/blog/${post.slug}`}
               className="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100"
             >
-              <div className={`h-32 bg-gradient-to-br ${post.coverGradient} flex items-center justify-center`}>
-                <span className="text-4xl opacity-80 group-hover:scale-110 transition-transform duration-300">{post.icon}</span>
+              <div className="h-32 flex items-center justify-center relative overflow-hidden" style={{ backgroundColor: post.coverColor }}>
+                <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 200 100">
+                  <circle cx="30" cy="30" r="3" fill="white"/><circle cx="70" cy="20" r="3" fill="white"/>
+                  <circle cx="120" cy="50" r="3" fill="white"/><circle cx="170" cy="30" r="3" fill="white"/>
+                  <circle cx="50" cy="70" r="3" fill="white"/><circle cx="150" cy="80" r="3" fill="white"/>
+                  <line x1="30" y1="30" x2="70" y2="20" stroke="white" strokeWidth="0.5"/>
+                  <line x1="70" y1="20" x2="120" y2="50" stroke="white" strokeWidth="0.5"/>
+                  <line x1="120" y1="50" x2="170" y2="30" stroke="white" strokeWidth="0.5"/>
+                  <line x1="50" y1="70" x2="120" y2="50" stroke="white" strokeWidth="0.5"/>
+                  <line x1="150" y1="80" x2="170" y2="30" stroke="white" strokeWidth="0.5"/>
+                </svg>
+                <span className="text-white text-sm font-semibold px-4 text-center relative z-10 group-hover:scale-105 transition-transform duration-300">{post.title}</span>
               </div>
 
               <div className="p-6">
