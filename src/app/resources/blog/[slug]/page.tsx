@@ -6,9 +6,9 @@ import Link from 'next/link'
 import { getBlogPost, getRecentPosts, type BlogPost } from '@/data/blog-posts'
 import { CheckCircle } from 'lucide-react'
 
-function ShareBar({ post }: { post: BlogPost }) {
+function ShareBar({ post, slug }: { post: BlogPost; slug: string }) {
   const [copied, setCopied] = useState(false)
-  const url = typeof window !== 'undefined' ? window.location.href : ''
+  const url = `https://gennoor.com/resources/blog/${slug}`
 
   const handleCopy = () => {
     navigator.clipboard.writeText(`${post.title}\n${url}\n\n${post.hashtags.join(' ')}`)
@@ -149,7 +149,7 @@ export default function BlogPostPage() {
               </Link>
               <p className="text-sm font-semibold text-gray-800 truncate">{post.title}</p>
             </div>
-            <ShareBar post={post} />
+            <ShareBar post={post} slug={slug} />
           </div>
         </div>
       </div>
@@ -180,7 +180,7 @@ export default function BlogPostPage() {
           {/* Share Bar */}
           <div className="px-6 sm:px-10 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
             <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Share this article</span>
-            <ShareBar post={post} />
+            <ShareBar post={post} slug={slug} />
           </div>
 
           {/* Body */}
@@ -215,7 +215,7 @@ export default function BlogPostPage() {
           {/* Bottom Share */}
           <div className="px-6 sm:px-10 py-5 bg-gray-50 border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <p className="text-sm text-gray-600 font-medium">Found this insightful? Share with your network.</p>
-            <ShareBar post={post} />
+            <ShareBar post={post} slug={slug} />
           </div>
         </article>
 
