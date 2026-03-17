@@ -5,6 +5,7 @@ import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 import { User, Target, Mic, PenTool, Compass, Zap } from 'lucide-react'
 import EmailOTP from '@/components/EmailOTP'
+import PhoneInput from '@/components/ui/PhoneInput'
 
 const API = process.env.NEXT_PUBLIC_CAREER_API_URL || 'https://ca-gennoor-career.kindbeach-fe39b6f0.centralindia.azurecontainerapps.io'
 
@@ -1149,20 +1150,13 @@ export default function CareerCoachPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-dark-600 mb-1.5">
-                  WhatsApp <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="tel"
-                  value={downloadContact.whatsapp}
-                  onChange={e => { setDownloadContact(p => ({ ...p, whatsapp: e.target.value })); setDownloadErrors(p => p.filter(k => k !== 'whatsapp')) }}
-                  placeholder="e.g., +91 98765 43210"
-                  className={`w-full rounded-lg border ${downloadErrors.includes('whatsapp') ? 'border-red-400 ring-1 ring-red-300 bg-red-50' : 'border-gray-300 bg-white'} px-3 py-2 text-sm text-dark-700 placeholder-dark-300 focus:border-primary-400 focus:ring-1 focus:ring-primary-400 outline-none`}
-                  disabled={isGeneratingPdf}
-                />
-                {downloadErrors.includes('whatsapp') && <p className="text-xs text-red-500 mt-1">WhatsApp number is required</p>}
-              </div>
+              <PhoneInput
+                label="WhatsApp"
+                id="career-whatsapp"
+                value={downloadContact.whatsapp}
+                onChange={(fullNumber) => { setDownloadContact(p => ({ ...p, whatsapp: fullNumber })); setDownloadErrors(p => p.filter(k => k !== 'whatsapp')) }}
+                required={true}
+              />
             </div>
 
             <div className="px-6 py-4 border-t border-gray-100 bg-gray-50">

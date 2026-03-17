@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import EmailOTP from '@/components/EmailOTP'
+import PhoneInput from '@/components/ui/PhoneInput'
 import {
   Calendar,
   Clock,
@@ -515,10 +516,12 @@ export default function BookingCalendarPage() {
                           className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                         <EmailOTP email={reqEmail} onVerified={() => setReqEmailVerified(true)} verified={reqEmailVerified} compact />
-                        <input
-                          type="tel" value={reqWhatsapp} onChange={e => setReqWhatsapp(e.target.value)}
-                          placeholder="WhatsApp number (optional)"
-                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        <PhoneInput
+                          label="WhatsApp (optional)"
+                          id="req-whatsapp"
+                          value={reqWhatsapp}
+                          onChange={(fullNumber) => setReqWhatsapp(fullNumber)}
+                          required={false}
                         />
                         <textarea
                           required rows={2} value={reqMessage} onChange={e => setReqMessage(e.target.value)}
@@ -597,19 +600,13 @@ export default function BookingCalendarPage() {
               </div>
 
               {/* whatsapp */}
-              <div>
-                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
-                  <MessageSquare className="h-4 w-4" /> WhatsApp Number
-                </label>
-                <input
-                  type="tel"
-                  required
-                  value={whatsapp}
-                  onChange={e => setWhatsapp(e.target.value)}
-                  placeholder="+91 98765 43210"
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
+              <PhoneInput
+                label="WhatsApp Number"
+                id="calendar-whatsapp"
+                value={whatsapp}
+                onChange={(fullNumber) => setWhatsapp(fullNumber)}
+                required={true}
+              />
 
               {/* topic */}
               <div>

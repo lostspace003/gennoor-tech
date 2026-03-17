@@ -3,13 +3,13 @@
 import { useState, useEffect } from 'react'
 import { Mail, MapPin, Clock, Send, CheckCircle } from 'lucide-react'
 import EmailOTP from '@/components/EmailOTP'
+import PhoneInput from '@/components/ui/PhoneInput'
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     whatsapp: '',
-    whatsappCountry: '+91',
     company: '',
     designation: '',
     interest: '',
@@ -223,30 +223,13 @@ export default function ContactPage() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp</label>
-                    <div className="flex gap-2">
-                      <select
-                        value={formData.whatsappCountry}
-                        onChange={e => update('whatsappCountry', e.target.value)}
-                        className="w-24 px-2 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 text-sm"
-                      >
-                        <option value="+91">+91</option>
-                        <option value="+966">+966</option>
-                        <option value="+971">+971</option>
-                        <option value="+1">+1</option>
-                        <option value="+44">+44</option>
-                        <option value="+255">+255</option>
-                      </select>
-                      <input
-                        type="tel"
-                        value={formData.whatsapp}
-                        onChange={e => update('whatsapp', e.target.value)}
-                        className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                        placeholder="WhatsApp number"
-                      />
-                    </div>
-                  </div>
+                  <PhoneInput
+                    label="WhatsApp"
+                    id="contact-whatsapp"
+                    value={formData.whatsapp}
+                    onChange={(fullNumber) => update('whatsapp', fullNumber)}
+                    required={false}
+                  />
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
                     <input
