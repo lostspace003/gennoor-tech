@@ -187,7 +187,7 @@ export default function ContactPage() {
           {/* Contact Form */}
           <div className="lg:col-span-2" id="book">
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Book a Discovery Call</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">We&apos;d Love to Hear From You</h2>
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
