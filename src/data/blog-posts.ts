@@ -8,7 +8,7 @@ export interface BlogPost {
   category: string
   tags: string[]
   hashtags: string[]
-  coverGradient: string
+  coverColor: string // hex color for card background
   icon: string
   featured?: 'hero' | 'spotlight' | null
 }
@@ -44,7 +44,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Agents',
     tags: ['AI Agents', 'Enterprise AI', 'Automation'],
     hashtags: ['#AIAgents', '#EnterpriseAI', '#Automation', '#AIStrategy', '#DigitalTransformation'],
-    coverGradient: 'from-blue-600 via-indigo-600 to-purple-700',
+    coverColor: '#3B5998',
     icon: '🤖',
   },
   {
@@ -75,7 +75,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Microsoft AI',
     tags: ['Copilot Studio', 'Agent Flows', 'No-Code AI', 'Power Platform'],
     hashtags: ['#CopilotStudio', '#AgentFlows', '#MicrosoftAI', '#NoCodeAI', '#PowerPlatform'],
-    coverGradient: 'from-cyan-600 via-blue-600 to-indigo-700',
+    coverColor: '#2D6A4F',
     icon: '⚡',
   },
   {
@@ -103,7 +103,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Architecture',
     tags: ['MCP', 'AI Integration', 'Enterprise Architecture'],
     hashtags: ['#MCP', '#ModelContextProtocol', '#AIIntegration', '#EnterpriseAI', '#AIArchitecture'],
-    coverGradient: 'from-orange-500 via-red-500 to-rose-600',
+    coverColor: '#C0392B',
     icon: '🔗',
   },
   {
@@ -133,7 +133,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Microsoft AI',
     tags: ['Dataverse', 'MCP', 'Power Platform', 'AI Agents'],
     hashtags: ['#Dataverse', '#MCP', '#PowerPlatform', '#AIAgents', '#MicrosoftAI'],
-    coverGradient: 'from-violet-600 via-purple-600 to-indigo-700',
+    coverColor: '#1A5276',
     icon: '🗄️',
   },
   {
@@ -161,7 +161,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Microsoft AI',
     tags: ['Power Apps', 'MCP', 'Low-Code', 'Citizen Developer'],
     hashtags: ['#PowerApps', '#MCP', '#LowCode', '#CitizenDeveloper', '#PowerPlatform'],
-    coverGradient: 'from-purple-600 via-pink-600 to-rose-600',
+    coverColor: '#8E44AD',
     icon: '🧩',
   },
   {
@@ -190,7 +190,7 @@ export const blogPosts: BlogPost[] = [
     category: 'MLOps',
     tags: ['MLflow', 'LLM Ops', 'AI Governance', 'Model Management'],
     hashtags: ['#MLflow', '#LLMOps', '#MLOps', '#AIGovernance', '#ModelManagement'],
-    coverGradient: 'from-teal-600 via-emerald-600 to-green-700',
+    coverColor: '#2E86C1',
     icon: '📊',
   },
   {
@@ -219,7 +219,7 @@ export const blogPosts: BlogPost[] = [
     category: 'MLOps',
     tags: ['MLflow', 'RAG', 'Evaluation', 'AI Quality'],
     hashtags: ['#MLflow', '#RAG', '#AIEvaluation', '#MLOps', '#DataQuality'],
-    coverGradient: 'from-green-600 via-teal-600 to-cyan-700',
+    coverColor: '#1E8449',
     icon: '🔍',
   },
   {
@@ -248,7 +248,7 @@ export const blogPosts: BlogPost[] = [
     category: 'MLOps',
     tags: ['MLflow', 'AI Governance', 'Compliance', 'Regulated Industries'],
     hashtags: ['#AIGovernance', '#MLflow', '#Compliance', '#RegulatedAI', '#ModelGovernance'],
-    coverGradient: 'from-slate-600 via-gray-700 to-zinc-800',
+    coverColor: '#2C3E50',
     icon: '🛡️',
   },
   {
@@ -284,7 +284,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Microsoft AI',
     tags: ['Microsoft Agent Framework', 'Copilot Studio', 'Azure AI'],
     hashtags: ['#MicrosoftAI', '#CopilotStudio', '#AzureAI', '#AIAgents', '#AgentFramework'],
-    coverGradient: 'from-blue-700 via-blue-600 to-cyan-600',
+    coverColor: '#D35400',
     icon: '⚖️',
   },
   {
@@ -315,7 +315,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Agents',
     tags: ['Agentic AI', 'Production AI', 'Enterprise', 'Best Practices'],
     hashtags: ['#AgenticAI', '#AIinProduction', '#EnterpriseAI', '#AIAgents', '#BestPractices'],
-    coverGradient: 'from-emerald-600 via-teal-600 to-cyan-700',
+    coverColor: '#16A085',
     icon: '🏗️',
   },
 
@@ -347,7 +347,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Models',
     tags: ['GPT-4o', 'Structured Outputs', 'Enterprise AI', 'Integration'],
     hashtags: ['#GPT4o', '#StructuredOutputs', '#EnterpriseAI', '#AIIntegration', '#OpenAI'],
-    coverGradient: 'from-green-600 via-emerald-600 to-teal-600',
+    coverColor: '#2980B9',
     icon: '🎯',
   },
   {
@@ -375,7 +375,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Models',
     tags: ['Open Source', 'Llama', 'Mistral', 'Qwen', 'DeepSeek'],
     hashtags: ['#OpenSourceAI', '#Llama', '#Mistral', '#Qwen', '#DeepSeek', '#LLM'],
-    coverGradient: 'from-amber-500 via-orange-500 to-red-600',
+    coverColor: '#D4AC0D',
     icon: '🏆',
   },
   {
@@ -404,7 +404,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Tools',
     tags: ['Ollama', 'Local LLM', 'Privacy', 'Edge AI'],
     hashtags: ['#Ollama', '#LocalAI', '#PrivacyFirst', '#EdgeAI', '#OpenSourceAI'],
-    coverGradient: 'from-gray-700 via-gray-800 to-black',
+    coverColor: '#7B241C',
     icon: '💻',
   },
   {
@@ -432,7 +432,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Models',
     tags: ['SLM', 'Phi', 'Edge AI', 'On-Device AI'],
     hashtags: ['#SmallLanguageModels', '#Phi4', '#EdgeAI', '#OnDeviceAI', '#AIEfficiency'],
-    coverGradient: 'from-pink-500 via-rose-500 to-red-600',
+    coverColor: '#006D77',
     icon: '🔬',
   },
   {
@@ -460,7 +460,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Models',
     tags: ['Hugging Face', 'Model Selection', 'Open Source', 'LLM'],
     hashtags: ['#HuggingFace', '#ModelSelection', '#OpenSourceAI', '#LLM', '#AIStrategy'],
-    coverGradient: 'from-yellow-500 via-amber-500 to-orange-600',
+    coverColor: '#4A235A',
     icon: '🤗',
   },
   {
@@ -487,7 +487,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Architecture',
     tags: ['RAG', 'GraphRAG', 'Hybrid Search', 'Vector Search'],
     hashtags: ['#RAG', '#GraphRAG', '#HybridSearch', '#VectorSearch', '#AIArchitecture'],
-    coverGradient: 'from-indigo-600 via-blue-600 to-cyan-600',
+    coverColor: '#1B4F72',
     icon: '🕸️',
   },
   {
@@ -515,7 +515,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Azure AI',
     tags: ['Azure AI Foundry', 'Model Selection', 'Cloud AI'],
     hashtags: ['#AzureAI', '#AIFoundry', '#ModelSelection', '#CloudAI', '#EnterpriseAI'],
-    coverGradient: 'from-blue-600 via-indigo-700 to-purple-800',
+    coverColor: '#196F3D',
     icon: '☁️',
   },
   {
@@ -548,7 +548,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Agents',
     tags: ['LangGraph', 'CrewAI', 'AutoGen', 'Multi-Agent'],
     hashtags: ['#LangGraph', '#CrewAI', '#AutoGen', '#MultiAgent', '#AIAgents'],
-    coverGradient: 'from-fuchsia-600 via-purple-600 to-indigo-700',
+    coverColor: '#6C3483',
     icon: '🔄',
   },
 
@@ -578,7 +578,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Healthcare AI',
     tags: ['Healthcare', 'Clinical AI', 'Medical Imaging', 'HealthTech'],
     hashtags: ['#HealthcareAI', '#ClinicalAI', '#MedicalImaging', '#HealthTech', '#AIinHealthcare'],
-    coverGradient: 'from-red-500 via-rose-500 to-pink-600',
+    coverColor: '#CB4335',
     icon: '🏥',
   },
   {
@@ -606,7 +606,7 @@ export const blogPosts: BlogPost[] = [
     category: 'BFSI AI',
     tags: ['Banking', 'Insurance', 'Fraud Detection', 'Claims Processing'],
     hashtags: ['#BFSI', '#BankingAI', '#InsuranceAI', '#FraudDetection', '#ClaimsProcessing'],
-    coverGradient: 'from-green-700 via-emerald-700 to-teal-800',
+    coverColor: '#0E6251',
     icon: '🏦',
   },
   {
@@ -634,7 +634,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Education AI',
     tags: ['Education', 'EdTech', 'Personalized Learning', 'AI Tutoring'],
     hashtags: ['#EdTech', '#AIinEducation', '#PersonalizedLearning', '#IntelligentTutoring', '#EdAI'],
-    coverGradient: 'from-blue-500 via-indigo-500 to-purple-600',
+    coverColor: '#1F618D',
     icon: '🎓',
   },
   {
@@ -662,7 +662,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Manufacturing AI',
     tags: ['Manufacturing', 'Predictive Maintenance', 'Quality Control', 'Industry 4.0'],
     hashtags: ['#ManufacturingAI', '#PredictiveMaintenance', '#Industry40', '#SmartFactory', '#DigitalTwin'],
-    coverGradient: 'from-gray-600 via-slate-600 to-zinc-700',
+    coverColor: '#117A65',
     icon: '🏭',
   },
   {
@@ -690,7 +690,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Retail AI',
     tags: ['Retail', 'Personalization', 'E-commerce', 'Demand Forecasting'],
     hashtags: ['#RetailAI', '#Personalization', '#Ecommerce', '#DemandForecasting', '#ConversationalCommerce'],
-    coverGradient: 'from-pink-600 via-purple-600 to-violet-700',
+    coverColor: '#7D3C98',
     icon: '🛒',
   },
   {
@@ -718,7 +718,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Government AI',
     tags: ['Government', 'Public Sector', 'Citizen Services', 'GovTech'],
     hashtags: ['#GovTech', '#GovernmentAI', '#CitizenServices', '#PublicSector', '#DigitalGovernment'],
-    coverGradient: 'from-blue-800 via-indigo-800 to-slate-900',
+    coverColor: '#CA6F1E',
     icon: '🏛️',
   },
   {
@@ -746,7 +746,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Energy AI',
     tags: ['Energy', 'Grid Optimization', 'Renewables', 'Carbon Tracking'],
     hashtags: ['#EnergyAI', '#SmartGrid', '#Renewables', '#CarbonIntelligence', '#CleanTech'],
-    coverGradient: 'from-green-500 via-emerald-500 to-teal-600',
+    coverColor: '#1C2833',
     icon: '⚡',
   },
   {
@@ -774,7 +774,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Legal AI',
     tags: ['Legal', 'Contract Analysis', 'Compliance', 'LegalTech'],
     hashtags: ['#LegalAI', '#LegalTech', '#ContractAnalysis', '#Compliance', '#AIinLegal'],
-    coverGradient: 'from-amber-700 via-yellow-700 to-orange-800',
+    coverColor: '#148F77',
     icon: '⚖️',
   },
 
@@ -809,7 +809,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Strategy',
     tags: ['AI Governance', 'Enterprise AI', 'Risk Management', 'Compliance'],
     hashtags: ['#AIGovernance', '#ResponsibleAI', '#EnterpriseAI', '#AICompliance', '#AIStrategy'],
-    coverGradient: 'from-slate-700 via-gray-800 to-zinc-900',
+    coverColor: '#2471A3',
     icon: '📋',
   },
   {
@@ -838,7 +838,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Strategy',
     tags: ['AI Strategy', 'C-Suite', 'Digital Transformation', 'Enterprise AI'],
     hashtags: ['#AIStrategy', '#CSuite', '#DigitalTransformation', '#EnterpriseAI', '#Leadership'],
-    coverGradient: 'from-indigo-800 via-blue-900 to-slate-900',
+    coverColor: '#922B21',
     icon: '🎯',
   },
   {
@@ -866,7 +866,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Strategy',
     tags: ['Responsible AI', 'Bias', 'Fairness', 'AI Ethics'],
     hashtags: ['#ResponsibleAI', '#AIEthics', '#AIFairness', '#AIBias', '#TrustworthyAI'],
-    coverGradient: 'from-rose-600 via-pink-600 to-fuchsia-700',
+    coverColor: '#0B5345',
     icon: '🤝',
   },
   {
@@ -896,7 +896,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Strategy',
     tags: ['AI Predictions', 'Future of AI', 'AI Agents', 'Technology Trends'],
     hashtags: ['#FutureOfAI', '#AIAgents', '#TechTrends', '#AIPredictions', '#Innovation'],
-    coverGradient: 'from-violet-700 via-purple-800 to-indigo-900',
+    coverColor: '#5B2C6F',
     icon: '🔮',
   },
   {
@@ -925,7 +925,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Microsoft AI',
     tags: ['Semantic Kernel', 'Microsoft', '.NET', 'AI Orchestration'],
     hashtags: ['#SemanticKernel', '#MicrosoftAI', '#DotNet', '#AIOrchestration', '#EnterpriseAI'],
-    coverGradient: 'from-blue-700 via-indigo-700 to-violet-800',
+    coverColor: '#154360',
     icon: '🧬',
   },
   {
@@ -954,7 +954,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Architecture',
     tags: ['Vector Database', 'Azure AI Search', 'Pinecone', 'RAG'],
     hashtags: ['#VectorDatabase', '#AzureAISearch', '#Pinecone', '#RAG', '#SemanticSearch'],
-    coverGradient: 'from-cyan-700 via-blue-700 to-indigo-800',
+    coverColor: '#1D8348',
     icon: '🗃️',
   },
   {
@@ -983,7 +983,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Engineering',
     tags: ['Prompt Engineering', 'Enterprise AI', 'Best Practices'],
     hashtags: ['#PromptEngineering', '#EnterpriseAI', '#AIEngineering', '#BestPractices', '#LLM'],
-    coverGradient: 'from-amber-600 via-orange-600 to-red-700',
+    coverColor: '#76448A',
     icon: '✍️',
   },
   {
@@ -1012,7 +1012,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Strategy',
     tags: ['Cost Optimization', 'AI Budget', 'Enterprise AI', 'Efficiency'],
     hashtags: ['#AICost', '#CostOptimization', '#EnterpriseAI', '#AIEfficiency', '#CloudCost'],
-    coverGradient: 'from-emerald-700 via-green-700 to-teal-800',
+    coverColor: '#B03A2E',
     icon: '💰',
   },
   {
@@ -1043,7 +1043,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Agents',
     tags: ['Customer Service', 'AI Agents', 'CX', 'Automation'],
     hashtags: ['#CustomerServiceAI', '#AIAgents', '#CX', '#CustomerExperience', '#ServiceAutomation'],
-    coverGradient: 'from-sky-500 via-blue-500 to-indigo-600',
+    coverColor: '#17202A',
     icon: '💬',
   },
   {
@@ -1073,7 +1073,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Agents',
     tags: ['Insurance', 'Claims Processing', 'Copilot Studio', 'Dataverse'],
     hashtags: ['#InsuranceAI', '#ClaimsProcessing', '#CopilotStudio', '#Dataverse', '#AIAgents'],
-    coverGradient: 'from-teal-600 via-cyan-600 to-blue-700',
+    coverColor: '#138D75',
     icon: '📄',
   },
   {
@@ -1102,7 +1102,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Engineering',
     tags: ['Document AI', 'OCR', 'Automation', 'Enterprise AI'],
     hashtags: ['#DocumentAI', '#DocumentIntelligence', '#AIAutomation', '#EnterpriseAI', '#OCR'],
-    coverGradient: 'from-orange-600 via-amber-600 to-yellow-700',
+    coverColor: '#2E86C1',
     icon: '📑',
   },
   {
@@ -1133,7 +1133,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Strategy',
     tags: ['POC', 'Production AI', 'Deployment', 'MLOps'],
     hashtags: ['#AIDeployment', '#POCtoProduction', '#EnterpriseAI', '#MLOps', '#AIStrategy'],
-    coverGradient: 'from-red-700 via-rose-700 to-pink-800',
+    coverColor: '#943126',
     icon: '🚀',
   },
   {
@@ -1161,7 +1161,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Strategy',
     tags: ['AI Training', 'Upskilling', 'Workforce', 'Change Management'],
     hashtags: ['#AITraining', '#Upskilling', '#WorkforceTransformation', '#AILiteracy', '#ChangeManagement'],
-    coverGradient: 'from-blue-600 via-purple-600 to-pink-600',
+    coverColor: '#0A3D62',
     icon: '📚',
   },
   {
@@ -1189,7 +1189,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Agents',
     tags: ['HR', 'Employee Experience', 'Onboarding', 'AI Agents'],
     hashtags: ['#HRAI', '#EmployeeExperience', '#AIAgents', '#HRTech', '#WorkplaceAI'],
-    coverGradient: 'from-violet-500 via-purple-500 to-fuchsia-600',
+    coverColor: '#6C3483',
     icon: '👥',
   },
   {
@@ -1217,7 +1217,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Security',
     tags: ['Cybersecurity', 'Threat Detection', 'SOC', 'AI Security'],
     hashtags: ['#CyberSecurityAI', '#ThreatDetection', '#SOC', '#AIDefense', '#InfoSec'],
-    coverGradient: 'from-red-800 via-red-700 to-orange-800',
+    coverColor: '#1A5276',
     icon: '🔒',
   },
   {
@@ -1246,7 +1246,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Engineering',
     tags: ['Chatbot', 'UX Design', 'Conversational AI', 'User Experience'],
     hashtags: ['#ChatbotUX', '#ConversationalAI', '#AIUX', '#UserExperience', '#DesignThinking'],
-    coverGradient: 'from-pink-500 via-rose-500 to-red-500',
+    coverColor: '#229954',
     icon: '💡',
   },
   {
@@ -1274,7 +1274,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Supply Chain AI',
     tags: ['Supply Chain', 'Resilience', 'Logistics', 'Demand Forecasting'],
     hashtags: ['#SupplyChainAI', '#Resilience', '#Logistics', '#DemandForecasting', '#SupplyChain'],
-    coverGradient: 'from-teal-700 via-cyan-700 to-blue-800',
+    coverColor: '#884EA0',
     icon: '🚛',
   },
   {
@@ -1302,7 +1302,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Microsoft AI',
     tags: ['Copilot Studio', 'Power Automate', 'Automation', 'Power Platform'],
     hashtags: ['#CopilotStudio', '#PowerAutomate', '#Automation', '#PowerPlatform', '#MicrosoftAI'],
-    coverGradient: 'from-blue-600 via-indigo-600 to-violet-700',
+    coverColor: '#DC7633',
     icon: '🔧',
   },
   {
@@ -1332,7 +1332,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Strategy',
     tags: ['Data Readiness', 'Data Quality', 'Enterprise AI', 'Data Governance'],
     hashtags: ['#DataReadiness', '#DataQuality', '#EnterpriseAI', '#DataGovernance', '#AIReady'],
-    coverGradient: 'from-yellow-600 via-amber-600 to-orange-700',
+    coverColor: '#212F3D',
     icon: '📦',
   },
   {
@@ -1360,7 +1360,7 @@ export const blogPosts: BlogPost[] = [
     category: 'AI Engineering',
     tags: ['Multimodal AI', 'Vision AI', 'Document AI', 'Enterprise AI'],
     hashtags: ['#MultimodalAI', '#VisionAI', '#DocumentAI', '#EnterpriseAI', '#ComputerVision'],
-    coverGradient: 'from-indigo-500 via-violet-500 to-purple-600',
+    coverColor: '#1ABC9C',
     icon: '👁️',
   },
   // ─── 5. INDUSTRY-SPECIFIC AI AGENTS ───
@@ -1391,7 +1391,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Healthcare AI',
     tags: ['Healthcare', 'AI Agents', 'Patient Experience', 'Clinical AI'],
     hashtags: ['#HealthcareAI', '#AIAgents', '#PatientExperience', '#DigitalHealth', '#ClinicalAI'],
-    coverGradient: 'from-red-500 via-rose-600 to-pink-700',
+    coverColor: '#3498DB',
     icon: '🩺',
   },
   {
@@ -1420,7 +1420,7 @@ export const blogPosts: BlogPost[] = [
     category: 'BFSI AI',
     tags: ['Banking', 'Loan Origination', 'AI Agents', 'Fintech'],
     hashtags: ['#BankingAI', '#LoanOrigination', '#AIAgents', '#Fintech', '#BFSI'],
-    coverGradient: 'from-green-700 via-emerald-700 to-teal-800',
+    coverColor: '#A93226',
     icon: '🏦',
   },
   {
@@ -1449,7 +1449,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Education AI',
     tags: ['Education', 'AI Agents', 'EdTech', 'Campus Operations'],
     hashtags: ['#EducationAI', '#AIAgents', '#EdTech', '#SmartCampus', '#PersonalizedLearning'],
-    coverGradient: 'from-blue-500 via-indigo-600 to-purple-700',
+    coverColor: '#0E6655',
     icon: '🎓',
   },
   {
@@ -1478,7 +1478,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Real Estate AI',
     tags: ['Real Estate', 'Property Management', 'AI Agents', 'PropTech'],
     hashtags: ['#RealEstateAI', '#PropTech', '#AIAgents', '#PropertyManagement', '#TenantExperience'],
-    coverGradient: 'from-amber-600 via-orange-600 to-red-600',
+    coverColor: '#7D3C98',
     icon: '🏢',
   },
   {
@@ -1507,7 +1507,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Telecom AI',
     tags: ['Telecom', 'Customer Retention', 'AI Agents', 'Customer Support'],
     hashtags: ['#TelecomAI', '#AIAgents', '#CustomerRetention', '#Telco', '#CX'],
-    coverGradient: 'from-sky-600 via-blue-600 to-indigo-700',
+    coverColor: '#1B4F72',
     icon: '📡',
   },
   {
@@ -1536,7 +1536,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Pharma AI',
     tags: ['Pharma', 'Drug Discovery', 'Clinical Trials', 'AI Agents'],
     hashtags: ['#PharmaAI', '#DrugDiscovery', '#ClinicalTrials', '#AIAgents', '#LifeSciences'],
-    coverGradient: 'from-emerald-600 via-green-600 to-teal-700',
+    coverColor: '#27AE60',
     icon: '💊',
   },
   {
@@ -1565,7 +1565,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Logistics AI',
     tags: ['Logistics', 'Warehouse', 'Route Optimization', 'AI Agents'],
     hashtags: ['#LogisticsAI', '#AIAgents', '#WarehouseAutomation', '#RouteOptimization', '#SupplyChain'],
-    coverGradient: 'from-slate-600 via-blue-700 to-indigo-800',
+    coverColor: '#8E44AD',
     icon: '📦',
   },
   {
@@ -1594,7 +1594,7 @@ export const blogPosts: BlogPost[] = [
     category: 'BFSI AI',
     tags: ['Insurance', 'Underwriting', 'Claims', 'AI Agents'],
     hashtags: ['#InsuranceAI', '#AIAgents', '#Underwriting', '#ClaimsProcessing', '#InsurTech'],
-    coverGradient: 'from-teal-700 via-cyan-700 to-blue-800',
+    coverColor: '#E67E22',
     icon: '🛡️',
   },
   {
@@ -1623,7 +1623,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Hospitality AI',
     tags: ['Hospitality', 'Hotels', 'Guest Experience', 'AI Agents'],
     hashtags: ['#HospitalityAI', '#AIAgents', '#GuestExperience', '#HotelTech', '#TravelTech'],
-    coverGradient: 'from-rose-500 via-pink-500 to-fuchsia-600',
+    coverColor: '#2C3E50',
     icon: '🏨',
   },
   {
@@ -1652,7 +1652,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Agriculture AI',
     tags: ['Agriculture', 'Precision Farming', 'AI Agents', 'AgriTech'],
     hashtags: ['#AgricultureAI', '#PrecisionFarming', '#AIAgents', '#AgriTech', '#SmartFarming'],
-    coverGradient: 'from-lime-600 via-green-600 to-emerald-700',
+    coverColor: '#16A085',
     icon: '🌾',
   },
 ]

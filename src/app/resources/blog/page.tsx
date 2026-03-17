@@ -5,6 +5,43 @@ import Link from 'next/link'
 import { blogPosts, blogCategories } from '@/data/blog-posts'
 import { CheckCircle } from 'lucide-react'
 
+// SVG pattern for visual texture
+function CardPattern() {
+  return (
+    <svg className="absolute inset-0 w-full h-full opacity-[0.08]" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+          <circle cx="1" cy="1" r="1" fill="white" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid)" />
+    </svg>
+  )
+}
+
+// Decorative circuit SVG for tech feel
+function CircuitDecor({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="60" cy="60" r="24" stroke="white" strokeWidth="1.5" opacity="0.2" />
+      <circle cx="60" cy="60" r="8" stroke="white" strokeWidth="1.5" opacity="0.3" />
+      <circle cx="60" cy="60" r="3" fill="white" opacity="0.4" />
+      <line x1="60" y1="36" x2="60" y2="12" stroke="white" strokeWidth="1" opacity="0.15" />
+      <line x1="60" y1="84" x2="60" y2="108" stroke="white" strokeWidth="1" opacity="0.15" />
+      <line x1="36" y1="60" x2="12" y2="60" stroke="white" strokeWidth="1" opacity="0.15" />
+      <line x1="84" y1="60" x2="108" y2="60" stroke="white" strokeWidth="1" opacity="0.15" />
+      <circle cx="60" cy="12" r="3" fill="white" opacity="0.2" />
+      <circle cx="60" cy="108" r="3" fill="white" opacity="0.2" />
+      <circle cx="12" cy="60" r="3" fill="white" opacity="0.2" />
+      <circle cx="108" cy="60" r="3" fill="white" opacity="0.2" />
+      <line x1="77" y1="43" x2="96" y2="24" stroke="white" strokeWidth="1" opacity="0.12" />
+      <line x1="43" y1="77" x2="24" y2="96" stroke="white" strokeWidth="1" opacity="0.12" />
+      <circle cx="96" cy="24" r="2.5" fill="white" opacity="0.15" />
+      <circle cx="24" cy="96" r="2.5" fill="white" opacity="0.15" />
+    </svg>
+  )
+}
+
 export default function BlogPage() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [email, setEmail] = useState('')
@@ -14,7 +51,6 @@ export default function BlogPage() {
     ? blogPosts.filter(p => p.category === activeCategory)
     : blogPosts
 
-  // For newspaper layout: hero, spotlights, and rest
   const hero = filtered.find(p => p.featured === 'hero') || filtered[0]
   const spotlights = filtered.filter(p => p.featured === 'spotlight' && p.slug !== hero?.slug).slice(0, 3)
   const spotlightSlugs = new Set([hero?.slug, ...spotlights.map(s => s.slug)])
@@ -28,20 +64,19 @@ export default function BlogPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: 'Newsletter Subscriber',
-          email,
+          name: 'Newsletter Subscriber', email,
           programTitle: 'Blog Newsletter Subscription',
           message: 'Subscribed to blog newsletter',
           timestamp: new Date().toISOString(),
         }),
       })
-    } catch { /* show success anyway */ }
+    } catch { /* show success */ }
     setSubscribed(true)
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* ── Masthead ── */}
+      {/* Masthead */}
       <header className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
           <p className="text-xs font-bold tracking-[0.3em] uppercase text-primary-600 mb-2">Insights & Perspectives</p>
@@ -55,17 +90,13 @@ export default function BlogPage() {
         </div>
       </header>
 
-      {/* ── Category Filter ── */}
+      {/* Category Filter */}
       <div className="bg-white border-b border-gray-100 sticky top-0 z-40">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex flex-wrap gap-1.5 justify-center">
             <button
               onClick={() => setActiveCategory(null)}
-              className={`px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all ${
-                !activeCategory
-                  ? 'bg-gray-900 text-white'
-                  : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
-              }`}
+              className={`px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all ${!activeCategory ? 'bg-gray-900 text-white' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'}`}
             >
               All
             </button>
@@ -73,11 +104,7 @@ export default function BlogPage() {
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all ${
-                  activeCategory === cat
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
-                }`}
+                className={`px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all ${activeCategory === cat ? 'bg-gray-900 text-white' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'}`}
               >
                 {cat}
               </button>
@@ -88,25 +115,20 @@ export default function BlogPage() {
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
 
-        {/* ── HERO: Full-width featured article ── */}
+        {/* HERO */}
         {hero && (
-          <Link
-            href={`/resources/blog/${hero.slug}`}
-            className="group block mb-8"
-          >
-            <div className={`relative bg-gradient-to-br ${hero.coverGradient} rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500`}>
-              <div className="absolute inset-0 opacity-[0.06]">
-                <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-              </div>
-              <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-0">
-                <div className="p-8 sm:p-10 lg:p-14 flex flex-col justify-center">
-                  <span className="inline-block px-3 py-1 bg-white/15 backdrop-blur-sm text-white text-xs font-bold rounded-full tracking-wide uppercase mb-4 w-fit">
+          <Link href={`/resources/blog/${hero.slug}`} className="group block mb-8">
+            <div className="relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500" style={{ backgroundColor: hero.coverColor }}>
+              <CardPattern />
+              <div className="relative grid grid-cols-1 lg:grid-cols-5 gap-0">
+                <div className="lg:col-span-3 p-8 sm:p-10 lg:p-14 flex flex-col justify-center">
+                  <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs font-bold rounded-full tracking-wide uppercase mb-4 w-fit">
                     Featured
                   </span>
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white leading-tight mb-4 group-hover:translate-x-1 transition-transform duration-300" style={{ fontFamily: 'Georgia, serif' }}>
                     {hero.title}
                   </h2>
-                  <p className="text-white/80 leading-relaxed mb-6 text-sm sm:text-base line-clamp-3">
+                  <p className="text-white/85 leading-relaxed mb-6 text-sm sm:text-base line-clamp-3">
                     {hero.excerpt}
                   </p>
                   <div className="flex items-center gap-3">
@@ -114,15 +136,15 @@ export default function BlogPage() {
                     <span className="text-white font-semibold text-sm group-hover:translate-x-1 transition-transform">Read article &rarr;</span>
                   </div>
                 </div>
-                <div className="hidden lg:flex items-center justify-center p-10">
-                  <span className="text-[120px] opacity-30 group-hover:scale-110 group-hover:opacity-40 transition-all duration-500">{hero.icon}</span>
+                <div className="hidden lg:flex lg:col-span-2 items-center justify-center p-8">
+                  <CircuitDecor className="w-48 h-48 opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500" />
                 </div>
               </div>
             </div>
           </Link>
         )}
 
-        {/* ── SPOTLIGHT ROW: 3 medium cards ── */}
+        {/* SPOTLIGHT ROW */}
         {spotlights.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
             {spotlights.map(post => (
@@ -131,9 +153,10 @@ export default function BlogPage() {
                 href={`/resources/blog/${post.slug}`}
                 className="group bg-white rounded-xl border border-gray-200/80 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
               >
-                <div className={`h-36 bg-gradient-to-br ${post.coverGradient} flex items-center justify-center relative`}>
-                  <span className="text-5xl opacity-70 group-hover:scale-110 transition-transform duration-300">{post.icon}</span>
-                  <span className="absolute top-3 left-3 px-2.5 py-1 bg-white/15 backdrop-blur-sm text-white text-[10px] font-bold rounded-full tracking-wide uppercase">
+                <div className="relative h-40 flex items-center justify-center" style={{ backgroundColor: post.coverColor }}>
+                  <CardPattern />
+                  <CircuitDecor className="relative w-20 h-20 opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-300" />
+                  <span className="absolute top-3 left-3 px-2.5 py-1 bg-white/20 backdrop-blur-sm text-white text-[10px] font-bold rounded-full tracking-wide uppercase">
                     {post.category}
                   </span>
                 </div>
@@ -152,7 +175,7 @@ export default function BlogPage() {
           </div>
         )}
 
-        {/* ── Newsletter Banner ── */}
+        {/* Newsletter */}
         <div className="mb-8 bg-gray-900 rounded-xl overflow-hidden">
           <div className="px-6 sm:px-10 py-7 flex flex-col sm:flex-row items-center justify-between gap-4">
             {subscribed ? (
@@ -167,14 +190,8 @@ export default function BlogPage() {
                   <p className="text-gray-400 text-sm">Enterprise AI insights delivered to your inbox. No spam.</p>
                 </div>
                 <form onSubmit={handleSubscribe} className="flex gap-2 w-full sm:w-auto">
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    placeholder="Your email"
-                    className="flex-1 sm:w-56 px-4 py-2.5 rounded-lg text-sm bg-white/10 text-white placeholder:text-gray-500 border border-white/10 focus:ring-2 focus:ring-primary-500 focus:outline-none"
-                  />
+                  <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="Your email"
+                    className="flex-1 sm:w-56 px-4 py-2.5 rounded-lg text-sm bg-white/10 text-white placeholder:text-gray-500 border border-white/10 focus:ring-2 focus:ring-primary-500 focus:outline-none" />
                   <button type="submit" className="shrink-0 px-5 py-2.5 bg-primary-600 text-white font-semibold text-sm rounded-lg hover:bg-primary-500 transition-colors">
                     Subscribe
                   </button>
@@ -184,34 +201,28 @@ export default function BlogPage() {
           </div>
         </div>
 
-        {/* ── NEWSPAPER GRID: Mixed sizes ── */}
+        {/* NEWSPAPER GRID */}
         <div className="space-y-5">
-          {/* Process rest in groups for varied layout */}
           {Array.from({ length: Math.ceil(rest.length / 5) }).map((_, groupIdx) => {
             const start = groupIdx * 5
             const group = rest.slice(start, start + 5)
             const isEven = groupIdx % 2 === 0
 
-            // Layout A: 2 large + 3 small | Layout B: 3 small + 2 large
             if (group.length >= 5) {
               const largeCards = isEven ? group.slice(0, 2) : group.slice(3, 5)
               const smallCards = isEven ? group.slice(2, 5) : group.slice(0, 3)
-
               return (
-                <div key={groupIdx} className={`grid grid-cols-1 lg:grid-cols-12 gap-5 ${isEven ? '' : ''}`}>
-                  {/* Large cards column */}
+                <div key={groupIdx} className="grid grid-cols-1 lg:grid-cols-12 gap-5">
                   <div className={`lg:col-span-7 space-y-5 ${isEven ? 'order-1' : 'order-2'}`}>
                     {largeCards.map(post => (
-                      <Link
-                        key={post.slug}
-                        href={`/resources/blog/${post.slug}`}
-                        className="group flex bg-white rounded-xl border border-gray-200/80 overflow-hidden hover:shadow-lg transition-all duration-300"
-                      >
-                        <div className={`w-32 sm:w-44 shrink-0 bg-gradient-to-br ${post.coverGradient} flex items-center justify-center`}>
-                          <span className="text-4xl opacity-70 group-hover:scale-110 transition-transform">{post.icon}</span>
+                      <Link key={post.slug} href={`/resources/blog/${post.slug}`}
+                        className="group flex bg-white rounded-xl border border-gray-200/80 overflow-hidden hover:shadow-lg transition-all duration-300">
+                        <div className="relative w-32 sm:w-44 shrink-0 flex items-center justify-center" style={{ backgroundColor: post.coverColor }}>
+                          <CardPattern />
+                          <CircuitDecor className="relative w-16 h-16 opacity-30 group-hover:opacity-50 transition-all" />
                         </div>
                         <div className="p-5 flex flex-col justify-center min-w-0">
-                          <span className="text-[10px] font-bold text-primary-600 uppercase tracking-wider mb-1.5">{post.category}</span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: post.coverColor }}>{post.category}</span>
                           <h3 className="text-base font-bold text-gray-900 leading-snug mb-2 group-hover:text-primary-600 transition-colors line-clamp-2" style={{ fontFamily: 'Georgia, serif' }}>
                             {post.title}
                           </h3>
@@ -221,20 +232,18 @@ export default function BlogPage() {
                       </Link>
                     ))}
                   </div>
-                  {/* Small cards column */}
                   <div className={`lg:col-span-5 space-y-5 ${isEven ? 'order-2' : 'order-1'}`}>
                     {smallCards.map(post => (
-                      <Link
-                        key={post.slug}
-                        href={`/resources/blog/${post.slug}`}
-                        className="group block bg-white rounded-xl border border-gray-200/80 p-5 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
-                      >
+                      <Link key={post.slug} href={`/resources/blog/${post.slug}`}
+                        className="group block bg-white rounded-xl border border-gray-200/80 p-5 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
                         <div className="flex items-start gap-4">
-                          <div className={`w-12 h-12 shrink-0 rounded-xl bg-gradient-to-br ${post.coverGradient} flex items-center justify-center`}>
-                            <span className="text-lg">{post.icon}</span>
+                          <div className="w-12 h-12 shrink-0 rounded-xl flex items-center justify-center" style={{ backgroundColor: post.coverColor }}>
+                            <svg className="w-5 h-5 text-white opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                              <circle cx="12" cy="12" r="4" /><line x1="12" y1="2" x2="12" y2="8" /><line x1="12" y1="16" x2="12" y2="22" /><line x1="2" y1="12" x2="8" y2="12" /><line x1="16" y1="12" x2="22" y2="12" />
+                            </svg>
                           </div>
                           <div className="min-w-0">
-                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{post.category} &middot; {post.readTime}</span>
+                            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: post.coverColor }}>{post.category} &middot; {post.readTime}</span>
                             <h3 className="text-sm font-bold text-gray-900 leading-snug mt-1 group-hover:text-primary-600 transition-colors line-clamp-2">
                               {post.title}
                             </h3>
@@ -247,20 +256,17 @@ export default function BlogPage() {
               )
             }
 
-            // Fallback: remaining cards in grid
             return (
               <div key={groupIdx} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {group.map(post => (
-                  <Link
-                    key={post.slug}
-                    href={`/resources/blog/${post.slug}`}
-                    className="group bg-white rounded-xl border border-gray-200/80 overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
-                  >
-                    <div className={`h-28 bg-gradient-to-br ${post.coverGradient} flex items-center justify-center`}>
-                      <span className="text-3xl opacity-70 group-hover:scale-110 transition-transform">{post.icon}</span>
+                  <Link key={post.slug} href={`/resources/blog/${post.slug}`}
+                    className="group bg-white rounded-xl border border-gray-200/80 overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
+                    <div className="relative h-28 flex items-center justify-center" style={{ backgroundColor: post.coverColor }}>
+                      <CardPattern />
+                      <CircuitDecor className="relative w-14 h-14 opacity-30 group-hover:opacity-50 transition-all" />
                     </div>
                     <div className="p-4">
-                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{post.category}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: post.coverColor }}>{post.category}</span>
                       <h3 className="text-sm font-bold text-gray-900 leading-snug mt-1 mb-2 group-hover:text-primary-600 transition-colors line-clamp-2" style={{ fontFamily: 'Georgia, serif' }}>
                         {post.title}
                       </h3>
@@ -274,17 +280,14 @@ export default function BlogPage() {
         </div>
       </div>
 
-      {/* ── Bottom CTA ── */}
+      {/* Bottom CTA */}
       <section className="bg-white border-t border-gray-200">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-14 text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-3" style={{ fontFamily: 'Georgia, serif' }}>Want AI insights tailored to your organization?</h2>
           <p className="text-gray-500 mb-8 max-w-xl mx-auto text-sm">
             From strategy workshops to hands-on implementation, we help enterprises turn AI potential into measurable results.
           </p>
-          <Link
-            href="/contact"
-            className="inline-flex px-6 py-3 bg-gray-900 text-white font-semibold text-sm rounded-lg hover:bg-gray-800 transition-colors"
-          >
+          <Link href="/contact" className="inline-flex px-6 py-3 bg-gray-900 text-white font-semibold text-sm rounded-lg hover:bg-gray-800 transition-colors">
             Book a Discovery Call
           </Link>
         </div>
