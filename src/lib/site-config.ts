@@ -38,7 +38,6 @@ export const siteConfig = {
           { name: 'Corporate Training', href: '/services/training' },
           { name: 'PoC Development', href: '/services/poc-development' },
           { name: 'Agentic AI Solutions', href: '/services/agentic-ai' },
-          { name: 'Webinars & Speaking', href: '/webinars' },
           { name: 'Collaboration', href: '/services/collaboration' },
         ]
       },
