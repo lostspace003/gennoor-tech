@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { Mail, Phone, Linkedin, Github, MapPin } from 'lucide-react'
+import { Mail, Phone, Linkedin, Github, MapPin, Youtube } from 'lucide-react'
 import { siteConfig } from '@/lib/site-config'
 import dynamic from 'next/dynamic'
 
@@ -102,6 +102,17 @@ export default function Footer() {
                   aria-label="GitHub"
                 >
                   <Github className="h-5 w-5" />
+                </a>
+              )}
+              {siteConfig.social.youtube && (
+                <a
+                  href={siteConfig.social.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-600 hover:text-red-600"
+                  aria-label="YouTube"
+                >
+                  <Youtube className="h-5 w-5" />
                 </a>
               )}
             </div>

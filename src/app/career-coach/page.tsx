@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
+import { User, Target, Mic, PenTool, Compass, Zap } from 'lucide-react'
 
 const API = process.env.NEXT_PUBLIC_CAREER_API_URL || 'https://ca-gennoor-career.kindbeach-fe39b6f0.centralindia.azurecontainerapps.io'
 
@@ -17,7 +18,7 @@ const AGENTS: Record<string, AgentConfig> = {
     name: 'Profile Optimizer',
     short: 'Profile',
     desc: 'Audit & rewrite your LinkedIn profile for maximum impact',
-    icon: '👤',
+    icon: 'User',
     color: 'teal',
     steps: ['Section Audit', 'Gap Analysis', 'AI Rewrite', 'Final Package'],
     fields: [
@@ -33,7 +34,7 @@ const AGENTS: Record<string, AgentConfig> = {
     name: 'Career Strategist',
     short: 'Career',
     desc: 'Skill gap analysis, target roles & 30-60-90 day action plan',
-    icon: '🎯',
+    icon: 'Target',
     color: 'blue',
     steps: ['Resume Parsing', 'Skill Gap Mapping', 'Target Roles', 'Action Plan'],
     fields: [
@@ -49,7 +50,7 @@ const AGENTS: Record<string, AgentConfig> = {
     name: 'Interview Coach',
     short: 'Interview',
     desc: 'Mock interviews, tailored questions & performance scorecards',
-    icon: '🎤',
+    icon: 'Mic',
     color: 'orange',
     steps: ['JD Analysis', 'Question Generation', 'Mock Interview', 'Scorecard'],
     fields: [
@@ -64,7 +65,7 @@ const AGENTS: Record<string, AgentConfig> = {
     name: 'Content Generator',
     short: 'Content',
     desc: 'LinkedIn posts, content pillars & 30-day publishing calendar',
-    icon: '✍️',
+    icon: 'PenTool',
     color: 'amber',
     steps: ['Audience Mapping', 'Content Pillars', 'Post Drafting', '30-Day Calendar'],
     fields: [
@@ -79,7 +80,7 @@ const AGENTS: Record<string, AgentConfig> = {
     name: 'Skill Navigator',
     short: 'Skills',
     desc: 'Learning paths, free resources & 12-week upskilling roadmap',
-    icon: '🧭',
+    icon: 'Compass',
     color: 'pink',
     steps: ['Skill Inventory', 'Dream Role Fit', 'Resource Curation', '12-Week Plan'],
     fields: [
@@ -97,6 +98,15 @@ const COLORS: Record<string, { bg: string; border: string; text: string; light: 
   orange: { bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-700', light: 'bg-orange-100', bar: 'bg-orange-500' },
   amber:  { bg: 'bg-amber-50',  border: 'border-amber-200',  text: 'text-amber-700',  light: 'bg-amber-100',  bar: 'bg-amber-500' },
   pink:   { bg: 'bg-pink-50',   border: 'border-pink-200',   text: 'text-pink-700',   light: 'bg-pink-100',   bar: 'bg-pink-500' },
+}
+
+const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  User, Target, Mic, PenTool, Compass, Zap,
+}
+
+function AgentIcon({ name, className = 'h-5 w-5' }: { name: string; className?: string }) {
+  const Icon = ICON_MAP[name]
+  return Icon ? <Icon className={className} /> : null
 }
 
 // ── Document Extraction (LLM-powered) ───────────────────────────────────
@@ -464,7 +474,7 @@ export default function CareerCoachPage() {
       const allResults = Object.entries(results).map(([id, content]) => {
         const a = AGENTS[id]
         return `<div style="margin-bottom:24px;">
-          <h2 style="color:#0c4a6e;font-size:18px;margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid #e0f2fe;">${a?.icon || ''} ${a?.name || id}</h2>
+          <h2 style="color:#0c4a6e;font-size:18px;margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid #e0f2fe;">${a?.name || id}</h2>
           <div class="md-content">${markdownToHtml(content)}</div>
         </div>`
       }).join('')
@@ -584,7 +594,9 @@ export default function CareerCoachPage() {
                   className={`group text-left rounded-xl border-2 ${ac.border} ${ac.bg} p-6 transition-all hover:shadow-lg hover:scale-[1.02]`}
                 >
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="text-2xl">{a.icon}</span>
+                    <div className={`w-10 h-10 rounded-lg ${ac.light} flex items-center justify-center`}>
+                      <AgentIcon name={a.icon} className={`h-5 w-5 ${ac.text}`} />
+                    </div>
                     <h3 className={`text-lg font-bold ${ac.text}`}>{a.name}</h3>
                   </div>
                   <p className="text-sm text-dark-500 mb-4">{a.desc}</p>
@@ -602,7 +614,9 @@ export default function CareerCoachPage() {
               className="text-left rounded-xl border-2 border-primary-300 bg-gradient-to-br from-primary-50 to-accent-50 p-6 transition-all hover:shadow-lg hover:scale-[1.02] md:col-span-2 lg:col-span-1"
             >
               <div className="flex items-center gap-3 mb-3">
-                <span className="text-2xl">⚡</span>
+                <div className="w-10 h-10 rounded-lg bg-primary-100 flex items-center justify-center">
+                  <Zap className="h-5 w-5 text-primary-700" />
+                </div>
                 <h3 className="text-lg font-bold text-primary-700">Full Career Package</h3>
               </div>
               <p className="text-sm text-dark-500 mb-4">
@@ -641,7 +655,7 @@ export default function CareerCoachPage() {
               className="rounded-full shadow-sm ring-1 ring-gray-200"
             />
             <div>
-              <h2 className="text-xl font-bold text-dark-800">{agent!.icon} {agent!.name}</h2>
+              <h2 className="text-xl font-bold text-dark-800 flex items-center gap-2"><AgentIcon name={agent!.icon} className="h-5 w-5" /> {agent!.name}</h2>
               <p className="text-sm text-dark-400">{agent!.desc}</p>
             </div>
           </div>
@@ -821,7 +835,7 @@ export default function CareerCoachPage() {
                     const ac = COLORS[a.color]
                     return (
                       <span key={i} className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full ${ac.light} ${ac.text}`}>
-                        <span className="opacity-60">{step.order}.</span> {a.icon} {a.short}
+                        <span className="opacity-60">{step.order}.</span> <AgentIcon name={a.icon} className="h-3.5 w-3.5" /> {a.short}
                       </span>
                     )
                   })}
@@ -845,7 +859,7 @@ export default function CareerCoachPage() {
                         return (
                           <button key={id} onClick={() => setActiveResultTab(id)}
                             className={`flex items-center gap-1.5 px-3 py-2 rounded-t-lg text-xs font-medium transition-all ${isActive ? `${ac.light} ${ac.text} border-b-2 ${ac.border}` : 'text-dark-400 hover:text-dark-600 hover:bg-gray-50'}`}>
-                            {a.icon} {a.short}
+                            <AgentIcon name={a.icon} className="h-3.5 w-3.5" /> {a.short}
                           </button>
                         )
                       })}
@@ -899,7 +913,9 @@ export default function CareerCoachPage() {
                 <div key={id} className={`rounded-xl border ${ac.border} overflow-hidden bg-white shadow-sm`}>
                   <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                      <span className="text-lg">{a.icon}</span>
+                      <div className={`w-8 h-8 rounded-lg ${ac.light} flex items-center justify-center`}>
+                        <AgentIcon name={a.icon} className={`h-4 w-4 ${ac.text}`} />
+                      </div>
                       <div>
                         <h4 className="text-sm font-semibold text-dark-700">{a.name}</h4>
                         <p className="text-[10px] text-dark-400 font-mono">

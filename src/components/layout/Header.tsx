@@ -12,6 +12,7 @@ export default function Header() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const pathname = usePathname()
   const navRef = useRef<HTMLElement>(null)
+  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Close dropdown when clicking outside or pressing Escape
   useEffect(() => {
@@ -43,6 +44,22 @@ export default function Header() {
     setIsMenuOpen(false)
   }, [pathname])
 
+  // Desktop hover handlers with small delay to prevent flicker
+  const handleMouseEnter = (name: string) => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current)
+      closeTimeoutRef.current = null
+    }
+    setOpenDropdown(name)
+  }
+
+  const handleMouseLeave = () => {
+    closeTimeoutRef.current = setTimeout(() => {
+      setOpenDropdown(null)
+    }, 150)
+  }
+
+  // Mobile click toggle
   const toggleDropdown = (name: string) => {
     setOpenDropdown(openDropdown === name ? null : name)
   }
@@ -67,18 +84,26 @@ export default function Header() {
           {/* Desktop Navigation - Added margin-left for spacing */}
           <div className="hidden lg:flex lg:items-center lg:space-x-1 lg:ml-16">
             {siteConfig.navigation.main.map((item) => (
-              <div key={item.name} className="relative">
+              <div
+                key={item.name}
+                className="relative"
+                onMouseEnter={() => item.children && handleMouseEnter(item.name)}
+                onMouseLeave={() => item.children && handleMouseLeave()}
+              >
                 {item.children ? (
-                  <button
-                    onClick={() => toggleDropdown(item.name)}
+                  <Link
+                    href={item.href}
                     className={cn(
                       'nav-link px-3 py-2 flex items-center space-x-1',
                       pathname.startsWith(item.href) && 'text-primary-600'
                     )}
                   >
                     <span>{item.name}</span>
-                    <ChevronDown className="h-4 w-4" />
-                  </button>
+                    <ChevronDown className={cn(
+                      'h-4 w-4 transition-transform duration-200',
+                      openDropdown === item.name && 'rotate-180'
+                    )} />
+                  </Link>
                 ) : (
                   <Link
                     href={item.href}
@@ -91,15 +116,20 @@ export default function Header() {
                   </Link>
                 )}
 
-                {/* Dropdown Menu */}
+                {/* Dropdown Menu - opens on hover */}
                 {item.children && openDropdown === item.name && (
-                  <div className="absolute left-0 mt-2 w-64 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                    <div className="py-1">
+                  <div className="absolute left-0 top-full pt-1 w-64">
+                    <div className="rounded-lg shadow-lg bg-white ring-1 ring-black/5 py-1 animate-fade-in">
                       {item.children.map((child) => (
                         <Link
                           key={child.name}
                           href={child.href}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          className={cn(
+                            'block px-4 py-2.5 text-sm transition-colors',
+                            pathname === child.href
+                              ? 'text-primary-600 bg-primary-50 font-medium'
+                              : 'text-gray-700 hover:bg-gray-50 hover:text-primary-600'
+                          )}
                           onClick={() => setOpenDropdown(null)}
                         >
                           {child.name}

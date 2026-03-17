@@ -43,7 +43,7 @@ export default function BlogPage() {
       <header style={{ backgroundColor: '#ffffff', borderBottom: '1px solid #e5e7eb' }}>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
           <p className="text-xs font-bold tracking-[0.3em] uppercase mb-2" style={{ color: '#4f46e5' }}>Insights & Perspectives</p>
-          <h1 className="text-4xl lg:text-5xl font-black tracking-tight" style={{ fontFamily: 'Georgia, serif', color: '#111827' }}>
+          <h1 className="text-4xl lg:text-5xl font-black tracking-tight" style={{ color: '#111827' }}>
             The Gennoor Tech Blog
           </h1>
           <div className="w-24 h-1 mx-auto mt-4 mb-3 rounded-full" style={{ backgroundColor: '#4f46e5' }} />
@@ -92,7 +92,7 @@ export default function BlogPage() {
                     Featured
                   </span>
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black leading-tight mb-4 group-hover:translate-x-1 transition-transform duration-300"
-                    style={{ fontFamily: 'Georgia, serif', color: '#ffffff' }}>
+                    style={{ color: '#ffffff' }}>
                     {hero.title}
                   </h2>
                   <p className="leading-relaxed mb-6 text-sm sm:text-base line-clamp-3" style={{ color: 'rgba(255,255,255,0.85)' }}>
@@ -140,7 +140,7 @@ export default function BlogPage() {
                     {post.category}
                   </span>
                   <h3 className="text-lg font-bold leading-snug line-clamp-2 group-hover:translate-x-0.5 transition-transform"
-                    style={{ fontFamily: 'Georgia, serif', color: '#ffffff' }}>
+                    style={{ color: '#ffffff' }}>
                     {post.title}
                   </h3>
                 </div>
@@ -258,7 +258,7 @@ export default function BlogPage() {
                     style={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb' }}>
                     <div className="relative h-32 flex flex-col justify-end p-4" style={{ backgroundColor: post.coverColor }}>
                       <span className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(255,255,255,0.7)' }}>{post.category}</span>
-                      <h3 className="text-sm font-bold leading-snug line-clamp-2" style={{ color: '#ffffff', fontFamily: 'Georgia, serif' }}>
+                      <h3 className="text-sm font-bold leading-snug line-clamp-2" style={{ color: '#ffffff' }}>
                         {post.title}
                       </h3>
                     </div>
@@ -277,7 +277,7 @@ export default function BlogPage() {
       {/* Bottom CTA */}
       <section style={{ backgroundColor: '#ffffff', borderTop: '1px solid #e5e7eb' }}>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-14 text-center">
-          <h2 className="text-2xl font-bold mb-3" style={{ fontFamily: 'Georgia, serif', color: '#111827' }}>
+          <h2 className="text-2xl font-bold mb-3" style={{ color: '#111827' }}>
             Want AI insights tailored to your organization?
           </h2>
           <p className="mb-8 max-w-xl mx-auto text-sm" style={{ color: '#6b7280' }}>

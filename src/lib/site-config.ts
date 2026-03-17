@@ -13,6 +13,7 @@ export const siteConfig = {
     linkedin: 'https://www.linkedin.com/in/jalal-khan-b8319955/',
     github: 'https://github.com/lostspace003',
     microsoftLearn: 'https://learn.microsoft.com/en-us/users/lostspace003/transcript/vjw63s4jxnmmwre?tab=credentials-tab',
+    youtube: 'https://www.youtube.com/@GennoorTech',
     twitter: '',
   },
 
@@ -37,7 +38,7 @@ export const siteConfig = {
           { name: 'Corporate Training', href: '/services/training' },
           { name: 'PoC Development', href: '/services/poc-development' },
           { name: 'Agentic AI Solutions', href: '/services/agentic-ai' },
-          { name: 'Webinars & Speaking', href: '/services/webinars' },
+          { name: 'Webinars & Speaking', href: '/webinars' },
           { name: 'Collaboration', href: '/services/collaboration' },
         ]
       },

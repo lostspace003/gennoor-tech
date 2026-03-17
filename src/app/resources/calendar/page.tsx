@@ -1,0 +1,491 @@
+'use client'
+
+import { useState, useEffect, useCallback } from 'react'
+import Link from 'next/link'
+import {
+  Calendar,
+  Clock,
+  Globe,
+  User,
+  Mail,
+  MessageSquare,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react'
+
+/* ───────── helpers ───────── */
+
+const MONTHS = [
+  'January','February','March','April','May','June',
+  'July','August','September','October','November','December',
+]
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+
+function generateTimeSlots(): string[] {
+  const slots: string[] = []
+  for (let h = 9; h < 18; h++) {
+    slots.push(`${h}:00`)
+    slots.push(`${h}:30`)
+  }
+  return slots
+}
+
+function formatTime(slot: string): string {
+  const [h, m] = slot.split(':').map(Number)
+  const suffix = h >= 12 ? 'PM' : 'AM'
+  const hour12 = h % 12 === 0 ? 12 : h % 12
+  return `${hour12}:${m.toString().padStart(2, '0')} ${suffix}`
+}
+
+function formatDateLabel(d: Date): string {
+  return `${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`
+}
+
+function isSameDay(a: Date, b: Date): boolean {
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  )
+}
+
+/* ───────── common timezones ───────── */
+
+const COMMON_TIMEZONES = [
+  'Asia/Kolkata',
+  'America/New_York',
+  'America/Chicago',
+  'America/Denver',
+  'America/Los_Angeles',
+  'Europe/London',
+  'Europe/Berlin',
+  'Europe/Paris',
+  'Asia/Dubai',
+  'Asia/Singapore',
+  'Asia/Tokyo',
+  'Australia/Sydney',
+  'Pacific/Auckland',
+  'UTC',
+]
+
+/* ───────── component ───────── */
+
+export default function BookingCalendarPage() {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const maxDate = new Date(today)
+  maxDate.setDate(maxDate.getDate() + 30)
+
+  const [viewMonth, setViewMonth] = useState(today.getMonth())
+  const [viewYear, setViewYear] = useState(today.getFullYear())
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
+  const [timezone, setTimezone] = useState('UTC')
+  const [showTzPicker, setShowTzPicker] = useState(false)
+
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [whatsapp, setWhatsapp] = useState('')
+  const [topic, setTopic] = useState('')
+
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
+  const [errorMsg, setErrorMsg] = useState('')
+
+  /* detect timezone on mount */
+  useEffect(() => {
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+      if (tz) setTimezone(tz)
+    } catch {
+      /* fallback stays UTC */
+    }
+  }, [])
+
+  /* ── calendar grid ── */
+
+  const firstDayOfMonth = new Date(viewYear, viewMonth, 1).getDay()
+  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate()
+
+  const canGoPrev = viewYear > today.getFullYear() || viewMonth > today.getMonth()
+  const canGoNext =
+    viewYear < maxDate.getFullYear() ||
+    (viewYear === maxDate.getFullYear() && viewMonth < maxDate.getMonth())
+
+  const goPrev = () => {
+    if (!canGoPrev) return
+    if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1) }
+    else setViewMonth(m => m - 1)
+  }
+
+  const goNext = () => {
+    if (!canGoNext) return
+    if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y + 1) }
+    else setViewMonth(m => m + 1)
+  }
+
+  const isDaySelectable = useCallback(
+    (day: number) => {
+      const d = new Date(viewYear, viewMonth, day)
+      const dow = d.getDay()
+      if (dow === 0 || dow === 6) return false // weekend
+      if (d < today) return false
+      if (d > maxDate) return false
+      return true
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [viewYear, viewMonth],
+  )
+
+  const isToday = (day: number) =>
+    isSameDay(new Date(viewYear, viewMonth, day), today)
+
+  const isSelected = (day: number) =>
+    selectedDate !== null &&
+    isSameDay(new Date(viewYear, viewMonth, day), selectedDate)
+
+  /* ── time slots ── */
+  const timeSlots = generateTimeSlots()
+
+  /* ── submit ── */
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!selectedDate || !selectedSlot) return
+    setStatus('submitting')
+    setErrorMsg('')
+
+    const dateLabel = formatDateLabel(selectedDate)
+    const timeLabel = formatTime(selectedSlot)
+
+    try {
+      const res = await fetch('/api/book-expert-call', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          whatsapp,
+          programTitle: 'Discovery Call Booking',
+          message: `Date: ${dateLabel} | Time: ${timeLabel} (${timezone}) | Topic: ${topic}`,
+          timestamp: new Date().toISOString(),
+        }),
+      })
+
+      if (!res.ok) throw new Error('Failed to submit')
+      setStatus('success')
+    } catch {
+      setStatus('error')
+      setErrorMsg(
+        'Something went wrong. Please try again or email us directly at contact@gennoor.com',
+      )
+    }
+  }
+
+  /* ── success state ── */
+  if (status === 'success') {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+        <div className="container mx-auto px-4 py-24 text-center max-w-2xl">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-6">
+            <Check className="h-8 w-8 text-green-600" />
+          </div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">Booking Confirmed!</h1>
+          <p className="text-lg text-gray-600 mb-2">
+            Your discovery call has been scheduled for{' '}
+            <strong>{selectedDate ? formatDateLabel(selectedDate) : ''}</strong> at{' '}
+            <strong>{selectedSlot ? formatTime(selectedSlot) : ''}</strong>{' '}
+            ({timezone}).
+          </p>
+          <p className="text-gray-500 mb-8">
+            A confirmation will be sent to <strong>{email}</strong>. We&apos;ll also reach out on
+            WhatsApp to share the meeting link.
+          </p>
+          <Link
+            href="/"
+            className="inline-block rounded-lg bg-primary-600 px-6 py-3 text-white font-medium hover:bg-primary-700 transition-colors"
+          >
+            Back to Home
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  /* ── main render ── */
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <div className="container mx-auto px-4 py-16 max-w-5xl">
+        {/* header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            Schedule a Discovery Call
+          </h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Book a free 30-minute consultation with a Gennoor Tech expert. Pick a date and
+            time that works for you.
+          </p>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* ─── LEFT: Calendar + Slots ─── */}
+          <div className="space-y-6">
+            {/* calendar card */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+              <div className="flex items-center gap-2 mb-5">
+                <Calendar className="h-5 w-5 text-primary-600" />
+                <h2 className="text-lg font-semibold text-gray-900">Select a Date</h2>
+              </div>
+
+              {/* month nav */}
+              <div className="flex items-center justify-between mb-4">
+                <button
+                  onClick={goPrev}
+                  disabled={!canGoPrev}
+                  className="p-1 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
+                  aria-label="Previous month"
+                >
+                  <ChevronLeft className="h-5 w-5 text-gray-700" />
+                </button>
+                <span className="font-medium text-gray-900">
+                  {MONTHS[viewMonth]} {viewYear}
+                </span>
+                <button
+                  onClick={goNext}
+                  disabled={!canGoNext}
+                  className="p-1 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
+                  aria-label="Next month"
+                >
+                  <ChevronRight className="h-5 w-5 text-gray-700" />
+                </button>
+              </div>
+
+              {/* day headers */}
+              <div className="grid grid-cols-7 text-center text-xs font-medium text-gray-500 mb-2">
+                {DAYS.map(d => (
+                  <span key={d}>{d}</span>
+                ))}
+              </div>
+
+              {/* day cells */}
+              <div className="grid grid-cols-7 gap-1 text-center text-sm">
+                {/* blanks before first day */}
+                {Array.from({ length: firstDayOfMonth }).map((_, i) => (
+                  <span key={`blank-${i}`} />
+                ))}
+
+                {Array.from({ length: daysInMonth }).map((_, i) => {
+                  const day = i + 1
+                  const selectable = isDaySelectable(day)
+                  const dow = new Date(viewYear, viewMonth, day).getDay()
+                  const isWeekend = dow === 0 || dow === 6
+
+                  return (
+                    <button
+                      key={day}
+                      disabled={!selectable}
+                      onClick={() => {
+                        setSelectedDate(new Date(viewYear, viewMonth, day))
+                        setSelectedSlot(null)
+                      }}
+                      className={`
+                        h-9 w-9 mx-auto rounded-full text-sm font-medium transition-colors
+                        ${isSelected(day) ? 'bg-primary-600 text-white' : ''}
+                        ${!isSelected(day) && isToday(day) ? 'ring-2 ring-primary-400 text-primary-700' : ''}
+                        ${!selectable && isWeekend ? 'text-gray-300 cursor-not-allowed' : ''}
+                        ${!selectable && !isWeekend ? 'text-gray-300 cursor-not-allowed' : ''}
+                        ${selectable && !isSelected(day) && !isToday(day) ? 'text-gray-800 hover:bg-primary-50' : ''}
+                      `}
+                    >
+                      {day}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* time-slot card */}
+            {selectedDate && (
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                <div className="flex items-center gap-2 mb-1">
+                  <Clock className="h-5 w-5 text-primary-600" />
+                  <h2 className="text-lg font-semibold text-gray-900">Select a Time</h2>
+                </div>
+                <p className="text-sm text-gray-500 mb-4">
+                  {formatDateLabel(selectedDate)}
+                </p>
+
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                  {timeSlots.map(slot => (
+                    <button
+                      key={slot}
+                      onClick={() => setSelectedSlot(slot)}
+                      className={`
+                        py-2 px-3 rounded-lg text-sm font-medium transition-colors border
+                        ${
+                          selectedSlot === slot
+                            ? 'bg-primary-600 text-white border-primary-600'
+                            : 'bg-white text-gray-700 border-gray-200 hover:border-primary-400 hover:text-primary-700'
+                        }
+                      `}
+                    >
+                      {formatTime(slot)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* timezone */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+              <div className="flex items-center gap-2 mb-3">
+                <Globe className="h-5 w-5 text-primary-600" />
+                <h2 className="text-lg font-semibold text-gray-900">Timezone</h2>
+              </div>
+
+              {!showTzPicker ? (
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-700">{timezone}</span>
+                  <button
+                    onClick={() => setShowTzPicker(true)}
+                    className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+                  >
+                    Change
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <select
+                    value={timezone}
+                    onChange={e => {
+                      setTimezone(e.target.value)
+                      setShowTzPicker(false)
+                    }}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    {COMMON_TIMEZONES.map(tz => (
+                      <option key={tz} value={tz}>
+                        {tz.replace(/_/g, ' ')}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={() => setShowTzPicker(false)}
+                    className="text-xs text-gray-500 hover:text-gray-700"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* ─── RIGHT: Details form ─── */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 h-fit lg:sticky lg:top-8">
+            <h2 className="text-lg font-semibold text-gray-900 mb-5">Your Details</h2>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* name */}
+              <div>
+                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
+                  <User className="h-4 w-4" /> Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  placeholder="Your full name"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+
+              {/* email */}
+              <div>
+                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
+                  <Mail className="h-4 w-4" /> Email
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+
+              {/* whatsapp */}
+              <div>
+                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
+                  <MessageSquare className="h-4 w-4" /> WhatsApp Number
+                </label>
+                <input
+                  type="tel"
+                  required
+                  value={whatsapp}
+                  onChange={e => setWhatsapp(e.target.value)}
+                  placeholder="+91 98765 43210"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+
+              {/* topic */}
+              <div>
+                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
+                  <Calendar className="h-4 w-4" /> Topic / Purpose of Call
+                </label>
+                <textarea
+                  required
+                  rows={3}
+                  value={topic}
+                  onChange={e => setTopic(e.target.value)}
+                  placeholder="E.g., AI strategy discussion, agentic workflow POC..."
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+                />
+              </div>
+
+              {/* summary bar */}
+              {selectedDate && selectedSlot && (
+                <div className="rounded-lg bg-primary-50 p-3 text-sm text-primary-800">
+                  <strong>Selected:</strong> {formatDateLabel(selectedDate)} at{' '}
+                  {formatTime(selectedSlot)} ({timezone})
+                </div>
+              )}
+
+              {/* error */}
+              {status === 'error' && (
+                <p className="text-sm text-red-600">{errorMsg}</p>
+              )}
+
+              {/* submit */}
+              <button
+                type="submit"
+                disabled={!selectedDate || !selectedSlot || status === 'submitting'}
+                className="w-full rounded-lg bg-primary-600 py-3 text-white font-medium hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {status === 'submitting' ? (
+                  <>
+                    <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Booking...
+                  </>
+                ) : (
+                  <>
+                    <Check className="h-4 w-4" />
+                    Confirm Booking
+                  </>
+                )}
+              </button>
+
+              {!selectedDate && (
+                <p className="text-xs text-center text-gray-400">
+                  Please select a date and time to continue.
+                </p>
+              )}
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
