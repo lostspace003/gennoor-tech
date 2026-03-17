@@ -161,6 +161,12 @@ export default function BookingCalendarPage() {
 
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
+  const [showRequestForm, setShowRequestForm] = useState(false)
+  const [requestStatus, setRequestStatus] = useState<'idle' | 'submitting' | 'sent'>('idle')
+  const [reqName, setReqName] = useState('')
+  const [reqEmail, setReqEmail] = useState('')
+  const [reqWhatsapp, setReqWhatsapp] = useState('')
+  const [reqMessage, setReqMessage] = useState('')
 
   /* detect timezone on mount */
   useEffect(() => {
@@ -222,6 +228,27 @@ export default function BookingCalendarPage() {
         return !isISTNightTime(istHour)
       })
     : []
+
+  /* ── request a call (when no slots available) ── */
+  const handleRequestCall = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setRequestStatus('submitting')
+    try {
+      await fetch('/api/book-expert-call', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: reqName,
+          email: reqEmail,
+          whatsapp: reqWhatsapp,
+          programTitle: 'Call Request (Outside Available Hours)',
+          message: `Preferred timezone: ${timezone} | Message: ${reqMessage}`,
+          timestamp: new Date().toISOString(),
+        }),
+      })
+    } catch { /* show sent anyway */ }
+    setRequestStatus('sent')
+  }
 
   /* ── submit ── */
   const handleSubmit = async (e: React.FormEvent) => {
@@ -410,11 +437,73 @@ export default function BookingCalendarPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500">No available slots for this date in your timezone.</p>
+                  <div className="space-y-4">
+                    <p className="text-sm text-gray-600">
+                      No available slots for this date in your timezone. Our available hours are <strong>8:00 AM – 11:00 PM IST</strong>.
+                    </p>
+                    {!showRequestForm && requestStatus !== 'sent' && (
+                      <button
+                        onClick={() => setShowRequestForm(true)}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-primary-700 bg-primary-50 rounded-lg hover:bg-primary-100 transition-colors border border-primary-200"
+                      >
+                        <Mail className="h-4 w-4" />
+                        Request a Call — Notify Us
+                      </button>
+                    )}
+                    {showRequestForm && requestStatus !== 'sent' && (
+                      <form onSubmit={handleRequestCall} className="space-y-3 bg-gray-50 rounded-xl p-4 border border-gray-100">
+                        <p className="text-xs text-gray-500">Let us know your preferred time and we&apos;ll get back to you.</p>
+                        <input
+                          type="text" required value={reqName} onChange={e => setReqName(e.target.value)}
+                          placeholder="Your name"
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        />
+                        <input
+                          type="email" required value={reqEmail} onChange={e => setReqEmail(e.target.value)}
+                          placeholder="Your email"
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        />
+                        <input
+                          type="tel" value={reqWhatsapp} onChange={e => setReqWhatsapp(e.target.value)}
+                          placeholder="WhatsApp number (optional)"
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        />
+                        <textarea
+                          required rows={2} value={reqMessage} onChange={e => setReqMessage(e.target.value)}
+                          placeholder="Preferred date/time and topic for the call..."
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            type="submit"
+                            disabled={requestStatus === 'submitting'}
+                            className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
+                          >
+                            {requestStatus === 'submitting' ? 'Sending...' : 'Send Request'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setShowRequestForm(false)}
+                            className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    )}
+                    {requestStatus === 'sent' && (
+                      <div className="flex items-center gap-2 bg-green-50 text-green-700 rounded-lg p-3 text-sm border border-green-200">
+                        <Check className="h-4 w-4 flex-shrink-0" />
+                        <p>Request sent! We&apos;ll get back to you shortly via email.</p>
+                      </div>
+                    )}
+                  </div>
                 )}
-                <p className="text-xs text-gray-400 mt-3">
-                  Available hours: 8:00 AM – 11:00 PM IST (Indian Standard Time)
-                </p>
+                {timeSlots.length > 0 && (
+                  <p className="text-xs text-gray-400 mt-3">
+                    Available hours: 8:00 AM – 11:00 PM IST (Indian Standard Time)
+                  </p>
+                )}
               </div>
             )}
 
