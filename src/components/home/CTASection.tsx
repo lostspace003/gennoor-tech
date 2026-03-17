@@ -36,7 +36,7 @@ export default function CTASection() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/contact#book"
+                href="/resources/calendar"
                 className="inline-flex items-center justify-center px-8 py-4 text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 transition-colors group"
               >
                 Book a Discovery Call

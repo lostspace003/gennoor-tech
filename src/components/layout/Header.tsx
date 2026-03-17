@@ -146,7 +146,7 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             {/* CTA Button - Desktop */}
             <Link
-              href="/contact#book"
+              href="/resources/calendar"
               className="hidden lg:inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors whitespace-nowrap"
             >
               Book a Call
@@ -219,7 +219,7 @@ export default function Header() {
                 </div>
               ))}
               <Link
-                href="/contact#book"
+                href="/resources/calendar"
                 className="block mx-3 mt-4 px-6 py-2.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg text-center transition-colors whitespace-nowrap"
                 onClick={() => setIsMenuOpen(false)}
               >

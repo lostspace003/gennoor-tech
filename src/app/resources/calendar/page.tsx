@@ -22,14 +22,80 @@ const MONTHS = [
 ]
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
 
+/** Minimum days from today before a booking is allowed */
+const MIN_BOOKING_GAP_DAYS = 3
+
+/**
+ * Convert a local time slot (in the user's chosen timezone) to IST hours.
+ * Returns the IST hour (0-23) for the given slot on the given date.
+ */
+function slotToISTHour(date: Date, slotHour: number, slotMinute: number, tz: string): number {
+  // Build a Date in the user's timezone for this slot
+  const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+  const timeStr = `${String(slotHour).padStart(2, '0')}:${String(slotMinute).padStart(2, '0')}:00`
+
+  // Get the UTC timestamp by parsing in the user's timezone
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz,
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+    hour12: false,
+  })
+
+  // Create a date object — we need to figure out the UTC offset for the user's timezone
+  // Use a trick: format the same instant in IST
+  const utcDate = new Date(`${dateStr}T${timeStr}`)
+
+  // Get the offset difference by comparing formatted times
+  const istFormatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Kolkata',
+    hour: 'numeric', minute: 'numeric',
+    hour12: false,
+  })
+
+  const userFormatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz,
+    hour: 'numeric', minute: 'numeric',
+    hour12: false,
+  })
+
+  // Use a reference date to calculate offset difference
+  const refDate = new Date('2026-01-15T12:00:00Z')
+  const istParts = istFormatter.formatToParts(refDate)
+  const userParts = userFormatter.formatToParts(refDate)
+
+  const istH = parseInt(istParts.find(p => p.type === 'hour')?.value || '0')
+  const istM = parseInt(istParts.find(p => p.type === 'minute')?.value || '0')
+  const userH = parseInt(userParts.find(p => p.type === 'hour')?.value || '0')
+  const userM = parseInt(userParts.find(p => p.type === 'minute')?.value || '0')
+
+  const istTotal = istH * 60 + istM
+  const userTotal = userH * 60 + userM
+  const offsetDiff = istTotal - userTotal // IST minutes ahead of user tz
+
+  const slotInMinutes = slotHour * 60 + slotMinute
+  const istMinutes = slotInMinutes + offsetDiff
+  const istHour = Math.floor(((istMinutes % 1440) + 1440) % 1440 / 60)
+  return istHour
+}
+
+/**
+ * Check if a slot falls within IST night hours (11 PM to 8 AM IST = hours 23, 0-7)
+ */
+function isISTNightTime(istHour: number): boolean {
+  return istHour >= 23 || istHour < 8
+}
+
 function generateTimeSlots(): string[] {
   const slots: string[] = []
-  for (let h = 9; h < 18; h++) {
+  for (let h = 0; h < 24; h++) {
     slots.push(`${h}:00`)
     slots.push(`${h}:30`)
   }
   return slots
 }
+
+const ALL_SLOTS = generateTimeSlots()
 
 function formatTime(slot: string): string {
   const [h, m] = slot.split(':').map(Number)
@@ -74,6 +140,9 @@ const COMMON_TIMEZONES = [
 export default function BookingCalendarPage() {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
+
+  const minDate = new Date(today)
+  minDate.setDate(minDate.getDate() + MIN_BOOKING_GAP_DAYS)
 
   const maxDate = new Date(today)
   maxDate.setDate(maxDate.getDate() + 30)
@@ -130,7 +199,7 @@ export default function BookingCalendarPage() {
       const d = new Date(viewYear, viewMonth, day)
       const dow = d.getDay()
       if (dow === 0 || dow === 6) return false // weekend
-      if (d < today) return false
+      if (d < minDate) return false // must be at least 3 days from today
       if (d > maxDate) return false
       return true
     },
@@ -145,8 +214,14 @@ export default function BookingCalendarPage() {
     selectedDate !== null &&
     isSameDay(new Date(viewYear, viewMonth, day), selectedDate)
 
-  /* ── time slots ── */
-  const timeSlots = generateTimeSlots()
+  /* ── time slots — filter out IST night hours (11 PM - 8 AM) ── */
+  const timeSlots = selectedDate
+    ? ALL_SLOTS.filter(slot => {
+        const [h, m] = slot.split(':').map(Number)
+        const istHour = slotToISTHour(selectedDate, h, m, timezone)
+        return !isISTNightTime(istHour)
+      })
+    : []
 
   /* ── submit ── */
   const handleSubmit = async (e: React.FormEvent) => {
@@ -315,24 +390,31 @@ export default function BookingCalendarPage() {
                   {formatDateLabel(selectedDate)}
                 </p>
 
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                  {timeSlots.map(slot => (
-                    <button
-                      key={slot}
-                      onClick={() => setSelectedSlot(slot)}
-                      className={`
-                        py-2 px-3 rounded-lg text-sm font-medium transition-colors border
-                        ${
-                          selectedSlot === slot
-                            ? 'bg-primary-600 text-white border-primary-600'
-                            : 'bg-white text-gray-700 border-gray-200 hover:border-primary-400 hover:text-primary-700'
-                        }
-                      `}
-                    >
-                      {formatTime(slot)}
-                    </button>
-                  ))}
-                </div>
+                {timeSlots.length > 0 ? (
+                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                    {timeSlots.map(slot => (
+                      <button
+                        key={slot}
+                        onClick={() => setSelectedSlot(slot)}
+                        className={`
+                          py-2 px-3 rounded-lg text-sm font-medium transition-colors border
+                          ${
+                            selectedSlot === slot
+                              ? 'bg-primary-600 text-white border-primary-600'
+                              : 'bg-white text-gray-700 border-gray-200 hover:border-primary-400 hover:text-primary-700'
+                          }
+                        `}
+                      >
+                        {formatTime(slot)}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500">No available slots for this date in your timezone.</p>
+                )}
+                <p className="text-xs text-gray-400 mt-3">
+                  Available hours: 8:00 AM – 11:00 PM IST (Indian Standard Time)
+                </p>
               </div>
             )}
 
