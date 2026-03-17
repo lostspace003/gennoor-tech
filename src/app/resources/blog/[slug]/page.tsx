@@ -47,14 +47,15 @@ function ShareBar({ post, slug }: { post: BlogPost; slug: string }) {
     <div className="flex items-center gap-1.5">
       {channels.map(ch => (
         <a key={ch.name} href={ch.href} target="_blank" rel="noopener noreferrer"
-          className="text-white p-2 rounded-lg transition-all duration-200 hover:scale-110 hover:opacity-90"
-          style={{ backgroundColor: ch.bg }}
+          className="p-2 rounded-lg transition-all duration-200 hover:scale-110 hover:opacity-90"
+          style={{ backgroundColor: ch.bg, color: '#ffffff' }}
           title={`Share on ${ch.name}`}>
           {ch.icon}
         </a>
       ))}
       <button onClick={handleCopy}
-        className="bg-gray-600 hover:bg-gray-700 text-white p-2 rounded-lg transition-all duration-200 hover:scale-110"
+        className="p-2 rounded-lg transition-all duration-200 hover:scale-110"
+        style={{ backgroundColor: '#4b5563', color: '#ffffff' }}
         title="Copy link with hashtags">
         {copied ? (
           <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
@@ -63,32 +64,6 @@ function ShareBar({ post, slug }: { post: BlogPost; slug: string }) {
         )}
       </button>
     </div>
-  )
-}
-
-function HeaderDecor() {
-  return (
-    <svg className="absolute right-8 lg:right-16 top-1/2 -translate-y-1/2 w-32 h-32 lg:w-48 lg:h-48 opacity-10" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="100" cy="100" r="50" stroke="white" strokeWidth="2" />
-      <circle cx="100" cy="100" r="20" stroke="white" strokeWidth="2" />
-      <circle cx="100" cy="100" r="5" fill="white" />
-      <line x1="100" y1="50" x2="100" y2="10" stroke="white" strokeWidth="1.5" />
-      <line x1="100" y1="150" x2="100" y2="190" stroke="white" strokeWidth="1.5" />
-      <line x1="50" y1="100" x2="10" y2="100" stroke="white" strokeWidth="1.5" />
-      <line x1="150" y1="100" x2="190" y2="100" stroke="white" strokeWidth="1.5" />
-      <circle cx="100" cy="10" r="5" fill="white" opacity="0.5" />
-      <circle cx="100" cy="190" r="5" fill="white" opacity="0.5" />
-      <circle cx="10" cy="100" r="5" fill="white" opacity="0.5" />
-      <circle cx="190" cy="100" r="5" fill="white" opacity="0.5" />
-      <line x1="135" y1="65" x2="165" y2="35" stroke="white" strokeWidth="1" />
-      <line x1="65" y1="135" x2="35" y2="165" stroke="white" strokeWidth="1" />
-      <line x1="135" y1="135" x2="165" y2="165" stroke="white" strokeWidth="1" />
-      <line x1="65" y1="65" x2="35" y2="35" stroke="white" strokeWidth="1" />
-      <circle cx="165" cy="35" r="4" fill="white" opacity="0.4" />
-      <circle cx="35" cy="165" r="4" fill="white" opacity="0.4" />
-      <circle cx="165" cy="165" r="4" fill="white" opacity="0.4" />
-      <circle cx="35" cy="35" r="4" fill="white" opacity="0.4" />
-    </svg>
   )
 }
 
@@ -108,10 +83,10 @@ export default function BlogPostPage() {
 
   if (!post) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#f9fafb' }}>
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Post not found</h1>
-          <Link href="/resources/blog" className="text-primary-600 font-medium hover:underline">Back to Blog</Link>
+          <h1 className="text-2xl font-bold mb-2" style={{ color: '#111827' }}>Post not found</h1>
+          <Link href="/resources/blog" className="font-medium hover:underline" style={{ color: '#4f46e5' }}>Back to Blog</Link>
         </div>
       </div>
     )
@@ -138,16 +113,17 @@ export default function BlogPostPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen" style={{ backgroundColor: '#f3f4f6' }}>
       {/* Sticky Share Bar */}
-      <div className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
-        <div className="bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
+      <div className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+        style={{ transform: scrolled ? 'translateY(0)' : 'translateY(-100%)', opacity: scrolled ? 1 : 0 }}>
+        <div style={{ backgroundColor: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(12px)', borderBottom: '1px solid #e5e7eb' }}>
           <div className="max-w-4xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 min-w-0">
-              <Link href="/resources/blog" className="shrink-0 text-gray-400 hover:text-gray-600 transition-colors">
+              <Link href="/resources/blog" className="shrink-0 transition-colors" style={{ color: '#9ca3af' }}>
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
               </Link>
-              <p className="text-sm font-semibold text-gray-800 truncate">{post.title}</p>
+              <p className="text-sm font-semibold truncate" style={{ color: '#1f2937' }}>{post.title}</p>
             </div>
             <ShareBar post={post} slug={slug} />
           </div>
@@ -156,30 +132,38 @@ export default function BlogPostPage() {
 
       {/* Article Card */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
-        <article className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200/60">
+        <article className="rounded-2xl shadow-xl overflow-hidden" style={{ backgroundColor: '#ffffff', border: '1px solid rgba(229,231,235,0.6)' }}>
 
-          {/* Header */}
+          {/* Header with article title on colored background */}
           <header className="relative overflow-hidden px-6 sm:px-10 py-12 lg:py-16" style={{ backgroundColor: post.coverColor }}>
-            <HeaderDecor />
-            <div className="relative max-w-2xl">
-              <Link href="/resources/blog" className="inline-flex items-center gap-1.5 text-white/70 hover:text-white text-sm mb-5 transition-colors">
+            <div className="relative max-w-2xl" style={{ zIndex: 1 }}>
+              <Link href="/resources/blog" className="inline-flex items-center gap-1.5 text-sm mb-5 transition-colors"
+                style={{ color: 'rgba(255,255,255,0.7)' }}>
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                 All Posts
               </Link>
               <div className="flex items-center gap-3 mb-4">
-                <span className="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs font-bold rounded-full tracking-wide uppercase">{post.category}</span>
-                <span className="text-white/70 text-sm">{post.readTime}</span>
+                <span className="px-3 py-1 text-xs font-bold rounded-full tracking-wide uppercase"
+                  style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: '#ffffff' }}>{post.category}</span>
+                <span className="text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>{post.readTime}</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight mb-5">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight mb-5" style={{ color: '#ffffff' }}>
                 {post.title}
               </h1>
-              <p className="text-white/80 text-sm">By <span className="text-white font-medium">{post.author}</span></p>
+              <p className="text-sm" style={{ color: 'rgba(255,255,255,0.8)' }}>By <span className="font-medium" style={{ color: '#ffffff' }}>{post.author}</span></p>
             </div>
+            {/* Subtle decoration */}
+            <svg className="absolute right-6 lg:right-12 top-1/2 -translate-y-1/2 w-28 h-28 lg:w-40 lg:h-40" viewBox="0 0 200 200" fill="none" style={{ opacity: 0.08 }}>
+              <circle cx="100" cy="100" r="80" stroke="white" strokeWidth="2"/>
+              <circle cx="100" cy="100" r="40" stroke="white" strokeWidth="2"/>
+              <circle cx="100" cy="100" r="10" fill="white"/>
+            </svg>
           </header>
 
           {/* Share Bar */}
-          <div className="px-6 sm:px-10 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
-            <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Share this article</span>
+          <div className="px-6 sm:px-10 py-4 flex items-center justify-between"
+            style={{ borderBottom: '1px solid #f3f4f6', backgroundColor: '#fafafa' }}>
+            <span className="text-xs font-medium uppercase tracking-wider" style={{ color: '#6b7280' }}>Share this article</span>
             <ShareBar post={post} slug={slug} />
           </div>
 
@@ -199,47 +183,50 @@ export default function BlogPostPage() {
           </div>
 
           {/* Tags */}
-          <div className="px-6 sm:px-10 py-6 border-t border-gray-100">
+          <div className="px-6 sm:px-10 py-6" style={{ borderTop: '1px solid #f3f4f6' }}>
             <div className="flex flex-wrap gap-2 mb-3">
               {post.tags.map(tag => (
-                <span key={tag} className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded-full font-medium">{tag}</span>
+                <span key={tag} className="px-3 py-1.5 text-sm rounded-full font-medium" style={{ backgroundColor: '#f3f4f6', color: '#374151' }}>{tag}</span>
               ))}
             </div>
             <div className="flex flex-wrap gap-1.5">
               {post.hashtags.map(ht => (
-                <span key={ht} className="text-sm text-primary-600 font-medium">{ht}</span>
+                <span key={ht} className="text-sm font-medium" style={{ color: '#4f46e5' }}>{ht}</span>
               ))}
             </div>
           </div>
 
           {/* Bottom Share */}
-          <div className="px-6 sm:px-10 py-5 bg-gray-50 border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <p className="text-sm text-gray-600 font-medium">Found this insightful? Share with your network.</p>
+          <div className="px-6 sm:px-10 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+            style={{ backgroundColor: '#f9fafb', borderTop: '1px solid #f3f4f6' }}>
+            <p className="text-sm font-medium" style={{ color: '#4b5563' }}>Found this insightful? Share with your network.</p>
             <ShareBar post={post} slug={slug} />
           </div>
         </article>
 
-        {/* Newsletter */}
-        <div className="mt-8 rounded-2xl shadow-lg border border-gray-200/60 overflow-hidden" style={{ backgroundColor: post.coverColor }}>
+        {/* Newsletter — solid dark background, never white */}
+        <div className="mt-8 rounded-2xl shadow-lg overflow-hidden" style={{ backgroundColor: '#1e293b' }}>
           <div className="px-6 sm:px-10 py-10 text-center">
             {subscribed ? (
               <div className="flex flex-col items-center gap-3">
-                <CheckCircle className="h-10 w-10 text-white" />
-                <h3 className="text-xl font-bold text-white">You&apos;re subscribed!</h3>
-                <p className="text-white/80 max-w-md text-sm">
+                <CheckCircle className="h-10 w-10" style={{ color: '#4ade80' }} />
+                <h3 className="text-xl font-bold" style={{ color: '#ffffff' }}>You&apos;re subscribed!</h3>
+                <p className="max-w-md text-sm" style={{ color: '#94a3b8' }}>
                   You&apos;ll receive the latest AI insights from across the globe directly in your inbox.
                 </p>
               </div>
             ) : (
               <>
-                <h3 className="text-xl font-bold text-white mb-2">Stay ahead of the curve</h3>
-                <p className="text-white/80 mb-6 max-w-md mx-auto text-sm">
+                <h3 className="text-xl font-bold mb-2" style={{ color: '#ffffff' }}>Stay ahead of the curve</h3>
+                <p className="mb-6 max-w-md mx-auto text-sm" style={{ color: '#94a3b8' }}>
                   Practitioner insights on enterprise AI delivered to your inbox. No spam, just signal.
                 </p>
                 <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-sm mx-auto">
                   <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter your email"
-                    className="w-full sm:flex-1 px-4 py-2.5 rounded-lg text-sm focus:ring-2 focus:ring-white/50 focus:outline-none" />
-                  <button type="submit" className="shrink-0 px-5 py-2.5 bg-white text-gray-900 font-semibold text-sm rounded-lg hover:bg-gray-100 transition-colors">
+                    className="w-full sm:flex-1 px-4 py-2.5 rounded-lg text-sm focus:outline-none"
+                    style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.15)' }} />
+                  <button type="submit" className="shrink-0 px-5 py-2.5 font-semibold text-sm rounded-lg transition-colors hover:opacity-90"
+                    style={{ backgroundColor: '#4f46e5', color: '#ffffff' }}>
                     Subscribe
                   </button>
                 </form>
@@ -248,24 +235,25 @@ export default function BlogPostPage() {
           </div>
         </div>
 
-        {/* Related Posts */}
+        {/* Related Posts — show title on colored background */}
         {relatedPosts.length > 0 && (
           <div className="mt-8 mb-8">
-            <h3 className="text-lg font-bold text-gray-900 mb-5">Continue reading</h3>
+            <h3 className="text-lg font-bold mb-5" style={{ color: '#111827' }}>Continue reading</h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {relatedPosts.map(rp => (
                 <Link key={rp.slug} href={`/resources/blog/${rp.slug}`}
-                  className="group bg-white rounded-xl border border-gray-200/60 overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
-                  <div className="h-24 flex items-center justify-center" style={{ backgroundColor: rp.coverColor }}>
-                    <svg className="w-10 h-10 text-white opacity-20 group-hover:opacity-30 group-hover:scale-110 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <circle cx="12" cy="12" r="4" /><line x1="12" y1="2" x2="12" y2="8" /><line x1="12" y1="16" x2="12" y2="22" /><line x1="2" y1="12" x2="8" y2="12" /><line x1="16" y1="12" x2="22" y2="12" />
-                    </svg>
-                  </div>
-                  <div className="p-4">
-                    <span className="text-[11px] font-medium uppercase tracking-wide" style={{ color: rp.coverColor }}>{rp.category}</span>
-                    <h4 className="text-sm font-bold text-gray-900 mt-1.5 group-hover:text-primary-600 transition-colors leading-snug line-clamp-2">
+                  className="group rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
+                  style={{ backgroundColor: '#ffffff', border: '1px solid rgba(229,231,235,0.6)' }}>
+                  <div className="h-28 flex flex-col justify-end p-4" style={{ backgroundColor: rp.coverColor }}>
+                    <span className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                      {rp.category}
+                    </span>
+                    <h4 className="text-sm font-bold leading-snug line-clamp-2" style={{ color: '#ffffff' }}>
                       {rp.title}
                     </h4>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-xs line-clamp-2" style={{ color: '#6b7280' }}>{rp.excerpt}</p>
                   </div>
                 </Link>
               ))}
