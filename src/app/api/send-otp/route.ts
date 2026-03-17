@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     // Send OTP email
     await sendEmail({
       to: email,
-      from: process.env.SMTP_FROM || 'contact@gennoor.com',
+      from: process.env.SMTP_USER || 'jalalkhan@gennoor.com',
       fromName: 'Gennoor Tech',
       subject: `${otp} is your verification code`,
       html: `
