@@ -141,7 +141,7 @@ export default function HeroSection() {
                     <div className="bg-gradient-to-br from-primary-600 to-accent-600 p-1 rounded-xl shadow-2xl">
                       <InlineVideoPlayer
                         videoSrc={`${BLOB_URL}/videos/gennoor-intro-video.mp4`}
-                        posterSrc="/videos/video-thumbnail.png"
+                        posterSrc={`${BLOB_URL}/videos/video-thumbnail.png`}
                         rounded="rounded-lg"
                       />
                     </div>
