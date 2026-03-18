@@ -1,11 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, Play, Volume2, VolumeX, Sparkles } from 'lucide-react'
+import { ArrowRight, Sparkles } from 'lucide-react'
 import { siteConfig, BLOB_URL } from '@/lib/site-config'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
-import VideoModal from '@/components/VideoModal'
+import InlineVideoPlayer from '@/components/InlineVideoPlayer'
 
 // Dynamically import the animated logo to avoid SSR issues
 const GennoorLogo = dynamic(() => import('@/components/GennoorLogo'), {
@@ -15,22 +15,12 @@ const GennoorLogo = dynamic(() => import('@/components/GennoorLogo'), {
 
 export default function HeroSection() {
   const [showContent, setShowContent] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isHovered, setIsHovered] = useState(false)
 
   useEffect(() => {
     // Show content after logo animation starts
     const timer = setTimeout(() => setShowContent(true), 2000)
     return () => clearTimeout(timer)
   }, [])
-
-  const openVideoModal = () => {
-    setIsModalOpen(true)
-  }
-
-  const closeVideoModal = () => {
-    setIsModalOpen(false)
-  }
 
   return (
     <section className="relative overflow-hidden min-h-screen flex items-center">
@@ -118,7 +108,7 @@ export default function HeroSection() {
                 </Link>
               </div>
 
-              {/* POC Link */}
+              {/* POC Link - Orange with sparkle */}
               <div
                 className={`transition-all duration-700 delay-900 mt-5 ${
                   showContent ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
@@ -126,10 +116,10 @@ export default function HeroSection() {
               >
                 <Link
                   href="/services/poc-development#live-demo"
-                  className="relative inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full text-sm font-medium text-white bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 shadow-md hover:shadow-lg transition-all group overflow-hidden"
+                  className="poc-sparkle-btn relative inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 transition-all group overflow-hidden"
                 >
-                  <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                  <Sparkles className="w-4 h-4 relative" />
+                  <span className="poc-shimmer absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0" />
+                  <Sparkles className="w-4 h-4 relative poc-sparkle-icon" />
                   <span className="relative">See our latest PoC in action</span>
                   <ArrowRight className="w-4 h-4 relative group-hover:translate-x-0.5 transition-transform" />
                 </Link>
@@ -142,54 +132,18 @@ export default function HeroSection() {
               <div className="relative">
                 {/* Video container - responsive with max width */}
                 <div className="w-full sm:w-[480px] lg:w-[560px] max-w-full">
-                  {/* Video Preview Thumbnail - 25% larger (640px × 360px) */}
+                  {/* Inline Video Player */}
                   <div
                     className={`relative transition-all duration-700 delay-500 mb-6 ${
                       showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                     }`}
                   >
-                    {/* Video thumbnail with gradient border */}
-                    <div
-                      className="relative rounded-xl overflow-hidden shadow-2xl bg-gradient-to-br from-primary-600 to-accent-600 p-1 cursor-pointer group"
-                      onClick={openVideoModal}
-                      onMouseEnter={() => setIsHovered(true)}
-                      onMouseLeave={() => setIsHovered(false)}
-                    >
-                      <div className="relative w-full h-full bg-gray-900 rounded-lg overflow-hidden">
-                        {/* Video thumbnail image */}
-                        <div className="relative aspect-video">
-                          <img
-                            src={`${BLOB_URL}/videos/intro-video-poster.jpg`}
-                            alt="Gennoor Tech Introduction Video"
-                            className="w-full h-full object-cover"
-                          />
-
-                          {/* Dark overlay on hover */}
-                          <div className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${
-                            isHovered ? 'opacity-100' : 'opacity-0'
-                          }`} />
-
-                          {/* Play button overlay */}
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className={`transform transition-all duration-300 ${
-                              isHovered ? 'scale-110' : 'scale-100'
-                            }`}>
-                              <div className="w-16 sm:w-20 h-16 sm:h-20 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-2xl group-hover:bg-white transition-colors">
-                                <Play className="w-6 sm:w-8 h-6 sm:h-8 text-gray-900 ml-0.5 sm:ml-1" />
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* "Click to Watch" text */}
-                          <div className={`absolute bottom-4 left-0 right-0 text-center transition-all duration-300 ${
-                            isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
-                          }`}>
-                            <span className="text-white font-medium text-sm sm:text-base bg-black/50 px-3 py-1.5 rounded-full backdrop-blur-sm">
-                              Click to Watch Full Video
-                            </span>
-                          </div>
-                        </div>
-                      </div>
+                    <div className="bg-gradient-to-br from-primary-600 to-accent-600 p-1 rounded-xl shadow-2xl">
+                      <InlineVideoPlayer
+                        videoSrc={`${BLOB_URL}/videos/gennoor-intro-video.mp4`}
+                        posterSrc={`${BLOB_URL}/videos/intro-video-poster.jpg`}
+                        rounded="rounded-lg"
+                      />
                     </div>
                   </div>
 
@@ -217,14 +171,25 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Video Modal */}
-      <VideoModal
-        isOpen={isModalOpen}
-        onClose={closeVideoModal}
-        videoSrc={`${BLOB_URL}/videos/gennoor-intro-video.mp4`}
-        posterSrc={`${BLOB_URL}/videos/intro-video-poster.jpg`}
-        enableSlidePause={false}
-      />
+      {/* Sparkle animation styles */}
+      <style jsx>{`
+        .poc-shimmer {
+          animation: shimmer 2.5s ease-in-out infinite;
+        }
+        .poc-sparkle-icon {
+          animation: sparkle 1.5s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          50% { transform: translateX(100%); }
+          50.01% { transform: translateX(-100%); }
+          100% { transform: translateX(-100%); }
+        }
+        @keyframes sparkle {
+          0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+          50% { transform: scale(1.2) rotate(15deg); opacity: 0.8; }
+        }
+      `}</style>
     </section>
   )
 }
