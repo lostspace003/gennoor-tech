@@ -1,13 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import { Play, ArrowRight, BarChart3, Shield, Zap } from 'lucide-react'
 import VideoModal from '@/components/VideoModal'
+import POCDetailModal from '@/components/POCDetailModal'
 import { BLOB_URL } from '@/lib/site-config'
 
 export default function POCShowcase() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [videoOpen, setVideoOpen] = useState(false)
+  const [detailOpen, setDetailOpen] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
 
   return (
@@ -34,7 +35,7 @@ export default function POCShowcase() {
             <div className="lg:col-span-3">
               <div
                 className="relative rounded-xl overflow-hidden shadow-xl cursor-pointer group"
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => setVideoOpen(true)}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
               >
@@ -99,13 +100,13 @@ export default function POCShowcase() {
                 </div>
               </div>
 
-              <Link
-                href="/services/poc-development#live-demo"
+              <button
+                onClick={() => setDetailOpen(true)}
                 className="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors group mt-2"
               >
                 View Full POC Details
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -113,12 +114,15 @@ export default function POCShowcase() {
 
       {/* Video Modal */}
       <VideoModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={videoOpen}
+        onClose={() => setVideoOpen(false)}
         videoSrc={`${BLOB_URL}/videos/POC.mp4`}
         posterSrc={`${BLOB_URL}/videos/poc-thumbnail.png`}
         enableSlidePause={false}
       />
+
+      {/* POC Detail Modal */}
+      <POCDetailModal isOpen={detailOpen} onClose={() => setDetailOpen(false)} />
     </section>
   )
 }

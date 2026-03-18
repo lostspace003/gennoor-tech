@@ -117,6 +117,22 @@ export default function HeroSection() {
                   {siteConfig.hero.cta2.text}
                 </Link>
               </div>
+
+              {/* POC Link */}
+              <div
+                className={`transition-all duration-700 delay-900 mt-4 ${
+                  showContent ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
+                }`}
+              >
+                <Link
+                  href="/services/poc-development#live-demo"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium text-primary-700 bg-primary-50 hover:bg-primary-100 border border-primary-200 transition-colors group"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>See our latest PoC in action</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+              </div>
             </div>
 
             {/* Right Column - Video and Animated Logo */}
@@ -174,22 +190,6 @@ export default function HeroSection() {
                         </div>
                       </div>
                     </div>
-                  </div>
-
-                  {/* POC Link */}
-                  <div
-                    className={`transition-all duration-700 delay-700 mb-4 ${
-                      showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-                    }`}
-                  >
-                    <Link
-                      href="/services/poc-development#live-demo"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium text-primary-700 bg-primary-50 hover:bg-primary-100 border border-primary-200 transition-colors group"
-                    >
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span>See our latest PoC in action</span>
-                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                    </Link>
                   </div>
 
                   {/* Animated Logo - Aligned to video's left edge */}
