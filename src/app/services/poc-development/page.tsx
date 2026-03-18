@@ -1,5 +1,6 @@
-import { ArrowLeft, Code2, Zap, Shield, Rocket, CheckCircle } from 'lucide-react'
+import { ArrowLeft, Code2, Zap, Shield, Rocket, CheckCircle, Play } from 'lucide-react'
 import Link from 'next/link'
+import POCDemoSection from './POCDemoSection'
 
 export default function PoCDevelopmentPage() {
   const pocTypes = [
@@ -114,6 +115,9 @@ export default function PoCDevelopmentPage() {
           </div>
         </div>
       </section>
+
+      {/* Live POC Demo */}
+      <POCDemoSection />
 
       {/* PoC Types */}
       <section className="py-16 lg:py-20 bg-gray-50">
