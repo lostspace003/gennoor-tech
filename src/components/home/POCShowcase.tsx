@@ -100,7 +100,7 @@ export default function POCShowcase() {
               </div>
 
               <Link
-                href="/poc"
+                href="/services/poc-development#live-demo"
                 className="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors group mt-2"
               >
                 View Full POC Details

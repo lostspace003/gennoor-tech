@@ -46,7 +46,7 @@ export const siteConfig = {
         href: '/portfolio',
         children: [
           { name: 'Case Studies', href: '/portfolio/case-studies' },
-          { name: 'PoCs & Demos', href: '/portfolio/demos' },
+          { name: 'PoCs & Demos', href: '/services/poc-development#live-demo' },
           { name: 'Open Source', href: '/portfolio/open-source' },
           { name: 'Client Testimonials', href: '/portfolio/testimonials' },
         ]
@@ -72,7 +72,7 @@ export const siteConfig = {
           { name: 'My Journey', href: '/about/journey' },
           { name: 'Certifications', href: '/about/certifications' },
           { name: 'Case Studies', href: '/portfolio/case-studies' },
-          { name: 'PoCs & Demos', href: '/portfolio/demos' },
+          { name: 'PoCs & Demos', href: '/services/poc-development#live-demo' },
         ]
       },
       {

@@ -1,4 +1,4 @@
-import { ArrowLeft, Code2, Zap, Shield, Rocket, CheckCircle, Play } from 'lucide-react'
+import { ArrowLeft, Code2, Zap, Shield, Rocket, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import POCDemoSection from './POCDemoSection'
 
