@@ -1,14 +1,11 @@
 'use client'
 
-import { useState } from 'react'
 import { ArrowRight, BarChart3, Shield, Zap } from 'lucide-react'
+import Link from 'next/link'
 import InlineVideoPlayer from '@/components/InlineVideoPlayer'
-import POCDetailModal from '@/components/POCDetailModal'
 import { BLOB_URL } from '@/lib/site-config'
 
 export default function POCShowcase() {
-  const [detailOpen, setDetailOpen] = useState(false)
-
   return (
     <section className="section-padding bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -70,20 +67,18 @@ export default function POCShowcase() {
                 </div>
               </div>
 
-              <button
-                onClick={() => setDetailOpen(true)}
+              <Link
+                href="/services/poc-development#live-demo"
                 className="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors group mt-2"
               >
                 View Full POC Details
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </button>
+              </Link>
             </div>
           </div>
         </div>
       </div>
 
-      {/* POC Detail Modal */}
-      <POCDetailModal isOpen={detailOpen} onClose={() => setDetailOpen(false)} />
     </section>
   )
 }
