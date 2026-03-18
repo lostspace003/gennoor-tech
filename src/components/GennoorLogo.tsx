@@ -12,7 +12,7 @@ interface LogoProps {
 
 const dots = {
   horizontal: {
-    viewBox: "0 0 380 130", width: 810, height: 240,  // 540 * 1.5 = 810, 160 * 1.5 = 240
+    viewBox: "0 0 380 140", width: 810, height: 258,
     arc: [
       [98.1,77.7,5.5],[86.5,92.6,5.5],[69.7,100.9,5.5],[50.9,101.0,5.5],
       [34.0,92.9,5.5],[22.2,78.3,5.5],[18.0,60.0,5.5],[22.2,41.7,5.5],
@@ -20,7 +20,7 @@ const dots = {
     ],
     bar: [[74,60,5.5],[88,60,5.5],[102,60,5.5]],
     name: { x: 128, y: 56, size: 30, anchor: "start" },
-    tag:  { x: 128, y: 78, size: 11, anchor: "start" }
+    tag:  { x: 128, y: 82, size: 19, anchor: "start" }
   },
   hero: {
     viewBox: "0 0 380 130", width: 512, height: 151,  // Matches max-w-lg (512px) with proportional height
@@ -143,7 +143,7 @@ export default function GennoorLogo({ variant = "horizontal" }: LogoProps) {
         <text
           x={d.tag.x} y={d.tag.y} textAnchor={d.tag.anchor as any}
           fontFamily="'Sora',Helvetica,Arial,sans-serif"
-          fontSize={d.tag.size} fontWeight="400" fill={tagColor}
+          fontSize={d.tag.size} fontWeight="700" fill={tagColor}
           letterSpacing="3" style={{ opacity: 0, fontVariant: 'small-caps', animation: 'gt-fade .7s ease-out 2.6s forwards' }}
         >
           train. innovate. build.

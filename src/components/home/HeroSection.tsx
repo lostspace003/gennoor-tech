@@ -141,29 +141,12 @@ export default function HeroSection() {
                     <div className="bg-gradient-to-br from-primary-600 to-accent-600 p-1 rounded-xl shadow-2xl">
                       <InlineVideoPlayer
                         videoSrc={`${BLOB_URL}/videos/gennoor-intro-video.mp4`}
-                        posterSrc={`${BLOB_URL}/videos/intro-video-poster.jpg`}
+                        posterSrc="/videos/video-thumbnail.png"
                         rounded="rounded-lg"
                       />
                     </div>
                   </div>
 
-                  {/* Animated Logo - Aligned to video's left edge */}
-                  <div className="relative h-[180px]">
-                    {/* Logo positioned to align with video's left edge */}
-                    <div className="absolute left-0 top-0 w-[650px]">
-                      {/* Shift logo left by 30px to align first dot with video edge */}
-                      <div className="relative -translate-x-[30px] scale-90">
-                        {/* Glow effect centered on the dots */}
-                        <div className="absolute left-[25px] top-[35px] w-[100px] h-[100px] bg-primary-600/20 rounded-full blur-3xl"></div>
-                        {/* Extended glow across the logo */}
-                        <div className="absolute left-[100px] top-[15px] w-[500px] h-[150px] bg-gradient-to-r from-primary-500/10 via-secondary-500/8 to-transparent blur-2xl"></div>
-                        {/* The animated logo */}
-                        <GennoorLogo
-                          variant="horizontal"
-                        />
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>

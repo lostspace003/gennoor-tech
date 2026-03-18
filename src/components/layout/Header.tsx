@@ -6,6 +6,12 @@ import { usePathname } from 'next/navigation'
 import { Menu, X, ChevronDown } from 'lucide-react'
 import { siteConfig } from '@/lib/site-config'
 import { cn } from '@/lib/utils'
+import dynamic from 'next/dynamic'
+
+const GennoorLogo = dynamic(() => import('@/components/GennoorLogo'), {
+  ssr: false,
+  loading: () => <div className="h-[77px] w-[243px]" />
+})
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -68,16 +74,12 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <nav ref={navRef} className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center group">
-            {/* Text Only - No Icon */}
-            <div className="flex items-baseline space-x-2">
-              <span className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-primary-600 to-secondary-500 bg-clip-text text-transparent group-hover:from-primary-500 group-hover:to-secondary-400 transition-all duration-300">
-                Gennoor
-              </span>
-              <span className="text-2xl lg:text-3xl font-bold text-gray-800">
-                Tech
-              </span>
+          {/* Logo - Animated GennoorLogo at 0.3x */}
+          <Link href="/" className="flex items-center flex-shrink-0">
+            <div className="w-[243px] h-[77px] overflow-hidden">
+              <div className="origin-top-left scale-[0.3]">
+                <GennoorLogo variant="horizontal" />
+              </div>
             </div>
           </Link>
 
