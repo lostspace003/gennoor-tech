@@ -1,15 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { Play, ArrowRight, BarChart3, Shield, Zap } from 'lucide-react'
-import VideoModal from '@/components/VideoModal'
+import { ArrowRight, BarChart3, Shield, Zap } from 'lucide-react'
+import InlineVideoPlayer from '@/components/InlineVideoPlayer'
 import POCDetailModal from '@/components/POCDetailModal'
 import { BLOB_URL } from '@/lib/site-config'
 
 export default function POCShowcase() {
-  const [videoOpen, setVideoOpen] = useState(false)
   const [detailOpen, setDetailOpen] = useState(false)
-  const [isHovered, setIsHovered] = useState(false)
 
   return (
     <section className="section-padding bg-white">
@@ -33,39 +31,11 @@ export default function POCShowcase() {
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center">
             {/* Video - takes 3 cols */}
             <div className="lg:col-span-3">
-              <div
-                className="relative rounded-xl overflow-hidden shadow-xl cursor-pointer group"
-                onClick={() => setVideoOpen(true)}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-              >
-                <div className="relative aspect-video bg-gray-900">
-                  <img
-                    src={`${BLOB_URL}/videos/poc-thumbnail.png`}
-                    alt="Analytics Dashboard POC"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className={`absolute inset-0 bg-black/30 transition-opacity duration-300 ${
-                    isHovered ? 'opacity-100' : 'opacity-40'
-                  }`} />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className={`transform transition-all duration-300 ${
-                      isHovered ? 'scale-110' : 'scale-100'
-                    }`}>
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-2xl group-hover:bg-white transition-colors">
-                        <Play className="w-7 h-7 sm:w-8 sm:h-8 text-primary-600 ml-0.5" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className={`absolute bottom-4 left-0 right-0 text-center transition-all duration-300 ${
-                    isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
-                  }`}>
-                    <span className="text-white font-medium text-sm bg-black/50 px-3 py-1.5 rounded-full backdrop-blur-sm">
-                      Watch Demo
-                    </span>
-                  </div>
-                </div>
-              </div>
+              <InlineVideoPlayer
+                videoSrc={`${BLOB_URL}/videos/POC.mp4`}
+                posterSrc={`${BLOB_URL}/videos/poc-thumbnail.png`}
+                className="shadow-xl"
+              />
             </div>
 
             {/* Info - takes 2 cols */}
@@ -111,15 +81,6 @@ export default function POCShowcase() {
           </div>
         </div>
       </div>
-
-      {/* Video Modal */}
-      <VideoModal
-        isOpen={videoOpen}
-        onClose={() => setVideoOpen(false)}
-        videoSrc={`${BLOB_URL}/videos/POC.mp4`}
-        posterSrc={`${BLOB_URL}/videos/poc-thumbnail.png`}
-        enableSlidePause={false}
-      />
 
       {/* POC Detail Modal */}
       <POCDetailModal isOpen={detailOpen} onClose={() => setDetailOpen(false)} />

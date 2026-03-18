@@ -120,17 +120,18 @@ export default function HeroSection() {
 
               {/* POC Link */}
               <div
-                className={`transition-all duration-700 delay-900 mt-4 ${
+                className={`transition-all duration-700 delay-900 mt-5 ${
                   showContent ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
                 }`}
               >
                 <Link
                   href="/services/poc-development#live-demo"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium text-primary-700 bg-primary-50 hover:bg-primary-100 border border-primary-200 transition-colors group"
+                  className="relative inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full text-sm font-medium text-white bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 shadow-md hover:shadow-lg transition-all group overflow-hidden"
                 >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>See our latest PoC in action</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                  <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                  <Sparkles className="w-4 h-4 relative" />
+                  <span className="relative">See our latest PoC in action</span>
+                  <ArrowRight className="w-4 h-4 relative group-hover:translate-x-0.5 transition-transform" />
                 </Link>
               </div>
             </div>

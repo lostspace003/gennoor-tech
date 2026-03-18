@@ -1,14 +1,10 @@
 'use client'
 
-import { useState } from 'react'
-import { Play, BarChart3, Zap, Shield, Globe } from 'lucide-react'
-import VideoModal from '@/components/VideoModal'
+import { BarChart3, Zap, Shield, Globe } from 'lucide-react'
+import InlineVideoPlayer from '@/components/InlineVideoPlayer'
 import { BLOB_URL } from '@/lib/site-config'
 
 export default function POCDemoSection() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isHovered, setIsHovered] = useState(false)
-
   const highlights = [
     {
       icon: <BarChart3 className="w-6 h-6" />,
@@ -53,44 +49,18 @@ export default function POCDemoSection() {
         </div>
 
         <div className="max-w-5xl mx-auto">
-          {/* Video */}
-          <div
-            className="relative rounded-2xl overflow-hidden shadow-2xl cursor-pointer group mb-10"
-            onClick={() => setIsModalOpen(true)}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
-            <div className="relative aspect-video bg-gray-900">
-              <img
-                src={`${BLOB_URL}/videos/poc-thumbnail.png`}
-                alt="Analytics Dashboard POC Demo"
-                className="w-full h-full object-cover"
-              />
-              <div className={`absolute inset-0 bg-black/30 transition-opacity duration-300 ${
-                isHovered ? 'opacity-100' : 'opacity-40'
-              }`} />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className={`transform transition-all duration-300 ${
-                  isHovered ? 'scale-110' : 'scale-100'
-                }`}>
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-2xl group-hover:bg-white transition-colors">
-                    <Play className="w-8 h-8 sm:w-10 sm:h-10 text-primary-600 ml-1" />
-                  </div>
-                </div>
-              </div>
-              <div className={`absolute bottom-5 left-0 right-0 text-center transition-all duration-300 ${
-                isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
-              }`}>
-                <span className="text-white font-medium bg-black/50 px-4 py-2 rounded-full backdrop-blur-sm">
-                  Watch Full Demo
-                </span>
-              </div>
-            </div>
+          {/* Inline Video */}
+          <div className="mb-10">
+            <InlineVideoPlayer
+              videoSrc={`${BLOB_URL}/videos/POC.mp4`}
+              posterSrc={`${BLOB_URL}/videos/poc-thumbnail.png`}
+              className="shadow-2xl"
+              rounded="rounded-2xl"
+            />
+            <p className="text-center text-sm text-gray-500 mt-4">
+              Full walkthrough — from data ingestion to interactive visualizations
+            </p>
           </div>
-
-          <p className="text-center text-sm text-gray-500 -mt-6 mb-10">
-            Full walkthrough — from data ingestion to interactive visualizations
-          </p>
 
           {/* Highlight cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
@@ -128,14 +98,6 @@ export default function POCDemoSection() {
           </div>
         </div>
       </div>
-
-      <VideoModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        videoSrc={`${BLOB_URL}/videos/POC.mp4`}
-        posterSrc={`${BLOB_URL}/videos/poc-thumbnail.png`}
-        enableSlidePause={false}
-      />
     </section>
   )
 }
