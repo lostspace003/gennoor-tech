@@ -145,7 +145,7 @@ export default function InlineVideoPlayer({
             <img
               src={posterSrc}
               alt="Video thumbnail"
-              className="absolute inset-0 w-full h-full object-contain"
+              className="absolute inset-0 w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-black/30" />
             <button
