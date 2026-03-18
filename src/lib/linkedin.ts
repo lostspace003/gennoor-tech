@@ -225,7 +225,7 @@ export function getAuthorizationUrl(state: string): string {
     client_id: config.clientId,
     redirect_uri: config.redirectUri,
     state,
-    scope: 'w_organization_social r_organization_social openid profile',
+    scope: 'openid profile w_member_social w_organization_social',
   })
   return `https://www.linkedin.com/oauth/v2/authorization?${params}`
 }
