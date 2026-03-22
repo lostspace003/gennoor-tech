@@ -214,7 +214,11 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight mb-5" style={{ color: '#ffffff' }}>
                 {post.title}
               </h1>
-              <p className="text-sm" style={{ color: 'rgba(255,255,255,0.8)' }}>By <span className="font-medium" style={{ color: '#ffffff' }}>{post.author}</span></p>
+              <p className="text-sm" style={{ color: 'rgba(255,255,255,0.8)' }}>
+                By <span className="font-medium" style={{ color: '#ffffff' }}>{post.author}</span>
+                <span className="mx-2" style={{ color: 'rgba(255,255,255,0.4)' }}>·</span>
+                {new Date(post.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+              </p>
             </div>
             <svg className="absolute right-6 lg:right-12 top-1/2 -translate-y-1/2 w-28 h-28 lg:w-40 lg:h-40" viewBox="0 0 200 200" fill="none" style={{ opacity: 0.08 }}>
               <circle cx="100" cy="100" r="80" stroke="white" strokeWidth="2"/>

@@ -4,6 +4,7 @@ export interface BlogPost {
   excerpt: string
   content: string
   author: string
+  date: string // ISO date string (YYYY-MM-DD)
   readTime: string
   category: string
   tags: string[]
@@ -40,6 +41,7 @@ export const blogPosts: BlogPost[] = [
 <p>Start with a single, well-defined workflow. Prove the value. Then scale. The organizations winning with agents are not building general-purpose AI — they are automating specific, measurable business processes.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2026-03-20',
     readTime: '4 min read',
     category: 'AI Agents',
     tags: ['AI Agents', 'Enterprise AI', 'Automation'],
@@ -71,6 +73,7 @@ export const blogPosts: BlogPost[] = [
 <p>Build a claims intake flow: receive a customer message, extract key fields with AI, look up the policy in Dataverse, and route to the right team. This demonstrates the full capability in one concrete, measurable use case. The ROI speaks for itself.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2026-03-16',
     readTime: '5 min read',
     category: 'Microsoft AI',
     tags: ['Copilot Studio', 'Agent Flows', 'No-Code AI', 'Power Platform'],
@@ -99,6 +102,7 @@ export const blogPosts: BlogPost[] = [
 <p>Start with a read-only MCP server for a non-critical data source — your internal documentation or product catalog. Get experience without production risk. Then extend to write operations with approval gates. The earlier you build MCP into your architecture, the easier every future integration becomes.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2026-03-12',
     readTime: '4 min read',
     category: 'AI Architecture',
     tags: ['MCP', 'AI Integration', 'Enterprise Architecture'],
@@ -129,6 +133,7 @@ export const blogPosts: BlogPost[] = [
 <p>The MCP server runs within your infrastructure. Data never leaves your network. Row-level security from Dataverse is enforced at the server level. The AI model only sees what the service principal is authorized to access.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2026-03-08',
     readTime: '5 min read',
     category: 'Microsoft AI',
     tags: ['Dataverse', 'MCP', 'Power Platform', 'AI Agents'],
@@ -157,6 +162,7 @@ export const blogPosts: BlogPost[] = [
 <p>IT departments have always struggled to keep up with business demand for applications. The MCP bridge pattern lets developers focus on the hard problems (business logic, security, integrations) while business teams handle the last mile (user experience, workflow design, agent personality).</p>
 `,
     author: 'Gennoor Tech',
+    date: '2026-03-04',
     readTime: '4 min read',
     category: 'Microsoft AI',
     tags: ['Power Apps', 'MCP', 'Low-Code', 'Citizen Developer'],
@@ -186,6 +192,7 @@ export const blogPosts: BlogPost[] = [
 <p>Start by wrapping your existing LLM calls with MLflow tracking. Log inputs, outputs, and metadata. Within a week, you will have visibility into how your AI is performing that you never had before. That visibility is the foundation for everything else — evaluation, optimization, and governance.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2026-02-28',
     readTime: '5 min read',
     category: 'MLOps',
     tags: ['MLflow', 'LLM Ops', 'AI Governance', 'Model Management'],
@@ -215,6 +222,7 @@ export const blogPosts: BlogPost[] = [
 <p>Evaluation is not a one-time activity. It is a continuous process. Every time you add new documents, change a model, or modify your prompts, re-run your evaluation suite. MLflow makes this repeatable and comparable.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2026-02-24',
     readTime: '5 min read',
     category: 'MLOps',
     tags: ['MLflow', 'RAG', 'Evaluation', 'AI Quality'],
@@ -244,6 +252,7 @@ export const blogPosts: BlogPost[] = [
 <p>Teams that invest in governance early move faster in the long run. When the regulator asks questions, you have answers. When a model misbehaves, you can trace exactly what happened. That confidence is what lets organizations scale AI from pilots to production.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2026-02-20',
     readTime: '4 min read',
     category: 'MLOps',
     tags: ['MLflow', 'AI Governance', 'Compliance', 'Regulated Industries'],
@@ -280,6 +289,7 @@ export const blogPosts: BlogPost[] = [
 <p>The smartest enterprises use both. Developers build sophisticated backend agents with Azure AI Agent Service and expose them as MCP servers. Business teams then compose those capabilities into user-facing experiences through Copilot Studio. Best of both worlds.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2026-02-16',
     readTime: '4 min read',
     category: 'Microsoft AI',
     tags: ['Microsoft Agent Framework', 'Copilot Studio', 'Azure AI'],
@@ -311,6 +321,7 @@ export const blogPosts: BlogPost[] = [
 <p>Track time saved per process, reduction in manual escalations, and customer satisfaction delta. These are the numbers that secure budget for phase two.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2026-02-12',
     readTime: '5 min read',
     category: 'AI Agents',
     tags: ['Agentic AI', 'Production AI', 'Enterprise', 'Best Practices'],
@@ -343,6 +354,7 @@ export const blogPosts: BlogPost[] = [
 <p>If you are building any system where an LLM feeds data into downstream processes, structured outputs should be your default. The reliability improvement alone justifies migration.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2026-02-08',
     readTime: '4 min read',
     category: 'AI Models',
     tags: ['GPT-4o', 'Structured Outputs', 'Enterprise AI', 'Integration'],
@@ -371,6 +383,7 @@ export const blogPosts: BlogPost[] = [
 <p>The best strategy: evaluate your top 2-3 candidates on 50 representative test cases from your actual use case. Let the data decide.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2026-02-04',
     readTime: '5 min read',
     category: 'AI Models',
     tags: ['Open Source', 'Llama', 'Mistral', 'Qwen', 'DeepSeek'],
@@ -400,6 +413,7 @@ export const blogPosts: BlogPost[] = [
 <p>Ollama excels for development, testing, privacy-sensitive use cases, and edge deployments. For high-throughput production workloads, teams typically graduate to vLLM or managed services. But for everything else, Ollama has become the de facto standard.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2026-01-31',
     readTime: '4 min read',
     category: 'AI Tools',
     tags: ['Ollama', 'Local LLM', 'Privacy', 'Edge AI'],
@@ -428,6 +442,7 @@ export const blogPosts: BlogPost[] = [
 <p>On-device customer assistants that work offline. Manufacturing quality inspection at the edge. Real-time document classification before expensive processing. The common thread: SLMs excel at focused, well-defined tasks where you can fine-tune for precision.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2026-01-27',
     readTime: '4 min read',
     category: 'AI Models',
     tags: ['SLM', 'Phi', 'Edge AI', 'On-Device AI'],
@@ -456,6 +471,7 @@ export const blogPosts: BlogPost[] = [
 <p>Benchmark scores measure potential. Production performance depends on prompt engineering, fine-tuning, and your specific data distribution. A well-prompted smaller model often outperforms a lazily-prompted larger one.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2026-01-23',
     readTime: '4 min read',
     category: 'AI Models',
     tags: ['Hugging Face', 'Model Selection', 'Open Source', 'LLM'],
@@ -483,6 +499,7 @@ export const blogPosts: BlogPost[] = [
 <p>The most advanced pattern: the LLM decides when to retrieve, what query to use, whether to reformulate, and when it has enough information. This handles complex questions that naive RAG cannot — multi-hop reasoning, comparative analysis, and exploratory queries.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2026-01-19',
     readTime: '5 min read',
     category: 'AI Architecture',
     tags: ['RAG', 'GraphRAG', 'Hybrid Search', 'Vector Search'],
@@ -511,6 +528,7 @@ export const blogPosts: BlogPost[] = [
 <p>The model you choose today will not be the model you use in 6 months. Abstract the LLM call behind an interface. When a better model drops, switching becomes a configuration change — not a rewrite.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2026-01-15',
     readTime: '4 min read',
     category: 'Azure AI',
     tags: ['Azure AI Foundry', 'Model Selection', 'Cloud AI'],
@@ -544,6 +562,7 @@ export const blogPosts: BlogPost[] = [
 <p>Start with a single agent. Prove the value. When you genuinely need specialization, add agents incrementally. Most "multi-agent" use cases work perfectly fine with one well-designed agent that has access to multiple tools.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2026-01-11',
     readTime: '5 min read',
     category: 'AI Agents',
     tags: ['LangGraph', 'CrewAI', 'AutoGen', 'Multi-Agent'],
@@ -574,6 +593,7 @@ export const blogPosts: BlogPost[] = [
 <p>Healthcare AI operates under strict regulations. Any system that influences clinical decisions needs validation, bias testing, and regulatory approval. The practical path: start with administrative AI (scheduling, documentation, billing) where regulatory requirements are lighter, then build the muscle for clinical applications.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2026-01-07',
     readTime: '5 min read',
     category: 'Healthcare AI',
     tags: ['Healthcare', 'Clinical AI', 'Medical Imaging', 'HealthTech'],
@@ -602,6 +622,7 @@ export const blogPosts: BlogPost[] = [
 <p>In financial services, explainability is not optional. Every AI decision that affects a customer needs a clear reasoning trail. This is where structured outputs, audit logging, and human-in-the-loop patterns are essential — not nice-to-haves.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2026-01-03',
     readTime: '5 min read',
     category: 'BFSI AI',
     tags: ['Banking', 'Insurance', 'Fraud Detection', 'Claims Processing'],
@@ -630,6 +651,7 @@ export const blogPosts: BlogPost[] = [
 <p>Student data is sensitive. AI in education must prioritize privacy, avoid reinforcing biases in assessment, and maintain the human connection that makes learning meaningful. Technology serves pedagogy — not the other way around.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-12-30',
     readTime: '4 min read',
     category: 'Education AI',
     tags: ['Education', 'EdTech', 'Personalized Learning', 'AI Tutoring'],
@@ -658,6 +680,7 @@ export const blogPosts: BlogPost[] = [
 <p>Predictive maintenance on your most expensive equipment. The data usually already exists (sensors, maintenance logs), the ROI is measurable, and the risk is low. Prove it there, then expand.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-12-26',
     readTime: '4 min read',
     category: 'Manufacturing AI',
     tags: ['Manufacturing', 'Predictive Maintenance', 'Quality Control', 'Industry 4.0'],
@@ -686,6 +709,7 @@ export const blogPosts: BlogPost[] = [
 <p>None of this works without clean, unified customer data. The most common blocker for retail AI is not model capability — it is data silos. Invest in your data layer first, and the AI applications follow naturally.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-12-22',
     readTime: '4 min read',
     category: 'Retail AI',
     tags: ['Retail', 'Personalization', 'E-commerce', 'Demand Forecasting'],
@@ -714,6 +738,7 @@ export const blogPosts: BlogPost[] = [
 <p>Government is often described as slow to adopt technology. That is changing. The combination of budget pressure, citizen expectations, and retiring workforce is creating genuine urgency. The agencies that invest now will set the standard for digital government.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-12-18',
     readTime: '4 min read',
     category: 'Government AI',
     tags: ['Government', 'Public Sector', 'Citizen Services', 'GovTech'],
@@ -742,6 +767,7 @@ export const blogPosts: BlogPost[] = [
 <p>Energy infrastructure is vast, complex, and aging. AI that improves efficiency by even a few percentage points translates to billions in savings and significant emissions reductions. This is one industry where AI impact is measured in both dollars and gigatons.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-12-14',
     readTime: '4 min read',
     category: 'Energy AI',
     tags: ['Energy', 'Grid Optimization', 'Renewables', 'Carbon Tracking'],
@@ -770,6 +796,7 @@ export const blogPosts: BlogPost[] = [
 <p>Start with contract review for a specific, repeatable contract type (NDAs, vendor agreements, lease renewals). Define what "good" looks like. Measure the AI against your current process. The time savings will make the case for broader adoption.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-12-10',
     readTime: '4 min read',
     category: 'Legal AI',
     tags: ['Legal', 'Contract Analysis', 'Compliance', 'LegalTech'],
@@ -805,6 +832,7 @@ export const blogPosts: BlogPost[] = [
 <p>Keep the Green Zone frictionless. Make Yellow Zone reviews fast (48 hours, not 6 weeks). Reserve heavy process for Red Zone. Governance is not about saying no — it is about saying yes faster, with appropriate safeguards.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-12-06',
     readTime: '5 min read',
     category: 'AI Strategy',
     tags: ['AI Governance', 'Enterprise AI', 'Risk Management', 'Compliance'],
@@ -834,6 +862,7 @@ export const blogPosts: BlogPost[] = [
 <p>Organizations buy expensive AI platforms before they have use cases. Flip the order. Find the problem, prove the solution with a focused POC, then invest in infrastructure. Technology follows strategy — not the other way around.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-12-02',
     readTime: '5 min read',
     category: 'AI Strategy',
     tags: ['AI Strategy', 'C-Suite', 'Digital Transformation', 'Enterprise AI'],
@@ -862,6 +891,7 @@ export const blogPosts: BlogPost[] = [
 <p>Companies that invest in responsible AI see fewer incidents, faster regulatory approvals, and stronger customer trust. It is an investment in sustainable AI adoption — not a tax on innovation.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-11-28',
     readTime: '4 min read',
     category: 'AI Strategy',
     tags: ['Responsible AI', 'Bias', 'Fairness', 'AI Ethics'],
@@ -892,6 +922,7 @@ export const blogPosts: BlogPost[] = [
 <p>Build your AI foundation: data layer, governance framework, and evaluation pipeline. These are not exciting, but they are what let you move fast when the next breakthrough arrives — and it always arrives sooner than expected.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-11-24',
     readTime: '5 min read',
     category: 'AI Strategy',
     tags: ['AI Predictions', 'Future of AI', 'AI Agents', 'Technology Trends'],
@@ -921,6 +952,7 @@ export const blogPosts: BlogPost[] = [
 <p>Semantic Kernel has added agent-to-agent communication, agent groups, and multi-agent patterns. Combined with its plugin system and Azure integration, it is positioned as the enterprise backbone for AI agent development in the Microsoft ecosystem.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-11-20',
     readTime: '4 min read',
     category: 'Microsoft AI',
     tags: ['Semantic Kernel', 'Microsoft', '.NET', 'AI Orchestration'],
@@ -950,6 +982,7 @@ export const blogPosts: BlogPost[] = [
 <p>Hybrid search (vector + keyword) is table stakes — insist on it. Quantization support matters at scale. Multi-tenancy matters for SaaS. Beyond that, choose what fits your existing stack. The retrieval quality difference between databases is smaller than the difference good prompt engineering makes.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-11-16',
     readTime: '5 min read',
     category: 'AI Architecture',
     tags: ['Vector Database', 'Azure AI Search', 'Pinecone', 'RAG'],
@@ -979,6 +1012,7 @@ export const blogPosts: BlogPost[] = [
 <p>Prompts that are too long (noise drowns signal), too vague (the model guesses what you want), or too rigid (breaking on edge cases). The best prompts are clear, structured, and include enough examples to convey the pattern without being prescriptive about every possible input.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-11-12',
     readTime: '4 min read',
     category: 'AI Engineering',
     tags: ['Prompt Engineering', 'Enterprise AI', 'Best Practices'],
@@ -1008,6 +1042,7 @@ export const blogPosts: BlogPost[] = [
 <p>Audit your current LLM usage. You will almost certainly find that 20% of your prompts account for 80% of your spend. Optimize those first. The savings often fund your next AI initiative.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-11-08',
     readTime: '5 min read',
     category: 'AI Strategy',
     tags: ['Cost Optimization', 'AI Budget', 'Enterprise AI', 'Efficiency'],
@@ -1039,6 +1074,7 @@ export const blogPosts: BlogPost[] = [
 <p>When customer service becomes fast, accurate, and available 24/7 — it stops being a cost center and becomes a differentiator. Customers remember great service. And they tell their friends.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-11-04',
     readTime: '5 min read',
     category: 'AI Agents',
     tags: ['Customer Service', 'AI Agents', 'CX', 'Automation'],
@@ -1069,6 +1105,7 @@ export const blogPosts: BlogPost[] = [
 <p>Typical results: 60% reduction in processing time for simple claims, 30% for complex ones. Adjusters focus on claims that need human judgment instead of data entry. Customer satisfaction improves because claims move faster.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-10-31',
     readTime: '6 min read',
     category: 'AI Agents',
     tags: ['Insurance', 'Claims Processing', 'Copilot Studio', 'Dataverse'],
@@ -1098,6 +1135,7 @@ export const blogPosts: BlogPost[] = [
 <p>Pick your highest-volume document type. Build extraction for that single type. Measure accuracy and time savings. One well-automated document type often saves more than a dozen half-automated ones.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-10-27',
     readTime: '4 min read',
     category: 'AI Engineering',
     tags: ['Document AI', 'OCR', 'Automation', 'Enterprise AI'],
@@ -1129,6 +1167,7 @@ export const blogPosts: BlogPost[] = [
 <p>The organizations that ship AI to production treat it as a product — with product owners, iterative improvement, and user feedback loops. Not a one-time project that gets handed off and forgotten.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-10-23',
     readTime: '5 min read',
     category: 'AI Strategy',
     tags: ['POC', 'Production AI', 'Deployment', 'MLOps'],
@@ -1157,6 +1196,7 @@ export const blogPosts: BlogPost[] = [
 <p>One well-trained AI champion in a department creates more impact than a company-wide AI platform nobody uses. Invest in champions first, then scale. AI adoption follows people, not technology rollouts.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-10-19',
     readTime: '4 min read',
     category: 'AI Strategy',
     tags: ['AI Training', 'Upskilling', 'Workforce', 'Change Management'],
@@ -1185,6 +1225,7 @@ export const blogPosts: BlogPost[] = [
 <p>Track time-to-productivity for new hires, HR query resolution time, employee satisfaction with HR services, and HR team capacity freed for strategic work. These metrics make the case for continued investment.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-10-15',
     readTime: '4 min read',
     category: 'AI Agents',
     tags: ['HR', 'Employee Experience', 'Onboarding', 'AI Agents'],
@@ -1213,6 +1254,7 @@ export const blogPosts: BlogPost[] = [
 <p>AI is not a silver bullet for cybersecurity. It reduces the noise, accelerates response, and catches what humans miss. But it also creates new attack surfaces (prompt injection, model manipulation). The strongest defense is AI-augmented human expertise — neither alone is sufficient.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-10-11',
     readTime: '5 min read',
     category: 'AI Security',
     tags: ['Cybersecurity', 'Threat Detection', 'SOC', 'AI Security'],
@@ -1242,6 +1284,7 @@ export const blogPosts: BlogPost[] = [
 <p>Forget response time and conversation length. Measure task completion rate — did the user accomplish what they came to do? If they did, the chatbot worked. If they left or escalated in frustration, iterate on that specific flow.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-10-07',
     readTime: '4 min read',
     category: 'AI Engineering',
     tags: ['Chatbot', 'UX Design', 'Conversational AI', 'User Experience'],
@@ -1270,6 +1313,7 @@ export const blogPosts: BlogPost[] = [
 <p>You do not need to model your entire supply chain on day one. Start with demand forecasting for your top 20% of SKUs (which typically drive 80% of revenue). Layer in supplier monitoring for your critical single-source components. Build from proven value outward.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-10-03',
     readTime: '4 min read',
     category: 'Supply Chain AI',
     tags: ['Supply Chain', 'Resilience', 'Logistics', 'Demand Forecasting'],
@@ -1298,6 +1342,7 @@ export const blogPosts: BlogPost[] = [
 <p>The beauty of this pattern is composability. Build a library of Power Automate flows for common operations (send email, create record, update status, generate PDF). Copilot agents can mix and match these flows into any workflow the business needs — without writing new code for each one.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-09-29',
     readTime: '5 min read',
     category: 'Microsoft AI',
     tags: ['Copilot Studio', 'Power Automate', 'Automation', 'Power Platform'],
@@ -1328,6 +1373,7 @@ export const blogPosts: BlogPost[] = [
 <p>Data readiness is not a one-time project. It is an ongoing discipline. The organizations that succeed with AI are the ones that treat data as a strategic asset — not just a byproduct of business operations.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-09-25',
     readTime: '5 min read',
     category: 'AI Strategy',
     tags: ['Data Readiness', 'Data Quality', 'Enterprise AI', 'Data Governance'],
@@ -1356,6 +1402,7 @@ export const blogPosts: BlogPost[] = [
 <p>Multimodal AI is rapidly becoming table stakes. Within 12 months, every major enterprise AI application will incorporate vision capabilities. The organizations building multimodal into their architecture now will have a significant head start.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-09-21',
     readTime: '4 min read',
     category: 'AI Engineering',
     tags: ['Multimodal AI', 'Vision AI', 'Document AI', 'Enterprise AI'],
@@ -1387,6 +1434,7 @@ export const blogPosts: BlogPost[] = [
 <p>Hospitals implementing patient journey agents report 40% reduction in administrative phone calls, 30% faster intake processing, and measurably higher patient satisfaction scores. The economics work because you are automating volume, not replacing expertise.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-09-17',
     readTime: '5 min read',
     category: 'Healthcare AI',
     tags: ['Healthcare', 'AI Agents', 'Patient Experience', 'Clinical AI'],
@@ -1416,6 +1464,7 @@ export const blogPosts: BlogPost[] = [
 <p>Banks deploying loan origination agents see 60-70% reduction in processing time for straightforward applications, 50% reduction in document handling costs, and significantly improved application completion rates because the conversational interface is simpler than traditional forms.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-09-13',
     readTime: '5 min read',
     category: 'BFSI AI',
     tags: ['Banking', 'Loan Origination', 'AI Agents', 'Fintech'],
@@ -1445,6 +1494,7 @@ export const blogPosts: BlogPost[] = [
 <p>Institutions report 60-80% of routine student queries handled without staff intervention. Student satisfaction with administrative services improves markedly. At-risk student identification happens weeks earlier, enabling timely intervention.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-09-09',
     readTime: '5 min read',
     category: 'Education AI',
     tags: ['Education', 'AI Agents', 'EdTech', 'Campus Operations'],
@@ -1474,6 +1524,7 @@ export const blogPosts: BlogPost[] = [
 <p>Tenants get instant responses at any hour. Maintenance is tracked transparently. Lease questions are answered immediately. The result: higher tenant retention, fewer complaints, and stronger online reviews — all of which impact property value.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-09-05',
     readTime: '4 min read',
     category: 'Real Estate AI',
     tags: ['Real Estate', 'Property Management', 'AI Agents', 'PropTech'],
@@ -1503,6 +1554,7 @@ export const blogPosts: BlogPost[] = [
 <p>Telecom systems are notoriously complex — BSS, OSS, CRM, network management, billing. The agent is only as good as its access to these systems. MCP-style integrations are particularly valuable here, providing standardized access across the telecom stack.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-09-01',
     readTime: '5 min read',
     category: 'Telecom AI',
     tags: ['Telecom', 'Customer Retention', 'AI Agents', 'Customer Support'],
@@ -1532,6 +1584,7 @@ export const blogPosts: BlogPost[] = [
 <p>Literature mining and trial matching are production-ready. Molecule design is in active use at major pharma companies with promising early results. Regulatory submission assistance is emerging. The compound effect — AI at every stage — is where the real acceleration happens.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-08-28',
     readTime: '5 min read',
     category: 'Pharma AI',
     tags: ['Pharma', 'Drug Discovery', 'Clinical Trials', 'AI Agents'],
@@ -1561,6 +1614,7 @@ export const blogPosts: BlogPost[] = [
 <p>Start with route optimization — the data is readily available (GPS, delivery records), the ROI is immediate (fuel savings), and the technology is mature. Layer in warehouse optimization and predictive tracking as you build confidence.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-08-24',
     readTime: '5 min read',
     category: 'Logistics AI',
     tags: ['Logistics', 'Warehouse', 'Route Optimization', 'AI Agents'],
@@ -1590,6 +1644,7 @@ export const blogPosts: BlogPost[] = [
 <p>Policyholders trust insurers who pay claims quickly and fairly. AI agents deliver speed. Human oversight ensures fairness. The combination — fast processing with meaningful human checkpoints — builds the kind of trust that drives retention and referrals.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-08-20',
     readTime: '5 min read',
     category: 'BFSI AI',
     tags: ['Insurance', 'Underwriting', 'Claims', 'AI Agents'],
@@ -1619,6 +1674,7 @@ export const blogPosts: BlogPost[] = [
 <p>The best implementations use AI to create <em>more</em> meaningful human interactions, not fewer. When the front desk agent handles the billing question, the human concierge has time to personally welcome the guest celebrating their anniversary. AI handles the transactional; humans deliver the emotional.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-08-16',
     readTime: '4 min read',
     category: 'Hospitality AI',
     tags: ['Hospitality', 'Hotels', 'Guest Experience', 'AI Agents'],
@@ -1648,12 +1704,320 @@ export const blogPosts: BlogPost[] = [
 <p>Precision farming AI has the potential to increase global food production by 15-25% while reducing water, chemical, and energy inputs. Few AI applications have a clearer humanitarian case.</p>
 `,
     author: 'Gennoor Tech',
+    date: '2025-08-12',
     readTime: '5 min read',
     category: 'Agriculture AI',
     tags: ['Agriculture', 'Precision Farming', 'AI Agents', 'AgriTech'],
     hashtags: ['#AgricultureAI', '#PrecisionFarming', '#AIAgents', '#AgriTech', '#SmartFarming'],
     coverColor: '#16A085',
     icon: '🌾',
+  },
+  // ─── NON-FUNCTIONAL TESTING FOR AI/LLM SYSTEMS ───
+  {
+    slug: 'non-functional-testing-ai-llm-systems',
+    title: 'Non-Functional Testing for AI & LLM Systems: The Complete Guide to Latency, Throughput, Consistency, and Token Efficiency',
+    featured: null,
+    excerpt: 'Your LLM can return the perfect answer and still fail in production. This comprehensive guide covers the four pillars of non-functional testing — latency, throughput, consistency, and token efficiency — with open-source tools and cloud-native solutions across AWS, Azure, and Google Cloud.',
+    content: `
+<p>Traditional software QA has always distinguished between <strong>functional testing</strong> (does it produce the right output?) and <strong>non-functional testing</strong> (does it perform well under real-world conditions?). For AI and Large Language Model (LLM) systems, this distinction becomes even more critical because the probabilistic nature of LLMs introduces entirely new dimensions of non-functional risk.</p>
+
+<p>Consider this: an LLM endpoint can return a perfectly accurate, well-grounded response and <em>still fail in production</em> if it takes 12 seconds to deliver that response, collapses under 50 concurrent users, produces wildly inconsistent answers to the same question, or burns through tokens at 3x the budgeted rate. These are not quality failures in the traditional sense. They are <strong>performance, scalability, reliability, and cost-efficiency failures</strong> — the domain of non-functional testing.</p>
+
+<p>This guide covers the four pillars of non-functional testing for AI/LLM systems: <strong>Latency</strong>, <strong>Throughput</strong>, <strong>Consistency</strong>, and <strong>Token Efficiency</strong>. For each pillar, we cover what to measure, how to measure it, which open-source tools to use, and what AWS, Google Cloud, and Microsoft Azure offer natively.</p>
+
+<h2>The Four Pillars of Non-Functional Testing</h2>
+
+<p>Non-functional testing for AI/LLM systems can be organized into four core pillars, each addressing a distinct dimension of production readiness:</p>
+
+<table>
+<thead>
+<tr><th>Pillar</th><th>What It Tests</th><th>Key Metrics</th><th>Why It Matters</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Latency</strong></td><td>Response speed and time to first output</td><td>TTFT, ITL, E2E Latency, P50/P95/P99</td><td>User trust, UX quality, SLA compliance</td></tr>
+<tr><td><strong>Throughput</strong></td><td>Capacity under concurrent load</td><td>RPS, TPS, Concurrent users, GPU utilization</td><td>Scalability, cost planning, capacity planning</td></tr>
+<tr><td><strong>Consistency</strong></td><td>Stability of outputs across repeat queries</td><td>Semantic similarity, output variance, format compliance rate</td><td>Reliability, predictability, regression detection</td></tr>
+<tr><td><strong>Token Efficiency</strong></td><td>Verbosity and cost per interaction</td><td>Tokens/response, cost/query, output-to-input ratio</td><td>Cost control, budget forecasting, optimization</td></tr>
+</tbody>
+</table>
+
+<h2>Pillar 1: Latency Testing</h2>
+
+<h3>Understanding LLM Latency</h3>
+
+<p>LLM latency is fundamentally different from traditional API latency. In a conventional REST API, you send a request and receive a complete response. With LLMs, response generation is <strong>incremental and token-by-token</strong>, which means latency must be decomposed into several distinct measurements.</p>
+
+<h3>Key Latency Metrics</h3>
+
+<ul>
+<li><strong>Time to First Token (TTFT)</strong> — The time between the server receiving a request and the model beginning to stream the first output token. This is the most user-visible metric — it determines how long a user stares at a blank screen. TTFT is heavily influenced by prompt length (longer prompts require more prefill computation), model size, and cold start behavior.</li>
+<li><strong>Inter-Token Latency (ITL)</strong> — The delay between consecutive output tokens during streaming. ITL determines the perceived smoothness of a streaming response. Spiky ITL creates a stuttering experience even if the total time is acceptable.</li>
+<li><strong>End-to-End Latency (E2E)</strong> — The total wall-clock time from request arrival to the completion of the last output token. This includes queuing time, prefill, generation, and any network overhead. E2E latency is the number that matters for non-streaming use cases and batch processing.</li>
+<li><strong>Percentile Latencies (P50, P95, P99)</strong> — Average latency is a misleading metric for LLMs because response times vary enormously based on output length. Percentile measurements reveal the tail-latency story. A system with a 2-second P50 but a 15-second P99 has a serious consistency problem.</li>
+</ul>
+
+<h3>Factors Affecting LLM Latency</h3>
+
+<ul>
+<li><strong>Model size and architecture</strong> — larger models require more GPU compute per token</li>
+<li><strong>Input prompt length</strong> — longer prompts increase prefill time</li>
+<li><strong>Output length</strong> — more tokens mean longer generation phase</li>
+<li><strong>Hardware</strong> — GPU type, memory bandwidth, and interconnects matter</li>
+<li><strong>Batch size and concurrent request load</strong></li>
+<li><strong>Cold starts</strong> — models scaled to zero must reload before serving</li>
+<li><strong>Network latency</strong> — especially for cloud-hosted and multi-region deployments</li>
+<li><strong>KV-cache efficiency and prefix caching</strong></li>
+</ul>
+
+<h3>Open-Source Tools for Latency Testing</h3>
+
+<p><strong>NVIDIA GenAI-Perf</strong> is NVIDIA's benchmarking tool specifically designed for LLM inference. It measures TTFT, ITL, E2E latency, and throughput with precise token-level granularity. It integrates natively with TensorRT-LLM and vLLM serving backends and supports sweeping across concurrency levels to map the full latency-throughput curve of a deployment.</p>
+
+<p><strong>LLMPerf (by Anyscale/Ray)</strong> spawns configurable concurrent requests, measures inter-token latency and generation throughput per request, and supports multiple providers including OpenAI, Anthropic, AWS Bedrock, Vertex AI, and any OpenAI-compatible endpoint via LiteLLM. It produces detailed JSON reports with per-request and aggregate statistics.</p>
+
+<p><strong>LLM Locust (by TrueFoundry)</strong> extends the popular Locust load testing framework with LLM-specific capabilities. It adds native tracking of TTFT and tokens-per-second during streaming responses, solves the Python GIL bottleneck, and provides a customized real-time web UI showing LLM-specific metrics.</p>
+
+<p><strong>GuideLLM (by Red Hat)</strong> simulates real-world traffic patterns and provides fine-grained metrics including requests per second, latency distributions, and concurrency analysis. It supports full sweeps to find the latency-throughput saturation point and outputs results in JSON, YAML, and CSV formats.</p>
+
+<p><strong>k6 (by Grafana Labs)</strong> is extremely memory-efficient (256 MB for a standard test versus JMeter's 760 MB) and supports tens of thousands of virtual users per instance. The Periscope framework extends k6 with pre-built scripts for OpenAI-compatible endpoints, with Grafana dashboards for visualization.</p>
+
+<p><strong>llm-load-test-azure</strong> is a community-maintained tool specifically for load testing LLM endpoints on Azure. It measures TTFT, time-between-tokens, and E2E latency and supports Azure OpenAI, Azure Model Catalog serverless, and managed-compute deployments.</p>
+
+<h3>Cloud-Native Latency Monitoring</h3>
+
+<p><strong>Microsoft Azure (Foundry)</strong> provides built-in model leaderboards that benchmark LLMs across quality, safety, cost, and performance — including time-to-first-token and generated-tokens-per-second. Production monitoring is delivered through Azure Monitor and Application Insights, providing real-time dashboards for token consumption, latency distributions, error rates, and quality scores.</p>
+
+<p><strong>AWS (Bedrock &amp; SageMaker)</strong> provides model evaluation jobs that can assess response latency across different models. AWS offers the aws-samples/load-test-llm-with-locust repository for load testing both SageMaker endpoints and Bedrock APIs. SageMaker endpoints expose CloudWatch metrics for invocation latency, model latency, and overhead latency.</p>
+
+<p><strong>Google Cloud (Vertex AI)</strong> provides a built-in model observability dashboard that tracks query rates, token throughput, first token latencies, and error rates. GKE Inference Gateway with load-aware and content-aware routing reduced TTFT by over 35% for certain workloads and improved P95 tail latency by 2x.</p>
+
+<h2>Pillar 2: Throughput Testing</h2>
+
+<h3>Understanding LLM Throughput</h3>
+
+<p>Throughput measures the <strong>total capacity</strong> of an LLM deployment — how many requests or tokens it can process per unit of time. Unlike latency (which is per-request), throughput is a system-level metric that determines whether a deployment can handle real-world traffic volumes.</p>
+
+<h3>Key Throughput Metrics</h3>
+
+<ul>
+<li><strong>Requests Per Second (RPS)</strong> — The total number of complete requests the system handles per second. This is the most intuitive capacity metric and directly maps to infrastructure cost planning.</li>
+<li><strong>Tokens Per Second (TPS)</strong> — The total output tokens generated per second across all concurrent requests. TPS better reflects actual GPU utilization than RPS because a system handling 10 short responses per second uses less compute than one handling 3 long responses.</li>
+<li><strong>Concurrent Users</strong> — The number of simultaneous requests the system can serve while maintaining acceptable latency. Beyond this threshold, requests queue and latency degrades.</li>
+<li><strong>GPU/CPU Utilization</strong> — Resource consumption during peak load. This determines cost efficiency and helps identify whether a deployment is over-provisioned or under-provisioned.</li>
+</ul>
+
+<h3>Load Testing vs Performance Benchmarking</h3>
+
+<p>Load testing and performance benchmarking are distinct but complementary approaches. <strong>Load testing</strong> simulates real-world traffic at scale to identify infrastructure bottlenecks like server capacity, autoscaling behavior, and network latency. <strong>Performance benchmarking</strong> measures the intrinsic performance of the model itself — throughput, token-level latency, and efficiency under controlled conditions. Both are needed for production readiness.</p>
+
+<h3>Open-Source Tools for Throughput Testing</h3>
+
+<p><strong>Locust</strong> remains one of the most popular open-source load testing frameworks due to its Python-native scripting, lightweight greenlet-based concurrency (thousands of simulated users), and real-time web UI. AWS provides official sample scripts for load testing SageMaker and Bedrock endpoints.</p>
+
+<p><strong>Apache JMeter</strong> supports 20+ protocols natively and can simulate complex multi-step workflows. While more resource-intensive than k6 (approximately 760 MB per test versus 256 MB), it is well-suited for organizations with legacy testing infrastructure. JMeter is natively supported in Azure App Testing as a managed cloud-based load testing service.</p>
+
+<p><strong>LLMServingPerfEvaluator (by FriendliAI)</strong> generates realistic workloads by simulating requests arriving according to a Poisson distribution, allowing you to stress test at varying request rates. It supports comparing different serving engines (such as vLLM versus TGI) on the same hardware.</p>
+
+<p><strong>MLPerf Inference (by MLCommons)</strong> is the industry-standard benchmark suite for AI inference performance. Version 5.1 introduced benchmarks for DeepSeek-R1, Llama 3.1 8B, and Whisper Large V3, with expanded interactive scenarios testing performance under lower latency constraints for agentic applications.</p>
+
+<h3>Cloud-Native Throughput Capabilities</h3>
+
+<p><strong>Microsoft Azure</strong> — Foundry leaderboards include throughput benchmarks refreshed periodically. Azure Load Testing supports running JMeter and Locust tests as a managed service. Azure OpenAI PTUs (Provisioned Throughput Units) guarantee a specific tokens-per-minute capacity.</p>
+
+<p><strong>AWS</strong> — Bedrock provides Provisioned Throughput options for dedicated capacity. SageMaker endpoints expose CloudWatch metrics for invocations, invocations-per-instance, and model errors. LLMPerf integrates natively with AWS Bedrock and SageMaker via LiteLLM.</p>
+
+<p><strong>Google Cloud</strong> — Vertex AI's observability dashboard displays token throughput metrics per model and endpoint. GKE Inference Gateway provides load-aware routing that scrapes real-time metrics (KV cache utilization, queue depth) from model servers.</p>
+
+<h2>Pillar 3: Consistency Testing</h2>
+
+<h3>Understanding LLM Consistency</h3>
+
+<p>LLMs are probabilistic systems — the same input can produce different outputs across invocations. While some variability is expected and desirable for creative tasks, production systems require a <strong>baseline level of consistency</strong> in factual accuracy, format compliance, and semantic meaning.</p>
+
+<h3>Key Consistency Metrics</h3>
+
+<ul>
+<li><strong>Semantic Similarity</strong> — Measures whether repeated queries produce semantically equivalent responses, even if the exact wording differs. Typically calculated using embedding-based cosine similarity. A high variance indicates an unreliable model.</li>
+<li><strong>Output Variance</strong> — Quantifies the spread of responses when the same prompt is submitted multiple times. Can be measured via token overlap, ROUGE scores, or embedding distance distributions.</li>
+<li><strong>Format Compliance Rate</strong> — Percentage of responses that adhere to the requested output format (JSON, table, bullet list, specific schema). Format inconsistency is a common production failure mode, especially with smaller models.</li>
+<li><strong>Semantic Robustness</strong> — Measures how much the model's output changes when the input is subjected to minor, meaning-preserving perturbations (typos, case changes, whitespace variations). A robust model should produce equivalent outputs regardless of trivial input variations.</li>
+</ul>
+
+<h3>Open-Source Tools for Consistency Testing</h3>
+
+<p><strong>DeepEval</strong> is an open-source LLM testing framework that supports regression testing across model iterations. With its companion platform Confident AI, it provides side-by-side comparison tools for catching regressions. It supports metrics for correctness, hallucination detection, toxicity, and consistency, all configurable via Python test suites that integrate into CI/CD pipelines.</p>
+
+<p><strong>Arize Phoenix</strong> is an open-source AI observability platform that excels at detecting when model outputs quietly drift over time. It monitors embedding drift — changes in vector representations that indicate semantic shifts — and provides visual plots for tracking RAG pipeline quality.</p>
+
+<p><strong>TruLens</strong> is a semantic evaluation toolkit that provides automated evaluation metrics for coherence, relevance, and groundedness. It supports LLM-as-a-judge workflows for assessing output consistency and integrates with OpenTelemetry.</p>
+
+<p><strong>Robustness Gym</strong> is a library specifically designed for stress testing NLP models across various perturbation scenarios. It systematically applies transformations to inputs (synonym substitution, character-level noise, semantic-preserving rephrasing) and measures output stability.</p>
+
+<p><strong>Promptfoo</strong> is an open-source CLI tool for evaluating and testing LLM outputs. It supports running the same prompt set across multiple models or prompt variations, with automated assertions for format compliance, factual accuracy, and semantic similarity.</p>
+
+<h3>Cloud-Native Consistency Capabilities</h3>
+
+<p><strong>Microsoft Azure</strong> — The Azure AI Evaluation SDK provides built-in evaluators for coherence, fluency, and relevance. Foundry supports compare runs functionality for side-by-side regression detection. PyRIT framework enables systematic adversarial testing.</p>
+
+<p><strong>AWS</strong> — Bedrock's automatic model evaluation includes semantic robustness testing, where prompts are perturbed approximately 5 times each (lowercase conversion, keyboard typos, number-to-word conversion, random case changes, whitespace variations). The robustness metric is calculated as the Delta F1 / F1 ratio.</p>
+
+<p><strong>Google Cloud</strong> — Vertex AI Model Monitoring v2 provides data drift and prediction drift detection. The evaluation service supports LLM-as-a-Judge methodology for assessing output quality and consistency at scale.</p>
+
+<h2>Pillar 4: Token Efficiency Testing</h2>
+
+<h3>Understanding Token Efficiency</h3>
+
+<p>Token efficiency measures how economically a model uses tokens to deliver useful output. In production AI systems, <strong>token usage directly translates to cost</strong> — every prompt token processed and every completion token generated incurs a charge. A model that produces the correct answer in 200 tokens is more efficient than one that produces the same answer in 800 tokens with unnecessary elaboration.</p>
+
+<h3>Key Token Efficiency Metrics</h3>
+
+<ul>
+<li><strong>Tokens per Response</strong> — Average and P95 output token count for a given task. High variance suggests inconsistent verbosity. Tracking this over time reveals whether prompt changes or model updates affect output length.</li>
+<li><strong>Cost per Query</strong> — The total cost (input tokens + output tokens at the model's pricing) for a single interaction. This is the metric that budget owners care about most.</li>
+<li><strong>Output-to-Input Ratio</strong> — The ratio of completion tokens to prompt tokens. For RAG systems with large context windows, a high input-to-output ratio may indicate inefficient retrieval (too much context for a short answer).</li>
+<li><strong>Task Completion Efficiency</strong> — Whether the model achieves the intended goal within a token budget. A model that exceeds the max_tokens limit and truncates its response has failed this metric even if the partial output is correct.</li>
+</ul>
+
+<h3>Open-Source Tools for Token Efficiency</h3>
+
+<p><strong>Langfuse</strong> (MIT license, recently acquired by ClickHouse) is the most widely-adopted open-source LLM engineering platform. It tracks token usage per trace with automatic cost calculation for 100+ model pricing configurations, providing cost breakdowns by model, user, and session.</p>
+
+<p><strong>Helicone</strong> is a proxy-based observability tool that captures model calls without any SDK changes — you simply change the base URL. It automatically generates cost reports, tracks token consumption trends, and supports rate limiting and caching.</p>
+
+<p><strong>OpenLLMetry (by Traceloop)</strong> is an OpenTelemetry-compliant SDK whose semantic conventions for LLM telemetry were adopted by the OpenTelemetry project itself. It tracks token usage, cost, and latency per call and exports data to any OTLP-compatible backend.</p>
+
+<p><strong>Opik (by Comet)</strong> is an open-source platform that completes trace logging and evaluation approximately 7-14x faster than comparable tools. It provides token usage tracking, cost estimation, and integrates with both LLM application workflows and model training pipelines.</p>
+
+<h3>Cloud-Native Token Efficiency Monitoring</h3>
+
+<p><strong>Microsoft Azure</strong> — Foundry's observability dashboard tracks token consumption, latency, error rates, and quality scores in real-time. Azure API Management integration provides detailed per-request token logging and cost estimation.</p>
+
+<p><strong>AWS</strong> — Bedrock provides CloudWatch metrics for input and output token counts per invocation. The fmeval library supports programmatic evaluation of model efficiency.</p>
+
+<p><strong>Google Cloud</strong> — Vertex AI tracks token throughput (input and output) per endpoint. Context caching for Gemini models and Memorystore integration provide architectural approaches to reducing token consumption.</p>
+
+<h2>Comprehensive Tool Comparison</h2>
+
+<table>
+<thead>
+<tr><th>Tool</th><th>Latency</th><th>Throughput</th><th>Consistency</th><th>Token Eff.</th><th>Best For</th></tr>
+</thead>
+<tbody>
+<tr><td>GenAI-Perf</td><td>Yes</td><td>Yes</td><td>—</td><td>—</td><td>GPU inference benchmarking (NVIDIA stack)</td></tr>
+<tr><td>LLMPerf</td><td>Yes</td><td>Yes</td><td>—</td><td>Yes</td><td>Multi-provider API benchmarking</td></tr>
+<tr><td>LLM Locust</td><td>Yes</td><td>Yes</td><td>—</td><td>—</td><td>Realistic load testing with streaming</td></tr>
+<tr><td>GuideLLM</td><td>Yes</td><td>Yes</td><td>—</td><td>—</td><td>Pre-deployment capacity planning</td></tr>
+<tr><td>k6 + Periscope</td><td>Yes</td><td>Yes</td><td>—</td><td>Yes</td><td>CI/CD integrated load testing</td></tr>
+<tr><td>DeepEval</td><td>—</td><td>—</td><td>Yes</td><td>—</td><td>LLM regression testing in CI/CD</td></tr>
+<tr><td>Arize Phoenix</td><td>Yes</td><td>—</td><td>Yes</td><td>Yes</td><td>Drift detection, RAG observability</td></tr>
+<tr><td>Langfuse</td><td>Yes</td><td>—</td><td>Yes</td><td>Yes</td><td>Full-stack LLM observability (self-hosted)</td></tr>
+<tr><td>Helicone</td><td>Yes</td><td>—</td><td>—</td><td>Yes</td><td>Zero-code cost tracking (proxy)</td></tr>
+<tr><td>Promptfoo</td><td>—</td><td>—</td><td>Yes</td><td>Yes</td><td>Prompt evaluation and comparison</td></tr>
+<tr><td>MLPerf Inference</td><td>Yes</td><td>Yes</td><td>—</td><td>—</td><td>Industry-standard hardware benchmarks</td></tr>
+</tbody>
+</table>
+
+<h2>Cloud Platform Comparison</h2>
+
+<table>
+<thead>
+<tr><th>Capability</th><th>Microsoft Azure</th><th>AWS</th><th>Google Cloud</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Latency Monitoring</strong></td><td>Application Insights + Foundry dashboard</td><td>CloudWatch metrics, Bedrock invocation latency</td><td>Model Observability dashboard, Metrics Explorer</td></tr>
+<tr><td><strong>Throughput Benchmarks</strong></td><td>Foundry Leaderboard, Azure Load Testing</td><td>Bedrock Provisioned Throughput, SageMaker scaling</td><td>Vertex AI dashboard, GKE Inference Gateway</td></tr>
+<tr><td><strong>Consistency Testing</strong></td><td>AI Evaluation SDK, Compare Runs, PyRIT</td><td>Bedrock Semantic Robustness (auto-perturbation)</td><td>Model Monitoring v2 (drift detection)</td></tr>
+<tr><td><strong>Token/Cost Tracking</strong></td><td>Foundry Observability, APIM integration</td><td>CloudWatch token metrics, Bedrock pricing API</td><td>Native cost estimation, context caching</td></tr>
+<tr><td><strong>Load Testing Service</strong></td><td>Azure App Testing (JMeter + Locust managed)</td><td>No native managed service</td><td>No native managed service</td></tr>
+</tbody>
+</table>
+
+<h2>The LLM Observability Ecosystem</h2>
+
+<p>Non-functional testing does not end at pre-deployment. Production LLM systems require <strong>continuous observability</strong> to catch latency regressions, throughput degradation, consistency drift, and cost anomalies.</p>
+
+<h3>Open-Source Observability Platforms</h3>
+
+<ul>
+<li><strong>Langfuse</strong> (MIT License) — The most widely-used open LLMOps platform. Provides tracing, prompt management, evaluation, cost tracking, and session replay. Self-hostable with no feature restrictions.</li>
+<li><strong>Arize Phoenix</strong> (Elastic License 2.0) — Strong on drift detection and RAG pipeline monitoring. Captures multi-step agent traces and provides structured evaluation workflows.</li>
+<li><strong>Opik</strong> (Apache 2.0) — Fastest open-source tracing tool (7-14x faster than alternatives). Bridges LLM application observability and model training workflows.</li>
+<li><strong>OpenLLMetry/Traceloop</strong> — OpenTelemetry-native. Semantic conventions adopted by the OTel project. Works with LangChain, LlamaIndex, Haystack, and native SDKs.</li>
+<li><strong>Helicone</strong> — Proxy-based (zero-code). Cost reports, rate limiting, and caching without SDK changes.</li>
+</ul>
+
+<h3>Enterprise/Commercial Platforms</h3>
+
+<ul>
+<li><strong>LangSmith</strong> — Deeply integrated with LangChain/LangGraph ecosystem. Best for teams already using LangChain.</li>
+<li><strong>Datadog LLM Observability</strong> — Enterprise-grade. Integrates with Vertex AI, Azure AI Foundry, and Bedrock. Full APM correlation.</li>
+<li><strong>Elastic</strong> — Integrations with both Azure AI Foundry and Vertex AI for production LLM observability.</li>
+<li><strong>Dynatrace</strong> — Automatic topology discovery and AI-powered anomaly detection for LLM workloads.</li>
+<li><strong>SigNoz</strong> — OpenTelemetry-native unified platform covering both LLM and traditional application observability.</li>
+</ul>
+
+<h3>Choosing an Observability Stack</h3>
+
+<p>A practical starting pattern: combine a <strong>gateway/proxy tool</strong> (Helicone or Portkey) for cost tracking with an <strong>evaluation tool</strong> (Phoenix or DeepEval) for quality metrics, and an <strong>OTel-based platform</strong> (SigNoz, Langfuse, or your existing APM) for unified observability. Start with cost and latency tracking — they are immediately actionable — then layer in quality metrics as the deployment matures.</p>
+
+<h2>Recommended Implementation Strategy</h2>
+
+<h3>Phase 1: Pre-Deployment Benchmarking</h3>
+
+<ul>
+<li>Select 2-3 candidate models and run latency + throughput benchmarks using GenAI-Perf, LLMPerf, or GuideLLM</li>
+<li>Measure TTFT, ITL, E2E latency, and TPS across a range of concurrency levels (1, 10, 50, 100 concurrent requests)</li>
+<li>Establish baseline token usage per query type using a representative evaluation dataset</li>
+<li>Compare costs across models using actual token metrics (not published benchmarks alone)</li>
+<li>Run consistency tests: submit the same 50-100 prompts 3-5 times each and measure semantic similarity variance</li>
+</ul>
+
+<h3>Phase 2: Load Testing</h3>
+
+<ul>
+<li>Use Locust, k6, or LLM Locust to simulate expected production traffic patterns</li>
+<li>Test at 1x, 2x, and 5x expected peak traffic to identify the saturation point</li>
+<li>Validate auto-scaling behavior: measure how quickly new instances come online and whether cold starts cause latency spikes</li>
+<li>Test cache hit rates with realistic query repetition patterns (typically 20-40% cache hits in production)</li>
+<li>Define SLOs: P95 latency threshold, minimum RPS, maximum error rate, and maximum cost per 1,000 queries</li>
+</ul>
+
+<h3>Phase 3: Production Observability</h3>
+
+<ul>
+<li>Deploy Langfuse, Helicone, or your cloud's native monitoring for continuous cost and latency tracking</li>
+<li>Set up alerting on P95 latency breaches, error rate spikes, and token consumption anomalies</li>
+<li>Implement drift detection (Arize Phoenix or Vertex AI Model Monitoring) to catch silent quality degradation</li>
+<li>Establish a weekly review cadence for cost-per-query trends and throughput utilization</li>
+</ul>
+
+<h3>Phase 4: Continuous Regression Testing</h3>
+
+<ul>
+<li>Integrate DeepEval or Promptfoo into CI/CD pipelines to catch consistency regressions on every prompt change</li>
+<li>Maintain a golden dataset of 100+ queries with expected outputs for regression testing</li>
+<li>Re-run full non-functional test suite before any model upgrade, prompt change, or infrastructure modification</li>
+<li>Document and version all SLO thresholds alongside application code</li>
+</ul>
+
+<h2>Conclusion</h2>
+
+<p>Non-functional testing for AI/LLM systems is not optional — it is a <strong>production gate</strong>. A model that is accurate but slow, consistent but expensive, or fast but unreliable will fail in production just as surely as one that hallucinates.</p>
+
+<p>The ecosystem of tools has matured significantly. Open-source tools like GenAI-Perf, LLMPerf, LLM Locust, DeepEval, Langfuse, and Arize Phoenix provide production-grade capabilities at zero licensing cost. All three major cloud platforms now offer native monitoring, evaluation, and observability features.</p>
+
+<p>The key insight: non-functional testing for LLMs is a <strong>continuous process</strong>, not a one-time gate. LLMs change behavior with temperature settings, context changes, and even provider-side model updates. Continuous monitoring and automated regression testing are essential to maintaining production quality.</p>
+
+<p>Organizations building production AI systems should establish clear SLOs for each non-functional pillar, instrument their deployments from day one, and integrate non-functional testing into their CI/CD pipelines alongside functional quality evaluations.</p>
+`,
+    author: 'Gennoor Tech',
+    date: '2026-03-22',
+    readTime: '18 min read',
+    category: 'MLOps',
+    tags: ['Non-Functional Testing', 'LLM Testing', 'Latency', 'Throughput', 'AI Observability', 'MLOps', 'Performance Testing'],
+    hashtags: ['#LLMTesting', '#MLOps', '#AIPerformance', '#NonFunctionalTesting', '#AIObservability', '#GenAI'],
+    coverColor: '#7C3AED',
+    icon: '🧪',
   },
 ]
 
@@ -1662,7 +2026,7 @@ export function getBlogPost(slug: string): BlogPost | undefined {
 }
 
 export function getRecentPosts(count: number = 3): BlogPost[] {
-  return blogPosts.slice(0, count)
+  return [...blogPosts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, count)
 }
 
 export const blogCategories = [...new Set(blogPosts.map(p => p.category))]

@@ -1,13 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { blogPosts, blogCategories } from '@/data/blog-posts'
-import { CheckCircle } from 'lucide-react'
+import { CheckCircle, ArrowUpDown, Calendar } from 'lucide-react'
 import EmailOTP from '@/components/EmailOTP'
+
+type SortOrder = 'newest' | 'oldest'
+type TimeFilter = 'all' | 'week' | 'month'
 
 export default function BlogPage() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
+  const [sortOrder, setSortOrder] = useState<SortOrder>('newest')
+  const [timeFilter, setTimeFilter] = useState<TimeFilter>('all')
   const [email, setEmail] = useState('')
   const [subscribed, setSubscribed] = useState(false)
   const [emailVerified, setEmailVerified] = useState(false)
@@ -16,9 +21,35 @@ export default function BlogPage() {
     setEmailVerified(false)
   }, [email])
 
-  const filtered = activeCategory
-    ? blogPosts.filter(p => p.category === activeCategory)
-    : blogPosts
+  const filtered = useMemo(() => {
+    let posts = [...blogPosts]
+
+    // Category filter
+    if (activeCategory) {
+      posts = posts.filter(p => p.category === activeCategory)
+    }
+
+    // Time filter
+    if (timeFilter !== 'all') {
+      const now = new Date()
+      const cutoff = new Date()
+      if (timeFilter === 'week') {
+        cutoff.setDate(now.getDate() - 7)
+      } else if (timeFilter === 'month') {
+        cutoff.setMonth(now.getMonth() - 1)
+      }
+      posts = posts.filter(p => new Date(p.date) >= cutoff)
+    }
+
+    // Sort
+    posts.sort((a, b) => {
+      const dateA = new Date(a.date).getTime()
+      const dateB = new Date(b.date).getTime()
+      return sortOrder === 'newest' ? dateB - dateA : dateA - dateB
+    })
+
+    return posts
+  }, [activeCategory, sortOrder, timeFilter])
 
   const hero = filtered.find(p => p.featured === 'hero') || filtered[0]
   const spotlights = filtered.filter(p => p.featured === 'spotlight' && p.slug !== hero?.slug).slice(0, 3)
@@ -59,9 +90,10 @@ export default function BlogPage() {
         </div>
       </header>
 
-      {/* Category Filter */}
+      {/* Category Filter + Sort/Time Filters */}
       <div className="sticky top-0 z-40" style={{ backgroundColor: '#ffffff', borderBottom: '1px solid #f3f4f6' }}>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          {/* Category pills */}
           <div className="flex flex-wrap gap-1.5 justify-center">
             <button
               onClick={() => setActiveCategory(null)}
@@ -81,10 +113,92 @@ export default function BlogPage() {
               </button>
             ))}
           </div>
+
+          {/* Sort & Time filter row */}
+          <div className="flex flex-wrap items-center justify-center gap-3 mt-3 pt-3" style={{ borderTop: '1px solid #f3f4f6' }}>
+            {/* Sort toggle */}
+            <div className="flex items-center gap-1.5">
+              <ArrowUpDown className="w-3.5 h-3.5" style={{ color: '#9ca3af' }} />
+              <button
+                onClick={() => setSortOrder('newest')}
+                className="px-3 py-1 text-xs font-medium rounded-md transition-all"
+                style={sortOrder === 'newest'
+                  ? { backgroundColor: '#4f46e5', color: '#ffffff' }
+                  : { backgroundColor: '#f3f4f6', color: '#6b7280' }}
+              >
+                Latest First
+              </button>
+              <button
+                onClick={() => setSortOrder('oldest')}
+                className="px-3 py-1 text-xs font-medium rounded-md transition-all"
+                style={sortOrder === 'oldest'
+                  ? { backgroundColor: '#4f46e5', color: '#ffffff' }
+                  : { backgroundColor: '#f3f4f6', color: '#6b7280' }}
+              >
+                Oldest First
+              </button>
+            </div>
+
+            <div className="w-px h-5" style={{ backgroundColor: '#e5e7eb' }} />
+
+            {/* Time filter */}
+            <div className="flex items-center gap-1.5">
+              <Calendar className="w-3.5 h-3.5" style={{ color: '#9ca3af' }} />
+              <button
+                onClick={() => setTimeFilter('all')}
+                className="px-3 py-1 text-xs font-medium rounded-md transition-all"
+                style={timeFilter === 'all'
+                  ? { backgroundColor: '#4f46e5', color: '#ffffff' }
+                  : { backgroundColor: '#f3f4f6', color: '#6b7280' }}
+              >
+                All Time
+              </button>
+              <button
+                onClick={() => setTimeFilter('week')}
+                className="px-3 py-1 text-xs font-medium rounded-md transition-all"
+                style={timeFilter === 'week'
+                  ? { backgroundColor: '#4f46e5', color: '#ffffff' }
+                  : { backgroundColor: '#f3f4f6', color: '#6b7280' }}
+              >
+                This Week
+              </button>
+              <button
+                onClick={() => setTimeFilter('month')}
+                className="px-3 py-1 text-xs font-medium rounded-md transition-all"
+                style={timeFilter === 'month'
+                  ? { backgroundColor: '#4f46e5', color: '#ffffff' }
+                  : { backgroundColor: '#f3f4f6', color: '#6b7280' }}
+              >
+                This Month
+              </button>
+            </div>
+
+            {/* Result count */}
+            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ backgroundColor: '#f3f4f6', color: '#9ca3af' }}>
+              {filtered.length} {filtered.length === 1 ? 'article' : 'articles'}
+            </span>
+          </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+
+        {/* Empty state */}
+        {filtered.length === 0 && (
+          <div className="text-center py-20">
+            <p className="text-lg font-semibold mb-2" style={{ color: '#111827' }}>No articles found</p>
+            <p className="text-sm mb-6" style={{ color: '#6b7280' }}>
+              Try adjusting your filters or selecting a different time range.
+            </p>
+            <button
+              onClick={() => { setActiveCategory(null); setTimeFilter('all'); setSortOrder('newest') }}
+              className="px-4 py-2 text-sm font-semibold rounded-lg transition-colors"
+              style={{ backgroundColor: '#4f46e5', color: '#ffffff' }}
+            >
+              Reset Filters
+            </button>
+          </div>
+        )}
 
         {/* HERO CARD */}
         {hero && (
@@ -93,10 +207,15 @@ export default function BlogPage() {
               style={{ backgroundColor: hero.coverColor }}>
               <div className="relative grid grid-cols-1 lg:grid-cols-5 gap-0">
                 <div className="lg:col-span-3 p-8 sm:p-10 lg:p-14 flex flex-col justify-center">
-                  <span className="inline-block px-3 py-1 text-xs font-bold rounded-full tracking-wide uppercase mb-4 w-fit"
-                    style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: '#ffffff' }}>
-                    Featured
-                  </span>
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="inline-block px-3 py-1 text-xs font-bold rounded-full tracking-wide uppercase w-fit"
+                      style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: '#ffffff' }}>
+                      Featured
+                    </span>
+                    <span className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                      {new Date(hero.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </span>
+                  </div>
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black leading-tight mb-4 group-hover:translate-x-1 transition-transform duration-300"
                     style={{ color: '#ffffff' }}>
                     {hero.title}
@@ -144,6 +263,9 @@ export default function BlogPage() {
                   <span className="absolute top-3 left-3 px-2.5 py-1 text-[10px] font-bold rounded-full tracking-wide uppercase"
                     style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: '#ffffff' }}>
                     {post.category}
+                  </span>
+                  <span className="absolute top-3 right-3 text-[10px] font-medium" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                    {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                   </span>
                   <h3 className="text-lg font-bold leading-snug line-clamp-2 group-hover:translate-x-0.5 transition-transform"
                     style={{ color: '#ffffff' }}>
@@ -219,7 +341,9 @@ export default function BlogPage() {
                         <div className="p-5 flex flex-col justify-center min-w-0">
                           <p className="text-sm line-clamp-3 mb-2" style={{ color: '#6b7280' }}>{post.excerpt}</p>
                           <div className="flex items-center gap-2">
-                            <span className="text-xs" style={{ color: '#9ca3af' }}>{post.readTime}</span>
+                            <span className="text-xs" style={{ color: '#9ca3af' }}>
+                              {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} · {post.readTime}
+                            </span>
                             <span className="text-xs font-semibold group-hover:translate-x-0.5 transition-transform" style={{ color: post.coverColor }}>Read &rarr;</span>
                           </div>
                         </div>
@@ -241,7 +365,7 @@ export default function BlogPage() {
                           </div>
                           <div className="min-w-0">
                             <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: post.coverColor }}>
-                              {post.category} &middot; {post.readTime}
+                              {post.category} &middot; {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} &middot; {post.readTime}
                             </span>
                             <h3 className="text-sm font-bold leading-snug mt-1 line-clamp-2 group-hover:text-primary-600 transition-colors"
                               style={{ color: '#111827' }}>
@@ -271,7 +395,9 @@ export default function BlogPage() {
                     </div>
                     <div className="p-4">
                       <p className="text-sm line-clamp-2 mb-2" style={{ color: '#6b7280' }}>{post.excerpt}</p>
-                      <span className="text-xs" style={{ color: '#9ca3af' }}>{post.readTime}</span>
+                      <span className="text-xs" style={{ color: '#9ca3af' }}>
+                        {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · {post.readTime}
+                      </span>
                     </div>
                   </Link>
                 ))}
