@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, Calendar, Clock, Tag } from 'lucide-react'
-import { blogPosts, getBlogPostBySlug, getRelatedPosts } from '@/data/blog-posts'
+import { blogPosts, getBlogPost, getRelatedPosts } from '@/data/blog-posts'
 import AuthorBio from '@/components/blog/AuthorBio'
 import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd'
 
@@ -16,7 +16,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const post = getBlogPostBySlug(slug)
+  const post = getBlogPost(slug)
   if (!post) return { title: 'Post Not Found' }
 
   return {
@@ -157,7 +157,7 @@ function renderMarkdown(content: string) {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params
-  const post = getBlogPostBySlug(slug)
+  const post = getBlogPost(slug)
   if (!post) notFound()
 
   const relatedPosts = getRelatedPosts(slug, post.category)

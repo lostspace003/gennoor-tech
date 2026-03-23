@@ -14,6 +14,7 @@ export const siteConfig = {
     github: 'https://github.com/lostspace003',
     microsoftLearn: 'https://learn.microsoft.com/en-us/users/lostspace003/transcript/vjw63s4jxnmmwre?tab=credentials-tab',
     twitter: '',
+    youtube: '',
   },
 
   // Navigation structure from strategy document

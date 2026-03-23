@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { blogPosts, getAllCategories } from '@/data/blog-posts'
+import { blogPosts, blogCategories } from '@/data/blog-posts'
 import BlogFilter from '@/components/blog/BlogFilter'
 import { BreadcrumbJsonLd } from '@/components/JsonLd'
 
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 }
 
 export default function BlogPage() {
-  const categories = getAllCategories()
+  const categories = blogCategories
   const postsForFilter = blogPosts.map(({ slug, title, excerpt, date, readTime, category }) => ({
     slug, title, excerpt, date, readTime, category,
   }))
