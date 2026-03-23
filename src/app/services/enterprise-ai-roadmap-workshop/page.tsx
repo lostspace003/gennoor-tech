@@ -164,7 +164,7 @@ export default function EnterpriseAIRoadmapWorkshopPage() {
             <span>/</span>
             <span>Enterprise AI Roadmap</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
+          <h1 className="text-4xl md:text-5xl font-black mb-6">
             Enterprise AI Roadmap Workshop — From Strategy to Implementation
           </h1>
           <p className="text-xl text-primary-100 mb-8 leading-relaxed">

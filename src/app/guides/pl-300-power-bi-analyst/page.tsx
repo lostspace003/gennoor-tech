@@ -109,7 +109,7 @@ export default function PL300StudyGuidePage() {
             <span>/</span>
             <span>PL-300</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
+          <h1 className="text-4xl md:text-5xl font-black mb-6">
             PL-300 Power BI Certification: Complete Study Guide 2026
           </h1>
           <p className="text-xl text-primary-100 mb-8 leading-relaxed">

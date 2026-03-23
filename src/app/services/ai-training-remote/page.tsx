@@ -151,7 +151,7 @@ export default function AITrainingRemotePage() {
             <Globe className="w-4 h-4" />
             Worldwide
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6">
             Remote AI Training
             <br />
             <span className="text-primary-100">Live Virtual Sessions Worldwide</span>

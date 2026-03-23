@@ -121,7 +121,7 @@ export default function AITrainingSaudiArabiaPage() {
             <Building2 className="w-4 h-4" />
             Saudi Arabia
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6">
             AI Training & Consulting
             <br />
             in Saudi Arabia

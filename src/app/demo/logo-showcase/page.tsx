@@ -12,7 +12,7 @@ export default function LogoShowcasePage() {
         <div className="max-w-4xl mx-auto">
           {/* Page Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            <h1 className="text-4xl font-black text-gray-900 mb-4">
               Animated Logo Showcase
             </h1>
             <p className="text-xl text-gray-600">

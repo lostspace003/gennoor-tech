@@ -109,7 +109,7 @@ export default function MS4004StudyGuidePage() {
             <span>/</span>
             <span>MS-4004</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
+          <h1 className="text-4xl md:text-5xl font-black mb-6">
             MS-4004 Microsoft 365 Copilot: Exam Prep Guide 2026
           </h1>
           <p className="text-xl text-primary-100 mb-8 leading-relaxed">

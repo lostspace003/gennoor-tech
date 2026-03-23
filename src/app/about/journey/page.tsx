@@ -80,7 +80,7 @@ export default function JourneyPage() {
             <p className="text-sm font-semibold tracking-widest uppercase text-primary-400 mb-4">
               About the Founder
             </p>
-            <h1 className="text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
+            <h1 className="text-4xl lg:text-5xl font-black text-white mb-6 leading-tight">
               My Journey
             </h1>
             <p className="text-xl text-gray-300 mb-3">

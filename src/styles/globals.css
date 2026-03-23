@@ -26,14 +26,15 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-heading font-bold tracking-tight;
+    @apply font-heading tracking-tight;
     color: #111827;
     line-height: 1.2;
   }
 
-  h1 { @apply text-3xl sm:text-4xl lg:text-5xl; }
-  h2 { @apply text-2xl sm:text-3xl; }
-  h3 { @apply text-xl sm:text-2xl; }
+  h1 { @apply font-black; }
+  h2 { @apply font-bold; }
+  h3 { @apply font-bold; }
+  h4, h5, h6 { @apply font-semibold; }
 
   p {
     line-height: 1.75;

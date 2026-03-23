@@ -111,7 +111,7 @@ export default function ContactPage() {
       <section className="relative bg-gradient-to-br from-primary-700 via-primary-600 to-primary-700 py-20 lg:py-28">
         <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-5" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6">
             Let&apos;s Build Your AI Future Together
           </h1>
           <p className="text-xl md:text-2xl text-primary-100 max-w-3xl mx-auto">

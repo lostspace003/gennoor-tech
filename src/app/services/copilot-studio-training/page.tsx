@@ -160,7 +160,7 @@ export default function CopilotStudioTrainingPage() {
             <span>/</span>
             <span>Copilot Studio Training</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
+          <h1 className="text-4xl md:text-5xl font-black mb-6">
             Microsoft Copilot Studio Training — Build Enterprise AI Agents
           </h1>
           <p className="text-xl text-primary-100 mb-8 leading-relaxed">

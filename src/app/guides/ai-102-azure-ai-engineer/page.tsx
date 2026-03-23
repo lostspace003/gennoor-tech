@@ -109,7 +109,7 @@ export default function AI102StudyGuidePage() {
             <span>/</span>
             <span>AI-102</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
+          <h1 className="text-4xl md:text-5xl font-black mb-6">
             Azure AI-102 Certification: Complete Study Guide 2026
           </h1>
           <p className="text-xl text-primary-100 mb-8 leading-relaxed">

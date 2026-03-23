@@ -93,7 +93,7 @@ export default function AgenticAIPage() {
           </Link>
 
           <div className="max-w-4xl">
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
               Agentic AI Solutions
             </h1>
             <p className="text-xl text-gray-600 mb-8">

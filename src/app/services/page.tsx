@@ -60,7 +60,7 @@ export default function ServicesPage() {
       <section className="bg-gradient-to-br from-primary-50 to-accent-50 py-16 lg:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
               Enterprise AI Services
             </h1>
             <p className="text-xl text-gray-600 mb-8">
@@ -94,7 +94,7 @@ export default function ServicesPage() {
                     </div>
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
+                    <h2 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
                       {service.title}
                     </h2>
                     <p className="text-gray-600 mb-4">{service.description}</p>

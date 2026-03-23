@@ -170,7 +170,7 @@ export default function AzureAIFoundryWorkshopPage() {
             <span>/</span>
             <span>Azure AI Foundry Workshop</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
+          <h1 className="text-4xl md:text-5xl font-black mb-6">
             Azure AI Foundry Workshop — Hands-On Enterprise AI Development
           </h1>
           <p className="text-xl text-primary-100 mb-8 leading-relaxed">

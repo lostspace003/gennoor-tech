@@ -124,7 +124,7 @@ export default function TrainingPage() {
           </Link>
 
           <div className="max-w-4xl">
-            <h1 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+            <h1 className="text-4xl lg:text-5xl font-black text-white mb-6">
               Corporate AI Training & Bootcamps
             </h1>
             <p className="text-xl text-white/90 mb-8">

@@ -131,7 +131,7 @@ export default function AITrainingIndiaPage() {
             <Building2 className="w-4 h-4" />
             India
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6">
             Enterprise AI Training
             <br />
             & Solutions in India
