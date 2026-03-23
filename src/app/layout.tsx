@@ -4,6 +4,7 @@ import '@/styles/globals.css'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import CareerCommandCenter from '@/components/CareerCommandCenter'
+import PageViewTracker from '@/components/PageViewTracker'
 import { siteConfig, BLOB_URL } from '@/lib/site-config'
 
 const inter = Inter({
@@ -99,6 +100,7 @@ export default function RootLayout({
           </main>
           <Footer />
           <CareerCommandCenter />
+          <PageViewTracker />
         </div>
       </body>
     </html>
