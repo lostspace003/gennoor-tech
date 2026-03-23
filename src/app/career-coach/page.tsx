@@ -851,7 +851,7 @@ export default function CareerCoachPage() {
             {/* Results */}
             {Object.keys(results).length > 0 && (
               <>
-                {expanded && <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setExpanded(false)} />}
+                {expanded && <div className="fixed inset-0 z-40 bg-black/40" role="presentation" onClick={() => setExpanded(false)} />}
                 <div ref={resultsRef} className={`rounded-xl border border-gray-200 shadow-sm overflow-hidden ${expanded ? 'fixed inset-4 z-50 bg-white flex flex-col' : 'bg-white'}`}>
 
                   {Object.keys(results).length > 1 && (
@@ -1057,7 +1057,7 @@ export default function CareerCoachPage() {
       {/* Review Before Submit Modal */}
       {showReviewModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setShowReviewModal(false)} />
+          <div className="absolute inset-0 bg-black/40" role="presentation" onClick={() => setShowReviewModal(false)} />
           <div className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4 overflow-hidden animate-slideUp">
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
               <h3 className="text-base font-bold text-dark-800">Review before submitting</h3>
@@ -1096,7 +1096,7 @@ export default function CareerCoachPage() {
       {/* Download PDF Contact Form */}
       {showDownloadForm && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/40" onClick={() => !isGeneratingPdf && setShowDownloadForm(false)} />
+          <div className="absolute inset-0 bg-black/40" role="presentation" onClick={() => !isGeneratingPdf && setShowDownloadForm(false)} />
           <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden animate-slideUp">
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-primary-50">
               <div className="flex items-center gap-3">
@@ -1180,7 +1180,7 @@ export default function CareerCoachPage() {
       {/* LinkedIn PDF Export Tip Modal */}
       {showLinkedInTip && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setShowLinkedInTip(false)} />
+          <div className="absolute inset-0 bg-black/40" role="presentation" onClick={() => setShowLinkedInTip(false)} />
           <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden animate-slideUp">
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-blue-50">
               <div className="flex items-center gap-3">

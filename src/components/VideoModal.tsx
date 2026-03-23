@@ -308,6 +308,7 @@ export default function VideoModal({
                 max={duration || 100}
                 value={currentTime}
                 onChange={handleSeek}
+                aria-label="Seek video progress"
                 className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
                 style={{
                   background: `linear-gradient(to right, #2563EB 0%, #2563EB ${(currentTime / duration) * 100}%, #4B5563 ${(currentTime / duration) * 100}%, #4B5563 100%)`

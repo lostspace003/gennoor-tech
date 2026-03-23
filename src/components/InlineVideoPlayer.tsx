@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState, useCallback } from 'react'
+import Image from 'next/image'
 import { Play, Pause, Maximize2, Minimize2, Volume2, VolumeX } from 'lucide-react'
 
 interface InlineVideoPlayerProps {
@@ -142,10 +143,12 @@ export default function InlineVideoPlayer({
         {/* Thumbnail (shown before video starts) */}
         {!hasStarted && (
           <>
-            <img
+            <Image
               src={posterSrc}
-              alt="Video thumbnail"
-              className="absolute inset-0 w-full h-full object-cover"
+              alt="Gennoor Tech introduction video thumbnail"
+              fill
+              className="object-cover"
+              priority
             />
             <div className="absolute inset-0 bg-black/30" />
             <button
@@ -215,6 +218,7 @@ export default function InlineVideoPlayer({
               step="0.1"
               value={currentTime}
               onChange={handleSeek}
+              aria-label="Seek video progress"
               className="w-full h-1.5 bg-white/30 rounded-full appearance-none cursor-pointer mb-2 video-seek"
               style={{
                 background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${(currentTime / (duration || 1)) * 100}%, rgba(255,255,255,0.3) ${(currentTime / (duration || 1)) * 100}%, rgba(255,255,255,0.3) 100%)`
@@ -223,16 +227,16 @@ export default function InlineVideoPlayer({
 
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <button onClick={startPlayback} className="p-1.5 hover:bg-white/20 rounded-full transition-colors" type="button">
-                  {isPlaying ? <Pause className="w-4 h-4 text-white" /> : <Play className="w-4 h-4 text-white" />}
+                <button onClick={startPlayback} className="p-1.5 hover:bg-white/20 rounded-full transition-colors" type="button" aria-label={isPlaying ? 'Pause video' : 'Play video'}>
+                  {isPlaying ? <Pause className="w-4 h-4 text-white" aria-hidden="true" /> : <Play className="w-4 h-4 text-white" aria-hidden="true" />}
                 </button>
-                <button onClick={toggleMute} className="p-1.5 hover:bg-white/20 rounded-full transition-colors" type="button">
-                  {isMuted ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-white" />}
+                <button onClick={toggleMute} className="p-1.5 hover:bg-white/20 rounded-full transition-colors" type="button" aria-label={isMuted ? 'Unmute video' : 'Mute video'}>
+                  {isMuted ? <VolumeX className="w-4 h-4 text-white" aria-hidden="true" /> : <Volume2 className="w-4 h-4 text-white" aria-hidden="true" />}
                 </button>
                 <span className="text-white text-xs ml-1">{formatTime(currentTime)} / {formatTime(duration)}</span>
               </div>
-              <button onClick={handleFullscreen} className="p-1.5 hover:bg-white/20 rounded-full transition-colors" type="button" title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}>
-                {isFullscreen ? <Minimize2 className="w-4 h-4 text-white" /> : <Maximize2 className="w-4 h-4 text-white" />}
+              <button onClick={handleFullscreen} className="p-1.5 hover:bg-white/20 rounded-full transition-colors" type="button" aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}>
+                {isFullscreen ? <Minimize2 className="w-4 h-4 text-white" aria-hidden="true" /> : <Maximize2 className="w-4 h-4 text-white" aria-hidden="true" />}
               </button>
             </div>
           </div>

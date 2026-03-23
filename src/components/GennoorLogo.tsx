@@ -104,6 +104,8 @@ export default function GennoorLogo({ variant = "horizontal" }: LogoProps) {
       height={d.height}
       viewBox={d.viewBox}
       style={{ animation: 'gt-glow 3s ease-in-out 3.2s infinite' }}
+      role="img"
+      aria-label="Gennoor Tech logo"
     >
       {d.arc.map(([cx, cy, r], i) => (
         <circle

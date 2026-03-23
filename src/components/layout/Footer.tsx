@@ -28,9 +28,9 @@ export default function Footer() {
       <div className="gradient-primary py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mx-auto text-center">
-            <h3 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-white mb-4">
               Stay Updated with AI Insights
-            </h3>
+            </h2>
             <p className="text-blue-100 mb-6">
               Monthly newsletter with enterprise AI trends, case studies, and exclusive content
             </p>
@@ -38,6 +38,7 @@ export default function Footer() {
               <input
                 type="email"
                 placeholder="Enter your email"
+                aria-label="Email address for newsletter"
                 className="flex-1 px-4 py-3 rounded-md text-gray-900 bg-white border-0 focus:ring-2 focus:ring-white"
                 required
               />
