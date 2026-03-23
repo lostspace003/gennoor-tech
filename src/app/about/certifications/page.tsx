@@ -1,8 +1,10 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { Award, Download, ExternalLink, Shield, Trophy, BookOpen } from 'lucide-react'
+import { Award, ExternalLink, Shield, Trophy, BookOpen } from 'lucide-react'
 import { certifications, getCertificationsByCategory, microsoftLearnStats, mctStatus } from '@/data/certifications'
 import { BLOB_URL } from '@/lib/site-config'
+import CertificationCards from '@/components/certifications/CertificationCards'
+import MCTCertificateButton from '@/components/certifications/MCTCertificateButton'
 
 export const metadata: Metadata = {
   title: 'Microsoft Certifications & Credentials — 16 Active Certifications',
@@ -54,18 +56,7 @@ export default function CertificationsPage() {
                   <p className="text-sm text-blue-100">Active since {mctStatus.since} • Authorized worldwide trainer</p>
                 </div>
               </div>
-              <a
-                href={`${BLOB_URL}/certificates/0-mct-certifcate.pdf`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center bg-white border-2 border-primary-600 text-primary-600 rounded-lg px-6 py-3 shadow-lg hover:bg-primary-50 transition-colors"
-              >
-                <Award className="w-6 h-6 mr-3" />
-                <div className="text-left">
-                  <p className="font-bold">View MCT Certificate</p>
-                  <p className="text-sm">Official Microsoft credential</p>
-                </div>
-              </a>
+              <MCTCertificateButton pdfUrl={`${BLOB_URL}/certificates/0-mct-certifcate.pdf`} />
             </div>
           </div>
         </div>
@@ -128,76 +119,11 @@ export default function CertificationsPage() {
                     {category}
                   </h2>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {certs.map((cert) => (
-                      <div
-                        key={cert.id}
-                        className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow"
-                      >
-                        <div className="flex justify-between items-start mb-3">
-                          <div className="flex-1">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                              {cert.name}
-                            </h3>
-                            <p className="text-sm text-primary-600 font-medium">
-                              {cert.code}
-                            </p>
-                          </div>
-                          <Award className={`w-8 h-8 text-gradient bg-gradient-to-br ${categoryColors[category as keyof typeof categoryColors]} text-white rounded p-1.5`} />
-                        </div>
-
-                        {cert.description && (
-                          <p className="text-sm text-gray-600 mb-3">
-                            {cert.description}
-                          </p>
-                        )}
-
-                        {cert.skills && cert.skills.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mb-3">
-                            {cert.skills.slice(0, 4).map((skill, index) => (
-                              <span
-                                key={index}
-                                className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded"
-                              >
-                                {skill}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-
-                        {cert.dateEarned && (
-                          <p className="text-xs text-gray-500 mb-3">
-                            Earned: {cert.dateEarned}
-                          </p>
-                        )}
-
-                        <div className="flex items-center gap-3">
-                          {cert.pdfPath && (
-                            <a
-                              href={cert.pdfPath}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center text-sm text-primary-600 hover:underline"
-                            >
-                              <Download className="w-4 h-4 mr-1" />
-                              View Certificate
-                            </a>
-                          )}
-                          {cert.credlyBadge && (
-                            <a
-                              href={cert.credlyBadge}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center text-sm text-primary-600 hover:underline"
-                            >
-                              <ExternalLink className="w-4 h-4 mr-1" />
-                              Credly Badge
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <CertificationCards
+                    certs={certs}
+                    category={category}
+                    categoryColor={categoryColors[category as keyof typeof categoryColors]}
+                  />
                 </div>
               )
             })}
