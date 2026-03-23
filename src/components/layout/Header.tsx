@@ -6,18 +6,14 @@ import { usePathname } from 'next/navigation'
 import { Menu, X, ChevronDown } from 'lucide-react'
 import { siteConfig } from '@/lib/site-config'
 import { cn } from '@/lib/utils'
-import dynamic from 'next/dynamic'
-
-const GennoorLogo = dynamic(() => import('@/components/GennoorLogo'), {
-  ssr: false,
-  loading: () => <div className="h-[52px] w-[225px] animate-pulse bg-gray-200/10 rounded" />
-})
+import GennoorLogo from '@/components/GennoorLogo'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const pathname = usePathname()
   const navRef = useRef<HTMLElement>(null)
+  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Close dropdown when clicking outside or pressing Escape
   useEffect(() => {
@@ -49,6 +45,22 @@ export default function Header() {
     setIsMenuOpen(false)
   }, [pathname])
 
+  // Desktop hover handlers with small delay to prevent flicker
+  const handleMouseEnter = (name: string) => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current)
+      closeTimeoutRef.current = null
+    }
+    setOpenDropdown(name)
+  }
+
+  const handleMouseLeave = () => {
+    closeTimeoutRef.current = setTimeout(() => {
+      setOpenDropdown(null)
+    }, 150)
+  }
+
+  // Mobile click toggle
   const toggleDropdown = (name: string) => {
     setOpenDropdown(openDropdown === name ? null : name)
   }
@@ -57,28 +69,38 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <nav ref={navRef} aria-label="Main navigation" className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
-          {/* Logo - GennoorLogo at 0.5x scale */}
-          <Link href="/" className="flex items-center group">
-            <div className="transform scale-50 origin-left -my-6">
-              <GennoorLogo variant="horizontal" />
+          {/* Logo - Animated GennoorLogo at 0.3x */}
+          <Link href="/" className="flex items-center flex-shrink-0">
+            <div className="w-[243px] h-[77px] overflow-hidden">
+              <div className="origin-top-left scale-[0.3]">
+                <GennoorLogo variant="horizontal" />
+              </div>
             </div>
           </Link>
 
           {/* Desktop Navigation - Added margin-left for spacing */}
           <div className="hidden lg:flex lg:items-center lg:space-x-1 lg:ml-16">
             {siteConfig.navigation.main.map((item) => (
-              <div key={item.name} className="relative">
+              <div
+                key={item.name}
+                className="relative"
+                onMouseEnter={() => item.children && handleMouseEnter(item.name)}
+                onMouseLeave={() => item.children && handleMouseLeave()}
+              >
                 {item.children ? (
-                  <button
-                    onClick={() => toggleDropdown(item.name)}
+                  <Link
+                    href={item.href}
                     className={cn(
                       'nav-link px-3 py-2 flex items-center space-x-1',
                       pathname.startsWith(item.href) && 'text-primary-600'
                     )}
                   >
                     <span>{item.name}</span>
-                    <ChevronDown className="h-4 w-4" />
-                  </button>
+                    <ChevronDown className={cn(
+                      'h-4 w-4 transition-transform duration-200',
+                      openDropdown === item.name && 'rotate-180'
+                    )} />
+                  </Link>
                 ) : (
                   <Link
                     href={item.href}
@@ -91,15 +113,20 @@ export default function Header() {
                   </Link>
                 )}
 
-                {/* Dropdown Menu */}
+                {/* Dropdown Menu - opens on hover */}
                 {item.children && openDropdown === item.name && (
-                  <div className="absolute left-0 mt-2 w-64 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                    <div className="py-1">
+                  <div className="absolute left-0 top-full pt-1 w-64">
+                    <div className="rounded-lg shadow-lg bg-white ring-1 ring-black/5 py-1 animate-fade-in">
                       {item.children.map((child) => (
                         <Link
                           key={child.name}
                           href={child.href}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          className={cn(
+                            'block px-4 py-2.5 text-sm transition-colors',
+                            pathname === child.href
+                              ? 'text-primary-600 bg-primary-50 font-medium'
+                              : 'text-gray-700 hover:bg-gray-50 hover:text-primary-600'
+                          )}
                           onClick={() => setOpenDropdown(null)}
                         >
                           {child.name}
@@ -116,7 +143,7 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             {/* CTA Button - Desktop */}
             <Link
-              href="/contact#book"
+              href="/resources/calendar"
               className="hidden lg:inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors whitespace-nowrap"
             >
               Book a Call
@@ -191,7 +218,7 @@ export default function Header() {
                 </div>
               ))}
               <Link
-                href="/contact#book"
+                href="/resources/calendar"
                 className="block mx-3 mt-4 px-6 py-2.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg text-center transition-colors whitespace-nowrap"
                 onClick={() => setIsMenuOpen(false)}
               >

@@ -7,14 +7,14 @@ export const siteConfig = {
   tagline: 'Enterprise AI Training & Solutions',
   description: 'Transform your organization with practical AI solutions. Expert-led training from strategy to implementation, drawing from 14+ years working with Fortune 500 companies across 6 countries.',
   url: 'https://gennoor.com',
-  email: 'jalalkhan@gennoor.com',
+  email: 'contact@gennoor.com',
   phone: '+91-XXXXXXXXXX',
   social: {
     linkedin: 'https://www.linkedin.com/in/jalal-khan-b8319955/',
     github: 'https://github.com/lostspace003',
     microsoftLearn: 'https://learn.microsoft.com/en-us/users/lostspace003/transcript/vjw63s4jxnmmwre?tab=credentials-tab',
+    youtube: 'https://www.youtube.com/@GennoorTech',
     twitter: '',
-    youtube: '',
   },
 
   // Navigation structure from strategy document
@@ -38,7 +38,6 @@ export const siteConfig = {
           { name: 'Corporate Training', href: '/services/training' },
           { name: 'PoC Development', href: '/services/poc-development' },
           { name: 'Agentic AI Solutions', href: '/services/agentic-ai' },
-          { name: 'Webinars & Speaking', href: '/services/webinars' },
           { name: 'Collaboration', href: '/services/collaboration' },
         ]
       },
@@ -47,33 +46,12 @@ export const siteConfig = {
         href: '/portfolio',
         children: [
           { name: 'Case Studies', href: '/portfolio/case-studies' },
-          { name: 'PoCs & Demos', href: '/portfolio/demos' },
+          { name: 'PoCs & Demos', href: '/services/poc-development#live-demo' },
           { name: 'Open Source', href: '/portfolio/open-source' },
           { name: 'Client Testimonials', href: '/portfolio/testimonials' },
         ]
       },
-      {
-        name: 'Resources',
-        href: '/resources',
-        children: [
-          { name: 'Blog', href: '/resources/blog' },
-          { name: 'Guides & Whitepapers', href: '/resources/guides' },
-          { name: 'Video Library', href: '/resources/videos' },
-          { name: 'Newsletter', href: '/resources/newsletter' },
-          { name: 'Training Calendar', href: '/resources/calendar' },
-        ]
-      },
-      {
-        name: 'Industries',
-        href: '/industries',
-        children: [
-          { name: 'Banking & Finance', href: '/industries/banking' },
-          { name: 'Government', href: '/industries/government' },
-          { name: 'Education', href: '/industries/education' },
-          { name: 'Energy & Manufacturing', href: '/industries/energy' },
-          { name: 'IT & Technology', href: '/industries/technology' },
-        ]
-      },
+      { name: 'Blog', href: '/resources/blog' },
       { name: 'Webinars', href: '/webinars' },
       { name: 'Contact', href: '/contact' },
     ],
@@ -89,12 +67,12 @@ export const siteConfig = {
         ]
       },
       {
-        title: 'Resources',
+        title: 'About',
         links: [
-          { name: 'Blog', href: '/resources/blog' },
-          { name: 'Guides', href: '/resources/guides' },
-          { name: 'Videos', href: '/resources/videos' },
-          { name: 'Calendar', href: '/resources/calendar' },
+          { name: 'My Journey', href: '/about/journey' },
+          { name: 'Certifications', href: '/about/certifications' },
+          { name: 'Case Studies', href: '/portfolio/case-studies' },
+          { name: 'PoCs & Demos', href: '/services/poc-development#live-demo' },
         ]
       },
       {
@@ -113,7 +91,7 @@ export const siteConfig = {
   hero: {
     headline: 'Transform Your Organization with Practical AI Solutions — Expert-Led Training from Strategy to Implementation',
     subheadline: 'Drawing from 14+ years working with Fortune 500 companies across 6 countries',
-    cta1: { text: 'Book a Discovery Call', href: '/contact#book' },
+    cta1: { text: 'Book a Discovery Call', href: '/resources/calendar' },
     cta2: { text: 'Explore My Work', href: '/portfolio' },
   },
 
