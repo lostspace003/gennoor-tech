@@ -5,8 +5,10 @@ import { certifications, getCertificationsByCategory, microsoftLearnStats, mctSt
 import { BLOB_URL } from '@/lib/site-config'
 
 export const metadata: Metadata = {
-  title: 'Certifications & Credentials',
-  description: 'Microsoft Certified Trainer (MCT) with 16 active certifications including Agentic AI. View my complete Microsoft Learn profile.',
+  title: 'Microsoft Certifications & Credentials — 16 Active Certifications',
+  description: 'Microsoft Certified Trainer (MCT) with 16 active certifications including Azure AI Engineer, Power BI Analyst, Agentic AI, and GitHub. 376+ hours on Microsoft Learn.',
+  keywords: ['Microsoft certifications', 'MCT trainer', 'Azure AI certifications', 'Microsoft Certified Trainer India'],
+  alternates: { canonical: 'https://gennoor.com/about/certifications' },
 }
 
 const categoryOrder = [

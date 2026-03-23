@@ -1,313 +1,325 @@
-'use client'
+import { Metadata } from 'next';
+import Link from 'next/link';
+import { Mail, Phone, Linkedin, Calendar, MapPin, Globe, Clock, MessageCircle } from 'lucide-react';
+import ContactForm from '@/components/contact/ContactForm';
 
-import { useState, useEffect } from 'react'
-import { Mail, MapPin, Clock, Send, CheckCircle } from 'lucide-react'
-import EmailOTP from '@/components/EmailOTP'
-import PhoneInput from '@/components/ui/PhoneInput'
+export const metadata: Metadata = {
+  title: 'Contact Gennoor Tech — AI Training & Consulting Enquiries',
+  description:
+    'Get in touch with Gennoor Tech for enterprise AI training, strategy consulting, and PoC development. Based in India, serving Saudi Arabia, GCC, APAC, and Africa.',
+  keywords: [
+    'contact AI consultant',
+    'AI training enquiry',
+    'enterprise AI consulting',
+    'Gennoor Tech contact',
+    'Jalal Ahmed Khan',
+  ],
+  openGraph: {
+    title: 'Contact Gennoor Tech — AI Training & Consulting Enquiries',
+    description:
+      'Reach out for AI training, strategy consulting, and proof-of-concept development. Based in India, serving clients globally.',
+    url: 'https://gennoor.com/contact',
+    type: 'website',
+  },
+  alternates: {
+    canonical: 'https://gennoor.com/contact',
+  },
+};
+
+const faqs = [
+  {
+    question: 'How quickly can you start an AI training engagement?',
+    answer:
+      'We can typically kick off a discovery call within 48 hours and begin a customized training program within 2-3 weeks, depending on the scope and number of participants.',
+  },
+  {
+    question: 'Do you offer training in languages other than English?',
+    answer:
+      'Our primary delivery language is English. For Saudi Arabia and GCC engagements, we can provide bilingual materials and work with local co-facilitators for Arabic support.',
+  },
+  {
+    question: 'What is the typical duration of your training programs?',
+    answer:
+      'Programs range from intensive 2-day workshops to comprehensive 8-12 week cohort programs. We design each engagement around your team\'s goals, existing skill levels, and business outcomes.',
+  },
+  {
+    question: 'Can you deliver training remotely?',
+    answer:
+      'Absolutely. We deliver live, interactive virtual sessions via Microsoft Teams or Zoom. Remote training includes the same hands-on labs, real-time Q&A, and post-session support as in-person delivery.',
+  },
+  {
+    question: 'How do I book a free consultation call?',
+    answer:
+      'You can book a 30-minute discovery call directly through our Calendly link on this page, or send us an email at jalalkhan@gennoor.com. We typically respond within 24 hours.',
+  },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
+};
+
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: 'Gennoor Tech',
+  description:
+    'Enterprise AI training, strategy consulting, and proof-of-concept development for organizations worldwide.',
+  url: 'https://gennoor.com',
+  email: 'jalalkhan@gennoor.com',
+  founder: {
+    '@type': 'Person',
+    name: 'Jalal Ahmed Khan',
+    url: 'https://www.linkedin.com/in/jalal-khan-b8319955/',
+  },
+  address: {
+    '@type': 'PostalAddress',
+    addressCountry: 'IN',
+    addressLocality: 'India',
+  },
+  areaServed: [
+    { '@type': 'Country', name: 'India' },
+    { '@type': 'Country', name: 'Saudi Arabia' },
+    { '@type': 'Place', name: 'GCC' },
+    { '@type': 'Place', name: 'APAC' },
+    { '@type': 'Place', name: 'Africa' },
+  ],
+  sameAs: ['https://www.linkedin.com/in/jalal-khan-b8319955/'],
+};
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    whatsapp: '',
-    company: '',
-    designation: '',
-    interest: '',
-    message: '',
-  })
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
-  const [errorMsg, setErrorMsg] = useState('')
-  const [emailVerified, setEmailVerified] = useState(false)
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+      />
 
-  useEffect(() => {
-    setEmailVerified(false)
-  }, [formData.email])
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setStatus('submitting')
-    setErrorMsg('')
-
-    try {
-      const res = await fetch('/api/book-expert-call', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          programTitle: formData.interest || 'General Enquiry',
-          timestamp: new Date().toISOString(),
-        }),
-      })
-
-      if (!res.ok) throw new Error('Failed to submit')
-      setStatus('success')
-    } catch {
-      setStatus('error')
-      setErrorMsg('Something went wrong. Please email us directly at contact@gennoor.com')
-    }
-  }
-
-  const update = (field: string, value: string) =>
-    setFormData(prev => ({ ...prev, [field]: value }))
-
-  if (status === 'success') {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-        <div className="container mx-auto px-4 py-24 text-center max-w-2xl">
-          <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-6" />
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Thank You!</h1>
-          <p className="text-lg text-gray-600 mb-2">
-            We&apos;ve received your enquiry and will get back to you within 24 hours.
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-br from-primary-700 via-primary-600 to-primary-700 py-20 lg:py-28">
+        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-5" />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+            Let&apos;s Build Your AI Future Together
+          </h1>
+          <p className="text-xl md:text-2xl text-primary-100 max-w-3xl mx-auto">
+            Whether you need AI training for your teams, a strategic roadmap, or a working
+            proof-of-concept — we&apos;re here to help.
           </p>
-          <p className="text-gray-500">
-            A confirmation email has been sent to <strong>{formData.email}</strong>
+        </div>
+      </section>
+
+      {/* Contact Info Cards */}
+      <section className="py-16 lg:py-20 bg-gray-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
+            Reach Out Through Any Channel
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Email */}
+            <a
+              href="mailto:jalalkhan@gennoor.com"
+              className="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100 text-center"
+            >
+              <div className="inline-flex items-center justify-center w-14 h-14 bg-primary-50 rounded-xl mb-4 group-hover:bg-primary-100 transition-colors">
+                <Mail className="w-7 h-7 text-primary-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-1">Email</h3>
+              <p className="text-sm text-gray-600">jalalkhan@gennoor.com</p>
+            </a>
+
+            {/* WhatsApp */}
+            <a
+              href="https://wa.me/message/gennoortech"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100 text-center"
+            >
+              <div className="inline-flex items-center justify-center w-14 h-14 bg-green-50 rounded-xl mb-4 group-hover:bg-green-100 transition-colors">
+                <MessageCircle className="w-7 h-7 text-green-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-1">WhatsApp</h3>
+              <p className="text-sm text-gray-600">Quick response on WhatsApp</p>
+            </a>
+
+            {/* LinkedIn */}
+            <a
+              href="https://www.linkedin.com/in/jalal-khan-b8319955/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100 text-center"
+            >
+              <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-50 rounded-xl mb-4 group-hover:bg-blue-100 transition-colors">
+                <Linkedin className="w-7 h-7 text-blue-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-1">LinkedIn</h3>
+              <p className="text-sm text-gray-600">Connect with Jalal Ahmed Khan</p>
+            </a>
+
+            {/* Calendly */}
+            <a
+              href="https://calendly.com/gennoortech"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100 text-center"
+            >
+              <div className="inline-flex items-center justify-center w-14 h-14 bg-accent-50 rounded-xl mb-4 group-hover:bg-primary-50 transition-colors">
+                <Calendar className="w-7 h-7 text-primary-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-1">Book a Call</h3>
+              <p className="text-sm text-gray-600">Free 30-minute discovery session</p>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Form Section */}
+      <section className="py-16 lg:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">
+                Send Us a Message
+              </h2>
+              <p className="text-lg text-gray-600 mb-8">
+                Tell us about your AI goals and we&apos;ll get back to you within 24 hours
+                with a tailored response — no generic templates, no sales pitch.
+              </p>
+              <ContactForm />
+            </div>
+
+            {/* Office Info */}
+            <div className="lg:pl-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">
+                Where We Operate
+              </h2>
+              <div className="space-y-6">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center">
+                    <MapPin className="w-6 h-6 text-primary-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-1">Based in India</h3>
+                    <p className="text-gray-600">
+                      Our home base, with deep roots in India&apos;s enterprise technology
+                      ecosystem — delivering AI training to Fortune 500 companies and
+                      fast-growing startups alike.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center">
+                    <Globe className="w-6 h-6 text-primary-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-1">
+                      Serving Clients Globally
+                    </h3>
+                    <p className="text-gray-600">
+                      Active engagements across Saudi Arabia, the broader GCC region, APAC
+                      markets, and Africa. We travel on-site or deliver live virtual sessions
+                      across time zones.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center">
+                    <Clock className="w-6 h-6 text-primary-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-1">Response Time</h3>
+                    <p className="text-gray-600">
+                      We respond to all enquiries within 24 hours. For urgent requests, reach
+                      out via WhatsApp for a faster reply.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Regions Served */}
+              <div className="mt-10 p-6 bg-gray-50 rounded-2xl">
+                <h3 className="font-semibold text-gray-900 mb-4">Regions We Serve</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    'Saudi Arabia',
+                    'UAE & GCC',
+                    'India',
+                    'Southeast Asia',
+                    'East Africa',
+                    'Remote / Worldwide',
+                  ].map((region) => (
+                    <div
+                      key={region}
+                      className="flex items-center gap-2 text-sm text-gray-700"
+                    >
+                      <div className="w-2 h-2 bg-primary-600 rounded-full" />
+                      {region}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-16 lg:py-20 bg-gray-50">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
+            Frequently Asked Questions
+          </h2>
+          <div className="space-y-6">
+            {faqs.map((faq, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+              >
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  {faq.question}
+                </h3>
+                <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-16 lg:py-20 bg-gradient-to-r from-primary-600 to-primary-700">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-bold text-white mb-4">
+            Ready to Get Started?
+          </h2>
+          <p className="text-xl text-primary-100 mb-8">
+            Book a free 30-minute call and let&apos;s explore how AI can transform your
+            organization.
           </p>
           <a
-            href="/"
-            className="inline-block mt-8 px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+            href="https://calendly.com/gennoortech"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-white text-primary-700 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-primary-50 transition-colors"
           >
-            Back to Home
+            <Calendar className="w-5 h-5" />
+            Book a Discovery Call
           </a>
         </div>
-      </div>
-    )
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Let&apos;s Work Together
-          </h1>
-          <p className="text-lg text-gray-600">
-            Whether you need AI training for your team, a proof-of-concept, or strategic consulting — let&apos;s discuss how we can help.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 max-w-6xl mx-auto">
-          {/* Contact Info */}
-          <div className="space-y-8">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Get in Touch</h2>
-              <div className="space-y-4">
-                <a href="mailto:contact@gennoor.com" className="flex items-start gap-3 text-gray-600 hover:text-primary-600 transition-colors">
-                  <Mail className="h-5 w-5 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="font-medium text-gray-900">Email</p>
-                    <p>contact@gennoor.com</p>
-                  </div>
-                </a>
-                <div className="flex items-start gap-3 text-gray-600">
-                  <MapPin className="h-5 w-5 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="font-medium text-gray-900">Location</p>
-                    <p>Mumbai, India</p>
-                    <p className="text-sm text-gray-500">Serving clients globally</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 text-gray-600">
-                  <Clock className="h-5 w-5 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="font-medium text-gray-900">Response Time</p>
-                    <p>Within 24 hours</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* What to expect */}
-            <div className="bg-primary-50 rounded-xl p-6">
-              <h3 className="font-semibold text-primary-900 mb-3">What happens next?</h3>
-              <ol className="space-y-3 text-sm text-primary-800">
-                <li className="flex gap-2">
-                  <span className="font-bold text-primary-600">1.</span>
-                  We review your requirements within 24 hours
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-bold text-primary-600">2.</span>
-                  Schedule a 30-min discovery call at your convenience
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-bold text-primary-600">3.</span>
-                  Receive a tailored proposal with scope, timeline & pricing
-                </li>
-              </ol>
-            </div>
-
-            {/* How we work */}
-            <div className="bg-gradient-to-br from-primary-50 to-blue-50 rounded-xl p-6 border border-primary-100">
-              <h3 className="font-semibold text-gray-900 mb-4">How We Work</h3>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm font-medium text-gray-900">Corporate Training</p>
-                  <p className="text-xs text-gray-600">2–10 day programs tailored to your team&apos;s level and goals</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-900">AI Strategy Workshop</p>
-                  <p className="text-xs text-gray-600">1–2 day intensive sessions for leadership alignment</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-900">PoC Development</p>
-                  <p className="text-xs text-gray-600">4–8 week sprints from prototype to production-ready demo</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-900">Advisory Retainer</p>
-                  <p className="text-xs text-gray-600">Ongoing monthly guidance for AI initiatives</p>
-                </div>
-              </div>
-              <div className="mt-4 pt-4 border-t border-primary-100">
-                <p className="text-sm font-medium text-gray-900 mb-3">For a quote, let&apos;s connect</p>
-                <div className="space-y-2">
-                  <a
-                    href="https://www.linkedin.com/in/jalal-khan-b8319955/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2.5 px-4 py-2.5 bg-[#0A66C2] text-white text-sm font-medium rounded-lg hover:bg-[#004182] transition-colors"
-                  >
-                    <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                    Connect on LinkedIn
-                  </a>
-                  <a
-                    href="https://www.youtube.com/@GennoorTech"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2.5 px-4 py-2.5 bg-[#FF0000] text-white text-sm font-medium rounded-lg hover:bg-[#CC0000] transition-colors"
-                  >
-                    <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                    GennoorTech on YouTube
-                  </a>
-                  <a
-                    href="mailto:contact@gennoor.com"
-                    className="flex items-center gap-2.5 px-4 py-2.5 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
-                  >
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                    contact@gennoor.com
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Contact Form */}
-          <div className="lg:col-span-2" id="book">
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">We&apos;d Love to Hear From You</h2>
-
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.name}
-                      onChange={e => update('name', e.target.value)}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                      placeholder="Your name"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-                    <input
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={e => update('email', e.target.value)}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                      placeholder="you@company.com"
-                    />
-                    <EmailOTP email={formData.email} onVerified={() => setEmailVerified(true)} verified={emailVerified} />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <PhoneInput
-                    label="WhatsApp"
-                    id="contact-whatsapp"
-                    value={formData.whatsapp}
-                    onChange={(fullNumber) => update('whatsapp', fullNumber)}
-                    required={false}
-                  />
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
-                    <input
-                      type="text"
-                      value={formData.company}
-                      onChange={e => update('company', e.target.value)}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                      placeholder="Company name"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Designation</label>
-                    <input
-                      type="text"
-                      value={formData.designation}
-                      onChange={e => update('designation', e.target.value)}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                      placeholder="Your role"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">I&apos;m Interested In</label>
-                    <select
-                      value={formData.interest}
-                      onChange={e => update('interest', e.target.value)}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
-                    >
-                      <option value="">Select an option</option>
-                      <option value="Corporate Training">Corporate Training</option>
-                      <option value="AI Strategy Consulting">AI Strategy Consulting</option>
-                      <option value="PoC Development">PoC Development</option>
-                      <option value="Agentic AI Solutions">Agentic AI Solutions</option>
-                      <option value="Speaking / Webinar">Speaking / Webinar</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tell us about your requirements</label>
-                  <textarea
-                    rows={4}
-                    value={formData.message}
-                    onChange={e => update('message', e.target.value)}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    placeholder="Briefly describe what you're looking for — team size, timeline, specific topics, etc."
-                  />
-                </div>
-
-                {errorMsg && (
-                  <p className="text-sm text-red-600">{errorMsg}</p>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={status === 'submitting' || !emailVerified}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {status === 'submitting' ? (
-                    <>
-                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                      Submitting...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="h-4 w-4" />
-                      Submit Enquiry
-                    </>
-                  )}
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
+      </section>
+    </>
+  );
 }

@@ -1,5 +1,27 @@
+import { Metadata } from 'next'
 import { ArrowLeft, Target, TrendingUp, Shield, Users, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
+import { ServiceJsonLd, FAQJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd'
+
+export const metadata: Metadata = {
+  title: 'AI Strategy & Consulting — Enterprise AI Roadmap',
+  description: 'Transform your organization with a comprehensive AI strategy. Expert-led AI readiness assessment, ROI modeling, governance frameworks, and implementation roadmaps for enterprises.',
+  keywords: ['AI strategy consulting', 'enterprise AI roadmap', 'AI readiness assessment', 'AI governance framework', 'AI ROI modeling'],
+  alternates: { canonical: 'https://gennoor.com/services/ai-strategy' },
+  openGraph: {
+    title: 'AI Strategy & Consulting — Enterprise AI Roadmap | Gennoor Tech',
+    description: 'Transform your organization with a comprehensive AI strategy. Expert-led consulting from readiness assessment to implementation.',
+    url: 'https://gennoor.com/services/ai-strategy',
+  },
+}
+
+const faqs = [
+  { question: 'How long does an AI strategy engagement take?', answer: 'A typical AI strategy engagement takes 5-8 weeks, covering discovery, strategy development, governance framework creation, and implementation planning. Timelines vary based on organization size and complexity.' },
+  { question: 'What deliverables do I receive?', answer: 'You receive an AI Readiness Assessment Report, Enterprise AI Roadmap (3-5 year vision), ROI Modeling & Business Case, AI Governance Framework, Risk Assessment, and a detailed Change Management Plan.' },
+  { question: 'Is this suitable for organizations new to AI?', answer: 'Absolutely. The engagement starts with a discovery phase that assesses your current state. Whether you are exploring AI for the first time or scaling existing initiatives, the strategy is tailored to your maturity level.' },
+  { question: 'Do you work with specific industries?', answer: 'We have deep experience in banking & finance, government, energy, education, and technology sectors. The frameworks are adaptable to any industry with enterprise AI needs.' },
+  { question: 'How is this different from a generic consulting firm?', answer: 'Jalal Ahmed Khan brings 14+ years of hands-on experience, 16 Microsoft certifications, and direct experience training C-suite leaders at Fortune 500 companies. You get practitioner-led strategy, not theoretical frameworks.' },
+]
 
 export default function AIStrategyPage() {
   const deliverables = [
@@ -148,6 +170,44 @@ export default function AIStrategyPage() {
         </div>
       </section>
 
+      {/* Related Services */}
+      <section className="py-16 lg:py-20 bg-gray-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Related Services</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <Link href="/services/training" className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+              <h3 className="font-semibold text-gray-900 mb-2">Corporate AI Training</h3>
+              <p className="text-sm text-gray-600">Upskill your team with hands-on Azure AI, Copilot, and Power Platform bootcamps.</p>
+            </Link>
+            <Link href="/services/poc-development" className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+              <h3 className="font-semibold text-gray-900 mb-2">PoC Development</h3>
+              <p className="text-sm text-gray-600">Validate your AI strategy with a working prototype in 2-6 weeks.</p>
+            </Link>
+            <Link href="/services/agentic-ai" className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+              <h3 className="font-semibold text-gray-900 mb-2">Agentic AI Solutions</h3>
+              <p className="text-sm text-gray-600">Build autonomous AI systems that execute your strategy.</p>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-16 lg:py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
+            Frequently Asked Questions
+          </h2>
+          <div className="max-w-3xl mx-auto space-y-6">
+            {faqs.map((faq) => (
+              <div key={faq.question} className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
+                <p className="text-gray-600">{faq.answer}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-16 lg:py-20 bg-primary-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -155,7 +215,7 @@ export default function AIStrategyPage() {
             Ready to Define Your AI Strategy?
           </h2>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Let's work together to create an AI roadmap that transforms your business
+            Let&apos;s work together to create an AI roadmap that transforms your business
           </p>
           <Link
             href="/contact#book"
@@ -165,6 +225,18 @@ export default function AIStrategyPage() {
           </Link>
         </div>
       </section>
+
+      <ServiceJsonLd
+        name="AI Strategy & Consulting"
+        description="Comprehensive AI strategy consulting including readiness assessment, ROI modeling, governance frameworks, and implementation roadmaps for enterprises."
+        url="https://gennoor.com/services/ai-strategy"
+      />
+      <FAQJsonLd faqs={faqs} />
+      <BreadcrumbJsonLd items={[
+        { name: 'Home', url: 'https://gennoor.com' },
+        { name: 'Services', url: 'https://gennoor.com/services' },
+        { name: 'AI Strategy & Consulting', url: 'https://gennoor.com/services/ai-strategy' },
+      ]} />
     </main>
   )
 }

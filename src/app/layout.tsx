@@ -4,7 +4,9 @@ import '@/styles/globals.css'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import CareerCommandCenter from '@/components/CareerCommandCenter'
-import PageViewTracker from '@/components/PageViewTracker'
+import GoogleAnalytics from '@/components/GoogleAnalytics'
+import WhatsAppButton from '@/components/WhatsAppButton'
+import { OrganizationJsonLd, WebSiteJsonLd } from '@/components/JsonLd'
 import { siteConfig, BLOB_URL } from '@/lib/site-config'
 
 const inter = Inter({
@@ -92,15 +94,23 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <OrganizationJsonLd />
+        <WebSiteJsonLd />
+      </head>
       <body className={`${inter.variable} ${plusJakarta.variable} antialiased`}>
+        <GoogleAnalytics />
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-primary-600 focus:text-white focus:rounded-lg">
+          Skip to main content
+        </a>
         <div className="flex min-h-screen flex-col">
           <Header />
-          <main className="flex-1">
+          <main id="main-content" className="flex-1">
             {children}
           </main>
           <Footer />
+          <WhatsAppButton />
           <CareerCommandCenter />
-          <PageViewTracker />
         </div>
       </body>
     </html>

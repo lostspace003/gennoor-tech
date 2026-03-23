@@ -3,8 +3,15 @@ import Link from 'next/link'
 import { User, Award, Building, ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'About',
-  description: 'Learn about Jalal Ahmed Khan and Gennoor Tech Private Limited',
+  title: 'About Jalal Ahmed Khan & Gennoor Tech — Enterprise AI Expert',
+  description: 'Meet Jalal Ahmed Khan — Microsoft Certified Trainer with 16 certifications, 14+ years of experience, and Fortune 500 clients across 6 countries. Founder of Gennoor Tech Private Limited.',
+  keywords: ['Jalal Ahmed Khan', 'Microsoft Certified Trainer', 'Gennoor Tech', 'enterprise AI consultant', 'AI trainer'],
+  alternates: { canonical: 'https://gennoor.com/about' },
+  openGraph: {
+    title: 'About Jalal Ahmed Khan & Gennoor Tech',
+    description: 'Microsoft Certified Trainer with 16 certifications, 14+ years experience, Fortune 500 clients across 6 countries.',
+    url: 'https://gennoor.com/about',
+  },
 }
 
 const sections = [

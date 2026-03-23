@@ -4,8 +4,10 @@ import { ArrowRight, Clock, Users, Building2, Github, FileText } from 'lucide-re
 import { caseStudies } from '@/data/case-studies'
 
 export const metadata: Metadata = {
-  title: 'Case Studies',
-  description: 'Real-world AI implementations and training programs delivered to Fortune 500 companies and government bodies',
+  title: 'AI Case Studies — Fortune 500 Implementations & Training Programs',
+  description: 'Real-world AI case studies: Bank of Tanzania AI agents, EY Copilot Studio deployment, Boeing document intelligence, and Saudi Arabia C-suite AI training.',
+  keywords: ['AI case studies', 'enterprise AI implementation', 'AI training case study', 'Fortune 500 AI projects'],
+  alternates: { canonical: 'https://gennoor.com/portfolio/case-studies' },
 }
 
 const industryColors = {

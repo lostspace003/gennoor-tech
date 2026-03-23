@@ -3,8 +3,10 @@ import Link from 'next/link'
 import { FileText, Code, Github, MessageSquare, ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Portfolio',
-  description: 'Explore my work: case studies, PoCs, open source contributions, and client testimonials',
+  title: 'Portfolio — AI Case Studies, PoCs & Enterprise Implementations',
+  description: 'Explore real-world AI implementations: banking document intelligence, enterprise AI agents, Copilot Studio solutions, and Fortune 500 training programs.',
+  keywords: ['AI portfolio', 'AI case studies', 'enterprise AI implementations', 'AI proof of concept examples'],
+  alternates: { canonical: 'https://gennoor.com/portfolio' },
 }
 
 const portfolioSections = [
