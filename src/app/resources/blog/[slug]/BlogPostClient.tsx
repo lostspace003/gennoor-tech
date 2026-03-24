@@ -8,8 +8,6 @@ import { CheckCircle } from 'lucide-react'
 
 function ShareBar({ post, slug }: { post: BlogPost; slug: string }) {
   const [copied, setCopied] = useState(false)
-  const [linkedInStatus, setLinkedInStatus] = useState<'idle' | 'confirming' | 'posting' | 'posted' | 'error'>('idle')
-  const [linkedInError, setLinkedInError] = useState('')
   const url = `https://gennoor.com/resources/blog/${slug}`
 
   const handleCopy = () => {
@@ -18,45 +16,13 @@ function ShareBar({ post, slug }: { post: BlogPost; slug: string }) {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const handleLinkedInPost = async () => {
-    if (linkedInStatus === 'idle') {
-      setLinkedInStatus('confirming')
-      return
-    }
-    if (linkedInStatus !== 'confirming') return
-
-    setLinkedInStatus('posting')
-    setLinkedInError('')
-    try {
-      const res = await fetch('/api/linkedin/post', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          slug,
-          title: post.title,
-          excerpt: post.excerpt,
-          url,
-          hashtags: post.hashtags,
-        }),
-      })
-      const data = await res.json()
-      if (data.success) {
-        setLinkedInStatus('posted')
-      } else {
-        setLinkedInError(data.message || 'Failed to post')
-        setLinkedInStatus('error')
-        setTimeout(() => setLinkedInStatus('idle'), 4000)
-      }
-    } catch {
-      setLinkedInError('Network error')
-      setLinkedInStatus('error')
-      setTimeout(() => setLinkedInStatus('idle'), 4000)
-    }
-  }
-
-  const linkedInIcon = <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-
   const channels = [
+    {
+      name: 'LinkedIn',
+      href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+      bg: '#0A66C2',
+      icon: <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>,
+    },
     {
       name: 'WhatsApp',
       href: `https://wa.me/?text=${encodeURIComponent(post.title + '\n\n' + url + '\n\n' + post.hashtags.join(' '))}`,
@@ -87,42 +53,6 @@ function ShareBar({ post, slug }: { post: BlogPost; slug: string }) {
           {ch.icon}
         </a>
       ))}
-
-      {/* LinkedIn - Posts to Company Page */}
-      <button
-        onClick={handleLinkedInPost}
-        disabled={linkedInStatus === 'posting' || linkedInStatus === 'posted'}
-        className="p-2 rounded-lg transition-all duration-200 hover:scale-110 hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
-        style={{ backgroundColor: linkedInStatus === 'posted' ? '#16a34a' : linkedInStatus === 'error' ? '#dc2626' : '#0A66C2', color: '#ffffff' }}
-        title={
-          linkedInStatus === 'idle' ? 'Post to Gennoor Tech LinkedIn Page' :
-          linkedInStatus === 'confirming' ? 'Click again to confirm' :
-          linkedInStatus === 'posting' ? 'Posting...' :
-          linkedInStatus === 'posted' ? 'Posted!' :
-          linkedInError
-        }
-      >
-        {linkedInStatus === 'posting' ? (
-          <svg className="h-3.5 w-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-        ) : linkedInStatus === 'posted' ? (
-          <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-        ) : linkedInIcon}
-      </button>
-
-      {/* Confirmation tooltip */}
-      {linkedInStatus === 'confirming' && (
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg whitespace-nowrap shadow-lg">
-          Post to Gennoor Tech page? Click again to confirm
-          <button onClick={() => setLinkedInStatus('idle')} className="ml-2 text-gray-400 hover:text-white">✕</button>
-        </div>
-      )}
-
-      {/* Error tooltip */}
-      {linkedInStatus === 'error' && (
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-red-600 text-white text-xs rounded-lg whitespace-nowrap shadow-lg">
-          {linkedInError}
-        </div>
-      )}
 
       <button onClick={handleCopy}
         className="p-2 rounded-lg transition-all duration-200 hover:scale-110"
