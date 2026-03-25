@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCommentsBySlug, saveComment, updateCommentStatus } from '@/lib/azure-storage'
-import { blogPosts } from '@/data/blog-posts'
+import { blogPostsMeta } from '@/data/blog-posts'
 
 // Simple in-memory rate limiter
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     if (!slug || !authorName?.trim() || !authorEmail?.trim() || !content?.trim()) {
       return NextResponse.json({ error: 'All fields are required' }, { status: 400 })
     }
-    if (!blogPosts.find(p => p.slug === slug)) {
+    if (!blogPostsMeta.find(p => p.slug === slug)) {
       return NextResponse.json({ error: 'Invalid blog post' }, { status: 400 })
     }
     if (content.length > 2000) {

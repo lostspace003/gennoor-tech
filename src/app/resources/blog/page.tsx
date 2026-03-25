@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { blogPosts, blogCategories } from '@/data/blog-posts'
+import { blogPostsMeta, blogCategories } from '@/data/blog-posts'
 import { siteConfig, BLOB_URL } from '@/lib/site-config'
 import BlogListClient from './BlogListClient'
 
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 
 export default function BlogPage() {
   // Sort posts for SSR — Google sees the full list in correct order
-  const sortedPosts = [...blogPosts].sort(
+  const sortedPosts = [...blogPostsMeta].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   )
 

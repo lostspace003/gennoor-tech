@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { getBlogPost, getRecentPosts, blogPosts } from '@/data/blog-posts'
+import { getBlogPostContent, getRecentPostsMeta, blogPostsMeta, type BlogPost } from '@/data/blog-posts'
 import { siteConfig, BLOB_URL } from '@/lib/site-config'
 import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd'
 import BlogPostClient from './BlogPostClient'
@@ -11,7 +11,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const post = getBlogPost(slug)
+  const post = await getBlogPostContent(slug)
   if (!post) return {}
 
   const articleUrl = `${siteConfig.url}/resources/blog/${slug}`
@@ -49,18 +49,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export function generateStaticParams() {
-  return blogPosts.map(post => ({ slug: post.slug }))
+  return blogPostsMeta.map(post => ({ slug: post.slug }))
 }
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params
-  const post = getBlogPost(slug)
+  const post = await getBlogPostContent(slug)
 
   if (!post) {
     notFound()
   }
 
-  const relatedPosts = getRecentPosts(6).filter(p => p.slug !== post.slug).slice(0, 3)
+  const relatedPosts = getRecentPostsMeta(6).filter(p => p.slug !== post.slug).slice(0, 3)
 
   const articleUrl = `${siteConfig.url}/resources/blog/${slug}`
 

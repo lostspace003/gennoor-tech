@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
-import { type BlogPost } from '@/data/blog-posts'
+import { type BlogPost, type BlogPostMeta } from '@/data/blog-posts'
 import EmailOTP from '@/components/EmailOTP'
 import { CheckCircle } from 'lucide-react'
 
@@ -74,7 +74,7 @@ function ShareBar({ post, slug }: { post: BlogPost; slug: string }) {
 export default function BlogPostClient({ post, slug, relatedPosts }: {
   post: BlogPost
   slug: string
-  relatedPosts: BlogPost[]
+  relatedPosts: BlogPostMeta[]
 }) {
   const [email, setEmail] = useState('')
   const [subscribed, setSubscribed] = useState(false)

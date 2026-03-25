@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { type BlogPost } from '@/data/blog-posts'
+import { type BlogPostMeta } from '@/data/blog-posts'
 import { CheckCircle, ArrowUpDown, Calendar } from 'lucide-react'
 import EmailOTP from '@/components/EmailOTP'
 
@@ -10,7 +10,7 @@ type SortOrder = 'newest' | 'oldest'
 type TimeFilter = 'all' | 'week' | 'month'
 
 interface BlogListClientProps {
-  posts: BlogPost[]
+  posts: BlogPostMeta[]
   categories: string[]
 }
 
