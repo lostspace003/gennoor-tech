@@ -142,7 +142,7 @@ export default function ContactPage() {
 
             {/* WhatsApp */}
             <a
-              href="https://wa.me/message/gennoortech"
+              href="https://wa.me/919326352241?text=Hi%20Jalal%2C%20I%20visited%20gennoor.com%20and%20would%20like%20to%20discuss%20AI%20training%2Fconsulting."
               target="_blank"
               rel="noopener noreferrer"
               className="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100 text-center"
