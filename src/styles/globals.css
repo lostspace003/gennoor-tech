@@ -206,3 +206,194 @@ input[type="range"]::-moz-range-thumb {
 .animate-slideUp {
   animation: modalSlideUp 0.3s ease-out;
 }
+
+/* ── Blog Visual Breaks ────────────────────────────────────── */
+
+/* Diagram container — wraps inline SVGs */
+.prose .blog-diagram {
+  text-align: center;
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  overflow-x: auto;
+}
+
+.prose .blog-diagram svg {
+  max-width: 100%;
+  height: auto;
+  display: inline-block;
+}
+
+.prose .blog-diagram figcaption {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-top: 0.75rem;
+  font-style: italic;
+}
+
+/* Stat highlight row — bold numbers with labels */
+.prose .blog-stats {
+  display: flex;
+  gap: 1rem;
+  margin: 2rem 0;
+  flex-wrap: wrap;
+}
+
+.prose .blog-stats .stat {
+  flex: 1;
+  min-width: 120px;
+  text-align: center;
+  padding: 1.25rem 1rem;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.prose .blog-stats .stat .stat-value {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #2563eb;
+  line-height: 1.2;
+}
+
+.prose .blog-stats .stat .stat-label {
+  display: block;
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+/* Callout boxes — info, tip, warning */
+.prose .blog-callout {
+  margin: 2rem 0;
+  padding: 1.25rem 1.5rem;
+  border-radius: 10px;
+  border-left: 4px solid;
+}
+
+.prose .blog-callout.callout-info {
+  background: #eff6ff;
+  border-color: #2563eb;
+}
+
+.prose .blog-callout.callout-tip {
+  background: #f0fdf4;
+  border-color: #16a34a;
+}
+
+.prose .blog-callout.callout-warning {
+  background: #fefce8;
+  border-color: #ca8a04;
+}
+
+.prose .blog-callout .callout-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.prose .blog-callout.callout-info .callout-title { color: #2563eb; }
+.prose .blog-callout.callout-tip .callout-title { color: #16a34a; }
+.prose .blog-callout.callout-warning .callout-title { color: #ca8a04; }
+
+.prose .blog-callout p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* Comparison grid */
+.prose .blog-compare {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.prose .blog-compare .compare-card {
+  padding: 1.25rem;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+
+.prose .blog-compare .compare-card .compare-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #2563eb;
+}
+
+.prose .blog-compare .compare-card p,
+.prose .blog-compare .compare-card li {
+  font-size: 0.85rem;
+  color: #475569;
+  margin: 0.25rem 0;
+}
+
+/* Process flow — horizontal steps */
+.prose .blog-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 2rem 0;
+  flex-wrap: wrap;
+  padding: 1.5rem 1rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.prose .blog-flow .flow-step {
+  text-align: center;
+  padding: 0.75rem 1rem;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+.prose .blog-flow .flow-step .step-num {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #2563eb;
+  margin-bottom: 0.25rem;
+}
+
+.prose .blog-flow .flow-step .step-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.prose .blog-flow .flow-arrow {
+  font-size: 1.25rem;
+  color: #94a3b8;
+  padding: 0 0.25rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .prose .blog-flow {
+    flex-direction: column;
+    gap: 0;
+  }
+  .prose .blog-flow .flow-arrow {
+    transform: rotate(90deg);
+  }
+  .prose .blog-stats {
+    flex-direction: column;
+  }
+}

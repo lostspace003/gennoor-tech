@@ -2,9 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { type BlogPost } from '@/data/blog-posts'
 import EmailOTP from '@/components/EmailOTP'
 import { CheckCircle } from 'lucide-react'
+
+const BlogComments = dynamic(() => import('@/components/BlogComments'), { ssr: false })
 
 function ShareBar({ post, slug }: { post: BlogPost; slug: string }) {
   const [copied, setCopied] = useState(false)
@@ -233,6 +236,8 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
             <ShareBar post={post} slug={slug} />
           </div>
         </article>
+
+        <BlogComments slug={slug} />
 
         {/* Newsletter */}
         <div className="mt-8 rounded-2xl shadow-lg overflow-hidden" style={{ backgroundColor: '#1e293b' }}>

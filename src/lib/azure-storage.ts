@@ -244,3 +244,62 @@ export async function getPageViewsByDate(date: string): Promise<PageViewRecord[]
   }
   return results
 }
+
+// ── Blog Comments ──────────────────────────────────────────────────────────
+
+export interface BlogComment {
+  partitionKey: string   // blog post slug
+  rowKey: string         // comment ID (timestamp-based)
+  parentId: string       // empty for top-level, parent rowKey for replies
+  authorName: string
+  authorEmail: string
+  content: string
+  isAuthorReply: boolean
+  status: string         // 'approved' | 'hidden'
+  timestamp: string
+}
+
+export async function saveComment(data: {
+  slug: string
+  parentId?: string
+  authorName: string
+  authorEmail: string
+  content: string
+}): Promise<BlogComment> {
+  const client = getTableClient('BlogComments')
+  const now = new Date()
+  const rowKey = `${now.getTime()}-${Math.random().toString(36).slice(2, 8)}`
+
+  const adminEmail = process.env.EMAIL_USER || ''
+  const entity: BlogComment = {
+    partitionKey: data.slug,
+    rowKey,
+    parentId: data.parentId || '',
+    authorName: data.authorName,
+    authorEmail: data.authorEmail,
+    content: data.content,
+    isAuthorReply: data.authorEmail.toLowerCase() === adminEmail.toLowerCase(),
+    status: 'approved',
+    timestamp: now.toISOString(),
+  }
+
+  await client.createEntity(entity)
+  return entity
+}
+
+export async function getCommentsBySlug(slug: string): Promise<BlogComment[]> {
+  const client = getTableClient('BlogComments')
+  const results: BlogComment[] = []
+  const entities = client.listEntities<BlogComment>({
+    queryOptions: { filter: `PartitionKey eq '${slug}' and status eq 'approved'` },
+  })
+  for await (const entity of entities) {
+    results.push(entity)
+  }
+  return results.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+}
+
+export async function updateCommentStatus(slug: string, rowKey: string, status: string): Promise<void> {
+  const client = getTableClient('BlogComments')
+  await client.updateEntity({ partitionKey: slug, rowKey, status }, 'Merge')
+}
