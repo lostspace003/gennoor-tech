@@ -163,7 +163,13 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
           {/* Share Bar */}
           <div className="px-6 sm:px-10 py-4 flex items-center justify-between"
             style={{ borderBottom: '1px solid #f3f4f6', backgroundColor: '#fafafa' }}>
-            <span className="text-xs font-medium uppercase tracking-wider" style={{ color: '#6b7280' }}>Share this article</span>
+            <div className="flex items-center gap-4">
+              <span className="text-xs font-medium uppercase tracking-wider" style={{ color: '#6b7280' }}>Share this article</span>
+              <a href="#discussion" className="text-xs font-semibold px-3 py-1.5 rounded-full transition-colors"
+                style={{ color: '#4f46e5', backgroundColor: '#eef2ff', border: '1px solid #e0e7ff' }}>
+                Join Discussion
+              </a>
+            </div>
             <ShareBar post={post} slug={slug} />
           </div>
 
@@ -237,7 +243,9 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
           </div>
         </article>
 
-        <BlogComments slug={slug} />
+        <div id="discussion">
+          <BlogComments slug={slug} />
+        </div>
 
         {/* Newsletter */}
         <div className="mt-8 rounded-2xl shadow-lg overflow-hidden" style={{ backgroundColor: '#1e293b' }}>
