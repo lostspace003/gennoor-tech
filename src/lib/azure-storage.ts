@@ -299,6 +299,16 @@ export async function getCommentsBySlug(slug: string): Promise<BlogComment[]> {
   return results.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
 }
 
+export async function getAllComments(): Promise<BlogComment[]> {
+  const client = getTableClient('BlogComments')
+  const results: BlogComment[] = []
+  const entities = client.listEntities<BlogComment>()
+  for await (const entity of entities) {
+    results.push(entity)
+  }
+  return results.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+}
+
 export async function updateCommentStatus(slug: string, rowKey: string, status: string): Promise<void> {
   const client = getTableClient('BlogComments')
   await client.updateEntity({ partitionKey: slug, rowKey, status }, 'Merge')
