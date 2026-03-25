@@ -14,6 +14,23 @@ export interface CertificationProgram {
   htmlContent?: string
 }
 
+export interface CertificationWithSlug extends CertificationProgram {
+  slug: string
+}
+
+function certSlug(code: string, title: string): string {
+  return `${code}-${title}`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+}
+
+export function getAllCertifications(): CertificationWithSlug[] {
+  const all = [...microsoftCertifications, ...googleCertifications, ...awsCertifications, ...githubCertifications]
+  return all.map(c => ({ ...c, slug: certSlug(c.code, c.title) }))
+}
+
+export function getCertificationBySlug(slug: string): CertificationWithSlug | undefined {
+  return getAllCertifications().find(c => c.slug === slug)
+}
+
 export const microsoftCertifications: CertificationProgram[] = [
   // AI Certifications (Latest 2025-2026)
   {

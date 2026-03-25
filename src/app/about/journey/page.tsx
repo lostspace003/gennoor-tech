@@ -3,8 +3,10 @@ import { ArrowRight, MapPin, Award, Briefcase, GraduationCap, Globe, Rocket, Bui
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'My Journey',
-  description: 'From Automobile Engineering to AI Leadership - The story of Jalal Ahmed Khan',
+  title: 'My Journey — From Engineering Professor to Global AI Leader',
+  description: 'The story of Jalal Ahmed Khan: 14+ years from Automobile Engineering professor to Microsoft Certified Trainer, Fortune 500 AI consultant, and founder of Gennoor Tech.',
+  keywords: ['Jalal Ahmed Khan journey', 'AI consultant story', 'Microsoft Certified Trainer India'],
+  alternates: { canonical: 'https://gennoor.com/about/journey' },
 }
 
 const timeline = [
@@ -78,7 +80,7 @@ export default function JourneyPage() {
             <p className="text-sm font-semibold tracking-widest uppercase text-primary-400 mb-4">
               About the Founder
             </p>
-            <h1 className="text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
+            <h1 className="text-4xl lg:text-5xl font-black text-white mb-6 leading-tight">
               My Journey
             </h1>
             <p className="text-xl text-gray-300 mb-3">

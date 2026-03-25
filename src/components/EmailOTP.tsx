@@ -185,6 +185,7 @@ export default function EmailOTP({ email, onVerified, verified, compact = false 
             onKeyDown={e => handleKeyDown(i, e)}
             onPaste={i === 0 ? handlePaste : undefined}
             disabled={verifying}
+            aria-label={`OTP digit ${i + 1} of 6`}
             className="w-10 h-10 text-center text-lg font-bold rounded-lg border border-gray-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:outline-none disabled:opacity-50"
           />
         ))}

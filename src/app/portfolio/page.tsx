@@ -3,8 +3,10 @@ import Link from 'next/link'
 import { FileText, Code, Github, MessageSquare, ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Portfolio',
-  description: 'Explore my work: case studies, PoCs, open source contributions, and client testimonials',
+  title: 'Portfolio — AI Case Studies, PoCs & Enterprise Implementations',
+  description: 'Explore real-world AI implementations: banking document intelligence, enterprise AI agents, Copilot Studio solutions, and Fortune 500 training programs.',
+  keywords: ['AI portfolio', 'AI case studies', 'enterprise AI implementations', 'AI proof of concept examples'],
+  alternates: { canonical: 'https://gennoor.com/portfolio' },
 }
 
 const portfolioSections = [
@@ -49,7 +51,7 @@ export default function PortfolioPage() {
       <section className="bg-gradient-to-br from-primary-50 to-accent-50 py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
               Portfolio
             </h1>
             <p className="text-xl text-gray-600">
@@ -81,7 +83,7 @@ export default function PortfolioPage() {
                     </span>
                   </div>
 
-                  <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                  <h2 className="text-xl font-bold text-gray-900 mb-2">
                     {section.title}
                   </h2>
 

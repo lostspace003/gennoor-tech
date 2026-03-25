@@ -300,7 +300,7 @@ export default function BookingCalendarPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-6">
             <Check className="h-8 w-8 text-green-600" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Booking Confirmed!</h1>
+          <h1 className="text-3xl font-black text-gray-900 mb-4">Booking Confirmed!</h1>
           <p className="text-lg text-gray-600 mb-2">
             Your discovery call has been scheduled for{' '}
             <strong>{selectedDate ? formatDateLabel(selectedDate) : ''}</strong> at{' '}
@@ -328,7 +328,7 @@ export default function BookingCalendarPage() {
       <div className="container mx-auto px-4 py-16 max-w-5xl">
         {/* header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+          <h1 className="text-4xl font-black text-gray-900 mb-3">
             Schedule a Discovery Call
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">

@@ -8,8 +8,6 @@ import { CheckCircle } from 'lucide-react'
 
 function ShareBar({ post, slug }: { post: BlogPost; slug: string }) {
   const [copied, setCopied] = useState(false)
-  const [linkedInStatus, setLinkedInStatus] = useState<'idle' | 'confirming' | 'posting' | 'posted' | 'error'>('idle')
-  const [linkedInError, setLinkedInError] = useState('')
   const url = `https://gennoor.com/resources/blog/${slug}`
 
   const handleCopy = () => {
@@ -18,45 +16,13 @@ function ShareBar({ post, slug }: { post: BlogPost; slug: string }) {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const handleLinkedInPost = async () => {
-    if (linkedInStatus === 'idle') {
-      setLinkedInStatus('confirming')
-      return
-    }
-    if (linkedInStatus !== 'confirming') return
-
-    setLinkedInStatus('posting')
-    setLinkedInError('')
-    try {
-      const res = await fetch('/api/linkedin/post', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          slug,
-          title: post.title,
-          excerpt: post.excerpt,
-          url,
-          hashtags: post.hashtags,
-        }),
-      })
-      const data = await res.json()
-      if (data.success) {
-        setLinkedInStatus('posted')
-      } else {
-        setLinkedInError(data.message || 'Failed to post')
-        setLinkedInStatus('error')
-        setTimeout(() => setLinkedInStatus('idle'), 4000)
-      }
-    } catch {
-      setLinkedInError('Network error')
-      setLinkedInStatus('error')
-      setTimeout(() => setLinkedInStatus('idle'), 4000)
-    }
-  }
-
-  const linkedInIcon = <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-
   const channels = [
+    {
+      name: 'LinkedIn',
+      href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+      bg: '#0A66C2',
+      icon: <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>,
+    },
     {
       name: 'WhatsApp',
       href: `https://wa.me/?text=${encodeURIComponent(post.title + '\n\n' + url + '\n\n' + post.hashtags.join(' '))}`,
@@ -87,42 +53,6 @@ function ShareBar({ post, slug }: { post: BlogPost; slug: string }) {
           {ch.icon}
         </a>
       ))}
-
-      {/* LinkedIn - Posts to Company Page */}
-      <button
-        onClick={handleLinkedInPost}
-        disabled={linkedInStatus === 'posting' || linkedInStatus === 'posted'}
-        className="p-2 rounded-lg transition-all duration-200 hover:scale-110 hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
-        style={{ backgroundColor: linkedInStatus === 'posted' ? '#16a34a' : linkedInStatus === 'error' ? '#dc2626' : '#0A66C2', color: '#ffffff' }}
-        title={
-          linkedInStatus === 'idle' ? 'Post to Gennoor Tech LinkedIn Page' :
-          linkedInStatus === 'confirming' ? 'Click again to confirm' :
-          linkedInStatus === 'posting' ? 'Posting...' :
-          linkedInStatus === 'posted' ? 'Posted!' :
-          linkedInError
-        }
-      >
-        {linkedInStatus === 'posting' ? (
-          <svg className="h-3.5 w-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-        ) : linkedInStatus === 'posted' ? (
-          <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-        ) : linkedInIcon}
-      </button>
-
-      {/* Confirmation tooltip */}
-      {linkedInStatus === 'confirming' && (
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg whitespace-nowrap shadow-lg">
-          Post to Gennoor Tech page? Click again to confirm
-          <button onClick={() => setLinkedInStatus('idle')} className="ml-2 text-gray-400 hover:text-white">✕</button>
-        </div>
-      )}
-
-      {/* Error tooltip */}
-      {linkedInStatus === 'error' && (
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-red-600 text-white text-xs rounded-lg whitespace-nowrap shadow-lg">
-          {linkedInError}
-        </div>
-      )}
 
       <button onClick={handleCopy}
         className="p-2 rounded-lg transition-all duration-200 hover:scale-110"
@@ -220,7 +150,7 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
                 {new Date(post.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
               </p>
             </div>
-            <svg className="absolute right-6 lg:right-12 top-1/2 -translate-y-1/2 w-28 h-28 lg:w-40 lg:h-40" viewBox="0 0 200 200" fill="none" style={{ opacity: 0.08 }}>
+            <svg className="absolute right-6 lg:right-12 top-1/2 -translate-y-1/2 w-28 h-28 lg:w-40 lg:h-40" viewBox="0 0 200 200" fill="none" style={{ opacity: 0.08 }} aria-hidden="true">
               <circle cx="100" cy="100" r="80" stroke="white" strokeWidth="2"/>
               <circle cx="100" cy="100" r="40" stroke="white" strokeWidth="2"/>
               <circle cx="100" cy="100" r="10" fill="white"/>
@@ -233,6 +163,16 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
             <span className="text-xs font-medium uppercase tracking-wider" style={{ color: '#6b7280' }}>Share this article</span>
             <ShareBar post={post} slug={slug} />
           </div>
+
+          {/* Key Takeaway Box - AEO optimized */}
+          {post.tldr && (
+            <div className="mx-6 sm:mx-10 mt-8 p-5 sm:p-6 rounded-xl border-l-4 border-primary-500" style={{ backgroundColor: '#f0f7ff' }}>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-sm font-bold uppercase tracking-wider text-primary-700">Key Takeaway</span>
+              </div>
+              <p className="text-gray-800 leading-relaxed font-medium">{post.tldr}</p>
+            </div>
+          )}
 
           {/* Body */}
           <div className="px-6 sm:px-10 py-10 lg:py-12">
@@ -263,6 +203,29 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
             </div>
           </div>
 
+          {/* Author Bio */}
+          <div className="px-6 sm:px-10 py-8" style={{ borderTop: '1px solid #f3f4f6', backgroundColor: '#f9fafb' }}>
+            <div className="flex items-start gap-4">
+              <div className="w-14 h-14 shrink-0 rounded-full bg-gradient-to-br from-primary-600 to-accent-600 flex items-center justify-center">
+                <span className="text-lg font-black text-white">JK</span>
+              </div>
+              <div>
+                <h4 className="text-base font-bold text-gray-900">Jalal Ahmed Khan</h4>
+                <p className="text-sm font-medium text-primary-600 mb-2">Microsoft Certified Trainer (MCT) · Founder, Gennoor Tech</p>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  14+ years in enterprise AI and cloud technologies. Delivered AI transformation programs for Fortune 500 companies across 6 countries including Boeing, Aramco, HDFC Bank, and Siemens. Holds 16 active Microsoft certifications including Azure AI Engineer and Power BI Analyst.
+                </p>
+                <div className="flex items-center gap-3 mt-3">
+                  <a href="https://www.linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" className="text-xs font-medium text-primary-600 hover:underline">LinkedIn</a>
+                  <span className="text-gray-300">·</span>
+                  <a href="/about" className="text-xs font-medium text-primary-600 hover:underline">Full Bio</a>
+                  <span className="text-gray-300">·</span>
+                  <a href="/about/certifications" className="text-xs font-medium text-primary-600 hover:underline">Certifications</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Bottom Share */}
           <div className="px-6 sm:px-10 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
             style={{ backgroundColor: '#f9fafb', borderTop: '1px solid #f3f4f6' }}>
@@ -290,6 +253,7 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
                 </p>
                 <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-sm mx-auto">
                   <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter your email"
+                    aria-label="Email address for newsletter"
                     className="w-full sm:flex-1 px-4 py-2.5 rounded-lg text-sm focus:outline-none"
                     style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.15)' }} />
                   <EmailOTP email={email} onVerified={() => setEmailVerified(true)} verified={emailVerified} compact />

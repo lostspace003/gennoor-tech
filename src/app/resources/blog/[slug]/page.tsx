@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { getBlogPost, getRecentPosts, blogPosts } from '@/data/blog-posts'
 import { siteConfig, BLOB_URL } from '@/lib/site-config'
+import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd'
 import BlogPostClient from './BlogPostClient'
 
 type Props = {
@@ -61,5 +62,24 @@ export default async function BlogPostPage({ params }: Props) {
 
   const relatedPosts = getRecentPosts(6).filter(p => p.slug !== post.slug).slice(0, 3)
 
-  return <BlogPostClient post={post} slug={slug} relatedPosts={relatedPosts} />
+  const articleUrl = `${siteConfig.url}/resources/blog/${slug}`
+
+  return (
+    <>
+      <ArticleJsonLd
+        title={post.title}
+        description={post.excerpt}
+        url={articleUrl}
+        datePublished={post.date}
+        authorName={post.author}
+        image={`${BLOB_URL}/logos/gennoor-tech-banner-linkedin-1584x396.png`}
+      />
+      <BreadcrumbJsonLd items={[
+        { name: 'Home', url: 'https://gennoor.com' },
+        { name: 'Blog', url: 'https://gennoor.com/resources/blog' },
+        { name: post.title, url: articleUrl },
+      ]} />
+      <BlogPostClient post={post} slug={slug} relatedPosts={relatedPosts} />
+    </>
+  )
 }

@@ -1,5 +1,27 @@
+import { Metadata } from 'next'
 import { ArrowLeft, Bot, Network, Cpu, GitBranch, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
+import { ServiceJsonLd, FAQJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd'
+
+export const metadata: Metadata = {
+  title: 'Agentic AI Solutions — Multi-Agent Systems for Enterprise',
+  description: 'Build autonomous AI agent systems for your enterprise. Multi-agent orchestration using LangChain, CrewAI, Copilot Studio, and AutoGen. From customer service automation to document processing pipelines.',
+  keywords: ['agentic AI', 'AI agents enterprise', 'multi-agent systems', 'LangChain agents', 'CrewAI', 'Copilot Studio agents', 'autonomous AI'],
+  alternates: { canonical: 'https://gennoor.com/services/agentic-ai' },
+  openGraph: {
+    title: 'Agentic AI Solutions — Multi-Agent Systems | Gennoor Tech',
+    description: 'Build autonomous AI agent systems using LangChain, CrewAI, and Copilot Studio for enterprise workflows.',
+    url: 'https://gennoor.com/services/agentic-ai',
+  },
+}
+
+const faqs = [
+  { question: 'What is Agentic AI and how is it different from regular AI?', answer: 'Agentic AI systems can autonomously reason, plan, use tools, and take actions to achieve goals — unlike traditional AI that only responds to single prompts. They can break down complex tasks, call APIs, query databases, and collaborate with other agents.' },
+  { question: 'What frameworks do you use for building AI agents?', answer: 'We use LangChain, CrewAI, Microsoft AutoGen, and Copilot Studio depending on the use case. For enterprise deployments, we often combine Copilot Studio for low-code scenarios with LangChain/CrewAI for complex orchestrations.' },
+  { question: 'How secure are agentic AI systems?', answer: 'Security is built in from the start. We implement role-based access controls, audit logging, human-in-the-loop approvals for sensitive actions, and deploy within your Azure tenant so data never leaves your security boundary.' },
+  { question: 'Can agents integrate with our existing systems?', answer: 'Yes. Agents are designed to use tools — which includes your existing APIs, databases, CRMs, ERPs, and Microsoft 365 services. We build custom tool integrations as part of every engagement.' },
+  { question: 'What is the typical timeline for an agentic AI project?', answer: 'A single-agent solution can be delivered in 2-3 weeks. Multi-agent orchestrations typically take 4-8 weeks depending on the number of agents, tool integrations, and workflow complexity.' },
+]
 
 export default function AgenticAIPage() {
   const agentCapabilities = [
@@ -71,7 +93,7 @@ export default function AgenticAIPage() {
           </Link>
 
           <div className="max-w-4xl">
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
               Agentic AI Solutions
             </h1>
             <p className="text-xl text-gray-600 mb-8">
@@ -248,6 +270,42 @@ export default function AgenticAIPage() {
         </div>
       </section>
 
+      {/* Related Services */}
+      <section className="py-16 lg:py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Related Services</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <Link href="/services/poc-development" className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+              <h3 className="font-semibold text-gray-900 mb-2">PoC Development</h3>
+              <p className="text-sm text-gray-600">Start with a focused agent prototype before scaling to full orchestration.</p>
+            </Link>
+            <Link href="/services/training" className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+              <h3 className="font-semibold text-gray-900 mb-2">Corporate AI Training</h3>
+              <p className="text-sm text-gray-600">Train your developers on LangChain, CrewAI, and Copilot Studio agent development.</p>
+            </Link>
+            <Link href="/services/ai-strategy" className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+              <h3 className="font-semibold text-gray-900 mb-2">AI Strategy & Consulting</h3>
+              <p className="text-sm text-gray-600">Identify the highest-impact agent use cases for your organization.</p>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-16 lg:py-20 bg-gray-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Frequently Asked Questions</h2>
+          <div className="max-w-3xl mx-auto space-y-6">
+            {faqs.map((faq) => (
+              <div key={faq.question} className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
+                <p className="text-gray-600">{faq.answer}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-16 lg:py-20 bg-primary-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -255,7 +313,7 @@ export default function AgenticAIPage() {
             Ready to Build Your AI Agent Team?
           </h2>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Let's design and deploy autonomous agents that transform your operations
+            Let&apos;s design and deploy autonomous agents that transform your operations
           </p>
           <Link
             href="/contact#book"
@@ -265,6 +323,18 @@ export default function AgenticAIPage() {
           </Link>
         </div>
       </section>
+
+      <ServiceJsonLd
+        name="Agentic AI Solutions"
+        description="Build autonomous AI agent systems for enterprise. Multi-agent orchestration using LangChain, CrewAI, Copilot Studio, and AutoGen."
+        url="https://gennoor.com/services/agentic-ai"
+      />
+      <FAQJsonLd faqs={faqs} />
+      <BreadcrumbJsonLd items={[
+        { name: 'Home', url: 'https://gennoor.com' },
+        { name: 'Services', url: 'https://gennoor.com/services' },
+        { name: 'Agentic AI Solutions', url: 'https://gennoor.com/services/agentic-ai' },
+      ]} />
     </main>
   )
 }

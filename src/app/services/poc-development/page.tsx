@@ -1,6 +1,27 @@
+import { Metadata } from 'next'
 import { ArrowLeft, Code2, Zap, Shield, Rocket, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
-import POCDemoSection from './POCDemoSection'
+import { ServiceJsonLd, FAQJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd'
+
+export const metadata: Metadata = {
+  title: 'AI Proof of Concept Development — From Idea to Working Prototype',
+  description: 'Build production-ready AI prototypes in 2-6 weeks. Document intelligence, chatbots, process automation, and predictive analytics PoCs using Azure AI, LangChain, and Copilot Studio.',
+  keywords: ['AI proof of concept', 'AI PoC development', 'document intelligence', 'AI chatbot development', 'Azure AI prototype'],
+  alternates: { canonical: 'https://gennoor.com/services/poc-development' },
+  openGraph: {
+    title: 'AI Proof of Concept Development | Gennoor Tech',
+    description: 'Build production-ready AI prototypes in 2-6 weeks. From document intelligence to chatbots.',
+    url: 'https://gennoor.com/services/poc-development',
+  },
+}
+
+const faqs = [
+  { question: 'How long does a PoC take to build?', answer: 'Most PoCs are delivered in 2-6 weeks depending on complexity. Document intelligence and process automation PoCs are typically faster (2-4 weeks), while predictive analytics may take 4-6 weeks.' },
+  { question: 'What do I get at the end of the PoC?', answer: 'You receive a working prototype, complete source code, API documentation, architecture diagram, deployment guide, and a knowledge transfer session so your team can maintain and extend the solution.' },
+  { question: 'Can the PoC be scaled to production?', answer: 'Yes. All PoCs are built with production architecture in mind using Azure enterprise-grade services. The transition from PoC to production typically involves adding security, scale testing, and CI/CD pipelines.' },
+  { question: 'What technologies do you use?', answer: 'We primarily use Azure OpenAI, Azure Document Intelligence, LangChain, Copilot Studio, Power Platform, and modern web frameworks (Next.js, FastAPI). The specific stack is chosen based on your existing infrastructure and requirements.' },
+  { question: 'Do you work with our existing data?', answer: 'Absolutely. The PoC is built against your real data and use cases. We work closely with your team during the discovery phase to understand your data landscape and integration requirements.' },
+]
 
 export default function PoCDevelopmentPage() {
   const pocTypes = [
@@ -67,7 +88,7 @@ export default function PoCDevelopmentPage() {
           </Link>
 
           <div className="max-w-4xl">
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
               Proof of Concept Development
             </h1>
             <p className="text-xl text-gray-600 mb-8">
@@ -115,9 +136,6 @@ export default function PoCDevelopmentPage() {
           </div>
         </div>
       </section>
-
-      {/* Live POC Demo */}
-      <POCDemoSection />
 
       {/* PoC Types */}
       <section className="py-16 lg:py-20 bg-gray-50">
@@ -214,6 +232,42 @@ export default function PoCDevelopmentPage() {
         </div>
       </section>
 
+      {/* Related Services */}
+      <section className="py-16 lg:py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Related Services</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <Link href="/services/ai-strategy" className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+              <h3 className="font-semibold text-gray-900 mb-2">AI Strategy & Consulting</h3>
+              <p className="text-sm text-gray-600">Define your AI roadmap before building — ensure every PoC aligns with business goals.</p>
+            </Link>
+            <Link href="/services/agentic-ai" className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+              <h3 className="font-semibold text-gray-900 mb-2">Agentic AI Solutions</h3>
+              <p className="text-sm text-gray-600">Scale your PoC into autonomous multi-agent systems.</p>
+            </Link>
+            <Link href="/services/training" className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+              <h3 className="font-semibold text-gray-900 mb-2">Corporate AI Training</h3>
+              <p className="text-sm text-gray-600">Train your team to maintain and extend AI solutions independently.</p>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-16 lg:py-20 bg-gray-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Frequently Asked Questions</h2>
+          <div className="max-w-3xl mx-auto space-y-6">
+            {faqs.map((faq) => (
+              <div key={faq.question} className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
+                <p className="text-gray-600">{faq.answer}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-16 lg:py-20 bg-primary-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -221,7 +275,7 @@ export default function PoCDevelopmentPage() {
             Ready to Build Your AI Proof of Concept?
           </h2>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Let's turn your AI vision into a working prototype that demonstrates real value
+            Let&apos;s turn your AI vision into a working prototype that demonstrates real value
           </p>
           <Link
             href="/contact#book"
@@ -231,6 +285,18 @@ export default function PoCDevelopmentPage() {
           </Link>
         </div>
       </section>
+
+      <ServiceJsonLd
+        name="AI Proof of Concept Development"
+        description="Build production-ready AI prototypes in 2-6 weeks. Document intelligence, chatbots, process automation, and predictive analytics."
+        url="https://gennoor.com/services/poc-development"
+      />
+      <FAQJsonLd faqs={faqs} />
+      <BreadcrumbJsonLd items={[
+        { name: 'Home', url: 'https://gennoor.com' },
+        { name: 'Services', url: 'https://gennoor.com/services' },
+        { name: 'PoC Development', url: 'https://gennoor.com/services/poc-development' },
+      ]} />
     </main>
   )
 }

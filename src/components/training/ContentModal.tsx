@@ -105,27 +105,27 @@ export default function ContentModal({ isOpen, onClose, title, htmlFile, program
               <button
                 onClick={() => setShowEnquiry(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors animate-pulse hover:animate-none"
-                title="Get this content via email"
+                aria-label="Download this content via email"
               >
-                <Download className="w-4 h-4" />
+                <Download className="w-4 h-4" aria-hidden="true" />
                 <span className="hidden sm:inline">Download</span>
               </button>
 
               {/* Zoom Controls */}
-              <div className="flex items-center gap-1 bg-white rounded-lg border px-2 py-1">
+              <div className="flex items-center gap-1 bg-white rounded-lg border px-2 py-1" role="group" aria-label="Zoom controls">
                 <button
                   onClick={handleZoomOut}
                   disabled={zoomLevel <= 50}
                   className="p-1 hover:bg-gray-100 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="Zoom Out"
+                  aria-label="Zoom out"
                 >
-                  <ZoomOut className="w-4 h-4 text-gray-600" />
+                  <ZoomOut className="w-4 h-4 text-gray-600" aria-hidden="true" />
                 </button>
 
                 <button
                   onClick={handleResetZoom}
                   className="px-2 py-1 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded transition-colors min-w-[60px]"
-                  title="Reset Zoom"
+                  aria-label={`Current zoom ${zoomLevel}%, click to reset`}
                 >
                   {zoomLevel}%
                 </button>
@@ -134,9 +134,9 @@ export default function ContentModal({ isOpen, onClose, title, htmlFile, program
                   onClick={handleZoomIn}
                   disabled={zoomLevel >= 230}
                   className="p-1 hover:bg-gray-100 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="Zoom In"
+                  aria-label="Zoom in"
                 >
-                  <ZoomIn className="w-4 h-4 text-gray-600" />
+                  <ZoomIn className="w-4 h-4 text-gray-600" aria-hidden="true" />
                 </button>
               </div>
 
@@ -144,18 +144,18 @@ export default function ContentModal({ isOpen, onClose, title, htmlFile, program
               <button
                 onClick={toggleFullWidth}
                 className={`p-2 rounded transition-colors ${isFullWidth ? 'bg-primary-100 text-primary-600' : 'hover:bg-gray-100 text-gray-600'}`}
-                title={isFullWidth ? 'Normal Width' : 'Full Width'}
+                aria-label={isFullWidth ? 'Normal width view' : 'Full width view'}
               >
-                <Maximize2 className="w-4 h-4" />
+                <Maximize2 className="w-4 h-4" aria-hidden="true" />
               </button>
 
               {/* Close Button */}
               <button
                 onClick={onClose}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                title="Close"
+                aria-label="Close content viewer"
               >
-                <X className="w-5 h-5 text-gray-500" />
+                <X className="w-5 h-5 text-gray-500" aria-hidden="true" />
               </button>
             </div>
           </div>

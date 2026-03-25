@@ -97,7 +97,7 @@ export default function CertificationPreparationPage() {
               <span className="text-white font-medium">Official Certification Preparation</span>
             </div>
 
-            <h1 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+            <h1 className="text-4xl lg:text-5xl font-black text-white mb-6">
               Certification Exam Preparation
             </h1>
             <p className="text-xl text-white/90 mb-8">

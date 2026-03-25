@@ -26,7 +26,18 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-heading font-bold tracking-tight;
+    @apply font-heading tracking-tight;
+    color: #111827;
+    line-height: 1.2;
+  }
+
+  h1 { @apply font-black; }
+  h2 { @apply font-bold; }
+  h3 { @apply font-bold; }
+  h4, h5, h6 { @apply font-semibold; }
+
+  p {
+    line-height: 1.75;
   }
 }
 

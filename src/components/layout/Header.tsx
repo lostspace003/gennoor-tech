@@ -67,7 +67,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-      <nav ref={navRef} className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <nav ref={navRef} aria-label="Main navigation" className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
           {/* Logo - Animated GennoorLogo at 0.3x */}
           <Link href="/" className="flex items-center flex-shrink-0">
@@ -154,6 +154,8 @@ export default function Header() {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="lg:hidden p-2 rounded-md hover:bg-gray-100"
               aria-label="Toggle menu"
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-menu"
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -162,7 +164,7 @@ export default function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-gray-200">
+          <div id="mobile-menu" className="lg:hidden py-4 border-t border-gray-200">
             <div className="space-y-1">
               {siteConfig.navigation.main.map((item) => (
                 <div key={item.name}>

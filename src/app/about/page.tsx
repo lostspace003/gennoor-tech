@@ -1,10 +1,18 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { User, Award, Building, ArrowRight } from 'lucide-react'
+import { PersonJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd'
 
 export const metadata: Metadata = {
-  title: 'About',
-  description: 'Learn about Jalal Ahmed Khan and Gennoor Tech Private Limited',
+  title: 'About Jalal Ahmed Khan & Gennoor Tech — Enterprise AI Expert',
+  description: 'Meet Jalal Ahmed Khan — Microsoft Certified Trainer with 16 certifications, 14+ years of experience, and Fortune 500 clients across 6 countries. Founder of Gennoor Tech Private Limited.',
+  keywords: ['Jalal Ahmed Khan', 'Microsoft Certified Trainer', 'Gennoor Tech', 'enterprise AI consultant', 'AI trainer'],
+  alternates: { canonical: 'https://gennoor.com/about' },
+  openGraph: {
+    title: 'About Jalal Ahmed Khan & Gennoor Tech',
+    description: 'Microsoft Certified Trainer with 16 certifications, 14+ years experience, Fortune 500 clients across 6 countries.',
+    url: 'https://gennoor.com/about',
+  },
 }
 
 const sections = [
@@ -34,11 +42,16 @@ const sections = [
 export default function AboutPage() {
   return (
     <>
+      <PersonJsonLd />
+      <BreadcrumbJsonLd items={[
+        { name: 'Home', url: 'https://gennoor.com' },
+        { name: 'About', url: 'https://gennoor.com/about' },
+      ]} />
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-primary-50 to-accent-50 py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
               About
             </h1>
             <p className="text-xl text-gray-600">
@@ -65,7 +78,7 @@ export default function AboutPage() {
                     <Icon className="w-6 h-6 text-white" />
                   </div>
 
-                  <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                  <h2 className="text-xl font-bold text-gray-900 mb-2">
                     {section.title}
                   </h2>
 

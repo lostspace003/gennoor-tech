@@ -18,6 +18,40 @@ export interface TrainingProgram {
   industry: string
 }
 
+export interface TrainingProgramWithSlug extends TrainingProgram {
+  slug: string
+}
+
+function generateSlug(id: string, title: string): string {
+  // Use id prefix (bootcamp/course number) + title for unique slugs
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+}
+
+function withSlugs(programs: TrainingProgram[]): TrainingProgramWithSlug[] {
+  const seen = new Set<string>()
+  return programs.map(p => {
+    let slug = generateSlug(p.id, p.title)
+    // Handle duplicate titles between bootcamps and courses
+    if (seen.has(slug)) {
+      slug = `${slug}-${p.category}`
+    }
+    seen.add(slug)
+    return { ...p, slug }
+  })
+}
+
+let _allPrograms: TrainingProgramWithSlug[] | null = null
+export function getAllPrograms(): TrainingProgramWithSlug[] {
+  if (!_allPrograms) {
+    _allPrograms = withSlugs([...bootcamps, ...courses])
+  }
+  return _allPrograms
+}
+
+export function getProgramBySlug(slug: string): TrainingProgramWithSlug | undefined {
+  return getAllPrograms().find(p => p.slug === slug)
+}
+
 export const bootcamps: TrainingProgram[] = [
   {
     id: 'bootcamp-1',
