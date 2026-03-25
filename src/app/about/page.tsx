@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { User, Award, Building, ArrowRight } from 'lucide-react'
+import { PersonJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd'
 
 export const metadata: Metadata = {
   title: 'About Jalal Ahmed Khan & Gennoor Tech — Enterprise AI Expert',
@@ -41,6 +42,11 @@ const sections = [
 export default function AboutPage() {
   return (
     <>
+      <PersonJsonLd />
+      <BreadcrumbJsonLd items={[
+        { name: 'Home', url: 'https://gennoor.com' },
+        { name: 'About', url: 'https://gennoor.com/about' },
+      ]} />
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-primary-50 to-accent-50 py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">

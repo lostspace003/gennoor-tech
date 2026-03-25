@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, Target, GraduationCap, Code2, Bot, Award, MapPin } from 'lucide-react'
-import { BreadcrumbJsonLd } from '@/components/JsonLd'
+import { BreadcrumbJsonLd, FAQJsonLd } from '@/components/JsonLd'
 
 export const metadata: Metadata = {
   title: 'AI Training & Consulting Services — Enterprise Solutions',
@@ -135,6 +135,27 @@ export default function ServicesPage() {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <section className="py-16 lg:py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Frequently Asked Questions</h2>
+          <div className="max-w-3xl mx-auto space-y-6">
+            {[
+              { question: 'What AI services does Gennoor Tech offer?', answer: 'Gennoor Tech offers AI strategy consulting, corporate AI training (80+ programs), PoC development, agentic AI solutions, and certification exam preparation across Microsoft, AWS, Google Cloud, and GitHub platforms.' },
+              { question: 'Do you offer remote AI training?', answer: 'Yes, we offer live virtual instructor-led training with the same hands-on labs and interactive experience as on-site sessions. We serve clients globally across India, Saudi Arabia, UAE, East Africa, and Southeast Asia.' },
+              { question: 'Which industries does Gennoor Tech serve?', answer: 'We serve financial services, insurance, healthcare, manufacturing, oil and gas, telecom, government, and technology sectors. Our clients include Fortune 500 companies like Boeing, Saudi Aramco, HDFC Bank, Siemens, and EY.' },
+              { question: 'How do I get started with Gennoor Tech?', answer: 'Book a free 30-minute discovery call where we discuss your goals, assess your current AI maturity, and recommend the right service. From there we provide a customized proposal within 48 hours.' },
+              { question: 'What makes Gennoor Tech training different from other providers?', answer: 'Our training is led by a Microsoft Certified Trainer with 16+ active certifications and 14+ years of enterprise experience across 6 countries. Every program is customized with industry-specific case studies, hands-on labs using your own data scenarios, and post-training mentoring.' },
+            ].map((faq) => (
+              <div key={faq.question} className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
+                <p className="text-gray-600">{faq.answer}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="py-16 lg:py-20 bg-primary-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">Not Sure Where to Start?</h2>
@@ -153,6 +174,13 @@ export default function ServicesPage() {
       <BreadcrumbJsonLd items={[
         { name: 'Home', url: 'https://gennoor.com' },
         { name: 'Services', url: 'https://gennoor.com/services' },
+      ]} />
+      <FAQJsonLd faqs={[
+        { question: 'What AI services does Gennoor Tech offer?', answer: 'Gennoor Tech offers AI strategy consulting, corporate AI training (80+ programs), PoC development, agentic AI solutions, and certification exam preparation across Microsoft, AWS, Google Cloud, and GitHub platforms.' },
+        { question: 'Do you offer remote AI training?', answer: 'Yes, we offer live virtual instructor-led training with the same hands-on labs and interactive experience as on-site sessions. We serve clients globally across India, Saudi Arabia, UAE, East Africa, and Southeast Asia.' },
+        { question: 'Which industries does Gennoor Tech serve?', answer: 'We serve financial services, insurance, healthcare, manufacturing, oil and gas, telecom, government, and technology sectors. Our clients include Fortune 500 companies like Boeing, Saudi Aramco, HDFC Bank, Siemens, and EY.' },
+        { question: 'How do I get started with Gennoor Tech?', answer: 'Book a free 30-minute discovery call where we discuss your goals, assess your current AI maturity, and recommend the right service. From there we provide a customized proposal within 48 hours.' },
+        { question: 'What makes Gennoor Tech training different from other providers?', answer: 'Our training is led by a Microsoft Certified Trainer with 16+ active certifications and 14+ years of enterprise experience across 6 countries. Every program is customized with industry-specific case studies, hands-on labs using your own data scenarios, and post-training mentoring.' },
       ]} />
     </>
   )

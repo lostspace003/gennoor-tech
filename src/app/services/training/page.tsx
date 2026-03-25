@@ -490,6 +490,28 @@ export default function TrainingPage() {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <section className="py-16 lg:py-20 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Frequently Asked Questions</h2>
+          <div className="max-w-3xl mx-auto space-y-6">
+            {[
+              { question: 'What training formats does Gennoor Tech offer?', answer: 'We offer on-site classroom training, live virtual instructor-led sessions, and hybrid formats. All programs include hands-on labs, real-world case studies, and post-training support materials.' },
+              { question: 'How are training programs customized for our team?', answer: 'Every program is tailored to your industry, tech stack, and team skill level. We conduct a pre-training assessment to understand your goals and design the curriculum around your specific use cases and data.' },
+              { question: 'What is the minimum batch size for corporate training?', answer: 'We recommend a minimum of 5 participants for corporate training to ensure interactive group exercises. Maximum batch size is typically 15-20 to maintain personalized attention. For larger groups, we run multiple parallel batches.' },
+              { question: 'Do you provide certification preparation as part of training?', answer: 'Yes, many of our bootcamps and courses include certification preparation for Microsoft, AWS, Google Cloud, and GitHub exams. Our trainer holds 16+ active certifications with a 98% student pass rate.' },
+              { question: 'Which industries do you serve with AI training?', answer: 'We serve financial services, insurance, healthcare, manufacturing, oil & gas, telecom, government, and technology sectors. Our clients include Fortune 500 companies like Boeing, Saudi Aramco, HDFC Bank, Siemens, and EY.' },
+              { question: 'What is the typical duration of a training program?', answer: 'Executive bootcamps run 2-3 days. Technical workshops are 3-5 days. Deep-dive courses can extend to 2 weeks. We also offer ongoing mentoring programs for teams implementing AI projects post-training.' },
+            ].map((faq) => (
+              <div key={faq.question} className="bg-gray-50 rounded-lg p-6 shadow-sm border border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
+                <p className="text-gray-600">{faq.answer}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-16 lg:py-20 bg-gray-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
