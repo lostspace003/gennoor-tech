@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { Mail, Phone, Linkedin, Calendar, MapPin, Globe, Clock, MessageCircle } from 'lucide-react';
 import ContactForm from '@/components/contact/ContactForm';
+import TrustpilotWidget from '@/components/TrustpilotWidget';
 
 export const metadata: Metadata = {
   title: 'Contact Gennoor Tech — AI Training & Consulting Enquiries',
@@ -184,6 +185,11 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
+
+      {/* Trustpilot */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <TrustpilotWidget />
+      </div>
 
       {/* Contact Form Section */}
       <section className="py-16 lg:py-20">
