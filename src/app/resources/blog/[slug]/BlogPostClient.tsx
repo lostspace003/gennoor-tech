@@ -164,11 +164,11 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
             <ShareBar post={post} slug={slug} />
           </div>
 
-          {/* TL;DR Box - AEO optimized */}
+          {/* Key Takeaway Box - AEO optimized */}
           {post.tldr && (
             <div className="mx-6 sm:mx-10 mt-8 p-5 sm:p-6 rounded-xl border-l-4 border-primary-500" style={{ backgroundColor: '#f0f7ff' }}>
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-sm font-bold uppercase tracking-wider text-primary-700">TL;DR</span>
+                <span className="text-sm font-bold uppercase tracking-wider text-primary-700">Key Takeaway</span>
               </div>
               <p className="text-gray-800 leading-relaxed font-medium">{post.tldr}</p>
             </div>
