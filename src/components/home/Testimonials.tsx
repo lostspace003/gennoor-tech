@@ -28,6 +28,18 @@ const testimonials = [
     company: "K21 Academy",
     program: "Foundational Python & AI"
   },
+  {
+    quote: "I have been utilizing training services of Jalal for different courses on Microsoft and AI. He is an excellent trainer when it comes to delivering official training and bespoke courses on AI. I would highly recommend him.",
+    author: "Bhavesh Shah",
+    company: "via Trustpilot",
+    program: "Microsoft & AI Training"
+  },
+  {
+    quote: "It was truly an awesome learning experience throughout the training. The sessions were well-structured, clear, and very easy to follow. Real-world examples and practical explanations made the concepts much more relatable. Overall, it was highly engaging, informative, and added great value to my understanding.",
+    author: "Tech Bliss",
+    company: "via Trustpilot",
+    program: "AI Training Program"
+  },
 ]
 
 export default function Testimonials() {
