@@ -67,9 +67,6 @@ tmp/
 # Optional eslint cache
 .eslintcache
 
-# Separate dashboard app (deployed independently on Vercel)
-/gennoor-dashboard
-
 # extra folder
 /extra
 /ss
