@@ -1,262 +1,132 @@
-import { TableClient, AzureNamedKeyCredential } from '@azure/data-tables'
-import { BlobServiceClient } from '@azure/storage-blob'
+import { TableClient, TableServiceClient, AzureNamedKeyCredential } from '@azure/data-tables'
 
-// ── Connection ──────────────────────────────────────────────────────────────
-
-function getConnectionString(): string {
-  const conn = process.env.AZURE_STORAGE_CONNECTION_STRING
-  if (!conn) throw new Error('AZURE_STORAGE_CONNECTION_STRING not set')
-  return conn
+function getConnectionConfig() {
+  const connStr = process.env.AZURE_STORAGE_CONNECTION_STRING
+  if (!connStr) throw new Error('AZURE_STORAGE_CONNECTION_STRING not configured')
+  return connStr
 }
-
-// ── Table Storage (Enquiries & Page Views) ──────────────────────────────────
 
 function getTableClient(tableName: string): TableClient {
-  return TableClient.fromConnectionString(getConnectionString(), tableName)
+  return TableClient.fromConnectionString(getConnectionConfig(), tableName)
 }
 
-export type EnquiryType = 'TrainingEnquiry' | 'CertificationEnquiry' | 'ExpertCallBooking'
-
-export interface EnquiryRecord {
-  partitionKey: string   // EnquiryType
-  rowKey: string         // unique ID (timestamp-based)
-  name: string
-  email: string
-  phone?: string
-  company?: string
-  designation?: string
-  programTitle?: string
-  leadScore?: string
-  details: string        // JSON string of all form fields
-  timestamp: string
-}
-
-export interface PageViewRecord {
-  partitionKey: string   // date YYYY-MM-DD
-  rowKey: string         // unique ID
-  page: string
-  url: string
-  referrer: string
-  userAgent: string
-  ip: string
-  country: string
-  city: string
-  timestamp: string
-}
-
-// Save an enquiry to Azure Table Storage
-export async function saveEnquiry(type: EnquiryType, data: Record<string, unknown>): Promise<void> {
+// Ensure table exists (creates if not)
+async function ensureTable(tableName: string) {
   try {
-    const client = getTableClient('Enquiries')
-    const now = new Date()
-    const rowKey = `${now.getTime()}-${Math.random().toString(36).slice(2, 8)}`
-
-    const entity: EnquiryRecord = {
-      partitionKey: type,
-      rowKey,
-      name: String(data.name || ''),
-      email: String(data.email || ''),
-      phone: String(data.phone || data.whatsapp || ''),
-      company: String(data.company || ''),
-      designation: String(data.designation || ''),
-      programTitle: String(data.programTitle || data.selectedCertification || ''),
-      leadScore: String(data.leadScore || ''),
-      details: JSON.stringify(data),
-      timestamp: now.toISOString(),
-    }
-
-    await client.createEntity(entity)
-    console.log(`Enquiry saved to Azure Table: ${type} / ${rowKey}`)
-  } catch (error) {
-    console.error('Failed to save enquiry to Azure Table:', error)
+    const client = getTableClient(tableName)
+    await client.createTable()
+  } catch (err: any) {
+    // TableAlreadyExists is fine
+    if (err?.statusCode !== 409) throw err
   }
 }
 
-// Save a page view to Azure Table Storage
+// ─── Page Views ──────────────────────────────────────────────
+
 export async function savePageView(data: {
   page: string
   url: string
-  referrer: string
-  userAgent: string
-  ip: string
-  country: string
-  city: string
-}): Promise<void> {
-  try {
-    const client = getTableClient('PageViews')
-    const now = new Date()
-    const dateKey = now.toISOString().split('T')[0] // YYYY-MM-DD
-    const rowKey = `${now.getTime()}-${Math.random().toString(36).slice(2, 8)}`
-
-    const entity: PageViewRecord = {
-      partitionKey: dateKey,
-      rowKey,
-      page: data.page,
-      url: data.url,
-      referrer: data.referrer,
-      userAgent: data.userAgent,
-      ip: data.ip,
-      country: data.country,
-      city: data.city,
-      timestamp: now.toISOString(),
-    }
-
-    await client.createEntity(entity)
-  } catch (error) {
-    console.error('Failed to save page view to Azure Table:', error)
-  }
-}
-
-// ── Blob Storage (PDFs) ─────────────────────────────────────────────────────
-
-function getBlobServiceClient(): BlobServiceClient {
-  return BlobServiceClient.fromConnectionString(getConnectionString())
-}
-
-// Download a PDF from blob storage as a Buffer (for email attachments)
-export async function downloadPdfFromBlob(blobPath: string): Promise<Buffer | null> {
-  try {
-    const blobService = getBlobServiceClient()
-    const containerClient = blobService.getContainerClient('course-brochures')
-    const blobClient = containerClient.getBlobClient(blobPath)
-    const downloadResponse = await blobClient.download(0)
-
-    if (!downloadResponse.readableStreamBody) return null
-
-    const chunks: Buffer[] = []
-    for await (const chunk of downloadResponse.readableStreamBody) {
-      chunks.push(Buffer.from(chunk))
-    }
-    return Buffer.concat(chunks)
-  } catch (error) {
-    console.error(`Failed to download blob ${blobPath}:`, error)
-    return null
-  }
-}
-
-// Upload a file to blob storage
-export async function uploadToBlob(
-  containerName: string,
-  blobName: string,
-  content: Buffer,
-  contentType: string = 'application/pdf'
-): Promise<string | null> {
-  try {
-    const blobService = getBlobServiceClient()
-    const containerClient = blobService.getContainerClient(containerName)
-    const blockBlobClient = containerClient.getBlockBlobClient(blobName)
-
-    await blockBlobClient.upload(content, content.length, {
-      blobHTTPHeaders: { blobContentType: contentType },
-    })
-
-    return blockBlobClient.url
-  } catch (error) {
-    console.error(`Failed to upload blob ${blobName}:`, error)
-    return null
-  }
-}
-
-// ── Career Coach Sessions ───────────────────────────────────────────────────
-
-export interface CareerSessionRecord {
-  partitionKey: string   // 'CareerSession'
-  rowKey: string         // session ID
-  agentId: string
-  agentName: string
-  inputFields: string    // JSON of field key-value pairs
-  aiResults: string      // JSON of agent results
-  resumeFileName?: string
-  resumeBlobPath?: string
-  contactInfo?: string   // JSON: { name, email, whatsapp }
-  status: string         // 'submitted' | 'completed' | 'downloaded' | 'error'
-  timestamp: string
-}
-
-// Save a career coach session (inputs + results)
-export async function saveCareerSession(data: {
-  sessionId: string
-  agentId: string
-  agentName: string
-  inputFields: Record<string, string>
-  aiResults?: Record<string, string>
-  resumeFileName?: string
-  resumeBlobPath?: string
-  contactInfo?: { name: string; email: string; whatsapp: string }
-  status: string
-}): Promise<void> {
-  try {
-    const client = getTableClient('CareerSessions')
-    const entity: CareerSessionRecord = {
-      partitionKey: 'CareerSession',
-      rowKey: data.sessionId,
-      agentId: data.agentId,
-      agentName: data.agentName,
-      inputFields: JSON.stringify(data.inputFields),
-      aiResults: JSON.stringify(data.aiResults || {}),
-      resumeFileName: data.resumeFileName || '',
-      resumeBlobPath: data.resumeBlobPath || '',
-      contactInfo: data.contactInfo ? JSON.stringify(data.contactInfo) : '',
-      status: data.status,
-      timestamp: new Date().toISOString(),
-    }
-    await client.upsertEntity(entity, 'Replace')
-    console.log(`Career session saved: ${data.sessionId}`)
-  } catch (error) {
-    console.error('Failed to save career session:', error)
-  }
-}
-
-// Upload resume to blob storage and return the blob path
-export async function uploadResume(
-  sessionId: string,
-  fileName: string,
-  content: Buffer
-): Promise<string | null> {
-  const blobName = `career-resumes/${sessionId}/${fileName}`
-  return uploadToBlob('media', blobName, content, 'application/pdf')
-}
-
-// ── Query Helpers ───────────────────────────────────────────────────────────
-
-// Get all enquiries by type
-export async function getEnquiriesByType(type: EnquiryType): Promise<EnquiryRecord[]> {
-  const client = getTableClient('Enquiries')
-  const results: EnquiryRecord[] = []
-  const entities = client.listEntities<EnquiryRecord>({
-    queryOptions: { filter: `PartitionKey eq '${type}'` },
-  })
-  for await (const entity of entities) {
-    results.push(entity)
-  }
-  return results
-}
-
-// Get page views for a specific date
-export async function getPageViewsByDate(date: string): Promise<PageViewRecord[]> {
+  referrer?: string
+  userAgent?: string
+  ip?: string
+  country?: string
+  city?: string
+}) {
+  await ensureTable('PageViews')
   const client = getTableClient('PageViews')
-  const results: PageViewRecord[] = []
-  const entities = client.listEntities<PageViewRecord>({
-    queryOptions: { filter: `PartitionKey eq '${date}'` },
+  const now = new Date()
+  const partitionKey = now.toISOString().slice(0, 10) // YYYY-MM-DD
+  const rowKey = `${now.getTime()}-${Math.random().toString(36).slice(2, 8)}`
+
+  await client.createEntity({
+    partitionKey,
+    rowKey,
+    page: data.page || '',
+    url: data.url || '',
+    referrer: data.referrer || '',
+    userAgent: (data.userAgent || '').slice(0, 500),
+    ip: data.ip || '',
+    country: data.country || '',
+    city: data.city || '',
+    timestamp: now.toISOString(),
   })
-  for await (const entity of entities) {
-    results.push(entity)
-  }
-  return results
 }
 
-// ── Blog Comments ──────────────────────────────────────────────────────────
+export async function getPageViews(days: number = 7) {
+  await ensureTable('PageViews')
+  const client = getTableClient('PageViews')
+  const since = new Date()
+  since.setDate(since.getDate() - days)
+  const sinceStr = since.toISOString().slice(0, 10)
 
-export interface BlogComment {
-  partitionKey: string   // blog post slug
-  rowKey: string         // comment ID (timestamp-based)
-  parentId: string       // empty for top-level, parent rowKey for replies
-  authorName: string
-  authorEmail: string
-  content: string
-  isAuthorReply: boolean
-  status: string         // 'approved' | 'hidden'
-  timestamp: string
+  const views: Array<Record<string, any>> = []
+  const query = client.listEntities({
+    queryOptions: { filter: `PartitionKey ge '${sinceStr}'` },
+  })
+
+  for await (const entity of query) {
+    views.push({
+      date: entity.partitionKey,
+      page: entity.page,
+      url: entity.url,
+      referrer: entity.referrer,
+      country: entity.country,
+      city: entity.city,
+      timestamp: entity.timestamp,
+    })
+  }
+
+  return views
+}
+
+// ─── Blog Comments ───────────────────────────────────────────
+
+export async function getCommentsBySlug(slug: string) {
+  await ensureTable('BlogComments')
+  const client = getTableClient('BlogComments')
+
+  const comments: Array<Record<string, any>> = []
+  const query = client.listEntities({
+    queryOptions: { filter: `PartitionKey eq '${slug}' and status ne 'hidden'` },
+  })
+
+  for await (const entity of query) {
+    comments.push({
+      rowKey: entity.rowKey,
+      slug: entity.partitionKey,
+      parentId: entity.parentId || null,
+      authorName: entity.authorName,
+      authorEmail: entity.authorEmail,
+      content: entity.content,
+      status: entity.status || 'approved',
+      createdAt: entity.createdAt,
+    })
+  }
+
+  return comments
+}
+
+export async function getAllComments() {
+  await ensureTable('BlogComments')
+  const client = getTableClient('BlogComments')
+
+  const comments: Array<Record<string, any>> = []
+  const query = client.listEntities()
+
+  for await (const entity of query) {
+    comments.push({
+      rowKey: entity.rowKey,
+      slug: entity.partitionKey,
+      parentId: entity.parentId || null,
+      authorName: entity.authorName,
+      authorEmail: entity.authorEmail,
+      content: entity.content,
+      status: entity.status || 'approved',
+      createdAt: entity.createdAt,
+    })
+  }
+
+  return comments
 }
 
 export async function saveComment(data: {
@@ -265,51 +135,149 @@ export async function saveComment(data: {
   authorName: string
   authorEmail: string
   content: string
-}): Promise<BlogComment> {
+}) {
+  await ensureTable('BlogComments')
   const client = getTableClient('BlogComments')
   const now = new Date()
   const rowKey = `${now.getTime()}-${Math.random().toString(36).slice(2, 8)}`
 
-  const adminEmail = process.env.EMAIL_USER || ''
-  const entity: BlogComment = {
+  const entity = {
     partitionKey: data.slug,
     rowKey,
     parentId: data.parentId || '',
     authorName: data.authorName,
     authorEmail: data.authorEmail,
     content: data.content,
-    isAuthorReply: data.authorEmail.toLowerCase() === adminEmail.toLowerCase(),
     status: 'approved',
-    timestamp: now.toISOString(),
+    createdAt: now.toISOString(),
   }
 
   await client.createEntity(entity)
-  return entity
+  return { ...entity, slug: data.slug }
 }
 
-export async function getCommentsBySlug(slug: string): Promise<BlogComment[]> {
+export async function updateCommentStatus(slug: string, rowKey: string, status: string) {
+  await ensureTable('BlogComments')
   const client = getTableClient('BlogComments')
-  const results: BlogComment[] = []
-  const entities = client.listEntities<BlogComment>({
-    queryOptions: { filter: `PartitionKey eq '${slug}' and status eq 'approved'` },
+  await client.updateEntity(
+    { partitionKey: slug, rowKey, status },
+    'Merge'
+  )
+}
+
+// ─── Enquiries ───────────────────────────────────────────────
+
+export async function saveEnquiry(type: string, data: Record<string, any>) {
+  const tableName = 'Enquiries'
+  await ensureTable(tableName)
+  const client = getTableClient(tableName)
+  const now = new Date()
+  const rowKey = `${now.getTime()}-${Math.random().toString(36).slice(2, 8)}`
+
+  await client.createEntity({
+    partitionKey: type,
+    rowKey,
+    ...data,
+    createdAt: now.toISOString(),
   })
-  for await (const entity of entities) {
-    results.push(entity)
-  }
-  return results.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+
+  return { partitionKey: type, rowKey }
 }
 
-export async function getAllComments(): Promise<BlogComment[]> {
-  const client = getTableClient('BlogComments')
-  const results: BlogComment[] = []
-  const entities = client.listEntities<BlogComment>()
-  for await (const entity of entities) {
-    results.push(entity)
+export async function getEnquiries(type?: string, days: number = 30) {
+  const tableName = 'Enquiries'
+  await ensureTable(tableName)
+  const client = getTableClient(tableName)
+
+  const enquiries: Array<Record<string, any>> = []
+  const filter = type ? `PartitionKey eq '${type}'` : undefined
+  const query = client.listEntities({
+    queryOptions: filter ? { filter } : undefined,
+  })
+
+  const since = new Date()
+  since.setDate(since.getDate() - days)
+
+  for await (const entity of query) {
+    const createdAt = entity.createdAt as string
+    if (createdAt && new Date(createdAt) >= since) {
+      enquiries.push({
+        rowKey: entity.rowKey,
+        type: entity.partitionKey,
+        ...entity,
+      })
+    }
   }
-  return results.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+
+  return enquiries
 }
 
-export async function updateCommentStatus(slug: string, rowKey: string, status: string): Promise<void> {
-  const client = getTableClient('BlogComments')
-  await client.updateEntity({ partitionKey: slug, rowKey, status }, 'Merge')
+// ─── Career Sessions ─────────────────────────────────────────
+
+export async function saveCareerSession(data: {
+  sessionId: string
+  agentId: string
+  agentName: string
+  inputFields: Record<string, any>
+  aiResults: Record<string, any>
+  resumeFileName?: string
+  resumeBlobPath?: string
+  contactInfo?: Record<string, any>
+  status: string
+}) {
+  await ensureTable('CareerSessions')
+  const client = getTableClient('CareerSessions')
+
+  await client.upsertEntity({
+    partitionKey: data.agentId,
+    rowKey: data.sessionId,
+    agentName: data.agentName,
+    inputFields: JSON.stringify(data.inputFields),
+    aiResults: JSON.stringify(data.aiResults),
+    resumeFileName: data.resumeFileName || '',
+    resumeBlobPath: data.resumeBlobPath || '',
+    contactInfo: data.contactInfo ? JSON.stringify(data.contactInfo) : '',
+    status: data.status,
+    updatedAt: new Date().toISOString(),
+  }, 'Merge')
+}
+
+export async function uploadResume(
+  sessionId: string,
+  fileName: string,
+  buffer: Buffer
+): Promise<string> {
+  const { BlobServiceClient } = await import('@azure/storage-blob')
+  const connStr = getConnectionConfig()
+  const blobService = BlobServiceClient.fromConnectionString(connStr)
+  const container = blobService.getContainerClient('resumes')
+  await container.createIfNotExists()
+  const blobName = `${sessionId}/${fileName}`
+  const blob = container.getBlockBlobClient(blobName)
+  await blob.uploadData(buffer, {
+    blobHTTPHeaders: { blobContentType: 'application/pdf' },
+  })
+  return blobName
+}
+
+// ─── PDF from Blob ───────────────────────────────────────────
+
+export async function downloadPdfFromBlob(blobPath: string): Promise<Buffer | null> {
+  try {
+    const { BlobServiceClient } = await import('@azure/storage-blob')
+    const connStr = getConnectionConfig()
+    const blobService = BlobServiceClient.fromConnectionString(connStr)
+    const container = blobService.getContainerClient('pdfs')
+    const blob = container.getBlobClient(blobPath)
+    const response = await blob.download(0)
+    const chunks: Buffer[] = []
+    if (response.readableStreamBody) {
+      for await (const chunk of response.readableStreamBody) {
+        chunks.push(Buffer.from(chunk))
+      }
+    }
+    return Buffer.concat(chunks)
+  } catch {
+    return null
+  }
 }
