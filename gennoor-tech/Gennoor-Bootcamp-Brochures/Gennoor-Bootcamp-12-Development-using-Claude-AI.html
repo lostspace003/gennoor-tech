@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Development using Claude AI — Gennoor Tech</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sora:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+  :root{--blue:#2563EB;--amber:#F59E0B;--navy:#0C1426;--charcoal:#2D3748;--gray:#4A5568;--light:#F8FAFC;--lightgray:#94A3B8;--white:#FFF;--claude:#D97706;--claudedark:#92400E}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;color:var(--charcoal);background:var(--white);-webkit-print-color-adjust:exact;print-color-adjust:exact;text-align:justify}
+  .page{width:210mm;min-height:297mm;padding:0;page-break-after:always;position:relative;overflow:hidden}.page:last-child{page-break-after:auto}
+  .cover{background:var(--navy);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:38mm 20mm;position:relative}
+  .cover::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 25% 25%,rgba(217,119,6,.1) 0%,transparent 55%),radial-gradient(ellipse at 75% 75%,rgba(37,99,235,.07) 0%,transparent 55%)}
+  .cover *{position:relative;z-index:1}
+  .badge{display:inline-block;border:1px solid rgba(217,119,6,.3);color:#E0A050;font-size:9px;letter-spacing:3px;text-transform:uppercase;padding:6px 20px;border-radius:20px;margin-bottom:28px;font-family:'Sora',sans-serif}
+  .cover h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:36px;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:8px}
+  .cover h1 span{color:var(--claude)}
+  .cover .subtitle{font-size:14px;color:#E0A050;font-weight:400;margin-bottom:35px;font-family:'Sora',sans-serif;line-height:1.5}
+  .meta-row{display:flex;gap:28px;justify-content:center;margin-top:25px}.meta-item{text-align:center}
+  .meta-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:800;color:var(--white)}
+  .meta-label{font-size:9px;color:#E0A050;letter-spacing:1px;text-transform:uppercase;margin-top:3px}
+  .amber-line{width:60px;height:3px;background:var(--claude);border-radius:2px;margin:18px auto}
+  .cp{padding:18mm 20mm}
+  .ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid #E2E8F0}
+  .ph .ls{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700}
+  .ph .pt{font-family:'Sora',sans-serif;font-size:8px;color:var(--lightgray);letter-spacing:2px;text-transform:uppercase}
+  h2{font-family:'Plus Jakarta Sans',sans-serif;font-size:21px;font-weight:800;color:var(--charcoal);margin-bottom:5px;text-align:left}
+  h2 span{color:var(--claude)}
+  .ss{font-size:10px;color:var(--lightgray);margin-bottom:14px;line-height:1.6}
+  .hb{background:linear-gradient(135deg,rgba(217,119,6,.06),rgba(37,99,235,.04));border:1px solid rgba(217,119,6,.12);border-radius:10px;padding:13px 16px;margin:12px 0}
+  .hb p{font-size:9.5px;color:var(--gray);line-height:1.7}.hb strong{color:var(--claudedark)}
+  .cg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+  .cd{background:var(--light);border-radius:8px;padding:12px 14px;border-left:3px solid var(--claude)}
+  .cd.a{border-left-color:var(--blue)}
+  .cd h4{font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5px;font-weight:700;color:var(--charcoal);margin-bottom:3px;text-align:left}
+  .cd p{font-size:8.5px;color:var(--gray);line-height:1.6}
+  .wg{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:9px;margin:10px 0}
+  .wc{text-align:center;padding:12px 7px;background:var(--light);border-radius:8px}
+  .wc .wi{font-size:24px;margin-bottom:5px}
+  .wc h4{font-family:'Plus Jakarta Sans',sans-serif;font-size:9px;font-weight:700;color:var(--charcoal);margin-bottom:2px}
+  .wc p{font-size:7px;color:var(--lightgray);line-height:1.4}
+  .or{display:flex;align-items:flex-start;gap:9px;margin-bottom:8px}
+  .on{width:24px;height:24px;min-width:24px;border-radius:50%;background:var(--claude);color:var(--white);display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;font-size:9px;font-weight:800}
+  .ot{font-size:9.5px;color:var(--gray);line-height:1.5;padding-top:2px}.ot strong{color:var(--charcoal)}
+  .db{margin-bottom:14px;page-break-inside:avoid}
+  .dh{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+  .dn{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:800;color:var(--white)}
+  .dn.b{background:var(--claude)}.dn.am{background:var(--blue)}
+  .dt{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;color:var(--charcoal)}
+  .ds{font-size:7.5px;color:var(--lightgray);letter-spacing:1px;text-transform:uppercase}
+  .sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-left:47px}
+  .se{background:var(--light);border-radius:6px;padding:10px 12px}
+  .sl{font-size:7.5px;color:var(--claude);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+  .se h5{font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:700;color:var(--charcoal);margin-bottom:4px;text-align:left}
+  .se ul{list-style:none;padding:0}
+  .se ul li{font-size:8.5px;color:var(--gray);line-height:1.7;padding-left:9px;position:relative}
+  .se ul li::before{content:'·';position:absolute;left:0;color:var(--claude);font-weight:900;font-size:12px;line-height:1;top:2px}
+  .ts{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
+  .tb{background:var(--light);border:1px solid #E2E8F0;border-radius:20px;padding:3px 9px;font-size:7.5px;color:var(--gray);font-weight:500}
+  .pf{position:absolute;bottom:12mm;left:20mm;right:20mm;display:flex;justify-content:space-between;font-size:7px;color:var(--lightgray)}
+  .ctp{background:var(--navy);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40mm 30mm;position:relative}
+  .ctp::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 50% 30%,rgba(217,119,6,.08) 0%,transparent 60%)}
+  .ctp *{position:relative;z-index:1}
+  .ci{color:#E0A050;font-size:12px;margin:5px 0}.ci a{color:#E0A050;text-decoration:none}
+  .fn{margin-top:12px;background:var(--light);border-radius:7px;padding:9px 14px;font-size:8.5px;color:var(--gray);line-height:1.6}.fn strong{color:var(--claude)}
+  .ct{display:inline-block;background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.15);border-radius:4px;padding:1px 6px;font-size:7px;color:var(--claude);font-weight:600;margin-left:4px;vertical-align:middle}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="page cover">
+  <svg width="95" height="95" viewBox="0 0 130 130" style="margin-bottom:10px"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+  <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;margin-bottom:3px"><span style="color:#A0B4CC">G</span><span style="color:#7B9BC5">e</span><span style="color:#3B82F6">nn</span><span style="color:#EAB308">oo</span><span style="color:#7B9BC5">r</span><span style="color:#8FA3BA"> Tech</span></div>
+  <div style="font-family:'Sora',sans-serif;font-size:8px;color:#E0A050;letter-spacing:3px;font-variant:small-caps;margin-bottom:22px">train. innovate. build.</div>
+  <div class="badge">5-Day Comprehensive Bootcamp · 40 Hours</div>
+  <h1>Claude<br><span>Masterclass</span></h1>
+  <p class="subtitle">Build production AI applications using Claude AI — API, Code, MCP &amp; Cloud<br>Claude.ai · Claude Code · Claude API · MCP · AI Fluency</p>
+  <div class="amber-line"></div>
+  <div class="meta-row">
+    <div class="meta-item"><div class="meta-val">5</div><div class="meta-label">Days</div></div>
+    <div class="meta-item"><div class="meta-val">40</div><div class="meta-label">Hours</div></div>
+    <div class="meta-item"><div class="meta-val">12+</div><div class="meta-label">Courses Covered</div></div>
+    <div class="meta-item"><div class="meta-val">Full-Stack</div><div class="meta-label">Coverage</div></div>
+  </div>
+  <div style="position:absolute;bottom:25mm;left:0;right:0;text-align:center;font-size:8px;color:#7A6040">www.gennoor.com · training@gennoor.com</div>
+</div>
+
+<!-- PAGE 2: OVERVIEW + COURSE MAP -->
+<div class="page cp">
+  <div class="ph"><div class="ls"><span style="color:#2D3748">G</span><span style="color:#3D5278">e</span><span style="color:#2563EB">nn</span><span style="color:#D69E2E">oo</span><span style="color:#4A6080">r</span><span style="color:#4A5568"> Tech</span></div><div class="pt">Development using Claude AI</div></div>
+  <h2>Course <span>Overview</span></h2>
+  <p class="ss">This 5-day instructor-led bootcamp covers all 13 Anthropic Claude courses — 380+ lectures condensed into a guided, hands-on format with live coding, exercises, and enterprise context that the self-paced courses don't provide. Every course module is covered in depth with real-world scenarios, Q&A, and practical application.</p>
+
+  <div class="hb"><p><strong>The self-paced courses take 30+ hours to complete alone. This bootcamp makes them stick.</strong> Instead of watching videos in isolation, you learn with an instructor who provides enterprise context, answers questions in real time, demonstrates real-world applications, and guides you through hands-on labs that go beyond the course content. You'll complete all courses and build production-ready skills in 5 days.</p></div>
+
+  <h2 style="margin-top:14px">Claude AI <span>Curriculum Map</span></h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;font-size:8.5px">
+    <div style="background:var(--light);border-radius:6px;padding:7px 10px;border-left:3px solid var(--claude)"><strong style="color:var(--charcoal)">Claude 101</strong><span class="ct">Claude.ai</span><br><span style="color:var(--lightgray)">12 lectures · 1 hr</span></div>
+    <div style="background:var(--light);border-radius:6px;padding:7px 10px;border-left:3px solid var(--claude)"><strong style="color:var(--charcoal)">AI Fluency: Framework & Foundations</strong><span class="ct">AI Fluency</span><br><span style="color:var(--lightgray)">14 lectures · 1.1 hr · 1 quiz</span></div>
+    <div style="background:var(--light);border-radius:6px;padding:7px 10px;border-left:3px solid var(--blue)"><strong style="color:var(--charcoal)">Building with the Claude API</strong><span class="ct">Platform</span><br><span style="color:var(--lightgray)">84 lectures · 8.1 hr · 10 quizzes</span></div>
+    <div style="background:var(--light);border-radius:6px;padding:7px 10px;border-left:3px solid var(--blue)"><strong style="color:var(--charcoal)">Claude Code in Action</strong><span class="ct">Claude Code</span><br><span style="color:var(--lightgray)">15 lectures · 1 hr · 1 quiz</span></div>
+    <div style="background:var(--light);border-radius:6px;padding:7px 10px;border-left:3px solid var(--blue)"><strong style="color:var(--charcoal)">Introduction to Agent Skills</strong><span class="ct">Claude Code</span><br><span style="color:var(--lightgray)">6 lectures · 30 min</span></div>
+    <div style="background:var(--light);border-radius:6px;padding:7px 10px;border-left:3px solid #10B981"><strong style="color:var(--charcoal)">Introduction to MCP</strong><span class="ct">MCP</span><br><span style="color:var(--lightgray)">16 lectures · 1 hr · 1 quiz</span></div>
+    <div style="background:var(--light);border-radius:6px;padding:7px 10px;border-left:3px solid #10B981"><strong style="color:var(--charcoal)">MCP: Advanced Topics</strong><span class="ct">MCP</span><br><span style="color:var(--lightgray)">15 lectures · 1.1 hr · 2 quizzes</span></div>
+    <div style="background:var(--light);border-radius:6px;padding:7px 10px;border-left:3px solid var(--claude)"><strong style="color:var(--charcoal)">Claude with Amazon Bedrock</strong><span class="ct">Platform</span><br><span style="color:var(--lightgray)">85 lectures · 8 hr · 10 quizzes</span></div>
+    <div style="background:var(--light);border-radius:6px;padding:7px 10px;border-left:3px solid var(--claude)"><strong style="color:var(--charcoal)">Claude with Google Cloud's Vertex AI</strong><span class="ct">Platform</span><br><span style="color:var(--lightgray)">85 lectures · 8 hr · 10 quizzes</span></div>
+    <div style="background:var(--light);border-radius:6px;padding:7px 10px;border-left:3px solid #8B5CF6"><strong style="color:var(--charcoal)">AI Fluency for Educators</strong><span class="ct">Education</span><br><span style="color:var(--lightgray)">4 lectures · 24 min</span></div>
+    <div style="background:var(--light);border-radius:6px;padding:7px 10px;border-left:3px solid #8B5CF6"><strong style="color:var(--charcoal)">AI Fluency for Students</strong><span class="ct">Education</span><br><span style="color:var(--lightgray)">5 lectures · 30 min</span></div>
+    <div style="background:var(--light);border-radius:6px;padding:7px 10px;border-left:3px solid #8B5CF6"><strong style="color:var(--charcoal)">Teaching AI Fluency</strong><span class="ct">Education</span><br><span style="color:var(--lightgray)">7 lectures · 36 min · 1 quiz</span></div>
+    <div style="background:var(--light);border-radius:6px;padding:7px 10px;border-left:3px solid #8B5CF6"><strong style="color:var(--charcoal)">AI Fluency for Nonprofits</strong><span class="ct">Nonprofits</span><br><span style="color:var(--lightgray)">9 lectures · 54 min · 1 quiz</span></div>
+  </div>
+
+  <h2 style="margin-top:14px">Who Is <span>This For?</span></h2>
+  <div class="wg">
+    <div class="wc"><div class="wi">👨‍💻</div><h4>AI Developers</h4><p>Engineers building with Claude API, Claude Code, and MCP</p></div>
+    <div class="wc"><div class="wi">💼</div><h4>Business Teams</h4><p>Teams adopting Claude for productivity and AI fluency</p></div>
+    <div class="wc"><div class="wi">🎓</div><h4>Educators & L&D</h4><p>Trainers rolling out AI fluency across organizations</p></div>
+    <div class="wc"><div class="wi">🏗️</div><h4>Cloud Engineers</h4><p>Teams deploying Claude via Bedrock or Vertex AI</p></div>
+  </div>
+
+  <div class="pf"><span>© 2026 Gennoor Tech Private Limited</span><span>www.gennoor.com</span><span>Page 2</span></div>
+</div>
+
+<!-- PAGE 3: DAY 1 & 2 -->
+<div class="page cp">
+  <div class="ph"><div class="ls"><span style="color:#2D3748">G</span><span style="color:#3D5278">e</span><span style="color:#2563EB">nn</span><span style="color:#D69E2E">oo</span><span style="color:#4A6080">r</span><span style="color:#4A5568"> Tech</span></div><div class="pt">Course Curriculum</div></div>
+  <h2>5-Day <span>Curriculum</span></h2>
+  <p class="ss">Covers all 13 Claude courses with instructor-led depth. Schedule and session order are fully customizable based on your organization's needs and time zones.</p>
+
+  <div class="db"><div class="dh"><div class="dn b">01</div><div><div class="dt">Claude Foundations & AI Fluency</div><div class="ds">Covers: Claude 101 · AI Fluency: Framework & Foundations · AI Fluency for Educators · Students · Nonprofits · Teaching AI Fluency</div></div></div>
+    <div class="sg"><div class="se"><div class="sl">Session A</div><h5>Claude 101 & AI Fluency Foundations</h5><ul><li>Claude 101: capabilities, interface, prompt craft, attachments, projects</li><li>AI Fluency Framework: what AI can and cannot do, mental models</li><li>Effective human-AI collaboration patterns and workflows</li><li>Lab: Claude for business analysis, writing, research, and summarization</li><li>Lab: Build a personal AI workflow for your daily role</li></ul></div>
+    <div class="se"><div class="sl">Session B</div><h5>AI Fluency for Teams — Education, Nonprofits & Teaching</h5><ul><li>AI Fluency for Educators: curriculum design, assessment with AI</li><li>AI Fluency for Students: research, learning, and academic integrity</li><li>Teaching AI Fluency: designing AI literacy programs for organizations</li><li>AI Fluency for Nonprofits: grant writing, impact reports, donor comms</li><li>Workshop: Design an AI fluency rollout plan for your organization</li></ul></div></div>
+  </div>
+
+  <div class="db"><div class="dh"><div class="dn am">02</div><div><div class="dt">Building with the Claude API — Part 1</div><div class="ds">Covers: Building with the Claude API (84 lectures, first half)</div></div></div>
+    <div class="sg"><div class="se"><div class="sl">Session A</div><h5>Claude API Fundamentals</h5><ul><li>Messages API: roles, system prompts, multi-turn conversations</li><li>Model selection: Opus, Sonnet, Haiku — capabilities and pricing</li><li>Streaming responses, token counting, and rate limit handling</li><li>Lab: Build a Claude chatbot with the Python SDK</li><li>Lab: Build a multi-turn conversation app with conversation memory</li></ul></div>
+    <div class="se"><div class="sl">Session B</div><h5>Advanced API Patterns</h5><ul><li>Tool use and function calling with Claude</li><li>Vision: analyzing images and documents with Claude</li><li>Structured output: JSON mode, XML parsing, schema enforcement</li><li>Lab: Build a tool-calling assistant that queries external APIs</li><li>Lab: Build a document analysis pipeline with vision + structured output</li></ul></div></div>
+  </div>
+
+  <div class="pf"><span>© 2026 Gennoor Tech Private Limited</span><span>www.gennoor.com</span><span>Page 3</span></div>
+</div>
+
+<!-- PAGE 4: DAY 3, 4, 5 -->
+<div class="page cp">
+  <div class="ph"><div class="ls"><span style="color:#2D3748">G</span><span style="color:#3D5278">e</span><span style="color:#2563EB">nn</span><span style="color:#D69E2E">oo</span><span style="color:#4A6080">r</span><span style="color:#4A5568"> Tech</span></div><div class="pt">Course Curriculum</div></div>
+
+  <div class="db"><div class="dh"><div class="dn b">03</div><div><div class="dt">Claude API Part 2 + Claude Code</div><div class="ds">Covers: Building with the Claude API (second half) · Claude Code in Action · Introduction to Agent Skills</div></div></div>
+    <div class="sg"><div class="se"><div class="sl">Session A</div><h5>API: Prompt Engineering, Caching & Evaluation</h5><ul><li>Advanced prompt engineering: chain-of-thought, few-shot, system prompts</li><li>Prompt caching for cost and latency optimization</li><li>Evaluation and testing: building evals for AI applications</li><li>Content moderation and safety with Claude</li><li>Lab: Build an evaluation harness for a Claude-powered application</li></ul></div>
+    <div class="se"><div class="sl">Session B</div><h5>Claude Code in Action & Agent Skills</h5><ul><li>Claude Code: terminal-based agentic coding assistant</li><li>Project scaffolding, code generation, debugging, and refactoring</li><li>Introduction to Agent Skills: building custom agent capabilities</li><li>Lab: Use Claude Code to build a complete web application</li><li>Lab: Create custom agent skills for code review and testing</li></ul></div></div>
+  </div>
+
+  <div class="db"><div class="dh"><div class="dn am">04</div><div><div class="dt">Model Context Protocol (MCP)</div><div class="ds">Covers: Introduction to MCP · MCP: Advanced Topics</div></div></div>
+    <div class="sg"><div class="se"><div class="sl">Session A</div><h5>Introduction to Model Context Protocol</h5><ul><li>What is MCP? Architecture, transports, and protocol design</li><li>MCP primitives: tools, resources, prompts, and sampling</li><li>Building MCP servers with Python and TypeScript</li><li>Lab: Build your first MCP server with tools and resources</li><li>Lab: Connect an MCP server to Claude Desktop</li></ul></div>
+    <div class="se"><div class="sl">Session B</div><h5>MCP: Advanced Topics</h5><ul><li>Advanced MCP patterns: SSE transport, authentication, security</li><li>Building MCP servers for databases, APIs, and file systems</li><li>MCP server discovery, configuration, and deployment</li><li>Lab: Build an enterprise MCP server connecting to a SQL database</li><li>Lab: Build a multi-tool MCP server with authentication</li></ul></div></div>
+  </div>
+
+  <div class="db"><div class="dh"><div class="dn b">05</div><div><div class="dt">Claude on Cloud Platforms & Capstone</div><div class="ds">Covers: Claude with Amazon Bedrock · Claude with Google Cloud's Vertex AI</div></div></div>
+    <div class="sg"><div class="se"><div class="sl">Session A</div><h5>Claude with Amazon Bedrock & Google Vertex AI</h5><ul><li>Claude on Bedrock: Converse API, Knowledge Bases, Agents, guardrails</li><li>Claude on Vertex AI: model deployment, grounding, extensions</li><li>Cross-platform patterns: when to use direct API vs Bedrock vs Vertex</li><li>Lab: Deploy Claude on Bedrock with Knowledge Bases for RAG</li><li>Lab: Deploy Claude on Vertex AI with enterprise grounding</li></ul></div>
+    <div class="se"><div class="sl">Session B</div><h5>Capstone: End-to-End Claude Application</h5><ul><li>Team project: Build a complete Claude-powered application</li><li>Combine API + MCP + Claude Code + cloud deployment</li><li>Architecture review: cost optimization, security, monitoring</li><li>Team presentations and expert feedback</li><li>Completion of all course modules completed</li></ul></div></div>
+  </div>
+
+  <div class="fn"><strong>Flexible & Customizable:</strong> Session order, timing, depth, and industry focus can be tailored to your organization's specific requirements. For developer-only audiences, AI Fluency modules can be replaced with deeper API and MCP labs.</div>
+
+  <div class="pf"><span>© 2026 Gennoor Tech Private Limited</span><span>www.gennoor.com</span><span>Page 4</span></div>
+</div>
+
+<!-- PAGE 5: TOOLS, CERT, FOUNDER -->
+<div class="page cp">
+  <div class="ph"><div class="ls"><span style="color:#2D3748">G</span><span style="color:#3D5278">e</span><span style="color:#2563EB">nn</span><span style="color:#D69E2E">oo</span><span style="color:#4A6080">r</span><span style="color:#4A5568"> Tech</span></div><div class="pt">Tools, Certification & Delivery</div></div>
+  <h2>Platforms & Tools <span>Covered</span></h2>
+  <p class="ss">All Claude course content plus hands-on enterprise labs</p>
+  <div class="ts"><span class="tb">Claude.ai</span><span class="tb">Claude API (Python SDK)</span><span class="tb">Claude Code</span><span class="tb">Claude Cowork</span><span class="tb">MCP Servers</span><span class="tb">MCP Python SDK</span><span class="tb">Amazon Bedrock</span><span class="tb">Google Vertex AI</span><span class="tb">Claude for Chrome</span><span class="tb">Claude for Slack</span><span class="tb">FastAPI</span><span class="tb">Docker</span><span class="tb">Python</span><span class="tb">TypeScript</span></div>
+
+  <h2 style="margin-top:14px">What You <span>Take Home</span></h2>
+  <div class="cg" style="margin-top:8px">
+    <div class="cd"><h4>📚 Complete Curriculum Covered</h4><p>Guided completion of all Claude courses with instructor Q&A, enterprise context, and deeper hands-on practice</p></div>
+    <div class="cd a"><h4>🚀 6 Lab Projects</h4><p>Complete code — Claude chatbot, tool-calling API, vision pipeline, Claude Code app, MCP server, cloud deployment</p></div>
+    <div class="cd"><h4>🔧 MCP Server Templates</h4><p>Production-ready MCP server boilerplate with Python and TypeScript, database connectors, and authentication patterns</p></div>
+    <div class="cd a"><h4>📋 AI Fluency Rollout Kit</h4><p>Templates for designing AI fluency programs for teams, educators, students, and nonprofits based on Anthropic methodology</p></div>
+  </div>
+
+  <h2 style="margin-top:14px">Certification of <span>Completion</span></h2>
+  <div style="display:flex;gap:12px;margin-top:8px">
+    <div style="flex:1;background:linear-gradient(135deg,rgba(217,119,6,.05),rgba(37,99,235,.03));border:1px solid rgba(217,119,6,.12);border-radius:9px;padding:12px 14px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <svg width="28" height="28" viewBox="0 0 130 130"><circle cx="105.8" cy="84" r="5" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="5" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="5" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="5" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="5" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="5" fill="#2563EB"/><circle cx="20" cy="65" r="5" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="5" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="5" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="5" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="5" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="5" fill="#2563EB"/><circle cx="80" cy="65" r="5" fill="#F59E0B"/><circle cx="95" cy="65" r="5" fill="#F59E0B"/><circle cx="110" cy="65" r="5" fill="#2563EB"/></svg>
+        <h3 style="margin:0;font-size:12px">Gennoor Tech — Certificate of Completion</h3>
+      </div>
+      <p style="font-size:9px;color:var(--gray);line-height:1.7">Upon completing all 5 days (40 hours), each participant receives a <strong style="color:var(--claude)">Gennoor Tech Certificate of Completion</strong> in <strong>"Development using Claude AI"</strong>. Digitally signed by the Founder & Director. Validates completion of all 13 Anthropic Claude courses with hands-on proficiency in Claude API, Claude Code, MCP, and cloud deployment.</p>
+    </div>
+    <div style="flex:.6;background:var(--light);border-radius:9px;padding:12px 14px">
+      <h4 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:9.5px;font-weight:700;color:var(--charcoal);margin-bottom:6px;text-align:left">Anthropic + Related Certifications</h4>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="background:white;border:1px solid #E2E8F0;border-radius:5px;padding:4px 8px"><div style="font-size:8px;font-weight:700;color:var(--claude)">Claude</div><div style="font-size:7px;color:var(--lightgray)">Complete all courses on claude.com</div></div>
+        <div style="background:white;border:1px solid #E2E8F0;border-radius:5px;padding:4px 8px"><div style="font-size:8px;font-weight:700;color:var(--claude)">AWS AIF-C01</div><div style="font-size:7px;color:var(--lightgray)">AI Practitioner (Bedrock + Claude)</div></div>
+        <div style="background:white;border:1px solid #E2E8F0;border-radius:5px;padding:4px 8px"><div style="font-size:8px;font-weight:700;color:var(--claude)">Google PMLE</div><div style="font-size:7px;color:var(--lightgray)">Professional ML Engineer (Vertex AI)</div></div>
+        <div style="background:white;border:1px solid #E2E8F0;border-radius:5px;padding:4px 8px"><div style="font-size:8px;font-weight:700;color:var(--claude)">Microsoft AB-100</div><div style="font-size:7px;color:var(--lightgray)">Agentic AI Solutions Architect</div></div>
+      </div>
+    </div>
+  </div>
+
+  <h2 style="margin-top:14px">Designed & Delivered <span>By</span></h2>
+  <div class="hb" style="padding:12px 16px;margin-top:6px">
+    <h3 style="margin-bottom:2px;font-size:13px">Jalal Ahmed Khan</h3>
+    <p style="font-size:8.5px;color:var(--claude);margin-bottom:6px;font-weight:600">Founder & Director, Gennoor Tech Private Limited</p>
+    <div style="display:flex;gap:16px;margin-top:4px">
+      <div style="flex:1"><p style="font-size:8.5px;color:var(--gray);line-height:1.7"><strong style="color:var(--charcoal)">Senior AI Consultant</strong> and <strong style="color:var(--charcoal)">Microsoft Certified Trainer (MCT)</strong> with 14+ years of experience. Completed all Claude courses. Built production MCP servers, Claude API integrations, and multi-agent systems. Delivered AI programs for Microsoft, EY, IBM, Boeing, and 80+ organizations across 6+ countries.</p></div>
+      <div style="flex:.55"><p style="font-size:8.5px;color:var(--gray);line-height:1.7"><strong style="color:var(--charcoal)">12+ active certifications</strong> including AB-100, AI-103, AZ-400, AI-300, PL-400, GH-300. Multi-cloud expertise: Claude API, Azure OpenAI, Bedrock, Vertex AI. Open-source contributor with MCP server projects on GitHub. <strong style="color:var(--charcoal)">M.E. Mechanical Engineering</strong>, Mumbai University.</p></div>
+    </div>
+  </div>
+
+  <div style="margin-top:10px;background:var(--light);border-radius:7px;padding:9px 16px;display:flex;gap:16px">
+    <div style="font-size:9px;color:var(--charcoal);font-weight:600;min-width:90px;font-family:'Plus Jakarta Sans',sans-serif">Delivery Options</div>
+    <div style="font-size:8.5px;color:var(--gray);line-height:1.6">🏢 <strong>On-Site</strong> — customized at your office &nbsp;|&nbsp; 💻 <strong>Virtual Live</strong> — interactive via Teams/Zoom &nbsp;|&nbsp; 🌍 <strong>International</strong> — GCC, Africa, APAC, UK</div>
+  </div>
+
+  <div class="pf"><span>© 2026 Gennoor Tech Private Limited</span><span>www.gennoor.com</span><span>Page 5</span></div>
+</div>
+
+<!-- PAGE 6: CONTACT -->
+<div class="page ctp">
+  <svg width="85" height="85" viewBox="0 0 130 130" style="margin-bottom:12px"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+  <h2 style="color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;margin-bottom:6px;text-align:center">Ready to Master<br>Claude?</h2>
+  <div class="amber-line"></div>
+  <p style="color:#E0A050;font-size:12px;margin-bottom:28px;line-height:1.6;text-align:center">Contact us to discuss a customized bootcamp<br>for your organization or register for the next open batch.</p>
+  <div class="ci">🌐  <a href="https://www.gennoor.com">www.gennoor.com</a></div>
+  <div class="ci">✉  <a href="/cdn-cgi/l/email-protection#096c67787c607b70496e6c676766667b276a6664"><span class="__cf_email__" data-cfemail="e5808b94908c979ca582808b8b8a8a97cb868a88">training@gennoor.com</span></a></div>
+  <div class="ci">📱  +91 9326 352 241</div>
+  <div class="ci">🔗  <a href="https://www.linkedin.com/company/gennoor-tech-private-limited/">linkedin.com/company/gennoor-tech-private-limited</a></div>
+  <div class="ci">▶  <a href="https://www.youtube.com/@GennoorTech">YouTube — @GennoorTech</a></div>
+  <div style="margin-top:30px">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700"><span style="color:#A0B4CC">G</span><span style="color:#7B9BC5">e</span><span style="color:#3B82F6">nn</span><span style="color:#EAB308">oo</span><span style="color:#7B9BC5">r</span><span style="color:#8FA3BA"> Tech</span></div>
+    <div style="font-family:'Sora',sans-serif;font-size:8px;color:#E0A050;letter-spacing:3px;font-variant
