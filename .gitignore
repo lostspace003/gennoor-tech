@@ -70,3 +70,10 @@ tmp/
 # extra folder
 /extra
 /ss
+
+# Claude Code
+.claude/
+
+# Loose images
+img.jpeg
+photo.png
