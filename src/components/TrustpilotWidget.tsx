@@ -5,6 +5,20 @@ import { Star, ExternalLink } from 'lucide-react'
 
 const trustpilotReviews = [
   {
+    name: 'Sourabh Taneja',
+    rating: 5,
+    title: 'An excellent trainer with deep expertise in AI',
+    text: "An excellent trainer with deep expertise in AI. He explains complex concepts in a very clear and practical way. His knowledge as an AI manager truly reflects in the way he connects theory with real-world applications. Highly engaging sessions and very helpful for both beginners and professionals. Highly recommended!",
+    date: '2026-03-30',
+  },
+  {
+    name: 'Lions Kashif',
+    rating: 5,
+    title: 'Real skills. Real engagement. Real results.',
+    text: "My experience with Gennoor's AI program was truly exceptional. The instructors demonstrated an outstanding command of the subject matter, delivering each session with remarkable clarity and depth. What set this program apart was the extraordinary level of audience engagement — every class felt dynamic, interactive, and purposeful. The instructors came exceptionally well-prepared, ensuring that no session was passive; instead, each one was packed with actionable insights and measurable productivity. If you're serious about building real-world AI skills, Gennoor doesn't just teach — they transform the way you think about and apply AI.",
+    date: '2026-03-30',
+  },
+  {
     name: 'Bhavesh Shah',
     rating: 5,
     title: 'Excellent Trainer',

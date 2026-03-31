@@ -5,6 +5,18 @@ import { ChevronLeft, ChevronRight, Quote } from 'lucide-react'
 
 const testimonials = [
   {
+    quote: "An excellent trainer with deep expertise in AI. He explains complex concepts in a very clear and practical way. His knowledge as an AI manager truly reflects in the way he connects theory with real-world applications. Highly engaging sessions and very helpful for both beginners and professionals. Highly recommended!",
+    author: "Sourabh Taneja",
+    company: "via Trustpilot",
+    program: "AI Training"
+  },
+  {
+    quote: "My experience with Gennoor's AI program was truly exceptional. The instructors demonstrated an outstanding command of the subject matter, delivering each session with remarkable clarity and depth. What set this program apart was the extraordinary level of audience engagement — every class felt dynamic, interactive, and purposeful.",
+    author: "Lions Kashif",
+    company: "via Trustpilot",
+    program: "AI Program Graduate"
+  },
+  {
     quote: "The 10-day AI Leadership program was transformative for our executives. Jalal's ability to bridge technical AI concepts with strategic business value aligned perfectly with Saudi Vision 2030.",
     author: "Director of Digital Transformation",
     company: "MCIT Saudi Arabia",
