@@ -7,6 +7,7 @@ import CareerCommandCenter from '@/components/CareerCommandCenter'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import TrackingPixels from '@/components/TrackingPixels'
+import PageViewTracker from '@/components/PageViewTracker'
 import { OrganizationJsonLd, WebSiteJsonLd } from '@/components/JsonLd'
 import { siteConfig, BLOB_URL } from '@/lib/site-config'
 
@@ -107,6 +108,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${plusJakarta.variable} antialiased`}>
         <GoogleAnalytics />
         <TrackingPixels />
+        <PageViewTracker />
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-primary-600 focus:text-white focus:rounded-lg">
           Skip to main content
         </a>

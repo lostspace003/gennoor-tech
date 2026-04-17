@@ -120,6 +120,8 @@ export default function AdminDashboard() {
   const [error, setError] = useState('')
   const [storedSecret, setStoredSecret] = useState('')
   const [days, setDays] = useState(7)
+  const [activeFilter, setActiveFilter] = useState<string>('7')
+  const [customDate, setCustomDate] = useState('')
   const [activeTab, setActiveTab] = useState<TabKey>('overview')
   const [autoRefresh, setAutoRefresh] = useState(false)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
@@ -133,7 +135,7 @@ export default function AdminDashboard() {
 
   const fetchAll = useCallback(async (adminSecret: string, numDays: number) => {
     setLoading(true); setError('')
-    const ts = numDays <= 1 ? 'P1D' : numDays <= 7 ? 'P7D' : numDays <= 14 ? 'P14D' : 'P30D'
+    const ts = numDays <= 1 ? 'PT24H' : numDays <= 2 ? 'P2D' : numDays <= 7 ? 'P7D' : numDays <= 14 ? 'P14D' : `P${numDays}D`
     try {
       const headers = { 'Content-Type': 'application/json' }
       const body = (extra: any = {}) => JSON.stringify({ secret: adminSecret, ...extra })
@@ -165,7 +167,21 @@ export default function AdminDashboard() {
 
   function handleLogin(e: React.FormEvent) { e.preventDefault(); fetchAll(secret, days) }
   function handleRefresh() { fetchAll(storedSecret, days) }
-  function handleDaysChange(d: number) { setDays(d); fetchAll(storedSecret, d) }
+  function handleDaysChange(d: number, filter: string) { setDays(d); setActiveFilter(filter); fetchAll(storedSecret, d) }
+  function handleCustomDate(dateStr: string) {
+    setCustomDate(dateStr)
+    if (!dateStr) return
+    const selected = new Date(dateStr + 'T00:00:00')
+    const now = new Date()
+    const diffDays = Math.max(1, Math.ceil((now.getTime() - selected.getTime()) / (1000 * 60 * 60 * 24)))
+    setDays(diffDays); setActiveFilter('custom'); fetchAll(storedSecret, diffDays)
+  }
+  function getFilterLabel(): string {
+    if (activeFilter === 'today') return 'Today'
+    if (activeFilter === 'yesterday') return 'Yesterday'
+    if (activeFilter === 'custom' && customDate) return `Since ${new Date(customDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
+    return `Last ${days} days`
+  }
   function handleLogout() { setAuthenticated(false); setData(null); setSetupData(null); setSeoData(null); setSessions([]); setStorageData(null); setInsightsData(null); setSecret(''); setStoredSecret('') }
 
   async function hideComment(slug: string, rowKey: string) {
@@ -251,9 +267,18 @@ export default function AdminDashboard() {
           </div>
           <div className="flex items-center gap-2">
             <div className="flex bg-slate-100 rounded-lg p-0.5">
-              {[7, 14, 30].map(d => (
-                <button key={d} onClick={() => handleDaysChange(d)} className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${days === d ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>{d}d</button>
+              {[
+                { label: 'Today', days: 0, key: 'today' },
+                { label: 'Yesterday', days: 1, key: 'yesterday' },
+                { label: '7d', days: 7, key: '7' },
+                { label: '14d', days: 14, key: '14' },
+                { label: '30d', days: 30, key: '30' },
+              ].map(f => (
+                <button key={f.key} onClick={() => handleDaysChange(f.days, f.key)} className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${activeFilter === f.key ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>{f.label}</button>
               ))}
+            </div>
+            <div className="relative">
+              <input type="date" value={customDate} onChange={e => handleCustomDate(e.target.value)} max={new Date().toISOString().slice(0, 10)} className={`px-2.5 py-1.5 text-xs rounded-md border transition-colors w-[130px] ${activeFilter === 'custom' ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300'}`} title="Custom date: show data from this date to today" />
             </div>
             <button onClick={() => setAutoRefresh(!autoRefresh)} className={`px-2.5 py-1.5 text-xs rounded-md transition-colors ${autoRefresh ? 'bg-teal-100 text-teal-700' : 'text-slate-400 hover:text-slate-600'}`} title={autoRefresh ? 'Auto-refresh ON (60s)' : 'Auto-refresh OFF'}>
               <Clock className="w-3.5 h-3.5" />
@@ -294,7 +319,7 @@ export default function AdminDashboard() {
               </div>
             )}
             <div className="grid md:grid-cols-2 gap-6">
-              <Panel title="Daily Page Views" subtitle={`Last ${days} days`}>
+              <Panel title="Daily Page Views" subtitle={getFilterLabel()}>
                 {chartDates.length === 0 ? <Empty /> : <AreaChartComponent data={chartDates} color="#2563eb" />}
               </Panel>
               <Panel title="Enquiry Breakdown">
@@ -321,7 +346,7 @@ export default function AdminDashboard() {
               <StatCard icon={MapPin} label="Cities" value={data.topCities.length} color="amber" />
               <StatCard icon={ExternalLink} label="Referrers" value={data.topReferrers.length} color="purple" />
             </div>
-            <Panel title="Traffic Trend" subtitle={`Last ${days} days`}>
+            <Panel title="Traffic Trend" subtitle={getFilterLabel()}>
               {chartDates.length === 0 ? <Empty /> : <AreaChartComponent data={chartDates} color="#2563eb" />}
             </Panel>
             <div className="grid md:grid-cols-2 gap-6">
