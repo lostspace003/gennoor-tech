@@ -91,7 +91,7 @@ export default function ClaudeCoworkPopup() {
           </ul>
 
           <Link
-            href="/claude-cowork#register"
+            href="/claude-cowork"
             onClick={dismiss}
             className="flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-[#FF6B35] hover:bg-[#e55a25] text-white font-bold rounded-full transition-colors text-sm"
           >
