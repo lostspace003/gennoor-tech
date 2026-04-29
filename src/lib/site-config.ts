@@ -52,6 +52,7 @@ export const siteConfig = {
         ]
       },
       { name: 'Blog', href: '/resources/blog' },
+      { name: 'Claude Cowork', href: '/claude-cowork' },
       { name: 'Webinars', href: '/webinars' },
       { name: 'Contact', href: '/contact' },
     ],
