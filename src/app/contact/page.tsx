@@ -51,7 +51,7 @@ const faqs = [
   {
     question: 'How do I book a free consultation call?',
     answer:
-      'You can book a 30-minute discovery call directly through our Calendly link on this page, or send us an email at jalalkhan@gennoor.com. We typically respond within 24 hours.',
+      'You can book a 30-minute discovery call directly through our Calendly link on this page, or send us an email at contact@gennoor.com. We typically respond within 24 hours.',
   },
 ];
 
@@ -75,7 +75,7 @@ const localBusinessSchema = {
   description:
     'Enterprise AI training, strategy consulting, and proof-of-concept development for organizations worldwide.',
   url: 'https://gennoor.com',
-  email: 'jalalkhan@gennoor.com',
+  email: 'contact@gennoor.com',
   founder: {
     '@type': 'Person',
     name: 'Jalal Ahmed Khan',
@@ -131,14 +131,14 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Email */}
             <a
-              href="mailto:jalalkhan@gennoor.com"
+              href="mailto:contact@gennoor.com"
               className="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100 text-center"
             >
               <div className="inline-flex items-center justify-center w-14 h-14 bg-primary-50 rounded-xl mb-4 group-hover:bg-primary-100 transition-colors">
                 <Mail className="w-7 h-7 text-primary-600" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-1">Email</h3>
-              <p className="text-sm text-gray-600">jalalkhan@gennoor.com</p>
+              <p className="text-sm text-gray-600">contact@gennoor.com</p>
             </a>
 
             {/* WhatsApp */}

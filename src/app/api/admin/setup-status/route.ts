@@ -50,12 +50,12 @@ export async function POST(request: NextRequest) {
         configured: !!process.env.APPLICATIONINSIGHTS_CONNECTION_STRING,
       },
 
-      // SMTP Email
+      // M365 Graph API Email
       smtp: {
-        label: 'SMTP Email Service',
-        description: 'Sends enquiry confirmations and admin notifications',
-        configured: !!(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS),
-        value: process.env.SMTP_HOST || '',
+        label: 'M365 Graph API Email',
+        description: 'Sends enquiry confirmations and admin notifications via Microsoft Graph',
+        configured: !!(process.env.M365_TENANT_ID && process.env.M365_CLIENT_ID && process.env.M365_CLIENT_SECRET),
+        value: process.env.M365_SENDER_EMAIL || '',
       },
 
       // Azure OpenAI
