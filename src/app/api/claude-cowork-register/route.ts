@@ -111,7 +111,7 @@ export async function POST(request: Request) {
 
     await sendEmail({
       to: email,
-      from: process.env.SMTP_USER || 'jalalkhan@gennoor.com',
+      from: process.env.M365_SENDER_EMAIL || 'admin@gennoor.com',
       fromName: 'Gennoor Tech — Claude Cowork',
       subject: "You're in — Claude Cowork Workshop confirmation",
       html: userEmailHtml,
@@ -133,7 +133,7 @@ export async function POST(request: Request) {
 
     await sendEmail({
       to: process.env.EMAIL_ADMIN || 'admin@gennoor.com',
-      from: process.env.SMTP_USER || 'jalalkhan@gennoor.com',
+      from: process.env.M365_SENDER_EMAIL || 'admin@gennoor.com',
       fromName: 'Cowork Registration System',
       subject: `New Claude Cowork Registration — ${fullName}`,
       html: adminEmailHtml,

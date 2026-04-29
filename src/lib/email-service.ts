@@ -1,9 +1,7 @@
-import nodemailer from 'nodemailer'
 import { readFile } from 'fs/promises'
 import path from 'path'
 import { downloadPdfFromBlob } from '@/lib/azure-storage'
 
-// Email configuration interface
 interface EmailConfig {
   to: string | string[]
   cc?: string | string[]
@@ -16,69 +14,107 @@ interface EmailConfig {
     filename: string
     path?: string
     content?: Buffer | string
+    contentType?: string
   }>
 }
 
-// Create reusable transporter
-const createTransporter = () => {
-  // Option 1: Using Hostinger SMTP
-  if (process.env.SMTP_HOST) {
-    const port = parseInt(process.env.SMTP_PORT || '587')
-    return nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: port,
-      secure: port === 465, // true for 465 (SSL), false for 587 (STARTTLS)
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-      tls: {
-        // Do not fail on invalid certs
-        rejectUnauthorized: false
-      }
-    })
+async function getGraphAccessToken(): Promise<string> {
+  const tenantId = process.env.M365_TENANT_ID
+  const clientId = process.env.M365_CLIENT_ID
+  const clientSecret = process.env.M365_CLIENT_SECRET
+
+  if (!tenantId || !clientId || !clientSecret) {
+    throw new Error('M365 Graph API credentials not configured. Set M365_TENANT_ID, M365_CLIENT_ID, M365_CLIENT_SECRET.')
   }
 
-  // Option 2: Using SendGrid SMTP (if you prefer SendGrid)
-  if (process.env.SENDGRID_API_KEY) {
-    return nodemailer.createTransport({
-      host: 'smtp.sendgrid.net',
-      port: 587,
-      auth: {
-        user: 'apikey',
-        pass: process.env.SENDGRID_API_KEY,
-      },
-    })
+  const tokenUrl = `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`
+
+  const res = await fetch(tokenUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      client_id: clientId,
+      client_secret: clientSecret,
+      scope: 'https://graph.microsoft.com/.default',
+      grant_type: 'client_credentials',
+    }),
+  })
+
+  if (!res.ok) {
+    const errorText = await res.text()
+    throw new Error(`Failed to get Graph API token: ${res.status} ${errorText}`)
   }
 
-  throw new Error('No email service configured. Please set SMTP or SendGrid credentials.')
+  const data = await res.json()
+  return data.access_token
 }
 
-// Send email function
+function toRecipients(emails: string | string[]): Array<{ emailAddress: { address: string } }> {
+  const list = Array.isArray(emails) ? emails : [emails]
+  return list.map((email) => ({ emailAddress: { address: email.trim() } }))
+}
+
 export async function sendEmail(config: EmailConfig) {
   try {
-    const transporter = createTransporter()
+    const graphMailbox = process.env.M365_SENDER_EMAIL || 'admin@gennoor.com'
+    const accessToken = await getGraphAccessToken()
 
-    // Prepare email options
-    const mailOptions = {
-      from: config.fromName
-        ? `"${config.fromName}" <${config.from}>`
-        : config.from,
-      to: Array.isArray(config.to) ? config.to.join(', ') : config.to,
-      cc: config.cc ? (Array.isArray(config.cc) ? config.cc.join(', ') : config.cc) : undefined,
-      bcc: config.bcc ? (Array.isArray(config.bcc) ? config.bcc.join(', ') : config.bcc) : undefined,
+    const message: Record<string, any> = {
       subject: config.subject,
-      html: config.html,
-      attachments: config.attachments,
+      body: {
+        contentType: 'HTML',
+        content: config.html,
+      },
+      from: {
+        emailAddress: {
+          address: graphMailbox,
+          name: config.fromName || 'Gennoor Tech',
+        },
+      },
+      toRecipients: toRecipients(config.to),
     }
 
-    // Send email
-    const info = await transporter.sendMail(mailOptions)
-    console.log('Email sent:', info.messageId)
+    if (config.cc) {
+      message.ccRecipients = toRecipients(config.cc)
+    }
+    if (config.bcc) {
+      message.bccRecipients = toRecipients(config.bcc)
+    }
+
+    if (config.attachments && config.attachments.length > 0) {
+      message.attachments = config.attachments
+        .filter((a) => a.content)
+        .map((a) => ({
+          '@odata.type': '#microsoft.graph.fileAttachment',
+          name: a.filename,
+          contentType: a.contentType || 'application/octet-stream',
+          contentBytes: Buffer.isBuffer(a.content)
+            ? a.content.toString('base64')
+            : Buffer.from(a.content as string).toString('base64'),
+        }))
+    }
+
+    const graphUrl = `https://graph.microsoft.com/v1.0/users/${graphMailbox}/sendMail`
+
+    const res = await fetch(graphUrl, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message, saveToSentItems: true }),
+    })
+
+    if (!res.ok) {
+      const errorText = await res.text()
+      throw new Error(`Graph API sendMail failed: ${res.status} ${errorText}`)
+    }
+
+    console.log('Email sent via Graph API to:', Array.isArray(config.to) ? config.to.join(', ') : config.to)
 
     return {
       success: true,
-      messageId: info.messageId,
+      messageId: `graph-${Date.now()}`,
     }
   } catch (error) {
     console.error('Email sending failed:', error)
@@ -89,14 +125,9 @@ export async function sendEmail(config: EmailConfig) {
   }
 }
 
-// Helper function to attach PDF - tries Azure Blob first, falls back to local filesystem
 export async function attachPDF(filename: string, filepath: string) {
   try {
-    // Try Azure Blob Storage first
     if (process.env.AZURE_STORAGE_CONNECTION_STRING) {
-      // Convert local path to blob path
-      // e.g. "public/Gennoor-Bootcamp-Brochures/file.pdf" -> "bootcamp-brochures/file.pdf"
-      // e.g. "public/Gennoor-Tech-Course-TOCs/file.pdf" -> "course-tocs/file.pdf"
       let blobPath = filepath
       if (filepath.includes('Gennoor-Bootcamp-Brochures')) {
         blobPath = `bootcamp-brochures/${path.basename(filepath)}`
@@ -112,7 +143,6 @@ export async function attachPDF(filename: string, filepath: string) {
       }
     }
 
-    // Fallback to local filesystem (for development)
     const fullPath = path.join(process.cwd(), filepath)
     const content = await readFile(fullPath)
     return { filename, content, contentType: 'application/pdf' }
@@ -122,7 +152,6 @@ export async function attachPDF(filename: string, filepath: string) {
   }
 }
 
-// Send training enquiry email
 export async function sendTrainingEnquiryEmail(data: {
   name: string
   email: string
@@ -137,21 +166,18 @@ export async function sendTrainingEnquiryEmail(data: {
   programType: string
   requestedFile: string
 }) {
-  // Determine lead score
   const leadScore = data.timeline === 'immediate' || data.timeline === '1-month'
     ? 'HOT'
     : data.timeline === '2-months'
     ? 'WARM'
     : 'COLD'
 
-  // Prepare attachment (PDF file)
   const attachmentFilename = `${data.programTitle.replace(/[^a-z0-9]/gi, '_')}_Details.pdf`
   const attachment = await attachPDF(
     attachmentFilename,
-    data.requestedFile // Already a PDF path
+    data.requestedFile
   )
 
-  // Send email to user
   const userEmailHtml = `
     <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center; border-radius: 10px 10px 0 0;">
@@ -195,7 +221,7 @@ export async function sendTrainingEnquiryEmail(data: {
 
         <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 20px; margin: 30px 0;">
           <p style="color: #856404; margin: 0; font-size: 16px;">
-            <strong>🎯 Special Offer:</strong> Book your training early and receive:
+            <strong>Special Offer:</strong> Book your training early and receive:
           </p>
           <ul style="color: #856404; margin: 10px 0 0; padding-left: 20px;">
             <li>Early bird discount</li>
@@ -223,19 +249,15 @@ export async function sendTrainingEnquiryEmail(data: {
           <h4 style="color: #333; margin-bottom: 15px;">Get in Touch:</h4>
           <table style="width: 100%; color: #555; line-height: 1.8;">
             <tr>
-              <td style="padding: 5px 0;">📧 Email:</td>
+              <td style="padding: 5px 0;">Email:</td>
               <td><a href="mailto:training@gennoor.com" style="color: #667eea;">training@gennoor.com</a></td>
             </tr>
             <tr>
-              <td style="padding: 5px 0;">📱 Phone:</td>
-              <td><a href="tel:+919326352241" style="color: #667eea;">+91 9326352241</a></td>
-            </tr>
-            <tr>
-              <td style="padding: 5px 0;">💬 WhatsApp:</td>
+              <td style="padding: 5px 0;">WhatsApp:</td>
               <td><a href="https://wa.me/919326352241" style="color: #667eea;">+91 9326352241</a></td>
             </tr>
             <tr>
-              <td style="padding: 5px 0;">🌐 Website:</td>
+              <td style="padding: 5px 0;">Website:</td>
               <td><a href="https://www.gennoor.com" style="color: #667eea;">www.gennoor.com</a></td>
             </tr>
           </table>
@@ -244,31 +266,25 @@ export async function sendTrainingEnquiryEmail(data: {
 
       <div style="background: #2c3e50; padding: 30px; text-align: center; border-radius: 0 0 10px 10px;">
         <p style="color: #ecf0f1; margin: 0; font-size: 14px;">
-          © 2024 Gennoor Tech. All rights reserved.
+          &copy; ${new Date().getFullYear()} Gennoor Tech. All rights reserved.
         </p>
         <p style="color: #95a5a6; margin: 10px 0 0; font-size: 13px;">
           Empowering Organizations with AI Excellence
         </p>
-        <div style="margin-top: 20px;">
-          <a href="https://linkedin.com/company/gennoor-tech" style="color: #3498db; margin: 0 10px;">LinkedIn</a>
-          <a href="https://twitter.com/gennoor_tech" style="color: #3498db; margin: 0 10px;">Twitter</a>
-          <a href="https://youtube.com/@gennoor-tech" style="color: #3498db; margin: 0 10px;">YouTube</a>
-        </div>
       </div>
     </div>
   `
 
   await sendEmail({
     to: data.email,
-    cc: process.env.CC_SALES_ON_TRAINING === 'true' ? [process.env.EMAIL_FROM_SALES || 'sales@gennoor.com'] : undefined,
-    from: process.env.SMTP_USER || 'jalalkhan@gennoor.com', // Use authenticated SMTP user as sender
+    cc: process.env.CC_SALES_ON_TRAINING === 'true' ? [process.env.EMAIL_ADMIN || 'admin@gennoor.com'] : undefined,
+    from: process.env.M365_SENDER_EMAIL || 'admin@gennoor.com',
     fromName: 'Gennoor Tech Training',
-    subject: `${data.programType === 'bootcamp' ? '🚀 Bootcamp' : '📚 Course'} Details: ${data.programTitle} | Gennoor Tech`,
+    subject: `${data.programType === 'bootcamp' ? 'Bootcamp' : 'Course'} Details: ${data.programTitle} | Gennoor Tech`,
     html: userEmailHtml,
     attachments: attachment ? [attachment] : undefined,
   })
 
-  // Send admin notification
   const adminEmailHtml = `
     <h2>[${leadScore}] New Training Enquiry - ${data.programTitle}</h2>
     <table border="1" cellpadding="8" style="border-collapse: collapse;">
@@ -296,15 +312,14 @@ export async function sendTrainingEnquiryEmail(data: {
 
   await sendEmail({
     to: process.env.EMAIL_ADMIN || 'admin@gennoor.com',
-    cc: [process.env.EMAIL_FROM_SALES || 'sales@gennoor.com', process.env.EMAIL_FROM_TRAINING || 'training@gennoor.com'],
-    from: process.env.SMTP_USER || 'jalalkhan@gennoor.com', // Use authenticated SMTP user
+    cc: [process.env.EMAIL_ADMIN || 'admin@gennoor.com'],
+    from: process.env.M365_SENDER_EMAIL || 'admin@gennoor.com',
     fromName: 'Training System',
     subject: `[${leadScore}] New Training Enquiry - ${data.programTitle}`,
     html: adminEmailHtml,
   })
 }
 
-// Send certification enquiry email
 export async function sendCertificationEnquiryEmail(data: {
   name: string
   email: string
@@ -318,16 +333,5 @@ export async function sendCertificationEnquiryEmail(data: {
   message?: string
   selectedCertification: string
 }) {
-  // Determine lead score
-  const leadScore = data.targetDate === '1-month'
-    ? 'HOT'
-    : data.targetDate === '2-months'
-    ? 'WARM'
-    : 'COLD'
-
-  // User email content (similar structure to training email)
-  // ... (implement certification specific email template)
-
-  // Admin notification
-  // ... (implement admin notification)
+  // Placeholder — implement certification-specific email template as needed
 }

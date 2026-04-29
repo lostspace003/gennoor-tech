@@ -23,7 +23,7 @@ export function OrganizationJsonLd() {
     ],
     contactPoint: {
       '@type': 'ContactPoint',
-      email: 'jalalkhan@gennoor.com',
+      email: 'contact@gennoor.com',
       contactType: 'customer service',
       availableLanguage: ['English', 'Hindi', 'Urdu'],
     },
