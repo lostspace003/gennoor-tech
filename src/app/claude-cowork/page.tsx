@@ -317,6 +317,39 @@ export default function ClaudeCoworkPage() {
         </div>
       </section>
 
+      {/* CTA Band */}
+      <section className="bg-[#FF6B35] py-12 sm:py-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-black text-white mb-3">
+                Ready to ship work like an operator?
+              </h2>
+              <p className="text-white/80 mb-6">
+                Free for the first 1000 registrants. Doors close after that.
+              </p>
+              <button
+                onClick={() => { scrollToRegister(); trackEvent('cta_footer_click') }}
+                className="inline-flex items-center gap-2 px-8 py-4 bg-[#1B2845] hover:bg-[#243354] text-white font-bold text-lg rounded-full transition-colors cursor-pointer"
+              >
+                GRAB MY FREE SEAT <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="text-white/90 text-right md:text-right text-left">
+              <p className="mb-2">
+                Questions? Email{' '}
+                <a href="mailto:admin@gennoor.com" className="underline font-semibold hover:text-white">
+                  admin@gennoor.com
+                </a>
+              </p>
+              <p className="text-sm text-white/70">
+                100% free &middot; No upsell &middot; Open to anyone, anywhere &middot; First 1000 only
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Registration Section */}
       <section id="register" ref={registerRef} className="bg-[#1B2845] py-16 sm:py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -449,39 +482,6 @@ export default function ClaudeCoworkPage() {
                   </button>
                 </form>
               )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer CTA Band */}
-      <section className="bg-[#FF6B35] py-12 sm:py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-black text-white mb-3">
-                Ready to ship work like an operator?
-              </h2>
-              <p className="text-white/80 mb-6">
-                Free for the first 1000 registrants. Doors close after that.
-              </p>
-              <button
-                onClick={() => { scrollToRegister(); trackEvent('cta_footer_click') }}
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[#1B2845] hover:bg-[#243354] text-white font-bold text-lg rounded-full transition-colors cursor-pointer"
-              >
-                GRAB MY FREE SEAT <ArrowRight className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="text-white/90 text-right md:text-right text-left">
-              <p className="mb-2">
-                Questions? Email{' '}
-                <a href="mailto:admin@gennoor.com" className="underline font-semibold hover:text-white">
-                  admin@gennoor.com
-                </a>
-              </p>
-              <p className="text-sm text-white/70">
-                100% free &middot; No upsell &middot; Open to anyone, anywhere &middot; First 1000 only
-              </p>
             </div>
           </div>
         </div>
