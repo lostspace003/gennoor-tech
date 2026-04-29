@@ -87,7 +87,16 @@ export default function Header() {
                 onMouseEnter={() => item.children && handleMouseEnter(item.name)}
                 onMouseLeave={() => item.children && handleMouseLeave()}
               >
-                {item.children ? (
+                {item.href === '/claude-cowork' ? (
+                  <Link
+                    href={item.href}
+                    className="relative inline-flex items-center gap-1.5 px-4 py-2 bg-[#FF6B35] text-white text-sm font-bold rounded-full hover:bg-[#e55a25] transition-colors shadow-sm"
+                  >
+                    <span className="inline-block w-2 h-2 bg-[#FFD23F] rounded-full animate-pulse" />
+                    {item.name}
+                    <span className="ml-1 text-[10px] font-black bg-[#FFD23F] text-[#1B2845] px-1.5 py-0.5 rounded-full leading-none uppercase">Free</span>
+                  </Link>
+                ) : item.children ? (
                   <Link
                     href={item.href}
                     className={cn(
@@ -203,6 +212,16 @@ export default function Header() {
                         </div>
                       )}
                     </>
+                  ) : item.href === '/claude-cowork' ? (
+                    <Link
+                      href={item.href}
+                      className="flex items-center gap-2 mx-3 my-2 px-4 py-2.5 bg-[#FF6B35] text-white text-sm font-bold rounded-full hover:bg-[#e55a25] transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <span className="inline-block w-2 h-2 bg-[#FFD23F] rounded-full animate-pulse" />
+                      {item.name}
+                      <span className="text-[10px] font-black bg-[#FFD23F] text-[#1B2845] px-1.5 py-0.5 rounded-full leading-none uppercase">Free</span>
+                    </Link>
                   ) : (
                     <Link
                       href={item.href}
