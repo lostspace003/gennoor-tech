@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useRef, FormEvent } from 'react'
 import { Check, ChevronDown, Download, ArrowRight, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
@@ -564,11 +564,11 @@ export default function ClaudeCoworkPage() {
           <h2 className="text-[13px] font-extrabold tracking-[.06em] uppercase text-[#1B2845] mb-5 pl-3.5 border-l-4 border-[#FFD23F]">Common questions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {[
-              { q: ‘Is this Claude AI workshop for technical people only?’, a: "No — it’s specifically for non-technical leaders, PMs, ops, marketers, analysts, founders. If you can use Slack, you can do this. Zero coding required." },
-              { q: ‘What if I miss part of the live Claude AI session?’, a: "Recordings are sent to all registrants 24 hours after the workshop. The labs are runnable on your own time too — they’re built into a folder you can keep." },
-              { q: ‘Can I bring my whole team to the Claude Cowork workshop?’, a: "Yes — and you should. Module 6 is \"build your team’s rollout playbook.\" Bring at least one teammate so you can split labs and get more output." },
-              { q: "Is this free Claude AI workshop really free? What’s the catch?", a: "No catch. No upsell at the end. No mailing list spam. You get 8 hours of training, the lab files, and the trainer playbook PDF. That’s it." },
-              { q: ‘What do I need before the Claude Cowork workshop?’, a: ‘The Claude desktop app installed and Cowork mode enabled (free), Chrome browser, and a laptop with at least 4 hours of battery. Setup checklist arrives by email after registration.’ },
+              { q: 'Is this for technical people only?', a: "No — it’s specifically for non-technical leaders, PMs, ops, marketers, analysts, founders. If you can use Slack, you can do this. Zero coding required." },
+              { q: 'What if I miss part of the live session?', a: "Recordings are sent to all registrants 24 hours after the workshop. The labs are runnable on your own time too — they’re built into a folder you can keep." },
+              { q: 'Can I bring my whole team?', a: "Yes — and you should. Module 6 is \"build your team’s rollout playbook.\" Bring at least one teammate so you can split labs and get more output." },
+              { q: "What’s the catch? Is there an upsell?", a: "No catch. No upsell at the end. No mailing list spam. You get 8 hours of training, the lab files, and the trainer playbook PDF. That’s it." },
+              { q: 'What do I need before the workshop?', a: 'The Claude desktop app installed and Cowork mode enabled (free), Chrome browser, and a laptop with at least 4 hours of battery. Setup checklist arrives by email after registration.' },
             ].map((faq, i) => (
               <details key={i} className="rounded-xl px-5 py-3.5 cursor-pointer" style={{ background: '#FFF8F0', boxShadow: '0 1px 4px rgba(0,0,0,.04)' }}>
                 <summary className="font-bold text-[15px] text-[#1B2845] list-none relative pr-6">
