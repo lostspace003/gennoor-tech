@@ -408,37 +408,6 @@ export default function ClaudeCoworkPage() {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="py-8">
-        <div className="max-w-[760px] mx-auto px-4 sm:px-6">
-          <h2 className="text-[13px] font-extrabold tracking-[.06em] uppercase text-[#1B2845] mb-4 pl-3.5 border-l-4 border-[#FFD23F]">Common questions</h2>
-          {[
-            { q: 'Why is this free?', a: "I want 1000 leaders walking into Monday with AI that actually works for them — not just article-reading. Free reaches more people. After this round, I run paid programs for orgs that want it for their teams." },
-            { q: 'Is this for technical people only?', a: 'No — it’s specifically for non-technical leaders, PMs, ops, marketers, analysts, founders. If you can use Slack, you can do this. Zero coding required.' },
-            { q: 'What if I miss part of the live session?', a: 'Recordings are sent to all registrants 24 hours after the workshop. The labs are runnable on your own time too — they’re built into a folder you can keep.' },
-            { q: 'Can I bring my whole team?', a: "Yes — and you should. Module 6 is \"build your team's rollout playbook.\" Bring at least one teammate so you can split labs and get more output." },
-            { q: "What's the catch? Is there an upsell?", a: 'No catch. No upsell at the end. No mailing list spam. You get 8 hours of training, the lab files, and the trainer playbook PDF. That’s it.' },
-            { q: 'What do I need before the workshop?', a: 'The Claude desktop app installed and Cowork mode enabled (free), Chrome browser, and a laptop with at least 4 hours of battery. Setup checklist arrives by email after registration.' },
-            { q: 'Who is Jalal?', a: null },
-          ].map((faq, i) => (
-            <details key={i} className="rounded-xl px-5 py-3.5 mb-2 cursor-pointer" style={{ background: '#FFF8F0', boxShadow: '0 1px 4px rgba(0,0,0,.04)' }}>
-              <summary className="font-bold text-[15px] text-[#1B2845] list-none relative pr-6">
-                {faq.q}
-                <span className="absolute right-0 top-0 text-xl text-[#FF6B35] font-bold" />
-              </summary>
-              {faq.a ? (
-                <p className="mt-2.5 text-sm leading-relaxed text-[#5C6784]">{faq.a}</p>
-              ) : (
-                <p className="mt-2.5 text-sm leading-relaxed text-[#5C6784]">
-                  Microsoft Certified Trainer with 16+ active certifications and 12 years of teaching experience. Has run paid AI programs at Microsoft, IBM, EY, Boeing, Saudi Aramco, HDFC Bank, Siemens, and TCS.{' '}
-                  <a href="https://linkedin.com/in/jalalahmedkhan" target="_blank" rel="noopener noreferrer" className="text-[#FF6B35] underline">Connect on LinkedIn</a>.
-                </p>
-              )}
-            </details>
-          ))}
-        </div>
-      </section>
-
       {/* Registration Section */}
       <section id="register" ref={registerRef} className="bg-[#1B2845] py-16 sm:py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -582,6 +551,30 @@ export default function ClaudeCoworkPage() {
                 </form>
               )}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-[13px] font-extrabold tracking-[.06em] uppercase text-[#1B2845] mb-5 pl-3.5 border-l-4 border-[#FFD23F]">Common questions</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {[
+              { q: 'Is this for technical people only?', a: "No — it’s specifically for non-technical leaders, PMs, ops, marketers, analysts, founders. If you can use Slack, you can do this. Zero coding required." },
+              { q: 'What if I miss part of the live session?', a: "Recordings are sent to all registrants 24 hours after the workshop. The labs are runnable on your own time too — they’re built into a folder you can keep." },
+              { q: 'Can I bring my whole team?', a: "Yes — and you should. Module 6 is \"build your team’s rollout playbook.\" Bring at least one teammate so you can split labs and get more output." },
+              { q: "What’s the catch? Is there an upsell?", a: "No catch. No upsell at the end. No mailing list spam. You get 8 hours of training, the lab files, and the trainer playbook PDF. That’s it." },
+              { q: 'What do I need before the workshop?', a: 'The Claude desktop app installed and Cowork mode enabled (free), Chrome browser, and a laptop with at least 4 hours of battery. Setup checklist arrives by email after registration.' },
+            ].map((faq, i) => (
+              <details key={i} className="rounded-xl px-5 py-3.5 cursor-pointer" style={{ background: '#FFF8F0', boxShadow: '0 1px 4px rgba(0,0,0,.04)' }}>
+                <summary className="font-bold text-[15px] text-[#1B2845] list-none relative pr-6">
+                  {faq.q}
+                  <span className="absolute right-0 top-0 text-xl text-[#FF6B35] font-bold" />
+                </summary>
+                <p className="mt-2.5 text-sm leading-relaxed text-[#5C6784]">{faq.a}</p>
+              </details>
+            ))}
           </div>
         </div>
       </section>
