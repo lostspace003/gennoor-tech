@@ -284,38 +284,20 @@ export default function ClaudeCoworkPage() {
       </section>
 
       {/* Meet Your Trainer */}
-      <section className="py-10" style={{ background: '#FFF8F0' }}>
+      <section className="py-6" style={{ background: '#FFF8F0' }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="rounded-2xl p-8" style={{ background: '#FAF6F0', boxShadow: '0 2px 12px rgba(0,0,0,.06)' }}>
-            <p className="text-[#FF6B35] font-extrabold text-xs tracking-[.08em] uppercase mb-1">YOUR TRAINER</p>
-            <h2 className="text-[28px] font-black text-[#1B2845] leading-tight mb-1.5">Jalal Khan</h2>
-            <p className="text-sm text-[#5C6784] mb-3.5">Microsoft Certified Trainer · 16+ active certifications · Founder of Gennoor</p>
-            <p className="text-[15px] text-[#1B2845] leading-relaxed mb-3">I&apos;ve trained over 5,000 leaders and operators on AI in the last 3 years — at Microsoft, IBM, EY, Boeing, Saudi Aramco, HDFC Bank, Siemens, and TCS.</p>
-            <p className="text-[15px] text-[#1B2845] leading-relaxed mb-3.5">Most &ldquo;AI training&rdquo; reads like a tip blog. This one&apos;s structured around 21 hands-on labs you actually run on your own laptop. You walk out with the workflows running, not just the concepts noted.</p>
-            <div className="flex flex-wrap gap-2 mt-3.5">
+          <div className="rounded-xl px-6 py-5 flex flex-col md:flex-row md:items-center gap-4" style={{ background: '#FAF6F0', boxShadow: '0 2px 12px rgba(0,0,0,.06)' }}>
+            <div className="flex-1 min-w-0">
+              <p className="text-[#FF6B35] font-extrabold text-[10px] tracking-[.08em] uppercase mb-0.5">YOUR TRAINER</p>
+              <h2 className="text-xl font-black text-[#1B2845] leading-tight mb-1">Jalal Khan</h2>
+              <p className="text-[13px] text-[#5C6784] mb-2">Microsoft Certified Trainer · 16+ certifications · Founder, Gennoor</p>
+              <p className="text-[14px] text-[#1B2845] leading-relaxed m-0">5,000+ leaders trained at Microsoft, IBM, EY, Boeing, Saudi Aramco &amp; more. 21 hands-on labs — you walk out with workflows running, not just concepts noted.</p>
+            </div>
+            <div className="flex flex-wrap gap-1.5 md:max-w-[240px] shrink-0">
               {['Microsoft', 'IBM', 'EY', 'Boeing', 'Saudi Aramco', 'HDFC Bank', 'Siemens', 'TCS'].map((logo) => (
-                <span key={logo} className="px-2.5 py-1 bg-white border border-[#E2DFD8] rounded-md text-[11px] font-bold tracking-[.04em] text-[#5C6784] uppercase">{logo}</span>
+                <span key={logo} className="px-2 py-0.5 bg-white border border-[#E2DFD8] rounded text-[10px] font-bold tracking-[.04em] text-[#5C6784] uppercase">{logo}</span>
               ))}
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-8">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-[13px] font-extrabold tracking-[.06em] uppercase text-[#1B2845] mb-4 pl-3.5 border-l-4 border-[#FFD23F]">What past trainees say</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
-            {[
-              { quote: "An excellent trainer with deep expertise in AI. He explains complex concepts in a very clear and practical way. His knowledge as an AI manager truly reflects in the way he connects theory with real-world applications. Highly engaging sessions and very helpful for both beginners and professionals.", cite: '— Sourabh Taneja, via Trustpilot' },
-              { quote: "I have been utilizing training services of Jalal for different courses on Microsoft and AI. He is an excellent trainer when it comes to delivering official training and bespoke courses on AI. I would highly recommend him.", cite: '— Bhavesh Shah, via Trustpilot' },
-              { quote: "Jalal possesses a rare ability to take incredibly complex topics and break them down into actionable, easy-to-understand insights. He doesn't just teach code — he teaches the 'why' behind the models. Sessions are consistently high-energy, well-structured, and meticulously researched.", cite: '— Joshua Charles, via LinkedIn' },
-            ].map((t, i) => (
-              <blockquote key={i} className="m-0 p-5 rounded-xl border-t-4 border-[#FF6B35]" style={{ background: '#FFF8F0', boxShadow: '0 2px 12px rgba(0,0,0,.06)' }}>
-                <p className="text-sm leading-relaxed italic text-[#1B2845] mb-2.5">&ldquo;{t.quote}&rdquo;</p>
-                <cite className="text-xs text-[#5C6784] not-italic font-bold">{t.cite}</cite>
-              </blockquote>
-            ))}
           </div>
         </div>
       </section>
@@ -360,6 +342,23 @@ export default function ClaudeCoworkPage() {
                 </div>
               )}
             </button>
+          ))}
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
+        <h2 className="text-[13px] font-extrabold tracking-[.06em] uppercase text-[#1B2845] mb-4 pl-3.5 border-l-4 border-[#FFD23F]">What past trainees say</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+          {[
+            { quote: "An excellent trainer with deep expertise in AI. He explains complex concepts in a very clear and practical way. His knowledge as an AI manager truly reflects in the way he connects theory with real-world applications. Highly engaging sessions and very helpful for both beginners and professionals.", cite: '— Sourabh Taneja, via Trustpilot' },
+            { quote: "I have been utilizing training services of Jalal for different courses on Microsoft and AI. He is an excellent trainer when it comes to delivering official training and bespoke courses on AI. I would highly recommend him.", cite: '— Bhavesh Shah, via Trustpilot' },
+            { quote: "Jalal possesses a rare ability to take incredibly complex topics and break them down into actionable, easy-to-understand insights. He doesn't just teach code — he teaches the 'why' behind the models. Sessions are consistently high-energy, well-structured, and meticulously researched.", cite: '— Joshua Charles, via LinkedIn' },
+          ].map((t, i) => (
+            <blockquote key={i} className="m-0 p-5 rounded-xl border-t-4 border-[#FF6B35]" style={{ background: '#FFF8F0', boxShadow: '0 2px 12px rgba(0,0,0,.06)' }}>
+              <p className="text-sm leading-relaxed italic text-[#1B2845] mb-2.5">&ldquo;{t.quote}&rdquo;</p>
+              <cite className="text-xs text-[#5C6784] not-italic font-bold">{t.cite}</cite>
+            </blockquote>
           ))}
         </div>
       </section>

@@ -368,6 +368,7 @@ export default function AdminDashboard() {
               <StatCard icon={BookOpen} label="Training" value={data.enquiryByType['TrainingEnquiry'] || data.enquiryByType['training'] || 0} color="teal" />
               <StatCard icon={FileText} label="Certification" value={data.enquiryByType['CertificationEnquiry'] || data.enquiryByType['certification'] || 0} color="amber" />
               <StatCard icon={Users} label="Expert Calls" value={data.enquiryByType['ExpertCallBooking'] || data.enquiryByType['expert-call'] || 0} color="purple" />
+              <StatCard icon={Users} label="Cowork Registrations" value={data.enquiryByType['ClaudeCoworkRegistration'] || 0} color="blue" />
             </div>
             <Panel title="Enquiry Breakdown">
               {Object.keys(data.enquiryByType).length === 0 ? <Empty /> : <PieChartComponent data={Object.entries(data.enquiryByType).map(([name, value]) => ({ name: name.replace(/-/g, ' '), value }))} />}
@@ -376,7 +377,7 @@ export default function AdminDashboard() {
               {data.recentEnquiries.length === 0 ? <Empty text="No enquiries yet" /> : (
                 <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-500 border-b border-slate-200"><th className="text-left py-2 px-3 font-medium">Type</th><th className="text-left py-2 px-3 font-medium">Name</th><th className="text-left py-2 px-3 font-medium">Email</th><th className="text-left py-2 px-3 font-medium">Course</th><th className="text-left py-2 px-3 font-medium">Date</th></tr></thead>
                 <tbody>{data.recentEnquiries.map((e, i) => (
-                  <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50"><td className="py-2.5 px-3"><span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-medium capitalize">{e.type}</span></td><td className="py-2.5 px-3 text-slate-800">{e.name}</td><td className="py-2.5 px-3 text-slate-600">{e.email}</td><td className="py-2.5 px-3 text-slate-500 max-w-[200px] truncate">{e.course}</td><td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{new Date(e.createdAt).toLocaleDateString()}</td></tr>
+                  <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50"><td className="py-2.5 px-3"><span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-medium capitalize">{e.type}</span></td><td className="py-2.5 px-3 text-slate-800">{e.name || e.fullName}</td><td className="py-2.5 px-3 text-slate-600">{e.email}</td><td className="py-2.5 px-3 text-slate-500 max-w-[200px] truncate">{e.course || e.company || '-'}</td><td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{new Date(e.createdAt).toLocaleDateString()}</td></tr>
                 ))}</tbody></table></div>
               )}
             </Panel>
