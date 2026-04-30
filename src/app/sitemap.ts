@@ -42,6 +42,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/services/copilot-studio-training`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${baseUrl}/services/azure-ai-foundry-workshop`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${baseUrl}/services/enterprise-ai-roadmap-workshop`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+
+    // Claude Cowork workshop
+    { url: `${baseUrl}/claude-cowork`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.95 },
   ]
 
   // Blog post pages
