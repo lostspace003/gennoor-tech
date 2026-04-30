@@ -3,12 +3,12 @@
 import { useState } from 'react'
 import { ArrowLeft, Award, Clock, DollarSign, Target, BookOpen, CheckCircle, Info, Send, Filter, X } from 'lucide-react'
 import Link from 'next/link'
-import { microsoftCertifications, googleCertifications, awsCertifications, githubCertifications } from '@/data/certification-prep'
+import { microsoftCertifications, googleCertifications, awsCertifications, githubCertifications, aiCertsCertifications } from '@/data/certification-prep'
 import CertificationDetailsModal from '@/components/certifications/CertificationDetailsModal'
 import CertificationEnquiryForm from '@/components/certifications/CertificationEnquiryForm'
 
 export default function CertificationPreparationPage() {
-  const [selectedProvider, setSelectedProvider] = useState<'all' | 'Microsoft' | 'Google' | 'AWS' | 'GitHub'>('all')
+  const [selectedProvider, setSelectedProvider] = useState<'all' | 'Microsoft' | 'Google' | 'AWS' | 'GitHub' | 'AI CERTs'>('all')
   const [selectedLevel, setSelectedLevel] = useState<'all' | 'Fundamentals' | 'Associate' | 'Expert' | 'Specialty'>('all')
   const [selectedCertification, setSelectedCertification] = useState<any>(null)
   const [showDetailsModal, setShowDetailsModal] = useState(false)
@@ -19,7 +19,8 @@ export default function CertificationPreparationPage() {
     ...microsoftCertifications,
     ...googleCertifications,
     ...awsCertifications,
-    ...githubCertifications
+    ...githubCertifications,
+    ...aiCertsCertifications
   ]
 
   // Filter certifications
@@ -34,7 +35,8 @@ export default function CertificationPreparationPage() {
     Microsoft: filteredCertifications.filter(c => c.provider === 'Microsoft'),
     Google: filteredCertifications.filter(c => c.provider === 'Google'),
     AWS: filteredCertifications.filter(c => c.provider === 'AWS'),
-    GitHub: filteredCertifications.filter(c => c.provider === 'GitHub')
+    GitHub: filteredCertifications.filter(c => c.provider === 'GitHub'),
+    'AI CERTs': filteredCertifications.filter(c => c.provider === 'AI CERTs')
   }
 
   const handleViewDetails = (cert: any) => {
@@ -72,6 +74,8 @@ export default function CertificationPreparationPage() {
         return 'bg-orange-600'
       case 'GitHub':
         return 'bg-gray-800'
+      case 'AI CERTs':
+        return 'bg-yellow-600'
       default:
         return 'bg-gray-600'
     }
@@ -101,13 +105,13 @@ export default function CertificationPreparationPage() {
               Certification Exam Preparation
             </h1>
             <p className="text-xl text-white/90 mb-8">
-              Prepare for industry-recognized certifications with expert guidance from a Microsoft Certified Trainer
-              with 16+ active certifications across Microsoft, AWS, Google Cloud, and GitHub.
+              Prepare for industry-recognized certifications with expert guidance from a Microsoft Certified Trainer & AI CERTs Certified Trainer
+              with 20+ active certifications across Microsoft, AWS, Google Cloud, GitHub, and AI CERTs.
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
-                <div className="text-3xl font-bold text-white">16+</div>
+                <div className="text-3xl font-bold text-white">20+</div>
                 <div className="text-white/80 text-sm">Active Certifications</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
@@ -119,8 +123,8 @@ export default function CertificationPreparationPage() {
                 <div className="text-white/80 text-sm">Students Certified</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
-                <div className="text-3xl font-bold text-white">4</div>
-                <div className="text-white/80 text-sm">Cloud Platforms</div>
+                <div className="text-3xl font-bold text-white">5</div>
+                <div className="text-white/80 text-sm">Certification Providers</div>
               </div>
             </div>
           </div>
@@ -146,6 +150,7 @@ export default function CertificationPreparationPage() {
               <option value="Google">Google Cloud</option>
               <option value="AWS">AWS</option>
               <option value="GitHub">GitHub</option>
+              <option value="AI CERTs">AI CERTs</option>
             </select>
 
             <select
@@ -323,7 +328,7 @@ export default function CertificationPreparationPage() {
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Expert Trainer</h3>
               <p className="text-gray-600">
-                Learn from a Microsoft Certified Trainer with 16+ active certifications
+                Learn from a Microsoft & AI CERTs Certified Trainer with 20+ active certifications
               </p>
             </div>
 

@@ -5,7 +5,7 @@ export interface Certification {
   name: string
   code: string
   issuer: string
-  category: 'Expert' | 'Associate' | 'Fundamentals' | 'AI Transformation' | 'Agentic AI' | 'GitHub' | 'Applied Skills'
+  category: 'Expert' | 'Associate' | 'Fundamentals' | 'AI Transformation' | 'Agentic AI' | 'GitHub' | 'AI CERTs' | 'Applied Skills'
   dateEarned?: string
   expiryDate?: string
   credlyBadge?: string
@@ -188,6 +188,55 @@ export const certifications: Certification[] = [
     pdfPath: `${BLOB_URL}/certificates/8-github-copilot.pdf`
   },
 
+  // AI CERTs Certifications
+  {
+    id: 'aict',
+    name: 'AI CERTs Certified Trainer',
+    code: 'AICT',
+    issuer: 'AI CERTs',
+    category: 'AI CERTs',
+    dateEarned: 'April 2026',
+    description: 'Authorized to deliver official AI CERTs training programs worldwide. Certified by AI CERTs (Russell Sarder, Chairman & CEO).',
+    skills: ['AI CERTs Training Delivery', 'AI+ Certification Programs', 'Enterprise AI Education'],
+    pdfPath: `${BLOB_URL}/certificates/17-aict.pdf`
+  },
+  {
+    id: 'ai-executive',
+    name: 'AI+ Executive',
+    code: 'AI+ Executive',
+    issuer: 'AI CERTs',
+    category: 'AI CERTs',
+    dateEarned: 'April 2026',
+    expiryDate: 'April 2027',
+    description: 'Executive-level AI certification covering strategic AI implementation, leadership, and organizational transformation.',
+    skills: ['AI Strategy', 'Executive Leadership', 'AI Governance', 'Business Transformation'],
+    pdfPath: `${BLOB_URL}/certificates/18-ai-executive.pdf`
+  },
+  {
+    id: 'ai-security-l1',
+    name: 'AI+ Security Level 1',
+    code: 'AI+ Security L1',
+    issuer: 'AI CERTs',
+    category: 'AI CERTs',
+    dateEarned: 'April 2026',
+    expiryDate: 'April 2027',
+    description: 'Foundational AI security certification covering threat landscapes, secure AI development, and AI risk management.',
+    skills: ['AI Security Fundamentals', 'Threat Modeling', 'Secure AI Development', 'Risk Assessment'],
+    pdfPath: `${BLOB_URL}/certificates/19-ai-security-l1.pdf`
+  },
+  {
+    id: 'ai-security-l2',
+    name: 'AI+ Security Level 2',
+    code: 'AI+ Security L2',
+    issuer: 'AI CERTs',
+    category: 'AI CERTs',
+    dateEarned: 'April 2026',
+    expiryDate: 'April 2027',
+    description: 'Advanced AI security certification covering adversarial ML, AI compliance frameworks, and enterprise AI security architecture.',
+    skills: ['Adversarial ML', 'AI Compliance', 'Security Architecture', 'Red Teaming AI'],
+    pdfPath: `${BLOB_URL}/certificates/20-ai-security-l2.pdf`
+  },
+
   // Applied Skills
   {
     id: 'as-001',
@@ -216,7 +265,7 @@ export const microsoftLearnStats = {
   hours: '376+',
   modules: 506,
   learningPaths: 126,
-  exams: 16,  // Updated with MCT
+  exams: 20,
   trophies: 88,
   points: 45000, // Update with actual
   profileUrl: 'https://learn.microsoft.com/en-us/users/lostspace003/transcript/vjw63s4jxnmmwre?tab=credentials-tab'
@@ -226,12 +275,24 @@ export const microsoftLearnStats = {
 export const mctStatus = {
   status: 'Active',
   since: '2022',
-  currentYear: '2024-2025', // MCT requires annual renewal
+  currentYear: '2024-2025',
   id: 'MCT',
   specializations: [
     'Azure AI',
     'Power Platform',
     'Microsoft 365 Copilot',
     'Agentic AI'
+  ]
+}
+
+// AICT Status
+export const aictStatus = {
+  status: 'Active',
+  since: '2026',
+  id: 'AICT4398',
+  programs: [
+    'AI+ Executive',
+    'AI+ Security Level 1',
+    'AI+ Security Level 2'
   ]
 }
