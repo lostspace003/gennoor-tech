@@ -83,6 +83,17 @@
   }
 }
 
+/* Seat counter pulse */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .4; }
+}
+
+/* FAQ toggle marker */
+details summary::-webkit-details-marker { display: none; }
+details summary::after { content: "+"; position: absolute; right: 0; top: 0; font-size: 20px; color: #FF6B35; font-weight: 700; }
+details[open] summary::after { content: "\2212"; }
+
 /* Custom animations */
 @keyframes fadeIn {
   from { opacity: 0; }
