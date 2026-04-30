@@ -1,21 +1,22 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { Award, ExternalLink, Shield, Trophy, BookOpen } from 'lucide-react'
-import { certifications, getCertificationsByCategory, microsoftLearnStats, mctStatus } from '@/data/certifications'
+import { certifications, getCertificationsByCategory, microsoftLearnStats, mctStatus, aictStatus } from '@/data/certifications'
 import { BLOB_URL } from '@/lib/site-config'
 import CertificationCards from '@/components/certifications/CertificationCards'
 import MCTCertificateButton from '@/components/certifications/MCTCertificateButton'
 
 export const metadata: Metadata = {
-  title: 'Microsoft Certifications & Credentials — 16 Active Certifications',
-  description: 'Microsoft Certified Trainer (MCT) with 16 active certifications including Azure AI Engineer, Power BI Analyst, Agentic AI, and GitHub. 376+ hours on Microsoft Learn.',
-  keywords: ['Microsoft certifications', 'MCT trainer', 'Azure AI certifications', 'Microsoft Certified Trainer India'],
+  title: 'Certifications & Credentials — 20+ Active Certifications',
+  description: 'Microsoft Certified Trainer (MCT) & AI CERTs Certified Trainer (AICT) with 20+ active certifications including Azure AI, AI+ Security, AI+ Executive, and GitHub. 376+ hours on Microsoft Learn.',
+  keywords: ['Microsoft certifications', 'MCT trainer', 'Azure AI certifications', 'AI CERTs', 'AICT trainer', 'AI+ Security', 'AI+ Executive'],
   alternates: { canonical: 'https://gennoor.com/about/certifications' },
 }
 
 const categoryOrder = [
   'AI Transformation',
   'Agentic AI',
+  'AI CERTs',
   'Expert',
   'Associate',
   'Fundamentals',
@@ -23,9 +24,10 @@ const categoryOrder = [
   'Applied Skills'
 ]
 
-const categoryColors = {
+const categoryColors: Record<string, string> = {
   'AI Transformation': 'from-purple-500 to-purple-600',
   'Agentic AI': 'from-indigo-500 to-indigo-600',
+  'AI CERTs': 'from-yellow-500 to-yellow-600',
   'Expert': 'from-red-500 to-red-600',
   'Associate': 'from-blue-500 to-blue-600',
   'Fundamentals': 'from-green-500 to-green-600',
@@ -47,16 +49,27 @@ export default function CertificationsPage() {
               Continuously learning and staying ahead of the AI curve with industry-leading certifications
             </p>
 
-            {/* MCT Badge */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="inline-flex items-center bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-lg px-6 py-3 shadow-lg">
-                <Shield className="w-6 h-6 mr-3" />
-                <div>
-                  <p className="font-bold">Microsoft Certified Trainer (MCT)</p>
-                  <p className="text-sm text-blue-100">Active since {mctStatus.since} • Authorized worldwide trainer</p>
+            {/* Trainer Badges */}
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="inline-flex items-center bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-lg px-6 py-3 shadow-lg">
+                  <Shield className="w-6 h-6 mr-3" />
+                  <div>
+                    <p className="font-bold">Microsoft Certified Trainer (MCT)</p>
+                    <p className="text-sm text-blue-100">Active since {mctStatus.since} • Authorized worldwide trainer</p>
+                  </div>
+                </div>
+                <MCTCertificateButton pdfUrl={`${BLOB_URL}/certificates/0-mct-certifcate.pdf`} />
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="inline-flex items-center bg-gradient-to-r from-yellow-600 to-yellow-700 text-white rounded-lg px-6 py-3 shadow-lg">
+                  <Award className="w-6 h-6 mr-3" />
+                  <div>
+                    <p className="font-bold">AI CERTs Certified Trainer (AICT)</p>
+                    <p className="text-sm text-yellow-100">Active since {aictStatus.since} • ID: {aictStatus.id}</p>
+                  </div>
                 </div>
               </div>
-              <MCTCertificateButton pdfUrl={`${BLOB_URL}/certificates/0-mct-certifcate.pdf`} />
             </div>
           </div>
         </div>
@@ -67,7 +80,7 @@ export default function CertificationsPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6 max-w-5xl mx-auto">
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary-600">16</div>
+              <div className="text-3xl font-bold text-primary-600">20</div>
               <div className="text-sm text-gray-600">Active Certifications</div>
             </div>
             <div className="text-center">

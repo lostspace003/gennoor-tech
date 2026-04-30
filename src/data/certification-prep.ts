@@ -2,7 +2,7 @@ export interface CertificationProgram {
   id: string
   code: string
   title: string
-  provider: 'Microsoft' | 'Google' | 'AWS' | 'GitHub'
+  provider: 'Microsoft' | 'Google' | 'AWS' | 'GitHub' | 'AI CERTs'
   level: 'Fundamentals' | 'Associate' | 'Expert' | 'Specialty'
   description: string
   examDuration: string
@@ -23,7 +23,7 @@ function certSlug(code: string, title: string): string {
 }
 
 export function getAllCertifications(): CertificationWithSlug[] {
-  const all = [...microsoftCertifications, ...googleCertifications, ...awsCertifications, ...githubCertifications]
+  const all = [...microsoftCertifications, ...googleCertifications, ...awsCertifications, ...githubCertifications, ...aiCertsCertifications]
   return all.map(c => ({ ...c, slug: certSlug(c.code, c.title) }))
 }
 
@@ -578,9 +578,76 @@ export const githubCertifications: CertificationProgram[] = [
   }
 ]
 
+export const aiCertsCertifications: CertificationProgram[] = [
+  {
+    id: 'aic-executive',
+    code: 'AI+ Executive',
+    title: 'AI+ Executive',
+    provider: 'AI CERTs',
+    level: 'Expert',
+    description: 'Executive-level certification for leaders driving AI adoption. Covers strategic AI implementation, ROI measurement, governance frameworks, and organizational transformation with AI.',
+    examDuration: '90 minutes',
+    passingScore: 'Pass/Fail',
+    prerequisites: ['Leadership or management experience', 'Basic understanding of AI concepts'],
+    topics: [
+      'AI strategy and business transformation',
+      'ROI measurement and AI investment decisions',
+      'AI governance and ethical frameworks',
+      'Organizational change management for AI',
+      'AI risk assessment and mitigation',
+      'Building AI-ready teams and culture'
+    ],
+    price: '$299 USD',
+    validityPeriod: '1 year'
+  },
+  {
+    id: 'aic-security-l1',
+    code: 'AI+ Security L1',
+    title: 'AI+ Security Level 1',
+    provider: 'AI CERTs',
+    level: 'Associate',
+    description: 'Foundational AI security certification covering the threat landscape for AI systems, secure AI development practices, data privacy in AI, and AI risk management fundamentals.',
+    examDuration: '90 minutes',
+    passingScore: 'Pass/Fail',
+    prerequisites: ['Basic cybersecurity knowledge', 'Familiarity with AI/ML concepts'],
+    topics: [
+      'AI threat landscape and attack vectors',
+      'Secure AI development lifecycle',
+      'Data privacy and protection in AI systems',
+      'AI risk management fundamentals',
+      'Bias detection and mitigation',
+      'Regulatory compliance for AI (EU AI Act, NIST)'
+    ],
+    price: '$299 USD',
+    validityPeriod: '1 year'
+  },
+  {
+    id: 'aic-security-l2',
+    code: 'AI+ Security L2',
+    title: 'AI+ Security Level 2',
+    provider: 'AI CERTs',
+    level: 'Expert',
+    description: 'Advanced AI security certification covering adversarial machine learning, AI red teaming, enterprise AI security architecture, compliance frameworks, and incident response for AI systems.',
+    examDuration: '120 minutes',
+    passingScore: 'Pass/Fail',
+    prerequisites: ['AI+ Security Level 1 or equivalent', 'Experience with AI/ML systems'],
+    topics: [
+      'Adversarial machine learning and defenses',
+      'AI red teaming and penetration testing',
+      'Enterprise AI security architecture',
+      'AI compliance and audit frameworks',
+      'Incident response for AI systems',
+      'Supply chain security for AI models'
+    ],
+    price: '$399 USD',
+    validityPeriod: '1 year'
+  }
+]
+
 export const allCertifications = [
   ...microsoftCertifications,
   ...googleCertifications,
   ...awsCertifications,
-  ...githubCertifications
+  ...githubCertifications,
+  ...aiCertsCertifications
 ]
