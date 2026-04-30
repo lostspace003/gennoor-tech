@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server'
+import { readFile } from 'fs/promises'
+import path from 'path'
 import { sendEmail } from '@/lib/email-service'
 import { saveEnquiry } from '@/lib/azure-storage'
 
@@ -109,12 +111,22 @@ export async function POST(request: Request) {
       </div>
     `
 
+    let pdfAttachment: { filename: string; content: Buffer; contentType: string } | undefined
+    try {
+      const pdfPath = path.join(process.cwd(), 'public', 'assets', 'Claude_Cowork_Workshop_Flyer.pdf')
+      const pdfBuffer = await readFile(pdfPath)
+      pdfAttachment = { filename: 'Claude_Cowork_Workshop_Flyer.pdf', content: pdfBuffer, contentType: 'application/pdf' }
+    } catch {
+      // PDF not found — send without attachment
+    }
+
     await sendEmail({
       to: email,
       from: process.env.M365_SENDER_EMAIL || 'admin@gennoor.com',
       fromName: 'Gennoor Tech — Claude Cowork',
       subject: "You're in — Claude Cowork Workshop confirmation",
       html: userEmailHtml,
+      attachments: pdfAttachment ? [pdfAttachment] : undefined,
     })
 
     const adminEmailHtml = `
