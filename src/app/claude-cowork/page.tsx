@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useRef, FormEvent } from 'react'
 import { Check, ChevronDown, Download, ArrowRight, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
@@ -51,6 +51,10 @@ export default function ClaudeCoworkPage() {
   const [openModule, setOpenModule] = useState<string | null>(null)
   const registerRef = useRef<HTMLDivElement>(null)
   const formTracked = useRef(false)
+
+  const [tzSearch, setTzSearch] = useState('')
+  const [tzOpen, setTzOpen] = useState(false)
+  const tzRef = useRef<HTMLDivElement>(null)
 
   const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [formError, setFormError] = useState('')
@@ -105,6 +109,20 @@ export default function ClaudeCoworkPage() {
       setFormStatus('error')
     }
   }
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (tzRef.current && !tzRef.current.contains(e.target as Node)) {
+        setTzOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const filteredTimeZones = TIME_ZONES.filter((tz) =>
+    tz.toLowerCase().includes(tzSearch.toLowerCase())
+  )
 
   useEffect(() => {
     if (!registerRef.current) return
@@ -164,9 +182,13 @@ export default function ClaudeCoworkPage() {
               </p>
 
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black leading-[1.1] tracking-tight mb-6 max-w-3xl text-white">
-                Stop drowning in busywork.<br />
-                Ship work like an operator.
+                Free Claude AI Workshop:<br />
+                Learn to Automate Your Work in 8 Hours
               </h1>
+
+              <p className="text-lg sm:text-xl text-[#FFD23F] font-bold mb-5 max-w-2xl">
+                Stop drowning in busywork. Ship work like an operator.
+              </p>
 
               <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-[13px] mb-5" style={{ background: 'rgba(255,255,255,.08)', color: '#D4DCEF' }} aria-live="polite">
                 <span className="w-2 h-2 rounded-full" style={{ background: '#06A77D', animation: 'pulse 1.5s ease-in-out infinite' }} aria-hidden="true" />
@@ -487,15 +509,48 @@ export default function ClaudeCoworkPage() {
                       <input id="country" name="country" type="text" required value={formData.country} onChange={handleFormChange}
                         className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-[#1B2845] focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/40 focus:border-[#FF6B35]" />
                     </div>
-                    <div>
-                      <label htmlFor="timeZone" className="block text-sm font-semibold text-[#1B2845] mb-1">Time Zone *</label>
-                      <select id="timeZone" name="timeZone" required value={formData.timeZone} onChange={handleFormChange}
-                        className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-[#1B2845] bg-white focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/40 focus:border-[#FF6B35]">
-                        <option value="">Select time zone</option>
-                        {TIME_ZONES.map((tz) => (
-                          <option key={tz} value={tz}>{tz}</option>
-                        ))}
-                      </select>
+                    <div ref={tzRef} className="relative">
+                      <label htmlFor="tzSearchInput" className="block text-sm font-semibold text-[#1B2845] mb-1">Time Zone *</label>
+                      <input type="hidden" name="timeZone" value={formData.timeZone} required />
+                      <div
+                        onClick={() => setTzOpen(!tzOpen)}
+                        className={`w-full px-4 py-2.5 border rounded-lg text-sm bg-white cursor-pointer flex items-center justify-between ${formData.timeZone ? 'text-[#1B2845]' : 'text-gray-400'} ${tzOpen ? 'border-[#FF6B35] ring-2 ring-[#FF6B35]/40' : 'border-gray-200'}`}
+                      >
+                        <span className="truncate">{formData.timeZone || 'Select time zone'}</span>
+                        <ChevronDown className={`w-4 h-4 shrink-0 text-gray-400 transition-transform ${tzOpen ? 'rotate-180' : ''}`} />
+                      </div>
+                      {tzOpen && (
+                        <div className="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg">
+                          <div className="p-2 border-b border-gray-100">
+                            <input
+                              id="tzSearchInput"
+                              type="text"
+                              placeholder="Type to search... e.g. IN, Mumbai, UTC+5"
+                              value={tzSearch}
+                              onChange={(e) => setTzSearch(e.target.value)}
+                              autoFocus
+                              className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm text-[#1B2845] focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/40 focus:border-[#FF6B35]"
+                            />
+                          </div>
+                          <ul className="max-h-48 overflow-y-auto py-1">
+                            {filteredTimeZones.length > 0 ? filteredTimeZones.map((tz) => (
+                              <li
+                                key={tz}
+                                onClick={() => {
+                                  setFormData((prev) => ({ ...prev, timeZone: tz }))
+                                  setTzOpen(false)
+                                  setTzSearch('')
+                                }}
+                                className={`px-4 py-2 text-sm cursor-pointer hover:bg-[#FFF8F0] ${formData.timeZone === tz ? 'bg-[#FFF8F0] text-[#FF6B35] font-semibold' : 'text-[#1B2845]'}`}
+                              >
+                                {tz}
+                              </li>
+                            )) : (
+                              <li className="px-4 py-2 text-sm text-gray-400">No matching time zones</li>
+                            )}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -529,8 +584,8 @@ export default function ClaudeCoworkPage() {
                   <div className="rounded-lg py-3.5 px-4 my-3.5 border-l-4 border-[#FFD23F]" style={{ background: '#FAF6F0' }}>
                     <p className="text-[13px] font-bold text-[#1B2845] mb-2"><strong>What happens after you register:</strong></p>
                     <ol className="m-0 pl-5 text-[13px] text-[#5C6784] leading-relaxed list-decimal">
-                      <li>Confirmation email lands in your inbox in 60 seconds</li>
-                      <li>Calendar invite (with your time zone) arrives within 24 hours</li>
+                      <li>Confirmation email lands in your inbox within an hour</li>
+                      <li>Calendar invite arrives 48 hours prior the session</li>
                       <li>Pre-class checklist sent 48 hours before the session</li>
                       <li>Join link sent 30 minutes before we start</li>
                     </ol>

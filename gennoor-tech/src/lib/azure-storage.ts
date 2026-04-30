@@ -260,6 +260,37 @@ export async function uploadResume(
   return blobName
 }
 
+// ─── Email Logs ─────────────────────────────────────────────
+
+export async function saveEmailLog(data: {
+  to: string
+  from: string
+  subject: string
+  status: 'sent' | 'failed'
+  messageId?: string
+  error?: string
+  source?: string
+}) {
+  await ensureTable('EmailLogs')
+  const client = getTableClient('EmailLogs')
+  const now = new Date()
+  const partitionKey = now.toISOString().slice(0, 10)
+  const rowKey = `${now.getTime()}-${Math.random().toString(36).slice(2, 8)}`
+
+  await client.createEntity({
+    partitionKey,
+    rowKey,
+    to: data.to,
+    from: data.from,
+    subject: (data.subject || '').slice(0, 500),
+    status: data.status,
+    messageId: data.messageId || '',
+    error: (data.error || '').slice(0, 1000),
+    source: data.source || 'api',
+    createdAt: now.toISOString(),
+  })
+}
+
 // ─── PDF from Blob ───────────────────────────────────────────
 
 export async function downloadPdfFromBlob(blobPath: string): Promise<Buffer | null> {

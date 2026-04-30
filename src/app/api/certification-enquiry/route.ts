@@ -49,7 +49,7 @@ export async function POST(request: Request) {
       cc: process.env.CC_ENQUIRY_ON_CERTIFICATION === 'true'
         ? [process.env.EMAIL_ADMIN || 'admin@gennoor.com']
         : undefined,
-      from: process.env.M365_SENDER_EMAIL || 'admin@gennoor.com',
+      from: process.env.EMAIL_FROM_TRAINING || 'training@gennoor.com',
       fromName: 'Gennoor Tech Certification Team',
       subject: `Certification Preparation Guide: ${selectedCertification} | Gennoor Tech`,
       html: `
@@ -127,7 +127,7 @@ export async function POST(request: Request) {
         process.env.EMAIL_ADMIN || 'admin@gennoor.com',
         process.env.EMAIL_ADMIN || 'admin@gennoor.com'
       ],
-      from: process.env.M365_SENDER_EMAIL || 'admin@gennoor.com',
+      from: process.env.EMAIL_FROM_TRAINING || 'training@gennoor.com',
       fromName: 'Certification System',
       subject: `[${leadScore}] Certification Enquiry - ${selectedCertification}`,
       html: `

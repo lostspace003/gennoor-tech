@@ -1,6 +1,7 @@
+import { EmailClient, KnownEmailSendStatus } from '@azure/communication-email'
 import { readFile } from 'fs/promises'
 import path from 'path'
-import { downloadPdfFromBlob } from '@/lib/azure-storage'
+import { downloadPdfFromBlob, saveEmailLog } from '@/lib/azure-storage'
 
 interface EmailConfig {
   to: string | string[]
@@ -18,109 +19,81 @@ interface EmailConfig {
   }>
 }
 
-async function getGraphAccessToken(): Promise<string> {
-  const tenantId = process.env.M365_TENANT_ID
-  const clientId = process.env.M365_CLIENT_ID
-  const clientSecret = process.env.M365_CLIENT_SECRET
-
-  if (!tenantId || !clientId || !clientSecret) {
-    throw new Error('M365 Graph API credentials not configured. Set M365_TENANT_ID, M365_CLIENT_ID, M365_CLIENT_SECRET.')
-  }
-
-  const tokenUrl = `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`
-
-  const res = await fetch(tokenUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      client_id: clientId,
-      client_secret: clientSecret,
-      scope: 'https://graph.microsoft.com/.default',
-      grant_type: 'client_credentials',
-    }),
-  })
-
-  if (!res.ok) {
-    const errorText = await res.text()
-    throw new Error(`Failed to get Graph API token: ${res.status} ${errorText}`)
-  }
-
-  const data = await res.json()
-  return data.access_token
-}
-
-function toRecipients(emails: string | string[]): Array<{ emailAddress: { address: string } }> {
+function toAddressList(emails: string | string[]): Array<{ address: string; displayName?: string }> {
   const list = Array.isArray(emails) ? emails : [emails]
-  return list.map((email) => ({ emailAddress: { address: email.trim() } }))
+  return list.map((email) => ({ address: email.trim() }))
 }
 
 export async function sendEmail(config: EmailConfig) {
-  try {
-    const graphMailbox = process.env.M365_SENDER_EMAIL || 'admin@gennoor.com'
-    const accessToken = await getGraphAccessToken()
+  const connectionString = process.env.AZURE_COMMUNICATION_CONNECTION_STRING
 
-    const message: Record<string, any> = {
-      subject: config.subject,
-      body: {
-        contentType: 'HTML',
-        content: config.html,
+  if (!connectionString) {
+    throw new Error('AZURE_COMMUNICATION_CONNECTION_STRING is not configured')
+  }
+
+  try {
+    const client = new EmailClient(connectionString)
+
+    const message: any = {
+      senderAddress: config.from,
+      content: {
+        subject: config.subject,
+        html: config.html,
       },
-      from: {
-        emailAddress: {
-          address: graphMailbox,
-          name: config.fromName || 'Gennoor Tech',
-        },
+      recipients: {
+        to: toAddressList(config.to),
       },
-      toRecipients: toRecipients(config.to),
     }
 
     if (config.cc) {
-      message.ccRecipients = toRecipients(config.cc)
+      message.recipients.cc = toAddressList(config.cc)
     }
     if (config.bcc) {
-      message.bccRecipients = toRecipients(config.bcc)
+      message.recipients.bcc = toAddressList(config.bcc)
     }
 
     if (config.attachments && config.attachments.length > 0) {
       message.attachments = config.attachments
         .filter((a) => a.content)
         .map((a) => ({
-          '@odata.type': '#microsoft.graph.fileAttachment',
           name: a.filename,
           contentType: a.contentType || 'application/octet-stream',
-          contentBytes: Buffer.isBuffer(a.content)
+          contentInBase64: Buffer.isBuffer(a.content)
             ? a.content.toString('base64')
             : Buffer.from(a.content as string).toString('base64'),
         }))
     }
 
-    const graphUrl = `https://graph.microsoft.com/v1.0/users/${graphMailbox}/sendMail`
+    const poller = await client.beginSend(message)
+    const result = await poller.pollUntilDone()
 
-    const res = await fetch(graphUrl, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ message, saveToSentItems: true }),
-    })
+    const recipients = Array.isArray(config.to) ? config.to : [config.to]
 
-    if (!res.ok) {
-      const errorText = await res.text()
-      throw new Error(`Graph API sendMail failed: ${res.status} ${errorText}`)
-    }
-
-    console.log('Email sent via Graph API to:', Array.isArray(config.to) ? config.to.join(', ') : config.to)
-
-    return {
-      success: true,
-      messageId: `graph-${Date.now()}`,
+    if (result.status === KnownEmailSendStatus.Succeeded) {
+      console.log('Email sent via Azure Communication Services to:', recipients.join(', '))
+      for (const recipient of recipients) {
+        saveEmailLog({ to: recipient, from: config.from, subject: config.subject, status: 'sent', messageId: result.id }).catch(() => {})
+      }
+      return {
+        success: true,
+        messageId: result.id,
+      }
+    } else {
+      for (const recipient of recipients) {
+        saveEmailLog({ to: recipient, from: config.from, subject: config.subject, status: 'failed', error: `Status: ${result.status}` }).catch(() => {})
+      }
+      throw new Error(`Email send failed with status: ${result.status}`)
     }
   } catch (error) {
     console.error('Email sending failed:', error)
+    const errorMsg = error instanceof Error ? error.message : 'Unknown error occurred'
+    const recipients = Array.isArray(config.to) ? config.to : [config.to]
+    for (const recipient of recipients) {
+      saveEmailLog({ to: recipient, from: config.from, subject: config.subject, status: 'failed', error: errorMsg }).catch(() => {})
+    }
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error occurred',
+      error: errorMsg,
     }
   }
 }
@@ -278,7 +251,7 @@ export async function sendTrainingEnquiryEmail(data: {
   await sendEmail({
     to: data.email,
     cc: process.env.CC_SALES_ON_TRAINING === 'true' ? [process.env.EMAIL_ADMIN || 'admin@gennoor.com'] : undefined,
-    from: process.env.M365_SENDER_EMAIL || 'admin@gennoor.com',
+    from: process.env.EMAIL_FROM_TRAINING || 'training@gennoor.com',
     fromName: 'Gennoor Tech Training',
     subject: `${data.programType === 'bootcamp' ? 'Bootcamp' : 'Course'} Details: ${data.programTitle} | Gennoor Tech`,
     html: userEmailHtml,
@@ -313,7 +286,7 @@ export async function sendTrainingEnquiryEmail(data: {
   await sendEmail({
     to: process.env.EMAIL_ADMIN || 'admin@gennoor.com',
     cc: [process.env.EMAIL_ADMIN || 'admin@gennoor.com'],
-    from: process.env.M365_SENDER_EMAIL || 'admin@gennoor.com',
+    from: process.env.EMAIL_FROM_TRAINING || 'training@gennoor.com',
     fromName: 'Training System',
     subject: `[${leadScore}] New Training Enquiry - ${data.programTitle}`,
     html: adminEmailHtml,
