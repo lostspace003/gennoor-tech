@@ -8,7 +8,7 @@ import {
   ExternalLink, Settings, CheckCircle2, XCircle, Search,
   Shield, Activity, Database, Server, Code2, Link2,
   AlertTriangle, Newspaper, Download, HardDrive, Bot,
-  Clock, Zap, BookOpen, TrendingUp,
+  Clock, Zap, BookOpen, TrendingUp, Send,
 } from 'lucide-react'
 
 // ─── Chart Components (Recharts, lazy loaded) ────────────────
@@ -64,7 +64,7 @@ function ChartLoader() {
 
 // ─── Types ───────────────────────────────────────────────────
 
-type TabKey = 'overview' | 'traffic' | 'enquiries' | 'sessions' | 'storage' | 'insights' | 'comments' | 'seo' | 'setup'
+type TabKey = 'overview' | 'traffic' | 'enquiries' | 'emails' | 'sessions' | 'storage' | 'insights' | 'comments' | 'seo' | 'setup'
 
 interface AnalyticsData {
   totalViews: number; totalComments: number; totalEnquiries: number; activeComments: number
@@ -127,6 +127,7 @@ export default function AdminDashboard() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
 
   const [data, setData] = useState<AnalyticsData | null>(null)
+  const [emailLogs, setEmailLogs] = useState<{ logs: Array<Record<string, any>>; totalSent: number; totalFailed: number; uniqueRecipients: number; total: number } | null>(null)
   const [setupData, setSetupData] = useState<SetupData | null>(null)
   const [seoData, setSeoData] = useState<SeoData | null>(null)
   const [sessions, setSessions] = useState<SessionRecord[]>([])
@@ -139,21 +140,23 @@ export default function AdminDashboard() {
     try {
       const headers = { 'Content-Type': 'application/json' }
       const body = (extra: any = {}) => JSON.stringify({ secret: adminSecret, ...extra })
-      const [analyticsRes, setupRes, seoRes, sessionsRes, storageRes, insightsRes] = await Promise.all([
+      const [analyticsRes, setupRes, seoRes, sessionsRes, storageRes, insightsRes, emailLogsRes] = await Promise.all([
         fetch('/api/admin/analytics', { method: 'POST', headers, body: body({ days: numDays }) }),
         fetch('/api/admin/setup-status', { method: 'POST', headers, body: body() }),
         fetch('/api/admin/seo-health', { method: 'POST', headers, body: body() }),
         fetch('/api/admin/sessions', { method: 'POST', headers, body: body() }),
         fetch('/api/admin/storage', { method: 'POST', headers, body: body() }),
         fetch('/api/admin/insights', { method: 'POST', headers, body: body({ metric: 'all', timespan: ts }) }),
+        fetch('/api/admin/email-logs', { method: 'POST', headers, body: body({ days: numDays }) }),
       ])
       if (analyticsRes.status === 401) { setError('Invalid admin secret'); setAuthenticated(false); return }
-      const [analyticsData, setupResult, seoResult, sessionsResult, storageResult, insightsResult] = await Promise.all([
+      const [analyticsData, setupResult, seoResult, sessionsResult, storageResult, insightsResult, emailLogsResult] = await Promise.all([
         analyticsRes.ok ? analyticsRes.json() : null, setupRes.ok ? setupRes.json() : null, seoRes.ok ? seoRes.json() : null,
         sessionsRes.ok ? sessionsRes.json() : [], storageRes.ok ? storageRes.json() : null, insightsRes.ok ? insightsRes.json() : null,
+        emailLogsRes.ok ? emailLogsRes.json() : null,
       ])
       setData(analyticsData); setSetupData(setupResult); setSeoData(seoResult)
-      setSessions(Array.isArray(sessionsResult) ? sessionsResult : []); setStorageData(storageResult); setInsightsData(insightsResult)
+      setSessions(Array.isArray(sessionsResult) ? sessionsResult : []); setStorageData(storageResult); setInsightsData(insightsResult); setEmailLogs(emailLogsResult)
       setAuthenticated(true); setStoredSecret(adminSecret); setLastUpdated(new Date())
     } catch { setError('Failed to load dashboard data') }
     finally { setLoading(false) }
@@ -182,7 +185,7 @@ export default function AdminDashboard() {
     if (activeFilter === 'custom' && customDate) return `Since ${new Date(customDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
     return `Last ${days} days`
   }
-  function handleLogout() { setAuthenticated(false); setData(null); setSetupData(null); setSeoData(null); setSessions([]); setStorageData(null); setInsightsData(null); setSecret(''); setStoredSecret('') }
+  function handleLogout() { setAuthenticated(false); setData(null); setSetupData(null); setSeoData(null); setSessions([]); setStorageData(null); setInsightsData(null); setEmailLogs(null); setSecret(''); setStoredSecret('') }
 
   async function hideComment(slug: string, rowKey: string) {
     try { const res = await fetch('/api/blog-comments', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, rowKey, adminSecret: storedSecret }) }); if (res.ok) handleRefresh() } catch {}
@@ -240,6 +243,7 @@ export default function AdminDashboard() {
     { key: 'overview', label: 'Overview', icon: BarChart3 },
     { key: 'traffic', label: 'Traffic', icon: TrendingUp },
     { key: 'enquiries', label: 'Enquiries', icon: Mail },
+    { key: 'emails', label: 'Emails', icon: Send, badge: emailLogs?.totalFailed || undefined },
     { key: 'sessions', label: 'Sessions', icon: Bot },
     { key: 'storage', label: 'Storage', icon: HardDrive },
     { key: 'insights', label: 'Insights', icon: Activity },
@@ -378,6 +382,32 @@ export default function AdminDashboard() {
                 <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-500 border-b border-slate-200"><th className="text-left py-2 px-3 font-medium">Type</th><th className="text-left py-2 px-3 font-medium">Name</th><th className="text-left py-2 px-3 font-medium">Email</th><th className="text-left py-2 px-3 font-medium">Course</th><th className="text-left py-2 px-3 font-medium">Date</th></tr></thead>
                 <tbody>{data.recentEnquiries.map((e, i) => (
                   <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50"><td className="py-2.5 px-3"><span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-medium capitalize">{e.type}</span></td><td className="py-2.5 px-3 text-slate-800">{e.name || (e as any).fullName}</td><td className="py-2.5 px-3 text-slate-600">{e.email}</td><td className="py-2.5 px-3 text-slate-500 max-w-[200px] truncate">{e.course || (e as any).company || '-'}</td><td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{new Date(e.createdAt).toLocaleDateString()}</td></tr>
+                ))}</tbody></table></div>
+              )}
+            </Panel>
+          </div>
+        )}
+
+        {/* ─── EMAILS ────────────────────────────────────── */}
+        {activeTab === 'emails' && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCard icon={Send} label="Total Sent" value={emailLogs?.totalSent || 0} color="teal" />
+              <StatCard icon={XCircle} label="Failed" value={emailLogs?.totalFailed || 0} color="purple" />
+              <StatCard icon={Users} label="Unique Recipients" value={emailLogs?.uniqueRecipients || 0} color="blue" />
+              <StatCard icon={Mail} label="Total Emails" value={emailLogs?.total || 0} color="amber" />
+            </div>
+            <Panel title="Email Send Log" action={emailLogs && emailLogs.logs.length > 0 ? <ExportButton onClick={() => downloadCSV(emailLogs.logs as any, 'email-logs')} /> : undefined}>
+              {!emailLogs || emailLogs.logs.length === 0 ? <Empty text="No emails sent yet" /> : (
+                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-500 border-b border-slate-200"><th className="text-left py-2 px-3 font-medium">Status</th><th className="text-left py-2 px-3 font-medium">To</th><th className="text-left py-2 px-3 font-medium">From</th><th className="text-left py-2 px-3 font-medium">Subject</th><th className="text-left py-2 px-3 font-medium">Date</th></tr></thead>
+                <tbody>{emailLogs.logs.map((log, i) => (
+                  <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50">
+                    <td className="py-2.5 px-3"><span className={`px-2 py-0.5 rounded text-xs font-medium ${log.status === 'sent' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{log.status}</span></td>
+                    <td className="py-2.5 px-3 text-slate-800">{log.to}</td>
+                    <td className="py-2.5 px-3 text-slate-500">{log.from}</td>
+                    <td className="py-2.5 px-3 text-slate-600 max-w-[250px] truncate">{log.subject}</td>
+                    <td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{new Date(log.createdAt).toLocaleString()}</td>
+                  </tr>
                 ))}</tbody></table></div>
               )}
             </Panel>
