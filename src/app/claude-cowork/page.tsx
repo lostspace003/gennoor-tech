@@ -307,9 +307,9 @@ export default function ClaudeCoworkPage() {
           <h2 className="text-[13px] font-extrabold tracking-[.06em] uppercase text-[#1B2845] mb-4 pl-3.5 border-l-4 border-[#FFD23F]">What past trainees say</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
             {[
-              { quote: "Best AI training I've taken in 2 years. I came in skeptical, walked out with three workflows already running.", cite: '— [Name], [Role], [Company]' },
-              { quote: "I've forwarded Jalal's session notes to 4 of my VPs. We saved a collective 30+ hours in week one.", cite: '— [Name], [Role], [Company]' },
-              { quote: "The labs are the difference. Most AI courses are theory. This one's 60% hands-on and you leave with real things built.", cite: '— [Name], [Role], [Company]' },
+              { quote: "An excellent trainer with deep expertise in AI. He explains complex concepts in a very clear and practical way. His knowledge as an AI manager truly reflects in the way he connects theory with real-world applications. Highly engaging sessions and very helpful for both beginners and professionals.", cite: '— Sourabh Taneja, via Trustpilot' },
+              { quote: "I have been utilizing training services of Jalal for different courses on Microsoft and AI. He is an excellent trainer when it comes to delivering official training and bespoke courses on AI. I would highly recommend him.", cite: '— Bhavesh Shah, via Trustpilot' },
+              { quote: "Jalal possesses a rare ability to take incredibly complex topics and break them down into actionable, easy-to-understand insights. He doesn't just teach code — he teaches the 'why' behind the models. Sessions are consistently high-energy, well-structured, and meticulously researched.", cite: '— Joshua Charles, via LinkedIn' },
             ].map((t, i) => (
               <blockquote key={i} className="m-0 p-5 rounded-xl border-t-4 border-[#FF6B35]" style={{ background: '#FFF8F0', boxShadow: '0 2px 12px rgba(0,0,0,.06)' }}>
                 <p className="text-sm leading-relaxed italic text-[#1B2845] mb-2.5">&ldquo;{t.quote}&rdquo;</p>
