@@ -151,48 +151,69 @@ export default function ClaudeCoworkPage() {
         <div className="absolute bottom-12 right-12 w-3 h-3 bg-[#FF6B35] rounded-full opacity-50 hidden sm:block" />
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
-          <div className="mb-4">
-            <span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-white uppercase">
-              Claude <span className="text-[#FFD23F]">Cowork</span>
-            </span>
-          </div>
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_280px] gap-8 items-center">
+            <div>
+              <div className="mb-4">
+                <span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-white uppercase">
+                  Claude <span className="text-[#FFD23F]">Cowork</span>
+                </span>
+              </div>
 
-          <p className="text-[#FFD23F] text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase mb-6">
-            GENNOOR PRESENTS &middot; FREE WORKSHOP &middot; 1000 SEATS ONLY
-          </p>
+              <p className="text-[#FFD23F] text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase mb-6">
+                GENNOOR PRESENTS &middot; FREE WORKSHOP &middot; 1000 SEATS ONLY
+              </p>
 
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black leading-[1.1] tracking-tight mb-6 max-w-3xl text-white">
-            Stop drowning in busywork.<br />
-            Ship work like an operator.
-          </h1>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black leading-[1.1] tracking-tight mb-6 max-w-3xl text-white">
+                Stop drowning in busywork.<br />
+                Ship work like an operator.
+              </h1>
 
-          <p className="text-base sm:text-lg text-white/90 max-w-2xl mb-8 leading-relaxed">
-            A free 8-hour, hands-on workshop that turns scattered tools, files, and meetings into one autonomous coworker. In your own time zone.
-          </p>
+              <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-[13px] mb-5" style={{ background: 'rgba(255,255,255,.08)', color: '#D4DCEF' }} aria-live="polite">
+                <span className="w-2 h-2 rounded-full" style={{ background: '#06A77D', animation: 'pulse 1.5s ease-in-out infinite' }} aria-hidden="true" />
+                <strong className="text-[#FFD23F] text-[15px]" id="seats-remaining">837</strong> seats remaining of 1000
+              </div>
 
-          <div className="flex flex-wrap gap-3 mb-10">
-            {[
-              { label: 'CLAUDE COWORK', color: '#FF6B35' },
-              { label: '21 LIVE LABS', color: '#00A8A8' },
-              { label: '1000 SEATS ONLY', color: '#7B5EA7' },
-              { label: 'BUILD-IT-LIVE', color: '#06A77D' },
-            ].map((pill) => (
-              <span
-                key={pill.label}
-                className="px-4 py-1.5 rounded-full text-xs sm:text-sm font-bold text-white border-2"
-                style={{ borderColor: pill.color, backgroundColor: `${pill.color}20` }}
+              <p className="text-base sm:text-lg text-white/90 max-w-2xl mb-8 leading-relaxed">
+                A free 8-hour, hands-on workshop that turns scattered tools, files, and meetings into one autonomous coworker. In your own time zone.
+              </p>
+
+              <div className="flex flex-wrap gap-3 mb-10">
+                {[
+                  { label: 'CLAUDE COWORK', color: '#FF6B35' },
+                  { label: '21 LIVE LABS', color: '#00A8A8' },
+                  { label: '1000 SEATS ONLY', color: '#7B5EA7' },
+                  { label: 'BUILD-IT-LIVE', color: '#06A77D' },
+                ].map((pill) => (
+                  <span
+                    key={pill.label}
+                    className="px-4 py-1.5 rounded-full text-xs sm:text-sm font-bold text-white border-2"
+                    style={{ borderColor: pill.color, backgroundColor: `${pill.color}20` }}
+                  >
+                    {pill.label}
+                  </span>
+                ))}
+              </div>
+
+              <button
+                onClick={() => { scrollToRegister(); trackEvent('cta_hero_click') }}
+                className="inline-flex items-center gap-2 px-8 py-4 bg-[#FF6B35] hover:bg-[#e55a25] text-white font-bold text-lg rounded-full transition-colors cursor-pointer"
               >
-                {pill.label}
-              </span>
-            ))}
-          </div>
+                GRAB MY FREE SEAT <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
 
-          <button
-            onClick={() => { scrollToRegister(); trackEvent('cta_hero_click') }}
-            className="inline-flex items-center gap-2 px-8 py-4 bg-[#FF6B35] hover:bg-[#e55a25] text-white font-bold text-lg rounded-full transition-colors cursor-pointer"
-          >
-            GRAB MY FREE SEAT <ArrowRight className="w-5 h-5" />
-          </button>
+            <div className="hidden md:flex flex-col items-end gap-4">
+              <img src="/assets/jalal-portrait.jpeg" alt="Jalal Khan, Founder of Gennoor"
+                className="w-[260px] h-[320px] rounded-2xl object-cover"
+                style={{ objectPosition: '50% 20%', boxShadow: '0 8px 30px rgba(0,0,0,.3)' }} />
+              <div className="w-[260px] rounded-xl px-4 py-3 text-center" style={{ background: 'rgba(255,255,255,.08)', backdropFilter: 'blur(8px)' }}>
+                <p className="text-white font-bold text-sm leading-tight mb-0.5">Jalal Khan</p>
+                <p className="text-[#FFD23F] text-[12px] font-bold tracking-wide mb-0.5">Microsoft Certified Trainer</p>
+                <p className="text-white/70 text-[11px] font-semibold tracking-wide uppercase mb-2">Founder, CEO — Gennoor Tech</p>
+                <p className="text-white/80 text-[12px] leading-relaxed m-0">5,000+ leaders trained at Microsoft, IBM, EY, Boeing &amp; more.</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -258,6 +279,43 @@ export default function ClaudeCoworkPage() {
                 </li>
               ))}
             </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Meet Your Trainer */}
+      <section className="py-10" style={{ background: '#FFF8F0' }}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="rounded-2xl p-8" style={{ background: '#FAF6F0', boxShadow: '0 2px 12px rgba(0,0,0,.06)' }}>
+            <p className="text-[#FF6B35] font-extrabold text-xs tracking-[.08em] uppercase mb-1">YOUR TRAINER</p>
+            <h2 className="text-[28px] font-black text-[#1B2845] leading-tight mb-1.5">Jalal Khan</h2>
+            <p className="text-sm text-[#5C6784] mb-3.5">Microsoft Certified Trainer · 16+ active certifications · Founder of Gennoor</p>
+            <p className="text-[15px] text-[#1B2845] leading-relaxed mb-3">I&apos;ve trained over 5,000 leaders and operators on AI in the last 3 years — at Microsoft, IBM, EY, Boeing, Saudi Aramco, HDFC Bank, Siemens, and TCS.</p>
+            <p className="text-[15px] text-[#1B2845] leading-relaxed mb-3.5">Most &ldquo;AI training&rdquo; reads like a tip blog. This one&apos;s structured around 21 hands-on labs you actually run on your own laptop. You walk out with the workflows running, not just the concepts noted.</p>
+            <div className="flex flex-wrap gap-2 mt-3.5">
+              {['Microsoft', 'IBM', 'EY', 'Boeing', 'Saudi Aramco', 'HDFC Bank', 'Siemens', 'TCS'].map((logo) => (
+                <span key={logo} className="px-2.5 py-1 bg-white border border-[#E2DFD8] rounded-md text-[11px] font-bold tracking-[.04em] text-[#5C6784] uppercase">{logo}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-[13px] font-extrabold tracking-[.06em] uppercase text-[#1B2845] mb-4 pl-3.5 border-l-4 border-[#FFD23F]">What past trainees say</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+            {[
+              { quote: "Best AI training I've taken in 2 years. I came in skeptical, walked out with three workflows already running.", cite: '— [Name], [Role], [Company]' },
+              { quote: "I've forwarded Jalal's session notes to 4 of my VPs. We saved a collective 30+ hours in week one.", cite: '— [Name], [Role], [Company]' },
+              { quote: "The labs are the difference. Most AI courses are theory. This one's 60% hands-on and you leave with real things built.", cite: '— [Name], [Role], [Company]' },
+            ].map((t, i) => (
+              <blockquote key={i} className="m-0 p-5 rounded-xl border-t-4 border-[#FF6B35]" style={{ background: '#FFF8F0', boxShadow: '0 2px 12px rgba(0,0,0,.06)' }}>
+                <p className="text-sm leading-relaxed italic text-[#1B2845] mb-2.5">&ldquo;{t.quote}&rdquo;</p>
+                <cite className="text-xs text-[#5C6784] not-italic font-bold">{t.cite}</cite>
+              </blockquote>
+            ))}
           </div>
         </div>
       </section>
@@ -347,6 +405,37 @@ export default function ClaudeCoworkPage() {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-8">
+        <div className="max-w-[760px] mx-auto px-4 sm:px-6">
+          <h2 className="text-[13px] font-extrabold tracking-[.06em] uppercase text-[#1B2845] mb-4 pl-3.5 border-l-4 border-[#FFD23F]">Common questions</h2>
+          {[
+            { q: 'Why is this free?', a: "I want 1000 leaders walking into Monday with AI that actually works for them — not just article-reading. Free reaches more people. After this round, I run paid programs for orgs that want it for their teams." },
+            { q: 'Is this for technical people only?', a: 'No — it’s specifically for non-technical leaders, PMs, ops, marketers, analysts, founders. If you can use Slack, you can do this. Zero coding required.' },
+            { q: 'What if I miss part of the live session?', a: 'Recordings are sent to all registrants 24 hours after the workshop. The labs are runnable on your own time too — they’re built into a folder you can keep.' },
+            { q: 'Can I bring my whole team?', a: "Yes — and you should. Module 6 is \"build your team's rollout playbook.\" Bring at least one teammate so you can split labs and get more output." },
+            { q: "What's the catch? Is there an upsell?", a: 'No catch. No upsell at the end. No mailing list spam. You get 8 hours of training, the lab files, and the trainer playbook PDF. That’s it.' },
+            { q: 'What do I need before the workshop?', a: 'The Claude desktop app installed and Cowork mode enabled (free), Chrome browser, and a laptop with at least 4 hours of battery. Setup checklist arrives by email after registration.' },
+            { q: 'Who is Jalal?', a: null },
+          ].map((faq, i) => (
+            <details key={i} className="rounded-xl px-5 py-3.5 mb-2 cursor-pointer" style={{ background: '#FFF8F0', boxShadow: '0 1px 4px rgba(0,0,0,.04)' }}>
+              <summary className="font-bold text-[15px] text-[#1B2845] list-none relative pr-6">
+                {faq.q}
+                <span className="absolute right-0 top-0 text-xl text-[#FF6B35] font-bold" />
+              </summary>
+              {faq.a ? (
+                <p className="mt-2.5 text-sm leading-relaxed text-[#5C6784]">{faq.a}</p>
+              ) : (
+                <p className="mt-2.5 text-sm leading-relaxed text-[#5C6784]">
+                  Microsoft Certified Trainer with 16+ active certifications and 12 years of teaching experience. Has run paid AI programs at Microsoft, IBM, EY, Boeing, Saudi Aramco, HDFC Bank, Siemens, and TCS.{' '}
+                  <a href="https://linkedin.com/in/jalalahmedkhan" target="_blank" rel="noopener noreferrer" className="text-[#FF6B35] underline">Connect on LinkedIn</a>.
+                </p>
+              )}
+            </details>
+          ))}
         </div>
       </section>
 
@@ -469,6 +558,16 @@ export default function ClaudeCoworkPage() {
                     </span>
                   </label>
 
+                  <div className="rounded-lg py-3.5 px-4 my-3.5 border-l-4 border-[#FFD23F]" style={{ background: '#FAF6F0' }}>
+                    <p className="text-[13px] font-bold text-[#1B2845] mb-2"><strong>What happens after you register:</strong></p>
+                    <ol className="m-0 pl-5 text-[13px] text-[#5C6784] leading-relaxed list-decimal">
+                      <li>Confirmation email lands in your inbox in 60 seconds</li>
+                      <li>Calendar invite (with your time zone) arrives within 24 hours</li>
+                      <li>Pre-class checklist sent 48 hours before the session</li>
+                      <li>Join link sent 30 minutes before we start</li>
+                    </ol>
+                  </div>
+
                   <button
                     type="submit"
                     disabled={formStatus === 'submitting' || !formData.consent}
@@ -482,6 +581,26 @@ export default function ClaudeCoworkPage() {
                   </button>
                 </form>
               )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Share Buttons */}
+      <section className="py-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="rounded-2xl py-6 px-7 text-center" style={{ background: '#FFD23F' }}>
+            <p className="text-lg font-extrabold text-[#1B2845] mb-1">Know someone else who&apos;d benefit?</p>
+            <p className="text-sm text-[#1B2845] opacity-85 mb-4">Forwarding this page helps fill the seats faster — and your friend gets a Sunday well spent.</p>
+            <div className="flex flex-wrap gap-2 justify-center">
+              <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fgennoor.com%2Fclaude-cowork" target="_blank" rel="noopener noreferrer"
+                className="px-4 py-2.5 text-white rounded-full font-bold text-[13px] no-underline transition-transform hover:-translate-y-0.5" style={{ background: '#0A66C2' }}>Share on LinkedIn</a>
+              <a href="https://wa.me/?text=I%20just%20signed%20up%20for%20a%20free%208-hour%20Claude%20workshop.%20Reclaim%205%2B%20hours%2Fweek.%20First%201000%20only%3A%20https%3A%2F%2Fgennoor.com%2Fclaude-cowork" target="_blank" rel="noopener noreferrer"
+                className="px-4 py-2.5 text-white rounded-full font-bold text-[13px] no-underline transition-transform hover:-translate-y-0.5" style={{ background: '#25D366' }}>Share on WhatsApp</a>
+              <a href="https://twitter.com/intent/tweet?text=Just%20signed%20up%20for%20a%20free%208-hour%20Claude%20Cowork%20workshop%20by%20%40gennoor.%20First%201000%20only%3A%20https%3A%2F%2Fgennoor.com%2Fclaude-cowork" target="_blank" rel="noopener noreferrer"
+                className="px-4 py-2.5 text-white rounded-full font-bold text-[13px] no-underline transition-transform hover:-translate-y-0.5" style={{ background: '#000' }}>Share on X</a>
+              <a href="mailto:?subject=Free%208-hour%20Claude%20Cowork%20Workshop&body=Hey%20-%20thought%20you%27d%20want%20to%20see%20this%3A%20https%3A%2F%2Fgennoor.com%2Fclaude-cowork"
+                className="px-4 py-2.5 text-white rounded-full font-bold text-[13px] no-underline transition-transform hover:-translate-y-0.5" style={{ background: '#1B2845' }}>Share via email</a>
             </div>
           </div>
         </div>

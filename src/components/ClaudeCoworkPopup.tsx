@@ -33,30 +33,41 @@ export default function ClaudeCoworkPopup() {
         <div className="bg-[#1B2845] px-6 pt-6 pb-5 rounded-t-2xl relative">
           <button
             onClick={dismiss}
-            className="absolute top-4 right-4 text-white/60 hover:text-white transition-colors cursor-pointer"
+            className="absolute top-4 right-4 text-white/60 hover:text-white transition-colors cursor-pointer z-10"
             aria-label="Close popup"
           >
             <X className="w-5 h-5" />
           </button>
 
-          <div className="mb-2">
-            <span className="text-2xl font-black tracking-tight text-white uppercase">
-              Claude <span className="text-[#FFD23F]">Cowork</span>
-            </span>
+          <div className="flex gap-4">
+            <div className="flex-1 min-w-0">
+              <div className="mb-2">
+                <span className="text-2xl font-black tracking-tight text-white uppercase">
+                  Claude <span className="text-[#FFD23F]">Cowork</span>
+                </span>
+              </div>
+
+              <div className="inline-block bg-[#FFD23F] text-[#1B2845] text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-3">
+                Free Workshop · 1000 Seats Only
+              </div>
+
+              <h2 className="text-white text-lg font-bold leading-tight mb-2">
+                Stop drowning in busywork.<br />
+                Ship work like an operator.
+              </h2>
+
+              <p className="text-white/80 text-sm leading-relaxed">
+                A free 8-hour hands-on workshop that turns scattered tools into one autonomous coworker.
+              </p>
+            </div>
+
+            <div className="hidden min-[400px]:flex flex-col items-center justify-center shrink-0 mr-2">
+              <img src="/assets/jalal-portrait.jpeg" alt="Jalal Khan"
+                className="w-[80px] h-[100px] rounded-xl object-cover mb-2" style={{ objectPosition: '50% 20%', boxShadow: '0 4px 16px rgba(0,0,0,.3)' }} />
+              <p className="text-white text-[11px] font-bold leading-tight text-center">Jalal Khan</p>
+              <p className="text-[#FFD23F] text-[9px] font-semibold text-center">Microsoft Certified<br />Trainer</p>
+            </div>
           </div>
-
-          <div className="inline-block bg-[#FFD23F] text-[#1B2845] text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-3">
-            Free Workshop · 1000 Seats Only
-          </div>
-
-          <h2 className="text-white text-lg font-bold leading-tight mb-2">
-            Stop drowning in busywork.<br />
-            Ship work like an operator.
-          </h2>
-
-          <p className="text-white/80 text-sm leading-relaxed">
-            A free 8-hour hands-on workshop that turns scattered tools into one autonomous coworker.
-          </p>
         </div>
 
         {/* Body */}
