@@ -12,13 +12,13 @@ export function OrganizationJsonLd() {
       jobTitle: 'Microsoft Certified Trainer & Enterprise AI Consultant',
       url: 'https://gennoor.com/about/journey',
       sameAs: [
-        'https://www.linkedin.com/in/jalal-khan-b8319955/',
+        'https://www.linkedin.com/in/lostspace003/',
         'https://github.com/lostspace003',
         'https://learn.microsoft.com/en-us/users/lostspace003/transcript/vjw63s4jxnmmwre?tab=credentials-tab',
       ],
     },
     sameAs: [
-      'https://www.linkedin.com/in/jalal-khan-b8319955/',
+      'https://www.linkedin.com/in/lostspace003/',
       'https://github.com/lostspace003',
     ],
     contactPoint: {
@@ -80,7 +80,7 @@ export function PersonJsonLd() {
       { '@type': 'EducationalOccupationalCredential', name: 'Microsoft Certified: Power BI Data Analyst Associate' },
     ],
     sameAs: [
-      'https://www.linkedin.com/in/jalal-khan-b8319955/',
+      'https://www.linkedin.com/in/lostspace003/',
       'https://github.com/lostspace003',
       'https://learn.microsoft.com/en-us/users/lostspace003/transcript/vjw63s4jxnmmwre?tab=credentials-tab',
     ],

@@ -10,7 +10,7 @@ export const siteConfig = {
   email: 'contact@gennoor.com',
   phone: '+91-XXXXXXXXXX',
   social: {
-    linkedin: 'https://www.linkedin.com/in/jalal-khan-b8319955/',
+    linkedin: 'https://www.linkedin.com/in/lostspace003/',
     github: 'https://github.com/lostspace003',
     microsoftLearn: 'https://learn.microsoft.com/en-us/users/lostspace003/transcript/vjw63s4jxnmmwre?tab=credentials-tab',
     youtube: 'https://www.youtube.com/@GennoorTech',
