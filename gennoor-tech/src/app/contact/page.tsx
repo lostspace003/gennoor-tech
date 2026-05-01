@@ -79,7 +79,7 @@ const localBusinessSchema = {
   founder: {
     '@type': 'Person',
     name: 'Jalal Ahmed Khan',
-    url: 'https://www.linkedin.com/in/jalal-khan-b8319955/',
+    url: 'https://www.linkedin.com/in/lostspace003/',
   },
   address: {
     '@type': 'PostalAddress',
@@ -93,7 +93,7 @@ const localBusinessSchema = {
     { '@type': 'Place', name: 'APAC' },
     { '@type': 'Place', name: 'Africa' },
   ],
-  sameAs: ['https://www.linkedin.com/in/jalal-khan-b8319955/'],
+  sameAs: ['https://www.linkedin.com/in/lostspace003/'],
 };
 
 export default function ContactPage() {
@@ -157,7 +157,7 @@ export default function ContactPage() {
 
             {/* LinkedIn */}
             <a
-              href="https://www.linkedin.com/in/jalal-khan-b8319955/"
+              href="https://www.linkedin.com/in/lostspace003/"
               target="_blank"
               rel="noopener noreferrer"
               className="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100 text-center"

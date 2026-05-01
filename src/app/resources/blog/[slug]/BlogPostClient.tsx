@@ -369,7 +369,7 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
                   14+ years in enterprise AI and cloud technologies. Delivered AI transformation programs for Fortune 500 companies across 6 countries including Boeing, Aramco, HDFC Bank, and Siemens. Holds 16 active Microsoft certifications including Azure AI Engineer and Power BI Analyst.
                 </p>
                 <div className="flex items-center gap-3 mt-3">
-                  <a href="https://www.linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" className="text-xs font-medium text-primary-600 hover:underline">LinkedIn</a>
+                  <a href="https://www.linkedin.com/in/lostspace003/" target="_blank" rel="noopener noreferrer" className="text-xs font-medium text-primary-600 hover:underline">LinkedIn</a>
                   <span className="text-gray-300">·</span>
                   <a href="/about" className="text-xs font-medium text-primary-600 hover:underline">Full Bio</a>
                   <span className="text-gray-300">·</span>
