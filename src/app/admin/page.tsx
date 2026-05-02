@@ -66,6 +66,7 @@ function ChartLoader() {
 // ─── Types ───────────────────────────────────────────────────
 
 type TabKey = 'overview' | 'traffic' | 'enquiries' | 'emails' | 'sessions' | 'bookings' | 'storage' | 'insights' | 'comments' | 'seo' | 'setup'
+type GroupKey = 'analytics' | 'communications' | 'bookings' | 'system'
 
 interface AnalyticsData {
   totalViews: number; totalComments: number; totalEnquiries: number; activeComments: number
@@ -125,6 +126,7 @@ export default function AdminDashboard() {
   const [days, setDays] = useState(7)
   const [activeFilter, setActiveFilter] = useState<string>('7')
   const [customDate, setCustomDate] = useState('')
+  const [activeGroup, setActiveGroup] = useState<GroupKey>('analytics')
   const [activeTab, setActiveTab] = useState<TabKey>('overview')
   const [autoRefresh, setAutoRefresh] = useState(false)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
@@ -324,19 +326,30 @@ export default function AdminDashboard() {
   const failedRequests = insightsData ? extractMetricValue(insightsData.failed) : 0
   const availability = insightsData ? extractMetricValue(insightsData.availability) : 0
 
-  const tabs: { key: TabKey; label: string; icon: any; badge?: number }[] = [
-    { key: 'overview', label: 'Overview', icon: BarChart3 },
-    { key: 'traffic', label: 'Traffic', icon: TrendingUp },
-    { key: 'enquiries', label: 'Enquiries', icon: Mail },
-    { key: 'emails', label: 'Emails', icon: Send, badge: emailLogs?.totalFailed || undefined },
-    { key: 'sessions', label: 'Sessions', icon: Bot },
-    { key: 'bookings', label: 'Bookings', icon: Calendar, badge: bookingsData.filter(b => b.status === 'pending').length || undefined },
-    { key: 'storage', label: 'Storage', icon: HardDrive },
-    { key: 'insights', label: 'Insights', icon: Activity },
-    { key: 'comments', label: 'Comments', icon: MessageSquare },
-    { key: 'seo', label: 'SEO', icon: Search },
-    { key: 'setup', label: 'Setup', icon: Settings, badge: setupData ? setupData.totalChecks - setupData.configuredCount : undefined },
+  const groups: { key: GroupKey; label: string; icon: any; badge?: number; tabs: { key: TabKey; label: string; icon: any; badge?: number }[] }[] = [
+    { key: 'analytics', label: 'Analytics', icon: BarChart3, tabs: [
+      { key: 'overview', label: 'Overview', icon: BarChart3 },
+      { key: 'traffic', label: 'Traffic', icon: TrendingUp },
+      { key: 'insights', label: 'Insights', icon: Activity },
+    ]},
+    { key: 'communications', label: 'Communications', icon: Mail, badge: (emailLogs?.totalFailed || 0) > 0 ? emailLogs!.totalFailed : undefined, tabs: [
+      { key: 'enquiries', label: 'Enquiries', icon: Mail },
+      { key: 'emails', label: 'Emails', icon: Send, badge: emailLogs?.totalFailed || undefined },
+      { key: 'comments', label: 'Comments', icon: MessageSquare },
+      { key: 'sessions', label: 'Sessions', icon: Bot },
+    ]},
+    { key: 'bookings', label: 'Bookings', icon: Calendar, badge: bookingsData.filter(b => b.status === 'pending').length || undefined, tabs: [
+      { key: 'bookings', label: 'All Requests', icon: Calendar, badge: bookingsData.filter(b => b.status === 'pending').length || undefined },
+    ]},
+    { key: 'system', label: 'System', icon: Settings, badge: setupData ? setupData.totalChecks - setupData.configuredCount : undefined, tabs: [
+      { key: 'storage', label: 'Storage', icon: HardDrive },
+      { key: 'seo', label: 'SEO Health', icon: Search },
+      { key: 'setup', label: 'Setup', icon: Settings, badge: setupData ? setupData.totalChecks - setupData.configuredCount : undefined },
+    ]},
   ]
+
+  const activeGroupData = groups.find(g => g.key === activeGroup)
+  const sidebarTabs = activeGroupData?.tabs || []
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800">
@@ -380,16 +393,35 @@ export default function AdminDashboard() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-        {/* Tabs */}
-        <div className="flex gap-1 bg-white rounded-xl p-1 mb-6 overflow-x-auto border border-slate-200 shadow-sm">
-          {tabs.map(tab => (
-            <button key={tab.key} onClick={() => setActiveTab(tab.key)} className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${activeTab === tab.key ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}>
-              <tab.icon className="w-3.5 h-3.5" />
-              {tab.label}
-              {tab.badge !== undefined && tab.badge > 0 && <span className="ml-0.5 px-1.5 py-0.5 bg-red-500 text-white text-[10px] rounded-full">{tab.badge}</span>}
+        {/* Main Horizontal Tabs */}
+        <div className="flex gap-1 bg-white rounded-xl p-1 mb-6 border border-slate-200 shadow-sm">
+          {groups.map(group => (
+            <button key={group.key} onClick={() => { setActiveGroup(group.key); setActiveTab(group.tabs[0].key) }} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex-1 justify-center ${activeGroup === group.key ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}>
+              <group.icon className="w-4 h-4" />
+              {group.label}
+              {group.badge !== undefined && group.badge > 0 && <span className={`ml-0.5 px-1.5 py-0.5 text-[10px] rounded-full ${activeGroup === group.key ? 'bg-white/25 text-white' : 'bg-red-500 text-white'}`}>{group.badge}</span>}
             </button>
           ))}
         </div>
+
+        <div className="flex gap-6">
+          {/* Vertical Sub-tabs (sidebar) */}
+          {sidebarTabs.length > 1 && (
+            <div className="w-44 flex-shrink-0">
+              <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden sticky top-[72px]">
+                {sidebarTabs.map(tab => (
+                  <button key={tab.key} onClick={() => setActiveTab(tab.key)} className={`flex items-center gap-2 w-full px-4 py-3 text-sm font-medium transition-colors border-l-[3px] ${activeTab === tab.key ? 'bg-blue-50 text-blue-700 border-blue-600' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50 border-transparent'}`}>
+                    <tab.icon className="w-4 h-4" />
+                    {tab.label}
+                    {tab.badge !== undefined && tab.badge > 0 && <span className="ml-auto px-1.5 py-0.5 bg-red-500 text-white text-[10px] rounded-full">{tab.badge}</span>}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Content Area */}
+          <div className="flex-1 min-w-0">
 
         {/* ─── OVERVIEW ──────────────────────────────────── */}
         {activeTab === 'overview' && (
@@ -981,6 +1013,9 @@ export default function AdminDashboard() {
             </Panel>
           </div>
         )}
+
+          </div>{/* end flex-1 content */}
+        </div>{/* end flex row */}
       </div>
     </div>
   )
