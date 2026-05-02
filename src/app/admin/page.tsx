@@ -82,7 +82,7 @@ interface SessionRecord { rowKey: string; agentId: string; agentName: string; st
 interface ContainerStats { name: string; blobCount: number; totalSizeBytes: number; lastModified: string }
 interface BlobInfo { name: string; containerName: string; size: number; contentType: string; lastModified: string }
 interface StorageData { containers: ContainerStats[]; recentBlobs: BlobInfo[] }
-interface BookingAppointment { id: string; serviceName: string; serviceId: string; startDateTime: { dateTime: string; timeZone: string }; endDateTime: { dateTime: string; timeZone: string }; customerName: string; customerEmail: string; customerPhone: string; customerNotes: string; customerTimeZone: string; isLocationOnline: boolean; joinWebUrl: string; status: string; createdDateTime: string; lastUpdatedDateTime: string }
+interface BookingAppointment { rowKey: string; name: string; email: string; whatsapp?: string; topic?: string; serviceName: string; serviceId: string; date: string; startTime: string; endTime: string; timezone: string; country?: string; status: string; createdAt: string; graphAppointmentId?: string; joinWebUrl?: string; adminMessage?: string; acceptedAt?: string; rejectedAt?: string; changeRequestedAt?: string }
 
 // ─── Helpers ─────────────────────────────────────────────────
 
@@ -138,6 +138,8 @@ export default function AdminDashboard() {
   const [bookingsData, setBookingsData] = useState<BookingAppointment[]>([])
   const [bookingsLoading, setBookingsLoading] = useState(false)
   const [bookingsAction, setBookingsAction] = useState<string | null>(null)
+  const [bookingMessage, setBookingMessage] = useState<Record<string, string>>({})
+  const [expandedBooking, setExpandedBooking] = useState<string | null>(null)
 
   const fetchAll = useCallback(async (adminSecret: string, numDays: number) => {
     setLoading(true); setError('')
@@ -194,19 +196,19 @@ export default function AdminDashboard() {
   }
   function handleLogout() { setAuthenticated(false); setData(null); setSetupData(null); setSeoData(null); setSessions([]); setStorageData(null); setInsightsData(null); setEmailLogs(null); setBookingsData([]); setSecret(''); setStoredSecret('') }
 
-  async function handleBookingAction(appointmentId: string, action: 'confirm' | 'cancel', message?: string) {
-    setBookingsAction(appointmentId)
+  async function handleBookingAction(rowKey: string, action: 'accept' | 'reject' | 'suggest-change', message?: string) {
+    setBookingsAction(rowKey)
     try {
       const res = await fetch('/api/bookings/appointments', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ appointmentId, action, cancellationMessage: message }),
+        body: JSON.stringify({ rowKey, action, message }),
       })
       if (res.ok) {
         const bRes = await fetch('/api/bookings/appointments')
         if (bRes.ok) { const bData = await bRes.json(); setBookingsData(bData.appointments || []) }
       }
-    } catch {} finally { setBookingsAction(null) }
+    } catch {} finally { setBookingsAction(null); setExpandedBooking(null); setBookingMessage({}) }
   }
 
   async function hideComment(slug: string, rowKey: string) {
@@ -267,7 +269,7 @@ export default function AdminDashboard() {
     { key: 'enquiries', label: 'Enquiries', icon: Mail },
     { key: 'emails', label: 'Emails', icon: Send, badge: emailLogs?.totalFailed || undefined },
     { key: 'sessions', label: 'Sessions', icon: Bot },
-    { key: 'bookings', label: 'Bookings', icon: Calendar, badge: bookingsData.filter(b => b.status === 'booked' || !b.status).length || undefined },
+    { key: 'bookings', label: 'Bookings', icon: Calendar, badge: bookingsData.filter(b => b.status === 'pending').length || undefined },
     { key: 'storage', label: 'Storage', icon: HardDrive },
     { key: 'insights', label: 'Insights', icon: Activity },
     { key: 'comments', label: 'Comments', icon: MessageSquare },
@@ -465,12 +467,12 @@ export default function AdminDashboard() {
         {activeTab === 'bookings' && (
           <div className="space-y-6">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <StatCard icon={Calendar} label="Total Bookings" value={bookingsData.length} color="blue" />
-              <StatCard icon={Clock} label="Upcoming" value={bookingsData.filter(b => new Date(b.startDateTime?.dateTime + 'Z') > new Date()).length} color="teal" />
-              <StatCard icon={CheckCircle} label="Confirmed" value={bookingsData.filter(b => b.status === 'confirmed').length} color="amber" />
-              <StatCard icon={X} label="Cancelled" value={bookingsData.filter(b => b.status === 'cancelled').length} color="purple" />
+              <StatCard icon={Clock} label="Pending" value={bookingsData.filter(b => b.status === 'pending').length} color="amber" />
+              <StatCard icon={CheckCircle} label="Accepted" value={bookingsData.filter(b => b.status === 'accepted').length} color="teal" />
+              <StatCard icon={XCircle} label="Rejected" value={bookingsData.filter(b => b.status === 'rejected').length} color="purple" />
+              <StatCard icon={AlertTriangle} label="Change Requested" value={bookingsData.filter(b => b.status === 'change-requested').length} color="blue" />
             </div>
-            <Panel title="All Appointments" subtitle="Manage bookings from your website" action={
+            <Panel title="Booking Requests" subtitle="Review and manage pending bookings" action={
               <button onClick={async () => { setBookingsLoading(true); try { const r = await fetch('/api/bookings/appointments'); if (r.ok) { const d = await r.json(); setBookingsData(d.appointments || []) } } catch {} finally { setBookingsLoading(false) } }} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 border border-slate-200 rounded-lg transition-colors">
                 <RefreshCw className={`w-3.5 h-3.5 ${bookingsLoading ? 'animate-spin' : ''}`} /> Refresh
               </button>
@@ -478,83 +480,117 @@ export default function AdminDashboard() {
               {bookingsData.length === 0 ? <Empty text="No bookings yet" /> : (
                 <div className="space-y-3">
                   {bookingsData.map(apt => {
-                    const startDate = apt.startDateTime?.dateTime ? new Date(apt.startDateTime.dateTime + 'Z') : null
-                    const endDate = apt.endDateTime?.dateTime ? new Date(apt.endDateTime.dateTime + 'Z') : null
-                    const isPast = startDate ? startDate < new Date() : false
-                    const isUpcoming = startDate ? startDate > new Date() : false
-                    const statusColor = apt.status === 'confirmed' ? 'bg-emerald-100 text-emerald-700' : apt.status === 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
+                    const bookingDate = apt.date ? new Date(apt.date + 'T00:00:00') : null
+                    const isPast = bookingDate ? bookingDate < new Date() : false
+                    const statusColor = apt.status === 'accepted' ? 'bg-emerald-100 text-emerald-700' : apt.status === 'rejected' ? 'bg-red-100 text-red-700' : apt.status === 'change-requested' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'
+                    const isExpanded = expandedBooking === apt.rowKey
 
                     return (
-                      <div key={apt.id} className={`border rounded-xl p-4 shadow-sm ${isPast ? 'bg-slate-50 border-slate-200 opacity-75' : 'bg-white border-slate-200'}`}>
+                      <div key={apt.rowKey} className={`border rounded-xl p-4 shadow-sm ${isPast && apt.status !== 'pending' ? 'bg-slate-50 border-slate-200 opacity-75' : apt.status === 'pending' ? 'bg-amber-50/30 border-amber-200' : 'bg-white border-slate-200'}`}>
                         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-                          {/* Date block */}
                           <div className="flex-shrink-0 w-16 text-center">
-                            {startDate && (
+                            {bookingDate && (
                               <>
-                                <div className="text-xs text-slate-500 uppercase">{startDate.toLocaleDateString('en-US', { month: 'short' })}</div>
-                                <div className="text-2xl font-bold text-slate-800">{startDate.getDate()}</div>
-                                <div className="text-xs text-slate-500">{startDate.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+                                <div className="text-xs text-slate-500 uppercase">{bookingDate.toLocaleDateString('en-US', { month: 'short' })}</div>
+                                <div className="text-2xl font-bold text-slate-800">{bookingDate.getDate()}</div>
+                                <div className="text-xs text-slate-500">{bookingDate.toLocaleDateString('en-US', { weekday: 'short' })}</div>
                               </>
                             )}
                           </div>
 
-                          {/* Details */}
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap mb-1">
                               <h3 className="text-sm font-semibold text-slate-800">{apt.serviceName}</h3>
-                              <span className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${statusColor}`}>{apt.status || 'booked'}</span>
-                              {isPast && <span className="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500">Past</span>}
+                              <span className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${statusColor}`}>{apt.status}</span>
+                              {isPast && apt.status !== 'pending' && <span className="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500">Past</span>}
                             </div>
 
                             <div className="grid sm:grid-cols-2 gap-x-4 gap-y-1 mt-2 text-sm">
                               <div className="flex items-center gap-1.5 text-slate-600">
                                 <Users className="w-3.5 h-3.5 text-slate-400" />
-                                <span className="font-medium">{apt.customerName}</span>
+                                <span className="font-medium">{apt.name}</span>
                               </div>
                               <div className="flex items-center gap-1.5 text-slate-600">
                                 <Mail className="w-3.5 h-3.5 text-slate-400" />
-                                <a href={`mailto:${apt.customerEmail}`} className="text-blue-600 hover:underline truncate">{apt.customerEmail}</a>
+                                <a href={`mailto:${apt.email}`} className="text-blue-600 hover:underline truncate">{apt.email}</a>
                               </div>
-                              {apt.customerPhone && (
+                              {apt.whatsapp && (
                                 <div className="flex items-center gap-1.5 text-slate-600">
                                   <Phone className="w-3.5 h-3.5 text-slate-400" />
-                                  <a href={`https://wa.me/${apt.customerPhone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{apt.customerPhone}</a>
+                                  <a href={`https://wa.me/${apt.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{apt.whatsapp}</a>
                                 </div>
                               )}
                               <div className="flex items-center gap-1.5 text-slate-600">
                                 <Clock className="w-3.5 h-3.5 text-slate-400" />
-                                <span>
-                                  {startDate?.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
-                                  {endDate && ` – ${endDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}`}
-                                </span>
+                                <span>{apt.startTime}{apt.endTime && apt.endTime !== apt.startTime ? ` – ${apt.endTime}` : ''} UTC</span>
                               </div>
+                              {apt.country && (
+                                <div className="flex items-center gap-1.5 text-slate-600">
+                                  <Globe className="w-3.5 h-3.5 text-slate-400" />
+                                  <span>{apt.country}</span>
+                                </div>
+                              )}
+                              {apt.timezone && apt.timezone !== 'UTC' && (
+                                <div className="flex items-center gap-1.5 text-slate-600">
+                                  <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                                  <span>{apt.timezone}</span>
+                                </div>
+                              )}
                             </div>
 
-                            {apt.customerNotes && (
+                            {apt.topic && (
                               <div className="mt-2 p-2 bg-slate-50 rounded-lg text-xs text-slate-600 border border-slate-100">
-                                <span className="font-medium text-slate-700">Notes:</span> {apt.customerNotes}
+                                <span className="font-medium text-slate-700">Topic:</span> {apt.topic}
+                              </div>
+                            )}
+
+                            {apt.adminMessage && apt.status !== 'pending' && (
+                              <div className="mt-2 p-2 bg-blue-50 rounded-lg text-xs text-blue-700 border border-blue-100">
+                                <span className="font-medium">Admin note:</span> {apt.adminMessage}
+                              </div>
+                            )}
+
+                            {isExpanded && (
+                              <div className="mt-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                                <textarea
+                                  value={bookingMessage[apt.rowKey] || ''}
+                                  onChange={e => setBookingMessage(prev => ({ ...prev, [apt.rowKey]: e.target.value }))}
+                                  placeholder="Optional message to customer..."
+                                  className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                                  rows={2}
+                                />
+                                <div className="flex gap-2 mt-2">
+                                  <button onClick={() => handleBookingAction(apt.rowKey, 'reject', bookingMessage[apt.rowKey])} disabled={bookingsAction === apt.rowKey} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                                    {bookingsAction === apt.rowKey ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <XCircle className="w-3.5 h-3.5" />} Confirm Reject
+                                  </button>
+                                  <button onClick={() => handleBookingAction(apt.rowKey, 'suggest-change', bookingMessage[apt.rowKey])} disabled={bookingsAction === apt.rowKey} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                                    {bookingsAction === apt.rowKey ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />} Send Change Request
+                                  </button>
+                                  <button onClick={() => setExpandedBooking(null)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg transition-colors">
+                                    Cancel
+                                  </button>
+                                </div>
                               </div>
                             )}
                           </div>
 
-                          {/* Actions */}
                           <div className="flex flex-wrap sm:flex-col gap-2 shrink-0">
                             {apt.joinWebUrl && (
                               <a href={apt.joinWebUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
-                                <Video className="w-3.5 h-3.5" /> Join
+                                <Video className="w-3.5 h-3.5" /> Join Teams
                               </a>
                             )}
-                            {isUpcoming && apt.status !== 'confirmed' && apt.status !== 'cancelled' && (
-                              <button onClick={() => handleBookingAction(apt.id, 'confirm')} disabled={bookingsAction === apt.id} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg transition-colors disabled:opacity-50">
-                                {bookingsAction === apt.id ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle className="w-3.5 h-3.5" />} Accept
-                              </button>
+                            {apt.status === 'pending' && (
+                              <>
+                                <button onClick={() => handleBookingAction(apt.rowKey, 'accept')} disabled={bookingsAction === apt.rowKey} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg transition-colors disabled:opacity-50">
+                                  {bookingsAction === apt.rowKey ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle className="w-3.5 h-3.5" />} Accept
+                                </button>
+                                <button onClick={() => setExpandedBooking(isExpanded ? null : apt.rowKey)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors">
+                                  <XCircle className="w-3.5 h-3.5" /> Reject / Change
+                                </button>
+                              </>
                             )}
-                            {isUpcoming && apt.status !== 'cancelled' && (
-                              <button onClick={() => { if (confirm('Cancel this appointment? The customer will be notified.')) handleBookingAction(apt.id, 'cancel', 'This appointment has been cancelled. We apologize for the inconvenience.') }} disabled={bookingsAction === apt.id} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors disabled:opacity-50">
-                                <X className="w-3.5 h-3.5" /> Reject
-                              </button>
-                            )}
-                            <a href={`mailto:${apt.customerEmail}?subject=Re: ${apt.serviceName} Booking&body=Hi ${apt.customerName},%0A%0A`} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors">
+                            <a href={`mailto:${apt.email}?subject=Re: ${apt.serviceName} Booking&body=Hi ${apt.name},%0A%0A`} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors">
                               <Mail className="w-3.5 h-3.5" /> Reply
                             </a>
                           </div>

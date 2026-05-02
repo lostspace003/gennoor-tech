@@ -212,6 +212,68 @@ export async function getEnquiries(type?: string, days: number = 30) {
   return enquiries
 }
 
+// ─── Pending Bookings ───────────────────────────────────────
+
+export async function savePendingBooking(data: {
+  serviceId: string
+  serviceName: string
+  date: string
+  startTime: string
+  endTime: string
+  timezone: string
+  name: string
+  email: string
+  whatsapp: string
+  topic: string
+  country: string
+}) {
+  const tableName = 'PendingBookings'
+  await ensureTable(tableName)
+  const client = getTableClient(tableName)
+  const now = new Date()
+  const rowKey = `${now.getTime()}-${Math.random().toString(36).slice(2, 8)}`
+
+  await client.createEntity({
+    partitionKey: 'booking',
+    rowKey,
+    ...data,
+    status: 'pending',
+    createdAt: now.toISOString(),
+  })
+
+  return { partitionKey: 'booking', rowKey }
+}
+
+export async function getPendingBookings() {
+  const tableName = 'PendingBookings'
+  await ensureTable(tableName)
+  const client = getTableClient(tableName)
+
+  const bookings: Array<Record<string, any>> = []
+  const query = client.listEntities()
+
+  for await (const entity of query) {
+    bookings.push({
+      rowKey: entity.rowKey,
+      ...entity,
+    })
+  }
+
+  bookings.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+  return bookings
+}
+
+export async function updatePendingBooking(rowKey: string, updates: Record<string, any>) {
+  const tableName = 'PendingBookings'
+  await ensureTable(tableName)
+  const client = getTableClient(tableName)
+
+  await client.updateEntity(
+    { partitionKey: 'booking', rowKey, ...updates },
+    'Merge',
+  )
+}
+
 // ─── Career Sessions ─────────────────────────────────────────
 
 export async function saveCareerSession(data: {

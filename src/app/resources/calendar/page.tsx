@@ -308,11 +308,11 @@ export default function BookingCalendarPage() {
       const res = await fetch('/api/bookings/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ serviceId: selectedService.id, date: dateToYMD(selectedDate), startTime: startParts, endTime: endParts, timezone, name, email, whatsapp, topic }),
+        body: JSON.stringify({ serviceId: selectedService.id, date: dateToYMD(selectedDate), startTime: startParts, endTime: endParts, timezone, name, email, whatsapp, topic, country: country.name }),
       })
       const data = await res.json()
       if (!res.ok || !data.success) throw new Error(data.message || 'Failed to create booking')
-      setBookingResult({ joinUrl: data.appointment?.joinUrl, service: data.appointment?.service })
+      setBookingResult({ service: selectedService.name })
       setStatus('success')
     } catch (err) {
       setStatus('error')
@@ -326,24 +326,23 @@ export default function BookingCalendarPage() {
       <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center px-4">
         <div className="max-w-lg w-full text-center">
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-5">
-              <Check className="h-8 w-8 text-green-600" />
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 mb-5">
+              <Clock className="h-8 w-8 text-blue-600" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">You&apos;re booked!</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Request Received!</h1>
             <p className="text-gray-600 mb-1">
               <strong>{bookingResult?.service || 'Meeting'}</strong> with Jalal Khan
             </p>
             <p className="text-gray-600">
               {selectedDate && formatShortDate(selectedDate)} at {selectedSlot?.localTimeLabel} ({country.name})
             </p>
-            {bookingResult?.joinUrl && (
-              <a href={bookingResult.joinUrl} target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 mt-5 px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors">
-                <Video className="h-4 w-4" /> Join Teams Meeting
-              </a>
-            )}
-            <div className="mt-5 p-3 bg-gray-50 rounded-xl text-sm text-gray-500">
-              A calendar invite has been sent to <strong>{email}</strong>
+            <div className="mt-5 p-4 bg-amber-50 rounded-xl border border-amber-200">
+              <p className="text-sm text-amber-800">
+                Your booking is pending confirmation. You&apos;ll receive a confirmation email with a Microsoft Teams meeting link once approved.
+              </p>
+            </div>
+            <div className="mt-4 p-3 bg-gray-50 rounded-xl text-sm text-gray-500">
+              A confirmation will be sent to <strong>{email}</strong>
             </div>
             <Link href="/" className="inline-block mt-5 text-sm text-primary-600 hover:text-primary-700 font-medium">
               Back to Home
