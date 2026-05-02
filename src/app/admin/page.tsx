@@ -140,6 +140,8 @@ export default function AdminDashboard() {
   const [bookingsAction, setBookingsAction] = useState<string | null>(null)
   const [bookingMessage, setBookingMessage] = useState<Record<string, string>>({})
   const [expandedBooking, setExpandedBooking] = useState<string | null>(null)
+  const [rescheduleData, setRescheduleData] = useState<Record<string, { date: string; startTime: string; endTime: string }>>({})
+  const [expandedAction, setExpandedAction] = useState<Record<string, 'reject' | 'reschedule' | null>>({})
 
   const fetchAll = useCallback(async (adminSecret: string, numDays: number) => {
     setLoading(true); setError('')
@@ -196,19 +198,25 @@ export default function AdminDashboard() {
   }
   function handleLogout() { setAuthenticated(false); setData(null); setSetupData(null); setSeoData(null); setSessions([]); setStorageData(null); setInsightsData(null); setEmailLogs(null); setBookingsData([]); setSecret(''); setStoredSecret('') }
 
-  async function handleBookingAction(rowKey: string, action: 'accept' | 'reject' | 'suggest-change', message?: string) {
+  async function handleBookingAction(rowKey: string, action: 'accept' | 'reject' | 'suggest-change' | 'cancel' | 'reschedule', message?: string) {
     setBookingsAction(rowKey)
     try {
+      const payload: Record<string, any> = { rowKey, action, message }
+      if (action === 'reschedule' && rescheduleData[rowKey]) {
+        payload.newDate = rescheduleData[rowKey].date
+        payload.newStartTime = rescheduleData[rowKey].startTime
+        payload.newEndTime = rescheduleData[rowKey].endTime
+      }
       const res = await fetch('/api/bookings/appointments', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rowKey, action, message }),
+        body: JSON.stringify(payload),
       })
       if (res.ok) {
         const bRes = await fetch('/api/bookings/appointments')
         if (bRes.ok) { const bData = await bRes.json(); setBookingsData(bData.appointments || []) }
       }
-    } catch {} finally { setBookingsAction(null); setExpandedBooking(null); setBookingMessage({}) }
+    } catch {} finally { setBookingsAction(null); setExpandedBooking(null); setBookingMessage({}); setRescheduleData({}); setExpandedAction({}) }
   }
 
   async function hideComment(slug: string, rowKey: string) {
@@ -482,7 +490,7 @@ export default function AdminDashboard() {
                   {bookingsData.map(apt => {
                     const bookingDate = apt.date ? new Date(apt.date + 'T00:00:00') : null
                     const isPast = bookingDate ? bookingDate < new Date() : false
-                    const statusColor = apt.status === 'accepted' ? 'bg-emerald-100 text-emerald-700' : apt.status === 'rejected' ? 'bg-red-100 text-red-700' : apt.status === 'change-requested' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'
+                    const statusColor = apt.status === 'accepted' ? 'bg-emerald-100 text-emerald-700' : apt.status === 'rejected' ? 'bg-red-100 text-red-700' : apt.status === 'cancelled' ? 'bg-red-100 text-red-700' : apt.status === 'change-requested' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'
                     const isExpanded = expandedBooking === apt.rowKey
 
                     return (
@@ -550,7 +558,8 @@ export default function AdminDashboard() {
                               </div>
                             )}
 
-                            {isExpanded && (
+                            {/* Expanded panel for reject/suggest-change */}
+                            {isExpanded && expandedAction[apt.rowKey] === 'reject' && (
                               <div className="mt-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
                                 <textarea
                                   value={bookingMessage[apt.rowKey] || ''}
@@ -560,14 +569,58 @@ export default function AdminDashboard() {
                                   rows={2}
                                 />
                                 <div className="flex gap-2 mt-2">
-                                  <button onClick={() => handleBookingAction(apt.rowKey, 'reject', bookingMessage[apt.rowKey])} disabled={bookingsAction === apt.rowKey} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50">
-                                    {bookingsAction === apt.rowKey ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <XCircle className="w-3.5 h-3.5" />} Confirm Reject
+                                  {apt.status === 'pending' && (
+                                    <button onClick={() => handleBookingAction(apt.rowKey, 'reject', bookingMessage[apt.rowKey])} disabled={bookingsAction === apt.rowKey} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                                      {bookingsAction === apt.rowKey ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <XCircle className="w-3.5 h-3.5" />} Confirm Reject
+                                    </button>
+                                  )}
+                                  {apt.status === 'pending' && (
+                                    <button onClick={() => handleBookingAction(apt.rowKey, 'suggest-change', bookingMessage[apt.rowKey])} disabled={bookingsAction === apt.rowKey} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                                      {bookingsAction === apt.rowKey ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />} Suggest Change
+                                    </button>
+                                  )}
+                                  {apt.status === 'accepted' && (
+                                    <button onClick={() => handleBookingAction(apt.rowKey, 'cancel', bookingMessage[apt.rowKey])} disabled={bookingsAction === apt.rowKey} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                                      {bookingsAction === apt.rowKey ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <XCircle className="w-3.5 h-3.5" />} Confirm Cancel
+                                    </button>
+                                  )}
+                                  <button onClick={() => { setExpandedBooking(null); setExpandedAction({}) }} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg transition-colors">
+                                    Back
                                   </button>
-                                  <button onClick={() => handleBookingAction(apt.rowKey, 'suggest-change', bookingMessage[apt.rowKey])} disabled={bookingsAction === apt.rowKey} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50">
-                                    {bookingsAction === apt.rowKey ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />} Send Change Request
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Expanded panel for reschedule */}
+                            {isExpanded && expandedAction[apt.rowKey] === 'reschedule' && (
+                              <div className="mt-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                                <div className="grid grid-cols-3 gap-2 mb-2">
+                                  <div>
+                                    <label className="block text-xs text-slate-500 mb-1">New Date</label>
+                                    <input type="date" value={rescheduleData[apt.rowKey]?.date || ''} onChange={e => setRescheduleData(prev => ({ ...prev, [apt.rowKey]: { ...prev[apt.rowKey], date: e.target.value } }))} className="w-full px-2 py-1.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                  </div>
+                                  <div>
+                                    <label className="block text-xs text-slate-500 mb-1">Start (UTC)</label>
+                                    <input type="time" value={rescheduleData[apt.rowKey]?.startTime || ''} onChange={e => setRescheduleData(prev => ({ ...prev, [apt.rowKey]: { ...prev[apt.rowKey], startTime: e.target.value } }))} className="w-full px-2 py-1.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                  </div>
+                                  <div>
+                                    <label className="block text-xs text-slate-500 mb-1">End (UTC)</label>
+                                    <input type="time" value={rescheduleData[apt.rowKey]?.endTime || ''} onChange={e => setRescheduleData(prev => ({ ...prev, [apt.rowKey]: { ...prev[apt.rowKey], endTime: e.target.value } }))} className="w-full px-2 py-1.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                  </div>
+                                </div>
+                                <textarea
+                                  value={bookingMessage[apt.rowKey] || ''}
+                                  onChange={e => setBookingMessage(prev => ({ ...prev, [apt.rowKey]: e.target.value }))}
+                                  placeholder="Optional note to customer..."
+                                  className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                                  rows={2}
+                                />
+                                <div className="flex gap-2 mt-2">
+                                  <button onClick={() => handleBookingAction(apt.rowKey, 'reschedule', bookingMessage[apt.rowKey])} disabled={bookingsAction === apt.rowKey || !rescheduleData[apt.rowKey]?.date || !rescheduleData[apt.rowKey]?.startTime} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                                    {bookingsAction === apt.rowKey ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Calendar className="w-3.5 h-3.5" />} Confirm Reschedule
                                   </button>
-                                  <button onClick={() => setExpandedBooking(null)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg transition-colors">
-                                    Cancel
+                                  <button onClick={() => { setExpandedBooking(null); setExpandedAction({}) }} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg transition-colors">
+                                    Back
                                   </button>
                                 </div>
                               </div>
@@ -580,13 +633,28 @@ export default function AdminDashboard() {
                                 <Video className="w-3.5 h-3.5" /> Join Teams
                               </a>
                             )}
+                            {/* Pending: Accept, Reject/Change, Reschedule */}
                             {apt.status === 'pending' && (
                               <>
                                 <button onClick={() => handleBookingAction(apt.rowKey, 'accept')} disabled={bookingsAction === apt.rowKey} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg transition-colors disabled:opacity-50">
                                   {bookingsAction === apt.rowKey ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle className="w-3.5 h-3.5" />} Accept
                                 </button>
-                                <button onClick={() => setExpandedBooking(isExpanded ? null : apt.rowKey)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors">
+                                <button onClick={() => { setExpandedBooking(apt.rowKey); setExpandedAction({ [apt.rowKey]: 'reject' }) }} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors">
                                   <XCircle className="w-3.5 h-3.5" /> Reject / Change
+                                </button>
+                                <button onClick={() => { setExpandedBooking(apt.rowKey); setExpandedAction({ [apt.rowKey]: 'reschedule' }); setRescheduleData(prev => ({ ...prev, [apt.rowKey]: { date: apt.date, startTime: apt.startTime, endTime: apt.endTime } })) }} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-lg transition-colors">
+                                  <Clock className="w-3.5 h-3.5" /> Reschedule
+                                </button>
+                              </>
+                            )}
+                            {/* Accepted: Reschedule, Cancel */}
+                            {apt.status === 'accepted' && (
+                              <>
+                                <button onClick={() => { setExpandedBooking(apt.rowKey); setExpandedAction({ [apt.rowKey]: 'reschedule' }); setRescheduleData(prev => ({ ...prev, [apt.rowKey]: { date: apt.date, startTime: apt.startTime, endTime: apt.endTime } })) }} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-lg transition-colors">
+                                  <Clock className="w-3.5 h-3.5" /> Reschedule
+                                </button>
+                                <button onClick={() => { setExpandedBooking(apt.rowKey); setExpandedAction({ [apt.rowKey]: 'reject' }) }} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors">
+                                  <XCircle className="w-3.5 h-3.5" /> Cancel
                                 </button>
                               </>
                             )}

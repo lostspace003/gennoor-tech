@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import {
   createBookingAppointment,
+  cancelBookingAppointment,
   getBookingServices,
   getConfiguredBusinessId,
   type CreateAppointmentPayload,
@@ -26,7 +27,7 @@ export async function PATCH(request: NextRequest) {
   try {
     initAppInsights()
     const body = await request.json()
-    const { rowKey, action, message: adminMessage } = body
+    const { rowKey, action, message: adminMessage, newDate, newStartTime, newEndTime } = body
 
     if (!rowKey || !action) {
       return NextResponse.json(
@@ -226,8 +227,170 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ success: true, message: 'Change suggestion sent to customer.' })
     }
 
+    // ── CANCEL (accepted booking) ──
+    if (action === 'cancel') {
+      if (!booking.graphAppointmentId) {
+        return NextResponse.json({ success: false, message: 'No Graph appointment to cancel.' }, { status: 400 })
+      }
+
+      const businessId = getConfiguredBusinessId()
+      await cancelBookingAppointment(businessId, booking.graphAppointmentId, adminMessage || 'This appointment has been cancelled.')
+
+      await updatePendingBooking(rowKey, {
+        status: 'cancelled',
+        cancelledAt: new Date().toISOString(),
+        adminMessage: adminMessage || '',
+      })
+
+      await sendEmail({
+        to: booking.email,
+        from: process.env.EMAIL_FROM_SCHEDULE || 'schedule@gennoor.com',
+        subject: `Cancelled: ${booking.serviceName} with Jalal Khan`,
+        html: `
+          <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto">
+            <div style="background:#991b1b;padding:24px 28px;border-radius:12px 12px 0 0">
+              <h1 style="color:#fff;margin:0;font-size:20px">Booking Cancelled</h1>
+            </div>
+            <div style="background:#fff;padding:28px;border:1px solid #e5e7eb;border-top:0;border-radius:0 0 12px 12px">
+              <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
+                Hi <strong>${booking.name}</strong>,
+              </p>
+              <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
+                Your booking for <strong>${booking.serviceName}</strong> on ${booking.date} at ${booking.startTime} UTC has been cancelled.
+              </p>
+              ${adminMessage ? `
+                <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px 16px;margin:0 0 16px">
+                  <p style="margin:0;font-size:14px;color:#991b1b">${adminMessage}</p>
+                </div>
+              ` : ''}
+              <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
+                Feel free to book a new time:
+              </p>
+              <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.gennoor.com'}/resources/calendar" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600">
+                Book Another Time
+              </a>
+            </div>
+          </div>
+        `,
+      }).catch(() => {})
+
+      trackEvent('BookingCancelled', { name: booking.name, email: booking.email })
+
+      return NextResponse.json({ success: true, message: 'Booking cancelled. Calendar event removed and customer notified.' })
+    }
+
+    // ── RESCHEDULE (accepted booking) ──
+    if (action === 'reschedule') {
+      if (!newDate || !newStartTime) {
+        return NextResponse.json({ success: false, message: 'newDate and newStartTime are required for reschedule.' }, { status: 400 })
+      }
+
+      const businessId = getConfiguredBusinessId()
+
+      if (booking.graphAppointmentId) {
+        await cancelBookingAppointment(businessId, booking.graphAppointmentId, 'Rescheduled to a new time.').catch(() => {})
+      }
+
+      const services = await getBookingServices(businessId)
+      const service = services.find(s => s.id === booking.serviceId) || services[0]
+
+      const durationMatch = service?.defaultDuration?.match(/PT(\d+)H?(\d+)?M?/)
+      const durationMinutes = durationMatch
+        ? (parseInt(durationMatch[1] || '0') * 60) + parseInt(durationMatch[2] || '0')
+        : 30
+
+      const startDateTime = `${newDate}T${newStartTime}:00`
+      const computedEnd = newEndTime && newEndTime !== newStartTime
+        ? `${newDate}T${newEndTime}:00`
+        : (() => {
+            const start = new Date(`${newDate}T${newStartTime}:00Z`)
+            start.setMinutes(start.getMinutes() + durationMinutes)
+            return start.toISOString().split('.')[0]
+          })()
+
+      const appointment: CreateAppointmentPayload = {
+        serviceId: service.id,
+        serviceName: service.displayName,
+        startDateTime: { dateTime: startDateTime, timeZone: 'UTC' },
+        endDateTime: { dateTime: computedEnd, timeZone: 'UTC' },
+        isLocationOnline: true,
+        staffMemberIds: service.staffMemberIds?.length ? service.staffMemberIds : undefined,
+        customers: [{
+          '@odata.type': '#microsoft.graph.bookingCustomerInformation',
+          name: booking.name,
+          emailAddress: booking.email,
+          phone: booking.whatsapp || '',
+          notes: booking.topic || '',
+          timeZone: 'UTC',
+        }],
+        customerNotes: [
+          booking.topic ? `Topic: ${booking.topic}` : '',
+          booking.whatsapp ? `WhatsApp: ${booking.whatsapp}` : '',
+        ].filter(Boolean).join(' | '),
+        optOutOfCustomerEmail: false,
+      }
+
+      const result = await createBookingAppointment(businessId, appointment)
+
+      await updatePendingBooking(rowKey, {
+        status: 'accepted',
+        date: newDate,
+        startTime: newStartTime,
+        endTime: newEndTime || newStartTime,
+        graphAppointmentId: result.id,
+        joinWebUrl: result.joinWebUrl || '',
+        rescheduledAt: new Date().toISOString(),
+        adminMessage: adminMessage || '',
+      })
+
+      await sendEmail({
+        to: booking.email,
+        from: process.env.EMAIL_FROM_SCHEDULE || 'schedule@gennoor.com',
+        subject: `Rescheduled: ${service.displayName} with Jalal Khan`,
+        html: `
+          <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto">
+            <div style="background:#065f46;padding:24px 28px;border-radius:12px 12px 0 0">
+              <h1 style="color:#fff;margin:0;font-size:20px">Booking Rescheduled</h1>
+            </div>
+            <div style="background:#fff;padding:28px;border:1px solid #e5e7eb;border-top:0;border-radius:0 0 12px 12px">
+              <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
+                Hi <strong>${booking.name}</strong>, your meeting has been rescheduled to a new time.
+              </p>
+              <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:16px;margin:0 0 16px">
+                <p style="margin:0 0 6px;font-size:14px;color:#111827"><strong>${service.displayName}</strong></p>
+                <p style="margin:0 0 4px;font-size:13px;color:#6b7280">New Date: <strong style="color:#374151">${newDate}</strong></p>
+                <p style="margin:0 0 4px;font-size:13px;color:#6b7280">New Time: <strong style="color:#374151">${newStartTime} UTC</strong></p>
+                <p style="margin:0;font-size:13px;color:#6b7280">With: <strong style="color:#374151">Jalal Khan</strong></p>
+              </div>
+              ${result.joinWebUrl ? `
+                <a href="${result.joinWebUrl}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:600;margin:0 0 16px">
+                  Join Teams Meeting
+                </a>
+              ` : ''}
+              ${adminMessage ? `
+                <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;margin:0 0 16px">
+                  <p style="margin:0;font-size:14px;color:#1e40af"><strong>Note from Jalal:</strong> ${adminMessage}</p>
+                </div>
+              ` : ''}
+              <p style="color:#6b7280;font-size:13px;line-height:1.5;margin:16px 0 0">
+                An updated calendar invite has been sent to your email.
+              </p>
+            </div>
+          </div>
+        `,
+      }).catch(() => {})
+
+      trackEvent('BookingRescheduled', { name: booking.name, email: booking.email, newDate, newStartTime })
+
+      return NextResponse.json({
+        success: true,
+        message: 'Booking rescheduled. New calendar event created and customer notified.',
+        joinWebUrl: result.joinWebUrl,
+      })
+    }
+
     return NextResponse.json(
-      { success: false, message: 'Invalid action. Use "accept", "reject", or "suggest-change".' },
+      { success: false, message: 'Invalid action. Use "accept", "reject", "suggest-change", "cancel", or "reschedule".' },
       { status: 400 },
     )
   } catch (error) {
