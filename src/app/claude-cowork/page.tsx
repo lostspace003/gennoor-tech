@@ -1,7 +1,8 @@
 ﻿'use client'
 
 import { useState, useEffect, useRef, FormEvent } from 'react'
-import { Check, ChevronDown, Download, ArrowRight, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
+import Link from 'next/link'
+import { Check, ChevronDown, Download, ArrowRight, CheckCircle, AlertCircle, Loader2, Calendar } from 'lucide-react'
 
 const TIME_ZONES = [
   'UTC-12:00 (Baker Island)',
@@ -216,12 +217,21 @@ export default function ClaudeCoworkPage() {
                 ))}
               </div>
 
-              <button
-                onClick={() => { scrollToRegister(); trackEvent('cta_hero_click') }}
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[#FF6B35] hover:bg-[#e55a25] text-white font-bold text-lg rounded-full transition-colors cursor-pointer"
-              >
-                GRAB MY FREE SEAT <ArrowRight className="w-5 h-5" />
-              </button>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  onClick={() => { scrollToRegister(); trackEvent('cta_hero_click') }}
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-[#FF6B35] hover:bg-[#e55a25] text-white font-bold text-lg rounded-full transition-colors cursor-pointer"
+                >
+                  GRAB MY FREE SEAT <ArrowRight className="w-5 h-5" />
+                </button>
+                <Link
+                  href="/resources/calendar"
+                  onClick={() => trackEvent('cta_schedule_meet_click')}
+                  className="inline-flex items-center gap-2 px-6 py-4 bg-white/10 hover:bg-white/20 text-white font-bold text-base rounded-full transition-colors border-2 border-white/30"
+                >
+                  <Calendar className="w-5 h-5" /> Schedule a Meet
+                </Link>
+              </div>
             </div>
 
             <div className="hidden md:flex flex-col items-end gap-4">

@@ -15,7 +15,9 @@
   "dependencies": {
     "@azure/communication-email": "^1.1.0",
     "@azure/data-tables": "^13.3.2",
+    "@azure/identity": "^4.13.1",
     "@azure/storage-blob": "^12.31.0",
+    "@microsoft/microsoft-graph-client": "^3.0.7",
     "@tailwindcss/forms": "^0.5.11",
     "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^25.4.0",
