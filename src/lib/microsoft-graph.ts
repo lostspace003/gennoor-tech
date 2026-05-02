@@ -45,6 +45,45 @@ export async function getBookingServices(businessId: string) {
   return result.value as BookingService[]
 }
 
+export async function createBookingService(
+  businessId: string,
+  service: {
+    displayName: string
+    description?: string
+    defaultDuration: string
+    defaultPrice: number
+    defaultPriceType: string
+    isLocationOnline: boolean
+    staffMemberIds: string[]
+  },
+) {
+  const client = getGraphClient()
+  return await client
+    .api(`/solutions/bookingBusinesses/${businessId}/services`)
+    .post(service)
+}
+
+export async function deleteBookingService(businessId: string, serviceId: string) {
+  const client = getGraphClient()
+  await client.api(`/solutions/bookingBusinesses/${businessId}/services/${serviceId}`).delete()
+}
+
+export async function updateBookingService(
+  businessId: string,
+  serviceId: string,
+  updates: Partial<{
+    displayName: string
+    description: string
+    defaultDuration: string
+    defaultPrice: number
+  }>,
+) {
+  const client = getGraphClient()
+  return await client
+    .api(`/solutions/bookingBusinesses/${businessId}/services/${serviceId}`)
+    .patch(updates)
+}
+
 // ─── Staff Availability ──────────────────────────────────────
 
 export async function getStaffAvailability(

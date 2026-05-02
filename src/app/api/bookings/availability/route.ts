@@ -7,20 +7,26 @@ import {
 
 const JALAL_KHAN_STAFF_ID = 'd0598bb5-a70c-4145-9007-6b5f7370a60d'
 
+const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000
 const IST_START_HOUR = 9
 const IST_END_HOUR = 18
 
-function toIST(utcDateStr: string): Date {
-  const utc = new Date(utcDateStr + (utcDateStr.endsWith('Z') ? '' : 'Z'))
-  return new Date(utc.getTime() + 5.5 * 60 * 60 * 1000)
-}
-
-function isWithinISTBusinessHours(utcStart: string, utcEnd: string): boolean {
-  const istStart = toIST(utcStart)
-  const istEnd = toIST(utcEnd)
+function isSlotWithinISTBusinessHours(utcStart: Date, utcEnd: Date): boolean {
+  const istStart = new Date(utcStart.getTime() + IST_OFFSET_MS)
+  const istEnd = new Date(utcEnd.getTime() + IST_OFFSET_MS)
   const startHour = istStart.getUTCHours() + istStart.getUTCMinutes() / 60
   const endHour = istEnd.getUTCHours() + istEnd.getUTCMinutes() / 60
-  return startHour >= IST_START_HOUR && endHour <= IST_END_HOUR
+  return (
+    startHour >= IST_START_HOUR &&
+    endHour <= IST_END_HOUR &&
+    istStart.getUTCDate() === istEnd.getUTCDate()
+  )
+}
+
+function parseDuration(iso: string): number {
+  const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?/)
+  if (!match) return 30
+  return (parseInt(match[1] || '0') * 60) + parseInt(match[2] || '0')
 }
 
 export async function GET(request: NextRequest) {
@@ -51,6 +57,9 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    const durationMinutes = parseDuration(service.defaultDuration)
+    const durationMs = durationMinutes * 60 * 1000
+
     const startDateTime = `${date}T00:00:00`
     const endDateTime = `${date}T23:59:59`
 
@@ -62,17 +71,31 @@ export async function GET(request: NextRequest) {
     )
 
     const slots: { start: string; end: string; status: string }[] = []
+
     for (const staff of availability) {
       for (const item of staff.availabilityItems) {
-        if (
-          item.status === 'available' &&
-          isWithinISTBusinessHours(item.startDateTime.dateTime, item.endDateTime.dateTime)
-        ) {
-          slots.push({
-            start: item.startDateTime.dateTime,
-            end: item.endDateTime.dateTime,
-            status: item.status,
-          })
+        if (item.status !== 'available') continue
+
+        const blockStart = new Date(
+          item.startDateTime.dateTime + (item.startDateTime.dateTime.endsWith('Z') ? '' : 'Z'),
+        )
+        const blockEnd = new Date(
+          item.endDateTime.dateTime + (item.endDateTime.dateTime.endsWith('Z') ? '' : 'Z'),
+        )
+
+        let cursor = new Date(blockStart)
+        while (cursor.getTime() + durationMs <= blockEnd.getTime()) {
+          const slotEnd = new Date(cursor.getTime() + durationMs)
+
+          if (isSlotWithinISTBusinessHours(cursor, slotEnd)) {
+            slots.push({
+              start: cursor.toISOString().split('.')[0],
+              end: slotEnd.toISOString().split('.')[0],
+              status: 'available',
+            })
+          }
+
+          cursor = slotEnd
         }
       }
     }
