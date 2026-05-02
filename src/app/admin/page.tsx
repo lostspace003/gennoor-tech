@@ -427,34 +427,83 @@ export default function AdminDashboard() {
         {/* ─── OVERVIEW ──────────────────────────────────── */}
         {activeTab === 'overview' && (
           <div className="space-y-6">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Key engagement metrics */}
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
               <StatCard icon={Eye} label="Page Views" value={data.totalViews} color="blue" />
-              <StatCard icon={Mail} label="Enquiries" value={data.totalEnquiries} color="amber" />
-              <StatCard icon={Bot} label="Career Sessions" value={sessions.length} color="teal" />
-              <StatCard icon={HardDrive} label="Storage Files" value={totalFiles} color="purple" />
+              <StatCard icon={Users} label="Sessions" value={(data as any).totalSessions || 0} color="teal" />
+              <StatCard icon={Clock} label="Avg Duration" value={0} color="amber" subtitle={`${Math.round((data as any).avgSessionDuration || 0)}s`} />
+              <StatCard icon={TrendingUp} label="Pages / Session" value={0} color="purple" subtitle={`${((data as any).avgPagesPerSession || 0).toFixed(1)}`} />
+              <StatCard icon={AlertTriangle} label="Bounce Rate" value={0} color="blue" subtitle={`${((data as any).bounceRate || 0).toFixed(1)}%`} />
             </div>
-            {insightsData && !insightsData.error && (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <StatCard icon={Server} label="Server Requests" value={Math.round(serverRequests)} color="blue" />
-                <StatCard icon={Zap} label="Avg Response (ms)" value={avgResponseTime} color="teal" />
-                <StatCard icon={AlertTriangle} label="Failed Requests" value={Math.round(failedRequests)} color="amber" />
-                <StatCard icon={Activity} label="Availability %" value={Math.round(availability * 100) / 100} color="purple" />
-              </div>
-            )}
+
+            {/* Visitors & server health */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCard icon={Users} label="New Visitors" value={(data as any).newVisitors || 0} color="teal" />
+              <StatCard icon={RefreshCw} label="Returning" value={(data as any).returningVisitors || 0} color="amber" />
+              <StatCard icon={Mail} label="Enquiries" value={data.totalEnquiries} color="purple" />
+              <StatCard icon={Calendar} label="Bookings" value={bookingsData.length} color="blue" />
+            </div>
+
+            {/* Trends */}
             <div className="grid md:grid-cols-2 gap-6">
               <Panel title="Daily Page Views" subtitle={getFilterLabel()}>
                 {chartDates.length === 0 ? <Empty /> : <AreaChartComponent data={chartDates} color="#2563eb" />}
               </Panel>
-              <Panel title="Enquiry Breakdown">
-                {Object.keys(data.enquiryByType).length === 0 ? <Empty /> : <PieChartComponent data={Object.entries(data.enquiryByType).map(([name, value]) => ({ name: name.replace(/-/g, ' '), value }))} />}
+              <Panel title="Sessions Trend" subtitle={getFilterLabel()}>
+                {(() => { const sd = (data as any).sessionsByDate; if (!sd || Object.keys(sd).length === 0) return <Empty />; const d = Object.entries(sd).sort().map(([date, val]) => ({ name: new Date(date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), value: val as number })); return <AreaChartComponent data={d} color="#0d9488" /> })()}
               </Panel>
             </div>
-            <div className="grid md:grid-cols-2 gap-6">
-              <Panel title="Top Pages">
-                {data.topPages.length === 0 ? <Empty /> : <BarChartComponent data={data.topPages.slice(0, 10).map(([name, value]) => ({ name: name.length > 30 ? name.slice(0, 30) + '...' : name, value }))} />}
+
+            {/* Conversion Funnel */}
+            {(data as any).conversionFunnel && (data as any).conversionFunnel.length > 0 && (
+              <Panel title="Conversion Funnel" subtitle="Visitor journey from landing to action">
+                <div className="flex items-end gap-2 justify-center py-4">
+                  {((data as any).conversionFunnel as { step: string; users: number }[]).map((step, i, arr) => {
+                    const maxUsers = arr[0]?.users || 1
+                    const pct = maxUsers > 0 ? (step.users / maxUsers) * 100 : 0
+                    const dropOff = i > 0 ? Math.round((1 - step.users / (arr[i - 1]?.users || 1)) * 100) : 0
+                    return (
+                      <div key={step.step} className="flex-1 text-center">
+                        <div className="relative mx-auto" style={{ width: `${Math.max(pct, 15)}%`, minWidth: 60 }}>
+                          <div className="bg-blue-500 rounded-t-lg mx-auto" style={{ height: Math.max(pct * 1.8, 30), background: `hsl(${220 - i * 30}, 70%, ${55 + i * 5}%)` }} />
+                        </div>
+                        <p className="text-sm font-semibold text-slate-800 mt-2">{step.users}</p>
+                        <p className="text-xs text-slate-500">{step.step}</p>
+                        {i > 0 && <p className="text-xs text-red-500 mt-0.5">-{dropOff}%</p>}
+                      </div>
+                    )
+                  })}
+                </div>
               </Panel>
-              <Panel title="Top Referrers">
-                {data.topReferrers.length === 0 ? <Empty /> : <BarChartComponent data={data.topReferrers.map(([name, value]) => ({ name, value }))} color="#0d9488" />}
+            )}
+
+            {/* Hourly traffic + top pages */}
+            <div className="grid md:grid-cols-2 gap-6">
+              <Panel title="Traffic by Hour (UTC)" subtitle="When visitors come">
+                {(() => { const ht = (data as any).hourlyTraffic; if (!ht || ht.length === 0) return <Empty />; return <BarChartComponent data={ht.map((h: any) => ({ name: `${h.hour}:00`, value: h.views }))} color="#8b5cf6" /> })()}
+              </Panel>
+              <Panel title="Top Pages" subtitle="Most visited">
+                {data.topPages.length === 0 ? <Empty /> : <BarChartComponent data={data.topPages.slice(0, 10).map(([name, value]) => ({ name: name.length > 25 ? name.slice(0, 25) + '...' : name, value }))} />}
+              </Panel>
+            </div>
+
+            {/* Page performance + landing pages */}
+            <div className="grid md:grid-cols-2 gap-6">
+              <Panel title="Page Performance" subtitle="Avg time on page (seconds)">
+                {(() => { const pp = (data as any).pagePerformance; if (!pp || pp.length === 0) return <Empty text="Not enough data" />; return <BarChartComponent data={pp.slice(0, 10).map((p: any) => ({ name: (p.page || '').length > 25 ? p.page.slice(0, 25) + '...' : p.page, value: Math.round(p.avgTime) }))} color="#0d9488" /> })()}
+              </Panel>
+              <Panel title="Top Landing Pages" subtitle="Where visitors enter">
+                {(() => { const lp = (data as any).topLandingPages; if (!lp || lp.length === 0) return <Empty />; return <BarChartComponent data={(lp as [string, number][]).slice(0, 8).map(([name, value]) => ({ name: name.length > 25 ? name.slice(0, 25) + '...' : name, value }))} color="#f59e0b" /> })()}
+              </Panel>
+            </div>
+
+            {/* Referrers + enquiry breakdown */}
+            <div className="grid md:grid-cols-2 gap-6">
+              <Panel title="Traffic Sources">
+                {data.topReferrers.length === 0 ? <Empty text="No referral traffic" /> : <PieChartComponent data={data.topReferrers.map(([name, value]) => ({ name, value }))} />}
+              </Panel>
+              <Panel title="Enquiry Breakdown">
+                {Object.keys(data.enquiryByType).length === 0 ? <Empty /> : <PieChartComponent data={Object.entries(data.enquiryByType).map(([name, value]) => ({ name: name.replace(/-/g, ' '), value }))} />}
               </Panel>
             </div>
           </div>
@@ -922,12 +971,24 @@ export default function AdminDashboard() {
                 <Panel title="Response Time Trend">{(() => { const d = extractTimeSeriesRows(insightsData.responseTimeTrend); return d.length ? <AreaChartComponent data={d.map(r => ({ ...r, value: Math.round(r.value) }))} color="#f59e0b" /> : <Empty /> })()}</Panel>
               </div>
               <div className="grid md:grid-cols-2 gap-6">
-                <Panel title="Top Pages (Server)">{(() => { const d = extractQueryRows(insightsData.topPages); return d.length ? <BarChartComponent data={d.map(r => ({ ...r, name: r.name.length > 25 ? r.name.slice(0, 25) + '...' : r.name }))} color="#0d9488" /> : <Empty /> })()}</Panel>
-                <Panel title="Browser Distribution">{(() => { const d = extractQueryRows(insightsData.browsers); return d.length ? <PieChartComponent data={d} /> : <Empty /> })()}</Panel>
+                <Panel title="Peak Traffic Hours">{(() => { const d = extractQueryRows(insightsData?.peakHours); return d.length ? <BarChartComponent data={d.map(r => ({ name: `${r.name}:00`, value: r.value }))} color="#8b5cf6" /> : <Empty /> })()}</Panel>
+                <Panel title="Custom Events">{(() => { const d = extractQueryRows(insightsData?.eventsSummary); return d.length ? <BarChartComponent data={d.slice(0, 10).map(r => ({ ...r, name: r.name.length > 20 ? r.name.slice(0, 20) + '...' : r.name }))} color="#0d9488" /> : <Empty text="No events tracked" /> })()}</Panel>
               </div>
               <div className="grid md:grid-cols-2 gap-6">
+                <Panel title="Device Types">{(() => { const d = extractQueryRows(insightsData?.deviceTypes); return d.length ? <PieChartComponent data={d} /> : <Empty /> })()}</Panel>
+                <Panel title="Operating Systems">{(() => { const d = extractQueryRows(insightsData?.operatingSystems); return d.length ? <PieChartComponent data={d} /> : <Empty /> })()}</Panel>
+              </div>
+              <div className="grid md:grid-cols-2 gap-6">
+                <Panel title="Browser Distribution">{(() => { const d = extractQueryRows(insightsData.browsers); return d.length ? <PieChartComponent data={d} /> : <Empty /> })()}</Panel>
                 <Panel title="Top Countries (Server)">{(() => { const d = extractQueryRows(insightsData.countries); return d.length ? <BarChartComponent data={d} color="#8b5cf6" /> : <Empty /> })()}</Panel>
+              </div>
+              <div className="grid md:grid-cols-2 gap-6">
+                <Panel title="Top Pages (Server)">{(() => { const d = extractQueryRows(insightsData.topPages); return d.length ? <BarChartComponent data={d.map(r => ({ ...r, name: r.name.length > 25 ? r.name.slice(0, 25) + '...' : r.name }))} color="#0d9488" /> : <Empty /> })()}</Panel>
+                <Panel title="Slowest Pages (ms)">{(() => { const d = extractQueryRows(insightsData?.slowestPages); return d.length ? <BarChartComponent data={d.map(r => ({ name: r.name.length > 25 ? r.name.slice(0, 25) + '...' : r.name, value: Math.round(r.value) }))} color="#f59e0b" /> : <Empty /> })()}</Panel>
+              </div>
+              <div className="grid md:grid-cols-2 gap-6">
                 <Panel title="Error Types">{(() => { const d = extractQueryRows(insightsData.errors); return d.length ? <BarChartComponent data={d.map(r => ({ ...r, name: r.name.length > 20 ? r.name.slice(0, 20) + '...' : r.name }))} color="#ef4444" /> : <Empty text="No errors" /> })()}</Panel>
+                <Panel title="Failed URLs">{(() => { const d = extractQueryRows(insightsData?.failedUrls); return d.length ? <BarChartComponent data={d.map(r => ({ ...r, name: r.name.length > 25 ? r.name.slice(0, 25) + '...' : r.name }))} color="#ef4444" /> : <Empty text="No failures" /> })()}</Panel>
               </div>
             </>)}
           </div>
