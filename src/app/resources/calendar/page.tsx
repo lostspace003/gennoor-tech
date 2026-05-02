@@ -7,7 +7,7 @@ import PhoneInput from '@/components/ui/PhoneInput'
 import {
   Calendar, Clock, User, Check, ChevronLeft, ChevronRight,
   Video, Loader2, AlertCircle, MapPin, ArrowLeft, ArrowRight,
-  Globe, Search, Sparkles, GraduationCap, Lightbulb,
+  Globe, Search, Sparkles, GraduationCap, Lightbulb, Mail,
 } from 'lucide-react'
 
 /* ───────── country → timezone ───────── */
@@ -144,7 +144,7 @@ export default function BookingCalendarPage() {
   const minDate = new Date(today); minDate.setDate(minDate.getDate() + MIN_BOOKING_GAP_DAYS)
   const maxDate = new Date(today); maxDate.setDate(maxDate.getDate() + 30)
 
-  // Steps: 1=timezone, 2=service, 3=date+time, 4=details
+  // Steps: 1=service, 2=email, 3=country, 4=date+time, 5=details
   const [step, setStep] = useState(1)
   const [fading, setFading] = useState(false)
 
@@ -170,12 +170,14 @@ export default function BookingCalendarPage() {
   const [slots, setSlots] = useState<LocalSlot[]>([])
   const [slotsLoading, setSlotsLoading] = useState(false)
 
-  // Form
-  const [name, setName] = useState('')
+  // Email (step 2)
   const [email, setEmail] = useState('')
+  const [emailVerified, setEmailVerified] = useState(false)
+
+  // Form (step 5)
+  const [name, setName] = useState('')
   const [whatsapp, setWhatsapp] = useState('')
   const [topic, setTopic] = useState('')
-  const [emailVerified, setEmailVerified] = useState(false)
 
   // Submission
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
@@ -354,10 +356,11 @@ export default function BookingCalendarPage() {
 
   /* ── step config ── */
   const STEPS = [
-    { n: 1, label: 'Timezone' },
-    { n: 2, label: 'Service' },
-    { n: 3, label: 'Date & Time' },
-    { n: 4, label: 'Details' },
+    { n: 1, label: 'Service' },
+    { n: 2, label: 'Email' },
+    { n: 3, label: 'Timezone' },
+    { n: 4, label: 'Date & Time' },
+    { n: 5, label: 'Confirm' },
   ]
 
   /* ── main render ── */
@@ -372,12 +375,12 @@ export default function BookingCalendarPage() {
         </div>
 
         {/* Progress bar */}
-        <div className="flex items-center justify-center gap-1 sm:gap-2 mb-8">
+        <div className="flex items-center justify-center gap-0.5 sm:gap-1.5 mb-8">
           {STEPS.map((s, i) => (
-            <div key={s.n} className="flex items-center gap-1 sm:gap-2">
+            <div key={s.n} className="flex items-center gap-0.5 sm:gap-1.5">
               <button
                 onClick={() => { if (s.n < step) goTo(s.n) }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors ${
+                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors ${
                   step === s.n ? 'bg-primary-600 text-white shadow-sm' :
                   step > s.n ? 'bg-green-100 text-green-700' :
                   'bg-gray-100 text-gray-400'
@@ -386,7 +389,7 @@ export default function BookingCalendarPage() {
                 {step > s.n ? <Check className="h-3 w-3" /> : <span>{s.n}</span>}
                 <span className="hidden sm:inline">{s.label}</span>
               </button>
-              {i < 3 && <div className={`w-4 sm:w-8 h-0.5 ${step > s.n ? 'bg-green-300' : 'bg-gray-200'}`} />}
+              {i < 4 && <div className={`w-3 sm:w-6 h-0.5 ${step > s.n ? 'bg-green-300' : 'bg-gray-200'}`} />}
             </div>
           ))}
         </div>
@@ -395,71 +398,16 @@ export default function BookingCalendarPage() {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
           <div className={`transition-opacity duration-200 ease-in-out ${fading ? 'opacity-0' : 'opacity-100'}`}>
 
-            {/* ═══ STEP 1 — Timezone ═══ */}
+            {/* ═══ STEP 1 — Service ═══ */}
             {step === 1 && (
               <div className="p-6 sm:p-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-                    <Globe className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-semibold text-gray-900">Where are you located?</h2>
-                    <p className="text-sm text-gray-500">We&apos;ll show available times in your timezone</p>
-                  </div>
-                </div>
-
-                <div className="relative mb-4">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <input
-                    type="text" placeholder="Search country..." value={countrySearch}
-                    onChange={e => setCountrySearch(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 max-h-[360px] overflow-y-auto pr-1">
-                  {filteredCountries.map(c => (
-                    <button key={c.code} onClick={() => setSelectedCountry(c.code)}
-                      className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-left transition-all border ${
-                        c.code === selectedCountry
-                          ? 'border-primary-500 bg-primary-50 text-primary-700 font-medium shadow-sm'
-                          : 'border-gray-100 hover:border-primary-200 hover:bg-gray-50 text-gray-700'
-                      }`}
-                    >
-                      <span className="text-lg leading-none">{c.flag}</span>
-                      <span className="truncate">{c.name}</span>
-                    </button>
-                  ))}
-                </div>
-
-                <div className="mt-6 flex justify-end">
-                  <button onClick={() => goTo(2)}
-                    className="px-8 py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors flex items-center gap-2 text-sm">
-                    Next <ArrowRight className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* ═══ STEP 2 — Service ═══ */}
-            {step === 2 && (
-              <div className="p-6 sm:p-8">
-                <div className="flex items-center justify-between mb-6">
-                  <button onClick={() => goTo(1)} className="flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 transition-colors">
-                    <ArrowLeft className="h-4 w-4" /> Back
-                  </button>
-                  <span className="flex items-center gap-1.5 text-sm text-gray-500">
-                    <MapPin className="h-3.5 w-3.5" /> {country.flag} {country.name}
-                  </span>
-                </div>
-
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center">
                     <Calendar className="h-5 w-5 text-primary-600" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold text-gray-900">What would you like to discuss?</h2>
-                    <p className="text-sm text-gray-500">All meetings are free &middot; Online via Microsoft Teams</p>
+                    <h2 className="text-lg font-semibold text-gray-900">What are you looking for?</h2>
+                    <p className="text-sm text-gray-500">All meetings are free &middot; 30 min &middot; Microsoft Teams</p>
                   </div>
                 </div>
 
@@ -512,7 +460,7 @@ export default function BookingCalendarPage() {
                 )}
 
                 <div className="mt-6 flex justify-end">
-                  <button onClick={() => { if (selectedService) goTo(3) }} disabled={!selectedService}
+                  <button onClick={() => { if (selectedService) goTo(2) }} disabled={!selectedService}
                     className="px-8 py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors flex items-center gap-2 text-sm disabled:opacity-50">
                     Next <ArrowRight className="h-4 w-4" />
                   </button>
@@ -520,12 +468,99 @@ export default function BookingCalendarPage() {
               </div>
             )}
 
-            {/* ═══ STEP 3 — Date & Time ═══ */}
+            {/* ═══ STEP 2 — Email Verification ═══ */}
+            {step === 2 && (
+              <div className="p-6 sm:p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <button onClick={() => goTo(1)} className="flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 transition-colors">
+                    <ArrowLeft className="h-4 w-4" /> Back
+                  </button>
+                  <span className="text-sm text-gray-400">{selectedService?.name}</span>
+                </div>
+
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+                    <Mail className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-900">Verify your email</h2>
+                    <p className="text-sm text-gray-500">We&apos;ll send the calendar invite and Teams link here</p>
+                  </div>
+                </div>
+
+                <div className="max-w-md">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="you@company.com"
+                    className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent mb-3" />
+                  <EmailOTP email={email} onVerified={() => setEmailVerified(true)} verified={emailVerified} />
+                </div>
+
+                <div className="mt-6 flex justify-end">
+                  <button onClick={() => { if (emailVerified) goTo(3) }} disabled={!emailVerified}
+                    className="px-8 py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors flex items-center gap-2 text-sm disabled:opacity-50">
+                    Next <ArrowRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* ═══ STEP 3 — Timezone ═══ */}
             {step === 3 && (
+              <div className="p-6 sm:p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <button onClick={() => goTo(2)} className="flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 transition-colors">
+                    <ArrowLeft className="h-4 w-4" /> Back
+                  </button>
+                  <span className="text-sm text-gray-400">{selectedService?.name} &middot; {email}</span>
+                </div>
+
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+                    <Globe className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-900">Where are you located?</h2>
+                    <p className="text-sm text-gray-500">We&apos;ll show available times in your timezone</p>
+                  </div>
+                </div>
+
+                <div className="relative mb-4">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <input type="text" placeholder="Search country..." value={countrySearch}
+                    onChange={e => setCountrySearch(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 max-h-[360px] overflow-y-auto pr-1">
+                  {filteredCountries.map(c => (
+                    <button key={c.code} onClick={() => setSelectedCountry(c.code)}
+                      className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-left transition-all border ${
+                        c.code === selectedCountry
+                          ? 'border-primary-500 bg-primary-50 text-primary-700 font-medium shadow-sm'
+                          : 'border-gray-100 hover:border-primary-200 hover:bg-gray-50 text-gray-700'
+                      }`}
+                    >
+                      <span className="text-lg leading-none">{c.flag}</span>
+                      <span className="truncate">{c.name}</span>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="mt-6 flex justify-end">
+                  <button onClick={() => goTo(4)}
+                    className="px-8 py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors flex items-center gap-2 text-sm">
+                    Next <ArrowRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* ═══ STEP 4 — Date & Time ═══ */}
+            {step === 4 && (
               <div>
                 <div className="px-6 sm:px-8 pt-6 sm:pt-8 pb-4 border-b border-gray-100">
                   <div className="flex items-center justify-between">
-                    <button onClick={() => goTo(2)} className="flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 transition-colors">
+                    <button onClick={() => goTo(3)} className="flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 transition-colors">
                       <ArrowLeft className="h-4 w-4" /> {selectedService?.name} ({parseDuration(selectedService?.duration || 'PT30M')} min)
                     </button>
                     <span className="flex items-center gap-1.5 text-sm text-gray-500">
@@ -627,7 +662,7 @@ export default function BookingCalendarPage() {
                             ))}
 
                             {selectedSlot && (
-                              <button onClick={() => goTo(4)}
+                              <button onClick={() => goTo(5)}
                                 className="w-full mt-2 py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors flex items-center justify-center gap-2">
                                 Next <ArrowRight className="h-4 w-4" />
                               </button>
@@ -674,10 +709,10 @@ export default function BookingCalendarPage() {
               </div>
             )}
 
-            {/* ═══ STEP 4 — Details ═══ */}
-            {step === 4 && (
+            {/* ═══ STEP 5 — Details & Confirm ═══ */}
+            {step === 5 && (
               <div className="p-6 sm:p-8">
-                <button onClick={() => goTo(3)} className="flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 transition-colors mb-6">
+                <button onClick={() => goTo(4)} className="flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 transition-colors mb-6">
                   <ArrowLeft className="h-4 w-4" /> Change date &amp; time
                 </button>
 
@@ -700,7 +735,7 @@ export default function BookingCalendarPage() {
                           {selectedSlot?.localTimeLabel} – {selectedSlot?.endTimeLabel}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-400 mt-1">{selectedSlot?.istTimeLabel} IST &middot; {country.flag} {country.name}</p>
+                      <p className="text-xs text-gray-400 mt-1">{selectedSlot?.istTimeLabel} IST &middot; {country.flag} {country.name} &middot; {email}</p>
                     </div>
                   </div>
                 </div>
@@ -711,13 +746,6 @@ export default function BookingCalendarPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
                     <input type="text" required value={name} onChange={e => setName(e.target.value)} placeholder="Your full name"
                       className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="you@company.com"
-                      className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
-                    <EmailOTP email={email} onVerified={() => setEmailVerified(true)} verified={emailVerified} />
                   </div>
 
                   <PhoneInput label="WhatsApp Number" id="cal-wa" value={whatsapp} onChange={setWhatsapp} required={true} />
@@ -735,13 +763,13 @@ export default function BookingCalendarPage() {
                     </div>
                   )}
 
-                  <button type="submit" disabled={!emailVerified || status === 'submitting'}
+                  <button type="submit" disabled={status === 'submitting'}
                     className="w-full py-3.5 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-base">
                     {status === 'submitting' ? <><Loader2 className="h-4 w-4 animate-spin" /> Booking...</> : <><Check className="h-4 w-4" /> Confirm Booking</>}
                   </button>
 
                   <p className="text-xs text-center text-gray-400">
-                    You&apos;ll receive a calendar invite and Teams meeting link via email
+                    You&apos;ll receive a calendar invite and Teams meeting link at {email}
                   </p>
                 </form>
               </div>
