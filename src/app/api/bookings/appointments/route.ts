@@ -70,6 +70,7 @@ export async function PATCH(request: NextRequest) {
         startDateTime: { dateTime: startDateTime, timeZone: 'UTC' },
         endDateTime: { dateTime: computedEnd, timeZone: 'UTC' },
         isLocationOnline: true,
+        staffMemberIds: service.staffMemberIds?.length ? service.staffMemberIds : undefined,
         customers: [{
           '@odata.type': '#microsoft.graph.bookingCustomerInformation',
           name: booking.name,

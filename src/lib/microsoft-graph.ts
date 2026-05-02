@@ -200,6 +200,7 @@ export interface CreateAppointmentPayload {
   startDateTime: { dateTime: string; timeZone: string }
   endDateTime: { dateTime: string; timeZone: string }
   isLocationOnline: boolean
+  staffMemberIds?: string[]
   customers: {
     '@odata.type': '#microsoft.graph.bookingCustomerInformation'
     name: string
