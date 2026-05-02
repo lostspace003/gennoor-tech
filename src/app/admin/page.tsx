@@ -130,6 +130,7 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<TabKey>('overview')
   const [autoRefresh, setAutoRefresh] = useState(false)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+  const [emailFilter, setEmailFilter] = useState('all')
 
   const [data, setData] = useState<AnalyticsData | null>(null)
   const [emailLogs, setEmailLogs] = useState<{ logs: Array<Record<string, any>>; totalSent: number; totalFailed: number; uniqueRecipients: number; total: number } | null>(null)
@@ -507,7 +508,26 @@ export default function AdminDashboard() {
         )}
 
         {/* ─── EMAILS ────────────────────────────────────── */}
-        {activeTab === 'emails' && (
+        {activeTab === 'emails' && (() => {
+          const allLogs = emailLogs?.logs || []
+          const sentLogs = allLogs.filter(l => l.status === 'sent')
+          const failedLogs = allLogs.filter(l => l.status === 'failed')
+          const bookingLogs = allLogs.filter(l => (l.from || '').includes('schedule') || (l.subject || '').match(/booking|confirmed|rescheduled|cancelled/i))
+          const contactLogs = allLogs.filter(l => (l.from || '').includes('contact') || (l.subject || '').match(/enquir|training|certification/i))
+          const otherLogs = allLogs.filter(l => !bookingLogs.includes(l) && !contactLogs.includes(l))
+
+          const emailInnerTabs = [
+            { key: 'all', label: 'All', count: allLogs.length },
+            { key: 'sent', label: 'Sent', count: sentLogs.length },
+            { key: 'failed', label: 'Failed', count: failedLogs.length },
+            { key: 'booking', label: 'Bookings', count: bookingLogs.length },
+            { key: 'contact', label: 'Contact', count: contactLogs.length },
+            { key: 'other', label: 'Other', count: otherLogs.length },
+          ]
+
+          const filteredLogs = emailFilter === 'sent' ? sentLogs : emailFilter === 'failed' ? failedLogs : emailFilter === 'booking' ? bookingLogs : emailFilter === 'contact' ? contactLogs : emailFilter === 'other' ? otherLogs : allLogs
+
+          return (
           <div className="space-y-6">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <StatCard icon={Send} label="Total Sent" value={emailLogs?.totalSent || 0} color="teal" />
@@ -515,22 +535,52 @@ export default function AdminDashboard() {
               <StatCard icon={Users} label="Unique Recipients" value={emailLogs?.uniqueRecipients || 0} color="blue" />
               <StatCard icon={Mail} label="Total Emails" value={emailLogs?.total || 0} color="amber" />
             </div>
-            <Panel title="Email Send Log" action={emailLogs && emailLogs.logs.length > 0 ? <ExportButton onClick={() => downloadCSV(emailLogs.logs as any, 'email-logs')} /> : undefined}>
-              {!emailLogs || emailLogs.logs.length === 0 ? <Empty text="No emails sent yet" /> : (
+
+            {/* Inner filter tabs */}
+            <div className="flex gap-1 bg-white rounded-lg p-1 border border-slate-200">
+              {emailInnerTabs.map(t => (
+                <button key={t.key} onClick={() => setEmailFilter(t.key)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${emailFilter === t.key ? t.key === 'failed' ? 'bg-red-600 text-white' : 'bg-slate-800 text-white' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}>
+                  {t.label}
+                  <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${emailFilter === t.key ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}`}>{t.count}</span>
+                </button>
+              ))}
+            </div>
+
+            <Panel title={`${emailInnerTabs.find(t => t.key === emailFilter)?.label || 'All'} Emails`} subtitle={`${filteredLogs.length} email${filteredLogs.length !== 1 ? 's' : ''}`} action={filteredLogs.length > 0 ? <ExportButton onClick={() => downloadCSV(filteredLogs as any, `emails-${emailFilter}`)} /> : undefined}>
+              {filteredLogs.length === 0 ? <Empty text="No emails in this category" /> : (
                 <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-500 border-b border-slate-200"><th className="text-left py-2 px-3 font-medium">Status</th><th className="text-left py-2 px-3 font-medium">To</th><th className="text-left py-2 px-3 font-medium">From</th><th className="text-left py-2 px-3 font-medium">Subject</th><th className="text-left py-2 px-3 font-medium">Date</th></tr></thead>
-                <tbody>{emailLogs.logs.map((log, i) => (
+                <tbody>{filteredLogs.map((log, i) => (
                   <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50">
                     <td className="py-2.5 px-3"><span className={`px-2 py-0.5 rounded text-xs font-medium ${log.status === 'sent' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{log.status}</span></td>
-                    <td className="py-2.5 px-3 text-slate-800">{log.to}</td>
-                    <td className="py-2.5 px-3 text-slate-500">{log.from}</td>
+                    <td className="py-2.5 px-3 text-slate-800 truncate max-w-[180px]">{log.to}</td>
+                    <td className="py-2.5 px-3 text-slate-500 truncate max-w-[160px]">{log.from}</td>
                     <td className="py-2.5 px-3 text-slate-600 max-w-[250px] truncate">{log.subject}</td>
                     <td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{new Date(log.createdAt).toLocaleString()}</td>
                   </tr>
                 ))}</tbody></table></div>
               )}
             </Panel>
+
+            {/* Failed emails detail (always visible if there are failures) */}
+            {emailFilter === 'all' && failedLogs.length > 0 && (
+              <Panel title="Failed Emails" subtitle={`${failedLogs.length} delivery failure${failedLogs.length !== 1 ? 's' : ''}`}>
+                <div className="space-y-2">
+                  {failedLogs.slice(0, 10).map((log, i) => (
+                    <div key={i} className="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-100">
+                      <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-red-800 truncate">{log.subject}</p>
+                        <p className="text-xs text-red-600">To: {log.to} &middot; {new Date(log.createdAt).toLocaleString()}</p>
+                        {log.error && <p className="text-xs text-red-500 mt-1">{log.error}</p>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Panel>
+            )}
           </div>
-        )}
+          )
+        })()}
 
         {/* ─── CAREER SESSIONS ───────────────────────────── */}
         {activeTab === 'sessions' && (
