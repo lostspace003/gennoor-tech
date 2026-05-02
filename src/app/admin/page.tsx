@@ -82,7 +82,8 @@ interface SessionRecord { rowKey: string; agentId: string; agentName: string; st
 interface ContainerStats { name: string; blobCount: number; totalSizeBytes: number; lastModified: string }
 interface BlobInfo { name: string; containerName: string; size: number; contentType: string; lastModified: string }
 interface StorageData { containers: ContainerStats[]; recentBlobs: BlobInfo[] }
-interface BookingAppointment { rowKey: string; name: string; email: string; whatsapp?: string; topic?: string; serviceName: string; serviceId: string; date: string; startTime: string; endTime: string; timezone: string; country?: string; status: string; createdAt: string; graphAppointmentId?: string; joinWebUrl?: string; adminMessage?: string; acceptedAt?: string; rejectedAt?: string; changeRequestedAt?: string }
+interface BookingAppointment { rowKey: string; name: string; email: string; whatsapp?: string; topic?: string; serviceName: string; serviceId: string; date: string; startTime: string; endTime: string; timezone: string; country?: string; status: string; createdAt: string; graphAppointmentId?: string; joinWebUrl?: string; adminMessage?: string; acceptedAt?: string; rejectedAt?: string; changeRequestedAt?: string; cancelledAt?: string; rescheduledAt?: string; outcomeNotes?: string }
+interface OutcomeNote { text: string; createdAt: string }
 
 // ─── Helpers ─────────────────────────────────────────────────
 
@@ -138,10 +139,13 @@ export default function AdminDashboard() {
   const [bookingsData, setBookingsData] = useState<BookingAppointment[]>([])
   const [bookingsLoading, setBookingsLoading] = useState(false)
   const [bookingsAction, setBookingsAction] = useState<string | null>(null)
-  const [bookingMessage, setBookingMessage] = useState<Record<string, string>>({})
-  const [expandedBooking, setExpandedBooking] = useState<string | null>(null)
-  const [rescheduleData, setRescheduleData] = useState<Record<string, { date: string; startTime: string; endTime: string }>>({})
-  const [expandedAction, setExpandedAction] = useState<Record<string, 'reject' | 'reschedule' | null>>({})
+  const [bookingModal, setBookingModal] = useState<{ type: 'outcome' | 'reply' | 'reschedule' | 'reject'; booking: BookingAppointment } | null>(null)
+  const [modalMessage, setModalMessage] = useState('')
+  const [modalSubject, setModalSubject] = useState('')
+  const [modalNotes, setModalNotes] = useState<OutcomeNote[]>([])
+  const [modalNewNote, setModalNewNote] = useState('')
+  const [modalResched, setModalResched] = useState({ date: '', startTime: '', endTime: '' })
+  const [modalSending, setModalSending] = useState(false)
 
   const fetchAll = useCallback(async (adminSecret: string, numDays: number) => {
     setLoading(true); setError('')
@@ -198,25 +202,74 @@ export default function AdminDashboard() {
   }
   function handleLogout() { setAuthenticated(false); setData(null); setSetupData(null); setSeoData(null); setSessions([]); setStorageData(null); setInsightsData(null); setEmailLogs(null); setBookingsData([]); setSecret(''); setStoredSecret('') }
 
-  async function handleBookingAction(rowKey: string, action: 'accept' | 'reject' | 'suggest-change' | 'cancel' | 'reschedule', message?: string) {
+  async function handleBookingAction(rowKey: string, action: string, extra?: Record<string, any>) {
     setBookingsAction(rowKey)
     try {
-      const payload: Record<string, any> = { rowKey, action, message }
-      if (action === 'reschedule' && rescheduleData[rowKey]) {
-        payload.newDate = rescheduleData[rowKey].date
-        payload.newStartTime = rescheduleData[rowKey].startTime
-        payload.newEndTime = rescheduleData[rowKey].endTime
-      }
       const res = await fetch('/api/bookings/appointments', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ rowKey, action, ...extra }),
       })
       if (res.ok) {
         const bRes = await fetch('/api/bookings/appointments')
         if (bRes.ok) { const bData = await bRes.json(); setBookingsData(bData.appointments || []) }
       }
-    } catch {} finally { setBookingsAction(null); setExpandedBooking(null); setBookingMessage({}); setRescheduleData({}); setExpandedAction({}) }
+    } catch {} finally { setBookingsAction(null); closeModal() }
+  }
+
+  function openModal(type: 'outcome' | 'reply' | 'reschedule' | 'reject', booking: BookingAppointment) {
+    setBookingModal({ type, booking })
+    setModalMessage('')
+    setModalNewNote('')
+    setModalSending(false)
+    if (type === 'outcome') {
+      try { setModalNotes(booking.outcomeNotes ? JSON.parse(booking.outcomeNotes) : []) } catch { setModalNotes([]) }
+    }
+    if (type === 'reply') {
+      setModalSubject(`Re: ${booking.serviceName} — ${booking.date}`)
+      setModalMessage('')
+    }
+    if (type === 'reschedule') {
+      setModalResched({ date: booking.date, startTime: booking.startTime, endTime: booking.endTime })
+      setModalMessage('')
+    }
+    if (type === 'reject') {
+      setModalMessage('')
+    }
+  }
+
+  function closeModal() {
+    setBookingModal(null); setModalMessage(''); setModalSubject(''); setModalNewNote(''); setModalSending(false)
+  }
+
+  async function saveOutcomeNote() {
+    if (!bookingModal || !modalNewNote.trim()) return
+    setModalSending(true)
+    const updated = [...modalNotes, { text: modalNewNote.trim(), createdAt: new Date().toISOString() }]
+    try {
+      const res = await fetch('/api/bookings/appointments', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rowKey: bookingModal.booking.rowKey, action: 'update-notes', notes: JSON.stringify(updated) }),
+      })
+      if (res.ok) {
+        setModalNotes(updated); setModalNewNote('')
+        const bRes = await fetch('/api/bookings/appointments')
+        if (bRes.ok) { const bData = await bRes.json(); setBookingsData(bData.appointments || []) }
+      }
+    } catch {} finally { setModalSending(false) }
+  }
+
+  async function sendReplyEmail() {
+    if (!bookingModal || !modalMessage.trim()) return
+    setModalSending(true)
+    try {
+      await fetch('/api/bookings/appointments', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rowKey: bookingModal.booking.rowKey, action: 'send-reply', subject: modalSubject, replyBody: modalMessage }),
+      })
+    } catch {} finally { setModalSending(false); closeModal() }
   }
 
   async function hideComment(slug: string, rowKey: string) {
@@ -491,8 +544,6 @@ export default function AdminDashboard() {
                     const bookingDate = apt.date ? new Date(apt.date + 'T00:00:00') : null
                     const isPast = bookingDate ? bookingDate < new Date() : false
                     const statusColor = apt.status === 'accepted' ? 'bg-emerald-100 text-emerald-700' : apt.status === 'rejected' ? 'bg-red-100 text-red-700' : apt.status === 'cancelled' ? 'bg-red-100 text-red-700' : apt.status === 'change-requested' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'
-                    const isExpanded = expandedBooking === apt.rowKey
-
                     return (
                       <div key={apt.rowKey} className={`border rounded-xl p-4 shadow-sm ${isPast && apt.status !== 'pending' ? 'bg-slate-50 border-slate-200 opacity-75' : apt.status === 'pending' ? 'bg-amber-50/30 border-amber-200' : 'bg-white border-slate-200'}`}>
                         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
@@ -558,73 +609,6 @@ export default function AdminDashboard() {
                               </div>
                             )}
 
-                            {/* Expanded panel for reject/suggest-change */}
-                            {isExpanded && expandedAction[apt.rowKey] === 'reject' && (
-                              <div className="mt-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
-                                <textarea
-                                  value={bookingMessage[apt.rowKey] || ''}
-                                  onChange={e => setBookingMessage(prev => ({ ...prev, [apt.rowKey]: e.target.value }))}
-                                  placeholder="Optional message to customer..."
-                                  className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                                  rows={2}
-                                />
-                                <div className="flex gap-2 mt-2">
-                                  {apt.status === 'pending' && (
-                                    <button onClick={() => handleBookingAction(apt.rowKey, 'reject', bookingMessage[apt.rowKey])} disabled={bookingsAction === apt.rowKey} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50">
-                                      {bookingsAction === apt.rowKey ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <XCircle className="w-3.5 h-3.5" />} Confirm Reject
-                                    </button>
-                                  )}
-                                  {apt.status === 'pending' && (
-                                    <button onClick={() => handleBookingAction(apt.rowKey, 'suggest-change', bookingMessage[apt.rowKey])} disabled={bookingsAction === apt.rowKey} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50">
-                                      {bookingsAction === apt.rowKey ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />} Suggest Change
-                                    </button>
-                                  )}
-                                  {apt.status === 'accepted' && (
-                                    <button onClick={() => handleBookingAction(apt.rowKey, 'cancel', bookingMessage[apt.rowKey])} disabled={bookingsAction === apt.rowKey} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50">
-                                      {bookingsAction === apt.rowKey ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <XCircle className="w-3.5 h-3.5" />} Confirm Cancel
-                                    </button>
-                                  )}
-                                  <button onClick={() => { setExpandedBooking(null); setExpandedAction({}) }} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg transition-colors">
-                                    Back
-                                  </button>
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Expanded panel for reschedule */}
-                            {isExpanded && expandedAction[apt.rowKey] === 'reschedule' && (
-                              <div className="mt-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
-                                <div className="grid grid-cols-3 gap-2 mb-2">
-                                  <div>
-                                    <label className="block text-xs text-slate-500 mb-1">New Date</label>
-                                    <input type="date" value={rescheduleData[apt.rowKey]?.date || ''} onChange={e => setRescheduleData(prev => ({ ...prev, [apt.rowKey]: { ...prev[apt.rowKey], date: e.target.value } }))} className="w-full px-2 py-1.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                                  </div>
-                                  <div>
-                                    <label className="block text-xs text-slate-500 mb-1">Start (UTC)</label>
-                                    <input type="time" value={rescheduleData[apt.rowKey]?.startTime || ''} onChange={e => setRescheduleData(prev => ({ ...prev, [apt.rowKey]: { ...prev[apt.rowKey], startTime: e.target.value } }))} className="w-full px-2 py-1.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                                  </div>
-                                  <div>
-                                    <label className="block text-xs text-slate-500 mb-1">End (UTC)</label>
-                                    <input type="time" value={rescheduleData[apt.rowKey]?.endTime || ''} onChange={e => setRescheduleData(prev => ({ ...prev, [apt.rowKey]: { ...prev[apt.rowKey], endTime: e.target.value } }))} className="w-full px-2 py-1.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                                  </div>
-                                </div>
-                                <textarea
-                                  value={bookingMessage[apt.rowKey] || ''}
-                                  onChange={e => setBookingMessage(prev => ({ ...prev, [apt.rowKey]: e.target.value }))}
-                                  placeholder="Optional note to customer..."
-                                  className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                                  rows={2}
-                                />
-                                <div className="flex gap-2 mt-2">
-                                  <button onClick={() => handleBookingAction(apt.rowKey, 'reschedule', bookingMessage[apt.rowKey])} disabled={bookingsAction === apt.rowKey || !rescheduleData[apt.rowKey]?.date || !rescheduleData[apt.rowKey]?.startTime} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors disabled:opacity-50">
-                                    {bookingsAction === apt.rowKey ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Calendar className="w-3.5 h-3.5" />} Confirm Reschedule
-                                  </button>
-                                  <button onClick={() => { setExpandedBooking(null); setExpandedAction({}) }} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg transition-colors">
-                                    Back
-                                  </button>
-                                </div>
-                              </div>
-                            )}
                           </div>
 
                           <div className="flex flex-wrap sm:flex-col gap-2 shrink-0">
@@ -633,34 +617,32 @@ export default function AdminDashboard() {
                                 <Video className="w-3.5 h-3.5" /> Join Teams
                               </a>
                             )}
-                            {/* Pending: Accept, Reject/Change, Reschedule */}
                             {apt.status === 'pending' && (
-                              <>
-                                <button onClick={() => handleBookingAction(apt.rowKey, 'accept')} disabled={bookingsAction === apt.rowKey} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg transition-colors disabled:opacity-50">
-                                  {bookingsAction === apt.rowKey ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle className="w-3.5 h-3.5" />} Accept
-                                </button>
-                                <button onClick={() => { setExpandedBooking(apt.rowKey); setExpandedAction({ [apt.rowKey]: 'reject' }) }} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors">
-                                  <XCircle className="w-3.5 h-3.5" /> Reject / Change
-                                </button>
-                                <button onClick={() => { setExpandedBooking(apt.rowKey); setExpandedAction({ [apt.rowKey]: 'reschedule' }); setRescheduleData(prev => ({ ...prev, [apt.rowKey]: { date: apt.date, startTime: apt.startTime, endTime: apt.endTime } })) }} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-lg transition-colors">
-                                  <Clock className="w-3.5 h-3.5" /> Reschedule
-                                </button>
-                              </>
+                              <button onClick={() => handleBookingAction(apt.rowKey, 'accept')} disabled={bookingsAction === apt.rowKey} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg transition-colors disabled:opacity-50">
+                                {bookingsAction === apt.rowKey ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle className="w-3.5 h-3.5" />} Accept
+                              </button>
                             )}
-                            {/* Accepted: Reschedule, Cancel */}
+                            {(apt.status === 'pending' || apt.status === 'accepted') && (
+                              <button onClick={() => openModal('reschedule', apt)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-lg transition-colors">
+                                <Clock className="w-3.5 h-3.5" /> Reschedule
+                              </button>
+                            )}
+                            {apt.status === 'pending' && (
+                              <button onClick={() => openModal('reject', apt)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors">
+                                <XCircle className="w-3.5 h-3.5" /> Reject / Change
+                              </button>
+                            )}
                             {apt.status === 'accepted' && (
-                              <>
-                                <button onClick={() => { setExpandedBooking(apt.rowKey); setExpandedAction({ [apt.rowKey]: 'reschedule' }); setRescheduleData(prev => ({ ...prev, [apt.rowKey]: { date: apt.date, startTime: apt.startTime, endTime: apt.endTime } })) }} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-lg transition-colors">
-                                  <Clock className="w-3.5 h-3.5" /> Reschedule
-                                </button>
-                                <button onClick={() => { setExpandedBooking(apt.rowKey); setExpandedAction({ [apt.rowKey]: 'reject' }) }} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors">
-                                  <XCircle className="w-3.5 h-3.5" /> Cancel
-                                </button>
-                              </>
+                              <button onClick={() => openModal('reject', apt)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors">
+                                <XCircle className="w-3.5 h-3.5" /> Cancel
+                              </button>
                             )}
-                            <a href={`mailto:${apt.email}?subject=Re: ${apt.serviceName} Booking&body=Hi ${apt.name},%0A%0A`} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors">
+                            <button onClick={() => openModal('outcome', apt)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg transition-colors">
+                              <FileText className="w-3.5 h-3.5" /> Outcome
+                            </button>
+                            <button onClick={() => openModal('reply', apt)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors">
                               <Mail className="w-3.5 h-3.5" /> Reply
-                            </a>
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -669,6 +651,151 @@ export default function AdminDashboard() {
                 </div>
               )}
             </Panel>
+          </div>
+        )}
+
+        {/* ─── BOOKING MODALS ─────────────────────────────── */}
+        {bookingModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50" onClick={closeModal}>
+            <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+              {/* Header */}
+              <div className="flex items-center justify-between p-5 border-b border-slate-200">
+                <h2 className="text-lg font-semibold text-slate-800">
+                  {bookingModal.type === 'outcome' && 'Meeting Outcome'}
+                  {bookingModal.type === 'reply' && 'Reply to Customer'}
+                  {bookingModal.type === 'reschedule' && 'Reschedule Booking'}
+                  {bookingModal.type === 'reject' && (bookingModal.booking.status === 'accepted' ? 'Cancel Booking' : 'Reject / Suggest Change')}
+                </h2>
+                <button onClick={closeModal} className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors"><X className="w-5 h-5 text-slate-500" /></button>
+              </div>
+
+              {/* Booking details (shown in all modals) */}
+              <div className="px-5 pt-4 pb-2">
+                <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 text-sm">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-semibold text-slate-800">{bookingModal.booking.serviceName}</span>
+                    <span className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${bookingModal.booking.status === 'accepted' ? 'bg-emerald-100 text-emerald-700' : bookingModal.booking.status === 'rejected' ? 'bg-red-100 text-red-700' : bookingModal.booking.status === 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>{bookingModal.booking.status}</span>
+                  </div>
+                  <p className="text-slate-600"><strong>{bookingModal.booking.name}</strong> &middot; {bookingModal.booking.email}</p>
+                  {bookingModal.booking.whatsapp && <p className="text-slate-500">WhatsApp: {bookingModal.booking.whatsapp}</p>}
+                  <p className="text-slate-500">{bookingModal.booking.date} &middot; {bookingModal.booking.startTime}{bookingModal.booking.endTime !== bookingModal.booking.startTime ? ` – ${bookingModal.booking.endTime}` : ''} UTC</p>
+                  {bookingModal.booking.topic && <p className="text-slate-500 mt-1">Topic: {bookingModal.booking.topic}</p>}
+                  {bookingModal.booking.country && <p className="text-slate-500">{bookingModal.booking.country}{bookingModal.booking.timezone !== 'UTC' ? ` (${bookingModal.booking.timezone})` : ''}</p>}
+                </div>
+              </div>
+
+              {/* ── OUTCOME MODAL ── */}
+              {bookingModal.type === 'outcome' && (
+                <div className="p-5 space-y-4">
+                  {modalNotes.length > 0 && (
+                    <div className="space-y-2">
+                      <h3 className="text-sm font-medium text-slate-700">Previous Notes</h3>
+                      {modalNotes.map((note, i) => (
+                        <div key={i} className="p-3 bg-purple-50 rounded-lg border border-purple-100">
+                          <p className="text-sm text-slate-700">{note.text}</p>
+                          <p className="text-xs text-slate-400 mt-1">{new Date(note.createdAt).toLocaleString()}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {modalNotes.length === 0 && <p className="text-sm text-slate-400">No outcome notes yet.</p>}
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Add Note</label>
+                    <textarea value={modalNewNote} onChange={e => setModalNewNote(e.target.value)} placeholder="Meeting outcome, follow-ups, action items..." className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none" rows={3} />
+                  </div>
+                  <button onClick={saveOutcomeNote} disabled={modalSending || !modalNewNote.trim()} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                    {modalSending ? <RefreshCw className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />} Save Note
+                  </button>
+                </div>
+              )}
+
+              {/* ── REPLY MODAL ── */}
+              {bookingModal.type === 'reply' && (
+                <div className="p-5 space-y-4">
+                  {bookingModal.booking.adminMessage && (
+                    <div>
+                      <h3 className="text-sm font-medium text-slate-700 mb-1">Previous Admin Message</h3>
+                      <div className="p-3 bg-blue-50 rounded-lg border border-blue-100 text-sm text-blue-800">{bookingModal.booking.adminMessage}</div>
+                    </div>
+                  )}
+                  {(() => { try { const notes: OutcomeNote[] = bookingModal.booking.outcomeNotes ? JSON.parse(bookingModal.booking.outcomeNotes) : []; return notes.length > 0 ? (
+                    <div>
+                      <h3 className="text-sm font-medium text-slate-700 mb-1">Outcome Notes</h3>
+                      {notes.map((n, i) => (
+                        <div key={i} className="p-2 bg-slate-50 rounded-lg border border-slate-100 text-sm text-slate-600 mb-1">
+                          {n.text} <span className="text-xs text-slate-400">— {new Date(n.createdAt).toLocaleDateString()}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null } catch { return null } })()}
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Subject</label>
+                    <input type="text" value={modalSubject} onChange={e => setModalSubject(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Message</label>
+                    <textarea value={modalMessage} onChange={e => setModalMessage(e.target.value)} placeholder="Type your reply..." className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" rows={4} />
+                  </div>
+                  <button onClick={sendReplyEmail} disabled={modalSending || !modalMessage.trim()} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                    {modalSending ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />} Send Email
+                  </button>
+                </div>
+              )}
+
+              {/* ── RESCHEDULE MODAL ── */}
+              {bookingModal.type === 'reschedule' && (
+                <div className="p-5 space-y-4">
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">New Date</label>
+                      <input type="date" value={modalResched.date} onChange={e => setModalResched(p => ({ ...p, date: e.target.value }))} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">Start (UTC)</label>
+                      <input type="time" value={modalResched.startTime} onChange={e => setModalResched(p => ({ ...p, startTime: e.target.value }))} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">End (UTC)</label>
+                      <input type="time" value={modalResched.endTime} onChange={e => setModalResched(p => ({ ...p, endTime: e.target.value }))} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Note to Customer (optional)</label>
+                    <textarea value={modalMessage} onChange={e => setModalMessage(e.target.value)} placeholder="Reason for rescheduling..." className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" rows={2} />
+                  </div>
+                  <button onClick={() => handleBookingAction(bookingModal.booking.rowKey, 'reschedule', { message: modalMessage, newDate: modalResched.date, newStartTime: modalResched.startTime, newEndTime: modalResched.endTime })} disabled={bookingsAction === bookingModal.booking.rowKey || !modalResched.date || !modalResched.startTime} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                    {bookingsAction === bookingModal.booking.rowKey ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Calendar className="w-4 h-4" />} Confirm Reschedule
+                  </button>
+                </div>
+              )}
+
+              {/* ── REJECT / CANCEL MODAL ── */}
+              {bookingModal.type === 'reject' && (
+                <div className="p-5 space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Message to Customer (optional)</label>
+                    <textarea value={modalMessage} onChange={e => setModalMessage(e.target.value)} placeholder="Reason for cancellation or suggestion..." className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 resize-none" rows={3} />
+                  </div>
+                  <div className="flex gap-2">
+                    {bookingModal.booking.status === 'pending' && (
+                      <>
+                        <button onClick={() => handleBookingAction(bookingModal.booking.rowKey, 'reject', { message: modalMessage })} disabled={bookingsAction === bookingModal.booking.rowKey} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                          {bookingsAction === bookingModal.booking.rowKey ? <RefreshCw className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />} Reject
+                        </button>
+                        <button onClick={() => handleBookingAction(bookingModal.booking.rowKey, 'suggest-change', { message: modalMessage })} disabled={bookingsAction === bookingModal.booking.rowKey} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                          {bookingsAction === bookingModal.booking.rowKey ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />} Suggest Change
+                        </button>
+                      </>
+                    )}
+                    {bookingModal.booking.status === 'accepted' && (
+                      <button onClick={() => handleBookingAction(bookingModal.booking.rowKey, 'cancel', { message: modalMessage })} disabled={bookingsAction === bookingModal.booking.rowKey} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                        {bookingsAction === bookingModal.booking.rowKey ? <RefreshCw className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />} Cancel Booking
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
 

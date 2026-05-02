@@ -27,7 +27,7 @@ export async function PATCH(request: NextRequest) {
   try {
     initAppInsights()
     const body = await request.json()
-    const { rowKey, action, message: adminMessage, newDate, newStartTime, newEndTime } = body
+    const { rowKey, action, message: adminMessage, newDate, newStartTime, newEndTime, notes, subject, replyBody } = body
 
     if (!rowKey || !action) {
       return NextResponse.json(
@@ -389,8 +389,49 @@ export async function PATCH(request: NextRequest) {
       })
     }
 
+    // ── UPDATE NOTES ──
+    if (action === 'update-notes') {
+      await updatePendingBooking(rowKey, { outcomeNotes: notes || '[]' })
+      return NextResponse.json({ success: true, message: 'Notes updated.' })
+    }
+
+    // ── SEND REPLY ──
+    if (action === 'send-reply') {
+      if (!replyBody) {
+        return NextResponse.json({ success: false, message: 'replyBody is required.' }, { status: 400 })
+      }
+
+      await sendEmail({
+        to: booking.email,
+        from: process.env.EMAIL_FROM_SCHEDULE || 'schedule@gennoor.com',
+        subject: subject || `Re: ${booking.serviceName}`,
+        html: `
+          <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto">
+            <div style="background:#1e3a5f;padding:24px 28px;border-radius:12px 12px 0 0">
+              <h1 style="color:#fff;margin:0;font-size:20px">Gennoor Tech</h1>
+            </div>
+            <div style="background:#fff;padding:28px;border:1px solid #e5e7eb;border-top:0;border-radius:0 0 12px 12px">
+              <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
+                Hi <strong>${booking.name}</strong>,
+              </p>
+              <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px;white-space:pre-wrap">
+                ${replyBody}
+              </p>
+              <p style="color:#6b7280;font-size:13px;line-height:1.5;margin:16px 0 0">
+                Best regards,<br />Jalal Khan<br />Gennoor Tech
+              </p>
+            </div>
+          </div>
+        `,
+      })
+
+      trackEvent('BookingReplyEmail', { name: booking.name, email: booking.email })
+
+      return NextResponse.json({ success: true, message: 'Reply sent.' })
+    }
+
     return NextResponse.json(
-      { success: false, message: 'Invalid action. Use "accept", "reject", "suggest-change", "cancel", or "reschedule".' },
+      { success: false, message: 'Invalid action.' },
       { status: 400 },
     )
   } catch (error) {
