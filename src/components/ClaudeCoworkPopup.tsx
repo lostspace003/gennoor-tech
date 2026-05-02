@@ -11,7 +11,7 @@ export default function ClaudeCoworkPopup() {
 
   useEffect(() => {
     if (pathname !== '/') return
-    if (localStorage.getItem('cowork-popup-dismissed')) return
+    if (sessionStorage.getItem('cowork-popup-dismissed')) return
 
     const timer = setTimeout(() => setVisible(true), 5000)
     return () => clearTimeout(timer)
@@ -19,7 +19,7 @@ export default function ClaudeCoworkPopup() {
 
   const dismiss = () => {
     setVisible(false)
-    localStorage.setItem('cowork-popup-dismissed', '1')
+    sessionStorage.setItem('cowork-popup-dismissed', '1')
   }
 
   if (!visible) return null
