@@ -228,12 +228,14 @@ export async function POST(request: NextRequest) {
           : 0,
       }))
 
-    // Conversion funnel
+    // Conversion funnel — use unique emails for enquiries to match IP-based visitor counts
+    const uniqueEnquiryEmails = new Set(enquiries.map((e: any) => e.email).filter(Boolean))
+    const enquiryCount = Math.min(uniqueEnquiryEmails.size, allVisitorIPs.size)
     const conversionFunnel = [
       { step: 'All Visitors', users: allVisitorIPs.size },
       { step: 'Viewed Services', users: servicesIPs.size },
       { step: 'Viewed Calendar', users: calendarIPs.size },
-      { step: 'Submitted Enquiry', users: enquiries.length },
+      { step: 'Submitted Enquiry', users: enquiryCount },
     ]
 
     // New vs returning visitors

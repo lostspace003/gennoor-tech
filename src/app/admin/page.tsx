@@ -457,19 +457,21 @@ export default function AdminDashboard() {
             {/* Conversion Funnel */}
             {(data as any).conversionFunnel && (data as any).conversionFunnel.length > 0 && (
               <Panel title="Conversion Funnel" subtitle="Visitor journey from landing to action">
-                <div className="flex items-end gap-2 justify-center py-4">
+                <div className="flex items-end gap-4 justify-center py-4 px-4">
                   {((data as any).conversionFunnel as { step: string; users: number }[]).map((step, i, arr) => {
-                    const maxUsers = arr[0]?.users || 1
-                    const pct = maxUsers > 0 ? (step.users / maxUsers) * 100 : 0
-                    const dropOff = i > 0 ? Math.round((1 - step.users / (arr[i - 1]?.users || 1)) * 100) : 0
+                    const maxUsers = Math.max(...arr.map(s => s.users), 1)
+                    const pct = Math.min((step.users / maxUsers) * 100, 100)
+                    const prevUsers = i > 0 ? arr[i - 1]?.users || 0 : 0
+                    const dropOff = i > 0 && prevUsers > 0 ? Math.round((1 - step.users / prevUsers) * 100) : 0
+                    const barHeight = Math.max(pct * 1.6, 24)
+                    const colors = ['#2563eb', '#0ea5e9', '#14b8a6', '#f59e0b']
                     return (
-                      <div key={step.step} className="flex-1 text-center">
-                        <div className="relative mx-auto" style={{ width: `${Math.max(pct, 15)}%`, minWidth: 60 }}>
-                          <div className="bg-blue-500 rounded-t-lg mx-auto" style={{ height: Math.max(pct * 1.8, 30), background: `hsl(${220 - i * 30}, 70%, ${55 + i * 5}%)` }} />
-                        </div>
-                        <p className="text-sm font-semibold text-slate-800 mt-2">{step.users}</p>
-                        <p className="text-xs text-slate-500">{step.step}</p>
-                        {i > 0 && <p className="text-xs text-red-500 mt-0.5">-{dropOff}%</p>}
+                      <div key={step.step} className="flex-1 text-center max-w-[160px]">
+                        <div className="mx-auto rounded-t-lg" style={{ height: barHeight, background: colors[i] || '#2563eb' }} />
+                        <p className="text-lg font-bold text-slate-800 mt-2">{step.users}</p>
+                        <p className="text-xs text-slate-500 font-medium">{step.step}</p>
+                        {i > 0 && dropOff > 0 && <p className="text-xs text-red-500 mt-0.5">-{dropOff}%</p>}
+                        {i > 0 && dropOff <= 0 && step.users > 0 && <p className="text-xs text-emerald-500 mt-0.5">retained</p>}
                       </div>
                     )
                   })}
