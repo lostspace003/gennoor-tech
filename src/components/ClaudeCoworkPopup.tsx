@@ -1,22 +1,25 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { X, ArrowRight, Sparkles } from 'lucide-react'
 
 export default function ClaudeCoworkPopup() {
   const [visible, setVisible] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
-    const dismissed = sessionStorage.getItem('cowork-popup-dismissed')
-    if (dismissed) return
+    if (pathname !== '/') return
+    if (localStorage.getItem('cowork-popup-dismissed')) return
 
-    setVisible(true)
-  }, [])
+    const timer = setTimeout(() => setVisible(true), 5000)
+    return () => clearTimeout(timer)
+  }, [pathname])
 
   const dismiss = () => {
     setVisible(false)
-    sessionStorage.setItem('cowork-popup-dismissed', '1')
+    localStorage.setItem('cowork-popup-dismissed', '1')
   }
 
   if (!visible) return null
