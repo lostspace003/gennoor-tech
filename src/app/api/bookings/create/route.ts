@@ -64,11 +64,11 @@ export async function POST(request: Request) {
       serviceName: service.displayName,
       startDateTime: {
         dateTime: startDateTime,
-        timeZone: timezone || 'UTC',
+        timeZone: 'UTC',
       },
       endDateTime: {
         dateTime: computedEnd,
-        timeZone: timezone || 'UTC',
+        timeZone: 'UTC',
       },
       isLocationOnline: true,
       customers: [
@@ -78,7 +78,7 @@ export async function POST(request: Request) {
           emailAddress: email,
           phone: whatsapp || '',
           notes: topic || '',
-          timeZone: timezone || 'UTC',
+          timeZone: 'UTC',
         },
       ],
       customerNotes: [
