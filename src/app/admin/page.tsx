@@ -150,6 +150,7 @@ export default function AdminDashboard() {
   const [modalResched, setModalResched] = useState({ date: '', startTime: '', endTime: '' })
   const [modalSending, setModalSending] = useState(false)
   const [bookingMonthFilter, setBookingMonthFilter] = useState('')
+  const [bookingStatsView, setBookingStatsView] = useState<'overall' | 'current'>('overall')
   const [selectedBookings, setSelectedBookings] = useState<Set<string>>(new Set())
   const [bookingDeleting, setBookingDeleting] = useState(false)
 
@@ -669,11 +670,25 @@ export default function AdminDashboard() {
           const isAllSelected = filteredBookings.length > 0 && filteredBookings.every(b => selectedBookings.has(b.rowKey))
           return (
           <div className="space-y-6">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <StatCard icon={Clock} label="Pending" value={filteredBookings.filter(b => b.status === 'pending').length} color="amber" />
-              <StatCard icon={CheckCircle} label="Accepted" value={filteredBookings.filter(b => b.status === 'accepted').length} color="teal" />
-              <StatCard icon={XCircle} label="Rejected" value={filteredBookings.filter(b => b.status === 'rejected').length} color="purple" />
-              <StatCard icon={AlertTriangle} label="Change Requested" value={filteredBookings.filter(b => b.status === 'change-requested').length} color="blue" />
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
+                  <button onClick={() => setBookingStatsView('overall')} className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${bookingStatsView === 'overall' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>Overall</button>
+                  <button onClick={() => setBookingStatsView('current')} className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${bookingStatsView === 'current' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>Current{bookingMonthFilter ? ` (${new Date(bookingMonthFilter + '-01').toLocaleDateString('en-US', { month: 'short' })})` : ''}</button>
+                </div>
+                <span className="text-xs text-slate-400">{bookingStatsView === 'overall' ? `${bookingsData.length} total` : `${filteredBookings.length} shown`}</span>
+              </div>
+              {(() => {
+                const statsSource = bookingStatsView === 'overall' ? bookingsData : filteredBookings
+                return (
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <StatCard icon={Clock} label="Pending" value={statsSource.filter(b => b.status === 'pending').length} color="amber" />
+                    <StatCard icon={CheckCircle} label="Accepted" value={statsSource.filter(b => b.status === 'accepted').length} color="teal" />
+                    <StatCard icon={XCircle} label="Rejected" value={statsSource.filter(b => b.status === 'rejected').length} color="purple" />
+                    <StatCard icon={AlertTriangle} label="Change Requested" value={statsSource.filter(b => b.status === 'change-requested').length} color="blue" />
+                  </div>
+                )
+              })()}
             </div>
             <Panel title="Booking Requests" subtitle={`Review and manage bookings${bookingMonthFilter ? ` — ${new Date(bookingMonthFilter + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` : ''}`} action={
               <div className="flex items-center gap-2 flex-wrap">
