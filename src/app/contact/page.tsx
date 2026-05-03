@@ -51,7 +51,7 @@ const faqs = [
   {
     question: 'How do I book a free consultation call?',
     answer:
-      'You can book a 30-minute discovery call directly through our Calendly link on this page, or send us an email at contact@gennoor.com. We typically respond within 24 hours.',
+      'You can book a 30-minute discovery call directly through our booking page, or send us an email at contact@gennoor.com. We typically respond within 24 hours.',
   },
 ];
 
@@ -169,11 +169,9 @@ export default function ContactPage() {
               <p className="text-sm text-gray-600">Connect with Jalal Ahmed Khan</p>
             </a>
 
-            {/* Calendly */}
-            <a
-              href="https://calendly.com/gennoortech"
-              target="_blank"
-              rel="noopener noreferrer"
+            {/* Book a Call */}
+            <Link
+              href="/resources/calendar"
               className="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100 text-center"
             >
               <div className="inline-flex items-center justify-center w-14 h-14 bg-accent-50 rounded-xl mb-4 group-hover:bg-primary-50 transition-colors">
@@ -181,7 +179,7 @@ export default function ContactPage() {
               </div>
               <h3 className="font-semibold text-gray-900 mb-1">Book a Call</h3>
               <p className="text-sm text-gray-600">Free 30-minute discovery session</p>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -315,15 +313,13 @@ export default function ContactPage() {
             Book a free 30-minute call and let&apos;s explore how AI can transform your
             organization.
           </p>
-          <a
-            href="https://calendly.com/gennoortech"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/resources/calendar"
             className="inline-flex items-center gap-2 bg-white text-primary-700 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-primary-50 transition-colors"
           >
             <Calendar className="w-5 h-5" />
             Book a Discovery Call
-          </a>
+          </Link>
         </div>
       </section>
     </>
