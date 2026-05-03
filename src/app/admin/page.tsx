@@ -151,6 +151,8 @@ export default function AdminDashboard() {
   const [modalSending, setModalSending] = useState(false)
   const [bookingMonthFilter, setBookingMonthFilter] = useState('')
   const [bookingStatsView, setBookingStatsView] = useState<'overall' | 'current'>('overall')
+  const [bookingPage, setBookingPage] = useState(1)
+  const [bookingsPerPage, setBookingsPerPage] = useState(15)
   const [selectedBookings, setSelectedBookings] = useState<Set<string>>(new Set())
   const [bookingDeleting, setBookingDeleting] = useState(false)
 
@@ -667,6 +669,9 @@ export default function AdminDashboard() {
             ? bookingsData.filter(b => b.date && b.date.slice(0, 7) === bookingMonthFilter)
             : bookingsData
           const allMonths = [...new Set(bookingsData.filter(b => b.date).map(b => b.date.slice(0, 7)))].sort().reverse()
+          const totalPages = Math.ceil(filteredBookings.length / bookingsPerPage)
+          const safePage = Math.min(bookingPage, totalPages || 1)
+          const pagedBookings = filteredBookings.slice((safePage - 1) * bookingsPerPage, safePage * bookingsPerPage)
           const isAllSelected = filteredBookings.length > 0 && filteredBookings.every(b => selectedBookings.has(b.rowKey))
           return (
           <div className="space-y-6">
@@ -692,7 +697,7 @@ export default function AdminDashboard() {
             </div>
             <Panel title="Booking Requests" subtitle={`Review and manage bookings${bookingMonthFilter ? ` — ${new Date(bookingMonthFilter + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` : ''}`} action={
               <div className="flex items-center gap-2 flex-wrap">
-                <select value={bookingMonthFilter} onChange={e => { setBookingMonthFilter(e.target.value); setSelectedBookings(new Set()) }} className="px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <select value={bookingMonthFilter} onChange={e => { setBookingMonthFilter(e.target.value); setBookingPage(1); setSelectedBookings(new Set()) }} className="px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
                   <option value="">All Months</option>
                   {allMonths.map(m => <option key={m} value={m}>{new Date(m + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</option>)}
                 </select>
@@ -728,13 +733,21 @@ export default function AdminDashboard() {
             }>
               {filteredBookings.length === 0 ? <Empty text={bookingMonthFilter ? 'No bookings for this month' : 'No bookings yet'} /> : (
                 <div className="space-y-3">
-                  <label className="flex items-center gap-2 px-1 py-1 text-xs text-slate-500 cursor-pointer select-none">
-                    <input type="checkbox" checked={isAllSelected} onChange={() => {
-                      if (isAllSelected) { setSelectedBookings(new Set()) } else { setSelectedBookings(new Set(filteredBookings.map(b => b.rowKey))) }
-                    }} className="w-3.5 h-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
-                    Select all ({filteredBookings.length})
-                  </label>
-                  {filteredBookings.map(apt => {
+                  <div className="flex items-center justify-between">
+                    <label className="flex items-center gap-2 px-1 py-1 text-xs text-slate-500 cursor-pointer select-none">
+                      <input type="checkbox" checked={isAllSelected} onChange={() => {
+                        if (isAllSelected) { setSelectedBookings(new Set()) } else { setSelectedBookings(new Set(filteredBookings.map(b => b.rowKey))) }
+                      }} className="w-3.5 h-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+                      Select all ({filteredBookings.length})
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-slate-400">Per page:</span>
+                      <select value={bookingsPerPage} onChange={e => { setBookingsPerPage(Number(e.target.value)); setBookingPage(1) }} className="px-2 py-1 text-xs border border-slate-200 rounded-lg bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        {[15, 30, 45, 60, 75, 90, 105].map(n => <option key={n} value={n}>{n}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  {pagedBookings.map(apt => {
                     const bookingDate = apt.date ? new Date(apt.date + 'T00:00:00') : null
                     const isPast = bookingDate ? bookingDate < new Date() : false
                     const statusColor = apt.status === 'accepted' ? 'bg-emerald-100 text-emerald-700' : apt.status === 'rejected' ? 'bg-red-100 text-red-700' : apt.status === 'cancelled' ? 'bg-red-100 text-red-700' : apt.status === 'change-requested' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'
@@ -850,6 +863,25 @@ export default function AdminDashboard() {
                       </div>
                     )
                   })}
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                      <span className="text-xs text-slate-400">
+                        {(safePage - 1) * bookingsPerPage + 1}–{Math.min(safePage * bookingsPerPage, filteredBookings.length)} of {filteredBookings.length}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => setBookingPage(p => Math.max(1, p - 1))} disabled={safePage === 1} className="px-2.5 py-1.5 text-xs font-medium rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">Prev</button>
+                        {(() => {
+                          const pages: number[] = []
+                          const start = Math.max(1, Math.min(safePage, totalPages - 4))
+                          for (let i = start; i <= Math.min(start + 4, totalPages); i++) pages.push(i)
+                          return pages.map(p => (
+                            <button key={p} onClick={() => setBookingPage(p)} className={`w-8 h-8 text-xs font-medium rounded-lg transition-colors ${p === safePage ? 'bg-blue-600 text-white' : 'border border-slate-200 hover:bg-slate-50 text-slate-600'}`}>{p}</button>
+                          ))
+                        })()}
+                        <button onClick={() => setBookingPage(p => Math.min(totalPages, p + 1))} disabled={safePage === totalPages} className="px-2.5 py-1.5 text-xs font-medium rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">Next</button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </Panel>
