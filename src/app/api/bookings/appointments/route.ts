@@ -6,7 +6,7 @@ import {
   getConfiguredBusinessId,
   type CreateAppointmentPayload,
 } from '@/lib/microsoft-graph'
-import { getPendingBookings, updatePendingBooking } from '@/lib/azure-storage'
+import { getPendingBookings, updatePendingBooking, deletePendingBooking } from '@/lib/azure-storage'
 import { sendEmail } from '@/lib/email-service'
 import { trackEvent, initAppInsights } from '@/lib/analytics'
 
@@ -84,7 +84,7 @@ export async function PATCH(request: NextRequest) {
           booking.topic ? `Topic: ${booking.topic}` : '',
           booking.whatsapp ? `WhatsApp: ${booking.whatsapp}` : '',
         ].filter(Boolean).join(' | '),
-        optOutOfCustomerEmail: false,
+        optOutOfCustomerEmail: true,
       }
 
       const result = await createBookingAppointment(businessId, appointment)
@@ -327,7 +327,7 @@ export async function PATCH(request: NextRequest) {
           booking.topic ? `Topic: ${booking.topic}` : '',
           booking.whatsapp ? `WhatsApp: ${booking.whatsapp}` : '',
         ].filter(Boolean).join(' | '),
-        optOutOfCustomerEmail: false,
+        optOutOfCustomerEmail: true,
       }
 
       const result = await createBookingAppointment(businessId, appointment)
@@ -438,6 +438,31 @@ export async function PATCH(request: NextRequest) {
     console.error('Error updating booking:', error)
     return NextResponse.json(
       { success: false, message: 'Failed to update booking' },
+      { status: 500 },
+    )
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { rowKeys } = await request.json()
+    if (!Array.isArray(rowKeys) || rowKeys.length === 0) {
+      return NextResponse.json(
+        { success: false, message: 'rowKeys array is required' },
+        { status: 400 },
+      )
+    }
+
+    const results = await Promise.allSettled(
+      rowKeys.map(key => deletePendingBooking(key))
+    )
+
+    const deleted = results.filter(r => r.status === 'fulfilled').length
+    return NextResponse.json({ success: true, message: `${deleted} booking(s) deleted.`, deleted })
+  } catch (error) {
+    console.error('Error deleting bookings:', error)
+    return NextResponse.json(
+      { success: false, message: 'Failed to delete bookings' },
       { status: 500 },
     )
   }

@@ -274,6 +274,13 @@ export async function updatePendingBooking(rowKey: string, updates: Record<strin
   )
 }
 
+export async function deletePendingBooking(rowKey: string) {
+  const tableName = 'PendingBookings'
+  await ensureTable(tableName)
+  const client = getTableClient(tableName)
+  await client.deleteEntity('booking', rowKey)
+}
+
 // ─── Career Sessions ─────────────────────────────────────────
 
 export async function saveCareerSession(data: {

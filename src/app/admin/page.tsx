@@ -9,7 +9,7 @@ import {
   Shield, Activity, Database, Server, Code2, Link2,
   AlertTriangle, Newspaper, Download, HardDrive, Bot,
   Clock, Zap, BookOpen, TrendingUp, Send, Calendar,
-  Video, CheckCircle, Phone, X,
+  Video, CheckCircle, Phone, X, Trash2,
 } from 'lucide-react'
 
 // ─── Chart Components (Recharts, lazy loaded) ────────────────
@@ -149,6 +149,9 @@ export default function AdminDashboard() {
   const [modalNewNote, setModalNewNote] = useState('')
   const [modalResched, setModalResched] = useState({ date: '', startTime: '', endTime: '' })
   const [modalSending, setModalSending] = useState(false)
+  const [bookingMonthFilter, setBookingMonthFilter] = useState('')
+  const [selectedBookings, setSelectedBookings] = useState<Set<string>>(new Set())
+  const [bookingDeleting, setBookingDeleting] = useState(false)
 
   const fetchAll = useCallback(async (adminSecret: string, numDays: number) => {
     setLoading(true); setError('')
@@ -658,36 +661,87 @@ export default function AdminDashboard() {
         )}
 
         {/* ─── BOOKINGS ──────────────────────────────────── */}
-        {activeTab === 'bookings' && (
+        {activeTab === 'bookings' && (() => {
+          const filteredBookings = bookingMonthFilter
+            ? bookingsData.filter(b => b.date && b.date.slice(0, 7) === bookingMonthFilter)
+            : bookingsData
+          const allMonths = [...new Set(bookingsData.filter(b => b.date).map(b => b.date.slice(0, 7)))].sort().reverse()
+          const isAllSelected = filteredBookings.length > 0 && filteredBookings.every(b => selectedBookings.has(b.rowKey))
+          return (
           <div className="space-y-6">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <StatCard icon={Clock} label="Pending" value={bookingsData.filter(b => b.status === 'pending').length} color="amber" />
-              <StatCard icon={CheckCircle} label="Accepted" value={bookingsData.filter(b => b.status === 'accepted').length} color="teal" />
-              <StatCard icon={XCircle} label="Rejected" value={bookingsData.filter(b => b.status === 'rejected').length} color="purple" />
-              <StatCard icon={AlertTriangle} label="Change Requested" value={bookingsData.filter(b => b.status === 'change-requested').length} color="blue" />
+              <StatCard icon={Clock} label="Pending" value={filteredBookings.filter(b => b.status === 'pending').length} color="amber" />
+              <StatCard icon={CheckCircle} label="Accepted" value={filteredBookings.filter(b => b.status === 'accepted').length} color="teal" />
+              <StatCard icon={XCircle} label="Rejected" value={filteredBookings.filter(b => b.status === 'rejected').length} color="purple" />
+              <StatCard icon={AlertTriangle} label="Change Requested" value={filteredBookings.filter(b => b.status === 'change-requested').length} color="blue" />
             </div>
-            <Panel title="Booking Requests" subtitle="Review and manage pending bookings" action={
-              <button onClick={async () => { setBookingsLoading(true); try { const r = await fetch('/api/bookings/appointments'); if (r.ok) { const d = await r.json(); setBookingsData(d.appointments || []) } } catch {} finally { setBookingsLoading(false) } }} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 border border-slate-200 rounded-lg transition-colors">
-                <RefreshCw className={`w-3.5 h-3.5 ${bookingsLoading ? 'animate-spin' : ''}`} /> Refresh
-              </button>
+            <Panel title="Booking Requests" subtitle={`Review and manage bookings${bookingMonthFilter ? ` — ${new Date(bookingMonthFilter + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` : ''}`} action={
+              <div className="flex items-center gap-2 flex-wrap">
+                <select value={bookingMonthFilter} onChange={e => { setBookingMonthFilter(e.target.value); setSelectedBookings(new Set()) }} className="px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option value="">All Months</option>
+                  {allMonths.map(m => <option key={m} value={m}>{new Date(m + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</option>)}
+                </select>
+                {selectedBookings.size > 0 && (
+                  <>
+                    <button onClick={() => {
+                      const selected = filteredBookings.filter(b => selectedBookings.has(b.rowKey))
+                      const csvData = selected.map(b => {
+                        let outcome = ''
+                        try { const notes: OutcomeNote[] = b.outcomeNotes ? JSON.parse(b.outcomeNotes) : []; outcome = notes.map(n => n.text).join('; ') } catch {}
+                        return { Name: b.name, Email: b.email, Date: b.date, Time: `${b.startTime}${b.endTime && b.endTime !== b.startTime ? ' - ' + b.endTime : ''} UTC`, Service: b.serviceName, Status: b.status, Outcome: outcome }
+                      })
+                      downloadCSV(csvData, `bookings-report-${new Date().toISOString().slice(0, 10)}`)
+                    }} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-lg transition-colors">
+                      <Download className="w-3.5 h-3.5" /> Download Report ({selectedBookings.size})
+                    </button>
+                    <button onClick={async () => {
+                      if (!confirm(`Delete ${selectedBookings.size} booking(s)? This cannot be undone.`)) return
+                      setBookingDeleting(true)
+                      try {
+                        const res = await fetch('/api/bookings/appointments', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ rowKeys: [...selectedBookings] }) })
+                        if (res.ok) { const r = await fetch('/api/bookings/appointments'); if (r.ok) { const d = await r.json(); setBookingsData(d.appointments || []) }; setSelectedBookings(new Set()) }
+                      } catch {} finally { setBookingDeleting(false) }
+                    }} disabled={bookingDeleting} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-lg transition-colors disabled:opacity-50">
+                      <Trash2 className={`w-3.5 h-3.5 ${bookingDeleting ? 'animate-spin' : ''}`} /> Delete ({selectedBookings.size})
+                    </button>
+                  </>
+                )}
+                <button onClick={async () => { setBookingsLoading(true); try { const r = await fetch('/api/bookings/appointments'); if (r.ok) { const d = await r.json(); setBookingsData(d.appointments || []) } } catch {} finally { setBookingsLoading(false) } }} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 border border-slate-200 rounded-lg transition-colors">
+                  <RefreshCw className={`w-3.5 h-3.5 ${bookingsLoading ? 'animate-spin' : ''}`} /> Refresh
+                </button>
+              </div>
             }>
-              {bookingsData.length === 0 ? <Empty text="No bookings yet" /> : (
+              {filteredBookings.length === 0 ? <Empty text={bookingMonthFilter ? 'No bookings for this month' : 'No bookings yet'} /> : (
                 <div className="space-y-3">
-                  {bookingsData.map(apt => {
+                  <label className="flex items-center gap-2 px-1 py-1 text-xs text-slate-500 cursor-pointer select-none">
+                    <input type="checkbox" checked={isAllSelected} onChange={() => {
+                      if (isAllSelected) { setSelectedBookings(new Set()) } else { setSelectedBookings(new Set(filteredBookings.map(b => b.rowKey))) }
+                    }} className="w-3.5 h-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+                    Select all ({filteredBookings.length})
+                  </label>
+                  {filteredBookings.map(apt => {
                     const bookingDate = apt.date ? new Date(apt.date + 'T00:00:00') : null
                     const isPast = bookingDate ? bookingDate < new Date() : false
                     const statusColor = apt.status === 'accepted' ? 'bg-emerald-100 text-emerald-700' : apt.status === 'rejected' ? 'bg-red-100 text-red-700' : apt.status === 'cancelled' ? 'bg-red-100 text-red-700' : apt.status === 'change-requested' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'
+                    const isSelected = selectedBookings.has(apt.rowKey)
                     return (
-                      <div key={apt.rowKey} className={`border rounded-xl p-4 shadow-sm ${isPast && apt.status !== 'pending' ? 'bg-slate-50 border-slate-200 opacity-75' : apt.status === 'pending' ? 'bg-amber-50/30 border-amber-200' : 'bg-white border-slate-200'}`}>
+                      <div key={apt.rowKey} className={`border rounded-xl p-4 shadow-sm ${isSelected ? 'ring-2 ring-blue-400 border-blue-300' : ''} ${isPast && apt.status !== 'pending' ? 'bg-slate-50 border-slate-200 opacity-75' : apt.status === 'pending' ? 'bg-amber-50/30 border-amber-200' : 'bg-white border-slate-200'}`}>
                         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-                          <div className="flex-shrink-0 w-16 text-center">
-                            {bookingDate && (
-                              <>
-                                <div className="text-xs text-slate-500 uppercase">{bookingDate.toLocaleDateString('en-US', { month: 'short' })}</div>
-                                <div className="text-2xl font-bold text-slate-800">{bookingDate.getDate()}</div>
-                                <div className="text-xs text-slate-500">{bookingDate.toLocaleDateString('en-US', { weekday: 'short' })}</div>
-                              </>
-                            )}
+                          <div className="flex flex-col items-center gap-2 shrink-0">
+                            <input type="checkbox" checked={isSelected} onChange={() => {
+                              const next = new Set(selectedBookings)
+                              if (isSelected) next.delete(apt.rowKey); else next.add(apt.rowKey)
+                              setSelectedBookings(next)
+                            }} className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+                            <div className="w-16 text-center">
+                              {bookingDate && (
+                                <>
+                                  <div className="text-xs text-slate-500 uppercase">{bookingDate.toLocaleDateString('en-US', { month: 'short' })}</div>
+                                  <div className="text-2xl font-bold text-slate-800">{bookingDate.getDate()}</div>
+                                  <div className="text-xs text-slate-500">{bookingDate.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+                                </>
+                              )}
+                            </div>
                           </div>
 
                           <div className="flex-1 min-w-0">
@@ -785,7 +839,7 @@ export default function AdminDashboard() {
               )}
             </Panel>
           </div>
-        )}
+        ) })()}
 
         {/* ─── BOOKING MODALS ─────────────────────────────── */}
         {bookingModal && (
