@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { ChevronRight, ChevronLeft, Zap, BookOpen, Rocket, ArrowRight, CheckCircle2 } from 'lucide-react'
+import { ChevronLeft, Zap, ArrowRight, CheckCircle2, Lightbulb, TrendingUp, Users, Target, Rocket } from 'lucide-react'
 
 const QUESTIONS = [
   {
@@ -58,7 +58,7 @@ const QUESTIONS = [
     id: 'priority',
     question: 'What matters most to you right now?',
     options: [
-      'Train my team on AI & Microsoft tools',
+      'Train my team on AI tools',
       'Build an AI solution for my business',
       'Create an AI strategy with clear ROI',
       'Automate repetitive work',
@@ -71,106 +71,144 @@ const QUESTIONS = [
   },
 ]
 
-const INDUSTRY_INSIGHTS: Record<string, string> = {
-  'IT & Software': 'In IT, AI can accelerate development cycles, automate testing, and enable smarter DevOps — teams that adopt AI tools early ship 40% faster.',
-  'Finance & Banking': 'In finance, AI is transforming fraud detection, risk assessment, and customer service — early adopters are seeing 30-50% efficiency gains in operations.',
-  'Healthcare': 'In healthcare, AI is revolutionizing patient scheduling, diagnostics support, and administrative workflows — reducing manual work by up to 40%.',
-  'Manufacturing': 'In manufacturing, AI-driven predictive maintenance and quality control are cutting downtime by 25-30% and reducing defect rates significantly.',
-  'Retail & E-commerce': 'In retail, AI powers personalized recommendations, inventory optimization, and customer insights — leading to 15-25% revenue uplift.',
-  'Education': 'In education, AI is enabling personalized learning paths, automated assessments, and administrative efficiency — freeing up educators to focus on teaching.',
-  'Real Estate': 'In real estate, AI is transforming property valuation, lead scoring, and market analysis — helping teams close deals 30% faster.',
-  'Other': 'Across industries, companies that strategically adopt AI are seeing 20-40% productivity gains and stronger competitive positioning.',
-}
-
-type Profile = 'explorer' | 'builder' | 'scaler'
-
-interface ProfileData {
-  title: string
-  tagline: string
+interface PillarScore {
+  name: string
+  score: number
   icon: typeof Zap
   color: string
-  bgColor: string
-  borderColor: string
-  recommendations: { title: string; description: string; href: string }[]
-  roi: string
+  barColor: string
 }
 
-const PROFILES: Record<Profile, ProfileData> = {
-  explorer: {
-    title: 'Explorer',
-    tagline: 'Your team has a big opportunity ahead.',
-    icon: BookOpen,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-50',
-    borderColor: 'border-blue-200',
-    recommendations: [
-      { title: 'AI Fundamentals Training', description: 'Get your team confident with AI tools like Copilot and Azure AI.', href: '/services/training' },
-      { title: 'AI Strategy Session', description: 'A 1-on-1 session to identify quick wins for your business.', href: '/services/ai-strategy' },
-      { title: 'Microsoft 365 Copilot Workshop', description: 'Hands-on training to boost daily productivity with AI.', href: '/services/training/ms-4004' },
-    ],
-    roi: 'Companies your size typically see 20-30% time savings within 3 months of starting AI training.',
-  },
-  builder: {
-    title: 'Builder',
-    tagline: "You're ready to see real results from AI.",
-    icon: Rocket,
-    color: 'text-teal-600',
-    bgColor: 'bg-teal-50',
-    borderColor: 'border-teal-200',
-    recommendations: [
-      { title: 'AI Strategy with ROI Roadmap', description: 'A clear plan showing exactly where AI will save money and time.', href: '/services/ai-strategy' },
-      { title: 'POC Development', description: "Build a working AI proof-of-concept for your specific business need.", href: '/services/poc-development' },
-      { title: 'Team Upskilling Program', description: 'Close the skills gap with hands-on Microsoft AI certification training.', href: '/services/training' },
-    ],
-    roi: 'Businesses at your stage typically achieve 3-5x ROI within 6 months of implementing their first AI solution.',
-  },
-  scaler: {
-    title: 'Scaler',
-    tagline: 'Time to go bigger with AI.',
-    icon: Zap,
-    color: 'text-purple-600',
-    bgColor: 'bg-purple-50',
-    borderColor: 'border-purple-200',
-    recommendations: [
-      { title: 'Agentic AI Solutions', description: 'Build intelligent agents that handle complex workflows autonomously.', href: '/services/agentic-ai' },
-      { title: 'Advanced AI Integration', description: 'Embed AI deeply into your operations for maximum impact.', href: '/services/poc-development' },
-      { title: 'AI Leadership Training', description: 'Equip your leaders to drive AI strategy and measure ROI effectively.', href: '/services/training' },
-    ],
-    roi: 'Companies scaling AI see 40-60% operational efficiency gains and significantly stronger market positioning.',
-  },
+interface QuickWin {
+  title: string
+  description: string
+  timeframe: string
 }
 
-function getProfile(answers: Record<string, string>): Profile {
-  let score = 0
-
-  const usageScores: Record<string, number> = {
-    "We don't use AI yet": 0,
-    'Some people use ChatGPT / Copilot on their own': 1,
-    "We've tried a few AI tools for business": 2,
-    'AI is part of our daily work': 3,
+function calculatePillars(answers: Record<string, string>): PillarScore[] {
+  const usageScore: Record<string, number> = {
+    "We don't use AI yet": 15,
+    'Some people use ChatGPT / Copilot on their own': 40,
+    "We've tried a few AI tools for business": 65,
+    'AI is part of our daily work': 90,
   }
 
-  const trainingScores: Record<string, number> = {
-    'No training at all': 0,
-    'A few have self-learned': 1,
-    "We've done some informal training": 2,
-    'We have a proper AI training program': 3,
+  const trainingScore: Record<string, number> = {
+    'No training at all': 15,
+    'A few have self-learned': 35,
+    "We've done some informal training": 60,
+    'We have a proper AI training program': 90,
   }
 
-  const timelineScores: Record<string, number> = {
-    'Just exploring': 0,
-    'Within 3 months': 1,
-    'Within 1 month': 2,
-    'Immediately': 3,
+  const challengeVisionScore: Record<string, number> = {
+    "Don't know where to start": 20,
+    "Team doesn't have the skills": 50,
+    "Can't see clear ROI": 60,
+    'Need help picking the right solution': 75,
   }
 
-  score += usageScores[answers.usage] ?? 0
-  score += trainingScores[answers.training] ?? 0
-  score += timelineScores[answers.timeline] ?? 0
+  const timelineScore: Record<string, number> = {
+    'Just exploring': 25,
+    'Within 3 months': 50,
+    'Within 1 month': 75,
+    'Immediately': 95,
+  }
 
-  if (score <= 3) return 'explorer'
-  if (score <= 6) return 'builder'
-  return 'scaler'
+  const priorityVisionBonus: Record<string, number> = {
+    'Train my team on AI tools': 10,
+    'Build an AI solution for my business': 15,
+    'Create an AI strategy with clear ROI': 20,
+    'Automate repetitive work': 12,
+  }
+
+  const vision = Math.min(100, (challengeVisionScore[answers.challenge] ?? 40) + (priorityVisionBonus[answers.priority] ?? 0))
+  const skills = trainingScore[answers.training] ?? 30
+  const adoption = usageScore[answers.usage] ?? 20
+  const action = timelineScore[answers.timeline] ?? 30
+
+  return [
+    { name: 'Vision & Strategy', score: vision, icon: Target, color: 'text-blue-600', barColor: 'bg-blue-500' },
+    { name: 'Team Skills', score: skills, icon: Users, color: 'text-teal-600', barColor: 'bg-teal-500' },
+    { name: 'AI Adoption', score: adoption, icon: TrendingUp, color: 'text-purple-600', barColor: 'bg-purple-500' },
+    { name: 'Readiness to Act', score: action, icon: Rocket, color: 'text-orange-600', barColor: 'bg-orange-500' },
+  ]
+}
+
+function getOverallScore(pillars: PillarScore[]): number {
+  return Math.round(pillars.reduce((sum, p) => sum + p.score, 0) / pillars.length)
+}
+
+function getStrengthStatement(pillars: PillarScore[], answers: Record<string, string>): string {
+  const strongest = [...pillars].sort((a, b) => b.score - a.score)[0]
+  const size = answers.size || '1–10'
+
+  const statements: Record<string, string> = {
+    'Vision & Strategy': `You already have clarity on what you want from AI — that's ahead of most ${size}-person companies we've seen. Many businesses stall because they never define what AI should actually do for them. You've passed that barrier.`,
+    'Team Skills': `Your team already has AI awareness — that's a real advantage. Most companies your size are starting from zero. Having people who've touched AI tools means you can move faster when you're ready to scale.`,
+    'AI Adoption': `You're already using AI in some form — that puts you ahead. The gap between "thinking about AI" and "actually using it" is where most businesses get stuck. You've crossed it.`,
+    'Readiness to Act': `Your urgency is a strength. Companies that move with intent — not panic — get 2-3x better outcomes from AI investments than those who wait and react to competitors.`,
+  }
+
+  return statements[strongest.name] || statements['Vision & Strategy']
+}
+
+function getQuickWin(pillars: PillarScore[], answers: Record<string, string>): QuickWin {
+  const weakest = [...pillars].sort((a, b) => a.score - b.score)[0]
+
+  const wins: Record<string, QuickWin> = {
+    'Vision & Strategy': {
+      title: 'Map your top 3 time drains',
+      description: 'Ask each team member: "What task do you repeat most that doesn\'t need your judgment?" List the top 3. These are your AI starting points — not big projects, just the obvious friction.',
+      timeframe: 'This week, 30 minutes',
+    },
+    'Team Skills': {
+      title: 'Run a 1-hour AI exploration session',
+      description: 'Pick one free AI tool (any chatbot or writing assistant). Spend 1 hour as a team trying it on a real work task. No training needed — just hands-on experimentation. Teams that try before they train adopt 3x faster.',
+      timeframe: 'This week, 1 hour',
+    },
+    'AI Adoption': {
+      title: 'Automate one small workflow',
+      description: 'Pick your simplest repetitive task — email sorting, meeting summaries, data entry. Set up one AI automation for just that task. Start with one person, one workflow. Prove it works before expanding.',
+      timeframe: 'Next 5 days',
+    },
+    'Readiness to Act': {
+      title: 'Set a 30-day AI sprint goal',
+      description: 'Define one measurable outcome: "Reduce time spent on [X] by 30%" or "Automate [Y] completely." Give it 30 days. A deadline turns interest into action — and gives you data to decide what\'s next.',
+      timeframe: 'Set it today, run for 30 days',
+    },
+  }
+
+  return wins[weakest.name] || wins['Vision & Strategy']
+}
+
+function getIndustryInsight(industry: string, answers: Record<string, string>): string {
+  const size = answers.size || '1–10'
+  const insights: Record<string, string> = {
+    'IT & Software': `In tech, ${size}-person teams that adopt AI internally (not just for clients) ship 30-40% faster. The biggest unlock isn't building AI products — it's using AI to accelerate your existing development, testing, and documentation workflows.`,
+    'Finance & Banking': `Financial services teams your size are seeing the fastest ROI from AI in three areas: automated document processing, client communication drafting, and compliance checking. Start where the paperwork is heaviest.`,
+    'Healthcare': `Healthcare organizations your size benefit most from AI in scheduling optimization, patient communication, and administrative documentation. The key is starting with non-clinical workflows first — lower risk, faster wins, builds confidence.`,
+    'Manufacturing': `Manufacturing companies your size get the quickest returns from AI-powered quality inspection, predictive maintenance alerts, and supply chain forecasting. Start with the data you already collect but don't fully use.`,
+    'Retail & E-commerce': `Retail businesses your size see the fastest impact from AI in inventory forecasting, personalized customer messaging, and automated product descriptions. Start with the task your team spends the most hours on weekly.`,
+    'Education': `Education organizations your size benefit most from AI in content creation, personalized learning paths, and administrative automation. The wins compound — one hour saved per teacher per day adds up to weeks of capacity annually.`,
+    'Real Estate': `Real estate teams your size get the quickest ROI from AI in property description writing, lead qualification, and market analysis automation. Start with the task that's currently bottlenecking your closings.`,
+    'Other': `Businesses your size across industries are seeing 20-35% time savings within 90 days of structured AI adoption. The key isn't the industry — it's starting with one workflow, proving value, then expanding deliberately.`,
+  }
+
+  return insights[industry] || insights['Other']
+}
+
+function getGapAdvice(pillars: PillarScore[]): { pillar: string; advice: string }[] {
+  const sorted = [...pillars].sort((a, b) => a.score - b.score)
+  const gaps = sorted.filter(p => p.score < 60).slice(0, 2)
+
+  const advice: Record<string, string> = {
+    'Vision & Strategy': "You know AI exists but haven't mapped it to your specific workflows yet. That's normal — most businesses skip this step and jump into tools. Spend time defining the problem before picking solutions.",
+    'Team Skills': "Your team needs hands-on exposure, not courses. People learn AI by using it on real tasks, not watching videos. Create safe space to experiment — mistakes here cost nothing, but avoidance costs momentum.",
+    'AI Adoption': "You're in the planning phase while others are testing. The risk isn't making a wrong choice — it's waiting so long that you're learning while competitors are optimizing. Start small, start now.",
+    'Readiness to Act': "You're interested but not yet committed to a timeline. That's fine if you're genuinely in research mode — but know that AI capabilities are moving fast. The gap between you and early movers widens every quarter.",
+  }
+
+  return gaps.map(p => ({ pillar: p.name, advice: advice[p.name] || '' }))
 }
 
 export default function AIReadinessQuiz() {
@@ -213,19 +251,24 @@ export default function AIReadinessQuiz() {
     e.preventDefault()
     if (!email.trim()) return
     setSubmitting(true)
+    const pillars = calculatePillars(answers)
     try {
       await fetch('/api/ai-readiness', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, answers, profile: getProfile(answers) }),
+        body: JSON.stringify({
+          name,
+          email,
+          answers,
+          overallScore: getOverallScore(pillars),
+          pillars: pillars.map(p => ({ name: p.name, score: p.score })),
+        }),
       })
       setSubmitted(true)
     } catch {}
     setSubmitting(false)
   }
 
-  const profile = showResult ? PROFILES[getProfile(answers)] : null
-  const industry = answers.industry || 'Other'
   const progress = ((currentQ + (showResult ? 1 : 0)) / QUESTIONS.length) * 100
 
   if (!started) {
@@ -238,9 +281,9 @@ export default function AIReadinessQuiz() {
           How AI-Ready Is Your Business?
         </h2>
         <p className="text-gray-600 text-lg mb-3 max-w-lg mx-auto">
-          Answer 7 quick questions and get a personalized AI readiness profile with tailored recommendations for your industry.
+          Answer 7 quick questions. Get an honest readiness breakdown — where you're strong, where the gaps are, and one thing you can do this week.
         </p>
-        <p className="text-gray-400 text-sm mb-8">Takes about 60 seconds</p>
+        <p className="text-gray-400 text-sm mb-8">No signup required. Takes 60 seconds.</p>
         <button
           onClick={() => setStarted(true)}
           className="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white text-base font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
@@ -265,13 +308,173 @@ export default function AIReadinessQuiz() {
     )
   }
 
+  if (showResult) {
+    const pillars = calculatePillars(answers)
+    const overall = getOverallScore(pillars)
+    const strength = getStrengthStatement(pillars, answers)
+    const quickWin = getQuickWin(pillars, answers)
+    const industryInsight = getIndustryInsight(answers.industry || 'Other', answers)
+    const gaps = getGapAdvice(pillars)
+
+    const scoreLabel = overall >= 70 ? 'Strong' : overall >= 45 ? 'Building' : 'Early Stage'
+    const scoreColor = overall >= 70 ? 'text-green-600' : overall >= 45 ? 'text-blue-600' : 'text-orange-600'
+    const scoreBg = overall >= 70 ? 'bg-green-50 border-green-200' : overall >= 45 ? 'bg-blue-50 border-blue-200' : 'bg-orange-50 border-orange-200'
+
+    return (
+      <div className="max-w-2xl mx-auto space-y-8">
+        {/* Overall Score */}
+        <div className={`rounded-2xl border p-6 sm:p-8 text-center ${scoreBg}`}>
+          <p className="text-sm font-medium text-gray-500 mb-2">Your AI Readiness Score</p>
+          <div className={`text-5xl sm:text-6xl font-black ${scoreColor} mb-1`}>{overall}</div>
+          <p className={`text-lg font-bold ${scoreColor}`}>{scoreLabel}</p>
+        </div>
+
+        {/* What you're doing right */}
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
+          <div className="flex items-start gap-3 mb-3">
+            <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+            <h3 className="text-lg font-bold text-gray-900">What you're already doing right</h3>
+          </div>
+          <p className="text-gray-600 leading-relaxed ml-8">{strength}</p>
+        </div>
+
+        {/* Pillar Breakdown */}
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
+          <h3 className="text-lg font-bold text-gray-900 mb-5">Your readiness breakdown</h3>
+          <div className="space-y-5">
+            {pillars.map((pillar) => (
+              <div key={pillar.name}>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <pillar.icon className={`w-4 h-4 ${pillar.color}`} />
+                    <span className="text-sm font-semibold text-gray-700">{pillar.name}</span>
+                  </div>
+                  <span className="text-sm font-bold text-gray-900">{pillar.score}/100</span>
+                </div>
+                <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full ${pillar.barColor} rounded-full transition-all duration-700 ease-out`}
+                    style={{ width: `${pillar.score}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Quick Win */}
+        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-6 sm:p-8">
+          <div className="flex items-start gap-3 mb-3">
+            <Lightbulb className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+            <div>
+              <h3 className="text-lg font-bold text-gray-900">Your #1 Quick Win</h3>
+              <p className="text-xs text-amber-700 font-medium mt-0.5">{quickWin.timeframe}</p>
+            </div>
+          </div>
+          <p className="text-gray-900 font-semibold mb-2 ml-8">{quickWin.title}</p>
+          <p className="text-gray-600 leading-relaxed ml-8">{quickWin.description}</p>
+        </div>
+
+        {/* Gaps / Areas to focus */}
+        {gaps.length > 0 && (
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Where to focus next</h3>
+            <div className="space-y-4">
+              {gaps.map((gap) => (
+                <div key={gap.pillar} className="pl-4 border-l-3 border-gray-200">
+                  <p className="text-sm font-semibold text-gray-800 mb-1">{gap.pillar}</p>
+                  <p className="text-sm text-gray-600 leading-relaxed">{gap.advice}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Industry Insight */}
+        <div className="bg-gray-50 rounded-2xl border border-gray-200 p-6 sm:p-8">
+          <div className="flex items-start gap-3 mb-3">
+            <TrendingUp className="w-5 h-5 text-primary-600 mt-0.5 flex-shrink-0" />
+            <h3 className="text-lg font-bold text-gray-900">What we're seeing in {answers.industry || 'your industry'}</h3>
+          </div>
+          <p className="text-gray-600 leading-relaxed ml-8">{industryInsight}</p>
+        </div>
+
+        {/* How we can help — soft, genuine */}
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
+          <h3 className="text-lg font-bold text-gray-900 mb-3">How we fit in</h3>
+          <p className="text-gray-600 leading-relaxed mb-4">
+            We work with {answers.size || 'small'}-person teams to close exactly the gaps you're seeing above — whether that's getting your team comfortable with AI, building your first automation, or creating a roadmap that ties AI directly to revenue. No generic playbooks. We look at your specific situation and work alongside you.
+          </p>
+          <p className="text-gray-600 leading-relaxed">
+            If you'd like to walk through these results together and talk about what makes sense for your business — that's what our free call is for. No pitch, just a conversation about your results.
+          </p>
+        </div>
+
+        {/* Email capture */}
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
+          {!submitted ? (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <h4 className="text-lg font-bold text-gray-900">Get your full report</h4>
+              <p className="text-sm text-gray-500">We'll send a detailed breakdown you can share with your team — including your scores, quick win, and a 30-day starter roadmap.</p>
+              <input
+                type="text"
+                placeholder="Your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400"
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400"
+              />
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {submitting ? 'Sending...' : <><ArrowRight className="w-4 h-4" /> Send My Report</>}
+              </button>
+            </form>
+          ) : (
+            <div className="flex items-center gap-3 p-4 bg-green-50 rounded-xl">
+              <CheckCircle2 className="w-6 h-6 text-green-600 flex-shrink-0" />
+              <p className="text-green-800 font-medium">Done! Check your inbox — we'll send the full report shortly.</p>
+            </div>
+          )}
+        </div>
+
+        {/* CTA */}
+        <div className="text-center space-y-3 pb-4">
+          <Link
+            href="/resources/calendar"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-colors"
+          >
+            Walk through my results — free 15-min call <ArrowRight className="w-4 h-4" />
+          </Link>
+          <div>
+            <button
+              onClick={handleReset}
+              className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              Retake assessment
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="max-w-2xl mx-auto">
       {/* Progress bar */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-gray-500">
-            {showResult ? 'Complete' : `Question ${currentQ + 1} of ${QUESTIONS.length}`}
+            Question {currentQ + 1} of {QUESTIONS.length}
           </span>
           <span className="text-sm font-medium text-primary-600">{Math.round(progress)}%</span>
         </div>
@@ -283,137 +486,38 @@ export default function AIReadinessQuiz() {
         </div>
       </div>
 
-      {!showResult ? (
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
-          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">{QUESTIONS[currentQ].question}</h3>
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
+        <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">{QUESTIONS[currentQ].question}</h3>
 
-          <div className="space-y-3">
-            {QUESTIONS[currentQ].options.map((option) => {
-              const isSelected = answers[QUESTIONS[currentQ].id] === option
-              return (
-                <button
-                  key={option}
-                  onClick={() => handleSelect(option)}
-                  className={`w-full text-left px-5 py-4 rounded-xl border-2 transition-all duration-200 text-sm sm:text-base font-medium ${
-                    isSelected
-                      ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm'
-                      : 'border-gray-150 bg-white text-gray-700 hover:border-primary-200 hover:bg-primary-50/50'
-                  }`}
-                >
-                  {option}
-                </button>
-              )
-            })}
-          </div>
-
-          {currentQ > 0 && (
-            <button
-              onClick={handleBack}
-              className="flex items-center gap-1 mt-5 text-sm text-gray-500 hover:text-gray-700 transition-colors"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              Back
-            </button>
-          )}
-        </div>
-      ) : profile && (
-        <div className="space-y-6">
-          {/* Profile result */}
-          <div className={`${profile.bgColor} rounded-2xl border ${profile.borderColor} p-6 sm:p-8`}>
-            <div className="flex items-center gap-3 mb-3">
-              <div className={`w-10 h-10 rounded-xl ${profile.bgColor} flex items-center justify-center`}>
-                <profile.icon className={`w-6 h-6 ${profile.color}`} />
-              </div>
-              <span className={`text-lg font-bold ${profile.color}`}>You're an AI {profile.title}</span>
-            </div>
-            <p className="text-gray-800 font-semibold text-xl mb-3">{profile.tagline}</p>
-            <p className="text-gray-600 text-base leading-relaxed">{INDUSTRY_INSIGHTS[industry]}</p>
-          </div>
-
-          {/* Recommendations */}
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
-            <h4 className="text-lg font-bold text-gray-900 mb-4">Recommended for you</h4>
-            <div className="space-y-3">
-              {profile.recommendations.map((rec) => (
-                <Link
-                  key={rec.title}
-                  href={rec.href}
-                  className="flex items-start gap-4 p-4 rounded-xl border border-gray-100 hover:border-primary-200 hover:bg-primary-50/30 transition-all duration-200 group"
-                >
-                  <ChevronRight className="w-5 h-5 text-primary-500 mt-0.5 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
-                  <div>
-                    <p className="font-semibold text-gray-900">{rec.title}</p>
-                    <p className="text-sm text-gray-500 mt-1">{rec.description}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* ROI */}
-          <div className="bg-gray-50 rounded-2xl border border-gray-200 p-6">
-            <p className="text-gray-600 leading-relaxed">
-              <span className="font-semibold text-gray-800">Expected impact: </span>
-              {profile.roi}
-            </p>
-          </div>
-
-          {/* Email capture */}
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
-            {!submitted ? (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <h4 className="text-lg font-bold text-gray-900">Get your personalized report</h4>
-                <p className="text-sm text-gray-500">We'll send a detailed breakdown with action steps tailored to your business.</p>
-                <input
-                  type="text"
-                  placeholder="Your name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400"
-                />
-                <input
-                  type="email"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400"
-                />
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-                >
-                  {submitting ? 'Sending...' : <><ArrowRight className="w-4 h-4" /> Send My Report</>}
-                </button>
-              </form>
-            ) : (
-              <div className="flex items-center gap-3 p-4 bg-green-50 rounded-xl">
-                <CheckCircle2 className="w-6 h-6 text-green-600 flex-shrink-0" />
-                <p className="text-green-800 font-medium">Report sent! We'll be in touch soon.</p>
-              </div>
-            )}
-          </div>
-
-          {/* Book a call + retake */}
-          <div className="text-center space-y-3 pb-4">
-            <Link
-              href="/resources/calendar"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-colors"
-            >
-              Book a Free Consultation <ArrowRight className="w-4 h-4" />
-            </Link>
-            <div>
+        <div className="space-y-3">
+          {QUESTIONS[currentQ].options.map((option) => {
+            const isSelected = answers[QUESTIONS[currentQ].id] === option
+            return (
               <button
-                onClick={handleReset}
-                className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+                key={option}
+                onClick={() => handleSelect(option)}
+                className={`w-full text-left px-5 py-4 rounded-xl border-2 transition-all duration-200 text-sm sm:text-base font-medium ${
+                  isSelected
+                    ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm'
+                    : 'border-gray-150 bg-white text-gray-700 hover:border-primary-200 hover:bg-primary-50/50'
+                }`}
               >
-                Retake assessment
+                {option}
               </button>
-            </div>
-          </div>
+            )
+          })}
         </div>
-      )}
+
+        {currentQ > 0 && (
+          <button
+            onClick={handleBack}
+            className="flex items-center gap-1 mt-5 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            Back
+          </button>
+        )}
+      </div>
     </div>
   )
 }

@@ -9,9 +9,9 @@ function getTableClient() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, answers, profile } = await request.json()
+    const { name, email, answers, overallScore, pillars } = await request.json()
 
-    if (!email || !answers || !profile) {
+    if (!email || !answers) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
@@ -27,7 +27,8 @@ export async function POST(request: NextRequest) {
       rowKey,
       name: name || '',
       email,
-      profile,
+      overallScore: overallScore || 0,
+      pillarScores: JSON.stringify(pillars || []),
       industry: answers.industry || '',
       companySize: answers.size || '',
       aiUsage: answers.usage || '',
