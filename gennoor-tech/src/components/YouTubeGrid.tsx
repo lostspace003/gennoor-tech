@@ -181,12 +181,15 @@ function PlaylistDropdown({ playlists, selected, onChange }: { playlists: string
   )
 }
 
+const VIDEOS_PER_PAGE = 9
+
 export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState<SortOption>('latest')
   const [duration, setDuration] = useState<DurationFilter>('all')
   const [time, setTime] = useState<TimeFilter>('all')
   const [selectedPlaylists, setSelectedPlaylists] = useState<string[]>([])
+  const [currentPage, setCurrentPage] = useState(1)
 
   const allPlaylists = useMemo(() => {
     const set = new Set<string>()
@@ -242,6 +245,21 @@ export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
     return result
   }, [videos, search, sort, duration, time, selectedPlaylists])
 
+  const totalPages = Math.ceil(filtered.length / VIDEOS_PER_PAGE)
+  const safeCurrentPage = Math.min(currentPage, totalPages || 1)
+  const paginatedVideos = filtered.slice((safeCurrentPage - 1) * VIDEOS_PER_PAGE, safeCurrentPage * VIDEOS_PER_PAGE)
+
+  useEffect(() => { setCurrentPage(1) }, [search, sort, duration, time, selectedPlaylists])
+
+  function getVisiblePages(): number[] {
+    const pages: number[] = []
+    let start = Math.max(1, safeCurrentPage - 2)
+    let end = Math.min(totalPages, start + 4)
+    if (end - start < 4) start = Math.max(1, end - 4)
+    for (let i = start; i <= end; i++) pages.push(i)
+    return pages
+  }
+
   const activeFilterCount = [
     duration !== 'all',
     time !== 'all',
@@ -252,22 +270,24 @@ export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
     <div>
       {/* Sticky filter bar */}
       <div className="sticky top-20 z-40 bg-white/95 backdrop-blur-sm -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 pb-4 pt-4 border-b border-gray-100">
-        {/* Search + Series dropdown */}
-        <div className="flex gap-3 mb-3">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search videos..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 transition-all duration-200"
-            />
-          </div>
-          {allPlaylists.length > 0 && (
-            <PlaylistDropdown playlists={allPlaylists} selected={selectedPlaylists} onChange={setSelectedPlaylists} />
-          )}
+        {/* Search */}
+        <div className="relative mb-3">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search videos..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 transition-all duration-200"
+          />
         </div>
+
+        {/* Series dropdown */}
+        {allPlaylists.length > 0 && (
+          <div className="mb-3">
+            <PlaylistDropdown playlists={allPlaylists} selected={selectedPlaylists} onChange={setSelectedPlaylists} />
+          </div>
+        )}
 
         {/* Filter rows */}
         <div className="space-y-2">
@@ -327,9 +347,44 @@ export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
       {/* Videos Grid */}
       <div className="pt-6">
         {filtered.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((video) => <VideoCard key={video.id} video={video} />)}
-          </div>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {paginatedVideos.map((video) => <VideoCard key={video.id} video={video} />)}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-10">
+                <button
+                  onClick={() => { setCurrentPage(safeCurrentPage - 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+                  disabled={safeCurrentPage === 1}
+                  className="px-3 py-2 text-sm font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  Previous
+                </button>
+                {getVisiblePages().map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => { setCurrentPage(page); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+                    className={`w-9 h-9 text-sm font-medium rounded-lg transition-colors ${
+                      page === safeCurrentPage
+                        ? 'bg-primary-600 text-white shadow-sm'
+                        : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+                <button
+                  onClick={() => { setCurrentPage(safeCurrentPage + 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+                  disabled={safeCurrentPage === totalPages}
+                  className="px-3 py-2 text-sm font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-16">
             <p className="text-gray-500 text-lg">No videos found</p>
