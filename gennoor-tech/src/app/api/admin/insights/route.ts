@@ -3,13 +3,13 @@ import {
   runQuery, getRequestsOverTime, getResponseTime,
   getFailedRequests, getAvailability, QUERIES, isAppInsightsConfigured,
 } from '@/lib/app-insights'
+import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 
 export async function POST(request: NextRequest) {
   try {
-    const { secret, metric, timespan = 'P7D' } = await request.json()
-    if (secret !== process.env.ADMIN_SECRET) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const { authorized } = await verifyAdmin(request)
+    if (!authorized) return unauthorizedResponse()
+    const { metric, timespan = 'P7D' } = await request.json()
 
     if (!isAppInsightsConfigured()) {
       return NextResponse.json({ error: 'App Insights not configured' }, { status: 400 })
@@ -45,18 +45,30 @@ export async function POST(request: NextRequest) {
           getAvailability(timespan).catch(() => null),
         ])
 
-        const [dailyUsers, responseTimeTrend, topPages, browsers, countries, errors] = await Promise.all([
+        const [dailyUsers, responseTimeTrend, topPages, browsers, countries, errors,
+          sessionStats, eventsSummary, peakHours, deviceTypes, operatingSystems,
+          slowestPages, failedUrls, userRetention] = await Promise.all([
           runQuery(QUERIES.dailyUsers, timespan).catch(() => null),
           runQuery(QUERIES.responseTimeTrend, timespan).catch(() => null),
           runQuery(QUERIES.topPages, timespan).catch(() => null),
           runQuery(QUERIES.browserStats, timespan).catch(() => null),
           runQuery(QUERIES.countryStats, timespan).catch(() => null),
           runQuery(QUERIES.errorsByType, timespan).catch(() => null),
+          runQuery(QUERIES.sessionStats, timespan).catch(() => null),
+          runQuery(QUERIES.eventsSummary, timespan).catch(() => null),
+          runQuery(QUERIES.peakHours, timespan).catch(() => null),
+          runQuery(QUERIES.deviceTypes, timespan).catch(() => null),
+          runQuery(QUERIES.operatingSystems, timespan).catch(() => null),
+          runQuery(QUERIES.slowestPages, timespan).catch(() => null),
+          runQuery(QUERIES.failedUrls, timespan).catch(() => null),
+          runQuery(QUERIES.userRetention, timespan).catch(() => null),
         ])
 
         return NextResponse.json({
           requests, responseTime, failed, availability,
           dailyUsers, responseTimeTrend, topPages, browsers, countries, errors,
+          sessionStats, eventsSummary, peakHours, deviceTypes, operatingSystems,
+          slowestPages, failedUrls, userRetention,
         })
       }
       default:

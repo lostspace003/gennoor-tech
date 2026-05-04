@@ -3,13 +3,13 @@ import {
   runQuery, getRequestsOverTime, getResponseTime,
   getFailedRequests, getAvailability, QUERIES, isAppInsightsConfigured,
 } from '@/lib/app-insights'
+import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 
 export async function POST(request: NextRequest) {
   try {
-    const { secret, metric, timespan = 'P7D' } = await request.json()
-    if (secret !== process.env.ADMIN_SECRET) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const { authorized } = await verifyAdmin(request)
+    if (!authorized) return unauthorizedResponse()
+    const { metric, timespan = 'P7D' } = await request.json()
 
     if (!isAppInsightsConfigured()) {
       return NextResponse.json({ error: 'App Insights not configured' }, { status: 400 })

@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getStorageOverview, getRecentBlobs } from '@/lib/azure-blobs'
+import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 
 export async function POST(request: NextRequest) {
   try {
-    const { secret } = await request.json()
-    if (secret !== process.env.ADMIN_SECRET) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const { authorized } = await verifyAdmin(request)
+    if (!authorized) return unauthorizedResponse()
 
     const [containers, recentBlobs] = await Promise.all([
       getStorageOverview(),

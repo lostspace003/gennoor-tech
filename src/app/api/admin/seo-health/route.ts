@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { blogPostsMeta } from '@/data/blog-posts'
+import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 
 export async function POST(request: NextRequest) {
   try {
-    const { secret } = await request.json()
-
-    if (secret !== process.env.ADMIN_SECRET) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const { authorized } = await verifyAdmin(request)
+    if (!authorized) return unauthorizedResponse()
 
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.gennoor.com'
 

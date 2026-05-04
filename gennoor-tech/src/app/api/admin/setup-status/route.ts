@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 
 export async function POST(request: NextRequest) {
   try {
-    const { secret } = await request.json()
-
-    if (secret !== process.env.ADMIN_SECRET) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const { authorized } = await verifyAdmin(request)
+    if (!authorized) return unauthorizedResponse()
 
     // Check which environment variables and services are configured
     const checks = {
@@ -50,12 +48,12 @@ export async function POST(request: NextRequest) {
         configured: !!process.env.APPLICATIONINSIGHTS_CONNECTION_STRING,
       },
 
-      // SMTP Email
+      // Azure Communication Services Email
       smtp: {
-        label: 'SMTP Email Service',
-        description: 'Sends enquiry confirmations and admin notifications',
-        configured: !!(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS),
-        value: process.env.SMTP_HOST || '',
+        label: 'Azure Communication Services Email',
+        description: 'Sends enquiry confirmations and admin notifications via Azure Communication Services',
+        configured: !!process.env.AZURE_COMMUNICATION_CONNECTION_STRING,
+        value: process.env.EMAIL_FROM_TRAINING || 'training@gennoor.com',
       },
 
       // Azure OpenAI

@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useSession, signOut } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import {
   BarChart3, Eye, MessageSquare, Mail, Globe, MapPin,
@@ -118,11 +120,10 @@ const ICON_MAP: Record<string, any> = { adminSecret: Shield, ga4MeasurementId: B
 // ─── Main Component ──────────────────────────────────────────
 
 export default function AdminDashboard() {
-  const [secret, setSecret] = useState('')
-  const [authenticated, setAuthenticated] = useState(false)
+  const { data: session, status } = useSession()
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [storedSecret, setStoredSecret] = useState('')
   const [days, setDays] = useState(7)
   const [activeFilter, setActiveFilter] = useState<string>('7')
   const [customDate, setCustomDate] = useState('')
@@ -156,12 +157,12 @@ export default function AdminDashboard() {
   const [selectedBookings, setSelectedBookings] = useState<Set<string>>(new Set())
   const [bookingDeleting, setBookingDeleting] = useState(false)
 
-  const fetchAll = useCallback(async (adminSecret: string, numDays: number) => {
+  const fetchAll = useCallback(async (numDays: number) => {
     setLoading(true); setError('')
     const ts = numDays <= 1 ? 'PT24H' : numDays <= 2 ? 'P2D' : numDays <= 7 ? 'P7D' : numDays <= 14 ? 'P14D' : `P${numDays}D`
     try {
       const headers = { 'Content-Type': 'application/json' }
-      const body = (extra: any = {}) => JSON.stringify({ secret: adminSecret, ...extra })
+      const body = (extra: any = {}) => JSON.stringify(extra)
       const [analyticsRes, setupRes, seoRes, sessionsRes, storageRes, insightsRes, emailLogsRes] = await Promise.all([
         fetch('/api/admin/analytics', { method: 'POST', headers, body: body({ days: numDays }) }),
         fetch('/api/admin/setup-status', { method: 'POST', headers, body: body() }),
@@ -171,7 +172,7 @@ export default function AdminDashboard() {
         fetch('/api/admin/insights', { method: 'POST', headers, body: body({ metric: 'all', timespan: ts }) }),
         fetch('/api/admin/email-logs', { method: 'POST', headers, body: body({ days: numDays }) }),
       ])
-      if (analyticsRes.status === 401) { setError('Invalid admin secret'); setAuthenticated(false); return }
+      if (analyticsRes.status === 401) { setError('Session expired. Please login again.'); router.push('/admin/login'); return }
       const [analyticsData, setupResult, seoResult, sessionsResult, storageResult, insightsResult, emailLogsResult] = await Promise.all([
         analyticsRes.ok ? analyticsRes.json() : null, setupRes.ok ? setupRes.json() : null, seoRes.ok ? seoRes.json() : null,
         sessionsRes.ok ? sessionsRes.json() : [], storageRes.ok ? storageRes.json() : null, insightsRes.ok ? insightsRes.json() : null,
@@ -179,29 +180,37 @@ export default function AdminDashboard() {
       ])
       setData(analyticsData); setSetupData(setupResult); setSeoData(seoResult)
       setSessions(Array.isArray(sessionsResult) ? sessionsResult : []); setStorageData(storageResult); setInsightsData(insightsResult); setEmailLogs(emailLogsResult)
-      setAuthenticated(true); setStoredSecret(adminSecret); setLastUpdated(new Date())
-      // Fetch bookings separately (no admin secret needed, uses Graph API)
+      setLastUpdated(new Date())
       try { const bRes = await fetch('/api/bookings/appointments'); if (bRes.ok) { const bData = await bRes.json(); setBookingsData(bData.appointments || []) } } catch {}
     } catch { setError('Failed to load dashboard data') }
     finally { setLoading(false) }
-  }, [])
+  }, [router])
 
   useEffect(() => {
-    if (!autoRefresh || !authenticated) return
-    const interval = setInterval(() => fetchAll(storedSecret, days), 60000)
-    return () => clearInterval(interval)
-  }, [autoRefresh, authenticated, storedSecret, days, fetchAll])
+    if (status === 'authenticated' && !data && !loading) { fetchAll(days) }
+  }, [status, data, loading, days, fetchAll])
 
-  function handleLogin(e: React.FormEvent) { e.preventDefault(); fetchAll(secret, days) }
-  function handleRefresh() { fetchAll(storedSecret, days) }
-  function handleDaysChange(d: number, filter: string) { setDays(d); setActiveFilter(filter); fetchAll(storedSecret, d) }
+  useEffect(() => {
+    if (!autoRefresh || status !== 'authenticated') return
+    const interval = setInterval(() => fetchAll(days), 60000)
+    return () => clearInterval(interval)
+  }, [autoRefresh, status, days, fetchAll])
+
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user?.email) {
+      fetch('/api/admin/auth-log', { method: 'POST' }).catch(() => {})
+    }
+  }, [status, session?.user?.email])
+
+  function handleRefresh() { fetchAll(days) }
+  function handleDaysChange(d: number, filter: string) { setDays(d); setActiveFilter(filter); fetchAll(d) }
   function handleCustomDate(dateStr: string) {
     setCustomDate(dateStr)
     if (!dateStr) return
     const selected = new Date(dateStr + 'T00:00:00')
     const now = new Date()
     const diffDays = Math.max(1, Math.ceil((now.getTime() - selected.getTime()) / (1000 * 60 * 60 * 24)))
-    setDays(diffDays); setActiveFilter('custom'); fetchAll(storedSecret, diffDays)
+    setDays(diffDays); setActiveFilter('custom'); fetchAll(diffDays)
   }
   function getFilterLabel(): string {
     if (activeFilter === 'today') return 'Today'
@@ -209,7 +218,7 @@ export default function AdminDashboard() {
     if (activeFilter === 'custom' && customDate) return `Since ${new Date(customDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
     return `Last ${days} days`
   }
-  function handleLogout() { setAuthenticated(false); setData(null); setSetupData(null); setSeoData(null); setSessions([]); setStorageData(null); setInsightsData(null); setEmailLogs(null); setBookingsData([]); setSecret(''); setStoredSecret('') }
+  function handleLogout() { signOut({ callbackUrl: '/admin/login' }) }
 
   async function handleBookingAction(rowKey: string, action: string, extra?: Record<string, any>) {
     setBookingsAction(rowKey)
@@ -282,42 +291,35 @@ export default function AdminDashboard() {
   }
 
   async function hideComment(slug: string, rowKey: string) {
-    try { const res = await fetch('/api/blog-comments', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, rowKey, adminSecret: storedSecret }) }); if (res.ok) handleRefresh() } catch {}
+    try { const res = await fetch('/api/blog-comments', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, rowKey }) }); if (res.ok) handleRefresh() } catch {}
   }
 
   // ─── Login Screen ─────────────────────────────────────────
 
-  if (!authenticated) {
+  if (status === 'loading') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 flex items-center justify-center px-4">
-        <div className="w-full max-w-md">
-          <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-xl">
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-teal-500 rounded-xl flex items-center justify-center">
-                <Lock className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-slate-800">Gennoor Admin</h1>
-                <p className="text-sm text-slate-500">Dashboard &amp; Analytics</p>
-              </div>
-            </div>
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">Admin Secret</label>
-                <input type="password" value={secret} onChange={e => setSecret(e.target.value)} placeholder="Enter your admin secret" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
-              </div>
-              {error && <p className="text-red-600 text-sm bg-red-50 px-3 py-2 rounded-lg border border-red-200">{error}</p>}
-              <button type="submit" disabled={loading} className="w-full py-3 bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md">
-                {loading ? <><RefreshCw className="w-4 h-4 animate-spin" /> Loading...</> : <><BarChart3 className="w-4 h-4" /> View Dashboard</>}
-              </button>
-            </form>
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 flex items-center justify-center">
+        <div className="flex items-center gap-3">
+          <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />
+          <span className="text-slate-600">Loading session...</span>
         </div>
       </div>
     )
   }
 
-  if (!data) return null
+  if (status === 'unauthenticated') {
+    router.push('/admin/login')
+    return null
+  }
+
+  if (!data) return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 flex items-center justify-center">
+      <div className="flex items-center gap-3">
+        <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />
+        <span className="text-slate-600">Loading dashboard data...</span>
+      </div>
+    </div>
+  )
 
   // ─── Derived Data ─────────────────────────────────────────
 
@@ -370,7 +372,7 @@ export default function AdminDashboard() {
             <div>
               <h1 className="text-lg font-bold text-slate-800">Gennoor Admin</h1>
               <p className="text-xs text-slate-500">
-                {setupData?.platform || 'Dashboard'} &middot; {setupData?.environment || ''}
+                {session?.user?.email || 'Dashboard'} &middot; {setupData?.environment || ''}
                 {lastUpdated && <> &middot; Updated {lastUpdated.toLocaleTimeString()}</>}
               </p>
             </div>

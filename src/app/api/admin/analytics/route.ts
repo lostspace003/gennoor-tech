@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPageViews, getAllComments, getEnquiries } from '@/lib/azure-storage'
+import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 
 export async function POST(request: NextRequest) {
   try {
-    const { secret, days = 7 } = await request.json()
+    const { authorized } = await verifyAdmin(request)
+    if (!authorized) return unauthorizedResponse()
 
-    if (secret !== process.env.ADMIN_SECRET) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const { days = 7 } = await request.json()
 
     const [pageViews, comments, enquiries] = await Promise.all([
       getPageViews(days).catch(() => []),

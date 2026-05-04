@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCommentsBySlug, saveComment, updateCommentStatus } from '@/lib/azure-storage'
 import { blogPostsMeta } from '@/data/blog-posts'
+import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 
 // Simple in-memory rate limiter
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
@@ -75,10 +76,9 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    const { slug, rowKey, adminSecret } = await req.json()
-    if (adminSecret !== process.env.ADMIN_SECRET) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const { authorized } = await verifyAdmin(req)
+    if (!authorized) return unauthorizedResponse()
+    const { slug, rowKey } = await req.json()
     await updateCommentStatus(slug, rowKey, 'hidden')
     return NextResponse.json({ success: true })
   } catch (error) {

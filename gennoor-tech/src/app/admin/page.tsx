@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useSession, signOut } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import {
   BarChart3, Eye, MessageSquare, Mail, Globe, MapPin,
@@ -8,7 +10,8 @@ import {
   ExternalLink, Settings, CheckCircle2, XCircle, Search,
   Shield, Activity, Database, Server, Code2, Link2,
   AlertTriangle, Newspaper, Download, HardDrive, Bot,
-  Clock, Zap, BookOpen, TrendingUp,
+  Clock, Zap, BookOpen, TrendingUp, Send, Calendar,
+  Video, CheckCircle, Phone, X, Trash2,
 } from 'lucide-react'
 
 // ─── Chart Components (Recharts, lazy loaded) ────────────────
@@ -64,7 +67,8 @@ function ChartLoader() {
 
 // ─── Types ───────────────────────────────────────────────────
 
-type TabKey = 'overview' | 'traffic' | 'enquiries' | 'sessions' | 'storage' | 'insights' | 'comments' | 'seo' | 'setup'
+type TabKey = 'overview' | 'traffic' | 'enquiries' | 'emails' | 'sessions' | 'bookings' | 'storage' | 'insights' | 'comments' | 'seo' | 'setup'
+type GroupKey = 'analytics' | 'communications' | 'bookings' | 'system'
 
 interface AnalyticsData {
   totalViews: number; totalComments: number; totalEnquiries: number; activeComments: number
@@ -81,6 +85,8 @@ interface SessionRecord { rowKey: string; agentId: string; agentName: string; st
 interface ContainerStats { name: string; blobCount: number; totalSizeBytes: number; lastModified: string }
 interface BlobInfo { name: string; containerName: string; size: number; contentType: string; lastModified: string }
 interface StorageData { containers: ContainerStats[]; recentBlobs: BlobInfo[] }
+interface BookingAppointment { rowKey: string; name: string; email: string; whatsapp?: string; topic?: string; serviceName: string; serviceId: string; date: string; startTime: string; endTime: string; timezone: string; country?: string; status: string; createdAt: string; graphAppointmentId?: string; joinWebUrl?: string; adminMessage?: string; acceptedAt?: string; rejectedAt?: string; changeRequestedAt?: string; cancelledAt?: string; rescheduledAt?: string; outcomeNotes?: string }
+interface OutcomeNote { text: string; createdAt: string }
 
 // ─── Helpers ─────────────────────────────────────────────────
 
@@ -114,67 +120,97 @@ const ICON_MAP: Record<string, any> = { adminSecret: Shield, ga4MeasurementId: B
 // ─── Main Component ──────────────────────────────────────────
 
 export default function AdminDashboard() {
-  const [secret, setSecret] = useState('')
-  const [authenticated, setAuthenticated] = useState(false)
+  const { data: session, status } = useSession()
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [storedSecret, setStoredSecret] = useState('')
   const [days, setDays] = useState(7)
   const [activeFilter, setActiveFilter] = useState<string>('7')
   const [customDate, setCustomDate] = useState('')
+  const [activeGroup, setActiveGroup] = useState<GroupKey>('analytics')
   const [activeTab, setActiveTab] = useState<TabKey>('overview')
   const [autoRefresh, setAutoRefresh] = useState(false)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+  const [emailFilter, setEmailFilter] = useState('all')
 
   const [data, setData] = useState<AnalyticsData | null>(null)
+  const [emailLogs, setEmailLogs] = useState<{ logs: Array<Record<string, any>>; totalSent: number; totalFailed: number; uniqueRecipients: number; total: number } | null>(null)
   const [setupData, setSetupData] = useState<SetupData | null>(null)
   const [seoData, setSeoData] = useState<SeoData | null>(null)
   const [sessions, setSessions] = useState<SessionRecord[]>([])
   const [storageData, setStorageData] = useState<StorageData | null>(null)
   const [insightsData, setInsightsData] = useState<any>(null)
+  const [bookingsData, setBookingsData] = useState<BookingAppointment[]>([])
+  const [bookingsLoading, setBookingsLoading] = useState(false)
+  const [bookingsAction, setBookingsAction] = useState<string | null>(null)
+  const [bookingModal, setBookingModal] = useState<{ type: 'outcome' | 'reply' | 'reschedule' | 'reject'; booking: BookingAppointment } | null>(null)
+  const [modalMessage, setModalMessage] = useState('')
+  const [modalSubject, setModalSubject] = useState('')
+  const [modalNotes, setModalNotes] = useState<OutcomeNote[]>([])
+  const [modalNewNote, setModalNewNote] = useState('')
+  const [modalResched, setModalResched] = useState({ date: '', startTime: '', endTime: '' })
+  const [modalSending, setModalSending] = useState(false)
+  const [bookingMonthFilter, setBookingMonthFilter] = useState('')
+  const [bookingStatsView, setBookingStatsView] = useState<'overall' | 'current'>('overall')
+  const [bookingPage, setBookingPage] = useState(1)
+  const [bookingsPerPage, setBookingsPerPage] = useState(15)
+  const [selectedBookings, setSelectedBookings] = useState<Set<string>>(new Set())
+  const [bookingDeleting, setBookingDeleting] = useState(false)
 
-  const fetchAll = useCallback(async (adminSecret: string, numDays: number) => {
+  const fetchAll = useCallback(async (numDays: number) => {
     setLoading(true); setError('')
     const ts = numDays <= 1 ? 'PT24H' : numDays <= 2 ? 'P2D' : numDays <= 7 ? 'P7D' : numDays <= 14 ? 'P14D' : `P${numDays}D`
     try {
       const headers = { 'Content-Type': 'application/json' }
-      const body = (extra: any = {}) => JSON.stringify({ secret: adminSecret, ...extra })
-      const [analyticsRes, setupRes, seoRes, sessionsRes, storageRes, insightsRes] = await Promise.all([
+      const body = (extra: any = {}) => JSON.stringify(extra)
+      const [analyticsRes, setupRes, seoRes, sessionsRes, storageRes, insightsRes, emailLogsRes] = await Promise.all([
         fetch('/api/admin/analytics', { method: 'POST', headers, body: body({ days: numDays }) }),
         fetch('/api/admin/setup-status', { method: 'POST', headers, body: body() }),
         fetch('/api/admin/seo-health', { method: 'POST', headers, body: body() }),
         fetch('/api/admin/sessions', { method: 'POST', headers, body: body() }),
         fetch('/api/admin/storage', { method: 'POST', headers, body: body() }),
         fetch('/api/admin/insights', { method: 'POST', headers, body: body({ metric: 'all', timespan: ts }) }),
+        fetch('/api/admin/email-logs', { method: 'POST', headers, body: body({ days: numDays }) }),
       ])
-      if (analyticsRes.status === 401) { setError('Invalid admin secret'); setAuthenticated(false); return }
-      const [analyticsData, setupResult, seoResult, sessionsResult, storageResult, insightsResult] = await Promise.all([
+      if (analyticsRes.status === 401) { setError('Session expired. Please login again.'); router.push('/admin/login'); return }
+      const [analyticsData, setupResult, seoResult, sessionsResult, storageResult, insightsResult, emailLogsResult] = await Promise.all([
         analyticsRes.ok ? analyticsRes.json() : null, setupRes.ok ? setupRes.json() : null, seoRes.ok ? seoRes.json() : null,
         sessionsRes.ok ? sessionsRes.json() : [], storageRes.ok ? storageRes.json() : null, insightsRes.ok ? insightsRes.json() : null,
+        emailLogsRes.ok ? emailLogsRes.json() : null,
       ])
       setData(analyticsData); setSetupData(setupResult); setSeoData(seoResult)
-      setSessions(Array.isArray(sessionsResult) ? sessionsResult : []); setStorageData(storageResult); setInsightsData(insightsResult)
-      setAuthenticated(true); setStoredSecret(adminSecret); setLastUpdated(new Date())
+      setSessions(Array.isArray(sessionsResult) ? sessionsResult : []); setStorageData(storageResult); setInsightsData(insightsResult); setEmailLogs(emailLogsResult)
+      setLastUpdated(new Date())
+      try { const bRes = await fetch('/api/bookings/appointments'); if (bRes.ok) { const bData = await bRes.json(); setBookingsData(bData.appointments || []) } } catch {}
     } catch { setError('Failed to load dashboard data') }
     finally { setLoading(false) }
-  }, [])
+  }, [router])
 
   useEffect(() => {
-    if (!autoRefresh || !authenticated) return
-    const interval = setInterval(() => fetchAll(storedSecret, days), 60000)
-    return () => clearInterval(interval)
-  }, [autoRefresh, authenticated, storedSecret, days, fetchAll])
+    if (status === 'authenticated' && !data && !loading) { fetchAll(days) }
+  }, [status, data, loading, days, fetchAll])
 
-  function handleLogin(e: React.FormEvent) { e.preventDefault(); fetchAll(secret, days) }
-  function handleRefresh() { fetchAll(storedSecret, days) }
-  function handleDaysChange(d: number, filter: string) { setDays(d); setActiveFilter(filter); fetchAll(storedSecret, d) }
+  useEffect(() => {
+    if (!autoRefresh || status !== 'authenticated') return
+    const interval = setInterval(() => fetchAll(days), 60000)
+    return () => clearInterval(interval)
+  }, [autoRefresh, status, days, fetchAll])
+
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user?.email) {
+      fetch('/api/admin/auth-log', { method: 'POST' }).catch(() => {})
+    }
+  }, [status, session?.user?.email])
+
+  function handleRefresh() { fetchAll(days) }
+  function handleDaysChange(d: number, filter: string) { setDays(d); setActiveFilter(filter); fetchAll(d) }
   function handleCustomDate(dateStr: string) {
     setCustomDate(dateStr)
     if (!dateStr) return
     const selected = new Date(dateStr + 'T00:00:00')
     const now = new Date()
     const diffDays = Math.max(1, Math.ceil((now.getTime() - selected.getTime()) / (1000 * 60 * 60 * 24)))
-    setDays(diffDays); setActiveFilter('custom'); fetchAll(storedSecret, diffDays)
+    setDays(diffDays); setActiveFilter('custom'); fetchAll(diffDays)
   }
   function getFilterLabel(): string {
     if (activeFilter === 'today') return 'Today'
@@ -182,45 +218,108 @@ export default function AdminDashboard() {
     if (activeFilter === 'custom' && customDate) return `Since ${new Date(customDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
     return `Last ${days} days`
   }
-  function handleLogout() { setAuthenticated(false); setData(null); setSetupData(null); setSeoData(null); setSessions([]); setStorageData(null); setInsightsData(null); setSecret(''); setStoredSecret('') }
+  function handleLogout() { signOut({ callbackUrl: '/admin/login' }) }
+
+  async function handleBookingAction(rowKey: string, action: string, extra?: Record<string, any>) {
+    setBookingsAction(rowKey)
+    try {
+      const res = await fetch('/api/bookings/appointments', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rowKey, action, ...extra }),
+      })
+      if (res.ok) {
+        const bRes = await fetch('/api/bookings/appointments')
+        if (bRes.ok) { const bData = await bRes.json(); setBookingsData(bData.appointments || []) }
+      }
+    } catch {} finally { setBookingsAction(null); closeModal() }
+  }
+
+  function openModal(type: 'outcome' | 'reply' | 'reschedule' | 'reject', booking: BookingAppointment) {
+    setBookingModal({ type, booking })
+    setModalMessage('')
+    setModalNewNote('')
+    setModalSending(false)
+    if (type === 'outcome') {
+      try { setModalNotes(booking.outcomeNotes ? JSON.parse(booking.outcomeNotes) : []) } catch { setModalNotes([]) }
+    }
+    if (type === 'reply') {
+      setModalSubject(`Re: ${booking.serviceName} — ${booking.date}`)
+      setModalMessage('')
+    }
+    if (type === 'reschedule') {
+      setModalResched({ date: booking.date, startTime: booking.startTime, endTime: booking.endTime })
+      setModalMessage('')
+    }
+    if (type === 'reject') {
+      setModalMessage('')
+    }
+  }
+
+  function closeModal() {
+    setBookingModal(null); setModalMessage(''); setModalSubject(''); setModalNewNote(''); setModalSending(false)
+  }
+
+  async function saveOutcomeNote() {
+    if (!bookingModal || !modalNewNote.trim()) return
+    setModalSending(true)
+    const updated = [...modalNotes, { text: modalNewNote.trim(), createdAt: new Date().toISOString() }]
+    try {
+      const res = await fetch('/api/bookings/appointments', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rowKey: bookingModal.booking.rowKey, action: 'update-notes', notes: JSON.stringify(updated) }),
+      })
+      if (res.ok) {
+        setModalNotes(updated); setModalNewNote('')
+        const bRes = await fetch('/api/bookings/appointments')
+        if (bRes.ok) { const bData = await bRes.json(); setBookingsData(bData.appointments || []) }
+      }
+    } catch {} finally { setModalSending(false) }
+  }
+
+  async function sendReplyEmail() {
+    if (!bookingModal || !modalMessage.trim()) return
+    setModalSending(true)
+    try {
+      await fetch('/api/bookings/appointments', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rowKey: bookingModal.booking.rowKey, action: 'send-reply', subject: modalSubject, replyBody: modalMessage }),
+      })
+    } catch {} finally { setModalSending(false); closeModal() }
+  }
 
   async function hideComment(slug: string, rowKey: string) {
-    try { const res = await fetch('/api/blog-comments', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, rowKey, adminSecret: storedSecret }) }); if (res.ok) handleRefresh() } catch {}
+    try { const res = await fetch('/api/blog-comments', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, rowKey }) }); if (res.ok) handleRefresh() } catch {}
   }
 
   // ─── Login Screen ─────────────────────────────────────────
 
-  if (!authenticated) {
+  if (status === 'loading') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 flex items-center justify-center px-4">
-        <div className="w-full max-w-md">
-          <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-xl">
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-teal-500 rounded-xl flex items-center justify-center">
-                <Lock className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-slate-800">Gennoor Admin</h1>
-                <p className="text-sm text-slate-500">Dashboard &amp; Analytics</p>
-              </div>
-            </div>
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">Admin Secret</label>
-                <input type="password" value={secret} onChange={e => setSecret(e.target.value)} placeholder="Enter your admin secret" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
-              </div>
-              {error && <p className="text-red-600 text-sm bg-red-50 px-3 py-2 rounded-lg border border-red-200">{error}</p>}
-              <button type="submit" disabled={loading} className="w-full py-3 bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md">
-                {loading ? <><RefreshCw className="w-4 h-4 animate-spin" /> Loading...</> : <><BarChart3 className="w-4 h-4" /> View Dashboard</>}
-              </button>
-            </form>
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 flex items-center justify-center">
+        <div className="flex items-center gap-3">
+          <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />
+          <span className="text-slate-600">Loading session...</span>
         </div>
       </div>
     )
   }
 
-  if (!data) return null
+  if (status === 'unauthenticated') {
+    router.push('/admin/login')
+    return null
+  }
+
+  if (!data) return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 flex items-center justify-center">
+      <div className="flex items-center gap-3">
+        <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />
+        <span className="text-slate-600">Loading dashboard data...</span>
+      </div>
+    </div>
+  )
 
   // ─── Derived Data ─────────────────────────────────────────
 
@@ -236,17 +335,30 @@ export default function AdminDashboard() {
   const failedRequests = insightsData ? extractMetricValue(insightsData.failed) : 0
   const availability = insightsData ? extractMetricValue(insightsData.availability) : 0
 
-  const tabs: { key: TabKey; label: string; icon: any; badge?: number }[] = [
-    { key: 'overview', label: 'Overview', icon: BarChart3 },
-    { key: 'traffic', label: 'Traffic', icon: TrendingUp },
-    { key: 'enquiries', label: 'Enquiries', icon: Mail },
-    { key: 'sessions', label: 'Sessions', icon: Bot },
-    { key: 'storage', label: 'Storage', icon: HardDrive },
-    { key: 'insights', label: 'Insights', icon: Activity },
-    { key: 'comments', label: 'Comments', icon: MessageSquare },
-    { key: 'seo', label: 'SEO', icon: Search },
-    { key: 'setup', label: 'Setup', icon: Settings, badge: setupData ? setupData.totalChecks - setupData.configuredCount : undefined },
+  const groups: { key: GroupKey; label: string; icon: any; badge?: number; tabs: { key: TabKey; label: string; icon: any; badge?: number }[] }[] = [
+    { key: 'analytics', label: 'Analytics', icon: BarChart3, tabs: [
+      { key: 'overview', label: 'Overview', icon: BarChart3 },
+      { key: 'traffic', label: 'Traffic', icon: TrendingUp },
+      { key: 'insights', label: 'Insights', icon: Activity },
+    ]},
+    { key: 'communications', label: 'Communications', icon: Mail, badge: (emailLogs?.totalFailed || 0) > 0 ? emailLogs!.totalFailed : undefined, tabs: [
+      { key: 'enquiries', label: 'Enquiries', icon: Mail },
+      { key: 'emails', label: 'Emails', icon: Send, badge: emailLogs?.totalFailed || undefined },
+      { key: 'comments', label: 'Comments', icon: MessageSquare },
+      { key: 'sessions', label: 'Sessions', icon: Bot },
+    ]},
+    { key: 'bookings', label: 'Bookings', icon: Calendar, badge: bookingsData.filter(b => b.status === 'pending').length || undefined, tabs: [
+      { key: 'bookings', label: 'All Requests', icon: Calendar, badge: bookingsData.filter(b => b.status === 'pending').length || undefined },
+    ]},
+    { key: 'system', label: 'System', icon: Settings, badge: setupData ? setupData.totalChecks - setupData.configuredCount : undefined, tabs: [
+      { key: 'storage', label: 'Storage', icon: HardDrive },
+      { key: 'seo', label: 'SEO Health', icon: Search },
+      { key: 'setup', label: 'Setup', icon: Settings, badge: setupData ? setupData.totalChecks - setupData.configuredCount : undefined },
+    ]},
   ]
+
+  const activeGroupData = groups.find(g => g.key === activeGroup)
+  const sidebarTabs = activeGroupData?.tabs || []
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800">
@@ -260,7 +372,7 @@ export default function AdminDashboard() {
             <div>
               <h1 className="text-lg font-bold text-slate-800">Gennoor Admin</h1>
               <p className="text-xs text-slate-500">
-                {setupData?.platform || 'Dashboard'} &middot; {setupData?.environment || ''}
+                {session?.user?.email || 'Dashboard'} &middot; {setupData?.environment || ''}
                 {lastUpdated && <> &middot; Updated {lastUpdated.toLocaleTimeString()}</>}
               </p>
             </div>
@@ -290,48 +402,118 @@ export default function AdminDashboard() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-        {/* Tabs */}
-        <div className="flex gap-1 bg-white rounded-xl p-1 mb-6 overflow-x-auto border border-slate-200 shadow-sm">
-          {tabs.map(tab => (
-            <button key={tab.key} onClick={() => setActiveTab(tab.key)} className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${activeTab === tab.key ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}>
-              <tab.icon className="w-3.5 h-3.5" />
-              {tab.label}
-              {tab.badge !== undefined && tab.badge > 0 && <span className="ml-0.5 px-1.5 py-0.5 bg-red-500 text-white text-[10px] rounded-full">{tab.badge}</span>}
+        {/* Main Horizontal Tabs */}
+        <div className="flex gap-1 bg-white rounded-xl p-1 mb-6 border border-slate-200 shadow-sm">
+          {groups.map(group => (
+            <button key={group.key} onClick={() => { setActiveGroup(group.key); setActiveTab(group.tabs[0].key) }} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex-1 justify-center ${activeGroup === group.key ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}>
+              <group.icon className="w-4 h-4" />
+              {group.label}
+              {group.badge !== undefined && group.badge > 0 && <span className={`ml-0.5 px-1.5 py-0.5 text-[10px] rounded-full ${activeGroup === group.key ? 'bg-white/25 text-white' : 'bg-red-500 text-white'}`}>{group.badge}</span>}
             </button>
           ))}
         </div>
 
+        <div className="flex gap-6">
+          {/* Vertical Sub-tabs (sidebar) */}
+          {sidebarTabs.length > 1 && (
+            <div className="w-44 flex-shrink-0">
+              <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden sticky top-[72px]">
+                {sidebarTabs.map(tab => (
+                  <button key={tab.key} onClick={() => setActiveTab(tab.key)} className={`flex items-center gap-2 w-full px-4 py-3 text-sm font-medium transition-colors border-l-[3px] ${activeTab === tab.key ? 'bg-blue-50 text-blue-700 border-blue-600' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50 border-transparent'}`}>
+                    <tab.icon className="w-4 h-4" />
+                    {tab.label}
+                    {tab.badge !== undefined && tab.badge > 0 && <span className="ml-auto px-1.5 py-0.5 bg-red-500 text-white text-[10px] rounded-full">{tab.badge}</span>}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Content Area */}
+          <div className="flex-1 min-w-0">
+
         {/* ─── OVERVIEW ──────────────────────────────────── */}
         {activeTab === 'overview' && (
           <div className="space-y-6">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Key engagement metrics */}
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
               <StatCard icon={Eye} label="Page Views" value={data.totalViews} color="blue" />
-              <StatCard icon={Mail} label="Enquiries" value={data.totalEnquiries} color="amber" />
-              <StatCard icon={Bot} label="Career Sessions" value={sessions.length} color="teal" />
-              <StatCard icon={HardDrive} label="Storage Files" value={totalFiles} color="purple" />
+              <StatCard icon={Users} label="Sessions" value={(data as any).totalSessions || 0} color="teal" />
+              <StatCard icon={Clock} label="Avg Duration" value={0} color="amber" subtitle={`${Math.round((data as any).avgSessionDuration || 0)}s`} />
+              <StatCard icon={TrendingUp} label="Pages / Session" value={0} color="purple" subtitle={`${((data as any).avgPagesPerSession || 0).toFixed(1)}`} />
+              <StatCard icon={AlertTriangle} label="Bounce Rate" value={0} color="blue" subtitle={`${((data as any).bounceRate || 0).toFixed(1)}%`} />
             </div>
-            {insightsData && !insightsData.error && (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <StatCard icon={Server} label="Server Requests" value={Math.round(serverRequests)} color="blue" />
-                <StatCard icon={Zap} label="Avg Response (ms)" value={avgResponseTime} color="teal" />
-                <StatCard icon={AlertTriangle} label="Failed Requests" value={Math.round(failedRequests)} color="amber" />
-                <StatCard icon={Activity} label="Availability %" value={Math.round(availability * 100) / 100} color="purple" />
-              </div>
-            )}
+
+            {/* Visitors & server health */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCard icon={Users} label="New Visitors" value={(data as any).newVisitors || 0} color="teal" />
+              <StatCard icon={RefreshCw} label="Returning" value={(data as any).returningVisitors || 0} color="amber" />
+              <StatCard icon={Mail} label="Enquiries" value={data.totalEnquiries} color="purple" />
+              <StatCard icon={Calendar} label="Bookings" value={bookingsData.length} color="blue" />
+            </div>
+
+            {/* Trends */}
             <div className="grid md:grid-cols-2 gap-6">
               <Panel title="Daily Page Views" subtitle={getFilterLabel()}>
                 {chartDates.length === 0 ? <Empty /> : <AreaChartComponent data={chartDates} color="#2563eb" />}
               </Panel>
-              <Panel title="Enquiry Breakdown">
-                {Object.keys(data.enquiryByType).length === 0 ? <Empty /> : <PieChartComponent data={Object.entries(data.enquiryByType).map(([name, value]) => ({ name: name.replace(/-/g, ' '), value }))} />}
+              <Panel title="Sessions Trend" subtitle={getFilterLabel()}>
+                {(() => { const sd = (data as any).sessionsByDate; if (!sd || Object.keys(sd).length === 0) return <Empty />; const d = Object.entries(sd).sort().map(([date, val]) => ({ name: new Date(date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), value: val as number })); return <AreaChartComponent data={d} color="#0d9488" /> })()}
               </Panel>
             </div>
-            <div className="grid md:grid-cols-2 gap-6">
-              <Panel title="Top Pages">
-                {data.topPages.length === 0 ? <Empty /> : <BarChartComponent data={data.topPages.slice(0, 10).map(([name, value]) => ({ name: name.length > 30 ? name.slice(0, 30) + '...' : name, value }))} />}
+
+            {/* Conversion Funnel */}
+            {(data as any).conversionFunnel && (data as any).conversionFunnel.length > 0 && (
+              <Panel title="Conversion Funnel" subtitle="Visitor journey from landing to action">
+                <div className="flex items-end gap-4 justify-center py-4 px-4">
+                  {((data as any).conversionFunnel as { step: string; users: number }[]).map((step, i, arr) => {
+                    const maxUsers = Math.max(...arr.map(s => s.users), 1)
+                    const pct = Math.min((step.users / maxUsers) * 100, 100)
+                    const prevUsers = i > 0 ? arr[i - 1]?.users || 0 : 0
+                    const dropOff = i > 0 && prevUsers > 0 ? Math.round((1 - step.users / prevUsers) * 100) : 0
+                    const barHeight = Math.max(pct * 1.6, 24)
+                    const colors = ['#2563eb', '#0ea5e9', '#14b8a6', '#f59e0b']
+                    return (
+                      <div key={step.step} className="flex-1 text-center max-w-[160px]">
+                        <div className="mx-auto rounded-t-lg" style={{ height: barHeight, background: colors[i] || '#2563eb' }} />
+                        <p className="text-lg font-bold text-slate-800 mt-2">{step.users}</p>
+                        <p className="text-xs text-slate-500 font-medium">{step.step}</p>
+                        {i > 0 && dropOff > 0 && <p className="text-xs text-red-500 mt-0.5">-{dropOff}%</p>}
+                        {i > 0 && dropOff <= 0 && step.users > 0 && <p className="text-xs text-emerald-500 mt-0.5">retained</p>}
+                      </div>
+                    )
+                  })}
+                </div>
               </Panel>
-              <Panel title="Top Referrers">
-                {data.topReferrers.length === 0 ? <Empty /> : <BarChartComponent data={data.topReferrers.map(([name, value]) => ({ name, value }))} color="#0d9488" />}
+            )}
+
+            {/* Hourly traffic + top pages */}
+            <div className="grid md:grid-cols-2 gap-6">
+              <Panel title="Traffic by Hour (UTC)" subtitle="When visitors come">
+                {(() => { const ht = (data as any).hourlyTraffic; if (!ht || ht.length === 0) return <Empty />; return <BarChartComponent data={ht.map((h: any) => ({ name: `${h.hour}:00`, value: h.views }))} color="#8b5cf6" /> })()}
+              </Panel>
+              <Panel title="Top Pages" subtitle="Most visited">
+                {data.topPages.length === 0 ? <Empty /> : <BarChartComponent data={data.topPages.slice(0, 10).map(([name, value]) => ({ name: name.length > 25 ? name.slice(0, 25) + '...' : name, value }))} />}
+              </Panel>
+            </div>
+
+            {/* Page performance + landing pages */}
+            <div className="grid md:grid-cols-2 gap-6">
+              <Panel title="Page Performance" subtitle="Avg time on page (seconds)">
+                {(() => { const pp = (data as any).pagePerformance; if (!pp || pp.length === 0) return <Empty text="Not enough data" />; return <BarChartComponent data={pp.slice(0, 10).map((p: any) => ({ name: (p.page || '').length > 25 ? p.page.slice(0, 25) + '...' : p.page, value: Math.round(p.avgTime) }))} color="#0d9488" /> })()}
+              </Panel>
+              <Panel title="Top Landing Pages" subtitle="Where visitors enter">
+                {(() => { const lp = (data as any).topLandingPages; if (!lp || lp.length === 0) return <Empty />; return <BarChartComponent data={(lp as [string, number][]).slice(0, 8).map(([name, value]) => ({ name: name.length > 25 ? name.slice(0, 25) + '...' : name, value }))} color="#f59e0b" /> })()}
+              </Panel>
+            </div>
+
+            {/* Referrers + enquiry breakdown */}
+            <div className="grid md:grid-cols-2 gap-6">
+              <Panel title="Traffic Sources">
+                {data.topReferrers.length === 0 ? <Empty text="No referral traffic" /> : <PieChartComponent data={data.topReferrers.map(([name, value]) => ({ name, value }))} />}
+              </Panel>
+              <Panel title="Enquiry Breakdown">
+                {Object.keys(data.enquiryByType).length === 0 ? <Empty /> : <PieChartComponent data={Object.entries(data.enquiryByType).map(([name, value]) => ({ name: name.replace(/-/g, ' '), value }))} />}
               </Panel>
             </div>
           </div>
@@ -368,6 +550,7 @@ export default function AdminDashboard() {
               <StatCard icon={BookOpen} label="Training" value={data.enquiryByType['TrainingEnquiry'] || data.enquiryByType['training'] || 0} color="teal" />
               <StatCard icon={FileText} label="Certification" value={data.enquiryByType['CertificationEnquiry'] || data.enquiryByType['certification'] || 0} color="amber" />
               <StatCard icon={Users} label="Expert Calls" value={data.enquiryByType['ExpertCallBooking'] || data.enquiryByType['expert-call'] || 0} color="purple" />
+              <StatCard icon={Users} label="Cowork Registrations" value={data.enquiryByType['ClaudeCoworkRegistration'] || 0} color="blue" />
             </div>
             <Panel title="Enquiry Breakdown">
               {Object.keys(data.enquiryByType).length === 0 ? <Empty /> : <PieChartComponent data={Object.entries(data.enquiryByType).map(([name, value]) => ({ name: name.replace(/-/g, ' '), value }))} />}
@@ -376,12 +559,87 @@ export default function AdminDashboard() {
               {data.recentEnquiries.length === 0 ? <Empty text="No enquiries yet" /> : (
                 <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-500 border-b border-slate-200"><th className="text-left py-2 px-3 font-medium">Type</th><th className="text-left py-2 px-3 font-medium">Name</th><th className="text-left py-2 px-3 font-medium">Email</th><th className="text-left py-2 px-3 font-medium">Course</th><th className="text-left py-2 px-3 font-medium">Date</th></tr></thead>
                 <tbody>{data.recentEnquiries.map((e, i) => (
-                  <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50"><td className="py-2.5 px-3"><span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-medium capitalize">{e.type}</span></td><td className="py-2.5 px-3 text-slate-800">{e.name}</td><td className="py-2.5 px-3 text-slate-600">{e.email}</td><td className="py-2.5 px-3 text-slate-500 max-w-[200px] truncate">{e.course}</td><td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{new Date(e.createdAt).toLocaleDateString()}</td></tr>
+                  <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50"><td className="py-2.5 px-3"><span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-medium capitalize">{e.type}</span></td><td className="py-2.5 px-3 text-slate-800">{e.name || (e as any).fullName}</td><td className="py-2.5 px-3 text-slate-600">{e.email}</td><td className="py-2.5 px-3 text-slate-500 max-w-[200px] truncate">{e.course || (e as any).company || '-'}</td><td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{new Date(e.createdAt).toLocaleDateString()}</td></tr>
                 ))}</tbody></table></div>
               )}
             </Panel>
           </div>
         )}
+
+        {/* ─── EMAILS ────────────────────────────────────── */}
+        {activeTab === 'emails' && (() => {
+          const allLogs = emailLogs?.logs || []
+          const sentLogs = allLogs.filter(l => l.status === 'sent')
+          const failedLogs = allLogs.filter(l => l.status === 'failed')
+          const bookingLogs = allLogs.filter(l => (l.from || '').includes('schedule') || (l.subject || '').match(/booking|confirmed|rescheduled|cancelled/i))
+          const contactLogs = allLogs.filter(l => (l.from || '').includes('contact') || (l.subject || '').match(/enquir|training|certification/i))
+          const otherLogs = allLogs.filter(l => !bookingLogs.includes(l) && !contactLogs.includes(l))
+
+          const emailInnerTabs = [
+            { key: 'all', label: 'All', count: allLogs.length },
+            { key: 'sent', label: 'Sent', count: sentLogs.length },
+            { key: 'failed', label: 'Failed', count: failedLogs.length },
+            { key: 'booking', label: 'Bookings', count: bookingLogs.length },
+            { key: 'contact', label: 'Contact', count: contactLogs.length },
+            { key: 'other', label: 'Other', count: otherLogs.length },
+          ]
+
+          const filteredLogs = emailFilter === 'sent' ? sentLogs : emailFilter === 'failed' ? failedLogs : emailFilter === 'booking' ? bookingLogs : emailFilter === 'contact' ? contactLogs : emailFilter === 'other' ? otherLogs : allLogs
+
+          return (
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCard icon={Send} label="Total Sent" value={emailLogs?.totalSent || 0} color="teal" />
+              <StatCard icon={XCircle} label="Failed" value={emailLogs?.totalFailed || 0} color="purple" />
+              <StatCard icon={Users} label="Unique Recipients" value={emailLogs?.uniqueRecipients || 0} color="blue" />
+              <StatCard icon={Mail} label="Total Emails" value={emailLogs?.total || 0} color="amber" />
+            </div>
+
+            {/* Inner filter tabs */}
+            <div className="flex gap-1 bg-white rounded-lg p-1 border border-slate-200">
+              {emailInnerTabs.map(t => (
+                <button key={t.key} onClick={() => setEmailFilter(t.key)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${emailFilter === t.key ? t.key === 'failed' ? 'bg-red-600 text-white' : 'bg-slate-800 text-white' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}>
+                  {t.label}
+                  <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${emailFilter === t.key ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}`}>{t.count}</span>
+                </button>
+              ))}
+            </div>
+
+            <Panel title={`${emailInnerTabs.find(t => t.key === emailFilter)?.label || 'All'} Emails`} subtitle={`${filteredLogs.length} email${filteredLogs.length !== 1 ? 's' : ''}`} action={filteredLogs.length > 0 ? <ExportButton onClick={() => downloadCSV(filteredLogs as any, `emails-${emailFilter}`)} /> : undefined}>
+              {filteredLogs.length === 0 ? <Empty text="No emails in this category" /> : (
+                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-500 border-b border-slate-200"><th className="text-left py-2 px-3 font-medium">Status</th><th className="text-left py-2 px-3 font-medium">To</th><th className="text-left py-2 px-3 font-medium">From</th><th className="text-left py-2 px-3 font-medium">Subject</th><th className="text-left py-2 px-3 font-medium">Date</th></tr></thead>
+                <tbody>{filteredLogs.map((log, i) => (
+                  <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50">
+                    <td className="py-2.5 px-3"><span className={`px-2 py-0.5 rounded text-xs font-medium ${log.status === 'sent' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{log.status}</span></td>
+                    <td className="py-2.5 px-3 text-slate-800 truncate max-w-[180px]">{log.to}</td>
+                    <td className="py-2.5 px-3 text-slate-500 truncate max-w-[160px]">{log.from}</td>
+                    <td className="py-2.5 px-3 text-slate-600 max-w-[250px] truncate">{log.subject}</td>
+                    <td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{new Date(log.createdAt).toLocaleString()}</td>
+                  </tr>
+                ))}</tbody></table></div>
+              )}
+            </Panel>
+
+            {/* Failed emails detail (always visible if there are failures) */}
+            {emailFilter === 'all' && failedLogs.length > 0 && (
+              <Panel title="Failed Emails" subtitle={`${failedLogs.length} delivery failure${failedLogs.length !== 1 ? 's' : ''}`}>
+                <div className="space-y-2">
+                  {failedLogs.slice(0, 10).map((log, i) => (
+                    <div key={i} className="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-100">
+                      <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-red-800 truncate">{log.subject}</p>
+                        <p className="text-xs text-red-600">To: {log.to} &middot; {new Date(log.createdAt).toLocaleString()}</p>
+                        {log.error && <p className="text-xs text-red-500 mt-1">{log.error}</p>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Panel>
+            )}
+          </div>
+          )
+        })()}
 
         {/* ─── CAREER SESSIONS ───────────────────────────── */}
         {activeTab === 'sessions' && (
@@ -404,6 +662,376 @@ export default function AdminDashboard() {
                 ))}</tbody></table></div>
               )}
             </Panel>
+          </div>
+        )}
+
+        {/* ─── BOOKINGS ──────────────────────────────────── */}
+        {activeTab === 'bookings' && (() => {
+          const filteredBookings = bookingMonthFilter
+            ? bookingsData.filter(b => b.date && b.date.slice(0, 7) === bookingMonthFilter)
+            : bookingsData
+          const allMonths = [...new Set(bookingsData.filter(b => b.date).map(b => b.date.slice(0, 7)))].sort().reverse()
+          const totalPages = Math.ceil(filteredBookings.length / bookingsPerPage)
+          const safePage = Math.min(bookingPage, totalPages || 1)
+          const pagedBookings = filteredBookings.slice((safePage - 1) * bookingsPerPage, safePage * bookingsPerPage)
+          const isAllSelected = filteredBookings.length > 0 && filteredBookings.every(b => selectedBookings.has(b.rowKey))
+          return (
+          <div className="space-y-6">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
+                  <button onClick={() => setBookingStatsView('overall')} className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${bookingStatsView === 'overall' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>Overall</button>
+                  <button onClick={() => setBookingStatsView('current')} className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${bookingStatsView === 'current' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>Current{bookingMonthFilter ? ` (${new Date(bookingMonthFilter + '-01').toLocaleDateString('en-US', { month: 'short' })})` : ''}</button>
+                </div>
+                <span className="text-xs text-slate-400">{bookingStatsView === 'overall' ? `${bookingsData.length} total` : `${filteredBookings.length} shown`}</span>
+              </div>
+              {(() => {
+                const statsSource = bookingStatsView === 'overall' ? bookingsData : filteredBookings
+                return (
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <StatCard icon={Clock} label="Pending" value={statsSource.filter(b => b.status === 'pending').length} color="amber" />
+                    <StatCard icon={CheckCircle} label="Accepted" value={statsSource.filter(b => b.status === 'accepted').length} color="teal" />
+                    <StatCard icon={XCircle} label="Rejected" value={statsSource.filter(b => b.status === 'rejected').length} color="purple" />
+                    <StatCard icon={AlertTriangle} label="Change Requested" value={statsSource.filter(b => b.status === 'change-requested').length} color="blue" />
+                  </div>
+                )
+              })()}
+            </div>
+            <Panel title="Booking Requests" subtitle={`Review and manage bookings${bookingMonthFilter ? ` — ${new Date(bookingMonthFilter + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` : ''}`} action={
+              <div className="flex items-center gap-2 flex-wrap">
+                <select value={bookingMonthFilter} onChange={e => { setBookingMonthFilter(e.target.value); setBookingPage(1); setSelectedBookings(new Set()) }} className="px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option value="">All Months</option>
+                  {allMonths.map(m => <option key={m} value={m}>{new Date(m + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</option>)}
+                </select>
+                {selectedBookings.size > 0 && (
+                  <>
+                    <button onClick={() => {
+                      const selected = filteredBookings.filter(b => selectedBookings.has(b.rowKey))
+                      const csvData = selected.map(b => {
+                        let outcome = ''
+                        try { const notes: OutcomeNote[] = b.outcomeNotes ? JSON.parse(b.outcomeNotes) : []; outcome = notes.map(n => n.text).join('; ') } catch {}
+                        return { Name: b.name, Email: b.email, Date: b.date, Time: `${b.startTime}${b.endTime && b.endTime !== b.startTime ? ' - ' + b.endTime : ''} UTC`, Service: b.serviceName, Status: b.status, Outcome: outcome }
+                      })
+                      downloadCSV(csvData, `bookings-report-${new Date().toISOString().slice(0, 10)}`)
+                    }} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-lg transition-colors">
+                      <Download className="w-3.5 h-3.5" /> Download Report ({selectedBookings.size})
+                    </button>
+                    <button onClick={async () => {
+                      if (!confirm(`Delete ${selectedBookings.size} booking(s)? This cannot be undone.`)) return
+                      setBookingDeleting(true)
+                      try {
+                        const res = await fetch('/api/bookings/appointments', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ rowKeys: [...selectedBookings] }) })
+                        if (res.ok) { const r = await fetch('/api/bookings/appointments'); if (r.ok) { const d = await r.json(); setBookingsData(d.appointments || []) }; setSelectedBookings(new Set()) }
+                      } catch {} finally { setBookingDeleting(false) }
+                    }} disabled={bookingDeleting} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-lg transition-colors disabled:opacity-50">
+                      <Trash2 className={`w-3.5 h-3.5 ${bookingDeleting ? 'animate-spin' : ''}`} /> Delete ({selectedBookings.size})
+                    </button>
+                  </>
+                )}
+                <button onClick={async () => { setBookingsLoading(true); try { const r = await fetch('/api/bookings/appointments'); if (r.ok) { const d = await r.json(); setBookingsData(d.appointments || []) } } catch {} finally { setBookingsLoading(false) } }} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 border border-slate-200 rounded-lg transition-colors">
+                  <RefreshCw className={`w-3.5 h-3.5 ${bookingsLoading ? 'animate-spin' : ''}`} /> Refresh
+                </button>
+              </div>
+            }>
+              {filteredBookings.length === 0 ? <Empty text={bookingMonthFilter ? 'No bookings for this month' : 'No bookings yet'} /> : (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="flex items-center gap-2 px-1 py-1 text-xs text-slate-500 cursor-pointer select-none">
+                      <input type="checkbox" checked={isAllSelected} onChange={() => {
+                        if (isAllSelected) { setSelectedBookings(new Set()) } else { setSelectedBookings(new Set(filteredBookings.map(b => b.rowKey))) }
+                      }} className="w-3.5 h-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+                      Select all ({filteredBookings.length})
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-slate-400">Per page:</span>
+                      <select value={bookingsPerPage} onChange={e => { setBookingsPerPage(Number(e.target.value)); setBookingPage(1) }} className="px-2 py-1 text-xs border border-slate-200 rounded-lg bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        {[15, 30, 45, 60, 75, 90, 105].map(n => <option key={n} value={n}>{n}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  {pagedBookings.map(apt => {
+                    const bookingDate = apt.date ? new Date(apt.date + 'T00:00:00') : null
+                    const isPast = bookingDate ? bookingDate < new Date() : false
+                    const statusColor = apt.status === 'accepted' ? 'bg-emerald-100 text-emerald-700' : apt.status === 'rejected' ? 'bg-red-100 text-red-700' : apt.status === 'cancelled' ? 'bg-red-100 text-red-700' : apt.status === 'change-requested' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'
+                    const isSelected = selectedBookings.has(apt.rowKey)
+                    return (
+                      <div key={apt.rowKey} className={`border rounded-xl p-4 shadow-sm ${isSelected ? 'ring-2 ring-blue-400 border-blue-300' : ''} ${isPast && apt.status !== 'pending' ? 'bg-slate-50 border-slate-200 opacity-75' : apt.status === 'pending' ? 'bg-amber-50/30 border-amber-200' : 'bg-white border-slate-200'}`}>
+                        <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+                          <div className="flex flex-col items-center gap-2 shrink-0">
+                            <input type="checkbox" checked={isSelected} onChange={() => {
+                              const next = new Set(selectedBookings)
+                              if (isSelected) next.delete(apt.rowKey); else next.add(apt.rowKey)
+                              setSelectedBookings(next)
+                            }} className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+                            <div className="w-16 text-center">
+                              {bookingDate && (
+                                <>
+                                  <div className="text-xs text-slate-500 uppercase">{bookingDate.toLocaleDateString('en-US', { month: 'short' })}</div>
+                                  <div className="text-2xl font-bold text-slate-800">{bookingDate.getDate()}</div>
+                                  <div className="text-xs text-slate-500">{bookingDate.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+                                </>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap mb-1">
+                              <h3 className="text-sm font-semibold text-slate-800">{apt.serviceName}</h3>
+                              <span className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${statusColor}`}>{apt.status}</span>
+                              {isPast && apt.status !== 'pending' && <span className="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500">Past</span>}
+                            </div>
+
+                            <div className="grid sm:grid-cols-2 gap-x-4 gap-y-1 mt-2 text-sm">
+                              <div className="flex items-center gap-1.5 text-slate-600">
+                                <Users className="w-3.5 h-3.5 text-slate-400" />
+                                <span className="font-medium">{apt.name}</span>
+                              </div>
+                              <div className="flex items-center gap-1.5 text-slate-600">
+                                <Mail className="w-3.5 h-3.5 text-slate-400" />
+                                <a href={`mailto:${apt.email}`} className="text-blue-600 hover:underline truncate">{apt.email}</a>
+                              </div>
+                              {apt.whatsapp && (
+                                <div className="flex items-center gap-1.5 text-slate-600">
+                                  <Phone className="w-3.5 h-3.5 text-slate-400" />
+                                  <a href={`https://wa.me/${apt.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{apt.whatsapp}</a>
+                                </div>
+                              )}
+                              <div className="flex items-center gap-1.5 text-slate-600">
+                                <Clock className="w-3.5 h-3.5 text-slate-400" />
+                                <span>{apt.startTime}{apt.endTime && apt.endTime !== apt.startTime ? ` – ${apt.endTime}` : ''} UTC</span>
+                              </div>
+                              {apt.country && (
+                                <div className="flex items-center gap-1.5 text-slate-600">
+                                  <Globe className="w-3.5 h-3.5 text-slate-400" />
+                                  <span>{apt.country}</span>
+                                </div>
+                              )}
+                              {apt.timezone && apt.timezone !== 'UTC' && (
+                                <div className="flex items-center gap-1.5 text-slate-600">
+                                  <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                                  <span>{apt.timezone}</span>
+                                </div>
+                              )}
+                            </div>
+
+                            {apt.topic && (
+                              <div className="mt-2 p-2 bg-slate-50 rounded-lg text-xs text-slate-600 border border-slate-100">
+                                <span className="font-medium text-slate-700">Topic:</span> {apt.topic}
+                              </div>
+                            )}
+
+                            {apt.adminMessage && apt.status !== 'pending' && (
+                              <div className="mt-2 p-2 bg-blue-50 rounded-lg text-xs text-blue-700 border border-blue-100">
+                                <span className="font-medium">Admin note:</span> {apt.adminMessage}
+                              </div>
+                            )}
+
+                          </div>
+
+                          <div className="flex flex-wrap sm:flex-col gap-2 shrink-0">
+                            {apt.joinWebUrl && (
+                              <a href={apt.joinWebUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                                <Video className="w-3.5 h-3.5" /> Join Teams
+                              </a>
+                            )}
+                            {apt.status === 'pending' && (
+                              <button onClick={() => handleBookingAction(apt.rowKey, 'accept')} disabled={bookingsAction === apt.rowKey} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg transition-colors disabled:opacity-50">
+                                {bookingsAction === apt.rowKey ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle className="w-3.5 h-3.5" />} Accept
+                              </button>
+                            )}
+                            {(apt.status === 'pending' || apt.status === 'accepted') && (
+                              <button onClick={() => openModal('reschedule', apt)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-lg transition-colors">
+                                <Clock className="w-3.5 h-3.5" /> Reschedule
+                              </button>
+                            )}
+                            {apt.status === 'pending' && (
+                              <button onClick={() => openModal('reject', apt)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors">
+                                <XCircle className="w-3.5 h-3.5" /> Reject / Change
+                              </button>
+                            )}
+                            {apt.status === 'accepted' && (
+                              <button onClick={() => openModal('reject', apt)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors">
+                                <XCircle className="w-3.5 h-3.5" /> Cancel
+                              </button>
+                            )}
+                            <button onClick={() => openModal('outcome', apt)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg transition-colors">
+                              <FileText className="w-3.5 h-3.5" /> Outcome
+                            </button>
+                            <button onClick={() => openModal('reply', apt)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors">
+                              <Mail className="w-3.5 h-3.5" /> Reply
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                      <span className="text-xs text-slate-400">
+                        {(safePage - 1) * bookingsPerPage + 1}–{Math.min(safePage * bookingsPerPage, filteredBookings.length)} of {filteredBookings.length}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => setBookingPage(p => Math.max(1, p - 1))} disabled={safePage === 1} className="px-2.5 py-1.5 text-xs font-medium rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">Prev</button>
+                        {(() => {
+                          const pages: number[] = []
+                          const start = Math.max(1, Math.min(safePage, totalPages - 4))
+                          for (let i = start; i <= Math.min(start + 4, totalPages); i++) pages.push(i)
+                          return pages.map(p => (
+                            <button key={p} onClick={() => setBookingPage(p)} className={`w-8 h-8 text-xs font-medium rounded-lg transition-colors ${p === safePage ? 'bg-blue-600 text-white' : 'border border-slate-200 hover:bg-slate-50 text-slate-600'}`}>{p}</button>
+                          ))
+                        })()}
+                        <button onClick={() => setBookingPage(p => Math.min(totalPages, p + 1))} disabled={safePage === totalPages} className="px-2.5 py-1.5 text-xs font-medium rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">Next</button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </Panel>
+          </div>
+        ) })()}
+
+        {/* ─── BOOKING MODALS ─────────────────────────────── */}
+        {bookingModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50" onClick={closeModal}>
+            <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+              {/* Header */}
+              <div className="flex items-center justify-between p-5 border-b border-slate-200">
+                <h2 className="text-lg font-semibold text-slate-800">
+                  {bookingModal.type === 'outcome' && 'Meeting Outcome'}
+                  {bookingModal.type === 'reply' && 'Reply to Customer'}
+                  {bookingModal.type === 'reschedule' && 'Reschedule Booking'}
+                  {bookingModal.type === 'reject' && (bookingModal.booking.status === 'accepted' ? 'Cancel Booking' : 'Reject / Suggest Change')}
+                </h2>
+                <button onClick={closeModal} className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors"><X className="w-5 h-5 text-slate-500" /></button>
+              </div>
+
+              {/* Booking details (shown in all modals) */}
+              <div className="px-5 pt-4 pb-2">
+                <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 text-sm">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-semibold text-slate-800">{bookingModal.booking.serviceName}</span>
+                    <span className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${bookingModal.booking.status === 'accepted' ? 'bg-emerald-100 text-emerald-700' : bookingModal.booking.status === 'rejected' ? 'bg-red-100 text-red-700' : bookingModal.booking.status === 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>{bookingModal.booking.status}</span>
+                  </div>
+                  <p className="text-slate-600"><strong>{bookingModal.booking.name}</strong> &middot; {bookingModal.booking.email}</p>
+                  {bookingModal.booking.whatsapp && <p className="text-slate-500">WhatsApp: {bookingModal.booking.whatsapp}</p>}
+                  <p className="text-slate-500">{bookingModal.booking.date} &middot; {bookingModal.booking.startTime}{bookingModal.booking.endTime !== bookingModal.booking.startTime ? ` – ${bookingModal.booking.endTime}` : ''} UTC</p>
+                  {bookingModal.booking.topic && <p className="text-slate-500 mt-1">Topic: {bookingModal.booking.topic}</p>}
+                  {bookingModal.booking.country && <p className="text-slate-500">{bookingModal.booking.country}{bookingModal.booking.timezone !== 'UTC' ? ` (${bookingModal.booking.timezone})` : ''}</p>}
+                </div>
+              </div>
+
+              {/* ── OUTCOME MODAL ── */}
+              {bookingModal.type === 'outcome' && (
+                <div className="p-5 space-y-4">
+                  {modalNotes.length > 0 && (
+                    <div className="space-y-2">
+                      <h3 className="text-sm font-medium text-slate-700">Previous Notes</h3>
+                      {modalNotes.map((note, i) => (
+                        <div key={i} className="p-3 bg-purple-50 rounded-lg border border-purple-100">
+                          <p className="text-sm text-slate-700">{note.text}</p>
+                          <p className="text-xs text-slate-400 mt-1">{new Date(note.createdAt).toLocaleString()}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {modalNotes.length === 0 && <p className="text-sm text-slate-400">No outcome notes yet.</p>}
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Add Note</label>
+                    <textarea value={modalNewNote} onChange={e => setModalNewNote(e.target.value)} placeholder="Meeting outcome, follow-ups, action items..." className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none" rows={3} />
+                  </div>
+                  <button onClick={saveOutcomeNote} disabled={modalSending || !modalNewNote.trim()} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                    {modalSending ? <RefreshCw className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />} Save Note
+                  </button>
+                </div>
+              )}
+
+              {/* ── REPLY MODAL ── */}
+              {bookingModal.type === 'reply' && (
+                <div className="p-5 space-y-4">
+                  {bookingModal.booking.adminMessage && (
+                    <div>
+                      <h3 className="text-sm font-medium text-slate-700 mb-1">Previous Admin Message</h3>
+                      <div className="p-3 bg-blue-50 rounded-lg border border-blue-100 text-sm text-blue-800">{bookingModal.booking.adminMessage}</div>
+                    </div>
+                  )}
+                  {(() => { try { const notes: OutcomeNote[] = bookingModal.booking.outcomeNotes ? JSON.parse(bookingModal.booking.outcomeNotes) : []; return notes.length > 0 ? (
+                    <div>
+                      <h3 className="text-sm font-medium text-slate-700 mb-1">Outcome Notes</h3>
+                      {notes.map((n, i) => (
+                        <div key={i} className="p-2 bg-slate-50 rounded-lg border border-slate-100 text-sm text-slate-600 mb-1">
+                          {n.text} <span className="text-xs text-slate-400">— {new Date(n.createdAt).toLocaleDateString()}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null } catch { return null } })()}
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Subject</label>
+                    <input type="text" value={modalSubject} onChange={e => setModalSubject(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Message</label>
+                    <textarea value={modalMessage} onChange={e => setModalMessage(e.target.value)} placeholder="Type your reply..." className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" rows={4} />
+                  </div>
+                  <button onClick={sendReplyEmail} disabled={modalSending || !modalMessage.trim()} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                    {modalSending ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />} Send Email
+                  </button>
+                </div>
+              )}
+
+              {/* ── RESCHEDULE MODAL ── */}
+              {bookingModal.type === 'reschedule' && (
+                <div className="p-5 space-y-4">
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">New Date</label>
+                      <input type="date" value={modalResched.date} onChange={e => setModalResched(p => ({ ...p, date: e.target.value }))} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">Start (UTC)</label>
+                      <input type="time" value={modalResched.startTime} onChange={e => setModalResched(p => ({ ...p, startTime: e.target.value }))} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">End (UTC)</label>
+                      <input type="time" value={modalResched.endTime} onChange={e => setModalResched(p => ({ ...p, endTime: e.target.value }))} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Note to Customer (optional)</label>
+                    <textarea value={modalMessage} onChange={e => setModalMessage(e.target.value)} placeholder="Reason for rescheduling..." className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" rows={2} />
+                  </div>
+                  <button onClick={() => handleBookingAction(bookingModal.booking.rowKey, 'reschedule', { message: modalMessage, newDate: modalResched.date, newStartTime: modalResched.startTime, newEndTime: modalResched.endTime })} disabled={bookingsAction === bookingModal.booking.rowKey || !modalResched.date || !modalResched.startTime} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                    {bookingsAction === bookingModal.booking.rowKey ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Calendar className="w-4 h-4" />} Confirm Reschedule
+                  </button>
+                </div>
+              )}
+
+              {/* ── REJECT / CANCEL MODAL ── */}
+              {bookingModal.type === 'reject' && (
+                <div className="p-5 space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Message to Customer (optional)</label>
+                    <textarea value={modalMessage} onChange={e => setModalMessage(e.target.value)} placeholder="Reason for cancellation or suggestion..." className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 resize-none" rows={3} />
+                  </div>
+                  <div className="flex gap-2">
+                    {bookingModal.booking.status === 'pending' && (
+                      <>
+                        <button onClick={() => handleBookingAction(bookingModal.booking.rowKey, 'reject', { message: modalMessage })} disabled={bookingsAction === bookingModal.booking.rowKey} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                          {bookingsAction === bookingModal.booking.rowKey ? <RefreshCw className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />} Reject
+                        </button>
+                        <button onClick={() => handleBookingAction(bookingModal.booking.rowKey, 'suggest-change', { message: modalMessage })} disabled={bookingsAction === bookingModal.booking.rowKey} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                          {bookingsAction === bookingModal.booking.rowKey ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />} Suggest Change
+                        </button>
+                      </>
+                    )}
+                    {bookingModal.booking.status === 'accepted' && (
+                      <button onClick={() => handleBookingAction(bookingModal.booking.rowKey, 'cancel', { message: modalMessage })} disabled={bookingsAction === bookingModal.booking.rowKey} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                        {bookingsAction === bookingModal.booking.rowKey ? <RefreshCw className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />} Cancel Booking
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -448,12 +1076,24 @@ export default function AdminDashboard() {
                 <Panel title="Response Time Trend">{(() => { const d = extractTimeSeriesRows(insightsData.responseTimeTrend); return d.length ? <AreaChartComponent data={d.map(r => ({ ...r, value: Math.round(r.value) }))} color="#f59e0b" /> : <Empty /> })()}</Panel>
               </div>
               <div className="grid md:grid-cols-2 gap-6">
-                <Panel title="Top Pages (Server)">{(() => { const d = extractQueryRows(insightsData.topPages); return d.length ? <BarChartComponent data={d.map(r => ({ ...r, name: r.name.length > 25 ? r.name.slice(0, 25) + '...' : r.name }))} color="#0d9488" /> : <Empty /> })()}</Panel>
-                <Panel title="Browser Distribution">{(() => { const d = extractQueryRows(insightsData.browsers); return d.length ? <PieChartComponent data={d} /> : <Empty /> })()}</Panel>
+                <Panel title="Peak Traffic Hours">{(() => { const d = extractQueryRows(insightsData?.peakHours); return d.length ? <BarChartComponent data={d.map(r => ({ name: `${r.name}:00`, value: r.value }))} color="#8b5cf6" /> : <Empty /> })()}</Panel>
+                <Panel title="Custom Events">{(() => { const d = extractQueryRows(insightsData?.eventsSummary); return d.length ? <BarChartComponent data={d.slice(0, 10).map(r => ({ ...r, name: r.name.length > 20 ? r.name.slice(0, 20) + '...' : r.name }))} color="#0d9488" /> : <Empty text="No events tracked" /> })()}</Panel>
               </div>
               <div className="grid md:grid-cols-2 gap-6">
+                <Panel title="Device Types">{(() => { const d = extractQueryRows(insightsData?.deviceTypes); return d.length ? <PieChartComponent data={d} /> : <Empty /> })()}</Panel>
+                <Panel title="Operating Systems">{(() => { const d = extractQueryRows(insightsData?.operatingSystems); return d.length ? <PieChartComponent data={d} /> : <Empty /> })()}</Panel>
+              </div>
+              <div className="grid md:grid-cols-2 gap-6">
+                <Panel title="Browser Distribution">{(() => { const d = extractQueryRows(insightsData.browsers); return d.length ? <PieChartComponent data={d} /> : <Empty /> })()}</Panel>
                 <Panel title="Top Countries (Server)">{(() => { const d = extractQueryRows(insightsData.countries); return d.length ? <BarChartComponent data={d} color="#8b5cf6" /> : <Empty /> })()}</Panel>
+              </div>
+              <div className="grid md:grid-cols-2 gap-6">
+                <Panel title="Top Pages (Server)">{(() => { const d = extractQueryRows(insightsData.topPages); return d.length ? <BarChartComponent data={d.map(r => ({ ...r, name: r.name.length > 25 ? r.name.slice(0, 25) + '...' : r.name }))} color="#0d9488" /> : <Empty /> })()}</Panel>
+                <Panel title="Slowest Pages (ms)">{(() => { const d = extractQueryRows(insightsData?.slowestPages); return d.length ? <BarChartComponent data={d.map(r => ({ name: r.name.length > 25 ? r.name.slice(0, 25) + '...' : r.name, value: Math.round(r.value) }))} color="#f59e0b" /> : <Empty /> })()}</Panel>
+              </div>
+              <div className="grid md:grid-cols-2 gap-6">
                 <Panel title="Error Types">{(() => { const d = extractQueryRows(insightsData.errors); return d.length ? <BarChartComponent data={d.map(r => ({ ...r, name: r.name.length > 20 ? r.name.slice(0, 20) + '...' : r.name }))} color="#ef4444" /> : <Empty text="No errors" /> })()}</Panel>
+                <Panel title="Failed URLs">{(() => { const d = extractQueryRows(insightsData?.failedUrls); return d.length ? <BarChartComponent data={d.map(r => ({ ...r, name: r.name.length > 25 ? r.name.slice(0, 25) + '...' : r.name }))} color="#ef4444" /> : <Empty text="No failures" /> })()}</Panel>
               </div>
             </>)}
           </div>
@@ -589,6 +1229,9 @@ export default function AdminDashboard() {
             </Panel>
           </div>
         )}
+
+          </div>{/* end flex-1 content */}
+        </div>{/* end flex row */}
       </div>
     </div>
   )

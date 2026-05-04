@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { TableClient } from '@azure/data-tables'
+import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 
 export async function POST(request: NextRequest) {
   try {
-    const { secret } = await request.json()
-    if (secret !== process.env.ADMIN_SECRET) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const { authorized } = await verifyAdmin(request)
+    if (!authorized) return unauthorizedResponse()
 
     const connStr = process.env.AZURE_STORAGE_CONNECTION_STRING
     if (!connStr) return NextResponse.json([])
