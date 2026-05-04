@@ -1,0 +1,45 @@
+name: YouTube Sync (Staging)
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  workflow_dispatch:        # Manual trigger
+
+env:
+  NODE_VERSION: '22.x'
+
+jobs:
+  sync-staging:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: staging
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build with YouTube fetch
+        run: npm run build
+        env:
+          NEXT_PUBLIC_BLOB_URL: "/media"
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+
+      - name: Trigger Vercel staging redeploy
+        if: success()
+        run: |
+          if [ -n "${{ secrets.VERCEL_STAGING_DEPLOY_HOOK }}" ]; then
+            curl -X POST "${{ secrets.VERCEL_STAGING_DEPLOY_HOOK }}" \
+              -H "Content-Type: application/json" \
+              -d '{}' \
+              --max-time 30
+            echo "Vercel staging redeploy triggered"
+          else
+            echo "No Vercel deploy hook configured — build validated successfully"
+          fi

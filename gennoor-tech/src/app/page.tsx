@@ -1,4 +1,5 @@
 import { PersonJsonLd } from '@/components/JsonLd'
+import ScrollReveal from '@/components/ScrollReveal'
 import HeroSection from '@/components/home/HeroSection'
 import TrustedBy from '@/components/home/TrustedBy'
 import ServicePillars from '@/components/home/ServicePillars'
@@ -6,6 +7,7 @@ import IntroVideo from '@/components/home/IntroVideo'
 import Metrics from '@/components/home/Metrics'
 import Testimonials from '@/components/home/Testimonials'
 import POCShowcase from '@/components/home/POCShowcase'
+import YouTubeVideos from '@/components/home/YouTubeVideos'
 import LatestBlog from '@/components/home/LatestBlog'
 import CTASection from '@/components/home/CTASection'
 
@@ -14,32 +16,43 @@ export default function HomePage() {
     <>
       <PersonJsonLd />
 
-      {/* Hero Section */}
       <HeroSection />
 
-      {/* Trusted By Strip */}
-      <TrustedBy />
+      <ScrollReveal>
+        <TrustedBy />
+      </ScrollReveal>
 
-      {/* Service Pillars */}
-      <ServicePillars />
+      <ScrollReveal>
+        <ServicePillars />
+      </ScrollReveal>
 
-      {/* Intro Video */}
-      <IntroVideo />
+      <ScrollReveal>
+        <IntroVideo />
+      </ScrollReveal>
 
-      {/* Proof Metrics */}
-      <Metrics />
+      <ScrollReveal>
+        <Metrics />
+      </ScrollReveal>
 
-      {/* Testimonials */}
-      <Testimonials />
+      <ScrollReveal>
+        <Testimonials />
+      </ScrollReveal>
 
-      {/* POC Showcase */}
-      <POCShowcase />
+      <ScrollReveal>
+        <POCShowcase />
+      </ScrollReveal>
 
-      {/* Latest Blog */}
-      <LatestBlog />
+      <ScrollReveal>
+        <YouTubeVideos />
+      </ScrollReveal>
 
-      {/* Final CTA */}
-      <CTASection />
+      <ScrollReveal>
+        <LatestBlog />
+      </ScrollReveal>
+
+      <ScrollReveal>
+        <CTASection />
+      </ScrollReveal>
     </>
   )
 }

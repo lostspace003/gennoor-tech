@@ -138,13 +138,15 @@ export default function HeroSection() {
                       showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                     }`}
                   >
-                    <div className="bg-gradient-to-br from-primary-600 to-accent-600 p-1 rounded-xl shadow-2xl">
-                      <InlineVideoPlayer
-                        videoSrc={`${BLOB_URL}/videos/gennoor-intro-video.mp4`}
-                        posterSrc={`${BLOB_URL}/videos/video-thumbnail-bright.png`}
-                        rounded="rounded-lg"
-                      />
-                    </div>
+                    <InlineVideoPlayer
+                      videoSrc="/media/videos/gennoor-presentation.mp4"
+                      posterSrc={`${BLOB_URL}/videos/video-thumbnail-bright.png`}
+                      rounded="rounded-xl"
+                      className="shadow-lg ring-1 ring-gray-200/60"
+                    />
+                    <p className="text-center text-sm font-semibold text-gray-600 mt-3 tracking-wide">
+                      Train. Innovate. Build. — AI that ships.
+                    </p>
                   </div>
 
                 </div>

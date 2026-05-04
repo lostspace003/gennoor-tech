@@ -29,7 +29,7 @@ export default function ServicePillars() {
               <Link
                 key={service.title}
                 href={service.href}
-                className="group relative bg-white rounded-xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 block"
+                className="group relative bg-white rounded-xl p-6 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-out border border-gray-100 block"
               >
                 {/* Icon */}
                 <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">

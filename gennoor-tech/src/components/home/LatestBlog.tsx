@@ -31,7 +31,7 @@ export default function LatestBlog() {
             <Link
               key={post.slug}
               href={`/resources/blog/${post.slug}`}
-              className="group rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
+              className="group rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-out"
               style={{ backgroundColor: '#ffffff', border: '1px solid #f3f4f6' }}
             >
               <div className="h-36 flex flex-col justify-end p-5 relative overflow-hidden" style={{ backgroundColor: post.coverColor }}>

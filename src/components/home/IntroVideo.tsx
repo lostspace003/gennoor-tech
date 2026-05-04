@@ -20,7 +20,7 @@ export default function IntroVideo() {
             videoSrc={`${BLOB_URL}/videos/gennoor-intro-video.mp4`}
             posterSrc={`${BLOB_URL}/images/personal-banner.png`}
             rounded="rounded-2xl"
-            className="shadow-xl ring-1 ring-black/5"
+            className="shadow-lg ring-1 ring-gray-200/60"
           />
         </div>
       </div>

@@ -37,14 +37,14 @@ export default function CTASection() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/resources/calendar"
-                className="inline-flex items-center justify-center px-8 py-4 text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 transition-colors group"
+                className="inline-flex items-center justify-center px-8 py-4 text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 hover:shadow-lg transition-all duration-200 ease-out group"
               >
                 Book a Discovery Call
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
                 href="/services/training"
-                className="inline-flex items-center justify-center px-8 py-4 text-base font-medium rounded-md text-primary-600 bg-white border-2 border-primary-600 hover:bg-primary-50 transition-colors"
+                className="inline-flex items-center justify-center px-8 py-4 text-base font-medium rounded-md text-primary-600 bg-white border-2 border-primary-600 hover:bg-primary-50 hover:shadow-lg transition-all duration-200 ease-out"
               >
                 Explore Services
               </Link>
