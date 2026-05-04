@@ -54,6 +54,7 @@ export const siteConfig = {
       { name: 'Blog', href: '/resources/blog' },
       { name: 'Videos', href: '/resources/videos' },
       { name: 'Claude Cowork', href: '/claude-cowork' },
+      { name: 'AI Readiness', href: '/ai-readiness' },
       { name: 'Webinars', href: '/webinars' },
       { name: 'Contact', href: '/contact' },
     ],
