@@ -66,7 +66,7 @@ export default async function VideosPage() {
       </section>
 
       {/* Videos Grid */}
-      <section className="section-padding">
+      <section className="py-6">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {videos.length > 0 ? (
             <YouTubeGrid videos={videos} />

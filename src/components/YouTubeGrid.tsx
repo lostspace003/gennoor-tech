@@ -1,14 +1,13 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import Image from 'next/image'
-import { Play, Eye, ThumbsUp, Search, Clock, Calendar, ListVideo, LayoutGrid, LayoutList } from 'lucide-react'
+import { Play, Eye, ThumbsUp, Search, Clock, Calendar, ListVideo, ChevronDown, Check } from 'lucide-react'
 import type { YouTubeVideo } from '@/lib/youtube'
 
 type SortOption = 'latest' | 'popular' | 'oldest' | 'most-liked'
 type DurationFilter = 'all' | 'shorts' | 'short' | 'medium' | 'long'
 type TimeFilter = 'all' | 'week' | 'month' | '3months' | 'year'
-type ViewMode = 'grid' | 'list'
 
 function formatViews(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
@@ -26,11 +25,7 @@ function timeAgo(dateStr: string): string {
   return `${Math.floor(days / 365)}y ago`
 }
 
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-}
-
-function VideoCardGrid({ video }: { video: YouTubeVideo }) {
+function VideoCard({ video }: { video: YouTubeVideo }) {
   return (
     <a
       href={`https://www.youtube.com/watch?v=${video.id}`}
@@ -77,51 +72,6 @@ function VideoCardGrid({ video }: { video: YouTubeVideo }) {
   )
 }
 
-function VideoCardList({ video }: { video: YouTubeVideo }) {
-  return (
-    <a
-      href={`https://www.youtube.com/watch?v=${video.id}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group flex gap-4 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 ease-out bg-white border border-gray-100 p-3"
-    >
-      <div className="relative w-48 sm:w-56 flex-shrink-0 aspect-video rounded-lg overflow-hidden bg-gray-100">
-        {video.thumbnail && (
-          <Image src={video.thumbnail} alt={video.title} fill className="object-cover" />
-        )}
-        <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-medium px-1.5 py-0.5 rounded">
-          {video.duration}
-        </div>
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center shadow-lg">
-            <Play className="w-4 h-4 text-white ml-0.5 fill-white" />
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-col justify-center min-w-0 flex-1">
-        <h3 className="font-semibold text-gray-900 text-sm line-clamp-2 mb-1 group-hover:text-primary-600 transition-colors duration-200">
-          {video.title}
-        </h3>
-        <p className="text-xs text-gray-500 line-clamp-2 mb-2 hidden sm:block">{video.description}</p>
-        {video.playlists.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-2">
-            {video.playlists.map((pl) => (
-              <span key={pl} className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-primary-50 text-primary-700">
-                {pl}
-              </span>
-            ))}
-          </div>
-        )}
-        <div className="flex items-center gap-3 text-xs text-gray-500">
-          <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{formatViews(video.viewCount)} views</span>
-          <span className="flex items-center gap-1"><ThumbsUp className="w-3 h-3" />{formatViews(video.likeCount)}</span>
-          <span>{formatDate(video.publishedAt)}</span>
-        </div>
-      </div>
-    </a>
-  )
-}
-
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: 'latest', label: 'Latest' },
   { value: 'popular', label: 'Most Viewed' },
@@ -129,7 +79,7 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: 'oldest', label: 'Oldest' },
 ]
 
-const DURATION_OPTIONS: { value: DurationFilter; label: string; icon?: string }[] = [
+const DURATION_OPTIONS: { value: DurationFilter; label: string }[] = [
   { value: 'all', label: 'All' },
   { value: 'shorts', label: 'Shorts' },
   { value: 'short', label: '1–5 min' },
@@ -161,13 +111,82 @@ function FilterPill({ active, onClick, children }: { active: boolean; onClick: (
   )
 }
 
+function PlaylistDropdown({ playlists, selected, onChange }: { playlists: string[]; selected: string[]; onChange: (v: string[]) => void }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
+
+  function toggle(pl: string) {
+    if (selected.includes(pl)) {
+      onChange(selected.filter((s) => s !== pl))
+    } else {
+      onChange([...selected, pl])
+    }
+  }
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-xs font-medium transition-all duration-200 ${
+          selected.length > 0
+            ? 'border-primary-300 bg-primary-50 text-primary-700'
+            : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+        }`}
+      >
+        <ListVideo className="w-3.5 h-3.5" />
+        {selected.length === 0 ? 'Series' : `${selected.length} selected`}
+        <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full mt-1 w-72 bg-white rounded-lg border border-gray-200 shadow-lg z-50 py-1 max-h-64 overflow-y-auto">
+          {playlists.map((pl) => {
+            const isSelected = selected.includes(pl)
+            return (
+              <button
+                key={pl}
+                type="button"
+                onClick={() => toggle(pl)}
+                className="flex items-center gap-2.5 w-full px-3 py-2 text-left text-xs hover:bg-gray-50 transition-colors"
+              >
+                <div className={`w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center transition-colors ${
+                  isSelected ? 'bg-primary-600 border-primary-600' : 'border-gray-300'
+                }`}>
+                  {isSelected && <Check className="w-2.5 h-2.5 text-white" />}
+                </div>
+                <span className={`truncate ${isSelected ? 'text-gray-900 font-medium' : 'text-gray-600'}`}>{pl}</span>
+              </button>
+            )
+          })}
+          {selected.length > 0 && (
+            <button
+              type="button"
+              onClick={() => onChange([])}
+              className="w-full px-3 py-2 text-xs text-primary-600 hover:bg-primary-50 font-medium text-left border-t border-gray-100 mt-1"
+            >
+              Clear selection
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState<SortOption>('latest')
   const [duration, setDuration] = useState<DurationFilter>('all')
   const [time, setTime] = useState<TimeFilter>('all')
-  const [playlist, setPlaylist] = useState<string>('all')
-  const [viewMode, setViewMode] = useState<ViewMode>('grid')
+  const [selectedPlaylists, setSelectedPlaylists] = useState<string[]>([])
 
   const allPlaylists = useMemo(() => {
     const set = new Set<string>()
@@ -209,8 +228,8 @@ export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
       result = result.filter((v) => new Date(v.publishedAt).getTime() >= cutoff)
     }
 
-    if (playlist !== 'all') {
-      result = result.filter((v) => v.playlists.includes(playlist))
+    if (selectedPlaylists.length > 0) {
+      result = result.filter((v) => selectedPlaylists.some((pl) => v.playlists.includes(pl)))
     }
 
     switch (sort) {
@@ -221,132 +240,103 @@ export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
     }
 
     return result
-  }, [videos, search, sort, duration, time, playlist])
+  }, [videos, search, sort, duration, time, selectedPlaylists])
 
   const activeFilterCount = [
     duration !== 'all',
     time !== 'all',
-    playlist !== 'all',
+    selectedPlaylists.length > 0,
   ].filter(Boolean).length
 
   return (
     <div>
-      {/* Search + View Toggle */}
-      <div className="flex gap-3 mb-5">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search videos..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 transition-all duration-200"
-          />
-        </div>
-        <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-          <button
-            onClick={() => setViewMode('grid')}
-            className={`p-2.5 transition-colors duration-200 ${viewMode === 'grid' ? 'bg-primary-50 text-primary-600' : 'text-gray-400 hover:text-gray-600'}`}
-            type="button" aria-label="Grid view"
-          >
-            <LayoutGrid className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setViewMode('list')}
-            className={`p-2.5 transition-colors duration-200 ${viewMode === 'list' ? 'bg-primary-50 text-primary-600' : 'text-gray-400 hover:text-gray-600'}`}
-            type="button" aria-label="List view"
-          >
-            <LayoutList className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-
-      {/* Filter rows */}
-      <div className="space-y-3 mb-6">
-        {/* Sort */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider w-16 flex-shrink-0">Sort</span>
-          {SORT_OPTIONS.map((opt) => (
-            <FilterPill key={opt.value} active={sort === opt.value} onClick={() => setSort(opt.value)}>
-              {opt.label}
-            </FilterPill>
-          ))}
+      {/* Sticky filter bar */}
+      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 pb-4 pt-4 border-b border-gray-100">
+        {/* Search + Series dropdown */}
+        <div className="flex gap-3 mb-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search videos..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 transition-all duration-200"
+            />
+          </div>
+          {allPlaylists.length > 0 && (
+            <PlaylistDropdown playlists={allPlaylists} selected={selectedPlaylists} onChange={setSelectedPlaylists} />
+          )}
         </div>
 
-        {/* Duration */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider w-16 flex-shrink-0 flex items-center gap-1">
-            <Clock className="w-3 h-3" /> Length
-          </span>
-          {DURATION_OPTIONS.map((opt) => (
-            <FilterPill key={opt.value} active={duration === opt.value} onClick={() => setDuration(opt.value)}>
-              {opt.label}
-            </FilterPill>
-          ))}
-        </div>
-
-        {/* Time */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider w-16 flex-shrink-0 flex items-center gap-1">
-            <Calendar className="w-3 h-3" /> Date
-          </span>
-          {TIME_OPTIONS.map((opt) => (
-            <FilterPill key={opt.value} active={time === opt.value} onClick={() => setTime(opt.value)}>
-              {opt.label}
-            </FilterPill>
-          ))}
-        </div>
-
-        {/* Playlists */}
-        {allPlaylists.length > 0 && (
+        {/* Filter rows */}
+        <div className="space-y-2">
+          {/* Sort */}
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider w-16 flex-shrink-0 flex items-center gap-1">
-              <ListVideo className="w-3 h-3" /> Series
-            </span>
-            <FilterPill active={playlist === 'all'} onClick={() => setPlaylist('all')}>All</FilterPill>
-            {allPlaylists.map((pl) => (
-              <FilterPill key={pl} active={playlist === pl} onClick={() => setPlaylist(pl)}>
-                {pl}
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider w-16 flex-shrink-0">Sort</span>
+            {SORT_OPTIONS.map((opt) => (
+              <FilterPill key={opt.value} active={sort === opt.value} onClick={() => setSort(opt.value)}>
+                {opt.label}
               </FilterPill>
             ))}
           </div>
-        )}
+
+          {/* Duration */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider w-16 flex-shrink-0 flex items-center gap-1">
+              <Clock className="w-3 h-3" /> Length
+            </span>
+            {DURATION_OPTIONS.map((opt) => (
+              <FilterPill key={opt.value} active={duration === opt.value} onClick={() => setDuration(opt.value)}>
+                {opt.label}
+              </FilterPill>
+            ))}
+          </div>
+
+          {/* Time */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider w-16 flex-shrink-0 flex items-center gap-1">
+              <Calendar className="w-3 h-3" /> Date
+            </span>
+            {TIME_OPTIONS.map((opt) => (
+              <FilterPill key={opt.value} active={time === opt.value} onClick={() => setTime(opt.value)}>
+                {opt.label}
+              </FilterPill>
+            ))}
+          </div>
+        </div>
+
+        {/* Results count + active filters */}
+        <div className="flex items-center justify-between mt-3">
+          <p className="text-sm text-gray-500">
+            {filtered.length} video{filtered.length !== 1 ? 's' : ''}
+            {search && ` matching "${search}"`}
+          </p>
+          {activeFilterCount > 0 && (
+            <button
+              onClick={() => { setDuration('all'); setTime('all'); setSelectedPlaylists([]) }}
+              className="text-xs text-primary-600 hover:text-primary-700 font-medium transition-colors"
+              type="button"
+            >
+              Clear filters ({activeFilterCount})
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Results count + active filters */}
-      <div className="flex items-center justify-between mb-6">
-        <p className="text-sm text-gray-500">
-          {filtered.length} video{filtered.length !== 1 ? 's' : ''}
-          {search && ` matching "${search}"`}
-        </p>
-        {activeFilterCount > 0 && (
-          <button
-            onClick={() => { setDuration('all'); setTime('all'); setPlaylist('all') }}
-            className="text-xs text-primary-600 hover:text-primary-700 font-medium transition-colors"
-            type="button"
-          >
-            Clear filters ({activeFilterCount})
-          </button>
-        )}
-      </div>
-
-      {/* Videos */}
-      {filtered.length > 0 ? (
-        viewMode === 'grid' ? (
+      {/* Videos Grid */}
+      <div className="pt-6">
+        {filtered.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((video) => <VideoCardGrid key={video.id} video={video} />)}
+            {filtered.map((video) => <VideoCard key={video.id} video={video} />)}
           </div>
         ) : (
-          <div className="space-y-3">
-            {filtered.map((video) => <VideoCardList key={video.id} video={video} />)}
+          <div className="text-center py-16">
+            <p className="text-gray-500 text-lg">No videos found</p>
+            <p className="text-gray-400 text-sm mt-1">Try adjusting your filters</p>
           </div>
-        )
-      ) : (
-        <div className="text-center py-16">
-          <p className="text-gray-500 text-lg">No videos found</p>
-          <p className="text-gray-400 text-sm mt-1">Try adjusting your filters</p>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }
