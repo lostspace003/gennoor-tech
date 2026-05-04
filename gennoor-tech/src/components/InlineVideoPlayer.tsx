@@ -181,15 +181,18 @@ export default function InlineVideoPlayer({
               className="object-cover"
               priority
             />
-            <button
-              onClick={startPlayback}
-              className="absolute inset-0 z-10 flex items-center justify-center group cursor-pointer"
-              type="button"
-            >
-              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg group-hover:scale-105 group-hover:shadow-xl transition-all duration-300">
-                <Play className="w-5 h-5 sm:w-6 sm:h-6 text-gray-800 ml-0.5 fill-gray-800" />
-              </div>
-            </button>
+            {/* Bottom controls bar on thumbnail */}
+            <div className="absolute bottom-0 left-0 right-0 z-10 flex items-center px-3 py-2.5 bg-gradient-to-t from-black/50 to-transparent">
+              <button
+                onClick={startPlayback}
+                className="p-1.5 hover:bg-white/15 rounded-full transition-colors duration-200"
+                type="button"
+                aria-label="Play video"
+              >
+                <Play className="w-4 h-4 text-white fill-white ml-0.5" />
+              </button>
+              <span className="text-white/70 text-[11px] font-medium ml-2 select-none">Play video</span>
+            </div>
           </>
         )}
 
