@@ -100,10 +100,10 @@ function FilterPill({ active, onClick, children }: { active: boolean; onClick: (
     <button
       onClick={onClick}
       type="button"
-      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 whitespace-nowrap ${
+      className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 whitespace-nowrap border ${
         active
-          ? 'bg-primary-600 text-white shadow-sm'
-          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          ? 'bg-primary-600 text-white border-primary-600 shadow-sm shadow-primary-200'
+          : 'bg-white text-gray-600 border-gray-200 hover:border-primary-300 hover:text-primary-600'
       }`}
     >
       {children}
@@ -181,7 +181,7 @@ function PlaylistDropdown({ playlists, selected, onChange }: { playlists: string
   )
 }
 
-const VIDEOS_PER_PAGE = 9
+const VIDEOS_PER_PAGE = 6
 
 export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
   const [search, setSearch] = useState('')
@@ -269,31 +269,27 @@ export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
   return (
     <div>
       {/* Sticky filter bar */}
-      <div className="sticky top-20 z-40 bg-white/95 backdrop-blur-sm -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 pb-4 pt-4 border-b border-gray-100">
-        {/* Search */}
-        <div className="relative mb-3">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search videos..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 transition-all duration-200"
-          />
+      <div className="sticky top-20 z-40 bg-white/80 backdrop-blur-md -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-4 border-b border-gray-100 shadow-sm">
+        {/* Top row: Search + Series + Results */}
+        <div className="flex items-center gap-3 mb-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search videos..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-9 pr-4 py-2 rounded-lg border border-gray-200 bg-gray-50/80 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400 focus:bg-white transition-all duration-200"
+            />
+          </div>
+          {allPlaylists.length > 0 && (
+            <PlaylistDropdown playlists={allPlaylists} selected={selectedPlaylists} onChange={setSelectedPlaylists} />
+          )}
         </div>
 
-        {/* Series dropdown */}
-        {allPlaylists.length > 0 && (
-          <div className="mb-3">
-            <PlaylistDropdown playlists={allPlaylists} selected={selectedPlaylists} onChange={setSelectedPlaylists} />
-          </div>
-        )}
-
-        {/* Filter rows */}
-        <div className="space-y-2">
-          {/* Sort */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider w-16 flex-shrink-0">Sort</span>
+        {/* Filters in a single compact row */}
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex items-center gap-1.5">
             {SORT_OPTIONS.map((opt) => (
               <FilterPill key={opt.value} active={sort === opt.value} onClick={() => setSort(opt.value)}>
                 {opt.label}
@@ -301,11 +297,10 @@ export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
             ))}
           </div>
 
-          {/* Duration */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider w-16 flex-shrink-0 flex items-center gap-1">
-              <Clock className="w-3 h-3" /> Length
-            </span>
+          <div className="w-px h-5 bg-gray-200" />
+
+          <div className="flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 text-gray-400" />
             {DURATION_OPTIONS.map((opt) => (
               <FilterPill key={opt.value} active={duration === opt.value} onClick={() => setDuration(opt.value)}>
                 {opt.label}
@@ -313,11 +308,10 @@ export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
             ))}
           </div>
 
-          {/* Time */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider w-16 flex-shrink-0 flex items-center gap-1">
-              <Calendar className="w-3 h-3" /> Date
-            </span>
+          <div className="w-px h-5 bg-gray-200" />
+
+          <div className="flex items-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5 text-gray-400" />
             {TIME_OPTIONS.map((opt) => (
               <FilterPill key={opt.value} active={time === opt.value} onClick={() => setTime(opt.value)}>
                 {opt.label}
@@ -326,11 +320,12 @@ export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
           </div>
         </div>
 
-        {/* Results count + active filters */}
+        {/* Results count */}
         <div className="flex items-center justify-between mt-3">
-          <p className="text-sm text-gray-500">
+          <p className="text-xs text-gray-500">
             {filtered.length} video{filtered.length !== 1 ? 's' : ''}
-            {search && ` matching "${search}"`}
+            {search && <span className="text-gray-400"> for &ldquo;{search}&rdquo;</span>}
+            {totalPages > 1 && <span className="text-gray-400"> &middot; Page {safeCurrentPage} of {totalPages}</span>}
           </p>
           {activeFilterCount > 0 && (
             <button
