@@ -19,7 +19,7 @@ async function callGPT(messages: any[], jsonMode = true, retries = 2): Promise<s
 
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      const body: any = { messages, temperature: 0.7, max_tokens: 4000 }
+      const body: any = { messages, temperature: 0.7, max_completion_tokens: 4000 }
       if (jsonMode) body.response_format = { type: 'json_object' }
 
       const res = await fetch(url, {
