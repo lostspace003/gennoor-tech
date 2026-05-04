@@ -19,7 +19,7 @@ export default function IntroVideo() {
           <div className="bg-gradient-to-br from-accent-600 to-primary-600 p-1 rounded-xl shadow-2xl">
             <InlineVideoPlayer
               videoSrc={`${BLOB_URL}/videos/gennoor-intro-video.mp4`}
-              posterSrc={`${BLOB_URL}/videos/video-thumbnail-bright.png`}
+              posterSrc={`${BLOB_URL}/images/personal-banner.png`}
               rounded="rounded-lg"
             />
           </div>

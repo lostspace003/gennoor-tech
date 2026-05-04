@@ -139,7 +139,7 @@ export default function InlineVideoPlayer({
       onMouseMove={handleMouseMove}
       onMouseLeave={() => isPlaying && setShowControls(false)}
     >
-      <div className={`relative ${isFullscreen ? 'h-screen flex items-center justify-center' : 'aspect-video'} bg-black`}>
+      <div className={`relative ${isFullscreen ? 'h-screen flex items-center justify-center' : 'aspect-video'} ${hasStarted ? 'bg-black' : 'bg-gray-100'}`}>
         {/* Thumbnail (shown before video starts) */}
         {!hasStarted && (
           <>
@@ -150,14 +150,14 @@ export default function InlineVideoPlayer({
               className="object-cover"
               priority
             />
-            <div className="absolute inset-0 bg-black/30" />
+            <div className="absolute inset-0 bg-black/10" />
             <button
               onClick={startPlayback}
               className="absolute inset-0 z-10 flex items-end justify-center pb-8 group cursor-pointer"
               type="button"
             >
-              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 group-hover:bg-white transition-all">
-                <Play className="w-7 h-7 sm:w-8 sm:h-8 text-primary-600 ml-0.5" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 group-hover:bg-white transition-all">
+                <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary-600 ml-0.5" />
               </div>
             </button>
           </>
@@ -197,8 +197,8 @@ export default function InlineVideoPlayer({
             className="absolute inset-0 z-10 flex items-end justify-center pb-8 bg-black/20"
             type="button"
           >
-            <div className="w-16 h-16 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform">
-              <Play className="w-7 h-7 text-primary-600 ml-0.5" />
+            <div className="w-8 h-8 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform">
+              <Play className="w-3.5 h-3.5 text-primary-600 ml-0.5" />
             </div>
           </button>
         )}
