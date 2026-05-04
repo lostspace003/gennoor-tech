@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, FormEvent } from 'react'
 import Link from 'next/link'
 import { Check, ChevronDown, Download, ArrowRight, CheckCircle, AlertCircle, Loader2, Calendar } from 'lucide-react'
+import InlineVideoPlayer from '@/components/InlineVideoPlayer'
 
 const TIME_ZONES = [
   'UTC-12:00 (Baker Island)',
@@ -263,6 +264,26 @@ export default function ClaudeCoworkPage() {
               <div className="text-sm text-[#5C6784] mt-1">{stat.label}</div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* About Gennoor — Video */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl sm:text-3xl font-black text-[#1B2845] mb-3">
+            We Serve AI Enablement for Anyone
+          </h2>
+          <p className="text-[#5C6784] text-base sm:text-lg max-w-2xl mx-auto">
+            We train teams, build AI solutions, and ship products — from strategy to production.
+          </p>
+        </div>
+        <div className="max-w-4xl mx-auto">
+          <InlineVideoPlayer
+            videoSrc="/media/videos/gennoor-presentation.mp4"
+            posterSrc="/media/videos/presentation-poster.webp"
+            className="shadow-xl"
+            rounded="rounded-2xl"
+          />
         </div>
       </section>
 

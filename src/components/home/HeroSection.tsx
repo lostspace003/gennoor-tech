@@ -140,11 +140,14 @@ export default function HeroSection() {
                   >
                     <div className="bg-gradient-to-br from-primary-600 to-accent-600 p-1 rounded-xl shadow-2xl">
                       <InlineVideoPlayer
-                        videoSrc={`${BLOB_URL}/videos/gennoor-intro-video.mp4`}
-                        posterSrc={`${BLOB_URL}/videos/video-thumbnail.png`}
+                        videoSrc="/media/videos/gennoor-presentation.mp4"
+                        posterSrc="/media/videos/presentation-poster.webp"
                         rounded="rounded-lg"
                       />
                     </div>
+                    <p className="text-center text-sm font-semibold text-gray-600 mt-3 tracking-wide">
+                      Train. Innovate. Build. — AI that ships.
+                    </p>
                   </div>
 
                 </div>
