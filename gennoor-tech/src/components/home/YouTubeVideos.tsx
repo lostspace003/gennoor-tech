@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, Play, Eye } from 'lucide-react'
+import { ArrowRight, Play, Eye, ThumbsUp } from 'lucide-react'
 import { getYouTubeVideos, type YouTubeVideo } from '@/lib/youtube'
 
 function formatViews(n: number): string {
@@ -29,12 +29,7 @@ function VideoCard({ video }: { video: YouTubeVideo }) {
     >
       <div className="relative aspect-video bg-gray-100">
         {video.thumbnail && (
-          <Image
-            src={video.thumbnail}
-            alt={video.title}
-            fill
-            className="object-cover"
-          />
+          <Image src={video.thumbnail} alt={video.title} fill className="object-cover" />
         )}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
         <div className="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-medium px-1.5 py-0.5 rounded">
@@ -50,11 +45,18 @@ function VideoCard({ video }: { video: YouTubeVideo }) {
         <h3 className="font-semibold text-gray-900 text-sm line-clamp-2 mb-2 group-hover:text-primary-600 transition-colors duration-200">
           {video.title}
         </h3>
+        {video.playlists.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-2">
+            {video.playlists.slice(0, 2).map((pl) => (
+              <span key={pl} className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-primary-50 text-primary-700">
+                {pl}
+              </span>
+            ))}
+          </div>
+        )}
         <div className="flex items-center gap-3 text-xs text-gray-500">
-          <span className="flex items-center gap-1">
-            <Eye className="w-3 h-3" />
-            {formatViews(video.viewCount)}
-          </span>
+          <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{formatViews(video.viewCount)}</span>
+          <span className="flex items-center gap-1"><ThumbsUp className="w-3 h-3" />{formatViews(video.likeCount)}</span>
           <span>{timeAgo(video.publishedAt)}</span>
         </div>
       </div>
