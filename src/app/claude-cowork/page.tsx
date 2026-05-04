@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, FormEvent } from 'react'
 import Link from 'next/link'
 import { Check, ChevronDown, Download, ArrowRight, CheckCircle, AlertCircle, Loader2, Calendar } from 'lucide-react'
 import InlineVideoPlayer from '@/components/InlineVideoPlayer'
+import { BLOB_URL } from '@/lib/site-config'
 
 const TIME_ZONES = [
   'UTC-12:00 (Baker Island)',
@@ -280,7 +281,7 @@ export default function ClaudeCoworkPage() {
         <div className="max-w-4xl mx-auto">
           <InlineVideoPlayer
             videoSrc="/media/videos/gennoor-presentation.mp4"
-            posterSrc="/media/videos/presentation-poster.webp"
+            posterSrc={`${BLOB_URL}/videos/video-thumbnail-bright.png`}
             className="shadow-xl"
             rounded="rounded-2xl"
           />

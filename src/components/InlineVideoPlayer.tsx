@@ -153,7 +153,7 @@ export default function InlineVideoPlayer({
             <div className="absolute inset-0 bg-black/30" />
             <button
               onClick={startPlayback}
-              className="absolute inset-0 z-10 flex items-center justify-center group cursor-pointer"
+              className="absolute inset-0 z-10 flex items-end justify-center pb-8 group cursor-pointer"
               type="button"
             >
               <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 group-hover:bg-white transition-all">
@@ -194,7 +194,7 @@ export default function InlineVideoPlayer({
         {hasStarted && !isPlaying && !isLoading && (
           <button
             onClick={startPlayback}
-            className="absolute inset-0 z-10 flex items-center justify-center bg-black/20"
+            className="absolute inset-0 z-10 flex items-end justify-center pb-8 bg-black/20"
             type="button"
           >
             <div className="w-16 h-16 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform">

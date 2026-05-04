@@ -267,11 +267,11 @@ export default function VideoModal({
             Your browser does not support the video tag.
           </video>
 
-          {/* Center play button overlay */}
+          {/* Bottom-center play button overlay */}
           {!isPlaying && !isLoading && !isPausedForSlide && (
             <button
               onClick={togglePlay}
-              className="absolute inset-0 flex items-center justify-center"
+              className="absolute inset-0 flex items-end justify-center pb-24"
               aria-label="Play video"
             >
               <div className="w-32 h-32 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white/30 transition-all transform hover:scale-110">
