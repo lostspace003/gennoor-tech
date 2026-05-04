@@ -182,16 +182,16 @@ export default function InlineVideoPlayer({
               priority
             />
             {/* Bottom controls bar on thumbnail */}
-            <div className="absolute bottom-0 left-0 right-0 z-10 flex items-center px-3 py-2.5 bg-gradient-to-t from-black/50 to-transparent">
+            <div className="absolute bottom-0 left-0 right-0 z-10 flex items-center px-3 py-3 bg-gradient-to-t from-black/70 via-black/30 to-transparent">
               <button
                 onClick={startPlayback}
-                className="p-1.5 hover:bg-white/15 rounded-full transition-colors duration-200"
+                className="flex items-center gap-2 px-3 py-1.5 bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200 shadow-lg"
                 type="button"
                 aria-label="Play video"
               >
                 <Play className="w-4 h-4 text-white fill-white ml-0.5" />
+                <span className="text-white text-xs font-semibold">Play video</span>
               </button>
-              <span className="text-white/70 text-[11px] font-medium ml-2 select-none">Play video</span>
             </div>
           </>
         )}
@@ -238,13 +238,13 @@ export default function InlineVideoPlayer({
               onMouseEnter={() => setIsHoveringProgress(true)}
               onMouseLeave={() => setIsHoveringProgress(false)}
             >
-              <div className={`w-full bg-white/25 transition-all duration-200 ${isHoveringProgress ? 'h-1.5' : 'h-1'} rounded-full overflow-hidden`}>
+              <div className={`w-full bg-white/40 transition-all duration-200 ${isHoveringProgress ? 'h-2' : 'h-1'} rounded-full overflow-hidden`}>
                 <div
-                  className="h-full bg-white rounded-full transition-[width] duration-100 ease-linear relative"
+                  className="h-full bg-primary-500 rounded-full transition-[width] duration-100 ease-linear relative"
                   style={{ width: `${progress}%` }}
                 >
                   {isHoveringProgress && (
-                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-sm" />
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-primary-500 rounded-full shadow-md ring-2 ring-white/80" />
                   )}
                 </div>
               </div>
@@ -276,7 +276,7 @@ export default function InlineVideoPlayer({
                       value={isMuted ? 0 : volume}
                       onChange={handleVolumeChange}
                       aria-label="Volume"
-                      className="w-14 h-1 ml-1 appearance-none bg-white/30 rounded-full cursor-pointer vol-slider"
+                      className="w-14 h-1 ml-1 appearance-none bg-white/40 rounded-full cursor-pointer vol-slider"
                     />
                   </div>
                 </div>
