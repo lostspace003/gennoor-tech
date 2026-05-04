@@ -73,20 +73,19 @@ export default function JourneyPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gray-900 py-20 lg:py-28">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:4rem_4rem]" />
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="bg-gradient-to-br from-primary-50 to-accent-50 py-16 lg:py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            <p className="text-sm font-semibold tracking-widest uppercase text-primary-400 mb-4">
+            <p className="text-sm font-semibold tracking-widest uppercase text-primary-600 mb-4">
               About the Founder
             </p>
-            <h1 className="text-4xl lg:text-5xl font-black text-white mb-6 leading-tight">
+            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6 leading-tight">
               My Journey
             </h1>
-            <p className="text-xl text-gray-300 mb-3">
+            <p className="text-xl text-gray-600 mb-3">
               From Automobile Engineering Professor to Global AI Transformation Leader
             </p>
-            <p className="text-base text-gray-400">
+            <p className="text-base text-gray-500">
               A story of continuous learning, adaptation, and impact across academia,
               enterprise training, and AI consulting.
             </p>

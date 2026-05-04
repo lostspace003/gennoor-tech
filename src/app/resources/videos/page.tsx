@@ -20,29 +20,25 @@ export default async function VideosPage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-600 to-accent-600 text-white py-16 lg:py-20">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-0 w-72 h-72 bg-white rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full blur-3xl" />
-        </div>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <section className="bg-gradient-to-br from-primary-50 to-accent-50 py-16 lg:py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <Link
             href="/"
-            className="inline-flex items-center text-sm text-white/70 hover:text-white transition-colors duration-200 mb-6"
+            className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 transition-colors duration-200 mb-6"
           >
             <ArrowLeft className="w-4 h-4 mr-1" />
             Back to Home
           </Link>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-white/15 backdrop-blur-sm rounded-lg flex items-center justify-center">
-              <Play className="w-5 h-5 text-white fill-white ml-0.5" />
+            <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+              <Play className="w-5 h-5 text-primary-600 fill-primary-600 ml-0.5" />
             </div>
-            <h1 className="text-3xl lg:text-4xl font-bold">Videos</h1>
+            <h1 className="text-3xl lg:text-4xl font-black text-gray-900">Videos</h1>
           </div>
-          <p className="text-lg text-blue-100 max-w-2xl mb-2">
+          <p className="text-lg text-gray-600 max-w-2xl mb-2">
             Tutorials, demos, and deep-dives on AI, Azure, and Microsoft technologies.
           </p>
-          <p className="text-sm text-blue-200/80 mb-6">
+          <p className="text-sm text-gray-500 mb-6">
             Auto-synced from our YouTube channel — new uploads appear here automatically.
           </p>
           <div className="flex flex-wrap items-center gap-3">
@@ -50,12 +46,12 @@ export default async function VideosPage() {
               href="https://www.youtube.com/@GennoorTech?sub_confirmation=1"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white text-sm font-medium rounded-lg transition-all duration-200 hover:shadow-lg"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-all duration-200 hover:shadow-lg"
             >
               <Youtube className="w-4 h-4" />
               Subscribe on YouTube
             </a>
-            <div className="flex items-center gap-4 text-sm text-blue-100">
+            <div className="flex items-center gap-4 text-sm text-gray-500">
               <span className="flex items-center gap-1.5">
                 <Film className="w-4 h-4" />
                 {videos.length} videos
