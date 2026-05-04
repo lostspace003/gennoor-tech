@@ -251,7 +251,7 @@ export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
   return (
     <div>
       {/* Sticky filter bar */}
-      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 pb-4 pt-4 border-b border-gray-100">
+      <div className="sticky top-20 z-40 bg-white/95 backdrop-blur-sm -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 pb-4 pt-4 border-b border-gray-100">
         {/* Search + Series dropdown */}
         <div className="flex gap-3 mb-3">
           <div className="relative flex-1">
