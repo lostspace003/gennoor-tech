@@ -181,7 +181,7 @@ function PlaylistDropdown({ playlists, selected, onChange }: { playlists: string
   )
 }
 
-const VIDEOS_PER_PAGE = 6
+const VIDEOS_PER_PAGE = 9
 
 export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
   const [search, setSearch] = useState('')
