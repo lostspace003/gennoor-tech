@@ -51,6 +51,8 @@ export async function POST(request: NextRequest) {
           subcategory: entity.subcategory || '',
           overallScore: entity.overallScore || 0,
           headline: entity.headline || '',
+          agentsUsed: entity.agentsUsed || '',
+          referencesCount: entity.referencesCount || 0,
           generatedAt: entity.generatedAt || entity.timestamp || '',
         })
       }

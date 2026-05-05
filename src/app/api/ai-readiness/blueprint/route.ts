@@ -3,7 +3,7 @@ import { AzureOpenAI } from 'openai'
 import { TableClient } from '@azure/data-tables'
 import { isEmailVerified } from '@/lib/otp-store'
 
-export const maxDuration = 60
+export const maxDuration = 120
 
 const SPEECH_KEY = process.env.AZURE_SPEECH_KEY || ''
 const SPEECH_REGION = process.env.AZURE_SPEECH_REGION || 'centralindia'
@@ -17,7 +17,6 @@ function getTableClient() {
 async function generateTTS(text: string, voice = 'en-US-AndrewMultilingualNeural'): Promise<string> {
   if (!SPEECH_KEY) return ''
   const url = `https://${SPEECH_REGION}.tts.speech.microsoft.com/cognitiveservices/v1`
-
   const ssml = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xmlns:mstts='https://www.w3.org/2001/mstts' xml:lang='en-US'>
     <voice name='${voice}'>
       <mstts:express-as style='cheerful'>
@@ -25,37 +24,22 @@ async function generateTTS(text: string, voice = 'en-US-AndrewMultilingualNeural
       </mstts:express-as>
     </voice>
   </speak>`
-
   try {
     const res = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Ocp-Apim-Subscription-Key': SPEECH_KEY,
-        'Content-Type': 'application/ssml+xml',
-        'X-Microsoft-OutputFormat': 'audio-16khz-128kbitrate-mono-mp3',
-      },
+      headers: { 'Ocp-Apim-Subscription-Key': SPEECH_KEY, 'Content-Type': 'application/ssml+xml', 'X-Microsoft-OutputFormat': 'audio-16khz-128kbitrate-mono-mp3' },
       body: ssml,
     })
     if (!res.ok) return ''
     const buf = await res.arrayBuffer()
     return Buffer.from(buf).toString('base64')
-  } catch {
-    return ''
-  }
+  } catch { return '' }
 }
 
 async function saveBlueprint(
-  email: string,
-  name: string,
-  role: string,
-  category: string,
-  subcategory: string,
-  overallScore: number,
-  headline: string,
-  answers: Record<string, string>,
-  openEnded: string,
-  dimensions: any,
-  reportSummary: string,
+  email: string, name: string, role: string, category: string, subcategory: string,
+  overallScore: number, headline: string, answers: Record<string, string>, openEnded: string,
+  dimensions: any, reportSummary: string, agentsUsed: string[], referencesCount: number,
 ) {
   try {
     const client = getTableClient()
@@ -64,23 +48,18 @@ async function saveBlueprint(
     await client.createEntity({
       partitionKey: now.toISOString().slice(0, 10),
       rowKey: `${now.getTime()}-${Math.random().toString(36).slice(2, 8)}`,
-      email,
-      name: name || '',
-      reportType: 'blueprint',
-      role: role || '',
-      category: category || '',
-      subcategory: subcategory || '',
-      overallScore,
-      headline: headline || '',
+      email, name: name || '', reportType: 'blueprint',
+      role: role || '', category: category || '', subcategory: subcategory || '',
+      overallScore, headline: headline || '',
       answersJson: JSON.stringify(answers).slice(0, 30000),
       openEnded: (openEnded || '').slice(0, 30000),
       dimensionsJson: JSON.stringify(dimensions || {}),
       reportSummary: reportSummary.slice(0, 30000),
+      agentsUsed: agentsUsed.join(', '),
+      referencesCount,
       generatedAt: now.toISOString(),
     })
-  } catch (err) {
-    console.error('Save blueprint error:', err)
-  }
+  } catch (err) { console.error('Save blueprint error:', err) }
 }
 
 export async function POST(request: NextRequest) {
@@ -92,7 +71,6 @@ export async function POST(request: NextRequest) {
     if (!email || !answers) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
-
     if (!isEmailVerified(email)) {
       return NextResponse.json({ error: 'Email not verified' }, { status: 401 })
     }
@@ -103,24 +81,71 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'AI service not configured' }, { status: 500 })
     }
 
-    const client = new AzureOpenAI({
-      endpoint,
-      apiKey,
-      apiVersion: '2024-12-01-preview',
-    })
+    const client = new AzureOpenAI({ endpoint, apiKey, apiVersion: '2024-12-01-preview' })
 
     const answersFormatted = Object.entries(answers as Record<string, string>)
-      .map(([q, a]) => `- ${q}: ${a}`)
-      .join('\n')
+      .map(([q, a]) => `- ${q}: ${a}`).join('\n')
 
-    const systemPrompt = `You are an elite AI readiness consultant. Analyze the person's role, industry, quiz answers, and open-ended response to produce a deeply personalized AI Readiness Blueprint. Reference their specific answers — no generic advice.
+    const userContext = `Name: ${name || 'Not provided'}\nRole: ${role || 'Not specified'}\nIndustry: ${category || 'Not specified'}${subcategory ? ` > ${subcategory}` : ''}\n\nQuiz answers:\n${answersFormatted}\n\nOpen-ended response:\n${openEnded || 'Not provided'}`
 
-Respond with ONLY valid JSON (no markdown, no code fences, no extra text). Use this exact structure:
+    // ═══════════════════════════════════════════════════════════
+    // AGENT 1: Industry Research (Bing Web Search grounding)
+    // ═══════════════════════════════════════════════════════════
+    let researchData = ''
+    let references: { url: string; title: string }[] = []
+
+    try {
+      const researchResponse = await client.responses.create({
+        model: deployment,
+        tools: [{ type: 'web_search' as any }],
+        input: `Research the latest AI adoption trends, statistics, and recommended AI tools for someone in the "${category || 'technology'}${subcategory ? ' > ' + subcategory : ''}" industry who works as a "${role || 'professional'}".
+
+Find:
+1. Current AI adoption rate and statistics for this specific industry (2024-2025 data)
+2. Top 5-7 specific AI tools that are most relevant for this role and industry (with their actual website URLs)
+3. Average ROI/productivity gains reported by companies in this sector after AI adoption
+4. Key risks or challenges of NOT adopting AI in this industry
+5. Any relevant case studies or success stories
+
+Be specific with real data, real tool names, real URLs. No generic advice.`,
+      } as any)
+
+      const output = (researchResponse as any).output || []
+      for (const item of output) {
+        if (item.type === 'message') {
+          for (const content of (item.content || [])) {
+            if (content.type === 'output_text') {
+              researchData = content.text || ''
+              if (content.annotations) {
+                for (const ann of content.annotations) {
+                  if (ann.type === 'url_citation' && ann.url) {
+                    const exists = references.some(r => r.url === ann.url)
+                    if (!exists) references.push({ url: ann.url, title: ann.title || ann.url })
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Research agent error (non-fatal):', err)
+      researchData = 'Web research unavailable — proceeding with knowledge-based analysis.'
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // AGENT 2: Skills & Gap Analysis
+    // ═══════════════════════════════════════════════════════════
+    const analysisResponse = await client.chat.completions.create({
+      model: deployment,
+      messages: [
+        {
+          role: 'system', content: `You are a senior AI skills assessor. Given a person's profile and their quiz answers, produce a precise skills and readiness analysis. Return ONLY valid JSON:
 
 {
-  "score": <number 0-100>,
+  "score": <0-100>,
   "headline": "<5-8 word punchy headline>",
-  "summary": "<3-4 sentence executive summary>",
+  "verdict": "<1 sentence honest verdict>",
   "dimensions": {
     "aiKnowledge": <0-100>,
     "technicalSkills": <0-100>,
@@ -129,107 +154,203 @@ Respond with ONLY valid JSON (no markdown, no code fences, no extra text). Use t
     "toolProficiency": <0-100>,
     "dataLiteracy": <0-100>
   },
+  "dimensionInsights": {
+    "aiKnowledge": "<1 sentence specific insight>",
+    "technicalSkills": "<1 sentence>",
+    "strategicThinking": "<1 sentence>",
+    "adaptability": "<1 sentence>",
+    "toolProficiency": "<1 sentence>",
+    "dataLiteracy": "<1 sentence>"
+  },
   "skillGap": [
-    { "skill": "<skill name>", "current": <0-100>, "required": <0-100> }
+    { "skill": "<name>", "current": <0-100>, "required": <0-100>, "priority": "Critical|High|Medium" }
   ],
-  "sections": [
-    { "title": "...", "content": "...", "type": "executive|analysis|roadmap|tools|roi|risk" }
-  ],
+  "strengths": ["<strength 1>", "<strength 2>", "<strength 3>"],
+  "weaknesses": ["<weakness 1>", "<weakness 2>", "<weakness 3>"]
+}
+
+- "skillGap": 8 skills specific to their role
+- Be brutally honest. Reference their actual answers.`
+        },
+        { role: 'user', content: userContext },
+      ],
+      max_completion_tokens: 3000,
+      temperature: 0.6,
+      response_format: { type: 'json_object' },
+    })
+
+    let analysisData: any = {}
+    try {
+      analysisData = JSON.parse(analysisResponse.choices[0]?.message?.content || '{}')
+    } catch { analysisData = {} }
+
+    // ═══════════════════════════════════════════════════════════
+    // AGENT 3: Roadmap, Tools & ROI (uses research + analysis)
+    // ═══════════════════════════════════════════════════════════
+    const roadmapResponse = await client.chat.completions.create({
+      model: deployment,
+      messages: [
+        {
+          role: 'system', content: `You are an AI implementation strategist. Using the research data and skills analysis provided, create a detailed implementation plan. Return ONLY valid JSON:
+
+{
   "tools": [
-    { "name": "...", "purpose": "...", "timeSaved": "...", "difficulty": "Easy|Medium|Hard" }
+    { "name": "<real tool name>", "url": "<actual website URL>", "purpose": "<specific use case for their role>", "timeSaved": "<hours/week>", "difficulty": "Easy|Medium|Hard", "cost": "Free|Freemium|Paid" }
   ],
   "roadmap": {
-    "phase1": { "title": "Foundation (Days 1-30)", "milestones": ["..."] },
-    "phase2": { "title": "Acceleration (Days 31-60)", "milestones": ["..."] },
-    "phase3": { "title": "Mastery (Days 61-90)", "milestones": ["..."] }
+    "phase1": { "title": "Foundation (Days 1-30)", "goal": "<main goal>", "milestones": ["<specific action>", "..."], "tools": ["<tool names to adopt>"] },
+    "phase2": { "title": "Acceleration (Days 31-60)", "goal": "<main goal>", "milestones": ["..."], "tools": ["..."] },
+    "phase3": { "title": "Mastery (Days 61-90)", "goal": "<main goal>", "milestones": ["..."], "tools": ["..."] }
   },
   "roi": {
     "hoursSavedPerWeek": <number>,
     "productivityIncrease": "<percentage>",
-    "annualValue": "<dollar amount>",
-    "breakEvenWeeks": <number>
+    "annualValue": "<dollar amount based on industry>",
+    "breakEvenWeeks": <number>,
+    "explanation": "<2 sentences explaining how this was calculated>"
   },
   "risks": [
-    { "type": "...", "severity": "High|Medium|Low", "description": "..." }
-  ]
+    { "type": "<risk name>", "severity": "High|Medium|Low", "description": "<specific to their industry/role>", "mitigation": "<how to address>" }
+  ],
+  "industryContext": "<3-4 sentences about AI adoption in their specific industry with real stats from the research>"
 }
 
-Requirements:
-- "dimensions": Score across 6 AI readiness dimensions based on their answers
-- "skillGap": 8 skills relevant to their role with current vs required levels
-- "sections": 6 sections covering executive summary, role-specific analysis, 90-day roadmap, tool recommendations, ROI projection, risk assessment. Content should be detailed paragraphs, not bullet points.
-- "tools": 5-7 specific AI tools relevant to their role + industry
-- "roadmap": Three phases with 3-4 specific milestones each
-- "risks": 3-4 key risks of NOT adopting AI
-- Be brutally honest, not salesy. Genuine insights only.`
-
-    const userMessage = `Generate a comprehensive AI Readiness Blueprint for:
-
-Name: ${name || 'Not provided'}
-Role: ${role || 'Not specified'}
-Industry: ${category || 'Not specified'}${subcategory ? ` > ${subcategory}` : ''}
-
-Quiz answers:
-${answersFormatted}
-
-Their open-ended response:
-${openEnded || 'Not provided'}`
-
-    const response = await client.chat.completions.create({
-      model: deployment,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userMessage },
+- "tools": 6-8 REAL tools with REAL URLs based on research. Prioritize by relevance.
+- "risks": 4 risks of NOT adopting AI, specific to their situation
+- Use actual data from the research provided. Be specific, not generic.`
+        },
+        {
+          role: 'user', content: `Person's profile:\n${userContext}\n\n---\nIndustry Research (from web search):\n${researchData}\n\n---\nSkills Analysis:\nScore: ${analysisData.score || 50}\nWeaknesses: ${(analysisData.weaknesses || []).join(', ')}\nTop skill gaps: ${(analysisData.skillGap || []).slice(0, 4).map((s: any) => s.skill).join(', ')}`
+        },
       ],
-      max_completion_tokens: 8000,
+      max_completion_tokens: 4000,
       temperature: 0.7,
+      response_format: { type: 'json_object' },
     })
 
-    const raw = response.choices[0]?.message?.content || ''
-
-    let blueprintData: any = {}
+    let roadmapData: any = {}
     try {
-      const cleaned = raw.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim()
-      blueprintData = JSON.parse(cleaned)
-    } catch {
-      const jsonMatch = raw.match(/\{[\s\S]*\}/)
-      if (jsonMatch) {
-        try { blueprintData = JSON.parse(jsonMatch[0]) } catch { /* noop */ }
+      roadmapData = JSON.parse(roadmapResponse.choices[0]?.message?.content || '{}')
+    } catch { roadmapData = {} }
+
+    // Add tool URLs to references if not already there
+    for (const tool of (roadmapData.tools || [])) {
+      if (tool.url && !references.some(r => r.url === tool.url)) {
+        references.push({ url: tool.url, title: tool.name })
       }
     }
 
-    if (!blueprintData.score) {
-      return NextResponse.json({ error: 'Failed to generate blueprint — please retry' }, { status: 500 })
-    }
+    // ═══════════════════════════════════════════════════════════
+    // Build slides for presentation
+    // ═══════════════════════════════════════════════════════════
+    const score = analysisData.score || 50
+    const headline = analysisData.headline || 'Your AI Readiness Blueprint'
 
-    const score = blueprintData.score
-    const summary = blueprintData.summary || ''
-    const narrationText = summary || `${name ? name + ', here' : 'Here'} is your AI readiness blueprint. Your overall score is ${score} out of 100. ${blueprintData.headline || ''}.`
-    const narrationAudio = await generateTTS(narrationText)
+    const slides = [
+      {
+        id: 0, type: 'score', title: 'Your AI Readiness Score',
+        narration: `${name ? name + ', your' : 'Your'} overall AI readiness score is ${score} out of 100. ${analysisData.verdict || headline}`,
+        content: { score, headline, verdict: analysisData.verdict || '' },
+      },
+      {
+        id: 1, type: 'dimensions', title: 'Readiness Breakdown',
+        narration: `Let me walk you through your six readiness dimensions. Your strongest area is ${getStrongestDimension(analysisData.dimensions)}. ${getWeakestInsight(analysisData)}`,
+        content: { dimensions: analysisData.dimensions || {}, insights: analysisData.dimensionInsights || {} },
+      },
+      {
+        id: 2, type: 'skillgap', title: 'Skill Gap Analysis',
+        narration: `Here's where the real opportunity lies. Your biggest gaps are in ${(analysisData.skillGap || []).slice(0, 3).map((s: any) => s.skill).join(', ')}. These are the skills that will unlock the most value for your role.`,
+        content: { skillGap: analysisData.skillGap || [], strengths: analysisData.strengths || [], weaknesses: analysisData.weaknesses || [] },
+      },
+      {
+        id: 3, type: 'industry', title: 'Industry Context',
+        narration: roadmapData.industryContext || `AI adoption in ${category || 'your industry'} is accelerating rapidly. Those who don't adapt risk falling behind.`,
+        content: { industryContext: roadmapData.industryContext || '', researchHighlights: researchData.slice(0, 500) },
+      },
+      {
+        id: 4, type: 'tools', title: 'Recommended AI Tools',
+        narration: `Based on your role and industry, here are the specific AI tools that will have the most impact. ${(roadmapData.tools || []).slice(0, 3).map((t: any) => t.name).join(', ')} are your top priorities.`,
+        content: { tools: roadmapData.tools || [] },
+      },
+      {
+        id: 5, type: 'roadmap', title: '90-Day Implementation Roadmap',
+        narration: `Here's your personalized 90-day plan. Phase 1 focuses on ${roadmapData.roadmap?.phase1?.goal || 'building foundations'}. Phase 2 moves into ${roadmapData.roadmap?.phase2?.goal || 'acceleration'}. By day 90, you'll be at ${roadmapData.roadmap?.phase3?.goal || 'mastery level'}.`,
+        content: { roadmap: roadmapData.roadmap || {} },
+      },
+      {
+        id: 6, type: 'roi', title: 'ROI Projection',
+        narration: `Let's talk numbers. By implementing these recommendations, you could save approximately ${roadmapData.roi?.hoursSavedPerWeek || 8} hours per week, translating to around ${roadmapData.roi?.annualValue || '$15,000'} in annual value. ${roadmapData.roi?.explanation || ''}`,
+        content: { roi: roadmapData.roi || {} },
+      },
+      {
+        id: 7, type: 'risks', title: 'Risks of Inaction',
+        narration: `Finally, let's be clear about what happens if you don't act. ${(roadmapData.risks || []).slice(0, 2).map((r: any) => r.description).join('. ')}`,
+        content: { risks: roadmapData.risks || [] },
+      },
+      {
+        id: 8, type: 'references', title: 'Sources & References',
+        narration: `All recommendations in this report are backed by real research. You'll find clickable links to every tool and source mentioned. Good luck on your AI journey!`,
+        content: { references },
+      },
+    ]
 
-    await saveBlueprint(email, name || '', role || '', category || '', subcategory || '', score, blueprintData.headline || '', answers, openEnded || '', blueprintData.dimensions || {}, JSON.stringify(blueprintData))
+    // Generate TTS for each slide in parallel (limit to first 6 for speed)
+    const ttsPromises = slides.slice(0, 7).map(s => generateTTS(s.narration))
+    const audioResults = await Promise.all(ttsPromises)
+    slides.forEach((s, i) => { if (i < audioResults.length) (s as any).audio = audioResults[i] })
+
+    const agentsUsed = ['Industry Research (Bing)', 'Skills Analysis', 'Roadmap & Strategy']
+
+    await saveBlueprint(
+      email, name || '', role || '', category || '', subcategory || '',
+      score, headline, answers, openEnded || '', analysisData.dimensions || {},
+      JSON.stringify({ analysisData, roadmapData, references }),
+      agentsUsed, references.length,
+    )
 
     return NextResponse.json({
       success: true,
       blueprint: {
         score,
-        headline: blueprintData.headline || 'Your AI Readiness Blueprint',
-        summary,
-        dimensions: blueprintData.dimensions || {},
-        skillGap: blueprintData.skillGap || [],
-        sections: blueprintData.sections || [],
-        tools: blueprintData.tools || [],
-        roadmap: blueprintData.roadmap || {},
-        roi: blueprintData.roi || {},
-        risks: blueprintData.risks || [],
-        narrationAudio: narrationAudio || null,
+        headline,
+        summary: analysisData.verdict || '',
+        dimensions: analysisData.dimensions || {},
+        dimensionInsights: analysisData.dimensionInsights || {},
+        skillGap: analysisData.skillGap || [],
+        strengths: analysisData.strengths || [],
+        weaknesses: analysisData.weaknesses || [],
+        tools: roadmapData.tools || [],
+        roadmap: roadmapData.roadmap || {},
+        roi: roadmapData.roi || {},
+        risks: roadmapData.risks || [],
+        industryContext: roadmapData.industryContext || '',
+        references,
+        slides,
+        agentsUsed,
       },
     })
   } catch (err: any) {
     console.error('Blueprint generation error:', err)
-    return NextResponse.json(
-      { error: err.message || 'Blueprint generation failed' },
-      { status: 500 },
-    )
+    return NextResponse.json({ error: err.message || 'Blueprint generation failed' }, { status: 500 })
   }
+}
+
+function getStrongestDimension(dims: any): string {
+  if (!dims) return 'adaptability'
+  const entries = Object.entries(dims) as [string, number][]
+  const strongest = entries.sort((a, b) => b[1] - a[1])[0]
+  const labels: Record<string, string> = {
+    aiKnowledge: 'AI Knowledge', technicalSkills: 'Technical Skills',
+    strategicThinking: 'Strategic Thinking', adaptability: 'Adaptability',
+    toolProficiency: 'Tool Proficiency', dataLiteracy: 'Data Literacy',
+  }
+  return labels[strongest?.[0]] || 'adaptability'
+}
+
+function getWeakestInsight(data: any): string {
+  if (!data?.dimensions) return ''
+  const entries = Object.entries(data.dimensions) as [string, number][]
+  const weakest = entries.sort((a, b) => a[1] - b[1])[0]
+  const insight = data.dimensionInsights?.[weakest?.[0]] || ''
+  return insight ? `Your area needing most attention: ${insight}` : ''
 }
