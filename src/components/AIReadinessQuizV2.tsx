@@ -367,6 +367,7 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
       const { generateDeepDivePDF, downloadPDF } = await import('@/lib/generate-report-pdf')
       const doc = generateDeepDivePDF(presentation, name, email)
       downloadPDF(doc, `AI-Readiness-Deep-Dive-${name || 'Report'}.pdf`)
+      fetch('/api/ai-readiness/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, name, reportType: 'deep-dive', action: 'pdf-download' }) }).catch(() => {})
     } catch (err) {
       console.error('PDF generation error:', err)
     }

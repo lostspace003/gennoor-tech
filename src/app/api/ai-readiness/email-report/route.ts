@@ -1,6 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { TableClient } from '@azure/data-tables'
 import { isEmailVerified } from '@/lib/otp-store'
 import { sendEmail } from '@/lib/email-service'
+
+async function logEmailSent(email: string, name: string, reportType: string) {
+  try {
+    const connStr = process.env.AZURE_STORAGE_CONNECTION_STRING
+    if (!connStr) return
+    const client = TableClient.fromConnectionString(connStr, 'AIReadinessReports')
+    await client.createTable().catch(() => {})
+    const now = new Date()
+    await client.createEntity({
+      partitionKey: now.toISOString().slice(0, 10),
+      rowKey: `${now.getTime()}-${Math.random().toString(36).slice(2, 8)}`,
+      email,
+      name: name || '',
+      reportType: reportType || '',
+      action: 'email-sent',
+      generatedAt: now.toISOString(),
+    })
+  } catch (err) {
+    console.error('Failed to log email send:', err)
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -105,6 +127,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (result.success) {
+      await logEmailSent(email, name || '', reportType || '')
       return NextResponse.json({ success: true, messageId: result.messageId })
     } else {
       return NextResponse.json(

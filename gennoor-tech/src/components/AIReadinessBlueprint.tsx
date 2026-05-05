@@ -508,6 +508,7 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
       }
       const doc = generateDeepDivePDF(mockPresentation, name, email)
       downloadPDF(doc, `AI-Blueprint-${name || 'Report'}.pdf`)
+      fetch('/api/ai-readiness/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, name, reportType: 'blueprint', action: 'pdf-download' }) }).catch(() => {})
     } catch (err) {
       console.error('PDF generation error:', err)
     }

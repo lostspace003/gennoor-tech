@@ -51,6 +51,10 @@ async function saveBlueprint(
   category: string,
   subcategory: string,
   overallScore: number,
+  headline: string,
+  answers: Record<string, string>,
+  openEnded: string,
+  dimensions: any,
   reportSummary: string,
 ) {
   try {
@@ -62,10 +66,15 @@ async function saveBlueprint(
       rowKey: `${now.getTime()}-${Math.random().toString(36).slice(2, 8)}`,
       email,
       name: name || '',
+      reportType: 'blueprint',
       role: role || '',
       category: category || '',
       subcategory: subcategory || '',
       overallScore,
+      headline: headline || '',
+      answersJson: JSON.stringify(answers).slice(0, 30000),
+      openEnded: (openEnded || '').slice(0, 30000),
+      dimensionsJson: JSON.stringify(dimensions || {}),
       reportSummary: reportSummary.slice(0, 30000),
       generatedAt: now.toISOString(),
     })
@@ -198,7 +207,7 @@ ${openEnded || 'Not provided'}`
     const narrationText = summary || `${name ? name + ', here' : 'Here'} is your AI readiness blueprint. Your overall score is ${score} out of 100. ${blueprintData.headline || ''}.`
     const narrationAudio = await generateTTS(narrationText)
 
-    await saveBlueprint(email, name || '', role || '', category || '', subcategory || '', score, JSON.stringify(blueprintData))
+    await saveBlueprint(email, name || '', role || '', category || '', subcategory || '', score, blueprintData.headline || '', answers, openEnded || '', blueprintData.dimensions || {}, JSON.stringify(blueprintData))
 
     return NextResponse.json({
       success: true,

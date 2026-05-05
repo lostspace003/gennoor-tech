@@ -143,6 +143,7 @@ async function saveReport(email: string, name: string, answers: Record<string, s
       rowKey,
       email,
       name: name || '',
+      reportType: 'quick-scan',
       persona: answers.persona || '',
       industry: answers.industry || '',
       monday: answers.monday || '',

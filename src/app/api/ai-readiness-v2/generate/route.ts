@@ -88,6 +88,7 @@ async function saveReport(email: string, name: string, answers: Record<string, s
       rowKey: `${now.getTime()}-${Math.random().toString(36).slice(2, 8)}`,
       email,
       name: name || '',
+      reportType: 'deep-dive',
       persona: answers.persona || '',
       industry: answers.industry || '',
       overallScore: presentation.score || 0,

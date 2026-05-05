@@ -67,7 +67,7 @@ function ChartLoader() {
 
 // ─── Types ───────────────────────────────────────────────────
 
-type TabKey = 'overview' | 'traffic' | 'enquiries' | 'emails' | 'sessions' | 'bookings' | 'storage' | 'insights' | 'comments' | 'seo' | 'setup'
+type TabKey = 'overview' | 'traffic' | 'enquiries' | 'emails' | 'sessions' | 'bookings' | 'storage' | 'insights' | 'comments' | 'seo' | 'setup' | 'ai-readiness'
 type GroupKey = 'analytics' | 'communications' | 'bookings' | 'system'
 
 interface AnalyticsData {
@@ -140,6 +140,7 @@ export default function AdminDashboard() {
   const [sessions, setSessions] = useState<SessionRecord[]>([])
   const [storageData, setStorageData] = useState<StorageData | null>(null)
   const [insightsData, setInsightsData] = useState<any>(null)
+  const [aiReadinessData, setAiReadinessData] = useState<any>(null)
   const [bookingsData, setBookingsData] = useState<BookingAppointment[]>([])
   const [bookingsLoading, setBookingsLoading] = useState(false)
   const [bookingsAction, setBookingsAction] = useState<string | null>(null)
@@ -163,7 +164,7 @@ export default function AdminDashboard() {
     try {
       const headers = { 'Content-Type': 'application/json' }
       const body = (extra: any = {}) => JSON.stringify(extra)
-      const [analyticsRes, setupRes, seoRes, sessionsRes, storageRes, insightsRes, emailLogsRes] = await Promise.all([
+      const [analyticsRes, setupRes, seoRes, sessionsRes, storageRes, insightsRes, emailLogsRes, aiReadinessRes] = await Promise.all([
         fetch('/api/admin/analytics', { method: 'POST', headers, body: body({ days: numDays }) }),
         fetch('/api/admin/setup-status', { method: 'POST', headers, body: body() }),
         fetch('/api/admin/seo-health', { method: 'POST', headers, body: body() }),
@@ -171,15 +172,16 @@ export default function AdminDashboard() {
         fetch('/api/admin/storage', { method: 'POST', headers, body: body() }),
         fetch('/api/admin/insights', { method: 'POST', headers, body: body({ metric: 'all', timespan: ts }) }),
         fetch('/api/admin/email-logs', { method: 'POST', headers, body: body({ days: numDays }) }),
+        fetch('/api/admin/ai-readiness', { method: 'POST', headers, body: body() }),
       ])
       if (analyticsRes.status === 401) { setError('Session expired. Please login again.'); router.push('/admin/login'); return }
-      const [analyticsData, setupResult, seoResult, sessionsResult, storageResult, insightsResult, emailLogsResult] = await Promise.all([
+      const [analyticsData, setupResult, seoResult, sessionsResult, storageResult, insightsResult, emailLogsResult, aiReadinessResult] = await Promise.all([
         analyticsRes.ok ? analyticsRes.json() : null, setupRes.ok ? setupRes.json() : null, seoRes.ok ? seoRes.json() : null,
         sessionsRes.ok ? sessionsRes.json() : [], storageRes.ok ? storageRes.json() : null, insightsRes.ok ? insightsRes.json() : null,
-        emailLogsRes.ok ? emailLogsRes.json() : null,
+        emailLogsRes.ok ? emailLogsRes.json() : null, aiReadinessRes.ok ? aiReadinessRes.json() : null,
       ])
       setData(analyticsData); setSetupData(setupResult); setSeoData(seoResult)
-      setSessions(Array.isArray(sessionsResult) ? sessionsResult : []); setStorageData(storageResult); setInsightsData(insightsResult); setEmailLogs(emailLogsResult)
+      setSessions(Array.isArray(sessionsResult) ? sessionsResult : []); setStorageData(storageResult); setInsightsData(insightsResult); setEmailLogs(emailLogsResult); setAiReadinessData(aiReadinessResult)
       setLastUpdated(new Date())
       try { const bRes = await fetch('/api/bookings/appointments'); if (bRes.ok) { const bData = await bRes.json(); setBookingsData(bData.appointments || []) } } catch {}
     } catch { setError('Failed to load dashboard data') }
@@ -340,6 +342,7 @@ export default function AdminDashboard() {
       { key: 'overview', label: 'Overview', icon: BarChart3 },
       { key: 'traffic', label: 'Traffic', icon: TrendingUp },
       { key: 'insights', label: 'Insights', icon: Activity },
+      { key: 'ai-readiness', label: 'AI Readiness', icon: Bot },
     ]},
     { key: 'communications', label: 'Communications', icon: Mail, badge: (emailLogs?.totalFailed || 0) > 0 ? emailLogs!.totalFailed : undefined, tabs: [
       { key: 'enquiries', label: 'Enquiries', icon: Mail },
@@ -1227,6 +1230,86 @@ export default function AdminDashboard() {
                 </a>
               ))}</div>
             </Panel>
+          </div>
+        )}
+
+        {activeTab === 'ai-readiness' && (
+          <div className="space-y-6">
+            {!aiReadinessData ? <Empty text="Loading AI Readiness data..." /> : (<>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <StatCard icon={Zap} label="Quick Scans" value={aiReadinessData.summary?.quickScans || 0} color="blue" />
+                <StatCard icon={BookOpen} label="Deep Dives" value={aiReadinessData.summary?.deepDives || 0} color="teal" />
+                <StatCard icon={FileText} label="Blueprints" value={aiReadinessData.summary?.blueprints || 0} color="amber" />
+                <StatCard icon={Bot} label="Total Reports" value={aiReadinessData.summary?.totalGenerations || 0} color="purple" />
+              </div>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <StatCard icon={Download} label="Downloads" value={aiReadinessData.summary?.downloads || 0} color="blue" />
+                <StatCard icon={Send} label="Emails Sent" value={aiReadinessData.summary?.emailsSent || 0} color="teal" />
+                <StatCard icon={TrendingUp} label="Avg Rating" value={0} subtitle={`${aiReadinessData.summary?.avgRating || 0}/5`} color="amber" />
+                <StatCard icon={MessageSquare} label="Feedback" value={aiReadinessData.summary?.totalFeedback || 0} color="purple" />
+              </div>
+
+              <Panel title="Score Distribution" subtitle="All assessment scores by range (last 90 days)">
+                <BarChartComponent data={aiReadinessData.scoreDist || []} color="#2563eb" />
+              </Panel>
+
+              <Panel title="Recent Submissions" subtitle="Latest AI readiness assessments">
+                {(!aiReadinessData.recentReports || aiReadinessData.recentReports.length === 0) ? <Empty text="No submissions yet" /> : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="text-left text-xs text-slate-500 border-b border-slate-200">
+                          <th className="pb-2 pr-4 font-medium">Name</th>
+                          <th className="pb-2 pr-4 font-medium">Email</th>
+                          <th className="pb-2 pr-4 font-medium">Type</th>
+                          <th className="pb-2 pr-4 font-medium">Score</th>
+                          <th className="pb-2 font-medium">Date</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {aiReadinessData.recentReports.slice(0, 25).map((r: any, i: number) => (
+                          <tr key={i} className="border-b border-slate-100 hover:bg-slate-50">
+                            <td className="py-2.5 pr-4 font-medium text-slate-800">{r.name || '-'}</td>
+                            <td className="py-2.5 pr-4 text-slate-600 text-xs">{r.email}</td>
+                            <td className="py-2.5 pr-4">
+                              <span className={`px-2 py-0.5 rounded text-xs font-medium ${r.reportType === 'quick-scan' ? 'bg-blue-100 text-blue-700' : r.reportType === 'deep-dive' ? 'bg-teal-100 text-teal-700' : r.reportType === 'blueprint' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
+                                {r.reportType === 'quick-scan' ? 'Quick Scan' : r.reportType === 'deep-dive' ? 'Deep Dive' : r.reportType === 'blueprint' ? 'Blueprint' : r.reportType || 'Unknown'}
+                              </span>
+                            </td>
+                            <td className="py-2.5 pr-4 font-semibold text-slate-800">{r.overallScore || '-'}</td>
+                            <td className="py-2.5 text-slate-500 text-xs">{r.generatedAt ? new Date(r.generatedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </Panel>
+
+              <Panel title="User Feedback" subtitle="Ratings and comments from assessments">
+                {(!aiReadinessData.feedback || aiReadinessData.feedback.length === 0) ? <Empty text="No feedback yet" /> : (
+                  <div className="space-y-2">
+                    {aiReadinessData.feedback.slice(0, 15).map((f: any, i: number) => (
+                      <div key={i} className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                        <div className="flex items-center gap-0.5">
+                          {Array.from({ length: 5 }, (_, s) => (
+                            <svg key={s} className={`w-4 h-4 ${s < f.rating ? 'text-amber-400' : 'text-slate-200'}`} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                          ))}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-slate-800 font-medium truncate">{f.name || f.email}</p>
+                          {f.comment && <p className="text-xs text-slate-500 mt-0.5 truncate">{f.comment}</p>}
+                        </div>
+                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${f.reportType === 'quick-scan' ? 'bg-blue-100 text-blue-700' : f.reportType === 'deep-dive' ? 'bg-teal-100 text-teal-700' : f.reportType === 'blueprint' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
+                          {f.reportType || '-'}
+                        </span>
+                        <span className="text-xs text-slate-400">{f.submittedAt ? new Date(f.submittedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) : ''}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Panel>
+            </>)}
           </div>
         )}
 
