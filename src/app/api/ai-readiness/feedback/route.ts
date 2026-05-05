@@ -9,7 +9,7 @@ function getTableClient() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, name, rating, comment, reportType, action } = await request.json()
+    const { email, name, rating, comment, reportType, action, orgInterest } = await request.json()
 
     if (!email || !rating) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
       comment: comment || '',
       reportType: reportType || '',
       action: action || '',
+      orgInterest: orgInterest || '',
       submittedAt: now.toISOString(),
     })
 

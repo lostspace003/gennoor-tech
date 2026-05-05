@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import EmailOTP from '@/components/EmailOTP'
 import PhoneInput from '@/components/ui/PhoneInput'
@@ -140,6 +141,7 @@ interface LocalSlot { raw: AvailableSlot; localHour: number; localMinute: number
 /* ───────── component ───────── */
 
 export default function BookingCalendarPage() {
+  const searchParams = useSearchParams()
   const today = new Date(); today.setHours(0, 0, 0, 0)
   const minDate = new Date(today); minDate.setDate(minDate.getDate() + MIN_BOOKING_GAP_DAYS)
   const maxDate = new Date(today); maxDate.setDate(maxDate.getDate() + 30)
@@ -196,6 +198,33 @@ export default function BookingCalendarPage() {
   useEffect(() => { setEmailVerified(false) }, [email])
   useEffect(() => { setReqEmailVerified(false) }, [reqEmail])
   useEffect(() => { setSelectedCountry(detectCountry()) }, [])
+
+  // Pre-fill from AI Readiness email links (?topic=ai-readiness&name=X&email=Y&option=Z)
+  const [presetApplied, setPresetApplied] = useState(false)
+  useEffect(() => {
+    if (presetApplied) return
+    const presetTopic = searchParams.get('topic')
+    if (presetTopic === 'ai-readiness') {
+      const presetName = searchParams.get('name') || ''
+      const presetEmail = searchParams.get('email') || ''
+      const presetOption = searchParams.get('option') || ''
+      const optionLabel = presetOption === 'yes' ? "Yes, let's explore" : presetOption === 'maybe' ? 'Maybe later' : presetOption === 'no' ? 'Not now' : ''
+      setName(presetName)
+      setEmail(presetEmail)
+      setEmailVerified(true)
+      setTopic(`AI Readiness for Organization${optionLabel ? ` — Interest: ${optionLabel}` : ''}`)
+      setStep(3)
+      setPresetApplied(true)
+    }
+  }, [searchParams, presetApplied])
+
+  // Auto-select Discovery service when preset is active and services load
+  useEffect(() => {
+    if (!presetApplied || services.length === 0 || selectedService) return
+    const discovery = services.find(s => s.name.toLowerCase().includes('discovery'))
+    if (discovery) setSelectedService(discovery)
+    else setSelectedService(services[0])
+  }, [presetApplied, services, selectedService])
 
   const goTo = useCallback((n: number) => {
     if (n === step || fading) return

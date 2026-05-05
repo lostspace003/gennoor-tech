@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { ArrowRight, ChevronLeft, Zap, Mail, Lock, Volume2, VolumeX, Target, Users, Workflow, Rocket, Clock, Lightbulb, TrendingUp, AlertTriangle, Calendar, Download, Send } from 'lucide-react'
-import FeedbackModal from '@/components/FeedbackModal'
+import { ArrowRight, ChevronLeft, Zap, Volume2, VolumeX, Target, Users, Workflow, Rocket, Clock, Lightbulb, TrendingUp, AlertTriangle, Calendar, Download } from 'lucide-react'
+import ReportEmailGate from '@/components/ReportEmailGate'
+import ReportSurvey from '@/components/ReportSurvey'
 
 const QUESTIONS = [
   {
@@ -105,7 +106,7 @@ interface Report {
   voiceSummary: string
 }
 
-type Step = 'email' | 'otp' | 'quiz' | 'loading' | 'results'
+type Step = 'quiz' | 'loading' | 'results'
 
 const PILLAR_ICONS: Record<string, typeof Zap> = {
   'Mindset': Target,
@@ -127,39 +128,47 @@ interface QuizProps {
 }
 
 export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
-  const [step, setStep] = useState<Step>('email')
-  const [email, setEmail] = useState('')
+  const [step, setStep] = useState<Step>('quiz')
   const [name, setName] = useState('')
-  const [otp, setOtp] = useState('')
+  const [email, setEmail] = useState('')
   const [currentQ, setCurrentQ] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [report, setReport] = useState<Report | null>(null)
   const [audioSrc, setAudioSrc] = useState<string | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [error, setError] = useState('')
-  const [sending, setSending] = useState(false)
   const [revealIndex, setRevealIndex] = useState(0)
-  const [otpTimer, setOtpTimer] = useState(0)
+  const [reportUnlocked, setReportUnlocked] = useState(false)
   const [downloadingPdf, setDownloadingPdf] = useState(false)
-  const [emailingReport, setEmailingReport] = useState(false)
-  const [emailSent, setEmailSent] = useState(false)
-  const [feedbackAction, setFeedbackAction] = useState<'download' | 'email' | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  // OTP countdown timer
   useEffect(() => {
-    if (otpTimer <= 0) return
-    const interval = setInterval(() => setOtpTimer(t => t - 1), 1000)
-    return () => clearInterval(interval)
-  }, [otpTimer])
+    if (step === 'quiz') onLock?.()
+  }, [step, onLock])
+
+  useEffect(() => {
+    if (step === 'quiz' || step === 'loading') return
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault() }
+    window.addEventListener('beforeunload', handler)
+    return () => window.removeEventListener('beforeunload', handler)
+  }, [step])
 
   // Animate results reveal
   useEffect(() => {
     if (step !== 'results' || !report) return
-    if (revealIndex >= 8) return
+    const maxReveal = reportUnlocked ? 8 : 4
+    if (revealIndex >= maxReveal) return
     const timer = setTimeout(() => setRevealIndex(i => i + 1), 400)
     return () => clearTimeout(timer)
-  }, [step, report, revealIndex])
+  }, [step, report, revealIndex, reportUnlocked])
+
+  // Continue reveal after unlock
+  useEffect(() => {
+    if (reportUnlocked && revealIndex < 8) {
+      const timer = setTimeout(() => setRevealIndex(i => i + 1), 400)
+      return () => clearTimeout(timer)
+    }
+  }, [reportUnlocked, revealIndex])
 
   // Auto-play audio when results load
   useEffect(() => {
@@ -168,18 +177,6 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
       setIsPlaying(true)
     }
   }, [audioSrc, step])
-
-  // Lock flow after OTP verification
-  useEffect(() => {
-    if (step !== 'email' && step !== 'otp') onLock?.()
-  }, [step, onLock])
-
-  useEffect(() => {
-    if (step === 'email' || step === 'otp') return
-    const handler = (e: BeforeUnloadEvent) => { e.preventDefault() }
-    window.addEventListener('beforeunload', handler)
-    return () => window.removeEventListener('beforeunload', handler)
-  }, [step])
 
   const toggleAudio = useCallback(() => {
     if (!audioRef.current) return
@@ -190,51 +187,6 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
     }
     setIsPlaying(!isPlaying)
   }, [isPlaying])
-
-  const formatTimer = (seconds: number) => {
-    const m = Math.floor(seconds / 60)
-    const s = seconds % 60
-    return `${m}:${s.toString().padStart(2, '0')}`
-  }
-
-  async function handleSendOTP() {
-    if (!email.trim()) return
-    setError('')
-    setSending(true)
-    try {
-      const res = await fetch('/api/send-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed to send code')
-      setOtpTimer(180)
-      setStep('otp')
-    } catch (err: any) {
-      setError(err.message)
-    }
-    setSending(false)
-  }
-
-  async function handleVerifyOTP() {
-    if (!otp.trim()) return
-    setError('')
-    setSending(true)
-    try {
-      const res = await fetch('/api/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Verification failed')
-      setStep('quiz')
-    } catch (err: any) {
-      setError(err.message)
-    }
-    setSending(false)
-  }
 
   function handleSelect(option: string) {
     const q = QUESTIONS[currentQ]
@@ -254,7 +206,7 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
       const res = await fetch('/api/ai-readiness/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name, answers: finalAnswers }),
+        body: JSON.stringify({ answers: finalAnswers }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to generate report')
@@ -271,20 +223,16 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
     }
   }
 
-  async function submitFeedback(rating: number, comment: string) {
-    fetch('/api/ai-readiness/feedback', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, name, rating, comment, reportType: 'quick-scan', action: feedbackAction }),
-    }).catch(() => {})
+  async function generatePdfBase64(): Promise<string> {
+    const { generateQuickScanPDF, pdfToBase64 } = await import('@/lib/generate-report-pdf')
+    const doc = generateQuickScanPDF(report!, name, email)
+    return pdfToBase64(doc)
   }
 
-  async function handleFeedbackSubmit(rating: number, comment: string) {
-    const action = feedbackAction
-    setFeedbackAction(null)
-    submitFeedback(rating, comment)
-    if (action === 'download') doDownloadReport()
-    if (action === 'email') doEmailReport()
+  function handleUnlock(userEmail: string, userName: string) {
+    setEmail(userEmail)
+    setName(userName)
+    setReportUnlocked(true)
   }
 
   async function doDownloadReport() {
@@ -301,33 +249,12 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
     setDownloadingPdf(false)
   }
 
-  async function doEmailReport() {
-    if (!report) return
-    setEmailingReport(true)
-    try {
-      const { generateQuickScanPDF, pdfToBase64 } = await import('@/lib/generate-report-pdf')
-      const doc = generateQuickScanPDF(report, name, email)
-      const pdfBase64 = pdfToBase64(doc)
-
-      const res = await fetch('/api/ai-readiness/email-report', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name, pdfBase64, reportType: 'quick-scan' }),
-      })
-      if (!res.ok) throw new Error('Failed to send email')
-      setEmailSent(true)
-    } catch (err) {
-      console.error('Email report error:', err)
-    }
-    setEmailingReport(false)
-  }
-
   function handleBack() {
     if (currentQ > 0) setCurrentQ(currentQ - 1)
   }
 
   function handleReset() {
-    setStep('email')
+    setStep('quiz')
     setCurrentQ(0)
     setAnswers({})
     setReport(null)
@@ -335,123 +262,12 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
     setIsPlaying(false)
     setRevealIndex(0)
     setError('')
-    setOtpTimer(0)
-    setEmailSent(false)
+    setReportUnlocked(false)
+    setEmail('')
+    setName('')
   }
 
   const progress = (currentQ / QUESTIONS.length) * 100
-
-  // ─── Email Entry ─────────────────────────────────────────
-  if (step === 'email') {
-    return (
-      <div className="max-w-md mx-auto py-12">
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-primary-50 flex items-center justify-center">
-              <Mail className="w-5 h-5 text-primary-600" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-gray-900">Verify your email</h3>
-              <p className="text-sm text-gray-500">Your report will be sent here</p>
-            </div>
-          </div>
-          <div className="space-y-3">
-            <input
-              type="text"
-              placeholder="Your name (optional)"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400"
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSendOTP()}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400"
-              autoFocus
-            />
-            {error && <p className="text-sm text-red-500">{error}</p>}
-            <button
-              onClick={handleSendOTP}
-              disabled={sending || !email.trim()}
-              className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-            >
-              {sending ? 'Sending...' : <><ArrowRight className="w-4 h-4" /> Send verification code</>}
-            </button>
-          </div>
-          <p className="text-xs text-gray-400 mt-4 text-center">No spam. Code expires in 3 minutes.</p>
-        </div>
-      </div>
-    )
-  }
-
-  // ─── OTP Verification ────────────────────────────────────
-  if (step === 'otp') {
-    return (
-      <div className="max-w-md mx-auto py-12">
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
-              <Lock className="w-5 h-5 text-green-600" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-gray-900">Enter verification code</h3>
-              <p className="text-sm text-gray-500">Sent to {email}</p>
-            </div>
-          </div>
-          <div className="space-y-3">
-            <input
-              type="text"
-              placeholder="6-digit code"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              onKeyDown={(e) => e.key === 'Enter' && handleVerifyOTP()}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-center text-2xl font-mono tracking-[0.5em] text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400"
-              autoFocus
-              maxLength={6}
-            />
-            {/* OTP Timer */}
-            <div className="text-center">
-              {otpTimer > 0 ? (
-                <p className="text-sm text-gray-500">
-                  Code expires in <span className={`font-mono font-bold ${otpTimer <= 30 ? 'text-red-500' : 'text-primary-600'}`}>{formatTimer(otpTimer)}</span>
-                </p>
-              ) : (
-                <p className="text-sm text-red-500 font-medium">Code expired</p>
-              )}
-            </div>
-            {error && <p className="text-sm text-red-500">{error}</p>}
-            <button
-              onClick={handleVerifyOTP}
-              disabled={sending || otp.length < 6 || otpTimer <= 0}
-              className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50"
-            >
-              {sending ? 'Verifying...' : 'Verify & Start'}
-            </button>
-          </div>
-          <div className="flex items-center justify-between mt-3">
-            <button
-              onClick={() => { setStep('email'); setOtp(''); setError(''); setOtpTimer(0) }}
-              className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              Use a different email
-            </button>
-            {otpTimer <= 0 && (
-              <button
-                onClick={handleSendOTP}
-                disabled={sending}
-                className="text-sm text-primary-600 hover:text-primary-700 font-medium transition-colors"
-              >
-                Resend code
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-    )
-  }
 
   // ─── Loading ─────────────────────────────────────────────
   if (step === 'loading') {
@@ -476,17 +292,11 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
 
     return (
       <div className="max-w-2xl mx-auto space-y-6">
-        {feedbackAction && (
-          <FeedbackModal
-            onSubmit={handleFeedbackSubmit}
-            onClose={() => setFeedbackAction(null)}
-          />
-        )}
         {audioSrc && (
           <audio ref={audioRef} src={audioSrc} onEnded={() => setIsPlaying(false)} />
         )}
 
-        {/* Score + Headline */}
+        {/* Score + Headline (visible) */}
         <div className={`relative rounded-2xl border bg-gradient-to-br ${scoreBg} p-6 sm:p-8 text-center transition-all duration-700 ${revealIndex >= 0 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           {audioSrc && (
             <button
@@ -502,7 +312,7 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
           <p className="text-gray-600">{report.verdict}</p>
         </div>
 
-        {/* Strength */}
+        {/* Strength (visible) */}
         <div className={`bg-white rounded-2xl border border-gray-200 shadow-sm p-6 transition-all duration-700 ${revealIndex >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <div className="flex items-start gap-3">
             <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
@@ -515,7 +325,7 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
           </div>
         </div>
 
-        {/* Reality Check */}
+        {/* Reality Check (visible) */}
         <div className={`bg-white rounded-2xl border border-gray-200 shadow-sm p-6 transition-all duration-700 ${revealIndex >= 2 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <div className="flex items-start gap-3">
             <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0">
@@ -532,7 +342,7 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
           </div>
         </div>
 
-        {/* Pillars */}
+        {/* Pillars (visible — partial, gives a peek) */}
         <div className={`bg-white rounded-2xl border border-gray-200 shadow-sm p-6 transition-all duration-700 ${revealIndex >= 3 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <h3 className="font-bold text-gray-900 mb-5">Your readiness breakdown</h3>
           <div className="space-y-4">
@@ -561,123 +371,116 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
           </div>
         </div>
 
-        {/* Monday Before vs After */}
-        <div className={`bg-white rounded-2xl border border-gray-200 shadow-sm p-6 transition-all duration-700 ${revealIndex >= 4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          <h3 className="font-bold text-gray-900 mb-4">Your Monday: Now vs. With AI</h3>
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div className="bg-gray-50 rounded-xl p-4">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">Now</p>
-              <ul className="space-y-2">
-                {report.mondayBefore.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                    <span className="text-red-400 mt-0.5">•</span>{item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="bg-primary-50/50 rounded-xl p-4">
-              <p className="text-xs font-bold text-primary-500 uppercase tracking-wide mb-2">With AI</p>
-              <ul className="space-y-2">
-                {report.mondayAfter.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
-                    <span className="text-primary-500 mt-0.5">•</span>{item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
+        {/* ─── EMAIL GATE (50% point) ─────────────────────────── */}
+        {!reportUnlocked && revealIndex >= 4 && (
+          <ReportEmailGate
+            onUnlock={handleUnlock}
+            reportType="quick-scan"
+            generatePdfBase64={generatePdfBase64}
+          />
+        )}
 
-        {/* Quick Win */}
-        <div className={`bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-6 transition-all duration-700 ${revealIndex >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          <div className="flex items-start gap-3 mb-3">
-            <Lightbulb className="w-5 h-5 text-amber-600 flex-shrink-0" />
-            <div>
-              <h3 className="font-bold text-gray-900">Your #1 Quick Win</h3>
-              <p className="text-xs text-amber-700 font-medium">{report.quickWin.timeframe}</p>
-            </div>
-          </div>
-          <p className="text-gray-900 font-semibold mb-3 ml-8">{report.quickWin.title}</p>
-          <ol className="space-y-2 ml-8">
-            {report.quickWin.steps.map((s, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                <span className="w-5 h-5 rounded-full bg-amber-200 text-amber-800 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">{i + 1}</span>
-                {s}
-              </li>
-            ))}
-          </ol>
-          {report.quickWin.expectedResult && (
-            <p className="mt-3 ml-8 text-sm text-amber-800 font-medium">→ {report.quickWin.expectedResult}</p>
-          )}
-        </div>
-
-        {/* 30-Day Plan */}
-        <div className={`bg-white rounded-2xl border border-gray-200 shadow-sm p-6 transition-all duration-700 ${revealIndex >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          <div className="flex items-start gap-3 mb-4">
-            <Calendar className="w-5 h-5 text-primary-600 flex-shrink-0" />
-            <h3 className="font-bold text-gray-900">Your 30-day starter plan</h3>
-          </div>
-          <div className="space-y-3 ml-8">
-            {report.thirtyDayPlan.map((item, i) => (
-              <div key={i} className="flex items-start gap-3 text-sm">
-                <div className="w-2 h-2 rounded-full bg-primary-400 mt-1.5 flex-shrink-0" />
-                <p className="text-gray-700">{item}</p>
+        {/* ─── LOCKED CONTENT (shown after unlock) ─────────────── */}
+        {reportUnlocked && (
+          <>
+            {/* Monday Before vs After */}
+            <div className={`bg-white rounded-2xl border border-gray-200 shadow-sm p-6 transition-all duration-700 ${revealIndex >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+              <h3 className="font-bold text-gray-900 mb-4">Your Monday: Now vs. With AI</h3>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="bg-gray-50 rounded-xl p-4">
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">Now</p>
+                  <ul className="space-y-2">
+                    {report.mondayBefore.map((item, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                        <span className="text-red-400 mt-0.5">•</span>{item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="bg-primary-50/50 rounded-xl p-4">
+                  <p className="text-xs font-bold text-primary-500 uppercase tracking-wide mb-2">With AI</p>
+                  <ul className="space-y-2">
+                    {report.mondayAfter.map((item, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                        <span className="text-primary-500 mt-0.5">•</span>{item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        {/* Industry + Peer */}
-        <div className={`bg-gray-50 rounded-2xl border border-gray-200 p-6 transition-all duration-700 ${revealIndex >= 7 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          <p className="text-gray-700 text-sm leading-relaxed mb-3">{report.industryInsight}</p>
-          <p className="text-gray-500 text-sm italic">{report.peerComparison}</p>
-        </div>
+            {/* Quick Win */}
+            <div className={`bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-6 transition-all duration-700 ${revealIndex >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+              <div className="flex items-start gap-3 mb-3">
+                <Lightbulb className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                <div>
+                  <h3 className="font-bold text-gray-900">Your #1 Quick Win</h3>
+                  <p className="text-xs text-amber-700 font-medium">{report.quickWin.timeframe}</p>
+                </div>
+              </div>
+              <p className="text-gray-900 font-semibold mb-3 ml-8">{report.quickWin.title}</p>
+              <ol className="space-y-2 ml-8">
+                {report.quickWin.steps.map((s, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                    <span className="w-5 h-5 rounded-full bg-amber-200 text-amber-800 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">{i + 1}</span>
+                    {s}
+                  </li>
+                ))}
+              </ol>
+              {report.quickWin.expectedResult && (
+                <p className="mt-3 ml-8 text-sm text-amber-800 font-medium">→ {report.quickWin.expectedResult}</p>
+              )}
+            </div>
 
-        {/* Download & Email Report */}
-        <div className={`bg-white rounded-2xl border border-gray-200 shadow-sm p-6 transition-all duration-700 ${revealIndex >= 8 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          <h3 className="font-bold text-gray-900 mb-4 text-center">Get your report</h3>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <button
-              onClick={() => setFeedbackAction('download')}
-              disabled={downloadingPdf}
-              className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl transition-all disabled:opacity-50"
-            >
-              <Download className="w-4 h-4" />
-              {downloadingPdf ? 'Generating PDF...' : 'Download Report'}
-            </button>
-            <button
-              onClick={() => setFeedbackAction('email')}
-              disabled={emailingReport || emailSent}
-              className={`flex-1 flex items-center justify-center gap-2 px-5 py-3 font-semibold rounded-xl transition-all disabled:opacity-50 ${
-                emailSent
-                  ? 'bg-green-50 text-green-700 border border-green-200'
-                  : 'bg-primary-600 hover:bg-primary-700 text-white'
-              }`}
-            >
-              <Send className="w-4 h-4" />
-              {emailSent ? 'Sent to your email!' : emailingReport ? 'Sending...' : 'Send on Email'}
-            </button>
-          </div>
-        </div>
+            {/* 30-Day Plan */}
+            <div className={`bg-white rounded-2xl border border-gray-200 shadow-sm p-6 transition-all duration-700 ${revealIndex >= 7 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+              <div className="flex items-start gap-3 mb-4">
+                <Calendar className="w-5 h-5 text-primary-600 flex-shrink-0" />
+                <h3 className="font-bold text-gray-900">Your 30-day starter plan</h3>
+              </div>
+              <div className="space-y-3 ml-8">
+                {report.thirtyDayPlan.map((item, i) => (
+                  <div key={i} className="flex items-start gap-3 text-sm">
+                    <div className="w-2 h-2 rounded-full bg-primary-400 mt-1.5 flex-shrink-0" />
+                    <p className="text-gray-700">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-        {/* CTA */}
-        <div className={`text-center space-y-4 py-6 transition-all duration-700 ${revealIndex >= 8 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          <p className="text-gray-600 text-sm">Want to discuss these results and figure out your next move?</p>
-          <a
-            href="/resources/calendar"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-colors"
-          >
-            Walk through my results — free 15-min call <ArrowRight className="w-4 h-4" />
-          </a>
-          <div>
-            <button
-              onClick={handleReset}
-              className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              Retake assessment
-            </button>
-          </div>
-        </div>
+            {/* Industry + Peer */}
+            <div className={`bg-gray-50 rounded-2xl border border-gray-200 p-6 transition-all duration-700 ${revealIndex >= 8 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+              <p className="text-gray-700 text-sm leading-relaxed mb-3">{report.industryInsight}</p>
+              <p className="text-gray-500 text-sm italic">{report.peerComparison}</p>
+            </div>
+
+            {/* Download button */}
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+              <button
+                onClick={doDownloadReport}
+                disabled={downloadingPdf}
+                className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl transition-all disabled:opacity-50"
+              >
+                <Download className="w-4 h-4" />
+                {downloadingPdf ? 'Generating PDF...' : 'Download Report'}
+              </button>
+            </div>
+
+            {/* Survey */}
+            <ReportSurvey email={email} name={name} reportType="quick-scan" />
+
+            {/* Retake */}
+            <div className="text-center py-4">
+              <button
+                onClick={handleReset}
+                className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                Retake assessment
+              </button>
+            </div>
+          </>
+        )}
       </div>
     )
   }

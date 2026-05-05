@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { AzureOpenAI } from 'openai'
 import { TableClient } from '@azure/data-tables'
-import { isEmailVerified } from '@/lib/otp-store'
 
 export const maxDuration = 120
 
@@ -68,11 +67,8 @@ export async function POST(request: NextRequest) {
   try {
     const { email, name, role, category, subcategory, answers, openEnded } = await request.json()
 
-    if (!email || !answers) {
+    if (!answers) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
-    }
-    if (!isEmailVerified(email)) {
-      return NextResponse.json({ error: 'Email not verified' }, { status: 401 })
     }
 
     const endpoint = process.env.AZURE_OPENAI_READINESS_ENDPOINT

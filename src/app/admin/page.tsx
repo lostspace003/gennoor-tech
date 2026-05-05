@@ -1242,11 +1242,12 @@ export default function AdminDashboard() {
                 <StatCard icon={FileText} label="Blueprints" value={aiReadinessData.summary?.blueprints || 0} color="amber" />
                 <StatCard icon={Bot} label="Total Reports" value={aiReadinessData.summary?.totalGenerations || 0} color="purple" />
               </div>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
                 <StatCard icon={Download} label="Downloads" value={aiReadinessData.summary?.downloads || 0} color="blue" />
                 <StatCard icon={Send} label="Emails Sent" value={aiReadinessData.summary?.emailsSent || 0} color="teal" />
                 <StatCard icon={TrendingUp} label="Avg Rating" value={0} subtitle={`${aiReadinessData.summary?.avgRating || 0}/5`} color="amber" />
                 <StatCard icon={MessageSquare} label="Feedback" value={aiReadinessData.summary?.totalFeedback || 0} color="purple" />
+                <StatCard icon={Users} label="Org Leads" value={aiReadinessData.summary?.orgLeads || 0} color="teal" />
               </div>
 
               <Panel title="Score Distribution" subtitle="All assessment scores by range (last 90 days)">
@@ -1303,6 +1304,7 @@ export default function AdminDashboard() {
                         <span className={`px-2 py-0.5 rounded text-xs font-medium ${f.reportType === 'quick-scan' ? 'bg-blue-100 text-blue-700' : f.reportType === 'deep-dive' ? 'bg-teal-100 text-teal-700' : f.reportType === 'blueprint' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
                           {f.reportType || '-'}
                         </span>
+                        {f.orgInterest === 'yes' && <span className="px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">Org Lead</span>}
                         <span className="text-xs text-slate-400">{f.submittedAt ? new Date(f.submittedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) : ''}</span>
                       </div>
                     ))}
