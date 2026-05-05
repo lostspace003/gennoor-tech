@@ -151,7 +151,12 @@ const AGENT_STEPS = [
   'Assembling your report...',
 ]
 
-export default function AIReadinessQuizV2() {
+interface QuizV2Props {
+  onLock?: () => void
+  onUnlock?: () => void
+}
+
+export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
   const [step, setStep] = useState<Step>('email')
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
@@ -191,6 +196,18 @@ export default function AIReadinessQuizV2() {
     const timer = setTimeout(() => setAgentStep(s => s + 1), 2500)
     return () => clearTimeout(timer)
   }, [step, agentStep])
+
+  // Lock flow after OTP verification
+  useEffect(() => {
+    if (step !== 'email' && step !== 'otp') onLock?.()
+  }, [step, onLock])
+
+  useEffect(() => {
+    if (step === 'email' || step === 'otp') return
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault() }
+    window.addEventListener('beforeunload', handler)
+    return () => window.removeEventListener('beforeunload', handler)
+  }, [step])
 
   // Auto-advance slides when audio ends
   const handleAudioEnd = useCallback(() => {

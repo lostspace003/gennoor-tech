@@ -12,22 +12,59 @@ type AssessmentMode = 'quick' | 'deep' | 'blueprint' | null
 
 export default function AIReadinessSelector() {
   const [selectedMode, setSelectedMode] = useState<AssessmentMode>(null)
+  const [locked, setLocked] = useState(false)
+  const [showExitConfirm, setShowExitConfirm] = useState(false)
+
+  function handleBack() {
+    if (locked) {
+      setShowExitConfirm(true)
+    } else {
+      setSelectedMode(null)
+    }
+  }
+
+  function confirmExit() {
+    setShowExitConfirm(false)
+    setLocked(false)
+    setSelectedMode(null)
+  }
 
   if (selectedMode) {
     return (
       <div className="animate-fade-in">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
           <button
-            onClick={() => setSelectedMode(null)}
+            onClick={handleBack}
             className="group inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors duration-200"
           >
             <ArrowLeft className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-1" />
             Choose a different assessment
           </button>
         </div>
-        {selectedMode === 'quick' && <AIReadinessQuiz />}
-        {selectedMode === 'deep' && <AIReadinessQuizV2 />}
-        {selectedMode === 'blueprint' && <AIReadinessBlueprint />}
+        {selectedMode === 'quick' && <AIReadinessQuiz onLock={() => setLocked(true)} onUnlock={() => setLocked(false)} />}
+        {selectedMode === 'deep' && <AIReadinessQuizV2 onLock={() => setLocked(true)} onUnlock={() => setLocked(false)} />}
+        {selectedMode === 'blueprint' && <AIReadinessBlueprint onLock={() => setLocked(true)} onUnlock={() => setLocked(false)} />}
+
+        {showExitConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowExitConfirm(false)} />
+            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center animate-fade-in">
+              <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-amber-50 flex items-center justify-center">
+                <svg className="w-6 h-6 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">Leave assessment?</h3>
+              <p className="text-sm text-gray-500 mb-5">All your progress and answers will be lost. You&apos;ll need to start over.</p>
+              <div className="flex gap-3">
+                <button onClick={() => setShowExitConfirm(false)} className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
+                  Stay
+                </button>
+                <button onClick={confirmExit} className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-xl transition-colors">
+                  Leave &amp; Lose Progress
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     )
   }

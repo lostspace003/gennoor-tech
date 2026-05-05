@@ -3,7 +3,7 @@ import { AzureOpenAI } from 'openai'
 import { TableClient } from '@azure/data-tables'
 import { isEmailVerified } from '@/lib/otp-store'
 
-export const maxDuration = 120
+export const maxDuration = 60
 
 const SPEECH_KEY = process.env.AZURE_SPEECH_KEY || ''
 const SPEECH_REGION = process.env.AZURE_SPEECH_REGION || 'centralindia'
@@ -76,8 +76,6 @@ async function saveBlueprint(
 
 export async function POST(request: NextRequest) {
   const deployment = process.env.AZURE_OPENAI_READINESS_DEPLOYMENT_MAIN || 'gpt-54'
-  let assistantId: string | null = null
-  let client: AzureOpenAI | null = null
 
   try {
     const { email, name, role, category, subcategory, answers, openEnded } = await request.json()
@@ -96,57 +94,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'AI service not configured' }, { status: 500 })
     }
 
-    client = new AzureOpenAI({
+    const client = new AzureOpenAI({
       endpoint,
       apiKey,
       apiVersion: '2024-12-01-preview',
     })
 
-    // Create assistant with code interpreter
-    const assistant = await client.beta.assistants.create({
-      model: deployment,
-      name: 'AI Readiness Blueprint Agent',
-      instructions: `You are an elite AI readiness consultant. You analyze a person's role, industry, quiz answers, and open-ended response to produce a comprehensive, premium-quality AI Readiness Blueprint report.
+    const answersFormatted = Object.entries(answers as Record<string, string>)
+      .map(([q, a]) => `- ${q}: ${a}`)
+      .join('\n')
 
-Your analysis must be deeply personalized — reference specific answers, role context, and industry nuances. No generic advice.
+    const systemPrompt = `You are an elite AI readiness consultant. Analyze the person's role, industry, quiz answers, and open-ended response to produce a deeply personalized AI Readiness Blueprint. Reference their specific answers — no generic advice.
 
-When generating the report, follow this structure:
+Respond with ONLY valid JSON (no markdown, no code fences, no extra text). Use this exact structure:
 
-1. EXECUTIVE SUMMARY: Provide an overall AI readiness score (0-100) with a punchy headline and 3-4 sentence summary of their position.
-
-2. ROLE-SPECIFIC ANALYSIS: Analyze how AI impacts their specific role ("${role}") in the "${category}" industry${subcategory ? ` (${subcategory})` : ''}. What tasks can be automated? What skills become more valuable?
-
-3. VISUALIZATIONS: Use Python and matplotlib to create exactly 2 charts in a SINGLE code block, saving each as a separate PNG file:
-   a) RADAR CHART: Score across 6 readiness dimensions (AI Knowledge, Technical Skills, Strategic Thinking, Adaptability, Tool Proficiency, Data Literacy). Filled polygon style. Colors: #6366f1 fill, #818cf8 line. Figure size 10x8.
-   b) SKILL GAP HEATMAP: Current vs required skill levels across 8 relevant skills for their role. Use imshow with RdYlGn colormap. Figure size 10x6.
-
-   Chart style: dark background (#1e1e2e), light text (#e2e8f0), no spines, dpi=150, bbox_inches='tight'.
-   IMPORTANT: Generate both charts in ONE code execution to save time.
-
-4. 90-DAY IMPLEMENTATION ROADMAP: Three phases with specific milestones:
-   - Phase 1 (Days 1-30): Foundation — specific tools to learn, habits to build
-   - Phase 2 (Days 31-60): Acceleration — intermediate applications, workflow changes
-   - Phase 3 (Days 61-90): Mastery — advanced integration, measurable outcomes
-
-5. TOOL RECOMMENDATIONS: List 5-7 specific AI tools relevant to their role + industry with:
-   - Tool name
-   - What it does for their specific role
-   - Estimated time saved per week
-   - Learning curve (Easy/Medium/Hard)
-
-6. ROI PROJECTION: Estimate quantifiable benefits:
-   - Hours saved per week
-   - Productivity increase percentage
-   - Estimated annual value (in time or money)
-   - Break-even timeline for learning investment
-
-7. RISK ASSESSMENT: Key risks of NOT adopting AI:
-   - Competitive risk
-   - Skill obsolescence risk
-   - Opportunity cost
-   - Industry disruption timeline
-
-After the full narrative report, output a JSON block wrapped in \`\`\`json ... \`\`\` tags with this exact structure:
 {
   "score": <number 0-100>,
   "headline": "<5-8 word punchy headline>",
@@ -159,6 +120,9 @@ After the full narrative report, output a JSON block wrapped in \`\`\`json ... \
     "toolProficiency": <0-100>,
     "dataLiteracy": <0-100>
   },
+  "skillGap": [
+    { "skill": "<skill name>", "current": <0-100>, "required": <0-100> }
+  ],
   "sections": [
     { "title": "...", "content": "...", "type": "executive|analysis|roadmap|tools|roi|risk" }
   ],
@@ -166,9 +130,9 @@ After the full narrative report, output a JSON block wrapped in \`\`\`json ... \
     { "name": "...", "purpose": "...", "timeSaved": "...", "difficulty": "Easy|Medium|Hard" }
   ],
   "roadmap": {
-    "phase1": { "title": "...", "milestones": ["..."] },
-    "phase2": { "title": "...", "milestones": ["..."] },
-    "phase3": { "title": "...", "milestones": ["..."] }
+    "phase1": { "title": "Foundation (Days 1-30)", "milestones": ["..."] },
+    "phase2": { "title": "Acceleration (Days 31-60)", "milestones": ["..."] },
+    "phase3": { "title": "Mastery (Days 61-90)", "milestones": ["..."] }
   },
   "roi": {
     "hoursSavedPerWeek": <number>,
@@ -179,165 +143,81 @@ After the full narrative report, output a JSON block wrapped in \`\`\`json ... \
   "risks": [
     { "type": "...", "severity": "High|Medium|Low", "description": "..." }
   ]
-}`,
-      tools: [{ type: 'code_interpreter' }],
-    })
+}
 
-    assistantId = assistant.id
+Requirements:
+- "dimensions": Score across 6 AI readiness dimensions based on their answers
+- "skillGap": 8 skills relevant to their role with current vs required levels
+- "sections": 6 sections covering executive summary, role-specific analysis, 90-day roadmap, tool recommendations, ROI projection, risk assessment. Content should be detailed paragraphs, not bullet points.
+- "tools": 5-7 specific AI tools relevant to their role + industry
+- "roadmap": Three phases with 3-4 specific milestones each
+- "risks": 3-4 key risks of NOT adopting AI
+- Be brutally honest, not salesy. Genuine insights only.`
 
-    // Create thread and add message
-    const thread = await client.beta.threads.create()
-
-    const answersFormatted = Object.entries(answers as Record<string, string>)
-      .map(([q, a]) => `- ${q}: ${a}`)
-      .join('\n')
-
-    await client.beta.threads.messages.create(thread.id, {
-      role: 'user',
-      content: `Generate a comprehensive AI Readiness Blueprint for this person:
+    const userMessage = `Generate a comprehensive AI Readiness Blueprint for:
 
 Name: ${name || 'Not provided'}
-Email: ${email}
 Role: ${role || 'Not specified'}
 Industry: ${category || 'Not specified'}${subcategory ? ` > ${subcategory}` : ''}
 
-Their quiz answers:
+Quiz answers:
 ${answersFormatted}
 
-Their open-ended response about AI goals and challenges:
-${openEnded || 'Not provided'}
+Their open-ended response:
+${openEnded || 'Not provided'}`
 
-Please create the full blueprint report with all 4 visualizations (radar chart, industry comparison, timeline roadmap, skill gap heatmap), the detailed narrative analysis, and the structured JSON summary at the end.`,
+    const response = await client.chat.completions.create({
+      model: deployment,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userMessage },
+      ],
+      max_completion_tokens: 8000,
+      temperature: 0.7,
     })
 
-    // Create run
-    const run = await client.beta.threads.runs.create(thread.id, {
-      assistant_id: assistant.id,
-      max_completion_tokens: 16000,
-    })
+    const raw = response.choices[0]?.message?.content || ''
 
-    // Poll for completion (2s intervals, max ~100s to leave room for post-processing)
-    let runStatus = run
-    let pollCount = 0
-    const maxPolls = 50
-
-    while (pollCount < maxPolls) {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-      pollCount++
-
-      runStatus = await client.beta.threads.runs.retrieve(run.id, { thread_id: thread.id })
-
-      if (runStatus.status === 'completed') break
-      if (
-        runStatus.status === 'failed' ||
-        runStatus.status === 'cancelled' ||
-        runStatus.status === 'expired'
-      ) {
-        throw new Error(
-          `Assistant run ${runStatus.status}: ${runStatus.last_error?.message || 'Unknown error'}`,
-        )
-      }
-    }
-
-    if (runStatus.status !== 'completed') {
-      throw new Error('Assistant run timed out after 100 seconds')
-    }
-
-    // Retrieve messages
-    const messages = await client.beta.threads.messages.list(thread.id, { order: 'desc' })
-
-    let reportText = ''
-    const charts: string[] = []
-
-    // Process assistant messages
-    for (const msg of messages.data) {
-      if (msg.role !== 'assistant') continue
-
-      for (const block of msg.content) {
-        if (block.type === 'text') {
-          reportText += block.text.value + '\n'
-        } else if (block.type === 'image_file') {
-          // Download image and convert to base64
-          try {
-            const fileId = block.image_file.file_id
-            const fileResponse = await client.files.content(fileId)
-            const arrayBuffer = await fileResponse.arrayBuffer()
-            const base64 = Buffer.from(arrayBuffer).toString('base64')
-            charts.push(`data:image/png;base64,${base64}`)
-          } catch (imgErr) {
-            console.error('Failed to download chart image:', imgErr)
-          }
-        }
-      }
-    }
-
-    // Parse structured JSON from the response
     let blueprintData: any = {}
-    const jsonMatch = reportText.match(/```json\s*([\s\S]*?)\s*```/)
-    if (jsonMatch) {
-      try {
-        blueprintData = JSON.parse(jsonMatch[1])
-      } catch (parseErr) {
-        console.error('Failed to parse blueprint JSON:', parseErr)
+    try {
+      const cleaned = raw.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim()
+      blueprintData = JSON.parse(cleaned)
+    } catch {
+      const jsonMatch = raw.match(/\{[\s\S]*\}/)
+      if (jsonMatch) {
+        try { blueprintData = JSON.parse(jsonMatch[0]) } catch { /* noop */ }
       }
     }
 
-    const score = blueprintData.score || 0
-    const headline = blueprintData.headline || 'Your AI Readiness Blueprint'
-    const summary = blueprintData.summary || ''
+    if (!blueprintData.score) {
+      return NextResponse.json({ error: 'Failed to generate blueprint — please retry' }, { status: 500 })
+    }
 
-    // Generate TTS narration for the executive summary
-    const narrationText = summary || `${name ? name + ', here' : 'Here'} is your AI readiness blueprint. Your overall score is ${score} out of 100. ${headline}.`
+    const score = blueprintData.score
+    const summary = blueprintData.summary || ''
+    const narrationText = summary || `${name ? name + ', here' : 'Here'} is your AI readiness blueprint. Your overall score is ${score} out of 100. ${blueprintData.headline || ''}.`
     const narrationAudio = await generateTTS(narrationText)
 
-    // Save to Azure Table Storage
-    await saveBlueprint(
-      email,
-      name || '',
-      role || '',
-      category || '',
-      subcategory || '',
-      score,
-      JSON.stringify(blueprintData),
-    )
-
-    // Clean up: delete the assistant
-    try {
-      await client.beta.assistants.delete(assistant.id)
-      assistantId = null
-    } catch (cleanupErr) {
-      console.error('Failed to delete assistant:', cleanupErr)
-    }
+    await saveBlueprint(email, name || '', role || '', category || '', subcategory || '', score, JSON.stringify(blueprintData))
 
     return NextResponse.json({
       success: true,
       blueprint: {
         score,
-        headline,
+        headline: blueprintData.headline || 'Your AI Readiness Blueprint',
         summary,
-        sections: blueprintData.sections || [],
         dimensions: blueprintData.dimensions || {},
+        skillGap: blueprintData.skillGap || [],
+        sections: blueprintData.sections || [],
         tools: blueprintData.tools || [],
         roadmap: blueprintData.roadmap || {},
         roi: blueprintData.roi || {},
         risks: blueprintData.risks || [],
-        charts,
         narrationAudio: narrationAudio || null,
-        fullReport: reportText,
       },
     })
   } catch (err: any) {
     console.error('Blueprint generation error:', err)
-
-    // Clean up assistant on error
-    if (client && assistantId) {
-      try {
-        await client.beta.assistants.delete(assistantId)
-      } catch (cleanupErr) {
-        console.error('Failed to delete assistant on error:', cleanupErr)
-      }
-    }
-
     return NextResponse.json(
       { error: err.message || 'Blueprint generation failed' },
       { status: 500 },

@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { ArrowRight, ChevronLeft, Mail, Lock, Download, Send, Zap, Check } from 'lucide-react'
+import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell } from 'recharts'
 import FeedbackModal from '@/components/FeedbackModal'
 
 // ─── Role → Category → Subcategory mapping ────────────────
@@ -98,134 +99,133 @@ const ROLE_QUESTIONS: Record<string, { id: string; question: string; subtext?: s
   freelancer: [
     { id: 'clients', question: 'How many active clients do you typically handle?', options: [
       { label: '1-2 — deep engagement with each' },
-      { label: '3-5 — juggling multiple projects' },
-      { label: '6-10 — volume-based work' },
-      { label: '10+ — productized or template-based' },
+      { label: '3-5 — balanced portfolio' },
+      { label: '6-10 — high volume, fast turnaround' },
+      { label: '10+ — running a one-person agency' },
     ]},
-    { id: 'bottleneck', question: 'What takes the most time that isn\'t billable?', options: [
-      { label: 'Proposals, invoicing, and admin' },
-      { label: 'Client communication and follow-ups' },
-      { label: 'Research before starting projects' },
-      { label: 'Marketing myself and finding leads' },
+    { id: 'time-sink', question: 'Where does most of your non-billable time go?', options: [
+      { label: 'Finding and pitching new clients' },
+      { label: 'Admin — invoices, contracts, scheduling' },
+      { label: 'Revisions and client communication' },
+      { label: 'Learning new skills to stay competitive' },
     ]},
-    { id: 'tools', question: 'Which AI tools are you already using?', options: [
-      { label: 'None — curious but haven\'t started' },
-      { label: 'ChatGPT for ideas and drafts' },
-      { label: 'Multiple tools — Copilot, Midjourney, etc.' },
-      { label: 'I\'ve built custom workflows with AI' },
+    { id: 'ai-use', question: 'How do you currently use AI in your work?', options: [
+      { label: 'I don\'t — haven\'t found the right fit' },
+      { label: 'ChatGPT for brainstorming or drafts' },
+      { label: 'AI tools specific to my craft (Midjourney, Cursor, etc.)' },
+      { label: 'It\'s core to my workflow — I couldn\'t go back' },
     ]},
-    { id: 'pricing', question: 'Has AI affected how you price your work?', options: [
-      { label: 'No — I charge the same as before' },
-      { label: 'I\'m worried it will drive prices down' },
-      { label: 'I charge more because I deliver faster' },
-      { label: 'I\'m shifting to value-based pricing' },
+    { id: 'pricing', question: 'How has AI affected your pricing?', options: [
+      { label: 'Clients expect lower prices because "AI can do it"' },
+      { label: 'No change yet but I see it coming' },
+      { label: 'I charge more because I deliver faster with AI' },
+      { label: 'I\'ve pivoted to services AI can\'t replace' },
     ]},
-    { id: 'growth', question: 'What\'s your biggest growth goal right now?', options: [
-      { label: 'Earn more without working more hours' },
-      { label: 'Build a personal brand that attracts clients' },
-      { label: 'Productize my service into something scalable' },
-      { label: 'Transition from freelancing to an agency/startup' },
+    { id: 'future', question: 'What\'s your biggest concern about AI as a freelancer?', options: [
+      { label: 'Clients replacing me with AI tools directly' },
+      { label: 'Competing with AI-augmented freelancers who are faster' },
+      { label: 'Not knowing which tools are worth investing time in' },
+      { label: 'Quality — AI output isn\'t good enough for my standards' },
     ]},
   ],
   startup: [
-    { id: 'stage', question: 'What stage are you at?', options: [
-      { label: 'Idea stage — validating the concept' },
-      { label: 'MVP — building or just launched' },
-      { label: 'Early traction — first paying customers' },
-      { label: 'Scaling — product-market fit found' },
+    { id: 'stage', question: 'What stage is your startup at?', options: [
+      { label: 'Idea / pre-product' },
+      { label: 'MVP / early traction' },
+      { label: 'Product-market fit / scaling' },
+      { label: 'Growth stage / raising Series A+' },
     ]},
-    { id: 'team', question: 'How big is your team?', options: [
+    { id: 'team-size', question: 'How big is your team?', options: [
       { label: 'Just me (solo founder)' },
       { label: '2-5 people' },
       { label: '6-20 people' },
       { label: '20+ people' },
     ]},
-    { id: 'ai-product', question: 'Is AI part of your product or just operations?', options: [
-      { label: 'AI IS our product — it\'s core to what we sell' },
-      { label: 'We use AI features to enhance our product' },
-      { label: 'Only for internal operations (marketing, support)' },
-      { label: 'We haven\'t integrated AI anywhere yet' },
+    { id: 'ai-in-product', question: 'How central is AI to your product?', options: [
+      { label: 'AI IS the product — it\'s our core tech' },
+      { label: 'AI enhances our product (features, recommendations)' },
+      { label: 'We use AI internally but the product isn\'t AI-based' },
+      { label: 'We haven\'t incorporated AI yet' },
     ]},
-    { id: 'bottleneck', question: 'What\'s your biggest constraint right now?', options: [
-      { label: 'Technical — building fast enough' },
-      { label: 'Commercial — getting customers and revenue' },
-      { label: 'Talent — can\'t hire the right people' },
-      { label: 'Capital — need funding to scale' },
+    { id: 'challenge', question: 'What\'s your biggest operational challenge?', options: [
+      { label: 'Moving fast with limited resources' },
+      { label: 'Hiring and retaining talent' },
+      { label: 'Customer acquisition and growth' },
+      { label: 'Building reliable systems that scale' },
     ]},
-    { id: 'compete', question: 'How are competitors using AI?', options: [
-      { label: 'No idea — haven\'t looked into it' },
-      { label: 'They\'re behind — this is our advantage' },
-      { label: 'Same level as us — it\'s a race' },
-      { label: 'They\'re ahead — we need to catch up' },
+    { id: 'ai-ops', question: 'Where could AI help your startup most right now?', options: [
+      { label: 'Automating repetitive ops (support, onboarding, reporting)' },
+      { label: 'Generating content and marketing faster' },
+      { label: 'Building and shipping product features faster' },
+      { label: 'Making better decisions with data we already have' },
     ]},
   ],
   'business-owner': [
-    { id: 'team-size', question: 'How many people work in your business?', options: [
-      { label: '1-10 — small team, everyone wears multiple hats' },
-      { label: '11-50 — departments forming, some structure' },
-      { label: '51-200 — established operations and processes' },
-      { label: '200+ — enterprise-level complexity' },
+    { id: 'biz-size', question: 'How many employees does your business have?', options: [
+      { label: '1-10 (small business)' },
+      { label: '11-50 (growing business)' },
+      { label: '51-200 (mid-size)' },
+      { label: '200+ (large organization)' },
     ]},
-    { id: 'processes', question: 'How would you describe your operations?', options: [
-      { label: 'Manual — spreadsheets, email, and willpower' },
-      { label: 'Some systems in place but lots of gaps' },
-      { label: 'Well-organized with ERP/CRM but not AI-enabled' },
-      { label: 'Already using automation and AI in operations' },
+    { id: 'digital', question: 'How digitized are your core operations?', options: [
+      { label: 'Mostly manual — paper, spreadsheets, phone calls' },
+      { label: 'Some systems in place but lots of manual work remains' },
+      { label: 'Good digital foundation — CRM, ERP, or cloud tools' },
+      { label: 'Highly digital — automated workflows, real-time dashboards' },
     ]},
-    { id: 'priority', question: 'Where would AI make the biggest impact for you?', options: [
-      { label: 'Customer service and support' },
-      { label: 'Sales and marketing automation' },
-      { label: 'Operations and supply chain' },
-      { label: 'Decision-making and business intelligence' },
+    { id: 'ai-status', question: 'What\'s your current relationship with AI?', options: [
+      { label: 'Curious but haven\'t started — not sure where to begin' },
+      { label: 'Tried a few things (ChatGPT, chatbots) — mixed results' },
+      { label: 'Piloting AI in specific areas' },
+      { label: 'AI is already part of how we operate' },
     ]},
-    { id: 'budget', question: 'What\'s your comfort level investing in AI?', options: [
-      { label: 'Want to start with free/low-cost tools' },
-      { label: 'Can invest if ROI is clear within 3 months' },
-      { label: 'Have budget allocated for digital transformation' },
-      { label: 'Ready to invest significantly for competitive edge' },
+    { id: 'priority', question: 'What would you most want AI to solve?', options: [
+      { label: 'Reducing operational costs and inefficiencies' },
+      { label: 'Improving customer experience and retention' },
+      { label: 'Generating more leads and revenue' },
+      { label: 'Making better strategic decisions faster' },
     ]},
-    { id: 'concern', question: 'What concerns you most about AI adoption?', options: [
-      { label: 'My team won\'t adopt it — resistance to change' },
-      { label: 'Data privacy and security risks' },
-      { label: 'Choosing the wrong tools and wasting money' },
-      { label: 'Being left behind if I don\'t act soon' },
+    { id: 'barrier', question: 'What\'s the biggest barrier to adopting AI in your business?', options: [
+      { label: 'Don\'t know what\'s possible or where to start' },
+      { label: 'Budget — unsure about ROI' },
+      { label: 'Team doesn\'t have the skills' },
+      { label: 'Data is messy, scattered, or not digitized' },
     ]},
   ],
   student: [
-    { id: 'year', question: 'Where are you in your academic journey?', options: [
-      { label: 'Undergraduate — early years' },
-      { label: 'Undergraduate — final year' },
+    { id: 'level', question: 'Where are you in your education?', options: [
+      { label: 'Undergraduate (1st-2nd year)' },
+      { label: 'Undergraduate (3rd-4th year)' },
       { label: 'Postgraduate / Masters' },
-      { label: 'Self-learning / bootcamp / certification' },
+      { label: 'PhD or research-focused' },
     ]},
-    { id: 'usage', question: 'How do you currently use AI in your studies?', options: [
-      { label: 'I don\'t — still doing everything manually' },
-      { label: 'ChatGPT for research and explanations' },
-      { label: 'Multiple AI tools — coding, writing, presentations' },
-      { label: 'I\'m building projects with AI/ML' },
+    { id: 'ai-exposure', question: 'How much have you explored AI?', options: [
+      { label: 'Just heard about it — haven\'t really used it' },
+      { label: 'Use ChatGPT for assignments and research' },
+      { label: 'Took a course or built a small project with AI' },
+      { label: 'Building with AI regularly — it\'s a core skill for me' },
     ]},
-    { id: 'career', question: 'What\'s your career goal?', options: [
-      { label: 'Get a great job at a top company' },
-      { label: 'Start my own business or freelance' },
+    { id: 'goal', question: 'What\'s your primary career goal?', options: [
+      { label: 'Get hired at a top company' },
+      { label: 'Build my own startup or freelance career' },
       { label: 'Go into research or academia' },
       { label: 'Still figuring it out' },
     ]},
-    { id: 'skill-gap', question: 'What AI skill would give you the biggest edge?', options: [
-      { label: 'Prompt engineering — getting better outputs' },
-      { label: 'Building AI applications (coding, APIs)' },
-      { label: 'Understanding AI strategy for business' },
-      { label: 'Data analysis and visualization with AI' },
+    { id: 'concern', question: 'What worries you most about AI and your career?', options: [
+      { label: 'Jobs in my field might not exist by the time I graduate' },
+      { label: 'I\'m not learning the right skills' },
+      { label: 'AI makes everything easier — how do I stand out?' },
+      { label: 'I\'m not worried — AI creates more opportunities' },
     ]},
-    { id: 'time', question: 'How much time can you invest in learning AI?', options: [
-      { label: '30 min/day — squeeze it in between classes' },
-      { label: '1-2 hours/day — serious about this' },
-      { label: 'Weekends only — packed schedule' },
-      { label: 'Full-time focus right now' },
+    { id: 'learn', question: 'How do you prefer to learn new tech skills?', options: [
+      { label: 'Online courses and tutorials' },
+      { label: 'Building projects — learn by doing' },
+      { label: 'University courses and structured programs' },
+      { label: 'Community — hackathons, meetups, open source' },
     ]},
   ],
 }
 
-// Common final questions for everyone
 const COMMON_QUESTIONS = [
   {
     id: 'ai-confidence',
@@ -242,10 +242,10 @@ const COMMON_QUESTIONS = [
     id: 'success-metric',
     question: 'How would you measure success with AI in 6 months?',
     options: [
-      { label: 'Saving 10+ hours per week on repetitive tasks' },
-      { label: 'Generating measurable revenue or cost savings' },
-      { label: 'Being seen as the AI expert in my space' },
-      { label: 'Having a clear, executable AI strategy' },
+      { label: 'Saving X hours per week on repetitive tasks' },
+      { label: 'Delivering noticeably better quality work' },
+      { label: 'Being seen as the AI-savvy person in my circle' },
+      { label: 'Having a clear roadmap I\'m actually following' },
     ],
   },
 ]
@@ -254,9 +254,14 @@ interface BlueprintReport {
   score: number
   headline: string
   summary: string
-  sections: { title: string; content: string }[]
-  charts: string[]
-  narrationAudio: string
+  dimensions: Record<string, number>
+  skillGap: { skill: string; current: number; required: number }[]
+  sections: { title: string; content: string; type: string }[]
+  tools: { name: string; purpose: string; timeSaved: string; difficulty: string }[]
+  roadmap: { phase1: { title: string; milestones: string[] }; phase2: { title: string; milestones: string[] }; phase3: { title: string; milestones: string[] } }
+  roi: { hoursSavedPerWeek: number; productivityIncrease: string; annualValue: string; breakEvenWeeks: number }
+  risks: { type: string; severity: string; description: string }[]
+  narrationAudio?: string | null
 }
 
 type Step = 'email' | 'otp' | 'role' | 'category' | 'subcategory' | 'questions' | 'open-ended' | 'generating' | 'gen-error' | 'report'
@@ -265,15 +270,30 @@ const AGENT_STEPS = [
   'Analyzing your profile and responses...',
   'Building your role-specific readiness model...',
   'Running AI adoption benchmark analysis...',
-  'Generating custom visualizations...',
+  'Scoring your readiness dimensions...',
   'Creating your implementation roadmap...',
   'Calculating ROI projections...',
-  'Building your personalized blueprint...',
-  'Recording voice summary...',
-  'Finalizing your report...',
+  'Finalizing your blueprint...',
 ]
 
-export default function AIReadinessBlueprint() {
+const DIMENSION_LABELS: Record<string, string> = {
+  aiKnowledge: 'AI Knowledge',
+  technicalSkills: 'Technical Skills',
+  strategicThinking: 'Strategic Thinking',
+  adaptability: 'Adaptability',
+  toolProficiency: 'Tool Proficiency',
+  dataLiteracy: 'Data Literacy',
+}
+
+const RADAR_COLORS = ['#6366f1', '#818cf8']
+const GAP_COLORS = { current: '#6366f1', required: '#22c55e' }
+
+interface BlueprintProps {
+  onLock?: () => void
+  onUnlock?: () => void
+}
+
+export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProps) {
   const [step, setStep] = useState<Step>('email')
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
@@ -293,6 +313,7 @@ export default function AIReadinessBlueprint() {
   const [emailingReport, setEmailingReport] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
   const [feedbackAction, setFeedbackAction] = useState<'download' | 'email' | null>(null)
+  const [isLocked, setIsLocked] = useState(false)
   const reportRef = useRef<HTMLDivElement>(null)
 
   const questions = [
@@ -301,6 +322,42 @@ export default function AIReadinessBlueprint() {
   ]
   const totalQuestions = questions.length
   const progress = totalQuestions > 0 ? (currentQ / totalQuestions) * 100 : 0
+
+  const lockSession = useCallback(() => {
+    if (!isLocked) {
+      setIsLocked(true)
+      onLock?.()
+    }
+  }, [isLocked, onLock])
+
+  // Lock after OTP verification (step moves past 'otp')
+  useEffect(() => {
+    if (step !== 'email' && step !== 'otp' && !isLocked) {
+      lockSession()
+    }
+  }, [step, isLocked, lockSession])
+
+  // Warn on page refresh/close when locked
+  useEffect(() => {
+    if (!isLocked) return
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault()
+    }
+    window.addEventListener('beforeunload', handler)
+    return () => window.removeEventListener('beforeunload', handler)
+  }, [isLocked])
+
+  // Warn on tab switch when locked
+  useEffect(() => {
+    if (!isLocked || step === 'report') return
+    const handler = () => {
+      if (document.hidden) {
+        // we don't block tab switch but the beforeunload handles close
+      }
+    }
+    document.addEventListener('visibilitychange', handler)
+    return () => document.removeEventListener('visibilitychange', handler)
+  }, [isLocked, step])
 
   // OTP countdown
   useEffect(() => {
@@ -313,7 +370,7 @@ export default function AIReadinessBlueprint() {
   useEffect(() => {
     if (step !== 'generating') return
     if (agentStep >= AGENT_STEPS.length) return
-    const timer = setTimeout(() => setAgentStep(s => s + 1), 7000)
+    const timer = setTimeout(() => setAgentStep(s => s + 1), 4000)
     return () => clearTimeout(timer)
   }, [step, agentStep])
 
@@ -400,7 +457,7 @@ export default function AIReadinessBlueprint() {
     setAgentStep(0)
     try {
       const controller = new AbortController()
-      const timeout = setTimeout(() => controller.abort(), 150000)
+      const timeout = setTimeout(() => controller.abort(), 90000)
       const res = await fetch('/api/ai-readiness/blueprint', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -485,6 +542,8 @@ export default function AIReadinessBlueprint() {
   }
 
   function handleReset() {
+    setIsLocked(false)
+    onUnlock?.()
     setStep('email')
     setRole('')
     setCategory('')
@@ -498,6 +557,17 @@ export default function AIReadinessBlueprint() {
     setOtpTimer(0)
     setEmailSent(false)
   }
+
+  // ─── Recharts data transforms ─────────────────────────────
+  const radarData = report?.dimensions
+    ? Object.entries(report.dimensions).map(([key, val]) => ({
+        dimension: DIMENSION_LABELS[key] || key,
+        score: val,
+        fullMark: 100,
+      }))
+    : []
+
+  const skillGapData = report?.skillGap || []
 
   // ─── EMAIL ───────────────────────────────────────────────
   if (step === 'email') {
@@ -713,8 +783,8 @@ export default function AIReadinessBlueprint() {
           <div className="absolute inset-6 rounded-full border-4 border-purple-400 border-l-transparent animate-spin [animation-duration:2s]" />
           <div className="absolute inset-9 rounded-full border-4 border-amber-400 border-r-transparent animate-spin [animation-direction:reverse] [animation-duration:2.5s]" />
         </div>
-        <h3 className="text-xl font-bold text-gray-900 mb-2">AI Agents building your blueprint</h3>
-        <p className="text-sm text-gray-500 mb-8">Code Interpreter is generating custom visualizations for you...</p>
+        <h3 className="text-xl font-bold text-gray-900 mb-2">AI is building your blueprint</h3>
+        <p className="text-sm text-gray-500 mb-8">Analyzing your responses and generating personalized insights...</p>
         <div className="space-y-3 text-left max-w-sm mx-auto">
           {AGENT_STEPS.map((label, i) => (
             <div key={i} className={`flex items-center gap-3 transition-all duration-500 ${i <= agentStep ? 'opacity-100' : 'opacity-30'}`}>
@@ -733,7 +803,7 @@ export default function AIReadinessBlueprint() {
             </div>
           ))}
         </div>
-        <p className="text-gray-400 text-xs mt-8">This takes about 60-90 seconds — hang tight</p>
+        <p className="text-gray-400 text-xs mt-8">This takes about 15-30 seconds — hang tight</p>
       </div>
     )
   }
@@ -747,7 +817,7 @@ export default function AIReadinessBlueprint() {
         </div>
         <h3 className="text-xl font-bold text-gray-900 mb-2">Generation didn&apos;t complete</h3>
         <p className="text-sm text-gray-500 mb-2">{error || 'Something went wrong while generating your blueprint.'}</p>
-        <p className="text-xs text-gray-400 mb-8">The AI agent may have timed out. Your answers are saved — just hit retry.</p>
+        <p className="text-xs text-gray-400 mb-8">Your answers are saved — just hit retry.</p>
         <div className="flex items-center justify-center gap-3">
           <button onClick={() => { setError(''); setStep('open-ended') }} className="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
             Edit Answers
@@ -783,16 +853,41 @@ export default function AIReadinessBlueprint() {
           </div>
         </div>
 
-        {/* Charts */}
-        {report.charts && report.charts.length > 0 && (
+        {/* Radar Chart — Readiness Dimensions */}
+        {radarData.length > 0 && (
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-            <h3 className="font-bold text-gray-900 mb-4">Your custom visualizations</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {report.charts.map((chart, i) => (
-                <div key={i} className="rounded-xl border border-gray-100 overflow-hidden bg-gray-50">
-                  <img src={`data:image/png;base64,${chart}`} alt={`Chart ${i + 1}`} className="w-full" />
-                </div>
-              ))}
+            <h3 className="font-bold text-gray-900 mb-1">Readiness Dimensions</h3>
+            <p className="text-xs text-gray-400 mb-4">Your score across 6 key AI readiness areas</p>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="75%">
+                  <PolarGrid stroke="#e2e8f0" />
+                  <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 12, fill: '#64748b' }} />
+                  <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 10, fill: '#94a3b8' }} />
+                  <Radar name="Your Score" dataKey="score" stroke={RADAR_COLORS[1]} fill={RADAR_COLORS[0]} fillOpacity={0.3} strokeWidth={2} />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {/* Skill Gap Chart */}
+        {skillGapData.length > 0 && (
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+            <h3 className="font-bold text-gray-900 mb-1">Skill Gap Analysis</h3>
+            <p className="text-xs text-gray-400 mb-4">Current level vs. what&apos;s needed for your role</p>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={skillGapData} layout="vertical" margin={{ left: 20, right: 20 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                  <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 11, fill: '#94a3b8' }} />
+                  <YAxis dataKey="skill" type="category" width={100} tick={{ fontSize: 11, fill: '#64748b' }} />
+                  <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '12px' }} />
+                  <Legend wrapperStyle={{ fontSize: '12px' }} />
+                  <Bar dataKey="current" name="Current Level" fill={GAP_COLORS.current} radius={[0, 4, 4, 0]} barSize={14} />
+                  <Bar dataKey="required" name="Required Level" fill={GAP_COLORS.required} radius={[0, 4, 4, 0]} barSize={14} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
         )}
@@ -804,6 +899,88 @@ export default function AIReadinessBlueprint() {
             <div className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">{section.content}</div>
           </div>
         ))}
+
+        {/* Tools Table */}
+        {report.tools.length > 0 && (
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+            <h3 className="font-bold text-gray-900 mb-4">Recommended AI Tools</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-100">
+                    <th className="text-left py-2 pr-4 font-semibold text-gray-700">Tool</th>
+                    <th className="text-left py-2 pr-4 font-semibold text-gray-700">Purpose</th>
+                    <th className="text-left py-2 pr-4 font-semibold text-gray-700">Time Saved</th>
+                    <th className="text-left py-2 font-semibold text-gray-700">Difficulty</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {report.tools.map((tool, i) => (
+                    <tr key={i} className="border-b border-gray-50">
+                      <td className="py-2.5 pr-4 font-medium text-gray-900">{tool.name}</td>
+                      <td className="py-2.5 pr-4 text-gray-600">{tool.purpose}</td>
+                      <td className="py-2.5 pr-4 text-primary-600 font-medium">{tool.timeSaved}</td>
+                      <td className="py-2.5">
+                        <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
+                          tool.difficulty === 'Easy' ? 'bg-green-50 text-green-700' :
+                          tool.difficulty === 'Medium' ? 'bg-amber-50 text-amber-700' :
+                          'bg-red-50 text-red-700'
+                        }`}>{tool.difficulty}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* ROI Card */}
+        {report.roi && (
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-200 p-6">
+            <h3 className="font-bold text-gray-900 mb-4">Estimated ROI</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-black text-green-600">{report.roi.hoursSavedPerWeek}h</div>
+                <div className="text-xs text-gray-500 mt-1">Saved / Week</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-black text-green-600">{report.roi.productivityIncrease}</div>
+                <div className="text-xs text-gray-500 mt-1">Productivity Boost</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-black text-green-600">{report.roi.annualValue}</div>
+                <div className="text-xs text-gray-500 mt-1">Annual Value</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-black text-green-600">{report.roi.breakEvenWeeks}w</div>
+                <div className="text-xs text-gray-500 mt-1">Break Even</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Risks */}
+        {report.risks.length > 0 && (
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+            <h3 className="font-bold text-gray-900 mb-4">Risk Assessment</h3>
+            <div className="space-y-3">
+              {report.risks.map((risk, i) => (
+                <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-gray-50">
+                  <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-bold flex-shrink-0 mt-0.5 ${
+                    risk.severity === 'High' ? 'bg-red-100 text-red-700' :
+                    risk.severity === 'Medium' ? 'bg-amber-100 text-amber-700' :
+                    'bg-blue-100 text-blue-700'
+                  }`}>{risk.severity}</span>
+                  <div>
+                    <div className="text-sm font-medium text-gray-900">{risk.type}</div>
+                    <div className="text-xs text-gray-500 mt-0.5">{risk.description}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Audio narration */}
         {report.narrationAudio && (

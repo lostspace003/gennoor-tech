@@ -121,7 +121,12 @@ const PILLAR_COLORS: Record<string, { text: string; bar: string }> = {
   'Readiness': { text: 'text-orange-600', bar: 'bg-orange-500' },
 }
 
-export default function AIReadinessQuiz() {
+interface QuizProps {
+  onLock?: () => void
+  onUnlock?: () => void
+}
+
+export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
   const [step, setStep] = useState<Step>('email')
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
@@ -163,6 +168,18 @@ export default function AIReadinessQuiz() {
       setIsPlaying(true)
     }
   }, [audioSrc, step])
+
+  // Lock flow after OTP verification
+  useEffect(() => {
+    if (step !== 'email' && step !== 'otp') onLock?.()
+  }, [step, onLock])
+
+  useEffect(() => {
+    if (step === 'email' || step === 'otp') return
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault() }
+    window.addEventListener('beforeunload', handler)
+    return () => window.removeEventListener('beforeunload', handler)
+  }, [step])
 
   const toggleAudio = useCallback(() => {
     if (!audioRef.current) return
