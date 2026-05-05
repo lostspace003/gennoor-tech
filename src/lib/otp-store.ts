@@ -12,6 +12,7 @@ interface OTPEntry {
 const store = new Map<string, OTPEntry>()
 
 const OTP_EXPIRY_MS = 5 * 60 * 1000 // 5 minutes
+const VERIFIED_EXPIRY_MS = 30 * 60 * 1000 // 30 minutes post-verification
 const OTP_LENGTH = 6
 
 /** Generate a random numeric OTP */
@@ -54,8 +55,9 @@ export function verifyOTP(email: string, code: string): boolean {
   }
   if (entry.code !== code) return false
 
-  // Mark as verified
+  // Mark as verified and extend expiry so user has time to complete assessment
   entry.verified = true
+  entry.expiresAt = Date.now() + VERIFIED_EXPIRY_MS
   store.set(key, entry)
   return true
 }
