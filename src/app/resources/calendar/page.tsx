@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { Suspense, useState, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import EmailOTP from '@/components/EmailOTP'
@@ -140,7 +140,7 @@ interface LocalSlot { raw: AvailableSlot; localHour: number; localMinute: number
 
 /* ───────── component ───────── */
 
-export default function BookingCalendarPage() {
+function BookingCalendarInner() {
   const searchParams = useSearchParams()
   const today = new Date(); today.setHours(0, 0, 0, 0)
   const minDate = new Date(today); minDate.setDate(minDate.getDate() + MIN_BOOKING_GAP_DAYS)
@@ -807,5 +807,13 @@ export default function BookingCalendarPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function BookingCalendarPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-blue-600" /></div>}>
+      <BookingCalendarInner />
+    </Suspense>
   )
 }
