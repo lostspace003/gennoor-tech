@@ -259,7 +259,7 @@ interface BlueprintReport {
   narrationAudio: string
 }
 
-type Step = 'email' | 'otp' | 'role' | 'category' | 'subcategory' | 'questions' | 'open-ended' | 'generating' | 'report'
+type Step = 'email' | 'otp' | 'role' | 'category' | 'subcategory' | 'questions' | 'open-ended' | 'generating' | 'gen-error' | 'report'
 
 const AGENT_STEPS = [
   'Analyzing your profile and responses...',
@@ -395,21 +395,29 @@ export default function AIReadinessBlueprint() {
   }
 
   async function handleSubmitBlueprint() {
+    setError('')
     setStep('generating')
     setAgentStep(0)
     try {
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 150000)
       const res = await fetch('/api/ai-readiness/blueprint', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, name, role, category, subcategory, answers, openEnded }),
+        signal: controller.signal,
       })
+      clearTimeout(timeout)
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Blueprint generation failed')
       setReport(data.blueprint)
       setStep('report')
     } catch (err: any) {
-      setError(err.message)
-      setStep('open-ended')
+      const msg = err.name === 'AbortError'
+        ? 'Generation took too long. Please try again.'
+        : (err.message || 'Blueprint generation failed')
+      setError(msg)
+      setStep('gen-error')
     }
   }
 
@@ -726,6 +734,28 @@ export default function AIReadinessBlueprint() {
           ))}
         </div>
         <p className="text-gray-400 text-xs mt-8">This takes about 60-90 seconds — hang tight</p>
+      </div>
+    )
+  }
+
+  // ─── GENERATION ERROR ────────────────────────────────────
+  if (step === 'gen-error') {
+    return (
+      <div className="max-w-lg mx-auto py-16 text-center">
+        <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-red-50 flex items-center justify-center">
+          <svg className="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
+        </div>
+        <h3 className="text-xl font-bold text-gray-900 mb-2">Generation didn&apos;t complete</h3>
+        <p className="text-sm text-gray-500 mb-2">{error || 'Something went wrong while generating your blueprint.'}</p>
+        <p className="text-xs text-gray-400 mb-8">The AI agent may have timed out. Your answers are saved — just hit retry.</p>
+        <div className="flex items-center justify-center gap-3">
+          <button onClick={() => { setError(''); setStep('open-ended') }} className="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
+            Edit Answers
+          </button>
+          <button onClick={handleSubmitBlueprint} className="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all shadow-lg hover:shadow-xl">
+            <Zap className="w-4 h-4" /> Retry Generation
+          </button>
+        </div>
       </div>
     )
   }

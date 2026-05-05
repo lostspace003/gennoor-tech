@@ -116,18 +116,12 @@ When generating the report, follow this structure:
 
 2. ROLE-SPECIFIC ANALYSIS: Analyze how AI impacts their specific role ("${role}") in the "${category}" industry${subcategory ? ` (${subcategory})` : ''}. What tasks can be automated? What skills become more valuable?
 
-3. VISUALIZATIONS: Use Python and matplotlib to create exactly 4 charts, saving each as a PNG file:
-   a) RADAR CHART: Score across 6 readiness dimensions (AI Knowledge, Technical Skills, Strategic Thinking, Adaptability, Tool Proficiency, Data Literacy). Use a filled polygon style with a clean, modern look. Use colors #6366f1 for fill and #818cf8 for the line.
-   b) INDUSTRY COMPARISON BAR CHART: Compare the person's scores against industry average and top performers across the 6 dimensions. Use grouped horizontal bars. Colors: #6366f1 (user), #94a3b8 (industry avg), #22c55e (top performers).
-   c) TIMELINE ROADMAP: A visual 90-day timeline showing phases (Foundation: Days 1-30, Acceleration: Days 31-60, Mastery: Days 61-90) with key milestones marked. Use a horizontal timeline with icons/markers.
-   d) SKILL GAP HEATMAP: A heatmap showing current vs required skill levels across 8-10 relevant skills for their role. Use matplotlib's imshow with a diverging colormap (RdYlGn).
+3. VISUALIZATIONS: Use Python and matplotlib to create exactly 2 charts in a SINGLE code block, saving each as a separate PNG file:
+   a) RADAR CHART: Score across 6 readiness dimensions (AI Knowledge, Technical Skills, Strategic Thinking, Adaptability, Tool Proficiency, Data Literacy). Filled polygon style. Colors: #6366f1 fill, #818cf8 line. Figure size 10x8.
+   b) SKILL GAP HEATMAP: Current vs required skill levels across 8 relevant skills for their role. Use imshow with RdYlGn colormap. Figure size 10x6.
 
-   Make all charts visually polished with:
-   - Dark background (#1e1e2e) with light text (#e2e8f0)
-   - No chart borders/spines where possible
-   - Clear labels and legends
-   - Figure size 10x8 for radar, 10x6 for others
-   - Save with dpi=150, bbox_inches='tight', transparent=False
+   Chart style: dark background (#1e1e2e), light text (#e2e8f0), no spines, dpi=150, bbox_inches='tight'.
+   IMPORTANT: Generate both charts in ONE code execution to save time.
 
 4. 90-DAY IMPLEMENTATION ROADMAP: Three phases with specific milestones:
    - Phase 1 (Days 1-30): Foundation — specific tools to learn, habits to build
@@ -222,13 +216,13 @@ Please create the full blueprint report with all 4 visualizations (radar chart, 
       max_completion_tokens: 16000,
     })
 
-    // Poll for completion
+    // Poll for completion (2s intervals, max ~100s to leave room for post-processing)
     let runStatus = run
     let pollCount = 0
-    const maxPolls = 100
+    const maxPolls = 50
 
     while (pollCount < maxPolls) {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 2000))
       pollCount++
 
       runStatus = await client.beta.threads.runs.retrieve(run.id, { thread_id: thread.id })
