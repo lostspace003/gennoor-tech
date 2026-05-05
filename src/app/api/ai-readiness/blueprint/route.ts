@@ -241,65 +241,131 @@ Be specific with real data, real tool names, real URLs. No generic advice.`,
     }
 
     // ═══════════════════════════════════════════════════════════
-    // Build slides for presentation
+    // AGENT 4: Presentation Narrator (generates rich slide narrations)
     // ═══════════════════════════════════════════════════════════
     const score = analysisData.score || 50
     const headline = analysisData.headline || 'Your AI Readiness Blueprint'
 
+    const narratorResponse = await client.chat.completions.create({
+      model: deployment,
+      messages: [
+        {
+          role: 'system', content: `You are a senior AI consultant delivering a personalized readiness report directly to someone. Write detailed narration scripts for each slide of their presentation. Speak directly to them by name if provided. Be warm, insightful, specific, and reference their actual situation. No fluff — genuine expertise.
+
+Return ONLY valid JSON with this structure:
+{
+  "slideNarrations": {
+    "score": "<4-5 sentences. Greet them, reveal their score, explain what it means in context of their role/industry. Be encouraging but honest.>",
+    "dimensions": "<4-5 sentences. Walk through their strongest and weakest dimensions. Explain WHY based on their answers. Reference specific answers they gave.>",
+    "skillgap": "<4-5 sentences. Explain the most critical skill gaps. Why these matter for their role. What happens if they close these gaps vs ignore them.>",
+    "industry": "<4-5 sentences. Share the industry research findings. Real stats about AI adoption in their field. How their peers/competitors are using AI. Make it feel urgent but achievable.>",
+    "tools": "<4-5 sentences. Introduce the top 3-4 recommended tools by name. Explain WHY each one is perfect for their specific workflow/challenges. Be specific about use cases.>",
+    "roadmap": "<4-5 sentences. Walk through the 90-day plan narrative. What they'll achieve by day 30, 60, 90. Make it feel exciting and achievable.>",
+    "roi": "<4-5 sentences. Break down the numbers — hours saved, money gained. Explain the calculation logic. Compare to what they're losing NOW by not having AI assistance.>",
+    "risks": "<4-5 sentences. Be direct about what happens if they don't act. Industry-specific consequences. Competitor advantage they're giving away. End with motivation, not fear.>",
+    "references": "<3 sentences. Wrap up. Mention that all sources are clickable. Encourage them to take the first step today. Offer to help via Gennoor.>"
+  }
+}
+
+Make each narration sound like a knowledgeable consultant speaking directly to them in a meeting. Conversational but authoritative.`
+        },
+        {
+          role: 'user', content: `Generate narration for this person:
+
+Name: ${name || 'there'}
+Role: ${role || 'Professional'}
+Industry: ${category || 'Not specified'}${subcategory ? ' > ' + subcategory : ''}
+
+Their quiz answers: ${answersFormatted}
+Open-ended response: ${openEnded || 'Not provided'}
+
+---
+Analysis results:
+Score: ${score}/100
+Headline: ${headline}
+Verdict: ${analysisData.verdict || ''}
+Strongest dimension: ${getStrongestDimension(analysisData.dimensions)}
+Weakest areas: ${(analysisData.weaknesses || []).join(', ')}
+Top skill gaps: ${(analysisData.skillGap || []).slice(0, 4).map((s: any) => `${s.skill} (${s.current}→${s.required})`).join(', ')}
+Strengths: ${(analysisData.strengths || []).join(', ')}
+
+---
+Industry research highlights: ${researchData.slice(0, 800)}
+
+---
+Recommended tools: ${(roadmapData.tools || []).slice(0, 5).map((t: any) => `${t.name} (${t.purpose})`).join(', ')}
+Roadmap phase 1 goal: ${roadmapData.roadmap?.phase1?.goal || ''}
+Roadmap phase 2 goal: ${roadmapData.roadmap?.phase2?.goal || ''}
+Roadmap phase 3 goal: ${roadmapData.roadmap?.phase3?.goal || ''}
+ROI: ${roadmapData.roi?.hoursSavedPerWeek || 0}h/week saved, ${roadmapData.roi?.annualValue || ''} annual value
+Risks: ${(roadmapData.risks || []).slice(0, 3).map((r: any) => r.type).join(', ')}`
+        },
+      ],
+      max_completion_tokens: 3000,
+      temperature: 0.75,
+      response_format: { type: 'json_object' },
+    })
+
+    let narrations: Record<string, string> = {}
+    try {
+      const parsed = JSON.parse(narratorResponse.choices[0]?.message?.content || '{}')
+      narrations = parsed.slideNarrations || parsed
+    } catch { narrations = {} }
+
     const slides = [
       {
         id: 0, type: 'score', title: 'Your AI Readiness Score',
-        narration: `${name ? name + ', your' : 'Your'} overall AI readiness score is ${score} out of 100. ${analysisData.verdict || headline}`,
+        narration: narrations.score || `${name ? name + ', your' : 'Your'} overall AI readiness score is ${score} out of 100. ${analysisData.verdict || headline}`,
         content: { score, headline, verdict: analysisData.verdict || '' },
       },
       {
         id: 1, type: 'dimensions', title: 'Readiness Breakdown',
-        narration: `Let me walk you through your six readiness dimensions. Your strongest area is ${getStrongestDimension(analysisData.dimensions)}. ${getWeakestInsight(analysisData)}`,
+        narration: narrations.dimensions || `Your six readiness dimensions show your strongest area is ${getStrongestDimension(analysisData.dimensions)}. ${getWeakestInsight(analysisData)}`,
         content: { dimensions: analysisData.dimensions || {}, insights: analysisData.dimensionInsights || {} },
       },
       {
         id: 2, type: 'skillgap', title: 'Skill Gap Analysis',
-        narration: `Here's where the real opportunity lies. Your biggest gaps are in ${(analysisData.skillGap || []).slice(0, 3).map((s: any) => s.skill).join(', ')}. These are the skills that will unlock the most value for your role.`,
+        narration: narrations.skillgap || `Your biggest gaps are in ${(analysisData.skillGap || []).slice(0, 3).map((s: any) => s.skill).join(', ')}. These are the skills that will unlock the most value for your role.`,
         content: { skillGap: analysisData.skillGap || [], strengths: analysisData.strengths || [], weaknesses: analysisData.weaknesses || [] },
       },
       {
         id: 3, type: 'industry', title: 'Industry Context',
-        narration: roadmapData.industryContext || `AI adoption in ${category || 'your industry'} is accelerating rapidly. Those who don't adapt risk falling behind.`,
+        narration: narrations.industry || roadmapData.industryContext || `AI adoption in ${category || 'your industry'} is accelerating rapidly.`,
         content: { industryContext: roadmapData.industryContext || '', researchHighlights: researchData.slice(0, 500) },
       },
       {
         id: 4, type: 'tools', title: 'Recommended AI Tools',
-        narration: `Based on your role and industry, here are the specific AI tools that will have the most impact. ${(roadmapData.tools || []).slice(0, 3).map((t: any) => t.name).join(', ')} are your top priorities.`,
+        narration: narrations.tools || `Based on your role and industry, here are the specific AI tools that will have the most impact.`,
         content: { tools: roadmapData.tools || [] },
       },
       {
         id: 5, type: 'roadmap', title: '90-Day Implementation Roadmap',
-        narration: `Here's your personalized 90-day plan. Phase 1 focuses on ${roadmapData.roadmap?.phase1?.goal || 'building foundations'}. Phase 2 moves into ${roadmapData.roadmap?.phase2?.goal || 'acceleration'}. By day 90, you'll be at ${roadmapData.roadmap?.phase3?.goal || 'mastery level'}.`,
+        narration: narrations.roadmap || `Here's your personalized 90-day plan. Phase 1 focuses on ${roadmapData.roadmap?.phase1?.goal || 'building foundations'}.`,
         content: { roadmap: roadmapData.roadmap || {} },
       },
       {
         id: 6, type: 'roi', title: 'ROI Projection',
-        narration: `Let's talk numbers. By implementing these recommendations, you could save approximately ${roadmapData.roi?.hoursSavedPerWeek || 8} hours per week, translating to around ${roadmapData.roi?.annualValue || '$15,000'} in annual value. ${roadmapData.roi?.explanation || ''}`,
+        narration: narrations.roi || `By implementing these recommendations, you could save approximately ${roadmapData.roi?.hoursSavedPerWeek || 8} hours per week, translating to around ${roadmapData.roi?.annualValue || '$15,000'} in annual value.`,
         content: { roi: roadmapData.roi || {} },
       },
       {
         id: 7, type: 'risks', title: 'Risks of Inaction',
-        narration: `Finally, let's be clear about what happens if you don't act. ${(roadmapData.risks || []).slice(0, 2).map((r: any) => r.description).join('. ')}`,
+        narration: narrations.risks || `${(roadmapData.risks || []).slice(0, 2).map((r: any) => r.description).join('. ')}`,
         content: { risks: roadmapData.risks || [] },
       },
       {
         id: 8, type: 'references', title: 'Sources & References',
-        narration: `All recommendations in this report are backed by real research. You'll find clickable links to every tool and source mentioned. Good luck on your AI journey!`,
+        narration: narrations.references || `All recommendations in this report are backed by real research. You'll find clickable links to every tool and source mentioned. Good luck on your AI journey!`,
         content: { references },
       },
     ]
 
-    // Generate TTS for each slide in parallel (limit to first 6 for speed)
-    const ttsPromises = slides.slice(0, 7).map(s => generateTTS(s.narration))
+    // Generate TTS for ALL slides in parallel
+    const ttsPromises = slides.map(s => generateTTS(s.narration))
     const audioResults = await Promise.all(ttsPromises)
-    slides.forEach((s, i) => { if (i < audioResults.length) (s as any).audio = audioResults[i] })
+    slides.forEach((s, i) => { (s as any).audio = audioResults[i] })
 
-    const agentsUsed = ['Industry Research (Bing)', 'Skills Analysis', 'Roadmap & Strategy']
+    const agentsUsed = ['Industry Research (Bing)', 'Skills Analysis', 'Roadmap & Strategy', 'Presentation Narrator']
 
     await saveBlueprint(
       email, name || '', role || '', category || '', subcategory || '',

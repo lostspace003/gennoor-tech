@@ -281,16 +281,17 @@ interface BlueprintReport {
 type Step = 'email' | 'otp' | 'role' | 'category' | 'subcategory' | 'questions' | 'open-ended' | 'generating' | 'gen-error' | 'report'
 
 const AGENT_STEPS = [
-  'Launching Industry Research Agent (Bing Search)...',
-  'Gathering real-time AI adoption data for your industry...',
-  'Launching Skills Analysis Agent...',
-  'Scoring your readiness across 6 dimensions...',
-  'Launching Roadmap & Strategy Agent...',
-  'Finding recommended tools with live URLs...',
-  'Building your 90-day implementation plan...',
-  'Calculating ROI projections...',
-  'Generating voice narration for each section...',
-  'Assembling your presentation...',
+  'Agent 1: Searching the web for your industry data (Bing)...',
+  'Pulling real-time AI adoption stats and tool URLs...',
+  'Agent 2: Analyzing your answers against 6 readiness dimensions...',
+  'Identifying your skill gaps and scoring your profile...',
+  'Agent 3: Building your personalized strategy and roadmap...',
+  'Finding AI tools specific to your role with live links...',
+  'Calculating ROI projections and risk assessment...',
+  'Agent 4: Writing detailed narration for your presentation...',
+  'Crafting consultant-style insights for each slide...',
+  'Generating voice narration (Azure Speech)...',
+  'Assembling your multi-slide report...',
 ]
 
 const DIMENSION_LABELS: Record<string, string> = {
