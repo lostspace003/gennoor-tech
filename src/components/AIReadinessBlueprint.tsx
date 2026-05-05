@@ -390,13 +390,22 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
     return () => clearInterval(interval)
   }, [otpTimer])
 
-  // Agent progress animation
+  // Agent progress animation — longer intervals to feel substantial
   useEffect(() => {
     if (step !== 'generating') return
     if (agentStep >= AGENT_STEPS.length) return
-    const timer = setTimeout(() => setAgentStep(s => s + 1), 5000)
+    const timer = setTimeout(() => setAgentStep(s => s + 1), 6000)
     return () => clearTimeout(timer)
   }, [step, agentStep])
+
+  // Auto-play slide audio when slide changes (must be at top level, not inside conditional)
+  useEffect(() => {
+    if (step !== 'report' || !isPlaying || !report?.slides) return
+    const slide = report.slides[currentSlide]
+    if (!slide?.audio || audioMuted || !audioRef.current) return
+    audioRef.current.src = `data:audio/mp3;base64,${slide.audio}`
+    audioRef.current.play().catch(() => {})
+  }, [currentSlide, isPlaying, step, audioMuted, report])
 
   const formatTimer = (seconds: number) => {
     const m = Math.floor(seconds / 60)
@@ -808,8 +817,8 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
           <div className="absolute inset-6 rounded-full border-4 border-purple-400 border-l-transparent animate-spin [animation-duration:2s]" />
           <div className="absolute inset-9 rounded-full border-4 border-amber-400 border-r-transparent animate-spin [animation-direction:reverse] [animation-duration:2.5s]" />
         </div>
-        <h3 className="text-xl font-bold text-gray-900 mb-2">AI is building your blueprint</h3>
-        <p className="text-sm text-gray-500 mb-8">Analyzing your responses and generating personalized insights...</p>
+        <h3 className="text-xl font-bold text-gray-900 mb-2">3 AI Agents are building your blueprint</h3>
+        <p className="text-sm text-gray-500 mb-8">Researching your industry, analyzing gaps, and crafting your personalized roadmap...</p>
         <div className="space-y-3 text-left max-w-sm mx-auto">
           {AGENT_STEPS.map((label, i) => (
             <div key={i} className={`flex items-center gap-3 transition-all duration-500 ${i <= agentStep ? 'opacity-100' : 'opacity-30'}`}>
@@ -828,7 +837,7 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
             </div>
           ))}
         </div>
-        <p className="text-gray-400 text-xs mt-8">This takes about 15-30 seconds — hang tight</p>
+        <p className="text-gray-400 text-xs mt-8">Multi-agent research + voice generation takes 45-90 seconds — worth the wait</p>
       </div>
     )
   }
@@ -869,22 +878,8 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
       }, 1500)
     }
 
-    function playSlideAudio() {
-      if (!slide?.audio || audioMuted || !audioRef.current) return
-      audioRef.current.src = `data:audio/mp3;base64,${slide.audio}`
-      audioRef.current.play().catch(() => {})
-    }
-
     function goNext() { if (currentSlide < slides.length - 1) setCurrentSlide(s => s + 1) }
     function goPrev() { if (currentSlide > 0) setCurrentSlide(s => s - 1) }
-
-    // Auto-play audio when slide changes
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useEffect(() => {
-      if (step !== 'report' || !isPlaying) return
-      playSlideAudio()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentSlide, isPlaying, step])
 
     return (
       <div className="max-w-3xl mx-auto" ref={reportRef}>
@@ -1119,7 +1114,7 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
               <button onClick={goPrev} disabled={currentSlide === 0} className="p-2 rounded-lg hover:bg-gray-200 disabled:opacity-30 transition-colors">
                 <SkipBack className="w-4 h-4 text-gray-600" />
               </button>
-              <button onClick={() => { setIsPlaying(!isPlaying); if (!isPlaying) playSlideAudio() }} className="p-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white transition-colors">
+              <button onClick={() => setIsPlaying(!isPlaying)} className="p-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white transition-colors">
                 {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
               </button>
               <button onClick={goNext} disabled={currentSlide >= slides.length - 1} className="p-2 rounded-lg hover:bg-gray-200 disabled:opacity-30 transition-colors">
