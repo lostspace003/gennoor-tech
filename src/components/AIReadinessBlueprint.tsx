@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { ArrowRight, ChevronLeft, Zap, Check, Play, Pause, Volume2, VolumeX, SkipForward, SkipBack, ExternalLink, Download } from 'lucide-react'
+import { ArrowRight, ChevronLeft, Zap, Check, Play, Pause, Volume2, VolumeX, SkipForward, SkipBack, ExternalLink, Lock } from 'lucide-react'
 import ReportEmailGate from '@/components/ReportEmailGate'
 import ReportSurvey from '@/components/ReportSurvey'
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts'
@@ -455,7 +455,7 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
   const [error, setError] = useState('')
   const [agentStep, setAgentStep] = useState(0)
   const [reportUnlocked, setReportUnlocked] = useState(false)
-  const [downloadingPdf, setDownloadingPdf] = useState(false)
+  const [showGateModal, setShowGateModal] = useState(false)
   const [isLocked, setIsLocked] = useState(false)
   const reportRef = useRef<HTMLDivElement>(null)
 
@@ -488,6 +488,14 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
       lockSession()
     }
   }, [step, isLocked, lockSession])
+
+  // Auto-open gate modal at 50% of slides
+  const gateSlideIdx = report ? Math.floor((report.slides?.length || 0) / 2) : 4
+  useEffect(() => {
+    if (step === 'report' && report && !reportUnlocked && currentSlide >= gateSlideIdx - 1) {
+      setShowGateModal(true)
+    }
+  }, [step, report, reportUnlocked, currentSlide, gateSlideIdx])
 
   // Warn on page refresh/close when locked
   useEffect(() => {
@@ -610,15 +618,8 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
   }
 
   async function generatePdfBase64(): Promise<string> {
-    const { generateDeepDivePDF, pdfToBase64 } = await import('@/lib/generate-report-pdf')
-    const mockPresentation = {
-      score: report!.score,
-      headline: report!.headline,
-      slides: (report!.slides || []).map((s, i) => ({
-        id: i, title: s.title, type: 'custom', narration: s.narration || '', content: { text: s.narration || '' },
-      })),
-    }
-    const doc = generateDeepDivePDF(mockPresentation, name, email)
+    const { generateBlueprintPDF, pdfToBase64 } = await import('@/lib/generate-report-pdf')
+    const doc = generateBlueprintPDF(report!, name, email)
     return pdfToBase64(doc)
   }
 
@@ -626,27 +627,6 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
     setEmail(userEmail)
     setName(userName)
     setReportUnlocked(true)
-  }
-
-  async function doDownloadReport() {
-    if (!report) return
-    setDownloadingPdf(true)
-    try {
-      const { generateDeepDivePDF, downloadPDF } = await import('@/lib/generate-report-pdf')
-      const mockPresentation = {
-        score: report.score,
-        headline: report.headline,
-        slides: (report.slides || []).map((s, i) => ({
-          id: i, title: s.title, type: 'custom', narration: s.narration || '', content: { text: s.narration || '' },
-        })),
-      }
-      const doc = generateDeepDivePDF(mockPresentation, name, email)
-      downloadPDF(doc, `AI-Readiness-Blueprint-${name || 'Report'}.pdf`)
-      fetch('/api/ai-readiness/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, name, reportType: 'blueprint', action: 'pdf-download' }) }).catch(() => {})
-    } catch (err) {
-      console.error('PDF generation error:', err)
-    }
-    setDownloadingPdf(false)
   }
 
   function handleReset() {
@@ -1178,31 +1158,30 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
           </div>
         </div>
 
-        {/* Email gate at 50% */}
-        {isAtGate && (
+        {/* Email gate modal */}
+        <ReportEmailGate
+          isOpen={showGateModal && !reportUnlocked}
+          onClose={() => setShowGateModal(false)}
+          onUnlock={handleUnlock}
+          reportType="blueprint"
+          generatePdfBase64={generatePdfBase64}
+        />
+
+        {/* Unlock trigger if modal was dismissed */}
+        {isAtGate && !showGateModal && (
           <div className="mt-6">
-            <ReportEmailGate
-              onUnlock={handleUnlock}
-              reportType="blueprint"
-              generatePdfBase64={generatePdfBase64}
-            />
+            <button
+              onClick={() => setShowGateModal(true)}
+              className="w-full py-4 bg-gradient-to-r from-primary-50 to-accent-50 border-2 border-dashed border-primary-200 rounded-2xl text-primary-700 font-semibold flex items-center justify-center gap-2 hover:border-primary-400 transition-all"
+            >
+              <Lock className="w-4 h-4" /> Unlock remaining slides
+            </button>
           </div>
         )}
 
-        {/* Post-unlock: download + survey */}
+        {/* Post-unlock: survey */}
         {reportUnlocked && currentSlide >= slides.length - 1 && (
           <div className="mt-6 space-y-6">
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-              <button
-                onClick={doDownloadReport}
-                disabled={downloadingPdf}
-                className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl transition-all disabled:opacity-50"
-              >
-                <Download className="w-4 h-4" />
-                {downloadingPdf ? 'Generating PDF...' : 'Download Report'}
-              </button>
-            </div>
-
             <ReportSurvey email={email} name={name} reportType="blueprint" role={role} category={category} subcategory={subcategory} />
 
             <div className="text-center">

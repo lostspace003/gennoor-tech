@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { ArrowRight, ChevronLeft, Zap, Volume2, VolumeX, Play, Pause, SkipForward, SkipBack, Download } from 'lucide-react'
+import { ArrowRight, ChevronLeft, Zap, Volume2, VolumeX, Play, Pause, SkipForward, SkipBack, Lock } from 'lucide-react'
 import ReportEmailGate from '@/components/ReportEmailGate'
 import ReportSurvey from '@/components/ReportSurvey'
 
@@ -166,7 +166,7 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
   const [presentation, setPresentation] = useState<Presentation | null>(null)
   const [error, setError] = useState('')
   const [reportUnlocked, setReportUnlocked] = useState(false)
-  const [downloadingPdf, setDownloadingPdf] = useState(false)
+  const [showGateModal, setShowGateModal] = useState(false)
 
   // Agent progress
   const [agentStep, setAgentStep] = useState(0)
@@ -294,19 +294,6 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
     setReportUnlocked(true)
   }
 
-  async function doDownloadReport() {
-    if (!presentation) return
-    setDownloadingPdf(true)
-    try {
-      const { generateDeepDivePDF, downloadPDF } = await import('@/lib/generate-report-pdf')
-      const doc = generateDeepDivePDF(presentation, name, email)
-      downloadPDF(doc, `AI-Readiness-Deep-Dive-${name || 'Report'}.pdf`)
-      fetch('/api/ai-readiness/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, name, reportType: 'deep-dive', action: 'pdf-download' }) }).catch(() => {})
-    } catch (err) {
-      console.error('PDF generation error:', err)
-    }
-    setDownloadingPdf(false)
-  }
 
   function handleReset() {
     setStep('quiz')
@@ -324,6 +311,10 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
 
   const progress = (currentQ / QUESTIONS.length) * 100
   const isAtGate = !reportUnlocked && presentation && currentSlide >= gateSlideIndex - 1
+
+  useEffect(() => {
+    if (isAtGate) setShowGateModal(true)
+  }, [isAtGate])
 
   // ─── GENERATING (Agent Working) ──────────────────────────
   if (step === 'generating') {
@@ -531,11 +522,6 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
                 {audioMuted ? <VolumeX className="w-4 h-4 text-gray-400" /> : <Volume2 className="w-4 h-4 text-gray-600" />}
               </button>
             </div>
-            {reportUnlocked && (
-              <button onClick={doDownloadReport} disabled={downloadingPdf} className="p-2 hover:bg-gray-200 rounded-full transition-colors" title="Download Report">
-                <Download className={`w-4 h-4 ${downloadingPdf ? 'text-gray-300 animate-pulse' : 'text-gray-600'}`} />
-              </button>
-            )}
           </div>
         </div>
 
@@ -556,29 +542,28 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
             </div>
           )}
 
-          {/* Email gate at 50% */}
-          {isAtGate && (
-            <ReportEmailGate
-              onUnlock={handleUnlock}
-              reportType="deep-dive"
-              generatePdfBase64={generatePdfBase64}
-            />
+          {/* Email gate modal */}
+          <ReportEmailGate
+            isOpen={showGateModal && !reportUnlocked}
+            onClose={() => setShowGateModal(false)}
+            onUnlock={handleUnlock}
+            reportType="deep-dive"
+            generatePdfBase64={generatePdfBase64}
+          />
+
+          {/* Unlock trigger if modal was dismissed */}
+          {isAtGate && !showGateModal && (
+            <button
+              onClick={() => setShowGateModal(true)}
+              className="w-full py-4 bg-gradient-to-r from-primary-50 to-accent-50 border-2 border-dashed border-primary-200 rounded-2xl text-primary-700 font-semibold flex items-center justify-center gap-2 hover:border-primary-400 transition-all"
+            >
+              <Lock className="w-4 h-4" /> Unlock remaining slides
+            </button>
           )}
 
           {/* Post-unlock content */}
           {reportUnlocked && currentSlide === presentation.slides.length - 1 && (
             <>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={doDownloadReport}
-                  disabled={downloadingPdf}
-                  className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl transition-all disabled:opacity-50"
-                >
-                  <Download className="w-4 h-4" />
-                  {downloadingPdf ? 'Generating PDF...' : 'Download Report'}
-                </button>
-              </div>
-
               <ReportSurvey email={email} name={name} reportType="deep-dive" />
 
               <div className="text-center">

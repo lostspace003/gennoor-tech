@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { ArrowRight, ChevronLeft, Zap, Volume2, VolumeX, Target, Users, Workflow, Rocket, Clock, Lightbulb, TrendingUp, AlertTriangle, Calendar, Download } from 'lucide-react'
+import { ArrowRight, ChevronLeft, Zap, Volume2, VolumeX, Target, Users, Workflow, Rocket, Clock, Lightbulb, TrendingUp, AlertTriangle, Calendar, Lock } from 'lucide-react'
 import ReportEmailGate from '@/components/ReportEmailGate'
 import ReportSurvey from '@/components/ReportSurvey'
 
@@ -139,7 +139,7 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
   const [error, setError] = useState('')
   const [revealIndex, setRevealIndex] = useState(0)
   const [reportUnlocked, setReportUnlocked] = useState(false)
-  const [downloadingPdf, setDownloadingPdf] = useState(false)
+  const [showGateModal, setShowGateModal] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
@@ -161,6 +161,13 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
     const timer = setTimeout(() => setRevealIndex(i => i + 1), 400)
     return () => clearTimeout(timer)
   }, [step, report, revealIndex, reportUnlocked])
+
+  // Auto-open gate modal at 50%
+  useEffect(() => {
+    if (revealIndex >= 4 && !reportUnlocked) {
+      setShowGateModal(true)
+    }
+  }, [revealIndex, reportUnlocked])
 
   // Continue reveal after unlock
   useEffect(() => {
@@ -235,19 +242,6 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
     setReportUnlocked(true)
   }
 
-  async function doDownloadReport() {
-    if (!report) return
-    setDownloadingPdf(true)
-    try {
-      const { generateQuickScanPDF, downloadPDF } = await import('@/lib/generate-report-pdf')
-      const doc = generateQuickScanPDF(report, name, email)
-      downloadPDF(doc, `AI-Readiness-Report-${name || 'Report'}.pdf`)
-      fetch('/api/ai-readiness/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, name, reportType: 'quick-scan', action: 'pdf-download' }) }).catch(() => {})
-    } catch (err) {
-      console.error('PDF generation error:', err)
-    }
-    setDownloadingPdf(false)
-  }
 
   function handleBack() {
     if (currentQ > 0) setCurrentQ(currentQ - 1)
@@ -371,13 +365,23 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
           </div>
         </div>
 
-        {/* ─── EMAIL GATE (50% point) ─────────────────────────── */}
-        {!reportUnlocked && revealIndex >= 4 && (
-          <ReportEmailGate
-            onUnlock={handleUnlock}
-            reportType="quick-scan"
-            generatePdfBase64={generatePdfBase64}
-          />
+        {/* ─── EMAIL GATE MODAL ─────────────────────────── */}
+        <ReportEmailGate
+          isOpen={showGateModal && !reportUnlocked}
+          onClose={() => setShowGateModal(false)}
+          onUnlock={handleUnlock}
+          reportType="quick-scan"
+          generatePdfBase64={generatePdfBase64}
+        />
+
+        {/* Unlock trigger if modal was dismissed */}
+        {!reportUnlocked && revealIndex >= 4 && !showGateModal && (
+          <button
+            onClick={() => setShowGateModal(true)}
+            className="w-full py-4 bg-gradient-to-r from-primary-50 to-accent-50 border-2 border-dashed border-primary-200 rounded-2xl text-primary-700 font-semibold flex items-center justify-center gap-2 hover:border-primary-400 transition-all"
+          >
+            <Lock className="w-4 h-4" /> Unlock remaining insights
+          </button>
         )}
 
         {/* ─── LOCKED CONTENT (shown after unlock) ─────────────── */}
@@ -455,17 +459,6 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
               <p className="text-gray-500 text-sm italic">{report.peerComparison}</p>
             </div>
 
-            {/* Download button */}
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-              <button
-                onClick={doDownloadReport}
-                disabled={downloadingPdf}
-                className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl transition-all disabled:opacity-50"
-              >
-                <Download className="w-4 h-4" />
-                {downloadingPdf ? 'Generating PDF...' : 'Download Report'}
-              </button>
-            </div>
 
             {/* Survey */}
             <ReportSurvey email={email} name={name} reportType="quick-scan" />

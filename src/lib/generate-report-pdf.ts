@@ -526,13 +526,24 @@ export function generateDeepDivePDF(
       }
 
       case 'plan': {
-        const planItems: string[] = Array.isArray(content) ? content : content?.steps ?? content?.plan ?? []
-        for (const item of planItems) {
-          y = ensureSpace(doc, y, LINE_HEIGHT + 4)
-          setFillColor(doc, LIGHT_GRAY)
-          doc.roundedRect(MARGIN, y - 4, CONTENT_W, LINE_HEIGHT + 4, 2, 2, 'F')
-          y = drawWrappedText(doc, y, `• ${item}`, { indent: 4 })
-          y += 3
+        if (content?.weeks && Array.isArray(content.weeks)) {
+          for (const week of content.weeks) {
+            y = ensureSpace(doc, y, LINE_HEIGHT + 8)
+            setFillColor(doc, LIGHT_GRAY)
+            doc.roundedRect(MARGIN, y - 4, CONTENT_W, LINE_HEIGHT + 4, 2, 2, 'F')
+            y = drawWrappedText(doc, y, week.period || '', { fontSize: 10, bold: true, color: BLUE })
+            y = drawWrappedText(doc, y, week.action || '', { indent: 4 })
+            y += 3
+          }
+        } else {
+          const planItems: string[] = Array.isArray(content) ? content : content?.steps ?? content?.plan ?? []
+          for (const item of planItems) {
+            y = ensureSpace(doc, y, LINE_HEIGHT + 4)
+            setFillColor(doc, LIGHT_GRAY)
+            doc.roundedRect(MARGIN, y - 4, CONTENT_W, LINE_HEIGHT + 4, 2, 2, 'F')
+            y = drawWrappedText(doc, y, `• ${item}`, { indent: 4 })
+            y += 3
+          }
         }
         break
       }
@@ -585,6 +596,305 @@ export function generateDeepDivePDF(
     setColor(doc, BLUE)
     doc.text('Visit gennoor.com or email info@gennoor.com', PAGE_W / 2, y, { align: 'center' })
   }
+
+  addFooter(doc)
+  return doc
+}
+
+// ═════════════════════════════════════════════════════════════════════
+// Blueprint PDF
+// ═════════════════════════════════════════════════════════════════════
+
+const DIMENSION_LABELS: Record<string, string> = {
+  aiKnowledge: 'AI Knowledge',
+  toolProficiency: 'Tool Proficiency',
+  workflowReadiness: 'Workflow Readiness',
+  dataLiteracy: 'Data Literacy',
+  strategicVision: 'Strategic Vision',
+  changeAdaptability: 'Change Adaptability',
+}
+
+export function generateBlueprintPDF(
+  report: any,
+  userName: string,
+  email: string,
+): jsPDF {
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' })
+  let y = drawHeader(doc, userName, report.score ?? 0)
+
+  y = drawWrappedText(doc, y, report.headline ?? '', {
+    fontSize: 15,
+    bold: true,
+    color: DARK,
+  })
+  y += 6
+
+  const slides: any[] = report.slides ?? []
+
+  for (const slide of slides) {
+    y = drawSectionTitle(doc, y, slide.title ?? '')
+
+    if (slide.narration) {
+      y = drawWrappedText(doc, y, slide.narration, { fontSize: 9, color: GRAY })
+      y += 4
+    }
+
+    const content = slide.content
+    const type: string = slide.type ?? ''
+
+    switch (type) {
+      case 'score': {
+        if (content && typeof content.score === 'number') {
+          y = ensureSpace(doc, y, 20)
+          doc.setFont('helvetica', 'bold')
+          doc.setFontSize(28)
+          setColor(doc, BLUE)
+          doc.text(`${content.score}/100`, PAGE_W / 2, y + 10, { align: 'center' })
+          y += 20
+          if (content.verdict) {
+            y = drawWrappedText(doc, y, content.verdict, { fontSize: 10, color: DARK })
+          }
+        }
+        break
+      }
+
+      case 'dimensions': {
+        const dims = content?.dimensions
+        const insights = content?.insights
+        if (dims && typeof dims === 'object') {
+          for (const [key, val] of Object.entries(dims)) {
+            const label = DIMENSION_LABELS[key] || key.replace(/([A-Z])/g, ' $1').trim()
+            const insight = insights?.[key] || ''
+            y = drawScoreBar(doc, y, label, Number(val) || 0, typeof insight === 'string' ? insight : '')
+          }
+        }
+        break
+      }
+
+      case 'skillgap': {
+        const gaps = content?.skillGap
+        if (Array.isArray(gaps) && gaps.length > 0) {
+          for (const gap of gaps) {
+            y = ensureSpace(doc, y, 16)
+            doc.setFont('helvetica', 'bold')
+            doc.setFontSize(10)
+            setColor(doc, DARK)
+            const priority = gap.priority ? ` [${gap.priority}]` : ''
+            doc.text(`${gap.skill || gap.name || ''}${priority}`, MARGIN, y)
+            y += 5
+            const cur = Number(gap.current || gap.currentLevel || 0)
+            const req = Number(gap.required || gap.target || gap.requiredLevel || 100)
+            const barW = CONTENT_W - 4
+            const barH = 4
+            setFillColor(doc, LIGHT_GRAY)
+            doc.roundedRect(MARGIN, y, barW, barH, 2, 2, 'F')
+            setFillColor(doc, ACCENT_AMBER)
+            if (cur > 0) doc.roundedRect(MARGIN, y, Math.max((cur / 100) * barW, 4), barH, 2, 2, 'F')
+            setFillColor(doc, ACCENT_GREEN)
+            setDrawColor(doc, ACCENT_GREEN)
+            const reqX = MARGIN + (req / 100) * barW
+            doc.line(reqX, y - 1, reqX, y + barH + 1)
+            y += barH + 2
+            doc.setFont('helvetica', 'normal')
+            doc.setFontSize(8)
+            setColor(doc, GRAY)
+            doc.text(`Current: ${cur}%`, MARGIN, y)
+            doc.text(`Required: ${req}%`, MARGIN + 40, y)
+            y += 5
+          }
+        }
+        if (Array.isArray(content?.strengths) && content.strengths.length > 0) {
+          y += 2
+          y = drawWrappedText(doc, y, 'Strengths:', { fontSize: 9, bold: true, color: ACCENT_GREEN })
+          for (const s of content.strengths) {
+            y = drawWrappedText(doc, y, `• ${s}`, { fontSize: 9, indent: 4 })
+          }
+        }
+        if (Array.isArray(content?.weaknesses) && content.weaknesses.length > 0) {
+          y += 2
+          y = drawWrappedText(doc, y, 'Areas to Improve:', { fontSize: 9, bold: true, color: ACCENT_AMBER })
+          for (const w of content.weaknesses) {
+            y = drawWrappedText(doc, y, `• ${w}`, { fontSize: 9, indent: 4 })
+          }
+        }
+        break
+      }
+
+      case 'industry': {
+        if (content?.industryContext) {
+          y = drawWrappedText(doc, y, content.industryContext)
+        }
+        if (content?.researchHighlights) {
+          y += 3
+          y = drawWrappedText(doc, y, content.researchHighlights, { fontSize: 9, color: GRAY })
+        }
+        break
+      }
+
+      case 'tools': {
+        const tools = content?.tools
+        if (Array.isArray(tools) && tools.length > 0) {
+          for (let i = 0; i < tools.length; i++) {
+            const t = tools[i]
+            y = ensureSpace(doc, y, 18)
+            setFillColor(doc, LIGHT_GRAY)
+            doc.roundedRect(MARGIN, y - 3, CONTENT_W, 16, 2, 2, 'F')
+            doc.setFont('helvetica', 'bold')
+            doc.setFontSize(10)
+            setColor(doc, DARK)
+            doc.text(`${i + 1}. ${t.name || t.tool || ''}`, MARGIN + 3, y + 1)
+            y += 6
+            if (t.purpose || t.useCase) {
+              y = drawWrappedText(doc, y, t.purpose || t.useCase, { fontSize: 9, color: GRAY, indent: 5 })
+            }
+            const meta: string[] = []
+            if (t.timeSaved) meta.push(`Saves ~${t.timeSaved}`)
+            if (t.difficulty) meta.push(`Difficulty: ${t.difficulty}`)
+            if (t.cost) meta.push(`Cost: ${t.cost}`)
+            if (meta.length > 0) {
+              y = drawWrappedText(doc, y, meta.join('  |  '), { fontSize: 8, color: BLUE, indent: 5 })
+            }
+            y += 3
+          }
+        }
+        break
+      }
+
+      case 'roadmap': {
+        const rm = content?.roadmap
+        if (rm && typeof rm === 'object') {
+          const phases = ['phase1', 'phase2', 'phase3']
+          const phaseLabels = ['Phase 1: Foundation (Weeks 1-2)', 'Phase 2: Integration (Weeks 3-6)', 'Phase 3: Optimization (Weeks 7-12)']
+          for (let i = 0; i < phases.length; i++) {
+            const phase = rm[phases[i]]
+            if (!phase) continue
+            y = ensureSpace(doc, y, 20)
+            setFillColor(doc, BLUE)
+            doc.rect(MARGIN, y, CONTENT_W, 7, 'F')
+            doc.setFont('helvetica', 'bold')
+            doc.setFontSize(9)
+            setColor(doc, WHITE)
+            doc.text(phase.title || phaseLabels[i], MARGIN + 3, y + 5)
+            y += 10
+            if (phase.goal) {
+              y = drawWrappedText(doc, y, `Goal: ${phase.goal}`, { fontSize: 9, bold: true, color: BLUE })
+              y += 1
+            }
+            const milestones: string[] = phase.milestones || phase.actions || []
+            for (let j = 0; j < milestones.length; j++) {
+              y = drawWrappedText(doc, y, `${j + 1}. ${milestones[j]}`, { fontSize: 9, indent: 4 })
+            }
+            if (Array.isArray(phase.tools) && phase.tools.length > 0) {
+              y += 1
+              y = drawWrappedText(doc, y, `Tools: ${phase.tools.join(', ')}`, { fontSize: 8, color: GRAY, indent: 4 })
+            }
+            y += 4
+          }
+        }
+        break
+      }
+
+      case 'roi': {
+        const roi = content?.roi
+        if (roi && typeof roi === 'object') {
+          y = ensureSpace(doc, y, 30)
+          const metrics = [
+            { label: 'Hours Saved/Week', value: roi.hoursSavedPerWeek || roi.hoursPerWeek || '-' },
+            { label: 'Productivity Boost', value: roi.productivityIncrease || roi.productivity || '-' },
+            { label: 'Annual Value', value: roi.annualValue || roi.annual || '-' },
+            { label: 'Break-even', value: roi.breakEvenWeeks ? `${roi.breakEvenWeeks} weeks` : '-' },
+          ]
+          const cellW = CONTENT_W / 2
+          for (let i = 0; i < metrics.length; i++) {
+            const col = i % 2
+            const row = Math.floor(i / 2)
+            const mx = MARGIN + col * cellW
+            const my = y + row * 18
+            setFillColor(doc, LIGHT_GRAY)
+            doc.roundedRect(mx, my, cellW - 2, 16, 2, 2, 'F')
+            doc.setFont('helvetica', 'normal')
+            doc.setFontSize(8)
+            setColor(doc, GRAY)
+            doc.text(metrics[i].label, mx + 4, my + 5)
+            doc.setFont('helvetica', 'bold')
+            doc.setFontSize(14)
+            setColor(doc, BLUE)
+            doc.text(String(metrics[i].value), mx + 4, my + 13)
+          }
+          y += 38
+          if (roi.explanation) {
+            y = drawWrappedText(doc, y, roi.explanation, { fontSize: 9, color: GRAY })
+          }
+        }
+        break
+      }
+
+      case 'risks': {
+        const risks = content?.risks
+        if (Array.isArray(risks) && risks.length > 0) {
+          for (const risk of risks) {
+            y = ensureSpace(doc, y, 18)
+            const sevColor = risk.severity === 'High' ? '#ef4444' : risk.severity === 'Medium' ? ACCENT_AMBER : BLUE
+            doc.setFont('helvetica', 'bold')
+            doc.setFontSize(9)
+            setColor(doc, sevColor)
+            doc.text(`[${risk.severity || 'Medium'}]`, MARGIN, y)
+            setColor(doc, DARK)
+            doc.text(` ${risk.type || risk.name || ''}`, MARGIN + 18, y)
+            y += 5
+            if (risk.description) {
+              y = drawWrappedText(doc, y, risk.description, { fontSize: 9, indent: 4 })
+            }
+            if (risk.mitigation) {
+              y = drawWrappedText(doc, y, `→ ${risk.mitigation}`, { fontSize: 9, color: ACCENT_GREEN, indent: 4 })
+            }
+            y += 3
+          }
+        }
+        break
+      }
+
+      case 'references': {
+        const refs = content?.references
+        if (Array.isArray(refs) && refs.length > 0) {
+          for (let i = 0; i < refs.length; i++) {
+            y = ensureSpace(doc, y, LINE_HEIGHT + 2)
+            const ref = refs[i]
+            const text = typeof ref === 'string' ? ref : (ref.title || ref.url || '')
+            y = drawWrappedText(doc, y, `${i + 1}. ${text}`, { fontSize: 8, color: GRAY })
+          }
+        }
+        break
+      }
+
+      default: {
+        if (content) {
+          if (typeof content === 'string') {
+            y = drawWrappedText(doc, y, content, { fontSize: 9 })
+          } else if (content.text) {
+            y = drawWrappedText(doc, y, content.text, { fontSize: 9 })
+          }
+        }
+        break
+      }
+    }
+
+    y += 6
+  }
+
+  y = ensureSpace(doc, y, 30)
+  setFillColor(doc, LIGHT_GRAY)
+  doc.roundedRect(MARGIN, y, CONTENT_W, 24, 3, 3, 'F')
+  y += 8
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(11)
+  setColor(doc, DARK)
+  doc.text('Ready to accelerate your AI journey?', PAGE_W / 2, y, { align: 'center' })
+  y += 7
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(9)
+  setColor(doc, BLUE)
+  doc.text('Visit gennoor.com or email info@gennoor.com', PAGE_W / 2, y, { align: 'center' })
 
   addFooter(doc)
   return doc
