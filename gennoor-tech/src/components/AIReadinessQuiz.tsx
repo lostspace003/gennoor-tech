@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { ArrowRight, ChevronLeft, Zap, Mail, Lock, Volume2, VolumeX, Target, Users, Workflow, Rocket, Clock, Lightbulb, TrendingUp, AlertTriangle, Calendar } from 'lucide-react'
+import { ArrowRight, ChevronLeft, Zap, Mail, Lock, Volume2, VolumeX, Target, Users, Workflow, Rocket, Clock, Lightbulb, TrendingUp, AlertTriangle, Calendar, Download, Send } from 'lucide-react'
 
 const QUESTIONS = [
   {
@@ -104,7 +104,7 @@ interface Report {
   voiceSummary: string
 }
 
-type Step = 'landing' | 'email' | 'otp' | 'quiz' | 'loading' | 'results'
+type Step = 'email' | 'otp' | 'quiz' | 'loading' | 'results'
 
 const PILLAR_ICONS: Record<string, typeof Zap> = {
   'Mindset': Target,
@@ -121,7 +121,7 @@ const PILLAR_COLORS: Record<string, { text: string; bar: string }> = {
 }
 
 export default function AIReadinessQuiz() {
-  const [step, setStep] = useState<Step>('landing')
+  const [step, setStep] = useState<Step>('email')
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [otp, setOtp] = useState('')
@@ -133,7 +133,18 @@ export default function AIReadinessQuiz() {
   const [error, setError] = useState('')
   const [sending, setSending] = useState(false)
   const [revealIndex, setRevealIndex] = useState(0)
+  const [otpTimer, setOtpTimer] = useState(0)
+  const [downloadingPdf, setDownloadingPdf] = useState(false)
+  const [emailingReport, setEmailingReport] = useState(false)
+  const [emailSent, setEmailSent] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+
+  // OTP countdown timer
+  useEffect(() => {
+    if (otpTimer <= 0) return
+    const interval = setInterval(() => setOtpTimer(t => t - 1), 1000)
+    return () => clearInterval(interval)
+  }, [otpTimer])
 
   // Animate results reveal
   useEffect(() => {
@@ -161,6 +172,12 @@ export default function AIReadinessQuiz() {
     setIsPlaying(!isPlaying)
   }, [isPlaying])
 
+  const formatTimer = (seconds: number) => {
+    const m = Math.floor(seconds / 60)
+    const s = seconds % 60
+    return `${m}:${s.toString().padStart(2, '0')}`
+  }
+
   async function handleSendOTP() {
     if (!email.trim()) return
     setError('')
@@ -173,6 +190,7 @@ export default function AIReadinessQuiz() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to send code')
+      setOtpTimer(180)
       setStep('otp')
     } catch (err: any) {
       setError(err.message)
@@ -234,12 +252,46 @@ export default function AIReadinessQuiz() {
     }
   }
 
+  async function handleDownloadReport() {
+    if (!report) return
+    setDownloadingPdf(true)
+    try {
+      const { generateQuickScanPDF, downloadPDF } = await import('@/lib/generate-report-pdf')
+      const doc = generateQuickScanPDF(report, name, email)
+      downloadPDF(doc, `AI-Readiness-Report-${name || 'Report'}.pdf`)
+    } catch (err) {
+      console.error('PDF generation error:', err)
+    }
+    setDownloadingPdf(false)
+  }
+
+  async function handleEmailReport() {
+    if (!report) return
+    setEmailingReport(true)
+    try {
+      const { generateQuickScanPDF, pdfToBase64 } = await import('@/lib/generate-report-pdf')
+      const doc = generateQuickScanPDF(report, name, email)
+      const pdfBase64 = pdfToBase64(doc)
+
+      const res = await fetch('/api/ai-readiness/email-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name, pdfBase64, reportType: 'quick-scan' }),
+      })
+      if (!res.ok) throw new Error('Failed to send email')
+      setEmailSent(true)
+    } catch (err) {
+      console.error('Email report error:', err)
+    }
+    setEmailingReport(false)
+  }
+
   function handleBack() {
     if (currentQ > 0) setCurrentQ(currentQ - 1)
   }
 
   function handleReset() {
-    setStep('landing')
+    setStep('email')
     setCurrentQ(0)
     setAnswers({})
     setReport(null)
@@ -247,46 +299,11 @@ export default function AIReadinessQuiz() {
     setIsPlaying(false)
     setRevealIndex(0)
     setError('')
+    setOtpTimer(0)
+    setEmailSent(false)
   }
 
   const progress = (currentQ / QUESTIONS.length) * 100
-
-  // ─── Landing ─────────────────────────────────────────────
-  if (step === 'landing') {
-    return (
-      <div className="max-w-2xl mx-auto text-center py-12">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 mb-6 shadow-lg">
-          <Zap className="w-8 h-8 text-white" />
-        </div>
-        <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-4">
-          How AI-Ready Are You, Really?
-        </h2>
-        <p className="text-gray-600 text-lg mb-2 max-w-lg mx-auto">
-          7 scenario-based questions. Brutally honest AI-generated report. Voice narration. Personalized to your exact situation.
-        </p>
-        <p className="text-gray-400 text-sm mb-8">Takes 90 seconds. Results generated by AI in real-time.</p>
-        <button
-          onClick={() => setStep('email')}
-          className="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white text-base font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-        >
-          Take the Assessment <ArrowRight className="w-5 h-5" />
-        </button>
-        <div className="mt-10 grid grid-cols-4 gap-4 max-w-md mx-auto">
-          {[
-            { val: '7', label: 'Scenarios' },
-            { val: '90s', label: 'To answer' },
-            { val: 'AI', label: 'Powered' },
-            { val: 'Free', label: 'Always' },
-          ].map(item => (
-            <div key={item.label} className="text-center">
-              <div className="text-xl font-black text-primary-600">{item.val}</div>
-              <div className="text-[11px] text-gray-500 mt-0.5">{item.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    )
-  }
 
   // ─── Email Entry ─────────────────────────────────────────
   if (step === 'email') {
@@ -299,7 +316,7 @@ export default function AIReadinessQuiz() {
             </div>
             <div>
               <h3 className="text-lg font-bold text-gray-900">Verify your email</h3>
-              <p className="text-sm text-gray-500">We'll send your report here</p>
+              <p className="text-sm text-gray-500">Your report will be sent here</p>
             </div>
           </div>
           <div className="space-y-3">
@@ -312,7 +329,7 @@ export default function AIReadinessQuiz() {
             />
             <input
               type="email"
-              placeholder="Email address"
+              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSendOTP()}
@@ -328,7 +345,7 @@ export default function AIReadinessQuiz() {
               {sending ? 'Sending...' : <><ArrowRight className="w-4 h-4" /> Send verification code</>}
             </button>
           </div>
-          <p className="text-xs text-gray-400 mt-4 text-center">We don't spam. Code expires in 5 minutes.</p>
+          <p className="text-xs text-gray-400 mt-4 text-center">No spam. Code expires in 3 minutes.</p>
         </div>
       </div>
     )
@@ -359,21 +376,42 @@ export default function AIReadinessQuiz() {
               autoFocus
               maxLength={6}
             />
+            {/* OTP Timer */}
+            <div className="text-center">
+              {otpTimer > 0 ? (
+                <p className="text-sm text-gray-500">
+                  Code expires in <span className={`font-mono font-bold ${otpTimer <= 30 ? 'text-red-500' : 'text-primary-600'}`}>{formatTimer(otpTimer)}</span>
+                </p>
+              ) : (
+                <p className="text-sm text-red-500 font-medium">Code expired</p>
+              )}
+            </div>
             {error && <p className="text-sm text-red-500">{error}</p>}
             <button
               onClick={handleVerifyOTP}
-              disabled={sending || otp.length < 6}
+              disabled={sending || otp.length < 6 || otpTimer <= 0}
               className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50"
             >
               {sending ? 'Verifying...' : 'Verify & Start'}
             </button>
           </div>
-          <button
-            onClick={() => { setStep('email'); setOtp(''); setError('') }}
-            className="w-full mt-3 text-sm text-gray-400 hover:text-gray-600 transition-colors text-center"
-          >
-            Use a different email
-          </button>
+          <div className="flex items-center justify-between mt-3">
+            <button
+              onClick={() => { setStep('email'); setOtp(''); setError(''); setOtpTimer(0) }}
+              className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              Use a different email
+            </button>
+            {otpTimer <= 0 && (
+              <button
+                onClick={handleSendOTP}
+                disabled={sending}
+                className="text-sm text-primary-600 hover:text-primary-700 font-medium transition-colors"
+              >
+                Resend code
+              </button>
+            )}
+          </div>
         </div>
       </div>
     )
@@ -390,7 +428,7 @@ export default function AIReadinessQuiz() {
         </div>
         <h3 className="text-xl font-bold text-gray-900 mb-2">AI is analyzing your answers</h3>
         <p className="text-gray-500 text-sm">Generating your personalized report with voice narration...</p>
-        <p className="text-gray-400 text-xs mt-4">Don't close this page — takes about 10 seconds</p>
+        <p className="text-gray-400 text-xs mt-4">Takes about 10 seconds</p>
       </div>
     )
   }
@@ -402,18 +440,16 @@ export default function AIReadinessQuiz() {
 
     return (
       <div className="max-w-2xl mx-auto space-y-6">
-        {/* Audio player */}
         {audioSrc && (
           <audio ref={audioRef} src={audioSrc} onEnded={() => setIsPlaying(false)} />
         )}
 
-        {/* Audio control + headline */}
-        <div className={`rounded-2xl border bg-gradient-to-br ${scoreBg} p-6 sm:p-8 text-center transition-all duration-700 ${revealIndex >= 0 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+        {/* Score + Headline */}
+        <div className={`relative rounded-2xl border bg-gradient-to-br ${scoreBg} p-6 sm:p-8 text-center transition-all duration-700 ${revealIndex >= 0 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           {audioSrc && (
             <button
               onClick={toggleAudio}
               className="absolute top-4 right-4 p-2 rounded-full bg-white/80 hover:bg-white shadow-sm transition-colors"
-              aria-label={isPlaying ? 'Pause narration' : 'Play narration'}
             >
               {isPlaying ? <Volume2 className="w-4 h-4 text-primary-600 animate-pulse" /> : <VolumeX className="w-4 h-4 text-gray-400" />}
             </button>
@@ -555,6 +591,33 @@ export default function AIReadinessQuiz() {
           <p className="text-gray-500 text-sm italic">{report.peerComparison}</p>
         </div>
 
+        {/* Download & Email Report */}
+        <div className={`bg-white rounded-2xl border border-gray-200 shadow-sm p-6 transition-all duration-700 ${revealIndex >= 8 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          <h3 className="font-bold text-gray-900 mb-4 text-center">Get your report</h3>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={handleDownloadReport}
+              disabled={downloadingPdf}
+              className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl transition-all disabled:opacity-50"
+            >
+              <Download className="w-4 h-4" />
+              {downloadingPdf ? 'Generating PDF...' : 'Download Report'}
+            </button>
+            <button
+              onClick={handleEmailReport}
+              disabled={emailingReport || emailSent}
+              className={`flex-1 flex items-center justify-center gap-2 px-5 py-3 font-semibold rounded-xl transition-all disabled:opacity-50 ${
+                emailSent
+                  ? 'bg-green-50 text-green-700 border border-green-200'
+                  : 'bg-primary-600 hover:bg-primary-700 text-white'
+              }`}
+            >
+              <Send className="w-4 h-4" />
+              {emailSent ? 'Sent to your email!' : emailingReport ? 'Sending...' : 'Send on Email'}
+            </button>
+          </div>
+        </div>
+
         {/* CTA */}
         <div className={`text-center space-y-4 py-6 transition-all duration-700 ${revealIndex >= 8 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <p className="text-gray-600 text-sm">Want to discuss these results and figure out your next move?</p>
@@ -580,7 +643,6 @@ export default function AIReadinessQuiz() {
   // ─── Quiz Questions ──────────────────────────────────────
   return (
     <div className="max-w-2xl mx-auto">
-      {/* Progress */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-gray-500">Question {currentQ + 1} of {QUESTIONS.length}</span>

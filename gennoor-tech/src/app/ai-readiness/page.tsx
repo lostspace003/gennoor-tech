@@ -1,10 +1,10 @@
 import { Metadata } from 'next'
-import AIReadinessQuiz from '@/components/AIReadinessQuiz'
+import AIReadinessSelector from '@/components/AIReadinessSelector'
 
 export const metadata: Metadata = {
   title: 'AI Readiness Assessment — Is Your Business Ready for AI?',
   description:
-    'Take our free 60-second AI readiness assessment. Get a personalized AI readiness profile with tailored recommendations for your industry and business size.',
+    'Take our free AI readiness assessment. Get a personalized AI readiness profile with tailored recommendations for your industry and business size.',
   keywords: [
     'AI readiness assessment',
     'AI readiness quiz',
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'AI Readiness Assessment — Is Your Business Ready for AI?',
     description:
-      'Take our free 60-second AI readiness assessment. Get a personalized AI readiness profile with tailored recommendations for your industry.',
+      'Take our free AI readiness assessment. Get a personalized AI readiness profile with tailored recommendations for your industry.',
     url: 'https://gennoor.com/ai-readiness',
     type: 'website',
   },
@@ -37,14 +37,14 @@ export default function AIReadinessPage() {
             AI Readiness Assessment
           </h1>
           <p className="mt-4 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
-            Find out where your business stands with AI — and get a clear path forward.
+            Find out where you stand with AI — choose your assessment style.
           </p>
         </div>
       </section>
 
-      {/* Quiz */}
+      {/* Assessment Selector */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-        <AIReadinessQuiz />
+        <AIReadinessSelector />
       </section>
     </>
   )

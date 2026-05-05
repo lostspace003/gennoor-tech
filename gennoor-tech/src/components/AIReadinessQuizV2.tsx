@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { ArrowRight, ChevronLeft, Zap, Mail, Lock, Volume2, VolumeX, Play, Pause, SkipForward, SkipBack, Download, Send } from 'lucide-react'
+import { ArrowRight, ChevronLeft, Zap, Mail, Lock, Volume2, VolumeX, Play, Pause, SkipForward, SkipBack, Download, Send, Check } from 'lucide-react'
 
 const QUESTIONS = [
   {
@@ -139,7 +139,7 @@ interface Presentation {
   slides: Slide[]
 }
 
-type Step = 'landing' | 'email' | 'otp' | 'quiz' | 'generating' | 'presentation'
+type Step = 'email' | 'otp' | 'quiz' | 'generating' | 'presentation'
 
 const AGENT_STEPS = [
   'Analyzing your responses...',
@@ -151,7 +151,7 @@ const AGENT_STEPS = [
 ]
 
 export default function AIReadinessQuizV2() {
-  const [step, setStep] = useState<Step>('landing')
+  const [step, setStep] = useState<Step>('email')
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [otp, setOtp] = useState('')
@@ -160,6 +160,10 @@ export default function AIReadinessQuizV2() {
   const [presentation, setPresentation] = useState<Presentation | null>(null)
   const [error, setError] = useState('')
   const [sending, setSending] = useState(false)
+  const [otpTimer, setOtpTimer] = useState(0)
+  const [downloadingPdf, setDownloadingPdf] = useState(false)
+  const [emailingReport, setEmailingReport] = useState(false)
+  const [emailSent, setEmailSent] = useState(false)
 
   // Agent progress
   const [agentStep, setAgentStep] = useState(0)
@@ -170,6 +174,13 @@ export default function AIReadinessQuizV2() {
   const [audioMuted, setAudioMuted] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+
+  // OTP countdown timer
+  useEffect(() => {
+    if (otpTimer <= 0) return
+    const interval = setInterval(() => setOtpTimer(t => t - 1), 1000)
+    return () => clearInterval(interval)
+  }, [otpTimer])
 
   // Agent progress animation
   useEffect(() => {
@@ -213,9 +224,16 @@ export default function AIReadinessQuizV2() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to send code')
+      setOtpTimer(180)
       setStep('otp')
     } catch (err: any) { setError(err.message) }
     setSending(false)
+  }
+
+  const formatTimer = (seconds: number) => {
+    const m = Math.floor(seconds / 60)
+    const s = seconds % 60
+    return `${m}:${s.toString().padStart(2, '0')}`
   }
 
   async function handleVerifyOTP() {
@@ -295,7 +313,7 @@ export default function AIReadinessQuizV2() {
   }
 
   function handleReset() {
-    setStep('landing')
+    setStep('email')
     setCurrentQ(0)
     setAnswers({})
     setPresentation(null)
@@ -303,46 +321,45 @@ export default function AIReadinessQuizV2() {
     setCurrentSlide(0)
     setError('')
     setAgentStep(0)
+    setOtpTimer(0)
+    setEmailSent(false)
+  }
+
+  async function handleDownloadReport() {
+    if (!presentation) return
+    setDownloadingPdf(true)
+    try {
+      const { generateDeepDivePDF, downloadPDF } = await import('@/lib/generate-report-pdf')
+      const doc = generateDeepDivePDF(presentation, name, email)
+      downloadPDF(doc, `AI-Readiness-Deep-Dive-${name || 'Report'}.pdf`)
+    } catch (err) {
+      console.error('PDF generation error:', err)
+    }
+    setDownloadingPdf(false)
+  }
+
+  async function handleEmailReport() {
+    if (!presentation) return
+    setEmailingReport(true)
+    try {
+      const { generateDeepDivePDF, pdfToBase64 } = await import('@/lib/generate-report-pdf')
+      const doc = generateDeepDivePDF(presentation, name, email)
+      const pdfBase64 = pdfToBase64(doc)
+
+      const res = await fetch('/api/ai-readiness/email-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name, pdfBase64, reportType: 'deep-dive' }),
+      })
+      if (!res.ok) throw new Error('Failed to send email')
+      setEmailSent(true)
+    } catch (err) {
+      console.error('Email report error:', err)
+    }
+    setEmailingReport(false)
   }
 
   const progress = (currentQ / QUESTIONS.length) * 100
-
-  // ─── LANDING ─────────────────────────────────────────────
-  if (step === 'landing') {
-    return (
-      <div className="max-w-2xl mx-auto text-center py-12">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 mb-6 shadow-lg">
-          <Zap className="w-8 h-8 text-white" />
-        </div>
-        <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-4">
-          How AI-Ready Are You, Really?
-        </h2>
-        <p className="text-gray-600 text-lg mb-2 max-w-lg mx-auto">
-          10 scenario-based questions. An AI agent builds you a personalized animated report with voice narration — unique to your situation.
-        </p>
-        <p className="text-gray-400 text-sm mb-8">Free. Takes 2 minutes. Report generated by GPT-5.4.</p>
-        <button
-          onClick={() => setStep('email')}
-          className="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white text-base font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-        >
-          Take the Assessment <ArrowRight className="w-5 h-5" />
-        </button>
-        <div className="mt-10 grid grid-cols-4 gap-4 max-w-md mx-auto">
-          {[
-            { val: '10', label: 'Scenarios' },
-            { val: '2m', label: 'To answer' },
-            { val: 'AI', label: 'Generated' },
-            { val: 'Voice', label: 'Narrated' },
-          ].map(item => (
-            <div key={item.label} className="text-center">
-              <div className="text-xl font-black text-primary-600">{item.val}</div>
-              <div className="text-[11px] text-gray-500 mt-0.5">{item.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    )
-  }
 
   // ─── EMAIL ───────────────────────────────────────────────
   if (step === 'email') {
@@ -388,12 +405,26 @@ export default function AIReadinessQuizV2() {
           </div>
           <div className="space-y-3">
             <input type="text" placeholder="6-digit code" value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))} onKeyDown={(e) => e.key === 'Enter' && handleVerifyOTP()} className="w-full px-4 py-3 rounded-xl border border-gray-200 text-center text-2xl font-mono tracking-[0.5em] text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400" autoFocus maxLength={6} />
+            <div className="text-center">
+              {otpTimer > 0 ? (
+                <p className="text-sm text-gray-500">
+                  Code expires in <span className={`font-mono font-bold ${otpTimer <= 30 ? 'text-red-500' : 'text-primary-600'}`}>{formatTimer(otpTimer)}</span>
+                </p>
+              ) : (
+                <p className="text-sm text-red-500 font-medium">Code expired</p>
+              )}
+            </div>
             {error && <p className="text-sm text-red-500">{error}</p>}
-            <button onClick={handleVerifyOTP} disabled={sending || otp.length < 6} className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50">
+            <button onClick={handleVerifyOTP} disabled={sending || otp.length < 6 || otpTimer <= 0} className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50">
               {sending ? 'Verifying...' : 'Verify & Start'}
             </button>
           </div>
-          <button onClick={() => { setStep('email'); setOtp(''); setError('') }} className="w-full mt-3 text-sm text-gray-400 hover:text-gray-600 transition-colors text-center">Use a different email</button>
+          <div className="flex items-center justify-between mt-3">
+            <button onClick={() => { setStep('email'); setOtp(''); setError(''); setOtpTimer(0) }} className="text-sm text-gray-400 hover:text-gray-600 transition-colors">Use a different email</button>
+            {otpTimer <= 0 && (
+              <button onClick={handleSendOTP} disabled={sending} className="text-sm text-primary-600 hover:text-primary-700 font-medium transition-colors">Resend code</button>
+            )}
+          </div>
         </div>
       </div>
     )
@@ -605,11 +636,11 @@ export default function AIReadinessQuizV2() {
               </button>
             </div>
             <div className="flex items-center gap-2">
-              <button onClick={() => { /* TODO: download */ }} className="p-2 hover:bg-gray-200 rounded-full transition-colors" title="Download report">
-                <Download className="w-4 h-4 text-gray-600" />
+              <button onClick={handleDownloadReport} disabled={downloadingPdf} className="p-2 hover:bg-gray-200 rounded-full transition-colors" title="Download Report">
+                <Download className={`w-4 h-4 ${downloadingPdf ? 'text-gray-300 animate-pulse' : 'text-gray-600'}`} />
               </button>
-              <button onClick={() => { /* TODO: email */ }} className="p-2 hover:bg-gray-200 rounded-full transition-colors" title="Email report">
-                <Send className="w-4 h-4 text-gray-600" />
+              <button onClick={handleEmailReport} disabled={emailingReport || emailSent} className="p-2 hover:bg-gray-200 rounded-full transition-colors" title="Send on Email">
+                {emailSent ? <Check className="w-4 h-4 text-green-500" /> : <Send className={`w-4 h-4 ${emailingReport ? 'text-gray-300 animate-pulse' : 'text-gray-600'}`} />}
               </button>
             </div>
           </div>
@@ -623,13 +654,35 @@ export default function AIReadinessQuizV2() {
         )}
 
         {/* Below player actions */}
-        <div className="mt-8 text-center space-y-3">
+        <div className="mt-8 space-y-4">
           {!isPlaying && currentSlide === 0 && (
-            <button onClick={startPresentation} className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all shadow-lg">
-              <Play className="w-4 h-4" /> Play my report
-            </button>
+            <div className="text-center">
+              <button onClick={startPresentation} className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all shadow-lg">
+                <Play className="w-4 h-4" /> Play my report
+              </button>
+            </div>
           )}
-          <div>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={handleDownloadReport}
+              disabled={downloadingPdf}
+              className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl transition-all disabled:opacity-50"
+            >
+              <Download className="w-4 h-4" />
+              {downloadingPdf ? 'Generating PDF...' : 'Download Report'}
+            </button>
+            <button
+              onClick={handleEmailReport}
+              disabled={emailingReport || emailSent}
+              className={`flex-1 flex items-center justify-center gap-2 px-5 py-3 font-semibold rounded-xl transition-all disabled:opacity-50 ${
+                emailSent ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-primary-600 hover:bg-primary-700 text-white'
+              }`}
+            >
+              <Send className="w-4 h-4" />
+              {emailSent ? 'Sent to your email!' : emailingReport ? 'Sending...' : 'Send on Email'}
+            </button>
+          </div>
+          <div className="text-center">
             <button onClick={handleReset} className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
               Retake assessment
             </button>
