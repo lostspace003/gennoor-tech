@@ -33,25 +33,15 @@ export async function POST(request: NextRequest) {
           </p>
 
           <div style="text-align: center; margin: 28px 0;">
-            <a href="${baseUrl}/resources/calendar?topic=ai-readiness&option=yes&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}"
+            <a href="${baseUrl}/resources/calendar?topic=ai-readiness&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}"
                style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #059669 0%, #047857 100%); color: #ffffff; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 14px; margin: 6px;">
-              Yes, let&rsquo;s explore
-            </a>
-            <br/>
-            <a href="${baseUrl}/resources/calendar?topic=ai-readiness&option=maybe&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}"
-               style="display: inline-block; padding: 14px 28px; background: #f1f5f9; color: #475569; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 14px; margin: 6px; border: 1px solid #e2e8f0;">
-              Maybe later
-            </a>
-            <br/>
-            <a href="${baseUrl}/resources/calendar?topic=ai-readiness&option=no&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}"
-               style="display: inline-block; padding: 14px 28px; background: #f1f5f9; color: #475569; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 14px; margin: 6px; border: 1px solid #e2e8f0;">
-              Not now
+              Yes, Interested!
             </a>
           </div>
 
           <div style="background: #f0fdf4; border-left: 4px solid #059669; padding: 18px 20px; margin: 24px 0; border-radius: 4px;">
             <p style="color: #047857; margin: 0; font-size: 14px; line-height: 1.7;">
-              Click any option above to book a free discovery call. Your details will be pre-filled.
+              Click above to book a free discovery call. Your details will be pre-filled.
             </p>
           </div>
 

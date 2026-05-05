@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
 
 
     const firstName = name ? name.split(' ')[0] : 'there'
-    const reportLabel = reportType === 'blueprint' ? 'Custom Blueprint' : reportType === 'deep-dive' ? 'Deep Dive' : 'Quick Scan'
+    const reportLabel = reportType === 'blueprint' ? 'Deep Dive' : 'Quick Scan'
 
     const htmlBody = `
       <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -65,10 +65,8 @@ export async function POST(request: NextRequest) {
 
           <h3 style="color: #1e293b; margin-top: 28px; font-size: 16px;">What&rsquo;s Next?</h3>
           <ol style="color: #475569; line-height: 2; font-size: 14px; padding-left: 20px;">
-            <li>Review your attached AI Readiness Blueprint</li>
             <li>Start with Phase 1 of your 90-day roadmap</li>
-            <li>Explore the recommended tools (clickable links in report)</li>
-            <li>Book a call if you want guided implementation</li>
+            <li><a href="https://www.gennoor.com/resources/calendar" style="color: #2563eb; text-decoration: underline;">Book a call</a> if you want guided implementation</li>
           </ol>
 
           <div style="text-align: center; margin: 32px 0 16px;">

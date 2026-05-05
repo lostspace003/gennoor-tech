@@ -489,10 +489,7 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
                 <p className="text-gray-700 text-lg leading-relaxed mb-4">{slide.content.industryInsight}</p>
                 <p className="text-gray-500 italic mb-6">{slide.content.peerComparison}</p>
                 <div className="bg-primary-50 border border-primary-200 rounded-xl p-6">
-                  <p className="text-gray-800 font-medium mb-4">{slide.content.cta}</p>
-                  <a href="/resources/calendar" className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-colors">
-                    Book a free 15-min call <ArrowRight className="w-4 h-4" />
-                  </a>
+                  <p className="text-gray-800 font-medium">{slide.content.cta}</p>
                 </div>
               </div>
             )}

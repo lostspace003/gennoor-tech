@@ -1370,7 +1370,7 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
                 </div>
               )}
               <a href="/resources/calendar" className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-colors">
-                Book a free 15-min call <ArrowRight className="w-4 h-4" />
+                Book a Call? <ArrowRight className="w-4 h-4" />
               </a>
               <div className="mt-4">
                 <button onClick={handleReset} className="text-sm text-gray-400 hover:text-gray-600 transition-colors">Retake assessment</button>

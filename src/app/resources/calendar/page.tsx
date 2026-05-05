@@ -199,7 +199,7 @@ function BookingCalendarInner() {
   useEffect(() => { setReqEmailVerified(false) }, [reqEmail])
   useEffect(() => { setSelectedCountry(detectCountry()) }, [])
 
-  // Pre-fill from AI Readiness email links (?topic=ai-readiness&name=X&email=Y&option=Z)
+  // Pre-fill from AI Readiness email links (?topic=ai-readiness&name=X&email=Y)
   const [presetApplied, setPresetApplied] = useState(false)
   useEffect(() => {
     if (presetApplied) return
@@ -207,24 +207,14 @@ function BookingCalendarInner() {
     if (presetTopic === 'ai-readiness') {
       const presetName = searchParams.get('name') || ''
       const presetEmail = searchParams.get('email') || ''
-      const presetOption = searchParams.get('option') || ''
-      const optionLabel = presetOption === 'yes' ? "Yes, let's explore" : presetOption === 'maybe' ? 'Maybe later' : presetOption === 'no' ? 'Not now' : ''
       setName(presetName)
       setEmail(presetEmail)
       setEmailVerified(true)
-      setTopic(`AI Readiness for Organization${optionLabel ? ` — Interest: ${optionLabel}` : ''}`)
-      setStep(3)
+      setTopic('AI Readiness — Discovery Call')
+      setStep(1)
       setPresetApplied(true)
     }
   }, [searchParams, presetApplied])
-
-  // Auto-select Discovery service when preset is active and services load
-  useEffect(() => {
-    if (!presetApplied || services.length === 0 || selectedService) return
-    const discovery = services.find(s => s.name.toLowerCase().includes('discovery'))
-    if (discovery) setSelectedService(discovery)
-    else setSelectedService(services[0])
-  }, [presetApplied, services, selectedService])
 
   const goTo = useCallback((n: number) => {
     if (n === step || fading) return
@@ -250,13 +240,8 @@ function BookingCalendarInner() {
     load()
   }, [])
 
-  // Default to Training Consultation
-  useEffect(() => {
-    if (services.length > 0 && !selectedService) {
-      const sorted = [...services].sort((a, b) => getServiceOrder(a.name) - getServiceOrder(b.name))
-      setSelectedService(sorted.find(s => isDefaultService(s.name)) || sorted[0])
-    }
-  }, [services, selectedService])
+  // No default service selection — let user choose
+
 
   // Fetch availability
   useEffect(() => {

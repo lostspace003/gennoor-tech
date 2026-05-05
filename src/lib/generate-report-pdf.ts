@@ -830,18 +830,21 @@ export function generateBlueprintPDF(
       }
 
       case 'risks': {
+        if (typeof content === 'string' || content?.text) {
+          const riskIntro = typeof content === 'string' ? content : content.text
+          if (riskIntro) {
+            y = drawWrappedText(doc, y, riskIntro, { fontSize: 9 })
+            y += 4
+          }
+        }
         const risks = content?.risks
         if (Array.isArray(risks) && risks.length > 0) {
           for (const risk of risks) {
             y = ensureSpace(doc, y, 18)
             const sevColor = risk.severity === 'High' ? '#ef4444' : risk.severity === 'Medium' ? ACCENT_AMBER : BLUE
-            doc.setFont('helvetica', 'bold')
-            doc.setFontSize(9)
-            setColor(doc, sevColor)
-            doc.text(`[${risk.severity || 'Medium'}]`, MARGIN, y)
-            setColor(doc, DARK)
-            doc.text(` ${risk.type || risk.name || ''}`, MARGIN + 18, y)
-            y += 5
+            const riskLabel = `[${risk.severity || 'Medium'}] ${risk.type || risk.name || ''}`
+            y = drawWrappedText(doc, y, riskLabel, { fontSize: 9, bold: true, color: sevColor })
+            y += 1
             if (risk.description) {
               y = drawWrappedText(doc, y, risk.description, { fontSize: 9, indent: 4 })
             }

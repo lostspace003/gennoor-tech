@@ -1237,9 +1237,8 @@ export default function AdminDashboard() {
           <div className="space-y-6">
             {!aiReadinessData ? <Empty text="Loading AI Readiness data..." /> : (<>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <StatCard icon={Zap} label="Quick Scans" value={aiReadinessData.summary?.quickScans || 0} color="blue" />
-                <StatCard icon={BookOpen} label="Deep Dives" value={aiReadinessData.summary?.deepDives || 0} color="teal" />
-                <StatCard icon={FileText} label="Blueprints" value={aiReadinessData.summary?.blueprints || 0} color="amber" />
+                <StatCard icon={BookOpen} label="Quick Scans" value={(aiReadinessData.summary?.quickScans || 0) + (aiReadinessData.summary?.deepDives || 0)} color="teal" />
+                <StatCard icon={FileText} label="Deep Dives" value={aiReadinessData.summary?.blueprints || 0} color="amber" />
                 <StatCard icon={Bot} label="Total Reports" value={aiReadinessData.summary?.totalGenerations || 0} color="purple" />
               </div>
               <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
@@ -1273,8 +1272,8 @@ export default function AdminDashboard() {
                             <td className="py-2.5 pr-4 font-medium text-slate-800">{r.name || '-'}</td>
                             <td className="py-2.5 pr-4 text-slate-600 text-xs">{r.email}</td>
                             <td className="py-2.5 pr-4">
-                              <span className={`px-2 py-0.5 rounded text-xs font-medium ${r.reportType === 'quick-scan' ? 'bg-blue-100 text-blue-700' : r.reportType === 'deep-dive' ? 'bg-teal-100 text-teal-700' : r.reportType === 'blueprint' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
-                                {r.reportType === 'quick-scan' ? 'Quick Scan' : r.reportType === 'deep-dive' ? 'Deep Dive' : r.reportType === 'blueprint' ? 'Blueprint' : r.reportType || 'Unknown'}
+                              <span className={`px-2 py-0.5 rounded text-xs font-medium ${r.reportType === 'quick-scan' || r.reportType === 'deep-dive' ? 'bg-teal-100 text-teal-700' : r.reportType === 'blueprint' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
+                                {r.reportType === 'quick-scan' || r.reportType === 'deep-dive' ? 'Quick Scan' : r.reportType === 'blueprint' ? 'Deep Dive' : r.reportType || 'Unknown'}
                               </span>
                             </td>
                             <td className="py-2.5 pr-4 font-semibold text-slate-800">{r.overallScore || '-'}</td>
@@ -1301,8 +1300,8 @@ export default function AdminDashboard() {
                           <p className="text-sm text-slate-800 font-medium truncate">{f.name || f.email}</p>
                           {f.comment && <p className="text-xs text-slate-500 mt-0.5 truncate">{f.comment}</p>}
                         </div>
-                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${f.reportType === 'quick-scan' ? 'bg-blue-100 text-blue-700' : f.reportType === 'deep-dive' ? 'bg-teal-100 text-teal-700' : f.reportType === 'blueprint' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
-                          {f.reportType || '-'}
+                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${f.reportType === 'quick-scan' || f.reportType === 'deep-dive' ? 'bg-teal-100 text-teal-700' : f.reportType === 'blueprint' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
+                          {f.reportType === 'quick-scan' || f.reportType === 'deep-dive' ? 'Quick Scan' : f.reportType === 'blueprint' ? 'Deep Dive' : f.reportType || '-'}
                         </span>
                         {f.orgInterest === 'yes' && <span className="px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">Org Lead</span>}
                         <span className="text-xs text-slate-400">{f.submittedAt ? new Date(f.submittedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) : ''}</span>
