@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { ArrowRight, ChevronLeft, Zap, Mail, Lock, Volume2, VolumeX, Play, Pause, SkipForward, SkipBack, Download, Send, Check } from 'lucide-react'
+import FeedbackModal from '@/components/FeedbackModal'
 
 const QUESTIONS = [
   {
@@ -164,6 +165,7 @@ export default function AIReadinessQuizV2() {
   const [downloadingPdf, setDownloadingPdf] = useState(false)
   const [emailingReport, setEmailingReport] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
+  const [feedbackAction, setFeedbackAction] = useState<'download' | 'email' | null>(null)
 
   // Agent progress
   const [agentStep, setAgentStep] = useState(0)
@@ -325,7 +327,23 @@ export default function AIReadinessQuizV2() {
     setEmailSent(false)
   }
 
-  async function handleDownloadReport() {
+  async function submitFeedback(rating: number, comment: string) {
+    fetch('/api/ai-readiness/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, name, rating, comment, reportType: 'deep-dive', action: feedbackAction }),
+    }).catch(() => {})
+  }
+
+  async function handleFeedbackSubmit(rating: number, comment: string) {
+    const action = feedbackAction
+    setFeedbackAction(null)
+    submitFeedback(rating, comment)
+    if (action === 'download') doDownloadReport()
+    if (action === 'email') doEmailReport()
+  }
+
+  async function doDownloadReport() {
     if (!presentation) return
     setDownloadingPdf(true)
     try {
@@ -338,7 +356,7 @@ export default function AIReadinessQuizV2() {
     setDownloadingPdf(false)
   }
 
-  async function handleEmailReport() {
+  async function doEmailReport() {
     if (!presentation) return
     setEmailingReport(true)
     try {
@@ -471,6 +489,12 @@ export default function AIReadinessQuizV2() {
 
     return (
       <div className="max-w-3xl mx-auto">
+        {feedbackAction && (
+          <FeedbackModal
+            onSubmit={handleFeedbackSubmit}
+            onClose={() => setFeedbackAction(null)}
+          />
+        )}
         <audio ref={audioRef} onEnded={handleAudioEnd} />
 
         {/* Player container */}
@@ -636,10 +660,10 @@ export default function AIReadinessQuizV2() {
               </button>
             </div>
             <div className="flex items-center gap-2">
-              <button onClick={handleDownloadReport} disabled={downloadingPdf} className="p-2 hover:bg-gray-200 rounded-full transition-colors" title="Download Report">
+              <button onClick={() => setFeedbackAction('download')} disabled={downloadingPdf} className="p-2 hover:bg-gray-200 rounded-full transition-colors" title="Download Report">
                 <Download className={`w-4 h-4 ${downloadingPdf ? 'text-gray-300 animate-pulse' : 'text-gray-600'}`} />
               </button>
-              <button onClick={handleEmailReport} disabled={emailingReport || emailSent} className="p-2 hover:bg-gray-200 rounded-full transition-colors" title="Send on Email">
+              <button onClick={() => setFeedbackAction('email')} disabled={emailingReport || emailSent} className="p-2 hover:bg-gray-200 rounded-full transition-colors" title="Send on Email">
                 {emailSent ? <Check className="w-4 h-4 text-green-500" /> : <Send className={`w-4 h-4 ${emailingReport ? 'text-gray-300 animate-pulse' : 'text-gray-600'}`} />}
               </button>
             </div>
@@ -664,7 +688,7 @@ export default function AIReadinessQuizV2() {
           )}
           <div className="flex flex-col sm:flex-row gap-3">
             <button
-              onClick={handleDownloadReport}
+              onClick={() => setFeedbackAction('download')}
               disabled={downloadingPdf}
               className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl transition-all disabled:opacity-50"
             >
@@ -672,7 +696,7 @@ export default function AIReadinessQuizV2() {
               {downloadingPdf ? 'Generating PDF...' : 'Download Report'}
             </button>
             <button
-              onClick={handleEmailReport}
+              onClick={() => setFeedbackAction('email')}
               disabled={emailingReport || emailSent}
               className={`flex-1 flex items-center justify-center gap-2 px-5 py-3 font-semibold rounded-xl transition-all disabled:opacity-50 ${
                 emailSent ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-primary-600 hover:bg-primary-700 text-white'

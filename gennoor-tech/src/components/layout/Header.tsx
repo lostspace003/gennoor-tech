@@ -91,7 +91,7 @@ export default function Header() {
                   <Link
                     href={item.href}
                     className={cn(
-                      'nav-link px-3 py-2 flex items-center space-x-1',
+                      'nav-link px-3 py-2 flex items-center space-x-1 whitespace-nowrap',
                       pathname.startsWith(item.href) && 'text-primary-600'
                     )}
                   >
@@ -105,7 +105,7 @@ export default function Header() {
                   <Link
                     href={item.href}
                     className={cn(
-                      'nav-link px-3 py-2',
+                      'nav-link px-3 py-2 whitespace-nowrap',
                       pathname === item.href && 'text-primary-600'
                     )}
                   >

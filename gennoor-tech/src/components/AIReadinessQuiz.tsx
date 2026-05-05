@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { ArrowRight, ChevronLeft, Zap, Mail, Lock, Volume2, VolumeX, Target, Users, Workflow, Rocket, Clock, Lightbulb, TrendingUp, AlertTriangle, Calendar, Download, Send } from 'lucide-react'
+import FeedbackModal from '@/components/FeedbackModal'
 
 const QUESTIONS = [
   {
@@ -137,6 +138,7 @@ export default function AIReadinessQuiz() {
   const [downloadingPdf, setDownloadingPdf] = useState(false)
   const [emailingReport, setEmailingReport] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
+  const [feedbackAction, setFeedbackAction] = useState<'download' | 'email' | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   // OTP countdown timer
@@ -252,7 +254,23 @@ export default function AIReadinessQuiz() {
     }
   }
 
-  async function handleDownloadReport() {
+  async function submitFeedback(rating: number, comment: string) {
+    fetch('/api/ai-readiness/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, name, rating, comment, reportType: 'quick-scan', action: feedbackAction }),
+    }).catch(() => {})
+  }
+
+  async function handleFeedbackSubmit(rating: number, comment: string) {
+    const action = feedbackAction
+    setFeedbackAction(null)
+    submitFeedback(rating, comment)
+    if (action === 'download') doDownloadReport()
+    if (action === 'email') doEmailReport()
+  }
+
+  async function doDownloadReport() {
     if (!report) return
     setDownloadingPdf(true)
     try {
@@ -265,7 +283,7 @@ export default function AIReadinessQuiz() {
     setDownloadingPdf(false)
   }
 
-  async function handleEmailReport() {
+  async function doEmailReport() {
     if (!report) return
     setEmailingReport(true)
     try {
@@ -440,6 +458,12 @@ export default function AIReadinessQuiz() {
 
     return (
       <div className="max-w-2xl mx-auto space-y-6">
+        {feedbackAction && (
+          <FeedbackModal
+            onSubmit={handleFeedbackSubmit}
+            onClose={() => setFeedbackAction(null)}
+          />
+        )}
         {audioSrc && (
           <audio ref={audioRef} src={audioSrc} onEnded={() => setIsPlaying(false)} />
         )}
@@ -596,7 +620,7 @@ export default function AIReadinessQuiz() {
           <h3 className="font-bold text-gray-900 mb-4 text-center">Get your report</h3>
           <div className="flex flex-col sm:flex-row gap-3">
             <button
-              onClick={handleDownloadReport}
+              onClick={() => setFeedbackAction('download')}
               disabled={downloadingPdf}
               className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl transition-all disabled:opacity-50"
             >
@@ -604,7 +628,7 @@ export default function AIReadinessQuiz() {
               {downloadingPdf ? 'Generating PDF...' : 'Download Report'}
             </button>
             <button
-              onClick={handleEmailReport}
+              onClick={() => setFeedbackAction('email')}
               disabled={emailingReport || emailSent}
               className={`flex-1 flex items-center justify-center gap-2 px-5 py-3 font-semibold rounded-xl transition-all disabled:opacity-50 ${
                 emailSent
