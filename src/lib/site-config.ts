@@ -95,7 +95,7 @@ export const siteConfig = {
     headline: 'Transform Your Organization with Practical AI Solutions — Expert-Led Training from Strategy to Implementation',
     subheadline: 'Drawing from 14+ years working with Fortune 500 companies across 6 countries',
     cta1: { text: 'Book a Discovery Call', href: '/resources/calendar' },
-    cta2: { text: 'Explore My Work', href: '/portfolio' },
+    cta2: { text: 'Check Your AI Readiness', href: '/ai-readiness' },
   },
 
   // Trusted by companies

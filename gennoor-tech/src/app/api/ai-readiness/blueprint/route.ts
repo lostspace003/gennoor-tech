@@ -86,7 +86,11 @@ export async function POST(request: NextRequest) {
     const answersFormatted = Object.entries(answers as Record<string, string>)
       .map(([q, a]) => `- ${q}: ${a}`).join('\n')
 
-    const userContext = `Name: ${name || 'Not provided'}\nRole: ${role || 'Not specified'}\nIndustry: ${category || 'Not specified'}${subcategory ? ` > ${subcategory}` : ''}\n\nQuiz answers:\n${answersFormatted}\n\nOpen-ended response:\n${openEnded || 'Not provided'}`
+    const currentTools = answers['current-tools'] || ''
+    const approvedAI = answers['approved-ai'] || ''
+    const toolPriority = answers['tool-priority'] || ''
+
+    const userContext = `Name: ${name || 'Not provided'}\nRole: ${role || 'Not specified'}\nIndustry: ${category || 'Not specified'}${subcategory ? ` > ${subcategory}` : ''}\nCurrent tools/stack: ${currentTools || 'Not specified'}\nApproved AI tools: ${approvedAI || 'Not specified'}\nTool selection priority: ${toolPriority || 'Not specified'}\n\nQuiz answers:\n${answersFormatted}\n\nOpen-ended response:\n${openEnded || 'Not provided'}`
 
     // ═══════════════════════════════════════════════════════════
     // AGENT 1: Industry Research (Bing Web Search grounding)
@@ -98,24 +102,26 @@ export async function POST(request: NextRequest) {
       const researchResponse = await client.responses.create({
         model: deployment,
         tools: [{ type: 'web_search' as any }],
-        input: `Research the latest AI adoption trends, statistics, and recommended AI tools for someone in the "${category || 'technology'}${subcategory ? ' > ' + subcategory : ''}" industry who works as a "${role || 'professional'}".
+        input: `Research the latest AI adoption trends, statistics, and recommended AI tools for someone in the "${category || 'technology'}${subcategory ? ' > ' + subcategory : ''}" industry who works as a "${role || 'professional'}".${currentTools ? ` They currently use: ${currentTools}.` : ''}${approvedAI ? ` Their organization has approved: ${approvedAI}.` : ''}
 
 Find:
-1. Current AI adoption rate and statistics for this specific industry (2024-2025 data)
-2. Top 5-7 specific AI tools that are most relevant for this role and industry (with their actual website URLs)
-3. Average ROI/productivity gains reported by companies in this sector after AI adoption
-4. Key risks or challenges of NOT adopting AI in this industry
-5. Any relevant case studies or success stories
+1. Current AI adoption rate and statistics for this specific industry (2024-2025 data) — cite the source reports/articles
+2. Top 5-7 specific AI tools that are most relevant for this role and industry (with their actual website URLs), considering tools that integrate with their existing stack
+3. Average ROI/productivity gains reported by companies in this sector after AI adoption — cite the studies
+4. Key risks or challenges of NOT adopting AI in this industry — cite analyst reports
+5. Any relevant case studies or success stories with source links
+6. Industry reports, analyst findings, or surveys about AI readiness in this field
 
-Be specific with real data, real tool names, real URLs. No generic advice.`,
+Be specific with real data, real tool names, real URLs. Cite as many sources as possible. No generic advice.`,
       } as any)
 
       const output = (researchResponse as any).output || []
+      const textParts: string[] = []
       for (const item of output) {
         if (item.type === 'message') {
           for (const content of (item.content || [])) {
             if (content.type === 'output_text') {
-              researchData = content.text || ''
+              textParts.push(content.text || '')
               if (content.annotations) {
                 for (const ann of content.annotations) {
                   if (ann.type === 'url_citation' && ann.url) {
@@ -127,7 +133,11 @@ Be specific with real data, real tool names, real URLs. No generic advice.`,
             }
           }
         }
+        if (item.type === 'web_search_call') {
+          // Search call logged — results come in subsequent message items
+        }
       }
+      researchData = textParts.join('\n\n')
     } catch (err) {
       console.error('Research agent error (non-fatal):', err)
       researchData = 'Web research unavailable — proceeding with knowledge-based analysis.'
@@ -195,7 +205,7 @@ Be specific with real data, real tool names, real URLs. No generic advice.`,
 
 {
   "tools": [
-    { "name": "<real tool name>", "url": "<actual website URL>", "purpose": "<specific use case for their role>", "timeSaved": "<hours/week>", "difficulty": "Easy|Medium|Hard", "cost": "Free|Freemium|Paid" }
+    { "name": "<real tool name e.g. Claude Code, Cursor, Microsoft Copilot>", "url": "<actual website URL>", "purpose": "<specific use case for their role>", "timeSaved": "<hours/week>", "difficulty": "Easy|Medium|Hard", "cost": "<specific e.g. $0/Free, $20/mo, Free for students, Usage-based ~$5-15/mo>" }
   ],
   "roadmap": {
     "phase1": { "title": "Foundation (Days 1-30)", "goal": "<main goal>", "milestones": ["<specific action>", "..."], "tools": ["<tool names to adopt>"] },
@@ -215,9 +225,12 @@ Be specific with real data, real tool names, real URLs. No generic advice.`,
   "industryContext": "<3-4 sentences about AI adoption in their specific industry with real stats from the research>"
 }
 
-- "tools": 6-8 REAL tools with REAL URLs based on research. Prioritize by relevance.
+- "tools": 6-8 REAL tools with REAL URLs based on research. Include actual product names (Claude Code, Claude Desktop, Microsoft Copilot, Cursor, GitHub Copilot, Perplexity, NotebookLM, etc.) — not generic categories.
+- Prioritize based on user's stated priority: if they said "price first" recommend free/freemium tools; if "usability" recommend polished consumer tools; if "comprehensiveness" recommend full-suite tools; if "low ongoing cost" recommend fixed-price subscriptions over usage-based pricing.
+- Consider what they already use and recommend tools that INTEGRATE with their existing stack. Don't recommend what they already have — recommend what's NEXT for them.
+- "cost" field MUST be specific: "$0/Free", "$10/mo", "$20/mo", "Free for students", "Usage-based ~$X/mo", "Included in M365" etc. — not just "Free/Paid"
 - "risks": 4 risks of NOT adopting AI, specific to their situation
-- Use actual data from the research provided. Be specific, not generic.`
+- Use actual data from the research provided. Be specific, not generic. Include references to sources in industryContext.`
         },
         {
           role: 'user', content: `Person's profile:\n${userContext}\n\n---\nIndustry Research (from web search):\n${researchData}\n\n---\nSkills Analysis:\nScore: ${analysisData.score || 50}\nWeaknesses: ${(analysisData.weaknesses || []).join(', ')}\nTop skill gaps: ${(analysisData.skillGap || []).slice(0, 4).map((s: any) => s.skill).join(', ')}`

@@ -1,9 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { ArrowRight, ChevronLeft, Mail, Lock, Download, Send, Zap, Check, Play, Pause, Volume2, VolumeX, SkipForward, SkipBack, ExternalLink } from 'lucide-react'
+import { ArrowRight, ChevronLeft, Mail, Lock, Send, Zap, Check, Play, Pause, Volume2, VolumeX, SkipForward, SkipBack, ExternalLink } from 'lucide-react'
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts'
-import FeedbackModal from '@/components/FeedbackModal'
 
 // ─── Role → Category → Subcategory mapping ────────────────
 const ROLE_OPTIONS = [
@@ -226,7 +225,134 @@ const ROLE_QUESTIONS: Record<string, { id: string; question: string; subtext?: s
   ],
 }
 
+const TOOLS_QUESTION: Record<string, { id: string; question: string; subtext: string; options: { label: string }[] }> = {
+  employee: {
+    id: 'current-tools',
+    question: 'What does your daily work environment look like?',
+    subtext: 'We\'ll recommend AI that plugs directly into what you already use.',
+    options: [
+      { label: 'Microsoft ecosystem — Outlook, Teams, SharePoint, Excel, Power Platform' },
+      { label: 'Google Workspace — Gmail, Docs, Sheets, Meet, Drive' },
+      { label: 'Slack + Atlassian (Jira, Confluence) or Notion + Linear' },
+      { label: 'Salesforce, HubSpot, SAP, Oracle, or other enterprise platforms' },
+    ],
+  },
+  freelancer: {
+    id: 'current-tools',
+    question: 'What\'s your primary toolkit right now?',
+    subtext: 'We\'ll build AI recommendations around your actual workflow.',
+    options: [
+      { label: 'Figma, Adobe Creative Cloud, Canva, or design-heavy tools' },
+      { label: 'Notion, Google Docs, Calendly, Loom — productivity-first' },
+      { label: 'VS Code, Cursor, GitHub, Vercel — code and ship' },
+      { label: 'WordPress, Mailchimp, Buffer, SEMrush — content & marketing' },
+    ],
+  },
+  startup: {
+    id: 'current-tools',
+    question: 'What\'s powering your startup right now?',
+    subtext: 'We\'ll recommend AI that fits your stage and stack.',
+    options: [
+      { label: 'GitHub + Vercel/Railway + Cursor or VS Code — shipping fast' },
+      { label: 'AWS / Azure / GCP + custom backend + CI/CD pipelines' },
+      { label: 'No-code/low-code — Bubble, Retool, Zapier, Airtable, Make' },
+      { label: 'Notion + Slack + Sheets — lean ops, figuring things out' },
+    ],
+  },
+  'business-owner': {
+    id: 'current-tools',
+    question: 'What systems does your business run on today?',
+    subtext: 'AI works best when it extends what you already have.',
+    options: [
+      { label: 'Microsoft 365 — Word, Excel, Outlook, Teams across the company' },
+      { label: 'CRM + Finance tools — Zoho, Tally, Salesforce, HubSpot, QuickBooks' },
+      { label: 'ERP / industry-specific — SAP, Oracle, custom software, POS systems' },
+      { label: 'Mostly WhatsApp, spreadsheets, phone calls — limited digital tools' },
+    ],
+  },
+  student: {
+    id: 'current-tools',
+    question: 'What do you use day-to-day for your studies and projects?',
+    subtext: 'We\'ll suggest AI that accelerates your learning, not replaces it.',
+    options: [
+      { label: 'Google Docs, Slides, Scholar — research and assignments' },
+      { label: 'VS Code, Python, Jupyter Notebooks, GitHub — coding projects' },
+      { label: 'Notion, Obsidian, Anki — notes, organization, revision' },
+      { label: 'Figma, Canva, Premiere Pro — design and creative work' },
+    ],
+  },
+}
+
+const AI_ACCESS_QUESTION: Record<string, { id: string; question: string; subtext: string; options: { label: string }[] }> = {
+  employee: {
+    id: 'approved-ai',
+    question: 'Which AI tools does your organization provide or allow?',
+    subtext: 'We\'ll build on what you have access to — not recommend what IT will block.',
+    options: [
+      { label: 'Microsoft Copilot — M365 Copilot, Copilot Studio, or GitHub Copilot' },
+      { label: 'ChatGPT Enterprise/Team or OpenAI API access' },
+      { label: 'Claude for Work, Claude Desktop, or Anthropic API' },
+      { label: 'None officially — some people use free tools on their own' },
+    ],
+  },
+  freelancer: {
+    id: 'approved-ai',
+    question: 'What AI tools are you already paying for or using regularly?',
+    subtext: 'So we build on your investment, not duplicate it.',
+    options: [
+      { label: 'ChatGPT Plus ($20/mo) or Claude Pro ($20/mo) for general work' },
+      { label: 'Cursor, GitHub Copilot, or Claude Code for development' },
+      { label: 'Midjourney, Runway, Descript, or Adobe Firefly for creative' },
+      { label: 'Nothing paid yet — using free tiers or haven\'t started' },
+    ],
+  },
+  startup: {
+    id: 'approved-ai',
+    question: 'What AI have you already integrated into your product or ops?',
+    subtext: 'We\'ll layer new recommendations on your existing AI investment.',
+    options: [
+      { label: 'OpenAI API, Azure OpenAI, or Anthropic API in our product' },
+      { label: 'Claude Code, Cursor, or Copilot for faster development' },
+      { label: 'Notion AI, ChatGPT Team, or Perplexity for internal ops' },
+      { label: 'Haven\'t integrated AI yet — still evaluating' },
+    ],
+  },
+  'business-owner': {
+    id: 'approved-ai',
+    question: 'Has your business started using any AI tools?',
+    subtext: 'Helps us know your starting point — no judgment either way.',
+    options: [
+      { label: 'Microsoft Copilot across Office, Teams, or Power Platform' },
+      { label: 'ChatGPT, Claude, or Perplexity for emails, research, writing' },
+      { label: 'AI features inside our CRM, ERP, or industry software' },
+      { label: 'Not yet — we haven\'t explored AI in any serious way' },
+    ],
+  },
+  student: {
+    id: 'approved-ai',
+    question: 'Which AI tools are part of your learning routine?',
+    subtext: 'We\'ll help you level up from wherever you are now.',
+    options: [
+      { label: 'ChatGPT or Claude — for research, assignments, explanations' },
+      { label: 'GitHub Copilot, Cursor, or Claude Code — for coding projects' },
+      { label: 'Perplexity, NotebookLM, or Gamma — for research & presentations' },
+      { label: 'Haven\'t used AI tools seriously — mostly manual work' },
+    ],
+  },
+}
+
 const COMMON_QUESTIONS = [
+  {
+    id: 'tool-priority',
+    question: 'When choosing an AI tool, what matters most to you?',
+    subtext: 'This shapes whether we recommend free, premium, or enterprise-grade tools.',
+    options: [
+      { label: 'Price first — free or cheapest option that gets the job done' },
+      { label: 'Usability — easy to learn, polished interface, minimal setup' },
+      { label: 'Comprehensiveness — one powerful tool that covers many use cases' },
+      { label: 'Low ongoing cost — predictable pricing, no surprise API/token bills' },
+    ],
+  },
   {
     id: 'ai-confidence',
     question: 'How confident are you about AI\'s role in your future?',
@@ -322,15 +448,19 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
   const [currentQ, setCurrentQ] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [openEnded, setOpenEnded] = useState('')
+  const [customInputs, setCustomInputs] = useState<Record<string, string>>({})
+  const [showCustomInput, setShowCustomInput] = useState<string | null>(null)
   const [report, setReport] = useState<BlueprintReport | null>(null)
   const [error, setError] = useState('')
   const [sending, setSending] = useState(false)
   const [otpTimer, setOtpTimer] = useState(0)
   const [agentStep, setAgentStep] = useState(0)
-  const [downloadingPdf, setDownloadingPdf] = useState(false)
   const [emailingReport, setEmailingReport] = useState(false)
-  const [emailSent, setEmailSent] = useState(false)
-  const [feedbackAction, setFeedbackAction] = useState<'download' | 'email' | null>(null)
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false)
+  const [feedbackRating, setFeedbackRating] = useState(0)
+  const [feedbackHover, setFeedbackHover] = useState(0)
+  const [feedbackComment, setFeedbackComment] = useState('')
+  const [orgInterest, setOrgInterest] = useState<'yes' | 'no' | 'maybe' | ''>('')
   const [isLocked, setIsLocked] = useState(false)
   const reportRef = useRef<HTMLDivElement>(null)
 
@@ -343,6 +473,8 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
 
   const questions = [
     ...(ROLE_QUESTIONS[role] || []),
+    ...(TOOLS_QUESTION[role] ? [TOOLS_QUESTION[role]] : []),
+    ...(AI_ACCESS_QUESTION[role] ? [AI_ACCESS_QUESTION[role]] : []),
     ...COMMON_QUESTIONS,
   ]
   const totalQuestions = questions.length
@@ -476,8 +608,25 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
 
   function handleAnswerSelect(option: string) {
     const q = questions[currentQ]
-    const newAnswers = { ...answers, [q.id]: option }
+    const customText = customInputs[q.id]
+    const finalAnswer = customText ? `${option} | Custom: ${customText}` : option
+    const newAnswers = { ...answers, [q.id]: finalAnswer }
     setAnswers(newAnswers)
+    setShowCustomInput(null)
+    if (currentQ < totalQuestions - 1) {
+      setTimeout(() => setCurrentQ(currentQ + 1), 250)
+    } else {
+      setStep('open-ended')
+    }
+  }
+
+  function handleCustomSubmit() {
+    const q = questions[currentQ]
+    const customText = customInputs[q.id]
+    if (!customText?.trim()) return
+    const newAnswers = { ...answers, [q.id]: `Custom: ${customText.trim()}` }
+    setAnswers(newAnswers)
+    setShowCustomInput(null)
     if (currentQ < totalQuestions - 1) {
       setTimeout(() => setCurrentQ(currentQ + 1), 250)
     } else {
@@ -512,67 +661,39 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
     }
   }
 
-  async function submitFeedback(rating: number, comment: string) {
+  async function handleFeedbackAndEmail() {
+    if (feedbackRating === 0 || !orgInterest) return
+    setEmailingReport(true)
+
+    // 1. Save feedback with org interest
     fetch('/api/ai-readiness/feedback', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, name, rating, comment, reportType: 'blueprint', action: feedbackAction }),
+      body: JSON.stringify({ email, name, rating: feedbackRating, comment: feedbackComment, reportType: 'blueprint', action: 'feedback', orgInterest }),
     }).catch(() => {})
-  }
 
-  async function handleFeedbackSubmit(rating: number, comment: string) {
-    const action = feedbackAction
-    setFeedbackAction(null)
-    submitFeedback(rating, comment)
-    if (action === 'download') doDownloadReport()
-    if (action === 'email') doEmailReport()
-  }
-
-  async function doDownloadReport() {
-    if (!report) return
-    setDownloadingPdf(true)
-    try {
-      const { generateDeepDivePDF, downloadPDF } = await import('@/lib/generate-report-pdf')
-      const mockPresentation = {
-        score: report.score,
-        headline: report.headline,
-        slides: (report.slides || []).map((s, i) => ({
-          id: i, title: s.title, type: 'custom', narration: s.narration || '', content: { text: s.narration || '' },
-        })),
-      }
-      const doc = generateDeepDivePDF(mockPresentation, name, email)
-      downloadPDF(doc, `AI-Blueprint-${name || 'Report'}.pdf`)
-      fetch('/api/ai-readiness/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, name, reportType: 'blueprint', action: 'pdf-download' }) }).catch(() => {})
-    } catch (err) {
-      console.error('PDF generation error:', err)
-    }
-    setDownloadingPdf(false)
-  }
-
-  async function doEmailReport() {
-    if (!report) return
-    setEmailingReport(true)
+    // 2. Generate PDF and email it
     try {
       const { generateDeepDivePDF, pdfToBase64 } = await import('@/lib/generate-report-pdf')
       const mockPresentation = {
-        score: report.score,
-        headline: report.headline,
-        slides: (report.slides || []).map((s, i) => ({
+        score: report!.score,
+        headline: report!.headline,
+        slides: (report!.slides || []).map((s, i) => ({
           id: i, title: s.title, type: 'custom', narration: s.narration || '', content: { text: s.narration || '' },
         })),
       }
       const doc = generateDeepDivePDF(mockPresentation, name, email)
       const pdfBase64 = pdfToBase64(doc)
-      const res = await fetch('/api/ai-readiness/email-report', {
+      await fetch('/api/ai-readiness/email-report', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name, pdfBase64, reportType: 'blueprint' }),
+        body: JSON.stringify({ email, name, pdfBase64, reportType: 'blueprint', orgInterest, role, category, subcategory }),
       })
-      if (!res.ok) throw new Error('Failed to send email')
-      setEmailSent(true)
     } catch (err) {
       console.error('Email report error:', err)
     }
+
+    setFeedbackSubmitted(true)
     setEmailingReport(false)
   }
 
@@ -585,12 +706,17 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
     setSubcategory('')
     setCurrentQ(0)
     setAnswers({})
+    setCustomInputs({})
+    setShowCustomInput(null)
     setOpenEnded('')
     setReport(null)
     setError('')
     setAgentStep(0)
     setOtpTimer(0)
-    setEmailSent(false)
+    setFeedbackSubmitted(false)
+    setFeedbackRating(0)
+    setFeedbackComment('')
+    setOrgInterest('')
   }
 
   // ─── Recharts data transforms ─────────────────────────────
@@ -739,7 +865,7 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
     )
   }
 
-  // ─── QUESTIONS ───────────────────────────────────────────
+  // ─── QUESTIONS ───────────────���───────────────────────────
   if (step === 'questions' && questions.length > 0) {
     const q = questions[currentQ]
     return (
@@ -768,8 +894,38 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
               )
             })}
           </div>
+
+          {/* Custom text input option */}
+          <div className="mt-4 border-t border-gray-100 pt-4">
+            {showCustomInput === q.id ? (
+              <div className="space-y-2.5">
+                <textarea
+                  value={customInputs[q.id] || ''}
+                  onChange={(e) => setCustomInputs({ ...customInputs, [q.id]: e.target.value })}
+                  placeholder="Type your own answer here..."
+                  rows={2}
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-900 resize-none focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400"
+                  autoFocus
+                />
+                <div className="flex items-center gap-2">
+                  <button onClick={handleCustomSubmit} disabled={!customInputs[q.id]?.trim()} className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-40">
+                    Submit
+                  </button>
+                  <button onClick={() => setShowCustomInput(null)} className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700 transition-colors">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button onClick={() => setShowCustomInput(q.id)} className="text-sm text-gray-400 hover:text-primary-600 transition-colors flex items-center gap-1.5">
+                <span className="w-4 h-4 rounded-full border border-gray-300 flex items-center justify-center text-[10px] font-bold">+</span>
+                None of these fit? Add your own response
+              </button>
+            )}
+          </div>
+
           {currentQ > 0 && (
-            <button onClick={() => setCurrentQ(currentQ - 1)} className="flex items-center gap-1 mt-5 text-sm text-gray-500 hover:text-gray-700 transition-colors">
+            <button onClick={() => setCurrentQ(currentQ - 1)} className="flex items-center gap-1 mt-4 text-sm text-gray-500 hover:text-gray-700 transition-colors">
               <ChevronLeft className="w-4 h-4" /> Back
             </button>
           )}
@@ -883,10 +1039,7 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
     function goPrev() { if (currentSlide > 0) setCurrentSlide(s => s - 1) }
 
     return (
-      <div className="max-w-3xl mx-auto" ref={reportRef}>
-        {feedbackAction && (
-          <FeedbackModal onSubmit={handleFeedbackSubmit} onClose={() => setFeedbackAction(null)} />
-        )}
+      <div className="max-w-5xl mx-auto" ref={reportRef}>
         <audio ref={audioRef} onEnded={handleAudioEnd} />
 
         {/* Agent badges */}
@@ -910,11 +1063,11 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
 
           {/* Progress bar */}
           <div className="h-1 bg-gray-100">
-            <div className="h-full bg-gradient-to-r from-primary-500 to-accent-500 transition-all duration-500" style={{ width: `${progressPct}%` }} />
+            <div className="h-full bg-gradient-to-r from-primary-500 to-accent-500 transition-all duration-700 ease-in-out" style={{ width: `${progressPct}%` }} />
           </div>
 
           {/* Slide content */}
-          <div className="min-h-[420px] p-8 flex flex-col justify-center animate-fade-in" key={currentSlide}>
+          <div className="min-h-[480px] p-8 sm:p-10 flex flex-col justify-center transition-opacity duration-500 ease-in-out" key={currentSlide} style={{ animation: 'slideIn 0.5s ease-out' }}>
             {slide?.type === 'score' && (
               <div className="text-center">
                 <p className="text-sm text-gray-500 mb-3">Your AI Readiness Score</p>
@@ -930,48 +1083,53 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
             )}
 
             {slide?.type === 'dimensions' && (
-              <div className="max-w-xl mx-auto w-full">
+              <div className="w-full">
                 <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">Readiness Dimensions</h3>
-                <div className="h-72">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="75%">
-                      <PolarGrid stroke="#e2e8f0" />
-                      <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 11, fill: '#64748b' }} />
-                      <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 10, fill: '#94a3b8' }} />
-                      <Radar name="Score" dataKey="score" stroke={RADAR_COLORS[1]} fill={RADAR_COLORS[0]} fillOpacity={0.3} strokeWidth={2} />
-                    </RadarChart>
-                  </ResponsiveContainer>
-                </div>
-                {slide.content.insights && (
-                  <div className="mt-4 space-y-1.5">
-                    {Object.entries(slide.content.insights as Record<string, string>).slice(0, 3).map(([key, insight]) => (
-                      <p key={key} className="text-xs text-gray-500"><span className="font-medium text-gray-700">{DIMENSION_LABELS[key] || key}:</span> {insight}</p>
-                    ))}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+                  <div className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
+                        <PolarGrid stroke="#e2e8f0" />
+                        <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 12, fill: '#475569' }} />
+                        <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 10, fill: '#94a3b8' }} />
+                        <Radar name="Score" dataKey="score" stroke={RADAR_COLORS[1]} fill={RADAR_COLORS[0]} fillOpacity={0.3} strokeWidth={2} />
+                      </RadarChart>
+                    </ResponsiveContainer>
                   </div>
-                )}
+                  {slide.content.insights && (
+                    <div className="space-y-3">
+                      {Object.entries(slide.content.insights as Record<string, string>).map(([key, insight]) => (
+                        <div key={key} className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
+                          <span className="text-xs font-bold text-primary-600 min-w-[90px]">{DIMENSION_LABELS[key] || key}</span>
+                          <span className="text-sm text-gray-600 text-justify">{insight}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
             {slide?.type === 'skillgap' && (
-              <div className="max-w-xl mx-auto w-full">
+              <div className="w-full">
                 <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">Skill Gap Analysis</h3>
-                <div className="h-64">
+                <div style={{ height: `${Math.max(320, (skillGapData.length || 6) * 48)}px` }}>
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={skillGapData} layout="vertical" margin={{ left: 10, right: 20 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                      <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 10, fill: '#94a3b8' }} />
-                      <YAxis dataKey="skill" type="category" width={90} tick={{ fontSize: 10, fill: '#64748b' }} />
-                      <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '11px' }} />
-                      <Legend wrapperStyle={{ fontSize: '11px' }} />
-                      <Bar dataKey="current" name="Current" fill={GAP_COLORS.current} radius={[0, 4, 4, 0]} barSize={12} />
-                      <Bar dataKey="required" name="Required" fill={GAP_COLORS.required} radius={[0, 4, 4, 0]} barSize={12} />
+                    <BarChart data={skillGapData} layout="vertical" margin={{ left: 20, right: 30, top: 10, bottom: 10 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
+                      <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 12, fill: '#64748b' }} tickCount={6} />
+                      <YAxis dataKey="skill" type="category" width={130} tick={{ fontSize: 12, fill: '#374151' }} interval={0} />
+                      <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '12px' }} />
+                      <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '12px' }} />
+                      <Bar dataKey="current" name="Your Level" fill={GAP_COLORS.current} radius={[0, 6, 6, 0]} barSize={16} />
+                      <Bar dataKey="required" name="Required" fill={GAP_COLORS.required} radius={[0, 6, 6, 0]} barSize={16} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
                 {slide.content.strengths?.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-2 justify-center">
+                  <div className="mt-4 flex flex-wrap gap-2 justify-center">
                     {slide.content.strengths.map((s: string, i: number) => (
-                      <span key={i} className="px-2.5 py-1 bg-green-50 text-green-700 rounded-full text-xs font-medium">{s}</span>
+                      <span key={i} className="px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-xs font-medium border border-green-100">{s}</span>
                     ))}
                   </div>
                 )}
@@ -979,25 +1137,25 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
             )}
 
             {slide?.type === 'industry' && (
-              <div className="max-w-xl mx-auto">
+              <div className="max-w-3xl mx-auto">
                 <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-4 mx-auto">
                   <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" /></svg>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3 text-center">Industry Context</h3>
-                <p className="text-gray-700 text-base leading-relaxed text-center">{slide.content.industryContext}</p>
-                <p className="text-xs text-gray-400 mt-4 text-center italic">Source: Live web research via Bing Search</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">Industry Context</h3>
+                <p className="text-gray-700 text-base leading-relaxed text-justify">{slide.content.industryContext}</p>
+                <p className="text-xs text-gray-400 mt-5 text-center italic">Source: Live web research via Bing Search</p>
               </div>
             )}
 
             {slide?.type === 'tools' && (
-              <div className="max-w-xl mx-auto w-full">
-                <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">Recommended AI Tools</h3>
-                <div className="space-y-3 max-h-[320px] overflow-y-auto pr-2">
+              <div className="w-full">
+                <h3 className="text-xl font-bold text-gray-900 mb-5 text-center">Recommended AI Tools</h3>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 max-h-[380px] overflow-y-auto pr-1">
                   {(slide.content.tools || []).map((tool: any, i: number) => (
-                    <div key={i} className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
+                    <div key={i} className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100 hover:border-primary-200 transition-colors">
                       <div className="w-8 h-8 rounded-lg bg-primary-100 text-primary-600 flex items-center justify-center flex-shrink-0 mt-0.5 text-sm font-bold">{i + 1}</div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-semibold text-gray-900 text-sm">{tool.name}</span>
                           {tool.url && (
                             <a href={tool.url} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700"><ExternalLink className="w-3.5 h-3.5" /></a>
@@ -1005,8 +1163,8 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
                           <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${tool.difficulty === 'Easy' ? 'bg-green-50 text-green-700' : tool.difficulty === 'Medium' ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-700'}`}>{tool.difficulty}</span>
                           {tool.cost && <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-700">{tool.cost}</span>}
                         </div>
-                        <p className="text-xs text-gray-600 mt-0.5">{tool.purpose}</p>
-                        <p className="text-xs text-primary-600 font-medium mt-0.5">Saves ~{tool.timeSaved}</p>
+                        <p className="text-xs text-gray-600 mt-1">{tool.purpose}</p>
+                        <p className="text-xs text-primary-600 font-medium mt-1">Saves ~{tool.timeSaved}</p>
                       </div>
                     </div>
                   ))}
@@ -1015,21 +1173,24 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
             )}
 
             {slide?.type === 'roadmap' && (
-              <div className="max-w-xl mx-auto w-full">
-                <h3 className="text-xl font-bold text-gray-900 mb-5 text-center">90-Day Implementation Roadmap</h3>
-                <div className="space-y-4">
+              <div className="w-full">
+                <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">90-Day Implementation Roadmap</h3>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
                   {['phase1', 'phase2', 'phase3'].map((phase, pi) => {
                     const p = slide.content.roadmap?.[phase]
                     if (!p) return null
-                    const colors = ['from-blue-500 to-blue-400', 'from-primary-500 to-primary-400', 'from-green-500 to-green-400']
+                    const bgColors = ['bg-blue-50 border-blue-100', 'bg-primary-50 border-primary-100', 'bg-green-50 border-green-100']
+                    const dotColors = ['bg-blue-500', 'bg-primary-500', 'bg-green-500']
                     return (
-                      <div key={phase} className="relative pl-6 border-l-2 border-gray-200">
-                        <div className={`absolute left-[-5px] top-1 w-2.5 h-2.5 rounded-full bg-gradient-to-r ${colors[pi]}`} />
-                        <h4 className="text-sm font-bold text-gray-900">{p.title}</h4>
-                        {p.goal && <p className="text-xs text-primary-600 font-medium mt-0.5">{p.goal}</p>}
-                        <ul className="mt-2 space-y-1">
+                      <div key={phase} className={`rounded-xl p-5 border ${bgColors[pi]}`}>
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className={`w-3 h-3 rounded-full ${dotColors[pi]}`} />
+                          <h4 className="text-sm font-bold text-gray-900">{p.title}</h4>
+                        </div>
+                        {p.goal && <p className="text-xs text-primary-700 font-medium mb-3">{p.goal}</p>}
+                        <ul className="space-y-2">
                           {p.milestones?.map((m: string, mi: number) => (
-                            <li key={mi} className="text-xs text-gray-600 flex items-start gap-2"><Check className="w-3 h-3 text-green-500 mt-0.5 flex-shrink-0" />{m}</li>
+                            <li key={mi} className="text-xs text-gray-700 flex items-start gap-2"><Check className="w-3.5 h-3.5 text-green-600 mt-0.5 flex-shrink-0" /><span className="text-justify">{m}</span></li>
                           ))}
                         </ul>
                       </div>
@@ -1040,43 +1201,43 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
             )}
 
             {slide?.type === 'roi' && (
-              <div className="max-w-xl mx-auto w-full text-center">
+              <div className="w-full text-center">
                 <h3 className="text-xl font-bold text-gray-900 mb-6">ROI Projection</h3>
-                <div className="grid grid-cols-2 gap-4 mb-5">
-                  <div className="bg-green-50 rounded-xl p-4">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                  <div className="bg-green-50 rounded-xl p-5 border border-green-100">
                     <div className="text-3xl font-black text-green-600">{slide.content.roi?.hoursSavedPerWeek || 0}h</div>
                     <div className="text-xs text-gray-600 mt-1">Hours Saved / Week</div>
                   </div>
-                  <div className="bg-green-50 rounded-xl p-4">
+                  <div className="bg-green-50 rounded-xl p-5 border border-green-100">
                     <div className="text-3xl font-black text-green-600">{slide.content.roi?.productivityIncrease || '0%'}</div>
                     <div className="text-xs text-gray-600 mt-1">Productivity Boost</div>
                   </div>
-                  <div className="bg-green-50 rounded-xl p-4">
+                  <div className="bg-green-50 rounded-xl p-5 border border-green-100">
                     <div className="text-3xl font-black text-green-600">{slide.content.roi?.annualValue || '$0'}</div>
                     <div className="text-xs text-gray-600 mt-1">Annual Value</div>
                   </div>
-                  <div className="bg-green-50 rounded-xl p-4">
+                  <div className="bg-green-50 rounded-xl p-5 border border-green-100">
                     <div className="text-3xl font-black text-green-600">{slide.content.roi?.breakEvenWeeks || 0}w</div>
                     <div className="text-xs text-gray-600 mt-1">Break Even</div>
                   </div>
                 </div>
                 {slide.content.roi?.explanation && (
-                  <p className="text-xs text-gray-500 italic">{slide.content.roi.explanation}</p>
+                  <p className="text-sm text-gray-500 italic text-justify max-w-2xl mx-auto">{slide.content.roi.explanation}</p>
                 )}
               </div>
             )}
 
             {slide?.type === 'risks' && (
-              <div className="max-w-xl mx-auto w-full">
-                <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">Risks of Inaction</h3>
-                <div className="space-y-3">
+              <div className="w-full">
+                <h3 className="text-xl font-bold text-gray-900 mb-5 text-center">Risks of Inaction</h3>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                   {(slide.content.risks || []).map((risk: any, i: number) => (
-                    <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-gray-50">
-                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-bold flex-shrink-0 mt-0.5 ${risk.severity === 'High' ? 'bg-red-100 text-red-700' : risk.severity === 'Medium' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>{risk.severity}</span>
+                    <div key={i} className="flex items-start gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
+                      <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-bold flex-shrink-0 ${risk.severity === 'High' ? 'bg-red-100 text-red-700' : risk.severity === 'Medium' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>{risk.severity}</span>
                       <div>
-                        <div className="text-sm font-medium text-gray-900">{risk.type}</div>
-                        <div className="text-xs text-gray-600 mt-0.5">{risk.description}</div>
-                        {risk.mitigation && <div className="text-xs text-green-700 mt-1 font-medium">→ {risk.mitigation}</div>}
+                        <div className="text-sm font-semibold text-gray-900">{risk.type}</div>
+                        <div className="text-xs text-gray-600 mt-1 text-justify">{risk.description}</div>
+                        {risk.mitigation && <div className="text-xs text-green-700 mt-2 font-medium">→ {risk.mitigation}</div>}
                       </div>
                     </div>
                   ))}
@@ -1085,12 +1246,12 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
             )}
 
             {slide?.type === 'references' && (
-              <div className="max-w-xl mx-auto w-full">
-                <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">Sources & References</h3>
-                <p className="text-xs text-gray-500 text-center mb-4">All recommendations backed by live research. Click to explore.</p>
-                <div className="space-y-2 max-h-[280px] overflow-y-auto pr-2">
+              <div className="w-full">
+                <h3 className="text-xl font-bold text-gray-900 mb-3 text-center">Sources & References</h3>
+                <p className="text-sm text-gray-500 text-center mb-5">All recommendations backed by live Bing Search research. Click to explore.</p>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 max-h-[320px] overflow-y-auto pr-1">
                   {(slide.content.references || []).map((ref: any, i: number) => (
-                    <a key={i} href={ref.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-primary-50 rounded-xl transition-colors group">
+                    <a key={i} href={ref.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-primary-50 rounded-xl border border-gray-100 hover:border-primary-200 transition-all group">
                       <span className="w-6 h-6 rounded-lg bg-primary-100 text-primary-600 flex items-center justify-center flex-shrink-0 text-xs font-bold">{i + 1}</span>
                       <span className="flex-1 text-sm text-gray-700 group-hover:text-primary-700 truncate">{ref.title}</span>
                       <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-primary-600 flex-shrink-0" />
@@ -1105,8 +1266,8 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
           </div>
 
           {/* Narration text */}
-          <div className="px-8 pb-4">
-            <p className="text-xs text-gray-400 italic text-center leading-relaxed">&ldquo;{slide?.narration}&rdquo;</p>
+          <div className="px-8 sm:px-10 pb-5 border-t border-gray-50 pt-4 bg-gradient-to-b from-gray-50/50 to-transparent">
+            <p className="text-sm text-gray-600 italic text-justify leading-relaxed">&ldquo;{slide?.narration}&rdquo;</p>
           </div>
 
           {/* Controls */}
@@ -1128,30 +1289,94 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
           </div>
         </div>
 
-        {/* Download & Email (below player) */}
-        <div className="mt-6 bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-          <h3 className="font-bold text-gray-900 mb-4 text-center">Get your blueprint</h3>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <button onClick={() => setFeedbackAction('download')} disabled={downloadingPdf} className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl transition-all disabled:opacity-50">
-              <Download className="w-4 h-4" />
-              {downloadingPdf ? 'Generating PDF...' : 'Download Report'}
-            </button>
-            <button onClick={() => setFeedbackAction('email')} disabled={emailingReport || emailSent} className={`flex-1 flex items-center justify-center gap-2 px-5 py-3 font-semibold rounded-xl transition-all disabled:opacity-50 ${emailSent ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-primary-600 hover:bg-primary-700 text-white'}`}>
-              <Send className="w-4 h-4" />
-              {emailSent ? 'Sent to your email!' : emailingReport ? 'Sending...' : 'Send on Email'}
-            </button>
-          </div>
-        </div>
+        {/* Feedback + Report Delivery (compulsory) */}
+        <div className="mt-6 bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
+          {!feedbackSubmitted ? (
+            <>
+              <h3 className="font-bold text-gray-900 mb-1 text-center text-lg">Get your PDF report</h3>
+              <p className="text-sm text-gray-500 text-center mb-6">Share your feedback and we&apos;ll email your complete blueprint as a PDF.</p>
 
-        {/* CTA + Reset */}
-        <div className="text-center space-y-4 py-6">
-          <p className="text-gray-600 text-sm">Want to walk through your blueprint with an AI expert?</p>
-          <a href="/resources/calendar" className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-colors">
-            Book a free 15-min call <ArrowRight className="w-4 h-4" />
-          </a>
-          <div>
-            <button onClick={handleReset} className="text-sm text-gray-400 hover:text-gray-600 transition-colors">Retake assessment</button>
-          </div>
+              {/* Star rating */}
+              <div className="flex items-center justify-center gap-1 mb-5">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    onClick={() => setFeedbackRating(star)}
+                    onMouseEnter={() => setFeedbackHover(star)}
+                    onMouseLeave={() => setFeedbackHover(0)}
+                    className="p-1 transition-transform hover:scale-110"
+                  >
+                    <svg className={`w-8 h-8 transition-colors ${star <= (feedbackHover || feedbackRating) ? 'text-amber-400 fill-amber-400' : 'text-gray-200 fill-gray-200'}`} viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  </button>
+                ))}
+                {feedbackRating > 0 && (
+                  <span className="ml-2 text-sm text-gray-500">
+                    {['', 'Needs work', 'Fair', 'Good', 'Great', 'Excellent'][feedbackRating]}
+                  </span>
+                )}
+              </div>
+
+              {/* Comment */}
+              <textarea
+                placeholder="Any feedback or suggestions? (optional)"
+                value={feedbackComment}
+                onChange={(e) => setFeedbackComment(e.target.value)}
+                rows={2}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 resize-none focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400 mb-5"
+              />
+
+              {/* Org interest consent */}
+              <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-5 border border-primary-100 mb-5">
+                <p className="text-sm font-semibold text-gray-900 mb-1">Interested in AI readiness for your team or organization?</p>
+                <p className="text-xs text-gray-500 mb-4">We can build a custom assessment on your organization&apos;s data, run AI training workshops, or set up AI tools for your team.</p>
+                <div className="flex flex-wrap gap-2">
+                  {([
+                    { val: 'yes' as const, label: 'Yes, let\'s explore this' },
+                    { val: 'maybe' as const, label: 'Maybe later' },
+                    { val: 'no' as const, label: 'Not right now' },
+                  ]).map(opt => (
+                    <button
+                      key={opt.val}
+                      onClick={() => setOrgInterest(opt.val)}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${orgInterest === opt.val ? 'bg-primary-600 text-white shadow-sm' : 'bg-white border border-gray-200 text-gray-700 hover:border-primary-300'}`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Submit */}
+              <button
+                onClick={handleFeedbackAndEmail}
+                disabled={feedbackRating === 0 || !orgInterest || emailingReport}
+                className="w-full py-3.5 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-40 flex items-center justify-center gap-2"
+              >
+                <Send className="w-4 h-4" />
+                {emailingReport ? 'Sending your report...' : 'Submit & Send Report to Email'}
+              </button>
+              {feedbackRating === 0 && <p className="text-xs text-gray-400 text-center mt-2">Please rate your experience to continue</p>}
+            </>
+          ) : (
+            <div className="text-center py-4">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-green-50 flex items-center justify-center">
+                <Check className="w-7 h-7 text-green-600" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">Report sent to your email!</h3>
+              <p className="text-sm text-gray-500 mb-6">Check {email} for your AI Readiness Blueprint PDF.</p>
+              {orgInterest === 'yes' && (
+                <div className="bg-primary-50 border border-primary-100 rounded-xl p-4 mb-5">
+                  <p className="text-sm text-primary-800">We&apos;ll reach out shortly about building an AI readiness assessment for your organization. Looking forward to it!</p>
+                </div>
+              )}
+              <a href="/resources/calendar" className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-colors">
+                Book a free 15-min call <ArrowRight className="w-4 h-4" />
+              </a>
+              <div className="mt-4">
+                <button onClick={handleReset} className="text-sm text-gray-400 hover:text-gray-600 transition-colors">Retake assessment</button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     )
