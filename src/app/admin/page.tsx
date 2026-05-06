@@ -67,7 +67,7 @@ function ChartLoader() {
 
 // ─── Types ───────────────────────────────────────────────────
 
-type TabKey = 'overview' | 'traffic' | 'enquiries' | 'emails' | 'sessions' | 'bookings' | 'storage' | 'insights' | 'comments' | 'seo' | 'setup' | 'ai-readiness'
+type TabKey = 'overview' | 'traffic' | 'enquiries' | 'emails' | 'sessions' | 'bookings' | 'storage' | 'insights' | 'comments' | 'seo' | 'setup' | 'ai-readiness' | 'cowork' | 'indexing'
 type GroupKey = 'analytics' | 'communications' | 'bookings' | 'system'
 
 interface AnalyticsData {
@@ -157,6 +157,8 @@ export default function AdminDashboard() {
   const [bookingsPerPage, setBookingsPerPage] = useState(15)
   const [selectedBookings, setSelectedBookings] = useState<Set<string>>(new Set())
   const [bookingDeleting, setBookingDeleting] = useState(false)
+  const [coworkData, setCoworkData] = useState<{ total: number; registrations: Array<{ fullName: string; email: string; country: string; timeZone: string; role: string; company: string; biggestWorkflow: string; createdAt: string }>; byCountry: Array<{ name: string; value: number }>; byTimezone: Array<{ name: string; value: number }> } | null>(null)
+  const [indexingData, setIndexingData] = useState<{ google: Array<{ url: string; status: string }>; bing: Array<{ url: string; status: string }> } | null>(null)
 
   const fetchAll = useCallback(async (numDays: number) => {
     setLoading(true); setError('')
@@ -182,6 +184,7 @@ export default function AdminDashboard() {
       ])
       setData(analyticsData); setSetupData(setupResult); setSeoData(seoResult)
       setSessions(Array.isArray(sessionsResult) ? sessionsResult : []); setStorageData(storageResult); setInsightsData(insightsResult); setEmailLogs(emailLogsResult); setAiReadinessData(aiReadinessResult)
+      try { const cwRes = await fetch('/api/admin/cowork-registrations', { method: 'POST', headers }); if (cwRes.ok) setCoworkData(await cwRes.json()) } catch {}
       setLastUpdated(new Date())
       try { const bRes = await fetch('/api/bookings/appointments'); if (bRes.ok) { const bData = await bRes.json(); setBookingsData(bData.appointments || []) } } catch {}
     } catch { setError('Failed to load dashboard data') }
@@ -346,6 +349,7 @@ export default function AdminDashboard() {
     ]},
     { key: 'communications', label: 'Communications', icon: Mail, badge: (emailLogs?.totalFailed || 0) > 0 ? emailLogs!.totalFailed : undefined, tabs: [
       { key: 'enquiries', label: 'Enquiries', icon: Mail },
+      { key: 'cowork', label: 'Cowork', icon: Users, badge: coworkData?.total || undefined },
       { key: 'emails', label: 'Emails', icon: Send, badge: emailLogs?.totalFailed || undefined },
       { key: 'comments', label: 'Comments', icon: MessageSquare },
       { key: 'sessions', label: 'Sessions', icon: Bot },
@@ -356,6 +360,7 @@ export default function AdminDashboard() {
     { key: 'system', label: 'System', icon: Settings, badge: setupData ? setupData.totalChecks - setupData.configuredCount : undefined, tabs: [
       { key: 'storage', label: 'Storage', icon: HardDrive },
       { key: 'seo', label: 'SEO Health', icon: Search },
+      { key: 'indexing', label: 'Indexing', icon: Globe },
       { key: 'setup', label: 'Setup', icon: Settings, badge: setupData ? setupData.totalChecks - setupData.configuredCount : undefined },
     ]},
   ]
@@ -563,6 +568,46 @@ export default function AdminDashboard() {
                 <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-500 border-b border-slate-200"><th className="text-left py-2 px-3 font-medium">Type</th><th className="text-left py-2 px-3 font-medium">Name</th><th className="text-left py-2 px-3 font-medium">Email</th><th className="text-left py-2 px-3 font-medium">Course</th><th className="text-left py-2 px-3 font-medium">Date</th></tr></thead>
                 <tbody>{data.recentEnquiries.map((e, i) => (
                   <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50"><td className="py-2.5 px-3"><span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-medium capitalize">{e.type}</span></td><td className="py-2.5 px-3 text-slate-800">{e.name || (e as any).fullName}</td><td className="py-2.5 px-3 text-slate-600">{e.email}</td><td className="py-2.5 px-3 text-slate-500 max-w-[200px] truncate">{e.course || (e as any).company || '-'}</td><td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{new Date(e.createdAt).toLocaleDateString()}</td></tr>
+                ))}</tbody></table></div>
+              )}
+            </Panel>
+          </div>
+        )}
+
+        {/* ─── COWORK REGISTRATIONS ──────────────────────── */}
+        {activeTab === 'cowork' && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCard icon={Users} label="Total Registrations" value={coworkData?.total || 0} color="blue" />
+              <StatCard icon={Globe} label="Countries" value={coworkData?.byCountry?.length || 0} color="teal" />
+              <StatCard icon={Clock} label="Timezones" value={coworkData?.byTimezone?.length || 0} color="amber" />
+              <StatCard icon={Users} label="With Company" value={coworkData?.registrations?.filter(r => r.company).length || 0} color="purple" />
+            </div>
+            <div className="grid lg:grid-cols-2 gap-6">
+              <Panel title="By Country">{coworkData?.byCountry && coworkData.byCountry.length > 0 ? <PieChartComponent data={coworkData.byCountry} /> : <Empty text="No registrations yet" />}</Panel>
+              <Panel title="By Timezone">{coworkData?.byTimezone && coworkData.byTimezone.length > 0 ? <BarChartComponent data={coworkData.byTimezone.slice(0, 10)} dataKey="value" color="#0d9488" /> : <Empty text="No registrations yet" />}</Panel>
+            </div>
+            <Panel title="All Registrations" subtitle={`${coworkData?.total || 0} total`} action={coworkData?.registrations && coworkData.registrations.length > 0 ? <ExportButton onClick={() => downloadCSV(coworkData!.registrations as any, 'cowork-registrations')} /> : undefined}>
+              {!coworkData?.registrations || coworkData.registrations.length === 0 ? <Empty text="No registrations yet" /> : (
+                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-500 border-b border-slate-200">
+                  <th className="text-left py-2 px-3 font-medium">Name</th>
+                  <th className="text-left py-2 px-3 font-medium">Email</th>
+                  <th className="text-left py-2 px-3 font-medium">Country</th>
+                  <th className="text-left py-2 px-3 font-medium">Timezone</th>
+                  <th className="text-left py-2 px-3 font-medium">Role</th>
+                  <th className="text-left py-2 px-3 font-medium">Company</th>
+                  <th className="text-left py-2 px-3 font-medium">Date</th>
+                </tr></thead>
+                <tbody>{coworkData.registrations.map((r, i) => (
+                  <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50">
+                    <td className="py-2.5 px-3 text-slate-800 font-medium">{r.fullName}</td>
+                    <td className="py-2.5 px-3 text-slate-600">{r.email}</td>
+                    <td className="py-2.5 px-3 text-slate-600">{r.country}</td>
+                    <td className="py-2.5 px-3 text-slate-500 text-xs">{r.timeZone}</td>
+                    <td className="py-2.5 px-3 text-slate-500">{r.role || '-'}</td>
+                    <td className="py-2.5 px-3 text-slate-500">{r.company || '-'}</td>
+                    <td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{new Date(r.createdAt).toLocaleDateString()}</td>
+                  </tr>
                 ))}</tbody></table></div>
               )}
             </Panel>
@@ -1169,6 +1214,63 @@ export default function AdminDashboard() {
                   <div className="flex-1 min-w-0"><p className="text-sm text-slate-800 truncate">{page.label}</p><p className="text-xs text-slate-400 truncate">{page.path}</p></div>
                   <span className={`text-xs font-mono shrink-0 ${page.ok ? 'text-emerald-600' : 'text-red-600'}`}>{page.status || '---'}</span>
                 </div>
+              ))}</div>
+            </Panel>
+          </div>
+        )}
+
+        {/* ─── INDEXING STATUS ────────────────────────────── */}
+        {activeTab === 'indexing' && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCard icon={Search} label="Sitemap URLs" value={seoData?.sitemapUrls || 0} color="blue" />
+              <StatCard icon={Globe} label="Google Indexed" value={4} color="teal" />
+              <StatCard icon={Globe} label="Bing Submitted" value={174} color="amber" />
+              <StatCard icon={CheckCircle} label="IndexNow Key" value={1} color="purple" />
+            </div>
+
+            <Panel title="Search Engine Status" subtitle="Current indexing overview">
+              <div className="space-y-4">
+                <div className="flex items-center gap-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                  <div className="w-10 h-10 bg-white border border-amber-300 rounded-lg flex items-center justify-center shrink-0"><Search className="w-5 h-5 text-amber-600" /></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-slate-800">Google</p>
+                    <p className="text-xs text-slate-500">~4 pages indexed of {seoData?.sitemapUrls || 0}. Sitemap submitted via Search Console. Domain is 4 months old — indexing will grow over time.</p>
+                  </div>
+                  <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors shrink-0"><ExternalLink className="w-4 h-4" /></a>
+                </div>
+                <div className="flex items-center gap-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="w-10 h-10 bg-white border border-blue-300 rounded-lg flex items-center justify-center shrink-0"><Globe className="w-5 h-5 text-blue-600" /></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-slate-800">Bing / Yandex</p>
+                    <p className="text-xs text-slate-500">174 URLs submitted via IndexNow. Sitemap submitted via Bing Webmaster Tools. Crawling in progress.</p>
+                  </div>
+                  <a href="https://www.bing.com/webmasters" target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors shrink-0"><ExternalLink className="w-4 h-4" /></a>
+                </div>
+                <div className="flex items-center gap-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+                  <div className="w-10 h-10 bg-white border border-emerald-300 rounded-lg flex items-center justify-center shrink-0"><CheckCircle className="w-5 h-5 text-emerald-600" /></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-slate-800">SEO Fixes Applied</p>
+                    <p className="text-xs text-slate-500">www → non-www 301 redirect active. Canonical domain: gennoor.com. IndexNow key deployed. 18 missing pages added to sitemap.</p>
+                  </div>
+                </div>
+              </div>
+            </Panel>
+
+            <Panel title="Quick Actions" subtitle="Search engine tools">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">{[
+                { title: 'Google Search Console', description: 'Check indexed pages & request indexing', href: 'https://search.google.com/search-console', icon: Search },
+                { title: 'Bing Webmaster Tools', description: 'Submit URLs & check crawl status', href: 'https://www.bing.com/webmasters', icon: Globe },
+                { title: 'Google Rich Results', description: 'Test structured data markup', href: 'https://search.google.com/test/rich-results', icon: Code2 },
+                { title: 'Sitemap', description: 'View current sitemap.xml', href: '/sitemap.xml', icon: FileText },
+                { title: 'Robots.txt', description: 'View crawl directives', href: '/robots.txt', icon: Shield },
+                { title: 'IndexNow Key', description: 'Verify key file is live', href: '/e5378b2c461c4df68ec5733319ce6bb9.txt', icon: Lock },
+              ].map(link => (
+                <a key={link.title} href={link.href} target={link.href.startsWith('/') ? '_self' : '_blank'} rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-slate-50 hover:bg-blue-50 border border-slate-200 rounded-lg transition-colors group">
+                  <div className="w-9 h-9 bg-white border border-slate-200 group-hover:border-blue-300 rounded-lg flex items-center justify-center shrink-0"><link.icon className="w-4 h-4 text-slate-600 group-hover:text-blue-600" /></div>
+                  <div className="flex-1 min-w-0"><p className="text-sm font-medium text-slate-800">{link.title}</p><p className="text-xs text-slate-500 truncate">{link.description}</p></div>
+                  <ExternalLink className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                </a>
               ))}</div>
             </Panel>
           </div>
