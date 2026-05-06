@@ -10,5 +10,6 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     sitemap: 'https://gennoor.com/sitemap.xml',
+    host: 'https://gennoor.com',
   }
 }

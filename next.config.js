@@ -3,6 +3,16 @@ const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
   serverExternalPackages: ['applicationinsights', '@azure/data-tables', '@azure/storage-blob', 'pdf-parse', '@azure/identity', '@microsoft/microsoft-graph-client'],
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.gennoor.com' }],
+        destination: 'https://gennoor.com/:path*',
+        permanent: true,
+      },
+    ]
+  },
   images: {
     remotePatterns: [
       {
