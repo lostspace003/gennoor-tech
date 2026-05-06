@@ -42,12 +42,14 @@ const TIME_ZONES = [
 ]
 
 const moduleDescriptions: Record<string, string> = {
-  '01': 'Understand what Claude Cowork is, how it differs from chat-based AI, and the mental model for delegating real work to an autonomous coworker.',
-  '02': 'Learn to feed Cowork your messy files, docs, and data — and get polished summaries, comparisons, and briefs back in minutes.',
-  '03': 'Connect Cowork to your calendar, email, project tools, and CRM so it can pull context and push outputs where you actually work.',
-  '04': 'Set up recurring tasks, scheduled digests, and automated handoffs so Cowork runs workflows while you sleep.',
-  '05': 'Build 5+ real workflows live: Friday digest, 1:1 prep, vendor review, stakeholder report, and your own custom workflow.',
-  '06': 'Create your team\'s rollout playbook — governance guardrails, approval chains, and a phased adoption plan you can present to leadership.',
+  '01': 'Get introduced to Claude — what it is, how it thinks, and why it\'s different from every other AI tool you\'ve tried.',
+  '02': 'Understand the key differences between Claude Chat and Claude Cowork, and learn when to use each for maximum impact.',
+  '03': 'Watch how Cowork takes your messy files, docs, and data and turns them into polished summaries, comparisons, and briefs.',
+  '04': 'See how Cowork creates professional reports and presentations from raw data — deliverables in minutes, not hours.',
+  '05': 'Connect Cowork to Google Drive and other enterprise systems to pull context and push outputs where you actually work.',
+  '06': 'Use Claude Cowork directly inside Chrome — browse, research, and get work done without switching tabs.',
+  '07': 'Set up scheduled flows and automated tasks so Claude handles recurring work while you focus on what matters.',
+  '08': 'Your roadmap to AI-powered productivity — what to do next and how to keep building on what you\'ve learned.',
 }
 
 export default function ClaudeCoworkPage() {
@@ -186,7 +188,7 @@ export default function ClaudeCoworkPage() {
 
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black leading-[1.1] tracking-tight mb-6 max-w-3xl text-white">
                 Free Claude AI Workshop:<br />
-                Learn to Automate Your Work in 8 Hours
+                Learn to Automate Your Work in 4 Hours
               </h1>
 
               <p className="text-lg sm:text-xl text-[#FFD23F] font-bold mb-5 max-w-2xl">
@@ -199,15 +201,15 @@ export default function ClaudeCoworkPage() {
               </div>
 
               <p className="text-base sm:text-lg text-white/90 max-w-2xl mb-8 leading-relaxed">
-                A free 8-hour, hands-on workshop that turns scattered tools, files, and meetings into one autonomous coworker. In your own time zone.
+                A free 4-hour live workshop where you sit back, watch live demos, and see how Claude Cowork can transform the way you work.
               </p>
 
               <div className="flex flex-wrap gap-3 mb-10">
                 {[
                   { label: 'CLAUDE COWORK', color: '#FF6B35' },
-                  { label: '21 LIVE LABS', color: '#00A8A8' },
+                  { label: '8 LIVE TOPICS', color: '#00A8A8' },
                   { label: '1000 SEATS ONLY', color: '#7B5EA7' },
-                  { label: 'BUILD-IT-LIVE', color: '#06A77D' },
+                  { label: 'WATCH & LEARN', color: '#06A77D' },
                 ].map((pill) => (
                   <span
                     key={pill.label}
@@ -255,9 +257,9 @@ export default function ClaudeCoworkPage() {
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { number: '8 hrs', label: 'intensive' },
-            { number: '6 mods', label: 'real workflows' },
-            { number: '21 labs', label: 'hands-on' },
+            { number: '4 hrs', label: 'intensive' },
+            { number: '8 topics', label: 'covered live' },
+            { number: 'live', label: 'demos & walkthroughs' },
             { number: '5+ hrs/wk', label: 'you reclaim' },
           ].map((stat) => (
             <div key={stat.label} className="bg-white rounded-xl p-6 text-center shadow-md border border-gray-100">
@@ -298,11 +300,11 @@ export default function ClaudeCoworkPage() {
             </div>
             <ul className="p-6 space-y-4">
               {[
-                'A weekly Friday digest that writes itself',
-                'A 1:1 prep packet ready every morning',
-                'Vendor + contract reviews in 10 minutes',
-                'A board-ready stakeholder report on demand',
-                'Your team\'s personalized rollout playbook',
+                'Clear understanding of what Claude can do for you',
+                'Know exactly when to use Chat vs Cowork',
+                'See data turned into reports and presentations live',
+                'Learn how to connect Claude to Google Drive and more',
+                'A roadmap to start automating your own workflows',
               ].map((item) => (
                 <li key={item} className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#06A77D] mt-0.5 shrink-0" />
@@ -361,18 +363,20 @@ export default function ClaudeCoworkPage() {
         <div className="flex items-center gap-3 mb-8">
           <div className="w-1.5 h-8 bg-[#FFD23F] rounded-full" />
           <h2 className="text-xl sm:text-2xl font-black text-[#1B2845] uppercase tracking-wide">
-            What We Cover &mdash; One Intensive Day
+            What We Cover &mdash; One Intensive Session
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { id: '01', title: 'Understanding Cowork', color: '#FF6B35' },
-            { id: '02', title: 'Files & Synthesis', color: '#00A8A8' },
-            { id: '03', title: 'Connect to Your Work', color: '#7B5EA7' },
-            { id: '04', title: 'Delegate & Schedule', color: '#E63946' },
-            { id: '05', title: 'Real Workflows', color: '#E07A1F' },
-            { id: '06', title: 'Govern & Roll Out', color: '#06A77D' },
+            { id: '01', title: 'What is Claude', color: '#FF6B35' },
+            { id: '02', title: 'Chat vs Cowork', color: '#00A8A8' },
+            { id: '03', title: 'Understand & Organize Data', color: '#7B5EA7' },
+            { id: '04', title: 'Reports & Presentations', color: '#06A77D' },
+            { id: '05', title: 'Enterprise Systems', color: '#FF6B35' },
+            { id: '06', title: 'Cowork in Chrome', color: '#00A8A8' },
+            { id: '07', title: 'Schedule Flows', color: '#7B5EA7' },
+            { id: '08', title: 'What\'s Next?', color: '#06A77D' },
           ].map((mod) => (
             <button
               key={mod.id}
@@ -423,7 +427,7 @@ export default function ClaudeCoworkPage() {
           <div className="absolute top-0 left-0 w-1.5 h-full bg-[#1B2845]" />
           <h3 className="font-black text-[#1B2845] text-lg uppercase tracking-wide mb-4">The Promise</h3>
           <p className="text-[#1B2845] text-lg sm:text-xl italic leading-relaxed max-w-4xl">
-            Walk in overwhelmed. Walk out with a personalized rollout playbook, 5+ workflows running on autopilot, and the AI-fluent reflexes that put you ahead of 95% of your peers.
+            Walk in curious. Walk out knowing exactly how Claude Cowork can automate your reports, organize your data, and give you back 5+ hours every week.
           </p>
         </div>
       </section>
@@ -474,7 +478,7 @@ export default function ClaudeCoworkPage() {
               <ul className="space-y-4 text-gray-300">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#FFD23F] mt-0.5 shrink-0" />
-                  <span>8 hours &middot; in your time zone &middot; details sent via email</span>
+                  <span>4 hours &middot; in your time zone &middot; details sent via email</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#FFD23F] mt-0.5 shrink-0" />
@@ -617,9 +621,9 @@ export default function ClaudeCoworkPage() {
                     <p className="text-[13px] font-bold text-[#1B2845] mb-2"><strong>What happens after you register:</strong></p>
                     <ol className="m-0 pl-5 text-[13px] text-[#5C6784] leading-relaxed list-decimal">
                       <li>Confirmation email lands in your inbox within an hour</li>
-                      <li>Calendar invite arrives 48 hours prior the session</li>
-                      <li>Pre-class checklist sent 48 hours before the session</li>
-                      <li>Join link sent 30 minutes before we start</li>
+                      <li>Session timings and joining link sent via email</li>
+                      <li>Just show up — no downloads or setup needed</li>
+                      <li>Sit back, watch live demos, and ask questions anytime</li>
                     </ol>
                   </div>
 
@@ -647,11 +651,11 @@ export default function ClaudeCoworkPage() {
           <h2 className="text-[13px] font-extrabold tracking-[.06em] uppercase text-[#1B2845] mb-5 pl-3.5 border-l-4 border-[#FFD23F]">Common questions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {[
-              { q: 'Is this for technical people only?', a: "No — it’s specifically for non-technical leaders, PMs, ops, marketers, analysts, founders. If you can use Slack, you can do this. Zero coding required." },
-              { q: 'What if I miss part of the live session?', a: "Recordings are sent to all registrants 24 hours after the workshop. The labs are runnable on your own time too — they’re built into a folder you can keep." },
-              { q: 'Can I bring my whole team?', a: "Yes — and you should. Module 6 is \"build your team’s rollout playbook.\" Bring at least one teammate so you can split labs and get more output." },
-              { q: "What’s the catch? Is there an upsell?", a: "No catch. No upsell at the end. No mailing list spam. You get 8 hours of training, the lab files, and the trainer playbook PDF. That’s it." },
-              { q: 'What do I need before the workshop?', a: 'The Claude desktop app installed and Cowork mode enabled (free), Chrome browser, and a laptop with at least 4 hours of battery. Setup checklist arrives by email after registration.' },
+              { q: 'Is this for technical people only?', a: "No — it's specifically for non-technical leaders, PMs, ops, marketers, analysts, founders. If you can use Slack, you can do this. Zero coding required." },
+              { q: 'What if I miss part of the live session?', a: "Recordings are sent to all registrants after the workshop. You can catch up on anything you missed at your own pace." },
+              { q: 'Can I bring my whole team?', a: "Yes — and you should. The more people from your team who attend, the easier it is to start using Claude across your workflows." },
+              { q: "What's the catch? Is there an upsell?", a: "No catch. No upsell at the end. No mailing list spam. You get 4 hours of live demos and training. That's it." },
+              { q: 'What do I need before the workshop?', a: "Nothing! Since Claude Cowork is a paid subscription, you don't need to purchase or install anything. Just show up, sit back, and watch everything live as your trainer demonstrates every feature." },
             ].map((faq, i) => (
               <details key={i} className="rounded-xl px-5 py-3.5 cursor-pointer" style={{ background: '#FFF8F0', boxShadow: '0 1px 4px rgba(0,0,0,.04)' }}>
                 <summary className="font-bold text-[15px] text-[#1B2845] list-none relative pr-6">
@@ -674,11 +678,11 @@ export default function ClaudeCoworkPage() {
             <div className="flex flex-wrap gap-2 justify-center">
               <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fgennoor.com%2Fclaude-cowork" target="_blank" rel="noopener noreferrer"
                 className="px-4 py-2.5 text-white rounded-full font-bold text-[13px] no-underline transition-transform hover:-translate-y-0.5" style={{ background: '#0A66C2' }}>Share on LinkedIn</a>
-              <a href="https://wa.me/?text=I%20just%20signed%20up%20for%20a%20free%208-hour%20Claude%20workshop.%20Reclaim%205%2B%20hours%2Fweek.%20First%201000%20only%3A%20https%3A%2F%2Fgennoor.com%2Fclaude-cowork" target="_blank" rel="noopener noreferrer"
+              <a href="https://wa.me/?text=I%20just%20signed%20up%20for%20a%20free%204-hour%20Claude%20workshop.%20Reclaim%205%2B%20hours%2Fweek.%20First%201000%20only%3A%20https%3A%2F%2Fgennoor.com%2Fclaude-cowork" target="_blank" rel="noopener noreferrer"
                 className="px-4 py-2.5 text-white rounded-full font-bold text-[13px] no-underline transition-transform hover:-translate-y-0.5" style={{ background: '#25D366' }}>Share on WhatsApp</a>
-              <a href="https://twitter.com/intent/tweet?text=Just%20signed%20up%20for%20a%20free%208-hour%20Claude%20Cowork%20workshop%20by%20%40gennoor.%20First%201000%20only%3A%20https%3A%2F%2Fgennoor.com%2Fclaude-cowork" target="_blank" rel="noopener noreferrer"
+              <a href="https://twitter.com/intent/tweet?text=Just%20signed%20up%20for%20a%20free%204-hour%20Claude%20Cowork%20workshop%20by%20%40gennoor.%20First%201000%20only%3A%20https%3A%2F%2Fgennoor.com%2Fclaude-cowork" target="_blank" rel="noopener noreferrer"
                 className="px-4 py-2.5 text-white rounded-full font-bold text-[13px] no-underline transition-transform hover:-translate-y-0.5" style={{ background: '#000' }}>Share on X</a>
-              <a href="mailto:?subject=Free%208-hour%20Claude%20Cowork%20Workshop&body=Hey%20-%20thought%20you%27d%20want%20to%20see%20this%3A%20https%3A%2F%2Fgennoor.com%2Fclaude-cowork"
+              <a href="mailto:?subject=Free%204-hour%20Claude%20Cowork%20Workshop&body=Hey%20-%20thought%20you%27d%20want%20to%20see%20this%3A%20https%3A%2F%2Fgennoor.com%2Fclaude-cowork"
                 className="px-4 py-2.5 text-white rounded-full font-bold text-[13px] no-underline transition-transform hover:-translate-y-0.5" style={{ background: '#1B2845' }}>Share via email</a>
             </div>
           </div>

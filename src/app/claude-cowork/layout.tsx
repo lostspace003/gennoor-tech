@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Free Claude AI Workshop — Learn Claude Cowork in 8 Hours | Gennoor',
-  description: 'Free hands-on Claude AI workshop: learn to use Claude Cowork to automate workflows, reclaim 5+ hours/week, and become AI-fluent. 21 live labs, 1000 seats only. Register now.',
+  title: 'Free Claude AI Workshop — Learn Claude Cowork in 4 Hours | Gennoor',
+  description: 'Free live Claude AI workshop: watch demos, learn Claude Cowork, and discover how to automate workflows and reclaim 5+ hours/week. 8 topics, 1000 seats only. Register now.',
   keywords: [
     'Claude AI workshop',
     'Claude AI training',
@@ -21,8 +21,8 @@ export const metadata: Metadata = {
     'Gennoor',
   ],
   openGraph: {
-    title: 'Free Claude AI Workshop — Learn Claude Cowork in 8 Hours',
-    description: 'Free hands-on Claude AI workshop: 21 live labs, real workflows, in your time zone. Reclaim 5+ hours/week. First 1000 seats only.',
+    title: 'Free Claude AI Workshop — Learn Claude Cowork in 4 Hours',
+    description: 'Free live Claude AI workshop: 8 topics, live demos, in your time zone. Reclaim 5+ hours/week. First 1000 seats only.',
     url: 'https://gennoor.com/claude-cowork',
     type: 'website',
     images: [
@@ -36,8 +36,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Free Claude AI Workshop — Learn Claude Cowork in 8 Hours',
-    description: 'Free hands-on Claude AI workshop: 21 live labs, real workflows, in your time zone. Reclaim 5+ hours/week. First 1000 only.',
+    title: 'Free Claude AI Workshop — Learn Claude Cowork in 4 Hours',
+    description: 'Free live Claude AI workshop: 8 topics, live demos, in your time zone. Reclaim 5+ hours/week. First 1000 only.',
     images: ['https://gennoor.com/assets/claude-cowork-og.png'],
   },
   alternates: {
@@ -55,7 +55,7 @@ export default function ClaudeCoworkLayout({ children }: { children: React.React
             '@context': 'https://schema.org',
             '@type': 'Event',
             name: 'Claude Cowork for Productivity Workshop',
-            description: 'A free 8-hour hands-on workshop that turns scattered tools, files, and meetings into one autonomous coworker.',
+            description: 'A free 4-hour live workshop where you watch demos and learn how Claude Cowork can automate your workflows.',
             eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
             eventStatus: 'https://schema.org/EventScheduled',
             location: {
@@ -99,7 +99,7 @@ export default function ClaudeCoworkLayout({ children }: { children: React.React
                 name: 'What if I miss part of the live Claude AI session?',
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: "Recordings are sent to all registrants 24 hours after the workshop. The labs are runnable on your own time too — they're built into a folder you can keep.",
+                  text: "Recordings are sent to all registrants after the workshop. You can catch up on anything you missed at your own pace.",
                 },
               },
               {
@@ -107,7 +107,7 @@ export default function ClaudeCoworkLayout({ children }: { children: React.React
                 name: 'Can I bring my whole team to the Claude Cowork workshop?',
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: "Yes — and you should. Module 6 is \"build your team's rollout playbook.\" Bring at least one teammate so you can split labs and get more output.",
+                  text: "Yes — and you should. The more people from your team who attend, the easier it is to start using Claude across your workflows.",
                 },
               },
               {
@@ -115,7 +115,7 @@ export default function ClaudeCoworkLayout({ children }: { children: React.React
                 name: 'Is this free Claude AI workshop really free? What\'s the catch?',
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: "No catch. No upsell at the end. No mailing list spam. You get 8 hours of training, the lab files, and the trainer playbook PDF. That's it.",
+                  text: "No catch. No upsell at the end. No mailing list spam. You get 4 hours of live demos and training. That's it.",
                 },
               },
               {
@@ -123,7 +123,7 @@ export default function ClaudeCoworkLayout({ children }: { children: React.React
                 name: 'What do I need before the Claude Cowork workshop?',
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: 'The Claude desktop app installed and Cowork mode enabled (free), Chrome browser, and a laptop with at least 4 hours of battery. Setup checklist arrives by email after registration.',
+                  text: "Nothing! Since Claude Cowork is a paid subscription, you don't need to purchase or install anything. Just show up, sit back, and watch everything live as your trainer demonstrates every feature.",
                 },
               },
             ],

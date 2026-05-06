@@ -60,7 +60,7 @@ export default function ClaudeCoworkPopup() {
               </h2>
 
               <p className="text-white/80 text-sm leading-relaxed">
-                A free 8-hour hands-on workshop that turns scattered tools into one autonomous coworker.
+                A free 4-hour live workshop — sit back, watch demos, and see how Claude Cowork transforms the way you work.
               </p>
             </div>
 
@@ -77,8 +77,8 @@ export default function ClaudeCoworkPopup() {
         <div className="bg-white px-6 py-5">
           <div className="flex flex-wrap gap-2 mb-4">
             {[
-              { label: '8 hrs intensive', color: '#FF6B35' },
-              { label: '21 live labs', color: '#00A8A8' },
+              { label: '4 hrs intensive', color: '#FF6B35' },
+              { label: '8 live topics', color: '#00A8A8' },
               { label: '1000 seats only', color: '#7B5EA7' },
             ].map((pill) => (
               <span
@@ -94,8 +94,8 @@ export default function ClaudeCoworkPopup() {
           <ul className="space-y-2 text-sm text-[#1B2845] mb-5">
             {[
               'Reclaim 5+ hours every week',
-              'Build real workflows live',
-              'Walk away with a rollout playbook',
+              'Watch live demos — no setup needed',
+              'Learn Chat vs Cowork, reports, integrations & more',
             ].map((item) => (
               <li key={item} className="flex items-center gap-2">
                 <Sparkles className="w-3.5 h-3.5 text-[#FFD23F] shrink-0" />

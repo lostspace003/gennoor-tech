@@ -53,30 +53,29 @@ export async function POST(request: Request) {
             <table style="width: 100%; color: #1B2845; font-size: 15px;">
               <tr>
                 <td style="padding: 8px 0; font-weight: 700;">When:</td>
-                <td style="padding: 8px 0;">8 hours in your local time zone (${timeZone}) — schedule details sent separately</td>
+                <td style="padding: 8px 0;">4 hours in your local time zone (${timeZone}) — schedule details sent separately</td>
               </tr>
               <tr>
                 <td style="padding: 8px 0; font-weight: 700;">Where:</td>
-                <td style="padding: 8px 0;">Online — joining link will arrive 24 hours before the session</td>
+                <td style="padding: 8px 0;">Online — joining link and timings will be shared via email</td>
               </tr>
               <tr>
                 <td style="padding: 8px 0; font-weight: 700;">What to bring:</td>
-                <td style="padding: 8px 0;">Claude desktop app installed, Cowork mode enabled, Chrome browser, your laptop fully charged</td>
+                <td style="padding: 8px 0;">Nothing! Just show up. You'll sit back, watch live demos, and learn. No setup required.</td>
               </tr>
             </table>
           </div>
 
-          <p style="color: #5C6784; line-height: 1.8; font-size: 15px;">
-            30 minutes before we start, we'll email you the join link, the working folder, and a 5-minute warm-up.
-          </p>
-
-          <h3 style="color: #1B2845; margin-top: 30px; font-size: 18px;">What you'll build in 8 hours:</h3>
+          <h3 style="color: #1B2845; margin-top: 30px; font-size: 18px;">What we'll cover in 4 hours:</h3>
           <ul style="color: #5C6784; line-height: 2.2; font-size: 15px; padding-left: 20px;">
-            <li>A weekly Friday digest that writes itself</li>
-            <li>A 1:1 prep packet ready every morning</li>
-            <li>Vendor + contract reviews in 10 minutes</li>
-            <li>A board-ready stakeholder report on demand</li>
-            <li>Your team's personalized rollout playbook</li>
+            <li>What is Claude — introduction to Claude and its capabilities</li>
+            <li>Claude Chat vs Claude Cowork — when to use each</li>
+            <li>Understand &amp; Organize Data — messy files to polished outputs</li>
+            <li>Create Reports &amp; Presentations — data to deliverables in minutes</li>
+            <li>Connect to Enterprise Systems — Google Drive, integrations, and more</li>
+            <li>Claude Cowork in Chrome — use Cowork right inside your browser</li>
+            <li>Schedule Flows using Claude — automate recurring tasks</li>
+            <li>What's Next? — your roadmap to AI-powered productivity</li>
           </ul>
 
           <div style="background: #FFD23F; border-radius: 10px; padding: 20px; margin: 30px 0; text-align: center;">
@@ -84,7 +83,7 @@ export async function POST(request: Request) {
               Two things to do today:
             </p>
             <ol style="color: #1B2845; text-align: left; margin: 12px 0 0; padding-left: 24px; font-size: 15px; line-height: 2;">
-              <li>Keep an eye on your inbox for the joining link (arriving 24h before)</li>
+              <li>Keep an eye on your inbox for the session timings and joining link</li>
               <li>Forward this email to one colleague who could also use a free 5-hours-a-week boost</li>
             </ol>
           </div>
