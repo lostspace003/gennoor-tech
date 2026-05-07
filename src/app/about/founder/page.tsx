@@ -64,23 +64,34 @@ export default function FounderPage() {
       {/* Bio Section */}
       <section className="py-14 lg:py-20 border-b border-gray-100">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto">
-            <p className="text-lg lg:text-xl text-gray-700 leading-relaxed mb-6">
-              Jalal Ahmed Khan brings 14+ years of experience spanning academia, enterprise training,
-              and AI consulting. His path — from teaching engineering students to training C-suite
-              executives at Fortune 500 companies — gives him a rare ability to bridge technical
-              complexity with strategic business value.
-            </p>
-            <p className="text-base text-gray-600 leading-relaxed mb-6">
-              He has delivered 80+ enterprise training programs across 6+ countries, working with
-              organizations including Microsoft, IBM, Boeing, EY, Saudi Aramco, and Bank of Tanzania.
-              His specialization spans Azure AI, Microsoft Copilot, Agentic AI, and Power Platform.
-            </p>
-            <p className="text-base text-gray-600 leading-relaxed">
-              In 2026, Jalal founded Gennoor Tech with a mission to democratize AI adoption for
-              enterprises across GCC, Africa, and APAC — delivering hands-on training, strategic
-              consulting, and production-ready PoC development.
-            </p>
+          <div className="max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14 items-start">
+              <div className="lg:col-span-2">
+                <p className="text-lg lg:text-xl text-gray-700 leading-relaxed mb-6">
+                  Jalal Ahmed Khan brings 14+ years of experience spanning academia, enterprise training,
+                  and AI consulting. His path — from teaching engineering students to training C-suite
+                  executives at Fortune 500 companies — gives him a rare ability to bridge technical
+                  complexity with strategic business value.
+                </p>
+                <p className="text-base text-gray-600 leading-relaxed mb-6">
+                  He has delivered 80+ enterprise training programs across 6+ countries, working with
+                  organizations including Microsoft, IBM, Boeing, EY, Saudi Aramco, and Bank of Tanzania.
+                  His specialization spans Azure AI, Microsoft Copilot, Agentic AI, and Power Platform.
+                </p>
+                <p className="text-base text-gray-600 leading-relaxed">
+                  In 2026, Jalal founded Gennoor Tech with a mission to democratize AI adoption for
+                  enterprises across GCC, Africa, and APAC — delivering hands-on training, strategic
+                  consulting, and production-ready PoC development.
+                </p>
+              </div>
+              <div className="flex justify-center lg:justify-end">
+                <img
+                  src="/assets/jalal-portrait.jpeg"
+                  alt="Jalal Ahmed Khan, Founder of Gennoor Tech"
+                  className="w-64 h-80 rounded-2xl object-cover object-[50%_20%] shadow-lg border-4 border-white ring-1 ring-gray-200"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>
