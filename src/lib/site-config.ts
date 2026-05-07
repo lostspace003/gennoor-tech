@@ -25,9 +25,8 @@ export const siteConfig = {
         name: 'About',
         href: '/about',
         children: [
-          { name: 'Our Story', href: '/about/story' },
-          { name: 'Our Founder', href: '/about/founder' },
           { name: 'Gennoor Tech', href: '/about/company' },
+          { name: 'Our Founder', href: '/about/founder' },
         ]
       },
       {
@@ -72,7 +71,7 @@ export const siteConfig = {
       {
         title: 'About',
         links: [
-          { name: 'Our Story', href: '/about/story' },
+          { name: 'Gennoor Tech', href: '/about/company' },
           { name: 'Our Founder', href: '/about/founder' },
           { name: 'Case Studies', href: '/portfolio/case-studies' },
           { name: 'PoCs & Demos', href: '/services/poc-development#live-demo' },

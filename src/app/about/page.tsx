@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { Building2, User, Building, ArrowRight } from 'lucide-react'
+import { Building2, User, ArrowRight } from 'lucide-react'
 import { OrganizationJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd'
 
 export const metadata: Metadata = {
@@ -18,9 +18,9 @@ export const metadata: Metadata = {
 const sections = [
   {
     icon: Building2,
-    title: 'Our Story',
-    description: 'How Gennoor Tech was built — from a vision to a global AI training company',
-    href: '/about/story',
+    title: 'Gennoor Tech',
+    description: 'Our vision, mission, company details, and the story of how we grew into a global AI training company',
+    href: '/about/company',
     highlight: 'Serving enterprises across 4 regions',
   },
   {
@@ -29,13 +29,6 @@ const sections = [
     description: 'Meet Jalal Ahmed Khan — MCT with 16+ active certifications & 14+ years of enterprise experience',
     href: '/about/founder',
     highlight: '16+ active certifications',
-  },
-  {
-    icon: Building,
-    title: 'Gennoor Tech Private Limited',
-    description: 'Founded to democratize AI adoption for enterprises across GCC, Africa, and APAC',
-    href: '/about/company',
-    highlight: 'Vision 2030 aligned',
   },
 ]
 
@@ -65,7 +58,7 @@ export default function AboutPage() {
       {/* Sections Grid */}
       <section className="section-padding">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {sections.map((section, index) => {
               const Icon = section.icon
               return (

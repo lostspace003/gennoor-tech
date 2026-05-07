@@ -219,7 +219,7 @@ export default function FounderPage() {
               <ArrowRight className="ml-2 w-4 h-4" />
             </Link>
             <Link
-              href="/about/story"
+              href="/about/company"
               className="inline-flex items-center px-6 py-3 border border-gray-200 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Read our company story
