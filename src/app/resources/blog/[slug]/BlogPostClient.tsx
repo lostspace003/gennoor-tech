@@ -373,7 +373,7 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
                   <span className="text-gray-300">·</span>
                   <a href="/about" className="text-xs font-medium text-primary-600 hover:underline">Full Bio</a>
                   <span className="text-gray-300">·</span>
-                  <a href="/about/certifications" className="text-xs font-medium text-primary-600 hover:underline">Certifications</a>
+                  <a href="/about/founder" className="text-xs font-medium text-primary-600 hover:underline">Certifications</a>
                 </div>
               </div>
             </div>

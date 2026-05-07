@@ -5,12 +5,12 @@ export function OrganizationJsonLd() {
     name: 'Gennoor Tech',
     url: 'https://gennoor.com',
     logo: 'https://gennoor.com/media/logos/gennoor-tech-icon-white_180x180_apple-touch-icon.png',
-    description: 'Enterprise AI Training & Solutions. Expert-led training from strategy to implementation, drawing from 14+ years working with Fortune 500 companies across 6 countries.',
+    description: 'Enterprise AI Training & Solutions. Expert-led training, consulting, and PoC development for Fortune 500 companies across 6+ countries.',
     founder: {
       '@type': 'Person',
       name: 'Jalal Ahmed Khan',
       jobTitle: 'Microsoft Certified Trainer & Enterprise AI Consultant',
-      url: 'https://gennoor.com/about/journey',
+      url: 'https://gennoor.com/about/founder',
       sameAs: [
         'https://www.linkedin.com/in/lostspace003/',
         'https://github.com/lostspace003',
@@ -58,7 +58,7 @@ export function PersonJsonLd() {
     '@type': 'Person',
     name: 'Jalal Ahmed Khan',
     jobTitle: 'Microsoft Certified Trainer & Enterprise AI Consultant',
-    url: 'https://gennoor.com/about/journey',
+    url: 'https://gennoor.com/about/founder',
     worksFor: {
       '@type': 'Organization',
       name: 'Gennoor Tech',
@@ -213,7 +213,7 @@ export function ArticleJsonLd({
     author: {
       '@type': 'Person',
       name: authorName,
-      url: 'https://gennoor.com/about/journey',
+      url: 'https://gennoor.com/about/founder',
     },
     publisher: {
       '@type': 'Organization',

@@ -142,7 +142,7 @@ export default function CompanyPage() {
             {/* CTA */}
             <div className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
-                href="/about/journey"
+                href="/about/founder"
                 className="inline-flex items-center px-6 py-3 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors"
               >
                 Meet the Founder

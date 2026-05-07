@@ -5,7 +5,7 @@ export const BLOB_URL = process.env.NEXT_PUBLIC_BLOB_URL || '/media'
 export const siteConfig = {
   name: 'Gennoor Tech',
   tagline: 'Enterprise AI Training & Solutions',
-  description: 'Transform your organization with practical AI solutions. Expert-led training from strategy to implementation, drawing from 14+ years working with Fortune 500 companies across 6 countries.',
+  description: 'Enterprise AI training, consulting, and PoC development for Fortune 500 companies across 6+ countries.',
   url: 'https://gennoor.com',
   email: 'contact@gennoor.com',
   phone: '+91-XXXXXXXXXX',
@@ -25,8 +25,8 @@ export const siteConfig = {
         name: 'About',
         href: '/about',
         children: [
-          { name: 'My Journey', href: '/about/journey' },
-          { name: 'Certifications', href: '/about/certifications' },
+          { name: 'Our Story', href: '/about/story' },
+          { name: 'Our Founder', href: '/about/founder' },
           { name: 'Gennoor Tech', href: '/about/company' },
         ]
       },
@@ -72,8 +72,8 @@ export const siteConfig = {
       {
         title: 'About',
         links: [
-          { name: 'My Journey', href: '/about/journey' },
-          { name: 'Certifications', href: '/about/certifications' },
+          { name: 'Our Story', href: '/about/story' },
+          { name: 'Our Founder', href: '/about/founder' },
           { name: 'Case Studies', href: '/portfolio/case-studies' },
           { name: 'PoCs & Demos', href: '/services/poc-development#live-demo' },
         ]
@@ -93,7 +93,7 @@ export const siteConfig = {
   // Hero section content
   hero: {
     headline: 'Transform Your Organization with Practical AI Solutions — Expert-Led Training from Strategy to Implementation',
-    subheadline: 'Drawing from 14+ years working with Fortune 500 companies across 6 countries',
+    subheadline: 'Trusted by Fortune 500 companies across 6+ countries — from strategy to deployment',
     cta1: { text: 'Book a Discovery Call', href: '/resources/calendar' },
     cta2: { text: 'Check Your AI Readiness', href: '/ai-readiness' },
   },

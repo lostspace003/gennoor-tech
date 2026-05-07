@@ -9,7 +9,7 @@ const metrics = [
   {
     value: siteConfig.metrics.certifications,
     label: 'Active Microsoft Certifications',
-    description: 'Including MCT & Agentic AI'
+    description: 'Held by our team'
   },
   {
     value: siteConfig.metrics.cSuiteLeaders,
@@ -19,7 +19,7 @@ const metrics = [
   {
     value: siteConfig.metrics.countries,
     label: 'Countries',
-    description: 'International delivery experience'
+    description: 'Global delivery footprint'
   },
 ]
 
@@ -37,10 +37,10 @@ export default function Metrics() {
         <div className="text-center mb-12">
           <div className="inline-flex items-center justify-center px-6 py-2 mb-4 text-xl font-semibold bg-white/10 backdrop-blur-sm text-white rounded-full">
             <span className="flex h-3 w-3 rounded-full bg-white mr-2 animate-pulse" />
-            Founder & Lead Trainer
+            Gennoor Tech — By the Numbers
           </div>
           <p className="text-blue-100 text-lg max-w-3xl mx-auto">
-            Building AI excellence through hands-on experience with Fortune 500 companies worldwide
+            Delivering AI transformation for enterprises worldwide
           </p>
         </div>
 

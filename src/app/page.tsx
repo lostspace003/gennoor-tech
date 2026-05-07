@@ -1,4 +1,4 @@
-import { PersonJsonLd } from '@/components/JsonLd'
+import { OrganizationJsonLd } from '@/components/JsonLd'
 import ScrollReveal from '@/components/ScrollReveal'
 import HeroSection from '@/components/home/HeroSection'
 import TrustedBy from '@/components/home/TrustedBy'
@@ -14,7 +14,7 @@ import CTASection from '@/components/home/CTASection'
 export default function HomePage() {
   return (
     <>
-      <PersonJsonLd />
+      <OrganizationJsonLd />
 
       <HeroSection />
 

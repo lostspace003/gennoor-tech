@@ -3,9 +3,9 @@ import { ArrowRight, CheckCircle } from 'lucide-react'
 
 export default function CTASection() {
   const benefits = [
-    '14+ years of enterprise experience',
+    '14+ years of enterprise expertise',
     'Hands-on PoC development',
-    'Microsoft Certified Trainer',
+    'Microsoft Certified Training Team',
     'Global delivery expertise'
   ]
 
@@ -19,7 +19,7 @@ export default function CTASection() {
             </h2>
             <p className="text-xl text-gray-600 mb-8">
               Whether you need strategic guidance, team training, or hands-on implementation,
-              I'm here to help you navigate your AI transformation journey.
+              our team is here to help you navigate your AI transformation journey.
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">

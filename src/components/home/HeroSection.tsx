@@ -47,7 +47,7 @@ export default function HeroSection() {
                 }`}
               >
                 <span className="flex h-1.5 w-1.5 rounded-full bg-primary-600 mr-2" />
-                Microsoft Certified Trainer • 14+ Years Experience
+                Enterprise AI Training & Solutions • Trusted by Fortune 500
               </div>
 
               {/* Main Headline */}
