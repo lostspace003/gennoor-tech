@@ -67,7 +67,7 @@ function ChartLoader() {
 
 // ─── Types ───────────────────────────────────────────────────
 
-type TabKey = 'overview' | 'traffic' | 'enquiries' | 'emails' | 'sessions' | 'bookings' | 'storage' | 'insights' | 'comments' | 'seo' | 'setup' | 'ai-readiness'
+type TabKey = 'overview' | 'traffic' | 'enquiries' | 'emails' | 'sessions' | 'bookings' | 'storage' | 'insights' | 'comments' | 'seo' | 'setup' | 'ai-readiness' | 'cowork' | 'indexing'
 type GroupKey = 'analytics' | 'communications' | 'bookings' | 'system'
 
 interface AnalyticsData {
@@ -151,12 +151,12 @@ export default function AdminDashboard() {
   const [modalNewNote, setModalNewNote] = useState('')
   const [modalResched, setModalResched] = useState({ date: '', startTime: '', endTime: '' })
   const [modalSending, setModalSending] = useState(false)
-  const [bookingMonthFilter, setBookingMonthFilter] = useState('')
-  const [bookingStatsView, setBookingStatsView] = useState<'overall' | 'current'>('overall')
   const [bookingPage, setBookingPage] = useState(1)
   const [bookingsPerPage, setBookingsPerPage] = useState(15)
   const [selectedBookings, setSelectedBookings] = useState<Set<string>>(new Set())
   const [bookingDeleting, setBookingDeleting] = useState(false)
+  const [coworkData, setCoworkData] = useState<{ total: number; registrations: Array<{ fullName: string; email: string; country: string; timeZone: string; role: string; company: string; biggestWorkflow: string; createdAt: string }>; byCountry: Array<{ name: string; value: number }>; byTimezone: Array<{ name: string; value: number }> } | null>(null)
+  const [indexingData, setIndexingData] = useState<{ google: Array<{ url: string; status: string }>; bing: Array<{ url: string; status: string }> } | null>(null)
 
   const fetchAll = useCallback(async (numDays: number) => {
     setLoading(true); setError('')
@@ -182,6 +182,7 @@ export default function AdminDashboard() {
       ])
       setData(analyticsData); setSetupData(setupResult); setSeoData(seoResult)
       setSessions(Array.isArray(sessionsResult) ? sessionsResult : []); setStorageData(storageResult); setInsightsData(insightsResult); setEmailLogs(emailLogsResult); setAiReadinessData(aiReadinessResult)
+      try { const cwRes = await fetch('/api/admin/cowork-registrations', { method: 'POST', headers }); if (cwRes.ok) setCoworkData(await cwRes.json()) } catch {}
       setLastUpdated(new Date())
       try { const bRes = await fetch('/api/bookings/appointments'); if (bRes.ok) { const bData = await bRes.json(); setBookingsData(bData.appointments || []) } } catch {}
     } catch { setError('Failed to load dashboard data') }
@@ -327,9 +328,27 @@ export default function AdminDashboard() {
 
   const sortedDates = Object.entries(data.viewsByDate).sort((a, b) => a[0].localeCompare(b[0]))
   const chartDates = sortedDates.map(([date, count]) => ({ name: new Date(date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), value: count }))
-  const completedSessions = sessions.filter(s => s.status === 'completed' || s.status === 'Completed').length
-  const pendingSessions = sessions.filter(s => s.status === 'pending' || s.status === 'submitted').length
-  const errorSessions = sessions.filter(s => s.status === 'error' || s.status === 'failed').length
+
+  // Global date filter — applies to all tabs
+  const filterStartDate = (() => {
+    if (activeFilter === 'today') { const d = new Date(); d.setHours(0, 0, 0, 0); return d }
+    if (activeFilter === 'yesterday') { const d = new Date(); d.setDate(d.getDate() - 1); d.setHours(0, 0, 0, 0); return d }
+    if (activeFilter === 'custom' && customDate) return new Date(customDate + 'T00:00:00')
+    const d = new Date(); d.setDate(d.getDate() - days); d.setHours(0, 0, 0, 0); return d
+  })()
+  const isInDateRange = (dateStr: string | undefined) => { if (!dateStr) return false; return new Date(dateStr) >= filterStartDate }
+  const filteredBookings = bookingsData.filter(b => isInDateRange(b.date) || isInDateRange(b.createdAt))
+  const filteredSessions = sessions.filter(s => isInDateRange(s.updatedAt))
+  const filteredCoworkRegs = coworkData?.registrations?.filter(r => isInDateRange(r.createdAt)) || []
+  const filteredCoworkByCountry = Object.entries(filteredCoworkRegs.reduce((acc: Record<string, number>, r) => { acc[r.country] = (acc[r.country] || 0) + 1; return acc }, {})).map(([name, value]) => ({ name, value }))
+  const filteredCoworkByTz = Object.entries(filteredCoworkRegs.reduce((acc: Record<string, number>, r) => { acc[r.timeZone] = (acc[r.timeZone] || 0) + 1; return acc }, {})).map(([name, value]) => ({ name, value }))
+  const filteredBlobs = storageData?.recentBlobs?.filter(b => isInDateRange(b.lastModified)) || []
+  const filteredAiReports = (aiReadinessData?.recentReports || []).filter((r: any) => isInDateRange(r.generatedAt))
+  const filteredAiFeedback = (aiReadinessData?.feedback || []).filter((f: any) => isInDateRange(f.submittedAt))
+
+  const completedSessions = filteredSessions.filter(s => s.status === 'completed' || s.status === 'Completed').length
+  const pendingSessions = filteredSessions.filter(s => s.status === 'pending' || s.status === 'submitted').length
+  const errorSessions = filteredSessions.filter(s => s.status === 'error' || s.status === 'failed').length
   const totalFiles = storageData?.containers.reduce((a, c) => a + c.blobCount, 0) || 0
   const totalSize = storageData?.containers.reduce((a, c) => a + c.totalSizeBytes, 0) || 0
   const serverRequests = insightsData ? extractMetricValue(insightsData.requests) : 0
@@ -346,6 +365,7 @@ export default function AdminDashboard() {
     ]},
     { key: 'communications', label: 'Communications', icon: Mail, badge: (emailLogs?.totalFailed || 0) > 0 ? emailLogs!.totalFailed : undefined, tabs: [
       { key: 'enquiries', label: 'Enquiries', icon: Mail },
+      { key: 'cowork', label: 'Cowork', icon: Users, badge: coworkData?.total || undefined },
       { key: 'emails', label: 'Emails', icon: Send, badge: emailLogs?.totalFailed || undefined },
       { key: 'comments', label: 'Comments', icon: MessageSquare },
       { key: 'sessions', label: 'Sessions', icon: Bot },
@@ -356,6 +376,7 @@ export default function AdminDashboard() {
     { key: 'system', label: 'System', icon: Settings, badge: setupData ? setupData.totalChecks - setupData.configuredCount : undefined, tabs: [
       { key: 'storage', label: 'Storage', icon: HardDrive },
       { key: 'seo', label: 'SEO Health', icon: Search },
+      { key: 'indexing', label: 'Indexing', icon: Globe },
       { key: 'setup', label: 'Setup', icon: Settings, badge: setupData ? setupData.totalChecks - setupData.configuredCount : undefined },
     ]},
   ]
@@ -452,7 +473,7 @@ export default function AdminDashboard() {
               <StatCard icon={Users} label="New Visitors" value={(data as any).newVisitors || 0} color="teal" />
               <StatCard icon={RefreshCw} label="Returning" value={(data as any).returningVisitors || 0} color="amber" />
               <StatCard icon={Mail} label="Enquiries" value={data.totalEnquiries} color="purple" />
-              <StatCard icon={Calendar} label="Bookings" value={bookingsData.length} color="blue" />
+              <StatCard icon={Calendar} label="Bookings" value={filteredBookings.length} color="blue" />
             </div>
 
             {/* Trends */}
@@ -569,6 +590,46 @@ export default function AdminDashboard() {
           </div>
         )}
 
+        {/* ─── COWORK REGISTRATIONS ──────────────────────── */}
+        {activeTab === 'cowork' && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCard icon={Users} label="Total Registrations" value={filteredCoworkRegs.length} color="blue" />
+              <StatCard icon={Globe} label="Countries" value={filteredCoworkByCountry.length} color="teal" />
+              <StatCard icon={Clock} label="Timezones" value={filteredCoworkByTz.length} color="amber" />
+              <StatCard icon={Users} label="With Company" value={filteredCoworkRegs.filter(r => r.company).length} color="purple" />
+            </div>
+            <div className="grid lg:grid-cols-2 gap-6">
+              <Panel title="By Country" subtitle={getFilterLabel()}>{filteredCoworkByCountry.length > 0 ? <PieChartComponent data={filteredCoworkByCountry} /> : <Empty text="No registrations yet" />}</Panel>
+              <Panel title="By Timezone" subtitle={getFilterLabel()}>{filteredCoworkByTz.length > 0 ? <BarChartComponent data={filteredCoworkByTz.slice(0, 10)} dataKey="value" color="#0d9488" /> : <Empty text="No registrations yet" />}</Panel>
+            </div>
+            <Panel title="All Registrations" subtitle={`${filteredCoworkRegs.length} total — ${getFilterLabel()}`} action={filteredCoworkRegs.length > 0 ? <ExportButton onClick={() => downloadCSV(filteredCoworkRegs as any, 'cowork-registrations')} /> : undefined}>
+              {filteredCoworkRegs.length === 0 ? <Empty text="No registrations yet" /> : (
+                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-500 border-b border-slate-200">
+                  <th className="text-left py-2 px-3 font-medium">Name</th>
+                  <th className="text-left py-2 px-3 font-medium">Email</th>
+                  <th className="text-left py-2 px-3 font-medium">Country</th>
+                  <th className="text-left py-2 px-3 font-medium">Timezone</th>
+                  <th className="text-left py-2 px-3 font-medium">Role</th>
+                  <th className="text-left py-2 px-3 font-medium">Company</th>
+                  <th className="text-left py-2 px-3 font-medium">Date</th>
+                </tr></thead>
+                <tbody>{filteredCoworkRegs.map((r, i) => (
+                  <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50">
+                    <td className="py-2.5 px-3 text-slate-800 font-medium">{r.fullName}</td>
+                    <td className="py-2.5 px-3 text-slate-600">{r.email}</td>
+                    <td className="py-2.5 px-3 text-slate-600">{r.country}</td>
+                    <td className="py-2.5 px-3 text-slate-500 text-xs">{r.timeZone}</td>
+                    <td className="py-2.5 px-3 text-slate-500">{r.role || '-'}</td>
+                    <td className="py-2.5 px-3 text-slate-500">{r.company || '-'}</td>
+                    <td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{new Date(r.createdAt).toLocaleDateString()}</td>
+                  </tr>
+                ))}</tbody></table></div>
+              )}
+            </Panel>
+          </div>
+        )}
+
         {/* ─── EMAILS ────────────────────────────────────── */}
         {activeTab === 'emails' && (() => {
           const allLogs = emailLogs?.logs || []
@@ -648,19 +709,19 @@ export default function AdminDashboard() {
         {activeTab === 'sessions' && (
           <div className="space-y-6">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <StatCard icon={Bot} label="Total Sessions" value={sessions.length} color="blue" />
+              <StatCard icon={Bot} label="Total Sessions" value={filteredSessions.length} color="blue" />
               <StatCard icon={CheckCircle2} label="Completed" value={completedSessions} color="teal" />
               <StatCard icon={Clock} label="Pending" value={pendingSessions} color="amber" />
               <StatCard icon={AlertTriangle} label="Errors" value={errorSessions} color="purple" />
             </div>
             <div className="grid md:grid-cols-2 gap-6">
-              <Panel title="Sessions by Agent">{sessions.length === 0 ? <Empty /> : <PieChartComponent data={Object.entries(sessions.reduce((acc: any, s) => { acc[s.agentName || 'Unknown'] = (acc[s.agentName || 'Unknown'] || 0) + 1; return acc }, {})).map(([name, value]) => ({ name, value: value as number }))} />}</Panel>
-              <Panel title="Session Status">{sessions.length === 0 ? <Empty /> : <PieChartComponent data={Object.entries(sessions.reduce((acc: any, s) => { acc[s.status || 'unknown'] = (acc[s.status || 'unknown'] || 0) + 1; return acc }, {})).map(([name, value]) => ({ name, value: value as number }))} />}</Panel>
+              <Panel title="Sessions by Agent" subtitle={getFilterLabel()}>{filteredSessions.length === 0 ? <Empty /> : <PieChartComponent data={Object.entries(filteredSessions.reduce((acc: any, s) => { acc[s.agentName || 'Unknown'] = (acc[s.agentName || 'Unknown'] || 0) + 1; return acc }, {})).map(([name, value]) => ({ name, value: value as number }))} />}</Panel>
+              <Panel title="Session Status" subtitle={getFilterLabel()}>{filteredSessions.length === 0 ? <Empty /> : <PieChartComponent data={Object.entries(filteredSessions.reduce((acc: any, s) => { acc[s.status || 'unknown'] = (acc[s.status || 'unknown'] || 0) + 1; return acc }, {})).map(([name, value]) => ({ name, value: value as number }))} />}</Panel>
             </div>
-            <Panel title="Recent Sessions" action={sessions.length > 0 ? <ExportButton onClick={() => downloadCSV(sessions as any, 'career-sessions')} /> : undefined}>
-              {sessions.length === 0 ? <Empty text="No career sessions yet" /> : (
+            <Panel title="Recent Sessions" subtitle={getFilterLabel()} action={filteredSessions.length > 0 ? <ExportButton onClick={() => downloadCSV(filteredSessions as any, 'career-sessions')} /> : undefined}>
+              {filteredSessions.length === 0 ? <Empty text="No career sessions yet" /> : (
                 <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-500 border-b border-slate-200"><th className="text-left py-2 px-3 font-medium">Agent</th><th className="text-left py-2 px-3 font-medium">Status</th><th className="text-left py-2 px-3 font-medium">Resume</th><th className="text-left py-2 px-3 font-medium">Date</th></tr></thead>
-                <tbody>{sessions.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || '')).slice(0, 20).map((s, i) => (
+                <tbody>{filteredSessions.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || '')).slice(0, 20).map((s, i) => (
                   <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50"><td className="py-2.5 px-3 text-slate-800">{s.agentName || s.agentId}</td><td className="py-2.5 px-3"><StatusBadge status={s.status} /></td><td className="py-2.5 px-3 text-slate-500 truncate max-w-[200px]">{s.resumeFileName || '-'}</td><td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{s.updatedAt ? new Date(s.updatedAt).toLocaleDateString() : '-'}</td></tr>
                 ))}</tbody></table></div>
               )}
@@ -670,42 +731,20 @@ export default function AdminDashboard() {
 
         {/* ─── BOOKINGS ──────────────────────────────────── */}
         {activeTab === 'bookings' && (() => {
-          const filteredBookings = bookingMonthFilter
-            ? bookingsData.filter(b => b.date && b.date.slice(0, 7) === bookingMonthFilter)
-            : bookingsData
-          const allMonths = [...new Set(bookingsData.filter(b => b.date).map(b => b.date.slice(0, 7)))].sort().reverse()
           const totalPages = Math.ceil(filteredBookings.length / bookingsPerPage)
           const safePage = Math.min(bookingPage, totalPages || 1)
           const pagedBookings = filteredBookings.slice((safePage - 1) * bookingsPerPage, safePage * bookingsPerPage)
           const isAllSelected = filteredBookings.length > 0 && filteredBookings.every(b => selectedBookings.has(b.rowKey))
           return (
           <div className="space-y-6">
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
-                  <button onClick={() => setBookingStatsView('overall')} className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${bookingStatsView === 'overall' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>Overall</button>
-                  <button onClick={() => setBookingStatsView('current')} className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${bookingStatsView === 'current' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>Current{bookingMonthFilter ? ` (${new Date(bookingMonthFilter + '-01').toLocaleDateString('en-US', { month: 'short' })})` : ''}</button>
-                </div>
-                <span className="text-xs text-slate-400">{bookingStatsView === 'overall' ? `${bookingsData.length} total` : `${filteredBookings.length} shown`}</span>
-              </div>
-              {(() => {
-                const statsSource = bookingStatsView === 'overall' ? bookingsData : filteredBookings
-                return (
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <StatCard icon={Clock} label="Pending" value={statsSource.filter(b => b.status === 'pending').length} color="amber" />
-                    <StatCard icon={CheckCircle} label="Accepted" value={statsSource.filter(b => b.status === 'accepted').length} color="teal" />
-                    <StatCard icon={XCircle} label="Rejected" value={statsSource.filter(b => b.status === 'rejected').length} color="purple" />
-                    <StatCard icon={AlertTriangle} label="Change Requested" value={statsSource.filter(b => b.status === 'change-requested').length} color="blue" />
-                  </div>
-                )
-              })()}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCard icon={Clock} label="Pending" value={filteredBookings.filter(b => b.status === 'pending').length} color="amber" />
+              <StatCard icon={CheckCircle} label="Accepted" value={filteredBookings.filter(b => b.status === 'accepted').length} color="teal" />
+              <StatCard icon={XCircle} label="Rejected" value={filteredBookings.filter(b => b.status === 'rejected').length} color="purple" />
+              <StatCard icon={AlertTriangle} label="Change Requested" value={filteredBookings.filter(b => b.status === 'change-requested').length} color="blue" />
             </div>
-            <Panel title="Booking Requests" subtitle={`Review and manage bookings${bookingMonthFilter ? ` — ${new Date(bookingMonthFilter + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` : ''}`} action={
+            <Panel title="Booking Requests" subtitle={`${filteredBookings.length} bookings — ${getFilterLabel()}`} action={
               <div className="flex items-center gap-2 flex-wrap">
-                <select value={bookingMonthFilter} onChange={e => { setBookingMonthFilter(e.target.value); setBookingPage(1); setSelectedBookings(new Set()) }} className="px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option value="">All Months</option>
-                  {allMonths.map(m => <option key={m} value={m}>{new Date(m + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</option>)}
-                </select>
                 {selectedBookings.size > 0 && (
                   <>
                     <button onClick={() => {
@@ -736,7 +775,7 @@ export default function AdminDashboard() {
                 </button>
               </div>
             }>
-              {filteredBookings.length === 0 ? <Empty text={bookingMonthFilter ? 'No bookings for this month' : 'No bookings yet'} /> : (
+              {filteredBookings.length === 0 ? <Empty text="No bookings in this period" /> : (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <label className="flex items-center gap-2 px-1 py-1 text-xs text-slate-500 cursor-pointer select-none">
@@ -1045,16 +1084,16 @@ export default function AdminDashboard() {
               <StatCard icon={HardDrive} label="Total Files" value={totalFiles} color="blue" />
               <StatCard icon={Database} label="Total Size" value={0} color="teal" subtitle={formatBytes(totalSize)} />
               <StatCard icon={Server} label="Containers" value={storageData?.containers.length || 0} color="amber" />
-              <StatCard icon={FileText} label="Recent Uploads" value={storageData?.recentBlobs.length || 0} color="purple" />
+              <StatCard icon={FileText} label="Recent Uploads" value={filteredBlobs.length} color="purple" />
             </div>
             <div className="grid md:grid-cols-2 gap-6">
               <Panel title="Storage by Container (KB)">{!storageData?.containers.length ? <Empty /> : <BarChartComponent data={storageData.containers.map(c => ({ name: c.name, value: Math.round(c.totalSizeBytes / 1024) }))} />}</Panel>
               <Panel title="Files by Container">{!storageData?.containers.length ? <Empty /> : <PieChartComponent data={storageData.containers.map(c => ({ name: c.name, value: c.blobCount }))} />}</Panel>
             </div>
-            <Panel title="Recent Files" action={storageData?.recentBlobs?.length ? <ExportButton onClick={() => downloadCSV(storageData.recentBlobs as any, 'storage-files')} /> : undefined}>
-              {!storageData?.recentBlobs?.length ? <Empty text="No files found" /> : (
+            <Panel title="Recent Files" subtitle={getFilterLabel()} action={filteredBlobs.length > 0 ? <ExportButton onClick={() => downloadCSV(filteredBlobs as any, 'storage-files')} /> : undefined}>
+              {filteredBlobs.length === 0 ? <Empty text="No files found" /> : (
                 <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-500 border-b border-slate-200"><th className="text-left py-2 px-3 font-medium">File</th><th className="text-left py-2 px-3 font-medium">Container</th><th className="text-left py-2 px-3 font-medium">Size</th><th className="text-left py-2 px-3 font-medium">Modified</th></tr></thead>
-                <tbody>{storageData.recentBlobs.map((b, i) => (
+                <tbody>{filteredBlobs.map((b, i) => (
                   <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50"><td className="py-2.5 px-3 text-slate-800 truncate max-w-[250px]">{b.name}</td><td className="py-2.5 px-3"><span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs">{b.containerName}</span></td><td className="py-2.5 px-3 text-slate-500">{formatBytes(b.size)}</td><td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{b.lastModified ? new Date(b.lastModified).toLocaleDateString() : '-'}</td></tr>
                 ))}</tbody></table></div>
               )}
@@ -1174,6 +1213,63 @@ export default function AdminDashboard() {
           </div>
         )}
 
+        {/* ─── INDEXING STATUS ────────────────────────────── */}
+        {activeTab === 'indexing' && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCard icon={Search} label="Sitemap URLs" value={seoData?.sitemapUrls || 0} color="blue" />
+              <StatCard icon={Globe} label="Google Indexed" value={4} color="teal" />
+              <StatCard icon={Globe} label="Bing Submitted" value={174} color="amber" />
+              <StatCard icon={CheckCircle} label="IndexNow Key" value={1} color="purple" />
+            </div>
+
+            <Panel title="Search Engine Status" subtitle="Current indexing overview">
+              <div className="space-y-4">
+                <div className="flex items-center gap-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                  <div className="w-10 h-10 bg-white border border-amber-300 rounded-lg flex items-center justify-center shrink-0"><Search className="w-5 h-5 text-amber-600" /></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-slate-800">Google</p>
+                    <p className="text-xs text-slate-500">~4 pages indexed of {seoData?.sitemapUrls || 0}. Sitemap submitted via Search Console. Domain is 4 months old — indexing will grow over time.</p>
+                  </div>
+                  <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors shrink-0"><ExternalLink className="w-4 h-4" /></a>
+                </div>
+                <div className="flex items-center gap-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="w-10 h-10 bg-white border border-blue-300 rounded-lg flex items-center justify-center shrink-0"><Globe className="w-5 h-5 text-blue-600" /></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-slate-800">Bing / Yandex</p>
+                    <p className="text-xs text-slate-500">174 URLs submitted via IndexNow. Sitemap submitted via Bing Webmaster Tools. Crawling in progress.</p>
+                  </div>
+                  <a href="https://www.bing.com/webmasters" target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors shrink-0"><ExternalLink className="w-4 h-4" /></a>
+                </div>
+                <div className="flex items-center gap-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+                  <div className="w-10 h-10 bg-white border border-emerald-300 rounded-lg flex items-center justify-center shrink-0"><CheckCircle className="w-5 h-5 text-emerald-600" /></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-slate-800">SEO Fixes Applied</p>
+                    <p className="text-xs text-slate-500">www → non-www 301 redirect active. Canonical domain: gennoor.com. IndexNow key deployed. 18 missing pages added to sitemap.</p>
+                  </div>
+                </div>
+              </div>
+            </Panel>
+
+            <Panel title="Quick Actions" subtitle="Search engine tools">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">{[
+                { title: 'Google Search Console', description: 'Check indexed pages & request indexing', href: 'https://search.google.com/search-console', icon: Search },
+                { title: 'Bing Webmaster Tools', description: 'Submit URLs & check crawl status', href: 'https://www.bing.com/webmasters', icon: Globe },
+                { title: 'Google Rich Results', description: 'Test structured data markup', href: 'https://search.google.com/test/rich-results', icon: Code2 },
+                { title: 'Sitemap', description: 'View current sitemap.xml', href: '/sitemap.xml', icon: FileText },
+                { title: 'Robots.txt', description: 'View crawl directives', href: '/robots.txt', icon: Shield },
+                { title: 'IndexNow Key', description: 'Verify key file is live', href: '/e5378b2c461c4df68ec5733319ce6bb9.txt', icon: Lock },
+              ].map(link => (
+                <a key={link.title} href={link.href} target={link.href.startsWith('/') ? '_self' : '_blank'} rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-slate-50 hover:bg-blue-50 border border-slate-200 rounded-lg transition-colors group">
+                  <div className="w-9 h-9 bg-white border border-slate-200 group-hover:border-blue-300 rounded-lg flex items-center justify-center shrink-0"><link.icon className="w-4 h-4 text-slate-600 group-hover:text-blue-600" /></div>
+                  <div className="flex-1 min-w-0"><p className="text-sm font-medium text-slate-800">{link.title}</p><p className="text-xs text-slate-500 truncate">{link.description}</p></div>
+                  <ExternalLink className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                </a>
+              ))}</div>
+            </Panel>
+          </div>
+        )}
+
         {/* ─── SETUP ─────────────────────────────────────── */}
         {activeTab === 'setup' && setupData && (
           <div className="space-y-6">
@@ -1237,24 +1333,24 @@ export default function AdminDashboard() {
           <div className="space-y-6">
             {!aiReadinessData ? <Empty text="Loading AI Readiness data..." /> : (<>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <StatCard icon={Zap} label="Quick Scans" value={aiReadinessData.summary?.quickScans || 0} color="blue" />
-                <StatCard icon={BookOpen} label="Deep Dives" value={aiReadinessData.summary?.deepDives || 0} color="teal" />
-                <StatCard icon={FileText} label="Blueprints" value={aiReadinessData.summary?.blueprints || 0} color="amber" />
-                <StatCard icon={Bot} label="Total Reports" value={aiReadinessData.summary?.totalGenerations || 0} color="purple" />
+                <StatCard icon={BookOpen} label="Quick Scans" value={filteredAiReports.filter((r: any) => r.reportType === 'quick-scan' || r.reportType === 'deep-dive').length} color="teal" />
+                <StatCard icon={FileText} label="Deep Dives" value={filteredAiReports.filter((r: any) => r.reportType === 'blueprint').length} color="amber" />
+                <StatCard icon={Bot} label="Total Reports" value={filteredAiReports.length} color="purple" />
               </div>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
                 <StatCard icon={Download} label="Downloads" value={aiReadinessData.summary?.downloads || 0} color="blue" />
                 <StatCard icon={Send} label="Emails Sent" value={aiReadinessData.summary?.emailsSent || 0} color="teal" />
                 <StatCard icon={TrendingUp} label="Avg Rating" value={0} subtitle={`${aiReadinessData.summary?.avgRating || 0}/5`} color="amber" />
-                <StatCard icon={MessageSquare} label="Feedback" value={aiReadinessData.summary?.totalFeedback || 0} color="purple" />
+                <StatCard icon={MessageSquare} label="Feedback" value={filteredAiFeedback.length} color="purple" />
+                <StatCard icon={Users} label="Org Leads" value={filteredAiFeedback.filter((f: any) => f.orgInterest === 'yes').length} color="teal" />
               </div>
 
               <Panel title="Score Distribution" subtitle="All assessment scores by range (last 90 days)">
                 <BarChartComponent data={aiReadinessData.scoreDist || []} color="#2563eb" />
               </Panel>
 
-              <Panel title="Recent Submissions" subtitle="Latest AI readiness assessments">
-                {(!aiReadinessData.recentReports || aiReadinessData.recentReports.length === 0) ? <Empty text="No submissions yet" /> : (
+              <Panel title="Recent Submissions" subtitle={`${filteredAiReports.length} reports — ${getFilterLabel()}`}>
+                {filteredAiReports.length === 0 ? <Empty text="No submissions yet" /> : (
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
@@ -1267,13 +1363,13 @@ export default function AdminDashboard() {
                         </tr>
                       </thead>
                       <tbody>
-                        {aiReadinessData.recentReports.slice(0, 25).map((r: any, i: number) => (
+                        {filteredAiReports.slice(0, 25).map((r: any, i: number) => (
                           <tr key={i} className="border-b border-slate-100 hover:bg-slate-50">
                             <td className="py-2.5 pr-4 font-medium text-slate-800">{r.name || '-'}</td>
                             <td className="py-2.5 pr-4 text-slate-600 text-xs">{r.email}</td>
                             <td className="py-2.5 pr-4">
-                              <span className={`px-2 py-0.5 rounded text-xs font-medium ${r.reportType === 'quick-scan' ? 'bg-blue-100 text-blue-700' : r.reportType === 'deep-dive' ? 'bg-teal-100 text-teal-700' : r.reportType === 'blueprint' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
-                                {r.reportType === 'quick-scan' ? 'Quick Scan' : r.reportType === 'deep-dive' ? 'Deep Dive' : r.reportType === 'blueprint' ? 'Blueprint' : r.reportType || 'Unknown'}
+                              <span className={`px-2 py-0.5 rounded text-xs font-medium ${r.reportType === 'quick-scan' || r.reportType === 'deep-dive' ? 'bg-teal-100 text-teal-700' : r.reportType === 'blueprint' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
+                                {r.reportType === 'quick-scan' || r.reportType === 'deep-dive' ? 'Quick Scan' : r.reportType === 'blueprint' ? 'Deep Dive' : r.reportType || 'Unknown'}
                               </span>
                             </td>
                             <td className="py-2.5 pr-4 font-semibold text-slate-800">{r.overallScore || '-'}</td>
@@ -1286,10 +1382,10 @@ export default function AdminDashboard() {
                 )}
               </Panel>
 
-              <Panel title="User Feedback" subtitle="Ratings and comments from assessments">
-                {(!aiReadinessData.feedback || aiReadinessData.feedback.length === 0) ? <Empty text="No feedback yet" /> : (
+              <Panel title="User Feedback" subtitle={`${filteredAiFeedback.length} responses — ${getFilterLabel()}`}>
+                {filteredAiFeedback.length === 0 ? <Empty text="No feedback yet" /> : (
                   <div className="space-y-2">
-                    {aiReadinessData.feedback.slice(0, 15).map((f: any, i: number) => (
+                    {filteredAiFeedback.slice(0, 15).map((f: any, i: number) => (
                       <div key={i} className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-lg">
                         <div className="flex items-center gap-0.5">
                           {Array.from({ length: 5 }, (_, s) => (
@@ -1300,9 +1396,10 @@ export default function AdminDashboard() {
                           <p className="text-sm text-slate-800 font-medium truncate">{f.name || f.email}</p>
                           {f.comment && <p className="text-xs text-slate-500 mt-0.5 truncate">{f.comment}</p>}
                         </div>
-                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${f.reportType === 'quick-scan' ? 'bg-blue-100 text-blue-700' : f.reportType === 'deep-dive' ? 'bg-teal-100 text-teal-700' : f.reportType === 'blueprint' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
-                          {f.reportType || '-'}
+                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${f.reportType === 'quick-scan' || f.reportType === 'deep-dive' ? 'bg-teal-100 text-teal-700' : f.reportType === 'blueprint' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
+                          {f.reportType === 'quick-scan' || f.reportType === 'deep-dive' ? 'Quick Scan' : f.reportType === 'blueprint' ? 'Deep Dive' : f.reportType || '-'}
                         </span>
+                        {f.orgInterest === 'yes' && <span className="px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">Org Lead</span>}
                         <span className="text-xs text-slate-400">{f.submittedAt ? new Date(f.submittedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) : ''}</span>
                       </div>
                     ))}
