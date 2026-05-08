@@ -29,7 +29,6 @@ export const siteConfig = {
           { name: 'Copilot Studio Training', href: '/services/copilot-studio-training', description: 'Build AI copilots with Microsoft' },
           { name: 'Enterprise AI Roadmap', href: '/services/enterprise-ai-roadmap-workshop', description: 'Strategic AI planning workshop' },
           { name: 'Certifications', href: '/services/certifications', description: 'Microsoft certification prep' },
-          { name: 'Claude Cowork', href: '/claude-cowork', description: 'Free 4-hour Claude workshop', badge: 'Closed' },
         ]
       },
       {
@@ -49,7 +48,8 @@ export const siteConfig = {
           { name: 'AI Academy', href: '/ai-academy', description: 'Free AI courses & learning paths', badge: 'Free' },
           { name: 'Blog', href: '/resources/blog', description: 'AI insights & articles' },
           { name: 'Videos', href: '/resources/videos', description: 'Training videos & tutorials' },
-          { name: 'Webinars', href: '/webinars', description: 'Live & recorded sessions' },
+          { name: 'Workshops & Webinars', href: '/webinars', description: 'Live sessions & recordings' },
+          { name: 'Claude Cowork', href: '/claude-cowork', description: 'Free 4-hour Claude workshop', badge: 'Closed' },
           { name: 'AI Readiness', href: '/ai-readiness', description: 'Assess your AI readiness' },
         ]
       },
