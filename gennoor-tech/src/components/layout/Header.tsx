@@ -101,6 +101,15 @@ export default function Header() {
                       openDropdown === item.name && 'rotate-180'
                     )} />
                   </Link>
+                ) : item.href === '/ai-academy' ? (
+                  <Link
+                    href={item.href}
+                    className="relative inline-flex items-center gap-1.5 px-4 py-2 bg-accent-600 text-white text-sm font-bold rounded-full hover:bg-accent-700 transition-colors shadow-sm"
+                  >
+                    <span className="inline-block w-2 h-2 bg-secondary-400 rounded-full animate-pulse" />
+                    {item.name}
+                    <span className="ml-0.5 text-[10px] font-black bg-secondary-400 text-dark-900 px-1.5 py-0.5 rounded-full leading-none uppercase">Free</span>
+                  </Link>
                 ) : (
                   <Link
                     href={item.href}
@@ -203,6 +212,16 @@ export default function Header() {
                         </div>
                       )}
                     </>
+                  ) : item.href === '/ai-academy' ? (
+                    <Link
+                      href={item.href}
+                      className="inline-flex items-center gap-1.5 mx-3 my-1 px-4 py-2 bg-accent-600 text-white text-sm font-bold rounded-full"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <span className="inline-block w-2 h-2 bg-secondary-400 rounded-full animate-pulse" />
+                      {item.name}
+                      <span className="ml-0.5 text-[10px] font-black bg-secondary-400 text-dark-900 px-1.5 py-0.5 rounded-full leading-none uppercase">Free</span>
+                    </Link>
                   ) : (
                     <Link
                       href={item.href}

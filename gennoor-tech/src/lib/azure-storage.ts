@@ -390,6 +390,92 @@ export async function getEmailLogs(days: number = 30) {
   return logs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 }
 
+// ─── Learners ───────────────────────────────────────────────
+
+export async function saveLearner(data: {
+  email: string
+  name: string
+  provider: 'otp' | 'google' | 'microsoft'
+}) {
+  await ensureTable('Learners')
+  const client = getTableClient('Learners')
+  const sanitizedEmail = data.email.toLowerCase().trim().replace(/[^a-z0-9@._-]/g, '')
+
+  await client.upsertEntity({
+    partitionKey: 'learner',
+    rowKey: sanitizedEmail,
+    email: data.email.toLowerCase().trim(),
+    name: data.name,
+    provider: data.provider,
+    lastLogin: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+  }, 'Merge')
+}
+
+export async function getLearner(email: string) {
+  await ensureTable('Learners')
+  const client = getTableClient('Learners')
+  const sanitizedEmail = email.toLowerCase().trim().replace(/[^a-z0-9@._-]/g, '')
+  try {
+    return await client.getEntity('learner', sanitizedEmail)
+  } catch {
+    return null
+  }
+}
+
+// ─── Course Progress ────────────────────────────────────────
+
+export async function saveCourseProgress(data: {
+  email: string
+  courseId: string
+  chapterId: string
+  currentSlide: number
+  totalSlides: number
+  completionPercent: number
+  completed: boolean
+}) {
+  await ensureTable('CourseProgress')
+  const client = getTableClient('CourseProgress')
+
+  await client.upsertEntity({
+    partitionKey: data.email.toLowerCase().trim(),
+    rowKey: `${data.courseId}:${data.chapterId}`,
+    courseId: data.courseId,
+    chapterId: data.chapterId,
+    currentSlide: data.currentSlide,
+    totalSlides: data.totalSlides,
+    completionPercent: data.completionPercent,
+    completed: data.completed,
+    lastAccessed: new Date().toISOString(),
+  }, 'Merge')
+}
+
+export async function getCourseProgress(email: string, courseId: string): Promise<Array<Record<string, any>>> {
+  await ensureTable('CourseProgress')
+  const client = getTableClient('CourseProgress')
+
+  const results: Array<Record<string, any>> = []
+  const pk = email.toLowerCase().trim()
+  const query = client.listEntities({
+    queryOptions: {
+      filter: `PartitionKey eq '${pk}' and RowKey ge '${courseId}:' and RowKey lt '${courseId};'`,
+    },
+  })
+
+  for await (const entity of query) {
+    results.push({
+      chapterId: entity.chapterId,
+      courseId: entity.courseId,
+      currentSlide: entity.currentSlide,
+      totalSlides: entity.totalSlides,
+      completionPercent: entity.completionPercent,
+      completed: entity.completed,
+      lastAccessed: entity.lastAccessed,
+    })
+  }
+  return results
+}
+
 // ─── PDF from Blob ───────────────────────────────────────────
 
 export async function downloadPdfFromBlob(blobPath: string): Promise<Buffer | null> {

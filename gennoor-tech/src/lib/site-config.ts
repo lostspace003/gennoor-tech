@@ -53,6 +53,7 @@ export const siteConfig = {
       },
       { name: 'Blog', href: '/resources/blog' },
       { name: 'Videos', href: '/resources/videos' },
+      { name: 'AI Academy', href: '/ai-academy' },
       { name: 'Claude Cowork', href: '/claude-cowork' },
       { name: 'AI Ready', href: '/ai-readiness' },
       { name: 'Webinars', href: '/webinars' },
@@ -79,12 +80,12 @@ export const siteConfig = {
         ]
       },
       {
-        title: 'Company',
+        title: 'Learning',
         links: [
-          { name: 'About', href: '/about' },
-          { name: 'Portfolio', href: '/portfolio' },
-          { name: 'Contact', href: '/contact' },
-          { name: 'Privacy', href: '/privacy' },
+          { name: 'AI Academy', href: '/ai-academy' },
+          { name: 'AB-100 Course', href: '/ai-academy/ab-100' },
+          { name: 'AI Readiness', href: '/ai-readiness' },
+          { name: 'Videos', href: '/resources/videos' },
         ]
       },
     ]

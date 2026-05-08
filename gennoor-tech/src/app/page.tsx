@@ -10,6 +10,7 @@ import POCShowcase from '@/components/home/POCShowcase'
 import YouTubeVideos from '@/components/home/YouTubeVideos'
 import LatestBlog from '@/components/home/LatestBlog'
 import CTASection from '@/components/home/CTASection'
+import AcademyCTA from '@/components/home/AcademyCTA'
 
 export default function HomePage() {
   return (
@@ -32,6 +33,10 @@ export default function HomePage() {
 
       <ScrollReveal>
         <Metrics />
+      </ScrollReveal>
+
+      <ScrollReveal>
+        <AcademyCTA />
       </ScrollReveal>
 
       <ScrollReveal>
