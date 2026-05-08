@@ -20,8 +20,8 @@ export default function AcademyPage() {
               AI Academy
             </h1>
             <p className="text-lg sm:text-xl text-white/80 leading-relaxed mb-10 max-w-2xl mx-auto">
-              Free, self-paced courses to master enterprise AI architecture.
-              Learn at your own pace with interactive slides, mock exams, and audio narration.
+              Free courses for everyone — technical, non-technical, business, HR, or any domain.
+              Learn AI at your own pace with interactive slides, mock exams, and audio narration.
             </p>
 
             {/* Stats */}

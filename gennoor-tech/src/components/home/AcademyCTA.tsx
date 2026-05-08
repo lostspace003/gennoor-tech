@@ -21,14 +21,14 @@ export default function AcademyCTA() {
               </div>
 
               <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4 leading-tight">
-                Start Your AI Journey{' '}
+                AI Courses for{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-400 to-secondary-400">
-                  Today
+                  Everyone
                 </span>
               </h2>
               <p className="text-lg text-white/70 mb-8 max-w-lg">
-                Free, self-paced courses with audio narration — learn enterprise AI architecture
-                and prepare for Microsoft certifications at your own pace.
+                Whether you&apos;re in tech, business, HR, or any domain — we have free, self-paced courses
+                to help you understand and apply AI in your role. No prior technical knowledge needed.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 mb-8">

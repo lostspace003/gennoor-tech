@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'AI Academy - Free Courses',
-  description: 'Free, self-paced courses to master enterprise AI architecture. Start with the Microsoft AB-100 certification course — 13 chapters, mock exam, and audio narration included.',
+  title: 'AI Academy - Free AI Courses for Everyone',
+  description: 'Free AI courses for every role — technical, business, HR, or any domain. Self-paced learning with interactive slides, mock exams, and audio narration. No prior technical knowledge needed.',
   openGraph: {
-    title: 'AI Academy - Free Courses | Gennoor Tech',
-    description: 'Free, self-paced courses to master enterprise AI architecture. 13 chapters + mock exam for Microsoft AB-100 certification.',
+    title: 'AI Academy - Free AI Courses for Everyone | Gennoor Tech',
+    description: 'Free AI courses for every role — technical, business, HR, or any domain. Self-paced learning with interactive slides, mock exams, and audio narration.',
     type: 'website',
   },
 }
