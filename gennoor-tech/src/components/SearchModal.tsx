@@ -1,56 +1,71 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, X, ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import Fuse, { type IFuseOptions } from 'fuse.js'
 
 interface SearchablePage {
   title: string
   description: string
   href: string
   category: string
+  keywords: string[]
 }
 
 const pages: SearchablePage[] = [
   // Programs
-  { title: 'Training Programs', description: 'Corporate AI training courses & bootcamps', href: '/services/training', category: 'Programs' },
-  { title: 'Azure AI Foundry Workshop', description: 'Hands-on Azure AI workshop', href: '/services/azure-ai-foundry-workshop', category: 'Programs' },
-  { title: 'Copilot Studio Training', description: 'Build AI copilots with Microsoft', href: '/services/copilot-studio-training', category: 'Programs' },
-  { title: 'Enterprise AI Roadmap Workshop', description: 'Strategic AI planning workshop', href: '/services/enterprise-ai-roadmap-workshop', category: 'Programs' },
-  { title: 'Certifications', description: 'Microsoft certification prep courses', href: '/services/certifications', category: 'Programs' },
-  { title: 'Claude Cowork', description: 'Free 4-hour Claude workshop', href: '/claude-cowork', category: 'Programs' },
+  { title: 'Training Programs', description: 'Corporate AI training courses & bootcamps', href: '/services/training', category: 'Programs', keywords: ['corporate training', 'bootcamp', 'workshop', 'learn', 'upskill', 'course catalog', 'AI training'] },
+  { title: 'Azure AI Foundry Workshop', description: 'Hands-on Azure AI workshop', href: '/services/azure-ai-foundry-workshop', category: 'Programs', keywords: ['azure', 'microsoft', 'foundry', 'hands-on', 'workshop', 'cloud AI', 'cognitive services'] },
+  { title: 'Copilot Studio Training', description: 'Build AI copilots with Microsoft', href: '/services/copilot-studio-training', category: 'Programs', keywords: ['copilot', 'microsoft', 'chatbot', 'low-code', 'power platform', 'virtual agent'] },
+  { title: 'Enterprise AI Roadmap Workshop', description: 'Strategic AI planning workshop', href: '/services/enterprise-ai-roadmap-workshop', category: 'Programs', keywords: ['strategy', 'roadmap', 'planning', 'executive', 'C-suite', 'transformation', 'digital'] },
+  { title: 'Certifications', description: 'Microsoft certification prep courses', href: '/services/certifications', category: 'Programs', keywords: ['exam', 'cert', 'microsoft certified', 'badge', 'credential', 'prep', 'study', 'AZ', 'AI', 'PL', 'SC', 'DP'] },
+  { title: 'Claude Cowork', description: 'Free 4-hour Claude workshop — Registration closed', href: '/claude-cowork', category: 'Programs', keywords: ['claude', 'anthropic', 'cowork', 'free workshop', 'automation', 'AI assistant'] },
   // Services
-  { title: 'AI Strategy & Consulting', description: 'Enterprise AI roadmaps & governance frameworks', href: '/services/ai-strategy', category: 'Services' },
-  { title: 'PoC Development', description: 'Production-ready AI prototypes & demos', href: '/services/poc-development', category: 'Services' },
-  { title: 'Agentic AI Solutions', description: 'Multi-agent orchestration with LangChain & CrewAI', href: '/services/agentic-ai', category: 'Services' },
-  { title: 'Collaboration', description: 'Partnership and collaboration opportunities', href: '/services/collaboration', category: 'Services' },
+  { title: 'AI Strategy & Consulting', description: 'Enterprise AI roadmaps & governance frameworks', href: '/services/ai-strategy', category: 'Services', keywords: ['consulting', 'strategy', 'governance', 'ROI', 'advisory', 'digital transformation', 'enterprise'] },
+  { title: 'PoC Development', description: 'Production-ready AI prototypes & demos', href: '/services/poc-development', category: 'Services', keywords: ['prototype', 'proof of concept', 'demo', 'MVP', 'build', 'development', 'document intelligence', 'chatbot'] },
+  { title: 'Agentic AI Solutions', description: 'Multi-agent orchestration with LangChain & CrewAI', href: '/services/agentic-ai', category: 'Services', keywords: ['agent', 'langchain', 'crewai', 'autogen', 'orchestration', 'multi-agent', 'autonomous', 'LLM'] },
+  { title: 'Collaboration', description: 'Partnership and collaboration opportunities', href: '/services/collaboration', category: 'Services', keywords: ['partner', 'collaborate', 'joint venture', 'work together', 'alliance'] },
   // Resources
-  { title: 'AI Academy', description: 'Free AI courses and learning paths', href: '/ai-academy', category: 'Resources' },
-  { title: 'Blog', description: 'AI insights, tutorials & articles', href: '/resources/blog', category: 'Resources' },
-  { title: 'Videos', description: 'Training videos & tutorials', href: '/resources/videos', category: 'Resources' },
-  { title: 'Webinars', description: 'Live and recorded webinar sessions', href: '/webinars', category: 'Resources' },
-  { title: 'AI Readiness Assessment', description: 'Check your organization\'s AI readiness', href: '/ai-readiness', category: 'Resources' },
+  { title: 'AI Academy', description: 'Free AI courses and learning paths', href: '/ai-academy', category: 'Resources', keywords: ['free course', 'learn', 'academy', 'education', 'self-paced', 'AB-100', 'beginner', 'fundamentals'] },
+  { title: 'Blog', description: 'AI insights, tutorials & articles', href: '/resources/blog', category: 'Resources', keywords: ['article', 'post', 'tutorial', 'insights', 'news', 'write-up', 'thought leadership'] },
+  { title: 'Videos', description: 'Training videos & tutorials', href: '/resources/videos', category: 'Resources', keywords: ['video', 'youtube', 'tutorial', 'watch', 'recording', 'demo'] },
+  { title: 'Webinars', description: 'Live and recorded webinar sessions', href: '/webinars', category: 'Resources', keywords: ['webinar', 'live session', 'online event', 'recording', 'presentation'] },
+  { title: 'AI Readiness Assessment', description: 'Check your organization\'s AI readiness', href: '/ai-readiness', category: 'Resources', keywords: ['assessment', 'readiness', 'quiz', 'score', 'evaluate', 'maturity', 'checklist'] },
   // Guides
-  { title: 'AI-102 Azure AI Engineer Guide', description: 'Study guide for Azure AI Engineer certification', href: '/guides/ai-102-azure-ai-engineer', category: 'Resources' },
-  { title: 'MS-4004 Copilot for M365 Guide', description: 'Guide for Microsoft Copilot certification', href: '/guides/ms-4004-copilot-365', category: 'Resources' },
-  { title: 'PL-300 Power BI Analyst Guide', description: 'Study guide for Power BI certification', href: '/guides/pl-300-power-bi-analyst', category: 'Resources' },
-  { title: 'Agentic AI Guide', description: 'Complete guide to agentic AI systems', href: '/resources/guides/agentic-ai', category: 'Resources' },
-  { title: 'Enterprise AI Training Guide', description: 'Guide to corporate AI training programs', href: '/resources/guides/enterprise-ai-training', category: 'Resources' },
-  { title: 'Microsoft Copilot Studio Guide', description: 'Guide to building with Copilot Studio', href: '/resources/guides/microsoft-copilot-studio', category: 'Resources' },
+  { title: 'AI-102 Azure AI Engineer Guide', description: 'Study guide for Azure AI Engineer certification', href: '/guides/ai-102-azure-ai-engineer', category: 'Resources', keywords: ['AI-102', 'azure AI engineer', 'exam guide', 'study', 'certification prep'] },
+  { title: 'MS-4004 Copilot for M365 Guide', description: 'Guide for Microsoft Copilot certification', href: '/guides/ms-4004-copilot-365', category: 'Resources', keywords: ['MS-4004', 'copilot', 'microsoft 365', 'exam guide', 'study'] },
+  { title: 'PL-300 Power BI Analyst Guide', description: 'Study guide for Power BI certification', href: '/guides/pl-300-power-bi-analyst', category: 'Resources', keywords: ['PL-300', 'power BI', 'analyst', 'data visualization', 'exam guide'] },
+  { title: 'Agentic AI Guide', description: 'Complete guide to agentic AI systems', href: '/resources/guides/agentic-ai', category: 'Resources', keywords: ['agentic', 'agent', 'autonomous AI', 'guide', 'multi-agent'] },
+  { title: 'Enterprise AI Training Guide', description: 'Guide to corporate AI training programs', href: '/resources/guides/enterprise-ai-training', category: 'Resources', keywords: ['enterprise', 'corporate training', 'guide', 'L&D', 'upskilling'] },
+  { title: 'Microsoft Copilot Studio Guide', description: 'Guide to building with Copilot Studio', href: '/resources/guides/microsoft-copilot-studio', category: 'Resources', keywords: ['copilot studio', 'microsoft', 'guide', 'chatbot', 'virtual agent'] },
   // About
-  { title: 'My Journey', description: '14+ years in enterprise AI across 6 countries', href: '/about/journey', category: 'About' },
-  { title: 'Gennoor Tech', description: 'About the company and mission', href: '/about/company', category: 'About' },
-  { title: 'Professional Certifications', description: '16 Microsoft & AI certifications', href: '/about/certifications', category: 'About' },
-  { title: 'Case Studies', description: 'Client success stories & outcomes', href: '/portfolio/case-studies', category: 'About' },
-  { title: 'Client Testimonials', description: 'What clients say about our work', href: '/portfolio/testimonials', category: 'About' },
-  { title: 'Open Source', description: 'Community contributions & projects', href: '/portfolio/open-source', category: 'About' },
+  { title: 'My Journey', description: '14+ years in enterprise AI across 6 countries', href: '/about/journey', category: 'About', keywords: ['about', 'jalal', 'journey', 'experience', 'background', 'bio', 'who'] },
+  { title: 'Gennoor Tech', description: 'About the company and mission', href: '/about/company', category: 'About', keywords: ['company', 'about us', 'mission', 'vision', 'gennoor'] },
+  { title: 'Professional Certifications', description: '16 Microsoft & AI certifications', href: '/about/certifications', category: 'About', keywords: ['certifications', 'credentials', 'badges', 'microsoft certified', 'MCT', 'qualifications'] },
+  { title: 'Case Studies', description: 'Client success stories & outcomes', href: '/portfolio/case-studies', category: 'About', keywords: ['case study', 'success story', 'client', 'results', 'outcome', 'portfolio'] },
+  { title: 'Client Testimonials', description: 'What clients say about our work', href: '/portfolio/testimonials', category: 'About', keywords: ['testimonial', 'review', 'feedback', 'client says', 'recommendation'] },
+  { title: 'Open Source', description: 'Community contributions & projects', href: '/portfolio/open-source', category: 'About', keywords: ['open source', 'github', 'contribution', 'community', 'projects'] },
   // Other
-  { title: 'Contact', description: 'Get in touch with us', href: '/contact', category: 'Contact' },
-  { title: 'Book a Discovery Call', description: 'Schedule a free consultation', href: '/resources/calendar', category: 'Contact' },
+  { title: 'Contact', description: 'Get in touch with us', href: '/contact', category: 'Contact', keywords: ['contact', 'email', 'reach out', 'enquiry', 'message', 'get in touch'] },
+  { title: 'Book a Discovery Call', description: 'Schedule a free consultation', href: '/resources/calendar', category: 'Contact', keywords: ['book', 'call', 'schedule', 'meeting', 'consultation', 'calendar', 'appointment'] },
 ]
 
 const categoryOrder = ['Programs', 'Services', 'Resources', 'About', 'Contact']
+
+const fuseOptions: IFuseOptions<SearchablePage> = {
+  keys: [
+    { name: 'title', weight: 0.4 },
+    { name: 'keywords', weight: 0.3 },
+    { name: 'description', weight: 0.2 },
+    { name: 'category', weight: 0.1 },
+  ],
+  threshold: 0.4,
+  includeScore: true,
+  ignoreLocation: true,
+  minMatchCharLength: 2,
+}
 
 export default function SearchModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [query, setQuery] = useState('')
@@ -59,12 +74,10 @@ export default function SearchModal({ open, onClose }: { open: boolean; onClose:
   const listRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
+  const fuse = useMemo(() => new Fuse(pages, fuseOptions), [])
+
   const filtered = query.trim()
-    ? pages.filter(p =>
-        p.title.toLowerCase().includes(query.toLowerCase()) ||
-        p.description.toLowerCase().includes(query.toLowerCase()) ||
-        p.category.toLowerCase().includes(query.toLowerCase())
-      )
+    ? fuse.search(query).map(r => r.item)
     : pages
 
   const grouped = categoryOrder
