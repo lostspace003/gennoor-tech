@@ -29,6 +29,7 @@ export default function AudioPlayer({ audioDir, currentSlide, totalSlides, steps
   const [audioReady, setAudioReady] = useState(false)
   const prevSlideRef = useRef(currentSlide)
   const sentStepRef = useRef(0)
+  const playWhenReadyRef = useRef<(() => void) | null>(null)
 
   if (!audioDir) return null
 
@@ -44,6 +45,12 @@ export default function AudioPlayer({ audioDir, currentSlide, totalSlides, steps
     const audio = audioRef.current
     if (!audio) return
 
+    // Clean up any stale canplaythrough listener from previous slide
+    if (playWhenReadyRef.current) {
+      audio.removeEventListener('canplaythrough', playWhenReadyRef.current)
+      playWhenReadyRef.current = null
+    }
+
     setAudioReady(false)
     setCurrentTime(0)
     setDuration(0)
@@ -52,16 +59,18 @@ export default function AudioPlayer({ audioDir, currentSlide, totalSlides, steps
     audio.load()
 
     if (autoPlay) {
-      onResetSteps?.()
+      if (stepsInSlide > 0) onResetSteps?.()
       const playWhenReady = () => {
         setTimeout(() => { audio.play().catch(() => {}) }, 750)
         audio.removeEventListener('canplaythrough', playWhenReady)
+        playWhenReadyRef.current = null
       }
+      playWhenReadyRef.current = playWhenReady
       audio.addEventListener('canplaythrough', playWhenReady)
     } else {
       onRevealAllSteps?.()
     }
-  }, [currentSlide, slideAudioSrc, autoPlay, speedIndex, onResetSteps, onRevealAllSteps])
+  }, [currentSlide, slideAudioSrc, autoPlay, speedIndex, stepsInSlide, onResetSteps, onRevealAllSteps])
 
   // Step timing: short intro (~8% or max 3s), then equal time per step
   const getStepTiming = useCallback((dur: number, steps: number) => {
