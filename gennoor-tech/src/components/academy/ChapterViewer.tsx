@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeftOpen, X, User, LogOut, ZoomIn, ZoomOut, Maximize, Minimize2, Lock } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeftOpen, X, User, LogOut, ZoomIn, ZoomOut, Maximize, Minimize2, Lock, CheckCircle } from 'lucide-react'
 import type { Chapter } from '@/config/courses'
 import { saveLocalProgress, getLocalProgress, getAllLocalProgress } from '@/lib/progress-store'
 import { useLearnerAuth } from '@/hooks/useLearnerAuth'
@@ -429,13 +429,23 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
             <span className="p-1.5 opacity-30"><ChevronLeft className="w-4 h-4" /></span>
           )}
           {nextChapter ? (
-            <Link
-              href={`/ai-academy/${courseId}/${nextChapter.slug}`}
-              className="p-1.5 rounded hover:bg-white/10 transition-colors"
-              title={`Next: ${nextChapter.title}`}
-            >
-              <ChevronRight className="w-4 h-4" />
-            </Link>
+            chapter.isFree && !isLoggedIn && !nextChapter.isFree ? (
+              <button
+                onClick={() => setShowAuthModal(true)}
+                className="p-1.5 rounded hover:bg-white/10 transition-colors"
+                title="Sign in to access next chapter"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            ) : (
+              <Link
+                href={`/ai-academy/${courseId}/${nextChapter.slug}`}
+                className="p-1.5 rounded hover:bg-white/10 transition-colors"
+                title={`Next: ${nextChapter.title}`}
+              >
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            )
           ) : (
             <span className="p-1.5 opacity-30"><ChevronRight className="w-4 h-4" /></span>
           )}
@@ -581,19 +591,51 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
         </div>
       </div>
 
-      {/* Next chapter bar (at bottom when chapter is near complete) */}
+      {/* Chapter complete / next chapter bar */}
       {nextChapter && slidePercent >= 90 && (
-        <div className="flex-shrink-0 bg-primary-900 text-white px-4 py-3 flex items-center justify-between animate-fade-in">
-          <span className="text-sm text-white/80">
-            Up next: <span className="font-medium text-white">{nextChapter.title}</span>
-          </span>
-          <Link
-            href={`/ai-academy/${courseId}/${nextChapter.slug}`}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-secondary-400 text-dark-900 text-sm font-bold rounded-lg hover:bg-secondary-300 transition-colors"
-          >
-            Next Chapter
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+        <div className={`flex-shrink-0 text-white px-4 flex items-center justify-between animate-fade-in ${
+          slidePercent >= 99 ? 'bg-gradient-to-r from-primary-800 to-primary-900 py-4' : 'bg-primary-900 py-3'
+        }`}>
+          {slidePercent >= 99 ? (
+            <>
+              <div className="flex items-center gap-3">
+                <CheckCircle className="w-5 h-5 text-secondary-400" />
+                <span className="text-sm font-medium">
+                  Chapter complete! Up next: <span className="text-secondary-300">{nextChapter.title}</span>
+                </span>
+              </div>
+              {chapter.isFree && !isLoggedIn ? (
+                <button
+                  onClick={() => setShowAuthModal(true)}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-secondary-400 text-dark-900 text-sm font-bold rounded-lg hover:bg-secondary-300 transition-colors"
+                >
+                  <User className="w-4 h-4" />
+                  Sign In to Continue
+                </button>
+              ) : (
+                <Link
+                  href={`/ai-academy/${courseId}/${nextChapter.slug}`}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-secondary-400 text-dark-900 text-sm font-bold rounded-lg hover:bg-secondary-300 transition-colors"
+                >
+                  Next Chapter
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              )}
+            </>
+          ) : (
+            <>
+              <span className="text-sm text-white/80">
+                Up next: <span className="font-medium text-white">{nextChapter.title}</span>
+              </span>
+              <Link
+                href={`/ai-academy/${courseId}/${nextChapter.slug}`}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-secondary-400 text-dark-900 text-sm font-bold rounded-lg hover:bg-secondary-300 transition-colors"
+              >
+                Next Chapter
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </>
+          )}
         </div>
       )}
 
