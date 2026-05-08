@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeftOpen, X, User, LogOut, ZoomIn, ZoomOut, Maximize, Minimize2, Lock, CheckCircle } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, SkipBack, SkipForward, PanelLeftClose, PanelLeftOpen, X, User, LogOut, ZoomIn, ZoomOut, Maximize, Minimize2, Lock, CheckCircle } from 'lucide-react'
 import type { Chapter } from '@/config/courses'
 import { saveLocalProgress, getLocalProgress, getAllLocalProgress } from '@/lib/progress-store'
 import { useLearnerAuth } from '@/hooks/useLearnerAuth'
@@ -149,10 +149,9 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
   const advanceStepInIframe = useCallback(() => postToIframe('gennoor-advance-step'), [postToIframe])
   const resetStepsInIframe = useCallback(() => postToIframe('gennoor-reset-steps'), [postToIframe])
   const revealAllStepsInIframe = useCallback(() => postToIframe('gennoor-reveal-all-steps'), [postToIframe])
-  const nextInIframe = useCallback(() => postToIframe('gennoor-next'), [postToIframe])
-  const prevInIframe = useCallback(() => postToIframe('gennoor-prev'), [postToIframe])
+  const retreatSlideInIframe = useCallback(() => postToIframe('gennoor-retreat-slide'), [postToIframe])
 
-  // Parent-side keyboard: ArrowRight/ArrowLeft for step+slide navigation
+  // Parent-side keyboard: ArrowRight/ArrowLeft for slide-level navigation
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.code === 'Space') return
@@ -161,15 +160,15 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
 
       if (e.key === 'ArrowRight') {
         e.preventDefault()
-        nextInIframe()
+        advanceSlideInIframe()
       } else if (e.key === 'ArrowLeft') {
         e.preventDefault()
-        prevInIframe()
+        retreatSlideInIframe()
       }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [nextInIframe, prevInIframe])
+  }, [advanceSlideInIframe, retreatSlideInIframe])
 
   const applyZoom = useCallback((level: number) => {
     try {
@@ -295,6 +294,15 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
               }, 50);
             }
 
+            if (e.data.type === 'gennoor-retreat-slide') {
+              var slide = document.querySelector('.slide.active');
+              if (slide) {
+                slide.querySelectorAll('[data-step].revealed').forEach(function(s) { s.classList.remove('revealed'); });
+              }
+              if (prevBtn) prevBtn.click();
+              setTimeout(function() { reportProgress(); }, 150);
+            }
+
             if (e.data.type === 'gennoor-next') {
               if (nextBtn) nextBtn.click();
               setTimeout(function() { reportProgress(); }, 100);
@@ -305,6 +313,12 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
               setTimeout(function() { reportProgress(); }, 100);
             }
           });
+
+          // Hide iframe's built-in nav — slide nav is in the parent toolbar
+          var controlsTop = document.querySelector('.controls-top');
+          if (controlsTop) controlsTop.style.display = 'none';
+          var stepInd = document.getElementById('stepIndicator');
+          if (stepInd) stepInd.style.display = 'none';
 
           setTimeout(function() { reportProgress(); }, 500);
         })();
@@ -351,6 +365,29 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
           {slideInfo && (
             <span className="ml-3 text-xs text-white/40">{slideInfo}</span>
           )}
+        </div>
+
+        {/* Slide navigation */}
+        <div className="flex items-center gap-1 flex-shrink-0">
+          <button
+            onClick={retreatSlideInIframe}
+            className="p-1.5 rounded hover:bg-white/10 transition-colors"
+            title="Previous slide (←)"
+            disabled={currentSlideNum <= 1}
+          >
+            <SkipBack className={`w-4 h-4 ${currentSlideNum <= 1 ? 'text-white/20' : 'text-white/70'}`} />
+          </button>
+          <span className="text-xs text-white/50 w-12 text-center tabular-nums">
+            {currentSlideNum}/{totalSlidesNum || '—'}
+          </span>
+          <button
+            onClick={advanceSlideInIframe}
+            className="p-1.5 rounded hover:bg-white/10 transition-colors"
+            title="Next slide (→)"
+            disabled={currentSlideNum >= totalSlidesNum}
+          >
+            <SkipForward className={`w-4 h-4 ${currentSlideNum >= totalSlidesNum ? 'text-white/20' : 'text-white/70'}`} />
+          </button>
         </div>
 
         {/* Audio player */}
