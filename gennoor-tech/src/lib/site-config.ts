@@ -17,57 +17,83 @@ export const siteConfig = {
     twitter: '',
   },
 
-  // Navigation structure from strategy document
+  // Navigation structure — 5 tabs, competitor-benchmarked for SEO & discoverability
   navigation: {
     main: [
-      { name: 'Home', href: '/' },
       {
-        name: 'About',
-        href: '/about',
+        name: 'Programs',
+        href: '/services/training',
         children: [
-          { name: 'My Journey', href: '/about/journey' },
-          { name: 'Certifications', href: '/about/certifications' },
-          { name: 'Gennoor Tech', href: '/about/company' },
+          { name: 'Training Programs', href: '/services/training', description: 'Corporate AI training courses' },
+          { name: 'Azure AI Foundry Workshop', href: '/services/azure-ai-foundry-workshop', description: 'Hands-on Azure AI workshop' },
+          { name: 'Copilot Studio Training', href: '/services/copilot-studio-training', description: 'Build AI copilots with Microsoft' },
+          { name: 'Enterprise AI Roadmap', href: '/services/enterprise-ai-roadmap-workshop', description: 'Strategic AI planning workshop' },
+          { name: 'Certifications', href: '/services/certifications', description: 'Microsoft certification prep' },
+          { name: 'Claude Cowork', href: '/claude-cowork', description: 'Free 4-hour Claude workshop', badge: 'Closed' },
         ]
       },
       {
         name: 'Services',
         href: '/services',
         children: [
-          { name: 'AI Strategy & Consulting', href: '/services/ai-strategy' },
-          { name: 'Corporate Training', href: '/services/training' },
-          { name: 'PoC Development', href: '/services/poc-development' },
-          { name: 'Agentic AI Solutions', href: '/services/agentic-ai' },
-          { name: 'Collaboration', href: '/services/collaboration' },
+          { name: 'AI Strategy & Consulting', href: '/services/ai-strategy', description: 'Enterprise AI roadmaps & governance' },
+          { name: 'PoC Development', href: '/services/poc-development', description: 'Production-ready AI prototypes' },
+          { name: 'Agentic AI Solutions', href: '/services/agentic-ai', description: 'Multi-agent orchestration' },
+          { name: 'Collaboration', href: '/services/collaboration', description: 'Partnership opportunities' },
         ]
       },
       {
-        name: 'Portfolio',
-        href: '/portfolio',
+        name: 'Resources',
+        href: '/resources/blog',
         children: [
-          { name: 'Case Studies', href: '/portfolio/case-studies' },
-          { name: 'PoCs & Demos', href: '/services/poc-development#live-demo' },
-          { name: 'Open Source', href: '/portfolio/open-source' },
-          { name: 'Client Testimonials', href: '/portfolio/testimonials' },
+          { name: 'AI Academy', href: '/ai-academy', description: 'Free AI courses & learning paths', badge: 'Free' },
+          { name: 'Blog', href: '/resources/blog', description: 'AI insights & articles' },
+          { name: 'Videos', href: '/resources/videos', description: 'Training videos & tutorials' },
+          { name: 'Webinars', href: '/webinars', description: 'Live & recorded sessions' },
+          { name: 'AI Readiness', href: '/ai-readiness', description: 'Assess your AI readiness' },
         ]
       },
-      { name: 'Blog', href: '/resources/blog' },
-      { name: 'Videos', href: '/resources/videos' },
-      { name: 'AI Academy', href: '/ai-academy' },
-      { name: 'Claude Cowork', href: '/claude-cowork' },
-      { name: 'AI Ready', href: '/ai-readiness' },
-      { name: 'Webinars', href: '/webinars' },
+      {
+        name: 'About',
+        href: '/about',
+        children: [
+          { name: 'My Journey', href: '/about/journey', description: '14+ years in enterprise AI' },
+          { name: 'Gennoor Tech', href: '/about/company', description: 'About the company' },
+          { name: 'Certifications', href: '/about/certifications', description: '16 professional credentials' },
+          { name: 'Case Studies', href: '/portfolio/case-studies', description: 'Client success stories' },
+          { name: 'Testimonials', href: '/portfolio/testimonials', description: 'What clients say' },
+          { name: 'Open Source', href: '/portfolio/open-source', description: 'Community contributions' },
+        ]
+      },
       { name: 'Contact', href: '/contact' },
     ],
 
     footer: [
       {
+        title: 'Programs',
+        links: [
+          { name: 'Training Programs', href: '/services/training' },
+          { name: 'Azure AI Foundry Workshop', href: '/services/azure-ai-foundry-workshop' },
+          { name: 'Copilot Studio Training', href: '/services/copilot-studio-training' },
+          { name: 'Certifications', href: '/services/certifications' },
+        ]
+      },
+      {
         title: 'Services',
         links: [
           { name: 'AI Strategy', href: '/services/ai-strategy' },
-          { name: 'Corporate Training', href: '/services/training' },
           { name: 'PoC Development', href: '/services/poc-development' },
           { name: 'Agentic AI', href: '/services/agentic-ai' },
+          { name: 'Collaboration', href: '/services/collaboration' },
+        ]
+      },
+      {
+        title: 'Resources',
+        links: [
+          { name: 'AI Academy', href: '/ai-academy' },
+          { name: 'Blog', href: '/resources/blog' },
+          { name: 'Videos', href: '/resources/videos' },
+          { name: 'AI Readiness', href: '/ai-readiness' },
         ]
       },
       {
@@ -76,16 +102,7 @@ export const siteConfig = {
           { name: 'My Journey', href: '/about/journey' },
           { name: 'Certifications', href: '/about/certifications' },
           { name: 'Case Studies', href: '/portfolio/case-studies' },
-          { name: 'PoCs & Demos', href: '/services/poc-development#live-demo' },
-        ]
-      },
-      {
-        title: 'Learning',
-        links: [
-          { name: 'AI Academy', href: '/ai-academy' },
-          { name: 'AB-100 Course', href: '/ai-academy/ab-100' },
-          { name: 'AI Readiness', href: '/ai-readiness' },
-          { name: 'Videos', href: '/resources/videos' },
+          { name: 'Open Source', href: '/portfolio/open-source' },
         ]
       },
     ]

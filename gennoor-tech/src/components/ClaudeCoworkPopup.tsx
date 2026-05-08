@@ -50,8 +50,8 @@ export default function ClaudeCoworkPopup() {
                 </span>
               </div>
 
-              <div className="inline-block bg-[#FFD23F] text-[#1B2845] text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-3">
-                Free Workshop · 1000 Seats Only
+              <div className="inline-block bg-red-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-3">
+                Registration Closed
               </div>
 
               <h2 className="text-white text-lg font-bold leading-tight mb-2">
@@ -107,16 +107,16 @@ export default function ClaudeCoworkPopup() {
           <Link
             href="/claude-cowork"
             onClick={dismiss}
-            className="flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-[#FF6B35] hover:bg-[#e55a25] text-white font-bold rounded-full transition-colors text-sm"
+            className="flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-gray-400 text-white font-bold rounded-full transition-colors text-sm"
           >
-            GRAB MY FREE SEAT <ArrowRight className="w-4 h-4" />
+            VIEW DETAILS <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
         {/* Footer */}
         <div className="bg-[#FFF8F0] px-6 py-3 rounded-b-2xl text-center">
           <p className="text-[11px] text-[#5C6784]">
-            100% free &middot; No upsell &middot; Open to anyone, anywhere &middot; First 1000 only
+            All 1,000 seats filled &middot; Registration closed &middot; Stay tuned for future events
           </p>
         </div>
       </div>
