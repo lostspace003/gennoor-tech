@@ -32,6 +32,7 @@ const pages: SearchablePage[] = [
   { title: 'Blog', description: 'AI insights, tutorials & articles', href: '/resources/blog', category: 'Resources', keywords: ['article', 'post', 'tutorial', 'insights', 'news', 'write-up', 'thought leadership'] },
   { title: 'Videos', description: 'Training videos & tutorials', href: '/resources/videos', category: 'Resources', keywords: ['video', 'youtube', 'tutorial', 'watch', 'recording', 'demo'] },
   { title: 'Webinars', description: 'Live and recorded webinar sessions', href: '/webinars', category: 'Resources', keywords: ['webinar', 'live session', 'online event', 'recording', 'presentation'] },
+  { title: 'Workshops', description: 'Free hands-on AI workshops', href: '/workshops', category: 'Resources', keywords: ['workshop', 'hands-on', 'live', 'free session', 'claude cowork', 'bootcamp'] },
   { title: 'AI Readiness Assessment', description: 'Check your organization\'s AI readiness', href: '/ai-readiness', category: 'Resources', keywords: ['assessment', 'readiness', 'quiz', 'score', 'evaluate', 'maturity', 'checklist'] },
   // Guides
   { title: 'AI-102 Azure AI Engineer Guide', description: 'Study guide for Azure AI Engineer certification', href: '/guides/ai-102-azure-ai-engineer', category: 'Resources', keywords: ['AI-102', 'azure AI engineer', 'exam guide', 'study', 'certification prep'] },

@@ -48,8 +48,8 @@ export const siteConfig = {
           { name: 'AI Academy', href: '/ai-academy', description: 'Free AI courses & learning paths', badge: 'Free' },
           { name: 'Blog', href: '/resources/blog', description: 'AI insights & articles' },
           { name: 'Videos', href: '/resources/videos', description: 'Training videos & tutorials' },
-          { name: 'Workshops & Webinars', href: '/webinars', description: 'Live sessions & recordings' },
-          { name: 'Claude Cowork', href: '/claude-cowork', description: 'Free 4-hour Claude workshop', badge: 'Closed' },
+          { name: 'Webinars', href: '/webinars', description: 'Live & recorded sessions' },
+          { name: 'Workshops', href: '/workshops', description: 'Hands-on free workshops' },
           { name: 'AI Readiness', href: '/ai-readiness', description: 'Assess your AI readiness' },
         ]
       },
