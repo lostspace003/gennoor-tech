@@ -131,13 +131,15 @@ export default function AITrainingSaudiArabiaPage() {
             organization — from executive awareness to hands-on engineering.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/resources/calendar"
+            <a
+              href="https://calendly.com/gennoortech"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-white text-primary-700 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-primary-50 transition-colors"
             >
               <Calendar className="w-5 h-5" />
               Book a Discovery Call
-            </Link>
+            </a>
             <Link
               href="/contact"
               className="inline-flex items-center gap-2 text-white border-2 border-white/30 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/10 transition-colors"
@@ -390,13 +392,15 @@ export default function AITrainingSaudiArabiaPage() {
             practical, results-driven training.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/resources/calendar"
+            <a
+              href="https://calendly.com/gennoortech"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-white text-primary-700 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-primary-50 transition-colors"
             >
               <Calendar className="w-5 h-5" />
               Book a Call
-            </Link>
+            </a>
             <Link
               href="/contact"
               className="inline-flex items-center gap-2 text-white border-2 border-white/30 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/10 transition-colors"

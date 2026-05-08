@@ -47,9 +47,9 @@ export async function POST(request: Request) {
     await sendEmail({
       to: email,
       cc: process.env.CC_ENQUIRY_ON_CERTIFICATION === 'true'
-        ? [process.env.EMAIL_ADMIN || 'admin@gennoor.com']
+        ? [process.env.EMAIL_FROM_ENQUIRY || 'enquiry@gennoor.com']
         : undefined,
-      from: process.env.EMAIL_FROM_TRAINING || 'training@gennoor.com',
+      from: process.env.SMTP_USER || 'jalalkhan@gennoor.com',
       fromName: 'Gennoor Tech Certification Team',
       subject: `Certification Preparation Guide: ${selectedCertification} | Gennoor Tech`,
       html: `
@@ -124,10 +124,10 @@ export async function POST(request: Request) {
     await sendEmail({
       to: process.env.EMAIL_ADMIN || 'admin@gennoor.com',
       cc: [
-        process.env.EMAIL_ADMIN || 'admin@gennoor.com',
-        process.env.EMAIL_ADMIN || 'admin@gennoor.com'
+        process.env.EMAIL_FROM_TRAINING || 'training@gennoor.com',
+        process.env.EMAIL_FROM_ENQUIRY || 'enquiry@gennoor.com'
       ],
-      from: process.env.EMAIL_FROM_TRAINING || 'training@gennoor.com',
+      from: process.env.SMTP_USER || 'jalalkhan@gennoor.com',
       fromName: 'Certification System',
       subject: `[${leadScore}] Certification Enquiry - ${selectedCertification}`,
       html: `

@@ -1,9 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { ArrowRight, ChevronLeft, Zap, Volume2, VolumeX, Play, Pause, SkipForward, SkipBack, Lock } from 'lucide-react'
-import ReportEmailGate from '@/components/ReportEmailGate'
-import ReportSurvey from '@/components/ReportSurvey'
+import { ArrowRight, ChevronLeft, Zap, Mail, Lock, Volume2, VolumeX, Play, Pause, SkipForward, SkipBack, Download, Send, Check } from 'lucide-react'
+import FeedbackModal from '@/components/FeedbackModal'
 
 const QUESTIONS = [
   {
@@ -141,7 +140,7 @@ interface Presentation {
   slides: Slide[]
 }
 
-type Step = 'quiz' | 'generating' | 'presentation'
+type Step = 'email' | 'otp' | 'quiz' | 'generating' | 'presentation'
 
 const AGENT_STEPS = [
   'Analyzing your responses...',
@@ -158,15 +157,20 @@ interface QuizV2Props {
 }
 
 export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
-  const [step, setStep] = useState<Step>('quiz')
-  const [name, setName] = useState('')
+  const [step, setStep] = useState<Step>('email')
   const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
+  const [otp, setOtp] = useState('')
   const [currentQ, setCurrentQ] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [presentation, setPresentation] = useState<Presentation | null>(null)
   const [error, setError] = useState('')
-  const [reportUnlocked, setReportUnlocked] = useState(false)
-  const [showGateModal, setShowGateModal] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [otpTimer, setOtpTimer] = useState(0)
+  const [downloadingPdf, setDownloadingPdf] = useState(false)
+  const [emailingReport, setEmailingReport] = useState(false)
+  const [emailSent, setEmailSent] = useState(false)
+  const [feedbackAction, setFeedbackAction] = useState<'download' | 'email' | null>(null)
 
   // Agent progress
   const [agentStep, setAgentStep] = useState(0)
@@ -178,18 +182,12 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
-  const gateSlideIndex = presentation ? Math.floor(presentation.slides.length / 2) : 4
-
+  // OTP countdown timer
   useEffect(() => {
-    if (step === 'quiz') onLock?.()
-  }, [step, onLock])
-
-  useEffect(() => {
-    if (step === 'quiz') return
-    const handler = (e: BeforeUnloadEvent) => { e.preventDefault() }
-    window.addEventListener('beforeunload', handler)
-    return () => window.removeEventListener('beforeunload', handler)
-  }, [step])
+    if (otpTimer <= 0) return
+    const interval = setInterval(() => setOtpTimer(t => t - 1), 1000)
+    return () => clearInterval(interval)
+  }, [otpTimer])
 
   // Agent progress animation
   useEffect(() => {
@@ -199,18 +197,29 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
     return () => clearTimeout(timer)
   }, [step, agentStep])
 
+  // Lock flow after OTP verification
+  useEffect(() => {
+    if (step !== 'email' && step !== 'otp') onLock?.()
+  }, [step, onLock])
+
+  useEffect(() => {
+    if (step === 'email' || step === 'otp') return
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault() }
+    window.addEventListener('beforeunload', handler)
+    return () => window.removeEventListener('beforeunload', handler)
+  }, [step])
+
   // Auto-advance slides when audio ends
   const handleAudioEnd = useCallback(() => {
     if (!presentation) return
-    const maxSlide = reportUnlocked ? presentation.slides.length - 1 : gateSlideIndex - 1
-    if (currentSlide < maxSlide) {
+    if (currentSlide < presentation.slides.length - 1) {
       timerRef.current = setTimeout(() => {
         setCurrentSlide(s => s + 1)
       }, 1000)
     } else {
       setIsPlaying(false)
     }
-  }, [presentation, currentSlide, reportUnlocked, gateSlideIndex])
+  }, [presentation, currentSlide])
 
   // Play audio for current slide
   useEffect(() => {
@@ -221,6 +230,47 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
       if (!audioMuted) audioRef.current.play().catch(() => {})
     }
   }, [currentSlide, isPlaying, presentation, audioMuted])
+
+  async function handleSendOTP() {
+    if (!email.trim()) return
+    setError('')
+    setSending(true)
+    try {
+      const res = await fetch('/api/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to send code')
+      setOtpTimer(180)
+      setStep('otp')
+    } catch (err: any) { setError(err.message) }
+    setSending(false)
+  }
+
+  const formatTimer = (seconds: number) => {
+    const m = Math.floor(seconds / 60)
+    const s = seconds % 60
+    return `${m}:${s.toString().padStart(2, '0')}`
+  }
+
+  async function handleVerifyOTP() {
+    if (!otp.trim()) return
+    setError('')
+    setSending(true)
+    try {
+      const res = await fetch('/api/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Verification failed')
+      setStep('quiz')
+    } catch (err: any) { setError(err.message) }
+    setSending(false)
+  }
 
   function handleSelect(option: string) {
     const q = QUESTIONS[currentQ]
@@ -240,7 +290,7 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
       const res = await fetch('/api/ai-readiness-v2/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers: finalAnswers }),
+        body: JSON.stringify({ email, name, answers: finalAnswers }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Generation failed')
@@ -272,8 +322,7 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
     if (!presentation) return
     audioRef.current?.pause()
     if (timerRef.current) clearTimeout(timerRef.current)
-    const maxSlide = reportUnlocked ? presentation.slides.length - 1 : gateSlideIndex - 1
-    if (currentSlide < maxSlide) setCurrentSlide(s => s + 1)
+    if (currentSlide < presentation.slides.length - 1) setCurrentSlide(s => s + 1)
   }
 
   function prevSlide() {
@@ -282,21 +331,8 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
     if (currentSlide > 0) setCurrentSlide(s => s - 1)
   }
 
-  async function generatePdfBase64(): Promise<string> {
-    const { generateDeepDivePDF, pdfToBase64 } = await import('@/lib/generate-report-pdf')
-    const doc = generateDeepDivePDF(presentation!, name, email)
-    return pdfToBase64(doc)
-  }
-
-  function handleUnlock(userEmail: string, userName: string) {
-    setEmail(userEmail)
-    setName(userName)
-    setReportUnlocked(true)
-  }
-
-
   function handleReset() {
-    setStep('quiz')
+    setStep('email')
     setCurrentQ(0)
     setAnswers({})
     setPresentation(null)
@@ -304,17 +340,131 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
     setCurrentSlide(0)
     setError('')
     setAgentStep(0)
-    setReportUnlocked(false)
-    setEmail('')
-    setName('')
+    setOtpTimer(0)
+    setEmailSent(false)
+  }
+
+  async function submitFeedback(rating: number, comment: string) {
+    fetch('/api/ai-readiness/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, name, rating, comment, reportType: 'deep-dive', action: feedbackAction }),
+    }).catch(() => {})
+  }
+
+  async function handleFeedbackSubmit(rating: number, comment: string) {
+    const action = feedbackAction
+    setFeedbackAction(null)
+    submitFeedback(rating, comment)
+    if (action === 'download') doDownloadReport()
+    if (action === 'email') doEmailReport()
+  }
+
+  async function doDownloadReport() {
+    if (!presentation) return
+    setDownloadingPdf(true)
+    try {
+      const { generateDeepDivePDF, downloadPDF } = await import('@/lib/generate-report-pdf')
+      const doc = generateDeepDivePDF(presentation, name, email)
+      downloadPDF(doc, `AI-Readiness-Deep-Dive-${name || 'Report'}.pdf`)
+      fetch('/api/ai-readiness/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, name, reportType: 'deep-dive', action: 'pdf-download' }) }).catch(() => {})
+    } catch (err) {
+      console.error('PDF generation error:', err)
+    }
+    setDownloadingPdf(false)
+  }
+
+  async function doEmailReport() {
+    if (!presentation) return
+    setEmailingReport(true)
+    try {
+      const { generateDeepDivePDF, pdfToBase64 } = await import('@/lib/generate-report-pdf')
+      const doc = generateDeepDivePDF(presentation, name, email)
+      const pdfBase64 = pdfToBase64(doc)
+
+      const res = await fetch('/api/ai-readiness/email-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name, pdfBase64, reportType: 'deep-dive' }),
+      })
+      if (!res.ok) throw new Error('Failed to send email')
+      setEmailSent(true)
+    } catch (err) {
+      console.error('Email report error:', err)
+    }
+    setEmailingReport(false)
   }
 
   const progress = (currentQ / QUESTIONS.length) * 100
-  const isAtGate = !reportUnlocked && presentation && currentSlide >= gateSlideIndex - 1
 
-  useEffect(() => {
-    if (isAtGate) setShowGateModal(true)
-  }, [isAtGate])
+  // ─── EMAIL ───────────────────────────────────────────────
+  if (step === 'email') {
+    return (
+      <div className="max-w-md mx-auto py-12">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-xl bg-primary-50 flex items-center justify-center">
+              <Mail className="w-5 h-5 text-primary-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-gray-900">Verify your email</h3>
+              <p className="text-sm text-gray-500">Your report will be sent here</p>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <input type="text" placeholder="Your name (optional)" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400" />
+            <input type="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSendOTP()} className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400" autoFocus />
+            {error && <p className="text-sm text-red-500">{error}</p>}
+            <button onClick={handleSendOTP} disabled={sending || !email.trim()} className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+              {sending ? 'Sending...' : <><ArrowRight className="w-4 h-4" /> Send verification code</>}
+            </button>
+          </div>
+          <p className="text-xs text-gray-400 mt-4 text-center">No spam. Code expires in 5 minutes.</p>
+        </div>
+      </div>
+    )
+  }
+
+  // ─── OTP ─────────────────────────────────────────────────
+  if (step === 'otp') {
+    return (
+      <div className="max-w-md mx-auto py-12">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
+              <Lock className="w-5 h-5 text-green-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-gray-900">Enter verification code</h3>
+              <p className="text-sm text-gray-500">Sent to {email}</p>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <input type="text" placeholder="6-digit code" value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))} onKeyDown={(e) => e.key === 'Enter' && handleVerifyOTP()} className="w-full px-4 py-3 rounded-xl border border-gray-200 text-center text-2xl font-mono tracking-[0.5em] text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400" autoFocus maxLength={6} />
+            <div className="text-center">
+              {otpTimer > 0 ? (
+                <p className="text-sm text-gray-500">
+                  Code expires in <span className={`font-mono font-bold ${otpTimer <= 30 ? 'text-red-500' : 'text-primary-600'}`}>{formatTimer(otpTimer)}</span>
+                </p>
+              ) : (
+                <p className="text-sm text-red-500 font-medium">Code expired</p>
+              )}
+            </div>
+            {error && <p className="text-sm text-red-500">{error}</p>}
+            <button onClick={handleVerifyOTP} disabled={sending || otp.length < 6 || otpTimer <= 0} className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50">
+              {sending ? 'Verifying...' : 'Verify & Start'}
+            </button>
+          </div>
+          <div className="flex items-center justify-between mt-3">
+            <button onClick={() => { setStep('email'); setOtp(''); setError(''); setOtpTimer(0) }} className="text-sm text-gray-400 hover:text-gray-600 transition-colors">Use a different email</button>
+            {otpTimer <= 0 && (
+              <button onClick={handleSendOTP} disabled={sending} className="text-sm text-primary-600 hover:text-primary-700 font-medium transition-colors">Resend code</button>
+            )}
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   // ─── GENERATING (Agent Working) ──────────────────────────
   if (step === 'generating') {
@@ -353,19 +503,24 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
   // ─── PRESENTATION PLAYER ─────────────────────────────────
   if (step === 'presentation' && presentation) {
     const slide = presentation.slides[currentSlide]
-    const totalSlides = reportUnlocked ? presentation.slides.length : gateSlideIndex
-    const progressPct = ((currentSlide + 1) / totalSlides) * 100
+    const progressPct = ((currentSlide + 1) / presentation.slides.length) * 100
 
     return (
       <div className="max-w-3xl mx-auto">
+        {feedbackAction && (
+          <FeedbackModal
+            onSubmit={handleFeedbackSubmit}
+            onClose={() => setFeedbackAction(null)}
+          />
+        )}
         <audio ref={audioRef} onEnded={handleAudioEnd} />
 
         {/* Player container */}
         <div className="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
           {/* Top bar */}
           <div className="flex items-center justify-between px-5 py-3 bg-gray-50 border-b border-gray-100">
-            <span className="text-xs font-medium text-gray-500">AI Readiness Report{name ? ` — ${name}` : ''}</span>
-            <span className="text-xs font-medium text-gray-400">{currentSlide + 1} / {reportUnlocked ? presentation.slides.length : `${gateSlideIndex}+`}</span>
+            <span className="text-xs font-medium text-gray-500">AI Readiness Report — {name || email}</span>
+            <span className="text-xs font-medium text-gray-400">{currentSlide + 1} / {presentation.slides.length}</span>
           </div>
 
           {/* Progress bar */}
@@ -512,11 +667,19 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
               <button onClick={togglePlay} className="p-2.5 bg-primary-600 hover:bg-primary-700 rounded-full transition-colors">
                 {isPlaying ? <Pause className="w-4 h-4 text-white" /> : <Play className="w-4 h-4 text-white ml-0.5" />}
               </button>
-              <button onClick={nextSlide} className="p-2 hover:bg-gray-200 rounded-full transition-colors" disabled={isAtGate || currentSlide === presentation.slides.length - 1}>
+              <button onClick={nextSlide} className="p-2 hover:bg-gray-200 rounded-full transition-colors" disabled={currentSlide === presentation.slides.length - 1}>
                 <SkipForward className="w-4 h-4 text-gray-600" />
               </button>
               <button onClick={() => setAudioMuted(!audioMuted)} className="p-2 hover:bg-gray-200 rounded-full transition-colors ml-1">
                 {audioMuted ? <VolumeX className="w-4 h-4 text-gray-400" /> : <Volume2 className="w-4 h-4 text-gray-600" />}
+              </button>
+            </div>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setFeedbackAction('download')} disabled={downloadingPdf} className="p-2 hover:bg-gray-200 rounded-full transition-colors" title="Download Report">
+                <Download className={`w-4 h-4 ${downloadingPdf ? 'text-gray-300 animate-pulse' : 'text-gray-600'}`} />
+              </button>
+              <button onClick={() => setFeedbackAction('email')} disabled={emailingReport || emailSent} className="p-2 hover:bg-gray-200 rounded-full transition-colors" title="Send on Email">
+                {emailSent ? <Check className="w-4 h-4 text-green-500" /> : <Send className={`w-4 h-4 ${emailingReport ? 'text-gray-300 animate-pulse' : 'text-gray-600'}`} />}
               </button>
             </div>
           </div>
@@ -529,47 +692,40 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
           </div>
         )}
 
-        {/* Below player */}
-        <div className="mt-8 space-y-6">
-          {!isPlaying && currentSlide === 0 && !reportUnlocked && (
+        {/* Below player actions */}
+        <div className="mt-8 space-y-4">
+          {!isPlaying && currentSlide === 0 && (
             <div className="text-center">
               <button onClick={startPresentation} className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all shadow-lg">
                 <Play className="w-4 h-4" /> Play my report
               </button>
             </div>
           )}
-
-          {/* Email gate modal */}
-          <ReportEmailGate
-            isOpen={showGateModal && !reportUnlocked}
-            onClose={() => setShowGateModal(false)}
-            onUnlock={handleUnlock}
-            reportType="deep-dive"
-            generatePdfBase64={generatePdfBase64}
-          />
-
-          {/* Unlock trigger if modal was dismissed */}
-          {isAtGate && !showGateModal && (
+          <div className="flex flex-col sm:flex-row gap-3">
             <button
-              onClick={() => setShowGateModal(true)}
-              className="w-full py-4 bg-gradient-to-r from-primary-50 to-accent-50 border-2 border-dashed border-primary-200 rounded-2xl text-primary-700 font-semibold flex items-center justify-center gap-2 hover:border-primary-400 transition-all"
+              onClick={() => setFeedbackAction('download')}
+              disabled={downloadingPdf}
+              className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl transition-all disabled:opacity-50"
             >
-              <Lock className="w-4 h-4" /> Unlock remaining slides
+              <Download className="w-4 h-4" />
+              {downloadingPdf ? 'Generating PDF...' : 'Download Report'}
             </button>
-          )}
-
-          {/* Post-unlock content */}
-          {reportUnlocked && currentSlide === presentation.slides.length - 1 && (
-            <>
-              <ReportSurvey email={email} name={name} reportType="deep-dive" />
-
-              <div className="text-center">
-                <button onClick={handleReset} className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
-                  Retake assessment
-                </button>
-              </div>
-            </>
-          )}
+            <button
+              onClick={() => setFeedbackAction('email')}
+              disabled={emailingReport || emailSent}
+              className={`flex-1 flex items-center justify-center gap-2 px-5 py-3 font-semibold rounded-xl transition-all disabled:opacity-50 ${
+                emailSent ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-primary-600 hover:bg-primary-700 text-white'
+              }`}
+            >
+              <Send className="w-4 h-4" />
+              {emailSent ? 'Sent to your email!' : emailingReport ? 'Sending...' : 'Send on Email'}
+            </button>
+          </div>
+          <div className="text-center">
+            <button onClick={handleReset} className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
+              Retake assessment
+            </button>
+          </div>
         </div>
 
         <style jsx>{`

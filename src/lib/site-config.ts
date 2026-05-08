@@ -5,7 +5,7 @@ export const BLOB_URL = process.env.NEXT_PUBLIC_BLOB_URL || '/media'
 export const siteConfig = {
   name: 'Gennoor Tech',
   tagline: 'Enterprise AI Training & Solutions',
-  description: 'Enterprise AI training, consulting, and PoC development for Fortune 500 companies across 6+ countries.',
+  description: 'Transform your organization with practical AI solutions. Expert-led training from strategy to implementation, drawing from 14+ years working with Fortune 500 companies across 6 countries.',
   url: 'https://gennoor.com',
   email: 'contact@gennoor.com',
   phone: '+91-XXXXXXXXXX',
@@ -25,8 +25,9 @@ export const siteConfig = {
         name: 'About',
         href: '/about',
         children: [
+          { name: 'My Journey', href: '/about/journey' },
+          { name: 'Certifications', href: '/about/certifications' },
           { name: 'Gennoor Tech', href: '/about/company' },
-          { name: 'Our Founder', href: '/about/founder' },
         ]
       },
       {
@@ -52,6 +53,7 @@ export const siteConfig = {
       },
       { name: 'Blog', href: '/resources/blog' },
       { name: 'Videos', href: '/resources/videos' },
+      { name: 'AI Academy', href: '/ai-academy' },
       { name: 'Claude Cowork', href: '/claude-cowork' },
       { name: 'AI Ready', href: '/ai-readiness' },
       { name: 'Webinars', href: '/webinars' },
@@ -71,19 +73,19 @@ export const siteConfig = {
       {
         title: 'About',
         links: [
-          { name: 'Gennoor Tech', href: '/about/company' },
-          { name: 'Our Founder', href: '/about/founder' },
+          { name: 'My Journey', href: '/about/journey' },
+          { name: 'Certifications', href: '/about/certifications' },
           { name: 'Case Studies', href: '/portfolio/case-studies' },
           { name: 'PoCs & Demos', href: '/services/poc-development#live-demo' },
         ]
       },
       {
-        title: 'Company',
+        title: 'Learning',
         links: [
-          { name: 'About', href: '/about' },
-          { name: 'Portfolio', href: '/portfolio' },
-          { name: 'Contact', href: '/contact' },
-          { name: 'Privacy', href: '/privacy' },
+          { name: 'AI Academy', href: '/ai-academy' },
+          { name: 'AB-100 Course', href: '/ai-academy/ab-100' },
+          { name: 'AI Readiness', href: '/ai-readiness' },
+          { name: 'Videos', href: '/resources/videos' },
         ]
       },
     ]
@@ -92,7 +94,7 @@ export const siteConfig = {
   // Hero section content
   hero: {
     headline: 'Transform Your Organization with Practical AI Solutions — Expert-Led Training from Strategy to Implementation',
-    subheadline: 'Trusted by Fortune 500 companies across 6+ countries — from strategy to deployment',
+    subheadline: 'Drawing from 14+ years working with Fortune 500 companies across 6 countries',
     cta1: { text: 'Book a Discovery Call', href: '/resources/calendar' },
     cta2: { text: 'Check Your AI Readiness', href: '/ai-readiness' },
   },

@@ -10,7 +10,7 @@ import {
   ExternalLink, Settings, CheckCircle2, XCircle, Search,
   Shield, Activity, Database, Server, Code2, Link2,
   AlertTriangle, Newspaper, Download, HardDrive, Bot,
-  Clock, Zap, BookOpen, TrendingUp, Send, Calendar,
+  Clock, Zap, BookOpen, TrendingUp, Send, Calendar, GraduationCap,
   Video, CheckCircle, Phone, X, Trash2,
 } from 'lucide-react'
 
@@ -67,7 +67,7 @@ function ChartLoader() {
 
 // ─── Types ───────────────────────────────────────────────────
 
-type TabKey = 'overview' | 'traffic' | 'enquiries' | 'emails' | 'sessions' | 'bookings' | 'storage' | 'insights' | 'comments' | 'seo' | 'setup' | 'ai-readiness' | 'cowork' | 'indexing'
+type TabKey = 'overview' | 'traffic' | 'enquiries' | 'emails' | 'sessions' | 'bookings' | 'storage' | 'insights' | 'comments' | 'seo' | 'setup' | 'ai-readiness' | 'cowork' | 'indexing' | 'academy'
 type GroupKey = 'analytics' | 'communications' | 'bookings' | 'system'
 
 interface AnalyticsData {
@@ -157,6 +157,7 @@ export default function AdminDashboard() {
   const [bookingDeleting, setBookingDeleting] = useState(false)
   const [coworkData, setCoworkData] = useState<{ total: number; registrations: Array<{ fullName: string; email: string; country: string; timeZone: string; role: string; company: string; biggestWorkflow: string; createdAt: string }>; byCountry: Array<{ name: string; value: number }>; byTimezone: Array<{ name: string; value: number }> } | null>(null)
   const [indexingData, setIndexingData] = useState<{ google: Array<{ url: string; status: string }>; bing: Array<{ url: string; status: string }> } | null>(null)
+  const [academyData, setAcademyData] = useState<{ learners: Array<{ email: string; name: string; provider: string; lastLogin: string; createdAt: string }>; progress: Array<{ email: string; courseId: string; chapterId: string; completionPercent: number; completed: boolean; lastAccessed: string }>; summary: { totalLearners: number; activeLearners: number; learnersWithCompletion: number; totalProgressEntries: number; byProvider: Record<string, number>; byCourse: Array<{ courseId: string; learners: number; completions: number }> }; chapterStats: Record<string, { views: number; completions: number; avgPercent: number }> } | null>(null)
 
   const fetchAll = useCallback(async (numDays: number) => {
     setLoading(true); setError('')
@@ -183,6 +184,7 @@ export default function AdminDashboard() {
       setData(analyticsData); setSetupData(setupResult); setSeoData(seoResult)
       setSessions(Array.isArray(sessionsResult) ? sessionsResult : []); setStorageData(storageResult); setInsightsData(insightsResult); setEmailLogs(emailLogsResult); setAiReadinessData(aiReadinessResult)
       try { const cwRes = await fetch('/api/admin/cowork-registrations', { method: 'POST', headers }); if (cwRes.ok) setCoworkData(await cwRes.json()) } catch {}
+      try { const acRes = await fetch('/api/admin/academy', { method: 'POST', headers }); if (acRes.ok) setAcademyData(await acRes.json()) } catch {}
       setLastUpdated(new Date())
       try { const bRes = await fetch('/api/bookings/appointments'); if (bRes.ok) { const bData = await bRes.json(); setBookingsData(bData.appointments || []) } } catch {}
     } catch { setError('Failed to load dashboard data') }
@@ -362,6 +364,7 @@ export default function AdminDashboard() {
       { key: 'traffic', label: 'Traffic', icon: TrendingUp },
       { key: 'insights', label: 'Insights', icon: Activity },
       { key: 'ai-readiness', label: 'AI Readiness', icon: Bot },
+      { key: 'academy', label: 'Academy', icon: BookOpen, badge: academyData?.summary?.totalLearners || undefined },
     ]},
     { key: 'communications', label: 'Communications', icon: Mail, badge: (emailLogs?.totalFailed || 0) > 0 ? emailLogs!.totalFailed : undefined, tabs: [
       { key: 'enquiries', label: 'Enquiries', icon: Mail },
@@ -629,6 +632,89 @@ export default function AdminDashboard() {
             </Panel>
           </div>
         )}
+
+        {/* ─── AI ACADEMY ─────────────────────────────────── */}
+        {activeTab === 'academy' && (() => {
+          const learners = academyData?.learners || []
+          const progressEntries = academyData?.progress || []
+          const summary = academyData?.summary || { totalLearners: 0, activeLearners: 0, learnersWithCompletion: 0, totalProgressEntries: 0, byProvider: {}, byCourse: [] }
+          const chapterStats = academyData?.chapterStats || {}
+
+          const filteredLearners = learners.filter(l => isInDateRange(l.createdAt))
+          const filteredProgress = progressEntries.filter(p => isInDateRange(p.lastAccessed))
+
+          const providerData = Object.entries(summary.byProvider).map(([name, value]) => ({ name: name === 'otp' ? 'Email OTP' : name === 'google' ? 'Google' : name === 'microsoft' ? 'Microsoft' : name, value }))
+
+          const chapterData = Object.entries(chapterStats)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([name, stats]) => ({ name: name.replace('chapter-', 'Ch '), value: stats.avgPercent }))
+
+          const completionData = Object.entries(chapterStats)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([name, stats]) => ({ name: name.replace('chapter-', 'Ch '), value: stats.completions }))
+
+          return (
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCard icon={Users} label="Total Learners" value={summary.totalLearners} color="blue" />
+              <StatCard icon={BookOpen} label="Active Learners" value={summary.activeLearners} color="teal" />
+              <StatCard icon={CheckCircle} label="With Completions" value={summary.learnersWithCompletion} color="amber" />
+              <StatCard icon={GraduationCap} label="New This Period" value={filteredLearners.length} color="purple" />
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-6">
+              <Panel title="Sign-in Method" subtitle={`${summary.totalLearners} total learners`}>
+                {providerData.length > 0 ? <PieChartComponent data={providerData} /> : <Empty text="No learners yet" />}
+              </Panel>
+              <Panel title="Avg. Progress by Chapter" subtitle="Average completion % per chapter">
+                {chapterData.length > 0 ? <BarChartComponent data={chapterData} dataKey="value" color="#0d9488" /> : <Empty text="No progress data yet" />}
+              </Panel>
+            </div>
+
+            <Panel title="Chapter Completions" subtitle="Number of learners who completed each chapter">
+              {completionData.length > 0 ? <BarChartComponent data={completionData} dataKey="value" color="#2563eb" /> : <Empty text="No completions yet" />}
+            </Panel>
+
+            <Panel title="All Learners" subtitle={`${learners.length} registered`} action={learners.length > 0 ? <ExportButton onClick={() => downloadCSV(learners as any, 'academy-learners')} /> : undefined}>
+              {learners.length === 0 ? <Empty text="No learners yet" /> : (
+                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-500 border-b border-slate-200">
+                  <th className="text-left py-2 px-3 font-medium">Name</th>
+                  <th className="text-left py-2 px-3 font-medium">Email</th>
+                  <th className="text-left py-2 px-3 font-medium">Provider</th>
+                  <th className="text-left py-2 px-3 font-medium">Last Login</th>
+                  <th className="text-left py-2 px-3 font-medium">Joined</th>
+                </tr></thead>
+                <tbody>{learners.slice(0, 50).map((l, i) => (
+                  <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50">
+                    <td className="py-2.5 px-3 text-slate-800 font-medium">{l.name || '-'}</td>
+                    <td className="py-2.5 px-3 text-slate-600">{l.email}</td>
+                    <td className="py-2.5 px-3"><span className={`px-2 py-0.5 rounded text-xs font-medium ${l.provider === 'google' ? 'bg-red-100 text-red-700' : l.provider === 'microsoft' ? 'bg-blue-100 text-blue-700' : 'bg-teal-100 text-teal-700'}`}>{l.provider === 'otp' ? 'Email' : l.provider}</span></td>
+                    <td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{l.lastLogin ? new Date(l.lastLogin).toLocaleDateString() : '-'}</td>
+                    <td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{l.createdAt ? new Date(l.createdAt).toLocaleDateString() : '-'}</td>
+                  </tr>
+                ))}</tbody></table></div>
+              )}
+            </Panel>
+
+            {summary.byCourse.length > 0 && (
+              <Panel title="Course Breakdown" subtitle="Learners and completions per course">
+                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-500 border-b border-slate-200">
+                  <th className="text-left py-2 px-3 font-medium">Course</th>
+                  <th className="text-left py-2 px-3 font-medium">Learners</th>
+                  <th className="text-left py-2 px-3 font-medium">Chapter Completions</th>
+                </tr></thead>
+                <tbody>{summary.byCourse.map((c, i) => (
+                  <tr key={i} className="border-b border-slate-100">
+                    <td className="py-2.5 px-3 text-slate-800 font-medium">{c.courseId}</td>
+                    <td className="py-2.5 px-3 text-slate-600">{c.learners}</td>
+                    <td className="py-2.5 px-3 text-slate-600">{c.completions}</td>
+                  </tr>
+                ))}</tbody></table></div>
+              </Panel>
+            )}
+          </div>
+          )
+        })()}
 
         {/* ─── EMAILS ────────────────────────────────────── */}
         {activeTab === 'emails' && (() => {

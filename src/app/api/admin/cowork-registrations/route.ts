@@ -7,37 +7,40 @@ export async function POST(request: NextRequest) {
     const { authorized } = await verifyAdmin(request)
     if (!authorized) return unauthorizedResponse()
 
-    const registrations = await getEnquiries('ClaudeCoworkRegistration', 365)
+    const enquiries = await getEnquiries('ClaudeCoworkRegistration', 365).catch(() => [])
 
-    const sorted = registrations.sort((a, b) =>
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    )
+    const registrations = enquiries.map((e: any) => ({
+      fullName: e.fullName || e.name || '',
+      email: e.email || '',
+      country: e.country || '',
+      timeZone: e.timeZone || e.timezone || '',
+      role: e.role || '',
+      company: e.company || '',
+      biggestWorkflow: e.biggestWorkflow || '',
+      createdAt: e.createdAt || '',
+    }))
 
-    const byCountry: Record<string, number> = {}
-    const byTimezone: Record<string, number> = {}
-    for (const r of sorted) {
-      const country = r.country || 'Unknown'
-      const tz = r.timeZone || 'Unknown'
-      byCountry[country] = (byCountry[country] || 0) + 1
-      byTimezone[tz] = (byTimezone[tz] || 0) + 1
-    }
+    const byCountry = Object.entries(
+      registrations.reduce((acc: Record<string, number>, r) => {
+        if (r.country) acc[r.country] = (acc[r.country] || 0) + 1
+        return acc
+      }, {})
+    ).map(([name, value]) => ({ name, value }))
+
+    const byTimezone = Object.entries(
+      registrations.reduce((acc: Record<string, number>, r) => {
+        if (r.timeZone) acc[r.timeZone] = (acc[r.timeZone] || 0) + 1
+        return acc
+      }, {})
+    ).map(([name, value]) => ({ name, value }))
 
     return NextResponse.json({
-      total: sorted.length,
-      registrations: sorted.map(r => ({
-        fullName: r.fullName,
-        email: r.email,
-        country: r.country,
-        timeZone: r.timeZone,
-        role: r.role || '',
-        company: r.company || '',
-        biggestWorkflow: r.biggestWorkflow || '',
-        createdAt: r.createdAt,
-      })),
-      byCountry: Object.entries(byCountry).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value),
-      byTimezone: Object.entries(byTimezone).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value),
+      total: registrations.length,
+      registrations,
+      byCountry,
+      byTimezone,
     })
-  } catch {
-    return NextResponse.json({ error: 'Failed to fetch registrations' }, { status: 500 })
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }

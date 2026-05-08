@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { TableClient } from '@azure/data-tables'
+import { isEmailVerified } from '@/lib/otp-store'
 import { sendEmail } from '@/lib/email-service'
-
-export const maxDuration = 30
-export const dynamic = 'force-dynamic'
 
 async function logEmailSent(email: string, name: string, reportType: string) {
   try {
@@ -37,6 +35,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    if (!isEmailVerified(email)) {
+      return NextResponse.json(
+        { error: 'Email not verified. Please verify your email first.' },
+        { status: 401 },
+      )
+    }
 
     const firstName = name ? name.split(' ')[0] : 'there'
     const reportLabel = reportType === 'blueprint' ? 'Deep Dive' : 'Quick Scan'

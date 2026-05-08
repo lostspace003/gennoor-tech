@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { TableClient } from '@azure/data-tables'
-
-export const maxDuration = 60
+import { isEmailVerified } from '@/lib/otp-store'
 
 const OPENAI_ENDPOINT = process.env.AZURE_OPENAI_READINESS_ENDPOINT || ''
 const OPENAI_KEY = process.env.AZURE_OPENAI_READINESS_KEY || ''
@@ -167,8 +166,12 @@ export async function POST(request: NextRequest) {
   try {
     const { email, name, answers } = await request.json()
 
-    if (!answers) {
+    if (!email || !answers) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    }
+
+    if (!isEmailVerified(email)) {
+      return NextResponse.json({ error: 'Email not verified' }, { status: 401 })
     }
 
     if (!OPENAI_ENDPOINT || !OPENAI_KEY) {

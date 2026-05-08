@@ -82,8 +82,8 @@ export default function ContactForm() {
           <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
           <p className="text-sm text-red-700">
             Something went wrong. Please try again or email us directly at{' '}
-            <a href="mailto:contact@gennoor.com" className="underline font-medium">
-              contact@gennoor.com
+            <a href="mailto:jalalkhan@gennoor.com" className="underline font-medium">
+              jalalkhan@gennoor.com
             </a>
           </p>
         </div>

@@ -1,41 +1,48 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { Building2, User, ArrowRight } from 'lucide-react'
-import { OrganizationJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd'
+import { User, Award, Building, ArrowRight } from 'lucide-react'
+import { PersonJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd'
 
 export const metadata: Metadata = {
-  title: 'About Gennoor Tech — Enterprise AI Training & Solutions',
-  description: 'Gennoor Tech Private Limited — enterprise AI training, consulting, and PoC development. Trusted by Fortune 500 companies across 6+ countries.',
-  keywords: ['Gennoor Tech', 'enterprise AI training', 'AI consulting', 'Microsoft Certified Trainer', 'AI solutions'],
+  title: 'About Jalal Ahmed Khan & Gennoor Tech — Enterprise AI Expert',
+  description: 'Meet Jalal Ahmed Khan — Microsoft Certified Trainer with 16 certifications, 14+ years of experience, and Fortune 500 clients across 6 countries. Founder of Gennoor Tech Private Limited.',
+  keywords: ['Jalal Ahmed Khan', 'Microsoft Certified Trainer', 'Gennoor Tech', 'enterprise AI consultant', 'AI trainer'],
   alternates: { canonical: 'https://gennoor.com/about' },
   openGraph: {
-    title: 'About Gennoor Tech — Enterprise AI Training & Solutions',
-    description: 'Enterprise AI training, consulting, and PoC development. Trusted by Fortune 500 companies across 6+ countries.',
+    title: 'About Jalal Ahmed Khan & Gennoor Tech',
+    description: 'Microsoft Certified Trainer with 16 certifications, 14+ years experience, Fortune 500 clients across 6 countries.',
     url: 'https://gennoor.com/about',
   },
 }
 
 const sections = [
   {
-    icon: Building2,
-    title: 'Gennoor Tech',
-    description: 'Our vision, mission, company details, and the story of how we grew into a global AI training company',
-    href: '/about/company',
-    highlight: 'Serving enterprises across 4 regions',
+    icon: User,
+    title: 'My Journey',
+    description: 'From Automobile Engineering Professor to Global AI Transformation Leader',
+    href: '/about/journey',
+    highlight: '14+ years of experience',
   },
   {
-    icon: User,
-    title: 'Our Founder',
-    description: 'Meet Jalal Ahmed Khan — MCT with 16+ active certifications & 14+ years of enterprise experience',
-    href: '/about/founder',
-    highlight: '16+ active certifications',
+    icon: Award,
+    title: 'Certifications & Credentials',
+    description: 'Microsoft Certified Trainer (MCT) with 16 active certifications including Agentic AI',
+    href: '/about/certifications',
+    highlight: '376+ hours on Microsoft Learn',
+  },
+  {
+    icon: Building,
+    title: 'Gennoor Tech Private Limited',
+    description: 'Founded to democratize AI adoption for enterprises across GCC, Africa, and APAC',
+    href: '/about/company',
+    highlight: 'Vision 2030 aligned',
   },
 ]
 
 export default function AboutPage() {
   return (
     <>
-      <OrganizationJsonLd />
+      <PersonJsonLd />
       <BreadcrumbJsonLd items={[
         { name: 'Home', url: 'https://gennoor.com' },
         { name: 'About', url: 'https://gennoor.com/about' },
@@ -58,7 +65,7 @@ export default function AboutPage() {
       {/* Sections Grid */}
       <section className="section-padding">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {sections.map((section, index) => {
               const Icon = section.icon
               return (

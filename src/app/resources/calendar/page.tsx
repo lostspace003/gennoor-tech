@@ -1,804 +1,669 @@
 'use client'
 
-import { Suspense, useState, useEffect, useCallback } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import EmailOTP from '@/components/EmailOTP'
 import PhoneInput from '@/components/ui/PhoneInput'
 import {
-  Calendar, Clock, User, Check, ChevronLeft, ChevronRight,
-  Video, Loader2, AlertCircle, MapPin, ArrowLeft, ArrowRight,
-  Globe, Search, Sparkles, GraduationCap, Lightbulb, Mail,
+  Calendar,
+  Clock,
+  Globe,
+  User,
+  Mail,
+  MessageSquare,
+  Check,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
-
-/* ───────── country → timezone ───────── */
-
-interface CountryEntry { name: string; code: string; timezone: string; flag: string }
-
-const COUNTRIES: CountryEntry[] = [
-  { name: 'India', code: 'IN', timezone: 'Asia/Kolkata', flag: '🇮🇳' },
-  { name: 'Saudi Arabia', code: 'SA', timezone: 'Asia/Riyadh', flag: '🇸🇦' },
-  { name: 'UAE', code: 'AE', timezone: 'Asia/Dubai', flag: '🇦🇪' },
-  { name: 'Qatar', code: 'QA', timezone: 'Asia/Qatar', flag: '🇶🇦' },
-  { name: 'Bahrain', code: 'BH', timezone: 'Asia/Bahrain', flag: '🇧🇭' },
-  { name: 'Kuwait', code: 'KW', timezone: 'Asia/Kuwait', flag: '🇰🇼' },
-  { name: 'Oman', code: 'OM', timezone: 'Asia/Muscat', flag: '🇴🇲' },
-  { name: 'United States (East)', code: 'US-E', timezone: 'America/New_York', flag: '🇺🇸' },
-  { name: 'United States (Central)', code: 'US-C', timezone: 'America/Chicago', flag: '🇺🇸' },
-  { name: 'United States (Mountain)', code: 'US-M', timezone: 'America/Denver', flag: '🇺🇸' },
-  { name: 'United States (West)', code: 'US-W', timezone: 'America/Los_Angeles', flag: '🇺🇸' },
-  { name: 'United Kingdom', code: 'GB', timezone: 'Europe/London', flag: '🇬🇧' },
-  { name: 'Germany', code: 'DE', timezone: 'Europe/Berlin', flag: '🇩🇪' },
-  { name: 'France', code: 'FR', timezone: 'Europe/Paris', flag: '🇫🇷' },
-  { name: 'Netherlands', code: 'NL', timezone: 'Europe/Amsterdam', flag: '🇳🇱' },
-  { name: 'Singapore', code: 'SG', timezone: 'Asia/Singapore', flag: '🇸🇬' },
-  { name: 'Malaysia', code: 'MY', timezone: 'Asia/Kuala_Lumpur', flag: '🇲🇾' },
-  { name: 'Japan', code: 'JP', timezone: 'Asia/Tokyo', flag: '🇯🇵' },
-  { name: 'South Korea', code: 'KR', timezone: 'Asia/Seoul', flag: '🇰🇷' },
-  { name: 'Australia (East)', code: 'AU-E', timezone: 'Australia/Sydney', flag: '🇦🇺' },
-  { name: 'Australia (West)', code: 'AU-W', timezone: 'Australia/Perth', flag: '🇦🇺' },
-  { name: 'New Zealand', code: 'NZ', timezone: 'Pacific/Auckland', flag: '🇳🇿' },
-  { name: 'Canada (East)', code: 'CA-E', timezone: 'America/Toronto', flag: '🇨🇦' },
-  { name: 'Canada (West)', code: 'CA-W', timezone: 'America/Vancouver', flag: '🇨🇦' },
-  { name: 'South Africa', code: 'ZA', timezone: 'Africa/Johannesburg', flag: '🇿🇦' },
-  { name: 'Nigeria', code: 'NG', timezone: 'Africa/Lagos', flag: '🇳🇬' },
-  { name: 'Kenya', code: 'KE', timezone: 'Africa/Nairobi', flag: '🇰🇪' },
-  { name: 'Egypt', code: 'EG', timezone: 'Africa/Cairo', flag: '🇪🇬' },
-  { name: 'Pakistan', code: 'PK', timezone: 'Asia/Karachi', flag: '🇵🇰' },
-  { name: 'Bangladesh', code: 'BD', timezone: 'Asia/Dhaka', flag: '🇧🇩' },
-  { name: 'Sri Lanka', code: 'LK', timezone: 'Asia/Colombo', flag: '🇱🇰' },
-  { name: 'Indonesia', code: 'ID', timezone: 'Asia/Jakarta', flag: '🇮🇩' },
-  { name: 'Thailand', code: 'TH', timezone: 'Asia/Bangkok', flag: '🇹🇭' },
-  { name: 'Philippines', code: 'PH', timezone: 'Asia/Manila', flag: '🇵🇭' },
-  { name: 'Brazil', code: 'BR', timezone: 'America/Sao_Paulo', flag: '🇧🇷' },
-  { name: 'Mexico', code: 'MX', timezone: 'America/Mexico_City', flag: '🇲🇽' },
-  { name: 'Turkey', code: 'TR', timezone: 'Europe/Istanbul', flag: '🇹🇷' },
-  { name: 'Israel', code: 'IL', timezone: 'Asia/Jerusalem', flag: '🇮🇱' },
-  { name: 'Jordan', code: 'JO', timezone: 'Asia/Amman', flag: '🇯🇴' },
-  { name: 'China', code: 'CN', timezone: 'Asia/Shanghai', flag: '🇨🇳' },
-  { name: 'Hong Kong', code: 'HK', timezone: 'Asia/Hong_Kong', flag: '🇭🇰' },
-]
 
 /* ───────── helpers ───────── */
 
-const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
-const DAYS_HEADER = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+const MONTHS = [
+  'January','February','March','April','May','June',
+  'July','August','September','October','November','December',
+]
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+
+/** Minimum days from today before a booking is allowed */
 const MIN_BOOKING_GAP_DAYS = 3
 
-function convertUTCToLocal(utcDateStr: string, tz: string) {
-  const utc = new Date(utcDateStr + (utcDateStr.endsWith('Z') ? '' : 'Z'))
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone: tz, hour: 'numeric', minute: 'numeric', year: 'numeric', month: '2-digit', day: '2-digit', hour12: false,
-  }).formatToParts(utc)
-  return {
-    hour: parseInt(parts.find(p => p.type === 'hour')?.value || '0'),
-    minute: parseInt(parts.find(p => p.type === 'minute')?.value || '0'),
+/**
+ * Convert a local time slot (in the user's chosen timezone) to IST hours.
+ * Returns the IST hour (0-23) for the given slot on the given date.
+ */
+function slotToISTHour(date: Date, slotHour: number, slotMinute: number, tz: string): number {
+  // Build a Date in the user's timezone for this slot
+  const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+  const timeStr = `${String(slotHour).padStart(2, '0')}:${String(slotMinute).padStart(2, '0')}:00`
+
+  // Get the UTC timestamp by parsing in the user's timezone
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz,
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+    hour12: false,
+  })
+
+  // Create a date object — we need to figure out the UTC offset for the user's timezone
+  // Use a trick: format the same instant in IST
+  const utcDate = new Date(`${dateStr}T${timeStr}`)
+
+  // Get the offset difference by comparing formatted times
+  const istFormatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Kolkata',
+    hour: 'numeric', minute: 'numeric',
+    hour12: false,
+  })
+
+  const userFormatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz,
+    hour: 'numeric', minute: 'numeric',
+    hour12: false,
+  })
+
+  // Use a reference date to calculate offset difference
+  const refDate = new Date('2026-01-15T12:00:00Z')
+  const istParts = istFormatter.formatToParts(refDate)
+  const userParts = userFormatter.formatToParts(refDate)
+
+  const istH = parseInt(istParts.find(p => p.type === 'hour')?.value || '0')
+  const istM = parseInt(istParts.find(p => p.type === 'minute')?.value || '0')
+  const userH = parseInt(userParts.find(p => p.type === 'hour')?.value || '0')
+  const userM = parseInt(userParts.find(p => p.type === 'minute')?.value || '0')
+
+  const istTotal = istH * 60 + istM
+  const userTotal = userH * 60 + userM
+  const offsetDiff = istTotal - userTotal // IST minutes ahead of user tz
+
+  const slotInMinutes = slotHour * 60 + slotMinute
+  const istMinutes = slotInMinutes + offsetDiff
+  const istHour = Math.floor(((istMinutes % 1440) + 1440) % 1440 / 60)
+  return istHour
+}
+
+/**
+ * Check if a slot falls within IST night hours (11 PM to 8 AM IST = hours 23, 0-7)
+ */
+function isISTNightTime(istHour: number): boolean {
+  return istHour >= 23 || istHour < 8
+}
+
+function generateTimeSlots(): string[] {
+  const slots: string[] = []
+  for (let h = 0; h < 24; h++) {
+    slots.push(`${h}:00`)
+    slots.push(`${h}:30`)
   }
+  return slots
 }
 
-function formatTime12(hour: number, minute: number): string {
-  const suffix = hour >= 12 ? 'PM' : 'AM'
-  const h = hour % 12 === 0 ? 12 : hour % 12
-  return `${h}:${String(minute).padStart(2, '0')} ${suffix}`
+const ALL_SLOTS = generateTimeSlots()
+
+function formatTime(slot: string): string {
+  const [h, m] = slot.split(':').map(Number)
+  const suffix = h >= 12 ? 'PM' : 'AM'
+  const hour12 = h % 12 === 0 ? 12 : h % 12
+  return `${hour12}:${m.toString().padStart(2, '0')} ${suffix}`
 }
 
-function formatShortDate(d: Date): string {
-  return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
+function formatDateLabel(d: Date): string {
+  return `${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`
 }
 
-function isSameDay(a: Date, b: Date) {
-  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate()
+function isSameDay(a: Date, b: Date): boolean {
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  )
 }
 
-function dateToYMD(d: Date) {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-}
+/* ───────── common timezones ───────── */
 
-function parseDuration(iso: string) {
-  const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?/)
-  if (!match) return 30
-  return (parseInt(match[1] || '0') * 60) + parseInt(match[2] || '0')
-}
-
-function detectCountry(): string {
-  try {
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
-    const match = COUNTRIES.find(c => c.timezone === tz)
-    if (match) return match.code
-  } catch { /* fallback */ }
-  return 'IN'
-}
-
-/* ───────── service helpers ───────── */
-
-function getServiceOrder(name: string): number {
-  const l = name.toLowerCase()
-  if (l.includes('discovery')) return 1
-  if (l.includes('training') || l.includes('consultation')) return 2
-  if (l.includes('strategy') || l.includes('workshop')) return 3
-  return 99
-}
-
-function isDefaultService(name: string): boolean {
-  const l = name.toLowerCase()
-  return l.includes('training') || l.includes('consultation')
-}
-
-function getServiceIcon(name: string) {
-  const l = name.toLowerCase()
-  if (l.includes('discovery')) return Lightbulb
-  if (l.includes('training') || l.includes('consultation')) return GraduationCap
-  if (l.includes('strategy') || l.includes('workshop')) return Sparkles
-  return Calendar
-}
-
-/* ───────── types ───────── */
-
-interface BookingService { id: string; name: string; description: string; duration: string; price: number; priceType: string; isOnline: boolean; staffIds: string[] }
-interface AvailableSlot { start: string; end: string; status: string }
-interface LocalSlot { raw: AvailableSlot; localHour: number; localMinute: number; localTimeLabel: string; endTimeLabel: string; istTimeLabel: string }
+const COMMON_TIMEZONES = [
+  'Asia/Kolkata',
+  'America/New_York',
+  'America/Chicago',
+  'America/Denver',
+  'America/Los_Angeles',
+  'Europe/London',
+  'Europe/Berlin',
+  'Europe/Paris',
+  'Asia/Dubai',
+  'Asia/Singapore',
+  'Asia/Tokyo',
+  'Australia/Sydney',
+  'Pacific/Auckland',
+  'UTC',
+]
 
 /* ───────── component ───────── */
 
-function BookingCalendarInner() {
-  const searchParams = useSearchParams()
-  const today = new Date(); today.setHours(0, 0, 0, 0)
-  const minDate = new Date(today); minDate.setDate(minDate.getDate() + MIN_BOOKING_GAP_DAYS)
-  const maxDate = new Date(today); maxDate.setDate(maxDate.getDate() + 30)
+export default function BookingCalendarPage() {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
 
-  // Steps: 1=service, 2=email, 3=country, 4=date+time, 5=details
-  const [step, setStep] = useState(1)
-  const [fading, setFading] = useState(false)
+  const minDate = new Date(today)
+  minDate.setDate(minDate.getDate() + MIN_BOOKING_GAP_DAYS)
 
-  // Country
-  const [selectedCountry, setSelectedCountry] = useState('IN')
-  const [countrySearch, setCountrySearch] = useState('')
-  const country = COUNTRIES.find(c => c.code === selectedCountry) || COUNTRIES[0]
-  const timezone = country.timezone
+  const maxDate = new Date(today)
+  maxDate.setDate(maxDate.getDate() + 30)
 
-  // Calendar
   const [viewMonth, setViewMonth] = useState(today.getMonth())
   const [viewYear, setViewYear] = useState(today.getFullYear())
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
-  const [selectedSlot, setSelectedSlot] = useState<LocalSlot | null>(null)
+  const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
+  const [timezone, setTimezone] = useState('UTC')
+  const [showTzPicker, setShowTzPicker] = useState(false)
 
-  // Services
-  const [services, setServices] = useState<BookingService[]>([])
-  const [selectedService, setSelectedService] = useState<BookingService | null>(null)
-  const [servicesLoading, setServicesLoading] = useState(true)
-  const [servicesError, setServicesError] = useState('')
-
-  // Availability
-  const [slots, setSlots] = useState<LocalSlot[]>([])
-  const [slotsLoading, setSlotsLoading] = useState(false)
-
-  // Email (step 2)
-  const [email, setEmail] = useState('')
-  const [emailVerified, setEmailVerified] = useState(false)
-
-  // Form (step 5)
   const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
   const [whatsapp, setWhatsapp] = useState('')
   const [topic, setTopic] = useState('')
 
-  // Submission
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
-  const [bookingResult, setBookingResult] = useState<{ joinUrl?: string; service?: string } | null>(null)
-
-  // Fallback
   const [showRequestForm, setShowRequestForm] = useState(false)
   const [requestStatus, setRequestStatus] = useState<'idle' | 'submitting' | 'sent'>('idle')
   const [reqName, setReqName] = useState('')
   const [reqEmail, setReqEmail] = useState('')
   const [reqWhatsapp, setReqWhatsapp] = useState('')
   const [reqMessage, setReqMessage] = useState('')
+  const [emailVerified, setEmailVerified] = useState(false)
   const [reqEmailVerified, setReqEmailVerified] = useState(false)
 
+  /* reset verified states when emails change */
   useEffect(() => { setEmailVerified(false) }, [email])
   useEffect(() => { setReqEmailVerified(false) }, [reqEmail])
-  useEffect(() => { setSelectedCountry(detectCountry()) }, [])
 
-  // Pre-fill from AI Readiness email links (?topic=ai-readiness&name=X&email=Y)
-  const [presetApplied, setPresetApplied] = useState(false)
+  /* detect timezone on mount */
   useEffect(() => {
-    if (presetApplied) return
-    const presetTopic = searchParams.get('topic')
-    if (presetTopic === 'ai-readiness') {
-      const presetName = searchParams.get('name') || ''
-      const presetEmail = searchParams.get('email') || ''
-      setName(presetName)
-      setEmail(presetEmail)
-      setEmailVerified(true)
-      setTopic('AI Readiness — Discovery Call')
-      setStep(1)
-      setPresetApplied(true)
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+      if (tz) setTimezone(tz)
+    } catch {
+      /* fallback stays UTC */
     }
-  }, [searchParams, presetApplied])
-
-  const goTo = useCallback((n: number) => {
-    if (n === step || fading) return
-    setFading(true)
-    setTimeout(() => {
-      setStep(n)
-      setTimeout(() => setFading(false), 50)
-    }, 200)
-  }, [step, fading])
-
-  // Fetch services
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch('/api/bookings/services')
-        const data = await res.json()
-        if (data.success && data.services?.length) {
-          setServices(data.services)
-        } else { setServicesError('No booking services available.') }
-      } catch { setServicesError('Unable to load services.') }
-      finally { setServicesLoading(false) }
-    }
-    load()
   }, [])
 
-  // No default service selection — let user choose
-
-
-  // Fetch availability
-  useEffect(() => {
-    if (!selectedDate || !selectedService) return
-    async function load() {
-      setSlotsLoading(true); setSlots([]); setSelectedSlot(null)
-      setShowRequestForm(false); setRequestStatus('idle')
-      try {
-        const params = new URLSearchParams({ date: dateToYMD(selectedDate!), serviceId: selectedService!.id, timezone })
-        const res = await fetch(`/api/bookings/availability?${params}`)
-        const data = await res.json()
-        if (data.success && data.slots) {
-          setSlots(data.slots.map((slot: AvailableSlot) => {
-            const local = convertUTCToLocal(slot.start, timezone)
-            const endLocal = convertUTCToLocal(slot.end, timezone)
-            const ist = convertUTCToLocal(slot.start, 'Asia/Kolkata')
-            return {
-              raw: slot,
-              localHour: local.hour,
-              localMinute: local.minute,
-              localTimeLabel: formatTime12(local.hour, local.minute),
-              endTimeLabel: formatTime12(endLocal.hour, endLocal.minute),
-              istTimeLabel: formatTime12(ist.hour, ist.minute),
-            }
-          }))
-        }
-      } catch { setSlots([]) }
-      finally { setSlotsLoading(false) }
-    }
-    load()
-  }, [selectedDate, selectedService, timezone])
-
   /* ── calendar grid ── */
+
   const firstDayOfMonth = new Date(viewYear, viewMonth, 1).getDay()
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate()
+
   const canGoPrev = viewYear > today.getFullYear() || viewMonth > today.getMonth()
-  const canGoNext = viewYear < maxDate.getFullYear() || (viewYear === maxDate.getFullYear() && viewMonth < maxDate.getMonth())
-  const goPrev = () => { if (!canGoPrev) return; if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1) } else setViewMonth(m => m - 1) }
-  const goNext = () => { if (!canGoNext) return; if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y + 1) } else setViewMonth(m => m + 1) }
-  const isDaySelectable = useCallback((day: number) => {
-    const d = new Date(viewYear, viewMonth, day); const dow = d.getDay()
-    return dow !== 0 && dow !== 6 && d >= minDate && d <= maxDate
+  const canGoNext =
+    viewYear < maxDate.getFullYear() ||
+    (viewYear === maxDate.getFullYear() && viewMonth < maxDate.getMonth())
+
+  const goPrev = () => {
+    if (!canGoPrev) return
+    if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1) }
+    else setViewMonth(m => m - 1)
+  }
+
+  const goNext = () => {
+    if (!canGoNext) return
+    if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y + 1) }
+    else setViewMonth(m => m + 1)
+  }
+
+  const isDaySelectable = useCallback(
+    (day: number) => {
+      const d = new Date(viewYear, viewMonth, day)
+      const dow = d.getDay()
+      if (dow === 0 || dow === 6) return false // weekend
+      if (d < minDate) return false // must be at least 3 days from today
+      if (d > maxDate) return false
+      return true
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [viewYear, viewMonth])
-  const isToday = (day: number) => isSameDay(new Date(viewYear, viewMonth, day), today)
-  const isSelected = (day: number) => selectedDate !== null && isSameDay(new Date(viewYear, viewMonth, day), selectedDate)
+    [viewYear, viewMonth],
+  )
 
-  const filteredCountries = countrySearch
-    ? COUNTRIES.filter(c => c.name.toLowerCase().includes(countrySearch.toLowerCase()))
-    : COUNTRIES
+  const isToday = (day: number) =>
+    isSameDay(new Date(viewYear, viewMonth, day), today)
 
-  const sortedServices = [...services].sort((a, b) => getServiceOrder(a.name) - getServiceOrder(b.name))
+  const isSelected = (day: number) =>
+    selectedDate !== null &&
+    isSameDay(new Date(viewYear, viewMonth, day), selectedDate)
 
-  const morningSlots = slots.filter(s => s.localHour < 12)
-  const afternoonSlots = slots.filter(s => s.localHour >= 12 && s.localHour < 17)
-  const eveningSlots = slots.filter(s => s.localHour >= 17)
+  /* ── time slots — filter out IST night hours (11 PM - 8 AM) ── */
+  const timeSlots = selectedDate
+    ? ALL_SLOTS.filter(slot => {
+        const [h, m] = slot.split(':').map(Number)
+        const istHour = slotToISTHour(selectedDate, h, m, timezone)
+        return !isISTNightTime(istHour)
+      })
+    : []
 
-  /* ── handlers ── */
+  /* ── request a call (when no slots available) ── */
   const handleRequestCall = async (e: React.FormEvent) => {
-    e.preventDefault(); setRequestStatus('submitting')
+    e.preventDefault()
+    setRequestStatus('submitting')
     try {
       await fetch('/api/book-expert-call', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: reqName, email: reqEmail, whatsapp: reqWhatsapp, programTitle: 'Call Request', message: `Country: ${country.name} | ${reqMessage}`, timestamp: new Date().toISOString() }),
+        body: JSON.stringify({
+          name: reqName,
+          email: reqEmail,
+          whatsapp: reqWhatsapp,
+          programTitle: 'Call Request (Outside Available Hours)',
+          message: `Preferred timezone: ${timezone} | Message: ${reqMessage}`,
+          timestamp: new Date().toISOString(),
+        }),
       })
-    } catch { /* best effort */ }
+    } catch { /* show sent anyway */ }
     setRequestStatus('sent')
   }
 
+  /* ── submit ── */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!selectedDate || !selectedSlot || !selectedService) return
-    setStatus('submitting'); setErrorMsg('')
+    if (!selectedDate || !selectedSlot) return
+    setStatus('submitting')
+    setErrorMsg('')
+
+    const dateLabel = formatDateLabel(selectedDate)
+    const timeLabel = formatTime(selectedSlot)
+
     try {
-      const startParts = selectedSlot.raw.start.split('T')[1]?.substring(0, 5) || '09:00'
-      const endParts = selectedSlot.raw.end.split('T')[1]?.substring(0, 5) || '09:30'
-      const res = await fetch('/api/bookings/create', {
+      const res = await fetch('/api/book-expert-call', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ serviceId: selectedService.id, date: dateToYMD(selectedDate), startTime: startParts, endTime: endParts, timezone, name, email, whatsapp, topic, country: country.name }),
+        body: JSON.stringify({
+          name,
+          email,
+          whatsapp,
+          programTitle: 'Discovery Call Booking',
+          message: `Date: ${dateLabel} | Time: ${timeLabel} (${timezone}) | Topic: ${topic}`,
+          timestamp: new Date().toISOString(),
+        }),
       })
-      const data = await res.json()
-      if (!res.ok || !data.success) throw new Error(data.message || 'Failed to create booking')
-      setBookingResult({ service: selectedService.name })
+
+      if (!res.ok) throw new Error('Failed to submit')
       setStatus('success')
-    } catch (err) {
+    } catch {
       setStatus('error')
-      setErrorMsg(err instanceof Error ? err.message : 'Something went wrong. Email us at contact@gennoor.com')
+      setErrorMsg(
+        'Something went wrong. Please try again or email us directly at contact@gennoor.com',
+      )
     }
   }
 
-  /* ── success screen ── */
+  /* ── success state ── */
   if (status === 'success') {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center px-4">
-        <div className="max-w-lg w-full text-center">
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 mb-5">
-              <Clock className="h-8 w-8 text-blue-600" />
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Request Received!</h1>
-            <p className="text-gray-600 mb-1">
-              <strong>{bookingResult?.service || 'Meeting'}</strong> with Jalal Khan
-            </p>
-            <p className="text-gray-600">
-              {selectedDate && formatShortDate(selectedDate)} at {selectedSlot?.localTimeLabel} ({country.name})
-            </p>
-            <div className="mt-5 p-4 bg-amber-50 rounded-xl border border-amber-200">
-              <p className="text-sm text-amber-800">
-                Your booking is pending confirmation. You&apos;ll receive a confirmation email with a Microsoft Teams meeting link once approved.
-              </p>
-            </div>
-            <div className="mt-4 p-3 bg-gray-50 rounded-xl text-sm text-gray-500">
-              A confirmation will be sent to <strong>{email}</strong>
-            </div>
-            <Link href="/" className="inline-block mt-5 text-sm text-primary-600 hover:text-primary-700 font-medium">
-              Back to Home
-            </Link>
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+        <div className="container mx-auto px-4 py-24 text-center max-w-2xl">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-6">
+            <Check className="h-8 w-8 text-green-600" />
           </div>
+          <h1 className="text-3xl font-black text-gray-900 mb-4">Booking Confirmed!</h1>
+          <p className="text-lg text-gray-600 mb-2">
+            Your discovery call has been scheduled for{' '}
+            <strong>{selectedDate ? formatDateLabel(selectedDate) : ''}</strong> at{' '}
+            <strong>{selectedSlot ? formatTime(selectedSlot) : ''}</strong>{' '}
+            ({timezone}).
+          </p>
+          <p className="text-gray-500 mb-8">
+            A confirmation will be sent to <strong>{email}</strong>. We&apos;ll also reach out on
+            WhatsApp to share the meeting link.
+          </p>
+          <Link
+            href="/"
+            className="inline-block rounded-lg bg-primary-600 px-6 py-3 text-white font-medium hover:bg-primary-700 transition-colors"
+          >
+            Back to Home
+          </Link>
         </div>
       </div>
     )
   }
 
-  /* ── step config ── */
-  const STEPS = [
-    { n: 1, label: 'Service' },
-    { n: 2, label: 'Email' },
-    { n: 3, label: 'Timezone' },
-    { n: 4, label: 'Date & Time' },
-    { n: 5, label: 'Confirm' },
-  ]
-
   /* ── main render ── */
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-white">
-      <div className="max-w-4xl mx-auto px-4 py-12">
-
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Book a meeting</h1>
-          <p className="text-gray-500">Schedule a free consultation with Jalal Khan, Gennoor Tech</p>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <div className="container mx-auto px-4 py-16 max-w-5xl">
+        {/* header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-black text-gray-900 mb-3">
+            Schedule a Discovery Call
+          </h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Book a free 30-minute consultation with a Gennoor Tech expert. Pick a date and
+            time that works for you.
+          </p>
         </div>
 
-        {/* Progress bar */}
-        <div className="flex items-center justify-center gap-0.5 sm:gap-1.5 mb-8">
-          {STEPS.map((s, i) => (
-            <div key={s.n} className="flex items-center gap-0.5 sm:gap-1.5">
-              <button
-                onClick={() => { if (s.n < step) goTo(s.n) }}
-                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors ${
-                  step === s.n ? 'bg-primary-600 text-white shadow-sm' :
-                  step > s.n ? 'bg-green-100 text-green-700' :
-                  'bg-gray-100 text-gray-400'
-                }`}
-              >
-                {step > s.n ? <Check className="h-3 w-3" /> : <span>{s.n}</span>}
-                <span className="hidden sm:inline">{s.label}</span>
-              </button>
-              {i < 4 && <div className={`w-3 sm:w-6 h-0.5 ${step > s.n ? 'bg-green-300' : 'bg-gray-200'}`} />}
-            </div>
-          ))}
-        </div>
-
-        {/* Card with fade transition */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className={`transition-opacity duration-200 ease-in-out ${fading ? 'opacity-0' : 'opacity-100'}`}>
-
-            {/* ═══ STEP 1 — Service ═══ */}
-            {step === 1 && (
-              <div className="p-6 sm:p-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center">
-                    <Calendar className="h-5 w-5 text-primary-600" />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-semibold text-gray-900">What are you looking for?</h2>
-                    <p className="text-sm text-gray-500">All meetings are free &middot; 30 min &middot; Microsoft Teams</p>
-                  </div>
-                </div>
-
-                {servicesLoading && (
-                  <div className="flex items-center justify-center gap-2 text-gray-400 py-12">
-                    <Loader2 className="h-5 w-5 animate-spin" /> Loading services...
-                  </div>
-                )}
-
-                {servicesError && (
-                  <div className="flex items-center gap-2 text-red-600 bg-red-50 rounded-xl p-4">
-                    <AlertCircle className="h-5 w-5" /> {servicesError}
-                  </div>
-                )}
-
-                {!servicesLoading && sortedServices.length > 0 && (
-                  <div className="space-y-3">
-                    {sortedServices.map(svc => {
-                      const Icon = getServiceIcon(svc.name)
-                      const active = selectedService?.id === svc.id
-                      return (
-                        <button key={svc.id} onClick={() => setSelectedService(svc)}
-                          className={`w-full text-left rounded-xl p-5 border-2 transition-all ${
-                            active ? 'border-primary-500 bg-primary-50' : 'border-gray-100 hover:border-primary-200'
-                          }`}
-                        >
-                          <div className="flex items-start gap-3">
-                            <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
-                              active ? 'bg-primary-200' : 'bg-gray-100'
-                            }`}>
-                              <Icon className={`h-5 w-5 ${active ? 'text-primary-700' : 'text-gray-500'}`} />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center justify-between mb-0.5">
-                                <span className="font-semibold text-gray-900">{svc.name}</span>
-                                <span className="text-sm text-gray-500">{parseDuration(svc.duration)} min</span>
-                              </div>
-                              {svc.description && <p className="text-sm text-gray-500">{svc.description}</p>}
-                              <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
-                                <span className="flex items-center gap-1"><Video className="h-3 w-3" /> Teams</span>
-                                <span className="flex items-center gap-1"><User className="h-3 w-3" /> Jalal Khan</span>
-                                <span>Free</span>
-                              </div>
-                            </div>
-                          </div>
-                        </button>
-                      )
-                    })}
-                  </div>
-                )}
-
-                <div className="mt-6 flex justify-end">
-                  <button onClick={() => { if (selectedService) goTo(2) }} disabled={!selectedService}
-                    className="px-8 py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors flex items-center gap-2 text-sm disabled:opacity-50">
-                    Next <ArrowRight className="h-4 w-4" />
-                  </button>
-                </div>
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* ─── LEFT: Calendar + Slots ─── */}
+          <div className="space-y-6">
+            {/* calendar card */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+              <div className="flex items-center gap-2 mb-5">
+                <Calendar className="h-5 w-5 text-primary-600" />
+                <h2 className="text-lg font-semibold text-gray-900">Select a Date</h2>
               </div>
-            )}
 
-            {/* ═══ STEP 2 — Email Verification ═══ */}
-            {step === 2 && (
-              <div className="p-6 sm:p-8">
-                <div className="flex items-center justify-between mb-6">
-                  <button onClick={() => goTo(1)} className="flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 transition-colors">
-                    <ArrowLeft className="h-4 w-4" /> Back
-                  </button>
-                  <span className="text-sm text-gray-400">{selectedService?.name}</span>
-                </div>
-
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-                    <Mail className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-semibold text-gray-900">Verify your email</h2>
-                    <p className="text-sm text-gray-500">We&apos;ll send the calendar invite and Teams link here</p>
-                  </div>
-                </div>
-
-                <div className="max-w-md">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                  <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="you@company.com"
-                    className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent mb-3" />
-                  <EmailOTP email={email} onVerified={() => setEmailVerified(true)} verified={emailVerified} />
-                </div>
-
-                <div className="mt-6 flex justify-end">
-                  <button onClick={() => { if (emailVerified) goTo(3) }} disabled={!emailVerified}
-                    className="px-8 py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors flex items-center gap-2 text-sm disabled:opacity-50">
-                    Next <ArrowRight className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* ═══ STEP 3 — Timezone ═══ */}
-            {step === 3 && (
-              <div className="p-6 sm:p-8">
-                <div className="flex items-center justify-between mb-6">
-                  <button onClick={() => goTo(2)} className="flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 transition-colors">
-                    <ArrowLeft className="h-4 w-4" /> Back
-                  </button>
-                  <span className="text-sm text-gray-400">{selectedService?.name} &middot; {email}</span>
-                </div>
-
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-                    <Globe className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-semibold text-gray-900">Where are you located?</h2>
-                    <p className="text-sm text-gray-500">We&apos;ll show available times in your timezone</p>
-                  </div>
-                </div>
-
-                <div className="relative mb-4">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <input type="text" placeholder="Search country..." value={countrySearch}
-                    onChange={e => setCountrySearch(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 max-h-[360px] overflow-y-auto pr-1">
-                  {filteredCountries.map(c => (
-                    <button key={c.code} onClick={() => setSelectedCountry(c.code)}
-                      className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-left transition-all border ${
-                        c.code === selectedCountry
-                          ? 'border-primary-500 bg-primary-50 text-primary-700 font-medium shadow-sm'
-                          : 'border-gray-100 hover:border-primary-200 hover:bg-gray-50 text-gray-700'
-                      }`}
-                    >
-                      <span className="text-lg leading-none">{c.flag}</span>
-                      <span className="truncate">{c.name}</span>
-                    </button>
-                  ))}
-                </div>
-
-                <div className="mt-6 flex justify-end">
-                  <button onClick={() => goTo(4)}
-                    className="px-8 py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors flex items-center gap-2 text-sm">
-                    Next <ArrowRight className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* ═══ STEP 4 — Date & Time ═══ */}
-            {step === 4 && (
-              <div>
-                <div className="px-6 sm:px-8 pt-6 sm:pt-8 pb-4 border-b border-gray-100">
-                  <div className="flex items-center justify-between">
-                    <button onClick={() => goTo(3)} className="flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 transition-colors">
-                      <ArrowLeft className="h-4 w-4" /> {selectedService?.name} ({parseDuration(selectedService?.duration || 'PT30M')} min)
-                    </button>
-                    <span className="flex items-center gap-1.5 text-sm text-gray-500">
-                      <MapPin className="h-3.5 w-3.5" /> {country.flag} {country.name}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-[1fr_280px] divide-y md:divide-y-0 md:divide-x divide-gray-100">
-                  {/* Calendar */}
-                  <div className="p-6 sm:p-8">
-                    <h3 className="text-base font-semibold text-gray-900 mb-4">Select a date</h3>
-
-                    <div className="flex items-center justify-between mb-4">
-                      <button onClick={goPrev} disabled={!canGoPrev} className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-30" aria-label="Previous">
-                        <ChevronLeft className="h-5 w-5 text-gray-600" />
-                      </button>
-                      <span className="font-medium text-gray-800">{MONTHS[viewMonth]} {viewYear}</span>
-                      <button onClick={goNext} disabled={!canGoNext} className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-30" aria-label="Next">
-                        <ChevronRight className="h-5 w-5 text-gray-600" />
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-7 text-center text-xs font-medium text-gray-400 mb-2">
-                      {DAYS_HEADER.map(d => <span key={d}>{d}</span>)}
-                    </div>
-
-                    <div className="grid grid-cols-7 gap-1 text-center">
-                      {Array.from({ length: firstDayOfMonth }).map((_, i) => <span key={`b-${i}`} />)}
-                      {Array.from({ length: daysInMonth }).map((_, i) => {
-                        const day = i + 1; const selectable = isDaySelectable(day)
-                        return (
-                          <button key={day} disabled={!selectable}
-                            onClick={() => { setSelectedDate(new Date(viewYear, viewMonth, day)); setSelectedSlot(null) }}
-                            className={`h-10 w-10 mx-auto rounded-full text-sm font-medium transition-all
-                              ${isSelected(day) ? 'bg-primary-600 text-white shadow-sm' : ''}
-                              ${!isSelected(day) && isToday(day) ? 'ring-2 ring-primary-400 text-primary-700' : ''}
-                              ${!selectable ? 'text-gray-200' : ''}
-                              ${selectable && !isSelected(day) && !isToday(day) ? 'text-gray-700 hover:bg-primary-50' : ''}
-                            `}
-                          >{day}</button>
-                        )
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Time slots */}
-                  <div className="p-6 sm:p-8 md:max-h-[480px] md:overflow-y-auto">
-                    {!selectedDate && (
-                      <div className="flex flex-col items-center justify-center h-full text-center py-12">
-                        <Calendar className="h-10 w-10 text-gray-200 mb-3" />
-                        <p className="text-sm text-gray-400">Pick a date to see<br />available times</p>
-                      </div>
-                    )}
-
-                    {selectedDate && (
-                      <>
-                        <h3 className="text-base font-semibold text-gray-900 mb-1">
-                          {formatShortDate(selectedDate)}
-                        </h3>
-                        <p className="text-xs text-gray-400 mb-4">{country.name} time</p>
-
-                        {slotsLoading && (
-                          <div className="flex items-center gap-2 text-gray-400 py-8 justify-center">
-                            <Loader2 className="h-4 w-4 animate-spin" /> Checking...
-                          </div>
-                        )}
-
-                        {!slotsLoading && slots.length > 0 && (
-                          <div className="space-y-4">
-                            {[
-                              { label: 'Morning', items: morningSlots },
-                              { label: 'Afternoon', items: afternoonSlots },
-                              { label: 'Evening', items: eveningSlots },
-                            ].filter(g => g.items.length > 0).map(group => (
-                              <div key={group.label}>
-                                <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
-                                  {group.label}
-                                </p>
-                                <div className="space-y-1.5">
-                                  {group.items.map((slot, idx) => (
-                                    <button key={idx} onClick={() => setSelectedSlot(slot)}
-                                      className={`w-full text-left px-4 py-3 rounded-xl text-sm transition-all border ${
-                                        selectedSlot === slot
-                                          ? 'bg-primary-600 text-white border-primary-600 shadow-sm'
-                                          : 'bg-white text-gray-700 border-gray-100 hover:border-primary-300 hover:bg-primary-50'
-                                      }`}
-                                    >
-                                      <div className="flex items-center justify-between">
-                                        <span className="font-medium">{slot.localTimeLabel} – {slot.endTimeLabel}</span>
-                                        {selectedSlot === slot ? <Check className="h-4 w-4" /> : (
-                                          <span className="text-xs text-gray-400">{slot.istTimeLabel} IST</span>
-                                        )}
-                                      </div>
-                                    </button>
-                                  ))}
-                                </div>
-                              </div>
-                            ))}
-
-                            {selectedSlot && (
-                              <button onClick={() => goTo(5)}
-                                className="w-full mt-2 py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors flex items-center justify-center gap-2">
-                                Next <ArrowRight className="h-4 w-4" />
-                              </button>
-                            )}
-                          </div>
-                        )}
-
-                        {!slotsLoading && slots.length === 0 && (
-                          <div className="space-y-3">
-                            <div className="text-center py-6">
-                              <Clock className="h-8 w-8 text-gray-200 mx-auto mb-2" />
-                              <p className="text-sm text-gray-500 font-medium">No slots available</p>
-                              <p className="text-xs text-gray-400 mt-1">Try a different date or request a call</p>
-                            </div>
-                            {!showRequestForm && requestStatus !== 'sent' && (
-                              <button onClick={() => setShowRequestForm(true)}
-                                className="w-full py-2.5 text-sm font-medium text-primary-600 bg-primary-50 rounded-xl hover:bg-primary-100 transition-colors">
-                                Request a Call
-                              </button>
-                            )}
-                            {showRequestForm && requestStatus !== 'sent' && (
-                              <form onSubmit={handleRequestCall} className="space-y-2">
-                                <input type="text" required value={reqName} onChange={e => setReqName(e.target.value)} placeholder="Name" className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
-                                <input type="email" required value={reqEmail} onChange={e => setReqEmail(e.target.value)} placeholder="Email" className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
-                                <EmailOTP email={reqEmail} onVerified={() => setReqEmailVerified(true)} verified={reqEmailVerified} compact />
-                                <PhoneInput label="WhatsApp" id="req-wa" value={reqWhatsapp} onChange={setReqWhatsapp} required={false} />
-                                <textarea required rows={2} value={reqMessage} onChange={e => setReqMessage(e.target.value)} placeholder="Preferred time..." className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none" />
-                                <button type="submit" disabled={requestStatus === 'submitting' || !reqEmailVerified} className="w-full py-2 text-sm font-medium text-white bg-primary-600 rounded-lg disabled:opacity-50">
-                                  {requestStatus === 'submitting' ? 'Sending...' : 'Send Request'}
-                                </button>
-                              </form>
-                            )}
-                            {requestStatus === 'sent' && (
-                              <div className="flex items-center gap-2 bg-green-50 text-green-700 rounded-lg p-3 text-sm">
-                                <Check className="h-4 w-4" /> Request sent!
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* ═══ STEP 5 — Details & Confirm ═══ */}
-            {step === 5 && (
-              <div className="p-6 sm:p-8">
-                <button onClick={() => goTo(4)} className="flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 transition-colors mb-6">
-                  <ArrowLeft className="h-4 w-4" /> Change date &amp; time
+              {/* month nav */}
+              <div className="flex items-center justify-between mb-4">
+                <button
+                  onClick={goPrev}
+                  disabled={!canGoPrev}
+                  className="p-1 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
+                  aria-label="Previous month"
+                >
+                  <ChevronLeft className="h-5 w-5 text-gray-700" />
                 </button>
+                <span className="font-medium text-gray-900">
+                  {MONTHS[viewMonth]} {viewYear}
+                </span>
+                <button
+                  onClick={goNext}
+                  disabled={!canGoNext}
+                  className="p-1 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
+                  aria-label="Next month"
+                >
+                  <ChevronRight className="h-5 w-5 text-gray-700" />
+                </button>
+              </div>
 
-                {/* Summary */}
-                <div className="bg-gray-50 rounded-xl p-5 mb-6 border border-gray-100">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-primary-100 flex items-center justify-center shrink-0">
-                      <Video className="h-6 w-6 text-primary-600" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900">{selectedService?.name}</h3>
-                      <p className="text-sm text-gray-500 mt-0.5">with Jalal Khan &middot; {parseDuration(selectedService?.duration || 'PT30M')} min &middot; Teams</p>
-                      <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-gray-700">
-                        <span className="flex items-center gap-1.5">
-                          <Calendar className="h-4 w-4 text-gray-400" />
-                          {selectedDate && formatShortDate(selectedDate)}
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                          <Clock className="h-4 w-4 text-gray-400" />
-                          {selectedSlot?.localTimeLabel} – {selectedSlot?.endTimeLabel}
-                        </span>
-                      </div>
-                      <p className="text-xs text-gray-400 mt-1">{selectedSlot?.istTimeLabel} IST &middot; {country.flag} {country.name} &middot; {email}</p>
-                    </div>
-                  </div>
-                </div>
+              {/* day headers */}
+              <div className="grid grid-cols-7 text-center text-xs font-medium text-gray-500 mb-2">
+                {DAYS.map(d => (
+                  <span key={d}>{d}</span>
+                ))}
+              </div>
 
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                    <input type="text" required value={name} onChange={e => setName(e.target.value)} placeholder="Your full name"
-                      className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
-                  </div>
+              {/* day cells */}
+              <div className="grid grid-cols-7 gap-1 text-center text-sm">
+                {/* blanks before first day */}
+                {Array.from({ length: firstDayOfMonth }).map((_, i) => (
+                  <span key={`blank-${i}`} />
+                ))}
 
-                  <PhoneInput label="WhatsApp Number" id="cal-wa" value={whatsapp} onChange={setWhatsapp} required={true} />
+                {Array.from({ length: daysInMonth }).map((_, i) => {
+                  const day = i + 1
+                  const selectable = isDaySelectable(day)
+                  const dow = new Date(viewYear, viewMonth, day).getDay()
+                  const isWeekend = dow === 0 || dow === 6
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">What would you like to discuss?</label>
-                    <textarea required rows={3} value={topic} onChange={e => setTopic(e.target.value)}
-                      placeholder="E.g., AI strategy, training for our team, proof-of-concept..."
-                      className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none" />
-                  </div>
+                  return (
+                    <button
+                      key={day}
+                      disabled={!selectable}
+                      onClick={() => {
+                        setSelectedDate(new Date(viewYear, viewMonth, day))
+                        setSelectedSlot(null)
+                      }}
+                      className={`
+                        h-9 w-9 mx-auto rounded-full text-sm font-medium transition-colors
+                        ${isSelected(day) ? 'bg-primary-600 text-white' : ''}
+                        ${!isSelected(day) && isToday(day) ? 'ring-2 ring-primary-400 text-primary-700' : ''}
+                        ${!selectable && isWeekend ? 'text-gray-300 cursor-not-allowed' : ''}
+                        ${!selectable && !isWeekend ? 'text-gray-300 cursor-not-allowed' : ''}
+                        ${selectable && !isSelected(day) && !isToday(day) ? 'text-gray-800 hover:bg-primary-50' : ''}
+                      `}
+                    >
+                      {day}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
 
-                  {status === 'error' && (
-                    <div className="flex items-center gap-2 text-red-600 bg-red-50 rounded-xl p-3 text-sm">
-                      <AlertCircle className="h-4 w-4" /> {errorMsg}
-                    </div>
-                  )}
+            {/* timezone — shown before time slots so user sets tz first */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+              <div className="flex items-center gap-2 mb-3">
+                <Globe className="h-5 w-5 text-primary-600" />
+                <h2 className="text-lg font-semibold text-gray-900">Your Timezone</h2>
+              </div>
 
-                  <button type="submit" disabled={status === 'submitting'}
-                    className="w-full py-3.5 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-base">
-                    {status === 'submitting' ? <><Loader2 className="h-4 w-4 animate-spin" /> Booking...</> : <><Check className="h-4 w-4" /> Confirm Booking</>}
+              {!showTzPicker ? (
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-700">{timezone}</span>
+                  <button
+                    onClick={() => setShowTzPicker(true)}
+                    className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+                  >
+                    Change
                   </button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <select
+                    value={timezone}
+                    onChange={e => {
+                      setTimezone(e.target.value)
+                      setShowTzPicker(false)
+                      setSelectedSlot(null) // reset slot when tz changes
+                    }}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    {COMMON_TIMEZONES.map(tz => (
+                      <option key={tz} value={tz}>
+                        {tz.replace(/_/g, ' ')}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={() => setShowTzPicker(false)}
+                    className="text-xs text-gray-500 hover:text-gray-700"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
+            </div>
 
-                  <p className="text-xs text-center text-gray-400">
-                    You&apos;ll receive a calendar invite and Teams meeting link at {email}
+            {/* time-slot card */}
+            {selectedDate && (
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                <div className="flex items-center gap-2 mb-1">
+                  <Clock className="h-5 w-5 text-primary-600" />
+                  <h2 className="text-lg font-semibold text-gray-900">Select a Time</h2>
+                </div>
+                <p className="text-sm text-gray-500 mb-4">
+                  {formatDateLabel(selectedDate)}
+                </p>
+
+                {timeSlots.length > 0 ? (
+                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                    {timeSlots.map(slot => (
+                      <button
+                        key={slot}
+                        onClick={() => setSelectedSlot(slot)}
+                        className={`
+                          py-2 px-3 rounded-lg text-sm font-medium transition-colors border
+                          ${
+                            selectedSlot === slot
+                              ? 'bg-primary-600 text-white border-primary-600'
+                              : 'bg-white text-gray-700 border-gray-200 hover:border-primary-400 hover:text-primary-700'
+                          }
+                        `}
+                      >
+                        {formatTime(slot)}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <p className="text-sm text-gray-600">
+                      No available slots for this date in your timezone. Our available hours are <strong>8:00 AM – 11:00 PM IST</strong>.
+                    </p>
+                    {!showRequestForm && requestStatus !== 'sent' && (
+                      <button
+                        onClick={() => setShowRequestForm(true)}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-primary-700 bg-primary-50 rounded-lg hover:bg-primary-100 transition-colors border border-primary-200"
+                      >
+                        <Mail className="h-4 w-4" />
+                        Request a Call — Notify Us
+                      </button>
+                    )}
+                    {showRequestForm && requestStatus !== 'sent' && (
+                      <form onSubmit={handleRequestCall} className="space-y-3 bg-gray-50 rounded-xl p-4 border border-gray-100">
+                        <p className="text-xs text-gray-500">Let us know your preferred time and we&apos;ll get back to you.</p>
+                        <input
+                          type="text" required value={reqName} onChange={e => setReqName(e.target.value)}
+                          placeholder="Your name"
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        />
+                        <input
+                          type="email" required value={reqEmail} onChange={e => setReqEmail(e.target.value)}
+                          placeholder="Your email"
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        />
+                        <EmailOTP email={reqEmail} onVerified={() => setReqEmailVerified(true)} verified={reqEmailVerified} compact />
+                        <PhoneInput
+                          label="WhatsApp (optional)"
+                          id="req-whatsapp"
+                          value={reqWhatsapp}
+                          onChange={(fullNumber) => setReqWhatsapp(fullNumber)}
+                          required={false}
+                        />
+                        <textarea
+                          required rows={2} value={reqMessage} onChange={e => setReqMessage(e.target.value)}
+                          placeholder="Preferred date/time and topic for the call..."
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            type="submit"
+                            disabled={requestStatus === 'submitting' || !reqEmailVerified}
+                            className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
+                          >
+                            {requestStatus === 'submitting' ? 'Sending...' : 'Send Request'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setShowRequestForm(false)}
+                            className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    )}
+                    {requestStatus === 'sent' && (
+                      <div className="flex items-center gap-2 bg-green-50 text-green-700 rounded-lg p-3 text-sm border border-green-200">
+                        <Check className="h-4 w-4 flex-shrink-0" />
+                        <p>Request sent! We&apos;ll get back to you shortly via email.</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {timeSlots.length > 0 && (
+                  <p className="text-xs text-gray-400 mt-3">
+                    Available hours: 8:00 AM – 11:00 PM IST (Indian Standard Time)
                   </p>
-                </form>
+                )}
               </div>
             )}
+          </div>
 
+          {/* ─── RIGHT: Details form ─── */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 h-fit lg:sticky lg:top-8">
+            <h2 className="text-lg font-semibold text-gray-900 mb-5">Your Details</h2>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* name */}
+              <div>
+                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
+                  <User className="h-4 w-4" /> Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  placeholder="Your full name"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+
+              {/* email */}
+              <div>
+                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
+                  <Mail className="h-4 w-4" /> Email
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+                <EmailOTP email={email} onVerified={() => setEmailVerified(true)} verified={emailVerified} />
+              </div>
+
+              {/* whatsapp */}
+              <PhoneInput
+                label="WhatsApp Number"
+                id="calendar-whatsapp"
+                value={whatsapp}
+                onChange={(fullNumber) => setWhatsapp(fullNumber)}
+                required={true}
+              />
+
+              {/* topic */}
+              <div>
+                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
+                  <Calendar className="h-4 w-4" /> Topic / Purpose of Call
+                </label>
+                <textarea
+                  required
+                  rows={3}
+                  value={topic}
+                  onChange={e => setTopic(e.target.value)}
+                  placeholder="E.g., AI strategy discussion, agentic workflow POC..."
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+                />
+              </div>
+
+              {/* summary bar */}
+              {selectedDate && selectedSlot && (
+                <div className="rounded-lg bg-primary-50 p-3 text-sm text-primary-800">
+                  <strong>Selected:</strong> {formatDateLabel(selectedDate)} at{' '}
+                  {formatTime(selectedSlot)} ({timezone})
+                </div>
+              )}
+
+              {/* error */}
+              {status === 'error' && (
+                <p className="text-sm text-red-600">{errorMsg}</p>
+              )}
+
+              {/* submit */}
+              <button
+                type="submit"
+                disabled={!selectedDate || !selectedSlot || !emailVerified || status === 'submitting'}
+                className="w-full rounded-lg bg-primary-600 py-3 text-white font-medium hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {status === 'submitting' ? (
+                  <>
+                    <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Booking...
+                  </>
+                ) : (
+                  <>
+                    <Check className="h-4 w-4" />
+                    Confirm Booking
+                  </>
+                )}
+              </button>
+
+              {!selectedDate && (
+                <p className="text-xs text-center text-gray-400">
+                  Please select a date and time to continue.
+                </p>
+              )}
+            </form>
           </div>
         </div>
       </div>
     </div>
-  )
-}
-
-export default function BookingCalendarPage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-blue-600" /></div>}>
-      <BookingCalendarInner />
-    </Suspense>
   )
 }

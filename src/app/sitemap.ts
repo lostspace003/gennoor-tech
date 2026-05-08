@@ -8,8 +8,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages: MetadataRoute.Sitemap = [
     { url: baseUrl, lastModified: new Date(), changeFrequency: 'weekly', priority: 1.0 },
     { url: `${baseUrl}/about`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${baseUrl}/about/company`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${baseUrl}/about/founder`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${baseUrl}/about/journey`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${baseUrl}/about/certifications`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${baseUrl}/contact`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
 
     // Services
@@ -42,38 +42,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/services/copilot-studio-training`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${baseUrl}/services/azure-ai-foundry-workshop`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${baseUrl}/services/enterprise-ai-roadmap-workshop`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-
-    // Claude Cowork workshop
-    { url: `${baseUrl}/claude-cowork`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.95 },
-
-    // Career & AI Readiness
-    { url: `${baseUrl}/career-coach`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${baseUrl}/ai-readiness`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
-
-    // Webinars & Videos
-    { url: `${baseUrl}/webinars`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${baseUrl}/resources/videos`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${baseUrl}/resources/calendar`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-
-    // About sub-pages
-    { url: `${baseUrl}/about/company`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-
-    // Portfolio sub-pages
-    { url: `${baseUrl}/portfolio/open-source`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${baseUrl}/portfolio/testimonials`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-
-    // Services - additional
-    { url: `${baseUrl}/services/collaboration`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-
-    // Resource guides
-    { url: `${baseUrl}/resources/guides/enterprise-ai-training`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${baseUrl}/resources/guides/agentic-ai`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${baseUrl}/resources/guides/ai-readiness-checklist`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${baseUrl}/resources/guides/microsoft-copilot-studio`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-
-    // Legal
-    { url: `${baseUrl}/privacy`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${baseUrl}/terms`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
   ]
 
   // Blog post pages

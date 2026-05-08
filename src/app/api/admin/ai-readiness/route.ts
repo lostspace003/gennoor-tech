@@ -74,7 +74,6 @@ export async function POST(request: NextRequest) {
           comment: entity.comment || '',
           reportType: entity.reportType || '',
           action: entity.action || '',
-          orgInterest: entity.orgInterest || '',
           submittedAt: entity.submittedAt || entity.timestamp || '',
         })
       }
@@ -98,8 +97,6 @@ export async function POST(request: NextRequest) {
       ? parseFloat((feedback.reduce((sum, f) => sum + (f.rating || 0), 0) / feedback.length).toFixed(1))
       : 0
 
-    const orgLeads = feedback.filter(f => f.orgInterest === 'yes').length
-
     return NextResponse.json({
       summary: {
         totalGenerations: generations.length + blueprints.length,
@@ -110,7 +107,6 @@ export async function POST(request: NextRequest) {
         downloads,
         avgRating,
         totalFeedback: feedback.length,
-        orgLeads,
       },
       scoreDist,
       recentReports: [...generations, ...blueprints]

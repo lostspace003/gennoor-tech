@@ -1,4 +1,4 @@
-import { OrganizationJsonLd } from '@/components/JsonLd'
+import { PersonJsonLd } from '@/components/JsonLd'
 import ScrollReveal from '@/components/ScrollReveal'
 import HeroSection from '@/components/home/HeroSection'
 import TrustedBy from '@/components/home/TrustedBy'
@@ -10,11 +10,12 @@ import POCShowcase from '@/components/home/POCShowcase'
 import YouTubeVideos from '@/components/home/YouTubeVideos'
 import LatestBlog from '@/components/home/LatestBlog'
 import CTASection from '@/components/home/CTASection'
+import AcademyCTA from '@/components/home/AcademyCTA'
 
 export default function HomePage() {
   return (
     <>
-      <OrganizationJsonLd />
+      <PersonJsonLd />
 
       <HeroSection />
 
@@ -32,6 +33,10 @@ export default function HomePage() {
 
       <ScrollReveal>
         <Metrics />
+      </ScrollReveal>
+
+      <ScrollReveal>
+        <AcademyCTA />
       </ScrollReveal>
 
       <ScrollReveal>

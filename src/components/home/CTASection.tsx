@@ -1,12 +1,12 @@
 import Link from 'next/link'
-import { ArrowRight, CheckCircle } from 'lucide-react'
+import { ArrowRight, CheckCircle, BookOpen } from 'lucide-react'
 
 export default function CTASection() {
   const benefits = [
-    '14+ years of enterprise expertise',
+    '14+ years of enterprise experience',
     'Hands-on PoC development',
-    'Microsoft Certified Training Team',
-    'Global delivery expertise'
+    'Microsoft Certified Trainer',
+    'Free AI Academy courses'
   ]
 
   return (
@@ -19,7 +19,7 @@ export default function CTASection() {
             </h2>
             <p className="text-xl text-gray-600 mb-8">
               Whether you need strategic guidance, team training, or hands-on implementation,
-              our team is here to help you navigate your AI transformation journey.
+              I'm here to help you navigate your AI transformation journey.
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
@@ -43,15 +43,16 @@ export default function CTASection() {
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
-                href="/services/training"
-                className="inline-flex items-center justify-center px-8 py-4 text-base font-medium rounded-md text-primary-600 bg-white border-2 border-primary-600 hover:bg-primary-50 hover:shadow-lg transition-all duration-200 ease-out"
+                href="/ai-academy"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-medium rounded-md text-accent-700 bg-accent-50 border-2 border-accent-200 hover:bg-accent-100 hover:shadow-lg transition-all duration-200 ease-out"
               >
-                Explore Services
+                <BookOpen className="h-5 w-5" />
+                Start Free Academy
               </Link>
             </div>
 
             <p className="mt-6 text-sm text-gray-500">
-              No commitment required • 30-minute consultation • Let's discuss your AI goals
+              No commitment required • Free courses available • Let's discuss your AI goals
             </p>
           </div>
         </div>

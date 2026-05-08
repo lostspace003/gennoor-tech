@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     // Send confirmation email to user
     await sendEmail({
       to: email,
-      from: process.env.EMAIL_FROM_TRAINING || 'training@gennoor.com',
+      from: process.env.SMTP_USER || 'jalalkhan@gennoor.com',
       fromName: 'Gennoor Tech',
       subject: `Thank You for Your Interest – ${programTitle} | Gennoor Tech`,
       html: `
@@ -122,10 +122,10 @@ export async function POST(request: Request) {
     await sendEmail({
       to: process.env.EMAIL_ADMIN || 'admin@gennoor.com',
       cc: [
-        process.env.EMAIL_ADMIN || 'admin@gennoor.com',
-        process.env.EMAIL_ADMIN || 'admin@gennoor.com'
+        process.env.EMAIL_FROM_TRAINING || 'training@gennoor.com',
+        process.env.EMAIL_FROM_SALES || 'sales@gennoor.com'
       ],
-      from: process.env.EMAIL_FROM_TRAINING || 'training@gennoor.com',
+      from: process.env.SMTP_USER || 'jalalkhan@gennoor.com',
       fromName: 'Gennoor Tech Website',
       subject: `[CALL REQUEST] ${name} from ${company} (${whatsappCountry}) – ${programTitle}`,
       html: `

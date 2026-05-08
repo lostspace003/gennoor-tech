@@ -1,9 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { ArrowRight, ChevronLeft, Zap, Check, Play, Pause, Volume2, VolumeX, SkipForward, SkipBack, ExternalLink, Lock } from 'lucide-react'
-import ReportEmailGate from '@/components/ReportEmailGate'
-import ReportSurvey from '@/components/ReportSurvey'
+import { ArrowRight, ChevronLeft, Mail, Lock, Send, Zap, Check, Play, Pause, Volume2, VolumeX, SkipForward, SkipBack, ExternalLink } from 'lucide-react'
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts'
 
 // ─── Role → Category → Subcategory mapping ────────────────
@@ -406,7 +404,7 @@ interface BlueprintReport {
   agentsUsed?: string[]
 }
 
-type Step = 'role' | 'category' | 'subcategory' | 'questions' | 'open-ended' | 'generating' | 'gen-error' | 'report'
+type Step = 'email' | 'otp' | 'role' | 'category' | 'subcategory' | 'questions' | 'open-ended' | 'generating' | 'gen-error' | 'report'
 
 const AGENT_STEPS = [
   'Agent 1: Searching the web for your industry data (Bing)...',
@@ -440,9 +438,10 @@ interface BlueprintProps {
 }
 
 export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProps) {
-  const [step, setStep] = useState<Step>('role')
+  const [step, setStep] = useState<Step>('email')
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
+  const [otp, setOtp] = useState('')
   const [role, setRole] = useState('')
   const [category, setCategory] = useState('')
   const [subcategory, setSubcategory] = useState('')
@@ -453,9 +452,15 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
   const [showCustomInput, setShowCustomInput] = useState<string | null>(null)
   const [report, setReport] = useState<BlueprintReport | null>(null)
   const [error, setError] = useState('')
+  const [sending, setSending] = useState(false)
+  const [otpTimer, setOtpTimer] = useState(0)
   const [agentStep, setAgentStep] = useState(0)
-  const [reportUnlocked, setReportUnlocked] = useState(false)
-  const [showGateModal, setShowGateModal] = useState(false)
+  const [emailingReport, setEmailingReport] = useState(false)
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false)
+  const [feedbackRating, setFeedbackRating] = useState(0)
+  const [feedbackHover, setFeedbackHover] = useState(0)
+  const [feedbackComment, setFeedbackComment] = useState('')
+  const [orgInterest, setOrgInterest] = useState<'yes' | 'no' | 'maybe' | ''>('')
   const [isLocked, setIsLocked] = useState(false)
   const reportRef = useRef<HTMLDivElement>(null)
 
@@ -482,20 +487,12 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
     }
   }, [isLocked, onLock])
 
-  // Lock when quiz starts
+  // Lock after OTP verification (step moves past 'otp')
   useEffect(() => {
-    if (step !== 'role' && !isLocked) {
+    if (step !== 'email' && step !== 'otp' && !isLocked) {
       lockSession()
     }
   }, [step, isLocked, lockSession])
-
-  // Auto-open gate modal at 50% of slides
-  const gateSlideIdx = report ? Math.floor((report.slides?.length || 0) / 2) : 4
-  useEffect(() => {
-    if (step === 'report' && report && !reportUnlocked && currentSlide >= gateSlideIdx - 1) {
-      setShowGateModal(true)
-    }
-  }, [step, report, reportUnlocked, currentSlide, gateSlideIdx])
 
   // Warn on page refresh/close when locked
   useEffect(() => {
@@ -519,6 +516,13 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
     return () => document.removeEventListener('visibilitychange', handler)
   }, [isLocked, step])
 
+  // OTP countdown
+  useEffect(() => {
+    if (otpTimer <= 0) return
+    const interval = setInterval(() => setOtpTimer(t => t - 1), 1000)
+    return () => clearInterval(interval)
+  }, [otpTimer])
+
   // Agent progress animation — longer intervals to feel substantial
   useEffect(() => {
     if (step !== 'generating') return
@@ -536,6 +540,46 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
     audioRef.current.play().catch(() => {})
   }, [currentSlide, isPlaying, step, audioMuted, report])
 
+  const formatTimer = (seconds: number) => {
+    const m = Math.floor(seconds / 60)
+    const s = seconds % 60
+    return `${m}:${s.toString().padStart(2, '0')}`
+  }
+
+  async function handleSendOTP() {
+    if (!email.trim()) return
+    setError('')
+    setSending(true)
+    try {
+      const res = await fetch('/api/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to send code')
+      setOtpTimer(180)
+      setStep('otp')
+    } catch (err: any) { setError(err.message) }
+    setSending(false)
+  }
+
+  async function handleVerifyOTP() {
+    if (!otp.trim()) return
+    setError('')
+    setSending(true)
+    try {
+      const res = await fetch('/api/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Verification failed')
+      setStep('role')
+    } catch (err: any) { setError(err.message) }
+    setSending(false)
+  }
 
   function handleRoleSelect(roleId: string) {
     setRole(roleId)
@@ -617,22 +661,46 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
     }
   }
 
-  async function generatePdfBase64(): Promise<string> {
-    const { generateBlueprintPDF, pdfToBase64 } = await import('@/lib/generate-report-pdf')
-    const doc = generateBlueprintPDF(report!, name, email)
-    return pdfToBase64(doc)
-  }
+  async function handleFeedbackAndEmail() {
+    if (feedbackRating === 0 || !orgInterest) return
+    setEmailingReport(true)
 
-  function handleUnlock(userEmail: string, userName: string) {
-    setEmail(userEmail)
-    setName(userName)
-    setReportUnlocked(true)
+    // 1. Save feedback with org interest
+    fetch('/api/ai-readiness/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, name, rating: feedbackRating, comment: feedbackComment, reportType: 'blueprint', action: 'feedback', orgInterest }),
+    }).catch(() => {})
+
+    // 2. Generate PDF and email it
+    try {
+      const { generateDeepDivePDF, pdfToBase64 } = await import('@/lib/generate-report-pdf')
+      const mockPresentation = {
+        score: report!.score,
+        headline: report!.headline,
+        slides: (report!.slides || []).map((s, i) => ({
+          id: i, title: s.title, type: 'custom', narration: s.narration || '', content: { text: s.narration || '' },
+        })),
+      }
+      const doc = generateDeepDivePDF(mockPresentation, name, email)
+      const pdfBase64 = pdfToBase64(doc)
+      await fetch('/api/ai-readiness/email-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name, pdfBase64, reportType: 'blueprint', orgInterest, role, category, subcategory }),
+      })
+    } catch (err) {
+      console.error('Email report error:', err)
+    }
+
+    setFeedbackSubmitted(true)
+    setEmailingReport(false)
   }
 
   function handleReset() {
     setIsLocked(false)
     onUnlock?.()
-    setStep('role')
+    setStep('email')
     setRole('')
     setCategory('')
     setSubcategory('')
@@ -644,9 +712,11 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
     setReport(null)
     setError('')
     setAgentStep(0)
-    setReportUnlocked(false)
-    setEmail('')
-    setName('')
+    setOtpTimer(0)
+    setFeedbackSubmitted(false)
+    setFeedbackRating(0)
+    setFeedbackComment('')
+    setOrgInterest('')
   }
 
   // ─── Recharts data transforms ─────────────────────────────
@@ -659,6 +729,71 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
     : []
 
   const skillGapData = report?.skillGap || []
+
+  // ─── EMAIL ───────────────────────────────────────────────
+  if (step === 'email') {
+    return (
+      <div className="max-w-md mx-auto py-12">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-xl bg-primary-50 flex items-center justify-center">
+              <Mail className="w-5 h-5 text-primary-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-gray-900">Verify your email</h3>
+              <p className="text-sm text-gray-500">Your blueprint will be sent here</p>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <input type="text" placeholder="Your name (optional)" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400" />
+            <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSendOTP()} className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400" autoFocus />
+            {error && <p className="text-sm text-red-500">{error}</p>}
+            <button onClick={handleSendOTP} disabled={sending || !email.trim()} className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+              {sending ? 'Sending...' : <><ArrowRight className="w-4 h-4" /> Send verification code</>}
+            </button>
+          </div>
+          <p className="text-xs text-gray-400 mt-4 text-center">No spam. Code expires in 3 minutes.</p>
+        </div>
+      </div>
+    )
+  }
+
+  // ─── OTP ─────────────────────────────────────────────────
+  if (step === 'otp') {
+    return (
+      <div className="max-w-md mx-auto py-12">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
+              <Lock className="w-5 h-5 text-green-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-gray-900">Enter verification code</h3>
+              <p className="text-sm text-gray-500">Sent to {email}</p>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <input type="text" placeholder="6-digit code" value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))} onKeyDown={(e) => e.key === 'Enter' && handleVerifyOTP()} className="w-full px-4 py-3 rounded-xl border border-gray-200 text-center text-2xl font-mono tracking-[0.5em] text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400" autoFocus maxLength={6} />
+            <div className="text-center">
+              {otpTimer > 0 ? (
+                <p className="text-sm text-gray-500">Code expires in <span className={`font-mono font-bold ${otpTimer <= 30 ? 'text-red-500' : 'text-primary-600'}`}>{formatTimer(otpTimer)}</span></p>
+              ) : (
+                <p className="text-sm text-red-500 font-medium">Code expired</p>
+              )}
+            </div>
+            {error && <p className="text-sm text-red-500">{error}</p>}
+            <button onClick={handleVerifyOTP} disabled={sending || otp.length < 6 || otpTimer <= 0} className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50">
+              {sending ? 'Verifying...' : 'Verify & Start'}
+            </button>
+          </div>
+          <div className="flex items-center justify-between mt-3">
+            <button onClick={() => { setStep('email'); setOtp(''); setError(''); setOtpTimer(0) }} className="text-sm text-gray-400 hover:text-gray-600 transition-colors">Use a different email</button>
+            {otpTimer <= 0 && <button onClick={handleSendOTP} disabled={sending} className="text-sm text-primary-600 hover:text-primary-700 font-medium transition-colors">Resend code</button>}
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   // ─── ROLE SELECTION ──────────────────────────────────────
   if (step === 'role') {
@@ -889,22 +1024,18 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
   // ─── REPORT ──────────────────────────────────────────────
   if (step === 'report' && report) {
     const slides = report.slides || []
-    const gateSlideIdx = Math.floor(slides.length / 2)
-    const maxSlide = reportUnlocked ? slides.length - 1 : gateSlideIdx - 1
     const slide = slides[currentSlide]
-    const totalVisible = reportUnlocked ? slides.length : gateSlideIdx
-    const progressPct = totalVisible > 0 ? ((currentSlide + 1) / totalVisible) * 100 : 0
-    const isAtGate = !reportUnlocked && currentSlide >= gateSlideIdx - 1
+    const progressPct = slides.length > 0 ? ((currentSlide + 1) / slides.length) * 100 : 0
 
     function handleAudioEnd() {
       if (timerRef.current) clearTimeout(timerRef.current)
       timerRef.current = setTimeout(() => {
-        if (currentSlide < maxSlide) setCurrentSlide(s => s + 1)
+        if (currentSlide < slides.length - 1) setCurrentSlide(s => s + 1)
         else setIsPlaying(false)
       }, 1500)
     }
 
-    function goNext() { if (currentSlide < maxSlide) setCurrentSlide(s => s + 1) }
+    function goNext() { if (currentSlide < slides.length - 1) setCurrentSlide(s => s + 1) }
     function goPrev() { if (currentSlide > 0) setCurrentSlide(s => s - 1) }
 
     return (
@@ -927,7 +1058,7 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
           {/* Top bar */}
           <div className="flex items-center justify-between px-5 py-3 bg-gray-50 border-b border-gray-100">
             <span className="text-xs font-medium text-gray-500">AI Readiness Blueprint — {name || email}</span>
-            <span className="text-xs font-medium text-gray-400">{currentSlide + 1} / {reportUnlocked ? slides.length : `${gateSlideIdx}+`}</span>
+            <span className="text-xs font-medium text-gray-400">{currentSlide + 1} / {slides.length}</span>
           </div>
 
           {/* Progress bar */}
@@ -1148,7 +1279,7 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
               <button onClick={() => setIsPlaying(!isPlaying)} className="p-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white transition-colors">
                 {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
               </button>
-              <button onClick={goNext} disabled={isAtGate || currentSlide >= slides.length - 1} className="p-2 rounded-lg hover:bg-gray-200 disabled:opacity-30 transition-colors">
+              <button onClick={goNext} disabled={currentSlide >= slides.length - 1} className="p-2 rounded-lg hover:bg-gray-200 disabled:opacity-30 transition-colors">
                 <SkipForward className="w-4 h-4 text-gray-600" />
               </button>
             </div>
@@ -1158,37 +1289,95 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
           </div>
         </div>
 
-        {/* Email gate modal */}
-        <ReportEmailGate
-          isOpen={showGateModal && !reportUnlocked}
-          onClose={() => setShowGateModal(false)}
-          onUnlock={handleUnlock}
-          reportType="blueprint"
-          generatePdfBase64={generatePdfBase64}
-        />
+        {/* Feedback + Report Delivery (compulsory) */}
+        <div className="mt-6 bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
+          {!feedbackSubmitted ? (
+            <>
+              <h3 className="font-bold text-gray-900 mb-1 text-center text-lg">Get your PDF report</h3>
+              <p className="text-sm text-gray-500 text-center mb-6">Share your feedback and we&apos;ll email your complete blueprint as a PDF.</p>
 
-        {/* Unlock trigger if modal was dismissed */}
-        {isAtGate && !showGateModal && (
-          <div className="mt-6">
-            <button
-              onClick={() => setShowGateModal(true)}
-              className="w-full py-4 bg-gradient-to-r from-primary-50 to-accent-50 border-2 border-dashed border-primary-200 rounded-2xl text-primary-700 font-semibold flex items-center justify-center gap-2 hover:border-primary-400 transition-all"
-            >
-              <Lock className="w-4 h-4" /> Unlock remaining slides
-            </button>
-          </div>
-        )}
+              {/* Star rating */}
+              <div className="flex items-center justify-center gap-1 mb-5">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    onClick={() => setFeedbackRating(star)}
+                    onMouseEnter={() => setFeedbackHover(star)}
+                    onMouseLeave={() => setFeedbackHover(0)}
+                    className="p-1 transition-transform hover:scale-110"
+                  >
+                    <svg className={`w-8 h-8 transition-colors ${star <= (feedbackHover || feedbackRating) ? 'text-amber-400 fill-amber-400' : 'text-gray-200 fill-gray-200'}`} viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  </button>
+                ))}
+                {feedbackRating > 0 && (
+                  <span className="ml-2 text-sm text-gray-500">
+                    {['', 'Needs work', 'Fair', 'Good', 'Great', 'Excellent'][feedbackRating]}
+                  </span>
+                )}
+              </div>
 
-        {/* Post-unlock: survey */}
-        {reportUnlocked && currentSlide >= slides.length - 1 && (
-          <div className="mt-6 space-y-6">
-            <ReportSurvey email={email} name={name} reportType="blueprint" role={role} category={category} subcategory={subcategory} />
+              {/* Comment */}
+              <textarea
+                placeholder="Any feedback or suggestions? (optional)"
+                value={feedbackComment}
+                onChange={(e) => setFeedbackComment(e.target.value)}
+                rows={2}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 resize-none focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400 mb-5"
+              />
 
-            <div className="text-center">
-              <button onClick={handleReset} className="text-sm text-gray-400 hover:text-gray-600 transition-colors">Retake assessment</button>
+              {/* Org interest consent */}
+              <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-5 border border-primary-100 mb-5">
+                <p className="text-sm font-semibold text-gray-900 mb-1">Interested in AI readiness for your team or organization?</p>
+                <p className="text-xs text-gray-500 mb-4">We can build a custom assessment on your organization&apos;s data, run AI training workshops, or set up AI tools for your team.</p>
+                <div className="flex flex-wrap gap-2">
+                  {([
+                    { val: 'yes' as const, label: 'Yes, let\'s explore this' },
+                    { val: 'maybe' as const, label: 'Maybe later' },
+                    { val: 'no' as const, label: 'Not right now' },
+                  ]).map(opt => (
+                    <button
+                      key={opt.val}
+                      onClick={() => setOrgInterest(opt.val)}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${orgInterest === opt.val ? 'bg-primary-600 text-white shadow-sm' : 'bg-white border border-gray-200 text-gray-700 hover:border-primary-300'}`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Submit */}
+              <button
+                onClick={handleFeedbackAndEmail}
+                disabled={feedbackRating === 0 || !orgInterest || emailingReport}
+                className="w-full py-3.5 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-40 flex items-center justify-center gap-2"
+              >
+                <Send className="w-4 h-4" />
+                {emailingReport ? 'Sending your report...' : 'Submit & Send Report to Email'}
+              </button>
+              {feedbackRating === 0 && <p className="text-xs text-gray-400 text-center mt-2">Please rate your experience to continue</p>}
+            </>
+          ) : (
+            <div className="text-center py-4">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-green-50 flex items-center justify-center">
+                <Check className="w-7 h-7 text-green-600" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">Report sent to your email!</h3>
+              <p className="text-sm text-gray-500 mb-6">Check {email} for your AI Readiness Blueprint PDF.</p>
+              {orgInterest === 'yes' && (
+                <div className="bg-primary-50 border border-primary-100 rounded-xl p-4 mb-5">
+                  <p className="text-sm text-primary-800">We&apos;ll reach out shortly about building an AI readiness assessment for your organization. Looking forward to it!</p>
+                </div>
+              )}
+              <a href="/resources/calendar" className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-colors">
+                Book a Call? <ArrowRight className="w-4 h-4" />
+              </a>
+              <div className="mt-4">
+                <button onClick={handleReset} className="text-sm text-gray-400 hover:text-gray-600 transition-colors">Retake assessment</button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     )
   }

@@ -576,7 +576,7 @@ export default function CareerCoachPage() {
           <div className="text-center mb-12">
             <div className="mb-4">
               <Image
-                src="/logos/bot-avatar-96.png"
+                src="/api/content/logos/bot-avatar-96.png"
                 alt="AI Career Coach"
                 width={64}
                 height={64}
@@ -653,7 +653,7 @@ export default function CareerCoachPage() {
           </button>
           <div className="flex items-center gap-3">
             <Image
-              src="/logos/bot-avatar-48.png"
+              src="/api/content/logos/bot-avatar-48.png"
               alt="AI Career Coach"
               width={40}
               height={40}
