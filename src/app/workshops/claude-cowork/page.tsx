@@ -166,7 +166,7 @@ export default function ClaudeCoworkRecapPage() {
                 <div className="relative shrink-0">
                   <div className="absolute -inset-1 bg-gradient-to-br from-primary-400 via-secondary-400 to-accent-400 rounded-xl opacity-30 blur-sm" />
                   <Image
-                    src="/assets/workshops/jalal-hd.png"
+                    src="/media/workshops/jalal-hd.png"
                     alt="Jalal Khan — Microsoft Certified Trainer"
                     width={240}
                     height={240}
@@ -176,7 +176,7 @@ export default function ClaudeCoworkRecapPage() {
                 <div>
                   <p className="text-gray-900 font-bold text-lg">Jalal Khan</p>
                   <div className="flex items-center gap-1.5 mb-2">
-                    <Image src="/assets/workshops/mct.png" alt="MCT" width={16} height={16} className="rounded-full" />
+                    <Image src="/media/workshops/mct.png" alt="MCT" width={16} height={16} className="rounded-full" />
                     <p className="text-primary-700 text-sm font-medium">Microsoft Certified Trainer</p>
                   </div>
                   <p className="text-gray-500 text-xs">14+ years · Trained in 6 countries</p>

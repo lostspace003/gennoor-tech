@@ -5,7 +5,6 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import WhatsAppButton from '@/components/WhatsAppButton'
-import ClaudeCoworkPopup from '@/components/ClaudeCoworkPopup'
 import TrackingPixels from '@/components/TrackingPixels'
 import PageViewTracker from '@/components/PageViewTracker'
 import { OrganizationJsonLd, WebSiteJsonLd } from '@/components/JsonLd'
@@ -119,7 +118,6 @@ export default function RootLayout({
           </main>
           <Footer />
           <WhatsAppButton />
-          <ClaudeCoworkPopup />
         </div>
       </body>
     </html>
