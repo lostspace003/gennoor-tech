@@ -7,12 +7,14 @@ export const metadata: Metadata = {
   description: 'Free, hands-on AI workshops led by Microsoft Certified Trainer Jalal Khan. Join live sessions on Claude, Azure AI, Copilot Studio, and more.',
 }
 
-const workshops = [
+type WorkshopStatus = 'completed' | 'coming_soon' | 'closed'
+
+const workshops: { title: string; description: string; href: string; status: WorkshopStatus; duration: string; seats: string; topics: number; instructor: string; gradient: string; accent: string }[] = [
   {
     title: 'Claude for Productivity',
     description: '73 registered, 32 attended, 8 hands-on modules, 4.9★ Trustpilot rating. A successful free workshop on Claude Cowork — from basics to Excel, PowerPoint & Chrome integrations.',
     href: '/workshops/claude-cowork',
-    status: 'completed' as const,
+    status: 'completed',
     duration: '4h 17m',
     seats: '32 attended',
     topics: 8,
@@ -24,7 +26,7 @@ const workshops = [
     title: 'Azure AI Agents Bootcamp',
     description: 'Build production-ready AI agents using Azure AI Foundry, Semantic Kernel, and LangGraph. From single agents to multi-agent orchestration.',
     href: '#',
-    status: 'coming_soon' as const,
+    status: 'coming_soon' ,
     duration: 'TBD',
     seats: 'TBD',
     topics: 0,
@@ -36,7 +38,7 @@ const workshops = [
     title: 'Copilot Studio Masterclass',
     description: 'Build enterprise copilots with Microsoft Copilot Studio — from no-code chatbots to advanced plugins and integrations with M365.',
     href: '#',
-    status: 'coming_soon' as const,
+    status: 'coming_soon' ,
     duration: 'TBD',
     seats: 'TBD',
     topics: 0,
@@ -84,22 +86,27 @@ export default function WorkshopsPage() {
                   {/* Gradient Header */}
                   <div className={`relative h-44 bg-gradient-to-br ${workshop.gradient} p-6 flex flex-col justify-between`}>
                     <div className="flex items-start justify-between">
-                      {workshop.status === 'completed' ? (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold bg-emerald-500/20 text-emerald-300 rounded-full border border-emerald-500/30">
-                          <CheckCircle className="w-3 h-3" />
-                          Completed
-                        </span>
-                      ) : workshop.status === 'closed' ? (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold bg-red-500/20 text-red-300 rounded-full border border-red-500/30">
-                          <Lock className="w-3 h-3" />
-                          Registration Closed
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold bg-white/15 text-white/80 rounded-full">
-                          <Sparkles className="w-3 h-3" />
-                          Coming Soon
-                        </span>
-                      )}
+                      {(() => {
+                        const status: WorkshopStatus = workshop.status
+                        if (status === 'completed') return (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold bg-emerald-500/20 text-emerald-300 rounded-full border border-emerald-500/30">
+                            <CheckCircle className="w-3 h-3" />
+                            Completed
+                          </span>
+                        )
+                        if (status === 'closed') return (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold bg-red-500/20 text-red-300 rounded-full border border-red-500/30">
+                            <Lock className="w-3 h-3" />
+                            Registration Closed
+                          </span>
+                        )
+                        return (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold bg-white/15 text-white/80 rounded-full">
+                            <Sparkles className="w-3 h-3" />
+                            Coming Soon
+                          </span>
+                        )
+                      })()}
                     </div>
                     <h3 className="text-white font-heading font-bold text-xl leading-tight">
                       {workshop.title}
@@ -143,31 +150,36 @@ export default function WorkshopsPage() {
 
                     {/* CTA */}
                     <div className="pt-4 border-t border-gray-100">
-                      {workshop.status === 'completed' ? (
-                        <Link
-                          href={workshop.href}
-                          className="flex items-center justify-between text-sm font-semibold text-emerald-600 group-hover:text-emerald-700 transition-colors"
-                        >
-                          <span className="flex items-center gap-1.5">
-                            <Star className="w-3.5 h-3.5 fill-current" />
-                            View Recap — 4.9★
+                      {(() => {
+                        const status: WorkshopStatus = workshop.status
+                        if (status === 'completed') return (
+                          <Link
+                            href={workshop.href}
+                            className="flex items-center justify-between text-sm font-semibold text-emerald-600 group-hover:text-emerald-700 transition-colors"
+                          >
+                            <span className="flex items-center gap-1.5">
+                              <Star className="w-3.5 h-3.5 fill-current" />
+                              View Recap — 4.9★
+                            </span>
+                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                          </Link>
+                        )
+                        if (status === 'closed') return (
+                          <Link
+                            href={workshop.href}
+                            className="flex items-center justify-between text-sm font-semibold text-primary-600 group-hover:text-primary-700 transition-colors"
+                          >
+                            View Details
+                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                          </Link>
+                        )
+                        return (
+                          <span className="flex items-center justify-between text-sm font-medium text-gray-400">
+                            Announcement Coming Soon
+                            <Sparkles className="w-4 h-4" />
                           </span>
-                          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                        </Link>
-                      ) : workshop.status === 'closed' ? (
-                        <Link
-                          href={workshop.href}
-                          className="flex items-center justify-between text-sm font-semibold text-primary-600 group-hover:text-primary-700 transition-colors"
-                        >
-                          View Details
-                          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                        </Link>
-                      ) : (
-                        <span className="flex items-center justify-between text-sm font-medium text-gray-400">
-                          Announcement Coming Soon
-                          <Sparkles className="w-4 h-4" />
-                        </span>
-                      )}
+                        )
+                      })()}
                     </div>
                   </div>
                 </div>
