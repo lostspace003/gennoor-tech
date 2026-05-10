@@ -6,10 +6,9 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/media/', '/_next/', '/admin/'],
+        disallow: ['/admin/', '/api/', '/_next/'],
       },
     ],
     sitemap: 'https://gennoor.com/sitemap.xml',
-    host: 'https://gennoor.com',
   }
 }

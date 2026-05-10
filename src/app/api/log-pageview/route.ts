@@ -60,7 +60,8 @@ export async function POST(request: NextRequest) {
     await savePageView({ page, url, referrer, userAgent, ip, country, city })
 
     return NextResponse.json({ ok: true })
-  } catch {
+  } catch (error) {
+    console.error('PageView API error:', error)
     return NextResponse.json({ ok: false }, { status: 500 })
   }
 }

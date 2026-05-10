@@ -50,17 +50,17 @@ export default function ClaudeCoworkPopup() {
                 </span>
               </div>
 
-              <div className="inline-block bg-red-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-3">
-                Registration Closed
+              <div className="inline-block bg-emerald-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-3">
+                Event Completed
               </div>
 
               <h2 className="text-white text-lg font-bold leading-tight mb-2">
-                Stop drowning in busywork.<br />
-                Ship work like an operator.
+                Claude for Productivity<br />
+                Workshop Recap
               </h2>
 
               <p className="text-white/80 text-sm leading-relaxed">
-                A free 4-hour live workshop — sit back, watch demos, and see how Claude Cowork transforms the way you work.
+                73 registered. 32 attended. 8 modules. 4.9★ on Trustpilot. See what we covered and what participants said.
               </p>
             </div>
 
@@ -77,9 +77,9 @@ export default function ClaudeCoworkPopup() {
         <div className="bg-white px-6 py-5">
           <div className="flex flex-wrap gap-2 mb-4">
             {[
-              { label: '4 hrs intensive', color: '#FF6B35' },
-              { label: '8 live topics', color: '#00A8A8' },
-              { label: '1000 seats only', color: '#7B5EA7' },
+              { label: '32 attended', color: '#22c55e' },
+              { label: '8 modules', color: '#FF6B35' },
+              { label: '4.9★ rating', color: '#00A8A8' },
             ].map((pill) => (
               <span
                 key={pill.label}
@@ -93,9 +93,9 @@ export default function ClaudeCoworkPopup() {
 
           <ul className="space-y-2 text-sm text-[#1B2845] mb-5">
             {[
-              'Reclaim 5+ hours every week',
-              'Watch live demos — no setup needed',
-              'Learn Chat vs Cowork, reports, integrations & more',
+              '8 hands-on modules from basics to Chrome integrations',
+              'Real workflows — Excel, PowerPoint, documents & more',
+              '7 Trustpilot reviews from attendees',
             ].map((item) => (
               <li key={item} className="flex items-center gap-2">
                 <Sparkles className="w-3.5 h-3.5 text-[#FFD23F] shrink-0" />
@@ -105,18 +105,18 @@ export default function ClaudeCoworkPopup() {
           </ul>
 
           <Link
-            href="/claude-cowork"
+            href="/workshops/claude-cowork"
             onClick={dismiss}
-            className="flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-gray-400 text-white font-bold rounded-full transition-colors text-sm"
+            className="flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-[#FFD23F] hover:bg-[#e6be38] text-[#1B2845] font-bold rounded-full transition-colors text-sm"
           >
-            VIEW DETAILS <ArrowRight className="w-4 h-4" />
+            VIEW RECAP <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
         {/* Footer */}
         <div className="bg-[#FFF8F0] px-6 py-3 rounded-b-2xl text-center">
           <p className="text-[11px] text-[#5C6784]">
-            All 1,000 seats filled &middot; Registration closed &middot; Stay tuned for future events
+            Event completed May 10, 2026 &middot; 73 registered &middot; Stay tuned for upcoming workshops
           </p>
         </div>
       </div>

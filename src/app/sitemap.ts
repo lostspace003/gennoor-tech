@@ -58,6 +58,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/guides/pl-300-power-bi-analyst`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${baseUrl}/guides/ms-4004-copilot-365`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
 
+    // Workshops
+    { url: `${baseUrl}/workshops`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${baseUrl}/workshops/claude-cowork`, lastModified: new Date('2026-05-10'), changeFrequency: 'monthly', priority: 0.8 },
+
     // Tools & features
     { url: `${baseUrl}/ai-readiness`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${baseUrl}/webinars`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },

@@ -10,9 +10,9 @@ export async function POST(request: NextRequest) {
     const { days = 7 } = await request.json()
 
     const [pageViews, comments, enquiries] = await Promise.all([
-      getPageViews(days).catch(() => []),
-      getAllComments().catch(() => []),
-      getEnquiries(undefined, days).catch(() => []),
+      getPageViews(days).catch((err) => { console.error('Failed to fetch page views:', err); return [] }),
+      getAllComments().catch((err) => { console.error('Failed to fetch comments:', err); return [] }),
+      getEnquiries(undefined, days).catch((err) => { console.error('Failed to fetch enquiries:', err); return [] }),
     ])
 
     // Aggregate page views by date

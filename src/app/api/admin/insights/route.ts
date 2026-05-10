@@ -38,30 +38,32 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(await runQuery(QUERIES.responseTimeTrend, timespan))
       case 'all': {
         // Fetch all key metrics in one call
+        const logFail = (name: string) => (err: unknown) => { console.error(`Insights metric "${name}" failed:`, err); return null }
+
         const [requests, responseTime, failed, availability] = await Promise.all([
-          getRequestsOverTime(timespan).catch(() => null),
-          getResponseTime(timespan).catch(() => null),
-          getFailedRequests(timespan).catch(() => null),
-          getAvailability(timespan).catch(() => null),
+          getRequestsOverTime(timespan).catch(logFail('requests')),
+          getResponseTime(timespan).catch(logFail('response-time')),
+          getFailedRequests(timespan).catch(logFail('failed')),
+          getAvailability(timespan).catch(logFail('availability')),
         ])
 
         const [dailyUsers, responseTimeTrend, topPages, browsers, countries, errors,
           sessionStats, eventsSummary, peakHours, deviceTypes, operatingSystems,
           slowestPages, failedUrls, userRetention] = await Promise.all([
-          runQuery(QUERIES.dailyUsers, timespan).catch(() => null),
-          runQuery(QUERIES.responseTimeTrend, timespan).catch(() => null),
-          runQuery(QUERIES.topPages, timespan).catch(() => null),
-          runQuery(QUERIES.browserStats, timespan).catch(() => null),
-          runQuery(QUERIES.countryStats, timespan).catch(() => null),
-          runQuery(QUERIES.errorsByType, timespan).catch(() => null),
-          runQuery(QUERIES.sessionStats, timespan).catch(() => null),
-          runQuery(QUERIES.eventsSummary, timespan).catch(() => null),
-          runQuery(QUERIES.peakHours, timespan).catch(() => null),
-          runQuery(QUERIES.deviceTypes, timespan).catch(() => null),
-          runQuery(QUERIES.operatingSystems, timespan).catch(() => null),
-          runQuery(QUERIES.slowestPages, timespan).catch(() => null),
-          runQuery(QUERIES.failedUrls, timespan).catch(() => null),
-          runQuery(QUERIES.userRetention, timespan).catch(() => null),
+          runQuery(QUERIES.dailyUsers, timespan).catch(logFail('dailyUsers')),
+          runQuery(QUERIES.responseTimeTrend, timespan).catch(logFail('responseTimeTrend')),
+          runQuery(QUERIES.topPages, timespan).catch(logFail('topPages')),
+          runQuery(QUERIES.browserStats, timespan).catch(logFail('browsers')),
+          runQuery(QUERIES.countryStats, timespan).catch(logFail('countries')),
+          runQuery(QUERIES.errorsByType, timespan).catch(logFail('errors')),
+          runQuery(QUERIES.sessionStats, timespan).catch(logFail('sessionStats')),
+          runQuery(QUERIES.eventsSummary, timespan).catch(logFail('eventsSummary')),
+          runQuery(QUERIES.peakHours, timespan).catch(logFail('peakHours')),
+          runQuery(QUERIES.deviceTypes, timespan).catch(logFail('deviceTypes')),
+          runQuery(QUERIES.operatingSystems, timespan).catch(logFail('operatingSystems')),
+          runQuery(QUERIES.slowestPages, timespan).catch(logFail('slowestPages')),
+          runQuery(QUERIES.failedUrls, timespan).catch(logFail('failedUrls')),
+          runQuery(QUERIES.userRetention, timespan).catch(logFail('userRetention')),
         ])
 
         return NextResponse.json({
