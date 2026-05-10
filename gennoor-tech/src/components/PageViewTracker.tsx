@@ -22,8 +22,8 @@ export default function PageViewTracker() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
-    }).catch(() => {
-      // Silently ignore tracking errors
+    }).catch((err) => {
+      console.error('PageView tracking failed:', err)
     })
   }, [pathname])
 

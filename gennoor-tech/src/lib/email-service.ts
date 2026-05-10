@@ -2,6 +2,8 @@ import { EmailClient, KnownEmailSendStatus } from '@azure/communication-email'
 import { readFile } from 'fs/promises'
 import path from 'path'
 import { downloadPdfFromBlob, saveEmailLog } from '@/lib/azure-storage'
+import { ConfidentialClientApplication } from '@azure/msal-node'
+import { Client } from '@microsoft/microsoft-graph-client'
 
 interface EmailConfig {
   to: string | string[]
@@ -22,6 +24,73 @@ interface EmailConfig {
 function toAddressList(emails: string | string[]): Array<{ address: string; displayName?: string }> {
   const list = Array.isArray(emails) ? emails : [emails]
   return list.map((email) => ({ address: email.trim() }))
+}
+
+async function saveToOutlookSentItems(config: EmailConfig) {
+  const tenantId = process.env.MS_GRAPH_TENANT_ID
+  const clientId = process.env.MS_GRAPH_CLIENT_ID
+  const clientSecret = process.env.MS_GRAPH_CLIENT_SECRET
+  const senderMailbox = process.env.OUTLOOK_SENDER_MAILBOX || config.from
+
+  if (!tenantId || !clientId || !clientSecret) return
+
+  try {
+    const cca = new ConfidentialClientApplication({
+      auth: { clientId, authority: `https://login.microsoftonline.com/${tenantId}`, clientSecret },
+    })
+
+    const tokenResponse = await cca.acquireTokenByClientCredential({
+      scopes: ['https://graph.microsoft.com/.default'],
+    })
+
+    if (!tokenResponse?.accessToken) return
+
+    const graphClient = Client.init({
+      authProvider: (done) => done(null, tokenResponse.accessToken),
+    })
+
+    const recipients = Array.isArray(config.to) ? config.to : [config.to]
+    const toRecipients = recipients.map((email) => ({
+      emailAddress: { address: email.trim() },
+    }))
+
+    const ccRecipients = config.cc
+      ? (Array.isArray(config.cc) ? config.cc : [config.cc]).map((email) => ({
+          emailAddress: { address: email.trim() },
+        }))
+      : []
+
+    const mailMessage: any = {
+      subject: config.subject,
+      body: { contentType: 'HTML', content: config.html },
+      toRecipients,
+      ccRecipients,
+    }
+
+    if (config.attachments && config.attachments.length > 0) {
+      mailMessage.attachments = config.attachments
+        .filter((a) => a.content)
+        .map((a) => ({
+          '@odata.type': '#microsoft.graph.fileAttachment',
+          name: a.filename,
+          contentType: a.contentType || 'application/octet-stream',
+          contentBytes: Buffer.isBuffer(a.content)
+            ? a.content.toString('base64')
+            : Buffer.from(a.content as string).toString('base64'),
+        }))
+    }
+
+    await graphClient
+      .api(`/users/${senderMailbox}/messages`)
+      .post(mailMessage)
+      .then(async (draft: any) => {
+        await graphClient.api(`/users/${senderMailbox}/messages/${draft.id}/move`).post({
+          destinationId: 'SentItems',
+        })
+      })
+  } catch (error) {
+    console.error('Failed to save to Outlook Sent Items:', error)
+  }
 }
 
 export async function sendEmail(config: EmailConfig) {
@@ -72,15 +141,18 @@ export async function sendEmail(config: EmailConfig) {
     if (result.status === KnownEmailSendStatus.Succeeded) {
       console.log('Email sent via Azure Communication Services to:', recipients.join(', '))
       for (const recipient of recipients) {
-        saveEmailLog({ to: recipient, from: config.from, subject: config.subject, status: 'sent', messageId: result.id }).catch(() => {})
+        saveEmailLog({ to: recipient, from: config.from, subject: config.subject, status: 'sent', messageId: result.id }).catch((err) => console.error('Email log save failed:', err))
       }
+      saveToOutlookSentItems(config).catch((err) =>
+        console.error('Outlook Sent Items save failed:', err)
+      )
       return {
         success: true,
         messageId: result.id,
       }
     } else {
       for (const recipient of recipients) {
-        saveEmailLog({ to: recipient, from: config.from, subject: config.subject, status: 'failed', error: `Status: ${result.status}` }).catch(() => {})
+        saveEmailLog({ to: recipient, from: config.from, subject: config.subject, status: 'failed', error: `Status: ${result.status}` }).catch((err) => console.error('Email log save failed:', err))
       }
       throw new Error(`Email send failed with status: ${result.status}`)
     }
@@ -89,7 +161,7 @@ export async function sendEmail(config: EmailConfig) {
     const errorMsg = error instanceof Error ? error.message : 'Unknown error occurred'
     const recipients = Array.isArray(config.to) ? config.to : [config.to]
     for (const recipient of recipients) {
-      saveEmailLog({ to: recipient, from: config.from, subject: config.subject, status: 'failed', error: errorMsg }).catch(() => {})
+      saveEmailLog({ to: recipient, from: config.from, subject: config.subject, status: 'failed', error: errorMsg }).catch((err) => console.error('Email log save failed:', err))
     }
     return {
       success: false,

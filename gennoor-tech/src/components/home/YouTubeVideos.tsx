@@ -1,68 +1,7 @@
 import Link from 'next/link'
-import Image from 'next/image'
-import { ArrowRight, Play, Eye, ThumbsUp } from 'lucide-react'
-import { getYouTubeVideos, type YouTubeVideo } from '@/lib/youtube'
-
-function formatViews(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`
-  return n.toString()
-}
-
-function timeAgo(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime()
-  const days = Math.floor(diff / 86400000)
-  if (days < 1) return 'Today'
-  if (days < 7) return `${days}d ago`
-  if (days < 30) return `${Math.floor(days / 7)}w ago`
-  if (days < 365) return `${Math.floor(days / 30)}mo ago`
-  return `${Math.floor(days / 365)}y ago`
-}
-
-function VideoCard({ video }: { video: YouTubeVideo }) {
-  return (
-    <a
-      href={`https://www.youtube.com/watch?v=${video.id}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-out bg-white border border-gray-100"
-    >
-      <div className="relative aspect-video bg-gray-100">
-        {video.thumbnail && (
-          <Image src={video.thumbnail} alt={video.title} fill className="object-cover" />
-        )}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-        <div className="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-medium px-1.5 py-0.5 rounded">
-          {video.duration}
-        </div>
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center shadow-lg">
-            <Play className="w-5 h-5 text-white ml-0.5 fill-white" />
-          </div>
-        </div>
-      </div>
-      <div className="p-4">
-        <h3 className="font-semibold text-gray-900 text-sm line-clamp-2 mb-2 group-hover:text-primary-600 transition-colors duration-200">
-          {video.title}
-        </h3>
-        {video.playlists.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-2">
-            {video.playlists.slice(0, 2).map((pl) => (
-              <span key={pl} className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-primary-50 text-primary-700">
-                {pl}
-              </span>
-            ))}
-          </div>
-        )}
-        <div className="flex items-center gap-3 text-xs text-gray-500">
-          <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{formatViews(video.viewCount)}</span>
-          <span className="flex items-center gap-1"><ThumbsUp className="w-3 h-3" />{formatViews(video.likeCount)}</span>
-          <span>{timeAgo(video.publishedAt)}</span>
-        </div>
-      </div>
-    </a>
-  )
-}
+import { ArrowRight } from 'lucide-react'
+import { getYouTubeVideos } from '@/lib/youtube'
+import { VideoCard } from '@/components/YouTubeGrid'
 
 export default async function YouTubeVideos() {
   const videos = await getYouTubeVideos(50)

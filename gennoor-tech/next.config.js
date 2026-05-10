@@ -1,6 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  async redirects() {
+    return [
+      {
+        source: '/claude-cowork',
+        destination: '/workshops/claude-cowork',
+        permanent: true,
+      },
+    ]
+  },
   output: 'standalone',
   serverExternalPackages: ['applicationinsights', '@azure/data-tables', '@azure/storage-blob', 'pdf-parse', '@azure/identity', '@microsoft/microsoft-graph-client'],
   images: {
