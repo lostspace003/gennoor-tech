@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, Award, Users, Clock, Globe, BookOpen, Rocket, Search, Filter, X, ChevronRight } from 'lucide-react'
+import { Award, Users, Clock, Globe, BookOpen, Rocket, Search, Filter, X, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import { bootcamps, courses } from '@/data/training-programs'
 import TrainingCard from '@/components/training/TrainingCard'
@@ -110,37 +110,34 @@ export default function TrainingPage() {
   const certifications = ['all', 'Yes', 'No']
 
   return (
-    <main className="min-h-screen pt-20">
+    <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-600 to-primary-800 py-16 lg:py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-white/10"></div>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <Link
-            href="/"
-            className="inline-flex items-center text-white/90 hover:text-white mb-8"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Home
-          </Link>
-
+      <section className="relative py-14 lg:py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-white"></div>
+        <div className="absolute inset-0 bg-gradient-mesh"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
-            <h1 className="text-4xl lg:text-5xl font-black text-white mb-6">
+            <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
+              Training Programs
+            </span>
+            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
               Corporate AI Training & Bootcamps
             </h1>
-            <p className="text-xl text-white/90 mb-8">
+            <p className="text-xl text-gray-600 mb-8">
               Transform your workforce with comprehensive AI training programs. From executive workshops
               to intensive technical bootcamps, we deliver customized training aligned with your business goals.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
                 href="/contact#book"
-                className="inline-flex items-center px-8 py-4 bg-white text-primary-700 font-medium rounded-lg hover:bg-gray-100 transition-colors"
+                className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300"
               >
                 Request Custom Training
               </Link>
               <a
                 href="#programs"
-                className="inline-flex items-center px-8 py-4 border-2 border-white text-white font-medium rounded-lg hover:bg-white/10 transition-colors"
+                className="inline-flex items-center px-8 py-4 border-2 border-primary-600 text-primary-600 font-medium rounded-xl hover:bg-primary-50 transition-all duration-300"
               >
                 Explore Programs
               </a>
@@ -150,11 +147,12 @@ export default function TrainingPage() {
       </section>
 
       {/* Stats */}
-      <section className="py-16 lg:py-20 bg-gray-50">
+      <section className="relative py-14 lg:py-20 bg-gray-50">
+        <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat) => (
-              <div key={stat.label} className="text-center">
+              <div key={stat.label} className="glass-card p-6 text-center">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4">
                   <stat.icon className="w-8 h-8 text-primary-600" />
                 </div>
@@ -167,7 +165,8 @@ export default function TrainingPage() {
       </section>
 
       {/* Training Programs Section */}
-      <section id="programs" className="py-16 lg:py-20">
+      <section id="programs" className="relative py-14 lg:py-20">
+        <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Section Header */}
           <div className="text-center mb-12">
@@ -333,13 +332,14 @@ export default function TrainingPage() {
       </section>
 
       {/* Certifications Section */}
-      <section className="py-16 lg:py-20 bg-gray-50">
+      <section className="relative py-14 lg:py-20 bg-gray-50">
+        <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
             Certification Exam Preparation
           </h2>
           <div className="max-w-5xl mx-auto">
-            <div className="bg-white rounded-lg shadow-lg p-8">
+            <div className="glass-card glow-border p-8">
               <div className="text-center mb-8">
                 <Award className="w-16 h-16 text-primary-600 mx-auto mb-4" />
                 <h3 className="text-2xl font-semibold text-gray-900 mb-2">
@@ -436,7 +436,7 @@ export default function TrainingPage() {
                 <div className="text-center">
                   <Link
                     href="/services/certifications"
-                    className="inline-flex items-center px-8 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
+                    className="inline-flex items-center px-8 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300"
                   >
                     View All Certification Programs
                     <ChevronRight className="w-5 h-5 ml-2" />
@@ -449,7 +449,8 @@ export default function TrainingPage() {
       </section>
 
       {/* Global Delivery */}
-      <section className="py-16 lg:py-20">
+      <section className="relative py-14 lg:py-20">
+        <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-12 text-center">
             <Globe className="w-20 h-20 text-white mx-auto mb-6" />
@@ -462,22 +463,22 @@ export default function TrainingPage() {
             </p>
             <div className="flex flex-wrap justify-center gap-4 mb-8">
               <span className="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg">
-                🇮🇳 India
+                India
               </span>
               <span className="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg">
-                🇸🇦 Saudi Arabia
+                Saudi Arabia
               </span>
               <span className="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg">
-                🇦🇪 UAE
+                UAE
               </span>
               <span className="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg">
-                🇹🇿 Tanzania
+                Tanzania
               </span>
               <span className="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg">
-                🇰🇪 Kenya
+                Kenya
               </span>
               <span className="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg">
-                🇲🇾 Malaysia
+                Malaysia
               </span>
             </div>
             <Link
@@ -491,7 +492,8 @@ export default function TrainingPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16 lg:py-20 bg-white">
+      <section className="relative py-14 lg:py-20">
+        <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Frequently Asked Questions</h2>
           <div className="max-w-3xl mx-auto space-y-6">
@@ -503,7 +505,7 @@ export default function TrainingPage() {
               { question: 'Which industries do you serve with AI training?', answer: 'We serve financial services, insurance, healthcare, manufacturing, oil & gas, telecom, government, and technology sectors. Our clients include Fortune 500 companies like Boeing, Saudi Aramco, HDFC Bank, Siemens, and EY.' },
               { question: 'What is the typical duration of a training program?', answer: 'Executive bootcamps run 2-3 days. Technical workshops are 3-5 days. Deep-dive courses can extend to 2 weeks. We also offer ongoing mentoring programs for teams implementing AI projects post-training.' },
             ].map((faq) => (
-              <div key={faq.question} className="bg-gray-50 rounded-lg p-6 shadow-sm border border-gray-100">
+              <div key={faq.question} className="glass-card p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
                 <p className="text-gray-600">{faq.answer}</p>
               </div>
@@ -513,10 +515,13 @@ export default function TrainingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 lg:py-20 bg-gray-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="relative py-14 lg:py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-white"></div>
+        <div className="absolute inset-0 bg-gradient-mesh"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">
-            Ready to Transform Your Team's AI Capabilities?
+            Ready to Transform Your Team&apos;s AI Capabilities?
           </h2>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Get a customized training proposal tailored to your industry and specific use cases
@@ -524,13 +529,13 @@ export default function TrainingPage() {
           <div className="flex flex-wrap justify-center gap-4">
             <Link
               href="/contact#book"
-              className="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300"
             >
               Get Training Proposal
             </Link>
             <Link
               href="/resources/calendar"
-              className="inline-flex items-center px-8 py-4 border-2 border-primary-600 text-primary-600 font-medium rounded-lg hover:bg-primary-50 transition-colors"
+              className="inline-flex items-center px-8 py-4 border-2 border-primary-600 text-primary-600 font-medium rounded-xl hover:bg-primary-50 transition-all duration-300"
             >
               View Training Calendar
             </Link>

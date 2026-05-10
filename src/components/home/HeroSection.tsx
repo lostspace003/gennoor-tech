@@ -3,58 +3,116 @@
 import Link from 'next/link'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import { siteConfig, BLOB_URL } from '@/lib/site-config'
-import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 import dynamic from 'next/dynamic'
 import InlineVideoPlayer from '@/components/InlineVideoPlayer'
 
-// Dynamically import the animated logo to avoid SSR issues
 const GennoorLogo = dynamic(() => import('@/components/GennoorLogo'), {
   ssr: false,
   loading: () => <div className="h-[180px] w-[650px] animate-pulse bg-gray-200/10 rounded-lg" />
 })
 
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 1.8,
+    },
+  },
+} as const
+
+const slideIn = {
+  hidden: { opacity: 0, x: -30, filter: 'blur(8px)' },
+  visible: {
+    opacity: 1,
+    x: 0,
+    filter: 'blur(0px)',
+    transition: { type: 'spring' as const, stiffness: 200, damping: 25 },
+  },
+}
+
 export default function HeroSection() {
-  const [showContent, setShowContent] = useState(false)
-
-  useEffect(() => {
-    // Show content after logo animation starts
-    const timer = setTimeout(() => setShowContent(true), 2000)
-    return () => clearTimeout(timer)
-  }, [])
-
   return (
-    <section className="relative overflow-hidden min-h-screen flex items-center">
-      {/* Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-teal-50" />
+    <section className="relative overflow-hidden min-h-[90vh] flex items-center">
+      {/* Ambient gradient mesh background */}
+      <div className="absolute inset-0 bg-white" />
+      <div className="absolute inset-0 bg-gradient-mesh" />
 
-      {/* Animated Background Elements */}
+      {/* Animated ambient orbs */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary-500 opacity-10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-accent-500 opacity-10 rounded-full blur-3xl animate-pulse delay-1000" />
+        <motion.div
+          className="absolute -top-32 right-[10%] w-[500px] h-[500px] rounded-full"
+          style={{
+            background: 'radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%)',
+            filter: 'blur(60px)',
+          }}
+          animate={{
+            y: [0, -20, 10, 0],
+            x: [0, 15, -10, 0],
+            scale: [1, 1.05, 0.98, 1],
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute -bottom-32 left-[5%] w-[450px] h-[450px] rounded-full"
+          style={{
+            background: 'radial-gradient(circle, rgba(13, 148, 136, 0.07) 0%, transparent 70%)',
+            filter: 'blur(60px)',
+          }}
+          animate={{
+            y: [0, 15, -20, 0],
+            x: [0, -10, 15, 0],
+            scale: [1, 0.97, 1.04, 1],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+        />
+        <motion.div
+          className="absolute top-[30%] left-[40%] w-[300px] h-[300px] rounded-full"
+          style={{
+            background: 'radial-gradient(circle, rgba(37, 99, 235, 0.04) 0%, transparent 70%)',
+            filter: 'blur(50px)',
+          }}
+          animate={{
+            y: [0, 20, -15, 0],
+            scale: [1, 1.08, 0.96, 1],
+          }}
+          transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut', delay: 4 }}
+        />
       </div>
+
+      {/* Subtle grid pattern */}
+      <div
+        className="absolute inset-0 opacity-[0.02]"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)',
+          backgroundSize: '60px 60px',
+        }}
+      />
 
       <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
         <div className="max-w-7xl mx-auto">
-          {/* Two column layout: Text left, Logo right */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
 
             {/* Left Column - Text Content */}
-            <div className="text-left">
-              {/* Badge - Appears after logo animation */}
-              <div
-                className={`inline-flex items-center rounded-full px-3 py-1 mb-4 text-xs font-medium bg-primary-100 text-primary-700 transition-all duration-700 ${
-                  showContent ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
-                }`}
-              >
-                <span className="flex h-1.5 w-1.5 rounded-full bg-primary-600 mr-2" />
-                Microsoft Certified Trainer • 14+ Years Experience
-              </div>
+            <motion.div
+              className="text-left"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {/* Badge */}
+              <motion.div variants={slideIn}>
+                <div className="inline-flex items-center rounded-full px-4 py-1.5 mb-5 text-xs font-semibold glass-card">
+                  <span className="flex h-1.5 w-1.5 rounded-full bg-primary-500 mr-2 animate-pulse shadow-glow-blue" />
+                  <span className="text-gray-600">Microsoft Certified Trainer • 14+ Years Experience</span>
+                </div>
+              </motion.div>
 
               {/* Main Headline */}
-              <h1
-                className={`text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 mb-4 transition-all duration-700 delay-300 ${
-                  showContent ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
-                }`}
+              <motion.h1
+                className="text-2xl sm:text-3xl lg:text-[2.75rem] font-bold tracking-tight text-gray-900 mb-5 leading-[1.15]"
+                variants={slideIn}
               >
                 {siteConfig.hero.headline.split('—').map((part, index) => (
                   <span key={index}>
@@ -68,113 +126,91 @@ export default function HeroSection() {
                         ))}
                       </>
                     ) : (
-                      <>
-                        <span className="block mt-1 text-xl sm:text-2xl lg:text-3xl text-gray-700">
-                          — {part}
-                        </span>
-                      </>
+                      <span className="block mt-2 text-xl sm:text-2xl lg:text-[1.75rem] text-gray-500 font-medium">
+                        — {part}
+                      </span>
                     )}
                   </span>
                 ))}
-              </h1>
+              </motion.h1>
 
               {/* Subheadline */}
-              <p
-                className={`text-base sm:text-lg text-gray-600 mb-6 max-w-2xl transition-all duration-700 delay-500 ${
-                  showContent ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
-                }`}
+              <motion.p
+                className="text-base sm:text-lg text-gray-500 mb-8 max-w-xl leading-relaxed"
+                variants={slideIn}
               >
                 {siteConfig.hero.subheadline}
-              </p>
+              </motion.p>
 
               {/* CTAs */}
-              <div
-                className={`flex flex-col sm:flex-row gap-3 transition-all duration-700 delay-700 ${
-                  showContent ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
-                }`}
-              >
-                <Link
-                  href={siteConfig.hero.cta1.href}
-                  className="inline-flex items-center justify-center px-6 py-3 text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 transition-colors group"
-                >
-                  {siteConfig.hero.cta1.text}
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </Link>
-                <Link
-                  href={siteConfig.hero.cta2.href}
-                  className="inline-flex items-center justify-center px-6 py-3 text-sm font-medium rounded-md text-primary-600 bg-white border-2 border-primary-600 hover:bg-primary-50 transition-colors"
-                >
-                  {siteConfig.hero.cta2.text}
-                </Link>
-              </div>
-
-              {/* POC Link - Orange with sparkle */}
-              <div
-                className={`transition-all duration-700 delay-900 mt-5 ${
-                  showContent ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
-                }`}
-              >
-                <Link
-                  href="/services/poc-development#live-demo"
-                  className="poc-sparkle-btn relative inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 transition-all group overflow-hidden"
-                >
-                  <span className="poc-shimmer absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0" />
-                  <Sparkles className="w-4 h-4 relative poc-sparkle-icon" />
-                  <span className="relative">See our latest PoC in action</span>
-                  <ArrowRight className="w-4 h-4 relative group-hover:translate-x-0.5 transition-transform" />
-                </Link>
-              </div>
-            </div>
-
-            {/* Right Column - Video and Animated Logo */}
-            <div className="flex flex-col items-center lg:items-end">
-              {/* Main container - responsive video container */}
-              <div className="relative">
-                {/* Video container - responsive with max width */}
-                <div className="w-full sm:w-[480px] lg:w-[560px] max-w-full">
-                  {/* Inline Video Player */}
-                  <div
-                    className={`relative transition-all duration-700 delay-500 mb-6 ${
-                      showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-                    }`}
+              <motion.div className="flex flex-col sm:flex-row gap-3" variants={slideIn}>
+                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                  <Link
+                    href={siteConfig.hero.cta1.href}
+                    className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue transition-all duration-300 group"
                   >
+                    {siteConfig.hero.cta1.text}
+                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                  <Link
+                    href={siteConfig.hero.cta2.href}
+                    className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 glass-card hover:border-primary-200 transition-all duration-300"
+                  >
+                    {siteConfig.hero.cta2.text}
+                  </Link>
+                </motion.div>
+              </motion.div>
+
+              {/* POC Link */}
+              <motion.div className="mt-6" variants={slideIn}>
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Link
+                    href="/services/poc-development#live-demo"
+                    className="relative inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-lg shadow-orange-500/20 hover:shadow-orange-500/35 transition-all duration-300 group overflow-hidden"
+                  >
+                    <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 animate-shimmer" />
+                    <Sparkles className="w-4 h-4 relative" />
+                    <span className="relative">See our latest PoC in action</span>
+                    <ArrowRight className="w-4 h-4 relative group-hover:translate-x-0.5 transition-transform" />
+                  </Link>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+
+            {/* Right Column - Video */}
+            <motion.div
+              className="flex flex-col items-center lg:items-end"
+              initial={{ opacity: 0, y: 40, filter: 'blur(8px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ delay: 2.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div className="relative w-full sm:w-[480px] lg:w-[560px] max-w-full">
+                {/* Ambient glow behind video */}
+                <div className="absolute -inset-8 bg-gradient-to-br from-primary-500/8 to-accent-500/8 rounded-3xl blur-2xl" />
+
+                <div className="relative mb-6">
+                  <div className="rounded-2xl overflow-hidden glass-card p-1">
                     <InlineVideoPlayer
                       videoSrc="/media/videos/gennoor-presentation.mp4"
                       posterSrc={`${BLOB_URL}/videos/video-thumbnail-bright.png`}
                       rounded="rounded-xl"
-                      className="shadow-lg ring-1 ring-gray-200/60"
+                      className="shadow-none"
                     />
-                    <p className="text-center text-sm font-semibold text-gray-600 mt-3 tracking-wide">
-                      Train. Innovate. Build. — AI that ships.
-                    </p>
                   </div>
-
+                  <p className="text-center text-sm font-semibold text-gray-500 mt-4 tracking-wide">
+                    Train. Innovate. Build. — AI that ships.
+                  </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
 
-      {/* Sparkle animation styles */}
-      <style jsx>{`
-        .poc-shimmer {
-          animation: shimmer 2.5s ease-in-out infinite;
-        }
-        .poc-sparkle-icon {
-          animation: sparkle 1.5s ease-in-out infinite;
-        }
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          50% { transform: translateX(100%); }
-          50.01% { transform: translateX(-100%); }
-          100% { transform: translateX(-100%); }
-        }
-        @keyframes sparkle {
-          0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
-          50% { transform: scale(1.2) rotate(15deg); opacity: 0.8; }
-        }
-      `}</style>
+      {/* Bottom gradient fade to white */}
+      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
     </section>
   )
 }

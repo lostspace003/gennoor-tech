@@ -138,9 +138,15 @@ export default function DemosPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-50 to-accent-50 py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative py-14 lg:py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-white" />
+        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
+            <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
+              PoCs & Demos
+            </span>
             <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
               PoCs & Demos
             </h1>
@@ -161,7 +167,7 @@ export default function DemosPage() {
               return (
                 <div
                   key={index}
-                  className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden"
+                  className="rounded-2xl glass-card glow-border hover:shadow-xl transition-all duration-300 overflow-hidden"
                 >
                   {/* Category Bar */}
                   <div className={`h-1 bg-gradient-to-r ${categoryColors[demo.category as keyof typeof categoryColors]}`} />
@@ -257,7 +263,7 @@ export default function DemosPage() {
           </div>
 
           {/* Call to Action */}
-          <div className="mt-16 text-center max-w-3xl mx-auto">
+          <div className="mt-16 glass-card rounded-2xl p-8 text-center max-w-3xl mx-auto">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
               Need a Custom PoC for Your Organization?
             </h2>
@@ -267,7 +273,7 @@ export default function DemosPage() {
             </p>
             <Link
               href="/contact"
-              className="inline-flex items-center px-6 py-3 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 transition-colors"
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300"
             >
               Discuss Your Requirements
             </Link>

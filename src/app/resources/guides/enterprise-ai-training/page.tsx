@@ -80,34 +80,37 @@ export default function EnterpriseAITrainingGuide() {
       ]} />
       <FAQJsonLd faqs={faqs} />
 
-      <main className="min-h-screen pt-20">
+      <main className="min-h-screen">
         {/* Hero */}
-        <section className="bg-gradient-to-br from-primary-600 to-primary-800 py-16 lg:py-24 relative overflow-hidden">
-          <div className="absolute inset-0 bg-grid-white/10"></div>
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <section className="relative py-14 lg:py-20 overflow-hidden">
+          <div className="absolute inset-0 bg-white" />
+          <div className="absolute inset-0 bg-gradient-mesh" />
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+          <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl">
-              <span className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full mb-6 text-white text-sm font-medium">
-                <BookOpen className="w-4 h-4 mr-2" />
+              <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
                 Comprehensive Guide
               </span>
-              <h1 className="text-4xl lg:text-5xl font-black text-white mb-6">
+              <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
                 Enterprise AI Training: The Complete Guide
               </h1>
-              <p className="text-xl text-white/90 mb-8">
+              <p className="text-xl text-gray-600 mb-8">
                 How to build AI capabilities at every level of your organization — from executive fluency to hands-on practitioner skills.
                 Based on training 2000+ professionals across Fortune 500 companies in 6 countries.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link href="/services/training" className="inline-flex items-center px-8 py-4 bg-white text-primary-700 font-medium rounded-lg hover:bg-gray-100 transition-colors">
+                <Link href="/services/training" className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300">
                   View Training Programs
                 </Link>
-                <Link href="/contact#book" className="inline-flex items-center px-8 py-4 border-2 border-white text-white font-medium rounded-lg hover:bg-white/10 transition-colors">
+                <Link href="/contact#book" className="inline-flex items-center px-8 py-4 border-2 border-primary-600 text-primary-700 font-medium rounded-xl hover:bg-primary-50 transition-colors">
                   Get Custom Proposal
                 </Link>
               </div>
             </div>
           </div>
         </section>
+
+        <div className="section-divider" />
 
         {/* Why AI Training Matters */}
         <section className="py-16 lg:py-20">
@@ -120,15 +123,15 @@ export default function EnterpriseAITrainingGuide() {
                 and organizational readiness to use them effectively.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-primary-50 rounded-lg p-6 text-center">
+                <div className="glass-card p-6 text-center">
                   <div className="text-3xl font-bold text-primary-600 mb-2">87%</div>
                   <p className="text-gray-600">of AI projects never reach production</p>
                 </div>
-                <div className="bg-primary-50 rounded-lg p-6 text-center">
+                <div className="glass-card p-6 text-center">
                   <div className="text-3xl font-bold text-primary-600 mb-2">60%</div>
                   <p className="text-gray-600">faster POC-to-production with proper training</p>
                 </div>
-                <div className="bg-primary-50 rounded-lg p-6 text-center">
+                <div className="glass-card p-6 text-center">
                   <div className="text-3xl font-bold text-primary-600 mb-2">3-5x</div>
                   <p className="text-gray-600">typical first-year ROI from AI training</p>
                 </div>
@@ -137,8 +140,10 @@ export default function EnterpriseAITrainingGuide() {
           </div>
         </section>
 
+        <div className="section-divider" />
+
         {/* Three-Tier Training Model */}
-        <section className="py-16 lg:py-20 bg-gray-50">
+        <section className="py-16 lg:py-20 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-4 text-center">The Three-Tier Training Model</h2>
@@ -149,7 +154,7 @@ export default function EnterpriseAITrainingGuide() {
 
               <div className="space-y-8">
                 {trainingTiers.map((tier, index) => (
-                  <div key={tier.title} className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
+                  <div key={tier.title} className="glass-card p-8">
                     <div className="flex items-start gap-4 mb-6">
                       <div className="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold">
                         {index + 1}
@@ -188,6 +193,8 @@ export default function EnterpriseAITrainingGuide() {
           </div>
         </section>
 
+        <div className="section-divider" />
+
         {/* Industry-Specific Training */}
         <section className="py-16 lg:py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -201,7 +208,7 @@ export default function EnterpriseAITrainingGuide() {
                   <Link
                     key={item.industry}
                     href={item.href}
-                    className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow group"
+                    className="glass-card p-6 hover:shadow-md transition-shadow group"
                   >
                     <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">{item.industry}</h3>
                     <p className="text-sm text-gray-600">{item.description}</p>
@@ -212,8 +219,10 @@ export default function EnterpriseAITrainingGuide() {
           </div>
         </section>
 
+        <div className="section-divider" />
+
         {/* Certification Paths */}
-        <section className="py-16 lg:py-20 bg-gray-50">
+        <section className="py-16 lg:py-20 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Certification Paths</h2>
@@ -221,22 +230,22 @@ export default function EnterpriseAITrainingGuide() {
                 Certifications validate your team&apos;s skills and demonstrate investment in AI capability building.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Link href="/services/certifications/ai-901-azure-ai-fundamentals" className="bg-white rounded-lg p-6 border border-gray-100 hover:shadow-md transition-shadow group">
+                <Link href="/services/certifications/ai-901-azure-ai-fundamentals" className="glass-card p-6 hover:shadow-md transition-shadow group">
                   <span className="text-xl font-bold text-blue-600">AI-901</span>
                   <h3 className="font-semibold text-gray-900 mt-1 group-hover:text-primary-600">Azure AI Fundamentals</h3>
                   <p className="text-sm text-gray-600 mt-1">Best starting point for all roles</p>
                 </Link>
-                <Link href="/services/certifications/ai-103-azure-ai-app-and-agent-developer-associate" className="bg-white rounded-lg p-6 border border-gray-100 hover:shadow-md transition-shadow group">
+                <Link href="/services/certifications/ai-103-azure-ai-app-and-agent-developer-associate" className="glass-card p-6 hover:shadow-md transition-shadow group">
                   <span className="text-xl font-bold text-blue-600">AI-103</span>
                   <h3 className="font-semibold text-gray-900 mt-1 group-hover:text-primary-600">AI App & Agent Developer</h3>
                   <p className="text-sm text-gray-600 mt-1">For developers building AI applications</p>
                 </Link>
-                <Link href="/services/certifications/ab-100-agentic-ai-business-solutions-architect" className="bg-white rounded-lg p-6 border border-gray-100 hover:shadow-md transition-shadow group">
+                <Link href="/services/certifications/ab-100-agentic-ai-business-solutions-architect" className="glass-card p-6 hover:shadow-md transition-shadow group">
                   <span className="text-xl font-bold text-blue-600">AB-100</span>
                   <h3 className="font-semibold text-gray-900 mt-1 group-hover:text-primary-600">Agentic AI Architect</h3>
                   <p className="text-sm text-gray-600 mt-1">For architects designing agent systems</p>
                 </Link>
-                <Link href="/services/certifications" className="bg-primary-50 rounded-lg p-6 border border-primary-100 hover:shadow-md transition-shadow group flex items-center justify-center">
+                <Link href="/services/certifications" className="glass-card p-6 hover:shadow-md transition-shadow group flex items-center justify-center">
                   <span className="font-semibold text-primary-600 group-hover:text-primary-700">View All 25+ Certifications →</span>
                 </Link>
               </div>
@@ -244,13 +253,15 @@ export default function EnterpriseAITrainingGuide() {
           </div>
         </section>
 
+        <div className="section-divider" />
+
         {/* FAQ */}
         <section className="py-16 lg:py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Frequently Asked Questions</h2>
             <div className="max-w-3xl mx-auto space-y-6">
               {faqs.map((faq) => (
-                <div key={faq.question} className="bg-gray-50 rounded-lg p-6 border border-gray-100">
+                <div key={faq.question} className="glass-card p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
                   <p className="text-gray-600">{faq.answer}</p>
                 </div>
@@ -259,18 +270,20 @@ export default function EnterpriseAITrainingGuide() {
           </div>
         </section>
 
+        <div className="section-divider" />
+
         {/* CTA */}
-        <section className="py-16 lg:py-20 bg-primary-50">
+        <section className="py-16 lg:py-20 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl font-bold text-gray-900 mb-6">Ready to Build Your Team&apos;s AI Capability?</h2>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               Get a customized training roadmap for your organization. We&apos;ll assess your current maturity and recommend the right programs.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link href="/contact#book" className="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors">
+              <Link href="/contact#book" className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300">
                 Get Training Roadmap
               </Link>
-              <Link href="/services/training" className="inline-flex items-center px-8 py-4 border-2 border-primary-600 text-primary-600 font-medium rounded-lg hover:bg-primary-50 transition-colors">
+              <Link href="/services/training" className="inline-flex items-center px-8 py-4 border-2 border-primary-600 text-primary-700 font-medium rounded-xl hover:bg-primary-50 transition-colors">
                 Browse All Programs
               </Link>
             </div>

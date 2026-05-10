@@ -100,24 +100,23 @@ export default function AI102StudyGuidePage() {
       />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-700 to-primary-600 text-white py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2 text-primary-100 mb-4">
-            <Link href="/guides" className="hover:text-white transition-colors">
-              Guides
-            </Link>
-            <span>/</span>
-            <span>AI-102</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-black mb-6">
+      <section className="relative py-14 lg:py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-white" />
+        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
+            AI-102 Study Guide
+          </span>
+          <h1 className="text-4xl md:text-5xl font-black mb-6 text-gray-900">
             Azure AI-102 Certification: Complete Study Guide 2026
           </h1>
-          <p className="text-xl text-primary-100 mb-8 leading-relaxed">
+          <p className="text-xl text-gray-600 mb-8 leading-relaxed">
             Everything you need to pass the AI-102 Azure AI Engineer Associate exam — from skills
             measured to study strategies, written by a Microsoft Certified Trainer with 16
             certifications.
           </p>
-          <div className="flex flex-wrap gap-6 text-primary-100">
+          <div className="flex flex-wrap gap-6 text-gray-500">
             <div className="flex items-center gap-2">
               <Clock className="w-5 h-5" />
               <span>15 min read</span>
@@ -133,6 +132,8 @@ export default function AI102StudyGuidePage() {
           </div>
         </div>
       </section>
+
+      <div className="section-divider" />
 
       {/* Exam Overview */}
       <section className="py-16 bg-white">
@@ -152,7 +153,7 @@ export default function AI102StudyGuidePage() {
           </p>
 
           <div className="grid md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-primary-50 rounded-xl p-6">
+            <div className="glass-card p-6">
               <h3 className="font-semibold text-gray-900 mb-3">Exam Details</h3>
               <ul className="space-y-2 text-gray-600">
                 <li><strong>Exam Code:</strong> AI-102</li>
@@ -164,7 +165,7 @@ export default function AI102StudyGuidePage() {
                 <li><strong>Languages:</strong> English, Japanese, Chinese, Korean</li>
               </ul>
             </div>
-            <div className="bg-accent-50 rounded-xl p-6">
+            <div className="glass-card p-6">
               <h3 className="font-semibold text-gray-900 mb-3">Who Should Take This Exam</h3>
               <ul className="space-y-2 text-gray-600">
                 <li>AI Engineers and Solution Architects</li>
@@ -178,8 +179,10 @@ export default function AI102StudyGuidePage() {
         </div>
       </section>
 
+      <div className="section-divider" />
+
       {/* Skills Measured */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Skills Measured</h2>
           <p className="text-lg text-gray-600 mb-8">
@@ -188,7 +191,7 @@ export default function AI102StudyGuidePage() {
           </p>
 
           <div className="space-y-6">
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="glass-card p-6">
               <div className="flex items-start gap-4">
                 <div className="bg-primary-100 text-primary-700 rounded-lg p-2 font-bold text-sm min-w-[60px] text-center">
                   15-20%
@@ -220,7 +223,7 @@ export default function AI102StudyGuidePage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="glass-card p-6">
               <div className="flex items-start gap-4">
                 <div className="bg-primary-100 text-primary-700 rounded-lg p-2 font-bold text-sm min-w-[60px] text-center">
                   15-20%
@@ -251,7 +254,7 @@ export default function AI102StudyGuidePage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="glass-card p-6">
               <div className="flex items-start gap-4">
                 <div className="bg-primary-100 text-primary-700 rounded-lg p-2 font-bold text-sm min-w-[60px] text-center">
                   15-20%
@@ -282,7 +285,7 @@ export default function AI102StudyGuidePage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="glass-card p-6">
               <div className="flex items-start gap-4">
                 <div className="bg-primary-100 text-primary-700 rounded-lg p-2 font-bold text-sm min-w-[60px] text-center">
                   20-25%
@@ -314,7 +317,7 @@ export default function AI102StudyGuidePage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="glass-card p-6">
               <div className="flex items-start gap-4">
                 <div className="bg-primary-100 text-primary-700 rounded-lg p-2 font-bold text-sm min-w-[60px] text-center">
                   15-20%
@@ -348,6 +351,8 @@ export default function AI102StudyGuidePage() {
         </div>
       </section>
 
+      <div className="section-divider" />
+
       {/* Study Resources */}
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -358,7 +363,7 @@ export default function AI102StudyGuidePage() {
           </p>
 
           <div className="space-y-6">
-            <div className="border border-gray-100 rounded-xl p-6">
+            <div className="glass-card p-6">
               <h3 className="text-xl font-semibold text-gray-900 mb-3 flex items-center gap-2">
                 <Target className="w-5 h-5 text-primary-600" />
                 Microsoft Learn — Official Learning Paths
@@ -370,7 +375,7 @@ export default function AI102StudyGuidePage() {
               </p>
             </div>
 
-            <div className="border border-gray-100 rounded-xl p-6">
+            <div className="glass-card p-6">
               <h3 className="text-xl font-semibold text-gray-900 mb-3 flex items-center gap-2">
                 <Target className="w-5 h-5 text-primary-600" />
                 Hands-On Labs in Azure Portal
@@ -383,7 +388,7 @@ export default function AI102StudyGuidePage() {
               </p>
             </div>
 
-            <div className="border border-gray-100 rounded-xl p-6">
+            <div className="glass-card p-6">
               <h3 className="text-xl font-semibold text-gray-900 mb-3 flex items-center gap-2">
                 <Target className="w-5 h-5 text-primary-600" />
                 Instructor-Led Training
@@ -402,7 +407,7 @@ export default function AI102StudyGuidePage() {
               </p>
             </div>
 
-            <div className="border border-gray-100 rounded-xl p-6">
+            <div className="glass-card p-6">
               <h3 className="text-xl font-semibold text-gray-900 mb-3 flex items-center gap-2">
                 <Target className="w-5 h-5 text-primary-600" />
                 Practice Assessments
@@ -418,8 +423,10 @@ export default function AI102StudyGuidePage() {
         </div>
       </section>
 
+      <div className="section-divider" />
+
       {/* Exam Tips */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Expert Exam Tips from an MCT
@@ -430,7 +437,7 @@ export default function AI102StudyGuidePage() {
           </p>
 
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl p-6 shadow-sm">
+            <div className="glass-card p-6">
               <Lightbulb className="w-6 h-6 text-primary-600 mb-3" />
               <h3 className="font-semibold text-gray-900 mb-2">Focus on Azure OpenAI and RAG</h3>
               <p className="text-gray-600 text-sm">
@@ -439,7 +446,7 @@ export default function AI102StudyGuidePage() {
                 and manage token limits and content filters.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-sm">
+            <div className="glass-card p-6">
               <Lightbulb className="w-6 h-6 text-primary-600 mb-3" />
               <h3 className="font-semibold text-gray-900 mb-2">Know the SDK Patterns</h3>
               <p className="text-gray-600 text-sm">
@@ -449,7 +456,7 @@ export default function AI102StudyGuidePage() {
                 patterns.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-sm">
+            <div className="glass-card p-6">
               <Lightbulb className="w-6 h-6 text-primary-600 mb-3" />
               <h3 className="font-semibold text-gray-900 mb-2">Understand Security Models</h3>
               <p className="text-gray-600 text-sm">
@@ -458,7 +465,7 @@ export default function AI102StudyGuidePage() {
                 secure AI services in a virtual network.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-sm">
+            <div className="glass-card p-6">
               <Lightbulb className="w-6 h-6 text-primary-600 mb-3" />
               <h3 className="font-semibold text-gray-900 mb-2">Master Responsible AI</h3>
               <p className="text-gray-600 text-sm">
@@ -467,7 +474,7 @@ export default function AI102StudyGuidePage() {
                 services require additional access approval.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-sm">
+            <div className="glass-card p-6">
               <Lightbulb className="w-6 h-6 text-primary-600 mb-3" />
               <h3 className="font-semibold text-gray-900 mb-2">Time Management Strategy</h3>
               <p className="text-gray-600 text-sm">
@@ -476,7 +483,7 @@ export default function AI102StudyGuidePage() {
                 minutes per case study and tackle them first while your mind is fresh.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-sm">
+            <div className="glass-card p-6">
               <Lightbulb className="w-6 h-6 text-primary-600 mb-3" />
               <h3 className="font-semibold text-gray-900 mb-2">Lab Questions Are Critical</h3>
               <p className="text-gray-600 text-sm">
@@ -489,6 +496,8 @@ export default function AI102StudyGuidePage() {
         </div>
       </section>
 
+      <div className="section-divider" />
+
       {/* FAQ Section */}
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -498,7 +507,7 @@ export default function AI102StudyGuidePage() {
           </h2>
           <div className="space-y-6">
             {faqData.map((faq, index) => (
-              <div key={index} className="border border-gray-100 rounded-xl p-6">
+              <div key={index} className="glass-card p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">{faq.question}</h3>
                 <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
               </div>
@@ -507,11 +516,13 @@ export default function AI102StudyGuidePage() {
         </div>
       </section>
 
+      <div className="section-divider" />
+
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-primary-700 to-primary-600 text-white">
+      <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Pass the AI-102 Exam?</h2>
-          <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to Pass the AI-102 Exam?</h2>
+          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Get expert-led AI-102 preparation training from a Microsoft Certified Trainer with
             real-world Azure AI project experience and a proven track record of helping candidates
             succeed.
@@ -519,14 +530,14 @@ export default function AI102StudyGuidePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/contact#book"
-              className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 px-8 py-4 rounded-xl font-semibold hover:bg-primary-50 transition-colors"
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white px-8 py-4 rounded-xl font-semibold hover:shadow-glow-blue transition-all duration-300"
             >
               Book AI-102 Training
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
               href="/about/certifications"
-              className="inline-flex items-center justify-center gap-2 border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-colors"
+              className="inline-flex items-center justify-center gap-2 border-2 border-primary-600 text-primary-700 px-8 py-4 rounded-xl font-semibold hover:bg-primary-50 transition-colors"
             >
               View Trainer Credentials
             </Link>

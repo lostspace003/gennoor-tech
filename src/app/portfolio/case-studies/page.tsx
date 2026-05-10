@@ -21,9 +21,15 @@ export default function CaseStudiesPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-50 to-accent-50 py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative py-14 lg:py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-white" />
+        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
+            <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
+              Case Studies
+            </span>
             <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
               Case Studies
             </h1>
@@ -43,7 +49,7 @@ export default function CaseStudiesPage() {
             {caseStudies.map((study, index) => (
               <div
                 key={study.id}
-                className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow"
+                className="rounded-2xl glass-card glow-border overflow-hidden hover:shadow-xl transition-shadow"
               >
                 {/* Header */}
                 <div className={`h-2 bg-gradient-to-r ${industryColors[study.industry as keyof typeof industryColors] || 'from-gray-500 to-gray-600'}`} />
@@ -140,7 +146,7 @@ export default function CaseStudiesPage() {
 
                   {/* Testimonial */}
                   {study.testimonial && (
-                    <div className="bg-gray-50/50 rounded-lg p-4 mb-6 border-l-4 border-primary-600">
+                    <div className="glass-card rounded-lg p-4 mb-6 border-l-4 border-primary-600">
                       <p className="text-gray-700 italic mb-2">
                         "{study.testimonial.quote}"
                       </p>
@@ -183,7 +189,7 @@ export default function CaseStudiesPage() {
           </div>
 
           {/* Stats Section */}
-          <div className="mt-16 bg-gradient-primary rounded-xl p-8 max-w-4xl mx-auto">
+          <div className="mt-16 bg-gradient-to-br from-[#0C1426] via-[#1E3A8A] to-accent-700 rounded-2xl p-8 max-w-4xl mx-auto">
             <h3 className="text-2xl font-bold text-white mb-6 text-center">
               Impact Across Industries
             </h3>

@@ -2,209 +2,219 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { ChevronLeft, ChevronRight, Quote } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const testimonials = [
   {
     quote: "An excellent trainer with deep expertise in AI. He explains complex concepts in a very clear and practical way. His knowledge as an AI manager truly reflects in the way he connects theory with real-world applications. Highly engaging sessions and very helpful for both beginners and professionals. Highly recommended!",
     author: "Sourabh Taneja",
     company: "via Trustpilot",
-    program: "AI Training"
+    program: "AI Training",
   },
   {
     quote: "My experience with Gennoor's AI program was truly exceptional. The instructors demonstrated an outstanding command of the subject matter, delivering each session with remarkable clarity and depth. What set this program apart was the extraordinary level of audience engagement — every class felt dynamic, interactive, and purposeful.",
     author: "Lions Kashif",
     company: "via Trustpilot",
-    program: "AI Program Graduate"
+    program: "AI Program Graduate",
   },
   {
     quote: "The 10-day AI Leadership program was transformative for our executives. Jalal's ability to bridge technical AI concepts with strategic business value aligned perfectly with Saudi Vision 2030.",
     author: "Director of Digital Transformation",
     company: "MCIT Saudi Arabia",
-    program: "AI Leadership Mastery Program"
+    program: "AI Leadership Mastery Program",
   },
   {
     quote: "Jalal's 10-day AI Agents Implementation program transformed our approach to banking automation. The multi-agent systems and blockchain integration opened new possibilities we hadn't considered.",
     author: "Head of Digital Innovation",
     company: "Bank of Tanzania",
-    program: "AI Agents Implementation"
+    program: "AI Agents Implementation",
   },
   {
     quote: "The custom Copilot Studio training with MCP integration was exactly what our team needed. The hands-on labs and HITL workflows are now part of our client implementations.",
     author: "Senior Manager, Technology Consulting",
     company: "EY",
-    program: "Copilot Studio & Agent Flows Training"
+    program: "Copilot Studio & Agent Flows Training",
   },
   {
     quote: "Jalal delivered a comprehensive Python & AI program that took our team from basics to building transformers in just 10 days. The practical approach made complex concepts accessible.",
     author: "Training Director",
     company: "K21 Academy",
-    program: "Foundational Python & AI"
+    program: "Foundational Python & AI",
   },
   {
     quote: "I have been utilizing training services of Jalal for different courses on Microsoft and AI. He is an excellent trainer when it comes to delivering official training and bespoke courses on AI. I would highly recommend him.",
     author: "Bhavesh Shah",
     company: "via Trustpilot",
-    program: "Microsoft & AI Training"
+    program: "Microsoft & AI Training",
   },
   {
     quote: "It was truly an awesome learning experience throughout the training. The sessions were well-structured, clear, and very easy to follow. Real-world examples and practical explanations made the concepts much more relatable. Overall, it was highly engaging, informative, and added great value to my understanding.",
     author: "Tech Bliss",
     company: "via Trustpilot",
-    program: "AI Training Program"
+    program: "AI Training Program",
   },
 ]
 
+const slideVariants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? 40 : -40,
+    opacity: 0,
+    filter: 'blur(6px)',
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+    filter: 'blur(0px)',
+    transition: { type: 'spring' as const, stiffness: 300, damping: 30 },
+  },
+  exit: (direction: number) => ({
+    x: direction < 0 ? 40 : -40,
+    opacity: 0,
+    filter: 'blur(6px)',
+    transition: { duration: 0.2 },
+  }),
+}
+
 export default function Testimonials() {
   const [current, setCurrent] = useState(0)
+  const [direction, setDirection] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const [progress, setProgress] = useState(0)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
-  const next = () => {
-    setCurrent((prev) => (prev + 1) % testimonials.length)
+  const navigate = (dir: number) => {
+    setDirection(dir)
+    setProgress(0)
+    setCurrent((prev) => (prev + dir + testimonials.length) % testimonials.length)
   }
 
-  const prev = () => {
-    setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length)
-  }
-
-  // Auto-rotate testimonials every 10 seconds with progress indicator
   useEffect(() => {
     if (!isPaused) {
-      // Reset progress
       setProgress(0)
-
-      // Start progress animation
       progressIntervalRef.current = setInterval(() => {
-        setProgress(prev => {
-          if (prev >= 100) {
-            return 0
-          }
-          return prev + 1
-        })
-      }, 100) // Update every 100ms for smooth animation (100 steps over 10 seconds)
-
-      // Start auto-rotation
+        setProgress((prev) => (prev >= 100 ? 0 : prev + 1))
+      }, 100)
       intervalRef.current = setInterval(() => {
-        next()
-        setProgress(0)
-      }, 10000) // 10 seconds
+        navigate(1)
+      }, 10000)
     } else {
-      // Pause progress when hovering
-      if (progressIntervalRef.current) {
-        clearInterval(progressIntervalRef.current)
-      }
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-      }
+      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current)
+      if (intervalRef.current) clearInterval(intervalRef.current)
     }
-
-    // Cleanup intervals on unmount or dependency change
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-      }
-      if (progressIntervalRef.current) {
-        clearInterval(progressIntervalRef.current)
-      }
+      if (intervalRef.current) clearInterval(intervalRef.current)
+      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current)
     }
   }, [isPaused, current])
 
-  // Reset interval when manually navigating
-  const handleManualNavigation = (direction: 'next' | 'prev') => {
-    // Reset progress
-    setProgress(0)
-
-    // Navigate
-    if (direction === 'next') {
-      next()
-    } else {
-      prev()
-    }
-  }
-
   return (
-    <section className="section-padding bg-gray-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-12">
+    <section className="py-20 lg:py-28 relative overflow-hidden">
+      {/* Subtle background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white" />
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="text-center max-w-3xl mx-auto mb-14">
+          <motion.div
+            className="inline-flex items-center rounded-full px-3 py-1 mb-4 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            Testimonials
+          </motion.div>
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
             Client's Feedback
           </h2>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-gray-500">
             Feedback from executives and managers who've experienced the transformation
           </p>
         </div>
 
         <div className="max-w-4xl mx-auto">
           <div className="relative">
-            {/* Quote Icon */}
-            <Quote className="absolute -top-4 -left-4 w-12 h-12 text-primary-200 text-primary-900/30" />
+            {/* Quote accent */}
+            <Quote className="absolute -top-3 -left-2 w-10 h-10 text-primary-100" />
 
-            {/* Testimonial Card */}
+            {/* Testimonial Card — Glass */}
             <div
-              className="bg-white rounded-2xl shadow-xl p-8 lg:p-12"
+              className="glass-card rounded-2xl p-8 lg:p-12 min-h-[280px]"
               onMouseEnter={() => setIsPaused(true)}
               onMouseLeave={() => setIsPaused(false)}
             >
-              <p className="text-lg lg:text-xl text-gray-700 leading-relaxed mb-6 italic">
-                "{testimonials[current].quote}"
-              </p>
+              <AnimatePresence mode="wait" custom={direction}>
+                <motion.div
+                  key={current}
+                  custom={direction}
+                  variants={slideVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                >
+                  <p className="text-lg lg:text-xl text-gray-600 leading-relaxed mb-8 italic">
+                    &ldquo;{testimonials[current].quote}&rdquo;
+                  </p>
 
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-semibold text-gray-900">
-                    {testimonials[current].author}
-                  </p>
-                  <p className="text-gray-600">
-                    {testimonials[current].company}
-                  </p>
-                  <p className="text-sm text-primary-600 mt-1">
-                    {testimonials[current].program}
-                  </p>
-                </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-semibold text-gray-900">
+                        {testimonials[current].author}
+                      </p>
+                      <p className="text-gray-500 text-sm">
+                        {testimonials[current].company}
+                      </p>
+                      <p className="text-sm text-primary-600 mt-1 font-medium">
+                        {testimonials[current].program}
+                      </p>
+                    </div>
 
-                {/* Navigation */}
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleManualNavigation('prev')}
-                    className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                    aria-label="Previous testimonial"
-                  >
-                    <ChevronLeft className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={() => handleManualNavigation('next')}
-                    className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                    aria-label="Next testimonial"
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
+                    <div className="flex items-center gap-1.5">
+                      <motion.button
+                        onClick={() => navigate(-1)}
+                        className="p-2.5 rounded-xl hover:bg-gray-100/60 transition-colors"
+                        aria-label="Previous testimonial"
+                        whileHover={{ scale: 1.08 }}
+                        whileTap={{ scale: 0.92 }}
+                      >
+                        <ChevronLeft className="w-4 h-4 text-gray-500" />
+                      </motion.button>
+                      <motion.button
+                        onClick={() => navigate(1)}
+                        className="p-2.5 rounded-xl hover:bg-gray-100/60 transition-colors"
+                        aria-label="Next testimonial"
+                        whileHover={{ scale: 1.08 }}
+                        whileTap={{ scale: 0.92 }}
+                      >
+                        <ChevronRight className="w-4 h-4 text-gray-500" />
+                      </motion.button>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
             </div>
 
-            {/* Progress Bar for Auto-rotation */}
-            <div className="mt-4 h-1 bg-gray-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-primary-600 transition-all duration-100 ease-linear"
+            {/* Progress bar */}
+            <div className="mt-5 h-[2px] bg-gray-100 rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-gradient-to-r from-primary-500 to-accent-500 rounded-full"
                 style={{ width: `${progress}%` }}
               />
             </div>
 
-            {/* Dots Indicator */}
-            <div className="flex justify-center mt-4 gap-2">
+            {/* Dots */}
+            <div className="flex justify-center mt-4 gap-1.5">
               {testimonials.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => {
+                    setDirection(index > current ? 1 : -1)
                     setCurrent(index)
                     setProgress(0)
                   }}
-                  className={`w-2 h-2 rounded-full transition-all ${
+                  className={`h-1.5 rounded-full transition-all duration-400 ${
                     index === current
-                      ? 'w-8 bg-primary-600'
-                      : 'bg-gray-300 hover:bg-gray-400'
+                      ? 'w-6 bg-primary-500'
+                      : 'w-1.5 bg-gray-200 hover:bg-gray-300'
                   }`}
                   aria-label={`Go to testimonial ${index + 1}`}
                 />

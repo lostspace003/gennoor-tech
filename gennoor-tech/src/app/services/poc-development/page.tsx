@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { ArrowLeft, Code2, Zap, Shield, Rocket, CheckCircle } from 'lucide-react'
+import { Code2, Zap, Shield, Rocket, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import { ServiceJsonLd, FAQJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd'
 
@@ -75,19 +75,17 @@ export default function PoCDevelopmentPage() {
   ]
 
   return (
-    <main className="min-h-screen pt-20">
+    <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-50 to-white py-16 lg:py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <Link
-            href="/"
-            className="inline-flex items-center text-primary-600 hover:text-primary-700 mb-8"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Home
-          </Link>
-
+      <section className="relative py-14 lg:py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-white"></div>
+        <div className="absolute inset-0 bg-gradient-mesh"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
+            <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
+              PoC Development
+            </span>
             <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
               Proof of Concept Development
             </h1>
@@ -97,7 +95,7 @@ export default function PoCDevelopmentPage() {
             </p>
             <Link
               href="/contact#book"
-              className="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300"
             >
               Discuss Your PoC Idea
             </Link>
@@ -106,27 +104,28 @@ export default function PoCDevelopmentPage() {
       </section>
 
       {/* Why PoC */}
-      <section className="py-16 lg:py-20">
+      <section className="relative py-14 lg:py-20">
+        <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
             Why Start with a PoC?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div className="text-center">
+            <div className="glass-card p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Zap className="w-8 h-8 text-primary-600" />
               </div>
               <h3 className="text-lg font-semibold mb-2">Rapid Validation</h3>
               <p className="text-gray-600">Test feasibility and value in weeks, not months</p>
             </div>
-            <div className="text-center">
+            <div className="glass-card p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Shield className="w-8 h-8 text-primary-600" />
               </div>
               <h3 className="text-lg font-semibold mb-2">Minimize Risk</h3>
               <p className="text-gray-600">Small investment to validate before full rollout</p>
             </div>
-            <div className="text-center">
+            <div className="glass-card p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Rocket className="w-8 h-8 text-primary-600" />
               </div>
@@ -138,14 +137,15 @@ export default function PoCDevelopmentPage() {
       </section>
 
       {/* PoC Types */}
-      <section className="py-16 lg:py-20 bg-gray-50">
+      <section className="relative py-14 lg:py-20 bg-gray-50">
+        <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
             Common PoC Solutions
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {pocTypes.map((poc) => (
-              <div key={poc.title} className="bg-white rounded-lg p-6 shadow-md">
+              <div key={poc.title} className="glass-card p-6">
                 <div className="flex items-start mb-4">
                   <Code2 className="w-6 h-6 text-primary-600 mr-3 flex-shrink-0 mt-1" />
                   <div className="flex-1">
@@ -170,7 +170,8 @@ export default function PoCDevelopmentPage() {
       </section>
 
       {/* Development Process */}
-      <section className="py-16 lg:py-20">
+      <section className="relative py-14 lg:py-20">
+        <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
             Our PoC Development Process
@@ -179,7 +180,7 @@ export default function PoCDevelopmentPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {process.map((phase, index) => (
                 <div key={phase.phase} className="relative">
-                  <div className="bg-white rounded-lg p-6 shadow-md h-full">
+                  <div className="glass-card p-6 h-full">
                     <div className="flex items-center mb-4">
                       <div className="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center font-bold mr-3">
                         {index + 1}
@@ -210,7 +211,8 @@ export default function PoCDevelopmentPage() {
       </section>
 
       {/* Tech Stack */}
-      <section className="py-16 lg:py-20 bg-gray-50">
+      <section className="relative py-14 lg:py-20 bg-gray-50">
+        <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
             Technology Expertise
@@ -223,7 +225,7 @@ export default function PoCDevelopmentPage() {
                 "Python", "TypeScript", ".NET", "React",
                 "FastAPI", "Next.js", "PostgreSQL", "CosmosDB"
               ].map((tech) => (
-                <div key={tech} className="bg-white rounded-lg px-4 py-3 text-center shadow-sm">
+                <div key={tech} className="glass-card px-4 py-3 text-center">
                   <span className="text-sm font-medium text-gray-700">{tech}</span>
                 </div>
               ))}
@@ -233,19 +235,20 @@ export default function PoCDevelopmentPage() {
       </section>
 
       {/* Related Services */}
-      <section className="py-16 lg:py-20">
+      <section className="relative py-14 lg:py-20">
+        <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Related Services</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <Link href="/services/ai-strategy" className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <Link href="/services/ai-strategy" className="glass-card p-6 hover:shadow-lg transition-shadow">
               <h3 className="font-semibold text-gray-900 mb-2">AI Strategy & Consulting</h3>
               <p className="text-sm text-gray-600">Define your AI roadmap before building — ensure every PoC aligns with business goals.</p>
             </Link>
-            <Link href="/services/agentic-ai" className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <Link href="/services/agentic-ai" className="glass-card p-6 hover:shadow-lg transition-shadow">
               <h3 className="font-semibold text-gray-900 mb-2">Agentic AI Solutions</h3>
               <p className="text-sm text-gray-600">Scale your PoC into autonomous multi-agent systems.</p>
             </Link>
-            <Link href="/services/training" className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <Link href="/services/training" className="glass-card p-6 hover:shadow-lg transition-shadow">
               <h3 className="font-semibold text-gray-900 mb-2">Corporate AI Training</h3>
               <p className="text-sm text-gray-600">Train your team to maintain and extend AI solutions independently.</p>
             </Link>
@@ -254,12 +257,13 @@ export default function PoCDevelopmentPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16 lg:py-20 bg-gray-50">
+      <section className="relative py-14 lg:py-20 bg-gray-50">
+        <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Frequently Asked Questions</h2>
           <div className="max-w-3xl mx-auto space-y-6">
             {faqs.map((faq) => (
-              <div key={faq.question} className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+              <div key={faq.question} className="glass-card p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
                 <p className="text-gray-600">{faq.answer}</p>
               </div>
@@ -269,8 +273,11 @@ export default function PoCDevelopmentPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 lg:py-20 bg-primary-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="relative py-14 lg:py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-white"></div>
+        <div className="absolute inset-0 bg-gradient-mesh"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">
             Ready to Build Your AI Proof of Concept?
           </h2>
@@ -279,7 +286,7 @@ export default function PoCDevelopmentPage() {
           </p>
           <Link
             href="/contact#book"
-            className="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
+            className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300"
           >
             Start Your PoC Project
           </Link>

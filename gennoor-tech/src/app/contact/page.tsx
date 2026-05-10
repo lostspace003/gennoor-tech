@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Mail, Phone, Linkedin, Calendar, MapPin, Globe, Clock, MessageCircle } from 'lucide-react';
+import { Mail, Linkedin, Calendar, MapPin, Globe, Clock, MessageCircle } from 'lucide-react';
 import ContactForm from '@/components/contact/ContactForm';
 import TrustpilotWidget from '@/components/TrustpilotWidget';
 
@@ -96,6 +96,41 @@ const localBusinessSchema = {
   sameAs: ['https://www.linkedin.com/in/lostspace003/'],
 };
 
+const contactChannels = [
+  {
+    href: 'mailto:jalalkhan@gennoor.com',
+    icon: Mail,
+    color: 'text-primary-600 bg-primary-50',
+    title: 'Email',
+    detail: 'jalalkhan@gennoor.com',
+    external: false,
+  },
+  {
+    href: 'https://wa.me/919326352241?text=Hi%20Jalal%2C%20I%20visited%20gennoor.com%20and%20would%20like%20to%20discuss%20AI%20training%2Fconsulting.',
+    icon: MessageCircle,
+    color: 'text-emerald-600 bg-emerald-50',
+    title: 'WhatsApp',
+    detail: 'Quick response on WhatsApp',
+    external: true,
+  },
+  {
+    href: 'https://www.linkedin.com/in/lostspace003/',
+    icon: Linkedin,
+    color: 'text-blue-600 bg-blue-50',
+    title: 'LinkedIn',
+    detail: 'Connect with Jalal Ahmed Khan',
+    external: true,
+  },
+  {
+    href: 'https://calendly.com/gennoortech',
+    icon: Calendar,
+    color: 'text-primary-600 bg-primary-50',
+    title: 'Book a Call',
+    detail: 'Free 30-minute discovery session',
+    external: true,
+  },
+];
+
 export default function ContactPage() {
   return (
     <>
@@ -108,80 +143,56 @@ export default function ContactPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
       />
 
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary-700 via-primary-600 to-primary-700 py-20 lg:py-28">
-        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-5" />
+      {/* Hero */}
+      <section className="relative py-14 lg:py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0f1729] via-[#111b33] to-[#0c1524]" />
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+            backgroundSize: '60px 60px',
+          }}
+        />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+          <div className="inline-flex items-center rounded-full px-4 py-1.5 mb-6 text-xs font-semibold border border-white/10"
+            style={{ background: 'rgba(255,255,255,0.05)' }}
+          >
+            <span className="text-white/60">Get in Touch</span>
+          </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6">
             Let&apos;s Build Your AI Future Together
           </h1>
-          <p className="text-xl md:text-2xl text-primary-100 max-w-3xl mx-auto">
+          <p className="text-xl md:text-2xl text-blue-200/50 max-w-3xl mx-auto">
             Whether you need AI training for your teams, a strategic roadmap, or a working
             proof-of-concept — we&apos;re here to help.
           </p>
         </div>
       </section>
 
-      {/* Contact Info Cards */}
-      <section className="py-16 lg:py-20 bg-gray-50">
+      {/* Contact Channels */}
+      <section className="py-20 lg:py-24 relative">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
             Reach Out Through Any Channel
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Email */}
-            <a
-              href="mailto:jalalkhan@gennoor.com"
-              className="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100 text-center"
-            >
-              <div className="inline-flex items-center justify-center w-14 h-14 bg-primary-50 rounded-xl mb-4 group-hover:bg-primary-100 transition-colors">
-                <Mail className="w-7 h-7 text-primary-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-1">Email</h3>
-              <p className="text-sm text-gray-600">jalalkhan@gennoor.com</p>
-            </a>
-
-            {/* WhatsApp */}
-            <a
-              href="https://wa.me/919326352241?text=Hi%20Jalal%2C%20I%20visited%20gennoor.com%20and%20would%20like%20to%20discuss%20AI%20training%2Fconsulting."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100 text-center"
-            >
-              <div className="inline-flex items-center justify-center w-14 h-14 bg-green-50 rounded-xl mb-4 group-hover:bg-green-100 transition-colors">
-                <MessageCircle className="w-7 h-7 text-green-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-1">WhatsApp</h3>
-              <p className="text-sm text-gray-600">Quick response on WhatsApp</p>
-            </a>
-
-            {/* LinkedIn */}
-            <a
-              href="https://www.linkedin.com/in/lostspace003/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100 text-center"
-            >
-              <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-50 rounded-xl mb-4 group-hover:bg-blue-100 transition-colors">
-                <Linkedin className="w-7 h-7 text-blue-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-1">LinkedIn</h3>
-              <p className="text-sm text-gray-600">Connect with Jalal Ahmed Khan</p>
-            </a>
-
-            {/* Calendly */}
-            <a
-              href="https://calendly.com/gennoortech"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100 text-center"
-            >
-              <div className="inline-flex items-center justify-center w-14 h-14 bg-accent-50 rounded-xl mb-4 group-hover:bg-primary-50 transition-colors">
-                <Calendar className="w-7 h-7 text-primary-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-1">Book a Call</h3>
-              <p className="text-sm text-gray-600">Free 30-minute discovery session</p>
-            </a>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {contactChannels.map((channel) => {
+              const Tag = channel.external ? 'a' : 'a';
+              return (
+                <a
+                  key={channel.title}
+                  href={channel.href}
+                  {...(channel.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                  className="group rounded-2xl p-6 text-center transition-all duration-500 glass-card glow-border"
+                >
+                  <div className={`inline-flex items-center justify-center w-12 h-12 ${channel.color} rounded-xl mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                    <channel.icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-1 text-sm">{channel.title}</h3>
+                  <p className="text-xs text-gray-500">{channel.detail}</p>
+                </a>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -191,88 +202,51 @@ export default function ContactPage() {
         <TrustpilotWidget />
       </div>
 
-      {/* Contact Form Section */}
-      <section className="py-16 lg:py-20">
+      {/* Contact Form + Office Info */}
+      <section className="py-20 lg:py-24 relative">
+        <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">
+              <h2 className="text-3xl font-bold text-gray-900 mb-5">
                 Send Us a Message
               </h2>
-              <p className="text-lg text-gray-600 mb-8">
+              <p className="text-lg text-gray-500 mb-8 leading-relaxed">
                 Tell us about your AI goals and we&apos;ll get back to you within 24 hours
                 with a tailored response — no generic templates, no sales pitch.
               </p>
               <ContactForm />
             </div>
 
-            {/* Office Info */}
             <div className="lg:pl-8">
               <h2 className="text-3xl font-bold text-gray-900 mb-6">
                 Where We Operate
               </h2>
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center">
-                    <MapPin className="w-6 h-6 text-primary-600" />
+              <div className="space-y-5">
+                {[
+                  { icon: MapPin, title: 'Based in India', desc: "Our home base, with deep roots in India's enterprise technology ecosystem — delivering AI training to Fortune 500 companies and fast-growing startups alike." },
+                  { icon: Globe, title: 'Serving Clients Globally', desc: 'Active engagements across Saudi Arabia, the broader GCC region, APAC markets, and Africa. We travel on-site or deliver live virtual sessions across time zones.' },
+                  { icon: Clock, title: 'Response Time', desc: 'We respond to all enquiries within 24 hours. For urgent requests, reach out via WhatsApp for a faster reply.' },
+                ].map((item) => (
+                  <div key={item.title} className="flex items-start gap-4 p-4 rounded-xl glass-card">
+                    <div className="flex-shrink-0 w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center">
+                      <item.icon className="w-5 h-5 text-primary-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 mb-1 text-sm">{item.title}</h3>
+                      <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Based in India</h3>
-                    <p className="text-gray-600">
-                      Our home base, with deep roots in India&apos;s enterprise technology
-                      ecosystem — delivering AI training to Fortune 500 companies and
-                      fast-growing startups alike.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center">
-                    <Globe className="w-6 h-6 text-primary-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">
-                      Serving Clients Globally
-                    </h3>
-                    <p className="text-gray-600">
-                      Active engagements across Saudi Arabia, the broader GCC region, APAC
-                      markets, and Africa. We travel on-site or deliver live virtual sessions
-                      across time zones.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center">
-                    <Clock className="w-6 h-6 text-primary-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Response Time</h3>
-                    <p className="text-gray-600">
-                      We respond to all enquiries within 24 hours. For urgent requests, reach
-                      out via WhatsApp for a faster reply.
-                    </p>
-                  </div>
-                </div>
+                ))}
               </div>
 
-              {/* Regions Served */}
-              <div className="mt-10 p-6 bg-gray-50 rounded-2xl">
-                <h3 className="font-semibold text-gray-900 mb-4">Regions We Serve</h3>
+              {/* Regions */}
+              <div className="mt-8 p-6 rounded-2xl glass-card">
+                <h3 className="font-semibold text-gray-900 mb-4 text-sm">Regions We Serve</h3>
                 <div className="grid grid-cols-2 gap-3">
-                  {[
-                    'Saudi Arabia',
-                    'UAE & GCC',
-                    'India',
-                    'Southeast Asia',
-                    'East Africa',
-                    'Remote / Worldwide',
-                  ].map((region) => (
-                    <div
-                      key={region}
-                      className="flex items-center gap-2 text-sm text-gray-700"
-                    >
-                      <div className="w-2 h-2 bg-primary-600 rounded-full" />
+                  {['Saudi Arabia', 'UAE & GCC', 'India', 'Southeast Asia', 'East Africa', 'Remote / Worldwide'].map((region) => (
+                    <div key={region} className="flex items-center gap-2 text-sm text-gray-600">
+                      <div className="w-1.5 h-1.5 bg-primary-500 rounded-full" />
                       {region}
                     </div>
                   ))}
@@ -283,22 +257,18 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-16 lg:py-20 bg-gray-50">
+      {/* FAQ */}
+      <section className="py-20 lg:py-24 relative">
+        <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
             Frequently Asked Questions
           </h2>
-          <div className="space-y-6">
+          <div className="space-y-4">
             {faqs.map((faq, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
-              >
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {faq.question}
-                </h3>
-                <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
+              <div key={index} className="rounded-2xl p-6 glass-card">
+                <h3 className="text-base font-semibold text-gray-900 mb-2">{faq.question}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">{faq.answer}</p>
               </div>
             ))}
           </div>
@@ -306,12 +276,13 @@ export default function ContactPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 lg:py-20 bg-gradient-to-r from-primary-600 to-primary-700">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
+      <section className="relative py-20 lg:py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0f1729] via-[#111b33] to-[#0c1524]" />
+        <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">
             Ready to Get Started?
           </h2>
-          <p className="text-xl text-primary-100 mb-8">
+          <p className="text-lg text-blue-200/50 mb-8">
             Book a free 30-minute call and let&apos;s explore how AI can transform your
             organization.
           </p>
@@ -319,7 +290,7 @@ export default function ContactPage() {
             href="https://calendly.com/gennoortech"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-white text-primary-700 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-primary-50 transition-colors"
+            className="inline-flex items-center gap-2 bg-white text-primary-700 px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300"
           >
             <Calendar className="w-5 h-5" />
             Book a Discovery Call

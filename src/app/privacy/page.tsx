@@ -8,11 +8,23 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <div className="max-w-3xl mx-auto px-4 py-16 sm:py-24">
-        <h1 className="text-3xl font-black text-gray-900 mb-2">Privacy Policy</h1>
-        <p className="text-sm text-gray-500 mb-10">Last updated: March 18, 2026</p>
+    <div className="min-h-screen bg-white">
+      {/* Hero */}
+      <section className="relative py-14 lg:py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-white" />
+        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
+            Privacy Policy
+          </span>
+          <h1 className="text-3xl font-black text-gray-900 mb-2">Privacy Policy</h1>
+          <p className="text-sm text-gray-500">Last updated: March 18, 2026</p>
+        </div>
+      </section>
 
+      <div className="max-w-3xl mx-auto px-4 pb-16 sm:pb-24">
+        <div className="glass-card p-8 sm:p-10">
         <div className="space-y-8 text-gray-700 text-[15px] leading-relaxed">
           <section>
             <h2 className="text-lg font-semibold text-gray-900 mb-2">Who We Are</h2>
@@ -103,6 +115,7 @@ export default function PrivacyPage() {
           <Link href="/" className="text-primary-600 hover:underline text-sm">
             &larr; Back to Home
           </Link>
+        </div>
         </div>
       </div>
     </div>

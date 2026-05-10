@@ -85,29 +85,32 @@ export default function AIReadinessChecklist() {
       ]} />
       <FAQJsonLd faqs={faqs} />
 
-      <main className="min-h-screen pt-20">
+      <main className="min-h-screen">
         {/* Hero */}
-        <section className="bg-gradient-to-br from-emerald-600 to-teal-800 py-16 lg:py-24 relative overflow-hidden">
-          <div className="absolute inset-0 bg-grid-white/10"></div>
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <section className="relative py-14 lg:py-20 overflow-hidden">
+          <div className="absolute inset-0 bg-white" />
+          <div className="absolute inset-0 bg-gradient-mesh" />
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+          <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl">
-              <span className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full mb-6 text-white text-sm font-medium">
-                <CheckCircle className="w-4 h-4 mr-2" />
+              <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
                 Free Resource
               </span>
-              <h1 className="text-4xl lg:text-5xl font-black text-white mb-6">
+              <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
                 Enterprise AI Readiness Checklist
               </h1>
-              <p className="text-xl text-white/90 mb-8">
+              <p className="text-xl text-gray-600 mb-8">
                 25 critical checkpoints across 5 dimensions. Assess your organization&apos;s readiness for
                 AI adoption — based on 14+ years of enterprise AI consulting across 6 countries.
               </p>
-              <Link href="/contact#book" className="inline-flex items-center px-8 py-4 bg-white text-emerald-700 font-medium rounded-lg hover:bg-gray-100 transition-colors">
+              <Link href="/contact#book" className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300">
                 Get Expert Assessment
               </Link>
             </div>
           </div>
         </section>
+
+        <div className="section-divider" />
 
         {/* Checklist Sections */}
         <section className="py-16 lg:py-20">
@@ -118,14 +121,14 @@ export default function AIReadinessChecklist() {
                 return (
                   <div key={section.title}>
                     <div className="flex items-center gap-3 mb-6">
-                      <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
-                        <Icon className="w-5 h-5 text-emerald-600" />
+                      <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                        <Icon className="w-5 h-5 text-primary-600" />
                       </div>
                       <h2 className="text-2xl font-bold text-gray-900">{section.title}</h2>
                     </div>
                     <div className="space-y-3">
                       {section.items.map((item) => (
-                        <div key={item} className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                        <div key={item} className="flex items-start gap-3 p-4 glass-card">
                           <div className="w-5 h-5 border-2 border-gray-300 rounded flex-shrink-0 mt-0.5"></div>
                           <p className="text-gray-700">{item}</p>
                         </div>
@@ -138,26 +141,28 @@ export default function AIReadinessChecklist() {
           </div>
         </section>
 
+        <div className="section-divider" />
+
         {/* Related Resources */}
-        <section className="py-16 lg:py-20 bg-gray-50">
+        <section className="py-16 lg:py-20 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Related Resources</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Link href="/resources/blog/ai-data-readiness-enterprise-checklist" className="bg-white rounded-lg p-6 border border-gray-100 hover:shadow-md transition-shadow group">
-                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-emerald-600">AI Data Readiness: Enterprise Checklist</h3>
+                <Link href="/resources/blog/ai-data-readiness-enterprise-checklist" className="glass-card p-6 hover:shadow-md transition-shadow group">
+                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary-600">AI Data Readiness: Enterprise Checklist</h3>
                   <p className="text-sm text-gray-600">Deep dive into data preparation for AI projects</p>
                 </Link>
-                <Link href="/resources/blog/ai-governance-framework-enterprise" className="bg-white rounded-lg p-6 border border-gray-100 hover:shadow-md transition-shadow group">
-                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-emerald-600">AI Governance Framework</h3>
+                <Link href="/resources/blog/ai-governance-framework-enterprise" className="glass-card p-6 hover:shadow-md transition-shadow group">
+                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary-600">AI Governance Framework</h3>
                   <p className="text-sm text-gray-600">Building responsible AI governance for enterprises</p>
                 </Link>
-                <Link href="/resources/blog/ai-strategy-c-suite-executive-guide" className="bg-white rounded-lg p-6 border border-gray-100 hover:shadow-md transition-shadow group">
-                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-emerald-600">AI Strategy: C-Suite Guide</h3>
+                <Link href="/resources/blog/ai-strategy-c-suite-executive-guide" className="glass-card p-6 hover:shadow-md transition-shadow group">
+                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary-600">AI Strategy: C-Suite Guide</h3>
                   <p className="text-sm text-gray-600">Executive guide to AI strategy and investment decisions</p>
                 </Link>
-                <Link href="/resources/guides/enterprise-ai-training" className="bg-white rounded-lg p-6 border border-gray-100 hover:shadow-md transition-shadow group">
-                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-emerald-600">Enterprise AI Training Guide</h3>
+                <Link href="/resources/guides/enterprise-ai-training" className="glass-card p-6 hover:shadow-md transition-shadow group">
+                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary-600">Enterprise AI Training Guide</h3>
                   <p className="text-sm text-gray-600">How to build AI capabilities at every level of your organization</p>
                 </Link>
               </div>
@@ -165,13 +170,15 @@ export default function AIReadinessChecklist() {
           </div>
         </section>
 
+        <div className="section-divider" />
+
         {/* FAQ */}
         <section className="py-16 lg:py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Frequently Asked Questions</h2>
             <div className="max-w-3xl mx-auto space-y-6">
               {faqs.map((faq) => (
-                <div key={faq.question} className="bg-gray-50 rounded-lg p-6 border border-gray-100">
+                <div key={faq.question} className="glass-card p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
                   <p className="text-gray-600">{faq.answer}</p>
                 </div>
@@ -180,14 +187,16 @@ export default function AIReadinessChecklist() {
           </div>
         </section>
 
+        <div className="section-divider" />
+
         {/* CTA */}
-        <section className="py-16 lg:py-20 bg-emerald-50">
+        <section className="py-16 lg:py-20 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl font-bold text-gray-900 mb-6">Need Help with Your AI Readiness Assessment?</h2>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               Book a free 30-minute discovery call. We&apos;ll review your checklist results and recommend next steps.
             </p>
-            <Link href="/contact#book" className="inline-flex items-center px-8 py-4 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors">
+            <Link href="/contact#book" className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300">
               Book Free Assessment Call
             </Link>
           </div>

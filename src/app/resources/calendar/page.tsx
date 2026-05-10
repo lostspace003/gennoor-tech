@@ -295,28 +295,30 @@ export default function BookingCalendarPage() {
   /* ── success state ── */
   if (status === 'success') {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <div className="min-h-screen bg-white">
         <div className="container mx-auto px-4 py-24 text-center max-w-2xl">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-6">
-            <Check className="h-8 w-8 text-green-600" />
+          <div className="rounded-2xl glass-card p-10">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-6">
+              <Check className="h-8 w-8 text-green-600" />
+            </div>
+            <h1 className="text-3xl font-black text-gray-900 mb-4">Booking Confirmed!</h1>
+            <p className="text-lg text-gray-600 mb-2">
+              Your discovery call has been scheduled for{' '}
+              <strong>{selectedDate ? formatDateLabel(selectedDate) : ''}</strong> at{' '}
+              <strong>{selectedSlot ? formatTime(selectedSlot) : ''}</strong>{' '}
+              ({timezone}).
+            </p>
+            <p className="text-gray-500 mb-8">
+              A confirmation will be sent to <strong>{email}</strong>. We&apos;ll also reach out on
+              WhatsApp to share the meeting link.
+            </p>
+            <Link
+              href="/"
+              className="inline-block bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl px-6 py-3 font-medium hover:shadow-glow-blue transition-all duration-300"
+            >
+              Back to Home
+            </Link>
           </div>
-          <h1 className="text-3xl font-black text-gray-900 mb-4">Booking Confirmed!</h1>
-          <p className="text-lg text-gray-600 mb-2">
-            Your discovery call has been scheduled for{' '}
-            <strong>{selectedDate ? formatDateLabel(selectedDate) : ''}</strong> at{' '}
-            <strong>{selectedSlot ? formatTime(selectedSlot) : ''}</strong>{' '}
-            ({timezone}).
-          </p>
-          <p className="text-gray-500 mb-8">
-            A confirmation will be sent to <strong>{email}</strong>. We&apos;ll also reach out on
-            WhatsApp to share the meeting link.
-          </p>
-          <Link
-            href="/"
-            className="inline-block rounded-lg bg-primary-600 px-6 py-3 text-white font-medium hover:bg-primary-700 transition-colors"
-          >
-            Back to Home
-          </Link>
         </div>
       </div>
     )
@@ -324,10 +326,13 @@ export default function BookingCalendarPage() {
 
   /* ── main render ── */
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <div className="container mx-auto px-4 py-16 max-w-5xl">
-        {/* header */}
-        <div className="text-center mb-12">
+    <div className="min-h-screen bg-white">
+      {/* Hero header */}
+      <section className="relative py-14 lg:py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-white" />
+        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+        <div className="relative container mx-auto px-4 max-w-5xl text-center">
           <h1 className="text-4xl font-black text-gray-900 mb-3">
             Schedule a Discovery Call
           </h1>
@@ -336,12 +341,15 @@ export default function BookingCalendarPage() {
             time that works for you.
           </p>
         </div>
+      </section>
+
+      <div className="container mx-auto px-4 py-16 max-w-5xl">
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* ─── LEFT: Calendar + Slots ─── */}
           <div className="space-y-6">
             {/* calendar card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+            <div className="rounded-2xl glass-card p-6">
               <div className="flex items-center gap-2 mb-5">
                 <Calendar className="h-5 w-5 text-primary-600" />
                 <h2 className="text-lg font-semibold text-gray-900">Select a Date</h2>
@@ -415,7 +423,7 @@ export default function BookingCalendarPage() {
             </div>
 
             {/* timezone — shown before time slots so user sets tz first */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+            <div className="rounded-2xl glass-card p-6">
               <div className="flex items-center gap-2 mb-3">
                 <Globe className="h-5 w-5 text-primary-600" />
                 <h2 className="text-lg font-semibold text-gray-900">Your Timezone</h2>
@@ -460,7 +468,7 @@ export default function BookingCalendarPage() {
 
             {/* time-slot card */}
             {selectedDate && (
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+              <div className="rounded-2xl glass-card p-6">
                 <div className="flex items-center gap-2 mb-1">
                   <Clock className="h-5 w-5 text-primary-600" />
                   <h2 className="text-lg font-semibold text-gray-900">Select a Time</h2>
@@ -564,7 +572,7 @@ export default function BookingCalendarPage() {
           </div>
 
           {/* ─── RIGHT: Details form ─── */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 h-fit lg:sticky lg:top-8">
+          <div className="rounded-2xl glass-card p-6 h-fit lg:sticky lg:top-8">
             <h2 className="text-lg font-semibold text-gray-900 mb-5">Your Details</h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -640,7 +648,7 @@ export default function BookingCalendarPage() {
               <button
                 type="submit"
                 disabled={!selectedDate || !selectedSlot || !emailVerified || status === 'submitting'}
-                className="w-full rounded-lg bg-primary-600 py-3 text-white font-medium hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl py-3 font-medium hover:shadow-glow-blue transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {status === 'submitting' ? (
                   <>

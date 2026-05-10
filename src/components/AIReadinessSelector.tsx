@@ -99,10 +99,8 @@ export default function AIReadinessSelector() {
             {/* Deep Dive Card */}
             <button
               onClick={() => setSelectedMode('deep')}
-              className="group relative flex flex-col items-start rounded-2xl bg-white border border-gray-200 p-7 sm:p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary-100/40 hover:border-primary-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+              className="glass-card glow-border group relative flex flex-col items-start p-7 sm:p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
             >
-              <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-primary-400 via-primary-300 to-primary-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-[1px]" />
-              <div className="absolute inset-0 rounded-2xl bg-white" />
               <div className="relative z-10 flex flex-col items-start w-full">
                 <div className="flex items-center justify-between w-full mb-5">
                   <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary-50 text-primary-600 group-hover:bg-primary-100 transition-colors duration-300">
@@ -127,10 +125,8 @@ export default function AIReadinessSelector() {
             {/* Custom Blueprint Card */}
             <button
               onClick={() => setSelectedMode('blueprint')}
-              className="group relative flex flex-col items-start rounded-2xl bg-white border border-gray-200 p-7 sm:p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary-100/40 hover:border-primary-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+              className="glass-card glow-border group relative flex flex-col items-start p-7 sm:p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
             >
-              <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-primary-400 via-primary-300 to-primary-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-[1px]" />
-              <div className="absolute inset-0 rounded-2xl bg-white" />
               <div className="relative z-10 flex flex-col items-start w-full">
                 <div className="flex items-center justify-between w-full mb-5">
                   <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary-50 text-primary-600 group-hover:bg-primary-100 transition-colors duration-300">
@@ -166,28 +162,18 @@ export default function AIReadinessSelector() {
   // ─── Hero landing view (thumbnail-inspired) ─────────────
   return (
     <div className="animate-fade-in">
-      {/* Light hero section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-gray-50 via-primary-50/30 to-white">
-        {/* Subtle grid pattern */}
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'linear-gradient(rgba(99,102,241,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.03) 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-        }} />
+      {/* Hero section */}
+      <section className="relative py-14 lg:py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-white" />
+        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
 
-        {/* Soft radial accents */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary-100/40 via-transparent to-transparent" />
-        <div className="absolute -bottom-32 left-16 w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,rgba(99,102,241,0.06)_0%,transparent_70%)]" />
-        <div className="absolute top-32 -right-20 w-[400px] h-[400px] rounded-full bg-[radial-gradient(circle,rgba(59,130,246,0.05)_0%,transparent_70%)]" />
-
-        <div className="container relative mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
+        <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left — Text content */}
             <div className="text-center lg:text-left">
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 bg-primary-50 border border-primary-100 rounded-full px-5 py-2 mb-7">
-                <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.5)]" />
-                <span className="text-sm font-semibold text-primary-700 tracking-wide uppercase">AI Assessment Tool</span>
-              </div>
+              <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">AI Readiness Assessment</span>
 
               {/* Title */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.05] tracking-tight mb-6">
@@ -211,7 +197,7 @@ export default function AIReadinessSelector() {
                   { icon: BarChart3, label: 'Custom Charts' },
                   { icon: Clock, label: 'Under 5 min' },
                 ].map(({ icon: Icon, label }) => (
-                  <div key={label} className="inline-flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-4 py-2 shadow-sm">
+                  <div key={label} className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-gray-200/60 rounded-full px-4 py-2 shadow-sm">
                     <Icon className="w-4 h-4 text-primary-600" />
                     <span className="text-sm text-gray-700 font-medium">{label}</span>
                   </div>
@@ -221,7 +207,7 @@ export default function AIReadinessSelector() {
               {/* CTA Button */}
               <button
                 onClick={() => setStarted(true)}
-                className="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white text-lg font-bold rounded-2xl transition-all duration-300 hover:shadow-[0_8px_32px_rgba(99,102,241,0.3)] hover:-translate-y-0.5"
+                className="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-lg font-bold rounded-xl hover:shadow-glow-blue transition-all duration-300 hover:-translate-y-0.5"
               >
                 <Play className="w-5 h-5 fill-current" />
                 Let&apos;s Get Started
@@ -236,7 +222,7 @@ export default function AIReadinessSelector() {
 
             {/* Right — Score card preview */}
             <div className="flex justify-center lg:justify-end">
-              <div className="w-full max-w-[380px] bg-white border border-gray-200 rounded-3xl p-8 sm:p-10 shadow-xl shadow-primary-100/20 relative">
+              <div className="glass-card w-full max-w-[380px] rounded-3xl p-8 sm:p-10 relative">
                 {/* Subtle gradient accent on top edge */}
                 <div className="absolute top-0 left-8 right-8 h-1 rounded-b-full bg-gradient-to-r from-primary-500 via-blue-500 to-accent-500" />
 
@@ -271,9 +257,11 @@ export default function AIReadinessSelector() {
         </div>
       </section>
 
-      {/* Light section below — social proof / what you get */}
-      <section className="bg-gradient-to-b from-white to-gray-50 border-t border-gray-100">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-18">
+      <div className="section-divider" />
+
+      {/* What You Get */}
+      <section className="bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
           <div className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">What You Get</h2>
             <p className="mt-2 text-gray-500">Two assessment formats, one goal — making you AI-ready.</p>
@@ -294,7 +282,7 @@ export default function AIReadinessSelector() {
                 desc: 'Role-specific assessment with interactive charts, 90-day roadmap, and ROI projection.',
               },
             ].map(({ icon: Icon, title, time, desc }) => (
-              <div key={title} className="text-center p-6 rounded-2xl hover:bg-white hover:shadow-lg hover:shadow-primary-50 transition-all duration-300">
+              <div key={title} className="glass-card text-center p-6 transition-all duration-300 hover:shadow-lg">
                 <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center">
                   <Icon className="w-6 h-6" />
                 </div>
@@ -309,7 +297,7 @@ export default function AIReadinessSelector() {
           <div className="text-center mt-10">
             <button
               onClick={() => setStarted(true)}
-              className="group inline-flex items-center gap-2 px-7 py-3.5 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-bold rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+              className="group inline-flex items-center gap-2 px-7 py-3.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-bold rounded-xl hover:shadow-glow-blue transition-all duration-300 hover:-translate-y-0.5"
             >
               Get Started Now
               <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />

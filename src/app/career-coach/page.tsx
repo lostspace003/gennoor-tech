@@ -571,9 +571,13 @@ export default function CareerCoachPage() {
 
   if (!selectedAgent) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-        <div className="container py-16">
-          <div className="text-center mb-12">
+      <div className="min-h-screen bg-white">
+        {/* Hero */}
+        <section className="relative py-14 lg:py-20 overflow-hidden">
+          <div className="absolute inset-0 bg-white" />
+          <div className="absolute inset-0 bg-gradient-mesh" />
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+          <div className="relative container text-center">
             <div className="mb-4">
               <Image
                 src="/api/content/logos/bot-avatar-96.png"
@@ -583,12 +587,17 @@ export default function CareerCoachPage() {
                 className="rounded-full mx-auto shadow-lg ring-2 ring-primary-100"
               />
             </div>
+            <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">Career Coach</span>
             <h1 className="text-4xl font-black text-dark-800 mb-3">Career Assistant Agent</h1>
             <p className="text-lg text-dark-500 max-w-2xl mx-auto">
               5 AI agents working together to transform your career. Choose an agent below or let the orchestrator chain the right ones for your goal.
             </p>
           </div>
+        </section>
 
+        <div className="section-divider" />
+
+        <section className="container py-14 lg:py-20">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {Object.values(AGENTS).map(a => {
               const ac = COLORS[a.color]
@@ -596,7 +605,7 @@ export default function CareerCoachPage() {
                 <button
                   key={a.id}
                   onClick={() => { setSelectedAgent(a.id); reset() }}
-                  className={`group text-left rounded-xl border-2 ${ac.border} ${ac.bg} p-6 transition-all hover:shadow-lg hover:scale-[1.02]`}
+                  className="glass-card glow-border group text-left p-6 transition-all duration-300 hover:shadow-lg hover:scale-[1.02]"
                 >
                   <div className="flex items-center gap-3 mb-3">
                     <div className={`w-10 h-10 rounded-lg ${ac.light} flex items-center justify-center`}>
@@ -616,7 +625,7 @@ export default function CareerCoachPage() {
 
             <button
               onClick={() => { setSelectedAgent('career_strategist'); reset() }}
-              className="text-left rounded-xl border-2 border-primary-300 bg-gradient-to-br from-primary-50 to-accent-50 p-6 transition-all hover:shadow-lg hover:scale-[1.02] md:col-span-2 lg:col-span-1"
+              className="glass-card glow-border group text-left p-6 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] md:col-span-2 lg:col-span-1"
             >
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-lg bg-primary-100 flex items-center justify-center">
@@ -634,7 +643,7 @@ export default function CareerCoachPage() {
               </div>
             </button>
           </div>
-        </div>
+        </section>
       </div>
     )
   }
@@ -644,30 +653,37 @@ export default function CareerCoachPage() {
   const activeAgents = plan?.plan?.map((s: any) => s.agent) || [selectedAgent]
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <div className="container py-8">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
-          <button onClick={() => { setSelectedAgent(null); reset() }} className="rounded-lg border border-gray-200 p-2 text-dark-500 hover:bg-gray-100 transition-colors">
-            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-          </button>
-          <div className="flex items-center gap-3">
-            <Image
-              src="/api/content/logos/bot-avatar-48.png"
-              alt="AI Career Coach"
-              width={40}
-              height={40}
-              className="rounded-full shadow-sm ring-1 ring-gray-200"
-            />
-            <div>
-              <h2 className="text-xl font-bold text-dark-800 flex items-center gap-2"><AgentIcon name={agent!.icon} className="h-5 w-5" /> {agent!.name}</h2>
-              <p className="text-sm text-dark-400">{agent!.desc}</p>
+    <div className="min-h-screen bg-white">
+      {/* Workspace Hero */}
+      <section className="relative py-8 overflow-hidden">
+        <div className="absolute inset-0 bg-white" />
+        <div className="absolute inset-0 bg-gradient-mesh opacity-50" />
+        <div className="relative container">
+          <div className="flex items-center gap-4">
+            <button onClick={() => { setSelectedAgent(null); reset() }} className="rounded-lg border border-gray-200 p-2 text-dark-500 hover:bg-gray-100 transition-colors">
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+            </button>
+            <div className="flex items-center gap-3">
+              <Image
+                src="/api/content/logos/bot-avatar-48.png"
+                alt="AI Career Coach"
+                width={40}
+                height={40}
+                className="rounded-full shadow-sm ring-1 ring-gray-200"
+              />
+              <div>
+                <h2 className="text-xl font-bold text-dark-800 flex items-center gap-2"><AgentIcon name={agent!.icon} className="h-5 w-5" /> {agent!.name}</h2>
+                <p className="text-sm text-dark-400">{agent!.desc}</p>
+              </div>
             </div>
+            {status === 'streaming' && (
+              <span className="ml-auto text-sm font-mono text-dark-400 tabular-nums">{fmt(elapsed)}</span>
+            )}
           </div>
-          {status === 'streaming' && (
-            <span className="ml-auto text-sm font-mono text-dark-400 tabular-nums">{fmt(elapsed)}</span>
-          )}
         </div>
+      </section>
+
+      <div className="container py-8">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left: Upload + Input + Results */}
@@ -675,7 +691,7 @@ export default function CareerCoachPage() {
 
             {/* Step 1: Document Upload / URL */}
             {status === 'idle' && !showAutoFillReview && (
-              <div className="rounded-xl border-2 border-dashed border-gray-300 bg-white overflow-hidden transition-colors">
+              <div className="glass-card border-2 border-dashed border-gray-300 overflow-hidden transition-colors">
 
                 <input
                   ref={fileInputRef}
@@ -730,7 +746,7 @@ export default function CareerCoachPage() {
                     <div className="flex items-center gap-3">
                       <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="rounded-lg bg-primary-600 px-5 py-2 text-sm font-medium text-white hover:bg-primary-700 transition-colors"
+                        className="bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:shadow-glow-blue transition-all duration-300 px-5 py-2 text-sm font-medium"
                       >
                         Choose File
                       </button>
@@ -752,7 +768,7 @@ export default function CareerCoachPage() {
 
             {/* Step 2: Input Form */}
             {!showAutoFillReview && (
-              <div className={`rounded-xl border ${c!.border} ${c!.bg} p-6`}>
+              <div className="glass-card p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <h3 className="text-sm font-semibold text-dark-600">Fill in your details</h3>
                   <span className="text-[10px] text-dark-400">(<span className="text-red-500">*</span> = required)</span>
@@ -809,7 +825,7 @@ export default function CareerCoachPage() {
                     <button
                       onClick={trySubmit}
                       disabled={status === 'streaming'}
-                      className="rounded-lg bg-primary-600 px-6 py-2 text-sm font-semibold text-white hover:bg-primary-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+                      className="bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:shadow-glow-blue transition-all duration-300 px-6 py-2 text-sm font-semibold disabled:opacity-50 flex items-center gap-2"
                     >
                       {status === 'streaming' ? (
                         <><span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> Processing...</>
@@ -852,7 +868,7 @@ export default function CareerCoachPage() {
             {Object.keys(results).length > 0 && (
               <>
                 {expanded && <div className="fixed inset-0 z-40 bg-black/40" role="presentation" onClick={() => setExpanded(false)} />}
-                <div ref={resultsRef} className={`rounded-xl border border-gray-200 shadow-sm overflow-hidden ${expanded ? 'fixed inset-4 z-50 bg-white flex flex-col' : 'bg-white'}`}>
+                <div ref={resultsRef} className={`glass-card overflow-hidden ${expanded ? 'fixed inset-4 z-50 bg-white flex flex-col' : ''}`}>
 
                   {Object.keys(results).length > 1 && (
                     <div className="flex items-center gap-1 px-4 pt-3 border-b border-gray-100 overflow-x-auto bg-white">
@@ -915,7 +931,7 @@ export default function CareerCoachPage() {
               const isRunning = prog?.stepStatus === 'running'
 
               return (
-                <div key={id} className={`rounded-xl border ${ac.border} overflow-hidden bg-white shadow-sm`}>
+                <div key={id} className="glass-card overflow-hidden">
                   <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
                       <div className={`w-8 h-8 rounded-lg ${ac.light} flex items-center justify-center`}>
@@ -971,7 +987,7 @@ export default function CareerCoachPage() {
             })}
 
             {status === 'idle' && (
-              <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+              <div className="glass-card p-4">
                 <h4 className="text-xs font-semibold text-dark-400 uppercase tracking-wider mb-3">Tips for best results</h4>
                 <ul className="space-y-2 text-xs text-dark-500">
                   {['Upload your resume to auto-fill fields instantly', 'Fill in all required fields marked with *', 'Include specific skills, years of experience, and metrics', 'Be specific about your target role or career goal'].map((t, i) => (
@@ -1045,7 +1061,7 @@ export default function CareerCoachPage() {
               )}
               <button
                 onClick={() => setShowAutoFillReview(false)}
-                className="w-full rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-700 transition-colors"
+                className="w-full bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:shadow-glow-blue transition-all duration-300 px-5 py-2.5 text-sm font-semibold"
               >
                 Review & Complete Form
               </button>
@@ -1083,7 +1099,7 @@ export default function CareerCoachPage() {
                 <button onClick={() => setShowReviewModal(false)} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-dark-600 hover:bg-gray-100 transition-colors">
                   Edit
                 </button>
-                <button onClick={confirmSubmit} className="rounded-lg bg-primary-600 px-5 py-2 text-sm font-semibold text-white hover:bg-primary-700 transition-colors flex items-center gap-2">
+                <button onClick={confirmSubmit} className="bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:shadow-glow-blue transition-all duration-300 px-5 py-2 text-sm font-semibold flex items-center gap-2">
                   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                   Confirm & Run
                 </button>
@@ -1163,7 +1179,7 @@ export default function CareerCoachPage() {
               <button
                 onClick={handleDownloadPdf}
                 disabled={isGeneratingPdf || !dlEmailVerified}
-                className="w-full rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-700 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                className="w-full bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:shadow-glow-blue transition-all duration-300 px-5 py-2.5 text-sm font-semibold disabled:opacity-60 flex items-center justify-center gap-2"
               >
                 {isGeneratingPdf ? (
                   <><span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> Generating PDF...</>
@@ -1225,7 +1241,7 @@ export default function CareerCoachPage() {
             <div className="px-6 py-4 border-t border-gray-100 bg-gray-50">
               <button
                 onClick={() => { setShowLinkedInTip(false); fileInputRef.current?.click() }}
-                className="w-full rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
+                className="w-full bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:shadow-glow-blue transition-all duration-300 px-5 py-2.5 text-sm font-semibold"
               >
                 Got it — Upload LinkedIn PDF
               </button>

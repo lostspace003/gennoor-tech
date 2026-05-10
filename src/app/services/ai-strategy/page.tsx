@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { ArrowLeft, Target, TrendingUp, Shield, Users, CheckCircle } from 'lucide-react'
+import { Target, TrendingUp, Shield, Users, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import { ServiceJsonLd, FAQJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd'
 
@@ -57,19 +57,17 @@ export default function AIStrategyPage() {
   ]
 
   return (
-    <main className="min-h-screen pt-20">
+    <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-50 to-white py-16 lg:py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <Link
-            href="/"
-            className="inline-flex items-center text-primary-600 hover:text-primary-700 mb-8"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Home
-          </Link>
-
+      <section className="relative py-14 lg:py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-white"></div>
+        <div className="absolute inset-0 bg-gradient-mesh"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
+            <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
+              AI Strategy
+            </span>
             <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
               AI Strategy & Consulting
             </h1>
@@ -79,7 +77,7 @@ export default function AIStrategyPage() {
             </p>
             <Link
               href="/contact#book"
-              className="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300"
             >
               Schedule Strategy Session
             </Link>
@@ -88,34 +86,35 @@ export default function AIStrategyPage() {
       </section>
 
       {/* Key Focus Areas */}
-      <section className="py-16 lg:py-20">
+      <section className="relative py-14 lg:py-20">
+        <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
             Strategic Focus Areas
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center">
+            <div className="glass-card p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Target className="w-8 h-8 text-primary-600" />
               </div>
               <h3 className="text-lg font-semibold mb-2">Business Alignment</h3>
               <p className="text-gray-600">Ensure AI initiatives directly support business objectives</p>
             </div>
-            <div className="text-center">
+            <div className="glass-card p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <TrendingUp className="w-8 h-8 text-primary-600" />
               </div>
               <h3 className="text-lg font-semibold mb-2">ROI Optimization</h3>
               <p className="text-gray-600">Identify high-impact use cases with clear returns</p>
             </div>
-            <div className="text-center">
+            <div className="glass-card p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Shield className="w-8 h-8 text-primary-600" />
               </div>
               <h3 className="text-lg font-semibold mb-2">Risk Management</h3>
               <p className="text-gray-600">Address ethical, legal, and operational risks</p>
             </div>
-            <div className="text-center">
+            <div className="glass-card p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="w-8 h-8 text-primary-600" />
               </div>
@@ -127,7 +126,8 @@ export default function AIStrategyPage() {
       </section>
 
       {/* Process */}
-      <section className="py-16 lg:py-20 bg-gray-50">
+      <section className="relative py-14 lg:py-20 bg-gray-50">
+        <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
             Our Strategic Process
@@ -152,38 +152,42 @@ export default function AIStrategyPage() {
       </section>
 
       {/* Deliverables */}
-      <section className="py-16 lg:py-20">
+      <section className="relative py-14 lg:py-20">
+        <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
             Key Deliverables
           </h2>
           <div className="max-w-3xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {deliverables.map((item) => (
-                <div key={item} className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-700">{item}</span>
-                </div>
-              ))}
+            <div className="glass-card p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {deliverables.map((item) => (
+                  <div key={item} className="flex items-start">
+                    <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700">{item}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Related Services */}
-      <section className="py-16 lg:py-20 bg-gray-50">
+      <section className="relative py-14 lg:py-20 bg-gray-50">
+        <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Related Services</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <Link href="/services/training" className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <Link href="/services/training" className="glass-card p-6 hover:shadow-lg transition-shadow">
               <h3 className="font-semibold text-gray-900 mb-2">Corporate AI Training</h3>
               <p className="text-sm text-gray-600">Upskill your team with hands-on Azure AI, Copilot, and Power Platform bootcamps.</p>
             </Link>
-            <Link href="/services/poc-development" className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <Link href="/services/poc-development" className="glass-card p-6 hover:shadow-lg transition-shadow">
               <h3 className="font-semibold text-gray-900 mb-2">PoC Development</h3>
               <p className="text-sm text-gray-600">Validate your AI strategy with a working prototype in 2-6 weeks.</p>
             </Link>
-            <Link href="/services/agentic-ai" className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <Link href="/services/agentic-ai" className="glass-card p-6 hover:shadow-lg transition-shadow">
               <h3 className="font-semibold text-gray-900 mb-2">Agentic AI Solutions</h3>
               <p className="text-sm text-gray-600">Build autonomous AI systems that execute your strategy.</p>
             </Link>
@@ -192,14 +196,15 @@ export default function AIStrategyPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16 lg:py-20">
+      <section className="relative py-14 lg:py-20">
+        <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
             Frequently Asked Questions
           </h2>
           <div className="max-w-3xl mx-auto space-y-6">
             {faqs.map((faq) => (
-              <div key={faq.question} className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+              <div key={faq.question} className="glass-card p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
                 <p className="text-gray-600">{faq.answer}</p>
               </div>
@@ -209,8 +214,11 @@ export default function AIStrategyPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 lg:py-20 bg-primary-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="relative py-14 lg:py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-white"></div>
+        <div className="absolute inset-0 bg-gradient-mesh"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">
             Ready to Define Your AI Strategy?
           </h2>
@@ -219,7 +227,7 @@ export default function AIStrategyPage() {
           </p>
           <Link
             href="/contact#book"
-            className="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
+            className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300"
           >
             Book a Strategy Consultation
           </Link>

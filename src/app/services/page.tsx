@@ -57,19 +57,26 @@ const locationServices = [
 export default function ServicesPage() {
   return (
     <>
-      <section className="bg-gradient-to-br from-primary-50 to-accent-50 py-16 lg:py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Hero */}
+      <section className="relative py-14 lg:py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-white" />
+        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
+            <div className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
+              Our Services
+            </div>
             <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
               Enterprise AI Services
             </h1>
-            <p className="text-xl text-gray-600 mb-8">
+            <p className="text-xl text-gray-500 mb-8 leading-relaxed max-w-3xl">
               From strategy to implementation — comprehensive AI training, consulting, and development
               services delivered by a Microsoft Certified Trainer with 14+ years of Fortune 500 experience.
             </p>
             <Link
               href="/contact#book"
-              className="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
+              className="inline-flex items-center px-7 py-3.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-xl hover:shadow-glow-blue transition-all duration-300"
             >
               Book a Free Discovery Call
             </Link>
@@ -77,19 +84,20 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      <section className="py-16 lg:py-20">
+      {/* Service Cards */}
+      <section className="py-20 lg:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-8 max-w-5xl mx-auto">
+          <div className="space-y-5 max-w-5xl mx-auto">
             {services.map((service) => {
               const Icon = service.icon
               return (
                 <Link
                   key={service.title}
                   href={service.href}
-                  className="group flex flex-col md:flex-row gap-6 bg-white rounded-xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100"
+                  className="group flex flex-col md:flex-row gap-6 rounded-2xl p-7 transition-all duration-500 glass-card glow-border"
                 >
                   <div className="flex-shrink-0">
-                    <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary-500/15">
                       <Icon className="w-7 h-7 text-white" />
                     </div>
                   </div>
@@ -97,17 +105,17 @@ export default function ServicesPage() {
                     <h2 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
                       {service.title}
                     </h2>
-                    <p className="text-gray-600 mb-4">{service.description}</p>
+                    <p className="text-gray-500 mb-4 leading-relaxed">{service.description}</p>
                     <div className="flex flex-wrap gap-2">
                       {service.highlights.map((h) => (
-                        <span key={h} className="px-3 py-1 bg-primary-50 text-primary-700 text-xs font-medium rounded-full">
+                        <span key={h} className="px-3 py-1 bg-primary-50/80 text-primary-600 text-xs font-semibold rounded-lg border border-primary-100/60">
                           {h}
                         </span>
                       ))}
                     </div>
                   </div>
                   <div className="flex items-center">
-                    <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-primary-600 group-hover:translate-x-1 transition-all" />
+                    <ArrowRight className="w-5 h-5 text-gray-300 group-hover:text-primary-600 group-hover:translate-x-1.5 transition-all duration-300" />
                   </div>
                 </Link>
               )
@@ -116,30 +124,33 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      <section className="py-16 lg:py-20 bg-gray-50">
+      {/* Training by Location */}
+      <section className="py-20 lg:py-24 relative">
+        <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Training by Location</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-gray-900 mb-10 text-center">Training by Location</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-4xl mx-auto">
             {locationServices.map((loc) => (
               <Link
                 key={loc.title}
                 href={loc.href}
-                className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow group"
+                className="rounded-2xl p-6 transition-all duration-500 glass-card glow-border group"
               >
-                <MapPin className="w-6 h-6 text-primary-600 mb-3" />
+                <MapPin className="w-5 h-5 text-primary-600 mb-3" />
                 <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-primary-600 transition-colors">{loc.title}</h3>
-                <p className="text-sm text-gray-600">{loc.description}</p>
+                <p className="text-sm text-gray-500">{loc.description}</p>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-16 lg:py-20">
+      {/* FAQ */}
+      <section className="py-20 lg:py-24 relative">
+        <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Frequently Asked Questions</h2>
-          <div className="max-w-3xl mx-auto space-y-6">
+          <div className="max-w-3xl mx-auto space-y-4">
             {[
               { question: 'What AI services does Gennoor Tech offer?', answer: 'Gennoor Tech offers AI strategy consulting, corporate AI training (80+ programs), PoC development, agentic AI solutions, and certification exam preparation across Microsoft, AWS, Google Cloud, and GitHub platforms.' },
               { question: 'Do you offer remote AI training?', answer: 'Yes, we offer live virtual instructor-led training with the same hands-on labs and interactive experience as on-site sessions. We serve clients globally across India, Saudi Arabia, UAE, East Africa, and Southeast Asia.' },
@@ -147,24 +158,27 @@ export default function ServicesPage() {
               { question: 'How do I get started with Gennoor Tech?', answer: 'Book a free 30-minute discovery call where we discuss your goals, assess your current AI maturity, and recommend the right service. From there we provide a customized proposal within 48 hours.' },
               { question: 'What makes Gennoor Tech training different from other providers?', answer: 'Our training is led by a Microsoft Certified Trainer with 16+ active certifications and 14+ years of enterprise experience across 6 countries. Every program is customized with industry-specific case studies, hands-on labs using your own data scenarios, and post-training mentoring.' },
             ].map((faq) => (
-              <div key={faq.question} className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
-                <p className="text-gray-600">{faq.answer}</p>
+              <div key={faq.question} className="rounded-2xl p-6 glass-card">
+                <h3 className="text-base font-semibold text-gray-900 mb-2">{faq.question}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">{faq.answer}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-16 lg:py-20 bg-primary-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Not Sure Where to Start?</h2>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+      {/* CTA */}
+      <section className="py-20 lg:py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-white" />
+        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-5">Not Sure Where to Start?</h2>
+          <p className="text-lg text-gray-500 mb-8 max-w-2xl mx-auto leading-relaxed">
             Book a free 30-minute discovery call. We&apos;ll discuss your goals and recommend the right service for your organization.
           </p>
           <Link
             href="/contact#book"
-            className="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
+            className="inline-flex items-center px-7 py-3.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-xl hover:shadow-glow-blue transition-all duration-300"
           >
             Book a Free Call
           </Link>

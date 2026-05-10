@@ -130,11 +130,10 @@ export default function ClaudeCoworkRecapPage() {
   return (
     <>
       {/* Hero */}
-      <div className="h-1 bg-gradient-to-r from-primary-600 via-secondary-500 to-accent-500" />
-      <section className="relative bg-gradient-to-br from-primary-100/60 via-white to-accent-100/40 py-10 lg:py-12 overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary-400/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
-        <div className="absolute bottom-0 left-0 w-72 h-72 bg-accent-400/10 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4" />
-        <div className="absolute top-1/2 left-1/2 w-60 h-60 bg-secondary-400/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+      <section className="relative py-14 lg:py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-white" />
+        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
 
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 text-gray-500 text-sm mb-4">
@@ -223,7 +222,7 @@ export default function ClaudeCoworkRecapPage() {
             {eventStats.map((stat) => (
               <div
                 key={stat.label}
-                className="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center hover:shadow-md transition-all duration-300 hover:-translate-y-1"
+                className="glass-card p-4 text-center hover:shadow-md transition-all duration-300 hover:-translate-y-1"
               >
                 <stat.icon className="w-4 h-4 mx-auto mb-1.5 text-primary-600" />
                 <p className="text-xl font-black text-gray-900">{stat.value}</p>
@@ -234,8 +233,10 @@ export default function ClaudeCoworkRecapPage() {
         </div>
       </section>
 
+      <div className="section-divider" />
+
       {/* What Was Covered */}
-      <section className="py-10 bg-gray-50">
+      <section className="py-10 bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">What Was Covered</h2>
           <p className="text-gray-600 mb-6">
@@ -246,7 +247,7 @@ export default function ClaudeCoworkRecapPage() {
             {modules.map((mod) => (
               <div
                 key={mod.number}
-                className="border border-gray-100 bg-white rounded-xl p-4 hover:shadow-md transition-all duration-300"
+                className="glass-card p-4 hover:shadow-md transition-all duration-300"
               >
                 <div className="flex items-start gap-3">
                   <div className="bg-primary-50 text-primary-700 rounded-lg px-2.5 py-0.5 font-bold text-xs shrink-0 mt-0.5">
@@ -276,7 +277,7 @@ export default function ClaudeCoworkRecapPage() {
               href="https://drive.google.com/file/d/18wl79ZheYRci7gpZAAX14hBs0RepAT95/view?usp=sharing"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-lg font-semibold text-sm hover:bg-primary-700 transition-colors shrink-0"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white px-4 py-2 rounded-xl font-semibold text-sm hover:shadow-glow-blue transition-all duration-300 shrink-0"
             >
               Download Materials
               <ArrowRight className="w-4 h-4" />
@@ -288,7 +289,7 @@ export default function ClaudeCoworkRecapPage() {
       {/* Engagement Highlights */}
       <section className="py-10 bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
+          <div className="glass-card rounded-2xl p-6">
             <div className="flex items-center gap-3 mb-4">
               <BarChart3 className="w-5 h-5 text-primary-600" />
               <h3 className="text-lg font-bold text-gray-900">Engagement Highlights</h3>
@@ -324,8 +325,10 @@ export default function ClaudeCoworkRecapPage() {
         </div>
       </section>
 
+      <div className="section-divider" />
+
       {/* Trustpilot Reviews */}
-      <section className="py-10 bg-gray-50">
+      <section className="py-10 bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
             <div>
@@ -349,7 +352,7 @@ export default function ClaudeCoworkRecapPage() {
             {reviews.map((review, i) => (
               <div
                 key={i}
-                className="bg-white border border-gray-100 rounded-xl p-4 hover:shadow-md transition-all duration-300 hover:-translate-y-1 flex flex-col"
+                className="glass-card p-4 hover:shadow-md transition-all duration-300 hover:-translate-y-1 flex flex-col"
               >
                 <div className="flex items-center gap-0.5 mb-2">
                   {[1, 2, 3, 4, 5].map((s) => (
@@ -369,8 +372,10 @@ export default function ClaudeCoworkRecapPage() {
         </div>
       </section>
 
+      <div className="section-divider" />
+
       {/* CTA */}
-      <section className="py-12 bg-gradient-to-br from-primary-50 via-white to-accent-50">
+      <section className="py-12 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-3">Want to Attend the Next One?</h2>
           <p className="text-gray-600 mb-6 max-w-xl mx-auto">
@@ -379,7 +384,7 @@ export default function ClaudeCoworkRecapPage() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href="/workshops"
-              className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-700 transition-colors shadow-md shadow-primary-200"
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-glow-blue transition-all duration-300"
             >
               Browse All Workshops
               <ArrowRight className="w-4 h-4" />

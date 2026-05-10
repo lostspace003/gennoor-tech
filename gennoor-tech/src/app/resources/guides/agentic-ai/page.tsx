@@ -52,34 +52,37 @@ export default function AgenticAIGuide() {
       ]} />
       <FAQJsonLd faqs={faqs} />
 
-      <main className="min-h-screen pt-20">
+      <main className="min-h-screen">
         {/* Hero */}
-        <section className="bg-gradient-to-br from-purple-700 to-indigo-900 py-16 lg:py-24 relative overflow-hidden">
-          <div className="absolute inset-0 bg-grid-white/10"></div>
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <section className="relative py-14 lg:py-20 overflow-hidden">
+          <div className="absolute inset-0 bg-white" />
+          <div className="absolute inset-0 bg-gradient-mesh" />
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+          <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl">
-              <span className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full mb-6 text-white text-sm font-medium">
-                <Bot className="w-4 h-4 mr-2" />
+              <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
                 Comprehensive Guide
               </span>
-              <h1 className="text-4xl lg:text-5xl font-black text-white mb-6">
+              <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
                 Agentic AI: The Complete Enterprise Guide
               </h1>
-              <p className="text-xl text-white/90 mb-8">
+              <p className="text-xl text-gray-600 mb-8">
                 Everything you need to know about building, deploying, and governing AI agents in the enterprise.
                 From single-agent chatbots to multi-agent orchestration systems.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link href="/services/agentic-ai" className="inline-flex items-center px-8 py-4 bg-white text-purple-700 font-medium rounded-lg hover:bg-gray-100 transition-colors">
+                <Link href="/services/agentic-ai" className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300">
                   Agentic AI Services
                 </Link>
-                <Link href="/services/training/agentic-ai-engineering" className="inline-flex items-center px-8 py-4 border-2 border-white text-white font-medium rounded-lg hover:bg-white/10 transition-colors">
+                <Link href="/services/training/agentic-ai-engineering" className="inline-flex items-center px-8 py-4 border-2 border-primary-600 text-primary-700 font-medium rounded-xl hover:bg-primary-50 transition-colors">
                   Agentic AI Training
                 </Link>
               </div>
             </div>
           </div>
         </section>
+
+        <div className="section-divider" />
 
         {/* What is Agentic AI */}
         <section className="py-16 lg:py-20">
@@ -93,18 +96,18 @@ export default function AgenticAIGuide() {
                 learning from outcomes.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-gray-50 rounded-lg p-6">
-                  <Cpu className="w-8 h-8 text-purple-600 mb-3" />
+                <div className="glass-card p-6">
+                  <Cpu className="w-8 h-8 text-primary-600 mb-3" />
                   <h3 className="font-semibold text-gray-900 mb-2">Reasoning</h3>
                   <p className="text-sm text-gray-600">Breaks complex problems into steps, plans execution strategies, and adapts when things change</p>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-6">
-                  <Zap className="w-8 h-8 text-purple-600 mb-3" />
+                <div className="glass-card p-6">
+                  <Zap className="w-8 h-8 text-primary-600 mb-3" />
                   <h3 className="font-semibold text-gray-900 mb-2">Tool Use</h3>
                   <p className="text-sm text-gray-600">Calls APIs, queries databases, searches the web, executes code, and processes documents</p>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-6">
-                  <Layers className="w-8 h-8 text-purple-600 mb-3" />
+                <div className="glass-card p-6">
+                  <Layers className="w-8 h-8 text-primary-600 mb-3" />
                   <h3 className="font-semibold text-gray-900 mb-2">Collaboration</h3>
                   <p className="text-sm text-gray-600">Multiple agents work together, each with specialized roles, sharing context and results</p>
                 </div>
@@ -113,8 +116,10 @@ export default function AgenticAIGuide() {
           </div>
         </section>
 
+        <div className="section-divider" />
+
         {/* Frameworks */}
-        <section className="py-16 lg:py-20 bg-gray-50">
+        <section className="py-16 lg:py-20 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-4 text-center">Agent Development Frameworks</h2>
@@ -123,20 +128,22 @@ export default function AgenticAIGuide() {
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {frameworks.map((fw) => (
-                  <Link key={fw.name} href={fw.href} className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow group">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">{fw.name}</h3>
+                  <Link key={fw.name} href={fw.href} className="glass-card p-6 hover:shadow-md transition-shadow group">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">{fw.name}</h3>
                     <p className="text-gray-600 text-sm">{fw.description}</p>
                   </Link>
                 ))}
               </div>
               <div className="mt-8 text-center">
-                <Link href="/resources/blog/what-are-ai-agents-enterprise-guide" className="inline-flex items-center text-purple-600 hover:text-purple-700 font-medium">
+                <Link href="/resources/blog/what-are-ai-agents-enterprise-guide" className="inline-flex items-center text-primary-600 hover:text-primary-700 font-medium">
                   Read: What Are AI Agents? Enterprise Guide <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </div>
             </div>
           </div>
         </section>
+
+        <div className="section-divider" />
 
         {/* Industry Use Cases */}
         <section className="py-16 lg:py-20">
@@ -148,8 +155,8 @@ export default function AgenticAIGuide() {
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {useCases.map((uc) => (
-                  <Link key={uc.industry} href={uc.href} className="bg-white rounded-lg p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow group">
-                    <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-purple-600 transition-colors text-sm">{uc.industry}</h3>
+                  <Link key={uc.industry} href={uc.href} className="glass-card p-5 hover:shadow-md transition-shadow group">
+                    <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-primary-600 transition-colors text-sm">{uc.industry}</h3>
                     <p className="text-gray-600 text-xs">{uc.description}</p>
                   </Link>
                 ))}
@@ -158,8 +165,10 @@ export default function AgenticAIGuide() {
           </div>
         </section>
 
+        <div className="section-divider" />
+
         {/* Production Readiness */}
-        <section className="py-16 lg:py-20 bg-gray-50">
+        <section className="py-16 lg:py-20 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-8">From POC to Production</h2>
@@ -175,9 +184,9 @@ export default function AgenticAIGuide() {
                   { phase: 'Deploy', weeks: '11-12', desc: 'Blue-green or canary deployment with monitoring' },
                   { phase: 'Operate & Improve', weeks: '13+', desc: 'Monitor KPIs, gather feedback, iterate on agent behavior' },
                 ].map((step, i) => (
-                  <div key={step.phase} className="flex items-start gap-4 bg-white rounded-lg p-5 border border-gray-100">
-                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <span className="text-sm font-bold text-purple-600">{i + 1}</span>
+                  <div key={step.phase} className="flex items-start gap-4 glass-card p-5">
+                    <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm font-bold text-primary-600">{i + 1}</span>
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-900">{step.phase} <span className="text-sm font-normal text-gray-500">(Weeks {step.weeks})</span></h3>
@@ -187,7 +196,7 @@ export default function AgenticAIGuide() {
                 ))}
               </div>
               <div className="mt-6 text-center">
-                <Link href="/resources/blog/ai-poc-to-production-playbook" className="inline-flex items-center text-purple-600 hover:text-purple-700 font-medium">
+                <Link href="/resources/blog/ai-poc-to-production-playbook" className="inline-flex items-center text-primary-600 hover:text-primary-700 font-medium">
                   Read: AI POC to Production Playbook <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </div>
@@ -195,13 +204,15 @@ export default function AgenticAIGuide() {
           </div>
         </section>
 
+        <div className="section-divider" />
+
         {/* FAQ */}
         <section className="py-16 lg:py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Frequently Asked Questions</h2>
             <div className="max-w-3xl mx-auto space-y-6">
               {faqs.map((faq) => (
-                <div key={faq.question} className="bg-gray-50 rounded-lg p-6 border border-gray-100">
+                <div key={faq.question} className="glass-card p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
                   <p className="text-gray-600">{faq.answer}</p>
                 </div>
@@ -210,18 +221,20 @@ export default function AgenticAIGuide() {
           </div>
         </section>
 
+        <div className="section-divider" />
+
         {/* CTA */}
-        <section className="py-16 lg:py-20 bg-purple-50">
+        <section className="py-16 lg:py-20 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl font-bold text-gray-900 mb-6">Ready to Build AI Agents?</h2>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               Whether you need training, a proof of concept, or production-ready agents, we can help.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link href="/services/agentic-ai" className="inline-flex items-center px-8 py-4 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors">
+              <Link href="/services/agentic-ai" className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300">
                 Agentic AI Services
               </Link>
-              <Link href="/contact#book" className="inline-flex items-center px-8 py-4 border-2 border-purple-600 text-purple-600 font-medium rounded-lg hover:bg-purple-50 transition-colors">
+              <Link href="/contact#book" className="inline-flex items-center px-8 py-4 border-2 border-primary-600 text-primary-700 font-medium rounded-xl hover:bg-primary-50 transition-colors">
                 Book a Discovery Call
               </Link>
             </div>

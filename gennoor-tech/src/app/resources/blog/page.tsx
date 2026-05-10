@@ -35,16 +35,21 @@ export default function BlogPage() {
   )
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
+    <div className="min-h-screen bg-white">
       {/* Masthead — server-rendered for SEO */}
-      <header style={{ backgroundColor: '#ffffff', borderBottom: '1px solid #e5e7eb' }}>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
-          <p className="text-xs font-bold tracking-[0.3em] uppercase mb-2" style={{ color: '#4f46e5' }}>Insights & Perspectives</p>
-          <h1 className="text-4xl lg:text-5xl font-black tracking-tight" style={{ color: '#111827' }}>
+      <header className="relative py-14 lg:py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-white" />
+        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
+            Insights &amp; Perspectives
+          </span>
+          <h1 className="text-4xl lg:text-5xl font-black tracking-tight text-gray-900">
             The Gennoor Tech Blog
           </h1>
-          <div className="w-24 h-1 mx-auto mt-4 mb-3 rounded-full" style={{ backgroundColor: '#4f46e5' }} aria-hidden="true" />
-          <p className="text-sm max-w-lg mx-auto" style={{ color: '#6b7280' }}>
+          <div className="section-divider w-24 mx-auto mt-6 mb-4" aria-hidden="true" />
+          <p className="text-sm max-w-lg mx-auto text-gray-500">
             Practitioner insights on enterprise AI, agentic systems, and real-world implementation strategies
           </p>
         </div>

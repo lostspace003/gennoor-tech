@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, Award, Clock, DollarSign, Target, BookOpen, CheckCircle, Info, Send, Filter, X } from 'lucide-react'
+import { Award, Clock, DollarSign, Target, BookOpen, CheckCircle, Info, Send, Filter, X, Users, Globe } from 'lucide-react'
 import Link from 'next/link'
 import { microsoftCertifications, googleCertifications, awsCertifications, githubCertifications, aiCertsCertifications } from '@/data/certification-prep'
 import CertificationDetailsModal from '@/components/certifications/CertificationDetailsModal'
@@ -82,49 +82,42 @@ export default function CertificationPreparationPage() {
   }
 
   return (
-    <main className="min-h-screen pt-20">
+    <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-600 to-primary-800 py-16 lg:py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-white/10"></div>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <Link
-            href="/services/training"
-            className="inline-flex items-center text-white/90 hover:text-white mb-8"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Training
-          </Link>
-
+      <section className="relative py-14 lg:py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-white"></div>
+        <div className="absolute inset-0 bg-gradient-mesh"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
-            <div className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full mb-6">
-              <Award className="w-5 h-5 text-yellow-400 mr-2" />
-              <span className="text-white font-medium">Official Certification Preparation</span>
-            </div>
+            <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
+              Certifications
+            </span>
 
-            <h1 className="text-4xl lg:text-5xl font-black text-white mb-6">
+            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
               Certification Exam Preparation
             </h1>
-            <p className="text-xl text-white/90 mb-8">
+            <p className="text-xl text-gray-600 mb-8">
               Prepare for industry-recognized certifications with expert guidance from a Microsoft Certified Trainer & AI CERTs Certified Trainer
               with 20+ active certifications across Microsoft, AWS, Google Cloud, GitHub, and AI CERTs.
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
-                <div className="text-3xl font-bold text-white">20+</div>
-                <div className="text-white/80 text-sm">Active Certifications</div>
+              <div className="glass-card p-4 text-center">
+                <div className="text-3xl font-bold text-primary-600">20+</div>
+                <div className="text-gray-600 text-sm">Active Certifications</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
-                <div className="text-3xl font-bold text-white">98%</div>
-                <div className="text-white/80 text-sm">Pass Rate</div>
+              <div className="glass-card p-4 text-center">
+                <div className="text-3xl font-bold text-primary-600">98%</div>
+                <div className="text-gray-600 text-sm">Pass Rate</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
-                <div className="text-3xl font-bold text-white">2000+</div>
-                <div className="text-white/80 text-sm">Students Certified</div>
+              <div className="glass-card p-4 text-center">
+                <div className="text-3xl font-bold text-primary-600">2000+</div>
+                <div className="text-gray-600 text-sm">Students Certified</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
-                <div className="text-3xl font-bold text-white">5</div>
-                <div className="text-white/80 text-sm">Certification Providers</div>
+              <div className="glass-card p-4 text-center">
+                <div className="text-3xl font-bold text-primary-600">5</div>
+                <div className="text-gray-600 text-sm">Certification Providers</div>
               </div>
             </div>
           </div>
@@ -132,7 +125,8 @@ export default function CertificationPreparationPage() {
       </section>
 
       {/* Filters */}
-      <section className="py-8 bg-gray-50 border-b">
+      <section className="relative py-8 bg-gray-50 border-b">
+        <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
             <div className="flex items-center gap-2">
@@ -188,7 +182,8 @@ export default function CertificationPreparationPage() {
       </section>
 
       {/* Certifications Grid */}
-      <section className="py-16 lg:py-20">
+      <section className="relative py-14 lg:py-20">
+        <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {Object.entries(groupedCertifications).map(([provider, certs]) => {
             if (certs.length === 0) return null
@@ -207,7 +202,7 @@ export default function CertificationPreparationPage() {
                   {certs.map((cert) => (
                     <div
                       key={cert.id}
-                      className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group"
+                      className="glass-card overflow-hidden group hover:shadow-xl transition-all duration-300"
                     >
                       {/* Card Header */}
                       <div className={`h-2 ${getProviderColor(cert.provider)}`}></div>
@@ -250,7 +245,7 @@ export default function CertificationPreparationPage() {
                         <div className="mb-4">
                           <p className="text-xs font-medium text-gray-700 mb-2">Key Topics:</p>
                           <div className="flex flex-wrap gap-1">
-                            {cert.topics.slice(0, 2).map((topic, idx) => (
+                            {cert.topics.slice(0, 2).map((topic: string, idx: number) => (
                               <span
                                 key={idx}
                                 className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded"
@@ -277,7 +272,7 @@ export default function CertificationPreparationPage() {
                           </button>
                           <button
                             onClick={() => handleEnquiry(cert)}
-                            className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors"
+                            className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-sm font-medium rounded-lg hover:shadow-glow-blue transition-all duration-300"
                           >
                             <Send className="w-4 h-4 mr-2" />
                             Enquire
@@ -294,10 +289,11 @@ export default function CertificationPreparationPage() {
       </section>
 
       {/* Quick Enquiry Form */}
-      <section className="py-16 lg:py-20 bg-gray-50">
+      <section className="relative py-14 lg:py-20 bg-gray-50">
+        <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-lg shadow-lg p-8">
+            <div className="glass-card p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
                 Quick Certification Enquiry
               </h2>
@@ -315,14 +311,15 @@ export default function CertificationPreparationPage() {
       </section>
 
       {/* Why Choose Us */}
-      <section className="py-16 lg:py-20">
+      <section className="relative py-14 lg:py-20">
+        <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
             Why Choose Our Certification Preparation?
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div className="text-center">
+            <div className="glass-card p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Award className="w-8 h-8 text-primary-600" />
               </div>
@@ -332,7 +329,7 @@ export default function CertificationPreparationPage() {
               </p>
             </div>
 
-            <div className="text-center">
+            <div className="glass-card p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Target className="w-8 h-8 text-primary-600" />
               </div>
@@ -342,7 +339,7 @@ export default function CertificationPreparationPage() {
               </p>
             </div>
 
-            <div className="text-center">
+            <div className="glass-card p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <BookOpen className="w-8 h-8 text-primary-600" />
               </div>
@@ -352,7 +349,7 @@ export default function CertificationPreparationPage() {
               </p>
             </div>
 
-            <div className="text-center">
+            <div className="glass-card p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="w-8 h-8 text-primary-600" />
               </div>
@@ -362,7 +359,7 @@ export default function CertificationPreparationPage() {
               </p>
             </div>
 
-            <div className="text-center">
+            <div className="glass-card p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="w-8 h-8 text-primary-600" />
               </div>
@@ -372,7 +369,7 @@ export default function CertificationPreparationPage() {
               </p>
             </div>
 
-            <div className="text-center">
+            <div className="glass-card p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Globe className="w-8 h-8 text-primary-600" />
               </div>
@@ -410,6 +407,3 @@ export default function CertificationPreparationPage() {
     </main>
   )
 }
-
-// Import statements for missing components
-import { Users, Globe } from 'lucide-react'

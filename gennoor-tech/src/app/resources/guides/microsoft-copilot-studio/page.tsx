@@ -48,34 +48,37 @@ export default function CopilotStudioGuide() {
       ]} />
       <FAQJsonLd faqs={faqs} />
 
-      <main className="min-h-screen pt-20">
+      <main className="min-h-screen">
         {/* Hero */}
-        <section className="bg-gradient-to-br from-blue-700 to-indigo-900 py-16 lg:py-24 relative overflow-hidden">
-          <div className="absolute inset-0 bg-grid-white/10"></div>
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <section className="relative py-14 lg:py-20 overflow-hidden">
+          <div className="absolute inset-0 bg-white" />
+          <div className="absolute inset-0 bg-gradient-mesh" />
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+          <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl">
-              <span className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full mb-6 text-white text-sm font-medium">
-                <BookOpen className="w-4 h-4 mr-2" />
+              <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
                 Comprehensive Guide
               </span>
-              <h1 className="text-4xl lg:text-5xl font-black text-white mb-6">
+              <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
                 Microsoft Copilot Studio: The Enterprise Guide
               </h1>
-              <p className="text-xl text-white/90 mb-8">
+              <p className="text-xl text-gray-600 mb-8">
                 Build enterprise AI agents with Microsoft&apos;s low-code platform. From simple chatbots to autonomous
                 multi-step agents integrated with Dataverse and Power Platform.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link href="/services/copilot-studio-training" className="inline-flex items-center px-8 py-4 bg-white text-blue-700 font-medium rounded-lg hover:bg-gray-100 transition-colors">
+                <Link href="/services/copilot-studio-training" className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300">
                   Copilot Studio Training
                 </Link>
-                <Link href="/contact#book" className="inline-flex items-center px-8 py-4 border-2 border-white text-white font-medium rounded-lg hover:bg-white/10 transition-colors">
+                <Link href="/contact#book" className="inline-flex items-center px-8 py-4 border-2 border-primary-600 text-primary-700 font-medium rounded-xl hover:bg-primary-50 transition-colors">
                   Book Expert Session
                 </Link>
               </div>
             </div>
           </div>
         </section>
+
+        <div className="section-divider" />
 
         {/* Key Capabilities */}
         <section className="py-16 lg:py-20">
@@ -89,9 +92,9 @@ export default function CopilotStudioGuide() {
                 {capabilities.map((cap) => {
                   const Icon = cap.icon
                   const content = (
-                    <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow group h-full">
-                      <Icon className="w-8 h-8 text-blue-600 mb-3" />
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{cap.title}</h3>
+                    <div className="glass-card p-6 hover:shadow-md transition-shadow group h-full">
+                      <Icon className="w-8 h-8 text-primary-600 mb-3" />
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">{cap.title}</h3>
                       <p className="text-gray-600 text-sm">{cap.description}</p>
                     </div>
                   )
@@ -106,8 +109,10 @@ export default function CopilotStudioGuide() {
           </div>
         </section>
 
+        <div className="section-divider" />
+
         {/* MCP Integration */}
-        <section className="py-16 lg:py-20 bg-gray-50">
+        <section className="py-16 lg:py-20 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-6">MCP: The Universal AI Integration Standard</h2>
@@ -116,26 +121,28 @@ export default function CopilotStudioGuide() {
                 enterprise system, and every AI agent can use it — Copilot Studio, Claude, GPT, open-source models.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Link href="/resources/blog/mcp-protocol-universal-ai-integration" className="bg-white rounded-lg p-6 border border-gray-100 hover:shadow-md transition-shadow group">
-                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600">MCP Protocol: Universal AI Integration</h3>
+                <Link href="/resources/blog/mcp-protocol-universal-ai-integration" className="glass-card p-6 hover:shadow-md transition-shadow group">
+                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary-600">MCP Protocol: Universal AI Integration</h3>
                   <p className="text-sm text-gray-600">Understanding the Model Context Protocol and why it matters for enterprises</p>
                 </Link>
-                <Link href="/resources/blog/dataverse-mcp-server-ai-agents" className="bg-white rounded-lg p-6 border border-gray-100 hover:shadow-md transition-shadow group">
-                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600">Dataverse MCP Server</h3>
+                <Link href="/resources/blog/dataverse-mcp-server-ai-agents" className="glass-card p-6 hover:shadow-md transition-shadow group">
+                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary-600">Dataverse MCP Server</h3>
                   <p className="text-sm text-gray-600">Build an MCP server to connect AI agents to your Dataverse business data</p>
                 </Link>
-                <Link href="/resources/blog/power-apps-mcp-server-citizen-developers" className="bg-white rounded-lg p-6 border border-gray-100 hover:shadow-md transition-shadow group">
-                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600">Power Apps MCP Server</h3>
+                <Link href="/resources/blog/power-apps-mcp-server-citizen-developers" className="glass-card p-6 hover:shadow-md transition-shadow group">
+                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary-600">Power Apps MCP Server</h3>
                   <p className="text-sm text-gray-600">Enable citizen developers to build AI-powered apps with MCP integration</p>
                 </Link>
-                <Link href="/resources/blog/microsoft-agent-framework-vs-copilot-studio" className="bg-white rounded-lg p-6 border border-gray-100 hover:shadow-md transition-shadow group">
-                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600">Agent Framework vs Copilot Studio</h3>
+                <Link href="/resources/blog/microsoft-agent-framework-vs-copilot-studio" className="glass-card p-6 hover:shadow-md transition-shadow group">
+                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary-600">Agent Framework vs Copilot Studio</h3>
                   <p className="text-sm text-gray-600">When to use Microsoft Agent Framework vs Copilot Studio for building agents</p>
                 </Link>
               </div>
             </div>
           </div>
         </section>
+
+        <div className="section-divider" />
 
         {/* Use Cases */}
         <section className="py-16 lg:py-20">
@@ -147,8 +154,8 @@ export default function CopilotStudioGuide() {
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {useCases.map((uc) => (
-                  <Link key={uc.title} href={uc.href} className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow group">
-                    <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{uc.title}</h3>
+                  <Link key={uc.title} href={uc.href} className="glass-card p-6 hover:shadow-md transition-shadow group">
+                    <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">{uc.title}</h3>
                     <p className="text-sm text-gray-600">{uc.description}</p>
                   </Link>
                 ))}
@@ -157,20 +164,22 @@ export default function CopilotStudioGuide() {
           </div>
         </section>
 
+        <div className="section-divider" />
+
         {/* Training & Certification */}
-        <section className="py-16 lg:py-20 bg-gray-50">
+        <section className="py-16 lg:py-20 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Training & Certification</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Link href="/services/copilot-studio-training" className="bg-white rounded-lg p-6 border border-gray-100 hover:shadow-md transition-shadow group">
-                  <Zap className="w-8 h-8 text-blue-600 mb-3" />
-                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600">Copilot Studio Training</h3>
+                <Link href="/services/copilot-studio-training" className="glass-card p-6 hover:shadow-md transition-shadow group">
+                  <Zap className="w-8 h-8 text-primary-600 mb-3" />
+                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary-600">Copilot Studio Training</h3>
                   <p className="text-sm text-gray-600">Dedicated hands-on workshop for building enterprise copilots</p>
                 </Link>
-                <Link href="/services/training/genai-copilot-mastery" className="bg-white rounded-lg p-6 border border-gray-100 hover:shadow-md transition-shadow group">
-                  <Users className="w-8 h-8 text-blue-600 mb-3" />
-                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600">GenAI Copilot Mastery Bootcamp</h3>
+                <Link href="/services/training/genai-copilot-mastery" className="glass-card p-6 hover:shadow-md transition-shadow group">
+                  <Users className="w-8 h-8 text-primary-600 mb-3" />
+                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary-600">GenAI Copilot Mastery Bootcamp</h3>
                   <p className="text-sm text-gray-600">5-day bootcamp covering Microsoft 365 Copilot, GitHub Copilot, and Copilot Studio</p>
                 </Link>
               </div>
@@ -178,13 +187,15 @@ export default function CopilotStudioGuide() {
           </div>
         </section>
 
+        <div className="section-divider" />
+
         {/* FAQ */}
         <section className="py-16 lg:py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Frequently Asked Questions</h2>
             <div className="max-w-3xl mx-auto space-y-6">
               {faqs.map((faq) => (
-                <div key={faq.question} className="bg-gray-50 rounded-lg p-6 border border-gray-100">
+                <div key={faq.question} className="glass-card p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
                   <p className="text-gray-600">{faq.answer}</p>
                 </div>
@@ -193,18 +204,20 @@ export default function CopilotStudioGuide() {
           </div>
         </section>
 
+        <div className="section-divider" />
+
         {/* CTA */}
-        <section className="py-16 lg:py-20 bg-blue-50">
+        <section className="py-16 lg:py-20 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl font-bold text-gray-900 mb-6">Ready to Build with Copilot Studio?</h2>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               Get hands-on training or let us build your first enterprise copilot.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link href="/services/copilot-studio-training" className="inline-flex items-center px-8 py-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+              <Link href="/services/copilot-studio-training" className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300">
                 Start Training
               </Link>
-              <Link href="/contact#book" className="inline-flex items-center px-8 py-4 border-2 border-blue-600 text-blue-600 font-medium rounded-lg hover:bg-blue-50 transition-colors">
+              <Link href="/contact#book" className="inline-flex items-center px-8 py-4 border-2 border-primary-600 text-primary-700 font-medium rounded-xl hover:bg-primary-50 transition-colors">
                 Book a Discovery Call
               </Link>
             </div>
