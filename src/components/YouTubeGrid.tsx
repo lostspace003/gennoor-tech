@@ -25,32 +25,52 @@ function timeAgo(dateStr: string): string {
   return `${Math.floor(days / 365)}y ago`
 }
 
-function VideoCard({ video }: { video: YouTubeVideo }) {
+export function VideoCard({ video }: { video: YouTubeVideo }) {
+  const [playing, setPlaying] = useState(false)
+
   return (
-    <a
-      href={`https://www.youtube.com/watch?v=${video.id}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-out bg-white border border-gray-100"
-    >
+    <div className="group rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-out bg-white border border-gray-100">
       <div className="relative aspect-video bg-gray-100">
-        {video.thumbnail && (
-          <Image src={video.thumbnail} alt={video.title} fill className="object-cover" />
+        {playing ? (
+          <iframe
+            src={`https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0`}
+            title={video.title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="absolute inset-0 w-full h-full border-0"
+          />
+        ) : (
+          <>
+            {video.thumbnail && (
+              <Image src={video.thumbnail} alt={video.title} fill className="object-cover" />
+            )}
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+            <div className="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-medium px-1.5 py-0.5 rounded">
+              {video.duration}
+            </div>
+            <button
+              type="button"
+              onClick={() => setPlaying(true)}
+              className="absolute inset-0 flex items-center justify-center cursor-pointer"
+              aria-label={`Play ${video.title}`}
+            >
+              <div className="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-lg opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300">
+                <Play className="w-6 h-6 text-white ml-0.5 fill-white" />
+              </div>
+            </button>
+          </>
         )}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-        <div className="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-medium px-1.5 py-0.5 rounded">
-          {video.duration}
-        </div>
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center shadow-lg">
-            <Play className="w-5 h-5 text-white ml-0.5 fill-white" />
-          </div>
-        </div>
       </div>
       <div className="p-4">
-        <h3 className="font-semibold text-gray-900 text-sm line-clamp-2 mb-2 group-hover:text-primary-600 transition-colors duration-200">
-          {video.title}
-        </h3>
+        <a
+          href={`https://www.youtube.com/watch?v=${video.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <h3 className="font-semibold text-gray-900 text-sm line-clamp-2 mb-2 hover:text-primary-600 transition-colors duration-200">
+            {video.title}
+          </h3>
+        </a>
         {video.playlists.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-2">
             {video.playlists.map((pl) => (
@@ -68,7 +88,7 @@ function VideoCard({ video }: { video: YouTubeVideo }) {
           <span>{timeAgo(video.publishedAt)}</span>
         </div>
       </div>
-    </a>
+    </div>
   )
 }
 
