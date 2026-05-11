@@ -11,12 +11,27 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   if (!caseStudy) {
     return {
       title: 'Case Study Not Found',
+      robots: { index: false, follow: false },
     }
   }
+
+  const url = `https://gennoor.com/portfolio/case-studies/${params.id}`
 
   return {
     title: caseStudy.title,
     description: caseStudy.challenge,
+    alternates: { canonical: url },
+    openGraph: {
+      title: `${caseStudy.title} | Gennoor Tech Case Study`,
+      description: caseStudy.challenge,
+      url,
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: caseStudy.title,
+      description: caseStudy.challenge,
+    },
   }
 }
 
