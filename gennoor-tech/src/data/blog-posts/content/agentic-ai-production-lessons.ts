@@ -6,6 +6,35 @@ export const post: BlogPost = {
     featured: 'spotlight',
     excerpt: 'After deploying agentic systems across banking, insurance, and manufacturing — here are the lessons that documentation does not teach you.',
     tldr: 'The five hardest lessons from deploying AI agents in production: always add human-in-the-loop for high-stakes decisions, implement cost guardrails from day one, design for graceful failure, log everything, and test with adversarial inputs.',
+    keyTakeaways: [
+      'Start with deterministic guardrails and narrow scope — open-ended autonomy fails catastrophically in regulated environments.',
+      'Design human-in-the-loop as a permanent feature for high-stakes decisions, not a temporary crutch.',
+      'Make observability non-negotiable: log every tool call, prompt, response, and decision from day one.',
+      'Implement hard cost guardrails before launch — agents can burn through five-figure budgets over a weekend.',
+      'Test with adversarial inputs and edge cases before users do — agents fail in surprising ways under real load.',
+    ],
+    faqs: [
+      {
+        question: 'Why do AI agents that work in demos fail in production?',
+        answer: 'Demos run in controlled environments with clean inputs and predictable goals. Production exposes agents to real user ambiguity, edge cases, concurrent load, and access to broader data than they should use. Without guardrails, observability, and cost controls, agents that look brilliant in a demo cause compliance incidents, hallucinations, and runaway bills in production.',
+      },
+      {
+        question: 'How much can a misconfigured AI agent cost?',
+        answer: 'We have personally debugged an agent that consumed $10,000 in API calls over a single weekend due to a recursive tool-use loop with no cost cap. Without per-session and per-day budget limits, an agent can easily spend more in a day than the entire pilot was budgeted for.',
+      },
+      {
+        question: 'When should you use human-in-the-loop versus full automation for AI agents?',
+        answer: 'Use human-in-the-loop for any decision with regulatory, financial, or safety consequences — credit approvals, medical recommendations, customer-facing communications, irreversible actions. Full automation is safe only for low-stakes, reversible, well-bounded tasks like internal classification, summarization, or data lookups.',
+      },
+      {
+        question: 'What logging is required for production AI agents?',
+        answer: 'At minimum log: the user prompt, every tool call with parameters and response, every intermediate LLM call with token counts, the final response, the trace ID, latency at each step, and cost per session. Without this you cannot debug failures, audit compliance issues, or attribute cost to use cases.',
+      },
+      {
+        question: 'How do you prevent AI agents from accessing data they should not use?',
+        answer: 'Use least-privilege scoping at the tool level (not just the data layer), enforce row-level security on every database the agent touches, classify tools by data sensitivity, and add a guardrail layer that filters inappropriate context before it reaches the model. Trusting the agent to "use good judgment" is the most common production failure.',
+      },
+    ],
     content: `
 <h2>Why Deploying AI Agents Is Harder Than It Looks</h2>
 

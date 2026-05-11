@@ -1,6 +1,11 @@
 // Auto-generated blog post metadata index
 // Full content is loaded on-demand from ./content/[slug].ts
 
+export interface FAQItem {
+  question: string
+  answer: string
+}
+
 export interface BlogPostMeta {
   slug: string
   title: string
@@ -15,6 +20,8 @@ export interface BlogPostMeta {
   icon: string
   featured?: 'hero' | 'spotlight' | null
   tldr?: string
+  keyTakeaways?: string[]
+  faqs?: FAQItem[]
 }
 
 export interface BlogPost extends BlogPostMeta {

@@ -2,8 +2,9 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { getBlogPostContent, getRecentPostsMeta, blogPostsMeta, type BlogPost } from '@/data/blog-posts'
 import { siteConfig, BLOB_URL } from '@/lib/site-config'
-import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd'
+import { ArticleJsonLd, BreadcrumbJsonLd, FAQJsonLd } from '@/components/JsonLd'
 import BlogPostClient from './BlogPostClient'
+import { resolveAuthor } from '@/config/authors'
 
 type Props = {
   params: Promise<{ slug: string }>
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: post.title,
     description: post.excerpt,
     keywords: post.tags,
-    authors: [{ name: post.author }],
+    authors: [{ name: resolveAuthor(post.author).name }],
     openGraph: {
       type: 'article',
       title: post.title,
@@ -63,6 +64,7 @@ export default async function BlogPostPage({ params }: Props) {
   const relatedPosts = getRecentPostsMeta(6).filter(p => p.slug !== post.slug).slice(0, 3)
 
   const articleUrl = `${siteConfig.url}/resources/blog/${slug}`
+  const author = resolveAuthor(post.author)
 
   return (
     <>
@@ -71,7 +73,7 @@ export default async function BlogPostPage({ params }: Props) {
         description={post.excerpt}
         url={articleUrl}
         datePublished={post.date}
-        authorName={post.author}
+        authorName={author.name}
         image={`${BLOB_URL}/logos/gennoor-tech-banner-linkedin-1584x396.png`}
       />
       <BreadcrumbJsonLd items={[
@@ -79,6 +81,9 @@ export default async function BlogPostPage({ params }: Props) {
         { name: 'Blog', url: 'https://gennoor.com/resources/blog' },
         { name: post.title, url: articleUrl },
       ]} />
+      {post.faqs && post.faqs.length > 0 && (
+        <FAQJsonLd faqs={post.faqs} />
+      )}
       <BlogPostClient post={post} slug={slug} relatedPosts={relatedPosts} />
     </>
   )

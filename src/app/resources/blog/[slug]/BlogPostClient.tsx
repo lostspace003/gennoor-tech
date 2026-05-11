@@ -6,6 +6,10 @@ import dynamic from 'next/dynamic'
 import { type BlogPost, type BlogPostMeta } from '@/data/blog-posts'
 import EmailOTP from '@/components/EmailOTP'
 import { CheckCircle } from 'lucide-react'
+import AuthorByline from '@/components/blog/AuthorByline'
+import KeyTakeaways from '@/components/blog/KeyTakeaways'
+import PostFAQ from '@/components/blog/PostFAQ'
+import { resolveAuthor } from '@/config/authors'
 
 const BlogComments = dynamic(() => import('@/components/BlogComments'), { ssr: false })
 
@@ -290,11 +294,11 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight mb-5" style={{ color: '#ffffff' }}>
                 {post.title}
               </h1>
-              <p className="text-sm" style={{ color: 'rgba(255,255,255,0.8)' }}>
-                By <span className="font-medium" style={{ color: '#ffffff' }}>{post.author}</span>
-                <span className="mx-2" style={{ color: 'rgba(255,255,255,0.4)' }}>·</span>
-                {new Date(post.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-              </p>
+              <AuthorByline
+                author={resolveAuthor(post.author)}
+                date={post.date}
+                readTime={post.readTime}
+              />
             </div>
             <svg className="absolute right-6 lg:right-12 top-1/2 -translate-y-1/2 w-28 h-28 lg:w-40 lg:h-40" viewBox="0 0 200 200" fill="none" style={{ opacity: 0.08 }} aria-hidden="true">
               <circle cx="100" cy="100" r="80" stroke="white" strokeWidth="2"/>
@@ -317,15 +321,8 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
             <ShareBar post={post} slug={slug} />
           </div>
 
-          {/* Key Takeaway Box - AEO optimized */}
-          {post.tldr && (
-            <div className="mx-6 sm:mx-10 mt-8 p-5 sm:p-6 rounded-xl border-l-4 border-primary-500" style={{ backgroundColor: '#f0f7ff' }}>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-sm font-bold uppercase tracking-wider text-primary-700">Key Takeaway</span>
-              </div>
-              <p className="text-gray-800 leading-relaxed font-medium">{post.tldr}</p>
-            </div>
-          )}
+          {/* Key Takeaways — AEO/featured-snippet optimized */}
+          <KeyTakeaways takeaways={post.keyTakeaways} tldr={post.tldr} />
 
           {/* Body */}
           <div className="px-6 sm:px-10 py-10 lg:py-12">
@@ -342,6 +339,9 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
             />
           </div>
 
+          {/* FAQ section — paired with FAQJsonLd in server page */}
+          <PostFAQ faqs={post.faqs} />
+
           {/* Tags */}
           <div className="px-6 sm:px-10 py-6" style={{ borderTop: '1px solid #f3f4f6' }}>
             <div className="flex flex-wrap gap-2 mb-3">
@@ -356,28 +356,58 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
             </div>
           </div>
 
-          {/* Author Bio */}
-          <div className="px-6 sm:px-10 py-8" style={{ borderTop: '1px solid #f3f4f6', backgroundColor: '#f9fafb' }}>
-            <div className="flex items-start gap-4">
-              <div className="w-14 h-14 shrink-0 rounded-full bg-gradient-to-br from-primary-600 to-accent-600 flex items-center justify-center">
-                <span className="text-lg font-black text-white">JK</span>
-              </div>
-              <div>
-                <h4 className="text-base font-bold text-gray-900">Jalal Ahmed Khan</h4>
-                <p className="text-sm font-medium text-primary-600 mb-2">Microsoft Certified Trainer (MCT) · Founder, Gennoor Tech</p>
-                <p className="text-sm text-gray-600 leading-relaxed">
-                  14+ years in enterprise AI and cloud technologies. Delivered AI transformation programs for Fortune 500 companies across 6 countries including Boeing, Aramco, HDFC Bank, and Siemens. Holds 16 active Microsoft certifications including Azure AI Engineer and Power BI Analyst.
-                </p>
-                <div className="flex items-center gap-3 mt-3">
-                  <a href="https://www.linkedin.com/in/lostspace003/" target="_blank" rel="noopener noreferrer" className="text-xs font-medium text-primary-600 hover:underline">LinkedIn</a>
-                  <span className="text-gray-300">·</span>
-                  <a href="/about" className="text-xs font-medium text-primary-600 hover:underline">Full Bio</a>
-                  <span className="text-gray-300">·</span>
-                  <a href="/about/certifications" className="text-xs font-medium text-primary-600 hover:underline">Certifications</a>
+          {/* Author Bio — long form, paired with compact AuthorByline in hero */}
+          {(() => {
+            const author = resolveAuthor(post.author)
+            return (
+              <div className="px-6 sm:px-10 py-8" style={{ borderTop: '1px solid #f3f4f6', backgroundColor: '#f9fafb' }}>
+                <div className="flex items-start gap-4">
+                  {author.photoUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={author.photoUrl}
+                      alt={author.name}
+                      width={56}
+                      height={56}
+                      className="w-14 h-14 shrink-0 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-14 h-14 shrink-0 rounded-full bg-gradient-to-br from-primary-600 to-accent-600 flex items-center justify-center">
+                      <span className="text-lg font-black text-white">{author.initials}</span>
+                    </div>
+                  )}
+                  <div>
+                    <h4 className="text-base font-bold text-gray-900">{author.name}</h4>
+                    <p className="text-sm font-medium text-primary-600 mb-2">{author.credentials} · {author.role}</p>
+                    <p className="text-sm text-gray-600 leading-relaxed">{author.bio}</p>
+                    <div className="flex items-center gap-3 mt-3 flex-wrap">
+                      {author.links.linkedin && (
+                        <a href={author.links.linkedin} target="_blank" rel="noopener noreferrer" className="text-xs font-medium text-primary-600 hover:underline">LinkedIn</a>
+                      )}
+                      {author.links.about && (
+                        <>
+                          <span className="text-gray-300">·</span>
+                          <a href={author.links.about} className="text-xs font-medium text-primary-600 hover:underline">Full Bio</a>
+                        </>
+                      )}
+                      {author.links.certifications && (
+                        <>
+                          <span className="text-gray-300">·</span>
+                          <a href={author.links.certifications} className="text-xs font-medium text-primary-600 hover:underline">Certifications</a>
+                        </>
+                      )}
+                      {author.links.microsoftLearn && (
+                        <>
+                          <span className="text-gray-300">·</span>
+                          <a href={author.links.microsoftLearn} target="_blank" rel="noopener noreferrer" className="text-xs font-medium text-primary-600 hover:underline">Microsoft Learn</a>
+                        </>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
+            )
+          })()}
 
           {/* Bottom Share */}
           <div className="px-6 sm:px-10 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"

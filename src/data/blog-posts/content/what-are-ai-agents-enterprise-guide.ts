@@ -6,6 +6,35 @@ export const post: BlogPost = {
     featured: 'hero',
     excerpt: 'AI agents are reshaping how enterprises automate complex workflows. Here is what they actually are, how they work, and where they deliver real value.',
     tldr: 'AI agents are software systems that autonomously perceive, reason, use tools, and take actions to achieve goals — unlike chatbots that only respond to queries or RPA that follows fixed scripts. They handle ambiguity and adapt to novel situations within their domain.',
+    keyTakeaways: [
+      'An AI agent perceives its environment, reasons over a goal, picks and uses tools, and takes actions — chatbots and RPA do none of these together.',
+      'The core loop is perceive → reason → act → observe, repeated until the goal is met or a stop condition fires.',
+      'Real enterprise value shows up where workflows are repetitive but require judgment — claims triage, IT support, document processing, employee onboarding.',
+      'You need clear scope, tool boundaries, and observability before deploying — autonomy without guardrails is a liability, not a feature.',
+      'Start with one narrow workflow, measure ROI, then expand — not with a "build us an AI agent platform" project.',
+    ],
+    faqs: [
+      {
+        question: 'What is the difference between an AI agent and a chatbot?',
+        answer: 'A chatbot responds to user queries with text. An AI agent perceives its environment, reasons over a goal, selects and uses external tools (APIs, databases, applications), and takes actions in the real world. A chatbot might tell you your account balance; an agent can transfer the money, file a dispute, and update your records — autonomously.',
+      },
+      {
+        question: 'How is an AI agent different from Robotic Process Automation (RPA)?',
+        answer: 'RPA follows hard-coded scripts that break the moment the underlying interface or process changes. An AI agent reasons about the goal and adapts when steps fail, inputs vary, or new situations arise. RPA automates known steps; agents handle ambiguity within a bounded domain.',
+      },
+      {
+        question: 'What are the best enterprise use cases for AI agents in 2026?',
+        answer: 'High-ROI use cases are repetitive workflows that still need judgment: insurance claims triage, IT helpdesk ticket resolution, document intelligence (invoices, contracts), employee HR queries, customer service for tier-1 issues, and intelligent data lookups across multiple systems. Avoid open-ended creative work and high-stakes irreversible decisions without human-in-the-loop.',
+      },
+      {
+        question: 'Do you need a large language model to build an AI agent?',
+        answer: 'An LLM is the most common reasoning engine for agents today, but the agent is the surrounding loop — tool integration, state management, retry logic, observability. You can build agents using GPT-4o, Claude, Llama, or smaller specialized models depending on cost, latency, and data sensitivity requirements.',
+      },
+      {
+        question: 'How do you measure ROI on an AI agent project?',
+        answer: 'Pick a single workflow with known volume and unit cost (e.g., "we process 5,000 claims/month at 12 minutes each"). After deployment, measure: percentage of cases fully automated, average handling time, cost per case, error rate, and customer satisfaction. Compare against the pre-agent baseline. Avoid vague "transformation" KPIs in the first 6 months.',
+      },
+    ],
     content: `
 <p>The term "AI agent" gets thrown around a lot — in vendor pitches, LinkedIn posts, and analyst reports. After fourteen years of deploying enterprise technology and now building agentic systems for organizations across six countries, I can tell you that most people using the term cannot actually define it. Let us cut through the noise.</p>
 
