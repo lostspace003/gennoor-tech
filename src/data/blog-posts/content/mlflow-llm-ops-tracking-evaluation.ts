@@ -178,7 +178,7 @@ mlflow.log_dict(interaction_data, "interaction_metadata.json")
 
 <h2>MLflow Evaluate Deep Dive</h2>
 
-<p>MLflow Evaluate provides a framework for systematically assessing LLM quality, combining automated metrics with human judgment patterns.</p>
+<p><a href="https://mlflow.org/docs/latest/genai/eval-monitor/" target="_blank" rel="noopener">MLflow Evaluate</a> provides a framework for systematically assessing LLM quality, combining automated metrics with human judgment patterns — and can use <a href="https://mlflow.org/docs/latest/genai/eval-monitor/scorers/third-party/ragas/" target="_blank" rel="noopener">RAGAS, DeepEval, and Phoenix scorers</a> out of the box.</p>
 
 <h3>Built-in Metrics</h3>
 
@@ -343,7 +343,7 @@ routes:<br>
 
 <h2>Model Registry Workflows</h2>
 
-<p>The MLflow Model Registry provides version control and lifecycle management for LLM applications.</p>
+<p>The <a href="https://mlflow.org/docs/latest/genai/version-tracking/" target="_blank" rel="noopener">MLflow Model Registry</a> provides version control and lifecycle management for LLM applications.</p>
 
 <h3>Registering Models</h3>
 
@@ -461,7 +461,7 @@ mlflow.set_tracking_uri(mlflow_tracking_uri)
 <li>Distributed training on Spark clusters</li>
 <li>Feature Store integration</li>
 <li>Model serving with auto-scaling</li>
-<li>Unity Catalog for data governance</li>
+<li><a href="https://docs.databricks.com/aws/en/data-governance/unity-catalog/ai-governance" target="_blank" rel="noopener">Unity Catalog</a> for data governance</li>
 </ul>
 
 <p>MLflow is pre-configured in Databricks notebooks—just start logging. For more advanced patterns, explore our <a href="/resources/blog">blog posts on Databricks architecture</a>.</p>

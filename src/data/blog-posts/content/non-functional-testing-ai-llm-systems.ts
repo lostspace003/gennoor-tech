@@ -108,7 +108,7 @@ export const post: BlogPost = {
 
 <p><strong>Apache JMeter</strong> supports 20+ protocols natively and can simulate complex multi-step workflows. While more resource-intensive than k6 (approximately 760 MB per test versus 256 MB), it is well-suited for organizations with legacy testing infrastructure. JMeter is natively supported in Azure App Testing as a managed cloud-based load testing service.</p>
 
-<p><strong>LLMServingPerfEvaluator (by FriendliAI)</strong> generates realistic workloads by simulating requests arriving according to a Poisson distribution, allowing you to stress test at varying request rates. It supports comparing different serving engines (such as vLLM versus TGI) on the same hardware.</p>
+<p><strong>LLMServingPerfEvaluator (by FriendliAI)</strong> generates realistic workloads by simulating requests arriving according to a Poisson distribution, allowing you to stress test at varying request rates. It supports comparing different serving engines (such as <a href="https://arxiv.org/abs/2511.17593" target="_blank" rel="noopener">vLLM versus TGI</a> — see the published benchmark study) on the same hardware.</p>
 
 <p><strong>MLPerf Inference (by MLCommons)</strong> is the industry-standard benchmark suite for AI inference performance. Version 5.1 introduced benchmarks for DeepSeek-R1, Llama 3.1 8B, and Whisper Large V3, with expanded interactive scenarios testing performance under lower latency constraints for agentic applications.</p>
 
@@ -145,7 +145,7 @@ export const post: BlogPost = {
 
 <p><strong>Robustness Gym</strong> is a library specifically designed for stress testing NLP models across various perturbation scenarios. It systematically applies transformations to inputs (synonym substitution, character-level noise, semantic-preserving rephrasing) and measures output stability.</p>
 
-<p><strong>Promptfoo</strong> is an open-source CLI tool for evaluating and testing LLM outputs. It supports running the same prompt set across multiple models or prompt variations, with automated assertions for format compliance, factual accuracy, and semantic similarity.</p>
+<p><a href="https://github.com/promptfoo/promptfoo" target="_blank" rel="noopener"><strong>Promptfoo</strong></a> is an open-source CLI tool for evaluating and testing LLM outputs — now part of OpenAI and used by both OpenAI and Anthropic in their own evaluation pipelines. It supports running the same prompt set across multiple models or prompt variations, with automated assertions for format compliance, factual accuracy, and semantic similarity.</p>
 
 <h3>Cloud-Native Consistency Capabilities</h3>
 
