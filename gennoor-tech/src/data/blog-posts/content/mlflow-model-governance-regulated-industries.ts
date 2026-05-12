@@ -20,7 +20,7 @@ export const post: BlogPost = {
 
 <h3>EU AI Act: High-Risk AI Systems</h3>
 
-<p>The EU AI Act classifies certain AI systems as "high-risk," including those used in credit scoring, insurance underwriting, medical diagnosis, and employment decisions. High-risk systems must demonstrate:</p>
+<p>The <a href="https://artificialintelligenceact.eu/high-level-summary/" target="_blank" rel="noopener">EU AI Act</a> classifies certain AI systems as "high-risk," including those used in credit scoring, insurance underwriting, medical diagnosis, and employment decisions — see <a href="https://artificialintelligenceact.eu/article/6/" target="_blank" rel="noopener">Article 6</a> for the classification rules. High-risk systems must demonstrate:</p>
 
 <ul>
 <li><strong>Data governance</strong>: Complete lineage from raw data through training to deployed model</li>
@@ -66,7 +66,7 @@ export const post: BlogPost = {
 
 <h2>MLflow Model Registry: Your Governance Foundation</h2>
 
-<p>The <strong>MLflow Model Registry</strong> is far more than a storage location for trained models. When used properly, it becomes the single source of truth for your model governance program. Let's dive deep into how to configure it for regulated environments.</p>
+<p>The <a href="https://mlflow.org/docs/latest/genai/version-tracking/" target="_blank" rel="noopener"><strong>MLflow Model Registry</strong></a> is far more than a storage location for trained models. When used properly, it becomes the single source of truth for your model governance program — and when paired with <a href="https://docs.databricks.com/aws/en/data-governance/unity-catalog/ai-governance" target="_blank" rel="noopener">Databricks Unity Catalog AI governance</a>, you get end-to-end lineage from data to predictions. Let's dive deep into how to configure it for regulated environments.</p>
 
 <h3>Metadata Schemas for Compliance</h3>
 

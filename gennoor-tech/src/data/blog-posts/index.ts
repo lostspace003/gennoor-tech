@@ -6,6 +6,12 @@ export interface FAQItem {
   answer: string
 }
 
+export interface Reference {
+  title: string
+  url: string
+  source: string
+}
+
 export interface BlogPostMeta {
   slug: string
   title: string
@@ -22,6 +28,7 @@ export interface BlogPostMeta {
   tldr?: string
   keyTakeaways?: string[]
   faqs?: FAQItem[]
+  references?: Reference[]
 }
 
 export interface BlogPost extends BlogPostMeta {

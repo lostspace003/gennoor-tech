@@ -171,7 +171,7 @@ retrieval_metric = make_metric(<br>
 
 <h3>Faithfulness</h3>
 
-<p>Faithfulness measures whether the generated answer is supported by the retrieved context. This is critical for preventing hallucinations—the LLM should only make claims that can be verified in the source documents.</p>
+<p><a href="https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/faithfulness/" target="_blank" rel="noopener">Faithfulness</a> measures whether the generated answer is supported by the retrieved context. This is critical for preventing hallucinations—the LLM should only make claims that can be verified in the source documents.</p>
 
 <p>Implement faithfulness evaluation using an LLM-as-judge approach:</p>
 
@@ -325,7 +325,7 @@ Questions should vary in complexity and specificity."""<br>
 
 <p>For guidance on building test sets tailored to your domain, our <a href="/services/training">MLOps training programs</a> include hands-on workshops.</p>
 
-<h2>MLflow Evaluate Configuration and Code Patterns</h2>
+<h2><a href="https://mlflow.org/docs/latest/llms/llm-evaluate/notebooks/rag-evaluation" target="_blank" rel="noopener">MLflow Evaluate</a> Configuration and Code Patterns</h2>
 
 <h3>Complete Evaluation Pipeline</h3>
 

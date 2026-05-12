@@ -1,16 +1,53 @@
-import type { FAQItem } from './index'
+import type { FAQItem, Reference } from './index'
 
-// SEO augmentation map: keyTakeaways + faqs that get merged into posts
-// at runtime by getBlogPostContent(). Inline data on a post takes precedence.
-// Goal: every post gets bulleted takeaways (featured-snippet bait) and FAQ
-// schema (FAQPage rich-result eligibility) without touching 54 content files.
+// SEO augmentation map: keyTakeaways + faqs + references that get merged into
+// posts at runtime by getBlogPostContent(). Inline data on a post takes precedence.
+// Goal: every post gets bulleted takeaways (featured-snippet bait), FAQ schema
+// (FAQPage rich-result eligibility), and authoritative outbound references
+// (E-E-A-T) without touching 54 content files.
 
 interface PostAugmentation {
   keyTakeaways?: string[]
   faqs?: FAQItem[]
+  references?: Reference[]
 }
 
 export const seoAugmentations: Record<string, PostAugmentation> = {
+  'what-are-ai-agents-enterprise-guide': {
+    references: [
+      { title: 'Introducing the Model Context Protocol', url: 'https://www.anthropic.com/news/model-context-protocol', source: 'Anthropic' },
+      { title: 'Microsoft Agent Framework — Overview', url: 'https://learn.microsoft.com/en-us/agent-framework/', source: 'Microsoft Learn' },
+      { title: 'LangGraph — Build resilient agents', url: 'https://github.com/langchain-ai/langgraph', source: 'GitHub — LangChain AI' },
+      { title: 'AutoGen — Microsoft Research project page', url: 'https://www.microsoft.com/en-us/research/project/autogen/', source: 'Microsoft Research' },
+      { title: 'CrewAI Documentation — agents, crews, flows', url: 'https://docs.crewai.com/', source: 'CrewAI' },
+      { title: 'NIST AI Risk Management Framework (AI RMF 1.0)', url: 'https://www.nist.gov/itl/ai-risk-management-framework', source: 'NIST' },
+      { title: 'EU AI Act — High-level summary', url: 'https://artificialintelligenceact.eu/high-level-summary/', source: 'EU Artificial Intelligence Act' },
+    ],
+  },
+
+  'agentic-ai-production-lessons': {
+    references: [
+      { title: 'Microsoft Agent Framework 1.0 — Production-ready release', url: 'https://devblogs.microsoft.com/agent-framework/microsoft-agent-framework-version-1-0/', source: 'Microsoft DevBlogs' },
+      { title: 'LangGraph — Build resilient agents', url: 'https://github.com/langchain-ai/langgraph', source: 'GitHub — LangChain AI' },
+      { title: 'Code execution with MCP: building more efficient AI agents', url: 'https://www.anthropic.com/engineering/code-execution-with-mcp', source: 'Anthropic Engineering blog' },
+      { title: 'MLflow GenAI: Evaluation & Monitoring for LLM applications', url: 'https://mlflow.org/docs/latest/genai/eval-monitor/', source: 'MLflow official documentation' },
+      { title: 'NIST AI RMF: Generative AI Profile', url: 'https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence', source: 'NIST' },
+      { title: 'promptfoo: red-teaming and evaluation of LLM applications', url: 'https://github.com/promptfoo/promptfoo', source: 'GitHub (used by OpenAI and Anthropic)' },
+    ],
+  },
+
+  'copilot-studio-agent-flows-complete-guide': {
+    references: [
+      { title: 'Agent flows and workflows overview', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/flows-overview', source: 'Microsoft Learn' },
+      { title: 'Use agent flows with your agent', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/advanced-flow', source: 'Microsoft Learn' },
+      { title: 'Edit and manage your agent flow in the designer', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/flow-designer', source: 'Microsoft Learn' },
+      { title: 'Build an agent flow with natural language', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/flow-nl', source: 'Microsoft Learn' },
+      { title: 'Agent flows FAQ', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/flows-faqs', source: 'Microsoft Learn' },
+      { title: 'Quickstart: Create and deploy an agent', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-get-started', source: 'Microsoft Learn' },
+      { title: 'Microsoft Copilot Studio — Official documentation', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/', source: 'Microsoft Learn' },
+    ],
+  },
+
   'mcp-protocol-universal-ai-integration': {
     keyTakeaways: [
       'Model Context Protocol (MCP) is an open standard that lets any AI model connect to any tool through one protocol — the "USB-C of AI".',
@@ -23,6 +60,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'How is MCP different from function calling or plugins?', answer: 'Function calling is model-specific (OpenAI, Anthropic, and Google all have different formats). MCP standardizes this across vendors, so one server works with multiple models. It also includes resources, prompts, and sampling primitives beyond just tools.' },
       { question: 'Should enterprises adopt MCP today?', answer: 'Yes, for new integrations. Building MCP servers for your core systems future-proofs them against model changes and lets multiple AI applications reuse the same integration. Existing per-model integrations can stay until they need maintenance.' },
       { question: 'What is needed to build an MCP server?', answer: 'A language runtime (TypeScript, Python, or any language with an MCP SDK), the MCP server library, your existing system credentials, and a clear definition of which tools and resources to expose. Most servers are 200–500 lines of code.' },
+    ],
+    references: [
+      { title: 'Introducing the Model Context Protocol', url: 'https://www.anthropic.com/news/model-context-protocol', source: 'Anthropic' },
+      { title: 'Model Context Protocol — Official Specification', url: 'https://modelcontextprotocol.io/specification/2025-11-25', source: 'modelcontextprotocol.io' },
+      { title: 'Model Context Protocol — GitHub organization', url: 'https://github.com/modelcontextprotocol', source: 'GitHub' },
+      { title: 'MCP specification and documentation repository', url: 'https://github.com/modelcontextprotocol/modelcontextprotocol', source: 'GitHub' },
+      { title: 'Connect to Dataverse with Model Context Protocol', url: 'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/data-platform-mcp', source: 'Microsoft Learn' },
+      { title: 'Code execution with MCP: building more efficient AI agents', url: 'https://www.anthropic.com/engineering/code-execution-with-mcp', source: 'Anthropic Engineering blog' },
     ],
   },
 
@@ -39,6 +84,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Can a Dataverse MCP server modify records or only read them?', answer: 'Both. You can expose read-only tools (queries, lookups) and write tools (create, update, delete) separately, then control which agents have access to which tools. Most production deployments start read-only and add write tools after testing.' },
       { question: 'Does a Dataverse MCP server work with Copilot Studio?', answer: 'Yes, but Copilot Studio also has native Dataverse connectors that may be simpler for Copilot-only workflows. Use MCP when you need the same Dataverse access from multiple AI applications including non-Microsoft models.' },
     ],
+    references: [
+      { title: 'Connect to Dataverse with Model Context Protocol (MCP)', url: 'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/data-platform-mcp', source: 'Microsoft Learn' },
+      { title: 'Dataverse MCP Server: A Game Changer for AI-Driven Workflows', url: 'https://www.microsoft.com/en-us/power-platform/blog/2025/07/07/dataverse-mcp/', source: 'Microsoft Power Platform Blog' },
+      { title: 'Configure the Dataverse MCP server', url: 'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/data-platform-mcp-disable', source: 'Microsoft Learn' },
+      { title: 'Dataverse MCP — FAQ', url: 'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/data-platform-mcp-faq', source: 'Microsoft Learn' },
+      { title: 'Work with Power Apps MCP server', url: 'https://learn.microsoft.com/en-us/power-apps/maker/model-driven-apps/power-apps-mcp-server', source: 'Microsoft Learn' },
+      { title: 'Introducing the Model Context Protocol', url: 'https://www.anthropic.com/news/model-context-protocol', source: 'Anthropic' },
+    ],
   },
 
   'power-apps-mcp-server-citizen-developers': {
@@ -53,6 +106,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Do citizen developers need to know MCP to build AI-enabled Power Apps?', answer: 'No. Citizen developers consume MCP-powered AI agents through standard Power Apps controls. Pro developers build and maintain the MCP servers once, and citizen developers use them across many apps.' },
       { question: 'What kind of AI agents work with Power Apps via MCP?', answer: 'Any AI agent that speaks MCP — Claude Desktop, custom agents built on Anthropic or OpenAI SDKs, Microsoft Copilot Studio agents (with appropriate connectors), or open-source agents running on your infrastructure.' },
       { question: 'Is MCP a replacement for Power Automate flows?', answer: 'No, they complement each other. Power Automate handles deterministic workflow logic; MCP-powered AI agents handle reasoning, ambiguity, and multi-step tasks that require judgment. Many production deployments use both.' },
+    ],
+    references: [
+      { title: 'Work with Power Apps MCP server', url: 'https://learn.microsoft.com/en-us/power-apps/maker/model-driven-apps/power-apps-mcp-server', source: 'Microsoft Learn' },
+      { title: 'Connect to Dataverse with Model Context Protocol (MCP)', url: 'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/data-platform-mcp', source: 'Microsoft Learn' },
+      { title: 'Dataverse MCP Server: A Game Changer for AI-Driven Workflows', url: 'https://www.microsoft.com/en-us/power-platform/blog/2025/07/07/dataverse-mcp/', source: 'Microsoft Power Platform Blog' },
+      { title: 'Model Context Protocol — Specification', url: 'https://modelcontextprotocol.io/specification/2025-11-25', source: 'modelcontextprotocol.io' },
+      { title: 'Microsoft Copilot Studio — Official documentation', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/', source: 'Microsoft Learn' },
+      { title: 'Introducing the Model Context Protocol', url: 'https://www.anthropic.com/news/model-context-protocol', source: 'Anthropic' },
     ],
   },
 
@@ -69,6 +130,15 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Can MLflow track tokens and cost per LLM call?', answer: 'Yes. MLflow Tracing captures token counts, latency, and cost per call. You can aggregate by prompt version, model, or experiment to attribute spend across teams and use cases.' },
       { question: 'Is MLflow free for enterprise use?', answer: 'The open-source version is free. Managed offerings from Databricks (the company behind MLflow) include enterprise features like SSO, RBAC, and audit logging, billed per workspace or user.' },
     ],
+    references: [
+      { title: 'MLflow GenAI: LLM and Agent Evaluation', url: 'https://mlflow.org/docs/latest/genai/eval-monitor/', source: 'MLflow official documentation' },
+      { title: 'MLflow Prompt Registry', url: 'https://mlflow.org/docs/latest/genai/prompt-registry/', source: 'MLflow official documentation' },
+      { title: 'MLflow Version Tracking for Agents and LLMs', url: 'https://mlflow.org/docs/latest/genai/version-tracking/', source: 'MLflow official documentation' },
+      { title: 'Databricks Unity Catalog: AI Governance', url: 'https://docs.databricks.com/aws/en/data-governance/unity-catalog/ai-governance', source: 'Databricks documentation' },
+      { title: 'Introducing DeepEval, RAGAS, and Phoenix Judges in MLflow', url: 'https://mlflow.org/blog/third-party-scorers', source: 'MLflow blog' },
+      { title: 'NIST AI Risk Management Framework (AI RMF 1.0)', url: 'https://www.nist.gov/itl/ai-risk-management-framework', source: 'National Institute of Standards and Technology' },
+      { title: 'promptfoo: open-source LLM evaluation and red-teaming', url: 'https://github.com/promptfoo/promptfoo', source: 'GitHub (used by OpenAI and Anthropic)' },
+    ],
   },
 
   'mlflow-rag-evaluation-pipeline': {
@@ -83,6 +153,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'How big should a RAG golden dataset be?', answer: 'Start with 50 question/answer pairs covering your top use cases. Grow to 200–500 as you discover edge cases. Beyond 500 you hit diminishing returns; focus instead on diversity (different question types, document types, user personas).' },
       { question: 'Can RAG evaluation be automated in CI/CD?', answer: 'Yes. Run your golden dataset through the RAG pipeline on every prompt or index change, log results to MLflow, and fail the build if metrics regress beyond a threshold. This catches quality issues before they reach users.' },
       { question: 'Should you use LLM-as-judge for RAG evaluation?', answer: 'LLM-as-judge works well for faithfulness and relevance scoring at scale. Pair it with human-labeled samples (10–20% of evaluations) to validate that the judge model agrees with human judgment. Pure LLM-as-judge without human spot-checks can drift.' },
+    ],
+    references: [
+      { title: 'LLM RAG Evaluation with MLflow — example notebook', url: 'https://mlflow.org/docs/latest/llms/llm-evaluate/notebooks/rag-evaluation', source: 'MLflow official documentation' },
+      { title: 'RAGAS Faithfulness metric', url: 'https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/faithfulness/', source: 'RAGAS official documentation' },
+      { title: 'RAGAS metrics overview', url: 'https://docs.ragas.io/en/stable/concepts/metrics/overview/', source: 'RAGAS official documentation' },
+      { title: 'MLflow third-party scorers (RAGAS, DeepEval, Phoenix)', url: 'https://mlflow.org/docs/latest/genai/eval-monitor/scorers/third-party/ragas/', source: 'MLflow official documentation' },
+      { title: 'Project GraphRAG — research on graph-augmented retrieval', url: 'https://www.microsoft.com/en-us/research/project/graphrag/', source: 'Microsoft Research' },
+      { title: 'NIST AI RMF: Generative AI Profile (NIST AI 600-1)', url: 'https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence', source: 'National Institute of Standards and Technology' },
     ],
   },
 
@@ -99,6 +177,17 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Can MLflow enforce approval workflows before models reach production?', answer: 'Yes. Use the MLflow Model Registry with stage transitions and webhooks to require approvals from designated approvers before a model moves to Production. Approvals are logged with timestamps and approver identity.' },
       { question: 'Does MLflow track which data was used to train each model?', answer: 'MLflow logs dataset references and hashes as part of each run. Combined with a data catalog (like Unity Catalog), you get end-to-end lineage from raw data → training dataset → model version → predictions.' },
     ],
+    references: [
+      { title: 'MLflow Documentation', url: 'https://mlflow.org/docs/latest/', source: 'MLflow official documentation' },
+      { title: 'Databricks Unity Catalog: AI Governance', url: 'https://docs.databricks.com/aws/en/data-governance/unity-catalog/ai-governance', source: 'Databricks documentation' },
+      { title: 'Databricks: Manage model lifecycle in Unity Catalog', url: 'https://docs.databricks.com/aws/en/machine-learning/manage-model-lifecycle/', source: 'Databricks documentation' },
+      { title: 'NIST AI Risk Management Framework (AI RMF 1.0)', url: 'https://www.nist.gov/itl/ai-risk-management-framework', source: 'National Institute of Standards and Technology' },
+      { title: 'NIST AI 100-1: AI RMF 1.0 (PDF)', url: 'https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf', source: 'NIST publications' },
+      { title: 'EU AI Act — High-level summary', url: 'https://artificialintelligenceact.eu/high-level-summary/', source: 'EU Artificial Intelligence Act' },
+      { title: 'EU AI Act Article 6: Classification rules for high-risk AI systems', url: 'https://artificialintelligenceact.eu/article/6/', source: 'EU Artificial Intelligence Act' },
+      { title: 'EU AI Act Article 16: Obligations of providers of high-risk AI systems', url: 'https://artificialintelligenceact.eu/article/16/', source: 'EU Artificial Intelligence Act' },
+      { title: 'Microsoft Responsible AI Standard v2 (PDF)', url: 'https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Microsoft-Responsible-AI-Standard-General-Requirements.pdf', source: 'Microsoft' },
+    ],
   },
 
   'microsoft-agent-framework-vs-copilot-studio': {
@@ -113,6 +202,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Can the two tools work together?', answer: 'Yes. A Copilot Studio agent can call an Agent Framework agent via a custom connector or HTTP action. Some enterprises use Copilot Studio as the user-facing surface and delegate complex multi-step reasoning to an Agent Framework backend.' },
       { question: 'Which one supports OpenAI and Anthropic models?', answer: 'Agent Framework supports any model with a compatible SDK including OpenAI, Anthropic, open-source models, and Azure OpenAI. Copilot Studio is primarily designed for Azure OpenAI and Microsoft AI services, with less flexibility on model choice.' },
       { question: 'Is Microsoft Agent Framework production-ready?', answer: 'Yes, it is generally available and used in production at Microsoft and customer organizations. It includes enterprise features for tracing, evaluation, and observability through Azure integration.' },
+    ],
+    references: [
+      { title: 'Microsoft Agent Framework — Official Documentation', url: 'https://learn.microsoft.com/en-us/agent-framework/', source: 'Microsoft Learn' },
+      { title: 'Microsoft Agent Framework Version 1.0 — Release announcement', url: 'https://devblogs.microsoft.com/agent-framework/microsoft-agent-framework-version-1-0/', source: 'Microsoft DevBlogs' },
+      { title: 'microsoft/agent-framework — GitHub repository', url: 'https://github.com/microsoft/agent-framework', source: 'GitHub' },
+      { title: 'Microsoft Copilot Studio — Official documentation', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/', source: 'Microsoft Learn' },
+      { title: 'Agent flows and workflows overview', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/flows-overview', source: 'Microsoft Learn' },
+      { title: 'Semantic Kernel — Official documentation (the predecessor)', url: 'https://learn.microsoft.com/en-us/semantic-kernel/', source: 'Microsoft Learn' },
     ],
   },
 
@@ -129,6 +226,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Does structured output work with other models?', answer: 'Anthropic Claude, Google Gemini, and several open-source frameworks (vLLM, Outlines) offer similar capabilities under different names. For production enterprise pipelines, prefer providers with strong schema guarantees over those that just "encourage" structured output.' },
       { question: 'Is structured output slower or more expensive?', answer: 'Slightly slower on first token because the engine compiles your schema. Token cost is the same. The savings come from eliminating retry loops, parser code, and downstream errors — net win for any pipeline that touches structured data.' },
     ],
+    references: [
+      { title: 'Structured model outputs — Official guide', url: 'https://developers.openai.com/api/docs/guides/structured-outputs', source: 'OpenAI API documentation' },
+      { title: 'Introducing Structured Outputs in the API', url: 'https://openai.com/index/introducing-structured-outputs-in-the-api/', source: 'OpenAI' },
+      { title: 'Introduction to Structured Outputs — Cookbook', url: 'https://developers.openai.com/cookbook/examples/structured_outputs_intro', source: 'OpenAI Cookbook' },
+      { title: 'Structured outputs with Azure OpenAI in Microsoft Foundry', url: 'https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/structured-outputs', source: 'Microsoft Learn' },
+      { title: 'Structured Outputs in vLLM', url: 'https://docs.vllm.ai/en/latest/features/structured_outputs/', source: 'vLLM official documentation' },
+    ],
   },
 
   'open-source-llms-enterprise-guide': {
@@ -143,6 +247,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'What does it cost to run a Llama 3 70B model in production?', answer: 'On a 2× H100 GPU node (~$5/hour cloud rate), you get ~30–60 tokens/sec throughput. At scale, cost per million tokens is roughly $1–3 versus $10–30 for GPT-4o — typically 60–90% cheaper depending on utilization.' },
       { question: 'Should we self-host or use a managed open-source LLM provider?', answer: 'Self-host for data sovereignty, custom fine-tuning, or sustained high volume. Use managed providers (Together AI, Anyscale, Fireworks, Azure OpenAI for open models) when you need elasticity or lack ML platform engineers.' },
       { question: 'What are the licensing risks with open-source LLMs?', answer: 'Most permit commercial use, but check carefully — Llama 3 restricts use for training competing models; some have additional acceptable-use clauses. Always have legal review the license before production deployment.' },
+    ],
+    references: [
+      { title: 'Open LLM Leaderboard — official Hugging Face evaluation', url: 'https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard', source: 'Hugging Face' },
+      { title: 'Open LLM Leaderboard — Documentation & methodology', url: 'https://huggingface.co/docs/leaderboards/en/open_llm_leaderboard/about', source: 'Hugging Face' },
+      { title: 'Phi-4 Technical Report', url: 'https://arxiv.org/abs/2412.08905', source: 'arXiv (Microsoft Research)' },
+      { title: 'Phi-3 Technical Report', url: 'https://arxiv.org/pdf/2404.14219', source: 'arXiv (Microsoft Research)' },
+      { title: 'Ollama — Run open-source LLMs locally', url: 'https://github.com/ollama/ollama', source: 'GitHub' },
+      { title: 'Foundry Models from partners and community (Llama, Mistral, etc.)', url: 'https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-from-partners', source: 'Microsoft Learn' },
     ],
   },
 
@@ -159,6 +271,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Is Ollama production-ready for enterprise serving?', answer: 'Ollama is great for development, prototyping, and small internal teams. For high-throughput production serving (hundreds of QPS), prefer vLLM, TGI, or Triton, which support batching and scale better. Ollama excels at simplicity, not throughput.' },
       { question: 'How do enterprises use Ollama for sensitive data?', answer: 'Run Ollama on an on-premise server or VPC instance, expose it only inside the corporate network, and route sensitive workflows (legal contracts, employee data, medical records) through it instead of public LLM APIs — keeping data inside your security perimeter.' },
     ],
+    references: [
+      { title: 'Ollama — Official website', url: 'https://ollama.com/', source: 'Ollama' },
+      { title: 'ollama/ollama — GitHub repository', url: 'https://github.com/ollama/ollama', source: 'GitHub' },
+      { title: 'Ollama model library', url: 'https://ollama.com/library', source: 'Ollama' },
+      { title: 'ollama-python — Official Python client', url: 'https://github.com/ollama/ollama-python', source: 'GitHub' },
+      { title: 'Ollama documentation (REST API, model management)', url: 'https://github.com/ollama/ollama/tree/main/docs', source: 'GitHub' },
+      { title: 'Open LLM Leaderboard — pick which model to pull', url: 'https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard', source: 'Hugging Face' },
+    ],
   },
 
   'small-language-models-big-impact': {
@@ -173,6 +293,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'When should I use a small model instead of GPT-4o?', answer: 'For narrow, well-defined tasks (classification, intent detection, structured extraction, simple summarization) where you can fine-tune or prompt-engineer the small model to match GPT-4o accuracy. The cost and latency savings are massive at scale.' },
       { question: 'Can small models run on phones?', answer: 'Yes. Apple\'s on-device AI uses 3B-class models. Google\'s Gemini Nano runs on Pixel phones. Phi-3 Mini runs on iPhone 15 and modern Android devices. On-device inference is becoming standard for personal assistants and privacy-sensitive features.' },
       { question: 'How do small models compare in cost to large models?', answer: 'A Phi-3 small model can serve a single GPU at 500+ tokens/sec; a 70B model needs multiple GPUs and serves much less. Per million tokens, small models are typically 10–100× cheaper than frontier APIs — a game-changer for high-volume use cases.' },
+    ],
+    references: [
+      { title: 'Phi Open Models — Microsoft\'s small language models', url: 'https://azure.microsoft.com/en-us/products/phi', source: 'Microsoft Azure' },
+      { title: 'Phi-4 Technical Report', url: 'https://arxiv.org/abs/2412.08905', source: 'arXiv (Microsoft Research)' },
+      { title: 'Phi-3 Technical Report — A Highly Capable Language Model Locally on Your Phone', url: 'https://arxiv.org/pdf/2404.14219', source: 'arXiv (Microsoft Research)' },
+      { title: 'Phi-4 model card', url: 'https://huggingface.co/microsoft/phi-4', source: 'Hugging Face' },
+      { title: 'Microsoft Phi Cookbook — Getting started with Phi SLMs', url: 'https://github.com/microsoft/PhiCookBook', source: 'GitHub — Microsoft' },
+      { title: 'Ollama — Run small models locally on your laptop', url: 'https://github.com/ollama/ollama', source: 'GitHub' },
     ],
   },
 
@@ -189,6 +317,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'How do I evaluate license compatibility on Hugging Face?', answer: 'Each model page shows its license (Apache 2.0, MIT, Llama Community, custom, etc.). Apache and MIT are unrestricted commercial use. Llama Community, Gemma, and other "open weights" licenses have restrictions — read carefully or consult legal.' },
       { question: 'What is the difference between a base model and an instruct model on Hugging Face?', answer: 'Base models are pre-trained on raw text and predict next tokens. Instruct (or chat) models are fine-tuned to follow instructions and converse. For most application use cases, use instruct models. Use base models only for further fine-tuning or specialized completion tasks.' },
     ],
+    references: [
+      { title: 'Open LLM Leaderboard — Hugging Face official rankings', url: 'https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard', source: 'Hugging Face' },
+      { title: 'Hugging Face Leaderboards & Evaluations — Documentation', url: 'https://huggingface.co/docs/leaderboards/index', source: 'Hugging Face' },
+      { title: 'Open LLM Leaderboard — Submission guide', url: 'https://huggingface.co/docs/leaderboards/en/open_llm_leaderboard/submitting', source: 'Hugging Face' },
+      { title: 'About the Open LLM Leaderboard — methodology', url: 'https://huggingface.co/docs/leaderboards/en/open_llm_leaderboard/about', source: 'Hugging Face' },
+      { title: 'Open LLM Leaderboard organization page', url: 'https://huggingface.co/open-llm-leaderboard', source: 'Hugging Face' },
+      { title: 'Open LLM Leaderboard 2 collection', url: 'https://huggingface.co/collections/open-llm-leaderboard/open-llm-leaderboard-2', source: 'Hugging Face' },
+    ],
   },
 
   'rag-beyond-basics-graphrag-hybrid-search': {
@@ -203,6 +339,15 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Why is hybrid search better than vector search alone?', answer: 'Vector search excels at semantic similarity but misses exact terms (model numbers, error codes, proper nouns). Keyword search (BM25) catches these. Hybrid search combines both with reciprocal rank fusion, typically improving recall by 20–30% on technical or domain-specific content.' },
       { question: 'Do I need a re-ranker on top of my RAG retrieval?', answer: 'For production-quality results, yes. A cross-encoder re-ranker (e.g., Cohere Rerank, BGE Reranker) reorders the top 20–50 retrieved chunks by precise relevance to the query. This often boosts answer quality more than any other single change.' },
       { question: 'What is agentic retrieval?', answer: 'Agentic retrieval uses an LLM to decompose complex queries into sub-questions, retrieve for each, then synthesize. For multi-hop or comparison questions, this beats single-shot retrieval. Tradeoff: higher latency and cost.' },
+    ],
+    references: [
+      { title: 'Project GraphRAG — Microsoft Research', url: 'https://www.microsoft.com/en-us/research/project/graphrag/', source: 'Microsoft Research' },
+      { title: 'microsoft/graphrag — GitHub repository', url: 'https://github.com/microsoft/graphrag', source: 'GitHub — Microsoft' },
+      { title: 'GraphRAG documentation', url: 'https://microsoft.github.io/graphrag/', source: 'Microsoft (GraphRAG)' },
+      { title: 'From Local to Global: A Graph RAG Approach to Query-Focused Summarization', url: 'https://www.microsoft.com/en-us/research/publication/from-local-to-global-a-graph-rag-approach-to-query-focused-summarization/', source: 'Microsoft Research publication' },
+      { title: 'Retrieval-Augmented Generation with Graphs (GraphRAG)', url: 'https://arxiv.org/abs/2501.00309', source: 'arXiv (peer-reviewed preprint)' },
+      { title: 'MLflow RAG Evaluation — example notebook', url: 'https://mlflow.org/docs/latest/llms/llm-evaluate/notebooks/rag-evaluation', source: 'MLflow official documentation' },
+      { title: 'RAGAS metrics overview for evaluating advanced RAG', url: 'https://docs.ragas.io/en/stable/concepts/metrics/overview/', source: 'RAGAS official documentation' },
     ],
   },
 
@@ -219,6 +364,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Can I run open-source models like Llama on Azure?', answer: 'Yes. Azure AI Foundry offers serverless deployment for many open-source models (Llama 3, Mistral, Phi, DeepSeek). You can also self-host on Azure ML compute or AKS for full control over scaling and fine-tuning.' },
       { question: 'How is pricing different across Azure AI Foundry models?', answer: 'OpenAI models are priced per token (input + output). Open-source serverless deployments are typically priced per token but lower than OpenAI rates. Self-hosted deployments pay only compute (GPU hours). Always model your QPS and token volume before choosing.' },
     ],
+    references: [
+      { title: 'Microsoft Foundry — Official Documentation', url: 'https://learn.microsoft.com/en-us/azure/foundry/', source: 'Microsoft Learn' },
+      { title: 'Microsoft Foundry Models — Overview', url: 'https://learn.microsoft.com/en-us/azure/foundry/concepts/foundry-models-overview', source: 'Microsoft Learn' },
+      { title: 'Foundry Models sold directly by Azure', url: 'https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure', source: 'Microsoft Learn' },
+      { title: 'Foundry Models from partners and community', url: 'https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-from-partners', source: 'Microsoft Learn' },
+      { title: 'AI Model Catalog — Browse 1,900+ models', url: 'https://ai.azure.com/catalog', source: 'Microsoft Foundry portal' },
+      { title: 'Responsible AI for Microsoft Foundry', url: 'https://learn.microsoft.com/en-us/azure/foundry/responsible-use-of-ai-overview', source: 'Microsoft Learn' },
+    ],
   },
 
   'multi-agent-systems-langgraph-crewai': {
@@ -233,6 +386,16 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Which framework should I choose: LangGraph, CrewAI, or AutoGen?', answer: 'LangGraph for production-grade workflows with complex state, retries, and human-in-the-loop. CrewAI for clean role-based teams when the workflow maps to human roles. AutoGen for research, conversational agents, and quick prototypes.' },
       { question: 'Is multi-agent always more accurate than single-agent?', answer: 'No. Multi-agent systems add latency, cost, and failure modes. The accuracy improvement comes from specialization and self-critique — but only if you design the agent boundaries well. A poorly designed multi-agent system is worse than a well-prompted single agent.' },
       { question: 'How do I debug a multi-agent system in production?', answer: 'Comprehensive tracing is non-negotiable. Every agent call, tool use, intermediate output, and final result must be logged with a trace ID. Use LangSmith, MLflow Tracing, or OpenTelemetry to visualize the agent graph and find failure points.' },
+    ],
+    references: [
+      { title: 'LangGraph — Build resilient agents (Python)', url: 'https://github.com/langchain-ai/langgraph', source: 'GitHub — LangChain AI' },
+      { title: 'LangGraph overview', url: 'https://docs.langchain.com/oss/python/langgraph/overview', source: 'LangChain official documentation' },
+      { title: 'LangGraph.js — Framework to build resilient language agents as graphs', url: 'https://github.com/langchain-ai/langgraphjs', source: 'GitHub — LangChain AI' },
+      { title: 'CrewAI — Framework for orchestrating role-playing autonomous AI agents', url: 'https://github.com/crewAIInc/crewAI', source: 'GitHub — CrewAI Inc' },
+      { title: 'CrewAI Documentation', url: 'https://docs.crewai.com/', source: 'CrewAI official documentation' },
+      { title: 'microsoft/autogen — A programming framework for agentic AI', url: 'https://github.com/microsoft/autogen', source: 'GitHub — Microsoft' },
+      { title: 'AutoGen — Multi-agent applications documentation', url: 'https://microsoft.github.io/autogen/stable/', source: 'Microsoft (AutoGen project)' },
+      { title: 'Microsoft Agent Framework — successor framework (Microsoft Research → product)', url: 'https://learn.microsoft.com/en-us/agent-framework/', source: 'Microsoft Learn' },
     ],
   },
 
@@ -249,6 +412,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'What regulations govern AI in healthcare?', answer: 'HIPAA (US patient data privacy), FDA (for AI as medical device), GDPR Article 9 (EU sensitive data), HITECH (US security), and emerging state-level laws. Plus institution-level IRB approval for clinical use. Always work with compliance from project inception.' },
       { question: 'Can hospitals use ChatGPT or Claude with patient data?', answer: 'Not directly on consumer APIs. Use HIPAA-compliant offerings (Azure OpenAI with BAA, Anthropic via AWS Bedrock with BAA) or on-premise open-source models. Always run privacy impact assessments before any patient data touches an LLM.' },
     ],
+    references: [
+      { title: 'FDA — Artificial Intelligence-Enabled Device Software Functions Guidance', url: 'https://www.fda.gov/regulatory-information/search-fda-guidance-documents/artificial-intelligence-enabled-device-software-functions-lifecycle-management-and-marketing', source: 'U.S. Food and Drug Administration' },
+      { title: 'FDA — AI in Software as a Medical Device', url: 'https://www.fda.gov/medical-devices/software-medical-device-samd/artificial-intelligence-software-medical-device', source: 'U.S. Food and Drug Administration' },
+      { title: 'McKinsey — The state of AI in 2025: Agents, innovation, and transformation', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'EU AI Act — High-level summary (healthcare is a high-risk category)', url: 'https://artificialintelligenceact.eu/high-level-summary/', source: 'EU Artificial Intelligence Act' },
+      { title: 'Microsoft Responsible AI Standard v2 (PDF)', url: 'https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Microsoft-Responsible-AI-Standard-General-Requirements.pdf', source: 'Microsoft' },
+      { title: 'NIST AI Risk Management Framework (AI RMF 1.0)', url: 'https://www.nist.gov/itl/ai-risk-management-framework', source: 'National Institute of Standards and Technology' },
+    ],
   },
 
   'ai-bfsi-fraud-detection-claims-processing': {
@@ -263,6 +434,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Is AI explainable enough for regulated banking decisions?', answer: 'For credit and underwriting decisions in many jurisdictions, you must be able to explain the decision to the customer (Reg B in the US, GDPR Article 22 in EU). Use interpretable models (XGBoost with SHAP) or post-hoc explanation tools for deep learning. Pure black-box models often cannot ship to production.' },
       { question: 'How do banks deploy AI without violating model risk management (SR 11-7)?', answer: 'Implement model risk management from day one: model inventory, validation by independent teams, ongoing performance monitoring, documentation of assumptions and limitations, and a clear governance chain. AI models follow the same rigor as traditional risk models, plus extra scrutiny for non-determinism.' },
       { question: 'Can generative AI be used for customer-facing banking applications?', answer: 'Yes, but carefully. Use grounded RAG over verified knowledge bases (not free-form generation), strict guardrails on financial advice, and human escalation paths. Many banks restrict gen-AI to internal employee tools first, then expand to customer-facing slowly.' },
+    ],
+    references: [
+      { title: 'EU AI Act Article 6: Classification rules for high-risk AI systems (credit scoring, insurance)', url: 'https://artificialintelligenceact.eu/article/6/', source: 'EU Artificial Intelligence Act' },
+      { title: 'EU AI Act Annex III: High-risk AI systems', url: 'https://artificialintelligenceact.eu/annex/3/', source: 'EU Artificial Intelligence Act' },
+      { title: 'NIST AI Risk Management Framework (AI RMF 1.0)', url: 'https://www.nist.gov/itl/ai-risk-management-framework', source: 'National Institute of Standards and Technology' },
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'Microsoft Responsible AI Standard v2 (PDF)', url: 'https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Microsoft-Responsible-AI-Standard-General-Requirements.pdf', source: 'Microsoft' },
+      { title: 'MLflow for model governance in regulated industries', url: 'https://mlflow.org/docs/latest/', source: 'MLflow' },
     ],
   },
 
@@ -279,6 +458,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'What privacy concerns exist for AI in education?', answer: 'Student data, especially for minors, is heavily regulated (FERPA in US, GDPR in EU). AI vendors must contractually limit data use, provide data residency, and support parental consent flows. Free consumer AI tools should generally not be used with student data.' },
       { question: 'Is AI in education effective or just hype?', answer: 'Effectiveness varies by use case. Adaptive math platforms show consistent gains (1.4× growth in studies). Essay feedback tools improve writing quality. Generic chatbots tutoring complex subjects show mixed results. Best practice: pilot with clear metrics before scaling.' },
     ],
+    references: [
+      { title: 'WEF — EdTech needs agentic AI for workforce transformation', url: 'https://www.weforum.org/stories/2025/05/see-why-edtech-needs-agentic-ai-for-workforce-transformation/', source: 'World Economic Forum' },
+      { title: 'WEF Future of Jobs Report 2025', url: 'https://www.weforum.org/publications/the-future-of-jobs-report-2025/', source: 'World Economic Forum' },
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'EU AI Act Annex III — education listed as high-risk', url: 'https://artificialintelligenceact.eu/annex/3/', source: 'EU Artificial Intelligence Act' },
+      { title: 'Microsoft Responsible AI Standard v2 (PDF)', url: 'https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Microsoft-Responsible-AI-Standard-General-Requirements.pdf', source: 'Microsoft' },
+      { title: 'NIST AI Risk Management Framework (AI RMF 1.0)', url: 'https://www.nist.gov/itl/ai-risk-management-framework', source: 'National Institute of Standards and Technology' },
+    ],
   },
 
   'ai-manufacturing-predictive-maintenance': {
@@ -293,6 +480,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'How accurate is AI-based quality control?', answer: 'Computer vision systems achieve 99%+ defect detection in well-lit, well-positioned scenarios — exceeding human inspectors who fatigue. Edge cases (rare defects, novel materials) still need human review.' },
       { question: 'What sensor data is needed for predictive maintenance?', answer: 'Vibration, temperature, current draw, acoustic emissions, oil chemistry, and runtime hours. Start with the most critical 20% of equipment that drives 80% of downtime cost. Don\'t boil the ocean — instrument incrementally.' },
       { question: 'What is a digital twin in manufacturing?', answer: 'A live virtual replica of a physical asset, process, or factory — fed by real-time sensor data. Enables "what-if" simulations, optimization, and predictive analytics without disrupting production. Best fit for high-value, complex processes.' },
+    ],
+    references: [
+      { title: 'McKinsey — The state of AI in 2025: Agents, innovation, and transformation', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'WEF Future of Jobs Report 2025', url: 'https://www.weforum.org/publications/the-future-of-jobs-report-2025/', source: 'World Economic Forum' },
+      { title: 'EU AI Act — High-level summary', url: 'https://artificialintelligenceact.eu/high-level-summary/', source: 'EU Artificial Intelligence Act' },
+      { title: 'Microsoft Foundry — AI for industry workloads', url: 'https://learn.microsoft.com/en-us/azure/foundry/', source: 'Microsoft Learn' },
+      { title: 'MLflow for predictive maintenance & manufacturing ML lifecycle', url: 'https://mlflow.org/docs/latest/', source: 'MLflow official documentation' },
+      { title: 'Microsoft Responsible AI Standard v2 (PDF)', url: 'https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Microsoft-Responsible-AI-Standard-General-Requirements.pdf', source: 'Microsoft' },
     ],
   },
 
@@ -309,6 +504,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Is dynamic pricing with AI fair to customers?', answer: 'Done badly, no — pricing based on personal demographics is often illegal and always reputation-damaging. Done well, dynamic pricing varies on supply, demand, time, and inventory — like airline tickets — and stays fair across customer segments.' },
       { question: 'What is conversational commerce?', answer: 'Customers shop through chat, voice, or messaging assistants that can answer questions, recommend products, check inventory, and complete purchases — all in natural language. Early implementations show strong conversion lifts but require careful UX to avoid frustrating users.' },
     ],
+    references: [
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'WEF Future of Jobs Report 2025', url: 'https://www.weforum.org/publications/the-future-of-jobs-report-2025/', source: 'World Economic Forum' },
+      { title: 'WEF Four Futures for Jobs — AI and Talent in 2030', url: 'https://www.weforum.org/publications/four-futures-for-jobs-in-the-new-economy-ai-and-talent-in-2030/', source: 'World Economic Forum' },
+      { title: 'Microsoft Foundry — Build retail AI solutions', url: 'https://learn.microsoft.com/en-us/azure/foundry/', source: 'Microsoft Learn' },
+      { title: 'Microsoft Responsible AI Standard v2 (PDF)', url: 'https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Microsoft-Responsible-AI-Standard-General-Requirements.pdf', source: 'Microsoft' },
+      { title: 'EU AI Act — High-level summary', url: 'https://artificialintelligenceact.eu/high-level-summary/', source: 'EU Artificial Intelligence Act' },
+    ],
   },
 
   'ai-government-citizen-services': {
@@ -323,6 +526,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'How is bias addressed in government AI systems?', answer: 'Through mandatory bias audits before deployment, ongoing fairness monitoring, transparent model documentation, public algorithmic impact assessments (required in NYC, Canada, EU), and clear citizen rights to challenge automated decisions.' },
       { question: 'Are government AI decisions appealable?', answer: 'Increasingly yes — by law in EU (GDPR Article 22), in some US states, and in many other jurisdictions. Best practice (and often legal requirement) is to ensure significant decisions have human review and clear appeal paths.' },
       { question: 'Can governments use commercial LLMs like GPT-4 or Claude?', answer: 'Yes, when contracted under government-specific terms (Azure Government, AWS GovCloud, Anthropic government offerings). Data residency, FedRAMP/IL5 compliance, and procurement vehicle (GSA schedule) all matter. Always coordinate with your CIO and legal teams.' },
+    ],
+    references: [
+      { title: 'NIST AI Risk Management Framework (AI RMF 1.0)', url: 'https://www.nist.gov/itl/ai-risk-management-framework', source: 'National Institute of Standards and Technology' },
+      { title: 'NIST AI 100-1: AI RMF 1.0 (PDF)', url: 'https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf', source: 'NIST publications' },
+      { title: 'EU AI Act — High-level summary', url: 'https://artificialintelligenceact.eu/high-level-summary/', source: 'EU Artificial Intelligence Act' },
+      { title: 'EU AI Act Annex III — government, migration, justice listed as high-risk', url: 'https://artificialintelligenceact.eu/annex/3/', source: 'EU Artificial Intelligence Act' },
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'Microsoft Responsible AI Standard v2 (PDF)', url: 'https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Microsoft-Responsible-AI-Standard-General-Requirements.pdf', source: 'Microsoft' },
     ],
   },
 
@@ -339,6 +550,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Can AI prevent grid failures and blackouts?', answer: 'AI can predict component failures hours to weeks in advance, flag operating-envelope violations in real time, and recommend protective actions — significantly reducing blackout risk. It does not eliminate cascading failures from rare extreme events.' },
       { question: 'How does AI help integrate renewable energy?', answer: 'Accurate short-term forecasting (15-minute to 24-hour) of wind and solar reduces the need for fossil-fueled spinning reserves. AI also manages battery storage dispatch, demand response programs, and grid-edge resources — making renewables economically viable at high penetration.' },
     ],
+    references: [
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'EU AI Act — High-level summary (critical infrastructure is high-risk)', url: 'https://artificialintelligenceact.eu/high-level-summary/', source: 'EU Artificial Intelligence Act' },
+      { title: 'NIST AI Risk Management Framework (AI RMF 1.0)', url: 'https://www.nist.gov/itl/ai-risk-management-framework', source: 'NIST' },
+      { title: 'Microsoft Foundry — AI for energy & utilities', url: 'https://learn.microsoft.com/en-us/azure/foundry/', source: 'Microsoft Learn' },
+      { title: 'Microsoft Responsible AI Standard v2 (PDF)', url: 'https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Microsoft-Responsible-AI-Standard-General-Requirements.pdf', source: 'Microsoft' },
+    ],
   },
 
   'ai-legal-contract-analysis': {
@@ -353,6 +571,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'How accurate is AI contract analysis?', answer: 'For clause extraction and standard-deviation detection, leading legal AI tools achieve 90%+ accuracy on common contract types. Accuracy drops for novel contract types, complex multi-jurisdictional clauses, or specialized practice areas — always require lawyer review.' },
       { question: 'Is AI-drafted legal text admissible or enforceable?', answer: 'Enforceability depends on the contract terms, not on how they were drafted. AI-drafted contracts are as enforceable as human-drafted ones — but a licensed lawyer should review and sign off, both for quality and to maintain attorney-client privilege.' },
       { question: 'What are the risks of using public AI tools (ChatGPT) for legal work?', answer: 'Confidentiality breach (data may be retained), potential privilege waiver, fabricated case citations, jurisdiction-specific errors, and ethics violations under bar rules. Always use enterprise legal AI tools with confidentiality agreements and zero data retention.' },
+    ],
+    references: [
+      { title: 'EU AI Act Article 16: Obligations of providers of high-risk AI systems', url: 'https://artificialintelligenceact.eu/article/16/', source: 'EU Artificial Intelligence Act' },
+      { title: 'EU AI Act — High-level summary', url: 'https://artificialintelligenceact.eu/high-level-summary/', source: 'EU Artificial Intelligence Act' },
+      { title: 'NIST AI Risk Management Framework (AI RMF 1.0)', url: 'https://www.nist.gov/itl/ai-risk-management-framework', source: 'NIST' },
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'Microsoft Responsible AI Standard v2 (PDF)', url: 'https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Microsoft-Responsible-AI-Standard-General-Requirements.pdf', source: 'Microsoft' },
+      { title: 'MLflow for model governance', url: 'https://mlflow.org/docs/latest/', source: 'MLflow official documentation' },
     ],
   },
 
@@ -369,6 +595,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Do we need a Chief AI Officer?', answer: 'For organizations with 5+ AI use cases or significant AI risk exposure, yes — a single accountable executive who owns AI strategy, risk, and ethics. For smaller AI footprints, this can be a hat worn by the CTO, CIO, or Chief Data Officer.' },
       { question: 'How do we govern shadow AI (employee use of consumer AI tools)?', answer: 'Discovery first (DLP, network monitoring, surveys), then sanctioned alternatives (enterprise ChatGPT, Copilot, Claude Enterprise) so employees don\'t need to use consumer tools. Pair with clear acceptable use policies and training. Outright bans rarely work.' },
     ],
+    references: [
+      { title: 'NIST AI Risk Management Framework (AI RMF 1.0)', url: 'https://www.nist.gov/itl/ai-risk-management-framework', source: 'National Institute of Standards and Technology' },
+      { title: 'NIST AI 100-1: AI RMF 1.0 (PDF)', url: 'https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf', source: 'NIST publications' },
+      { title: 'EU AI Act — High-level summary', url: 'https://artificialintelligenceact.eu/high-level-summary/', source: 'EU Artificial Intelligence Act' },
+      { title: 'EU AI Act Article 6: Classification of high-risk AI', url: 'https://artificialintelligenceact.eu/article/6/', source: 'EU Artificial Intelligence Act' },
+      { title: 'Microsoft Responsible AI Standard v2 (PDF)', url: 'https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Microsoft-Responsible-AI-Standard-General-Requirements.pdf', source: 'Microsoft' },
+      { title: 'MLflow for AI governance & lineage', url: 'https://mlflow.org/docs/latest/', source: 'MLflow official documentation' },
+    ],
   },
 
   'ai-strategy-c-suite-executive-guide': {
@@ -383,6 +617,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Does our company need a Chief AI Officer?', answer: 'If you have 5+ AI use cases, significant AI risk exposure, or AI as a strategic capability, yes — a dedicated executive with P&L authority. For smaller AI footprints, a CTO/CIO/CDO can wear this hat. The key is clear accountability, not the title.' },
       { question: 'What ROI metrics should we use for AI investments?', answer: 'Use case-by-case business KPIs: revenue lift, cost reduction, cycle time, customer satisfaction, employee productivity. Track them against a clear pre-AI baseline. Avoid vague "transformation" or "AI-enablement" KPIs — they hide failure and confuse boards.' },
       { question: 'Should we build or buy AI capability?', answer: 'Buy for commoditized capabilities (general LLMs, basic OCR, standard chatbots). Build for proprietary advantage (industry-specific models, unique data assets, differentiating workflows). Most enterprises end up in a build-with-buy hybrid — buy foundation models, build the application layer.' },
+    ],
+    references: [
+      { title: 'McKinsey — The state of AI in 2025: Agents, innovation, and transformation', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'WEF Four Futures for Jobs — AI and Talent in 2030', url: 'https://www.weforum.org/publications/four-futures-for-jobs-in-the-new-economy-ai-and-talent-in-2030/', source: 'World Economic Forum' },
+      { title: 'WEF Future of Jobs Report 2025', url: 'https://www.weforum.org/publications/the-future-of-jobs-report-2025/', source: 'World Economic Forum' },
+      { title: 'NIST AI Risk Management Framework (AI RMF 1.0)', url: 'https://www.nist.gov/itl/ai-risk-management-framework', source: 'NIST' },
+      { title: 'Microsoft Foundry — Build enterprise AI portfolio', url: 'https://learn.microsoft.com/en-us/azure/foundry/', source: 'Microsoft Learn' },
+      { title: 'Microsoft Responsible AI Standard v2 (PDF)', url: 'https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Microsoft-Responsible-AI-Standard-General-Requirements.pdf', source: 'Microsoft' },
     ],
   },
 
@@ -399,6 +641,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Can AI ever be unbiased?', answer: 'No AI is perfectly unbiased — the goal is to identify, measure, mitigate, and disclose bias rather than pretend it doesn\'t exist. Acknowledge tradeoffs (false-positive rate vs. recall across groups) and make them explicit policy decisions, not silent technical defaults.' },
       { question: 'Who is accountable when AI makes a bad decision?', answer: 'The deploying organization, ultimately. "The model decided" is not a legal or ethical defense. Assign a named human owner to every production AI system, with documented decision rights and an incident response runbook for when the AI fails.' },
     ],
+    references: [
+      { title: 'NIST AI Risk Management Framework (AI RMF 1.0)', url: 'https://www.nist.gov/itl/ai-risk-management-framework', source: 'NIST' },
+      { title: 'NIST AI RMF: Generative AI Profile', url: 'https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence', source: 'NIST' },
+      { title: 'EU AI Act Article 6: High-risk classification', url: 'https://artificialintelligenceact.eu/article/6/', source: 'EU Artificial Intelligence Act' },
+      { title: 'EU AI Act Article 16: Provider obligations', url: 'https://artificialintelligenceact.eu/article/16/', source: 'EU Artificial Intelligence Act' },
+      { title: 'Microsoft Responsible AI Standard v2 (PDF)', url: 'https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Microsoft-Responsible-AI-Standard-General-Requirements.pdf', source: 'Microsoft' },
+      { title: 'Microsoft Responsible AI Principles', url: 'https://www.microsoft.com/en-us/ai/principles-and-approach', source: 'Microsoft' },
+    ],
   },
 
   'future-of-ai-agents-predictions': {
@@ -414,6 +664,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'What jobs are most affected by AI agents?', answer: 'Tasks (not jobs) most affected: routine document review, first-line customer service, scheduling, basic research, code scaffolding, structured data extraction. Jobs that combine deep domain expertise, complex judgment, and stakeholder relationships are least disrupted in the short term.' },
       { question: 'How can enterprises prepare for the agent economy?', answer: 'Build internal agent orchestration capability now, even if your first use cases are simple. Standardize on MCP for integrations. Invest in observability and governance early. Train employees on agent collaboration skills. Don\'t wait for "AI to mature" — your competitors won\'t.' },
     ],
+    references: [
+      { title: 'Microsoft Agent Framework — Production-ready 1.0 release', url: 'https://devblogs.microsoft.com/agent-framework/microsoft-agent-framework-version-1-0/', source: 'Microsoft DevBlogs' },
+      { title: 'Introducing the Model Context Protocol', url: 'https://www.anthropic.com/news/model-context-protocol', source: 'Anthropic' },
+      { title: 'Model Context Protocol — Specification', url: 'https://modelcontextprotocol.io/specification/2025-11-25', source: 'modelcontextprotocol.io' },
+      { title: 'LangGraph — Build resilient agents', url: 'https://github.com/langchain-ai/langgraph', source: 'GitHub — LangChain AI' },
+      { title: 'EU AI Act — High-level summary', url: 'https://artificialintelligenceact.eu/high-level-summary/', source: 'EU Artificial Intelligence Act' },
+      { title: 'NIST AI Risk Management Framework (AI RMF 1.0)', url: 'https://www.nist.gov/itl/ai-risk-management-framework', source: 'National Institute of Standards and Technology' },
+    ],
   },
 
   'semantic-kernel-enterprise-ai-orchestration': {
@@ -428,6 +686,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'How does Semantic Kernel compare to LangChain?', answer: 'Semantic Kernel is more opinionated, more enterprise-focused, and tightly integrated with Azure AI services and .NET. LangChain has more community packages and broader model coverage. Microsoft-stack teams typically prefer Semantic Kernel; polyglot or non-Microsoft teams often choose LangChain.' },
       { question: 'Does Semantic Kernel support non-OpenAI models?', answer: 'Yes. SK supports Azure OpenAI, OpenAI, Hugging Face models, Anthropic Claude, Google Gemini, and local models via connectors. The SDK abstracts the model so application code doesn\'t change when you swap models.' },
       { question: 'Is Semantic Kernel production-ready?', answer: 'Yes. SK 1.x has been generally available since 2024 and is used in many production deployments. Microsoft uses it internally and continues active development including integration with Microsoft Agent Framework.' },
+    ],
+    references: [
+      { title: 'Semantic Kernel — Official Documentation', url: 'https://learn.microsoft.com/en-us/semantic-kernel/', source: 'Microsoft Learn' },
+      { title: 'microsoft/semantic-kernel — GitHub repository', url: 'https://github.com/microsoft/semantic-kernel', source: 'GitHub' },
+      { title: 'Semantic Kernel for Java — microsoft/semantic-kernel-java', url: 'https://github.com/microsoft/semantic-kernel-java', source: 'GitHub' },
+      { title: 'In-depth Semantic Kernel Demos', url: 'https://learn.microsoft.com/en-us/semantic-kernel/get-started/detailed-samples', source: 'Microsoft Learn' },
+      { title: 'Microsoft Agent Framework — the successor to Semantic Kernel', url: 'https://learn.microsoft.com/en-us/agent-framework/', source: 'Microsoft Learn' },
+      { title: 'microsoft/agent-framework — GitHub repository', url: 'https://github.com/microsoft/agent-framework', source: 'GitHub' },
     ],
   },
 
@@ -445,6 +711,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'How much data can pgvector handle?', answer: 'Practically, pgvector handles 10M+ vectors well with proper indexing (HNSW), and 100M+ with careful tuning. Above that, you start hitting PostgreSQL operational complexity. Dedicated vector databases scale to billions with less tuning.' },
       { question: 'Are vector databases more expensive than traditional databases?', answer: 'Vector indexes are memory-heavy and computation-heavy, so per-query costs are higher than equivalent SQL queries. Managed offerings (Pinecone, Azure AI Search) cost more than self-hosted at scale. Always benchmark cost-per-query at your expected QPS before committing.' },
     ],
+    references: [
+      { title: 'MLflow third-party scorers — RAG with vector DBs', url: 'https://mlflow.org/docs/latest/genai/eval-monitor/scorers/third-party/ragas/', source: 'MLflow official documentation' },
+      { title: 'Project GraphRAG — when graphs beat plain vectors', url: 'https://www.microsoft.com/en-us/research/project/graphrag/', source: 'Microsoft Research' },
+      { title: 'Microsoft Foundry — Azure AI Search and embeddings', url: 'https://learn.microsoft.com/en-us/azure/foundry/', source: 'Microsoft Learn' },
+      { title: 'RAGAS metrics overview — for benchmarking vector DB retrieval', url: 'https://docs.ragas.io/en/stable/concepts/metrics/overview/', source: 'RAGAS official documentation' },
+      { title: 'LangGraph — retrieval-augmented agent patterns', url: 'https://github.com/langchain-ai/langgraph', source: 'GitHub — LangChain AI' },
+    ],
   },
 
   'prompt-engineering-enterprise-guide': {
@@ -459,6 +732,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'What is a good prompt template structure?', answer: 'The RTFCE pattern: Role (you are an expert legal analyst), Task (review this contract for unfavorable terms), Format (return JSON with fields X, Y, Z), Constraints (only flag deviations from playbook), Examples (one or two few-shot examples). This is more reliable than free-form prompts.' },
       { question: 'Should we version-control prompts?', answer: 'Absolutely. Prompts are application code. Store them in Git, review changes in PRs, tag releases. This enables rollback when a prompt change degrades quality and supports compliance audit trails.' },
       { question: 'How do we test prompts in CI/CD?', answer: 'Maintain a golden dataset of inputs and expected outputs. Run the prompt against it on every change. Use LLM-as-judge or programmatic checks for output quality. Fail the build if accuracy drops beyond threshold. Tools: MLflow, LangSmith, Promptfoo.' },
+    ],
+    references: [
+      { title: 'MLflow Prompt Registry — versioned prompts', url: 'https://mlflow.org/docs/latest/genai/prompt-registry/', source: 'MLflow official documentation' },
+      { title: 'promptfoo — Test prompts, agents, and RAGs (used by OpenAI and Anthropic)', url: 'https://github.com/promptfoo/promptfoo', source: 'GitHub' },
+      { title: 'OpenAI — Introducing Structured Outputs in the API', url: 'https://openai.com/index/introducing-structured-outputs-in-the-api/', source: 'OpenAI' },
+      { title: 'OpenAI structured outputs guide', url: 'https://developers.openai.com/api/docs/guides/structured-outputs', source: 'OpenAI API documentation' },
+      { title: 'MLflow GenAI evaluation', url: 'https://mlflow.org/docs/latest/genai/eval-monitor/', source: 'MLflow' },
     ],
   },
 
@@ -475,6 +755,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'What is semantic caching?', answer: 'Caching LLM responses based on semantic similarity of inputs (not exact match). If a new query is semantically similar to a cached one above a threshold, return the cached response. Saves 20–40% on FAQ and customer-support workloads with high query repetition.' },
       { question: 'How do we right-size context windows?', answer: 'Most prompts include too much context. Trim system prompts to essentials. Use retrieval to inject only relevant chunks. Cap conversation history. Per-task analysis often shows 30–50% of tokens are unnecessary — that\'s direct cost savings.' },
     ],
+    references: [
+      { title: 'Phi Open Models — Microsoft\'s small (cheap) language models', url: 'https://azure.microsoft.com/en-us/products/phi', source: 'Microsoft Azure' },
+      { title: 'Phi-4 Technical Report', url: 'https://arxiv.org/abs/2412.08905', source: 'arXiv (Microsoft Research)' },
+      { title: 'Ollama — Run models locally to cut API costs', url: 'https://github.com/ollama/ollama', source: 'GitHub' },
+      { title: 'BentoML LLM Inference Handbook — performance & cost', url: 'https://bentoml.com/llm/inference-optimization/llm-performance-benchmarks', source: 'BentoML' },
+      { title: 'vLLM Structured Outputs — efficient inference', url: 'https://docs.vllm.ai/en/latest/features/structured_outputs/', source: 'vLLM' },
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+    ],
   },
 
   'ai-agents-customer-service-transformation': {
@@ -489,6 +777,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'What is the difference between a chatbot and an AI service agent?', answer: 'Chatbots answer questions from a knowledge base. AI agents reason over context (your account, your order, your history) and take actions (issue refunds, schedule callbacks, escalate to humans, update records). Agents have memory, tools, and authority.' },
       { question: 'How do AI agents handle emotional or complex customer issues?', answer: 'Through escalation paths. Modern agents detect frustration, complexity, or risk and hand off to humans with full context. The key is graceful handoff: the customer should not have to repeat themselves to the human agent.' },
       { question: 'What metrics matter for AI customer service agents?', answer: 'Contained resolution rate (resolved without human), customer satisfaction (CSAT or NPS specifically on AI interactions), average handle time, escalation rate, and quality scores on a sample of conversations. Track them weekly during rollout.' },
+    ],
+    references: [
+      { title: 'Microsoft Copilot Studio — Official documentation', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/', source: 'Microsoft Learn' },
+      { title: 'LangGraph — Build resilient customer-service agents', url: 'https://github.com/langchain-ai/langgraph', source: 'GitHub — LangChain AI' },
+      { title: 'McKinsey — The state of AI in 2025: Agents, innovation, and transformation', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'Microsoft Agent Framework — Production-ready 1.0', url: 'https://learn.microsoft.com/en-us/agent-framework/', source: 'Microsoft Learn' },
+      { title: 'Introducing the Model Context Protocol', url: 'https://www.anthropic.com/news/model-context-protocol', source: 'Anthropic' },
+      { title: 'Microsoft Responsible AI Standard v2 (PDF)', url: 'https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Microsoft-Responsible-AI-Standard-General-Requirements.pdf', source: 'Microsoft' },
     ],
   },
 
@@ -505,6 +801,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Is Copilot Studio compliant with insurance regulations (NAIC, GDPR)?', answer: 'Copilot Studio inherits Azure compliance certifications (SOC 2, ISO 27001, GDPR). NAIC and state-level insurance regulations require additional governance: bias testing for underwriting decisions, audit trails, customer notification of AI use. Build these into your deployment.' },
       { question: 'What is the typical ROI of an insurance claims agent?', answer: 'Common results: 60–80% reduction in cycle time on simple claims, 30–50% reduction in adjuster workload (freed for complex cases), 20–40% improvement in customer satisfaction (faster decisions), and reduced leakage from policy validation errors.' },
     ],
+    references: [
+      { title: 'Microsoft Copilot Studio — Official documentation', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/', source: 'Microsoft Learn' },
+      { title: 'Agent flows and workflows overview', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/flows-overview', source: 'Microsoft Learn' },
+      { title: 'Connect to Dataverse with Model Context Protocol (MCP)', url: 'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/data-platform-mcp', source: 'Microsoft Learn' },
+      { title: 'Use connectors in Copilot Studio agents', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/advanced-connectors', source: 'Microsoft Learn' },
+      { title: 'Quickstart: Create and deploy an agent in Copilot Studio', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-get-started', source: 'Microsoft Learn' },
+      { title: 'Responsible AI for Microsoft Foundry', url: 'https://learn.microsoft.com/en-us/azure/foundry/responsible-use-of-ai-overview', source: 'Microsoft Learn' },
+    ],
   },
 
   'ai-document-intelligence-enterprise': {
@@ -519,6 +823,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'How accurate is AI document extraction?', answer: 'For standard structured documents (invoices, forms), 95%+ field-level accuracy is achievable. For complex layouts, handwriting, or low-quality scans, accuracy drops to 80–90% — still useful with human review on exceptions. Always measure on your specific document mix.' },
       { question: 'What is the best AI tool for document intelligence?', answer: 'Azure AI Document Intelligence (Microsoft), AWS Textract + Comprehend, Google Document AI, and specialized vendors (UiPath, Hyperscience, Rossum). For maximum flexibility, GPT-4o and Claude with image input handle one-off extraction without training data. Pick based on volume, accuracy needs, and existing cloud commitment.' },
       { question: 'How long does it take to deploy AI document intelligence?', answer: 'For standard document types (invoices, IDs) with prebuilt models, weeks. For custom document types requiring labeled training data and fine-tuning, 2–4 months. The full enterprise rollout including integration with downstream systems (ERP, AP) typically takes 6–12 months.' },
+    ],
+    references: [
+      { title: 'Microsoft Foundry — Document Intelligence on Azure', url: 'https://learn.microsoft.com/en-us/azure/foundry/', source: 'Microsoft Learn' },
+      { title: 'OpenAI structured outputs — for reliable extraction', url: 'https://developers.openai.com/api/docs/guides/structured-outputs', source: 'OpenAI API documentation' },
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'Microsoft Foundry models overview (multimodal vision)', url: 'https://learn.microsoft.com/en-us/azure/foundry/concepts/foundry-models-overview', source: 'Microsoft Learn' },
+      { title: 'EU AI Act — High-risk if used in critical decisions', url: 'https://artificialintelligenceact.eu/high-level-summary/', source: 'EU Artificial Intelligence Act' },
     ],
   },
 
@@ -535,6 +846,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'What is the most overlooked step in AI productionization?', answer: 'Operational readiness: observability, alerting on quality degradation, cost monitoring, runbooks for common failures, and named on-call ownership. Models that work great at launch but degrade silently over time without monitoring become liabilities.' },
       { question: 'Should the POC team also run production deployment?', answer: 'Often no. POC teams are optimized for exploration and speed; production teams for reliability and ops. Hand off cleanly after POC — but include POC engineers in design reviews so production decisions don\'t contradict POC learnings.' },
     ],
+    references: [
+      { title: 'McKinsey — The state of AI in 2025: Agents, innovation, and transformation', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'MLflow Documentation — production ML/LLM platform', url: 'https://mlflow.org/docs/latest/', source: 'MLflow' },
+      { title: 'MLflow GenAI: Evaluation & Monitoring', url: 'https://mlflow.org/docs/latest/genai/eval-monitor/', source: 'MLflow' },
+      { title: 'Microsoft Agent Framework 1.0 — Production-ready', url: 'https://devblogs.microsoft.com/agent-framework/microsoft-agent-framework-version-1-0/', source: 'Microsoft DevBlogs' },
+      { title: 'NIST AI RMF — operational risk management', url: 'https://www.nist.gov/itl/ai-risk-management-framework', source: 'NIST' },
+    ],
   },
 
   'ai-training-upskilling-enterprise-workforce': {
@@ -549,6 +867,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'What is the right length for AI training?', answer: 'Executive fluency: 1–2 days. Manager capability: 2–3 days. Practitioner skills: 5–10 days for foundations, plus ongoing certification prep (typically 3–5 additional days per cert). Hands-on labs and real project work multiply retention compared to lecture alone.' },
       { question: 'Should AI training be in-person or virtual?', answer: 'Virtual instructor-led with hands-on labs works as well as in-person for most learners — provided sessions stay under 4 hours per day and include real exercises. In-person is better for executive workshops where peer discussion is the value. Recorded-only e-learning has the worst outcomes.' },
       { question: 'How do we measure AI training ROI?', answer: 'Track: post-training certifications earned, projects shipped within 90 days by trained employees, employee satisfaction with AI tools, and the count of trained employees actively building or governing AI initiatives. Pure attendance metrics are vanity — outcomes matter.' },
+    ],
+    references: [
+      { title: 'WEF Future of Jobs Report 2025', url: 'https://www.weforum.org/publications/the-future-of-jobs-report-2025/', source: 'World Economic Forum' },
+      { title: 'WEF Four Futures for Jobs — AI and Talent in 2030', url: 'https://www.weforum.org/publications/four-futures-for-jobs-in-the-new-economy-ai-and-talent-in-2030/', source: 'World Economic Forum' },
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'Microsoft Learn — Official Copilot Studio training', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/', source: 'Microsoft Learn' },
+      { title: 'Microsoft Responsible AI Principles', url: 'https://www.microsoft.com/en-us/ai/principles-and-approach', source: 'Microsoft' },
     ],
   },
 
@@ -565,6 +890,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'What privacy concerns exist for AI in HR?', answer: 'Employee data is often more sensitive than customer data and is regulated by employment law (EEOC, GDPR, state privacy laws). AI must not infer protected characteristics, must support opt-outs where required, and must have clear documentation of what data is processed and why.' },
       { question: 'How does AI handle sensitive HR topics (harassment, mental health)?', answer: 'AI agents should detect sensitive topics and escalate to human HR professionals immediately, with clear privacy protections during handoff. Never let an AI agent attempt to handle these autonomously — it\'s a legal, ethical, and reputational risk.' },
     ],
+    references: [
+      { title: 'Microsoft Copilot Studio — Build HR agents', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/', source: 'Microsoft Learn' },
+      { title: 'EU AI Act Annex III — employment listed as high-risk', url: 'https://artificialintelligenceact.eu/annex/3/', source: 'EU Artificial Intelligence Act' },
+      { title: 'WEF Future of Jobs Report 2025', url: 'https://www.weforum.org/publications/the-future-of-jobs-report-2025/', source: 'World Economic Forum' },
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'Microsoft Responsible AI Standard v2 (PDF)', url: 'https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Microsoft-Responsible-AI-Standard-General-Requirements.pdf', source: 'Microsoft' },
+    ],
   },
 
   'ai-cybersecurity-threat-detection': {
@@ -579,6 +911,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Are attackers using AI too?', answer: 'Yes. Generative AI lowers the barrier for phishing (perfect grammar, personalization), deepfakes (voice and video impersonation), and malicious code generation. The defense side is racing to keep up. Expect more AI-vs-AI scenarios over the next 2–3 years.' },
       { question: 'Should we let AI take autonomous response actions?', answer: 'For high-confidence, low-impact actions (block IP, isolate endpoint, reset session): yes. For high-impact actions (mass user lockouts, system shutdowns): require human approval. Tune the autonomy boundary based on confidence scores and impact analysis.' },
       { question: 'What is the role of human SOC analysts as AI advances?', answer: 'Tier-1 alert triage and routine response shifts to AI. Analysts move to threat hunting, novel attack investigation, deep forensics, and tuning AI detection models. Net: fewer alert-triage analysts, more skilled threat hunters — and the overall team size stays similar.' },
+    ],
+    references: [
+      { title: 'NIST AI Risk Management Framework (AI RMF 1.0)', url: 'https://www.nist.gov/itl/ai-risk-management-framework', source: 'NIST' },
+      { title: 'NIST AI RMF: Generative AI Profile (AI 600-1)', url: 'https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence', source: 'NIST' },
+      { title: 'promptfoo — Red-teaming and vulnerability scanning for LLMs', url: 'https://github.com/promptfoo/promptfoo', source: 'GitHub' },
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'Microsoft Responsible AI Standard v2 (PDF)', url: 'https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Microsoft-Responsible-AI-Standard-General-Requirements.pdf', source: 'Microsoft' },
+      { title: 'EU AI Act — Cybersecurity & critical infrastructure', url: 'https://artificialintelligenceact.eu/high-level-summary/', source: 'EU Artificial Intelligence Act' },
     ],
   },
 
@@ -595,6 +935,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Should AI chatbots always escalate to humans?', answer: 'Have a clear escalation path always available, but don\'t force escalation prematurely. Detect frustration cues (repeated questions, emotional language, complex queries) and offer human help proactively. The worst experience is "I can\'t help you" with no way forward.' },
       { question: 'How do we prevent chatbot hallucinations?', answer: 'Ground responses in retrieved context (RAG), prompt the model to cite sources, use structured outputs to constrain format, validate critical claims against authoritative systems, and train the model to say "I don\'t know" when context is missing. Hallucinations cannot be eliminated entirely — design for graceful failure.' },
     ],
+    references: [
+      { title: 'Microsoft Copilot Studio — Build chatbots that work', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/', source: 'Microsoft Learn' },
+      { title: 'OpenAI structured outputs — reduces hallucinated formats', url: 'https://developers.openai.com/api/docs/guides/structured-outputs', source: 'OpenAI API documentation' },
+      { title: 'RAGAS Faithfulness — measure groundedness of chatbot answers', url: 'https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/faithfulness/', source: 'RAGAS' },
+      { title: 'MLflow GenAI eval & monitoring for chatbot quality', url: 'https://mlflow.org/docs/latest/genai/eval-monitor/', source: 'MLflow' },
+      { title: 'Microsoft Responsible AI Principles', url: 'https://www.microsoft.com/en-us/ai/principles-and-approach', source: 'Microsoft' },
+    ],
   },
 
   'ai-supply-chain-resilience': {
@@ -609,6 +956,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'What data does an AI supply chain need?', answer: 'Internal: orders, inventory, lead times, shipments, supplier performance. External: weather, news (geopolitical events, disasters), competitor pricing, social signals (Twitter, Reddit for emerging demand), and economic indicators. The richer the external feed, the better the early-warning system.' },
       { question: 'Can AI predict events like the 2020 pandemic or Suez Canal blockage?', answer: 'Predicting specific events: no. Predicting impact and recommending response: yes. AI models trained on historical disruption patterns can simulate scenarios and propose mitigations within hours — versus weeks of human analysis.' },
       { question: 'What ROI is realistic for AI in supply chain?', answer: 'Industry data shows 10–20% reduction in stockouts, 15–30% reduction in inventory carrying cost, 5–15% improvement in service levels, and 30–50% reduction in expedited freight costs. Payback typically in 12–18 months for established enterprises with strong data foundations.' },
+    ],
+    references: [
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'WEF Future of Jobs Report 2025', url: 'https://www.weforum.org/publications/the-future-of-jobs-report-2025/', source: 'World Economic Forum' },
+      { title: 'Microsoft Foundry — AI for industry & supply chain', url: 'https://learn.microsoft.com/en-us/azure/foundry/', source: 'Microsoft Learn' },
+      { title: 'MLflow — Forecasting & ML lifecycle management', url: 'https://mlflow.org/docs/latest/', source: 'MLflow' },
+      { title: 'LangGraph — Resilient agent workflows', url: 'https://github.com/langchain-ai/langgraph', source: 'GitHub — LangChain AI' },
     ],
   },
 
@@ -625,6 +979,14 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'What licensing is needed for Copilot Studio + Power Automate?', answer: 'Copilot Studio license (per tenant or per user) plus Power Automate licensing (per user or per flow). Premium connectors require Power Automate Premium. AI Builder credits may also be needed for document intelligence and prediction features. Always model true cost at production volume.' },
       { question: 'Are there workflows where Power Automate alone is enough?', answer: 'Yes — for deterministic workflows triggered by structured events (form submissions, schedule, file changes) where AI reasoning adds no value. Don\'t add Copilot Studio unless the workflow genuinely benefits from natural language or AI judgment.' },
     ],
+    references: [
+      { title: 'Microsoft Copilot Studio — Official documentation', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/', source: 'Microsoft Learn' },
+      { title: 'Copilot in Power Automate — Overview', url: 'https://learn.microsoft.com/en-us/power-automate/copilot-overview', source: 'Microsoft Learn' },
+      { title: 'Agent flows and workflows overview', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/flows-overview', source: 'Microsoft Learn' },
+      { title: 'Use connectors in Copilot Studio agents', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/advanced-connectors', source: 'Microsoft Learn' },
+      { title: 'Connectors documentation — Copilot Studio, Power Platform, Logic Apps', url: 'https://learn.microsoft.com/en-us/connectors/', source: 'Microsoft Learn' },
+      { title: 'Create your first cloud flow using Copilot', url: 'https://learn.microsoft.com/en-us/power-automate/create-cloud-flow-using-copilot', source: 'Microsoft Learn' },
+    ],
   },
 
   'ai-data-readiness-enterprise-checklist': {
@@ -639,6 +1001,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'How do I assess our enterprise data readiness?', answer: 'Run a structured assessment across 5 dimensions: inventory (do we know what we have?), quality (is it accurate and complete?), governance (who owns it, who can access it?), infrastructure (can we serve it reliably?), and unstructured-data strategy (do we have a plan for documents, images, audio?).' },
       { question: 'Where do data quality issues hurt AI most?', answer: 'Inconsistent customer master data breaks personalization. Mislabeled training data poisons supervised models. Missing or stale features in production prediction systems cause silent accuracy drops. Always invest in data quality monitoring upstream of AI deployment.' },
       { question: 'Should we fix data before or during AI projects?', answer: 'Both. Fix the data backing your top 3 AI use cases first (highest leverage). Continue broader cataloging and governance work in parallel. Don\'t wait for "perfect data" before starting AI — it never arrives. Don\'t start AI without addressing the specific data backing your use case.' },
+    ],
+    references: [
+      { title: 'Databricks Unity Catalog — Data governance for AI', url: 'https://docs.databricks.com/aws/en/data-governance/unity-catalog/', source: 'Databricks documentation' },
+      { title: 'Databricks: View data lineage using Unity Catalog', url: 'https://docs.databricks.com/aws/en/data-governance/unity-catalog/data-lineage', source: 'Databricks documentation' },
+      { title: 'NIST AI Risk Management Framework (AI RMF 1.0)', url: 'https://www.nist.gov/itl/ai-risk-management-framework', source: 'NIST' },
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'MLflow — Data lineage tied to model lineage', url: 'https://mlflow.org/docs/latest/', source: 'MLflow' },
     ],
   },
 
@@ -655,6 +1024,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'How does multimodal AI compare in cost to text-only AI?', answer: 'Images consume more tokens than equivalent text. A high-resolution image can cost 1,000–4,000 tokens depending on resolution and detail setting. For high-volume vision workloads, this adds up quickly — optimize resolution and batch where possible.' },
       { question: 'Can multimodal AI replace specialized computer vision models?', answer: 'For general-purpose vision tasks (description, classification, OCR), yes — and faster to deploy. For specialized domains (medical imaging, defect detection, agricultural pest identification), purpose-trained CV models still outperform multimodal LLMs. Many enterprises use both — LLM for breadth, CV for depth.' },
     ],
+    references: [
+      { title: 'Microsoft Foundry Models — multimodal options (GPT-4o, Phi-4 vision)', url: 'https://learn.microsoft.com/en-us/azure/foundry/concepts/foundry-models-overview', source: 'Microsoft Learn' },
+      { title: 'AI Model Catalog — Browse 1,900+ models including vision', url: 'https://ai.azure.com/catalog', source: 'Microsoft Foundry portal' },
+      { title: 'OpenAI structured outputs — reliable extraction from vision', url: 'https://developers.openai.com/api/docs/guides/structured-outputs', source: 'OpenAI API documentation' },
+      { title: 'Phi-4 Technical Report', url: 'https://arxiv.org/abs/2412.08905', source: 'arXiv (Microsoft Research)' },
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+    ],
   },
 
   'ai-agents-healthcare-patient-journey': {
@@ -669,6 +1045,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Is AI safe in clinical decision-making?', answer: 'AI is safe as decision-support when paired with clinician oversight — surfacing patterns, flagging risks, drafting plans. Autonomous clinical decisions remain inappropriate for AI today. The most successful deployments make clinicians faster and more accurate, not removed from the loop.' },
       { question: 'What regulations apply to healthcare AI agents?', answer: 'HIPAA (US data privacy), GDPR Article 9 (EU sensitive data), FDA (when AI qualifies as a medical device — increasingly common), CMS rules for AI in Medicare/Medicaid services, and state-level laws. Always work with compliance and legal from project inception.' },
       { question: 'Can healthcare AI agents reduce clinician burnout?', answer: 'Yes — and this is one of the strongest ROI stories. Ambient documentation alone returns 1–2 hours per day per clinician. Automated administrative tasks (prior auth, scheduling) compound the savings. Burnout reduction is measurable and tied to retention.' },
+    ],
+    references: [
+      { title: 'FDA — AI in Software as a Medical Device', url: 'https://www.fda.gov/medical-devices/software-medical-device-samd/artificial-intelligence-software-medical-device', source: 'U.S. Food and Drug Administration' },
+      { title: 'FDA — AI-Enabled Device Software Functions Guidance', url: 'https://www.fda.gov/regulatory-information/search-fda-guidance-documents/artificial-intelligence-enabled-device-software-functions-lifecycle-management-and-marketing', source: 'U.S. Food and Drug Administration' },
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'EU AI Act — Healthcare is a high-risk category', url: 'https://artificialintelligenceact.eu/high-level-summary/', source: 'EU Artificial Intelligence Act' },
+      { title: 'Microsoft Agent Framework — Healthcare AI agents', url: 'https://learn.microsoft.com/en-us/agent-framework/', source: 'Microsoft Learn' },
     ],
   },
 
@@ -685,6 +1068,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Are AI lending decisions compliant with fair lending laws?', answer: 'They can be — but require: bias testing across protected classes, explainable models (or post-hoc explanations), adverse action notices that explain denials, and ongoing fairness monitoring. Black-box models without explainability typically cannot ship to production in regulated lending.' },
       { question: 'What is the typical ROI of AI in loan origination?', answer: 'Common results: 50–80% reduction in processing time, 30–50% reduction in cost per loan, 20–40% improvement in customer satisfaction (faster decisions), and reduced regulatory findings from automated compliance checks.' },
     ],
+    references: [
+      { title: 'EU AI Act Article 6 — credit scoring is high-risk', url: 'https://artificialintelligenceact.eu/article/6/', source: 'EU Artificial Intelligence Act' },
+      { title: 'EU AI Act Annex III — high-risk AI systems', url: 'https://artificialintelligenceact.eu/annex/3/', source: 'EU Artificial Intelligence Act' },
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'NIST AI Risk Management Framework (AI RMF 1.0)', url: 'https://www.nist.gov/itl/ai-risk-management-framework', source: 'NIST' },
+      { title: 'Microsoft Copilot Studio — Build banking agents', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/', source: 'Microsoft Learn' },
+    ],
   },
 
   'ai-agents-education-campus-operations': {
@@ -699,6 +1089,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Do AI agents reduce education staff?', answer: 'Typically not — they shift staff to high-value work. Administrative time on routine queries drops 40–60%; staff redirect to advising, mentoring, program development, and one-on-one student support. Net headcount usually stays similar; what they do changes meaningfully.' },
       { question: 'What privacy laws apply to AI agents in education?', answer: 'FERPA (US student data privacy), GDPR (EU), state-level student privacy laws, COPPA for K–12 students under 13, and accessibility laws (ADA, Section 508). Always pair AI deployment with privacy impact assessments and clear consent flows.' },
       { question: 'Can AI agents help with adaptive learning?', answer: 'Yes. AI agents track each student\'s mastery, adjust difficulty in real time, explain concepts in multiple ways, and recommend resources. Best for skill-based subjects (math, language, programming, certification prep). Less effective for nuanced humanities subjects requiring deep human discussion.' },
+    ],
+    references: [
+      { title: 'WEF — EdTech needs agentic AI for workforce transformation', url: 'https://www.weforum.org/stories/2025/05/see-why-edtech-needs-agentic-ai-for-workforce-transformation/', source: 'World Economic Forum' },
+      { title: 'WEF Future of Jobs Report 2025', url: 'https://www.weforum.org/publications/the-future-of-jobs-report-2025/', source: 'World Economic Forum' },
+      { title: 'EU AI Act Annex III — education listed as high-risk', url: 'https://artificialintelligenceact.eu/annex/3/', source: 'EU Artificial Intelligence Act' },
+      { title: 'Microsoft Copilot Studio — Build education agents', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/', source: 'Microsoft Learn' },
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
     ],
   },
 
@@ -715,6 +1112,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'What is the ROI of AI in property management?', answer: 'Common results: 50–70% reduction in tenant query handling time, 30–50% faster maintenance dispatch, 20–40% improvement in rent collection cycle time, and 10–20% improvement in tenant retention from faster, more responsive service.' },
       { question: 'Are AI agents replacing property managers?', answer: 'No — they reduce administrative burden so property managers focus on high-value work: vendor relationships, capital improvements, tenant retention, and portfolio strategy. Headcount usually stays similar; the work shifts to higher-value activities.' },
     ],
+    references: [
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'Microsoft Copilot Studio — Build PropTech agents', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/', source: 'Microsoft Learn' },
+      { title: 'Microsoft Agent Framework — 1.0 production release', url: 'https://learn.microsoft.com/en-us/agent-framework/', source: 'Microsoft Learn' },
+      { title: 'Introducing the Model Context Protocol', url: 'https://www.anthropic.com/news/model-context-protocol', source: 'Anthropic' },
+      { title: 'Microsoft Responsible AI Standard v2 (PDF)', url: 'https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Microsoft-Responsible-AI-Standard-General-Requirements.pdf', source: 'Microsoft' },
+    ],
   },
 
   'ai-agents-telecom-customer-retention': {
@@ -729,6 +1133,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Can AI agents handle technical telecom support?', answer: 'Yes for common issues: signal troubleshooting, plan changes, billing disputes, device setup, account management. Complex issues (network outages, business contracts, multi-line family plans) escalate to specialists with full context.' },
       { question: 'What is the ROI of AI agents in telecom?', answer: 'Top performers report 15–25% reduction in churn, 30–50% reduction in service cost, and 20–30% improvement in customer satisfaction. Payback in 9–18 months is realistic for mid-to-large telecoms.' },
       { question: 'How do telecom AI agents handle multilingual support?', answer: 'Modern multilingual LLMs (GPT-4o, Claude 3.5, Gemini) handle 50+ languages well. Telecoms in multilingual markets (India, EU, Middle East) deploy AI agents in their top 5–10 languages from day one, expanding as quality is validated for each language.' },
+    ],
+    references: [
+      { title: 'McKinsey — The state of AI in 2025: Agents, innovation, and transformation', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'Microsoft Copilot Studio — Build telco customer-care agents', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/', source: 'Microsoft Learn' },
+      { title: 'LangGraph — Build resilient retention agents', url: 'https://github.com/langchain-ai/langgraph', source: 'GitHub — LangChain AI' },
+      { title: 'Introducing the Model Context Protocol', url: 'https://www.anthropic.com/news/model-context-protocol', source: 'Anthropic' },
+      { title: 'Microsoft Responsible AI Standard v2 (PDF)', url: 'https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Microsoft-Responsible-AI-Standard-General-Requirements.pdf', source: 'Microsoft' },
     ],
   },
 
@@ -745,6 +1156,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Are AI-discovered drugs FDA-approved?', answer: 'Several AI-designed or AI-accelerated drugs have entered clinical trials, with first commercial approvals appearing in 2024–2025. The FDA evaluates them under standard frameworks plus emerging AI-specific guidance. Expect more AI-discovered drugs reaching approval over the next 3–5 years.' },
       { question: 'How is patient data protected in AI-powered pharma trials?', answer: 'Through HIPAA in the US, GDPR in EU, and equivalent regulations globally. De-identification, federated learning (data stays at the trial site), and strict access controls are standard. AI vendors working in pharma must support 21 CFR Part 11 compliance for electronic records and signatures.' },
     ],
+    references: [
+      { title: 'FDA — Guiding Principles of Good AI Practice in Drug Development', url: 'https://www.fda.gov/about-fda/artificial-intelligence-drug-development/guiding-principles-good-ai-practice-drug-development', source: 'U.S. Food and Drug Administration' },
+      { title: 'FDA — AI in Software as a Medical Device', url: 'https://www.fda.gov/medical-devices/software-medical-device-samd/artificial-intelligence-software-medical-device', source: 'U.S. Food and Drug Administration' },
+      { title: 'EU AI Act — Healthcare and pharmaceuticals as high-risk', url: 'https://artificialintelligenceact.eu/high-level-summary/', source: 'EU Artificial Intelligence Act' },
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'NIST AI Risk Management Framework (AI RMF 1.0)', url: 'https://www.nist.gov/itl/ai-risk-management-framework', source: 'NIST' },
+    ],
   },
 
   'ai-agents-logistics-warehouse-operations': {
@@ -759,6 +1177,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'What is route optimization with AI?', answer: 'AI-powered route optimization considers real-time traffic, weather, vehicle capacity, driver hours-of-service, customer time windows, and delivery priorities to plan and dynamically adjust delivery routes. Typically 15–30% improvement over static route planning.' },
       { question: 'Are AI agents replacing warehouse workers?', answer: 'AI and robotics together are reshaping warehouse work — some traditional roles decline, new roles (robot operators, exception handlers, AI supervisors) emerge. Net headcount depends on volume growth and automation pace. Plan workforce transition deliberately, not as an afterthought.' },
       { question: 'What is the ROI of AI in logistics?', answer: 'Common results: 20–30% improvement in pick productivity, 15–30% reduction in delivery cost, 30–50% reduction in expedited freight (from better predictions), and 10–20% improvement in on-time delivery. Payback in 12–24 months for established logistics operations.' },
+    ],
+    references: [
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'WEF Future of Jobs Report 2025', url: 'https://www.weforum.org/publications/the-future-of-jobs-report-2025/', source: 'World Economic Forum' },
+      { title: 'Microsoft Agent Framework — Production-ready agents', url: 'https://learn.microsoft.com/en-us/agent-framework/', source: 'Microsoft Learn' },
+      { title: 'LangGraph — Build resilient logistics agents', url: 'https://github.com/langchain-ai/langgraph', source: 'GitHub — LangChain AI' },
+      { title: 'Introducing the Model Context Protocol', url: 'https://www.anthropic.com/news/model-context-protocol', source: 'Anthropic' },
     ],
   },
 
@@ -775,6 +1200,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Are insurance AI decisions compliant with regulations?', answer: 'They can be — but require explainability (so customers can understand denials), bias testing (so coverage and pricing are fair), audit trails, and adverse-action notification. State and country regulations vary; always work with compliance from project inception.' },
       { question: 'What is the ROI of AI in insurance?', answer: 'Common results: 50–80% reduction in cycle time for standard products, 30–50% reduction in claims-handling cost, 20–40% improvement in fraud detection, and 10–25% improvement in customer satisfaction from faster decisions. Payback typically 12–24 months.' },
     ],
+    references: [
+      { title: 'EU AI Act Article 6: Credit & insurance are high-risk AI', url: 'https://artificialintelligenceact.eu/article/6/', source: 'EU Artificial Intelligence Act' },
+      { title: 'EU AI Act Annex III — insurance pricing and risk listed as high-risk', url: 'https://artificialintelligenceact.eu/annex/3/', source: 'EU Artificial Intelligence Act' },
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'NIST AI Risk Management Framework (AI RMF 1.0)', url: 'https://www.nist.gov/itl/ai-risk-management-framework', source: 'NIST' },
+      { title: 'Microsoft Copilot Studio + Dataverse for insurance', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/', source: 'Microsoft Learn' },
+    ],
   },
 
   'ai-agents-hospitality-guest-experience': {
@@ -789,6 +1221,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Can AI agents replace hotel concierges?', answer: 'For routine concierge tasks (restaurant reservations, activity bookings, local recommendations), yes — at 24/7 availability that human concierges cannot match. Skilled concierges remain valuable for high-end personalization, complex itineraries, and human connection that defines luxury hospitality.' },
       { question: 'What ROI does hospitality see from AI agents?', answer: 'Common results: 30–50% reduction in front-desk and concierge labor on routine tasks, 15–25% improvement in upsell revenue, 10–20% improvement in guest satisfaction scores, and meaningful improvement in loyalty program engagement.' },
       { question: 'How do AI agents handle multilingual guests?', answer: 'Modern AI agents handle 50+ languages with high quality — far exceeding what most hotel chains can staff. International brands deploy multilingual AI as a competitive advantage in markets where global guest mix is high (Middle East, Asia-Pacific, EU).' },
+    ],
+    references: [
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'WEF Future of Jobs Report 2025', url: 'https://www.weforum.org/publications/the-future-of-jobs-report-2025/', source: 'World Economic Forum' },
+      { title: 'Microsoft Copilot Studio — Build hospitality agents', url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/', source: 'Microsoft Learn' },
+      { title: 'Microsoft Agent Framework — 1.0 production release', url: 'https://learn.microsoft.com/en-us/agent-framework/', source: 'Microsoft Learn' },
+      { title: 'Microsoft Responsible AI Standard v2 (PDF)', url: 'https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Microsoft-Responsible-AI-Standard-General-Requirements.pdf', source: 'Microsoft' },
     ],
   },
 
@@ -805,6 +1244,13 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'Is AI agriculture only for large industrial farms?', answer: 'Today, mostly yes — sensor infrastructure and equipment costs favor scale. But mobile-first AI advisory apps for smallholder farmers (especially in India, Africa, Latin America) are growing rapidly. Satellite-based monitoring works at any farm size.' },
       { question: 'How does AI help with climate change adaptation in agriculture?', answer: 'AI helps growers manage increasing weather volatility — predicting extreme events, recommending climate-resilient crop choices, optimizing irrigation during droughts, and adjusting planting schedules as growing seasons shift. This is the long-game value of agricultural AI.' },
     ],
+    references: [
+      { title: 'McKinsey — The state of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'WEF Future of Jobs Report 2025', url: 'https://www.weforum.org/publications/the-future-of-jobs-report-2025/', source: 'World Economic Forum' },
+      { title: 'Microsoft Foundry — Models for vision and time-series', url: 'https://learn.microsoft.com/en-us/azure/foundry/concepts/foundry-models-overview', source: 'Microsoft Learn' },
+      { title: 'LangGraph — Build resilient agricultural agents', url: 'https://github.com/langchain-ai/langgraph', source: 'GitHub — LangChain AI' },
+      { title: 'Microsoft Responsible AI Standard v2 (PDF)', url: 'https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Microsoft-Responsible-AI-Standard-General-Requirements.pdf', source: 'Microsoft' },
+    ],
   },
 
   'non-functional-testing-ai-llm-systems': {
@@ -820,15 +1266,25 @@ export const seoAugmentations: Record<string, PostAugmentation> = {
       { question: 'How do you test LLM consistency?', answer: 'Run the same prompt multiple times (10–50 iterations) and measure variance in outputs. Use semantic similarity metrics (BERT score, embedding distance) or LLM-as-judge for consistency scoring. Set temperature to 0 for deterministic tasks; accept controlled variance for creative tasks.' },
       { question: 'What tools should I use for LLM load testing?', answer: 'Open-source: Locust (general load testing), Promptfoo (LLM-specific), LangSmith (LangChain ecosystem). Cloud-native: Azure Load Testing, AWS Distributed Load Testing, Google Cloud Load Generator. Always test against your production endpoint with realistic prompt distributions.' },
     ],
+    references: [
+      { title: 'Understand LLM latency and throughput metrics', url: 'https://docs.anyscale.com/llm/serving/benchmarking/metrics', source: 'Anyscale documentation' },
+      { title: 'LLM performance benchmarks (Inference Handbook)', url: 'https://bentoml.com/llm/inference-optimization/llm-performance-benchmarks', source: 'BentoML LLM Inference Handbook' },
+      { title: 'Comparative Analysis of LLM Inference Serving Systems: vLLM vs HuggingFace TGI', url: 'https://arxiv.org/abs/2511.17593', source: 'arXiv (peer-reviewed preprint)' },
+      { title: 'LLM-Inference-Bench: Benchmarking on AI Accelerators', url: 'https://arxiv.org/abs/2411.00136', source: 'arXiv (peer-reviewed preprint)' },
+      { title: 'promptfoo: open-source LLM evaluation and red-teaming', url: 'https://github.com/promptfoo/promptfoo', source: 'GitHub (used by OpenAI and Anthropic)' },
+      { title: 'MLflow GenAI: LLM and Agent Evaluation', url: 'https://mlflow.org/docs/latest/genai/eval-monitor/', source: 'MLflow official documentation' },
+      { title: 'RAGAS metrics overview (for consistency/groundedness scoring)', url: 'https://docs.ragas.io/en/stable/concepts/metrics/overview/', source: 'RAGAS official documentation' },
+    ],
   },
 }
 
-export function applyAugmentations<T extends { slug: string; keyTakeaways?: string[]; faqs?: FAQItem[] }>(post: T): T {
+export function applyAugmentations<T extends { slug: string; keyTakeaways?: string[]; faqs?: FAQItem[]; references?: Reference[] }>(post: T): T {
   const aug = seoAugmentations[post.slug]
   if (!aug) return post
   return {
     ...post,
     keyTakeaways: post.keyTakeaways && post.keyTakeaways.length > 0 ? post.keyTakeaways : aug.keyTakeaways,
     faqs: post.faqs && post.faqs.length > 0 ? post.faqs : aug.faqs,
+    references: post.references && post.references.length > 0 ? post.references : aug.references,
   }
 }

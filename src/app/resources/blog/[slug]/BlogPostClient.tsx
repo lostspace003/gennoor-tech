@@ -9,6 +9,7 @@ import { CheckCircle } from 'lucide-react'
 import AuthorByline from '@/components/blog/AuthorByline'
 import KeyTakeaways from '@/components/blog/KeyTakeaways'
 import PostFAQ from '@/components/blog/PostFAQ'
+import References from '@/components/blog/References'
 import { resolveAuthor } from '@/config/authors'
 
 const BlogComments = dynamic(() => import('@/components/BlogComments'), { ssr: false })
@@ -341,6 +342,9 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
 
           {/* FAQ section — paired with FAQJsonLd in server page */}
           <PostFAQ faqs={post.faqs} />
+
+          {/* References — authoritative outbound links for E-E-A-T */}
+          <References references={post.references} />
 
           {/* Tags */}
           <div className="px-6 sm:px-10 py-6" style={{ borderTop: '1px solid #f3f4f6' }}>
