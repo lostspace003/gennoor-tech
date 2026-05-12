@@ -14,7 +14,7 @@ export const post: BlogPost = {
 
 <p>This guide provides the detailed comparison you need to make an informed decision, including a feature-by-feature breakdown, architecture differences, cost analysis, and real-world decision scenarios. Let's start by understanding what each tool actually is.</p>
 
-<h2>What Is Copilot Studio?</h2>
+<h2>What Is <a href="https://learn.microsoft.com/en-us/microsoft-copilot-studio/" target="_blank" rel="noopener">Copilot Studio</a>?</h2>
 
 <p><strong>Copilot Studio</strong> is Microsoft's low-code/no-code platform for building conversational AI agents. It evolved from Power Virtual Agents and is tightly integrated with the Power Platform ecosystem. Think of it as the "citizen developer" path: you build agents through a visual interface, configure them with dropdown menus and forms, and deploy them across Microsoft 365, Teams, websites, and mobile apps.</p>
 
@@ -28,9 +28,9 @@ export const post: BlogPost = {
 <li><strong>Pre-built connectors</strong>: 1000+ connectors to enterprise systems</li>
 </ul>
 
-<h2>What Is Azure AI Agent Service?</h2>
+<h2>What Is <a href="https://learn.microsoft.com/en-us/agent-framework/" target="_blank" rel="noopener">Azure AI Agent Service</a>?</h2>
 
-<p><strong>Azure AI Agent Service</strong> (also known as Microsoft Agent Framework) is a code-first framework for building sophisticated, multi-agent AI systems. It's built on top of Semantic Kernel and Azure OpenAI, providing low-level control over agent behavior, orchestration, and tool use.</p>
+<p><strong>Azure AI Agent Service</strong> (also known as <a href="https://devblogs.microsoft.com/agent-framework/microsoft-agent-framework-version-1-0/" target="_blank" rel="noopener">Microsoft Agent Framework</a>, now production-ready at v1.0) is a code-first framework for building sophisticated, multi-agent AI systems. It's built on top of <a href="https://learn.microsoft.com/en-us/semantic-kernel/" target="_blank" rel="noopener">Semantic Kernel</a> and Azure OpenAI, providing low-level control over agent behavior, orchestration, and tool use.</p>
 
 <p>Azure AI Agent Service excels at:</p>
 

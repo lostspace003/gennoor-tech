@@ -6,13 +6,13 @@ export const post: BlogPost = {
     excerpt: 'One command to run any open-source model on your machine. Ollama makes local AI inference practical — and enterprises are finding serious use cases.',
     tldr: 'Ollama lets you run any open-source LLM locally with a single command. Enterprises use it for sensitive data processing, air-gapped environments, developer prototyping, and reducing API costs by 80%+.',
     content: `
-<p>Type <code>ollama run llama3</code> in your terminal. In 30 seconds, you have a fully functional 8-billion-parameter language model running on your machine, with an OpenAI-compatible API ready for integration. No Docker images to configure, no Python environments to wrestle with, no model format conversions. Ollama turned local LLM deployment from a weekend project into a single command.</p>
+<p>Type <code>ollama run llama3</code> in your terminal. In 30 seconds, you have a fully functional 8-billion-parameter language model running on your machine, with an OpenAI-compatible API ready for integration. No Docker images to configure, no Python environments to wrestle with, no model format conversions. <a href="https://ollama.com/" target="_blank" rel="noopener">Ollama</a> turned local LLM deployment from a weekend project into a single command.</p>
 
 <p>I have watched Ollama go from a developer tool to a strategic asset for enterprises in the past year. Organizations are finding serious production use cases that demand local inference: data sovereignty, cost control, offline operation, and development velocity. Here is what you need to know.</p>
 
 <h2>What Is Ollama, Technically?</h2>
 
-<p>Ollama is a model runtime and distribution platform. It packages open-source LLMs in an optimized format (GGUF, built on llama.cpp), handles quantization for efficient inference, provides a simple CLI and API, and includes GPU acceleration for NVIDIA, AMD, and Apple Silicon.</p>
+<p><a href="https://github.com/ollama/ollama" target="_blank" rel="noopener">Ollama</a> is an open-source model runtime and distribution platform. It packages open-source LLMs in an optimized format (GGUF, built on llama.cpp), handles quantization for efficient inference, provides a simple CLI and API, and includes GPU acceleration for NVIDIA, AMD, and Apple Silicon.</p>
 
 <p>The genius is in the packaging. Each model is containerized with its weights, configuration, and runtime optimizations. You download once, run anywhere. The API is OpenAI-compatible, meaning most existing code works with minimal changes. For developers, it is frictionless. For enterprises, it is a deployment model that makes sense.</p>
 
@@ -24,7 +24,7 @@ export const post: BlogPost = {
 
 <p>For enterprise deployment, you install Ollama on your servers, pre-download models, configure resource limits, and secure the API endpoint. The workflow scales from laptop to data center.</p>
 
-<h2>The Model Library: What You Can Run</h2>
+<h2>The <a href="https://ollama.com/library" target="_blank" rel="noopener">Model Library</a>: What You Can Run</h2>
 
 <p>Ollama's library includes hundreds of models: Llama (1B to 70B), Mistral, Mixtral, Phi-3, Qwen, Gemma, DeepSeek, and dozens of fine-tuned variants for coding, math, role-playing, and domain-specific tasks.</p>
 

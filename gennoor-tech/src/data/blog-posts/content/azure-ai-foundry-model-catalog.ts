@@ -14,9 +14,9 @@ export const post: BlogPost = {
 
 <p>Azure AI Foundry addresses this by providing an enterprise-grade model marketplace with curated models, standardized deployment patterns, built-in security and compliance, and integrated evaluation tools. It is Microsoft's answer to AWS Bedrock and Google Vertex AI—a unified platform for enterprise AI model selection, deployment, and management.</p>
 
-<h2>What is Azure AI Foundry?</h2>
+<h2>What is <a href="https://learn.microsoft.com/en-us/azure/foundry/" target="_blank" rel="noopener">Azure AI Foundry</a>?</h2>
 
-<p>Azure AI Foundry (formerly Azure AI Studio) is Microsoft's comprehensive platform for building, deploying, and managing enterprise AI applications. At its core is the <strong>Model Catalog</strong>—a curated marketplace of AI models from Microsoft, OpenAI, Meta, Mistral, Cohere, AI21, and other leading providers, all deployable through consistent APIs with enterprise security.</p>
+<p><a href="https://learn.microsoft.com/en-us/azure/foundry/concepts/foundry-models-overview" target="_blank" rel="noopener">Azure AI Foundry</a> (formerly Azure AI Studio) is Microsoft's comprehensive platform for building, deploying, and managing enterprise AI applications. At its core is the <a href="https://ai.azure.com/catalog" target="_blank" rel="noopener"><strong>Model Catalog</strong></a> — a curated marketplace of 1,900+ AI models from Microsoft, OpenAI, Meta, Mistral, Cohere, AI21, and other leading providers, all deployable through consistent APIs with enterprise security.</p>
 
 <p>The platform provides three key capabilities. First, <strong>unified model access</strong> through a single API surface that abstracts provider differences. Your application code calls Azure AI endpoints; behind the scenes, Azure routes to OpenAI, Mistral, or Meta models based on your deployment configuration. This enables seamless A/B testing and model switching without application changes.</p>
 

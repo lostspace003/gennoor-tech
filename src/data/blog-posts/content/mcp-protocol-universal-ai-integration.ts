@@ -6,7 +6,7 @@ export const post: BlogPost = {
     excerpt: 'Model Context Protocol is becoming the USB-C of AI — one standard to connect any model to any tool. Here is why every enterprise architect should pay attention.',
     tldr: 'Model Context Protocol (MCP) is an open standard that lets any AI model connect to any enterprise system through a single protocol — build one MCP server for your CRM and every AI agent in your org can use it.',
     content: `
-<p>Every AI agent needs to interact with enterprise systems. Until now, that meant custom integration code for every tool, every database, every API. Model Context Protocol (MCP) changes the game by providing a universal standard for AI-to-system communication. This deep dive will show you exactly how MCP works, why it matters, and how to implement it in your enterprise architecture.</p>
+<p>Every AI agent needs to interact with enterprise systems. Until now, that meant custom integration code for every tool, every database, every API. <a href="https://www.anthropic.com/news/model-context-protocol" target="_blank" rel="noopener">Model Context Protocol (MCP)</a>, introduced by Anthropic in late 2024, changes the game by providing a universal standard for AI-to-system communication. This deep dive will show you exactly how MCP works, why it matters, and how to implement it in your enterprise architecture.</p>
 
 <h2>What MCP Does</h2>
 <p>MCP provides a standardized way for AI models to discover, authenticate with, and use external tools. Build one MCP server for your CRM, and <strong>every</strong> AI agent in your organization can use it — Claude, GPT, Copilot, open-source models, all of them. It's the USB-C of AI integration: one protocol to rule them all.</p>
@@ -61,7 +61,7 @@ export const post: BlogPost = {
 <li><strong>Server-Sent Events (SSE) over HTTP</strong> — The server runs as a web service, clients connect via HTTP. Enables multi-user deployments, remote servers, and enterprise scalability.</li>
 </ul>
 
-<h2>Protocol Specification: The Three Primitives</h2>
+<h2><a href="https://modelcontextprotocol.io/specification/2025-11-25" target="_blank" rel="noopener">Protocol Specification</a>: The Three Primitives</h2>
 <p>MCP defines three core primitives that servers can expose:</p>
 
 <h3>Tools</h3>

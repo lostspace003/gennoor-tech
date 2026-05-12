@@ -34,7 +34,7 @@ export const post: BlogPost = {
 <p>Cherry-picked examples are the enemy of production readiness. Your POC must be tested against data that represents the full distribution of real-world inputs, including edge cases, malformed inputs, multilingual content, and adversarial examples. If you cannot get production data for the POC, create synthetic data that mirrors the statistical properties of production data — including the messy parts.</p>
 
 <h3>Build the Evaluation Framework Early</h3>
-<p>An evaluation suite is not a nice-to-have — it is the single most important artifact in your POC. Build a test set of 200-500 labeled examples that covers common cases, edge cases, and known failure modes. Run every change against this suite. Track metrics over time. The evaluation suite is what transforms "I think it works" into "I can prove it works, and here is the data."</p>
+<p>An evaluation suite is not a nice-to-have — it is the single most important artifact in your POC. Build a test set of 200-500 labeled examples that covers common cases, edge cases, and known failure modes. Tools like <a href="https://github.com/promptfoo/promptfoo" target="_blank" rel="noopener">promptfoo</a> (used by OpenAI and Anthropic) make it cheap to run this in CI. Run every change against this suite. Track metrics over time. The evaluation suite is what transforms "I think it works" into "I can prove it works, and here is the data."</p>
 
 <div class="blog-flow"><div class="flow-step"><span class="step-num">01</span><span class="step-label">POC Design</span></div><span class="flow-arrow">→</span><div class="flow-step"><span class="step-num">02</span><span class="step-label">Hardening</span></div><span class="flow-arrow">→</span><div class="flow-step"><span class="step-num">03</span><span class="step-label">Staging</span></div><span class="flow-arrow">→</span><div class="flow-step"><span class="step-num">04</span><span class="step-label">Deploy</span></div><span class="flow-arrow">→</span><div class="flow-step"><span class="step-num">05</span><span class="step-label">Operations</span></div></div>
 
@@ -58,7 +58,7 @@ export const post: BlogPost = {
 <li><strong>Structured logging</strong> — Log every AI call with input (or input hash for privacy), output, model version, latency, token usage, and cost. Use structured formats (JSON) that can be queried and analyzed.</li>
 <li><strong>Distributed tracing</strong> — For multi-step AI pipelines (RAG, agent workflows), implement end-to-end tracing so you can follow a single request through every component. OpenTelemetry is the standard.</li>
 <li><strong>Metrics and dashboards</strong> — Track request volume, latency percentiles, error rates, token usage, and cost in real-time dashboards. Use tools like Datadog, Grafana, or Application Insights.</li>
-<li><strong>Quality monitoring</strong> — Automated evaluation of production outputs against quality criteria. Detect drift before users complain.</li>
+<li><strong>Quality monitoring</strong> — Automated evaluation of production outputs against quality criteria using <a href="https://mlflow.org/docs/latest/genai/eval-monitor/" target="_blank" rel="noopener">MLflow GenAI evaluation</a> or similar tools. Detect drift before users complain.</li>
 </ul>
 
 <h3>Security</h3>

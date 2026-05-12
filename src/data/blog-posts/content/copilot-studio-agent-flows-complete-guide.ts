@@ -89,7 +89,7 @@ export const post: BlogPost = {
 <figcaption>Agent Flow architecture: triggers feed AI reasoning, which drives enterprise actions</figcaption>
 </div>
 
-<h2>Step-by-Step: Building Your First Agent Flow</h2>
+<h2>Step-by-Step: Building Your First <a href="https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-get-started" target="_blank" rel="noopener">Agent Flow</a></h2>
 <p>Let's build a complete agent flow that processes vendor invoice emails. This example demonstrates all key concepts.</p>
 
 <h3>Step 1: Create a New Agent</h3>
@@ -196,7 +196,7 @@ export const post: BlogPost = {
 <li>You're integrating with legacy systems that require custom connectors</li>
 </ul>
 
-<p>In practice, many organizations use both. Agent Flows for AI-powered decision-making, Power Automate for deterministic orchestration. They can call each other for hybrid workflows.</p>
+<p>In practice, many organizations use both. <a href="https://learn.microsoft.com/en-us/microsoft-copilot-studio/flows-overview" target="_blank" rel="noopener">Agent Flows</a> for AI-powered decision-making, <a href="https://learn.microsoft.com/en-us/power-automate/copilot-overview" target="_blank" rel="noopener">Power Automate</a> for deterministic orchestration. They can call each other for hybrid workflows.</p>
 
 <h2>Real Enterprise Scenarios</h2>
 

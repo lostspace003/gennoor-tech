@@ -6,7 +6,7 @@ export const post: BlogPost = {
     excerpt: 'The gap between open-source and proprietary models has narrowed dramatically. Here is a practical comparison for enterprise decision-makers.',
     tldr: 'Open-source LLMs like Llama 3, Mistral, Qwen, and DeepSeek now match proprietary models for many enterprise tasks at 60-90% lower cost, with the added benefits of data sovereignty and on-premise deployment.',
     content: `
-<p>The open-source LLM landscape has matured rapidly. Three years ago, open-source models were science projects — interesting but not production-ready. Today, models like Llama 3, Mistral, Qwen, and DeepSeek rival or exceed proprietary offerings on many enterprise tasks, at a fraction of the cost and with complete control over your data. The question is no longer "should we consider open-source?" It is "which open-source model fits our use case?"</p>
+<p>The open-source LLM landscape has matured rapidly. Three years ago, open-source models were science projects — interesting but not production-ready. Today, models like Llama 3, Mistral, Qwen, and DeepSeek rival or exceed proprietary offerings on many enterprise tasks, at a fraction of the cost and with complete control over your data — as the <a href="https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard" target="_blank" rel="noopener">Hugging Face Open LLM Leaderboard</a> shows on a weekly basis. The question is no longer "should we consider open-source?" It is "which open-source model fits our use case?"</p>
 
 <p>I have architected open-source LLM deployments for organizations in healthcare, financial services, manufacturing, and government. The decision framework I will share has helped teams navigate the complexity and make choices that deliver results.</p>
 
@@ -157,7 +157,7 @@ export const post: BlogPost = {
 <h2>Deployment Patterns: Architecture for Production</h2>
 
 <h3>Single-Model Serving</h3>
-<p>One model serves all requests. Simplest architecture. Works when a single model handles your use case. Use vLLM or TGI for optimized serving.</p>
+<p>One model serves all requests. Simplest architecture. Works when a single model handles your use case. Use <a href="https://arxiv.org/abs/2511.17593" target="_blank" rel="noopener">vLLM or TGI</a> for optimized serving — both compared in a recent peer-reviewed benchmark study.</p>
 
 <h3>Model Cascade</h3>
 <p>Small model triages requests. Complex queries escalate to larger model. Optimizes cost-performance. We have seen 60-80% of requests served by small model at 10% the cost.</p>

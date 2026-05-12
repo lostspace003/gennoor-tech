@@ -66,7 +66,7 @@ export const post: BlogPost = {
 
 <h3>The Solution: Guardrails First, Autonomy Second</h3>
 
-<p>The fix required implementing <strong>deterministic guardrails</strong>—hard-coded rules that constrain what the agent can do:</p>
+<p>The fix required implementing <strong>deterministic guardrails</strong> — hard-coded rules that constrain what the agent can do, typically built into the agent loop with <a href="https://github.com/langchain-ai/langgraph" target="_blank" rel="noopener">LangGraph</a> or <a href="https://learn.microsoft.com/en-us/agent-framework/" target="_blank" rel="noopener">Microsoft Agent Framework</a>:</p>
 
 <ul>
 <li><strong>Data access controls</strong>: Explicitly whitelist which data sources the agent can query for which types of questions</li>
@@ -183,7 +183,7 @@ export const post: BlogPost = {
 
 <h3>The Solution: Comprehensive Observability from Day One</h3>
 
-<p>After this incident, we now implement <strong>three layers of observability</strong> for every agent deployment:</p>
+<p>After this incident, we now implement <strong>three layers of observability</strong> for every agent deployment — typically anchored on <a href="https://mlflow.org/docs/latest/genai/eval-monitor/" target="_blank" rel="noopener">MLflow GenAI evaluation</a> and <a href="https://github.com/promptfoo/promptfoo" target="_blank" rel="noopener">promptfoo</a> for regression testing:</p>
 
 <h4>Layer 1: Distributed Tracing</h4>
 

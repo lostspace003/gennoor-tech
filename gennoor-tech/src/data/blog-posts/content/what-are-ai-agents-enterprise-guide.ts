@@ -108,13 +108,13 @@ export const post: BlogPost = {
 <p>A new enterprise customer signs a contract. The agent kicks off: create accounts in the CRM, provision access, schedule the kickoff meeting, send the welcome package, assign the customer success manager based on account tier and workload, and create the 90-day success plan. Each of these steps currently requires a human to log into a different system. The agent does it in minutes.</p>
 
 <h2>The Agent Frameworks Landscape</h2>
-<p><strong>LangGraph</strong> is the developer's choice for complex, stateful agents. It models agent workflows as graphs with nodes and edges, giving fine-grained control over execution flow and state management. Best for Python teams needing maximum flexibility.</p>
+<p><a href="https://github.com/langchain-ai/langgraph" target="_blank" rel="noopener"><strong>LangGraph</strong></a> is the developer's choice for complex, stateful agents. It models agent workflows as graphs with nodes and edges, giving fine-grained control over execution flow and state management. Best for Python teams needing maximum flexibility.</p>
 
-<p><strong>Semantic Kernel</strong> is Microsoft's agent framework, natural for .NET shops and Azure-heavy organizations. It plugs directly into Azure AI services and has strong enterprise security features.</p>
+<p><a href="https://learn.microsoft.com/en-us/agent-framework/" target="_blank" rel="noopener"><strong>Microsoft Agent Framework</strong></a> (the successor to Semantic Kernel) is the natural choice for .NET shops and Azure-heavy organizations. It plugs directly into Azure AI services and has strong enterprise security features.</p>
 
-<p><strong>Copilot Studio</strong> is the no-code option. Business teams can build agents visually, connect to Microsoft 365 and Dataverse, and deploy to Teams. For 60 to 70 percent of enterprise use cases, its boundaries are perfectly adequate.</p>
+<p><a href="https://learn.microsoft.com/en-us/microsoft-copilot-studio/" target="_blank" rel="noopener"><strong>Copilot Studio</strong></a> is the no-code option. Business teams can build agents visually, connect to Microsoft 365 and Dataverse, and deploy to Teams. For 60 to 70 percent of enterprise use cases, its boundaries are perfectly adequate.</p>
 
-<p><strong>CrewAI</strong> focuses on multi-agent collaboration. You define agents with roles and goals, then orchestrate them to work together. Excellent for scenarios needing specialist agents collaborating on a deliverable.</p>
+<p><a href="https://docs.crewai.com/" target="_blank" rel="noopener"><strong>CrewAI</strong></a> focuses on multi-agent collaboration. You define agents with roles and goals, then orchestrate them to work together. Excellent for scenarios needing specialist agents collaborating on a deliverable.</p>
 
 <h2>How to Evaluate If a Process Is Right for Agents</h2>
 <ul>

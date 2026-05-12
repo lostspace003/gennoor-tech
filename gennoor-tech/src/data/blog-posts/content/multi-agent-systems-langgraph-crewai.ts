@@ -38,7 +38,7 @@ export const post: BlogPost = {
 
 <div class="blog-compare"><div class="compare-card"><div class="compare-title">LangGraph</div><p>Graph-based, fine-grained state control. Best for complex branching, human-in-the-loop, production systems.</p></div><div class="compare-card"><div class="compare-title">CrewAI</div><p>Role-based teams, rapid prototyping. Best for linear workflows, content generation, research automation.</p></div><div class="compare-card"><div class="compare-title">AutoGen</div><p>Conversational agents, code execution. Best for data analysis, collaborative debugging, exploratory tasks.</p></div></div>
 
-<h2>LangGraph: Agentic Workflow Orchestration</h2>
+<h2><a href="https://github.com/langchain-ai/langgraph" target="_blank" rel="noopener">LangGraph</a>: Agentic Workflow Orchestration</h2>
 
 <p>LangGraph, from LangChain, provides a graph-based framework for building stateful, multi-actor applications. Unlike sequential chains, LangGraph models workflows as directed graphs where nodes represent agents or processing steps and edges represent control flow and message passing. This architecture supports cycles, conditional branching, parallel execution, and human-in-the-loop interactions—essential for real-world agentic workflows.</p>
 
@@ -62,7 +62,7 @@ export const post: BlogPost = {
 
 <p>At Gennoor Tech, our <a href="/services/training">enterprise AI training programs</a> include hands-on LangGraph implementation workshops, teaching state design, agent orchestration patterns, testing strategies, and production deployment for complex multi-agent workflows.</p>
 
-<h2>CrewAI: Role-Based Multi-Agent Framework</h2>
+<h2><a href="https://docs.crewai.com/" target="_blank" rel="noopener">CrewAI</a>: Role-Based Multi-Agent Framework</h2>
 
 <p>CrewAI provides a higher-level abstraction for multi-agent systems, modeling workflows as teams of agents with defined roles, goals, and collaboration patterns. While LangGraph gives you low-level graph control, CrewAI offers opinionated patterns that accelerate development for common use cases—research automation, content generation, data analysis, and business process automation.</p>
 
@@ -80,9 +80,9 @@ export const post: BlogPost = {
 
 <p>Many organizations use both—CrewAI for proof-of-concepts and simple workflows, LangGraph for production systems requiring robustness and scale. You can also integrate them—implement specialized agents in LangGraph and orchestrate them using CrewAI's crew abstraction.</p>
 
-<h2>AutoGen: Microsoft's Multi-Agent Framework</h2>
+<h2><a href="https://github.com/microsoft/autogen" target="_blank" rel="noopener">AutoGen</a>: Microsoft's Multi-Agent Framework</h2>
 
-<p>AutoGen, from Microsoft Research, focuses on conversational agent coordination and code generation workflows. Its core pattern is <strong>conversable agents</strong>—agents that communicate through natural language messages, enabling flexible coordination without rigid workflow definitions.</p>
+<p><a href="https://www.microsoft.com/en-us/research/project/autogen/" target="_blank" rel="noopener">AutoGen</a>, from Microsoft Research, focuses on conversational agent coordination and code generation workflows. Its core pattern is <strong>conversable agents</strong>—agents that communicate through natural language messages, enabling flexible coordination without rigid workflow definitions. (Note: AutoGen is now in maintenance mode; new projects should use <a href="https://learn.microsoft.com/en-us/agent-framework/" target="_blank" rel="noopener">Microsoft Agent Framework</a>.)</p>
 
 <p>AutoGen agents engage in multi-turn conversations to solve problems collaboratively. A <code>UserProxy</code> agent represents the human user, initiating tasks and executing code. An <code>Assistant</code> agent (powered by GPT-4o or similar) generates plans and writes code. A <code>Critic</code> agent reviews outputs for correctness and safety. Agents converse until reaching consensus or hitting termination conditions.</p>
 

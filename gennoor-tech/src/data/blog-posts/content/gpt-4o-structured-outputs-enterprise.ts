@@ -6,11 +6,11 @@ export const post: BlogPost = {
     excerpt: 'Guaranteed JSON schema adherence means no more parsing failures in production. Here is how structured outputs transform enterprise AI pipelines.',
     tldr: 'GPT-4o structured outputs guarantee JSON schema adherence, eliminating parsing failures in production pipelines. This single feature transforms enterprise AI integration by making model outputs programmatically reliable.',
     content: `
-<p>The single biggest friction point in enterprise AI integration has been parsing. Your LLM returns almost-valid JSON, your pipeline breaks, your team spends hours debugging edge cases. I have watched organizations spend weeks building validation layers, retry logic, and error handlers just to wrangle unreliable LLM outputs. OpenAI's structured outputs feature eliminates this entire class of problems.</p>
+<p>The single biggest friction point in enterprise AI integration has been parsing. Your LLM returns almost-valid JSON, your pipeline breaks, your team spends hours debugging edge cases. I have watched organizations spend weeks building validation layers, retry logic, and error handlers just to wrangle unreliable LLM outputs. <a href="https://openai.com/index/introducing-structured-outputs-in-the-api/" target="_blank" rel="noopener">OpenAI's structured outputs feature</a> eliminates this entire class of problems.</p>
 
 <p>After deploying structured outputs across fourteen enterprise clients spanning fintech, healthcare, and logistics, I can tell you this is not an incremental improvement. This is a fundamental architectural shift that changes how we build AI-powered systems.</p>
 
-<h2>What Are Structured Outputs, Precisely?</h2>
+<h2>What Are <a href="https://developers.openai.com/api/docs/guides/structured-outputs" target="_blank" rel="noopener">Structured Outputs</a>, Precisely?</h2>
 
 <p>Structured outputs allow you to define a JSON schema that the model is <strong>constrained to follow exactly</strong>. Not "encouraged to follow" or "usually follows." Guaranteed adherence. Every field type, every required property, every enum value — the model's output will match your schema or the API call fails. No exceptions.</p>
 
