@@ -7,7 +7,7 @@ export const post: BlogPost = {
     tldr: 'Responsible AI requires three practical pillars: bias testing before and after deployment, transparency through explainable outputs and documentation, and accountability via clear ownership and incident response processes.',
     content: `
 <h2>Why Responsible AI Is a Business Imperative</h2>
-<p>Responsible AI is not a checkbox exercise or a feel-good initiative. It is the difference between an AI system that builds trust and one that destroys it. And in enterprise settings, trust destruction has a very concrete cost: lawsuits, regulatory fines, lost customers, and reputational damage that takes years to repair.</p>
+<p>Responsible AI is not a checkbox exercise or a feel-good initiative. It is the difference between an AI system that builds trust and one that destroys it. Both the <a href="https://www.microsoft.com/en-us/ai/principles-and-approach" target="_blank" rel="noopener">Microsoft Responsible AI Principles</a> and the <a href="https://www.nist.gov/itl/ai-risk-management-framework" target="_blank" rel="noopener">NIST AI Risk Management Framework</a> are built on this premise. In enterprise settings, trust destruction has a very concrete cost: lawsuits, regulatory fines, lost customers, and reputational damage that takes years to repair.</p>
 
 <p>Consider the real-world consequences. Amazon scrapped an AI recruiting tool after discovering it systematically downgraded resumes from women. A major healthcare algorithm was found to prioritize white patients over sicker Black patients for follow-up care. Multiple facial recognition systems have been shown to have dramatically higher error rates for darker-skinned individuals. These are not theoretical risks — they are documented failures with real victims and real costs.</p>
 
@@ -59,7 +59,7 @@ export const post: BlogPost = {
 <h2>Transparency and Explainability</h2>
 
 <h3>Why Explainability Matters</h3>
-<p>When an AI system denies someone a loan, recommends a medical treatment, or flags a transaction as fraudulent, the affected person has a right to understand why. Beyond ethics, explainability is increasingly a legal requirement. The EU AI Act mandates transparency for high-risk AI systems. Financial regulations in many jurisdictions require explanations for adverse credit decisions. Healthcare regulations require that clinical decision support systems provide reasoning.</p>
+<p>When an AI system denies someone a loan, recommends a medical treatment, or flags a transaction as fraudulent, the affected person has a right to understand why. Beyond ethics, explainability is increasingly a legal requirement. The <a href="https://artificialintelligenceact.eu/article/16/" target="_blank" rel="noopener">EU AI Act mandates transparency</a> for high-risk AI systems. Financial regulations in many jurisdictions require explanations for adverse credit decisions. Healthcare regulations require that clinical decision support systems provide reasoning.</p>
 
 <h3>LIME: Local Interpretable Model-Agnostic Explanations</h3>
 <p>LIME explains individual predictions by creating a simple, interpretable model that approximates the complex model's behavior in the neighborhood of the prediction being explained. For a loan denial, LIME might show that the top factors were credit utilization at 85%, fewer than two years of credit history, and three recent hard inquiries. LIME works with any model and provides intuitive explanations but can be unstable — running it twice on the same prediction may give slightly different explanations.</p>

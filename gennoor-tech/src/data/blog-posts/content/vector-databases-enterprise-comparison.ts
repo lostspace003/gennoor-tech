@@ -7,7 +7,7 @@ export const post: BlogPost = {
     tldr: 'Azure AI Search is best for Microsoft-stack enterprises. Pinecone for managed simplicity. Weaviate for hybrid search. Qdrant for performance-critical workloads. Many enterprises do not need a separate vector database — PostgreSQL with pgvector works for most starting use cases.',
     content: `
 <h2>Why Vector Databases Matter for Enterprise AI</h2>
-<p>Vector databases are the backbone of modern AI applications. Every RAG (Retrieval-Augmented Generation) system, every semantic search engine, every recommendation system, and every similarity-matching application depends on the ability to store, index, and query high-dimensional vectors efficiently. As enterprises move beyond simple chatbot prototypes to production AI systems, the choice of vector database becomes a critical infrastructure decision.</p>
+<p>Vector databases are the backbone of modern AI applications. Every RAG (Retrieval-Augmented Generation) system, every semantic search engine, every recommendation system, and every similarity-matching application depends on the ability to store, index, and query high-dimensional vectors efficiently. (For frontier approaches that go beyond plain vector retrieval, see <a href="https://www.microsoft.com/en-us/research/project/graphrag/" target="_blank" rel="noopener">Microsoft GraphRAG</a> and <a href="https://docs.ragas.io/en/stable/concepts/metrics/overview/" target="_blank" rel="noopener">RAGAS evaluation metrics</a>.) As enterprises move beyond simple chatbot prototypes to production AI systems, the choice of vector database becomes a critical infrastructure decision.</p>
 
 <p>But here is the nuance that many guides miss: not every enterprise needs a dedicated vector database. With PostgreSQL adding pgvector, every major cloud provider adding vector capabilities to their existing services, and hybrid solutions blurring the lines between traditional and vector-native databases, the landscape is more complex — and more interesting — than "just pick Pinecone." This guide provides a comprehensive comparison to help you make the right choice for your specific requirements. For hands-on guidance on building production RAG systems, explore our <a href="/services/training">AI engineering training</a>.</p>
 
@@ -67,7 +67,7 @@ export const post: BlogPost = {
 
 <p><strong>Best for:</strong> Prototyping and development. Small-scale applications. Learning and experimentation. Projects where simplicity matters more than scale.</p>
 
-<h3>Azure AI Search</h3>
+<h3><a href="https://learn.microsoft.com/en-us/azure/foundry/" target="_blank" rel="noopener">Azure AI Search</a></h3>
 <p>Azure AI Search (formerly Azure Cognitive Search) is a managed search service that combines traditional keyword search, vector search, and semantic ranking in a single platform. For Azure-native enterprises, it often eliminates the need for a separate vector database entirely.</p>
 
 <p><strong>Strengths:</strong> Fully managed within the Azure ecosystem. Combines vector search, keyword search, and semantic ranking in one service. Integrated with Azure OpenAI Service for seamless RAG pipelines. Built-in security with Azure Active Directory integration. Compliance certifications that enterprise procurement teams require. Hybrid search (vector plus keyword) is a first-class feature, not an afterthought.</p>

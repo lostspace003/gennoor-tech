@@ -18,9 +18,9 @@ export const post: BlogPost = {
 
 <p>Advanced RAG patterns solve these problems by moving beyond naive vector similarity to incorporate graph structures, hybrid retrieval, intelligent re-ranking, and context-aware chunking strategies. Organizations implementing these patterns see 40-60% improvements in retrieval accuracy and dramatic reductions in hallucination rates.</p>
 
-<h2>GraphRAG: Adding Structure to Semantic Search</h2>
+<h2><a href="https://www.microsoft.com/en-us/research/project/graphrag/" target="_blank" rel="noopener">GraphRAG</a>: Adding Structure to Semantic Search</h2>
 
-<p>GraphRAG, pioneered by Microsoft Research, addresses the relationship problem by extracting an explicit knowledge graph from your document corpus. Instead of treating documents as isolated chunks, GraphRAG identifies entities (people, products, concepts), relationships (reports to, depends on, contradicts), and creates a queryable graph structure alongside your vector embeddings.</p>
+<p><a href="https://github.com/microsoft/graphrag" target="_blank" rel="noopener">GraphRAG</a>, pioneered by Microsoft Research, addresses the relationship problem by extracting an explicit knowledge graph from your document corpus. Instead of treating documents as isolated chunks, GraphRAG identifies entities (people, products, concepts), relationships (reports to, depends on, contradicts), and creates a queryable graph structure alongside your vector embeddings.</p>
 
 <p>The architecture has three components. First, an <strong>entity extraction pipeline</strong> uses NER (Named Entity Recognition) and relation extraction models to identify structured information in your documents. For enterprise content, you often need custom entity types—not just person/organization/location, but product names, regulatory codes, internal project names, and domain-specific concepts.</p>
 
@@ -122,7 +122,7 @@ export const post: BlogPost = {
 
 <p>Measure <strong>generation metrics</strong>: factual accuracy (does the answer contain correct information from retrieved context), groundedness (is the answer supported by retrieved documents or hallucinated), completeness (does it address all parts of the question), and conciseness (no unnecessary information).</p>
 
-<p>Use <strong>LLM-as-a-judge evaluation</strong> for subjective quality. GPT-4o evaluates whether generated answers are accurate, relevant, and well-grounded by comparing them to retrieved context and reference answers. This correlates well with human judgment (0.85+ agreement) and scales to thousands of evaluations.</p>
+<p>Use <strong>LLM-as-a-judge evaluation</strong> for subjective quality, anchored on <a href="https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/faithfulness/" target="_blank" rel="noopener">RAGAS faithfulness</a> and similar groundedness metrics. GPT-4o evaluates whether generated answers are accurate, relevant, and well-grounded by comparing them to retrieved context and reference answers. This correlates well with human judgment (0.85+ agreement) and scales to thousands of evaluations.</p>
 
 <p>Azure AI Studio provides built-in RAG evaluation with metrics for groundedness, relevance, and coherence. LangSmith offers evaluation datasets, metrics tracking, and A/B testing for comparing RAG configurations. Implement continuous evaluation in your CI/CD pipeline—run your golden dataset on every RAG system change.</p>
 

@@ -74,7 +74,7 @@ export const post: BlogPost = {
 
 <h2>HIPAA Compliance and Healthcare AI Governance</h2>
 
-<p>Healthcare AI must comply with HIPAA (Health Insurance Portability and Accountability Act) privacy and security rules. <strong>Protected Health Information (PHI)</strong> includes any information that can identify patients—names, dates, addresses, medical record numbers, and clinical data. AI systems processing PHI must implement technical, administrative, and physical safeguards.</p>
+<p>Healthcare AI must comply with HIPAA (Health Insurance Portability and Accountability Act) privacy and security rules — and, when the system informs diagnosis, with <a href="https://www.fda.gov/medical-devices/software-medical-device-samd/artificial-intelligence-software-medical-device" target="_blank" rel="noopener">FDA Software as a Medical Device</a> rules. <strong>Protected Health Information (PHI)</strong> includes any information that can identify patients—names, dates, addresses, medical record numbers, and clinical data. AI systems processing PHI must implement technical, administrative, and physical safeguards.</p>
 
 <p><strong>Business Associate Agreements (BAAs)</strong> are required when third-party vendors (AI platform providers, cloud hosting companies) access PHI. BAAs contractually bind vendors to HIPAA compliance, specify permitted uses of PHI, require breach notification, and establish liability. Before deploying any AI solution processing PHI, execute BAAs with all vendors in the processing chain (AI platform, cloud provider, integration partners).</p>
 
