@@ -921,7 +921,8 @@ export async function getBlogPostContent(slug: string): Promise<BlogPost | undef
   const loader = contentImports[slug]
   if (!loader) return undefined
   const mod = await loader()
-  return mod.post
+  const { applyAugmentations } = await import('./seo-augmentations')
+  return applyAugmentations(mod.post)
 }
 
 // Sync version that returns metadata only
