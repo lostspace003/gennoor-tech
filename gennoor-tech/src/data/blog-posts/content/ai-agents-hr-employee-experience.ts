@@ -25,7 +25,7 @@ export const post: BlogPost = {
 <h3>Resume Screening and Candidate Matching</h3>
 <p>AI agents can screen thousands of resumes against job requirements in minutes, identifying candidates who match not just keyword criteria but semantic skill patterns. Modern screening agents go beyond simple keyword matching to understand skill equivalencies (recognizing that "React development" and "frontend engineering with React.js" describe the same capability), career trajectory patterns, and cultural alignment indicators.</p>
 
-<p>Critical guardrail: bias testing must be built into every screening algorithm. Historical hiring data often contains embedded biases — if your company has historically hired primarily from certain universities or demographics, an AI trained on that data will replicate those patterns. Regular bias audits, diverse training data, and human oversight of AI screening decisions are non-negotiable requirements.</p>
+<p>Critical guardrail: bias testing must be built into every screening algorithm. Historical hiring data often contains embedded biases — if your company has historically hired primarily from certain universities or demographics, an AI trained on that data will replicate those patterns. Regular bias audits, diverse training data, and human oversight of AI screening decisions are non-negotiable requirements, consistent with <a href="https://www.eeoc.gov/ai" target="_blank" rel="noopener">EEOC guidance on AI in employment decisions</a>.</p>
 
 <h3>Interview Scheduling and Coordination</h3>
 <p>AI scheduling agents eliminate the back-and-forth email chains that delay hiring processes. These agents access interviewer calendars, candidate availability, room bookings, and video conferencing systems to coordinate multi-round interview schedules automatically. For high-volume recruiting, this alone can reduce scheduling time by 80% and cut days from the overall time-to-hire.</p>
@@ -64,7 +64,7 @@ export const post: BlogPost = {
 <p>AI agents provide HR leaders with predictive workforce analytics that inform strategic decisions. By analyzing hiring trends, attrition patterns, skill inventories, and business growth projections, AI models can forecast future workforce needs, identify emerging skill gaps, and recommend proactive talent strategies. This transforms HR from a reactive function into a strategic planning partner that anticipates organizational needs before they become urgent.</p>
 
 <h2>Compliance, Bias, and Ethics in HR AI</h2>
-<p>HR AI touches some of the most sensitive areas of organizational life — hiring decisions, compensation, performance evaluation, and termination. The ethical stakes are extraordinarily high, and the regulatory landscape is evolving rapidly. The EU AI Act classifies HR AI systems as "high-risk," requiring transparency, human oversight, and regular auditing.</p>
+<p>HR AI touches some of the most sensitive areas of organizational life — hiring decisions, compensation, performance evaluation, and termination. The ethical stakes are extraordinarily high, and the regulatory landscape is evolving rapidly. The <a href="https://artificialintelligenceact.eu/the-act/" target="_blank" rel="noopener">EU AI Act</a> classifies HR AI systems as "high-risk," requiring transparency, human oversight, and regular auditing.</p>
 
 <p>Essential safeguards for HR AI include:</p>
 <ul>
@@ -75,7 +75,7 @@ export const post: BlogPost = {
 </ul>
 
 <h2>HRIS Integration: Making AI Work with Existing Systems</h2>
-<p>HR AI agents must integrate seamlessly with existing Human Resource Information Systems to be effective. The major HRIS platforms — Workday, SAP SuccessFactors, Oracle HCM Cloud, ADP, and BambooHR — each have different integration capabilities and API architectures.</p>
+<p>HR AI agents must integrate seamlessly with existing Human Resource Information Systems to be effective. The major HRIS platforms — <a href="https://www.workday.com/en-us/products/human-capital-management/overview.html" target="_blank" rel="noopener">Workday</a>, SAP SuccessFactors, Oracle HCM Cloud, ADP, and BambooHR — each have different integration capabilities and API architectures.</p>
 
 <p>Successful HRIS integration requires: bidirectional data sync so AI agents have access to current employee data and can write updates back to the system of record, respect for role-based access controls so AI agents only access data they are authorized to see, audit logging of all AI interactions with HRIS data for compliance and troubleshooting, and graceful fallback when HRIS systems are unavailable or return unexpected results.</p>
 

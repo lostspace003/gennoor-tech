@@ -8,7 +8,7 @@ export const post: BlogPost = {
     content: `
 <p>Higher education institutions today face an unprecedented convergence of pressures: rising enrollment volumes, shrinking administrative budgets, heightened student expectations for instant digital services, and growing regulatory complexity. From the moment a prospective student discovers a university to the day an alumnus donates to a capital campaign, the lifecycle involves hundreds of discrete processes — each one a candidate for intelligent automation. AI agents are emerging as the transformative technology that allows colleges and universities to operate at scale without sacrificing the personalized experience that defines great education.</p>
 
-<p>Unlike simple chatbots that match keywords to FAQ entries, modern AI agents reason over structured and unstructured data, execute multi-step workflows, integrate with student information systems, and learn from every interaction. They do not replace educators or advisors — they amplify them, handling the routine so that humans can focus on the complex, the sensitive, and the deeply personal. This article explores how AI agents are reshaping campus operations across ten critical domains, the integration and compliance considerations that higher education demands, and a practical roadmap for institutions ready to begin.</p>
+<p>Unlike simple chatbots that match keywords to FAQ entries, modern AI agents reason over structured and unstructured data, execute multi-step workflows, integrate with student information systems, and learn from every interaction — a direction reinforced by <a href="https://www.unesco.org/en/digital-education/artificial-intelligence" target="_blank" rel="noopener">UNESCO's guidance on AI in education</a>, which emphasises human-centred, ethical deployment. They do not replace educators or advisors — they amplify them, handling the routine so that humans can focus on the complex, the sensitive, and the deeply personal. This article explores how AI agents are reshaping campus operations across ten critical domains, the integration and compliance considerations that higher education demands, and a practical roadmap for institutions ready to begin.</p>
 
 <h2>The Campus Challenge Landscape</h2>
 <p>Before examining solutions, it is worth understanding the scale of the problem. A mid-size university with 20,000 students processes roughly 50,000 admissions inquiries per cycle, manages 5,000 course sections, handles 15,000 financial aid applications, fields 100,000 IT and facilities helpdesk tickets annually, and must comply with regulations ranging from FERPA to ADA to Title IX. Staff-to-student ratios have declined steadily over the past decade, while student expectations — shaped by consumer-grade digital experiences — have risen sharply. The gap between demand and capacity is where AI agents deliver the most value.</p>
@@ -89,7 +89,7 @@ export const post: BlogPost = {
 <p>Integration architecture matters enormously. We recommend API-first approaches using the <a href="/services/training">Model Context Protocol (MCP)</a> pattern for standardized, secure system access.</p>
 
 <h2>FERPA Compliance and Data Privacy</h2>
-<p>The Family Educational Rights and Privacy Act (FERPA) governs the privacy of student education records. Any AI agent handling student data must comply rigorously.</p>
+<p>The <a href="https://studentprivacy.ed.gov/" target="_blank" rel="noopener">Family Educational Rights and Privacy Act (FERPA)</a> governs the privacy of student education records. Any AI agent handling student data must comply rigorously.</p>
 <ul>
 <li><strong>Authentication</strong> — Agents must verify student identity before disclosing any protected information. Multi-factor authentication integrated into the conversational flow is essential.</li>
 <li><strong>Data minimization</strong> — Agents should access and display only the information necessary for the task at hand.</li>
@@ -99,7 +99,7 @@ export const post: BlogPost = {
 </ul>
 
 <h2>Accessibility and Inclusive Design</h2>
-<p>Campus AI agents must be accessible to all students, including those with disabilities. This means compliance with WCAG 2.1 AA standards for web interfaces, screen reader compatibility, keyboard navigation support, alternative input methods (voice, switch access), plain language options for students with cognitive disabilities, and multilingual support for international students. Accessibility is not an afterthought — it must be designed in from the beginning.</p>
+<p>Campus AI agents must be accessible to all students, including those with disabilities. This means compliance with <a href="https://www.w3.org/TR/WCAG21/" target="_blank" rel="noopener">WCAG 2.1 AA standards</a> for web interfaces, screen reader compatibility, keyboard navigation support, alternative input methods (voice, switch access), plain language options for students with cognitive disabilities, and multilingual support for international students. Accessibility is not an afterthought — it must be designed in from the beginning.</p>
 
 <h2>Implementation Approach and Budget Considerations</h2>
 <p>Implementing AI agents across a campus is a journey, not a one-time project. We recommend a phased approach.</p>

@@ -6,7 +6,7 @@ export const post: BlogPost = {
     excerpt: 'MLflow has evolved from ML experiment tracking to a full LLM operations platform. Here is how to use it for prompt management, evaluation, and model governance.',
     tldr: 'MLflow has evolved into a full LLM operations platform supporting prompt versioning, model evaluation with custom metrics, A/B testing of prompts, and centralized model governance — essential for production AI systems.',
     content: `
-<p>As large language models move from proof-of-concept to production, organizations face a critical challenge: how do you track experiments, evaluate model quality, govern deployments, and monitor performance at scale? MLflow, originally built for traditional machine learning operations, has evolved into a comprehensive platform for LLM operations. This guide explores how to leverage MLflow to bring rigor, repeatability, and governance to your AI initiatives.</p>
+<p>As large language models move from proof-of-concept to production, organizations face a critical challenge: how do you track experiments, evaluate model quality, govern deployments, and monitor performance at scale? <a href="https://mlflow.org/docs/latest/llms/" target="_blank" rel="noopener">MLflow</a>, originally built for traditional machine learning operations, has evolved into a comprehensive platform for LLM operations. This guide explores how to leverage MLflow to bring rigor, repeatability, and governance to your AI initiatives.</p>
 
 <h2>MLflow Architecture for LLM Operations</h2>
 
@@ -188,7 +188,7 @@ mlflow.log_dict(interaction_data, "interaction_metadata.json")
 <li><strong>Perplexity</strong>: Measures how well a language model predicts text (lower is better)</li>
 <li><strong>BLEU Score</strong>: Compares generated text to reference translations</li>
 <li><strong>ROUGE Score</strong>: Evaluates summarization quality by comparing to reference summaries</li>
-<li><strong>Toxicity</strong>: Detects harmful or inappropriate content using Perspective API</li>
+<li><strong>Toxicity</strong>: Detects harmful or inappropriate content using <a href="https://perspectiveapi.com/" target="_blank" rel="noopener">Perspective API</a></li>
 <li><strong>Flesch Reading Ease</strong>: Assesses text readability</li>
 </ul>
 

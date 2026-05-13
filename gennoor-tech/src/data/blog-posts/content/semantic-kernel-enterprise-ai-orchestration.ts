@@ -9,7 +9,7 @@ export const post: BlogPost = {
 <p>Semantic Kernel does not have the Twitter following of LangChain or the hype of CrewAI. What it has is deep enterprise adoption, native C# and Java support, and first-class Azure integration. For Microsoft-stack organizations building production AI systems, it is not just a natural choice — it is arguably the only serious one. In this guide, we break down the architecture, the development model, and the enterprise patterns that make Semantic Kernel a quiet powerhouse for AI orchestration.</p>
 
 <h2>What Is Semantic Kernel?</h2>
-<p>Semantic Kernel is an open-source SDK from Microsoft that lets developers integrate large language models into their applications using familiar programming patterns. Unlike frameworks that force you to think in "AI-first" abstractions, Semantic Kernel wraps AI capabilities around your existing code. Your business logic stays intact. The AI becomes an orchestration layer on top of it.</p>
+<p><a href="https://learn.microsoft.com/en-us/semantic-kernel/" target="_blank" rel="noopener">Semantic Kernel</a> is an open-source SDK from Microsoft that lets developers integrate large language models into their applications using familiar programming patterns. Unlike frameworks that force you to think in "AI-first" abstractions, Semantic Kernel wraps AI capabilities around your existing code. Your business logic stays intact. The AI becomes an orchestration layer on top of it.</p>
 <p>At its core, Semantic Kernel solves a practical problem: how do you let an LLM call your existing enterprise functions, manage multi-step workflows, maintain context across conversations, and do it all within the guardrails your organization requires? The answer is a clean architecture built around a small number of well-defined concepts.</p>
 
 <h2>The Kernel Architecture</h2>
@@ -74,7 +74,7 @@ export const post: BlogPost = {
 <li><strong>Responsible AI:</strong> Semantic Kernel supports prompt shields, grounding detection, and safety evaluation through Azure AI Content Safety integration.</li>
 <li><strong>Managed identity:</strong> Connect to Azure OpenAI and other Azure services using managed identity instead of API keys. No secrets in configuration files.</li>
 </ul>
-<p>Azure integration goes deep. Semantic Kernel works natively with Azure OpenAI Service, Azure AI Search, Azure Cosmos DB (for memory), Azure Blob Storage (for document ingestion), Azure Functions (for serverless plugin hosting), and Azure Container Apps (for scalable agent deployment). The entire AI stack can be provisioned and managed through Azure, with enterprise-grade security, compliance, and governance.</p>
+<p>Azure integration goes deep. Semantic Kernel works natively with <a href="https://learn.microsoft.com/en-us/azure/ai-foundry/" target="_blank" rel="noopener">Azure AI Foundry</a>, Azure OpenAI Service, Azure AI Search, Azure Cosmos DB (for memory), Azure Blob Storage (for document ingestion), Azure Functions (for serverless plugin hosting), and Azure Container Apps (for scalable agent deployment). The entire AI stack can be provisioned and managed through Azure, with enterprise-grade security, compliance, and governance.</p>
 
 <h2>Real-World Use Cases</h2>
 <p>Here are the patterns we see most often in enterprise Semantic Kernel deployments:</p>

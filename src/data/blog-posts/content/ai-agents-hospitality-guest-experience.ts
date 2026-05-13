@@ -16,7 +16,7 @@ export const post: BlogPost = {
 
 <p>The hospitality industry confronts a unique set of challenges that make AI agents particularly valuable. Understanding these challenges provides context for the specific agent capabilities discussed throughout this article.</p>
 
-<p><strong>Labor constraints.</strong> Hospitality faces the most severe labor shortage of any major industry. High turnover rates, difficulty attracting workers to shift-based roles, and seasonal demand fluctuations create persistent staffing gaps that directly impact service quality. AI agents fill these gaps by handling routine interactions, freeing limited human staff to focus on high-value guest touchpoints.</p>
+<p><strong>Labor constraints.</strong> Hospitality faces the most severe labor shortage of any major industry, with the <a href="https://www.ahla.com/" target="_blank" rel="noopener">American Hotel & Lodging Association</a> reporting persistent vacancies across most hotel roles. High turnover rates, difficulty attracting workers to shift-based roles, and seasonal demand fluctuations create persistent staffing gaps that directly impact service quality. AI agents fill these gaps by handling routine interactions, freeing limited human staff to focus on high-value guest touchpoints.</p>
 
 <p><strong>The personalization paradox.</strong> Guests expect personalized experiences, but the transient nature of hotel stays means that staff rarely know individual guests well enough to personalize effectively. AI agents solve this by maintaining comprehensive guest profiles that capture preferences, history, and context, making personalization possible at scale even when the human staff member has never met the guest before.</p>
 
@@ -105,7 +105,7 @@ export const post: BlogPost = {
 
 <h2>PMS Integration: Opera, Mews, and Modern Platforms</h2>
 
-<p>Effective deployment of AI agents in hospitality requires integration with the property management system that serves as the operational backbone. For properties using Oracle Opera, the industry's most widely deployed PMS, integration involves connecting to Opera's APIs for reservation, guest profile, room management, and billing data. For properties on newer cloud-native platforms like Mews, Cloudbeds, or Apaleo, the API-first architecture of these systems simplifies integration significantly.</p>
+<p>Effective deployment of AI agents in hospitality requires integration with the property management system that serves as the operational backbone. For properties using <a href="https://www.oracle.com/hospitality/hotel-property-management/" target="_blank" rel="noopener">Oracle Opera</a>, the industry's most widely deployed PMS, integration involves connecting to Opera's APIs for reservation, guest profile, room management, and billing data. For properties on newer cloud-native platforms like <a href="https://www.mews.com/en/product/open-api" target="_blank" rel="noopener">Mews</a>, Cloudbeds, or Apaleo, the API-first architecture of these systems simplifies integration significantly.</p>
 
 <p>The integration architecture must support real-time bidirectional data flow. AI agents need to read current reservation data, guest profiles, room status, and rate information from the PMS, and write back room assignments, rate updates, guest communications, and service request fulfillment records. The PMS remains the system of record while AI agents provide the intelligence layer that enhances every operational process.</p>
 

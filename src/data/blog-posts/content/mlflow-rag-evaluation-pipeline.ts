@@ -6,7 +6,7 @@ export const post: BlogPost = {
     excerpt: 'Your RAG system is only as good as your evaluation. Here is how to build a systematic evaluation pipeline using MLflow that catches quality issues before users do.',
     tldr: 'A systematic RAG evaluation pipeline using MLflow tracks retrieval quality, answer faithfulness, and relevance across versions — catching quality regressions before users experience them.',
     content: `
-<p>Most teams building retrieval-augmented generation (RAG) systems start with vibes-based evaluation: "Does this answer look good?" While intuition helps during initial development, it fails catastrophically at scale. Production RAG systems answer thousands of queries daily across diverse topics—manual review is impossible, and subtle quality degradations go unnoticed until users complain. This guide presents a practical framework for rigorous RAG evaluation using MLflow.</p>
+<p>Most teams building retrieval-augmented generation (RAG) systems start with vibes-based evaluation: "Does this answer look good?" While intuition helps during initial development, it fails catastrophically at scale. Production RAG systems answer thousands of queries daily across diverse topics—manual review is impossible, and subtle quality degradations go unnoticed until users complain. This guide presents a practical framework for rigorous RAG evaluation using <a href="https://mlflow.org/docs/latest/llms/llm-evaluate/" target="_blank" rel="noopener">MLflow's LLM evaluation toolkit</a>.</p>
 
 <h2>Why Vibes-Based Evaluation Fails at Scale</h2>
 
@@ -223,7 +223,7 @@ Respond with only a number from 1 to 5."""<br>
 
 <h3>Toxicity</h3>
 
-<p>Toxicity detection identifies harmful, offensive, or inappropriate content. Use specialized models like Perspective API or Azure Content Safety:</p>
+<p>Toxicity detection identifies harmful, offensive, or inappropriate content. Use specialized models like <a href="https://perspectiveapi.com/" target="_blank" rel="noopener">Perspective API</a> or <a href="https://docs.smith.langchain.com/" target="_blank" rel="noopener">LangSmith evaluators</a>:</p>
 
 <code>
 from mlflow.metrics import toxicity<br><br>

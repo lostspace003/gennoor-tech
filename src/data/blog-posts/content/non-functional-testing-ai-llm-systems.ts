@@ -110,7 +110,7 @@ export const post: BlogPost = {
 
 <p><strong>LLMServingPerfEvaluator (by FriendliAI)</strong> generates realistic workloads by simulating requests arriving according to a Poisson distribution, allowing you to stress test at varying request rates. It supports comparing different serving engines (such as <a href="https://arxiv.org/abs/2511.17593" target="_blank" rel="noopener">vLLM versus TGI</a> — see the published benchmark study) on the same hardware.</p>
 
-<p><strong>MLPerf Inference (by MLCommons)</strong> is the industry-standard benchmark suite for AI inference performance. Version 5.1 introduced benchmarks for DeepSeek-R1, Llama 3.1 8B, and Whisper Large V3, with expanded interactive scenarios testing performance under lower latency constraints for agentic applications.</p>
+<p><strong>MLPerf Inference (by MLCommons)</strong> is the industry-standard benchmark suite for AI inference performance, complementing holistic evaluations like <a href="https://crfm.stanford.edu/helm/" target="_blank" rel="noopener">Stanford HELM</a> and risk frameworks like the <a href="https://www.nist.gov/itl/ai-risk-management-framework" target="_blank" rel="noopener">NIST AI Risk Management Framework</a>. Version 5.1 introduced benchmarks for DeepSeek-R1, Llama 3.1 8B, and Whisper Large V3, with expanded interactive scenarios testing performance under lower latency constraints for agentic applications.</p>
 
 <h3>Cloud-Native Throughput Capabilities</h3>
 
@@ -137,7 +137,7 @@ export const post: BlogPost = {
 
 <h3>Open-Source Tools for Consistency Testing</h3>
 
-<p><strong>DeepEval</strong> is an open-source LLM testing framework that supports regression testing across model iterations. With its companion platform Confident AI, it provides side-by-side comparison tools for catching regressions. It supports metrics for correctness, hallucination detection, toxicity, and consistency, all configurable via Python test suites that integrate into CI/CD pipelines.</p>
+<p><a href="https://docs.confident-ai.com/" target="_blank" rel="noopener"><strong>DeepEval</strong></a> is an open-source LLM testing framework that supports regression testing across model iterations. With its companion platform Confident AI, it provides side-by-side comparison tools for catching regressions. It supports metrics for correctness, hallucination detection, toxicity, and consistency, all configurable via Python test suites that integrate into CI/CD pipelines.</p>
 
 <p><strong>Arize Phoenix</strong> is an open-source AI observability platform that excels at detecting when model outputs quietly drift over time. It monitors embedding drift — changes in vector representations that indicate semantic shifts — and provides visual plots for tracking RAG pipeline quality.</p>
 

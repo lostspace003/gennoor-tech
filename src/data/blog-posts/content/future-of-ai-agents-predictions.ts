@@ -19,7 +19,7 @@ export const post: BlogPost = {
 <p>This shift has profound implications for how enterprises build and deploy AI. It means investing in orchestration infrastructure, defining clear interfaces between agents, and building monitoring systems that can track complex multi-agent workflows. Organizations that master multi-agent orchestration will move faster and handle more complex automation than those still relying on single-agent approaches.</p>
 
 <h2>Prediction 2: MCP Becomes the Universal Integration Layer</h2>
-<p>The Model Context Protocol (MCP) will transition from "interesting protocol" to "assumed infrastructure" — the way HTTP is for the web or SQL is for databases. Every enterprise tool vendor will offer an MCP server. Building AI integrations without MCP will feel like building websites without REST APIs — technically possible but practically absurd.</p>
+<p>The <a href="https://www.anthropic.com/news/model-context-protocol" target="_blank" rel="noopener">Model Context Protocol (MCP)</a>, introduced by Anthropic in late 2024, will transition from "interesting protocol" to "assumed infrastructure" — the way HTTP is for the web or SQL is for databases. Every enterprise tool vendor will offer an MCP server. Building AI integrations without MCP will feel like building websites without REST APIs — technically possible but practically absurd.</p>
 
 <p>MCP solves the integration problem that has plagued AI deployments: how do you give AI agents access to enterprise tools, data, and systems in a standardized, secure, and auditable way? Before MCP, every integration was custom. Every tool connection required bespoke code. Every new capability meant another engineering project. MCP creates a universal standard that lets agents discover and use tools through a consistent interface.</p>
 
@@ -51,7 +51,7 @@ export const post: BlogPost = {
 <p>Enterprises in manufacturing, retail, logistics, and field services should be planning their edge AI strategy now. The competitive advantage of real-time, local AI decisions will be significant in these industries.</p>
 
 <h2>Prediction 6: AI Governance Becomes Mandatory, Not Optional</h2>
-<p>Governance will shift from "nice to have" to "required for operation." The EU AI Act is already in effect. The US is developing sector-specific regulations. China has implemented AI regulations. Other jurisdictions are following. By 2028, any enterprise deploying AI in customer-facing or decision-making contexts will face regulatory requirements around transparency, fairness testing, risk assessment, and documentation.</p>
+<p>Governance will shift from "nice to have" to "required for operation." The <a href="https://artificialintelligenceact.eu/the-act/" target="_blank" rel="noopener">EU AI Act</a> is already in effect. The US is developing sector-specific regulations. China has implemented AI regulations. Other jurisdictions are following. By 2028, any enterprise deploying AI in customer-facing or decision-making contexts will face regulatory requirements around transparency, fairness testing, risk assessment, and documentation.</p>
 
 <p>The organizations that have been investing in governance frameworks, bias testing, model documentation, and audit trails will have a significant competitive advantage. They will deploy new AI systems faster because the governance infrastructure is already in place. They will face lower compliance costs because they are not scrambling to retrofit governance onto existing systems. And they will earn greater trust from customers and stakeholders who increasingly demand responsible AI practices.</p>
 
@@ -72,7 +72,7 @@ export const post: BlogPost = {
 <p>Established companies in knowledge-intensive industries should be planning their response now. The disruption will not come from a single competitor — it will come from a wave of AI-native startups, each attacking a different segment of the value chain.</p>
 
 <h2>Prediction 9: Open Source Closes the Gap with Proprietary Models</h2>
-<p>The performance gap between open-source and proprietary AI models will continue to narrow. By 2028, open-source models will match proprietary frontier models from twelve to eighteen months prior — and for many enterprise use cases, that is more than sufficient. Models like Llama, Mistral, Qwen, and their successors will provide enterprise-grade capabilities with the benefits of transparency, customizability, and data sovereignty.</p>
+<p>The performance gap between open-source and proprietary AI models will continue to narrow. By 2028, open-source models will match proprietary frontier models from twelve to eighteen months prior — and for many enterprise use cases, that is more than sufficient. Models like <a href="https://www.llama.com/" target="_blank" rel="noopener">Llama</a>, Mistral, Qwen, and their successors will provide enterprise-grade capabilities with the benefits of transparency, customizability, and data sovereignty.</p>
 
 <p>This does not mean proprietary models become irrelevant. The frontier will continue to advance, and proprietary models will maintain their lead in the most demanding capabilities. But for the majority of enterprise use cases, open-source models — especially when fine-tuned for specific tasks — will provide the best balance of performance, cost, control, and privacy.</p>
 

@@ -6,7 +6,7 @@ export const post: BlogPost = {
     excerpt: 'With thousands of models on Hugging Face, choosing the right one is overwhelming. Here is a systematic approach that cuts through the noise.',
     tldr: 'To select the right model from Hugging Face: define your task precisely, filter by size constraints, evaluate on your own data using the Open LLM Leaderboard as a starting point, and test the top 3 candidates before committing.',
     content: `
-<p>Hugging Face hosts over 500,000 models. The leaderboard updates daily. New state-of-the-art models drop weekly. For enterprise teams trying to select the right model for production, this abundance creates paralysis. Which model do you choose? How do you evaluate? What if a better model launches next week?</p>
+<p><a href="https://huggingface.co/docs" target="_blank" rel="noopener">Hugging Face</a> hosts over 500,000 models. The <a href="https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard" target="_blank" rel="noopener">Open LLM Leaderboard</a> updates daily. New state-of-the-art models drop weekly. For enterprise teams trying to select the right model for production, this abundance creates paralysis. Which model do you choose? How do you evaluate? What if a better model launches next week?</p>
 
 <p>I have guided dozens of organizations through model selection — from startups to Fortune 500s. The teams that succeed have a system. Here is the strategic framework that works.</p>
 
@@ -174,7 +174,7 @@ export const post: BlogPost = {
 <p>Use TGI when you want Hugging Face's official serving stack and prioritize compatibility.</p>
 
 <h3>vLLM</h3>
-<p>Higher throughput than TGI, especially for large models. State-of-the-art continuous batching. Supports PagedAttention for efficient memory use. Python-based. More actively developed.</p>
+<p>Higher throughput than TGI, especially for large models. <a href="https://docs.vllm.ai" target="_blank" rel="noopener">vLLM</a>'s state-of-the-art continuous batching and PagedAttention enable efficient memory use. Python-based. More actively developed.</p>
 
 <p>Use vLLM when throughput and cost-per-token matter most. This is the default choice for high-scale production.</p>
 
