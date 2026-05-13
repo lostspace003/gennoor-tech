@@ -37,9 +37,24 @@ export interface BlogPost extends BlogPostMeta {
 
 export const blogPostsMeta: BlogPostMeta[] = [
   {
+    slug: 'openai-daybreak-google-ai-zero-day',
+    title: "The Defender's Daybreak: OpenAI Launches an AI Cybersecurity Stack — Days After Google Detects the First AI-Built Zero-Day",
+    featured: 'hero',
+    excerpt: 'In a 24-hour window, the AI security balance shifted twice. Google confirmed the first AI-discovered, AI-weaponized zero-day in the wild. OpenAI launched Daybreak — a GPT-5.5-Cyber-powered defensive stack with Akamai, Cisco, Cloudflare, CrowdStrike, Fortinet, Oracle, Palo Alto Networks, and Zscaler. Here is what enterprises need to do about it.',
+    tldr: 'On May 11, 2026 Google GTIG disclosed the first AI-discovered and AI-weaponized zero-day used in the wild. On May 12, OpenAI launched Daybreak — a defensive cybersecurity stack built on GPT-5.5 and GPT-5.5-Cyber, partnered with Akamai, Cisco, Cloudflare, CrowdStrike, Fortinet, Oracle, Palo Alto Networks, and Zscaler. Disclosure-to-exploit timelines have collapsed from weeks to minutes.',
+    author: 'Gennoor Tech',
+    date: '2026-05-13',
+    readTime: '12 min read',
+    category: 'AI Security',
+    tags: ['AI Security', 'OpenAI Daybreak', 'GPT-5.5-Cyber', 'Zero-Day', 'Vulnerability Management', 'Enterprise AI', 'Threat Intelligence'],
+    hashtags: ['#AISecurity', '#Daybreak', '#ZeroDay', '#EnterpriseAI', '#Cybersecurity', '#GenAI', '#ThreatIntelligence'],
+    coverColor: '#0F172A',
+    icon: '🛡️',
+  },
+  {
     slug: 'what-are-ai-agents-enterprise-guide',
     title: 'What Are AI Agents? A No-Nonsense Enterprise Guide',
-    featured: 'hero',
+    featured: 'spotlight',
     excerpt: 'AI agents are reshaping how enterprises automate complex workflows. Here is what they actually are, how they work, and where they deliver real value.',
     tldr: 'AI agents are software systems that autonomously perceive, reason, use tools, and take actions to achieve goals — unlike chatbots that only respond to queries or RPA that follows fixed scripts. They handle ambiguity and adapt to novel situations within their domain.',
     author: 'Gennoor Tech',
@@ -865,6 +880,7 @@ export function getRelatedPostsMeta(currentSlug: string, category: string, limit
 
 // Load full blog post content on demand (only for individual post pages)
 const contentImports: Record<string, () => Promise<{ post: BlogPost }>> = {
+  'openai-daybreak-google-ai-zero-day': () => import('./content/openai-daybreak-google-ai-zero-day'),
   'what-are-ai-agents-enterprise-guide': () => import('./content/what-are-ai-agents-enterprise-guide'),
   'copilot-studio-agent-flows-complete-guide': () => import('./content/copilot-studio-agent-flows-complete-guide'),
   'mcp-protocol-universal-ai-integration': () => import('./content/mcp-protocol-universal-ai-integration'),
