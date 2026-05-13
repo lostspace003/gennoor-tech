@@ -3,7 +3,7 @@ import type { BlogPost } from '../index'
 export const post: BlogPost = {
     slug: 'what-are-ai-agents-enterprise-guide',
     title: 'What Are AI Agents? A No-Nonsense Enterprise Guide',
-    featured: 'hero',
+    featured: 'spotlight',
     excerpt: 'AI agents are reshaping how enterprises automate complex workflows. Here is what they actually are, how they work, and where they deliver real value.',
     tldr: 'AI agents are software systems that autonomously perceive, reason, use tools, and take actions to achieve goals — unlike chatbots that only respond to queries or RPA that follows fixed scripts. They handle ambiguity and adapt to novel situations within their domain.',
     keyTakeaways: [
