@@ -40,7 +40,7 @@ export const post: BlogPost = {
 <p>A practical guideline: start with three to five examples for most tasks. Add more examples when you identify failure modes that additional examples can address. But be aware that too many examples can dilute the signal — if you need more than ten examples, consider whether your task should be decomposed into simpler subtasks.</p>
 
 <h3>Chain-of-Thought Prompting</h3>
-<p>Chain-of-thought (CoT) prompting instructs the model to reason through a problem step by step before producing a final answer. This technique dramatically improves performance on tasks that require multi-step reasoning, mathematical calculations, logical deductions, and complex analysis.</p>
+<p><a href="https://arxiv.org/abs/2201.11903" target="_blank" rel="noopener">Chain-of-thought (CoT) prompting</a>, introduced by Wei et al. in 2022, instructs the model to reason through a problem step by step before producing a final answer. This technique dramatically improves performance on tasks that require multi-step reasoning, mathematical calculations, logical deductions, and complex analysis.</p>
 
 <p>In enterprise applications, chain-of-thought prompting serves a dual purpose. It improves accuracy by encouraging systematic reasoning. And it provides transparency — the reasoning chain is auditable, debuggable, and explainable. When a model produces an incorrect result, the chain of thought often reveals where the reasoning went wrong, making it much easier to diagnose and fix the issue.</p>
 
@@ -54,7 +54,7 @@ export const post: BlogPost = {
 <h3>Structured Output Prompting</h3>
 <p>Always define your expected output schema explicitly. Do not hope the model produces parseable results — instruct it to conform to a specific structure. For JSON output, provide the exact schema with field names, types, and descriptions. For text output, define the sections, headings, and format explicitly.</p>
 
-<p>Modern LLM APIs increasingly support structured output natively — OpenAI's function calling, Anthropic's tool use, and JSON mode features all constrain model output to valid structures. Use these features whenever available. They are more reliable than asking the model to produce structured output through prompt instructions alone.</p>
+<p>Modern LLM APIs increasingly support structured output natively — <a href="https://platform.openai.com/docs/guides/structured-outputs" target="_blank" rel="noopener">OpenAI's structured outputs and function calling</a>, <a href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview" target="_blank" rel="noopener">Anthropic's tool use</a>, and JSON mode features all constrain model output to valid structures. Use these features whenever available. They are more reliable than asking the model to produce structured output through prompt instructions alone.</p>
 
 <h2>Building Evaluation Suites</h2>
 <p>An evaluation suite is a set of test cases that measures your prompt's performance against defined quality criteria. It is the foundation of professional prompt engineering — without it, you are flying blind, and every prompt change is a gamble.</p>

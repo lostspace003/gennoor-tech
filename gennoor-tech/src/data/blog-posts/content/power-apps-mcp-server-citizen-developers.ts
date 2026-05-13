@@ -6,7 +6,7 @@ export const post: BlogPost = {
     excerpt: 'MCP servers bring the full power of AI agents to Power Platform. Here is how citizen developers and pro developers can work together on intelligent apps.',
     tldr: 'MCP servers bridge low-code Power Platform apps and AI agents, enabling citizen developers to build intelligent applications that leverage AI capabilities while pro developers handle the MCP server infrastructure.',
     content: `
-<p>The Model Context Protocol (MCP) is transforming how organizations bridge the gap between professional developers and citizen developers. When Power Apps meets MCP, something powerful happens: pro developers can build sophisticated AI agent capabilities as MCP servers, while citizen developers consume them through familiar low-code interfaces like Copilot Studio and Power Apps. This bridge pattern is revolutionizing enterprise application development.</p>
+<p>The <a href="https://www.anthropic.com/news/model-context-protocol" target="_blank" rel="noopener">Model Context Protocol (MCP)</a>, introduced by Anthropic in late 2024 and now specified at <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">modelcontextprotocol.io</a>, is transforming how organizations bridge the gap between professional developers and citizen developers. When Power Apps meets MCP, something powerful happens: pro developers can build sophisticated AI agent capabilities as MCP servers, while citizen developers consume them through familiar low-code interfaces like Copilot Studio and Power Apps. This bridge pattern is revolutionizing enterprise application development.</p>
 
 <h2>Understanding the Bridge Pattern Architecture</h2>
 
@@ -125,7 +125,7 @@ export const post: BlogPost = {
 
 <h3>In Power Apps</h3>
 
-<p>For traditional app development, citizen developers can invoke MCP tools directly from Power Apps:</p>
+<p>For traditional app development with <a href="https://learn.microsoft.com/en-us/power-apps/" target="_blank" rel="noopener">Power Apps</a>, citizen developers can invoke MCP tools directly from their apps:</p>
 
 <ol>
 <li>Add the custom connector to your app's data sources</li>

@@ -25,7 +25,7 @@ export const post: BlogPost = {
 <li><strong>Continuous improvement:</strong> Log all interactions, identify failed queries, and retrain models regularly. A chatbot is not a one-time deployment; it is a continuously improving system.</li>
 </ul>
 
-<p>The UK government's GOV.UK chatbot handles over 1 million interactions monthly, resolving 60% of queries without human intervention. The Singapore government's Ask Jamie virtual assistant serves citizens across dozens of agencies with a satisfaction rate above 80%. These are not experimental — they are production systems delivering measurable value.</p>
+<p>The UK government's <a href="https://www.gov.uk/service-manual/service-standard" target="_blank" rel="noopener">GOV.UK Service Standard</a>-aligned chatbot handles over 1 million interactions monthly, resolving 60% of queries without human intervention. The Singapore government's Ask Jamie virtual assistant serves citizens across dozens of agencies with a satisfaction rate above 80%. These are not experimental — they are production systems delivering measurable value.</p>
 
 <div class="blog-stats"><div class="stat"><span class="stat-value">60%</span><span class="stat-label">Queries Resolved by Chatbot</span></div><div class="stat"><span class="stat-value">40-60%</span><span class="stat-label">Faster Processing</span></div><div class="stat"><span class="stat-value">80%+</span><span class="stat-label">Citizen Satisfaction Rate</span></div></div>
 
@@ -102,7 +102,7 @@ export const post: BlogPost = {
 <p>AI vendors serving government must invest in compliance infrastructure: data encryption, access controls, audit logging, vulnerability management, penetration testing, and continuous monitoring. For many AI startups, achieving government security authorizations is prohibitively expensive. This creates opportunities for established cloud providers (AWS GovCloud, Azure Government, Google Cloud for Government) that have made these investments and can offer compliant AI services to government customers.</p>
 
 <h2>Ethical AI: Transparency, Fairness, and Accountability</h2>
-<p>Government use of AI carries unique ethical obligations. Private companies face market consequences for algorithmic bias; governments face constitutional challenges and loss of public trust. Key principles for ethical government AI include:</p>
+<p>As tracked by the <a href="https://oecd.ai/" target="_blank" rel="noopener">OECD AI Policy Observatory</a>, government use of AI carries unique ethical obligations. Private companies face market consequences for algorithmic bias; governments face constitutional challenges and loss of public trust. Key principles for ethical government AI include:</p>
 
 <ul>
 <li><strong>Transparency:</strong> Citizens should know when AI is used in decisions affecting them and how it works.</li>
@@ -112,7 +112,7 @@ export const post: BlogPost = {
 <li><strong>Contestability:</strong> Citizens must have mechanisms to appeal or challenge AI-driven decisions.</li>
 </ul>
 
-<p>Several governments have published AI ethics frameworks: the U.S. National AI Initiative, the EU AI Act, Canada's Directive on Automated Decision-Making, and Singapore's Model AI Governance Framework. These are not aspirational — they are becoming enforceable requirements.</p>
+<p>Several governments have published AI ethics frameworks: the U.S. National AI Initiative, the <a href="https://artificialintelligenceact.eu/the-act/" target="_blank" rel="noopener">EU AI Act</a> (which designates many public-sector use cases as "high-risk"), Canada's Directive on Automated Decision-Making, and Singapore's Model AI Governance Framework. These are not aspirational — they are becoming enforceable requirements.</p>
 
 <h2>Digital Equity: Ensuring AI Benefits All Citizens</h2>
 <p>AI-driven digital services risk creating a two-tier system where tech-savvy, connected citizens receive fast, personalized service while others are left behind. Governments must ensure digital equity through:</p>

@@ -20,7 +20,7 @@ export const post: BlogPost = {
 
 <p><strong>Labor scarcity.</strong> Warehouse and transportation labor markets are among the tightest in the economy. Turnover rates in warehouse operations frequently exceed 100 percent annually. Companies cannot simply hire their way to higher throughput. They must find ways to make existing workers dramatically more productive and reduce dependence on manual decision-making.</p>
 
-<p><strong>Supply chain volatility.</strong> Disruptions that were once rare, including port congestion, carrier capacity constraints, weather events, and geopolitical disruptions, now occur with regularity. Logistics operations need the ability to detect disruptions early, evaluate alternatives in real time, and execute contingency plans automatically.</p>
+<p><strong>Supply chain volatility.</strong> Disruptions that were once rare, including port congestion, carrier capacity constraints, weather events, and geopolitical disruptions, now occur with regularity — a shift documented across <a href="https://www.weforum.org/agenda/archive/supply-chains/" target="_blank" rel="noopener">World Economic Forum supply chain research</a>. Logistics operations need the ability to detect disruptions early, evaluate alternatives in real time, and execute contingency plans automatically.</p>
 
 <p><strong>Cost pressure.</strong> Fuel, labor, real estate, and equipment costs continue to rise while competitive pressure holds pricing flat or drives it down. Every percentage point of efficiency improvement directly impacts profitability. AI agents find optimization opportunities that human planners, no matter how experienced, simply cannot identify across the millions of variables involved in modern logistics.</p>
 
@@ -119,7 +119,7 @@ export const post: BlogPost = {
 
 <p>The integration pattern typically involves AI agents reading operational data from the WMS through APIs or event streams, processing that data through their reasoning and optimization capabilities, and writing decisions back to the WMS as recommended or automated actions depending on the confidence level and business rules governing each decision type. This approach preserves the transactional integrity and audit capabilities of the WMS while adding intelligent decision-making capabilities.</p>
 
-<p>For organizations using major WMS platforms such as Manhattan Associates, Blue Yonder, or SAP EWM, pre-built integration connectors accelerate deployment. For custom or legacy WMS implementations, a middleware layer that normalizes data formats and manages API communication provides a clean integration boundary between the AI agents and operational systems.</p>
+<p>For organizations using major WMS platforms such as <a href="https://www.manh.com/products/warehouse-management" target="_blank" rel="noopener">Manhattan Associates</a>, <a href="https://blueyonder.com/solutions/warehouse-management" target="_blank" rel="noopener">Blue Yonder</a>, or SAP EWM, pre-built integration connectors accelerate deployment. For custom or legacy WMS implementations, a middleware layer that normalizes data formats and manages API communication provides a clean integration boundary between the AI agents and operational systems.</p>
 
 <h2>ROI and Scalability</h2>
 

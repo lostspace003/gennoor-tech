@@ -32,7 +32,7 @@ export const post: BlogPost = {
 
 <p>An AI underwriting agent begins by ingesting the application and automatically enriching it with external data. For commercial property insurance, this might include pulling property records, building inspection reports, fire department response times, flood zone maps, crime statistics, and satellite imagery of the property and surrounding area. For personal auto insurance, it might include motor vehicle records, credit information, telematics data, and claims history from industry databases.</p>
 
-<p>The agent then applies machine learning models trained on historical underwriting decisions and loss outcomes to assess risk across multiple dimensions. Unlike traditional rule-based systems that evaluate risk factors independently, AI agents identify complex interactions between risk factors that human underwriters might miss. A commercial property in a low-crime area with excellent fire protection but poor roof condition and proximity to a flood zone presents a risk profile that requires nuanced assessment across multiple correlated factors.</p>
+<p>The agent then applies machine learning models — governed by emerging frameworks like the <a href="https://www.nist.gov/itl/ai-risk-management-framework" target="_blank" rel="noopener">NIST AI Risk Management Framework</a> — trained on historical underwriting decisions and loss outcomes to assess risk across multiple dimensions. Unlike traditional rule-based systems that evaluate risk factors independently, AI agents identify complex interactions between risk factors that human underwriters might miss. A commercial property in a low-crime area with excellent fire protection but poor roof condition and proximity to a flood zone presents a risk profile that requires nuanced assessment across multiple correlated factors.</p>
 
 <h3>Dynamic Pricing and Rating</h3>
 
@@ -64,7 +64,7 @@ export const post: BlogPost = {
 
 <h2>Fraud Detection Patterns and Prevention</h2>
 
-<p>Insurance fraud costs the industry billions annually and ultimately increases premiums for honest policyholders. AI fraud detection agents analyze claims in real time against complex pattern libraries to identify suspicious indicators before claims are paid.</p>
+<p>According to the <a href="https://insurancefraud.org/" target="_blank" rel="noopener">Coalition Against Insurance Fraud</a>, insurance fraud costs the industry billions annually and ultimately increases premiums for honest policyholders. AI fraud detection agents analyze claims in real time against complex pattern libraries to identify suspicious indicators before claims are paid.</p>
 
 <ul>
 <li><strong>Duplicate claim detection</strong> — The agent cross-references new claims against historical claims databases, identifying potential duplicates across carriers, claimants, and loss locations. It detects variations in names, addresses, and incident descriptions that might indicate the same loss being claimed multiple times.</li>
@@ -93,7 +93,7 @@ export const post: BlogPost = {
 
 <h2>Regulatory Compliance: State Regulations and NAIC Standards</h2>
 
-<p>Insurance is one of the most heavily regulated industries, with requirements varying across jurisdictions. AI agents must operate within strict regulatory frameworks, and this constraint is built into their design. Compliance agents validate that underwriting decisions comply with state-specific rating regulations, that claims handling meets statutory timeframe requirements, that communications include required disclosures, and that data handling practices conform to privacy regulations.</p>
+<p>Insurance is one of the most heavily regulated industries, with requirements varying across jurisdictions. AI agents must operate within strict regulatory frameworks — including the <a href="https://content.naic.org/cmte_h_big_data_ai.htm" target="_blank" rel="noopener">NAIC Model Bulletin on the Use of Artificial Intelligence Systems by Insurers</a> — and this constraint is built into their design. Compliance agents validate that underwriting decisions comply with state-specific rating regulations, that claims handling meets statutory timeframe requirements, that communications include required disclosures, and that data handling practices conform to privacy regulations.</p>
 
 <p>The agents also generate audit trails that document the reasoning behind every automated decision, providing the transparency that regulators require. This documentation capability is actually an advantage over manual processes, where decision rationale is often poorly recorded.</p>
 

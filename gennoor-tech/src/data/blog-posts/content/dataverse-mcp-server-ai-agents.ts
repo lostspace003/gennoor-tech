@@ -6,7 +6,7 @@ export const post: BlogPost = {
     excerpt: 'Connect any AI agent to Microsoft Dataverse through MCP. Query tables, create records, and navigate relationships — all through a standardized protocol.',
     tldr: 'An MCP server for Dataverse gives any AI agent — Claude, GPT, Copilot, or open-source models — the ability to query tables, create records, and navigate relationships in your business data through a standardized protocol.',
     content: `
-<p>Dataverse is the data backbone of Power Platform, Dynamics 365, and countless enterprise apps. Now imagine giving any AI agent — regardless of provider — secure, structured access to all of it. This comprehensive guide will show you exactly how to build a production-ready Dataverse MCP server that connects AI agents to your enterprise data.</p>
+<p><a href="https://learn.microsoft.com/en-us/power-apps/maker/data-platform/" target="_blank" rel="noopener">Dataverse</a> is the data backbone of Power Platform, Dynamics 365, and countless enterprise apps. Now imagine giving any AI agent — regardless of provider — secure, structured access to all of it through the <a href="https://www.anthropic.com/news/model-context-protocol" target="_blank" rel="noopener">Model Context Protocol (MCP)</a>. This comprehensive guide will show you exactly how to build a production-ready Dataverse MCP server that connects AI agents to your enterprise data.</p>
 
 <h2>How a Dataverse MCP Server Works</h2>
 <ul>
@@ -20,7 +20,7 @@ export const post: BlogPost = {
 <p>The Dataverse MCP server architecture consists of four layers:</p>
 
 <h3>Client Layer</h3>
-<p>AI agents (Claude, GPT, custom agents) act as MCP clients. They connect to the server via stdio or HTTP transport and call exposed tools.</p>
+<p>AI agents (Claude, GPT, custom agents) act as MCP clients. They connect to the server via stdio or HTTP transport defined in the <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">MCP specification</a> and call exposed tools.</p>
 
 <h3>Server Layer</h3>
 <p>The MCP server exposes standardized tools and handles tool execution. It translates generic tool calls into Dataverse-specific operations.</p>

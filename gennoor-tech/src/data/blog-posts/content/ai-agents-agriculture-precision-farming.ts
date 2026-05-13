@@ -34,7 +34,7 @@ export const post: BlogPost = {
 
 <h3>Satellite-Based Monitoring</h3>
 
-<p>The agent processes multispectral satellite imagery to generate vegetation indices such as NDVI, NDRE, and SAVI that quantify crop health, vigor, and biomass at the field level. By analyzing these indices over time, the agent detects emerging problems, including nutrient deficiencies, water stress, disease onset, and uneven emergence, often days before they become visible to the human eye during field walks.</p>
+<p>The agent processes multispectral satellite imagery — often sourced from open programs such as the European Space Agency's <a href="https://sentinel.esa.int/web/sentinel/missions/sentinel-2" target="_blank" rel="noopener">Sentinel-2</a> mission — to generate vegetation indices such as NDVI, NDRE, and SAVI that quantify crop health, vigor, and biomass at the field level. By analyzing these indices over time, the agent detects emerging problems, including nutrient deficiencies, water stress, disease onset, and uneven emergence, often days before they become visible to the human eye during field walks.</p>
 
 <p>The agent automatically compares current imagery against historical patterns for the same field and crop, identifying deviations that warrant investigation. It generates zone maps that divide each field into management zones based on crop performance, enabling variable-rate application of inputs that address specific zone needs rather than treating the entire field uniformly.</p>
 
@@ -42,7 +42,7 @@ export const post: BlogPost = {
 
 <p>When satellite imagery identifies an area of concern, the agent can trigger or recommend a targeted drone flight for higher-resolution assessment. Drone-mounted multispectral and thermal cameras provide the detail needed to diagnose specific problems. Computer vision models trained on extensive libraries of crop disease, pest damage, nutrient deficiency, and weed imagery classify the issue and estimate severity.</p>
 
-<p>Advanced drone-based agents also perform stand counts during early growth stages, measuring emergence rates and plant spacing to identify areas where replanting may be necessary. They assess canopy development, flowering progress, and maturity indicators to support harvest timing decisions.</p>
+<p>Advanced drone-based agents also perform stand counts during early growth stages, measuring emergence rates and plant spacing to identify areas where replanting may be necessary. They assess canopy development, flowering progress, and maturity indicators to support harvest timing decisions. Commercial deployments such as <a href="https://www.deere.com/en/sprayers/see-and-spray/" target="_blank" rel="noopener">John Deere's See & Spray</a> have demonstrated that vision-driven, targeted application can reduce herbicide use by more than two-thirds in row crops.</p>
 
 <h2>Soil Analysis and Health Monitoring</h2>
 
@@ -60,7 +60,7 @@ export const post: BlogPost = {
 
 <h2>Irrigation Optimization</h2>
 
-<p>Water management is one of the most impactful applications of AI in agriculture, particularly in water-scarce regions where irrigation efficiency has direct implications for both farm profitability and environmental sustainability. An AI irrigation agent manages water application with a precision that manual scheduling cannot approach.</p>
+<p>Water management is one of the most impactful applications of AI in agriculture, particularly in water-scarce regions where irrigation efficiency has direct implications for both farm profitability and environmental sustainability. According to the <a href="https://www.fao.org/water/en/" target="_blank" rel="noopener">FAO</a>, agriculture accounts for roughly 70 percent of global freshwater withdrawals — making every percentage point of irrigation efficiency consequential. An AI irrigation agent manages water application with a precision that manual scheduling cannot approach.</p>
 
 <p>The agent integrates soil moisture sensor data from multiple depths across the field, evapotranspiration models that estimate crop water demand based on weather conditions and growth stage, root zone models that track water availability at the depth where crops access it, and irrigation system characteristics including application rates, uniformity, and energy costs. Based on this integrated analysis, the agent generates irrigation schedules that maintain optimal soil moisture for crop growth while minimizing water waste, energy consumption, and nutrient leaching.</p>
 
