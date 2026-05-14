@@ -14,6 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/about/company`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${baseUrl}/about/journey`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${baseUrl}/about/certifications`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${baseUrl}/about/founder`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${baseUrl}/contact`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${baseUrl}/privacy`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
     { url: `${baseUrl}/terms`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
@@ -61,6 +62,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Workshops
     { url: `${baseUrl}/workshops`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
     { url: `${baseUrl}/workshops/claude-cowork`, lastModified: new Date('2026-05-10'), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}/claude-cowork`, lastModified: new Date('2026-05-10'), changeFrequency: 'monthly', priority: 0.7 },
 
     // Tools & features
     { url: `${baseUrl}/ai-readiness`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
