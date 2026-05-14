@@ -37,9 +37,24 @@ export interface BlogPost extends BlogPostMeta {
 
 export const blogPostsMeta: BlogPostMeta[] = [
   {
+    slug: 'meta-incognito-chat-whatsapp-private-ai',
+    title: 'Incognito for AI: Meta Launches a Truly Private Way to Chat With AI on WhatsApp — Built on Muse Spark and Private Processing',
+    featured: 'hero',
+    excerpt: 'On May 13, 2026, Meta launched Incognito Chat with Meta AI on WhatsApp and the Meta AI app — the first major AI product where the provider itself cannot read your conversations. Built on WhatsApp\'s Private Processing infrastructure and powered by the new Muse Spark model, the feature redefines the baseline for consumer AI privacy. Here is what it actually does, how it works, and what it means for the enterprise.',
+    tldr: 'On May 13, 2026, Meta shipped Incognito Chat with Meta AI on WhatsApp and the Meta AI app — the first frontier-AI consumer product where the provider explicitly cannot read the conversation. It runs on the new Muse Spark model inside WhatsApp\'s Private Processing infrastructure: anonymous authentication, attestable Confidential Virtual Machines, ephemeral session keys, and no server-side logs. Only Meta and Apple now ship truly-private AI, resetting the procurement baseline.',
+    author: 'Gennoor Tech',
+    date: '2026-05-14',
+    readTime: '11 min read',
+    category: 'AI Privacy',
+    tags: ['AI Privacy', 'Meta AI', 'Incognito Chat', 'WhatsApp', 'Private Processing', 'Muse Spark', 'Confidential Compute'],
+    hashtags: ['#AIPrivacy', '#IncognitoChat', '#MetaAI', '#WhatsApp', '#PrivateProcessing', '#MuseSpark', '#ConfidentialCompute'],
+    coverColor: '#1877F2',
+    icon: '🔒',
+  },
+  {
     slug: 'openai-daybreak-google-ai-zero-day',
     title: "The Defender's Daybreak: OpenAI Launches an AI Cybersecurity Stack — Days After Google Detects the First AI-Built Zero-Day",
-    featured: 'hero',
+    featured: 'spotlight',
     excerpt: 'In a 24-hour window, the AI security balance shifted twice. Google confirmed the first AI-discovered, AI-weaponized zero-day in the wild. OpenAI launched Daybreak — a GPT-5.5-Cyber-powered defensive stack with Akamai, Cisco, Cloudflare, CrowdStrike, Fortinet, Oracle, Palo Alto Networks, and Zscaler. Here is what enterprises need to do about it.',
     tldr: 'On May 11, 2026 Google GTIG disclosed the first AI-discovered and AI-weaponized zero-day used in the wild. On May 12, OpenAI launched Daybreak — a defensive cybersecurity stack built on GPT-5.5 and GPT-5.5-Cyber, partnered with Akamai, Cisco, Cloudflare, CrowdStrike, Fortinet, Oracle, Palo Alto Networks, and Zscaler. Disclosure-to-exploit timelines have collapsed from weeks to minutes.',
     author: 'Gennoor Tech',
