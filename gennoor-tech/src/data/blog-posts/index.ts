@@ -895,6 +895,7 @@ export function getRelatedPostsMeta(currentSlug: string, category: string, limit
 
 // Load full blog post content on demand (only for individual post pages)
 const contentImports: Record<string, () => Promise<{ post: BlogPost }>> = {
+  'meta-incognito-chat-whatsapp-private-ai': () => import('./content/meta-incognito-chat-whatsapp-private-ai'),
   'openai-daybreak-google-ai-zero-day': () => import('./content/openai-daybreak-google-ai-zero-day'),
   'what-are-ai-agents-enterprise-guide': () => import('./content/what-are-ai-agents-enterprise-guide'),
   'copilot-studio-agent-flows-complete-guide': () => import('./content/copilot-studio-agent-flows-complete-guide'),
