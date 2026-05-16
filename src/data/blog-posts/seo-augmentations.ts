@@ -13,6 +13,32 @@ interface PostAugmentation {
 }
 
 export const seoAugmentations: Record<string, PostAugmentation> = {
+  'ai-jobs-future-bill-gates-three-professions': {
+    keyTakeaways: [
+      'Bill Gates names three jobs he believes will outlast automation: biologists, energy specialists, and software developers — all roles requiring hypothesis generation, systems thinking, and creative judgment.',
+      'Microsoft AI CEO Mustafa Suleyman puts human-level performance on most professional tasks at 12–18 months; Anthropic CEO Dario Amodei warns half of entry-level white-collar jobs are at risk.',
+      'Counter-evidence: Vanguard\'s 2026 forecast shows the 100 occupations most exposed to AI are currently outperforming the rest of the labor market on job growth and wages.',
+      'Five enterprise priorities: audit workforce AI exposure, invest in hypothesis-driven roles, design human-AI collaboration into every workflow, redesign the junior talent pipeline, and start upskilling now — not next quarter.',
+      'The biggest risk is not mass unemployment tomorrow but a widening gap between what your workforce can do and what the market will require within 24 months.',
+    ],
+    faqs: [
+      { question: 'Which three jobs does Bill Gates think will survive AI?', answer: 'At the 2026 Goalkeepers event, Bill Gates named biologists, energy specialists, and software developers as the most resilient professions. His logic: each requires hypothesis generation, deep systems thinking, and creative judgment under uncertainty — capabilities current AI still cannot replicate end-to-end. He was clear this is a directional warning, not a precise forecast.' },
+      { question: 'How quickly will AI automate white-collar work according to Mustafa Suleyman?', answer: 'Microsoft AI CEO Mustafa Suleyman told the Financial Times in early 2026 that AI will reach "human-level performance on most, if not all, professional tasks" within 12 to 18 months. He specifically called out accounting, legal review, marketing, and project management as functions where automation will arrive first.' },
+      { question: 'Will AI actually eliminate entry-level white-collar jobs?', answer: 'Anthropic CEO Dario Amodei has warned that AI could eliminate up to half of entry-level white-collar positions within a few years. The deeper problem is structural: senior professionals learned the fundamentals in the same junior roles AI is now automating, so the talent pipeline itself breaks if nothing replaces those learning experiences.' },
+      { question: 'Does current labor-market data support the pessimistic predictions?', answer: 'Not yet. Vanguard\'s 2026 economic forecast found that the roughly 100 occupations most exposed to AI automation are outperforming the rest of the labor market on both job growth and real wage gains. Historically, transformative technologies create more jobs than they destroy — but the new jobs require different skills than the ones displaced, which is where workforce planning matters.' },
+      { question: 'What should an enterprise actually do in the next 12 months?', answer: 'Five concrete moves: (1) audit every role for AI exposure to map where reskilling is needed, (2) invest in roles that require hypothesis generation and systems thinking, (3) treat AI as scaffolding for human productivity rather than substitution, (4) redesign your junior-talent pipeline so people still learn the fundamentals even as AI automates the entry-level tasks, and (5) launch broad AI-literacy training now — every employee should know how to work with, evaluate, and govern AI outputs.' },
+    ],
+    references: [
+      { title: 'GatesNotes — Bill Gates Annual Letter', url: 'https://www.gatesnotes.com/Annual-Letter', source: 'GatesNotes' },
+      { title: 'The Future of Jobs Report 2025', url: 'https://www.weforum.org/publications/the-future-of-jobs-report-2025/', source: 'World Economic Forum' },
+      { title: 'The state of AI', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai', source: 'McKinsey & Company' },
+      { title: 'NIST AI Risk Management Framework (AI RMF 1.0)', url: 'https://www.nist.gov/itl/ai-risk-management-framework', source: 'NIST' },
+      { title: 'Artificial intelligence — topic hub', url: 'https://www.oecd.org/en/topics/artificial-intelligence.html', source: 'OECD' },
+      { title: 'Microsoft AI — official portal', url: 'https://www.microsoft.com/en-us/ai', source: 'Microsoft' },
+      { title: 'Anthropic — Research and policy', url: 'https://www.anthropic.com/research', source: 'Anthropic' },
+    ],
+  },
+
   'what-are-ai-agents-enterprise-guide': {
     references: [
       { title: 'Introducing the Model Context Protocol', url: 'https://www.anthropic.com/news/model-context-protocol', source: 'Anthropic' },
