@@ -67,6 +67,20 @@ export const blogPostsMeta: BlogPostMeta[] = [
     icon: '🛡️',
   },
   {
+    slug: 'ai-jobs-future-bill-gates-three-professions',
+    title: 'Only 3 Jobs Will Survive AI? What Bill Gates, Suleyman, and Other Leaders Are Really Saying',
+    excerpt: 'Bill Gates says only biologists, energy specialists, and coders will survive the AI takeover. Microsoft AI chief Mustafa Suleyman gives white-collar work 18 months. Here is what enterprises should actually take away from these predictions.',
+    tldr: 'Bill Gates predicts only three professions — biology, energy, and software development — will remain resilient as AI automates most work. Other tech leaders like Mustafa Suleyman and Dario Amodei echo similar urgency. The real takeaway for enterprises: workforce transformation is not optional, and the window to prepare is closing fast.',
+    author: 'Gennoor Tech',
+    date: '2026-03-30',
+    readTime: '10 min read',
+    category: 'AI Strategy',
+    tags: ['AI Jobs', 'Future of Work', 'Bill Gates', 'AI Strategy', 'Workforce Transformation'],
+    hashtags: ['#AIJobs', '#FutureOfWork', '#BillGates', '#AIStrategy', '#WorkforceTransformation'],
+    coverColor: '#8E44AD',
+    icon: '💼',
+  },
+  {
     slug: 'what-are-ai-agents-enterprise-guide',
     title: 'What Are AI Agents? A No-Nonsense Enterprise Guide',
     featured: 'spotlight',
@@ -897,6 +911,7 @@ export function getRelatedPostsMeta(currentSlug: string, category: string, limit
 const contentImports: Record<string, () => Promise<{ post: BlogPost }>> = {
   'meta-incognito-chat-whatsapp-private-ai': () => import('./content/meta-incognito-chat-whatsapp-private-ai'),
   'openai-daybreak-google-ai-zero-day': () => import('./content/openai-daybreak-google-ai-zero-day'),
+  'ai-jobs-future-bill-gates-three-professions': () => import('./content/ai-jobs-future-bill-gates-three-professions'),
   'what-are-ai-agents-enterprise-guide': () => import('./content/what-are-ai-agents-enterprise-guide'),
   'copilot-studio-agent-flows-complete-guide': () => import('./content/copilot-studio-agent-flows-complete-guide'),
   'mcp-protocol-universal-ai-integration': () => import('./content/mcp-protocol-universal-ai-integration'),
