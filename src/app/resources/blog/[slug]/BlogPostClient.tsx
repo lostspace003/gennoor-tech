@@ -243,14 +243,12 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
     e.preventDefault()
     if (!email) return
     try {
-      await fetch('/api/book-expert-call', {
+      await fetch('/api/newsletter-subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: 'Newsletter Subscriber', email,
-          programTitle: 'Blog Newsletter Subscription',
-          message: `Subscribed from: ${post.title}`,
-          timestamp: new Date().toISOString(),
+          email,
+          source: `blog-post:${slug}`,
         }),
       })
     } catch { /* show success */ }
