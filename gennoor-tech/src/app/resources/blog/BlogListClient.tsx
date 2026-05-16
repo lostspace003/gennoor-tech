@@ -65,12 +65,14 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
     e.preventDefault()
     if (!email) return
     try {
-      await fetch('/api/newsletter-subscribe', {
+      await fetch('/api/book-expert-call', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email,
-          source: 'blog-list',
+          name: 'Newsletter Subscriber', email,
+          programTitle: 'Blog Newsletter Subscription',
+          message: 'Subscribed to blog newsletter',
+          timestamp: new Date().toISOString(),
         }),
       })
     } catch { /* show success */ }
