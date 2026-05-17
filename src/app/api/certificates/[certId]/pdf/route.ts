@@ -27,7 +27,7 @@ export async function GET(
     const safeName = cert.recipientName.replace(/[^a-zA-Z0-9 _-]+/g, '').replace(/\s+/g, '_')
     const filename = `Gennoor_Tech_Certificate_${safeName || cert.certId}.pdf`
 
-    return new NextResponse(pdf, {
+    return new NextResponse(new Uint8Array(pdf), {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
