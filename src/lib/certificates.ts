@@ -169,7 +169,10 @@ export async function downloadCertificatePdf(blobPath: string): Promise<Buffer |
     }
     return Buffer.concat(chunks)
   } catch (err: unknown) {
-    if (err instanceof RestError && (err.statusCode === 404 || err.details?.errorCode === 'BlobNotFound')) {
+    if (
+      err instanceof RestError &&
+      (err.statusCode === 404 || (err.details as { errorCode?: string } | undefined)?.errorCode === 'BlobNotFound')
+    ) {
       return null
     }
     throw err
