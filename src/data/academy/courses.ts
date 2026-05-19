@@ -315,70 +315,74 @@ const baseCourses: Course[] = [
 
     duration: '65 min',
     chapterCount: 8,
-    format: ['video', 'reading', 'interactive'],
+    format: ['interactive', 'video', 'reading'],
 
     status: 'available',
     lastUpdated: '2026-05-19',
 
+    interactiveUrl: '/ai-academy/ai-for-finance-accounting',
+
     hookSentence:
-      'Close cycle, invoice extraction, forecasting, audit — and the data-quality conversation nobody else will have with you.',
+      'Four plays that pay. One that wastes time. The 90-day data sprint that decides whether the rest works. Built for CFOs, controllers, and FP&A leads who want AI to show up in EBITDA — not just in the strategy deck.',
     whoThisIsFor:
       'CFOs, controllers, FP&A leads, accountants, and audit partners. Especially valuable for finance teams who have been pitched 40 AI tools and need to know which ones actually work in regulated, audit-able environments.',
     whatYoullLearn: [
-      'AI in close and consolidation — what speeds up, what doesn\'t',
-      'Invoice & document AI — beyond the vendor demo',
-      'Forecasting with AI — when to use ML vs. an LLM vs. neither',
-      'Audit & anomaly detection — how to build evidence trails',
-      'Tax & compliance copilots — the regional regulatory reality',
-      'The data quality conversation — why most finance AI projects fail before they start',
+      'The four AI plays for finance — and the one to skip',
+      'Invoice & document AI — the four-week build plan with operational rhythm',
+      'The reconciliation agent — close from five days to two without firing the controller',
+      'Forecasting with AI — when ML beats Excel, when Excel still wins, and the governance overlay',
+      'Anomaly, audit, and fraud — three layers, internal audit as ally, the two failure modes',
+      'Tax & compliance copilots — three boring use cases that work, three to deliberately skip',
+      'The data quality conversation — three blockers, what to fix, and the 90-day sprint',
+      'Your finance AI roadmap on one page — five sections, three conversations to unlock',
     ],
     chapters: [
       {
         number: 1,
-        title: 'The finance-AI fit map',
+        title: 'Where AI fits in finance',
         duration: '8 min',
         objectives: [
-          'Identify 6 high-ROI AI use cases in finance',
-          'Apply the "auditable trail" test to AI candidates',
+          'Name the four AI plays for finance — and the fifth that wastes time',
+          'Sequence the plays in the right order; spot the three traps',
         ],
       },
       {
         number: 2,
-        title: 'AI in close & consolidation',
-        duration: '8 min',
+        title: 'Invoice & document AI',
+        duration: '9 min',
         objectives: [
-          'Identify which close tasks AI compresses (and which it can\'t)',
-          'Design AI-assisted journal entry workflows that pass audit',
+          'Build the three deliverables — extraction, LLM verification, ERP write-back',
+          'Run the four-week build and lock in the operational rhythm',
         ],
         hasQuiz: true,
       },
       {
         number: 3,
-        title: 'Invoice & document AI — past the vendor demo',
-        duration: '9 min',
+        title: 'The reconciliation agent',
+        duration: '8 min',
         objectives: [
-          'Evaluate document-AI vendor claims',
-          'Design a fallback path for the 10% of invoices that always fail',
+          'Map the agent into your close calendar to recover two days a month',
+          'Set the material-entry threshold that keeps auditors comfortable',
         ],
         hasExercise: true,
       },
       {
         number: 4,
-        title: 'Forecasting with AI: ML vs. LLM vs. neither',
+        title: 'Forecasting with AI',
         duration: '9 min',
         objectives: [
-          'Pick the right tool: classical ML for forecasting, LLM for narrative',
-          'Avoid the "ChatGPT forecasted my revenue" credibility loss',
+          'Score the five conditions: when ML beats Excel, when Excel wins',
+          'Stand up forecasts with confidence intervals + the three-item governance overlay',
         ],
         hasQuiz: true,
       },
       {
         number: 5,
-        title: 'Audit & anomaly detection',
+        title: 'Anomaly, audit, and fraud',
         duration: '8 min',
         objectives: [
-          'Use anomaly detection in transaction monitoring',
-          'Build evidence trails that auditors accept',
+          'Buy the three layers in order: rules → statistical → LLM reasoning',
+          'Make internal audit an ally; track investigation rate weekly',
         ],
       },
       {
@@ -386,8 +390,8 @@ const baseCourses: Course[] = [
         title: 'Tax & compliance copilots',
         duration: '7 min',
         objectives: [
-          'Use AI for tax research without violating professional standards',
-          'Apply regional regulatory boundaries (India, GCC, EU)',
+          'Run the three boring use cases that work — and deliberately not the three that don\'t',
+          'Lock the source-of-truth, enforce citation, review edge cases quarterly',
         ],
         hasExercise: true,
       },
@@ -396,17 +400,17 @@ const baseCourses: Course[] = [
         title: 'The data quality conversation',
         duration: '8 min',
         objectives: [
-          'Audit your data readiness before any AI initiative',
-          'Spot the 3 data dead-ends that kill finance-AI projects',
+          'Name the three blockers: master data, unstructured GL, history without consistency',
+          'Run the 90-day data sprint that pays back fifty times in AI deployment time',
         ],
       },
       {
         number: 8,
-        title: 'Capstone: Your finance AI roadmap',
+        title: 'Capstone — Your finance AI roadmap on one page',
         duration: '8 min',
         objectives: [
-          'Pick 2 high-ROI use cases for the next 2 quarters',
-          'Draft an audit-friendly pilot scope for one of them',
+          'Collapse the course into a five-section operating roadmap',
+          'Unlock the three conversations: CFO, internal audit, audit committee',
         ],
         isCapstone: true,
       },
