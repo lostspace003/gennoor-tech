@@ -103,6 +103,11 @@ export interface Course {
   // Cross-links
   pairedPocs?: string[] // PoC slugs from src/data/pocs.ts (future)
   relatedCourseSlugs?: string[] // sibling courses in this/adjacent tracks
+
+  // Interactive web-rendered course variant.
+  // When set, the catalog detail page shows a distinct CTA linking to the interactive experience.
+  // Example: AB-100 lives at /ai-academy/ab-100 and is surfaced in /academy via this field.
+  interactiveUrl?: string
 }
 
 export interface TrackInfo {

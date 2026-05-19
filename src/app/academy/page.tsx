@@ -72,12 +72,12 @@ export default function AcademyPage() {
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm text-gray-500 mb-8">
               <span className="inline-flex items-center gap-1.5">
                 <BookOpen className="w-4 h-4 text-primary-500" />
-                {courses.length} courses live · more shipping through 2026
+                {courses.length} courses in catalog · 1 fully interactive (AB-100) · scaffolds rolling out through 2026
               </span>
               <span className="text-gray-300">·</span>
               <span className="inline-flex items-center gap-1.5">
                 <Award className="w-4 h-4 text-primary-500" />
-                Free · no credit card · email-gated downloads only
+                Free · no credit card
               </span>
             </div>
 
