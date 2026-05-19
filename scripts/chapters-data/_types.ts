@@ -109,6 +109,16 @@ export const AI_GOVERNANCE_BOARDS_THEME: CourseTheme = {
   tint:        '#F1F5F9',
 }
 
+export const AI_FINANCE_THEME: CourseTheme = {
+  primary:     '#047857',
+  primaryDeep: '#065F46',
+  accent:      '#D97706',
+  accentLight: '#FCD34D',
+  navy:        '#022C22',
+  cyan:        '#34D399',
+  tint:        '#ECFDF5',
+}
+
 export interface Chapter {
   courseId: string
   chapterId: string
