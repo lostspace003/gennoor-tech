@@ -31,10 +31,12 @@ const baseCourses: Course[] = [
 
     duration: '55 min',
     chapterCount: 8,
-    format: ['video', 'reading', 'interactive'],
+    format: ['interactive', 'video', 'reading'],
 
     status: 'available',
     lastUpdated: '2026-05-19',
+
+    interactiveUrl: '/ai-academy/ai-foundations',
 
     hookSentence:
       'The fastest way to get a non-technical team speaking the same AI vocabulary.',

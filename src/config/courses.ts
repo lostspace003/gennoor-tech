@@ -187,6 +187,37 @@ export const courses: Course[] = [
       },
     ],
   },
+  {
+    id: 'ai-foundations',
+    title: 'AI Foundations for Everyone',
+    shortTitle: 'AI Foundations',
+    description:
+      'A practical 55-minute foundations course for business teams — no code, no buzzwords, no hype.',
+    longDescription:
+      'The fastest way to get a non-technical team speaking the same AI vocabulary. Covers what AI is and isn\'t, how LLMs actually work, where AI fits in everyday work, the privacy and bias risks to watch, how to evaluate AI claims, hands-on Copilot prompts, and habit-building that sticks. Every chapter ends with key takeaways and chapter 8 finishes with a 1-page capstone plan.',
+    thumbnail: '/courses/ai-foundations/thumbnail.png',
+    level: 'Foundational',
+    duration: '~55 min',
+    certification: 'No',
+    totalChapters: 8,
+    tags: ['Foundations', 'GenAI', 'Copilot', 'Non-technical'],
+    badge: 'FREE',
+    chapters: [
+      {
+        id: 'chapter-01',
+        slug: 'chapter-01-what-is-ai',
+        number: 1,
+        title: 'What is AI? (Without the hype)',
+        description: 'AI/ML/GenAI distinctions, three things AI is NOT, and why 2022 was the inflection point.',
+        htmlFile: '/courses/ai-foundations/chapters/chapter-01-what-is-ai.html',
+        estimatedMinutes: 7,
+        isFree: true,
+        audioDir: '/courses/ai-foundations/audio/chapter-01',
+      },
+      // Chapters 2-8 — content authored in src/data/academy/chapter-content/ai-foundations-for-everyone.ts;
+      // run scripts/build-academy-chapter.ts <chapter-id> to generate HTML + audio + upload to blob storage.
+    ],
+  },
 ]
 
 export function getCourseById(id: string): Course | undefined {
