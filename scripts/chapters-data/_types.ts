@@ -119,6 +119,16 @@ export const AI_FINANCE_THEME: CourseTheme = {
   tint:        '#ECFDF5',
 }
 
+export const AI_FINANCIAL_SERVICES_THEME: CourseTheme = {
+  primary:     '#1D4ED8',
+  primaryDeep: '#1E3A8A',
+  accent:      '#CA8A04',
+  accentLight: '#FACC15',
+  navy:        '#0B1538',
+  cyan:        '#60A5FA',
+  tint:        '#EFF6FF',
+}
+
 export interface Chapter {
   courseId: string
   chapterId: string
