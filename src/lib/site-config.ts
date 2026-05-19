@@ -49,7 +49,8 @@ export const siteConfig = {
         name: 'Resources',
         href: '/resources/blog',
         children: [
-          { name: 'AI Academy', href: '/ai-academy', description: 'Free AI courses & learning paths', badge: 'Free' },
+          { name: 'Gennoor Academy', href: '/academy', description: '6 tracks · masterclass-grade courses paired with optional pilots', badge: 'New' },
+          { name: 'AI Academy (AB-100)', href: '/ai-academy', description: 'Interactive certification course', badge: 'Free' },
           { name: 'Blog', href: '/resources/blog', description: 'AI insights & articles' },
           { name: 'Videos', href: '/resources/videos', description: 'Training videos & tutorials' },
           { name: 'Webinars', href: '/webinars', description: 'Live & recorded sessions' },
@@ -96,7 +97,7 @@ export const siteConfig = {
       {
         title: 'Resources',
         links: [
-          { name: 'AI Academy', href: '/ai-academy' },
+          { name: 'Gennoor Academy', href: '/academy' },
           { name: 'Blog', href: '/resources/blog' },
           { name: 'Videos', href: '/resources/videos' },
           { name: 'AI Readiness', href: '/ai-readiness' },
