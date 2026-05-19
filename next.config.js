@@ -8,6 +8,16 @@ const nextConfig = {
         destination: '/workshops/claude-cowork',
         permanent: true,
       },
+      {
+        source: '/portfolio/demos',
+        destination: '/resources/pocs',
+        permanent: true,
+      },
+      {
+        source: '/services',
+        destination: '/solutions',
+        permanent: true,
+      },
     ]
   },
   output: 'standalone',
