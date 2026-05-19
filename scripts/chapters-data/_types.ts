@@ -139,6 +139,16 @@ export const GENAI_BUSINESS_THEME: CourseTheme = {
   tint:        '#F5F3FF',
 }
 
+export const AI_FOR_HR_THEME: CourseTheme = {
+  primary:     '#BE185D',
+  primaryDeep: '#9D174D',
+  accent:      '#D97706',
+  accentLight: '#FCD34D',
+  navy:        '#3F0A23',
+  cyan:        '#F472B6',
+  tint:        '#FDF2F8',
+}
+
 export interface Chapter {
   courseId: string
   chapterId: string
