@@ -89,6 +89,16 @@ export const AI_FOUNDATIONS_THEME: CourseTheme = {
   tint:        '#F0FDFA',
 }
 
+export const AI_STRATEGY_C_SUITE_THEME: CourseTheme = {
+  primary:     '#1E40AF',
+  primaryDeep: '#1E3A8A',
+  accent:      '#F59E0B',
+  accentLight: '#FCD34D',
+  navy:        '#0B1220',
+  cyan:        '#60A5FA',
+  tint:        '#EFF6FF',
+}
+
 export interface Chapter {
   courseId: string
   chapterId: string

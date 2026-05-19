@@ -17,7 +17,7 @@ import { BlobServiceClient } from '@azure/storage-blob'
 import { mkdir, writeFile, readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { chapters, type Chapter, type Slide, type CourseTheme, DEFAULT_THEME } from './chapters-data/index.ts'
+import { chapters, coursesData, type Chapter, type Slide, type CourseTheme, DEFAULT_THEME } from './chapters-data/index.ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PROJECT_ROOT = path.resolve(__dirname, '..')
@@ -529,22 +529,37 @@ async function build(chapter: Chapter, ICONS: Record<string, string>, opts: Buil
 
 const { ICONS } = await import('./chapters-data/index.ts')
 
-const args = process.argv.slice(2)
-const target = args[0] ?? 'chapter-01'
-const htmlOnly = args.includes('--html-only')
+// Usage:
+//   <courseId> <chapterId | all> [--html-only]    — explicit course
+//   <chapterId | all> [--html-only]               — legacy (ai-foundations)
+const argv = process.argv.slice(2).filter(a => !a.startsWith('--'))
+const htmlOnly = process.argv.includes('--html-only')
+let courseId = 'ai-foundations'
+let target = 'chapter-01'
+if (argv.length >= 2) {
+  courseId = argv[0]
+  target = argv[1]
+} else if (argv.length === 1) {
+  target = argv[0]
+}
 
 async function main() {
   const opts: BuildOptions = { htmlOnly }
+  const courseChapters = coursesData[courseId]
+  if (!courseChapters) {
+    console.error(`Unknown courseId: ${courseId}. Available: ${Object.keys(coursesData).join(', ')}`)
+    process.exit(1)
+  }
   if (target === 'all') {
-    const ids = Object.keys(chapters).sort()
-    console.log(`Building ALL chapters: ${ids.join(', ')}${htmlOnly ? ' · HTML only' : ''}\n`)
+    const ids = Object.keys(courseChapters).sort()
+    console.log(`Building ALL chapters of ${courseId}: ${ids.join(', ')}${htmlOnly ? ' · HTML only' : ''}\n`)
     for (const id of ids) {
-      await build(chapters[id], ICONS, opts)
+      await build(courseChapters[id], ICONS, opts)
     }
   } else {
-    const chapter = chapters[target]
+    const chapter = courseChapters[target]
     if (!chapter) {
-      console.error(`Unknown chapterId: ${target}. Available: ${Object.keys(chapters).join(', ')}`)
+      console.error(`Unknown chapterId: ${target} in ${courseId}. Available: ${Object.keys(courseChapters).join(', ')}`)
       process.exit(1)
     }
     await build(chapter, ICONS, opts)
