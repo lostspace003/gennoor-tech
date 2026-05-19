@@ -13,6 +13,16 @@ export interface Chapter {
   transcriptFile?: string
 }
 
+export interface CourseTheme {
+  primary: string
+  primaryDeep: string
+  accent: string
+  accentLight: string
+  navy: string
+  cyan: string
+  tint: string
+}
+
 export interface Course {
   id: string
   title: string
@@ -27,6 +37,7 @@ export interface Course {
   totalChapters: number
   tags: string[]
   badge: 'FREE' | 'PREMIUM'
+  theme?: CourseTheme
 }
 
 export const courses: Course[] = [
@@ -202,6 +213,15 @@ export const courses: Course[] = [
     totalChapters: 8,
     tags: ['Foundations', 'GenAI', 'Copilot', 'Non-technical'],
     badge: 'FREE',
+    theme: {
+      primary:     '#0F766E',
+      primaryDeep: '#0E6058',
+      accent:      '#D97706',
+      accentLight: '#FCD34D',
+      navy:        '#134E4A',
+      cyan:        '#5EEAD4',
+      tint:        '#F0FDFA',
+    },
     chapters: [
       {
         id: 'chapter-01',

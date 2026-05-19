@@ -17,7 +17,7 @@ import { BlobServiceClient } from '@azure/storage-blob'
 import { mkdir, writeFile, readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { chapters, type Chapter, type Slide } from './chapters-data/index.ts'
+import { chapters, type Chapter, type Slide, type CourseTheme, DEFAULT_THEME } from './chapters-data/index.ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PROJECT_ROOT = path.resolve(__dirname, '..')
@@ -28,7 +28,7 @@ const SPEECH_KEY = process.env.AZURE_SPEECH_ACADEMY_KEY
 const SPEECH_REGION = process.env.AZURE_SPEECH_ACADEMY_REGION
 const STORAGE_CONN = process.env.AZURE_STORAGE_CONNECTION_STRING
 const CONTAINER = 'website-content'
-const DEFAULT_VOICE = 'en-IN-NeerjaExpressiveNeural'
+const DEFAULT_VOICE = 'en-US-AndrewMultilingualNeural'
 
 if (!STORAGE_CONN) {
   console.error('Missing AZURE_STORAGE_CONNECTION_STRING')
@@ -73,11 +73,13 @@ function composeSlideSSML(slide: Slide, voice: string = DEFAULT_VOICE): string {
     parts.push(paceText(slide.narrationTrail))
   }
   const body = parts.join(' ')
-  return `<speak version="1.0" xml:lang="en-IN" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts">
+  return `<speak version="1.0" xml:lang="en-US" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts">
 <voice name="${voice}">
-<prosody rate="-7%" pitch="+0Hz">
+<mstts:express-as style="cheerful">
+<prosody rate="-5%" pitch="+0Hz">
 ${body}
 </prosody>
+</mstts:express-as>
 </voice>
 </speak>`
 }
@@ -112,20 +114,22 @@ async function generateMp3(ssml: string): Promise<Buffer> {
 // HTML SLIDE-DECK GENERATION — AB-100 style
 // ─────────────────────────────────────────────────────────────────────
 
-function gennoorBrandMark(size: number): string {
+function gennoorBrandMark(size: number, theme: CourseTheme): string {
+  const p = theme.primary
+  const a = theme.accent
   return `<svg class="brand-mark" width="${size}" height="${size}" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="105.8" cy="84.0" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/>
-    <circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/>
-    <circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/>
-    <circle cx="20.0" cy="65.0" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/>
-    <circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/>
-    <circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/>
-    <circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/>
-    <circle cx="110" cy="65" r="6" fill="#2563EB"/>
+    <circle cx="105.8" cy="84.0" r="6" fill="${p}"/><circle cx="93.4" cy="99.9" r="6" fill="${p}"/>
+    <circle cx="75.4" cy="108.8" r="6" fill="${p}"/><circle cx="55.3" cy="108.9" r="6" fill="${p}"/>
+    <circle cx="37.1" cy="100.3" r="6" fill="${p}"/><circle cx="24.5" cy="84.6" r="6" fill="${p}"/>
+    <circle cx="20.0" cy="65.0" r="6" fill="${p}"/><circle cx="24.5" cy="45.4" r="6" fill="${p}"/>
+    <circle cx="37.1" cy="29.7" r="6" fill="${p}"/><circle cx="55.3" cy="21.1" r="6" fill="${p}"/>
+    <circle cx="75.4" cy="21.2" r="6" fill="${p}"/><circle cx="93.4" cy="30.1" r="6" fill="${p}"/>
+    <circle cx="80" cy="65" r="6" fill="${a}"/><circle cx="95" cy="65" r="6" fill="${a}"/>
+    <circle cx="110" cy="65" r="6" fill="${p}"/>
   </svg>`
 }
 
-function renderTitleSlide(slide: Slide, num: string, total: string): string {
+function renderTitleSlide(slide: Slide, num: string, total: string, theme: CourseTheme): string {
   const eyebrow = slide.eyebrow ? escapeXml(slide.eyebrow.toUpperCase()) : ''
   const subtitle = (slide.bodyHtml ?? '')
     .replace(/<p class="lead">/g, '')
@@ -136,9 +140,9 @@ function renderTitleSlide(slide: Slide, num: string, total: string): string {
     <section class="slide title-slide" data-slide="${num}">
       <div class="slide-num">${num} / ${total}</div>
       <div class="brand-full">
-        ${gennoorBrandMark(52)}
+        ${gennoorBrandMark(52, theme)}
         <div class="brand-wordmark">
-          <span class="name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-blue">r</span><span class="b-w-soft"> Academy</span></span>
+          <span class="name"><span class="b-w">Ge</span><span class="b-c1">nn</span><span class="b-c2">oo</span><span class="b-c1">r</span><span class="b-w-soft"> Academy</span></span>
           <span class="tag">TRAIN · INNOVATE · BUILD</span>
         </div>
       </div>
@@ -219,20 +223,22 @@ function renderRecapSlide(slide: Slide, num: string, total: string): string {
   `
 }
 
-function renderSlide(slide: Slide, idx: number, total: number, ICONS: Record<string, string>): string {
+function renderSlide(slide: Slide, idx: number, total: number, ICONS: Record<string, string>, theme: CourseTheme): string {
   const slideNum = idx + 1
   const numStr = String(slideNum).padStart(2, '0')
   const totalStr = String(total).padStart(2, '0')
   const isTitle = idx === 0
   const isRecap = slide.bodyHtml?.includes('class="takeaways"') ?? false
-  if (isTitle) return renderTitleSlide(slide, numStr, totalStr)
+  if (isTitle) return renderTitleSlide(slide, numStr, totalStr, theme)
   if (isRecap) return renderRecapSlide(slide, numStr, totalStr)
   return renderContentSlide(slide, numStr, totalStr, ICONS)
 }
 
 function renderChapterHtml(chapter: Chapter, ICONS: Record<string, string>): string {
   const totalSlides = chapter.slides.length
-  const slidesHtml = chapter.slides.map((slide, i) => renderSlide(slide, i, totalSlides, ICONS)).join('\n')
+  const theme: CourseTheme = chapter.theme ?? DEFAULT_THEME
+  const courseLabel = chapter.courseId.toUpperCase().replace(/-/g, ' ')
+  const slidesHtml = chapter.slides.map((slide, i) => renderSlide(slide, i, totalSlides, ICONS, theme)).join('\n')
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -245,9 +251,10 @@ function renderChapterHtml(chapter: Chapter, ICONS: Record<string, string>): str
   --bg:#FAFAFA;--paper:#FFFFFF;
   --ink:#0F172A;--ink-soft:#475569;--ink-mute:#64748B;--ink-soft-2:#94A3B8;
   --line:#E2E8F0;--line-soft:#F1F5F9;
-  --brand-blue:#2563EB;--brand-blue-deep:#1D4ED8;--brand-blue-darker:#1E40AF;
-  --brand-cyan:#60A5FA;--brand-navy:#0C1426;
-  --brand-amber:#F59E0B;--brand-amber-deep:#D97706;--brand-amber-light:#FCD34D;
+  --c-primary:${theme.primary};--c-primary-deep:${theme.primaryDeep};
+  --c-cyan:${theme.cyan};--c-dark:${theme.navy};
+  --c-accent:${theme.accent};--c-accent-light:${theme.accentLight};
+  --c-tint:${theme.tint};
   --semantic-green:#10B981;--semantic-red:#EF4444;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -258,22 +265,22 @@ body{
   font-size:18px;line-height:1.55;-webkit-font-smoothing:antialiased;
 }
 .app{position:fixed;inset:0;display:flex;flex-direction:column}
-.topbar{height:56px;background:var(--brand-navy);color:#fff;display:flex;align-items:center;padding:0 22px;gap:18px;border-bottom:1px solid rgba(255,255,255,.06);z-index:10;flex-shrink:0}
+.topbar{height:56px;background:var(--c-dark);color:#fff;display:flex;align-items:center;padding:0 22px;gap:18px;border-bottom:1px solid rgba(255,255,255,.06);z-index:10;flex-shrink:0}
 .brand-lockup{display:flex;align-items:center;gap:12px;flex-shrink:0}
 .brand-mark{flex-shrink:0}
 .brand-text{display:flex;flex-direction:column;line-height:1.1}
 .brand-name{font-size:16px;font-weight:600;letter-spacing:.3px;color:#fff}
-.brand-name .b-blue{color:var(--brand-cyan)}
-.brand-name .b-amber{color:var(--brand-amber)}
+.brand-name .b-c1{color:var(--c-cyan)}
+.brand-name .b-c2{color:var(--c-accent)}
 .brand-name .b-w{color:#fff}
 .brand-name .b-w-soft{color:rgba(255,255,255,.7);font-weight:500}
-.brand-sub{font-size:10px;color:var(--brand-amber);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;margin-top:2px}
+.brand-sub{font-size:10px;color:var(--c-accent);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;margin-top:2px}
 .topbar .divider{width:1px;height:22px;background:rgba(255,255,255,.15)}
 .topbar .chapter-title{font-size:15px;opacity:.78;letter-spacing:.2px;font-weight:400;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topbar .meta{display:flex;gap:8px;align-items:center;flex-shrink:0}
 .topbar .meta .pill{padding:3px 11px;background:rgba(255,255,255,.10);border-radius:4px;font-size:13px;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px}
 .progress{height:3px;background:rgba(0,0,0,.05);position:relative;flex-shrink:0}
-#progressFill{position:absolute;top:0;left:0;height:100%;width:0%;background:linear-gradient(90deg,var(--brand-blue) 0%,var(--brand-amber) 100%);transition:width .5s cubic-bezier(.4,0,.2,1)}
+#progressFill{position:absolute;top:0;left:0;height:100%;width:0%;background:linear-gradient(90deg,var(--c-primary) 0%,var(--c-accent) 100%);transition:width .5s cubic-bezier(.4,0,.2,1)}
 .stage{flex:1;position:relative;overflow:hidden;background:var(--bg)}
 .slides{width:100%;height:100%;position:relative}
 .slide{position:absolute;inset:0;padding:42px 64px 100px;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .35s ease;overflow-y:auto}
@@ -283,49 +290,49 @@ body{
 [data-step].revealed{opacity:1;transform:translateY(0);pointer-events:auto}
 
 /* TITLE SLIDE */
-.slide.title-slide{background:linear-gradient(135deg,#0C1426 0%,#1D4ED8 35%,#2563EB 70%,#F59E0B 130%);color:#fff;justify-content:center;padding:120px 80px;overflow:hidden}
-.slide.title-slide::before{content:"";position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,.20) 0%,transparent 70%);top:-200px;right:-200px;pointer-events:none}
-.slide.title-slide::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(96,165,250,.25) 0%,transparent 70%);bottom:-160px;left:-160px;pointer-events:none}
+.slide.title-slide{background:linear-gradient(135deg,${theme.navy} 0%,${theme.primaryDeep} 35%,${theme.primary} 70%,${theme.accent} 130%);color:#fff;justify-content:center;padding:120px 80px;overflow:hidden}
+.slide.title-slide::before{content:"";position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,${theme.accent}33 0%,transparent 70%);top:-200px;right:-200px;pointer-events:none}
+.slide.title-slide::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,${theme.cyan}3F 0%,transparent 70%);bottom:-160px;left:-160px;pointer-events:none}
 .slide.title-slide .slide-num{color:rgba(255,255,255,.55)}
 .slide.title-slide .brand-full{position:absolute;top:42px;left:64px;display:flex;align-items:center;gap:16px;z-index:2}
 .slide.title-slide .brand-wordmark{display:flex;flex-direction:column;line-height:1}
 .slide.title-slide .brand-wordmark .name{font-size:24px;font-weight:600;letter-spacing:.5px;color:#fff}
-.slide.title-slide .brand-wordmark .name .b-blue{color:var(--brand-cyan)}
-.slide.title-slide .brand-wordmark .name .b-amber{color:var(--brand-amber-light)}
-.slide.title-slide .brand-wordmark .tag{font-size:11px;color:var(--brand-amber-light);letter-spacing:3px;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;margin-top:5px;text-transform:uppercase}
+.slide.title-slide .brand-wordmark .name .b-c1{color:var(--c-cyan)}
+.slide.title-slide .brand-wordmark .name .b-c2{color:var(--c-accent-light)}
+.slide.title-slide .brand-wordmark .tag{font-size:11px;color:var(--c-accent-light);letter-spacing:3px;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;margin-top:5px;text-transform:uppercase}
 .slide.title-slide .title-inner{position:relative;z-index:2;max-width:1100px}
-.slide.title-slide .eyebrow{font-family:'Cascadia Code','Consolas',monospace;font-size:14px;letter-spacing:3px;color:var(--brand-amber-light);margin-bottom:18px;font-weight:600;text-transform:uppercase}
+.slide.title-slide .eyebrow{font-family:'Cascadia Code','Consolas',monospace;font-size:14px;letter-spacing:3px;color:var(--c-accent-light);margin-bottom:18px;font-weight:600;text-transform:uppercase}
 .slide.title-slide h1{font-size:64px;line-height:1.1;font-weight:700;letter-spacing:-1.2px;margin-bottom:20px;color:#fff}
-.slide.title-slide h1 em{font-style:normal;color:var(--brand-amber-light);font-weight:700}
+.slide.title-slide h1 em{font-style:normal;color:var(--c-accent-light);font-weight:700}
 .slide.title-slide .subtitle{font-size:21px;line-height:1.55;color:rgba(255,255,255,.92);font-weight:400;max-width:880px}
-.slide.title-slide .subtitle em{color:var(--brand-amber-light);font-style:italic;font-weight:600}
+.slide.title-slide .subtitle em{color:var(--c-accent-light);font-style:italic;font-weight:600}
 .slide.title-slide .subtitle strong{color:#fff;font-weight:600}
 
 /* CONTENT SLIDE */
 .slide.content-slide{padding:42px 64px 100px}
-.slide .eyebrow{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;letter-spacing:2.5px;color:var(--brand-blue);margin-bottom:12px;font-weight:700;text-transform:uppercase}
+.slide .eyebrow{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;letter-spacing:2.5px;color:var(--c-primary);margin-bottom:12px;font-weight:700;text-transform:uppercase}
 .slide-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:18px}
-.slide-icon{width:48px;height:48px;flex-shrink:0;border-radius:10px;background:linear-gradient(135deg,var(--brand-blue),var(--brand-blue-deep));color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px -4px rgba(37,99,235,.4)}
+.slide-icon{width:48px;height:48px;flex-shrink:0;border-radius:10px;background:linear-gradient(135deg,var(--c-primary),var(--c-primary-deep));color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px -4px ${theme.primary}66}
 .slide-icon svg{width:24px;height:24px}
-.slide h2.slide-h{font-size:38px;font-weight:700;letter-spacing:-.6px;line-height:1.15;color:var(--brand-navy);flex-grow:1;padding-top:4px}
-.slide h2.slide-h em{font-style:normal;color:var(--brand-amber-deep);font-weight:700}
+.slide h2.slide-h{font-size:38px;font-weight:700;letter-spacing:-.6px;line-height:1.15;color:var(--c-dark);flex-grow:1;padding-top:4px}
+.slide h2.slide-h em{font-style:normal;color:var(--c-accent);font-weight:700}
 .slide p{font-size:17px;color:var(--ink-soft);margin-bottom:14px}
 .slide p:last-child{margin-bottom:0}
 .slide .lead{font-size:19px;color:var(--ink);line-height:1.5;max-width:1000px;margin-bottom:20px}
-.slide .lead em{color:var(--brand-amber-deep);font-style:italic;font-weight:600}
-.slide em{color:var(--brand-amber-deep);font-style:italic;font-weight:600}
-.slide strong{color:var(--brand-navy);font-weight:700}
+.slide .lead em{color:var(--c-accent);font-style:italic;font-weight:600}
+.slide em{color:var(--c-accent);font-style:italic;font-weight:600}
+.slide strong{color:var(--c-dark);font-weight:700}
 
 /* CARDS GRID */
 .cards{display:grid;gap:14px;margin-top:14px;max-width:1320px}
 .cards.cols-2{grid-template-columns:repeat(2,1fr)}
 .cards.cols-3{grid-template-columns:repeat(3,1fr)}
-.card{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--brand-blue);border-radius:6px;padding:20px 22px;position:relative;box-shadow:0 1px 3px rgba(15,23,42,.04);display:flex;flex-direction:column;gap:6px}
-.card-num{font-size:22px;color:var(--brand-blue);font-weight:700;line-height:1;letter-spacing:-.5px;font-family:'Cascadia Code','Consolas',monospace}
-.card:has(.step-card.accent-amber){border-top-color:var(--brand-amber)}
+.card{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--c-primary);border-radius:6px;padding:20px 22px;position:relative;box-shadow:0 1px 3px rgba(15,23,42,.04);display:flex;flex-direction:column;gap:6px}
+.card-num{font-size:22px;color:var(--c-primary);font-weight:700;line-height:1;letter-spacing:-.5px;font-family:'Cascadia Code','Consolas',monospace}
+.card:has(.step-card.accent-amber){border-top-color:var(--c-accent)}
 .card:has(.step-card.accent-red){border-top-color:var(--semantic-red)}
 .card:has(.step-card.accent-green){border-top-color:var(--semantic-green)}
-.card:has(.step-card.accent-amber) .card-num{color:var(--brand-amber-deep)}
+.card:has(.step-card.accent-amber) .card-num{color:var(--c-accent)}
 .card:has(.step-card.accent-red) .card-num{color:var(--semantic-red)}
 .card:has(.step-card.accent-green) .card-num{color:var(--semantic-green)}
 
@@ -333,11 +340,11 @@ body{
 .step-card{background:transparent;border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;box-shadow:none}
 .step-card .step-icon{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;margin-bottom:4px}
 .step-card .step-icon svg{width:16px;height:16px}
-.step-card.accent-blue .step-icon{background:linear-gradient(135deg,#3B82F6,var(--brand-blue))}
-.step-card.accent-amber .step-icon{background:linear-gradient(135deg,#FBBF24,var(--brand-amber-deep))}
+.step-card.accent-blue .step-icon{background:linear-gradient(135deg,#3B82F6,var(--c-primary))}
+.step-card.accent-amber .step-icon{background:linear-gradient(135deg,#FBBF24,var(--c-accent))}
 .step-card.accent-red .step-icon{background:linear-gradient(135deg,#F87171,var(--semantic-red))}
 .step-card.accent-green .step-icon{background:linear-gradient(135deg,#4ADE80,var(--semantic-green))}
-.step-card .step-content h3{font-size:17px;font-weight:700;color:var(--brand-navy);margin-bottom:5px;letter-spacing:-.2px;line-height:1.25}
+.step-card .step-content h3{font-size:17px;font-weight:700;color:var(--c-dark);margin-bottom:5px;letter-spacing:-.2px;line-height:1.25}
 .step-card .step-content p{font-size:14.5px;color:var(--ink-soft);margin:0;line-height:1.55}
 
 /* CALLOUTS */
@@ -346,13 +353,13 @@ body{
 .callout-icon svg{width:16px;height:16px}
 .callout > div:last-child{flex:1}
 .callout-title{font-family:'Cascadia Code','Consolas',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;font-weight:700}
-.callout-body{font-size:15.5px;line-height:1.55;color:var(--brand-navy)}
-.callout-body em{color:var(--brand-amber-deep);font-style:italic;font-weight:600}
-.callout-info{background:#EFF6FF;border-left:4px solid var(--brand-blue)}
-.callout-info .callout-icon{background:var(--brand-blue)}
-.callout-info .callout-title{color:var(--brand-blue-deep)}
-.callout-tip{background:#FFF4CE;border-left:4px solid var(--brand-amber)}
-.callout-tip .callout-icon{background:var(--brand-amber)}
+.callout-body{font-size:15.5px;line-height:1.55;color:var(--c-dark)}
+.callout-body em{color:var(--c-accent);font-style:italic;font-weight:600}
+.callout-info{background:${theme.tint};border-left:4px solid var(--c-primary)}
+.callout-info .callout-icon{background:var(--c-primary)}
+.callout-info .callout-title{color:var(--c-primary-deep)}
+.callout-tip{background:${theme.accentLight}33;border-left:4px solid var(--c-accent)}
+.callout-tip .callout-icon{background:var(--c-accent)}
 .callout-tip .callout-title{color:#92400E}
 .callout-warning{background:#FEF2F2;border-left:4px solid var(--semantic-red)}
 .callout-warning .callout-icon{background:var(--semantic-red)}
@@ -363,19 +370,19 @@ body{
 .recap{max-width:980px;margin-top:8px}
 .recap .lead{font-size:17px;color:var(--ink-soft);margin-bottom:22px}
 .recap-list{display:grid;gap:12px}
-.recap-item{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--brand-blue);padding:16px 22px;border-radius:6px;display:flex;gap:16px;align-items:flex-start;box-shadow:0 1px 3px rgba(15,23,42,.04)}
-.recap-item .check{flex-shrink:0;width:34px;height:34px;border-radius:7px;background:linear-gradient(135deg,var(--brand-blue),var(--brand-blue-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px}
-.recap-item .text{font-size:17px;color:var(--brand-navy);line-height:1.45;font-weight:500;padding-top:6px;flex:1}
-.recap-item .text em{color:var(--brand-amber-deep);font-style:italic;font-weight:600}
-.recap-item .text strong{color:var(--brand-navy)}
+.recap-item{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--c-primary);padding:16px 22px;border-radius:6px;display:flex;gap:16px;align-items:flex-start;box-shadow:0 1px 3px rgba(15,23,42,.04)}
+.recap-item .check{flex-shrink:0;width:34px;height:34px;border-radius:7px;background:linear-gradient(135deg,var(--c-primary),var(--c-primary-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px}
+.recap-item .text{font-size:17px;color:var(--c-dark);line-height:1.45;font-weight:500;padding-top:6px;flex:1}
+.recap-item .text em{color:var(--c-accent);font-style:italic;font-weight:600}
+.recap-item .text strong{color:var(--c-dark)}
 
 /* CONTROLS (hidden by parent iframe script) */
-.controls-top{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:var(--brand-navy);padding:8px 12px;border-radius:6px;box-shadow:0 8px 24px rgba(12,20,38,.30);z-index:15}
+.controls-top{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:var(--c-dark);padding:8px 12px;border-radius:6px;box-shadow:0 8px 24px rgba(12,20,38,.30);z-index:15}
 .controls-top button{width:34px;height:34px;border:0;background:transparent;color:#fff;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;border-radius:4px;transition:.15s}
 .controls-top button:hover{background:rgba(255,255,255,.12)}
 .controls-top button:disabled{opacity:.3;cursor:not-allowed}
 .controls-top .counter,.controls-top #counter{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;font-weight:600;color:#fff;letter-spacing:.5px;padding:0 12px;min-width:60px;text-align:center}
-#stepIndicator{position:fixed;bottom:72px;left:50%;transform:translateX(-50%);background:rgba(12,20,38,.85);color:var(--brand-amber);padding:5px 14px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:2px;font-family:'Cascadia Code','Consolas',monospace;z-index:14;text-transform:uppercase;backdrop-filter:blur(8px)}
+#stepIndicator{position:fixed;bottom:72px;left:50%;transform:translateX(-50%);background:rgba(12,20,38,.85);color:var(--c-accent);padding:5px 14px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:2px;font-family:'Cascadia Code','Consolas',monospace;z-index:14;text-transform:uppercase;backdrop-filter:blur(8px)}
 
 @media (max-width:900px){
   .slide{padding:32px 24px 100px}
@@ -395,10 +402,10 @@ body{
 <div class="app">
   <div class="topbar">
     <div class="brand-lockup">
-      ${gennoorBrandMark(28)}
+      ${gennoorBrandMark(28, theme)}
       <div class="brand-text">
-        <span class="brand-name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-blue">r</span><span class="b-w-soft"> Academy</span></span>
-        <span class="brand-sub">AI FOUNDATIONS</span>
+        <span class="brand-name"><span class="b-w">Ge</span><span class="b-c1">nn</span><span class="b-c2">oo</span><span class="b-c1">r</span><span class="b-w-soft"> Academy</span></span>
+        <span class="brand-sub">${courseLabel}</span>
       </div>
     </div>
     <div class="divider"></div>

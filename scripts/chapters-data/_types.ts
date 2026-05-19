@@ -59,6 +59,36 @@ export interface Slide {
   narrationTrail?: string
 }
 
+export interface CourseTheme {
+  primary: string
+  primaryDeep: string
+  accent: string
+  accentLight: string
+  navy: string
+  cyan: string
+  tint: string
+}
+
+export const DEFAULT_THEME: CourseTheme = {
+  primary:     '#2563EB',
+  primaryDeep: '#1D4ED8',
+  accent:      '#F59E0B',
+  accentLight: '#FCD34D',
+  navy:        '#0C1426',
+  cyan:        '#60A5FA',
+  tint:        '#EFF6FF',
+}
+
+export const AI_FOUNDATIONS_THEME: CourseTheme = {
+  primary:     '#0F766E',
+  primaryDeep: '#0E6058',
+  accent:      '#D97706',
+  accentLight: '#FCD34D',
+  navy:        '#134E4A',
+  cyan:        '#5EEAD4',
+  tint:        '#F0FDFA',
+}
+
 export interface Chapter {
   courseId: string
   chapterId: string
@@ -67,6 +97,7 @@ export interface Chapter {
   title: string
   subtitle: string
   slides: Slide[]
+  theme?: CourseTheme
 }
 
 // ─────────────────────────────────────────────────────────────────────
