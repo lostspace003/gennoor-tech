@@ -558,7 +558,7 @@ export default function ForSMBPage() {
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
               <a
-                href="https://wa.me/919999999999"
+                href="https://wa.me/919326352241?text=Hi%20Gennoor%2C%20I%20visited%20gennoor.com/solutions/for-smb%20and%20would%20like%20to%20discuss%20an%20SMB%20package."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 glass-card hover:border-primary-200 transition-all duration-300"
@@ -986,7 +986,7 @@ export default function ForSMBPage() {
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
             <a
-              href="https://wa.me/919999999999"
+              href="https://wa.me/919326352241?text=Hi%20Gennoor%2C%20I%20visited%20gennoor.com/solutions/for-smb%20and%20would%20like%20to%20discuss%20an%20SMB%20package."
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 glass-card hover:border-primary-200 transition-all duration-300"
