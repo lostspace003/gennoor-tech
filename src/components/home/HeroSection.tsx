@@ -105,7 +105,7 @@ export default function HeroSection() {
               <motion.div variants={slideIn}>
                 <div className="inline-flex items-center rounded-full px-4 py-1.5 mb-5 text-xs font-semibold glass-card">
                   <span className="flex h-1.5 w-1.5 rounded-full bg-primary-500 mr-2 animate-pulse shadow-glow-blue" />
-                  <span className="text-gray-600">Microsoft Certified Trainer • 14+ Years Experience</span>
+                  <span className="text-gray-600">{siteConfig.hero.badge}</span>
                 </div>
               </motion.div>
 
@@ -133,6 +133,24 @@ export default function HeroSection() {
                   </span>
                 ))}
               </motion.h1>
+
+              {/* Brand Promise — the five-word transformation arc */}
+              <motion.div
+                variants={slideIn}
+                className="mb-5 flex flex-wrap items-center gap-x-1.5 text-sm sm:text-base font-semibold tracking-wide"
+                style={{ fontFamily: "'Sora', Helvetica, Arial, sans-serif" }}
+              >
+                {siteConfig.hero.brandPromise.split(' ').map((word, idx) => {
+                  const isPunct = word.endsWith('.')
+                  const clean = isPunct ? word.slice(0, -1) : word
+                  return (
+                    <span key={`${word}-${idx}`} className="inline-flex items-baseline">
+                      <span className="text-gray-700">{clean}</span>
+                      {isPunct && <span className="text-amber-500">.</span>}
+                    </span>
+                  )
+                })}
+              </motion.div>
 
               {/* Subheadline */}
               <motion.p
@@ -200,7 +218,7 @@ export default function HeroSection() {
                     />
                   </div>
                   <p className="text-center text-sm font-semibold text-gray-500 mt-4 tracking-wide">
-                    Train. Innovate. Build. — AI that ships.
+                    Diagnose. Train. Innovate. Build. Sustain. — AI that lasts.
                   </p>
                 </div>
               </div>

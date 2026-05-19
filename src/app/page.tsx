@@ -1,6 +1,8 @@
 import { PersonJsonLd } from '@/components/JsonLd'
 import ScrollReveal from '@/components/ScrollReveal'
 import HeroSection from '@/components/home/HeroSection'
+import GennoorWay from '@/components/home/GennoorWay'
+import DualAudienceSelector from '@/components/home/DualAudienceSelector'
 import TrustedBy from '@/components/home/TrustedBy'
 import ServicePillars from '@/components/home/ServicePillars'
 import IntroVideo from '@/components/home/IntroVideo'
@@ -19,6 +21,16 @@ export default function HomePage() {
 
       <HeroSection />
 
+      {/* The methodology — the centerpiece of the new positioning */}
+      <ScrollReveal>
+        <GennoorWay />
+      </ScrollReveal>
+
+      {/* SMB vs Enterprise track selector */}
+      <ScrollReveal>
+        <DualAudienceSelector />
+      </ScrollReveal>
+
       <ScrollReveal>
         <TrustedBy />
       </ScrollReveal>
@@ -28,23 +40,24 @@ export default function HomePage() {
       </ScrollReveal>
 
       <ScrollReveal>
-        <IntroVideo />
+        <Metrics />
       </ScrollReveal>
 
       <ScrollReveal>
-        <Metrics />
+        <POCShowcase />
       </ScrollReveal>
 
       <ScrollReveal>
         <AcademyCTA />
       </ScrollReveal>
 
+      {/* Founder credibility — moved down to footer-of-page position */}
       <ScrollReveal>
-        <Testimonials />
+        <IntroVideo />
       </ScrollReveal>
 
       <ScrollReveal>
-        <POCShowcase />
+        <Testimonials />
       </ScrollReveal>
 
       <ScrollReveal>

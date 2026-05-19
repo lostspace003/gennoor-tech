@@ -4,8 +4,9 @@ export const BLOB_URL = process.env.NEXT_PUBLIC_BLOB_URL || '/media'
 
 export const siteConfig = {
   name: 'Gennoor Tech',
-  tagline: 'Enterprise AI Training & Solutions',
-  description: 'Transform your organization with practical AI solutions. Expert-led training from strategy to implementation, drawing from 14+ years working with Fortune 500 companies across 6 countries.',
+  tagline: 'Enterprise AI Transformation',
+  brandPromise: 'Diagnose. Train. Innovate. Build. Sustain.',
+  description: 'Enterprise AI transformation partner for organizations across GCC, Africa, and South Asia — from readiness diagnostic to deployed agents to long-term sustainment. Senior Microsoft-certified delivery, boutique speed, transparent pricing.',
   url: 'https://gennoor.com',
   email: 'contact@gennoor.com',
   phone: '+91-XXXXXXXXXX',
@@ -110,10 +111,12 @@ export const siteConfig = {
 
   // Hero section content
   hero: {
-    headline: 'Transform Your Organization with Practical AI Solutions — Expert-Led Training from Strategy to Implementation',
-    subheadline: 'Drawing from 14+ years working with Fortune 500 companies across 6 countries',
-    cta1: { text: 'Book a Discovery Call', href: '/resources/calendar' },
-    cta2: { text: 'Check Your AI Readiness', href: '/ai-readiness' },
+    badge: 'Enterprise AI Transformation • GCC · Africa · South Asia',
+    headline: 'Enterprise AI Transformation — delivered end-to-end.',
+    brandPromise: 'Diagnose. Train. Innovate. Build. Sustain.',
+    subheadline: 'We partner with enterprises and growing businesses to turn AI ambition into measurable, sustained outcomes — from the first readiness diagnostic to your hundredth production agent.',
+    cta1: { text: 'Run AI Readiness Diagnostic', href: '/ai-readiness' },
+    cta2: { text: 'Talk to our team', href: '/contact' },
   },
 
   // Trusted by companies
