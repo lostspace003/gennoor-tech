@@ -250,6 +250,11 @@ function CourseCard({ course }: { course: Course }) {
           <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold text-gray-600 bg-gray-50 border border-gray-100">
             {levelInfo?.label ?? course.level}
           </span>
+          {course.interactiveUrl && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200/60">
+              Interactive
+            </span>
+          )}
         </div>
         {!isAvailable && (
           <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold text-amber-700 bg-amber-50 border border-amber-100/60 flex-shrink-0">

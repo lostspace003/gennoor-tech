@@ -318,27 +318,60 @@ export default async function CourseDetailPage({ params }: PageProps) {
       <section className="py-12 lg:py-14 relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto">
-            <div className="rounded-2xl p-6 lg:p-7 glass-card glow-border">
-              {isAvailable ? (
+            <div
+              className={`rounded-2xl p-6 lg:p-7 glow-border ${
+                course.interactiveUrl
+                  ? 'bg-gradient-to-br from-amber-50/60 to-primary-50/40 border border-amber-200/60'
+                  : 'glass-card'
+              }`}
+            >
+              {course.interactiveUrl ? (
+                /* INTERACTIVE COURSE — links to web-rendered experience */
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                  <div className="flex-grow">
+                    <p className="text-xs font-bold tracking-widest text-amber-700 uppercase mb-1">
+                      Interactive Course · Free
+                    </p>
+                    <h3 className="text-base font-bold text-gray-900 mb-1">
+                      Full web-rendered experience available now.
+                    </h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">
+                      All {course.chapterCount} chapters live with interactive slides, audio
+                      narration, mock-exam practice, and cross-device progress tracking. The
+                      first two chapters are accessible without an account.
+                    </p>
+                  </div>
+                  <Link
+                    href={course.interactiveUrl}
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-amber-500 to-amber-600 hover:shadow-lg hover:shadow-amber-500/25 transition-all flex-shrink-0"
+                  >
+                    Take the interactive course
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              ) : isAvailable ? (
+                /* AVAILABLE SCAFFOLD — curriculum live, content rolling out */
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                   <div className="flex-grow">
                     <h3 className="text-base font-bold text-gray-900 mb-1">
-                      Course is live and free to access.
+                      Curriculum live · full chapter content rolling out through 2026.
                     </h3>
                     <p className="text-sm text-gray-500 leading-relaxed">
-                      Sign in to track your progress across devices. The first two chapters
-                      are accessible without an account.
+                      The outline, learning objectives, references, and capstone deliverable
+                      are published. Full chapter content (video, narration, exercises) ships
+                      progressively. Get notified when each chapter goes live.
                     </p>
                   </div>
                   <Link
                     href="/contact"
                     className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue transition-all flex-shrink-0"
                   >
-                    Get notified when chapter 1 ships
+                    Get notified when chapters ship
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
               ) : (
+                /* COMING SOON */
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                   <div className="flex-grow">
                     <h3 className="text-base font-bold text-gray-900 mb-1">
