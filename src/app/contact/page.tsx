@@ -1,81 +1,52 @@
-import { Metadata } from 'next';
-import Link from 'next/link';
-import { Mail, Linkedin, Calendar, MapPin, Globe, Clock, MessageCircle } from 'lucide-react';
-import ContactForm from '@/components/contact/ContactForm';
-import TrustpilotWidget from '@/components/TrustpilotWidget';
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import {
+  Compass,
+  FileText,
+  Calendar,
+  Mail,
+  MessageCircle,
+  Linkedin,
+  ArrowRight,
+  Clock,
+  Globe,
+  CheckCircle2,
+  MapPin,
+  Activity,
+} from 'lucide-react'
+import ContactForm from '@/components/contact/ContactForm'
+import TrustpilotWidget from '@/components/TrustpilotWidget'
 
 export const metadata: Metadata = {
-  title: 'Contact Gennoor Tech — AI Training & Consulting Enquiries',
+  title: 'Contact Gennoor Tech — Three Ways to Start',
   description:
-    'Get in touch with Gennoor Tech for enterprise AI training, strategy consulting, and PoC development. Based in India, serving Saudi Arabia, GCC, APAC, and Africa.',
+    'Pick your starting point with Gennoor Tech: run a 15-minute AI Readiness Diagnostic, request a scoped pilot proposal, or book a 30-minute exploratory call. Response in 24 hours; faster on WhatsApp.',
   keywords: [
-    'contact AI consultant',
-    'AI training enquiry',
-    'enterprise AI consulting',
-    'Gennoor Tech contact',
-    'Jalal Ahmed Khan',
+    'contact Gennoor Tech',
+    'AI consultant contact',
+    'AI readiness diagnostic',
+    'AI pilot proposal',
+    'book AI consulting call',
+    'Gennoor Tech WhatsApp',
   ],
+  alternates: { canonical: 'https://gennoor.com/contact' },
   openGraph: {
-    title: 'Contact Gennoor Tech — AI Training & Consulting Enquiries',
+    title: 'Contact Gennoor Tech — Three Ways to Start',
     description:
-      'Reach out for AI training, strategy consulting, and proof-of-concept development. Based in India, serving clients globally.',
+      'Diagnostic, pilot proposal, or 30-minute call. Pick the entry that fits where you are.',
     url: 'https://gennoor.com/contact',
-    type: 'website',
   },
-  alternates: {
-    canonical: 'https://gennoor.com/contact',
-  },
-};
+}
 
-const faqs = [
-  {
-    question: 'How quickly can you start an AI training engagement?',
-    answer:
-      'We can typically kick off a discovery call within 48 hours and begin a customized training program within 2-3 weeks, depending on the scope and number of participants.',
-  },
-  {
-    question: 'Do you offer training in languages other than English?',
-    answer:
-      'Our primary delivery language is English. For Saudi Arabia and GCC engagements, we can provide bilingual materials and work with local co-facilitators for Arabic support.',
-  },
-  {
-    question: 'What is the typical duration of your training programs?',
-    answer:
-      'Programs range from intensive 2-day workshops to comprehensive 8-12 week cohort programs. We design each engagement around your team\'s goals, existing skill levels, and business outcomes.',
-  },
-  {
-    question: 'Can you deliver training remotely?',
-    answer:
-      'Absolutely. We deliver live, interactive virtual sessions via Microsoft Teams or Zoom. Remote training includes the same hands-on labs, real-time Q&A, and post-session support as in-person delivery.',
-  },
-  {
-    question: 'How do I book a free consultation call?',
-    answer:
-      'You can book a 30-minute discovery call directly through our Calendly link on this page, or send us an email at jalalkhan@gennoor.com. We typically respond within 24 hours.',
-  },
-];
-
-const faqSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: faqs.map((faq) => ({
-    '@type': 'Question',
-    name: faq.question,
-    acceptedAnswer: {
-      '@type': 'Answer',
-      text: faq.answer,
-    },
-  })),
-};
-
+// Schema
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
   name: 'Gennoor Tech',
   description:
-    'Enterprise AI training, strategy consulting, and proof-of-concept development for organizations worldwide.',
+    'Enterprise AI Transformation partner. Diagnose, train, innovate, build, sustain — delivered across GCC, India, Africa, and APAC.',
   url: 'https://gennoor.com',
-  email: 'jalalkhan@gennoor.com',
+  email: 'contact@gennoor.com',
   founder: {
     '@type': 'Person',
     name: 'Jalal Ahmed Khan',
@@ -89,47 +60,178 @@ const localBusinessSchema = {
   areaServed: [
     { '@type': 'Country', name: 'India' },
     { '@type': 'Country', name: 'Saudi Arabia' },
+    { '@type': 'Country', name: 'United Arab Emirates' },
     { '@type': 'Place', name: 'GCC' },
-    { '@type': 'Place', name: 'APAC' },
-    { '@type': 'Place', name: 'Africa' },
+    { '@type': 'Place', name: 'East Africa' },
+    { '@type': 'Place', name: 'Southeast Asia' },
   ],
   sameAs: ['https://www.linkedin.com/in/lostspace003/'],
-};
+}
 
-const contactChannels = [
+const faqs = [
   {
-    href: 'mailto:jalalkhan@gennoor.com',
-    icon: Mail,
-    color: 'text-primary-600 bg-primary-50',
-    title: 'Email',
-    detail: 'jalalkhan@gennoor.com',
-    external: false,
+    question: 'How quickly will you respond?',
+    answer:
+      'Within 24 hours for any inbound (email, contact form, LinkedIn). WhatsApp is typically much faster — most messages get a same-day response, often within a few hours during business hours across GCC, India, and Africa time zones.',
   },
   {
-    href: 'https://wa.me/919326352241?text=Hi%20Jalal%2C%20I%20visited%20gennoor.com%20and%20would%20like%20to%20discuss%20AI%20training%2Fconsulting.',
-    icon: MessageCircle,
-    color: 'text-emerald-600 bg-emerald-50',
-    title: 'WhatsApp',
-    detail: 'Quick response on WhatsApp',
-    external: true,
+    question: 'Is the discovery call really free, with no hidden cost?',
+    answer:
+      'Yes. The 30-minute exploratory call is free, with no obligation to engage further. The 15-minute AI Readiness Diagnostic on /ai-readiness is also free. We charge starting at the engagement-scoping stage — when you ask us to deliver a written proposal.',
   },
   {
-    href: 'https://www.linkedin.com/in/lostspace003/',
-    icon: Linkedin,
-    color: 'text-blue-600 bg-blue-50',
-    title: 'LinkedIn',
-    detail: 'Connect with Jalal Ahmed Khan',
-    external: true,
+    question: 'Do I need to sign an NDA before the first conversation?',
+    answer:
+      'Not for an exploratory call. We respect confidentiality by default and do not take notes that leave our team. For deeper scoping conversations where you want to share specific data, sample documents, or detailed architecture, a mutual NDA is signed first (typical exchange: 2–5 working days). See /about/trust-and-security for our NDA posture.',
   },
   {
-    href: 'https://calendly.com/gennoortech',
+    question: 'What if my use case isn\'t in your standard packages or PoC catalog?',
+    answer:
+      'That\'s common. The packages and PoCs cover our most-shipped patterns. For bespoke needs — a custom ML model, a forecasting engine, an analytics platform, an air-gapped deployment, a domain-specific agent — we scope it as a custom build after the exploratory call. Typical custom-build scoping takes 5 working days after the call.',
+  },
+  {
+    question: 'What information should I have ready for the discovery call?',
+    answer:
+      'Whatever you have, in whatever form. Useful but not required: a rough sense of your team size, what tools you currently use (Microsoft 365, Google Workspace, your CRM, your data warehouse), which use case or problem you\'re trying to solve, and any constraints (regulatory, budget, timeline). We can have a useful conversation with very little — bring whatever you have.',
+  },
+  {
+    question: 'What does the 15-minute Readiness Diagnostic involve?',
+    answer:
+      'A short structured self-assessment covering strategy, data, people, tech, and governance. You answer a series of questions; the system computes your AI Readiness Score across five dimensions; you get a written summary on screen and a downloadable PDF you can share with your team. Free, no commitment, takes about 15 minutes.',
+  },
+  {
+    question: 'Can you travel on-site for engagements?',
+    answer:
+      'Yes. On-site delivery is standard for executive bootcamps, large workshops, and steering committees. We have ongoing on-site presence in India, Saudi Arabia, UAE, Tanzania, Kenya, and remote engagements globally. On-site costs are quoted transparently in the SOW.',
+  },
+  {
+    question: 'What hours are you reachable?',
+    answer:
+      'Core hours: 9am–7pm India Standard Time (covers GCC, Africa, and APAC business hours). For urgent matters during active engagements, WhatsApp and async Slack work outside core hours. For sev-1 incidents on Sustain retainers, the 4-hour senior-practitioner SLA applies 24/7.',
+  },
+  {
+    question: 'Do you offer free workshops or webinars?',
+    answer:
+      'Yes. Free workshops and webinars run regularly across GCC, India, and East Africa — covering Copilot adoption, AI governance, prompt engineering, and emerging topics. Schedule on /workshops and /webinars. Coming to a city near you? We do open events when client travel takes us there.',
+  },
+  {
+    question: 'How do you handle personal data (PII, PHI, regulated content)?',
+    answer:
+      'For engagements involving regulated data, we default to private-deployment patterns (open-source LLMs on private infra, tokenization or de-identification before model inputs), explicit DPA terms, and regional-residency deployment. See /about/trust-and-security for the full data-handling reference.',
+  },
+]
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+  })),
+}
+
+// Three intents — the core of the page
+const intents = [
+  {
+    code: 'A',
+    title: 'Run the 15-minute Readiness Diagnostic',
+    icon: Compass,
+    accent: 'from-amber-500 to-amber-600',
+    eyebrow: 'Top of funnel · Free',
+    blurb:
+      'Not sure where you are in your AI journey? Answer a structured set of questions on strategy, data, people, tech, and governance. Get a written AI Readiness Score and a 1-page summary you can share with your leadership team — in about 15 minutes.',
+    bullets: [
+      'Free · no commitment · no email gate to start',
+      '5-dimension AI Readiness Score',
+      'Written summary you keep',
+      'Recommended next step based on your score',
+    ],
+    cta: { label: 'Start the diagnostic', href: '/ai-readiness' },
+    type: 'link' as const,
+  },
+  {
+    code: 'B',
+    title: 'Request a scoped engagement proposal',
+    icon: FileText,
+    accent: 'from-primary-500 to-primary-700',
+    eyebrow: 'Middle of funnel · 5 working days',
+    blurb:
+      'Already know what you want to build, scope, or scale? Tell us the situation in the form below. Within 5 working days you get a written proposal — fixed scope, fixed price, fixed timeline — that your procurement team can act on.',
+    bullets: [
+      'Written proposal in 5 working days',
+      'Fixed scope · fixed price for Diagnose/Train/Innovate',
+      'No PowerPoint deck — plain English',
+      'NDA exchanged before any sensitive data sharing',
+    ],
+    cta: { label: 'Jump to the form', href: '#proposal' },
+    type: 'anchor' as const,
+  },
+  {
+    code: 'C',
+    title: 'Book a 30-minute exploratory call',
     icon: Calendar,
-    color: 'text-primary-600 bg-primary-50',
-    title: 'Book a Call',
-    detail: 'Free 30-minute discovery session',
+    accent: 'from-primary-500 to-primary-700',
+    eyebrow: 'Anywhere in funnel · Free',
+    blurb:
+      'Prefer to talk first? Book a 30-minute call. We listen, ask awkward questions, and tell you honestly which package or engagement fits — or whether AI is the right answer for this problem yet. No deck, no pitch.',
+    bullets: [
+      'Free · no commitment',
+      'Direct calendar booking — no back-and-forth',
+      'You walk away with a clear next step (even if it isn\'t us)',
+      'Recording available on request',
+    ],
+    cta: {
+      label: 'Book a call',
+      href: 'https://calendly.com/gennoortech',
+      external: true,
+    },
+    type: 'external' as const,
+  },
+]
+
+const directChannels = [
+  {
+    icon: Mail,
+    label: 'Email',
+    value: 'contact@gennoor.com',
+    href: 'mailto:contact@gennoor.com',
+    note: 'Response within 24 hours',
+  },
+  {
+    icon: MessageCircle,
+    label: 'WhatsApp',
+    value: 'Message us',
+    href: 'https://wa.me/919326352241?text=Hi%20Gennoor%2C%20I%20visited%20gennoor.com%20and%20would%20like%20to%20discuss%20an%20AI%20engagement.',
+    note: 'Fastest channel · usually same day',
     external: true,
   },
-];
+  {
+    icon: Linkedin,
+    label: 'LinkedIn',
+    value: 'Jalal Ahmed Khan',
+    href: 'https://www.linkedin.com/in/lostspace003/',
+    note: 'Founder — connect or message',
+    external: true,
+  },
+  {
+    icon: Calendar,
+    label: 'Calendar',
+    value: 'calendly.com/gennoortech',
+    href: 'https://calendly.com/gennoortech',
+    note: 'Direct 30-min slot booking',
+    external: true,
+  },
+]
+
+const regions = [
+  { name: 'India', detail: 'Mumbai-based · GST-compliant invoicing · on-site coverage nationwide' },
+  { name: 'Saudi Arabia', detail: 'Vision 2030-aligned · MCIT partnerships · on-site delivery' },
+  { name: 'UAE', detail: 'DIFC + ADGM regulated finance · on-site in Dubai & Abu Dhabi' },
+  { name: 'East Africa', detail: 'Tanzania, Kenya · partner-augmented delivery + on-site' },
+  { name: 'Southeast Asia', detail: 'Singapore, Malaysia · remote-first, on-site on request' },
+  { name: 'Global remote', detail: 'EU, UK, US, Africa elsewhere · live virtual delivery' },
+]
 
 export default function ContactPage() {
   return (
@@ -143,113 +245,288 @@ export default function ContactPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
       />
 
-      {/* Hero */}
+      {/* HERO */}
       <section className="relative py-14 lg:py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0f1729] via-[#111b33] to-[#0c1524]" />
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-            backgroundSize: '60px 60px',
-          }}
-        />
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center rounded-full px-4 py-1.5 mb-6 text-xs font-semibold border border-white/10"
-            style={{ background: 'rgba(255,255,255,0.05)' }}
-          >
-            <span className="text-white/60">Get in Touch</span>
+        <div className="absolute inset-0 bg-white" />
+        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
+              <MessageCircle className="w-3 h-3 mr-1.5" />
+              Get in touch
+            </div>
+            <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold tracking-tight text-gray-900 mb-5 leading-[1.1]">
+              Three ways to <span className="gradient-text">start</span>.
+            </h1>
+            <p className="text-lg text-gray-500 mb-2 leading-relaxed max-w-3xl mx-auto">
+              Pick the entry point that fits where you are — top of funnel, middle, or
+              bottom. All three are free. We respond within 24 hours; WhatsApp is the
+              fastest path.
+            </p>
+            <p className="text-sm text-gray-400 leading-relaxed">
+              For procurement / legal / security reference materials, see{' '}
+              <Link
+                href="/about/trust-and-security"
+                className="text-primary-600 font-semibold hover:text-primary-700 transition-colors"
+              >
+                Trust &amp; Security
+              </Link>
+              .
+            </p>
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6">
-            Let&apos;s Build Your AI Future Together
-          </h1>
-          <p className="text-xl md:text-2xl text-blue-200/50 max-w-3xl mx-auto">
-            Whether you need AI training for your teams, a strategic roadmap, or a working
-            proof-of-concept — we&apos;re here to help.
-          </p>
         </div>
       </section>
 
-      {/* Contact Channels */}
-      <section className="py-20 lg:py-24 relative">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-            Reach Out Through Any Channel
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {contactChannels.map((channel) => {
-              const Tag = channel.external ? 'a' : 'a';
+      {/* THREE INTENTS */}
+      <section className="py-12 lg:py-16 relative">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+            {intents.map((intent) => {
+              const Icon = intent.icon
+              const isExternal = intent.type === 'external'
+              const Wrapper: React.ElementType = isExternal ? 'a' : Link
+              const wrapperProps = isExternal
+                ? {
+                    href: intent.cta.href,
+                    target: '_blank',
+                    rel: 'noopener noreferrer',
+                  }
+                : { href: intent.cta.href }
+
               return (
-                <a
-                  key={channel.title}
-                  href={channel.href}
-                  {...(channel.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                  className="group rounded-2xl p-6 text-center transition-all duration-500 glass-card glow-border"
+                <Wrapper
+                  key={intent.code}
+                  {...wrapperProps}
+                  className="group rounded-3xl p-7 lg:p-8 glass-card glow-border transition-all duration-500 hover:-translate-y-1 flex flex-col"
                 >
-                  <div className={`inline-flex items-center justify-center w-12 h-12 ${channel.color} rounded-xl mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                    <channel.icon className="w-6 h-6" />
+                  <div
+                    className={`inline-flex w-14 h-14 rounded-2xl bg-gradient-to-br ${intent.accent} items-center justify-center mb-5 shadow-lg shadow-primary-500/15 group-hover:scale-105 transition-transform`}
+                  >
+                    <Icon className="w-7 h-7 text-white" />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-1 text-sm">{channel.title}</h3>
-                  <p className="text-xs text-gray-500">{channel.detail}</p>
-                </a>
-              );
+                  <p className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-2">
+                    Intent {intent.code} · {intent.eyebrow}
+                  </p>
+                  <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-3 leading-tight">
+                    {intent.title}
+                  </h2>
+                  <p className="text-sm text-gray-500 leading-relaxed mb-5">{intent.blurb}</p>
+                  <ul className="space-y-2 mb-6 flex-grow">
+                    {intent.bullets.map((b) => (
+                      <li
+                        key={b}
+                        className="flex items-start gap-2 text-sm text-gray-600"
+                      >
+                        <CheckCircle2 className="w-4 h-4 text-primary-500 flex-shrink-0 mt-0.5" />
+                        <span>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="inline-flex items-center text-primary-600 font-semibold group-hover:text-primary-700 transition-colors">
+                    <span>{intent.cta.label}</span>
+                    <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+                  </div>
+                </Wrapper>
+              )
             })}
           </div>
         </div>
       </section>
 
-      {/* Trustpilot */}
+      {/* INTENT B — proposal form */}
+      <section id="proposal" className="scroll-mt-24 py-20 lg:py-24 relative">
+        <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14">
+              <div className="lg:col-span-5">
+                <p className="text-xs font-bold tracking-widest text-primary-600 uppercase mb-3">
+                  Intent B · Engagement proposal
+                </p>
+                <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-5 leading-tight">
+                  Tell us the situation. Get a written proposal in 5 working days.
+                </h2>
+                <p className="text-base text-gray-600 leading-relaxed mb-6">
+                  Use this form if you already know roughly what you want — a specific PoC,
+                  a Copilot rollout, a custom build, a multi-quarter transformation program.
+                  We respond within 24 hours to acknowledge and within 5 working days with a
+                  written proposal you can act on.
+                </p>
+                <div className="space-y-3 text-sm text-gray-600">
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary-500 flex-shrink-0 mt-0.5" />
+                    <span>
+                      Fixed scope and fixed price for Diagnose / Train / Innovate phases
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary-500 flex-shrink-0 mt-0.5" />
+                    <span>
+                      Mutual NDA exchanged before sensitive data shared (2–5 working days)
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary-500 flex-shrink-0 mt-0.5" />
+                    <span>No sales pitch, no PowerPoint deck — plain-English proposal</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary-500 flex-shrink-0 mt-0.5" />
+                    <span>
+                      If we can&apos;t take on the engagement, we say so and recommend partners
+                    </span>
+                  </div>
+                </div>
+                <div className="mt-7 rounded-2xl p-5 bg-amber-50/40 border border-amber-100/50">
+                  <p className="text-sm text-gray-700 leading-relaxed">
+                    <strong className="text-gray-900">Just exploring?</strong>{' '}
+                    The 15-minute{' '}
+                    <Link
+                      href="/ai-readiness"
+                      className="text-primary-600 font-semibold hover:text-primary-700 transition-colors"
+                    >
+                      Readiness Diagnostic
+                    </Link>{' '}
+                    or a 30-minute{' '}
+                    <a
+                      href="https://calendly.com/gennoortech"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary-600 font-semibold hover:text-primary-700 transition-colors"
+                    >
+                      exploratory call
+                    </a>{' '}
+                    are better starting points than the proposal form.
+                  </p>
+                </div>
+              </div>
+              <div className="lg:col-span-7">
+                <div className="rounded-3xl p-7 lg:p-8 glass-card">
+                  <ContactForm />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* DIRECT CHANNELS */}
+      <section className="py-16 lg:py-20 relative">
+        <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-10">
+            <p className="text-xs font-bold tracking-widest text-primary-600 uppercase mb-3">
+              Or reach out directly
+            </p>
+            <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">
+              Four channels — pick what suits you.
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto">
+            {directChannels.map((c) => {
+              const Icon = c.icon
+              const isExternal = !!c.external
+              const Tag: React.ElementType = 'a'
+              return (
+                <Tag
+                  key={c.label}
+                  href={c.href}
+                  {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                  className="group rounded-2xl p-6 glass-card glow-border transition-all duration-500 hover:-translate-y-1 text-center"
+                >
+                  <div className="inline-flex w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
+                    <Icon className="w-5 h-5 text-white" />
+                  </div>
+                  <h3 className="text-base font-bold text-gray-900 mb-1">{c.label}</h3>
+                  <p className="text-sm text-gray-700 mb-1 font-medium">{c.value}</p>
+                  <p className="text-xs text-gray-400">{c.note}</p>
+                </Tag>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* TRUSTPILOT */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <TrustpilotWidget />
       </div>
 
-      {/* Contact Form + Office Info */}
+      {/* REGIONS + RESPONSE TIME */}
       <section className="py-20 lg:py-24 relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-5">
-                Send Us a Message
-              </h2>
-              <p className="text-lg text-gray-500 mb-8 leading-relaxed">
-                Tell us about your AI goals and we&apos;ll get back to you within 24 hours
-                with a tailored response — no generic templates, no sales pitch.
-              </p>
-              <ContactForm />
-            </div>
-
-            <div className="lg:pl-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">
-                Where We Operate
-              </h2>
-              <div className="space-y-5">
-                {[
-                  { icon: MapPin, title: 'Based in India', desc: "Our home base, with deep roots in India's enterprise technology ecosystem — delivering AI training to Fortune 500 companies and fast-growing startups alike." },
-                  { icon: Globe, title: 'Serving Clients Globally', desc: 'Active engagements across Saudi Arabia, the broader GCC region, APAC markets, and Africa. We travel on-site or deliver live virtual sessions across time zones.' },
-                  { icon: Clock, title: 'Response Time', desc: 'We respond to all enquiries within 24 hours. For urgent requests, reach out via WhatsApp for a faster reply.' },
-                ].map((item) => (
-                  <div key={item.title} className="flex items-start gap-4 p-4 rounded-xl glass-card">
-                    <div className="flex-shrink-0 w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center">
-                      <item.icon className="w-5 h-5 text-primary-600" />
-                    </div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              <div className="lg:col-span-5">
+                <p className="text-xs font-bold tracking-widest text-primary-600 uppercase mb-3">
+                  Where we deliver
+                </p>
+                <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-5 leading-tight">
+                  Regional presence and remote everywhere.
+                </h2>
+                <p className="text-base text-gray-600 leading-relaxed mb-6">
+                  On-the-ground delivery experience across GCC, India, East Africa, and SEA.
+                  Remote delivery worldwide. Engagement language: English (Hindi, Urdu, and
+                  Arabic co-facilitation available on request).
+                </p>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <Clock className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
                     <div>
-                      <h3 className="font-semibold text-gray-900 mb-1 text-sm">{item.title}</h3>
-                      <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
+                      <p className="text-sm font-bold text-gray-900 mb-0.5">
+                        Response within 24 hours
+                      </p>
+                      <p className="text-sm text-gray-500 leading-relaxed">
+                        WhatsApp is faster — typically same-day, often within a few hours.
+                        For sev-1 incidents on Sustain retainers, 4-hour senior practitioner
+                        SLA applies 24/7.
+                      </p>
                     </div>
                   </div>
-                ))}
-              </div>
-
-              {/* Regions */}
-              <div className="mt-8 p-6 rounded-2xl glass-card">
-                <h3 className="font-semibold text-gray-900 mb-4 text-sm">Regions We Serve</h3>
-                <div className="grid grid-cols-2 gap-3">
-                  {['Saudi Arabia', 'UAE & GCC', 'India', 'Southeast Asia', 'East Africa', 'Remote / Worldwide'].map((region) => (
-                    <div key={region} className="flex items-center gap-2 text-sm text-gray-600">
-                      <div className="w-1.5 h-1.5 bg-primary-500 rounded-full" />
-                      {region}
+                  <div className="flex items-start gap-3">
+                    <Activity className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-bold text-gray-900 mb-0.5">
+                        Core hours: 9am–7pm IST
+                      </p>
+                      <p className="text-sm text-gray-500 leading-relaxed">
+                        Covers GCC, Africa, and APAC business hours. Outside core hours,
+                        async Slack and WhatsApp work for active engagements.
+                      </p>
                     </div>
-                  ))}
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Globe className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-bold text-gray-900 mb-0.5">
+                        Invoicing
+                      </p>
+                      <p className="text-sm text-gray-500 leading-relaxed">
+                        INR (GST-compliant) via Gennoor Tech Private Limited. International
+                        invoicing in USD, EUR, SAR, AED supported.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="lg:col-span-7">
+                <div className="rounded-3xl p-7 lg:p-8 glass-card">
+                  <h3 className="text-base font-bold text-gray-900 mb-5">
+                    Regions we serve
+                  </h3>
+                  <div className="space-y-3">
+                    {regions.map((r) => (
+                      <div key={r.name} className="flex items-start gap-3">
+                        <MapPin className="w-4 h-4 text-primary-500 flex-shrink-0 mt-1" />
+                        <div>
+                          <p className="text-sm font-bold text-gray-900 mb-0.5">{r.name}</p>
+                          <p className="text-xs text-gray-500 leading-relaxed">{r.detail}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -260,43 +537,65 @@ export default function ContactPage() {
       {/* FAQ */}
       <section className="py-20 lg:py-24 relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-            Frequently Asked Questions
-          </h2>
-          <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <div key={index} className="rounded-2xl p-6 glass-card">
-                <h3 className="text-base font-semibold text-gray-900 mb-2">{faq.question}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{faq.answer}</p>
-              </div>
-            ))}
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-10">
+              <p className="text-xs font-bold tracking-widest text-primary-600 uppercase mb-3">
+                FAQ
+              </p>
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+                Before you reach out.
+              </h2>
+              <p className="text-base text-gray-500 leading-relaxed">
+                What people commonly ask before sending the first message.
+              </p>
+            </div>
+            <div className="space-y-3">
+              {faqs.map((faq) => (
+                <details
+                  key={faq.question}
+                  className="group rounded-2xl p-5 glass-card transition-all duration-300"
+                >
+                  <summary className="flex justify-between items-start gap-4 cursor-pointer list-none">
+                    <h3 className="text-sm font-semibold text-gray-900">{faq.question}</h3>
+                    <ArrowRight className="w-4 h-4 text-gray-300 flex-shrink-0 mt-0.5 transition-transform duration-300 group-open:rotate-90" />
+                  </summary>
+                  <p className="mt-3 text-sm text-gray-600 leading-relaxed">{faq.answer}</p>
+                </details>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="relative py-20 lg:py-24 overflow-hidden">
+      {/* FOOTER CTA */}
+      <section className="py-20 lg:py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#0f1729] via-[#111b33] to-[#0c1524]" />
-        <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Ready to Get Started?
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
+            Still not sure where to start?
           </h2>
-          <p className="text-lg text-blue-200/50 mb-8">
-            Book a free 30-minute call and let&apos;s explore how AI can transform your
-            organization.
+          <p className="text-lg text-blue-200/60 mb-8 max-w-2xl mx-auto">
+            Read the methodology first. The Gennoor Way page walks through the five phases
+            and tells you which one you&apos;re probably in.
           </p>
-          <a
-            href="https://calendly.com/gennoortech"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-white text-primary-700 px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300"
-          >
-            <Calendar className="w-5 h-5" />
-            Book a Discovery Call
-          </a>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              href="/the-gennoor-way"
+              className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 px-7 py-3.5 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-all duration-300"
+            >
+              Read the methodology
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/ai-readiness"
+              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-sm font-semibold text-white border border-white/20 hover:bg-white/5 transition-all duration-300"
+            >
+              Run the 15-min diagnostic
+            </Link>
+          </div>
         </div>
       </section>
     </>
-  );
+  )
 }

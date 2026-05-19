@@ -124,19 +124,27 @@ export default function GennoorWay() {
           })}
         </div>
 
-        {/* Footer CTA */}
+        {/* Footer CTAs */}
         <motion.div
-          className="mt-12 text-center"
+          className="mt-12 flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center items-center"
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
           <Link
-            href="/ai-readiness"
+            href="/the-gennoor-way"
             className="inline-flex items-center gap-2 text-primary-600 font-semibold hover:text-primary-700 transition-colors"
           >
-            Not sure which phase you're in? Take the 15-minute diagnostic
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            Read the full methodology
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+          <span className="hidden sm:inline text-gray-300">·</span>
+          <Link
+            href="/ai-readiness"
+            className="inline-flex items-center gap-2 text-gray-600 font-semibold hover:text-primary-600 transition-colors"
+          >
+            Or take the 15-minute diagnostic
+            <ArrowRight className="w-4 h-4" />
           </Link>
         </motion.div>
       </div>

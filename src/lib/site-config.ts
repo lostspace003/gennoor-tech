@@ -18,7 +18,7 @@ export const siteConfig = {
     twitter: '',
   },
 
-  // Navigation structure — 5 tabs, competitor-benchmarked for SEO & discoverability
+  // Navigation structure — 6 tabs, competitor-benchmarked for SEO & discoverability
   navigation: {
     main: [
       {
@@ -36,12 +36,15 @@ export const siteConfig = {
         name: 'Services',
         href: '/services',
         children: [
+          { name: 'For SMB', href: '/solutions/for-smb', description: 'Productized AI packages from $3k · 6-week pilots' },
+          { name: 'For Enterprise', href: '/solutions/for-enterprise', description: 'Multi-quarter transformation programs · procurement-ready' },
           { name: 'AI Strategy & Consulting', href: '/services/ai-strategy', description: 'Enterprise AI roadmaps & governance' },
           { name: 'PoC Development', href: '/services/poc-development', description: 'Production-ready AI prototypes' },
           { name: 'Agentic AI Solutions', href: '/services/agentic-ai', description: 'Multi-agent orchestration' },
           { name: 'Collaboration', href: '/services/collaboration', description: 'Partnership opportunities' },
         ]
       },
+      { name: 'The Gennoor Way', href: '/the-gennoor-way' },
       {
         name: 'Resources',
         href: '/resources/blog',
@@ -60,6 +63,8 @@ export const siteConfig = {
         children: [
           { name: 'My Journey', href: '/about/journey', description: '14+ years in enterprise AI' },
           { name: 'Gennoor Tech', href: '/about/company', description: 'About the company' },
+          { name: 'Team & Delivery', href: '/about/team-and-delivery', description: 'Senior-only model · operating cadence · capacity' },
+          { name: 'Trust & Security', href: '/about/trust-and-security', description: 'Data, IP, compliance, sub-processors, stack' },
           { name: 'Certifications', href: '/about/certifications', description: '16 professional credentials' },
           { name: 'Case Studies', href: '/portfolio/case-studies', description: 'Client success stories' },
           { name: 'Testimonials', href: '/portfolio/testimonials', description: 'What clients say' },
@@ -82,10 +87,10 @@ export const siteConfig = {
       {
         title: 'Services',
         links: [
-          { name: 'AI Strategy', href: '/services/ai-strategy' },
+          { name: 'For SMB', href: '/solutions/for-smb' },
+          { name: 'For Enterprise', href: '/solutions/for-enterprise' },
+          { name: 'The Gennoor Way', href: '/the-gennoor-way' },
           { name: 'PoC Development', href: '/services/poc-development' },
-          { name: 'Agentic AI', href: '/services/agentic-ai' },
-          { name: 'Collaboration', href: '/services/collaboration' },
         ]
       },
       {
@@ -101,9 +106,9 @@ export const siteConfig = {
         title: 'About',
         links: [
           { name: 'My Journey', href: '/about/journey' },
+          { name: 'Team & Delivery', href: '/about/team-and-delivery' },
+          { name: 'Trust & Security', href: '/about/trust-and-security' },
           { name: 'Certifications', href: '/about/certifications' },
-          { name: 'Case Studies', href: '/portfolio/case-studies' },
-          { name: 'Open Source', href: '/portfolio/open-source' },
         ]
       },
     ]
