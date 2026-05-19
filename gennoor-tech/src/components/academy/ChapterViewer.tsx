@@ -33,10 +33,10 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [zoomLevel, setZoomLevel] = useState(75)
   const [isFullscreen, setIsFullscreen] = useState(false)
-  const { session, isLoggedIn, logout, refreshSession } = useLearnerAuth()
+  const { session, isLoggedIn, loading: authLoading, logout, refreshSession } = useLearnerAuth()
   const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  const requiresLogin = !chapter.isFree && !isLoggedIn
+  const requiresLogin = !chapter.isFree && !isLoggedIn && !authLoading
 
   // Debounced server sync for logged-in users
   const syncToServer = useCallback((chapterId: string, percent: number, currentSlide: number, totalSlides: number) => {

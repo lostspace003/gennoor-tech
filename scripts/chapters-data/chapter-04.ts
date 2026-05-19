@@ -7,7 +7,7 @@ export const aiFoundationsChapter04: Chapter = {
   chapterNumber: 4,
   chapterSlug: 'chapter-04-privacy-risk',
   title: 'Privacy, risk, and the things to watch',
-  subtitle: 'AI tools aren&rsquo;t a black hole — but they aren&rsquo;t private either.',
+  subtitle: 'AI tools aren’t a black hole — but they aren’t private either.',
   slides: [
     // ──────────────────────────────────────────────────────
     // SLIDE 1 — Opening
