@@ -65,14 +65,16 @@ export default function ServicesPage() {
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
             <div className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
-              Our Services
+              The Gennoor Way · Five phases, one partner
             </div>
             <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
-              Enterprise AI Services
+              End-to-end AI transformation — diagnosed, built, and sustained by one team.
             </h1>
             <p className="text-xl text-gray-500 mb-8 leading-relaxed max-w-3xl">
-              From strategy to implementation — comprehensive AI training, consulting, and development
-              services delivered by a Microsoft Certified Trainer with 14+ years of Fortune 500 experience.
+              Diagnose. Train. Innovate. Build. Sustain. We deliver the full AI journey for
+              enterprises and growing businesses across GCC, Africa, and South Asia — with
+              senior Microsoft-certified delivery, transparent pricing, and stack-flexible
+              architecture (Azure, AWS, GCP, or open-source — your choice).
             </p>
             <Link
               href="/contact#book"

@@ -71,7 +71,19 @@ export default function Footer() {
                 </div>
               </div>
               <p className="text-gray-500 text-sm leading-relaxed">
-                Enterprise AI Training & Solutions. Bridging the gap between business vision and technical execution.
+                Enterprise AI transformation partner for organizations across GCC, Africa, and South Asia — diagnostic to deployment to long-term sustainment.
+              </p>
+              <p className="text-xs font-semibold tracking-wide text-gray-700" style={{ fontFamily: "'Sora', Helvetica, Arial, sans-serif" }}>
+                <span>Diagnose</span>
+                <span className="text-amber-500">.</span>{' '}
+                <span>Train</span>
+                <span className="text-amber-500">.</span>{' '}
+                <span>Innovate</span>
+                <span className="text-amber-500">.</span>{' '}
+                <span>Build</span>
+                <span className="text-amber-500">.</span>{' '}
+                <span>Sustain</span>
+                <span className="text-amber-500">.</span>
               </p>
               <div className="space-y-2">
                 <a
@@ -150,10 +162,10 @@ export default function Footer() {
           <div className="mt-12 pt-8 border-t border-gray-100/60">
             <div className="text-center space-y-3">
               <p className="text-xs text-gray-400 tracking-wide">
-                Microsoft Certified Trainer (MCT) | 16+ active certifications | Azure AI Engineer | DevOps Expert
+                Senior delivery by Microsoft Certified Trainers · 16+ active certifications · stack-flexible (Azure, AWS, GCP, open-source)
               </p>
               <p className="text-xs text-gray-300">
-                Trained teams at: Microsoft • IBM • EY • Boeing • Saudi Aramco • HDFC Bank • Siemens • TCS
+                Delivered transformation programs at: Microsoft • IBM • EY • Boeing • Saudi Aramco • HDFC Bank • Siemens • TCS
               </p>
             </div>
           </div>

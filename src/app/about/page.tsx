@@ -56,14 +56,15 @@ export default function AboutPage() {
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
             <div className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
-              About Us
+              About Gennoor Tech
             </div>
             <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
-              About
+              We exist so the next wave of AI value doesn&apos;t skip our regions.
             </h1>
             <p className="text-xl text-gray-500 leading-relaxed">
-              Bridging the gap between C-suite vision and technical execution through
-              enterprise AI training, consulting, and hands-on implementation.
+              Gennoor Tech is the AI transformation partner for enterprises and growing businesses
+              across GCC, Africa, and South Asia — running the full journey from readiness
+              diagnostic to deployed agents to long-term sustainment.
             </p>
           </div>
         </div>

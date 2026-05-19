@@ -101,10 +101,10 @@ export default function Metrics() {
             viewport={{ once: true }}
           >
             <span className="flex h-2 w-2 rounded-full bg-primary-400 mr-2.5 animate-pulse shadow-glow-blue" />
-            <span className="text-white/80">Founder & Lead Trainer</span>
+            <span className="text-white/80">What We've Shipped</span>
           </motion.div>
           <p className="text-blue-200/60 text-lg max-w-3xl mx-auto">
-            Building AI excellence through hands-on experience with Fortune 500 companies worldwide
+            Delivering AI transformation programs across GCC, Africa, and South Asia — with senior, Microsoft-certified expertise on every engagement.
           </p>
         </div>
 
