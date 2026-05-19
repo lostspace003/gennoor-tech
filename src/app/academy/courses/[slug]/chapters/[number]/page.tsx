@@ -15,9 +15,11 @@ import {
 import { BreadcrumbJsonLd } from '@/components/JsonLd'
 import ChapterContentRenderer from '@/components/academy/ChapterContentRenderer'
 import ChapterQuiz from '@/components/academy/ChapterQuiz'
+import ChapterAudio from '@/components/academy/ChapterAudio'
 import { courses, getCourseBySlug } from '@/data/academy/courses'
 import { getChapterContent, getAuthoredChapterNumbers } from '@/data/academy/chapter-content'
 import { tracks, levels } from '@/data/academy/taxonomy'
+import { isAcademySpeechConfigured } from '@/lib/speech/azure-speech'
 
 interface PageProps {
   params: Promise<{ slug: string; number: string }>
@@ -159,13 +161,17 @@ export default async function ChapterPage({ params }: PageProps) {
               </ul>
             </div>
 
-            {/* Audio narration placeholder — replaced with real audio player once speech keys are configured */}
-            <div className="rounded-2xl p-4 bg-gray-50/60 border border-gray-100 mb-6">
-              <p className="text-xs text-gray-500 leading-relaxed">
-                <strong className="text-gray-700">Audio narration</strong> — coming soon for this
-                chapter. Read the chapter below in the meantime.
-              </p>
-            </div>
+            {/* Audio narration — rendered when Academy speech is configured */}
+            {isAcademySpeechConfigured() && (
+              <div className="mb-6">
+                <ChapterAudio
+                  courseSlug={course.slug}
+                  chapterNumber={chapterNum}
+                  chapterTitle={chapterMeta.title}
+                  estimatedDuration={chapterMeta.duration}
+                />
+              </div>
+            )}
           </div>
         </div>
       </section>
