@@ -1,5 +1,5 @@
 import type { Chapter, CourseTheme } from './_types.ts'
-import { AI_FOUNDATIONS_THEME, AI_STRATEGY_C_SUITE_THEME, AI_GOVERNANCE_BOARDS_THEME, AI_FINANCE_THEME, AI_FINANCIAL_SERVICES_THEME } from './_types.ts'
+import { AI_FOUNDATIONS_THEME, AI_STRATEGY_C_SUITE_THEME, AI_GOVERNANCE_BOARDS_THEME, AI_FINANCE_THEME, AI_FINANCIAL_SERVICES_THEME, GENAI_BUSINESS_THEME } from './_types.ts'
 
 // AI Foundations
 import { aiFoundationsChapter01 } from './ai-foundations/chapter-01.ts'
@@ -51,12 +51,23 @@ import { aiFinServChapter06 } from './ai-in-financial-services/chapter-06.ts'
 import { aiFinServChapter07 } from './ai-in-financial-services/chapter-07.ts'
 import { aiFinServChapter08 } from './ai-in-financial-services/chapter-08.ts'
 
+// Generative AI for Business
+import { genAiBizChapter01 } from './generative-ai-for-business/chapter-01.ts'
+import { genAiBizChapter02 } from './generative-ai-for-business/chapter-02.ts'
+import { genAiBizChapter03 } from './generative-ai-for-business/chapter-03.ts'
+import { genAiBizChapter04 } from './generative-ai-for-business/chapter-04.ts'
+import { genAiBizChapter05 } from './generative-ai-for-business/chapter-05.ts'
+import { genAiBizChapter06 } from './generative-ai-for-business/chapter-06.ts'
+import { genAiBizChapter07 } from './generative-ai-for-business/chapter-07.ts'
+import { genAiBizChapter08 } from './generative-ai-for-business/chapter-08.ts'
+
 const COURSE_THEMES: Record<string, CourseTheme> = {
   'ai-foundations': AI_FOUNDATIONS_THEME,
   'ai-strategy-c-suite': AI_STRATEGY_C_SUITE_THEME,
   'ai-governance-risk-boards': AI_GOVERNANCE_BOARDS_THEME,
   'ai-for-finance-accounting': AI_FINANCE_THEME,
   'ai-in-financial-services': AI_FINANCIAL_SERVICES_THEME,
+  'generative-ai-for-business': GENAI_BUSINESS_THEME,
 }
 
 const withTheme = (chapter: Chapter): Chapter => {
@@ -116,10 +127,20 @@ export const coursesData: Record<string, Record<string, Chapter>> = {
     'chapter-07': withTheme(aiFinServChapter07),
     'chapter-08': withTheme(aiFinServChapter08),
   },
+  'generative-ai-for-business': {
+    'chapter-01': withTheme(genAiBizChapter01),
+    'chapter-02': withTheme(genAiBizChapter02),
+    'chapter-03': withTheme(genAiBizChapter03),
+    'chapter-04': withTheme(genAiBizChapter04),
+    'chapter-05': withTheme(genAiBizChapter05),
+    'chapter-06': withTheme(genAiBizChapter06),
+    'chapter-07': withTheme(genAiBizChapter07),
+    'chapter-08': withTheme(genAiBizChapter08),
+  },
 }
 
 // Legacy flat map (AI Foundations only). Build script can use coursesData by courseId.
 export const chapters: Record<string, Chapter> = coursesData['ai-foundations']
 
 export type { Chapter, Slide, SlideStep, CourseTheme } from './_types.ts'
-export { ICONS, stepCard, calloutBlock, DEFAULT_THEME, AI_FOUNDATIONS_THEME, AI_STRATEGY_C_SUITE_THEME, AI_GOVERNANCE_BOARDS_THEME, AI_FINANCE_THEME, AI_FINANCIAL_SERVICES_THEME } from './_types.ts'
+export { ICONS, stepCard, calloutBlock, DEFAULT_THEME, AI_FOUNDATIONS_THEME, AI_STRATEGY_C_SUITE_THEME, AI_GOVERNANCE_BOARDS_THEME, AI_FINANCE_THEME, AI_FINANCIAL_SERVICES_THEME, GENAI_BUSINESS_THEME } from './_types.ts'
