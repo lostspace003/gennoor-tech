@@ -149,6 +149,16 @@ export const AI_FOR_HR_THEME: CourseTheme = {
   tint:        '#FDF2F8',
 }
 
+export const AI_HEALTHCARE_THEME: CourseTheme = {
+  primary:     '#0D9488',
+  primaryDeep: '#0F766E',
+  accent:      '#D97706',
+  accentLight: '#FCD34D',
+  navy:        '#0B3B36',
+  cyan:        '#5EEAD4',
+  tint:        '#F0FDFA',
+}
+
 export interface Chapter {
   courseId: string
   chapterId: string
