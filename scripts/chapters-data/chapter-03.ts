@@ -7,7 +7,7 @@ export const aiFoundationsChapter03: Chapter = {
   chapterNumber: 3,
   chapterSlug: 'chapter-03-where-ai-fits',
   title: 'Where AI fits in your work',
-  subtitle: 'Five patterns that cover almost every useful AI workflow — and four that don&rsquo;t.',
+  subtitle: 'Five patterns that cover almost every useful AI workflow — and four that don’t.',
   slides: [
     // ──────────────────────────────────────────────────────
     // SLIDE 1 — Opening

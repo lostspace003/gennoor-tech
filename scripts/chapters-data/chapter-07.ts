@@ -25,7 +25,7 @@ export const aiFoundationsChapter07: Chapter = {
     // SLIDE 2 — Why adoption fails
     // ──────────────────────────────────────────────────────
     {
-      title: 'Why adoption fails — it&rsquo;s not what you think',
+      title: 'Why adoption fails — it’s not what you think',
       iconKey: 'alertTriangle',
       eyebrow: 'Lesson 1 · The real reason',
       bodyHtml: `<p>It&rsquo;s rarely the technology. It&rsquo;s rarely the price. It&rsquo;s rarely the security. The most common reason people stop using AI after the first week — <strong>they forgot</strong>. Their existing workflow is automatic; the new AI step requires conscious effort. So three weeks in, they&rsquo;re back to the old pattern.</p>`,
