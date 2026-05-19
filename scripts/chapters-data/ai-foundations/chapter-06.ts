@@ -1,5 +1,5 @@
-import type { Chapter } from './_types.ts'
-import { stepCard, calloutBlock } from './_types.ts'
+import type { Chapter } from '../_types.ts'
+import { stepCard, calloutBlock } from '../_types.ts'
 
 export const aiFoundationsChapter06: Chapter = {
   courseId: 'ai-foundations',
