@@ -17,6 +17,7 @@ import {
 import { BreadcrumbJsonLd } from '@/components/JsonLd'
 import EnablementMoment from '@/components/academy/EnablementMoment'
 import { courses, getCourseBySlug, getRelatedCourses } from '@/data/academy/courses'
+import { getAuthoredChapterNumbers } from '@/data/academy/chapter-content'
 import {
   tracks,
   levels,
@@ -70,6 +71,8 @@ export default async function CourseDetailPage({ params }: PageProps) {
   const levelInfo = levels.find((l) => l.id === course.level)
   const relatedCourses = getRelatedCourses(course.slug)
   const isAvailable = course.status === 'available'
+  const authoredChapters = new Set(getAuthoredChapterNumbers(course.slug))
+  const hasAuthoredContent = authoredChapters.size > 0
 
   // Schema for AEO retrieval
   const courseSchema = {
@@ -243,16 +246,27 @@ export default async function CourseDetailPage({ params }: PageProps) {
               </p>
             </div>
 
+            {hasAuthoredContent && (
+              <div className="mb-6 rounded-2xl p-4 bg-emerald-50/50 border border-emerald-200/60">
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  <strong className="text-emerald-700">{authoredChapters.size} of {course.chapterCount} chapters
+                  authored.</strong>{' '}
+                  Click any authored chapter below to read it. Remaining chapters show the
+                  outline; full content rolling out through 2026.
+                </p>
+              </div>
+            )}
+
             <div className="space-y-3">
-              {course.chapters.map((chapter) => (
-                <div
-                  key={chapter.number}
-                  className={`rounded-2xl p-5 lg:p-6 ${
-                    chapter.isCapstone
-                      ? 'bg-amber-50/40 border border-amber-100/50'
-                      : 'glass-card'
-                  }`}
-                >
+              {course.chapters.map((chapter) => {
+                const isAuthored = authoredChapters.has(chapter.number)
+                const cardClasses = `rounded-2xl p-5 lg:p-6 ${
+                  chapter.isCapstone
+                    ? 'bg-amber-50/40 border border-amber-100/50'
+                    : 'glass-card'
+                } ${isAuthored ? 'glow-border transition-all duration-300 hover:-translate-y-0.5' : ''}`
+
+                const innerContent = (
                   <div className="flex items-start gap-4">
                     <div
                       className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold ${
@@ -270,7 +284,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
                             ? `Capstone: ${chapter.title}`
                             : `${chapter.number}. ${chapter.title}`}
                         </h3>
-                        <div className="flex items-center gap-2 flex-shrink-0">
+                        <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
                           <span className="text-xs text-gray-400 inline-flex items-center gap-1">
                             <Clock className="w-3 h-3" /> {chapter.duration}
                           </span>
@@ -282,6 +296,11 @@ export default async function CourseDetailPage({ params }: PageProps) {
                           {chapter.hasExercise && (
                             <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-100/60">
                               EXERCISE
+                            </span>
+                          )}
+                          {isAuthored && (
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/60">
+                              READ ▸
                             </span>
                           )}
                         </div>
@@ -296,8 +315,25 @@ export default async function CourseDetailPage({ params }: PageProps) {
                       </ul>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+
+                if (isAuthored) {
+                  return (
+                    <Link
+                      key={chapter.number}
+                      href={`/academy/courses/${course.slug}/chapters/${chapter.number}`}
+                      className={`block ${cardClasses}`}
+                    >
+                      {innerContent}
+                    </Link>
+                  )
+                }
+                return (
+                  <div key={chapter.number} className={cardClasses}>
+                    {innerContent}
+                  </div>
+                )
+              })}
             </div>
 
             {course.capstoneTitle && (
