@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { CheckCircle, Clock, Users, Monitor, Zap, HelpCircle, ArrowRight, BookOpen, Target, Award } from 'lucide-react';
+import PageHero from '@/components/shared/PageHero';
+import PageCTA from '@/components/shared/PageCTA';
 
 export const metadata: Metadata = {
   title: 'Microsoft Copilot Studio Training — Build Enterprise AI Agents | Gennoor Tech',
@@ -150,44 +152,25 @@ export default function CopilotStudioTrainingPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
       />
 
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-700 to-primary-600 text-white py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2 text-primary-100 mb-4">
-            <Link href="/services" className="hover:text-white transition-colors">
-              Services
-            </Link>
-            <span>/</span>
-            <span>Copilot Studio Training</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-black mb-6">
-            Microsoft Copilot Studio Training — Build Enterprise AI Agents
-          </h1>
-          <p className="text-xl text-primary-100 mb-8 leading-relaxed">
-            Hands-on, instructor-led training to build and deploy custom AI agents using Microsoft
-            Copilot Studio. Learn to create intelligent copilots that integrate with your
-            organizational data and automate business processes.
-          </p>
-          <div className="flex flex-wrap gap-6 text-primary-100">
-            <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5" />
-              <span>2-3 Days</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Monitor className="w-5 h-5" />
-              <span>Live / Virtual</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Users className="w-5 h-5" />
-              <span>Max 20 Participants</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Award className="w-5 h-5" />
-              <span>MCT-Led</span>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Training"
+        breadcrumbs={[
+          { label: 'Services', href: '/services' },
+          { label: 'Copilot Studio Training' },
+        ]}
+        title="Microsoft Copilot Studio Training — Build Enterprise AI Agents"
+        description="Hands-on, instructor-led training to build and deploy custom AI agents using Microsoft Copilot Studio. Learn to create intelligent copilots that integrate with your organizational data and automate business processes."
+        meta={[
+          { icon: Clock, label: '2-3 Days' },
+          { icon: Monitor, label: 'Live / Virtual' },
+          { icon: Users, label: 'Max 20 Participants' },
+          { icon: Award, label: 'MCT-Led' },
+        ]}
+        ctas={[
+          { label: 'Book Training Session', href: '/contact#book' },
+          { label: 'View All Training Options', href: '/services/training', variant: 'ghost' },
+        ]}
+      />
 
       {/* What You Will Learn */}
       <section className="py-16 bg-white">
@@ -347,34 +330,14 @@ export default function CopilotStudioTrainingPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-primary-700 to-primary-600 text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-4">
-            Ready to Build AI Agents with Copilot Studio?
-          </h2>
-          <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-            Book a Copilot Studio training session for your team. Available as a 2-3 day course
-            delivered live on-site or virtually, customized to your organization&apos;s use cases
-            and industry.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/contact#book"
-              className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 px-8 py-4 rounded-xl font-semibold hover:bg-primary-50 transition-colors"
-            >
-              Book Training Session
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-            <Link
-              href="/services/training"
-              className="inline-flex items-center justify-center gap-2 border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-colors"
-            >
-              View All Training Options
-            </Link>
-          </div>
-        </div>
-      </section>
+      <PageCTA
+        title="Ready to Build AI Agents with Copilot Studio?"
+        description="Book a Copilot Studio training session for your team. Available as a 2-3 day course delivered live on-site or virtually, customized to your organization's use cases and industry."
+        ctas={[
+          { label: 'Book Training Session', href: '/contact#book' },
+          { label: 'View All Training Options', href: '/services/training', variant: 'ghost' },
+        ]}
+      />
     </>
   );
 }

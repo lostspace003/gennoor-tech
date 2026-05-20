@@ -5,6 +5,7 @@ import { ArrowLeft, Clock, Users, Award, BookOpen, CheckCircle, Globe, Zap, Phon
 import { getAllPrograms, getProgramBySlug } from '@/data/training-programs'
 import { ServiceJsonLd, BreadcrumbJsonLd, FAQJsonLd } from '@/components/JsonLd'
 import ContentModal from '@/components/training/ContentModal'
+import PageCTA from '@/components/shared/PageCTA'
 
 type Props = {
   params: Promise<{ slug: string }>
@@ -91,68 +92,69 @@ export default async function TrainingProgramPage({ params }: Props) {
       ]} />
       <FAQJsonLd faqs={faqs} />
 
-      <main className="min-h-screen pt-20">
+      <main className="min-h-screen">
         {/* Hero Section */}
-        <section className="bg-gradient-to-br from-primary-600 to-primary-800 py-16 lg:py-24 relative overflow-hidden">
-          <div className="absolute inset-0 bg-grid-white/10"></div>
+        <section className="relative overflow-hidden py-14 lg:py-20">
+          <div className="absolute inset-0 bg-gradient-to-br from-[#f0f4ff] via-white to-[#f0fdf8]" />
+          <div className="absolute inset-0 bg-gradient-mesh" />
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <Link
               href="/services/training"
-              className="inline-flex items-center text-white/90 hover:text-white mb-8"
+              className="inline-flex items-center text-gray-500 hover:text-primary-600 mb-6 text-sm transition-colors"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <ArrowLeft className="w-4 h-4 mr-1.5" />
               Back to All Programs
             </Link>
 
             <div className="max-w-4xl">
-              <div className="flex flex-wrap gap-3 mb-6">
-                <span className="inline-flex items-center px-4 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-white text-sm font-medium">
+              <div className="flex flex-wrap gap-2 mb-5">
+                <span className="inline-flex items-center px-3 py-1 bg-primary-50 text-primary-700 ring-1 ring-primary-100 rounded-full text-xs font-semibold">
                   {program.category === 'bootcamp' ? 'Bootcamp' : 'Course'}
                 </span>
-                <span className="inline-flex items-center px-4 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-white text-sm font-medium">
+                <span className="inline-flex items-center px-3 py-1 bg-white/80 ring-1 ring-gray-200 text-gray-700 rounded-full text-xs font-semibold">
                   {program.level}
                 </span>
-                <span className="inline-flex items-center px-4 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-white text-sm font-medium">
+                <span className="inline-flex items-center px-3 py-1 bg-white/80 ring-1 ring-gray-200 text-gray-700 rounded-full text-xs font-semibold">
                   {program.technology}
                 </span>
               </div>
 
-              <h1 className="text-4xl lg:text-5xl font-black text-white mb-6">
+              <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-5 leading-tight tracking-tight">
                 {program.title}
               </h1>
-              <p className="text-xl text-white/90 mb-8">
+              <p className="text-base sm:text-lg text-gray-600 mb-8 leading-relaxed max-w-3xl">
                 {program.description}
               </p>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
-                  <Clock className="w-6 h-6 text-white mx-auto mb-2" />
-                  <div className="text-lg font-bold text-white">{program.duration}</div>
-                  <div className="text-white/80 text-sm">Duration</div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+                <div className="bg-white/80 backdrop-blur-sm ring-1 ring-gray-200 rounded-xl p-4 text-center">
+                  <Clock className="w-5 h-5 text-primary-600 mx-auto mb-2" />
+                  <div className="text-sm font-bold text-gray-900">{program.duration}</div>
+                  <div className="text-gray-500 text-xs">Duration</div>
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
-                  <Users className="w-6 h-6 text-white mx-auto mb-2" />
-                  <div className="text-lg font-bold text-white">5-15</div>
-                  <div className="text-white/80 text-sm">Batch Size</div>
+                <div className="bg-white/80 backdrop-blur-sm ring-1 ring-gray-200 rounded-xl p-4 text-center">
+                  <Users className="w-5 h-5 text-primary-600 mx-auto mb-2" />
+                  <div className="text-sm font-bold text-gray-900">5-15</div>
+                  <div className="text-gray-500 text-xs">Batch Size</div>
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
-                  <Award className="w-6 h-6 text-white mx-auto mb-2" />
-                  <div className="text-lg font-bold text-white">{program.certification === 'No' ? 'Practical' : 'Cert-Aligned'}</div>
-                  <div className="text-white/80 text-sm">Certification</div>
+                <div className="bg-white/80 backdrop-blur-sm ring-1 ring-gray-200 rounded-xl p-4 text-center">
+                  <Award className="w-5 h-5 text-primary-600 mx-auto mb-2" />
+                  <div className="text-sm font-bold text-gray-900">{program.certification === 'No' ? 'Practical' : 'Cert-Aligned'}</div>
+                  <div className="text-gray-500 text-xs">Certification</div>
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
-                  <Globe className="w-6 h-6 text-white mx-auto mb-2" />
-                  <div className="text-lg font-bold text-white">Global</div>
-                  <div className="text-white/80 text-sm">Delivery</div>
+                <div className="bg-white/80 backdrop-blur-sm ring-1 ring-gray-200 rounded-xl p-4 text-center">
+                  <Globe className="w-5 h-5 text-primary-600 mx-auto mb-2" />
+                  <div className="text-sm font-bold text-gray-900">Global</div>
+                  <div className="text-gray-500 text-xs">Delivery</div>
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-3">
                 <Link
                   href="/contact#book"
-                  className="inline-flex items-center px-8 py-4 bg-white text-primary-700 font-medium rounded-lg hover:bg-gray-100 transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue transition-all"
                 >
-                  <Phone className="w-5 h-5 mr-2" />
+                  <Phone className="w-4 h-4" />
                   Enquire Now
                 </Link>
               </div>
@@ -332,31 +334,14 @@ export default async function TrainingProgramPage({ params }: Props) {
           </section>
         )}
 
-        {/* CTA */}
-        <section className="py-16 lg:py-20 bg-primary-50">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">
-              Ready to Get Started with {program.title}?
-            </h2>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Get a customized training proposal for your team. We&apos;ll tailor the curriculum to your specific needs and schedule.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Link
-                href="/contact#book"
-                className="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
-              >
-                Request Custom Proposal
-              </Link>
-              <Link
-                href="/services/training"
-                className="inline-flex items-center px-8 py-4 border-2 border-primary-600 text-primary-600 font-medium rounded-lg hover:bg-primary-50 transition-colors"
-              >
-                View All Programs
-              </Link>
-            </div>
-          </div>
-        </section>
+        <PageCTA
+          title={`Ready to Get Started with ${program.title}?`}
+          description="Get a customized training proposal for your team. We'll tailor the curriculum to your specific needs and schedule."
+          ctas={[
+            { label: 'Request Custom Proposal', href: '/contact#book' },
+            { label: 'View All Programs', href: '/services/training', variant: 'ghost' },
+          ]}
+        />
       </main>
     </>
   )
