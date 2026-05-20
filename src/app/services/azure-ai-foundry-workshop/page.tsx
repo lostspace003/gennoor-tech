@@ -111,9 +111,9 @@ const faqData = [
       'While Microsoft Learn provides excellent foundational content, this workshop focuses on production-grade patterns and real-world architecture decisions. You will build a complete enterprise RAG solution end-to-end, learn from an MCT who has implemented these solutions in production, and get personalized guidance on your specific use cases.',
   },
   {
-    question: 'Does this workshop help with AI-102 certification preparation?',
+    question: 'Does this workshop help with AI-103 certification preparation?',
     answer:
-      'Yes. The workshop covers many AI-102 exam objectives, particularly around Azure OpenAI Service, AI Search, and Document Intelligence. Combined with our AI-102 study guide, this hands-on experience provides excellent exam preparation. See our AI-102 guide for a complete study plan.',
+      'Yes. The workshop covers the AI-103 (Developing AI Apps and Agents on Azure) exam objectives — Microsoft Foundry, the Foundry Agent Service, generative AI, RAG patterns, Document Intelligence in Foundry Tools, and responsible AI. Combined with our AI-103 study guide, this hands-on experience provides excellent exam preparation. AI-103 replaces AI-102, which retires on June 30, 2026.',
   },
 ];
 
@@ -178,7 +178,7 @@ export default function AzureAIFoundryWorkshopPage() {
         ]}
         ctas={[
           { label: 'Book Workshop', href: '/contact#book' },
-          { label: 'View AI-102 Study Guide', href: '/guides/ai-102-azure-ai-engineer', variant: 'ghost' },
+          { label: 'View AI-103 Study Guide', href: '/guides/ai-103-azure-ai-engineer', variant: 'ghost' },
         ]}
       />
 
@@ -363,7 +363,7 @@ export default function AzureAIFoundryWorkshopPage() {
         description="Book an Azure AI Foundry workshop for your development team. Two intensive days of hands-on learning that accelerates your team's ability to deliver production AI solutions."
         ctas={[
           { label: 'Book Workshop', href: '/contact#book' },
-          { label: 'View AI-102 Study Guide', href: '/guides/ai-102-azure-ai-engineer', variant: 'ghost' },
+          { label: 'View AI-103 Study Guide', href: '/guides/ai-103-azure-ai-engineer', variant: 'ghost' },
         ]}
       />
     </>

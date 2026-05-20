@@ -79,7 +79,7 @@ export const certifications: Certification[] = [
     code: 'AI-103',
     issuer: 'Microsoft',
     category: 'Associate',
-    description: 'Building generative apps, multistep reasoning workflows, and production-ready agents with multi-agent orchestration (Replaces AI-103)',
+    description: 'Building generative apps, multistep reasoning workflows, and production-ready agents with multi-agent orchestration (Replaces AI-102; AI-102 retires 2026-06-30)',
     skills: ['Azure OpenAI', 'Microsoft Foundry', 'Multi-Agent Systems', 'RAG Patterns', 'Agentic AI'],
     pdfPath: `${BLOB_URL}/certificates/6-ai103.pdf`
   },
