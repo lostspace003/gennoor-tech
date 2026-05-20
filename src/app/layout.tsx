@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter, Plus_Jakarta_Sans } from 'next/font/google'
+import { Inter, Sora } from 'next/font/google'
 import '@/styles/globals.css'
 import PortalShell from '@/components/portal/PortalShell'
 import Footer from '@/components/layout/Footer'
@@ -13,11 +13,14 @@ import { siteConfig, BLOB_URL } from '@/lib/site-config'
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
+  display: 'swap',
 })
 
-const plusJakarta = Plus_Jakarta_Sans({
+const sora = Sora({
   subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
   variable: '--font-heading',
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
@@ -109,7 +112,7 @@ export default function RootLayout({
           async
         />
       </head>
-      <body className={`${inter.variable} ${plusJakarta.variable} antialiased`}>
+      <body className={`${inter.variable} ${sora.variable} antialiased`}>
         <GoogleAnalytics />
         <TrackingPixels />
         <PageViewTracker />
