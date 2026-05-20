@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { CheckCircle, Clock, Users, Target, HelpCircle, ArrowRight, Award, Briefcase, FileCheck, MapPin, Lightbulb, TrendingUp } from 'lucide-react';
+import PageHero from '@/components/shared/PageHero';
+import PageCTA from '@/components/shared/PageCTA';
 
 export const metadata: Metadata = {
   title: 'Enterprise AI Roadmap Workshop — From Strategy to Implementation | Gennoor Tech',
@@ -154,44 +156,25 @@ export default function EnterpriseAIRoadmapWorkshopPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
       />
 
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-700 to-primary-600 text-white py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2 text-primary-100 mb-4">
-            <Link href="/services" className="hover:text-white transition-colors">
-              Services
-            </Link>
-            <span>/</span>
-            <span>Enterprise AI Roadmap</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-black mb-6">
-            Enterprise AI Roadmap Workshop — From Strategy to Implementation
-          </h1>
-          <p className="text-xl text-primary-100 mb-8 leading-relaxed">
-            A one-day intensive workshop that transforms AI ambiguity into a clear, actionable
-            implementation plan. Designed for C-suite executives and IT leaders who need to move
-            beyond AI experimentation into strategic, organization-wide adoption.
-          </p>
-          <div className="flex flex-wrap gap-6 text-primary-100">
-            <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5" />
-              <span>1-Day Intensive</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Briefcase className="w-5 h-5" />
-              <span>Executive-Level</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Users className="w-5 h-5" />
-              <span>6-12 Participants</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Award className="w-5 h-5" />
-              <span>MCT-Facilitated</span>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Workshop"
+        breadcrumbs={[
+          { label: 'Services', href: '/services' },
+          { label: 'Enterprise AI Roadmap' },
+        ]}
+        title="Enterprise AI Roadmap Workshop — From Strategy to Implementation"
+        description="A one-day intensive workshop that transforms AI ambiguity into a clear, actionable implementation plan. Designed for C-suite executives and IT leaders who need to move beyond AI experimentation into strategic, organization-wide adoption."
+        meta={[
+          { icon: Clock, label: '1-Day Intensive' },
+          { icon: Briefcase, label: 'Executive-Level' },
+          { icon: Users, label: '6-12 Participants' },
+          { icon: Award, label: 'MCT-Facilitated' },
+        ]}
+        ctas={[
+          { label: 'Book Workshop', href: '/contact#book' },
+          { label: 'View All Services', href: '/services/training', variant: 'ghost' },
+        ]}
+      />
 
       {/* The Challenge */}
       <section className="py-16 bg-white">
@@ -375,33 +358,14 @@ export default function EnterpriseAIRoadmapWorkshopPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-primary-700 to-primary-600 text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-4">
-            Ready to Build Your AI Roadmap?
-          </h2>
-          <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-            Book an Enterprise AI Roadmap Workshop for your leadership team. One day of focused
-            strategy work that saves months of misaligned AI experimentation and delivers a clear
-            path from where you are to where you need to be.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/contact#book"
-              className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 px-8 py-4 rounded-xl font-semibold hover:bg-primary-50 transition-colors"
-            >
-              Book Workshop
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-            <Link
-              href="/services/training"
-              className="inline-flex items-center justify-center gap-2 border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-colors"
-            >
-              View All Services
-            </Link>
-          </div>
-        </div>
-      </section>
+      <PageCTA
+        title="Ready to Build Your AI Roadmap?"
+        description="Book an Enterprise AI Roadmap Workshop for your leadership team. One day of focused strategy work that saves months of misaligned AI experimentation and delivers a clear path from where you are to where you need to be."
+        ctas={[
+          { label: 'Book Workshop', href: '/contact#book' },
+          { label: 'View All Services', href: '/services/training', variant: 'ghost' },
+        ]}
+      />
     </>
   );
 }

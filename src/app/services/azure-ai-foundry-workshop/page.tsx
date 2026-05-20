@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { CheckCircle, Clock, Users, Monitor, Code, HelpCircle, ArrowRight, Award, Cpu, Search, FileText } from 'lucide-react';
+import PageHero from '@/components/shared/PageHero';
+import PageCTA from '@/components/shared/PageCTA';
 
 export const metadata: Metadata = {
   title: 'Azure AI Foundry Workshop — Hands-On Enterprise AI Development | Gennoor Tech',
@@ -160,44 +162,25 @@ export default function AzureAIFoundryWorkshopPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
       />
 
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-700 to-primary-600 text-white py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2 text-primary-100 mb-4">
-            <Link href="/services" className="hover:text-white transition-colors">
-              Services
-            </Link>
-            <span>/</span>
-            <span>Azure AI Foundry Workshop</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-black mb-6">
-            Azure AI Foundry Workshop — Hands-On Enterprise AI Development
-          </h1>
-          <p className="text-xl text-primary-100 mb-8 leading-relaxed">
-            An intensive 2-day workshop where developers and architects build production-grade AI
-            solutions using Azure OpenAI, AI Search, Document Intelligence, and the Azure AI Foundry
-            platform. All code, all hands-on, all real.
-          </p>
-          <div className="flex flex-wrap gap-6 text-primary-100">
-            <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5" />
-              <span>2 Days Intensive</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Monitor className="w-5 h-5" />
-              <span>Live / Virtual</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Code className="w-5 h-5" />
-              <span>60% Hands-On Labs</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Award className="w-5 h-5" />
-              <span>MCT-Led</span>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Workshop"
+        breadcrumbs={[
+          { label: 'Services', href: '/services' },
+          { label: 'Azure AI Foundry Workshop' },
+        ]}
+        title="Azure AI Foundry Workshop — Hands-On Enterprise AI Development"
+        description="An intensive 2-day workshop where developers and architects build production-grade AI solutions using Azure OpenAI, AI Search, Document Intelligence, and the Azure AI Foundry platform. All code, all hands-on, all real."
+        meta={[
+          { icon: Clock, label: '2 Days Intensive' },
+          { icon: Monitor, label: 'Live / Virtual' },
+          { icon: Code, label: '60% Hands-On Labs' },
+          { icon: Award, label: 'MCT-Led' },
+        ]}
+        ctas={[
+          { label: 'Book Workshop', href: '/contact#book' },
+          { label: 'View AI-102 Study Guide', href: '/guides/ai-102-azure-ai-engineer', variant: 'ghost' },
+        ]}
+      />
 
       {/* Workshop Overview */}
       <section className="py-16 bg-white">
@@ -375,34 +358,14 @@ export default function AzureAIFoundryWorkshopPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-primary-700 to-primary-600 text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-4">
-            Ready to Build Enterprise AI on Azure?
-          </h2>
-          <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-            Book an Azure AI Foundry workshop for your development team. Two intensive days of
-            hands-on learning that accelerates your team&apos;s ability to deliver production AI
-            solutions.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/contact#book"
-              className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 px-8 py-4 rounded-xl font-semibold hover:bg-primary-50 transition-colors"
-            >
-              Book Workshop
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-            <Link
-              href="/guides/ai-102-azure-ai-engineer"
-              className="inline-flex items-center justify-center gap-2 border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-colors"
-            >
-              View AI-102 Study Guide
-            </Link>
-          </div>
-        </div>
-      </section>
+      <PageCTA
+        title="Ready to Build Enterprise AI on Azure?"
+        description="Book an Azure AI Foundry workshop for your development team. Two intensive days of hands-on learning that accelerates your team's ability to deliver production AI solutions."
+        ctas={[
+          { label: 'Book Workshop', href: '/contact#book' },
+          { label: 'View AI-102 Study Guide', href: '/guides/ai-102-azure-ai-engineer', variant: 'ghost' },
+        ]}
+      />
     </>
   );
 }

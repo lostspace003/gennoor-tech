@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import PageCTA from '@/components/shared/PageCTA';
 import {
   Calendar,
   CheckCircle,
@@ -381,35 +382,14 @@ export default function AITrainingSaudiArabiaPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-16 lg:py-20 bg-gradient-to-r from-primary-600 to-primary-700">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Ready to Build AI Capability in Saudi Arabia?
-          </h2>
-          <p className="text-xl text-primary-100 mb-8">
-            Let&apos;s discuss how we can support your Vision 2030 AI objectives with
-            practical, results-driven training.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a
-              href="https://calendly.com/gennoortech"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-white text-primary-700 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-primary-50 transition-colors"
-            >
-              <Calendar className="w-5 h-5" />
-              Book a Call
-            </a>
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-2 text-white border-2 border-white/30 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/10 transition-colors"
-            >
-              Contact Us
-            </Link>
-          </div>
-        </div>
-      </section>
+      <PageCTA
+        title="Ready to Build AI Capability in Saudi Arabia?"
+        description="Let's discuss how we can support your Vision 2030 AI objectives with practical, results-driven training."
+        ctas={[
+          { label: 'Book a Call', href: 'https://calendly.com/gennoortech' },
+          { label: 'Contact Us', href: '/contact', variant: 'ghost' },
+        ]}
+      />
     </>
   );
 }
