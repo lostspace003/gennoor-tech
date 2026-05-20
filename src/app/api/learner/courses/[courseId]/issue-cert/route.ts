@@ -6,7 +6,9 @@ import {
   findCertificateByRecipient,
   generateCertId,
   buildVerifyUrl,
+  uploadCertificatePdf,
 } from '@/lib/certificates'
+import { generateCertificatePdf } from '@/lib/certificate-pdf'
 import { courses as configCourses } from '@/config/courses'
 import { courses as academyCourses } from '@/data/academy/courses'
 
@@ -71,7 +73,7 @@ export async function POST(
   const issueDateIso = now.toISOString()
 
   const certId = generateCertId(courseId, now.getUTCFullYear())
-  const cert = await saveCertificate({
+  const certPayload = {
     certId,
     recipientName: learner.name,
     recipientEmail: learner.email,
@@ -84,9 +86,28 @@ export async function POST(
     trainerName: 'Gennoor Academy',
     issuerName: 'Gennoor Tech',
     issuerDomain: 'gennoor.com',
-    // PDF generation is not part of this iteration — web credential only
     pdfBlobPath: '',
     verifyUrl: buildVerifyUrl(certId),
+  }
+
+  // Generate + upload PDF in parallel with first save (so the cert row exists
+  // even if PDF generation fails — verify page degrades gracefully).
+  let pdfBlobPath = ''
+  try {
+    const pdfBuffer = await generateCertificatePdf({
+      ...certPayload,
+      status: 'issued',
+      createdAt: issueDateIso,
+    })
+    pdfBlobPath = await uploadCertificatePdf(certId, pdfBuffer)
+  } catch (err) {
+    console.error('[issue-cert] PDF generation failed', { certId, courseId, err })
+    // Continue — cert is still issued as a web credential; PDF can be regenerated later.
+  }
+
+  const cert = await saveCertificate({
+    ...certPayload,
+    pdfBlobPath,
   })
 
   return NextResponse.json({
@@ -94,6 +115,7 @@ export async function POST(
     verifyUrl: buildVerifyUrl(certId),
     issued: true,
     alreadyIssued: false,
+    pdfReady: !!pdfBlobPath,
   })
 }
 
