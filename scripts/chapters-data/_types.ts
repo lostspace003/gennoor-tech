@@ -159,6 +159,16 @@ export const AI_HEALTHCARE_THEME: CourseTheme = {
   tint:        '#F0FDFA',
 }
 
+export const M365_COPILOT_THEME: CourseTheme = {
+  primary:     '#0078D4',
+  primaryDeep: '#005A9E',
+  accent:      '#F59E0B',
+  accentLight: '#FCD34D',
+  navy:        '#0A1F33',
+  cyan:        '#50B0EE',
+  tint:        '#EBF5FB',
+}
+
 export interface Chapter {
   courseId: string
   chapterId: string
