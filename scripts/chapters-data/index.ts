@@ -1,5 +1,5 @@
 import type { Chapter, CourseTheme } from './_types.ts'
-import { AI_FOUNDATIONS_THEME, AI_STRATEGY_C_SUITE_THEME, AI_GOVERNANCE_BOARDS_THEME, AI_FINANCE_THEME, AI_FINANCIAL_SERVICES_THEME, GENAI_BUSINESS_THEME, AI_FOR_HR_THEME, AI_HEALTHCARE_THEME, M365_COPILOT_THEME, AI_FOR_SALES_THEME, AI_FOR_CS_THEME } from './_types.ts'
+import { AI_FOUNDATIONS_THEME, AI_STRATEGY_C_SUITE_THEME, AI_GOVERNANCE_BOARDS_THEME, AI_FINANCE_THEME, AI_FINANCIAL_SERVICES_THEME, GENAI_BUSINESS_THEME, AI_FOR_HR_THEME, AI_HEALTHCARE_THEME, M365_COPILOT_THEME, AI_FOR_SALES_THEME, AI_FOR_CS_THEME, AI_FOR_OPS_THEME } from './_types.ts'
 
 // AI Foundations
 import { aiFoundationsChapter01 } from './ai-foundations/chapter-01.ts'
@@ -111,6 +111,16 @@ import { aiCsChapter06 } from './ai-for-customer-service-support/chapter-06.ts'
 import { aiCsChapter07 } from './ai-for-customer-service-support/chapter-07.ts'
 import { aiCsChapter08 } from './ai-for-customer-service-support/chapter-08.ts'
 
+// AI for Operations & Supply Chain
+import { aiOpsChapter01 } from './ai-for-operations-supply-chain/chapter-01.ts'
+import { aiOpsChapter02 } from './ai-for-operations-supply-chain/chapter-02.ts'
+import { aiOpsChapter03 } from './ai-for-operations-supply-chain/chapter-03.ts'
+import { aiOpsChapter04 } from './ai-for-operations-supply-chain/chapter-04.ts'
+import { aiOpsChapter05 } from './ai-for-operations-supply-chain/chapter-05.ts'
+import { aiOpsChapter06 } from './ai-for-operations-supply-chain/chapter-06.ts'
+import { aiOpsChapter07 } from './ai-for-operations-supply-chain/chapter-07.ts'
+import { aiOpsChapter08 } from './ai-for-operations-supply-chain/chapter-08.ts'
+
 const COURSE_THEMES: Record<string, CourseTheme> = {
   'ai-foundations': AI_FOUNDATIONS_THEME,
   'ai-strategy-c-suite': AI_STRATEGY_C_SUITE_THEME,
@@ -123,6 +133,7 @@ const COURSE_THEMES: Record<string, CourseTheme> = {
   'm365-copilot-adoption': M365_COPILOT_THEME,
   'ai-for-sales-marketing': AI_FOR_SALES_THEME,
   'ai-for-customer-service-support': AI_FOR_CS_THEME,
+  'ai-for-operations-supply-chain': AI_FOR_OPS_THEME,
 }
 
 const withTheme = (chapter: Chapter): Chapter => {
@@ -242,10 +253,20 @@ export const coursesData: Record<string, Record<string, Chapter>> = {
     'chapter-07': withTheme(aiCsChapter07),
     'chapter-08': withTheme(aiCsChapter08),
   },
+  'ai-for-operations-supply-chain': {
+    'chapter-01': withTheme(aiOpsChapter01),
+    'chapter-02': withTheme(aiOpsChapter02),
+    'chapter-03': withTheme(aiOpsChapter03),
+    'chapter-04': withTheme(aiOpsChapter04),
+    'chapter-05': withTheme(aiOpsChapter05),
+    'chapter-06': withTheme(aiOpsChapter06),
+    'chapter-07': withTheme(aiOpsChapter07),
+    'chapter-08': withTheme(aiOpsChapter08),
+  },
 }
 
 // Legacy flat map (AI Foundations only). Build script can use coursesData by courseId.
 export const chapters: Record<string, Chapter> = coursesData['ai-foundations']
 
 export type { Chapter, Slide, SlideStep, CourseTheme } from './_types.ts'
-export { ICONS, stepCard, calloutBlock, DEFAULT_THEME, AI_FOUNDATIONS_THEME, AI_STRATEGY_C_SUITE_THEME, AI_GOVERNANCE_BOARDS_THEME, AI_FINANCE_THEME, AI_FINANCIAL_SERVICES_THEME, GENAI_BUSINESS_THEME, AI_FOR_HR_THEME, AI_HEALTHCARE_THEME, M365_COPILOT_THEME, AI_FOR_SALES_THEME, AI_FOR_CS_THEME } from './_types.ts'
+export { ICONS, stepCard, calloutBlock, DEFAULT_THEME, AI_FOUNDATIONS_THEME, AI_STRATEGY_C_SUITE_THEME, AI_GOVERNANCE_BOARDS_THEME, AI_FINANCE_THEME, AI_FINANCIAL_SERVICES_THEME, GENAI_BUSINESS_THEME, AI_FOR_HR_THEME, AI_HEALTHCARE_THEME, M365_COPILOT_THEME, AI_FOR_SALES_THEME, AI_FOR_CS_THEME, AI_FOR_OPS_THEME } from './_types.ts'
