@@ -209,6 +209,16 @@ export const AI_MANUFACTURING_THEME: CourseTheme = {
   tint:        '#F8FAFC',
 }
 
+export const COPILOT_STUDIO_THEME: CourseTheme = {
+  primary:     '#155E75',
+  primaryDeep: '#164E63',
+  accent:      '#F59E0B',
+  accentLight: '#FCD34D',
+  navy:        '#083344',
+  cyan:        '#0891B2',
+  tint:        '#ECFEFF',
+}
+
 export interface Chapter {
   courseId: string
   chapterId: string
