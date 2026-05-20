@@ -169,6 +169,16 @@ export const M365_COPILOT_THEME: CourseTheme = {
   tint:        '#EBF5FB',
 }
 
+export const AI_FOR_SALES_THEME: CourseTheme = {
+  primary:     '#EA580C',
+  primaryDeep: '#C2410C',
+  accent:      '#0EA5E9',
+  accentLight: '#7DD3FC',
+  navy:        '#431407',
+  cyan:        '#FB923C',
+  tint:        '#FFF7ED',
+}
+
 export interface Chapter {
   courseId: string
   chapterId: string

@@ -889,116 +889,120 @@ const baseCourses: Course[] = [
   },
 
   // ────────────────────────────────────────────────────────────────────
-  // FUNCTION TRACK — Sales
+  // FUNCTION TRACK — Sales & Marketing
   // ────────────────────────────────────────────────────────────────────
   {
     slug: 'ai-for-sales-marketing',
     title: 'AI for Sales & Marketing',
     subtitle:
-      'Where AI ships real value in sales and marketing — prospecting, scoring, proposals, personalization — and where the brand risk lives.',
+      'A 65-minute playbook for revenue leaders — six AI plays that ship, three that disappoint, and a 2-quarter portfolio with the KPIs that prove ROI.',
 
     track: 'function',
-    level: 'foundational',
-    audience: ['individual-contributor', 'manager', 'director'],
+    level: 'intermediate',
+    audience: ['director', 'manager', 'individual-contributor'],
     functions: ['sales'],
     industries: ['cross-industry'],
     stack: ['microsoft', 'stack-agnostic'],
-    pairedPhase: ['train', 'innovate'],
+    pairedPhase: ['train', 'innovate', 'sustain'],
 
-    duration: '55 min',
+    duration: '65 min',
     chapterCount: 8,
-    format: ['video', 'reading', 'interactive'],
+    format: ['interactive', 'video', 'reading'],
 
     status: 'available',
-    lastUpdated: '2026-05-19',
+    lastUpdated: '2026-05-20',
+
+    interactiveUrl: '/ai-academy/ai-for-sales-marketing',
 
     hookSentence:
-      'Prospecting, lead scoring, proposal generation, content production — with the brand and compliance traps clearly named.',
+      'Six revenue AI plays that ship value sequenced over two quarters — and three that consistently disappoint, named explicitly so the budget redirects. The disciplined workflow that doubles response rates against the AI-spam pattern collapsing the industry.',
     whoThisIsFor:
-      'CROs, CMOs, sales ops, demand gen, and revenue operations leaders. Especially useful for teams already on Salesforce, HubSpot, or Microsoft Sales Copilot who want to move from "we have AI" to measurable productivity gains.',
+      'Chief revenue officers, chief marketing officers, sales ops, demand gen, marketing ops, and revenue operations leaders. Especially useful for teams already on Salesforce, HubSpot, or Microsoft Sales Copilot who want to move from "we have AI" to measurable productivity gains — without the brand events that mark teams who chased the vendor demo.',
     whatYoullLearn: [
-      'AI in prospecting — beyond "automate the SDR"',
-      'Lead scoring with AI — and the data quality reality',
-      'Proposal generation — fast, branded, on-message',
-      'Content production at scale (without losing your brand)',
-      'Personalization that doesn\'t cross the creepy line',
-      'Sales call AI — what to do with transcripts and signals',
+      'The revenue-AI fit map — six plays that ship, three that disappoint, one principle for every vendor pitch',
+      'AI in prospecting — three useful uses + the AI-spam math + the disciplined workflow',
+      'Lead scoring with AI — two scoring layers + the six-check CRM data quality gate + three-band score-to-action',
+      'Proposal generation — the four-block template + three guardrails + where the recovered time should go',
+      'Content production at scale — the brand voice anchor + four brand risks + the three-stage pipeline',
+      'Personalization that works — three tiers + the creepy line you don\'t cross + relevant beats clever',
+      'Sales call AI — four extractions per call + the three-stage coaching loop + the privacy posture customers expect',
+      'Your 2-quarter portfolio on one page — three plays sequenced + four KPIs + four week-one conversations',
     ],
     chapters: [
       {
         number: 1,
-        title: 'The sales-AI fit map',
-        duration: '7 min',
+        title: 'The revenue-AI fit map',
+        duration: '8 min',
         objectives: [
-          'Identify 7 high-fit AI use cases in sales and marketing',
-          'Spot the 3 use cases where AI consistently disappoints',
+          'Name the six revenue AI plays that ship value + the three that disappoint',
+          'Apply the principle — AI augments judgment, never replaces it — to every vendor pitch',
         ],
       },
       {
         number: 2,
         title: 'AI in prospecting',
-        duration: '7 min',
+        duration: '9 min',
         objectives: [
-          'Use AI for ICP refinement and account research',
-          'Avoid the "AI-spam" outbound trap that kills response rates',
+          'Deploy three useful uses: ICP refinement, pre-meeting research, signal-based triggers',
+          'Avoid the AI-spam trap with the disciplined three-component workflow',
         ],
         hasQuiz: true,
       },
       {
         number: 3,
         title: 'Lead scoring with AI',
-        duration: '7 min',
+        duration: '9 min',
         objectives: [
-          'Combine ML scoring with LLM-driven signal extraction',
-          'Audit your CRM data quality before scoring',
+          'Combine ML predictive scoring with LLM behavioural signal extraction',
+          'Pass the six-check CRM data quality gate before any deployment',
         ],
       },
       {
         number: 4,
         title: 'Proposal generation',
-        duration: '7 min',
+        duration: '9 min',
         objectives: [
-          'Build branded proposal templates with CRM context',
-          'Set guardrails so generated proposals stay on-message',
+          'Run the four-block template with three guardrails — CRM grounding, claim register, legal-review gate',
+          'Reinvest the recovered time into discovery, expansion, and coaching — not into admin',
         ],
         hasExercise: true,
       },
       {
         number: 5,
         title: 'Content production — at scale, on brand',
-        duration: '7 min',
+        duration: '8 min',
         objectives: [
-          'Use AI for first drafts without losing voice',
-          'Spot the 4 brand risks of generative content',
+          'Stand up the brand voice anchor — style guide as system prompt, two human edits, quarterly fingerprint audit',
+          'Build the three-stage pipeline that catches all four brand risks pre-publication',
         ],
         hasQuiz: true,
       },
       {
         number: 6,
         title: 'Personalization that works',
-        duration: '7 min',
+        duration: '8 min',
         objectives: [
-          'Apply personalization tiers from light to deep',
-          'Stay on the right side of the creepy line',
+          'Choose the right personalization tier per channel — light, middle, or deep',
+          'Hold the creepy line on inferred personal life, broker-sourced internal signals, and protected attributes',
         ],
       },
       {
         number: 7,
         title: 'Sales call AI — transcripts to action',
-        duration: '6 min',
+        duration: '9 min',
         objectives: [
-          'Use call AI to extract next steps and risk signals',
-          'Build feedback loops that improve rep coaching',
+          'Configure four extractions per call and aggregate them into the strategic signal',
+          'Run the three-stage coaching loop that drops new-rep ramp time 30–50%',
         ],
         hasExercise: true,
       },
       {
         number: 8,
-        title: 'Capstone: Your sales AI portfolio',
+        title: 'Capstone — Your 2-quarter sales AI portfolio',
         duration: '7 min',
         objectives: [
-          'Pick 3 use cases, sequence them across 2 quarters',
-          'Define KPIs that prove (or disprove) ROI',
+          'Collapse the course into a three-play, two-quarter portfolio with sequencing discipline',
+          'Schedule four week-one conversations: executive sponsor, rev ops, legal/infosec, two pilot reps',
         ],
         isCapstone: true,
       },
@@ -1007,25 +1011,31 @@ const baseCourses: Course[] = [
     capstoneTitle: 'Your 2-Quarter Sales AI Portfolio',
     references: [
       {
+        title: 'Microsoft Sales Copilot — Documentation',
+        source: 'Microsoft Learn',
+        url: 'https://learn.microsoft.com/en-us/microsoft-sales-copilot/',
+      },
+      {
         title: 'State of Sales — Salesforce Research',
         source: 'Salesforce',
         url: 'https://www.salesforce.com/resources/research-reports/state-of-sales/',
-      },
-      {
-        title: 'OWASP Top 10 for LLM Applications',
-        source: 'OWASP Foundation',
-        url: 'https://owasp.org/www-project-top-10-for-large-language-model-applications/',
       },
       {
         title: 'HubSpot State of AI in Marketing',
         source: 'HubSpot Research',
         url: 'https://www.hubspot.com/state-of-marketing',
       },
+      {
+        title: 'OWASP Top 10 for LLM Applications',
+        source: 'OWASP Foundation',
+        url: 'https://owasp.org/www-project-top-10-for-large-language-model-applications/',
+      },
     ],
     pairedPocs: ['poc-06-sales-proposal-generator'],
     relatedCourseSlugs: [
       'ai-foundations-for-everyone',
       'ai-for-customer-service-support',
+      'm365-copilot-adoption',
     ],
   },
 
