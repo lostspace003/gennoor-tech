@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, SkipBack, SkipForward, PanelLeftClose, PanelLeftOpen, X, User, LogOut, ZoomIn, ZoomOut, Maximize, Minimize2, Lock, CheckCircle } from 'lucide-react'
 import type { Chapter } from '@/config/courses'
+import { courses as allCourses } from '@/config/courses'
 import { saveLocalProgress, getLocalProgress, getAllLocalProgress } from '@/lib/progress-store'
 import { useLearnerAuth } from '@/hooks/useLearnerAuth'
 import SaveProgressModal from './SaveProgressModal'
@@ -33,10 +34,24 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [zoomLevel, setZoomLevel] = useState(75)
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [showWelcomeToast, setShowWelcomeToast] = useState(false)
   const { session, isLoggedIn, loading: authLoading, logout, refreshSession } = useLearnerAuth()
   const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const requiresLogin = !chapter.isFree && !isLoggedIn && !authLoading
+
+  // Look up the course (for theme + chapter-count context in onboarding)
+  const course = useMemo(() => allCourses.find(c => c.id === courseId), [courseId])
+  const theme = course?.theme
+  const totalChapterCount = course?.chapters.length ?? allChapters.length
+  const freeChapterCount = course?.chapters.filter(c => c.isFree).length ?? 0
+
+  // Inline themed style helpers (theme may be undefined for AB-100)
+  const themedBg = theme ? { background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryDeep} 100%)` } : undefined
+  const themedSolid = theme ? { backgroundColor: theme.primary } : undefined
+  const themedSolidDeep = theme ? { backgroundColor: theme.primaryDeep } : undefined
+  const themedAccentText = theme ? { color: theme.primaryDeep } : undefined
+  const themedTint = theme ? { backgroundColor: theme.tint } : undefined
 
   // Debounced server sync for logged-in users
   const syncToServer = useCallback((chapterId: string, percent: number, currentSlide: number, totalSlides: number) => {
@@ -131,6 +146,9 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
     }
     setShowSaveBanner(false)
     setShowAuthModal(false)
+    // Show post-login welcome toast — auto-dismiss after ~5s
+    setShowWelcomeToast(true)
+    setTimeout(() => setShowWelcomeToast(false), 5000)
   }, [refreshSession])
 
   const progressChapterCount = useMemo(() => {
@@ -589,29 +607,84 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
         {/* iframe or login gate */}
         <div className="flex-1 min-w-0 relative">
           {requiresLogin ? (
-            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-              <div className="text-center max-w-md px-6">
-                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-primary-100 flex items-center justify-center">
-                  <Lock className="w-8 h-8 text-primary-600" />
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Sign in to continue</h2>
-                <p className="text-gray-500 mb-6">
-                  Create a free account to access all chapters, track your progress, and earn your certification.
-                </p>
-                <button
-                  onClick={() => setShowAuthModal(true)}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 text-white text-sm font-bold rounded-lg hover:bg-primary-700 transition-colors"
-                >
-                  <User className="w-4 h-4" />
-                  Sign In / Create Account
-                </button>
-                <div className="mt-4">
-                  <Link
-                    href={`/ai-academy/${courseId}`}
-                    className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+            <div className="absolute inset-0 overflow-y-auto bg-gradient-to-br from-gray-50 to-gray-100">
+              <div className="min-h-full flex items-center justify-center py-12 px-6">
+                <div className="max-w-lg w-full">
+                  {/* Themed lock badge */}
+                  <div
+                    className="w-16 h-16 mx-auto mb-5 rounded-2xl flex items-center justify-center shadow-lg"
+                    style={themedBg}
                   >
-                    Back to course overview
-                  </Link>
+                    <Lock className="w-8 h-8 text-white" />
+                  </div>
+
+                  {/* Course context */}
+                  {course && (
+                    <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 text-center mb-2">
+                      {course.shortTitle} · Chapter {chapter.number} of {totalChapterCount}
+                    </p>
+                  )}
+
+                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-3 font-heading">
+                    You&apos;ve finished the free chapters
+                  </h2>
+                  <p className="text-gray-500 text-center mb-6 leading-relaxed">
+                    {freeChapterCount > 0
+                      ? `The first ${freeChapterCount} chapter${freeChapterCount > 1 ? 's are' : ' is'} free — sign in (10 seconds) to unlock the rest and continue from where you left off.`
+                      : 'Sign in (takes 10 seconds) to unlock all chapters and track progress across devices.'}
+                  </p>
+
+                  {/* Value stack — three concrete items */}
+                  <div className="bg-white rounded-xl ring-1 ring-gray-200 p-5 mb-6 space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={themedTint}>
+                        <CheckCircle className="w-4 h-4" style={themedAccentText} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">Unlock all {totalChapterCount} chapters</p>
+                        <p className="text-xs text-gray-500 mt-0.5">Including the capstone — your one-page roadmap or production-grade artifact.</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={themedTint}>
+                        <CheckCircle className="w-4 h-4" style={themedAccentText} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">Progress synced across devices</p>
+                        <p className="text-xs text-gray-500 mt-0.5">Resume from this exact slide on your phone, laptop, or tablet.</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={themedTint}>
+                        <CheckCircle className="w-4 h-4" style={themedAccentText} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">Free forever · no credit card</p>
+                        <p className="text-xs text-gray-500 mt-0.5">All courses stay free. No upsells. We don&apos;t share your email.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setShowAuthModal(true)}
+                    className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 text-white text-sm font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5"
+                    style={themedBg}
+                  >
+                    <User className="w-4 h-4" />
+                    Sign in to continue
+                  </button>
+                  <p className="text-xs text-gray-400 text-center mt-3">
+                    Google · Microsoft · or email — pick any.
+                  </p>
+
+                  <div className="mt-5 text-center">
+                    <Link
+                      href={`/ai-academy/${courseId}`}
+                      className="text-sm text-gray-500 hover:text-gray-700 font-medium"
+                    >
+                      ← Back to course overview
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
@@ -630,31 +703,41 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
 
       {/* Chapter complete / next chapter bar */}
       {nextChapter && slidePercent >= 90 && (
-        <div className={`flex-shrink-0 text-white px-4 flex items-center justify-between animate-fade-in ${
-          slidePercent >= 99 ? 'bg-gradient-to-r from-primary-800 to-primary-900 py-4' : 'bg-primary-900 py-3'
-        }`}>
+        <div
+          className={`flex-shrink-0 text-white px-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fade-in ${
+            slidePercent >= 99 ? 'py-4' : 'py-3'
+          } ${theme ? '' : (slidePercent >= 99 ? 'bg-gradient-to-r from-primary-800 to-primary-900' : 'bg-primary-900')}`}
+          style={theme ? (slidePercent >= 99 ? { background: `linear-gradient(90deg, ${theme.primaryDeep} 0%, ${theme.navy} 100%)` } : { backgroundColor: theme.navy }) : undefined}
+        >
           {slidePercent >= 99 ? (
             <>
-              <div className="flex items-center gap-3">
-                <CheckCircle className="w-5 h-5 text-secondary-400" />
-                <span className="text-sm font-medium">
-                  Chapter complete! Up next: <span className="text-secondary-300">{nextChapter.title}</span>
-                </span>
+              <div className="flex flex-col gap-1 min-w-0">
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-secondary-400 flex-shrink-0" />
+                  <span className="text-sm font-medium truncate">
+                    Chapter complete! Up next: <span className="text-secondary-300">{nextChapter.title}</span>
+                  </span>
+                </div>
+                {chapter.isFree && !isLoggedIn && !nextChapter.isFree && (
+                  <p className="text-xs text-white/60 pl-8">
+                    Sign in (10s) to unlock chapter {nextChapter.number} and {totalChapterCount - (nextChapter.number - 1)} more · free forever · no card
+                  </p>
+                )}
               </div>
-              {chapter.isFree && !isLoggedIn ? (
+              {chapter.isFree && !isLoggedIn && !nextChapter.isFree ? (
                 <button
                   onClick={() => setShowAuthModal(true)}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-secondary-400 text-dark-900 text-sm font-bold rounded-lg hover:bg-secondary-300 transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-secondary-400 text-dark-900 text-sm font-bold rounded-lg hover:bg-secondary-300 transition-colors flex-shrink-0"
                 >
                   <User className="w-4 h-4" />
-                  Sign In to Continue
+                  Sign in to continue
                 </button>
               ) : (
                 <Link
                   href={`/ai-academy/${courseId}/${nextChapter.slug}`}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-secondary-400 text-dark-900 text-sm font-bold rounded-lg hover:bg-secondary-300 transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-secondary-400 text-dark-900 text-sm font-bold rounded-lg hover:bg-secondary-300 transition-colors flex-shrink-0"
                 >
-                  Next Chapter
+                  Next chapter
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               )}
@@ -666,9 +749,9 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
               </span>
               <Link
                 href={`/ai-academy/${courseId}/${nextChapter.slug}`}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-secondary-400 text-dark-900 text-sm font-bold rounded-lg hover:bg-secondary-300 transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-secondary-400 text-dark-900 text-sm font-bold rounded-lg hover:bg-secondary-300 transition-colors flex-shrink-0"
               >
-                Next Chapter
+                Next chapter
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </>
@@ -686,12 +769,41 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
         />
       )}
 
-      {/* Auth modal */}
+      {/* Auth modal — contextual title/subtitle when triggered from paywall */}
       <LearnerAuthModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         onLoginSuccess={handleLoginSuccess}
+        title={requiresLogin ? `Unlock the rest of ${course?.shortTitle ?? 'the course'}` : undefined}
+        subtitle={requiresLogin ? 'Sign in to continue from chapter ' + chapter.number + ' and sync your progress across devices.' : undefined}
       />
+
+      {/* Post-login welcome toast — themed, auto-dismiss */}
+      {showWelcomeToast && session && (
+        <div className="fixed bottom-6 right-6 z-[70] max-w-sm animate-slide-up">
+          <div
+            className="bg-white rounded-xl shadow-2xl ring-1 ring-gray-200 p-4 flex items-start gap-3"
+          >
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+              style={themedBg}
+            >
+              <CheckCircle className="w-5 h-5 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-gray-900">Welcome, {session.name.split(' ')[0]}.</p>
+              <p className="text-xs text-gray-500 mt-0.5">Your progress is now synced across devices.</p>
+            </div>
+            <button
+              onClick={() => setShowWelcomeToast(false)}
+              className="text-gray-300 hover:text-gray-500 flex-shrink-0"
+              aria-label="Dismiss"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
