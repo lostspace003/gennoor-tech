@@ -1344,7 +1344,7 @@ export default function AdminDashboard() {
                 { title: 'Google Rich Results', description: 'Test structured data markup', href: 'https://search.google.com/test/rich-results', icon: Code2 },
                 { title: 'Sitemap', description: 'View current sitemap.xml', href: '/sitemap.xml', icon: FileText },
                 { title: 'Robots.txt', description: 'View crawl directives', href: '/robots.txt', icon: Shield },
-                { title: 'IndexNow Key', description: 'Verify key file is live', href: '/e5378b2c461c4df68ec5733319ce6bb9.txt', icon: Lock },
+                { title: 'IndexNow Key', description: 'Verify key file is live', href: '/1774b0e00b584216b04f41a75b9de8e2.txt', icon: Lock },
               ].map(link => (
                 <a key={link.title} href={link.href} target={link.href.startsWith('/') ? '_self' : '_blank'} rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-slate-50 hover:bg-blue-50 border border-slate-200 rounded-lg transition-colors group">
                   <div className="w-9 h-9 bg-white border border-slate-200 group-hover:border-blue-300 rounded-lg flex items-center justify-center shrink-0"><link.icon className="w-4 h-4 text-slate-600 group-hover:text-blue-600" /></div>
