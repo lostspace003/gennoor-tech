@@ -43,10 +43,51 @@ async function ensureTable() {
   }
 }
 
+// Map specific workshop slugs to short, recognisable cert ID prefixes.
+// Academy course slugs use the GNR-ACAD prefix family.
+const CERT_PREFIX_OVERRIDES: Record<string, string> = {
+  'claude-cowork': 'GNR-CC',
+}
+
+const ACADEMY_SLUG_PREFIXES: Record<string, string> = {
+  'ai-foundations': 'GNR-ACAD-FND',
+  'ai-strategy-c-suite': 'GNR-ACAD-EXEC',
+  'ai-governance-risk-boards': 'GNR-ACAD-GOV',
+  'ai-for-finance-accounting': 'GNR-ACAD-FIN',
+  'ai-in-financial-services': 'GNR-ACAD-BFSI',
+  'generative-ai-for-business': 'GNR-ACAD-GENAI',
+  'ai-for-hr-people-teams': 'GNR-ACAD-HR',
+  'ai-in-healthcare': 'GNR-ACAD-HLTH',
+  'm365-copilot-adoption': 'GNR-ACAD-M365',
+  'ai-for-sales-marketing': 'GNR-ACAD-SALES',
+  'ai-for-customer-service-support': 'GNR-ACAD-CS',
+  'ai-for-operations-supply-chain': 'GNR-ACAD-OPS',
+  'ai-in-manufacturing': 'GNR-ACAD-MFG',
+  'building-ai-agents-copilot-studio': 'GNR-ACAD-CS-STUDIO',
+  'ab-100': 'GNR-ACAD-AB100',
+}
+
 export function generateCertId(workshopSlug: string, year: number): string {
-  const prefix = workshopSlug === 'claude-cowork' ? 'GNR-CC' : `GNR-${workshopSlug.toUpperCase().slice(0, 3)}`
+  const prefix =
+    CERT_PREFIX_OVERRIDES[workshopSlug] ||
+    ACADEMY_SLUG_PREFIXES[workshopSlug] ||
+    `GNR-${workshopSlug.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6)}`
   const rand = crypto.randomBytes(4).toString('hex').toUpperCase()
   return `${prefix}-${year}-${rand}`
+}
+
+/**
+ * Look up an existing certificate for a given recipient + course combo.
+ * Used by academy course-completion to keep issuance idempotent.
+ */
+export async function findCertificateByRecipient(
+  workshopSlug: string,
+  recipientEmail: string,
+): Promise<Certificate | null> {
+  if (!recipientEmail) return null
+  const all = await listCertificatesByWorkshop(workshopSlug)
+  const normalisedEmail = recipientEmail.toLowerCase()
+  return all.find(c => c.recipientEmail.toLowerCase() === normalisedEmail && c.status === 'issued') ?? null
 }
 
 export async function saveCertificate(cert: Omit<Certificate, 'createdAt' | 'status'> & { status?: 'issued' | 'revoked' }) {

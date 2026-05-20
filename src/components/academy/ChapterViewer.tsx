@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, SkipBack, SkipForward, PanelLeftClose, PanelLeftOpen, X, User, LogOut, ZoomIn, ZoomOut, Maximize, Minimize2, Lock, CheckCircle } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, SkipBack, SkipForward, PanelLeftClose, PanelLeftOpen, X, User, LogOut, ZoomIn, ZoomOut, Maximize, Minimize2, Lock, CheckCircle, Trophy, Sparkles, Award } from 'lucide-react'
 import type { Chapter } from '@/config/courses'
 import { courses as allCourses } from '@/config/courses'
 import { saveLocalProgress, getLocalProgress, getAllLocalProgress } from '@/lib/progress-store'
@@ -35,8 +35,13 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
   const [zoomLevel, setZoomLevel] = useState(75)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [showWelcomeToast, setShowWelcomeToast] = useState(false)
+  const [showCelebration, setShowCelebration] = useState(false)
+  const [celebrationCertId, setCelebrationCertId] = useState<string | null>(null)
+  const [celebrationLoading, setCelebrationLoading] = useState(false)
+  const [celebrationError, setCelebrationError] = useState<string | null>(null)
   const { session, isLoggedIn, loading: authLoading, logout, refreshSession } = useLearnerAuth()
   const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const celebrationTriggeredRef = useRef(false)
 
   const requiresLogin = !chapter.isFree && !isLoggedIn && !authLoading
 
@@ -130,6 +135,58 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
     window.addEventListener('beforeunload', handler)
     return () => window.removeEventListener('beforeunload', handler)
   }, [courseId, isLoggedIn, bannerDismissed, slidePercent])
+
+  // Detect course completion — last regular (non-mock-exam) chapter at 99%+
+  // for a logged-in user. Triggers cert issuance + celebration overlay once
+  // per course (localStorage flag prevents re-firing on revisit).
+  const isLastRegularChapter = useMemo(() => {
+    if (!course) return false
+    const regulars = course.chapters.filter(ch => !ch.isMockExam)
+    return regulars.length > 0 && regulars[regulars.length - 1].id === chapter.id
+  }, [course, chapter.id])
+
+  const celebrationStorageKey = `gennoor-celebrated:${courseId}`
+
+  useEffect(() => {
+    if (!isLoggedIn || !isLastRegularChapter) return
+    if (slidePercent < 99) return
+    if (celebrationTriggeredRef.current) return
+    if (typeof window !== 'undefined' && window.localStorage.getItem(celebrationStorageKey)) {
+      // Already celebrated this course on this device — try to fetch existing cert silently
+      celebrationTriggeredRef.current = true
+      fetch(`/api/learner/courses/${courseId}/issue-cert`)
+        .then(r => (r.ok ? r.json() : null))
+        .then(data => {
+          if (data?.cert?.certId) setCelebrationCertId(data.cert.certId)
+        })
+        .catch(() => { /* silent */ })
+      return
+    }
+
+    celebrationTriggeredRef.current = true
+    setShowCelebration(true)
+    setCelebrationLoading(true)
+    setCelebrationError(null)
+
+    fetch(`/api/learner/courses/${courseId}/issue-cert`, { method: 'POST' })
+      .then(async r => {
+        if (r.ok) return r.json()
+        const data = await r.json().catch(() => ({}))
+        throw new Error(data.error || `Issue failed (${r.status})`)
+      })
+      .then(data => {
+        if (data?.cert?.certId) {
+          setCelebrationCertId(data.cert.certId)
+          if (typeof window !== 'undefined') {
+            window.localStorage.setItem(celebrationStorageKey, data.cert.certId)
+          }
+        }
+      })
+      .catch(err => {
+        setCelebrationError(err.message || 'Could not issue certificate. You can retry from the chapter overview.')
+      })
+      .finally(() => setCelebrationLoading(false))
+  }, [isLoggedIn, isLastRegularChapter, slidePercent, courseId, celebrationStorageKey])
 
   const handleLoginSuccess = useCallback(async () => {
     await refreshSession()
@@ -777,6 +834,98 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
         title={requiresLogin ? `Unlock the rest of ${course?.shortTitle ?? 'the course'}` : undefined}
         subtitle={requiresLogin ? 'Sign in to continue from chapter ' + chapter.number + ' and sync your progress across devices.' : undefined}
       />
+
+      {/* Course-complete celebration overlay */}
+      {showCelebration && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 animate-fade-in">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowCelebration(false)} />
+          <div className="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden">
+            {/* Themed celebration header */}
+            <div className="relative px-6 sm:px-8 py-10 text-center overflow-hidden" style={themedBg}>
+              {/* Decorative sparkles */}
+              <div className="absolute top-4 left-6 text-white/30">
+                <Sparkles className="w-5 h-5" />
+              </div>
+              <div className="absolute top-8 right-10 text-white/40">
+                <Sparkles className="w-4 h-4" />
+              </div>
+              <div className="absolute bottom-6 right-6 text-white/30">
+                <Sparkles className="w-6 h-6" />
+              </div>
+              <div className="absolute bottom-10 left-10 text-white/40">
+                <Sparkles className="w-3 h-3" />
+              </div>
+
+              <div className="relative">
+                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                  <Trophy className="w-10 h-10 text-white" strokeWidth={2} />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-widest text-white/80 mb-2">
+                  Course Complete
+                </p>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white font-heading mb-2">
+                  Congratulations{session ? `, ${session.name.split(' ')[0]}` : ''}!
+                </h2>
+                <p className="text-white/90 text-sm">
+                  You finished <span className="font-bold">{course?.title}</span>.
+                </p>
+              </div>
+            </div>
+
+            {/* Body */}
+            <div className="p-6 sm:p-8">
+              {celebrationLoading && (
+                <div className="text-center py-6">
+                  <div className="inline-flex items-center gap-2 text-sm text-gray-500">
+                    <Award className="w-4 h-4 animate-pulse" style={themedAccentText} />
+                    Issuing your certificate…
+                  </div>
+                </div>
+              )}
+
+              {!celebrationLoading && celebrationCertId && (
+                <>
+                  <div className="bg-gray-50 rounded-xl ring-1 ring-gray-200 p-4 mb-5 text-center">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1">
+                      Credential ID
+                    </p>
+                    <p className="font-mono font-bold text-gray-900 text-sm break-all">
+                      {celebrationCertId}
+                    </p>
+                  </div>
+                  <Link
+                    href={`/verify/${celebrationCertId}`}
+                    className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 text-white text-sm font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5"
+                    style={themedBg}
+                  >
+                    <Award className="w-4 h-4" />
+                    View &amp; share your certificate
+                  </Link>
+                  <p className="text-xs text-gray-400 text-center mt-3">
+                    Add to LinkedIn, share publicly, or just keep the link.
+                  </p>
+                </>
+              )}
+
+              {!celebrationLoading && celebrationError && !celebrationCertId && (
+                <div className="text-center py-4">
+                  <p className="text-sm text-red-600 mb-3">{celebrationError}</p>
+                  <p className="text-xs text-gray-500">
+                    Your completion is saved — try refreshing this page in a moment.
+                  </p>
+                </div>
+              )}
+
+              <button
+                onClick={() => setShowCelebration(false)}
+                className="w-full text-sm text-gray-500 hover:text-gray-700 mt-4 transition-colors"
+              >
+                Continue exploring
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Post-login welcome toast — themed, auto-dismiss */}
       {showWelcomeToast && session && (
