@@ -1,7 +1,6 @@
-import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { CheckCircle2, Download, Linkedin, Share2, ShieldCheck, Calendar, Award, ExternalLink } from 'lucide-react'
+import { CheckCircle2, Download, Linkedin, Share2, ShieldCheck, Calendar, Award, ExternalLink, GraduationCap } from 'lucide-react'
 import {
   getCertificate,
   buildLinkedInAddToProfileUrl,
@@ -9,7 +8,14 @@ import {
   buildPdfDownloadUrl,
   buildVerifyUrl,
 } from '@/lib/certificates'
+import { courses as configCourses } from '@/config/courses'
 import ScrollReveal from '@/components/ScrollReveal'
+
+// Academy course slugs use the GNR-ACAD prefix family — the prefix is also
+// our quick way to know whether a cert came from a course or a workshop.
+function isAcademyCert(certId: string): boolean {
+  return certId.toUpperCase().startsWith('GNR-ACAD-')
+}
 
 export const dynamic = 'force-dynamic'
 
@@ -97,8 +103,11 @@ export default async function VerifyPage({ params }: Props) {
 
   const linkedInAddUrl = buildLinkedInAddToProfileUrl(cert)
   const linkedInShareUrl = buildLinkedInShareUrl(cert)
-  const pdfUrl = buildPdfDownloadUrl(cert.certId)
+  const hasPdf = !!cert.pdfBlobPath
+  const pdfUrl = hasPdf ? buildPdfDownloadUrl(cert.certId) : ''
   const durationLabel = formatDuration(cert.durationMinutes)
+  const isAcademy = isAcademyCert(cert.certId)
+  const academyCourse = isAcademy ? configCourses.find(c => c.id === cert.workshopSlug) : undefined
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#f5f0eb] via-white to-[#fff8f0] py-12 sm:py-20 px-4 scroll-smooth">
@@ -118,8 +127,8 @@ export default async function VerifyPage({ params }: Props) {
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#FF6B35]/10 rounded-full translate-y-1/2 -translate-x-1/2" />
               <div className="relative">
                 <div className="inline-flex items-center gap-2 bg-[#FFD23F] text-[#1B2845] px-4 py-1.5 rounded-full text-xs font-extrabold tracking-widest mb-4">
-                  <Award className="w-4 h-4" strokeWidth={2.5} />
-                  GENNOOR TECH · CERTIFICATE OF COMPLETION
+                  {isAcademy ? <GraduationCap className="w-4 h-4" strokeWidth={2.5} /> : <Award className="w-4 h-4" strokeWidth={2.5} />}
+                  {isAcademy ? 'GENNOOR ACADEMY · CERTIFICATE OF COMPLETION' : 'GENNOOR TECH · CERTIFICATE OF COMPLETION'}
                 </div>
                 <p className="text-[#FFD23F] text-sm font-semibold tracking-widest mb-3">THIS IS TO CERTIFY THAT</p>
                 <h1 className="text-3xl sm:text-5xl font-extrabold text-white mb-4 leading-tight">
@@ -183,8 +192,11 @@ export default async function VerifyPage({ params }: Props) {
                   <div>
                     <p className="text-xs uppercase tracking-wider text-[#5C6784] font-bold mb-1">Status</p>
                     <p className="text-green-700 font-semibold">Verified & Active</p>
-                    {cert.trainerName && (
+                    {cert.trainerName && !isAcademy && (
                       <p className="text-sm text-[#5C6784] mt-0.5">Trainer: {cert.trainerName}</p>
+                    )}
+                    {isAcademy && (
+                      <p className="text-sm text-[#5C6784] mt-0.5">Self-paced · Gennoor Academy</p>
                     )}
                   </div>
                 </div>
@@ -212,18 +224,23 @@ export default async function VerifyPage({ params }: Props) {
                     <Share2 className="w-5 h-5" />
                     Share on LinkedIn
                   </a>
-                  <a
-                    href={pdfUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[#FF6B35] text-white font-semibold hover:bg-[#e55a25] transition-all duration-300 hover:-translate-y-0.5 shadow-md hover:shadow-lg"
-                  >
-                    <Download className="w-5 h-5" />
-                    Download PDF
-                  </a>
+                  {hasPdf && (
+                    <a
+                      href={pdfUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[#FF6B35] text-white font-semibold hover:bg-[#e55a25] transition-all duration-300 hover:-translate-y-0.5 shadow-md hover:shadow-lg"
+                    >
+                      <Download className="w-5 h-5" />
+                      Download PDF
+                    </a>
+                  )}
                 </div>
                 <p className="text-xs text-[#5C6784] mt-4 leading-relaxed">
                   Clicking <strong>Add to LinkedIn Profile</strong> opens LinkedIn with the certificate details pre-filled. Sign in, review, and click <strong>Save</strong> to add it to your profile.
+                  {!hasPdf && isAcademy && (
+                    <> This is a web-only credential — the public verify URL is the credential of record.</>
+                  )}
                 </p>
               </div>
             </div>
@@ -248,10 +265,24 @@ export default async function VerifyPage({ params }: Props) {
 
         <ScrollReveal delay={0.1}>
           <div className="mt-6 text-center">
-            <p className="text-sm text-[#5C6784]">
-              Issued via <Link href="/workshops/claude-cowork" className="text-[#FF6B35] font-semibold hover:underline">Claude Cowork Workshop</Link> · Trained by{' '}
-              <Link href="/about/founder" className="text-[#FF6B35] font-semibold hover:underline">{cert.trainerName || 'Jalal Khan'}</Link>
-            </p>
+            {isAcademy ? (
+              <p className="text-sm text-[#5C6784]">
+                Issued via{' '}
+                {academyCourse ? (
+                  <Link href={`/ai-academy/${academyCourse.id}`} className="text-[#FF6B35] font-semibold hover:underline">
+                    {academyCourse.shortTitle}
+                  </Link>
+                ) : (
+                  <Link href="/ai-academy" className="text-[#FF6B35] font-semibold hover:underline">Gennoor Academy</Link>
+                )}{' '}
+                · Self-paced course completed in{durationLabel ? ` ${durationLabel}` : ' the learner\'s own time'}
+              </p>
+            ) : (
+              <p className="text-sm text-[#5C6784]">
+                Issued via <Link href="/workshops/claude-cowork" className="text-[#FF6B35] font-semibold hover:underline">Claude Cowork Workshop</Link> · Trained by{' '}
+                <Link href="/about/founder" className="text-[#FF6B35] font-semibold hover:underline">{cert.trainerName || 'Jalal Khan'}</Link>
+              </p>
+            )}
           </div>
         </ScrollReveal>
       </div>
