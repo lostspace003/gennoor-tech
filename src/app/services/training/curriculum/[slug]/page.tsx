@@ -1,8 +1,17 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Download, Clock, BookOpen, Users, Layers } from 'lucide-react'
+import { ArrowLeft, Download, Clock, BookOpen, Users, Layers, Compass, GraduationCap, Lightbulb, Hammer, RefreshCw, Phone, ArrowRight } from 'lucide-react'
 import { getCoursePdfBySlug, allCoursePdfs } from '@/data/course-pdfs'
+import type { EnablementPhase } from '@/data/course-pdfs'
+
+const PHASE_ICONS: Record<EnablementPhase['phase'], typeof Compass> = {
+  Diagnose: Compass,
+  Train: GraduationCap,
+  Innovate: Lightbulb,
+  Build: Hammer,
+  Sustain: RefreshCw,
+}
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -166,6 +175,87 @@ export default async function CurriculumViewerPage({ params }: Props) {
           </aside>
         </div>
       </section>
+
+      {/* Domain-centric AI Enablement section — only renders when course has the new fields */}
+      {(course.aiEnablementSummary || course.aiEnablementPhases) && (
+        <section className="bg-white border-t border-gray-200">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
+            <div className="max-w-3xl mb-10">
+              <span className="inline-flex items-center text-[10px] font-bold text-primary-700 bg-primary-50 px-2 py-1 rounded-full uppercase tracking-wider mb-3">
+                How Gennoor supports {course.trackLabel === 'By Industry' ? 'this sector' : course.trackLabel === 'By Function' ? 'this function' : 'this practice'}
+              </span>
+              <h2 className="font-heading text-2xl sm:text-3xl font-bold text-gray-900 mb-3 leading-tight">
+                AI Enablement for {course.title.replace(/^AI (in|for) /, '')}
+              </h2>
+              {course.aiEnablementSummary && (
+                <p className="text-base text-gray-600 leading-relaxed">
+                  {course.aiEnablementSummary}
+                </p>
+              )}
+            </div>
+
+            {course.aiEnablementPhases && course.aiEnablementPhases.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-12">
+                {course.aiEnablementPhases.map((phase, i) => {
+                  const Icon = PHASE_ICONS[phase.phase]
+                  return (
+                    <div
+                      key={phase.phase}
+                      className="bg-gray-50 rounded-xl p-5 ring-1 ring-gray-200 hover:ring-primary-300 hover:bg-white transition-all"
+                    >
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary-600 text-white">
+                          <Icon className="w-4 h-4" />
+                        </span>
+                        <span className="text-[10px] font-bold tracking-widest text-gray-400 uppercase">
+                          Phase {i + 1}
+                        </span>
+                      </div>
+                      <h3 className="font-heading text-sm font-bold text-gray-900 mb-1.5">
+                        {phase.phase}
+                      </h3>
+                      <p className="text-xs text-gray-600 leading-relaxed">
+                        {phase.action}
+                      </p>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+
+            <div className="rounded-2xl bg-gradient-to-br from-primary-600 to-primary-700 p-6 sm:p-8 text-white">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-heading text-xl font-bold mb-1.5">
+                    Book a call about {course.title}
+                  </h3>
+                  <p className="text-sm text-primary-100 max-w-2xl leading-relaxed">
+                    30-minute working session with our team. Bring your current state, your constraints
+                    and the outcome you need — we&apos;ll come back with the right phase to start and a
+                    realistic delivery shape.
+                  </p>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2 lg:flex-shrink-0">
+                  <Link
+                    href="/contact#book"
+                    className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white text-primary-700 text-sm font-bold rounded-lg hover:bg-primary-50 transition-colors"
+                  >
+                    <Phone className="w-4 h-4" />
+                    Book a discovery call
+                  </Link>
+                  <Link
+                    href="/services"
+                    className="inline-flex items-center justify-center gap-2 px-5 py-2.5 border border-white/30 text-white text-sm font-semibold rounded-lg hover:bg-white/10 transition-colors"
+                  >
+                    See full AI Enablement
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
     </main>
   )
 }
