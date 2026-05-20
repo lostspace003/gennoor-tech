@@ -4,6 +4,10 @@ import { courses } from '@/config/courses'
 import { caseStudies } from '@/data/case-studies'
 import { getAllPrograms } from '@/data/training-programs'
 import { getAllCertifications } from '@/data/certification-prep'
+import { allCoursePdfs } from '@/data/course-pdfs'
+import { courses as academyCourses } from '@/data/academy/courses'
+import { industries } from '@/data/industries'
+import { pocs } from '@/data/pocs'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://gennoor.com'
@@ -15,9 +19,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/about/journey`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${baseUrl}/about/certifications`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${baseUrl}/about/founder`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}/about/team-and-delivery`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${baseUrl}/about/trust-and-security`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${baseUrl}/contact`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${baseUrl}/privacy`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
     { url: `${baseUrl}/terms`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
+    { url: `${baseUrl}/the-gennoor-way`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${baseUrl}/sitemap-index`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.4 },
 
     // Services
     { url: `${baseUrl}/services`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
@@ -27,6 +35,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/services/agentic-ai`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${baseUrl}/services/certifications`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${baseUrl}/services/collaboration`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+
+    // Solutions hubs
+    { url: `${baseUrl}/solutions`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}/solutions/for-smb`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${baseUrl}/solutions/for-enterprise`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
 
     // Location pages
     { url: `${baseUrl}/services/ai-training-saudi-arabia`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
@@ -49,10 +62,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/resources/blog`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
     { url: `${baseUrl}/resources/videos`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
     { url: `${baseUrl}/resources/calendar`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
+    { url: `${baseUrl}/resources/pocs`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
     { url: `${baseUrl}/resources/guides/agentic-ai`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${baseUrl}/resources/guides/ai-readiness-checklist`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${baseUrl}/resources/guides/enterprise-ai-training`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${baseUrl}/resources/guides/microsoft-copilot-studio`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+
+    // Industries hub
+    { url: `${baseUrl}/industries`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+
+    // Case studies root
+    { url: `${baseUrl}/case-studies`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
 
     // Certification guides
     { url: `${baseUrl}/guides/ai-103-azure-ai-engineer`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
@@ -124,5 +144,51 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }))
 
-  return [...staticPages, ...academyPages, ...blogPages, ...caseStudyPages, ...trainingPages, ...certPages]
+  // Course curriculum pages (22 paid 2-day course PDFs)
+  const curriculumPages: MetadataRoute.Sitemap = allCoursePdfs.map((c) => ({
+    url: `${baseUrl}/services/training/curriculum/${c.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.8,
+  }))
+
+  // New Academy structure pages
+  const newAcademyPages: MetadataRoute.Sitemap = [
+    { url: `${baseUrl}/academy`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
+    ...academyCourses.map((c) => ({
+      url: `${baseUrl}/academy/courses/${c.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    })),
+  ]
+
+  // Industry detail pages
+  const industryPages: MetadataRoute.Sitemap = industries.map((i) => ({
+    url: `${baseUrl}/industries/${i.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }))
+
+  // PoC catalog detail pages
+  const pocPages: MetadataRoute.Sitemap = pocs.map((p) => ({
+    url: `${baseUrl}/resources/pocs/${p.id}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }))
+
+  return [
+    ...staticPages,
+    ...academyPages,
+    ...newAcademyPages,
+    ...blogPages,
+    ...caseStudyPages,
+    ...trainingPages,
+    ...certPages,
+    ...curriculumPages,
+    ...industryPages,
+    ...pocPages,
+  ]
 }
