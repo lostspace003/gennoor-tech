@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google'
 import '@/styles/globals.css'
-import Header from '@/components/layout/Header'
+import PortalShell from '@/components/portal/PortalShell'
 import Footer from '@/components/layout/Footer'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import WhatsAppButton from '@/components/WhatsAppButton'
@@ -124,12 +124,13 @@ export default function RootLayout({
         </div>
         <div className="noise-overlay" aria-hidden="true" />
 
-        <div className="flex min-h-screen flex-col relative z-10">
-          <Header />
-          <main id="main-content" className="flex-1">
-            {children}
-          </main>
-          <Footer />
+        <div className="relative z-10">
+          <PortalShell>
+            <main id="main-content">
+              {children}
+            </main>
+            <Footer />
+          </PortalShell>
           <WhatsAppButton />
         </div>
       </body>
