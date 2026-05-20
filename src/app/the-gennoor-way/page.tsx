@@ -278,10 +278,7 @@ export default function TheGennoorWayPage() {
             <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold tracking-tight text-gray-900 mb-6 leading-[1.1]">
               The <span className="gradient-text">Gennoor</span> Way
             </h1>
-            <p
-              className="text-base sm:text-lg font-semibold tracking-wide text-gray-700 mb-6"
-              style={{ fontFamily: "'Sora', Helvetica, Arial, sans-serif" }}
-            >
+            <p className="font-heading text-base sm:text-lg font-semibold tracking-wide text-gray-700 mb-6">
               <span>Diagnose</span>
               <span className="text-amber-500">.</span>{' '}
               <span>Train</span>
