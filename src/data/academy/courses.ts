@@ -1040,136 +1040,146 @@ const baseCourses: Course[] = [
   },
 
   // ────────────────────────────────────────────────────────────────────
-  // FUNCTION TRACK — Customer Service
+  // FUNCTION TRACK — Customer Service & Support
   // ────────────────────────────────────────────────────────────────────
   {
     slug: 'ai-for-customer-service-support',
     title: 'AI for Customer Service & Support',
     subtitle:
-      'A 50-minute deep dive on where AI helps support (and where it backfires) — agent assist, bots, voice, escalation, frontline adoption.',
+      'A 65-minute playbook for CX leaders — three patterns that ship, two that backfire, the support-not-surveillance line, and a 4-week pilot with the KPIs that prove value.',
 
     track: 'function',
-    level: 'foundational',
-    audience: ['individual-contributor', 'manager', 'director'],
+    level: 'intermediate',
+    audience: ['director', 'manager', 'individual-contributor'],
     functions: ['customer-service'],
     industries: ['cross-industry'],
     stack: ['microsoft', 'stack-agnostic'],
-    pairedPhase: ['train', 'innovate'],
+    pairedPhase: ['train', 'innovate', 'sustain'],
 
-    duration: '50 min',
+    duration: '65 min',
     chapterCount: 8,
-    format: ['video', 'reading', 'interactive'],
+    format: ['interactive', 'video', 'reading'],
 
     status: 'available',
-    lastUpdated: '2026-05-19',
+    lastUpdated: '2026-05-20',
+
+    interactiveUrl: '/ai-academy/ai-for-customer-service-support',
 
     hookSentence:
-      'Agent assist vs full bots, multilingual support, sentiment + escalation — with the customer-trust risks named clearly.',
+      'Three CS-AI patterns that ship — and two that drop CSAT 15–25 points, named explicitly. Plus the support-not-surveillance line on sentiment AI that decides whether the team leans in.',
     whoThisIsFor:
-      'CX leaders, support managers, and ops teams running customer service across phone, chat, and email. Especially useful for teams considering bot deployments at scale and concerned about CSAT impact.',
+      'CX leaders, contact-centre operators, support managers, and ops teams running customer service across phone, chat, and email. Especially useful for teams considering bot deployments at scale and concerned about CSAT impact — and for teams whose previous AI rollout fractured frontline-agent trust.',
     whatYoullLearn: [
-      'Agent assist vs full bots — when each pattern fits',
-      'Multilingual support at production scale',
-      'Knowledge base AI that doesn\'t hallucinate policies',
-      'Sentiment & escalation logic that frontline teams trust',
-      'Voice support AI — beyond IVR',
-      'Adoption with frontline teams (the part that decides success)',
+      'The CS-AI fit map — three patterns that ship, two that backfire, one principle for every pitch',
+      'Agent assist — the four-component stack + three anti-patterns + six-week rollout rhythm',
+      'Scoped deflection bots — intent inventory + three scope rules + clean-handoff design',
+      'Multilingual support — language reality + code-switching + production gotchas at scale',
+      'Knowledge AI — three grounding disciplines + KB-quality gate + citation patterns',
+      'Sentiment + escalation — the support-not-surveillance line + escalation logic teams rely on',
+      'Voice support AI — three plays + latency/accent gotchas + the disclosure customers expect',
+      'Your 4-week pilot plan — one play deeply + KPI scaffold + four conversations Monday',
     ],
     chapters: [
       {
         number: 1,
         title: 'The CS-AI fit map',
-        duration: '7 min',
+        duration: '8 min',
         objectives: [
-          'Pick the right pattern: assist, bot, or no AI',
-          'Map AI candidates to your contact-volume curve',
+          'Name the three CS-AI patterns that ship + the two that consistently backfire',
+          'Apply the principle — AI handles volume, humans handle judgment — to every vendor pitch',
         ],
       },
       {
         number: 2,
         title: 'Agent assist done right',
-        duration: '7 min',
+        duration: '9 min',
         objectives: [
-          'Design suggested-response patterns that reps actually use',
-          'Avoid the 3 agent-assist anti-patterns',
+          'Deploy all four components: suggested response, knowledge surfacing, real-time coaching, auto case summary',
+          'Avoid the three anti-patterns and hold the six-week rollout rhythm',
         ],
         hasQuiz: true,
       },
       {
         number: 3,
-        title: 'Full bots — when and how',
-        duration: '7 min',
+        title: 'Scoped tier-1 deflection bots',
+        duration: '9 min',
         objectives: [
-          'Choose the deflection patterns that improve (not degrade) CSAT',
-          'Design clean human-handoff so customers don\'t repeat themselves',
+          'Run the intent inventory; refuse deflection bots if top 10 intents are under 60% of volume',
+          'Build whitelist + 3-turn cap + emotional-escalation exit + clean-handoff design',
         ],
+        hasExercise: true,
       },
       {
         number: 4,
         title: 'Multilingual support at scale',
-        duration: '6 min',
+        duration: '9 min',
         objectives: [
-          'Architect for the languages your customers actually use',
-          'Handle code-switching common in GCC, India, Africa',
+          'Measure actual language distribution; tier languages by deployment depth',
+          'Handle code-switching, dialect register, and the three production gotchas at scale',
         ],
         hasExercise: true,
       },
       {
         number: 5,
         title: 'Knowledge base AI — without hallucinated policies',
-        duration: '7 min',
+        duration: '9 min',
         objectives: [
-          'Ground answers in the actual KB, not the model\'s memory',
-          'Build citation patterns customers can verify',
+          'Enforce the three grounding disciplines — retrieval-only, mandatory citations, refusal patterns',
+          'Pass the KB-quality gate before deploying — atomic articles, same-day versioning, quarterly audit',
         ],
         hasQuiz: true,
       },
       {
         number: 6,
-        title: 'Sentiment, escalation, frontline trust',
-        duration: '6 min',
+        title: 'Sentiment, escalation, and frontline trust',
+        duration: '9 min',
         objectives: [
-          'Use sentiment signals without surveilling reps',
-          'Build escalation logic teams actually rely on',
+          'Commit to three support-not-surveillance principles in writing before deploying sentiment AI',
+          'Send the right team-trust signal — adjusted-on-feedback, coaching-not-punishment, no AI-driven terminations',
         ],
       },
       {
         number: 7,
         title: 'Voice support AI',
-        duration: '5 min',
+        duration: '8 min',
         objectives: [
-          'Move beyond IVR to natural-voice flows',
-          'Spot the latency and accent gotchas in production',
+          'Ship three voice plays — IVR replacement, structured data capture, wait-time assistant',
+          'Architect for latency under 1.5s, accent recognition, interruption handling, and disclosure',
         ],
       },
       {
         number: 8,
-        title: 'Capstone: Your CS AI rollout plan',
-        duration: '5 min',
+        title: 'Capstone — Your 4-week CS AI pilot plan',
+        duration: '7 min',
         objectives: [
-          'Pick one pattern to pilot in 4 weeks',
-          'Define CSAT, deflection, and AHT targets',
+          'Run one play deeply for four weeks with daily standup and clean baseline',
+          'Schedule four week-one conversations: executive sponsor, supervisor, infosec/legal, two pilot agents',
         ],
         isCapstone: true,
       },
     ],
-    exerciseCount: 1,
+    exerciseCount: 2,
     capstoneTitle: 'Your 4-Week CS AI Pilot Plan',
     references: [
+      {
+        title: 'Microsoft Dynamics 365 Customer Service — Documentation',
+        source: 'Microsoft Learn',
+        url: 'https://learn.microsoft.com/en-us/dynamics365/customer-service/',
+      },
       {
         title: 'Gartner — CX in the Age of AI',
         source: 'Gartner Research',
         url: 'https://www.gartner.com/en/customer-service-support',
       },
       {
-        title: 'Microsoft Customer Service in the Era of AI',
-        source: 'Microsoft',
-        url: 'https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/category/customer-service/',
-      },
-      {
         title: 'McKinsey — Customer Operations and AI',
         source: 'McKinsey & Company',
         url: 'https://www.mckinsey.com/capabilities/operations/our-insights',
+      },
+      {
+        title: 'EU AI Act — Final Text (incl. transparency/disclosure obligations)',
+        source: 'European Parliament',
+        url: 'https://artificialintelligenceact.eu/',
       },
     ],
     pairedPocs: ['poc-07-multilingual-customer-support-agent'],
