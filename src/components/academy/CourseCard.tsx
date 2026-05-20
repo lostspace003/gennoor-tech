@@ -10,13 +10,21 @@ interface CourseCardProps {
 }
 
 export default function CourseCard({ course, overallProgress = 0 }: CourseCardProps) {
+  const freeChapterCount = course.chapters.filter(c => c.isFree).length
+  const headerStyle = course.theme
+    ? { background: `linear-gradient(135deg, ${course.theme.primary} 0%, ${course.theme.primaryDeep} 60%, ${course.theme.accent} 100%)` }
+    : undefined
+
   return (
     <Link
       href={`/ai-academy/${course.id}`}
       className="group block bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden ring-1 ring-gray-100"
     >
-      {/* Gradient header */}
-      <div className="relative h-48 bg-gradient-to-br from-primary-600 via-primary-700 to-accent-600 p-6 flex flex-col justify-between">
+      {/* Themed header */}
+      <div
+        className={`relative h-48 p-6 flex flex-col justify-between ${course.theme ? '' : 'bg-gradient-to-br from-primary-600 via-primary-700 to-accent-600'}`}
+        style={headerStyle}
+      >
         <div className="flex items-start justify-between">
           <span className="inline-flex items-center px-3 py-1 text-xs font-bold bg-secondary-400 text-dark-900 rounded-full uppercase">
             {course.badge}
@@ -65,6 +73,14 @@ export default function CourseCard({ course, overallProgress = 0 }: CourseCardPr
             </span>
           ))}
         </div>
+
+        {/* Free chapter signal */}
+        {freeChapterCount > 0 && overallProgress === 0 && (
+          <p className="text-xs text-gray-500 mb-4">
+            <span className="font-semibold text-emerald-600">First {freeChapterCount} chapter{freeChapterCount > 1 ? 's' : ''} free</span>
+            {' · no sign-in needed'}
+          </p>
+        )}
 
         {/* CTA */}
         <div className="flex items-center justify-between pt-4 border-t border-gray-100">
