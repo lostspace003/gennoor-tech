@@ -102,7 +102,8 @@ export default function SitemapIndexPage() {
     {
       heading: 'Certification Guides',
       links: [
-        { href: '/guides/ai-102-azure-ai-engineer', label: 'AI-102 — Azure AI Engineer' },
+        { href: '/guides/ai-103-azure-ai-engineer', label: 'AI-103 — Azure AI Engineer (current)' },
+        { href: '/guides/ai-102-azure-ai-engineer', label: 'AI-102 — Azure AI Engineer (retires 2026-06-30)' },
         { href: '/guides/pl-300-power-bi-analyst', label: 'PL-300 — Power BI Analyst' },
         { href: '/guides/ms-4004-copilot-365', label: 'MS-4004 — Copilot 365' },
       ],

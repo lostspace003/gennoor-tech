@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { BookOpen, CheckCircle, Clock, Award, Target, Lightbulb, HelpCircle, ArrowRight } from 'lucide-react';
+import { BookOpen, CheckCircle, Clock, Award, Target, Lightbulb, HelpCircle, ArrowRight, AlertTriangle } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Azure AI-102 Certification: Complete Study Guide 2026 | Gennoor Tech',
@@ -98,6 +98,21 @@ export default function AI102StudyGuidePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
       />
+
+      {/* Retirement banner */}
+      <section className="py-4 bg-amber-50/80 border-b border-amber-100">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+          <div className="text-sm text-amber-900 leading-relaxed">
+            <strong>AI-102 retires June 30, 2026 at 11:59 PM Central.</strong>{' '}
+            Microsoft has replaced it with{' '}
+            <Link href="/guides/ai-103-azure-ai-engineer" className="font-semibold underline hover:text-amber-700">
+              AI-103: Developing AI Apps and Agents on Azure
+            </Link>
+            . If you are scheduling the exam now, choose AI-103.
+          </div>
+        </div>
+      </section>
 
       {/* Hero Section */}
       <section className="relative py-14 lg:py-20 overflow-hidden">

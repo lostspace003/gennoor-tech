@@ -55,7 +55,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/resources/guides/microsoft-copilot-studio`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
 
     // Certification guides
-    { url: `${baseUrl}/guides/ai-102-azure-ai-engineer`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}/guides/ai-103-azure-ai-engineer`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${baseUrl}/guides/ai-102-azure-ai-engineer`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
     { url: `${baseUrl}/guides/pl-300-power-bi-analyst`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${baseUrl}/guides/ms-4004-copilot-365`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
 

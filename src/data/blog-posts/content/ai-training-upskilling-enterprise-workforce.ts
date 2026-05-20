@@ -71,7 +71,7 @@ export const post: BlogPost = {
 <h2>Certification Programs and Industry Credentials</h2>
 <p>External certifications provide credibility, standardized benchmarks, and motivation. The most valuable certifications for enterprise AI teams include:</p>
 <ul>
-<li><strong>Microsoft certifications</strong> — Azure AI Engineer Associate (AI-102), Azure Data Scientist Associate (DP-100), and the newer AI-900 fundamentals certification for non-technical roles. Particularly valuable for organizations in the Microsoft ecosystem.</li>
+<li><strong>Microsoft certifications</strong> — Azure AI Engineer Associate (AI-103: Developing AI Apps and Agents on Azure, which replaces AI-102 on 2026-06-30), Azure Data Scientist Associate (DP-100), and the AI-900 fundamentals certification for non-technical roles. Particularly valuable for organizations in the Microsoft ecosystem.</li>
 <li><strong>AWS certifications</strong> — AWS Machine Learning Specialty, AWS AI Practitioner, and the Cloud Practitioner foundation for managers who need cloud literacy. Strong for organizations building on AWS infrastructure.</li>
 <li><strong>Google Cloud certifications</strong> — Professional Machine Learning Engineer and Cloud Digital Leader for non-technical stakeholders. Google's certifications emphasize practical application and responsible AI practices.</li>
 <li><strong>Vendor-neutral certifications</strong> — CDMP (Certified Data Management Professional) for data governance, and various prompt engineering certifications emerging from organizations like DeepLearning.AI.</li>

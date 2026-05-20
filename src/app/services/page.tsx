@@ -44,7 +44,7 @@ const services = [
     title: 'Certification Preparation',
     description: 'Structured preparation for Microsoft Azure AI, Power BI, Copilot, and GitHub certifications with hands-on labs and practice exams.',
     href: '/services/certifications',
-    highlights: ['AI-102', 'PL-300', 'MS-4004', 'GitHub Certifications'],
+    highlights: ['AI-103', 'PL-300', 'MS-4004', 'GitHub Certifications'],
   },
 ]
 

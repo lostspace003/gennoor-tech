@@ -33,7 +33,7 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
   const [showSaveBanner, setShowSaveBanner] = useState(false)
   const [bannerDismissed, setBannerDismissed] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
-  const [zoomLevel, setZoomLevel] = useState(75)
+  const [zoomLevel, setZoomLevel] = useState(100)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [showWelcomeToast, setShowWelcomeToast] = useState(false)
   const [showCelebration, setShowCelebration] = useState(false)
