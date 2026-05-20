@@ -50,12 +50,15 @@
     transition: opacity 0.4s ease;
   }
 
-  /* Comfortable B2B type scale — Sora headings, tight tracking on large sizes. */
+  /* Comfortable B2B type scale — Sora headings, tight tracking on large sizes.
+     font-synthesis: none prevents the browser from faking weight 900 since Sora
+     only ships 100-800; any `font-black` class resolves to Sora 800 instead. */
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading;
     color: #111827;
     line-height: 1.18;
     letter-spacing: -0.02em;
+    font-synthesis: none;
   }
 
   h1 { @apply font-extrabold; font-size: clamp(2.25rem, 4.2vw, 2.75rem); }   /* 36 → 44px */
