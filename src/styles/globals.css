@@ -24,6 +24,10 @@
     --glow-accent: rgba(13, 148, 136, 0.12);
     --surface-elevated: rgba(255, 255, 255, 0.9);
     --nav-height: 5rem;
+    /* Azure-portal-style shell */
+    --portal-topbar-h: 56px;
+    --portal-rail-w-expanded: 272px;
+    --portal-rail-w-collapsed: 56px;
   }
 }
 
