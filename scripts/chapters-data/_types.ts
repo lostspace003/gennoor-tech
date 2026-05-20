@@ -199,6 +199,16 @@ export const AI_FOR_OPS_THEME: CourseTheme = {
   tint:        '#FAFAF9',
 }
 
+export const AI_MANUFACTURING_THEME: CourseTheme = {
+  primary:     '#334155',
+  primaryDeep: '#1E293B',
+  accent:      '#FBBF24',
+  accentLight: '#FDE68A',
+  navy:        '#0F172A',
+  cyan:        '#64748B',
+  tint:        '#F8FAFC',
+}
+
 export interface Chapter {
   courseId: string
   chapterId: string
