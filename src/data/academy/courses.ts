@@ -1742,6 +1742,156 @@ const baseCourses: Course[] = [
   },
 
   // ────────────────────────────────────────────────────────────────────
+  // FUNCTION TRACK — Microsoft 365 Copilot Adoption
+  // ────────────────────────────────────────────────────────────────────
+  {
+    slug: 'm365-copilot-adoption',
+    title: 'Microsoft 365 Copilot Adoption Playbook',
+    subtitle:
+      'A 70-minute playbook for IT and change leaders — persona-based licensing, the 4-week pilot template, prompt libraries, governance, measurement, and the 90-day rollout plan that lands at 70%+ adoption.',
+
+    track: 'function',
+    level: 'intermediate',
+    audience: ['director', 'manager', 'technical'],
+    functions: ['it-engineering'],
+    industries: ['cross-industry'],
+    stack: ['microsoft'],
+    pairedPhase: ['train', 'innovate', 'sustain'],
+
+    duration: '70 min',
+    chapterCount: 8,
+    format: ['interactive', 'video', 'reading'],
+
+    status: 'available',
+    lastUpdated: '2026-05-20',
+
+    interactiveUrl: '/ai-academy/m365-copilot-adoption',
+
+    hookSentence:
+      'Most Copilot rollouts stall at 10–20% six months in. This is the honest IT/change playbook for landing at 70%+ — persona licensing, 4-week pilot, prompt libraries, governance, measurement, and the 90-day plan.',
+    whoThisIsFor:
+      'IT leaders, change managers, modern-workplace owners, and the digital-adoption teams responsible for landing Microsoft 365 Copilot at scale. Especially relevant for organisations sitting on paid licenses with low actual usage — and for IT teams about to make a $1–10M Copilot commitment they need to defend at renewal.',
+    whatYoullLearn: [
+      'Why most Copilot rollouts stall at 10–20% — three honest reasons, none of them technology',
+      'Persona-based licensing math — four personas, the year-1 spend cut, how to push back on blanket-license pressure',
+      'The 4-week pilot template — week-by-week activities, exit criteria, and how the pilot funds the wider rollout',
+      'Persona-based prompt libraries — structure, content sourcing, governance — the asset that makes Copilot stick',
+      'Governance and the IT conversation — DLP, sensitivity labels, sharing posture, SharePoint hygiene before scale',
+      'Measurement in steady state — four numbers, three cadences, what fund renewal and detect drift',
+      'Scaling and the second wave — how to expand without losing what made the first wave work',
+      'Your 90-day Copilot rollout plan on one page — three phases, three deliverables, executive-sponsor ready',
+    ],
+    chapters: [
+      {
+        number: 1,
+        title: 'The Copilot adoption problem',
+        duration: '8 min',
+        objectives: [
+          'Name the three honest reasons most Copilot rollouts stall — none of them about technology',
+          'Distinguish what IT owns from what change management owns — and why the split decides the outcome',
+        ],
+      },
+      {
+        number: 2,
+        title: 'Licensing strategy',
+        duration: '9 min',
+        objectives: [
+          'Run persona-based sizing across four personas with adoption probability per persona',
+          'Defend the math against vendor blanket-license pressure — save 30–50% of year-1 spend',
+        ],
+        hasQuiz: true,
+      },
+      {
+        number: 3,
+        title: 'Pilot design for Copilot',
+        duration: '9 min',
+        objectives: [
+          'Run the 4-week pilot template — week-by-week activities and exit criteria',
+          'Build the executive-sponsor presentation that turns the pilot into funded rollout',
+        ],
+        hasExercise: true,
+      },
+      {
+        number: 4,
+        title: 'Persona-based prompt libraries',
+        duration: '9 min',
+        objectives: [
+          'Build the role-specific prompt library that makes Copilot stick after week two',
+          'Apply content-sourcing and governance disciplines so the library stays current and trusted',
+        ],
+        hasQuiz: true,
+      },
+      {
+        number: 5,
+        title: 'Governance and the IT conversation',
+        duration: '9 min',
+        objectives: [
+          'Run the 30-day IT preparation sprint — DLP, sensitivity labels, sharing posture, SharePoint audit',
+          'Have the IT-funding conversation that protects the rollout from a late-stage data-exposure incident',
+        ],
+      },
+      {
+        number: 6,
+        title: 'Measurement in steady state',
+        duration: '8 min',
+        objectives: [
+          'Track four numbers, three cadences — the steady-state Copilot health dashboard',
+          'Detect drift early — silent license churn, persona attrition, prompt-library staleness',
+        ],
+      },
+      {
+        number: 7,
+        title: 'Scaling and the second wave',
+        duration: '8 min',
+        objectives: [
+          'Expand beyond the initial 400 licenses without losing what made wave one work',
+          'Build the champion network as the scaling infrastructure for waves three through five',
+        ],
+        hasExercise: true,
+      },
+      {
+        number: 8,
+        title: 'Capstone — Your 90-day Copilot rollout plan',
+        duration: '6 min',
+        objectives: [
+          'Collapse the course into a three-phase, 90-day rollout plan with one deliverable per phase',
+          'Schedule the three quarter-1 conversations: executive sponsor, IT director, change-management lead',
+        ],
+        isCapstone: true,
+      },
+    ],
+    exerciseCount: 2,
+    capstoneTitle: 'Your 90-Day Copilot Rollout Plan',
+    references: [
+      {
+        title: 'Microsoft 365 Copilot — Adoption Hub',
+        source: 'Microsoft Adoption',
+        url: 'https://adoption.microsoft.com/en-us/copilot/',
+      },
+      {
+        title: 'Microsoft 365 Copilot — Setup & Configuration',
+        source: 'Microsoft Learn',
+        url: 'https://learn.microsoft.com/en-us/copilot/microsoft-365/',
+      },
+      {
+        title: 'Data, Privacy, and Security for Microsoft 365 Copilot',
+        source: 'Microsoft Learn',
+        url: 'https://learn.microsoft.com/en-us/copilot/microsoft-365/microsoft-365-copilot-privacy',
+      },
+      {
+        title: 'Microsoft Purview — Information Protection (Sensitivity Labels)',
+        source: 'Microsoft Learn',
+        url: 'https://learn.microsoft.com/en-us/purview/information-protection',
+      },
+    ],
+    pairedPocs: ['poc-17-microsoft-365-copilot-rollout'],
+    relatedCourseSlugs: [
+      'building-ai-agents-copilot-studio',
+      'ai-foundations-for-everyone',
+    ],
+  },
+
+  // ────────────────────────────────────────────────────────────────────
   // BUILDER TRACK — Copilot Studio
   // ────────────────────────────────────────────────────────────────────
   {
