@@ -109,8 +109,8 @@ export default function TrainingPage() {
                 href="#catalog"
                 className="inline-flex items-center px-7 py-3.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-sm font-semibold rounded-xl hover:shadow-glow-blue transition-all duration-300"
               >
-                <Download className="w-4 h-4 mr-2" />
-                Browse free PDF catalog ({allCoursePdfs.length} courses)
+                <BookOpen className="w-4 h-4 mr-2" />
+                Browse 2-day curriculum ({allCoursePdfs.length} courses)
               </a>
               <a
                 href="#bootcamps"
@@ -124,25 +124,25 @@ export default function TrainingPage() {
         </div>
       </section>
 
-      {/* ===== FREE PDF COURSE CATALOG ===== */}
+      {/* ===== 2-DAY TRAINING CURRICULUM CATALOG ===== */}
       <section id="catalog" className="relative py-14 lg:py-20 bg-gray-50 scroll-mt-24">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-10">
             <p className="text-xs font-bold tracking-widest text-primary-600 uppercase mb-3">
-              Free · Branded · Downloadable
+              Instructor-led · 2 days · 16 hours
             </p>
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              The Gennoor Academy course catalog.
+              2-Day training curriculum catalog.
             </h2>
             <p className="text-base text-gray-500 leading-relaxed">
-              {allCoursePdfs.length} branded course briefs across five tracks. Each PDF is a self-contained
-              ~6–10 page guide — outcomes, audience, full module breakdown, plus an <strong className="text-gray-700">Enablement Sidebar</strong> on
-              every module that bridges from reading to a 4-week pilot inside your organisation.
+              {allCoursePdfs.length} 2-day (16-hour) instructor-led training courses across five tracks.
+              Each course is a paid engagement — delivered on-site or virtual to your team, customised to your
+              industry, your data, and your tools. View the curriculum below, or download for sharing.
             </p>
-            <div className="inline-flex items-center gap-2 mt-5 px-4 py-2 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900">
+            <div className="inline-flex items-center gap-2 mt-5 px-4 py-2 bg-primary-50 border border-primary-200 rounded-lg text-xs text-primary-900">
               <BookOpen className="w-4 h-4" />
-              No sign-in required. Click to download. Share freely.
+              Click any course to view the full curriculum PDF in your browser, or download to share.
             </div>
           </div>
 
@@ -349,8 +349,8 @@ export default function TrainingPage() {
           <h2 className="text-3xl font-bold text-gray-900 mb-10 text-center">FAQ</h2>
           <div className="max-w-3xl mx-auto space-y-4">
             {[
-              { question: 'Are the PDF courses really free?', answer: 'Yes. No sign-in, no email gate. Download and share freely. Each PDF ends with a "next steps" page — apply it in your company, take it as a team, or go deeper via a bootcamp. We monetise the apply-it-step.' },
-              { question: 'What\'s the difference between a PDF brief and a bootcamp?', answer: 'PDFs are ~6–10 page course briefs you read in 20 minutes — outcomes, modules, audience, enablement bridge. Bootcamps are 2–10 day intensives with hands-on labs on your data, run by a senior trainer in your time zone.' },
+              { question: 'How does the 2-day curriculum work?', answer: 'Each curriculum is a paid, instructor-led 2-day (16-hour) course delivered on-site or virtual to your team. The PDF is the full curriculum document — outcomes, modules, topic breakdown — that you can review before booking. Customised to your industry, your data, your tools.' },
+              { question: 'What\'s the difference between a 2-day curriculum and a longer bootcamp?', answer: '2-day curriculum courses are focused, single-topic intensives — one core skill mastered across 16 hours. Bootcamps are 3–10 day deep dives that combine multiple skills and include hands-on labs on your live environment. Most teams start with a 2-day course and scale up from there.' },
               { question: 'How are bootcamps customised?', answer: 'Every bootcamp is tailored to your industry, tech stack, and team skill level. We conduct a pre-training assessment to understand your goals and design the curriculum around your specific use cases and data.' },
               { question: 'What is the minimum batch size?', answer: 'Five participants minimum. Max 15–20 for personalised attention. For larger groups we run parallel batches.' },
               { question: 'Do you include certification preparation?', answer: 'Yes, many bootcamps include cert prep for Microsoft, AWS, Google Cloud, GitHub exams. Trainer holds 16+ active certs with 98% student pass rate.' },
@@ -402,12 +402,16 @@ export default function TrainingPage() {
 // =====================================================================
 
 function CoursePdfCard({ course }: { course: CoursePdf }) {
+  const viewerUrl = `/services/training/curriculum/${course.slug}`
   const pdfUrl = `/api/content/courses/pdfs/${course.slug}.pdf`
   return (
-    <div className="group bg-white rounded-2xl ring-1 ring-gray-200 hover:ring-primary-300 hover:shadow-lg transition-all duration-300 p-5 flex flex-col">
+    <Link
+      href={viewerUrl}
+      className="group bg-white rounded-2xl ring-1 ring-gray-200 hover:ring-primary-300 hover:shadow-lg transition-all duration-300 p-5 flex flex-col"
+    >
       <div className="flex items-start justify-between mb-3">
-        <span className="inline-flex items-center text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full uppercase tracking-wider">
-          FREE PDF
+        <span className="inline-flex items-center text-[10px] font-bold text-primary-700 bg-primary-50 px-2 py-0.5 rounded-full uppercase tracking-wider">
+          2-Day Course · 16h
         </span>
         <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider">
           {course.trackLabel}
@@ -429,15 +433,22 @@ function CoursePdfCard({ course }: { course: CoursePdf }) {
           {course.modules.length} modules
         </span>
       </div>
-      <a
-        href={pdfUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center justify-center gap-2 px-3 py-2 text-xs font-semibold text-primary-700 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors"
-      >
-        <Download className="w-3.5 h-3.5" />
-        Download PDF
-      </a>
-    </div>
+      <div className="flex gap-2">
+        <span className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-primary-700 bg-primary-50 group-hover:bg-primary-100 rounded-lg transition-colors">
+          View curriculum
+          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+        </span>
+        <a
+          href={pdfUrl}
+          download={`${course.slug}.pdf`}
+          onClick={e => e.stopPropagation()}
+          className="inline-flex items-center justify-center gap-1.5 px-2.5 py-2 text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+          title="Download PDF"
+          aria-label="Download PDF"
+        >
+          <Download className="w-3.5 h-3.5" />
+        </a>
+      </div>
+    </Link>
   )
 }
