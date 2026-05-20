@@ -55,7 +55,7 @@ export const aiFoundationsForEveryone: CoursePdf = {
   track: 'foundations',
   trackLabel: 'Foundations',
   audience: 'All employees, including non-technical staff and new joiners',
-  duration: '~60 min self-paced read',
+  duration: '2 days (16 hours)',
   pages: 48,
   outcomes: [
     'Speak the same AI vocabulary as your most technical colleagues — without becoming one',
@@ -86,7 +86,7 @@ export const genAiForBusiness: CoursePdf = {
   track: 'foundations',
   trackLabel: 'Foundations',
   audience: 'Managers, team leads, business analysts',
-  duration: '~50 min self-paced read',
+  duration: '2 days (16 hours)',
   pages: 40,
   outcomes: [
     'Frame GenAI value in P&L terms — not feature lists',
@@ -116,7 +116,7 @@ export const aiLiteracyNonTech: CoursePdf = {
   track: 'foundations',
   trackLabel: 'Foundations',
   audience: 'Individual contributors in HR, Marketing, Sales, Operations',
-  duration: '~45 min self-paced read',
+  duration: '2 days (16 hours)',
   pages: 36,
   outcomes: [
     'Demystify five AI buzzwords your boss uses in meetings',
@@ -149,7 +149,7 @@ export const aiForHr: CoursePdf = {
   track: 'function',
   trackLabel: 'By Function',
   audience: 'HR leaders, L&D managers, people operations, HR business partners',
-  duration: '~65 min self-paced read',
+  duration: '2 days (16 hours)',
   pages: 56,
   outcomes: [
     'Name four HR AI plays sequenced over 18 months + the fifth pattern HR should refuse',
@@ -181,7 +181,7 @@ export const aiForFinance: CoursePdf = {
   track: 'function',
   trackLabel: 'By Function',
   audience: 'CFOs, controllers, FP&A leaders, accountants',
-  duration: '~70 min self-paced read',
+  duration: '2 days (16 hours)',
   pages: 60,
   outcomes: [
     'Run AI inside the financial close without breaking control posture',
@@ -213,7 +213,7 @@ export const aiForSalesMarketing: CoursePdf = {
   track: 'function',
   trackLabel: 'By Function',
   audience: 'CROs, CMOs, sales ops, demand gen, revenue operations',
-  duration: '~65 min self-paced read',
+  duration: '2 days (16 hours)',
   pages: 52,
   outcomes: [
     'Apply the one principle that filters 60% of AI vendor pitches in 10 seconds',
@@ -245,7 +245,7 @@ export const aiForCustomerService: CoursePdf = {
   track: 'function',
   trackLabel: 'By Function',
   audience: 'CX leaders, contact-centre operators, support managers',
-  duration: '~65 min self-paced read',
+  duration: '2 days (16 hours)',
   pages: 48,
   outcomes: [
     'Apply the principle — AI handles volume, humans handle judgment — to every vendor pitch',
@@ -277,7 +277,7 @@ export const aiForOps: CoursePdf = {
   track: 'function',
   trackLabel: 'By Function',
   audience: 'COOs, supply chain directors, plant managers, logistics heads',
-  duration: '~70 min self-paced read',
+  duration: '2 days (16 hours)',
   pages: 56,
   outcomes: [
     'Run the data-stable filter (data ready · process stable) per play before any AI investment',
@@ -309,7 +309,7 @@ export const aiForLegal: CoursePdf = {
   track: 'function',
   trackLabel: 'By Function',
   audience: 'General Counsels, compliance officers, risk leaders',
-  duration: '~60 min self-paced read',
+  duration: '2 days (16 hours)',
   pages: 52,
   outcomes: [
     'Apply contract review AI with paralegal-in-loop pattern that preserves privilege',
@@ -343,7 +343,7 @@ export const aiStrategyCsuite: CoursePdf = {
   track: 'leadership',
   trackLabel: 'Leadership',
   audience: 'CEOs, CIOs, CDOs, CSOs',
-  duration: '~50 min self-paced read',
+  duration: '2 days (16 hours)',
   pages: 44,
   outcomes: [
     'Identify where AI value actually lives in your business (and where it doesn\'t)',
@@ -374,7 +374,7 @@ export const aiGovernanceBoards: CoursePdf = {
   track: 'leadership',
   trackLabel: 'Leadership',
   audience: 'Board directors, audit committee chairs, risk committee chairs',
-  duration: '~50 min self-paced read',
+  duration: '2 days (16 hours)',
   pages: 32,
   outcomes: [
     'Carry five questions into the next audit committee meeting',
@@ -406,7 +406,7 @@ export const aiRoiBusinessCase: CoursePdf = {
   track: 'leadership',
   trackLabel: 'Leadership',
   audience: 'Finance partners, PMOs, business case authors, CFOs',
-  duration: '~55 min self-paced read',
+  duration: '2 days (16 hours)',
   pages: 40,
   outcomes: [
     'Apply the four ROI patterns to any AI investment proposal',
@@ -440,7 +440,7 @@ export const aiFinancialServices: CoursePdf = {
   track: 'industry',
   trackLabel: 'By Industry',
   audience: 'BFSI leaders — banks, insurance, capital markets, payments',
-  duration: '~70 min self-paced read',
+  duration: '2 days (16 hours)',
   pages: 60,
   outcomes: [
     'Deploy fraud detection that beats classical rules without breaking explainability',
@@ -472,7 +472,7 @@ export const aiHealthcare: CoursePdf = {
   track: 'industry',
   trackLabel: 'By Industry',
   audience: 'Hospital administrators, chief medical informatics officers, hospital CIOs',
-  duration: '~65 min self-paced read',
+  duration: '2 days (16 hours)',
   pages: 56,
   outcomes: [
     'Name the four healthcare AI plays + the careful fifth (clinical decision support)',
@@ -504,7 +504,7 @@ export const aiManufacturing: CoursePdf = {
   track: 'industry',
   trackLabel: 'By Industry',
   audience: 'Plant managers, VPs of manufacturing, plant operations directors',
-  duration: '~70 min self-paced read',
+  duration: '2 days (16 hours)',
   pages: 56,
   outcomes: [
     'Apply the OT/IT bridge filter (data accessible · data quality usable · culture supports)',
@@ -536,7 +536,7 @@ export const aiGovernment: CoursePdf = {
   track: 'industry',
   trackLabel: 'By Industry',
   audience: 'Public sector CIOs, transformation leads, ministry of digital transformation',
-  duration: '~65 min self-paced read',
+  duration: '2 days (16 hours)',
   pages: 56,
   outcomes: [
     'Deploy citizen-services AI under public-trust framework',
@@ -567,7 +567,7 @@ export const aiEducation: CoursePdf = {
   track: 'industry',
   trackLabel: 'By Industry',
   audience: 'University administrators, EdTech leaders, ministry of education staff',
-  duration: '~60 min self-paced read',
+  duration: '2 days (16 hours)',
   pages: 48,
   outcomes: [
     'Deploy personalized learning AI without replacing teacher judgment',
@@ -601,7 +601,7 @@ export const promptEngineering: CoursePdf = {
   track: 'builder',
   trackLabel: 'Builder',
   audience: 'Developers, analysts, power users building with LLMs',
-  duration: '~55 min self-paced read',
+  duration: '2 days (16 hours)',
   pages: 44,
   requirements: 'Working knowledge of one programming language + an LLM API key (OpenAI · Anthropic · Azure OpenAI)',
   outcomes: [
@@ -632,7 +632,7 @@ export const copilotStudio: CoursePdf = {
   track: 'builder',
   trackLabel: 'Builder',
   audience: 'Power Platform developers, citizen developers, solution architects, Copilot Studio admins',
-  duration: '~75 min self-paced read',
+  duration: '2 days (16 hours)',
   pages: 60,
   requirements: 'Microsoft 365 + Power Platform tenant access. Familiarity with Power Automate is helpful but not required.',
   outcomes: [
@@ -665,7 +665,7 @@ export const m365Copilot: CoursePdf = {
   track: 'builder',
   trackLabel: 'Builder',
   audience: 'IT leaders, change managers, modern-workplace owners',
-  duration: '~70 min self-paced read',
+  duration: '2 days (16 hours)',
   pages: 40,
   outcomes: [
     'Name three reasons most Copilot rollouts stall at 10–20% — none about technology',
@@ -697,7 +697,7 @@ export const claudeCodeDevelopers: CoursePdf = {
   track: 'builder',
   trackLabel: 'Builder',
   audience: 'Software engineers, ML engineers, AI application developers',
-  duration: '~24 hours hands-on (bootcamp format) · or ~80 min self-paced read of this catalog brief',
+  duration: '2 days (16 hours)',
   pages: 60,
   requirements: 'Claude Pro/Team subscription · Anthropic API key with credits · Node.js + Python 3.10+ · VS Code · Claude Code installed via npm · Git · Docker',
   outcomes: [
@@ -734,7 +734,7 @@ export const mlForecasting: CoursePdf = {
   track: 'builder',
   trackLabel: 'Builder',
   audience: 'Analysts, BI leaders, ops planners, finance modelers',
-  duration: '~65 min self-paced read',
+  duration: '2 days (16 hours)',
   pages: 52,
   outcomes: [
     'Apply the four-question filter: ML vs LLM vs neither',
