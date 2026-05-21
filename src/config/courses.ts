@@ -1996,6 +1996,118 @@ export const courses: Course[] = [
       },
     ],
   },
+  {
+    id: 'working-with-copilots',
+    title: 'Working with Copilots',
+    shortTitle: 'Working with Copilots',
+    description:
+      'A 50-minute practical guide for professionals already using M365 Copilot, GitHub Copilot, or ChatGPT Enterprise — when to lean in, when to skip it.',
+    longDescription:
+      'For analysts, managers, and individual contributors already issued M365 Copilot, GitHub Copilot, or ChatGPT Enterprise. Seven chapters: the three-layer mental model (chat / grounded / agentic); the time-to-decent-draft test for when to use Copilot at all; the four Office workflows (Word, Excel, Outlook, Teams) plus the wrong-file trap; GitHub Copilot for non-developers (spreadsheets, regex, scripts); the three things ChatGPT Enterprise does that M365 Copilot can\'t (deep research, Operator agents, Canvas); security and data-exposure boundaries with Microsoft\'s own quotes on Restricted SharePoint Search and the EU Data Boundary gotcha; and the close — your one-page operating manual with 5 always-use tasks, 3 nevers, and the Friday review.',
+    thumbnail: '/courses/working-with-copilots/thumbnail.png',
+    level: 'Intermediate',
+    duration: '~50 min',
+    certification: 'No',
+    totalChapters: 7,
+    tags: ['Foundations', 'M365 Copilot', 'GitHub Copilot', 'ChatGPT Enterprise', 'Microsoft', 'Security'],
+    badge: 'FREE',
+    theme: {
+      primary:     '#475569',
+      primaryDeep: '#334155',
+      accent:      '#F97316',
+      accentLight: '#FDBA74',
+      navy:        '#1E293B',
+      cyan:        '#94A3B8',
+      tint:        '#F8FAFC',
+    },
+    chapters: [
+      {
+        id: 'chapter-01',
+        slug: 'chapter-01-mental-model',
+        number: 1,
+        title: 'The Copilot mental model',
+        description:
+          'Copilot isn\'t one thing — it\'s three. Chat-only, grounded, and agentic. The trick to using them well is knowing which layer you\'re talking to.',
+        htmlFile: '/courses/working-with-copilots/chapters/chapter-01-mental-model.html',
+        estimatedMinutes: 8,
+        isFree: true,
+        chapterAudio: '/courses/working-with-copilots/audio/chapter-01/chapter-01.mp3',
+        chapterCues: '/courses/working-with-copilots/audio/chapter-01/cues.json',
+      },
+      {
+        id: 'chapter-02',
+        slug: 'chapter-02-when-to-use',
+        number: 2,
+        title: 'When to use Copilot vs. do it yourself',
+        description:
+          'The one-sentence test — time-to-decent-draft. Three patterns that always lose. Honest counter-data from the Australian government Copilot trials.',
+        htmlFile: '/courses/working-with-copilots/chapters/chapter-02-when-to-use.html',
+        estimatedMinutes: 7,
+        chapterAudio: '/courses/working-with-copilots/audio/chapter-02/chapter-02.mp3',
+        chapterCues: '/courses/working-with-copilots/audio/chapter-02/cues.json',
+      },
+      {
+        id: 'chapter-03',
+        slug: 'chapter-03-office-workflows',
+        number: 3,
+        title: 'Office Copilot workflows',
+        description:
+          'One workflow per app — Word, Excel, Outlook, Teams. Plus the recurring trap: Copilot grabs the wrong file because of permission/path defaults.',
+        htmlFile: '/courses/working-with-copilots/chapters/chapter-03-office-workflows.html',
+        estimatedMinutes: 7,
+        chapterAudio: '/courses/working-with-copilots/audio/chapter-03/chapter-03.mp3',
+        chapterCues: '/courses/working-with-copilots/audio/chapter-03/cues.json',
+      },
+      {
+        id: 'chapter-04',
+        slug: 'chapter-04-github-copilot',
+        number: 4,
+        title: 'GitHub Copilot for non-developers',
+        description:
+          'Copilot Spaces + Agent Mode broke GitHub Copilot out of code-only. Spreadsheets, regex, weekly automation — three use cases a non-dev can ship.',
+        htmlFile: '/courses/working-with-copilots/chapters/chapter-04-github-copilot.html',
+        estimatedMinutes: 7,
+        chapterAudio: '/courses/working-with-copilots/audio/chapter-04/chapter-04.mp3',
+        chapterCues: '/courses/working-with-copilots/audio/chapter-04/cues.json',
+      },
+      {
+        id: 'chapter-05',
+        slug: 'chapter-05-chatgpt-enterprise',
+        number: 5,
+        title: 'ChatGPT Enterprise edge cases',
+        description:
+          'Three things ChatGPT Enterprise does that M365 Copilot doesn\'t — deep research with citations, Operator-style web agents, Canvas co-editing.',
+        htmlFile: '/courses/working-with-copilots/chapters/chapter-05-chatgpt-enterprise.html',
+        estimatedMinutes: 7,
+        chapterAudio: '/courses/working-with-copilots/audio/chapter-05/chapter-05.mp3',
+        chapterCues: '/courses/working-with-copilots/audio/chapter-05/cues.json',
+      },
+      {
+        id: 'chapter-06',
+        slug: 'chapter-06-security',
+        number: 6,
+        title: 'Security and data-exposure boundaries',
+        description:
+          'Microsoft\'s own words: "Restricted SharePoint Search isn\'t a security boundary." The EU Data Boundary Anthropic gotcha. EU AI Act, NIST RMF, India DPDP.',
+        htmlFile: '/courses/working-with-copilots/chapters/chapter-06-security.html',
+        estimatedMinutes: 8,
+        chapterAudio: '/courses/working-with-copilots/audio/chapter-06/chapter-06.mp3',
+        chapterCues: '/courses/working-with-copilots/audio/chapter-06/cues.json',
+      },
+      {
+        id: 'chapter-07',
+        slug: 'chapter-07-making-it-stick',
+        number: 7,
+        title: 'Making it stick: your Copilot operating manual',
+        description:
+          'Five always-use tasks. Three nevers. The Friday review. Fill in the operating-manual builder, download the markdown, print it, pin it where you can see it.',
+        htmlFile: '/courses/working-with-copilots/chapters/chapter-07-making-it-stick.html',
+        estimatedMinutes: 6,
+        chapterAudio: '/courses/working-with-copilots/audio/chapter-07/chapter-07.mp3',
+        chapterCues: '/courses/working-with-copilots/audio/chapter-07/cues.json',
+      },
+    ],
+  },
 ]
 
 export function getCourseById(id: string): Course | undefined {
