@@ -68,6 +68,7 @@ const ACADEMY_SLUG_PREFIXES: Record<string, string> = {
   'ai-literacy-non-technical-teams': 'GNR-ACAD-LIT',
   'prompting-mastery': 'GNR-ACAD-PROMPT',
   'working-with-copilots': 'GNR-ACAD-CPLT',
+  'evaluating-ai-output': 'GNR-ACAD-EVAL',
 }
 
 export function generateCertId(workshopSlug: string, year: number): string {

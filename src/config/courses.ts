@@ -2108,6 +2108,118 @@ export const courses: Course[] = [
       },
     ],
   },
+  {
+    id: 'evaluating-ai-output',
+    title: 'Evaluating AI Output',
+    shortTitle: 'Evaluating AI Output',
+    description:
+      'A 45-minute discipline for professionals reviewing AI-generated work — spotting hallucinations, checking sources, building a verification habit.',
+    longDescription:
+      'For ICs and managers reviewing AI-generated work — their own, their team\'s, or a vendor\'s. Seven chapters: the fluency illusion (Microsoft FAccT 2024, Anthropic sycophancy, Stanford HAI 2026); accuracy vs. usefulness as separate tests; three hallucination patterns (confident fabrication, plausible detail, stale fact) anchored in NIST AI 600-1 and the Vectara HHEM leaderboard; citation evaluation with the Mata v. Avianca anchor, 1,353+ court cases, Sixth Circuit $30K sanctions, and Deloitte Australia\'s AU$290K refund; demographic and regional bias with named cases (Bloomberg study, EEOC iTutorGroup, Workday Mobley class action); the verification habit grounded in Lally\'s 66-day study and BJ Fogg\'s B=MAP formula; and the close — your one-page verification playbook with three never-skip checks, one escalation rule, and the Friday review.',
+    thumbnail: '/courses/evaluating-ai-output/thumbnail.png',
+    level: 'Intermediate',
+    duration: '~45 min',
+    certification: 'No',
+    totalChapters: 7,
+    tags: ['Foundations', 'Evaluation', 'Hallucinations', 'Citations', 'Bias', 'NIST', 'Verification'],
+    badge: 'FREE',
+    theme: {
+      primary:     '#475569',
+      primaryDeep: '#334155',
+      accent:      '#F97316',
+      accentLight: '#FDBA74',
+      navy:        '#1E293B',
+      cyan:        '#94A3B8',
+      tint:        '#F8FAFC',
+    },
+    chapters: [
+      {
+        id: 'chapter-01',
+        slug: 'chapter-01-evaluation-is-hard',
+        number: 1,
+        title: 'Why AI evaluation is harder than it looks',
+        description:
+          'The fluency illusion is real. Microsoft FAccT 2024 study (404 participants), Anthropic sycophancy paper, Stanford HAI 2026 — confident writing convinces us regardless of accuracy.',
+        htmlFile: '/courses/evaluating-ai-output/chapters/chapter-01-evaluation-is-hard.html',
+        estimatedMinutes: 6,
+        isFree: true,
+        chapterAudio: '/courses/evaluating-ai-output/audio/chapter-01/chapter-01.mp3',
+        chapterCues: '/courses/evaluating-ai-output/audio/chapter-01/cues.json',
+      },
+      {
+        id: 'chapter-02',
+        slug: 'chapter-02-accuracy-vs-usefulness',
+        number: 2,
+        title: 'Accuracy vs. usefulness',
+        description:
+          'Two different tests. Accurate-and-useless. Useful-and-wrong. The rule: whichever failure is hardest to recover from goes first. The Deloitte Australia anchor.',
+        htmlFile: '/courses/evaluating-ai-output/chapters/chapter-02-accuracy-vs-usefulness.html',
+        estimatedMinutes: 6,
+        chapterAudio: '/courses/evaluating-ai-output/audio/chapter-02/chapter-02.mp3',
+        chapterCues: '/courses/evaluating-ai-output/audio/chapter-02/cues.json',
+      },
+      {
+        id: 'chapter-03',
+        slug: 'chapter-03-hallucination-patterns',
+        number: 3,
+        title: 'Spotting hallucinations in 3 patterns',
+        description:
+          'Confident fabrication. Plausible detail. Stale fact. NIST taxonomy, OpenAI "why models hallucinate", Vectara HHEM — reasoning models actually hallucinate MORE on long-form text.',
+        htmlFile: '/courses/evaluating-ai-output/chapters/chapter-03-hallucination-patterns.html',
+        estimatedMinutes: 7,
+        chapterAudio: '/courses/evaluating-ai-output/audio/chapter-03/chapter-03.mp3',
+        chapterCues: '/courses/evaluating-ai-output/audio/chapter-03/cues.json',
+      },
+      {
+        id: 'chapter-04',
+        slug: 'chapter-04-citations',
+        number: 4,
+        title: 'Evaluating sources and citations',
+        description:
+          '1,353+ court cases through 2026. Mata v. Avianca to the Sixth Circuit $30K sanctions. Deloitte AU$290K refund. The Nature 72% fake-citation finding. The 3-step citation check.',
+        htmlFile: '/courses/evaluating-ai-output/chapters/chapter-04-citations.html',
+        estimatedMinutes: 7,
+        chapterAudio: '/courses/evaluating-ai-output/audio/chapter-04/chapter-04.mp3',
+        chapterCues: '/courses/evaluating-ai-output/audio/chapter-04/cues.json',
+      },
+      {
+        id: 'chapter-05',
+        slug: 'chapter-05-bias',
+        number: 5,
+        title: 'Spotting bias in outputs',
+        description:
+          'Bloomberg resume study (11% top-rank for Black women), EEOC iTutorGroup $365K settlement, Workday Mobley class action, MMLU-ProX 30-point Swahili gap. Demographic + regional patterns.',
+        htmlFile: '/courses/evaluating-ai-output/chapters/chapter-05-bias.html',
+        estimatedMinutes: 7,
+        chapterAudio: '/courses/evaluating-ai-output/audio/chapter-05/chapter-05.mp3',
+        chapterCues: '/courses/evaluating-ai-output/audio/chapter-05/cues.json',
+      },
+      {
+        id: 'chapter-06',
+        slug: 'chapter-06-verification-habit',
+        number: 6,
+        title: 'Building your verification habit',
+        description:
+          'Lally\'s 66-day median to automaticity. Moore\'s overprecision research. BJ Fogg\'s B=MAP formula. The 5-minute three-step routine that survives week three.',
+        htmlFile: '/courses/evaluating-ai-output/chapters/chapter-06-verification-habit.html',
+        estimatedMinutes: 6,
+        chapterAudio: '/courses/evaluating-ai-output/audio/chapter-06/chapter-06.mp3',
+        chapterCues: '/courses/evaluating-ai-output/audio/chapter-06/cues.json',
+      },
+      {
+        id: 'chapter-07',
+        slug: 'chapter-07-playbook',
+        number: 7,
+        title: 'Making it stick: your verification playbook',
+        description:
+          'Three never-skip checks. One escalation rule. The Friday review. Fill in the playbook builder, download the markdown, print it, pin it where you can see it.',
+        htmlFile: '/courses/evaluating-ai-output/chapters/chapter-07-playbook.html',
+        estimatedMinutes: 5,
+        chapterAudio: '/courses/evaluating-ai-output/audio/chapter-07/chapter-07.mp3',
+        chapterCues: '/courses/evaluating-ai-output/audio/chapter-07/cues.json',
+      },
+    ],
+  },
 ]
 
 export function getCourseById(id: string): Course | undefined {
