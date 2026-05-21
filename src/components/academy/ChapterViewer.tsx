@@ -11,6 +11,7 @@ import SaveProgressModal from './SaveProgressModal'
 import LearnerAuthModal from './LearnerAuthModal'
 import CourseCompletionOverlay from './CourseCompletionOverlay'
 import AudioPlayer from './AudioPlayer'
+import ChapterAudioControls from './ChapterAudioControls'
 
 interface ChapterViewerProps {
   courseId: string
@@ -494,8 +495,8 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
           </button>
         </div>
 
-        {/* Audio player */}
-        {chapter.audioDir && (
+        {/* Audio player — legacy per-slide MP3 pattern */}
+        {chapter.audioDir && !chapter.chapterAudio && (
           <AudioPlayer
             audioDir={chapter.audioDir}
             currentSlide={currentSlideNum}
@@ -506,6 +507,16 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
             onAdvanceStep={advanceStepInIframe}
             onResetSteps={resetStepsInIframe}
             onRevealAllSteps={revealAllStepsInIframe}
+          />
+        )}
+
+        {/* Audio player — new timestamp-fire pattern (one MP3 + cues per chapter) */}
+        {chapter.chapterAudio && (
+          <ChapterAudioControls
+            chapterAudio={chapter.chapterAudio}
+            chapterCues={chapter.chapterCues}
+            iframeRef={iframeRef}
+            totalSlides={totalSlidesNum}
           />
         )}
 
