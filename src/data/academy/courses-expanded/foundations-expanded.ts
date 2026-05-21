@@ -299,7 +299,8 @@ export const foundationsExpanded: Course[] = [
     format: ['video', 'reading'],
 
     status: 'available',
-    lastUpdated: '2026-05-19',
+    lastUpdated: '2026-05-21',
+    interactiveUrl: '/ai-academy/working-with-copilots',
 
     hookSentence:
       'You have the licence. Now — when to use Copilot, when to skip it, and where the data-exposure lines are.',
