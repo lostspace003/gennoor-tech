@@ -74,6 +74,7 @@ const ACADEMY_SLUG_PREFIXES: Record<string, string> = {
   'building-trusted-support-bots': 'GNR-ACAD-BOT',
   'ai-for-legal-compliance': 'GNR-ACAD-LEG',
   'ai-augmented-month-end-close': 'GNR-ACAD-CLS',
+  'demand-forecasting-in-practice': 'GNR-ACAD-FCT',
 }
 
 export function generateCertId(workshopSlug: string, year: number): string {
