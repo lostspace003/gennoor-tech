@@ -47,7 +47,7 @@ What works in close-cycle AI today. *Reconciliation copilots.* Bank rec, interco
 
 > [S5 ▸ reveal 2 · what doesn't]
 
-What doesn't work yet. *Judgement accruals — litigation, restructuring, complex revenue recognition.* Anything where the answer depends on facts only humans know. *AI gets close. Human gets correct.* The Wall Street Journal CFO Journal in August twenty twenty-five reported a Fortune Five Hundred controller catching an AI-generated revenue recognition narrative referencing a contract clause that didn't exist. *Close held thirty-six hours.* That's the failure mode that scares audit committees.
+What doesn't work yet. *Judgement accruals — litigation, restructuring, complex revenue recognition.* Anything where the answer depends on facts only humans know. *AI gets close. Human gets correct.* And there's a specific failure mode auditors and audit committees are watching for in twenty twenty-six — *the confabulated-source narrative.* AI commentary that references a contract clause that doesn't exist. A promotion that wasn't run. A customer that didn't sign. *The legal-system precedent is Mata versus Avianca — court briefs with fabricated citations. The same failure mode is now being caught in MD&A drafts.* That's what scares audit committees.
 
 > [S6 ▸ slide change · t ≈ 4:15]
 

@@ -29,7 +29,7 @@ Demand forecasting is the use case where ML on tabular data has been delivering 
 | 13 | Promotional uplift forecasting: 2024-25 case studies from Coca-Cola, Unilever, Carrefour show 20-40% accuracy improvement on promotional weeks via AI vs naive baseline | Vendor case studies + Gartner | 2024-2025 |
 | 14 | S&OP integration: SCC 2025 — only 38% of organisations connect ML demand forecast to executive S&OP decisions; the gap is the narrative layer + accountability | SCC 2025 + Gartner | 2025 |
 | 15 | Forecast value-added (FVA) analysis: gold-standard methodology for measuring whether human override adds or subtracts accuracy. From Mike Gilliland (SAS) 2010+ — increasingly mandatory in mature S&OP | Gilliland FVA + APICS | ongoing |
-| 16 | LLM hallucination in forecast narratives: a 2025 industry blog (LokadTech) documented LLM-generated S&OP commentary attributing variance to a quarter-end promotion that wasn't run | LokadTech 2025 | 2025 |
+| 16 | LLM hallucination in forecast narratives: the confabulated-source failure mode — LLM-generated S&OP commentary attributing variance to a planned promotion that was actually cancelled. The cross-domain analog is Mata v. Avianca (S.D.N.Y. Jun 2023). Pattern industry observers warn about. | Industry pattern + Mata v. Avianca analog | 2024-2026 |
 | 17 | EU AI Act high-risk classification: demand forecasting itself is not Annex III, but employment-affecting workforce-planning forecasts are; supply chain leaders should know the boundary | EU AI Act 2024/1689 | Aug 2026 |
 | 18 | India RBI guidance on AI in financial services (2025) — adjacent; supply chain AI is not directly regulated but explainability is becoming a vendor-RFP standard | RBI master direction 2025 | 2025 |
 | 19 | Forecast horizon decomposition: short-term (1-4 wk) → ML demand sensing; mid-term (1-12 mo) → ML or hybrid; long-term (12-36 mo) → judgement-heavy + scenario; ML alone is weak past 6 months | Industry consensus + multiple vendor docs | 2024-2025 |
@@ -38,7 +38,7 @@ Demand forecasting is the use case where ML on tabular data has been delivering 
 ## Named incidents
 
 1. **M5 Competition (2022)** — LightGBM-dominated, classical methods still competitive on aggregated levels. Use to ground "no single technique wins."
-2. **LokadTech LLM-narrative hallucination (2025)** — phantom promotion attribution. Use to ground quote-or-cut in S&OP commentary.
+2. **The confabulated-source pattern in S&OP commentary** — LLM attributing variance to a planned promotion that was cancelled. Industry-observed pattern; ground in cross-domain analog (Mata v. Avianca) rather than a specific named publication.
 3. **P&G NPI case (2024)** — analog-product lookup + early signals. Use to ground NPI methodology.
 
 ## What we do NOT say
@@ -76,7 +76,7 @@ Demand forecasting is the use case where ML on tabular data has been delivering 
 **Sources:** [12].
 
 ### Chapter 7 — Connecting forecast to S&OP (~5 min)
-**What:** SCC 2025 — only 38% connect ML forecast to executive S&OP decisions. Forecast value-added (FVA) analysis. The narrative layer where LLMs add value — and the LokadTech hallucination. Quote-or-cut for S&OP commentary. Executive consensus + planner judgement + ML.
+**What:** SCC research — only ~38% connect ML forecast to executive S&OP decisions. Forecast value-added (FVA) analysis. The narrative layer where LLMs add value — and the confabulated-source failure mode (industry pattern + cross-domain analog: Mata v. Avianca). Quote-or-cut for S&OP commentary. Executive consensus + planner judgement + ML.
 **Sources:** [14], [15], [16].
 
 ### Chapter 8 — Making it stick · 2-quarter rollout (~4 min)

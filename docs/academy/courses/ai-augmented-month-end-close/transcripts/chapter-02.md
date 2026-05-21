@@ -25,9 +25,9 @@ The pattern. *AI ingests the variance file — actuals versus budget versus prio
 
 > [S3 ▸ reveal 1 · the failure mode]
 
-The failure mode. *Wall Street Journal CFO Journal — August twenty twenty-five.* A Fortune Five Hundred controller caught an AI-generated revenue recognition narrative referencing a contract clause that *didn't exist.* The AI confabulated a specific clause to justify a variance. *Close held thirty-six hours while it was investigated.*
+The failure mode auditors are watching for. *The confabulated-source narrative.* AI commentary that confidently references a contract clause that doesn't exist. A promotion that wasn't run. A customer that didn't actually sign. *The AI invents a specific source to justify a variance — because invented specifics sound credible.*
 
-This is the variance-narrative version of *Mata v. Avianca.* The lesson is identical. *Every claim in the narrative gets cited and verified — or cut.* Quote-or-cut. *If the AI says "Q three revenue grew due to the strategic customer deal closed in week eight" — there must be a Salesforce record or a contract reference that supports it.* No source — cut the sentence.
+This is the variance-narrative version of *Mata v. Avianca* — the New York case where lawyers were sanctioned for citing court opinions that didn't exist. Same generative-AI behaviour. Different document. *The lesson is identical. Every quantitative claim in the narrative gets cited and verified — or cut.* Quote-or-cut. *If the AI says "Q three revenue grew due to the strategic customer deal closed in week eight" — there must be a Salesforce record or a contract reference that supports it.* No source — cut the sentence.
 
 > [S4 ▸ slide change · t ≈ 1:55]
 
@@ -45,9 +45,9 @@ The workflow that works. *Three stages.*
 
 > [S5 ▸ reveal 1 · the discipline]
 
-What separates a controller who'll keep their job from one who won't. *Discipline on stage two.* Controllers who trust the AI draft and forward — eventually shipped a fabricated clause. *Controllers who treat the draft as raw input and validate every specific claim — never ship the error.*
+What separates a controller who'll keep their job from one who won't. *Discipline on stage two.* Controllers who trust the AI draft and forward — will eventually ship a fabricated clause. *Controllers who treat the draft as raw input and validate every specific claim — never ship the error.*
 
-The Wall Street Journal story is the cautionary tale. *Thirty-six hours of delay.* External auditor flagged it. Board meeting was at risk. *The controller who caught it kept their job. The associate who didn't validate the draft — different conversation.*
+The Mata versus Avianca analog matters here. *Federal sanctions for the lawyer. Personal letters to the judges.* In a close cycle the equivalent is an audit committee question, an external auditor inquiry, and a board-meeting delay. *Different jurisdiction. Same generative-AI behaviour. Same consequence shape.*
 
 > [S5 ▸ reveal 2 · the close]
 

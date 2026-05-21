@@ -41,7 +41,7 @@ Four trust trip-wires. *Hard nos.*
 
 *Two — no override without FVA recording.* Planner overrides are valuable. *Unrecorded overrides are noise.* Every override gets logged, every quarter reviewed.
 
-*Three — no AI-generated narrative without source check.* The LokadTech rule. Quote or cut. *Every specific claim in S&OP commentary either traces to a number, or it gets cut from the deck.*
+*Three — no AI-generated narrative without source check.* The quote-or-cut rule, borrowed from the legal-citation discipline post Mata v. Avianca. *Every specific claim in S&OP commentary either traces to a number, or it gets cut from the deck.*
 
 *Four — no "set and forget."* FVA is the contract. Quarterly review. *Stop measuring, you've lost the controls.*
 
