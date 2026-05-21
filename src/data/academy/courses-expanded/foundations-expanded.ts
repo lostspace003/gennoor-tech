@@ -434,7 +434,8 @@ export const foundationsExpanded: Course[] = [
     format: ['video', 'reading'],
 
     status: 'available',
-    lastUpdated: '2026-05-19',
+    lastUpdated: '2026-05-21',
+    interactiveUrl: '/ai-academy/evaluating-ai-output',
 
     hookSentence:
       'AI evaluation is harder than it looks. Three hallucination patterns, source-checking habits, and the verification routine you can actually keep.',
@@ -509,17 +510,15 @@ export const foundationsExpanded: Course[] = [
       },
       {
         number: 7,
-        title: 'Capstone: Your verification playbook',
+        title: 'Making it stick: your verification playbook',
         duration: '7 min',
         objectives: [
           'Draft a 1-page verification playbook for your function',
-          'Define the 3 checks you’ll never skip on AI output',
+          'Lock in the 3 checks you will never skip on AI output',
         ],
-        isCapstone: true,
       },
     ],
     exerciseCount: 2,
-    capstoneTitle: 'Your 1-Page Verification Playbook',
     references: [
       {
         title: 'NIST AI Risk Management Framework',
