@@ -65,6 +65,7 @@ const ACADEMY_SLUG_PREFIXES: Record<string, string> = {
   'ai-in-manufacturing': 'GNR-ACAD-MFG',
   'building-ai-agents-copilot-studio': 'GNR-ACAD-CS-STUDIO',
   'ab-100': 'GNR-ACAD-AB100',
+  'ai-literacy-non-technical-teams': 'GNR-ACAD-LIT',
 }
 
 export function generateCertId(workshopSlug: string, year: number): string {
