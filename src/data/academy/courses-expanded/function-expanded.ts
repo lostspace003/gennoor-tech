@@ -469,7 +469,8 @@ export const functionExpanded: Course[] = [
     format: ['video', 'reading', 'interactive'],
 
     status: 'available',
-    lastUpdated: '2026-05-19',
+    lastUpdated: '2026-05-22',
+    interactiveUrl: '/ai-academy/revops-automation-with-ai',
 
     hookSentence:
       'Where AI lifts forecast accuracy and pipeline hygiene without breaking the rep experience — and the tooling decisions that decide your next 24 months.',
@@ -554,17 +555,15 @@ export const functionExpanded: Course[] = [
       },
       {
         number: 8,
-        title: 'Capstone: Your RevOps AI roadmap',
+        title: 'Making it stick: your RevOps AI roadmap',
         duration: '7 min',
         objectives: [
           'Pick 3 use cases sequenced across 2 quarters',
-          'Define the data quality bar before any of them ship',
+          'Lock in the data quality bar before any of them ship',
         ],
-        isCapstone: true,
       },
     ],
     exerciseCount: 2,
-    capstoneTitle: 'Your 2-Quarter RevOps AI Roadmap',
     references: [
       {
         title: 'State of Sales — Salesforce Research',
