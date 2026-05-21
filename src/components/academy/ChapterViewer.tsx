@@ -11,7 +11,7 @@ import SaveProgressModal from './SaveProgressModal'
 import LearnerAuthModal from './LearnerAuthModal'
 import CourseCompletionOverlay from './CourseCompletionOverlay'
 import AudioPlayer from './AudioPlayer'
-import ChapterAudioControls from './ChapterAudioControls'
+import ChapterAudioControls, { type ChapterAudioControlsHandle } from './ChapterAudioControls'
 
 interface ChapterViewerProps {
   courseId: string
@@ -244,17 +244,71 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
     return Object.values(progress.chapters).filter(ch => ch.completionPercent > 0).length
   }, [courseId, slidePercent])
 
+  // Ref to the parent-level audio player — used so any nav button (parent
+  // toolbar OR in-iframe step controls) can seek the audio to the matching
+  // cue. Bidirectional sync.
+  const audioControlsRef = useRef<ChapterAudioControlsHandle | null>(null)
+
   const postToIframe = useCallback((type: string) => {
     try {
       iframeRef.current?.contentWindow?.postMessage({ type }, '*')
     } catch { /* cross-origin */ }
   }, [])
 
-  const advanceSlideInIframe = useCallback(() => postToIframe('gennoor-advance-slide'), [postToIframe])
-  const advanceStepInIframe = useCallback(() => postToIframe('gennoor-advance-step'), [postToIframe])
+  // Slide / step nav — branches on whether this chapter uses the new
+  // chapterAudio pattern. New chapters: drive everything through the audio
+  // (audio is single source of truth). Legacy chapters: existing per-slide
+  // MP3 message protocol.
+  const isNewAudioPattern = !!chapter.chapterAudio
+
+  const advanceSlideInIframe = useCallback(() => {
+    if (isNewAudioPattern && audioControlsRef.current) {
+      audioControlsRef.current.step('next-slide')
+    } else {
+      postToIframe('gennoor-advance-slide')
+    }
+  }, [isNewAudioPattern, postToIframe])
+
+  const advanceStepInIframe = useCallback(() => {
+    if (isNewAudioPattern && audioControlsRef.current) {
+      audioControlsRef.current.step('next-step')
+    } else {
+      postToIframe('gennoor-advance-step')
+    }
+  }, [isNewAudioPattern, postToIframe])
+
   const resetStepsInIframe = useCallback(() => postToIframe('gennoor-reset-steps'), [postToIframe])
   const revealAllStepsInIframe = useCallback(() => postToIframe('gennoor-reveal-all-steps'), [postToIframe])
-  const retreatSlideInIframe = useCallback(() => postToIframe('gennoor-retreat-slide'), [postToIframe])
+
+  const retreatSlideInIframe = useCallback(() => {
+    if (isNewAudioPattern && audioControlsRef.current) {
+      audioControlsRef.current.step('prev-slide')
+    } else {
+      postToIframe('gennoor-retreat-slide')
+    }
+  }, [isNewAudioPattern, postToIframe])
+
+  const retreatStepInIframe = useCallback(() => {
+    if (isNewAudioPattern && audioControlsRef.current) {
+      audioControlsRef.current.step('prev-step')
+    }
+  }, [isNewAudioPattern])
+
+  // Listen for nav events posted UP from the iframe (its in-iframe step
+  // controls). These come with the slide+step the iframe just navigated to —
+  // the parent's job is to seek the audio so it follows.
+  useEffect(() => {
+    if (!isNewAudioPattern) return
+    const handler = (e: MessageEvent) => {
+      if (!e || !e.data || e.data.type !== 'gennoor-academy:nav') return
+      const slide = e.data.slide
+      const step = e.data.step
+      if (typeof slide !== 'number') return
+      audioControlsRef.current?.seekToCue(slide, step)
+    }
+    window.addEventListener('message', handler)
+    return () => window.removeEventListener('message', handler)
+  }, [isNewAudioPattern])
 
   // Parent-side keyboard: ArrowRight/ArrowLeft for slide-level navigation
   useEffect(() => {
@@ -513,6 +567,7 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
         {/* Audio player — new timestamp-fire pattern (one MP3 + cues per chapter) */}
         {chapter.chapterAudio && (
           <ChapterAudioControls
+            ref={audioControlsRef}
             chapterAudio={chapter.chapterAudio}
             chapterCues={chapter.chapterCues}
             iframeRef={iframeRef}
