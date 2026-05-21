@@ -10,6 +10,15 @@ export interface Chapter {
   isMockExam?: boolean
   audioFile?: string
   audioDir?: string
+  /**
+   * Path to a single continuous MP3 for the chapter (timestamp-fire pattern).
+   * When present, the player loads this one file and fires slide / step
+   * transitions on cues from `chapterCues`. Falls back to per-slide MP3s
+   * via `audioDir` when absent. See `docs/academy/build-plan.md` §6.
+   */
+  chapterAudio?: string
+  /** Path to the cues.json that maps timestamps to slide/step transitions. */
+  chapterCues?: string
   transcriptFile?: string
 }
 
@@ -1760,6 +1769,106 @@ export const courses: Course[] = [
         htmlFile: '/courses/building-ai-agents-copilot-studio/chapters/chapter-08-capstone.html',
         estimatedMinutes: 8,
         audioDir: '/courses/building-ai-agents-copilot-studio/audio/chapter-08',
+      },
+    ],
+  },
+  {
+    id: 'ai-literacy-non-technical-teams',
+    title: 'AI Literacy for Non-Technical Teams',
+    shortTitle: 'AI Literacy',
+    description:
+      'A 40-minute foundations course for HR, Marketing, Sales, and Ops — no code, no jargon, just where AI actually helps your day-to-day.',
+    longDescription:
+      'For individual contributors and managers in non-technical functions who are being asked to use AI in their day-to-day. Six chapters: distinguishing rules-based, machine learning, and generative AI in plain English; prompting as a learnable skill (Goal · Context · Source · Expectations); where AI helps you specifically by function; the risks every non-technical user should know — with real named cases (Air Canada, iTutorGroup, Samsung); ten prompts to try this week; and a one-page week-one plan. No capstone. The whole course is built around what you can actually do at your desk on Monday.',
+    thumbnail: '/courses/ai-literacy-non-technical-teams/thumbnail.png',
+    level: 'Foundational',
+    duration: '~40 min',
+    certification: 'No',
+    totalChapters: 6,
+    tags: ['Foundations', 'AI Literacy', 'Non-technical', 'HR', 'Marketing', 'Sales', 'Ops'],
+    badge: 'FREE',
+    theme: {
+      primary:     '#475569',
+      primaryDeep: '#334155',
+      accent:      '#F97316',
+      accentLight: '#FDBA74',
+      navy:        '#1E293B',
+      cyan:        '#94A3B8',
+      tint:        '#F8FAFC',
+    },
+    chapters: [
+      {
+        id: 'chapter-01',
+        slug: 'chapter-01-demystifying-ai',
+        number: 1,
+        title: 'Demystifying AI',
+        description:
+          'Three things sitting in your Gmail right now are three completely different kinds of AI — rules, machine learning, generative. Tell them apart, and you stop trusting them all the same.',
+        htmlFile: '/courses/ai-literacy-non-technical-teams/chapters/chapter-01-demystifying-ai.html',
+        estimatedMinutes: 7,
+        isFree: true,
+        chapterAudio: '/courses/ai-literacy-non-technical-teams/audio/chapter-01/chapter-01.mp3',
+        chapterCues: '/courses/ai-literacy-non-technical-teams/audio/chapter-01/cues.json',
+      },
+      {
+        id: 'chapter-02',
+        slug: 'chapter-02-prompting-as-a-learnable-skill',
+        number: 2,
+        title: 'Prompting as a learnable skill',
+        description:
+          'One real prompt refined live in four steps — Goal · Context · Source · Expectations. The same framework that takes a 6-out-of-10 follow-up email to a 9.',
+        htmlFile: '/courses/ai-literacy-non-technical-teams/chapters/chapter-02-prompting-as-a-learnable-skill.html',
+        estimatedMinutes: 8,
+        chapterAudio: '/courses/ai-literacy-non-technical-teams/audio/chapter-02/chapter-02.mp3',
+        chapterCues: '/courses/ai-literacy-non-technical-teams/audio/chapter-02/cues.json',
+      },
+      {
+        id: 'chapter-03',
+        slug: 'chapter-03-where-ai-helps',
+        number: 3,
+        title: 'Where AI actually helps you (by function)',
+        description:
+          'Four function lanes — HR, Marketing, Sales, Ops — with one concrete story under each. Then a switcher panel with three highest-leverage prompts per function and the trap that catches people first time.',
+        htmlFile: '/courses/ai-literacy-non-technical-teams/chapters/chapter-03-where-ai-helps.html',
+        estimatedMinutes: 9,
+        chapterAudio: '/courses/ai-literacy-non-technical-teams/audio/chapter-03/chapter-03.mp3',
+        chapterCues: '/courses/ai-literacy-non-technical-teams/audio/chapter-03/cues.json',
+      },
+      {
+        id: 'chapter-04',
+        slug: 'chapter-04-risks-you-should-know',
+        number: 4,
+        title: 'The risks you should know',
+        description:
+          'Three named incidents — Air Canada (2024), iTutorGroup EEOC (2023), Samsung (2023) — with the precedents they set. The list of what never goes in a public AI tool, the enterprise carve-out, and a sorter to calibrate your paste instincts.',
+        htmlFile: '/courses/ai-literacy-non-technical-teams/chapters/chapter-04-risks-you-should-know.html',
+        estimatedMinutes: 7,
+        chapterAudio: '/courses/ai-literacy-non-technical-teams/audio/chapter-04/chapter-04.mp3',
+        chapterCues: '/courses/ai-literacy-non-technical-teams/audio/chapter-04/cues.json',
+      },
+      {
+        id: 'chapter-05',
+        slug: 'chapter-05-ten-prompts',
+        number: 5,
+        title: 'Ten prompts to try this week',
+        description:
+          'A library — ten tested prompts you can copy, with sample inputs, expected outputs, and the one thing that makes each one work. Pick three. Run them on real material. By month three, the library is doing the heavy lift.',
+        htmlFile: '/courses/ai-literacy-non-technical-teams/chapters/chapter-05-ten-prompts.html',
+        estimatedMinutes: 6,
+        chapterAudio: '/courses/ai-literacy-non-technical-teams/audio/chapter-05/chapter-05.mp3',
+        chapterCues: '/courses/ai-literacy-non-technical-teams/audio/chapter-05/cues.json',
+      },
+      {
+        id: 'chapter-06',
+        slug: 'chapter-06-making-it-stick',
+        number: 6,
+        title: 'Making it stick at your desk: week one',
+        description:
+          'The data on why most adoption fails (44.2% quit after one underwhelming output), the week-one trap that catches people on Wednesday, and a customisable five-day plan per function. Closes the course with an imperative, not a recap.',
+        htmlFile: '/courses/ai-literacy-non-technical-teams/chapters/chapter-06-making-it-stick.html',
+        estimatedMinutes: 6,
+        chapterAudio: '/courses/ai-literacy-non-technical-teams/audio/chapter-06/chapter-06.mp3',
+        chapterCues: '/courses/ai-literacy-non-technical-teams/audio/chapter-06/cues.json',
       },
     ],
   },
