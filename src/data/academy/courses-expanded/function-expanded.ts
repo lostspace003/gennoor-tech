@@ -174,7 +174,8 @@ export const functionExpanded: Course[] = [
     format: ['video', 'reading', 'interactive'],
 
     status: 'available',
-    lastUpdated: '2026-05-19',
+    lastUpdated: '2026-05-21',
+    interactiveUrl: '/ai-academy/recruiting-ai-in-practice',
 
     hookSentence:
       'For TA teams past the foundations course — the full hiring funnel with AI, and the bias and compliance posture that keeps you out of trouble.',
@@ -260,17 +261,15 @@ export const functionExpanded: Course[] = [
       },
       {
         number: 8,
-        title: 'Capstone: Your funnel-wide AI rollout',
+        title: 'Making it stick: your funnel-wide AI rollout',
         duration: '6 min',
         objectives: [
           'Pick 3 funnel stages and sequence AI deployment across 2 quarters',
-          'Draft the bias-audit cadence your CHRO can sign off on',
+          'Lock in the bias-audit cadence your CHRO will sign off on',
         ],
-        isCapstone: true,
       },
     ],
     exerciseCount: 2,
-    capstoneTitle: 'Your 2-Quarter Recruiting AI Rollout',
     references: [
       {
         title: 'EEOC Technical Assistance Document on AI in Employment',
