@@ -55,6 +55,6 @@ The Monday move. *Pick your next NPI launch.* Identify three analogs. *Pull thei
 
 > [S6 ▸ reveal 1 · next up]
 
-Next chapter. *Connecting forecast to S&OP.* SCC twenty twenty-five — only thirty-eight percent connect ML forecast to executive S&OP decisions. *FVA analysis. The LLM narrative layer. And the LokadTech hallucination case.*
+Next chapter. *Connecting forecast to S&OP.* Supply Chain Council research shows only around thirty-eight percent of organisations actually connect ML forecast to executive S&OP decisions. *FVA analysis. The LLM narrative layer. And the confabulated-source failure mode S&OP leaders are watching for in twenty twenty-six.*
 
 > [end]

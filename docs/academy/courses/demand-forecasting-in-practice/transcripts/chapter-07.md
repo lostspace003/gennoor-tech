@@ -23,11 +23,11 @@ The gap isn't accuracy. *The gap is the narrative layer and the accountability l
 
 > [S3 ▸ slide change · t ≈ 1:10]
 
-> [S3 ▸ reveal 1 · LokadTech case]
+> [S3 ▸ reveal 1 · the pattern]
 
-The cautionary tale. *LokadTech industry blog, twenty twenty-five.* An S&OP team deployed an LLM-generated commentary layer on top of their forecast. *In one monthly cycle, the LLM-written commentary attributed a regional sales spike to a quarter-end promotion that wasn't actually run.* The promotion was on the planned calendar but cancelled. The LLM didn't know.
+The failure pattern S&OP leaders need to know about. *LLM-generated commentary attributing a regional spike to a promotion that was actually cancelled.* The promotion was on the planned calendar. The LLM read the planned calendar. *The cancellation was recorded somewhere else — and the LLM didn't reconcile.*
 
-*The CFO read the commentary. Asked the head of supply chain about it. Embarrassing.* The fix was the same as the legal-citation rule — *quote or cut.* Every specific claim in S&OP commentary either has a source the AI pulled from, or it gets cut from the executive deck.
+This is the demand-planning version of *Mata versus Avianca* — the legal case where lawyers were sanctioned for citing court opinions that didn't exist. Same generative-AI behaviour. Different document. *The fix is the same as the legal-citation rule — quote or cut.* Every specific claim in S&OP commentary either has a source the AI pulled from, or it gets cut from the executive deck. *If your LLM commentary tool can't show source-of-claim for every specific assertion, your S&OP deck is one cycle away from a CFO reading something untrue.*
 
 > [S4 ▸ slide change · t ≈ 2:10]
 
@@ -49,7 +49,7 @@ The discipline. *The forecast number is the AI's output. The story is partly AI,
 
 > [S5 ▸ reveal 2 · the close]
 
-The Monday move. *Pull last month's S&OP exec deck.* Find one specific claim in the commentary. *Trace it back to a number in the forecast.* If you can't trace it in five minutes — the LokadTech failure mode is one cycle away from you. *Fix the quote-or-cut rule before the next deck.*
+The Monday move. *Pull last month's S&OP exec deck.* Find one specific claim in the commentary. *Trace it back to a number in the forecast.* If you can't trace it in five minutes — the confabulated-source failure mode is one cycle away from you. *Fix the quote-or-cut rule before the next deck.*
 
 > [S6 ▸ slide change · t ≈ 4:20]
 

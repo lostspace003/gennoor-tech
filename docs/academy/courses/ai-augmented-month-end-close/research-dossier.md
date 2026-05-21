@@ -27,7 +27,7 @@ This course teaches controllers and FP&A leaders to ship AI in the close cycle w
 | 9 | Big-4 audit firm position: AI-generated journal entries are acceptable IF (a) the underlying source data is traceable, (b) a human approves before posting, (c) the audit trail captures the AI tool used | PwC + Deloitte + KPMG + EY guidance | 2024-2025 |
 | 10 | Accrual estimation accuracy: top-3 close-AI tools deliver 85-92% accuracy on routine accruals (utilities, rent, payroll fringe) vs ~60-70% manual junior-accountant baseline | Vic.ai customer reporting + Trintech case studies | 2024-2025 |
 | 11 | Reconciliation use case: BlackLine + Trintech AI cuts manual reconciliation hours 35-50% in PE-backed mid-market deployments | BlackLine + Trintech case studies | 2025 |
-| 12 | Hallucination risk: WSJ Aug 2025 report on a Fortune 500 controller catching AI-generated revenue recognition narrative referencing a contract clause that didn't exist; close held 36 hours | WSJ CFO Journal | Aug 2025 |
+| 12 | Hallucination risk in close commentary: the confabulated-source failure mode — AI commentary confidently referencing a contract clause that doesn't exist or a promotion that wasn't run. Audit committees + external auditors actively watching for this in 2026. Cross-domain analog is Mata v. Avianca (S.D.N.Y. Jun 2023). | Industry pattern + Mata v. Avianca analog | 2024-2026 |
 | 13 | Audit committee surveys (Deloitte Audit Committee Pulse Q4 2025): 62% want explicit AI-use disclosure in close documentation; 31% require additional sample-testing of AI-touched accounts | Deloitte ACP Q4 2025 | 2025 |
 | 14 | Quad-eye principle for AI-touched entries: drafter (AI) → preparer (analyst) → reviewer (controller/manager) → approver (CFO/director). Standard in mature deployments. | Big-4 advisory guidance 2025 | 2025 |
 | 15 | EU AI Act Art. 50 transparency obligations: client-facing finance AI chatbots (e.g., investor relations bots) must disclose AI nature from Aug 2 2026 | EU AI Act 2024/1689 | Aug 2026 |
@@ -52,7 +52,7 @@ This course teaches controllers and FP&A leaders to ship AI in the close cycle w
 **Sources:** [1], [2], [3], [4], [17].
 
 ### Chapter 2 — Variance narratives (~5 min)
-**What:** The killer-app for AI in close. KPMG 50-70% time savings on MD&A drafting. The AI drafts the explanation; controller validates the *why*. The hallucination case: WSJ Aug 2025 Fortune 500 close held 36 hours. Quote-or-cut rule for narratives.
+**What:** The killer-app for AI in close. KPMG 50-70% time savings on MD&A drafting. The AI drafts the explanation; controller validates the *why*. The confabulated-source failure mode (industry pattern + cross-domain analog: Mata v. Avianca, federal lawyers sanctioned for fabricated citations). Quote-or-cut rule for narratives.
 **Sources:** [12], [18].
 
 ### Chapter 3 — Accrual proposals (~5 min)
