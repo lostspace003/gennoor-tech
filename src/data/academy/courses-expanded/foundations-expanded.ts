@@ -374,17 +374,15 @@ export const foundationsExpanded: Course[] = [
       },
       {
         number: 7,
-        title: 'Capstone: Your Copilot operating manual',
+        title: 'Making it stick: your Copilot operating manual',
         duration: '7 min',
         objectives: [
-          'Draft a 1-page personal Copilot operating manual',
-          'Define the 5 tasks you’ll always use Copilot for going forward',
+          'Lock in the 5 tasks you will always use Copilot for going forward',
+          'Generate your 1-page operating manual and pin it to your workspace',
         ],
-        isCapstone: true,
       },
     ],
     exerciseCount: 2,
-    capstoneTitle: 'Your 1-Page Copilot Operating Manual',
     references: [
       {
         title: 'Microsoft 365 Copilot Documentation',

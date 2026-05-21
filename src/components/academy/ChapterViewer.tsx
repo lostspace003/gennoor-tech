@@ -111,9 +111,11 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
     return () => window.removeEventListener('message', handler)
   }, [courseId, syncToServer])
 
-  // Show save banner for non-logged-in users who have progress
+  // Show save banner for non-logged-in users who have progress.
+  // Wait for auth check to resolve — otherwise the banner flashes for
+  // signed-in users during the initial /api/learner/session round-trip.
   useEffect(() => {
-    if (isLoggedIn || bannerDismissed) return
+    if (authLoading || isLoggedIn || bannerDismissed) return
     const progress = getLocalProgress(courseId)
     if (!progress) return
     const chaptersWithProgress = Object.values(progress.chapters).filter(
@@ -122,11 +124,11 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
     if (chaptersWithProgress.length > 0) {
       setShowSaveBanner(true)
     }
-  }, [courseId, isLoggedIn, bannerDismissed, slidePercent])
+  }, [courseId, authLoading, isLoggedIn, bannerDismissed, slidePercent])
 
   // beforeunload for non-logged-in users with progress
   useEffect(() => {
-    if (isLoggedIn || bannerDismissed) return
+    if (authLoading || isLoggedIn || bannerDismissed) return
     const progress = getLocalProgress(courseId)
     const hasProgress = progress && Object.values(progress.chapters).some(ch => ch.completionPercent > 0 && ch.chapterId !== 'chapter-00')
     if (!hasProgress) return
@@ -134,7 +136,7 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
     const handler = (e: BeforeUnloadEvent) => { e.preventDefault() }
     window.addEventListener('beforeunload', handler)
     return () => window.removeEventListener('beforeunload', handler)
-  }, [courseId, isLoggedIn, bannerDismissed, slidePercent])
+  }, [courseId, authLoading, isLoggedIn, bannerDismissed, slidePercent])
 
   // Detect course completion — last regular (non-mock-exam) chapter at 99%+
   // for a logged-in user. Triggers cert issuance + celebration overlay once
@@ -636,7 +638,7 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
             <span className="p-1.5 opacity-30"><ChevronLeft className="w-4 h-4" /></span>
           )}
           {nextChapter ? (
-            chapter.isFree && !isLoggedIn && !nextChapter.isFree ? (
+            chapter.isFree && !authLoading && !isLoggedIn && !nextChapter.isFree ? (
               <button
                 onClick={() => setShowAuthModal(true)}
                 className="p-1.5 rounded hover:bg-white/10 transition-colors"
@@ -660,8 +662,14 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
 
         <div className="w-px h-6 bg-white/20" />
 
-        {/* User badge or sign-in */}
-        {isLoggedIn && session ? (
+        {/* User badge or sign-in. Render a skeleton while the session
+            check is in flight — otherwise the Sign In button flashes for
+            users who are already signed in. */}
+        {authLoading ? (
+          <div className="flex items-center gap-2 flex-shrink-0" aria-hidden>
+            <div className="w-7 h-7 rounded-full bg-white/10 animate-pulse" />
+          </div>
+        ) : isLoggedIn && session ? (
           <div className="flex items-center gap-2 flex-shrink-0">
             <div className="w-7 h-7 rounded-full bg-accent-600 flex items-center justify-center text-xs font-bold">
               {session.name.charAt(0).toUpperCase()}
@@ -870,13 +878,13 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
                     Chapter complete! Up next: <span className="text-secondary-300">{nextChapter.title}</span>
                   </span>
                 </div>
-                {chapter.isFree && !isLoggedIn && !nextChapter.isFree && (
+                {chapter.isFree && !authLoading && !isLoggedIn && !nextChapter.isFree && (
                   <p className="text-xs text-white/60 pl-8">
                     Sign in (10s) to unlock chapter {nextChapter.number} and {totalChapterCount - (nextChapter.number - 1)} more · free forever · no card
                   </p>
                 )}
               </div>
-              {chapter.isFree && !isLoggedIn && !nextChapter.isFree ? (
+              {chapter.isFree && !authLoading && !isLoggedIn && !nextChapter.isFree ? (
                 <button
                   onClick={() => setShowAuthModal(true)}
                   className="inline-flex items-center gap-2 px-5 py-2.5 bg-secondary-400 text-dark-900 text-sm font-bold rounded-lg hover:bg-secondary-300 transition-colors flex-shrink-0"
@@ -911,8 +919,8 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
         </div>
       )}
 
-      {/* Save progress banner for non-logged-in users */}
-      {showSaveBanner && !isLoggedIn && !bannerDismissed && (
+      {/* Save progress banner for non-logged-in users. Suppressed while auth check is in flight. */}
+      {showSaveBanner && !authLoading && !isLoggedIn && !bannerDismissed && (
         <SaveProgressModal
           isVisible={true}
           onDismiss={() => { setBannerDismissed(true); setShowSaveBanner(false) }}
