@@ -376,7 +376,10 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
         (function() {
           function reportProgress() {
             var progressFill = document.getElementById('progressFill');
-            var counter = document.getElementById('counter');
+            // 'counter' is the legacy per-slide-MP3 chapter ID; 'counterTop'
+            // is the new chapterAudio pattern ID (used in courses shipped
+            // from May 2026 onwards). Read whichever exists.
+            var counter = document.getElementById('counter') || document.getElementById('counterTop');
             var percent = 0;
             var text = '';
             if (progressFill) {
