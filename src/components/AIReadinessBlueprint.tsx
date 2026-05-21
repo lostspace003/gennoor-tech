@@ -243,7 +243,7 @@ const TOOLS_QUESTION: Record<string, { id: string; question: string; subtext: st
     subtext: 'We\'ll build AI recommendations around your actual workflow.',
     options: [
       { label: 'Figma, Adobe Creative Cloud, Canva, or design-heavy tools' },
-      { label: 'Notion, Google Docs, Calendly, Loom — productivity-first' },
+      { label: 'Notion, Google Docs, Loom — productivity-first' },
       { label: 'VS Code, Cursor, GitHub, Vercel — code and ship' },
       { label: 'WordPress, Mailchimp, Buffer, SEMrush — content & marketing' },
     ],
