@@ -65,6 +65,32 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
     const [audioReady, setAudioReady] = useState(false)
     const [audioError, setAudioError] = useState(false)
     const currentCueIdxRef = useRef(-1)
+    // Stores a seek target that couldn't be applied yet because the audio
+    // wasn't loaded enough to seek. Re-applied in onCanPlay / onLoadedData.
+    // Without this, slide-nav buttons clicked before the user hits Play
+    // would silently fail to seek, and Play would then start from 0 —
+    // making the iframe show e.g. slide 4 while audio plays slide 1.
+    const pendingSeekRef = useRef<number | null>(null)
+
+    const applySeek = useCallback((timestamp: number) => {
+      const audio = audioRef.current
+      if (!audio || !Number.isFinite(timestamp)) {
+        pendingSeekRef.current = timestamp
+        return
+      }
+      // HAVE_METADATA (1) is enough for setting currentTime to take effect.
+      // Below that, queue the seek for canplay.
+      if (audio.readyState >= 1) {
+        try {
+          audio.currentTime = timestamp
+          pendingSeekRef.current = null
+        } catch {
+          pendingSeekRef.current = timestamp
+        }
+      } else {
+        pendingSeekRef.current = timestamp
+      }
+    }, [])
 
     const audioSrc = useMemo(() => `/api/content${chapterAudio}`, [chapterAudio])
     const cuesSrc = useMemo(() => (chapterCues ? `/api/content${chapterCues}` : null), [chapterCues])
@@ -123,12 +149,10 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       if (idx < 0) return
       const cue = cues[idx]
       currentCueIdxRef.current = idx
-      if (audioRef.current && Number.isFinite(cue.at)) {
-        try { audioRef.current.currentTime = cue.at } catch {}
-      }
+      applySeek(cue.at)
       // Mirror the visual state down immediately — handles the paused case
       postCue(idx)
-    }, [cues, postCue])
+    }, [cues, postCue, applySeek])
 
     const stepNav = useCallback((direction: 'next-slide' | 'prev-slide' | 'next-step' | 'prev-step') => {
       if (cues.length === 0) return
@@ -160,22 +184,35 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       if (target === cur) return
       const cue = cues[target]
       currentCueIdxRef.current = target
-      if (audioRef.current && Number.isFinite(cue.at)) {
-        try { audioRef.current.currentTime = cue.at } catch {}
-      }
+      applySeek(cue.at)
       postCue(target)
-    }, [cues, postCue])
+    }, [cues, postCue, applySeek])
 
     useImperativeHandle(ref, () => ({ seekToCue, step: stepNav }), [seekToCue, stepNav])
 
     useEffect(() => {
       currentCueIdxRef.current = -1
+      pendingSeekRef.current = null
       setCurrentTime(0)
       setDuration(0)
       setIsPlaying(false)
       setAudioReady(false)
       setAudioError(false)
     }, [audioSrc])
+
+    // Re-apply any pending seek when the audio becomes seekable. Called from
+    // both onLoadedMetadata and onCanPlay so it fires at the earliest point
+    // the browser will honour a currentTime assignment.
+    const flushPendingSeek = useCallback(() => {
+      const audio = audioRef.current
+      if (!audio || pendingSeekRef.current === null) return
+      try {
+        audio.currentTime = pendingSeekRef.current
+        pendingSeekRef.current = null
+      } catch {
+        // try again on next ready event
+      }
+    }, [])
 
     useEffect(() => {
       if (audioRef.current) audioRef.current.playbackRate = SPEEDS[speedIndex]
@@ -223,11 +260,15 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
         <audio
           ref={audioRef}
           src={audioSrc}
-          preload="metadata"
+          // 'auto' so the audio data is loaded ahead of any seek. With
+          // 'metadata' some browsers silently drop currentTime assignments
+          // until data arrives, which made slide-nav-then-play start from 0.
+          preload="auto"
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
-          onLoadedMetadata={e => { setDuration(e.currentTarget.duration); setAudioReady(true) }}
-          onCanPlay={() => setAudioReady(true)}
+          onLoadedMetadata={e => { setDuration(e.currentTarget.duration); setAudioReady(true); flushPendingSeek() }}
+          onLoadedData={flushPendingSeek}
+          onCanPlay={() => { setAudioReady(true); flushPendingSeek() }}
           onTimeUpdate={handleTimeUpdate}
           onError={() => setAudioError(true)}
           onEnded={() => setIsPlaying(false)}
