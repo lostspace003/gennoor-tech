@@ -183,8 +183,8 @@ const intents = [
     ],
     cta: {
       label: 'Book a call',
-      href: 'https://calendly.com/gennoortech',
-      external: true,
+      href: '#book',
+      external: false,
     },
     type: 'external' as const,
   },
@@ -216,11 +216,11 @@ const directChannels = [
   },
   {
     icon: Calendar,
-    label: 'Calendar',
-    value: 'calendly.com/gennoortech',
-    href: 'https://calendly.com/gennoortech',
-    note: 'Direct 30-min slot booking',
-    external: true,
+    label: 'Book a slot',
+    value: 'Pick a time below',
+    href: '#book',
+    note: 'Direct 30-min slot booking · Microsoft Bookings',
+    external: false,
   },
 ]
 
@@ -390,9 +390,7 @@ export default function ContactPage() {
                     </Link>{' '}
                     or a 30-minute{' '}
                     <a
-                      href="https://calendly.com/gennoortech"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href="#book"
                       className="text-primary-600 font-semibold hover:text-primary-700 transition-colors"
                     >
                       exploratory call

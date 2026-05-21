@@ -133,9 +133,7 @@ export default function AITrainingSaudiArabiaPage() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
-              href="https://calendly.com/gennoortech"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/contact#book"
               className="inline-flex items-center gap-2 bg-white text-primary-700 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-primary-50 transition-colors"
             >
               <Calendar className="w-5 h-5" />
@@ -386,7 +384,7 @@ export default function AITrainingSaudiArabiaPage() {
         title="Ready to Build AI Capability in Saudi Arabia?"
         description="Let's discuss how we can support your Vision 2030 AI objectives with practical, results-driven training."
         ctas={[
-          { label: 'Book a Call', href: 'https://calendly.com/gennoortech' },
+          { label: 'Book a Call', href: '/contact#book' },
           { label: 'Contact Us', href: '/contact', variant: 'ghost' },
         ]}
       />
