@@ -26,7 +26,9 @@ export const foundationsExpanded: Course[] = [
     format: ['video', 'reading'],
 
     status: 'available',
-    lastUpdated: '2026-05-19',
+    lastUpdated: '2026-05-21',
+
+    interactiveUrl: '/ai-academy/ai-literacy-non-technical-teams',
 
     hookSentence:
       'For non-tech functions — what AI is, what it isn’t, and the 10 prompts you can try Monday morning.',
