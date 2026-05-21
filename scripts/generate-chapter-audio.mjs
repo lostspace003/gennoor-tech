@@ -33,9 +33,10 @@ const SPEECH_KEY    = process.env.AZURE_SPEECH_ACADEMY_KEY
 const SPEECH_REGION = process.env.AZURE_SPEECH_ACADEMY_REGION
 const DEFAULT_VOICE = 'en-US-EmmaMultilingualNeural'
 
-// Slide-boundary pacing — user-locked.
+// Pacing — user-locked.
 const SLIDE_TAIL_MS = 3000   // wait after slide ends
 const SLIDE_HEAD_MS = 2000   // wait before next slide starts
+const STEP_GAP_MS   = 750    // wait between reveals within a slide
 // MP3 format we ask Azure Speech to emit: 48 kbps CBR mono → 6000 bytes/sec.
 const MP3_BYTES_PER_SEC = 48000 / 8
 
@@ -254,7 +255,7 @@ console.log(`  chapter:    ${chapterId}`)
 console.log(`  voice:      ${voice}`)
 console.log(`  transcript: ${path.relative(PROJECT_ROOT, transcriptPath)}`)
 console.log(`  output:     ${path.relative(PROJECT_ROOT, outPath)}`)
-console.log(`  pacing:     ${SLIDE_TAIL_MS}ms tail + ${SLIDE_HEAD_MS}ms head between slides\n`)
+console.log(`  pacing:     ${STEP_GAP_MS}ms in-slide · ${SLIDE_TAIL_MS}+${SLIDE_HEAD_MS}ms slide-boundary\n`)
 
 const md = await readFile(transcriptPath, 'utf8')
 const cues = parseCues(md)
@@ -271,10 +272,16 @@ let cumulativeBytes = 0
 for (let i = 0; i < cues.length; i++) {
   const cue = cues[i]
   const next = cues[i + 1]
+  // Trailing silence policy:
+  //  - last cue in the chapter → no tail
+  //  - next cue is on a NEW slide → SLIDE_TAIL_MS + SLIDE_HEAD_MS (5s total)
+  //  - next cue is on the SAME slide (within-slide reveal) → STEP_GAP_MS (0.75s)
   const nextSlideDiffers = next && next.slide !== cue.slide
-  // If next cue is on a new slide, this cue gets the full slide-boundary
-  // silence appended to its tail (3000ms + 2000ms = 5000ms).
-  const trailingBreakMs = nextSlideDiffers ? (SLIDE_TAIL_MS + SLIDE_HEAD_MS) : 0
+  const trailingBreakMs = !next
+    ? 0
+    : nextSlideDiffers
+      ? (SLIDE_TAIL_MS + SLIDE_HEAD_MS)
+      : STEP_GAP_MS
 
   const label = `cue ${i + 1}/${cues.length} · S${cue.slide}${cue.step !== undefined ? ` step ${cue.step}` : ''}`
   const isEmptyAnchor = cue.paragraphs.length === 0 && cue.extraSilenceMs === 0
@@ -315,7 +322,7 @@ const cuesDoc = {
   audioFile: `${chapterId}.mp3`,
   status: 'real',
   voice,
-  pacing: { slideTailMs: SLIDE_TAIL_MS, slideHeadMs: SLIDE_HEAD_MS },
+  pacing: { slideTailMs: SLIDE_TAIL_MS, slideHeadMs: SLIDE_HEAD_MS, stepGapMs: STEP_GAP_MS },
   expectedDurationSeconds: +totalSec.toFixed(2),
   expectedDurationDisplay: formatMMSS(totalSec),
   cues: cueTimings,
