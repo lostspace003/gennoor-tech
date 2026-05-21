@@ -155,7 +155,8 @@ export const foundationsExpanded: Course[] = [
     format: ['video', 'reading'],
 
     status: 'available',
-    lastUpdated: '2026-05-19',
+    lastUpdated: '2026-05-21',
+    interactiveUrl: '/ai-academy/prompting-mastery',
 
     hookSentence:
       'Past basic prompts — structured outputs, reasoning, few-shot, evaluation, and prompt libraries that compound across a team.',
@@ -239,17 +240,15 @@ export const foundationsExpanded: Course[] = [
       },
       {
         number: 8,
-        title: 'Capstone: Your team prompt library',
+        title: 'Making your library stick',
         duration: '7 min',
         objectives: [
-          'Author 5 reusable prompts with structure, examples, and evals',
-          'Define the contribution and review process for the library',
+          'Pick the owner, ritual, gates, and contribution path your library needs',
+          'Run the 4-week rollout plan to lock the pattern on your team',
         ],
-        isCapstone: true,
       },
     ],
     exerciseCount: 2,
-    capstoneTitle: 'Your 5-Prompt Team Library',
     references: [
       {
         title: 'OpenAI Prompt Engineering Guide',
