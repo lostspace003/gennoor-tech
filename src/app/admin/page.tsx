@@ -158,6 +158,7 @@ export default function AdminDashboard() {
   const [coworkData, setCoworkData] = useState<{ total: number; registrations: Array<{ fullName: string; email: string; country: string; timeZone: string; role: string; company: string; biggestWorkflow: string; createdAt: string }>; byCountry: Array<{ name: string; value: number }>; byTimezone: Array<{ name: string; value: number }> } | null>(null)
   const [indexingData, setIndexingData] = useState<{ google: Array<{ url: string; status: string }>; bing: Array<{ url: string; status: string }> } | null>(null)
   const [academyData, setAcademyData] = useState<{ learners: Array<{ email: string; name: string; provider: string; lastLogin: string; createdAt: string }>; progress: Array<{ email: string; courseId: string; chapterId: string; completionPercent: number; completed: boolean; lastAccessed: string }>; summary: { totalLearners: number; activeLearners: number; learnersWithCompletion: number; totalProgressEntries: number; byProvider: Record<string, number>; byCourse: Array<{ courseId: string; learners: number; completions: number }> }; chapterStats: Record<string, { views: number; completions: number; avgPercent: number }> } | null>(null)
+  const [indexNowState, setIndexNowState] = useState<{ pushing: boolean; result?: { success: boolean; submitted?: number; total?: number; error?: string; submittedAt?: string } }>({ pushing: false })
 
   const fetchAll = useCallback(async (numDays: number) => {
     setLoading(true); setError('')
@@ -1334,6 +1335,37 @@ export default function AdminDashboard() {
                     <p className="text-xs text-slate-500">www → non-www 301 redirect active. Canonical domain: gennoor.com. IndexNow key deployed. 18 missing pages added to sitemap.</p>
                   </div>
                 </div>
+              </div>
+            </Panel>
+
+            <Panel title="Push to IndexNow" subtitle="Re-submit every sitemap URL to Bing / Yandex / Naver / Seznam">
+              <div className="flex items-center justify-between gap-4 flex-wrap">
+                <div className="text-sm text-slate-600">
+                  <p>Pushes <strong>all {seoData?.sitemapUrls || 0}</strong> URLs from <code className="text-xs px-1.5 py-0.5 bg-slate-100 rounded">/sitemap.xml</code> to IndexNow. Engines typically re-crawl within hours.</p>
+                  {indexNowState.result && (
+                    <p className={`mt-2 text-xs ${indexNowState.result.success ? 'text-emerald-600' : 'text-rose-600'}`}>
+                      {indexNowState.result.success
+                        ? `✓ Submitted ${indexNowState.result.submitted}/${indexNowState.result.total} URLs at ${new Date(indexNowState.result.submittedAt!).toLocaleString()}`
+                        : `✗ ${indexNowState.result.error || 'Failed'}`}
+                    </p>
+                  )}
+                </div>
+                <button
+                  onClick={async () => {
+                    setIndexNowState({ pushing: true })
+                    try {
+                      const res = await fetch('/api/admin/indexnow-push', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+                      const data = await res.json()
+                      setIndexNowState({ pushing: false, result: data })
+                    } catch (err) {
+                      setIndexNowState({ pushing: false, result: { success: false, error: err instanceof Error ? err.message : 'Network error' } })
+                    }
+                  }}
+                  disabled={indexNowState.pushing}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                >
+                  {indexNowState.pushing ? <><RefreshCw className="w-4 h-4 animate-spin" /> Pushing...</> : <><Send className="w-4 h-4" /> Push Now</>}
+                </button>
               </div>
             </Panel>
 

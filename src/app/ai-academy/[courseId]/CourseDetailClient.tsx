@@ -122,7 +122,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                 </Link>
               )}
               <a
-                href={`/Gennoor-Academy-Course-PDFs/${course.id}.pdf`}
+                href={`/api/content/courses-pdfs/${course.id}.pdf`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg ring-1 ring-white/20 hover:ring-white/40 transition-all backdrop-blur-sm"
@@ -290,7 +290,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                   Book a 30-min call
                 </Link>
                 <a
-                  href={`/Gennoor-Academy-Course-PDFs/${course.id}.pdf`}
+                  href={`/api/content/courses-pdfs/${course.id}.pdf`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-5 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg ring-1 ring-white/30"

@@ -185,6 +185,78 @@ export function FAQJsonLd({ faqs }: { faqs: { question: string; answer: string }
   )
 }
 
+export function CourseJsonLd({
+  title,
+  description,
+  url,
+  courseCode,
+  duration,
+  level,
+  audience,
+  image,
+}: {
+  title: string
+  description: string
+  url: string
+  courseCode?: string
+  duration?: string
+  level?: string
+  audience?: string
+  image?: string
+}) {
+  // Schema.org Course — eligible for Google's Course Info rich-result snippet.
+  // ISO-8601 duration: "~36 min" → "PT36M". Best-effort parse.
+  const isoDuration = (() => {
+    if (!duration) return undefined
+    const m = duration.match(/(\d+)\s*min/i)
+    if (m) return `PT${m[1]}M`
+    const h = duration.match(/(\d+)\s*hour/i)
+    if (h) return `PT${h[1]}H`
+    return undefined
+  })()
+
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'Course',
+    name: title,
+    description,
+    url,
+    courseCode,
+    provider: {
+      '@type': 'Organization',
+      name: 'Gennoor Tech',
+      sameAs: 'https://gennoor.com',
+      url: 'https://gennoor.com',
+    },
+    inLanguage: 'en',
+    isAccessibleForFree: true,
+    educationalLevel: level,
+    audience: audience ? { '@type': 'EducationalAudience', educationalRole: audience } : undefined,
+    hasCourseInstance: {
+      '@type': 'CourseInstance',
+      courseMode: 'online',
+      courseWorkload: isoDuration,
+      url,
+    },
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+      category: 'free',
+      availability: 'https://schema.org/InStock',
+      url,
+    },
+    ...(image && { image }),
+  }
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  )
+}
+
 export function ArticleJsonLd({
   title,
   description,
