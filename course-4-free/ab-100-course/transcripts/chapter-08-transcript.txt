@@ -1,0 +1,173 @@
+--- SLIDE 01 ---
+Chapter eight! <break time='500ms'/> Analyze, monitor, and tune AI-powered business solutions. <break time='600ms'/> Chapters five through seven covered building, <break time='200ms'/> extending, <break time='200ms'/> and orchestrating. <break time='300ms'/> Now we move to day-two operations. <break time='400ms'/> The agent is in production. <break time='300ms'/> Users are using it. <break time='400ms'/> How do you keep it working? <break time='300ms'/> This chapter covers monitoring, <break time='200ms'/> feedback loops, <break time='200ms'/> telemetry, <break time='200ms'/> and tuning. <break time='400ms'/> Let's get into it!
+
+--- SLIDE 02 ---
+Five themes in this chapter! <break time='400ms'/> The day-two operations playbook. <break time='300ms'/> Here's the truth most teams learn the hard way. <break time='400ms'/> Most agent failures aren't build failures. <break time='300ms'/> They're operations failures. <break time='300ms'/> Drift that nobody noticed, <break time='200ms'/> feedback that nobody read, <break time='200ms'/> monitoring that was never configured. <break time='500ms'/> I'll bring up each theme.
+
+Theme one! <break time='300ms'/> Monitoring framework and tools. <break time='400ms'/> Five monitoring dimensions, <break time='200ms'/> plus the operating model, <break time='200ms'/> plus Microsoft's monitoring stack.
+
+Theme two! <break time='300ms'/> Backlog and user feedback analysis. <break time='400ms'/> Six categorization domains, <break time='200ms'/> impact-effort prioritization, <break time='200ms'/> and conversation transcript mining.
+
+Theme three! <break time='300ms'/> AI-based diagnosis and tuning. <break time='400ms'/> Five root cause categories, <break time='200ms'/> a diagnostic workflow, <break time='200ms'/> and four tuning strategies covering knowledge, <break time='200ms'/> behavior, <break time='200ms'/> performance, <break time='200ms'/> and governance.
+
+Theme four! <break time='300ms'/> Performance metrics. <break time='400ms'/> Three categories, <break time='200ms'/> operational, <break time='200ms'/> quality, <break time='200ms'/> and user-centered. <break time='300ms'/> Plus model drift indicators. <break time='300ms'/> Task completion rate is the gold-standard metric.
+
+And theme five! <break time='300ms'/> Telemetry interpretation. <break time='400ms'/> Four telemetry categories <break time='200ms'/> and a six-step diagnostic workflow. <break time='300ms'/> From signal to fix.
+
+--- SLIDE 03 ---
+Unit one! <break time='500ms'/> Monitoring framework and tools. <break time='400ms'/> What to monitor <break time='200ms'/> and which Microsoft tools surface the data. <break time='400ms'/> This is the foundation of day-two operations for AI agents.
+
+--- SLIDE 04 ---
+Five monitoring dimensions! <break time='400ms'/> Production AI agents need visibility across all five. <break time='300ms'/> Skip any one <break time='200ms'/> and the blind spot will eventually break trust. <break time='400ms'/> I'll bring them up one at a time.
+
+Dimension one, <break time='300ms'/> Operational Health! <break time='400ms'/> Uptime, <break time='200ms'/> availability, <break time='200ms'/> error frequency, <break time='200ms'/> throttling, <break time='200ms'/> processing delays. <break time='300ms'/> These are the classic IT metrics. <break time='300ms'/> Necessary but not sufficient!
+
+Dimension two, <break time='300ms'/> Performance! <break time='400ms'/> Response times, <break time='200ms'/> success rates, <break time='200ms'/> tool reliability, <break time='200ms'/> and workflow completion. <break time='300ms'/> The agent-specific metrics layered on top of basic operational health.
+
+Dimension three, <break time='300ms'/> Quality and Accuracy! <break time='400ms'/> Output appropriateness, <break time='200ms'/> business rule alignment, <break time='200ms'/> and deviation detection. <break time='400ms'/> Quality is the hardest dimension to monitor. <break time='300ms'/> It can't be fully automated. <break time='300ms'/> It needs human-in-the-loop spot checks.
+
+Dimension four, <break time='300ms'/> Usage Insights! <break time='400ms'/> Volume trends, <break time='200ms'/> adoption, <break time='200ms'/> feature utilization, <break time='200ms'/> behavioral patterns. <break time='400ms'/> This is the business success indicator. <break time='300ms'/> Agents that aren't used create no value, <break time='200ms'/> regardless of how well they perform.
+
+And dimension five, <break time='300ms'/> Risk and Compliance! <break time='400ms'/> Guardrail violations, <break time='200ms'/> sensitive data handling, <break time='200ms'/> suspicious activity, <break time='200ms'/> and policy adherence. <break time='400ms'/> Required for governance review. <break time='300ms'/> No agent ships without this dimension instrumented.
+
+--- SLIDE 05 ---
+The monitoring operating model! <break time='400ms'/> Four practices that turn ad-hoc monitoring into a sustainable function. <break time='300ms'/> Without these, <break time='200ms'/> monitoring becomes whatever the on-call engineer remembers to check. <break time='400ms'/> I'll bring them up one at a time.
+
+Practice one, <break time='300ms'/> Establish the Operating Model! <break time='400ms'/> Defined roles, <break time='200ms'/> ops, <break time='200ms'/> product owners, <break time='200ms'/> data engineers, <break time='200ms'/> architects. <break time='300ms'/> Standardized metric definitions. <break time='200ms'/> Baselines and trends. <break time='200ms'/> Log review cadence, <break time='200ms'/> daily, <break time='200ms'/> weekly, <break time='200ms'/> monthly. <break time='400ms'/> Roles are the foundation. <break time='300ms'/> Without owners, <break time='200ms'/> metrics drift.
+
+Practice two, <break time='300ms'/> Configure Guardrails and Threshold Alerts! <break time='400ms'/> Set thresholds for latency, <break time='200ms'/> exception volume, <break time='200ms'/> and unusual activity. <break time='300ms'/> Automated alerts for guardrail triggers <break time='200ms'/> and tool invocation failures. <break time='400ms'/> Watch for prompt spikes. <break time='300ms'/> They often indicate misuse or a customer in distress.
+
+Practice three, <break time='300ms'/> Regular Quality Evaluations! <break time='400ms'/> Human-in-the-loop spot checks. <break time='200ms'/> Scenario-based evaluations. <break time='200ms'/> Review low-confidence outputs. <break time='200ms'/> Validate business rule alignment. <break time='400ms'/> Telemetry doesn't catch quality degradation. <break time='300ms'/> Humans do.
+
+And practice four, <break time='300ms'/> Continuous Improvement! <break time='400ms'/> Analyze logs and telemetry for failure patterns. <break time='200ms'/> Identify training needs. <break time='200ms'/> Recommend prompt improvements. <break time='200ms'/> Propose workflow adjustments or model retraining. <break time='400ms'/> Monitoring without action is theater.
+
+--- SLIDE 06 ---
+Five Microsoft monitoring tools! <break time='400ms'/> Each covers a different layer. <break time='300ms'/> Stack them. <break time='300ms'/> No single tool gives full visibility. <break time='400ms'/> I'll bring them up one at a time.
+
+Tool one, <break time='300ms'/> Azure Monitor! <break time='400ms'/> Core telemetry plus alerts. <break time='300ms'/> Application and agent telemetry, <break time='200ms'/> real-time dashboards, <break time='200ms'/> K Q L queries for diagnostics, <break time='200ms'/> and integration with Log Analytics. <break time='400ms'/> The foundation. <break time='300ms'/> Most production deployments start here.
+
+Tool two, <break time='300ms'/> M365 Admin Analytics! <break time='400ms'/> Usage and adoption trends. <break time='300ms'/> Agent usage volume, <break time='200ms'/> engagement tracking, <break time='200ms'/> department-level barriers, <break time='200ms'/> and week-over-week trend comparisons. <break time='400ms'/> The adoption signal. <break time='300ms'/> Telemetry alone won't show you this.
+
+Tool three, <break time='300ms'/> Copilot and Agent Analytics Dashboards! <break time='400ms'/> Built-in dashboards for agent invocation frequency, <break time='200ms'/> task completion trends, <break time='200ms'/> common queries, <break time='200ms'/> and error events. <break time='300ms'/> The easiest path to baseline visibility for Copilot Studio agents.
+
+Tool four, <break time='300ms'/> Power Platform Admin Center! <break time='400ms'/> Environment-level monitoring. <break time='300ms'/> Connector usage and limits, <break time='200ms'/> flow telemetry, <break time='200ms'/> and D L P rule impact. <break time='400ms'/> Critical for Power Platform agents. <break time='300ms'/> Connector throttling kills agents silently.
+
+And tool five, <break time='300ms'/> Foundry and observability platforms! <break time='400ms'/> Centralize multi-system logs. <break time='300ms'/> Cross-environment dashboards, <break time='200ms'/> AI model execution insights. <break time='300ms'/> A single pane of glass for enterprises with multiple AI environments. <break time='300ms'/> Where governance teams live.
+
+--- SLIDE 07 ---
+Time for a knowledge check! <break time='500ms'/> Which process should be included when establishing a monitoring operating model? <break time='400ms'/> Is it ignoring agent guardrail triggers? <break time='200ms'/> Standardizing metric definitions and log review cadence? <break time='200ms'/> Disabling all alerts to reduce noise? <break time='200ms'/> Or allowing unrestricted agent configuration? <break time='500ms'/> Think about it. <break time='400ms'/> The answer is standardizing metric definitions and establishing a log review cadence. <break time='300ms'/> Without standard definitions, <break time='200ms'/> every team measures success differently. <break time='300ms'/> Without cadence, <break time='200ms'/> log review becomes ad hoc. <break time='300ms'/> Ignoring guardrail triggers defeats governance. <break time='200ms'/> Disabling alerts removes your early warning system.
+
+--- SLIDE 08 ---
+Unit two! <break time='500ms'/> Backlog and user feedback analysis. <break time='400ms'/> Translating raw signals, <break time='200ms'/> support tickets, <break time='200ms'/> surveys, <break time='200ms'/> transcripts, <break time='200ms'/> into prioritized improvements. <break time='400ms'/> This is the bridge between monitoring and tuning.
+
+--- SLIDE 09 ---
+Six backlog categories! <break time='400ms'/> Every issue, <break time='200ms'/> request, <break time='200ms'/> or piece of feedback maps to one of these six domains. <break time='300ms'/> Categorize first. <break time='300ms'/> Without categorization, <break time='200ms'/> the backlog is just noise. <break time='400ms'/> I'll bring them up one at a time.
+
+Domain one, <break time='300ms'/> Accuracy! <break time='400ms'/> Misinterpreted queries, <break time='200ms'/> missing context, <break time='200ms'/> wrong answers. <break time='300ms'/> The agent gets the question wrong <break time='200ms'/> or answers the wrong question entirely. <break time='300ms'/> Usually a knowledge or prompt issue underneath.
+
+Domain two, <break time='300ms'/> Knowledge! <break time='400ms'/> Outdated docs, <break time='200ms'/> missing domain articles. <break time='300ms'/> The agent simply doesn't know things it should know. <break time='300ms'/> Usually fixable by updating knowledge sources.
+
+Domain three, <break time='300ms'/> Performance! <break time='400ms'/> High latency, <break time='200ms'/> connector throttling, <break time='200ms'/> slow responses. <break time='300ms'/> The agent works but slowly. <break time='300ms'/> Often the easiest to fix <break time='200ms'/> through workflow optimization or connector tuning.
+
+Domain four, <break time='300ms'/> UX! <break time='400ms'/> Confusing flows, <break time='200ms'/> unclear instructions. <break time='300ms'/> The agent works but users can't use it well. <break time='400ms'/> Highest impact on adoption! <break time='300ms'/> UX issues drive abandonment.
+
+Domain five, <break time='300ms'/> Integration! <break time='400ms'/> API failures, <break time='200ms'/> broken actions. <break time='300ms'/> The agent's connection to enterprise systems isn't working. <break time='300ms'/> Often blame-game-prone. <break time='300ms'/> Could be the agent, <break time='200ms'/> could be the downstream system.
+
+And domain six, <break time='300ms'/> Governance! <break time='400ms'/> Data access blocked, <break time='200ms'/> D L P alerts firing. <break time='300ms'/> The agent is blocked from doing what users need, <break time='200ms'/> usually for good reason. <break time='400ms'/> Resolution requires governance review, <break time='200ms'/> not just engineering.
+
+--- SLIDE 10 ---
+Now prioritize by impact and effort! <break time='400ms'/> The classic two-by-two matrix. <break time='300ms'/> Once items are categorized, <break time='200ms'/> they need to be ordered. <break time='300ms'/> High impact, <break time='200ms'/> low effort wins. <break time='300ms'/> That's where the architect earns their keep. <break time='400ms'/> I'll bring up the quadrants one at a time.
+
+Quadrant one, <break time='300ms'/> high impact, <break time='200ms'/> low effort! <break time='400ms'/> Priority one. <break time='300ms'/> Immediate action. <break time='300ms'/> Update outdated knowledge, <break time='200ms'/> fix obvious prompt issues, <break time='200ms'/> quick connector configuration tweaks. <break time='300ms'/> The architect's bread and butter.
+
+Quadrant two, <break time='300ms'/> high impact, <break time='200ms'/> high effort! <break time='400ms'/> Priority two. <break time='300ms'/> Plan and schedule. <break time='300ms'/> Major workflow redesigns, <break time='200ms'/> custom model retraining, <break time='200ms'/> cross-team integration changes. <break time='300ms'/> Don't ignore them. <break time='300ms'/> They have value, <break time='200ms'/> but they need staffing.
+
+Quadrant three, <break time='300ms'/> low impact, <break time='200ms'/> low effort! <break time='400ms'/> Priority three. <break time='300ms'/> Optimize when possible. <break time='300ms'/> Cosmetic improvements, <break time='200ms'/> small UX tweaks. <break time='300ms'/> Done when capacity is available. <break time='200ms'/> Never as the headline work.
+
+And quadrant four, <break time='300ms'/> low impact, <break time='200ms'/> high effort! <break time='400ms'/> Priority four. <break time='300ms'/> Defer and reassess. <break time='300ms'/> Don't do these. <break time='300ms'/> They're the trap that consumes teams without delivering value. <break time='300ms'/> Reassess quarterly.
+
+--- SLIDE 11 ---
+Knowledge check number two! <break time='500ms'/> What is the best first step when analyzing backlog items for AI and agent usage? <break time='400ms'/> Is it immediately redesigning agent prompts? <break time='200ms'/> Categorizing backlog items into meaningful domains? <break time='200ms'/> Archiving past feedback to avoid noise? <break time='200ms'/> Or disabling the agent until issues are fixed? <break time='500ms'/> The answer is categorize! <break time='300ms'/> Categorizing items into meaningful domains is the foundation of structured prioritization. <break time='300ms'/> Without categorization, <break time='200ms'/> the backlog is undifferentiated noise. <break time='300ms'/> You can't prioritize what you haven't classified. <break time='300ms'/> Categorize first, <break time='200ms'/> prioritize second, <break time='200ms'/> fix third.
+
+--- SLIDE 12 ---
+Unit three! <break time='500ms'/> AI-based diagnosis and tuning. <break time='400ms'/> When the backlog signals something needs fixing, <break time='200ms'/> what's the diagnostic process <break time='200ms'/> and how do you tune? <break time='400ms'/> Six-step diagnostic workflow, <break time='200ms'/> five root cause categories, <break time='200ms'/> and four tuning strategies. <break time='300ms'/> From symptom to targeted fix.
+
+--- SLIDE 13 ---
+The diagnostic workflow plus five root cause categories! <break time='400ms'/> The flow on top shows the sequence. <break time='300ms'/> The five root causes underneath cover every type of agent issue. <break time='400ms'/> I'll reveal the flow first, <break time='200ms'/> then each root cause.
+
+The six-step diagnostic workflow! <break time='400ms'/> Step one, <break time='200ms'/> monitor, <break time='200ms'/> tracking latency, <break time='200ms'/> throughput, <break time='200ms'/> quality, <break time='200ms'/> and satisfaction. <break time='200ms'/> Step two, <break time='200ms'/> detect anomalies, <break time='200ms'/> looking for deviations from your baselines. <break time='200ms'/> Step three, <break time='200ms'/> correlate, <break time='200ms'/> combining user behavior, <break time='200ms'/> failures, <break time='200ms'/> and performance data. <break time='200ms'/> Step four, <break time='200ms'/> determine root cause. <break time='200ms'/> Step five, <break time='200ms'/> apply targeted tuning in the right layer. <break time='200ms'/> Step six, <break time='200ms'/> validate by comparing telemetry before versus after. <break time='400ms'/> Don't skip validation! <break time='300ms'/> The same issue can recur if you tune the wrong thing.
+
+Root cause one, <break time='300ms'/> Model or Prompt! <break time='400ms'/> Misinterpretation, <break time='200ms'/> insufficient context, <break time='200ms'/> wrong instructions. <break time='300ms'/> Fixable through prompt refinement or model tuning.
+
+Root cause two, <break time='300ms'/> Knowledge Gaps! <break time='400ms'/> Missing organizational content, <break time='200ms'/> outdated files. <break time='300ms'/> The agent doesn't know what it should. <break time='300ms'/> Fix at the knowledge source.
+
+Root cause three, <break time='300ms'/> Integration Failure! <break time='400ms'/> Connector constraints, <break time='200ms'/> API limits, <break time='200ms'/> data access rules. <break time='300ms'/> Often the most maddening category. <break time='300ms'/> The agent is working, <break time='200ms'/> the downstream system isn't.
+
+Root cause four, <break time='300ms'/> Configuration! <break time='400ms'/> Incorrect environment variables, <break time='200ms'/> feature toggles, <break time='200ms'/> role settings. <break time='300ms'/> Boring but common. <break time='300ms'/> Most production incidents trace here.
+
+And root cause five, <break time='300ms'/> Governance Interference! <break time='400ms'/> D L P blocking, <break time='200ms'/> sensitivity labels, <break time='200ms'/> restricted actions. <break time='300ms'/> Resolution requires governance review, <break time='200ms'/> not just engineering.
+
+--- SLIDE 14 ---
+Four tuning strategies! <break time='400ms'/> Once the root cause is identified, <break time='200ms'/> the fix lives in one of these four layers. <break time='300ms'/> Apply the right strategy for the right cause. <break time='300ms'/> Tuning prompts when the issue is integration <break time='200ms'/> just wastes time. <break time='400ms'/> I'll bring them up one at a time.
+
+Strategy one, <break time='300ms'/> Knowledge Tuning! <break time='400ms'/> The most common tuning need. <break time='300ms'/> Add or update content to fill gaps, <break time='200ms'/> remove outdated information, <break time='200ms'/> refine knowledge structure for retrieval, <break time='200ms'/> and re-index when the corpus changes significantly. <break time='400ms'/> Most agent issues are knowledge issues in disguise.
+
+Strategy two, <break time='300ms'/> Behavioral Tuning! <break time='400ms'/> This is where prompt engineering pays off. <break time='300ms'/> Adjust orchestration steps, <break time='200ms'/> add clarifying instructions, <break time='200ms'/> introduce fallback strategies for ambiguous queries, <break time='200ms'/> and refine guardrail rules.
+
+Strategy three, <break time='300ms'/> Performance Tuning! <break time='400ms'/> Optimize connectors and external data calls, <break time='200ms'/> reduce unnecessary workflow steps, <break time='200ms'/> address slow processing logic or oversized payloads. <break time='300ms'/> The cheapest user-perceived win. <break time='300ms'/> Speed matters.
+
+And strategy four, <break time='300ms'/> Governance-Aligned Tuning! <break time='400ms'/> Review D L P, <break time='200ms'/> sensitivity labels, <break time='200ms'/> and access rules. <break time='300ms'/> Align agent capabilities with compliance. <break time='400ms'/> And critically, <break time='300ms'/> ensure logging and auditing remain intact after changes. <break time='300ms'/> The audit trail must not break during tuning.
+
+--- SLIDE 15 ---
+Knowledge check number three! <break time='500ms'/> Which activity is typically the first step in diagnosing AI agent issues? <break time='400ms'/> Is it deploying a model update? <break time='200ms'/> Reviewing telemetry and logs to identify patterns? <break time='200ms'/> Adjusting access policies? <break time='200ms'/> Or modifying workflow steps? <break time='500ms'/> The answer is reviewing telemetry and logs. <break time='300ms'/> You can't fix what you haven't measured. <break time='300ms'/> Deploying a model update without diagnosis is shooting in the dark. <break time='300ms'/> Adjusting access policies assumes the issue is governance without evidence. <break time='300ms'/> Diagnosis precedes action. <break time='300ms'/> Always.
+
+--- SLIDE 16 ---
+Unit four! <break time='500ms'/> Performance metrics. <break time='400ms'/> What you measure shapes what you optimize. <break time='300ms'/> Three metric categories, <break time='200ms'/> plus drift indicators that signal generative AI degradation. <break time='400ms'/> Task completion rate is the gold standard!
+
+--- SLIDE 17 ---
+Three metric categories for AI agent performance! <break time='400ms'/> Operational, <break time='200ms'/> quality and reasoning, <break time='200ms'/> and user-centered. <break time='300ms'/> User-centered is the most important. <break time='400ms'/> I'll bring them up one at a time.
+
+Category one, <break time='300ms'/> Operational Metrics! <break time='400ms'/> Latency, <break time='200ms'/> throughput, <break time='200ms'/> error rate, <break time='200ms'/> and resource utilization including compute, <break time='200ms'/> memory, <break time='200ms'/> and token consumption. <break time='400ms'/> Necessary but not sufficient. <break time='300ms'/> Healthy operational metrics don't guarantee user success.
+
+Category two, <break time='300ms'/> Quality and Reasoning Metrics! <break time='400ms'/> Response accuracy, <break time='200ms'/> meaning alignment with expected outputs. <break time='200ms'/> Knowledge coverage, <break time='200ms'/> the ability to surface correct domain content. <break time='200ms'/> And action effectiveness, <break time='200ms'/> whether multi-step tasks complete as intended. <break time='400ms'/> Hard to automate. <break time='300ms'/> Needs human-in-the-loop validation.
+
+Category three, <break time='300ms'/> User-Centered Metrics! <break time='400ms'/> Satisfaction indicators, <break time='200ms'/> abandonment rate, <break time='200ms'/> measuring drop-off during workflows, <break time='200ms'/> and task completion rate, <break time='200ms'/> whether users achieve their intended outcomes. <break time='500ms'/> Task completion rate is the gold-standard metric! <break time='300ms'/> The single best indicator that an agent is delivering value.
+
+And now the model drift indicators! <break time='400ms'/> Three signals specific to generative AI. <break time='300ms'/> Shifts in response patterns, <break time='200ms'/> declining accuracy on recurring tasks, <break time='200ms'/> and increased hallucination or off-topic responses. <break time='400ms'/> Watch for all three. <break time='300ms'/> Drift accumulates quietly <break time='200ms'/> until it breaks user trust.
+
+--- SLIDE 18 ---
+Last knowledge check! <break time='500ms'/> Which metric best indicates whether users are achieving the intended outcome of an agent workflow? <break time='400ms'/> Token usage? <break time='200ms'/> Task completion rate? <break time='200ms'/> Connector quota? <break time='200ms'/> Or storage utilization? <break time='500ms'/> The answer is task completion rate. <break time='300ms'/> It directly measures whether users achieve their intended outcome. <break time='300ms'/> Token usage tracks cost, <break time='200ms'/> not user success. <break time='200ms'/> Connector quota is an infrastructure metric. <break time='200ms'/> Storage utilization is irrelevant to user outcomes. <break time='400ms'/> An agent can have low token usage, <break time='200ms'/> plenty of connector quota, <break time='200ms'/> and minimal storage, <break time='200ms'/> and still completely fail its users.
+
+--- SLIDE 19 ---
+Last unit! <break time='500ms'/> Interpreting telemetry data for performance and tuning. <break time='400ms'/> Bringing it all together. <break time='300ms'/> What telemetry to read, <break time='200ms'/> how to read it, <break time='200ms'/> and how to drive tuning from signal.
+
+--- SLIDE 20 ---
+Four telemetry categories plus the six-step diagnosis workflow! <break time='400ms'/> The categories tell you what data to collect. <break time='300ms'/> The workflow tells you how to use it. <break time='400ms'/> I'll bring up the four categories, <break time='200ms'/> then the workflow.
+
+Category one, <break time='300ms'/> Operational Telemetry! <break time='400ms'/> Latency, <break time='200ms'/> throughput, <break time='200ms'/> error rates and failure modes, <break time='200ms'/> resource consumption, <break time='200ms'/> and throttling. <break time='300ms'/> The infrastructure layer.
+
+Category two, <break time='300ms'/> Model-Level Telemetry! <break time='400ms'/> Token usage and cost patterns, <break time='200ms'/> response consistency, <break time='200ms'/> and drift indicators. <break time='300ms'/> Specific to generative AI, <break time='200ms'/> distinct from operational metrics.
+
+Category three, <break time='300ms'/> Behavioral Telemetry! <break time='400ms'/> User satisfaction, <break time='200ms'/> completion rates, <break time='200ms'/> prompt patterns, <break time='200ms'/> abandonment rates, <break time='200ms'/> and model alignment to intended tasks. <break time='400ms'/> This is the user's voice. <break time='300ms'/> Turn this on or fly blind.
+
+And category four, <break time='300ms'/> Governance Telemetry! <break time='400ms'/> Guardrail interventions, <break time='200ms'/> blocked actions, <break time='200ms'/> restricted data access events, <break time='200ms'/> and policy or sensitivity label conflicts. <break time='400ms'/> Required for audit. <break time='300ms'/> Auditors will ask for this data.
+
+Now the six-step telemetry-driven diagnosis workflow! <break time='400ms'/> Step one, <break time='200ms'/> monitor key metrics. <break time='200ms'/> Step two, <break time='200ms'/> identify anomalies. <break time='200ms'/> Step three, <break time='200ms'/> correlate related signals. <break time='200ms'/> Step four, <break time='200ms'/> determine root cause. <break time='200ms'/> Step five, <break time='200ms'/> apply targeted tuning. <break time='200ms'/> Step six, <break time='200ms'/> validate improvements. <break time='400ms'/> This is the closed loop. <break time='300ms'/> Repeat continuously.
+
+--- SLIDE 21 ---
+Time to apply Chapter eight end-to-end! <break time='500ms'/> Here's the scenario. <break time='400ms'/> MegaRetail launched their Copilot for Sales agent three months ago <break time='200ms'/> for twelve hundred sales reps. <break time='300ms'/> Telemetry looks healthy, <break time='200ms'/> ninety-six percent success rate, <break time='200ms'/> one point eight second average latency. <break time='400ms'/> But weekly active users have dropped from sixty percent <break time='200ms'/> to thirty-five percent. <break time='300ms'/> User satisfaction surveys show frustration. <break time='300ms'/> Conversation transcripts show many users abandoning at the proposal-drafting step. <break time='300ms'/> Some reps complain the agent gives wrong pricing recommendations. <break time='300ms'/> And a few governance alerts about sensitive customer data appearing in summaries. <break time='500ms'/> Discuss with your partner. <break time='400ms'/> Where do you start the diagnosis, <break time='200ms'/> telemetry, <break time='200ms'/> backlog, <break time='200ms'/> or transcripts? <break time='300ms'/> What does the gap between healthy operational metrics <break time='200ms'/> and dropping adoption tell you? <break time='300ms'/> How would you categorize the issues into backlog domains? <break time='300ms'/> And what monitoring would you put in place for next time? <break time='500ms'/> The key insight here is to start with transcripts, <break time='200ms'/> not telemetry. <break time='400ms'/> Healthy telemetry plus dropping adoption <break time='200ms'/> is the canonical telemetry blind spot pattern. <break time='300ms'/> The infrastructure is fine. <break time='300ms'/> The problem is user-facing. <break time='400ms'/> Transcripts reveal what telemetry can't, <break time='200ms'/> misunderstood intents, <break time='200ms'/> abandoned flows, <break time='200ms'/> and unmet expectations. <break time='400ms'/> The success rate metric is measuring the wrong thing. <break time='300ms'/> It's counting technical completions, <break time='200ms'/> not user-perceived success. <break time='400ms'/> For the backlog, <break time='200ms'/> wrong pricing recommendations maps to knowledge tuning, <break time='200ms'/> priority one. <break time='200ms'/> Abandoning at proposal-drafting maps to behavioral tuning, <break time='200ms'/> also priority one. <break time='200ms'/> And sensitive data in summaries maps to governance tuning, <break time='200ms'/> also priority one for compliance risk. <break time='300ms'/> Performance? <break time='200ms'/> Skip it. <break time='200ms'/> Latency is fine. <break time='400ms'/> For better monitoring next time, <break time='200ms'/> add task completion rate to dashboards, <break time='200ms'/> set up monthly transcript reviews, <break time='200ms'/> and alert on adoption drift <break time='200ms'/> when weekly actives drop more than ten percent week-over-week.
+
+--- SLIDE 22 ---
+Final recap! <break time='400ms'/> Six things to take into Chapter nine. <break time='400ms'/> I'll bring them up one at a time.
+
+Takeaway one! <break time='300ms'/> Five monitoring dimensions. <break time='400ms'/> Operational, <break time='200ms'/> performance, <break time='200ms'/> quality, <break time='200ms'/> usage, <break time='200ms'/> and risk. <break time='300ms'/> Cover all five. <break time='300ms'/> Focusing on just operational health <break time='200ms'/> misses the most important business signals.
+
+Takeaway two! <break time='300ms'/> Five Microsoft monitoring tools. <break time='400ms'/> Azure Monitor for telemetry, <break time='200ms'/> M365 Admin Analytics for adoption, <break time='200ms'/> Copilot dashboards for agent-specific views, <break time='200ms'/> Power Platform Admin Center for environment monitoring, <break time='200ms'/> and Foundry observability for the enterprise-wide picture.
+
+Takeaway three! <break time='300ms'/> Six backlog domains. <break time='400ms'/> Accuracy, <break time='200ms'/> knowledge, <break time='200ms'/> performance, <break time='200ms'/> UX, <break time='200ms'/> integration, <break time='200ms'/> and governance. <break time='300ms'/> Categorize before prioritizing. <break time='300ms'/> Then plot on the impact-effort matrix. <break time='300ms'/> High impact, <break time='200ms'/> low effort wins.
+
+Takeaway four! <break time='300ms'/> Five root cause categories. <break time='400ms'/> Model or prompt, <break time='200ms'/> knowledge gaps, <break time='200ms'/> integration failures, <break time='200ms'/> configuration, <break time='200ms'/> and governance interference. <break time='300ms'/> Every agent issue traces to one of these five.
+
+Takeaway five! <break time='300ms'/> Four tuning strategies. <break time='400ms'/> Knowledge tuning is the most common need. <break time='300ms'/> Behavioral, <break time='200ms'/> performance, <break time='200ms'/> and governance follow. <break time='300ms'/> Match strategy to root cause.
+
+And takeaway six! <break time='300ms'/> Task completion rate is the gold-standard user-centered metric. <break time='400ms'/> Plus model drift indicators specific to generative AI. <break time='300ms'/> Plus the six-step diagnostic workflow, <break time='200ms'/> monitor, <break time='200ms'/> detect, <break time='200ms'/> correlate, <break time='200ms'/> root cause, <break time='200ms'/> tune, <break time='200ms'/> validate. <break time='500ms'/> That's Chapter eight! <break time='300ms'/> Onwards to Chapter nine, <break time='200ms'/> managing the testing of AI solutions.

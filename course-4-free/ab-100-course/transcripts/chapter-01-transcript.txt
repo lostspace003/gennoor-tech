@@ -1,0 +1,157 @@
+--- SLIDE 01 ---
+Welcome everyone! <break time='500ms'/> Across this self-paced course, <break time='200ms'/> we step into the role of the solution architect <break time='200ms'/> in an AI-first world. <break time='400ms'/> Chapter one sets the foundation. <break time='300ms'/> What does it mean to architect for agentic AI, <break time='200ms'/> and what is your job in that transformation? <break time='400ms'/> This course is about how you think, <break time='200ms'/> not how you configure.
+
+--- SLIDE 02 ---
+Before going deep, <break time='300ms'/> let me frame the map. <break time='400ms'/> We will cover six areas in this chapter, <break time='200ms'/> each building on the one before. <break time='300ms'/> I will reveal them one at a time.
+
+First! <break time='300ms'/> The Architect's Role. <break time='400ms'/> This is where it all starts. <break time='300ms'/> By the end of this chapter, <break time='200ms'/> you should be able to define your role to a non-technical executive <break time='200ms'/> in one sentence. <break time='300ms'/> If you cannot, <break time='200ms'/> your customer cannot either.
+
+Second! <break time='300ms'/> The Transformation Framework. <break time='400ms'/> Five phases, <break time='200ms'/> in order. <break time='300ms'/> Skip Phase one and the project fails. <break time='300ms'/> Most failed AI projects skip Phase one.
+
+Third! <break time='300ms'/> The Microsoft AI Stack. <break time='400ms'/> Five layers. <break time='200ms'/> Each one has a sweet spot. <break time='300ms'/> Your job is to know which layer to start with <break time='200ms'/> for any new business scenario.
+
+Fourth! <break time='300ms'/> Out-of-the-Box Agents. <break time='400ms'/> The phrase you will say a hundred times: <break time='300ms'/> do not build what Microsoft has already built.
+
+Fifth! <break time='300ms'/> Best Practices. <break time='400ms'/> Four practices. <break time='300ms'/> Ignore one <break time='200ms'/> and your architecture is brittle.
+
+Sixth! <break time='300ms'/> Knowledge Checks. <break time='400ms'/> Three quick questions and one scenario. <break time='300ms'/> Do not worry about getting them right. <break time='200ms'/> Worry about defending your reasoning.
+
+--- SLIDE 03 ---
+Now the most important question of this entire course. <break time='500ms'/> What does an AI architect actually do? <break time='400ms'/> If you cannot answer it in one sentence <break time='200ms'/> by the end of this unit, <break time='200ms'/> we have not done our job.
+
+--- SLIDE 04 ---
+Four learning objectives for this unit. <break time='400ms'/> I will bring them up one at a time.
+
+One! <break time='300ms'/> Explain the architect's role in driving AI adoption and transformation. <break time='300ms'/> In your own words.
+
+Two! <break time='300ms'/> Identify the key responsibilities of an AI architect in business contexts. <break time='300ms'/> We will see five of them in detail in a moment.
+
+Three! <break time='300ms'/> Understand how architects align AI solutions with organizational goals. <break time='300ms'/> Alignment is a strategic skill, <break time='200ms'/> not a technical one.
+
+Four! <break time='300ms'/> Apply best practices for scaling AI across enterprise environments. <break time='300ms'/> We will cover the four practices that matter.
+
+--- SLIDE 05 ---
+The single most important visual in this course. <break time='400ms'/> I will build it up piece by piece. <break time='500ms'/>
+
+On one side, <break time='300ms'/> the business. <break time='300ms'/> K P Is, <break time='200ms'/> R O I, <break time='200ms'/> customer outcomes. <break time='300ms'/> The C F O. <break time='200ms'/> The V P of Operations. <break time='300ms'/> They speak the language of money and outcomes.
+
+On the other side, <break time='300ms'/> the technology. <break time='300ms'/> Foundry, <break time='200ms'/> Copilot Studio, <break time='200ms'/> Dynamics, <break time='200ms'/> Azure. <break time='300ms'/> Models, <break time='200ms'/> tokens, <break time='200ms'/> latency, <break time='200ms'/> tool calls. <break time='300ms'/> A different language entirely.
+
+When these two sides try to talk directly, <break time='300ms'/> projects fail. <break time='300ms'/> The business asks for vague things. <break time='200ms'/> Technology builds the wrong things. <break time='400ms'/> The architect is the bridge. <break time='300ms'/> You translate.
+
+Let me give you four examples. <break time='400ms'/> Example one! <break time='300ms'/> Business says <break time='200ms'/> reduce service cost. <break time='300ms'/> You translate that into <break time='200ms'/> Copilot Studio agent <break time='200ms'/> plus Dynamics 365 Customer Service grounding. <break time='300ms'/> Specific. <break time='200ms'/> Buildable.
+
+Example two! <break time='300ms'/> Help reps sell more <break time='300ms'/> becomes <break time='200ms'/> Sales Copilot <break time='200ms'/> plus custom C R M connector <break time='200ms'/> plus email summary.
+
+Example three! <break time='300ms'/> Token cost too high <break time='300ms'/> becomes a model router. <break time='300ms'/> Cheaper models for triage, <break time='200ms'/> premium models for synthesis.
+
+Example four! <break time='300ms'/> Data residency risk <break time='300ms'/> becomes region-pinned Foundry <break time='200ms'/> plus scoped grounding sources. <break time='400ms'/> This is what translation looks like. <break time='300ms'/> This is your job.
+
+--- SLIDE 06 ---
+If your job is to be the bridge, <break time='300ms'/> what do you actually deliver? <break time='400ms'/> Five responsibilities. <break time='300ms'/> I will bring them up one at a time.
+
+One! <break time='300ms'/> Vision and Roadmap. <break time='400ms'/> Define the AI strategy aligned with business priorities. <break time='300ms'/> Vision before roadmap. <break time='300ms'/> Most architects skip the vision <break time='200ms'/> and the roadmap takes them to the wrong place faster. <break time='400ms'/> What good looks like? <break time='300ms'/> Reduce average handle time by twenty percent in six months. <break time='200ms'/> Measurable. <break time='200ms'/> Time-bound.
+
+Two! <break time='300ms'/> Data Architecture. <break time='400ms'/> Without good data, <break time='200ms'/> AI is useless. <break time='300ms'/> Ensure data is ready, <break time='200ms'/> governed, <break time='200ms'/> and accessible for grounding and training. <break time='300ms'/> We will spend significant time on this in Chapter two. <break time='300ms'/> What good looks like? <break time='200ms'/> A curated knowledge base, <break time='200ms'/> sensitivity labels applied, <break time='200ms'/> scoped per persona.
+
+Three! <break time='300ms'/> Integration. <break time='400ms'/> AI in isolation is a demo. <break time='300ms'/> AI in workflows is a product. <break time='300ms'/> The agent must do things. <break time='200ms'/> Write to ServiceNow. <break time='200ms'/> Update Dynamics. <break time='200ms'/> Post to Teams. <break time='300ms'/> All in one flow.
+
+Four! <break time='300ms'/> Security and Ethics. <break time='400ms'/> Fairness, <break time='200ms'/> transparency, <break time='200ms'/> accountability. <break time='300ms'/> Not optional. <break time='300ms'/> Content filters on. <break time='200ms'/> D L P scoped. <break time='200ms'/> Audit trail enabled. <break time='200ms'/> Human in the loop for sensitive flows. <break time='300ms'/> Chapter eleven is dedicated entirely to this.
+
+Five! <break time='300ms'/> Performance Monitoring. <break time='400ms'/> What gets measured gets improved. <break time='300ms'/> Without telemetry from week one, <break time='200ms'/> you cannot prove R O I. <break time='300ms'/> A weekly dashboard showing <break time='200ms'/> deflection rate, <break time='200ms'/> satisfaction, <break time='200ms'/> escalation rate, <break time='200ms'/> token cost per session.
+
+Now the hard part. <break time='400ms'/> All five. <break time='300ms'/> Not three of five. <break time='200ms'/> Not four of five. <break time='300ms'/> Skip any one and the project sinks. <break time='300ms'/> Look at the cards. <break time='200ms'/> Which one is your team weakest at?
+
+--- SLIDE 07 ---
+Time for a knowledge check! <break time='500ms'/> Which responsibility ensures AI initiatives align with business priorities? <break time='400ms'/> Is it A, <break time='200ms'/> Integration? <break time='200ms'/> B, <break time='200ms'/> Vision and Roadmap? <break time='200ms'/> C, <break time='200ms'/> Performance Monitoring? <break time='200ms'/> Or D, <break time='200ms'/> Data Architecture? <break time='400ms'/> Take a moment to think about this one. <break time='500ms'/> The answer is B, <break time='200ms'/> Vision and Roadmap. <break time='400ms'/> Vision and Roadmap is where alignment lives. <break time='300ms'/> Integration, <break time='200ms'/> monitoring, <break time='200ms'/> and data architecture are essential, <break time='200ms'/> but they execute against the strategy <break time='200ms'/> that Vision and Roadmap defines. <break time='300ms'/> Misaligned strategy means perfect execution <break time='200ms'/> still ships the wrong thing.
+
+--- SLIDE 08 ---
+You know what your job is. <break time='400ms'/> Now, <break time='200ms'/> how do you do it? <break time='500ms'/> Every AI transformation, <break time='200ms'/> regardless of company or industry, <break time='200ms'/> follows the same five phases. <break time='400ms'/> Sequential. <break time='200ms'/> Non-skippable. <break time='300ms'/> Most failed AI projects skip Phase one. <break time='200ms'/> They build something, <break time='200ms'/> then ask what problem it solves.
+
+--- SLIDE 09 ---
+Five phases! <break time='400ms'/> I will build them up one at a time, <break time='200ms'/> then we will fill in what happens in each. <break time='500ms'/>
+
+Phase one! <break time='300ms'/> Define. <break time='400ms'/> What business outcome are we chasing? <break time='300ms'/> What does success look like, <break time='200ms'/> in numbers? <break time='300ms'/> If you cannot answer that, <break time='200ms'/> do not move to phase two.
+
+Phase two! <break time='300ms'/> Develop. <break time='400ms'/> What is the AI strategy? <break time='300ms'/> Build, <break time='200ms'/> buy, <break time='200ms'/> or extend? <break time='200ms'/> Which models? <break time='200ms'/> Which platforms?
+
+Phase three! <break time='300ms'/> Design. <break time='400ms'/> The architecture. <break time='200ms'/> The data flow. <break time='200ms'/> The integrations. <break time='200ms'/> The security model. <break time='300ms'/> Diagrams come out here.
+
+Phase four! <break time='300ms'/> Implement. <break time='400ms'/> Build it. <break time='200ms'/> Ground it. <break time='200ms'/> Test it. <break time='200ms'/> Integrate it. <break time='300ms'/> The longest phase.
+
+Phase five! <break time='300ms'/> Monitor. <break time='400ms'/> Measure. <break time='200ms'/> Tune. <break time='200ms'/> Optimize. <break time='200ms'/> Learn for the next iteration. <break time='400ms'/> Eighty percent of failed projects skip Phase one. <break time='200ms'/> Do not be that team.
+
+Now let me fill in the details for each phase. <break time='500ms'/> Phase one: <break time='300ms'/> pin down the metric. <break time='300ms'/> Average handle time? <break time='200ms'/> Deflection rate? <break time='200ms'/> Revenue per rep? <break time='300ms'/> If they cannot give you a number, <break time='200ms'/> do not design yet.
+
+Phase two: <break time='300ms'/> high-level approach. <break time='300ms'/> Build, <break time='200ms'/> buy, <break time='200ms'/> or extend? <break time='200ms'/> Which models? <break time='200ms'/> Which platforms? <break time='300ms'/> Just direction. <break time='200ms'/> No architecture diagrams yet.
+
+Phase three: <break time='300ms'/> this is where you earn your title. <break time='400ms'/> Architecture diagrams, <break time='200ms'/> data flows, <break time='200ms'/> integration points, <break time='200ms'/> security model, <break time='200ms'/> agent topology.
+
+Phase four: <break time='300ms'/> build agents, <break time='200ms'/> ground in data, <break time='200ms'/> configure connectors, <break time='200ms'/> run user acceptance testing, <break time='200ms'/> deploy. <break time='300ms'/> Most of the calendar time.
+
+Phase five: <break time='300ms'/> telemetry, <break time='200ms'/> A B testing, <break time='200ms'/> prompt tuning, <break time='200ms'/> model swapping, <break time='200ms'/> cost optimization. <break time='300ms'/> This is where you prove R O I.
+
+--- SLIDE 10 ---
+Four non-negotiable best practices. <break time='400ms'/> These separate the projects that ship <break time='200ms'/> from the ones that do not. <break time='300ms'/> The first is the most often violated. <break time='500ms'/>
+
+One! <break time='300ms'/> Start with measurable outcomes. <break time='400ms'/> The first conversation should end with a number, <break time='200ms'/> not a feature list. <break time='300ms'/> Reduce ticket resolution time by twenty percent. <break time='200ms'/> Yes! <break time='300ms'/> Build a chatbot. <break time='200ms'/> No.
+
+Two! <break time='300ms'/> Modular and flexible design. <break time='400ms'/> The AI landscape changes every six months. <break time='300ms'/> New models, <break time='200ms'/> new tools. <break time='300ms'/> Build components you can swap, <break time='200ms'/> or you will throw the whole thing out in a year. <break time='300ms'/> Use a model router <break time='200ms'/> so swapping one model for a newer one <break time='200ms'/> is a config change, <break time='200ms'/> not a rewrite.
+
+Three! <break time='300ms'/> Responsible AI from day one. <break time='400ms'/> Bake fairness, <break time='200ms'/> transparency, <break time='200ms'/> accountability into the design. <break time='300ms'/> Do not bolt them on when audit calls. <break time='300ms'/> Bias evaluations in the C I C D pipeline. <break time='200ms'/> Content filters tuned per scenario. <break time='200ms'/> Human-in-the-loop for irreversible actions.
+
+Four! <break time='300ms'/> Cross-functional collaboration. <break time='400ms'/> The lone architect locked in a room is a myth. <break time='300ms'/> Architecture is a team sport. <break time='300ms'/> Data scientists, <break time='200ms'/> developers, <break time='200ms'/> business leaders, <break time='200ms'/> legal, <break time='200ms'/> security, <break time='200ms'/> all in one room. <break time='300ms'/> Weekly architecture review <break time='200ms'/> with product, <break time='200ms'/> data, <break time='200ms'/> security, <break time='200ms'/> and a business sponsor at the table.
+
+--- SLIDE 11 ---
+Now we get tactical. <break time='400ms'/> Microsoft has a lot of AI tools. <break time='300ms'/> By the end of this unit, <break time='200ms'/> you should be able to draw the ecosystem on a napkin.
+
+--- SLIDE 12 ---
+The entire stack on one slide! <break time='400ms'/> I will build it up, <break time='200ms'/> first the platform, <break time='200ms'/> then the five layers, <break time='200ms'/> then a quick test for the room. <break time='500ms'/>
+
+At the center, <break time='300ms'/> the Microsoft AI Platform. <break time='300ms'/> Everything branches off this.
+
+Layer one! <break time='300ms'/> Azure AI. <break time='400ms'/> The foundation. <break time='300ms'/> Foundation models, <break time='200ms'/> cognitive services, <break time='200ms'/> infrastructure. <break time='300ms'/> Use when you are building from primitives.
+
+Layer two! <break time='300ms'/> Microsoft Foundry. <break time='400ms'/> Custom agents, <break time='200ms'/> model catalog, <break time='200ms'/> orchestration, <break time='200ms'/> evaluations. <break time='300ms'/> Use when nothing prebuilt fits. <break time='200ms'/> Chapter six goes deep here.
+
+Layer three! <break time='300ms'/> Copilot Studio. <break time='400ms'/> Low-code agents. <break time='300ms'/> Topics, <break time='200ms'/> knowledge, <break time='200ms'/> M C P. <break time='300ms'/> Use when shipping fast with low-code. <break time='200ms'/> Most of your work happens here.
+
+Layer four! <break time='300ms'/> M 365 Copilot. <break time='400ms'/> The productivity layer. <break time='300ms'/> Word, <break time='200ms'/> Excel, <break time='200ms'/> Teams, <break time='200ms'/> Outlook. <break time='300ms'/> Use when the scenario is productivity.
+
+Layer five! <break time='300ms'/> Dynamics 365. <break time='400ms'/> AI embedded in business apps. <break time='300ms'/> Sales, <break time='200ms'/> service, <break time='200ms'/> finance, <break time='200ms'/> supply chain. <break time='300ms'/> Use when the customer is on Dynamics.
+
+Quick test for the room! <break time='400ms'/> For an H R chatbot answering policy questions, <break time='200ms'/> which layer do you start with? <break time='400ms'/> Take guesses. <break time='300ms'/> The right answer is Copilot Studio. <break time='300ms'/> Low-code, <break time='200ms'/> fast, <break time='200ms'/> easy to ground in H R docs.
+
+--- SLIDE 13 ---
+A phrase you will say a hundred times. <break time='400ms'/> Do not build what Microsoft has already built! <break time='500ms'/> Out-of-the-box agents are your starting point. <break time='300ms'/> Always. <break time='400ms'/> Configure first. <break time='200ms'/> Extend if needed. <break time='200ms'/> Build custom only as a last resort. <break time='300ms'/> The order is not negotiable.
+
+--- SLIDE 14 ---
+The decision rule. <break time='400ms'/> Three steps, <break time='200ms'/> in order. <break time='300ms'/> I will walk through them one at a time. <break time='500ms'/>
+
+First, <break time='200ms'/> configure! <break time='400ms'/> Use a pre-built agent as it ships. <break time='300ms'/> Sales Copilot. <break time='200ms'/> Service Copilot. <break time='200ms'/> M 365 Facilitator. <break time='200ms'/> Researcher agent. <break time='200ms'/> Finance Copilot. <break time='300ms'/> Most scenarios are already covered. <break time='200ms'/> Just turn it on.
+
+Second, <break time='200ms'/> extend! <break time='400ms'/> Add knowledge sources, <break time='200ms'/> custom topics, <break time='200ms'/> actions, <break time='200ms'/> M C P servers. <break time='300ms'/> Add a SharePoint knowledge base to Service Copilot. <break time='200ms'/> Create a custom topic for product returns. <break time='200ms'/> Connect a Salesforce instance via M C P server. <break time='400ms'/> Most projects stop here. <break time='300ms'/> Extension covers ninety percent of real-world needs.
+
+Third, <break time='200ms'/> build custom! <break time='400ms'/> Foundry agents, <break time='200ms'/> custom models, <break time='200ms'/> custom code. <break time='300ms'/> Industry-specific agent in Foundry. <break time='200ms'/> Fine-tuned small language model for a niche domain. <break time='200ms'/> Custom orchestrator with private models. <break time='400ms'/> Most expensive, <break time='200ms'/> most time-consuming, <break time='200ms'/> riskiest. <break time='300ms'/> Save it for when there is truly no other way. <break time='300ms'/> Customers who skip to custom-build <break time='200ms'/> spend three times the budget.
+
+--- SLIDE 15 ---
+Time for a knowledge check! <break time='500ms'/> Which Microsoft resource provides prebuilt AI agents <break time='200ms'/> for business workflows? <break time='400ms'/> Is it A, <break time='200ms'/> Azure Machine Learning? <break time='200ms'/> B, <break time='200ms'/> Copilot Studio? <break time='200ms'/> C, <break time='200ms'/> Power B I? <break time='200ms'/> Or D, <break time='200ms'/> GitHub Copilot? <break time='400ms'/> Think about it. <break time='500ms'/> The answer is B, <break time='200ms'/> Copilot Studio. <break time='400ms'/> Copilot Studio is the home for prebuilt and customizable agents. <break time='300ms'/> Azure Machine Learning is for training and deploying models. <break time='200ms'/> Power B I is analytics. <break time='200ms'/> GitHub Copilot is for developers writing code.
+
+--- SLIDE 16 ---
+Now think like an architect! <break time='500ms'/> Here is the Acme Manufacturing scenario. <break time='400ms'/> Two hundred service agents <break time='200ms'/> handle fifty thousand tickets a month. <break time='300ms'/> Average call is twelve minutes. <break time='300ms'/> They have Dynamics 365 Customer Service <break time='200ms'/> and M 365 E 5 licensing. <break time='300ms'/> Leadership wants deployment quickly. <break time='200ms'/> Budget is real but not infinite. <break time='500ms'/> The discussion questions. <break time='400ms'/> Which prebuilt agents fit this scenario? <break time='200ms'/> Name at least two. <break time='300ms'/> What would you configure <break time='200ms'/> versus extend <break time='200ms'/> versus build custom? <break time='300ms'/> What is the single biggest risk to the deadline? <break time='300ms'/> Which of the five architect responsibilities are most critical here? <break time='500ms'/> Take a moment to think through these. <break time='400ms'/> For prebuilt agents, <break time='300ms'/> Dynamics 365 Customer Service Copilot <break time='200ms'/> handles case summarization, <break time='200ms'/> knowledge search, <break time='200ms'/> draft responses, <break time='200ms'/> and sentiment analysis. <break time='300ms'/> M 365 Copilot in Outlook and Teams <break time='200ms'/> covers agent-side productivity, <break time='200ms'/> like call notes, <break time='200ms'/> email drafts, <break time='200ms'/> and meeting recaps. <break time='300ms'/> And a Copilot Studio agent <break time='200ms'/> handles customer-facing self-service <break time='200ms'/> and ticket deflection. <break time='500ms'/> For configure versus extend versus build: <break time='300ms'/> configure means turning on Dynamics 365 Service Copilot features <break time='200ms'/> and enabling M 365 Copilot for the agent team. <break time='300ms'/> Extend means grounding in product manuals <break time='200ms'/> and internal knowledge base, <break time='200ms'/> adding custom topics for top ticket categories, <break time='200ms'/> and connecting ServiceNow or warranty system <break time='200ms'/> via M C P or connector. <break time='300ms'/> Build custom? <break time='200ms'/> Avoid for this scope. <break time='200ms'/> None required. <break time='200ms'/> Push back if leadership asks for it. <break time='500ms'/> The biggest risk to the deadline? <break time='300ms'/> Data readiness. <break time='300ms'/> Knowledge curation, <break time='200ms'/> sensitivity labels, <break time='200ms'/> scoping. <break time='300ms'/> Always the number one risk. <break time='300ms'/> Change management is second. <break time='200ms'/> Two hundred agents need training, <break time='200ms'/> not just a tool launch. <break time='300ms'/> The technology is not the risk. <break time='200ms'/> The platform is ready. <break time='200ms'/> The risk is upstream. <break time='500ms'/> The most critical architect responsibilities? <break time='300ms'/> Vision and Roadmap, <break time='200ms'/> to pin down the metric. <break time='200ms'/> Average handle time? <break time='200ms'/> Deflection percentage? <break time='200ms'/> C SAT? <break time='200ms'/> No metric, <break time='200ms'/> no project. <break time='300ms'/> Data Architecture, <break time='200ms'/> because grounding quality determines agent quality. <break time='200ms'/> Most underestimated. <break time='300ms'/> And Performance Monitoring, <break time='200ms'/> because without telemetry from week one, <break time='200ms'/> you cannot prove R O I to leadership.
+
+--- SLIDE 17 ---
+Time for the final knowledge check! <break time='500ms'/> Which best practice should architects follow <break time='200ms'/> to scale AI across the enterprise? <break time='400ms'/> Is it A, <break time='200ms'/> focus solely on technology upgrades? <break time='200ms'/> B, <break time='200ms'/> adopt modular and flexible design principles? <break time='200ms'/> C, <break time='200ms'/> avoid collaboration with business leaders? <break time='200ms'/> Or D, <break time='200ms'/> implement AI without considering responsible AI principles? <break time='400ms'/> Think about it. <break time='500ms'/> The answer is B, <break time='200ms'/> adopt modular and flexible design principles. <break time='400ms'/> Modular and flexible design lets you swap components, <break time='200ms'/> models, <break time='200ms'/> knowledge sources, <break time='200ms'/> and tools, <break time='200ms'/> as the AI landscape evolves. <break time='300ms'/> Locking in on tech upgrades, <break time='200ms'/> ignoring business stakeholders, <break time='200ms'/> or skipping responsible AI <break time='200ms'/> all create brittle systems that do not scale.
+
+--- SLIDE 18 ---
+Final recap! <break time='400ms'/> Five things to carry into Chapter two. <break time='300ms'/> I will bring them up one at a time. <break time='500ms'/>
+
+One! <break time='300ms'/> The architect is the bridge <break time='200ms'/> between business strategy <break time='200ms'/> and technical implementation. <break time='300ms'/> If you forget everything else, <break time='200ms'/> remember this. <break time='200ms'/> Draw it on every whiteboard.
+
+Two! <break time='300ms'/> Five responsibilities. <break time='200ms'/> All of them. <break time='200ms'/> All the time. <break time='300ms'/> Vision, <break time='200ms'/> Data, <break time='200ms'/> Integration, <break time='200ms'/> Security and Ethics, <break time='200ms'/> Performance.
+
+Three! <break time='300ms'/> The five-phase framework. <break time='300ms'/> Define, <break time='200ms'/> Develop, <break time='200ms'/> Design, <break time='200ms'/> Implement, <break time='200ms'/> Monitor. <break time='300ms'/> Do not skip phase one. <break time='200ms'/> Ever.
+
+Four! <break time='300ms'/> The Microsoft AI stack. <break time='300ms'/> Azure AI, <break time='200ms'/> Foundry, <break time='200ms'/> Copilot Studio, <break time='200ms'/> M 365 Copilot, <break time='200ms'/> Dynamics 365. <break time='300ms'/> Know what each one is for.
+
+Five! <break time='300ms'/> The decision rule. <break time='300ms'/> Configure. <break time='200ms'/> Then extend. <break time='200ms'/> Then build custom. <break time='300ms'/> Always in that order. <break time='500ms'/> That is Chapter one! <break time='300ms'/> Take a break, <break time='200ms'/> then we move to Chapter two, <break time='200ms'/> analyzing requirements for AI-powered business solutions.

@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 06 — Design Extensibility of AI Solutions · Gennoor Tech</title>
+<style>
+:root{
+  --bg:#FAFAFA; --paper:#FFFFFF;
+  --ink:#201F1E; --ink-soft:#605E5C; --ink-mute:#8A8886;
+  --line:#EDEBE9; --line-soft:#F3F2F1;
+  --ms-blue:#2563EB; --ms-blue-deep:#1D4ED8; --ms-navy:#0C1426;
+  --ms-cyan:#60A5FA; --ms-cyan-deep:#1E40AF;
+  --copilot:#F59E0B; --copilot-light:#FCD34D;
+  --ms-yellow:#F59E0B; --ms-green:#107C10; --ms-red:#D13438; --ms-orange:#F97316;
+  --logo-red:#2563EB; --logo-green:#2563EB; --logo-blue:#F59E0B; --logo-yellow:#F59E0B;
+  --notes-bg:#0C1426; --notes-text:#FFFFFF; --notes-accent:#F59E0B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;font-size:19px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.app{position:fixed;inset:0;display:flex;flex-direction:column}
+.topbar{height:56px;background:var(--ms-navy);color:#FFFFFF;display:flex;align-items:center;padding:0 24px;gap:18px;border-bottom:1px solid rgba(255,255,255,.06);z-index:10}
+.topbar .brand-mark{width:30px;height:30px;flex-shrink:0;display:block}
+.topbar .brand-lockup{display:flex;align-items:center;gap:10px;text-decoration:none;color:#FFFFFF;flex-shrink:0}
+.topbar .brand-text{display:flex;flex-direction:column;line-height:1.1}
+.topbar .brand-name{font-size:18px;font-weight:600;letter-spacing:.3px;color:#FFFFFF}
+.topbar .brand-sub{font-size:12px;color:var(--ms-yellow);letter-spacing:1.2px;text-transform:uppercase;font-weight:600;font-family:'Cascadia Code','Consolas',monospace}
+.topbar .divider{width:1px;height:24px;background:rgba(255,255,255,.15)}
+.topbar .logo{font-weight:600;font-size:20px;letter-spacing:.2px}
+.topbar .chapter-title{font-size:16px;opacity:.75;letter-spacing:.2px;font-weight:400}
+.topbar.topbar-grid .topbar-left .chapter-title{max-width:36ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topbar .spacer{flex:1}
+.topbar .meta{font-size:16px;opacity:.85;display:flex;gap:10px;align-items:center}
+.topbar .meta .pill{padding:4px 12px;background:rgba(255,255,255,.10);border-radius:4px;font-size:15px;font-weight:500}
+.topbar .meta .step-pill{background:var(--ms-blue);font-weight:600;font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px}
+.topbar button{background:transparent;border:1px solid rgba(255,255,255,.25);color:#FFFFFF;padding:7px 16px;border-radius:4px;font-family:inherit;font-size:16px;font-weight:500;cursor:pointer;transition:.15s}
+.topbar button:hover{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.4)}
+.topbar button.active{background:var(--ms-blue);border-color:var(--ms-blue)}
+.progress{height:3px;background:rgba(255,255,255,.06);position:relative;border-bottom:1px solid var(--line)}
+.progress-fill{position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg,var(--ms-blue) 0%,var(--copilot) 50%,var(--ms-cyan) 100%);transition:width .4s cubic-bezier(.4,0,.2,1)}
+.stage{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.slides{width:100%;height:100%;position:relative}
+.slide{position:absolute;inset:0;padding:36px 64px 80px;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .35s ease;overflow-y:auto}
+.slide.active{opacity:1;pointer-events:auto}
+.slide-num{position:absolute;top:18px;right:28px;font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ink-mute);letter-spacing:1.5px}
+[data-step]{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.2,.7,.3,1), transform .55s cubic-bezier(.2,.7,.3,1);pointer-events:none}
+[data-step].revealed{opacity:1;transform:translateY(0);pointer-events:auto}
+.notes-panel{position:fixed;bottom:0;left:0;right:0;background:var(--notes-bg);color:var(--notes-text);padding:22px 32px 26px;border-top:3px solid var(--notes-accent);transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);z-index:20;max-height:48vh;overflow-y:auto;box-shadow:0 -20px 40px rgba(0,0,0,.18)}
+.notes-panel.open{transform:translateY(0)}
+.notes-panel .label{display:flex;align-items:center;gap:10px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--notes-accent);margin-bottom:10px;font-weight:600}
+.notes-panel .label::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--notes-accent);animation:pulse 1.6s ease-in-out infinite}
+.notes-panel .label .step-tag{margin-left:auto;font-size:12px;color:rgba(255,255,255,.55);letter-spacing:1px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.notes-panel .script{font-size:22px;line-height:1.65;max-width:880px;font-weight:400;transition:opacity .25s}
+.notes-panel .script.fading{opacity:.3}
+.notes-panel .script em{color:var(--notes-accent);font-style:normal;font-weight:600;background:rgba(255,185,0,.15);padding:1px 6px;border-radius:3px}
+.controls{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:var(--ms-navy);padding:8px 14px;border-radius:4px;box-shadow:0 6px 24px rgba(0,32,80,.25);z-index:15}
+.controls button{width:36px;height:36px;border-radius:3px;border:none;background:transparent;color:#FFFFFF;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;transition:.15s}
+.controls button:hover{background:rgba(255,255,255,.12)}
+.controls button:disabled{opacity:.3;cursor:not-allowed}
+.controls .counter{font-family:'Cascadia Code','Consolas',monospace;font-size:16px;color:#FFFFFF;padding:0 14px;letter-spacing:1px;font-weight:500}
+.step-indicator{position:fixed;bottom:64px;left:50%;transform:translateX(-50%);font-size:14px;font-family:'Cascadia Code','Consolas',monospace;color:var(--ms-blue);letter-spacing:1.5px;opacity:0;transition:opacity .3s;z-index:14;text-transform:uppercase;font-weight:600}
+.step-indicator.show{opacity:.85}
+.step-indicator::after{content:" →";animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+
+.slide.title-slide{background:linear-gradient(135deg,#0C1426 0%,#1D4ED8 35%,#2563EB 70%,#60A5FA 110%);color:#FFFFFF;justify-content:center;padding:175px 100px 100px 100px;position:absolute;overflow:hidden}
+.slide.title-slide .brand-full{position:absolute;top:48px;left:64px;display:flex;align-items:center;gap:16px}
+.slide.title-slide .brand-mark-lg{width:64px;height:64px}
+.slide.title-slide .brand-wordmark{display:flex;flex-direction:column;line-height:1}
+.slide.title-slide .brand-wordmark .name{font-size:30px;font-weight:600;letter-spacing:1px;color:#FFFFFF}
+.slide.title-slide .brand-wordmark .tag{font-size:14px;color:var(--ms-yellow);letter-spacing:3px;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;margin-top:4px;text-transform:uppercase}
+.slide.title-slide .eyebrow{font-family:'Cascadia Code','Consolas',monospace;font-size:16px;letter-spacing:3px;color:var(--ms-cyan);margin-bottom:20px;font-weight:500}
+.slide.title-slide h1{font-size:80px;line-height:1.1;font-weight:600;max-width:1200px;letter-spacing:-1.5px}
+.slide.title-slide h1 em{font-style:normal;color:var(--ms-cyan);font-weight:600}
+.slide.title-slide .meta-row{margin-top:48px;display:flex;gap:36px;font-size:18px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.slide.title-slide .meta-row strong{color:#FFFFFF;display:block;font-size:28px;text-transform:none;font-weight:600;letter-spacing:0;margin-top:4px}
+.title-slide::before{content:"";position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(98,100,167,.30) 0%,transparent 70%);top:-200px;right:-200px;pointer-events:none}
+.title-slide::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(80,230,255,.20) 0%,transparent 70%);bottom:-160px;left:-160px;pointer-events:none}
+
+.slide.section-divider{background:linear-gradient(135deg,var(--ms-blue) 0%,var(--copilot) 100%);color:#FFFFFF;justify-content:center;align-items:flex-start;padding:80px;position:relative;overflow:hidden}
+.slide.section-divider::before{content:"";position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(80,230,255,.18) 0%,transparent 70%);top:-180px;right:-180px;pointer-events:none}
+.slide.section-divider .label{font-family:'Cascadia Code','Consolas',monospace;font-size:18px;letter-spacing:4px;margin-bottom:18px;opacity:.8;font-weight:500}
+.slide.section-divider h2{font-size:78px;line-height:1.05;font-weight:600;max-width:1100px;letter-spacing:-1.5px}
+.slide.section-divider h2 em{font-style:normal;color:var(--ms-cyan);font-weight:600}
+.slide.section-divider .sub{margin-top:28px;font-size:24px;max-width:780px;color:rgba(255,255,255,.95);font-weight:400;line-height:1.45}
+
+.slide.content-slide{padding:34px 60px 76px}
+.slide h3.slide-h{font-size:40px;font-weight:600;letter-spacing:-.5px;margin-bottom:6px;line-height:1.15;color:var(--ms-navy)}
+.slide h3.slide-h em{font-style:normal;color:var(--copilot);font-weight:600}
+.slide .lead{font-size:19px;color:var(--ink-soft);margin-bottom:20px;max-width:1000px}
+
+/* OVERVIEW 5 cards */
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--ms-blue);padding:16px;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.card .num{font-size:25px;color:var(--ms-blue);font-weight:600;margin-bottom:4px;line-height:1}
+.card h4{font-size:19px;font-weight:600;margin-bottom:6px;color:var(--ms-navy);line-height:1.25}
+.card p{font-size:15px;color:var(--ink-soft);line-height:1.45}
+.card .ex{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:14px;color:var(--ms-blue-deep);font-style:italic}
+.card .ex strong{color:var(--copilot);font-style:normal;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;font-size:12px;letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:2px}
+
+/* CUSTOM MODEL SCENARIOS - 5 indicator cards */
+.indicator-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:18px}
+.indicator{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:18px 14px;text-align:left;position:relative;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.indicator::before{content:"";position:absolute;top:0;left:0;right:0;height:4px}
+.indicator.i1::before{background:#2563EB}
+.indicator.i2::before{background:#F59E0B}
+.indicator.i3::before{background:#D13438}
+.indicator.i4::before{background:#1E40AF}
+.indicator.i5::before{background:#107C10}
+.indicator .num{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--ink-mute);letter-spacing:1.5px;font-weight:600;margin-top:4px;margin-bottom:5px}
+.indicator .icon{font-size:30px;margin-bottom:5px;line-height:1}
+.indicator.i1 .icon{color:#2563EB}
+.indicator.i2 .icon{color:#F59E0B}
+.indicator.i3 .icon{color:#D13438}
+.indicator.i4 .icon{color:#1E40AF}
+.indicator.i5 .icon{color:#107C10}
+.indicator h4{font-size:18px;color:var(--ms-navy);font-weight:600;margin-bottom:5px;line-height:1.2}
+.indicator p{font-size:14px;color:var(--ink-soft);line-height:1.45}
+.indicator .ex{margin-top:8px;padding-top:6px;border-top:1px dashed var(--line);font-size:13px;color:var(--ms-blue-deep);font-style:italic;line-height:1.4}
+
+/* 5-STEP LIFECYCLE */
+.framework{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.fw-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;position:relative}
+.fw-row::before{content:"";position:absolute;top:30px;left:6%;right:6%;height:2px;background:linear-gradient(90deg,#2563EB 0%,#F59E0B 50%,#107C10 100%);z-index:0}
+.fw-step{text-align:center;background:var(--paper);position:relative;z-index:1;padding:0 4px}
+.fw-step .num{width:60px;height:60px;border-radius:50%;background:var(--paper);border:3px solid var(--ms-blue);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:var(--ms-blue);box-shadow:0 4px 12px rgba(0,120,212,.15)}
+.fw-step.s2 .num{border-color:#1D4ED8;color:#1D4ED8}
+.fw-step.s3 .num{border-color:#F59E0B;color:#F59E0B}
+.fw-step.s4 .num{border-color:#1E40AF;color:#1E40AF}
+.fw-step.s5 .num{border-color:#107C10;color:#107C10}
+.fw-step h6{font-size:16px;color:var(--ms-navy);font-weight:600;margin-bottom:3px;line-height:1.2}
+.fw-step p{font-size:13px;color:var(--ink-soft);line-height:1.4;padding:0 4px}
+
+/* 3-STEP DESIGN FRAMEWORK */
+.three-step{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.ts{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.ts .num{display:inline-block;width:36px;height:36px;border-radius:50%;color:#FFFFFF;font-weight:700;font-size:20px;line-height:36px;text-align:center;margin-bottom:10px}
+.ts.t1 .num{background:#2563EB}
+.ts.t2 .num{background:#F59E0B}
+.ts.t3 .num{background:#1E40AF}
+.ts h5{font-size:20px;color:var(--ms-navy);font-weight:600;margin-bottom:6px;line-height:1.2}
+.ts p{font-size:16px;color:var(--ink-soft);line-height:1.5;margin-bottom:8px}
+.ts h6{font-size:14px;color:var(--ms-navy);font-weight:600;letter-spacing:1.2px;text-transform:uppercase;margin:8px 0 4px}
+.ts ul{list-style:none}
+.ts li{padding:3px 0 3px 14px;position:relative;font-size:15px;color:var(--ink);line-height:1.4}
+.ts li::before{content:"›";position:absolute;left:0;top:3px;color:var(--copilot);font-weight:700}
+
+/* COLLABORATION PATTERNS - 4 cards */
+.patterns{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:18px}
+.pattern{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--ms-blue);border-radius:6px;padding:18px 22px;display:flex;gap:16px;align-items:flex-start;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.pattern.p1{border-left-color:#2563EB}
+.pattern.p2{border-left-color:#F59E0B}
+.pattern.p3{border-left-color:#1E40AF}
+.pattern.p4{border-left-color:#107C10}
+.pattern .badge{flex-shrink:0;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;font-family:'Cascadia Code','Consolas',monospace}
+.pattern.p1 .badge{background:#DBEAFE;color:#2563EB}
+.pattern.p2 .badge{background:#FEF3C7;color:#F59E0B}
+.pattern.p3 .badge{background:#E5F4F6;color:#1E40AF}
+.pattern.p4 .badge{background:#DFF6DD;color:#107C10}
+.pattern .body h5{font-size:19px;color:var(--ms-navy);font-weight:600;margin-bottom:4px;line-height:1.3}
+.pattern .body p{font-size:16px;color:var(--ink-soft);line-height:1.5;margin-bottom:6px}
+.pattern .body .flow{font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ms-navy);background:#F8FAFD;padding:6px 10px;border-radius:3px;border-left:2px solid var(--ms-blue);margin-top:6px;line-height:1.4}
+
+/* 4 EXTENSIBILITY LAYERS */
+.layers{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
+.layer{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:18px 16px;text-align:left;box-shadow:0 1px 3px rgba(0,0,0,.04);position:relative;overflow:hidden}
+.layer::before{content:"";position:absolute;top:0;left:0;right:0;height:5px}
+.layer.l1::before{background:#2563EB}
+.layer.l2::before{background:#F59E0B}
+.layer.l3::before{background:#1E40AF}
+.layer.l4::before{background:#D83B01}
+.layer .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;color:var(--ink-mute);letter-spacing:1.5px;font-weight:600;margin-top:5px;margin-bottom:6px}
+.layer .icon{font-size:35px;margin-bottom:5px;line-height:1}
+.layer.l1 .icon{color:#2563EB}
+.layer.l2 .icon{color:#F59E0B}
+.layer.l3 .icon{color:#1E40AF}
+.layer.l4 .icon{color:#D83B01}
+.layer h4{font-size:19px;color:var(--ms-navy);font-weight:600;margin-bottom:6px;line-height:1.2}
+.layer p{font-size:15px;color:var(--ink-soft);line-height:1.5;margin-bottom:6px}
+.layer .ex{margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);font-size:13px;color:var(--ms-blue-deep);font-style:italic;line-height:1.4}
+
+/* MCP SECTION - hero card + integration patterns */
+.mcp-hero{margin-top:18px;background:linear-gradient(135deg,#0C1426,#1D4ED8);color:#FFFFFF;border-radius:8px;padding:22px 28px;box-shadow:0 4px 16px rgba(0,32,80,.20)}
+.mcp-hero .badge{display:inline-block;background:var(--notes-accent);color:var(--ms-navy);padding:4px 12px;border-radius:3px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:10px}
+.mcp-hero h4{font-size:25px;font-weight:600;margin-bottom:8px;color:#FFFFFF}
+.mcp-hero p{font-size:17px;line-height:1.55;color:rgba(255,255,255,.92);margin-bottom:8px}
+.mcp-hero p strong{color:var(--notes-accent);font-weight:600}
+.mcp-features{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.mcp-feature{background:rgba(255,255,255,.08);padding:10px 12px;border-radius:4px;border-left:3px solid var(--notes-accent)}
+.mcp-feature h6{font-size:14px;color:var(--notes-accent);font-weight:600;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:3px;font-family:'Cascadia Code','Consolas',monospace}
+.mcp-feature p{font-size:15px;color:rgba(255,255,255,.95);line-height:1.45;margin:0}
+.mcp-patterns{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.mcp-pattern{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:14px 16px;border-top:3px solid var(--ms-blue)}
+.mcp-pattern.mp2{border-top-color:#F59E0B}
+.mcp-pattern.mp3{border-top-color:#1E40AF}
+.mcp-pattern .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--ink-mute);letter-spacing:1.2px;font-weight:600;margin-bottom:4px}
+.mcp-pattern h6{font-size:18px;color:var(--ms-navy);font-weight:600;margin-bottom:4px}
+.mcp-pattern p{font-size:14px;color:var(--ink-soft);line-height:1.45}
+
+/* COMPUTER USE - scenarios + design takeaways */
+.cu-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
+.cu-card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:18px 16px;box-shadow:0 1px 3px rgba(0,0,0,.04);position:relative;overflow:hidden;border-left:4px solid var(--ms-blue)}
+.cu-card.c1{border-left-color:#2563EB}
+.cu-card.c2{border-left-color:#F59E0B}
+.cu-card.c3{border-left-color:#1E40AF}
+.cu-card.c4{border-left-color:#D83B01}
+.cu-card .icon{font-size:30px;margin-bottom:6px;line-height:1}
+.cu-card.c1 .icon{color:#2563EB}
+.cu-card.c2 .icon{color:#F59E0B}
+.cu-card.c3 .icon{color:#1E40AF}
+.cu-card.c4 .icon{color:#D83B01}
+.cu-card h5{font-size:18px;color:var(--ms-navy);font-weight:600;margin-bottom:6px;line-height:1.2}
+.cu-card p{font-size:15px;color:var(--ink-soft);line-height:1.5;margin-bottom:6px}
+.cu-card ul{list-style:none}
+.cu-card li{padding:3px 0 3px 12px;position:relative;font-size:14px;color:var(--ink);line-height:1.4}
+.cu-card li::before{content:"›";position:absolute;left:0;top:3px;color:var(--copilot);font-weight:700}
+
+/* REASONING + VOICE - 3-card row */
+.reason-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.reason-card{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:20px 22px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.reason-card.standard{border-top:4px solid #2563EB}
+.reason-card.deep{border-top:4px solid #F59E0B;background:linear-gradient(135deg,#FFFFFF 0%,#F8F7FE 100%)}
+.reason-card.voice{border-top:4px solid #D83B01}
+.reason-card .complexity{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;letter-spacing:1.5px;font-weight:600;text-transform:uppercase;margin-bottom:6px}
+.reason-card.standard .complexity{color:#2563EB}
+.reason-card.deep .complexity{color:#F59E0B}
+.reason-card.voice .complexity{color:#D83B01}
+.reason-card h4{font-size:22px;color:var(--ms-navy);font-weight:600;margin-bottom:5px;line-height:1.2}
+.reason-card .desc{font-size:16px;color:var(--ink-soft);line-height:1.5;margin-bottom:10px}
+.reason-card h6{font-size:14px;color:var(--ms-navy);font-weight:600;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:5px}
+.reason-card ul{list-style:none}
+.reason-card li{padding:3px 0 3px 14px;position:relative;font-size:15px;color:var(--ink);line-height:1.45}
+.reason-card.standard li::before{content:"✓";position:absolute;left:0;top:3px;color:#2563EB;font-weight:700}
+.reason-card.deep li::before{content:"✓";position:absolute;left:0;top:3px;color:#F59E0B;font-weight:700}
+.reason-card.voice li::before{content:"✓";position:absolute;left:0;top:3px;color:#D83B01;font-weight:700}
+.reason-card .ex{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:14px;color:var(--ms-blue-deep);font-style:italic;line-height:1.45}
+
+/* M365 SOLUTION PATTERNS */
+.m365-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:18px}
+.m365-card{background:var(--paper);border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.m365-card .top{padding:16px 22px;color:#FFFFFF;display:flex;align-items:center;gap:14px}
+.m365-card.m1 .top{background:linear-gradient(135deg,#2563EB 0%,#1D4ED8 100%)}
+.m365-card.m2 .top{background:linear-gradient(135deg,#F59E0B 0%,#B45309 100%)}
+.m365-card.m3 .top{background:linear-gradient(135deg,#1E40AF 0%,#107C10 100%)}
+.m365-card.m4 .top{background:linear-gradient(135deg,#D83B01 0%,#F59E0B 100%)}
+.m365-card .top .ico{font-size:32px}
+.m365-card .top h5{font-size:20px;font-weight:600;margin-bottom:2px}
+.m365-card .top .sub{font-size:15px;opacity:.92}
+.m365-card .body{padding:14px 22px}
+.m365-card .body p{font-size:16px;color:var(--ink-soft);line-height:1.5}
+.m365-card .body .ex{margin-top:6px;font-size:14px;color:var(--ms-blue-deep);font-style:italic;line-height:1.4}
+
+/* QUIZ */
+.quiz-wrap{max-width:880px;margin:0 auto;width:100%}
+.quiz-q{font-size:31px;line-height:1.3;font-weight:600;color:var(--ms-navy);margin-bottom:22px;letter-spacing:-.3px}
+.quiz-q em{font-style:normal;color:var(--copilot);font-weight:600}
+.quiz-options{display:flex;flex-direction:column;gap:10px}
+.quiz-opt{background:var(--paper);border:1px solid var(--line);padding:14px 18px;border-radius:4px;cursor:pointer;display:flex;align-items:flex-start;gap:16px;transition:.15s;font-size:18px;font-family:inherit;text-align:left;width:100%;color:var(--ink);line-height:1.4}
+.quiz-opt:hover{border-color:var(--ms-blue);background:#F3F9FD;box-shadow:0 2px 6px rgba(0,120,212,.10)}
+.quiz-opt .letter{width:30px;height:30px;border-radius:4px;background:var(--bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--ms-blue-deep);flex-shrink:0;font-size:16px}
+.quiz-opt.correct{border-color:var(--ms-green);background:#DFF6DD}
+.quiz-opt.correct .letter{background:var(--ms-green);color:#FFFFFF;border-color:var(--ms-green)}
+.quiz-opt.wrong{border-color:var(--ms-red);background:#FDE7E9;opacity:.65}
+.quiz-explain{margin-top:18px;background:#DFF6DD;border-left:4px solid var(--ms-green);padding:14px 18px;border-radius:4px;display:none}
+.quiz-explain.show{display:block;animation:slideUp .5s ease}
+.quiz-explain strong{color:var(--ms-green);font-family:'Cascadia Code','Consolas',monospace;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
+.quiz-explain p{margin-top:6px;font-size:18px;color:var(--ink);line-height:1.55}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* SCENARIO */
+.scenario{max-width:1100px;margin:0 auto;background:linear-gradient(135deg,#FEF3C7 0%,#E5E3F4 100%);border-radius:8px;padding:26px 36px;border-left:4px solid var(--copilot)}
+.scenario .tag{display:inline-block;background:var(--copilot);color:#FFFFFF;padding:5px 14px;border-radius:3px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:12px}
+.scenario h3{font-size:29px;line-height:1.25;color:var(--ms-navy);margin-bottom:12px;font-weight:600;letter-spacing:-.3px}
+.scenario .quote{font-size:19px;line-height:1.5;color:var(--ms-navy);padding:13px 18px;background:rgba(255,255,255,.8);border-radius:4px;margin:10px 0;border-left:3px solid var(--ms-blue);font-style:italic}
+.scenario .prompts h5{font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ms-navy);margin-bottom:8px;font-weight:600;margin-top:10px}
+.scenario .prompts ul{list-style:none}
+.scenario .prompts li{padding:7px 0 7px 22px;position:relative;font-size:17px;color:var(--ink);border-bottom:1px dashed rgba(0,32,80,.18);line-height:1.45}
+.scenario .prompts li:last-child{border-bottom:none}
+.scenario .prompts li::before{content:"→";position:absolute;left:0;top:7px;color:var(--copilot);font-weight:700}
+.scenario .reveal-btn{margin-top:14px;background:var(--ms-blue);color:#FFFFFF;border:none;padding:10px 22px;border-radius:4px;font-family:'Segoe UI',sans-serif;font-size:16px;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:.15s}
+.scenario .reveal-btn:hover{background:var(--ms-blue-deep);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,120,212,.30)}
+.scenario .reveal-btn.shown{display:none}
+.answer-panel{margin-top:14px;background:var(--paper);border:1px solid var(--ms-blue);border-radius:6px;padding:18px 22px;display:none}
+.answer-panel.show{display:block;animation:slideUp .5s ease}
+.answer-panel .ap-label{display:inline-block;background:var(--ms-navy);color:#FFFFFF;padding:4px 12px;border-radius:3px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:10px}
+.answer-panel .ap-row{margin-bottom:10px}
+.answer-panel .ap-row:last-child{margin-bottom:0}
+.answer-panel .ap-q{font-size:17px;color:var(--copilot);font-weight:600;margin-bottom:5px}
+.answer-panel .ap-a{font-size:16px;color:var(--ink);line-height:1.55;padding-left:14px;border-left:2px solid #DBEAFE}
+.answer-panel .ap-a span{display:block;margin-bottom:3px}
+.answer-panel .ap-a span::before{content:"• ";color:var(--ms-blue);font-weight:700}
+
+/* RECAP */
+.recap{max-width:920px;margin:0 auto}
+.recap-list{display:grid;gap:9px;margin-top:14px}
+.recap-item{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--ms-blue);padding:12px 22px;border-radius:4px;display:flex;gap:14px;align-items:flex-start;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.recap-item .check{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--ms-blue);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+.recap-item .text{font-size:18px;color:var(--ms-navy);line-height:1.45}
+.recap-item .text em{color:var(--copilot);font-style:normal;font-weight:600}
+
+.float-hint{position:fixed;top:72px;right:20px;background:var(--ms-navy);color:#FFFFFF;padding:10px 16px;border-radius:4px;font-size:15px;opacity:0;transition:.3s;z-index:30;pointer-events:none;font-family:'Cascadia Code','Consolas',monospace;box-shadow:0 6px 16px rgba(0,32,80,.20)}
+.float-hint.show{opacity:.95}
+
+/* GENNOOR WORDMARK COLOR LETTERS */
+.brand-name .b-w{color:#FFFFFF}
+.brand-name .b-blue{color:#60A5FA}
+.brand-name .b-amber{color:#F59E0B}
+.slide.title-slide .brand-wordmark .name .b-w{color:#FFFFFF}
+.slide.title-slide .brand-wordmark .name .b-blue{color:#60A5FA}
+.slide.title-slide .brand-wordmark .name .b-amber{color:#F59E0B}
+
+/* TOPBAR GRID — slide nav moved to topbar center */
+.topbar.topbar-grid{display:grid !important;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;height:72px;padding:0 28px}
+.topbar.topbar-grid .topbar-left{display:flex;align-items:center;gap:18px;min-width:0;overflow:hidden}
+.topbar.topbar-grid .topbar-left .chapter-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar.topbar-grid .topbar-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.topbar.topbar-grid .topbar-right{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0}
+.step-indicator-top{font-family:'Cascadia Code','Consolas',monospace;font-size:10px;letter-spacing:2.5px;color:var(--gn-amber,var(--ms-yellow));font-weight:700;text-transform:uppercase;line-height:1;opacity:.95}
+.step-indicator-top.complete{color:rgba(255,255,255,.5)}
+.controls-top{display:inline-flex;align-items:center;gap:4px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.10);border-radius:5px;padding:3px 6px}
+.controls-top button{width:28px;height:28px;border-radius:3px;border:none;background:transparent;color:#FFFFFF;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:.15s;padding:0}
+.controls-top button:hover{background:rgba(255,255,255,.12)}
+.controls-top button:disabled{opacity:.3;cursor:not-allowed}
+.controls-top .counter{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;font-weight:600;color:#FFFFFF;letter-spacing:.5px;padding:0 12px;min-width:64px;text-align:center}
+.controls-top .counter strong{color:var(--gn-amber,var(--ms-yellow));font-weight:700}
+/* Hide original bottom controls (now empty) */
+.bottom-nav-removed{display:none !important}
+
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar topbar-grid">
+    <div class="topbar-left">
+    <a href="#" class="brand-lockup">
+      <svg class="brand-mark" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+      <div class="brand-text">
+        <span class="brand-name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+        <span class="brand-sub">AB-100</span>
+      </div>
+    </a>
+    <div class="divider"></div>
+    <div class="chapter-title">Chapter 06 · Design Extensibility</div>
+    </div>
+    <div class="topbar-center">
+      <div class="step-indicator-top" id="stepIndicator">More to reveal</div>
+      <div class="controls-top">
+        <button id="prevBtn" title="Previous (←)">‹</button>
+        <span class="counter" id="counter">1 / 22</span>
+        <button id="nextBtn" title="Next (→)">›</button>
+      </div>
+    </div>
+    <div class="topbar-right">
+    <div class="meta">
+      <span class="pill" id="sectionLabel">Opening</span>
+      <span class="pill step-pill" id="stepPill" style="display:none">Step 1/6</span>
+    </div>
+    <button id="notesToggle" title="Toggle notes (T)">📖 Notes</button>
+    </div>
+  </div>
+
+  <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="stage">
+    <div class="slides" id="slides">
+
+      <!-- 01 TITLE -->
+      <section class="slide title-slide active"
+        data-section="Opening"
+        data-script="Chapter 6. <em>Design extensibility of AI solutions.</em> Chapter 5 covered building agents on Microsoft platforms. This chapter is about going beyond the platform — when prebuilt isn't enough, when you need custom models, or when you need to extend Copilot Studio with code, MCP, and Computer Use. By the end you'll know exactly where each extensibility option fits.">
+        <div class="slide-num">01 / 22</div>
+        <div class="brand-full">
+          <svg class="brand-mark-lg" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+          <div class="brand-wordmark">
+            <span class="name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+            <span class="tag">AB-100 Course</span>
+          </div>
+        </div>
+        <div class="eyebrow">CHAPTER 06</div>
+        <h1>Design <em>Extensibility</em><br>of AI Solutions</h1>
+        <div class="meta-row">
+          <div>FOCUS<strong>Custom models · MCP · Computer Use</strong></div>
+          <div>SCOPE<strong>Foundry · M365 · Copilot Studio</strong></div>
+          <div>OUTPUT<strong>Right-sized extension strategy</strong></div>
+        </div>
+      </section>
+
+      <!-- 02 OVERVIEW -->
+      <section class="slide content-slide"
+        data-section="Opening"
+        data-script="Five themes. Each one represents a different way to extend AI on the Microsoft stack. Pick the right one for the requirement — over-engineering kills timelines.">
+        <div class="slide-num">02 / 22</div>
+        <h3 class="slide-h">What this chapter <em>covers</em></h3>
+        <p class="lead">Five extensibility themes. From custom Foundry models all the way down to Computer Use clicking buttons in legacy apps. Each has a sweet spot.</p>
+        <div class="cards">
+          <div class="card" data-step data-script="One — <em>Custom models in Foundry</em>. When prebuilt isn't enough. Domain-specific reasoning, regulatory needs, data sovereignty.">
+            <div class="num">01</div><h4>Custom Foundry Models</h4>
+            <p>Domain-specific reasoning, compliance, data sovereignty needs unmet by prebuilt copilots.</p>
+            <div class="ex"><strong>Path</strong>Pro-code · Foundry lifecycle.</div>
+          </div>
+          <div class="card" data-step data-script="Two — <em>Microsoft 365 Copilot agents</em>. Declarative, modular, instruction-driven. Live in Teams, Outlook, SharePoint.">
+            <div class="num">02</div><h4>M365 Copilot Agents</h4>
+            <p>Modular instruction-driven agents inside Microsoft 365 — Teams, Outlook, SharePoint.</p>
+            <div class="ex"><strong>Path</strong>Agent Builder · low/no code.</div>
+          </div>
+          <div class="card" data-step data-script="Three — <em>Copilot Studio extensibility plus MCP</em>. Four extensibility layers. Model Context Protocol for structured business context — especially Dynamics 365 F&amp;O.">
+            <div class="num">03</div><h4>Studio Extensibility + MCP</h4>
+            <p>Four layers — instruction · skill · integration · pro-code. Plus MCP for D365 F&amp;O context.</p>
+            <div class="ex"><strong>Path</strong>VS Code · MCP servers.</div>
+          </div>
+          <div class="card" data-step data-script="Four — <em>Advanced capabilities</em>. Computer Use to drive UIs. Deep reasoning for multi-step decisions. Voice mode for hands-free workflows.">
+            <div class="num">04</div><h4>Advanced Capabilities</h4>
+            <p>Computer Use · Deep Reasoning · Voice Mode. The capabilities that unlock new scenarios.</p>
+            <div class="ex"><strong>Path</strong>Copilot Studio settings.</div>
+          </div>
+          <div class="card" data-step data-script="Five — <em>Microsoft 365 optimization</em>. Teams agents. SharePoint agents. Permission-aware grounding via Microsoft Graph.">
+            <div class="num">05</div><h4>M365 Teams &amp; SharePoint</h4>
+            <p>Optimize agents inside Teams and SharePoint with Graph-grounded retrieval.</p>
+            <div class="ex"><strong>Path</strong>Graph + permissions inheritance.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 SECTION DIVIDER UNIT 1 -->
+      <section class="slide section-divider"
+        data-section="Foundry Custom Models"
+        data-script="First unit. <em>Custom models in Microsoft Foundry.</em> The escape hatch when prebuilt copilots don't meet domain or compliance needs. Used sparingly — Foundry custom models are expensive to build and operate.">
+        <div class="slide-num">03 / 22</div>
+        <div class="label">UNIT ONE</div>
+        <h2>Custom Models in<br>Microsoft <em>Foundry</em></h2>
+        <div class="sub">The pro-code path. Used when prebuilt copilots can't meet domain specificity, regulatory needs, or unique workflow requirements.</div>
+      </section>
+
+      <!-- 04 WHEN CUSTOM MODELS -->
+      <section class="slide content-slide"
+        data-section="Foundry Custom Models"
+        data-script="<em>When do you actually need a custom model?</em> Five indicators. If two or more apply, custom Foundry is on the table. Less than two — extend Copilot or use a prebuilt model. I'll bring them up one at a time.">
+        <div class="slide-num">04 / 22</div>
+        <h3 class="slide-h">When to use a <em>custom Foundry model</em></h3>
+        <p class="lead">Five indicators. If two or more apply, Foundry custom is justified. Fewer than two — extend Copilot Studio or a prebuilt model first. Custom models are powerful but expensive.</p>
+        <div class="indicator-grid">
+          <div class="indicator i1" data-step
+            data-script="<em>Indicator 1 — Domain specificity</em>. Industries where general-purpose LLMs fail. Legal, healthcare, engineering, finance, manufacturing. Specialized terminology, specialized reasoning patterns. Prebuilt models stumble here.">
+            <div class="num">INDICATOR 01</div>
+            <div class="icon">⚛</div>
+            <h4>Domain Specificity</h4>
+            <p>Specialized terminology and reasoning — legal, healthcare, engineering, finance.</p>
+            <div class="ex">Engineering calc agent that knows ASTM specs</div>
+          </div>
+          <div class="indicator i2" data-step
+            data-script="<em>Indicator 2 — High-impact decisions</em>. Where accuracy directly affects compliance, financial outcomes, or operational safety. Wrong answers carry real consequences. Prebuilt models can't be trusted here without extensive validation.">
+            <div class="num">INDICATOR 02</div>
+            <div class="icon">⚖</div>
+            <h4>High-Impact Decisions</h4>
+            <p>Decisions affecting compliance, finances, safety. Where wrong answers have real cost.</p>
+            <div class="ex">Drug interaction checker · loan approval engine</div>
+          </div>
+          <div class="indicator i3" data-step
+            data-script="<em>Indicator 3 — Data sovereignty</em>. Mandates requiring full control over data processing, storage, evaluation, and monitoring. Government agencies. Regulated financial services. Healthcare in some regions.">
+            <div class="num">INDICATOR 03</div>
+            <div class="icon">🛡</div>
+            <h4>Data Sovereignty</h4>
+            <p>Regulatory mandates requiring full control over data processing, storage, evaluation.</p>
+            <div class="ex">Sovereign-cloud government workflows</div>
+          </div>
+          <div class="indicator i4" data-step
+            data-script="<em>Indicator 4 — Unique workflows</em>. When prebuilt copilots don't fit organizational processes. Workflows so specialized that customization layers can't bend the agent enough.">
+            <div class="num">INDICATOR 04</div>
+            <div class="icon">⤴</div>
+            <h4>Unique Workflows</h4>
+            <p>Processes too specialized for prebuilt customization to handle.</p>
+            <div class="ex">Insurance underwriting decision logic</div>
+          </div>
+          <div class="indicator i5" data-step
+            data-script="<em>Indicator 5 — Cost optimization at scale</em>. High-volume inference where small specialized custom models are cheaper to run than general-purpose LLMs. Million-call-per-day scenarios. SLM economics over LLM.">
+            <div class="num">INDICATOR 05</div>
+            <div class="icon">$</div>
+            <h4>Cost at High Volume</h4>
+            <p>High-volume inference where small custom models beat LLM economics.</p>
+            <div class="ex">10M classification calls/month at SLM cost</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05 5-STEP CUSTOM MODEL LIFECYCLE -->
+      <section class="slide content-slide"
+        data-section="Foundry Custom Models"
+        data-script="<em>Five-step custom model design process</em>. Same pattern Microsoft documents for Foundry projects. I'll bring them up one at a time.">
+        <div class="slide-num">05 / 22</div>
+        <h3 class="slide-h">Custom model design — <em>five steps</em></h3>
+        <p class="lead">Microsoft's published lifecycle. Apply the steps in order. Skip any one and the project either fails validation or fails compliance.</p>
+        <div class="framework">
+          <div class="fw-row">
+            <div class="fw-step s1" data-step data-script="<em>Step 1 — Define business objectives</em>. Measurable outcomes. Accuracy targets. Time-saved goals. Cost efficiency. Map directly to use cases where custom outperforms prebuilt. Make sure the gap is real before committing.">
+              <div class="num">1</div><h6>Define Objectives</h6><p>Accuracy · time saved · cost targets, mapped to use cases</p>
+            </div>
+            <div class="fw-step s2" data-step data-script="<em>Step 2 — Assess data requirements</em>. Inventory proprietary datasets. Identify gaps in labeling, quality, diversity, structure. Verify governance allows training use. <em>Most projects fail here</em> — discovering that the data isn't usable.">
+              <div class="num">2</div><h6>Assess Data</h6><p>Inventory data · find gaps · verify governance allows training</p>
+            </div>
+            <div class="fw-step s3" data-step data-script="<em>Step 3 — Select the model path</em>. Three options. Fine-tune a foundation model. Train a domain-built small model. Hybrid — combine custom with prebuilt copilots. Pick based on speed, accuracy, and edge requirements.">
+              <div class="num">3</div><h6>Model Path</h6><p>Fine-tune · domain SLM · hybrid combination</p>
+            </div>
+            <div class="fw-step s4" data-step data-script="<em>Step 4 — Enterprise integration</em>. Connect to Dynamics 365, Azure Functions and Logic Apps, Foundry agents, Azure AI Search. Integration is rarely the bottleneck — but skipping it means the model doesn't reach users.">
+              <div class="num">4</div><h6>Enterprise Integration</h6><p>D365 · Functions · Foundry agents · AI Search · pipelines</p>
+            </div>
+            <div class="fw-step s5" data-step data-script="<em>Step 5 — Validation and evaluation</em>. Scenario-based tests. Safety and bias analysis. Stress, latency, scaling tests. ROI confirmation. <em>Don't skip the bias analysis</em> — that's the audit failure waiting to happen.">
+              <div class="num">5</div><h6>Validate &amp; Evaluate</h6><p>Scenario tests · safety/bias · latency · ROI confirmation</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 SECTION DIVIDER UNIT 2 -->
+      <section class="slide section-divider"
+        data-section="M365 Copilot Agents"
+        data-script="Unit two. <em>Designing agents in Microsoft 365 Copilot.</em> The most common extensibility scenario — way more common than custom Foundry models. Modular, instruction-driven, lives inside Teams and SharePoint.">
+        <div class="slide-num">06 / 22</div>
+        <div class="label">UNIT TWO</div>
+        <h2>Microsoft 365<br><em>Copilot Agents</em></h2>
+        <div class="sub">Modular, instruction-driven, declarative agents that live inside Teams, Outlook, Loop, SharePoint. The common case for most enterprise scenarios.</div>
+      </section>
+
+      <!-- 07 M365 AGENT DESIGN FRAMEWORK -->
+      <section class="slide content-slide"
+        data-section="M365 Copilot Agents"
+        data-script="<em>Three-step design framework</em> for Microsoft 365 Copilot agents. Understand the core problem. Define the agent's behavior. Connect data and tools. <em>Sequential</em> — don't connect data before you've defined behavior. I'll bring them up one at a time.">
+        <div class="slide-num">07 / 22</div>
+        <h3 class="slide-h">M365 agent design — <em>three steps</em></h3>
+        <p class="lead">Microsoft's three-step framework for designing Microsoft 365 Copilot agents. Apply in order. Don't skip ahead to data connections before you've nailed behavior.</p>
+        <div class="three-step">
+          <div class="ts t1" data-step
+            data-script="<em>Step 1 — Understand the core problem</em>. Define the task. Identify the business goal. Determine what decisions the agent must make. Specify what systems it interacts with. Focus on a single high-value need — not a Swiss Army knife.">
+            <div class="num">1</div>
+            <h5>Understand the Core Problem</h5>
+            <p>Define task · business goal · decisions · systems involved.</p>
+            <h6>Single high-value need</h6>
+            <ul>
+              <li>Lead preparation</li>
+              <li>Case triage</li>
+              <li>Policy Q&amp;A</li>
+              <li>Workflow routing</li>
+            </ul>
+          </div>
+          <div class="ts t2" data-step
+            data-script="<em>Step 2 — Define agent behavior</em>. Specify the role. Define allowed and disallowed capabilities. Set guardrails — tone, content, compliance. Identify escalation conditions. <em>This is where Chapter 5 RAI tenets get operationalized</em>.">
+            <div class="num">2</div>
+            <h5>Define Agent Behavior</h5>
+            <p>Role · allowed/disallowed capabilities · guardrails · escalation rules.</p>
+            <h6>Examples</h6>
+            <ul>
+              <li>"Service triage assistant" role</li>
+              <li>Tone &amp; content boundaries</li>
+              <li>Compliance limits</li>
+              <li>When to escalate to humans</li>
+            </ul>
+          </div>
+          <div class="ts t3" data-step
+            data-script="<em>Step 3 — Connect data and tools</em>. Microsoft Graph for org content — SharePoint, OneDrive, Teams, files. Built-in connectors and actions. Custom APIs when needed. Always operate within least-privilege and zero-trust security.">
+            <div class="num">3</div>
+            <h5>Connect Data &amp; Tools</h5>
+            <p>Microsoft Graph data, connectors, actions, custom APIs — least privilege.</p>
+            <h6>Sources</h6>
+            <ul>
+              <li>SharePoint, OneDrive, Teams</li>
+              <li>Built-in connectors</li>
+              <li>Custom APIs (only when needed)</li>
+              <li>Zero-trust boundaries</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 08 4 COLLABORATION PATTERNS -->
+      <section class="slide content-slide"
+        data-section="M365 Copilot Agents"
+        data-script="<em>Four collaboration patterns</em> when multiple M365 agents work together. Chapter 3 covered orchestration patterns at the strategy level. These are the M365-specific implementations. I'll bring them up one at a time.">
+        <div class="slide-num">08 / 22</div>
+        <h3 class="slide-h">Four <em>collaboration patterns</em></h3>
+        <p class="lead">When multiple M365 agents work together, they follow one of four patterns. Pick based on whether agents work in series, in parallel, iteratively, or under a coordinator.</p>
+        <div class="patterns">
+          <div class="pattern p1" data-step
+            data-script="<em>Pattern 1 — Sequential workflow</em>. Agent A passes to Agent B passes to user review. Linear pipeline. Used when each step depends on the previous one — research → analyze → report.">
+            <div class="badge">⇄</div>
+            <div class="body">
+              <h5>Sequential Workflow</h5>
+              <p>Linear pipeline — each agent depends on the previous one.</p>
+              <div class="flow">Agent A → Agent B → User Review</div>
+            </div>
+          </div>
+          <div class="pattern p2" data-step
+            data-script="<em>Pattern 2 — Parallel evaluation</em>. Multiple agents analyze the same data, results combined. Used for diverse perspectives — risk analysis from multiple angles, comparison shopping.">
+            <div class="badge">⇉</div>
+            <div class="body">
+              <h5>Parallel Evaluation</h5>
+              <p>Multiple agents analyze data simultaneously, results combined.</p>
+              <div class="flow">Agent A ╱╲ → Combined<br>Agent B ╱  ╲   Result</div>
+            </div>
+          </div>
+          <div class="pattern p3" data-step
+            data-script="<em>Pattern 3 — Feedback loop iteration</em>. Agent refines content until quality threshold met. Drafter agent + reviewer agent. The reviewer pushes back until standards are hit.">
+            <div class="badge">↻</div>
+            <div class="body">
+              <h5>Feedback Loop Iteration</h5>
+              <p>Agent refines output iteratively until a quality threshold is met.</p>
+              <div class="flow">Draft → Review → Refine → ✓ Quality met</div>
+            </div>
+          </div>
+          <div class="pattern p4" data-step
+            data-script="<em>Pattern 4 — Orchestrated interaction</em>. Primary agent delegates subtasks based on intent or conditions. The conductor pattern. Chapter 3's Magentic and handoff orchestration — applied at the M365 layer.">
+            <div class="badge">⊛</div>
+            <div class="body">
+              <h5>Orchestrated Interaction</h5>
+              <p>Primary agent delegates subtasks based on intent or conditions.</p>
+              <div class="flow">Coordinator → { A | B | C } based on intent</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 09 QUIZ 1 -->
+      <section class="slide content-slide"
+        data-section="M365 Copilot Agents"
+        data-script="Quick check on M365 Copilot design.">
+        <div class="slide-num">09 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 1 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which principle is most important when designing agents for <em>Microsoft 365 Copilot?</em></div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Adding as many capabilities as possible</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Clear intent, guardrails, and scoped permissions are the foundation of safe, trustworthy M365 Copilot agents. Adding many capabilities creates ambiguity and security risk. Ignoring data boundaries violates Chapter 5's privacy and accountability tenets. Removing user review removes accountability. Only narrow, well-scoped agents survive enterprise governance review."><span class="letter">B</span> Ensuring the agent has clear intent, guardrails, and scoped permissions</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> Designing agents without considering data boundaries</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Removing all user review steps</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 10 SECTION DIVIDER UNIT 3 -->
+      <section class="slide section-divider"
+        data-section="Studio Extensibility + MCP"
+        data-script="Unit three. <em>Copilot Studio extensibility plus Model Context Protocol.</em> Two related topics. Four extensibility layers in Studio, then how MCP standardizes context retrieval — especially for Dynamics 365 Finance and Operations.">
+        <div class="slide-num">10 / 22</div>
+        <div class="label">UNIT THREE</div>
+        <h2>Copilot Studio<br>Extensibility &amp; <em>MCP</em></h2>
+        <div class="sub">Four extensibility layers — instruction · skill · integration · pro-code. Plus Model Context Protocol for standardized business-context retrieval.</div>
+      </section>
+
+      <!-- 11 4 EXTENSIBILITY LAYERS -->
+      <section class="slide content-slide"
+        data-section="Studio Extensibility + MCP"
+        data-script="<em>Four extensibility layers</em> in Copilot Studio. Each layer represents a different level of customization depth. Use the lowest layer that meets the need. I'll bring them up in order.">
+        <div class="slide-num">11 / 22</div>
+        <h3 class="slide-h">Copilot Studio — <em>four extensibility layers</em></h3>
+        <p class="lead">Layer up only as far as you need. Most agents stay at instruction or skill level. Pro-code is the last resort, not the first.</p>
+        <div class="layers">
+          <div class="layer l1" data-step
+            data-script="<em>Layer 1 — Instruction level</em>. Defines behavior, tone, boundaries, reasoning authority. Refines the agent's purpose, role, action patterns, escalation rules. <em>The cheapest extension layer</em> — change wording, change behavior. Don't rebuild when prompt modification will do.">
+            <div class="lab">LAYER 01 · CHEAPEST</div>
+            <div class="icon">✎</div>
+            <h4>Instruction</h4>
+            <p>Behavior, tone, boundaries, role through prompt modification.</p>
+            <div class="ex">"You are a finance triage agent. Always cite policy IDs."</div>
+          </div>
+          <div class="layer l2" data-step
+            data-script="<em>Layer 2 — Skill and capability</em>. What the agent can do. Domain-specific operations. Retrieval skills. Action-oriented skills. Multi-step workflows. <em>Build modular, reusable skills</em> — same skill across multiple agents.">
+            <div class="lab">LAYER 02</div>
+            <div class="icon">⊞</div>
+            <h4>Skill</h4>
+            <p>Modular operations agents can invoke. Reusable across agents.</p>
+            <div class="ex">"Lookup-Customer-Tier" skill reused in 5 agents</div>
+          </div>
+          <div class="layer l3" data-step
+            data-script="<em>Layer 3 — Integration</em>. Interaction with enterprise systems of record. Data retrieval. Action execution. External APIs. Event publishing. Data governance and least privilege. <em>Watch for connector sprawl</em> — standardize on a small set.">
+            <div class="lab">LAYER 03</div>
+            <div class="icon">⇆</div>
+            <h4>Integration</h4>
+            <p>Enterprise systems of record. Data retrieval, actions, external APIs, events.</p>
+            <div class="ex">Custom connector to legacy ERP for invoice approval</div>
+          </div>
+          <div class="layer l4" data-step
+            data-script="<em>Layer 4 — Pro-code in VS Code</em>. Last resort. Custom agent logic. Reusable components. Code-based tools. Source control. Lifecycle management. <em>Use only when low-code can't deliver</em> — every line of code is a maintenance commitment.">
+            <div class="lab">LAYER 04 · LAST RESORT</div>
+            <div class="icon">{ }</div>
+            <h4>Pro-Code</h4>
+            <p>VS Code authoring. Custom logic, reusable components, source-controlled.</p>
+            <div class="ex">Complex orchestration logic with deep transformations</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12 MCP -->
+      <section class="slide content-slide"
+        data-section="Studio Extensibility + MCP"
+        data-script="<em>Model Context Protocol — MCP.</em> Standardized contract for retrieving business context. The most important extensibility innovation in the past year. I'll explain what it is, then walk through three integration patterns.">
+        <div class="slide-num">12 / 22</div>
+        <h3 class="slide-h"><em>Model Context Protocol</em> — what &amp; why</h3>
+        <p class="lead">MCP standardizes how agents retrieve and interpret business context. Most relevant for Dynamics 365 Finance &amp; Operations — but applicable wherever agents need authoritative business semantics.</p>
+        <div class="mcp-hero" data-step
+          data-script="<em>What is MCP?</em> A structured contract for agent context access. Exposes business entities, relationships, metadata, domain objects. Reduces hallucination by grounding agents in authoritative business data. Enables consistent reasoning across multiple apps and agents.">
+          <div class="badge">Why MCP matters</div>
+          <h4>The standardized context contract</h4>
+          <p>MCP serves as a <strong>structured contract</strong> for how agents access and interpret business context. Exposes business entities, relationships, labels, metadata, and domain-specific objects — especially in Dynamics 365 F&amp;O.</p>
+          <div class="mcp-features">
+            <div class="mcp-feature"><h6>Reduces hallucination</h6><p>Grounds agents in real F&amp;O context.</p></div>
+            <div class="mcp-feature"><h6>Multi-app interoperability</h6><p>Consistent semantics across agents.</p></div>
+            <div class="mcp-feature"><h6>Improves explainability</h6><p>Decisions trace to authoritative data.</p></div>
+          </div>
+        </div>
+        <div class="mcp-patterns">
+          <div class="mcp-pattern" data-step
+            data-script="<em>Pattern A — Context-driven reasoning</em>. Agents retrieve real-time MCP context to ensure responses reflect authoritative business rules. Best for compliance-sensitive tasks — finance workflows, procurement, vendor management.">
+            <div class="lab">PATTERN A</div><h6>Context-Driven Reasoning</h6><p>Real-time MCP context for compliance-sensitive workflows. Finance, procurement, vendor management.</p>
+          </div>
+          <div class="mcp-pattern mp2" data-step
+            data-script="<em>Pattern B — Workflow-integrated agents</em>. Agents augment workflows by using MCP to drive approvals, escalate exceptions, summarize status. The decision-support pattern in active business processes.">
+            <div class="lab">PATTERN B</div><h6>Workflow-Integrated</h6><p>MCP drives approvals, escalations, status summaries inside active workflows.</p>
+          </div>
+          <div class="mcp-pattern mp3" data-step
+            data-script="<em>Pattern C — Multi-agent collaboration via MCP</em>. Standardizes the data each agent can reference. Improves cross-domain collaboration — HR plus Finance plus Supply Chain agents. <em>The big payoff</em> — agents don't need point-to-point integrations.">
+            <div class="lab">PATTERN C</div><h6>Multi-Agent via MCP</h6><p>Cross-domain collaboration — HR + Finance + Supply Chain agents share standardized context.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 13 QUIZ 2 -->
+      <section class="slide content-slide"
+        data-section="Studio Extensibility + MCP"
+        data-script="Quick check on extensibility.">
+        <div class="slide-num">13 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 2 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which design approach best improves <em>long-term extensibility</em> for enterprise-grade Copilot Studio agents?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Hard-coding all logic inside a single instruction block</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Modular skills, integrations, and reusable instruction components are the foundation of long-term extensibility. Hard-coded monoliths can't be evolved or reused. Avoiding custom actions or external connectors leaves capabilities on the table. Pro-code-only ignores the first three layers and creates unnecessary maintenance burden. The right answer combines all four extensibility layers — but starts with the lowest, most modular ones."><span class="letter">B</span> Using modular skills, integrations, and reusable instruction components</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> Avoiding custom actions or external connectors</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Relying only on pro-code development in Visual Studio Code</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 14 SECTION DIVIDER UNIT 4 -->
+      <section class="slide section-divider"
+        data-section="Advanced Capabilities"
+        data-script="Unit four. <em>Advanced Copilot Studio capabilities.</em> Three powerful features. Computer Use — drive UIs without APIs. Deep reasoning — multi-step decision-making. Voice mode — hands-free interaction.">
+        <div class="slide-num">14 / 22</div>
+        <div class="label">UNIT FOUR</div>
+        <h2>Advanced<br><em>Capabilities</em></h2>
+        <div class="sub">Three high-value capabilities. Computer Use to drive any UI · Deep Reasoning for multi-step logic · Voice Mode for hands-free workflows.</div>
+      </section>
+
+      <!-- 15 COMPUTER USE -->
+      <section class="slide content-slide"
+        data-section="Advanced Capabilities"
+        data-script="<em>Computer Use</em>. Lets agents control mouse and keyboard. Click buttons, fill forms, navigate UIs, extract on-screen text. <em>The escape hatch when no API exists</em>. Four scenario types where it shines. I'll bring them up one at a time.">
+        <div class="slide-num">15 / 22</div>
+        <h3 class="slide-h">Computer Use — <em>when to reach for it</em></h3>
+        <p class="lead">Agents can control mouse, keyboard, and read on-screen UI elements. Use only when no API or connector exists — UI changes can break automation. Treat it as the API of last resort.</p>
+        <div class="cu-grid">
+          <div class="cu-card c1" data-step
+            data-script="<em>Scenario 1 — No API exists</em>. Legacy systems. Vendor portals without APIs. Desktop-only applications. The most common reason to reach for Computer Use.">
+            <div class="icon">⊘</div>
+            <h5>No API exists</h5>
+            <p>The classic case. The system has no programmable interface.</p>
+            <ul>
+              <li>Legacy systems</li>
+              <li>Vendor portals (no API)</li>
+              <li>Desktop-only apps</li>
+            </ul>
+          </div>
+          <div class="cu-card c2" data-step
+            data-script="<em>Scenario 2 — Repetitive UI-driven tasks</em>. Data entry. Form submission. Copy-paste workflows. The high-volume drudgery you'd otherwise hire seasonal staff for.">
+            <div class="icon">⌨</div>
+            <h5>Repetitive UI tasks</h5>
+            <p>High-volume tasks that follow the same UI sequence every time.</p>
+            <ul>
+              <li>Data entry</li>
+              <li>Form submission</li>
+              <li>Copy-paste workflows</li>
+            </ul>
+          </div>
+          <div class="cu-card c3" data-step
+            data-script="<em>Scenario 3 — Multi-app navigation</em>. Pull data from a website, enter into CRM. Download report from portal. Update spreadsheets based on UI data. The bridge between systems that don't talk.">
+            <div class="icon">⇄</div>
+            <h5>Multi-app navigation</h5>
+            <p>Bridge systems that don't have native integrations.</p>
+            <ul>
+              <li>Web → CRM data flow</li>
+              <li>Portal report download</li>
+              <li>Spreadsheet updates from UI</li>
+            </ul>
+          </div>
+          <div class="cu-card c4" data-step
+            data-script="<em>Scenario 4 — Human-like reasoning needed</em>. Identifying the right button on a dynamic page. Navigating menus that change based on context. The agent uses reasoning to interpret the UI — same skills humans use.">
+            <div class="icon">⚛</div>
+            <h5>Human-like reasoning</h5>
+            <p>Where the UI is dynamic and the agent must interpret context.</p>
+            <ul>
+              <li>Dynamic page elements</li>
+              <li>Context-dependent menus</li>
+              <li>Vision + reasoning combined</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 16 STANDARD vs DEEP REASONING + VOICE -->
+      <section class="slide content-slide"
+        data-section="Advanced Capabilities"
+        data-script="<em>Three behavioral capabilities</em>. Standard reasoning, deep reasoning, voice mode. Pick based on the problem complexity and interaction modality. I'll bring them up one at a time.">
+        <div class="slide-num">16 / 22</div>
+        <h3 class="slide-h">Reasoning depth &amp; <em>voice mode</em></h3>
+        <p class="lead">Standard reasoning is the default — fast and cheap. Deep reasoning unlocks multi-step problem solving. Voice mode adds the hands-free interaction layer.</p>
+        <div class="reason-grid">
+          <div class="reason-card standard" data-step
+            data-script="<em>Standard reasoning</em>. The default. Fast responses. Lower compute. Conversational responses, summaries, simple calculations, basic workflow assistance. Use for ninety percent of agent interactions.">
+            <div class="complexity">▪ DEFAULT · FAST · CHEAP</div>
+            <h4>Standard Reasoning</h4>
+            <p class="desc">Conversational responses, summaries, simple calculations, basic assistance.</p>
+            <h6>Use for</h6>
+            <ul>
+              <li>Conversational responses</li>
+              <li>Summaries &amp; classifications</li>
+              <li>Simple workflows</li>
+              <li>~90% of agent interactions</li>
+            </ul>
+          </div>
+          <div class="reason-card deep" data-step
+            data-script="<em>Deep reasoning</em> (in preview). Multi-step tasks, complex business rules, analytical processes, structured decision trees. Use for finance, compliance, engineering, operations. <em>Higher cost, higher latency</em> — turn on only where it matters.">
+            <div class="complexity">▪▪ ADVANCED · STRUCTURED</div>
+            <h4>Deep Reasoning</h4>
+            <p class="desc">Multi-step problem solving, business rule evaluation, structured decision trees.</p>
+            <h6>Use for</h6>
+            <ul>
+              <li>High-precision logic</li>
+              <li>Multi-stage evaluation</li>
+              <li>Constraint validation</li>
+              <li>Decomposition tasks</li>
+            </ul>
+            <div class="ex">Example: Multi-step financial validation, recommendation generation.</div>
+          </div>
+          <div class="reason-card voice" data-step
+            data-script="<em>Voice mode</em> via IVR. Hands-free workflows. Natural communication. Customer service IVR, field tech support, healthcare triage, HR self-service. <em>Different design rules</em> — short phrasing, confirmation steps, design for interruptions.">
+            <div class="complexity">▪ VOICE / IVR</div>
+            <h4>Voice Mode</h4>
+            <p class="desc">Hands-free interaction via IVR. Different design rules from text agents.</p>
+            <h6>Design rules</h6>
+            <ul>
+              <li>Short, clear phrasing</li>
+              <li>Confirmation steps</li>
+              <li>Handle interruptions</li>
+              <li>Confidence checks</li>
+            </ul>
+            <div class="ex">Use cases: customer service, field tech, healthcare triage, IT self-service.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 17 QUIZ 3 -->
+      <section class="slide content-slide"
+        data-section="Advanced Capabilities"
+        data-script="Quick check on Computer Use scenarios.">
+        <div class="slide-num">17 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 3 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which scenario is best suited for <em>Computer Use?</em></div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Calling a well-documented REST API</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Computer Use is for cases where no API exists — legacy desktop applications are the canonical example. They have UIs but no programmable interface. A well-documented REST API should always be called directly — never click through a UI when an API is available. Batch data pipelines and offline analytics don't involve UI interaction at all. Computer Use is the API of last resort."><span class="letter">B</span> Navigating a legacy desktop application</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> Running a batch data pipeline</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Performing offline analytics</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 18 SECTION DIVIDER UNIT 5 -->
+      <section class="slide section-divider"
+        data-section="M365 Optimization"
+        data-script="Last unit. <em>Optimizing M365 agents in Teams and SharePoint.</em> Where most enterprise users will actually meet your agents — embedded in their daily collaboration tools.">
+        <div class="slide-num">18 / 22</div>
+        <div class="label">UNIT FIVE</div>
+        <h2>Microsoft 365<br>Teams &amp; <em>SharePoint</em></h2>
+        <div class="sub">Where most users actually meet your agents. Microsoft Graph for grounding. Permission-aware retrieval. Four solution patterns to know.</div>
+      </section>
+
+      <!-- 19 M365 SOLUTION PATTERNS -->
+      <section class="slide content-slide"
+        data-section="M365 Optimization"
+        data-script="<em>Four solution patterns</em> for M365 agents in Teams and SharePoint. Recognizable shapes you'll see across most enterprise scenarios. I'll bring them up one at a time.">
+        <div class="slide-num">19 / 22</div>
+        <h3 class="slide-h">Four <em>M365 solution patterns</em></h3>
+        <p class="lead">Microsoft Graph automatically respects user permissions — agents inherit what the user can see. These four patterns cover most enterprise needs.</p>
+        <div class="m365-grid">
+          <div class="m365-card m1" data-step
+            data-script="<em>Pattern 1 — SharePoint Knowledge Assistant</em>. Answers site questions. Helps find documents. Provides summaries and insights. The most common starting point for SharePoint agents.">
+            <div class="top"><div class="ico">📚</div><div><h5>SharePoint Knowledge Assistant</h5><div class="sub">Pattern 1 · Most common</div></div></div>
+            <div class="body">
+              <p>Answers site questions, helps find documents, provides summaries and insights from SharePoint content.</p>
+              <div class="ex">Example: HR policy assistant grounded on policies SharePoint site.</div>
+            </div>
+          </div>
+          <div class="m365-card m2" data-step
+            data-script="<em>Pattern 2 — Teams Project Assistant</em>. Supports project teams. Summarizes channel activity. Retrieves documents. Automates task creation. <em>Where productivity gains compound</em>.">
+            <div class="top"><div class="ico">⊞</div><div><h5>Teams Project Assistant</h5><div class="sub">Pattern 2 · Productivity</div></div></div>
+            <div class="body">
+              <p>Project team support — channel summaries, document retrieval, task automation from messages.</p>
+              <div class="ex">Example: Daily channel digest, "create task from this thread" automation.</div>
+            </div>
+          </div>
+          <div class="m365-card m3" data-step
+            data-script="<em>Pattern 3 — Organizational Policy Assistant</em>. Retrieves policies. Provides grounded answers. Ensures compliance and accuracy. The compliance team's favorite agent type.">
+            <div class="top"><div class="ico">⚖</div><div><h5>Organizational Policy Assistant</h5><div class="sub">Pattern 3 · Compliance</div></div></div>
+            <div class="body">
+              <p>Retrieves policies, provides grounded answers, ensures compliance accuracy with citations.</p>
+              <div class="ex">Example: "What's our travel policy for international trips?" with cited source.</div>
+            </div>
+          </div>
+          <div class="m365-card m4" data-step
+            data-script="<em>Pattern 4 — Site Owner Support Agent</em>. Helps maintain SharePoint sites. Suggests improvements. Drafts pages and content. The agent that helps build other knowledge surfaces.">
+            <div class="top"><div class="ico">⚙</div><div><h5>Site Owner Support Agent</h5><div class="sub">Pattern 4 · Maintenance</div></div></div>
+            <div class="body">
+              <p>Helps site owners maintain SharePoint — suggests improvements, drafts pages, recommends organization.</p>
+              <div class="ex">Example: "Suggest navigation improvements based on user behavior."</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 20 QUIZ 4 -->
+      <section class="slide content-slide"
+        data-section="M365 Optimization"
+        data-script="Last knowledge check.">
+        <div class="slide-num">20 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 4 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which factor most strongly improves accuracy for <em>SharePoint agents?</em></div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Using larger models</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">B</span> Adding more prompts</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Structuring SharePoint content and metadata is the highest-leverage accuracy improvement. Microsoft Graph relies on metadata to find relevant content; well-tagged libraries with clear titles, descriptions, and structured columns dramatically improve retrieval. Larger models don't help if the content is unstructured. Prompt engineering matters less than data quality. Channel activity is irrelevant. This ties directly to Chapter 2's grounding dimensions — cleanliness and availability."><span class="letter">C</span> Structuring SharePoint content and metadata</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Increasing Teams channel activity</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 21 SCENARIO -->
+      <section class="slide content-slide"
+        data-section="Wrap"
+        data-script="<em>Apply Chapter 6 end-to-end.</em> Pairs work through this extensibility design challenge. Listen for who jumps to <em>'build a custom Foundry model'</em> when extending Copilot Studio would do — push back hard.">
+        <div class="slide-num">21 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Scenario <em>discussion</em></h3>
+        <p class="lead" style="margin-bottom:14px">Choose the right extensibility approach. Justify with the layered framework.</p>
+        <div class="scenario">
+          <div class="tag">Scenario · Pair Discussion</div>
+          <h3>ContractFlow law firm wants a contract drafting agent</h3>
+          <div class="quote">"ContractFlow has 200 attorneys. They draft commercial contracts daily. Standard clauses sit in SharePoint. The firm has a 50-page style guide for legal language. They use a 12-year-old paralegal database (no API) to look up case precedents. Senior attorneys want voice dictation while driving. Drafts must always cite the precedent. Compliance audits every clause. Project deadline: 14 weeks."</div>
+          <div class="prompts">
+            <h5>Discuss with your partner</h5>
+            <ul>
+              <li>Custom Foundry model, M365 Copilot agent, or extended Copilot Studio? Justify with the indicators.</li>
+              <li>Which extensibility layers (instruction · skill · integration · pro-code) would you use, and for what?</li>
+              <li>Where does Computer Use fit? Where does MCP fit? Where does Voice Mode fit?</li>
+              <li>What's the right reasoning depth — Standard or Deep — for clause drafting? Why?</li>
+            </ul>
+          </div>
+          <button class="reveal-btn" id="revealAnswer">Reveal Discussion Points →</button>
+          <div class="answer-panel" id="answerPanel">
+            <div class="ap-label">Guide · suggested points</div>
+            <div class="ap-row">
+              <div class="ap-q">Right approach — Extended Copilot Studio (NOT custom Foundry)</div>
+              <div class="ap-a">
+                <span><strong>Don't go custom Foundry</strong> — only one indicator hits cleanly (domain specificity). Insufficient justification for the cost and timeline.</span>
+                <span><strong>Extend Copilot Studio</strong> — instruction-level customization for legal style guide, skill-level for clause retrieval, integration for paralegal database via Computer Use.</span>
+                <span>14-week timeline rules out Foundry custom anyway.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Extensibility layers in use</div>
+              <div class="ap-a">
+                <span><strong>Layer 1 (Instruction):</strong> Encode the 50-page style guide as agent instructions and tone constraints.</span>
+                <span><strong>Layer 2 (Skill):</strong> Modular skills — "Draft-NDA-Clause", "Find-Precedent", "Validate-Citation" — reusable across attorneys.</span>
+                <span><strong>Layer 3 (Integration):</strong> SharePoint connector for clause library; Computer Use for the legacy paralegal database.</span>
+                <span><strong>Layer 4 (Pro-code):</strong> Skip. Low-code is sufficient for this scope.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Computer Use · MCP · Voice Mode placement</div>
+              <div class="ap-a">
+                <span><strong>Computer Use:</strong> Only for the 12-year-old paralegal database (no API) — log in, search precedents, extract data, return to agent.</span>
+                <span><strong>MCP:</strong> Lower priority — would add value if integrating with D365 F&amp;O for billing, but not core to drafting itself.</span>
+                <span><strong>Voice Mode:</strong> Yes — senior attorneys want hands-free dictation. Design for short phrasing, confirmation steps, interruption handling.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Reasoning depth — Deep, but selectively</div>
+              <div class="ap-a">
+                <span><strong>Standard reasoning</strong> for routine clause retrieval and Q&amp;A — most interactions.</span>
+                <span><strong>Deep reasoning</strong> for clause-level decisions involving multi-jurisdiction analysis, conflict checking, or precedent reconciliation. Compliance-sensitive moments.</span>
+                <span>Don't enable Deep reasoning by default — cost and latency hit isn't justified for simple retrieval.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 22 RECAP -->
+      <section class="slide content-slide"
+        data-section="Wrap"
+        data-script="Final recap. Six things to take into Chapter 7. I'll bring them up one at a time.">
+        <div class="slide-num">22 / 22</div>
+        <h3 class="slide-h">Chapter 6 — <em>key takeaways</em></h3>
+        <p class="lead">Six things to carry forward into Chapter 7, where we cover orchestrating prebuilt agents.</p>
+        <div class="recap">
+          <div class="recap-list">
+            <div class="recap-item" data-step
+              data-script="One — five indicators for custom Foundry models. Domain specificity, high-impact decisions, data sovereignty, unique workflows, cost at high volume. Two or more required.">
+              <div class="check">1</div><div class="text">Custom Foundry — <em>5 indicators</em>: Domain · High-Impact · Sovereignty · Unique Workflows · Cost at Scale. Need 2+ to justify.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Two — M365 Copilot agent design. Three steps. Understand the problem. Define behavior. Connect data and tools. Sequential.">
+              <div class="check">2</div><div class="text">M365 agents — <em>3-step design</em>: Understand Problem · Define Behavior · Connect Data &amp; Tools. Strict order.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Three — Copilot Studio extensibility has four layers. Instruction. Skill. Integration. Pro-code. Use the lowest layer that meets the need.">
+              <div class="check">3</div><div class="text">Copilot Studio — <em>4 extensibility layers</em>: Instruction · Skill · Integration · Pro-Code. Use lowest sufficient.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Four — Model Context Protocol standardizes business context retrieval. Critical for D365 F&amp;O. Three patterns — context-driven, workflow-integrated, multi-agent.">
+              <div class="check">4</div><div class="text"><em>MCP</em> = standardized contract for business context. 3 patterns: context-driven · workflow-integrated · multi-agent.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Five — Computer Use is the API of last resort. Use only when no API exists, or for repetitive UI tasks, or multi-app navigation, or human-like UI reasoning. UI changes break it.">
+              <div class="check">5</div><div class="text"><em>Computer Use</em> — API of last resort. Use only when no API exists or for UI-bound legacy systems.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Six — three behavioral capabilities. Standard reasoning is the default. Deep reasoning for multi-step structured decisions. Voice mode for hands-free with short phrasing and confirmation steps. <em>That's Chapter 6. Onwards to Chapter 7 — orchestrating prebuilt agents.</em>">
+              <div class="check">6</div><div class="text">Behavioral capabilities — <em>Standard</em> default · <em>Deep</em> for multi-step logic · <em>Voice</em> for hands-free interaction.</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:18px;text-align:center;font-size:18px;color:var(--copilot);font-weight:600">
+          → Continue to Chapter 7: Orchestrate Prebuilt Agents
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="notes-panel" id="notesPanel">
+    <div class="label">📖 Read aloud · notes <span class="step-tag" id="stepTag"></span></div>
+    <div class="script" id="notesScript">Welcome script will appear here.</div>
+  </div>
+
+
+
+  <div class="float-hint" id="hint">← → to advance step-by-step · T for notes</div>
+</div>
+
+<script>
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0; let notesOpen = false;
+  const counter = document.getElementById('counter');
+  const progressFill = document.getElementById('progressFill');
+  const notesPanel = document.getElementById('notesPanel');
+  const notesScript = document.getElementById('notesScript');
+  const stepTag = document.getElementById('stepTag');
+  const sectionLabel = document.getElementById('sectionLabel');
+  const stepPill = document.getElementById('stepPill');
+  const stepIndicator = document.getElementById('stepIndicator');
+  const notesToggle = document.getElementById('notesToggle');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const hint = document.getElementById('hint');
+  function getSteps(s){return Array.from(s.querySelectorAll('[data-step]'));}
+  function getRevealed(s){return Array.from(s.querySelectorAll('[data-step].revealed'));}
+  function updateScript(text, stepInfo){
+    notesScript.classList.add('fading');
+    setTimeout(()=>{ notesScript.innerHTML = text || ''; stepTag.textContent = stepInfo || ''; notesScript.classList.remove('fading'); },180);
+  }
+  function updateStepIndicator(slide){
+    const steps = getSteps(slide); const revealed = getRevealed(slide);
+    if(steps.length>0 && revealed.length<steps.length){ stepIndicator.classList.add('show'); stepPill.style.display='inline-block'; stepPill.textContent = `Step ${revealed.length}/${steps.length}`; }
+    else if(steps.length>0){ stepIndicator.classList.remove('show'); stepPill.style.display='inline-block'; stepPill.textContent = `${steps.length}/${steps.length}`; }
+    else { stepIndicator.classList.remove('show'); stepPill.style.display='none'; }
+  }
+  function showSlide(i, revealAll){
+    if(i<0||i>=total) return;
+    slides[current].classList.remove('active');
+    getSteps(slides[current]).forEach(el=>el.classList.remove('revealed'));
+    current = i;
+    const slide = slides[current]; slide.classList.add('active'); slide.scrollTop = 0;
+    if(revealAll){ getSteps(slide).forEach(el=>el.classList.add('revealed')); }
+    counter.textContent = (current+1)+' / '+total;
+    progressFill.style.width = ((current+1)/total*100)+'%';
+    sectionLabel.textContent = slide.dataset.section || '';
+    if(revealAll){ const steps = getSteps(slide); const last = steps[steps.length-1]; if(last && last.dataset.script) updateScript(last.dataset.script, `Step ${steps.length}/${steps.length}`); else updateScript(slide.dataset.script, ''); } else { updateScript(slide.dataset.script, ''); }
+    updateStepIndicator(slide);
+    prevBtn.disabled = (current===0 && getRevealed(slide).length===0);
+    nextBtn.disabled = (current===total-1 && (getSteps(slide).length===0 || getRevealed(slide).length===getSteps(slide).length));
+  }
+  function next(){
+    const slide = slides[current]; const steps = getSteps(slide); const revealed = getRevealed(slide);
+    if(revealed.length<steps.length){ const idx = revealed.length; const el = steps[idx]; el.classList.add('revealed'); if(el.dataset.script) updateScript(el.dataset.script, `Step ${idx+1}/${steps.length}`); updateStepIndicator(slide); prevBtn.disabled=false; if(revealed.length+1===steps.length && current===total-1) nextBtn.disabled=true; }
+    else if(current<total-1){ showSlide(current+1, false); }
+  }
+  function prev(){
+    const slide = slides[current]; const revealed = getRevealed(slide);
+    if(revealed.length>0){ const last = revealed[revealed.length-1]; last.classList.remove('revealed'); const remaining = getRevealed(slide); if(remaining.length>0){ const r = remaining[remaining.length-1]; const total = getSteps(slide).length; updateScript(r.dataset.script, `Step ${remaining.length}/${total}`); } else { updateScript(slide.dataset.script, ''); } updateStepIndicator(slide); nextBtn.disabled=false; }
+    else if(current>0){ showSlide(current-1, true); }
+  }
+  function toggleNotes(){ notesOpen = !notesOpen; notesPanel.classList.toggle('open', notesOpen); notesToggle.classList.toggle('active', notesOpen); }
+  prevBtn.addEventListener('click', prev); nextBtn.addEventListener('click', next); notesToggle.addEventListener('click', toggleNotes);
+  document.addEventListener('keydown',(e)=>{ if(e.target.matches('input,textarea')) return; if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();} else if(e.key==='ArrowLeft'){e.preventDefault();prev();} else if(e.key==='t'||e.key==='T'){e.preventDefault();toggleNotes();} else if(e.key==='Home'){e.preventDefault();showSlide(0,false);} else if(e.key==='End'){e.preventDefault();showSlide(total-1,true);} });
+  document.querySelectorAll('.quiz-opt').forEach(btn=>{ btn.addEventListener('click',()=>{ const wrap = btn.closest('.quiz-wrap'); const opts = wrap.querySelectorAll('.quiz-opt'); const explain = wrap.querySelector('.quiz-explain'); opts.forEach(o=>{ if(o.dataset.correct==='true') o.classList.add('correct'); else o.classList.add('wrong'); }); const correctOpt = wrap.querySelector('.quiz-opt[data-correct="true"]'); if(correctOpt && explain){ explain.querySelector('p').textContent = correctOpt.dataset.explain || ''; explain.classList.add('show'); } }); });
+  const revealBtn = document.getElementById('revealAnswer'); const answerPanel = document.getElementById('answerPanel');
+  if(revealBtn && answerPanel){ revealBtn.addEventListener('click',()=>{ answerPanel.classList.add('show'); revealBtn.classList.add('shown'); }); }
+  setTimeout(()=>{hint.classList.add('show');},800); setTimeout(()=>{hint.classList.remove('show');},5500);
+  showSlide(0,false);
+})();
+</script>
+</body>
+</html>

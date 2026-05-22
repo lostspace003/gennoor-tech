@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 02 — Analyze Requirements for AI-Powered Business Solutions · Gennoor Tech</title>
+<style>
+:root{
+  --bg:#FAFAFA; --paper:#FFFFFF;
+  --ink:#201F1E; --ink-soft:#605E5C; --ink-mute:#8A8886;
+  --line:#EDEBE9; --line-soft:#F3F2F1;
+  --ms-blue:#2563EB; --ms-blue-deep:#1D4ED8; --ms-navy:#0C1426;
+  --ms-cyan:#60A5FA; --ms-cyan-deep:#1E40AF;
+  --copilot:#F59E0B; --copilot-light:#FCD34D; --copilot-pink:#E3008C;
+  --ms-yellow:#F59E0B; --ms-green:#107C10; --ms-red:#D13438; --ms-orange:#F97316;
+  --logo-red:#2563EB; --logo-green:#2563EB; --logo-blue:#F59E0B; --logo-yellow:#F59E0B;
+  --notes-bg:#0C1426; --notes-text:#FFFFFF; --notes-accent:#F59E0B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;font-size:19px;line-height:1.55;-webkit-font-smoothing:antialiased}
+
+.app{position:fixed;inset:0;display:flex;flex-direction:column}
+.topbar{height:56px;background:var(--ms-navy);color:#FFFFFF;display:flex;align-items:center;padding:0 24px;gap:18px;border-bottom:1px solid rgba(255,255,255,.06);z-index:10}
+.topbar .brand-mark{width:30px;height:30px;flex-shrink:0;display:block}
+.topbar .brand-lockup{display:flex;align-items:center;gap:10px;text-decoration:none;color:#FFFFFF;flex-shrink:0}
+.topbar .brand-text{display:flex;flex-direction:column;line-height:1.1}
+.topbar .brand-name{font-size:18px;font-weight:600;letter-spacing:.3px;color:#FFFFFF}
+.topbar .brand-sub{font-size:12px;color:var(--ms-yellow);letter-spacing:1.2px;text-transform:uppercase;font-weight:600;font-family:'Cascadia Code','Consolas',monospace}
+.topbar .divider{width:1px;height:24px;background:rgba(255,255,255,.15)}
+.topbar .logo{font-weight:600;font-size:20px;letter-spacing:.2px}
+.topbar .chapter-title{font-size:16px;opacity:.75;letter-spacing:.2px;font-weight:400}
+.topbar.topbar-grid .topbar-left .chapter-title{max-width:36ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topbar .spacer{flex:1}
+.topbar .meta{font-size:16px;opacity:.85;display:flex;gap:10px;align-items:center}
+.topbar .meta .pill{padding:4px 12px;background:rgba(255,255,255,.10);border-radius:4px;font-size:15px;font-weight:500}
+.topbar .meta .step-pill{background:var(--ms-blue);font-weight:600;font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px}
+.topbar button{background:transparent;border:1px solid rgba(255,255,255,.25);color:#FFFFFF;padding:7px 16px;border-radius:4px;font-family:inherit;font-size:16px;font-weight:500;cursor:pointer;transition:.15s}
+.topbar button:hover{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.4)}
+.topbar button.active{background:var(--ms-blue);border-color:var(--ms-blue)}
+
+.progress{height:3px;background:rgba(255,255,255,.06);position:relative;border-bottom:1px solid var(--line)}
+.progress-fill{position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg,var(--ms-blue) 0%,var(--copilot) 50%,var(--ms-cyan) 100%);transition:width .4s cubic-bezier(.4,0,.2,1)}
+
+.stage{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.slides{width:100%;height:100%;position:relative}
+.slide{position:absolute;inset:0;padding:40px 64px 80px;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .35s ease;overflow-y:auto}
+.slide.active{opacity:1;pointer-events:auto}
+.slide-num{position:absolute;top:18px;right:28px;font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ink-mute);letter-spacing:1.5px}
+
+[data-step]{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.2,.7,.3,1), transform .55s cubic-bezier(.2,.7,.3,1);pointer-events:none}
+[data-step].revealed{opacity:1;transform:translateY(0);pointer-events:auto}
+[data-step].slide-in-left{transform:translateX(-24px)}
+[data-step].slide-in-left.revealed{transform:translateX(0)}
+[data-step].slide-in-right{transform:translateX(24px)}
+[data-step].slide-in-right.revealed{transform:translateX(0)}
+[data-step].zoom-in{transform:scale(.85)}
+[data-step].zoom-in.revealed{transform:scale(1)}
+
+.notes-panel{position:fixed;bottom:0;left:0;right:0;background:var(--notes-bg);color:var(--notes-text);padding:22px 32px 26px;border-top:3px solid var(--notes-accent);transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);z-index:20;max-height:48vh;overflow-y:auto;box-shadow:0 -20px 40px rgba(0,0,0,.18)}
+.notes-panel.open{transform:translateY(0)}
+.notes-panel .label{display:flex;align-items:center;gap:10px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--notes-accent);margin-bottom:10px;font-weight:600}
+.notes-panel .label::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--notes-accent);animation:pulse 1.6s ease-in-out infinite}
+.notes-panel .label .step-tag{margin-left:auto;font-size:12px;color:rgba(255,255,255,.55);letter-spacing:1px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.notes-panel .script{font-size:22px;line-height:1.65;max-width:880px;font-weight:400;transition:opacity .25s}
+.notes-panel .script.fading{opacity:.3}
+.notes-panel .script em{color:var(--notes-accent);font-style:normal;font-weight:600;background:rgba(255,185,0,.15);padding:1px 6px;border-radius:3px}
+
+.controls{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:var(--ms-navy);padding:8px 14px;border-radius:4px;box-shadow:0 6px 24px rgba(0,32,80,.25);z-index:15}
+.controls button{width:36px;height:36px;border-radius:3px;border:none;background:transparent;color:#FFFFFF;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;transition:.15s}
+.controls button:hover{background:rgba(255,255,255,.12)}
+.controls button:disabled{opacity:.3;cursor:not-allowed}
+.controls .counter{font-family:'Cascadia Code','Consolas',monospace;font-size:16px;color:#FFFFFF;padding:0 14px;letter-spacing:1px;font-weight:500}
+
+.step-indicator{position:fixed;bottom:64px;left:50%;transform:translateX(-50%);font-size:14px;font-family:'Cascadia Code','Consolas',monospace;color:var(--ms-blue);letter-spacing:1.5px;opacity:0;transition:opacity .3s;z-index:14;text-transform:uppercase;font-weight:600}
+.step-indicator.show{opacity:.85}
+.step-indicator::after{content:" →";animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+
+.slide.title-slide{background:linear-gradient(135deg,#0C1426 0%,#1D4ED8 35%,#2563EB 70%,#60A5FA 110%);color:#FFFFFF;justify-content:center;padding:175px 100px 100px 100px;position:absolute;overflow:hidden}
+.slide.title-slide .brand-full{position:absolute;top:48px;left:64px;display:flex;align-items:center;gap:16px}
+.slide.title-slide .brand-mark-lg{width:64px;height:64px}
+.slide.title-slide .brand-wordmark{display:flex;flex-direction:column;line-height:1}
+.slide.title-slide .brand-wordmark .name{font-size:30px;font-weight:600;letter-spacing:1px;color:#FFFFFF}
+.slide.title-slide .brand-wordmark .tag{font-size:14px;color:var(--ms-yellow);letter-spacing:3px;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;margin-top:4px;text-transform:uppercase}
+.slide.title-slide .eyebrow{font-family:'Cascadia Code','Consolas',monospace;font-size:16px;letter-spacing:3px;color:var(--ms-cyan);margin-bottom:20px;font-weight:500}
+.slide.title-slide h1{font-size:85px;line-height:1.1;font-weight:600;max-width:1200px;letter-spacing:-1.5px}
+.slide.title-slide h1 em{font-style:normal;color:var(--ms-cyan);font-weight:600}
+.slide.title-slide .meta-row{margin-top:48px;display:flex;gap:36px;font-size:18px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.slide.title-slide .meta-row strong{color:#FFFFFF;display:block;font-size:28px;text-transform:none;font-weight:600;letter-spacing:0;margin-top:4px}
+.title-slide::before{content:"";position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(98,100,167,.30) 0%,transparent 70%);top:-200px;right:-200px;pointer-events:none}
+.title-slide::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(80,230,255,.20) 0%,transparent 70%);bottom:-160px;left:-160px;pointer-events:none}
+
+.slide.section-divider{background:linear-gradient(135deg,var(--ms-blue) 0%,var(--copilot) 100%);color:#FFFFFF;justify-content:center;align-items:flex-start;padding:80px;position:relative;overflow:hidden}
+.slide.section-divider::before{content:"";position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(80,230,255,.18) 0%,transparent 70%);top:-180px;right:-180px;pointer-events:none}
+.slide.section-divider .label{font-family:'Cascadia Code','Consolas',monospace;font-size:18px;letter-spacing:4px;margin-bottom:18px;opacity:.8;font-weight:500}
+.slide.section-divider h2{font-size:92px;line-height:1.05;font-weight:600;max-width:1100px;letter-spacing:-2px}
+.slide.section-divider h2 em{font-style:normal;color:var(--ms-cyan);font-weight:600}
+.slide.section-divider .sub{margin-top:28px;font-size:25px;max-width:780px;color:rgba(255,255,255,.95);font-weight:400;line-height:1.45}
+
+.slide.content-slide{padding:48px 72px 90px}
+.slide h3.slide-h{font-size:48px;font-weight:600;letter-spacing:-.6px;margin-bottom:8px;line-height:1.15;color:var(--ms-navy)}
+.slide h3.slide-h em{font-style:normal;color:var(--copilot);font-weight:600}
+.slide .lead{font-size:21px;color:var(--ink-soft);margin-bottom:28px;max-width:900px}
+
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.cards.cols-2{grid-template-columns:repeat(2,1fr)}
+.cards.cols-4{grid-template-columns:repeat(4,1fr)}
+.cards.cols-5{grid-template-columns:repeat(5,1fr)}
+.card{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--ms-blue);padding:20px;border-radius:4px;position:relative;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.card .num{font-size:28px;color:var(--ms-blue);font-weight:600;margin-bottom:4px;line-height:1;letter-spacing:-.5px}
+.card h4{font-size:21px;font-weight:600;margin-bottom:6px;color:var(--ms-navy)}
+.card p{font-size:17px;color:var(--ink-soft);line-height:1.5}
+.card .ex{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:16px;color:var(--ms-blue-deep);font-style:italic}
+.card .ex strong{color:var(--copilot);font-style:normal;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:2px}
+.card.summary-card{background:linear-gradient(135deg,var(--ms-navy) 0%,var(--copilot) 100%);color:#FFFFFF;border:none}
+.card.summary-card h4{color:#FFFFFF}
+.card.summary-card p{color:rgba(255,255,255,.85)}
+.card.summary-card .num{color:var(--ms-cyan)}
+.card.summary-card .ex{border-top-color:rgba(255,255,255,.15);color:var(--ms-cyan)}
+
+/* PILLAR CARDS — three big roles of agents */
+.pillar-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px}
+.pillar-card{background:var(--paper);border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05);display:flex;flex-direction:column}
+.pillar-card .top{padding:24px;color:#FFFFFF;text-align:left}
+.pillar-card.p1 .top{background:linear-gradient(135deg,#2563EB 0%,#1D4ED8 100%)}
+.pillar-card.p2 .top{background:linear-gradient(135deg,#F59E0B 0%,#B45309 100%)}
+.pillar-card.p3 .top{background:linear-gradient(135deg,#1E40AF 0%,#107C10 100%)}
+.pillar-card .icon{font-size:42px;margin-bottom:12px;display:block}
+.pillar-card .top h4{font-size:28px;font-weight:600;margin-bottom:6px;letter-spacing:-.3px}
+.pillar-card .top .sub{font-size:16px;opacity:.9;line-height:1.4}
+.pillar-card .body{padding:18px 22px;flex:1}
+.pillar-card .body ul{list-style:none}
+.pillar-card .body li{padding:6px 0 6px 18px;position:relative;font-size:17px;color:var(--ink);line-height:1.5}
+.pillar-card .body li::before{content:"→";position:absolute;left:0;top:6px;color:var(--copilot);font-weight:700}
+
+/* TASK AUTOMATION TABLE */
+.task-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:18px}
+.task-row{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--ms-blue);border-radius:4px;padding:16px 20px;display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:start}
+.task-row .area{font-weight:600;color:var(--ms-navy);font-size:18px}
+.task-row .area .icon{display:block;font-size:28px;margin-bottom:4px;color:var(--ms-blue)}
+.task-row .desc{font-size:17px;color:var(--ink);line-height:1.5}
+.task-row .desc .tools{display:block;margin-top:6px;font-size:14px;color:var(--copilot);font-weight:600;font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px}
+
+/* GROUNDING CONCEPT (slide 9) */
+.concept-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;margin-top:18px}
+.concept-card{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.concept-card .badge{display:inline-block;background:var(--copilot);color:#FFFFFF;padding:4px 12px;border-radius:3px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:10px}
+.concept-card h4{font-size:28px;color:var(--ms-navy);font-weight:600;margin-bottom:10px;line-height:1.25}
+.concept-card p{font-size:18px;color:var(--ink);line-height:1.55;margin-bottom:8px}
+.concept-card .pipe{display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px}
+.concept-card .pipe-step{background:var(--bg);padding:10px 14px;border-radius:4px;border-left:3px solid var(--ms-blue);font-size:16px;color:var(--ink)}
+.concept-card .pipe-step strong{color:var(--ms-navy);display:block;font-size:14px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:2px;font-weight:600}
+
+/* FIVE DIMENSIONS */
+.dim-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:18px}
+.dim-card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:18px 14px;text-align:left;position:relative;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.dim-card::before{content:"";position:absolute;top:0;left:0;right:0;height:5px}
+.dim-card.d1::before{background:#2563EB}
+.dim-card.d2::before{background:#F59E0B}
+.dim-card.d3::before{background:#1E40AF}
+.dim-card.d4::before{background:#107C10}
+.dim-card.d5::before{background:#F59E0B}
+.dim-card .dim-num{font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ink-mute);letter-spacing:1.5px;font-weight:600;margin-top:6px}
+.dim-card .dim-icon{font-size:35px;margin:8px 0 4px}
+.dim-card.d1 .dim-icon{color:#2563EB}
+.dim-card.d2 .dim-icon{color:#F59E0B}
+.dim-card.d3 .dim-icon{color:#1E40AF}
+.dim-card.d4 .dim-icon{color:#107C10}
+.dim-card.d5 .dim-icon{color:#B58800}
+.dim-card h4{font-size:22px;font-weight:600;color:var(--ms-navy);margin-bottom:6px;line-height:1.2}
+.dim-card p{font-size:15px;color:var(--ink-soft);line-height:1.45}
+.dim-card .indicator{margin-top:10px;padding-top:8px;border-top:1px dashed var(--line);font-size:14px;color:var(--ms-blue-deep);font-style:italic}
+.dim-card .indicator strong{color:var(--copilot);font-style:normal;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;font-size:12px;letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:2px}
+
+/* DIMENSIONS IMPACT TABLE */
+.impact-table{margin-top:14px;background:var(--paper);border:1px solid var(--line);border-radius:6px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.impact-row{display:grid;grid-template-columns:160px 1.2fr 1.5fr;gap:0;border-bottom:1px solid var(--line)}
+.impact-row:last-child{border-bottom:none}
+.impact-row.head{background:var(--ms-navy);color:#FFFFFF;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
+.impact-row.head > div{padding:12px 18px}
+.impact-row > div{padding:14px 18px;font-size:17px;line-height:1.5}
+.impact-row .dim{font-weight:600;color:var(--ms-navy);border-left:3px solid var(--ms-blue);background:#F8FAFD}
+.impact-row.r1 .dim{border-left-color:#2563EB}
+.impact-row.r2 .dim{border-left-color:#F59E0B}
+.impact-row.r3 .dim{border-left-color:#1E40AF}
+.impact-row.r4 .dim{border-left-color:#107C10}
+.impact-row.r5 .dim{border-left-color:#F59E0B}
+.impact-row .def{color:var(--ink)}
+.impact-row .impact{color:var(--ms-blue-deep);font-weight:500}
+
+/* DATA ESTATE LAYERS */
+.estate{margin-top:18px;display:flex;flex-direction:column;gap:8px;max-width:980px;margin-left:auto;margin-right:auto}
+.estate-layer{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:16px 22px;display:grid;grid-template-columns:60px 1fr 220px;gap:20px;align-items:center;box-shadow:0 1px 3px rgba(0,0,0,.04);position:relative}
+.estate-layer::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:6px 0 0 6px}
+.estate-layer.l1::before{background:#2563EB}
+.estate-layer.l2::before{background:#F59E0B}
+.estate-layer.l3::before{background:#1E40AF}
+.estate-layer.l4::before{background:linear-gradient(180deg,#F59E0B,#D83B01)}
+.estate-layer .layer-num{font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ink-mute);letter-spacing:1.5px;font-weight:600;text-align:center}
+.estate-layer .layer-num strong{display:block;font-size:30px;color:var(--ms-blue);font-family:'Segoe UI',sans-serif;letter-spacing:0;margin-bottom:2px}
+.estate-layer.l2 .layer-num strong{color:#F59E0B}
+.estate-layer.l3 .layer-num strong{color:#1E40AF}
+.estate-layer.l4 .layer-num strong{color:#D83B01}
+.estate-layer .layer-name h5{font-size:21px;color:var(--ms-navy);font-weight:600;margin-bottom:3px}
+.estate-layer .layer-name p{font-size:16px;color:var(--ink-soft);line-height:1.45}
+.estate-layer .examples{font-size:14px;color:var(--copilot);font-weight:600;font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.4px;text-align:right}
+.estate-layer .examples strong{display:block;color:var(--ink-mute);font-size:12px;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:3px;font-weight:600;font-family:'Segoe UI',sans-serif}
+
+/* RAG PIPELINE */
+.rag{margin-top:14px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.rag-flow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;position:relative;margin-bottom:14px}
+.rag-flow::before{content:"";position:absolute;top:36px;left:5%;right:5%;height:2px;background:linear-gradient(90deg,#2563EB 0%,#F59E0B 100%);transform:scaleX(0);transform-origin:left;transition:transform 1.5s ease}
+.rag-flow.flow-active::before{transform:scaleX(1)}
+.rag-stage{text-align:center;position:relative;z-index:1}
+.rag-stage .dot{width:72px;height:72px;border-radius:50%;background:var(--paper);border:3px solid var(--ms-blue);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--ms-blue);box-shadow:0 4px 14px rgba(0,120,212,.20)}
+.rag-stage.s2 .dot{border-color:#F59E0B;color:#F59E0B}
+.rag-stage.s3 .dot{border-color:#1E40AF;color:#1E40AF}
+.rag-stage.s4 .dot{border-color:#107C10;color:#107C10}
+.rag-stage.s5 .dot{border-color:#D83B01;color:#D83B01}
+.rag-stage h6{font-size:18px;color:var(--ms-navy);font-weight:600;margin-bottom:3px}
+.rag-stage p{font-size:14px;color:var(--ink-soft);line-height:1.4}
+.rag-note{margin-top:14px;padding:12px 16px;background:#FEF3C7;border-left:3px solid var(--copilot);border-radius:4px;font-size:16px;color:var(--ms-navy);font-style:italic}
+.rag-note strong{font-style:normal;color:var(--copilot);font-weight:600}
+
+/* MS DATABASES */
+.db-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}
+.db-card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:18px;border-top:3px solid var(--ms-blue);box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.db-card.db1{border-top-color:#2563EB}
+.db-card.db2{border-top-color:#F59E0B}
+.db-card.db3{border-top-color:#1E40AF}
+.db-card.db4{border-top-color:#107C10}
+.db-card .db-icon{font-size:30px;display:block;margin-bottom:6px}
+.db-card.db1 .db-icon{color:#2563EB}
+.db-card.db2 .db-icon{color:#F59E0B}
+.db-card.db3 .db-icon{color:#1E40AF}
+.db-card.db4 .db-icon{color:#107C10}
+.db-card h4{font-size:20px;color:var(--ms-navy);font-weight:600;margin-bottom:6px}
+.db-card p{font-size:16px;color:var(--ink-soft);line-height:1.45;margin-bottom:8px}
+.db-card .uses{font-size:14px;color:var(--ms-blue-deep);border-top:1px dashed var(--line);padding-top:6px}
+.db-card .uses strong{color:var(--copilot);font-family:'Cascadia Code','Consolas',monospace;font-size:12px;letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:2px;font-weight:600}
+
+/* QUIZ */
+.quiz-wrap{max-width:880px;margin:0 auto;width:100%}
+.quiz-q{font-size:35px;line-height:1.3;font-weight:600;color:var(--ms-navy);margin-bottom:28px;letter-spacing:-.3px}
+.quiz-q em{font-style:normal;color:var(--copilot);font-weight:600}
+.quiz-options{display:flex;flex-direction:column;gap:10px}
+.quiz-opt{background:var(--paper);border:1px solid var(--line);padding:16px 20px;border-radius:4px;cursor:pointer;display:flex;align-items:center;gap:18px;transition:.15s;font-size:19px;font-family:inherit;text-align:left;width:100%;color:var(--ink)}
+.quiz-opt:hover{border-color:var(--ms-blue);background:#F3F9FD;box-shadow:0 2px 6px rgba(0,120,212,.10)}
+.quiz-opt .letter{width:32px;height:32px;border-radius:4px;background:var(--bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--ms-blue-deep);flex-shrink:0;font-size:18px}
+.quiz-opt.correct{border-color:var(--ms-green);background:#DFF6DD}
+.quiz-opt.correct .letter{background:var(--ms-green);color:#FFFFFF;border-color:var(--ms-green)}
+.quiz-opt.wrong{border-color:var(--ms-red);background:#FDE7E9;opacity:.65}
+.quiz-explain{margin-top:20px;background:#DFF6DD;border-left:4px solid var(--ms-green);padding:16px 20px;border-radius:4px;display:none}
+.quiz-explain.show{display:block;animation:slideUp .5s ease}
+.quiz-explain strong{color:var(--ms-green);font-family:'Cascadia Code','Consolas',monospace;font-size:15px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
+.quiz-explain p{margin-top:8px;font-size:18px;color:var(--ink)}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* SCENARIO */
+.scenario{max-width:1100px;margin:0 auto;background:linear-gradient(135deg,#FEF3C7 0%,#E5E3F4 100%);border-radius:8px;padding:32px 40px;border-left:4px solid var(--copilot)}
+.scenario .tag{display:inline-block;background:var(--copilot);color:#FFFFFF;padding:5px 14px;border-radius:3px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:14px}
+.scenario h3{font-size:32px;line-height:1.25;color:var(--ms-navy);margin-bottom:16px;font-weight:600;letter-spacing:-.3px}
+.scenario .quote{font-size:21px;line-height:1.5;color:var(--ms-navy);padding:16px 20px;background:rgba(255,255,255,.8);border-radius:4px;margin:14px 0;border-left:3px solid var(--ms-blue);font-style:italic}
+.scenario .prompts h5{font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ms-navy);margin-bottom:10px;font-weight:600;margin-top:10px}
+.scenario .prompts ul{list-style:none}
+.scenario .prompts li{padding:8px 0 8px 24px;position:relative;font-size:18px;color:var(--ink);border-bottom:1px dashed rgba(0,32,80,.18)}
+.scenario .prompts li:last-child{border-bottom:none}
+.scenario .prompts li::before{content:"→";position:absolute;left:0;top:8px;color:var(--copilot);font-weight:700}
+.scenario .reveal-btn{margin-top:16px;background:var(--ms-blue);color:#FFFFFF;border:none;padding:10px 22px;border-radius:4px;font-family:'Segoe UI',sans-serif;font-size:16px;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:.15s}
+.scenario .reveal-btn:hover{background:var(--ms-blue-deep);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,120,212,.30)}
+.scenario .reveal-btn.shown{display:none}
+
+.answer-panel{margin-top:18px;background:var(--paper);border:1px solid var(--ms-blue);border-radius:6px;padding:22px 26px;display:none}
+.answer-panel.show{display:block;animation:slideUp .5s ease}
+.answer-panel .ap-label{display:inline-block;background:var(--ms-navy);color:#FFFFFF;padding:4px 12px;border-radius:3px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:14px}
+.answer-panel .ap-row{margin-bottom:14px}
+.answer-panel .ap-row:last-child{margin-bottom:0}
+.answer-panel .ap-q{font-size:18px;color:var(--copilot);font-weight:600;margin-bottom:6px}
+.answer-panel .ap-a{font-size:17px;color:var(--ink);line-height:1.55;padding-left:14px;border-left:2px solid #DBEAFE}
+.answer-panel .ap-a span{display:block;margin-bottom:3px}
+.answer-panel .ap-a span::before{content:"• ";color:var(--ms-blue);font-weight:700}
+
+/* RECAP */
+.recap{max-width:900px;margin:0 auto}
+.recap-list{display:grid;gap:12px;margin-top:20px}
+.recap-item{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--ms-blue);padding:16px 22px;border-radius:4px;display:flex;gap:16px;align-items:flex-start;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.recap-item .check{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--ms-blue);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px}
+.recap-item .text{font-size:20px;color:var(--ms-navy);line-height:1.4}
+.recap-item .text em{color:var(--copilot);font-style:normal;font-weight:600}
+
+/* OBJECTIVES */
+.objectives{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.obj{display:flex;gap:14px;align-items:flex-start;padding:16px;background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--ms-blue);border-radius:4px}
+.obj .num{color:var(--ms-blue);font-size:28px;font-weight:600;flex-shrink:0;line-height:1}
+.obj .label{font-size:18px;color:var(--ink);line-height:1.5}
+
+/* BEST PRACTICES (specific to grounding) */
+.bp-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:18px;max-width:1100px}
+.bp-card{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--copilot);border-radius:4px;padding:18px 22px}
+.bp-card .bp-num{font-size:25px;color:var(--copilot);font-weight:600;margin-bottom:4px;letter-spacing:-.5px}
+.bp-card h4{font-size:20px;color:var(--ms-navy);font-weight:600;margin-bottom:4px}
+.bp-card p{font-size:16px;color:var(--ink-soft);line-height:1.5}
+.bp-card .ex{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:15px;color:var(--ms-blue-deep);font-style:italic}
+
+.float-hint{position:fixed;top:72px;right:20px;background:var(--ms-navy);color:#FFFFFF;padding:10px 16px;border-radius:4px;font-size:15px;opacity:0;transition:.3s;z-index:30;pointer-events:none;font-family:'Cascadia Code','Consolas',monospace;box-shadow:0 6px 16px rgba(0,32,80,.20)}
+.float-hint.show{opacity:.95}
+
+/* GENNOOR WORDMARK COLOR LETTERS */
+.brand-name .b-w{color:#FFFFFF}
+.brand-name .b-blue{color:#60A5FA}
+.brand-name .b-amber{color:#F59E0B}
+.slide.title-slide .brand-wordmark .name .b-w{color:#FFFFFF}
+.slide.title-slide .brand-wordmark .name .b-blue{color:#60A5FA}
+.slide.title-slide .brand-wordmark .name .b-amber{color:#F59E0B}
+
+/* TOPBAR GRID — slide nav moved to topbar center */
+.topbar.topbar-grid{display:grid !important;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;height:72px;padding:0 28px}
+.topbar.topbar-grid .topbar-left{display:flex;align-items:center;gap:18px;min-width:0;overflow:hidden}
+.topbar.topbar-grid .topbar-left .chapter-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar.topbar-grid .topbar-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.topbar.topbar-grid .topbar-right{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0}
+.step-indicator-top{font-family:'Cascadia Code','Consolas',monospace;font-size:10px;letter-spacing:2.5px;color:var(--gn-amber,var(--ms-yellow));font-weight:700;text-transform:uppercase;line-height:1;opacity:.95}
+.step-indicator-top.complete{color:rgba(255,255,255,.5)}
+.controls-top{display:inline-flex;align-items:center;gap:4px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.10);border-radius:5px;padding:3px 6px}
+.controls-top button{width:28px;height:28px;border-radius:3px;border:none;background:transparent;color:#FFFFFF;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:.15s;padding:0}
+.controls-top button:hover{background:rgba(255,255,255,.12)}
+.controls-top button:disabled{opacity:.3;cursor:not-allowed}
+.controls-top .counter{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;font-weight:600;color:#FFFFFF;letter-spacing:.5px;padding:0 12px;min-width:64px;text-align:center}
+.controls-top .counter strong{color:var(--gn-amber,var(--ms-yellow));font-weight:700}
+/* Hide original bottom controls (now empty) */
+.bottom-nav-removed{display:none !important}
+
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar topbar-grid">
+    <div class="topbar-left">
+    <a href="#" class="brand-lockup">
+      <svg class="brand-mark" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+      <div class="brand-text">
+        <span class="brand-name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+        <span class="brand-sub">AB-100</span>
+      </div>
+    </a>
+    <div class="divider"></div>
+    <div class="chapter-title">Chapter 02 · Analyze Requirements</div>
+    </div>
+    <div class="topbar-center">
+      <div class="step-indicator-top" id="stepIndicator">More to reveal</div>
+      <div class="controls-top">
+        <button id="prevBtn" title="Previous (←)">‹</button>
+        <span class="counter" id="counter">1 / 20</span>
+        <button id="nextBtn" title="Next (→)">›</button>
+      </div>
+    </div>
+    <div class="topbar-right">
+    <div class="meta">
+      <span class="pill" id="sectionLabel">Opening</span>
+      <span class="pill step-pill" id="stepPill" style="display:none">Step 1/6</span>
+    </div>
+    <button id="notesToggle" title="Toggle notes (T)">📖 Notes</button>
+    </div>
+  </div>
+
+  <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="stage">
+    <div class="slides" id="slides">
+
+      <!-- 01 TITLE -->
+      <section class="slide title-slide active"
+        data-section="Opening"
+        data-script="Welcome back. Chapter 1 was about <em>who you are</em> as an architect. Chapter 2 is about <em>what you analyze</em> before you design anything. Bad analysis kills more AI projects than bad code. By the end of this chapter, you will know exactly what to look at, what to question, and what to demand from your customer.">
+        <div class="slide-num">01 / 20</div>
+        <div class="brand-full">
+          <svg class="brand-mark-lg" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+          <div class="brand-wordmark">
+            <span class="name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+            <span class="tag">AB-100 Course</span>
+          </div>
+        </div>
+        <div class="eyebrow">CHAPTER 02</div>
+        <h1>Analyze Requirements for<br><em>AI-Powered Business</em> Solutions</h1>
+        <div class="meta-row">
+          <div>YOUR FOCUS<strong>Data &amp; grounding</strong></div>
+          <div>YOUR LENS<strong>Business outcomes</strong></div>
+          <div>YOUR OUTPUT<strong>Architecture-ready requirements</strong></div>
+        </div>
+      </section>
+
+      <!-- 02 OVERVIEW -->
+      <section class="slide content-slide"
+        data-section="Opening"
+        data-script="Chapter 2 has four big areas. Each one is a tool you'll use on every customer engagement.">
+        <div class="slide-num">02 / 20</div>
+        <h3 class="slide-h">What this chapter <em>covers</em></h3>
+        <p class="lead">AI agents only work if the data underneath them is ready. This chapter teaches you how to evaluate three things: what agents do, whether your data is groundable, and how to architect data for AI to consume.</p>
+        <div class="cards cols-4">
+          <div class="card" data-step data-script="First — <em>Agents in Action</em>. Three roles AI agents play in a business: task automation, data analytics, and decision-making. You need to know which one your customer is actually asking for.">
+            <div class="num">01</div><h4>Agents in Action</h4>
+            <p>Three roles AI agents play: task automation, data analytics, decision-making.</p>
+            <div class="ex"><strong>You will learn</strong>How to map a business need to the right agent role.</div>
+          </div>
+          <div class="card" data-step data-script="Second — <em>Grounding</em>. The most important concept in this entire course. We'll evaluate data on five dimensions. If grounding is weak, your agent hallucinates.">
+            <div class="num">02</div><h4>Grounding Data</h4>
+            <p>The five dimensions every architect evaluates: accuracy, relevance, timeliness, cleanliness, availability.</p>
+            <div class="ex"><strong>You will learn</strong>The five-dimension test you'll run on every dataset.</div>
+          </div>
+          <div class="card" data-step data-script="Third — <em>Data Architecture</em>. Azure data estate, RAG pipelines, Microsoft databases for AI. The plumbing that makes everything work.">
+            <div class="num">03</div><h4>Data Architecture</h4>
+            <p>Azure data estate layers, Microsoft databases, and RAG pipelines for AI.</p>
+            <div class="ex"><strong>You will learn</strong>The four layers of an AI-ready data estate.</div>
+          </div>
+          <div class="card" data-step data-script="Fourth — <em>Knowledge checks and a real scenario</em>. We'll apply everything to an HR policy assistant case at the end.">
+            <div class="num">04</div><h4>Apply &amp; Practice</h4>
+            <p>Knowledge checks plus a real-world data-readiness scenario.</p>
+            <div class="ex"><strong>You will learn</strong>How to assess whether a customer is ready to deploy AI.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 SECTION DIVIDER UNIT 1 -->
+      <section class="slide section-divider"
+        data-section="Agents in Action"
+        data-script="First unit. <em>What do AI agents actually do?</em> If you can't answer this for a non-technical executive in plain English, you can't sell the project.">
+        <div class="slide-num">03 / 20</div>
+        <div class="label">UNIT ONE</div>
+        <h2>Agents in <em>Action</em></h2>
+        <div class="sub">Three roles AI agents play in business operations. Most projects only need one of the three — your job is to know which.</div>
+      </section>
+
+      <!-- 04 OBJECTIVES UNIT 1 -->
+      <section class="slide content-slide"
+        data-section="Agents in Action"
+        data-script="Four objectives for this unit. I'll bring them up one at a time.">
+        <div class="slide-num">04 / 20</div>
+        <h3 class="slide-h">Learning <em>objectives</em></h3>
+        <p class="lead">By the end of this unit, you'll be able to:</p>
+        <div class="objectives">
+          <div class="obj" data-step data-script="One — explain the three roles of AI agents: task automation, data analytics, and decision-making."><div class="num">01</div><div class="label">Explain how AI agents support task automation, data analytics, and decision-making</div></div>
+          <div class="obj" data-step data-script="Two — describe how Microsoft Copilot enhances productivity in everyday tools — Word, Outlook, Teams, Dynamics."><div class="num">02</div><div class="label">Describe how Microsoft Copilot enhances productivity across workflows</div></div>
+          <div class="obj" data-step data-script="Three — identify how generative AI unlocks productivity and supports responsible decision-making."><div class="num">03</div><div class="label">Identify how generative AI unlocks productivity and supports decisions</div></div>
+          <div class="obj" data-step data-script="Four — assess scenarios where agents add measurable value. <em>Measurable</em> is the keyword."><div class="num">04</div><div class="label">Assess scenarios where agents add measurable value to enterprise environments</div></div>
+        </div>
+      </section>
+
+      <!-- 05 THREE PILLARS -->
+      <section class="slide content-slide"
+        data-section="Agents in Action"
+        data-script="Three roles AI agents play. Memorize them. Every business case fits into one of these three buckets — sometimes two, occasionally all three. I'll bring them up one at a time.">
+        <div class="slide-num">05 / 20</div>
+        <h3 class="slide-h">Three <em>roles</em> of AI agents in business</h3>
+        <p class="lead">Most projects start by saying "we want an AI agent." Your first job is to figure out which of these three roles they actually need.</p>
+        <div class="pillar-cards">
+          <div class="pillar-card p1" data-step
+            data-script="Role one — <em>Task Automation</em>. Drafting emails, summarizing meetings, triggering workflows. The agent <em>does</em> things. This is where most projects start because the value is immediate and visible.">
+            <div class="top">
+              <span class="icon">⚡</span>
+              <h4>Task Automation</h4>
+              <div class="sub">Agents that do work for you</div>
+            </div>
+            <div class="body">
+              <ul>
+                <li>Draft documents, emails, responses</li>
+                <li>Summarize emails, meetings, chats</li>
+                <li>Trigger multi-step workflows</li>
+                <li>Reduce cognitive load on the team</li>
+              </ul>
+            </div>
+          </div>
+          <div class="pillar-card p2" data-step
+            data-script="Role two — <em>Data Analytics</em>. Natural language to insights. The agent <em>explains</em> data. Lets non-analysts ask questions of the data and get back charts and recommendations.">
+            <div class="top">
+              <span class="icon">📊</span>
+              <h4>Data Analytics</h4>
+              <div class="sub">Agents that explain your data</div>
+            </div>
+            <div class="body">
+              <ul>
+                <li>Natural language → insights</li>
+                <li>Trend, outlier, pattern detection</li>
+                <li>Generate visualizations on demand</li>
+                <li>Interpret dashboards for non-analysts</li>
+              </ul>
+            </div>
+          </div>
+          <div class="pillar-card p3" data-step
+            data-script="Role three — <em>Decision-Making</em>. Agents that <em>recommend</em>. They synthesize across documents, datasets, and meetings to suggest next moves. Decisions still belong to the human — but the agent does the legwork.">
+            <div class="top">
+              <span class="icon">🎯</span>
+              <h4>Decision-Making</h4>
+              <div class="sub">Agents that recommend next moves</div>
+            </div>
+            <div class="body">
+              <ul>
+                <li>Scenario recommendations</li>
+                <li>Risk identification via patterns</li>
+                <li>Synthesize across docs, meetings, data</li>
+                <li>Human still owns the decision</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 TASK AUTOMATION EXAMPLES -->
+      <section class="slide content-slide"
+        data-section="Agents in Action"
+        data-script="Task automation is the most common use case, so let's drill in. Four task areas, four real Microsoft tool combinations. I'll bring them up one at a time.">
+        <div class="slide-num">06 / 20</div>
+        <h3 class="slide-h">Task automation — <em>real examples</em></h3>
+        <p class="lead">Four task areas your customer will recognize, mapped to real Microsoft products you already have.</p>
+        <div class="task-grid">
+          <div class="task-row" data-step
+            data-script="<em>Communication</em>. Drafting emails, summarizing Teams threads, creating meeting recaps. M365 Copilot does this out of the box — no custom build needed.">
+            <div class="area"><span class="icon">✉</span>Communication</div>
+            <div class="desc">Draft emails, summarize Teams threads, create meeting recaps with action items.<span class="tools">M365 COPILOT</span></div>
+          </div>
+          <div class="task-row" data-step
+            data-script="<em>Documentation</em>. First-draft reports, rewriting and optimizing content, structured templates. Word, OneNote, Loop with Copilot.">
+            <div class="area"><span class="icon">📄</span>Documentation</div>
+            <div class="desc">Generate first-draft reports, rewrite or optimize content, structured templates.<span class="tools">WORD · ONENOTE · LOOP · M365 COPILOT</span></div>
+          </div>
+          <div class="task-row" data-step
+            data-script="<em>Process Automation</em>. Multi-step workflows — approvals, notifications, content generation. This is where Copilot Studio plus Power Automate shine.">
+            <div class="area"><span class="icon">⚙</span>Process Automation</div>
+            <div class="desc">Trigger workflows and multi-step processes — approvals, notifications, generation.<span class="tools">COPILOT STUDIO · POWER AUTOMATE</span></div>
+          </div>
+          <div class="task-row" data-step
+            data-script="<em>Knowledge Retrieval</em>. Answering questions using enterprise data. This is where grounding becomes critical — and that's exactly the next unit.">
+            <div class="area"><span class="icon">🔍</span>Knowledge Retrieval</div>
+            <div class="desc">Answer questions using enterprise data with semantic grounding.<span class="tools">COPILOT SEARCH · GRAPH GROUNDING</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 07 QUIZ 1 -->
+      <section class="slide content-slide"
+        data-section="Agents in Action"
+        data-script="Quick check. Don't tell them the answer — let them call out their pick first.">
+        <div class="slide-num">07 / 20</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:24px">Question 1 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which is a key benefit of using AI agents for <em>data analytics?</em></div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> They replace the need for all BI tools</button>
+            <button class="quiz-opt" data-correct="true" data-explain="AI agents augment analytics by translating natural language questions into insights — they don't replace BI tools or eliminate governance. They lower the skill floor so non-analysts can ask questions of data without writing SQL or learning a BI platform. Governance and proper data prep are still required."><span class="letter">B</span> They translate natural language questions into insights</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> They eliminate the need for data governance</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> They require manual configuration for every dataset</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 08 SECTION DIVIDER UNIT 2 -->
+      <section class="slide section-divider"
+        data-section="Grounding"
+        data-script="Now <em>the most important unit in this chapter</em>. Maybe in the entire course. <em>Grounding.</em> The single biggest reason AI projects fail in production is bad grounding. Pay close attention.">
+        <div class="slide-num">08 / 20</div>
+        <div class="label">UNIT TWO</div>
+        <h2>Grounding — the <em>five dimensions</em><br>of AI-ready data</h2>
+        <div class="sub">If you only remember one thing from this chapter, remember this: weak grounding is the number-one cause of AI project failure.</div>
+      </section>
+
+      <!-- 09 GROUNDING CONCEPT -->
+      <section class="slide content-slide"
+        data-section="Grounding"
+        data-script="What is grounding? Watch the screen — I'll build it up.">
+        <div class="slide-num">09 / 20</div>
+        <h3 class="slide-h">What is <em>grounding</em>?</h3>
+        <p class="lead">The mechanism that connects an AI agent to <em>your</em> trusted data instead of relying solely on the model's training data.</p>
+        <div class="concept-grid">
+          <div class="concept-card" data-step
+            data-script="Grounding is the practice of <em>tying the AI's answers to your organization's real, trusted data</em>. Without grounding, the model invents plausible-sounding answers — that's hallucination. Grounding eliminates the guesswork.">
+            <div class="badge">Definition</div>
+            <h4>Grounding ties AI responses to <em style="color:var(--copilot)">your organization's real data</em></h4>
+            <p>The agent doesn't make answers up from training data — it retrieves verified content from your SharePoint, OneDrive, Dataverse, or connected sources before generating a response.</p>
+            <p style="margin-top:8px"><strong style="color:var(--copilot)">Why it matters:</strong> reduces hallucinations, increases trust, ensures compliance, respects user permissions.</p>
+          </div>
+          <div class="concept-card" data-step
+            data-script="How does it work in Microsoft? <em>Semantic Index</em> sits across Microsoft Graph and indexes everything semantically. The <em>Copilot Retrieval API</em> fetches the right content — respecting user permissions — before the model writes a response. This is why Microsoft 365 Copilot just works on day one.">
+            <div class="badge" style="background:var(--ms-blue)">How Microsoft does it</div>
+            <h4>The grounding pipeline</h4>
+            <div class="pipe">
+              <div class="pipe-step"><strong>1. Semantic Index</strong>Builds semantic representations of all M365 content — Graph-wide.</div>
+              <div class="pipe-step"><strong>2. Retrieval API</strong>Fetches the right content — scoped to user permissions.</div>
+              <div class="pipe-step"><strong>3. Generation</strong>Model uses retrieved content to write a grounded response.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 FIVE DIMENSIONS -->
+      <section class="slide content-slide"
+        data-section="Grounding"
+        data-script="The five-dimension test. Run it on every dataset before grounding any agent. I'll bring up each dimension one at a time.">
+        <div class="slide-num">10 / 20</div>
+        <h3 class="slide-h">The <em>five dimensions</em> of grounding data</h3>
+        <p class="lead">Memorize these. You'll evaluate every customer's data against all five before designing anything.</p>
+        <div class="dim-grid">
+          <div class="dim-card d1" data-step
+            data-script="<em>Accuracy</em>. Data must reflect real, verifiable facts. Verified by SMEs, traceable to authoritative sources, free from outdated assumptions. Inaccurate data = harmful agent outputs.">
+            <div class="dim-num">DIMENSION 1</div>
+            <div class="dim-icon">✓</div>
+            <h4>Accuracy</h4>
+            <p>Data reflects real, verifiable facts. SMEs have validated it. Authoritative sources back it up.</p>
+            <div class="indicator"><strong>Test</strong>"Is this verified by an SME?"</div>
+          </div>
+          <div class="dim-card d2" data-step
+            data-script="<em>Relevance</em>. Data must match the agent's intended use case. If you ground a sales agent in HR policies, semantic search will return conceptually similar but contextually wrong content. Scope your sources.">
+            <div class="dim-num">DIMENSION 2</div>
+            <div class="dim-icon">⊙</div>
+            <h4>Relevance</h4>
+            <p>Data matches the agent's intended use case, workflow, and business domain.</p>
+            <div class="indicator"><strong>Test</strong>"Does this fit the use case?"</div>
+          </div>
+          <div class="dim-card d3" data-step
+            data-script="<em>Timeliness</em>. Stale data degrades AI outputs fast. Modified dates, refresh schedules, seasonal updates, compliance changes — all must be reflected. The semantic index updates continuously, but only if the source is updated.">
+            <div class="dim-num">DIMENSION 3</div>
+            <div class="dim-icon">⏱</div>
+            <h4>Timeliness</h4>
+            <p>Data is current. Reflects latest documents, policies, and conversations.</p>
+            <div class="indicator"><strong>Test</strong>"When was this last updated?"</div>
+          </div>
+          <div class="dim-card d4" data-step
+            data-script="<em>Cleanliness</em>. Clean data improves embedding quality. Duplicates, inconsistent formatting, dead links, orphaned metadata — all noise. <em>Data pollution</em> is the technical term, and it kills retrieval precision.">
+            <div class="dim-num">DIMENSION 4</div>
+            <div class="dim-icon">✦</div>
+            <h4>Cleanliness</h4>
+            <p>No duplicates, clean structure, consistent formatting, minimal noise.</p>
+            <div class="indicator"><strong>Test</strong>"Is the structure consistent?"</div>
+          </div>
+          <div class="dim-card d5" data-step
+            data-script="<em>Availability</em>. The Retrieval API respects permissions. If a user doesn't have access, the agent won't ground from that content. Data must be properly indexed in Microsoft Graph and access-controlled appropriately.">
+            <div class="dim-num">DIMENSION 5</div>
+            <div class="dim-icon">⤓</div>
+            <h4>Availability</h4>
+            <p>Data is accessible, indexed in Microsoft Graph, with clear access controls.</p>
+            <div class="indicator"><strong>Test</strong>"Can the right user reach it?"</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11 IMPACT TABLE -->
+      <section class="slide content-slide"
+        data-section="Grounding"
+        data-script="Same five dimensions, but now showing impact. Why does each one matter? I'll reveal them row by row.">
+        <div class="slide-num">11 / 20</div>
+        <h3 class="slide-h">What happens if you <em>skip</em> each dimension</h3>
+        <p class="lead">Every weakness in grounding data shows up in agent behavior. Use this table when reviewing a customer's data audit.</p>
+        <div class="impact-table">
+          <div class="impact-row head">
+            <div>Dimension</div>
+            <div>Definition</div>
+            <div>Impact on agent performance</div>
+          </div>
+          <div class="impact-row r1" data-step data-script="<em>Accuracy</em> directly reduces hallucinations. Inaccurate source data → inaccurate agent answers, no exceptions.">
+            <div class="dim">Accuracy</div>
+            <div class="def">Data is correct and verified</div>
+            <div class="impact">Reduces hallucinations and misinformation</div>
+          </div>
+          <div class="impact-row r2" data-step data-script="<em>Relevance</em> ensures responses match the intended scenario. Poor relevance = right-sounding but wrong-context answers.">
+            <div class="dim">Relevance</div>
+            <div class="def">Data aligns with the task and intent</div>
+            <div class="impact">Ensures responses match the intended scenario</div>
+          </div>
+          <div class="impact-row r3" data-step data-script="<em>Timeliness</em> keeps outputs aligned with current policies. Stale grounding data = compliance risk.">
+            <div class="dim">Timeliness</div>
+            <div class="def">Data is current and up to date</div>
+            <div class="impact">Keeps outputs aligned with latest policies</div>
+          </div>
+          <div class="impact-row r4" data-step data-script="<em>Cleanliness</em> improves retrieval precision. Noisy data = lower-quality embeddings = wrong content surfaced.">
+            <div class="dim">Cleanliness</div>
+            <div class="def">Data is structured and free of noise</div>
+            <div class="impact">Improves retrieval precision</div>
+          </div>
+          <div class="impact-row r5" data-step data-script="<em>Availability</em> determines whether the agent can ground at all. Wrong permissions = no answer for that user — even if the data exists.">
+            <div class="dim">Availability</div>
+            <div class="def">Data is accessible and indexable</div>
+            <div class="impact">Ensures agent can ground reliably per permissions</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12 GROUNDING BEST PRACTICES -->
+      <section class="slide content-slide"
+        data-section="Grounding"
+        data-script="Four best practices when reviewing grounding data on a real project. Apply these on every engagement. I'll bring them up one at a time.">
+        <div class="slide-num">12 / 20</div>
+        <h3 class="slide-h">Best practices for <em>reviewing grounding data</em></h3>
+        <p class="lead">These are your action items when a customer hands you a SharePoint with five thousand documents and says "ground the agent in this."</p>
+        <div class="bp-cards">
+          <div class="bp-card" data-step
+            data-script="One — <em>Evaluate before upload</em>. Don't ground on raw data. Remove outdated, conflicting, or duplicate content first. Garbage in, garbage out — but louder, because AI will confidently repeat the garbage.">
+            <div class="bp-num">①</div>
+            <h4>Evaluate content quality before grounding</h4>
+            <p>Remove outdated or conflicting information before upload. Audit before ingest, not after deployment.</p>
+            <div class="ex">Example: Customer's SharePoint has 3 versions of the same expense policy. Pick the authoritative one, archive the rest.</div>
+          </div>
+          <div class="bp-card" data-step
+            data-script="Two — <em>Store in SharePoint or OneDrive</em>. Why? Because that's what gets indexed by the Microsoft 365 semantic index automatically. Random folders on a network drive don't ground.">
+            <div class="bp-num">②</div>
+            <h4>Use SharePoint or OneDrive for authoritative content</h4>
+            <p>Microsoft 365 semantic index covers Graph-connected sources. Network drives don't ground.</p>
+            <div class="ex">Example: Move HR policy library from a Network share into a curated SharePoint site labeled "HR-Authoritative."</div>
+          </div>
+          <div class="bp-card" data-step
+            data-script="Three — <em>Maintain consistent formatting</em>. Headings, sections, metadata fields. Embeddings work better on well-structured text. Microsoft Word with proper styles beats free-form PDFs every time.">
+            <div class="bp-num">③</div>
+            <h4>Maintain consistent formatting and structure</h4>
+            <p>Headings, metadata, predictable layout improve embeddings and retrieval precision.</p>
+            <div class="ex">Example: Apply a "Policy Document" template — same heading hierarchy, same metadata schema across all docs.</div>
+          </div>
+          <div class="bp-card" data-step
+            data-script="Four — <em>Review permissions and SME validation regularly</em>. Permissions drift. SMEs change roles. Set a quarterly review cadence and stick to it.">
+            <div class="bp-num">④</div>
+            <h4>Review permissions and SME validation regularly</h4>
+            <p>Permissions drift. Knowledge changes ownership. Quarterly review keeps grounding trustworthy.</p>
+            <div class="ex">Example: Quarterly audit — every grounded source has a named SME owner and reviewed access controls.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 13 QUIZ 2 -->
+      <section class="slide content-slide"
+        data-section="Grounding"
+        data-script="Quick check on the dimensions.">
+        <div class="slide-num">13 / 20</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:24px">Question 2 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which grounding data dimension ensures the model retrieves information aligned with the <em>intended business scenario?</em></div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Cleanliness</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">B</span> Availability</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Relevance ensures the agent retrieves content that matches the user's scenario, workflow, and business domain. Cleanliness improves retrieval precision but doesn't fix wrong-context content. Availability is about access. Timeliness is about freshness. Only Relevance addresses scenario alignment."><span class="letter">C</span> Relevance</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Timeliness</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 14 SECTION DIVIDER UNIT 3 -->
+      <section class="slide section-divider"
+        data-section="Data Architecture"
+        data-script="Last unit. <em>Data architecture for AI</em>. The plumbing layer. Get this right and your agents have a clean home to live in. Get it wrong and nothing works at scale.">
+        <div class="slide-num">14 / 20</div>
+        <div class="label">UNIT THREE</div>
+        <h2>Data Architecture<br><em>for AI Systems</em></h2>
+        <div class="sub">Azure data estate, Microsoft databases for AI, RAG pipelines — the plumbing that makes grounding work at enterprise scale.</div>
+      </section>
+
+      <!-- 15 AZURE DATA ESTATE -->
+      <section class="slide content-slide"
+        data-section="Data Architecture"
+        data-script="The Azure data estate for AI. Four layers. Bottom to top — operational data, analytical stores, intelligence layer, AI apps. I'll build it up layer by layer.">
+        <div class="slide-num">15 / 20</div>
+        <h3 class="slide-h">The <em>Azure data estate</em> for AI</h3>
+        <p class="lead">Four layers. Each one feeds the one above it. AI agents and Copilot live at the top — but they only work if the layers below are solid.</p>
+        <div class="estate">
+          <div class="estate-layer l1" data-step
+            data-script="<em>Layer 1 — Operational Databases</em>. Where your business actually runs. CRM, ERP, transactions. Azure SQL, Cosmos DB, PostgreSQL on Azure. The single source of truth for live business data.">
+            <div class="layer-num">LAYER<strong>01</strong></div>
+            <div class="layer-name"><h5>Operational Databases</h5><p>Where the business runs. Live transactional data — CRM, ERP, line-of-business apps.</p></div>
+            <div class="examples"><strong>Microsoft services</strong>Azure SQL · Cosmos DB · PostgreSQL · Dataverse</div>
+          </div>
+          <div class="estate-layer l2" data-step
+            data-script="<em>Layer 2 — Analytical Stores</em>. Curated data prepared for analysis and AI training. Lakehouses, warehouses. Microsoft Fabric is the modern unified analytical platform here.">
+            <div class="layer-num">LAYER<strong>02</strong></div>
+            <div class="layer-name"><h5>Analytical Stores · Lakehouse / Warehouse</h5><p>Curated, consolidated data prepared for analytics, AI training, and ML workloads.</p></div>
+            <div class="examples"><strong>Microsoft services</strong>Microsoft Fabric · OneLake · Synapse</div>
+          </div>
+          <div class="estate-layer l3" data-step
+            data-script="<em>Layer 3 — Intelligence Layer</em>. Where grounding actually lives. Semantic indexes, vector search, embeddings, ranking. This is what makes agents able to retrieve <em>meaning</em>, not just keywords.">
+            <div class="layer-num">LAYER<strong>03</strong></div>
+            <div class="layer-name"><h5>Intelligence Layer · Search + Vector Index</h5><p>Semantic search, vector embeddings, retrieval ranking. The brain that connects raw data to AI prompts.</p></div>
+            <div class="examples"><strong>Microsoft services</strong>Azure AI Search · Microsoft Graph Semantic Index · Embeddings</div>
+          </div>
+          <div class="estate-layer l4" data-step
+            data-script="<em>Layer 4 — AI apps and agents</em>. The top of the stack. Copilot, custom agents, RAG apps, autonomous agents. This is where the user actually interacts. Without the three layers underneath, this layer is hollow.">
+            <div class="layer-num">LAYER<strong>04</strong></div>
+            <div class="layer-name"><h5>AI Apps + Agents</h5><p>The user-facing layer. Copilot, custom RAG apps, autonomous agents, chat experiences.</p></div>
+            <div class="examples"><strong>Microsoft services</strong>M365 Copilot · Copilot Studio · Foundry · Custom apps</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 16 MS DATABASES -->
+      <section class="slide content-slide"
+        data-section="Data Architecture"
+        data-script="Microsoft database options for AI workloads. Each one has a sweet spot. Pick wrong and you over-engineer. I'll bring up each option.">
+        <div class="slide-num">16 / 20</div>
+        <h3 class="slide-h">Microsoft databases — <em>AI-ready</em></h3>
+        <p class="lead">Modern Microsoft databases ship with vector search, embeddings support, and AI-native features. Choose based on your workload.</p>
+        <div class="db-grid">
+          <div class="db-card db1" data-step
+            data-script="<em>Azure SQL</em>. Vector data, semantic search, JSON storage. The default if your customer is already on SQL Server. Smooth migration path.">
+            <span class="db-icon">⛁</span>
+            <h4>Azure SQL</h4>
+            <p>Vector data, semantic search, JSON storage. AI features inside the relational database your team already knows.</p>
+            <div class="uses"><strong>Best for</strong>Existing SQL Server shops adding RAG to apps.</div>
+          </div>
+          <div class="db-card db2" data-step
+            data-script="<em>Cosmos DB</em>. Low-latency, native vector search. Built for AI-driven apps that need sub-second retrieval at planet scale. Choose this for chat apps and real-time agents.">
+            <span class="db-icon">◈</span>
+            <h4>Cosmos DB</h4>
+            <p>Low-latency, native vector search at global scale. Designed for AI-driven apps and real-time decision agents.</p>
+            <div class="uses"><strong>Best for</strong>Real-time chat, planet-scale agents, low-latency RAG.</div>
+          </div>
+          <div class="db-card db3" data-step
+            data-script="<em>PostgreSQL on Azure</em>. ML extensions and embeddings (pgvector). Open-source teams gravitate here. Strong for hybrid OLTP plus AI workloads.">
+            <span class="db-icon">⬡</span>
+            <h4>PostgreSQL on Azure</h4>
+            <p>ML extensions, pgvector embeddings, full Postgres power. The open-source choice for AI-augmented OLTP.</p>
+            <div class="uses"><strong>Best for</strong>Open-source-leaning teams, OLTP + embeddings.</div>
+          </div>
+          <div class="db-card db4" data-step
+            data-script="<em>Microsoft Fabric</em>. Unified analytics platform. OneLake for storage, Lakehouse for curation, built-in AI workloads. Choose this when the customer needs analytics <em>and</em> AI on the same governed data.">
+            <span class="db-icon">▤</span>
+            <h4>Microsoft Fabric</h4>
+            <p>Unified analytics platform with OneLake, Lakehouse, and AI workloads on one governed data plane.</p>
+            <div class="uses"><strong>Best for</strong>Analytics + AI on the same governed estate.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 17 RAG PIPELINE -->
+      <section class="slide content-slide"
+        data-section="Data Architecture"
+        data-script="The <em>RAG pipeline</em>. Retrieval-Augmented Generation. The standard pattern for grounding agents in your data. Five stages — I'll light them up one at a time.">
+        <div class="slide-num">17 / 20</div>
+        <h3 class="slide-h">The <em>RAG pipeline</em> — five stages</h3>
+        <p class="lead">RAG is what separates a prototype from a production-trustworthy system. Every architect should be able to draw this from memory.</p>
+        <div class="rag">
+          <div class="rag-flow" id="ragFlow">
+            <div class="rag-stage s1" data-step
+              data-script="<em>Stage 1 — Ingest</em>. Pull data from sources: SharePoint, OneDrive, databases, APIs. This is where data quality matters most — bad data in means bad answers out.">
+              <div class="dot">⤓</div>
+              <h6>Ingest</h6>
+              <p>Pull from SharePoint, OneDrive, databases, APIs</p>
+            </div>
+            <div class="rag-stage s2" data-step
+              data-script="<em>Stage 2 — Chunk &amp; Embed</em>. Split documents into passages, then convert each passage into a vector — a numerical representation of meaning. Embeddings are the foundation of semantic search.">
+              <div class="dot">◇</div>
+              <h6>Chunk &amp; Embed</h6>
+              <p>Split into passages, convert to vectors</p>
+            </div>
+            <div class="rag-stage s3" data-step
+              data-script="<em>Stage 3 — Index</em>. Store embeddings in a vector index. Azure AI Search, Cosmos DB vector index, or the Microsoft Graph semantic index do this for you.">
+              <div class="dot">▦</div>
+              <h6>Index</h6>
+              <p>Store vectors in Azure AI Search or Graph Index</p>
+            </div>
+            <div class="rag-stage s4" data-step
+              data-script="<em>Stage 4 — Retrieve</em>. User asks a question. The system searches the index for the most relevant passages. Permissions are enforced here — Retrieval API respects them automatically.">
+              <div class="dot">🔍</div>
+              <h6>Retrieve</h6>
+              <p>Search index for relevant passages, scoped to permissions</p>
+            </div>
+            <div class="rag-stage s5" data-step
+              data-script="<em>Stage 5 — Generate</em>. Pass retrieved content plus the user's question to the model. The model writes a grounded response — citing the retrieved passages.">
+              <div class="dot">✎</div>
+              <h6>Generate</h6>
+              <p>Model writes grounded response with citations</p>
+            </div>
+          </div>
+          <div class="rag-note" data-step
+            data-script="The big advantage of RAG: <em>real-time data access, preserved data privacy, mitigated hallucinations</em>. The model never sees data outside the retrieval — and you can swap the underlying model without rewriting your data layer.">
+            <strong>Why architects love RAG:</strong> real-time data access, preserved privacy, mitigated hallucinations. Swap the model anytime without rewriting the data layer.
+          </div>
+        </div>
+      </section>
+
+      <!-- 18 QUIZ 3 -->
+      <section class="slide content-slide"
+        data-section="Data Architecture"
+        data-script="Quick check on architecture.">
+        <div class="slide-num">18 / 20</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:24px">Question 3 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which component ensures AI agents can <em>retrieve and interpret</em> enterprise data accurately?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> User interface customization</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Semantic indexing converts enterprise content into semantic representations that enable precise retrieval. Microsoft Graph semantic index does this for M365 content automatically. UI customization, Teams channels, and email lists don't enable retrieval — only semantic indexing does."><span class="letter">B</span> Semantic indexing</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> Microsoft Teams channels</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Email distribution lists</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 19 SCENARIO -->
+      <section class="slide content-slide"
+        data-section="Data Architecture"
+        data-script="Now apply everything. Pairs work through this scenario. Walk the room. Listen for who jumps to <em>'build a custom agent'</em> — push them back to <em>'analyze the data first.'</em>">
+        <div class="slide-num">19 / 20</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Scenario <em>discussion</em></h3>
+        <p class="lead" style="margin-bottom:18px">Apply the five dimensions and the data architecture lens.</p>
+        <div class="scenario">
+          <div class="tag">Scenario · Pair Discussion</div>
+          <h3>BrightCorp wants an HR policy assistant</h3>
+          <div class="quote">"We have 8,000 employees across 14 countries. HR policy questions overwhelm our HR team — same five questions, asked a thousand times a week. We have policies in SharePoint, but they're scattered across regional sites. Some are PDFs, some are Word, some are out of date. Leadership wants an agent rolled out broadly and fast."</div>
+          <div class="prompts">
+            <h5>Discuss with your partner</h5>
+            <ul>
+              <li>What types of data must be collected and categorized first?</li>
+              <li>Run the five-dimension test — which dimensions are likely <em>weakest</em> here?</li>
+              <li>Which Microsoft data architecture components do you need? (Database? Index? RAG?)</li>
+              <li>What is the single biggest risk if data is not governed before launch?</li>
+            </ul>
+          </div>
+          <button class="reveal-btn" id="revealAnswer">Reveal Discussion Points →</button>
+          <div class="answer-panel" id="answerPanel">
+            <div class="ap-label">Guide · suggested points</div>
+            <div class="ap-row">
+              <div class="ap-q">What data must be collected and categorized first?</div>
+              <div class="ap-a">
+                <span><strong>Authoritative HR policy library</strong> — the master version of every policy, version-controlled.</span>
+                <span><strong>Regional variations</strong> tagged with country/region metadata so the agent surfaces the right one.</span>
+                <span><strong>SME owner mapping</strong> — every policy has a named owner who validates accuracy.</span>
+                <span><strong>Sensitivity labels</strong> applied via Microsoft Purview — public, internal, confidential.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Which dimensions are weakest? (Five-dimension test)</div>
+              <div class="ap-a">
+                <span><strong>Cleanliness</strong> — mixed formats (PDF, Word), scattered, duplicates likely. Major cleanup needed.</span>
+                <span><strong>Timeliness</strong> — "some are out of date." Stale policies = compliance risk.</span>
+                <span><strong>Relevance</strong> — regional content needs scoping so a German employee doesn't get US policy.</span>
+                <span><strong>Accuracy &amp; Availability</strong> — likely OK once the cleanup is done; SharePoint Graph index handles availability.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Which architecture components do you need?</div>
+              <div class="ap-a">
+                <span><strong>Centralized SharePoint site</strong> — single authoritative HR-Policy site, regional subsites.</span>
+                <span><strong>Semantic Index (Microsoft Graph)</strong> — automatic for SharePoint content; ground via Copilot Retrieval API.</span>
+                <span><strong>Copilot Studio agent</strong> with knowledge sources scoped to the HR-Policy SharePoint site + regional metadata filters.</span>
+                <span><strong>Microsoft Purview</strong> for sensitivity labels, lineage, and access policies.</span>
+                <span><strong>No custom RAG required</strong> — the M365 Copilot grounding pipeline handles this scenario natively.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Biggest risk if data is not governed?</div>
+              <div class="ap-a">
+                <span><strong>Compliance / legal exposure</strong> — agent confidently quoting outdated policy is a liability.</span>
+                <span><strong>Trust collapse</strong> — one wrong answer to a sensitive question (parental leave, harassment policy) and adoption dies.</span>
+                <span><strong>Permission leakage</strong> — without proper access controls, agent could surface confidential HR docs to the wrong audience.</span>
+                <span><strong>Hidden fix is upstream</strong> — push back on leadership: 30 days of data governance saves 6 months of post-launch firefighting.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 20 RECAP -->
+      <section class="slide content-slide"
+        data-section="Wrap"
+        data-script="<em>Final recap.</em> Five things to take into Chapter 3. I'll bring them up one at a time. Read each as it appears.">
+        <div class="slide-num">20 / 20</div>
+        <h3 class="slide-h">Chapter 2 — <em>key takeaways</em></h3>
+        <p class="lead">Five things to carry forward.</p>
+        <div class="recap">
+          <div class="recap-list">
+            <div class="recap-item" data-step
+              data-script="One — agents play three roles. <em>Task automation, data analytics, decision-making.</em> Match the right one to the customer's actual need.">
+              <div class="check">1</div><div class="text">AI agents play three roles: <em>task automation, data analytics, decision-making.</em></div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Two — <em>weak grounding kills AI projects</em>. More than any other reason. Data first, model second.">
+              <div class="check">2</div><div class="text"><em>Weak grounding</em> is the #1 cause of AI project failure. Data first, model second.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Three — the five dimensions. <em>Accuracy, Relevance, Timeliness, Cleanliness, Availability.</em> Run this test on every dataset.">
+              <div class="check">3</div><div class="text">Five dimensions of grounding: <em>Accuracy · Relevance · Timeliness · Cleanliness · Availability.</em></div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Four — the four-layer Azure data estate. <em>Operational, Analytical, Intelligence, AI Apps.</em> AI lives at the top — but only works if the layers below are solid.">
+              <div class="check">4</div><div class="text">Azure data estate: <em>Operational · Analytical · Intelligence · AI Apps.</em> Four layers, all required.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Five — RAG is the standard pattern. <em>Ingest, Chunk, Index, Retrieve, Generate.</em> Memorize it. Draw it on every architecture whiteboard. That's Chapter 2 — next we go into the bigger AI strategy in Chapter 3.">
+              <div class="check">5</div><div class="text">RAG pipeline: <em>Ingest → Chunk &amp; Embed → Index → Retrieve → Generate.</em></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:30px;text-align:center;font-size:18px;color:var(--copilot);font-weight:600">
+          → Continue to Chapter 3: Design Overall AI Strategy
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="notes-panel" id="notesPanel">
+    <div class="label">📖 Read aloud · notes <span class="step-tag" id="stepTag"></span></div>
+    <div class="script" id="notesScript">Welcome script will appear here.</div>
+  </div>
+
+
+
+  <div class="float-hint" id="hint">← → to advance step-by-step · T for notes</div>
+
+</div>
+
+<script>
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+  let notesOpen = false;
+
+  const counter = document.getElementById('counter');
+  const progressFill = document.getElementById('progressFill');
+  const notesPanel = document.getElementById('notesPanel');
+  const notesScript = document.getElementById('notesScript');
+  const stepTag = document.getElementById('stepTag');
+  const sectionLabel = document.getElementById('sectionLabel');
+  const stepPill = document.getElementById('stepPill');
+  const stepIndicator = document.getElementById('stepIndicator');
+  const notesToggle = document.getElementById('notesToggle');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const hint = document.getElementById('hint');
+
+  function getSteps(slide){ return Array.from(slide.querySelectorAll('[data-step]')); }
+  function getRevealed(slide){ return Array.from(slide.querySelectorAll('[data-step].revealed')); }
+
+  function updateScript(text, stepInfo){
+    notesScript.classList.add('fading');
+    setTimeout(()=>{
+      notesScript.innerHTML = text || '';
+      stepTag.textContent = stepInfo || '';
+      notesScript.classList.remove('fading');
+    },180);
+  }
+
+  function updateStepIndicator(slide){
+    const steps = getSteps(slide);
+    const revealed = getRevealed(slide);
+    if(steps.length > 0 && revealed.length < steps.length){
+      stepIndicator.classList.add('show');
+      stepPill.style.display = 'inline-block';
+      stepPill.textContent = `Step ${revealed.length}/${steps.length}`;
+    } else if(steps.length > 0){
+      stepIndicator.classList.remove('show');
+      stepPill.style.display = 'inline-block';
+      stepPill.textContent = `${steps.length}/${steps.length}`;
+    } else {
+      stepIndicator.classList.remove('show');
+      stepPill.style.display = 'none';
+    }
+    const rf = slide.querySelector('.rag-flow');
+    if(rf){
+      if(revealed.some(el => el.classList.contains('rag-stage'))) rf.classList.add('flow-active');
+      else rf.classList.remove('flow-active');
+    }
+  }
+
+  function showSlide(i, revealAll){
+    if(i<0||i>=total) return;
+    slides[current].classList.remove('active');
+    getSteps(slides[current]).forEach(el=>el.classList.remove('revealed'));
+    const rf = slides[current].querySelector('.rag-flow'); if(rf) rf.classList.remove('flow-active');
+
+    current = i;
+    const slide = slides[current];
+    slide.classList.add('active');
+    slide.scrollTop = 0;
+
+    if(revealAll){
+      getSteps(slide).forEach(el=>el.classList.add('revealed'));
+      const rf2 = slide.querySelector('.rag-flow'); if(rf2) rf2.classList.add('flow-active');
+    }
+
+    counter.textContent = (current+1)+' / '+total;
+    progressFill.style.width = ((current+1)/total*100)+'%';
+    sectionLabel.textContent = slide.dataset.section || '';
+
+    if(revealAll){
+      const steps = getSteps(slide);
+      const last = steps[steps.length-1];
+      if(last && last.dataset.script) updateScript(last.dataset.script, `Step ${steps.length}/${steps.length}`);
+      else updateScript(slide.dataset.script, '');
+    } else {
+      updateScript(slide.dataset.script, '');
+    }
+    updateStepIndicator(slide);
+    prevBtn.disabled = (current===0 && getRevealed(slide).length===0);
+    nextBtn.disabled = (current===total-1 && (getSteps(slide).length===0 || getRevealed(slide).length===getSteps(slide).length));
+  }
+
+  function next(){
+    const slide = slides[current];
+    const steps = getSteps(slide);
+    const revealed = getRevealed(slide);
+    if(revealed.length < steps.length){
+      const idx = revealed.length;
+      const el = steps[idx];
+      el.classList.add('revealed');
+      if(el.dataset.script) updateScript(el.dataset.script, `Step ${idx+1}/${steps.length}`);
+      updateStepIndicator(slide);
+      prevBtn.disabled = false;
+      if(revealed.length+1 === steps.length && current===total-1) nextBtn.disabled = true;
+    } else if(current < total-1){
+      showSlide(current+1, false);
+    }
+  }
+
+  function prev(){
+    const slide = slides[current];
+    const revealed = getRevealed(slide);
+    if(revealed.length > 0){
+      const last = revealed[revealed.length-1];
+      last.classList.remove('revealed');
+      const remaining = getRevealed(slide);
+      if(remaining.length > 0){
+        const r = remaining[remaining.length-1];
+        const total = getSteps(slide).length;
+        updateScript(r.dataset.script, `Step ${remaining.length}/${total}`);
+      } else {
+        updateScript(slide.dataset.script, '');
+      }
+      updateStepIndicator(slide);
+      nextBtn.disabled = false;
+    } else if(current > 0){
+      showSlide(current-1, true);
+    }
+  }
+
+  function toggleNotes(){
+    notesOpen = !notesOpen;
+    notesPanel.classList.toggle('open', notesOpen);
+    notesToggle.classList.toggle('active', notesOpen);
+  }
+
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+  notesToggle.addEventListener('click', toggleNotes);
+
+  document.addEventListener('keydown',(e)=>{
+    if(e.target.matches('input,textarea')) return;
+    if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}
+    else if(e.key==='ArrowLeft'){e.preventDefault();prev();}
+    else if(e.key==='t'||e.key==='T'){e.preventDefault();toggleNotes();}
+    else if(e.key==='Home'){e.preventDefault();showSlide(0,false);}
+    else if(e.key==='End'){e.preventDefault();showSlide(total-1,true);}
+  });
+
+  document.querySelectorAll('.quiz-opt').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const wrap = btn.closest('.quiz-wrap');
+      const opts = wrap.querySelectorAll('.quiz-opt');
+      const explain = wrap.querySelector('.quiz-explain');
+      opts.forEach(o=>{
+        if(o.dataset.correct==='true') o.classList.add('correct');
+        else o.classList.add('wrong');
+      });
+      const correctOpt = wrap.querySelector('.quiz-opt[data-correct="true"]');
+      if(correctOpt && explain){
+        explain.querySelector('p').textContent = correctOpt.dataset.explain || '';
+        explain.classList.add('show');
+      }
+    });
+  });
+
+  const revealBtn = document.getElementById('revealAnswer');
+  const answerPanel = document.getElementById('answerPanel');
+  if(revealBtn && answerPanel){
+    revealBtn.addEventListener('click',()=>{
+      answerPanel.classList.add('show');
+      revealBtn.classList.add('shown');
+    });
+  }
+
+  setTimeout(()=>{hint.classList.add('show');},800);
+  setTimeout(()=>{hint.classList.remove('show');},5500);
+
+  showSlide(0,false);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 04 — Evaluate Costs &amp; Benefits of an AI-Powered Business Solution · Gennoor Tech</title>
+<style>
+:root{
+  --bg:#FAFAFA; --paper:#FFFFFF;
+  --ink:#201F1E; --ink-soft:#605E5C; --ink-mute:#8A8886;
+  --line:#EDEBE9; --line-soft:#F3F2F1;
+  --ms-blue:#2563EB; --ms-blue-deep:#1D4ED8; --ms-navy:#0C1426;
+  --ms-cyan:#60A5FA; --ms-cyan-deep:#1E40AF;
+  --copilot:#F59E0B; --copilot-light:#FCD34D;
+  --ms-yellow:#F59E0B; --ms-green:#107C10; --ms-red:#D13438; --ms-orange:#F97316;
+  --logo-red:#2563EB; --logo-green:#2563EB; --logo-blue:#F59E0B; --logo-yellow:#F59E0B;
+  --notes-bg:#0C1426; --notes-text:#FFFFFF; --notes-accent:#F59E0B;
+  --money:#107C10;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;font-size:19px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.app{position:fixed;inset:0;display:flex;flex-direction:column}
+.topbar{height:56px;background:var(--ms-navy);color:#FFFFFF;display:flex;align-items:center;padding:0 24px;gap:18px;border-bottom:1px solid rgba(255,255,255,.06);z-index:10}
+.topbar .brand-mark{width:30px;height:30px;flex-shrink:0;display:block}
+.topbar .brand-lockup{display:flex;align-items:center;gap:10px;text-decoration:none;color:#FFFFFF;flex-shrink:0}
+.topbar .brand-text{display:flex;flex-direction:column;line-height:1.1}
+.topbar .brand-name{font-size:18px;font-weight:600;letter-spacing:.3px;color:#FFFFFF}
+.topbar .brand-sub{font-size:12px;color:var(--ms-yellow);letter-spacing:1.2px;text-transform:uppercase;font-weight:600;font-family:'Cascadia Code','Consolas',monospace}
+.topbar .divider{width:1px;height:24px;background:rgba(255,255,255,.15)}
+.topbar .logo{font-weight:600;font-size:20px;letter-spacing:.2px}
+.topbar .chapter-title{font-size:16px;opacity:.75;letter-spacing:.2px;font-weight:400}
+.topbar.topbar-grid .topbar-left .chapter-title{max-width:36ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topbar .spacer{flex:1}
+.topbar .meta{font-size:16px;opacity:.85;display:flex;gap:10px;align-items:center}
+.topbar .meta .pill{padding:4px 12px;background:rgba(255,255,255,.10);border-radius:4px;font-size:15px;font-weight:500}
+.topbar .meta .step-pill{background:var(--ms-blue);font-weight:600;font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px}
+.topbar button{background:transparent;border:1px solid rgba(255,255,255,.25);color:#FFFFFF;padding:7px 16px;border-radius:4px;font-family:inherit;font-size:16px;font-weight:500;cursor:pointer;transition:.15s}
+.topbar button:hover{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.4)}
+.topbar button.active{background:var(--ms-blue);border-color:var(--ms-blue)}
+.progress{height:3px;background:rgba(255,255,255,.06);position:relative;border-bottom:1px solid var(--line)}
+.progress-fill{position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg,var(--ms-blue) 0%,var(--copilot) 50%,var(--ms-cyan) 100%);transition:width .4s cubic-bezier(.4,0,.2,1)}
+.stage{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.slides{width:100%;height:100%;position:relative}
+.slide{position:absolute;inset:0;padding:40px 64px 80px;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .35s ease;overflow-y:auto}
+.slide.active{opacity:1;pointer-events:auto}
+.slide-num{position:absolute;top:18px;right:28px;font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ink-mute);letter-spacing:1.5px}
+[data-step]{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.2,.7,.3,1), transform .55s cubic-bezier(.2,.7,.3,1);pointer-events:none}
+[data-step].revealed{opacity:1;transform:translateY(0);pointer-events:auto}
+.notes-panel{position:fixed;bottom:0;left:0;right:0;background:var(--notes-bg);color:var(--notes-text);padding:22px 32px 26px;border-top:3px solid var(--notes-accent);transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);z-index:20;max-height:48vh;overflow-y:auto;box-shadow:0 -20px 40px rgba(0,0,0,.18)}
+.notes-panel.open{transform:translateY(0)}
+.notes-panel .label{display:flex;align-items:center;gap:10px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--notes-accent);margin-bottom:10px;font-weight:600}
+.notes-panel .label::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--notes-accent);animation:pulse 1.6s ease-in-out infinite}
+.notes-panel .label .step-tag{margin-left:auto;font-size:12px;color:rgba(255,255,255,.55);letter-spacing:1px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.notes-panel .script{font-size:22px;line-height:1.65;max-width:880px;font-weight:400;transition:opacity .25s}
+.notes-panel .script.fading{opacity:.3}
+.notes-panel .script em{color:var(--notes-accent);font-style:normal;font-weight:600;background:rgba(255,185,0,.15);padding:1px 6px;border-radius:3px}
+.controls{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:var(--ms-navy);padding:8px 14px;border-radius:4px;box-shadow:0 6px 24px rgba(0,32,80,.25);z-index:15}
+.controls button{width:36px;height:36px;border-radius:3px;border:none;background:transparent;color:#FFFFFF;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;transition:.15s}
+.controls button:hover{background:rgba(255,255,255,.12)}
+.controls button:disabled{opacity:.3;cursor:not-allowed}
+.controls .counter{font-family:'Cascadia Code','Consolas',monospace;font-size:16px;color:#FFFFFF;padding:0 14px;letter-spacing:1px;font-weight:500}
+.step-indicator{position:fixed;bottom:64px;left:50%;transform:translateX(-50%);font-size:14px;font-family:'Cascadia Code','Consolas',monospace;color:var(--ms-blue);letter-spacing:1.5px;opacity:0;transition:opacity .3s;z-index:14;text-transform:uppercase;font-weight:600}
+.step-indicator.show{opacity:.85}
+.step-indicator::after{content:" →";animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+
+.slide.title-slide{background:linear-gradient(135deg,#0C1426 0%,#1D4ED8 35%,#2563EB 70%,#60A5FA 110%);color:#FFFFFF;justify-content:center;padding:175px 100px 100px 100px;position:absolute;overflow:hidden}
+.slide.title-slide .brand-full{position:absolute;top:48px;left:64px;display:flex;align-items:center;gap:16px}
+.slide.title-slide .brand-mark-lg{width:64px;height:64px}
+.slide.title-slide .brand-wordmark{display:flex;flex-direction:column;line-height:1}
+.slide.title-slide .brand-wordmark .name{font-size:30px;font-weight:600;letter-spacing:1px;color:#FFFFFF}
+.slide.title-slide .brand-wordmark .tag{font-size:14px;color:var(--ms-yellow);letter-spacing:3px;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;margin-top:4px;text-transform:uppercase}
+.slide.title-slide .eyebrow{font-family:'Cascadia Code','Consolas',monospace;font-size:16px;letter-spacing:3px;color:var(--ms-cyan);margin-bottom:20px;font-weight:500}
+.slide.title-slide h1{font-size:80px;line-height:1.1;font-weight:600;max-width:1200px;letter-spacing:-1.5px}
+.slide.title-slide h1 em{font-style:normal;color:var(--ms-cyan);font-weight:600}
+.slide.title-slide .meta-row{margin-top:48px;display:flex;gap:36px;font-size:18px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.slide.title-slide .meta-row strong{color:#FFFFFF;display:block;font-size:28px;text-transform:none;font-weight:600;letter-spacing:0;margin-top:4px}
+.title-slide::before{content:"";position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(98,100,167,.30) 0%,transparent 70%);top:-200px;right:-200px;pointer-events:none}
+.title-slide::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(80,230,255,.20) 0%,transparent 70%);bottom:-160px;left:-160px;pointer-events:none}
+
+.slide.section-divider{background:linear-gradient(135deg,var(--ms-blue) 0%,var(--copilot) 100%);color:#FFFFFF;justify-content:center;align-items:flex-start;padding:80px;position:relative;overflow:hidden}
+.slide.section-divider::before{content:"";position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(80,230,255,.18) 0%,transparent 70%);top:-180px;right:-180px;pointer-events:none}
+.slide.section-divider .label{font-family:'Cascadia Code','Consolas',monospace;font-size:18px;letter-spacing:4px;margin-bottom:18px;opacity:.8;font-weight:500}
+.slide.section-divider h2{font-size:85px;line-height:1.05;font-weight:600;max-width:1100px;letter-spacing:-1.5px}
+.slide.section-divider h2 em{font-style:normal;color:var(--ms-cyan);font-weight:600}
+.slide.section-divider .sub{margin-top:28px;font-size:25px;max-width:780px;color:rgba(255,255,255,.95);font-weight:400;line-height:1.45}
+
+.slide.content-slide{padding:36px 64px 80px}
+.slide h3.slide-h{font-size:42px;font-weight:600;letter-spacing:-.5px;margin-bottom:6px;line-height:1.15;color:var(--ms-navy)}
+.slide h3.slide-h em{font-style:normal;color:var(--copilot);font-weight:600}
+.slide .lead{font-size:20px;color:var(--ink-soft);margin-bottom:22px;max-width:1000px}
+
+/* OVERVIEW */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--ms-blue);padding:18px;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.card .num{font-size:28px;color:var(--ms-blue);font-weight:600;margin-bottom:4px;line-height:1}
+.card h4{font-size:20px;font-weight:600;margin-bottom:6px;color:var(--ms-navy);line-height:1.25}
+.card p{font-size:16px;color:var(--ink-soft);line-height:1.5}
+.card .ex{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:15px;color:var(--ms-blue-deep);font-style:italic}
+.card .ex strong{color:var(--copilot);font-style:normal;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;font-size:12px;letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:2px}
+
+/* WHY ROI MATTERS - 4 failure modes */
+.failure-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:18px;max-width:1000px}
+.fail-card{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--ms-red);border-radius:4px;padding:18px 22px;display:flex;gap:16px;align-items:flex-start;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.fail-card .icon{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:#FDE7E9;color:var(--ms-red);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px}
+.fail-card h5{font-size:19px;color:var(--ms-navy);font-weight:600;margin-bottom:4px;line-height:1.3}
+.fail-card p{font-size:16px;color:var(--ink-soft);line-height:1.5}
+
+/* ROI CATEGORIES - 5 cards */
+.roi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:18px}
+.roi-card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:18px 14px;position:relative;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.roi-card::before{content:"";position:absolute;top:0;left:0;right:0;height:5px}
+.roi-card.c1::before{background:#2563EB}
+.roi-card.c2::before{background:#107C10}
+.roi-card.c3::before{background:#F59E0B}
+.roi-card.c4::before{background:#D83B01}
+.roi-card.c5::before{background:#1E40AF}
+.roi-card .icon{font-size:32px;margin:8px 0 4px}
+.roi-card.c1 .icon{color:#2563EB}
+.roi-card.c2 .icon{color:#107C10}
+.roi-card.c3 .icon{color:#F59E0B}
+.roi-card.c4 .icon{color:#D83B01}
+.roi-card.c5 .icon{color:#1E40AF}
+.roi-card h4{font-size:20px;font-weight:600;color:var(--ms-navy);margin-bottom:8px;line-height:1.2}
+.roi-card ul{list-style:none}
+.roi-card li{padding:3px 0 3px 12px;position:relative;font-size:14px;color:var(--ink);line-height:1.4}
+.roi-card li::before{content:"›";position:absolute;left:0;top:3px;color:var(--copilot);font-weight:700}
+
+/* TCO DRIVERS */
+.tco-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:18px}
+.tco-card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:18px 16px;position:relative;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.tco-card .tco-num{font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ink-mute);letter-spacing:1.5px;font-weight:600;margin-bottom:6px}
+.tco-card .tco-icon{font-size:38px;margin-bottom:6px;line-height:1}
+.tco-card.t1{border-top:3px solid #2563EB} .tco-card.t1 .tco-icon{color:#2563EB}
+.tco-card.t2{border-top:3px solid #1D4ED8} .tco-card.t2 .tco-icon{color:#1D4ED8}
+.tco-card.t3{border-top:3px solid #F59E0B} .tco-card.t3 .tco-icon{color:#F59E0B}
+.tco-card.t4{border-top:3px solid #D83B01} .tco-card.t4 .tco-icon{color:#D83B01}
+.tco-card.t5{border-top:3px solid #1E40AF} .tco-card.t5 .tco-icon{color:#1E40AF}
+.tco-card h4{font-size:20px;font-weight:600;color:var(--ms-navy);margin-bottom:6px;line-height:1.2}
+.tco-card ul{list-style:none}
+.tco-card li{padding:3px 0 3px 10px;position:relative;font-size:14px;color:var(--ink-soft);line-height:1.4}
+.tco-card li::before{content:"·";position:absolute;left:2px;top:1px;color:var(--ms-blue);font-weight:700;font-size:18px}
+
+/* 6 STEP FRAMEWORK */
+.framework{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.fw-row{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;position:relative}
+.fw-row::before{content:"";position:absolute;top:30px;left:5%;right:5%;height:2px;background:linear-gradient(90deg,#2563EB 0%,#107C10 100%);z-index:0}
+.fw-step{text-align:center;background:var(--paper);position:relative;z-index:1;padding-top:0}
+.fw-step .num{width:60px;height:60px;border-radius:50%;background:var(--paper);border:3px solid var(--ms-blue);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:var(--ms-blue);box-shadow:0 4px 12px rgba(0,120,212,.15)}
+.fw-step.s2 .num{border-color:#1D4ED8;color:#1D4ED8}
+.fw-step.s3 .num{border-color:#F59E0B;color:#F59E0B}
+.fw-step.s4 .num{border-color:#1E40AF;color:#1E40AF}
+.fw-step.s5 .num{border-color:#D83B01;color:#D83B01}
+.fw-step.s6 .num{border-color:#107C10;color:#107C10}
+.fw-step h6{font-size:16px;color:var(--ms-navy);font-weight:600;margin-bottom:3px;line-height:1.2}
+.fw-step p{font-size:13px;color:var(--ink-soft);line-height:1.4;padding:0 4px}
+
+/* FORMULA + SAVINGS CALC */
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+.formula-card{background:linear-gradient(135deg,#0C1426,#1D4ED8);color:#FFFFFF;border-radius:8px;padding:24px;box-shadow:0 4px 16px rgba(0,32,80,.20)}
+.formula-card .badge{display:inline-block;background:var(--notes-accent);color:var(--ms-navy);padding:4px 12px;border-radius:3px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:14px}
+.formula-card h4{font-size:22px;font-weight:600;margin-bottom:10px;color:#FFFFFF}
+.formula-card .formula{font-family:'Cascadia Code','Consolas',monospace;font-size:18px;background:rgba(255,255,255,.10);padding:14px 16px;border-radius:4px;line-height:1.7;color:#FFFFFF;border-left:3px solid var(--notes-accent)}
+.formula-card .formula em{color:var(--notes-accent);font-style:normal;font-weight:600}
+.formula-card .secondary{margin-top:12px;font-size:16px;line-height:1.55;color:rgba(255,255,255,.85)}
+.formula-card .secondary strong{color:var(--notes-accent);font-weight:600}
+
+.savings-card{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:22px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.savings-card .badge{display:inline-block;background:var(--copilot);color:#FFFFFF;padding:4px 12px;border-radius:3px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:10px}
+.savings-card h4{font-size:22px;color:var(--ms-navy);font-weight:600;margin-bottom:10px}
+.savings-card .calc-table{margin-top:8px;border-top:1px solid var(--line)}
+.savings-card .calc-row{display:grid;grid-template-columns:1fr 110px;padding:8px 0;border-bottom:1px solid var(--line-soft);font-size:16px;color:var(--ink);align-items:center}
+.savings-card .calc-row .lbl{color:var(--ink)}
+.savings-card .calc-row .val{font-family:'Cascadia Code','Consolas',monospace;text-align:right;font-weight:600;color:var(--ms-navy)}
+.savings-card .calc-row.highlight{background:linear-gradient(90deg,#DFF6DD 0%,transparent 100%);padding:10px 8px;border-radius:4px;border-bottom:none;margin-top:4px}
+.savings-card .calc-row.highlight .lbl{font-weight:600;color:var(--money)}
+.savings-card .calc-row.highlight .val{color:var(--money);font-size:22px;font-weight:700}
+
+/* WORKED EXAMPLE TILES */
+.example-wrap{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:26px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.example-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:14px}
+.example-header h4{font-size:25px;color:var(--ms-navy);font-weight:600}
+.example-header .ctx{font-size:16px;color:var(--ink-soft);font-style:italic}
+.example-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.tile{background:var(--bg);border-radius:6px;padding:16px 14px;text-align:center;border-top:3px solid var(--ms-blue)}
+.tile.ti1{border-top-color:#2563EB}
+.tile.ti2{border-top-color:#F59E0B}
+.tile.ti3{border-top-color:#D83B01}
+.tile.ti4{border-top-color:#107C10}
+.tile.ti5{border-top-color:#F59E0B}
+.tile .lbl{font-size:13px;color:var(--ink-mute);letter-spacing:1.2px;text-transform:uppercase;font-weight:600;margin-bottom:6px}
+.tile .big{font-family:'Cascadia Code','Consolas',monospace;font-size:30px;font-weight:700;color:var(--ms-navy);line-height:1.1;margin-bottom:4px;letter-spacing:-.5px}
+.tile.ti4 .big{color:var(--money)}
+.tile.ti5 .big{color:#B58800}
+.tile .sub{font-size:14px;color:var(--ink-soft);line-height:1.3}
+
+/* BUILD/BUY/EXTEND CARDS */
+.bbe-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.bbe{background:var(--paper);border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.bbe .top{padding:20px 22px;color:#FFFFFF}
+.bbe.b1 .top{background:linear-gradient(135deg,#D83B01 0%,#B45309 100%)}
+.bbe.b2 .top{background:linear-gradient(135deg,#107C10 0%,#1E40AF 100%)}
+.bbe.b3 .top{background:linear-gradient(135deg,#2563EB 0%,#F59E0B 100%)}
+.bbe .top .tag{display:inline-block;background:rgba(255,255,255,.2);padding:3px 10px;border-radius:3px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+.bbe .top h4{font-size:28px;font-weight:600;margin-bottom:4px;letter-spacing:-.3px}
+.bbe .top .sub{font-size:16px;opacity:.92}
+.bbe .body{padding:16px 22px;display:flex;flex-direction:column;gap:8px}
+.bbe .body h6{font-size:14px;color:var(--ms-navy);font-weight:600;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:2px;margin-top:4px}
+.bbe .body ul{list-style:none}
+.bbe .body li{padding:4px 0 4px 16px;position:relative;font-size:16px;color:var(--ink);line-height:1.45}
+.bbe .body li::before{content:"✓";position:absolute;left:0;top:4px;color:var(--ms-green);font-weight:700;font-size:16px}
+
+/* TCO MATRIX */
+.tcomatrix{margin-top:14px;background:var(--paper);border:1px solid var(--line);border-radius:6px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.tcm-row{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;border-bottom:1px solid var(--line)}
+.tcm-row:last-child{border-bottom:none}
+.tcm-row.head{background:var(--ms-navy);color:#FFFFFF}
+.tcm-row.head > div{padding:12px 16px;font-size:14px;letter-spacing:1.2px;text-transform:uppercase;font-weight:600;text-align:center}
+.tcm-row.head > div:first-child{text-align:left}
+.tcm-row > div{padding:14px 16px;font-size:17px;border-right:1px solid var(--line);text-align:center;color:var(--ink);line-height:1.4}
+.tcm-row > div:first-child{font-weight:600;color:var(--ms-navy);background:#F8FAFD;border-left:3px solid var(--ms-blue);text-align:left}
+.tcm-row.r2 > div:first-child{border-left-color:#1D4ED8}
+.tcm-row.r3 > div:first-child{border-left-color:#F59E0B}
+.tcm-row.r4 > div:first-child{border-left-color:#D83B01}
+.tcm-row.r5 > div:first-child{border-left-color:#1E40AF}
+.tcm-row > div:last-child{border-right:none}
+.cost-tag{display:inline-block;padding:4px 12px;border-radius:3px;font-weight:700;font-size:14px;font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px}
+.cost-tag.high{background:#FDE7E9;color:var(--ms-red)}
+.cost-tag.med{background:#FFF4CE;color:#8A6914}
+.cost-tag.low{background:#DFF6DD;color:var(--ms-green)}
+
+/* SCORING MATRIX */
+.score-matrix{margin-top:14px;background:var(--paper);border:1px solid var(--line);border-radius:6px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.score-matrix .totals-row{background:#FEF3C7;font-weight:700}
+.score-matrix .totals-row > div{padding:14px 16px}
+.score-matrix .totals-row .score{font-size:22px}
+
+/* MODEL ROUTER WHY */
+.why-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:18px;max-width:1100px}
+.why-card{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--ms-blue);border-radius:6px;padding:20px 24px;display:flex;gap:18px;align-items:flex-start;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.why-card.w1{border-left-color:#2563EB}
+.why-card.w2{border-left-color:#107C10}
+.why-card.w3{border-left-color:#F59E0B}
+.why-card.w4{border-left-color:#D83B01}
+.why-card .icon{flex-shrink:0;width:42px;height:42px;border-radius:8px;background:#F3F9FD;color:var(--ms-blue);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700}
+.why-card.w1 .icon{background:#F3F9FD;color:#2563EB}
+.why-card.w2 .icon{background:#DFF6DD;color:#107C10}
+.why-card.w3 .icon{background:#FEF3C7;color:#F59E0B}
+.why-card.w4 .icon{background:#FFF4CE;color:#D83B01}
+.why-card .body h5{font-size:20px;color:var(--ms-navy);font-weight:600;margin-bottom:4px}
+.why-card .body p{font-size:16px;color:var(--ink-soft);line-height:1.55}
+.why-card .body p strong{color:var(--ms-navy);font-weight:600}
+
+/* ROUTING RULES */
+.rules-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
+.rule-card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:18px;text-align:left;box-shadow:0 1px 3px rgba(0,0,0,.04);position:relative;overflow:hidden}
+.rule-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px}
+.rule-card.r1::before{background:#2563EB}
+.rule-card.r2::before{background:#F59E0B}
+.rule-card.r3::before{background:#D83B01}
+.rule-card.r4::before{background:#107C10}
+.rule-card .rule-num{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;color:var(--ink-mute);letter-spacing:1.2px;font-weight:600;margin-top:4px;margin-bottom:6px}
+.rule-card h4{font-size:20px;color:var(--ms-navy);font-weight:600;margin-bottom:6px}
+.rule-card p{font-size:16px;color:var(--ink-soft);line-height:1.5;margin-bottom:8px}
+.rule-card .ex-snippet{margin-top:8px;background:var(--bg);padding:8px 10px;border-radius:3px;font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ms-navy);border-left:2px solid var(--ms-blue);line-height:1.45}
+
+/* QUIZ */
+.quiz-wrap{max-width:880px;margin:0 auto;width:100%}
+.quiz-q{font-size:32px;line-height:1.3;font-weight:600;color:var(--ms-navy);margin-bottom:24px;letter-spacing:-.3px}
+.quiz-q em{font-style:normal;color:var(--copilot);font-weight:600}
+.quiz-options{display:flex;flex-direction:column;gap:10px}
+.quiz-opt{background:var(--paper);border:1px solid var(--line);padding:14px 18px;border-radius:4px;cursor:pointer;display:flex;align-items:flex-start;gap:16px;transition:.15s;font-size:18px;font-family:inherit;text-align:left;width:100%;color:var(--ink);line-height:1.4}
+.quiz-opt:hover{border-color:var(--ms-blue);background:#F3F9FD;box-shadow:0 2px 6px rgba(0,120,212,.10)}
+.quiz-opt .letter{width:30px;height:30px;border-radius:4px;background:var(--bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--ms-blue-deep);flex-shrink:0;font-size:16px}
+.quiz-opt.correct{border-color:var(--ms-green);background:#DFF6DD}
+.quiz-opt.correct .letter{background:var(--ms-green);color:#FFFFFF;border-color:var(--ms-green)}
+.quiz-opt.wrong{border-color:var(--ms-red);background:#FDE7E9;opacity:.65}
+.quiz-explain{margin-top:18px;background:#DFF6DD;border-left:4px solid var(--ms-green);padding:14px 18px;border-radius:4px;display:none}
+.quiz-explain.show{display:block;animation:slideUp .5s ease}
+.quiz-explain strong{color:var(--ms-green);font-family:'Cascadia Code','Consolas',monospace;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
+.quiz-explain p{margin-top:6px;font-size:18px;color:var(--ink);line-height:1.55}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* SCENARIO */
+.scenario{max-width:1100px;margin:0 auto;background:linear-gradient(135deg,#FEF3C7 0%,#E5E3F4 100%);border-radius:8px;padding:28px 36px;border-left:4px solid var(--copilot)}
+.scenario .tag{display:inline-block;background:var(--copilot);color:#FFFFFF;padding:5px 14px;border-radius:3px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:12px}
+.scenario h3{font-size:30px;line-height:1.25;color:var(--ms-navy);margin-bottom:14px;font-weight:600;letter-spacing:-.3px}
+.scenario .quote{font-size:19px;line-height:1.5;color:var(--ms-navy);padding:14px 18px;background:rgba(255,255,255,.8);border-radius:4px;margin:12px 0;border-left:3px solid var(--ms-blue);font-style:italic}
+.scenario .data-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+.scenario .data-tile{background:#FFFFFF;padding:10px 14px;border-radius:4px;border-top:3px solid var(--ms-blue)}
+.scenario .data-tile .lbl{font-size:12px;color:var(--ink-mute);letter-spacing:1.2px;text-transform:uppercase;font-weight:600;margin-bottom:3px}
+.scenario .data-tile .val{font-family:'Cascadia Code','Consolas',monospace;font-size:22px;font-weight:700;color:var(--ms-navy);line-height:1}
+.scenario .prompts h5{font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ms-navy);margin-bottom:8px;font-weight:600;margin-top:12px}
+.scenario .prompts ul{list-style:none}
+.scenario .prompts li{padding:7px 0 7px 22px;position:relative;font-size:17px;color:var(--ink);border-bottom:1px dashed rgba(0,32,80,.18);line-height:1.45}
+.scenario .prompts li:last-child{border-bottom:none}
+.scenario .prompts li::before{content:"→";position:absolute;left:0;top:7px;color:var(--copilot);font-weight:700}
+.scenario .reveal-btn{margin-top:14px;background:var(--ms-blue);color:#FFFFFF;border:none;padding:10px 22px;border-radius:4px;font-family:'Segoe UI',sans-serif;font-size:16px;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:.15s}
+.scenario .reveal-btn:hover{background:var(--ms-blue-deep);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,120,212,.30)}
+.scenario .reveal-btn.shown{display:none}
+.answer-panel{margin-top:16px;background:var(--paper);border:1px solid var(--ms-blue);border-radius:6px;padding:20px 24px;display:none}
+.answer-panel.show{display:block;animation:slideUp .5s ease}
+.answer-panel .ap-label{display:inline-block;background:var(--ms-navy);color:#FFFFFF;padding:4px 12px;border-radius:3px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:12px}
+.answer-panel .ap-row{margin-bottom:12px}
+.answer-panel .ap-row:last-child{margin-bottom:0}
+.answer-panel .ap-q{font-size:18px;color:var(--copilot);font-weight:600;margin-bottom:5px}
+.answer-panel .ap-a{font-size:16px;color:var(--ink);line-height:1.55;padding-left:14px;border-left:2px solid #DBEAFE}
+.answer-panel .ap-a span{display:block;margin-bottom:3px}
+.answer-panel .ap-a span::before{content:"• ";color:var(--ms-blue);font-weight:700}
+.answer-panel .calc-line{font-family:'Cascadia Code','Consolas',monospace;background:#F8FAFD;padding:6px 10px;border-radius:3px;font-size:15px;color:var(--ms-navy);margin-top:4px;border-left:2px solid var(--ms-green)}
+
+/* RECAP */
+.recap{max-width:920px;margin:0 auto}
+.recap-list{display:grid;gap:10px;margin-top:16px}
+.recap-item{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--ms-blue);padding:14px 22px;border-radius:4px;display:flex;gap:14px;align-items:flex-start;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.recap-item .check{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--ms-blue);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+.recap-item .text{font-size:19px;color:var(--ms-navy);line-height:1.4}
+.recap-item .text em{color:var(--copilot);font-style:normal;font-weight:600}
+
+.float-hint{position:fixed;top:72px;right:20px;background:var(--ms-navy);color:#FFFFFF;padding:10px 16px;border-radius:4px;font-size:15px;opacity:0;transition:.3s;z-index:30;pointer-events:none;font-family:'Cascadia Code','Consolas',monospace;box-shadow:0 6px 16px rgba(0,32,80,.20)}
+.float-hint.show{opacity:.95}
+
+/* GENNOOR WORDMARK COLOR LETTERS */
+.brand-name .b-w{color:#FFFFFF}
+.brand-name .b-blue{color:#60A5FA}
+.brand-name .b-amber{color:#F59E0B}
+.slide.title-slide .brand-wordmark .name .b-w{color:#FFFFFF}
+.slide.title-slide .brand-wordmark .name .b-blue{color:#60A5FA}
+.slide.title-slide .brand-wordmark .name .b-amber{color:#F59E0B}
+
+/* TOPBAR GRID — slide nav moved to topbar center */
+.topbar.topbar-grid{display:grid !important;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;height:72px;padding:0 28px}
+.topbar.topbar-grid .topbar-left{display:flex;align-items:center;gap:18px;min-width:0;overflow:hidden}
+.topbar.topbar-grid .topbar-left .chapter-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar.topbar-grid .topbar-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.topbar.topbar-grid .topbar-right{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0}
+.step-indicator-top{font-family:'Cascadia Code','Consolas',monospace;font-size:10px;letter-spacing:2.5px;color:var(--gn-amber,var(--ms-yellow));font-weight:700;text-transform:uppercase;line-height:1;opacity:.95}
+.step-indicator-top.complete{color:rgba(255,255,255,.5)}
+.controls-top{display:inline-flex;align-items:center;gap:4px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.10);border-radius:5px;padding:3px 6px}
+.controls-top button{width:28px;height:28px;border-radius:3px;border:none;background:transparent;color:#FFFFFF;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:.15s;padding:0}
+.controls-top button:hover{background:rgba(255,255,255,.12)}
+.controls-top button:disabled{opacity:.3;cursor:not-allowed}
+.controls-top .counter{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;font-weight:600;color:#FFFFFF;letter-spacing:.5px;padding:0 12px;min-width:64px;text-align:center}
+.controls-top .counter strong{color:var(--gn-amber,var(--ms-yellow));font-weight:700}
+/* Hide original bottom controls (now empty) */
+.bottom-nav-removed{display:none !important}
+
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar topbar-grid">
+    <div class="topbar-left">
+    <a href="#" class="brand-lockup">
+      <svg class="brand-mark" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+      <div class="brand-text">
+        <span class="brand-name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+        <span class="brand-sub">AB-100</span>
+      </div>
+    </a>
+    <div class="divider"></div>
+    <div class="chapter-title">Chapter 04 · Evaluate Costs & Benefits</div>
+    </div>
+    <div class="topbar-center">
+      <div class="step-indicator-top" id="stepIndicator">More to reveal</div>
+      <div class="controls-top">
+        <button id="prevBtn" title="Previous (←)">‹</button>
+        <span class="counter" id="counter">1 / 23</span>
+        <button id="nextBtn" title="Next (→)">›</button>
+      </div>
+    </div>
+    <div class="topbar-right">
+    <div class="meta">
+      <span class="pill" id="sectionLabel">Opening</span>
+      <span class="pill step-pill" id="stepPill" style="display:none">Step 1/6</span>
+    </div>
+    <button id="notesToggle" title="Toggle notes (T)">📖 Notes</button>
+    </div>
+  </div>
+
+  <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="stage">
+    <div class="slides" id="slides">
+
+      <!-- 01 TITLE -->
+      <section class="slide title-slide active"
+        data-section="Opening"
+        data-script="Chapter 4. <em>Evaluate the costs and benefits of an AI-powered business solution.</em> Chapter 3 was about strategy and design — Chapter 4 is about putting numbers on it. ROI. TCO. Build vs buy vs extend. Model routing for cost optimization. By the end you'll be able to walk into any executive review and defend an AI investment with hard numbers.">
+        <div class="slide-num">01 / 23</div>
+        <div class="brand-full">
+          <svg class="brand-mark-lg" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+          <div class="brand-wordmark">
+            <span class="name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+            <span class="tag">AB-100 Course</span>
+          </div>
+        </div>
+        <div class="eyebrow">CHAPTER 04</div>
+        <h1>Evaluate <em>Costs &amp; Benefits</em><br>of an AI-Powered Solution</h1>
+        <div class="meta-row">
+          <div>FOCUS<strong>ROI · TCO · Build/Buy/Extend</strong></div>
+          <div>OUTPUT<strong>Defensible business case</strong></div>
+          <div>AUDIENCE<strong>Executive decision-makers</strong></div>
+        </div>
+      </section>
+
+      <!-- 02 OVERVIEW -->
+      <section class="slide content-slide"
+        data-section="Opening"
+        data-script="Four areas. Each one is a tool you'll use when leadership asks <em>'what's the business case?'</em>">
+        <div class="slide-num">02 / 23</div>
+        <h3 class="slide-h">What this chapter <em>covers</em></h3>
+        <p class="lead">Four areas — every architect needs to be able to defend AI investments financially. The model has to make sense to the CFO, not just the CTO.</p>
+        <div class="cards">
+          <div class="card" data-step data-script="One — <em>ROI criteria and TCO</em>. The five ROI categories and the five cost drivers that go into Total Cost of Ownership.">
+            <div class="num">01</div><h4>ROI &amp; TCO Foundations</h4>
+            <p>Five ROI categories, five TCO cost drivers — the foundation for any business case.</p>
+            <div class="ex"><strong>Output</strong>Vocabulary to talk to finance.</div>
+          </div>
+          <div class="card" data-step data-script="Two — <em>Build a complete ROI analysis</em>. Six-step framework, time-to-money formula, worked example with real numbers.">
+            <div class="num">02</div><h4>ROI Analysis Process</h4>
+            <p>Six-step framework, time-to-money formulas, worked example with real numbers.</p>
+            <div class="ex"><strong>Output</strong>Executive one-page ROI summary.</div>
+          </div>
+          <div class="card" data-step data-script="Three — <em>Build, buy, or extend</em>. The strategic decision. TCO comparison and weighted scoring matrix.">
+            <div class="num">03</div><h4>Build · Buy · Extend</h4>
+            <p>Strategic decision framework. TCO comparison across all three options. Weighted scoring.</p>
+            <div class="ex"><strong>Output</strong>Defensible build vs buy vs extend choice.</div>
+          </div>
+          <div class="card" data-step data-script="Four — <em>Azure AI Foundry Model Router</em>. The cost optimization layer — route simple tasks to small models, complex tasks to LLMs.">
+            <div class="num">04</div><h4>Model Router</h4>
+            <p>Route requests intelligently — SLMs for simple, LLMs for complex. Cost optimization at runtime.</p>
+            <div class="ex"><strong>Output</strong>Routing strategy that cuts cost without hurting quality.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 SECTION DIVIDER UNIT 1 -->
+      <section class="slide section-divider"
+        data-section="ROI &amp; TCO"
+        data-script="First unit. <em>ROI criteria and Total Cost of Ownership.</em> The vocabulary that lets you talk to finance, talk to the CFO, talk to the budget committee.">
+        <div class="slide-num">03 / 23</div>
+        <div class="label">UNIT ONE</div>
+        <h2>ROI Criteria<br>&amp; <em>Total Cost of Ownership</em></h2>
+        <div class="sub">If you can't put numbers on the value, the project won't survive the next budget review. This unit gives you the framework.</div>
+      </section>
+
+      <!-- 04 WHY ROI MATTERS -->
+      <section class="slide content-slide"
+        data-section="ROI &amp; TCO"
+        data-script="Why does ROI matter so much for AI? Because most AI projects fail for predictable reasons. Four failure modes. I'll bring them up one at a time.">
+        <div class="slide-num">04 / 23</div>
+        <h3 class="slide-h">Why <em>ROI criteria</em> matter</h3>
+        <p class="lead">AI projects fail for predictable reasons. All four are about <em>not having a business case</em> — or having a wrong one. Get this right at the start and your project survives.</p>
+        <div class="failure-grid">
+          <div class="fail-card" data-step data-script="<em>Failure 1</em>. Organizations overestimate productivity gains. They assume agents save 50% of effort when reality is 15%. Always anchor on real telemetry, not vendor demos.">
+            <div class="icon">!</div>
+            <div><h5>Overestimating productivity gains</h5><p>Vendor demos show 50% savings. Reality often delivers 15%. Anchor on telemetry, not marketing.</p></div>
+          </div>
+          <div class="fail-card" data-step data-script="<em>Failure 2</em>. Organizations underestimate operational and maintenance costs. The model itself is cheap. The data prep, monitoring, retraining, and governance — that's where the budget goes.">
+            <div class="icon">!</div>
+            <div><h5>Underestimating ops &amp; maintenance</h5><p>Model inference is cheap. Data prep, monitoring, retraining, governance is where the budget goes.</p></div>
+          </div>
+          <div class="fail-card" data-step data-script="<em>Failure 3</em>. They lack a clear measurement framework. Without a baseline before, you can't prove value after. Always establish a no-AI baseline first.">
+            <div class="icon">!</div>
+            <div><h5>No clear measurement framework</h5><p>Without a 'no-AI' baseline, you can't prove value after deployment. Establish baseline first.</p></div>
+          </div>
+          <div class="fail-card" data-step data-script="<em>Failure 4</em>. They can't articulate value to leadership. Engineers love the tech. Executives want the dollar number. Translation is your job.">
+            <div class="icon">!</div>
+            <div><h5>Can't articulate value to leadership</h5><p>Engineers love the tech. Executives want the dollar number. Translation is the architect's job.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05 ROI CATEGORIES -->
+      <section class="slide content-slide"
+        data-section="ROI &amp; TCO"
+        data-script="The <em>five ROI categories</em>. Every AI business case should touch most of these. Don't let your customer leave any of them on the table. I'll bring them up one at a time.">
+        <div class="slide-num">05 / 23</div>
+        <h3 class="slide-h">Five <em>ROI categories</em></h3>
+        <p class="lead">Quantify benefits across all five. Most projects only measure category 1 or 2 and leave the rest on the table.</p>
+        <div class="roi-grid">
+          <div class="roi-card c1" data-step data-script="<em>Productivity gains</em>. Time saved per task. Reduced manual data entry. Faster case resolution. Automated summarization. The most measurable category — start here.">
+            <div class="icon">⚡</div>
+            <h4>Productivity Gains</h4>
+            <ul>
+              <li>Time saved per task</li>
+              <li>Reduced manual data entry</li>
+              <li>Faster case resolution</li>
+              <li>Auto summarization &amp; classification</li>
+            </ul>
+          </div>
+          <div class="roi-card c2" data-step data-script="<em>Cost savings</em>. Reduced labor hours. Lower operational overhead. Decreased ticket volume. Reduced compliance review workload. Hard dollars.">
+            <div class="icon">$</div>
+            <h4>Cost Savings</h4>
+            <ul>
+              <li>Reduced labor hours</li>
+              <li>Lower operational overhead</li>
+              <li>Decreased support ticket volume</li>
+              <li>Reduced compliance review workload</li>
+            </ul>
+          </div>
+          <div class="roi-card c3" data-step data-script="<em>Revenue impact</em>. Increased conversion. Faster lead qualification. Better retention. Upsell and cross-sell recommendations. Often the biggest ROI category — and the most overlooked.">
+            <div class="icon">↗</div>
+            <h4>Revenue Impact</h4>
+            <ul>
+              <li>Increased sales conversion</li>
+              <li>Faster lead qualification</li>
+              <li>Improved retention</li>
+              <li>Upsell / cross-sell recs</li>
+            </ul>
+          </div>
+          <div class="roi-card c4" data-step data-script="<em>Risk reduction</em>. Fewer compliance violations. Reduced error rates. Improved data consistency. Lower operational risk. Hard to quantify but huge in regulated industries.">
+            <div class="icon">⛨</div>
+            <h4>Risk Reduction</h4>
+            <ul>
+              <li>Fewer compliance violations</li>
+              <li>Reduced error rates</li>
+              <li>Improved data consistency</li>
+              <li>Lower operational risk</li>
+            </ul>
+          </div>
+          <div class="roi-card c5" data-step data-script="<em>Strategic value</em>. New business models. Enhanced customer experience. Competitive differentiation. The hardest to put a number on — but the most important to executives.">
+            <div class="icon">★</div>
+            <h4>Strategic Value</h4>
+            <ul>
+              <li>New business models</li>
+              <li>Enhanced customer experience</li>
+              <li>Competitive differentiation</li>
+              <li>Innovation enablement</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 TCO 5 DRIVERS -->
+      <section class="slide content-slide"
+        data-section="ROI &amp; TCO"
+        data-script="<em>Total Cost of Ownership.</em> Five cost drivers. The cost iceberg — most teams only see two of them. I'll bring them up one at a time.">
+        <div class="slide-num">06 / 23</div>
+        <h3 class="slide-h">TCO — the <em>five cost drivers</em></h3>
+        <p class="lead">Every AI investment has costs across all five. Skip any of them in your analysis and your ROI numbers fall apart in production.</p>
+        <div class="tco-grid">
+          <div class="tco-card t1" data-step data-script="<em>Driver 1 — Infrastructure</em>. Compute (CPU and GPU) for inference. Storage. Network egress. Resiliency and HA. The Azure bill nobody planned for.">
+            <div class="tco-num">DRIVER 01</div>
+            <div class="tco-icon">▤</div>
+            <h4>Infrastructure</h4>
+            <ul>
+              <li>Compute (CPU/GPU) for inference</li>
+              <li>Storage</li>
+              <li>Network &amp; egress</li>
+              <li>Resiliency / HA</li>
+            </ul>
+          </div>
+          <div class="tco-card t2" data-step data-script="<em>Driver 2 — Development &amp; integration</em>. Agent design. Orchestration. Connectors and APIs. Authentication. Testing. The build phase costs.">
+            <div class="tco-num">DRIVER 02</div>
+            <div class="tco-icon">⚙</div>
+            <h4>Development &amp; Integration</h4>
+            <ul>
+              <li>Agent design &amp; orchestration</li>
+              <li>Connectors / APIs</li>
+              <li>Authentication</li>
+              <li>Testing &amp; compliance</li>
+            </ul>
+          </div>
+          <div class="tco-card t3" data-step data-script="<em>Driver 3 — Data quality &amp; preparation</em>. Cleansing, labeling, grounding indexes, refresh schedules, drift monitoring. The unsung hero of AI cost — most underestimated.">
+            <div class="tco-num">DRIVER 03</div>
+            <div class="tco-icon">◈</div>
+            <h4>Data Quality &amp; Prep</h4>
+            <ul>
+              <li>Cleansing &amp; labeling</li>
+              <li>Grounding / indexing</li>
+              <li>Refresh schedules</li>
+              <li>Drift monitoring</li>
+            </ul>
+          </div>
+          <div class="tco-card t4" data-step data-script="<em>Driver 4 — Expertise &amp; staffing</em>. Architects. AI/ML engineers. MLOps. SMEs. Change management. Talent is the most expensive line item — always.">
+            <div class="tco-num">DRIVER 04</div>
+            <div class="tco-icon">⚐</div>
+            <h4>Expertise &amp; Staffing</h4>
+            <ul>
+              <li>Architects, AI/ML engineers</li>
+              <li>MLOps engineers</li>
+              <li>SMEs for grounding data</li>
+              <li>Change management / training</li>
+            </ul>
+          </div>
+          <div class="tco-card t5" data-step data-script="<em>Driver 5 — Operations &amp; licensing</em>. Monitoring, telemetry, evaluation, re-tuning, incident response, consumption fees. The recurring annual cost.">
+            <div class="tco-num">DRIVER 05</div>
+            <div class="tco-icon">↻</div>
+            <h4>Operations &amp; Licensing</h4>
+            <ul>
+              <li>Monitoring &amp; telemetry</li>
+              <li>Evaluation &amp; re-tuning</li>
+              <li>Incident response</li>
+              <li>Consumption / subscription fees</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 07 QUIZ 1 -->
+      <section class="slide content-slide"
+        data-section="ROI &amp; TCO"
+        data-script="Quick check. Don't say the answer — let the room call it out first.">
+        <div class="slide-num">07 / 23</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 1 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which of the following is part of <em>TCO</em> for AI solutions?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Only initial development cost</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">B</span> Only licensing cost</button>
+            <button class="quiz-opt" data-correct="true" data-explain="TCO is total — it spans development, deployment, operational, change management, and decommissioning costs across the entire lifecycle. Considering only one cost category (development, licensing, training) misses 80% of the real cost. The lifetime view is what makes the analysis credible to a CFO."><span class="letter">C</span> All costs across development, deployment, and operations</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Only user training</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 08 SECTION DIVIDER UNIT 2 -->
+      <section class="slide section-divider"
+        data-section="ROI Analysis"
+        data-script="Unit two. <em>Building a complete ROI analysis.</em> Six steps. A formula. A worked example with real numbers. By the end of this unit you'll have a template you can use on any project.">
+        <div class="slide-num">08 / 23</div>
+        <div class="label">UNIT TWO</div>
+        <h2>Build a <em>Complete</em><br>ROI Analysis</h2>
+        <div class="sub">Six steps. One formula. One worked example. Walk out of this unit with a template you can use on every customer engagement.</div>
+      </section>
+
+      <!-- 09 6-STEP FRAMEWORK -->
+      <section class="slide content-slide"
+        data-section="ROI Analysis"
+        data-script="The <em>six-step ROI evaluation framework</em>. Apply this on every project. Skipping any step weakens the case. I'll bring them up one at a time.">
+        <div class="slide-num">09 / 23</div>
+        <h3 class="slide-h">The <em>6-step</em> ROI evaluation framework</h3>
+        <p class="lead">Microsoft's published framework. Run all six steps in order. Skipping the early steps is what kills business cases at executive review.</p>
+        <div class="framework">
+          <div class="fw-row">
+            <div class="fw-step s1" data-step data-script="<em>Step 1 — Define business outcomes.</em> Specific, measurable. 'Reduce call handling time by 20 percent.' Not 'improve customer experience.' Force precision.">
+              <div class="num">1</div><h6>Define Outcomes</h6><p>Specific, measurable goals (20% AHT reduction)</p>
+            </div>
+            <div class="fw-step s2" data-step data-script="<em>Step 2 — Identify ROI drivers.</em> Which of the five categories apply — productivity, cost, revenue, risk, strategic. Most projects need at least two.">
+              <div class="num">2</div><h6>ID ROI Drivers</h6><p>Which of the 5 categories apply</p>
+            </div>
+            <div class="fw-step s3" data-step data-script="<em>Step 3 — Calculate TCO.</em> All five drivers. Year 1 and steady-state. Don't forget the data prep cost.">
+              <div class="num">3</div><h6>Calculate TCO</h6><p>All 5 cost drivers, Year 1 + steady state</p>
+            </div>
+            <div class="fw-step s4" data-step data-script="<em>Step 4 — Quantify benefits.</em> Use Copilot Studio analytics where available. Time-and-motion studies. Process KPIs. Always have a baseline.">
+              <div class="num">4</div><h6>Quantify Benefits</h6><p>Analytics, T&amp;M studies, KPIs</p>
+            </div>
+            <div class="fw-step s5" data-step data-script="<em>Step 5 — Compare benefits vs TCO.</em> Payback period. NPV. Cost-benefit ratio. Annualized ROI. Show all four — different stakeholders care about different ones.">
+              <div class="num">5</div><h6>Compare</h6><p>Payback, NPV, ROI %, cost-benefit ratio</p>
+            </div>
+            <div class="fw-step s6" data-step data-script="<em>Step 6 — Validate with stakeholders.</em> Finance signs the numbers. Operations signs the assumptions. Business owner signs the outcomes. The AI Center of Excellence signs the architecture. <em>Get all four sign-offs before scaling.</em>">
+              <div class="num">6</div><h6>Validate</h6><p>Finance · Ops · Business · AI CoE</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 FORMULA + SAVINGS CALCULATOR -->
+      <section class="slide content-slide"
+        data-section="ROI Analysis"
+        data-script="The <em>core formula</em> and how to use Microsoft's <em>Copilot Studio Savings Calculator</em>. I'll bring up the formula first, then the calculator inputs and example.">
+        <div class="slide-num">10 / 23</div>
+        <h3 class="slide-h">Convert time into <em>money</em></h3>
+        <p class="lead">Microsoft Copilot Studio ships with a Savings Calculator on every agent's Analytics page. Use it. Or use the formula manually if Studio isn't in scope.</p>
+        <div class="calc-grid">
+          <div class="formula-card" data-step
+            data-script="<em>The core formula.</em> Annual benefit equals minutes saved per run, divided by 60, times runs per year, times labor rate. Plus error cost avoided. Plus working capital effects if material. <em>Memorize this formula.</em>">
+            <div class="badge">Core Formula</div>
+            <h4>Annual Benefit ($)</h4>
+            <div class="formula">
+              = (<em>min saved per run</em> ÷ 60)<br>
+              × <em>runs per year</em><br>
+              × <em>labor rate ($/hr)</em><br>
+              + error cost avoided<br>
+              + working-capital effects
+            </div>
+            <div class="secondary">
+              <strong>Always show 3 cases:</strong> optimistic · expected · conservative — by varying adoption rate, minutes saved, and quality lift.
+            </div>
+          </div>
+          <div class="savings-card" data-step
+            data-script="<em>Microsoft's Savings Calculator</em> — same formula, automated. Drop in four inputs, it computes monthly savings. <em>Example</em>: 6 minutes saved per run, 20,000 successful runs a month, $60-an-hour fully loaded labor rate. <em>$120,000 a month in savings</em>. Direct from the agent's Analytics page.">
+            <div class="badge">Savings Calculator · Copilot Studio</div>
+            <h4>Worked example — agent savings</h4>
+            <div class="calc-table">
+              <div class="calc-row"><span class="lbl">Minutes saved per run</span><span class="val">6 min</span></div>
+              <div class="calc-row"><span class="lbl">Successful runs / month</span><span class="val">20,000</span></div>
+              <div class="calc-row"><span class="lbl">Fully-loaded labor rate</span><span class="val">$60 / hr</span></div>
+              <div class="calc-row"><span class="lbl">Hours saved / month</span><span class="val">2,000 hrs</span></div>
+              <div class="calc-row highlight"><span class="lbl">Monthly savings</span><span class="val">$120,000</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11 WORKED EXAMPLE -->
+      <section class="slide content-slide"
+        data-section="ROI Analysis"
+        data-script="<em>A complete worked example.</em> Customer email triage. Watch the numbers stack up. I'll bring them up tile by tile.">
+        <div class="slide-num">11 / 23</div>
+        <h3 class="slide-h">Worked example — <em>customer email triage</em></h3>
+        <p class="lead">Real numbers from a Microsoft case study. The pattern repeats across industries — once you see it once, you can apply it.</p>
+        <div class="example-wrap">
+          <div class="example-header">
+            <h4>Scenario: AI agent triages incoming customer emails</h4>
+            <div class="ctx">Drafts categorization + initial response · 50K msgs/month · 60% adoption · $45/hr loaded rate</div>
+          </div>
+          <div class="example-tiles">
+            <div class="tile ti1" data-step data-script="<em>Tile 1</em>. Inputs. 1.8 minutes saved per message — drafting plus categorization. 50,000 messages a month. 60% adoption rate — not everything gets routed to the agent.">
+              <div class="lbl">Inputs</div>
+              <div class="big">1.8min</div>
+              <div class="sub">saved per email · 60% adoption</div>
+            </div>
+            <div class="tile ti2" data-step data-script="<em>Tile 2</em>. Annual savings calculation. 50,000 × 12 × 60% × 1.8 ÷ 60 × $45 — comes to <em>$486,000 a year</em>. Direct labor savings only — strategic value not counted yet.">
+              <div class="lbl">Annual Savings</div>
+              <div class="big">$486K</div>
+              <div class="sub">labor only · before strategic</div>
+            </div>
+            <div class="tile ti3" data-step data-script="<em>Tile 3</em>. Year-1 TCO. <em>$300,000</em> — covers one-time build plus ongoing run-rate. All five cost drivers folded in.">
+              <div class="lbl">Year-1 TCO</div>
+              <div class="big">$300K</div>
+              <div class="sub">one-time + run-rate</div>
+            </div>
+            <div class="tile ti4" data-step data-script="<em>Tile 4</em>. ROI. ($486K minus $300K) divided by $300K — about <em>62 percent ROI</em>. Strong but not eye-watering.">
+              <div class="lbl">ROI Year 1</div>
+              <div class="big">62%</div>
+              <div class="sub">($486K – $300K) / $300K</div>
+            </div>
+            <div class="tile ti5" data-step data-script="<em>Tile 5</em>. Payback period. Initial cost divided by net monthly benefit — <em>about 7.4 months</em>. Anything under 12 months is generally a green light.">
+              <div class="lbl">Payback</div>
+              <div class="big">7.4mo</div>
+              <div class="sub">break-even point</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12 QUIZ 2 -->
+      <section class="slide content-slide"
+        data-section="ROI Analysis"
+        data-script="Quick check on credible benefits.">
+        <div class="slide-num">12 / 23</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 2 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which combination best supports a <em>credible benefits estimate</em> for an AI agent?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="true" data-explain="Minutes saved per run, successful runs in the period, and fully-loaded labor rate are the three core inputs to any credible benefits model. They map directly to dollars and tie back to actual telemetry from agent analytics. Token counts and prompt designs are technical metrics that don't translate to value. Daily active users alone tells you adoption — not value."><span class="letter">A</span> Minutes saved per run, successful runs, fully loaded labor rate</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">B</span> Number of prompts used, model temperature, token count</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> Number of personas, conversation styles, color of the dashboard</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Daily active users only</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 13 SECTION DIVIDER UNIT 3 -->
+      <section class="slide section-divider"
+        data-section="Build · Buy · Extend"
+        data-script="Unit three. <em>Build, buy, or extend.</em> The biggest strategic decision your customer will make. Get it wrong by going Build when Extend would do — and you've burned 9 months and $2M for nothing.">
+        <div class="slide-num">13 / 23</div>
+        <div class="label">UNIT THREE</div>
+        <h2>Build · Buy · <em>Extend</em></h2>
+        <div class="sub">The strategic decision that determines time-to-value, cost, control, and competitive differentiation. Most teams get this wrong.</div>
+      </section>
+
+      <!-- 14 BUILD/BUY/EXTEND CARDS -->
+      <section class="slide content-slide"
+        data-section="Build · Buy · Extend"
+        data-script="<em>Three options.</em> Build creates from scratch. Buy acquires SaaS. Extend customizes existing platforms like Microsoft Copilot. <em>Each has a sweet spot.</em> I'll bring them up one at a time.">
+        <div class="slide-num">14 / 23</div>
+        <h3 class="slide-h">Three strategic options — <em>when to choose each</em></h3>
+        <p class="lead">Build, buy, or extend. Each has a clear sweet spot. The wrong choice burns months and millions.</p>
+        <div class="bbe-grid">
+          <div class="bbe b1" data-step data-script="<em>Build</em>. Create AI components internally. Maximum control. Maximum cost. Maximum risk. Use only when AI <em>is</em> your competitive advantage. Industry-vertical solutions. Deep regulatory needs. Strong internal AI/ML capability.">
+            <div class="top">
+              <div class="tag">Option 1</div>
+              <h4>Build</h4>
+              <div class="sub">Create internally · maximum control</div>
+            </div>
+            <div class="body">
+              <h6>When to build</h6>
+              <ul>
+                <li>AI defines competitive advantage</li>
+                <li>Regulatory needs unmet by SaaS</li>
+                <li>Data sensitivity demands full control</li>
+                <li>Strong internal AI/ML capability</li>
+              </ul>
+            </div>
+          </div>
+          <div class="bbe b2" data-step data-script="<em>Buy</em>. Acquire prebuilt SaaS capabilities. Fastest. Cheapest upfront. Standardized. Use when speed matters more than customization. Low organizational AI maturity. Vendor ecosystem provides ongoing upgrades.">
+            <div class="top">
+              <div class="tag">Option 2</div>
+              <h4>Buy</h4>
+              <div class="sub">Acquire SaaS · fastest path</div>
+            </div>
+            <div class="body">
+              <h6>When to buy</h6>
+              <ul>
+                <li>Efficiency matters more than custom</li>
+                <li>Standard processes meet your needs</li>
+                <li>Low internal AI maturity</li>
+                <li>Vendor ecosystem provides upgrades</li>
+              </ul>
+            </div>
+          </div>
+          <div class="bbe b3" data-step data-script="<em>Extend</em>. Customize existing platforms — Microsoft Copilot, Copilot Studio. Hybrid path — get vendor maturity plus enterprise-specific adaptation. Use when base model performs well but needs enterprise context. <em>The default path for most projects.</em>">
+            <div class="top">
+              <div class="tag">Option 3</div>
+              <h4>Extend</h4>
+              <div class="sub">Customize Copilot · hybrid path</div>
+            </div>
+            <div class="body">
+              <h6>When to extend</h6>
+              <ul>
+                <li>Want Copilot adopting your logic</li>
+                <li>Domain knowledge added via grounding</li>
+                <li>Base model good but needs context</li>
+                <li>Default path for most enterprise needs</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 15 TCO COMPARISON MATRIX -->
+      <section class="slide content-slide"
+        data-section="Build · Buy · Extend"
+        data-script="<em>TCO across the three options.</em> Five cost domains. Build is high everywhere. Buy is low everywhere. Extend sits in the middle — except for data prep, which is high regardless of platform. I'll reveal each row.">
+        <div class="slide-num">15 / 23</div>
+        <h3 class="slide-h">TCO comparison — <em>Build vs Buy vs Extend</em></h3>
+        <p class="lead">Five cost domains. Build's costs are uniformly high. Buy's are uniformly low. Extend is mostly medium — with one important exception.</p>
+        <div class="tcomatrix">
+          <div class="tcm-row head">
+            <div>Cost Domain</div>
+            <div>Build</div>
+            <div>Buy</div>
+            <div>Extend</div>
+          </div>
+          <div class="tcm-row r1" data-step data-script="<em>Infrastructure</em>. Build — high (you provision everything). Buy — low (vendor handles it). Extend — medium (some Azure resources for connectors and grounding).">
+            <div>Infrastructure</div>
+            <div><span class="cost-tag high">High</span></div>
+            <div><span class="cost-tag low">Low</span></div>
+            <div><span class="cost-tag med">Medium</span></div>
+          </div>
+          <div class="tcm-row r2" data-step data-script="<em>Development</em>. Build — high. Buy — low (configure, don't code). Extend — medium (custom topics, connectors, plugins).">
+            <div>Development</div>
+            <div><span class="cost-tag high">High</span></div>
+            <div><span class="cost-tag low">Low</span></div>
+            <div><span class="cost-tag med">Medium</span></div>
+          </div>
+          <div class="tcm-row r3" data-step data-script="<em>Data preparation</em>. <em>This is the surprise row.</em> Build — high (you build the pipeline). Buy — low (vendor's data). Extend — <em>also high</em>. Why? Because the value of extending is grounding the model in your data — which you must prepare yourself.">
+            <div>Data Preparation</div>
+            <div><span class="cost-tag high">High</span></div>
+            <div><span class="cost-tag low">Low</span></div>
+            <div><span class="cost-tag high">High</span></div>
+          </div>
+          <div class="tcm-row r4" data-step data-script="<em>Expertise</em>. Build — high (deep AI/ML talent). Buy — low (configuration skills). Extend — medium (Copilot Studio + business analyst skills).">
+            <div>Expertise</div>
+            <div><span class="cost-tag high">High</span></div>
+            <div><span class="cost-tag low">Low</span></div>
+            <div><span class="cost-tag med">Medium</span></div>
+          </div>
+          <div class="tcm-row r5" data-step data-script="<em>Operations</em>. Build — high (you operate everything). Buy — medium (some integration ops). Extend — medium (operate the customizations, vendor handles the platform).">
+            <div>Operations</div>
+            <div><span class="cost-tag high">High</span></div>
+            <div><span class="cost-tag med">Medium</span></div>
+            <div><span class="cost-tag med">Medium</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 16 WEIGHTED SCORING MATRIX -->
+      <section class="slide content-slide"
+        data-section="Build · Buy · Extend"
+        data-script="<em>The weighted scoring matrix.</em> Five criteria. Score each option 1 to 5. Sum the columns. Highest total wins. Defensible methodology to bring to leadership. I'll reveal each row.">
+        <div class="slide-num">16 / 23</div>
+        <h3 class="slide-h">Weighted <em>scoring matrix</em></h3>
+        <p class="lead">Microsoft's published scoring framework. Score each option 1–5 on five criteria. Sum the columns. The winner is your defensible recommendation.</p>
+        <div class="tcomatrix score-matrix">
+          <div class="tcm-row head">
+            <div>Criteria</div>
+            <div>Build</div>
+            <div>Buy</div>
+            <div>Extend</div>
+          </div>
+          <div class="tcm-row r1" data-step data-script="<em>Strategic fit</em>. Build wins for strategic differentiation — score 5. Buy gives you commodity capabilities — score 2. Extend gets a 4 — strong domain alignment.">
+            <div>Strategic fit</div>
+            <div>5</div><div>2</div><div>4</div>
+          </div>
+          <div class="tcm-row r2" data-step data-script="<em>Time-to-value</em>. Buy wins — score 5, immediate. Build slowest — score 2. Extend fast — score 4.">
+            <div>Time-to-Value</div>
+            <div>2</div><div>5</div><div>4</div>
+          </div>
+          <div class="tcm-row r3" data-step data-script="<em>TCO</em>. Buy lowest cost — score 4. Build highest — score 2. Extend middle — score 3.">
+            <div>TCO</div>
+            <div>2</div><div>4</div><div>3</div>
+          </div>
+          <div class="tcm-row r4" data-step data-script="<em>Customization need</em>. Build maximum — score 5. Buy minimum — score 2. Extend strong — score 4.">
+            <div>Customization need</div>
+            <div>5</div><div>2</div><div>4</div>
+          </div>
+          <div class="tcm-row r5" data-step data-script="<em>Maintainability</em>. Build hardest to maintain — score 3 (you own everything). Buy easiest — score 4 (vendor maintains). Extend solid — score 4.">
+            <div>Maintainability</div>
+            <div>3</div><div>4</div><div>4</div>
+          </div>
+          <div class="tcm-row totals-row" data-step data-script="<em>Totals</em>. Build 17. Buy 17. Extend 19. <em>Extend wins on average.</em> That's why it's the default path. Adjust weights for your customer's priorities — strategic differentiation might tip toward Build, urgent timeline toward Buy.">
+            <div>Total score</div>
+            <div class="score">17</div>
+            <div class="score">17</div>
+            <div class="score" style="color:var(--money)">19</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 17 QUIZ 3 -->
+      <section class="slide content-slide"
+        data-section="Build · Buy · Extend"
+        data-script="Quick check on Build vs Buy vs Extend.">
+        <div class="slide-num">17 / 23</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 3 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which scenario most strongly indicates a <em>Build approach?</em></div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Standard HR onboarding workflow</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">B</span> Document summarization for internal policies</button>
+            <button class="quiz-opt" data-correct="true" data-explain="A highly specialized decision engine that differentiates the organization competitively is the textbook Build scenario. It defines competitive advantage, requires deep customization, and likely requires data sensitivity controls SaaS can't offer. The other three are Extend or Buy scenarios — standard workflows are commodity, document summarization is what M365 Copilot already does, email triage is well-served by Copilot Studio extension."><span class="letter">C</span> Highly specialized decision engine that differentiates the organization competitively</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Simple customer email triage</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 18 SECTION DIVIDER UNIT 4 -->
+      <section class="slide section-divider"
+        data-section="Model Router"
+        data-script="Last unit. <em>Model routing.</em> The cost optimization layer. Route simple tasks to small models, complex tasks to large models. Save 60–80% on model costs without sacrificing quality.">
+        <div class="slide-num">18 / 23</div>
+        <div class="label">UNIT FOUR</div>
+        <h2>Azure AI Foundry<br><em>Model Router</em></h2>
+        <div class="sub">Route requests intelligently. Small models for simple tasks. Large models for complex reasoning. Cost optimization without quality loss.</div>
+      </section>
+
+      <!-- 19 WHY MODEL ROUTING -->
+      <section class="slide content-slide"
+        data-section="Model Router"
+        data-script="<em>Four reasons to invest in routing.</em> One unified endpoint. Smart selection. Failover. Hybrid AI strategies. I'll bring them up one at a time.">
+        <div class="slide-num">19 / 23</div>
+        <h3 class="slide-h">Why <em>model routing</em> matters</h3>
+        <p class="lead">Modern AI apps use multiple models — general LLMs, small language models, fine-tuned models, task-specific models. The router decides which one handles each request.</p>
+        <div class="why-grid">
+          <div class="why-card w1" data-step data-script="<em>Reason 1 — Optimize cost</em>. SLMs for simple tasks. LLMs only when needed. Reduce token consumption. Most workloads have an 80/20 split — 80% of requests can run on a smaller, cheaper model.">
+            <div class="icon">$</div>
+            <div class="body">
+              <h5>Optimize Cost</h5>
+              <p><strong>SLMs for simple tasks. LLMs only when needed.</strong> 80/20 rule applies — 80% of requests don't need GPT-4-class reasoning.</p>
+            </div>
+          </div>
+          <div class="why-card w2" data-step data-script="<em>Reason 2 — Improve performance</em>. Route low-latency tasks to faster models. Route domain-specific tasks to fine-tuned models. Better response time, better accuracy where it matters.">
+            <div class="icon">⚡</div>
+            <div class="body">
+              <h5>Improve Performance</h5>
+              <p><strong>Low-latency to fast models. Domain-specific to fine-tuned.</strong> Right-size each request to its real needs.</p>
+            </div>
+          </div>
+          <div class="why-card w3" data-step data-script="<em>Reason 3 — Increase reliability</em>. Failover to backup models. Switch automatically to newer versions. Built-in resiliency for production-critical agents.">
+            <div class="icon">⛨</div>
+            <div class="body">
+              <h5>Increase Reliability</h5>
+              <p><strong>Automatic failover. Version-aware routing.</strong> Production-grade resiliency without rewriting application code.</p>
+            </div>
+          </div>
+          <div class="why-card w4" data-step data-script="<em>Reason 4 — Hybrid AI strategies</em>. Combine foundation, fine-tuned, and custom models. Aligns with build, buy, or both. The router becomes the integration layer for mixed-model strategies.">
+            <div class="icon">⇆</div>
+            <div class="body">
+              <h5>Hybrid AI Strategies</h5>
+              <p><strong>Mix foundation + fine-tuned + custom.</strong> The router becomes the integration layer for build/buy/both strategies.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 20 ROUTING RULES -->
+      <section class="slide content-slide"
+        data-section="Model Router"
+        data-script="<em>Four types of routing rules.</em> Static, weighted, fallback, version-based. Use them in combination. I'll bring them up one at a time with concrete examples.">
+        <div class="slide-num">20 / 23</div>
+        <h3 class="slide-h">Four types of <em>routing rules</em></h3>
+        <p class="lead">Use these in combination. A real production router runs static rules first, then weighted A/B, with fallback safety nets and version-based gradual rollouts.</p>
+        <div class="rules-grid">
+          <div class="rule-card r1" data-step data-script="<em>Static rules</em>. Deterministic. <em>If task is classification, use SLM. If domain is finance, use fine-tuned model.</em> Most common pattern. Predictable cost and latency.">
+            <div class="rule-num">RULE TYPE 01</div>
+            <h4>Static Rules</h4>
+            <p>Deterministic if-then routing. Predictable cost and behavior.</p>
+            <div class="ex-snippet">if task = classification<br>  → use SLM<br>if domain = finance<br>  → use fine-tuned model</div>
+          </div>
+          <div class="rule-card r2" data-step data-script="<em>Weighted routing</em>. Distribute traffic across models. Used for A/B testing and gradual rollout. <em>Send 90% to v1, 10% to v2.</em> Compare quality, then shift weights.">
+            <div class="rule-num">RULE TYPE 02</div>
+            <h4>Weighted Routing</h4>
+            <p>Distribute traffic across models for A/B testing and gradual rollout.</p>
+            <div class="ex-snippet">v1 → 90% traffic<br>v2 → 10% traffic<br>shift gradually based on KPIs</div>
+          </div>
+          <div class="rule-card r3" data-step data-script="<em>Fallback routing</em>. If primary fails, automatically route to backup. <em>Resiliency at the model layer.</em> Critical for production agents.">
+            <div class="rule-num">RULE TYPE 03</div>
+            <h4>Fallback Routing</h4>
+            <p>If primary model fails or rate-limits, route to backup model automatically.</p>
+            <div class="ex-snippet">primary: gpt-4-turbo<br>fallback-1: gpt-4o-mini<br>fallback-2: phi-3-medium</div>
+          </div>
+          <div class="rule-card r4" data-step data-script="<em>Version-based routing</em>. Route to latest stable, or to experimental versions for early testing. <em>Lets you adopt new model versions safely</em> without redeploying app code.">
+            <div class="rule-num">RULE TYPE 04</div>
+            <h4>Version-Based Routing</h4>
+            <p>Route by model version — latest stable, experimental, or pinned.</p>
+            <div class="ex-snippet">production → stable<br>canary → experimental<br>compliance → pinned-v1</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 21 QUIZ 4 -->
+      <section class="slide content-slide"
+        data-section="Model Router"
+        data-script="Last knowledge check.">
+        <div class="slide-num">21 / 23</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 4 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which factor most strongly indicates routing to an <em>SLM</em> rather than an LLM?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> High creativity required</button>
+            <button class="quiz-opt" data-correct="true" data-explain="High latency sensitivity favors SLMs because small language models respond significantly faster than large LLMs — often sub-100ms vs 1–2 seconds. SLMs trade some reasoning depth for speed and cost. High creativity, high domain complexity, and high compliance risk all push toward LLMs or fine-tuned models, not SLMs."><span class="letter">B</span> High latency sensitivity</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> High domain complexity</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> High compliance risk</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 22 SCENARIO -->
+      <section class="slide content-slide"
+        data-section="Wrap"
+        data-script="<em>Apply everything from Chapter 4.</em> Pairs work through this ROI scenario. Listen for who jumps to <em>'build a custom agent'</em> — push them back to the weighted scoring matrix.">
+        <div class="slide-num">22 / 23</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Scenario <em>discussion</em></h3>
+        <p class="lead" style="margin-bottom:14px">Real numbers, real decision. Calculate the ROI and recommend Build · Buy · Extend.</p>
+        <div class="scenario">
+          <div class="tag">Scenario · Pair Discussion</div>
+          <h3>InsureCo wants to triage claims with AI</h3>
+          <div class="quote">"InsureCo processes 80,000 claims a year. Each claim takes a junior adjuster 22 minutes on average to read, categorize, and route. Loaded labor rate is $52 an hour. Leadership wants to deploy an AI agent to triage simple claims. Vendor pitched a custom build at $1.2M with 11-month timeline. Your platform team thinks Copilot Studio with custom topics + Azure AI Search grounding could ship in 8 weeks."</div>
+          <div class="data-row">
+            <div class="data-tile"><div class="lbl">Claims / year</div><div class="val">80,000</div></div>
+            <div class="data-tile"><div class="lbl">Avg time per claim</div><div class="val">22 min</div></div>
+            <div class="data-tile"><div class="lbl">Loaded rate</div><div class="val">$52/hr</div></div>
+            <div class="data-tile"><div class="lbl">Adoption (assume)</div><div class="val">70%</div></div>
+          </div>
+          <div class="prompts">
+            <h5>Discuss with your partner</h5>
+            <ul>
+              <li>If the agent saves 14 minutes per triaged claim — what's the annual labor savings?</li>
+              <li>Build option: $1.2M, 11mo. Extend (Copilot Studio): est. $250K Year-1 TCO. Compute ROI %, payback for each.</li>
+              <li>Apply the weighted scoring matrix — does the math support Build or Extend?</li>
+              <li>What model routing rule would you put in place to keep ongoing costs down?</li>
+            </ul>
+          </div>
+          <button class="reveal-btn" id="revealAnswer">Reveal Discussion Points →</button>
+          <div class="answer-panel" id="answerPanel">
+            <div class="ap-label">Guide · suggested points</div>
+            <div class="ap-row">
+              <div class="ap-q">Annual labor savings calculation</div>
+              <div class="ap-a">
+                <div class="calc-line">14 min ÷ 60 × 80,000 × 70% × $52 = <strong style="color:var(--money)">~$679,000 / year</strong></div>
+                <span>That's labor only — adjuster time freed for higher-value work.</span>
+                <span>Add error-cost-avoided + faster cycle time → realistic upside ~$850K–$900K.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">ROI &amp; payback — Build vs Extend</div>
+              <div class="ap-a">
+                <div class="calc-line"><strong>Build:</strong> Year-1 net = $679K − $1.2M = −$521K loss · ROI = −43% · payback ~21mo</div>
+                <div class="calc-line"><strong>Extend:</strong> Year-1 net = $679K − $250K = +$429K gain · ROI = 172% · payback ~4.4mo</div>
+                <span>Extend wins decisively on year-1 economics. Build catches up only in Year 3+ assuming the customization compounds.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Weighted scoring assessment</div>
+              <div class="ap-a">
+                <span><strong>Strategic fit:</strong> claims triage is operational, not differentiating — Extend wins.</span>
+                <span><strong>Time-to-value:</strong> 8 weeks vs 11 months — Extend dominates.</span>
+                <span><strong>TCO:</strong> $250K vs $1.2M — Extend dominates.</span>
+                <span><strong>Customization:</strong> Copilot Studio + Azure AI Search handles claim ground truth — Extend sufficient.</span>
+                <span><strong>Recommendation:</strong> Extend. Push back firmly on the vendor's $1.2M pitch.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Model routing rule</div>
+              <div class="ap-a">
+                <span><strong>Static rule:</strong> simple-category claim → SLM (Phi-3 or similar). Complex/edge case → GPT-4-class.</span>
+                <span><strong>Fallback:</strong> if primary rate-limits, route to backup SLM.</span>
+                <span><strong>Outcome:</strong> ~80% of claims hit the cheap path → token costs drop 60–70% vs single-LLM design.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 23 RECAP -->
+      <section class="slide content-slide"
+        data-section="Wrap"
+        data-script="Final recap. Six things to take into Chapter 5. I'll bring them up one at a time.">
+        <div class="slide-num">23 / 23</div>
+        <h3 class="slide-h">Chapter 4 — <em>key takeaways</em></h3>
+        <p class="lead">Six things to carry forward.</p>
+        <div class="recap">
+          <div class="recap-list">
+            <div class="recap-item" data-step
+              data-script="One — five ROI categories. Productivity, cost savings, revenue, risk reduction, strategic value. Quantify across all five.">
+              <div class="check">1</div><div class="text"><em>Five ROI categories:</em> Productivity · Cost Savings · Revenue · Risk Reduction · Strategic Value.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Two — five TCO drivers. Infrastructure, development, data prep, expertise, operations. All five, every project.">
+              <div class="check">2</div><div class="text"><em>Five TCO drivers:</em> Infrastructure · Development · Data Prep · Expertise · Operations. All five, every project.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Three — the core formula. Annual benefit equals minutes saved per run divided by 60, times runs per year, times labor rate. Memorize it.">
+              <div class="check">3</div><div class="text">Core formula: <em>Annual Benefit = (min/run ÷ 60) × runs/year × labor rate</em> + error/throughput effects.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Four — Build vs Buy vs Extend. Extend wins by default. Build only when you're competing on the AI itself. Buy only when speed beats fit.">
+              <div class="check">4</div><div class="text"><em>Extend wins by default.</em> Build only when AI is your competitive advantage. Buy only when speed beats fit.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Five — weighted scoring matrix. Five criteria, score one to five, sum the columns. Defensible methodology for executive review.">
+              <div class="check">5</div><div class="text">Use the <em>weighted scoring matrix</em>: 5 criteria × 3 options. Sum columns. Defensible to leadership.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Six — model router cuts 60–80% of token costs. SLMs for simple, LLMs for complex. Apply this on every production agent. <em>That's Chapter 4. Onwards to Chapter 5 — designing AI and agents in detail.</em>">
+              <div class="check">6</div><div class="text"><em>Model Router</em> cuts 60–80% of token cost. SLM for simple, LLM for complex, fallback for resilience.</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:22px;text-align:center;font-size:18px;color:var(--copilot);font-weight:600">
+          → Continue to Chapter 5: Design AI and Agents
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="notes-panel" id="notesPanel">
+    <div class="label">📖 Read aloud · notes <span class="step-tag" id="stepTag"></span></div>
+    <div class="script" id="notesScript">Welcome script will appear here.</div>
+  </div>
+
+
+
+  <div class="float-hint" id="hint">← → to advance step-by-step · T for notes</div>
+
+</div>
+
+<script>
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+  let notesOpen = false;
+  const counter = document.getElementById('counter');
+  const progressFill = document.getElementById('progressFill');
+  const notesPanel = document.getElementById('notesPanel');
+  const notesScript = document.getElementById('notesScript');
+  const stepTag = document.getElementById('stepTag');
+  const sectionLabel = document.getElementById('sectionLabel');
+  const stepPill = document.getElementById('stepPill');
+  const stepIndicator = document.getElementById('stepIndicator');
+  const notesToggle = document.getElementById('notesToggle');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const hint = document.getElementById('hint');
+  function getSteps(s){return Array.from(s.querySelectorAll('[data-step]'));}
+  function getRevealed(s){return Array.from(s.querySelectorAll('[data-step].revealed'));}
+  function updateScript(text, stepInfo){
+    notesScript.classList.add('fading');
+    setTimeout(()=>{
+      notesScript.innerHTML = text || '';
+      stepTag.textContent = stepInfo || '';
+      notesScript.classList.remove('fading');
+    },180);
+  }
+  function updateStepIndicator(slide){
+    const steps = getSteps(slide); const revealed = getRevealed(slide);
+    if(steps.length>0 && revealed.length<steps.length){
+      stepIndicator.classList.add('show');
+      stepPill.style.display='inline-block';
+      stepPill.textContent = `Step ${revealed.length}/${steps.length}`;
+    } else if(steps.length>0){
+      stepIndicator.classList.remove('show');
+      stepPill.style.display='inline-block';
+      stepPill.textContent = `${steps.length}/${steps.length}`;
+    } else {
+      stepIndicator.classList.remove('show');
+      stepPill.style.display='none';
+    }
+  }
+  function showSlide(i, revealAll){
+    if(i<0||i>=total) return;
+    slides[current].classList.remove('active');
+    getSteps(slides[current]).forEach(el=>el.classList.remove('revealed'));
+    current = i;
+    const slide = slides[current];
+    slide.classList.add('active');
+    slide.scrollTop = 0;
+    if(revealAll){ getSteps(slide).forEach(el=>el.classList.add('revealed')); }
+    counter.textContent = (current+1)+' / '+total;
+    progressFill.style.width = ((current+1)/total*100)+'%';
+    sectionLabel.textContent = slide.dataset.section || '';
+    if(revealAll){
+      const steps = getSteps(slide); const last = steps[steps.length-1];
+      if(last && last.dataset.script) updateScript(last.dataset.script, `Step ${steps.length}/${steps.length}`);
+      else updateScript(slide.dataset.script, '');
+    } else { updateScript(slide.dataset.script, ''); }
+    updateStepIndicator(slide);
+    prevBtn.disabled = (current===0 && getRevealed(slide).length===0);
+    nextBtn.disabled = (current===total-1 && (getSteps(slide).length===0 || getRevealed(slide).length===getSteps(slide).length));
+  }
+  function next(){
+    const slide = slides[current]; const steps = getSteps(slide); const revealed = getRevealed(slide);
+    if(revealed.length<steps.length){
+      const idx = revealed.length; const el = steps[idx];
+      el.classList.add('revealed');
+      if(el.dataset.script) updateScript(el.dataset.script, `Step ${idx+1}/${steps.length}`);
+      updateStepIndicator(slide); prevBtn.disabled=false;
+      if(revealed.length+1===steps.length && current===total-1) nextBtn.disabled=true;
+    } else if(current<total-1){ showSlide(current+1, false); }
+  }
+  function prev(){
+    const slide = slides[current]; const revealed = getRevealed(slide);
+    if(revealed.length>0){
+      const last = revealed[revealed.length-1]; last.classList.remove('revealed');
+      const remaining = getRevealed(slide);
+      if(remaining.length>0){
+        const r = remaining[remaining.length-1]; const total = getSteps(slide).length;
+        updateScript(r.dataset.script, `Step ${remaining.length}/${total}`);
+      } else { updateScript(slide.dataset.script, ''); }
+      updateStepIndicator(slide); nextBtn.disabled=false;
+    } else if(current>0){ showSlide(current-1, true); }
+  }
+  function toggleNotes(){
+    notesOpen = !notesOpen;
+    notesPanel.classList.toggle('open', notesOpen);
+    notesToggle.classList.toggle('active', notesOpen);
+  }
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+  notesToggle.addEventListener('click', toggleNotes);
+  document.addEventListener('keydown',(e)=>{
+    if(e.target.matches('input,textarea')) return;
+    if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}
+    else if(e.key==='ArrowLeft'){e.preventDefault();prev();}
+    else if(e.key==='t'||e.key==='T'){e.preventDefault();toggleNotes();}
+    else if(e.key==='Home'){e.preventDefault();showSlide(0,false);}
+    else if(e.key==='End'){e.preventDefault();showSlide(total-1,true);}
+  });
+  document.querySelectorAll('.quiz-opt').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const wrap = btn.closest('.quiz-wrap'); const opts = wrap.querySelectorAll('.quiz-opt'); const explain = wrap.querySelector('.quiz-explain');
+      opts.forEach(o=>{ if(o.dataset.correct==='true') o.classList.add('correct'); else o.classList.add('wrong'); });
+      const correctOpt = wrap.querySelector('.quiz-opt[data-correct="true"]');
+      if(correctOpt && explain){ explain.querySelector('p').textContent = correctOpt.dataset.explain || ''; explain.classList.add('show'); }
+    });
+  });
+  const revealBtn = document.getElementById('revealAnswer'); const answerPanel = document.getElementById('answerPanel');
+  if(revealBtn && answerPanel){
+    revealBtn.addEventListener('click',()=>{ answerPanel.classList.add('show'); revealBtn.classList.add('shown'); });
+  }
+  setTimeout(()=>{hint.classList.add('show');},800);
+  setTimeout(()=>{hint.classList.remove('show');},5500);
+  showSlide(0,false);
+})();
+</script>
+</body>
+</html>

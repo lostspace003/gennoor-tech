@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 01 — Introduction to Agentic AI Business Solution Architecture · Gennoor Tech</title>
+<style>
+:root{
+  /* Fluent neutrals */
+  --bg:#FAFAFA; --paper:#FFFFFF;
+  --ink:#201F1E; --ink-soft:#605E5C; --ink-mute:#8A8886;
+  --line:#EDEBE9; --line-soft:#F3F2F1;
+  /* Microsoft brand */
+  --ms-blue:#2563EB; --ms-blue-deep:#1D4ED8; --ms-navy:#0C1426;
+  --ms-cyan:#60A5FA; --ms-cyan-deep:#1E40AF;
+  /* Copilot accent */
+  --copilot:#F59E0B; --copilot-light:#FCD34D; --copilot-pink:#E3008C;
+  /* Fluent semantic */
+  --ms-yellow:#F59E0B; --ms-green:#107C10; --ms-red:#D13438; --ms-orange:#F97316;
+  /* Logo squares */
+  --logo-red:#2563EB; --logo-green:#2563EB; --logo-blue:#F59E0B; --logo-yellow:#F59E0B;
+  /* Notes panel */
+  --notes-bg:#0C1426; --notes-text:#FFFFFF; --notes-accent:#F59E0B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
+  font-size:19px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+
+.app{position:fixed;inset:0;display:flex;flex-direction:column}
+
+/* TOP BAR */
+.topbar{
+  height:56px;background:var(--ms-navy);color:#FFFFFF;
+  display:flex;align-items:center;padding:0 24px;gap:18px;
+  border-bottom:1px solid rgba(255,255,255,.06);z-index:10;
+}
+.topbar .brand-mark{width:30px;height:30px;flex-shrink:0;display:block}
+.topbar .brand-lockup{display:flex;align-items:center;gap:10px;text-decoration:none;color:#FFFFFF;flex-shrink:0}
+.topbar .brand-text{display:flex;flex-direction:column;line-height:1.1}
+.topbar .brand-name{font-size:18px;font-weight:600;letter-spacing:.3px;color:#FFFFFF}
+.topbar .brand-sub{font-size:12px;color:var(--ms-yellow);letter-spacing:1.2px;text-transform:uppercase;font-weight:600;font-family:'Cascadia Code','Consolas',monospace}
+.topbar .divider{width:1px;height:24px;background:rgba(255,255,255,.15)}
+.topbar .logo{font-weight:600;font-size:20px;letter-spacing:.2px}
+.topbar .chapter-title{font-size:16px;opacity:.75;letter-spacing:.2px;font-weight:400}
+.topbar.topbar-grid .topbar-left .chapter-title{max-width:36ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topbar .spacer{flex:1}
+.topbar .meta{font-size:16px;opacity:.85;display:flex;gap:10px;align-items:center}
+.topbar .meta .pill{padding:4px 12px;background:rgba(255,255,255,.10);border-radius:4px;font-size:15px;font-weight:500}
+.topbar .meta .step-pill{background:var(--ms-blue);font-weight:600;font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px}
+.topbar button{
+  background:transparent;border:1px solid rgba(255,255,255,.25);
+  color:#FFFFFF;padding:7px 16px;border-radius:4px;
+  font-family:inherit;font-size:16px;font-weight:500;cursor:pointer;transition:.15s;
+}
+.topbar button:hover{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.4)}
+.topbar button.active{background:var(--ms-blue);border-color:var(--ms-blue)}
+
+.progress{height:3px;background:rgba(255,255,255,.06);position:relative;border-bottom:1px solid var(--line)}
+.progress-fill{position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg,var(--ms-blue) 0%,var(--copilot) 50%,var(--ms-cyan) 100%);transition:width .4s cubic-bezier(.4,0,.2,1)}
+
+/* STAGE */
+.stage{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.slides{width:100%;height:100%;position:relative}
+.slide{position:absolute;inset:0;padding:40px 64px 80px;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .35s ease;overflow-y:auto}
+.slide.active{opacity:1;pointer-events:auto}
+.slide-num{position:absolute;top:18px;right:28px;font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ink-mute);letter-spacing:1.5px}
+
+/* STEP REVEAL SYSTEM */
+[data-step]{
+  opacity:0;transform:translateY(14px);
+  transition:opacity .55s cubic-bezier(.2,.7,.3,1), transform .55s cubic-bezier(.2,.7,.3,1);
+  pointer-events:none;
+}
+[data-step].revealed{opacity:1;transform:translateY(0);pointer-events:auto}
+[data-step].slide-in-left{transform:translateX(-24px)}
+[data-step].slide-in-left.revealed{transform:translateX(0)}
+[data-step].slide-in-right{transform:translateX(24px)}
+[data-step].slide-in-right.revealed{transform:translateX(0)}
+[data-step].zoom-in{transform:scale(.85)}
+[data-step].zoom-in.revealed{transform:scale(1)}
+
+/* NOTES PANEL */
+.notes-panel{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--notes-bg);color:var(--notes-text);
+  padding:22px 32px 26px;border-top:3px solid var(--notes-accent);
+  transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);
+  z-index:20;max-height:48vh;overflow-y:auto;box-shadow:0 -20px 40px rgba(0,0,0,.18);
+}
+.notes-panel.open{transform:translateY(0)}
+.notes-panel .label{display:flex;align-items:center;gap:10px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--notes-accent);margin-bottom:10px;font-weight:600}
+.notes-panel .label::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--notes-accent);animation:pulse 1.6s ease-in-out infinite}
+.notes-panel .label .step-tag{margin-left:auto;font-size:12px;color:rgba(255,255,255,.55);letter-spacing:1px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.notes-panel .script{font-size:22px;line-height:1.65;max-width:880px;font-weight:400;transition:opacity .25s}
+.notes-panel .script.fading{opacity:.3}
+.notes-panel .script em{color:var(--notes-accent);font-style:normal;font-weight:600;background:rgba(255,185,0,.15);padding:1px 6px;border-radius:3px}
+
+/* CONTROLS */
+.controls{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:var(--ms-navy);padding:8px 14px;border-radius:4px;box-shadow:0 6px 24px rgba(0,32,80,.25);z-index:15}
+.controls button{width:36px;height:36px;border-radius:3px;border:none;background:transparent;color:#FFFFFF;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;transition:.15s}
+.controls button:hover{background:rgba(255,255,255,.12)}
+.controls button:disabled{opacity:.3;cursor:not-allowed}
+.controls .counter{font-family:'Cascadia Code','Consolas',monospace;font-size:16px;color:#FFFFFF;padding:0 14px;letter-spacing:1px;font-weight:500}
+
+.step-indicator{position:fixed;bottom:64px;left:50%;transform:translateX(-50%);font-size:14px;font-family:'Cascadia Code','Consolas',monospace;color:var(--ms-blue);letter-spacing:1.5px;opacity:0;transition:opacity .3s;z-index:14;text-transform:uppercase;font-weight:600}
+.step-indicator.show{opacity:.85}
+.step-indicator::after{content:" →";animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+
+/* TITLE SLIDE — Copilot gradient hero */
+.slide.title-slide{
+  background:linear-gradient(135deg,#0C1426 0%,#1D4ED8 35%,#2563EB 70%,#60A5FA 110%);
+  color:#FFFFFF;justify-content:center;padding:175px 100px 100px 100px;position:absolute;overflow:hidden;
+}
+.slide.title-slide .brand-full{position:absolute;top:48px;left:64px;display:flex;align-items:center;gap:16px}
+.slide.title-slide .brand-mark-lg{width:64px;height:64px}
+.slide.title-slide .brand-wordmark{display:flex;flex-direction:column;line-height:1}
+.slide.title-slide .brand-wordmark .name{font-size:30px;font-weight:600;letter-spacing:1px;color:#FFFFFF}
+.slide.title-slide .brand-wordmark .tag{font-size:14px;color:var(--ms-yellow);letter-spacing:3px;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;margin-top:4px;text-transform:uppercase}
+.slide.title-slide .eyebrow{font-family:'Cascadia Code','Consolas',monospace;font-size:16px;letter-spacing:3px;color:var(--ms-cyan);margin-bottom:20px;font-weight:500}
+.slide.title-slide h1{font-size:90px;line-height:1.1;font-weight:600;max-width:1200px;letter-spacing:-1.5px}
+.slide.title-slide h1 em{font-style:normal;color:var(--ms-cyan);font-weight:600}
+.slide.title-slide .meta-row{margin-top:48px;display:flex;gap:36px;font-size:18px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.slide.title-slide .meta-row strong{color:#FFFFFF;display:block;font-size:28px;text-transform:none;font-weight:600;letter-spacing:0;margin-top:4px}
+.title-slide::before{content:"";position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(98,100,167,.30) 0%,transparent 70%);top:-200px;right:-200px;pointer-events:none}
+.title-slide::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(80,230,255,.20) 0%,transparent 70%);bottom:-160px;left:-160px;pointer-events:none}
+
+/* SECTION DIVIDER — Microsoft Blue → Copilot purple gradient */
+.slide.section-divider{
+  background:linear-gradient(135deg,var(--ms-blue) 0%,var(--copilot) 100%);
+  color:#FFFFFF;justify-content:center;align-items:flex-start;padding:80px;position:relative;overflow:hidden;
+}
+.slide.section-divider::before{content:"";position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(80,230,255,.18) 0%,transparent 70%);top:-180px;right:-180px;pointer-events:none}
+.slide.section-divider .label{font-family:'Cascadia Code','Consolas',monospace;font-size:18px;letter-spacing:4px;margin-bottom:18px;opacity:.8;font-weight:500}
+.slide.section-divider h2{font-size:98px;line-height:1.05;font-weight:600;max-width:1100px;letter-spacing:-2px}
+.slide.section-divider h2 em{font-style:normal;color:var(--ms-cyan);font-weight:600}
+.slide.section-divider .sub{margin-top:28px;font-size:25px;max-width:780px;color:rgba(255,255,255,.95);font-weight:400;line-height:1.45}
+
+/* CONTENT SLIDE */
+.slide.content-slide{padding:48px 72px 90px}
+.slide h3.slide-h{font-size:48px;font-weight:600;letter-spacing:-.6px;margin-bottom:8px;line-height:1.15;color:var(--ms-navy)}
+.slide h3.slide-h em{font-style:normal;color:var(--copilot);font-weight:600}
+.slide .lead{font-size:21px;color:var(--ink-soft);margin-bottom:28px;max-width:900px}
+
+/* CARDS */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.cards.cols-2{grid-template-columns:repeat(2,1fr)}
+.card{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--ms-blue);padding:20px;border-radius:4px;position:relative;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.card .num{font-size:28px;color:var(--ms-blue);font-weight:600;margin-bottom:4px;line-height:1;letter-spacing:-.5px}
+.card h4{font-size:21px;font-weight:600;margin-bottom:6px;color:var(--ms-navy)}
+.card p{font-size:17px;color:var(--ink-soft);line-height:1.5}
+.card .ex{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:16px;color:var(--ms-blue-deep);font-style:italic}
+.card .ex strong{color:var(--copilot);font-style:normal;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:2px}
+.card.summary-card{background:linear-gradient(135deg,var(--ms-navy) 0%,var(--copilot) 100%);color:#FFFFFF;border:none}
+.card.summary-card h4{color:#FFFFFF}
+.card.summary-card p{color:rgba(255,255,255,.85)}
+.card.summary-card .num{color:var(--ms-cyan)}
+.card.summary-card .ex{border-top-color:rgba(255,255,255,.15);color:var(--ms-cyan)}
+
+/* BRIDGE */
+.bridge{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:36px 40px;margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:24px;position:relative;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.bridge .pillar{flex:0 0 200px;text-align:center}
+.bridge .pillar .icon{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:40px;font-weight:600}
+.bridge .pillar.left .icon{background:#DBEAFE;color:var(--ms-blue)}
+.bridge .pillar.right .icon{background:#E5E3F4;color:var(--copilot)}
+.bridge .pillar h5{font-size:24px;margin-bottom:4px;color:var(--ms-navy);font-weight:600}
+.bridge .pillar p{font-size:15px;color:var(--ink-soft);line-height:1.45}
+.bridge .center{flex:1;text-align:center;position:relative}
+.bridge .arch{position:relative;height:110px}
+.bridge .arch svg{width:100%;height:100%}
+.bridge .role-tag{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,var(--ms-blue) 0%,var(--copilot) 100%);color:#FFFFFF;padding:12px 22px;border-radius:4px;font-size:20px;font-weight:600;white-space:nowrap;box-shadow:0 6px 20px rgba(0,120,212,.30)}
+[data-step].revealed .role-tag{animation:tagPulse 2.4s ease-in-out infinite}
+@keyframes tagPulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.05)}}
+.bridge-arrow{stroke:url(#bridgeGradient);stroke-width:3;fill:none;stroke-dasharray:1000;stroke-dashoffset:1000}
+[data-step].revealed .bridge-arrow{animation:drawArrow 1.6s ease forwards}
+@keyframes drawArrow{to{stroke-dashoffset:0}}
+
+/* TRANSLATIONS */
+.translations{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.translation{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--copilot);border-radius:4px;padding:14px 18px;display:flex;gap:10px;align-items:flex-start;font-size:17px}
+.translation .from{color:var(--ms-blue-deep);font-weight:600}
+.translation .arrow{color:var(--ink-mute);margin:0 4px}
+.translation .to{color:var(--copilot);font-weight:600}
+.translation p{color:var(--ink);line-height:1.5;flex:1}
+
+/* PROCESS */
+.process{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:14px;position:relative}
+.process-line{position:absolute;top:30px;left:5%;right:5%;height:2px;background:var(--line);overflow:hidden}
+.process-line::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--ms-blue) 0%,var(--copilot) 100%);transform:scaleX(0);transform-origin:left;transition:transform 1.5s ease}
+.process-line.revealed::after{transform:scaleX(1)}
+.step-pf{text-align:center;position:relative;z-index:1}
+.step-pf .dot{width:60px;height:60px;border-radius:50%;background:var(--paper);border:3px solid var(--ms-blue);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--ms-blue);font-weight:600;box-shadow:0 4px 14px rgba(0,120,212,.20)}
+.step-pf h6{font-size:20px;color:var(--ms-navy);margin-bottom:4px;font-weight:600}
+.step-pf p{font-size:14px;color:var(--ink-soft);padding:0 4px;line-height:1.4}
+
+.phase-detail{margin-top:24px;display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.phase-detail .pd{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--copilot);padding:12px 14px;border-radius:4px;font-size:14px;color:var(--ink-soft);line-height:1.45}
+.phase-detail .pd strong{display:block;color:var(--ms-navy);font-size:16px;margin-bottom:4px;font-weight:600}
+
+/* ECOSYSTEM */
+.ecosystem{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:30px;margin-top:10px;position:relative;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.ecosystem .center-node{display:block;width:fit-content;margin:0 auto 24px;background:linear-gradient(135deg,var(--ms-navy) 0%,var(--ms-blue) 50%,var(--copilot) 100%);color:#FFFFFF;padding:14px 28px;border-radius:6px;font-size:22px;font-weight:600;text-align:center;box-shadow:0 8px 24px rgba(0,32,80,.25);letter-spacing:.2px}
+.ecosystem .branches{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.ecosystem .branch{background:var(--bg);padding:14px 12px;border-radius:4px;text-align:center;border-top:3px solid;transition:transform .2s}
+.ecosystem .branch:hover{transform:translateY(-2px)}
+.ecosystem .branch.b1{border-top-color:#2563EB}  /* Azure blue */
+.ecosystem .branch.b2{border-top-color:#F59E0B}  /* Foundry — Copilot purple */
+.ecosystem .branch.b3{border-top-color:#1E40AF}  /* Copilot Studio cyan */
+.ecosystem .branch.b4{border-top-color:#1D4ED8}  /* M365 deep blue */
+.ecosystem .branch.b5{border-top-color:#B45309}  /* Dynamics dark purple */
+.ecosystem .branch h6{font-size:18px;color:var(--ms-navy);margin-bottom:3px;font-weight:600}
+.ecosystem .branch p{font-size:14px;color:var(--ink-soft);line-height:1.4;margin-bottom:6px}
+.ecosystem .branch .use{font-size:12px;color:var(--ms-blue);font-weight:600;text-transform:uppercase;letter-spacing:.3px;border-top:1px dashed var(--line);padding-top:6px;margin-top:6px}
+
+.test-callout{margin-top:18px;padding:14px 22px;background:#FFF4CE;border-left:4px solid var(--ms-yellow);border-radius:4px;max-width:900px}
+.test-callout .label{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;letter-spacing:2px;color:#8A6914;text-transform:uppercase;margin-bottom:4px;font-weight:600}
+.test-callout .body{font-size:19px;color:var(--ms-navy);line-height:1.5}
+.test-callout .body span.ans{color:var(--ms-blue);font-weight:600}
+
+/* QUIZ */
+.quiz-wrap{max-width:880px;margin:0 auto;width:100%}
+.quiz-q{font-size:35px;line-height:1.3;font-weight:600;color:var(--ms-navy);margin-bottom:28px;letter-spacing:-.3px}
+.quiz-q em{font-style:normal;color:var(--copilot);font-weight:600}
+.quiz-options{display:flex;flex-direction:column;gap:10px}
+.quiz-opt{background:var(--paper);border:1px solid var(--line);padding:16px 20px;border-radius:4px;cursor:pointer;display:flex;align-items:center;gap:18px;transition:.15s;font-size:19px;font-family:inherit;text-align:left;width:100%;color:var(--ink)}
+.quiz-opt:hover{border-color:var(--ms-blue);background:#F3F9FD;box-shadow:0 2px 6px rgba(0,120,212,.10)}
+.quiz-opt .letter{width:32px;height:32px;border-radius:4px;background:var(--bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--ms-blue-deep);flex-shrink:0;font-size:18px}
+.quiz-opt.correct{border-color:var(--ms-green);background:#DFF6DD}
+.quiz-opt.correct .letter{background:var(--ms-green);color:#FFFFFF;border-color:var(--ms-green)}
+.quiz-opt.wrong{border-color:var(--ms-red);background:#FDE7E9;opacity:.65}
+.quiz-explain{margin-top:20px;background:#DFF6DD;border-left:4px solid var(--ms-green);padding:16px 20px;border-radius:4px;display:none}
+.quiz-explain.show{display:block;animation:slideUp .5s ease}
+.quiz-explain strong{color:var(--ms-green);font-family:'Cascadia Code','Consolas',monospace;font-size:15px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
+.quiz-explain p{margin-top:8px;font-size:18px;color:var(--ink)}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* SCENARIO */
+.scenario{max-width:1100px;margin:0 auto;background:linear-gradient(135deg,#FEF3C7 0%,#E5E3F4 100%);border-radius:8px;padding:32px 40px;border-left:4px solid var(--copilot)}
+.scenario .tag{display:inline-block;background:var(--copilot);color:#FFFFFF;padding:5px 14px;border-radius:3px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:14px}
+.scenario h3{font-size:32px;line-height:1.25;color:var(--ms-navy);margin-bottom:16px;font-weight:600;letter-spacing:-.3px}
+.scenario .quote{font-size:21px;line-height:1.5;color:var(--ms-navy);padding:16px 20px;background:rgba(255,255,255,.8);border-radius:4px;margin:14px 0;border-left:3px solid var(--ms-blue);font-style:italic}
+.scenario .prompts h5{font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ms-navy);margin-bottom:10px;font-weight:600;margin-top:10px}
+.scenario .prompts ul{list-style:none}
+.scenario .prompts li{padding:8px 0 8px 24px;position:relative;font-size:18px;color:var(--ink);border-bottom:1px dashed rgba(0,32,80,.18)}
+.scenario .prompts li:last-child{border-bottom:none}
+.scenario .prompts li::before{content:"→";position:absolute;left:0;top:8px;color:var(--copilot);font-weight:700}
+.scenario .reveal-btn{margin-top:16px;background:var(--ms-blue);color:#FFFFFF;border:none;padding:10px 22px;border-radius:4px;font-family:'Segoe UI',sans-serif;font-size:16px;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:.15s}
+.scenario .reveal-btn:hover{background:var(--ms-blue-deep);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,120,212,.30)}
+.scenario .reveal-btn.shown{display:none}
+
+.answer-panel{margin-top:18px;background:var(--paper);border:1px solid var(--ms-blue);border-radius:6px;padding:22px 26px;display:none}
+.answer-panel.show{display:block;animation:slideUp .5s ease}
+.answer-panel .ap-label{display:inline-block;background:var(--ms-navy);color:#FFFFFF;padding:4px 12px;border-radius:3px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:14px}
+.answer-panel .ap-row{margin-bottom:14px}
+.answer-panel .ap-row:last-child{margin-bottom:0}
+.answer-panel .ap-q{font-size:18px;color:var(--copilot);font-weight:600;margin-bottom:6px}
+.answer-panel .ap-a{font-size:17px;color:var(--ink);line-height:1.55;padding-left:14px;border-left:2px solid #DBEAFE}
+.answer-panel .ap-a span{display:block;margin-bottom:3px}
+.answer-panel .ap-a span::before{content:"• ";color:var(--ms-blue);font-weight:700}
+
+/* DECISION TREE — Microsoft semantic colors */
+.decision-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:14px}
+.decision-card{padding:22px;border-radius:6px;border:1px solid;border-top-width:3px}
+.decision-card .step-num{font-size:28px;margin-bottom:4px;line-height:1;font-weight:600}
+.decision-card h4{font-size:24px;color:var(--ms-navy);margin-bottom:8px;font-weight:600}
+.decision-card p{font-size:17px;color:var(--ink-soft);line-height:1.5;margin-bottom:10px}
+.decision-card .examples{border-top:1px dashed rgba(0,0,0,.12);padding-top:8px;margin-top:8px;font-size:14px;color:var(--ms-blue-deep)}
+.decision-card .examples strong{color:var(--copilot);font-family:'Cascadia Code','Consolas',monospace;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:3px;font-weight:600}
+
+/* RECAP */
+.recap{max-width:900px;margin:0 auto}
+.recap-list{display:grid;gap:12px;margin-top:20px}
+.recap-item{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--ms-blue);padding:16px 22px;border-radius:4px;display:flex;gap:16px;align-items:flex-start;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.recap-item .check{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--ms-blue);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px}
+.recap-item .text{font-size:20px;color:var(--ms-navy);line-height:1.4}
+.recap-item .text em{color:var(--copilot);font-style:normal;font-weight:600}
+
+/* OBJECTIVES */
+.objectives{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.obj{display:flex;gap:14px;align-items:flex-start;padding:16px;background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--ms-blue);border-radius:4px}
+.obj .num{color:var(--ms-blue);font-size:28px;font-weight:600;flex-shrink:0;line-height:1}
+.obj .label{font-size:18px;color:var(--ink);line-height:1.5}
+
+.float-hint{position:fixed;top:72px;right:20px;background:var(--ms-navy);color:#FFFFFF;padding:10px 16px;border-radius:4px;font-size:15px;opacity:0;transition:.3s;z-index:30;pointer-events:none;font-family:'Cascadia Code','Consolas',monospace;box-shadow:0 6px 16px rgba(0,32,80,.20)}
+.float-hint.show{opacity:.95}
+
+/* GENNOOR WORDMARK COLOR LETTERS */
+.brand-name .b-w{color:#FFFFFF}
+.brand-name .b-blue{color:#60A5FA}
+.brand-name .b-amber{color:#F59E0B}
+.slide.title-slide .brand-wordmark .name .b-w{color:#FFFFFF}
+.slide.title-slide .brand-wordmark .name .b-blue{color:#60A5FA}
+.slide.title-slide .brand-wordmark .name .b-amber{color:#F59E0B}
+
+/* TOPBAR GRID — slide nav moved to topbar center */
+.topbar.topbar-grid{display:grid !important;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;height:72px;padding:0 28px}
+.topbar.topbar-grid .topbar-left{display:flex;align-items:center;gap:18px;min-width:0;overflow:hidden}
+.topbar.topbar-grid .topbar-left .chapter-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar.topbar-grid .topbar-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.topbar.topbar-grid .topbar-right{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0}
+.step-indicator-top{font-family:'Cascadia Code','Consolas',monospace;font-size:10px;letter-spacing:2.5px;color:var(--gn-amber,var(--ms-yellow));font-weight:700;text-transform:uppercase;line-height:1;opacity:.95}
+.step-indicator-top.complete{color:rgba(255,255,255,.5)}
+.controls-top{display:inline-flex;align-items:center;gap:4px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.10);border-radius:5px;padding:3px 6px}
+.controls-top button{width:28px;height:28px;border-radius:3px;border:none;background:transparent;color:#FFFFFF;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:.15s;padding:0}
+.controls-top button:hover{background:rgba(255,255,255,.12)}
+.controls-top button:disabled{opacity:.3;cursor:not-allowed}
+.controls-top .counter{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;font-weight:600;color:#FFFFFF;letter-spacing:.5px;padding:0 12px;min-width:64px;text-align:center}
+.controls-top .counter strong{color:var(--gn-amber,var(--ms-yellow));font-weight:700}
+/* Hide original bottom controls (now empty) */
+.bottom-nav-removed{display:none !important}
+
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar topbar-grid">
+    <div class="topbar-left">
+    <a href="#" class="brand-lockup">
+      <svg class="brand-mark" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+      <div class="brand-text">
+        <span class="brand-name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+        <span class="brand-sub">AB-100</span>
+      </div>
+    </a>
+    <div class="divider"></div>
+    <div class="chapter-title">Chapter 01 · Introduction to Agentic AI</div>
+    </div>
+    <div class="topbar-center">
+      <div class="step-indicator-top" id="stepIndicator">More to reveal</div>
+      <div class="controls-top">
+        <button id="prevBtn" title="Previous (←)">‹</button>
+        <span class="counter" id="counter">1 / 18</span>
+        <button id="nextBtn" title="Next (→)">›</button>
+      </div>
+    </div>
+    <div class="topbar-right">
+    <div class="meta">
+      <span class="pill" id="sectionLabel">Opening</span>
+      <span class="pill step-pill" id="stepPill" style="display:none">Step 1/6</span>
+    </div>
+    <button id="notesToggle" title="Toggle notes (T)">📖 Notes</button>
+    </div>
+  </div>
+
+  <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="stage">
+    <div class="slides" id="slides">
+
+      <!-- 01 TITLE -->
+      <section class="slide title-slide active"
+        data-section="Opening"
+        data-script="Welcome everyone. Across this self-paced course we step into the role of the <em>solution architect</em> in an AI-first world. Chapter 1 sets the foundation — what does it mean to architect for agentic AI, and what is your job in that transformation? This course is about <em>how you think</em>, not how you configure.">
+        <div class="slide-num">01 / 18</div>
+        <div class="brand-full">
+          <svg class="brand-mark-lg" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+          <div class="brand-wordmark">
+            <span class="name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+            <span class="tag">AB-100 Course</span>
+          </div>
+        </div>
+        <div class="eyebrow">CHAPTER 01</div>
+        <h1>Introduction to <em>Agentic AI</em><br>Business Solution Architecture</h1>
+        <div class="meta-row">
+          <div>YOUR ROLE<strong>Solution Architect</strong></div>
+          <div>YOUR MINDSET<strong>Strategy first</strong></div>
+          <div>YOUR OUTPUT<strong>Designed systems</strong></div>
+        </div>
+      </section>
+
+      <!-- 02 OVERVIEW -->
+      <section class="slide content-slide"
+        data-section="Opening"
+        data-script="Before going deep, let's frame the map. We'll cover six areas, building on each other. I'll reveal them one at a time.">
+        <div class="slide-num">02 / 18</div>
+        <h3 class="slide-h">What this chapter <em>covers</em></h3>
+        <p class="lead">AI transformation impacts processes, people, and culture. Your job as architect is to ensure measurable value — with compliance, scalability, and security designed in from day one.</p>
+        <div class="cards">
+          <div class="card" data-step data-script="First — <em>The Architect's Role</em>. This is where it all starts. By the end of this hour, you should be able to define your role to a non-technical executive in <em>one sentence</em>. If you can't, your customer can't either.">
+            <div class="num">01</div><h4>The Architect's Role</h4>
+            <p>Bridging business strategy and technical implementation in AI-driven organizations.</p>
+            <div class="ex"><strong>You will learn</strong>How to define your role to a non-technical executive in one sentence.</div>
+          </div>
+          <div class="card" data-step data-script="Second — <em>Transformation Framework</em>. Five phases, in order. Skip Phase 1 and the project fails. Most failed AI projects skip Phase 1.">
+            <div class="num">02</div><h4>Transformation Framework</h4>
+            <p>The five-phase journey from defining outcomes to measuring impact.</p>
+            <div class="ex"><strong>You will learn</strong>Why most failed AI projects skip Phase 1 — and how to prevent it.</div>
+          </div>
+          <div class="card" data-step data-script="Third — <em>Microsoft AI Stack</em>. Five layers. Each one has a sweet spot. Your job is to know which layer to start with for any new business scenario.">
+            <div class="num">03</div><h4>Microsoft AI Stack</h4>
+            <p>Azure AI, Foundry, Copilot Studio, M365 Copilot, Dynamics 365 — what each is for.</p>
+            <div class="ex"><strong>You will learn</strong>Which layer to start with for any new business scenario.</div>
+          </div>
+          <div class="card" data-step data-script="Fourth — <em>Out-of-the-Box Agents</em>. The phrase you'll say a hundred times: <em>'Don't build what Microsoft has already built.'</em>">
+            <div class="num">04</div><h4>Out-of-the-Box Agents</h4>
+            <p>What Microsoft already gives you — versus what you must architect yourself.</p>
+            <div class="ex"><strong>You will learn</strong>The "configure → extend → build" decision rule.</div>
+          </div>
+          <div class="card" data-step data-script="Fifth — <em>Best Practices</em>. Four practices. Ignore one and your architecture is brittle.">
+            <div class="num">05</div><h4>Best Practices</h4>
+            <p>Modular design, responsible AI, and how to scale across the enterprise.</p>
+            <div class="ex"><strong>You will learn</strong>The four practices that separate enterprise from hobbyist.</div>
+          </div>
+          <div class="card" data-step data-script="Sixth — <em>Knowledge Checks</em>. Three quick questions and one scenario. Don't worry about getting them right — worry about defending your reasoning.">
+            <div class="num">06</div><h4>Knowledge Checks</h4>
+            <p>Three quick checks plus one scenario to lock in the concepts.</p>
+            <div class="ex"><strong>You will learn</strong>How to defend an architectural choice with reasoning.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 SECTION DIVIDER -->
+      <section class="slide section-divider"
+        data-section="Architect Role"
+        data-script="The most important question of this entire course: <em>what does an AI architect actually do?</em> If you cannot answer it in one sentence by the end of this unit, we have not done our job.">
+        <div class="slide-num">03 / 18</div>
+        <div class="label">UNIT ONE</div>
+        <h2>The <em>Architect's Role</em><br>in AI Transformation</h2>
+        <div class="sub">If you can't define your role in one sentence, your customer can't either — and the project is in trouble before it begins.</div>
+      </section>
+
+      <!-- 04 OBJECTIVES -->
+      <section class="slide content-slide"
+        data-section="Architect Role"
+        data-script="Four learning objectives for this unit. I'll bring them up one at a time.">
+        <div class="slide-num">04 / 18</div>
+        <h3 class="slide-h">Learning <em>objectives</em></h3>
+        <p class="lead">By the end of this unit, you'll be able to:</p>
+        <div class="objectives">
+          <div class="obj" data-step data-script="One — explain the architect's role in AI adoption and transformation. <em>In your own words.</em>"><div class="num">01</div><div class="label">Explain the architect's role in driving AI adoption and transformation</div></div>
+          <div class="obj" data-step data-script="Two — identify the architect's key responsibilities. We'll see five of them in detail in a moment."><div class="num">02</div><div class="label">Identify the key responsibilities of an AI architect in business contexts</div></div>
+          <div class="obj" data-step data-script="Three — understand how to align AI solutions with organizational goals. Alignment is a strategic skill, not a technical one."><div class="num">03</div><div class="label">Understand how architects align AI solutions with organizational goals</div></div>
+          <div class="obj" data-step data-script="Four — apply best practices for scaling AI across an enterprise. We'll cover the four practices that matter."><div class="num">04</div><div class="label">Apply best practices for scaling AI across enterprise environments</div></div>
+        </div>
+      </section>
+
+      <!-- 05 BRIDGE -->
+      <section class="slide content-slide"
+        data-section="Architect Role"
+        data-script="The single most important visual in this course. I'll build it up piece by piece.">
+        <div class="slide-num">05 / 18</div>
+        <h3 class="slide-h">You are the <em>bridge</em></h3>
+        <p class="lead">The architect connects business strategy to technical implementation. Without this bridge, AI initiatives fail.</p>
+        <div class="bridge">
+          <div data-step class="slide-in-left" style="flex:0 0 200px"
+            data-script="On one side, the <em>business</em>. KPIs, ROI, customer outcomes. The CFO. The VP of Operations. They speak the language of money and outcomes.">
+            <div class="pillar left">
+              <div class="icon">$</div>
+              <h5>Business Strategy</h5>
+              <p>KPIs · ROI · Customer outcomes · Operational priorities</p>
+            </div>
+          </div>
+          <div data-step class="slide-in-right" style="flex:0 0 200px;order:3"
+            data-script="On the other side, the <em>technology</em>. Foundry, Copilot Studio, Dynamics, Azure. Models, tokens, latency, tool calls. Different language entirely.">
+            <div class="pillar right">
+              <div class="icon">⌬</div>
+              <h5>Technical Stack</h5>
+              <p>Foundry · Copilot Studio · Dynamics · Azure AI</p>
+            </div>
+          </div>
+          <div data-step class="zoom-in" style="flex:1;order:2"
+            data-script="When these two sides try to talk directly, projects fail. The business asks for vague things. Technology builds the wrong things. The <em>architect is the bridge</em>. You translate.">
+            <div class="center">
+              <div class="arch">
+                <svg viewBox="0 0 400 120" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="bridgeGradient" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stop-color="#2563EB"/>
+                      <stop offset="100%" stop-color="#F59E0B"/>
+                    </linearGradient>
+                  </defs>
+                  <path class="bridge-arrow" d="M 20 100 Q 200 -20 380 100" />
+                </svg>
+                <div class="role-tag">→ Architect ←</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="translations">
+          <div class="translation" data-step
+            data-script="Example one. Business says <em>'reduce service cost.'</em> You translate that into <em>Copilot Studio agent + D365 Customer Service grounding</em>. Specific. Buildable.">
+            <p><span class="from">"Reduce service cost"</span><span class="arrow">→</span><span class="to">Copilot Studio agent + D365 Customer Service grounding</span></p>
+          </div>
+          <div class="translation" data-step
+            data-script="Example two. <em>'Help reps sell more'</em> becomes <em>Sales Copilot + custom CRM connector + email summary</em>.">
+            <p><span class="from">"Help reps sell more"</span><span class="arrow">→</span><span class="to">Sales Copilot + custom CRM connector + email summary</span></p>
+          </div>
+          <div class="translation" data-step
+            data-script="Example three. <em>'Token cost too high'</em> becomes a <em>model router</em> — cheaper models for triage, premium models for synthesis.">
+            <p><span class="from">"Token cost too high"</span><span class="arrow">→</span><span class="to">Model router · cheaper for triage, premium for synthesis</span></p>
+          </div>
+          <div class="translation" data-step
+            data-script="Example four. <em>'Data residency risk'</em> becomes <em>region-pinned Foundry + scoped grounding</em>. This is what translation looks like.">
+            <p><span class="from">"Data residency risk"</span><span class="arrow">→</span><span class="to">Region-pinned Foundry + scoped grounding sources</span></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 RESPONSIBILITIES -->
+      <section class="slide content-slide"
+        data-section="Architect Role"
+        data-script="If your job is to be the bridge, <em>what do you actually deliver?</em> Five responsibilities. I'll bring them up one at a time.">
+        <div class="slide-num">06 / 18</div>
+        <h3 class="slide-h">Five core <em>responsibilities</em></h3>
+        <p class="lead">These five define what an AI architect is accountable for. All five, all the time. None are optional.</p>
+        <div class="cards">
+          <div class="card" data-step
+            data-script="One — <em>Vision and Roadmap</em>. Define the AI strategy aligned with business priorities. Vision <em>before</em> roadmap. Most architects skip the vision and the roadmap takes them to the wrong place faster.">
+            <div class="num">01</div><h4>Vision &amp; Roadmap</h4>
+            <p>Define the AI adoption strategy aligned with business priorities.</p>
+            <div class="ex"><strong>What good looks like</strong>"Reduce average handle time by 20% in 6 months" — measurable, time-bound.</div>
+          </div>
+          <div class="card" data-step
+            data-script="Two — <em>Data Architecture</em>. Without good data, AI is useless. We'll spend significant time on this in Chapter 2.">
+            <div class="num">02</div><h4>Data Architecture</h4>
+            <p>Ensure data is ready, governed, and accessible for grounding and training.</p>
+            <div class="ex"><strong>What good looks like</strong>Curated knowledge base, sensitivity labels applied, scoped per persona.</div>
+          </div>
+          <div class="card" data-step
+            data-script="Three — <em>Integration</em>. AI in isolation is a demo. AI in workflows is a product. The agent must <em>do</em> things — write to ServiceNow, update Dynamics, post to Teams.">
+            <div class="num">03</div><h4>Integration</h4>
+            <p>Connect AI services with existing enterprise workflows. AI in isolation is a demo.</p>
+            <div class="ex"><strong>What good looks like</strong>Agent writes to ServiceNow, updates Dynamics, posts to Teams — all in one flow.</div>
+          </div>
+          <div class="card" data-step
+            data-script="Four — <em>Security and Ethics</em>. Fairness, transparency, accountability. Not optional. Chapter 11 is dedicated entirely to this.">
+            <div class="num">04</div><h4>Security &amp; Ethics</h4>
+            <p>Implement responsible AI principles: fairness, transparency, accountability.</p>
+            <div class="ex"><strong>What good looks like</strong>Content filters on, DLP scoped, audit trail enabled, human in the loop for sensitive flows.</div>
+          </div>
+          <div class="card" data-step
+            data-script="Five — <em>Performance Monitoring</em>. What gets measured gets improved. Without telemetry from week one, you can't prove ROI.">
+            <div class="num">05</div><h4>Performance Monitoring</h4>
+            <p>Establish KPIs and monitor effectiveness. What gets measured gets improved.</p>
+            <div class="ex"><strong>What good looks like</strong>Weekly dashboard: deflection rate, satisfaction, escalation rate, token cost per session.</div>
+          </div>
+          <div class="card summary-card" data-step
+            data-script="Now the hard part. <em>All five.</em> Not three of five. Not four of five. Skip any one and the project sinks. Look at the cards. Which one is your team weakest at?">
+            <div class="num">→</div>
+            <h4>All five, in order</h4>
+            <p>Skip any one and the project sinks. Architect = all five at once.</p>
+            <div class="ex">Question for the room: which one is your team weakest at today?</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 07 QUIZ 1 -->
+      <section class="slide content-slide"
+        data-section="Architect Role"
+        data-script="Quick check. Read the question. Don't tell them the answer yet — let them call out their pick first. Then click any option to reveal.">
+        <div class="slide-num">07 / 18</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:24px">Question 1 of 3 — let learners call out their answer first.</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which responsibility ensures AI initiatives <em>align with business priorities?</em></div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Integration</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Vision &amp; Roadmap is where alignment lives. Integration, monitoring, and data architecture are essential — but they execute against the strategy that Vision &amp; Roadmap defines. Misaligned strategy means perfect execution still ships the wrong thing."><span class="letter">B</span> Vision &amp; Roadmap</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> Performance Monitoring</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Data Architecture</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 08 SECTION DIVIDER FRAMEWORK -->
+      <section class="slide section-divider"
+        data-section="Framework"
+        data-script="You know what your job is. Now <em>how</em> do you do it? Every AI transformation, regardless of company or industry, follows the same five phases.">
+        <div class="slide-num">08 / 18</div>
+        <div class="label">UNIT TWO</div>
+        <h2>The 5‑Phase<br><em>Transformation Framework</em></h2>
+        <div class="sub">Sequential. Non-skippable. Most failed AI projects skip Phase 1 — they build something, then ask what problem it solves.</div>
+      </section>
+
+      <!-- 09 PROCESS -->
+      <section class="slide content-slide"
+        data-section="Framework"
+        data-script="Five phases. I'll build them up one at a time, then we'll fill in what happens in each.">
+        <div class="slide-num">09 / 18</div>
+        <h3 class="slide-h">From <em>goals to optimization</em></h3>
+        <p class="lead">Five phases. Sequential. Most failures happen because Phase 1 was skipped.</p>
+        <div class="process">
+          <div class="process-line" id="processLine"></div>
+          <div class="step-pf" data-step
+            data-script="Phase one — <em>Define</em>. What business outcome are we chasing? What does success look like, in numbers? If you can't answer that, don't move to phase two."><div class="dot">1</div><h6>Define</h6><p>Business goals &amp; success metrics</p></div>
+          <div class="step-pf" data-step
+            data-script="Phase two — <em>Develop</em>. What's the AI strategy? Build, buy, or extend? Which models? Which platforms?"><div class="dot">2</div><h6>Develop</h6><p>AI strategy &amp; approach</p></div>
+          <div class="step-pf" data-step
+            data-script="Phase three — <em>Design</em>. The architecture. The data flow. The integrations. The security model. Diagrams come out here."><div class="dot">3</div><h6>Design</h6><p>Architecture &amp; data model</p></div>
+          <div class="step-pf" data-step
+            data-script="Phase four — <em>Implement</em>. Build it. Ground it. Test it. Integrate it. The longest phase."><div class="dot">4</div><h6>Implement</h6><p>Build, ground, integrate</p></div>
+          <div class="step-pf" data-step
+            data-script="Phase five — <em>Monitor</em>. Measure. Tune. Optimize. Learn for the next iteration. Eighty percent of failed projects skip Phase 1 — don't be that team."><div class="dot">5</div><h6>Monitor</h6><p>Measure, tune, optimize</p></div>
+        </div>
+        <div class="phase-detail">
+          <div class="pd" data-step
+            data-script="What actually happens in <em>Phase 1</em>: pin down the metric. AHT? Deflection? Revenue per rep? If they can't give you a number, don't design yet."><strong>Phase 1</strong>What metric will move? AHT? Deflection? Revenue per rep? If they can't answer, don't design yet.</div>
+          <div class="pd" data-step
+            data-script="<em>Phase 2</em>: high-level approach. Build, buy, or extend? Which models? Just direction, no architecture diagrams yet."><strong>Phase 2</strong>Build, buy, or extend? Which models, which platforms, what's the high-level approach?</div>
+          <div class="pd" data-step
+            data-script="<em>Phase 3</em>: this is where you earn your title. Architecture diagrams, data flows, integration points, security model, agent topology."><strong>Phase 3</strong>Architecture diagrams, data flows, integration points, security model, agent topology.</div>
+          <div class="pd" data-step
+            data-script="<em>Phase 4</em>: build agents, ground in data, configure connectors, run UAT, deploy. Most of the calendar time."><strong>Phase 4</strong>Build agents, ground in data, configure connectors, run UAT, deploy.</div>
+          <div class="pd" data-step
+            data-script="<em>Phase 5</em>: telemetry, A/B testing, prompt tuning, model swapping, cost optimization. This is where you prove ROI."><strong>Phase 5</strong>Telemetry, A/B testing, prompt tuning, model swapping, cost optimization.</div>
+        </div>
+      </section>
+
+      <!-- 10 BEST PRACTICES -->
+      <section class="slide content-slide"
+        data-section="Framework"
+        data-script="Four non-negotiable practices. I'll bring them up one at a time. The first is the most often violated.">
+        <div class="slide-num">10 / 18</div>
+        <h3 class="slide-h">Best practices to <em>scale across the enterprise</em></h3>
+        <p class="lead">Four non-negotiables. These separate the projects that ship from the ones that don't.</p>
+        <div class="cards cols-2" style="max-width:1100px">
+          <div class="card" data-step
+            data-script="One — <em>Start with measurable outcomes</em>. The first conversation should end with a number, not a feature list. <em>'Reduce ticket resolution by 20%'</em> — yes. <em>'Build a chatbot'</em> — no.">
+            <div class="num">①</div><h4>Start with measurable outcomes</h4>
+            <p>If you can't measure it, you can't justify it. The first conversation should end with a number, not a feature list.</p>
+            <div class="ex"><strong>Real example</strong>"Reduce ticket resolution time by 20%" not "Build a customer service chatbot."</div>
+          </div>
+          <div class="card" data-step
+            data-script="Two — <em>Modular and flexible design</em>. The AI landscape changes every six months. New models, new tools. Build components you can swap, or you'll throw the whole thing out in a year.">
+            <div class="num">②</div><h4>Modular &amp; flexible design</h4>
+            <p>The AI landscape changes every six months. Build components you can swap — models, tools, knowledge sources.</p>
+            <div class="ex"><strong>Real example</strong>Use a model router so swapping GPT-4o for a newer model is a config change, not a rewrite.</div>
+          </div>
+          <div class="card" data-step
+            data-script="Three — <em>Responsible AI from day one</em>. Bake fairness, transparency, accountability into the design. Don't bolt them on when audit calls.">
+            <div class="num">③</div><h4>Responsible AI from day one</h4>
+            <p>Fairness, transparency, accountability are designed in — not bolted on later when audit calls.</p>
+            <div class="ex"><strong>Real example</strong>Bias evaluations in CI/CD. Content filters tuned per scenario. Human-in-the-loop for irreversible actions.</div>
+          </div>
+          <div class="card" data-step
+            data-script="Four — <em>Cross-functional collaboration</em>. The lone architect locked in a room is a myth. Architecture is a team sport. Data, dev, business, legal, security — all in one room.">
+            <div class="num">④</div><h4>Cross-functional collaboration</h4>
+            <p>Data scientists, developers, business leaders, legal, security — all in one room. Architecture is a team sport.</p>
+            <div class="ex"><strong>Real example</strong>Weekly architecture review with product, data, security, and a business sponsor at the table.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11 SECTION DIVIDER MS STACK -->
+      <section class="slide section-divider"
+        data-section="MS Stack"
+        data-script="Now we get tactical. <em>Microsoft has a lot of AI tools.</em> By the end of this unit you should be able to draw the ecosystem on a napkin.">
+        <div class="slide-num">11 / 18</div>
+        <div class="label">UNIT THREE</div>
+        <h2>The Microsoft<br><em>AI Ecosystem</em></h2>
+        <div class="sub">Five layers. Know what each one is for. The first architectural question on any project is "which layer?"</div>
+      </section>
+
+      <!-- 12 ECOSYSTEM -->
+      <section class="slide content-slide"
+        data-section="MS Stack"
+        data-script="The entire stack on one slide. I'll build it up — first the platform, then the five layers, then a quick test for the room.">
+        <div class="slide-num">12 / 18</div>
+        <h3 class="slide-h">The stack on <em>one slide</em></h3>
+        <p class="lead">Memorize this layout. Every architecture conversation starts here. Each layer has a sweet spot — pick wrong and you over-engineer or under-deliver.</p>
+        <div class="ecosystem">
+          <div data-step class="zoom-in"
+            data-script="At the center, the <em>Microsoft AI Platform</em>. Everything branches off this.">
+            <div class="center-node">Microsoft AI Platform</div>
+          </div>
+          <div class="branches">
+            <div class="branch b1" data-step
+              data-script="Layer one — <em>Azure AI</em>. The foundation. Foundation models, cognitive services, infrastructure. <em>Use when you're building from primitives</em>.">
+              <h6>Azure AI</h6>
+              <p>Foundation models, cognitive services, infrastructure</p>
+              <div class="use">Use when: building from primitives</div>
+            </div>
+            <div class="branch b2" data-step
+              data-script="Layer two — <em>Foundry</em>. Custom agents, model catalog, evaluations. <em>Use when nothing prebuilt fits</em>. Chapter 6 goes deep here.">
+              <h6>Microsoft Foundry</h6>
+              <p>Custom agents, model catalog, orchestration, evaluations</p>
+              <div class="use">Use when: nothing prebuilt fits</div>
+            </div>
+            <div class="branch b3" data-step
+              data-script="Layer three — <em>Copilot Studio</em>. Low-code agents. Topics, knowledge, MCP. <em>Use when shipping fast, low-code</em>. Most of your work happens here.">
+              <h6>Copilot Studio</h6>
+              <p>Low-code agents, knowledge, topics, MCP</p>
+              <div class="use">Use when: shipping fast, low-code</div>
+            </div>
+            <div class="branch b4" data-step
+              data-script="Layer four — <em>M365 Copilot</em>. The productivity layer. Word, Excel, Teams, Outlook. <em>Use when productivity scenarios</em>.">
+              <h6>M365 Copilot</h6>
+              <p>Productivity copilot, agents in Teams &amp; SharePoint</p>
+              <div class="use">Use when: productivity scenarios</div>
+            </div>
+            <div class="branch b5" data-step
+              data-script="Layer five — <em>Dynamics 365</em>. AI embedded in business apps. Sales, service, finance, supply chain. <em>Use when customer is on Dynamics</em>.">
+              <h6>Dynamics 365</h6>
+              <p>Embedded AI for sales, service, finance, supply chain</p>
+              <div class="use">Use when: customer is on Dynamics</div>
+            </div>
+          </div>
+        </div>
+        <div class="test-callout" data-step
+          data-script="Quick test for the room. <em>'For an HR chatbot answering policy questions, which layer do you start with?'</em> Take guesses. Right answer — <em>Copilot Studio</em>. Low-code, fast, easy to ground in HR docs.">
+          <div class="label">Quick test for the room</div>
+          <div class="body">"For an HR chatbot answering policy questions, which layer do you start with?" → <span class="ans">Copilot Studio</span> (low-code, easy to ground in HR docs).</div>
+        </div>
+      </section>
+
+      <!-- 13 SECTION DIVIDER OOB -->
+      <section class="slide section-divider"
+        data-section="OOB Agents"
+        data-script="A phrase you'll say a hundred times: <em>'Don't build what Microsoft has already built.'</em> Out-of-the-box agents are your starting point. Always.">
+        <div class="slide-num">13 / 18</div>
+        <div class="label">UNIT FOUR</div>
+        <h2>Out‑of‑the‑Box<br><em>AI Agents</em></h2>
+        <div class="sub">Configure first. Extend if needed. Build custom only as a last resort. The order is not negotiable.</div>
+      </section>
+
+      <!-- 14 CONFIGURE EXTEND BUILD -->
+      <section class="slide content-slide"
+        data-section="OOB Agents"
+        data-script="The decision rule. Three steps, in order. I'll walk through them one at a time.">
+        <div class="slide-num">14 / 18</div>
+        <h3 class="slide-h">Configure <em>before</em> you build</h3>
+        <p class="lead">Microsoft ships dozens of pre-built agents. The decision tree is simple — and one-way.</p>
+        <div class="decision-row">
+          <div class="decision-card" style="background:#DFF6DD;border-color:var(--ms-green)" data-step
+            data-script="<em>First — Configure.</em> Use a pre-built agent as it ships. Sales Copilot, Service Copilot, M365 Facilitator. Most scenarios are already covered. Just turn it on.">
+            <div class="step-num" style="color:var(--ms-green)">First →</div>
+            <h4>Configure</h4>
+            <p>Use a pre-built Copilot/agent as it ships. Most scenarios are already covered.</p>
+            <div class="examples"><strong>Examples</strong>Sales Copilot · Service Copilot · M365 Facilitator agent · Researcher agent · Finance Copilot</div>
+          </div>
+          <div class="decision-card" style="background:#FFF4CE;border-color:var(--ms-yellow)" data-step
+            data-script="<em>Second — Extend.</em> Add knowledge, topics, actions, MCP. Most projects stop here. Extension covers ninety percent of real-world needs.">
+            <div class="step-num" style="color:#8A6914">Then →</div>
+            <h4>Extend</h4>
+            <p>Add knowledge sources, custom topics, actions, MCP servers. Most projects stop here.</p>
+            <div class="examples"><strong>Examples</strong>Add SharePoint KB to Service Copilot · Custom topic for product returns · MCP server to query a Salesforce instance</div>
+          </div>
+          <div class="decision-card" style="background:#FDE7E9;border-color:var(--ms-red)" data-step
+            data-script="<em>Third — Build custom.</em> Foundry, custom code, custom models. Most expensive, riskiest. Save it for when there's truly no other way. Customers who skip to custom-build spend three times the budget.">
+            <div class="step-num" style="color:var(--ms-red)">Last →</div>
+            <h4>Build Custom</h4>
+            <p>Foundry agents, custom models, custom code. Most expensive, most time-consuming, riskiest.</p>
+            <div class="examples"><strong>Examples</strong>Industry-specific agent in Foundry · Fine-tuned SLM for a niche domain · Custom orchestrator with private models</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 15 QUIZ 2 -->
+      <section class="slide content-slide"
+        data-section="OOB Agents"
+        data-script="Quick check 2.">
+        <div class="slide-num">15 / 18</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:24px">Question 2 of 3</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which Microsoft resource provides <em>prebuilt AI agents</em> for business workflows?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Azure Machine Learning</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Copilot Studio is the home for prebuilt and customizable agents. Azure ML is for training/deploying models. Power BI is analytics. GitHub Copilot is for developers writing code."><span class="letter">B</span> Copilot Studio</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> Power BI</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> GitHub Copilot</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 16 SCENARIO -->
+      <section class="slide content-slide"
+        data-section="OOB Agents"
+        data-script="Now think like an architect. Pairs work through the four questions. After they discuss, click <em>Reveal Discussion Points</em> to anchor the conversation.">
+        <div class="slide-num">16 / 18</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Scenario <em>discussion</em></h3>
+        <p class="lead" style="margin-bottom:18px">Work in pairs. Defend your reasoning, not just your answer.</p>
+        <div class="scenario">
+          <div class="tag">Scenario · Pair Discussion</div>
+          <h3>Acme Manufacturing wants AI for their service team</h3>
+          <div class="quote">"Our 200 service agents handle 50,000 tickets a month. Average call is 12 minutes. We have Dynamics 365 Customer Service and M365 E5. Leadership wants us deployed quickly. Budget is real but not infinite."</div>
+          <div class="prompts">
+            <h5>Discuss with your partner</h5>
+            <ul>
+              <li>Which prebuilt agents fit this scenario? Name at least two.</li>
+              <li>What would you <em>configure</em> versus <em>extend</em> versus <em>build custom?</em></li>
+              <li>What is the single biggest risk to the deadline?</li>
+              <li>Which of the 5 architect responsibilities are most critical here?</li>
+            </ul>
+          </div>
+          <button class="reveal-btn" id="revealAnswer">Reveal Discussion Points →</button>
+          <div class="answer-panel" id="answerPanel">
+            <div class="ap-label">Guide · suggested points</div>
+            <div class="ap-row">
+              <div class="ap-q">Which prebuilt agents fit?</div>
+              <div class="ap-a">
+                <span><strong>Dynamics 365 Customer Service Copilot</strong> — case summarization, knowledge search, draft responses, sentiment.</span>
+                <span><strong>M365 Copilot in Outlook &amp; Teams</strong> — agent-side productivity (call notes, email drafts, meeting recap).</span>
+                <span><strong>Copilot Studio agent</strong> — for customer-facing self-service / ticket deflection.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Configure / Extend / Build?</div>
+              <div class="ap-a">
+                <span><strong>Configure:</strong> Turn on D365 Service Copilot features, enable M365 Copilot for the agent team.</span>
+                <span><strong>Extend:</strong> Ground in product manuals + internal KB; add custom topics for top ticket categories; connect ServiceNow or warranty system via MCP / connector.</span>
+                <span><strong>Build custom:</strong> Avoid for this scope. None required. Push back if leadership asks for it.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Biggest risk to the deadline?</div>
+              <div class="ap-a">
+                <span><strong>Data readiness</strong> — knowledge curation, sensitivity labels, scoping. Always the #1 risk.</span>
+                <span><strong>Change management</strong> — 200 agents need training, not just a tool launch.</span>
+                <span><strong>Not the technology</strong> — the platform is ready. The risk is upstream.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Most critical architect responsibilities?</div>
+              <div class="ap-a">
+                <span><strong>Vision &amp; Roadmap</strong> — pin down the metric: AHT? Deflection %? CSAT? No metric, no project.</span>
+                <span><strong>Data Architecture</strong> — grounding quality determines agent quality. Most underestimated.</span>
+                <span><strong>Performance Monitoring</strong> — without telemetry from week 1, you can't prove ROI to leadership.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 17 QUIZ 3 -->
+      <section class="slide content-slide"
+        data-section="Wrap"
+        data-script="Last quick check before we wrap.">
+        <div class="slide-num">17 / 18</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:24px">Question 3 of 3 · Final</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which best practice should architects follow to <em>scale AI across the enterprise?</em></div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Focus solely on technology upgrades</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Modular and flexible design lets you swap components — models, knowledge sources, tools — as the AI landscape evolves. Locking in tech upgrades, ignoring business stakeholders, or skipping responsible AI all create brittle systems that don't scale."><span class="letter">B</span> Adopt modular and flexible design principles</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> Avoid collaboration with business leaders</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Implement AI without considering responsible AI principles</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 18 RECAP -->
+      <section class="slide content-slide"
+        data-section="Wrap"
+        data-script="<em>Final recap.</em> Five things. I'll bring them up one at a time. Read each one aloud as it appears.">
+        <div class="slide-num">18 / 18</div>
+        <h3 class="slide-h">Chapter 1 — <em>key takeaways</em></h3>
+        <p class="lead">Five things to carry into Chapter 2.</p>
+        <div class="recap">
+          <div class="recap-list">
+            <div class="recap-item" data-step
+              data-script="One — the architect is the <em>bridge</em>. If you forget everything else, remember this. Draw it on every whiteboard.">
+              <div class="check">1</div><div class="text">The architect is the <em>bridge</em> between business strategy and technical implementation.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Two — five responsibilities, all of them, all the time. <em>Vision, Data, Integration, Security &amp; Ethics, Performance.</em>">
+              <div class="check">2</div><div class="text">Five responsibilities: <em>Vision, Data, Integration, Security &amp; Ethics, Performance.</em></div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Three — the five-phase framework. <em>Define, Develop, Design, Implement, Monitor.</em> Don't skip phase one. Ever.">
+              <div class="check">3</div><div class="text">Five-phase framework: <em>Define → Develop → Design → Implement → Monitor.</em></div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Four — the Microsoft AI stack. <em>Azure AI, Foundry, Copilot Studio, M365 Copilot, Dynamics 365.</em> Know what each one is for.">
+              <div class="check">4</div><div class="text">Microsoft AI stack: <em>Azure AI · Foundry · Copilot Studio · M365 Copilot · Dynamics 365.</em></div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Five — the decision rule. <em>Configure. Then extend. Then build custom.</em> Always in that order. That's Chapter 1. Take a break, then we move to Chapter 2 — analyzing requirements.">
+              <div class="check">5</div><div class="text">Decision rule: <em>Configure → Extend → Build custom.</em> Always in that order.</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:30px;text-align:center;font-size:18px;color:var(--copilot);font-weight:600">
+          → Continue to Chapter 2: Analyze Requirements
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="notes-panel" id="notesPanel">
+    <div class="label">📖 Read aloud · notes <span class="step-tag" id="stepTag"></span></div>
+    <div class="script" id="notesScript">Welcome script will appear here.</div>
+  </div>
+
+
+
+  <div class="float-hint" id="hint">← → to advance step-by-step · T for notes</div>
+
+</div>
+
+<script>
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+  let notesOpen = false;
+
+  const counter = document.getElementById('counter');
+  const progressFill = document.getElementById('progressFill');
+  const notesPanel = document.getElementById('notesPanel');
+  const notesScript = document.getElementById('notesScript');
+  const stepTag = document.getElementById('stepTag');
+  const sectionLabel = document.getElementById('sectionLabel');
+  const stepPill = document.getElementById('stepPill');
+  const stepIndicator = document.getElementById('stepIndicator');
+  const notesToggle = document.getElementById('notesToggle');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const hint = document.getElementById('hint');
+
+  function getSteps(slide){ return Array.from(slide.querySelectorAll('[data-step]')); }
+  function getRevealed(slide){ return Array.from(slide.querySelectorAll('[data-step].revealed')); }
+
+  function updateScript(text, stepInfo){
+    notesScript.classList.add('fading');
+    setTimeout(()=>{
+      notesScript.innerHTML = text || '';
+      stepTag.textContent = stepInfo || '';
+      notesScript.classList.remove('fading');
+    },180);
+  }
+
+  function updateStepIndicator(slide){
+    const steps = getSteps(slide);
+    const revealed = getRevealed(slide);
+    if(steps.length > 0 && revealed.length < steps.length){
+      stepIndicator.classList.add('show');
+      stepPill.style.display = 'inline-block';
+      stepPill.textContent = `Step ${revealed.length}/${steps.length}`;
+    } else if(steps.length > 0){
+      stepIndicator.classList.remove('show');
+      stepPill.style.display = 'inline-block';
+      stepPill.textContent = `${steps.length}/${steps.length}`;
+    } else {
+      stepIndicator.classList.remove('show');
+      stepPill.style.display = 'none';
+    }
+    const pl = slide.querySelector('.process-line');
+    if(pl){
+      if(revealed.some(el => el.classList.contains('step-pf'))) pl.classList.add('revealed');
+      else pl.classList.remove('revealed');
+    }
+  }
+
+  function showSlide(i, revealAll){
+    if(i<0||i>=total) return;
+    slides[current].classList.remove('active');
+    getSteps(slides[current]).forEach(el=>el.classList.remove('revealed'));
+    const pl = slides[current].querySelector('.process-line'); if(pl) pl.classList.remove('revealed');
+
+    current = i;
+    const slide = slides[current];
+    slide.classList.add('active');
+    slide.scrollTop = 0;
+
+    if(revealAll){
+      getSteps(slide).forEach(el=>el.classList.add('revealed'));
+      const pl2 = slide.querySelector('.process-line'); if(pl2) pl2.classList.add('revealed');
+    }
+
+    counter.textContent = (current+1)+' / '+total;
+    progressFill.style.width = ((current+1)/total*100)+'%';
+    sectionLabel.textContent = slide.dataset.section || '';
+
+    if(revealAll){
+      const steps = getSteps(slide);
+      const last = steps[steps.length-1];
+      if(last && last.dataset.script) updateScript(last.dataset.script, `Step ${steps.length}/${steps.length}`);
+      else updateScript(slide.dataset.script, '');
+    } else {
+      updateScript(slide.dataset.script, '');
+    }
+    updateStepIndicator(slide);
+    prevBtn.disabled = (current===0 && getRevealed(slide).length===0);
+    nextBtn.disabled = (current===total-1 && (getSteps(slide).length===0 || getRevealed(slide).length===getSteps(slide).length));
+  }
+
+  function next(){
+    const slide = slides[current];
+    const steps = getSteps(slide);
+    const revealed = getRevealed(slide);
+    if(revealed.length < steps.length){
+      const idx = revealed.length;
+      const el = steps[idx];
+      el.classList.add('revealed');
+      if(el.dataset.script) updateScript(el.dataset.script, `Step ${idx+1}/${steps.length}`);
+      updateStepIndicator(slide);
+      prevBtn.disabled = false;
+      if(revealed.length+1 === steps.length && current===total-1) nextBtn.disabled = true;
+    } else if(current < total-1){
+      showSlide(current+1, false);
+    }
+  }
+
+  function prev(){
+    const slide = slides[current];
+    const revealed = getRevealed(slide);
+    if(revealed.length > 0){
+      const last = revealed[revealed.length-1];
+      last.classList.remove('revealed');
+      const remaining = getRevealed(slide);
+      if(remaining.length > 0){
+        const r = remaining[remaining.length-1];
+        const total = getSteps(slide).length;
+        updateScript(r.dataset.script, `Step ${remaining.length}/${total}`);
+      } else {
+        updateScript(slide.dataset.script, '');
+      }
+      updateStepIndicator(slide);
+      nextBtn.disabled = false;
+    } else if(current > 0){
+      showSlide(current-1, true);
+    }
+  }
+
+  function toggleNotes(){
+    notesOpen = !notesOpen;
+    notesPanel.classList.toggle('open', notesOpen);
+    notesToggle.classList.toggle('active', notesOpen);
+  }
+
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+  notesToggle.addEventListener('click', toggleNotes);
+
+  document.addEventListener('keydown',(e)=>{
+    if(e.target.matches('input,textarea')) return;
+    if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}
+    else if(e.key==='ArrowLeft'){e.preventDefault();prev();}
+    else if(e.key==='t'||e.key==='T'){e.preventDefault();toggleNotes();}
+    else if(e.key==='Home'){e.preventDefault();showSlide(0,false);}
+    else if(e.key==='End'){e.preventDefault();showSlide(total-1,true);}
+  });
+
+  document.querySelectorAll('.quiz-opt').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const wrap = btn.closest('.quiz-wrap');
+      const opts = wrap.querySelectorAll('.quiz-opt');
+      const explain = wrap.querySelector('.quiz-explain');
+      opts.forEach(o=>{
+        if(o.dataset.correct==='true') o.classList.add('correct');
+        else o.classList.add('wrong');
+      });
+      const correctOpt = wrap.querySelector('.quiz-opt[data-correct="true"]');
+      if(correctOpt && explain){
+        explain.querySelector('p').textContent = correctOpt.dataset.explain || '';
+        explain.classList.add('show');
+      }
+    });
+  });
+
+  const revealBtn = document.getElementById('revealAnswer');
+  const answerPanel = document.getElementById('answerPanel');
+  if(revealBtn && answerPanel){
+    revealBtn.addEventListener('click',()=>{
+      answerPanel.classList.add('show');
+      revealBtn.classList.add('shown');
+    });
+  }
+
+  setTimeout(()=>{hint.classList.add('show');},800);
+  setTimeout(()=>{hint.classList.remove('show');},5500);
+
+  showSlide(0,false);
+})();
+</script>
+</body>
+</html>

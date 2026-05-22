@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 08 — Analyze, Monitor, and Tune AI-Powered Business Solutions · Gennoor Tech</title>
+<style>
+:root{
+  --bg:#FAFAFA; --paper:#FFFFFF;
+  --ink:#201F1E; --ink-soft:#605E5C; --ink-mute:#8A8886;
+  --line:#EDEBE9; --line-soft:#F3F2F1;
+  --ms-blue:#2563EB; --ms-blue-deep:#1D4ED8; --ms-navy:#0C1426;
+  --ms-cyan:#60A5FA; --ms-cyan-deep:#1E40AF;
+  --copilot:#F59E0B; --copilot-light:#FCD34D;
+  --ms-yellow:#F59E0B; --ms-green:#107C10; --ms-red:#D13438; --ms-orange:#F97316;
+  --logo-red:#2563EB; --logo-green:#2563EB; --logo-blue:#F59E0B; --logo-yellow:#F59E0B;
+  --notes-bg:#0C1426; --notes-text:#FFFFFF; --notes-accent:#F59E0B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;font-size:19px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.app{position:fixed;inset:0;display:flex;flex-direction:column}
+.topbar{height:56px;background:var(--ms-navy);color:#FFFFFF;display:flex;align-items:center;padding:0 24px;gap:18px;border-bottom:1px solid rgba(255,255,255,.06);z-index:10}
+.topbar .brand-mark{width:30px;height:30px;flex-shrink:0;display:block}
+.topbar .brand-lockup{display:flex;align-items:center;gap:10px;text-decoration:none;color:#FFFFFF;flex-shrink:0}
+.topbar .brand-text{display:flex;flex-direction:column;line-height:1.1}
+.topbar .brand-name{font-size:18px;font-weight:600;letter-spacing:.3px;color:#FFFFFF}
+.topbar .brand-sub{font-size:12px;color:var(--ms-yellow);letter-spacing:1.2px;text-transform:uppercase;font-weight:600;font-family:'Cascadia Code','Consolas',monospace}
+.topbar .divider{width:1px;height:24px;background:rgba(255,255,255,.15)}
+.topbar .logo{font-weight:600;font-size:20px;letter-spacing:.2px}
+.topbar .chapter-title{font-size:16px;opacity:.75;letter-spacing:.2px;font-weight:400}
+.topbar.topbar-grid .topbar-left .chapter-title{max-width:36ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topbar .spacer{flex:1}
+.topbar .meta{font-size:16px;opacity:.85;display:flex;gap:10px;align-items:center}
+.topbar .meta .pill{padding:4px 12px;background:rgba(255,255,255,.10);border-radius:4px;font-size:15px;font-weight:500}
+.topbar .meta .step-pill{background:var(--ms-blue);font-weight:600;font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px}
+.topbar button{background:transparent;border:1px solid rgba(255,255,255,.25);color:#FFFFFF;padding:7px 16px;border-radius:4px;font-family:inherit;font-size:16px;font-weight:500;cursor:pointer;transition:.15s}
+.topbar button:hover{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.4)}
+.topbar button.active{background:var(--ms-blue);border-color:var(--ms-blue)}
+.progress{height:3px;background:rgba(255,255,255,.06);position:relative;border-bottom:1px solid var(--line)}
+.progress-fill{position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg,var(--ms-blue) 0%,var(--copilot) 50%,var(--ms-cyan) 100%);transition:width .4s cubic-bezier(.4,0,.2,1)}
+.stage{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.slides{width:100%;height:100%;position:relative}
+.slide{position:absolute;inset:0;padding:36px 64px 80px;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .35s ease;overflow-y:auto}
+.slide.active{opacity:1;pointer-events:auto}
+.slide-num{position:absolute;top:18px;right:28px;font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ink-mute);letter-spacing:1.5px}
+[data-step]{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.2,.7,.3,1), transform .55s cubic-bezier(.2,.7,.3,1);pointer-events:none}
+[data-step].revealed{opacity:1;transform:translateY(0);pointer-events:auto}
+.notes-panel{position:fixed;bottom:0;left:0;right:0;background:var(--notes-bg);color:var(--notes-text);padding:22px 32px 26px;border-top:3px solid var(--notes-accent);transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);z-index:20;max-height:48vh;overflow-y:auto;box-shadow:0 -20px 40px rgba(0,0,0,.18)}
+.notes-panel.open{transform:translateY(0)}
+.notes-panel .label{display:flex;align-items:center;gap:10px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--notes-accent);margin-bottom:10px;font-weight:600}
+.notes-panel .label::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--notes-accent);animation:pulse 1.6s ease-in-out infinite}
+.notes-panel .label .step-tag{margin-left:auto;font-size:12px;color:rgba(255,255,255,.55);letter-spacing:1px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.notes-panel .script{font-size:22px;line-height:1.65;max-width:880px;font-weight:400;transition:opacity .25s}
+.notes-panel .script.fading{opacity:.3}
+.notes-panel .script em{color:var(--notes-accent);font-style:normal;font-weight:600;background:rgba(255,185,0,.15);padding:1px 6px;border-radius:3px}
+.controls{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:var(--ms-navy);padding:8px 14px;border-radius:4px;box-shadow:0 6px 24px rgba(0,32,80,.25);z-index:15}
+.controls button{width:36px;height:36px;border-radius:3px;border:none;background:transparent;color:#FFFFFF;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;transition:.15s}
+.controls button:hover{background:rgba(255,255,255,.12)}
+.controls button:disabled{opacity:.3;cursor:not-allowed}
+.controls .counter{font-family:'Cascadia Code','Consolas',monospace;font-size:16px;color:#FFFFFF;padding:0 14px;letter-spacing:1px;font-weight:500}
+.step-indicator{position:fixed;bottom:64px;left:50%;transform:translateX(-50%);font-size:14px;font-family:'Cascadia Code','Consolas',monospace;color:var(--ms-blue);letter-spacing:1.5px;opacity:0;transition:opacity .3s;z-index:14;text-transform:uppercase;font-weight:600}
+.step-indicator.show{opacity:.85}
+.step-indicator::after{content:" →";animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+
+.slide.title-slide{background:linear-gradient(135deg,#0C1426 0%,#1D4ED8 35%,#2563EB 70%,#60A5FA 110%);color:#FFFFFF;justify-content:center;padding:175px 100px 100px 100px;position:absolute;overflow:hidden}
+.slide.title-slide .brand-full{position:absolute;top:48px;left:64px;display:flex;align-items:center;gap:16px}
+.slide.title-slide .brand-mark-lg{width:64px;height:64px}
+.slide.title-slide .brand-wordmark{display:flex;flex-direction:column;line-height:1}
+.slide.title-slide .brand-wordmark .name{font-size:30px;font-weight:600;letter-spacing:1px;color:#FFFFFF}
+.slide.title-slide .brand-wordmark .tag{font-size:14px;color:var(--ms-yellow);letter-spacing:3px;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;margin-top:4px;text-transform:uppercase}
+.slide.title-slide .eyebrow{font-family:'Cascadia Code','Consolas',monospace;font-size:16px;letter-spacing:3px;color:var(--ms-cyan);margin-bottom:20px;font-weight:500}
+.slide.title-slide h1{font-size:80px;line-height:1.1;font-weight:600;max-width:1200px;letter-spacing:-1.5px}
+.slide.title-slide h1 em{font-style:normal;color:var(--ms-cyan);font-weight:600}
+.slide.title-slide .meta-row{margin-top:48px;display:flex;gap:36px;font-size:18px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.slide.title-slide .meta-row strong{color:#FFFFFF;display:block;font-size:28px;text-transform:none;font-weight:600;letter-spacing:0;margin-top:4px}
+.title-slide::before{content:"";position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(98,100,167,.30) 0%,transparent 70%);top:-200px;right:-200px;pointer-events:none}
+.title-slide::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(80,230,255,.20) 0%,transparent 70%);bottom:-160px;left:-160px;pointer-events:none}
+
+.slide.section-divider{background:linear-gradient(135deg,var(--ms-blue) 0%,var(--copilot) 100%);color:#FFFFFF;justify-content:center;align-items:flex-start;padding:80px;position:relative;overflow:hidden}
+.slide.section-divider::before{content:"";position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(80,230,255,.18) 0%,transparent 70%);top:-180px;right:-180px;pointer-events:none}
+.slide.section-divider .label{font-family:'Cascadia Code','Consolas',monospace;font-size:18px;letter-spacing:4px;margin-bottom:18px;opacity:.8;font-weight:500}
+.slide.section-divider h2{font-size:78px;line-height:1.05;font-weight:600;max-width:1100px;letter-spacing:-1.5px}
+.slide.section-divider h2 em{font-style:normal;color:var(--ms-cyan);font-weight:600}
+.slide.section-divider .sub{margin-top:28px;font-size:24px;max-width:780px;color:rgba(255,255,255,.95);font-weight:400;line-height:1.45}
+
+.slide.content-slide{padding:34px 60px 76px}
+.slide h3.slide-h{font-size:40px;font-weight:600;letter-spacing:-.5px;margin-bottom:6px;line-height:1.15;color:var(--ms-navy)}
+.slide h3.slide-h em{font-style:normal;color:var(--copilot);font-weight:600}
+.slide .lead{font-size:19px;color:var(--ink-soft);margin-bottom:20px;max-width:1000px}
+
+/* OVERVIEW 5 cards */
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--ms-blue);padding:16px;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.card .num{font-size:25px;color:var(--ms-blue);font-weight:600;margin-bottom:4px;line-height:1}
+.card h4{font-size:19px;font-weight:600;margin-bottom:6px;color:var(--ms-navy);line-height:1.25}
+.card p{font-size:15px;color:var(--ink-soft);line-height:1.45}
+.card .ex{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:14px;color:var(--ms-blue-deep);font-style:italic}
+.card .ex strong{color:var(--copilot);font-style:normal;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;font-size:12px;letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:2px}
+
+/* 5-DIMENSION MONITORING REQUIREMENTS */
+.requirements{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:18px}
+.req{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:18px 16px;box-shadow:0 1px 3px rgba(0,0,0,.04);position:relative;overflow:hidden}
+.req::before{content:"";position:absolute;top:0;left:0;right:0;height:4px}
+.req.r1::before{background:#2563EB}
+.req.r2::before{background:#F59E0B}
+.req.r3::before{background:#1E40AF}
+.req.r4::before{background:#107C10}
+.req.r5::before{background:#D13438}
+.req .icon{font-size:30px;line-height:1;margin-top:5px;margin-bottom:6px}
+.req.r1 .icon{color:#2563EB}
+.req.r2 .icon{color:#F59E0B}
+.req.r3 .icon{color:#1E40AF}
+.req.r4 .icon{color:#107C10}
+.req.r5 .icon{color:#D13438}
+.req .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--ink-mute);letter-spacing:1.2px;font-weight:600;margin-bottom:5px}
+.req h4{font-size:18px;color:var(--ms-navy);font-weight:600;margin-bottom:6px;line-height:1.2}
+.req ul{list-style:none}
+.req li{padding:2.5px 0 2.5px 12px;position:relative;font-size:14px;color:var(--ink-soft);line-height:1.4}
+.req li::before{content:"•";position:absolute;left:0;color:var(--copilot);font-weight:700}
+
+/* 4-STEP OPERATING MODEL */
+.opmodel{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
+.opm{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:18px 22px;box-shadow:0 1px 4px rgba(0,0,0,.05);position:relative}
+.opm.o1{border-top:4px solid #2563EB}
+.opm.o2{border-top:4px solid #F59E0B}
+.opm.o3{border-top:4px solid #1E40AF}
+.opm.o4{border-top:4px solid #107C10}
+.opm .num{position:absolute;top:14px;right:18px;font-family:'Cascadia Code','Consolas',monospace;font-size:30px;font-weight:700;color:rgba(0,0,0,.08)}
+.opm h5{font-size:19px;color:var(--ms-navy);font-weight:600;margin-bottom:6px;line-height:1.2;padding-right:30px}
+.opm p{font-size:15px;color:var(--ink-soft);line-height:1.5;margin-bottom:8px}
+.opm h6{font-size:13px;color:var(--ms-navy);font-weight:600;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:5px}
+.opm ul{list-style:none}
+.opm li{padding:2px 0 2px 12px;position:relative;font-size:14px;color:var(--ink);line-height:1.4}
+.opm li::before{content:"›";position:absolute;left:0;top:2px;color:var(--copilot);font-weight:700}
+
+/* MONITORING TOOLS */
+.tools-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:18px}
+.tool-card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:16px 14px;text-align:left;box-shadow:0 1px 3px rgba(0,0,0,.04);position:relative;overflow:hidden;border-left:4px solid var(--ms-blue)}
+.tool-card.t1{border-left-color:#2563EB}
+.tool-card.t2{border-left-color:#F59E0B}
+.tool-card.t3{border-left-color:#1E40AF}
+.tool-card.t4{border-left-color:#D83B01}
+.tool-card.t5{border-left-color:#107C10}
+.tool-card .icon{font-size:28px;margin-bottom:5px;line-height:1}
+.tool-card.t1 .icon{color:#2563EB}
+.tool-card.t2 .icon{color:#F59E0B}
+.tool-card.t3 .icon{color:#1E40AF}
+.tool-card.t4 .icon{color:#D83B01}
+.tool-card.t5 .icon{color:#107C10}
+.tool-card .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:11px;letter-spacing:1.2px;font-weight:600;color:var(--ink-mute);margin-bottom:4px;text-transform:uppercase}
+.tool-card h5{font-size:17px;color:var(--ms-navy);font-weight:600;margin-bottom:5px;line-height:1.2}
+.tool-card p{font-size:13px;color:var(--ink-soft);line-height:1.4;margin-bottom:6px}
+.tool-card ul{list-style:none}
+.tool-card li{padding:2px 0 2px 10px;position:relative;font-size:12px;color:var(--ink);line-height:1.4}
+.tool-card li::before{content:"›";position:absolute;left:0;top:2px;color:var(--copilot);font-weight:700}
+
+/* 6 BACKLOG CATEGORIES */
+.backlog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.bl-card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:18px 22px;display:flex;gap:14px;align-items:flex-start;box-shadow:0 1px 3px rgba(0,0,0,.04);border-top:3px solid var(--ms-blue)}
+.bl-card.b1{border-top-color:#2563EB}
+.bl-card.b2{border-top-color:#F59E0B}
+.bl-card.b3{border-top-color:#1E40AF}
+.bl-card.b4{border-top-color:#D83B01}
+.bl-card.b5{border-top-color:#107C10}
+.bl-card.b6{border-top-color:#D13438}
+.bl-card .icon{flex-shrink:0;width:40px;height:40px;border-radius:8px;background:#FEF3C7;color:var(--copilot);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700}
+.bl-card.b1 .icon{background:#DBEAFE;color:#2563EB}
+.bl-card.b2 .icon{background:#FEF3C7;color:#F59E0B}
+.bl-card.b3 .icon{background:#E5F4F6;color:#1E40AF}
+.bl-card.b4 .icon{background:#FFE2D6;color:#D83B01}
+.bl-card.b5 .icon{background:#DFF6DD;color:#107C10}
+.bl-card.b6 .icon{background:#FDE7E9;color:#D13438}
+.bl-card .body h5{font-size:18px;color:var(--ms-navy);font-weight:600;margin-bottom:4px;line-height:1.25}
+.bl-card .body p{font-size:14px;color:var(--ink-soft);line-height:1.45;margin-bottom:5px}
+.bl-card .body .ex{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--ms-blue-deep);background:#F8FAFD;padding:3px 8px;border-radius:3px;display:inline-block;line-height:1.3}
+
+/* IMPACT/EFFORT MATRIX */
+.matrix{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.04);max-width:820px;margin-left:auto;margin-right:auto}
+.matrix-grid{display:grid;grid-template-columns:80px 1fr 1fr;grid-template-rows:30px 1fr 1fr 30px;gap:8px}
+.m-yaxis{grid-column:1;writing-mode:vertical-lr;transform:rotate(180deg);text-align:center;font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ink-mute);letter-spacing:1.5px;font-weight:600;text-transform:uppercase}
+.m-yaxis.high{grid-row:2}
+.m-yaxis.low{grid-row:3}
+.m-xtop{grid-column:2/4;grid-row:1;text-align:center;font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ink-mute);letter-spacing:1.5px;font-weight:600;text-transform:uppercase;align-self:center}
+.m-xleft{grid-column:2;grid-row:4;text-align:center;font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ms-green);letter-spacing:1px;font-weight:600;text-transform:uppercase;align-self:center}
+.m-xright{grid-column:3;grid-row:4;text-align:center;font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ms-red);letter-spacing:1px;font-weight:600;text-transform:uppercase;align-self:center}
+.q1{grid-column:2;grid-row:2;background:linear-gradient(135deg,#DFF6DD 0%,#C5EBC1 100%);border:2px solid #107C10;border-radius:6px;padding:14px 18px;display:flex;flex-direction:column;justify-content:center}
+.q2{grid-column:3;grid-row:2;background:linear-gradient(135deg,#FFF4CE 0%,#FFE7A0 100%);border:2px solid #B58800;border-radius:6px;padding:14px 18px;display:flex;flex-direction:column;justify-content:center}
+.q3{grid-column:2;grid-row:3;background:linear-gradient(135deg,#DBEAFE 0%,#C5DDF2 100%);border:2px solid #2563EB;border-radius:6px;padding:14px 18px;display:flex;flex-direction:column;justify-content:center}
+.q4{grid-column:3;grid-row:3;background:linear-gradient(135deg,#F3F2F1 0%,#E5E3E1 100%);border:2px solid #8A8886;border-radius:6px;padding:14px 18px;display:flex;flex-direction:column;justify-content:center}
+.q-tag{font-family:'Cascadia Code','Consolas',monospace;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px}
+.q1 .q-tag{color:#107C10}
+.q2 .q-tag{color:#B58800}
+.q3 .q-tag{color:#2563EB}
+.q4 .q-tag{color:#605E5C}
+.q-title{font-size:18px;font-weight:600;color:var(--ms-navy);margin-bottom:3px}
+.q-desc{font-size:14px;color:var(--ink-soft);line-height:1.4}
+
+/* 5 ROOT CAUSE CATEGORIES + DIAGNOSTIC */
+.diag-flow{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:22px 28px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.diag-row{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;align-items:stretch}
+.diag-step{background:var(--bg);border-radius:5px;padding:12px 10px;text-align:center;position:relative;border-top:3px solid var(--ms-blue)}
+.diag-step.d2{border-top-color:#1D4ED8}
+.diag-step.d3{border-top-color:#F59E0B}
+.diag-step.d4{border-top-color:#1E40AF}
+.diag-step.d5{border-top-color:#D83B01}
+.diag-step.d6{border-top-color:#107C10}
+.diag-step .num{font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ink-mute);letter-spacing:1px;font-weight:600;margin-bottom:4px}
+.diag-step h6{font-size:15px;color:var(--ms-navy);font-weight:600;margin-bottom:3px;line-height:1.2}
+.diag-step p{font-size:12px;color:var(--ink-soft);line-height:1.35}
+.causes{margin-top:14px;display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.cause{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:12px 14px;border-left:4px solid var(--ms-blue);box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.cause.c1{border-left-color:#2563EB}
+.cause.c2{border-left-color:#F59E0B}
+.cause.c3{border-left-color:#1E40AF}
+.cause.c4{border-left-color:#D83B01}
+.cause.c5{border-left-color:#D13438}
+.cause .num{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--ink-mute);letter-spacing:1.2px;font-weight:600;margin-bottom:3px}
+.cause h6{font-size:16px;color:var(--ms-navy);font-weight:600;margin-bottom:3px;line-height:1.2}
+.cause p{font-size:13px;color:var(--ink-soft);line-height:1.4}
+
+/* 4 TUNING STRATEGIES */
+.tuning-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:18px}
+.tune{background:var(--paper);border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.tune .top{padding:16px 22px;color:#FFFFFF;display:flex;align-items:center;gap:12px}
+.tune.tu1 .top{background:linear-gradient(135deg,#2563EB 0%,#1D4ED8 100%)}
+.tune.tu2 .top{background:linear-gradient(135deg,#F59E0B 0%,#B45309 100%)}
+.tune.tu3 .top{background:linear-gradient(135deg,#1E40AF 0%,#107C10 100%)}
+.tune.tu4 .top{background:linear-gradient(135deg,#D83B01 0%,#F59E0B 100%)}
+.tune .top .ico{font-size:28px}
+.tune .top h5{font-size:20px;font-weight:600;margin-bottom:2px}
+.tune .top .sub{font-size:15px;opacity:.92}
+.tune .body{padding:14px 22px}
+.tune .body ul{list-style:none}
+.tune .body li{padding:4px 0 4px 16px;position:relative;font-size:16px;color:var(--ink);line-height:1.45}
+.tune .body li::before{content:"✓";position:absolute;left:0;top:4px;color:var(--ms-green);font-weight:700}
+
+/* 3 METRIC CATEGORIES */
+.metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.met-card{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:20px 22px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.met-card.me1{border-top:4px solid #2563EB}
+.met-card.me2{border-top:4px solid #F59E0B}
+.met-card.me3{border-top:4px solid #107C10}
+.met-card .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;letter-spacing:1.5px;font-weight:600;text-transform:uppercase;margin-bottom:5px}
+.met-card.me1 .lab{color:#2563EB}
+.met-card.me2 .lab{color:#F59E0B}
+.met-card.me3 .lab{color:#107C10}
+.met-card h4{font-size:21px;color:var(--ms-navy);font-weight:600;margin-bottom:8px;line-height:1.2}
+.met-card .metric{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start;padding:6px 0;border-bottom:1px dashed var(--line-soft);font-size:16px;color:var(--ink);line-height:1.35}
+.met-card .metric:last-child{border-bottom:none}
+.met-card .metric .name{font-weight:600;color:var(--ms-navy)}
+.met-card .metric .desc{font-size:14px;color:var(--ink-soft);grid-column:1/3;margin-top:1px}
+.met-card .metric .star{color:var(--ms-yellow);font-size:18px;line-height:1}
+
+.drift-card{margin-top:14px;background:linear-gradient(135deg,#FFF4CE 0%,#FFE7A0 100%);border:1px solid var(--ms-yellow);border-radius:6px;padding:14px 22px}
+.drift-card h6{font-size:14px;color:#8A6914;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.drift-card .drift-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;font-size:15px;color:var(--ink);line-height:1.4}
+.drift-card .drift-grid > div{padding-left:18px;position:relative}
+.drift-card .drift-grid > div::before{content:"⚠";position:absolute;left:0;color:#B58800;font-weight:700}
+.drift-card .drift-grid strong{color:var(--ms-navy);font-weight:600}
+
+/* TELEMETRY 4 CATEGORIES + 6-STEP DIAGNOSIS */
+.tel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
+.tel-card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:18px 18px;box-shadow:0 1px 3px rgba(0,0,0,.04);position:relative;overflow:hidden}
+.tel-card::before{content:"";position:absolute;top:0;left:0;right:0;height:5px}
+.tel-card.te1::before{background:#2563EB}
+.tel-card.te2::before{background:#F59E0B}
+.tel-card.te3::before{background:#1E40AF}
+.tel-card.te4::before{background:#D13438}
+.tel-card .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--ink-mute);letter-spacing:1.2px;font-weight:600;margin-top:5px;margin-bottom:5px}
+.tel-card h5{font-size:18px;color:var(--ms-navy);font-weight:600;margin-bottom:8px;line-height:1.2}
+.tel-card ul{list-style:none}
+.tel-card li{padding:3px 0 3px 12px;position:relative;font-size:14px;color:var(--ink);line-height:1.45}
+.tel-card.te1 li::before{content:"›";position:absolute;left:0;top:3px;color:#2563EB;font-weight:700}
+.tel-card.te2 li::before{content:"›";position:absolute;left:0;top:3px;color:#F59E0B;font-weight:700}
+.tel-card.te3 li::before{content:"›";position:absolute;left:0;top:3px;color:#1E40AF;font-weight:700}
+.tel-card.te4 li::before{content:"›";position:absolute;left:0;top:3px;color:#D13438;font-weight:700}
+.tel-flow{margin-top:14px;background:linear-gradient(135deg,#0C1426 0%,#1D4ED8 100%);color:#FFFFFF;border-radius:8px;padding:18px 24px}
+.tel-flow h6{font-size:14px;color:var(--ms-cyan);font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+.tel-flow .flow-row{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;align-items:center;font-size:14px;line-height:1.3}
+.tel-flow .flow-step{background:rgba(255,255,255,.10);border-left:3px solid var(--ms-cyan);padding:8px 10px;border-radius:3px}
+.tel-flow .flow-step .n{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--ms-cyan);font-weight:700;letter-spacing:.5px;margin-bottom:2px}
+.tel-flow .flow-step .l{font-weight:600;color:#FFFFFF}
+
+/* QUIZ */
+.quiz-wrap{max-width:880px;margin:0 auto;width:100%}
+.quiz-q{font-size:31px;line-height:1.3;font-weight:600;color:var(--ms-navy);margin-bottom:22px;letter-spacing:-.3px}
+.quiz-q em{font-style:normal;color:var(--copilot);font-weight:600}
+.quiz-options{display:flex;flex-direction:column;gap:10px}
+.quiz-opt{background:var(--paper);border:1px solid var(--line);padding:14px 18px;border-radius:4px;cursor:pointer;display:flex;align-items:flex-start;gap:16px;transition:.15s;font-size:18px;font-family:inherit;text-align:left;width:100%;color:var(--ink);line-height:1.4}
+.quiz-opt:hover{border-color:var(--ms-blue);background:#F3F9FD;box-shadow:0 2px 6px rgba(0,120,212,.10)}
+.quiz-opt .letter{width:30px;height:30px;border-radius:4px;background:var(--bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--ms-blue-deep);flex-shrink:0;font-size:16px}
+.quiz-opt.correct{border-color:var(--ms-green);background:#DFF6DD}
+.quiz-opt.correct .letter{background:var(--ms-green);color:#FFFFFF;border-color:var(--ms-green)}
+.quiz-opt.wrong{border-color:var(--ms-red);background:#FDE7E9;opacity:.65}
+.quiz-explain{margin-top:18px;background:#DFF6DD;border-left:4px solid var(--ms-green);padding:14px 18px;border-radius:4px;display:none}
+.quiz-explain.show{display:block;animation:slideUp .5s ease}
+.quiz-explain strong{color:var(--ms-green);font-family:'Cascadia Code','Consolas',monospace;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
+.quiz-explain p{margin-top:6px;font-size:18px;color:var(--ink);line-height:1.55}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* SCENARIO */
+.scenario{max-width:1100px;margin:0 auto;background:linear-gradient(135deg,#FEF3C7 0%,#E5E3F4 100%);border-radius:8px;padding:26px 36px;border-left:4px solid var(--copilot)}
+.scenario .tag{display:inline-block;background:var(--copilot);color:#FFFFFF;padding:5px 14px;border-radius:3px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:12px}
+.scenario h3{font-size:29px;line-height:1.25;color:var(--ms-navy);margin-bottom:12px;font-weight:600;letter-spacing:-.3px}
+.scenario .quote{font-size:19px;line-height:1.5;color:var(--ms-navy);padding:13px 18px;background:rgba(255,255,255,.8);border-radius:4px;margin:10px 0;border-left:3px solid var(--ms-blue);font-style:italic}
+.scenario .telemetry-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;font-size:16px}
+.scenario .tel-stat{background:rgba(255,255,255,.85);padding:8px 10px;border-radius:4px;border-left:3px solid var(--ms-green)}
+.scenario .tel-stat.warn{border-left-color:#D13438}
+.scenario .tel-stat .name{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--ink-mute);letter-spacing:1.2px;font-weight:600;text-transform:uppercase;margin-bottom:2px}
+.scenario .tel-stat .val{font-size:18px;font-weight:600;color:var(--ms-navy)}
+.scenario .tel-stat.warn .val{color:#D13438}
+.scenario .prompts h5{font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ms-navy);margin-bottom:8px;font-weight:600;margin-top:10px}
+.scenario .prompts ul{list-style:none}
+.scenario .prompts li{padding:7px 0 7px 22px;position:relative;font-size:17px;color:var(--ink);border-bottom:1px dashed rgba(0,32,80,.18);line-height:1.45}
+.scenario .prompts li:last-child{border-bottom:none}
+.scenario .prompts li::before{content:"→";position:absolute;left:0;top:7px;color:var(--copilot);font-weight:700}
+.scenario .reveal-btn{margin-top:14px;background:var(--ms-blue);color:#FFFFFF;border:none;padding:10px 22px;border-radius:4px;font-family:'Segoe UI',sans-serif;font-size:16px;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:.15s}
+.scenario .reveal-btn:hover{background:var(--ms-blue-deep);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,120,212,.30)}
+.scenario .reveal-btn.shown{display:none}
+.answer-panel{margin-top:14px;background:var(--paper);border:1px solid var(--ms-blue);border-radius:6px;padding:18px 22px;display:none}
+.answer-panel.show{display:block;animation:slideUp .5s ease}
+.answer-panel .ap-label{display:inline-block;background:var(--ms-navy);color:#FFFFFF;padding:4px 12px;border-radius:3px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:10px}
+.answer-panel .ap-row{margin-bottom:10px}
+.answer-panel .ap-row:last-child{margin-bottom:0}
+.answer-panel .ap-q{font-size:17px;color:var(--copilot);font-weight:600;margin-bottom:5px}
+.answer-panel .ap-a{font-size:16px;color:var(--ink);line-height:1.55;padding-left:14px;border-left:2px solid #DBEAFE}
+.answer-panel .ap-a span{display:block;margin-bottom:3px}
+.answer-panel .ap-a span::before{content:"• ";color:var(--ms-blue);font-weight:700}
+
+/* RECAP */
+.recap{max-width:920px;margin:0 auto}
+.recap-list{display:grid;gap:9px;margin-top:14px}
+.recap-item{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--ms-blue);padding:12px 22px;border-radius:4px;display:flex;gap:14px;align-items:flex-start;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.recap-item .check{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--ms-blue);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+.recap-item .text{font-size:18px;color:var(--ms-navy);line-height:1.45}
+.recap-item .text em{color:var(--copilot);font-style:normal;font-weight:600}
+
+.float-hint{position:fixed;top:72px;right:20px;background:var(--ms-navy);color:#FFFFFF;padding:10px 16px;border-radius:4px;font-size:15px;opacity:0;transition:.3s;z-index:30;pointer-events:none;font-family:'Cascadia Code','Consolas',monospace;box-shadow:0 6px 16px rgba(0,32,80,.20)}
+.float-hint.show{opacity:.95}
+
+/* GENNOOR WORDMARK COLOR LETTERS */
+.brand-name .b-w{color:#FFFFFF}
+.brand-name .b-blue{color:#60A5FA}
+.brand-name .b-amber{color:#F59E0B}
+.slide.title-slide .brand-wordmark .name .b-w{color:#FFFFFF}
+.slide.title-slide .brand-wordmark .name .b-blue{color:#60A5FA}
+.slide.title-slide .brand-wordmark .name .b-amber{color:#F59E0B}
+
+/* TOPBAR GRID — slide nav moved to topbar center */
+.topbar.topbar-grid{display:grid !important;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;height:72px;padding:0 28px}
+.topbar.topbar-grid .topbar-left{display:flex;align-items:center;gap:18px;min-width:0;overflow:hidden}
+.topbar.topbar-grid .topbar-left .chapter-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar.topbar-grid .topbar-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.topbar.topbar-grid .topbar-right{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0}
+.step-indicator-top{font-family:'Cascadia Code','Consolas',monospace;font-size:10px;letter-spacing:2.5px;color:var(--gn-amber,var(--ms-yellow));font-weight:700;text-transform:uppercase;line-height:1;opacity:.95}
+.step-indicator-top.complete{color:rgba(255,255,255,.5)}
+.controls-top{display:inline-flex;align-items:center;gap:4px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.10);border-radius:5px;padding:3px 6px}
+.controls-top button{width:28px;height:28px;border-radius:3px;border:none;background:transparent;color:#FFFFFF;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:.15s;padding:0}
+.controls-top button:hover{background:rgba(255,255,255,.12)}
+.controls-top button:disabled{opacity:.3;cursor:not-allowed}
+.controls-top .counter{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;font-weight:600;color:#FFFFFF;letter-spacing:.5px;padding:0 12px;min-width:64px;text-align:center}
+.controls-top .counter strong{color:var(--gn-amber,var(--ms-yellow));font-weight:700}
+/* Hide original bottom controls (now empty) */
+.bottom-nav-removed{display:none !important}
+
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar topbar-grid">
+    <div class="topbar-left">
+    <a href="#" class="brand-lockup">
+      <svg class="brand-mark" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+      <div class="brand-text">
+        <span class="brand-name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+        <span class="brand-sub">AB-100</span>
+      </div>
+    </a>
+    <div class="divider"></div>
+    <div class="chapter-title">Chapter 08 · Analyze, Monitor, Tune</div>
+    </div>
+    <div class="topbar-center">
+      <div class="step-indicator-top" id="stepIndicator">More to reveal</div>
+      <div class="controls-top">
+        <button id="prevBtn" title="Previous (←)">‹</button>
+        <span class="counter" id="counter">1 / 22</span>
+        <button id="nextBtn" title="Next (→)">›</button>
+      </div>
+    </div>
+    <div class="topbar-right">
+    <div class="meta">
+      <span class="pill" id="sectionLabel">Opening</span>
+      <span class="pill step-pill" id="stepPill" style="display:none">Step 1/6</span>
+    </div>
+    <button id="notesToggle" title="Toggle notes (T)">📖 Notes</button>
+    </div>
+  </div>
+
+  <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="stage">
+    <div class="slides" id="slides">
+
+      <!-- 01 TITLE -->
+      <section class="slide title-slide active"
+        data-section="Opening"
+        data-script="Chapter 8. <em>Analyze, monitor, and tune AI-powered business solutions.</em> Chapters 5 through 7 covered building, extending, and orchestrating. Now we move to <em>day-2 operations</em>. The agent is in production. Users are using it. <em>How do you keep it working?</em> This chapter covers monitoring, feedback loops, telemetry, and tuning.">
+        <div class="slide-num">01 / 22</div>
+        <div class="brand-full">
+          <svg class="brand-mark-lg" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+          <div class="brand-wordmark">
+            <span class="name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+            <span class="tag">AB-100 Course</span>
+          </div>
+        </div>
+        <div class="eyebrow">CHAPTER 08</div>
+        <h1>Analyze, Monitor,<br>and <em>Tune</em></h1>
+        <div class="meta-row">
+          <div>FOCUS<strong>Day-2 operations</strong></div>
+          <div>SCOPE<strong>Telemetry · feedback · tuning</strong></div>
+          <div>OUTPUT<strong>Continuous improvement loop</strong></div>
+        </div>
+      </section>
+
+      <!-- 02 OVERVIEW -->
+      <section class="slide content-slide"
+        data-section="Opening"
+        data-script="Five themes. The day-2 operations playbook. <em>Most agent failures aren't build failures — they're operations failures</em>. Drift, feedback ignored, no monitoring in place.">
+        <div class="slide-num">02 / 22</div>
+        <h3 class="slide-h">What this chapter <em>covers</em></h3>
+        <p class="lead">Five themes for keeping AI agents reliable, accurate, and trusted in production. Build is half the work — operations is the other half.</p>
+        <div class="cards">
+          <div class="card" data-step data-script="One — <em>monitoring framework and tools</em>. Five monitoring dimensions plus the operating model plus Microsoft's monitoring stack.">
+            <div class="num">01</div><h4>Monitoring &amp; Tools</h4>
+            <p>5 monitoring dimensions · operating model · Microsoft's monitoring tool stack.</p>
+            <div class="ex"><strong>Output</strong>Operational visibility.</div>
+          </div>
+          <div class="card" data-step data-script="Two — <em>backlog and user feedback analysis</em>. Six categorization domains. Impact-effort prioritization. Conversation transcript mining.">
+            <div class="num">02</div><h4>Backlog &amp; Feedback</h4>
+            <p>6 backlog domains · impact/effort prioritization · transcript pattern mining.</p>
+            <div class="ex"><strong>Output</strong>Prioritized improvement list.</div>
+          </div>
+          <div class="card" data-step data-script="Three — <em>AI-based diagnosis and tuning</em>. Five root cause categories. Diagnostic workflow. Four tuning strategies — knowledge, behavior, performance, governance.">
+            <div class="num">03</div><h4>Diagnose &amp; Tune</h4>
+            <p>5 root causes · diagnostic workflow · 4 tuning strategies (knowledge/behavior/perf/governance).</p>
+            <div class="ex"><strong>Output</strong>Targeted fix.</div>
+          </div>
+          <div class="card" data-step data-script="Four — <em>performance metrics</em>. Three categories. Operational, quality, user-centered. Plus model drift indicators. <em>Task completion rate is the gold-standard metric</em>.">
+            <div class="num">04</div><h4>Performance Metrics</h4>
+            <p>3 metric categories — operational · quality · user-centered. Plus drift indicators.</p>
+            <div class="ex"><strong>Output</strong>KPI scorecard.</div>
+          </div>
+          <div class="card" data-step data-script="Five — <em>telemetry interpretation</em>. Four telemetry categories. Six-step diagnostic workflow. From signal to fix.">
+            <div class="num">05</div><h4>Telemetry &amp; Tuning</h4>
+            <p>4 telemetry categories · 6-step diagnosis workflow from signal to fix.</p>
+            <div class="ex"><strong>Output</strong>Closed feedback loop.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 SECTION DIVIDER UNIT 1 -->
+      <section class="slide section-divider"
+        data-section="Monitoring Framework"
+        data-script="First unit. <em>Monitoring framework and tools.</em> What to monitor and which Microsoft tools surface the data. The foundation of day-2 operations.">
+        <div class="slide-num">03 / 22</div>
+        <div class="label">UNIT ONE</div>
+        <h2>Monitoring<br>&amp; <em>Tools</em></h2>
+        <div class="sub">Five monitoring dimensions · operating model · Microsoft's monitoring tool stack. The foundation of day-2 operations for AI agents.</div>
+      </section>
+
+      <!-- 04 5 MONITORING REQUIREMENTS -->
+      <section class="slide content-slide"
+        data-section="Monitoring Framework"
+        data-script="<em>Five monitoring dimensions.</em> Operational health. Performance. Quality. Usage. Risk and compliance. <em>Cover all five</em> — focusing on just operational health misses the most important business signals. I'll bring them up one at a time.">
+        <div class="slide-num">04 / 22</div>
+        <h3 class="slide-h">Five <em>monitoring dimensions</em></h3>
+        <p class="lead">Production AI agents need visibility across all five dimensions. Skip any one and the blind spot will eventually break trust.</p>
+        <div class="requirements">
+          <div class="req r1" data-step
+            data-script="<em>Dimension 1 — Operational health</em>. Uptime, availability, error frequency, throttling, processing delays. <em>The classic IT metrics</em> — necessary but not sufficient.">
+            <div class="lab">DIMENSION 01</div>
+            <div class="icon">⚡</div>
+            <h4>Operational Health</h4>
+            <ul>
+              <li>Uptime &amp; availability</li>
+              <li>Error frequency</li>
+              <li>Throttling</li>
+              <li>Processing delays</li>
+            </ul>
+          </div>
+          <div class="req r2" data-step
+            data-script="<em>Dimension 2 — Performance</em>. Response times. Success rates. Tool reliability. Workflow completion. The agent-specific metrics layered on top of basic operational health.">
+            <div class="lab">DIMENSION 02</div>
+            <div class="icon">⏱</div>
+            <h4>Performance</h4>
+            <ul>
+              <li>Response time</li>
+              <li>Success rates</li>
+              <li>Tool reliability</li>
+              <li>Workflow completion</li>
+            </ul>
+          </div>
+          <div class="req r3" data-step
+            data-script="<em>Dimension 3 — Quality</em>. Output appropriateness. Business rule alignment. Deviation detection. <em>Quality is the hardest dimension to monitor</em> — needs human-in-the-loop spot checks.">
+            <div class="lab">DIMENSION 03</div>
+            <div class="icon">✓</div>
+            <h4>Quality &amp; Accuracy</h4>
+            <ul>
+              <li>Output appropriateness</li>
+              <li>Business rule alignment</li>
+              <li>Deviation detection</li>
+              <li>Human-in-the-loop spot checks</li>
+            </ul>
+          </div>
+          <div class="req r4" data-step
+            data-script="<em>Dimension 4 — Usage</em>. Volume trends. Adoption. Feature utilization. Behavioral patterns. <em>The business success indicator</em> — agents that aren't used create no value, regardless of how well they perform.">
+            <div class="lab">DIMENSION 04</div>
+            <div class="icon">📊</div>
+            <h4>Usage Insights</h4>
+            <ul>
+              <li>Volume trends</li>
+              <li>User adoption</li>
+              <li>Feature utilization</li>
+              <li>Behavioral patterns</li>
+            </ul>
+          </div>
+          <div class="req r5" data-step
+            data-script="<em>Dimension 5 — Risk and compliance</em>. Guardrail violations. Sensitive data handling. Suspicious activity. Policy adherence. <em>Required for governance review</em> — no agent ships without this dimension instrumented.">
+            <div class="lab">DIMENSION 05</div>
+            <div class="icon">🛡</div>
+            <h4>Risk &amp; Compliance</h4>
+            <ul>
+              <li>Guardrail violations</li>
+              <li>Sensitive data handling</li>
+              <li>Suspicious activity</li>
+              <li>Policy adherence</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05 4-STEP OPERATING MODEL -->
+      <section class="slide content-slide"
+        data-section="Monitoring Framework"
+        data-script="<em>The monitoring operating model.</em> Four practices that turn ad-hoc monitoring into a sustainable function. <em>Without these, monitoring becomes whatever the on-call engineer remembers to check</em>. I'll bring them up one at a time.">
+        <div class="slide-num">05 / 22</div>
+        <h3 class="slide-h">Monitoring <em>operating model</em></h3>
+        <p class="lead">Four practices for production-grade monitoring. Skip any of them and monitoring becomes whatever the on-call engineer remembers to check.</p>
+        <div class="opmodel">
+          <div class="opm o1" data-step
+            data-script="<em>Practice 1 — Establish the operating model</em>. Defined roles — ops, product owners, data engineers, architects. Standardized metric definitions. Baselines and trends. Log review cadence — daily, weekly, monthly. Change tracking. <em>Roles are the foundation</em> — without owners, metrics drift.">
+            <div class="num">1</div>
+            <h5>Establish Operating Model</h5>
+            <p>Roles, ownership, accountability for AI operations.</p>
+            <h6>What to define</h6>
+            <ul>
+              <li>Defined roles (ops · PO · architect)</li>
+              <li>Standardized metric definitions</li>
+              <li>Baselines &amp; trends</li>
+              <li>Review cadence (daily/weekly/monthly)</li>
+            </ul>
+          </div>
+          <div class="opm o2" data-step
+            data-script="<em>Practice 2 — Configure guardrails and threshold alerts</em>. Set thresholds for latency, exception volume, unusual activity. Automated alerts for guardrail triggers and tool invocation failures. <em>Watch for prompt spikes</em> — they often indicate misuse or a customer in distress.">
+            <div class="num">2</div>
+            <h5>Guardrails &amp; Alerts</h5>
+            <p>Threshold-based automated alerting for anomalies.</p>
+            <h6>What to alert on</h6>
+            <ul>
+              <li>Latency thresholds</li>
+              <li>Exception volume spikes</li>
+              <li>Guardrail triggers</li>
+              <li>Tool invocation failures</li>
+            </ul>
+          </div>
+          <div class="opm o3" data-step
+            data-script="<em>Practice 3 — Regular quality evaluations</em>. Human-in-the-loop spot checks. Scenario-based evaluations. Review low-confidence outputs. Validate business rule alignment. <em>Telemetry doesn't catch quality degradation</em> — humans do.">
+            <div class="num">3</div>
+            <h5>Quality Evaluations</h5>
+            <p>Human-in-the-loop quality checks beyond telemetry.</p>
+            <h6>What to do</h6>
+            <ul>
+              <li>HITL spot checks</li>
+              <li>Scenario-based evaluations</li>
+              <li>Review low-confidence outputs</li>
+              <li>Validate business rule alignment</li>
+            </ul>
+          </div>
+          <div class="opm o4" data-step
+            data-script="<em>Practice 4 — Continuous improvement</em>. Analyze logs and telemetry for failure patterns. Identify training needs. Recommend prompt improvements. Propose workflow adjustments or model retraining. <em>Monitoring without action is theater</em>.">
+            <div class="num">4</div>
+            <h5>Continuous Improvement</h5>
+            <p>Insights translated into measurable improvements.</p>
+            <h6>What to drive</h6>
+            <ul>
+              <li>Failure pattern analysis</li>
+              <li>User training needs</li>
+              <li>Prompt improvements</li>
+              <li>Workflow / model adjustments</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 MONITORING TOOLS -->
+      <section class="slide content-slide"
+        data-section="Monitoring Framework"
+        data-script="<em>Five Microsoft monitoring tools.</em> Each covers a different layer. Stack them — no single tool gives full visibility. I'll bring them up one at a time.">
+        <div class="slide-num">06 / 22</div>
+        <h3 class="slide-h">Microsoft's <em>monitoring tool stack</em></h3>
+        <p class="lead">Five tools cover the AI agent monitoring stack end-to-end. Production deployments use a layered combination — no single tool handles all five dimensions.</p>
+        <div class="tools-grid">
+          <div class="tool-card t1" data-step
+            data-script="<em>Azure Monitor</em>. Core telemetry plus alerts. Application and agent telemetry. Real-time dashboards. KQL queries for diagnostics. Integration with Log Analytics. <em>The foundation</em> — most production deployments start here.">
+            <div class="lab">TOOL 01</div>
+            <div class="icon">⊞</div>
+            <h5>Azure Monitor</h5>
+            <p>Core telemetry + alerts platform.</p>
+            <ul>
+              <li>App + agent telemetry</li>
+              <li>Real-time dashboards</li>
+              <li>KQL diagnostics</li>
+              <li>Log Analytics integration</li>
+            </ul>
+          </div>
+          <div class="tool-card t2" data-step
+            data-script="<em>M365 Admin Analytics</em>. Usage and adoption trends. Agent usage volume. Engagement tracking. Identifies departments with low usage or barriers. Week-over-week improvements. <em>The adoption signal</em> — telemetry alone won't show this.">
+            <div class="lab">TOOL 02</div>
+            <div class="icon">📈</div>
+            <h5>M365 Admin Analytics</h5>
+            <p>Usage and adoption signal.</p>
+            <ul>
+              <li>Agent usage volume</li>
+              <li>Engagement tracking</li>
+              <li>Department-level barriers</li>
+              <li>Week-over-week trends</li>
+            </ul>
+          </div>
+          <div class="tool-card t3" data-step
+            data-script="<em>Copilot &amp; Agent Analytics Dashboards</em>. Built-in dashboards for agent invocation frequency, task completion, common queries, productivity patterns, error events. <em>Easiest path to baseline visibility</em> for Copilot Studio agents.">
+            <div class="lab">TOOL 03</div>
+            <div class="icon">📊</div>
+            <h5>Copilot &amp; Agent Dashboards</h5>
+            <p>Built-in agent analytics views.</p>
+            <ul>
+              <li>Invocation frequency</li>
+              <li>Task completion trends</li>
+              <li>Common queries</li>
+              <li>Error / guardrail events</li>
+            </ul>
+          </div>
+          <div class="tool-card t4" data-step
+            data-script="<em>Power Platform Admin Center</em>. Environment-level monitoring. Connector usage and limits. Flow telemetry. DLP rule impact. <em>Critical for Power Platform agents</em> — connector throttling kills agents silently.">
+            <div class="lab">TOOL 04</div>
+            <div class="icon">⚙</div>
+            <h5>Power Platform Admin</h5>
+            <p>Environment-level visibility.</p>
+            <ul>
+              <li>Environment health</li>
+              <li>Connector usage / limits</li>
+              <li>Flow telemetry</li>
+              <li>DLP impact visibility</li>
+            </ul>
+          </div>
+          <div class="tool-card t5" data-step
+            data-script="<em>Foundry &amp; observability platforms</em>. Centralize multi-system logs. Cross-environment dashboards. AI model execution insights. <em>Single pane of glass</em> for enterprises with multiple AI environments. Where governance teams live.">
+            <div class="lab">TOOL 05</div>
+            <div class="icon">🔭</div>
+            <h5>Foundry / Observability</h5>
+            <p>Cross-system single pane of glass.</p>
+            <ul>
+              <li>Multi-system log aggregation</li>
+              <li>Cross-environment dashboards</li>
+              <li>Model execution insights</li>
+              <li>Reduced fragmentation</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 07 QUIZ 1 -->
+      <section class="slide content-slide"
+        data-section="Monitoring Framework"
+        data-script="Quick check.">
+        <div class="slide-num">07 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 1 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which process should be included when establishing a <em>monitoring operating model?</em></div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Ignore agent guardrail triggers</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Standardized metric definitions and a defined log review cadence are the foundation of a monitoring operating model. Without standard definitions, every team measures success differently. Without cadence, log review becomes ad-hoc. Ignoring guardrail triggers would defeat the purpose of governance. Disabling alerts removes the early warning system. Unrestricted configuration breaks change control."><span class="letter">B</span> Standardize metric definitions and log review cadence</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> Disable all alerts to reduce noise</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Allow unrestricted agent configuration</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 08 SECTION DIVIDER UNIT 2 -->
+      <section class="slide section-divider"
+        data-section="Backlog &amp; Feedback"
+        data-script="Unit two. <em>Backlog and user feedback analysis.</em> Translating raw signals — support tickets, surveys, transcripts — into prioritized improvements. The bridge between monitoring and tuning.">
+        <div class="slide-num">08 / 22</div>
+        <div class="label">UNIT TWO</div>
+        <h2>Backlog &amp;<br>User <em>Feedback</em></h2>
+        <div class="sub">Categorize backlog domains · prioritize by impact and effort · mine conversation transcripts for root causes. The bridge between monitoring and action.</div>
+      </section>
+
+      <!-- 09 6 BACKLOG CATEGORIES -->
+      <section class="slide content-slide"
+        data-section="Backlog &amp; Feedback"
+        data-script="<em>Six backlog categories.</em> Every issue, request, or piece of feedback maps to one of these six domains. <em>Categorize first</em> — without categorization, the backlog is just noise. I'll bring them up one at a time.">
+        <div class="slide-num">09 / 22</div>
+        <h3 class="slide-h">Six <em>backlog domains</em></h3>
+        <p class="lead">Every backlog item maps to one of six domains. Categorize before prioritizing — different domains demand different fixes.</p>
+        <div class="backlog-grid">
+          <div class="bl-card b1" data-step
+            data-script="<em>Domain 1 — Accuracy</em>. Misinterpreted queries. Missing context. The agent gets the question wrong or answers the wrong question. Usually a knowledge or prompt issue.">
+            <div class="icon">⊕</div>
+            <div class="body">
+              <h5>Accuracy</h5>
+              <p>Misinterpreted queries, missing context, wrong answers.</p>
+              <div class="ex">"Agent gives wrong account balance"</div>
+            </div>
+          </div>
+          <div class="bl-card b2" data-step
+            data-script="<em>Domain 2 — Knowledge</em>. Outdated docs. Missing domain articles. <em>The agent doesn't know things it should know</em>. Usually fixable by knowledge source updates.">
+            <div class="icon">📚</div>
+            <div class="body">
+              <h5>Knowledge</h5>
+              <p>Outdated docs, missing domain articles, knowledge gaps.</p>
+              <div class="ex">"Agent doesn't know new pricing tiers"</div>
+            </div>
+          </div>
+          <div class="bl-card b3" data-step
+            data-script="<em>Domain 3 — Performance</em>. High latency. Connector throttling. The agent works but slowly. <em>Often the easiest to fix</em> — workflow optimization or connector tuning.">
+            <div class="icon">⚡</div>
+            <div class="body">
+              <h5>Performance</h5>
+              <p>High latency, connector throttling, slow responses.</p>
+              <div class="ex">"Agent takes 8 seconds to respond"</div>
+            </div>
+          </div>
+          <div class="bl-card b4" data-step
+            data-script="<em>Domain 4 — UX</em>. Confusing flows. Unclear instructions. The agent works but users can't use it well. <em>Highest impact on adoption</em> — UX issues drive abandonment.">
+            <div class="icon">⊡</div>
+            <div class="body">
+              <h5>UX</h5>
+              <p>Confusing flows, unclear instructions, friction points.</p>
+              <div class="ex">"Users abandon at step 3 of proposal flow"</div>
+            </div>
+          </div>
+          <div class="bl-card b5" data-step
+            data-script="<em>Domain 5 — Integration</em>. API failures. Broken actions. The agent's connection to enterprise systems isn't working. <em>Often blame-game-prone</em> — could be agent, could be downstream system.">
+            <div class="icon">⇆</div>
+            <div class="body">
+              <h5>Integration</h5>
+              <p>API failures, broken actions, downstream system issues.</p>
+              <div class="ex">"Salesforce connector returning 503 errors"</div>
+            </div>
+          </div>
+          <div class="bl-card b6" data-step
+            data-script="<em>Domain 6 — Governance</em>. Data access blocked. DLP alerts. The agent's blocked from doing what users need — usually for good reason. <em>Resolution requires governance review, not just engineering</em>.">
+            <div class="icon">🛡</div>
+            <div class="body">
+              <h5>Governance</h5>
+              <p>Data access blocked, DLP alerts, policy conflicts.</p>
+              <div class="ex">"Agent blocked from reading customer PII"</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 IMPACT/EFFORT MATRIX -->
+      <section class="slide content-slide"
+        data-section="Backlog &amp; Feedback"
+        data-script="<em>Prioritize by impact and effort.</em> Classic two-by-two. Once items are categorized, they need to be ordered. <em>High impact, low effort wins</em> — that's where the architect earns their keep. I'll bring up the quadrants one at a time.">
+        <div class="slide-num">10 / 22</div>
+        <h3 class="slide-h">Prioritize by <em>impact &amp; effort</em></h3>
+        <p class="lead">After categorization comes prioritization. Plot every backlog item on the impact-effort matrix. Priority 1 wins go in the upper-left quadrant — high impact, low effort.</p>
+        <div class="matrix">
+          <div class="matrix-grid">
+            <div class="m-yaxis high">High Impact</div>
+            <div class="m-yaxis low">Low Impact</div>
+            <div class="m-xtop">Effort</div>
+            <div class="m-xleft">Low Effort</div>
+            <div class="m-xright">High Effort</div>
+            <div class="q1" data-step data-script="<em>Quadrant 1 — High impact, low effort</em>. Priority one. <em>Immediate action</em>. Update outdated knowledge. Fix obvious prompt issues. Quick connector configuration tweaks. The architect's bread and butter.">
+              <div class="q-tag">▲ Priority 1</div>
+              <div class="q-title">Immediate action</div>
+              <div class="q-desc">Update knowledge · fix prompt errors · config tweaks</div>
+            </div>
+            <div class="q2" data-step data-script="<em>Quadrant 2 — High impact, high effort</em>. Priority two. <em>Plan and schedule</em>. Major workflow redesigns. Custom model retraining. Cross-team integration changes. Don't ignore — they have value, but they need staffing.">
+              <div class="q-tag">▲ Priority 2</div>
+              <div class="q-title">Plan and schedule</div>
+              <div class="q-desc">Workflow redesign · model retraining · cross-team changes</div>
+            </div>
+            <div class="q3" data-step data-script="<em>Quadrant 3 — Low impact, low effort</em>. Priority three. <em>Optimize when possible</em>. Cosmetic improvements. Small UX tweaks. Done when capacity is available — never as the headline work.">
+              <div class="q-tag">▼ Priority 3</div>
+              <div class="q-title">Optimize when possible</div>
+              <div class="q-desc">Cosmetic fixes · small UX tweaks · housekeeping</div>
+            </div>
+            <div class="q4" data-step data-script="<em>Quadrant 4 — Low impact, high effort</em>. Priority four. <em>Defer and reassess</em>. Don't do these. They're the trap that consumes teams without delivering value. Reassess quarterly.">
+              <div class="q-tag">▼ Priority 4</div>
+              <div class="q-title">Defer; reassess later</div>
+              <div class="q-desc">Don't do these — reassess quarterly</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11 QUIZ 2 -->
+      <section class="slide content-slide"
+        data-section="Backlog &amp; Feedback"
+        data-script="Quick check.">
+        <div class="slide-num">11 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 2 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">What is the best <em>first step</em> when analyzing backlog items for AI and agent usage?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Immediately redesign agent prompts</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Categorizing backlog items into meaningful domains is the foundation of structured prioritization. Without categorization, the backlog is undifferentiated noise — and you can't prioritize what you haven't classified. Jumping to prompt redesign skips diagnosis. Archiving feedback loses signal. Disabling the agent abandons users. Categorize first, prioritize second, fix third."><span class="letter">B</span> Categorize backlog items into meaningful domains</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> Archive past feedback to avoid noise</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Disable the agent until issues are fixed</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 12 SECTION DIVIDER UNIT 3 -->
+      <section class="slide section-divider"
+        data-section="Diagnose &amp; Tune"
+        data-script="Unit three. <em>AI-based diagnosis and tuning.</em> When the backlog signals something needs fixing — what's the diagnostic process and how do you tune?">
+        <div class="slide-num">12 / 22</div>
+        <div class="label">UNIT THREE</div>
+        <h2>Diagnose<br>&amp; <em>Tune</em></h2>
+        <div class="sub">Six-step diagnostic workflow · five root cause categories · four tuning strategies. From symptom to targeted fix.</div>
+      </section>
+
+      <!-- 13 DIAGNOSTIC FLOW + 5 ROOT CAUSES -->
+      <section class="slide content-slide"
+        data-section="Diagnose &amp; Tune"
+        data-script="<em>Diagnostic workflow plus five root cause categories.</em> The flow on top — telemetry through validation. The five root causes underneath — every agent issue traces back to one of these. I'll reveal the flow first, then each root cause.">
+        <div class="slide-num">13 / 22</div>
+        <h3 class="slide-h"><em>Diagnostic workflow</em> &amp; root causes</h3>
+        <p class="lead">A consistent diagnostic workflow plus five root cause categories. Every agent issue traces back to one of these five.</p>
+        <div data-step data-script="<em>The 6-step diagnostic workflow.</em> Monitor → detect anomalies → correlate signals → determine root cause → apply targeted tuning → validate. <em>Don't skip validation</em> — the same issue can recur if you tune the wrong thing.">
+          <div class="diag-flow">
+            <div class="diag-row">
+              <div class="diag-step"><div class="num">STEP 1</div><h6>Monitor</h6><p>Latency · throughput · quality · satisfaction</p></div>
+              <div class="diag-step d2"><div class="num">STEP 2</div><h6>Detect</h6><p>Anomalies · deviations from baseline</p></div>
+              <div class="diag-step d3"><div class="num">STEP 3</div><h6>Correlate</h6><p>Combine user behavior · failures · perf</p></div>
+              <div class="diag-step d4"><div class="num">STEP 4</div><h6>Root Cause</h6><p>Model · integration · prompt · config?</p></div>
+              <div class="diag-step d5"><div class="num">STEP 5</div><h6>Tune</h6><p>Targeted fix in the right layer</p></div>
+              <div class="diag-step d6"><div class="num">STEP 6</div><h6>Validate</h6><p>Compare telemetry before vs after</p></div>
+            </div>
+          </div>
+        </div>
+        <div class="causes" style="margin-top:14px">
+          <div class="cause c1" data-step
+            data-script="<em>Root cause 1 — Model or prompt</em>. Misinterpretation. Insufficient context. Wrong instructions. Fixable through prompt refinement or model tuning.">
+            <div class="num">CAUSE 01</div>
+            <h6>Model / Prompt</h6>
+            <p>Misinterpretation, insufficient context, instruction errors</p>
+          </div>
+          <div class="cause c2" data-step
+            data-script="<em>Root cause 2 — Knowledge gaps</em>. Missing organizational content. Outdated files. The agent doesn't know what it should. Fix at the knowledge source.">
+            <div class="num">CAUSE 02</div>
+            <h6>Knowledge Gap</h6>
+            <p>Missing org content, outdated files, gaps in coverage</p>
+          </div>
+          <div class="cause c3" data-step
+            data-script="<em>Root cause 3 — Integration failure</em>. Connector constraints. API limits. Data access rules. Often the most maddening — agent is working, downstream system isn't.">
+            <div class="num">CAUSE 03</div>
+            <h6>Integration Failure</h6>
+            <p>Connector constraints, API limits, data access rules</p>
+          </div>
+          <div class="cause c4" data-step
+            data-script="<em>Root cause 4 — Configuration</em>. Incorrect environment variables. Feature toggles. Role settings. Boring but common — most production incidents trace here.">
+            <div class="num">CAUSE 04</div>
+            <h6>Configuration</h6>
+            <p>Env vars, feature toggles, role / permission settings</p>
+          </div>
+          <div class="cause c5" data-step
+            data-script="<em>Root cause 5 — Governance interference</em>. DLP blocking. Sensitivity labels. Restricted actions. Resolution requires governance review, not just engineering.">
+            <div class="num">CAUSE 05</div>
+            <h6>Governance</h6>
+            <p>DLP blocking, sensitivity labels, restricted actions</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 14 4 TUNING STRATEGIES -->
+      <section class="slide content-slide"
+        data-section="Diagnose &amp; Tune"
+        data-script="<em>Four tuning strategies.</em> Once the root cause is identified, the fix lives in one of these four layers. <em>Apply the right strategy for the right cause</em> — tuning prompts when the issue is integration just wastes time. I'll bring them up one at a time.">
+        <div class="slide-num">14 / 22</div>
+        <h3 class="slide-h">Four <em>tuning strategies</em></h3>
+        <p class="lead">Each tuning strategy targets a specific layer. Match strategy to root cause — tuning prompts when the issue is integration just wastes time.</p>
+        <div class="tuning-grid">
+          <div class="tune tu1" data-step
+            data-script="<em>Strategy 1 — Knowledge tuning</em>. Add or update content to fill gaps. Remove outdated information. Refine knowledge structure for retrieval. <em>The most common tuning need</em> — most agent issues are knowledge issues in disguise.">
+            <div class="top">
+              <div class="ico">📚</div>
+              <div><h5>Knowledge Tuning</h5><div class="sub">Strategy 1 · most common</div></div>
+            </div>
+            <div class="body">
+              <ul>
+                <li>Add or update content to fill gaps</li>
+                <li>Remove outdated information</li>
+                <li>Refine knowledge structure for retrieval</li>
+                <li>Re-index when corpus changes significantly</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tune tu2" data-step
+            data-script="<em>Strategy 2 — Behavioral tuning</em>. Adjust orchestrations or agent steps. Add clarifying instructions. Introduce fallback strategies for ambiguous queries. <em>Where prompt engineering pays off</em>.">
+            <div class="top">
+              <div class="ico">⚛</div>
+              <div><h5>Behavioral Tuning</h5><div class="sub">Strategy 2 · prompt engineering</div></div>
+            </div>
+            <div class="body">
+              <ul>
+                <li>Adjust orchestration steps</li>
+                <li>Add clarifying instructions</li>
+                <li>Introduce fallback strategies</li>
+                <li>Refine guardrail rules</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tune tu3" data-step
+            data-script="<em>Strategy 3 — Performance tuning</em>. Optimize connectors and external data calls. Reduce unnecessary workflow steps. Address slow processing logic or oversized payloads. The cheapest user-perceived win — speed.">
+            <div class="top">
+              <div class="ico">⚡</div>
+              <div><h5>Performance Tuning</h5><div class="sub">Strategy 3 · perceived speed</div></div>
+            </div>
+            <div class="body">
+              <ul>
+                <li>Optimize connectors and external calls</li>
+                <li>Reduce unnecessary workflow steps</li>
+                <li>Address slow processing logic</li>
+                <li>Trim oversized payloads</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tune tu4" data-step
+            data-script="<em>Strategy 4 — Governance-aligned tuning</em>. Review DLP, sensitivity labels, access rules. Align agent capabilities with compliance. <em>Ensure logging and auditing remain intact after changes</em> — the audit trail mustn't break during tuning.">
+            <div class="top">
+              <div class="ico">🛡</div>
+              <div><h5>Governance Tuning</h5><div class="sub">Strategy 4 · compliance-aware</div></div>
+            </div>
+            <div class="body">
+              <ul>
+                <li>Review DLP, sensitivity, access rules</li>
+                <li>Align with compliance requirements</li>
+                <li>Preserve logging and audit trail</li>
+                <li>Document policy changes</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 15 QUIZ 3 -->
+      <section class="slide content-slide"
+        data-section="Diagnose &amp; Tune"
+        data-script="Quick check.">
+        <div class="slide-num">15 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 3 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which activity is typically the <em>first step</em> in diagnosing AI agent issues?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Deploying a model update</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Reviewing telemetry and logs to identify patterns is the foundation of diagnosis — you can't fix what you haven't measured. Deploying a model update without diagnosis is shooting in the dark. Adjusting access policies assumes the issue is governance — premature without evidence. Modifying workflow steps without root cause analysis is the same kind of guesswork. Diagnosis precedes action."><span class="letter">B</span> Reviewing telemetry and logs to identify patterns</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> Adjusting access policies</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Modifying workflow steps</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 16 SECTION DIVIDER UNIT 4 -->
+      <section class="slide section-divider"
+        data-section="Performance Metrics"
+        data-script="Unit four. <em>Performance metrics.</em> What you measure shapes what you optimize. Three metric categories. Plus drift indicators that signal generative AI degradation.">
+        <div class="slide-num">16 / 22</div>
+        <div class="label">UNIT FOUR</div>
+        <h2>Performance<br><em>Metrics</em></h2>
+        <div class="sub">Three metric categories — operational · quality · user-centered. Plus drift indicators that signal generative AI degradation. <em>Task completion rate is the gold standard.</em></div>
+      </section>
+
+      <!-- 17 3 METRIC CATEGORIES + DRIFT -->
+      <section class="slide content-slide"
+        data-section="Performance Metrics"
+        data-script="<em>Three metric categories</em> for AI agent performance. Operational. Quality and reasoning. User-centered. <em>User-centered is the most important</em> — task completion rate is the gold-standard metric. I'll bring them up one at a time.">
+        <div class="slide-num">17 / 22</div>
+        <h3 class="slide-h">Three <em>metric categories</em> + drift</h3>
+        <p class="lead">Operational metrics measure infrastructure. Quality metrics measure reasoning. User-centered metrics measure success. Plus drift indicators specific to generative AI.</p>
+        <div class="metrics-grid">
+          <div class="met-card me1" data-step
+            data-script="<em>Operational metrics</em>. Latency. Throughput. Error rate. Resource utilization including compute, memory, token consumption. <em>Necessary but not sufficient</em>. Healthy operational metrics don't guarantee user success.">
+            <div class="lab">CATEGORY 01 · INFRASTRUCTURE</div>
+            <h4>Operational</h4>
+            <div class="metric"><span class="name">Latency</span><span class="desc">Time to process agent requests.</span></div>
+            <div class="metric"><span class="name">Throughput</span><span class="desc">Volume of completed runs per period.</span></div>
+            <div class="metric"><span class="name">Error rate</span><span class="desc">Proportion of failed/incomplete tasks.</span></div>
+            <div class="metric"><span class="name">Resource use</span><span class="desc">Compute, memory, tokens consumed.</span></div>
+          </div>
+          <div class="met-card me2" data-step
+            data-script="<em>Quality and reasoning metrics</em>. Response accuracy — alignment with expected outputs. Knowledge coverage — ability to surface correct domain content. Action effectiveness — completion of multi-step tasks as intended. <em>Hard to automate</em> — needs human-in-the-loop validation.">
+            <div class="lab">CATEGORY 02 · REASONING</div>
+            <h4>Quality &amp; Reasoning</h4>
+            <div class="metric"><span class="name">Response accuracy</span><span class="desc">Alignment with expected outputs.</span></div>
+            <div class="metric"><span class="name">Knowledge coverage</span><span class="desc">Surfaces correct domain content.</span></div>
+            <div class="metric"><span class="name">Action effectiveness</span><span class="desc">Multi-step tasks complete correctly.</span></div>
+          </div>
+          <div class="met-card me3" data-step
+            data-script="<em>User-centered metrics</em>. Satisfaction indicators. Abandonment rate — drop-off during workflows. <em>Task completion rate</em> — whether users achieve intended outcomes. <em>Task completion rate is the gold-standard metric</em>. The single best indicator that an agent is delivering value.">
+            <div class="lab">CATEGORY 03 · USER OUTCOMES</div>
+            <h4>User-Centered</h4>
+            <div class="metric"><span class="name">Satisfaction</span><span class="desc">User feedback trends and sentiment.</span></div>
+            <div class="metric"><span class="name">Abandonment</span><span class="desc">Drop-off during agent workflows.</span></div>
+            <div class="metric"><span class="name">Task completion <span class="star">★</span></span><span class="desc">Users achieve intended outcomes — gold standard.</span></div>
+          </div>
+        </div>
+        <div class="drift-card" data-step
+          data-script="<em>Model drift indicators</em>. Three signals specific to generative AI. Shifts in response patterns. Declining accuracy on recurring tasks. Increased hallucination or off-topic responses. <em>Watch for all three</em> — drift accumulates quietly until it breaks user trust.">
+          <h6>⚠ Model drift indicators · specific to generative AI</h6>
+          <div class="drift-grid">
+            <div><strong>Pattern shifts:</strong> Response patterns drift from established norms.</div>
+            <div><strong>Accuracy decline:</strong> Recurring tasks start producing weaker results.</div>
+            <div><strong>Hallucination uptick:</strong> Off-topic or fabricated responses increase.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 18 QUIZ 4 -->
+      <section class="slide content-slide"
+        data-section="Performance Metrics"
+        data-script="Last knowledge check.">
+        <div class="slide-num">18 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 4 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which metric best indicates whether users are achieving the <em>intended outcome</em> of an agent workflow?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Token usage</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Task completion rate is the gold-standard user-centered metric — it directly measures whether users achieve their intended outcome. Token usage tracks cost, not user success. Connector quota is an infrastructure metric. Storage utilization is irrelevant to user outcomes. An agent can have low token usage, plenty of connector quota, and minimal storage — and still completely fail its users. Task completion is what matters."><span class="letter">B</span> Task completion rate</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> Connector quota</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Storage utilization</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 19 SECTION DIVIDER UNIT 5 -->
+      <section class="slide section-divider"
+        data-section="Telemetry &amp; Tuning"
+        data-script="Last unit. <em>Interpreting telemetry data for performance and tuning.</em> Bringing it all together — what telemetry to read, how to read it, how to drive tuning from signal.">
+        <div class="slide-num">19 / 22</div>
+        <div class="label">UNIT FIVE</div>
+        <h2>Telemetry<br><em>Interpretation</em></h2>
+        <div class="sub">Four telemetry categories · six-step diagnosis workflow. Bringing monitoring, feedback, and tuning into one closed loop.</div>
+      </section>
+
+      <!-- 20 4 TELEMETRY CATEGORIES + 6-STEP DIAGNOSIS -->
+      <section class="slide content-slide"
+        data-section="Telemetry &amp; Tuning"
+        data-script="<em>Four telemetry categories plus the six-step diagnosis workflow.</em> The categories tell you what data to collect. The workflow tells you how to use it. I'll bring up the four categories, then the workflow.">
+        <div class="slide-num">20 / 22</div>
+        <h3 class="slide-h">Telemetry <em>categories &amp; workflow</em></h3>
+        <p class="lead">Four telemetry categories cover the signals you need. The six-step workflow turns signal into fix.</p>
+        <div class="tel-grid">
+          <div class="tel-card te1" data-step
+            data-script="<em>Operational telemetry</em>. Latency, throughput. Error rates and failure modes. Resource consumption and throttling. The infrastructure layer.">
+            <div class="lab">CATEGORY 01</div>
+            <h5>Operational</h5>
+            <ul>
+              <li>Latency &amp; throughput</li>
+              <li>Error rates &amp; failure modes</li>
+              <li>Resource use &amp; throttling</li>
+            </ul>
+          </div>
+          <div class="tel-card te2" data-step
+            data-script="<em>Model-level telemetry</em>. Token usage and cost patterns. Response consistency. Drift indicators. Specific to generative AI — distinct from operational metrics.">
+            <div class="lab">CATEGORY 02</div>
+            <h5>Model-Level</h5>
+            <ul>
+              <li>Token usage &amp; cost patterns</li>
+              <li>Response consistency</li>
+              <li>Drift indicators</li>
+            </ul>
+          </div>
+          <div class="tel-card te3" data-step
+            data-script="<em>Behavioral telemetry</em>. User satisfaction. Completion rates. Prompt patterns. Abandonment rates. Model alignment to intended tasks. <em>The user's voice</em> — turn this on or fly blind.">
+            <div class="lab">CATEGORY 03</div>
+            <h5>Behavioral</h5>
+            <ul>
+              <li>Satisfaction &amp; completion</li>
+              <li>Prompt patterns</li>
+              <li>Abandonment rates</li>
+              <li>Intent alignment</li>
+            </ul>
+          </div>
+          <div class="tel-card te4" data-step
+            data-script="<em>Governance telemetry</em>. Guardrail interventions. Blocked actions. Restricted data access events. Policy or sensitivity label conflicts. <em>Required for audit</em> — auditors will ask for this data.">
+            <div class="lab">CATEGORY 04</div>
+            <h5>Governance</h5>
+            <ul>
+              <li>Guardrail interventions</li>
+              <li>Blocked actions</li>
+              <li>Data access denials</li>
+              <li>Policy conflicts</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tel-flow" data-step
+          data-script="<em>The six-step telemetry-driven diagnosis workflow.</em> Monitor key metrics. Identify anomalies. Correlate related signals. Determine root cause. Apply targeted tuning. Validate improvements. <em>This is the closed loop</em> — repeat continuously.">
+          <h6>▸ The 6-step telemetry-driven diagnosis workflow</h6>
+          <div class="flow-row">
+            <div class="flow-step"><div class="n">STEP 1</div><div class="l">Monitor key metrics</div></div>
+            <div class="flow-step"><div class="n">STEP 2</div><div class="l">Identify anomalies</div></div>
+            <div class="flow-step"><div class="n">STEP 3</div><div class="l">Correlate signals</div></div>
+            <div class="flow-step"><div class="n">STEP 4</div><div class="l">Root cause</div></div>
+            <div class="flow-step"><div class="n">STEP 5</div><div class="l">Targeted tuning</div></div>
+            <div class="flow-step"><div class="n">STEP 6</div><div class="l">Validate</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 21 SCENARIO -->
+      <section class="slide content-slide"
+        data-section="Wrap"
+        data-script="<em>Apply Chapter 8 end-to-end.</em> Pairs work through this real-world tuning challenge. <em>Listen for who jumps to a fix without diagnosis</em> — push back hard. The whole point of Chapter 8 is diagnose before you tune.">
+        <div class="slide-num">21 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Scenario <em>discussion</em></h3>
+        <p class="lead" style="margin-bottom:14px">Diagnose, prioritize, and tune. <em>Telemetry says one thing. Users say another.</em></p>
+        <div class="scenario">
+          <div class="tag">Scenario · Pair Discussion</div>
+          <h3>MegaRetail Sales Helper — healthy metrics, dropping adoption</h3>
+          <div class="quote">"MegaRetail launched their Copilot for Sales agent 3 months ago for 1,200 sales reps. Telemetry looks healthy — see the dashboard. But weekly active users have dropped from 60% to 35%. User satisfaction surveys show frustration. Conversation transcripts show many users abandoning at the proposal-drafting step. Some reps complain the agent gives 'wrong' pricing recommendations. A few governance alerts about sensitive customer data appearing in summaries."</div>
+          <div class="telemetry-strip">
+            <div class="tel-stat"><div class="name">Success Rate</div><div class="val">96%</div></div>
+            <div class="tel-stat"><div class="name">Avg Latency</div><div class="val">1.8 sec</div></div>
+            <div class="tel-stat warn"><div class="name">Weekly Active</div><div class="val">35% ↓</div></div>
+            <div class="tel-stat warn"><div class="name">Satisfaction</div><div class="val">Dropping</div></div>
+          </div>
+          <div class="prompts">
+            <h5>Discuss with your partner</h5>
+            <ul>
+              <li>Where do you start the diagnosis — telemetry, backlog, or transcripts? Why?</li>
+              <li>What does the gap between healthy operational metrics and dropping adoption tell you about the root cause?</li>
+              <li>Categorize the issues into backlog domains. Which tuning strategies would you apply, and in what order?</li>
+              <li>What monitoring would you put in place to catch this earlier next time?</li>
+            </ul>
+          </div>
+          <button class="reveal-btn" id="revealAnswer">Reveal Discussion Points →</button>
+          <div class="answer-panel" id="answerPanel">
+            <div class="ap-label">Guide · suggested points</div>
+            <div class="ap-row">
+              <div class="ap-q">Start with transcripts (not telemetry)</div>
+              <div class="ap-a">
+                <span><strong>Why transcripts:</strong> Healthy telemetry plus dropping adoption is the canonical "telemetry blind spot" pattern. The infrastructure is fine — the problem is user-facing.</span>
+                <span><strong>Transcripts reveal what telemetry can't:</strong> Misunderstood intents, abandoned flows, unmet expectations.</span>
+                <span><strong>Telemetry confirms scale:</strong> Once transcripts surface the issue, telemetry tells you how widespread.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">What the metrics gap tells you</div>
+              <div class="ap-a">
+                <span><strong>Operational health is fine</strong> — agent is up, fast, succeeding from the system's perspective.</span>
+                <span><strong>User-centered metrics are failing</strong> — abandonment, satisfaction, weekly active. The agent technically completes tasks but doesn't deliver value.</span>
+                <span><strong>Diagnosis:</strong> The "success rate" metric is measuring the wrong thing. It's counting technical completions, not user-perceived success.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Backlog categorization + tuning order</div>
+              <div class="ap-a">
+                <span><strong>Knowledge:</strong> "Wrong pricing recommendations" → Knowledge tuning. Refresh pricing data sources. <em>Priority 1 — high impact, low effort.</em></span>
+                <span><strong>UX:</strong> "Abandoning at proposal-drafting step" → Behavioral tuning. Clarify the flow, add fallbacks. <em>Priority 1.</em></span>
+                <span><strong>Governance:</strong> "Sensitive data in summaries" → Governance tuning. Tighten DLP, sensitivity label enforcement. <em>Priority 1 — compliance risk.</em></span>
+                <span><strong>Performance:</strong> Skip. Latency is fine. Don't waste cycles tuning what isn't broken.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Better monitoring for next time</div>
+              <div class="ap-a">
+                <span><strong>Add user-centered metrics to dashboards:</strong> Task completion rate (gold standard), abandonment rate by workflow step.</span>
+                <span><strong>Set up monthly transcript reviews:</strong> Sample-based human-in-the-loop quality checks.</span>
+                <span><strong>Alert on adoption drift:</strong> Threshold alert when weekly actives drop more than 10% week-over-week.</span>
+                <span><strong>Drift indicators:</strong> Watch for response pattern shifts on recurring tasks like pricing recommendations.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 22 RECAP -->
+      <section class="slide content-slide"
+        data-section="Wrap"
+        data-script="Final recap. Six things to take into Chapter 9. I'll bring them up one at a time.">
+        <div class="slide-num">22 / 22</div>
+        <h3 class="slide-h">Chapter 8 — <em>key takeaways</em></h3>
+        <p class="lead">Six things to carry forward into Chapter 9, where we cover testing AI solutions.</p>
+        <div class="recap">
+          <div class="recap-list">
+            <div class="recap-item" data-step
+              data-script="One — five monitoring dimensions. Operational, performance, quality, usage, risk. Cover all five — focusing on just operational health misses the most important business signals.">
+              <div class="check">1</div><div class="text">Monitor across <em>5 dimensions</em>: Operational · Performance · Quality · Usage · Risk &amp; Compliance.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Two — five Microsoft monitoring tools. Azure Monitor for telemetry. M365 Admin Analytics for adoption. Copilot dashboards. Power Platform Admin Center. Foundry observability.">
+              <div class="check">2</div><div class="text">Microsoft's <em>monitoring stack</em>: Azure Monitor · M365 Admin · Copilot Dashboards · PP Admin · Foundry Observability.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Three — six backlog domains. Accuracy, knowledge, performance, UX, integration, governance. Categorize before prioritizing. Then plot on the impact-effort matrix — high impact, low effort wins.">
+              <div class="check">3</div><div class="text">Backlog — <em>6 domains</em> + <em>impact/effort matrix</em>. Categorize first, prioritize second, fix third.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Four — five root cause categories. Model or prompt. Knowledge gaps. Integration failures. Configuration. Governance interference. Every agent issue traces to one of these five.">
+              <div class="check">4</div><div class="text"><em>5 root causes</em>: Model/Prompt · Knowledge · Integration · Configuration · Governance.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Five — four tuning strategies. Knowledge tuning is the most common need. Behavioral, performance, governance follow. Match strategy to root cause.">
+              <div class="check">5</div><div class="text"><em>4 tuning strategies</em>: Knowledge · Behavioral · Performance · Governance. Match strategy to root cause.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Six — task completion rate is the gold-standard user-centered metric. Plus model drift indicators specific to generative AI. <em>Six-step diagnostic workflow</em> — monitor, detect, correlate, root cause, tune, validate. <em>That's Chapter 8</em>. Onwards to Chapter 9 — managing the testing of AI solutions.">
+              <div class="check">6</div><div class="text"><em>Task completion rate</em> is the gold-standard metric. + drift indicators. + 6-step diagnostic loop.</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:18px;text-align:center;font-size:18px;color:var(--copilot);font-weight:600">
+          → Continue to Chapter 9: Manage Testing
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="notes-panel" id="notesPanel">
+    <div class="label">📖 Read aloud · notes <span class="step-tag" id="stepTag"></span></div>
+    <div class="script" id="notesScript">Welcome script will appear here.</div>
+  </div>
+
+
+
+  <div class="float-hint" id="hint">← → to advance step-by-step · T for notes</div>
+</div>
+
+<script>
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0; let notesOpen = false;
+  const counter = document.getElementById('counter');
+  const progressFill = document.getElementById('progressFill');
+  const notesPanel = document.getElementById('notesPanel');
+  const notesScript = document.getElementById('notesScript');
+  const stepTag = document.getElementById('stepTag');
+  const sectionLabel = document.getElementById('sectionLabel');
+  const stepPill = document.getElementById('stepPill');
+  const stepIndicator = document.getElementById('stepIndicator');
+  const notesToggle = document.getElementById('notesToggle');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const hint = document.getElementById('hint');
+  function getSteps(s){return Array.from(s.querySelectorAll('[data-step]'));}
+  function getRevealed(s){return Array.from(s.querySelectorAll('[data-step].revealed'));}
+  function updateScript(text, stepInfo){
+    notesScript.classList.add('fading');
+    setTimeout(()=>{ notesScript.innerHTML = text || ''; stepTag.textContent = stepInfo || ''; notesScript.classList.remove('fading'); },180);
+  }
+  function updateStepIndicator(slide){
+    const steps = getSteps(slide); const revealed = getRevealed(slide);
+    if(steps.length>0 && revealed.length<steps.length){ stepIndicator.classList.add('show'); stepPill.style.display='inline-block'; stepPill.textContent = `Step ${revealed.length}/${steps.length}`; }
+    else if(steps.length>0){ stepIndicator.classList.remove('show'); stepPill.style.display='inline-block'; stepPill.textContent = `${steps.length}/${steps.length}`; }
+    else { stepIndicator.classList.remove('show'); stepPill.style.display='none'; }
+  }
+  function showSlide(i, revealAll){
+    if(i<0||i>=total) return;
+    slides[current].classList.remove('active');
+    getSteps(slides[current]).forEach(el=>el.classList.remove('revealed'));
+    current = i;
+    const slide = slides[current]; slide.classList.add('active'); slide.scrollTop = 0;
+    if(revealAll){ getSteps(slide).forEach(el=>el.classList.add('revealed')); }
+    counter.textContent = (current+1)+' / '+total;
+    progressFill.style.width = ((current+1)/total*100)+'%';
+    sectionLabel.textContent = slide.dataset.section || '';
+    if(revealAll){ const steps = getSteps(slide); const last = steps[steps.length-1]; if(last && last.dataset.script) updateScript(last.dataset.script, `Step ${steps.length}/${steps.length}`); else updateScript(slide.dataset.script, ''); } else { updateScript(slide.dataset.script, ''); }
+    updateStepIndicator(slide);
+    prevBtn.disabled = (current===0 && getRevealed(slide).length===0);
+    nextBtn.disabled = (current===total-1 && (getSteps(slide).length===0 || getRevealed(slide).length===getSteps(slide).length));
+  }
+  function next(){
+    const slide = slides[current]; const steps = getSteps(slide); const revealed = getRevealed(slide);
+    if(revealed.length<steps.length){ const idx = revealed.length; const el = steps[idx]; el.classList.add('revealed'); if(el.dataset.script) updateScript(el.dataset.script, `Step ${idx+1}/${steps.length}`); updateStepIndicator(slide); prevBtn.disabled=false; if(revealed.length+1===steps.length && current===total-1) nextBtn.disabled=true; }
+    else if(current<total-1){ showSlide(current+1, false); }
+  }
+  function prev(){
+    const slide = slides[current]; const revealed = getRevealed(slide);
+    if(revealed.length>0){ const last = revealed[revealed.length-1]; last.classList.remove('revealed'); const remaining = getRevealed(slide); if(remaining.length>0){ const r = remaining[remaining.length-1]; const total = getSteps(slide).length; updateScript(r.dataset.script, `Step ${remaining.length}/${total}`); } else { updateScript(slide.dataset.script, ''); } updateStepIndicator(slide); nextBtn.disabled=false; }
+    else if(current>0){ showSlide(current-1, true); }
+  }
+  function toggleNotes(){ notesOpen = !notesOpen; notesPanel.classList.toggle('open', notesOpen); notesToggle.classList.toggle('active', notesOpen); }
+  prevBtn.addEventListener('click', prev); nextBtn.addEventListener('click', next); notesToggle.addEventListener('click', toggleNotes);
+  document.addEventListener('keydown',(e)=>{ if(e.target.matches('input,textarea')) return; if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();} else if(e.key==='ArrowLeft'){e.preventDefault();prev();} else if(e.key==='t'||e.key==='T'){e.preventDefault();toggleNotes();} else if(e.key==='Home'){e.preventDefault();showSlide(0,false);} else if(e.key==='End'){e.preventDefault();showSlide(total-1,true);} });
+  document.querySelectorAll('.quiz-opt').forEach(btn=>{ btn.addEventListener('click',()=>{ const wrap = btn.closest('.quiz-wrap'); const opts = wrap.querySelectorAll('.quiz-opt'); const explain = wrap.querySelector('.quiz-explain'); opts.forEach(o=>{ if(o.dataset.correct==='true') o.classList.add('correct'); else o.classList.add('wrong'); }); const correctOpt = wrap.querySelector('.quiz-opt[data-correct="true"]'); if(correctOpt && explain){ explain.querySelector('p').textContent = correctOpt.dataset.explain || ''; explain.classList.add('show'); } }); });
+  const revealBtn = document.getElementById('revealAnswer'); const answerPanel = document.getElementById('answerPanel');
+  if(revealBtn && answerPanel){ revealBtn.addEventListener('click',()=>{ answerPanel.classList.add('show'); revealBtn.classList.add('shown'); }); }
+  setTimeout(()=>{hint.classList.add('show');},800); setTimeout(()=>{hint.classList.remove('show');},5500);
+  showSlide(0,false);
+})();
+</script>
+</body>
+</html>

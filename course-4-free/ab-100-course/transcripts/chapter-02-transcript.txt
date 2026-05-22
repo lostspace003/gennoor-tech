@@ -1,0 +1,159 @@
+--- SLIDE 01 ---
+Welcome back! <break time='500ms'/> Chapter one was about who you are as an architect. <break time='300ms'/> Chapter two is about what you analyze <break time='200ms'/> before you design anything. <break time='400ms'/> Bad analysis kills more AI projects than bad code. <break time='400ms'/> By the end of this chapter, <break time='200ms'/> you will know exactly what to look at, <break time='200ms'/> what to question, <break time='200ms'/> and what to demand from your customer.
+
+--- SLIDE 02 ---
+This chapter has four big areas. <break time='400ms'/> Each one is a tool you will use on every customer engagement. <break time='300ms'/> I will reveal them one at a time.
+
+First! <break time='300ms'/> Agents in Action. <break time='400ms'/> Three roles AI agents play in a business: <break time='200ms'/> task automation, <break time='200ms'/> data analytics, <break time='200ms'/> and decision-making. <break time='300ms'/> You need to know which one your customer is actually asking for.
+
+Second! <break time='300ms'/> Grounding Data. <break time='400ms'/> The most important concept in this entire course. <break time='300ms'/> We will evaluate data on five dimensions. <break time='300ms'/> If grounding is weak, <break time='200ms'/> your agent hallucinates.
+
+Third! <break time='300ms'/> Data Architecture. <break time='400ms'/> Azure data estate, <break time='200ms'/> RAG pipelines, <break time='200ms'/> Microsoft databases for AI. <break time='300ms'/> The plumbing that makes everything work.
+
+Fourth! <break time='300ms'/> Knowledge checks and a real scenario. <break time='400ms'/> We will apply everything to an H R policy assistant case at the end.
+
+--- SLIDE 03 ---
+First unit. <break time='400ms'/> What do AI agents actually do? <break time='500ms'/> If you cannot answer this for a non-technical executive <break time='200ms'/> in plain English, <break time='200ms'/> you cannot sell the project. <break time='400ms'/> Most projects only need one of the three roles. <break time='300ms'/> Your job is to know which.
+
+--- SLIDE 04 ---
+Four learning objectives for this unit. <break time='400ms'/> I will bring them up one at a time.
+
+One! <break time='300ms'/> Explain the three roles of AI agents: <break time='200ms'/> task automation, <break time='200ms'/> data analytics, <break time='200ms'/> and decision-making.
+
+Two! <break time='300ms'/> Describe how Microsoft Copilot enhances productivity <break time='200ms'/> across everyday tools. <break time='200ms'/> Word, <break time='200ms'/> Outlook, <break time='200ms'/> Teams, <break time='200ms'/> Dynamics.
+
+Three! <break time='300ms'/> Identify how generative AI unlocks productivity <break time='200ms'/> and supports responsible decision-making.
+
+Four! <break time='300ms'/> Assess scenarios where agents add measurable value. <break time='300ms'/> Measurable is the keyword.
+
+--- SLIDE 05 ---
+Three roles AI agents play in business. <break time='400ms'/> Memorize them. <break time='300ms'/> Every business case fits into one of these three buckets, <break time='200ms'/> sometimes two, <break time='200ms'/> occasionally all three. <break time='300ms'/> I will bring them up one at a time. <break time='500ms'/>
+
+Role one! <break time='300ms'/> Task Automation. <break time='400ms'/> Agents that do work for you. <break time='300ms'/> Drafting emails, <break time='200ms'/> summarizing meetings, <break time='200ms'/> triggering workflows. <break time='300ms'/> The agent does things. <break time='300ms'/> Drafts documents, <break time='200ms'/> emails, <break time='200ms'/> and responses. <break time='200ms'/> Summarizes emails, <break time='200ms'/> meetings, <break time='200ms'/> and chats. <break time='200ms'/> Triggers multi-step workflows. <break time='200ms'/> Reduces cognitive load on the team. <break time='400ms'/> This is where most projects start <break time='200ms'/> because the value is immediate and visible.
+
+Role two! <break time='300ms'/> Data Analytics. <break time='400ms'/> Agents that explain your data. <break time='300ms'/> Natural language to insights. <break time='300ms'/> The agent lets non-analysts ask questions of the data <break time='200ms'/> and get back charts and recommendations. <break time='300ms'/> Trend detection. <break time='200ms'/> Outlier detection. <break time='200ms'/> Pattern detection. <break time='200ms'/> Generate visualizations on demand. <break time='200ms'/> Interpret dashboards for people who are not data analysts.
+
+Role three! <break time='300ms'/> Decision-Making. <break time='400ms'/> Agents that recommend next moves. <break time='300ms'/> They synthesize across documents, <break time='200ms'/> datasets, <break time='200ms'/> and meetings <break time='200ms'/> to suggest what to do next. <break time='300ms'/> Scenario recommendations. <break time='200ms'/> Risk identification via patterns. <break time='200ms'/> Cross-source synthesis. <break time='400ms'/> Decisions still belong to the human, <break time='200ms'/> but the agent does the legwork.
+
+--- SLIDE 06 ---
+Task automation is the most common use case, <break time='300ms'/> so let me drill into it. <break time='400ms'/> Four task areas, <break time='200ms'/> four real Microsoft tool combinations. <break time='300ms'/> I will bring them up one at a time. <break time='500ms'/>
+
+Communication! <break time='300ms'/> Drafting emails, <break time='200ms'/> summarizing Teams threads, <break time='200ms'/> creating meeting recaps. <break time='300ms'/> M 365 Copilot does this out of the box. <break time='200ms'/> No custom build needed.
+
+Documentation! <break time='300ms'/> First-draft reports, <break time='200ms'/> rewriting and optimizing content, <break time='200ms'/> structured templates. <break time='300ms'/> Word, <break time='200ms'/> OneNote, <break time='200ms'/> and Loop with Copilot.
+
+Process Automation! <break time='300ms'/> Multi-step workflows. <break time='300ms'/> Approvals, <break time='200ms'/> notifications, <break time='200ms'/> content generation. <break time='300ms'/> This is where Copilot Studio <break time='200ms'/> plus Power Automate shine.
+
+Knowledge Retrieval! <break time='300ms'/> Answering questions using enterprise data. <break time='300ms'/> This is where grounding becomes critical. <break time='300ms'/> And that is exactly the next unit.
+
+--- SLIDE 07 ---
+Time for a knowledge check! <break time='500ms'/> Which is a key benefit of using AI agents <break time='200ms'/> for data analytics? <break time='400ms'/> Is it A, <break time='200ms'/> they replace the need for all B I tools? <break time='200ms'/> B, <break time='200ms'/> they translate natural language questions into insights? <break time='200ms'/> C, <break time='200ms'/> they eliminate the need for data governance? <break time='200ms'/> Or D, <break time='200ms'/> they require manual configuration for every dataset? <break time='400ms'/> Take a moment to think. <break time='500ms'/> The answer is B, <break time='200ms'/> they translate natural language questions into insights. <break time='400ms'/> AI agents augment analytics <break time='200ms'/> by letting non-analysts ask questions of data <break time='200ms'/> without writing S Q L <break time='200ms'/> or learning a B I platform. <break time='300ms'/> They do not replace B I tools <break time='200ms'/> or eliminate governance. <break time='300ms'/> Proper data preparation is still required.
+
+--- SLIDE 08 ---
+Now the most important unit in this chapter. <break time='400ms'/> Maybe in the entire course. <break time='500ms'/> Grounding. <break time='400ms'/> The single biggest reason AI projects fail in production <break time='200ms'/> is bad grounding. <break time='300ms'/> Pay close attention. <break time='400ms'/> If you only remember one thing from this chapter, <break time='200ms'/> remember this: <break time='300ms'/> weak grounding is the number-one cause <break time='200ms'/> of AI project failure.
+
+--- SLIDE 09 ---
+What is grounding? <break time='400ms'/> Watch the screen. <break time='200ms'/> I will build it up. <break time='500ms'/>
+
+Grounding is the practice of tying the AI's answers <break time='200ms'/> to your organization's real, <break time='200ms'/> trusted data. <break time='400ms'/> Without grounding, <break time='200ms'/> the model invents plausible-sounding answers. <break time='300ms'/> That is hallucination. <break time='300ms'/> Grounding eliminates the guesswork. <break time='300ms'/> The agent does not make answers up from training data. <break time='300ms'/> It retrieves verified content <break time='200ms'/> from your SharePoint, <break time='200ms'/> OneDrive, <break time='200ms'/> Dataverse, <break time='200ms'/> or connected sources <break time='200ms'/> before generating a response. <break time='400ms'/> Why does it matter? <break time='300ms'/> Reduces hallucinations. <break time='200ms'/> Increases trust. <break time='200ms'/> Ensures compliance. <break time='200ms'/> Respects user permissions.
+
+How does it work in Microsoft? <break time='400ms'/> The Semantic Index sits across Microsoft Graph <break time='200ms'/> and indexes everything semantically. <break time='300ms'/> The Copilot Retrieval A P I <break time='200ms'/> fetches the right content, <break time='200ms'/> respecting user permissions, <break time='200ms'/> before the model writes a response. <break time='300ms'/> Three steps in the pipeline: <break time='200ms'/> first, <break time='200ms'/> Semantic Index builds semantic representations <break time='200ms'/> of all M 365 content, <break time='200ms'/> Graph-wide. <break time='300ms'/> Second, <break time='200ms'/> the Retrieval A P I fetches the right content <break time='200ms'/> scoped to user permissions. <break time='300ms'/> Third, <break time='200ms'/> the model uses retrieved content <break time='200ms'/> to write a grounded response. <break time='400ms'/> This is why Microsoft 365 Copilot <break time='200ms'/> just works on day one.
+
+--- SLIDE 10 ---
+The five-dimension test! <break time='400ms'/> Run it on every dataset <break time='200ms'/> before grounding any agent. <break time='300ms'/> Memorize these. <break time='300ms'/> I will bring up each dimension one at a time. <break time='500ms'/>
+
+Dimension one! <break time='300ms'/> Accuracy. <break time='400ms'/> Data must reflect real, <break time='200ms'/> verifiable facts. <break time='300ms'/> Verified by subject matter experts. <break time='200ms'/> Traceable to authoritative sources. <break time='200ms'/> Free from outdated assumptions. <break time='300ms'/> Inaccurate data <break time='200ms'/> equals harmful agent outputs. <break time='200ms'/> No exceptions. <break time='300ms'/> The test question: <break time='200ms'/> is this verified by an S M E?
+
+Dimension two! <break time='300ms'/> Relevance. <break time='400ms'/> Data must match the agent's intended use case. <break time='300ms'/> If you ground a sales agent in H R policies, <break time='200ms'/> semantic search will return conceptually similar <break time='200ms'/> but contextually wrong content. <break time='300ms'/> Scope your sources. <break time='300ms'/> The test question: <break time='200ms'/> does this fit the use case?
+
+Dimension three! <break time='300ms'/> Timeliness. <break time='400ms'/> Stale data degrades AI outputs fast. <break time='300ms'/> Modified dates, <break time='200ms'/> refresh schedules, <break time='200ms'/> seasonal updates, <break time='200ms'/> compliance changes. <break time='300ms'/> All must be reflected. <break time='300ms'/> The semantic index updates continuously, <break time='200ms'/> but only if the source document is updated. <break time='300ms'/> The test question: <break time='200ms'/> when was this last updated?
+
+Dimension four! <break time='300ms'/> Cleanliness. <break time='400ms'/> Clean data improves embedding quality. <break time='300ms'/> Duplicates, <break time='200ms'/> inconsistent formatting, <break time='200ms'/> dead links, <break time='200ms'/> orphaned metadata. <break time='300ms'/> All of that is noise. <break time='300ms'/> Data pollution is the technical term, <break time='200ms'/> and it kills retrieval precision. <break time='300ms'/> The test question: <break time='200ms'/> is the structure consistent?
+
+Dimension five! <break time='300ms'/> Availability. <break time='400ms'/> The Retrieval A P I respects permissions. <break time='300ms'/> If a user does not have access, <break time='200ms'/> the agent will not ground from that content. <break time='300ms'/> Data must be properly indexed in Microsoft Graph <break time='200ms'/> and access-controlled appropriately. <break time='300ms'/> The test question: <break time='200ms'/> can the right user reach it?
+
+--- SLIDE 11 ---
+Same five dimensions, <break time='300ms'/> but now showing impact. <break time='400ms'/> Why does each one matter? <break time='300ms'/> I will reveal them row by row. <break time='500ms'/>
+
+Accuracy <break time='200ms'/> directly reduces hallucinations. <break time='300ms'/> Inaccurate source data <break time='200ms'/> means inaccurate agent answers. <break time='200ms'/> No exceptions.
+
+Relevance <break time='200ms'/> ensures responses match the intended scenario. <break time='300ms'/> Poor relevance <break time='200ms'/> gives you right-sounding <break time='200ms'/> but wrong-context answers.
+
+Timeliness <break time='200ms'/> keeps outputs aligned with current policies. <break time='300ms'/> Stale grounding data <break time='200ms'/> is a compliance risk.
+
+Cleanliness <break time='200ms'/> improves retrieval precision. <break time='300ms'/> Noisy data <break time='200ms'/> means lower-quality embeddings, <break time='200ms'/> which means wrong content surfaced.
+
+Availability <break time='200ms'/> determines whether the agent can ground at all. <break time='300ms'/> Wrong permissions <break time='200ms'/> mean no answer for that user, <break time='200ms'/> even if the data exists.
+
+--- SLIDE 12 ---
+Four best practices <break time='200ms'/> when reviewing grounding data on a real project. <break time='400ms'/> Apply these on every engagement. <break time='300ms'/> I will bring them up one at a time. <break time='500ms'/>
+
+One! <break time='300ms'/> Evaluate content quality before grounding. <break time='400ms'/> Do not ground on raw data. <break time='300ms'/> Remove outdated, <break time='200ms'/> conflicting, <break time='200ms'/> or duplicate content first. <break time='300ms'/> Garbage in, <break time='200ms'/> garbage out, <break time='200ms'/> but louder, <break time='200ms'/> because AI will confidently repeat the garbage. <break time='300ms'/> Example: <break time='200ms'/> customer's SharePoint has three versions of the same expense policy. <break time='200ms'/> Pick the authoritative one, <break time='200ms'/> archive the rest.
+
+Two! <break time='300ms'/> Use SharePoint or OneDrive for authoritative content. <break time='400ms'/> Why? <break time='200ms'/> Because that is what gets indexed <break time='200ms'/> by the Microsoft 365 semantic index automatically. <break time='300ms'/> Random folders on a network drive <break time='200ms'/> do not ground. <break time='300ms'/> Example: <break time='200ms'/> move the H R policy library from a network share <break time='200ms'/> into a curated SharePoint site <break time='200ms'/> labeled H R Authoritative.
+
+Three! <break time='300ms'/> Maintain consistent formatting and structure. <break time='400ms'/> Headings, <break time='200ms'/> sections, <break time='200ms'/> metadata fields. <break time='300ms'/> Embeddings work better on well-structured text. <break time='300ms'/> Microsoft Word with proper styles <break time='200ms'/> beats free-form P D Fs every time. <break time='300ms'/> Example: <break time='200ms'/> apply a policy document template. <break time='200ms'/> Same heading hierarchy, <break time='200ms'/> same metadata schema across all docs.
+
+Four! <break time='300ms'/> Review permissions and S M E validation regularly. <break time='400ms'/> Permissions drift. <break time='200ms'/> Subject matter experts change roles. <break time='300ms'/> Set a quarterly review cadence <break time='200ms'/> and stick to it. <break time='300ms'/> Example: <break time='200ms'/> quarterly audit. <break time='200ms'/> Every grounded source has a named S M E owner <break time='200ms'/> and reviewed access controls.
+
+--- SLIDE 13 ---
+Time for a knowledge check! <break time='500ms'/> Which grounding data dimension ensures the model retrieves information <break time='200ms'/> aligned with the intended business scenario? <break time='400ms'/> Is it A, <break time='200ms'/> Cleanliness? <break time='200ms'/> B, <break time='200ms'/> Availability? <break time='200ms'/> C, <break time='200ms'/> Relevance? <break time='200ms'/> Or D, <break time='200ms'/> Timeliness? <break time='400ms'/> Think about it. <break time='500ms'/> The answer is C, <break time='200ms'/> Relevance. <break time='400ms'/> Relevance ensures the agent retrieves content <break time='200ms'/> that matches the user's scenario, <break time='200ms'/> workflow, <break time='200ms'/> and business domain. <break time='300ms'/> Cleanliness improves retrieval precision <break time='200ms'/> but does not fix wrong-context content. <break time='200ms'/> Availability is about access. <break time='200ms'/> Timeliness is about freshness. <break time='300ms'/> Only Relevance addresses scenario alignment.
+
+--- SLIDE 14 ---
+Last unit. <break time='400ms'/> Data architecture for AI. <break time='500ms'/> The plumbing layer. <break time='300ms'/> Get this right <break time='200ms'/> and your agents have a clean home to live in. <break time='300ms'/> Get it wrong <break time='200ms'/> and nothing works at scale. <break time='400ms'/> Azure data estate, <break time='200ms'/> Microsoft databases for AI, <break time='200ms'/> RAG pipelines, <break time='200ms'/> the plumbing that makes grounding work at enterprise scale.
+
+--- SLIDE 15 ---
+The Azure data estate for AI. <break time='400ms'/> Four layers. <break time='300ms'/> Bottom to top. <break time='200ms'/> Operational data, <break time='200ms'/> analytical stores, <break time='200ms'/> intelligence layer, <break time='200ms'/> AI apps. <break time='300ms'/> Each one feeds the one above it. <break time='300ms'/> I will build it up layer by layer. <break time='500ms'/>
+
+Layer one! <break time='300ms'/> Operational Databases. <break time='400ms'/> Where your business actually runs. <break time='300ms'/> C R M, <break time='200ms'/> E R P, <break time='200ms'/> transactions. <break time='300ms'/> Azure S Q L, <break time='200ms'/> Cosmos D B, <break time='200ms'/> PostgreSQL on Azure, <break time='200ms'/> Dataverse. <break time='300ms'/> The single source of truth for live business data.
+
+Layer two! <break time='300ms'/> Analytical Stores. <break time='400ms'/> Curated data prepared for analysis <break time='200ms'/> and AI training. <break time='300ms'/> Lakehouses. <break time='200ms'/> Warehouses. <break time='300ms'/> Microsoft Fabric is the modern unified analytical platform here.
+
+Layer three! <break time='300ms'/> The Intelligence Layer. <break time='400ms'/> Where grounding actually lives. <break time='300ms'/> Semantic indexes, <break time='200ms'/> vector search, <break time='200ms'/> embeddings, <break time='200ms'/> ranking. <break time='300ms'/> This is what makes agents able to retrieve meaning, <break time='200ms'/> not just keywords.
+
+Layer four! <break time='300ms'/> AI Apps and Agents. <break time='400ms'/> The top of the stack. <break time='300ms'/> Copilot, <break time='200ms'/> custom agents, <break time='200ms'/> RAG apps, <break time='200ms'/> autonomous agents. <break time='300ms'/> This is where the user actually interacts. <break time='300ms'/> Without the three layers underneath, <break time='200ms'/> this layer is hollow.
+
+--- SLIDE 16 ---
+Microsoft database options for AI workloads. <break time='400ms'/> Each one has a sweet spot. <break time='300ms'/> Pick wrong and you over-engineer. <break time='300ms'/> I will bring up each option. <break time='500ms'/>
+
+Azure S Q L! <break time='300ms'/> Vector data, <break time='200ms'/> semantic search, <break time='200ms'/> J SON storage. <break time='300ms'/> AI features inside the relational database <break time='200ms'/> your team already knows. <break time='300ms'/> The default if your customer is already on S Q L Server. <break time='200ms'/> Smooth migration path.
+
+Cosmos D B! <break time='300ms'/> Low-latency, <break time='200ms'/> native vector search <break time='200ms'/> at global scale. <break time='300ms'/> Built for AI-driven apps <break time='200ms'/> that need sub-second retrieval at planet scale. <break time='300ms'/> Choose this for chat apps <break time='200ms'/> and real-time agents.
+
+PostgreSQL on Azure! <break time='300ms'/> Machine learning extensions <break time='200ms'/> and embeddings via pgvector. <break time='300ms'/> Open-source teams gravitate here. <break time='300ms'/> Strong for hybrid O L T P <break time='200ms'/> plus AI workloads.
+
+Microsoft Fabric! <break time='300ms'/> Unified analytics platform. <break time='300ms'/> OneLake for storage. <break time='200ms'/> Lakehouse for curation. <break time='200ms'/> Built-in AI workloads. <break time='300ms'/> Choose this when the customer needs analytics <break time='200ms'/> and AI on the same governed data.
+
+--- SLIDE 17 ---
+The RAG pipeline! <break time='400ms'/> Retrieval-Augmented Generation. <break time='300ms'/> The standard pattern for grounding agents in your data. <break time='300ms'/> Five stages. <break time='200ms'/> I will light them up one at a time. <break time='500ms'/>
+
+Stage one! <break time='300ms'/> Ingest. <break time='400ms'/> Pull data from sources: <break time='200ms'/> SharePoint, <break time='200ms'/> OneDrive, <break time='200ms'/> databases, <break time='200ms'/> A P Is. <break time='300ms'/> This is where data quality matters most. <break time='200ms'/> Bad data in <break time='200ms'/> means bad answers out.
+
+Stage two! <break time='300ms'/> Chunk and Embed. <break time='400ms'/> Split documents into passages, <break time='200ms'/> then convert each passage into a vector, <break time='200ms'/> a numerical representation of meaning. <break time='300ms'/> Embeddings are the foundation of semantic search.
+
+Stage three! <break time='300ms'/> Index. <break time='400ms'/> Store embeddings in a vector index. <break time='300ms'/> Azure AI Search, <break time='200ms'/> Cosmos D B vector index, <break time='200ms'/> or the Microsoft Graph semantic index <break time='200ms'/> do this for you.
+
+Stage four! <break time='300ms'/> Retrieve. <break time='400ms'/> The user asks a question. <break time='300ms'/> The system searches the index <break time='200ms'/> for the most relevant passages. <break time='300ms'/> Permissions are enforced here. <break time='200ms'/> The Retrieval A P I <break time='200ms'/> respects them automatically.
+
+Stage five! <break time='300ms'/> Generate. <break time='400ms'/> Pass retrieved content <break time='200ms'/> plus the user's question <break time='200ms'/> to the model. <break time='300ms'/> The model writes a grounded response, <break time='200ms'/> citing the retrieved passages.
+
+The big advantage of RAG! <break time='400ms'/> Real-time data access. <break time='200ms'/> Preserved data privacy. <break time='200ms'/> Mitigated hallucinations. <break time='300ms'/> The model never sees data outside the retrieval. <break time='300ms'/> And you can swap the underlying model <break time='200ms'/> without rewriting your data layer.
+
+--- SLIDE 18 ---
+Time for a knowledge check! <break time='500ms'/> Which component ensures AI agents can retrieve <break time='200ms'/> and interpret enterprise data accurately? <break time='400ms'/> Is it A, <break time='200ms'/> user interface customization? <break time='200ms'/> B, <break time='200ms'/> semantic indexing? <break time='200ms'/> C, <break time='200ms'/> Microsoft Teams channels? <break time='200ms'/> Or D, <break time='200ms'/> email distribution lists? <break time='400ms'/> Think about it. <break time='500ms'/> The answer is B, <break time='200ms'/> semantic indexing. <break time='400ms'/> Semantic indexing converts enterprise content <break time='200ms'/> into semantic representations <break time='200ms'/> that enable precise retrieval. <break time='300ms'/> Microsoft Graph semantic index <break time='200ms'/> does this for M 365 content automatically. <break time='300ms'/> U I customization, <break time='200ms'/> Teams channels, <break time='200ms'/> and email lists <break time='200ms'/> do not enable retrieval. <break time='200ms'/> Only semantic indexing does.
+
+--- SLIDE 19 ---
+Now apply everything! <break time='500ms'/> Here is the BrightCorp H R scenario. <break time='400ms'/> Eight thousand employees <break time='200ms'/> across fourteen countries. <break time='300ms'/> H R policy questions overwhelm their H R team. <break time='300ms'/> Same five questions, <break time='200ms'/> asked a thousand times a week. <break time='300ms'/> They have policies in SharePoint, <break time='200ms'/> but they are scattered across regional sites. <break time='200ms'/> Some are P D Fs, <break time='200ms'/> some are Word, <break time='200ms'/> some are out of date. <break time='300ms'/> Leadership wants an agent <break time='200ms'/> rolled out broadly and fast. <break time='500ms'/> The discussion questions. <break time='400ms'/> What types of data must be collected and categorized first? <break time='300ms'/> Run the five-dimension test. <break time='200ms'/> Which dimensions are likely weakest here? <break time='300ms'/> Which Microsoft data architecture components do you need? <break time='200ms'/> Database? <break time='200ms'/> Index? <break time='200ms'/> RAG? <break time='300ms'/> What is the single biggest risk <break time='200ms'/> if data is not governed before launch? <break time='500ms'/> Take a moment to think through those questions. <break time='500ms'/> For data collection: <break time='300ms'/> you need an authoritative H R policy library, <break time='200ms'/> the master version of every policy, <break time='200ms'/> version-controlled. <break time='300ms'/> Regional variations <break time='200ms'/> tagged with country and region metadata <break time='200ms'/> so the agent surfaces the right one. <break time='300ms'/> S M E owner mapping, <break time='200ms'/> every policy has a named owner who validates accuracy. <break time='300ms'/> And sensitivity labels <break time='200ms'/> applied via Microsoft Purview, <break time='200ms'/> public, <break time='200ms'/> internal, <break time='200ms'/> confidential. <break time='500ms'/> For the five-dimension test: <break time='300ms'/> Cleanliness is weakest, <break time='200ms'/> mixed formats, <break time='200ms'/> scattered content, <break time='200ms'/> duplicates likely, <break time='200ms'/> major cleanup needed. <break time='300ms'/> Timeliness is weak too, <break time='200ms'/> some policies are out of date, <break time='200ms'/> that is a compliance risk. <break time='300ms'/> Relevance needs attention, <break time='200ms'/> regional content needs scoping <break time='200ms'/> so a German employee <break time='200ms'/> does not get U S policy. <break time='300ms'/> Accuracy and Availability are likely okay <break time='200ms'/> once the cleanup is done. <break time='500ms'/> For architecture components: <break time='300ms'/> a centralized SharePoint site, <break time='200ms'/> single authoritative H R Policy site <break time='200ms'/> with regional subsites. <break time='300ms'/> Semantic Index via Microsoft Graph, <break time='200ms'/> automatic for SharePoint content. <break time='300ms'/> A Copilot Studio agent <break time='200ms'/> with knowledge sources scoped to the H R Policy SharePoint site <break time='200ms'/> plus regional metadata filters. <break time='300ms'/> Microsoft Purview <break time='200ms'/> for sensitivity labels, <break time='200ms'/> lineage, <break time='200ms'/> and access policies. <break time='300ms'/> No custom RAG required. <break time='200ms'/> The M 365 Copilot grounding pipeline <break time='200ms'/> handles this scenario natively. <break time='500ms'/> The biggest risk if data is not governed? <break time='300ms'/> Compliance and legal exposure. <break time='300ms'/> The agent confidently quoting outdated policy <break time='200ms'/> is a liability. <break time='300ms'/> Trust collapse. <break time='200ms'/> One wrong answer to a sensitive question, <break time='200ms'/> parental leave, <break time='200ms'/> harassment policy, <break time='200ms'/> and adoption dies. <break time='300ms'/> Permission leakage. <break time='200ms'/> Without proper access controls, <break time='200ms'/> the agent could surface confidential H R docs <break time='200ms'/> to the wrong audience. <break time='400ms'/> The hidden fix is upstream. <break time='300ms'/> Push back on leadership: <break time='200ms'/> thirty days of data governance <break time='200ms'/> saves six months of post-launch firefighting.
+
+--- SLIDE 20 ---
+Final recap! <break time='400ms'/> Five things to carry into Chapter three. <break time='300ms'/> I will bring them up one at a time. <break time='500ms'/>
+
+One! <break time='300ms'/> Agents play three roles. <break time='300ms'/> Task automation, <break time='200ms'/> data analytics, <break time='200ms'/> decision-making. <break time='300ms'/> Match the right one <break time='200ms'/> to the customer's actual need.
+
+Two! <break time='300ms'/> Weak grounding kills AI projects. <break time='300ms'/> More than any other reason. <break time='300ms'/> Data first. <break time='200ms'/> Model second.
+
+Three! <break time='300ms'/> The five dimensions. <break time='300ms'/> Accuracy, <break time='200ms'/> Relevance, <break time='200ms'/> Timeliness, <break time='200ms'/> Cleanliness, <break time='200ms'/> Availability. <break time='300ms'/> Run this test on every dataset.
+
+Four! <break time='300ms'/> The four-layer Azure data estate. <break time='300ms'/> Operational, <break time='200ms'/> Analytical, <break time='200ms'/> Intelligence, <break time='200ms'/> AI Apps. <break time='300ms'/> AI lives at the top, <break time='200ms'/> but only works if the layers below are solid.
+
+Five! <break time='300ms'/> RAG is the standard pattern. <break time='300ms'/> Ingest, <break time='200ms'/> Chunk and Embed, <break time='200ms'/> Index, <break time='200ms'/> Retrieve, <break time='200ms'/> Generate. <break time='300ms'/> Memorize it. <break time='200ms'/> Draw it on every architecture whiteboard. <break time='500ms'/> That is Chapter two! <break time='300ms'/> Next we go into the bigger AI strategy <break time='200ms'/> in Chapter three.

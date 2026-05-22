@@ -1,0 +1,1722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AB-100 Mock Exam · Gennoor Tech</title>
+<style>
+:root{
+  --bg:#FAFAFA; --paper:#FFFFFF;
+  --ink:#0F172A; --ink-soft:#475569; --ink-mute:#94A3B8;
+  --line:#E2E8F0; --line-soft:#F1F5F9;
+  --gn-navy:#0C1426;
+  --gn-blue:#2563EB;
+  --gn-blue-deep:#1D4ED8;
+  --gn-indigo:#1E3A8A;
+  --gn-amber:#F59E0B;
+  --gn-amber-deep:#B45309;
+  --gn-blue-light:#60A5FA;
+  --green:#10B981; --green-soft:#D1FAE5; --green-deep:#047857;
+  --red:#EF4444; --red-soft:#FEE2E2; --red-deep:#B91C1C;
+  --amber-soft:#FEF3C7;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.app{position:fixed;inset:0;display:flex;flex-direction:column;overflow:hidden}
+
+/* TOPBAR */
+.topbar{height:60px;background:var(--gn-navy);color:#FFFFFF;padding:0 24px;border-bottom:1px solid rgba(255,255,255,.06);z-index:10;flex-shrink:0;display:flex;align-items:center;gap:18px}
+.topbar.topbar-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;padding:0 24px}
+.topbar-left{display:flex;align-items:center;gap:18px;min-width:0}
+.topbar-left .brand-lockup{flex-shrink:0}
+.topbar-left .exam-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar-center{display:flex;align-items:center;justify-content:center}
+.topbar-right{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0}
+.q-page-num{display:inline-flex;align-items:center;gap:8px;padding:7px 18px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.14);border-radius:6px;font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px}
+.q-page-num .qpn-label{font-size:11px;color:rgba(255,255,255,.65);letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
+.q-page-num .qpn-current{font-size:18px;font-weight:700;color:var(--gn-amber);min-width:26px;text-align:right}
+.q-page-num .qpn-sep{color:rgba(255,255,255,.4);font-size:14px}
+.q-page-num .qpn-total{font-size:14px;color:rgba(255,255,255,.7);font-weight:500}
+.brand-lockup{display:flex;align-items:center;gap:10px;text-decoration:none;color:#FFFFFF;flex-shrink:0}
+.brand-mark{width:26px;height:26px;flex-shrink:0;display:block}
+.brand-text{display:flex;flex-direction:column;line-height:1.1}
+.brand-name{font-size:14px;font-weight:600;letter-spacing:.3px}
+.brand-name .b-w{color:#FFFFFF}
+.brand-name .b-blue{color:#60A5FA}
+.brand-name .b-amber{color:#F59E0B}
+.brand-sub{font-size:10px;color:var(--gn-amber);letter-spacing:1.2px;text-transform:uppercase;font-weight:600;font-family:'Cascadia Code','Consolas',monospace}
+.topbar .divider{width:1px;height:26px;background:rgba(255,255,255,.15)}
+.topbar .exam-title{font-size:13px;opacity:.75;letter-spacing:.2px;font-weight:400}
+.topbar .spacer{flex:1}
+.topbar .meta{display:flex;gap:12px;align-items:center}
+.topbar .pill{padding:5px 14px;background:rgba(255,255,255,.10);border-radius:4px;font-size:12px;font-weight:500;font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px}
+.topbar .pill.timer{background:var(--gn-blue);font-weight:600;display:flex;align-items:center;gap:8px}
+.topbar .pill.timer.warn{background:var(--gn-amber)}
+.topbar .pill.timer.danger{background:var(--red);animation:pulse-red 1s ease-in-out infinite}
+@keyframes pulse-red{0%,100%{opacity:1}50%{opacity:.7}}
+.topbar .pill.timer .dot{width:6px;height:6px;border-radius:50%;background:#FFFFFF;animation:tick 1s ease-in-out infinite}
+@keyframes tick{0%,100%{opacity:.4}50%{opacity:1}}
+.topbar button{background:transparent;border:1px solid rgba(255,255,255,.25);color:#FFFFFF;padding:7px 14px;border-radius:4px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;transition:.15s}
+.topbar button:hover{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.4)}
+.topbar button.danger{border-color:rgba(239,68,68,.5);color:#FCA5A5}
+.topbar button.danger:hover{background:rgba(239,68,68,.15);color:#FFFFFF}
+
+/* SCREEN SYSTEM */
+.screen{position:absolute;inset:60px 0 0 0;display:none;flex-direction:column;background:var(--bg);overflow:hidden}
+.screen.active{display:flex}
+.screen.active.welcome{inset:0}
+
+/* WELCOME SCREEN */
+.welcome{background:linear-gradient(135deg,#0C1426 0%,#1E3A8A 35%,#2563EB 70%,#60A5FA 110%);color:#FFFFFF;justify-content:center;align-items:center;padding:60px;text-align:center;overflow-y:auto}
+.welcome::before{content:"";position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,.18) 0%,transparent 70%);top:-200px;right:-200px;pointer-events:none}
+.welcome::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(96,165,250,.20) 0%,transparent 70%);bottom:-160px;left:-160px;pointer-events:none}
+.welcome-content{max-width:880px;position:relative;z-index:1}
+.welcome .brand-full{display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:32px}
+.welcome .brand-full svg{width:64px;height:64px}
+.welcome .brand-full .name{font-size:28px;font-weight:600;letter-spacing:1px;color:#FFFFFF;line-height:1}
+.welcome .brand-full .name .b-w{color:#FFFFFF}
+.welcome .brand-full .name .b-blue{color:#60A5FA}
+.welcome .brand-full .name .b-amber{color:#F59E0B}
+.welcome .brand-full .tag{font-size:11px;color:var(--gn-amber);letter-spacing:3px;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;margin-top:6px;text-transform:uppercase;display:block}
+.welcome .eyebrow{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;letter-spacing:3px;color:var(--gn-amber);margin-bottom:18px;font-weight:600}
+.welcome h1{font-size:54px;line-height:1.1;font-weight:600;max-width:1000px;letter-spacing:-1.5px;margin-bottom:14px}
+.welcome h1 em{font-style:normal;color:var(--gn-amber);font-weight:600}
+.welcome .lede{font-size:17px;color:rgba(255,255,255,.85);max-width:780px;line-height:1.5;font-weight:400;margin:0 auto 38px}
+
+.exam-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:880px;margin:0 auto 38px}
+.stat-tile{padding:18px 14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;backdrop-filter:blur(10px)}
+.stat-tile .num{font-size:34px;font-weight:700;line-height:1;font-family:'Cascadia Code','Consolas',monospace;color:var(--gn-amber);margin-bottom:5px}
+.stat-tile .lab{font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.7);font-weight:600;margin-bottom:3px}
+.stat-tile h6{font-size:12px;color:#FFFFFF;font-weight:500;line-height:1.3}
+
+.exam-info{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:22px 28px;margin:0 auto 30px;max-width:780px;text-align:left;backdrop-filter:blur(10px)}
+.exam-info h4{font-size:13px;color:var(--gn-amber);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:12px;font-family:'Cascadia Code','Consolas',monospace}
+.exam-info ul{list-style:none}
+.exam-info li{padding:5px 0 5px 22px;position:relative;font-size:13.5px;line-height:1.5;color:rgba(255,255,255,.92)}
+.exam-info li::before{content:"›";position:absolute;left:6px;top:5px;color:var(--gn-amber);font-weight:700;font-size:14px}
+.exam-info li strong{color:#FFFFFF;font-weight:600}
+
+.start-btn{background:var(--gn-amber);color:var(--gn-navy);padding:16px 44px;border-radius:6px;font-family:inherit;font-size:16px;font-weight:600;border:none;cursor:pointer;transition:all .2s;letter-spacing:.5px;box-shadow:0 6px 20px rgba(245,158,11,.30)}
+.start-btn:hover{background:#FBBF24;transform:translateY(-2px);box-shadow:0 10px 28px rgba(245,158,11,.40)}
+.start-btn:active{transform:translateY(0)}
+
+.f11-banner{display:flex;align-items:center;justify-content:center;gap:14px;padding:14px 22px;background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.28);border-radius:8px;font-size:13px;color:rgba(255,255,255,.92);max-width:660px;margin:0 auto 22px;line-height:1.4}
+.f11-banner .f11-key{padding:5px 11px;background:var(--gn-amber);color:var(--gn-navy);border-radius:4px;font-weight:700;font-size:12px;letter-spacing:1px;font-family:'Cascadia Code','Consolas',monospace;flex-shrink:0}
+.f11-banner strong{color:var(--gn-amber);font-weight:600}
+.attempts-history{margin-top:20px;font-size:12px;color:rgba(255,255,255,.65)}
+
+/* EXAM SCREEN */
+.exam-stage{flex:1;display:flex;overflow:hidden}
+.case-sidebar{width:0;background:var(--paper);border-right:1px solid var(--line);overflow:hidden;transition:width .35s cubic-bezier(.4,0,.2,1);flex-shrink:0;display:flex;flex-direction:column}
+.case-sidebar.open{width:420px}
+.case-header{padding:18px 24px;border-bottom:1px solid var(--line);background:var(--gn-navy);color:#FFFFFF;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
+.case-header .case-id{font-family:'Cascadia Code','Consolas',monospace;font-size:11px;color:var(--gn-amber);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:3px}
+.case-header h3{font-size:15px;font-weight:600;line-height:1.2}
+.case-header button{background:transparent;border:none;color:rgba(255,255,255,.7);font-size:20px;cursor:pointer;padding:4px 8px;border-radius:3px;transition:.15s}
+.case-header button:hover{color:#FFFFFF;background:rgba(255,255,255,.1)}
+.case-content{flex:1;padding:20px 24px;overflow-y:auto;font-size:13px;line-height:1.6;color:var(--ink)}
+.case-content h4{font-size:11px;color:var(--gn-blue-deep);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin:18px 0 6px;font-family:'Cascadia Code','Consolas',monospace}
+.case-content h4:first-child{margin-top:0}
+.case-content h5{font-size:13px;color:var(--gn-navy);font-weight:600;margin:10px 0 4px}
+.case-content p{margin-bottom:6px}
+.case-content ul{margin-left:18px;margin-bottom:6px}
+.case-content li{padding:2px 0;font-size:12.5px}
+
+.exam-main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+
+.question-bar{padding:14px 32px;background:var(--paper);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;flex-shrink:0}
+.q-counter{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;color:var(--ink-mute);letter-spacing:1px;font-weight:600}
+.q-counter strong{color:var(--gn-blue);font-size:18px;font-weight:700}
+.q-type-badge{padding:5px 12px;border-radius:4px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;font-family:'Cascadia Code','Consolas',monospace}
+.q-type-badge.mcq{background:#DBEAFE;color:#1D4ED8}
+.q-type-badge.hotspot{background:#FEF3C7;color:#92400E}
+.q-type-badge.dragdrop{background:#E0E7FF;color:#3730A3}
+.q-type-badge.multi{background:#D1FAE5;color:#047857}
+.case-pill{padding:5px 12px;background:#F0F9FF;color:var(--gn-blue-deep);border:1px solid #BAE6FD;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px;text-transform:uppercase;transition:.15s}
+.case-pill:hover{background:#E0F2FE;border-color:var(--gn-blue)}
+.case-pill.active{background:var(--gn-blue);color:#FFFFFF;border-color:var(--gn-blue)}
+.q-bar-spacer{flex:1}
+.mark-btn{padding:5px 12px;background:transparent;border:1px solid var(--line);color:var(--ink-soft);border-radius:4px;font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.15s}
+.mark-btn:hover{border-color:var(--gn-amber);color:var(--gn-amber-deep)}
+.mark-btn.marked{background:var(--amber-soft);border-color:var(--gn-amber);color:var(--gn-amber-deep)}
+.mark-btn::before{content:"☆";font-size:14px}
+.mark-btn.marked::before{content:"★"}
+.nav-jump-btn{padding:5px 12px;background:transparent;border:1px solid var(--line);color:var(--ink-soft);border-radius:4px;font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;transition:.15s}
+.nav-jump-btn:hover{border-color:var(--gn-blue);color:var(--gn-blue)}
+
+.q-content{flex:1;overflow-y:auto;padding:32px 56px 100px;background:var(--bg)}
+.q-content-inner{max-width:920px;margin:0 auto}
+.q-text{font-size:18px;line-height:1.5;color:var(--gn-navy);margin-bottom:6px;font-weight:500}
+.q-text em{font-style:normal;color:var(--gn-blue);font-weight:600}
+.q-instruction{font-size:13px;color:var(--ink-soft);margin-bottom:24px;font-style:italic}
+
+/* MCQ / MULTI options */
+.options-list{display:flex;flex-direction:column;gap:10px}
+.option{background:var(--paper);border:1.5px solid var(--line);padding:14px 18px;border-radius:6px;cursor:pointer;display:flex;align-items:flex-start;gap:14px;transition:all .2s;font-size:14.5px;line-height:1.4;color:var(--ink);position:relative;animation:slideUp .3s ease backwards}
+.option:nth-child(1){animation-delay:.05s}
+.option:nth-child(2){animation-delay:.1s}
+.option:nth-child(3){animation-delay:.15s}
+.option:nth-child(4){animation-delay:.2s}
+.option:nth-child(5){animation-delay:.25s}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.option:hover{border-color:var(--gn-blue);background:#F9FBFE;transform:translateX(2px);box-shadow:0 2px 8px rgba(37,99,235,.08)}
+.option.selected{border-color:var(--gn-blue);background:#EFF6FF;box-shadow:0 2px 8px rgba(37,99,235,.15)}
+.option .marker{width:28px;height:28px;border-radius:4px;background:var(--paper);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--ink-mute);flex-shrink:0;font-size:13px;font-family:'Cascadia Code','Consolas',monospace;transition:.2s}
+.option:hover .marker{border-color:var(--gn-blue);color:var(--gn-blue)}
+.option.selected .marker{background:var(--gn-blue);color:#FFFFFF;border-color:var(--gn-blue)}
+.option.multi .marker{border-radius:4px}
+.option.multi.selected .marker::before{content:"✓"}
+.option.multi.selected .marker{font-size:14px}
+
+/* HOTSPOT */
+.hotspot-list{display:flex;flex-direction:column;gap:18px}
+.hotspot-row{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:18px 22px;animation:slideUp .35s ease backwards}
+.hotspot-row:nth-child(1){animation-delay:.05s}
+.hotspot-row:nth-child(2){animation-delay:.12s}
+.hotspot-row:nth-child(3){animation-delay:.19s}
+.hotspot-label{font-size:13px;color:var(--gn-navy);font-weight:600;margin-bottom:10px;line-height:1.3}
+.dropdown{position:relative;width:100%}
+.dropdown-trigger{width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:5px;padding:11px 16px;font-family:inherit;font-size:14px;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:.15s;text-align:left}
+.dropdown-trigger:hover{border-color:var(--gn-blue);background:#F9FBFE}
+.dropdown.open .dropdown-trigger{border-color:var(--gn-blue);background:#EFF6FF}
+.dropdown.selected .dropdown-trigger{color:var(--gn-navy);font-weight:500}
+.dropdown-trigger.placeholder{color:var(--ink-mute);font-style:italic;font-weight:400}
+.dropdown-trigger::after{content:"▾";color:var(--gn-blue);transition:.2s;font-size:14px}
+.dropdown.open .dropdown-trigger::after{transform:rotate(180deg)}
+.dropdown-menu{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--paper);border:1.5px solid var(--line);border-radius:5px;box-shadow:0 8px 24px rgba(15,23,42,.12);max-height:0;overflow:hidden;opacity:0;transition:max-height .25s ease, opacity .2s ease;z-index:5;pointer-events:none}
+.dropdown.open .dropdown-menu{max-height:300px;opacity:1;pointer-events:auto;overflow-y:auto}
+.dropdown-item{padding:11px 16px;font-size:14px;color:var(--ink);cursor:pointer;transition:background .15s;border-bottom:1px solid var(--line-soft)}
+.dropdown-item:last-child{border-bottom:none}
+.dropdown-item:hover{background:#EFF6FF;color:var(--gn-blue-deep)}
+.dropdown-item.selected{background:var(--gn-blue);color:#FFFFFF;font-weight:500}
+
+/* DRAG DROP */
+.dragdrop-container{display:grid;grid-template-columns:1fr 1.2fr;gap:24px;align-items:flex-start}
+.drag-source{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:18px}
+.drag-source h5,.drop-target h5{font-size:11px;color:var(--gn-blue-deep);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:12px;font-family:'Cascadia Code','Consolas',monospace}
+.drag-items{display:flex;flex-direction:column;gap:8px}
+.drag-item{background:var(--bg);border:1.5px solid var(--line);border-radius:5px;padding:12px 16px;font-size:13.5px;color:var(--ink);cursor:grab;transition:all .2s;user-select:none;animation:slideUp .35s ease backwards;font-weight:500;display:flex;align-items:center;gap:10px}
+.drag-item:nth-child(1){animation-delay:.05s}
+.drag-item:nth-child(2){animation-delay:.10s}
+.drag-item:nth-child(3){animation-delay:.15s}
+.drag-item:nth-child(4){animation-delay:.20s}
+.drag-item:nth-child(5){animation-delay:.25s}
+.drag-item::before{content:"⋮⋮";color:var(--ink-mute);font-size:14px;letter-spacing:-2px;flex-shrink:0}
+.drag-item:hover{border-color:var(--gn-blue);background:#F9FBFE;box-shadow:0 2px 6px rgba(37,99,235,.10)}
+.drag-item.dragging{opacity:.4;cursor:grabbing}
+.drag-item.placed{display:none}
+.drag-item.placed.reusable{display:flex}
+.drop-targets{display:flex;flex-direction:column;gap:14px}
+.drop-row{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:18px}
+.drop-label{font-size:13.5px;color:var(--gn-navy);font-weight:600;margin-bottom:10px}
+.drop-zone{min-height:54px;background:var(--bg);border:2px dashed var(--line);border-radius:5px;padding:10px 14px;display:flex;align-items:center;color:var(--ink-mute);font-size:13px;font-style:italic;transition:all .25s}
+.drop-zone.over{border-color:var(--gn-blue);background:#EFF6FF;color:var(--gn-blue)}
+.drop-zone.filled{border:1.5px solid var(--gn-blue);background:#EFF6FF;color:var(--ink);font-style:normal;font-weight:500;padding:0;justify-content:space-between}
+.drop-zone.filled .placed-item{flex:1;padding:12px 16px;display:flex;align-items:center;gap:10px}
+.drop-zone.filled .placed-item::before{content:"⋮⋮";color:var(--gn-blue);font-size:14px;letter-spacing:-2px}
+.drop-zone.filled .remove-btn{padding:0 16px;height:100%;background:transparent;border:none;border-left:1px solid var(--line);color:var(--ink-mute);cursor:pointer;font-size:18px;transition:.15s}
+.drop-zone.filled .remove-btn:hover{color:var(--red);background:var(--red-soft)}
+
+/* BOTTOM CONTROLS */
+.exam-controls{padding:14px 32px;background:var(--paper);border-top:1px solid var(--line);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.exam-controls button{font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer;padding:9px 22px;border-radius:5px;transition:all .15s;border:1.5px solid transparent}
+.btn-prev{background:var(--paper);border-color:var(--line);color:var(--ink)}
+.btn-prev:hover:not(:disabled){border-color:var(--gn-blue);color:var(--gn-blue);transform:translateX(-2px)}
+.btn-prev:disabled{opacity:.4;cursor:not-allowed}
+.btn-next{background:var(--gn-blue);color:#FFFFFF;border-color:var(--gn-blue);font-weight:600;margin-left:auto}
+.btn-next:hover{background:var(--gn-blue-deep);border-color:var(--gn-blue-deep);transform:translateX(2px)}
+.btn-submit{background:var(--gn-amber);color:var(--gn-navy);border-color:var(--gn-amber);font-weight:600;margin-left:auto}
+.btn-submit:hover{background:#FBBF24;border-color:#FBBF24;transform:scale(1.02)}
+.answered-state{font-size:12px;color:var(--ink-mute);font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px;margin-left:auto;margin-right:14px}
+.answered-state.complete{color:var(--green-deep);font-weight:600}
+
+/* QUESTION NAVIGATOR (modal) */
+.modal-overlay{position:fixed;inset:0;background:rgba(12,20,38,.6);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:50;padding:40px;animation:fadeIn .2s ease}
+.modal-overlay.show{display:flex}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--paper);border-radius:12px;max-width:780px;width:100%;max-height:85vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(12,20,38,.30);animation:modalUp .25s ease}
+@keyframes modalUp{from{opacity:0;transform:translateY(20px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-header{padding:20px 28px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.modal-header h3{font-size:18px;color:var(--gn-navy);font-weight:600}
+.modal-header button{background:transparent;border:none;font-size:22px;color:var(--ink-mute);cursor:pointer;padding:4px 10px;border-radius:4px;transition:.15s}
+.modal-header button:hover{color:var(--gn-navy);background:var(--bg)}
+.modal-body{padding:24px 28px;overflow-y:auto;flex:1}
+.nav-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:8px}
+.nav-cell{aspect-ratio:1;background:var(--paper);border:1.5px solid var(--line);border-radius:5px;font-family:'Cascadia Code','Consolas',monospace;font-size:13px;font-weight:600;color:var(--ink-soft);cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;transition:.15s}
+.nav-cell:hover{border-color:var(--gn-blue);color:var(--gn-blue);transform:scale(1.05)}
+.nav-cell.answered{background:#DBEAFE;border-color:var(--gn-blue);color:var(--gn-blue-deep)}
+.nav-cell.marked{background:var(--amber-soft);border-color:var(--gn-amber);color:var(--gn-amber-deep)}
+.nav-cell.marked.answered{background:linear-gradient(135deg,#DBEAFE 50%,var(--amber-soft) 50%)}
+.nav-cell.current{box-shadow:0 0 0 3px var(--gn-blue);transform:scale(1.05)}
+.nav-cell .case-dot{position:absolute;top:3px;right:3px;width:5px;height:5px;border-radius:50%;background:var(--gn-amber)}
+.nav-legend{margin-top:18px;display:flex;flex-wrap:wrap;gap:14px;font-size:11.5px;color:var(--ink-soft);padding-top:14px;border-top:1px solid var(--line)}
+.legend-item{display:flex;align-items:center;gap:6px}
+.legend-swatch{width:14px;height:14px;border-radius:3px;border:1.5px solid var(--line)}
+.legend-swatch.answered{background:#DBEAFE;border-color:var(--gn-blue)}
+.legend-swatch.marked{background:var(--amber-soft);border-color:var(--gn-amber)}
+.legend-swatch.current{background:var(--paper);box-shadow:0 0 0 2px var(--gn-blue)}
+
+/* SUBMIT MODAL */
+.submit-confirm h3{font-size:22px;color:var(--gn-navy);margin-bottom:8px}
+.submit-confirm .summary{margin:18px 0;padding:18px 22px;background:var(--bg);border-radius:8px;font-size:14px;line-height:1.7;color:var(--ink)}
+.submit-confirm .summary div{display:flex;justify-content:space-between;padding:4px 0}
+.submit-confirm .summary div strong{color:var(--gn-navy)}
+.submit-confirm .actions{display:flex;gap:12px;justify-content:flex-end}
+.submit-confirm button{padding:10px 22px;font-size:13.5px;font-weight:600;border-radius:5px;cursor:pointer;font-family:inherit;border:1.5px solid transparent;transition:.15s}
+.btn-cancel{background:var(--paper);border-color:var(--line);color:var(--ink)}
+.btn-cancel:hover{border-color:var(--ink-soft)}
+.btn-confirm{background:var(--gn-amber);color:var(--gn-navy);border-color:var(--gn-amber)}
+.btn-confirm:hover{background:#FBBF24}
+
+/* REVIEW SCREEN */
+.review-stage{flex:1;overflow-y:auto;padding:32px 56px 60px;background:var(--bg)}
+.review-inner{max-width:1100px;margin:0 auto}
+.review-header{background:linear-gradient(135deg,#0C1426 0%,#1E3A8A 100%);color:#FFFFFF;border-radius:14px;padding:36px 44px;text-align:center;margin-bottom:30px;position:relative;overflow:hidden}
+.review-header::before{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,.20) 0%,transparent 70%);top:-100px;right:-100px;pointer-events:none}
+.review-header .label{font-family:'Cascadia Code','Consolas',monospace;font-size:11px;color:var(--gn-amber);letter-spacing:3px;font-weight:600;text-transform:uppercase;margin-bottom:10px}
+.review-header h2{font-size:32px;font-weight:600;letter-spacing:-.5px;margin-bottom:6px}
+.review-header .verdict{font-size:60px;font-weight:700;line-height:1;font-family:'Cascadia Code','Consolas',monospace;margin:14px 0 6px}
+.review-header .verdict.pass{color:var(--green)}
+.review-header .verdict.fail{color:#FCA5A5}
+.review-header .pass-label{font-size:14px;letter-spacing:2px;text-transform:uppercase;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;margin-bottom:18px}
+.review-header .pass-label.pass{color:var(--green)}
+.review-header .pass-label.fail{color:#FCA5A5}
+.review-header .stats-row{display:flex;justify-content:center;gap:36px;margin-top:18px;font-size:13px}
+.review-header .stats-row div{display:flex;flex-direction:column;align-items:center;gap:4px}
+.review-header .stats-row .v{font-size:22px;font-weight:700;color:#FFFFFF;font-family:'Cascadia Code','Consolas',monospace}
+.review-header .stats-row .l{font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.7);font-weight:600}
+.review-actions{display:flex;justify-content:center;gap:12px;margin-top:24px}
+.review-actions button{padding:10px 22px;font-size:13.5px;font-weight:600;border-radius:5px;cursor:pointer;font-family:inherit;border:1.5px solid transparent;transition:.15s}
+.review-actions button.primary{background:var(--gn-amber);color:var(--gn-navy);border-color:var(--gn-amber)}
+.review-actions button.primary:hover{background:#FBBF24}
+.review-actions button.secondary{background:transparent;color:#FFFFFF;border-color:rgba(255,255,255,.4)}
+.review-actions button.secondary:hover{background:rgba(255,255,255,.1);border-color:#FFFFFF}
+
+.review-filters{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.review-filters .lbl{font-size:11px;color:var(--ink-mute);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-right:6px;font-family:'Cascadia Code','Consolas',monospace}
+.filter-btn{padding:6px 14px;background:var(--paper);border:1px solid var(--line);border-radius:4px;font-family:inherit;font-size:12.5px;font-weight:500;color:var(--ink-soft);cursor:pointer;transition:.15s}
+.filter-btn:hover{border-color:var(--gn-blue);color:var(--gn-blue)}
+.filter-btn.active{background:var(--gn-blue);color:#FFFFFF;border-color:var(--gn-blue)}
+.filter-btn.fail.active{background:var(--red);border-color:var(--red)}
+.filter-btn.pass.active{background:var(--green);border-color:var(--green)}
+
+.review-list{display:flex;flex-direction:column;gap:14px}
+.review-card{background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:hidden;border-left:4px solid var(--green)}
+.review-card.wrong{border-left-color:var(--red)}
+.review-card.skipped{border-left-color:var(--gn-amber)}
+.review-card-header{padding:16px 22px;display:flex;align-items:center;gap:12px;cursor:pointer;background:var(--paper);transition:.15s}
+.review-card-header:hover{background:#FAFBFC}
+.review-card .q-num{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;font-weight:700;color:var(--ink-mute);min-width:38px}
+.review-card .status-icon{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.review-card.correct .status-icon{background:var(--green-soft);color:var(--green-deep)}
+.review-card.wrong .status-icon{background:var(--red-soft);color:var(--red-deep)}
+.review-card.skipped .status-icon{background:var(--amber-soft);color:var(--gn-amber-deep)}
+.review-card .q-preview{font-size:14px;color:var(--ink);font-weight:500;line-height:1.4;flex:1}
+.review-card .expand-icon{color:var(--ink-mute);font-size:18px;transition:transform .2s}
+.review-card.expanded .expand-icon{transform:rotate(90deg)}
+.review-detail{display:none;padding:0 22px 22px;border-top:1px solid var(--line-soft)}
+.review-card.expanded .review-detail{display:block;animation:slideDown .3s ease}
+@keyframes slideDown{from{opacity:0;max-height:0}to{opacity:1;max-height:2000px}}
+.review-detail .full-q{margin-top:18px;font-size:14.5px;line-height:1.5;color:var(--gn-navy);font-weight:500}
+.review-detail .answer-block{margin-top:14px;padding:12px 16px;border-radius:6px;font-size:13.5px;line-height:1.5}
+.review-detail .answer-block.user{background:var(--bg);border:1px solid var(--line)}
+.review-detail .answer-block.user.wrong{background:var(--red-soft);border-color:#FCA5A5}
+.review-detail .answer-block.user.correct{background:var(--green-soft);border-color:#86EFAC}
+.review-detail .answer-block.correct-block{background:var(--green-soft);border:1px solid #86EFAC;margin-top:8px}
+.review-detail .answer-block .lbl{font-size:10.5px;color:var(--ink-mute);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:5px;font-family:'Cascadia Code','Consolas',monospace}
+.review-detail .answer-block.user.wrong .lbl{color:var(--red-deep)}
+.review-detail .answer-block.user.correct .lbl{color:var(--green-deep)}
+.review-detail .answer-block.correct-block .lbl{color:var(--green-deep)}
+.review-detail .explain{margin-top:14px;padding:14px 18px;background:#F0F9FF;border-left:3px solid var(--gn-blue);border-radius:0 6px 6px 0;font-size:13px;line-height:1.6;color:var(--ink)}
+.review-detail .explain .lbl{font-size:10.5px;color:var(--gn-blue-deep);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:6px;font-family:'Cascadia Code','Consolas',monospace;display:block}
+
+/* HINT */
+.hint{position:fixed;top:72px;right:20px;background:var(--gn-navy);color:#FFFFFF;padding:10px 16px;border-radius:5px;font-size:12px;opacity:0;transition:opacity .3s;z-index:30;pointer-events:none;font-family:'Cascadia Code','Consolas',monospace;box-shadow:0 6px 16px rgba(12,20,38,.20)}
+.hint.show{opacity:.95}
+
+/* SCROLLBAR */
+.q-content::-webkit-scrollbar,.case-content::-webkit-scrollbar,.review-stage::-webkit-scrollbar,.modal-body::-webkit-scrollbar{width:8px}
+.q-content::-webkit-scrollbar-track,.case-content::-webkit-scrollbar-track,.review-stage::-webkit-scrollbar-track,.modal-body::-webkit-scrollbar-track{background:transparent}
+.q-content::-webkit-scrollbar-thumb,.case-content::-webkit-scrollbar-thumb,.review-stage::-webkit-scrollbar-thumb,.modal-body::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
+.q-content::-webkit-scrollbar-thumb:hover,.case-content::-webkit-scrollbar-thumb:hover,.review-stage::-webkit-scrollbar-thumb:hover,.modal-body::-webkit-scrollbar-thumb:hover{background:var(--ink-mute)}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ============= WELCOME SCREEN ============= -->
+  <div id="welcomeScreen" class="screen welcome active">
+    <div class="welcome-content">
+      <div class="brand-full">
+        <svg viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+        <div>
+          <span class="name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+          <span class="tag">AB-100 Mock Exam</span>
+        </div>
+      </div>
+      <div class="eyebrow">★ AB-100 MOCK EXAM ★</div>
+      <h1>Architecting <em>Agentic AI</em><br>Business Solutions</h1>
+      <div class="lede">Pattern-matched to the real Microsoft AB-100 certification. Multiple choice, multi-select, hotspot dropdowns, and drag-and-drop questions — exactly the formats you'll see on exam day.</div>
+
+      <div class="exam-stats">
+        <div class="stat-tile"><div class="num">50</div><div class="lab">Questions</div><h6>Across all skill areas</h6></div>
+        <div class="stat-tile"><div class="num">120</div><div class="lab">Minutes</div><h6>Real exam timing</h6></div>
+        <div class="stat-tile"><div class="num">700</div><div class="lab">To Pass</div><h6>Out of 1000</h6></div>
+        <div class="stat-tile"><div class="num">2</div><div class="lab">Case Studies</div><h6>Multi-question scenarios</h6></div>
+      </div>
+
+      <div class="exam-info">
+        <h4>▸ Before you begin</h4>
+        <ul>
+          <li>The timer starts the moment you click <strong>Begin Exam</strong> and runs for <strong>120 minutes</strong>. The exam auto-submits when time expires.</li>
+          <li>Use <strong>Mark for Review</strong> to flag questions, then jump back via the question navigator (top right).</li>
+          <li><strong>Case-study questions</strong> show a blue badge — click it to open the case context in a side panel.</li>
+          <li>Keyboard: <strong>← / →</strong> to navigate, <strong>M</strong> to mark, <strong>N</strong> to open navigator.</li>
+          <li>Your score and full review (with explanations) appear after submission.</li>
+        </ul>
+      </div>
+
+      <div class="f11-banner">
+        <span class="f11-key">F11</span>
+        <span>Press <strong>F11</strong> for full-screen exam visibility in your browser. Best experience with no distractions.</span>
+      </div>
+      <button class="start-btn" onclick="startExam()">Begin Exam →</button>
+      <div class="attempts-history" id="attemptsHistory"></div>
+    </div>
+  </div>
+
+  <!-- ============= EXAM SCREEN ============= -->
+  <div id="examScreen" class="screen">
+    <div class="topbar topbar-grid">
+      <div class="topbar-left">
+        <a href="#" class="brand-lockup" onclick="event.preventDefault();confirmExit()">
+          <svg class="brand-mark" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+          <div class="brand-text">
+            <span class="brand-name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+            <span class="brand-sub">AB-100 Mock</span>
+          </div>
+        </a>
+        <div class="divider"></div>
+        <div class="exam-title">AB-100 Mock Exam</div>
+      </div>
+      <div class="topbar-center">
+        <div class="q-page-num">
+          <span class="qpn-label">Question</span>
+          <span class="qpn-current" id="qpnCurrent">01</span>
+          <span class="qpn-sep">/</span>
+          <span class="qpn-total">50</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span class="pill" id="answeredCount">0 / 50</span>
+        <span class="pill timer" id="timerPill"><span class="dot"></span><span id="timerText">120:00</span></span>
+        <button onclick="openNavigator()" title="Question navigator (N)">▦ Navigator</button>
+        <button class="danger" onclick="confirmSubmit()">Submit</button>
+      </div>
+    </div>
+
+    <div class="exam-stage">
+      <!-- CASE STUDY SIDEBAR -->
+      <aside class="case-sidebar" id="caseSidebar">
+        <div class="case-header">
+          <div>
+            <div class="case-id" id="caseId">CASE STUDY</div>
+            <h3 id="caseTitle">Case Study</h3>
+          </div>
+          <button onclick="toggleCaseSidebar()" title="Close">✕</button>
+        </div>
+        <div class="case-content" id="caseContent"></div>
+      </aside>
+
+      <!-- MAIN QUESTION AREA -->
+      <main class="exam-main">
+        <div class="question-bar">
+          <span class="q-type-badge" id="qTypeBadge">MCQ</span>
+          <button class="case-pill" id="caseBtn" style="display:none" onclick="toggleCaseSidebar()">📖 Case Study</button>
+          <div class="q-bar-spacer"></div>
+          <button class="mark-btn" id="markBtn" onclick="toggleMark()">Mark for review</button>
+        </div>
+        <div class="q-content" id="qContent">
+          <div class="q-content-inner" id="qInner"></div>
+        </div>
+        <div class="exam-controls">
+          <button class="btn-prev" id="prevBtn" onclick="prevQ()">‹ Previous</button>
+          <span class="answered-state" id="qStateLabel">Not answered</span>
+          <button class="btn-next" id="nextBtn" onclick="nextQ()">Next ›</button>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ============= REVIEW SCREEN ============= -->
+  <div id="reviewScreen" class="screen">
+    <div class="topbar">
+      <a href="#" class="brand-lockup">
+        <svg class="brand-mark" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+        <div class="brand-text">
+          <span class="brand-name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+          <span class="brand-sub">Exam Review</span>
+        </div>
+      </a>
+      <div class="divider"></div>
+      <div class="exam-title">AB-100 Mock Exam &middot; Results</div>
+      <div class="spacer"></div>
+      <button onclick="resetExam()">↺ Retake exam</button>
+    </div>
+    <div class="review-stage">
+      <div class="review-inner">
+        <div class="review-header">
+          <div class="label">★ Exam Complete ★</div>
+          <h2>AB-100 Mock Exam Results</h2>
+          <div class="verdict" id="rvScore">000</div>
+          <div class="pass-label" id="rvVerdict">Calculating…</div>
+          <div class="stats-row">
+            <div><span class="v" id="rvCorrect">0</span><span class="l">Correct</span></div>
+            <div><span class="v" id="rvWrong">0</span><span class="l">Incorrect</span></div>
+            <div><span class="v" id="rvSkipped">0</span><span class="l">Skipped</span></div>
+            <div><span class="v" id="rvTime">00:00</span><span class="l">Time taken</span></div>
+          </div>
+          <div class="review-actions">
+            <button class="primary" onclick="resetExam()">Retake Exam</button>
+            <button class="secondary" onclick="goWelcome()">Back to Home</button>
+          </div>
+        </div>
+
+        <div class="review-filters">
+          <span class="lbl">Filter</span>
+          <button class="filter-btn active" data-filter="all" onclick="filterReview('all')">All (<span id="fAll">50</span>)</button>
+          <button class="filter-btn fail" data-filter="wrong" onclick="filterReview('wrong')">Wrong (<span id="fWrong">0</span>)</button>
+          <button class="filter-btn pass" data-filter="correct" onclick="filterReview('correct')">Correct (<span id="fCorrect">0</span>)</button>
+          <button class="filter-btn" data-filter="skipped" onclick="filterReview('skipped')">Skipped (<span id="fSkipped">0</span>)</button>
+        </div>
+
+        <div class="review-list" id="reviewList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============= NAVIGATOR MODAL ============= -->
+  <div class="modal-overlay" id="navModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Question Navigator</h3>
+        <button onclick="closeNavigator()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="nav-grid" id="navGrid"></div>
+        <div class="nav-legend">
+          <div class="legend-item"><div class="legend-swatch"></div>Unanswered</div>
+          <div class="legend-item"><div class="legend-swatch answered"></div>Answered</div>
+          <div class="legend-item"><div class="legend-swatch marked"></div>Marked for review</div>
+          <div class="legend-item"><div class="legend-swatch current"></div>Current</div>
+          <div class="legend-item">⬤ Case-study question</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============= SUBMIT CONFIRM MODAL ============= -->
+  <div class="modal-overlay" id="submitModal">
+    <div class="modal submit-confirm">
+      <div class="modal-header">
+        <h3>Submit Exam?</h3>
+        <button onclick="closeSubmitConfirm()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="color:var(--ink-soft);margin-bottom:6px">Once submitted, you can't return to change answers. Review your status below before continuing.</p>
+        <div class="summary" id="submitSummary"></div>
+        <div class="actions">
+          <button class="btn-cancel" onclick="closeSubmitConfirm()">Continue Exam</button>
+          <button class="btn-confirm" onclick="submitExam()">Submit &amp; See Results</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hint" id="hint">← → navigate · M mark · N navigator</div>
+</div>
+
+<script>
+// ============= DATA =============
+const caseStudies = {
+  fabrikam: {
+    title: 'Fabrikam, Inc. — Cloud Migration & AI Adoption',
+    sections: [
+      {h:'Background',c:'<p>Fabrikam, Inc., is a global consumer goods company undergoing a digital transformation initiative to migrate its entire infrastructure to the Microsoft cloud. As a key element of this cloud migration, the company will implement Microsoft Dynamics 365 Sales, moving away from the current on-premises proprietary technologies used by its business-to-business (B2B) sales team.</p><p>As part of the cloud migration, Fabrikam will adopt an AI-first approach to its business solutions and implement AI solutions, wherever possible, to streamline operations.</p>'},
+      {h:'Problem Statements',c:'<p>Fabrikam\'s infrastructure currently relies on various on-premises systems that require sales executives to use corporate computers with physical keyboards to access business information during customer interactions. Mobile phones cannot be used for these purposes. As a result, the sales executives spend a lot of time searching for data on disparate systems and file servers, rather than focusing on customers.</p><p>Stakeholders are concerned that users will be hesitant to adopt AI. If the AI initiatives are NOT adopted, cost savings will never be realized. Funding for future AI initiatives will depend on demonstrating an increase in AI adoption month over month. Rapid adoption of the agent is a high priority.</p>'},
+      {h:'Planned Initiatives — Infrastructure Migration',c:'<p>Fabrikam plans to migrate from its current on-premises infrastructure to a completely cloud-based topology, including user authentication, security framework, and adoption of services by end users. All data will be consolidated into a single Microsoft Dataverse environment as a single source of truth (SSOT) for the sales team.</p>'},
+      {h:'Planned Initiatives — Sales Cycle Enablement',c:'<ul><li>Use low-code development to create a single AI agent with Dataverse as its core component.</li><li>Sales managers can access unanswered correspondence from prospects and intervene as appropriate.</li><li>Replace the previous proprietary software with Dynamics 365 Sales.</li><li>Sales executives use D365 Sales to track interactions for open opportunities and send follow-up communications.</li><li>Sales executives use handsfree headsets to interact with an AI agent for questions about internal policies or customer data.</li></ul>'},
+      {h:'Requirements — Infrastructure Migration',c:'<ul><li>Azure must be used for all future infrastructure workloads.</li><li>Follow Microsoft-recommended methodologies for infrastructure migration to the cloud.</li><li>Any created AI agents must have their ROI calculated to ensure cost savings.</li></ul>'},
+      {h:'Requirements — Sales Cycle Enablement',c:'<ul><li>The final AI agent must follow Microsoft recommendations for a conversational user experience.</li><li>A designated checklist must be reviewed to ensure the agent follows Microsoft deployment recommendations for a compliant solution.</li><li>Detailed telemetry must be logged for the first agent during initial adoption.</li><li>Unexpected AI agent actions must end in escalation to a live representative (after 2 failed attempts).</li><li>ROI of switching processes is required for stakeholder sign off.</li><li>Sales team must use D365 Sales to correspond with prospects more efficiently.</li><li>Sales managers must report on AI agent adoption monthly to key stakeholders.</li><li>Any sensitive information shared via the AI agent must be tracked for future auditing.</li></ul>'}
+    ]
+  },
+  contoso: {
+    title: 'Contoso, Ltd. — High-Tech Manufacturing AI Adoption',
+    sections: [
+      {h:'Overview',c:'<p>Contoso, Ltd. is a high-tech manufacturing company that uses Microsoft Dynamics 365 Finance, Dynamics 365 Supply Chain Management, and Dynamics 365 Commerce for its North American operations. The company designs and develops innovative products with many patents and proprietary technologies — closely guarded secrets.</p><p>Contoso executives want to integrate and adopt AI solutions to scale the company in preparation for an anticipated period of rapid growth. The company has multiple legal entities and Azure subscriptions.</p>'},
+      {h:'Requirements — AI Adoption (Executive Roles)',c:'<ul><li><strong>CTO:</strong> Select one D365 prebuilt AI agent and one custom Microsoft Copilot Studio AI agent to prioritize and deploy.</li><li><strong>CIO:</strong> Ensure appropriate security labels are assigned to data used by AI agents.</li><li><strong>CFO:</strong> Analyze the ROI for the AI agents being deployed.</li><li><strong>CISO:</strong> Discover and inventory AI resources for auditing.</li><li><strong>CEO:</strong> Ensure all solutions adhere to industry-standard responsible AI practices.</li></ul><p>All AI initiatives will have a detailed business use case, defined audience profile, and estimated ROI comparing current process cost savings against estimated new AI solution costs.</p><p>The R&D department already has a custom Model Context Protocol (MCP) server containing comprehensive product specifications and compliance data.</p>'},
+      {h:'Custom AI Agent Requirements',c:'<ul><li>Will use data from D365 Supply Chain Management to answer manufacturing team questions as a low-code solution.</li><li>Must be accessible from within Microsoft Teams.</li><li>Must be designed to eventually connect to other agents — selectable based on description.</li><li>Topics will be selected based on description of query purpose, NOT trigger phrase, for more conversational interactions.</li><li>Must answer product specification questions using existing technologies (the R&D MCP server).</li><li>Must integrate with and be accessible from D365 Supply Chain Management.</li><li>Must use D365 SCM business logic that is stored outside the application.</li></ul>'},
+      {h:'Analysis, Reporting & Troubleshooting',c:'<ul><li><strong>CISO:</strong> Audit all AI solutions monthly for compliance and security.</li><li><strong>CFO:</strong> Quarterly comparison of estimated ROI vs actual measured efficiencies and adoption — using Copilot Studio agent usage estimator.</li><li><strong>CISO:</strong> Identify how much sensitive data was accessed per agent run and who accessed it (security risk indicator).</li><li><strong>CTO:</strong> Track user feedback on AI agent response quality. Consistently poor feedback triggers reengineering discussion.</li><li><strong>CEO:</strong> Quarterly assessment of all required metrics. Tools must be Microsoft-recommended and verify reliability, interpretability, fairness, and compliance.</li><li><strong>CFO:</strong> Track abandoned vs resolved AI conversations daily — too many abandoned indicates inefficient Copilot Studio credit usage.</li></ul>'}
+    ]
+  }
+};
+
+const questions = [
+  // Q1 - HOTSPOT - Fabrikam
+  {id:1, type:'hotspot', caseId:'fabrikam',
+   text:'Which framework should you use to meet the AI agent requirements for the sales cycle enablement?',
+   instruction:'Each correct selection is worth one point.',
+   hotspots:[
+     {label:'For Microsoft Copilot Studio best practices',
+      options:['the ALM Accelerator for Microsoft Power Platform','Microsoft Cloud Adoption Framework for Azure','Microsoft Power Platform Well-Architected framework','Success by Design'],
+      correctIndex:0},
+     {label:'For conversational user experiences',
+      options:['the ALM Accelerator for Microsoft Power Platform','Microsoft Cloud Adoption Framework for Azure','Microsoft Power Platform Well-Architected framework','Success by Design'],
+      correctIndex:2}
+   ],
+   explanation:'<strong>ALM Accelerator</strong> manages the entire lifecycle of apps and copilots — development, version control, testing, deployment, and updates — making it the right choice for Copilot Studio best practices. The <strong>Power Platform Well-Architected framework</strong> provides guidance on designing solutions covering performance, security, reliability, operational excellence, and user experience — making it the framework for conversational user experiences.'},
+
+  // Q2 - MCQ - Fabrikam
+  {id:2, type:'mcq', caseId:'fabrikam',
+   text:'Which framework should you use for the infrastructure migration?',
+   options:['Microsoft Cloud Adoption Framework for Azure','Success by Design','Microsoft Power Platform Center of Excellence (CoE)','Microsoft Power Platform Project Setup Wizard'],
+   correctIndex:0,
+   explanation:'<strong>The Cloud Adoption Framework (CAF)</strong> provides a Microsoft-recommended end-to-end methodology for moving on-premises workloads to Azure — covering assessment, solution design, migration, validation, and operations. It directly aligns with Fabrikam\'s requirement to "follow Microsoft-recommended methodologies for infrastructure migration to the cloud" and includes guidance on ROI calculation, security, and telemetry. <strong>Success by Design</strong> focuses on Power Platform value realization, not migration. <strong>CoE</strong> is for governance, not migration. <strong>Project Setup Wizard</strong> is a development scaffolding tool, not a migration framework.'},
+
+  // Q3 - MCQ
+  {id:3, type:'mcq',
+   text:'A company uses Microsoft Dynamics 365 Sales to manage leads stored in a Dataverse table named Lead with non-standard terminology and custom columns. You need to configure business terms in the Lead table so that Microsoft Copilot controls can summarize the leads efficiently. The solution must minimize administrative effort. How should you configure the business terms?',
+   options:['Combine all the fields into one custom field.','Map the field display names as business terms.','Add the schema names as business terms.','Create new business terms for each field.'],
+   correctIndex:1,
+   explanation:'<strong>Mapping field display names to business terms</strong> creates readable, searchable labels Copilot\'s summarization engine recognizes without additional config. Requires only a one-time entry per term and no schema changes — minimizes admin effort. Combining fields loses granularity. Schema names are technical, not user-friendly. Creating new business terms duplicates effort and disconnects from field metadata.'},
+
+  // Q4 - DRAG DROP
+  {id:4, type:'dragdrop',
+   text:'You are designing two Microsoft Copilot Studio agents named Agent1 and Agent2. Each agent must use a standard model and NOT use generative orchestration. Agent1 must support simple and short phrases for a given topic. Agent2 must integrate with Microsoft Dynamics 365 Contact Center voice channel. Which language model should you recommend for each agent?',
+   instruction:'Each language model may be used once, more than once, or not at all.',
+   options:['Azure Language in Foundry Tools','Azure OpenAI','Conversational language understanding (CLU)','Natural language understanding (NLU)','Natural language understanding + (NLU+)'],
+   slots:[
+     {label:'Agent1 (simple/short phrases for a topic)',correctIndex:3},
+     {label:'Agent2 (D365 Contact Center voice channel)',correctIndex:4}
+   ],
+   reusable:true,
+   explanation:'<strong>NLU</strong> handles intent recognition, entity extraction, and basic natural language for simple/short phrases — the right pick for Agent1. <strong>NLU+</strong> extends NLU with advanced reasoning, context awareness, generative responses, and improved conversation handling — required for the voice channel integration in Agent2.'},
+
+  // Q5 - MCQ
+  {id:5, type:'mcq',
+   text:'A company uses Microsoft Dynamics 365 finance and operations apps. The company plans to use Microsoft Copilot in-app help and guidance to generate responses for internal business processes. You need to add an additional knowledge source for the business processes. The solution must NOT add new topics to the Copilot agent. Which knowledge source should you add?',
+   options:['Microsoft Dataverse','a public website','Azure AI Search','a file upload'],
+   correctIndex:3,
+   explanation:'<strong>File upload</strong> is the supported knowledge-source type for in-app Copilot guidance in D365 F&O. It can be added directly without creating new topics. The uploaded document is indexed locally and made available to the Copilot engine. Dataverse needs custom plugins. Public websites aren\'t ingestible directly. Azure AI Search introduces an external indexing pipeline.'},
+
+  // Q6 - MCQ
+  {id:6, type:'mcq',
+   text:'A company has an AI business solution. You need to extend the solution so that Microsoft 365 Copilot can invoke external logic hosted in Azure services. What should you include in the solution?',
+   options:['Microsoft Copilot Studio skills','Microsoft Power Platform connectors','custom engine agents'],
+   correctIndex:1,
+   explanation:'<strong>Power Platform connectors</strong> provide a standardized, bi-directional integration layer that exposes Azure-hosted logic (Functions, Logic Apps, API Management) to M365 Copilot. Supports custom OpenAPI definitions, governed authentication, and cross-service calls. Studio skills operate within Studio, not for arbitrary Azure APIs. Custom engine agents run outside the M365 ecosystem with high overhead.'},
+
+  // Q7 - HOTSPOT
+  {id:7, type:'hotspot',
+   text:'You need to design a shared prompt library used across multiple business units. The solution must ensure consistent AI responses with reusable formats, support governance and version control, minimize administrative effort, and minimize ongoing costs.',
+   instruction:'Each correct selection is worth one point.',
+   hotspots:[
+     {label:'Ensure consistent AI responses',
+      options:['Delegate department-specific prompt templates.','Define standardized prompt templates.','Maintain a prompt history.'],
+      correctIndex:1},
+     {label:'Support governance and version control',
+      options:['Define standardized prompt templates.','Store prompts in a Git repository.','Categorize prompts by business function.'],
+      correctIndex:1}
+   ],
+   explanation:'<strong>Standardized prompt templates</strong> ensure structured, consistent instructions across teams — reducing variability and maintenance overhead. <strong>Git repositories</strong> support governance via version control, change tracking, collaboration, rollback, and auditability — fitting the governance and version-control requirement.'},
+
+  // Q8 - DRAG DROP
+  {id:8, type:'dragdrop',
+   text:'A company has a Microsoft Foundry project that uses a single agent and a single prompt. The agent frequently produces incomplete results, struggles with domain-specific reasoning, and has slow response times. You need to recommend a solution to improve overall performance and accuracy.',
+   options:['Add a grounding data source.','Add a prebuilt connector.','Move to a multi-agent architecture.','Upgrade to a larger generative AI model.'],
+   slots:[
+     {label:'To improve performance',correctIndex:2},
+     {label:'To improve accuracy',correctIndex:0}
+   ],
+   reusable:false,
+   explanation:'<strong>Multi-agent architecture</strong> splits responsibilities across specialized agents — improving speed, scalability, and complex workflow handling (performance). <strong>Grounding data source</strong> connects the AI to reliable external data (company documents, databases, knowledge bases) via RAG — improving accuracy by removing reliance on training data alone.'},
+
+  // Q9 - MCQ
+  {id:9, type:'mcq',
+   text:'A financial services company uses Microsoft Dynamics 365 Finance. Currently, support staff manually reviews customer transaction histories to detect fraud before escalating cases. You need to recommend an automation solution. The solution must ensure escalations reach a human analyst for final decision making. What should you recommend?',
+   options:['Deploy an autonomous agent that closes non-fraud cases automatically.','Use Microsoft 365 Copilot in Word to automatically finalize fraud detection policies.','Configure a task agent to generate fraud risk scores for the human analyst to review.','Export the data to a data lake for analysis in Microsoft Power BI.'],
+   correctIndex:2,
+   explanation:'<strong>Task agents</strong> in D365 Finance ingest transaction data, apply fraud-detection models, and output a risk score — presented to the human analyst for final review. Keeps human-in-the-loop, integrates with security roles and audit trails. Autonomous agents bypass human review. Copilot in Word is productivity-focused, not workflow automation. Power BI is reporting, not escalation.'},
+
+  // Q10 - MCQ
+  {id:10, type:'mcq',
+   text:'A company plans to deploy a Microsoft Copilot Studio agent that will analyze historical business data to predict customer behavior. The data is currently stored in an Azure SQL database, flat files, APIs, and logs. You need to organize the data into a format that can be used as a knowledge source in Copilot Studio. What should you include?',
+   options:['Azure AI Search','Azure Data Lake Storage','Azure Cosmos DB','Azure Translator in Foundry Tools'],
+   correctIndex:0,
+   explanation:'<strong>Azure AI Search</strong> is purpose-built for ingestion, indexing, and semantic search over heterogeneous data sources (relational tables, files, APIs, logs). Built-in support for vector indexing and AI-enhanced query pipelines makes it the ideal knowledge-store for Copilot Studio. Data Lake lacks indexing. Cosmos DB is transactional. Translator is for language only.'},
+
+  // Q11 - MCQ
+  {id:11, type:'mcq',
+   text:'A retail company plans to deploy Microsoft Copilot Studio agents to support D365 Commerce scenarios and a Power Apps inventory management solution. You need to recommend a solution to organize product catalog data as a consistent source for multiple AI systems.',
+   options:['Let each agent scrape product details from Microsoft SharePoint Online libraries.','Store the product catalog data in a separate custom table for each agent.','Configure prompts to pull product details from the PDFs of external vendors.','Centralize the product catalog data in Microsoft Dataverse and expose the data to both agents.'],
+   correctIndex:3,
+   explanation:'<strong>Dataverse</strong> provides a single source of truth — every system consumes the same up-to-date records, eliminating drift. Built-in governance, security (row/field-level), data validation. Native connectivity from both Copilot Studio and Power Apps. Scales horizontally with rich query support.'},
+
+  // Q12 - MCQ
+  {id:12, type:'mcq',
+   text:'A company has a portfolio of AI initiatives at different stages of development. You need to recommend a structured approach to evaluating return on AI investment (ROAI) across all initiatives. The solution must balance immediate results with long-term values and strategic innovations.',
+   options:['a simple cost and benefit analysis','a horizon-based framework','the internal rate of return (IRR) function','a prioritization grid'],
+   correctIndex:1,
+   explanation:'<strong>Horizon-based framework</strong> aligns initiatives with distinct time-frames (short/medium/long-term) — capturing immediate efficiencies AND future strategic innovation. Enables weighting of returns, risk, and capability development. Cost-benefit ignores timing. IRR is single-project only. Prioritization grid lacks time-frame dimension.'},
+
+  // Q13 - MCQ
+  {id:13, type:'mcq',
+   text:'You need to recommend a Microsoft Power Platform business solution that consolidates data from multiple internal and external data sources. The solution must provide centralized data for AI systems including Copilot Studio agents, Dynamics 365, and external AI models; support built-in data classification and protection policies; and provide data for grounding and analytics.',
+   options:['Microsoft Dataverse','Azure Data Lake Storage','a Microsoft Power BI semantic model','Azure Cosmos DB'],
+   correctIndex:0,
+   explanation:'<strong>Dataverse</strong> is Power Platform\'s native, purpose-built data platform — single governed repository, built-in data classification/sensitivity labeling, native connectivity to Copilot Studio/D365/external AI, and serves as a grounding layer. Data Lake lacks built-in classification. Power BI is for analytics consumption. Cosmos DB requires custom dev for policies.'},
+
+  // Q14 - MCQ
+  {id:14, type:'mcq',
+   text:'A company plans to deploy an AI-based customer service app that will autonomously manage interactions, escalate complex cases, and learn from historical ticket data. You need to perform a return on AI investment (ROAI) analysis. The solution must ensure the analysis is accurate. What should you do first?',
+   options:['Establish the AI performance metrics.','Conduct an AI market benchmarking study.','Model the customer experience.','Identify and quantify all the development, deployment, and operating costs.'],
+   correctIndex:3,
+   explanation:'<strong>Quantified costs are the denominator</strong> for any return calculation. Without a baseline financial footprint (development, integration, infrastructure, licensing, maintenance, training), no later analysis is reliable. Metrics, benchmarks, and CX modeling all rely on this cost foundation.'},
+
+  // Q15 - DRAG DROP
+  {id:15, type:'dragdrop',
+   text:'You are designing end-to-end test scenarios for a business solution that uses D365 Sales and D365 Finance. You need to ensure the business solution properly exchanges data between the D365 apps and aligns with defined user workflows and business processes.',
+   options:['Drift','Exploratory','Integration','Performance','User acceptance'],
+   slots:[
+     {label:'Properly exchanges data between the Dynamics 365 apps',correctIndex:2},
+     {label:'Aligns with defined user workflows and business processes',correctIndex:4}
+   ],
+   reusable:false,
+   explanation:'<strong>Integration testing</strong> validates data exchange between systems/apps — exactly what\'s needed to verify D365 Sales and Finance share data correctly. <strong>User acceptance testing (UAT)</strong> validates that the solution aligns with defined user workflows and business processes from an end-user perspective.'},
+
+  // Q16 - MCQ
+  {id:16, type:'mcq',
+   text:'A company has a Microsoft 365 tenant in Canada and multiple Power Platform environments in Canada and the US. The company plans to deploy a Copilot Studio agent to the Canadian environment using Dataverse data stored in Canada and a connector to an Azure OpenAI instance in the US. You need to ensure the agent adheres to data residency and data movement policies before being deployed.',
+   options:['Ensure that the data processed by Azure OpenAI is stored in the United States.','From the Microsoft Purview portal, validate the Data loss prevention settings.','Migrate the tenant to the United States.','Ensure that cross-region data movement is enabled for the Canadian environment and connector dependencies.'],
+   correctIndex:3,
+   explanation:'<strong>Cross-region data movement settings</strong> in Power Platform admin center govern whether environments can use connectors that move data outside the region. The Canadian environment must have this enabled to legally use the US-hosted Azure OpenAI connector. Storing data in the US violates Canadian residency. Tenant migration is overkill. Purview DLP is broader and doesn\'t directly address cross-region movement.'},
+
+  // Q17 - HOTSPOT
+  {id:17, type:'hotspot',
+   text:'A company has a Microsoft Copilot Studio agent for customer support. You are reviewing and validating two prompts: one with instructions to "help the customer as best you can", and one that helps retrieve product information from a knowledge base. You need to ensure the agent delivers consistent and accurate responses.',
+   instruction:'Each correct selection is worth one point.',
+   hotspots:[
+     {label:'A prompt with instructions to "help the customer as best you can"',
+      options:['Add filler words to make the prompt sound more natural and conversational.','Keep the prompt vague to enable model flexibility.','Rewrite the prompt with clear and task-specific instructions.'],
+      correctIndex:2},
+     {label:'A prompt that helps retrieve product information from a knowledge base',
+      options:['Add several open-ended questions to give the model broader context.','Use responses with only reference sources and limit the response scope.','Remove the knowledge source so that the model responds freely with general product information.'],
+      correctIndex:1}
+   ],
+   explanation:'Vague prompts produce vague outputs — <strong>rewrite with clear, task-specific instructions</strong> for consistency. For knowledge-base retrieval, <strong>limit responses to reference sources only and constrain response scope</strong> — this prevents hallucination and keeps responses grounded in your authoritative content.'},
+
+  // Q18 - HOTSPOT
+  {id:18, type:'hotspot',
+   text:'You are designing a testing solution for Microsoft Copilot Studio agents. You need to validate prompt engineering best practices to ensure the agents generate accurate and contextually relevant responses. Which prompt validation techniques and metrics should you include?',
+   instruction:'Each correct selection is worth one point.',
+   hotspots:[
+     {label:'Prompt validation techniques',
+      options:['Exclude domain-specific terminology from the prompts.','Use prompts that have varied phrasing.','Use only simple, one-word prompts.'],
+      correctIndex:1},
+     {label:'Metrics',
+      options:['The number of words generated per response','Response relevance and accuracy','The response generation time'],
+      correctIndex:1}
+   ],
+   explanation:'<strong>Varied phrasing</strong> validates the agent handles natural language diversity — exposes weaknesses in intent recognition. <strong>Response relevance and accuracy</strong> are the meaningful quality metrics for prompt engineering — word counts and generation time don\'t measure correctness.'},
+
+  // Q19 - MCQ
+  {id:19, type:'mcq',
+   text:'A company has two Power Platform environments named Dev1 and Prod1. A Copilot Studio agent named Agent1 is built into a solution in Dev1. You plan to deploy Agent1 to Prod1. You need to make Agent1 available to users in Prod1. The solution must minimize administrative effort.',
+   options:['Share Agent1 with the users in Prod1.','Export the solution as an unmanaged solution and import the solution into Prod1.','Export the solution as a managed solution and import the solution into Prod1.','Create a new Copilot Studio agent in Prod1 by replicating the configuration of Agent1.'],
+   correctIndex:2,
+   explanation:'<strong>Managed solution export/import</strong> is Microsoft\'s recommended ALM pattern for moving from Dev to Prod — preserves component dependencies, layers cleanly over base solutions, supports updates, and locks down customizations in production. Unmanaged is for development. Sharing across environments isn\'t directly supported. Manual recreation is high-effort and error-prone.'},
+
+  // Q20 - MCQ
+  {id:20, type:'mcq',
+   text:'A company has a Power Platform environment with Dataverse data. You create a Copilot Studio agent named Agent1 that processes the Dataverse data. You discover that Agent1 fails to return relevant or accurate results. You need to improve the quality and reliability of data grounding.',
+   options:['Retrain Agent1.','Verify and cleanse the Dataverse data.','Use an adaptive card in Agent1.','Add example user inputs to the training data of Agent1.'],
+   correctIndex:1,
+   explanation:'<strong>Garbage in, garbage out.</strong> Grounding quality depends entirely on data quality. Verify and cleanse Dataverse data — fix nulls, duplicates, inconsistencies, formatting — before any other agent tuning. Retraining doesn\'t fix bad source data. Adaptive cards are UI. Example inputs don\'t address grounding accuracy.'},
+
+  // Q21 - MCQ
+  {id:21, type:'mcq',
+   text:'A company plans to deploy a Microsoft Copilot Studio agent to enhance customer support. The company stores customer data across ServiceNow, Microsoft Dynamics 365 Finance, Dynamics 365 Supply Chain Management, and Excel files in SharePoint Online. You need to recommend a solution to ensure the agent can deliver accurate and timely responses.',
+   options:['Implement a model router for query handling.','Create custom prompts.','Implement Microsoft Power Platform connectors.','Enable incremental indexing in Azure AI Search.'],
+   correctIndex:3,
+   explanation:'<strong>Incremental indexing in Azure AI Search</strong> keeps the agent\'s knowledge fresh across all the heterogeneous sources (ServiceNow, D365, Excel/SharePoint) without full re-indexing — ensuring timely AND accurate responses. Model routers handle compute cost optimization, not data freshness. Connectors expose data but don\'t solve indexing freshness.'},
+
+  // Q22 - MCQ
+  {id:22, type:'mcq',
+   text:'A manufacturing company wants to deploy an agent to automate supplier invoice processing. You are designing a solution to evaluate the financial implications. The company is especially concerned about budget overruns. You need to ensure the solution considers TCO, expected savings from automation, and whether to extend existing AI capabilities.',
+   options:['a break-even analysis only','adopting prebuilt agents to reduce the deployment time','training a custom model','a return on AI investment (ROAI) analysis'],
+   correctIndex:3,
+   explanation:'A <strong>full ROAI analysis</strong> is the only option that holistically covers TCO, expected savings, AND build/buy/extend evaluation — all three requirements. Break-even analysis alone is too narrow. Adopting prebuilt agents and training models are tactical decisions, not financial evaluation frameworks.'},
+
+  // Q23 - MCQ
+  {id:23, type:'mcq',
+   text:'A company has a Power Platform solution containing Dataverse tables, a Power BI workspace named WS1, a canvas app named App1 using Dataverse, and a Power BI semantic model that connects to Dataverse via DirectQuery. You plan to use generative AI to provide answers to queries based on a subset of corporate data. You need to ensure the data is available as a grounding data source for AI systems.',
+   options:['Populate a Dataverse table.','Share WS1.','Endorse the semantic model.','Export the semantic model.'],
+   correctIndex:2,
+   explanation:'<strong>Endorsing a Power BI semantic model</strong> (Promoted or Certified) marks it as a trusted, governed dataset for the organization — making it discoverable and consumable by AI systems for grounding. Endorsement is the official Microsoft pattern for exposing curated semantic models as AI grounding sources. The other options don\'t address discoverability or governance.'},
+
+  // Q24 - DRAG DROP
+  {id:24, type:'dragdrop',
+   text:'A company plans to implement an AI business solution for a consumer goods company. You need to create agents to orchestrate sales order fulfillment and shipping of goods to customers, and to analyze historical data and trends to replenish stock.',
+   options:['Autonomous','Prompt-and-response','Task'],
+   slots:[
+     {label:'Orchestrate the sales order fulfillment and shipping',correctIndex:0},
+     {label:'Analyze historical data and trends to replenish stock',correctIndex:0}
+   ],
+   reusable:true,
+   explanation:'Both scenarios require <strong>autonomous agents</strong>. Order fulfillment orchestration involves multi-step decision-making across systems (inventory, shipping, billing) without continuous human input. Stock replenishment based on historical trend analysis requires the agent to monitor, decide, and act on its own — classic autonomous agent behavior. Task agents are single-purpose. Prompt-and-response agents wait for direct user input.'},
+
+  // Q25 - MCQ
+  {id:25, type:'mcq',
+   text:'A company has an AI agent that automates the review of customer feedback stored in a cloud database. You plan to generate monthly reports from the agent\'s output to provide insights into customer sentiment and guide product development and marketing. You need to ensure the data ingested by the agent is clean and suitable for the intended use.',
+   options:['Create a workflow in Microsoft Power Automate.','Identify and address biased data.','Create an agent flow in Microsoft Copilot Studio.','Sort the database by customer last name.'],
+   correctIndex:2,
+   explanation:'<strong>An agent flow in Copilot Studio</strong> is the AI-native pattern for ingestion, transformation, and validation of data prior to agent processing. Built-in data prep, conditional handling, and integration with the agent itself. Power Automate workflows are valid but not as agent-native. Bias-checking is a downstream concern. Sorting alphabetically doesn\'t clean data.'},
+
+  // Q26 - MCQ
+  {id:26, type:'mcq',
+   text:'A company is designing a Power Platform solution to reduce manual steps of a business process by deploying an existing AI model. You need to calculate the return on AI investment (ROAI) by identifying the metadata and telemetry of the solution. What should you use?',
+   options:['Microsoft Power Platform admin center','Success by Design','the Business value toolkit','Microsoft Cloud Adoption Framework for Azure'],
+   correctIndex:2,
+   explanation:'<strong>The Business value toolkit</strong> is Microsoft\'s purpose-built kit for capturing solution metadata, baseline metrics, and telemetry needed to compute ROAI. Includes templates and dashboards for tracking value realization. Admin center is operational, not value-tracking. Success by Design is broader methodology. CAF is for cloud migration.'},
+
+  // Q27 - HOTSPOT
+  {id:27, type:'hotspot',
+   text:'A company has a Microsoft Power Platform environment. You need to build two agents named Agent1 and Agent2. Agent1 must be extendable using the Semantic Kernel and must connect to multiple business apps and APIs. Agent2 must connect directly to data stored in Microsoft Dataverse and must be embeddable in a Power Apps canvas app.',
+   instruction:'Each correct selection is worth one point.',
+   hotspots:[
+     {label:'Agent1 — extendable with Semantic Kernel, multi-app/API connectivity',
+      options:['Microsoft Foundry','Azure Logic Apps','Copilot in Power Apps','Microsoft Copilot Studio'],
+      correctIndex:3},
+     {label:'Agent2 — direct Dataverse, embeddable in Power Apps canvas',
+      options:['Microsoft Foundry','Azure Logic Apps','Copilot in Power Apps','Microsoft Copilot Studio'],
+      correctIndex:3}
+   ],
+   explanation:'<strong>Microsoft Copilot Studio</strong> is the right answer for both agents. It supports Semantic Kernel-based extensibility plus connectors for multi-app/API integration (Agent1). It also has native Dataverse connectivity and embeds directly into Power Apps canvas apps via the in-app agent control (Agent2). Foundry is more dev-heavy. Logic Apps are workflow-only. Copilot in Power Apps is a consumer of agents, not a builder.'},
+
+  // Q28 - MCQ
+  {id:28, type:'mcq',
+   text:'A company has an Azure environment that supports multiple business units. The company plans to implement an AI solution that will perform sentiment analysis on customer product reviews. You need to evaluate the potential cost of the solution to support return on AI investment (ROAI) analysis.',
+   options:['Cost Management + Billing','Microsoft Fabric SKU Estimator','Total Cost of Ownership (TCO) Calculator','Azure Reservations'],
+   correctIndex:2,
+   explanation:'<strong>The TCO Calculator</strong> is Microsoft\'s tool for estimating total cost of ownership of an Azure solution PRE-deployment — exactly what\'s needed to feed ROAI analysis. Cost Management is for actual spend post-deployment. Fabric SKU Estimator is product-specific. Reservations are for cost optimization, not estimation.'},
+
+  // Q29 - HOTSPOT
+  {id:29, type:'hotspot',
+   text:'You need to recommend a Power Platform solution for customer support. The solution must include AI capabilities in Power Automate. It must use a centralized workspace for AI models, and generate short overviews from large amounts of unstructured text such as case notes or transcripts, without requiring additional training or coding.',
+   instruction:'Each correct selection is worth one point.',
+   hotspots:[
+     {label:'Use a centralized workspace',
+      options:['An Microsoft Foundry hub','Azure OpenAI Foundry','Microsoft Copilot Studio','Microsoft Dataverse'],
+      correctIndex:1},
+     {label:'Generate short overviews',
+      options:['An AI Builder prebuilt model','An AI Builder prebuilt prompt','Azure OpenAI','GitHub Copilot','Microsoft Copilot in Power Automate'],
+      correctIndex:0}
+   ],
+   explanation:'<strong>Azure OpenAI Foundry</strong> serves as a centralized workspace for AI models — managing deployments, versions, and endpoints. <strong>AI Builder prebuilt model</strong> for text summarization works without additional training or coding — the no-code-required option for generating short overviews from unstructured text in Power Automate.'},
+
+  // Q30 - HOTSPOT
+  {id:30, type:'hotspot',
+   text:'A company uses Microsoft Dynamics 365 Finance for accounts payable and customer debt recovery. You are designing an AI finance process that provides AI-driven details to help staff identify overdue vendor invoices and outstanding balances, and helps staff reduce how long it takes to review overdue invoices and payment history.',
+   instruction:'Each correct selection is worth one point.',
+   hotspots:[
+     {label:'Help identify vendor overdue invoices and outstanding balances',
+      options:['Agent management','AI Summaries with Copilot','The Account Reconciliation agent','The Supplier Communication agent'],
+      correctIndex:2},
+     {label:'Reduce how long it takes to review overdue invoices and payment history',
+      options:['Analyze demand plans with Copilot','Collections coordinator summary','The Account Reconciliation agent','The Supplier Communication agent'],
+      correctIndex:1}
+   ],
+   explanation:'<strong>The Account Reconciliation agent</strong> in D365 Finance specifically identifies overdue vendor invoices, outstanding balances, and reconciliation gaps. <strong>Collections coordinator summary</strong> compresses overdue invoice and payment history reviews — accelerating the collections team\'s decision cycle.'},
+
+  // Q31 - MULTI - Contoso
+  {id:31, type:'multi', caseId:'contoso',
+   text:'Which two components in the custom AI agent design should the CFO evaluate in the quarterly agent analysis?',
+   instruction:'Each correct answer presents part of the solution. Each correct selection is worth one point.',
+   options:['the GPT models used for the agent','the average characters in a chat message','the agent orchestration method','the average session time per agent'],
+   correctIndices:[0,2],
+   explanation:'The CFO uses the <strong>Copilot Studio agent usage estimator</strong> for ROI analysis. <strong>GPT models</strong> drive the per-message cost via tokens consumed. <strong>Agent orchestration method</strong> determines whether the agent uses generative orchestration (more expensive) vs classic NLU (cheaper) — fundamental cost driver. Average characters per message is a side metric. Average session time matters operationally but not financially as much as model choice and orchestration.'},
+
+  // ============= APPENDED FROM MOCK-02 (Q32-Q50) =============
+  // Q1 - MCQ - Ch 1 Architect Role
+  {id:32, type:'mcq',
+   text:'A new customer engagement begins. The CIO asks you to define your role as <em>AI Solution Architect</em> in a single sentence. Which definition best aligns with the architect responsibilities described in the AB-100 framework?',
+   options:[
+     'The architect writes prompts and configures connectors for each agent in production.',
+     'The architect bridges business strategy and technical implementation, ensuring measurable value across compliance, scalability, and security.',
+     'The architect owns the day-to-day operational support of all deployed agents.',
+     'The architect approves every generative AI output before it reaches end users.'
+   ],
+   correctIndex:1,
+   explanation:'Per the AB-100 framework, the AI Solution Architect bridges <strong>business strategy and technical implementation</strong> — ensuring measurable business outcomes with compliance, scalability, and security designed in from day one. Prompt-writing (A) is delivery work. Day-to-day ops (C) belongs to the AI Operations team. Output approval (D) is impractical for production scale and isn\'t the architect\'s role.'},
+
+  // Q2 - MCQ - Ch 2 Grounding
+  {id:33, type:'mcq',
+   text:'A customer\'s production agent gives wildly different answers to the same policy question depending on the day. Investigation reveals the underlying data store hasn\'t changed but the agent frequently fabricates company policy details. What is the FIRST architectural fix you should recommend?',
+   options:[
+     'Switch the agent to a larger generative AI model.',
+     'Implement grounding via Retrieval Augmented Generation (RAG) over the policy documents.',
+     'Lower the model\'s temperature setting to zero.',
+     'Add example user inputs to the agent\'s training data.'
+   ],
+   correctIndex:1,
+   explanation:'Hallucination on policy questions is the textbook symptom of <strong>weak grounding</strong>. RAG forces the agent to retrieve verified policy passages before generating — eliminating fabrication. A larger model still hallucinates without ground truth. Temperature reduces randomness but doesn\'t supply factual context. Example inputs train phrasing, not facts.'},
+
+  // Q3 - HOTSPOT - Ch 3/5 Agent Type Selection
+  {id:34, type:'hotspot',
+   text:'You are advising on Copilot Studio agent type selection for two scenarios in a logistics company. Which agent type fits each scenario?',
+   instruction:'Each correct selection is worth one point.',
+   hotspots:[
+     {label:'Continuously monitor inventory levels and trigger reorder workflows when thresholds are breached — no human in the loop for routine reorders',
+      options:['Autonomous','Task','Prompt-and-response'],
+      correctIndex:0},
+     {label:'Answer FAQ questions about return policies when an end user types a question',
+      options:['Autonomous','Task','Prompt-and-response'],
+      correctIndex:2}
+   ],
+   explanation:'<strong>Autonomous agents</strong> act on triggers without waiting for user input — perfect for continuous inventory monitoring and reorder execution. <strong>Prompt-and-response agents</strong> wait for direct user queries and respond conversationally — the right pattern for an FAQ agent. Task agents perform single, scoped operations on demand and are not the best fit for either scenario above.'},
+
+  // Q4 - DRAG-DROP - Ch 5/11 RAI principles
+  {id:35, type:'dragdrop',
+   text:'Match each Microsoft Responsible AI principle to the scenario it most directly addresses.',
+   instruction:'Each principle may be used once, more than once, or not at all.',
+   options:['Fairness','Reliability and Safety','Transparency','Privacy and Security'],
+   slots:[
+     {label:'A loan-approval agent denies applications more often for one demographic group',correctIndex:0},
+     {label:'A user cannot tell whether an answer was generated by AI or written by a human',correctIndex:2}
+   ],
+   reusable:false,
+   explanation:'<strong>Fairness</strong> ensures AI systems treat all groups equitably — directly addresses demographic bias in lending decisions. <strong>Transparency</strong> requires that users understand when they\'re interacting with AI and how decisions are made — directly addresses the AI-vs-human ambiguity. Reliability/Safety covers system robustness; Privacy/Security covers data protection — both are important but not the primary fit here.'},
+
+  // Q5 - MCQ - Ch 4 ROI
+  {id:36, type:'mcq',
+   text:'Per the recommended ROAI workflow, which step comes IMMEDIATELY AFTER identifying and quantifying the total cost of ownership (TCO)?',
+   options:[
+     'Calculate the internal rate of return (IRR).',
+     'Establish baseline business metrics and projected post-AI metrics.',
+     'Submit the ROAI calculation to executive sponsors.',
+     'Run user acceptance testing on the deployed agent.'
+   ],
+   correctIndex:1,
+   explanation:'Once the cost denominator is established, the next step is to define the <strong>numerator</strong>: baseline metrics today and projected metrics after AI deployment. Without baselines, you can\'t measure delta. IRR comes later as a derived calculation. Executive sign-off requires the full ROAI, not just costs. UAT is a deployment-phase activity, not a financial-analysis step.'},
+
+  // Q6 - MCQ - Ch 6 MCP
+  {id:37, type:'mcq',
+   text:'A customer\'s R&D team maintains a custom Model Context Protocol (MCP) server containing comprehensive product specifications. The customer wants their Copilot Studio agent to use this MCP server for product Q&A. What is the recommended integration pattern?',
+   options:[
+     'Export the MCP server data nightly to Microsoft Dataverse, then ground the agent on Dataverse.',
+     'Add the MCP server as a tool in Copilot Studio so the agent can invoke it on demand.',
+     'Manually summarize the MCP content into a Word document and upload it as a knowledge file.',
+     'Re-implement the MCP server\'s logic as a Power Platform custom connector.'
+   ],
+   correctIndex:1,
+   explanation:'MCP is a standardized protocol for exposing tools and context to AI agents. <strong>Adding the MCP server directly as a tool</strong> in Copilot Studio is the native, recommended pattern — preserves real-time accuracy and keeps R&D as the single source. Nightly export creates staleness. Manual summary loses fidelity and must be redone constantly. Re-implementing as a connector duplicates effort and abandons the MCP standard.'},
+
+  // Q7 - HOTSPOT - Ch 8 Monitoring
+  {id:38, type:'hotspot',
+   text:'You are designing the monitoring strategy for a production Copilot Studio agent. Which Microsoft tool or signal best addresses each requirement?',
+   instruction:'Each correct selection is worth one point.',
+   hotspots:[
+     {label:'Track whether agent response latency degrades over time across millions of sessions',
+      options:['Application Insights traces with custom metrics','Power Platform admin center storage report','Conversation transcripts exported to SharePoint'],
+      correctIndex:0},
+     {label:'Identify topics where users repeatedly express dissatisfaction with the agent\'s responses',
+      options:['Application Insights traces','User feedback dashboard in Copilot Studio analytics','Azure Cost Management charts'],
+      correctIndex:1}
+   ],
+   explanation:'<strong>Application Insights</strong> with custom metrics is the right surface for latency telemetry — supports time-series, percentile calculation, and alerting. The <strong>Copilot Studio user feedback dashboard</strong> aggregates thumbs-up/down and topic-level satisfaction signals — purpose-built for finding low-quality topics. Storage reports and cost charts answer different questions; transcripts in SharePoint don\'t scale for trend analysis.'},
+
+  // Q8 - MCQ - Ch 9 Testing
+  {id:39, type:'mcq',
+   text:'A customer\'s prompt has been edited in production and response quality has dropped sharply. The change passed unit testing. Which testing pattern would have caught this regression BEFORE production?',
+   options:[
+     'Performance testing under peak load',
+     'Drift testing with golden-set baseline regression',
+     'Exploratory testing by support staff',
+     'Penetration testing for prompt injection'
+   ],
+   correctIndex:1,
+   explanation:'<strong>Golden-set baseline regression</strong> is the canonical pattern for catching prompt-quality regressions: a curated set of representative inputs with known good outputs, replayed after every change. Quality drift is detected when responses diverge from baseline. Performance/load tests miss content quality. Exploratory testing is unsystematic. Penetration testing covers a different threat — adversarial inputs, not quality regression.'},
+
+  // Q9 - DRAG-DROP - Ch 10 ALM environments
+  {id:40, type:'dragdrop',
+   text:'A customer is establishing the ALM environment topology for Copilot Studio agents. Which solution type belongs in each environment?',
+   instruction:'Each solution type may be used once, more than once, or not at all.',
+   options:['Unmanaged solution','Managed solution'],
+   slots:[
+     {label:'Development environment (Dev1)',correctIndex:0},
+     {label:'User Acceptance Testing environment (UAT1)',correctIndex:1},
+     {label:'Production environment (Prod1)',correctIndex:1}
+   ],
+   reusable:true,
+   explanation:'<strong>Unmanaged solutions in Dev only</strong> — that\'s where makers build and customize freely. <strong>Managed solutions in UAT and Prod</strong> — testing the actual deployment artifact in UAT, then promoting the same artifact to Prod. Managed in non-Dev environments locks down components, prevents drift, and supports clean updates and rollbacks.'},
+
+  // Q10 - MCQ - Ch 11 Information Barriers
+  {id:41, type:'mcq',
+   text:'A customer requires that an AI agent\'s training data, telemetry, and conversation logs are scoped per business unit so that legal teams cannot see HR conversations, and vice versa. Which Microsoft service provides this scoping?',
+   options:[
+     'Microsoft Purview sensitivity labels and information barriers',
+     'Azure Key Vault with role-based access',
+     'Microsoft Defender for Cloud Apps',
+     'Azure Active Directory Conditional Access policies'
+   ],
+   correctIndex:0,
+   explanation:'<strong>Microsoft Purview information barriers</strong> are purpose-built for business-unit scoping of communications and content — exactly the legal/HR separation pattern. Sensitivity labels enforce data classification across Microsoft 365. Key Vault stores secrets, not data scoping. Defender is threat protection. Conditional Access governs sign-in, not content visibility.'},
+
+  // Q11 - MULTI - Ch 11 Governance
+  {id:42, type:'multi',
+   text:'You are establishing AI governance for a regulated financial services customer. Which TWO governance artifacts must be in place BEFORE deploying any AI agent to production?',
+   instruction:'Each correct answer presents part of the solution. Each correct selection is worth one point.',
+   options:[
+     'AI risk register with documented mitigation plans',
+     'RACI matrix defining AI agent ownership across Architect, Operations, Security, and Business',
+     'End-of-life decommissioning runbook',
+     'Quarterly user adoption survey schedule'
+   ],
+   correctIndices:[0,1],
+   explanation:'A <strong>risk register</strong> documents the AI-specific risks (hallucination, drift, bias, data leakage) with mitigations — required pre-prod evidence for any regulated deployment. The <strong>RACI matrix</strong> establishes accountability before incidents happen — without it, no one owns response. EOL runbook (C) is needed eventually but not pre-launch. Adoption surveys (D) are post-launch operational practice.'},
+
+  // Q12 - MCQ - Ch 7 Cross-D365 Orchestration
+  {id:43, type:'mcq',
+   text:'A sales rep asks a Copilot agent: <em>"Why did this customer\'s last invoice get held?"</em> The answer requires correlating data from D365 Finance (invoice), D365 Supply Chain Management (delivery), and D365 Sales (account history). What is the recommended architectural pattern?',
+   options:[
+     'Build three separate agents — one per D365 module — and have the user pick which to query.',
+     'Use Microsoft 365 Copilot orchestrator to coordinate across the three D365 modules.',
+     'Export all three datasets nightly to a single Dataverse table and query that.',
+     'Have the sales rep open each D365 module manually and consolidate the answer themselves.'
+   ],
+   correctIndex:1,
+   explanation:'<strong>M365 Copilot orchestration</strong> is purpose-built for cross-module reasoning across D365 — the orchestrator routes the question to the right modules, fetches results, and synthesizes a unified answer. Per-module agents (A) push the orchestration burden onto the user. Nightly exports (C) introduce staleness for what should be live correlation. Manual consolidation (D) defeats the purpose of AI assistance.'},
+
+  // Q13 - HOTSPOT - Ch 5 Copilot Studio Mechanisms
+  {id:44, type:'hotspot',
+   text:'You are designing topics for a Copilot Studio customer-support agent. Which mechanism best fits each requirement?',
+   instruction:'Each correct selection is worth one point.',
+   hotspots:[
+     {label:'Handle a "I want to return my order" intent that includes explicit branching logic for product type and return reason',
+      options:['Topic with conditions','Generative answers','Agent flow only','System topic'],
+      correctIndex:0},
+     {label:'Catch unrecognized questions and answer from configured knowledge sources without writing topic logic',
+      options:['Topic with conditions','Generative answers','Agent flow only','System topic'],
+      correctIndex:1}
+   ],
+   explanation:'<strong>Topics with conditions</strong> handle intents with deterministic branching — the right pattern when business logic must follow a defined decision tree. <strong>Generative answers</strong> are the fallback for questions not covered by an explicit topic — synthesizing responses from the configured knowledge sources without authoring topic flow. System topics handle built-in capabilities (auth, escalation). Agent flows orchestrate multi-step actions.'},
+
+  // Q14 - MCQ - Ch 4 TCO Calculator
+  {id:45, type:'mcq',
+   text:'A customer is comparing two AI deployment options PRE-DEPLOYMENT: Option 1 uses prebuilt M365 Copilot agents only; Option 2 uses custom Copilot Studio agents extended with Azure Functions and Azure AI Search. Which Microsoft tool best supports the cost comparison?',
+   options:[
+     'Azure Cost Management + Billing dashboards',
+     'The Microsoft Total Cost of Ownership (TCO) Calculator combined with Azure Pricing Calculator',
+     'Power Platform admin center capacity reports',
+     'Azure Reservations purchase recommendations'
+   ],
+   correctIndex:1,
+   explanation:'The <strong>TCO Calculator</strong> is Microsoft\'s pre-deployment estimation tool — pairs naturally with the Azure Pricing Calculator for itemized service costs. Cost Management (A) reports actual post-deployment spend — useful for tracking but not for pre-deployment comparison. Capacity reports (C) describe current consumption. Reservations (D) is an optimization tactic for already-deployed workloads.'},
+
+  // Q15 - MCQ - Ch 9 Custom Model Testing
+  {id:46, type:'mcq',
+   text:'A custom Foundry model classifies customer support tickets into 12 categories. Overall accuracy is 94%, but accuracy on two minority categories drops to 31%. What is the correct interpretation and recommended response?',
+   options:[
+     'Acceptable variance — retrain the model with more total data.',
+     'Class imbalance and a fairness gap — rebalance the training set or apply class-weighted loss.',
+     'Concept drift — retrain on the most recent 30 days of data only.',
+     'Overfitting — apply L2 regularization and reduce model complexity.'
+   ],
+   correctIndex:1,
+   explanation:'High overall accuracy with collapse on minority classes is the canonical signature of <strong>class imbalance</strong> — the model is rewarded for getting the majority classes right and ignores the minorities. Fix: rebalance the training set (oversample/undersample) or use class-weighted loss to make minority errors more expensive. Adding more total data (A) doesn\'t fix imbalance. Drift (C) requires evidence of distribution change over time. Overfitting (D) shows as train-vs-test gap, not minority-class collapse.'},
+
+  // Q16 - DRAG-DROP - Ch 8 Telemetry
+  {id:47, type:'dragdrop',
+   text:'You are categorizing telemetry signals for an AI monitoring dashboard. Match each metric to the monitoring concern it primarily serves.',
+   instruction:'Each metric may be used once, more than once, or not at all.',
+   options:['Token consumption per session','User feedback rating','End-to-end response latency','Topic recognition rate'],
+   slots:[
+     {label:'Cost monitoring',correctIndex:0},
+     {label:'Quality monitoring',correctIndex:1}
+   ],
+   reusable:false,
+   explanation:'<strong>Token consumption</strong> is the direct cost driver in generative AI — every token in and out maps to a billing line item. <strong>User feedback rating</strong> is the primary quality signal (CSAT proxy). Latency belongs to performance monitoring; topic recognition rate belongs to intent-engineering quality. The mapping above is the cleanest cost/quality split.'},
+
+  // Q17 - MCQ - Ch 11 RAI Toolkit
+  {id:48, type:'mcq',
+   text:'A regulator has requested audit-ready evidence of an AI agent\'s model behavior, fairness across demographic groups, and reliability under adversarial inputs. Which Microsoft toolset produces this evidence?',
+   options:[
+     'Power BI dashboards configured against telemetry data',
+     'Azure AI Content Safety with default filters enabled',
+     'The Microsoft Responsible AI Toolkit — Fairlearn, InterpretML, and Error Analysis',
+     'Microsoft Defender for Cloud security baselines'
+   ],
+   correctIndex:2,
+   explanation:'The <strong>Responsible AI Toolkit</strong> bundles open-source tooling that Microsoft endorses for regulated AI evidence: <em>Fairlearn</em> for fairness, <em>InterpretML</em> for explainability, and <em>Error Analysis</em> for systematic error decomposition. Power BI (A) visualizes data but doesn\'t produce RAI-specific evidence. Content Safety (B) filters harmful content at runtime — different control. Defender (D) is security infrastructure.'},
+
+  // Q18 - HOTSPOT - Ch 6 Extensibility
+  {id:49, type:'hotspot',
+   text:'You need to extend a Copilot Studio agent with two custom capabilities. Which extension type is the correct fit for each requirement?',
+   instruction:'Each correct selection is worth one point.',
+   hotspots:[
+     {label:'Allow the agent to send an approval email through Microsoft Outlook on behalf of the user',
+      options:['Pre-built connector','Custom connector','MCP server','None — write a Power Fx formula instead'],
+      correctIndex:0},
+     {label:'Allow the agent to perform real-time read/write to a custom internal-only REST API for inventory levels',
+      options:['Pre-built connector','Custom connector','MCP server','None — embed the data inline'],
+      correctIndex:1}
+   ],
+   explanation:'<strong>Pre-built connectors</strong> exist for first-party Microsoft services like Outlook — no need to build from scratch. <strong>Custom connectors</strong> wrap an OpenAPI definition for any internal REST API and expose it to Copilot Studio with governed authentication, schema mapping, and DLP support. MCP servers are for tools and broader context, not single-purpose REST integration. Power Fx is for in-app logic, not external service calls.'},
+
+  // Q19 - MULTI - Ch 3 CAF Phase 1
+  {id:50, type:'multi',
+   text:'A customer says: <em>"We want AI agents but our data lives in 8 different systems and our compliance officer is concerned about exposure."</em> Per the Microsoft Cloud Adoption Framework, which TWO Phase 1 (Strategy) deliverables must be in place BEFORE the team proceeds to Phase 2 (Plan)?',
+   instruction:'Each correct answer presents part of the solution. Each correct selection is worth one point.',
+   options:[
+     'An approved data-classification policy aligned to Microsoft Purview',
+     'A documented list of business outcomes with measurable success criteria',
+     'A detailed agent design specification with prompt templates',
+     'A completed Power Platform tenant migration to a single region'
+   ],
+   correctIndices:[0,1],
+   explanation:'CAF Phase 1 is about strategic alignment, not building. <strong>Data-classification policy</strong> is required to address the compliance officer\'s concern and to scope what data is even eligible for AI use. <strong>Business outcomes with measurable success criteria</strong> are the foundation of every later phase — without them, ROAI is impossible to measure. Detailed agent specs (C) belong to Phase 3 (Ready/Adopt). Tenant migration (D) is infrastructure work that follows strategy, not precedes it.'}
+];
+
+// ============= STATE =============
+const TOTAL_TIME = 120 * 60; // 100 minutes in seconds
+let currentQ = 0;
+let answers = {}; // { qId: <answer data> }
+let marked = new Set();
+let timeRemaining = TOTAL_TIME;
+let timerInterval = null;
+let examStartedAt = null;
+let examFinishedAt = null;
+let caseSidebarOpen = false;
+let openDropdown = null;
+let draggingItem = null;
+let reviewFilter = 'all';
+
+// ============= HELPER =============
+function $(id){return document.getElementById(id)}
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+function fmtTime(sec){
+  const m=Math.floor(sec/60), s=sec%60;
+  return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+
+// ============= EXAM FLOW =============
+function startExam(){
+  currentQ=0; answers={}; marked.clear(); timeRemaining=TOTAL_TIME;
+  examStartedAt=Date.now();
+  showScreen('examScreen');
+  startTimer();
+  renderQuestion();
+  setTimeout(()=>$('hint').classList.add('show'),500);
+  setTimeout(()=>$('hint').classList.remove('show'),5500);
+}
+
+function startTimer(){
+  if(timerInterval) clearInterval(timerInterval);
+  updateTimerDisplay();
+  timerInterval = setInterval(()=>{
+    timeRemaining--;
+    updateTimerDisplay();
+    if(timeRemaining<=0){
+      clearInterval(timerInterval);
+      submitExam();
+    }
+  },1000);
+}
+
+function updateTimerDisplay(){
+  const el = $('timerPill');
+  $('timerText').textContent = fmtTime(timeRemaining);
+  el.classList.remove('warn','danger');
+  if(timeRemaining<=120) el.classList.add('danger');
+  else if(timeRemaining<=600) el.classList.add('warn');
+}
+
+function renderQuestion(){
+  const q = questions[currentQ];
+  // Update topbar center counter
+  const cur = $('qpnCurrent'); if(cur) cur.textContent = String(currentQ+1).padStart(2,'0');
+  
+  // Type badge
+  const tb = $('qTypeBadge');
+  tb.className = 'q-type-badge ' + q.type;
+  tb.textContent = {mcq:'Single Answer',hotspot:'Hotspot',dragdrop:'Drag & Drop',multi:'Multi-Select'}[q.type];
+  
+  // Case study
+  const caseBtn = $('caseBtn');
+  if(q.caseId){
+    caseBtn.style.display = 'flex';
+    caseBtn.textContent = '📖 Case: ' + (q.caseId==='fabrikam'?'Fabrikam':'Contoso');
+    if(caseSidebarOpen) populateCaseStudy(q.caseId);
+  } else {
+    caseBtn.style.display = 'none';
+    if(caseSidebarOpen) toggleCaseSidebar();
+  }
+  
+  // Mark button
+  $('markBtn').classList.toggle('marked', marked.has(q.id));
+  
+  // Render question content
+  const inner = $('qInner');
+  let html = `<div class="q-text">${q.text}</div>`;
+  if(q.instruction) html += `<div class="q-instruction">${q.instruction}</div>`;
+  
+  if(q.type==='mcq'){
+    html += renderMCQ(q);
+  } else if(q.type==='multi'){
+    html += renderMulti(q);
+  } else if(q.type==='hotspot'){
+    html += renderHotspot(q);
+  } else if(q.type==='dragdrop'){
+    html += renderDragDrop(q);
+  }
+  
+  inner.innerHTML = html;
+  
+  // Wire interactions for the rendered question
+  if(q.type==='mcq') wireMCQ(q);
+  else if(q.type==='multi') wireMulti(q);
+  else if(q.type==='hotspot') wireHotspot(q);
+  else if(q.type==='dragdrop') wireDragDrop(q);
+  
+  // Update nav
+  $('prevBtn').disabled = currentQ===0;
+  if(currentQ===questions.length-1){
+    $('nextBtn').textContent = 'Review →';
+  } else {
+    $('nextBtn').textContent = 'Next ›';
+  }
+  $('qContent').scrollTop = 0;
+  updateAnsweredCount();
+  updateQStateLabel();
+}
+
+function renderMCQ(q){
+  let h = '<div class="options-list">';
+  q.options.forEach((opt,i)=>{
+    const letter = String.fromCharCode(65+i);
+    const sel = answers[q.id]===i ? ' selected' : '';
+    h += `<button class="option${sel}" data-idx="${i}"><span class="marker">${letter}</span><span>${opt}</span></button>`;
+  });
+  return h + '</div>';
+}
+
+function wireMCQ(q){
+  document.querySelectorAll('#qInner .option').forEach(el=>{
+    el.onclick = ()=>{
+      const idx = parseInt(el.dataset.idx);
+      answers[q.id] = idx;
+      document.querySelectorAll('#qInner .option').forEach(o=>o.classList.remove('selected'));
+      el.classList.add('selected');
+      updateAnsweredCount(); updateQStateLabel();
+    };
+  });
+}
+
+function renderMulti(q){
+  let h = '<div class="options-list">';
+  const sel = answers[q.id] || [];
+  q.options.forEach((opt,i)=>{
+    const letter = String.fromCharCode(65+i);
+    const isSel = sel.includes(i) ? ' selected' : '';
+    h += `<button class="option multi${isSel}" data-idx="${i}"><span class="marker">${sel.includes(i)?'':letter}</span><span>${opt}</span></button>`;
+  });
+  return h + '</div>';
+}
+
+function wireMulti(q){
+  document.querySelectorAll('#qInner .option').forEach(el=>{
+    el.onclick = ()=>{
+      const idx = parseInt(el.dataset.idx);
+      let arr = answers[q.id] ? [...answers[q.id]] : [];
+      if(arr.includes(idx)) arr = arr.filter(x=>x!==idx);
+      else arr.push(idx);
+      answers[q.id] = arr;
+      // Re-render to update markers
+      const inner = $('qInner');
+      const text = inner.querySelector('.q-text').outerHTML;
+      const instr = inner.querySelector('.q-instruction')?.outerHTML || '';
+      inner.innerHTML = text + instr + renderMulti(q);
+      wireMulti(q);
+      updateAnsweredCount(); updateQStateLabel();
+    };
+  });
+}
+
+function renderHotspot(q){
+  let h = '<div class="hotspot-list">';
+  const ans = answers[q.id] || {};
+  q.hotspots.forEach((hs,hi)=>{
+    const selectedIdx = ans[hi];
+    const placeholder = selectedIdx===undefined;
+    const triggerText = placeholder ? 'Select an option…' : hs.options[selectedIdx];
+    const triggerCls = placeholder ? 'placeholder' : '';
+    h += `<div class="hotspot-row">
+      <div class="hotspot-label">${hs.label}</div>
+      <div class="dropdown" data-hi="${hi}">
+        <button class="dropdown-trigger ${triggerCls}">${triggerText}</button>
+        <div class="dropdown-menu">`;
+    hs.options.forEach((opt,oi)=>{
+      const itemSel = oi===selectedIdx ? ' selected' : '';
+      h += `<div class="dropdown-item${itemSel}" data-oi="${oi}">${opt}</div>`;
+    });
+    h += `</div></div></div>`;
+  });
+  return h + '</div>';
+}
+
+function wireHotspot(q){
+  document.querySelectorAll('#qInner .dropdown').forEach(dd=>{
+    const hi = parseInt(dd.dataset.hi);
+    const trigger = dd.querySelector('.dropdown-trigger');
+    trigger.onclick = (e)=>{
+      e.stopPropagation();
+      // close any other open
+      document.querySelectorAll('.dropdown.open').forEach(d=>{ if(d!==dd) d.classList.remove('open'); });
+      dd.classList.toggle('open');
+      openDropdown = dd.classList.contains('open') ? dd : null;
+    };
+    dd.querySelectorAll('.dropdown-item').forEach(item=>{
+      item.onclick = (e)=>{
+        e.stopPropagation();
+        const oi = parseInt(item.dataset.oi);
+        if(!answers[q.id]) answers[q.id] = {};
+        answers[q.id][hi] = oi;
+        // update trigger text
+        trigger.textContent = q.hotspots[hi].options[oi];
+        trigger.classList.remove('placeholder');
+        // mark selected
+        dd.querySelectorAll('.dropdown-item').forEach(it=>it.classList.remove('selected'));
+        item.classList.add('selected');
+        // re-add caret (textContent stripped it)
+        dd.classList.remove('open');
+        openDropdown = null;
+        updateAnsweredCount(); updateQStateLabel();
+      };
+    });
+  });
+  // close on outside click
+  document.addEventListener('click', closeDropdownsOnOutside);
+}
+
+function closeDropdownsOnOutside(){
+  if(openDropdown){
+    openDropdown.classList.remove('open');
+    openDropdown = null;
+  }
+}
+
+function renderDragDrop(q){
+  const ans = answers[q.id] || {}; // { slotIdx: optionIdx }
+  // build set of placed options for non-reusable
+  let placedOptions = new Set();
+  if(!q.reusable){
+    Object.values(ans).forEach(oi=>placedOptions.add(oi));
+  }
+  
+  let h = '<div class="dragdrop-container"><div class="drag-source"><h5>▸ Available options</h5><div class="drag-items">';
+  q.options.forEach((opt,oi)=>{
+    const placed = placedOptions.has(oi);
+    const cls = placed ? (q.reusable?'placed reusable':'placed') : '';
+    h += `<div class="drag-item ${cls}" draggable="true" data-oi="${oi}">${opt}</div>`;
+  });
+  h += '</div></div><div class="drop-targets">';
+  q.slots.forEach((slot,si)=>{
+    h += `<div class="drop-row"><div class="drop-label">${slot.label}</div>`;
+    const placedOi = ans[si];
+    if(placedOi!==undefined){
+      h += `<div class="drop-zone filled" data-si="${si}">
+        <div class="placed-item" draggable="true" data-oi="${placedOi}">${q.options[placedOi]}</div>
+        <button class="remove-btn" data-si="${si}" title="Remove">×</button>
+      </div>`;
+    } else {
+      h += `<div class="drop-zone" data-si="${si}">Drop here…</div>`;
+    }
+    h += '</div>';
+  });
+  h += '</div></div>';
+  return h;
+}
+
+function wireDragDrop(q){
+  document.querySelectorAll('#qInner .drag-item, #qInner .placed-item').forEach(el=>{
+    el.ondragstart = (e)=>{
+      draggingItem = {oi: parseInt(el.dataset.oi), source: el.classList.contains('placed-item') ? 'zone' : 'pool', el};
+      el.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      try{ e.dataTransfer.setData('text/plain','x'); }catch(_){}
+    };
+    el.ondragend = ()=>{
+      el.classList.remove('dragging');
+      document.querySelectorAll('.drop-zone.over').forEach(z=>z.classList.remove('over'));
+      draggingItem = null;
+    };
+  });
+  document.querySelectorAll('#qInner .drop-zone').forEach(zone=>{
+    zone.ondragover = (e)=>{ e.preventDefault(); zone.classList.add('over'); e.dataTransfer.dropEffect='move'; };
+    zone.ondragleave = ()=>{ zone.classList.remove('over'); };
+    zone.ondrop = (e)=>{
+      e.preventDefault(); zone.classList.remove('over');
+      if(!draggingItem) return;
+      const si = parseInt(zone.dataset.si);
+      if(!answers[q.id]) answers[q.id] = {};
+      // if zone already has an item, that item goes back to pool (just by re-render)
+      answers[q.id][si] = draggingItem.oi;
+      // if dragged from another zone, clear that zone
+      if(draggingItem.source==='zone'){
+        const sourceZone = draggingItem.el.closest('.drop-zone');
+        if(sourceZone){
+          const ssi = parseInt(sourceZone.dataset.si);
+          if(ssi!==si) delete answers[q.id][ssi];
+        }
+      }
+      rerenderDragDrop(q);
+    };
+  });
+  document.querySelectorAll('#qInner .remove-btn').forEach(btn=>{
+    btn.onclick = (e)=>{
+      e.stopPropagation();
+      const si = parseInt(btn.dataset.si);
+      if(answers[q.id]) delete answers[q.id][si];
+      rerenderDragDrop(q);
+    };
+  });
+}
+
+function rerenderDragDrop(q){
+  const inner = $('qInner');
+  const text = inner.querySelector('.q-text').outerHTML;
+  const instr = inner.querySelector('.q-instruction')?.outerHTML || '';
+  inner.innerHTML = text + instr + renderDragDrop(q);
+  wireDragDrop(q);
+  updateAnsweredCount(); updateQStateLabel();
+}
+
+function isComplete(q){
+  const a = answers[q.id];
+  if(a===undefined||a===null) return false;
+  if(q.type==='mcq') return typeof a==='number';
+  if(q.type==='multi') return Array.isArray(a) && a.length>0;
+  if(q.type==='hotspot') return q.hotspots.every((_,i)=>a[i]!==undefined);
+  if(q.type==='dragdrop') return q.slots.every((_,i)=>a[i]!==undefined);
+  return false;
+}
+
+function isCorrect(q){
+  const a = answers[q.id];
+  if(!isComplete(q)) return false;
+  if(q.type==='mcq') return a===q.correctIndex;
+  if(q.type==='multi'){
+    if(a.length!==q.correctIndices.length) return false;
+    return q.correctIndices.every(ci=>a.includes(ci));
+  }
+  if(q.type==='hotspot') return q.hotspots.every((hs,i)=>a[i]===hs.correctIndex);
+  if(q.type==='dragdrop') return q.slots.every((s,i)=>a[i]===s.correctIndex);
+  return false;
+}
+
+function updateAnsweredCount(){
+  const n = questions.filter(q=>isComplete(q)).length;
+  $('answeredCount').textContent = `${n} / ${questions.length}`;
+}
+
+function updateQStateLabel(){
+  const q = questions[currentQ];
+  const lbl = $('qStateLabel');
+  if(isComplete(q)){
+    lbl.textContent = '✓ Answered';
+    lbl.classList.add('complete');
+  } else {
+    lbl.textContent = 'Not answered';
+    lbl.classList.remove('complete');
+  }
+}
+
+function nextQ(){
+  if(currentQ < questions.length-1){
+    currentQ++;
+    renderQuestion();
+  } else {
+    confirmSubmit();
+  }
+}
+function prevQ(){
+  if(currentQ>0){
+    currentQ--;
+    renderQuestion();
+  }
+}
+function toggleMark(){
+  const q = questions[currentQ];
+  if(marked.has(q.id)) marked.delete(q.id);
+  else marked.add(q.id);
+  $('markBtn').classList.toggle('marked', marked.has(q.id));
+}
+
+// ============= CASE STUDY =============
+function toggleCaseSidebar(){
+  caseSidebarOpen = !caseSidebarOpen;
+  $('caseSidebar').classList.toggle('open', caseSidebarOpen);
+  $('caseBtn').classList.toggle('active', caseSidebarOpen);
+  if(caseSidebarOpen){
+    const q = questions[currentQ];
+    if(q.caseId) populateCaseStudy(q.caseId);
+  }
+}
+function populateCaseStudy(id){
+  const cs = caseStudies[id];
+  if(!cs) return;
+  $('caseId').textContent = 'CASE STUDY · ' + id.toUpperCase();
+  $('caseTitle').textContent = cs.title;
+  let h = '';
+  cs.sections.forEach(s=>{
+    h += `<h4>${s.h}</h4>${s.c}`;
+  });
+  $('caseContent').innerHTML = h;
+}
+
+// ============= NAVIGATOR =============
+function openNavigator(){
+  const grid = $('navGrid');
+  let h = '';
+  questions.forEach((q,i)=>{
+    let cls = 'nav-cell';
+    if(isComplete(q)) cls += ' answered';
+    if(marked.has(q.id)) cls += ' marked';
+    if(i===currentQ) cls += ' current';
+    const dot = q.caseId ? '<span class="case-dot"></span>' : '';
+    h += `<button class="${cls}" onclick="jumpTo(${i})">${String(q.id).padStart(2,'0')}${dot}</button>`;
+  });
+  grid.innerHTML = h;
+  $('navModal').classList.add('show');
+}
+function closeNavigator(){
+  $('navModal').classList.remove('show');
+}
+function jumpTo(i){
+  currentQ=i;
+  closeNavigator();
+  renderQuestion();
+}
+
+// ============= SUBMIT =============
+function confirmSubmit(){
+  const answered = questions.filter(q=>isComplete(q)).length;
+  const unanswered = questions.length - answered;
+  const markedCount = marked.size;
+  $('submitSummary').innerHTML = `
+    <div><span>Answered:</span><strong>${answered} of ${questions.length}</strong></div>
+    <div><span>Unanswered:</span><strong style="color:${unanswered>0?'var(--red)':'var(--green-deep)'}">${unanswered}</strong></div>
+    <div><span>Marked for review:</span><strong>${markedCount}</strong></div>
+    <div><span>Time remaining:</span><strong>${fmtTime(timeRemaining)}</strong></div>
+  `;
+  $('submitModal').classList.add('show');
+}
+function closeSubmitConfirm(){
+  $('submitModal').classList.remove('show');
+}
+function confirmExit(){
+  if(confirm('Exit exam? Your progress will be lost.')) {
+    if(timerInterval) clearInterval(timerInterval);
+    showScreen('welcomeScreen');
+  }
+}
+
+function submitExam(){
+  if(timerInterval) clearInterval(timerInterval);
+  examFinishedAt = Date.now();
+  closeSubmitConfirm();
+  buildReview();
+  showScreen('reviewScreen');
+}
+
+function buildReview(){
+  let correct=0, wrong=0, skipped=0;
+  questions.forEach(q=>{
+    if(!isComplete(q)) skipped++;
+    else if(isCorrect(q)) correct++;
+    else wrong++;
+  });
+  // Score out of 1000 per AB-100 convention
+  const score = Math.round((correct/questions.length)*1000);
+  const passed = score >= 700;
+  $('rvScore').textContent = score;
+  $('rvScore').className = 'verdict ' + (passed?'pass':'fail');
+  $('rvVerdict').textContent = passed ? '✓ PASS — You hit the AB-100 threshold' : '✗ FAIL — Below the 700 threshold';
+  $('rvVerdict').className = 'pass-label ' + (passed?'pass':'fail');
+  $('rvCorrect').textContent = correct;
+  $('rvWrong').textContent = wrong;
+  $('rvSkipped').textContent = skipped;
+  const elapsed = Math.floor((examFinishedAt - examStartedAt)/1000);
+  $('rvTime').textContent = fmtTime(Math.min(elapsed, TOTAL_TIME));
+  
+  // Filter counts
+  $('fAll').textContent = questions.length;
+  $('fCorrect').textContent = correct;
+  $('fWrong').textContent = wrong;
+  $('fSkipped').textContent = skipped;
+  
+  renderReviewList();
+}
+
+function filterReview(filter){
+  reviewFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active', b.dataset.filter===filter));
+  renderReviewList();
+}
+
+function renderReviewList(){
+  const list = $('reviewList');
+  let h = '';
+  questions.forEach((q,i)=>{
+    let status;
+    if(!isComplete(q)) status='skipped';
+    else if(isCorrect(q)) status='correct';
+    else status='wrong';
+    if(reviewFilter!=='all' && reviewFilter!==status) return;
+    
+    const icon = {correct:'✓',wrong:'✗',skipped:'—'}[status];
+    h += `<div class="review-card ${status}" data-qid="${q.id}">
+      <div class="review-card-header" onclick="toggleReviewCard(${q.id})">
+        <span class="q-num">${String(q.id).padStart(2,'0')}</span>
+        <span class="status-icon">${icon}</span>
+        <span class="q-preview">${truncate(q.text,140)}</span>
+        <span class="expand-icon">›</span>
+      </div>
+      <div class="review-detail">
+        <div class="full-q">${q.text}</div>
+        ${q.instruction?`<div class="q-instruction" style="margin-top:6px">${q.instruction}</div>`:''}
+        ${renderReviewAnswers(q,status)}
+        <div class="explain"><span class="lbl">Why this answer</span>${q.explanation||'No explanation provided.'}</div>
+      </div>
+    </div>`;
+  });
+  list.innerHTML = h || '<div style="padding:40px;text-align:center;color:var(--ink-mute);font-size:14px">No questions match this filter.</div>';
+}
+
+function truncate(s,n){
+  if(s.length<=n) return s;
+  return s.substring(0,n).trim()+'…';
+}
+
+function renderReviewAnswers(q,status){
+  const a = answers[q.id];
+  if(q.type==='mcq'){
+    let h = '';
+    if(a!==undefined){
+      const cls = a===q.correctIndex ? 'correct' : 'wrong';
+      h += `<div class="answer-block user ${cls}"><div class="lbl">Your answer</div>${String.fromCharCode(65+a)}. ${q.options[a]}</div>`;
+    } else {
+      h += `<div class="answer-block user wrong"><div class="lbl">Your answer</div><em>Skipped — not answered</em></div>`;
+    }
+    if(status!=='correct'){
+      h += `<div class="answer-block correct-block"><div class="lbl">Correct answer</div>${String.fromCharCode(65+q.correctIndex)}. ${q.options[q.correctIndex]}</div>`;
+    }
+    return h;
+  }
+  if(q.type==='multi'){
+    let h = '';
+    if(a && a.length){
+      const cls = isCorrect(q) ? 'correct' : 'wrong';
+      const userText = a.map(i=>`${String.fromCharCode(65+i)}. ${q.options[i]}`).join('<br>');
+      h += `<div class="answer-block user ${cls}"><div class="lbl">Your answer</div>${userText}</div>`;
+    } else {
+      h += `<div class="answer-block user wrong"><div class="lbl">Your answer</div><em>Skipped — not answered</em></div>`;
+    }
+    if(status!=='correct'){
+      const correctText = q.correctIndices.map(i=>`${String.fromCharCode(65+i)}. ${q.options[i]}`).join('<br>');
+      h += `<div class="answer-block correct-block"><div class="lbl">Correct answer</div>${correctText}</div>`;
+    }
+    return h;
+  }
+  if(q.type==='hotspot'){
+    let h = '';
+    let userText = q.hotspots.map((hs,hi)=>{
+      if(a && a[hi]!==undefined){
+        const correct = a[hi]===hs.correctIndex;
+        return `<strong>${hs.label}:</strong> ${hs.options[a[hi]]} ${correct?'✓':'✗'}`;
+      } else {
+        return `<strong>${hs.label}:</strong> <em>not answered</em>`;
+      }
+    }).join('<br>');
+    const cls = status==='correct' ? 'correct' : 'wrong';
+    h += `<div class="answer-block user ${cls}"><div class="lbl">Your answer</div>${userText}</div>`;
+    if(status!=='correct'){
+      const correctText = q.hotspots.map(hs=>`<strong>${hs.label}:</strong> ${hs.options[hs.correctIndex]}`).join('<br>');
+      h += `<div class="answer-block correct-block"><div class="lbl">Correct answer</div>${correctText}</div>`;
+    }
+    return h;
+  }
+  if(q.type==='dragdrop'){
+    let h = '';
+    let userText = q.slots.map((s,si)=>{
+      if(a && a[si]!==undefined){
+        const correct = a[si]===s.correctIndex;
+        return `<strong>${s.label}:</strong> ${q.options[a[si]]} ${correct?'✓':'✗'}`;
+      } else {
+        return `<strong>${s.label}:</strong> <em>not answered</em>`;
+      }
+    }).join('<br>');
+    const cls = status==='correct' ? 'correct' : 'wrong';
+    h += `<div class="answer-block user ${cls}"><div class="lbl">Your answer</div>${userText}</div>`;
+    if(status!=='correct'){
+      const correctText = q.slots.map(s=>`<strong>${s.label}:</strong> ${q.options[s.correctIndex]}`).join('<br>');
+      h += `<div class="answer-block correct-block"><div class="lbl">Correct answer</div>${correctText}</div>`;
+    }
+    return h;
+  }
+  return '';
+}
+
+function toggleReviewCard(qid){
+  document.querySelector(`.review-card[data-qid="${qid}"]`).classList.toggle('expanded');
+}
+
+function resetExam(){
+  startExam();
+}
+function goWelcome(){
+  showScreen('welcomeScreen');
+}
+
+// ============= KEYBOARD =============
+document.addEventListener('keydown',(e)=>{
+  if(!$('examScreen').classList.contains('active')) return;
+  if(e.target.matches('input,textarea')) return;
+  if($('navModal').classList.contains('show') || $('submitModal').classList.contains('show')){
+    if(e.key==='Escape'){ closeNavigator(); closeSubmitConfirm(); }
+    return;
+  }
+  if(e.key==='ArrowRight'){ e.preventDefault(); nextQ(); }
+  else if(e.key==='ArrowLeft'){ e.preventDefault(); prevQ(); }
+  else if(e.key==='m'||e.key==='M'){ e.preventDefault(); toggleMark(); }
+  else if(e.key==='n'||e.key==='N'){ e.preventDefault(); openNavigator(); }
+  else if(e.key==='c'||e.key==='C'){
+    const q = questions[currentQ];
+    if(q.caseId){ e.preventDefault(); toggleCaseSidebar(); }
+  }
+});
+
+// click outside to close modal
+$('navModal').addEventListener('click',(e)=>{ if(e.target===$('navModal')) closeNavigator(); });
+$('submitModal').addEventListener('click',(e)=>{ if(e.target===$('submitModal')) closeSubmitConfirm(); });
+
+// ============= INIT =============
+showScreen('welcomeScreen');
+</script>
+</body>
+</html>

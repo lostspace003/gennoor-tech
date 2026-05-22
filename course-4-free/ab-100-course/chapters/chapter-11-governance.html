@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 11 — Responsible AI, Security, Governance, Risk, Compliance · Gennoor Tech</title>
+<style>
+:root{
+  --bg:#FAFAFA; --paper:#FFFFFF;
+  --ink:#201F1E; --ink-soft:#605E5C; --ink-mute:#8A8886;
+  --line:#EDEBE9; --line-soft:#F3F2F1;
+  --ms-blue:#2563EB; --ms-blue-deep:#1D4ED8; --ms-navy:#0C1426;
+  --ms-cyan:#60A5FA; --ms-cyan-deep:#1E40AF;
+  --copilot:#F59E0B; --copilot-light:#FCD34D;
+  --ms-yellow:#F59E0B; --ms-green:#107C10; --ms-red:#D13438; --ms-orange:#F97316;
+  --logo-red:#2563EB; --logo-green:#2563EB; --logo-blue:#F59E0B; --logo-yellow:#F59E0B;
+  --notes-bg:#0C1426; --notes-text:#FFFFFF; --notes-accent:#F59E0B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;font-size:19px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.app{position:fixed;inset:0;display:flex;flex-direction:column}
+.topbar{height:56px;background:var(--ms-navy);color:#FFFFFF;display:flex;align-items:center;padding:0 24px;gap:18px;border-bottom:1px solid rgba(255,255,255,.06);z-index:10}
+.topbar .brand-mark{width:30px;height:30px;flex-shrink:0;display:block}
+.topbar .brand-lockup{display:flex;align-items:center;gap:10px;text-decoration:none;color:#FFFFFF;flex-shrink:0}
+.topbar .brand-text{display:flex;flex-direction:column;line-height:1.1}
+.topbar .brand-name{font-size:18px;font-weight:600;letter-spacing:.3px;color:#FFFFFF}
+.topbar .brand-sub{font-size:12px;color:var(--ms-yellow);letter-spacing:1.2px;text-transform:uppercase;font-weight:600;font-family:'Cascadia Code','Consolas',monospace}
+.topbar .divider{width:1px;height:24px;background:rgba(255,255,255,.15)}
+.topbar .logo{font-weight:600;font-size:20px;letter-spacing:.2px}
+.topbar .chapter-title{font-size:16px;opacity:.75;letter-spacing:.2px;font-weight:400}
+.topbar.topbar-grid .topbar-left .chapter-title{max-width:36ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topbar .spacer{flex:1}
+.topbar .meta{font-size:16px;opacity:.85;display:flex;gap:10px;align-items:center}
+.topbar .meta .pill{padding:4px 12px;background:rgba(255,255,255,.10);border-radius:4px;font-size:15px;font-weight:500}
+.topbar .meta .step-pill{background:var(--ms-blue);font-weight:600;font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px}
+.topbar button{background:transparent;border:1px solid rgba(255,255,255,.25);color:#FFFFFF;padding:7px 16px;border-radius:4px;font-family:inherit;font-size:16px;font-weight:500;cursor:pointer;transition:.15s}
+.topbar button:hover{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.4)}
+.topbar button.active{background:var(--ms-blue);border-color:var(--ms-blue)}
+.progress{height:3px;background:rgba(255,255,255,.06);position:relative;border-bottom:1px solid var(--line)}
+.progress-fill{position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg,var(--ms-blue) 0%,var(--copilot) 50%,var(--ms-cyan) 100%);transition:width .4s cubic-bezier(.4,0,.2,1)}
+.stage{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.slides{width:100%;height:100%;position:relative}
+.slide{position:absolute;inset:0;padding:36px 64px 80px;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .35s ease;overflow-y:auto}
+.slide.active{opacity:1;pointer-events:auto}
+.slide-num{position:absolute;top:18px;right:28px;font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ink-mute);letter-spacing:1.5px}
+[data-step]{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.2,.7,.3,1), transform .55s cubic-bezier(.2,.7,.3,1);pointer-events:none}
+[data-step].revealed{opacity:1;transform:translateY(0);pointer-events:auto}
+.notes-panel{position:fixed;bottom:0;left:0;right:0;background:var(--notes-bg);color:var(--notes-text);padding:22px 32px 26px;border-top:3px solid var(--notes-accent);transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);z-index:20;max-height:48vh;overflow-y:auto;box-shadow:0 -20px 40px rgba(0,0,0,.18)}
+.notes-panel.open{transform:translateY(0)}
+.notes-panel .label{display:flex;align-items:center;gap:10px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--notes-accent);margin-bottom:10px;font-weight:600}
+.notes-panel .label::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--notes-accent);animation:pulse 1.6s ease-in-out infinite}
+.notes-panel .label .step-tag{margin-left:auto;font-size:12px;color:rgba(255,255,255,.55);letter-spacing:1px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.notes-panel .script{font-size:22px;line-height:1.65;max-width:880px;font-weight:400;transition:opacity .25s}
+.notes-panel .script.fading{opacity:.3}
+.notes-panel .script em{color:var(--notes-accent);font-style:normal;font-weight:600;background:rgba(255,185,0,.15);padding:1px 6px;border-radius:3px}
+.controls{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:var(--ms-navy);padding:8px 14px;border-radius:4px;box-shadow:0 6px 24px rgba(0,32,80,.25);z-index:15}
+.controls button{width:36px;height:36px;border-radius:3px;border:none;background:transparent;color:#FFFFFF;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;transition:.15s}
+.controls button:hover{background:rgba(255,255,255,.12)}
+.controls button:disabled{opacity:.3;cursor:not-allowed}
+.controls .counter{font-family:'Cascadia Code','Consolas',monospace;font-size:16px;color:#FFFFFF;padding:0 14px;letter-spacing:1px;font-weight:500}
+.step-indicator{position:fixed;bottom:64px;left:50%;transform:translateX(-50%);font-size:14px;font-family:'Cascadia Code','Consolas',monospace;color:var(--ms-blue);letter-spacing:1.5px;opacity:0;transition:opacity .3s;z-index:14;text-transform:uppercase;font-weight:600}
+.step-indicator.show{opacity:.85}
+.step-indicator::after{content:" →";animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+
+.slide.title-slide{background:linear-gradient(135deg,#0C1426 0%,#1D4ED8 35%,#2563EB 70%,#60A5FA 110%);color:#FFFFFF;justify-content:center;padding:175px 100px 100px 100px;position:absolute;overflow:hidden}
+.slide.title-slide .brand-full{position:absolute;top:48px;left:64px;display:flex;align-items:center;gap:16px}
+.slide.title-slide .brand-mark-lg{width:64px;height:64px}
+.slide.title-slide .brand-wordmark{display:flex;flex-direction:column;line-height:1}
+.slide.title-slide .brand-wordmark .name{font-size:30px;font-weight:600;letter-spacing:1px;color:#FFFFFF}
+.slide.title-slide .brand-wordmark .tag{font-size:14px;color:var(--ms-yellow);letter-spacing:3px;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;margin-top:4px;text-transform:uppercase}
+.slide.title-slide .eyebrow{font-family:'Cascadia Code','Consolas',monospace;font-size:16px;letter-spacing:3px;color:var(--ms-cyan);margin-bottom:20px;font-weight:500}
+.slide.title-slide h1{font-size:75px;line-height:1.1;font-weight:600;max-width:1200px;letter-spacing:-1.5px}
+.slide.title-slide h1 em{font-style:normal;color:var(--ms-cyan);font-weight:600}
+.slide.title-slide .subtitle{margin-top:20px;font-size:22px;color:rgba(255,255,255,.85);max-width:900px;line-height:1.5;font-weight:400}
+.slide.title-slide .meta-row{margin-top:36px;display:flex;gap:36px;font-size:18px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.slide.title-slide .meta-row strong{color:#FFFFFF;display:block;font-size:28px;text-transform:none;font-weight:600;letter-spacing:0;margin-top:4px}
+.title-slide::before{content:"";position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(98,100,167,.30) 0%,transparent 70%);top:-200px;right:-200px;pointer-events:none}
+.title-slide::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(80,230,255,.20) 0%,transparent 70%);bottom:-160px;left:-160px;pointer-events:none}
+.finale-banner{position:absolute;top:80px;right:64px;background:rgba(255,185,0,.20);border:1px solid var(--ms-yellow);color:var(--ms-yellow);padding:6px 16px;border-radius:3px;font-size:14px;font-family:'Cascadia Code','Consolas',monospace;letter-spacing:2px;text-transform:uppercase;font-weight:600}
+
+.slide.section-divider{background:linear-gradient(135deg,var(--ms-blue) 0%,var(--copilot) 100%);color:#FFFFFF;justify-content:center;align-items:flex-start;padding:80px;position:relative;overflow:hidden}
+.slide.section-divider::before{content:"";position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(80,230,255,.18) 0%,transparent 70%);top:-180px;right:-180px;pointer-events:none}
+.slide.section-divider .label{font-family:'Cascadia Code','Consolas',monospace;font-size:18px;letter-spacing:4px;margin-bottom:18px;opacity:.8;font-weight:500}
+.slide.section-divider h2{font-size:78px;line-height:1.05;font-weight:600;max-width:1100px;letter-spacing:-1.5px}
+.slide.section-divider h2 em{font-style:normal;color:var(--ms-cyan);font-weight:600}
+.slide.section-divider .sub{margin-top:28px;font-size:24px;max-width:780px;color:rgba(255,255,255,.95);font-weight:400;line-height:1.45}
+
+.slide.content-slide{padding:34px 60px 76px}
+.slide h3.slide-h{font-size:40px;font-weight:600;letter-spacing:-.5px;margin-bottom:6px;line-height:1.15;color:var(--ms-navy)}
+.slide h3.slide-h em{font-style:normal;color:var(--copilot);font-weight:600}
+.slide .lead{font-size:19px;color:var(--ink-soft);margin-bottom:20px;max-width:1000px}
+
+/* OVERVIEW 5 cards */
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--ms-blue);padding:16px;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.card .num{font-size:25px;color:var(--ms-blue);font-weight:600;margin-bottom:4px;line-height:1}
+.card h4{font-size:19px;font-weight:600;margin-bottom:6px;color:var(--ms-navy);line-height:1.25}
+.card p{font-size:15px;color:var(--ink-soft);line-height:1.45}
+.card .ex{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:14px;color:var(--ms-blue-deep);font-style:italic}
+.card .ex strong{color:var(--copilot);font-style:normal;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;font-size:12px;letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:2px}
+
+/* 6 RAI PRINCIPLES */
+.rai-principles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.rai-card{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:18px 22px;box-shadow:0 1px 4px rgba(0,0,0,.05);position:relative;overflow:hidden}
+.rai-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px}
+.rai-card.r1::before{background:linear-gradient(90deg,#2563EB,#1D4ED8)}
+.rai-card.r2::before{background:linear-gradient(90deg,#107C10,#1E40AF)}
+.rai-card.r3::before{background:linear-gradient(90deg,#D13438,#D83B01)}
+.rai-card.r4::before{background:linear-gradient(90deg,#F59E0B,#FF8C00)}
+.rai-card.r5::before{background:linear-gradient(90deg,#F59E0B,#B45309)}
+.rai-card.r6::before{background:linear-gradient(90deg,#1E40AF,#60A5FA)}
+.rai-card .ico{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:8px;font-weight:700}
+.rai-card.r1 .ico{background:#DBEAFE;color:#2563EB}
+.rai-card.r2 .ico{background:#DFF6DD;color:#107C10}
+.rai-card.r3 .ico{background:#FDE7E9;color:#D13438}
+.rai-card.r4 .ico{background:#FFF4CE;color:#B58800}
+.rai-card.r5 .ico{background:#FEF3C7;color:#F59E0B}
+.rai-card.r6 .ico{background:#E5F4F6;color:#1E40AF}
+.rai-card .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;letter-spacing:1.2px;font-weight:600;color:var(--ink-mute);margin-bottom:3px;text-transform:uppercase}
+.rai-card h4{font-size:20px;color:var(--ms-navy);font-weight:600;margin-bottom:6px;letter-spacing:-.2px;line-height:1.2}
+.rai-card p{font-size:15px;color:var(--ink-soft);line-height:1.45;margin-bottom:6px}
+.rai-card .ctrl{font-size:13px;color:var(--ms-navy);background:var(--bg);padding:5px 10px;border-radius:3px;line-height:1.4;border-left:2px solid var(--copilot)}
+.rai-card .ctrl strong{color:var(--copilot);font-weight:600;font-family:'Cascadia Code','Consolas',monospace;font-size:12px;letter-spacing:1px;display:block;margin-bottom:1px;text-transform:uppercase}
+
+/* 4-LAYER DEFENSE */
+.defense-stack{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.def-title{font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--copilot);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:14px}
+.def-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.def-layer{background:var(--bg);border-radius:6px;padding:14px 16px;border-top:4px solid var(--ms-blue);position:relative}
+.def-layer.l2{border-top-color:#107C10;background:linear-gradient(135deg,#F3FDF3 0%,var(--bg) 100%)}
+.def-layer.l3{border-top-color:#F59E0B;background:linear-gradient(135deg,#FFFBE6 0%,var(--bg) 100%)}
+.def-layer.l4{border-top-color:#D13438;background:linear-gradient(135deg,#FDF3F4 0%,var(--bg) 100%)}
+.def-layer .num{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--ms-blue);letter-spacing:1.5px;font-weight:700;margin-bottom:3px}
+.def-layer.l2 .num{color:#107C10}
+.def-layer.l3 .num{color:#B58800}
+.def-layer.l4 .num{color:#D13438}
+.def-layer h6{font-size:18px;color:var(--ms-navy);font-weight:600;margin-bottom:5px;line-height:1.2}
+.def-layer p{font-size:14px;color:var(--ink-soft);margin-bottom:6px;line-height:1.4}
+.def-layer ul{list-style:none}
+.def-layer li{padding:2.5px 0 2.5px 12px;position:relative;font-size:13px;color:var(--ink);line-height:1.4}
+.def-layer li::before{content:"›";position:absolute;left:0;top:2.5px;color:var(--copilot);font-weight:700}
+
+/* IMPLEMENTATION GUIDE - 6 areas */
+.impl-guide{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+.impl-card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start;box-shadow:0 1px 3px rgba(0,0,0,.04);border-left:3px solid var(--ms-blue)}
+.impl-card.i2{border-left-color:#107C10}
+.impl-card.i3{border-left-color:#1E40AF}
+.impl-card.i4{border-left-color:#D13438}
+.impl-card.i5{border-left-color:#F59E0B}
+.impl-card.i6{border-left-color:#F59E0B}
+.impl-card .step-num{flex-shrink:0;width:32px;height:32px;border-radius:50%;background:var(--bg);border:2px solid var(--ms-blue);color:var(--ms-blue);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;font-family:'Cascadia Code','Consolas',monospace}
+.impl-card.i2 .step-num{border-color:#107C10;color:#107C10}
+.impl-card.i3 .step-num{border-color:#1E40AF;color:#1E40AF}
+.impl-card.i4 .step-num{border-color:#D13438;color:#D13438}
+.impl-card.i5 .step-num{border-color:#F59E0B;color:#F59E0B}
+.impl-card.i6 .step-num{border-color:#F59E0B;color:#B58800}
+.impl-card .body h6{font-size:16px;color:var(--ms-navy);font-weight:600;margin-bottom:3px;line-height:1.2}
+.impl-card .body p{font-size:14px;color:var(--ink-soft);line-height:1.4}
+
+/* IDENTITY & SEPARATION */
+.identity-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+.id-card{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:20px 24px;box-shadow:0 1px 4px rgba(0,0,0,.05);border-top:4px solid var(--ms-blue)}
+.id-card.c2{border-top-color:#F59E0B}
+.id-card .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;letter-spacing:1.2px;font-weight:600;color:var(--ms-blue);margin-bottom:5px;text-transform:uppercase}
+.id-card.c2 .lab{color:#F59E0B}
+.id-card h4{font-size:21px;color:var(--ms-navy);font-weight:600;margin-bottom:8px;line-height:1.2}
+.id-card .practice{padding:7px 0;border-bottom:1px dashed var(--line-soft)}
+.id-card .practice:last-child{border-bottom:none}
+.id-card .practice strong{color:var(--ms-navy);font-weight:600;font-size:16px;display:block;margin-bottom:2px}
+.id-card .practice span{font-size:14px;color:var(--ink-soft);line-height:1.4}
+.sep-roles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.sep-role{background:var(--bg);border-radius:4px;padding:8px 10px;text-align:center;border-top:3px solid var(--copilot)}
+.sep-role.s2{border-top-color:#2563EB}
+.sep-role.s3{border-top-color:#107C10}
+.sep-role.s4{border-top-color:#D13438}
+.sep-role h6{font-size:14px;color:var(--ms-navy);font-weight:600;margin-bottom:2px;letter-spacing:0;text-transform:none}
+.sep-role p{font-size:12px;color:var(--ink-soft);line-height:1.3}
+
+/* DATA GOVERNANCE - 4 controls */
+.data-gov{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
+.dg-card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:16px 18px;box-shadow:0 1px 3px rgba(0,0,0,.04);position:relative;overflow:hidden}
+.dg-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px}
+.dg-card.d1::before{background:#2563EB}
+.dg-card.d2::before{background:#F59E0B}
+.dg-card.d3::before{background:#107C10}
+.dg-card.d4::before{background:#D83B01}
+.dg-card .ico{font-size:28px;margin-bottom:6px;margin-top:4px}
+.dg-card.d1 .ico{color:#2563EB}
+.dg-card.d2 .ico{color:#F59E0B}
+.dg-card.d3 .ico{color:#107C10}
+.dg-card.d4 .ico{color:#D83B01}
+.dg-card .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--ink-mute);letter-spacing:1.2px;font-weight:600;margin-bottom:4px}
+.dg-card h5{font-size:18px;color:var(--ms-navy);font-weight:600;margin-bottom:6px;line-height:1.2}
+.dg-card ul{list-style:none}
+.dg-card li{padding:2.5px 0 2.5px 12px;position:relative;font-size:14px;color:var(--ink-soft);line-height:1.4}
+.dg-card li::before{content:"•";position:absolute;left:0;color:var(--copilot);font-weight:700}
+
+/* 5 VULNERABILITY CATEGORIES */
+.vuln-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:18px}
+.vuln-card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:14px;position:relative;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.vuln-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px}
+.vuln-card.v1::before{background:#D13438}
+.vuln-card.v2::before{background:#D83B01}
+.vuln-card.v3::before{background:#F59E0B}
+.vuln-card.v4::before{background:#F59E0B}
+.vuln-card.v5::before{background:#1E40AF}
+.vuln-card .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--ink-mute);letter-spacing:1.2px;font-weight:600;margin-bottom:3px}
+.vuln-card .icon{font-size:22px;margin-top:4px;margin-bottom:5px}
+.vuln-card.v1 .icon{color:#D13438}
+.vuln-card.v2 .icon{color:#D83B01}
+.vuln-card.v3 .icon{color:#B58800}
+.vuln-card.v4 .icon{color:#F59E0B}
+.vuln-card.v5 .icon{color:#1E40AF}
+.vuln-card h5{font-size:16px;color:var(--ms-navy);font-weight:600;margin-bottom:5px;line-height:1.2}
+.vuln-card ul{list-style:none}
+.vuln-card li{padding:2px 0 2px 10px;position:relative;font-size:13px;color:var(--ink-soft);line-height:1.35}
+.vuln-card li::before{content:"·";position:absolute;left:0;color:var(--copilot);font-weight:700;font-size:18px;line-height:.5}
+.vuln-card .impact{margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);font-size:12px;color:var(--ms-red);font-weight:600;line-height:1.3}
+
+/* 5 MITIGATION STRATEGIES + LAYERED DEFENSE */
+.mitigations{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:22px 26px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.mit-title{font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--copilot);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:14px}
+.mit-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.mit{background:var(--bg);border-radius:6px;padding:12px 14px;text-align:center;border-bottom:3px solid var(--ms-blue)}
+.mit.m2{border-bottom-color:#107C10}
+.mit.m3{border-bottom-color:#F59E0B}
+.mit.m4{border-bottom-color:#D83B01}
+.mit.m5{border-bottom-color:#F59E0B}
+.mit .num{width:30px;height:30px;border-radius:50%;background:var(--paper);border:2px solid var(--ms-blue);color:var(--ms-blue);margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;font-family:'Cascadia Code','Consolas',monospace}
+.mit.m2 .num{border-color:#107C10;color:#107C10}
+.mit.m3 .num{border-color:#F59E0B;color:#B58800}
+.mit.m4 .num{border-color:#D83B01;color:#D83B01}
+.mit.m5 .num{border-color:#F59E0B;color:#F59E0B}
+.mit h6{font-size:15px;color:var(--ms-navy);font-weight:600;margin-bottom:3px;line-height:1.2;letter-spacing:0;text-transform:none}
+.mit p{font-size:13px;color:var(--ink-soft);line-height:1.35}
+.layered-quote{margin-top:14px;background:linear-gradient(135deg,#0C1426 0%,#1D4ED8 100%);color:#FFFFFF;padding:14px 22px;border-radius:6px;border-left:4px solid var(--ms-cyan)}
+.layered-quote .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--ms-cyan);letter-spacing:1.5px;font-weight:600;margin-bottom:5px;text-transform:uppercase}
+.layered-quote p{font-size:17px;line-height:1.5;color:rgba(255,255,255,.95)}
+.layered-quote em{font-style:normal;color:var(--ms-cyan);font-weight:600}
+
+/* COMPLIANCE - residency + Purview + grounding access + audit */
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+.comp-card{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:18px 22px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.comp-card.c1{border-left:4px solid #2563EB}
+.comp-card.c2{border-left:4px solid #F59E0B}
+.comp-card.c3{border-left:4px solid #107C10}
+.comp-card.c4{border-left:4px solid #D83B01}
+.comp-card .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;letter-spacing:1.2px;font-weight:600;margin-bottom:5px;text-transform:uppercase}
+.comp-card.c1 .lab{color:#2563EB}
+.comp-card.c2 .lab{color:#F59E0B}
+.comp-card.c3 .lab{color:#107C10}
+.comp-card.c4 .lab{color:#D83B01}
+.comp-card h5{font-size:19px;color:var(--ms-navy);font-weight:600;margin-bottom:8px;line-height:1.2}
+.comp-card ul{list-style:none}
+.comp-card li{padding:3px 0 3px 14px;position:relative;font-size:14px;color:var(--ink);line-height:1.4}
+.comp-card li::before{content:"›";position:absolute;left:0;top:3px;color:var(--copilot);font-weight:700}
+.comp-card li strong{color:var(--ms-navy);font-weight:600}
+
+/* OPERATING MODEL - RACI + INCIDENT RESPONSE + SIGN-OFF */
+.op-model{margin-top:18px;display:grid;grid-template-columns:1.4fr 1fr;gap:14px}
+.op-raci{background:var(--paper);border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.or-row{display:grid;grid-template-columns:1.5fr 0.7fr 0.7fr 0.7fr 0.7fr;border-bottom:1px solid var(--line)}
+.or-row:last-child{border-bottom:none}
+.or-row.head{background:var(--ms-navy);color:#FFFFFF}
+.or-row.head > div{padding:9px 10px;font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:600;text-align:center}
+.or-row.head > div:first-child{text-align:left}
+.or-row > div{padding:8px 10px;font-size:14px;border-right:1px solid var(--line);text-align:center;color:var(--ink);line-height:1.3;font-family:'Cascadia Code','Consolas',monospace;font-weight:700}
+.or-row > div:first-child{font-weight:600;color:var(--ms-navy);background:#F8FAFD;text-align:left;font-family:'Segoe UI',sans-serif;font-size:15px}
+.or-row > div:last-child{border-right:none}
+.or-cell.a{color:#D13438}
+.or-cell.r{color:#2563EB}
+.or-cell.c{color:#F59E0B}
+.or-cell.i{color:#605E5C}
+.op-incident{background:linear-gradient(135deg,#0C1426 0%,#1D4ED8 100%);color:#FFFFFF;border-radius:8px;padding:18px 22px}
+.op-incident h5{font-size:19px;font-weight:600;margin-bottom:8px;color:#FFFFFF}
+.op-incident p{font-size:14px;color:rgba(255,255,255,.85);margin-bottom:8px;line-height:1.4}
+.op-incident h6{font-size:12px;color:var(--ms-cyan);font-weight:600;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:5px}
+.op-incident ul{list-style:none}
+.op-incident li{padding:3px 0 3px 14px;position:relative;font-size:14px;color:rgba(255,255,255,.92);line-height:1.4}
+.op-incident li::before{content:"⚡";position:absolute;left:0;color:var(--ms-cyan);font-weight:700;font-size:11px}
+
+/* QUIZ */
+.quiz-wrap{max-width:880px;margin:0 auto;width:100%}
+.quiz-q{font-size:31px;line-height:1.3;font-weight:600;color:var(--ms-navy);margin-bottom:22px;letter-spacing:-.3px}
+.quiz-q em{font-style:normal;color:var(--copilot);font-weight:600}
+.quiz-options{display:flex;flex-direction:column;gap:10px}
+.quiz-opt{background:var(--paper);border:1px solid var(--line);padding:14px 18px;border-radius:4px;cursor:pointer;display:flex;align-items:flex-start;gap:16px;transition:.15s;font-size:18px;font-family:inherit;text-align:left;width:100%;color:var(--ink);line-height:1.4}
+.quiz-opt:hover{border-color:var(--ms-blue);background:#F3F9FD;box-shadow:0 2px 6px rgba(0,120,212,.10)}
+.quiz-opt .letter{width:30px;height:30px;border-radius:4px;background:var(--bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--ms-blue-deep);flex-shrink:0;font-size:16px}
+.quiz-opt.correct{border-color:var(--ms-green);background:#DFF6DD}
+.quiz-opt.correct .letter{background:var(--ms-green);color:#FFFFFF;border-color:var(--ms-green)}
+.quiz-opt.wrong{border-color:var(--ms-red);background:#FDE7E9;opacity:.65}
+.quiz-explain{margin-top:18px;background:#DFF6DD;border-left:4px solid var(--ms-green);padding:14px 18px;border-radius:4px;display:none}
+.quiz-explain.show{display:block;animation:slideUp .5s ease}
+.quiz-explain strong{color:var(--ms-green);font-family:'Cascadia Code','Consolas',monospace;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
+.quiz-explain p{margin-top:6px;font-size:18px;color:var(--ink);line-height:1.55}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* SCENARIO */
+.scenario{max-width:1100px;margin:0 auto;background:linear-gradient(135deg,#FEF3C7 0%,#E5E3F4 100%);border-radius:8px;padding:26px 36px;border-left:4px solid var(--copilot)}
+.scenario .tag{display:inline-block;background:var(--copilot);color:#FFFFFF;padding:5px 14px;border-radius:3px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:12px}
+.scenario h3{font-size:29px;line-height:1.25;color:var(--ms-navy);margin-bottom:12px;font-weight:600;letter-spacing:-.3px}
+.scenario .quote{font-size:19px;line-height:1.5;color:var(--ms-navy);padding:13px 18px;background:rgba(255,255,255,.8);border-radius:4px;margin:10px 0;border-left:3px solid var(--ms-blue);font-style:italic}
+.scenario .prompts h5{font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ms-navy);margin-bottom:8px;font-weight:600;margin-top:10px}
+.scenario .prompts ul{list-style:none}
+.scenario .prompts li{padding:7px 0 7px 22px;position:relative;font-size:17px;color:var(--ink);border-bottom:1px dashed rgba(0,32,80,.18);line-height:1.45}
+.scenario .prompts li:last-child{border-bottom:none}
+.scenario .prompts li::before{content:"→";position:absolute;left:0;top:7px;color:var(--copilot);font-weight:700}
+.scenario .reveal-btn{margin-top:14px;background:var(--ms-blue);color:#FFFFFF;border:none;padding:10px 22px;border-radius:4px;font-family:'Segoe UI',sans-serif;font-size:16px;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:.15s}
+.scenario .reveal-btn:hover{background:var(--ms-blue-deep);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,120,212,.30)}
+.scenario .reveal-btn.shown{display:none}
+.answer-panel{margin-top:14px;background:var(--paper);border:1px solid var(--ms-blue);border-radius:6px;padding:18px 22px;display:none}
+.answer-panel.show{display:block;animation:slideUp .5s ease}
+.answer-panel .ap-label{display:inline-block;background:var(--ms-navy);color:#FFFFFF;padding:4px 12px;border-radius:3px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:10px}
+.answer-panel .ap-row{margin-bottom:10px}
+.answer-panel .ap-row:last-child{margin-bottom:0}
+.answer-panel .ap-q{font-size:17px;color:var(--copilot);font-weight:600;margin-bottom:5px}
+.answer-panel .ap-a{font-size:16px;color:var(--ink);line-height:1.55;padding-left:14px;border-left:2px solid #DBEAFE}
+.answer-panel .ap-a span{display:block;margin-bottom:3px}
+.answer-panel .ap-a span::before{content:"• ";color:var(--ms-blue);font-weight:700}
+
+/* COURSE FINALE RECAP */
+.finale-recap{max-width:1000px;margin:0 auto}
+.finale-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.fs-item{background:linear-gradient(135deg,#0C1426 0%,#2563EB 100%);color:#FFFFFF;border-radius:6px;padding:14px 18px;text-align:center}
+.fs-item.f2{background:linear-gradient(135deg,#2563EB 0%,#F59E0B 100%)}
+.fs-item.f3{background:linear-gradient(135deg,#F59E0B 0%,#1E40AF 100%)}
+.fs-item.f4{background:linear-gradient(135deg,#1E40AF 0%,#107C10 100%)}
+.fs-item .num{font-size:40px;font-weight:700;line-height:1;margin-bottom:4px;font-family:'Cascadia Code','Consolas',monospace}
+.fs-item .lab{font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;color:rgba(255,255,255,.85)}
+.recap-list{display:grid;gap:9px;margin-top:14px}
+.recap-item{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--ms-blue);padding:12px 22px;border-radius:4px;display:flex;gap:14px;align-items:flex-start;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.recap-item .check{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--ms-blue);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+.recap-item .text{font-size:18px;color:var(--ms-navy);line-height:1.45}
+.recap-item .text em{color:var(--copilot);font-style:normal;font-weight:600}
+.completion-message{margin-top:24px;background:linear-gradient(135deg,#0C1426 0%,#1D4ED8 50%,#2563EB 100%);color:#FFFFFF;padding:24px 32px;border-radius:8px;text-align:center;box-shadow:0 4px 16px rgba(0,32,80,.30)}
+.completion-message .label{font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ms-cyan);letter-spacing:3px;font-weight:600;margin-bottom:8px;text-transform:uppercase}
+.completion-message h4{font-size:30px;font-weight:600;margin-bottom:8px;color:#FFFFFF;letter-spacing:-.3px}
+.completion-message h4 em{font-style:normal;color:var(--ms-cyan);font-weight:600}
+.completion-message p{font-size:18px;color:rgba(255,255,255,.9);line-height:1.5;max-width:700px;margin:0 auto}
+
+.float-hint{position:fixed;top:72px;right:20px;background:var(--ms-navy);color:#FFFFFF;padding:10px 16px;border-radius:4px;font-size:15px;opacity:0;transition:.3s;z-index:30;pointer-events:none;font-family:'Cascadia Code','Consolas',monospace;box-shadow:0 6px 16px rgba(0,32,80,.20)}
+.float-hint.show{opacity:.95}
+
+/* GENNOOR WORDMARK COLOR LETTERS */
+.brand-name .b-w{color:#FFFFFF}
+.brand-name .b-blue{color:#60A5FA}
+.brand-name .b-amber{color:#F59E0B}
+.slide.title-slide .brand-wordmark .name .b-w{color:#FFFFFF}
+.slide.title-slide .brand-wordmark .name .b-blue{color:#60A5FA}
+.slide.title-slide .brand-wordmark .name .b-amber{color:#F59E0B}
+
+/* TOPBAR GRID — slide nav moved to topbar center */
+.topbar.topbar-grid{display:grid !important;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;height:72px;padding:0 28px}
+.topbar.topbar-grid .topbar-left{display:flex;align-items:center;gap:18px;min-width:0;overflow:hidden}
+.topbar.topbar-grid .topbar-left .chapter-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar.topbar-grid .topbar-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.topbar.topbar-grid .topbar-right{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0}
+.step-indicator-top{font-family:'Cascadia Code','Consolas',monospace;font-size:10px;letter-spacing:2.5px;color:var(--gn-amber,var(--ms-yellow));font-weight:700;text-transform:uppercase;line-height:1;opacity:.95}
+.step-indicator-top.complete{color:rgba(255,255,255,.5)}
+.controls-top{display:inline-flex;align-items:center;gap:4px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.10);border-radius:5px;padding:3px 6px}
+.controls-top button{width:28px;height:28px;border-radius:3px;border:none;background:transparent;color:#FFFFFF;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:.15s;padding:0}
+.controls-top button:hover{background:rgba(255,255,255,.12)}
+.controls-top button:disabled{opacity:.3;cursor:not-allowed}
+.controls-top .counter{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;font-weight:600;color:#FFFFFF;letter-spacing:.5px;padding:0 12px;min-width:64px;text-align:center}
+.controls-top .counter strong{color:var(--gn-amber,var(--ms-yellow));font-weight:700}
+/* Hide original bottom controls (now empty) */
+.bottom-nav-removed{display:none !important}
+
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar topbar-grid">
+    <div class="topbar-left">
+    <a href="#" class="brand-lockup">
+      <svg class="brand-mark" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+      <div class="brand-text">
+        <span class="brand-name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+        <span class="brand-sub">AB-100</span>
+      </div>
+    </a>
+    <div class="divider"></div>
+    <div class="chapter-title">Chapter 11 · RAI · Security · Governance</div>
+    </div>
+    <div class="topbar-center">
+      <div class="step-indicator-top" id="stepIndicator">More to reveal</div>
+      <div class="controls-top">
+        <button id="prevBtn" title="Previous (←)">‹</button>
+        <span class="counter" id="counter">1 / 22</span>
+        <button id="nextBtn" title="Next (→)">›</button>
+      </div>
+    </div>
+    <div class="topbar-right">
+    <div class="meta">
+      <span class="pill" id="sectionLabel">Opening</span>
+      <span class="pill step-pill" id="stepPill" style="display:none">Step 1/6</span>
+    </div>
+    <button id="notesToggle" title="Toggle notes (T)">📖 Notes</button>
+    </div>
+  </div>
+
+  <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="stage">
+    <div class="slides" id="slides">
+
+      <!-- 01 TITLE -->
+      <section class="slide title-slide active"
+        data-section="Opening"
+        data-script="Chapter 11. <em>Responsible AI, security, governance, risk management, and compliance.</em> The course finale. Everything we've covered — from agent design to ALM — comes together under the <em>governance umbrella</em>. This chapter is where the AI architect role becomes genuinely accountable for what the organization deploys.">
+        <div class="slide-num">01 / 22</div>
+        <div class="brand-full">
+          <svg class="brand-mark-lg" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+          <div class="brand-wordmark">
+            <span class="name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+            <span class="tag">AB-100 Course</span>
+          </div>
+        </div>
+        <div class="finale-banner">★ COURSE FINALE</div>
+        <div class="eyebrow">CHAPTER 11</div>
+        <h1>Responsible AI<br><em>Security, Governance,</em><br>Risk &amp; Compliance</h1>
+        <div class="subtitle">Where everything from Chapters 1–10 comes together under the governance umbrella. The architect's accountability layer.</div>
+        <div class="meta-row">
+          <div>FOCUS<strong>The governance umbrella</strong></div>
+          <div>SCOPE<strong>RAI · security · vulnerabilities · compliance · audit</strong></div>
+          <div>OUTPUT<strong>Production-ready governance framework</strong></div>
+        </div>
+      </section>
+
+      <!-- 02 OVERVIEW -->
+      <section class="slide content-slide"
+        data-section="Opening"
+        data-script="Five themes. <em>The complete governance framework for AI solutions</em>. Foundations through compliance through operating model. <em>This is what makes you the architect, not the developer</em> — accountability for what the system does in the wild.">
+        <div class="slide-num">02 / 22</div>
+        <h3 class="slide-h">What this chapter <em>covers</em></h3>
+        <p class="lead">Five themes covering the full governance umbrella. By the end, you have a defensible framework for shipping AI in regulated environments.</p>
+        <div class="cards">
+          <div class="card" data-step data-script="One — <em>RAI principles and 4-layer defense</em>. Microsoft's 6 RAI principles. The 4-layer defense in depth model. Implementation guide for translating principles to controls.">
+            <div class="num">01</div><h4>Foundation</h4>
+            <p>6 RAI principles · 4-layer defense in depth · 6-area implementation guide.</p>
+            <div class="ex"><strong>Output</strong>Governance baseline.</div>
+          </div>
+          <div class="card" data-step data-script="Two — <em>security and identity</em>. Managed identities, RBAC, separation of duties. Data governance — DLP, sensitivity labels, retention. The control layer that protects the agent and its data.">
+            <div class="num">02</div><h4>Security &amp; Identity</h4>
+            <p>Managed identities · RBAC · separation of duties · DLP · sensitivity · retention.</p>
+            <div class="ex"><strong>Output</strong>Identity &amp; access design.</div>
+          </div>
+          <div class="card" data-step data-script="Three — <em>AI vulnerabilities and mitigations</em>. The 5 vulnerability categories unique to AI — prompt manipulation, model behavior, data exposure, identity gaps, agent workflow. Plus the 5 mitigation strategies and layered defense.">
+            <div class="num">03</div><h4>Vulnerabilities</h4>
+            <p>5 AI vulnerability categories · 5 mitigation strategies · layered defense.</p>
+            <div class="ex"><strong>Output</strong>Threat model.</div>
+          </div>
+          <div class="card" data-step data-script="Four — <em>compliance</em>. Data residency, Purview controls, grounding data access, audit trails. The regulatory layer that auditors will examine.">
+            <div class="num">04</div><h4>Compliance</h4>
+            <p>Residency · Purview · grounding access · audit trails for models &amp; data.</p>
+            <div class="ex"><strong>Output</strong>Compliance framework.</div>
+          </div>
+          <div class="card" data-step data-script="Five — <em>operating model</em>. RACI for governance. Incident response. Production sign-off. The day-two operations that turn governance design into governance practice.">
+            <div class="num">05</div><h4>Operating Model</h4>
+            <p>Governance RACI · incident response · production sign-off.</p>
+            <div class="ex"><strong>Output</strong>Day-2 operations.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 SECTION DIVIDER UNIT 1 -->
+      <section class="slide section-divider"
+        data-section="Foundation"
+        data-script="First unit. <em>RAI principles and the 4-layer defense in depth model.</em> The foundation everything else builds on.">
+        <div class="slide-num">03 / 22</div>
+        <div class="label">UNIT ONE</div>
+        <h2>RAI Principles<br>&amp; <em>Defense in Depth</em></h2>
+        <div class="sub">6 Microsoft Responsible AI principles · 4-layer defense in depth model · 6-area implementation guide. The foundation everything else builds on.</div>
+      </section>
+
+      <!-- 04 6 RAI PRINCIPLES -->
+      <section class="slide content-slide"
+        data-section="Foundation"
+        data-script="<em>Microsoft's six Responsible AI principles</em>. We touched on these in Chapter 5. Here they become governance lenses — every AI solution gets evaluated through all six. <em>Skip any one and you have a gap that will surface in audit</em>. I'll bring them up one at a time.">
+        <div class="slide-num">04 / 22</div>
+        <h3 class="slide-h">Six <em>Responsible AI principles</em></h3>
+        <p class="lead">Microsoft's published RAI principles — the lens through which every AI solution gets evaluated. Each principle maps to specific technical controls.</p>
+        <div class="rai-principles">
+          <div class="rai-card r1" data-step
+            data-script="<em>Principle 1 — Fairness</em>. AI systems should treat all groups equitably. Technical controls — bias testing on training data, fairness evaluation across user groups, mitigation strategies for biased outputs.">
+            <div class="ico">⚖</div>
+            <div class="lab">PRINCIPLE 01</div>
+            <h4>Fairness</h4>
+            <p>AI systems treat all groups equitably across demographics and use cases.</p>
+            <div class="ctrl"><strong>Controls</strong>Bias testing · fairness evaluation · disparate impact review</div>
+          </div>
+          <div class="rai-card r2" data-step
+            data-script="<em>Principle 2 — Reliability and Safety</em>. Systems function as intended and prevent harm. Controls — testing across normal and edge cases, fallback behavior, hallucination detection, safety boundaries in adversarial scenarios.">
+            <div class="ico">🛡</div>
+            <div class="lab">PRINCIPLE 02</div>
+            <h4>Reliability &amp; Safety</h4>
+            <p>Systems function as intended; prevent harm; predictable in edge cases.</p>
+            <div class="ctrl"><strong>Controls</strong>Edge case testing · fallback behavior · hallucination detection</div>
+          </div>
+          <div class="rai-card r3" data-step
+            data-script="<em>Principle 3 — Privacy and Security</em>. Protect personal and organizational data. Controls — managed identities, RBAC, DLP, encryption at rest and in transit, data minimization. <em>The most technical of the principles</em>.">
+            <div class="ico">🔒</div>
+            <div class="lab">PRINCIPLE 03</div>
+            <h4>Privacy &amp; Security</h4>
+            <p>Protect personal and organizational data through strong controls and minimization.</p>
+            <div class="ctrl"><strong>Controls</strong>Managed identity · RBAC · DLP · encryption · minimization</div>
+          </div>
+          <div class="rai-card r4" data-step
+            data-script="<em>Principle 4 — Inclusiveness</em>. AI should empower people of all abilities and backgrounds. Controls — accessibility testing, multilingual support, diverse user testing.">
+            <div class="ico">♿</div>
+            <div class="lab">PRINCIPLE 04</div>
+            <h4>Inclusiveness</h4>
+            <p>Empower people of all abilities and backgrounds; remove barriers.</p>
+            <div class="ctrl"><strong>Controls</strong>Accessibility testing · multilingual · diverse user research</div>
+          </div>
+          <div class="rai-card r5" data-step
+            data-script="<em>Principle 5 — Transparency</em>. Solutions should be understandable with clear disclosures on AI usage. Controls — user-facing AI disclosures, model cards, documentation of limitations, escalation paths.">
+            <div class="ico">👁</div>
+            <div class="lab">PRINCIPLE 05</div>
+            <h4>Transparency</h4>
+            <p>Understandable with clear disclosures on AI involvement and limitations.</p>
+            <div class="ctrl"><strong>Controls</strong>AI disclosures · model cards · limitation docs · escalation paths</div>
+          </div>
+          <div class="rai-card r6" data-step
+            data-script="<em>Principle 6 — Accountability</em>. Organizations retain responsibility for AI decisions. Controls — clear ownership, governance boards, audit trails, sign-off workflows. <em>This is where the architect role lives</em> — accountable for what the system does.">
+            <div class="ico">⚓</div>
+            <div class="lab">PRINCIPLE 06</div>
+            <h4>Accountability</h4>
+            <p>Organizations retain responsibility for AI decisions — humans accountable, not the AI.</p>
+            <div class="ctrl"><strong>Controls</strong>Ownership · governance boards · audit trails · sign-off</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05 4-LAYER DEFENSE IN DEPTH -->
+      <section class="slide content-slide"
+        data-section="Foundation"
+        data-script="<em>The 4-layer defense in depth model</em>. Microsoft's published architecture for securing AI agents. Identity, Data, Observability, Threat. <em>No single layer is sufficient</em> — each one catches what the others miss. I'll bring them up one at a time.">
+        <div class="slide-num">05 / 22</div>
+        <h3 class="slide-h">Four-layer <em>defense in depth</em></h3>
+        <p class="lead">Microsoft's published architecture for securing AI agents. Each layer catches what others miss. Defense in depth means no single failure compromises the system.</p>
+        <div class="defense-stack">
+          <div class="def-title">▸ The 4-layer defense in depth model</div>
+          <div class="def-grid">
+            <div class="def-layer l1" data-step
+              data-script="<em>Layer 1 — Identity and access</em>. Managed identities per agent. RBAC at narrowest scope. Separation of duties — Maker, Publisher, Admin, Security. <em>The first line of defense</em> — without identity controls, nothing else matters.">
+              <div class="num">LAYER 01</div>
+              <h6>Identity &amp; Access</h6>
+              <p>First line of defense. Without identity, nothing else holds.</p>
+              <ul>
+                <li>Managed identities per agent</li>
+                <li>RBAC at narrowest scope</li>
+                <li>Separation of duties</li>
+                <li>Access review cadence</li>
+              </ul>
+            </div>
+            <div class="def-layer l2" data-step
+              data-script="<em>Layer 2 — Data governance</em>. Data boundaries — internal versus public. DLP policies on connectors and actions. Sensitivity labels propagated through to outputs. Residency enforcement. <em>The data layer protects what the agent can see and what it can leak</em>.">
+              <div class="num">LAYER 02</div>
+              <h6>Data Governance</h6>
+              <p>What the agent can see — and what it can leak.</p>
+              <ul>
+                <li>Data boundaries (internal/public)</li>
+                <li>DLP on connectors</li>
+                <li>Sensitivity labels propagated</li>
+                <li>Residency enforcement</li>
+              </ul>
+            </div>
+            <div class="def-layer l3" data-step
+              data-script="<em>Layer 3 — Observability and cost</em>. Centralized logging for prompts, tool calls, errors, safety events. Dashboards for quality, safety, cost. Alerts for spend thresholds and anomalies. <em>You can't govern what you can't see</em>.">
+              <div class="num">LAYER 03</div>
+              <h6>Observability &amp; Cost</h6>
+              <p>You can't govern what you can't see.</p>
+              <ul>
+                <li>Centralized logging</li>
+                <li>Quality, safety, cost dashboards</li>
+                <li>Anomaly &amp; spend alerts</li>
+                <li>Tagged resources for attribution</li>
+              </ul>
+            </div>
+            <div class="def-layer l4" data-step
+              data-script="<em>Layer 4 — Threat protection and assurance</em>. AI-specific threat detection — prompt manipulation, data leakage attempts. Input/output filtering. Red team evaluations pre-production. Incident response for the AI-specific failure modes. <em>The active defense layer</em>.">
+              <div class="num">LAYER 04</div>
+              <h6>Threat Protection</h6>
+              <p>Active defense — for AI-specific failure modes.</p>
+              <ul>
+                <li>Prompt manipulation detection</li>
+                <li>Input/output filtering</li>
+                <li>Pre-prod red teaming</li>
+                <li>Incident response readiness</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 IMPLEMENTATION GUIDE - 6 areas -->
+      <section class="slide content-slide"
+        data-section="Foundation"
+        data-script="<em>The 6-area implementation guide</em>. Microsoft's published checklist for translating the 4-layer model into actual configuration work. <em>Each area has named owners</em> — these aren't tasks for the architect alone. I'll bring them up one at a time.">
+        <div class="slide-num">06 / 22</div>
+        <h3 class="slide-h">Six-area <em>implementation guide</em></h3>
+        <p class="lead">The checklist that turns the 4-layer model into actual configuration work. Each area has named owners — the architect coordinates, doesn't do it all alone.</p>
+        <div class="impl-guide">
+          <div class="impl-card i1" data-step
+            data-script="<em>Area 1 — Establish identities and access</em>. Create managed identities per agent per environment. Assign least-privilege Azure roles at narrowest scope. Define maker, publisher, admin role mappings and access review cadence.">
+            <div class="step-num">1</div>
+            <div class="body">
+              <h6>Establish identities &amp; access</h6>
+              <p>Managed identities per agent · least-privilege roles · access review cadence.</p>
+            </div>
+          </div>
+          <div class="impl-card i2" data-step
+            data-script="<em>Area 2 — Harden data access</em>. Inventory knowledge sources and classify sensitivity. Apply DLP and sensitivity labels. Restrict risky connectors and HTTP calls. Configure data residency and retention.">
+            <div class="step-num">2</div>
+            <div class="body">
+              <h6>Harden data access</h6>
+              <p>Classify sources · DLP · labels · residency · retention.</p>
+            </div>
+          </div>
+          <div class="impl-card i3" data-step
+            data-script="<em>Area 3 — Stand up observability</em>. Route logs to a central workspace. Enable telemetry for prompts, tool calls, errors. Build dashboards for quality, safety, cost. Configure alerts for anomalies and budget thresholds.">
+            <div class="step-num">3</div>
+            <div class="body">
+              <h6>Stand up observability</h6>
+              <p>Central workspace · prompt &amp; tool telemetry · dashboards · alerts.</p>
+            </div>
+          </div>
+          <div class="impl-card i4" data-step
+            data-script="<em>Area 4 — Enable threat protection</em>. Turn on AI-aware threat protections and content safety checks. Schedule red team assessments. Track findings to closure before production release.">
+            <div class="step-num">4</div>
+            <div class="body">
+              <h6>Enable threat protection</h6>
+              <p>AI threat detection · content safety · scheduled red team assessments.</p>
+            </div>
+          </div>
+          <div class="impl-card i5" data-step
+            data-script="<em>Area 5 — Govern environments and releases</em>. Use environment routing to separate Dev/Test/Prod. Require peer review and approver sign-off to publish. Block publishing if mandatory checks fail.">
+            <div class="step-num">5</div>
+            <div class="body">
+              <h6>Govern environments &amp; releases</h6>
+              <p>Environment routing · peer review · approval gates · publish blocking.</p>
+            </div>
+          </div>
+          <div class="impl-card i6" data-step
+            data-script="<em>Area 6 — Prepare incident response</em>. Document disable and rollback steps. Communication templates. Evidence preservation. Tabletop exercises for high-impact agents.">
+            <div class="step-num">6</div>
+            <div class="body">
+              <h6>Prepare incident response</h6>
+              <p>Disable/rollback runbooks · communication templates · tabletop exercises.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 07 QUIZ 1 -->
+      <section class="slide content-slide"
+        data-section="Foundation"
+        data-script="Quick check.">
+        <div class="slide-num">07 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 1 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which option best reflects a <em>defense in depth</em> approach when designing enterprise AI agents?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Grant broad access so the agent can retrieve any data it may need in future tasks</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Defense in depth means using layered identity, access, data governance, monitoring, and threat protection controls. Microsoft's 4-layer model — identity/data/observability/threat — explicitly avoids any single point of failure. Granting broad access violates least privilege from the first layer. Letting the agent self-correct without human oversight removes accountability. Disabling logging breaks the observability layer. Layered controls is the only answer that matches the published architecture."><span class="letter">B</span> Use layered identity, access, data governance, monitoring, and threat protection controls</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> Allow the agent to self-correct risky behaviors without human oversight</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Disable logging to reduce operational costs</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 08 SECTION DIVIDER UNIT 2 -->
+      <section class="slide section-divider"
+        data-section="Security &amp; Identity"
+        data-script="Unit two. <em>Security and identity in detail.</em> Managed identities, RBAC, separation of duties. Data governance — DLP, sensitivity labels, retention.">
+        <div class="slide-num">08 / 22</div>
+        <div class="label">UNIT TWO</div>
+        <h2>Security<br>&amp; <em>Identity</em></h2>
+        <div class="sub">Managed identities · RBAC · separation of duties · DLP · sensitivity labels · retention. The control layer that protects agents and data.</div>
+      </section>
+
+      <!-- 09 IDENTITY FOUNDATIONS -->
+      <section class="slide content-slide"
+        data-section="Security &amp; Identity"
+        data-script="<em>Identity foundations</em>. Two pillars. Managed identities and RBAC on the left. Separation of duties on the right with the four roles. <em>Every agent gets a unique identity, scoped to least privilege, with separated build-publish-admin-security roles</em>. I'll reveal each side.">
+        <div class="slide-num">09 / 22</div>
+        <h3 class="slide-h">Identity <em>foundations</em></h3>
+        <p class="lead">Two pillars — managed identities with RBAC, plus separation of duties. Every agent gets unique identity, least privilege, separated roles.</p>
+        <div class="identity-grid">
+          <div class="id-card c1" data-step
+            data-script="<em>Pillar 1 — Managed identities and RBAC</em>. Every agent, tool, and pipeline has a first-class identity with ownership and lifecycle metadata. Assign managed identities per agent per environment to remove secrets. RBAC at narrowest scope — subscription, resource group, or resource. <em>When acting on behalf of a user, propagate the user's permissions</em>. When acting as itself, scope a service role with only necessary actions.">
+            <div class="lab">PILLAR 01</div>
+            <h4>Managed identities + RBAC</h4>
+            <div class="practice">
+              <strong>Unique identity per agent</strong>
+              <span>Per environment (prod, pre-prod, dev) with ownership metadata.</span>
+            </div>
+            <div class="practice">
+              <strong>Managed identities — no secrets</strong>
+              <span>Remove embedded credentials, simplify rotation.</span>
+            </div>
+            <div class="practice">
+              <strong>RBAC at narrowest scope</strong>
+              <span>Resource &gt; resource group &gt; subscription. Tighter is better.</span>
+            </div>
+            <div class="practice">
+              <strong>Acting on behalf of user</strong>
+              <span>Propagate user permissions. Don't elevate.</span>
+            </div>
+            <div class="practice">
+              <strong>Acting as itself</strong>
+              <span>Service role with only necessary actions.</span>
+            </div>
+          </div>
+          <div class="id-card c2" data-step
+            data-script="<em>Pillar 2 — Separation of duties</em>. Four roles. Maker — builds the agent. Publisher — promotes to production. Environment Admin — manages tier configuration. Security Admin — owns guardrails and DLP. <em>Require approvals for publishing to production and for changes to high-risk capabilities</em> like data modification. <em>The same person should not be both maker and publisher</em> — that's the entire point.">
+            <div class="lab">PILLAR 02</div>
+            <h4>Separation of duties</h4>
+            <p style="font-size:12px;color:var(--ink-soft);line-height:1.5;margin-bottom:6px">Distinct roles for the four control points. Approvals required for production publishing.</p>
+            <div class="sep-roles">
+              <div class="sep-role s1"><h6>Maker</h6><p>Builds agent</p></div>
+              <div class="sep-role s2"><h6>Publisher</h6><p>Promotes to Prod</p></div>
+              <div class="sep-role s3"><h6>Env Admin</h6><p>Manages tiers</p></div>
+              <div class="sep-role s4"><h6>Security Admin</h6><p>Owns guardrails</p></div>
+            </div>
+            <div style="margin-top:10px;font-size:11.5px;color:var(--ms-navy);background:#FFF4CE;padding:8px 12px;border-radius:4px;border-left:3px solid var(--ms-yellow);line-height:1.4">
+              <strong style="font-family:'Cascadia Code','Consolas',monospace;font-size:9.5px;letter-spacing:1px;display:block;margin-bottom:2px;color:#B58800">⚠ KEY RULE</strong>
+              The same person must <strong>never</strong> be both Maker and Publisher — that defeats the whole pattern.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 DATA GOVERNANCE -->
+      <section class="slide content-slide"
+        data-section="Security &amp; Identity"
+        data-script="<em>Four data governance controls</em>. Data boundaries. DLP and sensitivity. Retention and minimization. Transparency. <em>Together these define what the agent can see, what it can use, what it can keep, and what it must disclose</em>. I'll bring them up one at a time.">
+        <div class="slide-num">10 / 22</div>
+        <h3 class="slide-h">Four <em>data governance</em> controls</h3>
+        <p class="lead">What the agent can see, use, keep, and disclose. Four controls cover the data lifecycle from ingestion through retention.</p>
+        <div class="data-gov">
+          <div class="dg-card d1" data-step
+            data-script="<em>Control 1 — Data boundaries</em>. Separate internal from public workloads. Keep confidential sources out of public-facing agents. Honor data residency by selecting compliant regions for knowledge, logs, and memory. <em>The first cut</em> — what the agent is even allowed to access.">
+            <div class="ico">⛓</div>
+            <div class="lab">CONTROL 01</div>
+            <h5>Data boundaries</h5>
+            <ul>
+              <li>Separate internal vs public workloads</li>
+              <li>Keep confidential out of public agents</li>
+              <li>Honor data residency for region</li>
+              <li>Knowledge, logs, memory all in scope</li>
+            </ul>
+          </div>
+          <div class="dg-card d2" data-step
+            data-script="<em>Control 2 — DLP and sensitivity</em>. DLP policies restrict connectors, actions, data movement. Sensitivity labels applied to knowledge sources. <em>Surface the highest label in responses where supported</em> — so users know they're seeing confidential content.">
+            <div class="ico">🏷</div>
+            <div class="lab">CONTROL 02</div>
+            <h5>DLP &amp; sensitivity</h5>
+            <ul>
+              <li>DLP restricts connectors &amp; actions</li>
+              <li>Sensitivity labels on knowledge</li>
+              <li>Surface highest label in responses</li>
+              <li>Block sensitive outbound flow</li>
+            </ul>
+          </div>
+          <div class="dg-card d3" data-step
+            data-script="<em>Control 3 — Retention and minimization</em>. Define retention windows for logs, agent memories, training data. Automate purge and anonymization. <em>The minimization principle</em> — only keep what you need, only as long as you need it.">
+            <div class="ico">🗑</div>
+            <div class="lab">CONTROL 03</div>
+            <h5>Retention &amp; minimization</h5>
+            <ul>
+              <li>Define windows for logs, memory</li>
+              <li>Automate purge &amp; anonymization</li>
+              <li>Minimum data principle</li>
+              <li>Redact PII at preprocessing</li>
+            </ul>
+          </div>
+          <div class="dg-card d4" data-step
+            data-script="<em>Control 4 — Transparency</em>. Disclose AI involvement and data usage to users and stakeholders. Provide data deletion mechanisms. <em>Required by RAI principle 5</em> — and by GDPR, CCPA, and most regional regulations.">
+            <div class="ico">👁</div>
+            <div class="lab">CONTROL 04</div>
+            <h5>Transparency</h5>
+            <ul>
+              <li>Disclose AI involvement to users</li>
+              <li>Document data usage</li>
+              <li>Provide data deletion paths</li>
+              <li>Required by RAI &amp; regulation</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11 QUIZ 2 -->
+      <section class="slide content-slide"
+        data-section="Security &amp; Identity"
+        data-script="Quick check.">
+        <div class="slide-num">11 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 2 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which approach best aligns with <em>least privilege</em> for a production agent that writes to a single storage account?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Assign Owner at the subscription scope for the agent's identity</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Storage Blob Data Contributor at the storage account scope for the agent's managed identity is the textbook least-privilege answer. The role is just enough to write blobs (not delete or manage), the scope is just the one account (not the whole resource group or subscription), and managed identities eliminate stored secrets. Owner at subscription is wildly over-privileged. Contributor at resource group is still too broad. Shared secrets in code violate the no-secrets principle and Reader can't even write. The combination of right role + narrowest scope + managed identity is the canonical pattern."><span class="letter">B</span> Assign Storage Blob Data Contributor at the storage account scope for the agent's managed identity</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> Assign Contributor at the resource group scope for the agent's identity</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Use a shared secret stored in code with Reader at the resource scope</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 12 SECTION DIVIDER UNIT 3 -->
+      <section class="slide section-divider"
+        data-section="Vulnerabilities"
+        data-script="Unit three. <em>AI vulnerabilities and mitigations.</em> The threat model unique to AI. Five vulnerability categories, five mitigation strategies, the layered defense.">
+        <div class="slide-num">12 / 22</div>
+        <div class="label">UNIT THREE</div>
+        <h2>AI Vulnerabilities<br>&amp; <em>Mitigations</em></h2>
+        <div class="sub">5 vulnerability categories unique to AI · 5 mitigation strategies · layered defense. The threat model traditional security doesn't cover.</div>
+      </section>
+
+      <!-- 13 5 VULNERABILITY CATEGORIES -->
+      <section class="slide content-slide"
+        data-section="Vulnerabilities"
+        data-script="<em>Five AI vulnerability categories</em>. Prompt manipulation. Model behavior. Data exposure. Identity and RBAC gaps. Agent and workflow vulnerabilities. <em>None of these existed in traditional software</em> — or at least, not in this form. I'll bring them up one at a time.">
+        <div class="slide-num">13 / 22</div>
+        <h3 class="slide-h">Five <em>AI vulnerability</em> categories</h3>
+        <p class="lead">The threat model unique to AI. Traditional security covers some of these but most are AI-specific. Each one needs explicit mitigation.</p>
+        <div class="vuln-grid">
+          <div class="vuln-card v1" data-step
+            data-script="<em>Vulnerability 1 — Prompt manipulation</em>. Override system instructions. Deceptive context. Multi-step coercion. Hidden instructions in text, HTML, or files. <em>The most uniquely AI vulnerability</em> — there's no traditional analog. Impact — return of sensitive data, unintended actions, harmful output.">
+            <div class="lab">VULN 01</div>
+            <div class="icon">💉</div>
+            <h5>Prompt manipulation</h5>
+            <ul>
+              <li>"Ignore previous instructions"</li>
+              <li>Deceptive context</li>
+              <li>Multi-step coercion</li>
+              <li>Hidden instructions in files</li>
+            </ul>
+            <div class="impact">Sensitive data leak · unintended actions</div>
+          </div>
+          <div class="vuln-card v2" data-step
+            data-script="<em>Vulnerability 2 — Model behavior</em>. Hallucinations or fabricated information. Toxicity. Poor boundary enforcement on safety instructions. Biased reasoning. Overgeneralization creating compliance risk. <em>The model itself misbehaves</em> — even without an adversary.">
+            <div class="lab">VULN 02</div>
+            <div class="icon">🎲</div>
+            <h5>Model behavior</h5>
+            <ul>
+              <li>Hallucinations / fabrication</li>
+              <li>Toxicity / harmful output</li>
+              <li>Poor safety boundaries</li>
+              <li>Biased reasoning</li>
+            </ul>
+            <div class="impact">Compliance risk · trust erosion</div>
+          </div>
+          <div class="vuln-card v3" data-step
+            data-script="<em>Vulnerability 3 — Data exposure</em>. Prompts indirectly expose sensitive information. Logs and memory store unprotected data. Excessive permissions allow access to data the model doesn't need. Input files contain embedded malicious instructions. <em>The exfiltration path</em>.">
+            <div class="lab">VULN 03</div>
+            <div class="icon">📤</div>
+            <h5>Data exposure</h5>
+            <ul>
+              <li>Indirect exposure via prompts</li>
+              <li>Unprotected logs / memory</li>
+              <li>Excessive permissions</li>
+              <li>Malicious input files</li>
+            </ul>
+            <div class="impact">PII leak · IP exfiltration</div>
+          </div>
+          <div class="vuln-card v4" data-step
+            data-script="<em>Vulnerability 4 — Identity and RBAC gaps</em>. Models or agents inherit elevated privileges. Privilege escalation through misconfigured connectors. Access to downstream tools beyond intent. <em>Traditional vulnerability, expanded surface area</em>.">
+            <div class="lab">VULN 04</div>
+            <div class="icon">🔑</div>
+            <h5>Identity / RBAC gaps</h5>
+            <ul>
+              <li>Elevated agent privileges</li>
+              <li>Connector escalation paths</li>
+              <li>Downstream tool over-access</li>
+              <li>Anomalous elevation attempts</li>
+            </ul>
+            <div class="impact">Privilege escalation · lateral movement</div>
+          </div>
+          <div class="vuln-card v5" data-step
+            data-script="<em>Vulnerability 5 — Agent and workflow</em>. Autonomous tool use without guardrails. Misinterpretation of instructions triggering unintended actions. Poor auditing and rollback. Unsecured flows calling third-party endpoints. <em>The action layer</em> — most dangerous because actions persist.">
+            <div class="lab">VULN 05</div>
+            <div class="icon">⚙</div>
+            <h5>Agent / workflow</h5>
+            <ul>
+              <li>Tool use without guardrails</li>
+              <li>Misinterpreted instructions</li>
+              <li>Poor auditing &amp; rollback</li>
+              <li>Unsecured external calls</li>
+            </ul>
+            <div class="impact">Wrong actions taken · no rollback</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 14 5 MITIGATION STRATEGIES + LAYERED -->
+      <section class="slide content-slide"
+        data-section="Vulnerabilities"
+        data-script="<em>Five mitigation strategies plus layered defense</em>. Activity monitoring. Evaluation and testing. Identity and RBAC. Input/output filtering. Layered defense. <em>None alone is sufficient</em>. I'll reveal them, then the layered defense quote.">
+        <div class="slide-num">14 / 22</div>
+        <h3 class="slide-h">Five <em>mitigation strategies</em> + layered defense</h3>
+        <p class="lead">Mitigations corresponding to the vulnerability categories. Each mitigation is necessary but not sufficient — the layered defense principle is what makes it work.</p>
+        <div class="mitigations">
+          <div class="mit-title">▸ The 5 mitigation strategies</div>
+          <div class="mit-grid">
+            <div class="mit m1" data-step
+              data-script="<em>Mitigation 1 — Activity monitoring</em>. Monitor AI activity logs for anomalies. Investigate spikes in harmful or unexpected output. Dashboards tracking risk-based indicators. Capture user prompts, tool calls, actions.">
+              <div class="num">1</div>
+              <h6>Activity monitoring</h6>
+              <p>Logs, anomaly detection, risk dashboards.</p>
+            </div>
+            <div class="mit m2" data-step
+              data-script="<em>Mitigation 2 — Regular evaluation and testing</em>. Test prompt resilience. Validate expected safety behavior. Assess impact of new model versions. Identify abnormal responses before release. <em>Connects directly to Chapter 9</em>.">
+              <div class="num">2</div>
+              <h6>Evaluation &amp; testing</h6>
+              <p>Prompt resilience, safety, version validation.</p>
+            </div>
+            <div class="mit m3" data-step
+              data-script="<em>Mitigation 3 — Strict identity and RBAC</em>. Least privilege. Managed identities for models, agents, pipelines. Restrict data access to what the AI needs. Approval workflows for privileged operations.">
+              <div class="num">3</div>
+              <h6>Identity &amp; RBAC</h6>
+              <p>Least privilege, managed identities, approvals.</p>
+            </div>
+            <div class="mit m4" data-step
+              data-script="<em>Mitigation 4 — Input/output filtering</em>. Block code execution attempts. Strip unsafe HTML or embedded prompts. Apply safety filters on outputs. Limit file types accepted. <em>The active defense against prompt manipulation</em>.">
+              <div class="num">4</div>
+              <h6>Input/output filtering</h6>
+              <p>Block code execution, strip embedded prompts, safety filters.</p>
+            </div>
+            <div class="mit m5" data-step
+              data-script="<em>Mitigation 5 — Layered defense</em>. The meta-mitigation. No single control is sufficient. Combine identity boundaries, data governance, evaluation, monitoring, and incident response. <em>This is the architectural answer</em>.">
+              <div class="num">5</div>
+              <h6>Layered defense</h6>
+              <p>Combine all the above. The architectural answer.</p>
+            </div>
+          </div>
+          <div data-step
+            data-script="<em>The layered defense principle in Microsoft's words</em>. A layered approach reduces single point failure risk. Identity and access boundaries plus secure data governance plus model evaluation and testing plus monitoring and anomaly detection plus incident response readiness. <em>Each layer compensates for the others</em>.">
+            <div class="layered-quote">
+              <div class="lab">LAYERED DEFENSE PRINCIPLE</div>
+              <p>"A layered approach reduces single point failure risk: <em>identity and access boundaries · secure data governance · model evaluation and testing · monitoring and anomaly detection · incident response readiness</em>." — Each layer compensates for what the others miss.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 15 QUIZ 3 -->
+      <section class="slide content-slide"
+        data-section="Vulnerabilities"
+        data-script="Quick check.">
+        <div class="slide-num">15 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 3 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which scenario represents a <em>prompt manipulation</em> attack?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> A user requests documentation stored in their permission scope</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Embedding hidden instructions inside an uploaded text file is a classic indirect prompt injection — a known prompt manipulation technique. The malicious instructions are processed by the model when it reads the file, even though the user appears to be asking for something innocuous like 'summarize this'. A user requesting their own scoped documentation is normal authorized use. A slow response is a performance issue, not security. An admin updating a managed identity is routine governance. Hidden instructions in input files is the textbook prompt manipulation pattern."><span class="letter">B</span> A user embeds hidden instructions inside an uploaded text file</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> The AI model returns a slow response due to system load</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> An administrator updates an agent's managed identity</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 16 SECTION DIVIDER UNIT 4 -->
+      <section class="slide section-divider"
+        data-section="Compliance"
+        data-script="Unit four. <em>Compliance.</em> Data residency, Purview controls, grounding access, audit trails. The regulatory layer.">
+        <div class="slide-num">16 / 22</div>
+        <div class="label">UNIT FOUR</div>
+        <h2>Compliance<br><em>&amp; Audit</em></h2>
+        <div class="sub">Data residency · Purview controls · grounding data access · audit trails for models and data. The regulatory layer auditors examine.</div>
+      </section>
+
+      <!-- 17 COMPLIANCE GRID - 4 areas -->
+      <section class="slide content-slide"
+        data-section="Compliance"
+        data-script="<em>Four compliance domains</em>. Data residency. Purview controls. Grounding data access. Audit trails. <em>Each is what auditors will examine</em>. I'll bring them up one at a time.">
+        <div class="slide-num">17 / 22</div>
+        <h3 class="slide-h">Four <em>compliance domains</em></h3>
+        <p class="lead">The regulatory layer. Each domain is what auditors will examine. Together they form the compliance evidence package.</p>
+        <div class="comp-grid">
+          <div class="comp-card c1" data-step
+            data-script="<em>Domain 1 — Data residency</em>. Where prompts, context, model inputs are processed. Where logs and conversations are stored. Whether unpublished agents and preview features follow different rules. Whether cross-region interactions occur during inference. <em>Default to in-region</em> with explicit approval for any cross-region exception.">
+            <div class="lab">DOMAIN 01</div>
+            <h5>Data residency</h5>
+            <ul>
+              <li><strong>Where prompts process</strong> — by region</li>
+              <li><strong>Where logs store</strong> — telemetry, conversations</li>
+              <li><strong>Preview features</strong> — may differ from GA</li>
+              <li><strong>Cross-region inference</strong> — disable by default</li>
+              <li><strong>Connectors &amp; plugins</strong> — verify they don't cross boundaries</li>
+            </ul>
+          </div>
+          <div class="comp-card c2" data-step
+            data-script="<em>Domain 2 — Purview controls for M365 Copilot</em>. Sensitivity labels restrict cross-tenant or cross-region transmission. DLP rules prevent sensitive data in AI prompts or outputs. Auditing, policy insights, compliance documentation. <em>Validate Copilot interaction logs follow residency rules</em>.">
+            <div class="lab">DOMAIN 02</div>
+            <h5>Purview controls (M365 Copilot)</h5>
+            <ul>
+              <li><strong>Sensitivity labels</strong> — restrict cross-tenant transmission</li>
+              <li><strong>DLP rules</strong> — block sensitive data in prompts or outputs</li>
+              <li><strong>Auditing &amp; policy insights</strong> — for Copilot solutions</li>
+              <li><strong>Interaction logs</strong> — follow residency rules</li>
+            </ul>
+          </div>
+          <div class="comp-card c3" data-step
+            data-script="<em>Domain 3 — Grounding data access controls</em>. Least privilege by default. Role-aligned data partitions — separate by function. Clear ownership and stewardship. Auditability — log every retrieval. <em>For model tuning</em> — segregated environments, approval workflows for new datasets, verified data lineage, restricted promotion of tuned models.">
+            <div class="lab">DOMAIN 03</div>
+            <h5>Grounding access &amp; tuning</h5>
+            <ul>
+              <li><strong>Least privilege by default</strong> — grounding access</li>
+              <li><strong>Role-aligned partitions</strong> — separate by function</li>
+              <li><strong>Stewardship assigned</strong> — clear ownership</li>
+              <li><strong>Tuning approval workflows</strong> — verified lineage</li>
+              <li><strong>Restricted promotion</strong> — tuned models gated</li>
+            </ul>
+          </div>
+          <div class="comp-card c4" data-step
+            data-script="<em>Domain 4 — Audit trails</em>. Who, what, when. For models — registration, tuning, promotion, rollbacks, deployment, access attempts. For data — ingestion, schema changes, refresh cycles, label changes, residency movement. <em>Logs capture metadata, not content</em> — to avoid unnecessary exposure of sensitive information. Retention 90 days for low risk, 12-24 months for regulated, indefinite for incidents.">
+            <div class="lab">DOMAIN 04</div>
+            <h5>Audit trails — models &amp; data</h5>
+            <ul>
+              <li><strong>Models:</strong> registration, tuning, promotion, rollback</li>
+              <li><strong>Data:</strong> ingestion, schema, refresh, residency events</li>
+              <li><strong>Capture metadata, not content</strong> — avoid exposure</li>
+              <li><strong>Immutable logs</strong> — separation of duties enforced</li>
+              <li><strong>Retention:</strong> 90d low-risk, 12-24mo regulated, ∞ incidents</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 18 QUIZ 4 -->
+      <section class="slide content-slide"
+        data-section="Compliance"
+        data-script="Last knowledge check of the course.">
+        <div class="slide-num">18 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 4 of 4 · final knowledge check</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which statement best describes a complete <em>audit trail</em> design for AI model changes?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> It captures only deployment timestamps to track system uptime</button>
+            <button class="quiz-opt" data-correct="true" data-explain="A complete audit trail records who made changes, what changed, and when — the classic 5W audit pattern adapted for AI. For model changes specifically, this means tracking model registration, tuning operations, environment promotions, rollbacks, deployment configuration changes, and access attempts (including unauthorized ones). Capturing only deployment timestamps misses tuning, rollbacks, and access events. Latency metrics are operational telemetry, not audit. Logging only data access misses model lifecycle events. Who/what/when is the foundational audit pattern."><span class="letter">B</span> It records who made changes, what changed, and when the changes occurred</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> It focuses primarily on latency and performance metrics</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> It logs only data access events</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 19 SECTION DIVIDER UNIT 5 -->
+      <section class="slide section-divider"
+        data-section="Operating Model"
+        data-script="Last unit of Chapter 11 and the course. <em>The operating model.</em> RACI, incident response, production sign-off. The day-two work that turns governance design into governance practice.">
+        <div class="slide-num">19 / 22</div>
+        <div class="label">UNIT FIVE</div>
+        <h2>Operating<br>Model<br>&amp; <em>Day-2</em></h2>
+        <div class="sub">Governance RACI · incident response runbooks · production sign-off. Where governance design becomes governance practice.</div>
+      </section>
+
+      <!-- 20 RACI + INCIDENT RESPONSE -->
+      <section class="slide content-slide"
+        data-section="Operating Model"
+        data-script="<em>The governance RACI plus the incident response playbook</em>. RACI on the left — five activities across four roles. Incident response on the right — five steps from detection through recovery. <em>Both required for production operation</em>. I'll reveal each.">
+        <div class="slide-num">20 / 22</div>
+        <h3 class="slide-h">RACI &amp; <em>incident response</em></h3>
+        <p class="lead">Who owns what in governance. How you respond when something goes wrong. Both required before any AI agent reaches production.</p>
+        <div class="op-model">
+          <div class="op-raci" data-step
+            data-script="<em>The governance RACI</em>. Five governance activities — RAI review, security baseline, residency configuration, vulnerability mitigation, audit and compliance reporting. Four roles — AI Architect, Security Admin, Compliance Officer, Product Owner. <em>The AI Architect is Accountable for RAI review and vulnerability mitigation</em>. Security Admin is Accountable for the security baseline. Compliance Officer is Accountable for audit and residency. Product Owner is Responsible for business outcomes.">
+            <div class="or-row head">
+              <div>Governance activity</div>
+              <div>AI Architect</div>
+              <div>Security Admin</div>
+              <div>Compliance</div>
+              <div>Product Owner</div>
+            </div>
+            <div class="or-row">
+              <div>RAI review</div>
+              <div class="or-cell a">A/R</div>
+              <div class="or-cell c">C</div>
+              <div class="or-cell c">C</div>
+              <div class="or-cell c">C</div>
+            </div>
+            <div class="or-row">
+              <div>Security baseline</div>
+              <div class="or-cell c">C</div>
+              <div class="or-cell a">A/R</div>
+              <div class="or-cell c">C</div>
+              <div class="or-cell i">I</div>
+            </div>
+            <div class="or-row">
+              <div>Residency configuration</div>
+              <div class="or-cell c">C</div>
+              <div class="or-cell r">R</div>
+              <div class="or-cell a">A</div>
+              <div class="or-cell i">I</div>
+            </div>
+            <div class="or-row">
+              <div>Vulnerability mitigation</div>
+              <div class="or-cell a">A</div>
+              <div class="or-cell r">R</div>
+              <div class="or-cell c">C</div>
+              <div class="or-cell i">I</div>
+            </div>
+            <div class="or-row">
+              <div>Audit &amp; compliance reporting</div>
+              <div class="or-cell c">C</div>
+              <div class="or-cell c">C</div>
+              <div class="or-cell a">A/R</div>
+              <div class="or-cell i">I</div>
+            </div>
+          </div>
+          <div class="op-incident" data-step
+            data-script="<em>The incident response playbook</em>. Five steps. Detect — anomaly alerts, user reports, monitoring dashboards. Disable — quickly disable the agent. Preserve — keep logs and artifacts for forensic analysis. Notify — communicate with stakeholders per pre-defined templates. Recover — rollback to last known good state, then post-mortem. <em>Rehearse this for high-impact agents</em> — tabletop exercises before production.">
+            <h5>Incident response playbook</h5>
+            <p>Five steps from detection through recovery. Pre-rehearsed for high-impact agents.</p>
+            <h6>The 5 steps</h6>
+            <ul>
+              <li><strong style="color:#FFFFFF">Detect</strong> — anomaly alerts, user reports, dashboards</li>
+              <li><strong style="color:#FFFFFF">Disable</strong> — quickly disable the agent</li>
+              <li><strong style="color:#FFFFFF">Preserve</strong> — logs &amp; artifacts for forensic analysis</li>
+              <li><strong style="color:#FFFFFF">Notify</strong> — pre-defined communication templates</li>
+              <li><strong style="color:#FFFFFF">Recover</strong> — rollback, then post-mortem</li>
+            </ul>
+            <div style="margin-top:12px;padding:10px 14px;background:rgba(255,185,0,.15);border-left:3px solid var(--ms-cyan);border-radius:4px;font-size:11.5px;color:rgba(255,255,255,.95);line-height:1.4">
+              <strong style="color:var(--ms-cyan);font-family:'Cascadia Code','Consolas',monospace;font-size:9.5px;letter-spacing:1px;display:block;margin-bottom:2px">⚡ TABLETOP DRILL</strong>
+              Run a tabletop exercise quarterly for high-impact agents. <em style="color:var(--ms-cyan);font-style:normal;font-weight:600">First time you do incident response should NOT be in production.</em>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 21 SCENARIO - COURSE CAPSTONE -->
+      <section class="slide content-slide"
+        data-section="Wrap"
+        data-script="<em>Course capstone scenario.</em> Pairs work through this final integrating challenge. <em>Pharmaceutical, multi-region, regulated industry</em> — you have to apply Chapters 1 through 11 together. There's no single right answer — that's the point. Architect-level thinking required.">
+        <div class="slide-num">21 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Course capstone <em>scenario</em></h3>
+        <p class="lead" style="margin-bottom:14px">Apply Chapters 1–11 end-to-end. <em>Pharmaceutical, multi-region, regulated.</em></p>
+        <div class="scenario">
+          <div class="tag">★ Course Capstone · Pair Discussion</div>
+          <h3>PharmaCorp's Enterprise AI Assistant Program</h3>
+          <div class="quote">"PharmaCorp is a global pharmaceutical company. 75,000 employees across 40+ countries. Subject to FDA, EMA, HIPAA, GDPR — full regulatory complexity. They're launching an enterprise AI assistant program with: (1) a custom medical research model in Foundry for drug discovery, (2) Copilot Studio agents for clinical trial coordination and regulatory submissions, (3) D365 Customer Service AI for patient support, (4) deployment across US, EU, APAC, and LATAM regions. 5,000+ users across business, scientific, and clinical roles. CIO has asked you, the AI architect, to design the responsible AI, security, governance, risk, and compliance framework for the program. 12-month rollout. The Audit Committee will review your framework next month."</div>
+          <div class="prompts">
+            <h5>Discuss with your partner</h5>
+            <ul>
+              <li>Which RAI principles are most critical here? Why? What goes in the Audit Committee briefing?</li>
+              <li>Design the 4-layer defense in depth across the three solution components. What's different between the medical research model and the patient-support agent?</li>
+              <li>Threat model — what are the top 3 AI vulnerabilities for this program? How do you mitigate each?</li>
+              <li>Multi-region compliance — GDPR + HIPAA + FDA validation requirements. How do you architect for residency and audit?</li>
+              <li>Audit trail requirements — FDA expects validation evidence. What gets logged, how immutable, retained for how long?</li>
+              <li>Governance RACI — who's accountable for what at PharmaCorp? Where do you place the AI Architect?</li>
+              <li>Day 1 incident — what's your response plan if the medical research model produces a hallucinated drug interaction recommendation? Walk through the 5 steps.</li>
+            </ul>
+          </div>
+          <button class="reveal-btn" id="revealAnswer">Reveal Discussion Points →</button>
+          <div class="answer-panel" id="answerPanel">
+            <div class="ap-label">Guide · capstone discussion points</div>
+            <div class="ap-row">
+              <div class="ap-q">Critical RAI principles for pharma</div>
+              <div class="ap-a">
+                <span><strong>Reliability &amp; Safety:</strong> Highest priority — clinical decisions can harm patients. Hallucinated drug interactions = direct patient harm.</span>
+                <span><strong>Privacy &amp; Security:</strong> HIPAA + GDPR — patient data is the most sensitive class. PHI plus medical history.</span>
+                <span><strong>Transparency:</strong> FDA validation explicitly requires explainability. Clinicians and patients must know AI is involved.</span>
+                <span><strong>Accountability:</strong> Pharma legal liability — humans on the hook for decisions, not the AI. Required by FDA submissions.</span>
+                <span><strong>Audit Committee briefing focus:</strong> Lead with reliability/safety case + clear accountability chain. Show layered defense, not single controls.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">4-layer defense across the three components</div>
+              <div class="ap-a">
+                <span><strong>Medical research model (Foundry):</strong> Strictest — Layer 1 isolated managed identities, Layer 2 PHI never leaves region, Layer 3 every inference logged with model version, Layer 4 red team monthly + adversarial input testing.</span>
+                <span><strong>Clinical trial Copilot Studio agents:</strong> High — same Layer 1/2 baseline, Layer 3 conversation logging with PHI redaction, Layer 4 prompt injection filtering on uploaded protocols.</span>
+                <span><strong>D365 patient-support AI:</strong> Standard — Layer 1/2 standard, Layer 3 normal Copilot telemetry, Layer 4 standard content safety. Lower risk because it's directing to humans, not making clinical calls.</span>
+                <span><strong>Match rigor to risk:</strong> Don't apply medical-research-model rigor to the patient-support chatbot — that's gold-plating that delays the program.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Top 3 vulnerabilities + mitigations</div>
+              <div class="ap-a">
+                <span><strong>1. Model behavior — hallucinations in clinical context:</strong> Mitigation = grounding-only responses (no free generation), confidence thresholds with human handoff below threshold, regular evaluation against medical golden datasets.</span>
+                <span><strong>2. Data exposure — PHI leakage:</strong> Mitigation = DLP on all connectors, sensitivity labels propagated through agent responses, tenant-level Purview policies, regional data boundaries.</span>
+                <span><strong>3. Prompt manipulation — clinical trial uploads with hidden instructions:</strong> Mitigation = input sanitization for uploaded files, structured prompt templates with allowlists, output filtering for unexpected actions.</span>
+                <span><strong>The threat model is uniquely pharma:</strong> Insider risk (researchers exfiltrating IP), regulatory (audit failure), patient safety (clinical errors). Mitigations must address all three.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Multi-region compliance architecture</div>
+              <div class="ap-a">
+                <span><strong>Per-region deployment:</strong> 4 regions × 4 environment tiers = 16 environments minimum. Foundry workspaces per region. D365 tenants per region.</span>
+                <span><strong>EU GDPR:</strong> EU patient data never leaves EU — even in Dev. Right-to-deletion mechanisms. DPO sign-off on every release.</span>
+                <span><strong>US HIPAA:</strong> BAA agreements verified. PHI access logged per individual. Minimum necessary access.</span>
+                <span><strong>FDA validation:</strong> Model versions immutable post-validation. Validation evidence per region. CSV (computer system validation) documented.</span>
+                <span><strong>APAC + LATAM:</strong> Country-by-country review — each has unique regulations. Default in-region, deny cross-border.</span>
+                <span><strong>Cross-region exceptions:</strong> Documented approval workflow, time-limited, audit trail required.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Audit trail for FDA validation</div>
+              <div class="ap-a">
+                <span><strong>What gets logged:</strong> Every model registration, tuning operation, promotion, rollback, evaluation result, data refresh, sensitivity label change, residency event, access attempt. Plus identity per action.</span>
+                <span><strong>Immutability:</strong> Append-only audit store. Separate identity from production write access. WORM (write once read many) for FDA-validated artifacts.</span>
+                <span><strong>Retention:</strong> FDA-regulated artifacts — minimum 7 years post-decommission. EU GDPR conflicts here — work with legal on retention vs. right-to-erasure conflict.</span>
+                <span><strong>Format:</strong> Structured (JSON) with correlation IDs across systems. Time-stamped with role-based attribution.</span>
+                <span><strong>Capture metadata, not content:</strong> Critical — log that PHI was accessed, not the PHI itself. Protects from audit trail becoming the leak vector.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Governance RACI for PharmaCorp</div>
+              <div class="ap-a">
+                <span><strong>AI Architect:</strong> Accountable for RAI review, vulnerability mitigation, defense-in-depth design, model card content. Responsible for technical reviews. Single point of failure risk — needs strong R partners.</span>
+                <span><strong>Chief Medical Officer:</strong> Accountable for clinical safety review of medical research model. Veto authority on production release.</span>
+                <span><strong>DPO (Data Protection Officer):</strong> Accountable for GDPR compliance, residency, retention conflicts. Required EU role.</span>
+                <span><strong>Compliance Officer:</strong> Accountable for FDA submissions, HIPAA BAAs, audit reporting.</span>
+                <span><strong>Security Admin (CISO team):</strong> Accountable for security baseline, threat protection, incident response readiness.</span>
+                <span><strong>Product Owner per agent:</strong> Responsible for business outcomes and the user-facing decisions the agent enables.</span>
+                <span><strong>Audit Committee:</strong> Reviews quarterly. Accountable to the Board.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Day 1 incident — hallucinated drug interaction</div>
+              <div class="ap-a">
+                <span><strong>Step 1 Detect:</strong> Either anomaly alert (output flagged) or clinician report. Whichever first.</span>
+                <span><strong>Step 2 Disable:</strong> AI Architect approves immediate disable. Within 5 minutes. Don't wait for the post-mortem.</span>
+                <span><strong>Step 3 Preserve:</strong> Lock the model version, conversation log, grounding state, model cards. Forensic snapshot.</span>
+                <span><strong>Step 4 Notify:</strong> CMO immediately (clinical safety). DPO and Compliance Officer (regulatory). Affected clinicians (clinical impact). FDA if required by regulation. Use pre-defined communication templates — don't draft under pressure.</span>
+                <span><strong>Step 5 Recover:</strong> Roll back to last validated model version. Post-mortem within 72 hours. Determine if grounding data, model behavior, or prompt was the failure mode. Update controls before re-enable. <em>Validation evidence regenerated</em> before re-deployment.</span>
+                <span><strong>The architect's call:</strong> Bias toward disable when in doubt. Patient safety over operational continuity. Always.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 22 COURSE FINALE RECAP -->
+      <section class="slide content-slide"
+        data-section="Wrap"
+        data-script="The course finale. <em>AB-100 complete.</em> Six final takeaways from Chapter 11. Then the course-wide recap. I'll bring them up one at a time.">
+        <div class="slide-num">22 / 22</div>
+        <h3 class="slide-h">Chapter 11 &amp; <em>course finale</em></h3>
+        <p class="lead">Six takeaways from Chapter 11. Plus the course-wide stats and what you carry forward as an AB-100 architect.</p>
+        <div class="finale-recap">
+          <div class="finale-stats">
+            <div class="fs-item f1"><div class="num">11</div><div class="lab">Chapters</div></div>
+            <div class="fs-item f2"><div class="num">5</div><div class="lab">Themes / chapter</div></div>
+            <div class="fs-item f3"><div class="num">10</div><div class="lab">Real scenarios</div></div>
+            <div class="fs-item f4"><div class="num">∞</div><div class="lab">Architect calls</div></div>
+          </div>
+          <div class="recap-list">
+            <div class="recap-item" data-step
+              data-script="One — six RAI principles. Fairness, reliability and safety, privacy and security, inclusiveness, transparency, accountability. The lens through which every AI solution gets evaluated.">
+              <div class="check">1</div><div class="text"><em>6 RAI principles</em>: Fairness · Reliability &amp; Safety · Privacy &amp; Security · Inclusiveness · Transparency · Accountability.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Two — 4-layer defense in depth. Identity, data, observability, threat. Plus the 6-area implementation guide. No single layer is sufficient — defense in depth means layered controls compensate for each other.">
+              <div class="check">2</div><div class="text"><em>4-layer defense in depth</em> + 6-area implementation guide. Identity · Data · Observability · Threat. No single layer is sufficient.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Three — security and identity. Managed identities per agent. RBAC at narrowest scope. Separation of duties — never the same person both Maker and Publisher. Four data governance controls — boundaries, DLP, retention, transparency.">
+              <div class="check">3</div><div class="text">Security: <em>managed identities · RBAC · separation of duties · 4 data governance controls</em>.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Four — five AI vulnerability categories. Prompt manipulation. Model behavior. Data exposure. Identity gaps. Agent workflow. Plus five mitigation strategies and the layered defense principle.">
+              <div class="check">4</div><div class="text">5 AI vulnerabilities + 5 mitigations + <em>layered defense</em>. The threat model traditional security doesn't cover.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Five — compliance domains. Data residency. Purview controls. Grounding access. Audit trails. <em>Capture metadata, not content</em>. Match retention to regulatory class.">
+              <div class="check">5</div><div class="text">Compliance: <em>residency · Purview · grounding access · audit trails</em>. Capture metadata not content.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Six — operating model. Governance RACI. Five-step incident response. The architect is accountable for the technical calls. <em>And the course is complete.</em>">
+              <div class="check">6</div><div class="text">Operating model: <em>RACI + 5-step incident response</em>. Architect accountable for technical calls. <strong>Course complete.</strong></div>
+            </div>
+          </div>
+          <div class="completion-message" data-step
+            data-script="<em>AB-100 complete.</em> You now have the architect's vocabulary. Bridge translation between business and AI. Five-phase framework. Microsoft stack mastery. Requirements analysis. AI strategy and CAF for AI. ROI evaluation. Agent and model design with Responsible AI. Extensibility. Orchestration of prebuilt agents. Monitoring and tuning. Testing strategy. ALM discipline. And finally — the governance umbrella that holds it all together. <em>You're ready</em> to architect agentic AI business solutions. Go build something — responsibly.">
+            <div class="label">★ AB‑100 COMPLETE ★</div>
+            <h4>You're now an <em>Agentic AI Solution Architect</em></h4>
+            <p>11 chapters. The vocabulary, frameworks, and judgment to architect AI solutions on the Microsoft platform — responsibly, securely, and at enterprise scale. Go build something.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="notes-panel" id="notesPanel">
+    <div class="label">📖 Read aloud · notes <span class="step-tag" id="stepTag"></span></div>
+    <div class="script" id="notesScript">Welcome script will appear here.</div>
+  </div>
+
+
+
+  <div class="float-hint" id="hint">← → to advance step-by-step · T for notes</div>
+</div>
+
+<script>
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0; let notesOpen = false;
+  const counter = document.getElementById('counter');
+  const progressFill = document.getElementById('progressFill');
+  const notesPanel = document.getElementById('notesPanel');
+  const notesScript = document.getElementById('notesScript');
+  const stepTag = document.getElementById('stepTag');
+  const sectionLabel = document.getElementById('sectionLabel');
+  const stepPill = document.getElementById('stepPill');
+  const stepIndicator = document.getElementById('stepIndicator');
+  const notesToggle = document.getElementById('notesToggle');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const hint = document.getElementById('hint');
+  function getSteps(s){return Array.from(s.querySelectorAll('[data-step]'));}
+  function getRevealed(s){return Array.from(s.querySelectorAll('[data-step].revealed'));}
+  function updateScript(text, stepInfo){
+    notesScript.classList.add('fading');
+    setTimeout(()=>{ notesScript.innerHTML = text || ''; stepTag.textContent = stepInfo || ''; notesScript.classList.remove('fading'); },180);
+  }
+  function updateStepIndicator(slide){
+    const steps = getSteps(slide); const revealed = getRevealed(slide);
+    if(steps.length>0 && revealed.length<steps.length){ stepIndicator.classList.add('show'); stepPill.style.display='inline-block'; stepPill.textContent = `Step ${revealed.length}/${steps.length}`; }
+    else if(steps.length>0){ stepIndicator.classList.remove('show'); stepPill.style.display='inline-block'; stepPill.textContent = `${steps.length}/${steps.length}`; }
+    else { stepIndicator.classList.remove('show'); stepPill.style.display='none'; }
+  }
+  function showSlide(i, revealAll){
+    if(i<0||i>=total) return;
+    slides[current].classList.remove('active');
+    getSteps(slides[current]).forEach(el=>el.classList.remove('revealed'));
+    current = i;
+    const slide = slides[current]; slide.classList.add('active'); slide.scrollTop = 0;
+    if(revealAll){ getSteps(slide).forEach(el=>el.classList.add('revealed')); }
+    counter.textContent = (current+1)+' / '+total;
+    progressFill.style.width = ((current+1)/total*100)+'%';
+    sectionLabel.textContent = slide.dataset.section || '';
+    if(revealAll){ const steps = getSteps(slide); const last = steps[steps.length-1]; if(last && last.dataset.script) updateScript(last.dataset.script, `Step ${steps.length}/${steps.length}`); else updateScript(slide.dataset.script, ''); } else { updateScript(slide.dataset.script, ''); }
+    updateStepIndicator(slide);
+    prevBtn.disabled = (current===0 && getRevealed(slide).length===0);
+    nextBtn.disabled = (current===total-1 && (getSteps(slide).length===0 || getRevealed(slide).length===getSteps(slide).length));
+  }
+  function next(){
+    const slide = slides[current]; const steps = getSteps(slide); const revealed = getRevealed(slide);
+    if(revealed.length<steps.length){ const idx = revealed.length; const el = steps[idx]; el.classList.add('revealed'); if(el.dataset.script) updateScript(el.dataset.script, `Step ${idx+1}/${steps.length}`); updateStepIndicator(slide); prevBtn.disabled=false; if(revealed.length+1===steps.length && current===total-1) nextBtn.disabled=true; }
+    else if(current<total-1){ showSlide(current+1, false); }
+  }
+  function prev(){
+    const slide = slides[current]; const revealed = getRevealed(slide);
+    if(revealed.length>0){ const last = revealed[revealed.length-1]; last.classList.remove('revealed'); const remaining = getRevealed(slide); if(remaining.length>0){ const r = remaining[remaining.length-1]; const total = getSteps(slide).length; updateScript(r.dataset.script, `Step ${remaining.length}/${total}`); } else { updateScript(slide.dataset.script, ''); } updateStepIndicator(slide); nextBtn.disabled=false; }
+    else if(current>0){ showSlide(current-1, true); }
+  }
+  function toggleNotes(){ notesOpen = !notesOpen; notesPanel.classList.toggle('open', notesOpen); notesToggle.classList.toggle('active', notesOpen); }
+  prevBtn.addEventListener('click', prev); nextBtn.addEventListener('click', next); notesToggle.addEventListener('click', toggleNotes);
+  document.addEventListener('keydown',(e)=>{ if(e.target.matches('input,textarea')) return; if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();} else if(e.key==='ArrowLeft'){e.preventDefault();prev();} else if(e.key==='t'||e.key==='T'){e.preventDefault();toggleNotes();} else if(e.key==='Home'){e.preventDefault();showSlide(0,false);} else if(e.key==='End'){e.preventDefault();showSlide(total-1,true);} });
+  document.querySelectorAll('.quiz-opt').forEach(btn=>{ btn.addEventListener('click',()=>{ const wrap = btn.closest('.quiz-wrap'); const opts = wrap.querySelectorAll('.quiz-opt'); const explain = wrap.querySelector('.quiz-explain'); opts.forEach(o=>{ if(o.dataset.correct==='true') o.classList.add('correct'); else o.classList.add('wrong'); }); const correctOpt = wrap.querySelector('.quiz-opt[data-correct="true"]'); if(correctOpt && explain){ explain.querySelector('p').textContent = correctOpt.dataset.explain || ''; explain.classList.add('show'); } }); });
+  const revealBtn = document.getElementById('revealAnswer'); const answerPanel = document.getElementById('answerPanel');
+  if(revealBtn && answerPanel){ revealBtn.addEventListener('click',()=>{ answerPanel.classList.add('show'); revealBtn.classList.add('shown'); }); }
+  setTimeout(()=>{hint.classList.add('show');},800); setTimeout(()=>{hint.classList.remove('show');},5500);
+  showSlide(0,false);
+})();
+</script>
+</body>
+</html>
