@@ -363,6 +363,20 @@ const COURSES = [
     ],
   },
   {
+    slug: 'ai-decision-making',
+    courseTagline: 'Foundations · AI Decision Making',
+    title: 'AI Decision Making',
+    subtitle: 'AI is a decision input, not the decision. The cognitive-offloading risk gets worse with better models.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Advanced',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-decision-making/chapter-01-input-vs-maker',
+    takeaways: [
+      'Three decision modes and the drift toward AI-as-decider — Kahneman framing, two countermeasures, and three never-delegated decision categories.',
+      'The 80/20 verification rule with three 100%-verify categories — and the override discipline that documents what AI didn\'t see.',
+      'Team norms that survive tool churn + a quarterly audit with model-drift checks + a one-page AI decision charter for the team.',
+    ],
+  },
+  {
     slug: 'open-source-llms-for-enterprise',
     courseTagline: 'Builder · Open-Source LLMs for Enterprise',
     title: 'Open-Source LLMs for Enterprise',
