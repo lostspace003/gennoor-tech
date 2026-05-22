@@ -116,6 +116,17 @@ export const COURSE_OUTCOMES: Record<string, string[]> = {
     'Call AI with 4 extractions + the 2-2-2 weekly coaching loop that drops new-rep ramp 30-50%',
   ],
 
+  'ai-strategy-for-cdo': [
+    'The CDO mandate doubled when AI landed — headcount rarely did. Three boundary fights with the CIO, CTO, and CISO, and three resolution patterns that work',
+    'A minimum-viable-data-foundation filter that separates the data work that unblocks AI from the data work that doesn\'t',
+    'A three-pillar RACI with the CISO and CRO that holds past month six — with one R per pillar to prevent the committee-freezes-and-shadow-AI-begins pattern',
+    'Three-horizon investment allocation with CFO-defensible framing — neither data starves AI nor AI starves data',
+    'Vendor management across four overlapping categories — and the 4-vendor trap with the working 2-3-strategic-vendor pattern',
+    'Four board KPIs that survive 12 months of director scrutiny — and four activity metrics to retire',
+    'A three-tier delegation model + four-rhythm operating cadence that keeps the CDO from becoming the bottleneck',
+    'A one-page CDO-CIO-CISO joint charter + 4 trust trip-wires + interactive charter builder',
+  ],
+
   'ai-vendor-management': [
     'The four AI vendor archetypes (hyperscalers, ISVs, boutiques, SI partners) and the three most likely to over-promise',
     '12-item AI-specific diligence checklist across 4 categories with five red-flag answers and a three-tier rule that scales without watering down',
