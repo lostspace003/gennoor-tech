@@ -116,6 +116,17 @@ export const COURSE_OUTCOMES: Record<string, string[]> = {
     'Call AI with 4 extractions + the 2-2-2 weekly coaching loop that drops new-rep ramp 30-50%',
   ],
 
+  'azure-ai-foundry-essentials': [
+    'The Foundry 3-layer architecture (hub · project · connections) and when raw Azure OpenAI beats Foundry — premature consolidation is overhead, late is rework',
+    'Model catalog navigation across 4 families (Azure OpenAI · open-weight · partner · custom) and 3 deployment types — picked on YOUR eval set, not vendor benchmarks',
+    'Identity done right: managed identity + Key Vault + private endpoints — making the wrong way harder than the right way',
+    'The 4 built-in Foundry evaluators (groundedness · relevance · coherence · safety) and the 3-pattern custom evaluator workflow',
+    'Deployment-type fit: serverless ≤5M tokens/month · PTU ≥10M · managed compute for open-weight · batch for async',
+    'Cost monitoring across Azure Monitor + Cost Management + Foundry dashboards, with 3 alerts that fire before invoice day',
+    'The 20-item production-readiness checklist with 3 disqualifiers nobody crosses (no managed identity · no eval flow · no rollback path)',
+    '4-section production sign-off pack + 4 trust trip-wires + interactive sign-off builder for the platform team',
+  ],
+
   'mlops-for-llms': [
     'Five differences that make LLMOps its own discipline — non-determinism, generative outputs, third-party black boxes, per-request cost variability, adversarial users',
     '3-tier production evaluation (light + targeted + gold sampling), LLM-as-judge done right (different family, structured rubric, human on disagreement), PII discipline',
