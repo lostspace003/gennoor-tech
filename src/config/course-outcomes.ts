@@ -116,6 +116,17 @@ export const COURSE_OUTCOMES: Record<string, string[]> = {
     'Call AI with 4 extractions + the 2-2-2 weekly coaching loop that drops new-rep ramp 30-50%',
   ],
 
+  'ai-vendor-management': [
+    'The four AI vendor archetypes (hyperscalers, ISVs, boutiques, SI partners) and the three most likely to over-promise',
+    '12-item AI-specific diligence checklist across 4 categories with five red-flag answers and a three-tier rule that scales without watering down',
+    'Six AI-specific contract clauses standard MSAs miss — including the training-data trap and regulator-driven extras for BFSI, healthcare, and EU AI Act',
+    'Performance SLAs across four dimensions (availability, latency, accuracy, drift) with remedies including termination right — not just service credits',
+    'Four lock-in tests (model, data, prompt, integration) with realistic mitigations and the four anti-patterns that don\'t work',
+    'Five signal sources with a four-phase response cadence and three audit rhythms (quarterly, annual, pre-renewal)',
+    'Pre-written offboarding plans addressing the three AI-specific exit risks (data deletion proof, model retention, retraining echoes)',
+    'A one-page AI vendor playbook + 4 trust trip-wires + interactive playbook builder for the category team',
+  ],
+
   'ai-decision-making': [
     'AI is a decision input, not the decision — three modes (AI-as-input, AI-assisted, AI-as-decider) and the drift toward delegation that grows with better models',
     'The cognitive offloading risk grounded in Kahneman\'s System 1 / System 2 — why better models suppress critique and the two countermeasures that keep reasoning engaged',
