@@ -363,6 +363,20 @@ const COURSES = [
     ],
   },
   {
+    slug: 'open-source-llms-for-enterprise',
+    courseTagline: 'Builder · Open-Source LLMs for Enterprise',
+    title: 'Open-Source LLMs for Enterprise',
+    subtitle: 'Open-source isn\'t free — it\'s a different cost curve. Sovereignty, cost-at-scale, roadmap control.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/open-source-llms-for-enterprise/chapter-01-why',
+    takeaways: [
+      'The three real reasons enterprises move to open-source — sovereignty, cost-at-scale, roadmap control — and 3 cases where hosted APIs still win.',
+      'Four model families with license traps and size discipline + production-grade serving (vLLM, TGI) sized for real concurrency, not laptop benchmarks.',
+      'A 5-component TCO with honest breakeven (~20-50M tokens/day) and a 4-section decision pack + 4 trust trip-wires for the steering committee.',
+    ],
+  },
+  {
     slug: 'azure-ai-foundry-essentials',
     courseTagline: 'Builder · Azure AI Foundry',
     title: 'Azure AI Foundry Essentials',

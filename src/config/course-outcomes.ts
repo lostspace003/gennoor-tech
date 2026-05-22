@@ -116,6 +116,17 @@ export const COURSE_OUTCOMES: Record<string, string[]> = {
     'Call AI with 4 extractions + the 2-2-2 weekly coaching loop that drops new-rep ramp 30-50%',
   ],
 
+  'open-source-llms-for-enterprise': [
+    'Open-source isn\'t free — it\'s a different cost curve. Three real reasons (sovereignty + residency, cost at scale, roadmap control) and 3 cases hosted API still wins',
+    'Four model families compared (Llama, Mistral, Phi, Qwen) with the license traps that catch teams and the size discipline that resists "bigger is better"',
+    'Self-hosting with Ollama vs vLLM vs TGI vs Azure ML — the gap between demo-grade benchmarks and production-grade concurrency',
+    'Fine-tuning approaches (LoRA · QLoRA · full) and the "try retrieval first" discipline — when fine-tuning is the wrong shortcut',
+    '5-component TCO with honest breakeven math — real breakeven is 20-50M tokens/day, not the headline GPU price',
+    'Three sovereign deployment tiers and what regulators + CISOs actually accept across India, GCC, US, EU',
+    'Operational discipline across model upgrades, security patches, and 3-layer observability (GPU · model · request)',
+    'A 4-section decision pack + 4 trust trip-wires + interactive decision-pack builder for the steering committee',
+  ],
+
   'azure-ai-foundry-essentials': [
     'The Foundry 3-layer architecture (hub · project · connections) and when raw Azure OpenAI beats Foundry — premature consolidation is overhead, late is rework',
     'Model catalog navigation across 4 families (Azure OpenAI · open-weight · partner · custom) and 3 deployment types — picked on YOUR eval set, not vendor benchmarks',
