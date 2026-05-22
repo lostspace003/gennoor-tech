@@ -39,18 +39,28 @@ export async function POST(
     return NextResponse.json({ error: 'Course not found' }, { status: 404 })
   }
 
-  // Server-side completion gate — last regular (non-mock-exam) chapter must be done
-  const regularChapters = course.chapters.filter(c => !c.isMockExam)
-  const lastChapter = regularChapters[regularChapters.length - 1]
-  if (!lastChapter) {
+  // Server-side completion gate — EVERY non-mock, non-intro chapter must be completed.
+  // chapter-00 (intro screen, no audio) is excluded from the gate so cert issuance
+  // doesn't depend on the learner explicitly visiting the welcome screen.
+  const gatedChapters = course.chapters.filter(c => !c.isMockExam && c.id !== 'chapter-00')
+  if (gatedChapters.length === 0) {
     return NextResponse.json({ error: 'Course has no chapters' }, { status: 500 })
   }
 
   const progressEntries = await getCourseProgress(learner.email, courseId)
-  const lastChapterProgress = progressEntries.find(p => p.chapterId === lastChapter.id)
-  if (!lastChapterProgress?.completed) {
+  const incomplete = gatedChapters.filter(ch => {
+    const p = progressEntries.find(e => e.chapterId === ch.id)
+    return !p?.completed
+  })
+  if (incomplete.length > 0) {
     return NextResponse.json(
-      { error: 'Course not yet complete', completed: false },
+      {
+        error: 'Course not yet complete',
+        completed: false,
+        incompleteChapters: incomplete.map(ch => ({ id: ch.id, title: ch.title, number: ch.number })),
+        totalChapters: gatedChapters.length,
+        completedChapters: gatedChapters.length - incomplete.length,
+      },
       { status: 403 },
     )
   }

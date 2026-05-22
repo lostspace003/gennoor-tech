@@ -1,0 +1,297 @@
+// Generate chapter-00 intro HTML for all 20 academy courses.
+// Each writes to tmp/academy-build/<slug>/chapters/chapter-00-welcome.html
+// then can be uploaded via upload-chapter-assets.mjs.
+
+import { buildIntro } from './build-intro-html.mjs'
+
+const SLATE_ORANGE = {
+  primary: '#475569', primaryDeep: '#334155', accent: '#F97316', tint: '#F8FAFC',
+}
+
+const COURSES = [
+  // ── Original 10 (legacy) ──
+  // AB-100 already has its own chapter-00; skip it from this batch.
+  {
+    slug: 'ai-foundations',
+    courseTagline: 'Foundations · AI Literacy for Every Knowledge Worker',
+    title: 'AI Foundations',
+    subtitle: 'The honest mental model — what AI is, what it isn\'t, and how to use it without losing judgement.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Beginner',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-foundations/chapter-01-what-ai-actually-is',
+    takeaways: [
+      'A working mental model of what current AI actually does — and the boundary of where it stops being reliable.',
+      'The three-question test you can apply to any AI initiative — augment vs replace, grounded vs hallucinated, value vs noise.',
+      'A Monday-morning move you can run this week to start using AI without losing the judgement that makes you good at your job.',
+    ],
+  },
+  {
+    slug: 'ai-strategy-c-suite',
+    courseTagline: 'Strategy · AI for the C-Suite',
+    title: 'AI Strategy for the C-Suite',
+    subtitle: 'Six plays that move the P&L, three that don\'t, the stage-gate that keeps you honest.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Advanced',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-strategy-c-suite/chapter-01-strategy-landscape',
+    takeaways: [
+      'A clear-eyed take on the AI strategy landscape — what\'s working at scale, what\'s vendor pitch, what\'s genuinely new.',
+      'The CEO-grade portfolio framework — six plays that move the P&L, three that disappoint, stage-gates that kill bad bets.',
+      'The trust trip-wires every CEO needs in writing — the four boundaries you don\'t cross regardless of pressure.',
+    ],
+  },
+  {
+    slug: 'ai-governance-risk-boards',
+    courseTagline: 'Governance · AI Governance, Risk + Boards',
+    title: 'AI Governance, Risk + Boards',
+    subtitle: 'The board-grade AI governance brief — NIST AI RMF, ISO 42001, EU AI Act, and the four resolutions every board should pass.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Advanced',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-governance-risk-boards/chapter-01-board-landscape',
+    takeaways: [
+      'A working knowledge of the AI governance regulatory stack — NIST AI RMF, ISO 42001, EU AI Act, sector-specific overlays.',
+      'The four board resolutions every regulated company should pass — wording included, sourced from real precedent.',
+      'A risk register pattern that\'s defensible to regulators, auditors, and litigation — not just a checkbox exercise.',
+    ],
+  },
+  {
+    slug: 'ai-for-finance-accounting',
+    courseTagline: 'Finance · AI for Finance + Accounting',
+    title: 'AI for Finance & Accounting',
+    subtitle: 'Five plays that ship in finance functions, the audit trail discipline, and where the line is on AI-prepared financials.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-for-finance-accounting/chapter-01-finance-landscape',
+    takeaways: [
+      'The five AI plays that consistently ship in finance — close acceleration, variance analysis, AP automation, narrative drafting, FP&A models.',
+      'The audit-trail discipline that keeps your AI-augmented numbers defensible to external auditors and regulators.',
+      'The hard line on AI-prepared financials — what\'s in scope, what isn\'t, and how to document the human review that makes the difference.',
+    ],
+  },
+  {
+    slug: 'ai-in-financial-services',
+    courseTagline: 'Financial Services · AI in Banking, Insurance, Markets',
+    title: 'AI in Financial Services',
+    subtitle: 'The regulator-aware playbook — fair lending, claims, AML, surveillance, advice — with the lines you cannot cross.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-in-financial-services/chapter-01-fsi-landscape',
+    takeaways: [
+      'A clear map of where AI works in financial services today — and where the regulator scrutiny makes it not worth the speed.',
+      'The fair-lending + claims + AML + surveillance + advice patterns that get approved versus the ones that don\'t.',
+      'The trust trip-wires for financial services AI — explainability, adverse-action notices, fairness monitoring, and the audit-defense posture.',
+    ],
+  },
+  {
+    slug: 'generative-ai-for-business',
+    courseTagline: 'Generative AI · For Business Leaders',
+    title: 'Generative AI for Business',
+    subtitle: 'The honest landscape — what genAI ships in production, what doesn\'t, and the playbook that gets you both savings and trust.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/generative-ai-for-business/chapter-01-genai-landscape',
+    takeaways: [
+      'A grounded view of what generative AI actually does — drafting, summarising, transforming — and where it stops being reliable.',
+      'The eight enterprise use cases that consistently ship value, sequenced by ROI and trust-risk profile.',
+      'A 90-day plan you can defend to your board — pilot, scale, embed — with the trust trip-wires that keep it from blowing up.',
+    ],
+  },
+  {
+    slug: 'ai-for-hr-people-teams',
+    courseTagline: 'People · AI for HR + People Teams',
+    title: 'AI for HR & People Teams',
+    subtitle: 'Sourcing, screening, learning, retention — with EEOC, GDPR Art 22, NYC Local Law 144, and the bias-audit discipline.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-for-hr-people-teams/chapter-01-hr-landscape',
+    takeaways: [
+      'A clear-eyed map of AI in HR — sourcing, screening, learning, retention, internal mobility — with the use cases that work.',
+      'The compliance posture — EEOC + DOJ joint guidance, GDPR Art 22, NYC Local Law 144, Mobley v. Workday — applied to your stack.',
+      'The bias-audit discipline that protects your org legally AND ethically — not just a checkbox, but an operating practice.',
+    ],
+  },
+  {
+    slug: 'ai-in-healthcare',
+    courseTagline: 'Healthcare · AI in Hospitals + Health Systems',
+    title: 'AI in Healthcare',
+    subtitle: 'Ambient scribing, clinical decision support, radiology, patient-facing AI, payer AI — with the 4-quadrant regulatory posture.',
+    chapterMeta: { total: 8 }, duration: '~40 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-in-healthcare/chapter-01-healthcare-landscape',
+    takeaways: [
+      'A grounded read of where AI works in healthcare — FDA SaMD list, ambient scribing, CDS, radiology, patient-facing AI, payer AI.',
+      'The 4-quadrant regulatory posture you can defend — FDA + HIPAA/DPDPA + EU AI Act + NIST/CHAI + ABIM/AMA/CMS.',
+      'The 2-quarter hospital roadmap and 4 trust trip-wires — physician responsibility, patient consent, no AI-only denials, no set-and-forget.',
+    ],
+  },
+  {
+    slug: 'm365-copilot-adoption',
+    courseTagline: 'Tools · Microsoft 365 Copilot Adoption',
+    title: 'Microsoft 365 Copilot Adoption',
+    subtitle: 'The honest playbook — adoption is the challenge, not licensing. Active-user fraction is the metric.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/m365-copilot-adoption/chapter-01-copilot-landscape',
+    takeaways: [
+      'A real read of M365 Copilot — what ships at $30/user/month, where it delivers, and the 30-40% active-user gap problem.',
+      'The IT-admin foundation — tenant isolation, Microsoft Graph permissions, Purview DLP, Defender for Cloud Apps, EU AI Act + HIPAA + DPDPA.',
+      'The 3-phase rollout plan — pilot/scale/embed — with the champions network discipline that closes the active-user gap.',
+    ],
+  },
+  {
+    slug: 'ai-for-sales-marketing',
+    courseTagline: 'Revenue · AI for Sales & Marketing',
+    title: 'AI for Sales & Marketing',
+    subtitle: 'Augment human judgement, don\'t replace it. Six plays that ship, three that disappoint, four trust trip-wires.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-for-sales-marketing/chapter-01-fit-map',
+    takeaways: [
+      'Andy Grove\'s output framing applied to revenue AI — six plays that consistently ship, three that consistently disappoint.',
+      'The disciplined prospecting workflow that beats AI-spam — Google + Yahoo Feb 2024 rules, the 4-step pattern, the two-layer lead scoring.',
+      'The claim register + legal-review gate + GDPR Art 22 boundary + creepy-line discipline — the trust posture for revenue AI.',
+    ],
+  },
+  {
+    slug: 'ai-for-customer-service-support',
+    courseTagline: 'Service · AI for CS & Support',
+    title: 'AI for Customer Service & Support',
+    subtitle: 'Three deployment patterns, the deflection trap, the agent-augment pattern, and the trust trip-wires that protect the brand.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-for-customer-service-support/chapter-01-cs-landscape',
+    takeaways: [
+      'A grounded read of AI in customer service — bots that fail, agent-augment that ships, the Air Canada Moffatt boundary.',
+      'The three deployment patterns — full bot, agent-augment, hybrid — and which one fits your customer + brand profile.',
+      'The trust trip-wires — disclosure, escalation, identity verification, no AI-only denials — that keep service AI defensible.',
+    ],
+  },
+  {
+    slug: 'ai-for-supply-chain-logistics',
+    courseTagline: 'Operations · AI for Supply Chain + Logistics',
+    title: 'AI for Supply Chain & Logistics',
+    subtitle: 'Forecasting, inventory, S&OP, routing, supplier risk — with the M5 competition reality on AI forecasting.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-for-supply-chain-logistics/chapter-01-sc-landscape',
+    takeaways: [
+      'A grounded read of AI in supply chain — what works in forecasting, inventory, S&OP, routing, supplier risk.',
+      'The M5 forecasting reality — domain-context-poor AI beats domain-rich models when the workflow is right.',
+      'The 2-quarter operations roadmap with the trust trip-wires that protect against the brittleness AI brings to ops.',
+    ],
+  },
+  {
+    slug: 'ai-for-manufacturing',
+    courseTagline: 'Industry · AI for Manufacturing',
+    title: 'AI for Manufacturing',
+    subtitle: 'Predictive maintenance, quality, energy, scheduling, worker safety — with the digital-twin reality and ISA-95 stack.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-for-manufacturing/chapter-01-mfg-landscape',
+    takeaways: [
+      'A grounded read of AI in manufacturing — predictive maintenance, quality, energy, scheduling, worker safety.',
+      'The digital-twin reality and ISA-95 stack — where AI plugs in and where it breaks at the shop-floor reality.',
+      'The 2-quarter plant roadmap and trust trip-wires — worker safety, equipment integrity, regulatory disclosure.',
+    ],
+  },
+  {
+    slug: 'ai-for-energy-utilities',
+    courseTagline: 'Energy · AI for Energy + Utilities',
+    title: 'AI for Energy & Utilities',
+    subtitle: 'Demand forecasting, grid management, generation optimisation, customer service — with the regulator-aware posture.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-for-energy-utilities/chapter-01-energy-landscape',
+    takeaways: [
+      'A grounded read of AI in energy + utilities — demand forecasting, grid management, generation optimisation, customer ops.',
+      'The regulator-aware posture — PUC scrutiny, reliability standards, customer-facing AI disclosure.',
+      'The 2-quarter utility roadmap and trust trip-wires — grid stability, customer protection, no AI-only denials.',
+    ],
+  },
+  {
+    slug: 'ai-for-retail-ecommerce',
+    courseTagline: 'Retail · AI for Retail + eCommerce',
+    title: 'AI for Retail & eCommerce',
+    subtitle: 'Merchandising, pricing, personalisation, fulfilment, returns — with the privacy + brand-voice + experimentation discipline.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-for-retail-ecommerce/chapter-01-retail-landscape',
+    takeaways: [
+      'A grounded read of AI in retail + eCom — merchandising, pricing, personalisation, fulfilment, returns.',
+      'The privacy + brand-voice + experimentation discipline — what works, what disappoints, what crosses the creepy line.',
+      'The 2-quarter retail roadmap with trust trip-wires — customer privacy, brand integrity, fair pricing, returns policy.',
+    ],
+  },
+  {
+    slug: 'ai-readiness-assessment-deep-dive',
+    courseTagline: 'Diagnostic · AI Readiness Assessment Deep-Dive',
+    title: 'AI Readiness Assessment Deep-Dive',
+    subtitle: 'Five readiness dimensions, the 12-question diagnostic, how to read the score, and what to do at each maturity level.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-readiness-assessment-deep-dive/chapter-01-readiness-landscape',
+    takeaways: [
+      'The five AI readiness dimensions — data, talent, governance, infrastructure, leadership commitment — with how to honestly score each.',
+      'The 12-question diagnostic and how to read the score — green, amber, red — and what each level means for your next move.',
+      'The maturity-stage playbook — what to do at level 1, 2, 3 — without skipping steps that breaks the foundation.',
+    ],
+  },
+  {
+    slug: 'ai-program-management-pmo',
+    courseTagline: 'Delivery · AI Program Management + PMO',
+    title: 'AI Program Management & PMO',
+    subtitle: 'Portfolio shape, stage-gating, vendor management, model lifecycle, ops handoff — the PMO that actually delivers AI value.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-program-management-pmo/chapter-01-pmo-landscape',
+    takeaways: [
+      'The AI portfolio shape — pilots, scaling, embed — and the stage-gating discipline that kills bad bets early.',
+      'The vendor-management and model-lifecycle patterns — contracts, model registries, retraining cadence, sunset criteria.',
+      'The PMO playbook — how to actually deliver AI value at the program level, not just at the pilot level.',
+    ],
+  },
+  {
+    slug: 'ai-talent-strategy',
+    courseTagline: 'Talent · AI Talent Strategy',
+    title: 'AI Talent Strategy',
+    subtitle: 'Build, buy, borrow — the role architecture, hiring patterns, retention plays, and the AI-fluency build for your existing org.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-talent-strategy/chapter-01-talent-landscape',
+    takeaways: [
+      'The build/buy/borrow framework for AI talent — when to hire, when to partner, when to upskill, with cost realism.',
+      'The role architecture that scales — ML engineer, data scientist, ML ops, AI PM, AI strategist — and what each actually does.',
+      'The AI fluency build for the existing org — the curriculum, the cadence, the manager moves that compound.',
+    ],
+  },
+  {
+    slug: 'enterprise-data-foundations-for-ai',
+    courseTagline: 'Foundations · Enterprise Data for AI',
+    title: 'Enterprise Data Foundations for AI',
+    subtitle: 'Data quality, lineage, governance, privacy, and the platform pattern that makes AI possible — not the platform that promises it.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/enterprise-data-foundations-for-ai/chapter-01-data-landscape',
+    takeaways: [
+      'The data-quality reality — most AI projects fail at this step, what it actually takes, how to scope honestly.',
+      'The lineage + governance pattern — what regulators expect, what auditors ask, what you can defend.',
+      'The platform discipline — pick the pattern that makes AI possible, not the platform that promises it.',
+    ],
+  },
+]
+
+for (const c of COURSES) {
+  buildIntro({
+    courseTagline: c.courseTagline,
+    title: c.title,
+    subtitle: c.subtitle,
+    chapterMeta: c.chapterMeta,
+    duration: c.duration,
+    level: c.level,
+    theme: c.theme,
+    takeaways: c.takeaways,
+    nextHref: c.nextHref,
+    outPath: `tmp/academy-build/${c.slug}/chapters/chapter-00-welcome.html`,
+  })
+}
+
+console.log(`\n✓ Generated ${COURSES.length} intro HTMLs.`)

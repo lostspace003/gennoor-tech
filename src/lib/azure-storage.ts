@@ -476,6 +476,35 @@ export async function getCourseProgress(email: string, courseId: string): Promis
   return results
 }
 
+/**
+ * Return every chapter-progress row for a learner across all courses.
+ * Used by the dashboard to render an at-a-glance view of in-progress vs
+ * completed vs not-started courses.
+ */
+export async function getAllCourseProgress(email: string): Promise<Array<Record<string, any>>> {
+  await ensureTable('CourseProgress')
+  const client = getTableClient('CourseProgress')
+
+  const results: Array<Record<string, any>> = []
+  const pk = email.toLowerCase().trim()
+  const query = client.listEntities({
+    queryOptions: { filter: `PartitionKey eq '${pk}'` },
+  })
+
+  for await (const entity of query) {
+    results.push({
+      chapterId: entity.chapterId,
+      courseId: entity.courseId,
+      currentSlide: entity.currentSlide,
+      totalSlides: entity.totalSlides,
+      completionPercent: entity.completionPercent,
+      completed: entity.completed,
+      lastAccessed: entity.lastAccessed,
+    })
+  }
+  return results
+}
+
 // ─── PDF from Blob ───────────────────────────────────────────
 
 export async function downloadPdfFromBlob(blobPath: string): Promise<Buffer | null> {
