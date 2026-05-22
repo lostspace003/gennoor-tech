@@ -363,6 +363,20 @@ const COURSES = [
     ],
   },
   {
+    slug: 'building-an-hr-copilot-case-study',
+    courseTagline: 'Case Study · Building an HR Copilot',
+    title: 'Building an HR Copilot — A Case Study',
+    subtitle: 'A real HR onboarding copilot — from use-case selection to pilot rollout with architecture, evaluation, and adoption playbook intact.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/building-an-hr-copilot-case-study/chapter-01-use-case',
+    takeaways: [
+      'The impact × feasibility filter that picked HR onboarding Q&A over recruiting AI — and the three use cases consciously skipped.',
+      'Azure OpenAI + Copilot Studio + Dataverse stack with cross-role RLS, hybrid 5+1 conversation flow, and weekly iteration that caught hallucinations.',
+      'Three-cohort pilot with signed kill criteria + week-4-to-8 adoption interventions that sustained 50% usage past the cliff.',
+    ],
+  },
+  {
     slug: 'banking-multimodal-rag-case-study',
     courseTagline: 'Case Study · Banking Multimodal RAG',
     title: 'Case Study: Banking Multimodal RAG',
