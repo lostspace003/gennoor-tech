@@ -81,6 +81,27 @@ export async function POST(request: NextRequest) {
       if (!err?.message?.includes('TableNotFound') && err?.statusCode !== 404) throw err
     }
 
+    const leads: any[] = []
+    try {
+      const client = TableClient.fromConnectionString(connStr, 'AIReadinessLeads')
+      for await (const entity of client.listEntities({
+        queryOptions: { filter: `PartitionKey ge '${cutoffStr}'` },
+      })) {
+        leads.push({
+          date: entity.partitionKey,
+          name: entity.name || '',
+          email: entity.email || '',
+          company: entity.company || '',
+          option: entity.option || '',
+          message: entity.message || '',
+          source: entity.source || '',
+          submittedAt: entity.submittedAt || entity.timestamp || '',
+        })
+      }
+    } catch (err: any) {
+      if (!err?.message?.includes('TableNotFound') && err?.statusCode !== 404) throw err
+    }
+
     const generations = reports.filter(r => r.action === 'generate' || r.action === '')
     const quickScans = generations.filter(r => r.reportType === 'quick-scan').length
     const deepDives = generations.filter(r => r.reportType === 'deep-dive').length
@@ -107,12 +128,14 @@ export async function POST(request: NextRequest) {
         downloads,
         avgRating,
         totalFeedback: feedback.length,
+        leads: leads.length,
       },
       scoreDist,
       recentReports: [...generations, ...blueprints]
         .sort((a, b) => (b.generatedAt || '').localeCompare(a.generatedAt || ''))
         .slice(0, 50),
       feedback: feedback.sort((a, b) => (b.submittedAt || '').localeCompare(a.submittedAt || '')).slice(0, 30),
+      leads: leads.sort((a, b) => (b.submittedAt || '').localeCompare(a.submittedAt || '')).slice(0, 50),
     })
   } catch (error) {
     console.error('AI Readiness admin error:', error)
