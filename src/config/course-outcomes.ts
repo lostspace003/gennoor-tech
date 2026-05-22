@@ -116,6 +116,17 @@ export const COURSE_OUTCOMES: Record<string, string[]> = {
     'Call AI with 4 extractions + the 2-2-2 weekly coaching loop that drops new-rep ramp 30-50%',
   ],
 
+  'ai-strategy-for-cio': [
+    'AI as one workload in the run-grow-transform portfolio, not bolted on — and the three portfolio failures from treating AI as a side program',
+    'Five-criterion infrastructure test across hyperscaler, sovereign, on-prem, and hybrid — with regional forcing factors that override',
+    'Build vs buy vs compose with three concrete criteria — and the "buy that turned into build" pattern spotted via the consulting-to-license ratio',
+    'Talent strategy differentiated per capability bucket — and the SI dependency trap with the knowledge-transfer contractual fix',
+    'Four operational risks unique to AI and BCDR including vendor outage failover plus graceful degradation that\'s actually tested',
+    'A three-metric board reporting structure that holds AI alongside ERP, cloud, and security with the same calibration',
+    'A four-rhythm operating cadence with three cross-functional partners (CDO, CISO, CFO) and a delegation framework that prevents CIO-as-bottleneck',
+    'A one-page CIO AI portfolio statement + 4 trust trip-wires + interactive portfolio builder',
+  ],
+
   'ai-strategy-for-cdo': [
     'The CDO mandate doubled when AI landed — headcount rarely did. Three boundary fights with the CIO, CTO, and CISO, and three resolution patterns that work',
     'A minimum-viable-data-foundation filter that separates the data work that unblocks AI from the data work that doesn\'t',
