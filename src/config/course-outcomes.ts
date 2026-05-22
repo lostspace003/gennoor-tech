@@ -116,6 +116,17 @@ export const COURSE_OUTCOMES: Record<string, string[]> = {
     'Call AI with 4 extractions + the 2-2-2 weekly coaching loop that drops new-rep ramp 30-50%',
   ],
 
+  'ai-roi-business-case-building': [
+    'The 6-component business case framework finance respects — problem · benefits · costs · risks · financial metric · stakeholders',
+    'The 4 fail modes of typical AI business cases — and the 30%-haircut test that catches the optimistic ones',
+    'The 7 cost buckets (with the year-2 cost surprise) most cases miss — including the often-skipped internal team time',
+    'The 5 AI-specific risks every case must name + sensitivity analysis on 3-5 variables — the discipline finance respects',
+    'NPV, IRR, payback — which one for which stakeholder + how to get hurdle + discount rates from finance up front',
+    'The 4 CFO questions you must answer in 3 minutes — payback · worst case · derailment · month-12 success',
+    'The 4-quarter ROI realisation cadence that earns the next case credibility — baseline · activity · outcome · annual',
+    'A 2-week disciplined build cadence + 5 trust trip-wires + interactive design-doc builder',
+  ],
+
   // ─── Older catalog (existing courses) ────────────────────────────────────
   'ai-for-customer-service-support': [
     'The 3 CS-AI patterns that ship in production — agent-assist, scoped deflection bots, hybrid',
