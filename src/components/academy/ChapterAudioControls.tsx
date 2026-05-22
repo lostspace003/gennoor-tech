@@ -179,9 +179,10 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       currentCueIdxRef.current = idx
       applySeek(cue.at)
       // Mirror the visual state down immediately — handles the paused case.
-      // userDriven=true tells the iframe to reveal the slide fully rather
-      // than wait for audio-driven step cues.
-      postCue(idx, true)
+      // Do NOT mark userDriven: we want the same progressive reveal that
+      // happens on auto-advance, so bullets fade in as the voice mentions
+      // them rather than dumping the full slide at once.
+      postCue(idx)
       playAfterSeek()
     }, [cues, postCue, applySeek, playAfterSeek])
 
@@ -216,7 +217,7 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       const cue = cues[target]
       currentCueIdxRef.current = target
       applySeek(cue.at)
-      postCue(target, true)
+      postCue(target)
       playAfterSeek()
     }, [cues, postCue, applySeek, playAfterSeek])
 
