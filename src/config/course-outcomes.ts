@@ -116,6 +116,17 @@ export const COURSE_OUTCOMES: Record<string, string[]> = {
     'Call AI with 4 extractions + the 2-2-2 weekly coaching loop that drops new-rep ramp 30-50%',
   ],
 
+  'mlops-for-llms': [
+    'Five differences that make LLMOps its own discipline — non-determinism, generative outputs, third-party black boxes, per-request cost variability, adversarial users',
+    '3-tier production evaluation (light + targeted + gold sampling), LLM-as-judge done right (different family, structured rubric, human on disagreement), PII discipline',
+    'Three distinct drift types — input, output, behavioral — with regression-set replay to catch silent vendor model updates',
+    'Four cost optimization patterns (compress + cache + route + smaller-plus-retrieval) and three anti-patterns that break quality or correctness',
+    'One-artifact versioning (prompt + model + eval) with shadow/canary/feature-flag rollouts and 60-second rollback as a tested capability',
+    'OpenTelemetry GenAI semantic conventions + MLflow vs LangSmith for trace search, replay, and eval linking',
+    'Four incident types (quality, drift, abuse, vendor outage) with 5-question triage and the eval-case-it post-mortem that produces durable regression tests',
+    '5-section LLMOps runbook + 4 trust trip-wires + interactive runbook builder for the platform team',
+  ],
+
   'rag-architectures-foundations': [
     'When RAG fits — large/changing KB · citations + grounding · long-tail facts — and 3 cases when it\'s the wrong architecture',
     'Embeddings as dense vectors — what they encode well (topic, paraphrase, semantic relations) and miss (IDs, negation, numerics, recency)',

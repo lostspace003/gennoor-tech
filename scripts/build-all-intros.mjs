@@ -363,6 +363,20 @@ const COURSES = [
     ],
   },
   {
+    slug: 'mlops-for-llms',
+    courseTagline: 'Builder · MLOps for LLMs',
+    title: 'MLOps for LLMs',
+    subtitle: 'LLMs in production don\'t fail like classical ML. The on-call playbook is different.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Advanced',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/mlops-for-llms/chapter-01-llmops-vs-mlops',
+    takeaways: [
+      'Five differences between LLMOps and classical MLOps — what carries over, what doesn\'t, and where teams get hurt.',
+      'Online evals on sampled production with 3-tier sampling and LLM-as-judge discipline that catches what offline gates miss.',
+      'A 5-section LLMOps runbook with 60-second rollback, 3-drift detection, and the eval-case-it post-mortem — what on-call operates against at 3am.',
+    ],
+  },
+  {
     slug: 'rag-architectures-foundations',
     courseTagline: 'Builder · RAG Architectures',
     title: 'RAG Architectures — Foundations',
