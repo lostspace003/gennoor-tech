@@ -180,6 +180,20 @@ const COURSES = [
     ],
   },
   {
+    slug: 'ai-for-operations-supply-chain',
+    courseTagline: 'Ops · AI for Operations + Supply Chain',
+    title: 'AI for Operations & Supply Chain',
+    subtitle: 'Operational AI quietly compounds. Six plays, three anti-plays, the AI+OR principle, and four trust trip-wires.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-for-operations-supply-chain/chapter-01-landscape',
+    takeaways: [
+      'Six operations AI plays that compound on the P&L — forecasting, procurement, logistics, predictive maintenance, inventory, supplier risk.',
+      'The AI+OR principle for logistics — AI improves inputs, operations research still does the optimisation. Remove OR and it usually breaks.',
+      'An 18-month rollout with four trust trip-wires — autonomous high-stakes decisions, AI without OR, set-and-forget models, AI saying "skip inspection".',
+    ],
+  },
+  {
     slug: 'ai-for-manufacturing',
     courseTagline: 'Industry · AI for Manufacturing',
     title: 'AI for Manufacturing',
