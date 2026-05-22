@@ -236,8 +236,36 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
     function togglePlay() {
       const audio = audioRef.current
       if (!audio) return
-      if (audio.paused) audio.play().catch(() => {})
-      else audio.pause()
+      if (!audio.paused) { audio.pause(); return }
+
+      // If we have a queued seek (slide-nav clicked before audio was loaded
+      // enough to seek), apply it BEFORE play(). Without this, the audio
+      // starts from 0 — playing slide-1 content even though the user
+      // advanced past it.
+      const pending = pendingSeekRef.current
+      if (pending !== null) {
+        if (audio.readyState >= 1) {
+          try { audio.currentTime = pending; pendingSeekRef.current = null } catch {}
+          audio.play().catch(() => {})
+          return
+        }
+        // Not seekable yet — defer play until canplay fires.
+        const onReady = () => {
+          audio.removeEventListener('canplay', onReady)
+          try {
+            if (pendingSeekRef.current !== null) {
+              audio.currentTime = pendingSeekRef.current
+              pendingSeekRef.current = null
+            }
+          } catch {}
+          audio.play().catch(() => {})
+        }
+        audio.addEventListener('canplay', onReady, { once: true })
+        // Force a load attempt in case preload="auto" hasn't kicked in yet.
+        try { audio.load() } catch {}
+        return
+      }
+      audio.play().catch(() => {})
     }
 
     function cycleSpeed() { setSpeedIndex(prev => (prev + 1) % SPEEDS.length) }

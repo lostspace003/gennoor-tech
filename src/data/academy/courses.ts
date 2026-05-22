@@ -4,6 +4,7 @@ import { functionExpanded } from './courses-expanded/function-expanded'
 import { leadershipExpanded } from './courses-expanded/leadership-expanded'
 import { industryExpanded } from './courses-expanded/industry-expanded'
 import { builderExpanded } from './courses-expanded/builder-expanded'
+import { missingRealCourses } from './courses-expanded/missing-real-courses'
 
 // Gennoor Academy catalog — full course library, organized across 6 tracks.
 // `baseCourses` are the original 13 scaffolds.
@@ -16,7 +17,7 @@ const baseCourses: Course[] = [
   // FOUNDATIONS TRACK
   // ────────────────────────────────────────────────────────────────────
   {
-    slug: 'ai-foundations-for-everyone',
+    slug: 'ai-foundations',
     title: 'AI Foundations for Everyone',
     subtitle:
       'A practical 55-minute guide for business teams — no code, no buzzwords, no hype.',
@@ -2096,7 +2097,7 @@ const baseCourses: Course[] = [
 // ────────────────────────────────────────────────────────────────────
 const interactiveCourses: Course[] = [
   {
-    slug: 'ab-100-architecting-agentic-ai',
+    slug: 'ab-100',
     title: 'AB-100: Architecting Agentic AI Business Solutions',
     subtitle:
       'The flagship interactive course — Microsoft AB-100 certification prep with chapter-by-chapter web experience, audio narration, and a 50-question mock exam.',
@@ -2304,6 +2305,7 @@ export const courses: Course[] = [
   ...leadershipExpanded,
   ...industryExpanded,
   ...builderExpanded,
+  ...missingRealCourses,
   ...interactiveCourses,
 ]
 

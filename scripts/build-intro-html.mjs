@@ -40,22 +40,18 @@ const SHARED_JS = (nextHref) => `
 window.parent.postMessage({ type: 'gennoor-slide-progress', percent: 0, slideInfo: 'Intro · 1 / 1', totalSteps: 0, currentStep: 0, chapterId: 'chapter-00' }, '*')
 
 document.getElementById('begin').addEventListener('click', function () {
-  // First try parent navigation (when embedded in ChapterViewer iframe).
-  try {
-    window.parent.postMessage({ type: 'gennoor-academy:advance', target: ${JSON.stringify(nextHref)} }, '*')
-  } catch (e) { /* fall through */ }
-  // Fallback: direct navigate. Top-level frame breakout for the iframe case.
-  setTimeout(function () {
+  var nextHref = ${JSON.stringify(nextHref)}
+  var inIframe = window.parent !== window
+  if (inIframe) {
+    // Parent (ChapterViewer) handles via Next.js router.push — a client-side
+    // navigation that PRESERVES fullscreen state. A hard navigation here
+    // (window.top.location.href) would exit fullscreen, so we don't do it.
     try {
-      if (window.top && window.top !== window) {
-        window.top.location.href = ${JSON.stringify(nextHref)}
-      } else {
-        window.location.href = ${JSON.stringify(nextHref)}
-      }
-    } catch (e) {
-      window.location.href = ${JSON.stringify(nextHref)}
-    }
-  }, 150)
+      window.parent.postMessage({ type: 'gennoor-academy:advance', target: nextHref }, '*')
+      return
+    } catch (e) { /* fall through to hard nav as last resort */ }
+  }
+  window.location.href = nextHref
 })
 `
 
