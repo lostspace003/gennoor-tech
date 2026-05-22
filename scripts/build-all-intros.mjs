@@ -363,6 +363,20 @@ const COURSES = [
     ],
   },
   {
+    slug: 'rag-architectures-foundations',
+    courseTagline: 'Builder · RAG Architectures',
+    title: 'RAG Architectures — Foundations',
+    subtitle: 'RAG looks simple in the diagram and brutal in production. Retrieval quality drives 80% of system quality — and is what teams under-invest in.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/rag-architectures-foundations/chapter-01-why-rag',
+    takeaways: [
+      'When RAG fits and 3 cases when it\'s the wrong architecture — RAG vs long-context vs fine-tuning, picked by what the task actually needs.',
+      '4 vector stores compared with a scale guide, hybrid search done right (BM25 + vectors + semantic), and the cost-quality curve for re-ranking.',
+      '6 production failure modes with targeted fixes + a 5-component production architecture and 4 trust trip-wires you don\'t cross.',
+    ],
+  },
+  {
     slug: 'ai-in-education',
     courseTagline: 'Education · AI in Schools, Colleges, Universities',
     title: 'AI in Education',

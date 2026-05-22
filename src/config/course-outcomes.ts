@@ -116,6 +116,17 @@ export const COURSE_OUTCOMES: Record<string, string[]> = {
     'Call AI with 4 extractions + the 2-2-2 weekly coaching loop that drops new-rep ramp 30-50%',
   ],
 
+  'rag-architectures-foundations': [
+    'When RAG fits — large/changing KB · citations + grounding · long-tail facts — and 3 cases when it\'s the wrong architecture',
+    'Embeddings as dense vectors — what they encode well (topic, paraphrase, semantic relations) and miss (IDs, negation, numerics, recency)',
+    '4 vector stores compared — pgvector, Pinecone, Azure AI Search, Weaviate — with the scale guide and cost traps to avoid',
+    'Hybrid search (BM25 + vector + semantic ranking) with RRF/weighted/cascade fusion — where retrieval quality actually lives',
+    '3 re-ranker types and the cost-quality curve — first 50 candidates lift 15-25%; beyond that, diminishing returns',
+    'Evaluation in two layers — retrieval (hit rate, MRR, recall@k) vs answer (RAGAS: groundedness, faithfulness, relevance) — never conflated',
+    '6 production failure modes (bad chunking, query intent mismatch, OOD queries, context overflow, metadata blind spots, stale knowledge) + targeted fixes',
+    '5-component production architecture + 4 trust trip-wires + interactive architecture-decision-record builder',
+  ],
+
   'ai-in-education': [
     'The 6 plays that ship in education today — AI literacy, tutoring, educator support, integrity, equity, privacy',
     'The 3 anti-plays that harm — AI replacing teachers, surveillance-heavy AI, autonomous high-stakes grading',
