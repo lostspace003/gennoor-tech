@@ -116,6 +116,17 @@ export const COURSE_OUTCOMES: Record<string, string[]> = {
     'Call AI with 4 extractions + the 2-2-2 weekly coaching loop that drops new-rep ramp 30-50%',
   ],
 
+  'ai-decision-making': [
+    'AI is a decision input, not the decision — three modes (AI-as-input, AI-assisted, AI-as-decider) and the drift toward delegation that grows with better models',
+    'The cognitive offloading risk grounded in Kahneman\'s System 1 / System 2 — why better models suppress critique and the two countermeasures that keep reasoning engaged',
+    'Three override signals (context, recency, regional) and the deference trap that hides overrides — with the override-documentation discipline',
+    'The 80/20 verification rule with three filters (reversibility, stakes, context) and three categories that need 100% verification',
+    'Team-level decision norms that survive tool churn — categorisation, pre-commitment, override docs — with a 3-stage onboarding pattern',
+    'Scenario planning with AI without the false-confidence trap — the 4-step discipline that mixes AI breadth with your judgement',
+    'Three drift types (deference, verification, model) and the quarterly decision audit that catches them — with model-drift canonical-prompts check',
+    'A one-page AI decision charter + 4 trust trip-wires + interactive charter builder for the team',
+  ],
+
   'open-source-llms-for-enterprise': [
     'Open-source isn\'t free — it\'s a different cost curve. Three real reasons (sovereignty + residency, cost at scale, roadmap control) and 3 cases hosted API still wins',
     'Four model families compared (Llama, Mistral, Phi, Qwen) with the license traps that catch teams and the size discipline that resists "bigger is better"',
