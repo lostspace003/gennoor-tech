@@ -108,6 +108,12 @@ export interface Course {
   // When set, the catalog detail page shows a distinct CTA linking to the interactive experience.
   // Example: AB-100 lives at /ai-academy/ab-100 and is surfaced in /academy via this field.
   interactiveUrl?: string
+
+  // Optional short tagline shown in the hero meta strip in place of a duration timer.
+  tagline?: string
+
+  // Optional downloadable PDF companion (full course in PDF form).
+  pdfUrl?: string
 }
 
 export interface TrackInfo {

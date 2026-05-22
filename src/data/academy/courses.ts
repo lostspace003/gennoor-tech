@@ -38,6 +38,8 @@ const baseCourses: Course[] = [
     lastUpdated: '2026-05-19',
 
     interactiveUrl: '/ai-academy/ai-foundations',
+    tagline: 'Self-paced',
+    pdfUrl: 'https://gennoor.com/api/content/courses-pdfs/ai-foundations.pdf',
 
     hookSentence:
       'The fastest way to get a non-technical team speaking the same AI vocabulary.',
