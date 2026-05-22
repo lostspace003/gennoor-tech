@@ -116,6 +116,17 @@ export const COURSE_OUTCOMES: Record<string, string[]> = {
     'Call AI with 4 extractions + the 2-2-2 weekly coaching loop that drops new-rep ramp 30-50%',
   ],
 
+  'ai-risk-for-audit-committees': [
+    'AI risk in all 4 buckets it touches (operational, compliance, strategic, reputational) — and 3 risks that don\'t map cleanly to legacy frameworks',
+    'Inherent vs residual rated across 4 dimensions with the controls-assumed anti-pattern made visible',
+    'NIST AI RMF overlay on COSO + three-lines + ISO 31000 — risk catalog + control library AI-specific extensions',
+    'A 9-question line of inquiry that surfaces real risk vs rehearsal — and how to press for specifics',
+    'First/second/third-line assurance for AI with a 12-month internal audit plan that covers without over-rotating',
+    'A 1-page board view that meaningfully changes between meetings — and the heatmap-as-theatre trap',
+    'Cross-committee coordination across audit, risk, technology, and ESG — with 3 coordination patterns and escalation taxonomy',
+    'A one-page audit committee AI playbook + 4 trust trip-wires + interactive playbook builder',
+  ],
+
   'ai-strategy-for-cio': [
     'AI as one workload in the run-grow-transform portfolio, not bolted on — and the three portfolio failures from treating AI as a side program',
     'Five-criterion infrastructure test across hyperscaler, sovereign, on-prem, and hybrid — with regional forcing factors that override',
