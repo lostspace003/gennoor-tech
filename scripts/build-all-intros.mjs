@@ -363,6 +363,20 @@ const COURSES = [
     ],
   },
   {
+    slug: 'ai-roi-business-case-building',
+    courseTagline: 'Finance · AI ROI + Business Case Building',
+    title: 'AI ROI & Business Case Building',
+    subtitle: 'Most AI business cases fail not because AI doesn\'t work — but because the case is built wrong.',
+    chapterMeta: { total: 8 }, duration: '~30 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-roi-business-case-building/chapter-01-landscape',
+    takeaways: [
+      'The 6-component framework finance respects — problem · benefits · costs · risks · financial metric · stakeholders.',
+      'The 7 cost buckets and 5 AI-specific risks every case names — and the productivity-benefit trap most cases fall into.',
+      'A 2-week disciplined build cadence + the 4 CFO questions you must be able to answer in three minutes.',
+    ],
+  },
+  {
     slug: 'ai-product-management',
     courseTagline: 'Product · AI Product Management',
     title: 'AI Product Management',
