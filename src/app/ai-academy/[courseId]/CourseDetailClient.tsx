@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, BookOpen, Clock, BarChart3, Award, PlayCircle, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, BookOpen, Clock, BarChart3, Award, PlayCircle, CheckCircle2, Download } from 'lucide-react'
 import ChapterList from '@/components/academy/ChapterList'
 import type { ChapterProgress } from '@/components/academy/ChapterList'
 import { getLocalProgress } from '@/lib/progress-store'
@@ -105,6 +105,15 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                   {firstChapter.number === 0 ? 'Start Course' : 'Start Chapter 01'}
                 </Link>
               )}
+              <a
+                href={`/Gennoor-Academy-Course-PDFs/${course.id}.pdf`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg ring-1 ring-white/20 hover:ring-white/40 transition-all backdrop-blur-sm"
+              >
+                <Download className="w-5 h-5" />
+                Download course PDF
+              </a>
             </div>
           </div>
         </div>
