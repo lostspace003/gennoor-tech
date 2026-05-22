@@ -8,7 +8,7 @@ export const industryExpanded: Course[] = [
   // INDUSTRY TRACK — Government & Public Sector
   // ────────────────────────────────────────────────────────────────────
   {
-    slug: 'ai-in-government-public-sector',
+    slug: 'ai-for-public-sector',
     title: 'AI in Government & Public Sector',
     subtitle:
       'Citizen services, case management, and procurement modernization — built around Vision 2030, Digital India, and data-sovereignty rails.',
@@ -159,7 +159,7 @@ export const industryExpanded: Course[] = [
   // INDUSTRY TRACK — Energy & Utilities
   // ────────────────────────────────────────────────────────────────────
   {
-    slug: 'ai-in-energy-utilities',
+    slug: 'ai-for-energy-utilities',
     title: 'AI in Energy & Utilities',
     subtitle:
       'Grid optimization, renewable forecasting, asset health, and customer engagement — with the regulatory reporting that comes with all of it.',
@@ -305,7 +305,7 @@ export const industryExpanded: Course[] = [
   // INDUSTRY TRACK — Retail & E-commerce
   // ────────────────────────────────────────────────────────────────────
   {
-    slug: 'ai-in-retail-ecommerce',
+    slug: 'ai-for-retail-ecommerce',
     title: 'AI in Retail & E-commerce',
     subtitle:
       'Personalization, SKU-level forecasting, visual merchandising, pricing, and inventory — with the creepy line clearly marked.',

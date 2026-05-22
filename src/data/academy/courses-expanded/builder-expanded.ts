@@ -5,11 +5,12 @@ import type { Course } from '../types'
 // RAG, Azure AI Foundry, open-source LLMs, and LLMOps.
 
 export const builderExpanded: Course[] = [
-  // ────────────────────────────────────────────────────────────────────
-  // BUILDER TRACK — Microsoft 365 Copilot Adoption Playbook
-  // ────────────────────────────────────────────────────────────────────
+  // m365-copilot-adoption and prompting-mastery moved to their canonical
+  // entries (courses.ts and foundations-expanded.ts respectively) to avoid
+  // duplicate slugs in the catalog after the May 2026 slug alignment.
+  /* DUPLICATE-REMOVED-START
   {
-    slug: 'microsoft-365-copilot-adoption-playbook',
+    slug: 'm365-copilot-adoption',
     title: 'Microsoft 365 Copilot Adoption Playbook',
     subtitle:
       'From license assignment to org-wide habit — a 45-minute operator’s playbook for IT leaders and change managers running real Copilot rollouts.',
@@ -148,7 +149,7 @@ export const builderExpanded: Course[] = [
   // BUILDER TRACK — Prompt Engineering for Practitioners
   // ────────────────────────────────────────────────────────────────────
   {
-    slug: 'prompt-engineering-for-practitioners',
+    slug: 'prompting-mastery',
     title: 'Prompt Engineering for Practitioners',
     subtitle:
       'A 60-minute hands-on course for developers and senior analysts — structured outputs, tool use, evaluation, and prompt-as-code.',
@@ -290,6 +291,7 @@ export const builderExpanded: Course[] = [
       'mlops-for-llms',
     ],
   },
+  DUPLICATE-REMOVED-END */
 
   // ────────────────────────────────────────────────────────────────────
   // BUILDER TRACK — RAG Architectures Foundations
