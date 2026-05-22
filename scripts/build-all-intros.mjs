@@ -363,6 +363,20 @@ const COURSES = [
     ],
   },
   {
+    slug: 'azure-ai-foundry-essentials',
+    courseTagline: 'Builder · Azure AI Foundry',
+    title: 'Azure AI Foundry Essentials',
+    subtitle: 'Foundry is the consolidation layer on top of Azure AI. Hub · project · connections. From POC to production.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/azure-ai-foundry-essentials/chapter-01-architecture',
+    takeaways: [
+      'The 3-layer Foundry architecture (hub, project, connections) and when raw Azure OpenAI beats Foundry — start raw, migrate at feature three.',
+      'Managed identity + Key Vault + private endpoints for regulated workloads — making the wrong way harder than the right way.',
+      'A 20-item production-readiness checklist with three disqualifiers nobody crosses and a 4-section sign-off pack the platform team accepts.',
+    ],
+  },
+  {
     slug: 'mlops-for-llms',
     courseTagline: 'Builder · MLOps for LLMs',
     title: 'MLOps for LLMs',
