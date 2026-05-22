@@ -116,6 +116,17 @@ export const COURSE_OUTCOMES: Record<string, string[]> = {
     'Call AI with 4 extractions + the 2-2-2 weekly coaching loop that drops new-rep ramp 30-50%',
   ],
 
+  'ai-in-education': [
+    'The 6 plays that ship in education today — AI literacy, tutoring, educator support, integrity, equity, privacy',
+    'The 3 anti-plays that harm — AI replacing teachers, surveillance-heavy AI, autonomous high-stakes grading',
+    'The pedagogy-first filter — does this serve a learning objective, or did the vendor say it would help?',
+    'AI literacy as a discipline — 4 components at age-appropriate sequencing from elementary through higher ed',
+    'The supplement-not-substitute discipline for AI tutoring + the grading line for educator AI',
+    '3-tier academic integrity model — prohibited · permitted with disclosure · required — labelled per assessment',
+    'FERPA · COPPA · GDPR posture + the 3 vendor contract essentials + child-safety guardrails',
+    '12-month school/institution rollout with 4 trust trip-wires + interactive design-doc builder',
+  ],
+
   'ai-roi-business-case-building': [
     'The 6-component business case framework finance respects — problem · benefits · costs · risks · financial metric · stakeholders',
     'The 4 fail modes of typical AI business cases — and the 30%-haircut test that catches the optimistic ones',

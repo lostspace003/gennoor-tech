@@ -363,6 +363,20 @@ const COURSES = [
     ],
   },
   {
+    slug: 'ai-in-education',
+    courseTagline: 'Education · AI in Schools, Colleges, Universities',
+    title: 'AI in Education',
+    subtitle: 'AI in education succeeds when it augments teachers and supports learners. Pedagogy leads. Technology follows.',
+    chapterMeta: { total: 8 }, duration: '~30 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-in-education/chapter-01-landscape',
+    takeaways: [
+      'Six plays that ship — AI literacy, tutoring, educator support, integrity, equity, privacy — and three anti-plays that harm.',
+      'The pedagogy-first filter — does this serve a learning objective, or did the vendor say it would help?',
+      'A twelve-month school or institution rollout with four trust trip-wires and a built-in design-doc builder for the cabinet.',
+    ],
+  },
+  {
     slug: 'ai-roi-business-case-building',
     courseTagline: 'Finance · AI ROI + Business Case Building',
     title: 'AI ROI & Business Case Building',
