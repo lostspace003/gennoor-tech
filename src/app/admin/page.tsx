@@ -67,7 +67,7 @@ function ChartLoader() {
 
 // ─── Types ───────────────────────────────────────────────────
 
-type TabKey = 'overview' | 'traffic' | 'enquiries' | 'emails' | 'sessions' | 'bookings' | 'storage' | 'insights' | 'comments' | 'seo' | 'setup' | 'ai-readiness' | 'cowork' | 'indexing' | 'academy' | 'auth-log'
+type TabKey = 'overview' | 'traffic' | 'enquiries' | 'emails' | 'sessions' | 'bookings' | 'storage' | 'insights' | 'comments' | 'seo' | 'setup' | 'ai-readiness' | 'cowork' | 'indexing' | 'academy' | 'auth-log' | 'certificates' | 'course-feedback'
 type GroupKey = 'analytics' | 'communications' | 'bookings' | 'system'
 
 interface AnalyticsData {
@@ -161,6 +161,9 @@ export default function AdminDashboard() {
   const [academyData, setAcademyData] = useState<{ learners: Array<{ email: string; name: string; provider: string; lastLogin: string; createdAt: string }>; progress: Array<{ email: string; courseId: string; chapterId: string; completionPercent: number; completed: boolean; lastAccessed: string }>; summary: { totalLearners: number; activeLearners: number; learnersWithCompletion: number; totalProgressEntries: number; byProvider: Record<string, number>; byCourse: Array<{ courseId: string; learners: number; completions: number }> }; chapterStats: Record<string, { views: number; completions: number; avgPercent: number }> } | null>(null)
   const [indexNowState, setIndexNowState] = useState<{ pushing: boolean; result?: { success: boolean; submitted?: number; total?: number; error?: string; submittedAt?: string } }>({ pushing: false })
   const [authLog, setAuthLog] = useState<AuthLogEntry[]>([])
+  const [certData, setCertData] = useState<{ summary: { total: number; issued: number; revoked: number; uniqueLearners: number; past7: number; past30: number }; perCourse: Array<{ slug: string; title: string; count: number }>; recent: Array<{ certId: string; recipientName: string; recipientEmail: string; workshopTitle: string; workshopSlug: string; issueDate: string; verifyUrl: string; status: string; createdAt: string }> } | null>(null)
+  const [feedbackData, setFeedbackData] = useState<{ summary: { total: number; avgRating: number; fiveStar: number; lowRated: number }; perCourse: Array<{ courseId: string; count: number; avgRating: number; commentsCount: number }>; recent: Array<{ courseId: string; learnerName: string; learnerEmail: string; rating: number; comments: string; createdAt: string }> } | null>(null)
+  const [liveVisitors, setLiveVisitors] = useState<{ count: number; byPage: Array<{ page: string; hits: number }> }>({ count: 0, byPage: [] })
 
   const fetchAll = useCallback(async (numDays: number) => {
     setLoading(true); setError('')
@@ -168,7 +171,7 @@ export default function AdminDashboard() {
     try {
       const headers = { 'Content-Type': 'application/json' }
       const body = (extra: any = {}) => JSON.stringify(extra)
-      const [analyticsRes, setupRes, seoRes, sessionsRes, storageRes, insightsRes, emailLogsRes, aiReadinessRes] = await Promise.all([
+      const [analyticsRes, setupRes, seoRes, sessionsRes, storageRes, insightsRes, emailLogsRes, aiReadinessRes, certRes, feedbackRes] = await Promise.all([
         fetch('/api/admin/analytics', { method: 'POST', headers, body: body({ days: numDays }) }),
         fetch('/api/admin/setup-status', { method: 'POST', headers, body: body() }),
         fetch('/api/admin/seo-health', { method: 'POST', headers, body: body() }),
@@ -177,13 +180,18 @@ export default function AdminDashboard() {
         fetch('/api/admin/insights', { method: 'POST', headers, body: body({ metric: 'all', timespan: ts }) }),
         fetch('/api/admin/email-logs', { method: 'POST', headers, body: body({ days: numDays }) }),
         fetch('/api/admin/ai-readiness', { method: 'POST', headers, body: body() }),
+        fetch('/api/admin/certificates', { method: 'POST', headers, body: body() }),
+        fetch('/api/admin/course-feedback', { method: 'POST', headers, body: body() }),
       ])
       if (analyticsRes.status === 401) { setError('Session expired. Please login again.'); router.push('/admin/login'); return }
-      const [analyticsData, setupResult, seoResult, sessionsResult, storageResult, insightsResult, emailLogsResult, aiReadinessResult] = await Promise.all([
+      const [analyticsData, setupResult, seoResult, sessionsResult, storageResult, insightsResult, emailLogsResult, aiReadinessResult, certResult, feedbackResult] = await Promise.all([
         analyticsRes.ok ? analyticsRes.json() : null, setupRes.ok ? setupRes.json() : null, seoRes.ok ? seoRes.json() : null,
         sessionsRes.ok ? sessionsRes.json() : [], storageRes.ok ? storageRes.json() : null, insightsRes.ok ? insightsRes.json() : null,
         emailLogsRes.ok ? emailLogsRes.json() : null, aiReadinessRes.ok ? aiReadinessRes.json() : null,
+        certRes.ok ? certRes.json() : null, feedbackRes.ok ? feedbackRes.json() : null,
       ])
+      setCertData(certResult)
+      setFeedbackData(feedbackResult)
       setData(analyticsData); setSetupData(setupResult); setSeoData(seoResult)
       setSessions(Array.isArray(sessionsResult) ? sessionsResult : []); setStorageData(storageResult); setInsightsData(insightsResult); setEmailLogs(emailLogsResult); setAiReadinessData(aiReadinessResult)
       try { const cwRes = await fetch('/api/admin/cowork-registrations', { method: 'POST', headers }); if (cwRes.ok) setCoworkData(await cwRes.json()) } catch {}
@@ -210,6 +218,17 @@ export default function AdminDashboard() {
       fetch('/api/admin/auth-log').then(r => r.ok ? r.json() : { logs: [] }).then(d => setAuthLog(d.logs || [])).catch(() => {})
     }
   }, [status, session?.user?.email])
+
+  useEffect(() => {
+    if (status !== 'authenticated') return
+    const pull = () => fetch('/api/admin/live-visitors')
+      .then(r => r.ok ? r.json() : { count: 0, byPage: [] })
+      .then(d => setLiveVisitors({ count: d.count || 0, byPage: d.byPage || [] }))
+      .catch(() => {})
+    pull()
+    const id = setInterval(pull, 30000)
+    return () => clearInterval(id)
+  }, [status])
 
   function handleRefresh() { fetchAll(days) }
   function handleDaysChange(d: number, filter: string) { setDays(d); setActiveFilter(filter); fetchAll(d) }
@@ -369,6 +388,8 @@ export default function AdminDashboard() {
       { key: 'insights', label: 'Insights', icon: Activity },
       { key: 'ai-readiness', label: 'AI Readiness', icon: Bot },
       { key: 'academy', label: 'Academy', icon: BookOpen, badge: academyData?.summary?.totalLearners || undefined },
+      { key: 'certificates', label: 'Certificates', icon: GraduationCap, badge: certData?.summary?.issued || undefined },
+      { key: 'course-feedback', label: 'Course Feedback', icon: MessageSquare, badge: feedbackData?.summary?.lowRated || undefined },
     ]},
     { key: 'communications', label: 'Communications', icon: Mail, badge: (emailLogs?.totalFailed || 0) > 0 ? emailLogs!.totalFailed : undefined, tabs: [
       { key: 'enquiries', label: 'Enquiries', icon: Mail },
@@ -466,7 +487,23 @@ export default function AdminDashboard() {
 
         {/* ─── OVERVIEW ──────────────────────────────────── */}
         {activeTab === 'overview' && (
-          <div className="space-y-6">
+          <div className="space-y-6 animate-fadeIn">
+            {/* Live now banner — refreshes every 30s */}
+            <div className="admin-card flex items-center justify-between gap-4 px-5 py-3 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl shadow-sm">
+              <div className="flex items-center gap-3">
+                <span className="relative flex h-3 w-3">
+                  <span className={`${liveVisitors.count > 0 ? 'animate-ping' : ''} absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75`}></span>
+                  <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-500"></span>
+                </span>
+                <p className="text-sm font-medium text-emerald-900">
+                  <span className="text-lg font-bold">{liveVisitors.count}</span> {liveVisitors.count === 1 ? 'visitor' : 'visitors'} on the site right now
+                </p>
+              </div>
+              {liveVisitors.byPage.length > 0 && (
+                <p className="text-xs text-emerald-700 truncate max-w-[40%]">Hot: {liveVisitors.byPage[0].page}</p>
+              )}
+            </div>
+
             {/* Key engagement metrics */}
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
               <StatCard icon={Eye} label="Page Views" value={data.totalViews} color="blue" />
@@ -827,13 +864,33 @@ export default function AdminDashboard() {
           const pagedBookings = filteredBookings.slice((safePage - 1) * bookingsPerPage, safePage * bookingsPerPage)
           const isAllSelected = filteredBookings.length > 0 && filteredBookings.every(b => selectedBookings.has(b.rowKey))
           return (
-          <div className="space-y-6">
+          <div className="space-y-6 animate-fadeIn">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <StatCard icon={Clock} label="Pending" value={filteredBookings.filter(b => b.status === 'pending').length} color="amber" />
               <StatCard icon={CheckCircle} label="Accepted" value={filteredBookings.filter(b => b.status === 'accepted').length} color="teal" />
               <StatCard icon={XCircle} label="Rejected" value={filteredBookings.filter(b => b.status === 'rejected').length} color="purple" />
               <StatCard icon={AlertTriangle} label="Change Requested" value={filteredBookings.filter(b => b.status === 'change-requested').length} color="blue" />
             </div>
+            {filteredBookings.length > 0 && (() => {
+              const total = filteredBookings.length
+              const accepted = filteredBookings.filter(b => b.status === 'accepted').length
+              const rejected = filteredBookings.filter(b => b.status === 'rejected').length
+              const pending = filteredBookings.filter(b => b.status === 'pending').length
+              const acceptRate = total ? Math.round((accepted / total) * 100) : 0
+              return (
+                <Panel title="Funnel" subtitle={`${getFilterLabel()} · ${total} total bookings`}>
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="flex-1 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2"><p className="text-xs text-amber-700">Requested</p><p className="text-lg font-bold text-amber-900">{total}</p></div>
+                    <span className="text-slate-300">{'>'}</span>
+                    <div className="flex-1 bg-teal-50 border border-teal-200 rounded-lg px-3 py-2"><p className="text-xs text-teal-700">Accepted</p><p className="text-lg font-bold text-teal-900">{accepted} <span className="text-xs font-normal text-teal-600">({acceptRate}%)</span></p></div>
+                    <span className="text-slate-300">{'>'}</span>
+                    <div className="flex-1 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2"><p className="text-xs text-rose-700">Rejected</p><p className="text-lg font-bold text-rose-900">{rejected}</p></div>
+                    <span className="text-slate-300">{'>'}</span>
+                    <div className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2"><p className="text-xs text-slate-600">Open</p><p className="text-lg font-bold text-slate-800">{pending}</p></div>
+                  </div>
+                </Panel>
+              )
+            })()}
             <Panel title="Booking Requests" subtitle={`${filteredBookings.length} bookings — ${getFilterLabel()}`} action={
               <div className="flex items-center gap-2 flex-wrap">
                 {selectedBookings.size > 0 && (
@@ -1392,6 +1449,84 @@ export default function AdminDashboard() {
           </div>
         )}
 
+        {/* ─── CERTIFICATES ─────────────────────────────── */}
+        {activeTab === 'certificates' && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCard icon={GraduationCap} label="Total Issued" value={certData?.summary?.issued || 0} color="blue" />
+              <StatCard icon={Users} label="Unique Learners" value={certData?.summary?.uniqueLearners || 0} color="teal" />
+              <StatCard icon={TrendingUp} label="Issued (7d)" value={certData?.summary?.past7 || 0} color="amber" />
+              <StatCard icon={XCircle} label="Revoked" value={certData?.summary?.revoked || 0} color="purple" />
+            </div>
+            <div className="grid lg:grid-cols-2 gap-6">
+              <Panel title="Issuances by Course" subtitle="Lifetime certs per course">
+                {(certData?.perCourse || []).length === 0 ? <Empty /> : (
+                  <RankedList items={(certData?.perCourse || []).slice(0, 10).map(c => [c.title || c.slug, c.count] as [string, number])} />
+                )}
+              </Panel>
+              <Panel title="Recent Issuances" subtitle="Last 100 certs" action={(certData?.recent?.length || 0) > 0 ? <ExportButton onClick={() => downloadCSV(certData?.recent as any, 'certificates')} /> : undefined}>
+                {(certData?.recent?.length || 0) === 0 ? <Empty text="No certificates issued yet" /> : (
+                  <div className="max-h-[500px] overflow-y-auto -mx-2 px-2 space-y-2">
+                    {(certData?.recent || []).slice(0, 30).map(c => (
+                      <div key={c.certId} className="flex items-center gap-3 p-2.5 border border-slate-100 hover:border-blue-200 hover:bg-blue-50/40 rounded-lg transition-all duration-150">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-slate-800 truncate">{c.recipientName}</p>
+                          <p className="text-xs text-slate-500 truncate">{c.workshopTitle || c.workshopSlug}</p>
+                        </div>
+                        <span className="text-xs text-slate-400 whitespace-nowrap">{c.createdAt ? new Date(c.createdAt).toLocaleDateString() : '-'}</span>
+                        {c.verifyUrl && <a href={c.verifyUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors" title="Verify"><ExternalLink className="w-3.5 h-3.5" /></a>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Panel>
+            </div>
+          </div>
+        )}
+
+        {/* ─── COURSE FEEDBACK ──────────────────────────── */}
+        {activeTab === 'course-feedback' && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCard icon={MessageSquare} label="Reviews" value={feedbackData?.summary?.total || 0} color="blue" />
+              <StatCard icon={CheckCircle} label="Avg Rating" value={feedbackData?.summary?.total ? Math.round((feedbackData.summary.avgRating || 0) * 10) / 10 : 0} color="teal" subtitle={`${feedbackData?.summary?.avgRating || 0}★`} />
+              <StatCard icon={CheckCircle2} label="5★ Reviews" value={feedbackData?.summary?.fiveStar || 0} color="amber" />
+              <StatCard icon={AlertTriangle} label="Low (1-2★)" value={feedbackData?.summary?.lowRated || 0} color="purple" />
+            </div>
+            <div className="grid lg:grid-cols-2 gap-6">
+              <Panel title="By Course" subtitle="Avg rating + review count">
+                {(feedbackData?.perCourse || []).length === 0 ? <Empty /> : (
+                  <div className="space-y-2.5">
+                    {(feedbackData?.perCourse || []).slice(0, 12).map(c => (
+                      <div key={c.courseId} className="flex items-center gap-3">
+                        <span className="text-sm text-slate-700 flex-1 truncate" title={c.courseId}>{c.courseId}</span>
+                        <span className={`text-xs font-medium ${c.avgRating >= 4 ? 'text-emerald-600' : c.avgRating >= 3 ? 'text-amber-600' : 'text-rose-600'}`}>{c.avgRating}★</span>
+                        <span className="text-xs text-slate-400 w-12 text-right">{c.count} {c.count === 1 ? 'review' : 'reviews'}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Panel>
+              <Panel title="Recent Reviews" subtitle="Last 30">
+                {(feedbackData?.recent?.length || 0) === 0 ? <Empty text="No feedback yet" /> : (
+                  <div className="max-h-[500px] overflow-y-auto -mx-2 px-2 space-y-2">
+                    {(feedbackData?.recent || []).slice(0, 30).map((r, i) => (
+                      <div key={i} className="p-2.5 border border-slate-100 hover:border-blue-200 hover:bg-blue-50/40 rounded-lg transition-all duration-150">
+                        <div className="flex items-center justify-between gap-3 mb-1">
+                          <span className="text-sm font-medium text-slate-800 truncate">{r.learnerName || r.learnerEmail}</span>
+                          <span className={`text-xs font-medium ${r.rating >= 4 ? 'text-emerald-600' : r.rating >= 3 ? 'text-amber-600' : 'text-rose-600'}`}>{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</span>
+                        </div>
+                        <p className="text-xs text-slate-500 mb-1 truncate">{r.courseId}</p>
+                        {r.comments && <p className="text-xs text-slate-600 italic">&ldquo;{r.comments}&rdquo;</p>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Panel>
+            </div>
+          </div>
+        )}
+
         {/* ─── AUTH LOG ──────────────────────────────────── */}
         {activeTab === 'auth-log' && (
           <div className="space-y-6">
@@ -1542,6 +1677,35 @@ export default function AdminDashboard() {
                 )}
               </Panel>
 
+              <Panel title="Interest-form Leads" subtitle={`${(aiReadinessData.leads || []).length} leads — pipeline from AI Readiness funnel`} action={(aiReadinessData.leads?.length || 0) > 0 ? <ExportButton onClick={() => downloadCSV(aiReadinessData.leads as any, 'ai-readiness-leads')} /> : undefined}>
+                {(aiReadinessData.leads || []).length === 0 ? <Empty text="No interest-form leads yet" /> : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="text-left text-xs text-slate-500 border-b border-slate-200">
+                          <th className="pb-2 pr-4 font-medium">Name</th>
+                          <th className="pb-2 pr-4 font-medium">Email</th>
+                          <th className="pb-2 pr-4 font-medium">Company</th>
+                          <th className="pb-2 pr-4 font-medium">Interested in</th>
+                          <th className="pb-2 font-medium">When</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(aiReadinessData.leads || []).slice(0, 30).map((l: any, i: number) => (
+                          <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/40 transition-colors duration-150">
+                            <td className="py-2.5 pr-4 font-medium text-slate-800">{l.name || '-'}</td>
+                            <td className="py-2.5 pr-4 text-slate-600 text-xs">{l.email}</td>
+                            <td className="py-2.5 pr-4 text-slate-600 text-xs">{l.company || '-'}</td>
+                            <td className="py-2.5 pr-4 text-slate-500 text-xs">{l.option || '-'}</td>
+                            <td className="py-2.5 text-slate-500 text-xs">{l.submittedAt ? new Date(l.submittedAt).toLocaleDateString() : '-'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </Panel>
+
               <Panel title="User Feedback" subtitle={`${filteredAiFeedback.length} responses — ${getFilterLabel()}`}>
                 {filteredAiFeedback.length === 0 ? <Empty text="No feedback yet" /> : (
                   <div className="space-y-2">
@@ -1582,7 +1746,7 @@ export default function AdminDashboard() {
 function StatCard({ icon: Icon, label, value, color, subtitle }: { icon: any; label: string; value: number; color: 'blue' | 'teal' | 'amber' | 'purple'; subtitle?: string }) {
   const colors = { blue: 'bg-blue-100 text-blue-600', teal: 'bg-teal-100 text-teal-600', amber: 'bg-amber-100 text-amber-600', purple: 'bg-purple-100 text-purple-600' }
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+    <div className="admin-card bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
       <div className="flex items-center gap-3">
         <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${colors[color]}`}><Icon className="w-5 h-5" /></div>
         <div><p className="text-2xl font-bold text-slate-800">{subtitle || value.toLocaleString()}</p><p className="text-xs text-slate-500">{label}</p></div>
@@ -1593,7 +1757,7 @@ function StatCard({ icon: Icon, label, value, color, subtitle }: { icon: any; la
 
 function Panel({ title, subtitle, children, action }: { title: string; subtitle?: string; children: React.ReactNode; action?: React.ReactNode }) {
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+    <div className="admin-card bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <div><h2 className="text-base font-semibold text-slate-800">{title}</h2>{subtitle && <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>}</div>
         {action}
