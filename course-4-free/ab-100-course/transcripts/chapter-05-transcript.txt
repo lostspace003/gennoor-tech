@@ -1,0 +1,202 @@
+--- SLIDE 01 ---
+Chapter five! <break time='500ms'/> Design AI and agents for business solutions. <break time='600ms'/> This is the largest chapter in the entire course, <break time='200ms'/> and the most hands-on. <break time='300ms'/> We move from strategy and R O I <break time='200ms'/> to actually designing agents. <break time='400ms'/> Responsible AI principles. <break time='200ms'/> Three agent types. <break time='200ms'/> Copilot Studio design patterns. <break time='200ms'/> Dynamics 365 customization. <break time='200ms'/> Foundry tools. <break time='200ms'/> Power Platform Well-Architected. <break time='200ms'/> Success metrics. <break time='400ms'/> By the end you'll be able to design any agent on the Microsoft stack from scratch. <break time='300ms'/> Let's get into it!
+
+--- SLIDE 02 ---
+Five major themes in Chapter five. <break time='300ms'/> The biggest chapter in the course. <break time='200ms'/> I'll bring up each theme on screen. <break time='500ms'/>
+
+One! <break time='200ms'/> Responsible AI. <break time='300ms'/> Microsoft's six core tenets that govern every agent you design. <break time='200ms'/> Fairness, <break time='200ms'/> reliability, <break time='200ms'/> privacy, <break time='200ms'/> inclusiveness, <break time='200ms'/> transparency, <break time='200ms'/> accountability. <break time='400ms'/>
+
+Two! <break time='200ms'/> Three agent types. <break time='300ms'/> Task agents do work. <break time='200ms'/> Autonomous agents work independently. <break time='200ms'/> Prompt-and-response agents have conversations. <break time='200ms'/> All three share the same five components underneath. <break time='400ms'/>
+
+Three! <break time='200ms'/> Copilot Studio design. <break time='300ms'/> Language understanding modes, <break time='200ms'/> N L U, <break time='200ms'/> C L U, <break time='200ms'/> generative. <break time='200ms'/> Topics, <break time='200ms'/> conditions, <break time='200ms'/> triggers. <break time='200ms'/> Agent flows. <break time='200ms'/> Prompt actions. <break time='400ms'/>
+
+Four! <break time='200ms'/> D three sixty-five and Foundry. <break time='300ms'/> How to customize Copilot in Dynamics 365. <break time='200ms'/> Business terms, <break time='200ms'/> customizations, <break time='200ms'/> connectors. <break time='200ms'/> And the Foundry tools catalog for pro-code agents. <break time='400ms'/>
+
+Five! <break time='200ms'/> Architecture and success. <break time='300ms'/> Power Platform Well-Architected Framework. <break time='200ms'/> Defining success criteria and adoption goals. <break time='300ms'/> Five pillars. <break time='200ms'/> Measurable outcomes.
+
+--- SLIDE 03 ---
+First unit. <break time='400ms'/> Microsoft Responsible AI principles. <break time='300ms'/> Six tenets. <break time='200ms'/> Apply them to every agent you design. <break time='400ms'/> This isn't optional! <break time='300ms'/> Microsoft enforces these guidelines, <break time='200ms'/> and so should you.
+
+--- SLIDE 04 ---
+The six tenets of Microsoft Responsible AI. <break time='300ms'/> Memorize them. <break time='200ms'/> Apply them on every project. <break time='300ms'/> I'll bring them up one at a time. <break time='500ms'/>
+
+Tenet one! <break time='300ms'/> Fairness. <break time='400ms'/> AI systems should treat all people fairly. <break time='200ms'/> Avoid harmful biases. <break time='200ms'/> Equitable outcomes across demographics. <break time='300ms'/> Test for disparate impact before going live. <break time='400ms'/>
+
+Tenet two! <break time='300ms'/> Reliability and safety. <break time='400ms'/> AI must operate reliably under expected and unexpected conditions. <break time='200ms'/> Continuous monitoring. <break time='200ms'/> Regular validation. <break time='200ms'/> Designed to prevent unsafe outputs. <break time='300ms'/> This is the most-tested tenet in production. <break time='400ms'/>
+
+Tenet three! <break time='300ms'/> Privacy and security. <break time='400ms'/> Protect personal data. <break time='200ms'/> Strict security protocols. <break time='200ms'/> Meet compliance requirements. <break time='300ms'/> Permission-aware grounding ties this back to Chapter two. <break time='400ms'/>
+
+Tenet four! <break time='300ms'/> Inclusiveness. <break time='400ms'/> Empower everyone. <break time='200ms'/> Avoid creating barriers. <break time='200ms'/> Accessibility. <break time='200ms'/> Inclusive design principles. <break time='300ms'/> Test with users from underrepresented groups before scaling. <break time='400ms'/>
+
+Tenet five! <break time='300ms'/> Transparency. <break time='400ms'/> Users must understand how AI systems work. <break time='200ms'/> Explain data dependencies. <break time='200ms'/> Show AI-driven decision logic. <break time='200ms'/> Citations from grounding. <break time='300ms'/> Users should never be confused about whether they're talking to AI. <break time='400ms'/>
+
+And tenet six! <break time='300ms'/> Accountability. <break time='400ms'/> People, <break time='200ms'/> not machines, <break time='200ms'/> are responsible for AI outcomes. <break time='300ms'/> Implement guardrails, <break time='200ms'/> governance, <break time='200ms'/> human oversight. <break time='300ms'/> The agent never owns the decision. <break time='200ms'/> A human does.
+
+--- SLIDE 05 ---
+The six tenets aren't a one-time checkbox. <break time='300ms'/> They apply across the entire AI lifecycle. <break time='200ms'/> Design, <break time='200ms'/> development, <break time='200ms'/> deployment, <break time='200ms'/> operations. <break time='300ms'/> Each phase has specific R A I activities. <break time='300ms'/> I'll bring up each phase. <break time='500ms'/>
+
+Phase one! <break time='300ms'/> Design. <break time='400ms'/> Define risks. <break time='200ms'/> Identify expected users. <break time='200ms'/> Map safety scenarios. <break time='200ms'/> Document edge cases. <break time='300ms'/> This is where most projects fail, <break time='200ms'/> by skipping this phase entirely. <break time='400ms'/>
+
+Phase two! <break time='300ms'/> Development. <break time='400ms'/> Apply fairness testing. <break time='200ms'/> Security reviews. <break time='200ms'/> Transparency documentation. <break time='200ms'/> Red-team your prompts. <break time='200ms'/> Test with adversarial inputs. <break time='400ms'/>
+
+Phase three! <break time='300ms'/> Deployment. <break time='400ms'/> Provide human oversight. <break time='200ms'/> Pre-production validation. <break time='200ms'/> Implement monitoring. <break time='200ms'/> Citations and audit trails. <break time='300ms'/> Don't skip the canary phase. <break time='400ms'/>
+
+And phase four! <break time='300ms'/> Operations. <break time='400ms'/> Continuously improve based on usage telemetry. <break time='200ms'/> Retraining when drift is detected. <break time='200ms'/> Policy updates. <break time='300ms'/> R A I is a continuous practice, <break time='200ms'/> not a deployment milestone.
+
+--- SLIDE 06 ---
+Time for a knowledge check! <break time='400ms'/> Here's the scenario. <break time='300ms'/> Which Responsible AI tenet ensures AI systems work safely under all expected conditions? <break time='400ms'/> Is it A, <break time='200ms'/> Inclusiveness? <break time='200ms'/> B, <break time='200ms'/> Reliability and Safety? <break time='200ms'/> C, <break time='200ms'/> Transparency? <break time='200ms'/> Or D, <break time='200ms'/> Accountability? <break time='400ms'/> Take a moment and think about it. <break time='500ms'/> The answer is B, <break time='200ms'/> Reliability and Safety. <break time='300ms'/> It's specifically about ensuring AI operates safely and dependably under both expected and unexpected conditions. <break time='200ms'/> Inclusiveness is about avoiding barriers. <break time='200ms'/> Transparency is about explainability. <break time='200ms'/> Accountability is about human responsibility. <break time='300ms'/> Only Reliability and Safety addresses operational dependability and safe behavior.
+
+--- SLIDE 07 ---
+Unit two! <break time='400ms'/> The three agent types in Copilot Studio. <break time='300ms'/> Task agents. <break time='200ms'/> Autonomous agents. <break time='200ms'/> Prompt-and-response agents. <break time='300ms'/> Each has a specific job. <break time='200ms'/> Pick the wrong one and your project is harder than it needs to be. <break time='300ms'/> They all share the same five components underneath.
+
+--- SLIDE 08 ---
+Three agent types in Copilot Studio. <break time='300ms'/> Choose based on how the work happens, <break time='200ms'/> driven by a user, <break time='200ms'/> by an event, <break time='200ms'/> or by conversation. <break time='300ms'/> I'll bring them up one at a time. <break time='500ms'/>
+
+Type one! <break time='300ms'/> Task agents. <break time='400ms'/> Specialized for completing specific actions or tasks. <break time='200ms'/> Triggered by a user. <break time='300ms'/> Automate order entry. <break time='200ms'/> Summarize customer inquiries. <break time='200ms'/> Retrieve inventory status. <break time='200ms'/> Create follow-up tasks. <break time='300ms'/> This is the most common type. <break time='200ms'/> User-driven, <break time='200ms'/> specific outcome, <break time='200ms'/> repeatable workflow. <break time='400ms'/>
+
+Type two! <break time='300ms'/> Autonomous agents. <break time='400ms'/> Work independently using goals, <break time='200ms'/> triggers, <break time='200ms'/> instructions, <break time='200ms'/> and actions. <break time='300ms'/> Run on events, <break time='200ms'/> not user prompts. <break time='200ms'/> Onboarding workflows. <break time='200ms'/> Weekly report summaries. <break time='200ms'/> Scheduled escalations. <break time='300ms'/> This is the hottest emerging category! <break time='400ms'/>
+
+Type three! <break time='300ms'/> Prompt-and-response agents. <break time='400ms'/> Conversational. <break time='200ms'/> Combine N L U, <break time='200ms'/> topics, <break time='200ms'/> generative answers, <break time='200ms'/> conditions, <break time='200ms'/> triggers. <break time='300ms'/> The classic chatbot pattern but powered by L L Ms. <break time='300ms'/> Best for F A Q, <break time='200ms'/> support, <break time='200ms'/> guided assistance.
+
+--- SLIDE 09 ---
+Agent anatomy! <break time='300ms'/> Five components. <break time='200ms'/> Same five components across all three agent types. <break time='300ms'/> Master these and you can design any agent. <break time='300ms'/> I'll bring them up one at a time. <break time='500ms'/>
+
+Component one! <break time='300ms'/> Goals. <break time='400ms'/> The agent's core mission. <break time='200ms'/> Actionable, <break time='200ms'/> observable, <break time='200ms'/> testable. <break time='300ms'/> Create a sales record. <break time='200ms'/> Submit a support ticket. <break time='200ms'/> Generate a customer summary. <break time='300ms'/> Outcome-based, <break time='200ms'/> not technology-based. <break time='400ms'/>
+
+Component two! <break time='300ms'/> Triggers. <break time='400ms'/> What makes the agent start. <break time='200ms'/> User input. <break time='200ms'/> System events. <break time='200ms'/> Schedule. <break time='200ms'/> Another agent. <break time='300ms'/> Triggers determine whether you've designed a task or autonomous agent. <break time='400ms'/>
+
+Component three! <break time='300ms'/> Knowledge. <break time='400ms'/> Documents, <break time='200ms'/> SharePoint, <break time='200ms'/> Dataverse, <break time='200ms'/> websites the agent grounds responses in. <break time='300ms'/> This is where Chapter two's grounding rules apply directly. <break time='400ms'/>
+
+Component four! <break time='300ms'/> Actions. <break time='400ms'/> Executable operations. <break time='200ms'/> API calls, <break time='200ms'/> record creation, <break time='200ms'/> email sends, <break time='200ms'/> CRM updates. <break time='300ms'/> Power Platform connectors, <break time='200ms'/> custom connectors, <break time='200ms'/> Dataverse. <break time='200ms'/> Every action requires inputs, <break time='200ms'/> outputs, <break time='200ms'/> auth, <break time='200ms'/> and error handling. <break time='400ms'/>
+
+And component five! <break time='300ms'/> Safety rules. <break time='400ms'/> Constraints and guardrails. <break time='300ms'/> Never override credit limit. <break time='200ms'/> Always ask before submitting. <break time='200ms'/> Escalate on complaint keywords. <break time='300ms'/> This is the behavioral envelope. <break time='200ms'/> Chapter three's constraint pyramid lives here.
+
+--- SLIDE 10 ---
+Time for another knowledge check! <break time='400ms'/> Which component defines what the autonomous agent must accomplish? <break time='300ms'/> A, <break time='200ms'/> Actions? <break time='200ms'/> B, <break time='200ms'/> Triggers? <break time='200ms'/> C, <break time='200ms'/> Goals? <break time='200ms'/> Or D, <break time='200ms'/> Knowledge Sources? <break time='400ms'/> Think about it. <break time='500ms'/> The answer is C, <break time='200ms'/> Goals! <break time='300ms'/> Goals define what the agent is expected to accomplish, <break time='200ms'/> the agent's core mission, <break time='200ms'/> expressed as actionable, <break time='200ms'/> outcome-based statements. <break time='300ms'/> Actions are how the agent does work. <break time='200ms'/> Triggers start the agent. <break time='200ms'/> Knowledge sources ground responses. <break time='300ms'/> Only Goals describe purpose. <break time='200ms'/> Without a clear goal, <break time='200ms'/> the other components have nothing to coordinate around.
+
+--- SLIDE 11 ---
+Unit three! <break time='400ms'/> The big one. <break time='300ms'/> Copilot Studio design patterns. <break time='400ms'/> Language understanding modes. <break time='200ms'/> Topics, <break time='200ms'/> conditions, <break time='200ms'/> triggers. <break time='200ms'/> Agent flows. <break time='200ms'/> Prompt actions. <break time='300ms'/> This is where you'll spend most of your hands-on design time.
+
+--- SLIDE 12 ---
+Three approaches to language understanding in Copilot Studio. <break time='300ms'/> Standard N L U. <break time='200ms'/> Azure C L U. <break time='200ms'/> Generative AI orchestration. <break time='300ms'/> Each fits a different problem shape. <break time='300ms'/> Get this choice right early, <break time='200ms'/> it shapes the rest of the design. <break time='300ms'/> I'll reveal each one. <break time='500ms'/>
+
+First! <break time='300ms'/> Standard N L U. <break time='400ms'/> Intent and entity models. <break time='200ms'/> Rules and patterns. <break time='200ms'/> Structured training. <break time='300ms'/> Predictable. <break time='200ms'/> Deterministic. <break time='200ms'/> Cheap. <break time='300ms'/> Use for fixed phrases, <break time='200ms'/> like reset password or check balance. <break time='200ms'/> Regulated workflows where deterministic responses matter. <break time='300ms'/> The least complex and cheapest option. <break time='400ms'/>
+
+Second! <break time='300ms'/> Azure C L U. <break time='400ms'/> AI-driven classification. <break time='200ms'/> Trainable models. <break time='200ms'/> Improved entity extraction. <break time='300ms'/> The sweet spot is variable phrasing within well-defined topic boundaries. <break time='300ms'/> Think about a field service bot that needs to understand the dozen ways a customer reports the same issue. <break time='200ms'/> Device broken, <break time='200ms'/> won't start, <break time='200ms'/> frozen. <break time='300ms'/> Moderate complexity, <break time='200ms'/> trainable. <break time='400ms'/>
+
+And third! <break time='300ms'/> Generative AI orchestration. <break time='400ms'/> L L Ms interpret prompts dynamically, <break time='200ms'/> retrieve knowledge, <break time='200ms'/> call actions. <break time='300ms'/> Powerful. <break time='200ms'/> Expensive. <break time='300ms'/> Use for unstructured queries, <break time='200ms'/> summarization, <break time='200ms'/> content generation, <break time='200ms'/> multi-turn reasoning. <break time='300ms'/> Always enable grounding when using generative orchestration. <break time='300ms'/> Don't reach for generative when N L U will do!
+
+--- SLIDE 13 ---
+Four mechanisms for shaping prompt-and-response agents. <break time='300ms'/> Generative answers, <break time='200ms'/> system topics, <break time='200ms'/> condition nodes, <break time='200ms'/> event triggers. <break time='300ms'/> Use them in combination. <break time='200ms'/> Most real agents use all four. <break time='300ms'/> I'll bring up each one. <break time='500ms'/>
+
+Mechanism one! <break time='300ms'/> Generative Answers, <break time='200ms'/> also called N L U Boost. <break time='400ms'/> Used when a topic doesn't match the user query. <break time='200ms'/> The agent generates an answer from configured knowledge sources, <break time='200ms'/> websites, <break time='200ms'/> SharePoint, <break time='200ms'/> Dataverse, <break time='200ms'/> connectors. <break time='300ms'/> The fallback that catches everything not explicitly designed. <break time='400ms'/>
+
+Mechanism two! <break time='300ms'/> System topics. <break time='400ms'/> Built-in capabilities. <break time='200ms'/> Greeting, <break time='200ms'/> fallback, <break time='200ms'/> escalation, <break time='200ms'/> end of conversation, <break time='200ms'/> disambiguation, <break time='200ms'/> error handling. <break time='300ms'/> Use them. <break time='200ms'/> Don't reinvent. <break time='200ms'/> They give you consistent UX out of the box. <break time='400ms'/>
+
+Mechanism three! <break time='300ms'/> Condition nodes. <break time='400ms'/> Branching dialog. <break time='200ms'/> Comparisons, <break time='200ms'/> variables, <break time='200ms'/> AND OR logic, <break time='200ms'/> multiple branches. <break time='200ms'/> Power Fx for advanced logic. <break time='300ms'/> Adapt responses to customer type, <break time='200ms'/> form input, <break time='200ms'/> conversation context. <break time='400ms'/>
+
+And mechanism four! <break time='300ms'/> Event triggers. <break time='400ms'/> The agent acts without user prompts. <break time='200ms'/> File uploaded. <break time='200ms'/> Task completed. <break time='200ms'/> Dataverse row added. <break time='200ms'/> Scheduled recurrence. <break time='300ms'/> The bridge to autonomous behavior. <break time='200ms'/> And watch the billing impact, <break time='200ms'/> triggers consume capacity!
+
+--- SLIDE 14 ---
+Agent flows! <break time='300ms'/> Native automation inside Copilot Studio. <break time='200ms'/> Triggers and actions. <break time='200ms'/> No separate Power Automate license needed. <break time='300ms'/> Faster, <break time='200ms'/> simpler, <break time='200ms'/> agent-optimized. <break time='300ms'/> I'll bring up the structure. <break time='500ms'/>
+
+Agent flows are native automation inside Copilot Studio. <break time='300ms'/> Built around triggers and actions, <break time='200ms'/> just like Power Automate. <break time='300ms'/> Critical difference, <break time='200ms'/> they use Copilot Studio message capacity, <break time='200ms'/> no separate license. <break time='200ms'/> Designed for AI-driven conversational automation. <break time='200ms'/> End-to-end process visibility. <break time='200ms'/> Natural-language authoring. <break time='400ms'/>
+
+Triggers! <break time='300ms'/> How a flow starts. <break time='200ms'/> Manual user request, <break time='200ms'/> scheduled time, <break time='200ms'/> system event, <break time='200ms'/> or another agent calling in. <break time='300ms'/> Watch billing, <break time='200ms'/> every trigger consumes capacity. <break time='400ms'/>
+
+Actions! <break time='300ms'/> Operations performed by the flow. <break time='200ms'/> Send email, <break time='200ms'/> update data, <break time='200ms'/> retrieve information, <break time='200ms'/> call APIs, <break time='200ms'/> create CRM records. <break time='300ms'/> The verbs of automation.
+
+--- SLIDE 15 ---
+Prompt actions! <break time='300ms'/> The unit of L L M-driven work in Copilot Studio. <break time='300ms'/> Five types. <break time='200ms'/> Transform, <break time='200ms'/> Summarize, <break time='200ms'/> Extract, <break time='200ms'/> Generate, <break time='200ms'/> Classify. <break time='300ms'/> Memorize them. <break time='200ms'/> Every prompt action falls into one of these five buckets. <break time='300ms'/> I'll bring up each type. <break time='500ms'/>
+
+Type one! <break time='300ms'/> Transform. <break time='400ms'/> Rewrite content. <break time='200ms'/> Reformat. <break time='200ms'/> Tone adjustment. <break time='300ms'/> Take a customer message, <break time='200ms'/> transform it into a professional rewrite. <break time='400ms'/>
+
+Type two! <break time='300ms'/> Summarize. <break time='400ms'/> Produce short, <break time='200ms'/> clear summary from longer content. <break time='200ms'/> Cases, <break time='200ms'/> chat threads, <break time='200ms'/> meeting notes. <break time='300ms'/> Reduces cognitive load. <break time='200ms'/> Most-used prompt action by far! <break time='400ms'/>
+
+Type three! <break time='300ms'/> Extract. <break time='400ms'/> Pull entities or fields from unstructured text. <break time='200ms'/> Order numbers, <break time='200ms'/> issue types, <break time='200ms'/> customer IDs. <break time='300ms'/> Turns free text into structured data, <break time='200ms'/> perfect for downstream automation. <break time='400ms'/>
+
+Type four! <break time='300ms'/> Generate. <break time='400ms'/> Produce new text from inputs. <break time='200ms'/> Draft email response. <break time='200ms'/> Write product description. <break time='200ms'/> Compose communication based on context. <break time='400ms'/>
+
+And type five! <break time='300ms'/> Classify. <break time='400ms'/> Categorize input. <break time='200ms'/> Billing, <break time='200ms'/> onboarding, <break time='200ms'/> support. <break time='300ms'/> The router pattern in your prompt-action toolkit.
+
+--- SLIDE 16 ---
+Time for knowledge check number three! <break time='400ms'/> A customer service bot must interpret dozens of ways customers describe a problem. <break time='300ms'/> Which option is best? <break time='300ms'/> A, <break time='200ms'/> Standard N L U? <break time='200ms'/> B, <break time='200ms'/> Azure C L U? <break time='200ms'/> C, <break time='200ms'/> Generative AI Orchestration? <break time='200ms'/> Or D, <break time='200ms'/> Hard-coded commands only? <break time='400ms'/> Think about it. <break time='500ms'/> The answer is B, <break time='200ms'/> Azure C L U! <break time='300ms'/> C L U is purpose-built for variable phrasing within defined topic boundaries, <break time='200ms'/> exactly the scenario described. <break time='300ms'/> Standard N L U works only for fixed phrases. <break time='200ms'/> Generative orchestration would be overkill and expensive for what's still a bounded classification problem. <break time='200ms'/> Hard-coded commands fail completely with phrasing variability.
+
+--- SLIDE 17 ---
+Unit four! <break time='400ms'/> Dynamics 365 Copilot customization and Foundry tools. <break time='300ms'/> Two ends of the spectrum. <break time='200ms'/> D three sixty-five customization is configuration-heavy SaaS. <break time='200ms'/> Foundry tools are pro-code building blocks.
+
+--- SLIDE 18 ---
+Four customization layers for Copilot in Dynamics 365. <break time='300ms'/> Apply all four to make Copilot reflect the customer's organization. <break time='300ms'/> I'll bring up each layer. <break time='500ms'/>
+
+Layer one! <break time='300ms'/> Business Terms and Domain Language. <break time='400ms'/> Stored in Dataverse fields, <break time='200ms'/> option sets, <break time='200ms'/> metadata. <break time='300ms'/> Define organization-specific vocabulary for products, <break time='200ms'/> services, <break time='200ms'/> roles, <break time='200ms'/> categories. <break time='300ms'/> Without this, <break time='200ms'/> Copilot uses generic language. <break time='200ms'/> For example, <break time='200ms'/> defining Tier-one Account versus Strategic Partner with explicit field values. <break time='400ms'/>
+
+Layer two! <break time='300ms'/> Prompt and Output Settings. <break time='400ms'/> Adjust tone, <break time='200ms'/> structure, <break time='200ms'/> required fields for AI-generated content. <break time='300ms'/> Match the company's writing style guide. <break time='200ms'/> Compliance language for regulated industries. <break time='200ms'/> For example, <break time='200ms'/> force compliance disclaimers on every generated insurance quote. <break time='400ms'/>
+
+Layer three! <break time='300ms'/> Data Scope and Field Configuration. <break time='400ms'/> Limit Copilot's access to relevant, <break time='200ms'/> up-to-date data fields and entities. <break time='300ms'/> This is the most missed customization layer! <break time='200ms'/> Without scoping, <break time='200ms'/> Copilot may reference outdated or irrelevant data. <break time='200ms'/> For example, <break time='200ms'/> exclude archived contacts and twenty-nineteen vintage notes from case summaries. <break time='400ms'/>
+
+And layer four! <break time='300ms'/> Surface Integration. <break time='400ms'/> Display Copilot outputs in forms, <break time='200ms'/> dashboards, <break time='200ms'/> agent workflows. <break time='300ms'/> Where users actually see the AI. <break time='200ms'/> Custom connectors using OAuth two point zero with Microsoft Entra ID, <break time='200ms'/> that's the standard auth pattern.
+
+--- SLIDE 19 ---
+Azure AI Foundry tools! <break time='300ms'/> Four categories. <break time='200ms'/> Pick the right tool for the right requirement. <break time='300ms'/> I'll bring up each category. <break time='500ms'/>
+
+Category one! <break time='300ms'/> Retrieval and Grounding. <break time='400ms'/> Vector search. <break time='200ms'/> Hybrid search. <break time='200ms'/> Indexing structured and unstructured sources. <break time='200ms'/> Querying enterprise knowledge. <break time='300ms'/> Azure AI Search underlies most of this. <break time='400ms'/>
+
+Category two! <break time='300ms'/> Data and Application Connectors. <break time='400ms'/> Connect to enterprise systems. <break time='200ms'/> SharePoint, <break time='200ms'/> Dataverse, <break time='200ms'/> SQL, <break time='200ms'/> custom APIs. <break time='300ms'/> The integration layer. <break time='200ms'/> Use prebuilt where possible, <break time='200ms'/> custom connectors only when there's no alternative. <break time='400ms'/>
+
+Category three! <break time='300ms'/> Orchestration and Workflows. <break time='400ms'/> Multi-agent coordination. <break time='200ms'/> Sequential, <break time='200ms'/> concurrent, <break time='200ms'/> handoff patterns from Chapter three. <break time='200ms'/> Activity Protocol. <break time='200ms'/> Agent-to-agent communication. <break time='200ms'/> State management. <break time='400ms'/>
+
+And category four! <break time='300ms'/> Evaluation and Monitoring. <break time='400ms'/> Test failure cases. <break time='200ms'/> Measure quality. <break time='200ms'/> Drift detection. <break time='200ms'/> Cost tracking. <break time='200ms'/> Production observability. <break time='300ms'/> Bake this in from day one, <break time='200ms'/> retrofitting evaluation is painful!
+
+--- SLIDE 20 ---
+Last unit! <break time='400ms'/> Architectural quality and success metrics. <break time='300ms'/> Power Platform Well-Architected Framework. <break time='200ms'/> How to define what success looks like before you build.
+
+--- SLIDE 21 ---
+Power Platform Well-Architected Framework! <break time='300ms'/> Five pillars. <break time='200ms'/> Aligned with Azure WAF. <break time='200ms'/> Apply to every intelligent application workload. <break time='300ms'/> I'll bring up each pillar. <break time='500ms'/>
+
+Pillar one! <break time='300ms'/> Reliability. <break time='400ms'/> Build redundancy and resiliency to meet uptime and recovery targets. <break time='200ms'/> Redundant connectors, <break time='200ms'/> retry policies in flows, <break time='200ms'/> resilient Dataverse architecture. <break time='400ms'/>
+
+Pillar two! <break time='300ms'/> Security. <break time='400ms'/> Protect data confidentiality, <break time='200ms'/> integrity, <break time='200ms'/> identity. <break time='200ms'/> Microsoft Entra ID least privilege. <break time='200ms'/> D L P policies. <break time='200ms'/> Secure connectors and APIs. <break time='400ms'/>
+
+Pillar three! <break time='300ms'/> Operational Excellence. <break time='400ms'/> Monitoring, <break time='200ms'/> observability, <break time='200ms'/> automated governance. <break time='200ms'/> Power Platform Admin Center. <break time='200ms'/> A L M with Azure DevOps or GitHub. <break time='200ms'/> Proactive alerts. <break time='400ms'/>
+
+Pillar four! <break time='300ms'/> Performance Efficiency. <break time='400ms'/> Workloads adjust to evolving demands. <break time='200ms'/> Right-size flows. <break time='200ms'/> Offload compute to Azure Functions. <break time='200ms'/> Dataverse for high-volume. <break time='400ms'/>
+
+And pillar five! <break time='300ms'/> Experience Optimization. <break time='400ms'/> Deliver meaningful experiences. <break time='200ms'/> UX consistency across Power Apps. <break time='200ms'/> Copilot-assisted workflows. <break time='200ms'/> Accessibility compliance. <break time='300ms'/> This one is unique to Power Platform, <break time='200ms'/> it's not in the Azure WAF!
+
+--- SLIDE 22 ---
+Success criteria categories! <break time='300ms'/> Six dimensions for defining what success looks like before you build. <break time='300ms'/> I'll bring them up one at a time. <break time='500ms'/>
+
+Dimension one! <break time='300ms'/> Business value. <break time='400ms'/> Quantifiable organizational benefit. <break time='200ms'/> Tied to dollars or time. <break time='300ms'/> The C F O category. <break time='200ms'/> For example, <break time='200ms'/> reduce processing time by forty percent. <break time='400ms'/>
+
+Dimension two! <break time='300ms'/> Operational efficiency. <break time='400ms'/> Workflow improvement. <break time='200ms'/> Automation gains. <break time='200ms'/> Fewer manual steps. <break time='200ms'/> For example, <break time='200ms'/> thirty percent fewer manual tasks. <break time='400ms'/>
+
+Dimension three! <break time='300ms'/> User experience. <break time='400ms'/> Productivity. <break time='200ms'/> Satisfaction. <break time='200ms'/> Time-to-task. <break time='200ms'/> Adoption. <break time='300ms'/> Easy to forget, <break time='200ms'/> dangerous to skip. <break time='200ms'/> For example, <break time='200ms'/> twenty percent faster task completion. <break time='400ms'/>
+
+Dimension four! <break time='300ms'/> Quality and accuracy. <break time='400ms'/> AI recommendation accuracy. <break time='200ms'/> Decision quality. <break time='200ms'/> Error rates. <break time='300ms'/> Set the bar. <break time='200ms'/> Eighty-five percent or better. <break time='200ms'/> And measure against it. <break time='400ms'/>
+
+Dimension five! <break time='300ms'/> Risk and compliance. <break time='400ms'/> Responsible AI applied. <break time='200ms'/> Audit coverage. <break time='200ms'/> Governance. <break time='300ms'/> The compliance officer's metric. <break time='200ms'/> For example, <break time='200ms'/> one hundred percent of outputs governance-audited. <break time='400ms'/>
+
+And dimension six! <break time='300ms'/> Scalability. <break time='400ms'/> Ability to handle growth. <break time='200ms'/> Throughput targets. <break time='300ms'/> The architecture's stress test. <break time='200ms'/> Set the number, <break time='200ms'/> ten thousand requests per day, <break time='200ms'/> one hundred thousand, <break time='200ms'/> and design to it.
+
+--- SLIDE 23 ---
+Last knowledge check for this chapter! <break time='400ms'/> When defining success criteria for an AI business solution, <break time='200ms'/> what matters most? <break time='300ms'/> A, <break time='200ms'/> The number of AI features used? <break time='200ms'/> B, <break time='200ms'/> Alignment to measurable business outcomes? <break time='200ms'/> C, <break time='200ms'/> The size of the development team? <break time='200ms'/> Or D, <break time='200ms'/> The number of data sources connected? <break time='400ms'/> Think about it. <break time='500ms'/> The answer is B, <break time='200ms'/> Alignment to measurable business outcomes! <break time='300ms'/> Without business outcome alignment, <break time='200ms'/> you're optimizing for technology metrics instead of value. <break time='200ms'/> Number of features, <break time='200ms'/> team size, <break time='200ms'/> and data sources connected are inputs, <break time='200ms'/> not outcomes. <break time='300ms'/> Finance and business owners only accept measurable, <break time='200ms'/> business-aligned metrics.
+
+--- SLIDE 24 ---
+Enterprise scenario time! <break time='400ms'/> Let's apply everything from Chapter five end-to-end. <break time='500ms'/> Here's the setup. <break time='300ms'/> FieldCore has six hundred HVAC technicians in the field. <break time='200ms'/> They use a mobile app and call a help desk when stuck. <break time='300ms'/> Most calls are about diagnosing thirty common error codes, <break time='200ms'/> but technicians describe each problem differently. <break time='300ms'/> Repair manuals live in SharePoint. <break time='200ms'/> Some manuals are confidential to commercial accounts. <break time='300ms'/> The CIO wants to ship in ten weeks. <break time='200ms'/> Help desk wants to reduce calls by forty percent. <break time='200ms'/> Compliance wants every recommendation audited. <break time='400ms'/> So here are your discussion questions. <break time='300ms'/> Which agent type? <break time='200ms'/> Task, <break time='200ms'/> Autonomous, <break time='200ms'/> or Prompt-Response? <break time='200ms'/> Justify your choice. <break time='300ms'/> Which language understanding mode, <break time='200ms'/> N L U, <break time='200ms'/> C L U, <break time='200ms'/> or Generative AI? <break time='300ms'/> List the five components, <break time='200ms'/> Goals, <break time='200ms'/> Triggers, <break time='200ms'/> Knowledge, <break time='200ms'/> Actions, <break time='200ms'/> Safety Rules, <break time='200ms'/> for this specific agent. <break time='300ms'/> Which Responsible AI tenets apply most strongly? <break time='200ms'/> What success KPIs would you track? <break time='400ms'/> Pause here and discuss with a partner, <break time='200ms'/> then reveal the discussion points to compare answers.
+
+--- SLIDE 25 ---
+Final recap! <break time='400ms'/> Seven things to take into Chapter six. <break time='300ms'/> I'll bring them up one at a time. <break time='500ms'/>
+
+Number one! <break time='300ms'/> Six Responsible AI tenets. <break time='400ms'/> Fairness, <break time='200ms'/> Reliability and Safety, <break time='200ms'/> Privacy and Security, <break time='200ms'/> Inclusiveness, <break time='200ms'/> Transparency, <break time='200ms'/> Accountability. <break time='300ms'/> Apply across the entire AI lifecycle, <break time='200ms'/> not just at design time. <break time='400ms'/>
+
+Number two! <break time='300ms'/> Three agent types in Copilot Studio. <break time='400ms'/> Task. <break time='200ms'/> Autonomous. <break time='200ms'/> Prompt-Response. <break time='300ms'/> Same five components underneath. <break time='200ms'/> Goals, <break time='200ms'/> Triggers, <break time='200ms'/> Knowledge, <break time='200ms'/> Actions, <break time='200ms'/> Safety Rules. <break time='400ms'/>
+
+Number three! <break time='300ms'/> Three language paths. <break time='400ms'/> N L U for fixed phrases. <break time='200ms'/> C L U for variable phrasing in defined topics. <break time='200ms'/> Generative AI for unstructured. <break time='400ms'/>
+
+Number four! <break time='300ms'/> Four Copilot Studio mechanisms. <break time='400ms'/> Generative answers, <break time='200ms'/> system topics, <break time='200ms'/> condition nodes, <break time='200ms'/> event triggers. <break time='200ms'/> Combine them. <break time='400ms'/>
+
+Number five! <break time='300ms'/> Agent flows. <break time='400ms'/> Native automation. <break time='200ms'/> Triggers and actions. <break time='200ms'/> No Power Automate license needed. <break time='300ms'/> Five prompt action types, <break time='200ms'/> Transform, <break time='200ms'/> Summarize, <break time='200ms'/> Extract, <break time='200ms'/> Generate, <break time='200ms'/> Classify. <break time='400ms'/>
+
+Number six! <break time='300ms'/> Power Platform Well-Architected Framework. <break time='400ms'/> Five pillars. <break time='200ms'/> Reliability, <break time='200ms'/> Security, <break time='200ms'/> Operational Excellence, <break time='200ms'/> Performance Efficiency, <break time='200ms'/> and Experience Optimization. <break time='400ms'/>
+
+And number seven! <break time='300ms'/> Define success before you build. <break time='400ms'/> Six categories. <break time='200ms'/> Business value, <break time='200ms'/> operational efficiency, <break time='200ms'/> user experience, <break time='200ms'/> quality, <break time='200ms'/> risk, <break time='200ms'/> scalability. <break time='300ms'/> Measurable. <break time='200ms'/> Time-bounded. <break time='400ms'/> That's Chapter five! <break time='300ms'/> Onwards to Chapter six, <break time='200ms'/> designing extensibility!

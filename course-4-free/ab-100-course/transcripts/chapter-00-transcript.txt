@@ -1,0 +1,99 @@
+--- SLIDE 01 ---
+Welcome to A B one hundred! <break time='500ms'/> Architecting Agentic AI Business Solutions. <break time='600ms'/> This is a completely self-paced course, <break time='200ms'/> with twelve chapters mapped directly to Microsoft's published exam objectives. <break time='400ms'/> Our approach is architecture-first. <break time='300ms'/> We focus on design judgment, <break time='200ms'/> trade-offs, <break time='200ms'/> and decision frameworks <break time='200ms'/> rather than step-by-step configuration. <break time='400ms'/> Let's get into it!
+
+--- SLIDE 02 ---
+Before we dive in, <break time='300ms'/> let me set two expectations. <break time='200ms'/> What this course is, <break time='200ms'/> and what it is not. <break time='500ms'/> I'll bring up each one for you.
+
+First up, <break time='300ms'/> what this course is! <break time='400ms'/> This is architecture and design judgment training. <break time='300ms'/> Real-world preparation for designing, <break time='200ms'/> governing, <break time='200ms'/> and shipping AI-powered business solutions on the Microsoft platform. <break time='400ms'/> You'll learn decision frameworks and trade-off analysis. <break time='300ms'/> We'll work through scenario-based learning across ten enterprise cases. <break time='300ms'/> Everything is end-to-end, <break time='200ms'/> from plan through design through deploy, <break time='200ms'/> and it's all aligned to the A B one hundred exam objectives. <break time='400ms'/> By the end, <break time='200ms'/> you should be able to defend an AI architecture decision <break time='200ms'/> in front of an enterprise audit committee!
+
+Now, <break time='300ms'/> what this course is not. <break time='400ms'/> It is not a step-by-step configuration tutorial. <break time='300ms'/> It is not a hands-on lab series. <break time='300ms'/> It is not surface-level feature demos. <break time='400ms'/> This is an architect-level course. <break time='300ms'/> We trust you to know how to click buttons. <break time='300ms'/> We're here to teach you when, <break time='200ms'/> why, <break time='200ms'/> and what to design.
+
+--- SLIDE 03 ---
+Let me give you the course at a glance! <break time='400ms'/> Four key numbers shape how this course is structured. <break time='300ms'/> I'll bring them up one at a time.
+
+Twelve chapters! <break time='300ms'/> Eleven content chapters plus one final revision chapter. <break time='300ms'/> Each one is mapped one-to-one with Microsoft's published exam objectives.
+
+Fifty mock exam questions! <break time='400ms'/> A full simulated exam across all four A B one hundred question types. <break time='300ms'/> Drag-and-drop, <break time='200ms'/> hotspot, <break time='200ms'/> single-answer, <break time='200ms'/> and multi-select. <break time='300ms'/> One hundred and twenty minutes, <break time='200ms'/> mirroring the real exam format.
+
+Ten enterprise scenarios! <break time='400ms'/> Real architecture challenges spanning banking, <break time='200ms'/> pharma, <break time='200ms'/> manufacturing, <break time='200ms'/> and retail. <break time='300ms'/> Each scenario comes with discussion points and architect-grade answers.
+
+And forty-four knowledge checks! <break time='400ms'/> Approximately four per chapter, <break time='200ms'/> pattern-matched to the A B one hundred exam style <break time='200ms'/> with scenario-based questions and explanations for every option.
+
+--- SLIDE 04 ---
+Now let me walk you through the actual A B one hundred exam. <break time='400ms'/> This is Microsoft's expert-level certification <break time='200ms'/> for solution architects designing agentic AI systems. <break time='400ms'/> Here are the published details from the Microsoft Learn study guide. <break time='500ms'/> You get one hundred minutes of proctored exam time. <break time='300ms'/> Non-English speakers get an additional thirty minutes. <break time='400ms'/> The passing score is seven hundred out of a thousand. <break time='300ms'/> You'll face forty to sixty questions, <break time='200ms'/> multiple-choice with interactive scenario components. <break time='400ms'/> The cost is one hundred and sixty-five US dollars, <break time='200ms'/> region-priced. <break time='300ms'/> You can take it online proctored <break time='200ms'/> or at a test center. <break time='500ms'/> One important thing to know! <break time='300ms'/> This is an expert-level exam. <break time='300ms'/> You need at least one active associate-level Microsoft certification to qualify. <break time='300ms'/> That could be the A B seven thirty, <break time='200ms'/> A B seven thirty-one, <break time='200ms'/> or one of nine eligible Dynamics 365 and Power Platform associate certifications.
+
+--- SLIDE 05 ---
+The exam has three skill areas <break time='200ms'/> with specific weightages. <break time='400ms'/> Plan. <break time='200ms'/> Design. <break time='200ms'/> Deploy. <break time='500ms'/> Each chapter in this course maps directly to one of these three areas. <break time='400ms'/> And here's something critical, <break time='300ms'/> Deploy is the heaviest section <break time='200ms'/> at forty to forty-five percent. <break time='300ms'/> That's where most architectural risk lives in real projects too.
+
+--- SLIDE 06 ---
+Let me break down the three skill areas for you! <break time='400ms'/> I'll reveal each one.
+
+Area one! <break time='300ms'/> Plan AI-powered business solutions. <break time='400ms'/> Twenty-five to thirty percent of the exam. <break time='300ms'/> Three chapters cover this area. <break time='200ms'/> Analyze requirements, <break time='200ms'/> design overall AI strategy, <break time='200ms'/> and evaluate costs and benefits. <break time='400ms'/> This is the before-you-build-anything phase!
+
+Area two! <break time='300ms'/> Design AI-powered business solutions. <break time='400ms'/> Also twenty-five to thirty percent. <break time='300ms'/> Three chapters. <break time='200ms'/> Design AI and agents, <break time='200ms'/> design extensibility, <break time='200ms'/> and orchestrate prebuilt agents. <break time='400ms'/> This is the component design phase!
+
+And area three! <break time='300ms'/> Deploy AI-powered business solutions. <break time='400ms'/> Forty to forty-five percent, <break time='200ms'/> nearly half the exam! <break time='300ms'/> Four chapters. <break time='200ms'/> Monitor and tune, <break time='200ms'/> manage testing, <break time='200ms'/> A L M process, <break time='200ms'/> and responsible AI with security and governance. <break time='400ms'/> This is the hardest section, <break time='200ms'/> and it has the most chapters!
+
+--- SLIDE 07 ---
+Let me give you the Plan area in detail. <break time='400ms'/> Three chapters, <break time='200ms'/> chapters two through four. <break time='300ms'/> This is the before-you-build phase. <break time='300ms'/> What does the business need? <break time='200ms'/> What is the strategy? <break time='200ms'/> What is the R O I? <break time='400ms'/> I'll walk through each chapter.
+
+Chapter two, <break time='200ms'/> Analyze Requirements. <break time='400ms'/> This covers agents in task automation, <break time='200ms'/> data analytics, <break time='200ms'/> and decision-making. <break time='300ms'/> We'll dive deep into data grounding across five dimensions, <break time='200ms'/> and how to organize business data for AI consumption. <break time='300ms'/> The scenario is BrightCorp HR, <break time='200ms'/> eight thousand employees across fourteen countries.
+
+Chapter three, <break time='200ms'/> Design Overall AI Strategy. <break time='400ms'/> This is one of the two largest chapters! <break time='300ms'/> It covers the Cloud Adoption Framework for AI, <break time='200ms'/> multi-agent solutions, <break time='200ms'/> the SaaS-first decision tree, <break time='200ms'/> prebuilt agents, <break time='200ms'/> knowledge sources, <break time='200ms'/> and solution constraints. <break time='300ms'/> The scenario is NorthStar, <break time='200ms'/> handling fifty R F Ps per week in a multi-agent setup.
+
+And chapter four, <break time='200ms'/> Evaluate Costs and Benefits. <break time='400ms'/> R O I analysis, <break time='200ms'/> total cost of ownership, <break time='200ms'/> build versus buy versus extend decisions, <break time='200ms'/> and the model router for cost optimization. <break time='300ms'/> The scenario is InsureCo Claims Triage, <break time='200ms'/> handling eighty thousand claims per year.
+
+--- SLIDE 08 ---
+Now the Design area in detail! <break time='400ms'/> Three chapters, <break time='200ms'/> chapters five through seven. <break time='300ms'/> The component design phase, <break time='200ms'/> figuring out what to build with which Microsoft tool. <break time='400ms'/> Let me walk through each one.
+
+Chapter five, <break time='200ms'/> Design AI and Agents. <break time='400ms'/> This is the largest chapter in the entire course! <break time='300ms'/> It covers six Responsible AI tenets, <break time='200ms'/> three agent types, <break time='200ms'/> Copilot Studio mechanisms, <break time='200ms'/> Dynamics 365 customizations, <break time='200ms'/> Foundry tools, <break time='200ms'/> and the Power Platform Well-Architected Framework. <break time='300ms'/> The scenario is FieldCore HVAC <break time='200ms'/> with six hundred technicians.
+
+Chapter six, <break time='200ms'/> Design Extensibility. <break time='400ms'/> When to use custom Foundry models, <break time='200ms'/> M365 Copilot agent design, <break time='200ms'/> Model Context Protocol, <break time='200ms'/> Computer Use, <break time='200ms'/> reasoning and voice capabilities, <break time='200ms'/> and Teams and SharePoint optimization. <break time='300ms'/> The scenario is ContractFlow, <break time='200ms'/> a law firm with two hundred attorneys.
+
+And chapter seven, <break time='200ms'/> Orchestrate Configuration for Prebuilt Agents. <break time='400ms'/> Dynamics 365 Copilot patterns, <break time='200ms'/> Customer Service AI Agent Hub, <break time='200ms'/> the M365 prebuilt agents catalog, <break time='200ms'/> Sales and Service configuration, <break time='200ms'/> Power Platform AI hub, <break time='200ms'/> and Finance and Operations knowledge sources. <break time='300ms'/> The scenario is Northwind Manufacturing <break time='200ms'/> with four thousand employees.
+
+--- SLIDE 09 ---
+And now the Deploy area in detail! <break time='400ms'/> This is the big one. <break time='300ms'/> Four chapters, <break time='200ms'/> chapters eight through eleven, <break time='200ms'/> making up forty to forty-five percent of the exam. <break time='400ms'/> This is where most enterprise AI projects either succeed or fail. <break time='400ms'/> Let me walk through each chapter.
+
+Chapter eight, <break time='200ms'/> Analyze, Monitor, and Tune. <break time='400ms'/> Five monitoring dimensions, <break time='200ms'/> backlog and feedback handling, <break time='200ms'/> a six-step diagnostic workflow, <break time='200ms'/> performance metrics including the gold-standard task completion rate, <break time='200ms'/> and telemetry interpretation. <break time='300ms'/> The scenario is MegaRetail Sales Helper.
+
+Chapter nine, <break time='200ms'/> Manage Testing. <break time='400ms'/> Four testing types, <break time='200ms'/> three metric categories, <break time='200ms'/> custom model validation thresholds, <break time='200ms'/> prompt validation lifecycle, <break time='200ms'/> end-to-end test scenarios, <break time='200ms'/> and Copilot for test case generation. <break time='300ms'/> The scenario is Acme Healthcare Discharge <break time='200ms'/> under HIPAA.
+
+Chapter ten, <break time='200ms'/> the A L M Process. <break time='400ms'/> Application Lifecycle Management for AI. <break time='300ms'/> Six artifact categories, <break time='200ms'/> four-tier environment strategy, <break time='200ms'/> seven-phase data lifecycle, <break time='200ms'/> promotion gates, <break time='200ms'/> and component-specific A L M for Copilot Studio, <break time='200ms'/> Foundry, <break time='200ms'/> custom models, <break time='200ms'/> and Dynamics 365. <break time='300ms'/> The scenario is GlobalBank, <break time='200ms'/> multi-component with fifty thousand users.
+
+And chapter eleven, <break time='200ms'/> Responsible AI, Security, Governance, Risk, and Compliance. <break time='400ms'/> This is the course finale for content chapters! <break time='300ms'/> Six Responsible AI principles, <break time='200ms'/> four-layer defense in depth, <break time='200ms'/> five AI vulnerability categories, <break time='200ms'/> compliance domains including data residency and Purview and audit trails, <break time='200ms'/> plus the operating model with RACI and incident response. <break time='300ms'/> The scenario is PharmaCorp, <break time='200ms'/> the capstone with seventy-five thousand users <break time='200ms'/> under FDA, EMA, HIPAA, and GDPR.
+
+--- SLIDE 10 ---
+Here's the complete chapter map! <break time='400ms'/> All thirteen entries, <break time='200ms'/> from the introduction through the final revision chapter. <break time='500ms'/> Chapter zero is this introduction. <break time='300ms'/> Chapter one is the foundation, <break time='200ms'/> covering the architect role, <break time='200ms'/> the five-phase framework, <break time='200ms'/> the Microsoft stack, <break time='200ms'/> and out-of-the-box agents. <break time='400ms'/> Chapters two through four cover the Plan skill area. <break time='300ms'/> Chapters five through seven cover Design. <break time='300ms'/> Chapters eight through eleven cover Deploy. <break time='300ms'/> And chapter twelve is the Final Revision and Exam Prep, <break time='200ms'/> with cross-cutting frameworks, <break time='200ms'/> mental models, <break time='200ms'/> common pitfalls, <break time='200ms'/> the mock exam, <break time='200ms'/> and career path guidance. <break time='500ms'/> Keep this map as your reference for the entire course!
+
+--- SLIDE 11 ---
+By the end, <break time='200ms'/> you'll have six concrete capabilities. <break time='300ms'/> Not just exam-ready, <break time='200ms'/> but production-ready! <break time='400ms'/> Let me walk through each one.
+
+Number one! <break time='300ms'/> Translate business problems into AI architecture. <break time='400ms'/> Take a business need, <break time='200ms'/> identify whether AI is the right solution, <break time='200ms'/> design the right components, <break time='200ms'/> and defend the choice in front of stakeholders.
+
+Number two! <break time='300ms'/> Make platform choices with confidence. <break time='400ms'/> M365 Copilot versus Copilot Studio versus Microsoft Foundry versus custom. <break time='300ms'/> SaaS-first versus build-first. <break time='300ms'/> Architects who can't make this call <break time='200ms'/> ship the wrong solution.
+
+Number three! <break time='300ms'/> Design multi-agent solutions. <break time='400ms'/> Five orchestration patterns. <break time='200ms'/> Sequential, <break time='200ms'/> concurrent, <break time='200ms'/> group chat, <break time='200ms'/> handoff, <break time='200ms'/> and magentic. <break time='300ms'/> Multi-agent is the future, <break time='200ms'/> and the exam emphasizes it!
+
+Number four! <break time='300ms'/> Produce R O I cases that convince C F Os. <break time='400ms'/> A six-step framework, <break time='200ms'/> total cost of ownership breakdown, <break time='200ms'/> build buy extend with weighted scoring. <break time='300ms'/> Walk into a C F O meeting with defensible numbers!
+
+Number five! <break time='300ms'/> Design A L M and testing for AI. <break time='400ms'/> Why AI application lifecycle management is different from traditional A L M. <break time='300ms'/> Seven-phase lifecycle, <break time='200ms'/> promotion gate matrices, <break time='200ms'/> and testing strategies for non-deterministic systems.
+
+And number six! <break time='300ms'/> Govern, secure, and comply. <break time='400ms'/> Six Responsible AI principles, <break time='200ms'/> four-layer defense in depth, <break time='200ms'/> vulnerability mitigation, <break time='200ms'/> and multi-region compliance. <break time='300ms'/> This is the architect's accountability layer!
+
+--- SLIDE 12 ---
+Now let me talk about what you should already know coming into this course. <break time='400ms'/> This is an advanced course, <break time='200ms'/> and Microsoft's prep guide is explicit about that. <break time='400ms'/> If any of these gaps are wide, <break time='200ms'/> flag it now and find resources to bridge. <break time='500ms'/> On the Microsoft platforms side, <break time='300ms'/> you should understand Power Platform fundamentals, <break time='200ms'/> the Dynamics 365 product family, <break time='200ms'/> Microsoft 365 Copilot capabilities, <break time='200ms'/> Azure cloud concepts including Entra ID and role-based access control and networking, <break time='200ms'/> and you should have Microsoft Foundry awareness. <break time='500ms'/> On the architecture and AI concepts side, <break time='300ms'/> you need solution architecture fundamentals, <break time='200ms'/> Cloud Adoption Framework familiarity, <break time='200ms'/> generative AI basics including large language models, <break time='200ms'/> prompting, <break time='200ms'/> and Retrieval-Augmented Generation, <break time='200ms'/> application lifecycle management concepts, <break time='200ms'/> and data governance including DLP and sensitivity labels. <break time='500ms'/> One more thing! <break time='300ms'/> To earn the A B one hundred credential, <break time='200ms'/> you also need an active associate-level Microsoft AI or Dynamics 365 certification. <break time='300ms'/> The exam alone does not grant the credential.
+
+--- SLIDE 13 ---
+Here's how each chapter works! <break time='400ms'/> The same four-step pattern repeats across all twelve content chapters. <break time='300ms'/> A predictable rhythm, <break time='200ms'/> so you can focus on the content <break time='200ms'/> and not the navigation. <break time='400ms'/> Let me walk you through each step.
+
+Step one, <break time='200ms'/> Concept Reveal! <break time='400ms'/> Each chapter has three to five themed units. <break time='300ms'/> Each unit introduces concepts step-by-step on screen. <break time='300ms'/> Press the right arrow or spacebar to advance reveals.
+
+Step two, <break time='200ms'/> Knowledge Check! <break time='400ms'/> Approximately one quiz per unit. <break time='300ms'/> Click any answer, <break time='200ms'/> and all options reveal whether they're correct or incorrect. <break time='300ms'/> An explanation panel shows the reasoning behind the correct answer.
+
+Step three, <break time='200ms'/> Enterprise Scenario! <break time='400ms'/> Each chapter ends with a real architecture scenario. <break time='300ms'/> Discuss with a partner, <break time='200ms'/> then reveal the discussion points to see architect-grade answers.
+
+And step four, <break time='200ms'/> Recap! <break time='400ms'/> Six takeaways per chapter, <break time='200ms'/> plus a pointer to the next chapter. <break time='300ms'/> The notes panel is available throughout, <break time='200ms'/> just press T to toggle it for guidance.
+
+--- SLIDE 14 ---
+That's the introduction! <break time='400ms'/> You now know what's coming, <break time='200ms'/> you know how to navigate, <break time='200ms'/> and you know what's on the exam. <break time='500ms'/> Let's begin Chapter 1! <break time='300ms'/> Introduction to Agentic AI Business Solution Architecture.

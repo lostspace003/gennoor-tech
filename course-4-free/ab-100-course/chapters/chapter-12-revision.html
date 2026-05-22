@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 12 — Final Revision &amp; Exam Prep · Gennoor Tech</title>
+<style>
+:root{
+  --bg:#FAFAFA; --paper:#FFFFFF;
+  --ink:#0F172A; --ink-soft:#475569; --ink-mute:#94A3B8;
+  --line:#E2E8F0; --line-soft:#F1F5F9;
+  --gn-navy:#0C1426;
+  --gn-blue:#2563EB;
+  --gn-blue-deep:#1D4ED8;
+  --gn-indigo:#1E3A8A;
+  --gn-amber:#F59E0B;
+  --gn-amber-deep:#B45309;
+  --gn-blue-light:#60A5FA;
+  --green:#10B981; --red:#EF4444; --orange:#F97316;
+  --notes-bg:#0C1426; --notes-text:#FFFFFF; --notes-accent:#F59E0B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;font-size:19px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.app{position:fixed;inset:0;display:flex;flex-direction:column}
+.topbar{height:56px;background:var(--gn-navy);color:#FFFFFF;display:flex;align-items:center;padding:0 24px;gap:18px;border-bottom:1px solid rgba(255,255,255,.06);z-index:10}
+.brand-lockup{display:flex;align-items:center;gap:10px;text-decoration:none;color:#FFFFFF;flex-shrink:0}
+.brand-mark{width:30px;height:30px;flex-shrink:0;display:block}
+.brand-text{display:flex;flex-direction:column;line-height:1.1}
+.brand-name{font-size:18px;font-weight:600;letter-spacing:.3px}
+.brand-sub{font-size:12px;color:var(--gn-amber);letter-spacing:1.2px;text-transform:uppercase;font-weight:600;font-family:'Cascadia Code','Consolas',monospace}
+.topbar .divider{width:1px;height:24px;background:rgba(255,255,255,.15)}
+.topbar .chapter-title{font-size:16px;opacity:.75;letter-spacing:.2px;font-weight:400}
+.topbar.topbar-grid .topbar-left .chapter-title{max-width:36ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topbar .spacer{flex:1}
+.topbar .meta{font-size:16px;opacity:.85;display:flex;gap:10px;align-items:center}
+.topbar .meta .pill{padding:4px 12px;background:rgba(255,255,255,.10);border-radius:4px;font-size:15px;font-weight:500}
+.topbar .meta .step-pill{background:var(--gn-blue);font-weight:600;font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px}
+.topbar button{background:transparent;border:1px solid rgba(255,255,255,.25);color:#FFFFFF;padding:7px 16px;border-radius:4px;font-family:inherit;font-size:16px;font-weight:500;cursor:pointer;transition:.15s}
+.topbar button:hover{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.4)}
+.topbar button.active{background:var(--gn-blue);border-color:var(--gn-blue)}
+
+.progress{height:3px;background:rgba(255,255,255,.06);position:relative;border-bottom:1px solid var(--line)}
+.progress-fill{position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg,var(--gn-blue) 0%,var(--gn-amber) 100%);transition:width .4s cubic-bezier(.4,0,.2,1)}
+.stage{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.slides{width:100%;height:100%;position:relative}
+.slide{position:absolute;inset:0;padding:36px 64px 80px;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .35s ease;overflow-y:auto}
+.slide.active{opacity:1;pointer-events:auto}
+.slide-num{position:absolute;top:18px;right:28px;font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ink-mute);letter-spacing:1.5px}
+[data-step]{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.2,.7,.3,1), transform .55s cubic-bezier(.2,.7,.3,1);pointer-events:none}
+[data-step].revealed{opacity:1;transform:translateY(0);pointer-events:auto}
+
+.notes-panel{position:fixed;bottom:0;left:0;right:0;background:var(--notes-bg);color:var(--notes-text);padding:22px 32px 26px;border-top:3px solid var(--notes-accent);transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);z-index:20;max-height:48vh;overflow-y:auto;box-shadow:0 -20px 40px rgba(0,0,0,.18)}
+.notes-panel.open{transform:translateY(0)}
+.notes-panel .label{display:flex;align-items:center;gap:10px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--notes-accent);margin-bottom:10px;font-weight:600}
+.notes-panel .label::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--notes-accent);animation:pulse 1.6s ease-in-out infinite}
+.notes-panel .label .step-tag{margin-left:auto;font-size:12px;color:rgba(255,255,255,.55);letter-spacing:1px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.notes-panel .script{font-size:22px;line-height:1.65;max-width:880px;font-weight:400;transition:opacity .25s}
+.notes-panel .script.fading{opacity:.3}
+.notes-panel .script em{color:var(--notes-accent);font-style:normal;font-weight:600;background:rgba(245,158,11,.15);padding:1px 6px;border-radius:3px}
+.controls{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:var(--gn-navy);padding:8px 14px;border-radius:4px;box-shadow:0 6px 24px rgba(12,20,38,.30);z-index:15}
+.controls button{width:36px;height:36px;border-radius:3px;border:none;background:transparent;color:#FFFFFF;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;transition:.15s}
+.controls button:hover{background:rgba(255,255,255,.12)}
+.controls button:disabled{opacity:.3;cursor:not-allowed}
+.controls .counter{font-family:'Cascadia Code','Consolas',monospace;font-size:16px;color:#FFFFFF;padding:0 14px;letter-spacing:1px;font-weight:500}
+.step-indicator{position:fixed;bottom:64px;left:50%;transform:translateX(-50%);font-size:14px;font-family:'Cascadia Code','Consolas',monospace;color:var(--gn-blue);letter-spacing:1.5px;opacity:0;transition:opacity .3s;z-index:14;text-transform:uppercase;font-weight:600}
+.step-indicator.show{opacity:.85}
+.step-indicator::after{content:" →";animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+
+.slide.title-slide{background:linear-gradient(135deg,#0C1426 0%,#1E3A8A 35%,#2563EB 70%,#60A5FA 110%);color:#FFFFFF;justify-content:center;padding:175px 100px 100px 100px;position:absolute;overflow:hidden}
+.slide.title-slide .brand-full{position:absolute;top:48px;left:64px;display:flex;align-items:center;gap:16px}
+.slide.title-slide .brand-mark-lg{width:64px;height:64px}
+.slide.title-slide .brand-wordmark{display:flex;flex-direction:column;line-height:1}
+.slide.title-slide .brand-wordmark .name{font-size:30px;font-weight:600;letter-spacing:1px;color:#FFFFFF}
+.slide.title-slide .brand-wordmark .tag{font-size:14px;color:var(--gn-amber);letter-spacing:3px;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;margin-top:4px;text-transform:uppercase}
+.slide.title-slide .eyebrow{font-family:'Cascadia Code','Consolas',monospace;font-size:16px;letter-spacing:3px;color:var(--gn-amber);margin-bottom:20px;font-weight:500}
+.slide.title-slide h1{font-size:75px;line-height:1.1;font-weight:600;max-width:1200px;letter-spacing:-1.5px}
+.slide.title-slide h1 em{font-style:normal;color:var(--gn-amber);font-weight:600}
+.slide.title-slide .subtitle{margin-top:20px;font-size:22px;color:rgba(255,255,255,.85);max-width:900px;line-height:1.5;font-weight:400}
+.slide.title-slide .meta-row{margin-top:36px;display:flex;gap:36px;font-size:18px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.slide.title-slide .meta-row strong{color:#FFFFFF;display:block;font-size:28px;text-transform:none;font-weight:600;letter-spacing:0;margin-top:4px}
+.title-slide::before{content:"";position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,.18) 0%,transparent 70%);top:-200px;right:-200px;pointer-events:none}
+.title-slide::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(96,165,250,.20) 0%,transparent 70%);bottom:-160px;left:-160px;pointer-events:none}
+.finale-banner{position:absolute;top:80px;right:64px;background:rgba(245,158,11,.20);border:1px solid var(--gn-amber);color:var(--gn-amber);padding:6px 16px;border-radius:3px;font-size:14px;font-family:'Cascadia Code','Consolas',monospace;letter-spacing:2px;text-transform:uppercase;font-weight:600}
+
+.slide.section-divider{background:linear-gradient(135deg,var(--gn-navy) 0%,var(--gn-blue) 100%);color:#FFFFFF;justify-content:center;align-items:flex-start;padding:80px;position:relative;overflow:hidden}
+.slide.section-divider::before{content:"";position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,.18) 0%,transparent 70%);top:-180px;right:-180px;pointer-events:none}
+.slide.section-divider .label{font-family:'Cascadia Code','Consolas',monospace;font-size:18px;letter-spacing:4px;margin-bottom:18px;color:var(--gn-amber);font-weight:600}
+.slide.section-divider h2{font-size:78px;line-height:1.05;font-weight:600;max-width:1100px;letter-spacing:-1.5px}
+.slide.section-divider h2 em{font-style:normal;color:var(--gn-amber);font-weight:600}
+.slide.section-divider .sub{margin-top:28px;font-size:24px;max-width:780px;color:rgba(255,255,255,.95);font-weight:400;line-height:1.45}
+
+.slide.content-slide{padding:34px 60px 76px}
+.slide h3.slide-h{font-size:40px;font-weight:600;letter-spacing:-.5px;margin-bottom:6px;line-height:1.15;color:var(--gn-navy)}
+.slide h3.slide-h em{font-style:normal;color:var(--gn-blue);font-weight:600}
+.slide .lead{font-size:19px;color:var(--ink-soft);margin-bottom:20px;max-width:1000px}
+
+/* JOURNEY MAP - 11 chapter recap */
+.journey{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:24px 28px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.journey-title{font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--gn-amber-deep);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:14px}
+.journey-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.j-item{padding:11px 12px;background:var(--bg);border-radius:6px;border-left:3px solid var(--gn-blue);transition:.15s}
+.j-item.foundation{border-left-color:var(--gn-amber)}
+.j-item.s2{border-left-color:var(--gn-indigo)}
+.j-item.s3{border-left-color:var(--gn-amber-deep)}
+.j-item .num{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--gn-blue);letter-spacing:1px;font-weight:700;margin-bottom:3px}
+.j-item.foundation .num{color:var(--gn-amber-deep)}
+.j-item.s2 .num{color:var(--gn-indigo)}
+.j-item.s3 .num{color:var(--gn-amber-deep)}
+.j-item h6{font-size:15px;color:var(--gn-navy);font-weight:600;line-height:1.25;margin-bottom:2px}
+.j-item p{font-size:12px;color:var(--ink-soft);line-height:1.35}
+
+/* AREA RECAP */
+.area-recap{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:22px 28px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.ar-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.ar-header .badge{padding:6px 14px;border-radius:4px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;font-family:'Cascadia Code','Consolas',monospace}
+.area-recap.a1 .ar-header .badge{background:#DBEAFE;color:#1D4ED8}
+.area-recap.a2 .ar-header .badge{background:#E0E7FF;color:#3730A3}
+.area-recap.a3 .ar-header .badge{background:#FED7AA;color:#9A3412}
+.ar-header h4{font-size:25px;color:var(--gn-navy);font-weight:600;letter-spacing:-.2px}
+.ar-header .weight{margin-left:auto;font-family:'Cascadia Code','Consolas',monospace;font-size:22px;font-weight:700}
+.area-recap.a1 .ar-header .weight{color:var(--gn-blue)}
+.area-recap.a2 .ar-header .weight{color:var(--gn-indigo)}
+.area-recap.a3 .ar-header .weight{color:var(--gn-amber-deep)}
+.recap-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.area-recap.a3 .recap-cols{grid-template-columns:repeat(4,1fr)}
+.recap-col{background:var(--bg);border-radius:6px;padding:12px 14px;border-top:3px solid var(--gn-blue)}
+.area-recap.a2 .recap-col{border-top-color:var(--gn-indigo)}
+.area-recap.a3 .recap-col{border-top-color:var(--gn-amber-deep)}
+.recap-col .ch{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--ink-mute);letter-spacing:1px;font-weight:600;margin-bottom:4px}
+.recap-col h5{font-size:16px;color:var(--gn-navy);font-weight:600;line-height:1.2;margin-bottom:8px}
+.recap-col .frameworks{font-size:13px;color:var(--ink);line-height:1.5}
+.recap-col .frameworks .fw{padding:3px 0;border-bottom:1px dashed var(--line);display:block}
+.recap-col .frameworks .fw:last-child{border-bottom:none}
+.recap-col .frameworks .fw strong{color:var(--gn-navy);font-weight:600;display:block;font-size:14px;margin-bottom:1px}
+.recap-col .keywords{margin-top:8px;padding-top:8px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-soft);line-height:1.4}
+.recap-col .keywords strong{color:var(--gn-blue);display:block;font-family:'Cascadia Code','Consolas',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;font-weight:600}
+.area-recap.a2 .recap-col .keywords strong{color:var(--gn-indigo)}
+.area-recap.a3 .recap-col .keywords strong{color:var(--gn-amber-deep)}
+
+/* CROSS-CUTTING FRAMEWORKS - 5 must-knows */
+.frameworks-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:18px}
+.fw-card{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:14px;position:relative;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.fw-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px}
+.fw-card.f1::before{background:var(--gn-blue)}
+.fw-card.f2::before{background:var(--gn-indigo)}
+.fw-card.f3::before{background:var(--green)}
+.fw-card.f4::before{background:var(--gn-amber)}
+.fw-card.f5::before{background:var(--gn-amber-deep)}
+.fw-card .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--ink-mute);letter-spacing:1.2px;font-weight:600;margin-bottom:5px;margin-top:3px}
+.fw-card h5{font-size:16px;color:var(--gn-navy);font-weight:600;margin-bottom:6px;line-height:1.2}
+.fw-card .from{font-size:12px;color:var(--gn-amber-deep);font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px;margin-bottom:6px}
+.fw-card ol{list-style:none;counter-reset:fw-step}
+.fw-card li{padding:2.5px 0 2.5px 16px;position:relative;font-size:13px;color:var(--ink);line-height:1.35;counter-increment:fw-step}
+.fw-card li::before{content:counter(fw-step);position:absolute;left:0;top:2.5px;color:var(--gn-blue);font-weight:700;font-size:12px;font-family:'Cascadia Code','Consolas',monospace}
+.fw-card.f2 li::before{color:var(--gn-indigo)}
+.fw-card.f3 li::before{color:var(--green)}
+.fw-card.f4 li::before{color:var(--gn-amber-deep)}
+.fw-card.f5 li::before{color:var(--gn-amber-deep)}
+
+/* MENTAL MODELS / RULES OF THUMB */
+.rules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.rule-card{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--gn-blue);border-radius:6px;padding:14px 18px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.rule-card.r2{border-left-color:var(--gn-indigo)}
+.rule-card.r3{border-left-color:var(--gn-amber)}
+.rule-card.r4{border-left-color:var(--green)}
+.rule-card.r5{border-left-color:var(--gn-amber-deep)}
+.rule-card.r6{border-left-color:var(--red)}
+.rule-card .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--ink-mute);letter-spacing:1.2px;font-weight:600;margin-bottom:4px}
+.rule-card h5{font-size:18px;color:var(--gn-navy);font-weight:600;margin-bottom:6px;line-height:1.25}
+.rule-card p{font-size:14px;color:var(--ink-soft);line-height:1.5}
+.rule-card p strong{color:var(--gn-navy);font-weight:600}
+
+/* PITFALLS */
+.pitfalls{margin-top:18px;background:linear-gradient(135deg,#0C1426 0%,#1E3A8A 100%);color:#FFFFFF;border-radius:10px;padding:24px 32px}
+.pitfalls h5{font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gn-amber);font-weight:600;margin-bottom:14px}
+.pitfalls-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pitfall{padding:13px 16px;background:rgba(255,255,255,.06);border-radius:6px;border-left:3px solid var(--red)}
+.pitfall.p2{border-left-color:var(--gn-amber)}
+.pitfall h6{font-size:16px;font-weight:600;color:#FFFFFF;margin-bottom:5px;letter-spacing:0;text-transform:none}
+.pitfall p{font-size:14px;color:rgba(255,255,255,.85);line-height:1.45}
+.pitfall p em{font-style:normal;color:var(--gn-amber);font-weight:600;background:rgba(245,158,11,.15);padding:1px 6px;border-radius:3px}
+
+/* QUIZ */
+.quiz-wrap{max-width:880px;margin:0 auto;width:100%}
+.quiz-q{font-size:29px;line-height:1.3;font-weight:600;color:var(--gn-navy);margin-bottom:22px;letter-spacing:-.3px}
+.quiz-q em{font-style:normal;color:var(--gn-blue);font-weight:600}
+.quiz-options{display:flex;flex-direction:column;gap:10px}
+.quiz-opt{background:var(--paper);border:1px solid var(--line);padding:14px 18px;border-radius:4px;cursor:pointer;display:flex;align-items:flex-start;gap:16px;transition:.15s;font-size:18px;font-family:inherit;text-align:left;width:100%;color:var(--ink);line-height:1.4}
+.quiz-opt:hover{border-color:var(--gn-blue);background:#F3F9FD;box-shadow:0 2px 6px rgba(37,99,235,.10)}
+.quiz-opt .letter{width:30px;height:30px;border-radius:4px;background:var(--bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--gn-blue-deep);flex-shrink:0;font-size:16px}
+.quiz-opt.correct{border-color:var(--green);background:#D1FAE5}
+.quiz-opt.correct .letter{background:var(--green);color:#FFFFFF;border-color:var(--green)}
+.quiz-opt.wrong{border-color:var(--red);background:#FEE2E2;opacity:.65}
+.quiz-explain{margin-top:18px;background:#D1FAE5;border-left:4px solid var(--green);padding:14px 18px;border-radius:4px;display:none}
+.quiz-explain.show{display:block;animation:slideUp .5s ease}
+.quiz-explain strong{color:#047857;font-family:'Cascadia Code','Consolas',monospace;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
+.quiz-explain p{margin-top:6px;font-size:17px;color:var(--ink);line-height:1.55}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* CAREER PATH */
+.career-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.career-card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:18px 22px;box-shadow:0 1px 4px rgba(0,0,0,.05);position:relative;overflow:hidden}
+.career-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px}
+.career-card.c1::before{background:var(--gn-blue)}
+.career-card.c2::before{background:var(--gn-indigo)}
+.career-card.c3::before{background:var(--gn-amber)}
+.career-card .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;letter-spacing:1.5px;font-weight:600;margin-bottom:5px;text-transform:uppercase}
+.career-card.c1 .lab{color:var(--gn-blue)}
+.career-card.c2 .lab{color:var(--gn-indigo)}
+.career-card.c3 .lab{color:var(--gn-amber-deep)}
+.career-card h5{font-size:20px;color:var(--gn-navy);font-weight:600;margin-bottom:8px;letter-spacing:-.2px;line-height:1.2}
+.career-card p{font-size:15px;color:var(--ink-soft);line-height:1.5}
+.career-card ul{list-style:none;margin-top:8px}
+.career-card li{padding:3px 0 3px 14px;position:relative;font-size:14px;color:var(--ink);line-height:1.4}
+.career-card li::before{content:"›";position:absolute;left:0;top:3px;color:var(--gn-blue);font-weight:700}
+.career-card.c2 li::before{color:var(--gn-indigo)}
+.career-card.c3 li::before{color:var(--gn-amber-deep)}
+
+/* COMPLETION */
+.completion-message{margin-top:18px;background:linear-gradient(135deg,#0C1426 0%,#1E3A8A 50%,#2563EB 100%);color:#FFFFFF;padding:32px 40px;border-radius:12px;text-align:center;box-shadow:0 6px 20px rgba(12,20,38,.30)}
+.completion-message .label{font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--gn-amber);letter-spacing:3px;font-weight:600;margin-bottom:10px;text-transform:uppercase}
+.completion-message h4{font-size:38px;font-weight:600;margin-bottom:10px;color:#FFFFFF;letter-spacing:-.4px}
+.completion-message h4 em{font-style:normal;color:var(--gn-amber);font-weight:600}
+.completion-message p{font-size:18px;color:rgba(255,255,255,.92);line-height:1.55;max-width:760px;margin:0 auto}
+
+.float-hint{position:fixed;top:72px;right:20px;background:var(--gn-navy);color:#FFFFFF;padding:10px 16px;border-radius:4px;font-size:15px;opacity:0;transition:.3s;z-index:30;pointer-events:none;font-family:'Cascadia Code','Consolas',monospace;box-shadow:0 6px 16px rgba(12,20,38,.20)}
+.float-hint.show{opacity:.95}
+
+/* GENNOOR WORDMARK COLOR LETTERS */
+.brand-name .b-w{color:#FFFFFF}
+.brand-name .b-blue{color:#60A5FA}
+.brand-name .b-amber{color:#F59E0B}
+.slide.title-slide .brand-wordmark .name .b-w{color:#FFFFFF}
+.slide.title-slide .brand-wordmark .name .b-blue{color:#60A5FA}
+.slide.title-slide .brand-wordmark .name .b-amber{color:#F59E0B}
+
+/* TOPBAR GRID — slide nav moved to topbar center */
+.topbar.topbar-grid{display:grid !important;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;height:72px;padding:0 28px}
+.topbar.topbar-grid .topbar-left{display:flex;align-items:center;gap:18px;min-width:0;overflow:hidden}
+.topbar.topbar-grid .topbar-left .chapter-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar.topbar-grid .topbar-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.topbar.topbar-grid .topbar-right{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0}
+.step-indicator-top{font-family:'Cascadia Code','Consolas',monospace;font-size:10px;letter-spacing:2.5px;color:var(--gn-amber,var(--ms-yellow));font-weight:700;text-transform:uppercase;line-height:1;opacity:.95}
+.step-indicator-top.complete{color:rgba(255,255,255,.5)}
+.controls-top{display:inline-flex;align-items:center;gap:4px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.10);border-radius:5px;padding:3px 6px}
+.controls-top button{width:28px;height:28px;border-radius:3px;border:none;background:transparent;color:#FFFFFF;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:.15s;padding:0}
+.controls-top button:hover{background:rgba(255,255,255,.12)}
+.controls-top button:disabled{opacity:.3;cursor:not-allowed}
+.controls-top .counter{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;font-weight:600;color:#FFFFFF;letter-spacing:.5px;padding:0 12px;min-width:64px;text-align:center}
+.controls-top .counter strong{color:var(--gn-amber,var(--ms-yellow));font-weight:700}
+/* Hide original bottom controls (now empty) */
+.bottom-nav-removed{display:none !important}
+
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar topbar-grid">
+    <div class="topbar-left">
+    <a href="#" class="brand-lockup">
+      <svg class="brand-mark" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+      <div class="brand-text">
+        <span class="brand-name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+        <span class="brand-sub">AB-100</span>
+      </div>
+    </a>
+    <div class="divider"></div>
+    <div class="chapter-title">Chapter 12 · Final Revision &amp; Exam Prep</div>
+    </div>
+    <div class="topbar-center">
+      <div class="step-indicator-top" id="stepIndicator">More to reveal</div>
+      <div class="controls-top">
+        <button id="prevBtn" title="Previous (←)">‹</button>
+        <span class="counter" id="counter">1 / 14</span>
+        <button id="nextBtn" title="Next (→)">›</button>
+      </div>
+    </div>
+    <div class="topbar-right">
+    <div class="meta">
+      <span class="pill" id="sectionLabel">Opening</span>
+      <span class="pill step-pill" id="stepPill" style="display:none">Step 1/6</span>
+    </div>
+    <button id="notesToggle" title="Toggle notes (T)">📖 Notes</button>
+    </div>
+  </div>
+
+  <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="stage">
+    <div class="slides" id="slides">
+
+      <!-- 01 TITLE -->
+      <section class="slide title-slide active"
+        data-section="Opening"
+        data-script="Chapter 12. <em>Final revision and exam prep.</em> The course finale before the certification. We've covered eleven chapters of new material. This chapter is condensed recall — the frameworks, decision rules, and mental models you need on exam day. <em>And the architect's career beyond AB-100</em>.">
+        <div class="slide-num">01 / 14</div>
+        <div class="brand-full">
+          <svg class="brand-mark-lg" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+          <div class="brand-wordmark">
+            <span class="name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+            <span class="tag">AB-100 Course</span>
+          </div>
+        </div>
+        <div class="finale-banner">★ FINAL REVISION</div>
+        <div class="eyebrow">CHAPTER 12 · EXAM PREP</div>
+        <h1>Final Revision<br>&amp; <em>Exam Prep</em></h1>
+        <div class="subtitle">Condensed recall of all 11 chapters. Cross-cutting frameworks. Architect mental models. Common pitfalls. Mock exam questions. Beyond AB-100.</div>
+        <div class="meta-row">
+          <div>FOCUS<strong>Recall &amp; consolidation</strong></div>
+          <div>OUTPUT<strong>Exam-ready architect</strong></div>
+          <div>NEXT<strong>Take the exam</strong></div>
+        </div>
+      </section>
+
+      <!-- 02 THE JOURNEY - all 11 chapters in one view -->
+      <section class="slide content-slide"
+        data-section="Opening"
+        data-script="<em>The journey.</em> Eleven chapters in one view. Color-coded by skill area. <em>Print this slide</em> — it's your exam-day reference card.">
+        <div class="slide-num">02 / 14</div>
+        <h3 class="slide-h">The <em>journey</em> — 11 chapters</h3>
+        <p class="lead">Where we've been. Color-coded by exam skill area. This is your one-page reference.</p>
+        <div class="journey">
+          <div class="journey-title">▸ All 11 chapters mapped to exam areas</div>
+          <div class="journey-grid">
+            <div class="j-item foundation">
+              <div class="num">CH 01 · FOUNDATION</div>
+              <h6>Introduction</h6>
+              <p>Architect role · 5-phase framework · MS stack · OOB agents</p>
+            </div>
+            <div class="j-item s1">
+              <div class="num">CH 02 · PLAN</div>
+              <h6>Analyze Requirements</h6>
+              <p>3 pillars · 5 grounding dims · Azure data estate · RAG</p>
+            </div>
+            <div class="j-item s1">
+              <div class="num">CH 03 · PLAN</div>
+              <h6>AI Strategy</h6>
+              <p>CAF for AI · multi-agent · SaaS-first · 5 orchestration patterns</p>
+            </div>
+            <div class="j-item s1">
+              <div class="num">CH 04 · PLAN</div>
+              <h6>ROI &amp; Costs</h6>
+              <p>ROI/TCO · 6-step framework · build/buy/extend · model router</p>
+            </div>
+            <div class="j-item s2">
+              <div class="num">CH 05 · DESIGN</div>
+              <h6>Design AI &amp; Agents</h6>
+              <p>6 RAI tenets · 3 agent types · NLU/CLU/Gen · Foundry tools · WAF</p>
+            </div>
+            <div class="j-item s2">
+              <div class="num">CH 06 · DESIGN</div>
+              <h6>Extensibility</h6>
+              <p>Foundry custom · M365 Copilot · MCP · Computer Use · voice</p>
+            </div>
+            <div class="j-item s2">
+              <div class="num">CH 07 · DESIGN</div>
+              <h6>Orchestrate Prebuilt</h6>
+              <p>D365 patterns · M365 prebuilt · Sales/Service · Power Platform AI</p>
+            </div>
+            <div class="j-item s3">
+              <div class="num">CH 08 · DEPLOY</div>
+              <h6>Monitor &amp; Tune</h6>
+              <p>5 dimensions · feedback · diagnostic · task completion · telemetry</p>
+            </div>
+            <div class="j-item s3">
+              <div class="num">CH 09 · DEPLOY</div>
+              <h6>Testing</h6>
+              <p>4 testing types · validation · prompt lifecycle · E2E · Copilot for tests</p>
+            </div>
+            <div class="j-item s3">
+              <div class="num">CH 10 · DEPLOY</div>
+              <h6>ALM Process</h6>
+              <p>6 artifacts · 4-tier env · 7-phase lifecycle · gate matrix</p>
+            </div>
+            <div class="j-item s3">
+              <div class="num">CH 11 · DEPLOY</div>
+              <h6>RAI · Security · Govern</h6>
+              <p>6 RAI · 4-layer defense · 5 vulnerabilities · RACI · incident response</p>
+            </div>
+            <div class="j-item foundation" style="background:linear-gradient(135deg,rgba(245,158,11,.10) 0%,rgba(180,83,9,.05) 100%)">
+              <div class="num">CH 12 · REVISION</div>
+              <h6>This chapter</h6>
+              <p>Cross-cutting frameworks · mental models · pitfalls · mock exam · career</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 SECTION DIVIDER PLAN -->
+      <section class="slide section-divider"
+        data-section="Plan Recap"
+        data-script="First recap area. <em>Plan</em> — 25 to 30 percent of exam. Three chapters. The before-you-build phase.">
+        <div class="slide-num">03 / 14</div>
+        <div class="label">RECAP · AREA 1</div>
+        <h2>Plan AI Solutions<br><em>25–30%</em></h2>
+        <div class="sub">Chapters 2, 3, 4. Requirements analysis · AI strategy · ROI evaluation. The frameworks you'll be tested on.</div>
+      </section>
+
+      <!-- 04 PLAN RECAP -->
+      <section class="slide content-slide"
+        data-section="Plan Recap"
+        data-script="<em>Plan area recap.</em> Three chapters. Each card has the key frameworks and the exam keywords to recognize. <em>If a question mentions any keyword</em>, you should immediately know which framework applies.">
+        <div class="slide-num">04 / 14</div>
+        <h3 class="slide-h">Plan area — <em>frameworks &amp; keywords</em></h3>
+        <p class="lead">If you see these keywords on the exam, these are the frameworks to apply.</p>
+        <div class="area-recap a1">
+          <div class="ar-header">
+            <span class="badge">PLAN</span>
+            <h4>Plan AI-Powered Business Solutions</h4>
+            <span class="weight">25–30%</span>
+          </div>
+          <div class="recap-cols">
+            <div class="recap-col">
+              <div class="ch">CH 02 · ANALYZE</div>
+              <h5>Analyze Requirements</h5>
+              <div class="frameworks">
+                <span class="fw"><strong>3 pillars of AI fit</strong>Task automation · data analytics · decision support</span>
+                <span class="fw"><strong>5 grounding dimensions</strong>Accuracy · Relevance · Timeliness · Cleanliness · Availability</span>
+                <span class="fw"><strong>Azure Data Estate</strong>Bronze → Silver → Gold</span>
+              </div>
+              <div class="keywords">
+                <strong>EXAM KEYWORDS</strong>
+                "grounding" · "RAG" · "data quality" · "accuracy/relevance/timeliness" · "data ingestion" · "knowledge sources"
+              </div>
+            </div>
+            <div class="recap-col">
+              <div class="ch">CH 03 · STRATEGY</div>
+              <h5>Design AI Strategy</h5>
+              <div class="frameworks">
+                <span class="fw"><strong>CAF for AI 5 phases</strong>Strategy · Plan · Ready · Govern · Manage</span>
+                <span class="fw"><strong>5 orchestration patterns</strong>Sequential · Concurrent · Group chat · Handoff · Magentic</span>
+                <span class="fw"><strong>SaaS-first decision tree</strong>M365 Copilot &gt; Studio &gt; Foundry &gt; Custom</span>
+                <span class="fw"><strong>Constraint pyramid</strong>Compliance · Identity · Data · Cost · Latency</span>
+              </div>
+              <div class="keywords">
+                <strong>EXAM KEYWORDS</strong>
+                "multi-agent" · "orchestration" · "prebuilt vs custom" · "extend M365 Copilot" · "AI Center of Excellence"
+              </div>
+            </div>
+            <div class="recap-col">
+              <div class="ch">CH 04 · ROI</div>
+              <h5>Costs &amp; Benefits</h5>
+              <div class="frameworks">
+                <span class="fw"><strong>6-step ROI framework</strong>Goals → Baseline → Costs → Benefits → ROI → Sensitivity</span>
+                <span class="fw"><strong>TCO components</strong>Licensing · Compute · Data · Build · Operate · Govern</span>
+                <span class="fw"><strong>Build/Buy/Extend matrix</strong>Strategic value × differentiation × time-to-value</span>
+                <span class="fw"><strong>Model Router</strong>Cost optimization via tiered model selection</span>
+              </div>
+              <div class="keywords">
+                <strong>EXAM KEYWORDS</strong>
+                "ROI" · "TCO" · "build vs buy" · "model router" · "tiered models" · "payback period"
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05 SECTION DIVIDER DESIGN -->
+      <section class="slide section-divider"
+        data-section="Design Recap"
+        data-script="Second area. <em>Design</em> — 25 to 30 percent. Chapters 5, 6, 7. The component design phase.">
+        <div class="slide-num">05 / 14</div>
+        <div class="label">RECAP · AREA 2</div>
+        <h2>Design AI Solutions<br><em>25–30%</em></h2>
+        <div class="sub">Chapters 5, 6, 7. AI &amp; agent design · extensibility · prebuilt orchestration. What to build with which Microsoft tool.</div>
+      </section>
+
+      <!-- 06 DESIGN RECAP -->
+      <section class="slide content-slide"
+        data-section="Design Recap"
+        data-script="<em>Design area recap.</em> Three chapters. <em>Chapter 5 is the heaviest in this area</em> — six RAI tenets, three agent types, the Copilot Studio paths. Memorize the decision triggers.">
+        <div class="slide-num">06 / 14</div>
+        <h3 class="slide-h">Design area — <em>frameworks &amp; keywords</em></h3>
+        <p class="lead">Chapter 5 is the largest in this area. Memorize the decision triggers for each framework.</p>
+        <div class="area-recap a2">
+          <div class="ar-header">
+            <span class="badge">DESIGN</span>
+            <h4>Design AI-Powered Business Solutions</h4>
+            <span class="weight">25–30%</span>
+          </div>
+          <div class="recap-cols">
+            <div class="recap-col">
+              <div class="ch">CH 05 · DESIGN AI</div>
+              <h5>AI &amp; Agents</h5>
+              <div class="frameworks">
+                <span class="fw"><strong>3 agent types</strong>Task · Autonomous · Prompt-Response</span>
+                <span class="fw"><strong>3 Copilot Studio paths</strong>NLU (intent) · CLU (Azure) · Generative (LLM)</span>
+                <span class="fw"><strong>6 RAI tenets</strong>Fairness · Reliability · Privacy · Inclusiveness · Transparency · Accountability</span>
+                <span class="fw"><strong>Power Platform WAF</strong>5 pillars for intelligent workloads</span>
+              </div>
+              <div class="keywords">
+                <strong>EXAM KEYWORDS</strong>
+                "task agent" · "autonomous" · "fallback" · "topics" · "generative orchestration" · "WAF"
+              </div>
+            </div>
+            <div class="recap-col">
+              <div class="ch">CH 06 · EXTENSIBILITY</div>
+              <h5>Extensibility</h5>
+              <div class="frameworks">
+                <span class="fw"><strong>When custom Foundry</strong>Domain-specific · regulated · existing IP</span>
+                <span class="fw"><strong>MCP — Model Context Protocol</strong>Structured tool/data access</span>
+                <span class="fw"><strong>Computer Use</strong>Browser/app automation when no API exists</span>
+                <span class="fw"><strong>M365 Copilot extensibility</strong>Connectors · plugins · agents · declarative</span>
+              </div>
+              <div class="keywords">
+                <strong>EXAM KEYWORDS</strong>
+                "MCP" · "A2A" · "Computer Use" · "voice mode" · "reasoning" · "declarative agent"
+              </div>
+            </div>
+            <div class="recap-col">
+              <div class="ch">CH 07 · PREBUILT</div>
+              <h5>Orchestrate Prebuilt</h5>
+              <div class="frameworks">
+                <span class="fw"><strong>D365 Copilot patterns</strong>Sales · Service · F&amp;O · Customer Insights</span>
+                <span class="fw"><strong>M365 prebuilt agents</strong>Researcher · Analyst · Sales · Service</span>
+                <span class="fw"><strong>Knowledge source order</strong>Configure → Add KB → Custom action → Custom agent</span>
+                <span class="fw"><strong>Power Platform AI Hub</strong>Catalog of prebuilt + custom AI</span>
+              </div>
+              <div class="keywords">
+                <strong>EXAM KEYWORDS</strong>
+                "prebuilt agent" · "AI hub" · "interoperability" · "knowledge sources" · "F&amp;O agent chats"
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 07 SECTION DIVIDER DEPLOY -->
+      <section class="slide section-divider"
+        data-section="Deploy Recap"
+        data-script="Third area — and the largest. <em>Deploy</em> — 40 to 45 percent. <em>Nearly half the exam</em>. Four chapters. The most critical area.">
+        <div class="slide-num">07 / 14</div>
+        <div class="label">RECAP · AREA 3</div>
+        <h2>Deploy AI Solutions<br><em>40–45%</em></h2>
+        <div class="sub">Chapters 8, 9, 10, 11. Monitor · test · ALM · govern. The largest section — nearly half the exam questions live here.</div>
+      </section>
+
+      <!-- 08 DEPLOY RECAP -->
+      <section class="slide content-slide"
+        data-section="Deploy Recap"
+        data-script="<em>Deploy area recap.</em> Four chapters. The biggest exam weight. <em>Most architects skip this in real projects and pay for it later</em> — the exam doesn't let you skip it.">
+        <div class="slide-num">08 / 14</div>
+        <h3 class="slide-h">Deploy area — <em>frameworks &amp; keywords</em></h3>
+        <p class="lead">Largest exam section. Where most enterprise AI projects either succeed or fail.</p>
+        <div class="area-recap a3">
+          <div class="ar-header">
+            <span class="badge">DEPLOY</span>
+            <h4>Deploy AI-Powered Business Solutions</h4>
+            <span class="weight">40–45%</span>
+          </div>
+          <div class="recap-cols">
+            <div class="recap-col">
+              <div class="ch">CH 08 · MONITOR</div>
+              <h5>Monitor &amp; Tune</h5>
+              <div class="frameworks">
+                <span class="fw"><strong>5 monitoring dimensions</strong>Quality · Performance · Cost · Safety · Adoption</span>
+                <span class="fw"><strong>6-step diagnostic</strong>Detect → Triage → Reproduce → Diagnose → Fix → Validate</span>
+                <span class="fw"><strong>Gold metric</strong>Task completion rate</span>
+              </div>
+              <div class="keywords">
+                <strong>EXAM KEYWORDS</strong>
+                "task completion" · "telemetry" · "feedback backlog" · "drift detection"
+              </div>
+            </div>
+            <div class="recap-col">
+              <div class="ch">CH 09 · TESTING</div>
+              <h5>Manage Testing</h5>
+              <div class="frameworks">
+                <span class="fw"><strong>4 testing types</strong>Functional · Quality · Safety · Integration</span>
+                <span class="fw"><strong>Validation thresholds</strong>Standard 90/85/80 · regulated 95/90/85</span>
+                <span class="fw"><strong>Prompt lifecycle</strong>Author → Test → Version → Approve → Deploy → Monitor</span>
+              </div>
+              <div class="keywords">
+                <strong>EXAM KEYWORDS</strong>
+                "validation criteria" · "prompt best practices" · "E2E test" · "Copilot for test cases"
+              </div>
+            </div>
+            <div class="recap-col">
+              <div class="ch">CH 10 · ALM</div>
+              <h5>ALM Process</h5>
+              <div class="frameworks">
+                <span class="fw"><strong>6 ALM artifacts</strong>Solution · Code · Prompt · Model · Data · Knowledge</span>
+                <span class="fw"><strong>4-tier environments</strong>Dev → Test → PreProd → Prod</span>
+                <span class="fw"><strong>7-phase data lifecycle</strong>A through G — Acquire to Govern</span>
+                <span class="fw"><strong>Promotion gate matrix</strong>Per-component criteria</span>
+              </div>
+              <div class="keywords">
+                <strong>EXAM KEYWORDS</strong>
+                "solutions" · "managed environment" · "promotion gates" · "data lifecycle"
+              </div>
+            </div>
+            <div class="recap-col">
+              <div class="ch">CH 11 · GOVERN</div>
+              <h5>RAI · Security · Govern</h5>
+              <div class="frameworks">
+                <span class="fw"><strong>4-layer defense</strong>Identity · Data · Observability · Threat</span>
+                <span class="fw"><strong>5 vulnerability categories</strong>Prompt manip · Model · Data · Identity · Workflow</span>
+                <span class="fw"><strong>5-step incident response</strong>Detect · Disable · Preserve · Notify · Recover</span>
+              </div>
+              <div class="keywords">
+                <strong>EXAM KEYWORDS</strong>
+                "least privilege" · "managed identity" · "DLP" · "residency" · "audit trail" · "prompt injection"
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 09 5 CROSS-CUTTING FRAMEWORKS -->
+      <section class="slide content-slide"
+        data-section="Frameworks"
+        data-script="<em>The five cross-cutting frameworks</em>. These appear across multiple chapters and the exam loves them. <em>If you only memorize five things from this course</em>, memorize these. I'll bring them up one at a time.">
+        <div class="slide-num">09 / 14</div>
+        <h3 class="slide-h">Five <em>cross-cutting frameworks</em></h3>
+        <p class="lead">If you only memorize five things from this course — these. They cut across multiple chapters and exam questions.</p>
+        <div class="frameworks-grid">
+          <div class="fw-card f1" data-step
+            data-script="<em>Framework 1 — The 5-phase architect framework.</em> From Chapter 1. Plan, Design, Build, Deploy, Operate. <em>Every architectural exercise maps here</em>. If a question asks 'what comes next' or 'where in the lifecycle', this is the structure.">
+            <div class="lab">FRAMEWORK 01</div>
+            <div class="from">From Ch 01</div>
+            <h5>5-Phase Architect Framework</h5>
+            <ol>
+              <li>Plan — requirements &amp; strategy</li>
+              <li>Design — components &amp; choices</li>
+              <li>Build — develop &amp; configure</li>
+              <li>Deploy — release with gates</li>
+              <li>Operate — monitor &amp; iterate</li>
+            </ol>
+          </div>
+          <div class="fw-card f2" data-step
+            data-script="<em>Framework 2 — Build/Buy/Extend matrix.</em> From Chapter 4. Three dimensions — strategic value, differentiation potential, time to value. <em>The ROI question's structural answer</em>.">
+            <div class="lab">FRAMEWORK 02</div>
+            <div class="from">From Ch 04</div>
+            <h5>Build / Buy / Extend</h5>
+            <ol>
+              <li>Strategic value to org</li>
+              <li>Differentiation potential</li>
+              <li>Time to value pressure</li>
+              <li>Internal capability/skills</li>
+              <li>Total cost of ownership</li>
+            </ol>
+          </div>
+          <div class="fw-card f3" data-step
+            data-script="<em>Framework 3 — SaaS-first decision tree.</em> From Chapter 3. <em>The most reused decision pattern in the entire course</em>. M365 Copilot first. Then Studio. Then Foundry. Custom only when nothing else fits.">
+            <div class="lab">FRAMEWORK 03</div>
+            <div class="from">From Ch 03</div>
+            <h5>SaaS-First Decision Tree</h5>
+            <ol>
+              <li>M365 Copilot prebuilt</li>
+              <li>Copilot Studio agents</li>
+              <li>Foundry tools</li>
+              <li>Custom Foundry models</li>
+              <li>Build from scratch (last resort)</li>
+            </ol>
+          </div>
+          <div class="fw-card f4" data-step
+            data-script="<em>Framework 4 — 4-layer defense in depth.</em> From Chapter 11. Identity, data, observability, threat protection. <em>The governance question's structural answer</em>.">
+            <div class="lab">FRAMEWORK 04</div>
+            <div class="from">From Ch 11</div>
+            <h5>4-Layer Defense in Depth</h5>
+            <ol>
+              <li>Identity &amp; Access (managed ID, RBAC)</li>
+              <li>Data Governance (DLP, labels, residency)</li>
+              <li>Observability &amp; Cost (logs, dashboards)</li>
+              <li>Threat Protection (filters, red team, IR)</li>
+            </ol>
+          </div>
+          <div class="fw-card f5" data-step
+            data-script="<em>Framework 5 — 7-phase data lifecycle.</em> From Chapter 10. A through G. Acquire, Bronze, Silver, Gold, Curate, Index, Govern. <em>Every data ALM question maps here</em>.">
+            <div class="lab">FRAMEWORK 05</div>
+            <div class="from">From Ch 10</div>
+            <h5>7-Phase Data Lifecycle</h5>
+            <ol>
+              <li>Acquire — source &amp; ingest</li>
+              <li>Bronze — raw landing</li>
+              <li>Silver — cleansed</li>
+              <li>Gold — curated for AI</li>
+              <li>Index — vectorize / KB</li>
+              <li>Serve — RAG / grounding</li>
+              <li>Govern — retention &amp; audit</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 ARCHITECT MENTAL MODELS / RULES OF THUMB -->
+      <section class="slide content-slide"
+        data-section="Mental Models"
+        data-script="<em>Six architect mental models</em>. Rules of thumb for exam day. When you can't remember the framework, fall back to these. I'll bring them up one at a time.">
+        <div class="slide-num">10 / 14</div>
+        <h3 class="slide-h">Architect <em>mental models</em></h3>
+        <p class="lead">When you can't remember the exact framework, these rules of thumb will get you to the right answer.</p>
+        <div class="rules-grid">
+          <div class="rule-card r1" data-step
+            data-script="<em>Rule 1 — SaaS first.</em> Always prefer prebuilt. If the question offers a prebuilt option that fits, that's usually the answer. <em>Custom is last resort, not first</em>.">
+            <div class="lab">RULE 01</div>
+            <h5>SaaS-first, custom-last</h5>
+            <p>If a <strong>prebuilt option fits</strong> the requirement, that's usually the answer. Custom Foundry models are last resort, not first instinct.</p>
+          </div>
+          <div class="rule-card r2" data-step
+            data-script="<em>Rule 2 — Least privilege wins.</em> Any answer that grants 'narrowest scope' or 'managed identity' over 'broad access' is almost always correct.">
+            <div class="lab">RULE 02</div>
+            <h5>Least privilege wins</h5>
+            <p>Any option that says <strong>"narrowest scope"</strong> or <strong>"managed identity"</strong> beats options that grant broad access. Always.</p>
+          </div>
+          <div class="rule-card r3" data-step
+            data-script="<em>Rule 3 — Defense in depth, never single layer.</em> If an option proposes one control to solve the problem, it's wrong. Microsoft's exam favors layered controls.">
+            <div class="lab">RULE 03</div>
+            <h5>Layered controls beat single</h5>
+            <p>Any option proposing <strong>one control</strong> to solve a security problem is wrong. The exam favors <strong>defense in depth</strong>.</p>
+          </div>
+          <div class="rule-card r4" data-step
+            data-script="<em>Rule 4 — Match rigor to risk.</em> Don't apply healthcare-grade validation to a sales chatbot. Match the controls to the regulatory class.">
+            <div class="lab">RULE 04</div>
+            <h5>Match rigor to risk</h5>
+            <p>Don't apply healthcare-grade validation to a sales chatbot. <strong>Stricter for regulated</strong>, looser for low-risk. Both answers exist on the exam.</p>
+          </div>
+          <div class="rule-card r5" data-step
+            data-script="<em>Rule 5 — Capture metadata, not content.</em> For audit trails. Logging the prompt content is a leak vector. Logging that a prompt happened, who, when, what model — that's auditable without exposure.">
+            <div class="lab">RULE 05</div>
+            <h5>Audit metadata, not content</h5>
+            <p>Logging prompt <strong>content</strong> is a leak vector. Logging metadata — who, when, model version, outcome — is auditable without exposure.</p>
+          </div>
+          <div class="rule-card r6" data-step
+            data-script="<em>Rule 6 — Bias toward disable.</em> When in doubt during incident response, disable the agent. Patient safety, customer safety, business continuity — disable first, investigate second.">
+            <div class="lab">RULE 06</div>
+            <h5>Bias toward disable</h5>
+            <p>In incident response, when in doubt, <strong>disable first</strong>, investigate second. The exam rewards safety over operational continuity.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11 COMMON PITFALLS -->
+      <section class="slide content-slide"
+        data-section="Pitfalls"
+        data-script="<em>Common exam pitfalls</em>. Things students commonly get wrong. <em>Each one is a trap</em> — recognize the pattern and you'll save yourself the wrong answer.">
+        <div class="slide-num">11 / 14</div>
+        <h3 class="slide-h">Common <em>exam pitfalls</em></h3>
+        <p class="lead">Patterns that catch unprepared candidates. Recognize the trap, save the wrong answer.</p>
+        <div class="pitfalls">
+          <h5>▸ Six traps to recognize</h5>
+          <div class="pitfalls-grid">
+            <div class="pitfall" data-step
+              data-script="<em>Pitfall 1 — Owner / Contributor traps.</em> If an answer offers Owner at subscription scope or Contributor at resource group, it's almost always wrong. <em>The right answer scopes tightly</em>.">
+              <h6>⚠ Over-privileged role assignments</h6>
+              <p>"Owner at subscription scope" or "Contributor at resource group" answers are almost always <em>wrong</em>. Tight scope wins.</p>
+            </div>
+            <div class="pitfall p2" data-step
+              data-script="<em>Pitfall 2 — Custom when prebuilt fits.</em> If the requirements describe a standard scenario and a prebuilt agent exists for it, the answer is the prebuilt agent. Don't get distracted by 'building from scratch in Foundry'.">
+              <h6>⚠ Reaching for custom too early</h6>
+              <p>If a prebuilt agent or D365 Copilot pattern fits, that's the <em>SaaS-first answer</em>. Don't build what Microsoft already built.</p>
+            </div>
+            <div class="pitfall" data-step
+              data-script="<em>Pitfall 3 — Single-control answers in security questions.</em> If a question is about securing AI and an option says 'use only DLP' or 'use only MFA', it's wrong. Defense in depth = multiple layers.">
+              <h6>⚠ Single-layer security answers</h6>
+              <p>"Use only DLP" or "Use only MFA" — wrong. The right answer combines <em>identity + data + observability + threat</em>.</p>
+            </div>
+            <div class="pitfall p2" data-step
+              data-script="<em>Pitfall 4 — Latency over regulation.</em> A few questions will tempt you with cross-region routing for performance. If the data is regulated, <em>residency wins</em>. Don't optimize away the law.">
+              <h6>⚠ Performance over compliance</h6>
+              <p>Don't pick "cross-region for latency" when the data is regulated. <em>Residency wins</em>. Always.</p>
+            </div>
+            <div class="pitfall" data-step
+              data-script="<em>Pitfall 5 — Model size obsession.</em> Bigger isn't always better. SLMs and model routers exist for a reason. If a question rewards 'the most capable model', look for the model router answer instead.">
+              <h6>⚠ "Bigger model = better"</h6>
+              <p>The <em>model router</em> is often correct over "always use the most capable model" — cost, latency, and routing matter.</p>
+            </div>
+            <div class="pitfall p2" data-step
+              data-script="<em>Pitfall 6 — Skipping the human.</em> Autonomous agents that take action without approval are dangerous. If an answer removes human oversight from a sensitive workflow, it's almost always wrong.">
+              <h6>⚠ "Fully autonomous" answers</h6>
+              <p>Removing humans from sensitive workflows is dangerous. <em>Approval workflows</em> beat "let the agent decide" for regulated tasks.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12 MOCK EXAM QUESTION -->
+      <section class="slide content-slide"
+        data-section="Mock Exam"
+        data-script="<em>Final mock exam question.</em> Course-style. Read carefully — the right answer applies multiple frameworks at once. <em>This is what AB-100 questions look like</em>.">
+        <div class="slide-num">12 / 14</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Mock <em>exam question</em></h3>
+        <p class="lead" style="margin-bottom:20px">Course-style scenario. Apply your frameworks.</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">A regulated healthcare org needs an AI agent to triage patient inquiries. They have a prebuilt D365 Customer Service AI Agent option, plus the choice of building custom in Foundry. Patient data is HIPAA-regulated and must stay in-region. Architect's <em>best</em> recommendation?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Build a custom Foundry model with a region-locked deployment to maximize control over PHI handling</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Three frameworks point to this answer: (1) SaaS-first — D365 prebuilt fits the standard customer-service scenario; building custom violates SaaS-first when prebuilt fits. (2) Match rigor to risk — extending the prebuilt with HIPAA-grade controls gives the right rigor without gold-plating. (3) Defense in depth — managed identity + DLP + sensitivity labels + residency configuration creates the layered controls HIPAA expects. Option A reaches for custom too early. Option C is a single-layer security answer. Option D removes human oversight from a regulated patient workflow — high-risk. Option B applies SaaS-first + match-rigor-to-risk + defense-in-depth simultaneously."><span class="letter">B</span> Use the prebuilt D365 Customer Service AI Agent. Configure with managed identities, DLP policies, sensitivity labels, and region-locked environments. Add human approval for any non-routine response</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> Use the prebuilt D365 Customer Service AI Agent with default configuration plus tenant-level DLP for PHI</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Build a fully autonomous agent in Copilot Studio that responds to patient inquiries without human review to maximize throughput</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 13 BEYOND AB-100 - CAREER PATH -->
+      <section class="slide content-slide"
+        data-section="Career Path"
+        data-script="<em>Beyond the AB-100 exam</em>. Three career paths. Each builds on what you learned here. <em>The certification is the start, not the end</em>.">
+        <div class="slide-num">13 / 14</div>
+        <h3 class="slide-h">Beyond <em>AB-100</em></h3>
+        <p class="lead">The certification opens three concrete career paths. Each builds on what you learned in this course.</p>
+        <div class="career-grid">
+          <div class="career-card c1" data-step
+            data-script="<em>Path 1 — Practicing AI Architect</em>. Lead enterprise AI architecture engagements. Multi-agent solution design. Cross-platform integration. <em>The natural day-1 outcome</em>.">
+            <div class="lab">PATH 01</div>
+            <h5>Practicing AI Architect</h5>
+            <p>Day-1 outcome of this certification. Lead enterprise AI architecture work directly.</p>
+            <ul>
+              <li>Multi-agent solution design</li>
+              <li>Platform selection &amp; ROI analysis</li>
+              <li>Cross-platform integration leads</li>
+              <li>Audit committee briefings</li>
+            </ul>
+          </div>
+          <div class="career-card c2" data-step
+            data-script="<em>Path 2 — AI Center of Excellence Lead</em>. From Chapter 3's AI CoE concept. Stand up the organization's AI governance. Drive adoption. Coach teams. <em>The transformation leadership track</em>.">
+            <div class="lab">PATH 02</div>
+            <h5>AI CoE Lead</h5>
+            <p>Stand up your org's AI governance and drive enterprise-wide adoption.</p>
+            <ul>
+              <li>Define AI standards &amp; patterns</li>
+              <li>Coach business and technical teams</li>
+              <li>Govern the AI portfolio</li>
+              <li>Measure adoption &amp; outcomes</li>
+            </ul>
+          </div>
+          <div class="career-card c3" data-step
+            data-script="<em>Path 3 — Continued certification</em>. AB-100 is one part of an evolving Microsoft AI credential ecosystem. Foundry-deep, Copilot-deep, and security-deep specializations are emerging. <em>Stay current — AI is moving fast</em>.">
+            <div class="lab">PATH 03</div>
+            <h5>Continued certification</h5>
+            <p>The Microsoft AI credential ecosystem is evolving rapidly. Specializations to watch:</p>
+            <ul>
+              <li>Foundry-deep specializations</li>
+              <li>Copilot Studio expert credentials</li>
+              <li>AI security specializations</li>
+              <li>Annual cert renewal — free assessments</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 14 COURSE COMPLETION -->
+      <section class="slide content-slide"
+        data-section="Wrap"
+        data-script="<em>The course is complete.</em> AB-100 prepared. Architect-ready. <em>Now go take the exam — and then go build something. Responsibly.</em>">
+        <div class="slide-num">14 / 14</div>
+        <h3 class="slide-h">Course <em>complete</em></h3>
+        <p class="lead">12 chapters. 256+ slides. 10 enterprise scenarios. The vocabulary, the frameworks, the judgment.</p>
+        <div class="completion-message">
+          <div class="label">★ AB-100 COURSE · COMPLETE ★</div>
+          <h4>You're an <em>AI Solution Architect</em></h4>
+          <p>You have the architect's vocabulary. The five-phase framework. SaaS-first decision making. ROI analysis with TCO. Six RAI principles. Four-layer defense in depth. ALM discipline for non-deterministic systems. The full Microsoft AI stack from Copilot to Foundry. And the judgment to defend it all in front of an enterprise audit committee. <strong style="color:#FFFFFF">Now go take the exam — and then go build something. Responsibly.</strong></p>
+        </div>
+        <div style="margin-top:18px;padding:18px 28px;background:var(--paper);border:1px solid var(--line);border-radius:8px;text-align:center">
+          <div style="font-size:11px;color:var(--ink-mute);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:8px;font-family:'Cascadia Code','Consolas',monospace">From everyone at Gennoor Tech</div>
+          <div style="font-size:15px;color:var(--gn-navy);line-height:1.5;font-weight:600">Thank you for trusting us with your learning journey.</div>
+          <div style="font-size:13px;color:var(--ink-soft);line-height:1.5;margin-top:6px">Train · Innovate · Build</div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="notes-panel" id="notesPanel">
+    <div class="label">📖 Read aloud · notes <span class="step-tag" id="stepTag"></span></div>
+    <div class="script" id="notesScript">Welcome notes will appear here.</div>
+  </div>
+
+
+
+  <div class="float-hint" id="hint">← → to advance step-by-step · T for notes</div>
+</div>
+
+<script>
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0; let notesOpen = false;
+  const counter = document.getElementById('counter');
+  const progressFill = document.getElementById('progressFill');
+  const notesPanel = document.getElementById('notesPanel');
+  const notesScript = document.getElementById('notesScript');
+  const stepTag = document.getElementById('stepTag');
+  const sectionLabel = document.getElementById('sectionLabel');
+  const stepPill = document.getElementById('stepPill');
+  const stepIndicator = document.getElementById('stepIndicator');
+  const notesToggle = document.getElementById('notesToggle');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const hint = document.getElementById('hint');
+  function getSteps(s){return Array.from(s.querySelectorAll('[data-step]'));}
+  function getRevealed(s){return Array.from(s.querySelectorAll('[data-step].revealed'));}
+  function updateScript(text, stepInfo){
+    notesScript.classList.add('fading');
+    setTimeout(()=>{ notesScript.innerHTML = text || ''; stepTag.textContent = stepInfo || ''; notesScript.classList.remove('fading'); },180);
+  }
+  function updateStepIndicator(slide){
+    const steps = getSteps(slide); const revealed = getRevealed(slide);
+    if(steps.length>0 && revealed.length<steps.length){ stepIndicator.classList.add('show'); stepPill.style.display='inline-block'; stepPill.textContent = `Step ${revealed.length}/${steps.length}`; }
+    else if(steps.length>0){ stepIndicator.classList.remove('show'); stepPill.style.display='inline-block'; stepPill.textContent = `${steps.length}/${steps.length}`; }
+    else { stepIndicator.classList.remove('show'); stepPill.style.display='none'; }
+  }
+  function showSlide(i, revealAll){
+    if(i<0||i>=total) return;
+    slides[current].classList.remove('active');
+    getSteps(slides[current]).forEach(el=>el.classList.remove('revealed'));
+    current = i;
+    const slide = slides[current]; slide.classList.add('active'); slide.scrollTop = 0;
+    if(revealAll){ getSteps(slide).forEach(el=>el.classList.add('revealed')); }
+    counter.textContent = (current+1)+' / '+total;
+    progressFill.style.width = ((current+1)/total*100)+'%';
+    sectionLabel.textContent = slide.dataset.section || '';
+    if(revealAll){ const steps = getSteps(slide); const last = steps[steps.length-1]; if(last && last.dataset.script) updateScript(last.dataset.script, `Step ${steps.length}/${steps.length}`); else updateScript(slide.dataset.script, ''); } else { updateScript(slide.dataset.script, ''); }
+    updateStepIndicator(slide);
+    prevBtn.disabled = (current===0 && getRevealed(slide).length===0);
+    nextBtn.disabled = (current===total-1 && (getSteps(slide).length===0 || getRevealed(slide).length===getSteps(slide).length));
+  }
+  function next(){
+    const slide = slides[current]; const steps = getSteps(slide); const revealed = getRevealed(slide);
+    if(revealed.length<steps.length){ const idx = revealed.length; const el = steps[idx]; el.classList.add('revealed'); if(el.dataset.script) updateScript(el.dataset.script, `Step ${idx+1}/${steps.length}`); updateStepIndicator(slide); prevBtn.disabled=false; if(revealed.length+1===steps.length && current===total-1) nextBtn.disabled=true; }
+    else if(current<total-1){ showSlide(current+1, false); }
+  }
+  function prev(){
+    const slide = slides[current]; const revealed = getRevealed(slide);
+    if(revealed.length>0){ const last = revealed[revealed.length-1]; last.classList.remove('revealed'); const remaining = getRevealed(slide); if(remaining.length>0){ const r = remaining[remaining.length-1]; const total = getSteps(slide).length; updateScript(r.dataset.script, `Step ${remaining.length}/${total}`); } else { updateScript(slide.dataset.script, ''); } updateStepIndicator(slide); nextBtn.disabled=false; }
+    else if(current>0){ showSlide(current-1, true); }
+  }
+  function toggleNotes(){ notesOpen = !notesOpen; notesPanel.classList.toggle('open', notesOpen); notesToggle.classList.toggle('active', notesOpen); }
+  prevBtn.addEventListener('click', prev); nextBtn.addEventListener('click', next); notesToggle.addEventListener('click', toggleNotes);
+  document.addEventListener('keydown',(e)=>{ if(e.target.matches('input,textarea')) return; if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();} else if(e.key==='ArrowLeft'){e.preventDefault();prev();} else if(e.key==='t'||e.key==='T'){e.preventDefault();toggleNotes();} else if(e.key==='Home'){e.preventDefault();showSlide(0,false);} else if(e.key==='End'){e.preventDefault();showSlide(total-1,true);} });
+  document.querySelectorAll('.quiz-opt').forEach(btn=>{ btn.addEventListener('click',()=>{ const wrap = btn.closest('.quiz-wrap'); const opts = wrap.querySelectorAll('.quiz-opt'); const explain = wrap.querySelector('.quiz-explain'); opts.forEach(o=>{ if(o.dataset.correct==='true') o.classList.add('correct'); else o.classList.add('wrong'); }); const correctOpt = wrap.querySelector('.quiz-opt[data-correct="true"]'); if(correctOpt && explain){ explain.querySelector('p').textContent = correctOpt.dataset.explain || ''; explain.classList.add('show'); } }); });
+  setTimeout(()=>{hint.classList.add('show');},800); setTimeout(()=>{hint.classList.remove('show');},5500);
+  showSlide(0,false);
+})();
+</script>
+</body>
+</html>

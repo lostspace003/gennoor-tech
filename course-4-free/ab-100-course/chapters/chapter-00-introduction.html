@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AB-100 — Course Introduction · Gennoor Tech</title>
+<style>
+:root{
+  --bg:#FAFAFA; --paper:#FFFFFF;
+  --ink:#0F172A; --ink-soft:#475569; --ink-mute:#94A3B8;
+  --line:#E2E8F0; --line-soft:#F1F5F9;
+  /* Gennoor brand */
+  --gn-navy:#0C1426;
+  --gn-blue:#2563EB;
+  --gn-blue-deep:#1D4ED8;
+  --gn-indigo:#1E3A8A;
+  --gn-amber:#F59E0B;
+  --gn-amber-deep:#B45309;
+  --gn-blue-light:#60A5FA;
+  /* Semantics */
+  --green:#10B981; --red:#EF4444; --orange:#F97316;
+  /* Notes panel */
+  --notes-bg:#0C1426; --notes-text:#FFFFFF; --notes-accent:#F59E0B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;font-size:19px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.app{position:fixed;inset:0;display:flex;flex-direction:column}
+.topbar{height:56px;background:var(--gn-navy);color:#FFFFFF;display:flex;align-items:center;padding:0 24px;gap:18px;border-bottom:1px solid rgba(255,255,255,.06);z-index:10}
+.brand-lockup{display:flex;align-items:center;gap:10px;text-decoration:none;color:#FFFFFF;flex-shrink:0}
+.brand-mark{width:30px;height:30px;flex-shrink:0;display:block}
+.brand-text{display:flex;flex-direction:column;line-height:1.1}
+.brand-name{font-size:18px;font-weight:600;letter-spacing:.3px;color:#FFFFFF}
+.brand-sub{font-size:12px;color:var(--gn-amber);letter-spacing:1.2px;text-transform:uppercase;font-weight:600;font-family:'Cascadia Code','Consolas',monospace}
+.topbar .divider{width:1px;height:24px;background:rgba(255,255,255,.15)}
+.topbar .chapter-title{font-size:16px;opacity:.75;letter-spacing:.2px;font-weight:400}
+.topbar.topbar-grid .topbar-left .chapter-title{max-width:36ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topbar .spacer{flex:1}
+.topbar .meta{font-size:16px;opacity:.85;display:flex;gap:10px;align-items:center}
+.topbar .meta .pill{padding:4px 12px;background:rgba(255,255,255,.10);border-radius:4px;font-size:15px;font-weight:500}
+.topbar .meta .step-pill{background:var(--gn-blue);font-weight:600;font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px}
+.topbar button{background:transparent;border:1px solid rgba(255,255,255,.25);color:#FFFFFF;padding:7px 16px;border-radius:4px;font-family:inherit;font-size:16px;font-weight:500;cursor:pointer;transition:.15s}
+.topbar button:hover{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.4)}
+.topbar button.active{background:var(--gn-blue);border-color:var(--gn-blue)}
+.progress{height:3px;background:rgba(255,255,255,.06);position:relative;border-bottom:1px solid var(--line)}
+.progress-fill{position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg,var(--gn-blue) 0%,var(--gn-amber) 100%);transition:width .4s cubic-bezier(.4,0,.2,1)}
+.stage{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.slides{width:100%;height:100%;position:relative}
+.slide{position:absolute;inset:0;padding:36px 64px 80px;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .35s ease;overflow-y:auto}
+.slide.active{opacity:1;pointer-events:auto}
+.slide-num{position:absolute;top:18px;right:28px;font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ink-mute);letter-spacing:1.5px}
+[data-step]{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.2,.7,.3,1), transform .55s cubic-bezier(.2,.7,.3,1);pointer-events:none}
+[data-step].revealed{opacity:1;transform:translateY(0);pointer-events:auto}
+
+.notes-panel{position:fixed;bottom:0;left:0;right:0;background:var(--notes-bg);color:var(--notes-text);padding:22px 32px 26px;border-top:3px solid var(--notes-accent);transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);z-index:20;max-height:48vh;overflow-y:auto;box-shadow:0 -20px 40px rgba(0,0,0,.18)}
+.notes-panel.open{transform:translateY(0)}
+.notes-panel .label{display:flex;align-items:center;gap:10px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--notes-accent);margin-bottom:10px;font-weight:600}
+.notes-panel .label::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--notes-accent);animation:pulse 1.6s ease-in-out infinite}
+.notes-panel .label .step-tag{margin-left:auto;font-size:12px;color:rgba(255,255,255,.55);letter-spacing:1px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.notes-panel .script{font-size:22px;line-height:1.65;max-width:880px;font-weight:400;transition:opacity .25s}
+.notes-panel .script.fading{opacity:.3}
+.notes-panel .script em{color:var(--notes-accent);font-style:normal;font-weight:600;background:rgba(245,158,11,.15);padding:1px 6px;border-radius:3px}
+.controls{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:var(--gn-navy);padding:8px 14px;border-radius:4px;box-shadow:0 6px 24px rgba(12,20,38,.30);z-index:15}
+.controls button{width:36px;height:36px;border-radius:3px;border:none;background:transparent;color:#FFFFFF;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;transition:.15s}
+.controls button:hover{background:rgba(255,255,255,.12)}
+.controls button:disabled{opacity:.3;cursor:not-allowed}
+.controls .counter{font-family:'Cascadia Code','Consolas',monospace;font-size:16px;color:#FFFFFF;padding:0 14px;letter-spacing:1px;font-weight:500}
+.step-indicator{position:fixed;bottom:64px;left:50%;transform:translateX(-50%);font-size:14px;font-family:'Cascadia Code','Consolas',monospace;color:var(--gn-blue);letter-spacing:1.5px;opacity:0;transition:opacity .3s;z-index:14;text-transform:uppercase;font-weight:600}
+.step-indicator.show{opacity:.85}
+.step-indicator::after{content:" →";animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+
+/* TITLE SLIDE - Gennoor full lockup */
+.slide.title-slide{background:linear-gradient(135deg,#0C1426 0%,#1E3A8A 35%,#2563EB 70%,#60A5FA 110%);color:#FFFFFF;justify-content:center;padding:175px 100px 100px 100px;position:absolute;overflow:hidden}
+.slide.title-slide .brand-full{position:absolute;top:48px;left:64px;display:flex;align-items:center;gap:16px}
+.slide.title-slide .f11-tip{position:absolute;bottom:32px;right:64px;display:flex;align-items:center;gap:10px;padding:8px 14px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);border-radius:6px;font-size:15px;color:rgba(255,255,255,.85);backdrop-filter:blur(8px);font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px}
+.slide.title-slide .f11-tip .f11-key{padding:3px 9px;background:var(--gn-amber);color:var(--gn-navy);border-radius:3px;font-weight:700;font-size:14px;letter-spacing:.5px;font-family:'Cascadia Code','Consolas',monospace}
+
+.slide.title-slide .brand-mark-lg{width:64px;height:64px}
+.slide.title-slide .brand-wordmark{display:flex;flex-direction:column;line-height:1}
+.slide.title-slide .brand-wordmark .name{font-size:30px;font-weight:600;letter-spacing:1px;color:#FFFFFF}
+.slide.title-slide .brand-wordmark .tag{font-size:14px;color:var(--gn-amber);letter-spacing:3px;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;margin-top:4px;text-transform:uppercase}
+.slide.title-slide .eyebrow{font-family:'Cascadia Code','Consolas',monospace;font-size:16px;letter-spacing:3px;color:var(--gn-amber);margin-bottom:20px;font-weight:500}
+.slide.title-slide h1{font-size:75px;line-height:1.1;font-weight:600;max-width:1200px;letter-spacing:-1.5px}
+.slide.title-slide h1 em{font-style:normal;color:var(--gn-amber);font-weight:600}
+.slide.title-slide .subtitle{margin-top:20px;font-size:22px;color:rgba(255,255,255,.85);max-width:900px;line-height:1.5;font-weight:400}
+.slide.title-slide .meta-row{margin-top:36px;display:flex;gap:36px;font-size:18px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.slide.title-slide .meta-row strong{color:#FFFFFF;display:block;font-size:28px;text-transform:none;font-weight:600;letter-spacing:0;margin-top:4px}
+.title-slide::before{content:"";position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,.18) 0%,transparent 70%);top:-200px;right:-200px;pointer-events:none}
+.title-slide::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(96,165,250,.20) 0%,transparent 70%);bottom:-160px;left:-160px;pointer-events:none}
+
+/* SECTION DIVIDER */
+.slide.section-divider{background:linear-gradient(135deg,var(--gn-navy) 0%,var(--gn-blue) 100%);color:#FFFFFF;justify-content:center;align-items:flex-start;padding:80px;position:relative;overflow:hidden}
+.slide.section-divider::before{content:"";position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,.18) 0%,transparent 70%);top:-180px;right:-180px;pointer-events:none}
+.slide.section-divider .label{font-family:'Cascadia Code','Consolas',monospace;font-size:18px;letter-spacing:4px;margin-bottom:18px;color:var(--gn-amber);font-weight:600}
+.slide.section-divider h2{font-size:78px;line-height:1.05;font-weight:600;max-width:1100px;letter-spacing:-1.5px}
+.slide.section-divider h2 em{font-style:normal;color:var(--gn-amber);font-weight:600}
+.slide.section-divider .sub{margin-top:28px;font-size:24px;max-width:780px;color:rgba(255,255,255,.95);font-weight:400;line-height:1.45}
+
+.slide.content-slide{padding:34px 60px 76px}
+.slide h3.slide-h{font-size:40px;font-weight:600;letter-spacing:-.5px;margin-bottom:6px;line-height:1.15;color:var(--gn-navy)}
+.slide h3.slide-h em{font-style:normal;color:var(--gn-blue);font-weight:600}
+.slide .lead{font-size:19px;color:var(--ink-soft);margin-bottom:20px;max-width:1000px}
+
+/* WELCOME — instructor / overview cards */
+.welcome-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+.welcome-card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:24px 28px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.welcome-card.primary{background:linear-gradient(135deg,#0C1426 0%,#1E3A8A 100%);color:#FFFFFF;border:none}
+.welcome-card .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:14px;letter-spacing:1.5px;font-weight:600;color:var(--gn-blue);margin-bottom:6px;text-transform:uppercase}
+.welcome-card.primary .lab{color:var(--gn-amber)}
+.welcome-card h4{font-size:28px;color:var(--gn-navy);font-weight:600;margin-bottom:10px;letter-spacing:-.3px;line-height:1.2}
+.welcome-card.primary h4{color:#FFFFFF}
+.welcome-card p{font-size:18px;color:var(--ink-soft);line-height:1.55}
+.welcome-card.primary p{color:rgba(255,255,255,.92)}
+.welcome-card ul{list-style:none;margin-top:10px}
+.welcome-card li{padding:5px 0 5px 18px;position:relative;font-size:17px;color:var(--ink);line-height:1.45}
+.welcome-card.primary li{color:rgba(255,255,255,.95)}
+.welcome-card li::before{content:"›";position:absolute;left:0;top:5px;color:var(--gn-blue);font-weight:700}
+.welcome-card.primary li::before{color:var(--gn-amber)}
+
+/* COURSE AT A GLANCE - 4 stat tiles */
+.glance-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}
+.glance-tile{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:22px 20px;text-align:center;border-top:4px solid var(--gn-blue);box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.glance-tile.t2{border-top-color:var(--gn-amber)}
+.glance-tile.t3{border-top-color:var(--gn-indigo)}
+.glance-tile.t4{border-top-color:var(--green)}
+.glance-tile .num{font-size:52px;font-weight:700;line-height:1;color:var(--gn-blue);font-family:'Cascadia Code','Consolas',monospace;margin-bottom:6px}
+.glance-tile.t2 .num{color:var(--gn-amber-deep)}
+.glance-tile.t3 .num{color:var(--gn-indigo)}
+.glance-tile.t4 .num{color:var(--green)}
+.glance-tile .lab{font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-mute);font-weight:600;margin-bottom:4px}
+.glance-tile h6{font-size:18px;color:var(--gn-navy);font-weight:600;line-height:1.3}
+
+/* EXAM AT A GLANCE */
+.exam-card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:28px 36px;margin-top:18px;box-shadow:0 1px 6px rgba(0,0,0,.05);border-left:5px solid var(--gn-blue)}
+.exam-card .topline{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.exam-card .badge{background:var(--gn-blue);color:#FFFFFF;padding:5px 14px;border-radius:4px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;font-family:'Cascadia Code','Consolas',monospace}
+.exam-card h4{font-size:30px;color:var(--gn-navy);font-weight:600;letter-spacing:-.3px}
+.exam-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:6px}
+.exam-stat{padding:14px 0}
+.exam-stat .num{font-size:38px;font-weight:700;color:var(--gn-blue);font-family:'Cascadia Code','Consolas',monospace;line-height:1;margin-bottom:5px}
+.exam-stat .lab{font-size:14px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-mute);font-weight:600;margin-bottom:4px}
+.exam-stat .desc{font-size:16px;color:var(--ink);line-height:1.4}
+.exam-prereqs{margin-top:18px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:14px 22px}
+.exam-prereqs h6{font-size:14px;color:var(--gn-amber-deep);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+.exam-prereqs p{font-size:16px;color:var(--ink);line-height:1.5}
+.exam-prereqs strong{color:var(--gn-navy);font-weight:600}
+
+/* SKILL AREAS - 3 weighted cards */
+.skill-areas{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.skill-card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:22px 26px;box-shadow:0 1px 4px rgba(0,0,0,.05);position:relative;overflow:hidden}
+.skill-card::before{content:"";position:absolute;top:0;left:0;right:0;height:5px}
+.skill-card.s1::before{background:linear-gradient(90deg,#2563EB,#1D4ED8)}
+.skill-card.s2::before{background:linear-gradient(90deg,#1D4ED8,#1E3A8A)}
+.skill-card.s3::before{background:linear-gradient(90deg,#F59E0B,#B45309)}
+.skill-card .area-num{font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ink-mute);letter-spacing:1.5px;font-weight:600;margin-bottom:5px}
+.skill-card h4{font-size:22px;color:var(--gn-navy);font-weight:600;margin-bottom:10px;letter-spacing:-.2px;line-height:1.2}
+.skill-card .weight{display:flex;align-items:baseline;gap:10px;margin-bottom:12px}
+.skill-card .weight .w-num{font-size:45px;font-weight:700;line-height:1;font-family:'Cascadia Code','Consolas',monospace}
+.skill-card.s1 .weight .w-num{color:var(--gn-blue)}
+.skill-card.s2 .weight .w-num{color:var(--gn-indigo)}
+.skill-card.s3 .weight .w-num{color:var(--gn-amber-deep)}
+.skill-card .weight .w-lab{font-size:14px;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink-mute);font-weight:600}
+.skill-card .bar{height:8px;background:var(--line-soft);border-radius:4px;overflow:hidden;margin-bottom:14px}
+.skill-card .bar .fill{height:100%;border-radius:4px}
+.skill-card.s1 .bar .fill{background:linear-gradient(90deg,#2563EB,#1D4ED8);width:28%}
+.skill-card.s2 .bar .fill{background:linear-gradient(90deg,#1D4ED8,#1E3A8A);width:28%}
+.skill-card.s3 .bar .fill{background:linear-gradient(90deg,#F59E0B,#B45309);width:43%}
+.skill-card .chapters{font-size:15px;color:var(--ink);line-height:1.5;padding-top:10px;border-top:1px dashed var(--line)}
+.skill-card .chapters strong{color:var(--gn-navy);font-weight:600;display:block;margin-bottom:3px;font-family:'Cascadia Code','Consolas',monospace;font-size:12px;letter-spacing:1px;text-transform:uppercase}
+
+/* CHAPTER MAP - 11 chapters table-of-contents */
+.chapter-map{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.cm-header{background:var(--gn-navy);color:#FFFFFF;padding:14px 24px;display:grid;grid-template-columns:60px 1fr 180px 100px;gap:18px;align-items:center}
+.cm-header > div{font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;color:rgba(255,255,255,.7);font-family:'Cascadia Code','Consolas',monospace}
+.cm-row{display:grid;grid-template-columns:60px 1fr 180px 100px;gap:18px;align-items:center;padding:11px 24px;border-bottom:1px solid var(--line-soft);transition:background .15s}
+.cm-row:last-child{border-bottom:none}
+.cm-row:hover{background:#FAFBFC}
+.cm-row .num{font-family:'Cascadia Code','Consolas',monospace;font-size:22px;font-weight:700;color:var(--gn-blue)}
+.cm-row .num.intro{color:var(--gn-amber-deep)}
+.cm-row.s1 .num{color:#2563EB}
+.cm-row.s2 .num{color:#1E3A8A}
+.cm-row.s3 .num{color:var(--gn-amber-deep)}
+.cm-row .title{font-size:18px;color:var(--gn-navy);font-weight:600;line-height:1.3}
+.cm-row .title .desc{display:block;font-size:14px;color:var(--ink-soft);font-weight:400;margin-top:2px}
+.cm-row .area{font-size:14px;color:var(--ink-soft);font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px}
+.cm-row .area .tag{display:inline-block;padding:3px 8px;border-radius:3px;font-size:12px;letter-spacing:.5px;font-weight:600}
+.cm-row.s0 .area .tag{background:#FEF3C7;color:#92400E}
+.cm-row.s1 .area .tag{background:#DBEAFE;color:#1D4ED8}
+.cm-row.s2 .area .tag{background:#E0E7FF;color:#3730A3}
+.cm-row.s3 .area .tag{background:#FED7AA;color:#9A3412}
+.cm-row .duration{font-size:14px;color:var(--ink-mute);text-align:right;font-family:'Cascadia Code','Consolas',monospace}
+
+/* SKILL BREAKDOWN - 1 area's chapters detailed */
+.area-detail{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:24px 28px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.area-detail .area-header{display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.area-detail .area-header .badge{padding:6px 14px;border-radius:4px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;font-family:'Cascadia Code','Consolas',monospace}
+.area-detail.a1 .area-header .badge{background:#DBEAFE;color:#1D4ED8}
+.area-detail.a2 .area-header .badge{background:#E0E7FF;color:#3730A3}
+.area-detail.a3 .area-header .badge{background:#FED7AA;color:#9A3412}
+.area-detail .area-header h4{font-size:25px;color:var(--gn-navy);font-weight:600;letter-spacing:-.2px}
+.area-detail .area-header .weight{margin-left:auto;font-family:'Cascadia Code','Consolas',monospace;font-size:22px;font-weight:700}
+.area-detail.a1 .area-header .weight{color:var(--gn-blue)}
+.area-detail.a2 .area-header .weight{color:var(--gn-indigo)}
+.area-detail.a3 .area-header .weight{color:var(--gn-amber-deep)}
+.area-chapters{display:grid;gap:10px}
+.area-ch{display:grid;grid-template-columns:48px 1fr;gap:14px;padding:11px 16px;background:var(--bg);border-radius:6px;border-left:3px solid var(--gn-blue)}
+.area-detail.a2 .area-ch{border-left-color:var(--gn-indigo)}
+.area-detail.a3 .area-ch{border-left-color:var(--gn-amber)}
+.area-ch .num{font-family:'Cascadia Code','Consolas',monospace;font-size:28px;font-weight:700;color:var(--gn-blue);line-height:1}
+.area-detail.a2 .area-ch .num{color:var(--gn-indigo)}
+.area-detail.a3 .area-ch .num{color:var(--gn-amber-deep)}
+.area-ch .body h5{font-size:18px;color:var(--gn-navy);font-weight:600;margin-bottom:3px;line-height:1.25}
+.area-ch .body p{font-size:14px;color:var(--ink-soft);line-height:1.4}
+
+/* OUTCOMES - 6 capability cards */
+.outcomes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.outcome-card{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:16px 20px;display:flex;gap:14px;align-items:flex-start;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.outcome-card .icon{flex-shrink:0;width:36px;height:36px;border-radius:8px;background:#DBEAFE;color:var(--gn-blue);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700}
+.outcome-card.o2 .icon{background:#FEF3C7;color:var(--gn-amber-deep)}
+.outcome-card.o3 .icon{background:#E0E7FF;color:var(--gn-indigo)}
+.outcome-card.o4 .icon{background:#D1FAE5;color:#047857}
+.outcome-card.o5 .icon{background:#FCE7F3;color:#BE185D}
+.outcome-card.o6 .icon{background:#FFE4E6;color:#BE123C}
+.outcome-card .body h5{font-size:18px;color:var(--gn-navy);font-weight:600;margin-bottom:3px;line-height:1.25}
+.outcome-card .body p{font-size:14px;color:var(--ink-soft);line-height:1.45}
+
+/* COURSE FORMAT */
+.format-strip{margin-top:18px;background:linear-gradient(135deg,#0C1426 0%,#1E3A8A 100%);color:#FFFFFF;border-radius:10px;padding:24px 32px}
+.format-strip h5{font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gn-amber);font-weight:600;margin-bottom:12px}
+.format-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.format-item{padding:14px 16px;background:rgba(255,255,255,.06);border-radius:6px;border-left:3px solid var(--gn-amber)}
+.format-item h6{font-size:16px;font-weight:600;color:#FFFFFF;margin-bottom:4px;letter-spacing:0;text-transform:none}
+.format-item p{font-size:14px;color:rgba(255,255,255,.85);line-height:1.4}
+
+/* PREREQUISITE SKILLS */
+.prereqs-box{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:24px 28px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.prereqs-box .head{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.prereqs-box .head .icon{width:38px;height:38px;border-radius:50%;background:#FEF3C7;color:var(--gn-amber-deep);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700}
+.prereqs-box h4{font-size:22px;color:var(--gn-navy);font-weight:600}
+.prereqs-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.prereqs-col h6{font-size:14px;color:var(--gn-amber-deep);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:6px}
+.prereqs-col ul{list-style:none}
+.prereqs-col li{padding:4px 0 4px 14px;position:relative;font-size:16px;color:var(--ink);line-height:1.45}
+.prereqs-col li::before{content:"›";position:absolute;left:0;top:4px;color:var(--gn-amber);font-weight:700}
+
+/* HOW IT WORKS */
+.how-it-works{margin-top:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.how-step{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:18px 20px;text-align:center;border-top:4px solid var(--gn-blue);box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.how-step.h2{border-top-color:var(--gn-amber)}
+.how-step.h3{border-top-color:var(--gn-indigo)}
+.how-step.h4{border-top-color:var(--green)}
+.how-step .step-num{width:36px;height:36px;border-radius:50%;background:var(--bg);border:2px solid var(--gn-blue);color:var(--gn-blue);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;font-family:'Cascadia Code','Consolas',monospace}
+.how-step.h2 .step-num{border-color:var(--gn-amber);color:var(--gn-amber-deep)}
+.how-step.h3 .step-num{border-color:var(--gn-indigo);color:var(--gn-indigo)}
+.how-step.h4 .step-num{border-color:var(--green);color:var(--green)}
+.how-step h5{font-size:18px;color:var(--gn-navy);font-weight:600;margin-bottom:5px;line-height:1.2}
+.how-step p{font-size:14px;color:var(--ink-soft);line-height:1.45}
+
+/* GETTING STARTED CTA */
+.start-cta{margin-top:18px;background:linear-gradient(135deg,#2563EB 0%,#F59E0B 100%);color:#FFFFFF;padding:32px 40px;border-radius:12px;text-align:center;box-shadow:0 6px 20px rgba(37,99,235,.25)}
+.start-cta .label{font-family:'Cascadia Code','Consolas',monospace;font-size:14px;letter-spacing:3px;font-weight:600;color:rgba(255,255,255,.85);margin-bottom:10px;text-transform:uppercase}
+.start-cta h4{font-size:38px;font-weight:600;margin-bottom:10px;letter-spacing:-.4px}
+.start-cta h4 em{font-style:normal;font-weight:600;color:#0C1426}
+.start-cta p{font-size:19px;color:rgba(255,255,255,.95);max-width:700px;margin:0 auto;line-height:1.5}
+
+.float-hint{position:fixed;top:72px;right:20px;background:var(--gn-navy);color:#FFFFFF;padding:10px 16px;border-radius:4px;font-size:15px;opacity:0;transition:.3s;z-index:30;pointer-events:none;font-family:'Cascadia Code','Consolas',monospace;box-shadow:0 6px 16px rgba(12,20,38,.20)}
+.float-hint.show{opacity:.95}
+
+/* GENNOOR WORDMARK COLOR LETTERS */
+.brand-name .b-w{color:#FFFFFF}
+.brand-name .b-blue{color:#60A5FA}
+.brand-name .b-amber{color:#F59E0B}
+.slide.title-slide .brand-wordmark .name .b-w{color:#FFFFFF}
+.slide.title-slide .brand-wordmark .name .b-blue{color:#60A5FA}
+.slide.title-slide .brand-wordmark .name .b-amber{color:#F59E0B}
+
+/* TOPBAR GRID — slide nav moved to topbar center */
+.topbar.topbar-grid{display:grid !important;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;height:72px;padding:0 28px}
+.topbar.topbar-grid .topbar-left{display:flex;align-items:center;gap:18px;min-width:0;overflow:hidden}
+.topbar.topbar-grid .topbar-left .chapter-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar.topbar-grid .topbar-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.topbar.topbar-grid .topbar-right{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0}
+.step-indicator-top{font-family:'Cascadia Code','Consolas',monospace;font-size:10px;letter-spacing:2.5px;color:var(--gn-amber,var(--ms-yellow));font-weight:700;text-transform:uppercase;line-height:1;opacity:.95}
+.step-indicator-top.complete{color:rgba(255,255,255,.5)}
+.controls-top{display:inline-flex;align-items:center;gap:4px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.10);border-radius:5px;padding:3px 6px}
+.controls-top button{width:28px;height:28px;border-radius:3px;border:none;background:transparent;color:#FFFFFF;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:.15s;padding:0}
+.controls-top button:hover{background:rgba(255,255,255,.12)}
+.controls-top button:disabled{opacity:.3;cursor:not-allowed}
+.controls-top .counter{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;font-weight:600;color:#FFFFFF;letter-spacing:.5px;padding:0 12px;min-width:64px;text-align:center}
+.controls-top .counter strong{color:var(--gn-amber,var(--ms-yellow));font-weight:700}
+/* Hide original bottom controls (now empty) */
+.bottom-nav-removed{display:none !important}
+
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar topbar-grid">
+    <div class="topbar-left">
+    <a href="#" class="brand-lockup">
+      <svg class="brand-mark" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/>
+      </svg>
+      <div class="brand-text">
+        <span class="brand-name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+        <span class="brand-sub">AB-100</span>
+      </div>
+    </a>
+    <div class="divider"></div>
+    <div class="chapter-title">Chapter 00 · Course Introduction</div>
+    </div>
+    <div class="topbar-center">
+      <div class="step-indicator-top" id="stepIndicator">More to reveal</div>
+      <div class="controls-top">
+        <button id="prevBtn" title="Previous (←)">‹</button>
+        <span class="counter" id="counter">1 / 14</span>
+        <button id="nextBtn" title="Next (→)">›</button>
+      </div>
+    </div>
+    <div class="topbar-right">
+    <div class="meta">
+      <span class="pill" id="sectionLabel">Welcome</span>
+      <span class="pill step-pill" id="stepPill" style="display:none">Step 1/6</span>
+    </div>
+    <button id="notesToggle" title="Toggle notes (T)">📖 Notes</button>
+    </div>
+  </div>
+
+  <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="stage">
+    <div class="slides" id="slides">
+
+      <!-- 01 TITLE -->
+      <section class="slide title-slide active"
+        data-section="Welcome"
+        data-script="Welcome to <em>AB-100</em>. Architecting Agentic AI Business Solutions. Self-paced course. Twelve chapters mapped directly to Microsoft's exam objectives. <em>Architecture-first</em> — we focus on design judgment, trade-offs, and decision frameworks rather than step-by-step configuration.">
+        <div class="slide-num">01 / 14</div>
+        <div class="brand-full">
+          <svg class="brand-mark-lg" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/>
+          </svg>
+          <div class="brand-wordmark">
+            <span class="name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+            <span class="tag">AB-100 Course</span>
+          </div>
+        </div>
+        <div class="eyebrow">CHAPTER 00 · COURSE INTRODUCTION</div>
+        <h1>Architecting<br><em>Agentic AI</em><br>Business Solutions</h1>
+        <div class="subtitle">Microsoft AB-100 certification course. 12 chapters mapped to exam objectives plus a final revision chapter. Self-paced format. Architecture, trade-offs, and design judgment for enterprise AI on the Microsoft platform.</div>
+        <div class="meta-row">
+          <div>EXAM<strong>AB-100 · 100 min · 700/1000</strong></div>
+          <div>DELIVERY<strong>Gennoor Tech · Self-paced</strong></div>
+        </div>
+        <div class="f11-tip">
+          <span class="f11-key">F11</span>
+          <span>Press <strong>F11</strong> for full-screen viewing in your browser</span>
+        </div>
+      </section>
+
+      <!-- 02 WELCOME -->
+      <section class="slide content-slide"
+        data-section="Welcome"
+        data-script="<em>Welcome.</em> Two things you should know about this course before we start. <em>What it is — and what it isn't.</em> I'll bring up each.">
+        <div class="slide-num">02 / 14</div>
+        <h3 class="slide-h">Welcome to <em>AB-100</em></h3>
+        <p class="lead">Two things to set expectations before we begin. What this course is — and what it deliberately isn't.</p>
+        <div class="welcome-grid">
+          <div class="welcome-card primary" data-step
+            data-script="<em>What this course is.</em> Architecture-first preparation for the AB-100 exam and for real-world enterprise AI architecture work. <em>We focus on design judgment</em> — the trade-offs, the decision frameworks, the why before the how. By the end, you'll be able to defend an AI architecture decision in front of an enterprise audit committee.">
+            <div class="lab">WHAT IT IS</div>
+            <h4>Architecture &amp; design judgment</h4>
+            <p>Real-world preparation for designing, governing, and shipping AI-powered business solutions on the Microsoft platform.</p>
+            <ul>
+              <li>Decision frameworks &amp; trade-off analysis</li>
+              <li>Scenario-based learning across 10 enterprise scenarios</li>
+              <li>End-to-end coverage — plan, design, deploy</li>
+              <li>Aligned to AB-100 exam objectives</li>
+            </ul>
+          </div>
+          <div class="welcome-card" data-step
+            data-script="<em>What this course isn't.</em> Not a step-by-step configuration tutorial. Not a hands-on lab series. Not surface-level feature demos. This is an <em>architect-level</em> course — we trust you to know how to click buttons. We're here to teach you when, why, and what to design.">
+            <div class="lab">WHAT IT ISN'T</div>
+            <h4>Not configuration training</h4>
+            <p>This course assumes you can configure tools. Our focus is the architecture <em style="font-style:normal;color:var(--gn-blue);font-weight:600">around</em> the configuration.</p>
+            <ul>
+              <li>Not click-by-click tool tutorials</li>
+              <li>Not hands-on labs (no exercises)</li>
+              <li>Not test-prep memorization</li>
+              <li>Not for first-time AI users</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 COURSE AT A GLANCE -->
+      <section class="slide content-slide"
+        data-section="Welcome"
+        data-script="<em>Course at a glance.</em> Four key numbers. Twelve chapters. Self-paced. Ten enterprise scenarios. Forty-four knowledge checks. <em>Architecture-first.</em> I'll bring them up one at a time.">
+        <div class="slide-num">03 / 14</div>
+        <h3 class="slide-h">Course <em>at a glance</em></h3>
+        <p class="lead">Four numbers that shape how this course is structured.</p>
+        <div class="glance-grid">
+          <div class="glance-tile t1" data-step
+            data-script="<em>Twelve chapters</em>. Eleven content chapters plus one final revision chapter. Mapped one-to-one with Microsoft's published exam objectives.">
+            <div class="num">12</div>
+            <div class="lab">CHAPTERS</div>
+            <h6>Mapped to exam objectives</h6>
+          </div>
+          <div class="glance-tile t2" data-step
+            data-script="<em>One full mock exam</em>. Fifty questions across all four AB-100 question types — drag-and-drop, hotspot, single-answer, multi-select. Hundred-twenty minutes. Mirrors the real exam format.">
+            <div class="num">50</div>
+            <div class="lab">MOCK Q'S</div>
+            <h6>Full simulated exam</h6>
+          </div>
+          <div class="glance-tile t3" data-step
+            data-script="<em>Ten enterprise scenarios</em>. Real architecture challenges — banking, pharma, manufacturing, retail. Each scenario has discussion points and architect-grade answers.">
+            <div class="num">10</div>
+            <div class="lab">SCENARIOS</div>
+            <h6>Real enterprise cases</h6>
+          </div>
+          <div class="glance-tile t4" data-step
+            data-script="<em>Forty-four knowledge checks</em>. Approximately four per chapter. Pattern-matched to AB-100 exam style — scenario-based with explanation per option.">
+            <div class="num">44</div>
+            <div class="lab">QUIZZES</div>
+            <h6>AB-100 exam style</h6>
+          </div>
+        </div>
+      </section>
+
+      <!-- 04 EXAM AT A GLANCE -->
+      <section class="slide content-slide"
+        data-section="Welcome"
+        data-script="<em>The AB-100 exam itself.</em> Microsoft's published details. <em>Expert-level certification</em> for solution architects designing agentic AI systems. Multiple-choice with interactive components. 100 minutes. 700 out of 1000 to pass.">
+        <div class="slide-num">04 / 14</div>
+        <h3 class="slide-h">The <em>AB-100 exam</em></h3>
+        <p class="lead">Microsoft's expert-level certification for agentic AI business solution architects. Source: Microsoft Learn study guide, January 2026.</p>
+        <div class="exam-card">
+          <div class="topline">
+            <span class="badge">EXAM AB-100</span>
+            <h4>Architecting Agentic AI Business Solutions</h4>
+          </div>
+          <div class="exam-grid">
+            <div class="exam-stat">
+              <div class="num">100</div>
+              <div class="lab">Minutes</div>
+              <div class="desc">Proctored exam duration. +30 min for non-English speakers.</div>
+            </div>
+            <div class="exam-stat">
+              <div class="num">700</div>
+              <div class="lab">Pass Score / 1000</div>
+              <div class="desc">Required to earn the certification.</div>
+            </div>
+            <div class="exam-stat">
+              <div class="num">40-60</div>
+              <div class="lab">Questions</div>
+              <div class="desc">Multiple-choice with interactive scenario components.</div>
+            </div>
+            <div class="exam-stat">
+              <div class="num">$165</div>
+              <div class="lab">USD</div>
+              <div class="desc">Region-priced. Online proctored or test center.</div>
+            </div>
+          </div>
+          <div class="exam-prereqs">
+            <h6>⚑ Prerequisites &amp; positioning</h6>
+            <p><strong>Expert-level exam</strong> — requires at least one active Associate-level Microsoft certification (e.g., AB-730, AB-731, or one of nine Dynamics 365 / Power Platform Associate certifications). The exam is the second step toward the <strong>Microsoft Certified: Agentic AI Business Solutions Architect</strong> credential.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05 SECTION DIVIDER - SKILL AREAS -->
+      <section class="slide section-divider"
+        data-section="Skill Areas"
+        data-script="The exam has <em>three skill areas</em> with specific weightages. Plan, Design, and Deploy. <em>Deploy is the heaviest</em> — 40 to 45 percent. The chapters in this course map directly to these three areas.">
+        <div class="slide-num">05 / 14</div>
+        <div class="label">EXAM BLUEPRINT</div>
+        <h2>Three skill areas<br><em>with weightages</em></h2>
+        <div class="sub">Plan (25–30%) · Design (25–30%) · Deploy (40–45%). Each chapter in this course maps to one of these three areas. Deploy carries the most exam weight — and that's where most architectural risk lives in real projects too.</div>
+      </section>
+
+      <!-- 06 SKILL AREAS WITH WEIGHTS -->
+      <section class="slide content-slide"
+        data-section="Skill Areas"
+        data-script="<em>Three skill areas with weightages</em>. Plan, Design, Deploy. Each card shows the percentage and the chapters that cover it. <em>Deploy is the largest section</em> — four chapters, 40 to 45 percent of the exam. I'll reveal each.">
+        <div class="slide-num">06 / 14</div>
+        <h3 class="slide-h">Three <em>skill areas</em></h3>
+        <p class="lead">The official AB-100 exam blueprint. Source: Microsoft Learn study guide.</p>
+        <div class="skill-areas">
+          <div class="skill-card s1" data-step
+            data-script="<em>Area 1 — Plan AI-powered business solutions.</em> 25 to 30 percent. Three chapters. Analyze requirements. Design overall AI strategy. Evaluate costs and benefits. <em>The 'before you build anything' phase</em>.">
+            <div class="area-num">AREA 01</div>
+            <h4>Plan AI-powered business solutions</h4>
+            <div class="weight">
+              <span class="w-num">25–30%</span>
+              <span class="w-lab">of exam</span>
+            </div>
+            <div class="bar"><div class="fill"></div></div>
+            <div class="chapters">
+              <strong>Chapters covered</strong>
+              Ch 02 · Analyze requirements<br>
+              Ch 03 · Design AI strategy<br>
+              Ch 04 · Evaluate costs &amp; benefits
+            </div>
+          </div>
+          <div class="skill-card s2" data-step
+            data-script="<em>Area 2 — Design AI-powered business solutions.</em> 25 to 30 percent. Three chapters. Design AI and agents. Design extensibility. Orchestrate prebuilt agents. <em>The component design phase</em>.">
+            <div class="area-num">AREA 02</div>
+            <h4>Design AI-powered business solutions</h4>
+            <div class="weight">
+              <span class="w-num">25–30%</span>
+              <span class="w-lab">of exam</span>
+            </div>
+            <div class="bar"><div class="fill"></div></div>
+            <div class="chapters">
+              <strong>Chapters covered</strong>
+              Ch 05 · Design AI &amp; agents<br>
+              Ch 06 · Design extensibility<br>
+              Ch 07 · Orchestrate prebuilt agents
+            </div>
+          </div>
+          <div class="skill-card s3" data-step
+            data-script="<em>Area 3 — Deploy AI-powered business solutions.</em> 40 to 45 percent — <em>nearly half the exam</em>. Four chapters. Monitor and tune. Manage testing. ALM. Responsible AI and governance. <em>The hardest section, with the most chapters</em>.">
+            <div class="area-num">AREA 03</div>
+            <h4>Deploy AI-powered business solutions</h4>
+            <div class="weight">
+              <span class="w-num">40–45%</span>
+              <span class="w-lab">of exam</span>
+            </div>
+            <div class="bar"><div class="fill"></div></div>
+            <div class="chapters">
+              <strong>Chapters covered</strong>
+              Ch 08 · Monitor &amp; tune<br>
+              Ch 09 · Manage testing<br>
+              Ch 10 · ALM process<br>
+              Ch 11 · RAI · security · governance
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 07 PLAN AREA DETAIL -->
+      <section class="slide content-slide"
+        data-section="Skill Areas"
+        data-script="<em>Plan area in detail.</em> Three chapters. Two through four. <em>The 'before you build' phase</em> — what does the business need, what's the strategy, what's the ROI. I'll bring up each chapter.">
+        <div class="slide-num">07 / 14</div>
+        <h3 class="slide-h">Area 1 — <em>Plan</em> (25–30%)</h3>
+        <p class="lead">Three chapters covering requirements analysis through ROI evaluation.</p>
+        <div class="area-detail a1">
+          <div class="area-header">
+            <span class="badge">PLAN</span>
+            <h4>Plan AI-powered business solutions</h4>
+            <span class="weight">25–30%</span>
+          </div>
+          <div class="area-chapters">
+            <div class="area-ch" data-step
+              data-script="<em>Chapter 2 — Analyze requirements.</em> Agents in task automation, data analytics, decision-making. Data grounding — accuracy, relevance, timeliness, cleanliness, availability. Organizing business data for AI consumption.">
+              <div class="num">02</div>
+              <div class="body">
+                <h5>Analyze requirements for AI-powered business solutions</h5>
+                <p>Agents in automation/analytics/decisions · grounding data quality · organizing data for AI access. <strong style="color:var(--gn-blue)">Scenario:</strong> BrightCorp HR (8K employees, 14 countries).</p>
+              </div>
+            </div>
+            <div class="area-ch" data-step
+              data-script="<em>Chapter 3 — Design overall AI strategy.</em> One of the two largest chapters. CAF for AI. Multi-agent solutions. SaaS-first decision tree. Prebuilt agents. Knowledge sources. Solution constraints.">
+              <div class="num">03</div>
+              <div class="body">
+                <h5>Design overall AI strategy for business solutions</h5>
+                <p>CAF for AI · multi-agent design · platform choice · prebuilt agents · constraint pyramid. <strong style="color:var(--gn-blue)">Scenario:</strong> NorthStar RFP (50 RFPs/week, multi-agent).</p>
+              </div>
+            </div>
+            <div class="area-ch" data-step
+              data-script="<em>Chapter 4 — Evaluate costs and benefits.</em> ROI analysis. Total cost of ownership. Build versus buy versus extend decisions. Model router for cost optimization.">
+              <div class="num">04</div>
+              <div class="body">
+                <h5>Evaluate the costs and benefits of an AI-powered business solution</h5>
+                <p>ROI criteria &amp; TCO · 6-step ROI framework · build/buy/extend matrix · model router. <strong style="color:var(--gn-blue)">Scenario:</strong> InsureCo Claims Triage (80K claims/yr).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 08 DESIGN AREA DETAIL -->
+      <section class="slide content-slide"
+        data-section="Skill Areas"
+        data-script="<em>Design area in detail.</em> Three chapters. Five through seven. <em>The component design phase</em> — what to build with which Microsoft tool. Chapter 5 is also one of the two largest chapters.">
+        <div class="slide-num">08 / 14</div>
+        <h3 class="slide-h">Area 2 — <em>Design</em> (25–30%)</h3>
+        <p class="lead">Three chapters covering AI/agent design, extensibility, and orchestration of prebuilt agents.</p>
+        <div class="area-detail a2">
+          <div class="area-header">
+            <span class="badge">DESIGN</span>
+            <h4>Design AI-powered business solutions</h4>
+            <span class="weight">25–30%</span>
+          </div>
+          <div class="area-chapters">
+            <div class="area-ch" data-step
+              data-script="<em>Chapter 5 — Design AI and agents.</em> The largest chapter. Six RAI tenets. Three agent types — task, autonomous, prompt-response. Copilot Studio mechanisms. D365 customizations. Foundry tools. Power Platform Well-Architected Framework.">
+              <div class="num">05</div>
+              <div class="body">
+                <h5>Design AI and agents for business solutions</h5>
+                <p>6 RAI tenets · 3 agent types · NLU/CLU/Generative paths · Foundry tool categories · Power Platform WAF. <strong style="color:var(--gn-indigo)">Scenario:</strong> FieldCore HVAC (600 technicians).</p>
+              </div>
+            </div>
+            <div class="area-ch" data-step
+              data-script="<em>Chapter 6 — Design extensibility.</em> When to use custom Foundry models. M365 Copilot agent design. MCP — Model Context Protocol. Computer Use. Reasoning and voice. Teams and SharePoint optimization.">
+              <div class="num">06</div>
+              <div class="body">
+                <h5>Design extensibility of AI solutions</h5>
+                <p>Custom Foundry models · M365 Copilot agents · Studio extensibility · MCP · Computer Use · voice/reasoning. <strong style="color:var(--gn-indigo)">Scenario:</strong> ContractFlow law firm (200 attorneys).</p>
+              </div>
+            </div>
+            <div class="area-ch" data-step
+              data-script="<em>Chapter 7 — Orchestrate configuration for prebuilt agents and apps.</em> D365 Copilot patterns. Customer Service AI Agent Hub. M365 prebuilt agents catalog. Sales and Service configuration. Power Platform AI hub. F&amp;O knowledge sources.">
+              <div class="num">07</div>
+              <div class="body">
+                <h5>Orchestrate configuration for prebuilt agents and apps</h5>
+                <p>D365 Copilot patterns · M365 prebuilt agents · Sales/Service config · Power Platform AI · F&amp;O knowledge. <strong style="color:var(--gn-indigo)">Scenario:</strong> Northwind Manufacturing (4K employees).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 09 DEPLOY AREA DETAIL -->
+      <section class="slide content-slide"
+        data-section="Skill Areas"
+        data-script="<em>Deploy area in detail.</em> Four chapters. Eight through eleven. <em>Forty to forty-five percent of the exam</em> — the largest section. Where most enterprise AI projects fail in production. I'll bring up each chapter.">
+        <div class="slide-num">09 / 14</div>
+        <h3 class="slide-h">Area 3 — <em>Deploy</em> (40–45%)</h3>
+        <p class="lead">Four chapters — the largest section. Where most enterprise AI projects either succeed or fail.</p>
+        <div class="area-detail a3">
+          <div class="area-header">
+            <span class="badge">DEPLOY</span>
+            <h4>Deploy AI-powered business solutions</h4>
+            <span class="weight">40–45%</span>
+          </div>
+          <div class="area-chapters">
+            <div class="area-ch" data-step
+              data-script="<em>Chapter 8 — Analyze, monitor, tune.</em> Five monitoring dimensions. Backlog and feedback handling. Six-step diagnostic workflow. Performance metrics including the gold-standard task completion rate. Telemetry interpretation.">
+              <div class="num">08</div>
+              <div class="body">
+                <h5>Analyze, monitor, and tune AI-powered business solutions</h5>
+                <p>5 monitoring dimensions · feedback backlog · diagnostic workflow · task completion (gold) · telemetry. <strong style="color:var(--gn-amber-deep)">Scenario:</strong> MegaRetail Sales Helper.</p>
+              </div>
+            </div>
+            <div class="area-ch" data-step
+              data-script="<em>Chapter 9 — Manage testing.</em> Four testing types. Three metric categories. Custom model validation thresholds. Prompt validation lifecycle. End-to-end test scenarios. Copilot for test case generation.">
+              <div class="num">09</div>
+              <div class="body">
+                <h5>Manage the testing of AI-powered business solutions</h5>
+                <p>4 testing types · validation thresholds · prompt validation lifecycle · E2E multi-app · Copilot for test cases. <strong style="color:var(--gn-amber-deep)">Scenario:</strong> Acme Healthcare Discharge (HIPAA).</p>
+              </div>
+            </div>
+            <div class="area-ch" data-step
+              data-script="<em>Chapter 10 — ALM process.</em> Application Lifecycle Management for AI. Six artifact categories. Four-tier environment strategy. Seven-phase data lifecycle. Promotion gates. Component-specific ALM for Copilot Studio, Foundry, custom models, D365.">
+              <div class="num">10</div>
+              <div class="body">
+                <h5>Design the ALM process for AI-powered business solutions</h5>
+                <p>6 artifact categories · 4-tier environments · 7-phase data lifecycle · gate matrix · component ALM. <strong style="color:var(--gn-amber-deep)">Scenario:</strong> GlobalBank multi-component (50K).</p>
+              </div>
+            </div>
+            <div class="area-ch" data-step
+              data-script="<em>Chapter 11 — Responsible AI, security, governance.</em> The course finale. Six RAI principles. Four-layer defense in depth. Five AI vulnerability categories. Compliance domains — residency, Purview, audit trails. Operating model with RACI and incident response.">
+              <div class="num">11</div>
+              <div class="body">
+                <h5>Design responsible AI, security, governance, risk management, and compliance</h5>
+                <p>6 RAI principles · 4-layer defense · 5 vulnerability categories · compliance · RACI · incident response. <strong style="color:var(--gn-amber-deep)">Scenario:</strong> PharmaCorp capstone (75K, FDA+EMA+HIPAA+GDPR).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 CHAPTER MAP -->
+      <section class="slide content-slide"
+        data-section="Course Map"
+        data-script="<em>The complete chapter map.</em> All 13 chapters from intro through final revision, mapped to the three exam areas. <em>Print this and tape it to the wall</em> — it's your reference for the entire course.">
+        <div class="slide-num">10 / 14</div>
+        <h3 class="slide-h">Complete <em>chapter map</em></h3>
+        <p class="lead">Every chapter mapped to its exam skill area. Reference card for the full course.</p>
+        <div class="chapter-map">
+          <div class="cm-header">
+            <div>#</div>
+            <div>Chapter title</div>
+            <div>Exam area</div>
+            <div>Slides</div>
+          </div>
+          <div class="cm-row s0"><div class="num intro">00</div><div class="title">Course Introduction<span class="desc">Welcome · exam overview · skill areas · chapter map</span></div><div class="area"><span class="tag">INTRO</span></div><div class="duration">14 slides</div></div>
+          <div class="cm-row s0"><div class="num intro">01</div><div class="title">Introduction to Agentic AI Business Solution Architecture<span class="desc">Architect role · 5-phase framework · Microsoft stack · OOB agents</span></div><div class="area"><span class="tag">FOUNDATION</span></div><div class="duration">18 slides</div></div>
+          <div class="cm-row s1"><div class="num">02</div><div class="title">Analyze Requirements for AI-Powered Business Solutions<span class="desc">3 pillars · 5 grounding dimensions · Azure data estate · RAG pipeline</span></div><div class="area"><span class="tag">PLAN · 25-30%</span></div><div class="duration">20 slides</div></div>
+          <div class="cm-row s1"><div class="num">03</div><div class="title">Design Overall AI Strategy for Business Solutions<span class="desc">CAF for AI · agent platforms · multi-agent · prebuilt · constraints</span></div><div class="area"><span class="tag">PLAN · 25-30%</span></div><div class="duration">25 slides</div></div>
+          <div class="cm-row s1"><div class="num">04</div><div class="title">Evaluate Costs &amp; Benefits of an AI-Powered Solution<span class="desc">ROI/TCO · 6-step framework · build/buy/extend · model router</span></div><div class="area"><span class="tag">PLAN · 25-30%</span></div><div class="duration">23 slides</div></div>
+          <div class="cm-row s2"><div class="num">05</div><div class="title">Design AI and Agents for Business Solutions<span class="desc">RAI tenets · 3 agent types · Copilot Studio · D365 · Foundry · WAF</span></div><div class="area"><span class="tag">DESIGN · 25-30%</span></div><div class="duration">25 slides</div></div>
+          <div class="cm-row s2"><div class="num">06</div><div class="title">Design Extensibility of AI Solutions<span class="desc">Custom models · M365 Copilot · Studio + MCP · Computer Use · voice</span></div><div class="area"><span class="tag">DESIGN · 25-30%</span></div><div class="duration">22 slides</div></div>
+          <div class="cm-row s2"><div class="num">07</div><div class="title">Orchestrate Configuration for Prebuilt Agents and Apps<span class="desc">D365 patterns · M365 prebuilt · Sales/Service · Power Platform AI</span></div><div class="area"><span class="tag">DESIGN · 25-30%</span></div><div class="duration">22 slides</div></div>
+          <div class="cm-row s3"><div class="num">08</div><div class="title">Analyze, Monitor, and Tune AI-Powered Solutions<span class="desc">5 dimensions · feedback · diagnostic · metrics · telemetry</span></div><div class="area"><span class="tag">DEPLOY · 40-45%</span></div><div class="duration">22 slides</div></div>
+          <div class="cm-row s3"><div class="num">09</div><div class="title">Manage the Testing of AI-Powered Solutions<span class="desc">4 testing types · validation · prompt lifecycle · E2E · Copilot for tests</span></div><div class="area"><span class="tag">DEPLOY · 40-45%</span></div><div class="duration">21 slides</div></div>
+          <div class="cm-row s3"><div class="num">10</div><div class="title">Design the ALM Process for AI-Powered Solutions<span class="desc">6 artifacts · 4-tier env · 7-phase lifecycle · gate matrix · RACI</span></div><div class="area"><span class="tag">DEPLOY · 40-45%</span></div><div class="duration">22 slides</div></div>
+          <div class="cm-row s3"><div class="num">11</div><div class="title">Responsible AI, Security, Governance, Risk &amp; Compliance<span class="desc">6 RAI · 4-layer defense · 5 vulnerabilities · compliance · RACI</span></div><div class="area"><span class="tag">DEPLOY · 40-45%</span></div><div class="duration">22 slides</div></div>
+          <div class="cm-row s0"><div class="num intro">12</div><div class="title">Final Revision &amp; Exam Prep<span class="desc">Cross-cutting frameworks · mental models · pitfalls · mock exam · career path</span></div><div class="area"><span class="tag">REVISION</span></div><div class="duration">14 slides</div></div>
+        </div>
+      </section>
+
+      <!-- 11 OUTCOMES -->
+      <section class="slide content-slide"
+        data-section="Outcomes"
+        data-script="<em>What you'll be able to do</em> by the end. Six concrete outcomes. Not just exam-ready — production-ready architects. I'll bring them up one at a time.">
+        <div class="slide-num">11 / 14</div>
+        <h3 class="slide-h">By the end you'll be able to <em>defend</em></h3>
+        <p class="lead">Six concrete capabilities — not just exam-ready, but production-ready architects.</p>
+        <div class="outcomes">
+          <div class="outcome-card o1" data-step
+            data-script="<em>One — translate business to AI architecture.</em> Take a business problem, identify whether AI is the right solution, design the right components, defend the choice.">
+            <div class="icon">⚙</div>
+            <div class="body">
+              <h5>Translate business to AI architecture</h5>
+              <p>Identify AI fit · design components · defend the choice in front of stakeholders.</p>
+            </div>
+          </div>
+          <div class="outcome-card o2" data-step
+            data-script="<em>Two — make platform choice with confidence.</em> M365 Copilot vs Copilot Studio vs Microsoft Foundry vs custom. SaaS-first vs build-first. Architects who can't make this call ship the wrong solution.">
+            <div class="icon">🧭</div>
+            <div class="body">
+              <h5>Make platform choices with confidence</h5>
+              <p>SaaS-first decision tree · M365 vs Studio vs Foundry vs custom · build/buy/extend.</p>
+            </div>
+          </div>
+          <div class="outcome-card o3" data-step
+            data-script="<em>Three — design multi-agent solutions.</em> Five orchestration patterns. When sequential, when concurrent, when group chat, when handoff, when magentic. Multi-agent is the future and the exam emphasizes it.">
+            <div class="icon">⚛</div>
+            <div class="body">
+              <h5>Design multi-agent solutions</h5>
+              <p>5 orchestration patterns · single vs multi · platform roles · A2A · MCP.</p>
+            </div>
+          </div>
+          <div class="outcome-card o4" data-step
+            data-script="<em>Four — produce ROI cases that convince CFOs.</em> Six-step framework. TCO breakdown. Build/buy/extend with weighted scoring. Walk into a CFO meeting with defensible numbers.">
+            <div class="icon">$</div>
+            <div class="body">
+              <h5>Build defensible ROI cases</h5>
+              <p>6-step framework · TCO · weighted scoring · CFO-ready math.</p>
+            </div>
+          </div>
+          <div class="outcome-card o5" data-step
+            data-script="<em>Five — design ALM and testing for AI.</em> Why AI ALM is different from traditional ALM. Seven-phase lifecycle. Promotion gate matrices. Testing strategies for non-deterministic systems.">
+            <div class="icon">↻</div>
+            <div class="body">
+              <h5>Design ALM &amp; testing for AI</h5>
+              <p>4-tier environments · 7-phase lifecycle · gates · testing non-deterministic systems.</p>
+            </div>
+          </div>
+          <div class="outcome-card o6" data-step
+            data-script="<em>Six — govern, secure, and comply.</em> Six RAI principles. Four-layer defense in depth. Vulnerability mitigation. Multi-region compliance. <em>The architect's accountability layer</em>.">
+            <div class="icon">⚓</div>
+            <div class="body">
+              <h5>Govern, secure, and comply</h5>
+              <p>6 RAI principles · 4-layer defense · vulnerability mitigation · multi-region compliance.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12 PREREQUISITE KNOWLEDGE -->
+      <section class="slide content-slide"
+        data-section="Prerequisites"
+        data-script="<em>What you should already know</em> coming into this course. <em>This is an advanced course</em> — Microsoft's prep guide is explicit about that. If any of these gaps are wide, flag it now and we'll find resources to bridge.">
+        <div class="slide-num">12 / 14</div>
+        <h3 class="slide-h">What you should <em>already know</em></h3>
+        <p class="lead">This is an advanced architecture course. The prerequisites are real — flag any gaps now so we can bridge.</p>
+        <div class="prereqs-box">
+          <div class="head">
+            <div class="icon">!</div>
+            <h4>Prerequisite knowledge for AB-100</h4>
+          </div>
+          <div class="prereqs-grid">
+            <div class="prereqs-col">
+              <h6>Microsoft platforms</h6>
+              <ul>
+                <li>Microsoft Power Platform fundamentals</li>
+                <li>Dynamics 365 product family overview</li>
+                <li>Microsoft 365 Copilot capabilities</li>
+                <li>Azure cloud concepts (Entra ID, RBAC, networking)</li>
+                <li>Microsoft Foundry awareness</li>
+              </ul>
+            </div>
+            <div class="prereqs-col">
+              <h6>Architecture &amp; AI concepts</h6>
+              <ul>
+                <li>Solution architecture fundamentals</li>
+                <li>Cloud Adoption Framework familiarity</li>
+                <li>Generative AI basics (LLMs, prompting, RAG)</li>
+                <li>Application lifecycle management (ALM) concepts</li>
+                <li>Data governance, DLP, sensitivity labels</li>
+              </ul>
+            </div>
+          </div>
+          <div style="margin-top:14px;padding:12px 18px;background:#FEF3C7;border-left:3px solid var(--gn-amber);border-radius:4px;font-size:12.5px;color:var(--ink);line-height:1.5">
+            <strong style="color:var(--gn-amber-deep);font-family:'Cascadia Code','Consolas',monospace;font-size:10px;letter-spacing:1px;display:block;margin-bottom:3px;text-transform:uppercase">⚑ Certification prerequisite</strong>
+            To earn the AB-100 credential, you also need an active <strong>Associate-level Microsoft AI or Dynamics 365 certification</strong> (e.g., AB-730, AB-731, MB-280, PL-200, or one of nine eligible Associate certifications). The exam alone doesn't grant the credential.
+          </div>
+        </div>
+      </section>
+
+      <!-- 13 HOW EACH CHAPTER WORKS -->
+      <section class="slide content-slide"
+        data-section="Format"
+        data-script="<em>How each chapter works.</em> Same four-step pattern across all 12 content chapters. <em>Predictable rhythm</em> — once you know the pattern, you can focus on the content. I'll bring them up.">
+        <div class="slide-num">13 / 14</div>
+        <h3 class="slide-h">How each chapter <em>works</em></h3>
+        <p class="lead">Same four-step rhythm across all 12 content chapters. Predictable structure lets you focus on architecture, not navigation.</p>
+        <div class="how-it-works">
+          <div class="how-step h1" data-step
+            data-script="<em>Step 1 — Concept reveal.</em> Each chapter has 3 to 5 themed units. Each unit introduces concepts step-by-step on screen. <em>Press right arrow</em> to advance reveals.">
+            <div class="step-num">1</div>
+            <h5>Concept reveal</h5>
+            <p>3–5 themed units per chapter. Step-by-step on-screen reveals.</p>
+          </div>
+          <div class="how-step h2" data-step
+            data-script="<em>Step 2 — Knowledge check.</em> Approximately one quiz per unit. Click any answer — all options reveal correct/wrong. Explanation panel shows the reasoning.">
+            <div class="step-num">2</div>
+            <h5>Knowledge check</h5>
+            <p>~4 quizzes per chapter. Click to reveal explanations. Pattern-matched to AB-100 style.</p>
+          </div>
+          <div class="how-step h3" data-step
+            data-script="<em>Step 3 — Enterprise scenario.</em> Each chapter ends with a real architecture scenario. Pairs discuss. <em>Reveal Discussion Points</em> shows architect-grade answers.">
+            <div class="step-num">3</div>
+            <h5>Enterprise scenario</h5>
+            <p>Real architecture cases. Pair discussion. Reveal panel with architect-grade answers.</p>
+          </div>
+          <div class="how-step h4" data-step
+            data-script="<em>Step 4 — Recap.</em> Six takeaways per chapter. Pointer to the next chapter. <em>Notes panel</em> available throughout — press T to toggle for guidance.">
+            <div class="step-num">4</div>
+            <h5>Recap &amp; transition</h5>
+            <p>6 takeaways · pointer to next chapter · Notes panel (press T) throughout.</p>
+          </div>
+        </div>
+        <div class="format-strip">
+          <h5>▸ Course features available throughout</h5>
+          <div class="format-grid">
+            <div class="format-item">
+              <h6>Step reveals</h6>
+              <p>Right arrow / space advances · left arrow reverses · components appear in lockstep with notes</p>
+            </div>
+            <div class="format-item">
+              <h6>Notes panel</h6>
+              <p>Press <strong style="color:var(--gn-amber);font-family:'Cascadia Code','Consolas',monospace">T</strong> to toggle · contextual notes update with each step</p>
+            </div>
+            <div class="format-item">
+              <h6>Per-chapter Notes doc</h6>
+              <p>Word document with full speaker notes · matching reveal numbering</p>
+            </div>
+            <div class="format-item">
+              <h6>Discussion-driven</h6>
+              <p>No labs · architecture discussion is the work · scenarios drive depth</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 14 LET'S BEGIN -->
+      <section class="slide content-slide"
+        data-section="Let's Begin"
+        data-script="<em>That's the introduction.</em> You know what's coming. You know how to navigate. You know what's on the exam. <em>Let's begin Chapter 1</em> — Introduction to Agentic AI Business Solution Architecture.">
+        <div class="slide-num">14 / 14</div>
+        <h3 class="slide-h">Ready to <em>begin</em>?</h3>
+        <p class="lead">You know what's coming. You know how to navigate. You know what's on the exam. Let's start.</p>
+        <div class="start-cta">
+          <div class="label">★ NEXT UP ★</div>
+          <h4>Chapter 1 — <em>Introduction to Agentic AI</em><br>Business Solution Architecture</h4>
+          <p>The architect role. The 5-phase framework. The Microsoft stack ecosystem. The OOB agents decision flow. Plus the Acme Manufacturing scenario to anchor everything.</p>
+        </div>
+        <div style="margin-top:24px;padding:18px 24px;background:var(--paper);border:1px solid var(--line);border-radius:8px;text-align:center">
+          <div style="font-size:11px;color:var(--ink-mute);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:6px;font-family:'Cascadia Code','Consolas',monospace">Course delivered by Gennoor Tech</div>
+          <div style="font-size:13px;color:var(--ink-soft);line-height:1.5">12 chapters + final revision · self-paced · architecture-first · scenario-driven · AB-100 exam-aligned</div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="notes-panel" id="notesPanel">
+    <div class="label">📖 Read aloud · notes <span class="step-tag" id="stepTag"></span></div>
+    <div class="script" id="notesScript">Welcome notes will appear here.</div>
+  </div>
+
+
+
+  <div class="float-hint" id="hint">← → to advance step-by-step · T for notes</div>
+</div>
+
+<script>
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0; let notesOpen = false;
+  const counter = document.getElementById('counter');
+  const progressFill = document.getElementById('progressFill');
+  const notesPanel = document.getElementById('notesPanel');
+  const notesScript = document.getElementById('notesScript');
+  const stepTag = document.getElementById('stepTag');
+  const sectionLabel = document.getElementById('sectionLabel');
+  const stepPill = document.getElementById('stepPill');
+  const stepIndicator = document.getElementById('stepIndicator');
+  const notesToggle = document.getElementById('notesToggle');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const hint = document.getElementById('hint');
+  function getSteps(s){return Array.from(s.querySelectorAll('[data-step]'));}
+  function getRevealed(s){return Array.from(s.querySelectorAll('[data-step].revealed'));}
+  function updateScript(text, stepInfo){
+    notesScript.classList.add('fading');
+    setTimeout(()=>{ notesScript.innerHTML = text || ''; stepTag.textContent = stepInfo || ''; notesScript.classList.remove('fading'); },180);
+  }
+  function updateStepIndicator(slide){
+    const steps = getSteps(slide); const revealed = getRevealed(slide);
+    if(steps.length>0 && revealed.length<steps.length){ stepIndicator.classList.add('show'); stepPill.style.display='inline-block'; stepPill.textContent = `Step ${revealed.length}/${steps.length}`; }
+    else if(steps.length>0){ stepIndicator.classList.remove('show'); stepPill.style.display='inline-block'; stepPill.textContent = `${steps.length}/${steps.length}`; }
+    else { stepIndicator.classList.remove('show'); stepPill.style.display='none'; }
+  }
+  function showSlide(i, revealAll){
+    if(i<0||i>=total) return;
+    slides[current].classList.remove('active');
+    getSteps(slides[current]).forEach(el=>el.classList.remove('revealed'));
+    current = i;
+    const slide = slides[current]; slide.classList.add('active'); slide.scrollTop = 0;
+    if(revealAll){ getSteps(slide).forEach(el=>el.classList.add('revealed')); }
+    counter.textContent = (current+1)+' / '+total;
+    progressFill.style.width = ((current+1)/total*100)+'%';
+    sectionLabel.textContent = slide.dataset.section || '';
+    if(revealAll){ const steps = getSteps(slide); const last = steps[steps.length-1]; if(last && last.dataset.script) updateScript(last.dataset.script, `Step ${steps.length}/${steps.length}`); else updateScript(slide.dataset.script, ''); } else { updateScript(slide.dataset.script, ''); }
+    updateStepIndicator(slide);
+    prevBtn.disabled = (current===0 && getRevealed(slide).length===0);
+    nextBtn.disabled = (current===total-1 && (getSteps(slide).length===0 || getRevealed(slide).length===getSteps(slide).length));
+  }
+  function next(){
+    const slide = slides[current]; const steps = getSteps(slide); const revealed = getRevealed(slide);
+    if(revealed.length<steps.length){ const idx = revealed.length; const el = steps[idx]; el.classList.add('revealed'); if(el.dataset.script) updateScript(el.dataset.script, `Step ${idx+1}/${steps.length}`); updateStepIndicator(slide); prevBtn.disabled=false; if(revealed.length+1===steps.length && current===total-1) nextBtn.disabled=true; }
+    else if(current<total-1){ showSlide(current+1, false); }
+  }
+  function prev(){
+    const slide = slides[current]; const revealed = getRevealed(slide);
+    if(revealed.length>0){ const last = revealed[revealed.length-1]; last.classList.remove('revealed'); const remaining = getRevealed(slide); if(remaining.length>0){ const r = remaining[remaining.length-1]; const total = getSteps(slide).length; updateScript(r.dataset.script, `Step ${remaining.length}/${total}`); } else { updateScript(slide.dataset.script, ''); } updateStepIndicator(slide); nextBtn.disabled=false; }
+    else if(current>0){ showSlide(current-1, true); }
+  }
+  function toggleNotes(){ notesOpen = !notesOpen; notesPanel.classList.toggle('open', notesOpen); notesToggle.classList.toggle('active', notesOpen); }
+  prevBtn.addEventListener('click', prev); nextBtn.addEventListener('click', next); notesToggle.addEventListener('click', toggleNotes);
+  document.addEventListener('keydown',(e)=>{ if(e.target.matches('input,textarea')) return; if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();} else if(e.key==='ArrowLeft'){e.preventDefault();prev();} else if(e.key==='t'||e.key==='T'){e.preventDefault();toggleNotes();} else if(e.key==='Home'){e.preventDefault();showSlide(0,false);} else if(e.key==='End'){e.preventDefault();showSlide(total-1,true);} });
+  setTimeout(()=>{hint.classList.add('show');},800); setTimeout(()=>{hint.classList.remove('show');},5500);
+  showSlide(0,false);
+})();
+</script>
+</body>
+</html>

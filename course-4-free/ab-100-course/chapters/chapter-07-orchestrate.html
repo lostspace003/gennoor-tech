@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 07 — Orchestrate Configuration for Prebuilt Agents and Apps · Gennoor Tech</title>
+<style>
+:root{
+  --bg:#FAFAFA; --paper:#FFFFFF;
+  --ink:#201F1E; --ink-soft:#605E5C; --ink-mute:#8A8886;
+  --line:#EDEBE9; --line-soft:#F3F2F1;
+  --ms-blue:#2563EB; --ms-blue-deep:#1D4ED8; --ms-navy:#0C1426;
+  --ms-cyan:#60A5FA; --ms-cyan-deep:#1E40AF;
+  --copilot:#F59E0B; --copilot-light:#FCD34D;
+  --ms-yellow:#F59E0B; --ms-green:#107C10; --ms-red:#D13438; --ms-orange:#F97316;
+  --logo-red:#2563EB; --logo-green:#2563EB; --logo-blue:#F59E0B; --logo-yellow:#F59E0B;
+  --notes-bg:#0C1426; --notes-text:#FFFFFF; --notes-accent:#F59E0B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;font-size:19px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.app{position:fixed;inset:0;display:flex;flex-direction:column}
+.topbar{height:56px;background:var(--ms-navy);color:#FFFFFF;display:flex;align-items:center;padding:0 24px;gap:18px;border-bottom:1px solid rgba(255,255,255,.06);z-index:10}
+.topbar .brand-mark{width:30px;height:30px;flex-shrink:0;display:block}
+.topbar .brand-lockup{display:flex;align-items:center;gap:10px;text-decoration:none;color:#FFFFFF;flex-shrink:0}
+.topbar .brand-text{display:flex;flex-direction:column;line-height:1.1}
+.topbar .brand-name{font-size:18px;font-weight:600;letter-spacing:.3px;color:#FFFFFF}
+.topbar .brand-sub{font-size:12px;color:var(--ms-yellow);letter-spacing:1.2px;text-transform:uppercase;font-weight:600;font-family:'Cascadia Code','Consolas',monospace}
+.topbar .divider{width:1px;height:24px;background:rgba(255,255,255,.15)}
+.topbar .logo{font-weight:600;font-size:20px;letter-spacing:.2px}
+.topbar .chapter-title{font-size:16px;opacity:.75;letter-spacing:.2px;font-weight:400}
+.topbar.topbar-grid .topbar-left .chapter-title{max-width:36ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topbar .spacer{flex:1}
+.topbar .meta{font-size:16px;opacity:.85;display:flex;gap:10px;align-items:center}
+.topbar .meta .pill{padding:4px 12px;background:rgba(255,255,255,.10);border-radius:4px;font-size:15px;font-weight:500}
+.topbar .meta .step-pill{background:var(--ms-blue);font-weight:600;font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px}
+.topbar button{background:transparent;border:1px solid rgba(255,255,255,.25);color:#FFFFFF;padding:7px 16px;border-radius:4px;font-family:inherit;font-size:16px;font-weight:500;cursor:pointer;transition:.15s}
+.topbar button:hover{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.4)}
+.topbar button.active{background:var(--ms-blue);border-color:var(--ms-blue)}
+.progress{height:3px;background:rgba(255,255,255,.06);position:relative;border-bottom:1px solid var(--line)}
+.progress-fill{position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg,var(--ms-blue) 0%,var(--copilot) 50%,var(--ms-cyan) 100%);transition:width .4s cubic-bezier(.4,0,.2,1)}
+.stage{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.slides{width:100%;height:100%;position:relative}
+.slide{position:absolute;inset:0;padding:36px 64px 80px;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .35s ease;overflow-y:auto}
+.slide.active{opacity:1;pointer-events:auto}
+.slide-num{position:absolute;top:18px;right:28px;font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ink-mute);letter-spacing:1.5px}
+[data-step]{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.2,.7,.3,1), transform .55s cubic-bezier(.2,.7,.3,1);pointer-events:none}
+[data-step].revealed{opacity:1;transform:translateY(0);pointer-events:auto}
+.notes-panel{position:fixed;bottom:0;left:0;right:0;background:var(--notes-bg);color:var(--notes-text);padding:22px 32px 26px;border-top:3px solid var(--notes-accent);transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);z-index:20;max-height:48vh;overflow-y:auto;box-shadow:0 -20px 40px rgba(0,0,0,.18)}
+.notes-panel.open{transform:translateY(0)}
+.notes-panel .label{display:flex;align-items:center;gap:10px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--notes-accent);margin-bottom:10px;font-weight:600}
+.notes-panel .label::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--notes-accent);animation:pulse 1.6s ease-in-out infinite}
+.notes-panel .label .step-tag{margin-left:auto;font-size:12px;color:rgba(255,255,255,.55);letter-spacing:1px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.notes-panel .script{font-size:22px;line-height:1.65;max-width:880px;font-weight:400;transition:opacity .25s}
+.notes-panel .script.fading{opacity:.3}
+.notes-panel .script em{color:var(--notes-accent);font-style:normal;font-weight:600;background:rgba(255,185,0,.15);padding:1px 6px;border-radius:3px}
+.controls{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:var(--ms-navy);padding:8px 14px;border-radius:4px;box-shadow:0 6px 24px rgba(0,32,80,.25);z-index:15}
+.controls button{width:36px;height:36px;border-radius:3px;border:none;background:transparent;color:#FFFFFF;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;transition:.15s}
+.controls button:hover{background:rgba(255,255,255,.12)}
+.controls button:disabled{opacity:.3;cursor:not-allowed}
+.controls .counter{font-family:'Cascadia Code','Consolas',monospace;font-size:16px;color:#FFFFFF;padding:0 14px;letter-spacing:1px;font-weight:500}
+.step-indicator{position:fixed;bottom:64px;left:50%;transform:translateX(-50%);font-size:14px;font-family:'Cascadia Code','Consolas',monospace;color:var(--ms-blue);letter-spacing:1.5px;opacity:0;transition:opacity .3s;z-index:14;text-transform:uppercase;font-weight:600}
+.step-indicator.show{opacity:.85}
+.step-indicator::after{content:" →";animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+
+.slide.title-slide{background:linear-gradient(135deg,#0C1426 0%,#1D4ED8 35%,#2563EB 70%,#60A5FA 110%);color:#FFFFFF;justify-content:center;padding:175px 100px 100px 100px;position:absolute;overflow:hidden}
+.slide.title-slide .brand-full{position:absolute;top:48px;left:64px;display:flex;align-items:center;gap:16px}
+.slide.title-slide .brand-mark-lg{width:64px;height:64px}
+.slide.title-slide .brand-wordmark{display:flex;flex-direction:column;line-height:1}
+.slide.title-slide .brand-wordmark .name{font-size:30px;font-weight:600;letter-spacing:1px;color:#FFFFFF}
+.slide.title-slide .brand-wordmark .tag{font-size:14px;color:var(--ms-yellow);letter-spacing:3px;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;margin-top:4px;text-transform:uppercase}
+.slide.title-slide .eyebrow{font-family:'Cascadia Code','Consolas',monospace;font-size:16px;letter-spacing:3px;color:var(--ms-cyan);margin-bottom:20px;font-weight:500}
+.slide.title-slide h1{font-size:75px;line-height:1.1;font-weight:600;max-width:1200px;letter-spacing:-1.5px}
+.slide.title-slide h1 em{font-style:normal;color:var(--ms-cyan);font-weight:600}
+.slide.title-slide .meta-row{margin-top:48px;display:flex;gap:36px;font-size:18px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.slide.title-slide .meta-row strong{color:#FFFFFF;display:block;font-size:28px;text-transform:none;font-weight:600;letter-spacing:0;margin-top:4px}
+.title-slide::before{content:"";position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(98,100,167,.30) 0%,transparent 70%);top:-200px;right:-200px;pointer-events:none}
+.title-slide::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(80,230,255,.20) 0%,transparent 70%);bottom:-160px;left:-160px;pointer-events:none}
+
+.slide.section-divider{background:linear-gradient(135deg,var(--ms-blue) 0%,var(--copilot) 100%);color:#FFFFFF;justify-content:center;align-items:flex-start;padding:80px;position:relative;overflow:hidden}
+.slide.section-divider::before{content:"";position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(80,230,255,.18) 0%,transparent 70%);top:-180px;right:-180px;pointer-events:none}
+.slide.section-divider .label{font-family:'Cascadia Code','Consolas',monospace;font-size:18px;letter-spacing:4px;margin-bottom:18px;opacity:.8;font-weight:500}
+.slide.section-divider h2{font-size:75px;line-height:1.05;font-weight:600;max-width:1100px;letter-spacing:-1.5px}
+.slide.section-divider h2 em{font-style:normal;color:var(--ms-cyan);font-weight:600}
+.slide.section-divider .sub{margin-top:28px;font-size:24px;max-width:780px;color:rgba(255,255,255,.95);font-weight:400;line-height:1.45}
+
+.slide.content-slide{padding:34px 60px 76px}
+.slide h3.slide-h{font-size:40px;font-weight:600;letter-spacing:-.5px;margin-bottom:6px;line-height:1.15;color:var(--ms-navy)}
+.slide h3.slide-h em{font-style:normal;color:var(--copilot);font-weight:600}
+.slide .lead{font-size:19px;color:var(--ink-soft);margin-bottom:20px;max-width:1000px}
+
+/* OVERVIEW 5 cards */
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--ms-blue);padding:16px;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.card .num{font-size:25px;color:var(--ms-blue);font-weight:600;margin-bottom:4px;line-height:1}
+.card h4{font-size:19px;font-weight:600;margin-bottom:6px;color:var(--ms-navy);line-height:1.25}
+.card p{font-size:15px;color:var(--ink-soft);line-height:1.45}
+.card .ex{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:14px;color:var(--ms-blue-deep);font-style:italic}
+.card .ex strong{color:var(--copilot);font-style:normal;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;font-size:12px;letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:2px}
+
+/* 3 AI EXPERIENCE MODELS */
+.experiences{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.exp{background:var(--paper);border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.exp .top{padding:18px 22px;color:#FFFFFF}
+.exp.e1 .top{background:linear-gradient(135deg,#2563EB 0%,#1D4ED8 100%)}
+.exp.e2 .top{background:linear-gradient(135deg,#F59E0B 0%,#B45309 100%)}
+.exp.e3 .top{background:linear-gradient(135deg,#1E40AF 0%,#107C10 100%)}
+.exp .top .badge{display:inline-block;background:rgba(255,255,255,.2);padding:3px 10px;border-radius:3px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+.exp .top h4{font-size:22px;font-weight:600;margin-bottom:4px;letter-spacing:-.3px}
+.exp .top .sub{font-size:16px;opacity:.92}
+.exp .body{padding:16px 22px}
+.exp .body h6{font-size:14px;color:var(--ms-navy);font-weight:600;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px}
+.exp .body ul{list-style:none;margin-bottom:6px}
+.exp .body li{padding:3px 0 3px 14px;position:relative;font-size:15px;color:var(--ink);line-height:1.45}
+.exp .body li::before{content:"›";position:absolute;left:0;top:3px;color:var(--copilot);font-weight:700}
+.exp .body .when{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:14px;color:var(--ms-blue-deep);font-style:italic;line-height:1.4}
+
+/* F&O CAPABILITIES MATRIX */
+.cap-matrix{margin-top:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.cap-col{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,.04);border-top:4px solid var(--ms-blue)}
+.cap-col.c2{border-top-color:#F59E0B}
+.cap-col.c3{border-top-color:#1E40AF}
+.cap-col .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;letter-spacing:1.5px;font-weight:600;text-transform:uppercase;margin-bottom:5px}
+.cap-col.c1 .lab{color:#2563EB}
+.cap-col.c2 .lab{color:#F59E0B}
+.cap-col.c3 .lab{color:#1E40AF}
+.cap-col h5{font-size:20px;color:var(--ms-navy);font-weight:600;margin-bottom:10px;line-height:1.2}
+.cap-col ul{list-style:none}
+.cap-col li{padding:5px 0 5px 16px;position:relative;font-size:16px;color:var(--ink);line-height:1.4;border-bottom:1px dashed var(--line-soft)}
+.cap-col li:last-child{border-bottom:none}
+.cap-col li::before{content:"✓";position:absolute;left:0;top:5px;color:var(--ms-green);font-weight:700;font-size:15px}
+
+/* CUSTOMER SERVICE - 3 capability types */
+.cs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.cs-card{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:18px 22px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.cs-card.cs1{border-top:4px solid #2563EB}
+.cs-card.cs2{border-top:4px solid #F59E0B}
+.cs-card.cs3{border-top:4px solid #1E40AF}
+.cs-card .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;letter-spacing:1.5px;font-weight:600;text-transform:uppercase;margin-bottom:5px}
+.cs-card.cs1 .lab{color:#2563EB}
+.cs-card.cs2 .lab{color:#F59E0B}
+.cs-card.cs3 .lab{color:#1E40AF}
+.cs-card h4{font-size:20px;color:var(--ms-navy);font-weight:600;margin-bottom:6px;line-height:1.2}
+.cs-card p{font-size:16px;color:var(--ink-soft);line-height:1.5;margin-bottom:8px}
+.cs-card h6{font-size:14px;color:var(--ms-navy);font-weight:600;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:5px}
+.cs-card ul{list-style:none}
+.cs-card li{padding:3px 0 3px 14px;position:relative;font-size:14px;color:var(--ink);line-height:1.45}
+.cs-card li::before{content:"›";position:absolute;left:0;top:3px;color:var(--copilot);font-weight:700}
+
+/* M365 ARCHITECTURE - flowing diagram */
+.arch-flow{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.arch-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;align-items:stretch}
+.arch-block{background:var(--bg);border-radius:5px;padding:14px 12px;text-align:center;position:relative;border-top:3px solid var(--ms-blue)}
+.arch-block.b2{border-top-color:#F59E0B}
+.arch-block.b3{border-top-color:#1E40AF}
+.arch-block.b4{border-top-color:#D83B01}
+.arch-block.b5{border-top-color:#107C10}
+.arch-block .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--ink-mute);letter-spacing:1.2px;font-weight:600;margin-bottom:5px}
+.arch-block h6{font-size:16px;color:var(--ms-navy);font-weight:600;margin-bottom:6px}
+.arch-block p{font-size:13px;color:var(--ink-soft);line-height:1.4}
+.arch-arrow{position:absolute;right:-6px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--ms-blue);font-weight:700;z-index:2}
+.checklist{margin-top:18px;background:#F8FAFD;border:1px solid var(--line);border-radius:6px;padding:16px 22px}
+.checklist h6{font-size:14px;color:var(--ms-navy);font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+.cl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.cl-item{display:flex;gap:8px;align-items:flex-start;font-size:14px;color:var(--ink);line-height:1.4}
+.cl-item .chk{flex-shrink:0;width:16px;height:16px;border-radius:3px;background:var(--ms-blue);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-top:1px}
+.cl-item strong{font-weight:600;color:var(--ms-navy)}
+
+/* 5-STEP DESIGN FRAMEWORK */
+.framework{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.fw-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;position:relative}
+.fw-row::before{content:"";position:absolute;top:30px;left:6%;right:6%;height:2px;background:linear-gradient(90deg,#2563EB 0%,#F59E0B 50%,#107C10 100%);z-index:0}
+.fw-step{text-align:center;background:var(--paper);position:relative;z-index:1;padding:0 4px}
+.fw-step .num{width:60px;height:60px;border-radius:50%;background:var(--paper);border:3px solid var(--ms-blue);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:var(--ms-blue);box-shadow:0 4px 12px rgba(0,120,212,.15)}
+.fw-step.s2 .num{border-color:#1D4ED8;color:#1D4ED8}
+.fw-step.s3 .num{border-color:#F59E0B;color:#F59E0B}
+.fw-step.s4 .num{border-color:#1E40AF;color:#1E40AF}
+.fw-step.s5 .num{border-color:#107C10;color:#107C10}
+.fw-step h6{font-size:16px;color:var(--ms-navy);font-weight:600;margin-bottom:3px;line-height:1.2}
+.fw-step p{font-size:13px;color:var(--ink-soft);line-height:1.4;padding:0 4px}
+
+/* PREBUILT AGENT CATALOG - 4-card grid */
+.catalog{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:18px}
+.cat-card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:14px 18px;display:flex;gap:14px;align-items:flex-start;box-shadow:0 1px 3px rgba(0,0,0,.04);border-left:4px solid var(--ms-blue)}
+.cat-card.k1{border-left-color:#2563EB}
+.cat-card.k2{border-left-color:#F59E0B}
+.cat-card.k3{border-left-color:#1E40AF}
+.cat-card.k4{border-left-color:#D83B01}
+.cat-card.k5{border-left-color:#107C10}
+.cat-card.k6{border-left-color:#F59E0B}
+.cat-card .icon{flex-shrink:0;width:34px;height:34px;border-radius:8px;background:#FEF3C7;color:var(--copilot);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700}
+.cat-card.k1 .icon{background:#DBEAFE;color:#2563EB}
+.cat-card.k2 .icon{background:#FEF3C7;color:#F59E0B}
+.cat-card.k3 .icon{background:#E5F4F6;color:#1E40AF}
+.cat-card.k4 .icon{background:#FFE2D6;color:#D83B01}
+.cat-card.k5 .icon{background:#DFF6DD;color:#107C10}
+.cat-card.k6 .icon{background:#FFF4CE;color:#B58800}
+.cat-card .body h5{font-size:18px;color:var(--ms-navy);font-weight:600;margin-bottom:3px;line-height:1.25}
+.cat-card .body p{font-size:14px;color:var(--ink-soft);line-height:1.45;margin-bottom:4px}
+.cat-card .body .kpi{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--copilot);font-weight:600;background:#FEF3C7;padding:3px 8px;border-radius:3px;display:inline-block;letter-spacing:.3px;margin-top:2px}
+
+/* SALES + SERVICE CONFIG - two columns */
+.config-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+.config-col{background:var(--paper);border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.config-col .top{padding:18px 24px;color:#FFFFFF}
+.config-col.sales .top{background:linear-gradient(135deg,#2563EB 0%,#F59E0B 100%)}
+.config-col.service .top{background:linear-gradient(135deg,#1E40AF 0%,#107C10 100%)}
+.config-col .top h4{font-size:22px;font-weight:600;margin-bottom:4px}
+.config-col .top .sub{font-size:15px;opacity:.92}
+.config-col .body{padding:16px 24px}
+.config-col .body h6{font-size:13px;color:var(--ms-navy);font-weight:600;letter-spacing:1.2px;text-transform:uppercase;margin:8px 0 5px}
+.config-col .body h6:first-child{margin-top:0}
+.config-col .body ul{list-style:none}
+.config-col .body li{padding:4px 0 4px 18px;position:relative;font-size:16px;color:var(--ink);line-height:1.4}
+.config-col .body li::before{content:counter(li-counter) ".";counter-increment:li-counter;position:absolute;left:0;color:var(--copilot);font-weight:700;font-family:'Cascadia Code','Consolas',monospace}
+.config-col .body ol{list-style:none;counter-reset:li-counter;margin-top:0}
+.config-col .body ol li{padding:4px 0 4px 22px}
+.config-col .body .kpi-strip{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);font-size:14px;color:var(--ms-blue-deep);font-style:italic;line-height:1.4}
+.config-col .body .kpi-strip strong{color:var(--copilot);font-style:normal;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;font-size:12px;letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:3px}
+
+/* POWER PLATFORM AI - 4 components */
+.pp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
+.pp-card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:18px 16px;text-align:left;box-shadow:0 1px 3px rgba(0,0,0,.04);position:relative;overflow:hidden}
+.pp-card::before{content:"";position:absolute;top:0;left:0;right:0;height:5px}
+.pp-card.pp1::before{background:#2563EB}
+.pp-card.pp2::before{background:#F59E0B}
+.pp-card.pp3::before{background:#1E40AF}
+.pp-card.pp4::before{background:#D83B01}
+.pp-card .icon{font-size:32px;margin-top:5px;margin-bottom:5px;line-height:1;font-weight:700}
+.pp-card.pp1 .icon{color:#2563EB}
+.pp-card.pp2 .icon{color:#F59E0B}
+.pp-card.pp3 .icon{color:#1E40AF}
+.pp-card.pp4 .icon{color:#D83B01}
+.pp-card h4{font-size:19px;color:var(--ms-navy);font-weight:600;margin-bottom:6px;line-height:1.2}
+.pp-card p{font-size:14px;color:var(--ink-soft);line-height:1.5;margin-bottom:6px}
+.pp-card ul{list-style:none}
+.pp-card li{padding:2px 0 2px 12px;position:relative;font-size:14px;color:var(--ink);line-height:1.4}
+.pp-card li::before{content:"›";position:absolute;left:0;top:2px;color:var(--copilot);font-weight:700}
+
+/* FEATURE SELECTION MATRIX */
+.feat-matrix{margin-top:14px;background:var(--paper);border:1px solid var(--line);border-radius:6px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.fm-row{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 1fr;border-bottom:1px solid var(--line)}
+.fm-row:last-child{border-bottom:none}
+.fm-row.head{background:var(--ms-navy);color:#FFFFFF}
+.fm-row.head > div{padding:10px 14px;font-size:14px;letter-spacing:1.2px;text-transform:uppercase;font-weight:600;text-align:center}
+.fm-row.head > div:first-child{text-align:left}
+.fm-row > div{padding:11px 14px;font-size:16px;border-right:1px solid var(--line);text-align:center;color:var(--ink);line-height:1.3}
+.fm-row > div:first-child{font-weight:600;color:var(--ms-navy);background:#F8FAFD;text-align:left}
+.fm-row > div:last-child{border-right:none}
+.fm-cell.yes{color:var(--ms-green);font-weight:700;font-size:20px}
+.fm-cell.no{color:var(--ink-mute);font-size:18px}
+
+/* F&O INTEROP */
+.interop-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:14px;margin-top:18px}
+.interop-card{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:18px 22px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.interop-card.left{border-left:4px solid #2563EB}
+.interop-card.right{border-left:4px solid #F59E0B}
+.interop-card h5{font-size:20px;color:var(--ms-navy);font-weight:600;margin-bottom:6px}
+.interop-card p{font-size:16px;color:var(--ink-soft);line-height:1.5;margin-bottom:8px}
+.interop-card h6{font-size:13px;color:var(--ms-navy);font-weight:600;letter-spacing:1.2px;text-transform:uppercase;margin:8px 0 4px}
+.interop-card ul{list-style:none}
+.interop-card li{padding:3px 0 3px 14px;position:relative;font-size:15px;color:var(--ink);line-height:1.4}
+.interop-card.left li::before{content:"➤";position:absolute;left:0;top:3px;color:#2563EB;font-weight:700;font-size:12px}
+.interop-card.right li::before{content:"⚙";position:absolute;left:0;top:3px;color:#F59E0B;font-weight:700}
+.interop-mapping{margin-top:14px;background:linear-gradient(135deg,#FEF3C7 0%,#E5E3F4 100%);border-radius:6px;padding:14px 20px}
+.interop-mapping h6{font-size:14px;color:var(--ms-navy);font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.mapping-row{display:grid;grid-template-columns:1.6fr auto 1fr;gap:10px;padding:5px 0;font-size:15px;align-items:center}
+.mapping-row .q{color:var(--ink);font-style:italic;line-height:1.3}
+.mapping-row .arrow{color:var(--copilot);font-weight:700;font-family:'Cascadia Code','Consolas',monospace;font-size:14px;letter-spacing:1px}
+.mapping-row .src{font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ms-blue-deep);font-weight:600;background:#FFFFFF;padding:3px 8px;border-radius:3px}
+
+/* QUIZ */
+.quiz-wrap{max-width:880px;margin:0 auto;width:100%}
+.quiz-q{font-size:31px;line-height:1.3;font-weight:600;color:var(--ms-navy);margin-bottom:22px;letter-spacing:-.3px}
+.quiz-q em{font-style:normal;color:var(--copilot);font-weight:600}
+.quiz-options{display:flex;flex-direction:column;gap:10px}
+.quiz-opt{background:var(--paper);border:1px solid var(--line);padding:14px 18px;border-radius:4px;cursor:pointer;display:flex;align-items:flex-start;gap:16px;transition:.15s;font-size:18px;font-family:inherit;text-align:left;width:100%;color:var(--ink);line-height:1.4}
+.quiz-opt:hover{border-color:var(--ms-blue);background:#F3F9FD;box-shadow:0 2px 6px rgba(0,120,212,.10)}
+.quiz-opt .letter{width:30px;height:30px;border-radius:4px;background:var(--bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--ms-blue-deep);flex-shrink:0;font-size:16px}
+.quiz-opt.correct{border-color:var(--ms-green);background:#DFF6DD}
+.quiz-opt.correct .letter{background:var(--ms-green);color:#FFFFFF;border-color:var(--ms-green)}
+.quiz-opt.wrong{border-color:var(--ms-red);background:#FDE7E9;opacity:.65}
+.quiz-explain{margin-top:18px;background:#DFF6DD;border-left:4px solid var(--ms-green);padding:14px 18px;border-radius:4px;display:none}
+.quiz-explain.show{display:block;animation:slideUp .5s ease}
+.quiz-explain strong{color:var(--ms-green);font-family:'Cascadia Code','Consolas',monospace;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
+.quiz-explain p{margin-top:6px;font-size:18px;color:var(--ink);line-height:1.55}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* SCENARIO */
+.scenario{max-width:1100px;margin:0 auto;background:linear-gradient(135deg,#FEF3C7 0%,#E5E3F4 100%);border-radius:8px;padding:26px 36px;border-left:4px solid var(--copilot)}
+.scenario .tag{display:inline-block;background:var(--copilot);color:#FFFFFF;padding:5px 14px;border-radius:3px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:12px}
+.scenario h3{font-size:29px;line-height:1.25;color:var(--ms-navy);margin-bottom:12px;font-weight:600;letter-spacing:-.3px}
+.scenario .quote{font-size:19px;line-height:1.5;color:var(--ms-navy);padding:13px 18px;background:rgba(255,255,255,.8);border-radius:4px;margin:10px 0;border-left:3px solid var(--ms-blue);font-style:italic}
+.scenario .prompts h5{font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ms-navy);margin-bottom:8px;font-weight:600;margin-top:10px}
+.scenario .prompts ul{list-style:none}
+.scenario .prompts li{padding:7px 0 7px 22px;position:relative;font-size:17px;color:var(--ink);border-bottom:1px dashed rgba(0,32,80,.18);line-height:1.45}
+.scenario .prompts li:last-child{border-bottom:none}
+.scenario .prompts li::before{content:"→";position:absolute;left:0;top:7px;color:var(--copilot);font-weight:700}
+.scenario .reveal-btn{margin-top:14px;background:var(--ms-blue);color:#FFFFFF;border:none;padding:10px 22px;border-radius:4px;font-family:'Segoe UI',sans-serif;font-size:16px;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:.15s}
+.scenario .reveal-btn:hover{background:var(--ms-blue-deep);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,120,212,.30)}
+.scenario .reveal-btn.shown{display:none}
+.answer-panel{margin-top:14px;background:var(--paper);border:1px solid var(--ms-blue);border-radius:6px;padding:18px 22px;display:none}
+.answer-panel.show{display:block;animation:slideUp .5s ease}
+.answer-panel .ap-label{display:inline-block;background:var(--ms-navy);color:#FFFFFF;padding:4px 12px;border-radius:3px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:10px}
+.answer-panel .ap-row{margin-bottom:10px}
+.answer-panel .ap-row:last-child{margin-bottom:0}
+.answer-panel .ap-q{font-size:17px;color:var(--copilot);font-weight:600;margin-bottom:5px}
+.answer-panel .ap-a{font-size:16px;color:var(--ink);line-height:1.55;padding-left:14px;border-left:2px solid #DBEAFE}
+.answer-panel .ap-a span{display:block;margin-bottom:3px}
+.answer-panel .ap-a span::before{content:"• ";color:var(--ms-blue);font-weight:700}
+
+/* RECAP */
+.recap{max-width:920px;margin:0 auto}
+.recap-list{display:grid;gap:9px;margin-top:14px}
+.recap-item{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--ms-blue);padding:12px 22px;border-radius:4px;display:flex;gap:14px;align-items:flex-start;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.recap-item .check{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--ms-blue);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+.recap-item .text{font-size:18px;color:var(--ms-navy);line-height:1.45}
+.recap-item .text em{color:var(--copilot);font-style:normal;font-weight:600}
+
+.float-hint{position:fixed;top:72px;right:20px;background:var(--ms-navy);color:#FFFFFF;padding:10px 16px;border-radius:4px;font-size:15px;opacity:0;transition:.3s;z-index:30;pointer-events:none;font-family:'Cascadia Code','Consolas',monospace;box-shadow:0 6px 16px rgba(0,32,80,.20)}
+.float-hint.show{opacity:.95}
+
+/* GENNOOR WORDMARK COLOR LETTERS */
+.brand-name .b-w{color:#FFFFFF}
+.brand-name .b-blue{color:#60A5FA}
+.brand-name .b-amber{color:#F59E0B}
+.slide.title-slide .brand-wordmark .name .b-w{color:#FFFFFF}
+.slide.title-slide .brand-wordmark .name .b-blue{color:#60A5FA}
+.slide.title-slide .brand-wordmark .name .b-amber{color:#F59E0B}
+
+/* TOPBAR GRID — slide nav moved to topbar center */
+.topbar.topbar-grid{display:grid !important;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;height:72px;padding:0 28px}
+.topbar.topbar-grid .topbar-left{display:flex;align-items:center;gap:18px;min-width:0;overflow:hidden}
+.topbar.topbar-grid .topbar-left .chapter-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar.topbar-grid .topbar-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.topbar.topbar-grid .topbar-right{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0}
+.step-indicator-top{font-family:'Cascadia Code','Consolas',monospace;font-size:10px;letter-spacing:2.5px;color:var(--gn-amber,var(--ms-yellow));font-weight:700;text-transform:uppercase;line-height:1;opacity:.95}
+.step-indicator-top.complete{color:rgba(255,255,255,.5)}
+.controls-top{display:inline-flex;align-items:center;gap:4px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.10);border-radius:5px;padding:3px 6px}
+.controls-top button{width:28px;height:28px;border-radius:3px;border:none;background:transparent;color:#FFFFFF;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:.15s;padding:0}
+.controls-top button:hover{background:rgba(255,255,255,.12)}
+.controls-top button:disabled{opacity:.3;cursor:not-allowed}
+.controls-top .counter{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;font-weight:600;color:#FFFFFF;letter-spacing:.5px;padding:0 12px;min-width:64px;text-align:center}
+.controls-top .counter strong{color:var(--gn-amber,var(--ms-yellow));font-weight:700}
+/* Hide original bottom controls (now empty) */
+.bottom-nav-removed{display:none !important}
+
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar topbar-grid">
+    <div class="topbar-left">
+    <a href="#" class="brand-lockup">
+      <svg class="brand-mark" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+      <div class="brand-text">
+        <span class="brand-name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+        <span class="brand-sub">AB-100</span>
+      </div>
+    </a>
+    <div class="divider"></div>
+    <div class="chapter-title">Chapter 07 · Orchestrate Prebuilt Agents</div>
+    </div>
+    <div class="topbar-center">
+      <div class="step-indicator-top" id="stepIndicator">More to reveal</div>
+      <div class="controls-top">
+        <button id="prevBtn" title="Previous (←)">‹</button>
+        <span class="counter" id="counter">1 / 22</span>
+        <button id="nextBtn" title="Next (→)">›</button>
+      </div>
+    </div>
+    <div class="topbar-right">
+    <div class="meta">
+      <span class="pill" id="sectionLabel">Opening</span>
+      <span class="pill step-pill" id="stepPill" style="display:none">Step 1/6</span>
+    </div>
+    <button id="notesToggle" title="Toggle notes (T)">📖 Notes</button>
+    </div>
+  </div>
+
+  <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="stage">
+    <div class="slides" id="slides">
+
+      <!-- 01 TITLE -->
+      <section class="slide title-slide active"
+        data-section="Opening"
+        data-script="Chapter 7. <em>Orchestrate configuration for prebuilt agents and apps.</em> The pivot point. Chapters 5 and 6 covered building and extending. Chapter 7 is about <em>using what's already there</em>. Microsoft ships dozens of prebuilt agents and Copilot capabilities across Dynamics 365, M365, and Power Platform. Your job is knowing when to use them and how to orchestrate them — not always to build from scratch.">
+        <div class="slide-num">01 / 22</div>
+        <div class="brand-full">
+          <svg class="brand-mark-lg" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+          <div class="brand-wordmark">
+            <span class="name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+            <span class="tag">AB-100 Course</span>
+          </div>
+        </div>
+        <div class="eyebrow">CHAPTER 07</div>
+        <h1>Orchestrate <em>Prebuilt</em><br>Agents &amp; Apps</h1>
+        <div class="meta-row">
+          <div>FOCUS<strong>Prebuilt over custom</strong></div>
+          <div>SCOPE<strong>D365 · M365 · Power Platform</strong></div>
+          <div>OUTPUT<strong>Right-fit orchestration plan</strong></div>
+        </div>
+      </section>
+
+      <!-- 02 OVERVIEW -->
+      <section class="slide content-slide"
+        data-section="Opening"
+        data-script="Five themes. The orchestration map across the Microsoft ecosystem. Most enterprise scenarios will combine pieces from multiple themes — that's the orchestration challenge.">
+        <div class="slide-num">02 / 22</div>
+        <h3 class="slide-h">What this chapter <em>covers</em></h3>
+        <p class="lead">Five themes covering the prebuilt agent ecosystem. Recognize them, orchestrate them, configure them. Don't reach for custom when prebuilt fits.</p>
+        <div class="cards">
+          <div class="card" data-step data-script="One — <em>Dynamics 365 Copilot patterns</em>. Three experience models — sidecar, embedded, external. Plus the capability map across Finance, Supply Chain, and Customer Service.">
+            <div class="num">01</div><h4>D365 Copilot Patterns</h4>
+            <p>Sidecar · embedded · external orchestration across Finance, Supply Chain, Customer Service.</p>
+            <div class="ex"><strong>Output</strong>D365 Copilot deployment shape.</div>
+          </div>
+          <div class="card" data-step data-script="Two — <em>Microsoft 365 prebuilt agents</em>. The architecture, the readiness checklist, the design framework, the catalog of pilot-ready agents. Treat agents like products.">
+            <div class="num">02</div><h4>M365 Prebuilt Agents</h4>
+            <p>Architecture, readiness checklist, 5-step framework, pilot-ready agent catalog.</p>
+            <div class="ex"><strong>Output</strong>Production-ready M365 agent.</div>
+          </div>
+          <div class="card" data-step data-script="Three — <em>M365 Copilot for Sales and Service</em>. Configuration workflow. Data prerequisites. Field mapping. Governance. Specific to seller and agent productivity.">
+            <div class="num">03</div><h4>M365 Copilot Sales/Service</h4>
+            <p>Configuration, data prerequisites, field mapping, governance for seller + agent productivity.</p>
+            <div class="ex"><strong>Output</strong>Configured Sales/Service Copilot.</div>
+          </div>
+          <div class="card" data-step data-script="Four — <em>Power Platform AI features</em>. AI Hub. Copilot in Power Apps and Automate. AI Builder. Copilot Studio. Pick the right component for the right job.">
+            <div class="num">04</div><h4>Power Platform AI</h4>
+            <p>AI Hub · Copilot · AI Builder · Copilot Studio. Match component to scenario.</p>
+            <div class="ex"><strong>Output</strong>Power Platform AI feature mix.</div>
+          </div>
+          <div class="card" data-step data-script="Five — <em>F&amp;O knowledge sources and interoperability</em>. Plugins. External knowledge. The 5-step process for adding knowledge to in-app help.">
+            <div class="num">05</div><h4>F&amp;O Knowledge &amp; Interop</h4>
+            <p>Plugins · external KBs · 5-step knowledge process for D365 in-app help.</p>
+            <div class="ex"><strong>Output</strong>Governed F&amp;O knowledge layer.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 SECTION DIVIDER UNIT 1 -->
+      <section class="slide section-divider"
+        data-section="D365 Copilot Patterns"
+        data-script="First unit. <em>Dynamics 365 Copilot patterns.</em> Three experience models, capability maps for Finance, Supply Chain, Customer Service. The most common deployment surface for prebuilt AI in enterprise.">
+        <div class="slide-num">03 / 22</div>
+        <div class="label">UNIT ONE</div>
+        <h2>Dynamics 365<br><em>Copilot Patterns</em></h2>
+        <div class="sub">Three experience models · Finance &amp; Supply Chain capabilities · Customer Service AI ecosystem. The largest prebuilt surface area in the Microsoft AI portfolio.</div>
+      </section>
+
+      <!-- 04 3 AI EXPERIENCE MODELS -->
+      <section class="slide content-slide"
+        data-section="D365 Copilot Patterns"
+        data-script="<em>Three AI experience models</em> for Dynamics 365 Copilot. Sidecar, embedded, external orchestration. Each fits a different interaction shape. <em>Most production deployments use all three together</em>. I'll bring them up one at a time.">
+        <div class="slide-num">04 / 22</div>
+        <h3 class="slide-h">Three D365 <em>AI experience models</em></h3>
+        <p class="lead">How Copilot shows up in Dynamics 365. Each model has a different interaction shape. Production deployments typically combine all three.</p>
+        <div class="experiences">
+          <div class="exp e1" data-step
+            data-script="<em>Sidecar Copilot</em>. Appears alongside the application supporting natural language chat. Users ask questions, request insights, invoke actions. Generative help. Workflow summaries. Natural language queries against business data.">
+            <div class="top">
+              <div class="badge">Model 1</div>
+              <h4>Sidecar Copilot</h4>
+              <div class="sub">Conversational chat panel beside the app</div>
+            </div>
+            <div class="body">
+              <h6>Common capabilities</h6>
+              <ul>
+                <li>Generative help &amp; explanations</li>
+                <li>Workflow summaries</li>
+                <li>Natural language data queries</li>
+                <li>Action invocation via chat</li>
+              </ul>
+              <div class="when"><strong>Use when</strong>Users want to <em>ask</em> rather than navigate. Conversational over click-driven.</div>
+            </div>
+          </div>
+          <div class="exp e2" data-step
+            data-script="<em>Embedded Copilot</em>. Brings Copilot capabilities inside workspace pages or operational views. Contextual, in-app intelligence. Purchase order change analysis. Customer collections summaries. Demand planning insights. Supplier communication drafting.">
+            <div class="top">
+              <div class="badge">Model 2</div>
+              <h4>Embedded Copilot</h4>
+              <div class="sub">Contextual intelligence inside workspaces</div>
+            </div>
+            <div class="body">
+              <h6>Common capabilities</h6>
+              <ul>
+                <li>PO change analysis</li>
+                <li>Collections summaries</li>
+                <li>Demand planning insights</li>
+                <li>Supplier draft assistance</li>
+              </ul>
+              <div class="when"><strong>Use when</strong>Intelligence needs to <em>live in the form</em>. In-flow assistance for power users.</div>
+            </div>
+          </div>
+          <div class="exp e3" data-step
+            data-script="<em>External orchestration</em>. Agents interact <em>beyond</em> the application UI. Cross-application automations. Role-specific Copilots in Teams. Workflow routing. Automated notifications. The bridge that turns D365 into an orchestrator, not just an app.">
+            <div class="top">
+              <div class="badge">Model 3</div>
+              <h4>External Orchestration</h4>
+              <div class="sub">Beyond the UI — cross-app automation</div>
+            </div>
+            <div class="body">
+              <h6>Common capabilities</h6>
+              <ul>
+                <li>Cross-application workflows</li>
+                <li>Role-specific Copilots in Teams</li>
+                <li>Workflow routing</li>
+                <li>Automated notifications</li>
+              </ul>
+              <div class="when"><strong>Use when</strong>Process spans D365 and other systems. Triggered events, not user actions.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05 F&O CAPABILITIES -->
+      <section class="slide content-slide"
+        data-section="D365 Copilot Patterns"
+        data-script="<em>Capability map</em> for Finance, Supply Chain, and the cross-app capabilities. <em>Know these by name</em> — customers will ask which prebuilt features apply to their specific module. I'll bring up each domain.">
+        <div class="slide-num">05 / 22</div>
+        <h3 class="slide-h">Finance &amp; Supply Chain — <em>capability map</em></h3>
+        <p class="lead">The prebuilt AI capabilities ship with the modules. Recognize them by name. Customers expect their architect to know what's available out of the box.</p>
+        <div class="cap-matrix">
+          <div class="cap-col c1" data-step
+            data-script="<em>Finance-specific capabilities</em>. Collections coordinator summaries. Customer page summaries. Statement posting summaries. Opportunity and risk analysis. Daily-driver capabilities for finance teams.">
+            <div class="lab">DOMAIN 01 · FINANCE</div>
+            <h5>Finance Capabilities</h5>
+            <ul>
+              <li>Collections coordinator summaries</li>
+              <li>Customer page summaries</li>
+              <li>Statement posting summaries</li>
+              <li>Opportunity &amp; risk analysis</li>
+            </ul>
+          </div>
+          <div class="cap-col c2" data-step
+            data-script="<em>Supply Chain capabilities</em>. AI-augmented demand planning. Warehouse workload insights. Supplier communication agent. Change review for confirmed purchase orders. <em>The supply chain transformation set</em> — these are the highest-ROI capabilities in this chapter.">
+            <div class="lab">DOMAIN 02 · SUPPLY CHAIN</div>
+            <h5>Supply Chain Capabilities</h5>
+            <ul>
+              <li>AI-augmented demand planning</li>
+              <li>Warehouse workload insights</li>
+              <li>Supplier communication agent</li>
+              <li>PO change review (confirmed orders)</li>
+            </ul>
+          </div>
+          <div class="cap-col c3" data-step
+            data-script="<em>Cross-app capabilities</em>. Generative help across all modules. Enhanced feedback loops. Natural language data assistance. The shared infrastructure that benefits every D365 user.">
+            <div class="lab">DOMAIN 03 · CROSS-APP</div>
+            <h5>Cross-App Capabilities</h5>
+            <ul>
+              <li>Generative help everywhere</li>
+              <li>Enhanced feedback loops</li>
+              <li>Natural language data assistance</li>
+              <li>Shared grounding context</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 CUSTOMER SERVICE AI -->
+      <section class="slide content-slide"
+        data-section="D365 Copilot Patterns"
+        data-script="<em>Customer Service AI</em>. Three capability types. Agent Hub. Autonomous Service Agents. Copilot in Contact Center. The most mature AI surface in the D365 portfolio. I'll bring them up one at a time.">
+        <div class="slide-num">06 / 22</div>
+        <h3 class="slide-h">D365 Customer Service — <em>three AI capability types</em></h3>
+        <p class="lead">D365 Customer Service has the most mature AI portfolio — case management, autonomous service agents, contact center copilots. Three capability types serve different roles.</p>
+        <div class="cs-grid">
+          <div class="cs-card cs1" data-step
+            data-script="<em>Agent Hub</em>. Empowers admins and supervisors to adopt autonomous AI agents safely. Monitor their impact. The control plane — where governance happens for autonomous service workflows.">
+            <div class="lab">CAPABILITY 01</div>
+            <h4>Agent Hub</h4>
+            <p>Admin and supervisor control plane for adopting and monitoring autonomous AI agents.</p>
+            <h6>Used by</h6>
+            <ul>
+              <li>Admins enabling agents</li>
+              <li>Supervisors monitoring impact</li>
+              <li>Governance teams</li>
+            </ul>
+          </div>
+          <div class="cs-card cs2" data-step
+            data-script="<em>Autonomous Service Agents</em>. Customer Intent Agent — discovers intents from cases. Case Management Agent — automates create, update, resolve, close. Knowledge Management Agent — surfaces insights. Quality Evaluation Agent — manages quality. Four prebuilt autonomous agents that ship with the platform.">
+            <div class="lab">CAPABILITY 02</div>
+            <h4>Autonomous Service Agents</h4>
+            <p>Four prebuilt autonomous agents that ship with D365 Customer Service.</p>
+            <h6>The four agents</h6>
+            <ul>
+              <li>Customer Intent Agent</li>
+              <li>Case Management Agent</li>
+              <li>Knowledge Management Agent</li>
+              <li>Quality Evaluation Agent</li>
+            </ul>
+          </div>
+          <div class="cs-card cs3" data-step
+            data-script="<em>Copilot in Contact Center</em>. Real-time AI assistance to customer service representatives. Asks questions, composes emails, summarizes cases and conversations. Embedded or standalone — availability varies by capacity. The reps' daily-driver assistant.">
+            <div class="lab">CAPABILITY 03</div>
+            <h4>Copilot in Contact Center</h4>
+            <p>Real-time AI assistance for customer service representatives.</p>
+            <h6>Common features</h6>
+            <ul>
+              <li>Ask questions about case</li>
+              <li>Compose customer emails</li>
+              <li>Summarize cases &amp; calls</li>
+              <li>Embedded or standalone</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 07 QUIZ 1 -->
+      <section class="slide content-slide"
+        data-section="D365 Copilot Patterns"
+        data-script="Quick check.">
+        <div class="slide-num">07 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 1 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which scenario is best suited for <em>orchestrating Copilot AI features across multiple Dynamics 365 modules?</em></div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Copying text from one field to another</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Resolving a supplier issue involving purchase orders, inventory status, and planning data is the textbook orchestration scenario — it spans Finance, Supply Chain, and Procurement modules. The other three are single-action, single-module tasks. Orchestration earns its complexity only when a process actually crosses module boundaries."><span class="letter">B</span> Resolving a supplier issue involving purchase orders, inventory, and planning data</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> Editing a personal user preference</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Viewing a static dashboard</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 08 SECTION DIVIDER UNIT 2 -->
+      <section class="slide section-divider"
+        data-section="M365 Prebuilt Agents"
+        data-script="Unit two. <em>Microsoft 365 prebuilt agents.</em> The deepest catalog of pilot-ready agents. Microsoft ships them, you orchestrate them. Treat each one like a product — defined mission, guardrails, telemetry.">
+        <div class="slide-num">08 / 22</div>
+        <div class="label">UNIT TWO</div>
+        <h2>Microsoft 365<br><em>Prebuilt Agents</em></h2>
+        <div class="sub">Architecture · readiness checklist · 5-step design framework · catalog of pilot-ready agents. <em>Treat agents like products.</em></div>
+      </section>
+
+      <!-- 09 M365 ARCHITECTURE + READINESS CHECKLIST -->
+      <section class="slide content-slide"
+        data-section="M365 Prebuilt Agents"
+        data-script="<em>M365 Agent architecture at a glance.</em> Five blocks. User entry → orchestrator → grounding → tools → action. Plus the architect's readiness checklist underneath. I'll reveal the blocks then the checklist.">
+        <div class="slide-num">09 / 22</div>
+        <h3 class="slide-h">M365 Agent <em>architecture &amp; readiness</em></h3>
+        <p class="lead">Five-block architecture. Plus an eight-item readiness checklist that no agent should reach production without.</p>
+        <div class="arch-flow">
+          <div class="arch-row">
+            <div class="arch-block" data-step data-script="<em>Block 1 — User &amp; Entry Point</em>. The user interacts via Microsoft 365 apps, Copilot Chat, or Teams. Entry point matters — it determines context, identity, and permissions.">
+              <div class="lab">USER</div><h6>Entry Point</h6><p>M365 app · Copilot Chat · Teams</p>
+            </div>
+            <div class="arch-block b2" data-step data-script="<em>Block 2 — Orchestrator</em>. Plans steps, selects tools, maintains context. The agent's brain. The orchestrator is what makes Copilot agents <em>agentic</em> rather than just chatbots.">
+              <div class="lab">PLAN</div><h6>Orchestrator</h6><p>Plans steps · selects tools · maintains context</p>
+            </div>
+            <div class="arch-block b3" data-step data-script="<em>Block 3 — Grounding Data</em>. SharePoint, OneDrive, email, meetings, wikis. The agent's knowledge. Chapter 2's grounding rules apply directly here.">
+              <div class="lab">DATA</div><h6>Grounding</h6><p>SharePoint · OneDrive · email · meetings · wikis</p>
+            </div>
+            <div class="arch-block b4" data-step data-script="<em>Block 4 — Tools &amp; Skills</em>. Microsoft Graph, Power Automate, connectors. The agent's hands. Chapter 5's component anatomy lives in this block.">
+              <div class="lab">ACT</div><h6>Tools / Skills</h6><p>Graph · Power Automate · connectors</p>
+            </div>
+            <div class="arch-block b5" data-step data-script="<em>Block 5 — Action &amp; Output</em>. Document edits, workflow updates, status reports. Plus review and telemetry — human-in-the-loop, logs, KPIs, cost. <em>Telemetry isn't optional</em> — it's how you prove the agent is working.">
+              <div class="lab">OUTPUT</div><h6>Action &amp; Output</h6><p>Edits · workflows · review · telemetry</p>
+            </div>
+          </div>
+        </div>
+        <div class="checklist" data-step data-script="<em>The architect's readiness checklist</em>. Eight items. Business value, identity, data scope, actions, security, change control, measurement, support. <em>No agent reaches production without all eight signed off.</em>">
+          <h6>Architect's readiness checklist · all 8 required before production</h6>
+          <div class="cl-grid">
+            <div class="cl-item"><span class="chk">✓</span><span><strong>Business value</strong> · clear owner, target users, measurable outcome</span></div>
+            <div class="cl-item"><span class="chk">✓</span><span><strong>Identity &amp; access</strong> · runs-as model documented, least-privilege confirmed</span></div>
+            <div class="cl-item"><span class="chk">✓</span><span><strong>Data scope</strong> · grounding corpus enumerated &amp; sensitivity labeled</span></div>
+            <div class="cl-item"><span class="chk">✓</span><span><strong>Actions &amp; tools</strong> · failure paths and human approval points defined</span></div>
+            <div class="cl-item"><span class="chk">✓</span><span><strong>Security &amp; compliance</strong> · DLP, eDiscovery, auditability designed</span></div>
+            <div class="cl-item"><span class="chk">✓</span><span><strong>Change control</strong> · versioning, rollout rings, rollback, sunset criteria</span></div>
+            <div class="cl-item"><span class="chk">✓</span><span><strong>Measurement</strong> · adoption, quality, latency, cost, business KPIs</span></div>
+            <div class="cl-item"><span class="chk">✓</span><span><strong>Support</strong> · ownership, runbook, ethics review, adoption plan</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 5-STEP AGENT DESIGN FRAMEWORK -->
+      <section class="slide content-slide"
+        data-section="M365 Prebuilt Agents"
+        data-script="<em>Five-step agent design framework</em>. Microsoft's published process for designing prebuilt agents. <em>Each step gates the next</em> — don't skip ahead. I'll bring them up one at a time.">
+        <div class="slide-num">10 / 22</div>
+        <h3 class="slide-h">M365 agent design — <em>five steps</em></h3>
+        <p class="lead">Microsoft's five-step framework for taking M365 agents from idea to production. Sequential. Each step gates the next.</p>
+        <div class="framework">
+          <div class="fw-row">
+            <div class="fw-step s1" data-step data-script="<em>Step 1 — Frame the job to be done</em>. Describe recurring business outcomes — not tool steps. <em>'Generate weekly executive briefings'</em> not <em>'click these five buttons'</em>. Outcome focus prevents over-fitting to current tooling.">
+              <div class="num">1</div><h6>Frame the Job</h6><p>Recurring business outcomes — not tool steps</p>
+            </div>
+            <div class="fw-step s2" data-step data-script="<em>Step 2 — Map inputs, knowledge, actions</em>. Enumerate the grounding sources. List the tools. Identify the write operations. <em>Be exhaustive</em> — missing a knowledge source kills accuracy.">
+              <div class="num">2</div><h6>Map I/K/A</h6><p>Enumerate inputs · knowledge · tools · write ops</p>
+            </div>
+            <div class="fw-step s3" data-step data-script="<em>Step 3 — Define guardrails</em>. Who can invoke. Data scope. Approval triggers. Logging. Reversal. The behavioral envelope from Chapter 5 applied to M365 agents.">
+              <div class="num">3</div><h6>Define Guardrails</h6><p>Who · scope · approvals · logging · reversal</p>
+            </div>
+            <div class="fw-step s4" data-step data-script="<em>Step 4 — Prototype the critical path</em>. Narrow end-to-end slice. Test and iterate. <em>One workflow, all the way through</em>. Don't try to build all features in parallel.">
+              <div class="num">4</div><h6>Prototype</h6><p>Narrow end-to-end slice · test &amp; iterate</p>
+            </div>
+            <div class="fw-step s5" data-step data-script="<em>Step 5 — Operationalize</em>. Add telemetry, quality checks, cost controls. Move from pilot to production. The graduation step. <em>Most agents stall here</em> because telemetry was never planned.">
+              <div class="num">5</div><h6>Operationalize</h6><p>Telemetry · quality · cost · pilot to prod</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11 PREBUILT AGENT CATALOG -->
+      <section class="slide content-slide"
+        data-section="M365 Prebuilt Agents"
+        data-script="<em>The pilot-ready agent catalog</em>. Six representative examples from Microsoft's published catalog. Recognize the shape — purpose, entry point, guardrails, KPIs. <em>Use this catalog to inspire customer-specific agents</em>. I'll bring them up one at a time.">
+        <div class="slide-num">11 / 22</div>
+        <h3 class="slide-h">Pilot-ready <em>M365 agent catalog</em></h3>
+        <p class="lead">Microsoft publishes a catalog of pilot-ready agents. These six represent the shape — every M365 agent should follow this template: purpose, entry point, inputs, guardrails, KPIs.</p>
+        <div class="catalog">
+          <div class="cat-card k1" data-step
+            data-script="<em>Executive Briefing Pack Generator</em>. Assembles executive briefing packs with latest updates, metrics, highlights. Entry — Copilot in Word, Copilot Chat. Guardrails — human approval before publishing, labeled content only. KPI — time saved, leadership satisfaction.">
+            <div class="icon">📊</div>
+            <div class="body">
+              <h5>Executive Briefing Pack Generator</h5>
+              <p>Assembles briefing packs with metrics, highlights, OKRs. Word + Copilot Chat entry.</p>
+              <span class="kpi">Time saved · alignment to messaging</span>
+            </div>
+          </div>
+          <div class="cat-card k2" data-step
+            data-script="<em>Portfolio Risk Insights Analyzer</em>. Consolidated insights on project portfolios. Risks, blockers, dependencies, resource pressures. Entry — Copilot in Excel, M365 Chat. Guardrails — anonymized data, no write-backs without approval.">
+            <div class="icon">⚠</div>
+            <div class="body">
+              <h5>Portfolio Risk Insights Analyzer</h5>
+              <p>Consolidates project portfolio risks, blockers, dependencies. Excel + Chat entry.</p>
+              <span class="kpi">Risk classification accuracy · time saved</span>
+            </div>
+          </div>
+          <div class="cat-card k3" data-step
+            data-script="<em>Compliance-Aware Content Redactor</em>. Detects and masks sensitive information before sharing externally. Entry — Word add-in, Teams Chat extension. Guardrails — strict non-writeback unless confirmed, audit trail required, cannot override sensitivity labels.">
+            <div class="icon">🛡</div>
+            <div class="body">
+              <h5>Compliance-Aware Content Redactor</h5>
+              <p>Detects and masks sensitive info before external sharing. Word + Teams entry.</p>
+              <span class="kpi">Incidents prevented · false positive ratio</span>
+            </div>
+          </div>
+          <div class="cat-card k4" data-step
+            data-script="<em>Content Localization Workpack Builder</em>. Region-specific content packages with terminology locks and cultural notes. Entry — Copilot in Word + Power Automate. Guardrails — human linguist review required, no automated publishing.">
+            <div class="icon">🌐</div>
+            <div class="body">
+              <h5>Content Localization Workpack Builder</h5>
+              <p>Region-specific localization packages with terminology locks. Word + Automate entry.</p>
+              <span class="kpi">Cycle time reduction · rework decrease</span>
+            </div>
+          </div>
+          <div class="cat-card k5" data-step
+            data-script="<em>Research Synthesis &amp; Brief Creator</em>. Compiles neutral research briefs from internal notes and approved sources. Entry — Copilot Chat, Word research view. Guardrails — must summarize uncertainty, controversial topics need human review.">
+            <div class="icon">✎</div>
+            <div class="body">
+              <h5>Research Synthesis &amp; Brief Creator</h5>
+              <p>Neutral research briefs from internal notes + approved sources. Chat + Word entry.</p>
+              <span class="kpi">Synthesis time · reviewer acceptance</span>
+            </div>
+          </div>
+          <div class="cat-card k6" data-step
+            data-script="<em>Telemetry to Insights Report Generator</em>. Transforms Copilot adoption telemetry into monthly slide-ready insights. Entry — Excel and PowerPoint. Guardrails — anonymized only, no user-level insights, visuals require human approval.">
+            <div class="icon">📈</div>
+            <div class="body">
+              <h5>Telemetry to Insights Report Generator</h5>
+              <p>Adoption telemetry → monthly insights deck. Excel + PowerPoint entry.</p>
+              <span class="kpi">Time to deck · insights adopted</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12 QUIZ 2 -->
+      <section class="slide content-slide"
+        data-section="M365 Prebuilt Agents"
+        data-script="Quick check on production-ready agents.">
+        <div class="slide-num">12 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 2 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which statement best reflects a <em>production-ready agent?</em></div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> It can answer questions on any corporate topic</button>
+            <button class="quiz-opt" data-correct="true" data-explain="A production-ready agent has a defined mission, the minimum tools to act, guardrails for reviewability, and telemetry for outcomes. This is the four-pillar test from Microsoft's published guidance. Universal scope creates ambiguity. Largest model is a vanity metric. Prompting for every action defeats the value of agents. Only the four-pillar definition reflects what enterprise governance teams actually approve."><span class="letter">B</span> It has a defined mission, minimum tools, guardrails for reviewability, and telemetry for outcomes</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> It uses the largest possible model to maximize quality</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> It prompts for every action to ensure control</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 13 SECTION DIVIDER UNIT 3 -->
+      <section class="slide section-divider"
+        data-section="M365 Sales/Service Config"
+        data-script="Unit three. <em>Configuring Microsoft 365 Copilot for Sales and Service.</em> Two specific configurations. Different data prerequisites, different workflows. Architecture-first approach with data sources, access controls, and ecosystem integration.">
+        <div class="slide-num">13 / 22</div>
+        <div class="label">UNIT THREE</div>
+        <h2>Configure M365 Copilot<br>for <em>Sales &amp; Service</em></h2>
+        <div class="sub">Two configurations. Different data prerequisites. Different workflows. Same architecture-first approach — data sources, field mapping, governance, KPIs.</div>
+      </section>
+
+      <!-- 14 SALES + SERVICE CONFIG -->
+      <section class="slide content-slide"
+        data-section="M365 Sales/Service Config"
+        data-script="<em>Sales and Service configuration side by side</em>. Same pattern, different data. <em>Field mapping is the single most important step</em> in either config — without it, Copilot grounds on wrong fields and gives wrong answers. I'll bring up Sales then Service.">
+        <div class="slide-num">14 / 22</div>
+        <h3 class="slide-h">Sales vs. Service — <em>configuration workflows</em></h3>
+        <p class="lead">Same architecture pattern, different data scope. Configuration is sequential. Field mapping is the make-or-break step in both.</p>
+        <div class="config-grid">
+          <div class="config-col sales" data-step
+            data-script="<em>Copilot for Sales</em>. Five-step configuration. Enable Copilot. Connect CRM. <em>Map opportunity, account, activity fields</em> — this is critical, missing fields means wrong answers. Define least-privilege permissions. Configure content sources for email summaries, opportunity reviews, proposals. KPIs — email/meeting prep time saved, lead-to-opportunity speed, proposal quality.">
+            <div class="top">
+              <h4>Copilot for Sales</h4>
+              <div class="sub">Configuration workflow + KPIs</div>
+            </div>
+            <div class="body">
+              <h6>Configuration steps</h6>
+              <ol>
+                <li>Enable Copilot for Sales (M365 + D365)</li>
+                <li>Connect CRM via approved connectors</li>
+                <li><strong>Map opportunity, account, activity fields</strong></li>
+                <li>Define least-privilege permissions</li>
+                <li>Configure content sources (email, opportunity, proposal, meeting prep)</li>
+              </ol>
+              <div class="kpi-strip">
+                <strong>Sales KPIs</strong>
+                Email/meeting prep time saved · lead-to-opportunity speed · proposal quality consistency.
+              </div>
+            </div>
+          </div>
+          <div class="config-col service" data-step
+            data-script="<em>Copilot for Service</em>. Five-step configuration. Connect case management engine. <em>Validate knowledge article repositories</em> — structure, quality, labeling. Enable Copilot actions for summarization, knowledge lookup, guided resolution. Integrate Power Automate for escalation and routing. Establish role-based access. KPIs — case handle time, first-contact resolution rate, knowledge retrieval speed.">
+            <div class="top">
+              <h4>Copilot for Service</h4>
+              <div class="sub">Configuration workflow + KPIs</div>
+            </div>
+            <div class="body">
+              <h6>Configuration steps</h6>
+              <ol>
+                <li>Connect case management engine (D365 CS or equivalent)</li>
+                <li><strong>Validate knowledge article repositories</strong> — structure, quality, labels</li>
+                <li>Enable Copilot actions (summarize · lookup · guide)</li>
+                <li>Integrate Power Automate (escalation · routing · approvals)</li>
+                <li>Establish role-based access for sensitive actions</li>
+              </ol>
+              <div class="kpi-strip">
+                <strong>Service KPIs</strong>
+                Case handle time · first-contact resolution · knowledge retrieval speed · article accuracy.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 15 QUIZ 3 -->
+      <section class="slide content-slide"
+        data-section="M365 Sales/Service Config"
+        data-script="Quick check.">
+        <div class="slide-num">15 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 3 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which is essential for configuring <em>Microsoft 365 Copilot for Sales?</em></div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Allowing unrestricted access to all CRM data</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Mapping opportunity and account fields is the core grounding step — without it, Copilot grounds on wrong fields and produces wrong answers. Unrestricted access violates Chapter 5's privacy and accountability tenets. Local-only storage breaks Graph access and freshness. Disabling sensitivity labels removes the safety net Copilot for Sales is designed to respect."><span class="letter">B</span> Mapping opportunity and account fields for grounding</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> Storing sales documents only on local drives</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Disabling sensitivity labels</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 16 SECTION DIVIDER UNIT 4 -->
+      <section class="slide section-divider"
+        data-section="Power Platform AI"
+        data-script="Unit four. <em>Power Platform AI features.</em> Four components. AI Hub, Copilot, AI Builder, Copilot Studio. Pick the right one for the job — over-reaching for Copilot Studio when AI Builder would do is a common mistake.">
+        <div class="slide-num">16 / 22</div>
+        <div class="label">UNIT FOUR</div>
+        <h2>Power Platform<br><em>AI Features</em></h2>
+        <div class="sub">Four components: AI Hub · Copilot · AI Builder · Copilot Studio. Match the component to the scenario — over-reaching is the most common mistake.</div>
+      </section>
+
+      <!-- 17 POWER PLATFORM AI COMPONENTS + FEATURE MATRIX -->
+      <section class="slide content-slide"
+        data-section="Power Platform AI"
+        data-script="<em>Four Power Platform AI components</em>. Plus a feature selection matrix at the bottom showing which scenarios each one fits. I'll bring up the components first, then the matrix.">
+        <div class="slide-num">17 / 22</div>
+        <h3 class="slide-h">Power Platform AI — <em>components &amp; selection</em></h3>
+        <p class="lead">Four components, four sweet spots. Don't reach for Copilot Studio when AI Builder solves it in a third the effort.</p>
+        <div class="pp-grid">
+          <div class="pp-card pp1" data-step
+            data-script="<em>AI Hub</em>. Centralizes AI features across Power Apps, Power Automate, Copilot Studio. The control plane — manage models, connectors, copilots in a governed environment. Where governance teams live.">
+            <div class="icon">⊞</div>
+            <h4>AI Hub</h4>
+            <p>Central orchestration for AI across Power Platform.</p>
+            <ul>
+              <li>Manage models &amp; copilots</li>
+              <li>Governance &amp; monitoring</li>
+              <li>Guided build paths</li>
+            </ul>
+          </div>
+          <div class="pp-card pp2" data-step
+            data-script="<em>Copilot in Power Platform</em>. Natural-language creation of apps, flows, tables, controls, logic. The maker's daily-driver. Generate screens from descriptions. Update Dataverse with conversational input.">
+            <div class="icon">✎</div>
+            <h4>Copilot in Power Platform</h4>
+            <p>NL-driven creation of apps, flows, tables, logic for makers.</p>
+            <ul>
+              <li>Generate app screens</li>
+              <li>Modify schemas conversationally</li>
+              <li>Build flows from intent</li>
+            </ul>
+          </div>
+          <div class="pp-card pp3" data-step
+            data-script="<em>AI Builder</em>. Prebuilt and customizable AI models. Document processing, classification, extraction, sentiment, prediction. <em>The fast path</em> for structured AI workloads — works inside flows and apps without separate orchestration.">
+            <div class="icon">⚛</div>
+            <h4>AI Builder</h4>
+            <p>Prebuilt and custom AI models — classification, extraction, prediction.</p>
+            <ul>
+              <li>Document processing</li>
+              <li>Sentiment &amp; classification</li>
+              <li>Custom prediction models</li>
+            </ul>
+          </div>
+          <div class="pp-card pp4" data-step
+            data-script="<em>Copilot Studio</em>. Low-code conversational agent creation with extensibility into M365 and external systems. The full agent platform — Chapter 5's playground. Use for conversational scenarios specifically.">
+            <div class="icon">💬</div>
+            <h4>Copilot Studio</h4>
+            <p>Low-code conversational agent creation with deep extensibility.</p>
+            <ul>
+              <li>Multi-turn dialog</li>
+              <li>External data &amp; APIs</li>
+              <li>Teams + M365 surfaces</li>
+            </ul>
+          </div>
+        </div>
+        <div data-step data-script="<em>Feature selection matrix</em>. Pick the right component for the scenario. Text generation — Copilot or Copilot Studio. Prediction or document extraction — AI Builder. Conversational agents — Copilot Studio only. AI Hub spans them all as the control plane.">
+          <div class="feat-matrix" style="margin-top:14px">
+            <div class="fm-row head">
+              <div>Scenario</div>
+              <div>Copilot</div>
+              <div>AI Builder</div>
+              <div>AI Hub</div>
+              <div>Copilot Studio</div>
+            </div>
+            <div class="fm-row">
+              <div>Text generation</div>
+              <div class="fm-cell yes">✓</div>
+              <div class="fm-cell no">—</div>
+              <div class="fm-cell yes">✓</div>
+              <div class="fm-cell yes">✓</div>
+            </div>
+            <div class="fm-row">
+              <div>Prediction</div>
+              <div class="fm-cell no">—</div>
+              <div class="fm-cell yes">✓</div>
+              <div class="fm-cell yes">✓</div>
+              <div class="fm-cell no">—</div>
+            </div>
+            <div class="fm-row">
+              <div>Document extraction</div>
+              <div class="fm-cell no">—</div>
+              <div class="fm-cell yes">✓</div>
+              <div class="fm-cell yes">✓</div>
+              <div class="fm-cell no">—</div>
+            </div>
+            <div class="fm-row">
+              <div>Conversational agent</div>
+              <div class="fm-cell no">—</div>
+              <div class="fm-cell no">—</div>
+              <div class="fm-cell no">—</div>
+              <div class="fm-cell yes">✓</div>
+            </div>
+            <div class="fm-row">
+              <div>Automation creation</div>
+              <div class="fm-cell yes">✓</div>
+              <div class="fm-cell no">—</div>
+              <div class="fm-cell yes">✓</div>
+              <div class="fm-cell no">—</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 18 QUIZ 4 -->
+      <section class="slide content-slide"
+        data-section="Power Platform AI"
+        data-script="Last knowledge check.">
+        <div class="slide-num">18 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 4 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which Power Platform component provides centralized access to <em>AI models, copilots, and governance tools?</em></div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Dataverse</button>
+            <button class="quiz-opt" data-correct="true" data-explain="AI Hub is the centralized governance and orchestration plane for Power Platform AI. It connects models, copilots, and connectors and provides monitoring, security, and guided build paths. Dataverse is the data layer underneath. Power Pages is for site building. There is no 'AI Connector Library' as a distinct product — connectors live within other components."><span class="letter">B</span> AI Hub</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> Power Pages</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> AI Connector Library</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 19 SECTION DIVIDER UNIT 5 -->
+      <section class="slide section-divider"
+        data-section="F&amp;O Knowledge"
+        data-script="Last unit. <em>F&amp;O knowledge sources and interoperability.</em> How to extend the F&amp;O Copilot agent with external knowledge bases, custom plugins, and structured business context.">
+        <div class="slide-num">19 / 22</div>
+        <div class="label">UNIT FIVE</div>
+        <h2>F&amp;O <em>Knowledge</em><br>&amp; Interoperability</h2>
+        <div class="sub">Plugins for actions · external knowledge for context · 5-step process for adding knowledge to in-app help. The extension layer for D365 Finance &amp; Operations.</div>
+      </section>
+
+      <!-- 20 F&O INTEROP + KNOWLEDGE PROCESS -->
+      <section class="slide content-slide"
+        data-section="F&amp;O Knowledge"
+        data-script="<em>F&amp;O interoperability and the 5-step knowledge process</em>. Two parts. First — what knowledge sources and plugins extend the F&amp;O agent. Then — the published 5-step process for adding knowledge to in-app help.">
+        <div class="slide-num">20 / 22</div>
+        <h3 class="slide-h">F&amp;O agent — <em>extend with knowledge &amp; plugins</em></h3>
+        <p class="lead">F&amp;O ships with a Copilot agent. Extend it with plugins (for actions) and external knowledge sources (for context). Then govern the lifecycle.</p>
+        <div class="interop-grid">
+          <div class="interop-card left" data-step
+            data-script="<em>External knowledge sources</em>. SharePoint policies. CRM data. Procurement portals. Azure SQL custom datastores. Compliance rules. <em>Combine multiple sources</em> in a single response — F&amp;O data plus SharePoint policy plus Azure SQL custom store.">
+            <h5>External knowledge sources</h5>
+            <p>What gets <em>connected</em> to the F&amp;O agent for context.</p>
+            <h6>Common sources</h6>
+            <ul>
+              <li>SharePoint libraries · policies · procedures</li>
+              <li>CRM, HR, procurement portals</li>
+              <li>Azure SQL · Dataverse · Cognitive Search</li>
+              <li>Compliance rules · pricing guidelines</li>
+            </ul>
+          </div>
+          <div class="interop-card right" data-step
+            data-script="<em>Copilot client plugins</em>. Custom actions, structured responses, business logic enforcement. The agent can write back to F&amp;O — update vendor terms, create records, trigger workflows. <em>Plugins are required when the agent needs to take action</em>, not just answer questions.">
+            <h5>Copilot client plugins</h5>
+            <p>What enables the agent to <em>take action</em> — write, update, trigger.</p>
+            <h6>Plugin capabilities</h6>
+            <ul>
+              <li>Define custom actions</li>
+              <li>Provide structured responses</li>
+              <li>Enforce business logic</li>
+              <li>Support multi-step workflows</li>
+            </ul>
+          </div>
+        </div>
+        <div class="interop-mapping" data-step
+          data-script="<em>Mapping business questions to knowledge sources</em>. The architect's daily exercise. Vendor credit limit goes to F&amp;O data. Compliance certificate goes to SharePoint. Update payment terms requires a plugin action — that's the giveaway that something writes to F&amp;O.">
+          <h6>Mapping business questions to sources</h6>
+          <div class="mapping-row">
+            <div class="q">"What is the current vendor credit limit?"</div>
+            <div class="arrow">→</div>
+            <div class="src">F&amp;O data</div>
+          </div>
+          <div class="mapping-row">
+            <div class="q">"What is the vendor's latest compliance certificate?"</div>
+            <div class="arrow">→</div>
+            <div class="src">SharePoint</div>
+          </div>
+          <div class="mapping-row">
+            <div class="q">"Can you update the vendor's payment terms?"</div>
+            <div class="arrow">→</div>
+            <div class="src">Plugin action</div>
+          </div>
+        </div>
+        <div data-step data-script="<em>The 5-step knowledge process</em> for adding knowledge sources to D365 in-app help. Prepare. Ingest via Copilot Studio. Test. Publish. Govern. <em>Step 1 — prepare — is non-negotiable</em>. Validate accuracy and apply sensitivity labels before any upload.">
+          <div class="framework" style="margin-top:14px">
+            <div class="fw-row">
+              <div class="fw-step s1"><div class="num">1</div><h6>Prepare</h6><p>Validate, label, apply Microsoft style</p></div>
+              <div class="fw-step s2"><div class="num">2</div><h6>Ingest</h6><p>Upload to Copilot Studio · wait for Ready</p></div>
+              <div class="fw-step s3"><div class="num">3</div><h6>Test</h6><p>Scenario questions · validate grounding</p></div>
+              <div class="fw-step s4"><div class="num">4</div><h6>Publish</h6><p>Make available to users · early feedback</p></div>
+              <div class="fw-step s5"><div class="num">5</div><h6>Govern</h6><p>Versioning · DLP · quarterly review</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 21 SCENARIO -->
+      <section class="slide content-slide"
+        data-section="Wrap"
+        data-script="<em>Apply Chapter 7 end-to-end.</em> Pairs work through this orchestration challenge. <em>Listen for who jumps to 'build a custom Copilot Studio agent'</em> when prebuilt agents would do — push back hard. Chapter 7 is about leveraging what Microsoft already ships.">
+        <div class="slide-num">21 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Scenario <em>discussion</em></h3>
+        <p class="lead" style="margin-bottom:14px">Choose the right mix of prebuilt agents and configurations. Defend your reasoning.</p>
+        <div class="scenario">
+          <div class="tag">Scenario · Pair Discussion</div>
+          <h3>Northwind Manufacturing wants AI across the enterprise</h3>
+          <div class="quote">"Northwind has 4,000 employees. They run D365 Finance, D365 Supply Chain, D365 Customer Service, and Microsoft 365. Sales reps want help with proposals (in Outlook) and CRM updates. Customer service has 200 agents wanting case summarization and sentiment-aware routing. Finance team wants help with collections and statement summaries. Procurement wants vendor compliance lookups that combine F&amp;O data with SharePoint contracts. Project deadline: 12 weeks. Budget is tight."</div>
+          <div class="prompts">
+            <h5>Discuss with your partner</h5>
+            <ul>
+              <li>Which prebuilt D365 capabilities apply directly to each business team? Which experience model — sidecar, embedded, external?</li>
+              <li>Sales reps need help in Outlook — which M365 Copilot configuration solves this? What are the data prerequisites?</li>
+              <li>Procurement vendor lookups span F&amp;O + SharePoint. What's the right architecture — plugins, knowledge sources, or both?</li>
+              <li>For a 12-week timeline + tight budget, what's the right mix of prebuilt vs Copilot Studio extension vs custom Foundry?</li>
+            </ul>
+          </div>
+          <button class="reveal-btn" id="revealAnswer">Reveal Discussion Points →</button>
+          <div class="answer-panel" id="answerPanel">
+            <div class="ap-label">Guide · suggested points</div>
+            <div class="ap-row">
+              <div class="ap-q">Prebuilt D365 capability mapping</div>
+              <div class="ap-a">
+                <span><strong>Customer Service:</strong> Agent Hub + autonomous Service Agents (Customer Intent + Case Management) + Copilot in Contact Center for embedded summarization. Sidecar + embedded models.</span>
+                <span><strong>Finance:</strong> Collections coordinator summaries, customer page summaries, statement posting summaries. Embedded model — lives inside the Finance workspaces.</span>
+                <span><strong>Supply Chain:</strong> Supplier communication agent + AI-augmented demand planning. Embedded + external orchestration for cross-system supplier comms.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Sales reps in Outlook — M365 Copilot for Sales</div>
+              <div class="ap-a">
+                <span><strong>Configuration:</strong> Enable Copilot for Sales connecting M365 + D365. Map opportunity, account, activity fields. Define seller-role least-privilege permissions.</span>
+                <span><strong>Data prerequisites:</strong> Validate CRM data is connected and synchronized. Sensitivity labels on sales documents in OneDrive/SharePoint. Standardized opportunity/account/contact fields.</span>
+                <span><strong>Deliverable:</strong> Email summarization, opportunity review, proposal drafting, meeting prep — all in Outlook.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Procurement vendor lookups — both knowledge sources AND plugins</div>
+              <div class="ap-a">
+                <span><strong>Knowledge sources:</strong> SharePoint contract library connected as external knowledge source to F&amp;O agent.</span>
+                <span><strong>Plugins:</strong> Required if procurement wants to <em>update</em> vendor terms — write-back operations always need a plugin.</span>
+                <span><strong>Combined response pattern:</strong> "Vendor X is approved in F&amp;O (data) and their compliance certificate (SharePoint) expires in 30 days. Update payment terms?" → plugin action.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">12-week / tight budget — heavy prebuilt, minimal Copilot Studio, no Foundry</div>
+              <div class="ap-a">
+                <span><strong>Prebuilt first (~80% of value):</strong> All D365 prebuilt agents + M365 Copilot for Sales + M365 Copilot for Service. These ship configured — weeks of effort, not months.</span>
+                <span><strong>Copilot Studio extension (~15%):</strong> Custom topic for procurement combined-source query. Custom plugin for vendor term updates.</span>
+                <span><strong>Foundry custom (0%):</strong> Skip. None of the indicators hit strongly enough — domain isn't specialized, decisions aren't safety-critical, no sovereignty mandate.</span>
+                <span><strong>The architect's job:</strong> Defend prebuilt-first against the inevitable internal voice that says "let's just build it."</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 22 RECAP -->
+      <section class="slide content-slide"
+        data-section="Wrap"
+        data-script="Final recap. Six things to take into Chapter 8. I'll bring them up one at a time.">
+        <div class="slide-num">22 / 22</div>
+        <h3 class="slide-h">Chapter 7 — <em>key takeaways</em></h3>
+        <p class="lead">Six things to carry forward into Chapter 8, where we cover analyzing, monitoring, and tuning AI solutions.</p>
+        <div class="recap">
+          <div class="recap-list">
+            <div class="recap-item" data-step
+              data-script="One — three D365 AI experience models. Sidecar, embedded, external orchestration. Production deployments combine all three.">
+              <div class="check">1</div><div class="text">D365 — <em>3 experience models</em>: Sidecar (chat) · Embedded (in-form) · External (cross-app). Combine in production.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Two — Customer Service has the most mature AI portfolio. Agent Hub plus four autonomous service agents plus Copilot in Contact Center.">
+              <div class="check">2</div><div class="text">D365 Customer Service — <em>Agent Hub</em> + 4 autonomous agents + Copilot in Contact Center. Most mature surface.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Three — M365 prebuilt agents follow the architect's readiness checklist. Eight items. No agent reaches production without all eight.">
+              <div class="check">3</div><div class="text">M365 agents — <em>8-item readiness checklist</em>. Business value · identity · data · actions · security · change · measurement · support.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Four — five-step agent design framework. Frame the job. Map inputs/knowledge/actions. Define guardrails. Prototype. Operationalize.">
+              <div class="check">4</div><div class="text">M365 agent design — <em>5 steps</em>: Frame job · Map I/K/A · Define guardrails · Prototype · Operationalize.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Five — Copilot for Sales and Service. Field mapping is the make-or-break step. Map opportunity, account, activity fields for Sales. Validate knowledge article repos for Service.">
+              <div class="check">5</div><div class="text">M365 Sales/Service — <em>field mapping is critical</em>. Sales: opportunity/account/activity. Service: validated knowledge repos.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Six — Power Platform AI has four components. AI Hub for governance. Copilot for natural-language creation. AI Builder for prediction and extraction. Copilot Studio for conversational agents. <em>Match component to scenario</em>. That's Chapter 7. Onwards to Chapter 8 — analyzing, monitoring, and tuning.">
+              <div class="check">6</div><div class="text">Power Platform — <em>AI Hub</em> (govern) · <em>Copilot</em> (create) · <em>AI Builder</em> (predict/extract) · <em>Copilot Studio</em> (chat). Match to scenario.</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:18px;text-align:center;font-size:18px;color:var(--copilot);font-weight:600">
+          → Continue to Chapter 8: Analyze, Monitor, and Tune
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="notes-panel" id="notesPanel">
+    <div class="label">📖 Read aloud · notes <span class="step-tag" id="stepTag"></span></div>
+    <div class="script" id="notesScript">Welcome script will appear here.</div>
+  </div>
+
+
+
+  <div class="float-hint" id="hint">← → to advance step-by-step · T for notes</div>
+</div>
+
+<script>
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0; let notesOpen = false;
+  const counter = document.getElementById('counter');
+  const progressFill = document.getElementById('progressFill');
+  const notesPanel = document.getElementById('notesPanel');
+  const notesScript = document.getElementById('notesScript');
+  const stepTag = document.getElementById('stepTag');
+  const sectionLabel = document.getElementById('sectionLabel');
+  const stepPill = document.getElementById('stepPill');
+  const stepIndicator = document.getElementById('stepIndicator');
+  const notesToggle = document.getElementById('notesToggle');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const hint = document.getElementById('hint');
+  function getSteps(s){return Array.from(s.querySelectorAll('[data-step]'));}
+  function getRevealed(s){return Array.from(s.querySelectorAll('[data-step].revealed'));}
+  function updateScript(text, stepInfo){
+    notesScript.classList.add('fading');
+    setTimeout(()=>{ notesScript.innerHTML = text || ''; stepTag.textContent = stepInfo || ''; notesScript.classList.remove('fading'); },180);
+  }
+  function updateStepIndicator(slide){
+    const steps = getSteps(slide); const revealed = getRevealed(slide);
+    if(steps.length>0 && revealed.length<steps.length){ stepIndicator.classList.add('show'); stepPill.style.display='inline-block'; stepPill.textContent = `Step ${revealed.length}/${steps.length}`; }
+    else if(steps.length>0){ stepIndicator.classList.remove('show'); stepPill.style.display='inline-block'; stepPill.textContent = `${steps.length}/${steps.length}`; }
+    else { stepIndicator.classList.remove('show'); stepPill.style.display='none'; }
+  }
+  function showSlide(i, revealAll){
+    if(i<0||i>=total) return;
+    slides[current].classList.remove('active');
+    getSteps(slides[current]).forEach(el=>el.classList.remove('revealed'));
+    current = i;
+    const slide = slides[current]; slide.classList.add('active'); slide.scrollTop = 0;
+    if(revealAll){ getSteps(slide).forEach(el=>el.classList.add('revealed')); }
+    counter.textContent = (current+1)+' / '+total;
+    progressFill.style.width = ((current+1)/total*100)+'%';
+    sectionLabel.textContent = slide.dataset.section || '';
+    if(revealAll){ const steps = getSteps(slide); const last = steps[steps.length-1]; if(last && last.dataset.script) updateScript(last.dataset.script, `Step ${steps.length}/${steps.length}`); else updateScript(slide.dataset.script, ''); } else { updateScript(slide.dataset.script, ''); }
+    updateStepIndicator(slide);
+    prevBtn.disabled = (current===0 && getRevealed(slide).length===0);
+    nextBtn.disabled = (current===total-1 && (getSteps(slide).length===0 || getRevealed(slide).length===getSteps(slide).length));
+  }
+  function next(){
+    const slide = slides[current]; const steps = getSteps(slide); const revealed = getRevealed(slide);
+    if(revealed.length<steps.length){ const idx = revealed.length; const el = steps[idx]; el.classList.add('revealed'); if(el.dataset.script) updateScript(el.dataset.script, `Step ${idx+1}/${steps.length}`); updateStepIndicator(slide); prevBtn.disabled=false; if(revealed.length+1===steps.length && current===total-1) nextBtn.disabled=true; }
+    else if(current<total-1){ showSlide(current+1, false); }
+  }
+  function prev(){
+    const slide = slides[current]; const revealed = getRevealed(slide);
+    if(revealed.length>0){ const last = revealed[revealed.length-1]; last.classList.remove('revealed'); const remaining = getRevealed(slide); if(remaining.length>0){ const r = remaining[remaining.length-1]; const total = getSteps(slide).length; updateScript(r.dataset.script, `Step ${remaining.length}/${total}`); } else { updateScript(slide.dataset.script, ''); } updateStepIndicator(slide); nextBtn.disabled=false; }
+    else if(current>0){ showSlide(current-1, true); }
+  }
+  function toggleNotes(){ notesOpen = !notesOpen; notesPanel.classList.toggle('open', notesOpen); notesToggle.classList.toggle('active', notesOpen); }
+  prevBtn.addEventListener('click', prev); nextBtn.addEventListener('click', next); notesToggle.addEventListener('click', toggleNotes);
+  document.addEventListener('keydown',(e)=>{ if(e.target.matches('input,textarea')) return; if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();} else if(e.key==='ArrowLeft'){e.preventDefault();prev();} else if(e.key==='t'||e.key==='T'){e.preventDefault();toggleNotes();} else if(e.key==='Home'){e.preventDefault();showSlide(0,false);} else if(e.key==='End'){e.preventDefault();showSlide(total-1,true);} });
+  document.querySelectorAll('.quiz-opt').forEach(btn=>{ btn.addEventListener('click',()=>{ const wrap = btn.closest('.quiz-wrap'); const opts = wrap.querySelectorAll('.quiz-opt'); const explain = wrap.querySelector('.quiz-explain'); opts.forEach(o=>{ if(o.dataset.correct==='true') o.classList.add('correct'); else o.classList.add('wrong'); }); const correctOpt = wrap.querySelector('.quiz-opt[data-correct="true"]'); if(correctOpt && explain){ explain.querySelector('p').textContent = correctOpt.dataset.explain || ''; explain.classList.add('show'); } }); });
+  const revealBtn = document.getElementById('revealAnswer'); const answerPanel = document.getElementById('answerPanel');
+  if(revealBtn && answerPanel){ revealBtn.addEventListener('click',()=>{ answerPanel.classList.add('show'); revealBtn.classList.add('shown'); }); }
+  setTimeout(()=>{hint.classList.add('show');},800); setTimeout(()=>{hint.classList.remove('show');},5500);
+  showSlide(0,false);
+})();
+</script>
+</body>
+</html>

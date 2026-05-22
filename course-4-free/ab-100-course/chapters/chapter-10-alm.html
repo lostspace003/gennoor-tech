@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 10 — Design the ALM Process for AI-Powered Business Solutions · Gennoor Tech</title>
+<style>
+:root{
+  --bg:#FAFAFA; --paper:#FFFFFF;
+  --ink:#201F1E; --ink-soft:#605E5C; --ink-mute:#8A8886;
+  --line:#EDEBE9; --line-soft:#F3F2F1;
+  --ms-blue:#2563EB; --ms-blue-deep:#1D4ED8; --ms-navy:#0C1426;
+  --ms-cyan:#60A5FA; --ms-cyan-deep:#1E40AF;
+  --copilot:#F59E0B; --copilot-light:#FCD34D;
+  --ms-yellow:#F59E0B; --ms-green:#107C10; --ms-red:#D13438; --ms-orange:#F97316;
+  --logo-red:#2563EB; --logo-green:#2563EB; --logo-blue:#F59E0B; --logo-yellow:#F59E0B;
+  --notes-bg:#0C1426; --notes-text:#FFFFFF; --notes-accent:#F59E0B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;font-size:19px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.app{position:fixed;inset:0;display:flex;flex-direction:column}
+.topbar{height:56px;background:var(--ms-navy);color:#FFFFFF;display:flex;align-items:center;padding:0 24px;gap:18px;border-bottom:1px solid rgba(255,255,255,.06);z-index:10}
+.topbar .brand-mark{width:30px;height:30px;flex-shrink:0;display:block}
+.topbar .brand-lockup{display:flex;align-items:center;gap:10px;text-decoration:none;color:#FFFFFF;flex-shrink:0}
+.topbar .brand-text{display:flex;flex-direction:column;line-height:1.1}
+.topbar .brand-name{font-size:18px;font-weight:600;letter-spacing:.3px;color:#FFFFFF}
+.topbar .brand-sub{font-size:12px;color:var(--ms-yellow);letter-spacing:1.2px;text-transform:uppercase;font-weight:600;font-family:'Cascadia Code','Consolas',monospace}
+.topbar .divider{width:1px;height:24px;background:rgba(255,255,255,.15)}
+.topbar .logo{font-weight:600;font-size:20px;letter-spacing:.2px}
+.topbar .chapter-title{font-size:16px;opacity:.75;letter-spacing:.2px;font-weight:400}
+.topbar.topbar-grid .topbar-left .chapter-title{max-width:36ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topbar .spacer{flex:1}
+.topbar .meta{font-size:16px;opacity:.85;display:flex;gap:10px;align-items:center}
+.topbar .meta .pill{padding:4px 12px;background:rgba(255,255,255,.10);border-radius:4px;font-size:15px;font-weight:500}
+.topbar .meta .step-pill{background:var(--ms-blue);font-weight:600;font-family:'Cascadia Code','Consolas',monospace;letter-spacing:.5px}
+.topbar button{background:transparent;border:1px solid rgba(255,255,255,.25);color:#FFFFFF;padding:7px 16px;border-radius:4px;font-family:inherit;font-size:16px;font-weight:500;cursor:pointer;transition:.15s}
+.topbar button:hover{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.4)}
+.topbar button.active{background:var(--ms-blue);border-color:var(--ms-blue)}
+.progress{height:3px;background:rgba(255,255,255,.06);position:relative;border-bottom:1px solid var(--line)}
+.progress-fill{position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg,var(--ms-blue) 0%,var(--copilot) 50%,var(--ms-cyan) 100%);transition:width .4s cubic-bezier(.4,0,.2,1)}
+.stage{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.slides{width:100%;height:100%;position:relative}
+.slide{position:absolute;inset:0;padding:36px 64px 80px;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .35s ease;overflow-y:auto}
+.slide.active{opacity:1;pointer-events:auto}
+.slide-num{position:absolute;top:18px;right:28px;font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ink-mute);letter-spacing:1.5px}
+[data-step]{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.2,.7,.3,1), transform .55s cubic-bezier(.2,.7,.3,1);pointer-events:none}
+[data-step].revealed{opacity:1;transform:translateY(0);pointer-events:auto}
+.notes-panel{position:fixed;bottom:0;left:0;right:0;background:var(--notes-bg);color:var(--notes-text);padding:22px 32px 26px;border-top:3px solid var(--notes-accent);transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);z-index:20;max-height:48vh;overflow-y:auto;box-shadow:0 -20px 40px rgba(0,0,0,.18)}
+.notes-panel.open{transform:translateY(0)}
+.notes-panel .label{display:flex;align-items:center;gap:10px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--notes-accent);margin-bottom:10px;font-weight:600}
+.notes-panel .label::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--notes-accent);animation:pulse 1.6s ease-in-out infinite}
+.notes-panel .label .step-tag{margin-left:auto;font-size:12px;color:rgba(255,255,255,.55);letter-spacing:1px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.notes-panel .script{font-size:22px;line-height:1.65;max-width:880px;font-weight:400;transition:opacity .25s}
+.notes-panel .script.fading{opacity:.3}
+.notes-panel .script em{color:var(--notes-accent);font-style:normal;font-weight:600;background:rgba(255,185,0,.15);padding:1px 6px;border-radius:3px}
+.controls{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:var(--ms-navy);padding:8px 14px;border-radius:4px;box-shadow:0 6px 24px rgba(0,32,80,.25);z-index:15}
+.controls button{width:36px;height:36px;border-radius:3px;border:none;background:transparent;color:#FFFFFF;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;transition:.15s}
+.controls button:hover{background:rgba(255,255,255,.12)}
+.controls button:disabled{opacity:.3;cursor:not-allowed}
+.controls .counter{font-family:'Cascadia Code','Consolas',monospace;font-size:16px;color:#FFFFFF;padding:0 14px;letter-spacing:1px;font-weight:500}
+.step-indicator{position:fixed;bottom:64px;left:50%;transform:translateX(-50%);font-size:14px;font-family:'Cascadia Code','Consolas',monospace;color:var(--ms-blue);letter-spacing:1.5px;opacity:0;transition:opacity .3s;z-index:14;text-transform:uppercase;font-weight:600}
+.step-indicator.show{opacity:.85}
+.step-indicator::after{content:" →";animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+
+.slide.title-slide{background:linear-gradient(135deg,#0C1426 0%,#1D4ED8 35%,#2563EB 70%,#60A5FA 110%);color:#FFFFFF;justify-content:center;padding:175px 100px 100px 100px;position:absolute;overflow:hidden}
+.slide.title-slide .brand-full{position:absolute;top:48px;left:64px;display:flex;align-items:center;gap:16px}
+.slide.title-slide .brand-mark-lg{width:64px;height:64px}
+.slide.title-slide .brand-wordmark{display:flex;flex-direction:column;line-height:1}
+.slide.title-slide .brand-wordmark .name{font-size:30px;font-weight:600;letter-spacing:1px;color:#FFFFFF}
+.slide.title-slide .brand-wordmark .tag{font-size:14px;color:var(--ms-yellow);letter-spacing:3px;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;margin-top:4px;text-transform:uppercase}
+.slide.title-slide .eyebrow{font-family:'Cascadia Code','Consolas',monospace;font-size:16px;letter-spacing:3px;color:var(--ms-cyan);margin-bottom:20px;font-weight:500}
+.slide.title-slide h1{font-size:80px;line-height:1.1;font-weight:600;max-width:1200px;letter-spacing:-1.5px}
+.slide.title-slide h1 em{font-style:normal;color:var(--ms-cyan);font-weight:600}
+.slide.title-slide .meta-row{margin-top:48px;display:flex;gap:36px;font-size:18px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.slide.title-slide .meta-row strong{color:#FFFFFF;display:block;font-size:28px;text-transform:none;font-weight:600;letter-spacing:0;margin-top:4px}
+.title-slide::before{content:"";position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(98,100,167,.30) 0%,transparent 70%);top:-200px;right:-200px;pointer-events:none}
+.title-slide::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(80,230,255,.20) 0%,transparent 70%);bottom:-160px;left:-160px;pointer-events:none}
+
+.slide.section-divider{background:linear-gradient(135deg,var(--ms-blue) 0%,var(--copilot) 100%);color:#FFFFFF;justify-content:center;align-items:flex-start;padding:80px;position:relative;overflow:hidden}
+.slide.section-divider::before{content:"";position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(80,230,255,.18) 0%,transparent 70%);top:-180px;right:-180px;pointer-events:none}
+.slide.section-divider .label{font-family:'Cascadia Code','Consolas',monospace;font-size:18px;letter-spacing:4px;margin-bottom:18px;opacity:.8;font-weight:500}
+.slide.section-divider h2{font-size:78px;line-height:1.05;font-weight:600;max-width:1100px;letter-spacing:-1.5px}
+.slide.section-divider h2 em{font-style:normal;color:var(--ms-cyan);font-weight:600}
+.slide.section-divider .sub{margin-top:28px;font-size:24px;max-width:780px;color:rgba(255,255,255,.95);font-weight:400;line-height:1.45}
+
+.slide.content-slide{padding:34px 60px 76px}
+.slide h3.slide-h{font-size:40px;font-weight:600;letter-spacing:-.5px;margin-bottom:6px;line-height:1.15;color:var(--ms-navy)}
+.slide h3.slide-h em{font-style:normal;color:var(--copilot);font-weight:600}
+.slide .lead{font-size:19px;color:var(--ink-soft);margin-bottom:20px;max-width:1000px}
+
+/* OVERVIEW 5 cards */
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--ms-blue);padding:16px;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.card .num{font-size:25px;color:var(--ms-blue);font-weight:600;margin-bottom:4px;line-height:1}
+.card h4{font-size:19px;font-weight:600;margin-bottom:6px;color:var(--ms-navy);line-height:1.25}
+.card p{font-size:15px;color:var(--ink-soft);line-height:1.45}
+.card .ex{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:14px;color:var(--ms-blue-deep);font-style:italic}
+.card .ex strong{color:var(--copilot);font-style:normal;font-weight:600;font-family:'Cascadia Code','Consolas',monospace;font-size:12px;letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:2px}
+
+/* WHY AI ALM IS DIFFERENT */
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.why-card{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:18px 22px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.why-card.w1{border-top:4px solid #D13438}
+.why-card.w2{border-top:4px solid #F59E0B}
+.why-card.w3{border-top:4px solid #F59E0B}
+.why-card .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;letter-spacing:1.2px;font-weight:600;text-transform:uppercase;margin-bottom:5px}
+.why-card.w1 .lab{color:#D13438}
+.why-card.w2 .lab{color:#F59E0B}
+.why-card.w3 .lab{color:#B58800}
+.why-card h4{font-size:20px;color:var(--ms-navy);font-weight:600;margin-bottom:6px;line-height:1.2}
+.why-card p{font-size:16px;color:var(--ink-soft);line-height:1.5;margin-bottom:8px}
+.why-card .impact{font-size:14px;color:var(--ms-navy);font-style:italic;line-height:1.4;padding-top:8px;border-top:1px dashed var(--line)}
+.why-card .impact strong{color:var(--copilot);font-style:normal;font-weight:600;display:block;margin-bottom:2px;font-family:'Cascadia Code','Consolas',monospace;font-size:12px;letter-spacing:1.2px;text-transform:uppercase}
+
+/* AI ARTIFACTS TO GOVERN - 6 categories */
+.artifacts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.art-card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:14px 18px;display:flex;gap:14px;align-items:flex-start;box-shadow:0 1px 3px rgba(0,0,0,.04);border-left:4px solid var(--ms-blue)}
+.art-card.a1{border-left-color:#2563EB}
+.art-card.a2{border-left-color:#F59E0B}
+.art-card.a3{border-left-color:#1E40AF}
+.art-card.a4{border-left-color:#D83B01}
+.art-card.a5{border-left-color:#107C10}
+.art-card.a6{border-left-color:#F59E0B}
+.art-card .icon{flex-shrink:0;width:36px;height:36px;border-radius:8px;background:#FEF3C7;color:var(--copilot);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700}
+.art-card.a1 .icon{background:#DBEAFE;color:#2563EB}
+.art-card.a2 .icon{background:#FEF3C7;color:#F59E0B}
+.art-card.a3 .icon{background:#E5F4F6;color:#1E40AF}
+.art-card.a4 .icon{background:#FFE2D6;color:#D83B01}
+.art-card.a5 .icon{background:#DFF6DD;color:#107C10}
+.art-card.a6 .icon{background:#FFF4CE;color:#B58800}
+.art-card .body h5{font-size:18px;color:var(--ms-navy);font-weight:600;margin-bottom:3px;line-height:1.25}
+.art-card .body p{font-size:14px;color:var(--ink-soft);line-height:1.45;margin-bottom:0}
+
+/* ENVIRONMENT STRATEGY - 4-tier ladder */
+.env-ladder{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:24px 28px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.env-row{display:grid;grid-template-columns:repeat(4,1fr) auto;gap:0;align-items:stretch;position:relative}
+.env-tier{background:var(--bg);border-radius:6px;padding:14px 14px;text-align:left;position:relative;border-top:4px solid var(--ms-blue);margin-right:30px}
+.env-tier.t2{border-top-color:#1D4ED8;background:linear-gradient(135deg,#F3F9FD 0%,var(--bg) 100%)}
+.env-tier.t3{border-top-color:#F59E0B;background:linear-gradient(135deg,#FEF3C7 0%,var(--bg) 100%)}
+.env-tier.t4{border-top-color:#107C10;background:linear-gradient(135deg,#DFF6DD 0%,var(--bg) 100%)}
+.env-tier .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;color:var(--ms-blue-deep);letter-spacing:1.5px;font-weight:600;margin-bottom:4px;text-transform:uppercase}
+.env-tier.t2 .lab{color:#1D4ED8}
+.env-tier.t3 .lab{color:#F59E0B}
+.env-tier.t4 .lab{color:#107C10}
+.env-tier h6{font-size:18px;color:var(--ms-navy);font-weight:600;margin-bottom:5px;line-height:1.2}
+.env-tier p{font-size:14px;color:var(--ink-soft);line-height:1.4;margin-bottom:5px}
+.env-tier .access{font-size:12px;color:var(--ink-mute);font-style:italic;line-height:1.3;padding-top:5px;border-top:1px dashed var(--line)}
+.env-arrow{position:absolute;top:50%;transform:translateY(-50%);font-size:22px;color:var(--copilot);font-weight:700;width:30px;text-align:center}
+.env-tier:nth-child(1) .env-arrow{right:-15px;top:50%}
+.env-row .env-tier:nth-child(1){grid-column:1}
+.env-row .env-tier:nth-child(2){grid-column:2}
+.env-row .env-tier:nth-child(3){grid-column:3}
+.env-row .env-tier:nth-child(4){grid-column:4;margin-right:0}
+.env-arrow-strip{position:absolute;left:0;right:0;top:42%;height:0;display:flex;justify-content:space-between;pointer-events:none;padding:0 23%}
+.env-arrow-mark{display:inline-flex;align-items:center;justify-content:center;color:var(--copilot);font-size:22px;font-weight:700;background:var(--paper);width:24px;height:24px;border-radius:50%;border:2px solid var(--copilot);transform:translateY(-50%)}
+.env-principles{margin-top:14px;background:#F8FAFD;border:1px solid var(--line);border-radius:6px;padding:14px 22px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;font-size:14px;color:var(--ink);line-height:1.4}
+.env-principles > div{padding-left:20px;position:relative}
+.env-principles > div::before{content:"⚑";position:absolute;left:0;color:var(--copilot);font-weight:700}
+.env-principles strong{color:var(--ms-navy);font-weight:600;display:block;margin-bottom:2px;font-size:14px}
+
+/* 7-PHASE LIFECYCLE */
+.lifecycle-flow{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.lc-title{font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--copilot);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:14px}
+.phase-row{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;align-items:stretch}
+.phase{background:var(--bg);border-radius:5px;padding:14px 10px;text-align:center;position:relative;border-top:3px solid var(--ms-blue)}
+.phase.p2{border-top-color:#2563EB}
+.phase.p3{border-top-color:#1D4ED8}
+.phase.p4{border-top-color:#F59E0B}
+.phase.p5{border-top-color:#1E40AF}
+.phase.p6{border-top-color:#107C10}
+.phase.p7{border-top-color:#D83B01}
+.phase .pl{font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ink-mute);letter-spacing:1.2px;font-weight:600;margin-bottom:3px}
+.phase .pl strong{color:var(--copilot);font-size:22px;display:block;margin-bottom:3px;line-height:1}
+.phase h6{font-size:15px;color:var(--ms-navy);font-weight:600;margin-bottom:3px;line-height:1.2}
+.phase p{font-size:12px;color:var(--ink-soft);line-height:1.35}
+.phase .gate{margin-top:8px;padding-top:6px;border-top:1px dashed var(--line);font-size:11px;color:var(--ms-blue-deep);font-style:italic;line-height:1.3;font-family:'Cascadia Code','Consolas',monospace;text-transform:uppercase;letter-spacing:.5px}
+
+/* PROMOTION GATE MATRIX */
+.gate-matrix{margin-top:14px;background:var(--paper);border:1px solid var(--line);border-radius:6px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.gm-row{display:grid;grid-template-columns:0.6fr 1.2fr 1.6fr 1.6fr;border-bottom:1px solid var(--line)}
+.gm-row:last-child{border-bottom:none}
+.gm-row.head{background:var(--ms-navy);color:#FFFFFF}
+.gm-row.head > div{padding:10px 14px;font-size:13px;letter-spacing:1.2px;text-transform:uppercase;font-weight:600}
+.gm-row > div{padding:11px 14px;font-size:15px;border-right:1px solid var(--line);color:var(--ink);line-height:1.3}
+.gm-row > div:last-child{border-right:none}
+.gm-row .gate{font-family:'Cascadia Code','Consolas',monospace;font-weight:700;color:var(--copilot);font-size:16px;letter-spacing:1px;text-align:center;background:#FEF3C7}
+.gm-row .ctrl{font-weight:600;color:var(--ms-navy)}
+.gm-row .ev{font-style:italic;color:var(--ms-blue-deep);font-size:14px}
+
+/* COPILOT STUDIO ALM - 3 component types + 3-stage flow */
+.cs-alm{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:18px}
+.cs-comp{background:var(--paper);border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.cs-comp .top{padding:16px 20px;color:#FFFFFF}
+.cs-comp.cc1 .top{background:linear-gradient(135deg,#2563EB 0%,#1D4ED8 100%)}
+.cs-comp.cc2 .top{background:linear-gradient(135deg,#F59E0B 0%,#B45309 100%)}
+.cs-comp.cc3 .top{background:linear-gradient(135deg,#1E40AF 0%,#107C10 100%)}
+.cs-comp .top h5{font-size:19px;font-weight:600;margin-bottom:3px}
+.cs-comp .top .sub{font-size:14px;opacity:.92}
+.cs-comp .body{padding:14px 20px}
+.cs-comp .body h6{font-size:13px;color:var(--ms-navy);font-weight:600;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:5px}
+.cs-comp .body ul{list-style:none}
+.cs-comp .body li{padding:3px 0 3px 14px;position:relative;font-size:14px;color:var(--ink);line-height:1.4}
+.cs-comp .body li::before{content:"›";position:absolute;left:0;top:3px;color:var(--copilot);font-weight:700}
+.alm-stages{margin-top:14px;background:linear-gradient(135deg,#0C1426 0%,#1D4ED8 100%);color:#FFFFFF;border-radius:8px;padding:18px 24px}
+.alm-stages h6{font-size:14px;color:var(--ms-cyan);font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+.stage-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stage-card{background:rgba(255,255,255,.10);border-left:3px solid var(--ms-cyan);padding:10px 14px;border-radius:3px}
+.stage-card .n{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--ms-cyan);font-weight:700;letter-spacing:.5px;margin-bottom:3px}
+.stage-card h6{color:#FFFFFF;font-size:16px;font-weight:600;margin-bottom:4px;letter-spacing:0;text-transform:none}
+.stage-card ul{list-style:none}
+.stage-card li{padding:2px 0 2px 10px;position:relative;font-size:14px;color:rgba(255,255,255,.92);line-height:1.4}
+.stage-card li::before{content:"›";position:absolute;left:0;top:2px;color:var(--ms-cyan);font-weight:700}
+
+/* FOUNDRY GATE MATRIX */
+.foundry-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:14px;margin-top:18px}
+.foundry-comp{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:18px 22px;box-shadow:0 1px 4px rgba(0,0,0,.04);border-left:4px solid var(--copilot)}
+.foundry-comp h5{font-size:19px;color:var(--ms-navy);font-weight:600;margin-bottom:6px}
+.foundry-comp p{font-size:15px;color:var(--ink-soft);line-height:1.5;margin-bottom:8px}
+.foundry-comp h6{font-size:13px;color:var(--ms-navy);font-weight:600;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:5px}
+.foundry-comp ul{list-style:none}
+.foundry-comp li{padding:3px 0 3px 14px;position:relative;font-size:14px;color:var(--ink);line-height:1.4}
+.foundry-comp li::before{content:"⚛";position:absolute;left:0;top:3px;color:var(--copilot);font-weight:700;font-size:12px}
+.gate-req-matrix{background:var(--paper);border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.grm-row{display:grid;grid-template-columns:1fr repeat(5,0.7fr);border-bottom:1px solid var(--line)}
+.grm-row:last-child{border-bottom:none}
+.grm-row.head{background:var(--ms-navy);color:#FFFFFF}
+.grm-row.head > div{padding:10px 8px;font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:600;text-align:center}
+.grm-row.head > div:first-child{text-align:left}
+.grm-row > div{padding:11px 10px;font-size:15px;border-right:1px solid var(--line);text-align:center;color:var(--ink);line-height:1.3}
+.grm-row > div:first-child{font-weight:600;color:var(--ms-navy);background:#F8FAFD;text-align:left;font-family:'Cascadia Code','Consolas',monospace;font-size:14px;letter-spacing:.5px}
+.grm-row > div:last-child{border-right:none}
+.req-yes{color:var(--ms-green);font-weight:700;font-size:20px}
+.req-rec{color:var(--ms-yellow);font-weight:700;font-size:18px}
+
+/* CUSTOM MODEL LIFECYCLE */
+.model-lifecycle{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.ml-row{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;position:relative;align-items:stretch}
+.ml-row::before{content:"";position:absolute;top:30px;left:6%;right:6%;height:2px;background:linear-gradient(90deg,#2563EB 0%,#F59E0B 30%,#1E40AF 60%,#107C10 100%);z-index:0}
+.ml-step{text-align:center;background:var(--paper);position:relative;z-index:1;padding:0 4px}
+.ml-step .num{width:60px;height:60px;border-radius:50%;background:var(--paper);border:3px solid var(--ms-blue);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:var(--ms-blue);box-shadow:0 4px 12px rgba(0,120,212,.15);font-family:'Cascadia Code','Consolas',monospace}
+.ml-step.s2 .num{border-color:#1D4ED8;color:#1D4ED8}
+.ml-step.s3 .num{border-color:#F59E0B;color:#F59E0B}
+.ml-step.s4 .num{border-color:#1E40AF;color:#1E40AF}
+.ml-step.s5 .num{border-color:#107C10;color:#107C10}
+.ml-step.s6 .num{border-color:#D83B01;color:#D83B01}
+.ml-step.s7 .num{border-color:#D13438;color:#D13438}
+.ml-step h6{font-size:15px;color:var(--ms-navy);font-weight:600;margin-bottom:3px;line-height:1.2}
+.ml-step p{font-size:12px;color:var(--ink-soft);line-height:1.35}
+.model-gates{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mg-card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:14px 20px;border-left:4px solid var(--ms-blue);box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.mg-card.g2{border-left-color:#107C10}
+.mg-card .lab{font-family:'Cascadia Code','Consolas',monospace;font-size:14px;color:var(--ms-blue);letter-spacing:1.5px;font-weight:700;margin-bottom:5px}
+.mg-card.g2 .lab{color:#107C10}
+.mg-card h6{font-size:18px;color:var(--ms-navy);font-weight:600;margin-bottom:8px;letter-spacing:0;text-transform:none}
+.mg-card ul{list-style:none}
+.mg-card li{padding:3px 0 3px 16px;position:relative;font-size:14px;color:var(--ink);line-height:1.4}
+.mg-card li::before{content:"✓";position:absolute;left:0;top:3px;color:var(--ms-green);font-weight:700}
+
+/* RACI MATRIX + CHECKLIST */
+.raci-matrix{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:6px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.raci-row{display:grid;grid-template-columns:1.4fr 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr;border-bottom:1px solid var(--line)}
+.raci-row:last-child{border-bottom:none}
+.raci-row.head{background:var(--ms-navy);color:#FFFFFF}
+.raci-row.head > div{padding:10px 12px;font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:600;text-align:center}
+.raci-row.head > div:first-child{text-align:left}
+.raci-row > div{padding:9px 12px;font-size:15px;border-right:1px solid var(--line);text-align:center;color:var(--ink);line-height:1.3;font-family:'Cascadia Code','Consolas',monospace;font-weight:700}
+.raci-row > div:first-child{font-weight:600;color:var(--ms-navy);background:#F8FAFD;text-align:left;font-family:'Segoe UI',sans-serif}
+.raci-row > div:last-child{border-right:none}
+.raci-cell.a{color:#D13438}
+.raci-cell.r{color:#2563EB}
+.raci-cell.c{color:#F59E0B}
+.raci-cell.i{color:#605E5C}
+.raci-legend{margin-top:8px;font-size:14px;color:var(--ink-soft);font-style:italic;text-align:center}
+.raci-legend strong{font-family:'Cascadia Code','Consolas',monospace;font-style:normal;font-weight:700;letter-spacing:1px}
+.raci-legend .a{color:#D13438}.raci-legend .r{color:#2563EB}.raci-legend .c{color:#F59E0B}.raci-legend .i{color:#605E5C}
+
+.checklist-strip{margin-top:14px;background:linear-gradient(135deg,#DFF6DD 0%,#C5EBC1 100%);border:1px solid #107C10;border-radius:6px;padding:14px 22px}
+.checklist-strip h6{font-size:14px;color:#107C10;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.cl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 18px;font-size:14px;color:var(--ink);line-height:1.4}
+.cl-grid > div{padding-left:18px;position:relative}
+.cl-grid > div::before{content:"☐";position:absolute;left:0;top:0;color:#107C10;font-weight:700;font-size:18px}
+
+/* QUIZ */
+.quiz-wrap{max-width:880px;margin:0 auto;width:100%}
+.quiz-q{font-size:31px;line-height:1.3;font-weight:600;color:var(--ms-navy);margin-bottom:22px;letter-spacing:-.3px}
+.quiz-q em{font-style:normal;color:var(--copilot);font-weight:600}
+.quiz-options{display:flex;flex-direction:column;gap:10px}
+.quiz-opt{background:var(--paper);border:1px solid var(--line);padding:14px 18px;border-radius:4px;cursor:pointer;display:flex;align-items:flex-start;gap:16px;transition:.15s;font-size:18px;font-family:inherit;text-align:left;width:100%;color:var(--ink);line-height:1.4}
+.quiz-opt:hover{border-color:var(--ms-blue);background:#F3F9FD;box-shadow:0 2px 6px rgba(0,120,212,.10)}
+.quiz-opt .letter{width:30px;height:30px;border-radius:4px;background:var(--bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--ms-blue-deep);flex-shrink:0;font-size:16px}
+.quiz-opt.correct{border-color:var(--ms-green);background:#DFF6DD}
+.quiz-opt.correct .letter{background:var(--ms-green);color:#FFFFFF;border-color:var(--ms-green)}
+.quiz-opt.wrong{border-color:var(--ms-red);background:#FDE7E9;opacity:.65}
+.quiz-explain{margin-top:18px;background:#DFF6DD;border-left:4px solid var(--ms-green);padding:14px 18px;border-radius:4px;display:none}
+.quiz-explain.show{display:block;animation:slideUp .5s ease}
+.quiz-explain strong{color:var(--ms-green);font-family:'Cascadia Code','Consolas',monospace;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
+.quiz-explain p{margin-top:6px;font-size:18px;color:var(--ink);line-height:1.55}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* SCENARIO */
+.scenario{max-width:1100px;margin:0 auto;background:linear-gradient(135deg,#FEF3C7 0%,#E5E3F4 100%);border-radius:8px;padding:26px 36px;border-left:4px solid var(--copilot)}
+.scenario .tag{display:inline-block;background:var(--copilot);color:#FFFFFF;padding:5px 14px;border-radius:3px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:12px}
+.scenario h3{font-size:29px;line-height:1.25;color:var(--ms-navy);margin-bottom:12px;font-weight:600;letter-spacing:-.3px}
+.scenario .quote{font-size:19px;line-height:1.5;color:var(--ms-navy);padding:13px 18px;background:rgba(255,255,255,.8);border-radius:4px;margin:10px 0;border-left:3px solid var(--ms-blue);font-style:italic}
+.scenario .prompts h5{font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ms-navy);margin-bottom:8px;font-weight:600;margin-top:10px}
+.scenario .prompts ul{list-style:none}
+.scenario .prompts li{padding:7px 0 7px 22px;position:relative;font-size:17px;color:var(--ink);border-bottom:1px dashed rgba(0,32,80,.18);line-height:1.45}
+.scenario .prompts li:last-child{border-bottom:none}
+.scenario .prompts li::before{content:"→";position:absolute;left:0;top:7px;color:var(--copilot);font-weight:700}
+.scenario .reveal-btn{margin-top:14px;background:var(--ms-blue);color:#FFFFFF;border:none;padding:10px 22px;border-radius:4px;font-family:'Segoe UI',sans-serif;font-size:16px;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:.15s}
+.scenario .reveal-btn:hover{background:var(--ms-blue-deep);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,120,212,.30)}
+.scenario .reveal-btn.shown{display:none}
+.answer-panel{margin-top:14px;background:var(--paper);border:1px solid var(--ms-blue);border-radius:6px;padding:18px 22px;display:none}
+.answer-panel.show{display:block;animation:slideUp .5s ease}
+.answer-panel .ap-label{display:inline-block;background:var(--ms-navy);color:#FFFFFF;padding:4px 12px;border-radius:3px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:10px}
+.answer-panel .ap-row{margin-bottom:10px}
+.answer-panel .ap-row:last-child{margin-bottom:0}
+.answer-panel .ap-q{font-size:17px;color:var(--copilot);font-weight:600;margin-bottom:5px}
+.answer-panel .ap-a{font-size:16px;color:var(--ink);line-height:1.55;padding-left:14px;border-left:2px solid #DBEAFE}
+.answer-panel .ap-a span{display:block;margin-bottom:3px}
+.answer-panel .ap-a span::before{content:"• ";color:var(--ms-blue);font-weight:700}
+
+/* RECAP */
+.recap{max-width:920px;margin:0 auto}
+.recap-list{display:grid;gap:9px;margin-top:14px}
+.recap-item{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--ms-blue);padding:12px 22px;border-radius:4px;display:flex;gap:14px;align-items:flex-start;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.recap-item .check{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--ms-blue);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+.recap-item .text{font-size:18px;color:var(--ms-navy);line-height:1.45}
+.recap-item .text em{color:var(--copilot);font-style:normal;font-weight:600}
+
+.float-hint{position:fixed;top:72px;right:20px;background:var(--ms-navy);color:#FFFFFF;padding:10px 16px;border-radius:4px;font-size:15px;opacity:0;transition:.3s;z-index:30;pointer-events:none;font-family:'Cascadia Code','Consolas',monospace;box-shadow:0 6px 16px rgba(0,32,80,.20)}
+.float-hint.show{opacity:.95}
+
+/* GENNOOR WORDMARK COLOR LETTERS */
+.brand-name .b-w{color:#FFFFFF}
+.brand-name .b-blue{color:#60A5FA}
+.brand-name .b-amber{color:#F59E0B}
+.slide.title-slide .brand-wordmark .name .b-w{color:#FFFFFF}
+.slide.title-slide .brand-wordmark .name .b-blue{color:#60A5FA}
+.slide.title-slide .brand-wordmark .name .b-amber{color:#F59E0B}
+
+/* TOPBAR GRID — slide nav moved to topbar center */
+.topbar.topbar-grid{display:grid !important;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;height:72px;padding:0 28px}
+.topbar.topbar-grid .topbar-left{display:flex;align-items:center;gap:18px;min-width:0;overflow:hidden}
+.topbar.topbar-grid .topbar-left .chapter-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar.topbar-grid .topbar-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.topbar.topbar-grid .topbar-right{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0}
+.step-indicator-top{font-family:'Cascadia Code','Consolas',monospace;font-size:10px;letter-spacing:2.5px;color:var(--gn-amber,var(--ms-yellow));font-weight:700;text-transform:uppercase;line-height:1;opacity:.95}
+.step-indicator-top.complete{color:rgba(255,255,255,.5)}
+.controls-top{display:inline-flex;align-items:center;gap:4px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.10);border-radius:5px;padding:3px 6px}
+.controls-top button{width:28px;height:28px;border-radius:3px;border:none;background:transparent;color:#FFFFFF;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:.15s;padding:0}
+.controls-top button:hover{background:rgba(255,255,255,.12)}
+.controls-top button:disabled{opacity:.3;cursor:not-allowed}
+.controls-top .counter{font-family:'Cascadia Code','Consolas',monospace;font-size:13px;font-weight:600;color:#FFFFFF;letter-spacing:.5px;padding:0 12px;min-width:64px;text-align:center}
+.controls-top .counter strong{color:var(--gn-amber,var(--ms-yellow));font-weight:700}
+/* Hide original bottom controls (now empty) */
+.bottom-nav-removed{display:none !important}
+
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar topbar-grid">
+    <div class="topbar-left">
+    <a href="#" class="brand-lockup">
+      <svg class="brand-mark" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+      <div class="brand-text">
+        <span class="brand-name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+        <span class="brand-sub">AB-100</span>
+      </div>
+    </a>
+    <div class="divider"></div>
+    <div class="chapter-title">Chapter 10 · ALM Process</div>
+    </div>
+    <div class="topbar-center">
+      <div class="step-indicator-top" id="stepIndicator">More to reveal</div>
+      <div class="controls-top">
+        <button id="prevBtn" title="Previous (←)">‹</button>
+        <span class="counter" id="counter">1 / 22</span>
+        <button id="nextBtn" title="Next (→)">›</button>
+      </div>
+    </div>
+    <div class="topbar-right">
+    <div class="meta">
+      <span class="pill" id="sectionLabel">Opening</span>
+      <span class="pill step-pill" id="stepPill" style="display:none">Step 1/6</span>
+    </div>
+    <button id="notesToggle" title="Toggle notes (T)">📖 Notes</button>
+    </div>
+  </div>
+
+  <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="stage">
+    <div class="slides" id="slides">
+
+      <!-- 01 TITLE -->
+      <section class="slide title-slide active"
+        data-section="Opening"
+        data-script="Chapter 10. <em>Design the ALM process for AI-powered business solutions.</em> Application Lifecycle Management. <em>AI ALM is harder than traditional ALM</em> — models drift, data shifts, prompts change behavior, agents adapt. This chapter covers ALM across data, agents, custom models, and Dynamics 365 AI components.">
+        <div class="slide-num">01 / 22</div>
+        <div class="brand-full">
+          <svg class="brand-mark-lg" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><circle cx="105.8" cy="84" r="6" fill="#2563EB"/><circle cx="93.4" cy="99.9" r="6" fill="#2563EB"/><circle cx="75.4" cy="108.8" r="6" fill="#2563EB"/><circle cx="55.3" cy="108.9" r="6" fill="#2563EB"/><circle cx="37.1" cy="100.3" r="6" fill="#2563EB"/><circle cx="24.5" cy="84.6" r="6" fill="#2563EB"/><circle cx="20" cy="65" r="6" fill="#2563EB"/><circle cx="24.5" cy="45.4" r="6" fill="#2563EB"/><circle cx="37.1" cy="29.7" r="6" fill="#2563EB"/><circle cx="55.3" cy="21.1" r="6" fill="#2563EB"/><circle cx="75.4" cy="21.2" r="6" fill="#2563EB"/><circle cx="93.4" cy="30.1" r="6" fill="#2563EB"/><circle cx="80" cy="65" r="6" fill="#F59E0B"/><circle cx="95" cy="65" r="6" fill="#F59E0B"/><circle cx="110" cy="65" r="6" fill="#2563EB"/></svg>
+          <div class="brand-wordmark">
+            <span class="name"><span class="b-w">Ge</span><span class="b-blue">nn</span><span class="b-amber">oo</span><span class="b-w">r&nbsp;Tech</span></span>
+            <span class="tag">AB-100 Course</span>
+          </div>
+        </div>
+        <div class="eyebrow">CHAPTER 10</div>
+        <h1>Design the<br><em>ALM Process</em></h1>
+        <div class="meta-row">
+          <div>FOCUS<strong>Lifecycle discipline</strong></div>
+          <div>SCOPE<strong>Data · agents · models · D365</strong></div>
+          <div>OUTPUT<strong>Governed AI lifecycle</strong></div>
+        </div>
+      </section>
+
+      <!-- 02 OVERVIEW -->
+      <section class="slide content-slide"
+        data-section="Opening"
+        data-script="Five themes. The complete ALM playbook for AI solutions. <em>Same lifecycle pattern across all components</em> — environments, gates, governance — but each component has unique artifacts to govern.">
+        <div class="slide-num">02 / 22</div>
+        <h3 class="slide-h">What this chapter <em>covers</em></h3>
+        <p class="lead">Five themes covering ALM for AI-powered business solutions. The pattern is consistent — environments, promotion gates, governance — but each AI component type has unique artifacts.</p>
+        <div class="cards">
+          <div class="card" data-step data-script="One — <em>ALM foundations</em>. Why AI ALM differs from traditional ALM. The 6 categories of artifacts to govern. The 4-tier environment strategy.">
+            <div class="num">01</div><h4>ALM Foundations</h4>
+            <p>Why AI ALM differs · 6 artifact categories · 4-tier environment strategy.</p>
+            <div class="ex"><strong>Output</strong>ALM design baseline.</div>
+          </div>
+          <div class="card" data-step data-script="Two — <em>AI Data ALM</em>. The most thorough lifecycle — 7 phases A through G with 5 promotion gates. The master pattern that applies across all AI components.">
+            <div class="num">02</div><h4>AI Data ALM</h4>
+            <p>7-phase lifecycle (A-G) · 5 promotion gates · master pattern for all AI ALM.</p>
+            <div class="ex"><strong>Output</strong>Data lifecycle design.</div>
+          </div>
+          <div class="card" data-step data-script="Three — <em>Agents ALM</em>. Copilot Studio agents, connectors, and actions. Microsoft Foundry agents. Both follow promotion gate matrices with required versus recommended controls.">
+            <div class="num">03</div><h4>Agents ALM</h4>
+            <p>Copilot Studio + Foundry · component-level versioning · gate requirements matrix.</p>
+            <div class="ex"><strong>Output</strong>Agent lifecycle plan.</div>
+          </div>
+          <div class="card" data-step data-script="Four — <em>custom models &amp; D365 AI</em>. The 7-step model lifecycle from plan through retirement. Plus D365 finance, supply chain, and customer service AI patterns.">
+            <div class="num">04</div><h4>Models &amp; D365</h4>
+            <p>7-step model lifecycle · D365 F&amp;SC + CX patterns · drift management.</p>
+            <div class="ex"><strong>Output</strong>Model deployment design.</div>
+          </div>
+          <div class="card" data-step data-script="Five — <em>governance and RACI</em>. Roles and responsibilities. The production go/no-go checklist. Continuous improvement practices.">
+            <div class="num">05</div><h4>Governance &amp; RACI</h4>
+            <p>RACI matrix · go/no-go checklist · continuous improvement loop.</p>
+            <div class="ex"><strong>Output</strong>Operating model.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 SECTION DIVIDER UNIT 1 -->
+      <section class="slide section-divider"
+        data-section="ALM Foundations"
+        data-script="First unit. <em>ALM foundations.</em> Why AI ALM is fundamentally different. What artifacts to govern. How to set up environments.">
+        <div class="slide-num">03 / 22</div>
+        <div class="label">UNIT ONE</div>
+        <h2>ALM<br><em>Foundations</em></h2>
+        <div class="sub">Why AI ALM differs from traditional ALM · 6 artifact categories to govern · 4-tier environment strategy with red/gold pattern.</div>
+      </section>
+
+      <!-- 04 WHY AI ALM DIFFERS -->
+      <section class="slide content-slide"
+        data-section="ALM Foundations"
+        data-script="<em>Why AI ALM is fundamentally different from traditional ALM.</em> Three core reasons. <em>Each one breaks an assumption</em> traditional ALM relies on. I'll bring them up one at a time.">
+        <div class="slide-num">04 / 22</div>
+        <h3 class="slide-h">Why AI ALM is <em>different</em></h3>
+        <p class="lead">Traditional ALM assumes deterministic systems. AI is none of those things. Three core differences shape everything that follows.</p>
+        <div class="why-grid">
+          <div class="why-card w1" data-step
+            data-script="<em>Difference 1 — Models drift</em>. Models behave differently as input data shifts. Production performance can degrade without any code change. Traditional ALM never had to worry about this. AI ALM <em>must</em> include drift detection and re-evaluation.">
+            <div class="lab">DIFFERENCE 01</div>
+            <h4>Models &amp; data drift</h4>
+            <p>Model behavior changes as production data shifts — even with no code change.</p>
+            <div class="impact">
+              <strong>Implication</strong>
+              ALM must include drift detection and scheduled re-evaluation against golden datasets.
+            </div>
+          </div>
+          <div class="why-card w2" data-step
+            data-script="<em>Difference 2 — Prompts and knowledge are code</em>. They affect output quality. They version. They need governance. <em>Treat prompts as production artifacts</em>, not configuration. Same applies to knowledge sources, sensitivity labels, DLP policies.">
+            <div class="lab">DIFFERENCE 02</div>
+            <h4>Prompts and knowledge are code</h4>
+            <p>Prompts, knowledge sources, and policies affect behavior — they need versioning like code.</p>
+            <div class="impact">
+              <strong>Implication</strong>
+              Prompts, knowledge bases, sensitivity labels, DLP rules become first-class ALM artifacts.
+            </div>
+          </div>
+          <div class="why-card w3" data-step
+            data-script="<em>Difference 3 — AI agents adapt based on context</em>. Same agent in different contexts produces different outputs. Hard to fully test. Hard to fully predict. <em>ALM must enforce context-bound testing and runtime monitoring</em> beyond what traditional QA covers.">
+            <div class="lab">DIFFERENCE 03</div>
+            <h4>Agents adapt to context</h4>
+            <p>Same agent, different contexts → different outputs. Pre-deployment testing can't catch every case.</p>
+            <div class="impact">
+              <strong>Implication</strong>
+              ALM extends past deployment — runtime monitoring and HITL feedback loops are mandatory.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05 ARTIFACTS TO GOVERN -->
+      <section class="slide content-slide"
+        data-section="ALM Foundations"
+        data-script="<em>Six categories of AI artifacts</em> that need ALM treatment. Datasets. Knowledge. Prompts. Policies. Agent and model definitions. Telemetry. <em>All six need versioning, lineage, sensitivity labels</em>. Skip any one and the ALM has a hole. I'll bring them up one at a time.">
+        <div class="slide-num">05 / 22</div>
+        <h3 class="slide-h">Six categories of <em>AI artifacts</em></h3>
+        <p class="lead">Treat each as a versioned, promotable ALM artifact. All six need lineage, labels, and gate evidence.</p>
+        <div class="artifacts">
+          <div class="art-card a1" data-step
+            data-script="<em>Category 1 — Training and evaluation datasets</em>. Raw, curated, embedding sets. Plus the <em>golden</em> evaluation sets used for regression testing. Both need versioning and immutable production snapshots.">
+            <div class="icon">📊</div>
+            <div class="body">
+              <h5>Datasets &amp; Embeddings</h5>
+              <p>Training, fine-tuning, evaluation datasets. Plus golden sets for regression.</p>
+            </div>
+          </div>
+          <div class="art-card a2" data-step
+            data-script="<em>Category 2 — Grounding knowledge</em>. SharePoint and OneDrive corpora. Dataverse tables. Wikis and knowledge bases. The retrieval source for every grounded response. <em>Quality issues here become accuracy issues at runtime</em>.">
+            <div class="icon">📚</div>
+            <div class="body">
+              <h5>Grounding Knowledge</h5>
+              <p>SharePoint, OneDrive, Dataverse, wikis, KBs. The retrieval foundation.</p>
+            </div>
+          </div>
+          <div class="art-card a3" data-step
+            data-script="<em>Category 3 — Prompt assets</em>. System prompts. Prompt actions. Templates. The behavioral envelope from Chapter 9 — these are production code with version control and approval gates.">
+            <div class="icon">⚛</div>
+            <div class="body">
+              <h5>Prompts &amp; Templates</h5>
+              <p>System prompts, prompt actions, templates — first-class versioned artifacts.</p>
+            </div>
+          </div>
+          <div class="art-card a4" data-step
+            data-script="<em>Category 4 — Policies and guardrails</em>. DLP rules. Sensitivity labels. Allowed connectors. Action limits. The governance layer that keeps the agent inside the lines.">
+            <div class="icon">🛡</div>
+            <div class="body">
+              <h5>Policies &amp; Guardrails</h5>
+              <p>DLP, sensitivity labels, allowed connectors, action limits.</p>
+            </div>
+          </div>
+          <div class="art-card a5" data-step
+            data-script="<em>Category 5 — Agent and model definitions</em>. Agent logic. Connector configurations. Model artifacts. Hyperparameters. The components themselves. <em>Each gets a version, each gets a release note</em>.">
+            <div class="icon">⚙</div>
+            <div class="body">
+              <h5>Agent &amp; Model Definitions</h5>
+              <p>Agent logic, connectors, model artifacts, hyperparameters, configs.</p>
+            </div>
+          </div>
+          <div class="art-card a6" data-step
+            data-script="<em>Category 6 — Run telemetry and feedback</em>. Latency, tokens, success/failure, safety events. User feedback. <em>Telemetry is an artifact</em> — store time series for audit and re-evaluation.">
+            <div class="icon">📈</div>
+            <div class="body">
+              <h5>Telemetry &amp; Feedback</h5>
+              <p>Latency, tokens, success/failure, safety events, user feedback signals.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 ENVIRONMENT STRATEGY -->
+      <section class="slide content-slide"
+        data-section="ALM Foundations"
+        data-script="<em>The 4-tier environment strategy</em>. Dev through Test through Pre-Prod through Prod. Plus four key principles. <em>The promotion arrow is one-way</em> — you never edit Prod directly. I'll bring up the tiers, then the principles.">
+        <div class="slide-num">06 / 22</div>
+        <h3 class="slide-h">Four-tier <em>environment strategy</em></h3>
+        <p class="lead">Separate data planes. Least-privilege access. Promotion gates with evidence. Never edit Prod directly.</p>
+        <div data-step
+          data-script="<em>Four environments</em>. Dev for building. Test for validation. Pre-Prod for canary and integration. Prod for live workloads. Each tier has stricter access controls than the last.">
+          <div class="env-ladder">
+            <div class="env-row" style="position:relative">
+              <div class="env-tier t1">
+                <div class="lab">TIER 01</div>
+                <h6>DEV</h6>
+                <p>Build &amp; iterate. Experimental data. Prompt testing. Connector prototypes.</p>
+                <div class="access">Full developer access · mutable data</div>
+              </div>
+              <div class="env-tier t2">
+                <div class="lab">TIER 02</div>
+                <h6>TEST / UAT</h6>
+                <p>Regression checks. Scenario validation. Quality gates. Golden sets.</p>
+                <div class="access">QA access · gold/red dataset pattern</div>
+              </div>
+              <div class="env-tier t3">
+                <div class="lab">TIER 03</div>
+                <h6>PRE-PROD</h6>
+                <p>Canary runs. Compliance review. Production-like data (masked).</p>
+                <div class="access">Limited access · CAB approval required</div>
+              </div>
+              <div class="env-tier t4">
+                <div class="lab">TIER 04</div>
+                <h6>PRODUCTION</h6>
+                <p>Live workloads. Frozen artifacts. Monitored. Rollback-ready.</p>
+                <div class="access">No direct edits · managed solutions only</div>
+              </div>
+              <div class="env-arrow-strip">
+                <div class="env-arrow-mark">›</div>
+                <div class="env-arrow-mark">›</div>
+                <div class="env-arrow-mark">›</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-step
+          data-script="<em>Four environment principles</em>. Least-privilege access — no shared identities. <em>Red/gold dataset pattern</em> — red is mutable experimental, gold is frozen and promoted. Promotion gates require evidence — quality reports, lineage, sign-offs. No direct edits in production — ever.">
+          <div class="env-principles">
+            <div><strong>Least privilege</strong>No shared identity across environments.</div>
+            <div><strong>Red/gold datasets</strong>Red = mutable. Gold = frozen, promoted only.</div>
+            <div><strong>Evidence-gated promotion</strong>Quality, lineage, security sign-off required.</div>
+            <div><strong>Never edit Prod directly</strong>Managed solutions only. Always.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 07 QUIZ 1 -->
+      <section class="slide content-slide"
+        data-section="ALM Foundations"
+        data-script="Quick check.">
+        <div class="slide-num">07 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 1 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which dataset is most ready for promotion to <em>Production</em> in an AI ALM process?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> The latest Dev extract with broad sample coverage</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">B</span> A Test dataset that looks balanced but has partial lineage</button>
+            <button class="quiz-opt" data-correct="true" data-explain="An immutable, versioned, labeled, lineage-complete 'gold' snapshot that has passed evaluation gates is the only dataset ready for production. Latest Dev extracts are mutable and unverified. Partial lineage breaks audit trails — even balanced data with missing lineage is unpromotable. Acceptable latency in pilot is necessary but nowhere near sufficient. Production-ready means immutable + labeled + lineage-complete + evaluation-gated."><span class="letter">C</span> An immutable, versioned dataset with sensitivity labels and full lineage that passed evaluation gates</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Any dataset that delivers acceptable latency in a pilot</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 08 SECTION DIVIDER UNIT 2 -->
+      <section class="slide section-divider"
+        data-section="AI Data ALM"
+        data-script="Unit two. <em>AI data ALM.</em> The most thorough lifecycle in the chapter. 7 phases — A through G. 5 promotion gates with explicit controls and evidence. <em>This pattern applies to every AI component type</em> with minor variations.">
+        <div class="slide-num">08 / 22</div>
+        <div class="label">UNIT TWO</div>
+        <h2>AI Data ALM<br><em>7-Phase Lifecycle</em></h2>
+        <div class="sub">7 phases (A–G) · 5 promotion gates with controls and evidence. The master pattern that all AI ALM follows.</div>
+      </section>
+
+      <!-- 09 7-PHASE LIFECYCLE -->
+      <section class="slide content-slide"
+        data-section="AI Data ALM"
+        data-script="<em>The 7-phase data ALM lifecycle.</em> Phases A through G. Plan and Catalog. Ingest and Prepare. Develop and Evaluate. Stage and Approve. Deploy and Serve. Operate and Monitor. Evolve and Retire. <em>Each phase has explicit gates</em> before moving to the next. I'll bring them up one at a time.">
+        <div class="slide-num">09 / 22</div>
+        <h3 class="slide-h">7-phase <em>data lifecycle</em></h3>
+        <p class="lead">Microsoft's published 7-phase data ALM lifecycle. Each phase produces specific evidence required by the next gate.</p>
+        <div class="lifecycle-flow">
+          <div class="lc-title">▸ Phases A through G with promotion gates</div>
+          <div class="phase-row">
+            <div class="phase p1" data-step data-script="<em>Phase A — Plan and Catalog</em>. Identify business scenarios and data contracts. Classify sensitivity. Apply labels. Register in catalog. Define KPIs and risk posture.">
+              <div class="pl"><strong>A</strong>PHASE</div>
+              <h6>Plan &amp; Catalog</h6>
+              <p>Data contracts · sensitivity labels · catalog</p>
+              <div class="gate">Gate A→B</div>
+            </div>
+            <div class="phase p2" data-step data-script="<em>Phase B — Ingest and Prepare</em>. Profile and remediate quality issues. Generate lineage. Stamp schema versions and hashes. Produce curated datasets and feature sets with deterministic pipelines.">
+              <div class="pl"><strong>B</strong>PHASE</div>
+              <h6>Ingest &amp; Prepare</h6>
+              <p>Quality · lineage · curated sets</p>
+              <div class="gate">Gate B→C</div>
+            </div>
+            <div class="phase p3" data-step data-script="<em>Phase C — Develop and Evaluate</em>. Train and iterate using Dev/Test data. <em>Never train on production knowledge</em>. Run evaluation suites — accuracy, safety, robustness, cost — on golden sets. Store model and data cards.">
+              <div class="pl"><strong>C</strong>PHASE</div>
+              <h6>Develop &amp; Evaluate</h6>
+              <p>Train · evaluate on golden sets · model cards</p>
+              <div class="gate">Gate C→D</div>
+            </div>
+            <div class="phase p4" data-step data-script="<em>Phase D — Stage and Approve</em>. Privacy, security, and compliance reviews. DLP, RAI, export controls. Canary runs using masked Prod-like data. Freeze gold datasets. Sign immutability attestations.">
+              <div class="pl"><strong>D</strong>PHASE</div>
+              <h6>Stage &amp; Approve</h6>
+              <p>Privacy/RAI review · canary · freeze gold</p>
+              <div class="gate">Gate D→E</div>
+            </div>
+            <div class="phase p5" data-step data-script="<em>Phase E — Deploy and Serve</em>. Promote gold corpora and indexes. Refresh semantic indexing. Enforce region and residency settings. Connector allow/deny lists. Register release in catalog.">
+              <div class="pl"><strong>E</strong>PHASE</div>
+              <h6>Deploy &amp; Serve</h6>
+              <p>Promote · residency · register in catalog</p>
+              <div class="gate">Gate E→F</div>
+            </div>
+            <div class="phase p6" data-step data-script="<em>Phase F — Operate and Monitor</em>. Track latency, cost, success rate, safety violations, data access denials. Detect data drift versus baselines. Trigger safeguards — circuit breakers, HITL. <em>Re-run evaluation suites on golden sets nightly or weekly</em>.">
+              <div class="pl"><strong>F</strong>PHASE</div>
+              <h6>Operate &amp; Monitor</h6>
+              <p>Telemetry · drift detection · re-eval</p>
+              <div class="gate">Continuous</div>
+            </div>
+            <div class="phase p7" data-step data-script="<em>Phase G — Evolve and Retire</em>. Rotate or retrain on updated gold sets. Apply retention and deletion policies. <em>Preserve audit trails and lineage for compliance</em> — even retired assets need their history accessible.">
+              <div class="pl"><strong>G</strong>PHASE</div>
+              <h6>Evolve &amp; Retire</h6>
+              <p>Retrain · retention · audit preservation</p>
+              <div class="gate">Loop back</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 PROMOTION GATE MATRIX -->
+      <section class="slide content-slide"
+        data-section="AI Data ALM"
+        data-script="<em>The promotion gate matrix.</em> Five gates. Each gate has a control area, the questions to answer, and the evidence required to pass. <em>Without evidence, no promotion</em>. Gates aren't checkboxes — they're audit trail. I'll reveal it.">
+        <div class="slide-num">10 / 22</div>
+        <h3 class="slide-h">Promotion <em>gate matrix</em></h3>
+        <p class="lead">Five gates. Each requires specific evidence. No evidence = no promotion. The matrix becomes part of the audit trail.</p>
+        <div class="gate-matrix" data-step
+          data-script="<em>The five gates and their evidence requirements</em>. Gate A→B — catalog and ownership, data contract approved, sensitivity labels applied. Gate B→C — data quality and lineage, profiling complete, version IDs stamped. Gate C→D — evaluation and safety, thresholds met, model cards produced. Gate D→E — compliance and residency, region rules verified, DLP approved. Gate E→F — runtime readiness, dashboards live, rollback validated, budget guards set. <em>Each gate is enforced by named owners</em>.">
+          <div class="gm-row head">
+            <div>Gate</div>
+            <div>Control Area</div>
+            <div>Questions to Answer</div>
+            <div>Evidence Required</div>
+          </div>
+          <div class="gm-row">
+            <div class="gate">A → B</div>
+            <div class="ctrl">Catalog &amp; ownership</div>
+            <div>Is the owner accountable? Is sensitivity labeled?</div>
+            <div class="ev">Data contract · catalog record · label policy proof</div>
+          </div>
+          <div class="gm-row">
+            <div class="gate">B → C</div>
+            <div class="ctrl">Data quality &amp; lineage</div>
+            <div>Is data profiled, balanced, de-identified where needed?</div>
+            <div class="ev">Profiling report · lineage graph · version IDs</div>
+          </div>
+          <div class="gm-row">
+            <div class="gate">C → D</div>
+            <div class="ctrl">Evaluation &amp; safety</div>
+            <div>Do evaluations meet thresholds? Bias or unsafe patterns?</div>
+            <div class="ev">Metrics pack · safety report · model/data card</div>
+          </div>
+          <div class="gm-row">
+            <div class="gate">D → E</div>
+            <div class="ctrl">Compliance &amp; residency</div>
+            <div>Do region rules and DLP policies permit use?</div>
+            <div class="ev">Residency mapping · DLP rules · approval memo</div>
+          </div>
+          <div class="gm-row">
+            <div class="gate">E → F</div>
+            <div class="ctrl">Runtime readiness</div>
+            <div>Can we monitor, roll back, and cap costs?</div>
+            <div class="ev">Dashboards · alarms · rollback plan · budget guard</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11 QUIZ 2 -->
+      <section class="slide content-slide"
+        data-section="AI Data ALM"
+        data-script="Quick check.">
+        <div class="slide-num">11 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 2 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Your organization operates in a regulated region with occasional demand spikes. What is the <em>default stance</em> for data residency in the ALM design?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Enable cross-region processing by default for performance</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Keep processing in-region by default and allow overflow only with explicit approval and controls. This is Microsoft's published default for residency-sensitive workloads. Cross-region by default violates regulatory boundaries on day one. Lowest-cost routing ignores compliance entirely. Disabling residency checks during canary releases creates a backdoor that auditors will find. The right pattern is in-region default + documented exceptions + explicit approval workflow."><span class="letter">B</span> Keep processing in-region by default; allow overflow only with explicit approval and controls</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> Route all traffic to the lowest-cost region regardless of policy</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Disable residency checks during canary releases</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 12 SECTION DIVIDER UNIT 3 -->
+      <section class="slide section-divider"
+        data-section="Agents ALM"
+        data-script="Unit three. <em>ALM for agents — Copilot Studio and Microsoft Foundry.</em> Same lifecycle pattern, different artifacts. Copilot Studio has agents, connectors, actions. Foundry has modular agent components.">
+        <div class="slide-num">12 / 22</div>
+        <div class="label">UNIT THREE</div>
+        <h2>Agents<br><em>ALM</em></h2>
+        <div class="sub">Copilot Studio + Microsoft Foundry · component-level versioning · gate requirements matrix. Same pattern, different artifacts.</div>
+      </section>
+
+      <!-- 13 COPILOT STUDIO ALM -->
+      <section class="slide content-slide"
+        data-section="Agents ALM"
+        data-script="<em>Copilot Studio ALM</em>. Three component types — agents, connectors, actions. Each has its own ALM rules. Below — the 3-stage flow that applies to all of them — Dev, Test, Prod. I'll bring up the components first, then the stage flow.">
+        <div class="slide-num">13 / 22</div>
+        <h3 class="slide-h">Copilot Studio — <em>3 component types &amp; 3 stages</em></h3>
+        <p class="lead">Copilot Studio agents include agents, connectors, and actions. Each has component-specific ALM rules layered on top of the standard 3-stage flow.</p>
+        <div class="cs-alm">
+          <div class="cs-comp cc1" data-step
+            data-script="<em>Component 1 — Agents</em>. Conversational or autonomous. Build in Dev. Validate reasoning quality and grounding in Test. Deploy via managed solutions in Prod. <em>Apply versioning and planned release cycles</em>.">
+            <div class="top">
+              <h5>Agents</h5>
+              <div class="sub">Conversational or autonomous</div>
+            </div>
+            <div class="body">
+              <h6>ALM rules</h6>
+              <ul>
+                <li>Build agent scope, intents, behaviors in Dev</li>
+                <li>Add knowledge sources in Dev only</li>
+                <li>Regression test all topics in Test</li>
+                <li>Deploy via managed solutions in Prod</li>
+                <li>Versioning + release cycles</li>
+              </ul>
+            </div>
+          </div>
+          <div class="cs-comp cc2" data-step
+            data-script="<em>Component 2 — Connectors</em>. Build via Dev only. Validate authentication flows. Apply DLP policies during Test. Publish only in Prod after full review. <em>Track versions and rollback strategies</em>.">
+            <div class="top">
+              <h5>Connectors</h5>
+              <div class="sub">Custom integration points</div>
+            </div>
+            <div class="body">
+              <h6>ALM rules</h6>
+              <ul>
+                <li>Build via Dev only</li>
+                <li>Validate authentication flows</li>
+                <li>Apply DLP policies during Test</li>
+                <li>Publish only after full review</li>
+                <li>Track versions and rollback paths</li>
+              </ul>
+            </div>
+          </div>
+          <div class="cs-comp cc3" data-step
+            data-script="<em>Component 3 — Actions</em>. The 5-step action lifecycle. Design — define outcome, inputs, outputs. Build — implement logic. Validate — confirm sequencing and error handling. Promote through environments via managed solutions. Monitor success and performance.">
+            <div class="top">
+              <h5>Actions</h5>
+              <div class="sub">Executable steps triggered by agents</div>
+            </div>
+            <div class="body">
+              <h6>5-step action lifecycle</h6>
+              <ul>
+                <li>Design — outcome, inputs, outputs</li>
+                <li>Build — Power Automate, plug-ins, APIs</li>
+                <li>Validate — sequencing &amp; error handling</li>
+                <li>Promote via managed solutions</li>
+                <li>Monitor success/failure rates</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div data-step
+          data-script="<em>The 3-stage flow that applies to all three component types</em>. Development — build and iterate, knowledge in Dev only. Testing — validate reasoning quality, grounding compliance, regression tests. Production — managed solutions only, monitored, change-controlled. <em>This pattern is universal</em> — same shape for every Copilot Studio asset.">
+          <div class="alm-stages">
+            <h6>▸ The 3-stage flow — applies to all component types</h6>
+            <div class="stage-row">
+              <div class="stage-card">
+                <div class="n">STAGE 1</div>
+                <h6>Development</h6>
+                <ul>
+                  <li>Draft agent scope</li>
+                  <li>Build actions and prompts</li>
+                  <li>Add knowledge sources</li>
+                  <li>Edge case prompt testing</li>
+                </ul>
+              </div>
+              <div class="stage-card">
+                <div class="n">STAGE 2</div>
+                <h6>Testing</h6>
+                <ul>
+                  <li>Validate reasoning quality</li>
+                  <li>Verify grounding integrity</li>
+                  <li>Evaluate triggers</li>
+                  <li>Regression tests on all topics</li>
+                </ul>
+              </div>
+              <div class="stage-card">
+                <div class="n">STAGE 3</div>
+                <h6>Production</h6>
+                <ul>
+                  <li>Managed solutions only</li>
+                  <li>Monitor usage &amp; safety</li>
+                  <li>Versioned release cycles</li>
+                  <li>Document change history</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 14 FOUNDRY GATE MATRIX -->
+      <section class="slide content-slide"
+        data-section="Agents ALM"
+        data-script="<em>Foundry agent ALM</em>. Modular components — agent logic, prompts, action handlers, data configs, security mappings, connectors, policies. <em>Treat each component as a versioned artifact</em>. The gate requirements matrix on the right shows what's required versus recommended at each promotion gate. I'll reveal components first, then the matrix.">
+        <div class="slide-num">14 / 22</div>
+        <h3 class="slide-h">Foundry agent ALM — <em>components &amp; gates</em></h3>
+        <p class="lead">Foundry agents are modular — each component versions independently. The gate matrix sets the bar for required versus recommended controls.</p>
+        <div class="foundry-grid">
+          <div class="foundry-comp" data-step
+            data-script="<em>Foundry agent components</em>. Seven modular pieces. Agent logic and orchestration. Prompts and behavioral rules. Action handlers and workflows. Data and grounding configurations. Security and permission mappings. Connectors and external integrations. Policies and safety controls. <em>Treat each as a versioned artifact</em> with immutable releases for production.">
+            <h5>Foundry agent components</h5>
+            <p>Modular components — each versioned independently with changelogs.</p>
+            <h6>7 component types</h6>
+            <ul>
+              <li>Agent logic and orchestration</li>
+              <li>Prompts and behavioral rules</li>
+              <li>Action handlers and workflows</li>
+              <li>Data and grounding configurations</li>
+              <li>Security and permission mappings</li>
+              <li>Connectors and external integrations</li>
+              <li>Policies and safety controls</li>
+            </ul>
+          </div>
+          <div data-step
+            data-script="<em>The Foundry gate requirements matrix</em>. Two gates. Dev to Test — functional and documentation required, compliance, safety, performance recommended. Test to Prod — <em>everything required</em>. The gate matrix codifies what 'production-ready' means in Microsoft Foundry.">
+            <div class="gate-req-matrix">
+              <div class="grm-row head">
+                <div>Gate</div>
+                <div>Functional</div>
+                <div>Compliance</div>
+                <div>Safety</div>
+                <div>Performance</div>
+                <div>Docs</div>
+              </div>
+              <div class="grm-row">
+                <div>Dev → Test</div>
+                <div class="req-yes">✓</div>
+                <div class="req-rec">△</div>
+                <div class="req-rec">△</div>
+                <div class="req-rec">△</div>
+                <div class="req-yes">✓</div>
+              </div>
+              <div class="grm-row">
+                <div>Test → Prod</div>
+                <div class="req-yes">✓</div>
+                <div class="req-yes">✓</div>
+                <div class="req-yes">✓</div>
+                <div class="req-yes">✓</div>
+                <div class="req-yes">✓</div>
+              </div>
+            </div>
+            <div style="margin-top:8px;font-size:11px;color:var(--ink-soft);font-style:italic;text-align:center">
+              <span style="color:#107C10;font-weight:700">✓ Required</span> · <span style="color:#F59E0B;font-weight:700">△ Recommended</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 15 QUIZ 3 -->
+      <section class="slide content-slide"
+        data-section="Agents ALM"
+        data-script="Quick check.">
+        <div class="slide-num">15 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 3 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">To keep agent behavior <em>consistent across environments</em>, which practice is essential?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Edit agent prompts directly in Production for speed</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Managed solutions with defined promotion gates from Dev → Test → Prod is the foundational practice. Direct edits in Production break the audit trail and create configuration drift. Sharing identities across environments violates least-privilege. Ad-hoc connector updates in Test bypass the change control that gates exist to enforce. Managed solutions plus gates is the only consistent answer — it's the pattern Microsoft publishes for every agent type."><span class="letter">B</span> Use managed solutions with defined promotion gates from Dev → Test → Prod</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> Share the same identity and connections across all environments</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Allow ad-hoc connector updates in Test without review</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 16 SECTION DIVIDER UNIT 4 -->
+      <section class="slide section-divider"
+        data-section="Models &amp; D365"
+        data-script="Unit four. <em>Custom models and Dynamics 365 AI ALM.</em> The 7-step model lifecycle. Two promotion gates. Same patterns extended to D365 finance, supply chain, and customer service AI features.">
+        <div class="slide-num">16 / 22</div>
+        <div class="label">UNIT FOUR</div>
+        <h2>Models &amp;<br>D365 <em>ALM</em></h2>
+        <div class="sub">7-step custom model lifecycle · 2 promotion gates · D365 F&amp;SC and Customer Service AI patterns. Domain-aware ALM.</div>
+      </section>
+
+      <!-- 17 CUSTOM MODEL LIFECYCLE -->
+      <section class="slide content-slide"
+        data-section="Models &amp; D365"
+        data-script="<em>The custom model 7-step lifecycle</em>. Plan and Design through Retirement. <em>Each step is gated</em>. Plus the two promotion gates underneath — Gate 1 Dev to Test, Gate 2 Test to Prod. <em>Gate 2 is stricter</em> — bias testing, performance baseline, security approval, rollback plan. I'll reveal the lifecycle, then the gates.">
+        <div class="slide-num">17 / 22</div>
+        <h3 class="slide-h">Custom model — <em>7-step lifecycle &amp; gates</em></h3>
+        <p class="lead">Microsoft's published 7-step lifecycle for custom AI models. Two promotion gates with explicit criteria.</p>
+        <div data-step
+          data-script="<em>The 7-step model lifecycle</em>. Plan &amp; Design — define use case, success criteria. Data Preparation — contracts, golden sets, versioned pipelines. Model Development — fine-tune, BYOM, document hyperparameters. Evaluation &amp; Approval — accuracy, cost, safety, model card. Deployment — managed artifacts, model registry, rollback paths. Monitor &amp; Optimize — drift detection, retraining triggers. Retirement — decommission, archive, transition plan.">
+          <div class="model-lifecycle">
+            <div class="ml-row">
+              <div class="ml-step s1"><div class="num">1</div><h6>Plan &amp; Design</h6><p>Use case · success criteria · constraints</p></div>
+              <div class="ml-step s2"><div class="num">2</div><h6>Data Prep</h6><p>Contracts · golden sets · versioned pipelines</p></div>
+              <div class="ml-step s3"><div class="num">3</div><h6>Model Dev</h6><p>Fine-tune · BYOM · hyperparameters</p></div>
+              <div class="ml-step s4"><div class="num">4</div><h6>Eval &amp; Approve</h6><p>Accuracy · cost · safety · model card</p></div>
+              <div class="ml-step s5"><div class="num">5</div><h6>Deploy</h6><p>Managed artifacts · registry · rollback</p></div>
+              <div class="ml-step s6"><div class="num">6</div><h6>Monitor</h6><p>Drift detection · retrain triggers</p></div>
+              <div class="ml-step s7"><div class="num">7</div><h6>Retire</h6><p>Decommission · archive · transition</p></div>
+            </div>
+          </div>
+        </div>
+        <div data-step
+          data-script="<em>Two promotion gates</em>. Gate 1 — Dev to Test — training data quality, safety and bias testing passed, documentation created. Gate 2 — Test to Prod — performance exceeds baseline, cost and latency in range, security and compliance approvals, <em>rollback plan confirmed</em>. <em>Rollback plan is non-negotiable</em> — without it, you can't recover from a bad release.">
+          <div class="model-gates">
+            <div class="mg-card g1">
+              <div class="lab">GATE 1 · DEV → TEST</div>
+              <h6>Pre-evaluation gate</h6>
+              <ul>
+                <li>Training data meets quality standards</li>
+                <li>Safety and bias testing passed</li>
+                <li>Documentation created</li>
+                <li>Initial evaluation thresholds met</li>
+              </ul>
+            </div>
+            <div class="mg-card g2">
+              <div class="lab">GATE 2 · TEST → PROD</div>
+              <h6>Production readiness gate</h6>
+              <ul>
+                <li>Performance exceeds baseline</li>
+                <li>Cost and latency within range</li>
+                <li>Security and compliance approved</li>
+                <li><strong>Rollback plan confirmed</strong> — non-negotiable</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 18 QUIZ 4 -->
+      <section class="slide content-slide"
+        data-section="Models &amp; D365"
+        data-script="Last knowledge check.">
+        <div class="slide-num">18 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Knowledge <em>check</em></h3>
+        <p class="lead" style="margin-bottom:20px">Question 4 of 4</p>
+        <div class="quiz-wrap">
+          <div class="quiz-q">Which ALM principle is most critical when promoting AI components across <em>Dynamics 365 environments?</em></div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="letter">A</span> Editing prompts directly in production</button>
+            <button class="quiz-opt" data-correct="true" data-explain="Using versioned, managed solutions with promotion gates is the foundational principle for D365 AI ALM — it applies equally to Finance/Supply Chain and Customer Service AI components. Direct edits in production break audit trails and create drift. Unrestricted access for testing violates least-privilege and exposes customer data. Deploying without validation is the path to production incidents. Versioned managed solutions with gates is the only answer that aligns with enterprise governance."><span class="letter">B</span> Using versioned, managed solutions with promotion gates</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">C</span> Allowing unrestricted access to customer data for testing</button>
+            <button class="quiz-opt" data-correct="false"><span class="letter">D</span> Deploying without validation to reduce delays</button>
+          </div>
+          <div class="quiz-explain"><strong>Why this answer</strong><p></p></div>
+        </div>
+      </section>
+
+      <!-- 19 SECTION DIVIDER UNIT 5 -->
+      <section class="slide section-divider"
+        data-section="Governance &amp; RACI"
+        data-script="Last unit. <em>Governance, RACI, and continuous improvement.</em> Who owns what. The production go/no-go checklist. Closing the lifecycle loop.">
+        <div class="slide-num">19 / 22</div>
+        <div class="label">UNIT FIVE</div>
+        <h2>Governance<br>&amp; <em>RACI</em></h2>
+        <div class="sub">Roles &amp; responsibilities · production go/no-go checklist · continuous improvement loop. The operating model.</div>
+      </section>
+
+      <!-- 20 RACI + CHECKLIST -->
+      <section class="slide content-slide"
+        data-section="Governance &amp; RACI"
+        data-script="<em>The RACI matrix and the production go/no-go checklist</em>. RACI sets ownership for every ALM activity — accountable, responsible, consulted, informed. The checklist is what every release must pass before reaching production. <em>Both are operational artifacts</em> — print them, post them, use them. I'll reveal each.">
+        <div class="slide-num">20 / 22</div>
+        <h3 class="slide-h">RACI &amp; <em>go/no-go checklist</em></h3>
+        <p class="lead">Five roles, six activities. Plus the production checklist that gates every release. Together they define the AI ALM operating model.</p>
+        <div data-step
+          data-script="<em>The RACI matrix for AI data ALM</em>. Five roles across the top — Data Owner, AI Architect, Security/Compliance, Platform Admin, Product Owner. Six activities down the side — define data contract, classify and label, quality profiling, evaluation thresholds, residency configuration, deployment and rollback. <em>Each cell maps to one of A, R, C, I</em>. Notice the AI Architect is accountable for evaluation thresholds and residency — that's the architect's domain.">
+          <div class="raci-matrix">
+            <div class="raci-row head">
+              <div>Activity</div>
+              <div>Data Owner</div>
+              <div>AI Architect</div>
+              <div>Sec/Comp</div>
+              <div>Platform Admin</div>
+              <div>Product Owner</div>
+            </div>
+            <div class="raci-row">
+              <div>Define data contract</div>
+              <div class="raci-cell r">R</div>
+              <div class="raci-cell a">A</div>
+              <div class="raci-cell c">C</div>
+              <div class="raci-cell c">C</div>
+              <div class="raci-cell c">C</div>
+            </div>
+            <div class="raci-row">
+              <div>Classify &amp; label</div>
+              <div class="raci-cell a">A/R</div>
+              <div class="raci-cell c">C</div>
+              <div class="raci-cell c">C</div>
+              <div class="raci-cell c">C</div>
+              <div class="raci-cell i">I</div>
+            </div>
+            <div class="raci-row">
+              <div>Evaluation thresholds</div>
+              <div class="raci-cell c">C</div>
+              <div class="raci-cell a">A/R</div>
+              <div class="raci-cell c">C</div>
+              <div class="raci-cell i">I</div>
+              <div class="raci-cell c">C</div>
+            </div>
+            <div class="raci-row">
+              <div>Residency configuration</div>
+              <div class="raci-cell c">C</div>
+              <div class="raci-cell a">A</div>
+              <div class="raci-cell r">R</div>
+              <div class="raci-cell r">R</div>
+              <div class="raci-cell i">I</div>
+            </div>
+            <div class="raci-row">
+              <div>Deployment &amp; rollback</div>
+              <div class="raci-cell i">I</div>
+              <div class="raci-cell a">A</div>
+              <div class="raci-cell c">C</div>
+              <div class="raci-cell r">R</div>
+              <div class="raci-cell r">R</div>
+            </div>
+            <div class="raci-row">
+              <div>Monitoring &amp; drift response</div>
+              <div class="raci-cell c">C</div>
+              <div class="raci-cell a">A</div>
+              <div class="raci-cell c">C</div>
+              <div class="raci-cell r">R</div>
+              <div class="raci-cell r">R</div>
+            </div>
+          </div>
+          <div class="raci-legend">
+            <strong class="a">A</strong> Accountable · <strong class="r">R</strong> Responsible · <strong class="c">C</strong> Consulted · <strong class="i">I</strong> Informed
+          </div>
+        </div>
+        <div data-step
+          data-script="<em>The production go/no-go checklist</em>. Six items. Data contract approved and tagged. Sensitivity labels and DLP applied. Lineage current and dataset immutable. Evaluation thresholds met. Residency decision recorded. Dashboards, budgets, alerts, and rollback validated in Pre-Prod. <em>All six checked or no production release</em> — period.">
+          <div class="checklist-strip">
+            <h6>☑ Production go/no-go checklist · all 6 required</h6>
+            <div class="cl-grid">
+              <div>Data contract approved · asset tagged &amp; discoverable</div>
+              <div>Sensitivity labels &amp; DLP applied · connectors approved</div>
+              <div>Lineage current · dataset snapshot immutable &amp; versioned</div>
+              <div>Evaluation thresholds met · safety risks mitigated</div>
+              <div>Residency decision recorded · cross-region toggle reviewed</div>
+              <div>Dashboards, budgets, alerts, rollback validated in Pre-Prod</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 21 SCENARIO -->
+      <section class="slide content-slide"
+        data-section="Wrap"
+        data-script="<em>Apply Chapter 10 end-to-end.</em> Pairs work through this complex multi-component ALM challenge. <em>Banking + multi-region + no current ALM discipline</em> — the architect has to design ALM from scratch under regulatory pressure.">
+        <div class="slide-num">21 / 22</div>
+        <h3 class="slide-h" style="margin-bottom:6px">Scenario <em>discussion</em></h3>
+        <p class="lead" style="margin-bottom:14px">Design ALM across multiple AI components for a regulated, multi-region enterprise.</p>
+        <div class="scenario">
+          <div class="tag">Scenario · Pair Discussion</div>
+          <h3>GlobalBank's multi-component AI rollout</h3>
+          <div class="quote">"GlobalBank has 50,000 employees across EU, US, and APAC. They're building a customer onboarding solution combining: a custom fraud detection model in Microsoft Foundry, a Copilot Studio agent for onboarding interviews, D365 Customer Service AI features for follow-up, plus knowledge sources from compliance docs (SharePoint) and product catalogs. 300 developers across 12 squads. Currently no ALM discipline — agents are being edited in production, no versioning, no environment separation. Compliance requires full audit trail. Data residency: EU customers' data must stay in EU. 16-week project timeline."</div>
+          <div class="prompts">
+            <h5>Discuss with your partner</h5>
+            <ul>
+              <li>Which AI artifacts need to be in the ALM scope? Be exhaustive — list everything that needs versioning.</li>
+              <li>Multi-region + EU residency requirement. What's the right environment strategy? How many environments, structured how?</li>
+              <li>Custom fraud model promotion gates vs. Copilot Studio agent gates — what's different? What's the same?</li>
+              <li>How would you handle the cross-region data residency requirement in the deployment design?</li>
+              <li>Who owns what (RACI)? Who's accountable for residency? For evaluation thresholds? For deployment?</li>
+            </ul>
+          </div>
+          <button class="reveal-btn" id="revealAnswer">Reveal Discussion Points →</button>
+          <div class="answer-panel" id="answerPanel">
+            <div class="ap-label">Guide · suggested points</div>
+            <div class="ap-row">
+              <div class="ap-q">Artifacts in ALM scope (all 6 categories apply)</div>
+              <div class="ap-a">
+                <span><strong>Datasets:</strong> Fraud training data, golden evaluation sets for fraud detection, onboarding conversation samples.</span>
+                <span><strong>Knowledge:</strong> SharePoint compliance corpus, product catalogs, semantic indexes for both.</span>
+                <span><strong>Prompts:</strong> Onboarding agent prompts, D365 customer service prompts, prompt templates per region.</span>
+                <span><strong>Policies:</strong> DLP rules per region, sensitivity labels (PII, financial data), connector allow/deny lists.</span>
+                <span><strong>Definitions:</strong> Fraud model artifacts, hyperparameters, agent definitions, connector configs.</span>
+                <span><strong>Telemetry:</strong> Run logs, drift metrics, safety events, user feedback per region.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Environment strategy — 4-tier per region</div>
+              <div class="ap-a">
+                <span><strong>4 tiers per region:</strong> Dev → Test → Pre-Prod → Prod, replicated for EU, US, APAC.</span>
+                <span><strong>Per-region isolation:</strong> EU customer data never crosses to US or APAC environments — even in Dev.</span>
+                <span><strong>No shared identities:</strong> Cross-region admin requires explicit role assignment per environment.</span>
+                <span><strong>Synthetic data in non-EU Dev:</strong> EU training samples must stay EU-resident — synthesize representative data for global Dev.</span>
+                <span><strong>Total environments:</strong> 12 (4 tiers × 3 regions). Heavy but compliance demands it.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Custom fraud model vs. Copilot agent gates</div>
+              <div class="ap-a">
+                <span><strong>Same baseline:</strong> Both use Dev→Test→Prod, both need versioning, both need rollback plans.</span>
+                <span><strong>Fraud model is stricter:</strong> Bias testing required (regulatory), model card mandatory, 7-step lifecycle including formal retirement, banking regulatory review at Gate 2.</span>
+                <span><strong>Copilot agent gates:</strong> 3-stage flow (Dev/Test/Prod), regression tests on topics, governance review for prompts. Lighter than fraud model.</span>
+                <span><strong>D365 Customer Service AI:</strong> Inherits Copilot pattern — managed solutions, versioned, gated.</span>
+                <span><strong>Architect's call:</strong> Don't apply fraud model rigor to the chat agent — that's gold-plating. Match rigor to risk.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">Cross-region data residency</div>
+              <div class="ap-a">
+                <span><strong>Default in-region:</strong> EU customer data processed in EU, US in US, APAC in APAC. No exceptions in baseline design.</span>
+                <span><strong>Document overflow rules:</strong> If EU spike requires overflow to US, require explicit approval workflow, masked data only, 30-day audit retention.</span>
+                <span><strong>Mailbox region alignment:</strong> Copilot agents respect user's mailbox geo. Configure per region.</span>
+                <span><strong>Connector allow lists:</strong> Region-specific. EU environment can only call EU connectors by default.</span>
+                <span><strong>Audit:</strong> Every cross-region data event logged with approval ID — auditors will ask.</span>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-q">RACI for the highest-stakes activities</div>
+              <div class="ap-a">
+                <span><strong>Residency configuration:</strong> AI Architect Accountable. Security/Compliance Responsible (does the work). Platform Admin Responsible (configures it). Banking governance team Consulted.</span>
+                <span><strong>Fraud model evaluation thresholds:</strong> AI Architect A/R (sets and validates). Data Science team Responsible. Risk &amp; Compliance Consulted. Product Owner Informed.</span>
+                <span><strong>Deployment &amp; rollback:</strong> AI Architect Accountable. Platform Admin Responsible. Product Owner Responsible (release decision). Security Consulted.</span>
+                <span><strong>Drift response:</strong> AI Architect Accountable for response plan. Platform Admin Responsible (executes). Data Owner Consulted. Product Owner Responsible (business decision).</span>
+                <span><strong>The architect's role:</strong> Accountable for almost everything technical. Must be supported by clear Responsible owners — otherwise the architect becomes a single point of failure.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 22 RECAP -->
+      <section class="slide content-slide"
+        data-section="Wrap"
+        data-script="Final recap. Six things to take into Chapter 11 — the final chapter. I'll bring them up one at a time.">
+        <div class="slide-num">22 / 22</div>
+        <h3 class="slide-h">Chapter 10 — <em>key takeaways</em></h3>
+        <p class="lead">Six things to carry forward into Chapter 11 — the course finale on responsible AI, security, governance, risk, and compliance.</p>
+        <div class="recap">
+          <div class="recap-list">
+            <div class="recap-item" data-step
+              data-script="One — AI ALM is fundamentally different from traditional ALM. Models drift. Prompts and knowledge are code. Agents adapt to context. Three differences that reshape every assumption.">
+              <div class="check">1</div><div class="text">AI ALM is <em>different</em> — drift · prompts-as-code · context-adaptive agents. Three differences reshape ALM.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Two — six categories of artifacts to govern. Datasets. Knowledge. Prompts. Policies. Agent and model definitions. Telemetry. All six need versioning and lineage.">
+              <div class="check">2</div><div class="text"><em>6 artifact categories</em>: Datasets · Knowledge · Prompts · Policies · Definitions · Telemetry.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Three — 4-tier environment strategy. Dev, Test, Pre-Prod, Prod. Red/gold dataset pattern. Evidence-gated promotion. Never edit Prod directly.">
+              <div class="check">3</div><div class="text"><em>4-tier environments</em> + red/gold pattern. Evidence-gated promotion. Never edit Prod.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Four — 7-phase data ALM lifecycle. A through G. Five promotion gates with explicit controls and evidence. <em>Master pattern</em> that all AI components follow with variations.">
+              <div class="check">4</div><div class="text"><em>7-phase lifecycle</em> (A–G) + 5 promotion gates with evidence. Master pattern for all AI components.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Five — agents and custom models follow the same lifecycle pattern with component-specific variations. Copilot Studio has 3 component types. Foundry has modular components. Custom models have a 7-step lifecycle. Same shape, different artifacts.">
+              <div class="check">5</div><div class="text">Agents + Models follow <em>same pattern</em> with component variations — Copilot Studio · Foundry · Custom Models · D365 AI.</div>
+            </div>
+            <div class="recap-item" data-step
+              data-script="Six — RACI matrix plus production go/no-go checklist. AI Architect is accountable for most technical decisions. Six checklist items required before any production release. <em>That's Chapter 10</em>. One chapter left — Chapter 11 covers responsible AI, security, governance, risk, and compliance. The final piece.">
+              <div class="check">6</div><div class="text"><em>RACI</em> + go/no-go checklist. AI Architect accountable for most technical calls. 6 items required pre-production.</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:18px;text-align:center;font-size:18px;color:var(--copilot);font-weight:600">
+          → Continue to Chapter 11: Responsible AI, Security, Governance — Course Finale
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="notes-panel" id="notesPanel">
+    <div class="label">📖 Read aloud · notes <span class="step-tag" id="stepTag"></span></div>
+    <div class="script" id="notesScript">Welcome script will appear here.</div>
+  </div>
+
+
+
+  <div class="float-hint" id="hint">← → to advance step-by-step · T for notes</div>
+</div>
+
+<script>
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0; let notesOpen = false;
+  const counter = document.getElementById('counter');
+  const progressFill = document.getElementById('progressFill');
+  const notesPanel = document.getElementById('notesPanel');
+  const notesScript = document.getElementById('notesScript');
+  const stepTag = document.getElementById('stepTag');
+  const sectionLabel = document.getElementById('sectionLabel');
+  const stepPill = document.getElementById('stepPill');
+  const stepIndicator = document.getElementById('stepIndicator');
+  const notesToggle = document.getElementById('notesToggle');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const hint = document.getElementById('hint');
+  function getSteps(s){return Array.from(s.querySelectorAll('[data-step]'));}
+  function getRevealed(s){return Array.from(s.querySelectorAll('[data-step].revealed'));}
+  function updateScript(text, stepInfo){
+    notesScript.classList.add('fading');
+    setTimeout(()=>{ notesScript.innerHTML = text || ''; stepTag.textContent = stepInfo || ''; notesScript.classList.remove('fading'); },180);
+  }
+  function updateStepIndicator(slide){
+    const steps = getSteps(slide); const revealed = getRevealed(slide);
+    if(steps.length>0 && revealed.length<steps.length){ stepIndicator.classList.add('show'); stepPill.style.display='inline-block'; stepPill.textContent = `Step ${revealed.length}/${steps.length}`; }
+    else if(steps.length>0){ stepIndicator.classList.remove('show'); stepPill.style.display='inline-block'; stepPill.textContent = `${steps.length}/${steps.length}`; }
+    else { stepIndicator.classList.remove('show'); stepPill.style.display='none'; }
+  }
+  function showSlide(i, revealAll){
+    if(i<0||i>=total) return;
+    slides[current].classList.remove('active');
+    getSteps(slides[current]).forEach(el=>el.classList.remove('revealed'));
+    current = i;
+    const slide = slides[current]; slide.classList.add('active'); slide.scrollTop = 0;
+    if(revealAll){ getSteps(slide).forEach(el=>el.classList.add('revealed')); }
+    counter.textContent = (current+1)+' / '+total;
+    progressFill.style.width = ((current+1)/total*100)+'%';
+    sectionLabel.textContent = slide.dataset.section || '';
+    if(revealAll){ const steps = getSteps(slide); const last = steps[steps.length-1]; if(last && last.dataset.script) updateScript(last.dataset.script, `Step ${steps.length}/${steps.length}`); else updateScript(slide.dataset.script, ''); } else { updateScript(slide.dataset.script, ''); }
+    updateStepIndicator(slide);
+    prevBtn.disabled = (current===0 && getRevealed(slide).length===0);
+    nextBtn.disabled = (current===total-1 && (getSteps(slide).length===0 || getRevealed(slide).length===getSteps(slide).length));
+  }
+  function next(){
+    const slide = slides[current]; const steps = getSteps(slide); const revealed = getRevealed(slide);
+    if(revealed.length<steps.length){ const idx = revealed.length; const el = steps[idx]; el.classList.add('revealed'); if(el.dataset.script) updateScript(el.dataset.script, `Step ${idx+1}/${steps.length}`); updateStepIndicator(slide); prevBtn.disabled=false; if(revealed.length+1===steps.length && current===total-1) nextBtn.disabled=true; }
+    else if(current<total-1){ showSlide(current+1, false); }
+  }
+  function prev(){
+    const slide = slides[current]; const revealed = getRevealed(slide);
+    if(revealed.length>0){ const last = revealed[revealed.length-1]; last.classList.remove('revealed'); const remaining = getRevealed(slide); if(remaining.length>0){ const r = remaining[remaining.length-1]; const total = getSteps(slide).length; updateScript(r.dataset.script, `Step ${remaining.length}/${total}`); } else { updateScript(slide.dataset.script, ''); } updateStepIndicator(slide); nextBtn.disabled=false; }
+    else if(current>0){ showSlide(current-1, true); }
+  }
+  function toggleNotes(){ notesOpen = !notesOpen; notesPanel.classList.toggle('open', notesOpen); notesToggle.classList.toggle('active', notesOpen); }
+  prevBtn.addEventListener('click', prev); nextBtn.addEventListener('click', next); notesToggle.addEventListener('click', toggleNotes);
+  document.addEventListener('keydown',(e)=>{ if(e.target.matches('input,textarea')) return; if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();} else if(e.key==='ArrowLeft'){e.preventDefault();prev();} else if(e.key==='t'||e.key==='T'){e.preventDefault();toggleNotes();} else if(e.key==='Home'){e.preventDefault();showSlide(0,false);} else if(e.key==='End'){e.preventDefault();showSlide(total-1,true);} });
+  document.querySelectorAll('.quiz-opt').forEach(btn=>{ btn.addEventListener('click',()=>{ const wrap = btn.closest('.quiz-wrap'); const opts = wrap.querySelectorAll('.quiz-opt'); const explain = wrap.querySelector('.quiz-explain'); opts.forEach(o=>{ if(o.dataset.correct==='true') o.classList.add('correct'); else o.classList.add('wrong'); }); const correctOpt = wrap.querySelector('.quiz-opt[data-correct="true"]'); if(correctOpt && explain){ explain.querySelector('p').textContent = correctOpt.dataset.explain || ''; explain.classList.add('show'); } }); });
+  const revealBtn = document.getElementById('revealAnswer'); const answerPanel = document.getElementById('answerPanel');
+  if(revealBtn && answerPanel){ revealBtn.addEventListener('click',()=>{ answerPanel.classList.add('show'); revealBtn.classList.add('shown'); }); }
+  setTimeout(()=>{hint.classList.add('show');},800); setTimeout(()=>{hint.classList.remove('show');},5500);
+  showSlide(0,false);
+})();
+</script>
+</body>
+</html>
