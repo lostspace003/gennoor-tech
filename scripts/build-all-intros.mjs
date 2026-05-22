@@ -363,6 +363,20 @@ const COURSES = [
     ],
   },
   {
+    slug: 'ai-risk-for-audit-committees',
+    courseTagline: 'Leadership · AI Risk for Audit Committees',
+    title: 'AI Risk for Audit Committees',
+    subtitle: 'AI risk doesn\'t fit cleanly into the existing risk universe. Most audit committees aren\'t asking the right questions yet.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-risk-for-audit-committees/chapter-01-universe',
+    takeaways: [
+      'AI risk in all 4 buckets it touches, not just operational — and the 3 risks that don\'t map cleanly to legacy frameworks.',
+      'Inherent vs residual with no controls-assumed shortcuts + NIST AI RMF overlay on COSO and three-lines + 9-question line of inquiry that surfaces real risk.',
+      'A 12-month internal audit AI plan, a 1-page board view that meaningfully changes, and cross-committee coordination across audit, risk, tech, ESG.',
+    ],
+  },
+  {
     slug: 'ai-strategy-for-cio',
     courseTagline: 'Leadership · AI Strategy for the CIO',
     title: 'AI Strategy for the CIO',
