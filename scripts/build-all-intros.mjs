@@ -222,6 +222,20 @@ const COURSES = [
     ],
   },
   {
+    slug: 'building-ai-agents-copilot-studio',
+    courseTagline: 'Build · Copilot Studio Agents (Production)',
+    title: 'Building AI Agents with Copilot Studio',
+    subtitle: 'Copilot Studio is a stack. Six components, three architectural decisions, twelve-item production gate.',
+    chapterMeta: { total: 8 }, duration: '~30 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/building-ai-agents-copilot-studio/chapter-01-architecture',
+    takeaways: [
+      'Six Copilot Studio components mapped and three architectural decisions made deliberately at the start — not after the third rebuild.',
+      'The 4-question framework for topic vs generative answers and the topic-explosion anti-pattern that hits at agent number twenty.',
+      'The 12-item production gate (4 architecture, 4 security, 4 operations) — twelve yes means production-ready. Anything less means not yet.',
+    ],
+  },
+  {
     slug: 'ai-for-energy-utilities',
     courseTagline: 'Energy · AI for Energy + Utilities',
     title: 'AI for Energy & Utilities',
