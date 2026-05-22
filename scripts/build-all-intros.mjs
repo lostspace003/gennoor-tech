@@ -363,6 +363,20 @@ const COURSES = [
     ],
   },
   {
+    slug: 'ai-strategy-for-cio',
+    courseTagline: 'Leadership · AI Strategy for the CIO',
+    title: 'AI Strategy for the CIO',
+    subtitle: 'AI is one workload competing for CIO attention. Six decisions that determine whether it stays additive or eats the portfolio.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Advanced',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-strategy-for-cio/chapter-01-portfolio',
+    takeaways: [
+      'AI inside the run-grow-transform allocation, not bolted on — and the 5-criterion infrastructure test that picks cloud vs sovereign vs on-prem.',
+      'Build vs buy vs compose with three criteria + talent strategy per capability bucket + the SI dependency trap and its knowledge-transfer fix.',
+      'BCDR for AI services + three-metric board reporting integrated with broader IT + four-rhythm cadence that keeps you from being the bottleneck.',
+    ],
+  },
+  {
     slug: 'ai-strategy-for-cdo',
     courseTagline: 'Leadership · AI Strategy for the CDO',
     title: 'AI Strategy for the CDO',
