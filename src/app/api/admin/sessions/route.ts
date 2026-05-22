@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
           agentName: entity.agentName || '',
           status: entity.status || '',
           resumeFileName: entity.resumeFileName || '',
+          resumeBlobPath: entity.resumeBlobPath || '',
           contactInfo: entity.contactInfo || '',
           updatedAt: entity.updatedAt || entity.timestamp || '',
         })
