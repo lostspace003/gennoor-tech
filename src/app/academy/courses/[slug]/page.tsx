@@ -4,7 +4,8 @@ import { notFound } from 'next/navigation'
 import {
   ArrowLeft,
   ArrowRight,
-  Clock,
+  ArrowDown,
+  Sparkles,
   Layers,
   Users,
   CheckCircle2,
@@ -13,6 +14,7 @@ import {
   ExternalLink,
   Target,
   AlertCircle,
+  Download,
 } from 'lucide-react'
 import { BreadcrumbJsonLd } from '@/components/JsonLd'
 import EnablementMoment from '@/components/academy/EnablementMoment'
@@ -146,11 +148,15 @@ export default async function CourseDetailPage({ params }: PageProps) {
             </p>
 
             <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-gray-500 mb-2">
-              <span className="inline-flex items-center gap-1.5">
-                <Clock className="w-4 h-4 text-primary-500" />
-                {course.duration}
-              </span>
-              <span className="text-gray-300">·</span>
+              {course.tagline && (
+                <>
+                  <span className="inline-flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-primary-500" />
+                    {course.tagline}
+                  </span>
+                  <span className="text-gray-300">·</span>
+                </>
+              )}
               <span className="inline-flex items-center gap-1.5">
                 <Layers className="w-4 h-4 text-primary-500" />
                 {course.chapterCount} chapters
@@ -167,6 +173,18 @@ export default async function CourseDetailPage({ params }: PageProps) {
               </span>
             </div>
             <p className="text-xs text-gray-400">Last updated: {course.lastUpdated}</p>
+
+            <a
+              href="#interactive-course"
+              className="mt-7 inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-amber-500 to-amber-600 hover:shadow-lg hover:shadow-amber-500/25 hover:-translate-y-0.5 transition-all"
+            >
+              {course.interactiveUrl
+                ? 'Take the interactive course'
+                : isAvailable
+                  ? 'Get notified when chapters ship'
+                  : 'Request early access'}
+              <ArrowDown className="w-4 h-4" />
+            </a>
           </div>
         </div>
       </section>
@@ -271,9 +289,6 @@ export default async function CourseDetailPage({ params }: PageProps) {
                             : `${chapter.number}. ${chapter.title}`}
                         </h3>
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          <span className="text-xs text-gray-400 inline-flex items-center gap-1">
-                            <Clock className="w-3 h-3" /> {chapter.duration}
-                          </span>
                           {chapter.hasQuiz && (
                             <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold text-primary-600 bg-primary-50 border border-primary-100/60">
                               QUIZ
@@ -315,7 +330,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
       </section>
 
       {/* ACCESS / STATUS */}
-      <section className="py-12 lg:py-14 relative">
+      <section id="interactive-course" className="py-12 lg:py-14 relative scroll-mt-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto">
             <div
@@ -341,13 +356,26 @@ export default async function CourseDetailPage({ params }: PageProps) {
                       first two chapters are accessible without an account.
                     </p>
                   </div>
-                  <Link
-                    href={course.interactiveUrl}
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-amber-500 to-amber-600 hover:shadow-lg hover:shadow-amber-500/25 transition-all flex-shrink-0"
-                  >
-                    Take the interactive course
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
+                  <div className="flex flex-col gap-2 flex-shrink-0">
+                    <Link
+                      href={course.interactiveUrl}
+                      className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-amber-500 to-amber-600 hover:shadow-lg hover:shadow-amber-500/25 hover:-translate-y-0.5 transition-all"
+                    >
+                      Take the interactive course
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                    {course.pdfUrl && (
+                      <a
+                        href={course.pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-semibold rounded-xl text-amber-700 bg-white border border-amber-200 hover:bg-amber-50 transition-all"
+                      >
+                        <Download className="w-4 h-4" />
+                        Download PDF version
+                      </a>
+                    )}
+                  </div>
                 </div>
               ) : isAvailable ? (
                 /* AVAILABLE SCAFFOLD — curriculum live, content rolling out */
