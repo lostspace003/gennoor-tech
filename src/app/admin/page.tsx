@@ -67,7 +67,7 @@ function ChartLoader() {
 
 // ─── Types ───────────────────────────────────────────────────
 
-type TabKey = 'overview' | 'traffic' | 'enquiries' | 'emails' | 'sessions' | 'bookings' | 'storage' | 'insights' | 'comments' | 'seo' | 'setup' | 'ai-readiness' | 'cowork' | 'indexing' | 'academy'
+type TabKey = 'overview' | 'traffic' | 'enquiries' | 'emails' | 'sessions' | 'bookings' | 'storage' | 'insights' | 'comments' | 'seo' | 'setup' | 'ai-readiness' | 'cowork' | 'indexing' | 'academy' | 'auth-log'
 type GroupKey = 'analytics' | 'communications' | 'bookings' | 'system'
 
 interface AnalyticsData {
@@ -81,7 +81,8 @@ interface SetupCheck { label: string; description: string; configured: boolean; 
 interface SetupData { environment: string; platform: string; totalChecks: number; configuredCount: number; checks: Record<string, SetupCheck> }
 interface SeoCheckItem { label: string; description: string; status: 'pass' | 'fail' | 'warning' | 'manual'; action: string; link?: string }
 interface SeoData { sitemapUrls: number; pagesUp: number; totalKeyPages: number; totalBlogPosts: number; blogCategories: string[]; latestPost: { title: string; slug: string; date: string } | null; ga4Configured: boolean; ga4Id: string; pageChecks: Array<{ path: string; label: string; status: number; ok: boolean }>; checklist: Array<{ category: string; items: SeoCheckItem[] }> }
-interface SessionRecord { rowKey: string; agentId: string; agentName: string; status: string; resumeFileName: string; updatedAt: string }
+interface SessionRecord { rowKey: string; agentId: string; agentName: string; status: string; resumeFileName: string; resumeBlobPath?: string; updatedAt: string }
+interface AuthLogEntry { rowKey: string; email: string; name?: string; ip: string; userAgent: string; loginAt: string }
 interface ContainerStats { name: string; blobCount: number; totalSizeBytes: number; lastModified: string }
 interface BlobInfo { name: string; containerName: string; size: number; contentType: string; lastModified: string }
 interface StorageData { containers: ContainerStats[]; recentBlobs: BlobInfo[] }
@@ -159,6 +160,7 @@ export default function AdminDashboard() {
   const [indexingData, setIndexingData] = useState<{ google: Array<{ url: string; status: string }>; bing: Array<{ url: string; status: string }> } | null>(null)
   const [academyData, setAcademyData] = useState<{ learners: Array<{ email: string; name: string; provider: string; lastLogin: string; createdAt: string }>; progress: Array<{ email: string; courseId: string; chapterId: string; completionPercent: number; completed: boolean; lastAccessed: string }>; summary: { totalLearners: number; activeLearners: number; learnersWithCompletion: number; totalProgressEntries: number; byProvider: Record<string, number>; byCourse: Array<{ courseId: string; learners: number; completions: number }> }; chapterStats: Record<string, { views: number; completions: number; avgPercent: number }> } | null>(null)
   const [indexNowState, setIndexNowState] = useState<{ pushing: boolean; result?: { success: boolean; submitted?: number; total?: number; error?: string; submittedAt?: string } }>({ pushing: false })
+  const [authLog, setAuthLog] = useState<AuthLogEntry[]>([])
 
   const fetchAll = useCallback(async (numDays: number) => {
     setLoading(true); setError('')
@@ -205,6 +207,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (status === 'authenticated' && session?.user?.email) {
       fetch('/api/admin/auth-log', { method: 'POST' }).catch(() => {})
+      fetch('/api/admin/auth-log').then(r => r.ok ? r.json() : { logs: [] }).then(d => setAuthLog(d.logs || [])).catch(() => {})
     }
   }, [status, session?.user?.email])
 
@@ -381,6 +384,7 @@ export default function AdminDashboard() {
       { key: 'storage', label: 'Storage', icon: HardDrive },
       { key: 'seo', label: 'SEO Health', icon: Search },
       { key: 'indexing', label: 'Indexing', icon: Globe },
+      { key: 'auth-log', label: 'Auth Log', icon: Lock },
       { key: 'setup', label: 'Setup', icon: Settings, badge: setupData ? setupData.totalChecks - setupData.configuredCount : undefined },
     ]},
   ]
@@ -809,7 +813,7 @@ export default function AdminDashboard() {
               {filteredSessions.length === 0 ? <Empty text="No career sessions yet" /> : (
                 <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-500 border-b border-slate-200"><th className="text-left py-2 px-3 font-medium">Agent</th><th className="text-left py-2 px-3 font-medium">Status</th><th className="text-left py-2 px-3 font-medium">Resume</th><th className="text-left py-2 px-3 font-medium">Date</th></tr></thead>
                 <tbody>{filteredSessions.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || '')).slice(0, 20).map((s, i) => (
-                  <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50"><td className="py-2.5 px-3 text-slate-800">{s.agentName || s.agentId}</td><td className="py-2.5 px-3"><StatusBadge status={s.status} /></td><td className="py-2.5 px-3 text-slate-500 truncate max-w-[200px]">{s.resumeFileName || '-'}</td><td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{s.updatedAt ? new Date(s.updatedAt).toLocaleDateString() : '-'}</td></tr>
+                  <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50"><td className="py-2.5 px-3 text-slate-800">{s.agentName || s.agentId}</td><td className="py-2.5 px-3"><StatusBadge status={s.status} /></td><td className="py-2.5 px-3 text-slate-500 truncate max-w-[200px]">{s.resumeBlobPath ? (<a href={`/api/admin/resume-download?path=${encodeURIComponent(s.resumeBlobPath)}`} className="text-blue-600 hover:underline inline-flex items-center gap-1" download><Download className="w-3 h-3" /> {s.resumeFileName || 'resume'}</a>) : (s.resumeFileName || '-')}</td><td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{s.updatedAt ? new Date(s.updatedAt).toLocaleDateString() : '-'}</td></tr>
                 ))}</tbody></table></div>
               )}
             </Panel>
@@ -1384,6 +1388,44 @@ export default function AdminDashboard() {
                   <ExternalLink className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                 </a>
               ))}</div>
+            </Panel>
+          </div>
+        )}
+
+        {/* ─── AUTH LOG ──────────────────────────────────── */}
+        {activeTab === 'auth-log' && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCard icon={Lock} label="Recent Sign-ins" value={authLog.length} color="blue" />
+              <StatCard icon={Users} label="Unique Admins" value={new Set(authLog.map(l => l.email)).size} color="teal" />
+              <StatCard icon={Globe} label="Unique IPs" value={new Set(authLog.map(l => l.ip)).size} color="amber" />
+              <StatCard icon={Clock} label="Last Sign-in" value={authLog.length} color="purple" />
+            </div>
+            <Panel title="Admin Sign-in History" subtitle="Last 50 admin authentications">
+              {authLog.length === 0 ? <Empty text="No sign-in events recorded yet" /> : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="text-slate-500 border-b border-slate-200">
+                        <th className="text-left py-2 px-3 font-medium">When</th>
+                        <th className="text-left py-2 px-3 font-medium">Admin</th>
+                        <th className="text-left py-2 px-3 font-medium">IP</th>
+                        <th className="text-left py-2 px-3 font-medium">User Agent</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {authLog.map((l, i) => (
+                        <tr key={l.rowKey || i} className="border-b border-slate-100 hover:bg-blue-50/50">
+                          <td className="py-2.5 px-3 text-slate-700 whitespace-nowrap">{new Date(l.loginAt).toLocaleString()}</td>
+                          <td className="py-2.5 px-3 text-slate-800">{l.name || l.email}</td>
+                          <td className="py-2.5 px-3 text-slate-500 font-mono text-xs">{l.ip}</td>
+                          <td className="py-2.5 px-3 text-slate-500 text-xs truncate max-w-[400px]">{l.userAgent}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </Panel>
           </div>
         )}
