@@ -116,6 +116,17 @@ export const COURSE_OUTCOMES: Record<string, string[]> = {
     'Call AI with 4 extractions + the 2-2-2 weekly coaching loop that drops new-rep ramp 30-50%',
   ],
 
+  'banking-multimodal-rag-case-study': [
+    'Why pure text-RAG fails on financial documents — three concrete failure modes (tables, charts, scanned annexures) and four pre-committed success criteria',
+    'A Stack Fit Assessment for Azure AI Search + Vision + GPT-4o mapped across a three-stage pipeline',
+    'Document cracking discipline for text, tables (small whole / medium row-group / large individual-row), and charts (~25%→80% lift on chart queries)',
+    'Nine-field index schema with embedding choice (text-embedding-3-large) and chunk-size discipline (banking-dense 400-800 tokens)',
+    'Hybrid search tuned for financial vocabulary — 3-component (vector + BM25 + semantic ranker), top 30 → ranker → top 8 to LLM, ~600ms budget',
+    'Three-layer evaluation (retrieval + grounding + answer accuracy) with 200-query gold set and CI hard-block on regression',
+    'Five-section MRM submission + five regulator questions (RBI + SAMA + EU AI Act) + the parallel 6-week regulatory assessment',
+    'Five lessons from the build + four trust trip-wires + interactive build-plan builder',
+  ],
+
   'ai-risk-for-audit-committees': [
     'AI risk in all 4 buckets it touches (operational, compliance, strategic, reputational) — and 3 risks that don\'t map cleanly to legacy frameworks',
     'Inherent vs residual rated across 4 dimensions with the controls-assumed anti-pattern made visible',

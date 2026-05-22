@@ -363,6 +363,20 @@ const COURSES = [
     ],
   },
   {
+    slug: 'banking-multimodal-rag-case-study',
+    courseTagline: 'Case Study · Banking Multimodal RAG',
+    title: 'Case Study: Banking Multimodal RAG',
+    subtitle: 'A real bank build, anonymised but structurally honest. From text-only RAG to multimodal in 8 months.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Advanced',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/banking-multimodal-rag-case-study/chapter-01-use-case',
+    takeaways: [
+      'Why pure text-RAG fails on financial documents — three concrete failure modes (tables, charts, scanned annexures).',
+      'Stack Fit (Azure AI Search + Vision + GPT-4o), document cracking, hybrid search tuned for financial vocabulary, and three-layer evaluation.',
+      'Five-section MRM submission + five regulator questions + five lessons learned + interactive build-plan builder.',
+    ],
+  },
+  {
     slug: 'ai-risk-for-audit-committees',
     courseTagline: 'Leadership · AI Risk for Audit Committees',
     title: 'AI Risk for Audit Committees',
