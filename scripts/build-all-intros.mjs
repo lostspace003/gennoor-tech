@@ -363,6 +363,20 @@ const COURSES = [
     ],
   },
   {
+    slug: 'ai-vendor-management',
+    courseTagline: 'Leadership · AI Vendor Management',
+    title: 'AI Vendor Management',
+    subtitle: 'Run AI vendors with the same discipline as any other critical supplier. Same diligence rigor, contract teeth, exit plan.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-vendor-management/chapter-01-landscape',
+    takeaways: [
+      'Four vendor archetypes (hyperscalers, ISVs, boutiques, SI partners) with the three over-promise patterns to scrutinise.',
+      'Six AI-specific contract clauses standard MSAs miss, four-dimensional SLAs with termination right, and four lock-in tests with realistic mitigations.',
+      'Five signal sources with four-phase response, pre-written offboarding addressing three AI-specific exit risks, and a one-page playbook for the category team.',
+    ],
+  },
+  {
     slug: 'ai-decision-making',
     courseTagline: 'Foundations · AI Decision Making',
     title: 'AI Decision Making',
