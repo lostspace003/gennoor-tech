@@ -116,6 +116,17 @@ export const COURSE_OUTCOMES: Record<string, string[]> = {
     'Call AI with 4 extractions + the 2-2-2 weekly coaching loop that drops new-rep ramp 30-50%',
   ],
 
+  'building-an-hr-copilot-case-study': [
+    'The impact × feasibility filter that picks the right first use case — and the three exciting use cases this team consciously skipped',
+    'Stack Fit Assessment across Azure OpenAI + Copilot Studio + Dataverse with three integration gotchas that only surface at pilot scale',
+    'Two grounding patterns (policy doc + HRIS data) with row-level security tested cross-role before launch',
+    'The 5+1+1 hybrid conversation flow that shipped — and why the earlier 50-topic prototype failed',
+    'Weekly iteration cycle that caught two pre-launch hallucinations on real HR ticket data',
+    'Three-cohort four-week pilot rollout with four kill criteria signed by HR + IT + Legal pre-launch',
+    'The week-4-to-8 adoption playbook — four interventions and three adoption signals that predicted sustained 50% usage',
+    'Five lessons from the build + four trust trip-wires + interactive build-plan builder',
+  ],
+
   'banking-multimodal-rag-case-study': [
     'Why pure text-RAG fails on financial documents — three concrete failure modes (tables, charts, scanned annexures) and four pre-committed success criteria',
     'A Stack Fit Assessment for Azure AI Search + Vision + GPT-4o mapped across a three-stage pipeline',
