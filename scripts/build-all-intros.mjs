@@ -194,6 +194,20 @@ const COURSES = [
     ],
   },
   {
+    slug: 'ai-in-manufacturing',
+    courseTagline: 'Industry · AI in Manufacturing',
+    title: 'AI in Manufacturing',
+    subtitle: 'Manufacturing AI is plant-floor reality. Six plays, three anti-plays, the OT/IT bridge filter.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-in-manufacturing/chapter-01-landscape',
+    takeaways: [
+      'Six plant-floor plays that ship — predictive maintenance, quality vision, process optimisation, plant-floor supply chain, safety AI, pragmatic digital twin.',
+      'The OT/IT bridge filter — plant engineering, IT, and AI team in the room from day one. The bridge is where most projects fail.',
+      'A twelve-month plant roadmap with four trust trip-wires — autonomous safety-critical, eighteen-month digital-twin megaproject, surveillance, and missing narrative.',
+    ],
+  },
+  {
     slug: 'ai-for-manufacturing',
     courseTagline: 'Industry · AI for Manufacturing',
     title: 'AI for Manufacturing',
