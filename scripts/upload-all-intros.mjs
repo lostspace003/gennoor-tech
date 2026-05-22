@@ -42,6 +42,11 @@ const SLUGS = [
   'ai-program-management-pmo',
   'ai-talent-strategy',
   'enterprise-data-foundations-for-ai',
+  // Next-10 batch — 4 truly new (others already above)
+  'ai-for-cybersecurity-soc',
+  'ai-for-public-sector',
+  'ai-in-pharma-life-sciences',
+  'ai-product-management',
 ]
 
 const service = BlobServiceClient.fromConnectionString(STORAGE_CONN)

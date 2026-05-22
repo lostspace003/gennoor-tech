@@ -277,6 +277,63 @@ const COURSES = [
       'The platform discipline — pick the pattern that makes AI possible, not the platform that promises it.',
     ],
   },
+  // ── Next-10 batch: 4 truly new slugs (others above were pre-loaded) ──
+  {
+    slug: 'ai-for-cybersecurity-soc',
+    courseTagline: 'Cyber · AI for Cybersecurity SOC',
+    title: 'AI for Cybersecurity SOC',
+    subtitle: 'AI is an analyst force multiplier — not an analyst replacement. The disciplined SOC playbook.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Advanced',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-for-cybersecurity-soc/chapter-01-landscape',
+    takeaways: [
+      '5 SOC plays that ship — triage, detection augmentation, investigation, threat intel, automation — plus the 3 anti-plays.',
+      'Verification discipline on AI threat intel (Mata cross-domain) and human-in-the-loop on response — non-negotiable.',
+      'Defend AI\'s own attack surface — 4 attack vectors with 4 defensive patterns including model behaviour monitoring.',
+    ],
+  },
+  {
+    slug: 'ai-for-public-sector',
+    courseTagline: 'Public Sector · AI for Government',
+    title: 'AI for Public Sector & Government',
+    subtitle: 'In government, AI must serve the public and be accountable to it. Citizens cannot easily switch suppliers.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Advanced',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-for-public-sector/chapter-01-landscape',
+    takeaways: [
+      '5 public-sector plays + 3 fail patterns — algorithmic rights decisions, chatbot misrepresentation, opaque high-stakes AI.',
+      'The case-worker decision boundary — AI prepares, humans decide on rights. Source verification (Mata cross-domain).',
+      'Public AI inventory + impact assessments + named accountability — OMB M-24-10, EU AI Act, UK ATRS, India DPDPA.',
+    ],
+  },
+  {
+    slug: 'ai-in-pharma-life-sciences',
+    courseTagline: 'Pharma · AI in Pharma + Life Sciences',
+    title: 'AI in Pharma & Life Sciences',
+    subtitle: 'AI accelerates discovery and operations within GxP guardrails. Patient safety, data integrity, regulatory accountability are non-negotiable.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Advanced',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-in-pharma-life-sciences/chapter-01-landscape',
+    takeaways: [
+      '5 pharma plays — discovery, trial operations, regulatory submissions, pharmacovigilance + RWE, commercial + medical affairs.',
+      'Citation discipline on AI-drafted regulatory content (Mata cross-domain) + Part 11 audit trail.',
+      'Validation in GxP contexts — 4 components and audit-ready documentation before deployment.',
+    ],
+  },
+  {
+    slug: 'ai-product-management',
+    courseTagline: 'Product · AI Product Management',
+    title: 'AI Product Management',
+    subtitle: 'AI products are evaluated like products — not like models. Users care about their job, not your benchmarks.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Intermediate',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-product-management/chapter-01-landscape',
+    takeaways: [
+      '5 AI PM capabilities — JTBD framing, eval harnesses, telemetry, guardrails, honest communication.',
+      'Frame each AI feature with the 3-part frame (user job · success criterion · failure modes) — in 3 sentences or kill it.',
+      'Unit economics modelled before launch + honest communication posture (Air Canada cross-domain) — both protect trust.',
+    ],
+  },
 ]
 
 for (const c of COURSES) {
