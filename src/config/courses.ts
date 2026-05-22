@@ -3378,10 +3378,17 @@ const AUTO_INTRO_SLUGS = new Set([
   'ai-for-manufacturing',
   'ai-for-energy-utilities',
   'ai-for-retail-ecommerce',
+  // Next-10 batch (Courses 21-30)
   'ai-readiness-assessment-deep-dive',
+  'enterprise-data-foundations-for-ai',
   'ai-program-management-pmo',
   'ai-talent-strategy',
-  'enterprise-data-foundations-for-ai',
+  // ai-for-energy-utilities already above
+  // ai-for-retail-ecommerce already above
+  'ai-for-cybersecurity-soc',
+  'ai-for-public-sector',
+  'ai-in-pharma-life-sciences',
+  'ai-product-management',
 ])
 
 for (const course of courses) {

@@ -264,4 +264,115 @@ export const COURSE_OUTCOMES: Record<string, string[]> = {
     'Quality monitoring — Forrester #3 failure mode, the 27-point gap, shadow QA + 5 metrics',
     'A 2-quarter rollout with 4 trust trip-wires and the through-line: AI for volume, humans for value',
   ],
+
+  // ─── Next-10 batch (Courses 21-30) ────────────────────────────────────────
+  'ai-readiness-assessment-deep-dive': [
+    'Apply Tetlock calibration to AI readiness — honest scoring beats green dashboards every time',
+    'Score 5 readiness dimensions independently — data · talent · governance · infrastructure · leadership commitment',
+    'Diagnose 3 stall patterns — pilot-permanent-pilot, data-not-there, governance-afterthought',
+    'Administer the 12-question diagnostic with 3 honest scoring rules — specifically not aspirationally, evidence-anchored, amber/red is normal',
+    'Read your 3-band result — operationalising · building · foundations — and know the next-move for each',
+    '4 trust trip-wires that protect against confidence theatre — no green without evidence, no sponsorship without budget, no permanent pilots, no governance afterthought',
+    'Walk out with a 12-month roadmap and the conversation to take to your CEO with your honest score in hand',
+    'Grounded in NIST AI RMF 1.0, EU AI Act 2024/1689, ISO/IEC 42001:2023, and Andy Grove\'s leverage framing',
+  ],
+
+  'enterprise-data-foundations-for-ai': [
+    'Most AI projects fail at the data step — recognise the pattern and stop it',
+    '5 pillars of data foundations — quality · lineage · governance · privacy · platform — scored independently',
+    '3 anti-patterns that waste budgets — buy platform without fixing data, ocean-boil cleanup projects, disconnected data team',
+    'Apply the DAMA-DMBOK quality framework with 4 dimensions (accuracy · completeness · freshness · consistency)',
+    'Build defensible lineage — EU AI Act Art 15 + NIST AI RMF + GDPR Art 30 traceability',
+    'Choose the right architecture — lakehouse + federated-with-central-platform is durable for most enterprises',
+    'Adopt the data product pattern — 3-5x AI team speed when data is published as curated, versioned, owned products',
+    '18-month rollout with 4 trust trip-wires you don\'t cross, plus an interactive builder for your CDO/CIO conversation',
+  ],
+
+  'ai-program-management-pmo': [
+    'Make AI a portfolio you manage — not pilots you accumulate',
+    'Build healthy pyramid shape — 10-15 pilots · 3-5 scaled · 1-2 embedded (most enterprises have inverted funnels)',
+    'Run stage-gate discipline with explicit kill criteria — 60-80% pilot-to-scale kill rate is healthy',
+    '4 vendor contract pillars — training data rights · update transparency · sunset · liability allocation',
+    'Manage model lifecycle with 4 retraining triggers + a single source-of-truth registry',
+    'Run the ops handoff with 4 artifacts (runbook · model card · dashboard · escalation tree) and a shadow period',
+    '5 PMO roles + honest sizing — underfunding the PMO is the single most common false economy',
+    '90-day bootstrap roadmap with 4 trust trip-wires and an interactive Markdown builder for your CIO',
+  ],
+
+  'ai-talent-strategy': [
+    'AI talent is the bottleneck — not the technology. The economics are asymmetric',
+    'Match capability to source — build / buy / borrow framework with 3 signals each',
+    '5 core roles + 3 emerging — ML engineer · data scientist · MLOps · AI PM · AI lead, plus governance/prompt/ethicist',
+    'Hire in a tight market — convert internal engineers, hire at senior-not-principal, source from adjacent fields',
+    'Retain through interesting work + access + path + competitive comp — in that order',
+    'The AI fluency build is the leverage — 5-10x payback vs hiring 1 senior engineer',
+    'Pick the right org model — hub-and-spoke beats pure central or pure federated for 500+ organisations',
+    '12-month talent roadmap with 4 trust trip-wires and an interactive builder for your CHRO or CEO',
+  ],
+
+  'ai-for-energy-utilities': [
+    'AI must augment operational reliability, not threaten it — grid stability and worker safety are non-negotiable',
+    '5 high-value plays — demand forecasting · grid management · generation optimisation · predictive maintenance · customer ops',
+    'Keep operator-in-the-loop on grid management — NERC + FERC + PUC oversight makes it non-negotiable',
+    'Run renewables forecasting and battery dispatch optimisation — where AI directly impacts revenue at scale',
+    'Use AI to extend asset inspection intervals — never to eliminate them (OSHA + worker safety)',
+    'Hold the customer disconnection line — AI flags, humans decide',
+    'Treat OT + IT + AI cybersecurity as one problem — 4 attack vectors, 3 defensive patterns',
+    '18-month rollout with 4 trust trip-wires and an interactive builder for your CIO, COO, or board',
+  ],
+
+  'ai-for-retail-ecommerce': [
+    'AI scales fast in retail but breaks brand fast — trust costs more to rebuild than to maintain',
+    '5 plays that ship — merchandising · pricing within guardrails · personalisation with the creepy line drawn · fulfilment + inventory · returns + fraud',
+    '3 anti-plays to kill — fully automated dynamic pricing, surveillance personalisation, AI-only customer service',
+    'Achieve top-quartile SKU-store forecasting (<20% MAPE) with hierarchical models and clean promo data',
+    'Draw the pricing guardrails — exclude essentials in emergencies, avoid the personalised-list-price trap',
+    'Run 3 personalisation tiers with the creepy line drawn explicitly — health, surveillance, inferred protected characteristics',
+    'Protect brand voice with style-guide-as-system-prompt, 2 human edits, quarterly fingerprint audit, plus EU AI Act Art 50 disclosure',
+    '12-month roadmap with 4 trust trip-wires and an interactive builder for your CEO, CDO, or CMO',
+  ],
+
+  'ai-for-cybersecurity-soc': [
+    'AI is an analyst force multiplier — not an analyst replacement',
+    '5 SOC plays — alert triage · detection augmentation · investigation · threat intel · automation',
+    '3 anti-plays — fully autonomous response, AI-only detection, AI as substitute for SOC maturity',
+    'Run alert triage with shadow review on suppressed alerts — false-negative rate is the truth indicator',
+    'Layered detection retained — signatures + rules + AI augmentation (never AI alone)',
+    'Apply verification discipline to AI threat intel — Mata cross-domain (hallucinated attribution is real)',
+    'Limit autonomous response to narrow reversible scenarios — broader requires human-in-the-loop',
+    'Defend AI\'s own attack surface — 4 attack vectors, 4 defensive patterns, including model behaviour monitoring',
+  ],
+
+  'ai-for-public-sector': [
+    'In government, AI must serve the public and be accountable to it — citizens cannot easily switch suppliers',
+    '5 public-sector plays — service delivery · case work augmentation · fraud detection · intelligent search · translation + accessibility',
+    '3 fail patterns — algorithmic decisions affecting rights without human review, chatbot misrepresentation, opaque high-stakes AI',
+    'Hold the case-worker decision boundary — AI prepares, humans decide on rights',
+    'Apply bias-audit discipline to fraud detection across protected categories before deployment',
+    'Verify AI-cited sources before acting (Mata cross-domain) and enforce access controls in AI search',
+    'Maintain a public AI inventory with impact assessments and named accountable officials — OMB M-24-10 + EU AI Act + UK ATRS',
+    '18-month roadmap with 4 trust trip-wires that protect due process and citizen trust',
+  ],
+
+  'ai-in-pharma-life-sciences': [
+    'AI accelerates discovery and operations within GxP guardrails — patient safety + data integrity + regulatory accountability are non-negotiable',
+    '5 plays — discovery · trial operations · regulatory submission · pharmacovigilance + RWE · commercial + medical affairs',
+    'Honestly read the AI discovery disappointment pattern — AI accelerates early stages, not guarantees clinical success',
+    'Keep investigator + medical monitor accountable under GCP — AI assists, humans decide',
+    'Apply citation discipline to AI-drafted regulatory content — every citation verified (Mata cross-domain), Part 11 audit trail',
+    'Preserve medical review on PV — qualified safety physician\'s causality assessment cannot be replaced by AI',
+    'Run AI promotional content through MLR — off-label suggestions and unsourced claims are enforcement targets',
+    'Validate AI in GxP contexts — 4 validation components and audit-ready documentation before deployment',
+  ],
+
+  'ai-product-management': [
+    'AI products are evaluated like products — not like models. Users care about their job, not your benchmarks',
+    '5 capabilities for AI PMs — JTBD framing · eval harnesses · telemetry · guardrails · honest communication',
+    '3 anti-patterns to avoid — chasing benchmarks, shipping without eval + telemetry, adding AI to features that worked fine without it',
+    'Frame each AI feature with the 3-part frame — user job · success criterion · failure modes — in 3 sentences',
+    'Build eval harnesses across 3 categories — task-specific, quality + safety, production telemetry — refreshed monthly',
+    'Use the acceptance rate metric as your primary AI product signal, with privacy-reviewed telemetry',
+    'Refusal as feature — narrow products that do their job well beat broad products that do many jobs poorly',
+    'Model unit economics before launch (inference is not free) and adopt an honest communication posture (Air Canada cross-domain)',
+  ],
 }
