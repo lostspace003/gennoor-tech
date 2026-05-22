@@ -363,6 +363,20 @@ const COURSES = [
     ],
   },
   {
+    slug: 'ai-strategy-for-cdo',
+    courseTagline: 'Leadership · AI Strategy for the CDO',
+    title: 'AI Strategy for the CDO',
+    subtitle: 'The CDO mandate doubled with AI on top. Headcount and budget rarely did. The charter is how you scale.',
+    chapterMeta: { total: 8 }, duration: '~36 min', level: 'Advanced',
+    theme: SLATE_ORANGE,
+    nextHref: '/ai-academy/ai-strategy-for-cdo/chapter-01-mandate',
+    takeaways: [
+      'The three boundary fights every CDO is having with the CIO, CTO, and CISO — and the resolution patterns that work past month six.',
+      'A 3-pillar RACI with CISO + CRO + three-horizon investment allocation that defends to the CFO — and four board KPIs that earn director engagement.',
+      'A three-tier delegation model + four-rhythm operating cadence + one-page CDO-CIO-CISO joint charter that keeps you from being the bottleneck.',
+    ],
+  },
+  {
     slug: 'ai-vendor-management',
     courseTagline: 'Leadership · AI Vendor Management',
     title: 'AI Vendor Management',
