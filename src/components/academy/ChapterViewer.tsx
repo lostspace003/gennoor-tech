@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, SkipBack, SkipForward, PanelLeftClose, PanelLeftOpen, X, User, LogOut, ZoomIn, ZoomOut, Maximize, Minimize2, Lock, CheckCircle } from 'lucide-react'
 import type { Chapter } from '@/config/courses'
 import { courses as allCourses } from '@/config/courses'
@@ -22,6 +23,7 @@ interface ChapterViewerProps {
 }
 
 export default function ChapterViewer({ courseId, chapter, prevChapter, nextChapter, allChapters }: ChapterViewerProps) {
+  const router = useRouter()
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -105,11 +107,36 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
           totalSlides,
         })
         syncToServer(event.data.chapterId, percent, currentSlide, totalSlides)
+      } else if (event.data?.type === 'gennoor-academy:advance') {
+        // Intro screen (chapter-00) — mark seen and advance to next chapter.
+        saveLocalProgress(courseId, chapter.id, {
+          completionPercent: 100,
+          currentSlide: 1,
+          totalSlides: 1,
+          completed: true,
+        })
+        if (isLoggedIn) {
+          fetch('/api/learner/progress', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              courseId,
+              chapterId: chapter.id,
+              currentSlide: 1,
+              totalSlides: 1,
+              completionPercent: 100,
+              completed: true,
+            }),
+          }).catch(() => { /* silent */ })
+        }
+        if (nextChapter) {
+          router.push(`/ai-academy/${courseId}/${nextChapter.slug}`)
+        }
       }
     }
     window.addEventListener('message', handler)
     return () => window.removeEventListener('message', handler)
-  }, [courseId, syncToServer])
+  }, [courseId, syncToServer, chapter.id, nextChapter, isLoggedIn, router])
 
   // Show save banner for non-logged-in users who have progress.
   // Wait for auth check to resolve — otherwise the banner flashes for
@@ -143,15 +170,31 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
   // per course (localStorage flag prevents re-firing on revisit).
   const isLastRegularChapter = useMemo(() => {
     if (!course) return false
-    const regulars = course.chapters.filter(ch => !ch.isMockExam)
+    const regulars = course.chapters.filter(ch => !ch.isMockExam && ch.id !== 'chapter-00')
     return regulars.length > 0 && regulars[regulars.length - 1].id === chapter.id
   }, [course, chapter.id])
+
+  // Mirror the server-side gate: every non-mock, non-intro chapter must be
+  // completed before the celebration overlay can fire. Prevents the overlay
+  // opening, calling issue-cert, and showing a 403 error to learners who
+  // jumped to the last chapter.
+  const allPriorChaptersCompleted = useMemo(() => {
+    if (!course) return false
+    const gated = course.chapters.filter(ch => !ch.isMockExam && ch.id !== 'chapter-00')
+    const local = getLocalProgress(courseId)
+    if (!local) return false
+    return gated.every(ch => {
+      if (ch.id === chapter.id) return true // current chapter completion is detected via slidePercent
+      return local.chapters[ch.id]?.completed === true
+    })
+  }, [course, courseId, chapter.id])
 
   const celebrationStorageKey = `gennoor-celebrated:${courseId}`
 
   useEffect(() => {
     if (!isLoggedIn || !isLastRegularChapter) return
     if (slidePercent < 99) return
+    if (!allPriorChaptersCompleted) return
     if (celebrationTriggeredRef.current) return
     if (typeof window !== 'undefined' && window.localStorage.getItem(celebrationStorageKey)) {
       // Already celebrated this course on this device — try to fetch existing cert silently

@@ -1,12 +1,36 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, BookOpen, Clock, BarChart3, Award, PlayCircle } from 'lucide-react'
+import { ArrowLeft, BookOpen, Clock, BarChart3, Award, PlayCircle, CheckCircle2 } from 'lucide-react'
 import ChapterList from '@/components/academy/ChapterList'
 import type { ChapterProgress } from '@/components/academy/ChapterList'
 import { getLocalProgress } from '@/lib/progress-store'
 import type { Course } from '@/config/courses'
+
+/**
+ * Split a long description into reader-friendly paragraphs. Heuristic:
+ * - Break on sentence boundaries followed by a capital letter
+ * - Group sentences into chunks of 2-3 so paragraphs feel like prose,
+ *   not a teleprompter line list.
+ */
+function splitToParagraphs(text: string): string[] {
+  const sentences = text
+    .split(/(?<=[.!?])\s+(?=[A-Z"])/g)
+    .map(s => s.trim())
+    .filter(Boolean)
+  const paragraphs: string[] = []
+  let buf: string[] = []
+  for (const s of sentences) {
+    buf.push(s)
+    if (buf.length >= 3) {
+      paragraphs.push(buf.join(' '))
+      buf = []
+    }
+  }
+  if (buf.length) paragraphs.push(buf.join(' '))
+  return paragraphs
+}
 
 interface CourseDetailClientProps {
   course: Course
@@ -27,6 +51,12 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
   const continueChapter = lastAccessedChapter
     ? course.chapters.find(ch => ch.id === lastAccessedChapter.chapterId)
     : null
+
+  const introParagraphs = useMemo(() => splitToParagraphs(course.longDescription), [course.longDescription])
+  const heroLead = introParagraphs[0] || course.description
+  const bodyParagraphs = introParagraphs.slice(1)
+  const themeAccent = course.theme?.accent || '#F97316'
+  const startCtaBg = course.theme ? course.theme.primaryDeep : undefined
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -53,8 +83,8 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
             <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight mb-4">
               {course.title}
             </h1>
-            <p className="text-lg text-white/80 leading-relaxed mb-8 max-w-2xl">
-              {course.longDescription}
+            <p className="text-lg text-white/85 leading-relaxed mb-8 max-w-2xl">
+              {heroLead}
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -72,7 +102,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                   className="inline-flex items-center gap-2 px-6 py-3 bg-secondary-400 text-dark-900 font-bold rounded-lg hover:bg-secondary-300 transition-colors"
                 >
                   <PlayCircle className="w-5 h-5" />
-                  Start Chapter 00
+                  {firstChapter.number === 0 ? 'Start Course' : 'Start Chapter 01'}
                 </Link>
               )}
             </div>
@@ -104,10 +134,51 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
         </div>
       </section>
 
+      {/* What you'll learn + About */}
+      <section className="bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-14 max-w-4xl">
+          {course.learningOutcomes && course.learningOutcomes.length > 0 && (
+            <div className="mb-12">
+              <h2 className="font-heading text-2xl font-bold text-gray-900 mb-1">What you'll learn</h2>
+              <p className="text-sm text-gray-500 mb-6">
+                The specific outcomes you walk out with — no fluff.
+              </p>
+              <ul className="grid sm:grid-cols-2 gap-4">
+                {course.learningOutcomes.map((outcome, i) => (
+                  <li key={i} className="flex items-start gap-3 p-4 rounded-xl bg-gray-50 ring-1 ring-gray-100">
+                    <CheckCircle2
+                      className="w-5 h-5 flex-shrink-0 mt-0.5"
+                      style={{ color: themeAccent }}
+                      strokeWidth={2.5}
+                    />
+                    <span className="text-sm text-gray-800 leading-relaxed">{outcome}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {bodyParagraphs.length > 0 && (
+            <div>
+              <h2 className="font-heading text-2xl font-bold text-gray-900 mb-6">About this course</h2>
+              <div className="space-y-4 text-[15px] text-gray-700 leading-[1.75]">
+                {bodyParagraphs.map((p, i) => (
+                  <p key={i}>{p}</p>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* Chapter list */}
-      <section className="section-padding">
+      <section className="section-padding bg-gray-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-          <h2 className="font-heading text-2xl font-bold text-gray-900 mb-6">Course Content</h2>
+          <h2 className="font-heading text-2xl font-bold text-gray-900 mb-1">Course content</h2>
+          <p className="text-sm text-gray-500 mb-6">
+            {course.totalChapters} chapters · {course.duration}
+            {startCtaBg ? '' : ''}
+          </p>
           <ChapterList courseId={course.id} chapters={course.chapters} progress={progress} />
         </div>
       </section>
