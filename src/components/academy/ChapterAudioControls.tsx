@@ -108,18 +108,46 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       return () => { cancelled = true }
     }, [cuesSrc])
 
-    const postCue = useCallback((idx: number) => {
+    const postCue = useCallback((idx: number, userDriven = false) => {
       const iframe = iframeRef.current
       if (!iframe || !iframe.contentWindow) return
       const cue = cues[idx]
       if (!cue) return
       try {
         iframe.contentWindow.postMessage(
-          { type: 'gennoor-academy:cue', slide: cue.slide, step: cue.step, at: cue.at },
+          { type: 'gennoor-academy:cue', slide: cue.slide, step: cue.step, at: cue.at, userDriven },
           '*',
         )
       } catch {}
     }, [cues, iframeRef])
+
+    // After a user-driven seek, also start playback. Without this, manually
+    // advancing while paused would seek silently and the user would still
+    // need to hit Play before hearing the new slide's narration. The user
+    // expectation (verified) is: "moving to the next slide plays that
+    // slide's voice".
+    const playAfterSeek = useCallback(() => {
+      const audio = audioRef.current
+      if (!audio) return
+      if (!audio.paused) return
+      const pending = pendingSeekRef.current
+      if (pending !== null && audio.readyState < 1) {
+        const onReady = () => {
+          audio.removeEventListener('canplay', onReady)
+          try {
+            if (pendingSeekRef.current !== null) {
+              audio.currentTime = pendingSeekRef.current
+              pendingSeekRef.current = null
+            }
+          } catch {}
+          audio.play().catch(() => {})
+        }
+        audio.addEventListener('canplay', onReady, { once: true })
+        try { audio.load() } catch {}
+        return
+      }
+      audio.play().catch(() => {})
+    }, [])
 
     const seekToCue = useCallback((targetSlide: number, targetStep?: number) => {
       if (cues.length === 0) return
@@ -150,9 +178,12 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       const cue = cues[idx]
       currentCueIdxRef.current = idx
       applySeek(cue.at)
-      // Mirror the visual state down immediately — handles the paused case
-      postCue(idx)
-    }, [cues, postCue, applySeek])
+      // Mirror the visual state down immediately — handles the paused case.
+      // userDriven=true tells the iframe to reveal the slide fully rather
+      // than wait for audio-driven step cues.
+      postCue(idx, true)
+      playAfterSeek()
+    }, [cues, postCue, applySeek, playAfterSeek])
 
     const stepNav = useCallback((direction: 'next-slide' | 'prev-slide' | 'next-step' | 'prev-step') => {
       if (cues.length === 0) return
@@ -185,8 +216,9 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       const cue = cues[target]
       currentCueIdxRef.current = target
       applySeek(cue.at)
-      postCue(target)
-    }, [cues, postCue, applySeek])
+      postCue(target, true)
+      playAfterSeek()
+    }, [cues, postCue, applySeek, playAfterSeek])
 
     useImperativeHandle(ref, () => ({ seekToCue, step: stepNav }), [seekToCue, stepNav])
 

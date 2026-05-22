@@ -355,6 +355,19 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
     return () => window.removeEventListener('message', handler)
   }, [isNewAudioPattern])
 
+  // Arrow-key intent forwarded from inside the iframe (the iframe's own
+  // ArrowRight/ArrowLeft handler would otherwise update only the muted
+  // iframe-internal audio, leaving the parent's audio stuck on slide 1).
+  useEffect(() => {
+    const handler = (e: MessageEvent) => {
+      if (!e || !e.data || e.data.type !== 'gennoor-academy:nav-request') return
+      if (e.data.dir === 'next') advanceSlideInIframe()
+      else if (e.data.dir === 'prev') retreatSlideInIframe()
+    }
+    window.addEventListener('message', handler)
+    return () => window.removeEventListener('message', handler)
+  }, [advanceSlideInIframe, retreatSlideInIframe])
+
   // Parent-side keyboard: ArrowRight/ArrowLeft for slide-level navigation
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -526,6 +539,49 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
           if (controlsTop) controlsTop.style.display = 'none';
           var stepInd = document.getElementById('stepIndicator');
           if (stepInd) stepInd.style.display = 'none';
+
+          // Intercept arrow keys in capture phase so the iframe's own
+          // PLAYER_JS handler does NOT fire (its audio is muted, so the
+          // user would see a visual change with no narration — and only
+          // the slide heading, since the iframe applies cues with
+          // fillSlide=false). Instead, route the intent up to the parent
+          // and let the parent's audio controls drive the seek + replay
+          // and post a userDriven=true cue back so we fully reveal.
+          document.addEventListener('keydown', function(e) {
+            if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft' &&
+                e.key !== 'PageDown' && e.key !== 'PageUp') return;
+            var tag = (e.target && e.target.tagName) || '';
+            if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            var dir = (e.key === 'ArrowRight' || e.key === 'PageDown') ? 'next' : 'prev';
+            try {
+              window.parent.postMessage(
+                { type: 'gennoor-academy:nav-request', dir: dir },
+                '*'
+              );
+            } catch (err) {}
+          }, true);
+
+          // After the iframe's own message handler applies a cue, run again
+          // and fully reveal the active slide when the cue is user-driven.
+          // Iframe's applyCue with fillSlide=false strips reveals on slide
+          // change; for manual navigation we want the whole slide visible
+          // immediately so the user does not stare at a bare heading.
+          window.addEventListener('message', function(e) {
+            if (!e || !e.data) return;
+            if (e.data.type !== 'gennoor-academy:cue') return;
+            if (!e.data.userDriven) return;
+            // Defer so the iframe's PLAYER_JS handler (which switches the
+            // .active slide) has already run by the time we reveal.
+            setTimeout(function() {
+              var slide = document.querySelector('.slide.active');
+              if (!slide) return;
+              slide.querySelectorAll('[data-step]:not(.revealed)').forEach(function(s) {
+                s.classList.add('revealed');
+              });
+            }, 0);
+          });
 
           setTimeout(function() { reportProgress(); }, 500);
         })();
