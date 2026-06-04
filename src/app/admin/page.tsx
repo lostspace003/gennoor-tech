@@ -1366,26 +1366,37 @@ export default function AdminDashboard() {
           <div className="space-y-6">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <StatCard icon={Search} label="Sitemap URLs" value={seoData?.sitemapUrls || 0} color="blue" />
-              <StatCard icon={Globe} label="Google Indexed" value={4} color="teal" />
-              <StatCard icon={Globe} label="Bing Submitted" value={174} color="amber" />
-              <StatCard icon={CheckCircle} label="IndexNow Key" value={1} color="purple" />
+              <StatCard icon={Send} label="Last Manual Push" value={indexNowState.result?.submitted || 0} color="teal" />
+              <StatCard icon={Clock} label="Auto Cadence" value={0} color="amber" subtitle="Every 4 days" />
+              <StatCard icon={CheckCircle} label="IndexNow Key" value={0} color="purple" subtitle="Active" />
             </div>
 
-            <Panel title="Search Engine Status" subtitle="Current indexing overview">
+            <Panel title="Automation" subtitle="GitHub Actions runs IndexNow on a schedule">
+              <div className="flex items-start gap-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+                <div className="w-10 h-10 bg-white border border-emerald-300 rounded-lg flex items-center justify-center shrink-0"><Zap className="w-5 h-5 text-emerald-600" /></div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-slate-800">IndexNow Push workflow</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Runs every 4 days at 03:00 UTC (days 4, 8, 12, 16, 20, 24, 28 each month). Submits every URL from <code className="text-xs px-1 py-0.5 bg-white rounded border border-emerald-200">/sitemap.xml</code> to Bing / Yandex / Naver / Seznam. No secrets required — runs <code className="text-xs px-1 py-0.5 bg-white rounded border border-emerald-200">npm run indexnow</code> directly against api.indexnow.org.</p>
+                </div>
+                <a href="https://github.com/lostspace003/gennoor-tech/actions/workflows/indexnow-push.yml" target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-emerald-600 transition-colors shrink-0" title="View workflow runs"><ExternalLink className="w-4 h-4" /></a>
+              </div>
+            </Panel>
+
+            <Panel title="Search Engine Status" subtitle="Where each engine stands">
               <div className="space-y-4">
                 <div className="flex items-center gap-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
                   <div className="w-10 h-10 bg-white border border-amber-300 rounded-lg flex items-center justify-center shrink-0"><Search className="w-5 h-5 text-amber-600" /></div>
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-slate-800">Google</p>
-                    <p className="text-xs text-slate-500">~4 pages indexed of {seoData?.sitemapUrls || 0}. Sitemap submitted via Search Console. Domain is 4 months old — indexing will grow over time.</p>
+                    <p className="text-xs text-slate-500">Google does NOT participate in IndexNow. Sitemap is discoverable via robots.txt and should be submitted manually in Search Console. Check the Coverage report for live indexed counts.</p>
                   </div>
                   <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors shrink-0"><ExternalLink className="w-4 h-4" /></a>
                 </div>
                 <div className="flex items-center gap-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                   <div className="w-10 h-10 bg-white border border-blue-300 rounded-lg flex items-center justify-center shrink-0"><Globe className="w-5 h-5 text-blue-600" /></div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-slate-800">Bing / Yandex</p>
-                    <p className="text-xs text-slate-500">174 URLs submitted via IndexNow. Sitemap submitted via Bing Webmaster Tools. Crawling in progress.</p>
+                    <p className="text-sm font-semibold text-slate-800">Bing / Yandex / Naver / Seznam</p>
+                    <p className="text-xs text-slate-500">Receive every sitemap URL via IndexNow on each cron run ({seoData?.sitemapUrls || 0} URLs per cycle). Engines typically crawl within hours. Verify the site in Bing Webmaster Tools for the live indexed count.</p>
                   </div>
                   <a href="https://www.bing.com/webmasters" target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors shrink-0"><ExternalLink className="w-4 h-4" /></a>
                 </div>
@@ -1393,16 +1404,16 @@ export default function AdminDashboard() {
                   <div className="w-10 h-10 bg-white border border-emerald-300 rounded-lg flex items-center justify-center shrink-0"><CheckCircle className="w-5 h-5 text-emerald-600" /></div>
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-slate-800">SEO Fixes Applied</p>
-                    <p className="text-xs text-slate-500">www → non-www 301 redirect active. Canonical domain: gennoor.com. IndexNow key deployed. 18 missing pages added to sitemap.</p>
+                    <p className="text-xs text-slate-500">www → non-www 301 redirect active. Canonical domain: gennoor.com. IndexNow key live. Sitemap covers home, services, academy, blog, case studies, training, certs, industries, and PoCs.</p>
                   </div>
                 </div>
               </div>
             </Panel>
 
-            <Panel title="Push to IndexNow" subtitle="Re-submit every sitemap URL to Bing / Yandex / Naver / Seznam">
+            <Panel title="Manual Push" subtitle="On-demand submit between cron runs">
               <div className="flex items-center justify-between gap-4 flex-wrap">
                 <div className="text-sm text-slate-600">
-                  <p>Pushes <strong>all {seoData?.sitemapUrls || 0}</strong> URLs from <code className="text-xs px-1.5 py-0.5 bg-slate-100 rounded">/sitemap.xml</code> to IndexNow. Engines typically re-crawl within hours.</p>
+                  <p>Submits <strong>all {seoData?.sitemapUrls || 0}</strong> URLs from <code className="text-xs px-1.5 py-0.5 bg-slate-100 rounded">/sitemap.xml</code> to IndexNow immediately. Use after publishing time-sensitive content (the cron handles the rest every 4 days).</p>
                   {indexNowState.result && (
                     <p className={`mt-2 text-xs ${indexNowState.result.success ? 'text-emerald-600' : 'text-rose-600'}`}>
                       {indexNowState.result.success
@@ -1434,6 +1445,7 @@ export default function AdminDashboard() {
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">{[
                 { title: 'Google Search Console', description: 'Check indexed pages & request indexing', href: 'https://search.google.com/search-console', icon: Search },
                 { title: 'Bing Webmaster Tools', description: 'Submit URLs & check crawl status', href: 'https://www.bing.com/webmasters', icon: Globe },
+                { title: 'IndexNow Workflow Runs', description: 'View automated push history on GitHub', href: 'https://github.com/lostspace003/gennoor-tech/actions/workflows/indexnow-push.yml', icon: Zap },
                 { title: 'Google Rich Results', description: 'Test structured data markup', href: 'https://search.google.com/test/rich-results', icon: Code2 },
                 { title: 'Sitemap', description: 'View current sitemap.xml', href: '/sitemap.xml', icon: FileText },
                 { title: 'Robots.txt', description: 'View crawl directives', href: '/robots.txt', icon: Shield },
