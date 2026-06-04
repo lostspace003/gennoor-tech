@@ -1383,23 +1383,15 @@ export default function AdminDashboard() {
               <StatCard icon={Clock} label="Auto Trigger" value={0} color="purple" subtitle="Each main deploy" />
             </div>
 
-            <Panel title="Automation" subtitle="Two GitHub Actions workflows run on schedule">
+            <Panel title="Automation" subtitle="One GitHub Actions workflow runs both Bing + Google in parallel">
               <div className="space-y-3">
                 <div className="flex items-start gap-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
                   <div className="w-10 h-10 bg-white border border-emerald-300 rounded-lg flex items-center justify-center shrink-0"><Zap className="w-5 h-5 text-emerald-600" /></div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-slate-800">IndexNow Push — Bing / Yandex / Naver / Seznam</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Auto-fires after every successful main deploy (90s after deploy completes) + safety cron every 4 days at 03:00 UTC. Submits every <code className="text-xs px-1 py-0.5 bg-white rounded border border-emerald-200">/sitemap.xml</code> URL to api.indexnow.org via <code className="text-xs px-1 py-0.5 bg-white rounded border border-emerald-200">npm run indexnow</code>.</p>
+                    <p className="text-sm font-semibold text-slate-800">SEO Re-index workflow — Bing + Google in one shot</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Auto-fires after every successful main deploy (90s wait so Azure propagates), plus safety cron every 4 days at 03:00 UTC. Two parallel jobs: <strong>IndexNow</strong> submits every <code className="text-xs px-1 py-0.5 bg-white rounded border border-emerald-200">/sitemap.xml</code> URL to Bing / Yandex / Naver / Seznam; <strong>GSC</strong> PUTs the sitemap to Google Search Console via OAuth.</p>
                   </div>
-                  <a href="https://github.com/lostspace003/gennoor-tech/actions/workflows/indexnow-push.yml" target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-emerald-600 transition-colors shrink-0" title="View workflow runs"><ExternalLink className="w-4 h-4" /></a>
-                </div>
-                <div className="flex items-start gap-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                  <div className="w-10 h-10 bg-white border border-blue-300 rounded-lg flex items-center justify-center shrink-0"><Zap className="w-5 h-5 text-blue-600" /></div>
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-slate-800">GSC Sitemap Resubmit — Google</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Auto-fires after every successful main deploy (90s after deploy completes) + safety cron every 4 days at 04:00 UTC. PUTs the sitemap to Google Search Console via <code className="text-xs px-1 py-0.5 bg-white rounded border border-blue-200">npm run gsc-resubmit</code> (OAuth as property owner).</p>
-                  </div>
-                  <a href="https://github.com/lostspace003/gennoor-tech/actions/workflows/gsc-sitemap-resubmit.yml" target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors shrink-0" title="View workflow runs"><ExternalLink className="w-4 h-4" /></a>
+                  <a href="https://github.com/lostspace003/gennoor-tech/actions/workflows/seo-reindex.yml" target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-emerald-600 transition-colors shrink-0" title="View workflow runs"><ExternalLink className="w-4 h-4" /></a>
                 </div>
               </div>
             </Panel>
@@ -1547,8 +1539,7 @@ export default function AdminDashboard() {
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">{[
                 { title: 'Google Search Console', description: 'Check indexed pages & request indexing', href: 'https://search.google.com/search-console', icon: Search },
                 { title: 'Bing Webmaster Tools', description: 'Submit URLs & check crawl status', href: 'https://www.bing.com/webmasters', icon: Globe },
-                { title: 'IndexNow Workflow Runs', description: 'View automated push history on GitHub', href: 'https://github.com/lostspace003/gennoor-tech/actions/workflows/indexnow-push.yml', icon: Zap },
-                { title: 'GSC Resubmit Workflow', description: 'View automated Google sitemap resubmit history', href: 'https://github.com/lostspace003/gennoor-tech/actions/workflows/gsc-sitemap-resubmit.yml', icon: Zap },
+                { title: 'SEO Re-index Workflow', description: 'View automated Bing + Google reindex history', href: 'https://github.com/lostspace003/gennoor-tech/actions/workflows/seo-reindex.yml', icon: Zap },
                 { title: 'Google Rich Results', description: 'Test structured data markup', href: 'https://search.google.com/test/rich-results', icon: Code2 },
                 { title: 'Sitemap', description: 'View current sitemap.xml', href: '/sitemap.xml', icon: FileText },
                 { title: 'Robots.txt', description: 'View crawl directives', href: '/robots.txt', icon: Shield },
