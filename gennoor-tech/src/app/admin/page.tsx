@@ -160,6 +160,17 @@ export default function AdminDashboard() {
   const [indexingData, setIndexingData] = useState<{ google: Array<{ url: string; status: string }>; bing: Array<{ url: string; status: string }> } | null>(null)
   const [academyData, setAcademyData] = useState<{ learners: Array<{ email: string; name: string; provider: string; lastLogin: string; createdAt: string }>; progress: Array<{ email: string; courseId: string; chapterId: string; completionPercent: number; completed: boolean; lastAccessed: string }>; summary: { totalLearners: number; activeLearners: number; learnersWithCompletion: number; totalProgressEntries: number; byProvider: Record<string, number>; byCourse: Array<{ courseId: string; learners: number; completions: number }> }; chapterStats: Record<string, { views: number; completions: number; avgPercent: number }> } | null>(null)
   const [indexNowState, setIndexNowState] = useState<{ pushing: boolean; result?: { success: boolean; submitted?: number; total?: number; error?: string; submittedAt?: string } }>({ pushing: false })
+  const [gscData, setGscData] = useState<{
+    configured: boolean
+    reason?: string
+    error?: string
+    indexedCount?: number
+    sitemaps?: Array<{ path: string; lastSubmitted?: string; lastDownloaded?: string; isPending?: boolean; errors?: string; warnings?: string }>
+    summary28d?: { clicks: number; impressions: number; ctr: number; position: number }
+    topPages?: Array<{ page: string; clicks: number; impressions: number; ctr: number; position: number }>
+    checkedAt?: string
+  } | null>(null)
+  const [gscResubmit, setGscResubmit] = useState<{ submitting: boolean; result?: { success: boolean; message?: string } }>({ submitting: false })
   const [authLog, setAuthLog] = useState<AuthLogEntry[]>([])
   const [certData, setCertData] = useState<{ summary: { total: number; issued: number; revoked: number; uniqueLearners: number; past7: number; past30: number }; perCourse: Array<{ slug: string; title: string; count: number }>; recent: Array<{ certId: string; recipientName: string; recipientEmail: string; workshopTitle: string; workshopSlug: string; issueDate: string; verifyUrl: string; status: string; createdAt: string }> } | null>(null)
   const [feedbackData, setFeedbackData] = useState<{ summary: { total: number; avgRating: number; fiveStar: number; lowRated: number }; perCourse: Array<{ courseId: string; count: number; avgRating: number; commentsCount: number }>; recent: Array<{ courseId: string; learnerName: string; learnerEmail: string; rating: number; comments: string; createdAt: string }> } | null>(null)
@@ -196,6 +207,7 @@ export default function AdminDashboard() {
       setSessions(Array.isArray(sessionsResult) ? sessionsResult : []); setStorageData(storageResult); setInsightsData(insightsResult); setEmailLogs(emailLogsResult); setAiReadinessData(aiReadinessResult)
       try { const cwRes = await fetch('/api/admin/cowork-registrations', { method: 'POST', headers }); if (cwRes.ok) setCoworkData(await cwRes.json()) } catch {}
       try { const acRes = await fetch('/api/admin/academy', { method: 'POST', headers }); if (acRes.ok) setAcademyData(await acRes.json()) } catch {}
+      try { const gRes = await fetch('/api/admin/gsc-coverage', { method: 'POST', headers }); if (gRes.ok) setGscData(await gRes.json()) } catch {}
       setLastUpdated(new Date())
       try { const bRes = await fetch('/api/bookings/appointments'); if (bRes.ok) { const bData = await bRes.json(); setBookingsData(bData.appointments || []) } } catch {}
     } catch { setError('Failed to load dashboard data') }
@@ -1366,20 +1378,110 @@ export default function AdminDashboard() {
           <div className="space-y-6">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <StatCard icon={Search} label="Sitemap URLs" value={seoData?.sitemapUrls || 0} color="blue" />
+              <StatCard icon={Globe} label="Google Indexed (90d)" value={gscData?.indexedCount || 0} color="amber" subtitle={!gscData ? 'Loading...' : gscData.configured === false ? 'Not configured' : undefined} />
               <StatCard icon={Send} label="Last Manual Push" value={indexNowState.result?.submitted || 0} color="teal" />
-              <StatCard icon={Clock} label="Auto Cadence" value={0} color="amber" subtitle="Every 4 days" />
-              <StatCard icon={CheckCircle} label="IndexNow Key" value={0} color="purple" subtitle="Active" />
+              <StatCard icon={Clock} label="Auto Cadence" value={0} color="purple" subtitle="Every 4 days" />
             </div>
 
-            <Panel title="Automation" subtitle="GitHub Actions runs IndexNow on a schedule">
-              <div className="flex items-start gap-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
-                <div className="w-10 h-10 bg-white border border-emerald-300 rounded-lg flex items-center justify-center shrink-0"><Zap className="w-5 h-5 text-emerald-600" /></div>
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-slate-800">IndexNow Push workflow</p>
-                  <p className="text-xs text-slate-500 mt-0.5">Runs every 4 days at 03:00 UTC (days 4, 8, 12, 16, 20, 24, 28 each month). Submits every URL from <code className="text-xs px-1 py-0.5 bg-white rounded border border-emerald-200">/sitemap.xml</code> to Bing / Yandex / Naver / Seznam. No secrets required — runs <code className="text-xs px-1 py-0.5 bg-white rounded border border-emerald-200">npm run indexnow</code> directly against api.indexnow.org.</p>
+            <Panel title="Automation" subtitle="Two GitHub Actions workflows run on schedule">
+              <div className="space-y-3">
+                <div className="flex items-start gap-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+                  <div className="w-10 h-10 bg-white border border-emerald-300 rounded-lg flex items-center justify-center shrink-0"><Zap className="w-5 h-5 text-emerald-600" /></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-slate-800">IndexNow Push — Bing / Yandex / Naver / Seznam</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Every 4 days at 03:00 UTC. Submits every <code className="text-xs px-1 py-0.5 bg-white rounded border border-emerald-200">/sitemap.xml</code> URL to api.indexnow.org via <code className="text-xs px-1 py-0.5 bg-white rounded border border-emerald-200">npm run indexnow</code>.</p>
+                  </div>
+                  <a href="https://github.com/lostspace003/gennoor-tech/actions/workflows/indexnow-push.yml" target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-emerald-600 transition-colors shrink-0" title="View workflow runs"><ExternalLink className="w-4 h-4" /></a>
                 </div>
-                <a href="https://github.com/lostspace003/gennoor-tech/actions/workflows/indexnow-push.yml" target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-emerald-600 transition-colors shrink-0" title="View workflow runs"><ExternalLink className="w-4 h-4" /></a>
+                <div className="flex items-start gap-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="w-10 h-10 bg-white border border-blue-300 rounded-lg flex items-center justify-center shrink-0"><Zap className="w-5 h-5 text-blue-600" /></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-slate-800">GSC Sitemap Resubmit — Google</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Every 4 days at 04:00 UTC. Authenticates as a service account and PUTs the sitemap to Google Search Console via <code className="text-xs px-1 py-0.5 bg-white rounded border border-blue-200">npm run gsc-resubmit</code>. Nudges Google to re-fetch sooner.</p>
+                  </div>
+                  <a href="https://github.com/lostspace003/gennoor-tech/actions/workflows/gsc-sitemap-resubmit.yml" target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors shrink-0" title="View workflow runs"><ExternalLink className="w-4 h-4" /></a>
+                </div>
               </div>
+            </Panel>
+
+            <Panel title="Google Coverage" subtitle={gscData?.checkedAt ? `Live from Search Console API — checked ${new Date(gscData.checkedAt).toLocaleString()}` : 'Live from Search Console API'}>
+              {!gscData ? (
+                <div className="flex items-center gap-3 p-4 bg-slate-50 border border-slate-200 rounded-lg"><RefreshCw className="w-4 h-4 animate-spin text-slate-400" /><p className="text-sm text-slate-500">Loading Google data...</p></div>
+              ) : gscData.configured === false ? (
+                <div className="flex items-start gap-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                  <div className="w-10 h-10 bg-white border border-amber-300 rounded-lg flex items-center justify-center shrink-0"><AlertTriangle className="w-5 h-5 text-amber-600" /></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-slate-800">Not yet configured</p>
+                    <p className="text-xs text-slate-500 mt-0.5">{gscData.reason || gscData.error || 'See workflow logs for details.'}</p>
+                    <div className="mt-2 flex flex-wrap gap-3 text-xs">
+                      <a href="https://console.developers.google.com/apis/api/searchconsole.googleapis.com/overview?project=406342268554" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Enable Search Console API →</a>
+                      <a href="https://search.google.com/search-console/users" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Add service account to GSC →</a>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div className="p-3 bg-slate-50 rounded-lg"><p className="text-xs text-slate-500">Indexed (last 90d)</p><p className="text-xl font-bold text-slate-800">{gscData.indexedCount?.toLocaleString() || 0}</p></div>
+                    <div className="p-3 bg-slate-50 rounded-lg"><p className="text-xs text-slate-500">Clicks (28d)</p><p className="text-xl font-bold text-slate-800">{Math.round(gscData.summary28d?.clicks || 0).toLocaleString()}</p></div>
+                    <div className="p-3 bg-slate-50 rounded-lg"><p className="text-xs text-slate-500">Impressions (28d)</p><p className="text-xl font-bold text-slate-800">{Math.round(gscData.summary28d?.impressions || 0).toLocaleString()}</p></div>
+                    <div className="p-3 bg-slate-50 rounded-lg"><p className="text-xs text-slate-500">Avg Position (28d)</p><p className="text-xl font-bold text-slate-800">{(gscData.summary28d?.position || 0).toFixed(1)}</p></div>
+                  </div>
+                  {gscData.sitemaps && gscData.sitemaps.length > 0 && (
+                    <div>
+                      <p className="text-xs font-medium text-slate-500 mb-2">Sitemaps known to Google</p>
+                      <div className="space-y-2">
+                        {gscData.sitemaps.map(s => (
+                          <div key={s.path} className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
+                            <FileText className="w-4 h-4 text-slate-400 shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-medium text-slate-800 truncate">{s.path}</p>
+                              <p className="text-[11px] text-slate-500">Submitted {s.lastSubmitted ? new Date(s.lastSubmitted).toLocaleDateString() : '—'} · Downloaded {s.lastDownloaded ? new Date(s.lastDownloaded).toLocaleDateString() : '—'}</p>
+                            </div>
+                            {s.errors && parseInt(s.errors) > 0 ? <span className="text-[11px] px-2 py-0.5 bg-rose-100 text-rose-700 rounded">{s.errors} errors</span> : s.warnings && parseInt(s.warnings) > 0 ? <span className="text-[11px] px-2 py-0.5 bg-amber-100 text-amber-700 rounded">{s.warnings} warnings</span> : <span className="text-[11px] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded">OK</span>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {gscData.topPages && gscData.topPages.length > 0 && (
+                    <div>
+                      <p className="text-xs font-medium text-slate-500 mb-2">Top pages by clicks (28d)</p>
+                      <div className="overflow-x-auto"><table className="w-full text-xs"><thead><tr className="text-slate-500 border-b border-slate-200"><th className="text-left py-2 px-2 font-medium">Page</th><th className="text-right py-2 px-2 font-medium">Clicks</th><th className="text-right py-2 px-2 font-medium">Impr.</th><th className="text-right py-2 px-2 font-medium">CTR</th><th className="text-right py-2 px-2 font-medium">Pos.</th></tr></thead>
+                      <tbody>{gscData.topPages.map((p, i) => (
+                        <tr key={i} className="border-b border-slate-100">
+                          <td className="py-2 px-2 text-slate-700 max-w-[280px] truncate"><a href={p.page} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 hover:underline">{p.page.replace('https://gennoor.com', '')}</a></td>
+                          <td className="py-2 px-2 text-right text-slate-800 font-medium">{Math.round(p.clicks).toLocaleString()}</td>
+                          <td className="py-2 px-2 text-right text-slate-600">{Math.round(p.impressions).toLocaleString()}</td>
+                          <td className="py-2 px-2 text-right text-slate-500">{((p.ctr || 0) * 100).toFixed(1)}%</td>
+                          <td className="py-2 px-2 text-right text-slate-500">{(p.position || 0).toFixed(1)}</td>
+                        </tr>
+                      ))}</tbody></table></div>
+                    </div>
+                  )}
+                  <div className="flex justify-end">
+                    <button
+                      onClick={async () => {
+                        setGscResubmit({ submitting: true })
+                        try {
+                          const res = await fetch('/api/admin/gsc-resubmit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+                          const data = await res.json()
+                          setGscResubmit({ submitting: false, result: { success: res.ok, message: data.message || data.error } })
+                        } catch (err) {
+                          setGscResubmit({ submitting: false, result: { success: false, message: err instanceof Error ? err.message : 'Network error' } })
+                        }
+                      }}
+                      disabled={gscResubmit.submitting}
+                      className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white rounded-lg text-xs font-medium transition-colors flex items-center gap-2"
+                    >
+                      {gscResubmit.submitting ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Resubmitting...</> : <><Send className="w-3.5 h-3.5" /> Resubmit sitemap to Google</>}
+                    </button>
+                  </div>
+                  {gscResubmit.result && (
+                    <p className={`text-xs text-right ${gscResubmit.result.success ? 'text-emerald-600' : 'text-rose-600'}`}>{gscResubmit.result.success ? '✓ Sitemap resubmitted' : `✗ ${gscResubmit.result.message}`}</p>
+                  )}
+                </div>
+              )}
             </Panel>
 
             <Panel title="Search Engine Status" subtitle="Where each engine stands">
@@ -1388,7 +1490,7 @@ export default function AdminDashboard() {
                   <div className="w-10 h-10 bg-white border border-amber-300 rounded-lg flex items-center justify-center shrink-0"><Search className="w-5 h-5 text-amber-600" /></div>
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-slate-800">Google</p>
-                    <p className="text-xs text-slate-500">Google does NOT participate in IndexNow. Sitemap is discoverable via robots.txt and should be submitted manually in Search Console. Check the Coverage report for live indexed counts.</p>
+                    <p className="text-xs text-slate-500">{gscData?.configured ? `${gscData.indexedCount?.toLocaleString() || 0} pages indexed of ${seoData?.sitemapUrls || 0} (live from Search Console API). Sitemap auto-resubmitted every 4 days.` : 'Google does NOT participate in IndexNow. Sitemap is auto-resubmitted via Search Console API every 4 days (once you enable the API).'}</p>
                   </div>
                   <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors shrink-0"><ExternalLink className="w-4 h-4" /></a>
                 </div>
@@ -1446,6 +1548,7 @@ export default function AdminDashboard() {
                 { title: 'Google Search Console', description: 'Check indexed pages & request indexing', href: 'https://search.google.com/search-console', icon: Search },
                 { title: 'Bing Webmaster Tools', description: 'Submit URLs & check crawl status', href: 'https://www.bing.com/webmasters', icon: Globe },
                 { title: 'IndexNow Workflow Runs', description: 'View automated push history on GitHub', href: 'https://github.com/lostspace003/gennoor-tech/actions/workflows/indexnow-push.yml', icon: Zap },
+                { title: 'GSC Resubmit Workflow', description: 'View automated Google sitemap resubmit history', href: 'https://github.com/lostspace003/gennoor-tech/actions/workflows/gsc-sitemap-resubmit.yml', icon: Zap },
                 { title: 'Google Rich Results', description: 'Test structured data markup', href: 'https://search.google.com/test/rich-results', icon: Code2 },
                 { title: 'Sitemap', description: 'View current sitemap.xml', href: '/sitemap.xml', icon: FileText },
                 { title: 'Robots.txt', description: 'View crawl directives', href: '/robots.txt', icon: Shield },

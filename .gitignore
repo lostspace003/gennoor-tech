@@ -74,6 +74,11 @@ tmp/
 # Claude Code
 .claude/
 
+# Local secrets (service account JSON keys, etc.)
+.secrets/
+*-service-account*.json
+gennoor-youtube-api-project-*.json
+
 # Loose images
 img.jpeg
 photo.png

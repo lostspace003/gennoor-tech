@@ -1,0 +1,26 @@
+name: GSC Sitemap Resubmit
+
+on:
+  schedule:
+    - cron: '0 4 */4 * *'   # 04:00 UTC, every 4 days (1h after IndexNow Push)
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '22.x'
+
+jobs:
+  resubmit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Resubmit sitemap to Google Search Console
+        run: npm run gsc-resubmit
+        env:
+          GOOGLE_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
