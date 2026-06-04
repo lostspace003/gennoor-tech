@@ -368,12 +368,20 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
     return () => window.removeEventListener('message', handler)
   }, [advanceSlideInIframe, retreatSlideInIframe])
 
-  // Parent-side keyboard: ArrowRight/ArrowLeft for slide-level navigation
+  // Parent-side keyboard: ArrowRight/ArrowLeft for slide-level navigation,
+  // Space for play/pause (new audio pattern only — legacy AudioPlayer has its
+  // own Space handler).
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.code === 'Space') return
       const tag = (e.target as HTMLElement)?.tagName
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
+
+      if (e.code === 'Space') {
+        if (!isNewAudioPattern) return
+        e.preventDefault()
+        audioControlsRef.current?.togglePlay()
+        return
+      }
 
       if (e.key === 'ArrowRight') {
         e.preventDefault()
@@ -385,7 +393,19 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [advanceSlideInIframe, retreatSlideInIframe])
+  }, [advanceSlideInIframe, retreatSlideInIframe, isNewAudioPattern])
+
+  // Space pressed INSIDE the iframe — iframe's injected handler posts a
+  // play-toggle message up; parent calls togglePlay so audio responds.
+  useEffect(() => {
+    if (!isNewAudioPattern) return
+    const handler = (e: MessageEvent) => {
+      if (!e || !e.data || e.data.type !== 'gennoor-academy:play-toggle') return
+      audioControlsRef.current?.togglePlay()
+    }
+    window.addEventListener('message', handler)
+    return () => window.removeEventListener('message', handler)
+  }, [isNewAudioPattern])
 
   const applyZoom = useCallback((level: number) => {
     try {
@@ -548,12 +568,22 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
           // and let the parent's audio controls drive the seek + replay
           // and post a userDriven=true cue back so we fully reveal.
           document.addEventListener('keydown', function(e) {
-            if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft' &&
-                e.key !== 'PageDown' && e.key !== 'PageUp') return;
+            var isNav = e.key === 'ArrowRight' || e.key === 'ArrowLeft' ||
+                        e.key === 'PageDown' || e.key === 'PageUp';
+            var isSpace = e.code === 'Space' || e.key === ' ';
+            if (!isNav && !isSpace) return;
             var tag = (e.target && e.target.tagName) || '';
             if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+            // Space inside a button/anchor should still activate it.
+            if (isSpace && (tag === 'BUTTON' || tag === 'A')) return;
             e.stopImmediatePropagation();
             e.preventDefault();
+            if (isSpace) {
+              try {
+                window.parent.postMessage({ type: 'gennoor-academy:play-toggle' }, '*');
+              } catch (err) {}
+              return;
+            }
             var dir = (e.key === 'ArrowRight' || e.key === 'PageDown') ? 'next' : 'prev';
             try {
               window.parent.postMessage(
@@ -676,6 +706,7 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
             chapterCues={chapter.chapterCues}
             iframeRef={iframeRef}
             totalSlides={totalSlidesNum}
+            resumeKey={`${courseId}:${chapter.id}`}
           />
         )}
 

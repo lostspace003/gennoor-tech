@@ -23,6 +23,8 @@ export interface ChapterAudioControlsHandle {
    *  negative = back N cues. Used when the parent toolbar's prev/next slide
    *  buttons fire without knowing the current state. */
   step: (direction: 'next-slide' | 'prev-slide' | 'next-step' | 'prev-step') => void
+  /** Toggle play/pause. Used by Space-key handlers (parent + iframe). */
+  togglePlay: () => void
 }
 
 interface ChapterAudioControlsProps {
@@ -34,6 +36,10 @@ interface ChapterAudioControlsProps {
   iframeRef: React.RefObject<HTMLIFrameElement | null> | React.MutableRefObject<HTMLIFrameElement | null>
   /** Total slides — used for the scrubber's segment markers. Optional. */
   totalSlides?: number
+  /** Stable key under which to persist the audio resume position in
+   *  localStorage — typically `${courseId}:${chapterId}`. When set, the
+   *  player saves currentTime as it advances and restores it on next open. */
+  resumeKey?: string
 }
 
 const SPEEDS = [1.0, 1.1, 1.2, 1.3]
@@ -54,8 +60,15 @@ function formatTime(t: number) {
  * this component so its own slide-nav and iframe-nav events can seek the
  * audio — bidirectional sync.
  */
+const RESUME_PREFIX = 'gennoor:academy:resume:'
+// Don't restore within this many seconds of the end — the user is effectively
+// done, restoring at 99% just makes them re-finish.
+const RESUME_TAIL_GUARD_SEC = 3
+// Throttle saves on timeupdate so we don't write to localStorage every 250ms.
+const RESUME_SAVE_INTERVAL_SEC = 5
+
 const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudioControlsProps>(
-  function ChapterAudioControls({ chapterAudio, chapterCues, iframeRef }, ref) {
+  function ChapterAudioControls({ chapterAudio, chapterCues, iframeRef, resumeKey }, ref) {
     const audioRef = useRef<HTMLAudioElement>(null)
     const [cues, setCues] = useState<Cue[]>([])
     const [isPlaying, setIsPlaying] = useState(false)
@@ -71,6 +84,11 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
     // would silently fail to seek, and Play would then start from 0 —
     // making the iframe show e.g. slide 4 while audio plays slide 1.
     const pendingSeekRef = useRef<number | null>(null)
+    // Resume position: read from localStorage once per audio src, queued as
+    // a pending seek so it survives the metadata-not-ready race. Reset to
+    // null after the first successful apply so manual seeks aren't fought.
+    const resumeAppliedRef = useRef(false)
+    const lastSaveAtRef = useRef(0)
 
     const applySeek = useCallback((timestamp: number) => {
       const audio = audioRef.current
@@ -221,17 +239,64 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       playAfterSeek()
     }, [cues, postCue, applySeek, playAfterSeek])
 
-    useImperativeHandle(ref, () => ({ seekToCue, step: stepNav }), [seekToCue, stepNav])
+    const togglePlay = useCallback(() => {
+      const audio = audioRef.current
+      if (!audio) return
+      if (!audio.paused) { audio.pause(); return }
+
+      // If we have a queued seek (slide-nav clicked before audio was loaded
+      // enough to seek), apply it BEFORE play(). Without this, the audio
+      // starts from 0 — playing slide-1 content even though the user
+      // advanced past it.
+      const pending = pendingSeekRef.current
+      if (pending !== null) {
+        if (audio.readyState >= 1) {
+          try { audio.currentTime = pending; pendingSeekRef.current = null } catch {}
+          audio.play().catch(() => {})
+          return
+        }
+        const onReady = () => {
+          audio.removeEventListener('canplay', onReady)
+          try {
+            if (pendingSeekRef.current !== null) {
+              audio.currentTime = pendingSeekRef.current
+              pendingSeekRef.current = null
+            }
+          } catch {}
+          audio.play().catch(() => {})
+        }
+        audio.addEventListener('canplay', onReady, { once: true })
+        try { audio.load() } catch {}
+        return
+      }
+      audio.play().catch(() => {})
+    }, [])
+
+    useImperativeHandle(ref, () => ({ seekToCue, step: stepNav, togglePlay }), [seekToCue, stepNav, togglePlay])
 
     useEffect(() => {
       currentCueIdxRef.current = -1
       pendingSeekRef.current = null
+      resumeAppliedRef.current = false
+      lastSaveAtRef.current = 0
       setCurrentTime(0)
       setDuration(0)
       setIsPlaying(false)
       setAudioReady(false)
       setAudioError(false)
-    }, [audioSrc])
+
+      // Load saved resume position (if any) and queue it as a pending seek.
+      // Applied on canplay/loadedmetadata via flushPendingSeek.
+      if (typeof window !== 'undefined' && resumeKey) {
+        try {
+          const raw = window.localStorage.getItem(RESUME_PREFIX + resumeKey)
+          if (raw) {
+            const saved = Number.parseFloat(raw)
+            if (Number.isFinite(saved) && saved > 1) pendingSeekRef.current = saved
+          }
+        } catch {}
+      }
+    }, [audioSrc, resumeKey])
 
     // Re-apply any pending seek when the audio becomes seekable. Called from
     // both onLoadedMetadata and onCanPlay so it fires at the earliest point
@@ -251,9 +316,28 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       if (audioRef.current) audioRef.current.playbackRate = SPEEDS[speedIndex]
     }, [speedIndex])
 
+    const saveResume = useCallback((t: number) => {
+      if (typeof window === 'undefined' || !resumeKey) return
+      try {
+        if (t > 1 && (!duration || t < duration - RESUME_TAIL_GUARD_SEC)) {
+          window.localStorage.setItem(RESUME_PREFIX + resumeKey, String(Math.floor(t)))
+        }
+      } catch {}
+    }, [duration, resumeKey])
+
+    const clearResume = useCallback(() => {
+      if (typeof window === 'undefined' || !resumeKey) return
+      try { window.localStorage.removeItem(RESUME_PREFIX + resumeKey) } catch {}
+    }, [resumeKey])
+
     function handleTimeUpdate(e: React.SyntheticEvent<HTMLAudioElement>) {
       const t = e.currentTarget.currentTime
       setCurrentTime(t)
+      // Throttled resume save — every RESUME_SAVE_INTERVAL_SEC.
+      if (t - lastSaveAtRef.current >= RESUME_SAVE_INTERVAL_SEC) {
+        lastSaveAtRef.current = t
+        saveResume(t)
+      }
       if (cues.length === 0) return
       let target = currentCueIdxRef.current
       for (let i = Math.max(0, target + 1); i < cues.length; i++) {
@@ -266,40 +350,22 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       }
     }
 
-    function togglePlay() {
-      const audio = audioRef.current
-      if (!audio) return
-      if (!audio.paused) { audio.pause(); return }
-
-      // If we have a queued seek (slide-nav clicked before audio was loaded
-      // enough to seek), apply it BEFORE play(). Without this, the audio
-      // starts from 0 — playing slide-1 content even though the user
-      // advanced past it.
-      const pending = pendingSeekRef.current
-      if (pending !== null) {
-        if (audio.readyState >= 1) {
-          try { audio.currentTime = pending; pendingSeekRef.current = null } catch {}
-          audio.play().catch(() => {})
-          return
-        }
-        // Not seekable yet — defer play until canplay fires.
-        const onReady = () => {
-          audio.removeEventListener('canplay', onReady)
-          try {
-            if (pendingSeekRef.current !== null) {
-              audio.currentTime = pendingSeekRef.current
-              pendingSeekRef.current = null
-            }
-          } catch {}
-          audio.play().catch(() => {})
-        }
-        audio.addEventListener('canplay', onReady, { once: true })
-        // Force a load attempt in case preload="auto" hasn't kicked in yet.
-        try { audio.load() } catch {}
-        return
+    // Save on tab hide / unload so a learner who closes the tab mid-chapter
+    // resumes where they were, not at the last 5-second tick.
+    useEffect(() => {
+      if (typeof window === 'undefined' || !resumeKey) return
+      const flush = () => {
+        const audio = audioRef.current
+        if (audio) saveResume(audio.currentTime)
       }
-      audio.play().catch(() => {})
-    }
+      const onVis = () => { if (document.visibilityState === 'hidden') flush() }
+      window.addEventListener('pagehide', flush)
+      document.addEventListener('visibilitychange', onVis)
+      return () => {
+        window.removeEventListener('pagehide', flush)
+        document.removeEventListener('visibilitychange', onVis)
+      }
+    }, [resumeKey, saveResume])
 
     function cycleSpeed() { setSpeedIndex(prev => (prev + 1) % SPEEDS.length) }
 
@@ -326,13 +392,13 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
           // until data arrives, which made slide-nav-then-play start from 0.
           preload="auto"
           onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
+          onPause={e => { setIsPlaying(false); saveResume(e.currentTarget.currentTime) }}
           onLoadedMetadata={e => { setDuration(e.currentTarget.duration); setAudioReady(true); flushPendingSeek() }}
           onLoadedData={flushPendingSeek}
           onCanPlay={() => { setAudioReady(true); flushPendingSeek() }}
           onTimeUpdate={handleTimeUpdate}
           onError={() => setAudioError(true)}
-          onEnded={() => setIsPlaying(false)}
+          onEnded={() => { setIsPlaying(false); clearResume() }}
         />
 
         <button
@@ -361,7 +427,7 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
 
         {audioReady && duration > 0 && (
           <div
-            className="w-32 h-1.5 bg-white/20 rounded-full cursor-pointer hidden sm:block"
+            className="w-20 sm:w-32 h-1.5 bg-white/20 rounded-full cursor-pointer"
             onClick={handleSeek}
           >
             <div
@@ -372,7 +438,7 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
         )}
 
         {audioReady && duration > 0 && (
-          <span className="text-[10px] text-white/40 hidden sm:inline tabular-nums">
+          <span className="text-[10px] text-white/40 tabular-nums">
             {formatTime(currentTime)} / {formatTime(duration)}
           </span>
         )}
