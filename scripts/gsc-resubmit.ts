@@ -1,16 +1,12 @@
 /*
- * Re-submit sitemap.xml to Google Search Console via the Webmasters API.
+ * Re-submit sitemap.xml to Google Search Console.
  *
- * Authenticates as a service account (gennoor-indexing@…iam.gserviceaccount.com)
- * which must be an Owner / Full user on the gennoor.com GSC property.
+ * Auth: prefers OAuth refresh token (GSC_OAUTH_CLIENT_ID/SECRET/REFRESH_TOKEN)
+ * authenticating as the human owner of the GSC property. Falls back to a
+ * service account JWT (GOOGLE_SERVICE_ACCOUNT_KEY) if OAuth not configured.
  *
- * The PUT to /sitemaps/{feedpath} nudges Google to re-fetch the sitemap. It does
- * NOT force indexing of individual URLs — Google still decides what to crawl
- * and when. But it shortens the discovery-to-crawl window for new content.
- *
- * Usage:
- *   GOOGLE_SERVICE_ACCOUNT_KEY="$(cat .secrets/gsc-key.json)" \
- *     node --experimental-strip-types scripts/gsc-resubmit.ts
+ * OAuth path is preferred because GSC's "Add User" UI rejects service accounts
+ * from personal GCP projects ("user not found").
  */
 
 import { SignJWT, importPKCS8 } from 'jose'
@@ -19,12 +15,33 @@ const SITE = 'sc-domain:gennoor.com'
 const SITEMAP = 'https://gennoor.com/sitemap.xml'
 const SCOPE = 'https://www.googleapis.com/auth/webmasters'
 
-async function getToken(): Promise<string> {
-  const keyJson = process.env.GOOGLE_SERVICE_ACCOUNT_KEY
-  if (!keyJson) {
-    console.error('GOOGLE_SERVICE_ACCOUNT_KEY env var not set')
+async function getTokenViaOAuth(): Promise<string | null> {
+  const { GSC_OAUTH_CLIENT_ID, GSC_OAUTH_CLIENT_SECRET, GSC_OAUTH_REFRESH_TOKEN } = process.env
+  if (!GSC_OAUTH_CLIENT_ID || !GSC_OAUTH_CLIENT_SECRET || !GSC_OAUTH_REFRESH_TOKEN) return null
+
+  console.log('Authenticating via OAuth refresh token...')
+  const res = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      client_id: GSC_OAUTH_CLIENT_ID,
+      client_secret: GSC_OAUTH_CLIENT_SECRET,
+      refresh_token: GSC_OAUTH_REFRESH_TOKEN,
+      grant_type: 'refresh_token',
+    }),
+  })
+  if (!res.ok) {
+    console.error(`OAuth refresh failed: HTTP ${res.status} ${await res.text()}`)
     process.exit(1)
   }
+  return (await res.json() as { access_token: string }).access_token
+}
+
+async function getTokenViaServiceAccount(): Promise<string | null> {
+  const keyJson = process.env.GOOGLE_SERVICE_ACCOUNT_KEY
+  if (!keyJson) return null
+
+  console.log('Authenticating via service account JWT...')
   const key = JSON.parse(keyJson) as { client_email: string; private_key: string; token_uri: string }
 
   const now = Math.floor(Date.now() / 1000)
@@ -46,15 +63,18 @@ async function getToken(): Promise<string> {
     }),
   })
   if (!res.ok) {
-    console.error(`Token exchange failed: HTTP ${res.status} ${await res.text()}`)
+    console.error(`Service account token exchange failed: HTTP ${res.status} ${await res.text()}`)
     process.exit(1)
   }
   return (await res.json() as { access_token: string }).access_token
 }
 
 async function main() {
-  console.log(`Authenticating to Google as service account...`)
-  const token = await getToken()
+  const token = (await getTokenViaOAuth()) || (await getTokenViaServiceAccount())
+  if (!token) {
+    console.error('No GSC credentials: set GSC_OAUTH_{CLIENT_ID,CLIENT_SECRET,REFRESH_TOKEN} or GOOGLE_SERVICE_ACCOUNT_KEY')
+    process.exit(1)
+  }
   console.log(`✓ Got access token`)
 
   const url = `https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(SITE)}/sitemaps/${encodeURIComponent(SITEMAP)}`
@@ -70,15 +90,6 @@ async function main() {
   } else {
     const body = await res.text()
     console.error(`✗ HTTP ${res.status}: ${body.slice(0, 500)}`)
-    if (res.status === 403) {
-      console.error('')
-      console.error('HINT: 403 usually means the service account is not added as a user on the GSC property.')
-      console.error('  1. Open https://search.google.com/search-console')
-      console.error('  2. Pick property: gennoor.com')
-      console.error('  3. Settings → Users and permissions → Add user')
-      console.error('  4. Paste: gennoor-indexing@gennoor-youtube-api-project.iam.gserviceaccount.com')
-      console.error('  5. Permission: Owner (Full required for sitemap submission)')
-    }
     process.exit(1)
   }
 }
