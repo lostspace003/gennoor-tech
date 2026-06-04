@@ -1,0 +1,63 @@
+name: SEO Re-index (Bing + Google)
+
+# Single workflow that pings every search engine after content changes.
+# - IndexNow → Bing, Yandex, Naver, Seznam
+# - Search Console API → Google
+#
+# Triggers:
+#   - workflow_run: auto-fires after every successful main deploy (90s wait
+#     for Azure to propagate, then both jobs run in parallel)
+#   - schedule: safety net every 4 days at 03:00 UTC (covers cases where
+#     deploys are skipped or the auto-fire missed)
+#   - workflow_dispatch: manual button in GitHub UI / gh CLI
+
+on:
+  schedule:
+    - cron: '0 3 */4 * *'
+  workflow_dispatch:
+  workflow_run:
+    workflows: ['CI/CD Pipeline']
+    types: [completed]
+    branches: [main]
+
+env:
+  NODE_VERSION: '22.x'
+
+jobs:
+  indexnow:
+    name: IndexNow — Bing / Yandex / Naver / Seznam
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Wait for Azure deploy to propagate
+        if: github.event_name == 'workflow_run'
+        run: sleep 90
+      - name: Submit sitemap to IndexNow
+        run: npm run indexnow
+
+  gsc:
+    name: Google Search Console — sitemap resubmit
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Wait for Azure deploy to propagate
+        if: github.event_name == 'workflow_run'
+        run: sleep 90
+      - name: Resubmit sitemap to Google Search Console
+        run: npm run gsc-resubmit
+        env:
+          GSC_OAUTH_CLIENT_ID: ${{ secrets.GSC_OAUTH_CLIENT_ID }}
+          GSC_OAUTH_CLIENT_SECRET: ${{ secrets.GSC_OAUTH_CLIENT_SECRET }}
+          GSC_OAUTH_REFRESH_TOKEN: ${{ secrets.GSC_OAUTH_REFRESH_TOKEN }}
