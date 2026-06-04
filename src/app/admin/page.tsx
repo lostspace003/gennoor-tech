@@ -1380,7 +1380,7 @@ export default function AdminDashboard() {
               <StatCard icon={Search} label="Sitemap URLs" value={seoData?.sitemapUrls || 0} color="blue" />
               <StatCard icon={Globe} label="Google Indexed (90d)" value={gscData?.indexedCount || 0} color="amber" subtitle={!gscData ? 'Loading...' : gscData.configured === false ? 'Not configured' : undefined} />
               <StatCard icon={Send} label="Last Manual Push" value={indexNowState.result?.submitted || 0} color="teal" />
-              <StatCard icon={Clock} label="Auto Cadence" value={0} color="purple" subtitle="Every 4 days" />
+              <StatCard icon={Clock} label="Auto Trigger" value={0} color="purple" subtitle="Each main deploy" />
             </div>
 
             <Panel title="Automation" subtitle="Two GitHub Actions workflows run on schedule">
@@ -1389,7 +1389,7 @@ export default function AdminDashboard() {
                   <div className="w-10 h-10 bg-white border border-emerald-300 rounded-lg flex items-center justify-center shrink-0"><Zap className="w-5 h-5 text-emerald-600" /></div>
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-slate-800">IndexNow Push — Bing / Yandex / Naver / Seznam</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Every 4 days at 03:00 UTC. Submits every <code className="text-xs px-1 py-0.5 bg-white rounded border border-emerald-200">/sitemap.xml</code> URL to api.indexnow.org via <code className="text-xs px-1 py-0.5 bg-white rounded border border-emerald-200">npm run indexnow</code>.</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Auto-fires after every successful main deploy (90s after deploy completes) + safety cron every 4 days at 03:00 UTC. Submits every <code className="text-xs px-1 py-0.5 bg-white rounded border border-emerald-200">/sitemap.xml</code> URL to api.indexnow.org via <code className="text-xs px-1 py-0.5 bg-white rounded border border-emerald-200">npm run indexnow</code>.</p>
                   </div>
                   <a href="https://github.com/lostspace003/gennoor-tech/actions/workflows/indexnow-push.yml" target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-emerald-600 transition-colors shrink-0" title="View workflow runs"><ExternalLink className="w-4 h-4" /></a>
                 </div>
@@ -1397,7 +1397,7 @@ export default function AdminDashboard() {
                   <div className="w-10 h-10 bg-white border border-blue-300 rounded-lg flex items-center justify-center shrink-0"><Zap className="w-5 h-5 text-blue-600" /></div>
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-slate-800">GSC Sitemap Resubmit — Google</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Every 4 days at 04:00 UTC. Authenticates as a service account and PUTs the sitemap to Google Search Console via <code className="text-xs px-1 py-0.5 bg-white rounded border border-blue-200">npm run gsc-resubmit</code>. Nudges Google to re-fetch sooner.</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Auto-fires after every successful main deploy (90s after deploy completes) + safety cron every 4 days at 04:00 UTC. PUTs the sitemap to Google Search Console via <code className="text-xs px-1 py-0.5 bg-white rounded border border-blue-200">npm run gsc-resubmit</code> (OAuth as property owner).</p>
                   </div>
                   <a href="https://github.com/lostspace003/gennoor-tech/actions/workflows/gsc-sitemap-resubmit.yml" target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors shrink-0" title="View workflow runs"><ExternalLink className="w-4 h-4" /></a>
                 </div>
