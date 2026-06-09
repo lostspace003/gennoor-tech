@@ -89,7 +89,8 @@ export const courses: Course[] = [
         htmlFile: '/courses/ab-100/chapters/chapter-00-introduction.html',
         estimatedMinutes: 15,
         isFree: true,
-        audioDir: '/courses/ab-100/audio/chapter-00',
+        chapterAudio: '/courses/ab-100/audio/chapter-00/chapter-00.mp3',
+        chapterCues: '/courses/ab-100/audio/chapter-00/cues.json',
       },
       {
         id: 'chapter-01',
@@ -99,7 +100,8 @@ export const courses: Course[] = [
         description: 'The architect role, agentic AI fundamentals, and the solution landscape',
         htmlFile: '/courses/ab-100/chapters/chapter-01-introduction.html',
         estimatedMinutes: 90,
-        audioDir: '/courses/ab-100/audio/chapter-01',
+        chapterAudio: '/courses/ab-100/audio/chapter-01/chapter-01.mp3',
+        chapterCues: '/courses/ab-100/audio/chapter-01/cues.json',
       },
       {
         id: 'chapter-02',
@@ -109,7 +111,8 @@ export const courses: Course[] = [
         description: 'Grounding, data architecture, and translating business needs into AI specs',
         htmlFile: '/courses/ab-100/chapters/chapter-02-analyze.html',
         estimatedMinutes: 100,
-        audioDir: '/courses/ab-100/audio/chapter-02',
+        chapterAudio: '/courses/ab-100/audio/chapter-02/chapter-02.mp3',
+        chapterCues: '/courses/ab-100/audio/chapter-02/cues.json',
       },
       {
         id: 'chapter-03',
@@ -119,7 +122,8 @@ export const courses: Course[] = [
         description: 'Cloud Adoption Framework, agent types, and solution design rules',
         htmlFile: '/courses/ab-100/chapters/chapter-03-strategy.html',
         estimatedMinutes: 120,
-        audioDir: '/courses/ab-100/audio/chapter-03',
+        chapterAudio: '/courses/ab-100/audio/chapter-03/chapter-03.mp3',
+        chapterCues: '/courses/ab-100/audio/chapter-03/cues.json',
       },
       {
         id: 'chapter-04',
@@ -129,7 +133,8 @@ export const courses: Course[] = [
         description: 'TCO analysis, model router patterns, and ROI modeling',
         htmlFile: '/courses/ab-100/chapters/chapter-04-roi.html',
         estimatedMinutes: 100,
-        audioDir: '/courses/ab-100/audio/chapter-04',
+        chapterAudio: '/courses/ab-100/audio/chapter-04/chapter-04.mp3',
+        chapterCues: '/courses/ab-100/audio/chapter-04/cues.json',
       },
       {
         id: 'chapter-05',
@@ -139,7 +144,8 @@ export const courses: Course[] = [
         description: 'Responsible AI, Copilot Studio, Azure AI Foundry, and solution design patterns',
         htmlFile: '/courses/ab-100/chapters/chapter-05-design.html',
         estimatedMinutes: 120,
-        audioDir: '/courses/ab-100/audio/chapter-05',
+        chapterAudio: '/courses/ab-100/audio/chapter-05/chapter-05.mp3',
+        chapterCues: '/courses/ab-100/audio/chapter-05/cues.json',
       },
       {
         id: 'chapter-06',
@@ -149,7 +155,8 @@ export const courses: Course[] = [
         description: 'Connectors, plugins, MCP, Computer Use, and extending agent capabilities',
         htmlFile: '/courses/ab-100/chapters/chapter-06-extensibility.html',
         estimatedMinutes: 100,
-        audioDir: '/courses/ab-100/audio/chapter-06',
+        chapterAudio: '/courses/ab-100/audio/chapter-06/chapter-06.mp3',
+        chapterCues: '/courses/ab-100/audio/chapter-06/cues.json',
       },
       {
         id: 'chapter-07',
@@ -159,7 +166,8 @@ export const courses: Course[] = [
         description: 'Dynamics 365 capability map and prebuilt agent orchestration',
         htmlFile: '/courses/ab-100/chapters/chapter-07-orchestrate.html',
         estimatedMinutes: 110,
-        audioDir: '/courses/ab-100/audio/chapter-07',
+        chapterAudio: '/courses/ab-100/audio/chapter-07/chapter-07.mp3',
+        chapterCues: '/courses/ab-100/audio/chapter-07/cues.json',
       },
       {
         id: 'chapter-08',
@@ -169,7 +177,8 @@ export const courses: Course[] = [
         description: 'Telemetry, feedback loops, and continuous AI solution improvement',
         htmlFile: '/courses/ab-100/chapters/chapter-08-monitor.html',
         estimatedMinutes: 110,
-        audioDir: '/courses/ab-100/audio/chapter-08',
+        chapterAudio: '/courses/ab-100/audio/chapter-08/chapter-08.mp3',
+        chapterCues: '/courses/ab-100/audio/chapter-08/cues.json',
       },
       {
         id: 'chapter-09',
@@ -179,7 +188,8 @@ export const courses: Course[] = [
         description: 'Prompt validation, multi-app E2E testing, and quality assurance',
         htmlFile: '/courses/ab-100/chapters/chapter-09-testing.html',
         estimatedMinutes: 100,
-        audioDir: '/courses/ab-100/audio/chapter-09',
+        chapterAudio: '/courses/ab-100/audio/chapter-09/chapter-09.mp3',
+        chapterCues: '/courses/ab-100/audio/chapter-09/cues.json',
       },
       {
         id: 'chapter-10',
@@ -189,7 +199,8 @@ export const courses: Course[] = [
         description: 'Application lifecycle management, data ALM, and custom model ALM',
         htmlFile: '/courses/ab-100/chapters/chapter-10-alm.html',
         estimatedMinutes: 110,
-        audioDir: '/courses/ab-100/audio/chapter-10',
+        chapterAudio: '/courses/ab-100/audio/chapter-10/chapter-10.mp3',
+        chapterCues: '/courses/ab-100/audio/chapter-10/cues.json',
       },
       {
         id: 'chapter-11',
@@ -199,7 +210,8 @@ export const courses: Course[] = [
         description: 'Responsible AI, security patterns, governance, risk, and compliance',
         htmlFile: '/courses/ab-100/chapters/chapter-11-governance.html',
         estimatedMinutes: 120,
-        audioDir: '/courses/ab-100/audio/chapter-11',
+        chapterAudio: '/courses/ab-100/audio/chapter-11/chapter-11.mp3',
+        chapterCues: '/courses/ab-100/audio/chapter-11/cues.json',
       },
       {
         id: 'chapter-12',
@@ -209,7 +221,8 @@ export const courses: Course[] = [
         description: 'Cross-cutting frameworks, common pitfalls, and exam preparation',
         htmlFile: '/courses/ab-100/chapters/chapter-12-revision.html',
         estimatedMinutes: 80,
-        audioDir: '/courses/ab-100/audio/chapter-12',
+        chapterAudio: '/courses/ab-100/audio/chapter-12/chapter-12.mp3',
+        chapterCues: '/courses/ab-100/audio/chapter-12/cues.json',
       },
       {
         id: 'mock-exam',

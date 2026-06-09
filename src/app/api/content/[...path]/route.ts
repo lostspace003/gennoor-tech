@@ -24,8 +24,18 @@ function getContentType(blobPath: string): string {
   return MIME[ext] || 'application/octet-stream'
 }
 
+function toWebStream(nodeStream: NodeJS.ReadableStream): ReadableStream {
+  return new ReadableStream({
+    start(controller) {
+      nodeStream.on('data', (chunk: Buffer) => controller.enqueue(new Uint8Array(chunk)))
+      nodeStream.on('end', () => controller.close())
+      nodeStream.on('error', (err: Error) => controller.error(err))
+    },
+  })
+}
+
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ path: string[] }> }
 ) {
   const { path } = await params
@@ -44,25 +54,59 @@ export async function GET(
     const blobService = BlobServiceClient.fromConnectionString(connStr)
     const container = blobService.getContainerClient(CONTAINER)
     const blob = container.getBlobClient(blobPath)
+    const contentType = getContentType(blobPath)
+
+    const properties = await blob.getProperties()
+    const totalLength = properties.contentLength ?? 0
+
+    // Range support — chapter audio runs to ~30 MB per file; without 206
+    // responses the browser can't seek without buffering everything first.
+    const range = req.headers.get('range')
+    if (range && totalLength > 0) {
+      const match = range.match(/bytes=(\d+)-(\d*)/)
+      if (match) {
+        const start = parseInt(match[1], 10)
+        const end = match[2] ? Math.min(parseInt(match[2], 10), totalLength - 1) : totalLength - 1
+        if (start >= totalLength || start > end) {
+          return new NextResponse(null, {
+            status: 416,
+            headers: { 'Content-Range': `bytes */${totalLength}` },
+          })
+        }
+        const partial = await blob.download(start, end - start + 1)
+        if (!partial.readableStreamBody) {
+          return NextResponse.json({ error: 'Not found' }, { status: 404 })
+        }
+        return new NextResponse(toWebStream(partial.readableStreamBody), {
+          status: 206,
+          headers: {
+            'Content-Type': contentType,
+            'Content-Range': `bytes ${start}-${end}/${totalLength}`,
+            'Content-Length': String(end - start + 1),
+            'Accept-Ranges': 'bytes',
+            'Cache-Control': 'public, max-age=86400',
+          },
+        })
+      }
+    }
 
     const download = await blob.download(0)
     if (!download.readableStreamBody) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 })
     }
 
-    const chunks: Buffer[] = []
-    for await (const chunk of download.readableStreamBody) {
-      chunks.push(Buffer.from(chunk))
+    const headers: Record<string, string> = {
+      'Content-Type': contentType,
+      'Cache-Control': 'public, max-age=86400, stale-while-revalidate=3600',
     }
-    const body = Buffer.concat(chunks)
+    if (totalLength > 0) headers['Content-Length'] = String(totalLength)
+    if (contentType.startsWith('audio/') || contentType.startsWith('video/')) {
+      headers['Accept-Ranges'] = 'bytes'
+    }
 
-    return new NextResponse(body, {
+    return new NextResponse(toWebStream(download.readableStreamBody), {
       status: 200,
-      headers: {
-        'Content-Type': getContentType(blobPath),
-        'Content-Length': String(body.length),
-        'Cache-Control': 'public, max-age=86400, stale-while-revalidate=3600',
-      },
+      headers,
     })
   } catch (err: any) {
     if (err?.statusCode === 404 || err?.details?.errorCode === 'BlobNotFound') {
