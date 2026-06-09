@@ -3,10 +3,13 @@
  * Fine for single-instance deployments (Azure App Service B1).
  */
 
+import { randomInt } from 'crypto'
+
 interface OTPEntry {
   code: string
   expiresAt: number
   verified: boolean
+  attempts: number
 }
 
 const store = new Map<string, OTPEntry>()
@@ -14,13 +17,15 @@ const store = new Map<string, OTPEntry>()
 const OTP_EXPIRY_MS = 5 * 60 * 1000 // 5 minutes
 const VERIFIED_EXPIRY_MS = 30 * 60 * 1000 // 30 minutes post-verification
 const OTP_LENGTH = 6
+// A code dies after this many wrong guesses — prevents brute-forcing the
+// 6-digit space within the 5-minute window.
+const MAX_ATTEMPTS = 5
 
-/** Generate a random numeric OTP */
+/** Generate a cryptographically random numeric OTP */
 export function generateOTP(): string {
-  const digits = '0123456789'
   let otp = ''
   for (let i = 0; i < OTP_LENGTH; i++) {
-    otp += digits[Math.floor(Math.random() * digits.length)]
+    otp += String(randomInt(0, 10))
   }
   return otp
 }
@@ -32,6 +37,7 @@ export function storeOTP(email: string, code: string): void {
     code,
     expiresAt: Date.now() + OTP_EXPIRY_MS,
     verified: false,
+    attempts: 0,
   })
 
   // Auto-cleanup after expiry
@@ -53,7 +59,11 @@ export function verifyOTP(email: string, code: string): boolean {
     store.delete(key)
     return false
   }
-  if (entry.code !== code) return false
+  if (entry.code !== code) {
+    entry.attempts += 1
+    if (entry.attempts >= MAX_ATTEMPTS) store.delete(key)
+    return false
+  }
 
   // Mark as verified and extend expiry so user has time to complete assessment
   entry.verified = true

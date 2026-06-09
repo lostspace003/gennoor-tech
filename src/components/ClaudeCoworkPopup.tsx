@@ -65,7 +65,7 @@ export default function ClaudeCoworkPopup() {
             </div>
 
             <div className="hidden min-[400px]:flex flex-col items-center justify-center shrink-0 mr-2">
-              <img src="/assets/jalal-portrait.jpeg" alt="Jalal Khan"
+              <img src="/media/assets/jalal-portrait.jpeg" alt="Jalal Khan"
                 className="w-[80px] h-[100px] rounded-xl object-cover mb-2" style={{ objectPosition: '50% 20%', boxShadow: '0 4px 16px rgba(0,0,0,.3)' }} />
               <p className="text-white text-[11px] font-bold leading-tight text-center">Jalal Khan</p>
               <p className="text-[#FFD23F] text-[9px] font-semibold text-center">Microsoft Certified<br />Trainer</p>

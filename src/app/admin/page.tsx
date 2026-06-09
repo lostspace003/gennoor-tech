@@ -201,6 +201,7 @@ export default function AdminDashboard() {
         emailLogsRes.ok ? emailLogsRes.json() : null, aiReadinessRes.ok ? aiReadinessRes.json() : null,
         certRes.ok ? certRes.json() : null, feedbackRes.ok ? feedbackRes.json() : null,
       ])
+      if (!analyticsData) setError('Failed to load analytics data')
       setCertData(certResult)
       setFeedbackData(feedbackResult)
       setData(analyticsData); setSetupData(setupResult); setSeoData(seoResult)
@@ -351,6 +352,23 @@ export default function AdminDashboard() {
     router.push('/admin/login')
     return null
   }
+
+  // Load failure: without this branch the page would sit on the loading
+  // spinner forever (error is set but `data` never becomes truthy).
+  if (!data && error && !loading) return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 flex items-center justify-center">
+      <div className="text-center">
+        <p className="text-red-600 font-medium mb-4">{error}</p>
+        <button
+          onClick={() => fetchAll(days)}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+        >
+          <RefreshCw className="w-4 h-4" />
+          Retry
+        </button>
+      </div>
+    </div>
+  )
 
   if (!data) return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 flex items-center justify-center">

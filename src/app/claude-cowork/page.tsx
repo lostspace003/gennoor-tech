@@ -64,7 +64,7 @@ export default function ClaudeCoworkPage() {
             {/* Instructor */}
             <div className="flex items-center justify-center gap-4 mb-4">
               <img
-                src="/assets/jalal-portrait.jpeg"
+                src="/media/assets/jalal-portrait.jpeg"
                 alt="Jalal Khan"
                 className="w-16 h-20 rounded-xl object-cover"
                 style={{ objectPosition: '50% 20%', boxShadow: '0 4px 16px rgba(0,0,0,.3)' }}

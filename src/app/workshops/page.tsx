@@ -147,7 +147,7 @@ export default function WorkshopsPage() {
 
                     <div className="flex items-center gap-2 mb-5 text-[11px] text-gray-400">
                       <img
-                        src="/assets/jalal-portrait.jpeg"
+                        src="/media/assets/jalal-portrait.jpeg"
                         alt={workshop.instructor}
                         className="w-5 h-5 rounded-full object-cover"
                         style={{ objectPosition: '50% 20%' }}

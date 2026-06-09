@@ -658,7 +658,7 @@ export default function TeamAndDeliveryPage() {
             <div className="md:col-span-1">
               <div className="aspect-[4/5] rounded-2xl overflow-hidden bg-gray-100 mb-4">
                 <img
-                  src="/assets/jalal-portrait.jpeg"
+                  src="/media/assets/jalal-portrait.jpeg"
                   alt="Jalal Ahmed Khan, Founder of Gennoor Tech"
                   className="w-full h-full object-cover object-[50%_20%]"
                 />

@@ -644,7 +644,7 @@ export default function ForEnterprisePage() {
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
               <Link
-                href="/case-studies"
+                href="/portfolio/case-studies"
                 className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 glass-card hover:border-primary-200 transition-all duration-300"
               >
                 See client case studies
@@ -1033,7 +1033,7 @@ export default function ForEnterprisePage() {
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
             <Link
-              href="/case-studies"
+              href="/portfolio/case-studies"
               className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 glass-card hover:border-primary-200 transition-all duration-300"
             >
               See client case studies

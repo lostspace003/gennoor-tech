@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyOTP } from '@/lib/otp-store'
+import { rateLimit, clientIp } from '@/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
   try {
@@ -7,6 +8,13 @@ export async function POST(request: NextRequest) {
 
     if (!email || !otp) {
       return NextResponse.json({ error: 'Email and OTP are required' }, { status: 400 })
+    }
+
+    if (!rateLimit(`otp-verify:${clientIp(request.headers)}`, 20, 10 * 60 * 1000)) {
+      return NextResponse.json(
+        { error: 'Too many attempts. Please wait a few minutes and try again.' },
+        { status: 429 },
+      )
     }
 
     const valid = verifyOTP(email, otp)

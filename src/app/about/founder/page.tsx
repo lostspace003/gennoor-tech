@@ -86,7 +86,7 @@ export default function FounderPage() {
               </div>
               <div className="flex justify-center lg:justify-end">
                 <img
-                  src="/assets/jalal-portrait.jpeg"
+                  src="/media/assets/jalal-portrait.jpeg"
                   alt="Jalal Ahmed Khan, Founder of Gennoor Tech"
                   className="w-64 h-80 rounded-2xl object-cover object-[50%_20%] shadow-lg border-4 border-white ring-1 ring-gray-200"
                 />

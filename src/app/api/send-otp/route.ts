@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateOTP, storeOTP } from '@/lib/otp-store'
 import { sendEmail } from '@/lib/email-service'
+import { rateLimit, clientIp } from '@/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,6 +14,19 @@ export async function POST(request: NextRequest) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
       return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
+    }
+
+    // Throttle both per recipient and per caller so the endpoint can't be
+    // used to bomb an inbox or burn through ACS email quota.
+    const normalised = email.toLowerCase().trim()
+    if (
+      !rateLimit(`otp-send:${normalised}`, 3, 15 * 60 * 1000) ||
+      !rateLimit(`otp-send-ip:${clientIp(request.headers)}`, 10, 60 * 60 * 1000)
+    ) {
+      return NextResponse.json(
+        { error: 'Too many codes requested. Please wait a few minutes and try again.' },
+        { status: 429 },
+      )
     }
 
     const otp = generateOTP()
