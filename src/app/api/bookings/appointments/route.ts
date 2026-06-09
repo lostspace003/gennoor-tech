@@ -9,8 +9,21 @@ import {
 import { getPendingBookings, updatePendingBooking, deletePendingBooking } from '@/lib/azure-storage'
 import { sendEmail } from '@/lib/email-service'
 import { trackEvent, initAppInsights } from '@/lib/analytics'
+import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 
-export async function GET() {
+// User-supplied values (booking form fields, admin free text) get interpolated
+// into email HTML — escape them so markup/scripts can't be injected.
+const esc = (s: unknown) =>
+  String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+
+export async function GET(request: NextRequest) {
+  const { authorized } = await verifyAdmin(request)
+  if (!authorized) return unauthorizedResponse()
+
   try {
     const bookings = await getPendingBookings()
     return NextResponse.json({ success: true, appointments: bookings })
@@ -24,6 +37,9 @@ export async function GET() {
 }
 
 export async function PATCH(request: NextRequest) {
+  const { authorized } = await verifyAdmin(request)
+  if (!authorized) return unauthorizedResponse()
+
   try {
     initAppInsights()
     const body = await request.json()
@@ -107,7 +123,7 @@ export async function PATCH(request: NextRequest) {
             </div>
             <div style="background:#fff;padding:28px;border:1px solid #e5e7eb;border-top:0;border-radius:0 0 12px 12px">
               <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
-                Hi <strong>${booking.name}</strong>, your meeting has been confirmed.
+                Hi <strong>${esc(booking.name)}</strong>, your meeting has been confirmed.
               </p>
               <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:16px;margin:0 0 16px">
                 <p style="margin:0 0 6px;font-size:14px;color:#111827"><strong>${service.displayName}</strong></p>
@@ -148,7 +164,7 @@ export async function PATCH(request: NextRequest) {
       await sendEmail({
         to: booking.email,
         from: process.env.EMAIL_FROM_SCHEDULE || 'schedule@gennoor.com',
-        subject: `Booking update — ${booking.serviceName}`,
+        subject: `Booking update — ${esc(booking.serviceName)}`,
         html: `
           <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto">
             <div style="background:#1e3a5f;padding:24px 28px;border-radius:12px 12px 0 0">
@@ -156,14 +172,14 @@ export async function PATCH(request: NextRequest) {
             </div>
             <div style="background:#fff;padding:28px;border:1px solid #e5e7eb;border-top:0;border-radius:0 0 12px 12px">
               <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
-                Hi <strong>${booking.name}</strong>,
+                Hi <strong>${esc(booking.name)}</strong>,
               </p>
               <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
-                Unfortunately, we&rsquo;re unable to confirm your booking for <strong>${booking.serviceName}</strong> on ${booking.date} at ${booking.startTime} UTC.
+                Unfortunately, we&rsquo;re unable to confirm your booking for <strong>${esc(booking.serviceName)}</strong> on ${booking.date} at ${booking.startTime} UTC.
               </p>
               ${adminMessage ? `
                 <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:12px 16px;margin:0 0 16px">
-                  <p style="margin:0;font-size:14px;color:#92400e">${adminMessage}</p>
+                  <p style="margin:0;font-size:14px;color:#92400e">${esc(adminMessage)}</p>
                 </div>
               ` : ''}
               <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
@@ -193,7 +209,7 @@ export async function PATCH(request: NextRequest) {
       await sendEmail({
         to: booking.email,
         from: process.env.EMAIL_FROM_SCHEDULE || 'schedule@gennoor.com',
-        subject: `Please reschedule — ${booking.serviceName}`,
+        subject: `Please reschedule — ${esc(booking.serviceName)}`,
         html: `
           <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto">
             <div style="background:#1e3a5f;padding:24px 28px;border-radius:12px 12px 0 0">
@@ -201,14 +217,14 @@ export async function PATCH(request: NextRequest) {
             </div>
             <div style="background:#fff;padding:28px;border:1px solid #e5e7eb;border-top:0;border-radius:0 0 12px 12px">
               <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
-                Hi <strong>${booking.name}</strong>,
+                Hi <strong>${esc(booking.name)}</strong>,
               </p>
               <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
-                We&rsquo;d love to meet, but the requested time for <strong>${booking.serviceName}</strong> on ${booking.date} at ${booking.startTime} UTC doesn&rsquo;t work for us.
+                We&rsquo;d love to meet, but the requested time for <strong>${esc(booking.serviceName)}</strong> on ${booking.date} at ${booking.startTime} UTC doesn&rsquo;t work for us.
               </p>
               ${adminMessage ? `
                 <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;margin:0 0 16px">
-                  <p style="margin:0;font-size:14px;color:#1e40af"><strong>Message from Jalal:</strong> ${adminMessage}</p>
+                  <p style="margin:0;font-size:14px;color:#1e40af"><strong>Message from Jalal:</strong> ${esc(adminMessage)}</p>
                 </div>
               ` : ''}
               <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
@@ -245,7 +261,7 @@ export async function PATCH(request: NextRequest) {
       await sendEmail({
         to: booking.email,
         from: process.env.EMAIL_FROM_SCHEDULE || 'schedule@gennoor.com',
-        subject: `Cancelled: ${booking.serviceName} with Jalal Khan`,
+        subject: `Cancelled: ${esc(booking.serviceName)} with Jalal Khan`,
         html: `
           <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto">
             <div style="background:#991b1b;padding:24px 28px;border-radius:12px 12px 0 0">
@@ -253,14 +269,14 @@ export async function PATCH(request: NextRequest) {
             </div>
             <div style="background:#fff;padding:28px;border:1px solid #e5e7eb;border-top:0;border-radius:0 0 12px 12px">
               <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
-                Hi <strong>${booking.name}</strong>,
+                Hi <strong>${esc(booking.name)}</strong>,
               </p>
               <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
-                Your booking for <strong>${booking.serviceName}</strong> on ${booking.date} at ${booking.startTime} UTC has been cancelled.
+                Your booking for <strong>${esc(booking.serviceName)}</strong> on ${booking.date} at ${booking.startTime} UTC has been cancelled.
               </p>
               ${adminMessage ? `
                 <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px 16px;margin:0 0 16px">
-                  <p style="margin:0;font-size:14px;color:#991b1b">${adminMessage}</p>
+                  <p style="margin:0;font-size:14px;color:#991b1b">${esc(adminMessage)}</p>
                 </div>
               ` : ''}
               <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
@@ -354,7 +370,7 @@ export async function PATCH(request: NextRequest) {
             </div>
             <div style="background:#fff;padding:28px;border:1px solid #e5e7eb;border-top:0;border-radius:0 0 12px 12px">
               <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
-                Hi <strong>${booking.name}</strong>, your meeting has been rescheduled to a new time.
+                Hi <strong>${esc(booking.name)}</strong>, your meeting has been rescheduled to a new time.
               </p>
               <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:16px;margin:0 0 16px">
                 <p style="margin:0 0 6px;font-size:14px;color:#111827"><strong>${service.displayName}</strong></p>
@@ -369,7 +385,7 @@ export async function PATCH(request: NextRequest) {
               ` : ''}
               ${adminMessage ? `
                 <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;margin:0 0 16px">
-                  <p style="margin:0;font-size:14px;color:#1e40af"><strong>Note from Jalal:</strong> ${adminMessage}</p>
+                  <p style="margin:0;font-size:14px;color:#1e40af"><strong>Note from Jalal:</strong> ${esc(adminMessage)}</p>
                 </div>
               ` : ''}
               <p style="color:#6b7280;font-size:13px;line-height:1.5;margin:16px 0 0">
@@ -404,7 +420,7 @@ export async function PATCH(request: NextRequest) {
       await sendEmail({
         to: booking.email,
         from: process.env.EMAIL_FROM_SCHEDULE || 'schedule@gennoor.com',
-        subject: subject || `Re: ${booking.serviceName}`,
+        subject: subject || `Re: ${esc(booking.serviceName)}`,
         html: `
           <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto">
             <div style="background:#1e3a5f;padding:24px 28px;border-radius:12px 12px 0 0">
@@ -412,10 +428,10 @@ export async function PATCH(request: NextRequest) {
             </div>
             <div style="background:#fff;padding:28px;border:1px solid #e5e7eb;border-top:0;border-radius:0 0 12px 12px">
               <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
-                Hi <strong>${booking.name}</strong>,
+                Hi <strong>${esc(booking.name)}</strong>,
               </p>
               <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px;white-space:pre-wrap">
-                ${replyBody}
+                ${esc(replyBody)}
               </p>
               <p style="color:#6b7280;font-size:13px;line-height:1.5;margin:16px 0 0">
                 Best regards,<br />Jalal Khan<br />Gennoor Tech
@@ -444,6 +460,9 @@ export async function PATCH(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  const { authorized } = await verifyAdmin(request)
+  if (!authorized) return unauthorizedResponse()
+
   try {
     const { rowKeys } = await request.json()
     if (!Array.isArray(rowKeys) || rowKeys.length === 0) {
