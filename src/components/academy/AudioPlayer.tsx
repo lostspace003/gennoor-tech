@@ -72,6 +72,13 @@ export default function AudioPlayer({ audioDir, currentSlide, totalSlides, steps
     }
   }, [currentSlide, slideAudioSrc, autoPlay, speedIndex, stepsInSlide, onResetSteps, onRevealAllSteps])
 
+  // Stop playback on unmount — a detached audio element otherwise keeps
+  // narrating after the learner navigates away from the chapter.
+  useEffect(() => {
+    const audio = audioRef.current
+    return () => { audio?.pause() }
+  }, [])
+
   // Step timing: short intro (~8% or max 3s), then equal time per step
   const getStepTiming = useCallback((dur: number, steps: number) => {
     const introTime = Math.min(dur * 0.08, 3)

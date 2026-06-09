@@ -316,6 +316,13 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       if (audioRef.current) audioRef.current.playbackRate = SPEEDS[speedIndex]
     }, [speedIndex])
 
+    // Stop playback on unmount — a detached audio element otherwise keeps
+    // narrating after the learner navigates away from the chapter.
+    useEffect(() => {
+      const audio = audioRef.current
+      return () => { audio?.pause() }
+    }, [])
+
     const saveResume = useCallback((t: number) => {
       if (typeof window === 'undefined' || !resumeKey) return
       try {

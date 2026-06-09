@@ -68,6 +68,17 @@ export const courses: Course[] = [
     totalChapters: 13,
     tags: ['Microsoft', 'Azure AI', 'Copilot Studio', 'Agentic AI', 'Dynamics 365'],
     badge: 'FREE',
+    // Microsoft certification course — MS blue is the appropriate palette here
+    // (non-Microsoft courses use their own themes, never default to this).
+    theme: {
+      primary:     '#2563EB',
+      primaryDeep: '#1D4ED8',
+      accent:      '#0EA5E9',
+      accentLight: '#7DD3FC',
+      navy:        '#1E293B',
+      cyan:        '#94A3B8',
+      tint:        '#EFF6FF',
+    },
     chapters: [
       {
         id: 'chapter-00',
@@ -880,7 +891,8 @@ export const courses: Course[] = [
         htmlFile: '/courses/m365-copilot-adoption/chapters/chapter-01-copilot-landscape.html',
         estimatedMinutes: 5,
         isFree: true,
-        audioDir: '/courses/m365-copilot-adoption/audio/chapter-01',
+        chapterAudio: '/courses/m365-copilot-adoption/audio/chapter-01/chapter-01.mp3',
+        chapterCues: '/courses/m365-copilot-adoption/audio/chapter-01/cues.json',
       },
       {
         id: 'chapter-02',
@@ -891,7 +903,8 @@ export const courses: Course[] = [
         htmlFile: '/courses/m365-copilot-adoption/chapters/chapter-02-use-cases.html',
         estimatedMinutes: 5,
         isFree: true,
-        audioDir: '/courses/m365-copilot-adoption/audio/chapter-02',
+        chapterAudio: '/courses/m365-copilot-adoption/audio/chapter-02/chapter-02.mp3',
+        chapterCues: '/courses/m365-copilot-adoption/audio/chapter-02/cues.json',
       },
       {
         id: 'chapter-03',
@@ -901,7 +914,8 @@ export const courses: Course[] = [
         description: '$30/user/month at scale = $1.8M/yr for 5K users. Three licensing patterns (universal · manager-tier · opt-in pilot first) · worked business case · active-user fraction is the critical variable · stage-gate pilot pattern from manager course.',
         htmlFile: '/courses/m365-copilot-adoption/chapters/chapter-03-licensing.html',
         estimatedMinutes: 5,
-        audioDir: '/courses/m365-copilot-adoption/audio/chapter-03',
+        chapterAudio: '/courses/m365-copilot-adoption/audio/chapter-03/chapter-03.mp3',
+        chapterCues: '/courses/m365-copilot-adoption/audio/chapter-03/cues.json',
       },
       {
         id: 'chapter-04',
@@ -911,7 +925,8 @@ export const courses: Course[] = [
         description: 'Tenant isolation · Microsoft Graph permission inheritance (Copilot inherits existing permissions — wrong + right) · Purview DLP + sensitivity labels · Defender for Cloud Apps CASB · EU AI Act + HIPAA BAA + DPDPA + UK FCA Consumer Duty.',
         htmlFile: '/courses/m365-copilot-adoption/chapters/chapter-04-security.html',
         estimatedMinutes: 5,
-        audioDir: '/courses/m365-copilot-adoption/audio/chapter-04',
+        chapterAudio: '/courses/m365-copilot-adoption/audio/chapter-04/chapter-04.mp3',
+        chapterCues: '/courses/m365-copilot-adoption/audio/chapter-04/cues.json',
       },
       {
         id: 'chapter-05',
@@ -921,7 +936,8 @@ export const courses: Course[] = [
         description: 'The most important chapter — why 60–70% don\'t become active (workflow integration · trust calibration · accountability) · the 3 moves (champions network · weekly office hours · visible tracking via Adoption Score + Viva Insights) · the 3 manager moves.',
         htmlFile: '/courses/m365-copilot-adoption/chapters/chapter-05-adoption.html',
         estimatedMinutes: 5,
-        audioDir: '/courses/m365-copilot-adoption/audio/chapter-05',
+        chapterAudio: '/courses/m365-copilot-adoption/audio/chapter-05/chapter-05.mp3',
+        chapterCues: '/courses/m365-copilot-adoption/audio/chapter-05/cues.json',
       },
       {
         id: 'chapter-06',
@@ -931,7 +947,8 @@ export const courses: Course[] = [
         description: 'Microsoft Copilot Studio for custom agents · 3 categories to extend (internal knowledge AI · workflow automation · domain-specific assistants) · 3 patterns NOT to extend · 3-phase build pattern · most agents shouldn\'t be built.',
         htmlFile: '/courses/m365-copilot-adoption/chapters/chapter-06-copilot-studio.html',
         estimatedMinutes: 5,
-        audioDir: '/courses/m365-copilot-adoption/audio/chapter-06',
+        chapterAudio: '/courses/m365-copilot-adoption/audio/chapter-06/chapter-06.mp3',
+        chapterCues: '/courses/m365-copilot-adoption/audio/chapter-06/cues.json',
       },
       {
         id: 'chapter-07',
@@ -941,7 +958,8 @@ export const courses: Course[] = [
         description: 'Tetlock calibration on Microsoft\'s 30% · the active-user metric (1+ Copilot interaction per week) · the early-decay pattern (40-50% month 1 → 20-30% month 3) · honest 3-number framework · don\'t extrapolate to full licensed base.',
         htmlFile: '/courses/m365-copilot-adoption/chapters/chapter-07-measuring.html',
         estimatedMinutes: 5,
-        audioDir: '/courses/m365-copilot-adoption/audio/chapter-07',
+        chapterAudio: '/courses/m365-copilot-adoption/audio/chapter-07/chapter-07.mp3',
+        chapterCues: '/courses/m365-copilot-adoption/audio/chapter-07/cues.json',
       },
       {
         id: 'chapter-08',
@@ -951,7 +969,8 @@ export const courses: Course[] = [
         description: '3-phase rollout (pilot weeks 1-12 · scale months 4-6 · embed months 7+) · 4 trust trip-wires · interactive builder that downloads a Markdown roadmap for your CIO conversation.',
         htmlFile: '/courses/m365-copilot-adoption/chapters/chapter-08-making-it-stick.html',
         estimatedMinutes: 6,
-        audioDir: '/courses/m365-copilot-adoption/audio/chapter-08',
+        chapterAudio: '/courses/m365-copilot-adoption/audio/chapter-08/chapter-08.mp3',
+        chapterCues: '/courses/m365-copilot-adoption/audio/chapter-08/cues.json',
       },
     ],
   },
@@ -992,7 +1011,8 @@ export const courses: Course[] = [
         htmlFile: '/courses/ai-for-sales-marketing/chapters/chapter-01-fit-map.html',
         estimatedMinutes: 5,
         isFree: true,
-        audioDir: '/courses/ai-for-sales-marketing/audio/chapter-01',
+        chapterAudio: '/courses/ai-for-sales-marketing/audio/chapter-01/chapter-01.mp3',
+        chapterCues: '/courses/ai-for-sales-marketing/audio/chapter-01/cues.json',
       },
       {
         id: 'chapter-02',
@@ -1003,7 +1023,8 @@ export const courses: Course[] = [
         htmlFile: '/courses/ai-for-sales-marketing/chapters/chapter-02-prospecting.html',
         estimatedMinutes: 5,
         isFree: true,
-        audioDir: '/courses/ai-for-sales-marketing/audio/chapter-02',
+        chapterAudio: '/courses/ai-for-sales-marketing/audio/chapter-02/chapter-02.mp3',
+        chapterCues: '/courses/ai-for-sales-marketing/audio/chapter-02/cues.json',
       },
       {
         id: 'chapter-03',
@@ -1013,7 +1034,8 @@ export const courses: Course[] = [
         description: 'Two-layer scoring (ML predictive + LLM signal) · 6-check CRM data quality gate · GDPR Article 22 human-in-the-loop boundary · 3-band action split with the buried Band 3 most teams miss.',
         htmlFile: '/courses/ai-for-sales-marketing/chapters/chapter-03-lead-scoring.html',
         estimatedMinutes: 5,
-        audioDir: '/courses/ai-for-sales-marketing/audio/chapter-03',
+        chapterAudio: '/courses/ai-for-sales-marketing/audio/chapter-03/chapter-03.mp3',
+        chapterCues: '/courses/ai-for-sales-marketing/audio/chapter-03/cues.json',
       },
       {
         id: 'chapter-04',
@@ -1023,7 +1045,8 @@ export const courses: Course[] = [
         description: '4-block proposal template (AI on situation/proposing/outcome, rep on commercials) · 3 guardrails (CRM grounding · claim register · legal-review gate) · Mata + Air Canada cross-domain applied.',
         htmlFile: '/courses/ai-for-sales-marketing/chapters/chapter-04-proposals.html',
         estimatedMinutes: 5,
-        audioDir: '/courses/ai-for-sales-marketing/audio/chapter-04',
+        chapterAudio: '/courses/ai-for-sales-marketing/audio/chapter-04/chapter-04.mp3',
+        chapterCues: '/courses/ai-for-sales-marketing/audio/chapter-04/cues.json',
       },
       {
         id: 'chapter-05',
@@ -1033,7 +1056,8 @@ export const courses: Course[] = [
         description: 'Brand voice anchor (style guide as system prompt + 2 human edits + quarterly fingerprint audit) · 4 brand risks · 3-stage pipeline · EU AI Act Article 50 transparency for customer-facing content.',
         htmlFile: '/courses/ai-for-sales-marketing/chapters/chapter-05-content.html',
         estimatedMinutes: 5,
-        audioDir: '/courses/ai-for-sales-marketing/audio/chapter-05',
+        chapterAudio: '/courses/ai-for-sales-marketing/audio/chapter-05/chapter-05.mp3',
+        chapterCues: '/courses/ai-for-sales-marketing/audio/chapter-05/cues.json',
       },
       {
         id: 'chapter-06',
@@ -1043,7 +1067,8 @@ export const courses: Course[] = [
         description: '3 tiers (light public data · middle first-party · deep cross-source) · 3 creepy-line categories (health/distress, surveillance detail, inferred protected characteristics) · consent posture across GDPR + DPDPA + CCPA.',
         htmlFile: '/courses/ai-for-sales-marketing/chapters/chapter-06-personalisation.html',
         estimatedMinutes: 5,
-        audioDir: '/courses/ai-for-sales-marketing/audio/chapter-06',
+        chapterAudio: '/courses/ai-for-sales-marketing/audio/chapter-06/chapter-06.mp3',
+        chapterCues: '/courses/ai-for-sales-marketing/audio/chapter-06/cues.json',
       },
       {
         id: 'chapter-07',
@@ -1053,7 +1078,8 @@ export const courses: Course[] = [
         description: '4 extractions (commitments · blockers · next steps · signals) · the weekly 2-2-2 coaching loop · Tetlock applied to vendor productivity claims · honest 3-number measurement.',
         htmlFile: '/courses/ai-for-sales-marketing/chapters/chapter-07-call-ai.html',
         estimatedMinutes: 5,
-        audioDir: '/courses/ai-for-sales-marketing/audio/chapter-07',
+        chapterAudio: '/courses/ai-for-sales-marketing/audio/chapter-07/chapter-07.mp3',
+        chapterCues: '/courses/ai-for-sales-marketing/audio/chapter-07/cues.json',
       },
       {
         id: 'chapter-08',
@@ -1063,7 +1089,8 @@ export const courses: Course[] = [
         description: '3-phase rollout (pilot weeks 1-12 · scale months 4-6 · embed months 7+) · 4 trust trip-wires (no AI volume · claim register · GDPR Art 22 · no creepy line) · interactive Markdown roadmap builder.',
         htmlFile: '/courses/ai-for-sales-marketing/chapters/chapter-08-making-it-stick.html',
         estimatedMinutes: 6,
-        audioDir: '/courses/ai-for-sales-marketing/audio/chapter-08',
+        chapterAudio: '/courses/ai-for-sales-marketing/audio/chapter-08/chapter-08.mp3',
+        chapterCues: '/courses/ai-for-sales-marketing/audio/chapter-08/cues.json',
       },
     ],
   },
