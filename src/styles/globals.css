@@ -174,7 +174,7 @@
 
 /* FAQ toggle marker */
 details summary::-webkit-details-marker { display: none; }
-details summary::after { content: "+"; position: absolute; right: 0; top: 0; font-size: 20px; color: #FF6B35; font-weight: 700; }
+details summary::after { content: "+"; position: absolute; right: 0; top: 0; font-size: 20px; color: #2563eb; font-weight: 700; }
 details[open] summary::after { content: "\2212"; }
 
 /* Custom animations */
