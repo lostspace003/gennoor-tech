@@ -14,7 +14,8 @@ const SHARED_CSS = `
   --c-tint: #F8FAFC;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; color: #0F172A; background: var(--c-tint); }
+html, body { height: 100%; font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; color: #0F172A; background: var(--c-tint); }
+h1, h2, h3, h4, h5, h6 { font-family: 'Sora', 'Inter', sans-serif; }
 .wrap { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; text-align: center; background: linear-gradient(140deg, var(--c-tint) 0%, #ffffff 100%); }
 .eyebrow { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; color: var(--c-accent); margin-bottom: 16px; }
 .title { font-size: clamp(28px, 4vw, 44px); font-weight: 800; line-height: 1.15; max-width: 880px; margin-bottom: 14px; color: var(--c-primary-deep); letter-spacing: -0.02em; }
@@ -81,6 +82,7 @@ export function buildIntro(spec) {
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 <title>${spec.title} — Welcome</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>${themeCss}${SHARED_CSS}</style>
 </head>
 <body>
