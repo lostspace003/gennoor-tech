@@ -27,7 +27,7 @@ export async function GET() {
     const conn = process.env.AZURE_STORAGE_CONNECTION_STRING
     if (conn) {
       const client = TableClient.fromConnectionString(conn, 'Certificates')
-      const lower = learner.email.toLowerCase().trim()
+      const lower = learner.email.toLowerCase().trim().replace(/'/g, "''")
       const query = client.listEntities({
         queryOptions: { filter: `recipientEmail eq '${lower}'` },
       })

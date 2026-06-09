@@ -82,7 +82,9 @@ export function generateCertId(workshopSlug: string, year: number): string {
     CERT_PREFIX_OVERRIDES[workshopSlug] ||
     ACADEMY_SLUG_PREFIXES[workshopSlug] ||
     `GNR-${workshopSlug.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6)}`
-  const rand = crypto.randomBytes(4).toString('hex').toUpperCase()
+  // 6 bytes = 12 hex chars; enough entropy that IDs can't be enumerated
+  // even without rate limiting. Older 8-char IDs remain valid.
+  const rand = crypto.randomBytes(6).toString('hex').toUpperCase()
   return `${prefix}-${year}-${rand}`
 }
 

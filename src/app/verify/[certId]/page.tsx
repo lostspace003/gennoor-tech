@@ -10,6 +10,8 @@ import {
 } from '@/lib/certificates'
 import { courses as configCourses } from '@/config/courses'
 import ScrollReveal from '@/components/ScrollReveal'
+import { headers } from 'next/headers'
+import { rateLimit, clientIp } from '@/lib/rate-limit'
 
 // Academy course slugs use the GNR-ACAD prefix family — the prefix is also
 // our quick way to know whether a cert came from a course or a workshop.
@@ -67,7 +69,11 @@ function formatDuration(minutes: number) {
 
 export default async function VerifyPage({ params }: Props) {
   const { certId } = await params
-  const cert = await getCertificate(certId).catch(() => null)
+
+  // Throttle per IP so certificate IDs can't be enumerated for learner names.
+  const hdrs = await headers()
+  const allowed = rateLimit(`cert-verify:${clientIp(hdrs)}`, 30, 10 * 60 * 1000)
+  const cert = allowed ? await getCertificate(certId).catch(() => null) : null
 
   if (!cert) {
     return (

@@ -1,13 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCertificate, downloadCertificatePdf } from '@/lib/certificates'
+import { rateLimit, clientIp } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ certId: string }> }
 ) {
   const { certId } = await params
+
+  // Cert IDs are guessable in principle — throttle per IP so they can't be
+  // enumerated for recipient names/emails.
+  if (!rateLimit(`cert-pdf:${clientIp(req.headers)}`, 20, 10 * 60 * 1000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
 
   if (!certId || !/^[A-Z0-9-]{4,80}$/i.test(certId)) {
     return NextResponse.json({ error: 'Invalid certificate ID' }, { status: 400 })
