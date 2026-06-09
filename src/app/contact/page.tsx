@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import ContactForm from '@/components/contact/ContactForm'
 import TrustpilotWidget from '@/components/TrustpilotWidget'
+import BookingCalendar from '@/components/booking/BookingCalendar'
 
 export const metadata: Metadata = {
   title: 'Contact Gennoor Tech — Three Ways to Start',
@@ -186,7 +187,7 @@ const intents = [
       href: '#book',
       external: false,
     },
-    type: 'external' as const,
+    type: 'anchor' as const,
   },
 ]
 
@@ -285,20 +286,12 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
             {intents.map((intent) => {
               const Icon = intent.icon
-              const isExternal = intent.type === 'external'
-              const Wrapper: React.ElementType = isExternal ? 'a' : Link
-              const wrapperProps = isExternal
-                ? {
-                    href: intent.cta.href,
-                    target: '_blank',
-                    rel: 'noopener noreferrer',
-                  }
-                : { href: intent.cta.href }
+              const Wrapper: React.ElementType = intent.type === 'anchor' ? 'a' : Link
 
               return (
                 <Wrapper
                   key={intent.code}
-                  {...wrapperProps}
+                  href={intent.cta.href}
                   className="group rounded-3xl p-7 lg:p-8 glass-card glow-border transition-all duration-500 hover:-translate-y-1 flex flex-col"
                 >
                   <div
@@ -443,6 +436,26 @@ export default function ContactPage() {
               )
             })}
           </div>
+        </div>
+      </section>
+
+      {/* INTENT C — book a call */}
+      <section id="book" className="scroll-mt-24 py-20 lg:py-24 relative">
+        <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-10">
+            <p className="text-xs font-bold tracking-widest text-primary-600 uppercase mb-3">
+              Intent C · Exploratory call
+            </p>
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+              Book a 30-minute call. Pick a time below.
+            </h2>
+            <p className="text-base text-gray-500 leading-relaxed">
+              Free, no commitment. We listen, ask awkward questions, and tell you honestly
+              which engagement fits — or whether AI is the right answer yet.
+            </p>
+          </div>
+          <BookingCalendar />
         </div>
       </section>
 
