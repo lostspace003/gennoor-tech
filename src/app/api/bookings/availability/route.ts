@@ -5,8 +5,6 @@ import {
   getConfiguredBusinessId,
 } from '@/lib/microsoft-graph'
 
-const JALAL_KHAN_STAFF_ID = 'd0598bb5-a70c-4145-9007-6b5f7370a60d'
-
 const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000
 const IST_START_HOUR = 9
 const IST_END_HOUR = 18
@@ -63,9 +61,22 @@ export async function GET(request: NextRequest) {
     const startDateTime = `${date}T00:00:00`
     const endDateTime = `${date}T23:59:59`
 
+    // Derive staff from the service itself so this never goes stale when the
+    // Bookings business / staff are recreated (the old hardcoded id broke here).
+    const staffIds = service.staffMemberIds?.length ? service.staffMemberIds : []
+    if (staffIds.length === 0) {
+      return NextResponse.json({
+        success: true,
+        date,
+        timezone,
+        service: { id: service.id, name: service.displayName, duration: service.defaultDuration },
+        slots: [],
+      })
+    }
+
     const availability = await getStaffAvailability(
       businessId,
-      [JALAL_KHAN_STAFF_ID],
+      staffIds,
       startDateTime,
       endDateTime,
     )

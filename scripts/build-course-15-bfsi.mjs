@@ -4,6 +4,10 @@ import { emit } from './build-chapter-html.mjs';
 const courseTagline = 'Industry · AI in Financial Services';
 const OUT = 'tmp/academy-build/ai-in-financial-services/chapters';
 
+// Helper functions for slide HTML
+
+
+
 const card = (ct, h3, ps, takeaway) =>
   `<div class="card"><span class="ct">${ct}</span><h3>${h3}</h3>${ps.map(p => `<p>${p}</p>`).join('')}${takeaway ? `<div class="takeaway">${takeaway}</div>` : ''}</div>`;
 const cardRed = (ct, h3, ps, takeaway) =>

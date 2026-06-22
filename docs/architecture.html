@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gennoor Tech — End-to-End Architecture</title>
+<style>
+  :root{
+    --bg:#0b1020; --panel:#121a2f; --panel2:#0f1730; --ink:#e8edf7; --muted:#9fb0d0;
+    --line:#2b3a5e; --client:#38bdf8; --vercel:#a78bfa; --azure:#0ea5e9; --ai:#22c55e;
+    --id:#f59e0b; --data:#f43f5e; --obs:#14b8a6; --chip:#1b2746;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#16224a 0,var(--bg) 55%);
+       color:var(--ink);font:15px/1.5 -apple-system,Segoe UI,Roboto,Inter,sans-serif;padding:32px}
+  h1{font-size:26px;margin:0 0 4px}
+  .sub{color:var(--muted);margin:0 0 24px;font-size:14px}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 26px}
+  .legend span{display:inline-flex;align-items:center;gap:7px;background:var(--chip);
+       border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:12px;color:var(--muted)}
+  .dot{width:11px;height:11px;border-radius:3px;display:inline-block}
+  .band{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
+       border-radius:16px;padding:18px 18px 8px;margin:0 0 20px;position:relative}
+  .band > h2{margin:0 0 14px;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .row{display:flex;flex-wrap:wrap;gap:14px}
+  .col{flex:1;min-width:200px}
+  .node{background:var(--chip);border:1px solid var(--line);border-left:4px solid var(--line);
+       border-radius:12px;padding:12px 14px;margin-bottom:12px;transition:.15s;box-shadow:0 6px 16px rgba(0,0,0,.25)}
+  .node:hover{transform:translateY(-2px);border-color:#4b6191}
+  .node .t{font-weight:650;font-size:14px;margin-bottom:3px;display:flex;align-items:center;gap:8px}
+  .node .d{color:var(--muted);font-size:12.5px;line-height:1.45}
+  .node .tag{font-size:10.5px;color:#cdd9f2;background:#22325a;border-radius:6px;padding:1px 7px;margin-left:auto}
+  .b-client{border-left-color:var(--client)} .b-vercel{border-left-color:var(--vercel)}
+  .b-azure{border-left-color:var(--azure)} .b-ai{border-left-color:var(--ai)}
+  .b-id{border-left-color:var(--id)} .b-data{border-left-color:var(--data)} .b-obs{border-left-color:var(--obs)}
+  .flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--chip);
+       border:1px dashed var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+  .flow b{color:var(--ink)} .flow .step{background:#1c2a4d;border:1px solid var(--line);border-radius:8px;
+       padding:4px 10px;font-size:12.5px;white-space:nowrap}
+  .arrow{color:#5b73a8;font-weight:700}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase}
+  td code{background:#1c2a4d;border-radius:5px;padding:1px 6px;color:#cfe0ff;font-size:12px}
+  .center{text-align:center}
+  .hub{background:linear-gradient(135deg,#2a1f5e,#1b2c5e);border:1px solid #4b6191;border-radius:14px;
+       padding:14px 18px;text-align:center;max-width:420px;margin:6px auto 16px}
+  .hub .t{font-weight:700;font-size:16px} .hub .d{color:#c3d0ee;font-size:12.5px}
+  footer{color:var(--muted);font-size:12px;margin-top:8px;text-align:center}
+  @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<h1>Gennoor Tech — End-to-End Architecture</h1>
+<p class="sub">Enterprise AI Training &amp; Solutions · Next.js 16 (App Router) · React 19 · TypeScript · deployed on Vercel, backed by Microsoft Azure · generated 2026-06-18</p>
+
+<div class="legend">
+  <span><i class="dot" style="background:var(--client)"></i>Client</span>
+  <span><i class="dot" style="background:var(--vercel)"></i>Vercel / Next.js</span>
+  <span><i class="dot" style="background:var(--azure)"></i>Azure</span>
+  <span><i class="dot" style="background:var(--ai)"></i>AI</span>
+  <span><i class="dot" style="background:var(--id)"></i>Identity</span>
+  <span><i class="dot" style="background:var(--data)"></i>Data</span>
+  <span><i class="dot" style="background:var(--obs)"></i>Observability / SEO</span>
+</div>
+
+<!-- USERS -->
+<div class="band">
+  <h2>1 · Users</h2>
+  <div class="row">
+    <div class="col"><div class="node b-client"><div class="t">🌐 Website Visitor / Lead</div><div class="d">Marketing site, AI-readiness, enquiries, bookings</div></div></div>
+    <div class="col"><div class="node b-client"><div class="t">🎓 Academy Learner</div><div class="d">Courses, player, progress, certificates</div></div></div>
+    <div class="col"><div class="node b-client"><div class="t">🛡️ Admin / Staff</div><div class="d">Console, analytics, content, registrations</div></div></div>
+  </div>
+</div>
+
+<div class="center arrow">▼ &nbsp; HTTPS &nbsp; ▼</div>
+
+<!-- VERCEL / NEXT -->
+<div class="band">
+  <h2>2 · Edge &amp; Application — Vercel + Next.js 16</h2>
+  <div class="hub"><div class="t">▲ Vercel Platform</div><div class="d">Edge CDN · ISR cache · serverless functions · auto-deploy main (prod) + staging</div></div>
+  <div class="row">
+    <div class="col"><div class="node b-vercel"><div class="t">Edge Middleware <span class="tag">middleware.ts</span></div><div class="d">Routing, admin guard, pageview hooks</div></div></div>
+    <div class="col"><div class="node b-vercel"><div class="t">Server Components</div><div class="d">Marketing · academy · admin pages (RSC)</div></div></div>
+    <div class="col"><div class="node b-vercel"><div class="t">Client Components</div><div class="d">React 19 · Tailwind · framer-motion · recharts</div></div></div>
+    <div class="col"><div class="node b-vercel"><div class="t">Route Handlers <span class="tag">/api/*</span></div><div class="d">Node runtime: auth · learner · admin · ai-readiness · bookings · certificates · content proxy</div></div></div>
+  </div>
+  <div class="row">
+    <div class="col"><div class="node b-vercel"><div class="t">Domain Services <span class="tag">src/lib</span></div><div class="d">azure-storage · azure-blobs · email-service · microsoft-graph · certificates · progress-store · rate-limit · analytics</div></div></div>
+    <div class="col"><div class="node b-vercel"><div class="t">Static Content <span class="tag">src/data · src/config</span></div><div class="d">Course chapters, blog posts, authors, catalog — shipped with build</div></div></div>
+  </div>
+</div>
+
+<div class="center arrow">▼ &nbsp; outbound integrations &nbsp; ▼</div>
+
+<!-- IDENTITY -->
+<div class="band">
+  <h2>3 · Identity (two separate systems)</h2>
+  <div class="grid2">
+    <div class="node b-id"><div class="t">🛡️ Admin Auth — NextAuth v5</div><div class="d">Microsoft <b>Entra ID</b> OAuth/OIDC → email allow-list (AZURE_AD_ALLOWED_USERS) → session cookie, middleware-guarded <code>/admin/*</code></div></div>
+    <div class="node b-id"><div class="t">🎓 Learner Auth — custom JWT (jose)</div><div class="d">Providers: <b>Email OTP</b> · <b>Google OAuth</b> · <b>Microsoft</b> → signed HS256 <code>learner-session</code> cookie · 30 days</div></div>
+  </div>
+</div>
+
+<!-- AI + COMMS + DATA -->
+<div class="band">
+  <h2>4 · External &amp; Azure Services</h2>
+  <div class="row">
+    <div class="col">
+      <div class="node b-ai"><div class="t">🤖 OpenAI API</div><div class="d">AI-readiness blueprints · field/text extraction</div></div>
+      <div class="node b-azure"><div class="t">✉️ Azure Communication Email</div><div class="d">Role-based senders → mirrored to Outlook Sent Items via MS Graph</div></div>
+      <div class="node b-azure"><div class="t">📅 Microsoft Graph — Bookings</div><div class="d">Staff availability + appointment creation (IST 9–18)</div></div>
+      <div class="node b-azure"><div class="t">🔊 Azure Speech</div><div class="d">Academy audio (narration)</div></div>
+    </div>
+    <div class="col">
+      <div class="node b-data"><div class="t">🗃️ Azure Table Storage</div><div class="d">PageViews · Certificates · EmailLogs · Sessions · AI-readiness leads · Feedback · Registrations · Comments</div></div>
+      <div class="node b-data"><div class="t">📦 Azure Blob Storage</div><div class="d"><code>website-content</code>: certificate &amp; report PDFs, academy media/audio (range-streamed), uploads</div></div>
+      <div class="node b-obs"><div class="t">📈 App Insights + GA4</div><div class="d">Requests · dependencies · exceptions · custom pageviews (+ Mixpanel optional)</div></div>
+      <div class="node b-obs"><div class="t">🔎 SEO automation</div><div class="d">sitemap-index · IndexNow push · Google Search Console resubmit</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- FLOWS -->
+<div class="band">
+  <h2>5 · Key End-to-End Flows</h2>
+
+  <div class="flow"><b>AI&nbsp;Readiness</b>
+    <span class="step">Form</span><span class="arrow">→</span>
+    <span class="step">/api/ai-readiness/generate</span><span class="arrow">→</span>
+    <span class="step">OpenAI blueprint</span><span class="arrow">→</span>
+    <span class="step">Render PDF → Blob</span><span class="arrow">→</span>
+    <span class="step">Email report (ACE)</span><span class="arrow">→</span>
+    <span class="step">Persist lead + track (Table)</span>
+  </div>
+
+  <div class="flow"><b>Expert&nbsp;Call</b>
+    <span class="step">GET availability</span><span class="arrow">→</span>
+    <span class="step">MS Graph free/busy</span><span class="arrow">→</span>
+    <span class="step">POST create booking</span><span class="arrow">→</span>
+    <span class="step">Graph appointment</span><span class="arrow">→</span>
+    <span class="step">Confirmation email</span>
+  </div>
+
+  <div class="flow"><b>Certificate</b>
+    <span class="step">Complete course</span><span class="arrow">→</span>
+    <span class="step">PDFKit + QR</span><span class="arrow">→</span>
+    <span class="step">Upload Blob (SAS)</span><span class="arrow">→</span>
+    <span class="step">Save record (Table)</span><span class="arrow">→</span>
+    <span class="step">Public /verify/[certId]</span>
+  </div>
+
+  <div class="flow"><b>Academy&nbsp;Content</b>
+    <span class="step">Request slide/audio (Range)</span><span class="arrow">→</span>
+    <span class="step">/api/content/[...path]</span><span class="arrow">→</span>
+    <span class="step">Blob range stream (206)</span><span class="arrow">→</span>
+    <span class="step">Save progress (local)</span><span class="arrow">→</span>
+    <span class="step">/api/learner/progress/sync</span>
+  </div>
+</div>
+
+<!-- AT A GLANCE -->
+<div class="band">
+  <h2>6 · At a Glance</h2>
+  <table>
+    <tr><th>Concern</th><th>Choice</th></tr>
+    <tr><td>Framework</td><td>Next.js 16 App Router · React 19 · TypeScript</td></tr>
+    <tr><td>Hosting</td><td>Vercel — Edge CDN + serverless · auto-deploy <code>main</code> + <code>staging</code></td></tr>
+    <tr><td>Admin identity</td><td>NextAuth v5 + Microsoft Entra ID (allow-list)</td></tr>
+    <tr><td>Learner identity</td><td>Custom JWT (jose) — OTP / Google / Microsoft</td></tr>
+    <tr><td>Persistence</td><td>Azure Table Storage + Azure Blob Storage</td></tr>
+    <tr><td>GenAI</td><td>OpenAI API — readiness blueprints, extraction</td></tr>
+    <tr><td>Comms / Scheduling</td><td>Azure Communication Email + Microsoft Graph (Bookings, Sent Items)</td></tr>
+    <tr><td>Credentials</td><td>PDFKit certificates + QR + public verification</td></tr>
+    <tr><td>Observability / SEO</td><td>App Insights + GA4 · IndexNow · GSC resubmit</td></tr>
+  </table>
+</div>
+
+<footer>Gennoor Tech · architecture overview · open this file in any browser — no tooling required</footer>
+</body>
+</html>

@@ -85,3 +85,6 @@ photo.png
 
 # Academy course PDFs — generated locally, served from Azure Blob Storage
 public/Gennoor-Academy-Course-PDFs/
+
+# Serena tool cache
+.serena/

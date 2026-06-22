@@ -167,6 +167,27 @@ export async function updateCommentStatus(slug: string, rowKey: string, status: 
 
 // ─── Enquiries ───────────────────────────────────────────────
 
+// Azure Table Storage only accepts primitive Edm types (string/number/boolean/
+// Date/binary). Arrays and plain objects throw "Unknown EDM type object", which
+// would 500 the whole request before any email is sent. Serialise them so any
+// caller can hand us structured fields safely.
+function toTableSafe(data: Record<string, any>): Record<string, any> {
+  const out: Record<string, any> = {}
+  for (const [key, value] of Object.entries(data)) {
+    if (value === null || value === undefined) {
+      out[key] = ''
+    } else if (
+      Array.isArray(value) ||
+      (typeof value === 'object' && !(value instanceof Date) && !Buffer.isBuffer(value))
+    ) {
+      out[key] = JSON.stringify(value)
+    } else {
+      out[key] = value
+    }
+  }
+  return out
+}
+
 export async function saveEnquiry(type: string, data: Record<string, any>) {
   const tableName = 'Enquiries'
   await ensureTable(tableName)
@@ -177,7 +198,7 @@ export async function saveEnquiry(type: string, data: Record<string, any>) {
   await client.createEntity({
     partitionKey: type,
     rowKey,
-    ...data,
+    ...toTableSafe(data),
     createdAt: now.toISOString(),
   })
 
