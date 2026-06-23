@@ -154,11 +154,16 @@ export default function AdminDashboard() {
   const [modalResched, setModalResched] = useState({ date: '', startTime: '', endTime: '' })
   const [modalSending, setModalSending] = useState(false)
   const [bookingPage, setBookingPage] = useState(1)
-  const [bookingsPerPage, setBookingsPerPage] = useState(15)
+  const [bookingsPerPage, setBookingsPerPage] = useState(10)
+  const [bookingStatusFilter, setBookingStatusFilter] = useState<string>('all')
   const [selectedBookings, setSelectedBookings] = useState<Set<string>>(new Set())
   const [bookingDeleting, setBookingDeleting] = useState(false)
   const [callRequests, setCallRequests] = useState<CallRequest[]>([])
   const [callRequestsLoading, setCallRequestsLoading] = useState(false)
+  const [selectedCallRequests, setSelectedCallRequests] = useState<Set<string>>(new Set())
+  const [callRequestPage, setCallRequestPage] = useState(1)
+  const [callRequestFilter, setCallRequestFilter] = useState<'all' | 'new' | 'replied'>('all')
+  const [callRequestsDeleting, setCallRequestsDeleting] = useState(false)
   const [callDraft, setCallDraft] = useState<{ req: CallRequest; instructions: string; subject: string; bodyHtml: string; drafting: boolean; sending: boolean; error: string; sent: boolean } | null>(null)
   const [coworkData, setCoworkData] = useState<{ total: number; registrations: Array<{ fullName: string; email: string; country: string; timeZone: string; role: string; company: string; biggestWorkflow: string; createdAt: string }>; byCountry: Array<{ name: string; value: number }>; byTimezone: Array<{ name: string; value: number }> } | null>(null)
   const [indexingData, setIndexingData] = useState<{ google: Array<{ url: string; status: string }>; bing: Array<{ url: string; status: string }> } | null>(null)
@@ -339,6 +344,36 @@ export default function AdminDashboard() {
   async function refreshCallRequests() {
     setCallRequestsLoading(true)
     try { const r = await fetch('/api/admin/call-requests'); if (r.ok) { const d = await r.json(); setCallRequests(d.requests || []) } } catch {} finally { setCallRequestsLoading(false) }
+  }
+
+  async function deleteCallRequest(rowKey: string, name: string) {
+    if (!confirm(`Delete the call request from ${name || 'this person'}? This cannot be undone.`)) return
+    setCallRequestsLoading(true)
+    try {
+      const res = await fetch('/api/admin/call-requests', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rowKeys: [rowKey] }),
+      })
+      if (res.ok) setCallRequests(prev => prev.filter(c => c.rowKey !== rowKey))
+    } catch {} finally { setCallRequestsLoading(false) }
+  }
+
+  async function bulkDeleteCallRequests() {
+    if (selectedCallRequests.size === 0) return
+    if (!confirm(`Delete ${selectedCallRequests.size} call request(s)? This cannot be undone.`)) return
+    setCallRequestsDeleting(true)
+    try {
+      const res = await fetch('/api/admin/call-requests', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rowKeys: [...selectedCallRequests] }),
+      })
+      if (res.ok) {
+        setCallRequests(prev => prev.filter(c => !selectedCallRequests.has(c.rowKey)))
+        setSelectedCallRequests(new Set())
+      }
+    } catch {} finally { setCallRequestsDeleting(false) }
   }
 
   function openCallDraft(req: CallRequest) {
@@ -954,28 +989,64 @@ export default function AdminDashboard() {
 
         {/* ─── BOOKINGS ──────────────────────────────────── */}
         {activeTab === 'bookings' && (() => {
+          // Booking tab shows ALL bookings (not constrained by the global date filter),
+          // narrowed only by the in-tab status filter. Shadows the outer filteredBookings.
+          const filteredBookings = bookingsData
+            .filter(b => bookingStatusFilter === 'all' ? true : b.status === bookingStatusFilter)
+            .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
           const totalPages = Math.ceil(filteredBookings.length / bookingsPerPage)
           const safePage = Math.min(bookingPage, totalPages || 1)
           const pagedBookings = filteredBookings.slice((safePage - 1) * bookingsPerPage, safePage * bookingsPerPage)
           const isAllSelected = filteredBookings.length > 0 && filteredBookings.every(b => selectedBookings.has(b.rowKey))
+          // Call requests: filtered + paginated at 10/page
+          const visibleCallRequests = callRequests.filter(c => callRequestFilter === 'all' ? true : callRequestFilter === 'new' ? !c.replied : c.replied)
+          const crPerPage = 10
+          const crTotalPages = Math.ceil(visibleCallRequests.length / crPerPage)
+          const crSafePage = Math.min(callRequestPage, crTotalPages || 1)
+          const pagedCallRequests = visibleCallRequests.slice((crSafePage - 1) * crPerPage, crSafePage * crPerPage)
+          const crAllSelected = visibleCallRequests.length > 0 && visibleCallRequests.every(c => selectedCallRequests.has(c.rowKey))
           return (
           <div className="space-y-6 animate-fadeIn">
             <Panel
               title="Call Requests"
-              subtitle={`${callRequests.length} inbound · from the website "Book a Call" form`}
+              subtitle={`${visibleCallRequests.length} of ${callRequests.length} · from the website "Book a Call" form`}
               action={
-                <button onClick={refreshCallRequests} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 border border-slate-200 rounded-lg transition-colors">
-                  <RefreshCw className={`w-3.5 h-3.5 ${callRequestsLoading ? 'animate-spin' : ''}`} /> Refresh
-                </button>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <select value={callRequestFilter} onChange={e => { setCallRequestFilter(e.target.value as 'all' | 'new' | 'replied'); setCallRequestPage(1) }} className="px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="all">All ({callRequests.length})</option>
+                    <option value="new">New ({callRequests.filter(c => !c.replied).length})</option>
+                    <option value="replied">Replied ({callRequests.filter(c => c.replied).length})</option>
+                  </select>
+                  {selectedCallRequests.size > 0 && (
+                    <button onClick={bulkDeleteCallRequests} disabled={callRequestsDeleting} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-lg transition-colors disabled:opacity-50">
+                      <Trash2 className={`w-3.5 h-3.5 ${callRequestsDeleting ? 'animate-spin' : ''}`} /> Delete ({selectedCallRequests.size})
+                    </button>
+                  )}
+                  <button onClick={refreshCallRequests} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 border border-slate-200 rounded-lg transition-colors">
+                    <RefreshCw className={`w-3.5 h-3.5 ${callRequestsLoading ? 'animate-spin' : ''}`} /> Refresh
+                  </button>
+                </div>
               }
             >
-              {callRequests.length === 0 ? <Empty text="No call requests yet" /> : (
+              {visibleCallRequests.length === 0 ? <Empty text="No call requests" /> : (
                 <div className="space-y-3">
-                  {callRequests.map(cr => {
+                  <label className="flex items-center gap-2 px-1 py-1 text-xs text-slate-500 cursor-pointer select-none w-fit">
+                    <input type="checkbox" checked={crAllSelected} onChange={() => {
+                      if (crAllSelected) { setSelectedCallRequests(new Set()) } else { setSelectedCallRequests(new Set(visibleCallRequests.map(c => c.rowKey))) }
+                    }} className="w-3.5 h-3.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                    Select all ({visibleCallRequests.length})
+                  </label>
+                  {pagedCallRequests.map(cr => {
                     const submitted = cr.timestamp || cr.createdAt
+                    const crSelected = selectedCallRequests.has(cr.rowKey)
                     return (
-                      <div key={cr.rowKey} className={`border rounded-xl p-4 shadow-sm ${cr.replied ? 'bg-slate-50 border-slate-200' : 'bg-indigo-50/40 border-indigo-200'}`}>
+                      <div key={cr.rowKey} className={`border rounded-xl p-4 shadow-sm ${crSelected ? 'ring-2 ring-indigo-400 border-indigo-300' : ''} ${cr.replied ? 'bg-slate-50 border-slate-200' : 'bg-indigo-50/40 border-indigo-200'}`}>
                         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+                          <input type="checkbox" checked={crSelected} onChange={() => {
+                            const next = new Set(selectedCallRequests)
+                            if (crSelected) next.delete(cr.rowKey); else next.add(cr.rowKey)
+                            setSelectedCallRequests(next)
+                          }} className="w-4 h-4 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 shrink-0" />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap mb-1">
                               <h3 className="text-sm font-semibold text-slate-800">{cr.name || 'Unknown'}</h3>
@@ -1021,11 +1092,33 @@ export default function AdminDashboard() {
                             <button onClick={() => openCallDraft(cr)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors">
                               <Bot className="w-3.5 h-3.5" /> {cr.replied ? 'Draft again' : 'Draft & send reply'}
                             </button>
+                            <button onClick={() => deleteCallRequest(cr.rowKey, cr.name)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-lg transition-colors">
+                              <Trash2 className="w-3.5 h-3.5" /> Delete
+                            </button>
                           </div>
                         </div>
                       </div>
                     )
                   })}
+                  {crTotalPages > 1 && (
+                    <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                      <span className="text-xs text-slate-400">
+                        {(crSafePage - 1) * crPerPage + 1}–{Math.min(crSafePage * crPerPage, visibleCallRequests.length)} of {visibleCallRequests.length}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => setCallRequestPage(p => Math.max(1, p - 1))} disabled={crSafePage === 1} className="px-2.5 py-1.5 text-xs font-medium rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">Prev</button>
+                        {(() => {
+                          const pages: number[] = []
+                          const start = Math.max(1, Math.min(crSafePage, crTotalPages - 4))
+                          for (let i = start; i <= Math.min(start + 4, crTotalPages); i++) pages.push(i)
+                          return pages.map(p => (
+                            <button key={p} onClick={() => setCallRequestPage(p)} className={`w-8 h-8 text-xs font-medium rounded-lg transition-colors ${p === crSafePage ? 'bg-indigo-600 text-white' : 'border border-slate-200 hover:bg-slate-50 text-slate-600'}`}>{p}</button>
+                          ))
+                        })()}
+                        <button onClick={() => setCallRequestPage(p => Math.min(crTotalPages, p + 1))} disabled={crSafePage === crTotalPages} className="px-2.5 py-1.5 text-xs font-medium rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">Next</button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </Panel>
@@ -1042,7 +1135,7 @@ export default function AdminDashboard() {
               const pending = filteredBookings.filter(b => b.status === 'pending').length
               const acceptRate = total ? Math.round((accepted / total) * 100) : 0
               return (
-                <Panel title="Funnel" subtitle={`${getFilterLabel()} · ${total} total bookings`}>
+                <Panel title="Funnel" subtitle={`All dates · ${total} ${bookingStatusFilter === 'all' ? 'total' : bookingStatusFilter} bookings`}>
                   <div className="flex items-center gap-2 text-sm">
                     <div className="flex-1 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2"><p className="text-xs text-amber-700">Requested</p><p className="text-lg font-bold text-amber-900">{total}</p></div>
                     <span className="text-slate-300">{'>'}</span>
@@ -1055,8 +1148,16 @@ export default function AdminDashboard() {
                 </Panel>
               )
             })()}
-            <Panel title="Booking Requests" subtitle={`${filteredBookings.length} bookings — ${getFilterLabel()}`} action={
+            <Panel title="Booking Requests" subtitle={`${filteredBookings.length} ${bookingStatusFilter === 'all' ? 'total' : bookingStatusFilter} · all dates`} action={
               <div className="flex items-center gap-2 flex-wrap">
+                <select value={bookingStatusFilter} onChange={e => { setBookingStatusFilter(e.target.value); setBookingPage(1) }} className="px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option value="all">All statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="accepted">Accepted</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="change-requested">Change requested</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
                 {selectedBookings.size > 0 && (
                   <>
                     <button onClick={() => {
@@ -1087,7 +1188,7 @@ export default function AdminDashboard() {
                 </button>
               </div>
             }>
-              {filteredBookings.length === 0 ? <Empty text="No bookings in this period" /> : (
+              {filteredBookings.length === 0 ? <Empty text={bookingStatusFilter === 'all' ? 'No bookings yet' : `No ${bookingStatusFilter} bookings`} /> : (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <label className="flex items-center gap-2 px-1 py-1 text-xs text-slate-500 cursor-pointer select-none">
@@ -1099,7 +1200,7 @@ export default function AdminDashboard() {
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-slate-400">Per page:</span>
                       <select value={bookingsPerPage} onChange={e => { setBookingsPerPage(Number(e.target.value)); setBookingPage(1) }} className="px-2 py-1 text-xs border border-slate-200 rounded-lg bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        {[15, 30, 45, 60, 75, 90, 105].map(n => <option key={n} value={n}>{n}</option>)}
+                        {[10, 15, 25, 50, 100].map(n => <option key={n} value={n}>{n}</option>)}
                       </select>
                     </div>
                   </div>
