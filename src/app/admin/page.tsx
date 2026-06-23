@@ -88,6 +88,7 @@ interface BlobInfo { name: string; containerName: string; size: number; contentT
 interface StorageData { containers: ContainerStats[]; recentBlobs: BlobInfo[] }
 interface BookingAppointment { rowKey: string; name: string; email: string; whatsapp?: string; topic?: string; serviceName: string; serviceId: string; date: string; startTime: string; endTime: string; timezone: string; country?: string; status: string; createdAt: string; graphAppointmentId?: string; joinWebUrl?: string; adminMessage?: string; acceptedAt?: string; rejectedAt?: string; changeRequestedAt?: string; cancelledAt?: string; rescheduledAt?: string; outcomeNotes?: string }
 interface OutcomeNote { text: string; createdAt: string }
+interface CallRequest { rowKey: string; name: string; email: string; whatsapp?: string; whatsappCountry?: string; company?: string; designation?: string; message?: string; programTitle?: string; timestamp?: string; createdAt: string; replied: boolean; repliedAt?: string; lastSubject?: string }
 
 // ─── Helpers ─────────────────────────────────────────────────
 
@@ -156,6 +157,9 @@ export default function AdminDashboard() {
   const [bookingsPerPage, setBookingsPerPage] = useState(15)
   const [selectedBookings, setSelectedBookings] = useState<Set<string>>(new Set())
   const [bookingDeleting, setBookingDeleting] = useState(false)
+  const [callRequests, setCallRequests] = useState<CallRequest[]>([])
+  const [callRequestsLoading, setCallRequestsLoading] = useState(false)
+  const [callDraft, setCallDraft] = useState<{ req: CallRequest; instructions: string; subject: string; bodyHtml: string; drafting: boolean; sending: boolean; error: string; sent: boolean } | null>(null)
   const [coworkData, setCoworkData] = useState<{ total: number; registrations: Array<{ fullName: string; email: string; country: string; timeZone: string; role: string; company: string; biggestWorkflow: string; createdAt: string }>; byCountry: Array<{ name: string; value: number }>; byTimezone: Array<{ name: string; value: number }> } | null>(null)
   const [indexingData, setIndexingData] = useState<{ google: Array<{ url: string; status: string }>; bing: Array<{ url: string; status: string }> } | null>(null)
   const [academyData, setAcademyData] = useState<{ learners: Array<{ email: string; name: string; provider: string; lastLogin: string; createdAt: string }>; progress: Array<{ email: string; courseId: string; chapterId: string; completionPercent: number; completed: boolean; lastAccessed: string }>; summary: { totalLearners: number; activeLearners: number; learnersWithCompletion: number; totalProgressEntries: number; byProvider: Record<string, number>; byCourse: Array<{ courseId: string; learners: number; completions: number }> }; chapterStats: Record<string, { views: number; completions: number; avgPercent: number }> } | null>(null)
@@ -211,6 +215,7 @@ export default function AdminDashboard() {
       try { const gRes = await fetch('/api/admin/gsc-coverage', { method: 'POST', headers }); if (gRes.ok) setGscData(await gRes.json()) } catch {}
       setLastUpdated(new Date())
       try { const bRes = await fetch('/api/bookings/appointments'); if (bRes.ok) { const bData = await bRes.json(); setBookingsData(bData.appointments || []) } } catch {}
+      try { const crRes = await fetch('/api/admin/call-requests'); if (crRes.ok) { const crData = await crRes.json(); setCallRequests(crData.requests || []) } } catch {}
     } catch { setError('Failed to load dashboard data') }
     finally { setLoading(false) }
   }, [router])
@@ -331,6 +336,66 @@ export default function AdminDashboard() {
     } catch {} finally { setModalSending(false); closeModal() }
   }
 
+  async function refreshCallRequests() {
+    setCallRequestsLoading(true)
+    try { const r = await fetch('/api/admin/call-requests'); if (r.ok) { const d = await r.json(); setCallRequests(d.requests || []) } } catch {} finally { setCallRequestsLoading(false) }
+  }
+
+  function openCallDraft(req: CallRequest) {
+    const firstName = (req.name || '').trim().split(/\s+/)[0] || 'there'
+    setCallDraft({
+      req,
+      instructions: 'Offer a discovery call this Friday, IST: morning 9:00 AM–12:00 PM or afternoon 2:00 PM–5:00 PM. Ask them to pick a time.',
+      subject: `Discovery Call with Gennoor Tech — ${firstName}`,
+      bodyHtml: '',
+      drafting: false,
+      sending: false,
+      error: '',
+      sent: false,
+    })
+  }
+
+  async function generateCallDraft() {
+    if (!callDraft) return
+    setCallDraft(d => d && ({ ...d, drafting: true, error: '' }))
+    try {
+      const res = await fetch('/api/admin/call-requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'draft', rowKey: callDraft.req.rowKey, instructions: callDraft.instructions }),
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setCallDraft(d => d && ({ ...d, subject: data.subject || d.subject, bodyHtml: data.bodyHtml || '', drafting: false }))
+      } else {
+        setCallDraft(d => d && ({ ...d, drafting: false, error: data.message || 'Failed to draft' }))
+      }
+    } catch {
+      setCallDraft(d => d && ({ ...d, drafting: false, error: 'Failed to draft' }))
+    }
+  }
+
+  async function sendCallDraft() {
+    if (!callDraft || !callDraft.bodyHtml.trim()) return
+    setCallDraft(d => d && ({ ...d, sending: true, error: '' }))
+    try {
+      const res = await fetch('/api/admin/call-requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'send', rowKey: callDraft.req.rowKey, subject: callDraft.subject, bodyHtml: callDraft.bodyHtml }),
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setCallDraft(d => d && ({ ...d, sending: false, sent: true }))
+        refreshCallRequests()
+      } else {
+        setCallDraft(d => d && ({ ...d, sending: false, error: data.message || 'Send failed' }))
+      }
+    } catch {
+      setCallDraft(d => d && ({ ...d, sending: false, error: 'Send failed' }))
+    }
+  }
+
   async function hideComment(slug: string, rowKey: string) {
     try { const res = await fetch('/api/blog-comments', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, rowKey }) }); if (res.ok) handleRefresh() } catch {}
   }
@@ -428,8 +493,8 @@ export default function AdminDashboard() {
       { key: 'comments', label: 'Comments', icon: MessageSquare },
       { key: 'sessions', label: 'Sessions', icon: Bot },
     ]},
-    { key: 'bookings', label: 'Bookings', icon: Calendar, badge: bookingsData.filter(b => b.status === 'pending').length || undefined, tabs: [
-      { key: 'bookings', label: 'All Requests', icon: Calendar, badge: bookingsData.filter(b => b.status === 'pending').length || undefined },
+    { key: 'bookings', label: 'Bookings', icon: Calendar, badge: (bookingsData.filter(b => b.status === 'pending').length + callRequests.filter(c => !c.replied).length) || undefined, tabs: [
+      { key: 'bookings', label: 'All Requests', icon: Calendar, badge: (bookingsData.filter(b => b.status === 'pending').length + callRequests.filter(c => !c.replied).length) || undefined },
     ]},
     { key: 'system', label: 'System', icon: Settings, badge: setupData ? setupData.totalChecks - setupData.configuredCount : undefined, tabs: [
       { key: 'storage', label: 'Storage', icon: HardDrive },
@@ -895,6 +960,75 @@ export default function AdminDashboard() {
           const isAllSelected = filteredBookings.length > 0 && filteredBookings.every(b => selectedBookings.has(b.rowKey))
           return (
           <div className="space-y-6 animate-fadeIn">
+            <Panel
+              title="Call Requests"
+              subtitle={`${callRequests.length} inbound · from the website "Book a Call" form`}
+              action={
+                <button onClick={refreshCallRequests} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 border border-slate-200 rounded-lg transition-colors">
+                  <RefreshCw className={`w-3.5 h-3.5 ${callRequestsLoading ? 'animate-spin' : ''}`} /> Refresh
+                </button>
+              }
+            >
+              {callRequests.length === 0 ? <Empty text="No call requests yet" /> : (
+                <div className="space-y-3">
+                  {callRequests.map(cr => {
+                    const submitted = cr.timestamp || cr.createdAt
+                    return (
+                      <div key={cr.rowKey} className={`border rounded-xl p-4 shadow-sm ${cr.replied ? 'bg-slate-50 border-slate-200' : 'bg-indigo-50/40 border-indigo-200'}`}>
+                        <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap mb-1">
+                              <h3 className="text-sm font-semibold text-slate-800">{cr.name || 'Unknown'}</h3>
+                              {cr.replied
+                                ? <span className="px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">Replied</span>
+                                : <span className="px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-700">New</span>}
+                              {cr.programTitle && <span className="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600">{cr.programTitle}</span>}
+                            </div>
+                            <div className="grid sm:grid-cols-2 gap-x-4 gap-y-1 mt-2 text-sm">
+                              <div className="flex items-center gap-1.5 text-slate-600">
+                                <Mail className="w-3.5 h-3.5 text-slate-400" />
+                                <a href={`mailto:${cr.email}`} className="text-blue-600 hover:underline truncate">{cr.email}</a>
+                              </div>
+                              {cr.whatsapp && (
+                                <div className="flex items-center gap-1.5 text-slate-600">
+                                  <Phone className="w-3.5 h-3.5 text-slate-400" />
+                                  <a href={`https://wa.me/${cr.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{cr.whatsapp}</a>
+                                </div>
+                              )}
+                              {cr.company && (
+                                <div className="flex items-center gap-1.5 text-slate-600">
+                                  <Database className="w-3.5 h-3.5 text-slate-400" />
+                                  <span className="truncate">{cr.company}{cr.designation ? ` · ${cr.designation}` : ''}</span>
+                                </div>
+                              )}
+                              {submitted && (
+                                <div className="flex items-center gap-1.5 text-slate-500">
+                                  <Clock className="w-3.5 h-3.5 text-slate-400" />
+                                  <span>{new Date(submitted).toLocaleString()}</span>
+                                </div>
+                              )}
+                            </div>
+                            {cr.message && (
+                              <div className="mt-2 p-2 bg-white/70 rounded-lg text-xs text-slate-600 border border-slate-100 whitespace-pre-wrap">
+                                <span className="font-medium text-slate-700">Message:</span> {cr.message}
+                              </div>
+                            )}
+                            {cr.replied && cr.repliedAt && (
+                              <p className="mt-2 text-xs text-emerald-700">Replied {new Date(cr.repliedAt).toLocaleString()}{cr.lastSubject ? ` · "${cr.lastSubject}"` : ''}</p>
+                            )}
+                          </div>
+                          <div className="flex flex-wrap sm:flex-col gap-2 shrink-0">
+                            <button onClick={() => openCallDraft(cr)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors">
+                              <Bot className="w-3.5 h-3.5" /> {cr.replied ? 'Draft again' : 'Draft & send reply'}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </Panel>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <StatCard icon={Clock} label="Pending" value={filteredBookings.filter(b => b.status === 'pending').length} color="amber" />
               <StatCard icon={CheckCircle} label="Accepted" value={filteredBookings.filter(b => b.status === 'accepted').length} color="teal" />
@@ -1109,6 +1243,74 @@ export default function AdminDashboard() {
             </Panel>
           </div>
         ) })()}
+
+        {/* ─── CALL REQUEST DRAFT/SEND MODAL ──────────────── */}
+        {callDraft && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50" onClick={() => setCallDraft(null)}>
+            <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center justify-between p-5 border-b border-slate-200">
+                <div>
+                  <h2 className="text-lg font-semibold text-slate-800">Reply to {callDraft.req.name || 'call request'}</h2>
+                  <p className="text-xs text-slate-500 mt-0.5">To {callDraft.req.email} · from admin@gennoor.com (CC admin@gennoor.com)</p>
+                </div>
+                <button onClick={() => setCallDraft(null)} className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"><X className="w-5 h-5" /></button>
+              </div>
+
+              {callDraft.sent ? (
+                <div className="p-6 text-center">
+                  <CheckCircle className="w-10 h-10 text-emerald-500 mx-auto mb-3" />
+                  <p className="text-slate-800 font-medium">Reply sent to {callDraft.req.email}</p>
+                  <p className="text-sm text-slate-500 mt-1">A copy was CC&apos;d to admin@gennoor.com.</p>
+                  <button onClick={() => setCallDraft(null)} className="mt-4 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition-colors">Close</button>
+                </div>
+              ) : (
+                <div className="p-5 space-y-4">
+                  <div>
+                    <label className="block text-xs font-medium text-slate-500 mb-1">Instructions for the AI (which day & times to offer)</label>
+                    <textarea value={callDraft.instructions} onChange={e => setCallDraft(d => d && ({ ...d, instructions: e.target.value }))} rows={2}
+                      className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y" />
+                  </div>
+                  <button onClick={generateCallDraft} disabled={callDraft.drafting}
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                    {callDraft.drafting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Bot className="w-4 h-4" />}
+                    {callDraft.drafting ? 'Drafting with GPT-5.4…' : (callDraft.bodyHtml ? 'Regenerate draft' : 'Generate draft')}
+                  </button>
+
+                  {callDraft.error && <p className="text-sm text-red-600">{callDraft.error}</p>}
+
+                  <div>
+                    <label className="block text-xs font-medium text-slate-500 mb-1">Subject</label>
+                    <input value={callDraft.subject} onChange={e => setCallDraft(d => d && ({ ...d, subject: e.target.value }))}
+                      className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-slate-500 mb-1">Body (editable HTML — wrapped in Gennoor branding on send)</label>
+                    <textarea value={callDraft.bodyHtml} onChange={e => setCallDraft(d => d && ({ ...d, bodyHtml: e.target.value }))} rows={8}
+                      placeholder="Click “Generate draft”, or write the email body here."
+                      className="w-full px-3 py-2 text-sm font-mono border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y" />
+                  </div>
+
+                  {callDraft.bodyHtml && (
+                    <div>
+                      <label className="block text-xs font-medium text-slate-500 mb-1">Preview</label>
+                      <div className="border border-slate-200 rounded-lg p-4 bg-slate-50 text-sm text-slate-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: callDraft.bodyHtml }} />
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                    <button onClick={() => setCallDraft(null)} className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">Cancel</button>
+                    <button onClick={sendCallDraft} disabled={callDraft.sending || !callDraft.bodyHtml.trim()}
+                      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                      {callDraft.sending ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                      {callDraft.sending ? 'Sending…' : 'Send reply'}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* ─── BOOKING MODALS ─────────────────────────────── */}
         {bookingModal && (

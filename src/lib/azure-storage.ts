@@ -205,6 +205,16 @@ export async function saveEnquiry(type: string, data: Record<string, any>) {
   return { partitionKey: type, rowKey }
 }
 
+export async function updateEnquiry(type: string, rowKey: string, updates: Record<string, any>) {
+  const tableName = 'Enquiries'
+  await ensureTable(tableName)
+  const client = getTableClient(tableName)
+  await client.updateEntity(
+    { partitionKey: type, rowKey, ...toTableSafe(updates) },
+    'Merge',
+  )
+}
+
 export async function getEnquiries(type?: string, days: number = 30) {
   const tableName = 'Enquiries'
   await ensureTable(tableName)
