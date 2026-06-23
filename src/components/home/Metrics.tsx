@@ -8,7 +8,7 @@ const metrics = [
   {
     value: siteConfig.metrics.trainingPrograms,
     label: 'Training Programs Delivered',
-    description: 'Across Fortune 500 companies',
+    description: 'For teams at global enterprises',
   },
   {
     value: siteConfig.metrics.certifications,

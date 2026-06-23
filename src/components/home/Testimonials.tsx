@@ -124,7 +124,7 @@ export default function Testimonials() {
             Testimonials
           </motion.div>
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            Client's Feedback
+            What Clients Say
           </h2>
           <p className="text-lg text-gray-500">
             Feedback from executives and managers who've experienced the transformation

@@ -1,0 +1,201 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
+import { getEnquiries, updateEnquiry } from '@/lib/azure-storage'
+import { sendEmail } from '@/lib/email-service'
+import { trackEvent, initAppInsights } from '@/lib/analytics'
+
+// User-supplied text gets interpolated into email HTML — escape it so markup
+// can't be injected.
+const esc = (s: unknown) =>
+  String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+
+const READINESS_ENDPOINT = process.env.AZURE_OPENAI_READINESS_ENDPOINT || ''
+const READINESS_KEY = process.env.AZURE_OPENAI_READINESS_KEY || ''
+const DEPLOYMENT_MAIN = process.env.AZURE_OPENAI_READINESS_DEPLOYMENT_MAIN || 'gpt-54'
+const DEPLOYMENT_FALLBACK = process.env.AZURE_OPENAI_READINESS_DEPLOYMENT || 'gpt-41-mini'
+
+// ─── GET: list inbound call requests (ExpertCallBooking enquiries) ──────────
+export async function GET(request: NextRequest) {
+  const { authorized } = await verifyAdmin(request)
+  if (!authorized) return unauthorizedResponse()
+
+  try {
+    // 2-year window so older requests don't silently disappear from the tab.
+    const rows = await getEnquiries('ExpertCallBooking', 730)
+    const requests = rows.map(r => ({
+      rowKey: r.rowKey,
+      name: r.name || '',
+      email: r.email || '',
+      whatsapp: r.whatsapp || '',
+      whatsappCountry: r.whatsappCountry || '',
+      company: r.company || '',
+      designation: r.designation || '',
+      message: r.message || '',
+      programTitle: r.programTitle || '',
+      timestamp: r.timestamp || r.createdAt || '',
+      createdAt: r.createdAt || '',
+      replied: r.replied === true || r.replied === 'true',
+      repliedAt: r.repliedAt || '',
+      lastSubject: r.lastSubject || '',
+    }))
+    requests.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    return NextResponse.json({ success: true, requests })
+  } catch (error) {
+    console.error('Error fetching call requests:', error)
+    return NextResponse.json({ success: false, message: 'Failed to fetch call requests' }, { status: 500 })
+  }
+}
+
+// ─── AI draft via Azure OpenAI (GPT-5.4 main, gpt-4.1-mini fallback) ────────
+async function callModel(deployment: string, systemPrompt: string, userMessage: string, useTemperature: boolean) {
+  const base = READINESS_ENDPOINT.endsWith('/') ? READINESS_ENDPOINT : READINESS_ENDPOINT + '/'
+  const url = `${base}openai/deployments/${deployment}/chat/completions?api-version=2024-12-01-preview`
+  const body: any = {
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userMessage },
+    ],
+    max_completion_tokens: 1400,
+    response_format: { type: 'json_object' },
+  }
+  if (useTemperature) body.temperature = 0.6
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'api-key': READINESS_KEY },
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) throw new Error(`${deployment}: HTTP ${res.status} — ${(await res.text()).slice(0, 300)}`)
+  const data = await res.json()
+  const content = data.choices?.[0]?.message?.content
+  if (!content) throw new Error(`${deployment}: empty response`)
+  return JSON.parse(content) as { subject?: string; body?: string }
+}
+
+async function generateDraft(req: any, instructions: string) {
+  const systemPrompt = `You draft warm, concise, professional reply emails for Gennoor Tech (enterprise AI training & consulting). The sender is admin@gennoor.com. A prospect has requested a discovery/expert call via the website. Your job is to write the reply that proposes availability and asks them to confirm a time.
+
+Rules:
+- Address the person by their first name.
+- Briefly acknowledge their specific request/context (use their message).
+- Follow the admin's instructions for which day(s) and time windows to offer. If none given, propose two windows on the next suitable weekday (morning 9:00 AM–12:00 PM and afternoon 2:00 PM–5:00 PM, IST / Asia Kolkata).
+- Ask them to reply with a preferred time; mention a Microsoft Teams calendar invite will follow.
+- Keep it to a few short paragraphs. No pricing promises.
+- Sign off as "Gennoor Tech".
+
+Return ONLY valid JSON: {"subject": "...", "body": "<p>...</p> with simple HTML: <p>, <ul><li>, <strong> only. Do NOT include <html>, <head>, <body>, styles, or a signature block with images. Plain content paragraphs only."}`
+
+  const userMessage = `Prospect request:
+- Name: ${req.name}
+- Email: ${req.email}
+- Company: ${req.company || 'N/A'}
+- Designation: ${req.designation || 'N/A'}
+- WhatsApp: ${req.whatsapp || 'N/A'} (${req.whatsappCountry || 'N/A'})
+- Program / interest: ${req.programTitle || 'N/A'}
+- Their message: ${req.message || 'N/A'}
+- Submitted: ${req.timestamp || req.createdAt}
+
+Admin instructions for this reply: ${instructions || '(none — use the default availability windows)'}
+
+Write the reply email now.`
+
+  try {
+    return await callModel(DEPLOYMENT_MAIN, systemPrompt, userMessage, false)
+  } catch (mainErr) {
+    console.error('Draft MAIN model failed, trying fallback:', (mainErr as Error).message)
+    return await callModel(DEPLOYMENT_FALLBACK, systemPrompt, userMessage, true)
+  }
+}
+
+// Wrap the AI's inner content in the Gennoor branded email shell.
+function wrapEmail(innerHtml: string) {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.gennoor.com'
+  return `
+    <div style="font-family:'Segoe UI',Arial,sans-serif;background:#f1f5f9;padding:24px 12px;margin:0">
+      <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e2e8f0">
+        <div style="background:linear-gradient(135deg,#2563eb 0%,#7c3aed 100%);padding:28px;text-align:center">
+          <h1 style="color:#fff;margin:0;font-size:22px;font-weight:700">Gennoor Tech</h1>
+          <p style="color:#dbeafe;margin:6px 0 0;font-size:13px">Enterprise AI Training, Certification &amp; Solutions</p>
+        </div>
+        <div style="padding:30px 28px;color:#374151;font-size:15px;line-height:1.7">
+          ${innerHtml}
+        </div>
+        <div style="background:#0f172a;padding:20px 28px;text-align:center">
+          <p style="color:#cbd5e1;margin:0;font-size:13px;font-weight:600">Gennoor Tech</p>
+          <p style="color:#64748b;margin:5px 0 0;font-size:11px">
+            <a href="mailto:admin@gennoor.com" style="color:#94a3b8;text-decoration:none">admin@gennoor.com</a> ·
+            <a href="${siteUrl}" style="color:#94a3b8;text-decoration:none">www.gennoor.com</a>
+          </p>
+        </div>
+      </div>
+    </div>`
+}
+
+// ─── POST: action = 'draft' | 'send' ───────────────────────────────────────
+export async function POST(request: NextRequest) {
+  const { authorized } = await verifyAdmin(request)
+  if (!authorized) return unauthorizedResponse()
+
+  try {
+    initAppInsights()
+    const body = await request.json()
+    const { action, rowKey, instructions, subject, bodyHtml } = body
+
+    if (action === 'draft') {
+      if (!rowKey) return NextResponse.json({ success: false, message: 'rowKey is required' }, { status: 400 })
+      if (!READINESS_ENDPOINT || !READINESS_KEY) {
+        return NextResponse.json({ success: false, message: 'AI service not configured' }, { status: 500 })
+      }
+      const rows = await getEnquiries('ExpertCallBooking', 730)
+      const req = rows.find(r => r.rowKey === rowKey)
+      if (!req) return NextResponse.json({ success: false, message: 'Request not found' }, { status: 404 })
+
+      const draft = await generateDraft(req, instructions || '')
+      const firstName = String(req.name || '').trim().split(/\s+/)[0] || 'there'
+      return NextResponse.json({
+        success: true,
+        subject: draft.subject || `Discovery Call with Gennoor Tech — ${firstName}`,
+        bodyHtml: draft.body || '',
+      })
+    }
+
+    if (action === 'send') {
+      if (!rowKey || !bodyHtml) {
+        return NextResponse.json({ success: false, message: 'rowKey and bodyHtml are required' }, { status: 400 })
+      }
+      const rows = await getEnquiries('ExpertCallBooking', 730)
+      const req = rows.find(r => r.rowKey === rowKey)
+      if (!req) return NextResponse.json({ success: false, message: 'Request not found' }, { status: 404 })
+
+      const result = await sendEmail({
+        to: req.email,
+        cc: process.env.EMAIL_ADMIN || 'admin@gennoor.com',
+        from: process.env.EMAIL_ADMIN || 'admin@gennoor.com',
+        fromName: 'Gennoor Tech',
+        subject: subject || `Discovery Call with Gennoor Tech`,
+        html: wrapEmail(bodyHtml),
+      })
+
+      if (!result.success) {
+        return NextResponse.json({ success: false, message: result.error || 'Send failed' }, { status: 502 })
+      }
+
+      await updateEnquiry('ExpertCallBooking', rowKey, {
+        replied: true,
+        repliedAt: new Date().toISOString(),
+        lastSubject: (subject || '').slice(0, 200),
+      }).catch(() => {})
+
+      trackEvent('CallRequestReplied', { name: req.name, email: req.email })
+      return NextResponse.json({ success: true, message: 'Reply sent.', messageId: result.messageId })
+    }
+
+    return NextResponse.json({ success: false, message: 'Invalid action' }, { status: 400 })
+  } catch (error) {
+    console.error('Call-request action error:', error)
+    return NextResponse.json({ success: false, message: (error as Error).message || 'Action failed' }, { status: 500 })
+  }
+}

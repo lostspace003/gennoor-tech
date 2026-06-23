@@ -181,19 +181,16 @@ export default function HeroSection() {
                 </motion.div>
               </motion.div>
 
-              {/* POC Link */}
-              <motion.div className="mt-6" variants={slideIn}>
-                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                  <Link
-                    href="/services/poc-development#live-demo"
-                    className="relative inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-lg shadow-orange-500/20 hover:shadow-orange-500/35 transition-all duration-300 group overflow-hidden"
-                  >
-                    <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 animate-shimmer" />
-                    <Sparkles className="w-4 h-4 relative" />
-                    <span className="relative">See our latest PoC in action</span>
-                    <ArrowRight className="w-4 h-4 relative group-hover:translate-x-0.5 transition-transform" />
-                  </Link>
-                </motion.div>
+              {/* POC Link — demoted to a quiet secondary link so the primary CTA stays singular */}
+              <motion.div className="mt-5" variants={slideIn}>
+                <Link
+                  href="/services/poc-development#live-demo"
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors group"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>See our latest PoC in action</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
               </motion.div>
             </motion.div>
 
