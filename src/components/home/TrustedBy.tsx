@@ -22,7 +22,7 @@ export default function TrustedBy() {
     <section className="py-14 relative">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <p className="text-center text-xs font-semibold text-gray-400 mb-10 uppercase tracking-[0.2em]">
-          Trusted by Fortune 500 Companies & Government Bodies
+          Delivered training to professionals at
         </p>
         <div className="flex flex-wrap justify-center items-center gap-8 lg:gap-14">
           {siteConfig.trustedBy.map((company, index) => {

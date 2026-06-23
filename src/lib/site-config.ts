@@ -22,7 +22,7 @@ export const siteConfig = {
   navigation: {
     main: [
       {
-        name: 'Programs',
+        name: 'Training',
         href: '/services/training',
         children: [
           { name: 'Training Programs', href: '/services/training', description: 'Corporate AI training courses' },
@@ -33,7 +33,7 @@ export const siteConfig = {
         ]
       },
       {
-        name: 'Services',
+        name: 'Build & Consulting',
         href: '/services',
         children: [
           { name: 'For SMB', href: '/solutions/for-smb', description: 'Productized AI packages from $3k · 6-week pilots' },
@@ -76,7 +76,7 @@ export const siteConfig = {
 
     footer: [
       {
-        title: 'Programs',
+        title: 'Training',
         links: [
           { name: 'Training Programs', href: '/services/training' },
           { name: 'Azure AI Foundry Workshop', href: '/services/azure-ai-foundry-workshop' },
@@ -85,7 +85,7 @@ export const siteConfig = {
         ]
       },
       {
-        title: 'Services',
+        title: 'Build & Consulting',
         links: [
           { name: 'For SMB', href: '/solutions/for-smb' },
           { name: 'For Enterprise', href: '/solutions/for-enterprise' },
@@ -117,9 +117,9 @@ export const siteConfig = {
   // Hero section content
   hero: {
     badge: 'Enterprise AI Transformation • GCC · Africa · South Asia',
-    headline: 'Enterprise AI Transformation — delivered end-to-end.',
+    headline: 'We train your team and build your first production AI agent — fixed price, from $3k, live in 6 weeks.',
     brandPromise: 'Diagnose. Train. Innovate. Build. Sustain.',
-    subheadline: 'We partner with enterprises and growing businesses to turn AI ambition into measurable, sustained outcomes — from the first readiness diagnostic to your hundredth production agent.',
+    subheadline: 'Three ways we work: we train your people, build your production AI, and advise your leadership — from the first readiness diagnostic to your hundredth deployed agent.',
     cta1: { text: 'Run AI Readiness Diagnostic', href: '/ai-readiness' },
     cta2: { text: 'Talk to our team', href: '/contact' },
   },
