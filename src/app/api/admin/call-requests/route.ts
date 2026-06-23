@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
-import { getEnquiries, updateEnquiry } from '@/lib/azure-storage'
+import { getEnquiries, updateEnquiry, deleteEnquiry } from '@/lib/azure-storage'
 import { sendEmail } from '@/lib/email-service'
 import { trackEvent, initAppInsights } from '@/lib/analytics'
 
@@ -116,8 +116,8 @@ function wrapEmail(innerHtml: string) {
   return `
     <div style="font-family:'Segoe UI',Arial,sans-serif;background:#f1f5f9;padding:24px 12px;margin:0">
       <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e2e8f0">
-        <div style="background:linear-gradient(135deg,#2563eb 0%,#7c3aed 100%);padding:28px;text-align:center">
-          <h1 style="color:#fff;margin:0;font-size:22px;font-weight:700">Gennoor Tech</h1>
+        <div style="background-color:#1d4ed8;background:#1d4ed8 linear-gradient(135deg,#2563eb 0%,#7c3aed 100%);padding:28px;text-align:center">
+          <h1 style="color:#ffffff;margin:0;font-size:22px;font-weight:700;mso-line-height-rule:exactly">Gennoor Tech</h1>
           <p style="color:#dbeafe;margin:6px 0 0;font-size:13px">Enterprise AI Training, Certification &amp; Solutions</p>
         </div>
         <div style="padding:30px 28px;color:#374151;font-size:15px;line-height:1.7">
@@ -197,5 +197,26 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Call-request action error:', error)
     return NextResponse.json({ success: false, message: (error as Error).message || 'Action failed' }, { status: 500 })
+  }
+}
+
+// ─── DELETE: remove one or more call requests ───────────────────────────────
+export async function DELETE(request: NextRequest) {
+  const { authorized } = await verifyAdmin(request)
+  if (!authorized) return unauthorizedResponse()
+
+  try {
+    const { rowKeys } = await request.json()
+    if (!Array.isArray(rowKeys) || rowKeys.length === 0) {
+      return NextResponse.json({ success: false, message: 'rowKeys array is required' }, { status: 400 })
+    }
+    const results = await Promise.allSettled(
+      rowKeys.map((key: string) => deleteEnquiry('ExpertCallBooking', key)),
+    )
+    const deleted = results.filter(r => r.status === 'fulfilled').length
+    return NextResponse.json({ success: true, message: `${deleted} request(s) deleted.`, deleted })
+  } catch (error) {
+    console.error('Error deleting call requests:', error)
+    return NextResponse.json({ success: false, message: 'Failed to delete' }, { status: 500 })
   }
 }
