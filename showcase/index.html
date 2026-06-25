@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Safar Anbiya · Journey of the Prophets — Product Showcase</title>
+<meta name="description" content="A gamified Islamic learning journey for kids — travel the path of all 25 prophets by the light of your lantern." />
+<link rel="icon" href="assets/icon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Amiri&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --twilight:#0C0820; --royal:#1A1140; --gold:#F5C451; --amber:#F0A93A;
+    --cream:#F4EEDE; --emerald:#2E9E6B; --ink:#0a0718;
+    --card:rgba(255,255,255,.04); --line:rgba(245,196,81,.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Nunito',system-ui,sans-serif; color:var(--cream);
+    background:radial-gradient(120% 90% at 50% -10%, #241858 0%, var(--royal) 38%, var(--twilight) 78%);
+    background-attachment:fixed; overflow-x:hidden; line-height:1.6;
+  }
+  h1,h2,h3,.disp{font-family:'Fredoka',sans-serif;font-weight:600;letter-spacing:.2px}
+  .ar{font-family:'Amiri',serif}
+  a{color:var(--gold);text-decoration:none}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  .gold{color:var(--gold)}
+  .muted{color:rgba(244,238,222,.62)}
+
+  /* ---------- starfield ---------- */
+  .stars{position:fixed;inset:0;z-index:0;pointer-events:none}
+  .star{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;opacity:.5;
+        animation:tw var(--d,3s) ease-in-out infinite alternate}
+  @keyframes tw{from{opacity:.12;transform:scale(.6)}to{opacity:.9;transform:scale(1.1)}}
+  main{position:relative;z-index:1}
+
+  /* ---------- hero ---------- */
+  .hero{text-align:center;padding:74px 0 34px}
+  .lantern{width:104px;height:104px;margin:0 auto 8px;display:block;
+           filter:drop-shadow(0 0 26px rgba(245,196,81,.55));animation:float 5s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  .glow-ring{position:absolute;left:50%;top:96px;width:340px;height:340px;transform:translateX(-50%);
+             background:radial-gradient(circle, rgba(245,196,81,.22),rgba(245,196,81,0) 62%);
+             border-radius:50%;z-index:-1;animation:pulse 5s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.5;transform:translateX(-50%) scale(.92)}50%{opacity:1;transform:translateX(-50%) scale(1.06)}}
+  .bismillah{font-size:23px;color:var(--gold);opacity:.92;margin-bottom:18px}
+  .hero h1{font-size:clamp(34px,7vw,62px);line-height:1.05}
+  .hero .sub{font-family:'Fredoka';letter-spacing:6px;text-transform:uppercase;font-size:clamp(11px,2.4vw,15px);color:rgba(244,238,222,.7);margin-top:6px}
+  .tagline{max-width:620px;margin:20px auto 0;font-size:clamp(15px,2.6vw,19px);color:rgba(244,238,222,.85)}
+  .cta{display:inline-flex;gap:10px;align-items:center;margin-top:26px;padding:13px 26px;border-radius:40px;
+       background:linear-gradient(180deg,var(--gold),var(--amber));color:#3a2400;font-family:'Fredoka';font-weight:600;
+       box-shadow:0 10px 30px rgba(245,196,81,.3);transition:transform .2s}
+  .cta:hover{transform:translateY(-2px)}
+  .pills{margin-top:26px;display:flex;gap:9px;flex-wrap:wrap;justify-content:center}
+  .pill{font-size:12.5px;font-weight:700;padding:6px 14px;border:1px solid var(--line);border-radius:30px;
+        background:var(--card);color:rgba(244,238,222,.85)}
+
+  /* ---------- section ---------- */
+  section{padding:54px 0}
+  .eyebrow{font-family:'Fredoka';letter-spacing:4px;text-transform:uppercase;font-size:12px;color:var(--amber);margin-bottom:10px}
+  h2{font-size:clamp(25px,4.5vw,38px);margin-bottom:8px}
+  .lead{color:rgba(244,238,222,.7);max-width:640px;margin-bottom:30px}
+
+  /* ---------- purpose grid ---------- */
+  .grid{display:grid;gap:18px}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:1.1fr .9fr}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;
+        backdrop-filter:blur(6px);transition:transform .25s,border-color .25s}
+  .card:hover{transform:translateY(-4px);border-color:rgba(245,196,81,.45)}
+  .card .ic{font-size:26px;margin-bottom:10px}
+  .card h3{font-size:18px;margin-bottom:6px;color:var(--cream)}
+  .card p{font-size:14.5px;color:rgba(244,238,222,.68)}
+
+  /* ---------- workflow stepper (with real screenshots) ---------- */
+  .flow{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:8px}
+  .beat{position:relative;background:var(--card);border:1px solid var(--line);border-radius:20px;
+        padding:14px 14px 16px;text-align:center;transition:all .4s ease}
+  .beat .shot{border-radius:18px;overflow:hidden;background:#0a0718;border:1px solid rgba(255,255,255,.06);
+              box-shadow:0 14px 30px rgba(0,0,0,.45);margin-bottom:13px;position:relative}
+  .beat .shot::before{content:"";position:absolute;top:9px;left:50%;transform:translateX(-50%);
+                      width:54px;height:4px;border-radius:4px;background:rgba(0,0,0,.45);z-index:2}
+  .beat .shot img{width:100%;display:block}
+  .beat .n{font-family:'Fredoka';font-size:11.5px;letter-spacing:1px;color:var(--amber);opacity:.85;text-transform:uppercase}
+  .beat .name{font-family:'Fredoka';font-weight:600;font-size:18px;margin:3px 0 4px;color:var(--cream)}
+  .beat .name .emoji{margin-right:5px}
+  .beat .d{font-size:12.5px;color:rgba(244,238,222,.6);line-height:1.45}
+  .beat.active{border-color:var(--gold);background:rgba(245,196,81,.1);
+               box-shadow:0 0 0 1px var(--gold),0 16px 40px rgba(245,196,81,.22);transform:translateY(-6px)}
+  .beat.active .name{color:var(--gold)}
+  .beat .step-no{position:absolute;top:-11px;left:-11px;width:30px;height:30px;border-radius:50%;
+                 background:linear-gradient(180deg,var(--gold),var(--amber));color:#3a2400;
+                 font-family:'Fredoka';font-weight:700;font-size:14px;display:grid;place-items:center;
+                 box-shadow:0 6px 16px rgba(245,196,81,.4);z-index:3}
+
+  /* ---------- showcase (phone + screens) ---------- */
+  .stage{display:grid;grid-template-columns:300px 1fr;gap:34px;align-items:center}
+  .phone{width:280px;justify-self:center;border-radius:34px;padding:11px;
+         background:linear-gradient(160deg,#2a2150,#120d2e);border:1px solid rgba(245,196,81,.25);
+         box-shadow:0 30px 70px rgba(0,0,0,.5), inset 0 0 0 2px rgba(255,255,255,.03);position:relative}
+  .phone::before{content:"";position:absolute;top:18px;left:50%;transform:translateX(-50%);
+                 width:96px;height:6px;border-radius:6px;background:rgba(0,0,0,.5);z-index:2}
+  .phone img{width:100%;border-radius:26px;display:block}
+  .feat li{list-style:none;display:flex;gap:12px;margin-bottom:15px;font-size:15px}
+  .feat li b{color:var(--cream)}
+  .feat .dot{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:16px;
+             background:rgba(245,196,81,.13);border:1px solid var(--line)}
+
+  /* ---------- arch / stack ---------- */
+  .stack{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .chip{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px;text-align:center}
+  .chip .t{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:5px}
+  .chip .v{font-family:'Fredoka';font-size:14.5px;color:var(--cream)}
+
+  /* ---------- architecture diagram ---------- */
+  .arch{margin-top:26px;display:flex;flex-direction:column;align-items:center;gap:0}
+  .tier{width:100%;max-width:760px;border-radius:20px;padding:20px 22px;position:relative;
+        background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid var(--line)}
+  .tier .badge{position:absolute;top:-12px;left:22px;font-family:'Fredoka';font-size:11px;letter-spacing:1.5px;
+               text-transform:uppercase;padding:4px 12px;border-radius:20px;color:#3a2400;
+               background:linear-gradient(180deg,var(--gold),var(--amber));box-shadow:0 6px 16px rgba(245,196,81,.35)}
+  .tier.host{border-color:rgba(46,158,107,.4)}
+  .tier.host .badge{background:linear-gradient(180deg,#3cc488,var(--emerald));color:#022014;box-shadow:0 6px 16px rgba(46,158,107,.3)}
+  .tier h3{font-size:17px;margin:6px 0 4px;color:var(--cream)}
+  .tier .meta{font-size:13px;color:rgba(244,238,222,.6);margin-bottom:14px}
+  .row{display:flex;gap:9px;flex-wrap:wrap}
+  .node{flex:1 1 auto;min-width:120px;text-align:center;background:rgba(12,8,32,.6);border:1px solid rgba(255,255,255,.08);
+        border-radius:12px;padding:11px 10px;font-size:13px;color:rgba(244,238,222,.9)}
+  .node b{display:block;font-family:'Fredoka';font-size:13.5px;color:var(--cream)}
+  .node span{font-size:11.5px;color:rgba(244,238,222,.55)}
+  .connector{display:flex;flex-direction:column;align-items:center;padding:6px 0}
+  .connector .line{width:2px;height:26px;background:linear-gradient(180deg,var(--gold),rgba(245,196,81,.15))}
+  .connector .lbl{font-size:11.5px;color:var(--amber);font-family:'Fredoka';letter-spacing:.5px;
+                  border:1px solid var(--line);border-radius:20px;padding:4px 13px;background:var(--ink);margin:2px 0}
+  .connector .arrow{color:var(--gold);font-size:13px;line-height:1;margin-top:-2px}
+  .switch{display:inline-flex;align-items:center;gap:8px;font-family:ui-monospace,monospace;font-size:12.5px;
+          background:rgba(46,158,107,.1);border:1px solid rgba(46,158,107,.35);border-radius:30px;padding:6px 14px;
+          color:var(--cream);margin-bottom:15px}
+  .switch b{color:#5fd6a0}.switch .pipe{color:rgba(244,238,222,.4)}
+  .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+  .svc{background:rgba(12,8,32,.55);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:13px 12px;
+       transition:transform .2s,border-color .2s}
+  .svc:hover{transform:translateY(-3px);border-color:rgba(46,158,107,.45)}
+  .svc .si{font-size:21px}
+  .svc .sn{font-family:'Fredoka';font-size:13.5px;color:var(--cream);margin:5px 0 1px}
+  .svc .sp{font-size:11.5px;color:var(--amber)}
+  @media(max-width:560px){ .svc-grid{grid-template-columns:1fr 1fr} }
+
+  /* ---------- code ---------- */
+  .code{background:var(--ink);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-top:10px}
+  .code .bar{display:flex;gap:7px;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.06)}
+  .code .bar i{width:11px;height:11px;border-radius:50%;display:inline-block}
+  .code .bar .fn{margin-left:10px;font-family:ui-monospace,monospace;font-size:12px;color:rgba(244,238,222,.5)}
+  .code pre{margin:0;padding:18px 20px;overflow-x:auto;font-family:ui-monospace,'Cascadia Code',Menlo,monospace;
+            font-size:13px;line-height:1.7}
+  .k{color:#c792ea}.f{color:#82aaff}.s{color:#c3e88d}.c{color:#5b6b8c;font-style:italic}.p{color:#89ddff}
+
+  /* ---------- palette ---------- */
+  .pal{display:flex;gap:12px;flex-wrap:wrap}
+  .sw{text-align:center;font-size:11px;color:rgba(244,238,222,.6)}
+  .sw i{display:block;width:64px;height:64px;border-radius:14px;margin-bottom:7px;border:1px solid rgba(255,255,255,.1)}
+
+  footer{text-align:center;padding:46px 0 60px;color:rgba(244,238,222,.45);font-size:13px;border-top:1px solid rgba(255,255,255,.06);margin-top:30px}
+
+  @media(max-width:860px){
+    .g3,.stack{grid-template-columns:1fr 1fr}
+    .g2,.stage{grid-template-columns:1fr}
+    .stage{text-align:center}
+  }
+  @media(max-width:520px){ .g3,.stack{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<main>
+
+  <!-- ===== HERO ===== -->
+  <header class="hero wrap">
+    <div class="glow-ring"></div>
+    <img class="lantern" src="assets/emblem.png" alt="Safar Anbiya lantern emblem" />
+    <div class="bismillah ar">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْم</div>
+    <div class="ar gold" style="font-size:26px;margin-bottom:8px">سَفَرُ الْأَنْبِيَاء</div>
+    <h1>Safar <span class="gold">Anbiya</span></h1>
+    <div class="sub">Journey of the Prophets</div>
+    <p class="tagline">A gamified Islamic learning journey for kids — travel the path of all <b class="gold">25 prophets</b> by the light of your lantern.</p>
+    <a class="cta" href="#flow">▶ See the journey</a>
+    <div class="pills">
+      <span class="pill">Next.js 15</span>
+      <span class="pill">React 19</span>
+      <span class="pill">Installable PWA</span>
+      <span class="pill">Azure cloud</span>
+      <span class="pill">Bilingual neural voice</span>
+      <span class="pill">Offline-ready</span>
+    </div>
+  </header>
+
+  <!-- ===== PURPOSE ===== -->
+  <section class="wrap" id="purpose">
+    <div class="eyebrow">Purpose &amp; Objective</div>
+    <h2>Why it exists</h2>
+    <p class="lead">Religious education for children is usually passive — text to read, videos to watch. Kids disengage. Safar Anbiya makes learning the stories of the prophets <b>active, beautiful and rewarding</b> — something a child <i>chooses</i> to open, the way they open a game.</p>
+    <div class="grid g3">
+      <div class="card"><div class="ic">🎯</div><h3>The objective</h3><p>Turn the lives of all 25 prophets into an interactive adventure a 5–10 year old wants to return to every day.</p></div>
+      <div class="card"><div class="ic">🕹️</div><h3>The approach</h3><p>Each prophet is a level: story → moral choice → consequence → the real Qur'anic ayah → quiz → reward.</p></div>
+      <div class="card"><div class="ic">👨‍👩‍👧</div><h3>Who it's for</h3><p>Muslim families &amp; children. Parent-managed accounts, child profiles, and a generated avatar each.</p></div>
+    </div>
+  </section>
+
+  <!-- ===== WORKFLOW ===== -->
+  <section class="wrap" id="flow">
+    <div class="eyebrow">The Workflow</div>
+    <h2>Every prophet is a 9-beat journey</h2>
+    <p class="lead">From the profile select and journey map, each prophet plays as a guided sequence. <b>Every screen below is a real screenshot from the app.</b> Watch a beat light up as the child moves through it:</p>
+    <div class="flow" id="flow-track">
+      <div class="beat" data-i="0"><span class="step-no">1</span><div class="shot"><img src="assets/beats/beat1-arrive.png" alt="Arrive beat" loading="lazy"></div><div class="n">Beat 1</div><div class="name"><span class="emoji">🌌</span>Arrive</div><div class="d">The prophet's unique night sky fades in; lantern lights the path.</div></div>
+      <div class="beat" data-i="1"><span class="step-no">2</span><div class="shot"><img src="assets/beats/beat2-story.png" alt="Story beat" loading="lazy"></div><div class="n">Beat 2</div><div class="name"><span class="emoji">📖</span>Story</div><div class="d">Up to 7 animated, narrated story panels.</div></div>
+      <div class="beat" data-i="2"><span class="step-no">3</span><div class="shot"><img src="assets/beats/beat3-decision.png" alt="Decision beat" loading="lazy"></div><div class="n">Beat 3</div><div class="name"><span class="emoji">🤔</span>Decision</div><div class="d">The child makes a moral choice.</div></div>
+      <div class="beat" data-i="3"><span class="step-no">4</span><div class="shot"><img src="assets/beats/beat4-result.png" alt="Result beat" loading="lazy"></div><div class="n">Beat 4</div><div class="name"><span class="emoji">🌟</span>Result</div><div class="d">The consequence — tied back to the prophet.</div></div>
+      <div class="beat" data-i="4"><span class="step-no">5</span><div class="shot"><img src="assets/beats/beat5-modern.png" alt="Modern beat" loading="lazy"></div><div class="n">Beat 5</div><div class="name"><span class="emoji">🏠</span>Today</div><div class="d">A "what would you do today?" parallel.</div></div>
+      <div class="beat" data-i="5"><span class="step-no">6</span><div class="shot"><img src="assets/beats/beat5b-mres.png" alt="Reflection beat" loading="lazy"></div><div class="n">Beat 6</div><div class="name"><span class="emoji">💡</span>Reflection</div><div class="d">The modern-day outcome + a short du'a.</div></div>
+      <div class="beat" data-i="6"><span class="step-no">7</span><div class="shot"><img src="assets/beats/beat6-ayah.png" alt="Ayah beat" loading="lazy"></div><div class="n">Beat 7</div><div class="name"><span class="emoji">☪️</span>Ayah</div><div class="d">3–4 authentic verses — recitation + meaning.</div></div>
+      <div class="beat" data-i="7"><span class="step-no">8</span><div class="shot"><img src="assets/beats/beat7-quiz.png" alt="Quiz beat" loading="lazy"></div><div class="n">Beat 8</div><div class="name"><span class="emoji">🧠</span>Quiz</div><div class="d">A short recap quiz.</div></div>
+      <div class="beat" data-i="8"><span class="step-no">9</span><div class="shot"><img src="assets/beats/beat8b-reward-clean.png" alt="Reward beat" loading="lazy"></div><div class="n">Beat 9</div><div class="name"><span class="emoji">🎉</span>Reward</div><div class="d">Stars, Noor, a badge, streak &amp; confetti.</div></div>
+    </div>
+  </section>
+
+  <!-- ===== SHOWCASE ===== -->
+  <section class="wrap">
+    <div class="eyebrow">Inside the experience</div>
+    <h2>Cinematic by design</h2>
+    <div class="stage" style="margin-top:24px">
+      <div class="phone"><img src="assets/beats/03-map.png" alt="Safar Anbiya journey map — all 25 prophets on one rope" /></div>
+      <ul class="feat">
+        <li><span class="dot">🌌</span><span><b>25 distinct night skies.</b> Each prophet has its own palette, aurora wash and moon placement — every stage feels different.</span></li>
+        <li><span class="dot">🎞️</span><span><b>Moving illustrations.</b> Continuous Ken Burns drift + per-scene cross-fades make every story beat feel alive.</span></li>
+        <li><span class="dot">🗣️</span><span><b>Bilingual neural narration.</b> English &amp; Urdu (male/female) Azure voices with live word-by-word highlighting.</span></li>
+        <li><span class="dot">🕋</span><span><b>The real ayah.</b> 3–4 authentic Qur'anic verses per prophet — qari recitation plus spoken meaning.</span></li>
+        <li><span class="dot">🏆</span><span><b>Noor gamification.</b> Level ladder, 1–3 stars, badge gallery, 🔥 daily streak, confetti &amp; chime SFX.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== ARCHITECTURE ===== -->
+  <section class="wrap">
+    <div class="eyebrow">Under the hood</div>
+    <h2>Architecture</h2>
+    <p class="lead">A single rich client experience deployed on Azure, with a swappable service layer that runs fully local in development and on cloud services in production.</p>
+
+    <div class="arch">
+      <!-- Client tier -->
+      <div class="tier">
+        <span class="badge">Client · PWA</span>
+        <h3>Next.js (App Router) · React 19 · installable PWA</h3>
+        <div class="meta">One rich client component drives the whole experience.</div>
+        <div class="row">
+          <div class="node"><b>ProphetsJourney.jsx</b><span>single client component</span></div>
+          <div class="node"><b>Content data</b><span>EN + Roman-Urdu · Qur'an</span></div>
+          <div class="node"><b>Service Worker</b><span>offline + install</span></div>
+          <div class="node"><b>localStorage</b><span>per-profile progress</span></div>
+        </div>
+      </div>
+
+      <!-- connector -->
+      <div class="connector">
+        <span class="line"></span>
+        <span class="lbl">deploy · GitHub Actions CI/CD</span>
+        <span class="line"></span>
+        <span class="arrow">▼</span>
+      </div>
+
+      <!-- Host tier -->
+      <div class="tier host">
+        <span class="badge">Azure Web App · B1 · Node 22</span>
+        <h3>Swappable service layer</h3>
+        <div class="switch"><span>SERVICE_MODE&nbsp;=</span> <b>local</b> <span class="pipe">|</span> <b>azure</b></div>
+        <div class="svc-grid">
+          <div class="svc"><div class="si">🗄️</div><div class="sn">Database</div><div class="sp">Azure SQL</div></div>
+          <div class="svc"><div class="si">📦</div><div class="sn">Media storage</div><div class="sp">Blob Storage</div></div>
+          <div class="svc"><div class="si">✉️</div><div class="sn">OTP &amp; email</div><div class="sp">Azure ACS</div></div>
+          <div class="svc"><div class="si">🎙️</div><div class="sn">Narration</div><div class="sp">Azure Speech (neural)</div></div>
+          <div class="svc"><div class="si">🖼️</div><div class="sn">Avatars</div><div class="sp">gpt-image-2</div></div>
+          <div class="svc"><div class="si">☪️</div><div class="sn">Qur'an data</div><div class="sp">alquran.cloud</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== VIDEO ===== -->
+  <section class="wrap">
+    <div class="eyebrow">Watch it</div>
+    <h2>Start → Chapter 1, with narration</h2>
+    <p class="lead">A real end-to-end walkthrough — splash, journey map, arriving with the first prophet, and the opening of the story — narrated by the app's own Azure neural voice.</p>
+    <div style="max-width:340px;margin:6px auto 0">
+      <video controls playsinline preload="metadata" poster="assets/beats/beat1-arrive.png"
+             style="width:100%;border-radius:26px;border:1px solid var(--line);box-shadow:0 30px 70px rgba(0,0,0,.5)">
+        <source src="assets/safar-anbiya-chapter1.mp4" type="video/mp4" />
+      </video>
+      <p style="text-align:center;font-size:12.5px;color:rgba(244,238,222,.5);margin-top:10px">▶ 51s · with sound — tap to play</p>
+    </div>
+  </section>
+
+  <!-- ===== STACK ===== -->
+  <section class="wrap">
+    <div class="eyebrow">Built with</div>
+    <h2>Tech stack</h2>
+    <div class="stack" style="margin-top:22px">
+      <div class="chip"><div class="t">Framework</div><div class="v">Next.js 15</div></div>
+      <div class="chip"><div class="t">UI</div><div class="v">React 19</div></div>
+      <div class="chip"><div class="t">Hosting</div><div class="v">Azure Web App</div></div>
+      <div class="chip"><div class="t">Database</div><div class="v">Azure SQL</div></div>
+      <div class="chip"><div class="t">Storage</div><div class="v">Azure Blob</div></div>
+      <div class="chip"><div class="t">Auth / Email</div><div class="v">Azure ACS (OTP)</div></div>
+      <div class="chip"><div class="t">Voice (TTS)</div><div class="v">Azure Speech</div></div>
+      <div class="chip"><div class="t">Avatars</div><div class="v">gpt-image-2</div></div>
+      <div class="chip"><div class="t">Qur'an data</div><div class="v">alquran.cloud</div></div>
+      <div class="chip"><div class="t">CI/CD</div><div class="v">GitHub Actions</div></div>
+      <div class="chip"><div class="t">Packaging</div><div class="v">PWABuilder</div></div>
+      <div class="chip"><div class="t">Offline</div><div class="v">Service Worker</div></div>
+    </div>
+  </section>
+
+  <!-- ===== CODE ===== -->
+  <section class="wrap">
+    <div class="eyebrow">A look at the code</div>
+    <h2>Readable scene styling</h2>
+    <p class="lead">The whole UI is styled with inline CSS strings parsed by a tiny <code>s()</code> helper — it turns <code>"border-radius:30px;color:#f4eede"</code> into a React style object, keeping hundreds of one-off scene styles legible inline.</p>
+    <div class="code">
+      <div class="bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i><span class="fn">app/components/ProphetsJourney.jsx</span></div>
+<pre><span class="k">function</span> <span class="f">s</span>(<span class="p">str</span>) {
+  <span class="k">const</span> o = {};
+  <span class="k">if</span> (!str) <span class="k">return</span> o;
+  str.<span class="f">split</span>(<span class="s">";"</span>).<span class="f">forEach</span>((decl) => {
+    <span class="k">const</span> i = decl.<span class="f">indexOf</span>(<span class="s">":"</span>);
+    <span class="k">if</span> (i &lt; 0) <span class="k">return</span>;
+    <span class="k">const</span> prop = decl.<span class="f">slice</span>(0, i).<span class="f">trim</span>();
+    <span class="k">const</span> val  = decl.<span class="f">slice</span>(i + 1).<span class="f">trim</span>();
+    <span class="k">if</span> (!prop || !val) <span class="k">return</span>;
+    <span class="c">// border-radius → borderRadius</span>
+    <span class="k">const</span> key = prop.<span class="f">replace</span>(/-([a-z])/g, (_, c) => c.<span class="f">toUpperCase</span>());
+    o[key] = val;
+  });
+  <span class="k">return</span> o;
+}</pre>
+    </div>
+  </section>
+
+  <!-- ===== BRAND ===== -->
+  <section class="wrap">
+    <div class="eyebrow">Brand</div>
+    <h2>Twilight navy &amp; gold</h2>
+    <p class="lead">The guiding lantern and eight-pointed star — Noor, light. Display <b>Fredoka</b> · Arabic <b>Amiri</b> · Body <b>Nunito</b>.</p>
+    <div class="pal">
+      <div class="sw"><i style="background:#0C0820"></i>Twilight<br>#0C0820</div>
+      <div class="sw"><i style="background:#1A1140"></i>Royal<br>#1A1140</div>
+      <div class="sw"><i style="background:#F5C451"></i>Noor Gold<br>#F5C451</div>
+      <div class="sw"><i style="background:#F0A93A"></i>Amber<br>#F0A93A</div>
+      <div class="sw"><i style="background:#F4EEDE"></i>Cream<br>#F4EEDE</div>
+      <div class="sw"><i style="background:#2E9E6B"></i>Emerald<br>#2E9E6B</div>
+    </div>
+  </section>
+
+  <footer>
+    <img src="assets/emblem.png" alt="" style="width:46px;opacity:.8;margin-bottom:12px" /><br>
+    <b class="disp gold" style="font-size:17px">Safar Anbiya</b> · Journey of the Prophets<br>
+    A gamified Islamic learning journey for kids · gennoor.com
+  </footer>
+</main>
+
+<script>
+  // twinkling starfield
+  (function(){
+    const f = document.getElementById('stars'); const N = 90;
+    for (let i=0;i<N;i++){
+      const s = document.createElement('span'); s.className='star';
+      s.style.left = Math.random()*100+'%';
+      s.style.top  = Math.random()*100+'%';
+      s.style.setProperty('--d',(2+Math.random()*4).toFixed(2)+'s');
+      s.style.animationDelay = (Math.random()*4).toFixed(2)+'s';
+      if(Math.random()>.8){ s.style.width=s.style.height='3px'; s.style.background='#F5C451'; }
+      f.appendChild(s);
+    }
+  })();
+
+  // auto-advancing workflow stepper
+  (function(){
+    const beats = Array.from(document.querySelectorAll('#flow-track .beat'));
+    let i = 0, started = false, timer = null;
+    function step(){
+      beats.forEach(b=>b.classList.remove('active'));
+      beats[i].classList.add('active');
+      i = (i+1) % beats.length;
+    }
+    const track = document.getElementById('flow-track');
+    const io = new IntersectionObserver((es)=>{
+      es.forEach(e=>{
+        if(e.isIntersecting && !started){ started=true; step(); timer=setInterval(step,1400); }
+      });
+    },{threshold:.3});
+    io.observe(track);
+  })();
+</script>
+</body>
+</html>

@@ -88,3 +88,6 @@ public/Gennoor-Academy-Course-PDFs/
 
 # Serena tool cache
 .serena/
+
+# Large source videos for the Safar Anbiya showcase (served from Azure Blob instead)
+showcase/assets/*.mp4

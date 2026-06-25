@@ -9,6 +9,7 @@ import IntroVideo from '@/components/home/IntroVideo'
 import Metrics from '@/components/home/Metrics'
 import Testimonials from '@/components/home/Testimonials'
 import POCShowcase from '@/components/home/POCShowcase'
+import FeaturedBuild from '@/components/home/FeaturedBuild'
 import YouTubeVideos from '@/components/home/YouTubeVideos'
 import LatestBlog from '@/components/home/LatestBlog'
 import CTASection from '@/components/home/CTASection'
@@ -37,6 +38,11 @@ export default function HomePage() {
 
       <ScrollReveal>
         <ServicePillars />
+      </ScrollReveal>
+
+      {/* Flagship product we shipped end-to-end */}
+      <ScrollReveal>
+        <FeaturedBuild />
       </ScrollReveal>
 
       <ScrollReveal>

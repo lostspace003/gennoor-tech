@@ -11,6 +11,10 @@ interface InlineVideoPlayerProps {
   posterSrc: string
   className?: string
   rounded?: string
+  /** Aspect-ratio utility for the stage, e.g. "aspect-video" (default) or "aspect-[9/16]" for portrait. */
+  aspectClass?: string
+  /** Tailwind object-fit for the poster image — "cover" (default) or "contain" for portrait posters. */
+  posterFit?: 'cover' | 'contain'
 }
 
 export default function InlineVideoPlayer({
@@ -18,6 +22,8 @@ export default function InlineVideoPlayer({
   posterSrc,
   className = '',
   rounded = 'rounded-xl',
+  aspectClass = 'aspect-video',
+  posterFit = 'cover',
 }: InlineVideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -170,7 +176,7 @@ export default function InlineVideoPlayer({
       onMouseMove={handleMouseMove}
       onMouseLeave={() => { isPlaying && setShowControls(false); setShowSpeedMenu(false) }}
     >
-      <div className={`relative ${isFullscreen ? 'h-screen flex items-center justify-center' : 'aspect-video'} ${hasStarted ? 'bg-black' : 'bg-gray-50'}`}>
+      <div className={`relative ${isFullscreen ? 'h-screen flex items-center justify-center' : aspectClass} ${hasStarted ? 'bg-black' : 'bg-gray-50'}`}>
         {/* Thumbnail */}
         {!hasStarted && (
           <>
@@ -178,7 +184,7 @@ export default function InlineVideoPlayer({
               src={posterSrc}
               alt="Video thumbnail"
               fill
-              className="object-cover"
+              className={posterFit === 'contain' ? 'object-contain' : 'object-cover'}
               priority
             />
             {/* Bottom controls bar on thumbnail */}
