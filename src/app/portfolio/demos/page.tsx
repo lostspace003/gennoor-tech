@@ -1,7 +1,20 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { Github, ExternalLink, Code, Database, Brain, FileText, Bot, Shield, BarChart } from 'lucide-react'
+import { Github, ExternalLink, Code, Database, Brain, FileText, Bot, Shield, BarChart, Sparkles, ArrowRight, type LucideIcon } from 'lucide-react'
 import { pocs } from '@/data/pocs'
+
+type Demo = {
+  title: string
+  category: string
+  icon: LucideIcon
+  description: string
+  features: string[]
+  technologies: string[]
+  impact: string
+  githubUrl?: string
+  detailUrl?: string
+  liveUrl?: string
+}
 
 export const metadata: Metadata = {
   title: 'AI PoCs & Demos — Production-Ready Prototypes',
@@ -10,7 +23,24 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://gennoor.com/portfolio/demos' },
 }
 
-const demos = [
+const demos: Demo[] = [
+  {
+    title: 'Safar Anbiya — Journey of the Prophets',
+    category: 'Flagship Product',
+    icon: Sparkles,
+    description: 'A cinematic, installable kids’ learning app we designed, built and shipped end-to-end: 25 interactive prophet journeys with bilingual neural narration, authentic Qur’an recitation, gamified progress, and a full Azure cloud backend.',
+    features: [
+      '25 interactive prophet journeys',
+      'Bilingual neural-voice narration (EN + UR)',
+      'Authentic Qur’an verses + recitation',
+      'Gamified progress, stars & badges',
+      'Installable PWA — works offline'
+    ],
+    technologies: ['Next.js 15', 'React 19', 'Azure SQL', 'Blob Storage', 'Azure Speech', 'PWA'],
+    detailUrl: '/work/safar-anbiya',
+    liveUrl: 'https://safar-anbiya.gennoor.com',
+    impact: 'Shipped end-to-end — live in production'
+  },
   {
     title: 'Banking Document Intelligence Pipeline',
     category: 'Document Processing',
@@ -126,6 +156,7 @@ const demos = [
 ]
 
 const categoryColors = {
+  'Flagship Product': 'from-amber-500 to-yellow-500',
   'Document Processing': 'from-blue-500 to-blue-600',
   'Fraud Detection': 'from-red-500 to-red-600',
   'AI/ML': 'from-purple-500 to-purple-600',
@@ -242,19 +273,41 @@ export default function DemosPage() {
 
                     {/* Actions */}
                     <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                      <a
-                        href={demo.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center text-sm text-primary-600 font-medium hover:underline"
-                      >
-                        <Github className="w-4 h-4 mr-1" />
-                        View on GitHub
-                      </a>
-                      <button className="inline-flex items-center text-sm text-gray-500 hover:text-primary-600">
-                        <ExternalLink className="w-4 h-4 mr-1" />
-                        Live Demo
-                      </button>
+                      {demo.detailUrl ? (
+                        <Link
+                          href={demo.detailUrl}
+                          className="group inline-flex items-center text-sm text-primary-600 font-medium hover:underline"
+                        >
+                          View details
+                          <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
+                        </Link>
+                      ) : (
+                        <a
+                          href={demo.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center text-sm text-primary-600 font-medium hover:underline"
+                        >
+                          <Github className="w-4 h-4 mr-1" />
+                          View on GitHub
+                        </a>
+                      )}
+                      {demo.liveUrl ? (
+                        <a
+                          href={demo.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center text-sm text-gray-500 hover:text-primary-600"
+                        >
+                          <ExternalLink className="w-4 h-4 mr-1" />
+                          Live App
+                        </a>
+                      ) : (
+                        <button className="inline-flex items-center text-sm text-gray-500 hover:text-primary-600">
+                          <ExternalLink className="w-4 h-4 mr-1" />
+                          Live Demo
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
