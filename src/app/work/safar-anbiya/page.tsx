@@ -74,6 +74,19 @@ const beats = [
   { img: 'beat8b-reward-clean.png', label: 'Reward', note: 'Stars, Noor, badges, streak 🎉' },
 ]
 
+const screens = [
+  {
+    img: 'screenshot-language-toggle.png',
+    title: 'Fully bilingual interface',
+    body: 'Every screen — not just the narration — switches between English and Roman-Urdu with one tap. Parent-managed accounts keep each child’s progress safe.',
+  },
+  {
+    img: 'screenshot-muhammad-rasul-allah.png',
+    title: 'The Noor journey map',
+    body: 'All 25 prophets on one light-trail, each with their Arabic name, unlocked as the child progresses — with streaks, Noor points, levels and a badge gallery.',
+  },
+]
+
 const archLayers = [
   {
     title: 'Frontend · installable PWA',
@@ -250,6 +263,46 @@ export default function SafarAnbiyaPage() {
                   <figcaption className="mt-2.5 px-0.5">
                     <span className="text-sm font-semibold text-amber-200">{b.label}</span>
                     <span className="mt-0.5 block text-xs text-indigo-100/55">{b.note}</span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── A closer look ──────────────────────────────────── */}
+      <section className="border-t border-white/5 py-16 lg:py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-6xl">
+            <h2 className="mb-3 text-2xl font-bold text-white lg:text-3xl">A closer look</h2>
+            <p className="mb-10 max-w-2xl text-indigo-100/70">
+              Two full screens from the running app — the bilingual welcome and the gamified journey map.
+            </p>
+            <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-8">
+              {screens.map((s) => (
+                <figure key={s.img} className="flex flex-col items-center text-center">
+                  <div
+                    className="w-full max-w-[300px] rounded-[2rem] p-2"
+                    style={{
+                      background: 'rgba(255,255,255,0.04)',
+                      border: '1px solid rgba(245,196,81,0.25)',
+                      boxShadow: '0 30px 80px -30px rgba(245,196,81,0.35)',
+                    }}
+                  >
+                    <div className="overflow-hidden rounded-[1.6rem] border border-white/10 bg-black/30">
+                      <Image
+                        src={`/showcase/safar-anbiya/${s.img}`}
+                        alt={s.title}
+                        width={300}
+                        height={677}
+                        className="h-auto w-full"
+                      />
+                    </div>
+                  </div>
+                  <figcaption className="mt-5 max-w-xs">
+                    <span className="block font-semibold text-amber-200">{s.title}</span>
+                    <span className="mt-1.5 block text-sm leading-relaxed text-indigo-100/65">{s.body}</span>
                   </figcaption>
                 </figure>
               ))}
