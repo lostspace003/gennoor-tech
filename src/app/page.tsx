@@ -40,11 +40,6 @@ export default function HomePage() {
         <ServicePillars />
       </ScrollReveal>
 
-      {/* Flagship product we shipped end-to-end */}
-      <ScrollReveal>
-        <FeaturedBuild />
-      </ScrollReveal>
-
       <ScrollReveal>
         <Metrics />
       </ScrollReveal>
@@ -76,6 +71,11 @@ export default function HomePage() {
 
       <ScrollReveal>
         <CTASection />
+      </ScrollReveal>
+
+      {/* Flagship product we shipped end-to-end — anchored just below the CTA */}
+      <ScrollReveal>
+        <FeaturedBuild />
       </ScrollReveal>
     </>
   )

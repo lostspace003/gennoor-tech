@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 
 const demos: Demo[] = [
   {
-    title: 'Safar Anbiya — Journey of the Prophets',
+    title: 'Safar-e-Anbiya — Journey of the Prophets',
     category: 'Flagship Product',
     icon: Sparkles,
     description: 'A cinematic, installable kids’ learning app we designed, built and shipped end-to-end: 25 interactive prophet journeys with bilingual neural narration, authentic Qur’an recitation, gamified progress, and a full Azure cloud backend.',

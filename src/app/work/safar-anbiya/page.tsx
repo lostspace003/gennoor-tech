@@ -8,9 +8,9 @@ import { BLOB_URL } from '@/lib/site-config'
 const LIVE_URL = 'https://safar-anbiya.gennoor.com'
 
 export const metadata: Metadata = {
-  title: 'Safar Anbiya — A Gamified Kids’ Learning App We Built End-to-End',
+  title: 'Safar-e-Anbiya — A Gamified Kids’ Learning App We Built End-to-End',
   description:
-    'How Gennoor Tech designed, built and shipped Safar Anbiya: a cinematic, installable kids’ app with 25 interactive prophet journeys, bilingual neural narration, real Qur’an recitation and a full Azure cloud backend.',
+    'How Gennoor Tech designed, built and shipped Safar-e-Anbiya: a cinematic, installable kids’ app with 25 interactive prophet journeys, bilingual neural narration, real Qur’an recitation and a full Azure cloud backend.',
   keywords: [
     'product development case study',
     'kids learning app',
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: 'https://gennoor.com/work/safar-anbiya' },
   openGraph: {
-    title: 'Safar Anbiya — Journey of the Prophets',
+    title: 'Safar-e-Anbiya — Journey of the Prophets',
     description:
       'A gamified Islamic learning journey for kids — 25 interactive prophet stories, bilingual neural narration, real Qur’an recitation, installable on any phone. Designed and shipped end-to-end by Gennoor Tech.',
     url: 'https://gennoor.com/work/safar-anbiya',
@@ -40,7 +40,7 @@ const features = [
   },
   {
     title: 'Bilingual narration',
-    body: 'Pre-generated Azure Neural voices in English and Urdu, with live word-by-word highlighting synced to the audio.',
+    body: 'Pre-generated Azure Neural voices in English and Urdu, with live word-by-word highlighting synced to the audio. English uses familiar Biblical prophet names (Abraham, Moses…).',
   },
   {
     title: 'The real ayah',
@@ -54,6 +54,10 @@ const features = [
     title: 'Installable PWA',
     body: 'Offline-capable, full app manifest, home-screen install, app shortcuts and Edge side-panel docking.',
   },
+  {
+    title: 'Parent accounts & safe leaderboard',
+    body: 'Email-OTP sign-in, parent-managed child profiles, and a privacy-first leaderboard (first name + age only — no photo, surname or country).',
+  },
 ]
 
 const beats = [
@@ -64,6 +68,7 @@ const beats = [
   { img: 'beat3-decision.png', label: 'Decision', note: 'The child makes a moral choice' },
   { img: 'beat4-result.png', label: 'Result', note: 'The consequence is shown' },
   { img: 'beat5-modern.png', label: 'Today', note: '“What would you do now?”' },
+  { img: 'beat5b-mres.png', label: 'Reflection', note: 'The modern-day result + a short du’a' },
   { img: 'beat6-ayah.png', label: 'Ayah', note: 'The real Qur’anic verse + recitation' },
   { img: 'beat7-quiz.png', label: 'Quiz', note: 'A short recap test' },
   { img: 'beat8b-reward-clean.png', label: 'Reward', note: 'Stars, Noor, badges, streak 🎉' },
@@ -83,7 +88,7 @@ const archLayers = [
   {
     title: 'AI & media pipeline',
     body: 'Narration is pre-generated static audio (not live TTS): a build script calls Azure Speech and writes hashed MP3s + a manifest, so audio loads instantly and works offline. Avatars are generated per child.',
-    tags: ['Azure Speech (neural)', 'gpt-image avatars', 'Content-hash audio cache', 'GitHub Actions CI/CD'],
+    tags: ['Azure Speech (neural)', 'gpt-image-2 avatars', 'Qur’an data · alquran.cloud', 'Content-hash audio cache', 'GitHub Actions CI/CD'],
   },
 ]
 
@@ -130,13 +135,13 @@ export default function SafarAnbiyaPage() {
               <div className="mb-4 flex items-center gap-4">
                 <Image
                   src="/showcase/safar-anbiya/emblem.png"
-                  alt="Safar Anbiya lantern emblem"
+                  alt="Safar-e-Anbiya lantern emblem"
                   width={64}
                   height={64}
                   className="h-16 w-16 object-contain drop-shadow"
                 />
                 <h1 className="text-4xl font-black leading-tight text-white lg:text-5xl">
-                  Safar Anbiya
+                  Safar-e-Anbiya
                 </h1>
               </div>
               <p className="mb-6 text-xl font-medium text-amber-200/90">Journey of the Prophets</p>

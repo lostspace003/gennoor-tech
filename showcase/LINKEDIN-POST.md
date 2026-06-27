@@ -1,4 +1,4 @@
-# LinkedIn post kit — Safar Anbiya walkthrough video
+# LinkedIn post kit — Safar-e-Anbiya walkthrough video
 
 > **Details (already filled in below):**
 > - **Company** → Gennoor Tech
@@ -14,7 +14,7 @@
 
 Most small businesses don't need a bigger team — they need someone who can take an idea and actually ship it. 🚀
 
-👇 This is **Safar Anbiya**, a kids' learning app we built end-to-end:
+👇 This is **Safar-e-Anbiya**, a kids' learning app we built end-to-end:
 • 25 interactive prophet stories with a moral choice in each
 • Bilingual **neural voice narration** (English + Urdu) and real Qur'an recitation
 • A full cloud backend — accounts, profiles, progress, media
@@ -34,7 +34,7 @@ Have an idea sitting in a doc or a spreadsheet? Let's turn it into something peo
 
 We take ideas and ship them. 🚀
 
-**Safar Anbiya** — a gamified kids' app we built end-to-end: 25 interactive stories, bilingual neural narration, real Qur'an recitation, a full cloud backend, installable on any phone. The clip shows one journey completed start to finish.
+**Safar-e-Anbiya** — a gamified kids' app we built end-to-end: 25 interactive stories, bilingual neural narration, real Qur'an recitation, a full cloud backend, installable on any phone. The clip shows one journey completed start to finish.
 
 That's what we do at **Gennoor Tech** — we help small & medium businesses design, build and ship real products (web, mobile, cloud, AI) without the bloat.
 
@@ -44,7 +44,7 @@ Got an idea? Let's make it real. 📩 jalalkhan@gennoor.com · https://www.genno
 
 ## 🖼️ Video alt text (paste into LinkedIn's "Edit" → "Alt text")
 
-> Portrait screen recording of the Safar Anbiya mobile app. A child's profile opens a glowing, star-lit map of 25 prophets. The first prophet is tapped and the chapter plays through start to finish: animated illustrated story panels with Urdu narration, a moral "what would you do?" choice, a Qur'an verse shown in Arabic with recitation and Urdu meaning, a short recap quiz, and a reward screen with three gold stars, points and a badge.
+> Portrait screen recording of the Safar-e-Anbiya mobile app. A child's profile opens a glowing, star-lit map of 25 prophets. The first prophet is tapped and the chapter plays through start to finish: animated illustrated story panels with Urdu narration, a moral "what would you do?" choice, a Qur'an verse shown in Arabic with recitation and Urdu meaning, a short recap quiz, and a reward screen with three gold stars, points and a badge.
 
 *(LinkedIn alt text limit is 300 characters — the version above fits.)*
 

@@ -84,13 +84,13 @@ export default function FeaturedBuild() {
               <div className="mb-4 flex items-center gap-3">
                 <Image
                   src="/showcase/safar-anbiya/emblem.png"
-                  alt="Safar Anbiya lantern emblem"
+                  alt="Safar-e-Anbiya lantern emblem"
                   width={48}
                   height={48}
                   className="h-12 w-12 object-contain drop-shadow"
                 />
                 <h2 className="text-3xl font-black text-white lg:text-4xl">
-                  Safar Anbiya <span className="text-amber-300">· Journey of the Prophets</span>
+                  Safar-e-Anbiya <span className="text-amber-300">· Journey of the Prophets</span>
                 </h2>
               </div>
 

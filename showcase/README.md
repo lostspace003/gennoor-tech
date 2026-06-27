@@ -1,8 +1,8 @@
-# Safar Anbiya · Journey of the Prophets
+# Safar-e-Anbiya · Journey of the Prophets
 
 > A gamified Islamic learning journey for kids — travel the path of all **25 prophets** by the light of your lantern.
 
-![Safar Anbiya — Journey of the Prophets](assets/social-lockup.png)
+![Safar-e-Anbiya — Journey of the Prophets](assets/social-lockup.png)
 
 A cinematic, story-driven Progressive Web App that turns the lives of the prophets
 into an interactive adventure: each prophet has their own night sky, animated story
@@ -173,4 +173,4 @@ directly, or embed it as the product page on another site.
 
 ---
 
-*Built with care. © Safar Anbiya · gennoor.com*
+*Built with care. © Safar-e-Anbiya · gennoor.com*
