@@ -1,9 +1,9 @@
 /**
  * Lightweight in-process sliding-window rate limiter.
  *
- * Effective on the single-instance Azure App Service deployment; on
- * serverless (Vercel preview) instances are ephemeral so limits reset —
- * acceptable since production traffic is served from Azure.
+ * Effective on the single-instance Azure App Service deployment; if the app
+ * is ever scaled out, instances each keep their own window so limits are
+ * per-instance — acceptable for the current single-instance setup.
  */
 
 type Window = { count: number; resetAt: number }
@@ -38,7 +38,7 @@ export function rateLimit(key: string, max: number, windowMs: number): boolean {
   return w.count <= max
 }
 
-/** Best-effort client IP from proxy headers (Vercel / Azure App Service). */
+/** Best-effort client IP from proxy headers (Azure App Service). */
 export function clientIp(headers: { get(name: string): string | null }): string {
   const fwd = headers.get('x-forwarded-for')
   if (fwd) return fwd.split(',')[0].trim()

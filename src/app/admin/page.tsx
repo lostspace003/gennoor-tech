@@ -2151,7 +2151,6 @@ export default function AdminDashboard() {
                 { title: 'Google Analytics', description: 'Real-time traffic & behavior', href: 'https://analytics.google.com', icon: BarChart3 },
                 { title: 'Search Console', description: 'Indexing & search performance', href: 'https://search.google.com/search-console', icon: Search },
                 { title: 'Azure Portal', description: 'App Service, Storage, OpenAI', href: 'https://portal.azure.com', icon: Server },
-                { title: 'Vercel Dashboard', description: 'Deployments & env variables', href: 'https://vercel.com/dashboard', icon: Activity },
                 { title: 'Sitemap', description: 'View XML sitemap', href: '/sitemap.xml', icon: FileText },
                 { title: 'Hostinger', description: 'Domain & DNS management', href: 'https://www.hostinger.com/cpanel-login', icon: Globe },
               ].map(link => (
