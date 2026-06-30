@@ -1,7 +1,7 @@
 # Gennoor Tech — End-to-End Architecture
 
 > Enterprise AI Training & Solutions platform.
-> **Stack:** Next.js 16 (App Router) · React 19 · TypeScript · Tailwind · deployed on **Vercel**, backed by **Microsoft Azure** services.
+> **Stack:** Next.js 16 (App Router) · React 19 · TypeScript · Tailwind · deployed on **Azure App Service**, backed by **Microsoft Azure** services.
 > _Last generated: 2026-06-18_
 
 ---
@@ -18,7 +18,7 @@ graph TB
         A[Admin / Staff<br/>Gennoor team]
     end
 
-    APP([Gennoor Tech Platform<br/>Next.js 16 on Vercel])
+    APP([Gennoor Tech Platform<br/>Next.js 16 on Azure App Service])
 
     subgraph External["External & Azure Services"]
         OAI[OpenAI API<br/>AI Readiness & extraction]
@@ -53,15 +53,15 @@ graph TB
 
 ## 2. Container / Deployment Architecture (C4 Level 2)
 
-The runtime shape: one Next.js app, split into Edge + Node runtimes, fronted by Vercel's CDN.
+The runtime shape: one Next.js app running as a standalone Node server on Azure App Service.
 
 ```mermaid
 graph TB
     Client[Browser<br/>React 19 · Tailwind · framer-motion · recharts]
 
-    subgraph Vercel["▲ Vercel Platform"]
-        CDN[Edge CDN<br/>static assets · ISR cache]
-        MW[Edge Middleware<br/>middleware.ts<br/>routing + pageview hooks]
+    subgraph Azure["Azure App Service"]
+        CDN[Static assets<br/>·.next/static · public/]
+        MW[Middleware<br/>middleware.ts<br/>routing + pageview hooks]
 
         subgraph NextApp["Next.js 16 App Router"]
             RSC[Server Components<br/>marketing · academy · admin pages]
@@ -281,15 +281,14 @@ graph LR
 ```mermaid
 graph LR
     DEV[Local<br/>next dev] --> GIT[Git repo]
-    GIT -- push staging --> VS[Vercel<br/>staging deploy]
-    GIT -- push main --> VP[Vercel<br/>production deploy]
-    VS --> PREVIEW[staging URL]
-    VP --> PROD[gennoor.tech]
+    GIT -- push main --> GHA[GitHub Actions<br/>CI/CD Pipeline]
+    GHA -- build + deploy --> AZ[Azure App Service<br/>gennoor-tech]
+    AZ --> PROD[gennoor.com]
 ```
 
-- **Vercel** auto-deploys both `main` (prod) and `staging` branches (`vercel.json`).
-- Secrets via Vercel env vars (`.env.example` documents the full surface: Azure conn strings, OpenAI, Graph, Entra, SMTP fallbacks, CRM/WhatsApp toggles).
-- Build: `next build`; ISR/edge handled by Vercel; Node runtime for `/api/*`.
+- **GitHub Actions** (`.github/workflows/deploy.yml`) builds and deploys `main` to the **Azure App Service** `gennoor-tech` on every push, then runs a health check.
+- Secrets via Azure App Service config + GitHub Actions secrets (`.env.example` documents the full surface: Azure conn strings, OpenAI, Graph, Entra, SMTP fallbacks, CRM/WhatsApp toggles).
+- Build: `next build` (standalone output); Node runtime serves both pages and `/api/*`.
 
 ---
 
@@ -298,7 +297,7 @@ graph LR
 | Concern | Choice |
 |---|---|
 | Framework | Next.js 16 App Router, React 19, TypeScript |
-| Hosting | Vercel (Edge CDN + serverless functions) |
+| Hosting | Azure App Service (Next.js standalone Node server) |
 | Styling | Tailwind, framer-motion, lucide-react, recharts |
 | Admin identity | NextAuth v5 + Microsoft Entra ID (allow-list) |
 | Learner identity | Custom JWT (jose) — OTP / Google / Microsoft |

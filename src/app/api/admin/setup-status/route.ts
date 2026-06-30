@@ -83,11 +83,9 @@ export async function POST(request: NextRequest) {
 
     // Determine environment
     const env = process.env.NODE_ENV || 'unknown'
-    const isVercel = !!process.env.VERCEL
     const isAzure = !!process.env.WEBSITE_INSTANCE_ID || !!process.env.WEBSITE_NODE_DEFAULT_VERSION
     let platform = 'Local'
-    if (isVercel) platform = 'Vercel'
-    else if (isAzure) platform = 'Azure'
+    if (isAzure) platform = 'Azure'
 
     const totalChecks = Object.keys(checks).length
     const configuredCount = Object.values(checks).filter(c => c.configured).length

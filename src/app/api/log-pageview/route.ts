@@ -33,17 +33,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true, skipped: 'bot' })
     }
 
-    // Extract IP and geo from server-side headers (works on both Azure and Vercel)
+    // Extract IP and geo from server-side headers (Azure App Service)
     const ip =
       request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
       request.headers.get('x-real-ip') ||
       ''
     const country =
-      request.headers.get('x-vercel-ip-country') ||
       request.headers.get('x-azure-clientip-country') ||
       ''
     const city =
-      request.headers.get('x-vercel-ip-city') ||
       request.headers.get('x-azure-clientip-city') ||
       ''
 

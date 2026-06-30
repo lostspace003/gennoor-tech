@@ -30,16 +30,3 @@ jobs:
         env:
           NEXT_PUBLIC_BLOB_URL: "/media"
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
-
-      - name: Trigger Vercel staging redeploy
-        if: success()
-        run: |
-          if [ -n "${{ secrets.VERCEL_STAGING_DEPLOY_HOOK }}" ]; then
-            curl -X POST "${{ secrets.VERCEL_STAGING_DEPLOY_HOOK }}" \
-              -H "Content-Type: application/json" \
-              -d '{}' \
-              --max-time 30
-            echo "Vercel staging redeploy triggered"
-          else
-            echo "No Vercel deploy hook configured — build validated successfully"
-          fi

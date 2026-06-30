@@ -4,7 +4,7 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="title" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=16;fontStyle=1;fontColor=#1f2937;" value="Gennoor Tech — End-to-End Architecture&#xa;Next.js 16 (App Router) · React 19 · TypeScript · Vercel + Microsoft Azure" vertex="1">
+        <mxCell id="title" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=16;fontStyle=1;fontColor=#1f2937;" value="Gennoor Tech — End-to-End Architecture&#xa;Next.js 16 (App Router) · React 19 · TypeScript · Azure App Service + Microsoft Azure" vertex="1">
           <mxGeometry height="50" width="1220" x="40" y="20" as="geometry" />
         </mxCell>
         <mxCell id="band-users" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef2ff;strokeColor=#c7d2fe;verticalAlign=top;fontSize=11;fontStyle=1;fontColor=#4338ca;align=left;spacingLeft=12;spacingTop=8;" value="USERS" vertex="1">
@@ -19,7 +19,7 @@
         <mxCell id="u-admin" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0f2fe;strokeColor=#38bdf8;fontColor=#0c4a6e;fontSize=12;" value="🛡️ Admin / Staff&#xa;Console · analytics · content · registrations" vertex="1">
           <mxGeometry height="55" width="350" x="870" y="125" as="geometry" />
         </mxCell>
-        <mxCell id="band-vercel" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f3ff;strokeColor=#ddd6fe;verticalAlign=top;fontSize=11;fontStyle=1;fontColor=#6d28d9;align=left;spacingLeft=12;spacingTop=8;" value="EDGE &amp; APPLICATION — ▲ Vercel + Next.js 16  (Edge CDN · ISR · serverless · auto-deploy main + staging)" vertex="1">
+        <mxCell id="band-appsvc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f3ff;strokeColor=#ddd6fe;verticalAlign=top;fontSize=11;fontStyle=1;fontColor=#6d28d9;align=left;spacingLeft=12;spacingTop=8;" value="APPLICATION — Azure App Service + Next.js 16  (standalone Node server · static assets · auto-deploy main via GitHub Actions)" vertex="1">
           <mxGeometry height="260" width="1220" x="40" y="230" as="geometry" />
         </mxCell>
         <mxCell id="v-mw" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ede9fe;strokeColor=#a78bfa;fontColor=#4c1d95;fontSize=12;" value="Edge Middleware&#xa;middleware.ts — routing · admin guard · pageview hooks" vertex="1">
@@ -76,13 +76,13 @@
         <mxCell id="x-seo" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ccfbf1;strokeColor=#14b8a6;fontColor=#115e59;fontSize=12;" value="🔎 SEO automation&#xa;sitemap-index · IndexNow push · Google Search Console resubmit" vertex="1">
           <mxGeometry height="120" width="255" x="965" y="800" as="geometry" />
         </mxCell>
-        <mxCell id="e1" edge="1" parent="1" source="u-visitor" style="endArrow=block;html=1;strokeColor=#64748b;strokeWidth=2;" target="band-vercel">
+        <mxCell id="e1" edge="1" parent="1" source="u-visitor" style="endArrow=block;html=1;strokeColor=#64748b;strokeWidth=2;" target="band-appsvc">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e2" edge="1" parent="1" source="u-learner" style="endArrow=block;html=1;strokeColor=#64748b;strokeWidth=2;" target="band-vercel">
+        <mxCell id="e2" edge="1" parent="1" source="u-learner" style="endArrow=block;html=1;strokeColor=#64748b;strokeWidth=2;" target="band-appsvc">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e3" edge="1" parent="1" source="u-admin" style="endArrow=block;html=1;strokeColor=#64748b;strokeWidth=2;" target="band-vercel">
+        <mxCell id="e3" edge="1" parent="1" source="u-admin" style="endArrow=block;html=1;strokeColor=#64748b;strokeWidth=2;" target="band-appsvc">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="e4" edge="1" parent="1" source="v-mw" style="endArrow=block;html=1;strokeColor=#7c3aed;dashed=1;" target="v-rsc">
