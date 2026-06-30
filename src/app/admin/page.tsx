@@ -88,7 +88,7 @@ interface BlobInfo { name: string; containerName: string; size: number; contentT
 interface StorageData { containers: ContainerStats[]; recentBlobs: BlobInfo[] }
 interface BookingAppointment { rowKey: string; name: string; email: string; whatsapp?: string; topic?: string; serviceName: string; serviceId: string; date: string; startTime: string; endTime: string; timezone: string; country?: string; status: string; createdAt: string; graphAppointmentId?: string; joinWebUrl?: string; adminMessage?: string; acceptedAt?: string; rejectedAt?: string; changeRequestedAt?: string; cancelledAt?: string; rescheduledAt?: string; outcomeNotes?: string }
 interface OutcomeNote { text: string; createdAt: string }
-interface CallRequest { rowKey: string; name: string; email: string; whatsapp?: string; whatsappCountry?: string; company?: string; designation?: string; message?: string; programTitle?: string; timestamp?: string; createdAt: string; replied: boolean; repliedAt?: string; lastSubject?: string }
+interface CallRequest { rowKey: string; name: string; email: string; whatsapp?: string; whatsappCountry?: string; company?: string; designation?: string; message?: string; programTitle?: string; timestamp?: string; createdAt: string; replied: boolean; repliedAt?: string; lastSubject?: string; scheduled?: boolean; scheduledAt?: string; scheduledDate?: string; scheduledTime?: string; scheduledServiceName?: string; joinWebUrl?: string }
 
 // ─── Helpers ─────────────────────────────────────────────────
 
@@ -165,6 +165,8 @@ export default function AdminDashboard() {
   const [callRequestFilter, setCallRequestFilter] = useState<'all' | 'new' | 'replied'>('all')
   const [callRequestsDeleting, setCallRequestsDeleting] = useState(false)
   const [callDraft, setCallDraft] = useState<{ req: CallRequest; instructions: string; subject: string; bodyHtml: string; drafting: boolean; sending: boolean; error: string; sent: boolean } | null>(null)
+  const [callSchedule, setCallSchedule] = useState<{ req: CallRequest; date: string; time: string; serviceId: string; submitting: boolean; error: string; done: boolean; joinUrl: string } | null>(null)
+  const [bookingServices, setBookingServices] = useState<{ id: string; name: string; duration: string }[]>([])
   const [coworkData, setCoworkData] = useState<{ total: number; registrations: Array<{ fullName: string; email: string; country: string; timeZone: string; role: string; company: string; biggestWorkflow: string; createdAt: string }>; byCountry: Array<{ name: string; value: number }>; byTimezone: Array<{ name: string; value: number }> } | null>(null)
   const [indexingData, setIndexingData] = useState<{ google: Array<{ url: string; status: string }>; bing: Array<{ url: string; status: string }> } | null>(null)
   const [academyData, setAcademyData] = useState<{ learners: Array<{ email: string; name: string; provider: string; lastLogin: string; createdAt: string }>; progress: Array<{ email: string; courseId: string; chapterId: string; completionPercent: number; completed: boolean; lastAccessed: string }>; summary: { totalLearners: number; activeLearners: number; learnersWithCompletion: number; totalProgressEntries: number; byProvider: Record<string, number>; byCourse: Array<{ courseId: string; learners: number; completions: number }> }; chapterStats: Record<string, { views: number; completions: number; avgPercent: number }> } | null>(null)
@@ -428,6 +430,43 @@ export default function AdminDashboard() {
       }
     } catch {
       setCallDraft(d => d && ({ ...d, sending: false, error: 'Send failed' }))
+    }
+  }
+
+  async function loadBookingServices() {
+    if (bookingServices.length) return
+    try {
+      const r = await fetch('/api/bookings/services')
+      if (r.ok) { const d = await r.json(); if (d.success) setBookingServices(d.services || []) }
+    } catch {}
+  }
+
+  function openCallSchedule(req: CallRequest) {
+    loadBookingServices()
+    const base = req.scheduledDate ? new Date(`${req.scheduledDate}T00:00:00Z`) : new Date()
+    if (!req.scheduledDate) base.setDate(base.getDate() + 1)
+    const date = base.toISOString().slice(0, 10)
+    setCallSchedule({ req, date, time: req.scheduledTime || '15:00', serviceId: '', submitting: false, error: '', done: false, joinUrl: '' })
+  }
+
+  async function submitCallSchedule() {
+    if (!callSchedule || !callSchedule.date || !callSchedule.time) return
+    setCallSchedule(s => s && ({ ...s, submitting: true, error: '' }))
+    try {
+      const res = await fetch('/api/admin/call-requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'schedule', rowKey: callSchedule.req.rowKey, date: callSchedule.date, time: callSchedule.time, serviceId: callSchedule.serviceId || undefined }),
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setCallSchedule(s => s && ({ ...s, submitting: false, done: true, joinUrl: data.joinWebUrl || '' }))
+        refreshCallRequests()
+      } else {
+        setCallSchedule(s => s && ({ ...s, submitting: false, error: data.message || 'Failed to schedule' }))
+      }
+    } catch {
+      setCallSchedule(s => s && ({ ...s, submitting: false, error: 'Failed to schedule meeting' }))
     }
   }
 
@@ -1050,9 +1089,11 @@ export default function AdminDashboard() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap mb-1">
                               <h3 className="text-sm font-semibold text-slate-800">{cr.name || 'Unknown'}</h3>
-                              {cr.replied
-                                ? <span className="px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">Replied</span>
-                                : <span className="px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-700">New</span>}
+                              {cr.scheduled
+                                ? <span className="px-2 py-0.5 rounded text-xs font-medium bg-teal-100 text-teal-700">Scheduled</span>
+                                : cr.replied
+                                  ? <span className="px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">Replied</span>
+                                  : <span className="px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-700">New</span>}
                               {cr.programTitle && <span className="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600">{cr.programTitle}</span>}
                             </div>
                             <div className="grid sm:grid-cols-2 gap-x-4 gap-y-1 mt-2 text-sm">
@@ -1084,11 +1125,20 @@ export default function AdminDashboard() {
                                 <span className="font-medium text-slate-700">Message:</span> {cr.message}
                               </div>
                             )}
-                            {cr.replied && cr.repliedAt && (
+                            {cr.replied && cr.repliedAt && !cr.scheduled && (
                               <p className="mt-2 text-xs text-emerald-700">Replied {new Date(cr.repliedAt).toLocaleString()}{cr.lastSubject ? ` · "${cr.lastSubject}"` : ''}</p>
+                            )}
+                            {cr.scheduled && cr.scheduledDate && (
+                              <p className="mt-2 text-xs text-teal-700">
+                                Meeting scheduled · {cr.scheduledDate} at {cr.scheduledTime} IST{cr.scheduledServiceName ? ` · ${cr.scheduledServiceName}` : ''}
+                                {cr.joinWebUrl && <> · <a href={cr.joinWebUrl} target="_blank" rel="noopener noreferrer" className="underline font-medium">Teams link</a></>}
+                              </p>
                             )}
                           </div>
                           <div className="flex flex-wrap sm:flex-col gap-2 shrink-0">
+                            <button onClick={() => openCallSchedule(cr)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors">
+                              <Calendar className="w-3.5 h-3.5" /> {cr.scheduled ? 'Reschedule' : 'Schedule meeting'}
+                            </button>
                             <button onClick={() => openCallDraft(cr)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors">
                               <Bot className="w-3.5 h-3.5" /> {cr.replied ? 'Draft again' : 'Draft & send reply'}
                             </button>
@@ -1405,6 +1455,70 @@ export default function AdminDashboard() {
                       className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors disabled:opacity-50">
                       {callDraft.sending ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                       {callDraft.sending ? 'Sending…' : 'Send reply'}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ─── SCHEDULE MEETING (call request) ─────────────── */}
+        {callSchedule && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50" onClick={() => setCallSchedule(null)}>
+            <div className="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center justify-between p-5 border-b border-slate-200">
+                <div>
+                  <h2 className="text-lg font-semibold text-slate-800">Schedule meeting</h2>
+                  <p className="text-xs text-slate-500 mt-0.5">With {callSchedule.req.name || callSchedule.req.email} · creates a Microsoft Teams meeting</p>
+                </div>
+                <button onClick={() => setCallSchedule(null)} className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"><X className="w-5 h-5" /></button>
+              </div>
+
+              {callSchedule.done ? (
+                <div className="p-6 text-center">
+                  <CheckCircle className="w-10 h-10 text-emerald-500 mx-auto mb-3" />
+                  <p className="text-slate-800 font-medium">Meeting scheduled with {callSchedule.req.name || callSchedule.req.email}</p>
+                  <p className="text-sm text-slate-500 mt-1">A branded confirmation with the Teams link was emailed (CC admin@gennoor.com).</p>
+                  {callSchedule.joinUrl && (
+                    <a href={callSchedule.joinUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
+                      <Calendar className="w-4 h-4" /> Open Teams meeting
+                    </a>
+                  )}
+                  <div><button onClick={() => setCallSchedule(null)} className="mt-4 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition-colors">Close</button></div>
+                </div>
+              ) : (
+                <div className="p-5 space-y-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-slate-500 mb-1">Date</label>
+                      <input type="date" value={callSchedule.date} onChange={e => setCallSchedule(s => s && ({ ...s, date: e.target.value }))}
+                        className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-500 mb-1">Time (IST)</label>
+                      <input type="time" value={callSchedule.time} onChange={e => setCallSchedule(s => s && ({ ...s, time: e.target.value }))}
+                        className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-slate-500 mb-1">Service</label>
+                    <select value={callSchedule.serviceId} onChange={e => setCallSchedule(s => s && ({ ...s, serviceId: e.target.value }))}
+                      className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+                      <option value="">Discovery Call (default)</option>
+                      {bookingServices.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                    </select>
+                  </div>
+                  <p className="text-xs text-slate-500">Times are in IST. The customer gets a branded confirmation with the Teams join link; admin@gennoor.com is CC&apos;d.</p>
+
+                  {callSchedule.error && <p className="text-sm text-red-600">{callSchedule.error}</p>}
+
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                    <button onClick={() => setCallSchedule(null)} className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">Cancel</button>
+                    <button onClick={submitCallSchedule} disabled={callSchedule.submitting || !callSchedule.date || !callSchedule.time}
+                      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                      {callSchedule.submitting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Calendar className="w-4 h-4" />}
+                      {callSchedule.submitting ? 'Scheduling…' : 'Schedule & notify'}
                     </button>
                   </div>
                 </div>

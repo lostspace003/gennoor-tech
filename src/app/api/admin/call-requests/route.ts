@@ -3,6 +3,97 @@ import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 import { getEnquiries, updateEnquiry, deleteEnquiry } from '@/lib/azure-storage'
 import { sendEmail } from '@/lib/email-service'
 import { trackEvent, initAppInsights } from '@/lib/analytics'
+import {
+  createBookingAppointment,
+  getBookingServices,
+  getConfiguredBusinessId,
+  type CreateAppointmentPayload,
+} from '@/lib/microsoft-graph'
+
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
+// Admin enters the agreed date/time as IST wall-clock. We format those values
+// directly (no conversion) and label them IST. date = 'YYYY-MM-DD', time = 'HH:MM'.
+function formatWhenIST(date: string, time: string, durationMinutes: number) {
+  const start = new Date(`${date}T${time}:00Z`)
+  const end = new Date(start.getTime() + durationMinutes * 60000)
+  const clock = (d: Date) => {
+    let h = d.getUTCHours()
+    const m = d.getUTCMinutes()
+    const ampm = h < 12 ? 'AM' : 'PM'
+    h = h % 12 || 12
+    return `${h}:${String(m).padStart(2, '0')} ${ampm}`
+  }
+  return {
+    dateLabel: `${WEEKDAYS[start.getUTCDay()]}, ${start.getUTCDate()} ${MONTHS[start.getUTCMonth()]} ${start.getUTCFullYear()}`,
+    timeLabel: `${clock(start)} – ${clock(end)} (IST)`,
+    durationLabel: durationMinutes >= 60 ? `${Math.floor(durationMinutes / 60)}h ${durationMinutes % 60 ? (durationMinutes % 60) + 'm' : ''}`.trim() : `${durationMinutes} minutes`,
+  }
+}
+
+// Branded confirmation email (mirrors the calendar "Accept" confirmation).
+function buildConfirmationEmail(opts: {
+  name: string
+  serviceName: string
+  when: { dateLabel: string; timeLabel: string; durationLabel: string }
+  joinWebUrl?: string
+  topic?: string
+}) {
+  const { name, serviceName, when, joinWebUrl, topic } = opts
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.gennoor.com'
+  const row = (label: string, value: string) =>
+    `<tr>
+      <td style="padding:10px 14px;border-bottom:1px solid #eef2f7;font-size:13px;color:#64748b;width:120px;vertical-align:top">${label}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #eef2f7;font-size:14px;color:#0f172a;font-weight:600">${value}</td>
+    </tr>`
+  return `
+    <div style="font-family:'Segoe UI',Arial,sans-serif;background:#f1f5f9;padding:24px 12px;margin:0">
+      <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e2e8f0">
+        <div style="background:linear-gradient(135deg,#2563eb 0%,#7c3aed 100%);padding:34px 28px;text-align:center">
+          <div style="font-size:30px;line-height:1;margin-bottom:8px">✅</div>
+          <h1 style="color:#ffffff;margin:0;font-size:22px;font-weight:700">Your call is confirmed</h1>
+          <p style="color:#dbeafe;margin:6px 0 0;font-size:14px">Gennoor Tech · ${esc(serviceName)}</p>
+        </div>
+        <div style="padding:30px 28px">
+          <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 22px">
+            Hi <strong>${esc(name)}</strong>, thanks for your interest in Gennoor Tech. Your call with
+            <strong>Jalal Khan</strong> is locked in — everything you need is below.
+          </p>
+          <table style="width:100%;border-collapse:collapse;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin:0 0 24px">
+            ${row('Service', esc(serviceName))}
+            ${row('Date', when.dateLabel)}
+            ${row('Time', when.timeLabel)}
+            ${row('Duration', when.durationLabel)}
+            ${row('Host', 'Jalal Khan · Founder &amp; Principal AI Consultant, Gennoor Tech')}
+            ${row('Format', 'Online · Microsoft Teams (link below)')}
+            ${topic ? row('Your note', esc(topic)) : ''}
+          </table>
+          ${joinWebUrl ? `
+            <div style="text-align:center;margin:0 0 26px">
+              <a href="${joinWebUrl}" style="display:inline-block;background:#2563eb;color:#ffffff;text-decoration:none;padding:14px 40px;border-radius:9px;font-size:15px;font-weight:700">
+                Join Microsoft Teams Meeting
+              </a>
+              <p style="color:#94a3b8;font-size:12px;margin:10px 0 0">A calendar invite with this link has also been emailed to you — save it to your calendar.</p>
+            </div>
+          ` : ''}
+          <div style="border-top:1px solid #e5e7eb;padding-top:18px;margin:0 0 8px">
+            <p style="color:#64748b;font-size:13px;line-height:1.6;margin:0">
+              Need to reschedule or can't make it? Just reply to this email and we'll sort it out.
+            </p>
+          </div>
+        </div>
+        <div style="background:#0f172a;padding:22px 28px;text-align:center">
+          <p style="color:#cbd5e1;margin:0;font-size:13px;font-weight:600">Gennoor Tech</p>
+          <p style="color:#64748b;margin:5px 0 0;font-size:11px">Enterprise AI Training, Certification &amp; Solutions</p>
+          <p style="color:#475569;margin:8px 0 0;font-size:11px">
+            <a href="mailto:schedule@gennoor.com" style="color:#94a3b8;text-decoration:none">schedule@gennoor.com</a> ·
+            <a href="${siteUrl}" style="color:#94a3b8;text-decoration:none">www.gennoor.com</a>
+          </p>
+        </div>
+      </div>
+    </div>`
+}
 
 // User-supplied text gets interpolated into email HTML — escape it so markup
 // can't be injected.
@@ -41,6 +132,12 @@ export async function GET(request: NextRequest) {
       replied: r.replied === true || r.replied === 'true',
       repliedAt: r.repliedAt || '',
       lastSubject: r.lastSubject || '',
+      scheduled: r.scheduled === true || r.scheduled === 'true',
+      scheduledAt: r.scheduledAt || '',
+      scheduledDate: r.scheduledDate || '',
+      scheduledTime: r.scheduledTime || '',
+      scheduledServiceName: r.scheduledServiceName || '',
+      joinWebUrl: r.joinWebUrl || '',
     }))
     requests.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     return NextResponse.json({ success: true, requests })
@@ -159,6 +256,103 @@ export async function POST(request: NextRequest) {
         success: true,
         subject: draft.subject || `Discovery Call with Gennoor Tech — ${firstName}`,
         bodyHtml: draft.body || '',
+      })
+    }
+
+    // ─── Schedule a real Microsoft Teams meeting for this call request ───────
+    if (action === 'schedule') {
+      const { date, time, serviceId, durationMinutes: durOverride } = body
+      if (!rowKey || !date || !time) {
+        return NextResponse.json({ success: false, message: 'rowKey, date and time are required' }, { status: 400 })
+      }
+      const rows = await getEnquiries('ExpertCallBooking', 730)
+      const req = rows.find(r => r.rowKey === rowKey)
+      if (!req) return NextResponse.json({ success: false, message: 'Request not found' }, { status: 404 })
+      if (!req.email) return NextResponse.json({ success: false, message: 'This request has no email address to invite.' }, { status: 400 })
+
+      const businessId = getConfiguredBusinessId()
+      const services = await getBookingServices(businessId)
+      if (!services.length) {
+        return NextResponse.json({ success: false, message: 'No bookable services are configured in Microsoft Bookings.' }, { status: 502 })
+      }
+      const service =
+        services.find(s => s.id === serviceId) ||
+        services.find(s => /discovery/i.test(s.displayName)) ||
+        services[0]
+
+      const durationMatch = service?.defaultDuration?.match(/PT(\d+)H?(\d+)?M?/)
+      const durationMinutes = Number(durOverride) || (durationMatch
+        ? (parseInt(durationMatch[1] || '0') * 60) + parseInt(durationMatch[2] || '0')
+        : 30)
+
+      // Admin entered IST wall-clock. Send IST local datetimes to Graph with the
+      // India Standard Time zone so Bookings stores the correct instant.
+      const startInstant = new Date(`${date}T${time}:00Z`)
+      const endInstant = new Date(startInstant.getTime() + durationMinutes * 60000)
+      const startLocal = `${date}T${time}:00`
+      const endLocal = endInstant.toISOString().split('.')[0]
+
+      const appointment: CreateAppointmentPayload = {
+        serviceId: service.id,
+        serviceName: service.displayName,
+        startDateTime: { dateTime: startLocal, timeZone: 'India Standard Time' },
+        endDateTime: { dateTime: endLocal, timeZone: 'India Standard Time' },
+        isLocationOnline: true,
+        staffMemberIds: service.staffMemberIds?.length ? service.staffMemberIds : undefined,
+        customers: [{
+          '@odata.type': '#microsoft.graph.bookingCustomerInformation',
+          name: req.name || '',
+          emailAddress: req.email,
+          phone: req.whatsapp || '',
+          notes: req.message || '',
+          timeZone: 'India Standard Time',
+        }],
+        customerNotes: [
+          req.programTitle ? `Program: ${req.programTitle}` : '',
+          req.company ? `Company: ${req.company}` : '',
+          req.whatsapp ? `WhatsApp: ${req.whatsapp}` : '',
+        ].filter(Boolean).join(' | '),
+        optOutOfCustomerEmail: true,
+      }
+
+      const result = await createBookingAppointment(businessId, appointment)
+
+      const when = formatWhenIST(date, time, durationMinutes)
+      const emailRes = await sendEmail({
+        to: req.email,
+        cc: process.env.EMAIL_ADMIN || 'admin@gennoor.com',
+        from: process.env.EMAIL_FROM_SCHEDULE || 'schedule@gennoor.com',
+        fromName: 'Gennoor Tech',
+        subject: `Confirmed: ${service.displayName} with Jalal Khan — ${when.dateLabel}`,
+        html: buildConfirmationEmail({
+          name: req.name || 'there',
+          serviceName: service.displayName,
+          when,
+          joinWebUrl: result.joinWebUrl,
+          topic: req.message,
+        }),
+      }).catch(e => ({ success: false, error: (e as Error).message }))
+
+      await updateEnquiry('ExpertCallBooking', rowKey, {
+        scheduled: true,
+        scheduledAt: new Date().toISOString(),
+        scheduledDate: date,
+        scheduledTime: time,
+        scheduledServiceName: service.displayName,
+        graphAppointmentId: result.id || '',
+        joinWebUrl: result.joinWebUrl || '',
+        replied: true,
+        repliedAt: new Date().toISOString(),
+      }).catch(() => {})
+
+      trackEvent('CallRequestScheduled', { name: req.name, email: req.email, service: service.displayName })
+      return NextResponse.json({
+        success: true,
+        message: emailRes.success === false
+          ? 'Meeting scheduled, but the confirmation email failed to send.'
+          : 'Meeting scheduled. Customer notified with the Teams link.',
+        joinWebUrl: result.joinWebUrl,
+        emailSent: emailRes.success !== false,
       })
     }
 
