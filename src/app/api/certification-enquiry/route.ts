@@ -95,6 +95,13 @@ export async function POST(request: Request) {
               <li>Free retake session if needed</li>
             </ul>
 
+            <div style="background: #f8fafc; border-left: 4px solid #2563eb; padding: 20px; margin: 25px 0; border-radius: 0 8px 8px 0;">
+              <p style="color: #1e293b; margin: 0 0 6px; font-weight: 600; font-size: 16px;">📎 Explore our full catalog</p>
+              <p style="color: #475569; margin: 0; line-height: 1.7; font-size: 15px;">
+                We've attached it (Excel): certification tracks plus our full training programs, PoC blueprints, and free resources — all in one place.
+              </p>
+            </div>
+
             <div style="border-top: 2px solid #e5e7eb; padding-top: 25px; margin-top: 35px;">
               <h4 style="color: #1f2937; margin-bottom: 15px;">Get in Touch:</h4>
               <table style="width: 100%; color: #4b5563; line-height: 2;">
