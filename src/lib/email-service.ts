@@ -312,6 +312,14 @@ export async function sendTrainingEnquiryEmail(data: {
           <li>Post-training support details</li>
         </ul>
 
+        <div style="background: #f8fafc; border-left: 4px solid #2563eb; padding: 20px; margin: 25px 0; border-radius: 0 8px 8px 0;">
+          <p style="color: #1e293b; margin: 0 0 6px; font-weight: 600; font-size: 16px;">📎 Explore our full catalog</p>
+          <p style="color: #475569; margin: 0; line-height: 1.7; font-size: 15px;">
+            Along with this program's details, we've attached our full catalog (Excel): every training program,
+            PoC blueprint, and free resource in one place — so you can see everything we offer at a glance.
+          </p>
+        </div>
+
         <h3 style="color: #333; margin-top: 30px;">Your Training Requirements:</h3>
         <div style="background: #ffffff; border: 1px solid #e0e0e0; padding: 20px; border-radius: 5px;">
           <table style="width: 100%; color: #555;">

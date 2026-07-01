@@ -93,6 +93,14 @@ export async function POST(request: Request) {
               <li>We'll finalize the schedule and delivery format</li>
             </ol>
 
+            <div style="background: #f8fafc; border-left: 4px solid #2563eb; padding: 20px; margin: 25px 0; border-radius: 0 8px 8px 0;">
+              <p style="color: #1e293b; margin: 0 0 6px; font-weight: 600; font-size: 16px;">📎 While you wait — explore our full catalog</p>
+              <p style="color: #475569; margin: 0; line-height: 1.7; font-size: 15px;">
+                We've attached it (Excel): every training program, PoC blueprint, and free resource in one place.
+                Have a look and note anything relevant so we can dive straight in on the call.
+              </p>
+            </div>
+
             <div style="border-top: 2px solid #e5e7eb; padding-top: 25px; margin-top: 35px;">
               <h4 style="color: #1f2937; margin-bottom: 15px;">Reach Us Anytime:</h4>
               <table style="width: 100%; color: #4b5563; line-height: 2;">
