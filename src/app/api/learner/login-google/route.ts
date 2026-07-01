@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createRemoteJWKSet, jwtVerify } from 'jose'
 import { createLearnerToken, learnerCookieOptions } from '@/lib/learner-auth'
-import { saveLearner } from '@/lib/azure-storage'
+import { saveLearner, getLearner } from '@/lib/azure-storage'
+import { sendAcademyWelcomeEmail } from '@/lib/email-service'
 
 const GOOGLE_JWKS = createRemoteJWKSet(new URL('https://www.googleapis.com/oauth2/v3/certs'))
 
@@ -30,7 +31,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No email in Google token' }, { status: 400 })
     }
 
+    const isNewLearner = !(await getLearner(email))
     await saveLearner({ email, name, provider: 'google' })
+    if (isNewLearner) {
+      sendAcademyWelcomeEmail({ name, email }).catch(err =>
+        console.error('Academy welcome email failed:', err),
+      )
+    }
     const token = await createLearnerToken({ email, name, provider: 'google' })
 
     const response = NextResponse.json({ success: true, name, email })

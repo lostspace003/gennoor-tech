@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { sendEmail } from '@/lib/email-service'
+import { sendEmail, catalogExcelAttachment } from '@/lib/email-service'
 import { trackEvent, trackException, initAppInsights } from '@/lib/analytics'
 import { saveEnquiry } from '@/lib/azure-storage'
 
@@ -44,6 +44,7 @@ export async function POST(request: Request) {
     })
 
     // Send confirmation email to user
+    const catalog = await catalogExcelAttachment()
     await sendEmail({
       to: email,
       cc: process.env.CC_ENQUIRY_ON_CERTIFICATION === 'true'
@@ -52,6 +53,7 @@ export async function POST(request: Request) {
       from: process.env.EMAIL_FROM_ENQUIRY || 'enquiry@gennoor.com',
       fromName: 'Gennoor Tech Certification Team',
       subject: `Certification Preparation Guide: ${selectedCertification} | Gennoor Tech`,
+      attachments: catalog ? [catalog] : undefined,
       html: `
         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); padding: 40px 30px; text-align: center; border-radius: 10px 10px 0 0;">

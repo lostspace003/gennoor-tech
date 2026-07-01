@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createLearnerToken, learnerCookieOptions } from '@/lib/learner-auth'
-import { saveLearner } from '@/lib/azure-storage'
+import { saveLearner, getLearner } from '@/lib/azure-storage'
+import { sendAcademyWelcomeEmail } from '@/lib/email-service'
 
 export async function GET(request: NextRequest) {
   const publicOrigin = process.env.NEXTAUTH_URL || request.nextUrl.origin
@@ -54,7 +55,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(new URL('/ai-academy?error=no_email', publicOrigin))
     }
 
+    const isNewLearner = !(await getLearner(email))
     await saveLearner({ email, name, provider: 'microsoft' })
+    if (isNewLearner) {
+      sendAcademyWelcomeEmail({ name, email }).catch(err =>
+        console.error('Academy welcome email failed:', err),
+      )
+    }
     const token = await createLearnerToken({ email, name, provider: 'microsoft' })
 
     const response = NextResponse.redirect(new URL(returnTo, publicOrigin))

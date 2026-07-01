@@ -197,6 +197,64 @@ export async function attachPDF(filename: string, filepath: string) {
   }
 }
 
+// The master catalog workbook, attached to enquiry confirmations and the academy
+// welcome email. Lives in public/ so it ships with the deployment.
+export async function catalogExcelAttachment() {
+  try {
+    const fullPath = path.join(process.cwd(), 'public', 'Gennoor-Tech-Catalog', 'Gennoor-Tech-Catalog.xlsx')
+    const content = await readFile(fullPath)
+    return {
+      filename: 'Gennoor-Tech-Catalog.xlsx',
+      content,
+      contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    }
+  } catch (error) {
+    console.error('Failed to attach catalog Excel:', error)
+    return null
+  }
+}
+
+// Welcome email sent once, on a learner's first Academy sign-in. Carries the catalog.
+export async function sendAcademyWelcomeEmail(data: { name: string; email: string }) {
+  const firstName = (data.name || 'there').trim().split(/\s+/)[0] || 'there'
+  const catalog = await catalogExcelAttachment()
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.gennoor.com'
+  const html = `
+    <div style="font-family:'Segoe UI',Arial,sans-serif;background:#f1f5f9;padding:24px 12px;margin:0">
+      <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e2e8f0">
+        <div style="background:#0C1426;padding:30px 28px;text-align:center">
+          <h1 style="color:#ffffff;margin:0;font-size:24px;font-weight:800">Gennoor Tech</h1>
+          <p style="color:#93b4ff;margin:6px 0 0;font-size:12px;letter-spacing:2px">TRAIN. INNOVATE. BUILD.</p>
+        </div>
+        <div style="padding:32px 28px;color:#374151;font-size:15px;line-height:1.7">
+          <h2 style="color:#0f172a;margin:0 0 12px;font-size:20px">Welcome to Gennoor AI Academy, ${firstName} 🎓</h2>
+          <p style="margin:0 0 16px">You're in. You now have free, self-paced access to our full course library — interactive lessons, videos, and readings across foundations, function, leadership, industry, builder, and applied tracks.</p>
+          <div style="background:#f8fafc;border-left:4px solid #2563EB;padding:16px 18px;border-radius:0 8px 8px 0;margin:0 0 20px">
+            <p style="margin:0;color:#334155"><strong>Attached:</strong> our full catalog (Excel) — every course, PoC blueprint, and free resource in one place.</p>
+          </div>
+          <div style="text-align:center;margin:24px 0">
+            <a href="${siteUrl}/academy" style="display:inline-block;background:#2563EB;color:#ffffff;text-decoration:none;padding:13px 34px;border-radius:9px;font-size:15px;font-weight:700">Start learning</a>
+          </div>
+          <p style="margin:0;color:#64748b;font-size:13px">Want something tailored for your team? Reach us at
+            <a href="mailto:admin@gennoor.com" style="color:#2563EB">admin@gennoor.com</a> or +91 9326352241.</p>
+        </div>
+        <div style="background:#0C1426;padding:18px 28px;text-align:center">
+          <p style="color:#94a3b8;margin:0;font-size:11px">
+            <a href="mailto:admin@gennoor.com" style="color:#93b4ff;text-decoration:none">admin@gennoor.com</a> ·
+            <a href="${siteUrl}" style="color:#93b4ff;text-decoration:none">www.gennoor.com</a></p>
+        </div>
+      </div>
+    </div>`
+  return sendEmail({
+    to: data.email,
+    from: process.env.EMAIL_FROM_INFO || 'info@gennoor.com',
+    fromName: 'Gennoor AI Academy',
+    subject: 'Welcome to Gennoor AI Academy 🎓',
+    html,
+    attachments: catalog ? [catalog] : undefined,
+  })
+}
+
 export async function sendTrainingEnquiryEmail(data: {
   name: string
   email: string
@@ -320,6 +378,10 @@ export async function sendTrainingEnquiryEmail(data: {
     </div>
   `
 
+  const catalog = await catalogExcelAttachment()
+  const trainingAttachments = [attachment, catalog].filter(
+    (a): a is { filename: string; content: Buffer; contentType: string } => Boolean(a),
+  )
   await sendEmail({
     to: data.email,
     cc: process.env.CC_SALES_ON_TRAINING === 'true' ? [process.env.EMAIL_ADMIN || 'admin@gennoor.com'] : undefined,
@@ -327,7 +389,7 @@ export async function sendTrainingEnquiryEmail(data: {
     fromName: 'Gennoor Tech Training',
     subject: `${data.programType === 'bootcamp' ? 'Bootcamp' : 'Course'} Details: ${data.programTitle} | Gennoor Tech`,
     html: userEmailHtml,
-    attachments: attachment ? [attachment] : undefined,
+    attachments: trainingAttachments.length ? trainingAttachments : undefined,
   })
 
   const adminEmailHtml = `
