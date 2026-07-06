@@ -19,7 +19,7 @@ export default function PrivacyPage() {
             Privacy Policy
           </span>
           <h1 className="text-3xl font-black text-gray-900 mb-2">Privacy Policy</h1>
-          <p className="text-sm text-gray-500">Last updated: March 18, 2026</p>
+          <p className="text-sm text-gray-500">Last updated: July 6, 2026</p>
         </div>
       </section>
 
@@ -101,6 +101,20 @@ export default function PrivacyPage() {
             <p>
               We may update this policy from time to time. Changes will be posted on this page with an updated date.
             </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">YouTube API Services</h2>
+            <p>
+              Gennoor Tech operates the YouTube channel <strong>&quot;AI in 45 Seconds&quot;</strong> (<a href="https://www.youtube.com/@AIin45Seconds-gennoor" className="text-primary-600 hover:underline" target="_blank" rel="noopener noreferrer">https://www.youtube.com/@AIin45Seconds-gennoor</a>). To publish and manage videos on our own channel, we use an internal automation tool that accesses <strong>YouTube API Services</strong>.
+            </p>
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+              <li>Our use of YouTube API Services is limited to <strong>our own channel</strong>: uploading our own videos, setting their titles and descriptions, posting comments from our channel, and reading our own channel&apos;s performance statistics.</li>
+              <li>We do <strong>not</strong> collect, store, or process any data about YouTube users or visitors through the YouTube API. No third party can access YouTube data through our tool.</li>
+              <li>Authorization tokens for our own account are stored encrypted in Microsoft Azure Key Vault and are never shared.</li>
+              <li>By using YouTube API Services, we agree to be bound by the <a href="https://www.youtube.com/t/terms" className="text-primary-600 hover:underline" target="_blank" rel="noopener noreferrer">YouTube Terms of Service</a>. Users interacting with our channel are subject to the <a href="https://policies.google.com/privacy" className="text-primary-600 hover:underline" target="_blank" rel="noopener noreferrer">Google Privacy Policy</a>.</li>
+              <li>To revoke any permission you may have granted to Google/YouTube services, visit your <a href="https://security.google.com/settings/security/permissions" className="text-primary-600 hover:underline" target="_blank" rel="noopener noreferrer">Google security settings</a>.</li>
+            </ul>
           </section>
 
           <section>
