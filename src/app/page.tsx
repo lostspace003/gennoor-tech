@@ -11,6 +11,7 @@ import Testimonials from '@/components/home/Testimonials'
 import POCShowcase from '@/components/home/POCShowcase'
 import FeaturedBuild from '@/components/home/FeaturedBuild'
 import YouTubeVideos from '@/components/home/YouTubeVideos'
+import AIin45SecondsShorts from '@/components/home/AIin45SecondsShorts'
 import LatestBlog from '@/components/home/LatestBlog'
 import CTASection from '@/components/home/CTASection'
 import AcademyCTA from '@/components/home/AcademyCTA'
@@ -63,6 +64,10 @@ export default function HomePage() {
 
       <ScrollReveal>
         <YouTubeVideos />
+      </ScrollReveal>
+
+      <ScrollReveal>
+        <AIin45SecondsShorts />
       </ScrollReveal>
 
       <ScrollReveal>

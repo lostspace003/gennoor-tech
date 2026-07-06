@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, Youtube, Play, Film } from 'lucide-react'
-import { getYouTubeVideos, getYouTubePlaylists } from '@/lib/youtube'
+import { getYouTubeVideos, getYouTubePlaylists, getAIin45SecondsVideos } from '@/lib/youtube'
 import YouTubeGrid from '@/components/YouTubeGrid'
+import ShortsStrip from '@/components/ShortsStrip'
 
 export const metadata: Metadata = {
   title: 'Videos',
@@ -12,9 +13,10 @@ export const metadata: Metadata = {
 export const revalidate = 21600
 
 export default async function VideosPage() {
-  const [videos, playlists] = await Promise.all([
+  const [videos, playlists, shorts] = await Promise.all([
     getYouTubeVideos(50),
     getYouTubePlaylists(),
+    getAIin45SecondsVideos(12),
   ])
 
   return (
@@ -70,6 +72,30 @@ export default async function VideosPage() {
           </div>
         </div>
       </section>
+
+      {/* AI in 45 Seconds shorts */}
+      {shorts.length > 0 && (
+        <section className="py-6">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-end mb-6">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">AI in 45 Seconds</h2>
+                <p className="text-sm text-gray-500">Daily AI explainers from our shorts channel</p>
+              </div>
+              <a
+                href="https://www.youtube.com/@AIin45Seconds-gennoor?sub_confirmation=1"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden sm:inline-flex items-center gap-1.5 text-primary-600 font-semibold text-sm hover:text-primary-700 transition-colors"
+              >
+                <Youtube className="w-4 h-4" />
+                Subscribe
+              </a>
+            </div>
+            <ShortsStrip videos={shorts} />
+          </div>
+        </section>
+      )}
 
       {/* Videos Grid */}
       <section className="py-6">
