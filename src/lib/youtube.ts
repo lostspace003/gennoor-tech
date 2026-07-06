@@ -1,5 +1,6 @@
 const API_KEY = process.env.YOUTUBE_API_KEY
 const CHANNEL_HANDLE = '@GennoorTech'
+const SHORTS_CHANNEL_HANDLE = '@AIin45Seconds-gennoor'
 const API_BASE = 'https://www.googleapis.com/youtube/v3'
 
 export interface YouTubeVideo {
@@ -37,10 +38,10 @@ function parseDuration(iso: string): { formatted: string; seconds: number } {
   return { formatted, seconds }
 }
 
-async function getChannelId(): Promise<string | null> {
+async function getChannelId(handle = CHANNEL_HANDLE): Promise<string | null> {
   if (!API_KEY) return null
   const res = await fetch(
-    `${API_BASE}/channels?part=contentDetails&forHandle=${CHANNEL_HANDLE}&key=${API_KEY}`,
+    `${API_BASE}/channels?part=contentDetails&forHandle=${handle}&key=${API_KEY}`,
     { next: { revalidate: 21600 } }
   )
   if (!res.ok) return null
@@ -48,10 +49,10 @@ async function getChannelId(): Promise<string | null> {
   return data.items?.[0]?.id || null
 }
 
-async function getUploadsPlaylistId(): Promise<string | null> {
+async function getUploadsPlaylistId(handle: string): Promise<string | null> {
   if (!API_KEY) return null
   const res = await fetch(
-    `${API_BASE}/channels?part=contentDetails&forHandle=${CHANNEL_HANDLE}&key=${API_KEY}`,
+    `${API_BASE}/channels?part=contentDetails&forHandle=${handle}&key=${API_KEY}`,
     { next: { revalidate: 21600 } }
   )
   if (!res.ok) return null
@@ -96,32 +97,57 @@ async function getPlaylistVideoIds(playlistId: string): Promise<string[]> {
   return (data.items || []).map((item: any) => item.snippet?.resourceId?.videoId).filter(Boolean)
 }
 
-export async function getYouTubeVideos(maxResults = 50): Promise<YouTubeVideo[]> {
+async function fetchUploadedVideos(handle: string, maxResults: number): Promise<YouTubeVideo[]> {
   if (!API_KEY) return []
 
+  const playlistId = await getUploadsPlaylistId(handle)
+  if (!playlistId) return []
+
+  const playlistRes = await fetch(
+    `${API_BASE}/playlistItems?part=snippet&playlistId=${playlistId}&maxResults=${maxResults}&key=${API_KEY}`,
+    { next: { revalidate: 21600 } }
+  )
+  if (!playlistRes.ok) return []
+  const playlistData = await playlistRes.json()
+
+  const videoIds = playlistData.items
+    ?.map((item: any) => item.snippet?.resourceId?.videoId)
+    .filter(Boolean)
+    .join(',')
+  if (!videoIds) return []
+
+  const videosRes = await fetch(
+    `${API_BASE}/videos?part=snippet,statistics,contentDetails&id=${videoIds}&key=${API_KEY}`,
+    { next: { revalidate: 21600 } }
+  )
+  if (!videosRes.ok) return []
+  const videosData = await videosRes.json()
+
+  return (videosData.items || []).map((item: any) => {
+    const { formatted, seconds } = parseDuration(item.contentDetails?.duration || '')
+    return {
+      id: item.id,
+      title: item.snippet.title,
+      description: item.snippet.description,
+      thumbnail: item.snippet.thumbnails?.maxres?.url
+        || item.snippet.thumbnails?.high?.url
+        || item.snippet.thumbnails?.medium?.url
+        || '',
+      publishedAt: item.snippet.publishedAt,
+      viewCount: parseInt(item.statistics?.viewCount || '0'),
+      likeCount: parseInt(item.statistics?.likeCount || '0'),
+      duration: formatted,
+      durationSeconds: seconds,
+      channelTitle: item.snippet.channelTitle,
+      playlists: [],
+    }
+  })
+}
+
+export async function getYouTubeVideos(maxResults = 50): Promise<YouTubeVideo[]> {
   try {
-    const playlistId = await getUploadsPlaylistId()
-    if (!playlistId) return []
-
-    const playlistRes = await fetch(
-      `${API_BASE}/playlistItems?part=snippet&playlistId=${playlistId}&maxResults=${maxResults}&key=${API_KEY}`,
-      { next: { revalidate: 21600 } }
-    )
-    if (!playlistRes.ok) return []
-    const playlistData = await playlistRes.json()
-
-    const videoIds = playlistData.items
-      ?.map((item: any) => item.snippet?.resourceId?.videoId)
-      .filter(Boolean)
-      .join(',')
-    if (!videoIds) return []
-
-    const videosRes = await fetch(
-      `${API_BASE}/videos?part=snippet,statistics,contentDetails&id=${videoIds}&key=${API_KEY}`,
-      { next: { revalidate: 21600 } }
-    )
-    if (!videosRes.ok) return []
-    const videosData = await videosRes.json()
+    const videos = await fetchUploadedVideos(CHANNEL_HANDLE, maxResults)
+    if (videos.length === 0) return []
 
     const playlists = await getYouTubePlaylists()
     const playlistMap: Record<string, string[]> = {}
@@ -136,27 +162,18 @@ export async function getYouTubeVideos(maxResults = 50): Promise<YouTubeVideo[]>
       })
     )
 
-    return (videosData.items || []).map((item: any) => {
-      const { formatted, seconds } = parseDuration(item.contentDetails?.duration || '')
-      return {
-        id: item.id,
-        title: item.snippet.title,
-        description: item.snippet.description,
-        thumbnail: item.snippet.thumbnails?.maxres?.url
-          || item.snippet.thumbnails?.high?.url
-          || item.snippet.thumbnails?.medium?.url
-          || '',
-        publishedAt: item.snippet.publishedAt,
-        viewCount: parseInt(item.statistics?.viewCount || '0'),
-        likeCount: parseInt(item.statistics?.likeCount || '0'),
-        duration: formatted,
-        durationSeconds: seconds,
-        channelTitle: item.snippet.channelTitle,
-        playlists: playlistMap[item.id] || [],
-      }
-    })
+    return videos.map((video) => ({ ...video, playlists: playlistMap[video.id] || [] }))
   } catch (e) {
     console.error('YouTube fetch error:', e)
+    return []
+  }
+}
+
+export async function getAIin45SecondsVideos(maxResults = 12): Promise<YouTubeVideo[]> {
+  try {
+    return await fetchUploadedVideos(SHORTS_CHANNEL_HANDLE, maxResults)
+  } catch (e) {
+    console.error('AI in 45 Seconds fetch error:', e)
     return []
   }
 }
