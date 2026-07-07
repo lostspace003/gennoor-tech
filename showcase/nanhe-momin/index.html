@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nanhe Momin — ننھے مومن | Episode 1: The Reward of Truthfulness</title>
+<meta name="description" content="Nanhe Momin — product showcase (proof of concept): an animated Seerah series for kids, produced end-to-end by an AI pipeline. Watch Episode 1: The Reward of Truthfulness.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕌</text></svg>">
+<style>
+  @font-face{
+    font-family:"Baloo 2";
+    src:url("assets/fonts/Baloo2-Variable.ttf") format("truetype");
+    font-weight:400 800; font-display:swap;
+  }
+  @font-face{
+    font-family:"Noto Nastaliq Urdu";
+    src:url("assets/fonts/NotoNastaliqUrdu-Regular.ttf") format("truetype");
+    font-weight:400; font-display:swap;
+  }
+  :root{
+    --dawn:#FBEED3; --dawn-deep:#F3D9A4;
+    --gold:#D99A28; --gold-soft:#E8B54A;
+    --dome:#17694A; --dome-deep:#0F4A34;
+    --clay:#9C5B33;
+    --night:#131B38; --night-soft:#1C2750;
+    --ink:#3A2A10; --ink-soft:#6B5636;
+    --cream:#FFF9EC;
+  }
+  *{margin:0; padding:0; box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Baloo 2", "Segoe UI", system-ui, sans-serif;
+    color:var(--ink); background:var(--dawn);
+    line-height:1.55; overflow-x:hidden;
+  }
+  img,video{max-width:100%; display:block}
+  a{color:inherit}
+  :focus-visible{outline:3px solid var(--gold); outline-offset:3px; border-radius:6px}
+
+  /* ---------- hero: golden morning ---------- */
+  .hero{
+    position:relative; text-align:center;
+    padding:3.5rem 1.25rem 4.5rem;
+    background:
+      radial-gradient(120% 90% at 50% -20%, #FFE9B8 0%, var(--dawn) 55%, var(--dawn-deep) 100%);
+  }
+  .hero-urdu{
+    font-family:"Noto Nastaliq Urdu", serif;
+    font-size:clamp(3rem, 9vw, 5.5rem);
+    color:var(--clay); line-height:1.9;
+    direction:rtl;
+  }
+  .hero-latin{
+    font-weight:800; letter-spacing:.35em; text-indent:.35em;
+    font-size:clamp(1rem, 2.6vw, 1.35rem);
+    color:var(--dome-deep); text-transform:uppercase;
+    margin-top:-0.4rem;
+  }
+  .hero-tag{
+    max-width:34rem; margin:1rem auto 2.25rem;
+    font-size:clamp(1rem, 2.2vw, 1.15rem); color:var(--ink-soft);
+  }
+  .player-frame{
+    max-width:900px; margin:0 auto;
+    background:var(--cream);
+    border-radius:22px; padding:12px;
+    box-shadow:0 12px 30px rgba(90,58,10,.22), 0 3px 8px rgba(90,58,10,.14);
+  }
+  .player-frame video{width:100%; border-radius:12px; background:#000}
+  .hero-chips{margin-top:1.4rem; display:flex; gap:.6rem; justify-content:center; flex-wrap:wrap}
+  .chip{
+    font-size:.85rem; font-weight:600; color:var(--dome-deep);
+    background:rgba(255,255,255,.65); border:1.5px solid var(--dome);
+    padding:.2rem .85rem; border-radius:999px;
+  }
+  /* fireflies — decorative only */
+  .fly{position:absolute; width:7px; height:7px; border-radius:50%;
+    background:var(--gold-soft); box-shadow:0 0 10px 3px rgba(232,181,74,.55);
+    opacity:.7; animation:drift 11s ease-in-out infinite; pointer-events:none}
+  .fly:nth-child(1){left:12%; top:30%; animation-delay:0s}
+  .fly:nth-child(2){left:85%; top:22%; animation-delay:-3s; transform:scale(.7)}
+  .fly:nth-child(3){left:74%; top:64%; animation-delay:-6s; transform:scale(.85)}
+  .fly:nth-child(4){left:22%; top:70%; animation-delay:-8s; transform:scale(.6)}
+  @keyframes drift{
+    0%,100%{translate:0 0} 25%{translate:14px -18px} 50%{translate:-10px -30px} 75%{translate:-18px -8px}
+  }
+
+  /* ---------- skyline divider ---------- */
+  .skyline{display:block; width:100%; height:60px; color:var(--dome)}
+  .skyline.flip{transform:scaleY(-1); color:var(--night)}
+
+  /* ---------- episode ---------- */
+  .band{padding:3.5rem 1.25rem}
+  .band-inner{max-width:900px; margin:0 auto}
+  .eyebrow{
+    font-size:.8rem; font-weight:700; letter-spacing:.28em; text-transform:uppercase;
+    color:var(--dome);
+  }
+  .ep-title{
+    font-size:clamp(1.7rem, 4.5vw, 2.6rem); font-weight:700; line-height:1.25;
+    margin:.4rem 0 .2rem;
+  }
+  .ep-title em{font-style:normal; color:var(--clay)}
+  .ep-lesson{max-width:36rem; color:var(--ink-soft); margin:.6rem 0 1rem}
+  .source{
+    display:inline-block; font-size:.85rem; font-weight:600;
+    color:var(--cream); background:var(--dome); border-radius:999px;
+    padding:.25rem 1rem;
+  }
+
+  /* ---------- stills strip ---------- */
+  .strip{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:14px;
+    margin-top:2.2rem;
+  }
+  .strip figure{
+    background:var(--cream); border-radius:14px; padding:8px 8px 10px;
+    box-shadow:0 4px 12px rgba(90,58,10,.14);
+    transition:transform .25s ease;
+  }
+  .strip figure:hover{transform:translateY(-4px) rotate(-.4deg)}
+  .strip img{border-radius:8px; aspect-ratio:16/9; object-fit:cover}
+  .strip figcaption{font-size:.85rem; font-weight:600; color:var(--ink-soft); padding-top:.45rem; text-align:center}
+
+  /* ---------- promises ---------- */
+  .promises{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:1rem;
+  }
+  .promise{
+    background:var(--cream); border-radius:14px; padding:1.1rem 1.2rem;
+    border-top:4px solid var(--gold);
+    box-shadow:0 4px 12px rgba(90,58,10,.10);
+  }
+  .promise h3{font-size:1.02rem; font-weight:700; margin-bottom:.2rem}
+  .promise p{font-size:.9rem; color:var(--ink-soft)}
+
+  /* ---------- night ---------- */
+  .night{
+    position:relative; color:#F3E9D2; text-align:center;
+    background:var(--night);
+    padding:4.5rem 1.25rem 2.5rem;
+  }
+  .night::before{
+    content:""; position:absolute; inset:0;
+    background:url("assets/night.jpg") center/cover no-repeat;
+    opacity:.35;
+  }
+  .night > *{position:relative}
+  .night-urdu{
+    font-family:"Noto Nastaliq Urdu", serif; direction:rtl;
+    font-size:clamp(1.5rem, 4vw, 2.1rem); line-height:2.1; color:var(--gold-soft);
+  }
+  .night-cta{
+    font-weight:800; letter-spacing:.2em; text-indent:.2em; text-transform:uppercase;
+    font-size:clamp(1.05rem, 3vw, 1.5rem); margin:.4rem 0 1rem;
+  }
+  .night-note{color:#C9BD9F; font-size:1rem}
+  .night footer{
+    margin-top:3rem; padding-top:1.2rem; border-top:1px solid rgba(243,233,210,.25);
+    font-size:.85rem; color:#A99F86;
+  }
+
+  /* ---------- reveal on scroll ---------- */
+  .reveal{opacity:0; translate:0 22px; transition:opacity .6s ease, translate .6s ease}
+  .reveal.in{opacity:1; translate:0 0}
+
+  @media (max-width:680px){
+    .strip{grid-template-columns:repeat(2,1fr)}
+    .promises{grid-template-columns:1fr}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .fly{animation:none}
+    .reveal{opacity:1; translate:none; transition:none}
+    html{scroll-behavior:auto}
+    .strip figure{transition:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="fly" aria-hidden="true"></span><span class="fly" aria-hidden="true"></span>
+  <span class="fly" aria-hidden="true"></span><span class="fly" aria-hidden="true"></span>
+  <p class="eyebrow" style="margin-bottom:1.2rem">Product showcase · Proof of concept</p>
+  <h1>
+    <span class="hero-urdu">ننھے مومن</span><br>
+    <span class="hero-latin">Nanhe Momin</span>
+  </h1>
+  <p class="hero-tag">An animated Seerah series for kids, produced end-to-end by an AI pipeline —
+     six little cousins living the Prophet's ﷺ lessons, in the Hindi-Urdu kids actually speak.</p>
+
+  <div class="player-frame">
+    <video controls preload="metadata" poster="assets/poster.jpg">
+      <source src="assets/nanhe-momin-ep01.mp4" type="video/mp4">
+      Your browser can't play this video. <a href="assets/nanhe-momin-ep01.mp4">Download Episode 1</a>.
+    </video>
+  </div>
+
+  <div class="hero-chips">
+    <span class="chip">Episode 01</span>
+    <span class="chip">3 minutes</span>
+    <span class="chip">हिन्दी-उर्दू</span>
+    <span class="chip">Ages 4–10</span>
+  </div>
+</header>
+
+<svg class="skyline" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true">
+  <path fill="currentColor" d="M0,60 L0,48 L120,48 L120,38 L180,38 L180,48 L360,48
+    L360,42 L380,42 L380,18 L386,12 L392,18 L392,42 L412,42 L412,48
+    L520,48 L530,44 Q600,2 670,44 L680,48
+    L820,48 L820,42 L840,42 L840,20 L846,14 L852,20 L852,42 L872,42 L872,48
+    L1040,48 L1040,38 L1100,38 L1100,48 L1200,48 L1200,60 Z"/>
+</svg>
+
+<main>
+  <section class="band" style="background:var(--cream)">
+    <div class="band-inner reveal">
+      <p class="eyebrow">Episode 01</p>
+      <h2 class="ep-title">सच्चाई का इनाम <em>· The Reward of Truthfulness</em></h2>
+      <p class="ep-lesson">Huzaifa breaks his cousin's brand-new cricket bat — and hides it.
+         Then Saad tells him why the whole of Makkah called the Prophet ﷺ
+         <strong>As-Sadiq, the Truthful</strong>, even before prophethood.</p>
+      <span class="source">Seerah Ibn Hisham · Sahih al-Bukhari 6094</span>
+
+      <div class="strip" role="list">
+        <figure role="listitem"><img src="assets/stills/salam.jpg" alt="Maaz waves salam to Huzaifa in the courtyard" loading="lazy"><figcaption>The salam</figcaption></figure>
+        <figure role="listitem"><img src="assets/stills/bat.jpg" alt="Maaz proudly shows his new cricket bat" loading="lazy"><figcaption>The new bat</figcaption></figure>
+        <figure role="listitem"><img src="assets/stills/swing.jpg" alt="Huzaifa swings the bat with all his might" loading="lazy"><figcaption>One wild swing</figcaption></figure>
+        <figure role="listitem"><img src="assets/stills/bush.jpg" alt="Huzaifa hides the broken bat while Hana watches" loading="lazy"><figcaption>The hiding place</figcaption></figure>
+        <figure role="listitem"><img src="assets/stills/lesson.jpg" alt="Saad gently tells the Seerah story" loading="lazy"><figcaption>Saad's story</figcaption></figure>
+        <figure role="listitem"><img src="assets/stills/friends.jpg" alt="All six cousins together at golden hour" loading="lazy"><figcaption>Truth wins</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="band-inner reveal">
+      <p class="eyebrow">What this proof of concept demonstrates</p>
+      <div class="promises">
+        <div class="promise">
+          <h3>Authentic sources</h3>
+          <p>Every lesson is retold from the Seerah with its reference shown on screen — nothing invented.</p>
+        </div>
+        <div class="promise">
+          <h3>Their own language</h3>
+          <p>Natural Hindi-Urdu the way children speak it — बैट, not बल्ला — so nothing needs translating.</p>
+        </div>
+        <div class="promise">
+          <h3>End-to-end AI production</h3>
+          <p>Screenplay, animation, voices, lipsync and quality checks — one automated pipeline, one theme line in.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<svg class="skyline flip" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true">
+  <path fill="currentColor" d="M0,60 L0,48 L120,48 L120,38 L180,38 L180,48 L360,48
+    L360,42 L380,42 L380,18 L386,12 L392,18 L392,42 L412,42 L412,48
+    L520,48 L530,44 Q600,2 670,44 L680,48
+    L820,48 L820,42 L840,42 L840,20 L846,14 L852,20 L852,42 L872,42 L872,48
+    L1040,48 L1040,38 L1100,38 L1100,48 L1200,48 L1200,60 Z"/>
+</svg>
+
+<section class="night">
+  <p class="night-urdu">لائیک &nbsp;•&nbsp; شیئر &nbsp;•&nbsp; سبسکرائب</p>
+  <p class="night-cta">Like &nbsp;•&nbsp; Share &nbsp;•&nbsp; Subscribe</p>
+  <p class="night-note">Episode 2 — coming soon, insha&rsquo;Allah.</p>
+  <footer>© Nanhe Momin · Product showcase — proof of concept · An animated Seerah series for children</footer>
+</section>
+
+<script>
+  const items = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window &&
+      !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+    }), { threshold: 0.15 });
+    items.forEach(el => io.observe(el));
+  } else {
+    items.forEach(el => el.classList.add("in"));
+  }
+</script>
+</body>
+</html>
