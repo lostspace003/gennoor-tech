@@ -42,6 +42,22 @@ const demos: Demo[] = [
     impact: 'Shipped end-to-end — live in production'
   },
   {
+    title: 'Nanhe Momin — Animated Seerah Series for Kids',
+    category: 'AI Media Production',
+    icon: Sparkles,
+    description: 'An animated children’s series produced end-to-end by one automated AI pipeline: a one-line theme goes in — screenplay, animation, natural Hindi-Urdu voices, lipsync and quality checks come out as a finished, source-cited episode.',
+    features: [
+      'One-line theme → finished episode',
+      'AI screenplay, animation & voices',
+      'Natural Hindi-Urdu dialogue',
+      'Authentic Seerah sources cited on screen',
+      'Automated lipsync & quality checks'
+    ],
+    technologies: ['AI video generation', 'Neural TTS', 'Lipsync', 'Automated QC', 'Hindi-Urdu'],
+    detailUrl: '/work/nanhe-momin',
+    impact: 'Episode 1 produced without a studio, cast or animators'
+  },
+  {
     title: 'Banking Document Intelligence Pipeline',
     category: 'Document Processing',
     icon: FileText,
@@ -157,6 +173,7 @@ const demos: Demo[] = [
 
 const categoryColors = {
   'Flagship Product': 'from-amber-500 to-yellow-500',
+  'AI Media Production': 'from-emerald-600 to-teal-500',
   'Document Processing': 'from-blue-500 to-blue-600',
   'Fraud Detection': 'from-red-500 to-red-600',
   'AI/ML': 'from-purple-500 to-purple-600',
