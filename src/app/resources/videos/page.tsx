@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowLeft, Youtube, Play, Film } from 'lucide-react'
+import { ArrowLeft, Youtube, Play, Film, MonitorPlay } from 'lucide-react'
 import { getYouTubeVideos, getYouTubePlaylists, getAIin45SecondsVideos } from '@/lib/youtube'
 import YouTubeGrid from '@/components/YouTubeGrid'
 import ShortsStrip from '@/components/ShortsStrip'
+import InlineVideoPlayer from '@/components/InlineVideoPlayer'
+import { BLOB_URL } from '@/lib/site-config'
 
 export const metadata: Metadata = {
   title: 'Videos',
@@ -68,6 +70,46 @@ export default async function VideosPage() {
                 <Play className="w-3.5 h-3.5 fill-current" />
                 {playlists.length} playlists
               </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured: the Gennoor platform, built with AI */}
+      <section className="py-6">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="glass-card p-6 lg:p-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+              <div className="lg:col-span-5">
+                <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 mb-4 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
+                  <MonitorPlay className="w-3.5 h-3.5" />
+                  Featured
+                </span>
+                <h2 className="text-2xl font-bold text-gray-900 mb-3">
+                  We Built Our Entire Platform with AI — Here&rsquo;s the Proof
+                </h2>
+                <p className="text-gray-600 leading-relaxed mb-4">
+                  A full walkthrough of how the Gennoor platform — a 40+ page website,
+                  smart booking system, automated emails, admin dashboard, and analytics —
+                  was built end-to-end with Claude Code by a single founder. No agencies,
+                  no dev team, no prototype: everything you see is live and serving real
+                  customers today.
+                </p>
+                <p className="text-sm text-gray-500">
+                  What AI-powered development actually delivers — 10× faster to market,
+                  $0 developer cost, production-ready from day one. (7.5 min)
+                </p>
+              </div>
+              <div className="lg:col-span-7">
+                <div className="rounded-2xl overflow-hidden glass-card p-1">
+                  <InlineVideoPlayer
+                    videoSrc="/media/videos/gennoor-presentation.mp4"
+                    posterSrc={`${BLOB_URL}/videos/video-thumbnail-bright.png`}
+                    rounded="rounded-xl"
+                    className="shadow-none"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>

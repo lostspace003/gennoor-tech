@@ -201,21 +201,22 @@ export default function HeroSection() {
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               transition={{ delay: 2.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
-              <div className="relative w-full sm:w-[480px] lg:w-[560px] max-w-full">
+              <div className="relative w-[280px] sm:w-[320px] lg:w-[360px] max-w-full lg:mr-8">
                 {/* Ambient glow behind video */}
                 <div className="absolute -inset-8 bg-gradient-to-br from-primary-500/8 to-accent-500/8 rounded-3xl blur-2xl" />
 
                 <div className="relative mb-6">
                   <div className="rounded-2xl overflow-hidden glass-card p-1">
                     <InlineVideoPlayer
-                      videoSrc="/media/videos/gennoor-presentation.mp4"
-                      posterSrc={`${BLOB_URL}/videos/video-thumbnail-bright.png`}
+                      videoSrc={`${BLOB_URL}/videos/gennoor-promo-vo.mp4`}
+                      posterSrc={`${BLOB_URL}/videos/gennoor-promo-poster.jpg`}
+                      aspectClass="aspect-[9/16]"
                       rounded="rounded-xl"
                       className="shadow-none"
                     />
                   </div>
                   <p className="text-center text-sm font-semibold text-gray-500 mt-4 tracking-wide">
-                    Diagnose. Train. Innovate. Build. Sustain. — AI that lasts.
+                    Gennoor in 2 minutes — sound on 🔊
                   </p>
                 </div>
               </div>

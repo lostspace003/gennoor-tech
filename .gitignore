@@ -88,3 +88,6 @@ public/Gennoor-Academy-Course-PDFs/
 
 # Large source videos for the showcases (served from Azure Blob instead)
 showcase/*/assets/*.mp4
+
+# Promo video source — uploaded to Azure Blob via scripts/upload-promo-video.mjs
+Gennoor Promo Video - VO.mp4
