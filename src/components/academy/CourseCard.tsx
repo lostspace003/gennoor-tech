@@ -10,7 +10,6 @@ interface CourseCardProps {
 }
 
 export default function CourseCard({ course, overallProgress = 0 }: CourseCardProps) {
-  const freeChapterCount = course.chapters.filter(c => c.isFree).length
   const headerStyle = course.theme
     ? { background: `linear-gradient(135deg, ${course.theme.primary} 0%, ${course.theme.primaryDeep} 60%, ${course.theme.accent} 100%)` }
     : undefined
@@ -18,21 +17,21 @@ export default function CourseCard({ course, overallProgress = 0 }: CourseCardPr
   return (
     <Link
       href={`/ai-academy/${course.id}`}
-      className="group block bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden ring-1 ring-gray-100"
+      className="group block bg-white rounded-2xl border border-gray-200/70 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden"
     >
       {/* Themed header */}
       <div
-        className={`relative h-48 p-6 flex flex-col justify-between ${course.theme ? '' : 'bg-gradient-to-br from-primary-600 via-primary-700 to-accent-600'}`}
+        className={`relative h-52 p-6 flex flex-col justify-between ${course.theme ? '' : 'bg-gradient-to-br from-primary-600 via-primary-700 to-accent-600'}`}
         style={headerStyle}
       >
         <div className="flex items-start justify-between">
-          <span className="inline-flex items-center px-3 py-1 text-xs font-bold bg-secondary-400 text-dark-900 rounded-full uppercase">
+          <span className="inline-flex items-center px-2.5 py-1 text-[10px] font-bold bg-secondary-400 text-dark-900 rounded-full uppercase tracking-[0.2em]">
             {course.badge}
           </span>
           <span className="text-white/80 text-sm font-medium">{course.shortTitle}</span>
         </div>
         <div>
-          <h3 className="text-white font-heading font-bold text-xl leading-tight">{course.title}</h3>
+          <h3 className="text-white font-heading font-extrabold tracking-tight text-2xl leading-tight">{course.title}</h3>
         </div>
         {overallProgress > 0 && (
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
@@ -43,6 +42,19 @@ export default function CourseCard({ course, overallProgress = 0 }: CourseCardPr
 
       {/* Body */}
       <div className="p-6">
+        {/* Micro-badges */}
+        <div className="flex flex-wrap gap-1.5 mb-4">
+          <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.2em] text-amber-700 bg-amber-50 border border-amber-200/60 rounded-full">
+            Free
+          </span>
+          <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-700 bg-white border border-gray-300 rounded-full">
+            {course.totalChapters} chapters
+          </span>
+          <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-700 bg-white border border-gray-300 rounded-full">
+            Audio
+          </span>
+        </div>
+
         <p className="text-gray-600 text-sm leading-relaxed mb-4">{course.description}</p>
 
         {/* Meta */}
@@ -74,11 +86,11 @@ export default function CourseCard({ course, overallProgress = 0 }: CourseCardPr
           ))}
         </div>
 
-        {/* Free chapter signal */}
-        {freeChapterCount > 0 && overallProgress === 0 && (
+        {/* Open-access signal */}
+        {overallProgress === 0 && (
           <p className="text-xs text-gray-500 mb-4">
-            <span className="font-semibold text-emerald-600">First {freeChapterCount} chapter{freeChapterCount > 1 ? 's' : ''} free</span>
-            {' · no sign-in needed'}
+            <span className="font-semibold text-emerald-600">Every chapter open</span>
+            {' · no account needed · certificate on completion'}
           </p>
         )}
 

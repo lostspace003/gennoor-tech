@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Trophy, Sparkles, Award, Star, ArrowRight, MessageSquare, ExternalLink, Loader2, GraduationCap, Phone, Gauge, Compass } from 'lucide-react'
 import type { Course } from '@/config/courses'
+import CertificateClaimForm from './CertificateClaimForm'
 
 interface Props {
   course: Course | undefined
@@ -12,6 +13,13 @@ interface Props {
   certId: string | null
   error: string | null
   onClose: () => void
+  /**
+   * Set when the learner has no session — the overlay hosts the no-login
+   * OTP certificate-claim form instead of the silent issuance states.
+   */
+  claimCourseId?: string
+  /** Called with the certId once the claim flow succeeds. */
+  onCertClaimed?: (certId: string) => void
 }
 
 /**
@@ -19,10 +27,11 @@ interface Props {
  *  - 'rating'    → 1-5 star feedback (shown immediately, while cert issues in background)
  *  - 'submitting'→ POST in flight to /api/learner/courses/[id]/feedback
  *  - 'issuing'   → feedback submitted, cert still landing (parent's loading prop)
+ *  - 'claim'     → no session: hosts the OTP certificate-claim form (claimCourseId set)
  *  - 'cert'      → cert is shown, learner can View & share / Add to LinkedIn
  *  - 'offer'     → "What we offer next" — 4 cards (Academy, Book a call, AI Readiness, How we operate)
  */
-type Step = 'rating' | 'submitting' | 'issuing' | 'cert' | 'offer'
+type Step = 'rating' | 'submitting' | 'issuing' | 'claim' | 'cert' | 'offer'
 
 export default function CourseCompletionOverlay({
   course,
@@ -31,6 +40,8 @@ export default function CourseCompletionOverlay({
   certId,
   error,
   onClose,
+  claimCourseId,
+  onCertClaimed,
 }: Props) {
   const theme = course?.theme
   const themedBg = theme
@@ -49,9 +60,18 @@ export default function CourseCompletionOverlay({
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false)
 
+  // No-session claim mode: the overlay hosts the OTP claim form until the
+  // cert lands, then falls into the same cert → offer states as logged-in.
+  const claimMode = !!claimCourseId
+
   // After feedback: if cert is still issuing, show 'issuing'; once landed, show 'cert'.
   // Before feedback: stay in whatever rating/submitting state the user is in.
   const currentStep: Step = (() => {
+    if (claimMode) {
+      if (certId) return step === 'offer' ? 'offer' : 'cert'
+      if (loading) return 'issuing'
+      return 'claim'
+    }
     if (step === 'rating' || step === 'submitting') return step
     if (feedbackSubmitted && loading) return 'issuing'
     if (feedbackSubmitted && certId) return step === 'offer' ? 'offer' : 'cert'
@@ -162,6 +182,17 @@ export default function CourseCompletionOverlay({
 
         {/* Body */}
         <div className="p-6 sm:p-8">
+
+          {/* CLAIM · no session — OTP certificate claim form */}
+          {currentStep === 'claim' && claimCourseId && (
+            <CertificateClaimForm
+              courseId={claimCourseId}
+              onClaimed={id => {
+                onCertClaimed?.(id)
+                setStep('cert')
+              }}
+            />
+          )}
 
           {/* STEP 1 · rating (feedback first) */}
           {(currentStep === 'rating' || currentStep === 'submitting') && (

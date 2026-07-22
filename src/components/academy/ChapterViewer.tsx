@@ -3,13 +3,11 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, SkipBack, SkipForward, PanelLeftClose, PanelLeftOpen, X, User, LogOut, ZoomIn, ZoomOut, Maximize, Minimize2, Lock, CheckCircle } from 'lucide-react'
+import { ArrowRight, ChevronLeft, ChevronRight, Menu, X, ZoomIn, ZoomOut, Maximize, Minimize2, CheckCircle, PlayCircle, RotateCcw } from 'lucide-react'
 import type { Chapter } from '@/config/courses'
 import { courses as allCourses } from '@/config/courses'
-import { saveLocalProgress, getLocalProgress, getAllLocalProgress } from '@/lib/progress-store'
+import { saveLocalProgress, getLocalProgress } from '@/lib/progress-store'
 import { useLearnerAuth } from '@/hooks/useLearnerAuth'
-import SaveProgressModal from './SaveProgressModal'
-import LearnerAuthModal from './LearnerAuthModal'
 import CourseCompletionOverlay from './CourseCompletionOverlay'
 import AudioPlayer from './AudioPlayer'
 import ChapterAudioControls, { type ChapterAudioControlsHandle } from './ChapterAudioControls'
@@ -22,45 +20,101 @@ interface ChapterViewerProps {
   allChapters: Chapter[]
 }
 
-export default function ChapterViewer({ courseId, chapter, prevChapter, nextChapter, allChapters }: ChapterViewerProps) {
+const NEXT_CHAPTER_COUNTDOWN_SEC = 8
+
+/**
+ * Full-screen continuous course player.
+ *
+ * VLC-style: the whole viewport is the player; a hamburger opens the chapter
+ * drawer; one timeline scrubs forward/backward (audio position is the single
+ * source of truth); chapters chain in place with an "Up next" countdown.
+ * No login anywhere — progress is saved on-device, and certificates are
+ * claimed with an OTP-verified email at completion.
+ *
+ * Chapter chaining is an IN-PLACE swap + history.pushState (not router.push):
+ * a route change would remount the player and browsers would then block the
+ * next chapter's autoplay; swapping in place keeps one document with gesture
+ * history, so continuous playback is permitted. Server chapter pages keep
+ * their per-chapter URLs/metadata for SEO and direct loads.
+ */
+export default function ChapterViewer({ courseId, chapter: initialChapter, allChapters }: ChapterViewerProps) {
   const router = useRouter()
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  const [activeChapter, setActiveChapter] = useState(initialChapter)
+  const chapter = activeChapter
+
+  const [drawerOpen, setDrawerOpen] = useState(false)
   const [slideInfo, setSlideInfo] = useState('')
   const [slidePercent, setSlidePercent] = useState(0)
   const [currentSlideNum, setCurrentSlideNum] = useState(1)
   const [totalSlidesNum, setTotalSlidesNum] = useState(0)
   const [stepsInSlide, setStepsInSlide] = useState(0)
   const [currentStepInSlide, setCurrentStepInSlide] = useState(0)
-  const [showSaveBanner, setShowSaveBanner] = useState(false)
-  const [bannerDismissed, setBannerDismissed] = useState(false)
-  const [showAuthModal, setShowAuthModal] = useState(false)
   const [zoomLevel, setZoomLevel] = useState(100)
   const [isFullscreen, setIsFullscreen] = useState(false)
-  const [showWelcomeToast, setShowWelcomeToast] = useState(false)
+  const [controlsIdle, setControlsIdle] = useState(false)
+  const [showEndOverlay, setShowEndOverlay] = useState(false)
+  const [countdown, setCountdown] = useState(NEXT_CHAPTER_COUNTDOWN_SEC)
   const [showCelebration, setShowCelebration] = useState(false)
   const [celebrationCertId, setCelebrationCertId] = useState<string | null>(null)
   const [celebrationLoading, setCelebrationLoading] = useState(false)
   const [celebrationError, setCelebrationError] = useState<string | null>(null)
-  const { session, isLoggedIn, loading: authLoading, logout, refreshSession } = useLearnerAuth()
+  const { session, isLoggedIn } = useLearnerAuth()
   const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const celebrationTriggeredRef = useRef(false)
+  const idleTimerRef = useRef<NodeJS.Timeout | null>(null)
 
-  const requiresLogin = !chapter.isFree && !isLoggedIn && !authLoading
+  // Prev/next derived from the live chapter (props only describe the
+  // initially-loaded one).
+  const chapterIndex = useMemo(
+    () => allChapters.findIndex(ch => ch.id === chapter.id),
+    [allChapters, chapter.id],
+  )
+  const prevChapter = chapterIndex > 0 ? allChapters[chapterIndex - 1] : null
+  const nextChapter = chapterIndex >= 0 && chapterIndex < allChapters.length - 1 ? allChapters[chapterIndex + 1] : null
 
-  // Look up the course (for theme + chapter-count context in onboarding)
   const course = useMemo(() => allCourses.find(c => c.id === courseId), [courseId])
   const theme = course?.theme
-  const totalChapterCount = course?.chapters.length ?? allChapters.length
-  const freeChapterCount = course?.chapters.filter(c => c.isFree).length ?? 0
 
-  // Inline themed style helpers (theme may be undefined for AB-100)
-  const themedBg = theme ? { background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryDeep} 100%)` } : undefined
-  const themedAccentText = theme ? { color: theme.primaryDeep } : undefined
-  const themedTint = theme ? { backgroundColor: theme.tint } : undefined
+  const isNewAudioPattern = !!chapter.chapterAudio
 
-  // Debounced server sync for logged-in users
+  // ── In-place chapter swap ────────────────────────────────────────────────
+  const swapChapter = useCallback((target: Chapter, pushUrl = true) => {
+    setShowEndOverlay(false)
+    setDrawerOpen(false)
+    setSlideInfo('')
+    setSlidePercent(0)
+    setCurrentSlideNum(1)
+    setTotalSlidesNum(0)
+    setActiveChapter(target)
+    if (pushUrl && typeof window !== 'undefined') {
+      window.history.pushState(null, '', `/ai-academy/${courseId}/${target.slug}`)
+      document.title = `${target.title} — ${course?.shortTitle ?? 'Gennoor Academy'}`
+    }
+  }, [courseId, course?.shortTitle])
+
+  // Browser back/forward inside the player maps the URL back to a chapter.
+  useEffect(() => {
+    const onPop = () => {
+      const slug = window.location.pathname.split('/').filter(Boolean).pop()
+      const target = allChapters.find(ch => ch.slug === slug)
+      if (target && target.id !== activeChapter.id) {
+        swapChapter(target, false)
+      } else if (!target) {
+        // URL no longer points at a chapter (e.g. course page) — let the
+        // server render it.
+        window.location.reload()
+      }
+    }
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [allChapters, activeChapter.id, swapChapter])
+
+  // ── Progress ─────────────────────────────────────────────────────────────
+  // Server sync is silent and only when a legacy session cookie exists —
+  // login is never required or prompted.
   const syncToServer = useCallback((chapterId: string, percent: number, currentSlide: number, totalSlides: number) => {
     if (!isLoggedIn) return
     if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current)
@@ -82,7 +136,6 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
     }, 5000)
   }, [courseId, isLoggedIn])
 
-  // Listen for postMessage from injected tracking script in iframe
   useEffect(() => {
     const handler = (event: MessageEvent) => {
       if (event.data?.type === 'gennoor-slide-progress') {
@@ -97,7 +150,6 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
 
         if (currentSlide > 0) setCurrentSlideNum(currentSlide)
         if (totalSlides > 0) setTotalSlidesNum(totalSlides)
-
         if (event.data.totalSteps !== undefined) setStepsInSlide(event.data.totalSteps)
         if (event.data.currentStep !== undefined) setCurrentStepInSlide(event.data.currentStep)
 
@@ -129,55 +181,20 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
             }),
           }).catch(() => { /* silent */ })
         }
-        if (nextChapter) {
-          router.push(`/ai-academy/${courseId}/${nextChapter.slug}`)
-        }
+        if (nextChapter) swapChapter(nextChapter)
       }
     }
     window.addEventListener('message', handler)
     return () => window.removeEventListener('message', handler)
-  }, [courseId, syncToServer, chapter.id, nextChapter, isLoggedIn, router])
+  }, [courseId, syncToServer, chapter.id, nextChapter, isLoggedIn, swapChapter])
 
-  // Show save banner for non-logged-in users who have progress.
-  // Wait for auth check to resolve — otherwise the banner flashes for
-  // signed-in users during the initial /api/learner/session round-trip.
-  useEffect(() => {
-    if (authLoading || isLoggedIn || bannerDismissed) return
-    const progress = getLocalProgress(courseId)
-    if (!progress) return
-    const chaptersWithProgress = Object.values(progress.chapters).filter(
-      ch => ch.completionPercent > 0 && ch.chapterId !== 'chapter-00'
-    )
-    if (chaptersWithProgress.length > 0) {
-      setShowSaveBanner(true)
-    }
-  }, [courseId, authLoading, isLoggedIn, bannerDismissed, slidePercent])
-
-  // beforeunload for non-logged-in users with progress
-  useEffect(() => {
-    if (authLoading || isLoggedIn || bannerDismissed) return
-    const progress = getLocalProgress(courseId)
-    const hasProgress = progress && Object.values(progress.chapters).some(ch => ch.completionPercent > 0 && ch.chapterId !== 'chapter-00')
-    if (!hasProgress) return
-
-    const handler = (e: BeforeUnloadEvent) => { e.preventDefault() }
-    window.addEventListener('beforeunload', handler)
-    return () => window.removeEventListener('beforeunload', handler)
-  }, [courseId, authLoading, isLoggedIn, bannerDismissed, slidePercent])
-
-  // Detect course completion — last regular (non-mock-exam) chapter at 99%+
-  // for a logged-in user. Triggers cert issuance + celebration overlay once
-  // per course (localStorage flag prevents re-firing on revisit).
+  // ── Course completion / certificate ──────────────────────────────────────
   const isLastRegularChapter = useMemo(() => {
     if (!course) return false
     const regulars = course.chapters.filter(ch => !ch.isMockExam && ch.id !== 'chapter-00')
     return regulars.length > 0 && regulars[regulars.length - 1].id === chapter.id
   }, [course, chapter.id])
 
-  // Mirror the server-side gate: every non-mock, non-intro chapter must be
-  // completed before the celebration overlay can fire. Prevents the overlay
-  // opening, calling issue-cert, and showing a 403 error to learners who
-  // jumped to the last chapter.
   const allPriorChaptersCompleted = useMemo(() => {
     if (!course) return false
     const gated = course.chapters.filter(ch => !ch.isMockExam && ch.id !== 'chapter-00')
@@ -192,32 +209,38 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
   const celebrationStorageKey = `gennoor-celebrated:${courseId}`
 
   useEffect(() => {
-    if (!isLoggedIn || !isLastRegularChapter) return
+    if (!isLastRegularChapter) return
     if (slidePercent < 99) return
     if (!allPriorChaptersCompleted) return
     if (celebrationTriggeredRef.current) return
     if (typeof window !== 'undefined' && window.localStorage.getItem(celebrationStorageKey)) {
-      // Already celebrated this course on this device — try to fetch existing cert silently
+      // Already celebrated this course on this device.
       celebrationTriggeredRef.current = true
-      fetch(`/api/learner/courses/${courseId}/issue-cert`)
-        .then(r => (r.ok ? r.json() : null))
-        .then(data => {
-          if (data?.cert?.certId) setCelebrationCertId(data.cert.certId)
-        })
-        .catch(() => { /* silent */ })
+      const stored = window.localStorage.getItem(celebrationStorageKey)
+      if (stored && stored !== 'true') setCelebrationCertId(stored)
+      else if (isLoggedIn) {
+        fetch(`/api/learner/courses/${courseId}/issue-cert`)
+          .then(r => (r.ok ? r.json() : null))
+          .then(data => {
+            if (data?.cert?.certId) setCelebrationCertId(data.cert.certId)
+          })
+          .catch(() => { /* silent */ })
+      }
       return
     }
 
     celebrationTriggeredRef.current = true
     setShowCelebration(true)
-    setCelebrationLoading(true)
     setCelebrationError(null)
 
-    // Force-flush the progress sync first. The 5s syncToServer debounce can
-    // mean the server hasn't yet seen completed:true on this chapter, which
-    // would make the issue-cert API's completion gate reject the request.
-    // Cancel any pending debounced sync and POST the final completion state
-    // synchronously, then call issue-cert.
+    if (!isLoggedIn) {
+      // No account: the overlay hosts the OTP certificate-claim form.
+      setCelebrationLoading(false)
+      return
+    }
+
+    // Logged-in flow (legacy sessions): silent issuance, unchanged.
+    setCelebrationLoading(true)
     if (syncTimeoutRef.current) {
       clearTimeout(syncTimeoutRef.current)
       syncTimeoutRef.current = null
@@ -225,7 +248,6 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
 
     const issuanceFlow = async () => {
       try {
-        // 1. Synchronously confirm completion to the server.
         await fetch('/api/learner/progress', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -239,7 +261,6 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
           }),
         })
 
-        // 2. Now request cert issuance — server gate will see completion.
         const res = await fetch(`/api/learner/courses/${courseId}/issue-cert`, { method: 'POST' })
         if (!res.ok) {
           const data = await res.json().catch(() => ({}))
@@ -261,37 +282,16 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
     }
 
     void issuanceFlow()
-  }, [isLoggedIn, isLastRegularChapter, slidePercent, courseId, celebrationStorageKey, chapter.id, currentSlideNum, totalSlidesNum])
+  }, [isLoggedIn, isLastRegularChapter, slidePercent, courseId, celebrationStorageKey, chapter.id, currentSlideNum, totalSlidesNum, allPriorChaptersCompleted])
 
-  const handleLoginSuccess = useCallback(async () => {
-    await refreshSession()
-    // Sync localStorage to server
-    const allProgress = getAllLocalProgress()
-    if (Object.keys(allProgress).length > 0) {
-      try {
-        await fetch('/api/learner/progress/sync', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ progress: allProgress }),
-        })
-      } catch { /* silent */ }
+  const handleCertClaimed = useCallback((certId: string) => {
+    setCelebrationCertId(certId)
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(celebrationStorageKey, certId)
     }
-    setShowSaveBanner(false)
-    setShowAuthModal(false)
-    // Show post-login welcome toast — auto-dismiss after ~5s
-    setShowWelcomeToast(true)
-    setTimeout(() => setShowWelcomeToast(false), 5000)
-  }, [refreshSession])
+  }, [celebrationStorageKey])
 
-  const progressChapterCount = useMemo(() => {
-    const progress = getLocalProgress(courseId)
-    if (!progress) return 0
-    return Object.values(progress.chapters).filter(ch => ch.completionPercent > 0).length
-  }, [courseId, slidePercent])
-
-  // Ref to the parent-level audio player — used so any nav button (parent
-  // toolbar OR in-iframe step controls) can seek the audio to the matching
-  // cue. Bidirectional sync.
+  // ── Audio / slide navigation plumbing ────────────────────────────────────
   const audioControlsRef = useRef<ChapterAudioControlsHandle | null>(null)
 
   const postToIframe = useCallback((type: string) => {
@@ -299,12 +299,6 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
       iframeRef.current?.contentWindow?.postMessage({ type }, '*')
     } catch { /* cross-origin */ }
   }, [])
-
-  // Slide / step nav — branches on whether this chapter uses the new
-  // chapterAudio pattern. New chapters: drive everything through the audio
-  // (audio is single source of truth). Legacy chapters: existing per-slide
-  // MP3 message protocol.
-  const isNewAudioPattern = !!chapter.chapterAudio
 
   const advanceSlideInIframe = useCallback(() => {
     if (isNewAudioPattern && audioControlsRef.current) {
@@ -333,15 +327,7 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
     }
   }, [isNewAudioPattern, postToIframe])
 
-  const retreatStepInIframe = useCallback(() => {
-    if (isNewAudioPattern && audioControlsRef.current) {
-      audioControlsRef.current.step('prev-step')
-    }
-  }, [isNewAudioPattern])
-
-  // Listen for nav events posted UP from the iframe (its in-iframe step
-  // controls). These come with the slide+step the iframe just navigated to —
-  // the parent's job is to seek the audio so it follows.
+  // Nav events posted UP from the iframe's in-slide controls.
   useEffect(() => {
     if (!isNewAudioPattern) return
     const handler = (e: MessageEvent) => {
@@ -355,9 +341,7 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
     return () => window.removeEventListener('message', handler)
   }, [isNewAudioPattern])
 
-  // Arrow-key intent forwarded from inside the iframe (the iframe's own
-  // ArrowRight/ArrowLeft handler would otherwise update only the muted
-  // iframe-internal audio, leaving the parent's audio stuck on slide 1).
+  // Arrow-key intent forwarded from inside the iframe.
   useEffect(() => {
     const handler = (e: MessageEvent) => {
       if (!e || !e.data || e.data.type !== 'gennoor-academy:nav-request') return
@@ -368,9 +352,9 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
     return () => window.removeEventListener('message', handler)
   }, [advanceSlideInIframe, retreatSlideInIframe])
 
-  // Parent-side keyboard: ArrowRight/ArrowLeft for slide-level navigation,
-  // Space for play/pause (new audio pattern only — legacy AudioPlayer has its
-  // own Space handler).
+  // Parent-side keyboard: Space play/pause, arrows slide nav, J/L ±10s,
+  // F fullscreen. Esc closes drawer/overlays (native fullscreen-Esc is
+  // handled by the browser).
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement)?.tagName
@@ -382,21 +366,29 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
         audioControlsRef.current?.togglePlay()
         return
       }
-
       if (e.key === 'ArrowRight') {
         e.preventDefault()
         advanceSlideInIframe()
       } else if (e.key === 'ArrowLeft') {
         e.preventDefault()
         retreatSlideInIframe()
+      } else if (e.key === 'j' || e.key === 'J') {
+        audioControlsRef.current?.seekBy(-10)
+      } else if (e.key === 'l' || e.key === 'L') {
+        audioControlsRef.current?.seekBy(10)
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen()
+      } else if (e.key === 'Escape') {
+        setDrawerOpen(false)
+        setShowEndOverlay(false)
       }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [advanceSlideInIframe, retreatSlideInIframe, isNewAudioPattern])
 
-  // Space pressed INSIDE the iframe — iframe's injected handler posts a
-  // play-toggle message up; parent calls togglePlay so audio responds.
+  // Space pressed INSIDE the iframe.
   useEffect(() => {
     if (!isNewAudioPattern) return
     const handler = (e: MessageEvent) => {
@@ -407,6 +399,7 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
     return () => window.removeEventListener('message', handler)
   }, [isNewAudioPattern])
 
+  // ── Zoom / fullscreen ────────────────────────────────────────────────────
   const applyZoom = useCallback((level: number) => {
     try {
       const iframeDoc = iframeRef.current?.contentDocument
@@ -437,7 +430,26 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
     return () => document.removeEventListener('fullscreenchange', handler)
   }, [])
 
-  // Inject tracking script + zoom into iframe on load
+  // Auto-hide the control bars in fullscreen after 3s idle (VLC behaviour).
+  const pokeControls = useCallback(() => {
+    setControlsIdle(false)
+    if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
+    idleTimerRef.current = setTimeout(() => setControlsIdle(true), 3000)
+  }, [])
+
+  useEffect(() => {
+    if (!isFullscreen) {
+      setControlsIdle(false)
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
+      return
+    }
+    pokeControls()
+    return () => { if (idleTimerRef.current) clearTimeout(idleTimerRef.current) }
+  }, [isFullscreen, pokeControls])
+
+  const barsHidden = isFullscreen && controlsIdle && !drawerOpen && !showEndOverlay && !showCelebration
+
+  // ── Iframe injection (progress tracking + authoritative deck state) ──────
   const handleIframeLoad = useCallback(() => {
     try {
       const iframeDoc = iframeRef.current?.contentDocument
@@ -643,15 +655,10 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
 
           // After the iframe's own message handler applies a cue, run again
           // and fully reveal the active slide when the cue is user-driven.
-          // Iframe's applyCue with fillSlide=false strips reveals on slide
-          // change; for manual navigation we want the whole slide visible
-          // immediately so the user does not stare at a bare heading.
           window.addEventListener('message', function(e) {
             if (!e || !e.data) return;
             if (e.data.type !== 'gennoor-academy:cue') return;
             if (!e.data.userDriven) return;
-            // Defer so the iframe's PLAYER_JS handler (which switches the
-            // .active slide) has already run by the time we reveal.
             setTimeout(function() {
               var slide = document.querySelector('.slide.active');
               if (!slide) return;
@@ -670,268 +677,163 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
     }
   }, [chapter.id, zoomLevel])
 
+  // ── End-of-chapter overlay + autoplay countdown ──────────────────────────
+  const handleAudioEnded = useCallback(() => {
+    if (isLastRegularChapter) return // celebration handles the finale
+    if (!nextChapter) return
+    setCountdown(NEXT_CHAPTER_COUNTDOWN_SEC)
+    setShowEndOverlay(true)
+  }, [isLastRegularChapter, nextChapter])
+
+  // Legacy chapters have no single audio end — raise the overlay at 99%.
+  useEffect(() => {
+    if (isNewAudioPattern || chapter.isMockExam) return
+    if (isLastRegularChapter || !nextChapter) return
+    if (slidePercent >= 99 && !showEndOverlay) {
+      setCountdown(NEXT_CHAPTER_COUNTDOWN_SEC)
+      setShowEndOverlay(true)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slidePercent, isNewAudioPattern, chapter.isMockExam, isLastRegularChapter, nextChapter])
+
+  useEffect(() => {
+    if (!showEndOverlay || !nextChapter) return
+    if (countdown <= 0) {
+      swapChapter(nextChapter)
+      return
+    }
+    const t = setTimeout(() => setCountdown(c => c - 1), 1000)
+    return () => clearTimeout(t)
+  }, [showEndOverlay, countdown, nextChapter, swapChapter])
+
   const regularChapters = allChapters.filter(ch => !ch.isMockExam)
   const mockExam = allChapters.find(ch => ch.isMockExam)
+  const localProgress = getLocalProgress(courseId)
 
+  const chapterTick = (ch: Chapter) => {
+    const p = localProgress?.chapters[ch.id]
+    if (p?.completed || (p?.completionPercent ?? 0) >= 95) return 'done'
+    if ((p?.completionPercent ?? 0) > 0) return 'partial'
+    return 'none'
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div ref={containerRef} className="fixed inset-0 z-40 bg-gray-100 flex flex-col" style={{ top: isFullscreen ? 0 : '80px' }}>
-      {/* Top navigation bar */}
-      <div className="flex-shrink-0 h-14 bg-[#0C1426] text-white flex items-center px-4 gap-3 z-10">
-        {/* Back */}
-        <Link
-          href={`/ai-academy/${courseId}`}
-          className="flex items-center gap-1 text-sm text-white/70 hover:text-white transition-colors flex-shrink-0"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span className="hidden sm:inline">Course</span>
-        </Link>
-
-        <div className="w-px h-6 bg-white/20" />
-
-        {/* Sidebar toggle */}
+    <div
+      ref={containerRef}
+      className="fixed inset-0 z-[60] bg-gray-950 flex flex-col"
+      onMouseMove={isFullscreen ? pokeControls : undefined}
+    >
+      {/* Top bar — minimal: hamburger · title · close */}
+      <div
+        className={`flex-shrink-0 bg-[#0C1426] text-white flex items-center px-3 gap-3 z-20 transition-all duration-300 ${
+          barsHidden ? 'h-0 opacity-0 overflow-hidden' : 'h-12'
+        }`}
+      >
         <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-1.5 rounded hover:bg-white/10 transition-colors flex-shrink-0"
-          title={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+          onClick={() => setDrawerOpen(o => !o)}
+          className="p-2 rounded-lg hover:bg-white/10 transition-colors flex-shrink-0"
+          title="Chapters"
+          aria-label="Open chapter list"
         >
-          {sidebarOpen ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeftOpen className="w-4 h-4" />}
+          <Menu className="w-5 h-5" />
         </button>
 
-        {/* Chapter title */}
-        <div className="flex-1 min-w-0 text-center">
-          <span className="text-xs text-white/50 mr-2">
+        <div className="flex-1 min-w-0 flex items-center justify-center gap-2">
+          <span className="text-[10px] font-bold tracking-widest text-white/40 uppercase flex-shrink-0">
             {chapter.isMockExam ? 'EXAM' : `CH ${String(chapter.number).padStart(2, '0')}`}
           </span>
           <span className="text-sm font-medium truncate">{chapter.title}</span>
           {slideInfo && (
-            <span className="ml-3 text-xs text-white/40">{slideInfo}</span>
+            <span className="hidden sm:inline text-xs text-white/40 flex-shrink-0">{slideInfo}</span>
           )}
         </div>
 
-        {/* Slide navigation */}
-        <div className="flex items-center gap-1 flex-shrink-0">
-          <button
-            onClick={retreatSlideInIframe}
-            className="p-1.5 rounded hover:bg-white/10 transition-colors"
-            title="Previous slide (←)"
-            disabled={currentSlideNum <= 1}
-          >
-            <SkipBack className={`w-4 h-4 ${currentSlideNum <= 1 ? 'text-white/20' : 'text-white/70'}`} />
-          </button>
-          <span className="text-xs text-white/50 w-12 text-center tabular-nums">
-            {currentSlideNum}/{totalSlidesNum || '—'}
-          </span>
-          <button
-            onClick={advanceSlideInIframe}
-            className="p-1.5 rounded hover:bg-white/10 transition-colors"
-            title="Next slide (→)"
-            disabled={currentSlideNum >= totalSlidesNum}
-          >
-            <SkipForward className={`w-4 h-4 ${currentSlideNum >= totalSlidesNum ? 'text-white/20' : 'text-white/70'}`} />
-          </button>
-        </div>
-
-        {/* Audio player — legacy per-slide MP3 pattern */}
-        {chapter.audioDir && !chapter.chapterAudio && (
-          <AudioPlayer
-            audioDir={chapter.audioDir}
-            currentSlide={currentSlideNum}
-            totalSlides={totalSlidesNum}
-            stepsInSlide={stepsInSlide}
-            currentStepInSlide={currentStepInSlide}
-            onSlideAudioEnd={advanceSlideInIframe}
-            onAdvanceStep={advanceStepInIframe}
-            onResetSteps={resetStepsInIframe}
-            onRevealAllSteps={revealAllStepsInIframe}
-          />
-        )}
-
-        {/* Audio player — new timestamp-fire pattern (one MP3 + cues per chapter) */}
-        {chapter.chapterAudio && (
-          <ChapterAudioControls
-            ref={audioControlsRef}
-            chapterAudio={chapter.chapterAudio}
-            chapterCues={chapter.chapterCues}
-            iframeRef={iframeRef}
-            totalSlides={totalSlidesNum}
-            resumeKey={`${courseId}:${chapter.id}`}
-          />
-        )}
-
-        {/* Zoom controls */}
-        <div className="flex items-center gap-1.5 flex-shrink-0">
-          <button
-            onClick={() => handleZoomChange(zoomLevel - 5)}
-            className="p-1 rounded hover:bg-white/10 transition-colors"
-            title="Zoom out"
-            disabled={zoomLevel <= 50}
-          >
-            <ZoomOut className="w-3.5 h-3.5 text-white/60" />
-          </button>
-          <input
-            type="range"
-            min={50}
-            max={125}
-            step={5}
-            value={zoomLevel}
-            onChange={(e) => handleZoomChange(Number(e.target.value))}
-            className="w-16 h-1 accent-accent-400 cursor-pointer"
-            title={`Zoom: ${zoomLevel}%`}
-          />
-          <button
-            onClick={() => handleZoomChange(zoomLevel + 5)}
-            className="p-1 rounded hover:bg-white/10 transition-colors"
-            title="Zoom in"
-            disabled={zoomLevel >= 125}
-          >
-            <ZoomIn className="w-3.5 h-3.5 text-white/60" />
-          </button>
-          <span className="text-[10px] text-white/40 w-8 text-center">{zoomLevel}%</span>
-        </div>
-
-        {/* Fullscreen toggle — prominent so learners find the maximized player */}
         <button
-          onClick={toggleFullscreen}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white/10 hover:bg-white/20 text-white transition-colors flex-shrink-0"
-          title={isFullscreen ? 'Exit full screen (Esc)' : 'Play full screen'}
+          onClick={() => router.push(`/ai-academy/${courseId}`)}
+          className="p-2 rounded-lg hover:bg-white/10 transition-colors flex-shrink-0"
+          title="Close player"
+          aria-label="Close player"
         >
-          {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize className="w-3.5 h-3.5" />}
-          <span className="hidden md:inline">{isFullscreen ? 'Exit' : 'Maximize'}</span>
+          <X className="w-5 h-5" />
         </button>
-
-        {/* Prev / Next */}
-        <div className="flex items-center gap-1 flex-shrink-0">
-          {prevChapter ? (
-            <Link
-              href={`/ai-academy/${courseId}/${prevChapter.slug}`}
-              className="p-1.5 rounded hover:bg-white/10 transition-colors"
-              title={`Previous: ${prevChapter.title}`}
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </Link>
-          ) : (
-            <span className="p-1.5 opacity-30"><ChevronLeft className="w-4 h-4" /></span>
-          )}
-          {nextChapter ? (
-            chapter.isFree && !authLoading && !isLoggedIn && !nextChapter.isFree ? (
-              <button
-                onClick={() => setShowAuthModal(true)}
-                className="p-1.5 rounded hover:bg-white/10 transition-colors"
-                title="Sign in to access next chapter"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            ) : (
-              <Link
-                href={`/ai-academy/${courseId}/${nextChapter.slug}`}
-                className="p-1.5 rounded hover:bg-white/10 transition-colors"
-                title={`Next: ${nextChapter.title}`}
-              >
-                <ChevronRight className="w-4 h-4" />
-              </Link>
-            )
-          ) : (
-            <span className="p-1.5 opacity-30"><ChevronRight className="w-4 h-4" /></span>
-          )}
-        </div>
-
-        <div className="w-px h-6 bg-white/20" />
-
-        {/* User badge or sign-in. Render a skeleton while the session
-            check is in flight — otherwise the Sign In button flashes for
-            users who are already signed in. */}
-        {authLoading ? (
-          <div className="flex items-center gap-2 flex-shrink-0" aria-hidden>
-            <div className="w-7 h-7 rounded-full bg-white/10 animate-pulse" />
-          </div>
-        ) : isLoggedIn && session ? (
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-7 h-7 rounded-full bg-accent-600 flex items-center justify-center text-xs font-bold">
-              {session.name.charAt(0).toUpperCase()}
-            </div>
-            <span className="hidden sm:inline text-xs text-white/70 max-w-[100px] truncate">{session.name}</span>
-            <button onClick={logout} className="p-1 rounded hover:bg-white/10" title="Sign out">
-              <LogOut className="w-3.5 h-3.5 text-white/50" />
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={() => setShowAuthModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-white/10 hover:bg-white/20 rounded-full transition-colors flex-shrink-0"
-          >
-            <User className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Sign In</span>
-          </button>
-        )}
       </div>
 
-      {/* Slide progress bar */}
-      <div className="flex-shrink-0 h-1 bg-gray-200 group hover:h-1.5 transition-all">
-        <div
-          className="h-full bg-primary-500 transition-all duration-300"
-          style={{ width: `${slidePercent}%` }}
+      {/* Stage */}
+      <div className="flex-1 min-h-0 relative">
+        <iframe
+          key={chapter.id}
+          ref={iframeRef}
+          src={`/api/content${chapter.htmlFile}`}
+          className="w-full h-full border-0 bg-gray-100"
+          sandbox="allow-scripts allow-same-origin"
+          title={chapter.title}
+          onLoad={handleIframeLoad}
         />
-      </div>
 
-      {/* Main content area */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar */}
-        {sidebarOpen && (
+        {/* Chapter drawer */}
+        {drawerOpen && (
           <>
-            {/* Mobile overlay */}
             <div
-              className="lg:hidden fixed inset-0 bg-black/40 z-20"
-              style={{ top: 'calc(80px + 56px + 4px)' }}
-              onClick={() => setSidebarOpen(false)}
+              className="absolute inset-0 bg-black/50 z-30 animate-fade-in"
+              onClick={() => setDrawerOpen(false)}
+              aria-hidden="true"
             />
-            <aside className="absolute lg:relative z-30 w-72 h-full bg-white border-r border-gray-200 overflow-y-auto flex-shrink-0 shadow-lg lg:shadow-none">
+            <aside className="absolute left-0 top-0 bottom-0 z-40 w-80 max-w-[85vw] bg-[#0C1426] text-white overflow-y-auto shadow-2xl animate-fade-in">
               <div className="p-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Chapters</h3>
-                  <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-1 hover:bg-gray-100 rounded">
-                    <X className="w-4 h-4 text-gray-400" />
+                <div className="flex items-center justify-between mb-1">
+                  <h3 className="text-xs font-bold tracking-widest text-white/40 uppercase">
+                    {course?.shortTitle ?? 'Course'}
+                  </h3>
+                  <button onClick={() => setDrawerOpen(false)} className="p-1.5 hover:bg-white/10 rounded-lg">
+                    <X className="w-4 h-4 text-white/60" />
                   </button>
                 </div>
-                <nav className="space-y-1">
+                <p className="text-sm font-semibold mb-4 text-white/90">Chapters</p>
+                <nav className="space-y-0.5">
                   {regularChapters.map(ch => {
                     const isActive = ch.id === chapter.id
+                    const tick = chapterTick(ch)
                     return (
-                      <Link
+                      <button
                         key={ch.id}
-                        href={`/ai-academy/${courseId}/${ch.slug}`}
-                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                        onClick={() => swapChapter(ch)}
+                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-left transition-colors ${
                           isActive
-                            ? 'bg-primary-50 text-primary-700 font-medium'
-                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                            ? 'bg-white/10 text-white font-medium'
+                            : 'text-white/60 hover:bg-white/5 hover:text-white'
                         }`}
                       >
-                        <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-                          isActive ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-500'
+                        <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold flex-shrink-0 ${
+                          tick === 'done'
+                            ? 'bg-emerald-500/20 text-emerald-400'
+                            : isActive ? 'bg-primary-500/30 text-primary-300' : 'bg-white/10 text-white/50'
                         }`}>
-                          {String(ch.number).padStart(2, '0')}
+                          {tick === 'done' ? <CheckCircle className="w-4 h-4" /> : String(ch.number).padStart(2, '0')}
                         </span>
-                        <span className="truncate">{ch.title}</span>
-                      </Link>
+                        <span className="truncate flex-1">{ch.title}</span>
+                        {ch.estimatedMinutes ? (
+                          <span className="text-[10px] text-white/30 flex-shrink-0 tabular-nums">{ch.estimatedMinutes}m</span>
+                        ) : null}
+                      </button>
                     )
                   })}
                   {mockExam && (
-                    <>
-                      <div className="pt-2 mt-2 border-t border-gray-100">
-                        <Link
-                          href={`/ai-academy/${courseId}/${mockExam.slug}`}
-                          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
-                            mockExam.id === chapter.id
-                              ? 'bg-secondary-50 text-secondary-700 font-medium'
-                              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                          }`}
-                        >
-                          <span className="w-7 h-7 rounded-lg bg-secondary-100 text-secondary-700 flex items-center justify-center text-xs font-bold flex-shrink-0">
-                            EX
-                          </span>
-                          <span className="truncate">{mockExam.title}</span>
-                        </Link>
-                      </div>
-                    </>
+                    <div className="pt-2 mt-2 border-t border-white/10">
+                      <button
+                        onClick={() => swapChapter(mockExam)}
+                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-left transition-colors ${
+                          mockExam.id === chapter.id
+                            ? 'bg-white/10 text-white font-medium'
+                            : 'text-white/60 hover:bg-white/5 hover:text-white'
+                        }`}
+                      >
+                        <span className="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center text-[11px] font-bold flex-shrink-0">
+                          EX
+                        </span>
+                        <span className="truncate">{mockExam.title}</span>
+                      </button>
+                    </div>
                   )}
                 </nav>
               </div>
@@ -939,181 +841,188 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
           </>
         )}
 
-        {/* iframe or login gate */}
-        <div className="flex-1 min-w-0 relative">
-          {requiresLogin ? (
-            <div className="absolute inset-0 overflow-y-auto bg-gradient-to-br from-gray-50 to-gray-100">
-              <div className="min-h-full flex items-center justify-center py-12 px-6">
-                <div className="max-w-lg w-full">
-                  {/* Themed lock badge */}
-                  <div
-                    className="w-16 h-16 mx-auto mb-5 rounded-2xl flex items-center justify-center shadow-lg"
-                    style={themedBg}
-                  >
-                    <Lock className="w-8 h-8 text-white" />
-                  </div>
+        {/* End-of-chapter "Up next" overlay */}
+        {showEndOverlay && nextChapter && (
+          <div className="absolute inset-0 z-40 bg-black/75 backdrop-blur-sm flex items-center justify-center p-6 animate-fade-in">
+            <div className="max-w-md w-full text-center text-white">
+              <div className="inline-flex items-center gap-2 text-emerald-400 text-sm font-semibold mb-4">
+                <CheckCircle className="w-5 h-5" />
+                Chapter complete
+              </div>
+              <p className="text-xs font-bold tracking-widest text-white/40 uppercase mb-2">Up next</p>
+              <h3 className="font-heading text-2xl font-bold mb-6">{nextChapter.title}</h3>
 
-                  {/* Course context */}
-                  {course && (
-                    <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 text-center mb-2">
-                      {course.shortTitle} · Chapter {chapter.number} of {totalChapterCount}
-                    </p>
-                  )}
+              <button
+                onClick={() => nextChapter && swapChapter(nextChapter)}
+                className="relative inline-flex items-center gap-3 px-8 py-4 bg-white text-gray-900 font-bold rounded-2xl hover:bg-gray-100 transition-colors mb-4"
+              >
+                <PlayCircle className="w-5 h-5" />
+                Play now
+                <span className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-primary-600 text-white text-xs font-bold flex items-center justify-center tabular-nums">
+                  {countdown}
+                </span>
+              </button>
 
-                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-3 font-heading">
-                    You&apos;ve finished the free chapters
-                  </h2>
-                  <p className="text-gray-500 text-center mb-6 leading-relaxed">
-                    {freeChapterCount > 0
-                      ? `The first ${freeChapterCount} chapter${freeChapterCount > 1 ? 's are' : ' is'} free — sign in (10 seconds) to unlock the rest and continue from where you left off.`
-                      : 'Sign in (takes 10 seconds) to unlock all chapters and track progress across devices.'}
-                  </p>
-
-                  {/* Value stack — three concrete items */}
-                  <div className="bg-white rounded-xl ring-1 ring-gray-200 p-5 mb-6 space-y-3">
-                    <div className="flex items-start gap-3">
-                      <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={themedTint}>
-                        <CheckCircle className="w-4 h-4" style={themedAccentText} />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-900">Unlock all {totalChapterCount} chapters</p>
-                        <p className="text-xs text-gray-500 mt-0.5">Including the capstone — your one-page roadmap or production-grade artifact.</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={themedTint}>
-                        <CheckCircle className="w-4 h-4" style={themedAccentText} />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-900">Progress synced across devices</p>
-                        <p className="text-xs text-gray-500 mt-0.5">Resume from this exact slide on your phone, laptop, or tablet.</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={themedTint}>
-                        <CheckCircle className="w-4 h-4" style={themedAccentText} />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-900">Free forever · no credit card</p>
-                        <p className="text-xs text-gray-500 mt-0.5">All courses stay free. No upsells. We don&apos;t share your email.</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => setShowAuthModal(true)}
-                    className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 text-white text-sm font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5"
-                    style={themedBg}
-                  >
-                    <User className="w-4 h-4" />
-                    Sign in to continue
-                  </button>
-                  <p className="text-xs text-gray-400 text-center mt-3">
-                    Google · Microsoft · or email — pick any.
-                  </p>
-
-                  <div className="mt-5 text-center">
-                    <Link
-                      href={`/ai-academy/${courseId}`}
-                      className="text-sm text-gray-500 hover:text-gray-700 font-medium"
-                    >
-                      ← Back to course overview
-                    </Link>
-                  </div>
-                </div>
+              <div className="flex items-center justify-center gap-4 text-sm">
+                <button
+                  onClick={() => { setShowEndOverlay(false); audioControlsRef.current?.seekToCue(1) }}
+                  className="inline-flex items-center gap-1.5 text-white/60 hover:text-white transition-colors"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  Replay chapter
+                </button>
+                <span className="text-white/20">·</span>
+                <button
+                  onClick={() => setShowEndOverlay(false)}
+                  className="text-white/60 hover:text-white transition-colors"
+                >
+                  Stay here
+                </button>
+                <span className="text-white/20">·</span>
+                <Link href={`/ai-academy/${courseId}`} className="text-white/60 hover:text-white transition-colors">
+                  Back to course
+                </Link>
               </div>
             </div>
-          ) : (
-            <iframe
-              ref={iframeRef}
-              src={`/api/content${chapter.htmlFile}`}
-              className="w-full h-full border-0"
-              sandbox="allow-scripts allow-same-origin"
-              title={chapter.title}
-              onLoad={handleIframeLoad}
-            />
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
-      {/* Chapter complete / next chapter bar */}
-      {nextChapter && slidePercent >= 90 && (
-        <div
-          className={`flex-shrink-0 text-white px-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fade-in ${
-            slidePercent >= 99 ? 'py-4' : 'py-3'
-          } ${theme ? '' : (slidePercent >= 99 ? 'bg-gradient-to-r from-primary-800 to-primary-900' : 'bg-primary-900')}`}
-          style={theme ? (slidePercent >= 99 ? { background: `linear-gradient(90deg, ${theme.primaryDeep} 0%, ${theme.navy} 100%)` } : { backgroundColor: theme.navy }) : undefined}
-        >
-          {slidePercent >= 99 ? (
-            <>
-              <div className="flex flex-col gap-1 min-w-0">
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-secondary-400 flex-shrink-0" />
-                  <span className="text-sm font-medium truncate">
-                    Chapter complete! Up next: <span className="text-secondary-300">{nextChapter.title}</span>
-                  </span>
-                </div>
-                {chapter.isFree && !authLoading && !isLoggedIn && !nextChapter.isFree && (
-                  <p className="text-xs text-white/60 pl-8">
-                    Sign in (10s) to unlock chapter {nextChapter.number} and {totalChapterCount - (nextChapter.number - 1)} more · free forever · no card
-                  </p>
-                )}
-              </div>
-              {chapter.isFree && !authLoading && !isLoggedIn && !nextChapter.isFree ? (
-                <button
-                  onClick={() => setShowAuthModal(true)}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-secondary-400 text-dark-900 text-sm font-bold rounded-lg hover:bg-secondary-300 transition-colors flex-shrink-0"
-                >
-                  <User className="w-4 h-4" />
-                  Sign in to continue
-                </button>
-              ) : (
-                <Link
-                  href={`/ai-academy/${courseId}/${nextChapter.slug}`}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-secondary-400 text-dark-900 text-sm font-bold rounded-lg hover:bg-secondary-300 transition-colors flex-shrink-0"
-                >
-                  Next chapter
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              )}
-            </>
-          ) : (
-            <>
-              <span className="text-sm text-white/80">
-                Up next: <span className="font-medium text-white">{nextChapter.title}</span>
+      {/* Bottom control bar — VLC-style */}
+      <div
+        className={`flex-shrink-0 bg-[#0C1426] text-white flex items-center px-3 gap-2 z-20 transition-all duration-300 ${
+          barsHidden ? 'h-0 opacity-0 overflow-hidden' : 'h-14'
+        }`}
+      >
+        {chapter.isMockExam ? (
+          <>
+            {/* Exam mode: slide nav + finish */}
+            <button onClick={retreatSlideInIframe} className="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Previous (←)">
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <span className="text-xs text-white/50 tabular-nums w-14 text-center">
+              {currentSlideNum}/{totalSlidesNum || '—'}
+            </span>
+            <button onClick={advanceSlideInIframe} className="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Next (→)">
+              <ChevronRight className="w-4 h-4" />
+            </button>
+            <div className="flex-1" />
+          </>
+        ) : isNewAudioPattern ? (
+          <>
+            <ChapterAudioControls
+              key={chapter.id}
+              ref={audioControlsRef}
+              chapterAudio={chapter.chapterAudio!}
+              chapterCues={chapter.chapterCues}
+              iframeRef={iframeRef}
+              totalSlides={totalSlidesNum}
+              resumeKey={`${courseId}:${chapter.id}`}
+              onEnded={handleAudioEnded}
+            />
+            <div className="w-px h-6 bg-white/15 flex-shrink-0 hidden sm:block" />
+            <div className="hidden sm:flex items-center flex-shrink-0">
+              <button onClick={retreatSlideInIframe} className="p-1.5 rounded hover:bg-white/10 transition-colors" title="Previous slide (←)">
+                <ChevronLeft className="w-4 h-4 text-white/70" />
+              </button>
+              <span className="text-[11px] text-white/50 tabular-nums w-12 text-center">
+                {currentSlideNum}/{totalSlidesNum || '—'}
               </span>
-              <Link
-                href={`/ai-academy/${courseId}/${nextChapter.slug}`}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-secondary-400 text-dark-900 text-sm font-bold rounded-lg hover:bg-secondary-300 transition-colors flex-shrink-0"
-              >
-                Next chapter
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </>
-          )}
+              <button onClick={advanceSlideInIframe} className="p-1.5 rounded hover:bg-white/10 transition-colors" title="Next slide (→)">
+                <ChevronRight className="w-4 h-4 text-white/70" />
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Legacy per-slide audio */}
+            <button onClick={retreatSlideInIframe} className="p-2 rounded-lg hover:bg-white/10 transition-colors flex-shrink-0" title="Previous slide (←)">
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <span className="text-xs text-white/50 tabular-nums w-14 text-center flex-shrink-0">
+              {currentSlideNum}/{totalSlidesNum || '—'}
+            </span>
+            <button onClick={advanceSlideInIframe} className="p-2 rounded-lg hover:bg-white/10 transition-colors flex-shrink-0" title="Next slide (→)">
+              <ChevronRight className="w-4 h-4" />
+            </button>
+            {chapter.audioDir && (
+              <AudioPlayer
+                audioDir={chapter.audioDir}
+                currentSlide={currentSlideNum}
+                totalSlides={totalSlidesNum}
+                stepsInSlide={stepsInSlide}
+                currentStepInSlide={currentStepInSlide}
+                onSlideAudioEnd={advanceSlideInIframe}
+                onAdvanceStep={advanceStepInIframe}
+                onResetSteps={resetStepsInIframe}
+                onRevealAllSteps={revealAllStepsInIframe}
+              />
+            )}
+            {/* Chapter progress bar (legacy has no continuous timeline) */}
+            <div className="relative flex-1 min-w-[60px] h-1.5 bg-white/20 rounded-full overflow-hidden">
+              <div
+                className="absolute inset-y-0 left-0 bg-primary-400 rounded-full transition-all duration-300"
+                style={{ width: `${slidePercent}%` }}
+              />
+            </div>
+          </>
+        )}
+
+        {/* Zoom */}
+        <div className="hidden md:flex items-center gap-0.5 flex-shrink-0">
+          <button
+            onClick={() => handleZoomChange(zoomLevel - 5)}
+            className="p-1.5 rounded hover:bg-white/10 transition-colors disabled:opacity-30"
+            title="Zoom out"
+            disabled={zoomLevel <= 50}
+          >
+            <ZoomOut className="w-3.5 h-3.5 text-white/60" />
+          </button>
+          <span className="text-[10px] text-white/40 w-8 text-center tabular-nums">{zoomLevel}%</span>
+          <button
+            onClick={() => handleZoomChange(zoomLevel + 5)}
+            className="p-1.5 rounded hover:bg-white/10 transition-colors disabled:opacity-30"
+            title="Zoom in"
+            disabled={zoomLevel >= 125}
+          >
+            <ZoomIn className="w-3.5 h-3.5 text-white/60" />
+          </button>
         </div>
-      )}
 
-      {/* Save progress banner for non-logged-in users. Suppressed while auth check is in flight. */}
-      {showSaveBanner && !authLoading && !isLoggedIn && !bannerDismissed && (
-        <SaveProgressModal
-          isVisible={true}
-          onDismiss={() => { setBannerDismissed(true); setShowSaveBanner(false) }}
-          onLoginSuccess={handleLoginSuccess}
-          completedChapters={progressChapterCount}
-        />
-      )}
+        {/* Fullscreen */}
+        <button
+          onClick={toggleFullscreen}
+          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white/10 hover:bg-white/20 transition-colors flex-shrink-0"
+          title={isFullscreen ? 'Exit full screen (F)' : 'Full screen (F)'}
+        >
+          {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize className="w-3.5 h-3.5" />}
+          <span className="hidden lg:inline">{isFullscreen ? 'Exit' : 'Maximize'}</span>
+        </button>
 
-      {/* Auth modal — contextual title/subtitle when triggered from paywall */}
-      <LearnerAuthModal
-        isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
-        onLoginSuccess={handleLoginSuccess}
-        title={requiresLogin ? `Unlock the rest of ${course?.shortTitle ?? 'the course'}` : undefined}
-        subtitle={requiresLogin ? 'Sign in to continue from chapter ' + chapter.number + ' and sync your progress across devices.' : undefined}
-      />
+        {/* Next chapter */}
+        {nextChapter && (
+          <button
+            onClick={() => swapChapter(nextChapter)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue transition-all flex-shrink-0"
+            title={`Next: ${nextChapter.title}`}
+          >
+            <span className="hidden sm:inline">Next</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        )}
+        {!nextChapter && prevChapter && (
+          <button
+            onClick={() => swapChapter(prevChapter)}
+            className="p-2 rounded-lg hover:bg-white/10 transition-colors flex-shrink-0"
+            title={`Previous: ${prevChapter.title}`}
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+        )}
+      </div>
 
-      {/* Course-complete celebration overlay */}
+      {/* Course-complete celebration overlay (hosts the OTP certificate
+          claim form when there is no legacy session) */}
       {showCelebration && (
         <CourseCompletionOverlay
           course={course}
@@ -1122,34 +1031,9 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
           certId={celebrationCertId}
           error={celebrationError}
           onClose={() => setShowCelebration(false)}
+          claimCourseId={!isLoggedIn ? courseId : undefined}
+          onCertClaimed={handleCertClaimed}
         />
-      )}
-
-      {/* Post-login welcome toast — themed, auto-dismiss */}
-      {showWelcomeToast && session && (
-        <div className="fixed bottom-6 right-6 z-[70] max-w-sm animate-slide-up">
-          <div
-            className="bg-white rounded-xl shadow-2xl ring-1 ring-gray-200 p-4 flex items-start gap-3"
-          >
-            <div
-              className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-              style={themedBg}
-            >
-              <CheckCircle className="w-5 h-5 text-white" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-gray-900">Welcome, {session.name.split(' ')[0]}.</p>
-              <p className="text-xs text-gray-500 mt-0.5">Your progress is now synced across devices.</p>
-            </div>
-            <button
-              onClick={() => setShowWelcomeToast(false)}
-              className="text-gray-300 hover:text-gray-500 flex-shrink-0"
-              aria-label="Dismiss"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
       )}
     </div>
   )

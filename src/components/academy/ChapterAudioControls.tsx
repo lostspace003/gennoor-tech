@@ -1,7 +1,7 @@
 'use client'
 
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
-import { Pause, Play } from 'lucide-react'
+import { Pause, Play, RotateCcw, RotateCw } from 'lucide-react'
 
 interface Cue {
   at: number
@@ -25,6 +25,8 @@ export interface ChapterAudioControlsHandle {
   step: (direction: 'next-slide' | 'prev-slide' | 'next-step' | 'prev-step') => void
   /** Toggle play/pause. Used by Space-key handlers (parent + iframe). */
   togglePlay: () => void
+  /** Relative time seek (VLC-style ±10s). */
+  seekBy: (seconds: number) => void
 }
 
 interface ChapterAudioControlsProps {
@@ -40,6 +42,9 @@ interface ChapterAudioControlsProps {
    *  localStorage — typically `${courseId}:${chapterId}`. When set, the
    *  player saves currentTime as it advances and restores it on next open. */
   resumeKey?: string
+  /** Fired when the chapter narration reaches its natural end — the player
+   *  uses this to raise the "Up next" overlay. */
+  onEnded?: () => void
 }
 
 const SPEEDS = [1.0, 1.1, 1.2, 1.3]
@@ -52,13 +57,11 @@ function formatTime(t: number) {
 }
 
 /**
- * Parent-level player for the timestamp-fire pattern.
- *
- * Loads one MP3 per chapter and a cues.json. Renders Play/Pause + speed +
- * scrubber in the parent ChapterViewer toolbar. Audio progression posts cues
- * down to the iframe so slides advance in sync. ChapterViewer holds a ref to
- * this component so its own slide-nav and iframe-nav events can seek the
- * audio — bidirectional sync.
+ * Parent-level player engine + VLC-style control strip for the
+ * timestamp-fire pattern: one MP3 per chapter plus a cues.json. Audio
+ * position is the single source of truth — every cue advance posts down to
+ * the iframe, and every user-driven seek additionally posts an authoritative
+ * apply-state so the deck is correct in BOTH directions.
  */
 const RESUME_PREFIX = 'gennoor:academy:resume:'
 // Don't restore within this many seconds of the end — the user is effectively
@@ -68,7 +71,7 @@ const RESUME_TAIL_GUARD_SEC = 3
 const RESUME_SAVE_INTERVAL_SEC = 5
 
 const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudioControlsProps>(
-  function ChapterAudioControls({ chapterAudio, chapterCues, iframeRef, resumeKey }, ref) {
+  function ChapterAudioControls({ chapterAudio, chapterCues, iframeRef, resumeKey, onEnded }, ref) {
     const audioRef = useRef<HTMLAudioElement>(null)
     const [cues, setCues] = useState<Cue[]>([])
     const [isPlaying, setIsPlaying] = useState(false)
@@ -184,6 +187,40 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       audio.play().catch(() => {})
     }, [])
 
+    // Time-based seek shared by the scrubber, ±10s buttons, and keyboard.
+    // Resolves the cue for the new position in EITHER direction and pushes
+    // authoritative state — never waits for the forward-only timeupdate.
+    const seekToTime = useCallback((t: number) => {
+      const audio = audioRef.current
+      if (!audio || !duration) return
+      const clamped = Math.max(0, Math.min(duration, t))
+      try { audio.currentTime = clamped } catch { pendingSeekRef.current = clamped }
+      let idx = -1
+      for (let i = 0; i < cues.length; i++) {
+        if (cues[i].at <= clamped + 0.05) idx = i
+        else break
+      }
+      currentCueIdxRef.current = idx
+      if (idx >= 0) {
+        postCue(idx)
+        postApplyState(idx)
+      } else if (cues.length > 0) {
+        // Before the first cue — reset to the very start of the deck.
+        try {
+          iframeRef.current?.contentWindow?.postMessage(
+            { type: 'gennoor-academy:apply-state', slide: 1, step: null },
+            '*',
+          )
+        } catch {}
+      }
+    }, [cues, duration, postCue, postApplyState, iframeRef])
+
+    const seekBy = useCallback((seconds: number) => {
+      const audio = audioRef.current
+      if (!audio) return
+      seekToTime(audio.currentTime + seconds)
+    }, [seekToTime])
+
     const seekToCue = useCallback((targetSlide: number, targetStep?: number) => {
       if (cues.length === 0) return
       // Exact match first
@@ -291,7 +328,7 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       audio.play().catch(() => {})
     }, [])
 
-    useImperativeHandle(ref, () => ({ seekToCue, step: stepNav, togglePlay }), [seekToCue, stepNav, togglePlay])
+    useImperativeHandle(ref, () => ({ seekToCue, step: stepNav, togglePlay, seekBy }), [seekToCue, stepNav, togglePlay, seekBy])
 
     useEffect(() => {
       currentCueIdxRef.current = -1
@@ -396,38 +433,19 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
     function cycleSpeed() { setSpeedIndex(prev => (prev + 1) % SPEEDS.length) }
 
     function handleSeek(e: React.MouseEvent<HTMLDivElement>) {
-      const audio = audioRef.current
-      if (!audio || !duration) return
+      if (!duration) return
       const rect = e.currentTarget.getBoundingClientRect()
       const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
-      const t = ratio * duration
-      audio.currentTime = t
-      // Immediately resolve the cue for the new position (either direction)
-      // and push authoritative state — don't wait for the next timeupdate,
-      // which only ever advances forward.
-      let idx = -1
-      for (let i = 0; i < cues.length; i++) {
-        if (cues[i].at <= t + 0.05) idx = i
-        else break
-      }
-      currentCueIdxRef.current = idx
-      if (idx >= 0) {
-        postCue(idx)
-        postApplyState(idx)
-      } else if (cues.length > 0) {
-        // Before the first cue — reset to the very start of the deck.
-        try {
-          iframeRef.current?.contentWindow?.postMessage(
-            { type: 'gennoor-academy:apply-state', slide: 1, step: null },
-            '*',
-          )
-        } catch {}
-      }
+      seekToTime(ratio * duration)
     }
 
     if (audioError) return null
 
     const speed = SPEEDS[speedIndex]
+    // Slide-start cue positions for the scrubber tick marks (skip slide 1 — it's the origin).
+    const slideTicks = duration > 0
+      ? cues.filter(c => c.step === undefined && c.slide > 1 && c.at < duration)
+      : []
 
     return (
       <>
@@ -445,50 +463,78 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
           onCanPlay={() => { setAudioReady(true); flushPendingSeek() }}
           onTimeUpdate={handleTimeUpdate}
           onError={() => setAudioError(true)}
-          onEnded={() => { setIsPlaying(false); clearResume() }}
+          onEnded={() => { setIsPlaying(false); clearResume(); onEnded?.() }}
         />
 
+        {/* Play / pause — the primary control, VLC-prominent */}
         <button
           onClick={togglePlay}
           disabled={!audioReady}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-bold transition-colors ${
-            isPlaying
-              ? 'bg-secondary-400 text-dark-900'
-              : audioReady
-                ? 'bg-white/10 hover:bg-white/20 text-white'
-                : 'bg-white/5 text-white/40 cursor-not-allowed'
+          className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${
+            audioReady
+              ? 'bg-white text-gray-900 hover:bg-gray-200'
+              : 'bg-white/20 text-white/40 cursor-not-allowed'
           }`}
           title={isPlaying ? 'Pause (Space)' : 'Play (Space)'}
         >
-          {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-          {isPlaying ? 'PAUSE' : audioReady ? 'PLAY' : '…'}
+          {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
         </button>
+
+        {/* ±10s */}
+        <button
+          onClick={() => seekBy(-10)}
+          disabled={!audioReady}
+          className="p-1.5 rounded hover:bg-white/10 text-white/70 hover:text-white transition-colors flex-shrink-0 disabled:opacity-30"
+          title="Back 10 seconds (J)"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
+        <button
+          onClick={() => seekBy(10)}
+          disabled={!audioReady}
+          className="p-1.5 rounded hover:bg-white/10 text-white/70 hover:text-white transition-colors flex-shrink-0 disabled:opacity-30"
+          title="Forward 10 seconds (L)"
+        >
+          <RotateCw className="w-4 h-4" />
+        </button>
+
+        {/* Timeline scrubber — the continuous chapter timeline with slide tick marks */}
+        <div
+          className="relative flex-1 min-w-[80px] h-6 flex items-center cursor-pointer group"
+          onClick={handleSeek}
+          title="Seek"
+        >
+          <div className="relative w-full h-1.5 group-hover:h-2.5 bg-white/20 rounded-full transition-all">
+            <div
+              className="absolute inset-y-0 left-0 bg-primary-400 rounded-full"
+              style={{ width: duration > 0 ? `${(currentTime / duration) * 100}%` : '0%' }}
+            />
+            {slideTicks.map(c => (
+              <span
+                key={`${c.slide}-${c.at}`}
+                className="absolute top-1/2 -translate-y-1/2 w-px h-full bg-white/50"
+                style={{ left: `${(c.at / duration) * 100}%` }}
+                title={`Slide ${c.slide}`}
+              />
+            ))}
+            <span
+              className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white shadow opacity-0 group-hover:opacity-100 transition-opacity"
+              style={{ left: duration > 0 ? `calc(${(currentTime / duration) * 100}% - 6px)` : '0%' }}
+            />
+          </div>
+        </div>
+
+        <span className="text-[11px] text-white/60 tabular-nums flex-shrink-0">
+          {formatTime(currentTime)} / {formatTime(duration)}
+        </span>
 
         <button
           onClick={cycleSpeed}
-          className="px-2 py-1 text-xs font-bold bg-white/10 hover:bg-white/20 rounded transition-colors"
+          className="px-2 py-1 text-[11px] font-bold bg-white/10 hover:bg-white/20 text-white rounded transition-colors flex-shrink-0"
           title="Cycle playback speed"
         >
           {speed.toFixed(1)}x
         </button>
-
-        {audioReady && duration > 0 && (
-          <div
-            className="w-20 sm:w-32 h-1.5 bg-white/20 rounded-full cursor-pointer"
-            onClick={handleSeek}
-          >
-            <div
-              className="h-full bg-secondary-400 rounded-full transition-all"
-              style={{ width: `${(currentTime / duration) * 100}%` }}
-            />
-          </div>
-        )}
-
-        {audioReady && duration > 0 && (
-          <span className="text-[10px] text-white/40 tabular-nums">
-            {formatTime(currentTime)} / {formatTime(duration)}
-          </span>
-        )}
       </>
     )
   },

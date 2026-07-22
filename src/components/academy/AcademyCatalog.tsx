@@ -190,7 +190,7 @@ export default function AcademyCatalog({ allCourses }: AcademyCatalogProps) {
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
                 {filtered.map((course) => (
                   <CourseCard key={course.slug} course={course} />
                 ))}
@@ -240,29 +240,29 @@ function CourseCard({ course }: { course: Course }) {
   return (
     <Link
       href={`/academy/courses/${course.slug}`}
-      className="group block rounded-2xl p-6 glass-card glow-border transition-all duration-500 hover:-translate-y-1 flex flex-col h-full"
+      className="group block rounded-2xl p-7 bg-white border border-gray-200/70 shadow-sm hover:shadow-lg transition-all duration-500 hover:-translate-y-1 flex flex-col h-full"
     >
-      <div className="flex items-start justify-between gap-2 mb-3">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold text-primary-600 bg-primary-50 border border-primary-100/60">
+      <div className="flex items-start justify-between gap-2 mb-4">
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-900 bg-white border border-gray-300">
             {trackInfo?.label ?? course.track}
           </span>
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold text-gray-600 bg-gray-50 border border-gray-100">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-700 bg-white border border-gray-300">
             {levelInfo?.label ?? course.level}
           </span>
           {course.interactiveUrl && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200/60">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] text-amber-700 bg-amber-50 border border-amber-200/60">
               Interactive
             </span>
           )}
         </div>
         {!isAvailable && (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold text-amber-700 bg-amber-50 border border-amber-100/60 flex-shrink-0">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] text-amber-700 bg-amber-50 border border-amber-100/60 flex-shrink-0">
             {course.status === 'coming-soon' ? 'Coming soon' : 'In development'}
           </span>
         )}
       </div>
-      <h3 className="text-lg font-bold text-gray-900 mb-2 leading-tight group-hover:text-primary-600 transition-colors">
+      <h3 className="text-xl font-extrabold tracking-tight text-gray-900 mb-3 leading-tight group-hover:text-primary-600 transition-colors">
         {course.title}
       </h3>
       <p className="text-sm text-gray-500 leading-relaxed mb-4 flex-grow">
