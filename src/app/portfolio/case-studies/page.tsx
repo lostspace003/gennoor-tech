@@ -30,7 +30,7 @@ export default function CaseStudiesPage() {
             <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
               Case Studies
             </span>
-            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 leading-tight tracking-tight mb-6">
               Case Studies
             </h1>
             <p className="text-xl text-gray-600">

@@ -32,6 +32,12 @@ export interface PageHeroProps {
   meta?: PageHeroMeta[]
   /** Up to two CTAs rendered to the right of the description. */
   ctas?: PageHeroCta[]
+  /** Vertical rhythm — 'compact' suits utility/legal pages. */
+  size?: 'default' | 'compact'
+  /** Horizontal alignment of the hero content. */
+  align?: 'left' | 'center'
+  /** Optional media/extra slot rendered below the CTAs (e.g. a video or illustration). */
+  children?: React.ReactNode
 }
 
 /**
@@ -47,7 +53,11 @@ export default function PageHero({
   description,
   meta,
   ctas,
+  size = 'default',
+  align = 'left',
+  children,
 }: PageHeroProps) {
+  const centered = align === 'center'
   return (
     <section className="relative overflow-hidden">
       {/* Light brand-tinted mesh background */}
@@ -70,10 +80,15 @@ export default function PageHero({
         }}
       />
 
-      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
-        <div className="max-w-4xl">
+      <div
+        className={cn(
+          'relative container mx-auto px-4 sm:px-6 lg:px-8',
+          size === 'compact' ? 'py-10 lg:py-14' : 'py-14 lg:py-20'
+        )}
+      >
+        <div className={cn('max-w-4xl', centered && 'mx-auto text-center')}>
           {breadcrumbs && breadcrumbs.length > 0 && (
-            <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-gray-500 mb-4">
+            <nav aria-label="Breadcrumb" className={cn('flex items-center gap-1.5 text-xs text-gray-500 mb-4', centered && 'justify-center')}>
               {breadcrumbs.map((b, i) => (
                 <span key={`${b.label}-${i}`} className="inline-flex items-center gap-1.5">
                   {b.href ? (
@@ -107,7 +122,7 @@ export default function PageHero({
           )}
 
           {meta && meta.length > 0 && (
-            <div className="flex flex-wrap gap-2.5 mb-8">
+            <div className={cn('flex flex-wrap gap-2.5 mb-8', centered && 'justify-center')}>
               {meta.map((m, i) => {
                 const Icon = m.icon
                 return (
@@ -124,7 +139,7 @@ export default function PageHero({
           )}
 
           {ctas && ctas.length > 0 && (
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className={cn('flex flex-col sm:flex-row gap-3', centered && 'sm:justify-center')}>
               {ctas.map((c, i) => (
                 <Link
                   key={`${c.label}-${i}`}
@@ -142,6 +157,8 @@ export default function PageHero({
               ))}
             </div>
           )}
+
+          {children}
         </div>
       </div>
     </section>

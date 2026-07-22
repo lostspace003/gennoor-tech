@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { User, Award, Building, ArrowRight } from 'lucide-react'
 import { PersonJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd'
+import PageHero from '@/components/shared/PageHero'
 
 export const metadata: Metadata = {
   title: 'About Jalal Ahmed Khan & Gennoor Tech — Enterprise AI Expert',
@@ -49,29 +50,14 @@ export default function AboutPage() {
       ]} />
 
       {/* Hero */}
-      <section className="relative py-14 lg:py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl">
-            <div className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
-              About Gennoor Tech
-            </div>
-            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
-              We exist so the next wave of AI value doesn&apos;t skip our regions.
-            </h1>
-            <p className="text-xl text-gray-500 leading-relaxed">
-              Gennoor Tech is the AI transformation partner for enterprises and growing businesses
-              across GCC, Africa, and South Asia — running the full journey from readiness
-              diagnostic to deployed agents to long-term sustainment.
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="About Gennoor Tech"
+        title="We exist so the next wave of AI value doesn't skip our regions."
+        description="Gennoor Tech is the AI transformation partner for enterprises and growing businesses across GCC, Africa, and South Asia — running the full journey from readiness diagnostic to deployed agents to long-term sustainment."
+      />
 
       {/* Sections Grid */}
-      <section className="py-20 lg:py-24">
+      <section className="section-padding">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-6xl mx-auto">
             {sections.map((section, index) => {
@@ -80,7 +66,7 @@ export default function AboutPage() {
                 <Link
                   key={index}
                   href={section.href}
-                  className="group rounded-2xl p-7 transition-all duration-500 glass-card glow-border"
+                  className="group rounded-2xl p-7 transition-all duration-300 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70"
                 >
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary-500/15">
                     <Icon className="w-6 h-6 text-white" />

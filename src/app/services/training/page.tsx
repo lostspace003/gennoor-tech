@@ -59,7 +59,7 @@ export default function TrainingPage() {
               <GraduationCap className="w-3 h-3 mr-1.5" />
               Phase 2 of The Gennoor Way · Train
             </span>
-            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6 leading-[1.1]">
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-6 leading-tight tracking-tight">
               Training that ends in a <span className="gradient-text">shipped system</span>.
             </h1>
             <p className="text-xl text-gray-600 mb-6 leading-relaxed max-w-3xl">
@@ -114,7 +114,7 @@ export default function TrainingPage() {
               </a>
               <a
                 href="#bootcamps"
-                className="inline-flex items-center px-7 py-3.5 border-2 border-primary-600 text-primary-600 text-sm font-semibold rounded-xl hover:bg-primary-50 transition-all duration-300"
+                className="inline-flex items-center px-7 py-3.5 bg-white ring-1 ring-gray-200 text-gray-700 text-sm font-semibold rounded-xl hover:ring-primary-300 hover:text-primary-700 transition-all duration-300"
               >
                 <Rocket className="w-4 h-4 mr-2" />
                 Enterprise bootcamps ({bootcamps.length})
@@ -296,7 +296,7 @@ export default function TrainingPage() {
                 { color: 'bg-orange-600', name: 'AWS', certs: ['Cloud Practitioner', 'AI Practitioner', 'ML Engineer + Specialty'] },
                 { color: 'bg-gray-800', name: 'GitHub', certs: ['GH-900 Foundations', 'GH-300 Actions', 'GH-200 Copilot'] },
               ].map(p => (
-                <div key={p.name} className="glass-card p-4">
+                <div key={p.name} className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-4">
                   <h4 className="font-semibold text-gray-900 mb-2 flex items-center">
                     <span className={`w-2 h-5 ${p.color} mr-2 rounded`} />
                     {p.name}
@@ -386,7 +386,7 @@ export default function TrainingPage() {
             </Link>
             <Link
               href="/resources/calendar"
-              className="inline-flex items-center px-7 py-3.5 border-2 border-primary-600 text-primary-600 text-sm font-semibold rounded-xl hover:bg-primary-50 transition-all duration-300"
+              className="inline-flex items-center px-7 py-3.5 bg-white ring-1 ring-gray-200 text-gray-700 text-sm font-semibold rounded-xl hover:ring-primary-300 hover:text-primary-700 transition-all duration-300"
             >
               View training calendar
             </Link>

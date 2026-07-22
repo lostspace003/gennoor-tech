@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { Code2, Zap, Shield, Rocket, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import { ServiceJsonLd, FAQJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd'
+import PageHero from '@/components/shared/PageHero'
 
 export const metadata: Metadata = {
   title: 'AI Proof of Concept Development — From Idea to Working Prototype',
@@ -77,31 +78,12 @@ export default function PoCDevelopmentPage() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-14 lg:py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-white"></div>
-        <div className="absolute inset-0 bg-gradient-mesh"></div>
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl">
-            <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
-              PoC Development
-            </span>
-            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
-              Proof of Concept Development
-            </h1>
-            <p className="text-xl text-gray-600 mb-8">
-              Transform ideas into working prototypes. We build production-ready PoCs that demonstrate
-              real business value and can scale to full implementation.
-            </p>
-            <Link
-              href="/contact#book"
-              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300"
-            >
-              Discuss Your PoC Idea
-            </Link>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="PoC Development"
+        title="Proof of Concept Development"
+        description="Transform ideas into working prototypes. We build production-ready PoCs that demonstrate real business value and can scale to full implementation."
+        ctas={[{ label: 'Discuss Your PoC Idea', href: '/contact#book' }]}
+      />
 
       {/* Why PoC */}
       <section className="relative py-14 lg:py-20">
@@ -111,21 +93,21 @@ export default function PoCDevelopmentPage() {
             Why Start with a PoC?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div className="glass-card p-6 text-center">
+            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Zap className="w-8 h-8 text-primary-600" />
               </div>
               <h3 className="text-lg font-semibold mb-2">Rapid Validation</h3>
               <p className="text-gray-600">Test feasibility and value in weeks, not months</p>
             </div>
-            <div className="glass-card p-6 text-center">
+            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Shield className="w-8 h-8 text-primary-600" />
               </div>
               <h3 className="text-lg font-semibold mb-2">Minimize Risk</h3>
               <p className="text-gray-600">Small investment to validate before full rollout</p>
             </div>
-            <div className="glass-card p-6 text-center">
+            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Rocket className="w-8 h-8 text-primary-600" />
               </div>
@@ -145,7 +127,7 @@ export default function PoCDevelopmentPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {pocTypes.map((poc) => (
-              <div key={poc.title} className="glass-card p-6">
+              <div key={poc.title} className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6">
                 <div className="flex items-start mb-4">
                   <Code2 className="w-6 h-6 text-primary-600 mr-3 flex-shrink-0 mt-1" />
                   <div className="flex-1">
@@ -180,7 +162,7 @@ export default function PoCDevelopmentPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {process.map((phase, index) => (
                 <div key={phase.phase} className="relative">
-                  <div className="glass-card p-6 h-full">
+                  <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 h-full">
                     <div className="flex items-center mb-4">
                       <div className="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center font-bold mr-3">
                         {index + 1}
@@ -225,7 +207,7 @@ export default function PoCDevelopmentPage() {
                 "Python", "TypeScript", ".NET", "React",
                 "FastAPI", "Next.js", "PostgreSQL", "CosmosDB"
               ].map((tech) => (
-                <div key={tech} className="glass-card px-4 py-3 text-center">
+                <div key={tech} className="bg-white rounded-xl border border-gray-200/70 shadow-sm px-4 py-3 text-center">
                   <span className="text-sm font-medium text-gray-700">{tech}</span>
                 </div>
               ))}
@@ -240,15 +222,15 @@ export default function PoCDevelopmentPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Related Services</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <Link href="/services/ai-strategy" className="glass-card p-6 hover:shadow-lg transition-shadow">
+            <Link href="/services/ai-strategy" className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 hover:shadow-lg transition-shadow">
               <h3 className="font-semibold text-gray-900 mb-2">AI Strategy & Consulting</h3>
               <p className="text-sm text-gray-600">Define your AI roadmap before building — ensure every PoC aligns with business goals.</p>
             </Link>
-            <Link href="/services/agentic-ai" className="glass-card p-6 hover:shadow-lg transition-shadow">
+            <Link href="/services/agentic-ai" className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 hover:shadow-lg transition-shadow">
               <h3 className="font-semibold text-gray-900 mb-2">Agentic AI Solutions</h3>
               <p className="text-sm text-gray-600">Scale your PoC into autonomous multi-agent systems.</p>
             </Link>
-            <Link href="/services/training" className="glass-card p-6 hover:shadow-lg transition-shadow">
+            <Link href="/services/training" className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 hover:shadow-lg transition-shadow">
               <h3 className="font-semibold text-gray-900 mb-2">Corporate AI Training</h3>
               <p className="text-sm text-gray-600">Train your team to maintain and extend AI solutions independently.</p>
             </Link>
@@ -263,7 +245,7 @@ export default function PoCDevelopmentPage() {
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Frequently Asked Questions</h2>
           <div className="max-w-3xl mx-auto space-y-6">
             {faqs.map((faq) => (
-              <div key={faq.question} className="glass-card p-6">
+              <div key={faq.question} className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
                 <p className="text-gray-600">{faq.answer}</p>
               </div>

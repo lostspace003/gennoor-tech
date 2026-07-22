@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { Target, Rocket, GraduationCap, Globe, Building2, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
+import PageHero from '@/components/shared/PageHero'
 
 export const metadata: Metadata = {
   title: 'About Gennoor Tech',
@@ -26,27 +27,14 @@ export default function CompanyPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative py-14 lg:py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
-              About the Company
-            </div>
-            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-4 leading-tight">
-              Gennoor Tech
-            </h1>
-            <p className="text-xl text-gray-500">
-              Enterprise AI Training &amp; Solutions
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="About the Company"
+        title="Gennoor Tech"
+        description="Enterprise AI Training & Solutions"
+      />
 
       {/* Vision */}
-      <section className="py-16 lg:py-20 relative">
+      <section className="py-14 lg:py-20 relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
@@ -61,7 +49,7 @@ export default function CompanyPage() {
       </section>
 
       {/* Mission */}
-      <section className="py-16 lg:py-20 relative">
+      <section className="py-14 lg:py-20 relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
@@ -77,17 +65,17 @@ export default function CompanyPage() {
       </section>
 
       {/* Core Objectives */}
-      <section className="py-16 lg:py-24 relative">
+      <section className="py-14 lg:py-20 relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
-            <div className="rounded-2xl glass-card p-8 lg:p-10">
+            <div className="rounded-2xl bg-white border border-gray-200/70 shadow-sm p-8 lg:p-10">
               <h2 className="text-2xl font-bold text-gray-900 mb-8">Core Objectives</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {coreObjectives.map((item) => {
                   const Icon = item.icon
                   return (
-                    <div key={item.title} className="rounded-xl p-5 glass-card">
+                    <div key={item.title} className="rounded-xl p-5 bg-gray-50/70 border border-gray-100">
                       <div className="flex items-center gap-3 mb-3">
                         <div className="w-9 h-9 bg-primary-50 rounded-xl flex items-center justify-center flex-shrink-0">
                           <Icon className="w-4 h-4 text-primary-600" />
@@ -102,7 +90,7 @@ export default function CompanyPage() {
             </div>
 
             {/* Company Details */}
-            <div className="mt-10 rounded-2xl glass-card p-8 lg:p-10">
+            <div className="mt-10 rounded-2xl bg-white border border-gray-200/70 shadow-sm p-8 lg:p-10">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center">
                   <Building2 className="w-5 h-5 text-white" />
@@ -130,7 +118,7 @@ export default function CompanyPage() {
               </Link>
               <Link
                 href="/contact"
-                className="inline-flex items-center px-6 py-3 text-sm font-semibold text-gray-700 rounded-xl glass-card transition-all duration-300"
+                className="inline-flex items-center px-6 py-3 text-sm font-semibold text-gray-700 rounded-xl bg-white ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700 transition-all duration-300"
               >
                 Get in Touch
               </Link>

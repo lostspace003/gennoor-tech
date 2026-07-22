@@ -37,33 +37,32 @@ export default function SolutionsHubPage() {
       <BreadcrumbJsonLd items={[{ name: 'Home', url: 'https://gennoor.com' }, { name: 'Solutions', url: 'https://gennoor.com/solutions' }]} />
       <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
         {/* Hero */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-[#0C1426] via-[#0F1B33] to-[#1A2547] text-white">
-          <div className="absolute inset-0 opacity-30">
-            <div className="absolute top-0 right-1/4 w-[40rem] h-[40rem] bg-primary-500/30 rounded-full blur-3xl" />
-            <div className="absolute bottom-0 left-1/4 w-[35rem] h-[35rem] bg-secondary-400/20 rounded-full blur-3xl" />
-          </div>
-          <div className="relative max-w-6xl mx-auto px-6 py-24 lg:py-32 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs tracking-widest text-secondary-300 mb-6">
+        <section className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-white" />
+          <div className="absolute inset-0 bg-gradient-mesh" />
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+          <div className="relative max-w-6xl mx-auto px-6 py-14 lg:py-20 text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50/80 border border-primary-100/60 text-xs tracking-widest font-semibold text-primary-600 mb-6">
               SOLUTIONS
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 leading-tight tracking-tight mb-6">
               Two tracks. One methodology.
-              <span className="block text-secondary-300 mt-2">Built for whoever you are.</span>
+              <span className="block gradient-text mt-2">Built for whoever you are.</span>
             </h1>
-            <p className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto">
+            <p className="text-lg md:text-xl text-gray-500 max-w-3xl mx-auto">
               We don’t make SMBs feel priced out. We don’t make enterprises feel under-served.
-              The same five-phase framework — <span className="text-secondary-300 font-semibold">Diagnose. Train. Innovate. Build. Sustain.</span> —
+              The same five-phase framework — <span className="text-primary-600 font-semibold">Diagnose. Train. Innovate. Build. Sustain.</span> —
               runs both motions, just sized differently.
             </p>
           </div>
         </section>
 
         {/* Two-track selector */}
-        <section className="max-w-6xl mx-auto px-6 py-20">
+        <section className="max-w-6xl mx-auto px-6 py-14 lg:py-20">
           <div className="grid md:grid-cols-2 gap-6">
             <Link
               href="/solutions/for-smb"
-              className="group relative bg-white rounded-3xl border-2 border-gray-200 hover:border-primary-500 hover:shadow-2xl transition-all duration-300 p-8 md:p-10 flex flex-col"
+              className="group relative bg-white rounded-2xl border border-gray-200/70 shadow-sm hover:border-primary-300 hover:shadow-md transition-all duration-300 p-8 md:p-10 flex flex-col"
             >
               <div className="w-14 h-14 rounded-2xl bg-primary-100 text-primary-700 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <Rocket className="w-7 h-7" />
@@ -85,7 +84,7 @@ export default function SolutionsHubPage() {
 
             <Link
               href="/solutions/for-enterprise"
-              className="group relative bg-white rounded-3xl border-2 border-gray-200 hover:border-secondary-500 hover:shadow-2xl transition-all duration-300 p-8 md:p-10 flex flex-col"
+              className="group relative bg-white rounded-2xl border border-gray-200/70 shadow-sm hover:border-secondary-300 hover:shadow-md transition-all duration-300 p-8 md:p-10 flex flex-col"
             >
               <div className="w-14 h-14 rounded-2xl bg-secondary-100 text-secondary-700 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <Building2 className="w-7 h-7" />
@@ -109,7 +108,7 @@ export default function SolutionsHubPage() {
 
         {/* Phases mini */}
         <section className="bg-gradient-to-br from-primary-50 via-white to-secondary-50 border-y border-gray-200">
-          <div className="max-w-6xl mx-auto px-6 py-16">
+          <div className="max-w-6xl mx-auto px-6 py-14 lg:py-20">
             <div className="text-center mb-12">
               <div className="text-xs uppercase tracking-widest text-primary-700 font-bold mb-2">The Gennoor Way</div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">One journey, five phases</h2>
@@ -119,7 +118,7 @@ export default function SolutionsHubPage() {
             </div>
             <div className="grid md:grid-cols-5 gap-4">
               {phases.map(p => (
-                <div key={p.name} className="bg-white rounded-xl border border-gray-200 p-5 text-center hover:shadow-md transition-all">
+                <div key={p.name} className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-5 text-center hover:shadow-md transition-all">
                   <div className="w-10 h-10 mx-auto mb-3 rounded-lg bg-primary-100 text-primary-700 flex items-center justify-center">
                     <p.icon className="w-5 h-5" />
                   </div>
@@ -142,7 +141,7 @@ export default function SolutionsHubPage() {
         <ThreePledges />
 
         {/* Final CTA */}
-        <section className="max-w-5xl mx-auto px-6 py-20 text-center">
+        <section className="max-w-5xl mx-auto px-6 py-14 lg:py-20 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Not sure which track fits?
           </h2>
@@ -152,7 +151,7 @@ export default function SolutionsHubPage() {
           </p>
           <Link
             href="/contact?intent=diagnostic"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 hover:shadow-xl transition-all"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-xl hover:shadow-glow-blue transition-all duration-300"
           >
             Book a 30-minute call <ArrowRight className="w-5 h-5" />
           </Link>

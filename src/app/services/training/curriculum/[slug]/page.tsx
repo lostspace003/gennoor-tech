@@ -93,14 +93,14 @@ export default async function CurriculumViewerPage({ params }: Props) {
               <a
                 href={pdfUrl}
                 download={`${course.slug}.pdf`}
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-lg transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue text-white text-sm font-semibold rounded-xl transition-all duration-300"
               >
                 <Download className="w-4 h-4" />
                 Download PDF
               </a>
               <Link
                 href="/contact#book"
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 border-2 border-primary-600 text-primary-600 text-sm font-semibold rounded-lg hover:bg-primary-50 transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white ring-1 ring-gray-200 text-gray-700 text-sm font-semibold rounded-xl hover:ring-primary-300 hover:text-primary-700 transition-all"
               >
                 Request training quote
               </Link>
@@ -167,7 +167,7 @@ export default async function CurriculumViewerPage({ params }: Props) {
               </p>
               <Link
                 href="/contact#book"
-                className="block w-full text-center px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold rounded-lg transition-colors"
+                className="block w-full text-center px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue text-white text-xs font-semibold rounded-xl transition-all duration-300"
               >
                 Request quote
               </Link>

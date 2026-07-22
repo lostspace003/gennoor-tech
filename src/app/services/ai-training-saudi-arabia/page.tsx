@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import PageCTA from '@/components/shared/PageCTA';
+import PageHero from '@/components/shared/PageHero';
 import {
   Calendar,
   CheckCircle,
@@ -115,43 +116,19 @@ export default function AITrainingSaudiArabiaPage() {
       />
 
       {/* Hero */}
-      <section className="relative bg-gradient-to-br from-primary-700 via-primary-600 to-primary-700 py-14 lg:py-20">
-        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-5" />
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-2 text-primary-100 text-sm font-medium mb-6">
-            <Building2 className="w-4 h-4" />
-            Saudi Arabia
-          </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6">
-            AI Training & Consulting
-            <br />
-            in Saudi Arabia
-          </h1>
-          <p className="text-xl md:text-2xl text-primary-100 max-w-3xl mx-auto mb-10">
-            Vision 2030-aligned programs that build real AI capability within your
-            organization — from executive awareness to hands-on engineering.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a
-              href="/contact#book"
-              className="inline-flex items-center gap-2 bg-white text-primary-700 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-primary-50 transition-colors"
-            >
-              <Calendar className="w-5 h-5" />
-              Book a Discovery Call
-            </a>
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-2 text-white border-2 border-white/30 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/10 transition-colors"
-            >
-              Send an Enquiry
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Saudi Arabia"
+        title="AI Training & Consulting in Saudi Arabia"
+        description="Vision 2030-aligned programs that build real AI capability within your organization — from executive awareness to hands-on engineering."
+        ctas={[
+          { label: 'Book a Discovery Call', href: '/contact#book' },
+          { label: 'Send an Enquiry', href: '/contact', variant: 'ghost' },
+        ]}
+        align="center"
+      />
 
       {/* Vision 2030 Alignment */}
-      <section className="py-16 lg:py-20">
+      <section className="py-14 lg:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -195,7 +172,7 @@ export default function AITrainingSaudiArabiaPage() {
       </section>
 
       {/* Real Experience */}
-      <section className="py-16 lg:py-20 bg-gray-50">
+      <section className="py-14 lg:py-20 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-4">
             Proven Track Record in Saudi Arabia
@@ -205,7 +182,7 @@ export default function AITrainingSaudiArabiaPage() {
             has personally delivered engagements with leading Saudi organizations.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200/70">
               <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center mb-4">
                 <Building2 className="w-6 h-6 text-primary-600" />
               </div>
@@ -218,7 +195,7 @@ export default function AITrainingSaudiArabiaPage() {
                 practices aligned with national digital transformation objectives.
               </p>
             </div>
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200/70">
               <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center mb-4">
                 <Target className="w-6 h-6 text-primary-600" />
               </div>
@@ -234,13 +211,13 @@ export default function AITrainingSaudiArabiaPage() {
       </section>
 
       {/* Services */}
-      <section className="py-16 lg:py-20">
+      <section className="py-14 lg:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-12">
             Services Available in Saudi Arabia
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200/70 hover:shadow-md transition-shadow">
               <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center mb-4">
                 <GraduationCap className="w-6 h-6 text-primary-600" />
               </div>
@@ -257,7 +234,7 @@ export default function AITrainingSaudiArabiaPage() {
                 Learn more <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200/70 hover:shadow-md transition-shadow">
               <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center mb-4">
                 <Lightbulb className="w-6 h-6 text-primary-600" />
               </div>
@@ -274,7 +251,7 @@ export default function AITrainingSaudiArabiaPage() {
                 Learn more <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200/70 hover:shadow-md transition-shadow">
               <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center mb-4">
                 <Target className="w-6 h-6 text-primary-600" />
               </div>
@@ -296,7 +273,7 @@ export default function AITrainingSaudiArabiaPage() {
       </section>
 
       {/* Why Gennoor */}
-      <section className="py-16 lg:py-20 bg-gray-50">
+      <section className="py-14 lg:py-20 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-4">
             Why Choose Gennoor Tech for Saudi Arabia
@@ -345,7 +322,7 @@ export default function AITrainingSaudiArabiaPage() {
             ].map((item, i) => (
               <div
                 key={i}
-                className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+                className="bg-white rounded-xl p-6 shadow-sm border border-gray-200/70"
               >
                 <div className="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center mb-3">
                   <item.icon className="w-5 h-5 text-primary-600" />
@@ -359,7 +336,7 @@ export default function AITrainingSaudiArabiaPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-16 lg:py-20">
+      <section className="py-14 lg:py-20">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
             Frequently Asked Questions
@@ -368,7 +345,7 @@ export default function AITrainingSaudiArabiaPage() {
             {faqs.map((faq, index) => (
               <div
                 key={index}
-                className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+                className="bg-white rounded-xl p-6 shadow-sm border border-gray-200/70"
               >
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   {faq.question}

@@ -94,7 +94,7 @@ export default function CertificationPreparationPage() {
               Certifications
             </span>
 
-            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-6 leading-tight tracking-tight">
               Certification Exam Preparation
             </h1>
             <p className="text-xl text-gray-600 mb-8">
@@ -202,7 +202,7 @@ export default function CertificationPreparationPage() {
                   {certs.map((cert) => (
                     <div
                       key={cert.id}
-                      className="glass-card overflow-hidden group hover:shadow-xl transition-all duration-300"
+                      className="bg-white rounded-2xl border border-gray-200/70 shadow-sm overflow-hidden group hover:shadow-xl transition-all duration-300"
                     >
                       {/* Card Header */}
                       <div className={`h-2 ${getProviderColor(cert.provider)}`}></div>
@@ -265,14 +265,14 @@ export default function CertificationPreparationPage() {
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleViewDetails(cert)}
-                            className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                            className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-white ring-1 ring-gray-200 text-gray-700 text-sm font-semibold rounded-xl hover:ring-primary-300 hover:text-primary-700 transition-all"
                           >
                             <Info className="w-4 h-4 mr-2" />
                             More Details
                           </button>
                           <button
                             onClick={() => handleEnquiry(cert)}
-                            className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-sm font-medium rounded-lg hover:shadow-glow-blue transition-all duration-300"
+                            className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-sm font-semibold rounded-xl hover:shadow-glow-blue transition-all duration-300"
                           >
                             <Send className="w-4 h-4 mr-2" />
                             Enquire
@@ -293,7 +293,7 @@ export default function CertificationPreparationPage() {
         <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
-            <div className="glass-card p-8">
+            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
                 Quick Certification Enquiry
               </h2>
@@ -319,7 +319,7 @@ export default function CertificationPreparationPage() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div className="glass-card p-6 text-center">
+            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Award className="w-8 h-8 text-primary-600" />
               </div>
@@ -329,7 +329,7 @@ export default function CertificationPreparationPage() {
               </p>
             </div>
 
-            <div className="glass-card p-6 text-center">
+            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Target className="w-8 h-8 text-primary-600" />
               </div>
@@ -339,7 +339,7 @@ export default function CertificationPreparationPage() {
               </p>
             </div>
 
-            <div className="glass-card p-6 text-center">
+            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <BookOpen className="w-8 h-8 text-primary-600" />
               </div>
@@ -349,7 +349,7 @@ export default function CertificationPreparationPage() {
               </p>
             </div>
 
-            <div className="glass-card p-6 text-center">
+            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="w-8 h-8 text-primary-600" />
               </div>
@@ -359,7 +359,7 @@ export default function CertificationPreparationPage() {
               </p>
             </div>
 
-            <div className="glass-card p-6 text-center">
+            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="w-8 h-8 text-primary-600" />
               </div>
@@ -369,7 +369,7 @@ export default function CertificationPreparationPage() {
               </p>
             </div>
 
-            <div className="glass-card p-6 text-center">
+            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Globe className="w-8 h-8 text-primary-600" />
               </div>

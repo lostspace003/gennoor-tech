@@ -511,7 +511,7 @@ export default function TrustAndSecurityPage() {
               <ShieldCheck className="w-3 h-3 mr-1.5" />
               For Procurement · Legal · Security · Audit
             </div>
-            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-gray-900 mb-5 leading-[1.1]">
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-5 leading-tight tracking-tight">
               Trust &amp; Security
             </h1>
             <p className="text-lg text-gray-500 mb-6 leading-relaxed max-w-3xl">
@@ -537,7 +537,7 @@ export default function TrustAndSecurityPage() {
           </div>
 
           {/* On-page TOC */}
-          <nav className="mt-12 max-w-4xl mx-auto rounded-2xl p-5 glass-card">
+          <nav className="mt-12 max-w-4xl mx-auto rounded-2xl p-5 bg-white border border-gray-200/70 shadow-sm">
             <p className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-3">
               On this page
             </p>
@@ -581,7 +581,7 @@ export default function TrustAndSecurityPage() {
           {dataPractices.map((p) => {
             const Icon = p.icon
             return (
-              <div key={p.title} className="rounded-2xl p-6 glass-card">
+              <div key={p.title} className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary-500/15">
                     <Icon className="w-5 h-5 text-white" />
@@ -604,7 +604,7 @@ export default function TrustAndSecurityPage() {
           here so there are no surprises. The MSA references this; the SOW references the MSA.
         </p>
         <div className="overflow-x-auto max-w-6xl">
-          <table className="w-full text-sm rounded-2xl overflow-hidden glass-card">
+          <table className="w-full text-sm rounded-2xl overflow-hidden bg-white border border-gray-200/70 shadow-sm">
             <thead>
               <tr className="border-b border-gray-100">
                 <th className="text-left px-5 py-4 text-xs font-bold tracking-widest text-gray-400 uppercase">
@@ -659,7 +659,7 @@ export default function TrustAndSecurityPage() {
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-6xl">
           {contractItems.map((item) => (
-            <div key={item.title} className="rounded-2xl p-6 glass-card">
+            <div key={item.title} className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
               <div className="flex items-start gap-3">
                 <FileText className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
                 <div>
@@ -685,7 +685,7 @@ export default function TrustAndSecurityPage() {
         </p>
         <div className="space-y-4 max-w-6xl">
           {regionalCompliance.map((r) => (
-            <div key={r.region} className="rounded-2xl p-6 glass-card">
+            <div key={r.region} className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
               <div className="flex flex-col md:flex-row md:items-start gap-4">
                 <div className="md:w-48 flex-shrink-0">
                   <div className="inline-flex items-center gap-2">
@@ -713,7 +713,7 @@ export default function TrustAndSecurityPage() {
           choice — Azure / AWS / GCP / on-prem.
         </p>
         <div className="overflow-x-auto max-w-6xl">
-          <table className="w-full text-sm rounded-2xl overflow-hidden glass-card">
+          <table className="w-full text-sm rounded-2xl overflow-hidden bg-white border border-gray-200/70 shadow-sm">
             <thead>
               <tr className="border-b border-gray-100">
                 <th className="text-left px-5 py-4 text-xs font-bold tracking-widest text-gray-400 uppercase">
@@ -757,7 +757,7 @@ export default function TrustAndSecurityPage() {
           Fit Assessment.
         </p>
         <div className="overflow-x-auto max-w-6xl">
-          <table className="w-full text-sm rounded-2xl overflow-hidden glass-card">
+          <table className="w-full text-sm rounded-2xl overflow-hidden bg-white border border-gray-200/70 shadow-sm">
             <thead>
               <tr className="border-b border-gray-100">
                 <th className="text-left px-5 py-4 text-xs font-bold tracking-widest text-gray-400 uppercase">
@@ -803,7 +803,7 @@ export default function TrustAndSecurityPage() {
         </p>
         <div className="space-y-3 max-w-6xl">
           {securityPractices.map((s) => (
-            <div key={s.title} className="rounded-2xl p-5 glass-card">
+            <div key={s.title} className="rounded-2xl p-5 bg-white border border-gray-200/70 shadow-sm">
               <div className="flex items-start gap-3">
                 <Lock className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
                 <div>
@@ -828,7 +828,7 @@ export default function TrustAndSecurityPage() {
           spelled out in the SOW.
         </p>
         <div className="overflow-x-auto max-w-6xl">
-          <table className="w-full text-sm rounded-2xl overflow-hidden glass-card">
+          <table className="w-full text-sm rounded-2xl overflow-hidden bg-white border border-gray-200/70 shadow-sm">
             <thead>
               <tr className="border-b border-gray-100">
                 <th className="text-left px-5 py-4 text-xs font-bold tracking-widest text-gray-400 uppercase">
@@ -869,7 +869,7 @@ export default function TrustAndSecurityPage() {
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-6xl">
           {complianceAlignment.map((c) => (
-            <div key={c.framework} className="rounded-2xl p-6 glass-card">
+            <div key={c.framework} className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
               <h3 className="text-base font-bold text-gray-900 mb-2">{c.framework}</h3>
               <p className="text-sm text-gray-600 leading-relaxed">{c.posture}</p>
             </div>
@@ -884,7 +884,7 @@ export default function TrustAndSecurityPage() {
         title="Entity, governance, insurance."
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-6xl">
-          <div className="rounded-2xl p-6 glass-card">
+          <div className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
             <div className="flex items-start gap-3">
               <Building2 className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
               <div>
@@ -897,7 +897,7 @@ export default function TrustAndSecurityPage() {
               </div>
             </div>
           </div>
-          <div className="rounded-2xl p-6 glass-card">
+          <div className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
             <div className="flex items-start gap-3">
               <ShieldCheck className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
               <div>
@@ -910,7 +910,7 @@ export default function TrustAndSecurityPage() {
               </div>
             </div>
           </div>
-          <div className="rounded-2xl p-6 glass-card">
+          <div className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
             <div className="flex items-start gap-3">
               <Users className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
               <div>
@@ -924,7 +924,7 @@ export default function TrustAndSecurityPage() {
               </div>
             </div>
           </div>
-          <div className="rounded-2xl p-6 glass-card">
+          <div className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
             <div className="flex items-start gap-3">
               <ScrollText className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
               <div>
@@ -950,7 +950,7 @@ export default function TrustAndSecurityPage() {
           {trustFaqs.map((faq) => (
             <details
               key={faq.question}
-              className="group rounded-2xl p-5 glass-card transition-all duration-300"
+              className="group rounded-2xl p-5 bg-white border border-gray-200/70 shadow-sm transition-all duration-300"
             >
               <summary className="flex justify-between items-start gap-4 cursor-pointer list-none">
                 <h3 className="text-sm font-semibold text-gray-900">{faq.question}</h3>
@@ -963,7 +963,7 @@ export default function TrustAndSecurityPage() {
       </Section>
 
       {/* 12. CONTACT */}
-      <section id="contact" className="py-20 lg:py-24 relative overflow-hidden">
+      <section id="contact" className="section-padding relative overflow-hidden">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="absolute inset-0 bg-gradient-mesh opacity-50" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
@@ -983,7 +983,7 @@ export default function TrustAndSecurityPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl">
               <a
                 href="mailto:contact@gennoor.com?subject=Security%20Questionnaire%20Request"
-                className="group rounded-2xl p-6 glass-card glow-border transition-all duration-300 hover:-translate-y-1"
+                className="group rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-300 hover:-translate-y-1"
               >
                 <Mail className="w-6 h-6 text-primary-500 mb-3" />
                 <h3 className="text-base font-bold text-gray-900 mb-1">
@@ -999,7 +999,7 @@ export default function TrustAndSecurityPage() {
               </a>
               <Link
                 href="/contact"
-                className="group rounded-2xl p-6 glass-card glow-border transition-all duration-300 hover:-translate-y-1"
+                className="group rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-300 hover:-translate-y-1"
               >
                 <FileText className="w-6 h-6 text-primary-500 mb-3" />
                 <h3 className="text-base font-bold text-gray-900 mb-1">
@@ -1037,7 +1037,7 @@ function Section({
   children: React.ReactNode
 }) {
   return (
-    <section id={id} className="scroll-mt-24 py-16 lg:py-20 relative">
+    <section id={id} className="scroll-mt-24 py-14 lg:py-20 relative">
       <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">

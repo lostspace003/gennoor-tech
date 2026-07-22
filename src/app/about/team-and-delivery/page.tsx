@@ -301,7 +301,7 @@ export default function TeamAndDeliveryPage() {
               <Users className="w-3 h-3 mr-1.5" />
               Who actually delivers, and how
             </div>
-            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-gray-900 mb-5 leading-[1.1]">
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-5 leading-tight tracking-tight">
               Senior-only delivery.
               <br />
               <span className="gradient-text">Capacity-limited by design.</span>
@@ -326,7 +326,7 @@ export default function TeamAndDeliveryPage() {
           </div>
 
           {/* On-page TOC */}
-          <nav className="mt-12 max-w-4xl mx-auto rounded-2xl p-5 glass-card">
+          <nav className="mt-12 max-w-4xl mx-auto rounded-2xl p-5 bg-white border border-gray-200/70 shadow-sm">
             <p className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-3">
               On this page
             </p>
@@ -359,7 +359,7 @@ export default function TeamAndDeliveryPage() {
       {/* 1. THE MODEL */}
       <Section id="model" eyebrow="01 · The Model" title="Why senior-only, and why capped.">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl">
-          <div className="rounded-2xl p-7 glass-card">
+          <div className="rounded-2xl p-7 bg-white border border-gray-200/70 shadow-sm">
             <div className="flex items-center gap-2 mb-3">
               <AlertTriangle className="w-5 h-5 text-amber-500" />
               <h3 className="text-base font-bold text-gray-900">The Big-4 pyramid</h3>
@@ -375,7 +375,7 @@ export default function TeamAndDeliveryPage() {
               more to fix than to do right the first time.
             </p>
           </div>
-          <div className="rounded-2xl p-7 glass-card glow-border">
+          <div className="rounded-2xl p-7 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70">
             <div className="flex items-center gap-2 mb-3">
               <CheckCircle2 className="w-5 h-5 text-primary-500" />
               <h3 className="text-base font-bold text-gray-900">The Gennoor model</h3>
@@ -420,7 +420,7 @@ export default function TeamAndDeliveryPage() {
           {roles.map((r) => {
             const Icon = r.icon
             return (
-              <div key={r.role} className="rounded-2xl p-6 glass-card">
+              <div key={r.role} className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                   <div className="lg:col-span-3">
                     <div className="flex items-center gap-3 mb-2">
@@ -477,7 +477,7 @@ export default function TeamAndDeliveryPage() {
             return (
               <div
                 key={c.rhythm}
-                className="rounded-2xl p-5 glass-card flex flex-col sm:flex-row sm:items-start gap-4"
+                className="rounded-2xl p-5 bg-white border border-gray-200/70 shadow-sm flex flex-col sm:flex-row sm:items-start gap-4"
               >
                 <div className="flex items-center gap-3 sm:w-56 flex-shrink-0">
                   <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary-500/15">
@@ -498,7 +498,7 @@ export default function TeamAndDeliveryPage() {
         eyebrow="04 · Demo Culture"
         title="The five-day rule."
       >
-        <div className="rounded-3xl p-7 lg:p-10 glass-card max-w-5xl glow-border">
+        <div className="rounded-3xl p-7 lg:p-10 bg-white border border-gray-200/70 shadow-sm max-w-5xl">
           <p className="text-2xl lg:text-3xl font-bold text-gray-900 mb-5 leading-tight">
             <span className="text-amber-500">No engagement</span> goes more than{' '}
             <span className="gradient-text">five working days</span> without a demo of
@@ -532,7 +532,7 @@ export default function TeamAndDeliveryPage() {
           Transfer is contractual — not a final-week milestone.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-6xl">
-          <div className="rounded-2xl p-6 glass-card">
+          <div className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
             <Heart className="w-6 h-6 text-primary-500 mb-3" />
             <h3 className="text-base font-bold text-gray-900 mb-2">
               Pair from day one
@@ -543,7 +543,7 @@ export default function TeamAndDeliveryPage() {
               building it with us, not by reading about it after.
             </p>
           </div>
-          <div className="rounded-2xl p-6 glass-card">
+          <div className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
             <CheckCircle2 className="w-6 h-6 text-primary-500 mb-3" />
             <h3 className="text-base font-bold text-gray-900 mb-2">
               Three measurable checkpoints
@@ -554,7 +554,7 @@ export default function TeamAndDeliveryPage() {
               checkpoints in the contract, not aspirations.
             </p>
           </div>
-          <div className="rounded-2xl p-6 glass-card">
+          <div className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
             <Layers className="w-6 h-6 text-primary-500 mb-3" />
             <h3 className="text-base font-bold text-gray-900 mb-2">
               Runbook + on-call rotation
@@ -565,7 +565,7 @@ export default function TeamAndDeliveryPage() {
               scenarios with us, and you can resolve a Sev-2 without escalating.
             </p>
           </div>
-          <div className="rounded-2xl p-6 glass-card">
+          <div className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
             <GraduationCap className="w-6 h-6 text-primary-500 mb-3" />
             <h3 className="text-base font-bold text-gray-900 mb-2">
               Training built into the schedule
@@ -586,7 +586,7 @@ export default function TeamAndDeliveryPage() {
         title="What we will (and will not) take on."
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl">
-          <div className="rounded-2xl p-6 glass-card">
+          <div className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
             <h3 className="text-base font-bold text-gray-900 mb-3">Active engagement cap</h3>
             <p className="text-sm text-gray-600 leading-relaxed mb-3">
               We typically run 3–5 active engagements at once, scaled by phase mix. SMB
@@ -598,7 +598,7 @@ export default function TeamAndDeliveryPage() {
               when we are queued out.
             </p>
           </div>
-          <div className="rounded-2xl p-6 glass-card">
+          <div className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
             <h3 className="text-base font-bold text-gray-900 mb-3">When we say no</h3>
             <p className="text-sm text-gray-600 leading-relaxed mb-3">
               We turn engagements down when: (a) the senior bench is full and an urgent start
@@ -625,7 +625,7 @@ export default function TeamAndDeliveryPage() {
         </p>
         <div className="space-y-3 max-w-6xl">
           {continuity.map((c) => (
-            <div key={c.title} className="rounded-2xl p-5 glass-card">
+            <div key={c.title} className="rounded-2xl p-5 bg-white border border-gray-200/70 shadow-sm">
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
                 <div>
@@ -653,7 +653,7 @@ export default function TeamAndDeliveryPage() {
         eyebrow="08 · The Founder"
         title="Who leads delivery today."
       >
-        <div className="rounded-3xl p-7 lg:p-10 glass-card glow-border max-w-5xl">
+        <div className="rounded-3xl p-7 lg:p-10 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 max-w-5xl">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-7 items-start">
             <div className="md:col-span-1">
               <div className="aspect-[4/5] rounded-2xl overflow-hidden bg-gray-100 mb-4">
@@ -715,7 +715,7 @@ export default function TeamAndDeliveryPage() {
           {teamFaqs.map((faq) => (
             <details
               key={faq.question}
-              className="group rounded-2xl p-5 glass-card transition-all duration-300"
+              className="group rounded-2xl p-5 bg-white border border-gray-200/70 shadow-sm transition-all duration-300"
             >
               <summary className="flex justify-between items-start gap-4 cursor-pointer list-none">
                 <h3 className="text-sm font-semibold text-gray-900">{faq.question}</h3>
@@ -728,7 +728,7 @@ export default function TeamAndDeliveryPage() {
       </Section>
 
       {/* FINAL CTA */}
-      <section className="py-20 lg:py-24 relative overflow-hidden">
+      <section className="section-padding relative overflow-hidden">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="absolute inset-0 bg-gradient-mesh opacity-50" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
@@ -758,7 +758,7 @@ export default function TeamAndDeliveryPage() {
               </Link>
               <Link
                 href="/about/trust-and-security"
-                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 glass-card hover:border-primary-200 transition-all duration-300"
+                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 bg-white ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700 transition-all duration-300"
               >
                 Read Trust &amp; Security
               </Link>
@@ -786,7 +786,7 @@ function Section({
   children: React.ReactNode
 }) {
   return (
-    <section id={id} className="scroll-mt-24 py-16 lg:py-20 relative">
+    <section id={id} className="scroll-mt-24 py-14 lg:py-20 relative">
       <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">

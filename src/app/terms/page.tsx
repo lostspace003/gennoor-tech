@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import PageHero from '@/components/shared/PageHero'
 
 export const metadata: Metadata = {
   title: 'Terms of Service | Gennoor Tech',
@@ -11,21 +12,15 @@ export default function TermsPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero */}
-      <section className="relative py-14 lg:py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
-        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
-            Terms of Service
-          </span>
-          <h1 className="text-3xl font-black text-gray-900 mb-2">Terms of Service</h1>
-          <p className="text-sm text-gray-500">Last updated: July 6, 2026</p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Terms of Service"
+        title="Terms of Service"
+        description="Last updated: July 6, 2026"
+        size="compact"
+      />
 
-      <div className="max-w-3xl mx-auto px-4 pb-16 sm:pb-24">
-        <div className="glass-card p-8 sm:p-10">
+      <div className="max-w-3xl mx-auto px-4 pt-8 pb-16 sm:pb-24">
+        <div className="bg-white rounded-2xl border border-gray-200/70 shadow-[0_2px_4px_rgba(15,23,42,0.05),0_16px_36px_-14px_rgba(15,23,42,0.08)] p-8 sm:p-10">
         <div className="space-y-8 text-gray-700 text-[15px] leading-relaxed">
           <section>
             <h2 className="text-lg font-semibold text-gray-900 mb-2">1. Who We Are</h2>

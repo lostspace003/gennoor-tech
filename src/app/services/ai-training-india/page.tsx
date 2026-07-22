@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import PageCTA from '@/components/shared/PageCTA';
+import PageHero from '@/components/shared/PageHero';
+import Disclosure from '@/components/shared/Disclosure';
 import {
   Calendar,
   CheckCircle,
@@ -125,43 +127,19 @@ export default function AITrainingIndiaPage() {
       />
 
       {/* Hero */}
-      <section className="relative bg-gradient-to-br from-primary-700 via-primary-600 to-primary-700 py-14 lg:py-20">
-        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-5" />
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-2 text-primary-100 text-sm font-medium mb-6">
-            <Building2 className="w-4 h-4" />
-            India
-          </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6">
-            Enterprise AI Training
-            <br />
-            & Solutions in India
-          </h1>
-          <p className="text-xl md:text-2xl text-primary-100 max-w-3xl mx-auto mb-10">
-            Hands-on AI programs for India&apos;s leading enterprises — built on real
-            experience training Fortune 500 teams across the country.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a
-              href="/contact#book"
-              className="inline-flex items-center gap-2 bg-white text-primary-700 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-primary-50 transition-colors"
-            >
-              <Calendar className="w-5 h-5" />
-              Book a Discovery Call
-            </a>
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-2 text-white border-2 border-white/30 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/10 transition-colors"
-            >
-              Send an Enquiry
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="India"
+        title="Enterprise AI Training & Solutions in India"
+        description="Hands-on AI programs for India's leading enterprises — built on real experience training Fortune 500 teams across the country."
+        ctas={[
+          { label: 'Book a Discovery Call', href: '/contact#book' },
+          { label: 'Send an Enquiry', href: '/contact', variant: 'ghost' },
+        ]}
+        align="center"
+      />
 
       {/* India AI Ecosystem */}
-      <section className="py-16 lg:py-20">
+      <section className="py-14 lg:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -174,17 +152,19 @@ export default function AITrainingIndiaPage() {
                 manufacturing, IT services, and healthcare. NASSCOM projects that AI will add
                 $500 billion to India&apos;s GDP by 2025.
               </p>
-              <p className="text-lg text-gray-600 mb-6">
-                But the gap between AI ambition and AI execution is still wide. Most enterprise
-                teams need structured, practical training that goes beyond theory — they need
-                to learn how to build, deploy, and govern AI systems using their own data and
-                their own business problems.
-              </p>
-              <p className="text-lg text-gray-600">
-                That&apos;s exactly what we deliver. Our programs are designed for Indian
-                enterprises — with IST-friendly scheduling, pricing flexibility, and deep
-                understanding of the local business context.
-              </p>
+              <Disclosure summary="Why structured, practical training matters">
+                <p className="mb-4">
+                  But the gap between AI ambition and AI execution is still wide. Most enterprise
+                  teams need structured, practical training that goes beyond theory — they need
+                  to learn how to build, deploy, and govern AI systems using their own data and
+                  their own business problems.
+                </p>
+                <p>
+                  That&apos;s exactly what we deliver. Our programs are designed for Indian
+                  enterprises — with IST-friendly scheduling, pricing flexibility, and deep
+                  understanding of the local business context.
+                </p>
+              </Disclosure>
             </div>
             <div className="bg-primary-50 rounded-2xl p-8">
               <h3 className="text-xl font-bold text-gray-900 mb-6">
@@ -210,7 +190,7 @@ export default function AITrainingIndiaPage() {
       </section>
 
       {/* Client Experience */}
-      <section className="py-16 lg:py-20 bg-gray-50">
+      <section className="py-14 lg:py-20 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-4">
             Trusted by India&apos;s Top Enterprises
@@ -223,14 +203,14 @@ export default function AITrainingIndiaPage() {
             {clients.map((client) => (
               <div
                 key={client}
-                className="bg-white rounded-xl px-8 py-5 shadow-sm border border-gray-100 text-lg font-semibold text-gray-700"
+                className="bg-white rounded-xl px-8 py-5 shadow-sm border border-gray-200/70 text-lg font-semibold text-gray-700"
               >
                 {client}
               </div>
             ))}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200/70">
               <h3 className="text-xl font-bold text-gray-900 mb-3">Banking & Financial Services</h3>
               <p className="text-gray-600">
                 Trained AI and data science teams at one of India&apos;s largest private banks,
@@ -238,7 +218,7 @@ export default function AITrainingIndiaPage() {
                 automation, and responsible AI governance for regulatory compliance.
               </p>
             </div>
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200/70">
               <h3 className="text-xl font-bold text-gray-900 mb-3">IT Services & Consulting</h3>
               <p className="text-gray-600">
                 Delivered enterprise AI upskilling programs for technology teams at major Indian
@@ -251,10 +231,10 @@ export default function AITrainingIndiaPage() {
       </section>
 
       {/* IST & Pricing */}
-      <section className="py-16 lg:py-20">
+      <section className="py-14 lg:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200/70">
               <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center mb-4">
                 <Clock className="w-6 h-6 text-primary-600" />
               </div>
@@ -279,7 +259,7 @@ export default function AITrainingIndiaPage() {
                 ))}
               </ul>
             </div>
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200/70">
               <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center mb-4">
                 <IndianRupee className="w-6 h-6 text-primary-600" />
               </div>
@@ -307,13 +287,13 @@ export default function AITrainingIndiaPage() {
       </section>
 
       {/* Services */}
-      <section className="py-16 lg:py-20 bg-gray-50">
+      <section className="py-14 lg:py-20 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-12">
             Services Available in India
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200/70 hover:shadow-md transition-shadow">
               <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center mb-4">
                 <GraduationCap className="w-6 h-6 text-primary-600" />
               </div>
@@ -330,7 +310,7 @@ export default function AITrainingIndiaPage() {
                 Learn more <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200/70 hover:shadow-md transition-shadow">
               <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center mb-4">
                 <Lightbulb className="w-6 h-6 text-primary-600" />
               </div>
@@ -347,7 +327,7 @@ export default function AITrainingIndiaPage() {
                 Learn more <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200/70 hover:shadow-md transition-shadow">
               <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center mb-4">
                 <Target className="w-6 h-6 text-primary-600" />
               </div>
@@ -369,7 +349,7 @@ export default function AITrainingIndiaPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-16 lg:py-20">
+      <section className="py-14 lg:py-20">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
             Frequently Asked Questions
@@ -378,7 +358,7 @@ export default function AITrainingIndiaPage() {
             {faqs.map((faq, index) => (
               <div
                 key={index}
-                className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+                className="bg-white rounded-xl p-6 shadow-sm border border-gray-200/70"
               >
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   {faq.question}

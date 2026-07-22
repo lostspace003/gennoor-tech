@@ -43,7 +43,7 @@ export default function AcademyPage() {
       </section>
 
       {/* Hero */}
-      <section className="relative py-12 lg:py-16 overflow-hidden">
+      <section className="relative py-10 lg:py-14 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0 bg-gradient-mesh" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
@@ -53,7 +53,7 @@ export default function AcademyPage() {
               <Sparkles className="w-3 h-3 mr-1.5" />
               {totalCourses} interactive courses · Free · Self-paced · Audio narration
             </div>
-            <h1 className="font-heading text-4xl sm:text-5xl font-bold text-gray-900 leading-tight mb-5">
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 leading-tight tracking-tight mb-5">
               Interactive Courses
             </h1>
             <p className="text-base sm:text-lg text-gray-500 leading-relaxed mb-8 max-w-2xl mx-auto">
@@ -72,7 +72,7 @@ export default function AcademyPage() {
               </a>
               <Link
                 href="/academy"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3 text-sm font-semibold rounded-xl text-gray-700 glass-card hover:border-primary-200 transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 px-7 py-3 text-sm font-semibold rounded-xl text-gray-700 bg-white ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700 transition-all duration-300"
               >
                 Or browse the full Academy catalog
               </Link>
@@ -90,7 +90,7 @@ export default function AcademyPage() {
           <div className="max-w-3xl mx-auto">
             <Link
               href="/academy"
-              className="group block rounded-2xl p-8 text-center glass-card glow-border transition-all duration-500 hover:-translate-y-1"
+              className="group block rounded-2xl p-8 text-center bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-500 hover:-translate-y-1"
             >
               <div className="w-14 h-14 rounded-full bg-primary-50/80 flex items-center justify-center mb-4 mx-auto">
                 <GraduationCap className="w-7 h-7 text-primary-500" />
@@ -143,7 +143,7 @@ export default function AcademyPage() {
                 description: 'Every course ends in a capstone — a one-page roadmap, plan, or production-grade artifact applied to your context.',
               },
             ].map(item => (
-              <div key={item.step} className="text-center p-6 rounded-2xl glass-card">
+              <div key={item.step} className="text-center p-6 rounded-2xl bg-white border border-gray-200/70 shadow-sm">
                 <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary-100 mb-4">
                   <item.icon className="w-7 h-7 text-primary-600" />
                   <span className="absolute -top-2 -right-2 w-7 h-7 bg-secondary-400 text-dark-900 text-xs font-bold rounded-full flex items-center justify-center">

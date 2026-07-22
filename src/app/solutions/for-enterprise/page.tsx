@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import { BreadcrumbJsonLd, FAQJsonLd } from '@/components/JsonLd'
 import ThreePledges from '@/components/ThreePledges'
+import Disclosure from '@/components/shared/Disclosure'
 
 export const metadata: Metadata = {
   title: 'Enterprise AI Transformation Programs — From Diagnostic to Sustained Adoption',
@@ -613,7 +614,7 @@ export default function ForEnterprisePage() {
       <FAQJsonLd faqs={enterpriseFaqs} />
 
       {/* HERO */}
-      <section className="relative py-16 lg:py-24 overflow-hidden">
+      <section className="relative py-14 lg:py-20 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0 bg-gradient-mesh" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
@@ -624,7 +625,7 @@ export default function ForEnterprisePage() {
               <Building2 className="w-3 h-3 mr-1.5" />
               For Enterprises · 250+ employees · GCC · India · Africa · APAC
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold tracking-tight text-gray-900 mb-6 leading-[1.1]">
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-6 leading-tight tracking-tight">
               Transformation programs that <span className="gradient-text">survive</span> the org chart.
             </h1>
             <p className="text-lg sm:text-xl text-gray-500 mb-8 leading-relaxed max-w-3xl mx-auto">
@@ -645,7 +646,7 @@ export default function ForEnterprisePage() {
               </Link>
               <Link
                 href="/portfolio/case-studies"
-                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 glass-card hover:border-primary-200 transition-all duration-300"
+                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 bg-white ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700 transition-all duration-300"
               >
                 See client case studies
               </Link>
@@ -673,7 +674,7 @@ export default function ForEnterprisePage() {
       </section>
 
       {/* THE ENGAGEMENT MODELS — DEEP */}
-      <section className="py-20 lg:py-24 relative">
+      <section className="section-padding relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-14">
@@ -703,7 +704,7 @@ export default function ForEnterprisePage() {
                 <article
                   key={eng.code}
                   id={eng.code.toLowerCase()}
-                  className="scroll-mt-24 rounded-3xl p-7 lg:p-10 glass-card glow-border"
+                  className="scroll-mt-24 rounded-3xl p-7 lg:p-10 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70"
                 >
                   {/* HEADER */}
                   <header className="flex flex-col lg:flex-row lg:items-start gap-6 mb-8 pb-8 border-b border-gray-100">
@@ -764,8 +765,9 @@ export default function ForEnterprisePage() {
                     </div>
                   </div>
 
-                  {/* TIMELINE + SUCCESS */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-7 mb-8">
+                  {/* TIMELINE + SUCCESS + REFERENCE + SCOPE — collapsed detail */}
+                  <Disclosure summary={`${eng.code} in detail — timeline, success criteria, reference engagement & scope`}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-7 mb-8 pt-3">
                     <div>
                       <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-3">
                         Timeline
@@ -846,6 +848,7 @@ export default function ForEnterprisePage() {
                       <p className="text-xs text-gray-600 leading-relaxed">{eng.pairsWith}</p>
                     </div>
                   </div>
+                  </Disclosure>
                 </article>
               )
             })}
@@ -860,7 +863,7 @@ export default function ForEnterprisePage() {
       />
 
       {/* PROCUREMENT-FRIENDLY */}
-      <section className="py-20 lg:py-24 relative">
+      <section className="section-padding relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-14">
@@ -882,7 +885,7 @@ export default function ForEnterprisePage() {
               return (
                 <div
                   key={item.title}
-                  className="rounded-2xl p-6 glass-card glow-border transition-all duration-500 hover:-translate-y-1"
+                  className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-500 hover:-translate-y-1"
                 >
                   <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
                     <Icon className="w-5 h-5 text-white" />
@@ -907,7 +910,7 @@ export default function ForEnterprisePage() {
       </section>
 
       {/* ENGAGEMENT COMPARISON TABLE */}
-      <section className="py-20 lg:py-24 relative">
+      <section className="section-padding relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-12">
@@ -920,7 +923,7 @@ export default function ForEnterprisePage() {
           </div>
 
           <div className="max-w-6xl mx-auto overflow-x-auto">
-            <table className="w-full text-sm rounded-2xl overflow-hidden glass-card">
+            <table className="w-full text-sm rounded-2xl overflow-hidden bg-white border border-gray-200/70 shadow-sm">
               <thead>
                 <tr className="border-b border-gray-100">
                   <th className="text-left px-5 py-4 text-xs font-bold tracking-widest text-gray-400 uppercase">
@@ -976,7 +979,7 @@ export default function ForEnterprisePage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-20 lg:py-24 relative">
+      <section className="section-padding relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
@@ -996,7 +999,7 @@ export default function ForEnterprisePage() {
               {enterpriseFaqs.map((faq) => (
                 <details
                   key={faq.question}
-                  className="group rounded-2xl p-6 glass-card transition-all duration-300"
+                  className="group rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm transition-all duration-300"
                 >
                   <summary className="flex justify-between items-start gap-4 cursor-pointer list-none">
                     <h3 className="text-base font-semibold text-gray-900">{faq.question}</h3>
@@ -1011,7 +1014,7 @@ export default function ForEnterprisePage() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="py-20 lg:py-28 relative overflow-hidden">
+      <section className="section-padding relative overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0 bg-gradient-mesh" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -1034,7 +1037,7 @@ export default function ForEnterprisePage() {
             </Link>
             <Link
               href="/portfolio/case-studies"
-              className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 glass-card hover:border-primary-200 transition-all duration-300"
+              className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 bg-white ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700 transition-all duration-300"
             >
               See client case studies
             </Link>

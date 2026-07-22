@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, Award, ExternalLink, Shield, Trophy, BookOpen } from 'lucide-react'
 import { PersonJsonLd } from '@/components/JsonLd'
+import PageHero from '@/components/shared/PageHero'
 import { getCertificationsByCategory, microsoftLearnStats, mctStatus, aictStatus } from '@/data/certifications'
 import { BLOB_URL } from '@/lib/site-config'
 import CertificationCards from '@/components/certifications/CertificationCards'
@@ -42,24 +43,15 @@ export default function FounderPage() {
       <PersonJsonLd />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-50 to-accent-50 py-16 lg:py-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <p className="text-sm font-semibold tracking-widest uppercase text-primary-600 mb-4">
-              Our Founder
-            </p>
-            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-4 leading-tight">
-              Jalal Ahmed Khan
-            </h1>
-            <p className="text-xl text-gray-600 mb-3">
-              Microsoft Certified Trainer &amp; Enterprise AI Consultant
-            </p>
-            <p className="text-base text-gray-500">
-              Founder of Gennoor Tech Private Limited
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Our Founder"
+        title="Jalal Ahmed Khan"
+        description="Microsoft Certified Trainer & Enterprise AI Consultant"
+      >
+        <p className="text-base text-gray-500">
+          Founder of Gennoor Tech Private Limited
+        </p>
+      </PageHero>
 
       {/* Bio Section */}
       <section className="py-14 lg:py-20 border-b border-gray-100">
@@ -97,13 +89,13 @@ export default function FounderPage() {
       </section>
 
       {/* Trainer Badges */}
-      <section className="py-12 border-b border-gray-200">
+      <section className="py-10 lg:py-14 border-b border-gray-200">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Credentials</h2>
             <div className="flex flex-col gap-4">
               <div className="flex flex-col sm:flex-row gap-4">
-                <div className="inline-flex items-center bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-lg px-6 py-3 shadow-lg">
+                <div className="inline-flex items-center bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl px-6 py-3 shadow-lg shadow-primary-500/15">
                   <Shield className="w-6 h-6 mr-3" />
                   <div>
                     <p className="font-bold">Microsoft Certified Trainer (MCT)</p>
@@ -113,7 +105,7 @@ export default function FounderPage() {
                 <MCTCertificateButton pdfUrl={`${BLOB_URL}/certificates/0-mct-certifcate.pdf`} />
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
-                <div className="inline-flex items-center bg-gradient-to-r from-yellow-600 to-yellow-700 text-white rounded-lg px-6 py-3 shadow-lg">
+                <div className="inline-flex items-center bg-gradient-to-r from-yellow-600 to-yellow-700 text-white rounded-xl px-6 py-3 shadow-lg shadow-yellow-500/15">
                   <Award className="w-6 h-6 mr-3" />
                   <div>
                     <p className="font-bold">AI CERTs Certified Trainer (AICT)</p>
@@ -152,11 +144,11 @@ export default function FounderPage() {
                 href="https://learn.microsoft.com/en-us/users/lostspace003/transcript/vjw63s4jxnmmwre?tab=credentials-tab"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-primary-600 to-accent-600 text-white rounded-md hover:from-primary-700 hover:to-accent-700 transition-colors shadow-md"
+                className="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:shadow-glow-blue transition-all duration-300 text-sm font-semibold"
               >
-                <Trophy className="w-5 h-5 mr-2" />
-                <span className="font-medium">View Full Microsoft Learn Profile</span>
-                <ExternalLink className="w-4 h-4 ml-2" />
+                <Trophy className="w-4 h-4 mr-2" />
+                <span>View Full Microsoft Learn Profile</span>
+                <ExternalLink className="w-3.5 h-3.5 ml-2" />
               </a>
             </div>
           </div>
@@ -189,7 +181,7 @@ export default function FounderPage() {
             })}
           </div>
 
-          <div className="max-w-4xl mx-auto mt-12 bg-blue-50 rounded-lg p-6">
+          <div className="max-w-4xl mx-auto mt-12 bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
               15+ Microsoft Applied Skills
             </h3>
@@ -219,19 +211,19 @@ export default function FounderPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-14">
+      <section className="py-14 lg:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               href="/contact"
-              className="inline-flex items-center px-6 py-3 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors"
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-sm font-semibold rounded-xl hover:shadow-glow-blue transition-all duration-300"
             >
               Work with Gennoor Tech
               <ArrowRight className="ml-2 w-4 h-4" />
             </Link>
             <Link
               href="/about/company"
-              className="inline-flex items-center px-6 py-3 border border-gray-200 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center px-6 py-3 bg-white ring-1 ring-gray-200 text-sm font-semibold text-gray-700 rounded-xl hover:ring-primary-300 hover:text-primary-700 transition-all duration-300"
             >
               Read our company story
             </Link>

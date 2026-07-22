@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { BreadcrumbJsonLd, FAQJsonLd } from '@/components/JsonLd'
 import ThreePledges from '@/components/ThreePledges'
+import Disclosure from '@/components/shared/Disclosure'
 
 export const metadata: Metadata = {
   title: 'AI Solutions for SMB & Growing Businesses — Fixed-Price AI Pilots from $3k',
@@ -528,7 +529,7 @@ export default function ForSMBPage() {
       <FAQJsonLd faqs={smbFaqs} />
 
       {/* HERO */}
-      <section className="relative py-16 lg:py-24 overflow-hidden">
+      <section className="relative py-14 lg:py-20 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0 bg-gradient-mesh" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
@@ -539,7 +540,7 @@ export default function ForSMBPage() {
               <Rocket className="w-3 h-3 mr-1.5" />
               For SMB &amp; Growing Businesses · 10–250 employees
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold tracking-tight text-gray-900 mb-6 leading-[1.1]">
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-6 leading-tight tracking-tight">
               Ship your first AI pilot in <span className="gradient-text">6 weeks</span>.
             </h1>
             <p className="text-lg sm:text-xl text-gray-500 mb-8 leading-relaxed max-w-3xl mx-auto">
@@ -561,7 +562,7 @@ export default function ForSMBPage() {
                 href="https://wa.me/919326352241?text=Hi%20Gennoor%2C%20I%20visited%20gennoor.com/solutions/for-smb%20and%20would%20like%20to%20discuss%20an%20SMB%20package."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 glass-card hover:border-primary-200 transition-all duration-300"
+                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 bg-white ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700 transition-all duration-300"
               >
                 <MessageCircle className="mr-2 h-4 w-4" />
                 Message on WhatsApp
@@ -590,7 +591,7 @@ export default function ForSMBPage() {
       </section>
 
       {/* DECISION HELPER */}
-      <section className="py-16 lg:py-20 relative">
+      <section className="py-14 lg:py-20 relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-12">
@@ -609,7 +610,7 @@ export default function ForSMBPage() {
             {decisionPaths.map((path) => (
               <div
                 key={path.if}
-                className="rounded-2xl p-5 glass-card glow-border transition-all duration-300 hover:-translate-y-0.5 grid grid-cols-1 md:grid-cols-12 gap-4 items-center"
+                className="rounded-2xl p-5 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-300 hover:-translate-y-0.5 grid grid-cols-1 md:grid-cols-12 gap-4 items-center"
               >
                 <div className="md:col-span-5">
                   <p className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
@@ -636,7 +637,7 @@ export default function ForSMBPage() {
       </section>
 
       {/* PACKAGES — DEEP */}
-      <section className="py-20 lg:py-24 relative">
+      <section className="section-padding relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-14">
@@ -667,7 +668,7 @@ export default function ForSMBPage() {
                 <article
                   key={pkg.code}
                   id={pkg.code.toLowerCase()}
-                  className="scroll-mt-24 rounded-3xl p-7 lg:p-10 glass-card glow-border"
+                  className="scroll-mt-24 rounded-3xl p-7 lg:p-10 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70"
                 >
                   {/* HEADER */}
                   <header className="flex flex-col lg:flex-row lg:items-start gap-6 mb-8 pb-8 border-b border-gray-100">
@@ -728,8 +729,9 @@ export default function ForSMBPage() {
                     </div>
                   </div>
 
-                  {/* TIMELINE + SUCCESS — two cols */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-7 mb-8">
+                  {/* TIMELINE + SUCCESS + EXAMPLE + SCOPE — collapsed detail */}
+                  <Disclosure summary={`${pkg.code} in detail — week-by-week, success criteria, real example & scope`}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-7 mb-8 pt-3">
                     <div>
                       <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-3">
                         Week-by-week
@@ -810,6 +812,7 @@ export default function ForSMBPage() {
                       <p className="text-xs text-gray-600 leading-relaxed">{pkg.pairsWith}</p>
                     </div>
                   </div>
+                  </Disclosure>
                 </article>
               )
             })}
@@ -824,7 +827,7 @@ export default function ForSMBPage() {
       />
 
       {/* HOW WE WORK */}
-      <section className="py-20 lg:py-24 relative">
+      <section className="section-padding relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-14">
@@ -846,7 +849,7 @@ export default function ForSMBPage() {
               return (
                 <div
                   key={step.title}
-                  className="rounded-2xl p-6 glass-card glow-border relative transition-all duration-500 hover:-translate-y-1"
+                  className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 relative transition-all duration-500 hover:-translate-y-1"
                 >
                   <span className="absolute top-4 right-5 text-2xl font-black text-gray-100">
                     {String(i + 1).padStart(2, '0')}
@@ -864,7 +867,7 @@ export default function ForSMBPage() {
       </section>
 
       {/* PACKAGE COMPARISON */}
-      <section className="py-20 lg:py-24 relative">
+      <section className="section-padding relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-12">
@@ -877,7 +880,7 @@ export default function ForSMBPage() {
           </div>
 
           <div className="max-w-6xl mx-auto overflow-x-auto">
-            <table className="w-full text-sm rounded-2xl overflow-hidden glass-card">
+            <table className="w-full text-sm rounded-2xl overflow-hidden bg-white border border-gray-200/70 shadow-sm">
               <thead>
                 <tr className="border-b border-gray-100">
                   <th className="text-left px-5 py-4 text-xs font-bold tracking-widest text-gray-400 uppercase">
@@ -930,7 +933,7 @@ export default function ForSMBPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-20 lg:py-24 relative">
+      <section className="section-padding relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
@@ -950,7 +953,7 @@ export default function ForSMBPage() {
               {smbFaqs.map((faq) => (
                 <details
                   key={faq.question}
-                  className="group rounded-2xl p-6 glass-card transition-all duration-300"
+                  className="group rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm transition-all duration-300"
                 >
                   <summary className="flex justify-between items-start gap-4 cursor-pointer list-none">
                     <h3 className="text-base font-semibold text-gray-900">{faq.question}</h3>
@@ -965,7 +968,7 @@ export default function ForSMBPage() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="py-20 lg:py-28 relative overflow-hidden">
+      <section className="section-padding relative overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0 bg-gradient-mesh" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -989,7 +992,7 @@ export default function ForSMBPage() {
               href="https://wa.me/919326352241?text=Hi%20Gennoor%2C%20I%20visited%20gennoor.com/solutions/for-smb%20and%20would%20like%20to%20discuss%20an%20SMB%20package."
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 glass-card hover:border-primary-200 transition-all duration-300"
+              className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 bg-white ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700 transition-all duration-300"
             >
               <MessageCircle className="mr-2 h-4 w-4" />
               Message on WhatsApp

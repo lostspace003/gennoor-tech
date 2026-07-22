@@ -48,7 +48,7 @@ export default function AcademyPage() {
       />
 
       {/* HERO */}
-      <section className="relative py-16 lg:py-24 overflow-hidden">
+      <section className="relative py-14 lg:py-20 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0 bg-gradient-mesh" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
@@ -59,7 +59,7 @@ export default function AcademyPage() {
               <GraduationCap className="w-3 h-3 mr-1.5" />
               Gennoor Academy
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold tracking-tight text-gray-900 mb-6 leading-[1.1]">
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-6 leading-tight tracking-tight">
               Courses that end in a <span className="gradient-text">shipped system</span>,
               not a certificate.
             </h1>
@@ -92,7 +92,7 @@ export default function AcademyPage() {
               </a>
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 glass-card hover:border-primary-200 transition-all duration-300"
+                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 bg-white ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700 transition-all duration-300"
               >
                 Run this for your team
               </Link>
@@ -102,7 +102,7 @@ export default function AcademyPage() {
       </section>
 
       {/* TRACKS */}
-      <section className="py-16 lg:py-20 relative">
+      <section className="py-14 lg:py-20 relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-12">
@@ -124,7 +124,7 @@ export default function AcademyPage() {
               return (
                 <div
                   key={track.id}
-                  className="rounded-2xl p-6 glass-card transition-all duration-300 hover:-translate-y-1"
+                  className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm transition-all duration-300 hover:-translate-y-1"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/15">
@@ -151,11 +151,11 @@ export default function AcademyPage() {
       <AcademyCatalog allCourses={courses} />
 
       {/* CUSTOM CONTENT CTA */}
-      <section className="py-20 lg:py-24 relative">
+      <section className="section-padding relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
-            <div className="rounded-3xl p-7 lg:p-10 glass-card glow-border">
+            <div className="rounded-3xl p-7 lg:p-10 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-amber-500/15">
                   <Sparkles className="w-6 h-6 text-white" />
@@ -187,7 +187,7 @@ export default function AcademyPage() {
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="py-20 lg:py-24 relative">
+      <section className="section-padding relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-12">
@@ -220,7 +220,7 @@ export default function AcademyPage() {
                   'At the end of every course, you get three concrete options to apply it: run it for your team, scope a pilot built on your data, or just talk.',
               },
             ].map((s) => (
-              <div key={s.step} className="rounded-2xl p-6 glass-card glow-border relative">
+              <div key={s.step} className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 relative">
                 <span className="absolute top-4 right-5 text-2xl font-black text-gray-100">
                   {s.step}
                 </span>
@@ -233,7 +233,7 @@ export default function AcademyPage() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="py-20 lg:py-24 relative overflow-hidden">
+      <section className="section-padding relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#0f1729] via-[#111b33] to-[#0c1524]" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
