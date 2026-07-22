@@ -82,7 +82,7 @@ module.exports = {
         'glass': '0 8px 32px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
         'glass-lg': '0 16px 48px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
         'glass-glow': '0 8px 32px rgba(37, 99, 235, 0.12), 0 0 0 1px rgba(37, 99, 235, 0.06)',
-        'card-hover': '0 20px 60px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(37, 99, 235, 0.08)',
+        'card-hover': '0 2px 4px rgba(15, 23, 42, 0.05), 0 24px 48px -16px rgba(15, 23, 42, 0.12)',
         'ambient': '0 0 80px rgba(37, 99, 235, 0.08)',
         'glow-blue': '0 0 40px rgba(37, 99, 235, 0.2)',
         'glow-teal': '0 0 40px rgba(13, 148, 136, 0.2)',
