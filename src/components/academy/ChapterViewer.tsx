@@ -481,6 +481,51 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
             }, '*');
           }
 
+          // Authoritative deck state — timeline position is the single source
+          // of truth. For target slide S / step K: earlier slides are inactive
+          // and fully revealed, slide S is active with steps <= K revealed,
+          // later slides are fully reset. Idempotent, so forward playback is
+          // unaffected; fixes wrong state when seeking/stepping BACKWARD
+          // (the chapter's built-in cue adapter only ever reveals forward).
+          // K semantics: null = slide start (no steps), 9999 = fully revealed.
+          function applyAuthoritativeState(S, K) {
+            var slides = document.querySelectorAll('.slide');
+            if (!slides.length) return;
+            slides.forEach(function(sl, i) {
+              var n = i + 1;
+              var steps = sl.querySelectorAll('[data-step]');
+              if (n < S) {
+                sl.classList.remove('active');
+                steps.forEach(function(s) { s.classList.add('revealed'); });
+              } else if (n === S) {
+                sl.classList.add('active');
+                steps.forEach(function(s, j) {
+                  var v = parseInt(s.getAttribute('data-step'), 10);
+                  var ord = isNaN(v) ? j + 1 : v;
+                  if (K != null && ord <= K) s.classList.add('revealed');
+                  else s.classList.remove('revealed');
+                });
+              } else {
+                sl.classList.remove('active');
+                steps.forEach(function(s) { s.classList.remove('revealed'); });
+              }
+            });
+            var fill = document.getElementById('progressFill');
+            if (fill) fill.style.width = (S / slides.length * 100) + '%';
+            var ctr = document.getElementById('counter') || document.getElementById('counterTop');
+            if (ctr) ctr.textContent = S + ' / ' + slides.length;
+            reportProgress();
+          }
+
+          window.addEventListener('message', function(e) {
+            if (!e || !e.data || e.data.type !== 'gennoor-academy:apply-state') return;
+            var S = e.data.slide;
+            var K = (e.data.step == null ? null : e.data.step);
+            // Defer so the built-in adapter's handling of the preceding cue has
+            // already run — this handler then corrects any forward-only residue.
+            setTimeout(function() { applyAuthoritativeState(S, K); }, 0);
+          });
+
           var progressFill = document.getElementById('progressFill');
           if (progressFill) {
             var observer = new MutationObserver(function() { reportProgress(); });
@@ -535,12 +580,15 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
             }
 
             if (e.data.type === 'gennoor-retreat-slide') {
-              var slide = document.querySelector('.slide.active');
-              if (slide) {
-                slide.querySelectorAll('[data-step].revealed').forEach(function(s) { s.classList.remove('revealed'); });
-              }
               if (prevBtn) prevBtn.click();
-              setTimeout(function() { reportProgress(); }, 150);
+              // Land on the previous slide fully revealed, later slides reset.
+              setTimeout(function() {
+                var all = document.querySelectorAll('.slide');
+                var act = document.querySelector('.slide.active');
+                var idx = Array.prototype.indexOf.call(all, act);
+                if (idx >= 0) applyAuthoritativeState(idx + 1, 9999);
+                else reportProgress();
+              }, 100);
             }
 
             if (e.data.type === 'gennoor-next') {

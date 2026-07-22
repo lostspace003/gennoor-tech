@@ -139,6 +139,23 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       } catch {}
     }, [cues, iframeRef])
 
+    // Authoritative state for user-driven seeks: the injected script rebuilds
+    // the exact slide/step state for this cue, correcting the built-in
+    // adapter's forward-only reveals when the user moves BACKWARD. Idempotent
+    // for forward moves. Sent after postCue so the adapter runs first.
+    const postApplyState = useCallback((idx: number) => {
+      const iframe = iframeRef.current
+      if (!iframe || !iframe.contentWindow) return
+      const cue = cues[idx]
+      if (!cue) return
+      try {
+        iframe.contentWindow.postMessage(
+          { type: 'gennoor-academy:apply-state', slide: cue.slide, step: cue.step ?? null },
+          '*',
+        )
+      } catch {}
+    }, [cues, iframeRef])
+
     // After a user-driven seek, also start playback. Without this, manually
     // advancing while paused would seek silently and the user would still
     // need to hit Play before hearing the new slide's narration. The user
@@ -201,8 +218,9 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       // happens on auto-advance, so bullets fade in as the voice mentions
       // them rather than dumping the full slide at once.
       postCue(idx)
+      postApplyState(idx)
       playAfterSeek()
-    }, [cues, postCue, applySeek, playAfterSeek])
+    }, [cues, postCue, postApplyState, applySeek, playAfterSeek])
 
     const stepNav = useCallback((direction: 'next-slide' | 'prev-slide' | 'next-step' | 'prev-step') => {
       if (cues.length === 0) return
@@ -236,8 +254,9 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       currentCueIdxRef.current = target
       applySeek(cue.at)
       postCue(target)
+      postApplyState(target)
       playAfterSeek()
-    }, [cues, postCue, applySeek, playAfterSeek])
+    }, [cues, postCue, postApplyState, applySeek, playAfterSeek])
 
     const togglePlay = useCallback(() => {
       const audio = audioRef.current
@@ -381,8 +400,29 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       if (!audio || !duration) return
       const rect = e.currentTarget.getBoundingClientRect()
       const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
-      audio.currentTime = ratio * duration
-      currentCueIdxRef.current = -1
+      const t = ratio * duration
+      audio.currentTime = t
+      // Immediately resolve the cue for the new position (either direction)
+      // and push authoritative state — don't wait for the next timeupdate,
+      // which only ever advances forward.
+      let idx = -1
+      for (let i = 0; i < cues.length; i++) {
+        if (cues[i].at <= t + 0.05) idx = i
+        else break
+      }
+      currentCueIdxRef.current = idx
+      if (idx >= 0) {
+        postCue(idx)
+        postApplyState(idx)
+      } else if (cues.length > 0) {
+        // Before the first cue — reset to the very start of the deck.
+        try {
+          iframeRef.current?.contentWindow?.postMessage(
+            { type: 'gennoor-academy:apply-state', slide: 1, step: null },
+            '*',
+          )
+        } catch {}
+      }
     }
 
     if (audioError) return null
