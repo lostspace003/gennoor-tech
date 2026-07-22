@@ -7,7 +7,7 @@ import { motion } from 'framer-motion'
 const features = [
   { icon: BookOpen, label: '100% Self-Paced', desc: 'No schedules, no deadlines — learn on your own time, at your own speed', color: 'from-blue-500 to-blue-600' },
   { icon: Headphones, label: 'Built-in Audio', desc: 'Every chapter has narration so you can listen while you follow along', color: 'from-teal-500 to-teal-600' },
-  { icon: Award, label: 'Cross-Device Sync', desc: 'Sign in once and pick up right where you left off on any device', color: 'from-amber-500 to-amber-600' },
+  { icon: Award, label: 'Real Certificates', desc: 'Finish a course and claim a verifiable certificate — no account needed', color: 'from-amber-500 to-amber-600' },
   { icon: Play, label: 'Free Forever', desc: 'No paywalls, no upsells — full courses completely free, always', color: 'from-purple-500 to-purple-600' },
 ]
 

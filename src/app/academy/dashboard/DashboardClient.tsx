@@ -2,11 +2,19 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { Trophy, BookOpen, Clock, Award, ArrowRight, CheckCircle2, Circle, PlayCircle, Loader2, ExternalLink } from 'lucide-react'
+import { BookOpen, Clock, Award, ArrowRight, CheckCircle2, Circle, PlayCircle, Loader2, ExternalLink } from 'lucide-react'
 import { courses as allCourses } from '@/config/courses'
 import { getAllLocalProgress } from '@/lib/progress-store'
 import { useLearnerAuth } from '@/hooks/useLearnerAuth'
+
+const LOCAL_CERTS_KEY = 'gennoor:academy:certs'
+
+interface LocalCertRecord {
+  certId: string
+  verifyUrl: string
+  issueDate: string
+  name: string
+}
 
 interface ProgressRow {
   chapterId: string
@@ -33,11 +41,19 @@ interface DashboardData {
 }
 
 export default function DashboardClient() {
-  const router = useRouter()
   const { isLoggedIn, loading: authLoading, session } = useLearnerAuth()
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [localCerts, setLocalCerts] = useState<Record<string, LocalCertRecord>>({})
+
+  // Certificates claimed on this device without an account (OTP claim flow).
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(LOCAL_CERTS_KEY)
+      if (raw) setLocalCerts(JSON.parse(raw))
+    } catch { /* ignore corrupt data */ }
+  }, [])
 
   useEffect(() => {
     if (authLoading) return
@@ -57,19 +73,39 @@ export default function DashboardClient() {
     return () => { cancelled = true }
   }, [isLoggedIn, authLoading])
 
+  // Server certs (when logged in) merged with device-local claimed certs,
+  // deduped by certId.
+  const certificates = useMemo<CertRow[]>(() => {
+    const merged: CertRow[] = [...(data?.certificates ?? [])]
+    const seen = new Set(merged.map(c => c.certId))
+    for (const [courseId, rec] of Object.entries(localCerts)) {
+      if (!rec?.certId || seen.has(rec.certId)) continue
+      seen.add(rec.certId)
+      merged.push({
+        certId: rec.certId,
+        workshopSlug: courseId,
+        workshopTitle: allCourses.find(c => c.id === courseId)?.title || courseId,
+        issueDate: rec.issueDate,
+        verifyUrl: rec.verifyUrl,
+      })
+    }
+    return merged
+  }, [data, localCerts])
+
   // Per-course summary: combine config + progress rows + cert.
   const courseSummaries = useMemo(() => {
     const progressByCourse = new Map<string, ProgressRow[]>()
     const certByCourse = new Map<string, CertRow>()
+
+    for (const c of certificates) {
+      certByCourse.set(c.workshopSlug, c)
+    }
 
     if (data) {
       for (const row of data.progress) {
         const arr = progressByCourse.get(row.courseId) || []
         arr.push(row)
         progressByCourse.set(row.courseId, arr)
-      }
-      for (const c of data.certificates) {
-        certByCourse.set(c.workshopSlug, c)
       }
     } else {
       // Fallback to localStorage for non-logged-in users
@@ -125,12 +161,12 @@ export default function DashboardClient() {
         if (a.lastTouched && b.lastTouched) return b.lastTouched.localeCompare(a.lastTouched)
         return 0
       })
-  }, [data])
+  }, [data, certificates])
 
   const stats = useMemo(() => {
     const started = courseSummaries.filter(s => !s.notStarted).length
     const completed = courseSummaries.filter(s => s.isCompleted).length
-    const certs = data?.certificates.length ?? 0
+    const certs = certificates.length
     const minutes = courseSummaries.reduce((sum, s) => {
       if (!s.notStarted) {
         return sum + s.course.chapters.reduce((m, ch) => {
@@ -141,7 +177,7 @@ export default function DashboardClient() {
       return sum
     }, 0)
     return { started, completed, certs, minutes }
-  }, [courseSummaries, data])
+  }, [courseSummaries, certificates])
 
   if (authLoading || loading) {
     return (
@@ -154,27 +190,6 @@ export default function DashboardClient() {
     )
   }
 
-  if (!isLoggedIn) {
-    return (
-      <main className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 max-w-2xl text-center">
-          <Trophy className="w-12 h-12 mx-auto text-gray-300 mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Sign in to see your dashboard</h1>
-          <p className="text-gray-600 mb-6">
-            Track which courses you have started, which are pending, and the certificates you have earned.
-          </p>
-          <Link
-            href="/ai-academy"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-colors"
-          >
-            <BookOpen className="w-4 h-4" />
-            Browse courses
-          </Link>
-        </div>
-      </main>
-    )
-  }
-
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Hero */}
@@ -182,11 +197,16 @@ export default function DashboardClient() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-14 max-w-5xl">
           <p className="text-xs font-bold uppercase tracking-widest text-orange-400 mb-2">Your Gennoor Academy dashboard</p>
           <h1 className="font-heading text-3xl sm:text-4xl font-bold mb-2">
-            Welcome back{session?.name ? `, ${session.name.split(' ')[0]}` : ''}
+            Your learning dashboard{session?.name ? `, ${session.name.split(' ')[0]}` : ''}
           </h1>
           <p className="text-white/75 text-sm max-w-xl">
             Here is everything you have started, completed, and earned.
           </p>
+          {!isLoggedIn && (
+            <p className="text-white/50 text-xs mt-2">
+              Progress is saved on this device.
+            </p>
+          )}
         </div>
       </section>
 
@@ -215,12 +235,12 @@ export default function DashboardClient() {
       </section>
 
       {/* Certificates */}
-      {data && data.certificates.length > 0 && (
+      {certificates.length > 0 && (
         <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 max-w-5xl">
           <h2 className="font-heading text-2xl font-bold text-gray-900 mb-1">Your certificates</h2>
           <p className="text-sm text-gray-500 mb-5">Download the PDF, add to LinkedIn, or share the verification link.</p>
           <div className="grid sm:grid-cols-2 gap-4">
-            {data.certificates.map(c => (
+            {certificates.map(c => (
               <Link
                 key={c.certId}
                 href={`/verify/${c.certId}`}

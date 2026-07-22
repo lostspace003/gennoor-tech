@@ -216,7 +216,7 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
                       {new Date(hero.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </span>
                   </div>
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black leading-tight mb-4 group-hover:translate-x-1 transition-transform duration-300"
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-tight mb-4 group-hover:translate-x-1 transition-transform duration-300"
                     style={{ color: '#ffffff' }}>
                     {hero.title}
                   </h2>
@@ -363,7 +363,7 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
                         <article className="flex items-start gap-4">
                           <div className="w-14 h-14 shrink-0 rounded-xl flex items-center justify-center"
                             style={{ backgroundColor: post.coverColor }}>
-                            <span className="text-xs font-black" style={{ color: '#ffffff' }}>
+                            <span className="text-xs font-bold" style={{ color: '#ffffff' }}>
                               {post.category.split(' ').map(w => w[0]).join('')}
                             </span>
                           </div>

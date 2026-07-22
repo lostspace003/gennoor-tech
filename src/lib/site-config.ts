@@ -116,10 +116,10 @@ export const siteConfig = {
 
   // Hero section content
   hero: {
-    badge: 'Enterprise AI Transformation • GCC · Africa · South Asia',
+    badge: 'AI training · Production agents · GCC · Africa · South Asia',
     headline: 'We train your team and build your first production AI agent — fixed price, from $3k, live in 6 weeks.',
     brandPromise: 'Diagnose. Train. Innovate. Build. Sustain.',
-    subheadline: 'Three ways we work: we train your people, build your production AI, and advise your leadership — from the first readiness diagnostic to your hundredth deployed agent.',
+    subheadline: 'Three things, one partner: we train your people, build your production AI agents, and advise your leadership — from first diagnostic to hundredth deployed agent.',
     cta1: { text: 'Run AI Readiness Diagnostic', href: '/ai-readiness' },
     cta2: { text: 'Talk to our team', href: '/contact' },
   },

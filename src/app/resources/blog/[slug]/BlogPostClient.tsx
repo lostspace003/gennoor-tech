@@ -377,7 +377,7 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
                     />
                   ) : (
                     <div className="w-14 h-14 shrink-0 rounded-full bg-gradient-to-br from-primary-600 to-accent-600 flex items-center justify-center">
-                      <span className="text-lg font-black text-white">{author.initials}</span>
+                      <span className="text-lg font-bold text-white">{author.initials}</span>
                     </div>
                   )}
                   <div>

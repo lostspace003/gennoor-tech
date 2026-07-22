@@ -533,7 +533,7 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
             {slide?.type === 'score' && (
               <div className="text-center">
                 <p className="text-sm text-gray-500 mb-3">Your AI Readiness Score</p>
-                <div className="text-7xl font-black text-primary-600 mb-3">{slide.content.score}</div>
+                <div className="text-7xl font-extrabold text-primary-600 mb-3">{slide.content.score}</div>
                 <p className="text-2xl font-bold text-gray-900 mb-2">{slide.content.headline}</p>
                 <p className="text-gray-600">{slide.content.verdict}</p>
               </div>

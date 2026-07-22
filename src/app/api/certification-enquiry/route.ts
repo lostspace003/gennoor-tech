@@ -2,9 +2,15 @@ import { NextResponse } from 'next/server'
 import { sendEmail, catalogExcelAttachment } from '@/lib/email-service'
 import { trackEvent, trackException, initAppInsights } from '@/lib/analytics'
 import { saveEnquiry } from '@/lib/azure-storage'
+import { rateLimit, clientIp } from '@/lib/rate-limit'
+import { escapeHtml } from '@/lib/escape-html'
 
 export async function POST(request: Request) {
   try {
+    const ip = clientIp(request.headers)
+    if (!rateLimit(`certification-enquiry:${ip}`, 5, 10 * 60_000)) {
+      return NextResponse.json({ error: 'Too many requests. Please try again in a few minutes.' }, { status: 429 })
+    }
     initAppInsights()
     const body = await request.json()
     const {
@@ -62,7 +68,7 @@ export async function POST(request: Request) {
           </div>
 
           <div style="padding: 40px 30px; background: #ffffff; border: 1px solid #e0e0e0; border-top: none;">
-            <h2 style="color: #1f2937; margin-top: 0;">Dear ${name},</h2>
+            <h2 style="color: #1f2937; margin-top: 0;">Dear ${escapeHtml(name)},</h2>
 
             <p style="color: #4b5563; line-height: 1.8; font-size: 16px;">
               Thank you for your interest in certification preparation with Gennoor Tech.
@@ -71,10 +77,10 @@ export async function POST(request: Request) {
             <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 25px 0;">
               <h3 style="color: #334155; margin-top: 0;">Your Enquiry Details:</h3>
               <ul style="color: #4b5563; line-height: 2; padding-left: 20px;">
-                <li><strong>Selected Certification:</strong> ${selectedCertification}</li>
-                <li><strong>Current Level:</strong> ${currentLevel}</li>
-                <li><strong>Target Date:</strong> ${targetDate}</li>
-                <li><strong>Preferred Mode:</strong> ${trainingMode}</li>
+                <li><strong>Selected Certification:</strong> ${escapeHtml(selectedCertification)}</li>
+                <li><strong>Current Level:</strong> ${escapeHtml(currentLevel)}</li>
+                <li><strong>Target Date:</strong> ${escapeHtml(targetDate)}</li>
+                <li><strong>Preferred Mode:</strong> ${escapeHtml(trainingMode)}</li>
               </ul>
             </div>
 
@@ -147,18 +153,18 @@ export async function POST(request: Request) {
             <tr style="background: ${leadScore === 'HOT' ? '#fee2e2' : leadScore === 'WARM' ? '#fef3c7' : '#f1f5f9'};">
               <td colspan="2" style="padding: 10px; border: 1px solid #e2e8f0; font-weight: 600;">Lead Score: ${leadScore}</td>
             </tr>
-            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Name</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${name}</td></tr>
-            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Email</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${email}</td></tr>
-            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Phone</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${phone}</td></tr>
-            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Company</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${company || 'Not provided'}</td></tr>
-            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Designation</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${designation || 'Not provided'}</td></tr>
-            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Certification</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${selectedCertification}</td></tr>
-            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Other Interests</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${certifications?.join(', ') || 'None'}</td></tr>
-            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Current Level</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${currentLevel}</td></tr>
-            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Target Date</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${targetDate}</td></tr>
-            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Training Mode</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${trainingMode}</td></tr>
-            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Message</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${message || 'N/A'}</td></tr>
-            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Timestamp</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${timestamp}</td></tr>
+            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Name</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${escapeHtml(name)}</td></tr>
+            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Email</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${escapeHtml(email)}</td></tr>
+            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Phone</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${escapeHtml(phone)}</td></tr>
+            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Company</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${escapeHtml(company) || 'Not provided'}</td></tr>
+            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Designation</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${escapeHtml(designation) || 'Not provided'}</td></tr>
+            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Certification</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${escapeHtml(selectedCertification)}</td></tr>
+            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Other Interests</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${escapeHtml(certifications?.join(', ')) || 'None'}</td></tr>
+            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Current Level</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${escapeHtml(currentLevel)}</td></tr>
+            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Target Date</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${escapeHtml(targetDate)}</td></tr>
+            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Training Mode</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${escapeHtml(trainingMode)}</td></tr>
+            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Message</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${escapeHtml(message) || 'N/A'}</td></tr>
+            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Timestamp</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${escapeHtml(timestamp)}</td></tr>
           </table>
 
           <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin-top: 20px;">

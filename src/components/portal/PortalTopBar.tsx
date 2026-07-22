@@ -90,7 +90,7 @@ export default function PortalTopBar({
         >
           <Sparkles className="w-3.5 h-3.5" />
           AI Academy
-          <span className="text-[9px] font-black bg-white/20 text-white px-1.5 py-0.5 rounded leading-none uppercase ml-0.5">
+          <span className="text-[9px] font-bold bg-white/20 text-white px-1.5 py-0.5 rounded leading-none uppercase ml-0.5">
             Free
           </span>
         </Link>

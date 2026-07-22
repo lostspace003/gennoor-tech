@@ -49,9 +49,9 @@ export default function GennoorWay() {
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-14">
+        <div className="text-center max-w-3xl mx-auto mb-14 lg:mb-16">
           <motion.div
-            className="inline-flex items-center rounded-full px-3 py-1 mb-4 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60"
+            className="inline-flex items-center rounded-full border border-gray-300 bg-white px-4 py-1.5 mb-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-900"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -59,13 +59,13 @@ export default function GennoorWay() {
             The Gennoor Way
           </motion.div>
           <motion.h2
-            className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4"
+            className="text-4xl lg:text-5xl font-extrabold tracking-tight text-gray-900 mb-5"
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.05 }}
           >
-            One partner. Five phases. Your AI journey, end-to-end.
+            One partner. Five phases. End to end.
           </motion.h2>
           <motion.p
             className="text-lg text-gray-500 leading-relaxed"
@@ -75,8 +75,7 @@ export default function GennoorWay() {
             transition={{ delay: 0.1 }}
           >
             Diagnose what you have. Train your people. Innovate on the highest-value use case.
-            Build for production. Sustain for the long run. Enter at any phase — exit only when
-            you choose to.
+            Build for production. Sustain for the long run. Start at any phase.
           </motion.p>
         </div>
 

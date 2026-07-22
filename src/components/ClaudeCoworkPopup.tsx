@@ -45,12 +45,12 @@ export default function ClaudeCoworkPopup() {
           <div className="flex gap-4">
             <div className="flex-1 min-w-0">
               <div className="mb-2">
-                <span className="text-2xl font-black tracking-tight text-white uppercase">
+                <span className="text-2xl font-extrabold tracking-tight text-white uppercase">
                   Claude <span className="text-[#FFD23F]">Cowork</span>
                 </span>
               </div>
 
-              <div className="inline-block bg-emerald-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-3">
+              <div className="inline-block bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-3">
                 Event Completed
               </div>
 

@@ -1,16 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyLearnerSession } from '@/lib/learner-auth'
 import { getCourseProgress } from '@/lib/azure-storage'
-import {
-  saveCertificate,
-  findCertificateByRecipient,
-  generateCertId,
-  buildVerifyUrl,
-  uploadCertificatePdf,
-} from '@/lib/certificates'
-import { generateCertificatePdf } from '@/lib/certificate-pdf'
+import { findCertificateByRecipient, buildVerifyUrl } from '@/lib/certificates'
+import { issueCourseCertificate } from '@/lib/issue-course-cert'
 import { courses as configCourses } from '@/config/courses'
-import { courses as academyCourses } from '@/data/academy/courses'
 
 export const dynamic = 'force-dynamic'
 
@@ -65,67 +58,26 @@ export async function POST(
     )
   }
 
-  // Idempotent — return existing cert if already issued
-  const existing = await findCertificateByRecipient(courseId, learner.email)
-  if (existing) {
+  const result = await issueCourseCertificate(courseId, {
+    email: learner.email,
+    name: learner.name,
+  })
+
+  if (result.alreadyIssued) {
     return NextResponse.json({
-      cert: existing,
-      verifyUrl: buildVerifyUrl(existing.certId),
+      cert: result.cert,
+      verifyUrl: result.verifyUrl,
       issued: false,
       alreadyIssued: true,
     })
   }
 
-  // Compute course details for the cert
-  const academyMeta = academyCourses.find(a => a.slug === courseId)
-  const totalMinutes = course.chapters.reduce((sum, ch) => sum + (ch.estimatedMinutes || 0), 0)
-  const now = new Date()
-  const issueDateIso = now.toISOString()
-
-  const certId = generateCertId(courseId, now.getUTCFullYear())
-  const certPayload = {
-    certId,
-    recipientName: learner.name,
-    recipientEmail: learner.email,
-    workshopSlug: courseId,
-    workshopTitle: course.title,
-    workshopSubtitle: academyMeta?.subtitle || course.description,
-    workshopDate: issueDateIso,
-    issueDate: issueDateIso,
-    durationMinutes: totalMinutes,
-    trainerName: 'Gennoor Academy',
-    issuerName: 'Gennoor Tech',
-    issuerDomain: 'gennoor.com',
-    pdfBlobPath: '',
-    verifyUrl: buildVerifyUrl(certId),
-  }
-
-  // Generate + upload PDF in parallel with first save (so the cert row exists
-  // even if PDF generation fails — verify page degrades gracefully).
-  let pdfBlobPath = ''
-  try {
-    const pdfBuffer = await generateCertificatePdf({
-      ...certPayload,
-      status: 'issued',
-      createdAt: issueDateIso,
-    })
-    pdfBlobPath = await uploadCertificatePdf(certId, pdfBuffer)
-  } catch (err) {
-    console.error('[issue-cert] PDF generation failed', { certId, courseId, err })
-    // Continue — cert is still issued as a web credential; PDF can be regenerated later.
-  }
-
-  const cert = await saveCertificate({
-    ...certPayload,
-    pdfBlobPath,
-  })
-
   return NextResponse.json({
-    cert,
-    verifyUrl: buildVerifyUrl(certId),
+    cert: result.cert,
+    verifyUrl: result.verifyUrl,
     issued: true,
     alreadyIssued: false,
-    pdfReady: !!pdfBlobPath,
+    pdfReady: result.pdfReady,
   })
 }
 

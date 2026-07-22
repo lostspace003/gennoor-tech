@@ -1071,7 +1071,7 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
             {slide?.type === 'score' && (
               <div className="text-center">
                 <p className="text-sm text-gray-500 mb-3">Your AI Readiness Score</p>
-                <div className={`text-7xl font-black mb-3 ${report.score >= 70 ? 'text-green-600' : report.score >= 45 ? 'text-primary-600' : 'text-orange-600'}`}>{slide.content.score}</div>
+                <div className={`text-7xl font-extrabold mb-3 ${report.score >= 70 ? 'text-green-600' : report.score >= 45 ? 'text-primary-600' : 'text-orange-600'}`}>{slide.content.score}</div>
                 <p className="text-2xl font-bold text-gray-900 mb-2">{slide.content.headline}</p>
                 <p className="text-gray-600">{slide.content.verdict}</p>
                 <div className="mt-4 flex items-center justify-center gap-4 text-xs text-gray-400">
@@ -1205,19 +1205,19 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
                 <h3 className="text-xl font-bold text-gray-900 mb-6">ROI Projection</h3>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                   <div className="bg-green-50 rounded-xl p-5 border border-green-100">
-                    <div className="text-3xl font-black text-green-600">{slide.content.roi?.hoursSavedPerWeek || 0}h</div>
+                    <div className="text-3xl font-extrabold text-green-600">{slide.content.roi?.hoursSavedPerWeek || 0}h</div>
                     <div className="text-xs text-gray-600 mt-1">Hours Saved / Week</div>
                   </div>
                   <div className="bg-green-50 rounded-xl p-5 border border-green-100">
-                    <div className="text-3xl font-black text-green-600">{slide.content.roi?.productivityIncrease || '0%'}</div>
+                    <div className="text-3xl font-extrabold text-green-600">{slide.content.roi?.productivityIncrease || '0%'}</div>
                     <div className="text-xs text-gray-600 mt-1">Productivity Boost</div>
                   </div>
                   <div className="bg-green-50 rounded-xl p-5 border border-green-100">
-                    <div className="text-3xl font-black text-green-600">{slide.content.roi?.annualValue || '$0'}</div>
+                    <div className="text-3xl font-extrabold text-green-600">{slide.content.roi?.annualValue || '$0'}</div>
                     <div className="text-xs text-gray-600 mt-1">Annual Value</div>
                   </div>
                   <div className="bg-green-50 rounded-xl p-5 border border-green-100">
-                    <div className="text-3xl font-black text-green-600">{slide.content.roi?.breakEvenWeeks || 0}w</div>
+                    <div className="text-3xl font-extrabold text-green-600">{slide.content.roi?.breakEvenWeeks || 0}w</div>
                     <div className="text-xs text-gray-600 mt-1">Break Even</div>
                   </div>
                 </div>

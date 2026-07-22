@@ -73,7 +73,7 @@ export default function Footer() {
               <p className="text-gray-500 text-sm leading-relaxed">
                 Enterprise AI transformation partner for organizations across GCC, Africa, and South Asia — diagnostic to deployment to long-term sustainment.
               </p>
-              <p className="text-xs font-semibold tracking-wide text-gray-700" style={{ fontFamily: "'Sora', Helvetica, Arial, sans-serif" }}>
+              <p className="font-heading text-xs font-semibold tracking-wide text-gray-700">
                 <span>Diagnose</span>
                 <span className="text-amber-500">.</span>{' '}
                 <span>Train</span>

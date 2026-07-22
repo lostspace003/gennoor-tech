@@ -225,7 +225,7 @@ export default function ClaudeCoworkRecapPage() {
                 className="glass-card p-4 text-center hover:shadow-md transition-all duration-300 hover:-translate-y-1"
               >
                 <stat.icon className="w-4 h-4 mx-auto mb-1.5 text-primary-600" />
-                <p className="text-xl font-black text-gray-900">{stat.value}</p>
+                <p className="text-xl font-extrabold text-gray-900">{stat.value}</p>
                 <p className="text-gray-500 text-[11px] font-medium mt-0.5">{stat.label}</p>
               </div>
             ))}
@@ -302,7 +302,7 @@ export default function ClaudeCoworkRecapPage() {
                 { label: 'Camera Sessions', value: '6' },
               ].map((stat) => (
                 <div key={stat.label}>
-                  <p className="text-xl font-black text-gray-900">{stat.value}</p>
+                  <p className="text-xl font-extrabold text-gray-900">{stat.value}</p>
                   <p className="text-gray-500 text-xs mt-0.5">{stat.label}</p>
                 </div>
               ))}

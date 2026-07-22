@@ -44,7 +44,7 @@ export default function HeroSection() {
         <motion.div
           className="absolute -top-32 right-[10%] w-[500px] h-[500px] rounded-full"
           style={{
-            background: 'radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(37, 99, 235, 0.06) 0%, transparent 70%)',
             filter: 'blur(60px)',
           }}
           animate={{
@@ -57,7 +57,7 @@ export default function HeroSection() {
         <motion.div
           className="absolute -bottom-32 left-[5%] w-[450px] h-[450px] rounded-full"
           style={{
-            background: 'radial-gradient(circle, rgba(13, 148, 136, 0.07) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(13, 148, 136, 0.05) 0%, transparent 70%)',
             filter: 'blur(60px)',
           }}
           animate={{
@@ -70,7 +70,7 @@ export default function HeroSection() {
         <motion.div
           className="absolute top-[30%] left-[40%] w-[300px] h-[300px] rounded-full"
           style={{
-            background: 'radial-gradient(circle, rgba(37, 99, 235, 0.04) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(37, 99, 235, 0.03) 0%, transparent 70%)',
             filter: 'blur(50px)',
           }}
           animate={{
@@ -90,7 +90,7 @@ export default function HeroSection() {
         }}
       />
 
-      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
 
@@ -101,44 +101,25 @@ export default function HeroSection() {
               initial="hidden"
               animate="visible"
             >
-              {/* Badge */}
+              {/* Badge — one8 micro-badge */}
               <motion.div variants={slideIn}>
-                <div className="inline-flex items-center rounded-full px-4 py-1.5 mb-5 text-xs font-semibold glass-card">
-                  <span className="flex h-1.5 w-1.5 rounded-full bg-primary-500 mr-2 animate-pulse shadow-glow-blue" />
-                  <span className="text-gray-600">{siteConfig.hero.badge}</span>
+                <div className="inline-flex items-center rounded-full border border-gray-300 bg-white px-4 py-1.5 mb-6 text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-900">
+                  {siteConfig.hero.badge}
                 </div>
               </motion.div>
 
-              {/* Main Headline */}
+              {/* Main Headline — solid near-black display type */}
               <motion.h1
-                className="text-2xl sm:text-3xl lg:text-[2.75rem] font-bold tracking-tight text-gray-900 mb-5 leading-[1.15]"
+                className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-gray-900 mb-6 leading-[1.1]"
                 variants={slideIn}
               >
-                {siteConfig.hero.headline.split('—').map((part, index) => (
-                  <span key={index}>
-                    {index === 0 ? (
-                      <>
-                        {part.split('AI').map((text, i) => (
-                          <span key={i}>
-                            {text}
-                            {i === 0 && <span className="gradient-text">AI</span>}
-                          </span>
-                        ))}
-                      </>
-                    ) : (
-                      <span className="block mt-2 text-xl sm:text-2xl lg:text-[1.75rem] text-gray-500 font-medium">
-                        — {part}
-                      </span>
-                    )}
-                  </span>
-                ))}
+                {siteConfig.hero.headline}
               </motion.h1>
 
               {/* Brand Promise — the five-word transformation arc */}
               <motion.div
                 variants={slideIn}
-                className="mb-5 flex flex-wrap items-center gap-x-1.5 text-sm sm:text-base font-semibold tracking-wide"
-                style={{ fontFamily: "'Sora', Helvetica, Arial, sans-serif" }}
+                className="font-heading mb-5 flex flex-wrap items-center gap-x-1.5 text-sm sm:text-base font-semibold tracking-wide"
               >
                 {siteConfig.hero.brandPromise.split(' ').map((word, idx) => {
                   const isPunct = word.endsWith('.')

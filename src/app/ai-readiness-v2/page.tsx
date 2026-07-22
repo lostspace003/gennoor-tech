@@ -17,7 +17,7 @@ export default function AIReadinessV2Page() {
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
         <div className="container relative mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">AI Readiness V2</span>
-          <h1 className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight">
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight">
             AI Readiness Assessment
           </h1>
           <p className="mt-4 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">

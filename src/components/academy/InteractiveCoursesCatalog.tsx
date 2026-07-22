@@ -84,7 +84,7 @@ export default function InteractiveCoursesCatalog({ courses }: Props) {
       <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
-          <h2 className="font-heading text-3xl font-bold text-gray-900 mb-3">Available Interactive Courses</h2>
+          <h2 className="font-heading text-3xl lg:text-4xl font-extrabold tracking-tight text-gray-900 mb-3">Available Interactive Courses</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             {courses.length} fully interactive courses with slides, audio narration, and progress tracking.
             Filter by level, audience, or industry — or browse by track below.
@@ -152,7 +152,7 @@ export default function InteractiveCoursesCatalog({ courses }: Props) {
                     <p className="text-xs text-gray-500">{group.info.tagline} · {group.items.length} course{group.items.length > 1 ? 's' : ''}</p>
                   </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
                   {group.items.map(c => (
                     <CourseCard key={c.config.id} course={c.config} />
                   ))}

@@ -2,9 +2,14 @@ import { NextResponse } from 'next/server'
 import { sendTrainingEnquiryEmail } from '@/lib/email-service'
 import { trackEvent, trackException, initAppInsights } from '@/lib/analytics'
 import { saveEnquiry } from '@/lib/azure-storage'
+import { rateLimit, clientIp } from '@/lib/rate-limit'
 
 export async function POST(request: Request) {
   try {
+    const ip = clientIp(request.headers)
+    if (!rateLimit(`training-enquiry:${ip}`, 5, 10 * 60_000)) {
+      return NextResponse.json({ error: 'Too many requests. Please try again in a few minutes.' }, { status: 429 })
+    }
     initAppInsights()
     const body = await request.json()
     const {

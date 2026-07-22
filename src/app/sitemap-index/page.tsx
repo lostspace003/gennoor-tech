@@ -150,7 +150,7 @@ export default function SitemapIndexPage() {
           <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
             Sitemap
           </span>
-          <h1 className="text-3xl sm:text-4xl font-black text-gray-900 mb-2">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-2">
             Every Page on Gennoor Tech
           </h1>
           <p className="text-gray-600">

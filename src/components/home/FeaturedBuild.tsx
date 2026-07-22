@@ -89,7 +89,7 @@ export default function FeaturedBuild() {
                   height={48}
                   className="h-12 w-12 object-contain drop-shadow"
                 />
-                <h2 className="text-3xl font-black text-white lg:text-4xl">
+                <h2 className="text-3xl font-extrabold text-white lg:text-4xl">
                   Safar-e-Anbiya <span className="text-amber-300">· Journey of the Prophets</span>
                 </h2>
               </div>

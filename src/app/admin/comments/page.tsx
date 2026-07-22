@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 interface Comment {
   partitionKey: string
@@ -15,27 +15,26 @@ interface Comment {
 }
 
 export default function AdminCommentsPage() {
-  const [secret, setSecret] = useState('')
-  const [authenticated, setAuthenticated] = useState(false)
   const [comments, setComments] = useState<Comment[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [filter, setFilter] = useState<'all' | 'approved' | 'hidden'>('all')
   const [searchSlug, setSearchSlug] = useState('')
   const [actionLoading, setActionLoading] = useState<string | null>(null)
 
-  const fetchComments = useCallback(async (adminSecret: string) => {
+  // Auth comes from the admin session cookie — the /admin middleware already
+  // requires Entra sign-in before this page is reachable.
+  const fetchComments = useCallback(async () => {
     setLoading(true)
     setError('')
     try {
-      const res = await fetch(`/api/admin/comments?secret=${encodeURIComponent(adminSecret)}`)
+      const res = await fetch('/api/admin/comments')
       if (!res.ok) {
-        if (res.status === 401) throw new Error('Invalid admin secret')
+        if (res.status === 401) throw new Error('Session expired — sign in again at /admin/login')
         throw new Error('Failed to load comments')
       }
       const data = await res.json()
       setComments(data)
-      setAuthenticated(true)
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
     } finally {
@@ -43,11 +42,9 @@ export default function AdminCommentsPage() {
     }
   }, [])
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!secret.trim()) return
-    fetchComments(secret)
-  }
+  useEffect(() => {
+    fetchComments()
+  }, [fetchComments])
 
   const toggleStatus = async (comment: Comment) => {
     const newStatus = comment.status === 'approved' ? 'hidden' : 'approved'
@@ -60,7 +57,6 @@ export default function AdminCommentsPage() {
           slug: comment.partitionKey,
           rowKey: comment.rowKey,
           status: newStatus,
-          secret,
         }),
       })
       if (!res.ok) throw new Error('Failed to update')
@@ -97,47 +93,6 @@ export default function AdminCommentsPage() {
     return `${days}d ago`
   }
 
-  // Login screen
-  if (!authenticated) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f9fa' }}>
-        <form onSubmit={handleLogin} style={{
-          background: '#fff', borderRadius: '16px', padding: '40px', boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
-          width: '100%', maxWidth: '400px',
-        }}>
-          <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '8px', color: '#111827' }}>Comment Admin</h1>
-          <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '24px' }}>Enter your admin secret to continue</p>
-          {error && (
-            <div style={{ background: '#fef2f2', color: '#dc2626', padding: '12px', borderRadius: '8px', fontSize: '14px', marginBottom: '16px' }}>
-              {error}
-            </div>
-          )}
-          <input
-            type="password"
-            value={secret}
-            onChange={e => setSecret(e.target.value)}
-            placeholder="Admin secret"
-            style={{
-              width: '100%', padding: '12px 16px', border: '1px solid #d1d5db', borderRadius: '8px',
-              fontSize: '14px', marginBottom: '16px', outline: 'none', boxSizing: 'border-box',
-            }}
-            autoFocus
-          />
-          <button
-            type="submit"
-            disabled={loading || !secret.trim()}
-            style={{
-              width: '100%', padding: '12px', background: loading ? '#93c5fd' : '#2563eb', color: '#fff',
-              border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: 600, cursor: loading ? 'wait' : 'pointer',
-            }}
-          >
-            {loading ? 'Verifying...' : 'Login'}
-          </button>
-        </form>
-      </div>
-    )
-  }
-
   // Admin dashboard
   return (
     <div style={{ minHeight: '100vh', background: '#f8f9fa' }}>
@@ -150,12 +105,12 @@ export default function AdminCommentsPage() {
           </p>
         </div>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-          <button onClick={() => fetchComments(secret)} style={{ padding: '8px 16px', background: '#f3f4f6', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '13px', cursor: 'pointer' }}>
+          <button onClick={() => fetchComments()} style={{ padding: '8px 16px', background: '#f3f4f6', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '13px', cursor: 'pointer' }}>
             Refresh
           </button>
-          <button onClick={() => { setAuthenticated(false); setSecret(''); setComments([]) }} style={{ padding: '8px 16px', background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', borderRadius: '8px', fontSize: '13px', cursor: 'pointer' }}>
-            Logout
-          </button>
+          <a href="/admin" style={{ padding: '8px 16px', background: '#eff6ff', color: '#2563eb', border: '1px solid #bfdbfe', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', textDecoration: 'none' }}>
+            Back to Admin
+          </a>
         </div>
       </div>
 
