@@ -497,7 +497,7 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
             </button>
           )}
           <p className="text-sm font-medium text-gray-500 mb-2">Your AI Readiness Score</p>
-          <div className={`text-6xl sm:text-7xl font-black ${scoreColor} mb-2`}>{report.score}</div>
+          <div className={`text-6xl sm:text-7xl font-extrabold ${scoreColor} mb-2`}>{report.score}</div>
           <p className="text-xl font-bold text-gray-900 mb-1">{report.headline}</p>
           <p className="text-gray-600">{report.verdict}</p>
         </div>

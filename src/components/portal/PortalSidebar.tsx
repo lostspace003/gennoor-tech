@@ -139,7 +139,7 @@ export default function PortalSidebar({
                     {p.badge && (
                       <span
                         className={cn(
-                          'ml-auto text-[9px] font-black px-1.5 py-0.5 rounded leading-none uppercase',
+                          'ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded leading-none uppercase',
                           p.badge === 'Free' && 'bg-emerald-100 text-emerald-700',
                           p.badge === 'New' && 'bg-primary-100 text-primary-700',
                           p.badge === 'Hot' && 'bg-orange-100 text-orange-700'
@@ -287,7 +287,7 @@ function SectionRow({
                   {child.badge && (
                     <span
                       className={cn(
-                        'ml-auto text-[9px] font-black px-1.5 py-0.5 rounded leading-none uppercase',
+                        'ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded leading-none uppercase',
                         child.badge === 'Free' && 'bg-emerald-100 text-emerald-700',
                         child.badge === 'New' && 'bg-primary-100 text-primary-700',
                         child.badge === 'Hot' && 'bg-orange-100 text-orange-700'

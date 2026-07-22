@@ -851,7 +851,7 @@ export default function ForSMBPage() {
                   key={step.title}
                   className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 relative transition-all duration-500 hover:-translate-y-1"
                 >
-                  <span className="absolute top-4 right-5 text-2xl font-black text-gray-100">
+                  <span className="absolute top-4 right-5 text-2xl font-extrabold text-gray-100">
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center mb-4 shadow-lg shadow-primary-500/15">

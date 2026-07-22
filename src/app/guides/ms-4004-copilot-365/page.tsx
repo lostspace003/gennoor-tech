@@ -108,7 +108,7 @@ export default function MS4004StudyGuidePage() {
           <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
             MS-4004 Study Guide
           </span>
-          <h1 className="text-4xl md:text-5xl font-black mb-6 text-gray-900">
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-6 text-gray-900">
             MS-4004 Microsoft 365 Copilot: Exam Prep Guide 2026
           </h1>
           <p className="text-xl text-gray-600 mb-8 leading-relaxed">

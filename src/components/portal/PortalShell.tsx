@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import PortalTopBar from './PortalTopBar'
 import PortalSidebar from './PortalSidebar'
 import PortalBreadcrumb from './PortalBreadcrumb'
+import RouteProgress from './RouteProgress'
 import SearchModal from '@/components/SearchModal'
 import { cn } from '@/lib/utils'
 
@@ -44,6 +45,17 @@ export default function PortalShell({ children }: { children: React.ReactNode })
     setMobileOpen(false)
   }, [pathname])
 
+  // Instant scroll reset on route change. `html { scroll-behavior: smooth }`
+  // makes the router's own reset animate and land late/short — behavior:'instant'
+  // overrides it so every navigation starts at the true top. The page scrolls in
+  // the window (the shell has no inner scroll container), but reset both roots
+  // defensively.
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
+  }, [pathname])
+
   // ⌘K / Ctrl+K opens search globally
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -61,6 +73,8 @@ export default function PortalShell({ children }: { children: React.ReactNode })
 
   return (
     <>
+      <RouteProgress />
+
       <PortalTopBar
         pinned={pinned}
         collapsed={collapsed}
@@ -87,7 +101,9 @@ export default function PortalShell({ children }: { children: React.ReactNode })
         )}
       >
         <PortalBreadcrumb />
-        {children}
+        <div key={pathname} className="animate-page-enter">
+          {children}
+        </div>
       </div>
 
       <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />

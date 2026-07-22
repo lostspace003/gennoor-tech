@@ -96,7 +96,7 @@ export default function AIReadinessChecklist() {
               <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
                 Free Resource
               </span>
-              <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
+              <h1 className="text-4xl lg:text-5xl font-extrabold text-gray-900 mb-6">
                 Enterprise AI Readiness Checklist
               </h1>
               <p className="text-xl text-gray-600 mb-8">

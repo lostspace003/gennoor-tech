@@ -282,7 +282,7 @@ export default function BookingCalendar() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-6">
             <Check className="h-8 w-8 text-green-600" />
           </div>
-          <h2 className="text-3xl font-black text-gray-900 mb-4">Booking Confirmed!</h2>
+          <h2 className="text-3xl font-extrabold text-gray-900 mb-4">Booking Confirmed!</h2>
           <p className="text-lg text-gray-600 mb-2">
             Your discovery call has been scheduled for{' '}
             <strong>{selectedDate ? formatDateLabel(selectedDate) : ''}</strong> at{' '}

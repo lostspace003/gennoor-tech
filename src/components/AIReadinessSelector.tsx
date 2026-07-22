@@ -176,7 +176,7 @@ export default function AIReadinessSelector() {
               <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">AI Readiness Assessment</span>
 
               {/* Title */}
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.05] tracking-tight mb-6">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.05] tracking-tight mb-6">
                 <span className="text-gray-900">How </span>
                 <span className="bg-gradient-to-r from-primary-600 via-primary-700 to-blue-600 bg-clip-text text-transparent">AI-Ready</span>
                 <br className="hidden sm:block" />
@@ -228,7 +228,7 @@ export default function AIReadinessSelector() {
 
                 <div className="text-center mb-8">
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-[2px] mb-3">Your Score</p>
-                  <div className="text-8xl sm:text-9xl font-black bg-gradient-to-b from-green-500 to-green-700 bg-clip-text text-transparent leading-none mb-2">73</div>
+                  <div className="text-8xl sm:text-9xl font-extrabold bg-gradient-to-b from-green-500 to-green-700 bg-clip-text text-transparent leading-none mb-2">73</div>
                   <p className="text-lg text-gray-500 font-semibold">out of 100</p>
                 </div>
 

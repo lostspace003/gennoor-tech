@@ -78,7 +78,7 @@ function Avatar({ author, size, onDark = false }: { author: AuthorProfile; size:
       }}
       aria-label={author.name}
     >
-      <span className="font-black text-white" style={{ fontSize }}>
+      <span className="font-bold text-white" style={{ fontSize }}>
         {author.initials}
       </span>
     </div>
