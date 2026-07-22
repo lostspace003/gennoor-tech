@@ -1,6 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          // SAMEORIGIN keeps academy chapter iframes (same-origin /api/content) working
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          // No includeSubDomains/preload yet — subdomain inventory unverified (docs/FOLLOW-UPS.md)
+          { key: 'Strict-Transport-Security', value: 'max-age=31536000' },
+        ],
+      },
+    ]
+  },
   async redirects() {
     return [
       {

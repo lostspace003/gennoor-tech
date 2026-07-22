@@ -2,6 +2,7 @@ import { EmailClient, KnownEmailSendStatus } from '@azure/communication-email'
 import { readFile } from 'fs/promises'
 import path from 'path'
 import { downloadPdfFromBlob, saveEmailLog } from '@/lib/azure-storage'
+import { escapeHtml } from '@/lib/escape-html'
 import { ConfidentialClientApplication } from '@azure/msal-node'
 import { Client } from '@microsoft/microsoft-graph-client'
 
@@ -281,6 +282,21 @@ export async function sendTrainingEnquiryEmail(data: {
     data.requestedFile
   )
 
+  // User-supplied fields escaped for safe interpolation into HTML templates.
+  const safe = {
+    name: escapeHtml(data.name),
+    email: escapeHtml(data.email),
+    phone: escapeHtml(data.phone),
+    company: escapeHtml(data.company),
+    designation: escapeHtml(data.designation),
+    trainingFor: escapeHtml(data.trainingFor),
+    teamSize: escapeHtml(data.teamSize),
+    timeline: escapeHtml(data.timeline),
+    message: escapeHtml(data.message),
+    programTitle: escapeHtml(data.programTitle),
+    programType: escapeHtml(data.programType),
+  }
+
   const userEmailHtml = `
     <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center; border-radius: 10px 10px 0 0;">
@@ -289,15 +305,15 @@ export async function sendTrainingEnquiryEmail(data: {
       </div>
 
       <div style="padding: 40px 30px; background: #ffffff; border: 1px solid #e0e0e0; border-top: none;">
-        <h2 style="color: #333; margin-top: 0; font-size: 24px;">Dear ${data.name},</h2>
+        <h2 style="color: #333; margin-top: 0; font-size: 24px;">Dear ${safe.name},</h2>
 
         <p style="color: #555; line-height: 1.8; font-size: 16px;">
-          Thank you for your interest in our <strong>${data.programTitle}</strong> ${data.programType}.
+          Thank you for your interest in our <strong>${safe.programTitle}</strong> ${safe.programType}.
         </p>
 
         <div style="background: #f8f9fa; border-left: 4px solid #667eea; padding: 20px; margin: 25px 0; border-radius: 5px;">
           <p style="color: #555; margin: 0; line-height: 1.8;">
-            We've attached the detailed ${data.programType} PDF including curriculum,
+            We've attached the detailed ${safe.programType} PDF including curriculum,
             learning objectives, and delivery format. This comprehensive outline will help you understand
             how our training can accelerate your team's AI journey.
           </p>
@@ -323,10 +339,10 @@ export async function sendTrainingEnquiryEmail(data: {
         <h3 style="color: #333; margin-top: 30px;">Your Training Requirements:</h3>
         <div style="background: #ffffff; border: 1px solid #e0e0e0; padding: 20px; border-radius: 5px;">
           <table style="width: 100%; color: #555;">
-            <tr><td style="padding: 5px 0;"><strong>Organization:</strong></td><td>${data.company}</td></tr>
-            <tr><td style="padding: 5px 0;"><strong>Training For:</strong></td><td>${data.trainingFor === 'team' ? `Team (${data.teamSize} members)` : data.trainingFor}</td></tr>
-            <tr><td style="padding: 5px 0;"><strong>Timeline:</strong></td><td>${data.timeline}</td></tr>
-            ${data.message ? `<tr><td style="padding: 5px 0; vertical-align: top;"><strong>Special Requirements:</strong></td><td>${data.message}</td></tr>` : ''}
+            <tr><td style="padding: 5px 0;"><strong>Organization:</strong></td><td>${safe.company}</td></tr>
+            <tr><td style="padding: 5px 0;"><strong>Training For:</strong></td><td>${data.trainingFor === 'team' ? `Team (${safe.teamSize} members)` : safe.trainingFor}</td></tr>
+            <tr><td style="padding: 5px 0;"><strong>Timeline:</strong></td><td>${safe.timeline}</td></tr>
+            ${data.message ? `<tr><td style="padding: 5px 0; vertical-align: top;"><strong>Special Requirements:</strong></td><td>${safe.message}</td></tr>` : ''}
           </table>
         </div>
 
@@ -343,7 +359,7 @@ export async function sendTrainingEnquiryEmail(data: {
 
         <h3 style="color: #333; margin-top: 30px;">Next Steps:</h3>
         <ol style="color: #555; line-height: 2;">
-          <li>Review the attached ${data.programType} details</li>
+          <li>Review the attached ${safe.programType} details</li>
           <li>Our training specialist will contact you soon</li>
           <li>Schedule a free consultation call to discuss customization</li>
           <li>Receive a tailored proposal with pricing options</li>
@@ -401,20 +417,20 @@ export async function sendTrainingEnquiryEmail(data: {
   })
 
   const adminEmailHtml = `
-    <h2>[${leadScore}] New Training Enquiry - ${data.programTitle}</h2>
+    <h2>[${leadScore}] New Training Enquiry - ${safe.programTitle}</h2>
     <table border="1" cellpadding="8" style="border-collapse: collapse;">
       <tr style="background: ${leadScore === 'HOT' ? '#ffcccc' : leadScore === 'WARM' ? '#ffffcc' : '#cccccc'};">
         <td colspan="2"><strong>Lead Score: ${leadScore}</strong></td>
       </tr>
-      <tr><td><strong>Program:</strong></td><td>${data.programTitle} (${data.programType})</td></tr>
-      <tr><td><strong>Name:</strong></td><td>${data.name}</td></tr>
-      <tr><td><strong>Email:</strong></td><td>${data.email}</td></tr>
-      <tr><td><strong>Phone:</strong></td><td>${data.phone}</td></tr>
-      <tr><td><strong>Company:</strong></td><td>${data.company}</td></tr>
-      <tr><td><strong>Designation:</strong></td><td>${data.designation}</td></tr>
-      <tr><td><strong>Training For:</strong></td><td>${data.trainingFor}${data.teamSize ? ` (${data.teamSize})` : ''}</td></tr>
-      <tr><td><strong>Timeline:</strong></td><td>${data.timeline}</td></tr>
-      <tr><td><strong>Message:</strong></td><td>${data.message || 'None'}</td></tr>
+      <tr><td><strong>Program:</strong></td><td>${safe.programTitle} (${safe.programType})</td></tr>
+      <tr><td><strong>Name:</strong></td><td>${safe.name}</td></tr>
+      <tr><td><strong>Email:</strong></td><td>${safe.email}</td></tr>
+      <tr><td><strong>Phone:</strong></td><td>${safe.phone}</td></tr>
+      <tr><td><strong>Company:</strong></td><td>${safe.company}</td></tr>
+      <tr><td><strong>Designation:</strong></td><td>${safe.designation}</td></tr>
+      <tr><td><strong>Training For:</strong></td><td>${safe.trainingFor}${data.teamSize ? ` (${safe.teamSize})` : ''}</td></tr>
+      <tr><td><strong>Timeline:</strong></td><td>${safe.timeline}</td></tr>
+      <tr><td><strong>Message:</strong></td><td>${safe.message || 'None'}</td></tr>
     </table>
     <h3>Recommended Actions:</h3>
     <ol>

@@ -2,9 +2,15 @@ import { NextResponse } from 'next/server'
 import { sendEmail, catalogExcelAttachment } from '@/lib/email-service'
 import { trackEvent, trackException, initAppInsights } from '@/lib/analytics'
 import { saveEnquiry } from '@/lib/azure-storage'
+import { rateLimit, clientIp } from '@/lib/rate-limit'
+import { escapeHtml } from '@/lib/escape-html'
 
 export async function POST(request: Request) {
   try {
+    const ip = clientIp(request.headers)
+    if (!rateLimit(`book-expert-call:${ip}`, 5, 10 * 60_000)) {
+      return NextResponse.json({ error: 'Too many requests. Please try again in a few minutes.' }, { status: 429 })
+    }
     initAppInsights()
     const body = await request.json()
     const {
@@ -50,10 +56,10 @@ export async function POST(request: Request) {
           </div>
 
           <div style="padding: 40px 30px; background: #ffffff; border: 1px solid #e0e0e0; border-top: none;">
-            <h2 style="color: #1f2937; margin-top: 0; font-size: 22px;">Dear ${name},</h2>
+            <h2 style="color: #1f2937; margin-top: 0; font-size: 22px;">Dear ${escapeHtml(name)},</h2>
 
             <p style="color: #4b5563; line-height: 1.8; font-size: 16px;">
-              Thank you for expressing your interest in <strong>${programTitle}</strong>.
+              Thank you for expressing your interest in <strong>${escapeHtml(programTitle)}</strong>.
               We're excited to connect with you!
             </p>
 
@@ -68,19 +74,19 @@ export async function POST(request: Request) {
               <table style="width: 100%; border-collapse: collapse; color: #475569;">
                 <tr>
                   <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; width: 40%;"><strong>Program:</strong></td>
-                  <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;">${programTitle}</td>
+                  <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;">${escapeHtml(programTitle)}</td>
                 </tr>
                 <tr>
                   <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;"><strong>Organization:</strong></td>
-                  <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;">${company}</td>
+                  <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;">${escapeHtml(company)}</td>
                 </tr>
                 <tr>
                   <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;"><strong>Country:</strong></td>
-                  <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;">${whatsappCountry}</td>
+                  <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;">${escapeHtml(whatsappCountry)}</td>
                 </tr>
                 <tr>
                   <td style="padding: 8px 0;"><strong>Role:</strong></td>
-                  <td style="padding: 8px 0;">${designation}</td>
+                  <td style="padding: 8px 0;">${escapeHtml(designation)}</td>
                 </tr>
               </table>
             </div>
@@ -145,39 +151,39 @@ export async function POST(request: Request) {
           <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
             <tr style="background: #f8fafc;">
               <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: 600; width: 35%;">Program</td>
-              <td style="padding: 10px; border: 1px solid #e2e8f0;">${programTitle}</td>
+              <td style="padding: 10px; border: 1px solid #e2e8f0;">${escapeHtml(programTitle)}</td>
             </tr>
             <tr>
               <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: 600;">Name</td>
-              <td style="padding: 10px; border: 1px solid #e2e8f0;">${name}</td>
+              <td style="padding: 10px; border: 1px solid #e2e8f0;">${escapeHtml(name)}</td>
             </tr>
             <tr style="background: #f8fafc;">
               <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: 600;">Email</td>
-              <td style="padding: 10px; border: 1px solid #e2e8f0;"><a href="mailto:${email}">${email}</a></td>
+              <td style="padding: 10px; border: 1px solid #e2e8f0;"><a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></td>
             </tr>
             <tr>
               <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: 600;">WhatsApp</td>
-              <td style="padding: 10px; border: 1px solid #e2e8f0;"><a href="https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}">${whatsapp}</a></td>
+              <td style="padding: 10px; border: 1px solid #e2e8f0;"><a href="https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}">${escapeHtml(whatsapp)}</a></td>
             </tr>
             <tr>
               <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: 600;">Country</td>
-              <td style="padding: 10px; border: 1px solid #e2e8f0;">${whatsappCountry}</td>
+              <td style="padding: 10px; border: 1px solid #e2e8f0;">${escapeHtml(whatsappCountry)}</td>
             </tr>
             <tr style="background: #f8fafc;">
               <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: 600;">Company</td>
-              <td style="padding: 10px; border: 1px solid #e2e8f0;">${company}</td>
+              <td style="padding: 10px; border: 1px solid #e2e8f0;">${escapeHtml(company)}</td>
             </tr>
             <tr>
               <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: 600;">Designation</td>
-              <td style="padding: 10px; border: 1px solid #e2e8f0;">${designation}</td>
+              <td style="padding: 10px; border: 1px solid #e2e8f0;">${escapeHtml(designation)}</td>
             </tr>
             <tr style="background: #f8fafc;">
               <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: 600;">Message</td>
-              <td style="padding: 10px; border: 1px solid #e2e8f0;">${message || 'N/A'}</td>
+              <td style="padding: 10px; border: 1px solid #e2e8f0;">${escapeHtml(message) || 'N/A'}</td>
             </tr>
             <tr>
               <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: 600;">Submitted</td>
-              <td style="padding: 10px; border: 1px solid #e2e8f0;">${timestamp}</td>
+              <td style="padding: 10px; border: 1px solid #e2e8f0;">${escapeHtml(timestamp)}</td>
             </tr>
           </table>
 

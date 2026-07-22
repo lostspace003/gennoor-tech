@@ -3,9 +3,15 @@ import { getBookingServices, getConfiguredBusinessId } from '@/lib/microsoft-gra
 import { trackEvent, initAppInsights } from '@/lib/analytics'
 import { savePendingBooking } from '@/lib/azure-storage'
 import { sendEmail } from '@/lib/email-service'
+import { rateLimit, clientIp } from '@/lib/rate-limit'
+import { escapeHtml } from '@/lib/escape-html'
 
 export async function POST(request: Request) {
   try {
+    const ip = clientIp(request.headers)
+    if (!rateLimit(`bookings-create:${ip}`, 5, 10 * 60_000)) {
+      return NextResponse.json({ error: 'Too many requests. Please try again in a few minutes.' }, { status: 429 })
+    }
     initAppInsights()
     const body = await request.json()
     const { serviceId, date, startTime, endTime, timezone, name, email, whatsapp, topic, country } = body
@@ -53,15 +59,15 @@ export async function POST(request: Request) {
           </div>
           <div style="background:#fff;padding:28px;border:1px solid #e5e7eb;border-top:0;border-radius:0 0 12px 12px">
             <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
-              Hi <strong>${name}</strong>,
+              Hi <strong>${escapeHtml(name)}</strong>,
             </p>
             <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
               We&rsquo;ve received your booking request. Our team will review and confirm shortly.
             </p>
             <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:16px;margin:0 0 16px">
               <p style="margin:0 0 6px;font-size:14px;color:#6b7280"><strong style="color:#111827">${service.displayName}</strong></p>
-              <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Date: <strong style="color:#374151">${date}</strong></p>
-              <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Time: <strong style="color:#374151">${startTime} UTC</strong></p>
+              <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Date: <strong style="color:#374151">${escapeHtml(date)}</strong></p>
+              <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Time: <strong style="color:#374151">${escapeHtml(startTime)} UTC</strong></p>
               <p style="margin:0;font-size:13px;color:#6b7280">With: <strong style="color:#374151">Jalal Khan</strong></p>
             </div>
             <p style="color:#6b7280;font-size:13px;line-height:1.5;margin:0">
@@ -89,12 +95,12 @@ export async function POST(request: Request) {
             </div>
             <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:16px;margin:0 0 16px">
               <p style="margin:0 0 6px;font-size:14px;color:#111827"><strong>${service.displayName}</strong></p>
-              <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Customer: <strong style="color:#374151">${name}</strong></p>
-              <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Email: <strong style="color:#374151">${email}</strong></p>
-              ${whatsapp ? `<p style="margin:0 0 4px;font-size:13px;color:#6b7280">WhatsApp: <strong style="color:#374151">${whatsapp}</strong></p>` : ''}
-              <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Date: <strong style="color:#374151">${date}</strong></p>
-              <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Time: <strong style="color:#374151">${startTime} – ${endTime} UTC</strong></p>
-              ${topic ? `<p style="margin:0;font-size:13px;color:#6b7280">Topic: <strong style="color:#374151">${topic}</strong></p>` : ''}
+              <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Customer: <strong style="color:#374151">${escapeHtml(name)}</strong></p>
+              <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Email: <strong style="color:#374151">${escapeHtml(email)}</strong></p>
+              ${whatsapp ? `<p style="margin:0 0 4px;font-size:13px;color:#6b7280">WhatsApp: <strong style="color:#374151">${escapeHtml(whatsapp)}</strong></p>` : ''}
+              <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Date: <strong style="color:#374151">${escapeHtml(date)}</strong></p>
+              <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Time: <strong style="color:#374151">${escapeHtml(startTime)} – ${escapeHtml(endTime)} UTC</strong></p>
+              ${topic ? `<p style="margin:0;font-size:13px;color:#6b7280">Topic: <strong style="color:#374151">${escapeHtml(topic)}</strong></p>` : ''}
             </div>
             <a href="${siteUrl}/admin" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600">
               Open Dashboard

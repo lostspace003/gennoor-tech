@@ -3,9 +3,15 @@ import { readFile } from 'fs/promises'
 import path from 'path'
 import { sendEmail } from '@/lib/email-service'
 import { saveEnquiry } from '@/lib/azure-storage'
+import { rateLimit, clientIp } from '@/lib/rate-limit'
+import { escapeHtml } from '@/lib/escape-html'
 
 export async function POST(request: Request) {
   try {
+    const ip = clientIp(request.headers)
+    if (!rateLimit(`claude-cowork-register:${ip}`, 5, 10 * 60_000)) {
+      return NextResponse.json({ error: 'Too many requests. Please try again in a few minutes.' }, { status: 429 })
+    }
     const body = await request.json()
     const {
       fullName,
@@ -43,7 +49,7 @@ export async function POST(request: Request) {
         </div>
 
         <div style="padding: 40px 30px; background: #ffffff; border: 1px solid #e0e0e0; border-top: none;">
-          <h2 style="color: #1B2845; margin-top: 0; font-size: 22px;">Hi ${fullName.split(' ')[0]},</h2>
+          <h2 style="color: #1B2845; margin-top: 0; font-size: 22px;">Hi ${escapeHtml(fullName.split(' ')[0])},</h2>
 
           <p style="color: #5C6784; line-height: 1.8; font-size: 16px;">
             You're confirmed for the free <strong>Claude Cowork Workshop</strong>. Here's what to expect:
@@ -53,7 +59,7 @@ export async function POST(request: Request) {
             <table style="width: 100%; color: #1B2845; font-size: 15px;">
               <tr>
                 <td style="padding: 8px 0; font-weight: 700;">When:</td>
-                <td style="padding: 8px 0;">4 hours in your local time zone (${timeZone}) — schedule details sent separately</td>
+                <td style="padding: 8px 0;">4 hours in your local time zone (${escapeHtml(timeZone)}) — schedule details sent separately</td>
               </tr>
               <tr>
                 <td style="padding: 8px 0; font-weight: 700;">Where:</td>
@@ -132,13 +138,13 @@ export async function POST(request: Request) {
       <h2>New Claude Cowork Registration</h2>
       <table border="1" cellpadding="8" style="border-collapse: collapse; font-family: Arial, sans-serif;">
         <tr style="background: #FFD23F;"><td colspan="2"><strong>Claude Cowork Workshop Registration</strong></td></tr>
-        <tr><td><strong>Name:</strong></td><td>${fullName}</td></tr>
-        <tr><td><strong>Email:</strong></td><td>${email}</td></tr>
-        <tr><td><strong>Country:</strong></td><td>${country}</td></tr>
-        <tr><td><strong>Time Zone:</strong></td><td>${timeZone}</td></tr>
-        <tr><td><strong>Role/Title:</strong></td><td>${role || 'Not provided'}</td></tr>
-        <tr><td><strong>Company:</strong></td><td>${company || 'Not provided'}</td></tr>
-        <tr><td><strong>Biggest Workflow:</strong></td><td>${biggestWorkflow || 'Not provided'}</td></tr>
+        <tr><td><strong>Name:</strong></td><td>${escapeHtml(fullName)}</td></tr>
+        <tr><td><strong>Email:</strong></td><td>${escapeHtml(email)}</td></tr>
+        <tr><td><strong>Country:</strong></td><td>${escapeHtml(country)}</td></tr>
+        <tr><td><strong>Time Zone:</strong></td><td>${escapeHtml(timeZone)}</td></tr>
+        <tr><td><strong>Role/Title:</strong></td><td>${escapeHtml(role) || 'Not provided'}</td></tr>
+        <tr><td><strong>Company:</strong></td><td>${escapeHtml(company) || 'Not provided'}</td></tr>
+        <tr><td><strong>Biggest Workflow:</strong></td><td>${escapeHtml(biggestWorkflow) || 'Not provided'}</td></tr>
       </table>
     `
 

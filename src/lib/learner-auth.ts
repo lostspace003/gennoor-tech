@@ -2,6 +2,10 @@ import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 
 const COOKIE_NAME = 'learner-session'
+if (!process.env.LEARNER_JWT_SECRET && !process.env.AUTH_SECRET) {
+  // Follow-up (docs/FOLLOW-UPS.md): hard-fail in production instead of falling back.
+  console.error('[learner-auth] SECURITY: no LEARNER_JWT_SECRET or AUTH_SECRET set — using insecure dev fallback secret')
+}
 const JWT_SECRET = new TextEncoder().encode(process.env.LEARNER_JWT_SECRET || process.env.AUTH_SECRET || 'gennoor-academy-fallback-secret')
 const JWT_EXPIRY = '30d'
 
