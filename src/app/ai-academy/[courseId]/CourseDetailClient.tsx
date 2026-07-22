@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowLeft, BookOpen, Clock, BarChart3, Award, PlayCircle, CheckCircle2, Download, Users, Headphones, Wrench, ShieldCheck, Mic } from 'lucide-react'
 import ChapterList from '@/components/academy/ChapterList'
 import type { ChapterProgress } from '@/components/academy/ChapterList'
+import PdfViewerModal from '@/components/academy/PdfViewerModal'
 import { getLocalProgress } from '@/lib/progress-store'
 import type { Course } from '@/config/courses'
 
@@ -35,6 +36,8 @@ interface CourseDetailClientProps {
 export default function CourseDetailClient({ course }: CourseDetailClientProps) {
   const firstChapter = course.chapters[0]
   const [progress, setProgress] = useState<Record<string, ChapterProgress>>({})
+  const [pdfOpen, setPdfOpen] = useState(false)
+  const pdfUrl = `/api/content/courses-pdfs/${course.id}.pdf`
 
   useEffect(() => {
     const local = getLocalProgress(course.id)
@@ -121,15 +124,14 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                   {firstChapter.number === 0 ? 'Start Course' : 'Start Chapter 01'}
                 </Link>
               )}
-              <a
-                href={`/api/content/courses-pdfs/${course.id}.pdf`}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
+                onClick={() => setPdfOpen(true)}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg ring-1 ring-white/20 hover:ring-white/40 transition-all backdrop-blur-sm"
               >
-                <Download className="w-5 h-5" />
-                Download course PDF
-              </a>
+                <BookOpen className="w-5 h-5" />
+                View course PDF
+              </button>
             </div>
           </div>
         </div>
@@ -289,20 +291,27 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                 >
                   Book a 30-min call
                 </Link>
-                <a
-                  href={`/api/content/courses-pdfs/${course.id}.pdf`}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  type="button"
+                  onClick={() => setPdfOpen(true)}
                   className="inline-flex items-center gap-2 px-5 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg ring-1 ring-white/30"
                 >
                   <Download className="w-4 h-4" />
-                  Download PDF
-                </a>
+                  View PDF
+                </button>
               </div>
             </div>
           </div>
         </div>
       </section>
+
+      {pdfOpen && (
+        <PdfViewerModal
+          title={`${course.title} — Course PDF`}
+          pdfUrl={pdfUrl}
+          onClose={() => setPdfOpen(false)}
+        />
+      )}
     </main>
   )
 }

@@ -710,13 +710,6 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
           />
         )}
 
-        {/* F11 tip */}
-        {!isFullscreen && (
-          <span className="text-[10px] text-white/40 hidden lg:inline flex-shrink-0">
-            Press <kbd className="px-1 py-0.5 bg-white/10 rounded text-[9px] font-bold text-white/60">F11</kbd> for Full Screen
-          </span>
-        )}
-
         {/* Zoom controls */}
         <div className="flex items-center gap-1.5 flex-shrink-0">
           <button
@@ -748,13 +741,14 @@ export default function ChapterViewer({ courseId, chapter, prevChapter, nextChap
           <span className="text-[10px] text-white/40 w-8 text-center">{zoomLevel}%</span>
         </div>
 
-        {/* Fullscreen toggle */}
+        {/* Fullscreen toggle — prominent so learners find the maximized player */}
         <button
           onClick={toggleFullscreen}
-          className="p-1.5 rounded hover:bg-white/10 transition-colors flex-shrink-0"
-          title={isFullscreen ? 'Exit fullscreen (Esc)' : 'Enter fullscreen'}
+          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white/10 hover:bg-white/20 text-white transition-colors flex-shrink-0"
+          title={isFullscreen ? 'Exit full screen (Esc)' : 'Play full screen'}
         >
-          {isFullscreen ? <Minimize2 className="w-4 h-4 text-white/70" /> : <Maximize className="w-4 h-4 text-white/70" />}
+          {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize className="w-3.5 h-3.5" />}
+          <span className="hidden md:inline">{isFullscreen ? 'Exit' : 'Maximize'}</span>
         </button>
 
         {/* Prev / Next */}
