@@ -48,26 +48,26 @@ export default function AcademyPage() {
       />
 
       {/* HERO */}
-      <section className="relative py-14 lg:py-20 overflow-hidden">
+      <section className="relative py-20 lg:py-28 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0 bg-gradient-mesh" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
 
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
-              <GraduationCap className="w-3 h-3 mr-1.5" />
-              Gennoor Academy
+            <div className="inline-flex items-center rounded-full border border-gray-300 bg-white px-4 py-1.5 mb-6 text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-900">
+              <GraduationCap className="w-3 h-3 mr-2" />
+              Free AI Academy
             </div>
-            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-6 leading-tight tracking-tight">
-              Courses that end in a <span className="gradient-text">shipped system</span>,
+            <h1 className="font-heading text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 mb-8 leading-[1.05]">
+              Courses that end in a shipped system,
               not a certificate.
             </h1>
-            <p className="text-lg sm:text-xl text-gray-500 mb-8 leading-relaxed max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-500 mb-10 leading-relaxed max-w-3xl mx-auto">
               Masterclass-grade B2B courses across six tracks — Foundations, Function,
-              Leadership, Industry, Builder, Applied. Free to learn. Every course pairs with
-              an optional 4-week pilot that turns what you learned into a working system
-              inside your environment.
+              Leadership, Industry, Builder, Applied. Free. No account needed. Certificate
+              on completion. Every course pairs with an optional 4-week pilot that turns
+              what you learned into a working system inside your environment.
             </p>
 
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm text-gray-500 mb-8">
@@ -221,7 +221,7 @@ export default function AcademyPage() {
               },
             ].map((s) => (
               <div key={s.step} className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 relative">
-                <span className="absolute top-4 right-5 text-2xl font-black text-gray-100">
+                <span className="absolute top-4 right-5 text-2xl font-extrabold text-gray-100">
                   {s.step}
                 </span>
                 <h3 className="text-base font-bold text-gray-900 mb-2 pr-10">{s.title}</h3>

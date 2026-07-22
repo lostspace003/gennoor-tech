@@ -89,7 +89,7 @@ export default function AIReadinessCTA() {
                   </defs>
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-4xl font-black text-white">{score}</span>
+                  <span className="text-4xl font-extrabold text-white">{score}</span>
                   <span className="text-xs text-gray-400 mt-0.5">/ 100</span>
                 </div>
               </div>

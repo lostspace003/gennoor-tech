@@ -43,23 +43,23 @@ export default function AcademyPage() {
       </section>
 
       {/* Hero */}
-      <section className="relative py-10 lg:py-14 overflow-hidden">
+      <section className="relative py-16 lg:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0 bg-gradient-mesh" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
-              <Sparkles className="w-3 h-3 mr-1.5" />
-              {totalCourses} interactive courses · Free · Self-paced · Audio narration
+            <div className="inline-flex items-center rounded-full border border-gray-300 bg-white px-4 py-1.5 mb-6 text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-900">
+              <Sparkles className="w-3 h-3 mr-2" />
+              Free AI Academy · {totalCourses} interactive courses
             </div>
-            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 leading-tight tracking-tight mb-5">
+            <h1 className="font-heading text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 leading-[1.05] mb-6">
               Interactive Courses
             </h1>
-            <p className="text-base sm:text-lg text-gray-500 leading-relaxed mb-8 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-gray-500 leading-relaxed mb-10 max-w-2xl mx-auto">
               {totalCourses} fully interactive courses — slides, narrated audio, quizzes, progress
-              tracked across devices. From AI foundations to building agents with Copilot Studio.
-              The first two chapters of every course are free; no sign-in needed to start.
+              tracked as you go. From AI foundations to building agents with Copilot Studio.
+              Free. No account needed. Certificate on completion.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -128,13 +128,13 @@ export default function AcademyPage() {
                 step: '01',
                 icon: BookOpen,
                 title: 'Start free',
-                description: 'The first two chapters of every course are free to read. No account, no email required. Pick a course; open it; learn.',
+                description: 'Every chapter of every course is open. No account, no email required. Pick a course; open it; learn.',
               },
               {
                 step: '02',
                 icon: BarChart3,
                 title: 'Track progress',
-                description: 'Sign in with Google, Microsoft, or email to save your progress across devices. Resume from where you left off.',
+                description: 'Your progress saves automatically in your browser — completed chapters get a tick, and you resume from where you left off.',
               },
               {
                 step: '03',

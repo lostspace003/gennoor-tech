@@ -95,24 +95,24 @@ export default function ServicePillars() {
       <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-16 lg:mb-20">
           <motion.div
-            className="inline-flex items-center rounded-full px-3 py-1 mb-4 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60"
+            className="inline-flex items-center rounded-full border border-gray-300 bg-white px-4 py-1.5 mb-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-900"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
             Our Services
           </motion.div>
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            How We Transform Organizations with AI
+          <h2 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-gray-900 mb-5">
+            What we do
           </h2>
           <p className="text-lg text-gray-500 leading-relaxed">
-            From strategic planning to hands-on implementation, delivering end-to-end AI transformation services
+            Strategy, training, and working software — priced up front, delivered by senior engineers.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {siteConfig.services.map((service, index) => (
             <GlassCard key={service.title} service={service} index={index} />
           ))}

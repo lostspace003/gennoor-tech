@@ -48,7 +48,7 @@ export default function FeaturedNanheMomin() {
                 Produced end-to-end by our AI pipeline
               </div>
 
-              <h2 className="mb-4 text-3xl font-black text-[#3A2A10] lg:text-4xl">
+              <h2 className="mb-4 text-3xl font-extrabold text-[#3A2A10] lg:text-4xl">
                 <span dir="rtl" className={`${nastaliq.className} mr-2 font-normal text-[#9C5B33]`}>
                   ننھے مومن
                 </span>
