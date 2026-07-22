@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, Target, GraduationCap, Code2, Bot, Award, MapPin } from 'lucide-react'
 import { BreadcrumbJsonLd, FAQJsonLd } from '@/components/JsonLd'
+import PageHero from '@/components/shared/PageHero'
 
 export const metadata: Metadata = {
   title: 'AI Training & Consulting Services — Enterprise Solutions',
@@ -58,36 +59,15 @@ export default function ServicesPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative py-14 lg:py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl">
-            <div className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
-              The Gennoor Way · Five phases, one partner
-            </div>
-            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
-              End-to-end AI transformation — diagnosed, built, and sustained by one team.
-            </h1>
-            <p className="text-xl text-gray-500 mb-8 leading-relaxed max-w-3xl">
-              Diagnose. Train. Innovate. Build. Sustain. We deliver the full AI journey for
-              enterprises and growing businesses across GCC, Africa, and South Asia — with
-              senior Microsoft-certified delivery, transparent pricing, and stack-flexible
-              architecture (Azure, AWS, GCP, or open-source — your choice).
-            </p>
-            <Link
-              href="/contact#book"
-              className="inline-flex items-center px-7 py-3.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-xl hover:shadow-glow-blue transition-all duration-300"
-            >
-              Book a Free Discovery Call
-            </Link>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="The Gennoor Way · Five phases, one partner"
+        title="End-to-end AI transformation — diagnosed, built, and sustained by one team."
+        description="Diagnose. Train. Innovate. Build. Sustain. We deliver the full AI journey for enterprises and growing businesses across GCC, Africa, and South Asia — with senior Microsoft-certified delivery, transparent pricing, and stack-flexible architecture (Azure, AWS, GCP, or open-source — your choice)."
+        ctas={[{ label: 'Book a Free Discovery Call', href: '/contact#book' }]}
+      />
 
       {/* Service Cards */}
-      <section className="py-20 lg:py-24">
+      <section className="py-14 lg:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-5 max-w-5xl mx-auto">
             {services.map((service) => {
@@ -96,7 +76,7 @@ export default function ServicesPage() {
                 <Link
                   key={service.title}
                   href={service.href}
-                  className="group flex flex-col md:flex-row gap-6 rounded-2xl p-7 transition-all duration-500 glass-card glow-border"
+                  className="group flex flex-col md:flex-row gap-6 rounded-2xl p-7 transition-all duration-500 bg-white border border-gray-200/70 shadow-sm hover:shadow-lg glow-border"
                 >
                   <div className="flex-shrink-0">
                     <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary-500/15">
@@ -127,7 +107,7 @@ export default function ServicesPage() {
       </section>
 
       {/* Training by Location */}
-      <section className="py-20 lg:py-24 relative">
+      <section className="py-14 lg:py-20 relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-10 text-center">Training by Location</h2>
@@ -136,7 +116,7 @@ export default function ServicesPage() {
               <Link
                 key={loc.title}
                 href={loc.href}
-                className="rounded-2xl p-6 transition-all duration-500 glass-card glow-border group"
+                className="rounded-2xl p-6 transition-all duration-500 bg-white border border-gray-200/70 shadow-sm hover:shadow-lg glow-border group"
               >
                 <MapPin className="w-5 h-5 text-primary-600 mb-3" />
                 <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-primary-600 transition-colors">{loc.title}</h3>
@@ -148,7 +128,7 @@ export default function ServicesPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-20 lg:py-24 relative">
+      <section className="py-14 lg:py-20 relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Frequently Asked Questions</h2>
@@ -160,7 +140,7 @@ export default function ServicesPage() {
               { question: 'How do I get started with Gennoor Tech?', answer: 'Book a free 30-minute discovery call where we discuss your goals, assess your current AI maturity, and recommend the right service. From there we provide a customized proposal within 48 hours.' },
               { question: 'What makes Gennoor Tech training different from other providers?', answer: 'Our training is led by a Microsoft Certified Trainer with 16+ active certifications and 14+ years of enterprise experience across 6 countries. Every program is customized with industry-specific case studies, hands-on labs using your own data scenarios, and post-training mentoring.' },
             ].map((faq) => (
-              <div key={faq.question} className="rounded-2xl p-6 glass-card">
+              <div key={faq.question} className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
                 <h3 className="text-base font-semibold text-gray-900 mb-2">{faq.question}</h3>
                 <p className="text-sm text-gray-500 leading-relaxed">{faq.answer}</p>
               </div>
@@ -170,7 +150,7 @@ export default function ServicesPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 lg:py-24 relative overflow-hidden">
+      <section className="py-14 lg:py-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0 bg-gradient-mesh" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">

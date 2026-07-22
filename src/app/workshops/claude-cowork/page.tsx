@@ -148,7 +148,7 @@ export default function ClaudeCoworkRecapPage() {
             {/* Left — Title + Instructor */}
             <div>
               <div className="flex flex-wrap items-center gap-3 mb-3">
-                <h1 className="text-3xl md:text-4xl font-black leading-tight text-gray-900">
+                <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 leading-tight tracking-tight">
                   Claude for Productivity
                 </h1>
                 <span className="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full border border-emerald-200">
@@ -391,7 +391,7 @@ export default function ClaudeCoworkRecapPage() {
             </Link>
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center gap-2 border-2 border-primary-600 text-primary-700 px-6 py-3 rounded-xl font-semibold hover:bg-primary-50 transition-colors"
+              className="inline-flex items-center justify-center gap-2 bg-white text-gray-700 ring-1 ring-gray-200 px-6 py-3 rounded-xl font-semibold hover:ring-primary-300 hover:text-primary-700 transition-all duration-300"
             >
               Contact Us
             </Link>

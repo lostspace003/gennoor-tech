@@ -163,7 +163,7 @@ export default async function TrainingProgramPage({ params }: Props) {
         </section>
 
         {/* What You'll Learn */}
-        <section className="py-16 lg:py-20">
+        <section className="py-14 lg:py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-8">What You&apos;ll Learn</h2>
@@ -183,24 +183,24 @@ export default async function TrainingProgramPage({ params }: Props) {
         </section>
 
         {/* Program Details */}
-        <section className="py-16 lg:py-20 bg-gray-50">
+        <section className="py-14 lg:py-20 bg-gray-50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-8">Program Details</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200/70">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Target Audience</h3>
                   <p className="text-gray-600">{program.audience}</p>
                 </div>
-                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200/70">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Skill Level</h3>
                   <p className="text-gray-600">{program.level} — {program.level === 'Executive' ? 'No technical prerequisites' : program.level === 'Beginner' ? 'Basic IT knowledge' : program.level === 'Intermediate' ? 'Foundational knowledge in the domain' : 'Strong technical background required'}</p>
                 </div>
-                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200/70">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Technology Platform</h3>
                   <p className="text-gray-600">{program.technology}</p>
                 </div>
-                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200/70">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Industry Focus</h3>
                   <p className="text-gray-600">{program.industry}</p>
                 </div>
@@ -210,26 +210,26 @@ export default async function TrainingProgramPage({ params }: Props) {
         </section>
 
         {/* Delivery Format */}
-        <section className="py-16 lg:py-20">
+        <section className="py-14 lg:py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-8">Delivery Format</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="text-center p-6 bg-white rounded-lg shadow-sm border border-gray-100">
+                <div className="text-center p-6 bg-white rounded-2xl shadow-sm border border-gray-200/70">
                   <div className="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Users className="w-7 h-7 text-primary-600" />
                   </div>
                   <h3 className="font-semibold text-gray-900 mb-2">On-Site Training</h3>
                   <p className="text-sm text-gray-600">Instructor-led classroom sessions at your location or ours</p>
                 </div>
-                <div className="text-center p-6 bg-white rounded-lg shadow-sm border border-gray-100">
+                <div className="text-center p-6 bg-white rounded-2xl shadow-sm border border-gray-200/70">
                   <div className="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Globe className="w-7 h-7 text-primary-600" />
                   </div>
                   <h3 className="font-semibold text-gray-900 mb-2">Live Virtual</h3>
                   <p className="text-sm text-gray-600">Interactive online sessions with hands-on labs and breakout rooms</p>
                 </div>
-                <div className="text-center p-6 bg-white rounded-lg shadow-sm border border-gray-100">
+                <div className="text-center p-6 bg-white rounded-2xl shadow-sm border border-gray-200/70">
                   <div className="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Zap className="w-7 h-7 text-primary-600" />
                   </div>
@@ -242,7 +242,7 @@ export default async function TrainingProgramPage({ params }: Props) {
         </section>
 
         {/* Why Choose This Program */}
-        <section className="py-16 lg:py-20 bg-gray-50">
+        <section className="py-14 lg:py-20 bg-gray-50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-8">Why Choose Gennoor Tech</h2>
@@ -289,12 +289,12 @@ export default async function TrainingProgramPage({ params }: Props) {
         </section>
 
         {/* FAQ Section */}
-        <section className="py-16 lg:py-20">
+        <section className="py-14 lg:py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Frequently Asked Questions</h2>
             <div className="max-w-3xl mx-auto space-y-6">
               {faqs.map((faq) => (
-                <div key={faq.question} className="bg-gray-50 rounded-lg p-6 shadow-sm border border-gray-100">
+                <div key={faq.question} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200/70">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
                   <p className="text-gray-600">{faq.answer}</p>
                 </div>
@@ -305,7 +305,7 @@ export default async function TrainingProgramPage({ params }: Props) {
 
         {/* Related Programs */}
         {relatedPrograms.length > 0 && (
-          <section className="py-16 lg:py-20 bg-gray-50">
+          <section className="py-14 lg:py-20 bg-gray-50">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
               <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Related Programs</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -313,7 +313,7 @@ export default async function TrainingProgramPage({ params }: Props) {
                   <Link
                     key={rp.slug}
                     href={`/services/training/${rp.slug}`}
-                    className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow group"
+                    className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200/70 hover:shadow-md transition-shadow group"
                   >
                     <div className="flex items-center gap-2 mb-3">
                       <span className="px-2 py-1 bg-primary-50 text-primary-700 text-xs font-medium rounded-full">

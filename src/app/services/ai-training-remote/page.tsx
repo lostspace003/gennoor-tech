@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import PageCTA from '@/components/shared/PageCTA';
+import PageHero from '@/components/shared/PageHero';
 import {
   Calendar,
   CheckCircle,
@@ -145,43 +146,19 @@ export default function AITrainingRemotePage() {
       />
 
       {/* Hero */}
-      <section className="relative bg-gradient-to-br from-primary-700 via-primary-600 to-primary-700 py-14 lg:py-20">
-        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-5" />
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-2 text-primary-100 text-sm font-medium mb-6">
-            <Globe className="w-4 h-4" />
-            Worldwide
-          </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6">
-            Remote AI Training
-            <br />
-            <span className="text-primary-100">Live Virtual Sessions Worldwide</span>
-          </h1>
-          <p className="text-xl md:text-2xl text-primary-100 max-w-3xl mx-auto mb-10">
-            Not pre-recorded lectures. Real trainers, live interaction, hands-on labs —
-            delivered to your team wherever they are.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a
-              href="/contact#book"
-              className="inline-flex items-center gap-2 bg-white text-primary-700 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-primary-50 transition-colors"
-            >
-              <Calendar className="w-5 h-5" />
-              Book a Discovery Call
-            </a>
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-2 text-white border-2 border-white/30 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/10 transition-colors"
-            >
-              Send an Enquiry
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Worldwide"
+        title="Remote AI Training — Live Virtual Sessions Worldwide"
+        description="Not pre-recorded lectures. Real trainers, live interaction, hands-on labs — delivered to your team wherever they are."
+        ctas={[
+          { label: 'Book a Discovery Call', href: '/contact#book' },
+          { label: 'Send an Enquiry', href: '/contact', variant: 'ghost' },
+        ]}
+        align="center"
+      />
 
       {/* How Remote Training Works */}
-      <section className="py-16 lg:py-20">
+      <section className="py-14 lg:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-4">
             How Remote Training Works
@@ -194,7 +171,7 @@ export default function AITrainingRemotePage() {
             {steps.map((step) => (
               <div
                 key={step.number}
-                className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+                className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200/70"
               >
                 <div className="text-3xl font-bold text-primary-600 mb-3">{step.number}</div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{step.title}</h3>
@@ -206,7 +183,7 @@ export default function AITrainingRemotePage() {
       </section>
 
       {/* What Makes It Different */}
-      <section className="py-16 lg:py-20 bg-gray-50">
+      <section className="py-14 lg:py-20 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -241,22 +218,22 @@ export default function AITrainingRemotePage() {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-center">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200/70 text-center">
                 <Video className="w-8 h-8 text-primary-600 mx-auto mb-3" />
                 <h3 className="font-semibold text-gray-900 mb-1">Live Sessions</h3>
                 <p className="text-sm text-gray-600">Real-time delivery, not recordings</p>
               </div>
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-center">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200/70 text-center">
                 <Users className="w-8 h-8 text-primary-600 mx-auto mb-3" />
                 <h3 className="font-semibold text-gray-900 mb-1">Small Cohorts</h3>
                 <p className="text-sm text-gray-600">8-25 participants for real interaction</p>
               </div>
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-center">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200/70 text-center">
                 <Monitor className="w-8 h-8 text-primary-600 mx-auto mb-3" />
                 <h3 className="font-semibold text-gray-900 mb-1">Hands-On Labs</h3>
                 <p className="text-sm text-gray-600">Code along with real exercises</p>
               </div>
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-center">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200/70 text-center">
                 <MessageSquare className="w-8 h-8 text-primary-600 mx-auto mb-3" />
                 <h3 className="font-semibold text-gray-900 mb-1">Post-Support</h3>
                 <p className="text-sm text-gray-600">2 weeks of follow-up assistance</p>
@@ -267,7 +244,7 @@ export default function AITrainingRemotePage() {
       </section>
 
       {/* Timezone Flexibility */}
-      <section className="py-16 lg:py-20">
+      <section className="py-14 lg:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="bg-primary-50 rounded-2xl p-8 md:p-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
@@ -298,7 +275,7 @@ export default function AITrainingRemotePage() {
                   ))}
                 </div>
               </div>
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200/70">
                 <h3 className="font-semibold text-gray-900 mb-4">Tools We Use</h3>
                 <div className="space-y-4">
                   {[
@@ -336,7 +313,7 @@ export default function AITrainingRemotePage() {
       </section>
 
       {/* Past Remote Delivery */}
-      <section className="py-16 lg:py-20 bg-gray-50">
+      <section className="py-14 lg:py-20 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-4">
             Proven Remote Delivery Track Record
@@ -354,7 +331,7 @@ export default function AITrainingRemotePage() {
             ].map((stat) => (
               <div
                 key={stat.label}
-                className="bg-white rounded-xl p-6 text-center shadow-sm border border-gray-100"
+                className="bg-white rounded-xl p-6 text-center shadow-sm border border-gray-200/70"
               >
                 <div className="text-3xl font-bold text-primary-600 mb-2">{stat.metric}</div>
                 <div className="text-sm text-gray-600">{stat.label}</div>
@@ -362,7 +339,7 @@ export default function AITrainingRemotePage() {
             ))}
           </div>
           <div className="mt-12 max-w-3xl mx-auto">
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200/70">
               <h3 className="text-xl font-bold text-gray-900 mb-4">
                 Industries We Have Served Remotely
               </h3>
@@ -393,13 +370,13 @@ export default function AITrainingRemotePage() {
       </section>
 
       {/* Services */}
-      <section className="py-16 lg:py-20">
+      <section className="py-14 lg:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-12">
             What We Deliver Remotely
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200/70 hover:shadow-md transition-shadow">
               <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center mb-4">
                 <GraduationCap className="w-6 h-6 text-primary-600" />
               </div>
@@ -415,7 +392,7 @@ export default function AITrainingRemotePage() {
                 Learn more <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200/70 hover:shadow-md transition-shadow">
               <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center mb-4">
                 <Lightbulb className="w-6 h-6 text-primary-600" />
               </div>
@@ -432,7 +409,7 @@ export default function AITrainingRemotePage() {
                 Learn more <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200/70 hover:shadow-md transition-shadow">
               <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center mb-4">
                 <Target className="w-6 h-6 text-primary-600" />
               </div>
@@ -453,7 +430,7 @@ export default function AITrainingRemotePage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-16 lg:py-20 bg-gray-50">
+      <section className="py-14 lg:py-20 bg-gray-50">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
             Frequently Asked Questions
@@ -462,7 +439,7 @@ export default function AITrainingRemotePage() {
             {faqs.map((faq, index) => (
               <div
                 key={index}
-                className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+                className="bg-white rounded-xl p-6 shadow-sm border border-gray-200/70"
               >
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   {faq.question}

@@ -45,7 +45,7 @@ export default function BlogPage() {
           <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
             Insights &amp; Perspectives
           </span>
-          <h1 className="text-4xl lg:text-5xl font-black tracking-tight text-gray-900">
+          <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 leading-tight tracking-tight">
             The Gennoor Tech Blog
           </h1>
           <div className="section-divider w-24 mx-auto mt-6 mb-4" aria-hidden="true" />

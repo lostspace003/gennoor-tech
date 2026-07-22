@@ -588,7 +588,7 @@ export default function CareerCoachPage() {
               />
             </div>
             <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">Career Coach</span>
-            <h1 className="text-4xl font-black text-dark-800 mb-3">Career Assistant Agent</h1>
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-dark-800 leading-tight tracking-tight mb-3">Career Assistant Agent</h1>
             <p className="text-lg text-dark-500 max-w-2xl mx-auto">
               5 AI agents working together to transform your career. Choose an agent below or let the orchestrator chain the right ones for your goal.
             </p>

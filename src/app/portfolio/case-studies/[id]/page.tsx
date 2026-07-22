@@ -45,7 +45,7 @@ export default function CaseStudyPage({ params }: { params: { id: string } }) {
   return (
     <>
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-50 to-accent-50 py-16">
+      <section className="bg-gradient-to-br from-primary-50 to-accent-50 py-14 lg:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <Link
             href="/portfolio/case-studies"
@@ -56,7 +56,7 @@ export default function CaseStudyPage({ params }: { params: { id: string } }) {
           </Link>
 
           <div className="max-w-4xl">
-            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 leading-tight tracking-tight mb-6">
               {caseStudy.title}
             </h1>
 
@@ -189,7 +189,7 @@ export default function CaseStudyPage({ params }: { params: { id: string } }) {
                   href={caseStudy.githubRepo}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center px-6 py-3 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors"
+                  className="inline-flex items-center px-6 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors"
                 >
                   <Github className="w-5 h-5 mr-2" />
                   View on GitHub
@@ -197,7 +197,7 @@ export default function CaseStudyPage({ params }: { params: { id: string } }) {
               )}
               <Link
                 href="/contact"
-                className="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl font-semibold hover:shadow-glow-blue transition-all duration-300"
               >
                 Discuss Similar Project
               </Link>

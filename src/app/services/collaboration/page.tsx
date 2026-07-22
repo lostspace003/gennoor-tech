@@ -41,7 +41,7 @@ export default function CollaborationPage() {
             <span className="inline-block px-4 py-1.5 bg-amber-50 text-amber-700 text-sm font-medium rounded-full mb-6 border border-amber-200">
               Work in Progress
             </span>
-            <h1 className="text-4xl font-black text-gray-900 mb-6">
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-6 leading-tight tracking-tight">
               Collaboration Programs
             </h1>
             <p className="text-lg text-gray-600 mb-10">
@@ -50,7 +50,7 @@ export default function CollaborationPage() {
             </p>
             <Link
               href="/"
-              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300"
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-xl hover:shadow-glow-blue transition-all duration-300"
             >
               Back to Home
             </Link>

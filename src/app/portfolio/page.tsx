@@ -57,7 +57,7 @@ export default function PortfolioPage() {
             <div className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
               Our Work
             </div>
-            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 leading-tight tracking-tight mb-6">
               Portfolio
             </h1>
             <p className="text-xl text-gray-500 leading-relaxed">
@@ -69,7 +69,7 @@ export default function PortfolioPage() {
       </section>
 
       {/* Portfolio Sections */}
-      <section className="py-20 lg:py-24">
+      <section className="section-padding">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-6xl mx-auto">
             {portfolioSections.map((section, index) => {

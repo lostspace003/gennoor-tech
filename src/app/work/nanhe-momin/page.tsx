@@ -80,16 +80,10 @@ const palette = [
 
 export default function NanheMominPage() {
   return (
-    <main style={{ background: '#FBEED3', color: '#3A2A10' }}>
+    <main className="bg-[#FBEED3] text-[#3A2A10]">
       {/* ── Hero ───────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              'radial-gradient(120% 90% at 50% -20%, #FFE9B8 0%, #FBEED3 55%, #F3D9A4 100%)',
-          }}
-        />
+        <div className="absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_-20%,#FFE9B8_0%,#FBEED3_55%,#F3D9A4_100%)]" />
 
         <div className="container relative z-10 mx-auto px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
           <Link
@@ -148,13 +142,7 @@ export default function NanheMominPage() {
 
             {/* Episode 1 video */}
             <div className="lg:col-span-7">
-              <div
-                className="rounded-3xl p-3"
-                style={{
-                  background: '#FFF9EC',
-                  boxShadow: '0 12px 30px rgba(90,58,10,.22), 0 3px 8px rgba(90,58,10,.14)',
-                }}
-              >
+              <div className="rounded-3xl p-3 bg-[#FFF9EC] shadow-[0_12px_30px_rgba(90,58,10,.22),0_3px_8px_rgba(90,58,10,.14)]">
                 <InlineVideoPlayer
                   videoSrc={`${BLOB_URL}/videos/nanhe-momin-ep01.mp4`}
                   posterSrc="/showcase/nanhe-momin/poster.jpg"
@@ -171,7 +159,7 @@ export default function NanheMominPage() {
       </section>
 
       {/* ── Episode 01 ─────────────────────────────────────── */}
-      <section className="border-t border-[#3A2A10]/10 py-16 lg:py-20" style={{ background: '#FFF9EC' }}>
+      <section className="border-t border-[#3A2A10]/10 py-16 lg:py-20 bg-[#FFF9EC]">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-6xl">
             <p className="mb-2 text-xs font-bold uppercase tracking-[0.28em] text-[#17694A]">
@@ -239,7 +227,7 @@ export default function NanheMominPage() {
       </section>
 
       {/* ── How it's made ──────────────────────────────────── */}
-      <section className="border-t border-[#3A2A10]/10 py-16 lg:py-20" style={{ background: '#FFF9EC' }}>
+      <section className="border-t border-[#3A2A10]/10 py-16 lg:py-20 bg-[#FFF9EC]">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-6xl">
             <h2 className="mb-3 text-2xl font-bold text-[#3A2A10] lg:text-3xl">
@@ -292,7 +280,7 @@ export default function NanheMominPage() {
       </section>
 
       {/* ── CTA (night) ────────────────────────────────────── */}
-      <section className="relative overflow-hidden py-20 text-center" style={{ background: '#131B38' }}>
+      <section className="relative overflow-hidden py-20 text-center bg-[#131B38]">
         <div className="absolute inset-0 opacity-35">
           <Image
             src="/showcase/nanhe-momin/night.jpg"

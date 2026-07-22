@@ -258,7 +258,7 @@ export default function ContactPage() {
               <MessageCircle className="w-3 h-3 mr-1.5" />
               Get in touch
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold tracking-tight text-gray-900 mb-5 leading-[1.1]">
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-5 leading-tight tracking-tight">
               Three ways to <span className="gradient-text">start</span>.
             </h1>
             <p className="text-lg text-gray-500 mb-2 leading-relaxed max-w-3xl mx-auto">
@@ -281,7 +281,7 @@ export default function ContactPage() {
       </section>
 
       {/* THREE INTENTS */}
-      <section className="py-12 lg:py-16 relative">
+      <section className="py-10 lg:py-14 relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
             {intents.map((intent) => {
@@ -292,7 +292,7 @@ export default function ContactPage() {
                 <Wrapper
                   key={intent.code}
                   href={intent.cta.href}
-                  className="group rounded-3xl p-7 lg:p-8 glass-card glow-border transition-all duration-500 hover:-translate-y-1 flex flex-col"
+                  className="group rounded-3xl p-7 lg:p-8 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-500 hover:-translate-y-1 flex flex-col"
                 >
                   <div
                     className={`inline-flex w-14 h-14 rounded-2xl bg-gradient-to-br ${intent.accent} items-center justify-center mb-5 shadow-lg shadow-primary-500/15 group-hover:scale-105 transition-transform`}
@@ -329,7 +329,7 @@ export default function ContactPage() {
       </section>
 
       {/* INTENT B — proposal form */}
-      <section id="proposal" className="scroll-mt-24 py-20 lg:py-24 relative">
+      <section id="proposal" className="scroll-mt-24 section-padding relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
@@ -393,7 +393,7 @@ export default function ContactPage() {
                 </div>
               </div>
               <div className="lg:col-span-7">
-                <div className="rounded-3xl p-7 lg:p-8 glass-card">
+                <div className="rounded-3xl p-7 lg:p-8 bg-white border border-gray-200/70 shadow-sm">
                   <ContactForm />
                 </div>
               </div>
@@ -403,7 +403,7 @@ export default function ContactPage() {
       </section>
 
       {/* DIRECT CHANNELS */}
-      <section className="py-16 lg:py-20 relative">
+      <section className="py-14 lg:py-20 relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-10">
@@ -424,7 +424,7 @@ export default function ContactPage() {
                   key={c.label}
                   href={c.href}
                   {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                  className="group rounded-2xl p-6 glass-card glow-border transition-all duration-500 hover:-translate-y-1 text-center"
+                  className="group rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-500 hover:-translate-y-1 text-center"
                 >
                   <div className="inline-flex w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
                     <Icon className="w-5 h-5 text-white" />
@@ -440,7 +440,7 @@ export default function ContactPage() {
       </section>
 
       {/* INTENT C — book a call */}
-      <section id="book" className="scroll-mt-24 py-20 lg:py-24 relative">
+      <section id="book" className="scroll-mt-24 section-padding relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-10">
@@ -465,7 +465,7 @@ export default function ContactPage() {
       </div>
 
       {/* REGIONS + RESPONSE TIME */}
-      <section className="py-20 lg:py-24 relative">
+      <section className="section-padding relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
@@ -523,7 +523,7 @@ export default function ContactPage() {
                 </div>
               </div>
               <div className="lg:col-span-7">
-                <div className="rounded-3xl p-7 lg:p-8 glass-card">
+                <div className="rounded-3xl p-7 lg:p-8 bg-white border border-gray-200/70 shadow-sm">
                   <h3 className="text-base font-bold text-gray-900 mb-5">
                     Regions we serve
                   </h3>
@@ -546,7 +546,7 @@ export default function ContactPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-20 lg:py-24 relative">
+      <section className="section-padding relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
@@ -565,7 +565,7 @@ export default function ContactPage() {
               {faqs.map((faq) => (
                 <details
                   key={faq.question}
-                  className="group rounded-2xl p-5 glass-card transition-all duration-300"
+                  className="group rounded-2xl p-5 bg-white border border-gray-200/70 shadow-sm transition-all duration-300"
                 >
                   <summary className="flex justify-between items-start gap-4 cursor-pointer list-none">
                     <h3 className="text-sm font-semibold text-gray-900">{faq.question}</h3>
@@ -580,7 +580,7 @@ export default function ContactPage() {
       </section>
 
       {/* FOOTER CTA */}
-      <section className="py-20 lg:py-24 relative overflow-hidden">
+      <section className="section-padding relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#0f1729] via-[#111b33] to-[#0c1524]" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">

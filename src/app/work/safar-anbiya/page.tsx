@@ -116,20 +116,11 @@ const palette = [
 
 export default function SafarAnbiyaPage() {
   return (
-    <main className="text-indigo-50" style={{ background: '#0C0820' }}>
+    <main className="text-indigo-50 bg-[#0C0820]">
       {/* ── Hero ───────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
-        <div
-          className="absolute inset-0"
-          style={{ background: 'linear-gradient(160deg, #0C0820 0%, #1A1140 55%, #0C0820 100%)' }}
-        />
-        <div
-          className="absolute inset-0 opacity-80"
-          style={{
-            background:
-              'radial-gradient(55% 45% at 20% 18%, rgba(245,196,81,0.12) 0%, transparent 60%), radial-gradient(50% 40% at 82% 80%, rgba(46,158,107,0.10) 0%, transparent 60%)',
-          }}
-        />
+        <div className="absolute inset-0 bg-[linear-gradient(160deg,#0C0820_0%,#1A1140_55%,#0C0820_100%)]" />
+        <div className="absolute inset-0 opacity-80 bg-[radial-gradient(55%_45%_at_20%_18%,rgba(245,196,81,0.12)_0%,transparent_60%),radial-gradient(50%_40%_at_82%_80%,rgba(46,158,107,0.10)_0%,transparent_60%)]" />
 
         <div className="container relative z-10 mx-auto px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
           <Link
@@ -190,14 +181,7 @@ export default function SafarAnbiyaPage() {
             {/* Portrait walkthrough video */}
             <div className="lg:col-span-5">
               <div className="mx-auto max-w-[300px]">
-                <div
-                  className="rounded-[2rem] p-2"
-                  style={{
-                    background: 'rgba(255,255,255,0.04)',
-                    border: '1px solid rgba(245,196,81,0.25)',
-                    boxShadow: '0 30px 80px -30px rgba(245,196,81,0.35)',
-                  }}
-                >
+                <div className="rounded-[2rem] p-2 bg-white/[0.04] border border-[#F5C451]/25 shadow-[0_30px_80px_-30px_rgba(245,196,81,0.35)]">
                   <InlineVideoPlayer
                     videoSrc={`${BLOB_URL}/videos/safar-anbiya-full.mp4`}
                     posterSrc="/showcase/safar-anbiya/screenshot-phone.png"
@@ -282,14 +266,7 @@ export default function SafarAnbiyaPage() {
             <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-8">
               {screens.map((s) => (
                 <figure key={s.img} className="flex flex-col items-center text-center">
-                  <div
-                    className="w-full max-w-[300px] rounded-[2rem] p-2"
-                    style={{
-                      background: 'rgba(255,255,255,0.04)',
-                      border: '1px solid rgba(245,196,81,0.25)',
-                      boxShadow: '0 30px 80px -30px rgba(245,196,81,0.35)',
-                    }}
-                  >
+                  <div className="w-full max-w-[300px] rounded-[2rem] p-2 bg-white/[0.04] border border-[#F5C451]/25 shadow-[0_30px_80px_-30px_rgba(245,196,81,0.35)]">
                     <div className="overflow-hidden rounded-[1.6rem] border border-white/10 bg-black/30">
                       <Image
                         src={`/showcase/safar-anbiya/${s.img}`}
@@ -369,10 +346,7 @@ export default function SafarAnbiyaPage() {
 
       {/* ── CTA ────────────────────────────────────────────── */}
       <section className="relative overflow-hidden border-t border-white/5 py-20">
-        <div
-          className="absolute inset-0 opacity-90"
-          style={{ background: 'radial-gradient(60% 80% at 50% 0%, rgba(245,196,81,0.12) 0%, transparent 60%)' }}
-        />
+        <div className="absolute inset-0 opacity-90 bg-[radial-gradient(60%_80%_at_50%_0%,rgba(245,196,81,0.12)_0%,transparent_60%)]" />
         <div className="container relative z-10 mx-auto px-4 text-center sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl">
             <h2 className="mb-4 text-3xl font-black text-white lg:text-4xl">

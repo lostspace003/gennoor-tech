@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { Bot, Network, Cpu, GitBranch, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import { ServiceJsonLd, FAQJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd'
+import PageHero from '@/components/shared/PageHero'
 
 export const metadata: Metadata = {
   title: 'Agentic AI Solutions — Multi-Agent Systems for Enterprise',
@@ -82,34 +83,15 @@ export default function AgenticAIPage() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-14 lg:py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl">
-            <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
-              Agentic AI
-            </span>
-            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
-              Agentic AI Solutions
-            </h1>
-            <p className="text-xl text-gray-600 mb-8">
-              Build autonomous AI systems that think, act, and collaborate. From single agents to
-              complex multi-agent orchestrations, we create AI that works like your best team members.
-            </p>
-            <Link
-              href="/contact#book"
-              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300"
-            >
-              Explore Agent Solutions
-            </Link>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Agentic AI"
+        title="Agentic AI Solutions"
+        description="Build autonomous AI systems that think, act, and collaborate. From single agents to complex multi-agent orchestrations, we create AI that works like your best team members."
+        ctas={[{ label: 'Explore Agent Solutions', href: '/contact#book' }]}
+      />
 
       {/* What are Agentic Systems */}
-      <section className="py-16 lg:py-20">
+      <section className="py-14 lg:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-6">
@@ -124,7 +106,7 @@ export default function AgenticAIPage() {
             {agentCapabilities.map((capability) => {
               const Icon = capability.icon
               return (
-                <div key={capability.title} className="rounded-2xl p-6 glass-card">
+                <div key={capability.title} className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
                   <Icon className="w-10 h-10 text-primary-600 mb-4" />
                   <h3 className="text-lg font-semibold mb-2">{capability.title}</h3>
                   <p className="text-sm text-gray-600">{capability.description}</p>
@@ -137,14 +119,14 @@ export default function AgenticAIPage() {
 
       {/* Use Cases */}
       <div className="section-divider" />
-      <section className="py-16 lg:py-20">
+      <section className="py-14 lg:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
             Real-World Agent Applications
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {useCases.map((useCase) => (
-              <div key={useCase.title} className="rounded-2xl p-6 glass-card">
+              <div key={useCase.title} className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">{useCase.title}</h3>
                 <p className="text-gray-600 mb-4">{useCase.description}</p>
                 <div>
@@ -168,7 +150,7 @@ export default function AgenticAIPage() {
 
       {/* Tech Stack */}
       <div className="section-divider" />
-      <section className="py-16 lg:py-20">
+      <section className="py-14 lg:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
             Our Agentic AI Tech Stack
@@ -189,12 +171,12 @@ export default function AgenticAIPage() {
 
       {/* How We Build */}
       <div className="section-divider" />
-      <section className="py-16 lg:py-20">
+      <section className="py-14 lg:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
             How We Build Agent Systems
           </h2>
-          <div className="max-w-4xl mx-auto rounded-2xl glass-card p-8">
+          <div className="max-w-4xl mx-auto rounded-2xl bg-white border border-gray-200/70 shadow-sm p-8">
             <div className="space-y-8">
               <div className="flex">
                 <div className="flex-shrink-0">
@@ -247,23 +229,23 @@ export default function AgenticAIPage() {
 
       {/* Benefits */}
       <div className="section-divider" />
-      <section className="py-16 lg:py-20">
+      <section className="py-14 lg:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
             Why Choose Agentic AI?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div className="text-center rounded-2xl glass-card p-6">
+            <div className="text-center rounded-2xl bg-white border border-gray-200/70 shadow-sm p-6">
               <div className="text-4xl font-bold text-primary-600 mb-2">10x</div>
               <div className="text-lg font-semibold mb-2">Productivity Gain</div>
               <p className="text-gray-600 text-sm">Automate complex workflows end-to-end</p>
             </div>
-            <div className="text-center rounded-2xl glass-card p-6">
+            <div className="text-center rounded-2xl bg-white border border-gray-200/70 shadow-sm p-6">
               <div className="text-4xl font-bold text-primary-600 mb-2">24/7</div>
               <div className="text-lg font-semibold mb-2">Autonomous Operation</div>
               <p className="text-gray-600 text-sm">Agents work round the clock without breaks</p>
             </div>
-            <div className="text-center rounded-2xl glass-card p-6">
+            <div className="text-center rounded-2xl bg-white border border-gray-200/70 shadow-sm p-6">
               <div className="text-4xl font-bold text-primary-600 mb-2">∞</div>
               <div className="text-lg font-semibold mb-2">Scalability</div>
               <p className="text-gray-600 text-sm">Add more agents as your needs grow</p>
@@ -273,19 +255,19 @@ export default function AgenticAIPage() {
       </section>
 
       {/* Related Services */}
-      <section className="py-16 lg:py-20">
+      <section className="py-14 lg:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Related Services</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <Link href="/services/poc-development" className="rounded-2xl p-6 glass-card glow-border hover:shadow-md transition-shadow">
+            <Link href="/services/poc-development" className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md transition-shadow">
               <h3 className="font-semibold text-gray-900 mb-2">PoC Development</h3>
               <p className="text-sm text-gray-600">Start with a focused agent prototype before scaling to full orchestration.</p>
             </Link>
-            <Link href="/services/training" className="rounded-2xl p-6 glass-card glow-border hover:shadow-md transition-shadow">
+            <Link href="/services/training" className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md transition-shadow">
               <h3 className="font-semibold text-gray-900 mb-2">Corporate AI Training</h3>
               <p className="text-sm text-gray-600">Train your developers on LangChain, CrewAI, and Copilot Studio agent development.</p>
             </Link>
-            <Link href="/services/ai-strategy" className="rounded-2xl p-6 glass-card glow-border hover:shadow-md transition-shadow">
+            <Link href="/services/ai-strategy" className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md transition-shadow">
               <h3 className="font-semibold text-gray-900 mb-2">AI Strategy & Consulting</h3>
               <p className="text-sm text-gray-600">Identify the highest-impact agent use cases for your organization.</p>
             </Link>
@@ -294,12 +276,12 @@ export default function AgenticAIPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16 lg:py-20">
+      <section className="py-14 lg:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Frequently Asked Questions</h2>
           <div className="max-w-3xl mx-auto space-y-6">
             {faqs.map((faq) => (
-              <div key={faq.question} className="rounded-2xl p-6 glass-card">
+              <div key={faq.question} className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
                 <p className="text-gray-600">{faq.answer}</p>
               </div>
@@ -309,7 +291,7 @@ export default function AgenticAIPage() {
       </section>
 
       {/* CTA */}
-      <section className="relative py-16 lg:py-20 overflow-hidden">
+      <section className="relative py-14 lg:py-20 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0 bg-gradient-mesh" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">

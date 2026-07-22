@@ -8,7 +8,7 @@ export default function WebinarsPage() {
       <div className="absolute inset-0 bg-gradient-mesh" />
       <div className="relative text-center max-w-2xl mx-auto px-4 py-24">
         <div className="text-6xl mb-8">&#127908;</div>
-        <h1 className="text-4xl font-black text-gray-900 mb-6">
+        <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 leading-tight tracking-tight mb-6">
           Something exciting is brewing.
         </h1>
         <p className="text-xl text-gray-400 mb-4 italic">
@@ -48,7 +48,7 @@ export default function WebinarsPage() {
           </a>
           <Link
             href="/contact"
-            className="px-6 py-3 font-semibold rounded-xl glass-card text-gray-700 transition-all duration-300"
+            className="inline-flex items-center justify-center px-6 py-3 font-semibold rounded-xl bg-white text-gray-700 ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700 transition-all duration-300"
           >
             Get Notified
           </Link>

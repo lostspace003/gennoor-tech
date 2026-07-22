@@ -190,7 +190,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
       </section>
 
       {/* WHAT YOU'LL LEARN + WHO IT'S FOR */}
-      <section className="py-14 lg:py-18 relative">
+      <section className="py-14 lg:py-20 relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto">
@@ -242,7 +242,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
       </section>
 
       {/* CHAPTER LIST */}
-      <section className="py-14 lg:py-18 relative">
+      <section className="py-14 lg:py-20 relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto">
@@ -425,7 +425,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
       </section>
 
       {/* REFERENCES */}
-      <section className="py-14 lg:py-18 relative">
+      <section className="py-14 lg:py-20 relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto">

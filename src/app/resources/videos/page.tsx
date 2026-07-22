@@ -43,7 +43,7 @@ export default async function VideosPage() {
             <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
               <Play className="w-5 h-5 text-primary-600 fill-primary-600 ml-0.5" />
             </div>
-            <h1 className="text-3xl lg:text-4xl font-black text-gray-900">Videos</h1>
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 leading-tight tracking-tight">Videos</h1>
           </div>
           <p className="text-lg text-gray-600 max-w-2xl mb-2">
             Tutorials, demos, and deep-dives on AI, Azure, and Microsoft technologies.

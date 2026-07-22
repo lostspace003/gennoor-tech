@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { Target, TrendingUp, Shield, Users, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import { ServiceJsonLd, FAQJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd'
+import PageHero from '@/components/shared/PageHero'
 
 export const metadata: Metadata = {
   title: 'AI Strategy & Consulting — Enterprise AI Roadmap',
@@ -59,31 +60,12 @@ export default function AIStrategyPage() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-14 lg:py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-white"></div>
-        <div className="absolute inset-0 bg-gradient-mesh"></div>
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl">
-            <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
-              AI Strategy
-            </span>
-            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
-              AI Strategy & Consulting
-            </h1>
-            <p className="text-xl text-gray-600 mb-8">
-              Transform your organization with a comprehensive AI strategy that delivers measurable business value.
-              From readiness assessment to implementation roadmap, we guide your AI journey.
-            </p>
-            <Link
-              href="/contact#book"
-              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300"
-            >
-              Schedule Strategy Session
-            </Link>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="AI Strategy"
+        title="AI Strategy & Consulting"
+        description="Transform your organization with a comprehensive AI strategy that delivers measurable business value. From readiness assessment to implementation roadmap, we guide your AI journey."
+        ctas={[{ label: 'Schedule Strategy Session', href: '/contact#book' }]}
+      />
 
       {/* Key Focus Areas */}
       <section className="relative py-14 lg:py-20">
@@ -93,28 +75,28 @@ export default function AIStrategyPage() {
             Strategic Focus Areas
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="glass-card p-6 text-center">
+            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Target className="w-8 h-8 text-primary-600" />
               </div>
               <h3 className="text-lg font-semibold mb-2">Business Alignment</h3>
               <p className="text-gray-600">Ensure AI initiatives directly support business objectives</p>
             </div>
-            <div className="glass-card p-6 text-center">
+            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <TrendingUp className="w-8 h-8 text-primary-600" />
               </div>
               <h3 className="text-lg font-semibold mb-2">ROI Optimization</h3>
               <p className="text-gray-600">Identify high-impact use cases with clear returns</p>
             </div>
-            <div className="glass-card p-6 text-center">
+            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Shield className="w-8 h-8 text-primary-600" />
               </div>
               <h3 className="text-lg font-semibold mb-2">Risk Management</h3>
               <p className="text-gray-600">Address ethical, legal, and operational risks</p>
             </div>
-            <div className="glass-card p-6 text-center">
+            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="w-8 h-8 text-primary-600" />
               </div>
@@ -159,7 +141,7 @@ export default function AIStrategyPage() {
             Key Deliverables
           </h2>
           <div className="max-w-3xl mx-auto">
-            <div className="glass-card p-8">
+            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {deliverables.map((item) => (
                   <div key={item} className="flex items-start">
@@ -179,15 +161,15 @@ export default function AIStrategyPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Related Services</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <Link href="/services/training" className="glass-card p-6 hover:shadow-lg transition-shadow">
+            <Link href="/services/training" className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 hover:shadow-lg transition-shadow">
               <h3 className="font-semibold text-gray-900 mb-2">Corporate AI Training</h3>
               <p className="text-sm text-gray-600">Upskill your team with hands-on Azure AI, Copilot, and Power Platform bootcamps.</p>
             </Link>
-            <Link href="/services/poc-development" className="glass-card p-6 hover:shadow-lg transition-shadow">
+            <Link href="/services/poc-development" className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 hover:shadow-lg transition-shadow">
               <h3 className="font-semibold text-gray-900 mb-2">PoC Development</h3>
               <p className="text-sm text-gray-600">Validate your AI strategy with a working prototype in 2-6 weeks.</p>
             </Link>
-            <Link href="/services/agentic-ai" className="glass-card p-6 hover:shadow-lg transition-shadow">
+            <Link href="/services/agentic-ai" className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 hover:shadow-lg transition-shadow">
               <h3 className="font-semibold text-gray-900 mb-2">Agentic AI Solutions</h3>
               <p className="text-sm text-gray-600">Build autonomous AI systems that execute your strategy.</p>
             </Link>
@@ -204,7 +186,7 @@ export default function AIStrategyPage() {
           </h2>
           <div className="max-w-3xl mx-auto space-y-6">
             {faqs.map((faq) => (
-              <div key={faq.question} className="glass-card p-6">
+              <div key={faq.question} className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
                 <p className="text-gray-600">{faq.answer}</p>
               </div>

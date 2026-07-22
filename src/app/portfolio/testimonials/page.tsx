@@ -23,7 +23,7 @@ export default function TestimonialsPage() {
         <span className="inline-block px-4 py-1.5 bg-amber-50 text-amber-700 text-sm font-medium rounded-full mb-6 border border-amber-200">
           Work in Progress
         </span>
-        <h1 className="text-4xl font-black text-gray-900 mb-6">
+        <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 leading-tight tracking-tight mb-6">
           Client Testimonials
         </h1>
         <p className="text-lg text-gray-600 mb-10">
