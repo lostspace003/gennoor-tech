@@ -211,6 +211,8 @@ export default function CRMCompletePage() {
             linkedin: row['LinkedIn'] || row['LinkedIn URL'] || '',
             website: row['Website'] || row['Company Website'] || '',
             status: 'new' as const,
+            processStatus: 'active' as const,  // Add required processStatus
+            stage: 'diagnose' as const,        // Add required stage
             value: parseFloat(row['Value'] || row['Deal Size'] || '0') || 0,
             score: parseFloat(row['Score'] || '50') || 50,
             lastActivity: new Date().toISOString(),
