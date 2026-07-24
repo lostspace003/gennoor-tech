@@ -6,10 +6,6 @@ export const metadata: Metadata = {
 }
 
 export default function CRMLayout({ children }: { children: React.ReactNode }) {
-  // CRM pages don't need the main site layout (no newsletter/footer)
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {children}
-    </div>
-  )
+  // CRM pages are completely isolated - no site navigation, newsletter, or footer
+  return <>{children}</>
 }

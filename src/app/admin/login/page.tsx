@@ -33,13 +33,27 @@ function LoginContent() {
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl shadow-xl mb-4">
-            <Sparkles className="w-8 h-8 text-white" />
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="24" r="20" stroke="url(#gradient)" strokeWidth="3" strokeDasharray="4 4"/>
+              <circle cx="24" cy="24" r="8" fill="url(#gradient)"/>
+              <circle cx="24" cy="12" r="3" fill="#2563eb"/>
+              <circle cx="36" cy="24" r="3" fill="#7c3aed"/>
+              <circle cx="24" cy="36" r="3" fill="#2563eb"/>
+              <circle cx="12" cy="24" r="3" fill="#7c3aed"/>
+              <defs>
+                <linearGradient id="gradient" x1="0" y1="0" x2="48" y2="48">
+                  <stop offset="0%" stopColor="#2563eb"/>
+                  <stop offset="100%" stopColor="#7c3aed"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div className="text-left">
+              <h1 className="text-2xl font-bold text-gray-900">Gennoor Tech</h1>
+              <p className="text-xs text-gray-500">TRAIN. INNOVATE. BUILD.</p>
+            </div>
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-            Gennoor CRM System
-          </h1>
-          <p className="text-gray-600 mt-2">AI-Powered Lead Intelligence</p>
+          <p className="text-gray-600 mt-2">CRM Lead Intelligence System</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
