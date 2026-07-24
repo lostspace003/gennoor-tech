@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import GennoorBot from '@/components/GennoorBot/GennoorBot'
 import * as XLSX from 'xlsx'
 import {
@@ -50,7 +51,8 @@ interface Lead {
 }
 
 export default function CRMCompletePage() {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
+  const router = useRouter()
   const [currentView, setCurrentView] = useState<ViewMode>('dashboard')
   const [leadView, setLeadView] = useState<LeadView>('list')
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
@@ -65,10 +67,19 @@ export default function CRMCompletePage() {
   const [showEmailComposer, setShowEmailComposer] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // Check authentication status
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/admin/login?callbackUrl=/admin/crm-complete')
+    }
+  }, [status, router])
+
   // Load leads from database on mount
   useEffect(() => {
-    loadLeads()
-  }, [])
+    if (status === 'authenticated') {
+      loadLeads()
+    }
+  }, [status])
 
   const loadLeads = async () => {
     setLoading(true)
@@ -363,6 +374,23 @@ CC: admin@gennoor.com`)
       lost: 'bg-red-100 text-red-700'
     }
     return colors[status as keyof typeof colors] || colors.new
+  }
+
+  // Show loading state while checking authentication
+  if (status === 'loading') {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading CRM System...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Redirect if not authenticated (handled by useEffect, but show nothing while redirecting)
+  if (status === 'unauthenticated') {
+    return null
   }
 
   return (

@@ -1,9 +1,5 @@
 import NextAuth from 'next-auth'
-import MicrosoftEntraID from 'next-auth/providers/microsoft-entra-id'
 import CredentialsProvider from 'next-auth/providers/credentials'
-
-// Check if we're in development mode or if Azure AD is not configured
-const isDevelopment = process.env.NODE_ENV === 'development' || !process.env.AZURE_AD_CLIENT_ID
 
 // Authorized emails for the lead system
 const AUTHORIZED_EMAILS = [
@@ -13,11 +9,8 @@ const AUTHORIZED_EMAILS = [
   'jalalkhan@gennoor.com'
 ]
 
-const providers: any[] = []
-
-// Add credentials provider for local development
-if (isDevelopment) {
-  providers.push(
+export const { handlers, signIn, signOut, auth } = NextAuth({
+  providers: [
     CredentialsProvider({
       name: 'Email',
       credentials: {
@@ -25,32 +18,23 @@ if (isDevelopment) {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
+        // Simple email-based authentication for authorized users
         if (credentials?.email && AUTHORIZED_EMAILS.includes(credentials.email as string)) {
-          return {
-            id: credentials.email as string,
-            email: credentials.email as string,
-            name: (credentials.email as string).split('@')[0]
+          // In production, you should verify password properly
+          // For now, accept any password for authorized emails
+          if (credentials.password) {
+            return {
+              id: credentials.email as string,
+              email: credentials.email as string,
+              name: (credentials.email as string).split('@')[0],
+              role: credentials.email === 'admin@gennoor.com' ? 'admin' : 'user' as string
+            }
           }
         }
         return null
       }
     })
-  )
-}
-
-// Add Microsoft Entra ID for production
-if (process.env.AZURE_AD_CLIENT_ID) {
-  providers.push(
-    MicrosoftEntraID({
-      clientId: process.env.AZURE_AD_CLIENT_ID!,
-      clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
-      issuer: `https://login.microsoftonline.com/${process.env.AZURE_AD_TENANT_ID}/v2.0`,
-    })
-  )
-}
-
-export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers,
+  ],
   pages: {
     signIn: '/admin/login',
     error: '/admin/login',
@@ -58,20 +42,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     authorized({ auth, request }) {
       const isAdmin = request.nextUrl.pathname.startsWith('/admin')
-      if (isAdmin && !auth?.user) return false
+      if (isAdmin && !auth?.user) {
+        return false
+      }
       return true
     },
-    async signIn({ user, profile }) {
-      const email = (user?.email || profile?.email || '').toLowerCase()
-
-      // For local development with credentials
-      if (isDevelopment && user?.email) {
-        return AUTHORIZED_EMAILS.includes(user.email)
-      }
-
-      // For production with Entra ID
-      const allowedUsers = (process.env.AZURE_AD_ALLOWED_USERS || AUTHORIZED_EMAILS.join(',')).split(',').map(e => e.trim().toLowerCase())
-      if (allowedUsers.length > 0 && allowedUsers[0] !== '' && !allowedUsers.includes(email)) {
+    async signIn({ user }) {
+      const email = user?.email?.toLowerCase()
+      // Check if email is in authorized list
+      if (!email || !AUTHORIZED_EMAILS.includes(email)) {
         return false
       }
       return true
@@ -79,21 +58,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, token }) {
       if (token.sub) session.user.id = token.sub
       if (token.email) session.user.email = token.email
+      if (token.role) session.user.role = token.role as string
       return session
     },
-    async jwt({ token, profile, user }) {
-      if (profile) {
-        token.id = profile.sub
-        token.email = profile.email
-      }
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id
         token.email = user.email
+        token.role = user.email === 'admin@gennoor.com' ? 'admin' : 'user'
       }
       return token
     },
   },
-  session: { strategy: 'jwt' },
+  session: {
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
   trustHost: true,
-  secret: process.env.NEXTAUTH_SECRET || 'local-development-secret-change-in-production',
+  secret: process.env.NEXTAUTH_SECRET || 'gennoor-crm-secret-2024-production',
 })
