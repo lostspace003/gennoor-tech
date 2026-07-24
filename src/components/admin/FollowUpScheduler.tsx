@@ -18,7 +18,7 @@ export default function FollowUpScheduler({ leadId }: { leadId: string }) {
   const [followUps, setFollowUps] = useState<FollowUp[]>([])
   const [showScheduler, setShowScheduler] = useState(false)
   const [newFollowUp, setNewFollowUp] = useState({
-    type: 'webinar' as const,
+    type: 'webinar' as 'webinar' | 'training' | 'call' | 'email',
     title: '',
     date: '',
     time: '',
