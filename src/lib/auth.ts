@@ -1,13 +1,6 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-
-// Authorized emails for the lead system
-const AUTHORIZED_EMAILS = [
-  'admin@gennoor.com',
-  'contact@gennoor.com',
-  'yusufchaudhary@gennoor.com',
-  'jalalkhan@gennoor.com'
-]
+import { validateUserCredentials } from '@/config/users'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -18,19 +11,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        // Simple email-based authentication for authorized users
-        if (credentials?.email && AUTHORIZED_EMAILS.includes(credentials.email as string)) {
-          // In production, you should verify password properly
-          // For now, accept any password for authorized emails
-          if (credentials.password) {
-            return {
-              id: credentials.email as string,
-              email: credentials.email as string,
-              name: (credentials.email as string).split('@')[0],
-              role: credentials.email === 'admin@gennoor.com' ? 'admin' : 'user' as string
-            }
+        if (!credentials?.email || !credentials?.password) {
+          return null
+        }
+
+        // Validate user credentials using Entry ID system
+        const user = validateUserCredentials(
+          credentials.email as string,
+          credentials.password as string
+        )
+
+        if (user) {
+          return {
+            id: user.entryId,
+            email: user.email,
+            name: user.name,
+            role: user.role
           }
         }
+
         return null
       }
     })
@@ -48,12 +47,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return true
     },
     async signIn({ user }) {
-      const email = user?.email?.toLowerCase()
-      // Check if email is in authorized list
-      if (!email || !AUTHORIZED_EMAILS.includes(email)) {
-        return false
-      }
-      return true
+      // User is already validated in authorize callback
+      return !!user
     },
     async session({ session, token }) {
       if (token.sub) session.user.id = token.sub
@@ -65,7 +60,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user) {
         token.id = user.id
         token.email = user.email
-        token.role = user.email === 'admin@gennoor.com' ? 'admin' : 'user'
+        token.role = user.role
       }
       return token
     },

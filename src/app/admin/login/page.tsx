@@ -31,7 +31,7 @@ function LoginContent() {
     try {
       const result = await signIn('credentials', {
         email,
-        password: password || 'gennoor2024', // Default password for now
+        password,
         redirect: false,
         callbackUrl,
       })
@@ -51,12 +51,8 @@ function LoginContent() {
 
   const quickLogin = (userEmail: string) => {
     setEmail(userEmail)
-    setPassword('gennoor2024')
-    setTimeout(() => {
-      document.getElementById('login-form')?.dispatchEvent(
-        new Event('submit', { bubbles: true, cancelable: true })
-      )
-    }, 100)
+    // User must enter their password
+    document.getElementById('password-input')?.focus()
   }
 
   return (
@@ -111,10 +107,11 @@ function LoginContent() {
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
+                  id="password-input"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter password"
+                  placeholder="Enter your Entry ID password"
                   className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   required
                 />
