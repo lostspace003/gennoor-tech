@@ -2,8 +2,8 @@ import NextAuth from 'next-auth'
 import MicrosoftEntraID from 'next-auth/providers/microsoft-entra-id'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
-// Check if we're in development mode
-const isDevelopment = process.env.NODE_ENV === 'development'
+// Check if we're in development mode or if Azure AD is not configured
+const isDevelopment = process.env.NODE_ENV === 'development' || !process.env.AZURE_AD_CLIENT_ID
 
 // Authorized emails for the lead system
 const AUTHORIZED_EMAILS = [
@@ -25,11 +25,11 @@ if (isDevelopment) {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (credentials?.email && AUTHORIZED_EMAILS.includes(credentials.email)) {
+        if (credentials?.email && AUTHORIZED_EMAILS.includes(credentials.email as string)) {
           return {
-            id: credentials.email,
-            email: credentials.email,
-            name: credentials.email.split('@')[0]
+            id: credentials.email as string,
+            email: credentials.email as string,
+            name: (credentials.email as string).split('@')[0]
           }
         }
         return null
