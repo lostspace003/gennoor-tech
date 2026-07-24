@@ -24,7 +24,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         // Find user by email - no password check needed for internal tool
         const user = AUTHORIZED_USERS.find(
-          u => u.email.toLowerCase() === credentials.email?.toLowerCase()
+          u => u.email.toLowerCase() === (credentials.email as string).toLowerCase()
         )
 
         if (user) {
