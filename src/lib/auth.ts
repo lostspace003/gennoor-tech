@@ -1,42 +1,26 @@
 import NextAuth from 'next-auth'
-import CredentialsProvider from 'next-auth/providers/credentials'
+import MicrosoftEntraID from 'next-auth/providers/microsoft-entra-id'
 
 // Authorized emails for the CRM system
-const AUTHORIZED_USERS = [
-  { email: 'admin@gennoor.com', name: 'Admin', role: 'admin' },
-  { email: 'jalalkhan@gennoor.com', name: 'Jalal Khan', role: 'ceo' },
-  { email: 'yusufchaudhary@gennoor.com', name: 'Yusuf Chaudhary', role: 'manager' },
-  { email: 'contact@gennoor.com', name: 'Contact', role: 'sales' }
+const AUTHORIZED_EMAILS = [
+  'admin@gennoor.com',
+  'jalalkhan@gennoor.com',
+  'yusufchaudhary@gennoor.com',
+  'contact@gennoor.com'
 ]
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
-    CredentialsProvider({
-      name: 'Email',
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
-      },
-      async authorize(credentials) {
-        if (!credentials?.email) {
-          return null
+    MicrosoftEntraID({
+      clientId: process.env.AZURE_AD_CLIENT_ID!,
+      clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
+      issuer: process.env.AZURE_AD_TENANT_ID
+        ? `https://login.microsoftonline.com/${process.env.AZURE_AD_TENANT_ID}/v2.0`
+        : undefined,
+      authorization: {
+        params: {
+          scope: 'openid profile email'
         }
-
-        // Find user by email - no password check needed for internal tool
-        const user = AUTHORIZED_USERS.find(
-          u => u.email.toLowerCase() === (credentials.email as string).toLowerCase()
-        )
-
-        if (user) {
-          return {
-            id: user.email,
-            email: user.email,
-            name: user.name,
-            role: user.role
-          }
-        }
-
-        return null
       }
     })
   ],
@@ -52,20 +36,29 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return true
     },
-    async signIn({ user }) {
-      return !!user
+    async signIn({ user, profile }) {
+      const email = (user?.email || profile?.email || '').toLowerCase()
+
+      // Check if email is in authorized list
+      if (!AUTHORIZED_EMAILS.includes(email)) {
+        return false // Deny access
+      }
+
+      return true // Allow access
     },
     async session({ session, token }) {
       if (token.sub) session.user.id = token.sub
       if (token.email) session.user.email = token.email
-      if (token.role) session.user.role = token.role as string
       return session
     },
-    async jwt({ token, user }) {
+    async jwt({ token, profile, user }) {
+      if (profile) {
+        token.id = profile.sub
+        token.email = profile.email
+      }
       if (user) {
         token.id = user.id
         token.email = user.email
-        token.role = user.role
       }
       return token
     },
@@ -75,5 +68,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   trustHost: true,
-  secret: process.env.NEXTAUTH_SECRET || 'dev-secret-change-in-production-7A3B9C2D8E4F1A6B5C9D0E3F8A2B7C4D',
+  secret: process.env.NEXTAUTH_SECRET || 'dev-secret-change-in-production',
 })

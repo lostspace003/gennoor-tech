@@ -3,60 +3,30 @@
 import { useState, Suspense } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Mail, Lock, LogIn, AlertCircle, Users, Sparkles, Shield } from 'lucide-react'
+import { AlertCircle, Sparkles, Shield } from 'lucide-react'
 
 function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   const callbackUrl = searchParams.get('callbackUrl') || '/admin/crm-complete'
   const urlError = searchParams.get('error')
 
-  const authorizedUsers = [
-    { email: 'admin@gennoor.com', name: 'Admin', role: 'Administrator' },
-    { email: 'contact@gennoor.com', name: 'Contact', role: 'Sales Team' },
-    { email: 'yusufchaudhary@gennoor.com', name: 'Yusuf Chaudhary', role: 'Manager' },
-    { email: 'jalalkhan@gennoor.com', name: 'Jalal Khan', role: 'CEO' },
-  ]
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
+  const handleMicrosoftSignIn = async () => {
     setLoading(true)
+    setError('')
 
     try {
-      const result = await signIn('credentials', {
-        email,
-        password: 'internal', // No password needed for internal CRM
-        redirect: false,
+      await signIn('microsoft-entra-id', {
         callbackUrl,
+        redirect: true,
       })
-
-      if (result?.error) {
-        setError('Invalid credentials. Please check your email and password.')
-      } else if (result?.ok) {
-        router.push(callbackUrl)
-        router.refresh()
-      }
     } catch (err) {
-      setError('An error occurred. Please try again.')
-    } finally {
+      setError('Failed to sign in with Microsoft. Please try again.')
       setLoading(false)
     }
-  }
-
-  const quickLogin = (userEmail: string) => {
-    setEmail(userEmail)
-    setPassword('internal')
-    setTimeout(() => {
-      document.getElementById('login-form')?.dispatchEvent(
-        new Event('submit', { bubbles: true, cancelable: true })
-      )
-    }, 100)
   }
 
   return (
@@ -86,56 +56,38 @@ function LoginContent() {
             </div>
           )}
 
-          <form id="login-form" onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@gennoor.com"
-                  className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                  required
-                />
-              </div>
-            </div>
+          <button
+            onClick={handleMicrosoftSignIn}
+            disabled={loading}
+            className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-lg hover:from-blue-700 hover:to-blue-800 transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+          >
+            {loading ? (
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <>
+                <svg className="w-5 h-5" viewBox="0 0 21 21">
+                  <rect x="1" y="1" width="9" height="9" fill="#f25022"/>
+                  <rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>
+                  <rect x="11" y="1" width="9" height="9" fill="#7fba00"/>
+                  <rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
+                </svg>
+                Sign in with Microsoft Entra ID
+              </>
+            )}
+          </button>
 
-            <input type="hidden" value="internal" name="password" />
-
-            <button
-              type="submit"
-              disabled={loading || !email}
-              className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium rounded-lg hover:shadow-lg transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <>
-                  <LogIn className="w-5 h-5" />
-                  Sign In
-                </>
-              )}
-            </button>
-          </form>
-
-          {/* Quick Access for Development */}
           <div className="mt-6 pt-6 border-t border-gray-200">
-            <p className="text-xs text-gray-500 mb-3 text-center">Authorized Users</p>
-            <div className="grid grid-cols-2 gap-2">
-              {authorizedUsers.map((user) => (
-                <button
-                  key={user.email}
-                  onClick={() => quickLogin(user.email)}
-                  className="p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors text-left"
-                >
-                  <div className="font-medium text-gray-700">{user.name}</div>
-                  <div className="text-gray-500">{user.role}</div>
-                </button>
-              ))}
+            <p className="text-xs text-gray-500 text-center mb-2">
+              Only authorized Gennoor accounts can access this dashboard.
+            </p>
+            <div className="text-xs text-gray-400 text-center">
+              Authorized users:
+              <div className="mt-2 space-y-1">
+                <div>admin@gennoor.com</div>
+                <div>jalalkhan@gennoor.com</div>
+                <div>yusufchaudhary@gennoor.com</div>
+                <div>contact@gennoor.com</div>
+              </div>
             </div>
           </div>
 
