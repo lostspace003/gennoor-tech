@@ -75,5 +75,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   trustHost: true,
-  secret: process.env.NEXTAUTH_SECRET || 'gennoor-crm-secret-2024-production',
+  // IMPORTANT: Set NEXTAUTH_SECRET in production!
+  secret: process.env.NEXTAUTH_SECRET || 'dev-secret-change-in-production-7A3B9C2D8E4F1A6B5C9D0E3F8A2B7C4D',
 })
