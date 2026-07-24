@@ -1,0 +1,1157 @@
+'use client'
+
+import { useState, useEffect, useRef } from 'react'
+import { useSession } from 'next-auth/react'
+import GennoorBot from '@/components/GennoorBot/GennoorBot'
+import * as XLSX from 'xlsx'
+import {
+  LayoutGrid, Users, Building2, Mail, Calendar, Phone,
+  Search, Filter, Plus, MoreVertical, Star, TrendingUp,
+  Clock, CheckCircle, AlertCircle, ArrowRight, X,
+  FileText, Target, Briefcase, DollarSign, Activity,
+  MessageSquare, Settings, ChevronDown, Eye, Edit,
+  Trash2, Send, Archive, Tag, MapPin, Globe, Linkedin,
+  Upload, Download, Sparkles, Bot, FileSpreadsheet,
+  Brain, Zap, Database, RefreshCw, CheckSquare
+} from 'lucide-react'
+
+type ViewMode = 'dashboard' | 'leads' | 'companies' | 'pipeline' | 'activities' | 'campaigns' | 'ai-research' | 'email-automation'
+type LeadView = 'list' | 'detail' | 'edit' | 'research'
+
+interface Lead {
+  id: string
+  name: string
+  email: string
+  phone: string
+  company: string
+  designation: string
+  linkedin?: string
+  website?: string
+  status: 'new' | 'contacted' | 'qualified' | 'proposal' | 'negotiation' | 'won' | 'lost'
+  value: number
+  score: number
+  lastActivity: string
+  nextAction: string
+  owner: string
+  source: string
+  tags: string[]
+  notes?: string
+  aiResearch?: {
+    summary: string
+    insights: string[]
+    opportunities: string[]
+    lastUpdated: string
+  }
+  emailHistory?: {
+    date: string
+    subject: string
+    status: 'sent' | 'opened' | 'replied'
+  }[]
+}
+
+export default function CRMCompletePage() {
+  const { data: session } = useSession()
+  const [currentView, setCurrentView] = useState<ViewMode>('dashboard')
+  const [leadView, setLeadView] = useState<LeadView>('list')
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
+  const [selectedLeads, setSelectedLeads] = useState<string[]>([])
+  const [searchTerm, setSearchTerm] = useState('')
+  const [showFilters, setShowFilters] = useState(false)
+  const [leads, setLeads] = useState<Lead[]>([])
+  const [loading, setLoading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [aiResearchActive, setAiResearchActive] = useState(false)
+  const [emailDraft, setEmailDraft] = useState('')
+  const [showEmailComposer, setShowEmailComposer] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Load leads from database on mount
+  useEffect(() => {
+    loadLeads()
+  }, [])
+
+  const loadLeads = async () => {
+    setLoading(true)
+    try {
+      const response = await fetch('/api/admin/leads')
+      if (response.ok) {
+        const data = await response.json()
+        setLeads(data.leads || [])
+      }
+    } catch (error) {
+      console.error('Error loading leads:', error)
+      // Use mock data as fallback
+      setLeads(generateMockLeads())
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const generateMockLeads = (): Lead[] => {
+    return Array.from({ length: 166 }, (_, i) => ({
+      id: `CRM-${String(i + 1).padStart(5, '0')}`,
+      name: `${['John', 'Sarah', 'Mike', 'Emma', 'David'][i % 5]} ${['Smith', 'Johnson', 'Williams', 'Brown', 'Jones'][i % 5]}`,
+      email: `contact${i + 1}@${['techcorp', 'innovate', 'digital', 'global', 'enterprise'][i % 5]}.com`,
+      phone: `+91 98${String(76543210 + i).substring(0, 8)}`,
+      company: `${['Tech', 'Digital', 'Global', 'Prime', 'Elite'][i % 5]} ${['Solutions', 'Systems', 'Innovations', 'Enterprises', 'Group'][i % 5]}`,
+      designation: ['CEO', 'CTO', 'VP Sales', 'Director', 'Manager'][i % 5],
+      linkedin: `https://linkedin.com/in/${['john', 'sarah', 'mike', 'emma', 'david'][i % 5]}-${['smith', 'johnson', 'williams', 'brown', 'jones'][i % 5]}-${i}`,
+      website: `https://${['techcorp', 'innovate', 'digital', 'global', 'enterprise'][i % 5]}.com`,
+      status: ['new', 'contacted', 'qualified', 'proposal', 'negotiation', 'won', 'lost'][i % 7] as any,
+      value: (i + 1) * 50000,
+      score: 60 + (i % 40),
+      lastActivity: `${i + 1} days ago`,
+      nextAction: ['Call', 'Email', 'Meeting', 'Proposal', 'Follow-up'][i % 5],
+      owner: ['You', 'Jalal Khan', 'Yusuf'][i % 3],
+      source: ['Website', 'LinkedIn', 'Referral', 'Event', 'Cold Call'][i % 5],
+      tags: [['Hot', 'Enterprise'], ['Urgent'], ['Follow-up'], ['Decision Maker'], ['Budget Approved']][i % 5],
+      notes: 'Initial contact made, awaiting response.',
+      aiResearch: i % 3 === 0 ? {
+        summary: 'Growing technology company with 50-200 employees, recently secured Series B funding.',
+        insights: [
+          'Using outdated CRM system',
+          'Expanding to new markets',
+          'Looking for automation solutions'
+        ],
+        opportunities: [
+          'CRM migration opportunity',
+          'Process automation potential',
+          'Training services needed'
+        ],
+        lastUpdated: new Date().toISOString()
+      } : undefined
+    }))
+  }
+
+  // Handle Excel file upload
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    // Only admin can upload
+    if (session?.user?.email !== 'admin@gennoor.com') {
+      alert('Only admin@gennoor.com can upload leads')
+      return
+    }
+
+    setUploadProgress(0)
+    const reader = new FileReader()
+
+    reader.onload = async (e) => {
+      try {
+        const data = new Uint8Array(e.target?.result as ArrayBuffer)
+        const workbook = XLSX.read(data, { type: 'array' })
+
+        let allLeads: Lead[] = []
+
+        // Process each sheet
+        workbook.SheetNames.forEach((sheetName) => {
+          const worksheet = workbook.Sheets[sheetName]
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: 'NA' })
+
+          // Convert Excel data to Lead format
+          const sheetLeads = jsonData.map((row: any, index) => ({
+            id: `EXCEL-${Date.now()}-${index}`,
+            name: row['Name'] || row['Contact Name'] || 'NA',
+            email: row['Email'] || row['Email Address'] || 'NA',
+            phone: row['Phone'] || row['Contact'] || 'NA',
+            company: row['Company'] || row['Organization'] || 'NA',
+            designation: row['Designation'] || row['Title'] || 'NA',
+            linkedin: row['LinkedIn'] || row['LinkedIn URL'] || '',
+            website: row['Website'] || row['Company Website'] || '',
+            status: 'new' as const,
+            value: parseFloat(row['Value'] || row['Deal Size'] || '0') || 0,
+            score: parseFloat(row['Score'] || '50') || 50,
+            lastActivity: new Date().toISOString(),
+            nextAction: 'Initial Contact',
+            owner: session?.user?.email?.split('@')[0] || 'Admin',
+            source: 'Excel Import',
+            tags: ['Imported', sheetName],
+            notes: `Imported from ${file.name} - ${sheetName} sheet`
+          }))
+
+          allLeads = [...allLeads, ...sheetLeads]
+          setUploadProgress((prev) => prev + (100 / workbook.SheetNames.length))
+        })
+
+        // Save to database
+        const response = await fetch('/api/admin/leads/bulk-upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ leads: allLeads })
+        })
+
+        if (response.ok) {
+          setLeads([...leads, ...allLeads])
+          alert(`Successfully imported ${allLeads.length} leads from ${workbook.SheetNames.length} sheets`)
+        }
+      } catch (error) {
+        console.error('Error processing file:', error)
+        alert('Error processing file. Please check the format.')
+      } finally {
+        setUploadProgress(0)
+        if (fileInputRef.current) {
+          fileInputRef.current.value = ''
+        }
+      }
+    }
+
+    reader.readAsArrayBuffer(file)
+  }
+
+  // AI Research for selected leads
+  const performAIResearch = async () => {
+    if (selectedLeads.length === 0) {
+      alert('Please select leads to research')
+      return
+    }
+
+    setAiResearchActive(true)
+
+    try {
+      for (const leadId of selectedLeads) {
+        const lead = leads.find(l => l.id === leadId)
+        if (!lead) continue
+
+        // Call AI research API
+        const response = await fetch('/api/admin/leads/ai-research', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: lead.name,
+            company: lead.company,
+            linkedin: lead.linkedin,
+            website: lead.website
+          })
+        })
+
+        if (response.ok) {
+          const research = await response.json()
+
+          // Update lead with research data
+          setLeads(prevLeads => prevLeads.map(l =>
+            l.id === leadId
+              ? {
+                  ...l,
+                  aiResearch: {
+                    summary: research.summary || 'Research completed',
+                    insights: research.insights || [],
+                    opportunities: research.opportunities || [],
+                    lastUpdated: new Date().toISOString()
+                  }
+                }
+              : l
+          ))
+        }
+      }
+
+      alert(`AI Research completed for ${selectedLeads.length} leads`)
+    } catch (error) {
+      console.error('Error performing AI research:', error)
+    } finally {
+      setAiResearchActive(false)
+      setSelectedLeads([])
+    }
+  }
+
+  // Generate AI Email Draft
+  const generateEmailDraft = async () => {
+    if (selectedLeads.length === 0) {
+      alert('Please select leads to email')
+      return
+    }
+
+    setLoading(true)
+
+    try {
+      const response = await fetch('/api/admin/leads/generate-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          leadIds: selectedLeads,
+          context: 'Introduction email for Gennoor Tech services'
+        })
+      })
+
+      if (response.ok) {
+        const { draft } = await response.json()
+        setEmailDraft(draft || `Dear [Name],
+
+I hope this email finds you well. I'm reaching out from Gennoor Tech regarding our innovative solutions that could benefit your organization.
+
+We specialize in:
+• Digital Transformation & AI Integration
+• Custom Software Development
+• Cloud Solutions & Infrastructure
+• Process Automation
+
+I'd love to schedule a brief call to understand your current challenges and explore how we can add value to your business.
+
+Would you be available for a 15-minute call this week?
+
+Best regards,
+${session?.user?.email?.split('@')[0] || 'Team Gennoor'}
+Gennoor Tech
+
+CC: admin@gennoor.com`)
+        setShowEmailComposer(true)
+      }
+    } catch (error) {
+      console.error('Error generating email:', error)
+      setEmailDraft('Error generating email draft. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Send Email
+  const sendEmail = async () => {
+    if (!emailDraft || selectedLeads.length === 0) return
+
+    setLoading(true)
+
+    try {
+      const response = await fetch('/api/admin/leads/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          leadIds: selectedLeads,
+          content: emailDraft,
+          cc: 'admin@gennoor.com' // Always CC admin
+        })
+      })
+
+      if (response.ok) {
+        alert(`Email sent to ${selectedLeads.length} leads (CC: admin@gennoor.com)`)
+        setShowEmailComposer(false)
+        setEmailDraft('')
+        setSelectedLeads([])
+      }
+    } catch (error) {
+      console.error('Error sending email:', error)
+      alert('Error sending email. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const filteredLeads = leads.filter(lead =>
+    lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    lead.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    lead.email.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
+  const sidebarItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutGrid },
+    { id: 'leads', label: 'Leads', icon: Users, count: leads.length },
+    { id: 'companies', label: 'Companies', icon: Building2, count: 45 },
+    { id: 'pipeline', label: 'Pipeline', icon: TrendingUp },
+    { id: 'ai-research', label: 'AI Research', icon: Brain },
+    { id: 'email-automation', label: 'Email Automation', icon: Mail },
+    { id: 'activities', label: 'Activities', icon: Activity },
+    { id: 'campaigns', label: 'Campaigns', icon: Target },
+  ]
+
+  const getStatusColor = (status: string) => {
+    const colors = {
+      new: 'bg-slate-100 text-slate-700',
+      contacted: 'bg-blue-100 text-blue-700',
+      qualified: 'bg-purple-100 text-purple-700',
+      proposal: 'bg-yellow-100 text-yellow-700',
+      negotiation: 'bg-orange-100 text-orange-700',
+      won: 'bg-green-100 text-green-700',
+      lost: 'bg-red-100 text-red-700'
+    }
+    return colors[status as keyof typeof colors] || colors.new
+  }
+
+  return (
+    <div className="h-screen bg-gray-50 flex overflow-hidden">
+      {/* Professional Sidebar */}
+      <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
+        {/* Logo */}
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+              G
+            </div>
+            <div>
+              <div className="font-semibold text-gray-900">Gennoor CRM</div>
+              <div className="text-xs text-gray-500">Complete Edition</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 p-3">
+          {sidebarItems.map((item) => {
+            const Icon = item.icon
+            return (
+              <button
+                key={item.id}
+                onClick={() => setCurrentView(item.id as ViewMode)}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-lg mb-1 transition-all ${
+                  currentView === item.id
+                    ? 'bg-blue-50 text-blue-600'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Icon className="w-4 h-4" />
+                  <span className="text-sm font-medium">{item.label}</span>
+                </div>
+                {item.count !== undefined && (
+                  <span className="text-xs bg-gray-200 px-2 py-0.5 rounded-full">
+                    {item.count}
+                  </span>
+                )}
+              </button>
+            )
+          })}
+        </nav>
+
+        {/* Database Status */}
+        <div className="p-4 border-t border-gray-200">
+          <div className="flex items-center gap-2 text-xs">
+            <Database className="w-4 h-4 text-green-500" />
+            <span className="text-gray-600">Database Connected</span>
+          </div>
+        </div>
+
+        {/* User */}
+        <div className="p-4 border-t border-gray-200">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-medium text-gray-900 truncate">
+                {session?.user?.email?.split('@')[0]}
+              </div>
+              <div className="text-xs text-gray-500">
+                {session?.user?.email === 'admin@gennoor.com' ? 'Administrator' : 'User'}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Top Bar */}
+        <div className="bg-white border-b border-gray-200 px-6 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <h1 className="text-xl font-semibold text-gray-900">
+                {currentView === 'leads' && 'Lead Management'}
+                {currentView === 'dashboard' && 'Dashboard'}
+                {currentView === 'companies' && 'Companies'}
+                {currentView === 'pipeline' && 'Sales Pipeline'}
+                {currentView === 'ai-research' && 'AI Research Center'}
+                {currentView === 'email-automation' && 'Email Automation'}
+                {currentView === 'activities' && 'Activities'}
+                {currentView === 'campaigns' && 'Campaigns'}
+              </h1>
+            </div>
+
+            <div className="flex items-center gap-3">
+              {/* Excel Upload - Admin Only */}
+              {session?.user?.email === 'admin@gennoor.com' && currentView === 'leads' && (
+                <>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".xlsx,.xls"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 flex items-center gap-2"
+                  >
+                    <Upload className="w-4 h-4" />
+                    Upload Excel
+                  </button>
+                </>
+              )}
+
+              {/* AI Research Button */}
+              {currentView === 'leads' && selectedLeads.length > 0 && (
+                <button
+                  onClick={performAIResearch}
+                  disabled={aiResearchActive}
+                  className="px-4 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 flex items-center gap-2 disabled:opacity-50"
+                >
+                  <Brain className="w-4 h-4" />
+                  {aiResearchActive ? 'Researching...' : 'AI Research'}
+                </button>
+              )}
+
+              {/* Email Selected */}
+              {currentView === 'leads' && selectedLeads.length > 0 && (
+                <button
+                  onClick={generateEmailDraft}
+                  className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 flex items-center gap-2"
+                >
+                  <Mail className="w-4 h-4" />
+                  Email Selected ({selectedLeads.length})
+                </button>
+              )}
+
+              <button
+                onClick={loadLeads}
+                className="p-2 hover:bg-gray-100 rounded-lg"
+                title="Refresh"
+              >
+                <RefreshCw className="w-5 h-5 text-gray-600" />
+              </button>
+
+              <button className="p-2 hover:bg-gray-100 rounded-lg">
+                <Settings className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Upload Progress */}
+        {uploadProgress > 0 && (
+          <div className="bg-green-50 px-6 py-2">
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-green-700">Uploading...</span>
+              <div className="flex-1 bg-green-200 rounded-full h-2">
+                <div
+                  className="bg-green-600 h-2 rounded-full transition-all"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+              </div>
+              <span className="text-sm text-green-700">{Math.round(uploadProgress)}%</span>
+            </div>
+          </div>
+        )}
+
+        {/* Content */}
+        <div className="flex-1 overflow-auto">
+          {/* Dashboard View */}
+          {currentView === 'dashboard' && (
+            <div className="p-6">
+              <div className="grid grid-cols-4 gap-4 mb-6">
+                <div className="bg-white p-4 rounded-lg border border-gray-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm text-gray-500">Total Leads</span>
+                    <Users className="w-4 h-4 text-gray-400" />
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900">{leads.length}</div>
+                  <div className="text-xs text-green-600 mt-1">+12% this month</div>
+                </div>
+                <div className="bg-white p-4 rounded-lg border border-gray-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm text-gray-500">Pipeline Value</span>
+                    <DollarSign className="w-4 h-4 text-gray-400" />
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900">
+                    ₹{(leads.reduce((sum, l) => sum + l.value, 0) / 1000000).toFixed(1)}M
+                  </div>
+                  <div className="text-xs text-green-600 mt-1">+8% this month</div>
+                </div>
+                <div className="bg-white p-4 rounded-lg border border-gray-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm text-gray-500">AI Researched</span>
+                    <Brain className="w-4 h-4 text-gray-400" />
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900">
+                    {leads.filter(l => l.aiResearch).length}
+                  </div>
+                  <div className="text-xs text-blue-600 mt-1">Auto-enriched</div>
+                </div>
+                <div className="bg-white p-4 rounded-lg border border-gray-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm text-gray-500">Activities Today</span>
+                    <Activity className="w-4 h-4 text-gray-400" />
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900">18</div>
+                  <div className="text-xs text-blue-600 mt-1">5 pending</div>
+                </div>
+              </div>
+
+              {/* Quick Actions */}
+              <div className="grid grid-cols-5 gap-4">
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="bg-white p-6 rounded-lg border border-gray-200 hover:border-green-300 hover:shadow-sm transition-all"
+                >
+                  <Upload className="w-8 h-8 text-green-600 mb-3" />
+                  <div className="text-sm font-medium text-gray-900">Upload Leads</div>
+                </button>
+                <button
+                  onClick={() => setCurrentView('ai-research')}
+                  className="bg-white p-6 rounded-lg border border-gray-200 hover:border-purple-300 hover:shadow-sm transition-all"
+                >
+                  <Brain className="w-8 h-8 text-purple-600 mb-3" />
+                  <div className="text-sm font-medium text-gray-900">AI Research</div>
+                </button>
+                <button
+                  onClick={() => setCurrentView('email-automation')}
+                  className="bg-white p-6 rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all"
+                >
+                  <Mail className="w-8 h-8 text-blue-600 mb-3" />
+                  <div className="text-sm font-medium text-gray-900">Send Campaign</div>
+                </button>
+                <button className="bg-white p-6 rounded-lg border border-gray-200 hover:border-yellow-300 hover:shadow-sm transition-all">
+                  <Calendar className="w-8 h-8 text-yellow-600 mb-3" />
+                  <div className="text-sm font-medium text-gray-900">Schedule Meeting</div>
+                </button>
+                <button className="bg-white p-6 rounded-lg border border-gray-200 hover:border-orange-300 hover:shadow-sm transition-all">
+                  <FileText className="w-8 h-8 text-orange-600 mb-3" />
+                  <div className="text-sm font-medium text-gray-900">Create Proposal</div>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Leads View */}
+          {currentView === 'leads' && leadView === 'list' && (
+            <div>
+              {/* Filters Bar */}
+              <div className="bg-white border-b border-gray-200 px-6 py-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder="Search leads..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50 flex items-center gap-2"
+                  >
+                    <Filter className="w-4 h-4" />
+                    Filters
+                  </button>
+                  <select className="px-4 py-2 border border-gray-200 rounded-lg text-sm">
+                    <option>All Status</option>
+                    <option>New</option>
+                    <option>Contacted</option>
+                    <option>Qualified</option>
+                  </select>
+                  <select className="px-4 py-2 border border-gray-200 rounded-lg text-sm">
+                    <option>All Owners</option>
+                    <option>Me</option>
+                    <option>Jalal Khan</option>
+                    <option>Yusuf</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Selected Actions Bar */}
+              {selectedLeads.length > 0 && (
+                <div className="bg-blue-50 px-6 py-2 flex items-center justify-between">
+                  <span className="text-sm text-blue-700">
+                    {selectedLeads.length} leads selected
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={performAIResearch}
+                      className="px-3 py-1 bg-purple-600 text-white text-sm rounded hover:bg-purple-700"
+                    >
+                      Research All
+                    </button>
+                    <button
+                      onClick={generateEmailDraft}
+                      className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                    >
+                      Email All
+                    </button>
+                    {session?.user?.email === 'admin@gennoor.com' && (
+                      <button className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700">
+                        Delete
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Leads Table */}
+              <div className="bg-white">
+                <table className="w-full">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th className="px-6 py-3 text-left">
+                        <input
+                          type="checkbox"
+                          className="rounded"
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedLeads(filteredLeads.map(l => l.id))
+                            } else {
+                              setSelectedLeads([])
+                            }
+                          }}
+                        />
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lead</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Company</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">LinkedIn</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Value</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">AI</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Owner</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {filteredLeads.slice(0, 10).map((lead) => (
+                      <tr key={lead.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4">
+                          <input
+                            type="checkbox"
+                            checked={selectedLeads.includes(lead.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedLeads([...selectedLeads, lead.id])
+                              } else {
+                                setSelectedLeads(selectedLeads.filter(id => id !== lead.id))
+                              }
+                            }}
+                            className="rounded"
+                          />
+                        </td>
+                        <td className="px-6 py-4">
+                          <button
+                            onClick={() => {
+                              setSelectedLead(lead)
+                              setLeadView('detail')
+                            }}
+                            className="text-left hover:text-blue-600"
+                          >
+                            <div className="text-sm font-medium text-gray-900">{lead.name}</div>
+                            <div className="text-sm text-gray-500">{lead.email}</div>
+                          </button>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-sm text-gray-900">{lead.company}</div>
+                          <div className="text-sm text-gray-500">{lead.designation}</div>
+                        </td>
+                        <td className="px-6 py-4">
+                          {lead.linkedin ? (
+                            <a
+                              href={lead.linkedin}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-800"
+                            >
+                              <Linkedin className="w-4 h-4" />
+                            </a>
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(lead.status)}`}>
+                            {lead.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-900">
+                          ₹{(lead.value / 1000).toFixed(0)}K
+                        </td>
+                        <td className="px-6 py-4">
+                          {lead.aiResearch ? (
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <div className="w-4 h-4 border border-gray-300 rounded" />
+                          )}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-900">{lead.owner}</td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => {
+                                setSelectedLead(lead)
+                                setLeadView('detail')
+                              }}
+                              className="p-1 hover:bg-gray-100 rounded"
+                              title="View Details"
+                            >
+                              <Eye className="w-4 h-4 text-gray-500" />
+                            </button>
+                            <button
+                              onClick={() => {
+                                setSelectedLead(lead)
+                                setLeadView('research')
+                              }}
+                              className="p-1 hover:bg-gray-100 rounded"
+                              title="View AI Research"
+                            >
+                              <Brain className="w-4 h-4 text-purple-500" />
+                            </button>
+                            <button
+                              onClick={() => {
+                                setSelectedLeads([lead.id])
+                                generateEmailDraft()
+                              }}
+                              className="p-1 hover:bg-gray-100 rounded"
+                              title="Send Email"
+                            >
+                              <Mail className="w-4 h-4 text-blue-500" />
+                            </button>
+                            <button className="p-1 hover:bg-gray-100 rounded">
+                              <MoreVertical className="w-4 h-4 text-gray-500" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Lead Detail View */}
+          {currentView === 'leads' && leadView === 'detail' && selectedLead && (
+            <div className="bg-white h-full">
+              <div className="border-b border-gray-200 px-6 py-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => setLeadView('list')}
+                      className="p-2 hover:bg-gray-100 rounded-lg"
+                    >
+                      <X className="w-5 h-5 text-gray-500" />
+                    </button>
+                    <div>
+                      <h2 className="text-lg font-semibold text-gray-900">{selectedLead.name}</h2>
+                      <p className="text-sm text-gray-500">{selectedLead.company} • {selectedLead.designation}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">
+                      Send Email
+                    </button>
+                    <button className="px-4 py-2 border border-gray-200 text-sm rounded-lg hover:bg-gray-50">
+                      Schedule Meeting
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex">
+                {/* Main Info */}
+                <div className="flex-1 p-6">
+                  <div className="space-y-6">
+                    {/* Contact Info */}
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500 mb-3">Contact Information</h3>
+                      <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+                        <div className="flex items-center gap-3">
+                          <Mail className="w-4 h-4 text-gray-400" />
+                          <span className="text-sm text-gray-900">{selectedLead.email}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Phone className="w-4 h-4 text-gray-400" />
+                          <span className="text-sm text-gray-900">{selectedLead.phone}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Building2 className="w-4 h-4 text-gray-400" />
+                          <span className="text-sm text-gray-900">{selectedLead.company}</span>
+                        </div>
+                        {selectedLead.linkedin && (
+                          <div className="flex items-center gap-3">
+                            <Linkedin className="w-4 h-4 text-gray-400" />
+                            <a href={selectedLead.linkedin} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
+                              LinkedIn Profile
+                            </a>
+                          </div>
+                        )}
+                        {selectedLead.website && (
+                          <div className="flex items-center gap-3">
+                            <Globe className="w-4 h-4 text-gray-400" />
+                            <a href={selectedLead.website} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
+                              {selectedLead.website}
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* AI Research */}
+                    {selectedLead.aiResearch && (
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-500 mb-3">AI Research Insights</h3>
+                        <div className="bg-purple-50 rounded-lg p-4 space-y-3">
+                          <div>
+                            <div className="text-sm font-medium text-purple-900 mb-1">Summary</div>
+                            <p className="text-sm text-gray-700">{selectedLead.aiResearch.summary}</p>
+                          </div>
+                          <div>
+                            <div className="text-sm font-medium text-purple-900 mb-1">Key Insights</div>
+                            <ul className="text-sm text-gray-700 space-y-1">
+                              {selectedLead.aiResearch.insights.map((insight, i) => (
+                                <li key={i} className="flex items-start gap-2">
+                                  <Sparkles className="w-3 h-3 text-purple-500 mt-0.5" />
+                                  {insight}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          <div>
+                            <div className="text-sm font-medium text-purple-900 mb-1">Opportunities</div>
+                            <ul className="text-sm text-gray-700 space-y-1">
+                              {selectedLead.aiResearch.opportunities.map((opp, i) => (
+                                <li key={i} className="flex items-start gap-2">
+                                  <Target className="w-3 h-3 text-green-500 mt-0.5" />
+                                  {opp}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Lead Details */}
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500 mb-3">Lead Details</h3>
+                      <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Status</span>
+                          <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(selectedLead.status)}`}>
+                            {selectedLead.status}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Value</span>
+                          <span className="text-sm text-gray-900 font-medium">₹{(selectedLead.value / 1000).toFixed(0)}K</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Score</span>
+                          <span className="text-sm text-gray-900">{selectedLead.score}/100</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Source</span>
+                          <span className="text-sm text-gray-900">{selectedLead.source}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Activity Timeline */}
+                <div className="w-96 border-l border-gray-200 p-6">
+                  <h3 className="text-sm font-medium text-gray-500 mb-3">Recent Activity</h3>
+                  <div className="space-y-4">
+                    <div className="flex gap-3">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <Mail className="w-4 h-4 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-900">Email sent</p>
+                        <p className="text-xs text-gray-500">2 hours ago</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                        <Brain className="w-4 h-4 text-purple-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-900">AI Research completed</p>
+                        <p className="text-xs text-gray-500">Yesterday</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                        <CheckCircle className="w-4 h-4 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-900">Lead imported</p>
+                        <p className="text-xs text-gray-500">3 days ago</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* AI Research View */}
+          {currentView === 'ai-research' && (
+            <div className="p-6">
+              <div className="bg-white rounded-lg p-6 mb-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">AI Research Center</h2>
+                <p className="text-gray-600 mb-6">
+                  Automatically research and enrich your leads using AI. Get insights about companies,
+                  find decision makers, and identify opportunities.
+                </p>
+
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                    <Brain className="w-8 h-8 text-purple-600 mb-3" />
+                    <h3 className="font-medium text-gray-900 mb-2">Company Research</h3>
+                    <p className="text-sm text-gray-600">
+                      Get company size, revenue, tech stack, and recent news
+                    </p>
+                  </div>
+
+                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <Users className="w-8 h-8 text-blue-600 mb-3" />
+                    <h3 className="font-medium text-gray-900 mb-2">Find Contacts</h3>
+                    <p className="text-sm text-gray-600">
+                      Discover decision makers and their LinkedIn profiles
+                    </p>
+                  </div>
+
+                  <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                    <Target className="w-8 h-8 text-green-600 mb-3" />
+                    <h3 className="font-medium text-gray-900 mb-2">Identify Opportunities</h3>
+                    <p className="text-sm text-gray-600">
+                      Find pain points and personalized selling opportunities
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg p-6">
+                <h3 className="font-medium text-gray-900 mb-4">Research Status</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span className="text-sm text-gray-700">Total Leads</span>
+                    <span className="font-medium">{leads.length}</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                    <span className="text-sm text-gray-700">Researched</span>
+                    <span className="font-medium text-green-700">
+                      {leads.filter(l => l.aiResearch).length}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+                    <span className="text-sm text-gray-700">Pending Research</span>
+                    <span className="font-medium text-yellow-700">
+                      {leads.filter(l => !l.aiResearch).length}
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setSelectedLeads(leads.filter(l => !l.aiResearch).map(l => l.id))
+                    performAIResearch()
+                  }}
+                  className="mt-4 w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center justify-center gap-2"
+                >
+                  <Brain className="w-4 h-4" />
+                  Research All Pending Leads
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Email Automation View */}
+          {currentView === 'email-automation' && (
+            <div className="p-6">
+              <div className="bg-white rounded-lg p-6 mb-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Email Automation</h2>
+                <p className="text-gray-600 mb-6">
+                  Create and send personalized email campaigns to your leads. All emails are automatically CC'd to admin@gennoor.com.
+                </p>
+
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <Zap className="w-8 h-8 text-blue-600 mb-3" />
+                    <h3 className="font-medium text-gray-900 mb-2">AI-Powered Drafts</h3>
+                    <p className="text-sm text-gray-600">
+                      Generate personalized emails using AI
+                    </p>
+                  </div>
+
+                  <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                    <Send className="w-8 h-8 text-green-600 mb-3" />
+                    <h3 className="font-medium text-gray-900 mb-2">Bulk Send</h3>
+                    <p className="text-sm text-gray-600">
+                      Send to multiple leads at once
+                    </p>
+                  </div>
+
+                  <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                    <Activity className="w-8 h-8 text-purple-600 mb-3" />
+                    <h3 className="font-medium text-gray-900 mb-2">Track Performance</h3>
+                    <p className="text-sm text-gray-600">
+                      Monitor open rates and responses
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-6 flex gap-4">
+                  <button
+                    onClick={() => {
+                      setCurrentView('leads')
+                      alert('Select leads from the Leads page to send emails')
+                    }}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    Create Campaign
+                  </button>
+                  <button className="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50">
+                    Email Templates
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Email Composer Modal */}
+        {showEmailComposer && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg w-3/4 max-w-4xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Compose Email ({selectedLeads.length} recipients)
+                </h3>
+                <button
+                  onClick={() => setShowEmailComposer(false)}
+                  className="p-2 hover:bg-gray-100 rounded"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  To: {selectedLeads.length} selected leads (CC: admin@gennoor.com)
+                </label>
+                <textarea
+                  value={emailDraft}
+                  onChange={(e) => setEmailDraft(e.target.value)}
+                  rows={12}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setShowEmailComposer(false)}
+                  className="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={sendEmail}
+                  disabled={loading}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {loading ? 'Sending...' : 'Send Email'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* GennoorBot */}
+      <GennoorBot />
+    </div>
+  )
+}

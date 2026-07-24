@@ -163,10 +163,12 @@ export default function CRMPage() {
             </div>
 
             <div className="flex items-center gap-3">
-              <button className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 flex items-center gap-2">
-                <Plus className="w-4 h-4" />
-                New Lead
-              </button>
+              {session?.user?.email === 'admin@gennoor.com' && (
+                <button className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 flex items-center gap-2">
+                  <Plus className="w-4 h-4" />
+                  Upload Leads
+                </button>
+              )}
               <button className="p-2 hover:bg-gray-100 rounded-lg">
                 <Settings className="w-5 h-5 text-gray-600" />
               </button>
