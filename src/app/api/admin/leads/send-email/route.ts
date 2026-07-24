@@ -4,14 +4,21 @@ import { auth } from '@/lib/auth'
 import { PDFGenerator } from '@/lib/pdf-generator'
 
 // Use existing Azure Communication Services
-const connectionString = process.env.AZURE_COMMUNICATION_CONNECTION_STRING!
-const emailClient = new EmailClient(connectionString)
+const connectionString = process.env.AZURE_COMMUNICATION_CONNECTION_STRING || ''
 
 export async function POST(request: Request) {
   try {
     const session = await auth()
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Initialize email client inside the function to avoid build-time errors
+    const emailClient = connectionString ? new EmailClient(connectionString) : null
+
+    if (!emailClient) {
+      console.error('Azure Communication Services not configured')
+      return NextResponse.json({ error: 'Email service not configured' }, { status: 500 })
     }
 
     const { leadIds, content, subject, attachPDF, pdfType } = await request.json()

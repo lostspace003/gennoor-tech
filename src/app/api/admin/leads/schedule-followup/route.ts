@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { EmailClient } from '@azure/communication-email'
 
-const connectionString = process.env.AZURE_COMMUNICATION_CONNECTION_STRING!
+const connectionString = process.env.AZURE_COMMUNICATION_CONNECTION_STRING || ''
 
 export async function POST(request: Request) {
   try {
@@ -49,6 +49,10 @@ export async function POST(request: Request) {
       }
 
       // Send calendar invite via email
+      if (!connectionString) {
+        console.log('Email service not configured - skipping invite')
+        return NextResponse.json({ success: true, followUp, emailSkipped: true })
+      }
       const emailClient = new EmailClient(connectionString)
       const emailMessage = {
         senderAddress: 'DoNotReply@gennoor.com',
