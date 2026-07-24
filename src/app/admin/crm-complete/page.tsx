@@ -31,12 +31,13 @@ interface Lead {
   status: 'new' | 'contacted' | 'qualified' | 'proposal' | 'negotiation' | 'won' | 'lost'
   value: number
   score: number
-  lastActivity: string
+  lastActivity: string // ISO date string
   nextAction: string
   owner: string
   source: string
   tags: string[]
   notes?: string
+  createdAt?: string // ISO date string
   aiResearch?: {
     summary: string
     insights: string[]
@@ -61,6 +62,9 @@ export default function CRMCompletePage() {
   const [showFilters, setShowFilters] = useState(false)
   const [leads, setLeads] = useState<Lead[]>([])
   const [loading, setLoading] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'week' | 'month'>('all')
+  const leadsPerPage = 10
   const [uploadProgress, setUploadProgress] = useState(0)
   const [aiResearchActive, setAiResearchActive] = useState(false)
   const [emailDraft, setEmailDraft] = useState('')
@@ -99,39 +103,46 @@ export default function CRMCompletePage() {
   }
 
   const generateMockLeads = (): Lead[] => {
-    return Array.from({ length: 166 }, (_, i) => ({
-      id: `CRM-${String(i + 1).padStart(5, '0')}`,
-      name: `${['John', 'Sarah', 'Mike', 'Emma', 'David'][i % 5]} ${['Smith', 'Johnson', 'Williams', 'Brown', 'Jones'][i % 5]}`,
-      email: `contact${i + 1}@${['techcorp', 'innovate', 'digital', 'global', 'enterprise'][i % 5]}.com`,
-      phone: `+91 98${String(76543210 + i).substring(0, 8)}`,
-      company: `${['Tech', 'Digital', 'Global', 'Prime', 'Elite'][i % 5]} ${['Solutions', 'Systems', 'Innovations', 'Enterprises', 'Group'][i % 5]}`,
-      designation: ['CEO', 'CTO', 'VP Sales', 'Director', 'Manager'][i % 5],
-      linkedin: `https://linkedin.com/in/${['john', 'sarah', 'mike', 'emma', 'david'][i % 5]}-${['smith', 'johnson', 'williams', 'brown', 'jones'][i % 5]}-${i}`,
-      website: `https://${['techcorp', 'innovate', 'digital', 'global', 'enterprise'][i % 5]}.com`,
-      status: ['new', 'contacted', 'qualified', 'proposal', 'negotiation', 'won', 'lost'][i % 7] as any,
-      value: (i + 1) * 50000,
-      score: 60 + (i % 40),
-      lastActivity: `${i + 1} days ago`,
-      nextAction: ['Call', 'Email', 'Meeting', 'Proposal', 'Follow-up'][i % 5],
-      owner: ['You', 'Jalal Khan', 'Yusuf'][i % 3],
-      source: ['Website', 'LinkedIn', 'Referral', 'Event', 'Cold Call'][i % 5],
-      tags: [['Hot', 'Enterprise'], ['Urgent'], ['Follow-up'], ['Decision Maker'], ['Budget Approved']][i % 5],
-      notes: 'Initial contact made, awaiting response.',
-      aiResearch: i % 3 === 0 ? {
-        summary: 'Growing technology company with 50-200 employees, recently secured Series B funding.',
-        insights: [
-          'Using outdated CRM system',
-          'Expanding to new markets',
-          'Looking for automation solutions'
-        ],
-        opportunities: [
-          'CRM migration opportunity',
-          'Process automation potential',
-          'Training services needed'
-        ],
-        lastUpdated: new Date().toISOString()
-      } : undefined
-    }))
+    // Generate leads with realistic dates spread over the last 60 days
+    const now = new Date()
+    return Array.from({ length: 10 }, (_, i) => {
+      const daysAgo = Math.floor(Math.random() * 60)
+      const lastActivityDate = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000)
+
+      return {
+        id: `CRM-${String(i + 1).padStart(5, '0')}`,
+        name: `${['John', 'Sarah', 'Mike', 'Emma', 'David'][i % 5]} ${['Smith', 'Johnson', 'Williams', 'Brown', 'Jones'][i % 5]}`,
+        email: `contact${i + 1}@${['techcorp', 'innovate', 'digital', 'global', 'enterprise'][i % 5]}.com`,
+        phone: `+91 98${String(76543210 + i).substring(0, 8)}`,
+        company: `${['Tech', 'Digital', 'Global', 'Prime', 'Elite'][i % 5]} ${['Solutions', 'Systems', 'Innovations', 'Enterprises', 'Group'][i % 5]}`,
+        designation: ['CEO', 'CTO', 'VP Sales', 'Director', 'Manager'][i % 5],
+        linkedin: `https://linkedin.com/in/${['john', 'sarah', 'mike', 'emma', 'david'][i % 5]}-${['smith', 'johnson', 'williams', 'brown', 'jones'][i % 5]}-${i}`,
+        website: `https://${['techcorp', 'innovate', 'digital', 'global', 'enterprise'][i % 5]}.com`,
+        status: ['new', 'contacted', 'qualified', 'proposal', 'negotiation', 'won', 'lost'][i % 7] as any,
+        value: (i + 1) * 50000,
+        score: 60 + (i % 40),
+        lastActivity: lastActivityDate.toISOString(),
+        nextAction: ['Call', 'Email', 'Meeting', 'Proposal', 'Follow-up'][i % 5],
+        owner: ['You', 'Jalal Khan', 'Yusuf'][i % 3],
+        source: ['Website', 'LinkedIn', 'Referral', 'Event', 'Cold Call'][i % 5],
+        tags: [['Hot', 'Enterprise'], ['Urgent'], ['Follow-up'], ['Decision Maker'], ['Budget Approved']][i % 5],
+        notes: 'Initial contact made, awaiting response.',
+        aiResearch: i % 3 === 0 ? {
+          summary: 'Growing technology company with 50-200 employees, recently secured Series B funding.',
+          insights: [
+            'Using outdated CRM system',
+            'Expanding to new markets',
+            'Looking for automation solutions'
+          ],
+          opportunities: [
+            'CRM migration opportunity',
+            'Process automation potential',
+            'Training services needed'
+          ],
+          lastUpdated: new Date().toISOString()
+        } : undefined
+      }
+    })
   }
 
   // Handle Excel file upload
@@ -346,16 +357,52 @@ CC: admin@gennoor.com`)
     }
   }
 
-  const filteredLeads = leads.filter(lead =>
-    lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    lead.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    lead.email.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  // Filter by search and date
+  const getFilteredLeads = () => {
+    let filtered = leads.filter(lead =>
+      lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lead.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lead.email.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+
+    // Apply date filter
+    const now = new Date()
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)
+    const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000)
+
+    if (dateFilter === 'today') {
+      filtered = filtered.filter(lead => {
+        const leadDate = new Date(lead.lastActivity)
+        return leadDate >= today
+      })
+    } else if (dateFilter === 'week') {
+      filtered = filtered.filter(lead => {
+        const leadDate = new Date(lead.lastActivity)
+        return leadDate >= weekAgo
+      })
+    } else if (dateFilter === 'month') {
+      filtered = filtered.filter(lead => {
+        const leadDate = new Date(lead.lastActivity)
+        return leadDate >= monthAgo
+      })
+    }
+
+    return filtered
+  }
+
+  const filteredLeads = getFilteredLeads()
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredLeads.length / leadsPerPage)
+  const startIndex = (currentPage - 1) * leadsPerPage
+  const endIndex = startIndex + leadsPerPage
+  const currentLeads = filteredLeads.slice(startIndex, endIndex)
 
   const sidebarItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutGrid },
     { id: 'leads', label: 'Leads', icon: Users, count: leads.length },
-    { id: 'companies', label: 'Companies', icon: Building2, count: 45 },
+    { id: 'companies', label: 'Companies', icon: Building2, count: [...new Set(leads.map(l => l.company))].length },
     { id: 'pipeline', label: 'Pipeline', icon: TrendingUp },
     { id: 'ai-research', label: 'AI Research', icon: Brain },
     { id: 'email-automation', label: 'Email Automation', icon: Mail },
@@ -374,6 +421,19 @@ CC: admin@gennoor.com`)
       lost: 'bg-red-100 text-red-700'
     }
     return colors[status as keyof typeof colors] || colors.new
+  }
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffTime = Math.abs(now.getTime() - date.getTime())
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+
+    if (diffDays === 0) return 'Today'
+    if (diffDays === 1) return 'Yesterday'
+    if (diffDays < 7) return `${diffDays} days ago`
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`
+    return `${Math.floor(diffDays / 30)} months ago`
   }
 
   // Show loading state while checking authentication
@@ -647,18 +707,63 @@ CC: admin@gennoor.com`)
                         type="text"
                         placeholder="Search leads..."
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={(e) => {
+                          setSearchTerm(e.target.value)
+                          setCurrentPage(1)
+                        }}
                         className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                   </div>
-                  <button
-                    onClick={() => setShowFilters(!showFilters)}
-                    className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50 flex items-center gap-2"
-                  >
-                    <Filter className="w-4 h-4" />
-                    Filters
-                  </button>
+
+                  {/* Date Filters */}
+                  <div className="flex items-center gap-2 border-l pl-3">
+                    <button
+                      onClick={() => {
+                        setDateFilter('all')
+                        setCurrentPage(1)
+                      }}
+                      className={`px-3 py-2 text-sm rounded-lg ${
+                        dateFilter === 'all' ? 'bg-blue-600 text-white' : 'border border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      All Time
+                    </button>
+                    <button
+                      onClick={() => {
+                        setDateFilter('today')
+                        setCurrentPage(1)
+                      }}
+                      className={`px-3 py-2 text-sm rounded-lg ${
+                        dateFilter === 'today' ? 'bg-blue-600 text-white' : 'border border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      Today
+                    </button>
+                    <button
+                      onClick={() => {
+                        setDateFilter('week')
+                        setCurrentPage(1)
+                      }}
+                      className={`px-3 py-2 text-sm rounded-lg ${
+                        dateFilter === 'week' ? 'bg-blue-600 text-white' : 'border border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      This Week
+                    </button>
+                    <button
+                      onClick={() => {
+                        setDateFilter('month')
+                        setCurrentPage(1)
+                      }}
+                      className={`px-3 py-2 text-sm rounded-lg ${
+                        dateFilter === 'month' ? 'bg-blue-600 text-white' : 'border border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      This Month
+                    </button>
+                  </div>
+
                   <select className="px-4 py-2 border border-gray-200 rounded-lg text-sm">
                     <option>All Status</option>
                     <option>New</option>
@@ -722,16 +827,15 @@ CC: admin@gennoor.com`)
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lead</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Company</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">LinkedIn</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Value</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">AI</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Last Activity</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Owner</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {filteredLeads.slice(0, 10).map((lead) => (
+                    {currentLeads.map((lead) => (
                       <tr key={lead.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4">
                           <input
@@ -762,19 +866,16 @@ CC: admin@gennoor.com`)
                         <td className="px-6 py-4">
                           <div className="text-sm text-gray-900">{lead.company}</div>
                           <div className="text-sm text-gray-500">{lead.designation}</div>
-                        </td>
-                        <td className="px-6 py-4">
-                          {lead.linkedin ? (
+                          {lead.linkedin && (
                             <a
                               href={lead.linkedin}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-blue-600 hover:text-blue-800"
+                              className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 mt-1"
                             >
-                              <Linkedin className="w-4 h-4" />
+                              <Linkedin className="w-3 h-3" />
+                              Connect
                             </a>
-                          ) : (
-                            <span className="text-gray-400">-</span>
                           )}
                         </td>
                         <td className="px-6 py-4">
@@ -785,12 +886,8 @@ CC: admin@gennoor.com`)
                         <td className="px-6 py-4 text-sm text-gray-900">
                           ₹{(lead.value / 1000).toFixed(0)}K
                         </td>
-                        <td className="px-6 py-4">
-                          {lead.aiResearch ? (
-                            <CheckCircle className="w-4 h-4 text-green-500" />
-                          ) : (
-                            <div className="w-4 h-4 border border-gray-300 rounded" />
-                          )}
+                        <td className="px-6 py-4 text-sm text-gray-500">
+                          {formatDate(lead.lastActivity)}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">{lead.owner}</td>
                         <td className="px-6 py-4">
@@ -834,6 +931,64 @@ CC: admin@gennoor.com`)
                     ))}
                   </tbody>
                 </table>
+
+                {/* Pagination */}
+                <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                  <div className="text-sm text-gray-700">
+                    Showing {startIndex + 1} to {Math.min(endIndex, filteredLeads.length)} of{' '}
+                    {filteredLeads.length} leads
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                      disabled={currentPage === 1}
+                      className="px-3 py-1 border border-gray-200 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                    >
+                      Previous
+                    </button>
+
+                    {/* Page Numbers */}
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                        let pageNum
+                        if (totalPages <= 5) {
+                          pageNum = i + 1
+                        } else if (currentPage <= 3) {
+                          pageNum = i + 1
+                        } else if (currentPage >= totalPages - 2) {
+                          pageNum = totalPages - 4 + i
+                        } else {
+                          pageNum = currentPage - 2 + i
+                        }
+
+                        if (pageNum > 0 && pageNum <= totalPages) {
+                          return (
+                            <button
+                              key={pageNum}
+                              onClick={() => setCurrentPage(pageNum)}
+                              className={`px-3 py-1 rounded text-sm ${
+                                currentPage === pageNum
+                                  ? 'bg-blue-600 text-white'
+                                  : 'border border-gray-200 hover:bg-gray-50'
+                              }`}
+                            >
+                              {pageNum}
+                            </button>
+                          )
+                        }
+                        return null
+                      })}
+                    </div>
+
+                    <button
+                      onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                      disabled={currentPage === totalPages || totalPages === 0}
+                      className="px-3 py-1 border border-gray-200 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           )}
