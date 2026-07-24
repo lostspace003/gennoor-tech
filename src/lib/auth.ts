@@ -1,6 +1,13 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { validateUserCredentials } from '@/config/users'
+
+// Authorized emails for the CRM system
+const AUTHORIZED_USERS = [
+  { email: 'admin@gennoor.com', name: 'Admin', role: 'admin' },
+  { email: 'jalalkhan@gennoor.com', name: 'Jalal Khan', role: 'ceo' },
+  { email: 'yusufchaudhary@gennoor.com', name: 'Yusuf Chaudhary', role: 'manager' },
+  { email: 'contact@gennoor.com', name: 'Contact', role: 'sales' }
+]
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -11,19 +18,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        if (!credentials?.email) {
           return null
         }
 
-        // Validate user credentials using Entry ID system
-        const user = validateUserCredentials(
-          credentials.email as string,
-          credentials.password as string
+        // Find user by email - no password check needed for internal tool
+        const user = AUTHORIZED_USERS.find(
+          u => u.email.toLowerCase() === credentials.email?.toLowerCase()
         )
 
         if (user) {
           return {
-            id: user.entryId,
+            id: user.email,
             email: user.email,
             name: user.name,
             role: user.role
@@ -47,7 +53,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return true
     },
     async signIn({ user }) {
-      // User is already validated in authorize callback
       return !!user
     },
     async session({ session, token }) {
@@ -70,6 +75,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   trustHost: true,
-  // IMPORTANT: Set NEXTAUTH_SECRET in production!
   secret: process.env.NEXTAUTH_SECRET || 'dev-secret-change-in-production-7A3B9C2D8E4F1A6B5C9D0E3F8A2B7C4D',
 })

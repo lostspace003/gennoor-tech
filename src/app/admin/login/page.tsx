@@ -31,7 +31,7 @@ function LoginContent() {
     try {
       const result = await signIn('credentials', {
         email,
-        password,
+        password: 'internal', // No password needed for internal CRM
         redirect: false,
         callbackUrl,
       })
@@ -51,8 +51,12 @@ function LoginContent() {
 
   const quickLogin = (userEmail: string) => {
     setEmail(userEmail)
-    // User must enter their password
-    document.getElementById('password-input')?.focus()
+    setPassword('internal')
+    setTimeout(() => {
+      document.getElementById('login-form')?.dispatchEvent(
+        new Event('submit', { bubbles: true, cancelable: true })
+      )
+    }, 100)
   }
 
   return (
@@ -100,27 +104,11 @@ function LoginContent() {
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  id="password-input"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your Entry ID password"
-                  className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                  required
-                />
-              </div>
-            </div>
+            <input type="hidden" value="internal" name="password" />
 
             <button
               type="submit"
-              disabled={loading || !email || !password}
+              disabled={loading || !email}
               className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium rounded-lg hover:shadow-lg transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading ? (
