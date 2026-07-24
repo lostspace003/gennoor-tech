@@ -38,11 +38,9 @@ export const authOptions: NextAuthConfig = {
       return token
     },
     async session({ session, token }) {
-      if (token?.email) {
-        session.user = {
-          email: token.email as string,
-          name: (token.email as string).split('@')[0]
-        }
+      if (token?.email && session.user) {
+        session.user.email = token.email as string
+        session.user.name = (token.email as string).split('@')[0]
       }
       return session
     }
