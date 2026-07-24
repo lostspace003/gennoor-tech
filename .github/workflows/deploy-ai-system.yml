@@ -1,0 +1,128 @@
+name: Deploy AI Copilot System
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'services/**'
+      - 'docker-compose.leads.yml'
+      - '.github/workflows/deploy-ai-system.yml'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+          - development
+
+env:
+  AZURE_WEBAPP_NAME: gennoor-ai-copilot
+  AZURE_RESOURCE_GROUP: gennoor-tech-rg
+  CONTAINER_REGISTRY: gennoorcr.azurecr.io
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'production' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Login to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ env.CONTAINER_REGISTRY }}
+          username: ${{ secrets.AZURE_ACR_USERNAME }}
+          password: ${{ secrets.AZURE_ACR_PASSWORD }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Embedding Service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./services/embedding
+          push: true
+          tags: |
+            ${{ env.CONTAINER_REGISTRY }}/embedding-service:${{ github.sha }}
+            ${{ env.CONTAINER_REGISTRY }}/embedding-service:latest
+          cache-from: type=registry,ref=${{ env.CONTAINER_REGISTRY }}/embedding-service:buildcache
+          cache-to: type=registry,ref=${{ env.CONTAINER_REGISTRY }}/embedding-service:buildcache,mode=max
+
+      - name: Build and push RAG API Service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./services/rag-api
+          push: true
+          tags: |
+            ${{ env.CONTAINER_REGISTRY }}/rag-api:${{ github.sha }}
+            ${{ env.CONTAINER_REGISTRY }}/rag-api:latest
+          cache-from: type=registry,ref=${{ env.CONTAINER_REGISTRY }}/rag-api:buildcache
+          cache-to: type=registry,ref=${{ env.CONTAINER_REGISTRY }}/rag-api:buildcache,mode=max
+
+      - name: Build and push Indexer Service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./services/indexer
+          push: true
+          tags: |
+            ${{ env.CONTAINER_REGISTRY }}/indexer:${{ github.sha }}
+            ${{ env.CONTAINER_REGISTRY }}/indexer:latest
+          cache-from: type=registry,ref=${{ env.CONTAINER_REGISTRY }}/indexer:buildcache
+          cache-to: type=registry,ref=${{ env.CONTAINER_REGISTRY }}/indexer:buildcache,mode=max
+
+      - name: Deploy to Azure Container Instances
+        uses: azure/aci-deploy@v1
+        with:
+          resource-group: ${{ env.AZURE_RESOURCE_GROUP }}
+          dns-name-label: gennoor-ai-copilot
+          image: ${{ env.CONTAINER_REGISTRY }}/rag-api:${{ github.sha }}
+          name: gennoor-ai-copilot
+          location: 'centralindia'
+          secure-environment-variables: |
+            OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+            AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            BING_API_KEY=${{ secrets.BING_API_KEY }}
+            FOUNDRY_API_KEY=${{ secrets.FOUNDRY_API_KEY }}
+            EMBEDDING_API_KEY=${{ secrets.EMBEDDING_API_KEY }}
+            MICROSOFT_ENTRA_CLIENT_ID=${{ secrets.MICROSOFT_ENTRA_CLIENT_ID }}
+            MICROSOFT_ENTRA_CLIENT_SECRET=${{ secrets.MICROSOFT_ENTRA_CLIENT_SECRET }}
+            MICROSOFT_ENTRA_TENANT_ID=${{ secrets.MICROSOFT_ENTRA_TENANT_ID }}
+
+      - name: Update Azure App Service Settings
+        run: |
+          az webapp config appsettings set \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --name ${{ env.AZURE_WEBAPP_NAME }} \
+            --settings \
+              AI_COPILOT_ENDPOINT="https://gennoor-ai-copilot.centralindia.azurecontainer.io" \
+              EMBEDDING_SERVICE_URL="https://gennoor-ai-copilot.centralindia.azurecontainer.io:8001" \
+              RAG_API_URL="https://gennoor-ai-copilot.centralindia.azurecontainer.io:8002"
+
+      - name: Setup Scheduled Indexing (Azure Logic App)
+        run: |
+          az logic workflow create \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --name gennoor-indexer-schedule \
+            --definition @azure-logic-app-indexer.json
+
+      - name: Notify Deployment Status
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: 'AI Copilot deployment ${{ job.status }} for ${{ github.event.inputs.environment || 'production' }}'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+          fields: repo,message,commit,author,eventName,ref,workflow
