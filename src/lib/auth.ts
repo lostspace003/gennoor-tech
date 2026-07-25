@@ -6,7 +6,8 @@ const AUTHORIZED_EMAILS = [
   'admin@gennoor.com',
   'jalalkhan@gennoor.com',
   'yusufchaudhary@gennoor.com',
-  'contact@gennoor.com'
+  'contact@gennoor.com',
+  'contacts@gennoor.com'  // Added new user
 ]
 
 export const { handlers, signIn, signOut, auth } = NextAuth({

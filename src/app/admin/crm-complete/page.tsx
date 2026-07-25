@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { useSession } from 'next-auth/react'
+import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import GennoorBot from '@/components/GennoorBot/GennoorBot'
 import * as XLSX from 'xlsx'
@@ -13,7 +13,7 @@ import {
   MessageSquare, Settings, ChevronDown, Eye, Edit,
   Trash2, Send, Archive, Tag, MapPin, Globe, Linkedin,
   Upload, Download, Sparkles, Bot, FileSpreadsheet,
-  Brain, Zap, Database, RefreshCw, CheckSquare
+  Brain, Zap, Database, RefreshCw, CheckSquare, LogOut, User
 } from 'lucide-react'
 
 type ViewMode = 'dashboard' | 'leads' | 'companies' | 'pipeline' | 'activities' | 'campaigns' | 'ai-research' | 'email-automation'
@@ -198,30 +198,49 @@ export default function CRMCompletePage() {
         // Process each sheet
         workbook.SheetNames.forEach((sheetName) => {
           const worksheet = workbook.Sheets[sheetName]
-          const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: 'NA' })
+
+          // Skip non-data sheets
+          if (sheetName === 'Read me & Sources' || sheetName === 'Lead Pivot') return
+
+          // For Gennoor_GCC sheet, data starts from row 4
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, {
+            defval: '',
+            range: 3  // Start from row 4 (0-indexed)
+          })
 
           // Convert Excel data to Lead format
-          const sheetLeads = jsonData.map((row: any, index) => ({
-            id: `EXCEL-${Date.now()}-${index}`,
-            name: row['Name'] || row['Contact Name'] || 'NA',
-            email: row['Email'] || row['Email Address'] || 'NA',
-            phone: row['Phone'] || row['Contact'] || 'NA',
-            company: row['Company'] || row['Organization'] || 'NA',
-            designation: row['Designation'] || row['Title'] || 'NA',
-            linkedin: row['LinkedIn'] || row['LinkedIn URL'] || '',
-            website: row['Website'] || row['Company Website'] || '',
-            status: 'new' as const,
-            processStatus: 'active' as const,  // Add required processStatus
-            stage: 'diagnose' as const,        // Add required stage
-            value: parseFloat(row['Value'] || row['Deal Size'] || '0') || 0,
-            score: parseFloat(row['Score'] || '50') || 50,
-            lastActivity: new Date().toISOString(),
-            nextAction: 'Initial Contact',
-            owner: session?.user?.email?.split('@')[0] || 'Admin',
-            source: 'Excel Import',
-            tags: ['Imported', sheetName],
-            notes: `Imported from ${file.name} - ${sheetName} sheet`
-          }))
+          const sheetLeads = jsonData.map((row: any, index) => {
+            // Map columns based on actual structure
+            const contact = row['Contact'] || row['Name'] || ''
+            const company = row['Company / Org'] || row['Company'] || row['Organization'] || 'NA'
+
+            return {
+              id: `EXCEL-${Date.now()}-${index}`,
+              name: contact || 'Contact Needed',
+              email: row['Email'] || `contact@${company.toLowerCase().replace(/\s+/g, '')}.com`,
+              phone: row['Phone'] || row['Contact Number'] || '+91-XXXXXXXXXX',
+              company: company,
+              designation: row['Designation'] || row['Title'] || 'Decision Maker',
+              linkedin: row['LinkedIn'] || row['LinkedIn URL'] || '',
+              website: row['Website'] || row['Company Website'] || '',
+              status: 'new' as const,
+              processStatus: 'active' as const,
+              stage: 'diagnose' as const,
+              value: 0,
+              score: row['Priority'] === 'High' ? 80 : row['Priority'] === 'Medium' ? 50 : 30,
+              lastActivity: new Date().toISOString(),
+              nextAction: 'Initial Contact',
+              owner: session?.user?.email?.split('@')[0] || 'Admin',
+              source: 'Excel Import',
+              tags: [
+                'Imported',
+                row['Lead Type'] || 'General',
+                row['Priority'] || 'Medium',
+                row['Region'] || 'Global'
+              ].filter(Boolean),
+              notes: `${row['Sector / Segment'] || ''} | ${row['City'] || ''}, ${row['Country'] || ''} | ${file.name}`
+            }
+          }).filter(lead => lead.company !== 'NA' && lead.company !== '') // Filter out empty rows
 
           allLeads = [...allLeads, ...sheetLeads]
           setUploadProgress((prev) => prev + (100 / workbook.SheetNames.length))
@@ -642,6 +661,19 @@ CC: admin@gennoor.com`)
             </div>
 
             <div className="flex items-center gap-3">
+              {/* Excel Template Download - Available to all */}
+              {currentView === 'leads' && (
+                <button
+                  onClick={() => {
+                    window.location.href = '/api/admin/template'
+                  }}
+                  className="px-4 py-2 border border-gray-200 text-sm rounded-lg hover:bg-gray-50 flex items-center gap-2"
+                >
+                  <Download className="w-4 h-4" />
+                  Download Template
+                </button>
+              )}
+
               {/* Excel Upload - Admin Only */}
               {session?.user?.email === 'admin@gennoor.com' && currentView === 'leads' && (
                 <>
@@ -693,9 +725,20 @@ CC: admin@gennoor.com`)
                 <RefreshCw className="w-5 h-5 text-gray-600" />
               </button>
 
-              <button className="p-2 hover:bg-gray-100 rounded-lg">
-                <Settings className="w-5 h-5 text-gray-600" />
-              </button>
+              {/* User Info & Logout */}
+              <div className="flex items-center gap-3 pl-3 border-l border-gray-200">
+                <div className="flex items-center gap-2">
+                  <User className="w-5 h-5 text-gray-600" />
+                  <span className="text-sm text-gray-700">{session?.user?.email}</span>
+                </div>
+                <button
+                  onClick={() => signOut({ callbackUrl: '/admin/login' })}
+                  className="p-2 hover:bg-red-50 rounded-lg text-red-600"
+                  title="Logout"
+                >
+                  <LogOut className="w-5 h-5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -1258,11 +1301,35 @@ CC: admin@gennoor.com`)
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">
+                    <button
+                      onClick={() => {
+                        setShowEmailComposer(true)
+                        setSelectedLeads([selectedLead.id])
+                      }}
+                      className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 flex items-center gap-2"
+                    >
+                      <Mail className="w-4 h-4" />
                       Send Email
                     </button>
-                    <button className="px-4 py-2 border border-gray-200 text-sm rounded-lg hover:bg-gray-50">
-                      Schedule Meeting
+                    <button
+                      onClick={() => setLeadView('edit')}
+                      className="px-4 py-2 border border-gray-200 text-sm rounded-lg hover:bg-gray-50 flex items-center gap-2"
+                    >
+                      <Edit className="w-4 h-4" />
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (confirm(`Delete lead ${selectedLead.name}?`)) {
+                          setLeads(leads.filter(l => l.id !== selectedLead.id))
+                          setLeadView('list')
+                          setSelectedLead(null)
+                        }
+                      }}
+                      className="px-4 py-2 border border-red-200 text-red-600 text-sm rounded-lg hover:bg-red-50 flex items-center gap-2"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Delete
                     </button>
                   </div>
                 </div>

@@ -33,24 +33,10 @@ function LoginContent() {
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none">
-              <circle cx="24" cy="24" r="20" stroke="url(#gradient)" strokeWidth="3" strokeDasharray="4 4"/>
-              <circle cx="24" cy="24" r="8" fill="url(#gradient)"/>
-              <circle cx="24" cy="12" r="3" fill="#2563eb"/>
-              <circle cx="36" cy="24" r="3" fill="#7c3aed"/>
-              <circle cx="24" cy="36" r="3" fill="#2563eb"/>
-              <circle cx="12" cy="24" r="3" fill="#7c3aed"/>
-              <defs>
-                <linearGradient id="gradient" x1="0" y1="0" x2="48" y2="48">
-                  <stop offset="0%" stopColor="#2563eb"/>
-                  <stop offset="100%" stopColor="#7c3aed"/>
-                </linearGradient>
-              </defs>
-            </svg>
-            <div className="text-left">
-              <h1 className="text-2xl font-bold text-gray-900">Gennoor Tech</h1>
-              <p className="text-xs text-gray-500">TRAIN. INNOVATE. BUILD.</p>
+          <div className="flex items-center justify-center mb-4">
+            <div className="text-center">
+              <h1 className="text-3xl font-bold text-gray-900">Gennoor Tech</h1>
+              <p className="text-sm text-gray-600 tracking-widest mt-1">TRAIN. INNOVATE. BUILD.</p>
             </div>
           </div>
           <p className="text-gray-600 mt-2">CRM Lead Intelligence System</p>
@@ -91,18 +77,9 @@ function LoginContent() {
           </button>
 
           <div className="mt-6 pt-6 border-t border-gray-200">
-            <p className="text-xs text-gray-500 text-center mb-2">
-              Only authorized Gennoor accounts can access this dashboard.
+            <p className="text-xs text-gray-500 text-center">
+              Secure access for authorized Gennoor team members only.
             </p>
-            <div className="text-xs text-gray-400 text-center">
-              Authorized users:
-              <div className="mt-2 space-y-1">
-                <div>admin@gennoor.com</div>
-                <div>jalalkhan@gennoor.com</div>
-                <div>yusufchaudhary@gennoor.com</div>
-                <div>contact@gennoor.com</div>
-              </div>
-            </div>
           </div>
 
           <div className="mt-6 text-center">
