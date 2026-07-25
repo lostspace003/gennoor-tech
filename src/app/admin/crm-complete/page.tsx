@@ -74,6 +74,14 @@ export default function CRMCompletePage() {
   const [aiResearchActive, setAiResearchActive] = useState(false)
   const [emailDraft, setEmailDraft] = useState('')
   const [showEmailComposer, setShowEmailComposer] = useState(false)
+  const [uploadValidation, setUploadValidation] = useState<{
+    show: boolean
+    errors: string[]
+    processed: number
+    skipped: number
+    valid: number
+  }>({ show: false, errors: [], processed: 0, skipped: 0, valid: 0 })
+  const [pendingLeads, setPendingLeads] = useState<Lead[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Check authentication status
@@ -194,39 +202,89 @@ export default function CRMCompletePage() {
         const workbook = XLSX.read(data, { type: 'array' })
 
         let allLeads: Lead[] = []
+        let validationErrors: string[] = []
+        let skippedRows = 0
+        let processedRows = 0
 
         // Process each sheet
         workbook.SheetNames.forEach((sheetName) => {
           const worksheet = workbook.Sheets[sheetName]
 
-          // Skip non-data sheets
-          if (sheetName === 'Read me & Sources' || sheetName === 'Lead Pivot') return
+          // Skip non-data sheets (including Instructions sheet from template)
+          if (sheetName === 'Instructions' || sheetName === 'Read me & Sources' || sheetName === 'Lead Pivot') return
 
-          // For Gennoor_GCC sheet, data starts from row 4
+          // Try to detect if it's our template format or Gennoor_GCC format
+          const firstRowCheck = XLSX.utils.sheet_to_json(worksheet, { header: 1, range: 0, defval: '' })
+          const hasStandardHeaders = firstRowCheck[0] && (
+            firstRowCheck[0].includes('Name') ||
+            firstRowCheck[0].includes('Email') ||
+            firstRowCheck[0].includes('Company')
+          )
+
           const jsonData = XLSX.utils.sheet_to_json(worksheet, {
             defval: '',
-            range: 3  // Start from row 4 (0-indexed)
+            range: hasStandardHeaders ? 0 : 3  // Start from row 1 for standard, row 4 for Gennoor_GCC
           })
 
-          // Convert Excel data to Lead format
-          const sheetLeads = jsonData.map((row: any, index) => {
-            // Map columns based on actual structure
-            const contact = row['Contact'] || row['Name'] || ''
-            const company = row['Company / Org'] || row['Company'] || row['Organization'] || 'NA'
+          // Validate and convert Excel data to Lead format
+          jsonData.forEach((row: any, index) => {
+            processedRows++
 
-            return {
+            // Required field validation
+            const name = row['Name'] || row['Contact'] || ''
+            const email = row['Email'] || row['Email Address'] || ''
+            const phone = row['Phone'] || row['Contact Number'] || ''
+            const company = row['Company / Org'] || row['Company'] || row['Organization'] || ''
+            const designation = row['Designation'] || row['Title'] || ''
+
+            // Skip empty rows
+            if (!name && !email && !company) {
+              skippedRows++
+              return
+            }
+
+            // Validation checks
+            const rowErrors: string[] = []
+
+            if (!name || name === 'NA' || name === '') {
+              rowErrors.push(`Row ${index + 1}: Name is required`)
+            }
+
+            if (!email || email === 'NA' || email === '') {
+              rowErrors.push(`Row ${index + 1}: Email is required`)
+            } else if (!email.includes('@') || !email.includes('.')) {
+              rowErrors.push(`Row ${index + 1}: Invalid email format (${email})`)
+            }
+
+            if (!company || company === 'NA' || company === '') {
+              rowErrors.push(`Row ${index + 1}: Company is required`)
+            }
+
+            if (!designation || designation === 'NA' || designation === '') {
+              rowErrors.push(`Row ${index + 1}: Designation is required`)
+            }
+
+            // If validation fails, add to errors and skip
+            if (rowErrors.length > 0) {
+              validationErrors.push(...rowErrors)
+              skippedRows++
+              return
+            }
+
+            // Create lead with validated data
+            const lead: Lead = {
               id: `EXCEL-${Date.now()}-${index}`,
-              name: contact || 'Contact Needed',
-              email: row['Email'] || `contact@${company.toLowerCase().replace(/\s+/g, '')}.com`,
-              phone: row['Phone'] || row['Contact Number'] || '+91-XXXXXXXXXX',
-              company: company,
-              designation: row['Designation'] || row['Title'] || 'Decision Maker',
-              linkedin: row['LinkedIn'] || row['LinkedIn URL'] || '',
-              website: row['Website'] || row['Company Website'] || '',
+              name: name.trim(),
+              email: email.trim().toLowerCase(),
+              phone: phone || 'Not provided',
+              company: company.trim(),
+              designation: designation.trim(),
+              linkedin: (row['LinkedIn'] || row['LinkedIn URL'] || '').trim(),
+              website: (row['Website'] || row['Company Website'] || '').trim(),
               status: 'new' as const,
               processStatus: 'active' as const,
               stage: 'diagnose' as const,
-              value: 0,
+              value: parseFloat(row['Value'] || '0') || 0,
               score: row['Priority'] === 'High' ? 80 : row['Priority'] === 'Medium' ? 50 : 30,
               lastActivity: new Date().toISOString(),
               nextAction: 'Initial Contact',
@@ -238,13 +296,39 @@ export default function CRMCompletePage() {
                 row['Priority'] || 'Medium',
                 row['Region'] || 'Global'
               ].filter(Boolean),
-              notes: `${row['Sector / Segment'] || ''} | ${row['City'] || ''}, ${row['Country'] || ''} | ${file.name}`
+              notes: [
+                row['Notes'],
+                row['Sector / Segment'],
+                row['City'] && row['Country'] ? `${row['City']}, ${row['Country']}` : row['Country'] || row['City'],
+                `Imported from ${file.name}`
+              ].filter(Boolean).join(' | ')
             }
-          }).filter(lead => lead.company !== 'NA' && lead.company !== '') // Filter out empty rows
 
-          allLeads = [...allLeads, ...sheetLeads]
+            allLeads.push(lead)
+          })
+
           setUploadProgress((prev) => prev + (100 / workbook.SheetNames.length))
         })
+
+        // Show validation results
+        if (validationErrors.length > 0 || skippedRows > 0) {
+          setPendingLeads(allLeads) // Store valid leads for later import
+          setUploadValidation({
+            show: true,
+            errors: validationErrors,
+            processed: processedRows,
+            skipped: skippedRows,
+            valid: allLeads.length
+          })
+          setUploadProgress(0)
+          return
+        }
+
+        if (allLeads.length === 0) {
+          alert('No valid leads found in the Excel file. Please check the format and try again.')
+          setUploadProgress(0)
+          return
+        }
 
         // Save to database
         const response = await fetch('/api/admin/leads/bulk-upload', {
@@ -255,7 +339,7 @@ export default function CRMCompletePage() {
 
         if (response.ok) {
           setLeads([...leads, ...allLeads])
-          alert(`Successfully imported ${allLeads.length} leads from ${workbook.SheetNames.length} sheets`)
+          alert(`✅ Successfully imported ${allLeads.length} leads!\n\nProcessed: ${processedRows} rows\nSkipped: ${skippedRows} rows`)
         }
       } catch (error) {
         console.error('Error processing file:', error)
