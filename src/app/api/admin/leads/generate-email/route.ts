@@ -1,66 +1,57 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { requireCrmUser } from '@/lib/crm/access'
+import { getLead } from '@/lib/crm/store'
+import { aiConfigured, draftEmail } from '@/lib/crm/ai'
+import { Lead } from '@/lib/crm/types'
 
-export async function POST(request: Request) {
-  try {
-    const session = await auth()
+// Honest fallback used when AI is unavailable — no invented statistics.
+function fallbackDraft(lead: Lead): { subject: string; body: string } {
+  const first = (lead.name || 'there').split(/\s+/)[0]
+  return {
+    subject: `AI enablement for ${lead.company || 'your team'} — free webinar from Gennoor Tech`,
+    body: `Dear ${first},
 
-    if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
+I'm reaching out from Gennoor Tech. We help organizations adopt AI through a clear journey: we diagnose where AI fits your work, train your team (technical and non-technical tracks), build a proof of concept you can see working, develop it into a product, and stay on for 3-6 months of hand-holding.
 
-    const { leadIds, context } = await request.json()
+To start, we'd love to offer ${lead.company || 'your organization'} two things, completely free:
+- A 2-hour webinar tailored to your team's needs
+- A 1-day online AI training for your people
 
-    // Generate personalized email draft
-    const draft = `Subject: Transform Your Business with Gennoor Tech's Innovative Solutions
+These are relationship-building sessions — no strings attached. You can also see our work on enterprise AI agent development on our YouTube channel.
 
-Dear [Name],
-
-I hope this message finds you well. I'm reaching out from Gennoor Tech because I believe we can add significant value to your organization's digital transformation journey.
-
-At Gennoor Tech, we've helped numerous companies like yours achieve:
-• 40% increase in operational efficiency through AI-powered automation
-• 60% reduction in manual processes with our custom solutions
-• Seamless digital transformation with minimal disruption
-
-Our comprehensive services include:
-✓ AI & Machine Learning Integration
-✓ Custom Software Development
-✓ Cloud Migration & Infrastructure
-✓ Process Automation & Optimization
-✓ Enterprise Training & Support
-
-What sets us apart:
-• Proven track record with 100+ successful implementations
-• Industry-leading expertise in cutting-edge technologies
-• Personalized approach tailored to your specific needs
-• Ongoing support and continuous improvement
-
-I'd love to schedule a brief 15-minute call to understand your current challenges and explore how Gennoor Tech can help accelerate your growth.
-
-Are you available for a quick discussion this week? I'm happy to work around your schedule.
-
-Looking forward to connecting with you soon.
+Would a short call this week work to pick a topic your team would benefit from most?
 
 Best regards,
-${session.user?.email?.split('@')[0] || 'Team Gennoor'}
-Gennoor Tech
+Team Gennoor Tech
+admin@gennoor.com | +91 9326352241
+www.gennoor.com`,
+  }
+}
 
-P.S. Feel free to check out our recent success stories at gennoor.com
+export async function POST(request: Request) {
+  const user = await requireCrmUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
----
-CC: admin@gennoor.com
-This email is automatically CC'd to admin for quality assurance and follow-up.`
+  try {
+    const { leadId, instructions } = await request.json()
+    if (!leadId) return NextResponse.json({ error: 'leadId required' }, { status: 400 })
 
-    return NextResponse.json({ draft })
+    const lead = await getLead(leadId)
+    if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
+
+    if (!aiConfigured()) {
+      return NextResponse.json({ ...fallbackDraft(lead), source: 'template' })
+    }
+
+    try {
+      const draft = await draftEmail(lead, instructions)
+      return NextResponse.json({ ...draft, source: 'ai' })
+    } catch (error) {
+      console.error('AI draft failed, using template:', error)
+      return NextResponse.json({ ...fallbackDraft(lead), source: 'template' })
+    }
   } catch (error) {
     console.error('Error generating email:', error)
-    return NextResponse.json(
-      { error: 'Failed to generate email' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to generate email' }, { status: 500 })
   }
 }

@@ -35,8 +35,9 @@ function LoginContent() {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
             <div className="text-center">
-              <h1 className="text-3xl font-bold text-gray-900">Gennoor Tech</h1>
-              <p className="text-sm text-gray-600 tracking-widest mt-1">TRAIN. INNOVATE. BUILD.</p>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logos/gennoor-tech-compact-dark.svg" alt="Gennoor Tech" className="h-12 w-auto mx-auto" />
+              <p className="text-sm text-gray-600 tracking-widest mt-2">TRAIN. INNOVATE. BUILD.</p>
             </div>
           </div>
           <p className="text-gray-600 mt-2">CRM Lead Intelligence System</p>

@@ -1,37 +1,37 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { requireCrmUser } from '@/lib/crm/access'
+import { upsertLeads } from '@/lib/crm/store'
+import { newLead } from '@/lib/crm/types'
 
 export async function POST(request: Request) {
-  try {
-    const session = await auth()
+  const user = await requireCrmUser()
+  if (!user?.isAdmin) {
+    return NextResponse.json({ error: 'Only admin@gennoor.com can upload leads' }, { status: 403 })
+  }
 
-    // Only admin can bulk upload
-    if (session?.user?.email !== 'admin@gennoor.com') {
-      return NextResponse.json(
-        { error: 'Only admin@gennoor.com can upload leads' },
-        { status: 403 }
-      )
+  try {
+    const { leads } = await request.json()
+    if (!Array.isArray(leads) || leads.length === 0) {
+      return NextResponse.json({ error: 'No leads provided' }, { status: 400 })
+    }
+    if (leads.length > 10000) {
+      return NextResponse.json({ error: 'Maximum 10,000 leads per upload' }, { status: 400 })
     }
 
-    const { leads } = await request.json()
+    const prepared = leads
+      .filter((l: any) => l && typeof l.name === 'string' && l.name.trim())
+      .map((l: any) => newLead({ ...l, source: l.source || 'Excel Import' }, user.email))
 
-    // Here you would save to database
-    // For now, we'll simulate success
-    console.log(`Uploading ${leads.length} leads to database...`)
-
-    // Simulate database save
-    await new Promise(resolve => setTimeout(resolve, 500))
+    const { added, updated } = await upsertLeads(prepared, user.email)
 
     return NextResponse.json({
       success: true,
-      message: `Successfully uploaded ${leads.length} leads`,
-      leadsCount: leads.length
+      added,
+      updated,
+      message: `Imported ${added} new leads${updated ? `, refreshed ${updated} existing` : ''}`,
     })
   } catch (error) {
     console.error('Error uploading leads:', error)
-    return NextResponse.json(
-      { error: 'Failed to upload leads' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to save leads' }, { status: 500 })
   }
 }

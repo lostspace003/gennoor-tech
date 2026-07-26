@@ -1,31 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
-import { dbOperations } from '@/lib/azure/database'
+import { requireCrmUser } from '@/lib/crm/access'
+import { getLeads, mutateLeads, touch } from '@/lib/crm/store'
+import { newLead, Lead } from '@/lib/crm/types'
 
-// Authorized emails
-const AUTHORIZED_EMAILS = [
-  'admin@gennoor.com',
-  'contact@gennoor.com',
-  'yusufchaudhary@gennoor.com',
-  'jalalkhan@gennoor.com'
-]
+export async function GET() {
+  const user = await requireCrmUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-export async function GET(req: NextRequest) {
   try {
-    // Check authentication
-    const session = await auth()
-    if (!session || !AUTHORIZED_EMAILS.includes(session.user?.email || '')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    // Get all leads from Azure SQL Database
-    const leads = await dbOperations.getLeads()
-
-    return NextResponse.json({
-      leads: leads.recordset || [],
-      total: leads.recordset?.length || 0
-    })
-
+    const leads = await getLeads()
+    return NextResponse.json({ leads, total: leads.length })
   } catch (error) {
     console.error('Error fetching leads:', error)
     return NextResponse.json({ error: 'Failed to fetch leads' }, { status: 500 })
@@ -33,72 +17,51 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const user = await requireCrmUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
   try {
-    // Check authentication
-    const session = await auth()
-    if (!session || !AUTHORIZED_EMAILS.includes(session.user?.email || '')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
     const data = await req.json()
-
-    // Validate required fields
-    if (!data.name || !data.email || !data.company) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    if (!data.name) {
+      return NextResponse.json({ error: 'Name is required' }, { status: 400 })
     }
-
-    // Generate unique ID
-    const leadId = `LEAD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-
-    const lead = {
-      id: leadId,
-      name: data.name,
-      email: data.email,
-      phone: data.phone || '',
-      company: data.company,
-      designation: data.designation || '',
-      linkedin: data.linkedin || '',
-      website: data.website || '',
-      status: data.status || 'new',
-      process_status: data.processStatus || 'active',
-      stage: data.stage || 'diagnose',
-      value: data.value || 0,
-      score: data.score || 50,
-      owner: data.owner || session.user?.email,
-      source: data.source || 'manual',
-      tags: JSON.stringify(data.tags || []),
-      notes: data.notes || ''
-    }
-
-    await dbOperations.createLead(lead)
-
-    return NextResponse.json(lead, { status: 201 })
-
+    const lead = newLead(data, user.email)
+    await mutateLeads((leads) => leads.unshift(lead))
+    return NextResponse.json({ lead }, { status: 201 })
   } catch (error) {
     console.error('Error creating lead:', error)
     return NextResponse.json({ error: 'Failed to create lead' }, { status: 500 })
   }
 }
 
+// Editable fields; system fields (activities, emailHistory, ...) are managed server-side.
+const EDITABLE: Array<keyof Lead> = [
+  'name', 'email', 'phone', 'company', 'designation', 'linkedin', 'website',
+  'status', 'processStatus', 'stage', 'priority', 'leadType', 'sector',
+  'region', 'country', 'city', 'value', 'score', 'owner', 'source', 'tags',
+  'notes', 'techProfile', 'finalizedPitch',
+]
+
 export async function PUT(req: NextRequest) {
+  const user = await requireCrmUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
   try {
-    // Check authentication
-    const session = await auth()
-    if (!session || !AUTHORIZED_EMAILS.includes(session.user?.email || '')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
     const data = await req.json()
+    if (!data.id) return NextResponse.json({ error: 'Lead ID required' }, { status: 400 })
 
-    if (!data.id) {
-      return NextResponse.json({ error: 'Lead ID required' }, { status: 400 })
-    }
+    const updated = await mutateLeads((leads) => {
+      const lead = leads.find((l) => l.id === data.id)
+      if (!lead) return null
+      for (const field of EDITABLE) {
+        if (field in data) (lead as any)[field] = data[field]
+      }
+      touch(lead, { at: new Date().toISOString(), by: user.email, type: 'updated', description: 'Lead details updated' })
+      return lead
+    })
 
-    // Update lead in Azure SQL Database
-    await dbOperations.updateLead(data.id, data)
-
-    return NextResponse.json({ success: true, lead: data })
-
+    if (!updated) return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
+    return NextResponse.json({ success: true, lead: updated })
   } catch (error) {
     console.error('Error updating lead:', error)
     return NextResponse.json({ error: 'Failed to update lead' }, { status: 500 })
@@ -106,26 +69,26 @@ export async function PUT(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  const user = await requireCrmUser()
+  if (!user?.isAdmin) return NextResponse.json({ error: 'Unauthorized - Admin only' }, { status: 401 })
+
   try {
-    // Check authentication - only admin can delete
-    const session = await auth()
-    if (!session || session.user?.email !== 'admin@gennoor.com') {
-      return NextResponse.json({ error: 'Unauthorized - Admin only' }, { status: 401 })
-    }
-
     const { searchParams } = new URL(req.url)
-    const id = searchParams.get('id')
+    const ids = searchParams.getAll('id')
+    if (ids.length === 0) return NextResponse.json({ error: 'Lead ID required' }, { status: 400 })
 
-    if (!id) {
-      return NextResponse.json({ error: 'Lead ID required' }, { status: 400 })
-    }
+    const removed = await mutateLeads((leads) => {
+      const before = leads.length
+      for (const id of ids) {
+        const idx = leads.findIndex((l) => l.id === id)
+        if (idx !== -1) leads.splice(idx, 1)
+      }
+      return before - leads.length
+    })
 
-    await dbOperations.deleteLead(id)
-
-    return NextResponse.json({ success: true, deleted: id })
-
+    return NextResponse.json({ success: true, deleted: removed })
   } catch (error) {
-    console.error('Error deleting lead:', error)
-    return NextResponse.json({ error: 'Failed to delete lead' }, { status: 500 })
+    console.error('Error deleting leads:', error)
+    return NextResponse.json({ error: 'Failed to delete leads' }, { status: 500 })
   }
 }

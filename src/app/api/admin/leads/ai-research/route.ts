@@ -1,47 +1,40 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { requireCrmUser } from '@/lib/crm/access'
+import { mutateLeads, getLead, touch } from '@/lib/crm/store'
+import { aiConfigured, researchLead } from '@/lib/crm/ai'
 
 export async function POST(request: Request) {
+  const user = await requireCrmUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  if (!aiConfigured()) {
+    return NextResponse.json(
+      { error: 'AI research is not configured. Set AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_KEY.' },
+      { status: 503 }
+    )
+  }
+
   try {
-    const session = await auth()
+    const { leadId } = await request.json()
+    if (!leadId) return NextResponse.json({ error: 'leadId required' }, { status: 400 })
 
-    if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
+    const lead = await getLead(leadId)
+    if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
 
-    const { name, company, linkedin, website } = await request.json()
+    const research = await researchLead(lead)
+    const aiResearch = { ...research, lastUpdated: new Date().toISOString() }
 
-    // Simulate AI research (in production, call GPT-4 or Foundry)
-    const research = {
-      summary: `${company} is a technology company specializing in digital transformation. The company has been growing rapidly with recent expansion into AI and cloud services. ${name} plays a key role in the organization's strategic initiatives.`,
-      insights: [
-        'Recently expanded into AI/ML services',
-        'Looking for automation solutions',
-        'Planning digital transformation initiatives',
-        'Growing team by 30% this year',
-        'Active on LinkedIn with regular updates'
-      ],
-      opportunities: [
-        'CRM system upgrade opportunity',
-        'Process automation potential',
-        'Training and consulting services',
-        'Long-term partnership possibility'
-      ],
-      lastUpdated: new Date().toISOString()
-    }
+    await mutateLeads((leads) => {
+      const l = leads.find((x) => x.id === leadId)
+      if (!l) return
+      l.aiResearch = aiResearch
+      l.techProfile = research.techOrNonTech
+      touch(l, { at: new Date().toISOString(), by: user.email, type: 'research', description: 'AI research completed' })
+    })
 
-    // Add delay to simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
-
-    return NextResponse.json(research)
+    return NextResponse.json({ research: aiResearch })
   } catch (error) {
     console.error('Error performing AI research:', error)
-    return NextResponse.json(
-      { error: 'Failed to perform AI research' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'AI research failed. Check Azure OpenAI configuration.' }, { status: 500 })
   }
 }
