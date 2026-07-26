@@ -91,7 +91,7 @@ export default function AgenticAIPage() {
       />
 
       {/* What are Agentic Systems */}
-      <section className="py-14 lg:py-20">
+      <section className="py-10 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-6">
@@ -119,7 +119,7 @@ export default function AgenticAIPage() {
 
       {/* Use Cases */}
       <div className="section-divider" />
-      <section className="py-14 lg:py-20">
+      <section className="py-10 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
             Real-World Agent Applications
@@ -150,7 +150,7 @@ export default function AgenticAIPage() {
 
       {/* Tech Stack */}
       <div className="section-divider" />
-      <section className="py-14 lg:py-20">
+      <section className="py-10 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
             Our Agentic AI Tech Stack
@@ -171,7 +171,7 @@ export default function AgenticAIPage() {
 
       {/* How We Build */}
       <div className="section-divider" />
-      <section className="py-14 lg:py-20">
+      <section className="py-10 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
             How We Build Agent Systems
@@ -229,7 +229,7 @@ export default function AgenticAIPage() {
 
       {/* Benefits */}
       <div className="section-divider" />
-      <section className="py-14 lg:py-20">
+      <section className="py-10 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
             Why Choose Agentic AI?
@@ -255,7 +255,7 @@ export default function AgenticAIPage() {
       </section>
 
       {/* Related Services */}
-      <section className="py-14 lg:py-20">
+      <section className="py-10 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Related Services</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
@@ -276,7 +276,7 @@ export default function AgenticAIPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-14 lg:py-20">
+      <section className="py-10 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Frequently Asked Questions</h2>
           <div className="max-w-3xl mx-auto space-y-6">
@@ -291,7 +291,7 @@ export default function AgenticAIPage() {
       </section>
 
       {/* CTA */}
-      <section className="relative py-14 lg:py-20 overflow-hidden">
+      <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0 bg-gradient-mesh" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">

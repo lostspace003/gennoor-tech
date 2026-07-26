@@ -67,7 +67,7 @@ export default function ServicesPage() {
       />
 
       {/* Service Cards */}
-      <section className="py-14 lg:py-20">
+      <section className="py-10 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-5 max-w-5xl mx-auto">
             {services.map((service) => {
@@ -107,7 +107,7 @@ export default function ServicesPage() {
       </section>
 
       {/* Training by Location */}
-      <section className="py-14 lg:py-20 relative">
+      <section className="py-10 lg:py-16 relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-10 text-center">Training by Location</h2>
@@ -128,7 +128,7 @@ export default function ServicesPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-14 lg:py-20 relative">
+      <section className="py-10 lg:py-16 relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Frequently Asked Questions</h2>
@@ -150,7 +150,7 @@ export default function ServicesPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-14 lg:py-20 relative overflow-hidden">
+      <section className="py-10 lg:py-16 relative overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0 bg-gradient-mesh" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">

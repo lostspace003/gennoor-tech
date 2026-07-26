@@ -38,7 +38,7 @@ export default function JourneyPage() {
       </PageHero>
 
       {/* Quote */}
-      <section className="py-14 lg:py-20 relative">
+      <section className="py-10 lg:py-16 relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
@@ -61,7 +61,7 @@ export default function JourneyPage() {
       </section>
 
       {/* Timeline */}
-      <section className="py-14 lg:py-20">
+      <section className="py-10 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <div className="relative">

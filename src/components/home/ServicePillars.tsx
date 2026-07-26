@@ -90,7 +90,7 @@ function GlassCard({ service, index }: { service: typeof siteConfig.services[0];
 
 export default function ServicePillars() {
   return (
-    <section className="py-20 lg:py-28 relative">
+    <section className="py-14 lg:py-20 relative">
       {/* Section divider */}
       <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
 

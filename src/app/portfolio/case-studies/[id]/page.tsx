@@ -45,7 +45,7 @@ export default function CaseStudyPage({ params }: { params: { id: string } }) {
   return (
     <>
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-50 to-accent-50 py-14 lg:py-20">
+      <section className="bg-gradient-to-br from-primary-50 to-accent-50 py-10 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <Link
             href="/portfolio/case-studies"

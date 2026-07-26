@@ -158,7 +158,7 @@ export default function AITrainingRemotePage() {
       />
 
       {/* How Remote Training Works */}
-      <section className="py-14 lg:py-20">
+      <section className="py-10 lg:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-4">
             How Remote Training Works
@@ -183,7 +183,7 @@ export default function AITrainingRemotePage() {
       </section>
 
       {/* What Makes It Different */}
-      <section className="py-14 lg:py-20 bg-gray-50">
+      <section className="py-10 lg:py-16 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -244,7 +244,7 @@ export default function AITrainingRemotePage() {
       </section>
 
       {/* Timezone Flexibility */}
-      <section className="py-14 lg:py-20">
+      <section className="py-10 lg:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="bg-primary-50 rounded-2xl p-8 md:p-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
@@ -313,7 +313,7 @@ export default function AITrainingRemotePage() {
       </section>
 
       {/* Past Remote Delivery */}
-      <section className="py-14 lg:py-20 bg-gray-50">
+      <section className="py-10 lg:py-16 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-4">
             Proven Remote Delivery Track Record
@@ -370,7 +370,7 @@ export default function AITrainingRemotePage() {
       </section>
 
       {/* Services */}
-      <section className="py-14 lg:py-20">
+      <section className="py-10 lg:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-12">
             What We Deliver Remotely
@@ -430,7 +430,7 @@ export default function AITrainingRemotePage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-14 lg:py-20 bg-gray-50">
+      <section className="py-10 lg:py-16 bg-gray-50">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
             Frequently Asked Questions

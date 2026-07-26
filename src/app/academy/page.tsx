@@ -48,7 +48,7 @@ export default function AcademyPage() {
       />
 
       {/* HERO */}
-      <section className="relative py-20 lg:py-28 overflow-hidden">
+      <section className="relative py-14 lg:py-20 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0 bg-gradient-mesh" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
@@ -102,7 +102,7 @@ export default function AcademyPage() {
       </section>
 
       {/* TRACKS */}
-      <section className="py-14 lg:py-20 relative">
+      <section className="py-10 lg:py-16 relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-12">

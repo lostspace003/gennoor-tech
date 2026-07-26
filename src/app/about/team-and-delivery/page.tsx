@@ -290,7 +290,7 @@ export default function TeamAndDeliveryPage() {
       <FAQJsonLd faqs={teamFaqs} />
 
       {/* HERO */}
-      <section className="relative py-14 lg:py-20 overflow-hidden">
+      <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0 bg-gradient-mesh" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
@@ -786,7 +786,7 @@ function Section({
   children: React.ReactNode
 }) {
   return (
-    <section id={id} className="scroll-mt-24 py-14 lg:py-20 relative">
+    <section id={id} className="scroll-mt-24 py-10 lg:py-16 relative">
       <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">

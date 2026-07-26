@@ -83,7 +83,7 @@ export default function PageHero({
       <div
         className={cn(
           'relative container mx-auto px-4 sm:px-6 lg:px-8',
-          size === 'compact' ? 'py-10 lg:py-14' : 'py-14 lg:py-20'
+          size === 'compact' ? 'py-10 lg:py-14' : 'py-10 lg:py-16'
         )}
       >
         <div className={cn('max-w-4xl', centered && 'mx-auto text-center')}>

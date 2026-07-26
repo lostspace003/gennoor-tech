@@ -86,7 +86,7 @@ export default function PoCDevelopmentPage() {
       />
 
       {/* Why PoC */}
-      <section className="relative py-14 lg:py-20">
+      <section className="relative py-10 lg:py-16">
         <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
@@ -119,7 +119,7 @@ export default function PoCDevelopmentPage() {
       </section>
 
       {/* PoC Types */}
-      <section className="relative py-14 lg:py-20 bg-gray-50">
+      <section className="relative py-10 lg:py-16 bg-gray-50">
         <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
@@ -152,7 +152,7 @@ export default function PoCDevelopmentPage() {
       </section>
 
       {/* Development Process */}
-      <section className="relative py-14 lg:py-20">
+      <section className="relative py-10 lg:py-16">
         <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
@@ -193,7 +193,7 @@ export default function PoCDevelopmentPage() {
       </section>
 
       {/* Tech Stack */}
-      <section className="relative py-14 lg:py-20 bg-gray-50">
+      <section className="relative py-10 lg:py-16 bg-gray-50">
         <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
@@ -217,7 +217,7 @@ export default function PoCDevelopmentPage() {
       </section>
 
       {/* Related Services */}
-      <section className="relative py-14 lg:py-20">
+      <section className="relative py-10 lg:py-16">
         <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Related Services</h2>
@@ -239,7 +239,7 @@ export default function PoCDevelopmentPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="relative py-14 lg:py-20 bg-gray-50">
+      <section className="relative py-10 lg:py-16 bg-gray-50">
         <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Frequently Asked Questions</h2>
@@ -255,7 +255,7 @@ export default function PoCDevelopmentPage() {
       </section>
 
       {/* CTA */}
-      <section className="relative py-14 lg:py-20 overflow-hidden">
+      <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white"></div>
         <div className="absolute inset-0 bg-gradient-mesh"></div>
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>

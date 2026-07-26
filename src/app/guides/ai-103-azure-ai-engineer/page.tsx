@@ -87,7 +87,7 @@ export default function AI103StudyGuidePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
 
       {/* Hero */}
-      <section className="relative py-14 lg:py-20 overflow-hidden">
+      <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#f0f4ff] via-white to-[#f0fdf8]" aria-hidden="true" />
         <div className="absolute inset-0 bg-gradient-mesh" aria-hidden="true" />
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -336,7 +336,7 @@ export default function AI103StudyGuidePage() {
       </section>
 
       {/* CTA */}
-      <section className="py-14 lg:py-20 relative overflow-hidden">
+      <section className="py-10 lg:py-16 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#f0f4ff] via-white to-[#f0fdf8]" aria-hidden="true" />
         <div className="absolute inset-0 bg-gradient-mesh" aria-hidden="true" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">

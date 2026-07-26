@@ -84,7 +84,7 @@ export default function CertificationPreparationPage() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-14 lg:py-20 overflow-hidden">
+      <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white"></div>
         <div className="absolute inset-0 bg-gradient-mesh"></div>
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
@@ -182,7 +182,7 @@ export default function CertificationPreparationPage() {
       </section>
 
       {/* Certifications Grid */}
-      <section className="relative py-14 lg:py-20">
+      <section className="relative py-10 lg:py-16">
         <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {Object.entries(groupedCertifications).map(([provider, certs]) => {
@@ -289,7 +289,7 @@ export default function CertificationPreparationPage() {
       </section>
 
       {/* Quick Enquiry Form */}
-      <section className="relative py-14 lg:py-20 bg-gray-50">
+      <section className="relative py-10 lg:py-16 bg-gray-50">
         <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
@@ -311,7 +311,7 @@ export default function CertificationPreparationPage() {
       </section>
 
       {/* Why Choose Us */}
-      <section className="relative py-14 lg:py-20">
+      <section className="relative py-10 lg:py-16">
         <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">

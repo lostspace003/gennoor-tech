@@ -6,7 +6,7 @@ export default function LatestBlog() {
   const posts = getRecentPosts(3)
 
   return (
-    <section className="py-20 lg:py-28 relative">
+    <section className="py-14 lg:py-20 relative">
       <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">

@@ -41,7 +41,7 @@ export default function SolutionsHubPage() {
           <div className="absolute inset-0 bg-white" />
           <div className="absolute inset-0 bg-gradient-mesh" />
           <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
-          <div className="relative max-w-6xl mx-auto px-6 py-14 lg:py-20 text-center">
+          <div className="relative max-w-6xl mx-auto px-6 py-10 lg:py-16 text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50/80 border border-primary-100/60 text-xs tracking-widest font-semibold text-primary-600 mb-6">
               SOLUTIONS
             </div>
@@ -58,7 +58,7 @@ export default function SolutionsHubPage() {
         </section>
 
         {/* Two-track selector */}
-        <section className="max-w-6xl mx-auto px-6 py-14 lg:py-20">
+        <section className="max-w-6xl mx-auto px-6 py-10 lg:py-16">
           <div className="grid md:grid-cols-2 gap-6">
             <Link
               href="/solutions/for-smb"
@@ -108,7 +108,7 @@ export default function SolutionsHubPage() {
 
         {/* Phases mini */}
         <section className="bg-gradient-to-br from-primary-50 via-white to-secondary-50 border-y border-gray-200">
-          <div className="max-w-6xl mx-auto px-6 py-14 lg:py-20">
+          <div className="max-w-6xl mx-auto px-6 py-10 lg:py-16">
             <div className="text-center mb-12">
               <div className="text-xs uppercase tracking-widest text-primary-700 font-bold mb-2">The Gennoor Way</div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">One journey, five phases</h2>
@@ -141,7 +141,7 @@ export default function SolutionsHubPage() {
         <ThreePledges />
 
         {/* Final CTA */}
-        <section className="max-w-5xl mx-auto px-6 py-14 lg:py-20 text-center">
+        <section className="max-w-5xl mx-auto px-6 py-10 lg:py-16 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Not sure which track fits?
           </h2>

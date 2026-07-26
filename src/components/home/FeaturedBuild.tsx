@@ -18,7 +18,7 @@ const highlights = [
 
 export default function FeaturedBuild() {
   return (
-    <section className="relative overflow-hidden py-20 lg:py-28">
+    <section className="relative overflow-hidden py-14 lg:py-20">
       {/* Twilight backdrop — the product's own palette */}
       <div className="absolute inset-0" style={{ background: 'linear-gradient(160deg, #0C0820 0%, #1A1140 55%, #0C0820 100%)' }} />
       {/* Aurora / star wash */}

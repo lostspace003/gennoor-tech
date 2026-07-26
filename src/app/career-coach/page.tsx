@@ -573,7 +573,7 @@ export default function CareerCoachPage() {
     return (
       <div className="min-h-screen bg-white">
         {/* Hero */}
-        <section className="relative py-14 lg:py-20 overflow-hidden">
+        <section className="relative py-10 lg:py-16 overflow-hidden">
           <div className="absolute inset-0 bg-white" />
           <div className="absolute inset-0 bg-gradient-mesh" />
           <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
@@ -597,7 +597,7 @@ export default function CareerCoachPage() {
 
         <div className="section-divider" />
 
-        <section className="container py-14 lg:py-20">
+        <section className="container py-10 lg:py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {Object.values(AGENTS).map(a => {
               const ac = COLORS[a.color]

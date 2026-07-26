@@ -13,7 +13,7 @@ export default function CTASection() {
   ]
 
   return (
-    <section className="py-20 lg:py-28 relative overflow-hidden">
+    <section className="py-14 lg:py-20 relative overflow-hidden">
       {/* Ambient gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#f0f4ff] via-white to-[#f0fdf8]" />
       <div className="absolute inset-0 bg-gradient-mesh" />

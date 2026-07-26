@@ -37,7 +37,7 @@ export default function CaseStudiesIndexPage() {
             <div className="absolute top-0 right-1/4 w-[40rem] h-[40rem] bg-primary-500/30 rounded-full blur-3xl" />
             <div className="absolute bottom-0 left-1/4 w-[35rem] h-[35rem] bg-secondary-400/20 rounded-full blur-3xl" />
           </div>
-          <div className="relative max-w-6xl mx-auto px-6 py-14 lg:py-20 text-center">
+          <div className="relative max-w-6xl mx-auto px-6 py-10 lg:py-16 text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs tracking-widest text-secondary-300 mb-6">
               CASE STUDIES
             </div>
@@ -52,7 +52,7 @@ export default function CaseStudiesIndexPage() {
           </div>
         </section>
 
-        <section className="max-w-6xl mx-auto px-6 py-14 lg:py-20">
+        <section className="max-w-6xl mx-auto px-6 py-10 lg:py-16">
           <div className="grid md:grid-cols-2 gap-6">
             {caseStudies.map(cs => (
               <Link

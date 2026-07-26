@@ -163,7 +163,7 @@ export default function AIReadinessSelector() {
   return (
     <div className="animate-fade-in">
       {/* Hero section */}
-      <section className="relative py-14 lg:py-20 overflow-hidden">
+      <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0 bg-gradient-mesh" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
@@ -261,7 +261,7 @@ export default function AIReadinessSelector() {
 
       {/* What You Get */}
       <section className="bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
           <div className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">What You Get</h2>
             <p className="mt-2 text-gray-500">Two assessment formats, one goal — making you AI-ready.</p>

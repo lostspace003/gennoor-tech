@@ -94,7 +94,7 @@ export default async function TrainingProgramPage({ params }: Props) {
 
       <main className="min-h-screen">
         {/* Hero Section */}
-        <section className="relative overflow-hidden py-14 lg:py-20">
+        <section className="relative overflow-hidden py-10 lg:py-16">
           <div className="absolute inset-0 bg-gradient-to-br from-[#f0f4ff] via-white to-[#f0fdf8]" />
           <div className="absolute inset-0 bg-gradient-mesh" />
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -163,7 +163,7 @@ export default async function TrainingProgramPage({ params }: Props) {
         </section>
 
         {/* What You'll Learn */}
-        <section className="py-14 lg:py-20">
+        <section className="py-10 lg:py-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-8">What You&apos;ll Learn</h2>
@@ -183,7 +183,7 @@ export default async function TrainingProgramPage({ params }: Props) {
         </section>
 
         {/* Program Details */}
-        <section className="py-14 lg:py-20 bg-gray-50">
+        <section className="py-10 lg:py-16 bg-gray-50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-8">Program Details</h2>
@@ -210,7 +210,7 @@ export default async function TrainingProgramPage({ params }: Props) {
         </section>
 
         {/* Delivery Format */}
-        <section className="py-14 lg:py-20">
+        <section className="py-10 lg:py-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-8">Delivery Format</h2>
@@ -242,7 +242,7 @@ export default async function TrainingProgramPage({ params }: Props) {
         </section>
 
         {/* Why Choose This Program */}
-        <section className="py-14 lg:py-20 bg-gray-50">
+        <section className="py-10 lg:py-16 bg-gray-50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-8">Why Choose Gennoor Tech</h2>
@@ -289,7 +289,7 @@ export default async function TrainingProgramPage({ params }: Props) {
         </section>
 
         {/* FAQ Section */}
-        <section className="py-14 lg:py-20">
+        <section className="py-10 lg:py-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Frequently Asked Questions</h2>
             <div className="max-w-3xl mx-auto space-y-6">
@@ -305,7 +305,7 @@ export default async function TrainingProgramPage({ params }: Props) {
 
         {/* Related Programs */}
         {relatedPrograms.length > 0 && (
-          <section className="py-14 lg:py-20 bg-gray-50">
+          <section className="py-10 lg:py-16 bg-gray-50">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
               <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Related Programs</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">

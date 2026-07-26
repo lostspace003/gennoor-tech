@@ -128,7 +128,7 @@ export default function AITrainingSaudiArabiaPage() {
       />
 
       {/* Vision 2030 Alignment */}
-      <section className="py-14 lg:py-20">
+      <section className="py-10 lg:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -172,7 +172,7 @@ export default function AITrainingSaudiArabiaPage() {
       </section>
 
       {/* Real Experience */}
-      <section className="py-14 lg:py-20 bg-gray-50">
+      <section className="py-10 lg:py-16 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-4">
             Proven Track Record in Saudi Arabia
@@ -211,7 +211,7 @@ export default function AITrainingSaudiArabiaPage() {
       </section>
 
       {/* Services */}
-      <section className="py-14 lg:py-20">
+      <section className="py-10 lg:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-12">
             Services Available in Saudi Arabia
@@ -273,7 +273,7 @@ export default function AITrainingSaudiArabiaPage() {
       </section>
 
       {/* Why Gennoor */}
-      <section className="py-14 lg:py-20 bg-gray-50">
+      <section className="py-10 lg:py-16 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-4">
             Why Choose Gennoor Tech for Saudi Arabia
@@ -336,7 +336,7 @@ export default function AITrainingSaudiArabiaPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-14 lg:py-20">
+      <section className="py-10 lg:py-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
             Frequently Asked Questions

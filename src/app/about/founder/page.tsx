@@ -54,7 +54,7 @@ export default function FounderPage() {
       </PageHero>
 
       {/* Bio Section */}
-      <section className="py-14 lg:py-20 border-b border-gray-100">
+      <section className="py-10 lg:py-16 border-b border-gray-100">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14 items-start">
@@ -211,7 +211,7 @@ export default function FounderPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-14 lg:py-20">
+      <section className="py-10 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link

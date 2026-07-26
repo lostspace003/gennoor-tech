@@ -24,7 +24,7 @@ export default function CollaborationPage() {
     ]} />
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-14 lg:py-20 overflow-hidden">
+      <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white"></div>
         <div className="absolute inset-0 bg-gradient-mesh"></div>
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>

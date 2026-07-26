@@ -49,7 +49,7 @@ export default function TrainingPage() {
   return (
     <main className="min-h-screen">
       {/* ===== HERO — Train phase of the Gennoor Way ===== */}
-      <section className="relative py-14 lg:py-20 overflow-hidden">
+      <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0 bg-gradient-mesh" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
@@ -125,7 +125,7 @@ export default function TrainingPage() {
       </section>
 
       {/* ===== 2-DAY TRAINING CURRICULUM CATALOG ===== */}
-      <section id="catalog" className="relative py-14 lg:py-20 bg-gray-50 scroll-mt-24">
+      <section id="catalog" className="relative py-10 lg:py-16 bg-gray-50 scroll-mt-24">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-10">
@@ -201,7 +201,7 @@ export default function TrainingPage() {
       </section>
 
       {/* ===== ENTERPRISE BOOTCAMPS ===== */}
-      <section id="bootcamps" className="relative py-14 lg:py-20 scroll-mt-24">
+      <section id="bootcamps" className="relative py-10 lg:py-16 scroll-mt-24">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-10">
@@ -275,7 +275,7 @@ export default function TrainingPage() {
       </section>
 
       {/* ===== CERTIFICATION PREP — condensed ===== */}
-      <section className="relative py-14 lg:py-20 bg-gray-50">
+      <section className="relative py-10 lg:py-16 bg-gray-50">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto">
@@ -322,7 +322,7 @@ export default function TrainingPage() {
       </section>
 
       {/* ===== GLOBAL DELIVERY ===== */}
-      <section className="relative py-14 lg:py-20">
+      <section className="relative py-10 lg:py-16">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-10 lg:p-12 text-center">
@@ -343,7 +343,7 @@ export default function TrainingPage() {
       </section>
 
       {/* ===== FAQ ===== */}
-      <section className="relative py-14 lg:py-20">
+      <section className="relative py-10 lg:py-16">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-10 text-center">FAQ</h2>
@@ -369,7 +369,7 @@ export default function TrainingPage() {
       </section>
 
       {/* ===== CTA ===== */}
-      <section className="relative py-14 lg:py-20 overflow-hidden">
+      <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0 bg-gradient-mesh" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">

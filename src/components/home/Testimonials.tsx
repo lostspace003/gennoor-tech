@@ -109,7 +109,7 @@ export default function Testimonials() {
   }, [isPaused, current])
 
   return (
-    <section className="py-20 lg:py-28 relative overflow-hidden">
+    <section className="py-14 lg:py-20 relative overflow-hidden">
       {/* Subtle background */}
       <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white" />
 

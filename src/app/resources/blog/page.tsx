@@ -37,7 +37,7 @@ export default function BlogPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Masthead — server-rendered for SEO */}
-      <header className="relative py-14 lg:py-20 overflow-hidden">
+      <header className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0 bg-gradient-mesh" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />

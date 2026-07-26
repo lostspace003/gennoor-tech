@@ -38,7 +38,7 @@ export default function AcademyCTA() {
         />
       </div>
 
-      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left — Text */}

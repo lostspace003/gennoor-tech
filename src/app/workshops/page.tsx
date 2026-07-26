@@ -55,7 +55,7 @@ export default function WorkshopsPage() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#0C1426] via-[#111b33] to-[#0d3b66]" />
         <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:60px_60px]" />
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold text-white/70 mb-6 border border-white/10 bg-white/5">
               <span className="w-1.5 h-1.5 bg-secondary-400 rounded-full animate-pulse" />

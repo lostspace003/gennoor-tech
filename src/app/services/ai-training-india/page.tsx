@@ -139,7 +139,7 @@ export default function AITrainingIndiaPage() {
       />
 
       {/* India AI Ecosystem */}
-      <section className="py-14 lg:py-20">
+      <section className="py-10 lg:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -190,7 +190,7 @@ export default function AITrainingIndiaPage() {
       </section>
 
       {/* Client Experience */}
-      <section className="py-14 lg:py-20 bg-gray-50">
+      <section className="py-10 lg:py-16 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-4">
             Trusted by India&apos;s Top Enterprises
@@ -231,7 +231,7 @@ export default function AITrainingIndiaPage() {
       </section>
 
       {/* IST & Pricing */}
-      <section className="py-14 lg:py-20">
+      <section className="py-10 lg:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200/70">
@@ -287,7 +287,7 @@ export default function AITrainingIndiaPage() {
       </section>
 
       {/* Services */}
-      <section className="py-14 lg:py-20 bg-gray-50">
+      <section className="py-10 lg:py-16 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-12">
             Services Available in India
@@ -349,7 +349,7 @@ export default function AITrainingIndiaPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-14 lg:py-20">
+      <section className="py-10 lg:py-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
             Frequently Asked Questions

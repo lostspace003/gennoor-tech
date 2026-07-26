@@ -57,7 +57,7 @@ export default function Metrics() {
   const isInView = useInView(ref, { once: true, margin: '0px 0px -100px 0px' })
 
   return (
-    <section className="py-20 lg:py-28 relative overflow-hidden">
+    <section className="py-14 lg:py-20 relative overflow-hidden">
       {/* Premium gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#0f1729] via-[#111b33] to-[#0c1524]" />
 

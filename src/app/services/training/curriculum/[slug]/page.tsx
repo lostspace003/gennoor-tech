@@ -179,7 +179,7 @@ export default async function CurriculumViewerPage({ params }: Props) {
       {/* Domain-centric AI Enablement section — only renders when course has the new fields */}
       {(course.aiEnablementSummary || course.aiEnablementPhases) && (
         <section className="bg-white border-t border-gray-200">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
             <div className="max-w-3xl mb-10">
               <span className="inline-flex items-center text-[10px] font-bold text-primary-700 bg-primary-50 px-2 py-1 rounded-full uppercase tracking-wider mb-3">
                 How Gennoor supports {course.trackLabel === 'By Industry' ? 'this sector' : course.trackLabel === 'By Function' ? 'this function' : 'this practice'}
