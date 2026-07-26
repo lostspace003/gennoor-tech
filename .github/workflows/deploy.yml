@@ -64,6 +64,19 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      # Runtime settings the CRM needs on the App Service (Foundry web search SP).
+      # Runs before deploy so new code always starts with its settings present.
+      - name: Sync CRM app settings
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        run: |
+          RG=$(az webapp list --query "[?name=='${{ env.AZURE_WEBAPP_NAME }}'].resourceGroup" -o tsv)
+          az webapp config appsettings set -g "$RG" -n "${{ env.AZURE_WEBAPP_NAME }}" --output none --settings \
+            FOUNDRY_TENANT_ID="${{ secrets.FOUNDRY_TENANT_ID }}" \
+            FOUNDRY_CLIENT_ID="${{ secrets.FOUNDRY_CLIENT_ID }}" \
+            FOUNDRY_CLIENT_SECRET="${{ secrets.FOUNDRY_CLIENT_SECRET }}" \
+            FOUNDRY_OPENAI_BASE="https://admin-5924-resource.openai.azure.com" \
+            FOUNDRY_WEB_MODEL="gpt-5"
+
       - name: Deploy to Azure Web App
         if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         uses: azure/webapps-deploy@v3

@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
 import { mutateLeads, getLead, touch } from '@/lib/crm/store'
-import { aiConfigured, researchLead } from '@/lib/crm/ai'
+import { aiConfigured, researchLead, researchLeadWeb } from '@/lib/crm/ai'
+import { foundryConfigured } from '@/lib/crm/foundry'
 
 export async function POST(request: Request) {
   const user = await requireCrmUser()
@@ -24,8 +25,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: `Lead is owned by ${lead.owner.split('@')[0]} — claim it or ask them/a manager.` }, { status: 403 })
     }
 
-    const research = await researchLead(lead)
-    const aiResearch = { ...research, lastUpdated: new Date().toISOString() }
+    // Prefer live web-grounded research; fall back to data-only when the
+    // shared gpt-5 deployment is busy or Foundry isn't configured.
+    let research
+    let webGrounded = false
+    if (foundryConfigured()) {
+      try {
+        research = await researchLeadWeb(lead)
+        webGrounded = true
+      } catch (error: any) {
+        console.error('Web research failed, falling back to data-only:', error?.message)
+      }
+    }
+    if (!research) research = await researchLead(lead)
+    const aiResearch = { ...research, webGrounded, lastUpdated: new Date().toISOString() }
 
     await mutateLeads((leads) => {
       const l = leads.find((x) => x.id === leadId)

@@ -163,6 +163,38 @@ You research sales leads for Gennoor's team. Based ONLY on the information given
   }
 }
 
+// Web-grounded research via Foundry's built-in web_search (when configured).
+// Throws on failure — the route falls back to researchLead().
+export async function researchLeadWeb(lead: Lead): Promise<{
+  summary: string
+  insights: string[]
+  opportunities: string[]
+  approach: string
+  techOrNonTech: 'technical' | 'non-technical'
+  sources: Array<{ title: string; url: string }>
+}> {
+  const { webGroundedCompletion } = await import('./foundry')
+  const result = await webGroundedCompletion(
+    `${GENNOOR_CONTEXT}
+
+Research this sales lead using LIVE WEB SEARCH: look up the company (what it does, size, industry, recent news) and, where public, the person. Then return ONLY a JSON object (no markdown fences):
+{"summary":"2-3 sentences grounded in what you found","insights":["3-5 findings relevant to selling AI training/consulting"],"opportunities":["2-4 Gennoor offerings that fit, mapped to the 5-step journey"],"approach":"2-3 sentences: recommended first touch","techOrNonTech":"technical|non-technical"}
+Facts you cannot verify stay out — no invention.`,
+    leadContext(lead)
+  )
+  const match = result.text.match(/\{[\s\S]*\}/)
+  if (!match) throw new Error('Web research returned no JSON')
+  const parsed = JSON.parse(match[0])
+  return {
+    summary: parsed.summary || '',
+    insights: Array.isArray(parsed.insights) ? parsed.insights : [],
+    opportunities: Array.isArray(parsed.opportunities) ? parsed.opportunities : [],
+    approach: parsed.approach || '',
+    techOrNonTech: parsed.techOrNonTech === 'technical' ? 'technical' : 'non-technical',
+    sources: result.citations.slice(0, 8),
+  }
+}
+
 export async function researchChat(lead: Lead, history: ChatMessage[]): Promise<string> {
   return chatCompletion([
     {

@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Bot, Send, X, Sparkles, Minus, Maximize2, Minimize2 } from 'lucide-react'
+import { Bot, Send, X, Sparkles, Minus, Maximize2, Minimize2, Globe } from 'lucide-react'
 import { Spinner } from './shared'
 
-interface Message { role: 'user' | 'assistant'; content: string }
+interface Message { role: 'user' | 'assistant'; content: string; usedWeb?: boolean; note?: string }
 
 const SUGGESTIONS = [
   'Which leads have not been contacted yet?',
@@ -24,6 +24,7 @@ export default function CrmCopilot() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [unseen, setUnseen] = useState(false)
+  const [webSearch, setWebSearch] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -45,11 +46,11 @@ export default function CrmCopilot() {
       const res = await fetch('/api/admin/crm-copilot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: next }),
+        body: JSON.stringify({ messages: next, web: webSearch }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Copilot failed')
-      setMessages([...next, { role: 'assistant', content: data.reply }])
+      setMessages([...next, { role: 'assistant', content: data.reply, usedWeb: data.usedWeb, note: data.webNote }])
       if (!open) setUnseen(true)
     } catch (e: any) {
       setError(e.message)
@@ -67,7 +68,8 @@ export default function CrmCopilot() {
         className="relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white text-xs font-medium shadow-sm hover:shadow-md transition-all"
         title="GennoorBot — CRM copilot"
       >
-        <Bot className="w-4 h-4" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logos/gennoor-tech-icon-white.svg" alt="" className="w-4.5 h-4.5 w-[18px] h-[18px]" />
         <span className="hidden sm:inline">GennoorBot</span>
         {/* Signal light: green pulse = online; amber = new reply while minimized */}
         <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
@@ -88,7 +90,8 @@ export default function CrmCopilot() {
           <div className="px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white flex items-center justify-between shrink-0 rounded-t-[inherit]">
             <div className="flex items-center gap-2.5">
               <span className="relative flex">
-                <Bot className="w-5 h-5" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logos/gennoor-tech-icon-white.svg" alt="GennoorBot" className="w-6 h-6" />
                 <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-green-400 border border-white/50" />
               </span>
               <div>
@@ -121,8 +124,10 @@ export default function CrmCopilot() {
               </div>
             )}
             {messages.map((m, i) => (
-              <div key={i} className={`max-w-[88%] rounded-xl px-3 py-2 text-sm whitespace-pre-line ${m.role === 'user' ? 'ml-auto bg-blue-600 text-white' : 'bg-gray-100 text-gray-800'}`}>
+              <div key={i} className={`max-w-[88%] rounded-xl px-3 py-2 text-sm whitespace-pre-line break-words ${m.role === 'user' ? 'ml-auto bg-blue-600 text-white' : 'bg-gray-100 text-gray-800'}`}>
                 {m.content}
+                {m.usedWeb && <div className="mt-1.5 text-[10px] text-emerald-600 flex items-center gap-1"><Globe className="w-3 h-3" /> answered with live web search</div>}
+                {m.note && <div className="mt-1.5 text-[10px] text-amber-600">{m.note}</div>}
               </div>
             ))}
             {busy && <Spinner label="Analyzing CRM data..." />}
@@ -130,17 +135,26 @@ export default function CrmCopilot() {
             <div ref={bottomRef} />
           </div>
 
-          <div className="p-2.5 border-t border-gray-100 flex gap-2 shrink-0">
+          <div className="p-2.5 border-t border-gray-100 space-y-1.5 shrink-0">
+            <button
+              onClick={() => setWebSearch((w) => !w)}
+              className={`flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full border transition-colors ${webSearch ? 'bg-emerald-600 text-white border-emerald-600' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
+              title="When on, GennoorBot also searches the live web (Foundry). Slower; falls back to CRM-only if the model is busy."
+            >
+              <Globe className="w-3 h-3" /> Web search {webSearch ? 'ON' : 'off'}
+            </button>
+            <div className="flex gap-2">
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && ask()}
-              placeholder="Ask about your leads..."
+              placeholder={webSearch ? 'Ask — CRM data + live web...' : 'Ask about your leads...'}
               className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             />
             <button onClick={() => ask()} disabled={busy || !input.trim()} className="px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50">
               <Send className="w-4 h-4" />
             </button>
+            </div>
           </div>
         </div>
       )}

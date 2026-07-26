@@ -45,6 +45,8 @@ export interface AIResearch {
   approach: string
   techOrNonTech: TechProfile
   lastUpdated: string
+  sources?: Array<{ title: string; url: string }>
+  webGrounded?: boolean
 }
 
 export interface ChatMessage {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, Suspense } from 'react'
+import { useState, Suspense, useEffect, useRef } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AlertCircle, Sparkles, Shield } from 'lucide-react'
@@ -10,6 +10,7 @@ function LoginContent() {
   const searchParams = useSearchParams()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const autoTried = useRef(false)
 
   const callbackUrl = searchParams.get('callbackUrl') || '/crm'
   const urlError = searchParams.get('error')
@@ -28,6 +29,17 @@ function LoginContent() {
       setLoading(false)
     }
   }
+
+  // Silent SSO: when we land here mid-navigation (callbackUrl present, no
+  // error), bounce straight through Microsoft — the Entra session usually
+  // signs the user back in without any clicks. Errors and direct visits
+  // still show the button.
+  useEffect(() => {
+    if (autoTried.current) return
+    if (urlError || !searchParams.get('callbackUrl')) return
+    autoTried.current = true
+    handleMicrosoftSignIn()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 flex items-center justify-center p-4">

@@ -366,6 +366,9 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
               <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${lead.aiResearch.techOrNonTech === 'technical' ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'}`}>
                 {lead.aiResearch.techOrNonTech}
               </span>
+              {lead.aiResearch.webGrounded && (
+                <span className="px-2 py-0.5 text-xs rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">🌐 live web research</span>
+              )}
               <span className="text-xs text-gray-500">updated {formatDateTime(lead.aiResearch.lastUpdated)}</span>
             </div>
             <Section title="Summary"><p>{lead.aiResearch.summary}</p></Section>
@@ -376,6 +379,17 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
               <ul className="space-y-1">{lead.aiResearch.opportunities.map((x, i) => <li key={i} className="flex gap-2"><CheckCircle className="w-3.5 h-3.5 text-green-500 mt-0.5 shrink-0" />{x}</li>)}</ul>
             </Section>
             <Section title="Recommended approach"><p>{lead.aiResearch.approach}</p></Section>
+            {lead.aiResearch.sources && lead.aiResearch.sources.length > 0 && (
+              <Section title="Sources">
+                <ul className="space-y-0.5">
+                  {lead.aiResearch.sources.map((s, i) => (
+                    <li key={i}>
+                      <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline break-all">{s.title || s.url}</a>
+                    </li>
+                  ))}
+                </ul>
+              </Section>
+            )}
           </div>
         )}
         {lead.finalizedPitch && (
