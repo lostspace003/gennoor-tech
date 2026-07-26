@@ -27,7 +27,16 @@ export async function middleware(request: NextRequest) {
   // The login page itself must stay reachable
   if (path.startsWith('/admin/login')) return NextResponse.next()
 
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET })
+  // Robust token read behind Azure's proxy: force secure-cookie mode and
+  // fall back across the cookie names next-auth v5/v4 may have used.
+  const secret = process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET
+  let token = await getToken({ req: request, secret, secureCookie: true }).catch(() => null)
+  if (!token) {
+    for (const cookieName of ['__Secure-authjs.session-token', 'authjs.session-token', '__Secure-next-auth.session-token']) {
+      token = await getToken({ req: request, secret, cookieName, salt: cookieName } as any).catch(() => null)
+      if (token) break
+    }
+  }
 
   if (!token) {
     const loginUrl = new URL('/admin/login', request.url)
