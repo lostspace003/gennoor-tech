@@ -58,7 +58,7 @@ export function DashboardView({ leads, onGoLeads, onOpenLead }: { leads: Lead[];
                           {inStage.length}
                         </div>
                       </div>
-                      <span className="w-16 text-right text-gray-400 shrink-0">{value > 0 ? `₹${(value / 1000).toFixed(0)}K` : '—'}</span>
+                      {value > 0 && <span className="w-16 text-right text-gray-500 shrink-0">₹{(value / 1000).toFixed(0)}K</span>}
                     </div>
                   )
                 })}

@@ -42,18 +42,20 @@ export function ProcessDot({ status }: { status: Lead['processStatus'] }) {
 export function StageBar({ stage, onSelect }: { stage: PipelineStage; onSelect?: (s: PipelineStage) => void }) {
   const currentIdx = PIPELINE_STAGES.indexOf(stage)
   return (
-    <div className="flex items-center gap-1">
-      {PIPELINE_STAGES.map((s, idx) => (
-        <button
-          key={s}
-          type="button"
-          disabled={!onSelect}
-          onClick={() => onSelect?.(s)}
-          className={`h-1.5 w-6 rounded transition-colors ${idx <= currentIdx ? 'bg-blue-600' : 'bg-gray-200'} ${onSelect ? 'hover:bg-blue-400 cursor-pointer' : 'cursor-default'}`}
-          title={STAGE_LABELS[s]}
-        />
-      ))}
-      <span className="ml-1.5 text-xs text-gray-500">{STAGE_LABELS[stage]}</span>
+    <div className="flex items-center gap-2">
+      <div className="flex w-20 h-2 rounded-full overflow-hidden bg-gray-100" role="progressbar" aria-label={`Stage ${currentIdx + 1} of 5`}>
+        {PIPELINE_STAGES.map((s, idx) => (
+          <button
+            key={s}
+            type="button"
+            disabled={!onSelect}
+            onClick={() => onSelect?.(s)}
+            className={`flex-1 transition-colors ${idx <= currentIdx ? 'bg-blue-600' : 'bg-gray-200'} ${idx > 0 ? 'border-l border-white' : ''} ${onSelect ? 'hover:bg-blue-400 cursor-pointer' : 'cursor-default'}`}
+            title={`${idx + 1}. ${STAGE_LABELS[s]}${onSelect ? ' — click to set' : ''}`}
+          />
+        ))}
+      </div>
+      <span className="text-xs text-gray-600 whitespace-nowrap"><span className="font-semibold text-gray-800">{currentIdx + 1}/5</span> {STAGE_LABELS[stage]}</span>
     </div>
   )
 }

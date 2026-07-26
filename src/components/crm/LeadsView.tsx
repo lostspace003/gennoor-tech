@@ -4,7 +4,7 @@ import { useMemo, useRef, useState } from 'react'
 import * as XLSX from 'xlsx'
 import { Search, Upload, Download, Trash2, Brain, Mail, X, Hand, Undo2, Archive, UserPlus } from 'lucide-react'
 import { Lead, LeadStatus, PipelineStage, ProcessStatus, PIPELINE_STAGES } from '@/lib/crm/types'
-import { StatusBadge, ProcessDot, StageBar, timeAgo, api, STAGE_LABELS, Spinner } from './shared'
+import { StatusBadge, StageBar, timeAgo, api, STAGE_LABELS, Spinner } from './shared'
 import { useCrm } from './CrmContext'
 
 const CRM_TEAM = ['admin@gennoor.com', 'jalalkhan@gennoor.com', 'yusufchaudhary@gennoor.com', 'contact@gennoor.com', 'contacts@gennoor.com']
@@ -506,7 +506,6 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stage</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Process</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Owner</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Research</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Activity</th>
@@ -515,7 +514,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
           <tbody className="divide-y divide-gray-100">
             {pageLeads.length === 0 && (
               <tr>
-                <td colSpan={10} className="px-6 py-16 text-center text-gray-400 text-sm">
+                <td colSpan={9} className="px-6 py-16 text-center text-gray-400 text-sm">
                   {leads.length === 0 ? 'No leads yet. Download the template, fill it, and upload it here.' : 'No leads match the current filters.'}
                 </td>
               </tr>
@@ -542,7 +541,14 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                   {[lead.city, lead.country].filter(Boolean).join(', ') || lead.region || '—'}
                 </td>
                 <td className="px-4 py-3"><StageBar stage={lead.stage} /></td>
-                <td className="px-4 py-3"><StatusBadge status={lead.status} /></td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-1.5">
+                    <StatusBadge status={lead.status} />
+                    {lead.processStatus !== 'active' && (
+                      <span className={`text-[10px] rounded-full px-1.5 py-0.5 ${lead.processStatus === 'paused' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`} title={`Process ${lead.processStatus}`}>{lead.processStatus}</span>
+                    )}
+                  </div>
+                </td>
                 <td className="px-4 py-3">
                   {lead.dumped ? (
                     <span className="text-[11px] bg-gray-200 text-gray-600 rounded-full px-2 py-0.5" title={lead.dumped.reason}>dumped</span>
