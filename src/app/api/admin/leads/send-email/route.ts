@@ -3,29 +3,13 @@ import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
 import { mutateLeads, getLeads, touch } from '@/lib/crm/store'
 import { downloadDocument } from '@/lib/crm/documents'
 import { sendEmail } from '@/lib/email-service'
-import { escapeHtml } from '@/lib/escape-html'
+import { emailShell, textToHtml } from '@/lib/crm/email-theme'
 
 const ADMIN_CC = process.env.EMAIL_ADMIN || 'admin@gennoor.com'
 const FROM = process.env.EMAIL_FROM_SALES || process.env.EMAIL_FROM_INFO || 'info@gennoor.com'
 
 function wrapHtml(bodyText: string): string {
-  const paragraphs = escapeHtml(bodyText)
-    .split(/\n{2,}/)
-    .map((p) => `<p style="margin:0 0 14px;white-space:pre-line">${p}</p>`)
-    .join('')
-  return `
-    <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:600px;margin:0 auto">
-      <div style="background:#0C1426;padding:26px 28px;text-align:center">
-        <h1 style="color:#ffffff;margin:0;font-size:22px;font-weight:800">Gennoor Tech</h1>
-        <p style="color:#93b4ff;margin:6px 0 0;font-size:11px;letter-spacing:2px">TRAIN. INNOVATE. BUILD.</p>
-      </div>
-      <div style="padding:28px;background:#ffffff;color:#374151;font-size:15px;line-height:1.7">
-        ${paragraphs}
-      </div>
-      <div style="background:#f8fafc;padding:16px 28px;text-align:center;border-top:1px solid #e2e8f0">
-        <p style="margin:0;color:#64748b;font-size:12px">Gennoor Tech · admin@gennoor.com · +91 9326352241 · www.gennoor.com</p>
-      </div>
-    </div>`
+  return emailShell(textToHtml(bodyText), { preheader: bodyText.split('\n')[0]?.slice(0, 90) })
 }
 
 export async function POST(request: Request) {

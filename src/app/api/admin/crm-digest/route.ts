@@ -3,6 +3,7 @@ import { BlobServiceClient } from '@azure/storage-blob'
 import { getLeads } from '@/lib/crm/store'
 import { sendEmail } from '@/lib/email-service'
 import { graphConfigured, listUpcomingMeetings } from '@/lib/crm/graph'
+import { emailShell } from '@/lib/crm/email-theme'
 import { CRM_USERS } from '@/lib/crm/access'
 
 const ADMIN = process.env.EMAIL_ADMIN || 'admin@gennoor.com'
@@ -68,13 +69,11 @@ export async function POST(req: NextRequest) {
         from: FROM,
         fromName: 'Gennoor CRM',
         subject: `Your CRM queue today: ${total} lead${total === 1 ? '' : 's'} need you`,
-        html: `<div style="font-family:'Segoe UI',Arial,sans-serif;max-width:600px;color:#374151">
-          <h3 style="margin:0 0 10px">Good morning — your queue</h3>
+        html: emailShell(`<h3 style="margin:0 0 10px;color:#0f172a">Good morning — your queue</h3>
           <ul style="margin:0 0 16px;padding-left:18px;line-height:1.9">
             ${li('need research', mineResearch)}${li('ready for first email', mineEmail)}${li('quiet 5+ days — follow up', mineFollow)}
           </ul>
-          <a href="https://gennoor-tech.azurewebsites.net/crm/queue" style="background:#2563EB;color:#fff;text-decoration:none;padding:9px 20px;border-radius:8px;font-size:14px">Open my Work Queue</a>
-        </div>`,
+          <a href="https://www.gennoor.com/crm/queue" style="display:inline-block;background:#2563EB;color:#fff;text-decoration:none;padding:9px 20px;border-radius:8px;font-size:14px">Open my Work Queue</a>`),
       })
       memberResults[member] = r.success
     }
@@ -94,9 +93,8 @@ export async function POST(req: NextRequest) {
     const row = (label: string, items: any[], tip: string) =>
       `<tr><td style="padding:6px 10px;border:1px solid #e2e8f0"><strong>${items.length}</strong></td><td style="padding:6px 10px;border:1px solid #e2e8f0">${label}</td><td style="padding:6px 10px;border:1px solid #e2e8f0;color:#64748b;font-size:12px">${items.slice(0, 4).map((l) => l.name).join(', ')}${items.length > 4 ? '…' : ''} ${tip}</td></tr>`
 
-    const html = `
-      <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:640px;margin:0 auto;color:#374151">
-        <h2 style="margin:0 0 4px">Gennoor CRM — morning digest</h2>
+    const html = emailShell(`
+        <h2 style="margin:0 0 4px;color:#0f172a">Gennoor CRM — morning digest</h2>
         <p style="margin:0 0 14px;color:#64748b;font-size:13px">${new Date().toLocaleDateString('en-IN', { dateStyle: 'full', timeZone: 'Asia/Kolkata' })}</p>
         <table style="border-collapse:collapse;font-size:14px">
           ${row('leads in the pool waiting for pickup', pool, '')}
@@ -105,8 +103,7 @@ export async function POST(req: NextRequest) {
           ${row('quiet 5+ days — follow-up due', followUpDue, '')}
         </table>
         ${meetingsHtml}
-        <p style="margin:18px 0 0"><a href="https://gennoor-tech.azurewebsites.net/crm/queue" style="background:#2563EB;color:#fff;text-decoration:none;padding:10px 22px;border-radius:8px;font-size:14px">Open the Work Queue</a></p>
-      </div>`
+        <p style="margin:18px 0 0"><a href="https://www.gennoor.com/crm/queue" style="display:inline-block;background:#2563EB;color:#fff;text-decoration:none;padding:10px 22px;border-radius:8px;font-size:14px">Open the Work Queue</a></p>`)
 
     const result = await sendEmail({
       to: ADMIN,

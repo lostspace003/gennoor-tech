@@ -4,6 +4,7 @@ import { mutateLeads, getLead, getLeads, touch } from '@/lib/crm/store'
 import { downloadDocument } from '@/lib/crm/documents'
 import { sendEmail } from '@/lib/email-service'
 import { escapeHtml } from '@/lib/escape-html'
+import { emailShell } from '@/lib/crm/email-theme'
 import { FollowUp } from '@/lib/crm/types'
 
 const ADMIN_CC = process.env.EMAIL_ADMIN || 'admin@gennoor.com'
@@ -62,31 +63,20 @@ export async function POST(request: Request) {
       timeZone: 'Asia/Kolkata',
     })
 
-    const html = `
-      <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:600px;margin:0 auto">
-        <div style="background:#0C1426;padding:26px 28px;text-align:center">
-          <h1 style="color:#ffffff;margin:0;font-size:22px;font-weight:800">Gennoor Tech</h1>
-          <p style="color:#93b4ff;margin:6px 0 0;font-size:11px;letter-spacing:2px">TRAIN. INNOVATE. BUILD.</p>
-        </div>
-        <div style="padding:28px;background:#ffffff;color:#374151;font-size:15px;line-height:1.7">
-          <p style="margin:0 0 14px">Dear ${escapeHtml(first)},</p>
-          <p style="margin:0 0 14px">
-            ${isWebinar
-              ? `We'd love to invite ${escapeHtml(lead.company || 'your team')} to a <strong>free 2-hour webinar</strong>, tailored to your team's needs. This is a relationship-building session — no cost, no obligation.`
-              : `As promised, we'd like to offer ${escapeHtml(lead.company || 'your team')} a <strong>free 1-day online training</strong> for your people. It's completely free — our way of building the relationship.`}
-          </p>
-          <div style="background:#f8fafc;border-left:4px solid #2563EB;padding:16px 18px;border-radius:0 8px 8px 0;margin:0 0 18px">
-            <p style="margin:0 0 4px"><strong>${escapeHtml(title)}</strong></p>
-            <p style="margin:0;color:#475569">${dateLabel} IST · Online (${isWebinar ? '2 hours' : 'full day'})</p>
-          </div>
-          ${notes ? `<p style="margin:0 0 14px;white-space:pre-line">${escapeHtml(notes)}</p>` : ''}
-          <p style="margin:0 0 14px">Reply to this email to confirm and we'll send the joining link.</p>
-          <p style="margin:0">Best regards,<br/>Team Gennoor Tech</p>
-        </div>
-        <div style="background:#f8fafc;padding:16px 28px;text-align:center;border-top:1px solid #e2e8f0">
-          <p style="margin:0;color:#64748b;font-size:12px">Gennoor Tech · admin@gennoor.com · +91 9326352241 · www.gennoor.com</p>
-        </div>
-      </div>`
+    const html = emailShell(`
+      <p style="margin:0 0 14px">Dear ${escapeHtml(first)},</p>
+      <p style="margin:0 0 14px">
+        ${isWebinar
+          ? `We'd love to invite ${escapeHtml(lead.company || 'your team')} to a <strong>free 2-hour webinar</strong>, tailored to your team's needs. This is a relationship-building session — no cost, no obligation.`
+          : `As promised, we'd like to offer ${escapeHtml(lead.company || 'your team')} a <strong>free 1-day online training</strong> for your people. It's completely free — our way of building the relationship.`}
+      </p>
+      <div style="background:#f8fafc;border-left:4px solid #2563EB;padding:16px 18px;border-radius:0 8px 8px 0;margin:0 0 18px">
+        <p style="margin:0 0 4px;font-size:16px"><strong>${escapeHtml(title)}</strong></p>
+        <p style="margin:0;color:#475569">${dateLabel} IST · Online (${isWebinar ? '2 hours' : 'full day'})</p>
+      </div>
+      ${notes ? `<p style="margin:0 0 14px;white-space:pre-line">${escapeHtml(notes)}</p>` : ''}
+      <p style="margin:0 0 14px">Reply to this email to confirm and we'll send the joining link.</p>
+      <p style="margin:0">Best regards,<br/><strong>Team Gennoor Tech</strong></p>`)
 
     const result = await sendEmail({
       to: lead.email,

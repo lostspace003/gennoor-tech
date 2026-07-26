@@ -50,11 +50,21 @@ async function callCandidate(
   }
   // Newer models reject max_tokens in favor of max_completion_tokens; try
   // the modern name first and fall back once on unsupported_parameter.
+  // 429s get one retry after the server's cooldown — deployments are shared.
   let response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'api-key': c.key },
     body: JSON.stringify({ ...payload, max_completion_tokens: options?.maxTokens ?? 1500 }),
   })
+  if (response.status === 429) {
+    const retryAfter = Math.min(Number(response.headers.get('retry-after')) || 12, 30)
+    await new Promise((r) => setTimeout(r, retryAfter * 1000))
+    response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'api-key': c.key },
+      body: JSON.stringify({ ...payload, max_completion_tokens: options?.maxTokens ?? 1500 }),
+    })
+  }
   if (!response.ok) {
     const text = await response.text()
     if (/unsupported_parameter|max_completion_tokens/i.test(text)) {
