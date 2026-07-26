@@ -5,6 +5,7 @@ import PortalShell from '@/components/portal/PortalShell'
 import Footer from '@/components/layout/Footer'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import WhatsAppButton from '@/components/WhatsAppButton'
+import GennoorCare from '@/components/GennoorCare/GennoorCare'
 import TrackingPixels from '@/components/TrackingPixels'
 import PageViewTracker from '@/components/PageViewTracker'
 import { OrganizationJsonLd, WebSiteJsonLd } from '@/components/JsonLd'
@@ -135,6 +136,7 @@ export default function RootLayout({
             <Footer />
           </PortalShell>
           <WhatsAppButton />
+          <GennoorCare />
         </div>
       </body>
     </html>

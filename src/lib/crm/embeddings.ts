@@ -51,6 +51,11 @@ async function saveStore(store: VectorStore) {
   await blob.upload(body, Buffer.byteLength(body), { blobHTTPHeaders: { blobContentType: 'application/json' } })
 }
 
+// Exported for the website bot's site index — same deployment, same SP token.
+export async function embedTexts(texts: string[]): Promise<number[][]> {
+  return embed(texts)
+}
+
 async function embed(texts: string[]): Promise<number[][]> {
   const { foundryConfigured } = await import('./foundry')
   if (!foundryConfigured()) throw new Error('Embeddings need the Foundry service principal')

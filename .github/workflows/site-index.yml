@@ -1,0 +1,21 @@
+name: GennoorCare Site Index
+
+on:
+  schedule:
+    - cron: '30 2 1 * *' # 1st of every month, 08:00 IST
+  workflow_dispatch:
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Reindex website knowledge for GennoorCare
+        run: |
+          STATUS=$(curl -s -o /tmp/out.json -w "%{http_code}" -X POST --max-time 1500 \
+            -H "x-cron-secret: ${{ secrets.CRM_CRON_SECRET }}" \
+            https://gennoor-tech.azurewebsites.net/api/admin/site-index)
+          cat /tmp/out.json
+          if [ "$STATUS" != "200" ]; then
+            echo "::error::Site index failed with status $STATUS"
+            exit 1
+          fi

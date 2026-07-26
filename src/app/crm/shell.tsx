@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { SessionProvider, useSession, signOut } from 'next-auth/react'
 import {
   LayoutGrid, Users, TrendingUp, Inbox, Calendar, FolderOpen,
-  LogOut, RefreshCw, Menu, X, AlertCircle, Zap, UsersRound,
+  LogOut, RefreshCw, Menu, X, AlertCircle, Zap, UsersRound, MessageCircle,
 } from 'lucide-react'
 import { CrmProvider, useCrm } from '@/components/crm/CrmContext'
 import CrmCopilot from '@/components/crm/CrmCopilot'
@@ -20,6 +20,7 @@ const NAV = [
   { href: '/crm/scheduler', label: 'Scheduler', icon: Calendar },
   { href: '/crm/documents', label: 'Documents', icon: FolderOpen },
   { href: '/crm/team', label: 'Team', icon: UsersRound, managerOnly: true },
+  { href: '/crm/botlog', label: 'GennoorCare', icon: MessageCircle, managerOnly: true },
 ] as Array<{ href: string; label: string; icon: any; managerOnly?: boolean }>
 
 export default function CrmShell({ children }: { children: React.ReactNode }) {
