@@ -24,7 +24,7 @@ export function DashboardView({ leads, onGoLeads, onOpenLead }: { leads: Lead[];
     .slice(0, 8)
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-3 sm:p-5 space-y-4">
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
         {metrics.map((m) => (
           <div key={m.label} className="bg-white p-4 rounded-lg border border-gray-200">
@@ -63,7 +63,7 @@ export function DashboardView({ leads, onGoLeads, onOpenLead }: { leads: Lead[];
 
 export function PipelineView({ leads, onOpenLead }: { leads: Lead[]; onOpenLead: (id: string) => void }) {
   return (
-    <div className="p-6 overflow-x-auto">
+    <div className="p-3 sm:p-5 overflow-x-auto">
       <div className="grid grid-cols-5 gap-4 min-w-[1000px]">
         {PIPELINE_STAGES.map((stage, idx) => {
           const stageLeads = leads.filter((l) => l.stage === stage)
@@ -115,7 +115,7 @@ export function InboxView({ onOpenLead }: { onOpenLead: (id: string) => void }) 
   useEffect(() => { load() }, [])
 
   return (
-    <div className="p-6 space-y-4 max-w-4xl">
+    <div className="p-3 sm:p-5 space-y-3 max-w-4xl">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-gray-800">Replies from leads (admin@gennoor.com inbox)</h3>
         <button onClick={load} className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50"><RefreshCw className="w-4 h-4 text-gray-500" /></button>
@@ -168,7 +168,7 @@ export function SchedulerView({ onOpenLead }: { onOpenLead: (id: string) => void
   useEffect(() => { load() }, [])
 
   return (
-    <div className="p-6 grid grid-cols-1 xl:grid-cols-2 gap-6">
+    <div className="p-3 sm:p-5 grid grid-cols-1 xl:grid-cols-2 gap-4">
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2"><Video className="w-4 h-4 text-blue-500" /> Upcoming meetings (next 30 days)</h3>
@@ -207,7 +207,7 @@ export function SchedulerView({ onOpenLead }: { onOpenLead: (id: string) => void
 
 interface Doc { name: string; size: number; lastModified: string }
 
-export function DocumentsView({ isAdmin, notify }: { isAdmin: boolean; notify: (m: string, e?: boolean) => void }) {
+export function DocumentsView({ canManage, notify }: { canManage: boolean; notify: (m: string, e?: boolean) => void }) {
   const [docs, setDocs] = useState<Doc[]>([])
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
@@ -245,7 +245,7 @@ export function DocumentsView({ isAdmin, notify }: { isAdmin: boolean; notify: (
   }
 
   return (
-    <div className="p-6 max-w-3xl space-y-4">
+    <div className="p-3 sm:p-5 max-w-3xl space-y-3">
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
         Upload the <strong>2-page manuals</strong> (technical & non-technical) under <em>manuals</em>, and <strong>webinar posters</strong> under <em>posters</em>. These become attachable in the email composer and follow-up invites.
       </div>
@@ -272,7 +272,7 @@ export function DocumentsView({ isAdmin, notify }: { isAdmin: boolean; notify: (
                 <div className="text-xs text-gray-400">{(d.size / 1024).toFixed(0)} KB · {formatDateTime(d.lastModified)}</div>
               </div>
             </div>
-            {isAdmin && (
+            {canManage && (
               <button onClick={() => remove(d.name)} className="p-2 hover:bg-red-50 rounded text-red-500"><Trash2 className="w-4 h-4" /></button>
             )}
           </div>

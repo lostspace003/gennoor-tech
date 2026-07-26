@@ -21,6 +21,8 @@ export interface EmailRecord {
   to: string
   subject: string
   status: 'sent' | 'failed'
+  body?: string
+  cc?: string[]
 }
 
 export interface FollowUp {
@@ -74,6 +76,7 @@ export interface Lead {
   source: string
   tags: string[]
   notes: string
+  altEmails?: string[]
   techProfile?: TechProfile
   aiResearch?: AIResearch
   researchChat: ChatMessage[]

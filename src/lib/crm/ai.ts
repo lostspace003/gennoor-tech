@@ -106,6 +106,13 @@ export function leadContext(lead: Lead): string {
     `Pipeline stage: ${lead.stage}`,
     `Notes: ${lead.notes || '(none)'}`,
     lead.aiResearch ? `Existing research summary: ${lead.aiResearch.summary}` : '',
+    lead.emailHistory?.length
+      ? `Emails already sent to this lead (do NOT repeat their content; any new email must advance the conversation): ${lead.emailHistory
+          .filter((e) => e.status === 'sent')
+          .slice(0, 3)
+          .map((e) => `"${e.subject}" on ${e.at.slice(0, 10)}`)
+          .join('; ')}`
+      : '',
   ].filter(Boolean).join('\n')
 }
 
@@ -175,11 +182,16 @@ export async function finalizePitch(lead: Lead, history: ChatMessage[]): Promise
       role: 'system',
       content: `${GENNOOR_CONTEXT}
 
-Based on the research discussion below, write the FINAL locked pitch content for this lead: a short brief the team will use for the outreach email. Structure: 1) What they likely need, 2) What we pitch (mapped to diagnose/train/POC/development/sustain), 3) The free offer to lead with (2-hour webinar or 1-day training), 4) Tone notes (technical vs non-technical). Keep it under 250 words. Lead data:
+Based on the research discussion below, write the FINAL locked pitch brief for this lead. This is an INTERNAL brief for the outreach team — NOT an email. STRICT FORMAT, exactly these four numbered sections and NOTHING else (no greeting, no sign-off, no subject line, no draft email, no closing remarks after section 4):
+1) Likely need — one or two sentences
+2) What we pitch — mapped to diagnose/train/POC/development/sustain
+3) Free offer to lead with — 2-hour webinar or 1-day training, and the suggested topic
+4) Tone — technical or non-technical, with one guidance sentence
+Keep the whole brief under 180 words. Lead data:
 ${leadContext(lead)}`,
     },
     ...history.map((m) => ({ role: m.role, content: m.content })),
-    { role: 'user', content: 'Finalize the pitch content now.' },
+    { role: 'user', content: 'Finalize the pitch brief now — the four sections only.' },
   ])
 }
 

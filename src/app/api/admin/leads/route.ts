@@ -39,7 +39,7 @@ const EDITABLE: Array<keyof Lead> = [
   'name', 'email', 'phone', 'company', 'designation', 'linkedin', 'website',
   'status', 'processStatus', 'stage', 'priority', 'leadType', 'sector',
   'region', 'country', 'city', 'value', 'score', 'owner', 'source', 'tags',
-  'notes', 'techProfile', 'finalizedPitch',
+  'notes', 'techProfile', 'finalizedPitch', 'altEmails',
 ]
 
 export async function PUT(req: NextRequest) {
@@ -70,7 +70,7 @@ export async function PUT(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   const user = await requireCrmUser()
-  if (!user?.isAdmin) return NextResponse.json({ error: 'Unauthorized - Admin only' }, { status: 401 })
+  if (!user?.isManager) return NextResponse.json({ error: 'Only managers can delete leads' }, { status: 403 })
 
   try {
     const { searchParams } = new URL(req.url)

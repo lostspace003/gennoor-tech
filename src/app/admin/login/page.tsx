@@ -11,7 +11,7 @@ function LoginContent() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const callbackUrl = searchParams.get('callbackUrl') || '/admin/crm-complete'
+  const callbackUrl = searchParams.get('callbackUrl') || '/crm'
   const urlError = searchParams.get('error')
 
   const handleMicrosoftSignIn = async () => {
@@ -36,7 +36,7 @@ function LoginContent() {
           <div className="flex items-center justify-center mb-4">
             <div className="text-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logos/gennoor-tech-compact-dark.svg" alt="Gennoor Tech" className="h-12 w-auto mx-auto" />
+              <img src="/logos/gennoor-tech-horizontal-transparent.svg" alt="Gennoor Tech" className="h-24 w-auto mx-auto" />
               <p className="text-sm text-gray-600 tracking-widest mt-2">TRAIN. INNOVATE. BUILD.</p>
             </div>
           </div>

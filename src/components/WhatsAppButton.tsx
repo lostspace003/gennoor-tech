@@ -1,10 +1,15 @@
 'use client'
 
 import { MessageCircle } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 
 export default function WhatsAppButton() {
+  const pathname = usePathname()
   const whatsappNumber = '919326352241'
   const message = encodeURIComponent('Hi Jalal, I visited gennoor.com and would like to discuss AI training/consulting for my organization.')
+
+  // App surfaces (CRM, admin) have their own floating actions
+  if (pathname.startsWith('/crm') || pathname.startsWith('/admin')) return null
 
   return (
     <a

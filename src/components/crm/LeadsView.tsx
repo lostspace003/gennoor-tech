@@ -10,7 +10,7 @@ const PAGE_SIZES = [10, 25, 50, 100]
 
 interface Props {
   leads: Lead[]
-  isAdmin: boolean
+  canManage: boolean
   onOpenLead: (id: string) => void
   onReload: () => Promise<void>
   notify: (msg: string, isError?: boolean) => void
@@ -53,7 +53,7 @@ function rowToLead(row: Record<string, any>): Partial<Lead> | null {
   }
 }
 
-export default function LeadsView({ leads, isAdmin, onOpenLead, onReload, notify }: Props) {
+export default function LeadsView({ leads, canManage, onOpenLead, onReload, notify }: Props) {
   const [searchTerm, setSearchTerm] = useState('')
   const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'week' | 'month'>('all')
   const [processFilter, setProcessFilter] = useState<'all' | ProcessStatus>('all')
@@ -189,7 +189,7 @@ export default function LeadsView({ leads, isAdmin, onOpenLead, onReload, notify
   return (
     <div>
       {/* Filter bar */}
-      <div className="bg-white border-b border-gray-200 px-6 py-3 space-y-3">
+      <div className="bg-white border-b border-gray-200 px-3 sm:px-4 py-2.5 space-y-2.5">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-64 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -227,7 +227,7 @@ export default function LeadsView({ leads, isAdmin, onOpenLead, onReload, notify
             <a href="/api/admin/template" className="px-3 py-2 border border-gray-200 text-sm rounded-lg hover:bg-gray-50 flex items-center gap-2">
               <Download className="w-4 h-4" /> Template
             </a>
-            {isAdmin && (
+            {canManage && (
               <>
                 <input ref={fileInputRef} type="file" accept=".xlsx,.xls" onChange={handleFile} className="hidden" />
                 <button onClick={() => fileInputRef.current?.click()} className="px-3 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 flex items-center gap-2">
@@ -244,7 +244,7 @@ export default function LeadsView({ leads, isAdmin, onOpenLead, onReload, notify
 
       {/* Bulk actions */}
       {selected.length > 0 && (
-        <div className="bg-blue-50 px-6 py-2.5 flex items-center justify-between">
+        <div className="bg-blue-50 px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-2">
           <span className="text-sm text-blue-700 font-medium">{selected.length} selected</span>
           <div className="flex items-center gap-2">
             <div className="flex items-center rounded overflow-hidden border border-gray-200">
@@ -252,7 +252,7 @@ export default function LeadsView({ leads, isAdmin, onOpenLead, onReload, notify
               <button onClick={() => setProcess('paused')} disabled={!!busy} className="px-3 py-1.5 bg-yellow-500 text-white text-xs hover:bg-yellow-600 disabled:opacity-50">Pause</button>
               <button onClick={() => setProcess('stopped')} disabled={!!busy} className="px-3 py-1.5 bg-red-600 text-white text-xs hover:bg-red-700 disabled:opacity-50">Stop</button>
             </div>
-            {isAdmin && (
+            {canManage && (
               <button onClick={deleteSelected} disabled={!!busy} className="px-3 py-1.5 bg-gray-700 text-white text-xs rounded hover:bg-gray-800 flex items-center gap-1.5 disabled:opacity-50">
                 <Trash2 className="w-3.5 h-3.5" /> Delete
               </button>
@@ -330,7 +330,7 @@ export default function LeadsView({ leads, isAdmin, onOpenLead, onReload, notify
         </table>
 
         {/* Pagination */}
-        <div className="px-6 py-3 border-t border-gray-200 flex flex-wrap items-center justify-between gap-3">
+        <div className="px-3 sm:px-4 py-2.5 border-t border-gray-200 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3 text-sm text-gray-600">
             <span>
               {filtered.length === 0 ? 0 : (safePage - 1) * pageSize + 1}–{Math.min(safePage * pageSize, filtered.length)} of {filtered.length}

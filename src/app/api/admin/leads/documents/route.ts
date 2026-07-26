@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   const user = await requireCrmUser()
-  if (!user?.isAdmin) return NextResponse.json({ error: 'Unauthorized - Admin only' }, { status: 401 })
+  if (!user?.isManager) return NextResponse.json({ error: 'Only managers can delete documents' }, { status: 403 })
 
   try {
     const name = req.nextUrl.searchParams.get('name')

@@ -33,7 +33,7 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
-    const { leadIds, subject, body, attachBlobs, extraTo } = await request.json()
+    const { leadIds, subject, body, attachBlobs, extraTo, extraCc, bcc } = await request.json()
     if (!Array.isArray(leadIds) || leadIds.length === 0 || !subject || !body) {
       return NextResponse.json({ error: 'leadIds, subject and body are required' }, { status: 400 })
     }
@@ -61,12 +61,16 @@ export async function POST(request: Request) {
     const html = wrapHtml(body)
     const results: Array<{ leadId: string; to: string; success: boolean; error?: string }> = []
 
-    // One email per lead so each lead gets an individually addressed message
+    // One email per lead so each lead gets an individually addressed message.
+    // admin@ is ALWAYS on CC regardless of what the caller passes.
+    const ccList = [ADMIN_CC, ...(Array.isArray(extraCc) ? extraCc.filter(Boolean) : [])]
+    const bccList = Array.isArray(bcc) ? bcc.filter(Boolean) : []
     for (const lead of sendable) {
       const to = [lead.email, ...(Array.isArray(extraTo) ? extraTo.filter(Boolean) : [])]
       const result = await sendEmail({
         to,
-        cc: ADMIN_CC,
+        cc: [...new Set(ccList)],
+        bcc: bccList.length ? bccList : undefined,
         from: FROM,
         fromName: 'Gennoor Tech',
         subject,
@@ -82,7 +86,15 @@ export async function POST(request: Request) {
       for (const r of results) {
         const lead = leads.find((l) => l.id === r.leadId)
         if (!lead) continue
-        lead.emailHistory.unshift({ at: now, by: user.email, to: r.to, subject, status: r.success ? 'sent' : 'failed' })
+        lead.emailHistory.unshift({
+          at: now,
+          by: user.email,
+          to: r.to,
+          subject,
+          status: r.success ? 'sent' : 'failed',
+          body: String(body).slice(0, 4000),
+          cc: [...new Set(ccList)],
+        })
         if (r.success && lead.status === 'new') lead.status = 'contacted'
         touch(lead, {
           at: now,

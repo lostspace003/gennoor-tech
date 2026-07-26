@@ -5,8 +5,8 @@ import { newLead } from '@/lib/crm/types'
 
 export async function POST(request: Request) {
   const user = await requireCrmUser()
-  if (!user?.isAdmin) {
-    return NextResponse.json({ error: 'Only admin@gennoor.com can upload leads' }, { status: 403 })
+  if (!user?.isManager) {
+    return NextResponse.json({ error: 'Only managers can upload leads' }, { status: 403 })
   }
 
   try {

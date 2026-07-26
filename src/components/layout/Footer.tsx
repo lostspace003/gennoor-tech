@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Mail, Linkedin, Github, MapPin, Youtube } from 'lucide-react'
 import { siteConfig } from '@/lib/site-config'
 import dynamic from 'next/dynamic'
@@ -19,6 +20,10 @@ const GennoorLogo = dynamic(() => import('@/components/GennoorLogo'), {
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
+  const pathname = usePathname()
+
+  // App surfaces (CRM, admin) have no marketing footer
+  if (pathname.startsWith('/crm') || pathname.startsWith('/admin')) return null
 
   return (
     <footer className="relative border-t border-gray-100/60">

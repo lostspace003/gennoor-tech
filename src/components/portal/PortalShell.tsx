@@ -71,6 +71,12 @@ export default function PortalShell({ children }: { children: React.ReactNode })
   // Desktop collapsed state — collapsed when not pinned AND not hovered
   const collapsed = !pinned && !hovering
 
+  // App surfaces (CRM, admin) render their own full-screen shells — no site
+  // topbar/sidebar/breadcrumb/padding around them.
+  if (pathname.startsWith('/crm') || pathname.startsWith('/admin')) {
+    return <>{children}</>
+  }
+
   return (
     <>
       <RouteProgress />
