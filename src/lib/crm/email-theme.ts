@@ -2,10 +2,14 @@ import { escapeHtml } from '@/lib/escape-html'
 
 // One professional email shell for every CRM/GennoorCare email. Real brand
 // logo (PNG — email clients don't render SVG), navy header, clean footer.
-const LOGO = 'https://www.gennoor.com/logos/gennoor-tech-horizontal-white_760x260_website-header.png'
+// The bright dark-bg variant keeps the logo readable on the navy header.
+const LOGO = 'https://www.gennoor.com/logos/gennoor-tech-horizontal-dark-bright_760x260_email-header.png'
 const SITE = 'https://www.gennoor.com'
 
-export function emailShell(bodyHtml: string, opts?: { preheader?: string }): string {
+export function emailShell(bodyHtml: string, opts?: { preheader?: string; senderEmail?: string; senderName?: string }): string {
+  // Signature: no phone numbers — the sender's address plus admin@ (always)
+  const sender = (opts?.senderEmail || '').trim().toLowerCase()
+  const emails = [...new Set([sender, 'admin@gennoor.com'].filter(Boolean))]
   return `
   <div style="background:#f1f5f9;padding:24px 12px;margin:0">
     ${opts?.preheader ? `<div style="display:none;max-height:0;overflow:hidden">${escapeHtml(opts.preheader)}</div>` : ''}
@@ -16,10 +20,11 @@ export function emailShell(bodyHtml: string, opts?: { preheader?: string }): str
       <div style="padding:30px 28px;color:#374151;font-size:15px;line-height:1.7">
         ${bodyHtml}
       </div>
-      <div style="background:#0C1426;padding:16px 28px">
+      <div style="background:#0C1426;padding:18px 28px">
+        <p style="color:#ffffff;margin:0 0 2px;font-size:13px;font-weight:600">${escapeHtml(opts?.senderName || 'Gennoor Tech')}</p>
+        <p style="color:#A8C3EF;margin:0 0 8px;font-size:11px;letter-spacing:1px">TRAIN · INNOVATE · BUILD</p>
         <p style="color:#94a3b8;margin:0;font-size:12px">
-          <a href="mailto:admin@gennoor.com" style="color:#93b4ff;text-decoration:none">admin@gennoor.com</a> ·
-          <a href="https://wa.me/919326352241" style="color:#93b4ff;text-decoration:none">+91 9326352241</a> ·
+          ${emails.map((e) => `<a href="mailto:${e}" style="color:#93b4ff;text-decoration:none">${e}</a>`).join(' · ')} ·
           <a href="${SITE}" style="color:#93b4ff;text-decoration:none">www.gennoor.com</a>
         </p>
       </div>

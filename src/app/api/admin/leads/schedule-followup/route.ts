@@ -76,7 +76,7 @@ export async function POST(request: Request) {
       </div>
       ${notes ? `<p style="margin:0 0 14px;white-space:pre-line">${escapeHtml(notes)}</p>` : ''}
       <p style="margin:0 0 14px">Reply to this email to confirm and we'll send the joining link.</p>
-      <p style="margin:0">Best regards,<br/><strong>Team Gennoor Tech</strong></p>`)
+      <p style="margin:0">Best regards,<br/><strong>Team Gennoor Tech</strong></p>`, { senderEmail: FROM })
 
     const result = await sendEmail({
       to: lead.email,

@@ -104,6 +104,49 @@ export async function createTeamsMeeting(req: MeetingRequest): Promise<{ id: str
   }
 }
 
+// Single event lookup — used for permission checks before update/cancel
+export async function getMeeting(eventId: string): Promise<{ id: string; subject: string; attendees: string[]; body: string } | null> {
+  const client = await getGraphClient()
+  try {
+    const e = await client.api(`/users/${MAILBOX}/events/${eventId}`).select('id,subject,attendees,body').get()
+    return {
+      id: e.id,
+      subject: e.subject || '',
+      attendees: (e.attendees || []).map((a: any) => a.emailAddress?.address).filter(Boolean),
+      body: e.body?.content || '',
+    }
+  } catch {
+    return null
+  }
+}
+
+// Reschedule/edit a meeting. Attendees automatically receive the updated
+// invite by email — so the change lands in the lead's thread too.
+export async function updateMeeting(eventId: string, changes: { start?: string; durationMinutes?: number; subject?: string; comment?: string }): Promise<void> {
+  const client = await getGraphClient()
+  const patch: Record<string, unknown> = {}
+  if (changes.subject) patch.subject = changes.subject
+  if (changes.start) {
+    const start = new Date(changes.start)
+    const end = new Date(start.getTime() + (changes.durationMinutes || 30) * 60_000)
+    patch.start = { dateTime: start.toISOString(), timeZone: 'UTC' }
+    patch.end = { dateTime: end.toISOString(), timeZone: 'UTC' }
+  }
+  if (changes.comment) {
+    // Prepend the comment so the original agenda stays in the invite
+    const existing = await getMeeting(eventId)
+    patch.body = { contentType: 'HTML', content: `<p><strong>Update:</strong> ${changes.comment}</p>${existing?.body || ''}` }
+  }
+  if (Object.keys(patch).length === 0) return
+  await client.api(`/users/${MAILBOX}/events/${eventId}`).patch(patch)
+}
+
+// Cancel a meeting with an optional message — attendees get the cancellation email.
+export async function cancelMeeting(eventId: string, comment?: string): Promise<void> {
+  const client = await getGraphClient()
+  await client.api(`/users/${MAILBOX}/events/${eventId}/cancel`).post({ comment: comment || 'Cancelled via Gennoor CRM.' })
+}
+
 export interface UpcomingMeeting {
   id: string
   subject: string

@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { Users, Activity, Mail, Brain, Calendar, Upload, FileText, Trash2, RefreshCw, Video } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { Users, Activity, Mail, Brain, Calendar, Upload, FileText, Trash2, RefreshCw, Video, Search, X, CalendarClock } from 'lucide-react'
 import { Lead, PIPELINE_STAGES } from '@/lib/crm/types'
-import { StatusBadge, timeAgo, formatDateTime, api, STAGE_LABELS, Spinner, InfoTip } from './shared'
+import { StatusBadge, timeAgo, formatDateTime, api, STAGE_LABELS, Spinner, InfoTip, MultiSelect, Pagination, DurationSlider } from './shared'
 import DocPreview from './DocPreview'
+import { useCrm } from './CrmContext'
 
 /* ---------------- Dashboard (real metrics only) ---------------- */
 
@@ -150,10 +151,15 @@ interface InboxMessage {
   receivedAt: string; leadId: string; leadName: string; leadCompany: string
 }
 
+const INBOX_PER_PAGE = 10
+
 export function InboxView({ onOpenLead }: { onOpenLead: (id: string) => void }) {
   const [messages, setMessages] = useState<InboxMessage[]>([])
   const [note, setNote] = useState('')
   const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const [fromFilter, setFromFilter] = useState<string[]>([])
+  const [page, setPage] = useState(1)
 
   const load = async () => {
     setLoading(true)
@@ -166,29 +172,61 @@ export function InboxView({ onOpenLead }: { onOpenLead: (id: string) => void }) 
 
   useEffect(() => { load() }, [])
 
+  // One entry per sender address — the multi-select filter for multi-email threads
+  const senders = useMemo(() => {
+    const map = new Map<string, string>()
+    for (const m of messages) if (!map.has(m.from.toLowerCase())) map.set(m.from.toLowerCase(), m.leadName || m.fromName || m.from)
+    return [...map.entries()].map(([value, name]) => ({ value, label: `${name} · ${value}` }))
+  }, [messages])
+
+  const filtered = useMemo(() => {
+    const term = search.toLowerCase()
+    return messages.filter((m) =>
+      (fromFilter.length === 0 || fromFilter.includes(m.from.toLowerCase())) &&
+      (!term || m.subject.toLowerCase().includes(term) || m.preview.toLowerCase().includes(term) ||
+        m.from.toLowerCase().includes(term) || m.leadName.toLowerCase().includes(term) || (m.leadCompany || '').toLowerCase().includes(term))
+    )
+  }, [messages, search, fromFilter])
+
+  const safePage = Math.min(page, Math.max(1, Math.ceil(filtered.length / INBOX_PER_PAGE)))
+  const pageMsgs = filtered.slice((safePage - 1) * INBOX_PER_PAGE, safePage * INBOX_PER_PAGE)
+
   return (
     <div className="p-3 sm:p-5 space-y-3 max-w-4xl">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-1.5">Replies from leads (admin@gennoor.com inbox) <InfoTip text="Emails received in the admin mailbox from any known lead address. Click one to open that lead's conversation and reply with AI." /></h3>
-        <button onClick={load} className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50"><RefreshCw className="w-4 h-4 text-gray-500" /></button>
+      <div className="flex flex-wrap items-center gap-2">
+        <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-1.5">Replies from leads (admin@gennoor.com inbox) <InfoTip text="Emails received in the admin mailbox from any known lead address. Filter by sender when several people are writing in. Click one to open that lead's conversation and reply with AI." /></h3>
+        <div className="ml-auto flex items-center gap-2">
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+            <input
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+              placeholder="Search subject, sender..."
+              className="pl-8 pr-3 py-2 border border-gray-200 rounded-lg text-xs w-48"
+            />
+          </div>
+          <MultiSelect label="Email" options={senders} values={fromFilter} onChange={(v) => { setFromFilter(v); setPage(1) }} />
+          <button onClick={load} className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50"><RefreshCw className="w-4 h-4 text-gray-500" /></button>
+        </div>
       </div>
       {note && <p className="text-xs bg-amber-50 border border-amber-200 text-amber-800 rounded-lg px-3 py-2">{note}</p>}
       {loading && <Spinner label="Checking inbox..." />}
-      {!loading && messages.length === 0 && !note && (
-        <div className="bg-gray-50 rounded-lg p-10 text-center text-sm text-gray-400">No replies from known leads yet.</div>
+      {!loading && filtered.length === 0 && !note && (
+        <div className="bg-gray-50 rounded-lg p-10 text-center text-sm text-gray-400">{messages.length === 0 ? 'No replies from known leads yet.' : 'No emails match the current filters.'}</div>
       )}
-      <div className="space-y-2">
-        {messages.map((m) => (
-          <button key={m.id} onClick={() => onOpenLead(m.leadId)} className="w-full text-left bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-sm transition-all">
+      <div className="space-y-1.5">
+        {pageMsgs.map((m) => (
+          <button key={m.id} onClick={() => onOpenLead(m.leadId)} className="w-full text-left bg-white border border-gray-200 rounded-lg px-3 py-2.5 hover:border-blue-300 hover:shadow-sm transition-all">
             <div className="flex items-center justify-between gap-3">
               <div className="text-sm font-medium text-gray-900 truncate">{m.subject || '(no subject)'}</div>
-              <div className="text-xs text-gray-400 shrink-0">{formatDateTime(m.receivedAt)}</div>
+              <div className="text-[11px] text-gray-400 shrink-0">{formatDateTime(m.receivedAt)}</div>
             </div>
-            <div className="text-xs text-emerald-700 mt-0.5">{m.leadName} · {m.leadCompany || m.from}</div>
-            <p className="text-sm text-gray-600 mt-1.5 line-clamp-2">{m.preview}</p>
+            <div className="text-[11px] text-emerald-700 mt-0.5 truncate">{m.leadName} · {m.leadCompany || m.from}</div>
+            <p className="text-xs text-gray-600 mt-1 line-clamp-1">{m.preview}</p>
           </button>
         ))}
       </div>
+      <Pagination page={safePage} total={filtered.length} perPage={INBOX_PER_PAGE} onPage={setPage} />
     </div>
   )
 }
@@ -199,10 +237,13 @@ interface Meeting { id: string; subject: string; start: string; end: string; att
 interface FollowUpRow { id: string; type: string; title: string; date: string; time: string; leadId: string; leadName: string; leadCompany: string; sentAt?: string }
 
 export function SchedulerView({ onOpenLead }: { onOpenLead: (id: string) => void }) {
+  const { notify } = useCrm()
   const [meetings, setMeetings] = useState<Meeting[]>([])
   const [followUps, setFollowUps] = useState<FollowUpRow[]>([])
   const [note, setNote] = useState('')
   const [loading, setLoading] = useState(true)
+  const [editing, setEditing] = useState<Meeting | null>(null)
+  const [busy, setBusy] = useState('')
 
   const load = async () => {
     setLoading(true)
@@ -237,9 +278,40 @@ export function SchedulerView({ onOpenLead }: { onOpenLead: (id: string) => void
             </div>
             <div className="text-xs text-gray-500 mt-1">{formatDateTime(m.start)} → {formatDateTime(m.end)}</div>
             <div className="text-xs text-gray-400 mt-1 truncate">With: {m.attendees.join(', ') || '—'}</div>
+            {/* Owner of the lead (or a manager) can move/cancel — server enforces */}
+            <div className="flex items-center gap-1.5 mt-2">
+              <button onClick={() => setEditing(m)} className="px-2.5 py-1 border border-gray-200 text-gray-600 text-[11px] rounded-lg hover:bg-gray-50 flex items-center gap-1">
+                <CalendarClock className="w-3 h-3" /> Reschedule
+              </button>
+              <button
+                onClick={async () => {
+                  const comment = prompt(`Cancel "${m.subject}"?\nOptional message for the attendees (they get the cancellation by email):`)
+                  if (comment === null) return
+                  setBusy(m.id)
+                  try {
+                    await api(`/api/admin/leads/schedule-meeting?meetingId=${encodeURIComponent(m.id)}${comment ? `&comment=${encodeURIComponent(comment)}` : ''}`, { method: 'DELETE' })
+                    notify('Meeting cancelled — attendees were emailed')
+                    await load()
+                  } catch (e: any) { notify(e.message, true) } finally { setBusy('') }
+                }}
+                disabled={busy === m.id}
+                className="px-2.5 py-1 border border-red-200 text-red-600 text-[11px] rounded-lg hover:bg-red-50 flex items-center gap-1 disabled:opacity-50"
+              >
+                <X className="w-3 h-3" /> {busy === m.id ? 'Cancelling…' : 'Cancel'}
+              </button>
+            </div>
           </div>
         ))}
       </div>
+
+      {editing && (
+        <RescheduleModal
+          meeting={editing}
+          onClose={() => setEditing(null)}
+          onDone={async () => { setEditing(null); notify('Meeting updated — attendees received the new invite'); await load() }}
+          notify={notify}
+        />
+      )}
 
       <div className="space-y-3">
         <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2"><Mail className="w-4 h-4 text-emerald-500" /> Webinar & training invites sent</h3>
@@ -250,6 +322,65 @@ export function SchedulerView({ onOpenLead }: { onOpenLead: (id: string) => void
             <div className="text-xs text-gray-500 mt-1">{f.date} at {f.time} · {f.leadName} ({f.leadCompany || '—'})</div>
           </button>
         ))}
+      </div>
+    </div>
+  )
+}
+
+// Reschedule an existing Teams meeting: new date/time + duration slider +
+// message to attendees. Server allows the lead's owner or a manager.
+function RescheduleModal({ meeting, onClose, onDone, notify }: {
+  meeting: Meeting
+  onClose: () => void
+  onDone: () => Promise<void>
+  notify: (m: string, e?: boolean) => void
+}) {
+  const startLocal = meeting.start ? new Date(meeting.start) : new Date()
+  const pad = (n: number) => String(n).padStart(2, '0')
+  const [date, setDate] = useState(`${startLocal.getFullYear()}-${pad(startLocal.getMonth() + 1)}-${pad(startLocal.getDate())}`)
+  const [time, setTime] = useState(`${pad(startLocal.getHours())}:${pad(startLocal.getMinutes())}`)
+  const [duration, setDuration] = useState(Math.max(15, Math.round((new Date(meeting.end).getTime() - new Date(meeting.start).getTime()) / 60_000) || 30))
+  const [comment, setComment] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  const save = async () => {
+    if (!date || !time) { notify('Pick a date and time', true); return }
+    setSaving(true)
+    try {
+      await api('/api/admin/leads/schedule-meeting', {
+        method: 'PATCH',
+        body: JSON.stringify({ meetingId: meeting.id, start: new Date(`${date}T${time}`).toISOString(), durationMinutes: duration, comment: comment.trim() || undefined }),
+      })
+      await onDone()
+    } catch (e: any) { notify(e.message, true) } finally { setSaving(false) }
+  }
+
+  const inputCls = 'w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl w-full max-w-md flex flex-col">
+        <div className="px-5 py-3.5 border-b border-gray-200 flex items-center justify-between">
+          <div>
+            <h3 className="text-base font-semibold text-gray-900">Reschedule meeting</h3>
+            <p className="text-[11px] text-gray-500 truncate max-w-72">{meeting.subject}</p>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded"><X className="w-5 h-5 text-gray-500" /></button>
+        </div>
+        <div className="p-5 space-y-3">
+          <div className="grid grid-cols-2 gap-2">
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} />
+            <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} />
+          </div>
+          <DurationSlider value={duration} onChange={setDuration} />
+          <textarea value={comment} onChange={(e) => setComment(e.target.value)} rows={2} className={inputCls} placeholder="Message to attendees (optional — included in the update email)" />
+          <p className="text-[11px] text-gray-400">Everyone on the invite gets the updated meeting by email, so the change also shows up in the lead's conversation thread.</p>
+        </div>
+        <div className="px-5 py-3.5 border-t border-gray-200 flex justify-end gap-2">
+          <button onClick={onClose} className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50">Cancel</button>
+          <button onClick={save} disabled={saving} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2">
+            <CalendarClock className="w-4 h-4" /> {saving ? 'Updating…' : 'Update & notify attendees'}
+          </button>
+        </div>
       </div>
     </div>
   )

@@ -8,6 +8,7 @@ import WhatsAppButton from '@/components/WhatsAppButton'
 import GennoorCare from '@/components/GennoorCare/GennoorCare'
 import TrackingPixels from '@/components/TrackingPixels'
 import PageViewTracker from '@/components/PageViewTracker'
+import RippleProvider from '@/components/RippleProvider'
 import { OrganizationJsonLd, WebSiteJsonLd } from '@/components/JsonLd'
 import { siteConfig, BLOB_URL } from '@/lib/site-config'
 
@@ -114,6 +115,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} ${sora.variable} antialiased`}>
+        <RippleProvider />
         <GoogleAnalytics />
         <TrackingPixels />
         <PageViewTracker />

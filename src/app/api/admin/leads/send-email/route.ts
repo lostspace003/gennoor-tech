@@ -9,7 +9,8 @@ const ADMIN_CC = process.env.EMAIL_ADMIN || 'admin@gennoor.com'
 const FROM = process.env.EMAIL_FROM_SALES || process.env.EMAIL_FROM_INFO || 'info@gennoor.com'
 
 function wrapHtml(bodyText: string): string {
-  return emailShell(textToHtml(bodyText), { preheader: bodyText.split('\n')[0]?.slice(0, 90) })
+  // Signature carries the sending address + admin@ (never a phone number)
+  return emailShell(textToHtml(bodyText), { preheader: bodyText.split('\n')[0]?.slice(0, 90), senderEmail: FROM })
 }
 
 export async function POST(request: Request) {

@@ -6,9 +6,10 @@ import {
   Calendar, Trash2, CheckCircle, MessageSquare, Lock, RefreshCw, Paperclip, Reply, Eye,
 } from 'lucide-react'
 import { Lead, ChatMessage, PIPELINE_STAGES } from '@/lib/crm/types'
-import { StatusBadge, ProcessDot, StageBar, api, formatDateTime, Spinner, STAGE_LABELS, CopyMsg, InfoTip } from './shared'
+import { StatusBadge, ProcessDot, StageBar, api, formatDateTime, Spinner, STAGE_LABELS, CopyMsg, InfoTip, DurationSlider } from './shared'
 import { useCrm } from './CrmContext'
 import DocPreview from './DocPreview'
+import DOMPurify from 'dompurify'
 
 type Tab = 'overview' | 'research' | 'email' | 'schedule'
 
@@ -533,7 +534,10 @@ function EmailTab({ lead, onReload, notify, onSchedule }: { lead: Lead; onReload
     ...inbound.map((m) => ({
       kind: 'received' as const, at: m.receivedAt, subject: m.subject,
       detail: `from ${m.from}`, status: 'received',
+      // Plain-text version for the collapsed 2-line preview
       body: (m.body || m.preview).replace(/<style[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, ' ').replace(/\s{3,}/g, '\n').trim(),
+      // Full HTML (sanitized at render time) for the expanded view — keeps bold, lists, links
+      html: /<[a-z][\s\S]*>/i.test(m.body || '') ? m.body : '',
       raw: m,
     })),
   ].sort((a, b) => b.at.localeCompare(a.at))
@@ -595,7 +599,14 @@ function EmailTab({ lead, onReload, notify, onSchedule }: { lead: Lead; onReload
               )}
             </div>
             {item.body && (
-              <p className={`text-sm text-gray-600 mt-2 break-words whitespace-pre-line ${expanded === i ? '' : 'line-clamp-2'}`}>{item.body}</p>
+              expanded === i && (item as any).html ? (
+                <div
+                  className="email-html-body text-sm text-gray-700 mt-2 break-words max-h-[28rem] overflow-y-auto bg-white rounded-lg border border-gray-100 p-3"
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize((item as any).html, { FORBID_TAGS: ['style', 'form', 'input'], FORBID_ATTR: ['onerror', 'onclick'] }) }}
+                />
+              ) : (
+                <p className={`text-sm text-gray-600 mt-2 break-words whitespace-pre-line ${expanded === i ? '' : 'line-clamp-2'}`}>{item.body}</p>
+              )
             )}
             {item.body && (
               <button onClick={() => setExpanded(expanded === i ? null : i)} className="text-[11px] text-blue-600 hover:underline mt-1">
@@ -826,7 +837,7 @@ function EmailComposer({ lead, replyTo, preset, onClose, onSent, notify }: { lea
             </div>
             <div className="border border-gray-200 rounded-lg p-2.5 max-h-32 overflow-y-auto">
               <div className="text-xs font-medium text-gray-500 mb-1.5 flex items-center justify-between gap-2">
-                <span className="flex items-center gap-1.5"><Paperclip className="w-3.5 h-3.5" /> Attachments {attach.length > 0 && `(${attach.length} selected)`}</span>
+                <span className="flex items-center gap-1.5"><Paperclip className="w-3.5 h-3.5" /> Attachments {attach.length > 0 ? `(${attach.length} on this email)` : '(none — nothing is attached unless you select it)'}</span>
                 <label className="px-2 py-1 border border-gray-200 rounded text-[11px] cursor-pointer hover:bg-gray-50">
                   {uploadingAttach ? 'Uploading…' : '+ Upload & attach'}
                   <input type="file" onChange={uploadAndAttach} className="hidden" disabled={uploadingAttach} />
@@ -839,13 +850,18 @@ function EmailComposer({ lead, replyTo, preset, onClose, onSent, notify }: { lea
                     <button
                       onClick={() => setAttach(attach.includes(d.name) ? attach.filter((n) => n !== d.name) : [...attach, d.name])}
                       className={`px-2 py-1 ${attach.includes(d.name) ? 'hover:bg-blue-700' : 'hover:bg-gray-50'}`}
-                      title={attach.includes(d.name) ? 'Click to remove from email' : 'Click to attach'}
+                      title={attach.includes(d.name) ? 'Attached — click to remove' : 'Click to attach'}
                     >
                       {d.name.split('/').pop()}
                     </button>
                     <button onClick={() => setPreview(d.name)} className={`px-1.5 py-1 border-l ${attach.includes(d.name) ? 'border-blue-500 hover:bg-blue-700' : 'border-gray-200 hover:bg-gray-50'}`} title="Preview">
                       <Eye className="w-3 h-3" />
                     </button>
+                    {attach.includes(d.name) && (
+                      <button onClick={() => setAttach(attach.filter((n) => n !== d.name))} className="px-1.5 py-1 border-l border-blue-500 hover:bg-red-500" title="Remove from this email">
+                        <X className="w-3 h-3" />
+                      </button>
+                    )}
                   </span>
                 ))}
               </div>
@@ -965,13 +981,11 @@ function ScheduleTab({ lead, onReload, notify }: { lead: Lead; onReload: () => P
         </h3>
         {!lead.email && <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">This lead has no email — add one on the Overview tab first.</p>}
         <input value={meetForm.subject} onChange={(e) => setMeetForm({ ...meetForm, subject: e.target.value })} className={inputCls} placeholder="Meeting subject" />
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           <input type="date" value={meetForm.date} onChange={(e) => setMeetForm({ ...meetForm, date: e.target.value })} className={inputCls} />
           <input type="time" value={meetForm.time} onChange={(e) => setMeetForm({ ...meetForm, time: e.target.value })} className={inputCls} />
-          <select value={meetForm.duration} onChange={(e) => setMeetForm({ ...meetForm, duration: Number(e.target.value) })} className={inputCls}>
-            <option value={15}>15 min</option><option value={30}>30 min</option><option value={45}>45 min</option><option value={60}>1 hour</option><option value={120}>2 hours</option>
-          </select>
         </div>
+        <DurationSlider value={meetForm.duration} onChange={(duration) => setMeetForm({ ...meetForm, duration })} />
         <input value={meetForm.extra} onChange={(e) => setMeetForm({ ...meetForm, extra: e.target.value })} className={inputCls} placeholder="More attendees (comma-separated emails, optional)" />
         <textarea value={meetForm.agenda} onChange={(e) => setMeetForm({ ...meetForm, agenda: e.target.value })} rows={2} className={inputCls} placeholder="Agenda (optional)" />
         <button onClick={scheduleMeeting} disabled={busy === 'meet' || !lead.email} className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50">

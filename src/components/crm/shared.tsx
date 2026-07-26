@@ -134,6 +134,117 @@ export function CopyMsg({ text, light }: { text: string; light?: boolean }) {
   )
 }
 
+// Slider for picking a duration — snaps to sensible stops, big readable value
+export function DurationSlider({ value, onChange, stops = [15, 30, 45, 60, 90, 120], label = 'Duration' }: {
+  value: number; onChange: (minutes: number) => void; stops?: number[]; label?: string
+}) {
+  const idx = Math.max(0, stops.indexOf(value) === -1 ? stops.findIndex((s) => s >= value) : stops.indexOf(value))
+  const fmt = (m: number) => (m < 60 ? `${m} min` : m % 60 === 0 ? `${m / 60} hr${m > 60 ? 's' : ''}` : `${Math.floor(m / 60)}h ${m % 60}m`)
+  return (
+    <div className="px-1">
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-xs text-gray-500">{label}</span>
+        <span className="text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5">{fmt(stops[idx] ?? value)}</span>
+      </div>
+      <input
+        type="range"
+        min={0}
+        max={stops.length - 1}
+        step={1}
+        value={idx}
+        onChange={(e) => onChange(stops[Number(e.target.value)])}
+        className="w-full h-1.5 bg-gray-200 rounded-full appearance-none cursor-pointer accent-blue-600"
+        aria-label={label}
+      />
+      <div className="flex justify-between mt-0.5">
+        {stops.map((s) => <span key={s} className="text-[10px] text-gray-400">{s < 60 ? s : `${s / 60}h`}</span>)}
+      </div>
+    </div>
+  )
+}
+
+// Numbered pagination (1 2 3 …) shared by every long CRM list
+export function Pagination({ page, total, perPage, onPage }: { page: number; total: number; perPage: number; onPage: (p: number) => void }) {
+  const pages = Math.max(1, Math.ceil(total / perPage))
+  if (pages <= 1) return null
+  // Window of page numbers around the current page, always with first/last
+  const nums = Array.from(new Set([1, pages, page - 1, page, page + 1].filter((p) => p >= 1 && p <= pages))).sort((a, b) => a - b)
+  return (
+    <div className="flex items-center justify-between gap-2 pt-1">
+      <span className="text-[11px] text-gray-400">{(page - 1) * perPage + 1}–{Math.min(page * perPage, total)} of {total}</span>
+      <div className="flex items-center gap-1">
+        <button onClick={() => onPage(page - 1)} disabled={page <= 1} className="px-2 py-1 text-xs border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40">‹</button>
+        {nums.map((n, i) => (
+          <span key={n} className="flex items-center gap-1">
+            {i > 0 && n - nums[i - 1] > 1 && <span className="text-xs text-gray-300 px-0.5">…</span>}
+            <button
+              onClick={() => onPage(n)}
+              className={`min-w-[1.75rem] px-2 py-1 text-xs rounded-lg border ${n === page ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+            >
+              {n}
+            </button>
+          </span>
+        ))}
+        <button onClick={() => onPage(page + 1)} disabled={page >= pages} className="px-2 py-1 text-xs border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40">›</button>
+      </div>
+    </div>
+  )
+}
+
+// Compact multi-select filter: button shows "Label · n", opens a checkbox list.
+// Empty selection = no filter (all).
+export function MultiSelect({ label, options, values, onChange }: {
+  label: string
+  options: Array<{ value: string; label: string }>
+  values: string[]
+  onChange: (values: string[]) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const toggle = (v: string) => onChange(values.includes(v) ? values.filter((x) => x !== v) : [...values, v])
+  return (
+    <span className="relative inline-flex" onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setOpen(false) }}>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className={`text-sm border rounded-lg px-2.5 py-2 flex items-center gap-1.5 ${values.length ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}`}
+      >
+        {label}{values.length > 0 && <span className="text-[10px] bg-blue-600 text-white rounded-full px-1.5 py-0.5 leading-none">{values.length}</span>}
+        <span className="text-gray-400 text-[10px]">▾</span>
+      </button>
+      {open && (
+        <span className="absolute z-[70] top-full mt-1 left-0 min-w-44 bg-white border border-gray-200 rounded-lg shadow-xl p-1.5 space-y-0.5">
+          {options.map((o) => (
+            <label key={o.value} className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-gray-50 cursor-pointer text-sm text-gray-700 whitespace-nowrap">
+              <input type="checkbox" className="rounded" checked={values.includes(o.value)} onChange={() => toggle(o.value)} />
+              {o.label}
+            </label>
+          ))}
+          {values.length > 0 && (
+            <button type="button" onClick={() => onChange([])} className="w-full text-left px-2 py-1.5 text-xs text-blue-600 hover:bg-blue-50 rounded-md">Clear ({values.length})</button>
+          )}
+        </span>
+      )}
+    </span>
+  )
+}
+
+// Lead priority helpers — free-text priority normalised to three buckets
+export function normPriority(p: string | undefined): 'high' | 'medium' | 'low' | '' {
+  const v = (p || '').trim().toLowerCase()
+  if (!v) return ''
+  if (v.startsWith('h') || v === '1' || v === 'p1' || v.includes('urgent')) return 'high'
+  if (v.startsWith('m') || v === '2' || v === 'p2') return 'medium'
+  if (v.startsWith('l') || v === '3' || v === 'p3') return 'low'
+  return 'medium'
+}
+
+export function PriorityBadge({ priority }: { priority: string | undefined }) {
+  const p = normPriority(priority)
+  if (!p) return <span className="text-[11px] text-gray-300">—</span>
+  const cls = p === 'high' ? 'bg-red-50 text-red-700 border-red-200' : p === 'medium' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-slate-50 text-slate-600 border-slate-200'
+  return <span className={`text-[11px] border rounded-full px-2 py-0.5 capitalize ${cls}`}>{p}</span>
+}
+
 export function Spinner({ label }: { label?: string }) {
   return (
     <span className="inline-flex items-center gap-2 text-sm text-gray-500">

@@ -117,6 +117,18 @@ export default function GennoorCare() {
     else setOpen(false)
   }
 
+  // Link titles arrive HTML-escaped from the bot ("&amp;" etc.) — show them plain
+  const decodeEntities = (s: string) =>
+    s.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#0?39;/g, "'")
+
+  // A suggested link is a duplicate if the reply text already links to it —
+  // by full URL, scheme-less URL, or just the path (inline links are often relative)
+  const linkInContent = (content: string, url: string) => {
+    if (content.includes(url) || content.includes(url.replace(/^https?:\/\/(www\.)?/, ''))) return true
+    const path = url.replace(/^https?:\/\/[^/]+/, '')
+    return path.length > 1 && content.includes(path)
+  }
+
   // Lightweight markdown rendering: paragraphs, bullets, **bold**,
   // [title](url) links AND bare URLs/domains made clickable.
   const renderInline = (text: string, keyBase: string) => {
@@ -212,11 +224,12 @@ export default function GennoorCare() {
             {msgs.map((m, i) => (
               <div key={i} className={`max-w-[88%] rounded-2xl px-3 py-2 text-[13px] leading-relaxed break-words ${m.role === 'user' ? 'ml-auto bg-blue-600 text-white rounded-br-md whitespace-pre-line' : 'bg-white border border-gray-200 text-gray-800 rounded-bl-md'}`}>
                 {m.role === 'assistant' ? renderText(m.content) : m.content}
-                {m.links && m.links.length > 0 && (
+                {/* Only add chips for links the reply text doesn't already contain — no duplicates */}
+                {m.links && m.links.filter((l) => !linkInContent(m.content, l.url)).length > 0 && (
                   <div className="mt-2 space-y-1.5">
-                    {m.links.map((l) => (
-                      <a key={l.url} href={l.url} className="block px-3 py-2 rounded-lg bg-blue-50 border border-blue-100 hover:border-blue-300 text-blue-700 text-xs font-medium truncate">
-                        {l.title} →
+                    {m.links.filter((l) => !linkInContent(m.content, l.url)).map((l) => (
+                      <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer" className="block px-3 py-2 rounded-lg bg-blue-50 border border-blue-100 hover:border-blue-300 text-blue-700 text-xs font-medium truncate">
+                        {decodeEntities(l.title)} →
                       </a>
                     ))}
                   </div>

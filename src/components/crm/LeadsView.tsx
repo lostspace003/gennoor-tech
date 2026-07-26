@@ -2,9 +2,9 @@
 
 import { useMemo, useRef, useState } from 'react'
 import * as XLSX from 'xlsx'
-import { Search, Upload, Download, Trash2, Brain, Mail, X, Hand, Undo2, Archive, UserPlus } from 'lucide-react'
+import { Search, Upload, Download, Trash2, Brain, Mail, X, Hand, Undo2, Archive, UserPlus, Sparkles } from 'lucide-react'
 import { Lead, LeadStatus, PipelineStage, ProcessStatus, PIPELINE_STAGES } from '@/lib/crm/types'
-import { StatusBadge, StageBar, timeAgo, api, STAGE_LABELS, Spinner, InfoTip } from './shared'
+import { StatusBadge, StageBar, timeAgo, api, STAGE_LABELS, Spinner, InfoTip, MultiSelect, PriorityBadge, normPriority } from './shared'
 import { useCrm } from './CrmContext'
 
 const CRM_TEAM = ['admin@gennoor.com', 'jalalkhan@gennoor.com', 'yusufchaudhary@gennoor.com', 'contact@gennoor.com', 'contacts@gennoor.com']
@@ -60,15 +60,19 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
   const { userEmail } = useCrm()
   const [poolFilter, setPoolFilter] = useState<'all' | 'pool' | 'mine' | 'dumped'>('all')
   const [searchTerm, setSearchTerm] = useState('')
-  const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'week' | 'month'>('all')
-  const [processFilter, setProcessFilter] = useState<'all' | ProcessStatus>('all')
-  const [stageFilter, setStageFilter] = useState<'all' | PipelineStage>('all')
-  const [statusFilter, setStatusFilter] = useState<'all' | LeadStatus>('all')
+  const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'week' | 'month' | 'custom'>('all')
+  const [dateFrom, setDateFrom] = useState('')
+  const [dateTo, setDateTo] = useState('')
+  const [processFilter, setProcessFilter] = useState<string[]>([])
+  const [stageFilter, setStageFilter] = useState<string[]>([])
+  const [statusFilter, setStatusFilter] = useState<string[]>([])
+  const [priorityFilter, setPriorityFilter] = useState<string[]>([])
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
   const [selected, setSelected] = useState<string[]>([])
   const [busy, setBusy] = useState('')
   const [upload, setUpload] = useState<ParsedUpload | null>(null)
+  const [adding, setAdding] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const resetPage = () => setPage(1)
@@ -92,17 +96,25 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
         l.sector.toLowerCase().includes(term) ||
         l.country.toLowerCase().includes(term)
     )
-    if (dateFilter !== 'all') {
+    if (dateFilter === 'custom') {
+      const from = dateFrom ? new Date(dateFrom).getTime() : 0
+      const to = dateTo ? new Date(dateTo).getTime() + 86_400_000 : Infinity
+      result = result.filter((l) => {
+        const t = new Date(l.createdAt || l.lastActivity).getTime()
+        return t >= from && t < to
+      })
+    } else if (dateFilter !== 'all') {
       const now = new Date()
       const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
       const cutoff = dateFilter === 'today' ? dayStart : dateFilter === 'week' ? dayStart - 6 * 86_400_000 : dayStart - 29 * 86_400_000
       result = result.filter((l) => new Date(l.createdAt || l.lastActivity).getTime() >= cutoff)
     }
-    if (processFilter !== 'all') result = result.filter((l) => l.processStatus === processFilter)
-    if (stageFilter !== 'all') result = result.filter((l) => l.stage === stageFilter)
-    if (statusFilter !== 'all') result = result.filter((l) => l.status === statusFilter)
+    if (processFilter.length) result = result.filter((l) => processFilter.includes(l.processStatus))
+    if (stageFilter.length) result = result.filter((l) => stageFilter.includes(l.stage))
+    if (statusFilter.length) result = result.filter((l) => statusFilter.includes(l.status))
+    if (priorityFilter.length) result = result.filter((l) => priorityFilter.includes(normPriority(l.priority) || 'none'))
     return result
-  }, [leads, searchTerm, dateFilter, processFilter, stageFilter, statusFilter, poolFilter, userEmail])
+  }, [leads, searchTerm, dateFilter, dateFrom, dateTo, processFilter, stageFilter, statusFilter, priorityFilter, poolFilter, userEmail])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
   const safePage = Math.min(page, totalPages)
@@ -364,24 +376,66 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
             <option value="today">Added today</option>
             <option value="week">This week</option>
             <option value="month">This month</option>
+            <option value="custom">Custom dates…</option>
           </select>
-          <select value={stageFilter} onChange={(e) => { setStageFilter(e.target.value as any); resetPage() }} className="text-sm border border-gray-200 rounded-lg px-2 py-2 text-gray-700">
-            <option value="all">All stages</option>
-            {PIPELINE_STAGES.map((s, i) => <option key={s} value={s}>{i + 1}. {STAGE_LABELS[s]}</option>)}
-          </select>
-          <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value as any); resetPage() }} className="text-sm border border-gray-200 rounded-lg px-2 py-2 text-gray-700">
-            <option value="all">All lead status</option>
-            {(['new', 'contacted', 'qualified', 'proposal', 'negotiation', 'won', 'lost'] as LeadStatus[]).map((s) => (
-              <option key={s} value={s}>{s[0].toUpperCase() + s.slice(1)}</option>
-            ))}
-          </select>
-          <select value={processFilter} onChange={(e) => { setProcessFilter(e.target.value as any); resetPage() }} className="text-sm border border-gray-200 rounded-lg px-2 py-2 text-gray-700">
-            <option value="all">All process</option>
-            <option value="active">Active</option>
-            <option value="paused">Paused</option>
-            <option value="stopped">Stopped</option>
-          </select>
+          {dateFilter === 'custom' && (
+            <span className="flex items-center gap-1">
+              <input type="date" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); resetPage() }} className="text-xs border border-gray-200 rounded-lg px-2 py-2 text-gray-700" title="From date" />
+              <span className="text-xs text-gray-400">→</span>
+              <input type="date" value={dateTo} onChange={(e) => { setDateTo(e.target.value); resetPage() }} className="text-xs border border-gray-200 rounded-lg px-2 py-2 text-gray-700" title="To date" />
+            </span>
+          )}
+          <MultiSelect
+            label="Priority"
+            options={[{ value: 'high', label: 'High' }, { value: 'medium', label: 'Medium' }, { value: 'low', label: 'Low' }, { value: 'none', label: 'Not set' }]}
+            values={priorityFilter}
+            onChange={(v) => { setPriorityFilter(v); resetPage() }}
+          />
+          <MultiSelect
+            label="Stage"
+            options={PIPELINE_STAGES.map((s, i) => ({ value: s, label: `${i + 1}. ${STAGE_LABELS[s]}` }))}
+            values={stageFilter}
+            onChange={(v) => { setStageFilter(v); resetPage() }}
+          />
+          <MultiSelect
+            label="Status"
+            options={(['new', 'contacted', 'qualified', 'proposal', 'negotiation', 'won', 'lost'] as LeadStatus[]).map((s) => ({ value: s, label: s[0].toUpperCase() + s.slice(1) }))}
+            values={statusFilter}
+            onChange={(v) => { setStatusFilter(v); resetPage() }}
+          />
+          <MultiSelect
+            label="Process"
+            options={[{ value: 'active', label: 'Active' }, { value: 'paused', label: 'Paused' }, { value: 'stopped', label: 'Stopped' }]}
+            values={processFilter}
+            onChange={(v) => { setProcessFilter(v); resetPage() }}
+          />
           <div className="ml-auto flex items-center gap-2">
+            <button
+              onClick={() => setAdding(true)}
+              className="px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 flex items-center gap-2"
+              title="Add a single lead manually — it will be saved under your name"
+            >
+              <UserPlus className="w-4 h-4" /> Add lead
+            </button>
+            {canManage && (
+              <button
+                onClick={async () => {
+                  const targets = (selected.length ? filtered.filter((l) => selected.includes(l.id)) : filtered.filter((l) => !normPriority(l.priority))).map((l) => l.id)
+                  if (targets.length === 0) { notify(selected.length ? 'Selected leads already have priorities' : 'Every visible lead already has a priority', true); return }
+                  setBusy('prioritize')
+                  try {
+                    const res = await api<{ updated: number }>('/api/admin/leads/prioritize', { method: 'POST', body: JSON.stringify({ leadIds: targets.slice(0, 60) }) })
+                    await onReload()
+                    notify(`AI set priority on ${res.updated} lead(s)`)
+                  } catch (e: any) { notify(e.message, true) } finally { setBusy('') }
+                }}
+                disabled={busy === 'prioritize'}
+                className="px-3 py-2 border border-purple-300 text-purple-700 text-sm rounded-lg hover:bg-purple-50 flex items-center gap-2 disabled:opacity-50"
+                title="AI assigns High/Medium/Low to the selected leads (or every visible lead without a priority)"
+              >
+                <Sparkles className="w-4 h-4" /> {busy === 'prioritize' ? 'Prioritizing…' : 'AI prioritize'}
+              </button>
+            )}
             <button
               onClick={() => {
                 const rows = filtered.map((l) => ({
@@ -505,6 +559,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                 />
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lead</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Priority</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Company</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stage</th>
@@ -517,7 +572,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
           <tbody className="divide-y divide-gray-100">
             {pageLeads.length === 0 && (
               <tr>
-                <td colSpan={9} className="px-6 py-16 text-center text-gray-400 text-sm">
+                <td colSpan={10} className="px-6 py-16 text-center text-gray-400 text-sm">
                   {leads.length === 0 ? 'No leads yet. Download the template, fill it, and upload it here.' : 'No leads match the current filters.'}
                 </td>
               </tr>
@@ -536,6 +591,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                   <div className="text-sm font-medium text-gray-900">{lead.name}</div>
                   <div className="text-xs text-gray-500">{lead.email || <span className="text-amber-500">no email</span>}</div>
                 </td>
+                <td className="px-4 py-3"><PriorityBadge priority={lead.priority} /></td>
                 <td className="px-4 py-3">
                   <div className="text-sm text-gray-900">{lead.company || '—'}</div>
                   <div className="text-xs text-gray-500">{lead.designation}</div>
@@ -607,6 +663,16 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
         </div>
       </div>
 
+      {/* Manual add-lead modal — anyone can add; the lead is saved under their name */}
+      {adding && (
+        <AddLeadModal
+          userEmail={userEmail}
+          onClose={() => setAdding(false)}
+          onAdded={async () => { setAdding(false); await onReload() }}
+          notify={notify}
+        />
+      )}
+
       {/* Upload preview modal */}
       {upload && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -637,6 +703,78 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+// Single-lead manual entry. The creator becomes the owner by default so the
+// lead lands in "My leads"; managers can release it to the pool or reassign.
+function AddLeadModal({ userEmail, onClose, onAdded, notify }: {
+  userEmail: string
+  onClose: () => void
+  onAdded: () => Promise<void>
+  notify: (msg: string, isError?: boolean) => void
+}) {
+  const [form, setForm] = useState({
+    name: '', email: '', phone: '', company: '', designation: '',
+    priority: '', sector: '', country: '', city: '', linkedin: '', website: '', notes: '',
+  })
+  const [saving, setSaving] = useState(false)
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+    setForm((f) => ({ ...f, [k]: e.target.value }))
+  const inputCls = 'w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+
+  const save = async () => {
+    if (!form.name.trim()) { notify('Name is required', true); return }
+    setSaving(true)
+    try {
+      await api('/api/admin/leads', {
+        method: 'POST',
+        body: JSON.stringify({ ...form, email: form.email.trim().toLowerCase(), owner: userEmail, source: 'manual' }),
+      })
+      notify(`Lead "${form.name.trim()}" added under your name`)
+      await onAdded()
+    } catch (e: any) { notify(e.message, true) } finally { setSaving(false) }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl w-full max-w-xl max-h-[88vh] flex flex-col">
+        <div className="px-5 py-3.5 border-b border-gray-200 flex items-center justify-between shrink-0">
+          <div>
+            <h3 className="text-base font-semibold text-gray-900">Add lead manually</h3>
+            <p className="text-[11px] text-gray-500">Saved under <span className="font-medium">{userEmail.split('@')[0]}</span> — a manager can release it to the pool or reassign it.</p>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded"><X className="w-5 h-5 text-gray-500" /></button>
+        </div>
+        <div className="p-5 overflow-y-auto space-y-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <input value={form.name} onChange={set('name')} className={inputCls} placeholder="Name *" autoFocus />
+            <select value={form.priority} onChange={set('priority')} className={inputCls}>
+              <option value="">Priority — not set</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+            <input value={form.email} onChange={set('email')} className={inputCls} placeholder="Email" type="email" />
+            <input value={form.phone} onChange={set('phone')} className={inputCls} placeholder="Phone" />
+            <input value={form.company} onChange={set('company')} className={inputCls} placeholder="Company" />
+            <input value={form.designation} onChange={set('designation')} className={inputCls} placeholder="Designation" />
+            <input value={form.sector} onChange={set('sector')} className={inputCls} placeholder="Sector / segment" />
+            <input value={form.country} onChange={set('country')} className={inputCls} placeholder="Country" />
+            <input value={form.city} onChange={set('city')} className={inputCls} placeholder="City" />
+            <input value={form.linkedin} onChange={set('linkedin')} className={inputCls} placeholder="LinkedIn URL" />
+          </div>
+          <input value={form.website} onChange={set('website')} className={inputCls} placeholder="Company website" />
+          <textarea value={form.notes} onChange={set('notes')} rows={3} className={inputCls} placeholder="Notes (context, where you met them, what they need...)" />
+        </div>
+        <div className="px-5 py-3.5 border-t border-gray-200 flex justify-end gap-2 shrink-0">
+          <button onClick={onClose} className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50">Cancel</button>
+          <button onClick={save} disabled={saving || !form.name.trim()} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2">
+            <UserPlus className="w-4 h-4" /> {saving ? 'Saving…' : 'Add lead'}
+          </button>
+        </div>
+      </div>
     </div>
   )
 }

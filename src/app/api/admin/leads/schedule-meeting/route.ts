@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
-import { mutateLeads, getLead, touch } from '@/lib/crm/store'
-import { graphConfigured, createTeamsMeeting, listUpcomingMeetings } from '@/lib/crm/graph'
+import { requireCrmUser, canWorkLead, CrmSessionUser } from '@/lib/crm/access'
+import { mutateLeads, getLead, getLeads, touch } from '@/lib/crm/store'
+import { graphConfigured, createTeamsMeeting, listUpcomingMeetings, getMeeting, updateMeeting, cancelMeeting } from '@/lib/crm/graph'
 
 // GET → upcoming meetings (the scheduler view)
 export async function GET() {
@@ -87,5 +87,72 @@ export async function POST(req: NextRequest) {
       },
       { status: 500 }
     )
+  }
+}
+
+// Change/cancel rule: managers (admin, jalal, yusuf) always; everyone else only
+// for meetings whose attendees include a lead they own. Returns the matched
+// leads so the change is logged on their timelines.
+async function authorizeMeeting(user: CrmSessionUser, meetingId: string) {
+  const meeting = await getMeeting(meetingId)
+  if (!meeting) return { error: 'Meeting not found (it may already be cancelled).', status: 404 as const }
+  const attendeeSet = new Set(meeting.attendees.map((a) => a.toLowerCase()))
+  const leads = await getLeads()
+  const matched = leads.filter((l) => [l.email, ...(l.altEmails || [])].some((e) => e && attendeeSet.has(e.toLowerCase())))
+  if (!user.isManager && !matched.some((l) => (l.owner || '').toLowerCase() === user.email)) {
+    return { error: 'Only the lead\'s owner or a manager can change this meeting.', status: 403 as const }
+  }
+  return { meeting, matched }
+}
+
+const logOnLeads = (leadIds: string[], by: string, description: string) =>
+  mutateLeads((leads) => {
+    for (const l of leads) {
+      if (leadIds.includes(l.id)) touch(l, { at: new Date().toISOString(), by, type: 'followup', description })
+    }
+  })
+
+// PATCH → reschedule / edit a meeting (new time, optional comment). Attendees
+// get the updated invite by email, so it shows up in the lead's thread too.
+export async function PATCH(req: NextRequest) {
+  const user = await requireCrmUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!graphConfigured()) return NextResponse.json({ error: 'Microsoft Graph is not configured.' }, { status: 503 })
+
+  try {
+    const { meetingId, start, durationMinutes, comment, subject } = await req.json()
+    if (!meetingId) return NextResponse.json({ error: 'meetingId required' }, { status: 400 })
+    const authz = await authorizeMeeting(user, meetingId)
+    if ('error' in authz) return NextResponse.json({ error: authz.error }, { status: authz.status })
+
+    await updateMeeting(meetingId, { start, durationMinutes: Number(durationMinutes) || 30, subject, comment })
+    const when = start ? ` to ${new Date(start).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST` : ''
+    await logOnLeads(authz.matched.map((l) => l.id), user.email, `Meeting rescheduled${when}: ${authz.meeting.subject}${comment ? ` — "${String(comment).slice(0, 140)}"` : ''}`)
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('Update meeting error:', error)
+    return NextResponse.json({ error: 'Failed to update meeting.' }, { status: 500 })
+  }
+}
+
+// DELETE → cancel a meeting (optional comment); attendees get the cancellation.
+export async function DELETE(req: NextRequest) {
+  const user = await requireCrmUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!graphConfigured()) return NextResponse.json({ error: 'Microsoft Graph is not configured.' }, { status: 503 })
+
+  try {
+    const meetingId = req.nextUrl.searchParams.get('meetingId')
+    const comment = req.nextUrl.searchParams.get('comment') || undefined
+    if (!meetingId) return NextResponse.json({ error: 'meetingId required' }, { status: 400 })
+    const authz = await authorizeMeeting(user, meetingId)
+    if ('error' in authz) return NextResponse.json({ error: authz.error }, { status: authz.status })
+
+    await cancelMeeting(meetingId, comment)
+    await logOnLeads(authz.matched.map((l) => l.id), user.email, `Meeting cancelled: ${authz.meeting.subject}${comment ? ` — "${comment.slice(0, 140)}"` : ''}`)
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('Cancel meeting error:', error)
+    return NextResponse.json({ error: 'Failed to cancel meeting.' }, { status: 500 })
   }
 }
