@@ -63,8 +63,36 @@ function Frame({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession()
   const { leads, loading, loadError, reload, notify, isAdmin, isManager } = useCrm()
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [inboxUnseen, setInboxUnseen] = useState(0)
 
   useEffect(() => setDrawerOpen(false), [pathname])
+
+  // Auto-pull replies: poll the inbox every 3 minutes while the CRM is open;
+  // badge counts messages newer than the last time the Inbox page was viewed.
+  useEffect(() => {
+    let stopped = false
+    const check = async () => {
+      if (document.hidden) return
+      try {
+        const res = await fetch('/api/admin/leads/inbox')
+        const data = await res.json()
+        if (stopped || !res.ok || !Array.isArray(data.messages)) return
+        const lastSeen = localStorage.getItem('crm.inbox.lastSeen') || ''
+        setInboxUnseen(data.messages.filter((m: any) => m.receivedAt > lastSeen).length)
+      } catch { /* polling is best-effort */ }
+    }
+    check()
+    const timer = setInterval(check, 180_000)
+    return () => { stopped = true; clearInterval(timer) }
+  }, [])
+
+  // Opening the Inbox marks everything seen
+  useEffect(() => {
+    if (pathname === '/crm/inbox') {
+      localStorage.setItem('crm.inbox.lastSeen', new Date().toISOString())
+      setInboxUnseen(0)
+    }
+  }, [pathname])
 
   const active = NAV.find((n) => pathname?.startsWith(n.href))
   const title = pathname?.match(/^\/crm\/leads\/./) ? 'Lead Workspace' : active?.label || 'CRM'
@@ -89,6 +117,9 @@ function Frame({ children }: { children: React.ReactNode }) {
                 <span className="text-sm font-medium">{item.label}</span>
               </span>
               {item.href === '/crm/leads' && <span className="text-[11px] bg-gray-100 px-1.5 py-0.5 rounded-full">{leads.length}</span>}
+              {item.href === '/crm/inbox' && inboxUnseen > 0 && (
+                <span className="text-[11px] bg-emerald-600 text-white px-1.5 py-0.5 rounded-full animate-pulse">{inboxUnseen}</span>
+              )}
             </Link>
           )
         })}

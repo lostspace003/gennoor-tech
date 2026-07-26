@@ -75,7 +75,8 @@ jobs:
             FOUNDRY_CLIENT_ID="${{ secrets.FOUNDRY_CLIENT_ID }}" \
             FOUNDRY_CLIENT_SECRET="${{ secrets.FOUNDRY_CLIENT_SECRET }}" \
             FOUNDRY_OPENAI_BASE="https://admin-5924-resource.openai.azure.com" \
-            FOUNDRY_WEB_MODEL="gpt-5"
+            FOUNDRY_WEB_MODEL="gpt-5" \
+            CRM_CRON_SECRET="${{ secrets.CRM_CRON_SECRET }}"
 
       - name: Deploy to Azure Web App
         if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')

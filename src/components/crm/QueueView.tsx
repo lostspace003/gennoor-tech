@@ -1,7 +1,8 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Brain, Lock, Send, Clock, PauseCircle, CheckCircle2, ArrowRight, Hand } from 'lucide-react'
+import { Brain, Lock, Send, Clock, PauseCircle, CheckCircle2, ArrowRight, Hand, Reply } from 'lucide-react'
 import { Lead } from '@/lib/crm/types'
 import { timeAgo } from './shared'
 import { useCrm } from './CrmContext'
@@ -72,9 +73,34 @@ const ACCENTS: Record<string, { border: string; bg: string; text: string; btn: s
 
 export default function QueueView({ leads }: { leads: Lead[] }) {
   const { userEmail, isManager, reload, notify } = useCrm()
+  const [replied, setReplied] = useState<Lead[]>([])
+
+  // Reply-aware: a lead whose inbound message is newer than our last sent
+  // email jumps to the top — that's the hottest work in the CRM.
+  useEffect(() => {
+    fetch('/api/admin/leads/inbox')
+      .then((r) => r.json())
+      .then((data) => {
+        if (!Array.isArray(data.messages)) return
+        const byLead = new Map<string, string>()
+        for (const m of data.messages) {
+          if (m.leadId && (!byLead.has(m.leadId) || m.receivedAt > byLead.get(m.leadId)!)) byLead.set(m.leadId, m.receivedAt)
+        }
+        setReplied(
+          leads.filter((l) => {
+            const rec = byLead.get(l.id)
+            if (!rec || l.dumped) return false
+            const sent = l.emailHistory.find((e) => e.status === 'sent')?.at || ''
+            return rec > sent
+          })
+        )
+      })
+      .catch(() => {})
+  }, [leads])
+
   // Managers see the whole team's queue; members see their own claimed work
   const { buckets, pool, paused, stopped } = buildQueue(leads, isManager ? undefined : userEmail)
-  const actionable = buckets.slice(0, 4).reduce((n, b) => n + b.leads.length, 0)
+  const actionable = buckets.slice(0, 4).reduce((n, b) => n + b.leads.length, 0) + replied.length
 
   const pickUp = async (id: string) => {
     try {
@@ -101,6 +127,32 @@ export default function QueueView({ leads }: { leads: Lead[] }) {
           <span className="text-xs text-gray-400">{paused.length} paused · {stopped.length} stopped</span>
         )}
       </div>
+
+      {/* Replies — hottest bucket, always on top */}
+      {replied.length > 0 && (
+        <div className="rounded-xl border border-rose-300 overflow-hidden">
+          <div className="bg-rose-50 px-4 py-2.5 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <Reply className="w-4 h-4 text-rose-600 shrink-0" />
+              <span className="text-sm font-semibold text-rose-700">Reply received — act now</span>
+            </div>
+            <span className="text-xs font-medium text-rose-700">{replied.length}</span>
+          </div>
+          <div className="divide-y divide-gray-100 bg-white">
+            {replied.map((l) => (
+              <div key={l.id} className="px-4 py-2.5 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium text-gray-900 truncate">{l.name} <span className="text-gray-400 font-normal">· {l.company || '—'}</span></div>
+                  <div className="text-xs text-gray-400">{l.owner ? l.owner.split('@')[0] : 'pool'}</div>
+                </div>
+                <Link href={`/crm/leads/${encodeURIComponent(l.id)}?tab=email`} className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs rounded-lg flex items-center gap-1.5 shrink-0">
+                  Open reply <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Pool — pick up new work */}
       <div className="rounded-xl border border-emerald-200 overflow-hidden">

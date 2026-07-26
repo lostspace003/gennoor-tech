@@ -38,6 +38,55 @@ export function DashboardView({ leads, onGoLeads, onOpenLead }: { leads: Lead[];
         ))}
       </div>
 
+      {/* Pipeline & revenue snapshot — real data only */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <h3 className="text-sm font-semibold text-gray-800 mb-3">Pipeline funnel</h3>
+          {(() => {
+            const activeLeads = leads.filter((l) => !l.dumped)
+            const max = Math.max(1, ...PIPELINE_STAGES.map((s) => activeLeads.filter((l) => l.stage === s).length))
+            return (
+              <div className="space-y-2">
+                {PIPELINE_STAGES.map((s, i) => {
+                  const inStage = activeLeads.filter((l) => l.stage === s)
+                  const value = inStage.reduce((sum, l) => sum + (l.value || 0), 0)
+                  return (
+                    <div key={s} className="flex items-center gap-2 text-xs">
+                      <span className="w-24 text-gray-500 shrink-0">{i + 1}. {STAGE_LABELS[s]}</span>
+                      <div className="flex-1 bg-gray-100 rounded-full h-4 overflow-hidden">
+                        <div className="h-full bg-blue-500 rounded-full flex items-center justify-end pr-1.5 text-[10px] text-white min-w-[1.25rem]" style={{ width: `${(inStage.length / max) * 100}%` }}>
+                          {inStage.length}
+                        </div>
+                      </div>
+                      <span className="w-16 text-right text-gray-400 shrink-0">{value > 0 ? `₹${(value / 1000).toFixed(0)}K` : '—'}</span>
+                    </div>
+                  )
+                })}
+              </div>
+            )
+          })()}
+        </div>
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <h3 className="text-sm font-semibold text-gray-800 mb-3">Outcomes & outreach</h3>
+          {(() => {
+            const won = leads.filter((l) => l.status === 'won')
+            const lost = leads.filter((l) => l.status === 'lost')
+            const weekAgo = Date.now() - 7 * 86_400_000
+            const emails7d = leads.reduce((n, l) => n + l.emailHistory.filter((e) => e.status === 'sent' && new Date(e.at).getTime() >= weekAgo).length, 0)
+            const invites = leads.reduce((n, l) => n + l.followUps.length, 0)
+            const wonValue = won.reduce((s, l) => s + (l.value || 0), 0)
+            return (
+              <div className="grid grid-cols-2 gap-3 text-center">
+                <div className="bg-green-50 rounded-lg p-3"><div className="text-xl font-bold text-green-700">{won.length}</div><div className="text-[11px] text-green-700">won{wonValue > 0 ? ` · ₹${(wonValue / 1000).toFixed(0)}K` : ''}</div></div>
+                <div className="bg-red-50 rounded-lg p-3"><div className="text-xl font-bold text-red-600">{lost.length}</div><div className="text-[11px] text-red-600">lost</div></div>
+                <div className="bg-sky-50 rounded-lg p-3"><div className="text-xl font-bold text-sky-700">{emails7d}</div><div className="text-[11px] text-sky-700">emails sent (7d)</div></div>
+                <div className="bg-emerald-50 rounded-lg p-3"><div className="text-xl font-bold text-emerald-700">{invites}</div><div className="text-[11px] text-emerald-700">webinar/training invites</div></div>
+              </div>
+            )
+          })()}
+        </div>
+      </div>
+
       <div className="bg-white rounded-lg border border-gray-200">
         <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
           <h3 className="text-sm font-semibold text-gray-800">Recent activity</h3>

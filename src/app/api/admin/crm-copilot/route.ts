@@ -25,7 +25,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'messages required' }, { status: 400 })
     }
 
-    const leads = await getLeads()
+    const allLeads = await getLeads()
+
+    // Scale: small CRMs go in whole (most accurate); large ones use
+    // embedding retrieval to select the leads relevant to the question.
+    let leads = allLeads
+    let scopeNote = ''
+    if (allLeads.length > 150) {
+      try {
+        const { retrieveRelevantLeads } = await import('@/lib/crm/embeddings')
+        const question = [...messages].reverse().find((m: any) => m.role === 'user')?.content || ''
+        leads = await retrieveRelevantLeads(allLeads, String(question), 30)
+        scopeNote = ` (retrieved the ${leads.length} most relevant of ${allLeads.length} leads for this question)`
+      } catch (error: any) {
+        console.error('Embedding retrieval failed, using full snapshot:', error?.message)
+      }
+    }
+
     const snapshot = leads.map((l) => ({
       id: l.id,
       name: l.name,
@@ -52,7 +68,7 @@ export async function POST(request: Request) {
 
 You are GennoorBot, the CRM copilot for the Gennoor sales team. Today is ${new Date().toISOString().slice(0, 10)}. Ground answers in the CRM data below; be specific — name leads and companies. When asked for lists, keep them tight. If the data doesn't contain the answer, say so plainly.
 
-CRM DATA (${snapshot.length} leads):
+CRM DATA (${snapshot.length} leads${scopeNote}):
 ${JSON.stringify(snapshot)}`
 
     const history = messages.slice(-12).map((m: any) => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: String(m.content) }))
