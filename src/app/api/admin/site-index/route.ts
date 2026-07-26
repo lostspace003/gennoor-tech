@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireCrmUser } from '@/lib/crm/access'
 import { embedTexts } from '@/lib/crm/embeddings'
-import { loadIndexMeta, saveIndex, loadVectors, EMBED_DIM, SiteChunk, SiteIndexMeta } from '@/lib/bot/store'
+import {
+  loadIndexMeta, saveIndex, loadVectors, EMBED_DIM, SiteChunk, SiteIndexMeta,
+  readIndexStatus, writeIndexStatus,
+} from '@/lib/bot/store'
 import crypto from 'crypto'
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.gennoor.com'
@@ -12,7 +15,7 @@ function hash(s: string) { return crypto.createHash('sha1').update(s).digest('he
 
 function htmlToText(html: string): { title: string; text: string } {
   const title = (html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1] || '').replace(/\s*[|—-]\s*Gennoor.*$/i, '').trim()
-  let body = html
+  const body = html
     .replace(/<script[\s\S]*?<\/script>/gi, ' ')
     .replace(/<style[\s\S]*?<\/style>/gi, ' ')
     .replace(/<nav[\s\S]*?<\/nav>/gi, ' ')
@@ -26,30 +29,24 @@ function htmlToText(html: string): { title: string; text: string } {
   return { title, text }
 }
 
-// Rebuilds the site knowledge index. Delta-based: unchanged pages keep their
-// existing chunks and vectors; only new/changed pages are re-embedded.
-// Auth: CRM manager session OR the cron secret (monthly GitHub Action).
-export async function POST(req: NextRequest) {
-  const cronOk = process.env.CRM_CRON_SECRET && req.headers.get('x-cron-secret') === process.env.CRM_CRON_SECRET
-  const user = cronOk ? null : await requireCrmUser()
-  if (!cronOk && !user?.isManager) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
+// The actual crawl+embed job. Runs detached from the HTTP request because a
+// full index exceeds the App Service request timeout (~230s). Progress and
+// result land in site-index/status.json.
+async function runIndex() {
   try {
-    // 1. Sitemap → URL list
-    const sitemapRes = await fetch(`${SITE}/sitemap.xml`, { headers: { 'User-Agent': 'GennoorBot-Indexer' } })
-    if (!sitemapRes.ok) return NextResponse.json({ error: `sitemap fetch failed (${sitemapRes.status})` }, { status: 500 })
+    const sitemapRes = await fetch(`${SITE}/sitemap.xml`, { headers: { 'User-Agent': 'GennoorCare-Indexer' } })
+    if (!sitemapRes.ok) throw new Error(`sitemap fetch failed (${sitemapRes.status})`)
     const xml = await sitemapRes.text()
     const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)]
       .map((m) => m[1].trim())
       .filter((u) => !EXCLUDE.some((rx) => rx.test(u)))
-    if (urls.length === 0) return NextResponse.json({ error: 'No URLs found in sitemap' }, { status: 500 })
+    if (urls.length === 0) throw new Error('No URLs found in sitemap')
 
     const prev = await loadIndexMeta()
     const prevVectors = prev ? await loadVectors(prev.updatedAt) : null
-    const prevByChunk = new Map<string, number>() // chunk id -> index in prev vectors
+    const prevByChunk = new Map<string, number>()
     prev?.chunks.forEach((c, i) => prevByChunk.set(c.id, i))
 
-    // 2. Fetch pages (batches of 8), detect changes
     const pages: Record<string, string> = {}
     const chunks: SiteChunk[] = []
     let changedPages = 0
@@ -59,7 +56,7 @@ export async function POST(req: NextRequest) {
       const batch = urls.slice(i, i + 8)
       const results = await Promise.all(batch.map(async (url) => {
         try {
-          const res = await fetch(url, { headers: { 'User-Agent': 'GennoorBot-Indexer' } })
+          const res = await fetch(url, { headers: { 'User-Agent': 'GennoorCare-Indexer' } })
           if (!res.ok) return null
           return { url, html: await res.text() }
         } catch { return null }
@@ -67,7 +64,7 @@ export async function POST(req: NextRequest) {
       for (const r of results) {
         if (!r) { fetchErrors++; continue }
         const { title, text } = htmlToText(r.html)
-        if (text.length < 200) continue // skip thin pages
+        if (text.length < 200) continue
         const pageHash = hash(text)
         pages[r.url] = pageHash
         if (prev?.pages[r.url] !== pageHash) changedPages++
@@ -76,9 +73,11 @@ export async function POST(req: NextRequest) {
           chunks.push({ id: hash(`${r.url}|${piece}`), url: r.url, title: title || r.url, text: piece, hash: pageHash })
         }
       }
+      if (i % 80 === 0) {
+        await writeIndexStatus({ state: 'running', startedAt: new Date().toISOString(), progress: `crawled ${Math.min(i + 8, urls.length)}/${urls.length} pages` }).catch(() => {})
+      }
     }
 
-    // 3. Embed only chunks we don't already have vectors for
     const vectors = new Float32Array(chunks.length * EMBED_DIM)
     const toEmbed: number[] = []
     chunks.forEach((c, i) => {
@@ -93,28 +92,57 @@ export async function POST(req: NextRequest) {
       const idxs = toEmbed.slice(i, i + 64)
       const embedded = await embedTexts(idxs.map((x) => `${chunks[x].title}\n${chunks[x].text}`))
       idxs.forEach((x, j) => vectors.set(embedded[j], x * EMBED_DIM))
+      if (i % 320 === 0) {
+        await writeIndexStatus({ state: 'running', startedAt: new Date().toISOString(), progress: `embedded ${Math.min(i + 64, toEmbed.length)}/${toEmbed.length} chunks` }).catch(() => {})
+      }
     }
 
     const meta: SiteIndexMeta = { chunks, pages, updatedAt: new Date().toISOString() }
     await saveIndex(meta, vectors)
-
-    return NextResponse.json({
-      success: true,
-      pages: Object.keys(pages).length,
-      chunks: chunks.length,
-      changedPages,
-      embedded: toEmbed.length,
-      fetchErrors,
+    await writeIndexStatus({
+      state: 'done',
+      startedAt: new Date().toISOString(),
+      finishedAt: new Date().toISOString(),
+      result: { pages: Object.keys(pages).length, chunks: chunks.length, changedPages, embedded: toEmbed.length, fetchErrors },
     })
   } catch (error: any) {
     console.error('Site index error:', error)
-    return NextResponse.json({ error: `Indexing failed: ${error?.message}` }, { status: 500 })
+    await writeIndexStatus({ state: 'error', startedAt: new Date().toISOString(), finishedAt: new Date().toISOString(), error: String(error?.message || error) }).catch(() => {})
   }
 }
 
-export async function GET() {
-  const user = await requireCrmUser()
-  if (!user?.isManager) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  const meta = await loadIndexMeta()
-  return NextResponse.json(meta ? { indexed: true, pages: Object.keys(meta.pages).length, chunks: meta.chunks.length, updatedAt: meta.updatedAt } : { indexed: false })
+function cronAuthorized(req: NextRequest): boolean {
+  return Boolean(process.env.CRM_CRON_SECRET && req.headers.get('x-cron-secret') === process.env.CRM_CRON_SECRET)
+}
+
+// POST → start the index job (returns immediately; job continues server-side)
+export async function POST(req: NextRequest) {
+  const cronOk = cronAuthorized(req)
+  const user = cronOk ? null : await requireCrmUser()
+  if (!cronOk && !user?.isManager) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const status = await readIndexStatus()
+  if (status?.state === 'running' && Date.now() - new Date(status.startedAt).getTime() < 30 * 60_000) {
+    return NextResponse.json({ started: false, alreadyRunning: true, progress: status.progress }, { status: 409 })
+  }
+
+  await writeIndexStatus({ state: 'running', startedAt: new Date().toISOString(), progress: 'starting crawl' })
+  runIndex() // deliberately not awaited — outlives this request
+  return NextResponse.json({ started: true, note: 'Indexing runs in the background — poll GET for status.' }, { status: 202 })
+}
+
+// GET → index info + job status (manager session or cron secret)
+export async function GET(req: NextRequest) {
+  const cronOk = cronAuthorized(req)
+  const user = cronOk ? null : await requireCrmUser()
+  if (!cronOk && !user?.isManager) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const [meta, status] = await Promise.all([loadIndexMeta(), readIndexStatus()])
+  return NextResponse.json({
+    indexed: Boolean(meta),
+    pages: meta ? Object.keys(meta.pages).length : 0,
+    chunks: meta?.chunks.length || 0,
+    updatedAt: meta?.updatedAt || null,
+    job: status,
+  })
 }

@@ -71,12 +71,29 @@ export default function BotLogView({ isManager, notify }: { isManager: boolean; 
 
   const reindex = async () => {
     setBusy('index')
-    notify('Reindexing the website — this takes a few minutes...')
     try {
-      const r = await api<any>('/api/admin/site-index', { method: 'POST', body: '{}' })
-      setIndexInfo({ indexed: true, pages: r.pages, chunks: r.chunks, updatedAt: new Date().toISOString() })
-      notify(`Indexed ${r.pages} pages (${r.changedPages} changed, ${r.embedded} chunks embedded)`)
-    } catch (e: any) { notify(e.message, true) } finally { setBusy('') }
+      await api('/api/admin/site-index', { method: 'POST', body: '{}' })
+      notify('Indexing started — it runs in the background for a few minutes')
+      // Poll status until the job settles
+      const poll = setInterval(async () => {
+        try {
+          const info = await api<any>('/api/admin/site-index')
+          setIndexInfo(info)
+          if (info.job?.state === 'done') {
+            clearInterval(poll)
+            setBusy('')
+            notify(`Indexed ${info.job.result.pages} pages (${info.job.result.changedPages} changed, ${info.job.result.embedded} chunks embedded)`)
+          } else if (info.job?.state === 'error') {
+            clearInterval(poll)
+            setBusy('')
+            notify(`Indexing failed: ${info.job.error}`, true)
+          }
+        } catch { /* keep polling */ }
+      }, 8000)
+    } catch (e: any) {
+      notify(e.message, true)
+      setBusy('')
+    }
   }
 
   // Minimal MD render: #/##/- lines styled, rest as text
@@ -172,6 +189,9 @@ export default function BotLogView({ isManager, notify }: { isManager: boolean; 
               </>
             ) : (
               <div className="text-amber-700">The website hasn't been indexed yet — GennoorCare can't answer until the first index run.</div>
+            )}
+            {indexInfo?.job?.state === 'running' && (
+              <div className="text-xs text-blue-600 flex items-center gap-1.5"><RefreshCw className="w-3 h-3 animate-spin" /> {indexInfo.job.progress || 'indexing...'}</div>
             )}
           </div>
           <button onClick={reindex} disabled={busy === 'index'} className="px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 flex items-center gap-2 disabled:opacity-50">

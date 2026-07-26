@@ -83,6 +83,25 @@ export function topKChunks(query: Float32Array, vectors: Float32Array, chunks: S
   return scored.sort((a, b) => b.s - a.s).slice(0, k).map((x) => chunks[x.i])
 }
 
+/* ---------- index job status (async indexing) ---------- */
+
+export interface IndexStatus {
+  state: 'running' | 'done' | 'error'
+  startedAt: string
+  finishedAt?: string
+  progress?: string
+  result?: { pages: number; chunks: number; changedPages: number; embedded: number; fetchErrors: number }
+  error?: string
+}
+
+export async function readIndexStatus(): Promise<IndexStatus | null> {
+  return readJson<IndexStatus>('site-index/status.json')
+}
+
+export async function writeIndexStatus(status: IndexStatus) {
+  await writeBlob('site-index/status.json', JSON.stringify(status), 'application/json')
+}
+
 /* ---------- daily usage / budget breaker ---------- */
 
 interface DayUsage { requests: number; tokens: number }
