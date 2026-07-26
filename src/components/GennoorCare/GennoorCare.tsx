@@ -178,18 +178,12 @@ export default function GennoorCare() {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-40 flex items-center gap-2 pl-3 pr-4 py-3 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-xl transition-all hover:scale-105"
-          aria-label="Chat with GennoorCare"
+          className="fixed bottom-6 right-6 z-40 rounded-full transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+          aria-label={msgs.length > 0 ? 'Continue your GennoorCare chat' : 'Chat with GennoorCare'}
+          title={msgs.length > 0 ? 'Continue chat' : 'Ask GennoorCare'}
         >
-          <span className="relative flex">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logos/gennoor-tech-icon-white.svg" alt="" className="w-6 h-6" />
-            <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-400" />
-            </span>
-          </span>
-          <span className="text-sm font-semibold hidden sm:inline">{msgs.length > 0 ? 'Continue chat' : 'Ask GennoorCare'}</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logos/gennoorbot-avatar.svg" alt="GennoorCare" className="w-16 h-16 drop-shadow-lg" />
         </button>
       )}
 
@@ -199,7 +193,7 @@ export default function GennoorCare() {
           <div className="px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2.5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logos/gennoor-tech-icon-white.svg" alt="" className="w-7 h-7" />
+              <img src="/logos/gennoorbot-avatar.svg" alt="" className="w-9 h-9" />
               <div>
                 <div className="font-semibold text-sm leading-tight">GennoorCare</div>
                 <div className="text-[10px] text-blue-100 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" /> online — courses, training & POCs</div>

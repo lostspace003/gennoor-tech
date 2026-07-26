@@ -65,17 +65,19 @@ export default function CrmCopilot() {
       {/* Top floater with presence light */}
       <button
         onClick={() => setOpen((o) => !o)}
-        className="relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white text-xs font-medium shadow-sm hover:shadow-md transition-all"
+        className="relative rounded-full transition-transform hover:scale-110 focus:outline-none"
         title="GennoorBot — CRM copilot"
+        aria-label="Open GennoorBot"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logos/gennoor-tech-icon-white.svg" alt="" className="w-4.5 h-4.5 w-[18px] h-[18px]" />
-        <span className="hidden sm:inline">GennoorBot</span>
-        {/* Signal light: green pulse = online; amber = new reply while minimized */}
-        <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
-          <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${unseen ? 'bg-amber-400' : 'bg-green-400'}`} />
-          <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${unseen ? 'bg-amber-400' : 'bg-green-500'}`} />
-        </span>
+        <img src="/logos/gennoorbot-avatar.svg" alt="GennoorBot" className="w-9 h-9" />
+        {/* amber overlay when a reply arrived while minimized */}
+        {unseen && (
+          <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-amber-400" />
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-400 border border-white" />
+          </span>
+        )}
       </button>
 
       {/* Panel */}
@@ -89,11 +91,8 @@ export default function CrmCopilot() {
         >
           <div className="px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white flex items-center justify-between shrink-0 rounded-t-[inherit]">
             <div className="flex items-center gap-2.5">
-              <span className="relative flex">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/logos/gennoor-tech-icon-white.svg" alt="GennoorBot" className="w-6 h-6" />
-                <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-green-400 border border-white/50" />
-              </span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logos/gennoorbot-avatar.svg" alt="GennoorBot" className="w-8 h-8" />
               <div>
                 <div className="font-semibold text-sm leading-tight">GennoorBot</div>
                 <div className="text-[10px] text-blue-100">CRM copilot · online · knows all your lead data</div>
