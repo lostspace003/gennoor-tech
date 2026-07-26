@@ -6,7 +6,7 @@ import {
   Calendar, Trash2, CheckCircle, MessageSquare, Lock, RefreshCw, Paperclip, Reply, Eye,
 } from 'lucide-react'
 import { Lead, ChatMessage, PIPELINE_STAGES } from '@/lib/crm/types'
-import { StatusBadge, ProcessDot, StageBar, api, formatDateTime, Spinner, STAGE_LABELS } from './shared'
+import { StatusBadge, ProcessDot, StageBar, api, formatDateTime, Spinner, STAGE_LABELS, CopyMsg } from './shared'
 import { useCrm } from './CrmContext'
 import DocPreview from './DocPreview'
 
@@ -443,6 +443,7 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
               </button>
             </div>
             <p className="text-sm text-gray-700 whitespace-pre-line break-words">{lead.finalizedPitch}</p>
+            <CopyMsg text={lead.finalizedPitch} />
             <p className="text-xs text-green-700 mt-2">Next step: draft the email — the AI draft is built from this brief.</p>
           </div>
         )}
@@ -465,6 +466,7 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
           {chat.map((m, i) => (
             <div key={i} className={`max-w-[85%] rounded-lg px-3 py-2 text-sm whitespace-pre-line break-words ${m.role === 'user' ? 'ml-auto bg-blue-600 text-white' : 'bg-gray-100 text-gray-800'}`}>
               {m.content}
+              <CopyMsg text={m.content} light={m.role === 'user'} />
             </div>
           ))}
           {chatting && <Spinner label="Thinking..." />}
@@ -863,7 +865,7 @@ function EmailComposer({ lead, replyTo, preset, onClose, onSent, notify }: { lea
                 <p className="text-xs text-gray-400 text-center mt-6">Tell the copilot how to change the draft — &quot;shorter&quot;, &quot;more formal&quot;, &quot;lead with the webinar&quot;, &quot;mention their fintech focus&quot;...</p>
               )}
               {chatLog.map((m, i) => (
-                <div key={i} className={`max-w-[90%] rounded-lg px-3 py-2 text-xs whitespace-pre-line ${m.role === 'user' ? 'ml-auto bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'}`}>{m.content}</div>
+                <div key={i} className={`max-w-[90%] rounded-lg px-3 py-2 text-xs whitespace-pre-line break-words ${m.role === 'user' ? 'ml-auto bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'}`}>{m.content}<CopyMsg text={m.content} light={m.role === 'user'} /></div>
               ))}
               {busy === 'refine' && <Spinner label="Revising..." />}
             </div>

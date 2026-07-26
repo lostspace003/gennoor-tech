@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { Bot, Send, X, Sparkles, Minus, Maximize2, Minimize2, Globe } from 'lucide-react'
-import { Spinner } from './shared'
+import { Spinner, CopyMsg } from './shared'
 
 interface Message { role: 'user' | 'assistant'; content: string; usedWeb?: boolean; note?: string }
 
@@ -126,6 +126,7 @@ export default function CrmCopilot() {
             {messages.map((m, i) => (
               <div key={i} className={`max-w-[88%] rounded-xl px-3 py-2 text-sm whitespace-pre-line break-words ${m.role === 'user' ? 'ml-auto bg-blue-600 text-white' : 'bg-gray-100 text-gray-800'}`}>
                 {m.content}
+                <CopyMsg text={m.content} light={m.role === 'user'} />
                 {m.usedWeb && <div className="mt-1.5 text-[10px] text-emerald-600 flex items-center gap-1"><Globe className="w-3 h-3" /> answered with live web search</div>}
                 {m.note && <div className="mt-1.5 text-[10px] text-amber-600">{m.note}</div>}
               </div>

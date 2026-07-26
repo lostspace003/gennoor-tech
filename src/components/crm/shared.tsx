@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { Lead, LeadStatus, PipelineStage, PIPELINE_STAGES } from '@/lib/crm/types'
 
 export const STAGE_LABELS: Record<PipelineStage, string> = {
@@ -88,6 +89,26 @@ export async function api<T = any>(url: string, init?: RequestInit): Promise<T> 
   const data = await res.json().catch(() => ({}))
   if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`)
   return data as T
+}
+
+// Tiny copy affordance for chat messages and AI outputs
+export function CopyMsg({ text, light }: { text: string; light?: boolean }) {
+  const [copied, setCopied] = useState(false)
+  return (
+    <button
+      onClick={(e) => {
+        e.stopPropagation()
+        navigator.clipboard.writeText(text).then(() => {
+          setCopied(true)
+          setTimeout(() => setCopied(false), 1500)
+        })
+      }}
+      className={`mt-1 block text-[10px] ${light ? 'text-blue-100 hover:text-white' : 'text-gray-400 hover:text-gray-600'}`}
+      title="Copy message"
+    >
+      {copied ? '✓ copied' : 'copy'}
+    </button>
+  )
 }
 
 export function Spinner({ label }: { label?: string }) {
