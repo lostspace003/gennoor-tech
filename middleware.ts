@@ -12,6 +12,7 @@ const AUTHORIZED_EMAILS = [
   'aditya@gennoor.com',
   'deepanshu@gennoor.com',
   'zaid@gennoor.com',
+  'sales@gennoor.com',
 ]
 
 export async function middleware(request: NextRequest) {
