@@ -34,7 +34,7 @@ function htmlToText(html: string): { title: string; text: string } {
 // result land in site-index/status.json.
 async function runIndex() {
   try {
-    const sitemapRes = await fetch(`${SITE}/sitemap.xml`, { headers: { 'User-Agent': 'GennoorCare-Indexer' } })
+    const sitemapRes = await fetch(`${SITE}/sitemap.xml`, { headers: { 'User-Agent': 'GennoorCare-Indexer' }, signal: AbortSignal.timeout(30_000) })
     if (!sitemapRes.ok) throw new Error(`sitemap fetch failed (${sitemapRes.status})`)
     const xml = await sitemapRes.text()
     const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)]
@@ -56,7 +56,7 @@ async function runIndex() {
       const batch = urls.slice(i, i + 8)
       const results = await Promise.all(batch.map(async (url) => {
         try {
-          const res = await fetch(url, { headers: { 'User-Agent': 'GennoorCare-Indexer' } })
+          const res = await fetch(url, { headers: { 'User-Agent': 'GennoorCare-Indexer' }, signal: AbortSignal.timeout(20_000) })
           if (!res.ok) return null
           return { url, html: await res.text() }
         } catch { return null }
@@ -73,7 +73,7 @@ async function runIndex() {
           chunks.push({ id: hash(`${r.url}|${piece}`), url: r.url, title: title || r.url, text: piece, hash: pageHash })
         }
       }
-      if (i % 80 === 0) {
+      if (i % 40 === 0) {
         await writeIndexStatus({ state: 'running', startedAt: new Date().toISOString(), progress: `crawled ${Math.min(i + 8, urls.length)}/${urls.length} pages` }).catch(() => {})
       }
     }
