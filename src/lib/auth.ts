@@ -39,7 +39,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return true
     },
     async signIn({ user, profile }) {
-      const email = (user?.email || profile?.email || '').toLowerCase()
+      // Fall back to preferred_username (the UPN): fresh Entra users have no
+      // `email` claim until Exchange provisions their mailbox, and the UPN
+      // IS their email address in this tenant.
+      const email = (user?.email || profile?.email || (profile as any)?.preferred_username || '').toLowerCase()
 
       // Check if email is in authorized list
       if (!AUTHORIZED_EMAILS.includes(email)) {
@@ -56,7 +59,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, profile, user }) {
       if (profile) {
         if (profile.sub) token.id = profile.sub
-        if (profile.email) token.email = profile.email
+        const pEmail = profile.email || (profile as any).preferred_username
+        if (pEmail) token.email = String(pEmail).toLowerCase()
       }
       if (user) {
         if (user.id) token.id = user.id
