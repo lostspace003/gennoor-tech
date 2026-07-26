@@ -88,13 +88,18 @@ async function runIndex() {
         toEmbed.push(i)
       }
     })
-    for (let i = 0; i < toEmbed.length; i += 64) {
-      const idxs = toEmbed.slice(i, i + 64)
+    // Pace embeddings under the deployment's tokens-per-minute limit:
+    // 24 chunks (~19K tokens) per call, 12s between calls. A full first
+    // index takes ~25 quiet minutes; monthly deltas take seconds.
+    const EMBED_BATCH = 24
+    for (let i = 0; i < toEmbed.length; i += EMBED_BATCH) {
+      const idxs = toEmbed.slice(i, i + EMBED_BATCH)
       const embedded = await embedTexts(idxs.map((x) => `${chunks[x].title}\n${chunks[x].text}`))
       idxs.forEach((x, j) => vectors.set(embedded[j], x * EMBED_DIM))
-      if (i % 320 === 0) {
-        await writeIndexStatus({ state: 'running', startedAt: new Date().toISOString(), progress: `embedded ${Math.min(i + 64, toEmbed.length)}/${toEmbed.length} chunks` }).catch(() => {})
+      if ((i / EMBED_BATCH) % 5 === 0) {
+        await writeIndexStatus({ state: 'running', startedAt: new Date().toISOString(), progress: `embedded ${Math.min(i + EMBED_BATCH, toEmbed.length)}/${toEmbed.length} chunks` }).catch(() => {})
       }
+      if (i + EMBED_BATCH < toEmbed.length) await new Promise((r) => setTimeout(r, 12_000))
     }
 
     const meta: SiteIndexMeta = { chunks, pages, updatedAt: new Date().toISOString() }

@@ -22,8 +22,8 @@ jobs:
 
       - name: Wait for completion
         run: |
-          for i in $(seq 1 60); do
-            sleep 20
+          for i in $(seq 1 120); do
+            sleep 30
             curl -s -H "x-cron-secret: ${{ secrets.CRM_CRON_SECRET }}" \
               https://gennoor-tech.azurewebsites.net/api/admin/site-index > /tmp/status.json
             STATE=$(python3 -c "import json;print(json.load(open('/tmp/status.json')).get('job',{}).get('state',''))" 2>/dev/null)

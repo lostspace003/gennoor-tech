@@ -69,14 +69,23 @@ async function embed(texts: string[]): Promise<number[][]> {
     },
   })
   const token = await cca.acquireTokenByClientCredential({ scopes: ['https://cognitiveservices.azure.com/.default'] })
-  const res = await fetch(`${BASE}/openai/deployments/${DEPLOYMENT}/embeddings?api-version=2023-05-15`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token!.accessToken}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ input: texts }),
-  })
-  if (!res.ok) throw new Error(`Embedding error ${res.status}: ${(await res.text()).slice(0, 200)}`)
-  const data = await res.json()
-  return data.data.map((d: any) => d.embedding)
+  // 429s are routine on the shared deployment — wait out the window and retry
+  for (let attempt = 0; attempt < 6; attempt++) {
+    const res = await fetch(`${BASE}/openai/deployments/${DEPLOYMENT}/embeddings?api-version=2023-05-15`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token!.accessToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ input: texts }),
+    })
+    if (res.status === 429) {
+      const retryAfter = Number(res.headers.get('retry-after')) || 20
+      await new Promise((r) => setTimeout(r, Math.min(retryAfter, 60) * 1000))
+      continue
+    }
+    if (!res.ok) throw new Error(`Embedding error ${res.status}: ${(await res.text()).slice(0, 200)}`)
+    const data = await res.json()
+    return data.data.map((d: any) => d.embedding)
+  }
+  throw new Error('Embedding rate limit persisted after 6 retries')
 }
 
 function cosine(a: number[], b: number[]): number {
