@@ -77,6 +77,9 @@ export interface Lead {
   tags: string[]
   notes: string
   altEmails?: string[]
+  // Pool model: owner === '' means unclaimed (in the pool, visible to all).
+  // Claiming sets owner; releasing clears it. Dumped leads are parked with a reason.
+  dumped?: { at: string; by: string; reason: string }
   techProfile?: TechProfile
   aiResearch?: AIResearch
   researchChat: ChatMessage[]
@@ -112,7 +115,8 @@ export function newLead(partial: Partial<Lead> & { name: string }, by: string): 
     city: partial.city || '',
     value: partial.value || 0,
     score: partial.score ?? 50,
-    owner: partial.owner || by,
+    // Imported/new leads land in the shared pool unless explicitly owned
+    owner: partial.owner || '',
     source: partial.source || 'manual',
     tags: partial.tags || [],
     notes: partial.notes || '',

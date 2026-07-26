@@ -33,3 +33,11 @@ export async function requireCrmUser(): Promise<CrmSessionUser | null> {
   if (!CRM_USERS.includes(email)) return null
   return { email, isAdmin: email === CRM_ADMIN, isManager: CRM_MANAGERS.includes(email) }
 }
+
+// Pool rule: a claimed lead is worked only by its owner (managers exempt).
+// Unclaimed leads can be worked by anyone — but working actions in the UI
+// nudge users to claim first.
+export function canWorkLead(lead: { owner?: string }, user: CrmSessionUser): boolean {
+  const owner = (lead.owner || '').toLowerCase()
+  return user.isManager || !owner || owner === user.email
+}

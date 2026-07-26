@@ -1,9 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { Brain, Lock, Send, Clock, PauseCircle, CheckCircle2, ArrowRight } from 'lucide-react'
+import { Brain, Lock, Send, Clock, PauseCircle, CheckCircle2, ArrowRight, Hand } from 'lucide-react'
 import { Lead } from '@/lib/crm/types'
 import { timeAgo } from './shared'
+import { useCrm } from './CrmContext'
 
 const FOLLOW_UP_AFTER_DAYS = 5
 
@@ -25,8 +26,11 @@ function lastSentAt(l: Lead): string | null {
 
 // The propelling flow: every active lead lands in exactly one bucket, in
 // pipeline order, each with a single obvious next action.
-export function buildQueue(leads: Lead[]): { buckets: Bucket[]; paused: Lead[]; stopped: Lead[]; done: Lead[] } {
-  const active = leads.filter((l) => l.processStatus === 'active' && !['won', 'lost'].includes(l.status))
+export function buildQueue(leads: Lead[], mine?: string): { buckets: Bucket[]; pool: Lead[]; paused: Lead[]; stopped: Lead[]; done: Lead[] } {
+  const workable = leads.filter((l) => !l.dumped && l.processStatus === 'active' && !['won', 'lost'].includes(l.status))
+  const pool = workable.filter((l) => !l.owner)
+  // Personal queue: your claimed leads. Managers pass mine=undefined to see all claimed work.
+  const active = workable.filter((l) => l.owner && (!mine || l.owner.toLowerCase() === mine.toLowerCase()))
   const now = Date.now()
 
   const needsResearch = active.filter((l) => !l.aiResearch)
@@ -51,8 +55,9 @@ export function buildQueue(leads: Lead[]): { buckets: Bucket[]; paused: Lead[]; 
 
   return {
     buckets,
-    paused: leads.filter((l) => l.processStatus === 'paused'),
-    stopped: leads.filter((l) => l.processStatus === 'stopped'),
+    pool,
+    paused: leads.filter((l) => !l.dumped && l.processStatus === 'paused'),
+    stopped: leads.filter((l) => !l.dumped && l.processStatus === 'stopped'),
     done: leads.filter((l) => ['won', 'lost'].includes(l.status)),
   }
 }
@@ -66,18 +71,62 @@ const ACCENTS: Record<string, { border: string; bg: string; text: string; btn: s
 }
 
 export default function QueueView({ leads }: { leads: Lead[] }) {
-  const { buckets, paused, stopped } = buildQueue(leads)
+  const { userEmail, isManager, reload, notify } = useCrm()
+  // Managers see the whole team's queue; members see their own claimed work
+  const { buckets, pool, paused, stopped } = buildQueue(leads, isManager ? undefined : userEmail)
   const actionable = buckets.slice(0, 4).reduce((n, b) => n + b.leads.length, 0)
+
+  const pickUp = async (id: string) => {
+    try {
+      const res = await fetch('/api/admin/leads/claim', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ leadIds: [id], action: 'claim' }),
+      })
+      const d = await res.json()
+      if (!res.ok) throw new Error(d.error || 'Claim failed')
+      await reload()
+      notify('Picked up — it’s in your queue now')
+    } catch (e: any) { notify(e.message, true) }
+  }
 
   return (
     <div className="p-3 sm:p-5 space-y-4 max-w-5xl">
       <div className="flex flex-wrap items-center gap-3">
-        <h2 className="text-base font-semibold text-gray-900">Work queue</h2>
+        <h2 className="text-base font-semibold text-gray-900">{isManager ? 'Team work queue' : 'My work queue'}</h2>
         <span className="text-xs bg-blue-50 text-blue-700 border border-blue-200 rounded-full px-2.5 py-1">
           {actionable} lead{actionable === 1 ? '' : 's'} need action
         </span>
         {(paused.length > 0 || stopped.length > 0) && (
           <span className="text-xs text-gray-400">{paused.length} paused · {stopped.length} stopped</span>
+        )}
+      </div>
+
+      {/* Pool — pick up new work */}
+      <div className="rounded-xl border border-emerald-200 overflow-hidden">
+        <div className="bg-emerald-50 px-4 py-2.5 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <Hand className="w-4 h-4 text-emerald-700 shrink-0" />
+            <span className="text-sm font-semibold text-emerald-700">Pool — unclaimed leads</span>
+            <span className="text-xs text-gray-500 hidden sm:inline truncate">— pick one up to start working it</span>
+          </div>
+          <span className="text-xs font-medium text-emerald-700">{pool.length}</span>
+        </div>
+        {pool.length > 0 && (
+          <div className="divide-y divide-gray-100 bg-white">
+            {pool.slice(0, 6).map((l) => (
+              <div key={l.id} className="px-4 py-2.5 flex items-center justify-between gap-3">
+                <Link href={`/crm/leads/${encodeURIComponent(l.id)}`} className="min-w-0 hover:text-blue-700">
+                  <div className="text-sm font-medium text-gray-900 truncate">{l.name} <span className="text-gray-400 font-normal">· {l.company || '—'}</span></div>
+                  <div className="text-xs text-gray-400">{l.priority && `${l.priority} priority · `}{[l.country, l.sector].filter(Boolean).join(' · ') || timeAgo(l.createdAt)}</div>
+                </Link>
+                <button onClick={() => pickUp(l.id)} className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded-lg flex items-center gap-1.5 shrink-0">
+                  <Hand className="w-3.5 h-3.5" /> Pick up
+                </button>
+              </div>
+            ))}
+            {pool.length > 6 && <div className="px-4 py-2 text-xs text-gray-400 bg-gray-50">+ {pool.length - 6} more in the pool — see Leads → Pool</div>}
+          </div>
         )}
       </div>
 

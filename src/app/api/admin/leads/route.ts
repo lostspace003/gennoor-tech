@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireCrmUser } from '@/lib/crm/access'
+import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
 import { getLeads, mutateLeads, touch } from '@/lib/crm/store'
 import { newLead, Lead } from '@/lib/crm/types'
 
@@ -53,6 +53,7 @@ export async function PUT(req: NextRequest) {
     const updated = await mutateLeads((leads) => {
       const lead = leads.find((l) => l.id === data.id)
       if (!lead) return null
+      if (!canWorkLead(lead, user)) return 'forbidden' as const
       for (const field of EDITABLE) {
         if (field in data) (lead as any)[field] = data[field]
       }
@@ -60,6 +61,7 @@ export async function PUT(req: NextRequest) {
       return lead
     })
 
+    if (updated === 'forbidden') return NextResponse.json({ error: 'Lead is owned by someone else — claim it first.' }, { status: 403 })
     if (!updated) return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
     return NextResponse.json({ success: true, lead: updated })
   } catch (error) {

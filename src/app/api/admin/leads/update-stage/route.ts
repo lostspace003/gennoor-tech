@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { requireCrmUser } from '@/lib/crm/access'
+import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
 import { mutateLeads, touch } from '@/lib/crm/store'
 import { PIPELINE_STAGES } from '@/lib/crm/types'
 
@@ -16,6 +16,7 @@ export async function POST(request: Request) {
     const found = await mutateLeads((leads) => {
       const lead = leads.find((l) => l.id === leadId)
       if (!lead) return false
+      if (!canWorkLead(lead, user)) return 'forbidden' as const
       lead.stage = stage
       touch(lead, {
         at: new Date().toISOString(),
@@ -26,6 +27,7 @@ export async function POST(request: Request) {
       return true
     })
 
+    if (found === 'forbidden') return NextResponse.json({ error: 'Lead is owned by someone else — claim it first.' }, { status: 403 })
     if (!found) return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
     return NextResponse.json({ success: true })
   } catch (error) {

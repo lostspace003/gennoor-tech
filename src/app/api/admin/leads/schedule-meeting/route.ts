@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireCrmUser } from '@/lib/crm/access'
+import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
 import { mutateLeads, getLead, touch } from '@/lib/crm/store'
 import { graphConfigured, createTeamsMeeting, listUpcomingMeetings } from '@/lib/crm/graph'
 
@@ -45,6 +45,9 @@ export async function POST(req: NextRequest) {
 
     const lead = await getLead(leadId)
     if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
+    if (!canWorkLead(lead, user)) {
+      return NextResponse.json({ error: `Lead is owned by ${lead.owner.split('@')[0]} — claim it or ask them/a manager.` }, { status: 403 })
+    }
     if (!lead.email) return NextResponse.json({ error: 'Lead has no email address' }, { status: 400 })
 
     const attendees = [

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { requireCrmUser } from '@/lib/crm/access'
+import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
 import { mutateLeads, getLeads, touch } from '@/lib/crm/store'
 import { downloadDocument } from '@/lib/crm/documents'
 import { sendEmail } from '@/lib/email-service'
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     }
 
     const allLeads = await getLeads()
-    const targets = allLeads.filter((l) => leadIds.includes(l.id))
+    const targets = allLeads.filter((l) => leadIds.includes(l.id) && canWorkLead(l, user))
     const missingEmail = targets.filter((l) => !l.email)
     const sendable = targets.filter((l) => l.email)
 

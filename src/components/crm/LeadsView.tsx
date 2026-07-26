@@ -2,9 +2,12 @@
 
 import { useMemo, useRef, useState } from 'react'
 import * as XLSX from 'xlsx'
-import { Search, Upload, Download, Trash2, Brain, Mail, X } from 'lucide-react'
+import { Search, Upload, Download, Trash2, Brain, Mail, X, Hand, Undo2, Archive, UserPlus } from 'lucide-react'
 import { Lead, LeadStatus, PipelineStage, ProcessStatus, PIPELINE_STAGES } from '@/lib/crm/types'
 import { StatusBadge, ProcessDot, StageBar, timeAgo, api, STAGE_LABELS, Spinner } from './shared'
+import { useCrm } from './CrmContext'
+
+const CRM_TEAM = ['admin@gennoor.com', 'jalalkhan@gennoor.com', 'yusufchaudhary@gennoor.com', 'contact@gennoor.com', 'contacts@gennoor.com']
 
 const PAGE_SIZES = [10, 25, 50, 100]
 
@@ -54,6 +57,8 @@ function rowToLead(row: Record<string, any>): Partial<Lead> | null {
 }
 
 export default function LeadsView({ leads, canManage, onOpenLead, onReload, notify }: Props) {
+  const { userEmail } = useCrm()
+  const [poolFilter, setPoolFilter] = useState<'all' | 'pool' | 'mine' | 'dumped'>('all')
   const [searchTerm, setSearchTerm] = useState('')
   const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'week' | 'month'>('all')
   const [processFilter, setProcessFilter] = useState<'all' | ProcessStatus>('all')
@@ -70,7 +75,15 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
 
   const filtered = useMemo(() => {
     const term = searchTerm.toLowerCase()
-    let result = leads.filter(
+    let result = leads
+    // Ownership scope: dumped leads only show in their own tab
+    if (poolFilter === 'dumped') result = result.filter((l) => l.dumped)
+    else {
+      result = result.filter((l) => !l.dumped)
+      if (poolFilter === 'pool') result = result.filter((l) => !l.owner)
+      if (poolFilter === 'mine') result = result.filter((l) => l.owner?.toLowerCase() === userEmail.toLowerCase())
+    }
+    result = result.filter(
       (l) =>
         !term ||
         l.name.toLowerCase().includes(term) ||
@@ -89,11 +102,35 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
     if (stageFilter !== 'all') result = result.filter((l) => l.stage === stageFilter)
     if (statusFilter !== 'all') result = result.filter((l) => l.status === statusFilter)
     return result
-  }, [leads, searchTerm, dateFilter, processFilter, stageFilter, statusFilter])
+  }, [leads, searchTerm, dateFilter, processFilter, stageFilter, statusFilter, poolFilter, userEmail])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
   const safePage = Math.min(page, totalPages)
   const pageLeads = filtered.slice((safePage - 1) * pageSize, safePage * pageSize)
+
+  const poolAction = async (action: 'claim' | 'release' | 'dump' | 'restore' | 'assign', assignee?: string) => {
+    if (selected.length === 0) return
+    let reason: string | undefined
+    if (action === 'dump') {
+      reason = prompt('Why dump these leads? (e.g. vague, duplicate, wrong fit)') || undefined
+      if (reason === undefined) return
+    }
+    setBusy(action)
+    try {
+      const res = await api<{ done: number; skipped: string[] }>('/api/admin/leads/claim', {
+        method: 'POST',
+        body: JSON.stringify({ leadIds: selected, action, reason, assignee }),
+      })
+      await onReload()
+      const skippedNote = res.skipped?.length ? ` · skipped: ${res.skipped.slice(0, 3).join('; ')}${res.skipped.length > 3 ? '…' : ''}` : ''
+      notify(`${res.done} lead(s) ${action === 'claim' ? 'picked up' : action === 'release' ? 'released to pool' : action === 'dump' ? 'dumped' : action === 'restore' ? 'restored' : `assigned to ${assignee?.split('@')[0]}`}${skippedNote}`, res.done === 0)
+      setSelected([])
+    } catch (e: any) {
+      notify(e.message, true)
+    } finally {
+      setBusy('')
+    }
+  }
 
   const setProcess = async (status: ProcessStatus) => {
     if (selected.length === 0) return
@@ -237,8 +274,25 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
             )}
           </div>
         </div>
-        <div className="text-xs text-gray-500">
-          Showing {filtered.length} of {leads.length} leads
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          {/* Pool scope chips */}
+          <div className="flex items-center gap-1.5">
+            {([
+              ['all', `All active (${leads.filter((l) => !l.dumped).length})`],
+              ['pool', `Pool — pick up (${leads.filter((l) => !l.dumped && !l.owner).length})`],
+              ['mine', `My leads (${leads.filter((l) => !l.dumped && l.owner?.toLowerCase() === userEmail.toLowerCase()).length})`],
+              ['dumped', `Dumped (${leads.filter((l) => l.dumped).length})`],
+            ] as Array<[typeof poolFilter, string]>).map(([key, label]) => (
+              <button
+                key={key}
+                onClick={() => { setPoolFilter(key); resetPage(); setSelected([]) }}
+                className={`px-2.5 py-1 text-xs rounded-full border transition-colors ${poolFilter === key ? (key === 'dumped' ? 'bg-gray-700 text-white border-gray-700' : 'bg-blue-600 text-white border-blue-600') : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <div className="text-xs text-gray-500">Showing {filtered.length} of {leads.length} leads</div>
         </div>
       </div>
 
@@ -246,7 +300,36 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
       {selected.length > 0 && (
         <div className="bg-blue-50 px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-2">
           <span className="text-sm text-blue-700 font-medium">{selected.length} selected</span>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Pool actions */}
+            {poolFilter === 'dumped' ? (
+              <button onClick={() => poolAction('restore')} disabled={!!busy} className="px-3 py-1.5 bg-emerald-600 text-white text-xs rounded hover:bg-emerald-700 flex items-center gap-1.5 disabled:opacity-50">
+                <Undo2 className="w-3.5 h-3.5" /> Restore to pool
+              </button>
+            ) : (
+              <>
+                <button onClick={() => poolAction('claim')} disabled={!!busy} className="px-3 py-1.5 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 flex items-center gap-1.5 disabled:opacity-50">
+                  <Hand className="w-3.5 h-3.5" /> Pick up
+                </button>
+                <button onClick={() => poolAction('release')} disabled={!!busy} className="px-3 py-1.5 border border-blue-300 text-blue-700 text-xs rounded hover:bg-blue-50 flex items-center gap-1.5 disabled:opacity-50">
+                  <Undo2 className="w-3.5 h-3.5" /> Release
+                </button>
+                <button onClick={() => poolAction('dump')} disabled={!!busy} className="px-3 py-1.5 border border-gray-300 text-gray-600 text-xs rounded hover:bg-gray-100 flex items-center gap-1.5 disabled:opacity-50">
+                  <Archive className="w-3.5 h-3.5" /> Dump
+                </button>
+                {canManage && (
+                  <select
+                    defaultValue=""
+                    onChange={(e) => { if (e.target.value) { poolAction('assign', e.target.value); e.target.value = '' } }}
+                    disabled={!!busy}
+                    className="px-2 py-1.5 border border-purple-300 text-purple-700 text-xs rounded bg-white disabled:opacity-50"
+                  >
+                    <option value="" disabled>Assign to…</option>
+                    {CRM_TEAM.map((u) => <option key={u} value={u}>{u.split('@')[0]}</option>)}
+                  </select>
+                )}
+              </>
+            )}
             <div className="flex items-center rounded overflow-hidden border border-gray-200">
               <button onClick={() => setProcess('active')} disabled={!!busy} className="px-3 py-1.5 bg-green-600 text-white text-xs hover:bg-green-700 disabled:opacity-50">Start</button>
               <button onClick={() => setProcess('paused')} disabled={!!busy} className="px-3 py-1.5 bg-yellow-500 text-white text-xs hover:bg-yellow-600 disabled:opacity-50">Pause</button>
@@ -281,6 +364,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stage</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Process</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Owner</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Research</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Activity</th>
             </tr>
@@ -288,7 +372,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
           <tbody className="divide-y divide-gray-100">
             {pageLeads.length === 0 && (
               <tr>
-                <td colSpan={9} className="px-6 py-16 text-center text-gray-400 text-sm">
+                <td colSpan={10} className="px-6 py-16 text-center text-gray-400 text-sm">
                   {leads.length === 0 ? 'No leads yet. Download the template, fill it, and upload it here.' : 'No leads match the current filters.'}
                 </td>
               </tr>
@@ -316,7 +400,17 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                 </td>
                 <td className="px-4 py-3"><StageBar stage={lead.stage} /></td>
                 <td className="px-4 py-3"><StatusBadge status={lead.status} /></td>
-                <td className="px-4 py-3"><ProcessDot status={lead.processStatus} /></td>
+                <td className="px-4 py-3">
+                  {lead.dumped ? (
+                    <span className="text-[11px] bg-gray-200 text-gray-600 rounded-full px-2 py-0.5" title={lead.dumped.reason}>dumped</span>
+                  ) : lead.owner ? (
+                    <span className={`text-[11px] rounded-full px-2 py-0.5 ${lead.owner.toLowerCase() === userEmail.toLowerCase() ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-600'}`}>
+                      {lead.owner.toLowerCase() === userEmail.toLowerCase() ? 'me' : lead.owner.split('@')[0]}
+                    </span>
+                  ) : (
+                    <span className="text-[11px] bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-2 py-0.5">pool</span>
+                  )}
+                </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2 text-xs">
                     {lead.aiResearch ? <span className="inline-flex items-center gap-1 text-purple-600"><Brain className="w-3.5 h-3.5" /> done</span> : <span className="text-gray-400">—</span>}

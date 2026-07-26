@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { requireCrmUser } from '@/lib/crm/access'
+import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
 import { mutateLeads, touch } from '@/lib/crm/store'
 
 // Start / pause / stop the outreach process for one or more leads.
@@ -17,6 +17,7 @@ export async function POST(request: Request) {
       let n = 0
       for (const lead of leads) {
         if (leadIds.includes(lead.id)) {
+          if (!canWorkLead(lead, user)) continue
           lead.processStatus = processStatus
           touch(lead, {
             at: new Date().toISOString(),

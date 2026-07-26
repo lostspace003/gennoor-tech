@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import { Lead, ChatMessage, PIPELINE_STAGES } from '@/lib/crm/types'
 import { StatusBadge, ProcessDot, StageBar, api, formatDateTime, Spinner, STAGE_LABELS } from './shared'
+import { useCrm } from './CrmContext'
 
 type Tab = 'overview' | 'research' | 'email' | 'schedule'
 
@@ -33,8 +34,27 @@ interface Props {
 export default function LeadWorkspace({ lead, canManage, onClose, onReload, notify, initialTab }: Props) {
   const validTab = (t?: string): Tab => (['overview', 'research', 'email', 'schedule'].includes(t || '') ? (t as Tab) : 'overview')
   const [tab, setTab] = useState<Tab>(validTab(initialTab))
+  const { userEmail, isManager } = useCrm()
+  const [poolBusy, setPoolBusy] = useState(false)
 
   useEffect(() => setTab(validTab(initialTab)), [lead.id, initialTab]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const isMine = lead.owner?.toLowerCase() === userEmail.toLowerCase()
+  const workable = isManager || !lead.owner || isMine
+
+  const poolAction = async (action: 'claim' | 'release' | 'dump' | 'restore') => {
+    let reason: string | undefined
+    if (action === 'dump') {
+      reason = prompt('Why dump this lead? (e.g. vague, duplicate, wrong fit)') || undefined
+      if (reason === undefined) return
+    }
+    setPoolBusy(true)
+    try {
+      await api('/api/admin/leads/claim', { method: 'POST', body: JSON.stringify({ leadIds: [lead.id], action, reason }) })
+      await onReload()
+      notify(action === 'claim' ? 'Lead picked up — it’s yours' : action === 'release' ? 'Released to pool' : action === 'dump' ? 'Lead dumped' : 'Restored to pool')
+    } catch (e: any) { notify(e.message, true) } finally { setPoolBusy(false) }
+  }
 
   return (
     <div className="bg-white h-full flex flex-col">
@@ -53,6 +73,29 @@ export default function LeadWorkspace({ lead, canManage, onClose, onReload, noti
               </div>
               <p className="text-xs sm:text-sm text-gray-500 break-words">{[lead.company, lead.designation].filter(Boolean).join(' • ') || 'No company info yet'}</p>
             </div>
+          </div>
+          {/* Pool controls */}
+          <div className="flex items-center gap-1.5">
+            {lead.dumped ? (
+              <>
+                <span className="text-[11px] bg-gray-200 text-gray-600 rounded-full px-2 py-1" title={lead.dumped.reason}>Dumped: {lead.dumped.reason.slice(0, 30)}</span>
+                <button onClick={() => poolAction('restore')} disabled={poolBusy} className="px-2.5 py-1.5 bg-emerald-600 text-white text-xs rounded-lg hover:bg-emerald-700 disabled:opacity-50">Restore</button>
+              </>
+            ) : !lead.owner ? (
+              <>
+                <span className="text-[11px] bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-2 py-1">In pool</span>
+                <button onClick={() => poolAction('claim')} disabled={poolBusy} className="px-2.5 py-1.5 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 disabled:opacity-50">Pick up</button>
+                <button onClick={() => poolAction('dump')} disabled={poolBusy} className="px-2.5 py-1.5 border border-gray-300 text-gray-600 text-xs rounded-lg hover:bg-gray-100 disabled:opacity-50">Dump</button>
+              </>
+            ) : isMine || isManager ? (
+              <>
+                <span className="text-[11px] bg-blue-100 text-blue-700 rounded-full px-2 py-1">{isMine ? 'My lead' : `Owner: ${lead.owner.split('@')[0]}`}</span>
+                <button onClick={() => poolAction('release')} disabled={poolBusy} className="px-2.5 py-1.5 border border-blue-300 text-blue-700 text-xs rounded-lg hover:bg-blue-50 disabled:opacity-50">Release</button>
+                <button onClick={() => poolAction('dump')} disabled={poolBusy} className="px-2.5 py-1.5 border border-gray-300 text-gray-600 text-xs rounded-lg hover:bg-gray-100 disabled:opacity-50">Dump</button>
+              </>
+            ) : (
+              <span className="text-[11px] bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-2 py-1">Owned by {lead.owner.split('@')[0]} — read-only for you</span>
+            )}
           </div>
           <StageBar
             stage={lead.stage}

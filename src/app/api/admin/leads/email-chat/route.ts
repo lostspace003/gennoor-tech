@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { requireCrmUser } from '@/lib/crm/access'
+import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
 import { getLead } from '@/lib/crm/store'
 import { aiConfigured, chatCompletion, leadContext, GENNOOR_CONTEXT } from '@/lib/crm/ai'
 
@@ -22,6 +22,9 @@ export async function POST(request: Request) {
 
     const lead = await getLead(leadId)
     if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
+    if (!canWorkLead(lead, user)) {
+      return NextResponse.json({ error: `Lead is owned by ${lead.owner.split('@')[0]} — claim it or ask them/a manager.` }, { status: 403 })
+    }
 
     const replyContext = replyTo
       ? `\n\nThe team is REPLYING to this inbound email from the lead:\n---\n${String(replyTo).slice(0, 3000)}\n---`
