@@ -18,10 +18,10 @@ export async function middleware(request: NextRequest) {
 
   // Canonical host for app surfaces: auth cookies live on www.gennoor.com —
   // logging in on the bare domain would create a second, separate session.
-  if (request.nextUrl.hostname === 'gennoor.com') {
-    const url = request.nextUrl.clone()
-    url.hostname = 'www.gennoor.com'
-    return NextResponse.redirect(url, 301)
+  // Behind Azure's proxy the real host is in the header, not nextUrl.
+  const host = (request.headers.get('host') || '').toLowerCase()
+  if (host === 'gennoor.com') {
+    return NextResponse.redirect(`https://www.gennoor.com${path}${request.nextUrl.search}`, 301)
   }
 
   // The login page itself must stay reachable
