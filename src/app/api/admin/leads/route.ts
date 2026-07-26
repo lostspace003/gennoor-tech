@@ -38,6 +38,7 @@ export async function POST(req: NextRequest) {
 const EDITABLE: Array<keyof Lead> = [
   'name', 'email', 'phone', 'company', 'designation', 'linkedin', 'website',
   'status', 'processStatus', 'stage', 'priority', 'leadType', 'sector',
+  'companySize', 'businessFunction', 'interest', 'decisionRole',
   'region', 'country', 'city', 'value', 'score', 'owner', 'source', 'tags',
   'notes', 'techProfile', 'finalizedPitch', 'altEmails',
 ]

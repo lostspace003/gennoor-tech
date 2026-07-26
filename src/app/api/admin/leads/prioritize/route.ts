@@ -6,6 +6,7 @@ import { aiConfigured, chatCompletion } from '@/lib/crm/ai'
 // POST {leadIds[]} → managers only. AI assigns High/Medium/Low to each lead
 // from its profile (designation, company, sector, notes, research). The result
 // lands in the same free-text `priority` field uploaders fill by hand.
+// EMPTY-ONLY by design: a priority someone already set is never overwritten.
 export async function POST(req: NextRequest) {
   const user = await requireCrmUser()
   if (!user?.isManager) return NextResponse.json({ error: 'Managers only' }, { status: 403 })
@@ -18,10 +19,11 @@ export async function POST(req: NextRequest) {
     }
     const ids = new Set(leadIds.slice(0, 60).map(String))
 
-    // AI pass happens OUTSIDE mutateLeads (the mutator must stay synchronous)
+    // AI pass happens OUTSIDE mutateLeads (the mutator must stay synchronous).
+    // Only leads with NO priority are scored — manual verdicts always win.
     const all = await getLeads()
-    const targets = all.filter((l) => ids.has(l.id))
-    if (targets.length === 0) return NextResponse.json({ updated: 0, priorities: {} })
+    const targets = all.filter((l) => ids.has(l.id) && !(l.priority || '').trim())
+    if (targets.length === 0) return NextResponse.json({ updated: 0, priorities: {}, note: 'All selected leads already have a priority.' })
 
     const digest = targets
       .map((l) => `${l.id} | ${l.name} | ${l.designation || '-'} @ ${l.company || '-'} | sector: ${l.sector || '-'} | country: ${l.country || '-'} | value: ${l.value || 0} | stage: ${l.stage} | notes: ${(l.notes || '').slice(0, 120)} | research: ${(l.aiResearch?.summary || '').slice(0, 150)}`)
@@ -46,7 +48,8 @@ Reply with ONLY a JSON object mapping each lead id to "High", "Medium" or "Low".
       let count = 0
       for (const lead of leads) {
         const p = String(parsed[lead.id] || '').trim()
-        if (!ids.has(lead.id) || !/^(High|Medium|Low)$/i.test(p)) continue
+        // Re-check emptiness at write time too (someone may have set it meanwhile)
+        if (!ids.has(lead.id) || (lead.priority || '').trim() || !/^(High|Medium|Low)$/i.test(p)) continue
         lead.priority = p[0].toUpperCase() + p.slice(1).toLowerCase()
         priorities[lead.id] = lead.priority
         touch(lead, { at: new Date().toISOString(), by: user.email, type: 'updated', description: `AI set priority: ${lead.priority}` })

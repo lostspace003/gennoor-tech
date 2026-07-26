@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState } from 'react'
 import * as XLSX from 'xlsx'
 import { Search, Upload, Download, Trash2, Brain, Mail, X, Hand, Undo2, Archive, UserPlus, Sparkles } from 'lucide-react'
-import { Lead, LeadStatus, PipelineStage, ProcessStatus, PIPELINE_STAGES } from '@/lib/crm/types'
+import { Lead, LeadStatus, PipelineStage, ProcessStatus, PIPELINE_STAGES, COMPANY_SIZES, BUSINESS_FUNCTIONS, LEAD_INTERESTS, DECISION_ROLES } from '@/lib/crm/types'
 import { StatusBadge, StageBar, timeAgo, api, STAGE_LABELS, Spinner, InfoTip, MultiSelect, PriorityBadge, normPriority } from './shared'
 import { useCrm } from './CrmContext'
 
@@ -48,6 +48,10 @@ function rowToLead(row: Record<string, any>): Partial<Lead> | null {
     website: pick('Website', 'Company Website'),
     priority: pick('Priority'),
     leadType: pick('Lead Type', 'Type'),
+    companySize: pick('Company Size', 'Size', 'Org Size'),
+    businessFunction: pick('Function', 'Business Function', 'Department'),
+    interest: pick('Interest', 'Interested In', 'Requirement'),
+    decisionRole: pick('Decision Role', 'Role Type', 'Buying Role'),
     sector: pick('Sector / Segment', 'Sector', 'Segment', 'Industry'),
     region: pick('Region'),
     country: pick('Country'),
@@ -67,6 +71,11 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
   const [stageFilter, setStageFilter] = useState<string[]>([])
   const [statusFilter, setStatusFilter] = useState<string[]>([])
   const [priorityFilter, setPriorityFilter] = useState<string[]>([])
+  const [sizeFilter, setSizeFilter] = useState<string[]>([])
+  const [functionFilter, setFunctionFilter] = useState<string[]>([])
+  const [interestFilter, setInterestFilter] = useState<string[]>([])
+  const [roleFilter, setRoleFilter] = useState<string[]>([])
+  const [sourceFilter, setSourceFilter] = useState<string[]>([])
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
   const [selected, setSelected] = useState<string[]>([])
@@ -113,8 +122,13 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
     if (stageFilter.length) result = result.filter((l) => stageFilter.includes(l.stage))
     if (statusFilter.length) result = result.filter((l) => statusFilter.includes(l.status))
     if (priorityFilter.length) result = result.filter((l) => priorityFilter.includes(normPriority(l.priority) || 'none'))
+    if (sizeFilter.length) result = result.filter((l) => sizeFilter.includes(l.companySize || 'none'))
+    if (functionFilter.length) result = result.filter((l) => functionFilter.includes(l.businessFunction || 'none'))
+    if (interestFilter.length) result = result.filter((l) => interestFilter.includes(l.interest || 'none'))
+    if (roleFilter.length) result = result.filter((l) => roleFilter.includes(l.decisionRole || 'none'))
+    if (sourceFilter.length) result = result.filter((l) => sourceFilter.includes(l.source || 'none'))
     return result
-  }, [leads, searchTerm, dateFilter, dateFrom, dateTo, processFilter, stageFilter, statusFilter, priorityFilter, poolFilter, userEmail])
+  }, [leads, searchTerm, dateFilter, dateFrom, dateTo, processFilter, stageFilter, statusFilter, priorityFilter, sizeFilter, functionFilter, interestFilter, roleFilter, sourceFilter, poolFilter, userEmail])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
   const safePage = Math.min(page, totalPages)
@@ -301,6 +315,10 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                   website: pick(row, 'Website'),
                   priority: pick(row, 'Priority'),
                   leadType: pick(row, 'Lead Type'),
+                  companySize: pick(row, 'Company Size'),
+                  businessFunction: pick(row, 'Function'),
+                  interest: pick(row, 'Interest'),
+                  decisionRole: pick(row, 'Decision Role'),
                   sector: pick(row, 'Sector / Segment'),
                   region: pick(row, 'Region'),
                   country: pick(row, 'Country'),
@@ -409,6 +427,36 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
             values={processFilter}
             onChange={(v) => { setProcessFilter(v); resetPage() }}
           />
+          <MultiSelect
+            label="Size"
+            options={[...COMPANY_SIZES.map((s) => ({ value: s, label: s })), { value: 'none', label: 'Not set' }]}
+            values={sizeFilter}
+            onChange={(v) => { setSizeFilter(v); resetPage() }}
+          />
+          <MultiSelect
+            label="Function"
+            options={[...BUSINESS_FUNCTIONS.map((s) => ({ value: s, label: s })), { value: 'none', label: 'Not set' }]}
+            values={functionFilter}
+            onChange={(v) => { setFunctionFilter(v); resetPage() }}
+          />
+          <MultiSelect
+            label="Interest"
+            options={[...LEAD_INTERESTS.map((s) => ({ value: s, label: s })), { value: 'none', label: 'Not set' }]}
+            values={interestFilter}
+            onChange={(v) => { setInterestFilter(v); resetPage() }}
+          />
+          <MultiSelect
+            label="Role"
+            options={[...DECISION_ROLES.map((s) => ({ value: s, label: s })), { value: 'none', label: 'Not set' }]}
+            values={roleFilter}
+            onChange={(v) => { setRoleFilter(v); resetPage() }}
+          />
+          <MultiSelect
+            label="Source"
+            options={[...new Set(leads.map((l) => l.source).filter(Boolean))].sort().map((s) => ({ value: s, label: s }))}
+            values={sourceFilter}
+            onChange={(v) => { setSourceFilter(v); resetPage() }}
+          />
           <div className="ml-auto flex items-center gap-2">
             <button
               onClick={() => setAdding(true)}
@@ -420,20 +468,23 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
             {canManage && (
               <button
                 onClick={async () => {
-                  const targets = (selected.length ? filtered.filter((l) => selected.includes(l.id)) : filtered.filter((l) => !normPriority(l.priority))).map((l) => l.id)
-                  if (targets.length === 0) { notify(selected.length ? 'Selected leads already have priorities' : 'Every visible lead already has a priority', true); return }
+                  // Empty-only: leads with a priority are never touched. Scope with the
+                  // date filter (today/week/month/custom) or a manual selection.
+                  const scope = selected.length ? filtered.filter((l) => selected.includes(l.id)) : filtered
+                  const targets = scope.filter((l) => !(l.priority || '').trim()).map((l) => l.id)
+                  if (targets.length === 0) { notify('Nothing to score — every lead in scope already has a priority', true); return }
                   setBusy('prioritize')
                   try {
                     const res = await api<{ updated: number }>('/api/admin/leads/prioritize', { method: 'POST', body: JSON.stringify({ leadIds: targets.slice(0, 60) }) })
                     await onReload()
-                    notify(`AI set priority on ${res.updated} lead(s)`)
+                    notify(`AI set priority on ${res.updated} lead(s) — existing priorities untouched`)
                   } catch (e: any) { notify(e.message, true) } finally { setBusy('') }
                 }}
                 disabled={busy === 'prioritize'}
                 className="px-3 py-2 border border-purple-300 text-purple-700 text-sm rounded-lg hover:bg-purple-50 flex items-center gap-2 disabled:opacity-50"
-                title="AI assigns High/Medium/Low to the selected leads (or every visible lead without a priority)"
+                title="AI fills ONLY empty priorities. Scope it with the date filter (today / week / month / custom dates) or by selecting leads."
               >
-                <Sparkles className="w-4 h-4" /> {busy === 'prioritize' ? 'Prioritizing…' : 'AI prioritize'}
+                <Sparkles className="w-4 h-4" /> {busy === 'prioritize' ? 'Prioritizing…' : `AI priority${(() => { const scope = selected.length ? filtered.filter((l) => selected.includes(l.id)) : filtered; const n = scope.filter((l) => !(l.priority || '').trim()).length; return n ? ` (${n} empty)` : '' })()}`}
               </button>
             )}
             <button
@@ -441,7 +492,10 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                 const rows = filtered.map((l) => ({
                   Name: l.name, Email: l.email, Phone: l.phone, Company: l.company,
                   Designation: l.designation, LinkedIn: l.linkedin, Website: l.website,
-                  Priority: l.priority, 'Lead Type': l.leadType, 'Sector / Segment': l.sector,
+                  Priority: l.priority, 'Lead Type': l.leadType,
+                  'Company Size': l.companySize || '', Function: l.businessFunction || '',
+                  Interest: l.interest || '', 'Decision Role': l.decisionRole || '',
+                  'Sector / Segment': l.sector,
                   Region: l.region, Country: l.country, City: l.city,
                   Stage: l.stage, Status: l.status, Process: l.processStatus,
                   Owner: l.owner || 'pool', 'Value (INR)': l.value || '',
@@ -560,6 +614,8 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lead</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Priority</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Size · Function</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Interest</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Company</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stage</th>
@@ -572,7 +628,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
           <tbody className="divide-y divide-gray-100">
             {pageLeads.length === 0 && (
               <tr>
-                <td colSpan={10} className="px-6 py-16 text-center text-gray-400 text-sm">
+                <td colSpan={12} className="px-6 py-16 text-center text-gray-400 text-sm">
                   {leads.length === 0 ? 'No leads yet. Download the template, fill it, and upload it here.' : 'No leads match the current filters.'}
                 </td>
               </tr>
@@ -592,6 +648,14 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                   <div className="text-xs text-gray-500">{lead.email || <span className="text-amber-500">no email</span>}</div>
                 </td>
                 <td className="px-4 py-3"><PriorityBadge priority={lead.priority} /></td>
+                <td className="px-4 py-3 text-xs">
+                  <div className="text-gray-700">{lead.companySize || <span className="text-gray-300">—</span>}</div>
+                  <div className="text-gray-400">{lead.businessFunction || ''}</div>
+                </td>
+                <td className="px-4 py-3 text-xs">
+                  <div className="text-gray-700">{lead.interest || <span className="text-gray-300">—</span>}</div>
+                  <div className="text-gray-400">{lead.decisionRole || ''}</div>
+                </td>
                 <td className="px-4 py-3">
                   <div className="text-sm text-gray-900">{lead.company || '—'}</div>
                   <div className="text-xs text-gray-500">{lead.designation}</div>
@@ -717,7 +781,8 @@ function AddLeadModal({ userEmail, onClose, onAdded, notify }: {
 }) {
   const [form, setForm] = useState({
     name: '', email: '', phone: '', company: '', designation: '',
-    priority: '', sector: '', country: '', city: '', linkedin: '', website: '', notes: '',
+    priority: '', companySize: '', businessFunction: '', interest: '', decisionRole: '',
+    sector: '', country: '', city: '', linkedin: '', website: '', notes: '',
   })
   const [saving, setSaving] = useState(false)
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
@@ -755,6 +820,22 @@ function AddLeadModal({ userEmail, onClose, onAdded, notify }: {
               <option value="High">High</option>
               <option value="Medium">Medium</option>
               <option value="Low">Low</option>
+            </select>
+            <select value={form.companySize} onChange={set('companySize')} className={inputCls}>
+              <option value="">Company size — not set</option>
+              {COMPANY_SIZES.map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+            <select value={form.businessFunction} onChange={set('businessFunction')} className={inputCls}>
+              <option value="">Function — not set</option>
+              {BUSINESS_FUNCTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+            <select value={form.interest} onChange={set('interest')} className={inputCls}>
+              <option value="">Interest — not set</option>
+              {LEAD_INTERESTS.map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+            <select value={form.decisionRole} onChange={set('decisionRole')} className={inputCls}>
+              <option value="">Decision role — not set</option>
+              {DECISION_ROLES.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
             <input value={form.email} onChange={set('email')} className={inputCls} placeholder="Email" type="email" />
             <input value={form.phone} onChange={set('phone')} className={inputCls} placeholder="Phone" />

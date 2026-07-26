@@ -18,6 +18,10 @@ export async function GET() {
         'Website': 'https://www.techcorpindia.com',
         'Priority': 'High',
         'Lead Type': 'Enterprise',
+        'Company Size': 'Enterprise',
+        'Function': 'IT & Tech',
+        'Interest': 'Training',
+        'Decision Role': 'Decision-maker',
         'Sector / Segment': 'IT Services',
         'Region': 'Asia',
         'Country': 'India',
@@ -34,6 +38,10 @@ export async function GET() {
         'Website': '',
         'Priority': '',
         'Lead Type': '',
+        'Company Size': 'Medium',
+        'Function': 'Finance',
+        'Interest': '',
+        'Decision Role': '',
         'Sector / Segment': 'Banking & Finance',
         'Region': 'GCC',
         'Country': 'UAE',
@@ -45,7 +53,8 @@ export async function GET() {
     const worksheet = XLSX.utils.json_to_sheet(sampleData)
     worksheet['!cols'] = [
       { wch: 20 }, { wch: 30 }, { wch: 20 }, { wch: 25 }, { wch: 25 },
-      { wch: 40 }, { wch: 30 }, { wch: 10 }, { wch: 15 }, { wch: 20 },
+      { wch: 40 }, { wch: 30 }, { wch: 10 }, { wch: 15 }, { wch: 14 },
+      { wch: 18 }, { wch: 12 }, { wch: 16 }, { wch: 20 },
       { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 40 },
     ]
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Leads')
@@ -66,6 +75,10 @@ export async function GET() {
       ['- Phone, Company, Designation, LinkedIn, Website'],
       ['- Priority: High / Medium / Low'],
       ['- Lead Type: Enterprise / Corporate / SMB / Startup / Institute'],
+      ['- Company Size: Small / Medium / Large / Enterprise'],
+      ['- Function: IT & Tech / HR & L&D / Finance / Operations / Sales & Marketing / Leadership / Other'],
+      ['- Interest: Training / POC / Development / Advisory'],
+      ['- Decision Role: Decision-maker / Influencer / End-user'],
       ['- Sector / Segment, Region, Country, City, Notes'],
       [''],
       ['GOOD TO KNOW'],

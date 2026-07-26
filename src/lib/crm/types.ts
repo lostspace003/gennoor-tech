@@ -8,6 +8,13 @@ export type TechProfile = 'technical' | 'non-technical'
 
 export const PIPELINE_STAGES: PipelineStage[] = ['diagnose', 'train', 'poc', 'development', 'sustain']
 
+// Category options — dropdowns in the add-lead form and multi-select filters.
+// Stored as free strings so imports with other spellings still land.
+export const COMPANY_SIZES = ['Small', 'Medium', 'Large', 'Enterprise']
+export const BUSINESS_FUNCTIONS = ['IT & Tech', 'HR & L&D', 'Finance', 'Operations', 'Sales & Marketing', 'Leadership / C-suite', 'Other']
+export const LEAD_INTERESTS = ['Training', 'POC', 'Development', 'Advisory']
+export const DECISION_ROLES = ['Decision-maker', 'Influencer', 'End-user']
+
 export interface LeadActivity {
   at: string
   by: string
@@ -68,6 +75,11 @@ export interface Lead {
   stage: PipelineStage
   priority: string
   leadType: string
+  // Category fields (see COMPANY_SIZES etc. above); blank = not set
+  companySize?: string
+  businessFunction?: string
+  interest?: string
+  decisionRole?: string
   sector: string
   region: string
   country: string
@@ -111,6 +123,10 @@ export function newLead(partial: Partial<Lead> & { name: string }, by: string): 
     stage: partial.stage || 'diagnose',
     priority: partial.priority || '',
     leadType: partial.leadType || '',
+    companySize: partial.companySize || '',
+    businessFunction: partial.businessFunction || '',
+    interest: partial.interest || '',
+    decisionRole: partial.decisionRole || '',
     sector: partial.sector || '',
     region: partial.region || '',
     country: partial.country || '',

@@ -5,7 +5,7 @@ import {
   X, Mail, Phone, Building2, Linkedin, Globe, Brain, Send, Sparkles,
   Calendar, Trash2, CheckCircle, MessageSquare, Lock, RefreshCw, Paperclip, Reply, Eye,
 } from 'lucide-react'
-import { Lead, ChatMessage, PIPELINE_STAGES } from '@/lib/crm/types'
+import { Lead, ChatMessage, PIPELINE_STAGES, COMPANY_SIZES, BUSINESS_FUNCTIONS, LEAD_INTERESTS, DECISION_ROLES } from '@/lib/crm/types'
 import { StatusBadge, ProcessDot, StageBar, api, formatDateTime, Spinner, STAGE_LABELS, CopyMsg, InfoTip, DurationSlider } from './shared'
 import { useCrm } from './CrmContext'
 import DocPreview from './DocPreview'
@@ -152,6 +152,8 @@ function OverviewTab({ lead, canManage, onReload, onClose, notify }: { lead: Lea
       designation: lead.designation, linkedin: lead.linkedin, website: lead.website,
       sector: lead.sector, region: lead.region, country: lead.country, city: lead.city,
       priority: lead.priority, leadType: lead.leadType, notes: lead.notes, status: lead.status,
+      companySize: lead.companySize || '', businessFunction: lead.businessFunction || '',
+      interest: lead.interest || '', decisionRole: lead.decisionRole || '',
     })
     setEditing(true)
   }
@@ -214,6 +216,21 @@ function OverviewTab({ lead, canManage, onReload, onClose, notify }: { lead: Lea
               {field('LinkedIn URL', 'linkedin')}
               {field('Website', 'website')}
               {field('Sector', 'sector')}
+              {(([
+                ['Company size', 'companySize', COMPANY_SIZES],
+                ['Function', 'businessFunction', BUSINESS_FUNCTIONS],
+                ['Interest', 'interest', LEAD_INTERESTS],
+                ['Decision role', 'decisionRole', DECISION_ROLES],
+                ['Priority', 'priority', ['High', 'Medium', 'Low']],
+              ]) as Array<[string, keyof Lead, string[]]>).map(([label, key, options]) => (
+                <div key={key as string}>
+                  <label className="block text-xs text-gray-500 mb-1">{label}</label>
+                  <select value={(form[key] as string) || ''} onChange={(e) => setForm({ ...form, [key]: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm">
+                    <option value="">Not set</option>
+                    {options.map((o) => <option key={o} value={o}>{o}</option>)}
+                  </select>
+                </div>
+              ))}
               {field('Region', 'region')}
               {field('Country', 'country')}
               {field('City', 'city')}

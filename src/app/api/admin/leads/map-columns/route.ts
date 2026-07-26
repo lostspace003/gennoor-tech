@@ -4,7 +4,8 @@ import { aiConfigured, chatCompletion } from '@/lib/crm/ai'
 
 const TEMPLATE_FIELDS = [
   'Name', 'Email', 'Phone', 'Company', 'Designation', 'LinkedIn', 'Website',
-  'Priority', 'Lead Type', 'Sector / Segment', 'Region', 'Country', 'City', 'Notes',
+  'Priority', 'Lead Type', 'Company Size', 'Function', 'Interest', 'Decision Role',
+  'Sector / Segment', 'Region', 'Country', 'City', 'Notes',
 ] as const
 
 // AI column mapping for non-template spreadsheets: given the sheet's headers
@@ -29,8 +30,8 @@ export async function POST(request: Request) {
         {
           role: 'system',
           content: `You map spreadsheet columns to a CRM lead template. Template fields: ${TEMPLATE_FIELDS.join(', ')}.
-Rules: map each template field to EXACTLY ONE source header, or null when no column fits. Never map the same source header twice (pick the best fit). "Name" means the person's full name, not the company. A column of job titles → Designation. A column with URLs containing linkedin → LinkedIn. Scores/priorities like High/Medium/Low or 1-10 → Priority. Free-text remarks/tips/skills → Notes.
-Return ONLY JSON: {"mapping": {"Name": "<source header or null>", ...all 14 template fields...}, "confidence": "high|medium|low", "note": "one short sentence about anything ambiguous"}`,
+Rules: map each template field to EXACTLY ONE source header, or null when no column fits. Never map the same source header twice (pick the best fit). "Name" means the person's full name, not the company. A column of job titles → Designation. A column with URLs containing linkedin → LinkedIn. Scores/priorities like High/Medium/Low or 1-10 → Priority. Org headcount/size bands → Company Size. Department/team names → Function. What they want to buy (training/POC/development/advisory) → Interest. Buying authority (decision maker/influencer/user) → Decision Role. Free-text remarks/tips/skills → Notes.
+Return ONLY JSON: {"mapping": {"Name": "<source header or null>", ...all ${TEMPLATE_FIELDS.length} template fields...}, "confidence": "high|medium|low", "note": "one short sentence about anything ambiguous"}`,
         },
         {
           role: 'user',
