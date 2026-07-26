@@ -167,43 +167,164 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
     }
   }
 
-  const handleFile = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
+  // Multi-format import: spreadsheets parse locally (AI maps unfamiliar
+  // columns); PDF/DOCX extract text server-side; MD/TXT read directly —
+  // then AI pulls structured leads out of the text. Everything lands in
+  // one preview before anything is saved.
+  const handleFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || [])
+    if (files.length === 0) return
+    const valid: Partial<Lead>[] = []
+    const warnings: string[] = []
+    let skipped = 0
+
+    const extractFromText = async (text: string, label: string) => {
+      setBusy('aimap')
+      notify(`Extracting leads from ${label} with AI...`)
+      const res = await api<{ leads: any[]; truncated: boolean }>('/api/admin/leads/extract-leads', {
+        method: 'POST',
+        body: JSON.stringify({ text }),
+      })
+      if (res.truncated) warnings.push(`${label}: very long document — only the first ~44k characters were scanned`)
+      for (const l of res.leads) {
+        if (!l.name) continue
+        valid.push({
+          name: String(l.name), email: String(l.email || '').toLowerCase(), phone: String(l.phone || ''),
+          company: String(l.company || ''), designation: String(l.designation || ''),
+          linkedin: String(l.linkedin || ''), website: String(l.website || ''),
+          country: String(l.country || ''), city: String(l.city || ''), notes: String(l.notes || ''),
+        })
+      }
+      warnings.unshift(`${label}: AI extracted ${res.leads.length} lead(s) — review before importing`)
+    }
+
+    try {
+      for (const file of files) {
+        const ext = (file.name.split('.').pop() || '').toLowerCase()
+        if (['md', 'txt'].includes(ext)) {
+          await extractFromText(await file.text(), file.name)
+        } else if (['pdf', 'docx'].includes(ext)) {
+          setBusy('aimap')
+          const form = new FormData()
+          form.append('file', file)
+          const r = await fetch('/api/admin/leads/extract-file', { method: 'POST', body: form })
+          const d = await r.json()
+          if (!r.ok) { warnings.unshift(`${file.name}: ${d.error}`); continue }
+          await extractFromText(d.text, file.name)
+        } else if (['xlsx', 'xls', 'csv'].includes(ext)) {
+          await parseSpreadsheet(file, valid, warnings, (n) => { skipped += n })
+        } else {
+          warnings.unshift(`${file.name}: unsupported format .${ext} (use xlsx, csv, pdf, docx, md or txt)`)
+        }
+      }
+      // De-dupe across everything parsed in this upload (email, else name+company)
+      const seen = new Set<string>()
+      const deduped = valid.filter((l) => {
+        const key = l.email ? `e:${l.email}` : `nc:${(l.name || '').toLowerCase()}|${(l.company || '').toLowerCase()}`
+        if (seen.has(key)) return false
+        seen.add(key)
+        return true
+      })
+      if (deduped.length < valid.length) warnings.unshift(`${valid.length - deduped.length} duplicate row(s) removed within this upload`)
+      setUpload({ valid: deduped, warnings: warnings.slice(0, 50), skipped })
+    } catch (e: any) {
+      notify(e.message || 'Import failed', true)
+    } finally {
+      setBusy('')
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
+
+  const parseSpreadsheet = (file: File, valid: Partial<Lead>[], warnings: string[], addSkipped: (n: number) => void) =>
+    new Promise<void>((resolve, reject) => {
     const reader = new FileReader()
-    reader.onload = (e) => {
+    reader.onerror = () => reject(new Error(`Could not read ${file.name}`))
+    reader.onload = async (e) => {
       try {
         const workbook = XLSX.read(new Uint8Array(e.target?.result as ArrayBuffer), { type: 'array' })
-        const valid: Partial<Lead>[] = []
-        const warnings: string[] = []
         let skipped = 0
+
         for (const sheetName of workbook.SheetNames) {
-          if (/instructions|read me|pivot/i.test(sheetName)) continue
-          const rows = XLSX.utils.sheet_to_json<Record<string, any>>(workbook.Sheets[sheetName], { defval: '' })
-          rows.forEach((row, i) => {
-            const lead = rowToLead(row)
-            if (!lead) {
-              if (Object.values(row).some((v) => String(v).trim())) {
-                skipped++
-                warnings.push(`${sheetName} row ${i + 2}: no Name — skipped`)
+          if (/instructions|read me|pivot|summary|dashboard/i.test(sheetName)) continue
+          const grid = XLSX.utils.sheet_to_json<any[]>(workbook.Sheets[sheetName], { header: 1, defval: '' })
+          if (grid.length === 0) continue
+
+          // Header row = first row with 3+ text cells (handles files with title rows above)
+          const headerIdx = grid.findIndex((r) => r.filter((c) => typeof c === 'string' && c.trim()).length >= 3)
+          if (headerIdx === -1) continue
+          const rows = XLSX.utils.sheet_to_json<Record<string, any>>(workbook.Sheets[sheetName], { defval: '', range: headerIdx })
+          const dataRows = rows.filter((r) => Object.values(r).some((v) => String(v).trim()))
+          if (dataRows.length === 0) continue
+
+          // Pass 1: template/known-alias mapping
+          let leadsFromSheet = dataRows.map((row) => rowToLead(row))
+          const hitRate = leadsFromSheet.filter(Boolean).length / dataRows.length
+
+          // Pass 2: sheet doesn't look like our template — ask AI to map columns
+          if (hitRate < 0.5) {
+            setBusy('aimap')
+            notify(`"${sheetName}" doesn't match the template — asking AI to map the columns...`)
+            try {
+              const headers = Object.keys(dataRows[0])
+              const res = await api<{ mapping: Record<string, string | null>; note: string; confidence: string }>(
+                '/api/admin/leads/map-columns',
+                { method: 'POST', body: JSON.stringify({ headers, samples: dataRows.slice(0, 3).map((r) => headers.map((h) => r[h])) }) }
+              )
+              const m = res.mapping
+              const pick = (row: Record<string, any>, field: string) => {
+                const src = m[field]
+                const v = src ? String(row[src] ?? '').trim() : ''
+                return v.toUpperCase() === 'NA' ? '' : v
               }
+              leadsFromSheet = dataRows.map((row) => {
+                const name = pick(row, 'Name')
+                if (!name) return null
+                return {
+                  name,
+                  email: pick(row, 'Email').toLowerCase(),
+                  phone: pick(row, 'Phone'),
+                  company: pick(row, 'Company'),
+                  designation: pick(row, 'Designation'),
+                  linkedin: pick(row, 'LinkedIn'),
+                  website: pick(row, 'Website'),
+                  priority: pick(row, 'Priority'),
+                  leadType: pick(row, 'Lead Type'),
+                  sector: pick(row, 'Sector / Segment'),
+                  region: pick(row, 'Region'),
+                  country: pick(row, 'Country'),
+                  city: pick(row, 'City'),
+                  notes: pick(row, 'Notes'),
+                } as Partial<Lead>
+              })
+              const used = Object.entries(m).filter(([, v]) => v).map(([f, v]) => `${v}→${f}`).join(', ')
+              warnings.unshift(`${sheetName}: AI-mapped columns (${res.confidence} confidence): ${used}${res.note ? ` · ${res.note}` : ''}`)
+            } catch (err: any) {
+              warnings.unshift(`${sheetName}: AI mapping failed (${err.message}) — rows imported only where standard columns matched`)
+            } finally {
+              setBusy('')
+            }
+          }
+
+          leadsFromSheet.forEach((lead, i) => {
+            if (!lead) {
+              skipped++
+              if (warnings.length < 50) warnings.push(`${sheetName} row ${headerIdx + i + 2}: no Name — skipped`)
               return
             }
             if (lead.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email)) {
-              warnings.push(`${sheetName} row ${i + 2}: "${lead.email}" doesn't look like an email — kept as-is`)
+              warnings.push(`${sheetName} row ${headerIdx + i + 2}: "${lead.email}" doesn't look like an email — kept as-is`)
             }
             valid.push(lead)
           })
         }
-        setUpload({ valid, warnings: warnings.slice(0, 50), skipped })
+        addSkipped(skipped)
+        resolve()
       } catch {
-        notify('Could not read that file. Save it as .xlsx and try again.', true)
-      } finally {
-        if (fileInputRef.current) fileInputRef.current.value = ''
+        reject(new Error(`Could not read ${file.name}. Save it as .xlsx/.csv and try again.`))
       }
     }
     reader.readAsArrayBuffer(file)
-  }
+  })
 
   const confirmImport = async () => {
     if (!upload || upload.valid.length === 0) return
@@ -288,9 +409,9 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
             </a>
             {canManage && (
               <>
-                <input ref={fileInputRef} type="file" accept=".xlsx,.xls" onChange={handleFile} className="hidden" />
-                <button onClick={() => fileInputRef.current?.click()} className="px-3 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 flex items-center gap-2">
-                  <Upload className="w-4 h-4" /> Upload Excel
+                <input ref={fileInputRef} type="file" accept=".xlsx,.xls,.csv,.pdf,.docx,.md,.txt" multiple onChange={handleFile} className="hidden" />
+                <button onClick={() => fileInputRef.current?.click()} disabled={busy === 'aimap'} className="px-3 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 flex items-center gap-2 disabled:opacity-60" title="Excel, CSV, PDF, Word, Markdown or text — multiple files at once. AI maps or extracts what doesn't match the template.">
+                  <Upload className="w-4 h-4" /> {busy === 'aimap' ? 'AI processing...' : 'Import leads'}
                 </button>
               </>
             )}
