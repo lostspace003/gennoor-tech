@@ -32,14 +32,38 @@ function LoginContent() {
 
   // Silent SSO: when we land here mid-navigation (callbackUrl present, no
   // error), bounce straight through Microsoft — the Entra session usually
-  // signs the user back in without any clicks. Errors and direct visits
-  // still show the button.
+  // signs the user back in without any clicks. Guards: only once per
+  // 2 minutes per tab (sessionStorage), so a failing bounce can never loop —
+  // the second landing shows the normal button instead.
+  const [autoSigning, setAutoSigning] = useState(false)
   useEffect(() => {
     if (autoTried.current) return
     if (urlError || !searchParams.get('callbackUrl')) return
+    try {
+      const last = Number(sessionStorage.getItem('gnr.sso.tried') || 0)
+      if (Date.now() - last < 120_000) return // recent attempt didn't stick — show the button
+      sessionStorage.setItem('gnr.sso.tried', String(Date.now()))
+    } catch { /* private mode — still try once */ }
     autoTried.current = true
+    setAutoSigning(true)
     handleMicrosoftSignIn()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (autoSigning && !error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 flex items-center justify-center p-4">
+        <div className="text-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logos/gennoor-tech-horizontal-transparent.svg" alt="Gennoor Tech" className="h-16 w-auto mx-auto mb-5" />
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-sm text-gray-600">Signing you in with Microsoft…</p>
+          <button onClick={() => setAutoSigning(false)} className="mt-4 text-xs text-gray-400 hover:text-gray-600 underline">
+            Taking too long? Sign in manually
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 flex items-center justify-center p-4">
