@@ -69,5 +69,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   trustHost: true,
-  secret: process.env.NEXTAUTH_SECRET || 'dev-secret-change-in-production',
+  // Accept both env names — the App Service historically had only AUTH_SECRET
+  // while code read NEXTAUTH_SECRET, splitting sign/verify secrets and
+  // breaking sessions. Keep them interchangeable forever.
+  secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET || 'dev-secret-change-in-production',
 })

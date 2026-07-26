@@ -16,10 +16,18 @@ const AUTHORIZED_EMAILS = [
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
 
+  // Canonical host for app surfaces: auth cookies live on www.gennoor.com —
+  // logging in on the bare domain would create a second, separate session.
+  if (request.nextUrl.hostname === 'gennoor.com') {
+    const url = request.nextUrl.clone()
+    url.hostname = 'www.gennoor.com'
+    return NextResponse.redirect(url, 301)
+  }
+
   // The login page itself must stay reachable
   if (path.startsWith('/admin/login')) return NextResponse.next()
 
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
+  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET })
 
   if (!token) {
     const loginUrl = new URL('/admin/login', request.url)
