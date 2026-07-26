@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import GennoorCareTile from '@/components/admin/GennoorCareTile'
+import CrmStatsTile from '@/components/admin/CrmStatsTile'
 import dynamic from 'next/dynamic'
 import {
   BarChart3, Eye, MessageSquare, Mail, Globe, MapPin,
@@ -618,6 +619,7 @@ export default function AdminDashboard() {
             <button onClick={() => setAutoRefresh(!autoRefresh)} className={`px-2.5 py-1.5 text-xs rounded-md transition-colors ${autoRefresh ? 'bg-teal-100 text-teal-700' : 'text-slate-400 hover:text-slate-600'}`} title={autoRefresh ? 'Auto-refresh ON (60s)' : 'Auto-refresh OFF'}>
               <Clock className="w-3.5 h-3.5" />
             </button>
+            <CrmStatsTile />
             <GennoorCareTile />
             <button onClick={() => router.push('/crm')} className="px-3 py-1.5 text-xs font-medium bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-md hover:shadow-md transition-all flex items-center gap-1.5">
               <Bot className="w-3.5 h-3.5" />
