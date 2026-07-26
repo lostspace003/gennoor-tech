@@ -11,7 +11,7 @@ function LoginContent() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const callbackUrl = searchParams.get('callbackUrl') || '/crm/dashboard'
+  const callbackUrl = searchParams.get('callbackUrl') || '/admin/crm-complete'
   const urlError = searchParams.get('error')
 
   const handleMicrosoftSignIn = async () => {

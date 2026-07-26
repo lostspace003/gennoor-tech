@@ -214,7 +214,7 @@ export default function CRMCompletePage() {
           if (sheetName === 'Instructions' || sheetName === 'Read me & Sources' || sheetName === 'Lead Pivot') return
 
           // Try to detect if it's our template format or Gennoor_GCC format
-          const firstRowCheck = XLSX.utils.sheet_to_json(worksheet, { header: 1, range: 0, defval: '' })
+          const firstRowCheck = XLSX.utils.sheet_to_json(worksheet, { header: 1, range: 0, defval: '' }) as string[][]
           const hasStandardHeaders = firstRowCheck[0] && (
             firstRowCheck[0].includes('Name') ||
             firstRowCheck[0].includes('Email') ||

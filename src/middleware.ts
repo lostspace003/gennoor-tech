@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
 
   // Protected routes
-  const protectedPaths = ['/admin', '/crm']
+  const protectedPaths = ['/admin']
   const isProtectedPath = protectedPaths.some(p => path.startsWith(p))
 
   if (isProtectedPath) {
@@ -43,5 +43,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/crm/:path*', '/crm/dashboard/:path*']
+  matcher: ['/admin/:path*']
 }
