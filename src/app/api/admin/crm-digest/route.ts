@@ -1,10 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { BlobServiceClient } from '@azure/storage-blob'
 import { getLeads } from '@/lib/crm/store'
 import { sendEmail } from '@/lib/email-service'
 import { graphConfigured, listUpcomingMeetings } from '@/lib/crm/graph'
+import { CRM_USERS } from '@/lib/crm/access'
 
 const ADMIN = process.env.EMAIL_ADMIN || 'admin@gennoor.com'
 const FROM = process.env.EMAIL_FROM_INFO || 'info@gennoor.com'
+
+// Daily point-in-time backup of the lead store (kept 30 days). Runs with the
+// digest so backups happen without extra infrastructure.
+async function backupLeads(leads: unknown[]) {
+  const conn = process.env.AZURE_STORAGE_CONNECTION_STRING
+  if (!conn) return
+  const container = BlobServiceClient.fromConnectionString(conn).getContainerClient('crm-data')
+  await container.createIfNotExists()
+  const stamp = new Date().toISOString().slice(0, 10)
+  const body = JSON.stringify(leads)
+  await container.getBlockBlobClient(`backups/leads-${stamp}.json`).upload(body, Buffer.byteLength(body), {
+    blobHTTPHeaders: { blobContentType: 'application/json' },
+  })
+  // prune backups older than 30 days
+  const cutoff = new Date(Date.now() - 30 * 86_400_000).toISOString().slice(0, 10)
+  for await (const blob of container.listBlobsFlat({ prefix: 'backups/leads-' })) {
+    const date = blob.name.slice('backups/leads-'.length, 'backups/leads-'.length + 10)
+    if (date < cutoff) await container.deleteBlob(blob.name).catch(() => {})
+  }
+}
 
 // Morning digest for the sales team — triggered by the GitHub Actions cron
 // (secured by CRM_CRON_SECRET), never by browser users.
@@ -16,6 +38,8 @@ export async function POST(req: NextRequest) {
 
   try {
     const leads = await getLeads()
+    await backupLeads(leads).catch((e) => console.error('Backup failed:', e))
+
     const active = leads.filter((l) => !l.dumped && l.processStatus === 'active' && !['won', 'lost'].includes(l.status))
     const pool = active.filter((l) => !l.owner)
     const claimed = active.filter((l) => l.owner)
@@ -27,6 +51,33 @@ export async function POST(req: NextRequest) {
       const at = lastSent(l)
       return at && Date.now() - new Date(at).getTime() > 5 * 86_400_000
     })
+
+    // Personal digests: each member with claimed leads gets their own queue
+    const memberResults: Record<string, boolean> = {}
+    for (const member of CRM_USERS.filter((u) => u !== ADMIN)) {
+      const mine = (arr: typeof claimed) => arr.filter((l) => l.owner?.toLowerCase() === member)
+      const mineResearch = mine(needsResearch)
+      const mineEmail = mine(needsEmail)
+      const mineFollow = mine(followUpDue)
+      const total = mineResearch.length + mineEmail.length + mineFollow.length
+      if (total === 0) continue
+      const li = (label: string, items: any[]) =>
+        items.length ? `<li><strong>${items.length}</strong> ${label}: ${items.slice(0, 5).map((l) => l.name).join(', ')}${items.length > 5 ? '…' : ''}</li>` : ''
+      const r = await sendEmail({
+        to: member,
+        from: FROM,
+        fromName: 'Gennoor CRM',
+        subject: `Your CRM queue today: ${total} lead${total === 1 ? '' : 's'} need you`,
+        html: `<div style="font-family:'Segoe UI',Arial,sans-serif;max-width:600px;color:#374151">
+          <h3 style="margin:0 0 10px">Good morning — your queue</h3>
+          <ul style="margin:0 0 16px;padding-left:18px;line-height:1.9">
+            ${li('need research', mineResearch)}${li('ready for first email', mineEmail)}${li('quiet 5+ days — follow up', mineFollow)}
+          </ul>
+          <a href="https://gennoor-tech.azurewebsites.net/crm/queue" style="background:#2563EB;color:#fff;text-decoration:none;padding:9px 20px;border-radius:8px;font-size:14px">Open my Work Queue</a>
+        </div>`,
+      })
+      memberResults[member] = r.success
+    }
 
     let meetingsHtml = ''
     if (graphConfigured()) {
@@ -65,7 +116,7 @@ export async function POST(req: NextRequest) {
       html,
     })
 
-    return NextResponse.json({ success: result.success, pool: pool.length, followUpDue: followUpDue.length })
+    return NextResponse.json({ success: result.success, pool: pool.length, followUpDue: followUpDue.length, memberDigests: memberResults, backedUp: true })
   } catch (error) {
     console.error('Digest error:', error)
     return NextResponse.json({ error: 'Digest failed' }, { status: 500 })

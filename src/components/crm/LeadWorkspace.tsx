@@ -222,6 +222,16 @@ function OverviewTab({ lead, canManage, onReload, onClose, notify }: { lead: Lea
                   {['new', 'contacted', 'qualified', 'proposal', 'negotiation', 'won', 'lost'].map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">Deal value (₹){form.status === 'won' ? ' — set it for won deals' : ''}</label>
+                <input
+                  type="number"
+                  min={0}
+                  value={form.value ?? 0}
+                  onChange={(e) => setForm({ ...form, value: Number(e.target.value) || 0 })}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
             </div>
             <div>
               <label className="block text-xs text-gray-500 mb-1">Notes</label>
@@ -271,6 +281,7 @@ function OverviewTab({ lead, canManage, onReload, onClose, notify }: { lead: Lea
       {/* Activity timeline — real data only */}
       <div>
         <h3 className="text-sm font-medium text-gray-500 mb-3">Activity</h3>
+        <NoteInput leadId={lead.id} onReload={onReload} notify={notify} />
         <div className="space-y-3 max-h-[32rem] overflow-y-auto pr-2">
           {lead.activities.length === 0 && <p className="text-sm text-gray-400">No activity yet.</p>}
           {lead.activities.map((a, i) => (
@@ -284,6 +295,37 @@ function OverviewTab({ lead, canManage, onReload, onClose, notify }: { lead: Lea
           ))}
         </div>
       </div>
+    </div>
+  )
+}
+
+// Quick note logging — meeting outcomes, call summaries — straight onto the trail
+function NoteInput({ leadId, onReload, notify }: { leadId: string; onReload: () => Promise<void>; notify: Props['notify'] }) {
+  const [note, setNote] = useState('')
+  const [saving, setSaving] = useState(false)
+  const save = async () => {
+    const text = note.trim()
+    if (!text || saving) return
+    setSaving(true)
+    try {
+      await api('/api/admin/leads/add-note', { method: 'POST', body: JSON.stringify({ leadId, note: text }) })
+      setNote('')
+      await onReload()
+      notify('Note logged')
+    } catch (e: any) { notify(e.message, true) } finally { setSaving(false) }
+  }
+  return (
+    <div className="flex gap-1.5 mb-3">
+      <input
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        onKeyDown={(e) => e.key === 'Enter' && save()}
+        placeholder="Log a note — meeting outcome, call summary..."
+        className="flex-1 px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      />
+      <button onClick={save} disabled={saving || !note.trim()} className="px-2.5 py-1.5 bg-gray-800 text-white text-xs rounded-lg hover:bg-gray-900 disabled:opacity-40">
+        {saving ? '...' : 'Log'}
+      </button>
     </div>
   )
 }

@@ -261,6 +261,28 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
             <option value="stopped">Stopped</option>
           </select>
           <div className="ml-auto flex items-center gap-2">
+            <button
+              onClick={() => {
+                const rows = filtered.map((l) => ({
+                  Name: l.name, Email: l.email, Phone: l.phone, Company: l.company,
+                  Designation: l.designation, LinkedIn: l.linkedin, Website: l.website,
+                  Priority: l.priority, 'Lead Type': l.leadType, 'Sector / Segment': l.sector,
+                  Region: l.region, Country: l.country, City: l.city,
+                  Stage: l.stage, Status: l.status, Process: l.processStatus,
+                  Owner: l.owner || 'pool', 'Value (INR)': l.value || '',
+                  'Emails Sent': l.emailHistory.filter((e) => e.status === 'sent').length,
+                  'Last Activity': l.lastActivity?.slice(0, 10), Notes: l.notes,
+                }))
+                const wb = XLSX.utils.book_new()
+                XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), 'Leads')
+                XLSX.writeFile(wb, `gennoor-leads-${new Date().toISOString().slice(0, 10)}.xlsx`)
+                notify(`Exported ${rows.length} lead(s)`)
+              }}
+              className="px-3 py-2 border border-gray-200 text-sm rounded-lg hover:bg-gray-50 flex items-center gap-2"
+              title="Download the currently filtered leads as Excel"
+            >
+              <Download className="w-4 h-4" /> Export ({filtered.length})
+            </button>
             <a href="/api/admin/template" className="px-3 py-2 border border-gray-200 text-sm rounded-lg hover:bg-gray-50 flex items-center gap-2">
               <Download className="w-4 h-4" /> Template
             </a>

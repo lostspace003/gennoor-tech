@@ -125,7 +125,8 @@ Offerings follow a 5-step client journey:
 5. Sustain — maintenance with complementary hand-holding for 3-6 months
 Free relationship-building offers used in outreach: a free 2-hour webinar tailored to the company's needs, and a free 1-day online training. There is also a YouTube channel on enterprise AI agent development.
 Contact: admin@gennoor.com, +91 9326352241.
-STRICT RULES for anything you write: never invent statistics, client counts, or case studies. No fabricated claims like "100+ implementations" or "40% cost reduction". Be honest, specific and concise.`
+STRICT RULES for anything you write: never invent statistics, client counts, or case studies. No fabricated claims like "100+ implementations" or "40% cost reduction". Be honest, specific and concise.
+STYLE — business-grade brevity, always: lead with the point; short sentences; bullets over paragraphs; no filler ("I hope this helps", "it's worth noting"), no restating the question, no hedging boilerplate. Outreach emails stay under 170 words. Answers to the team: only the detail they need to act, nothing more.`
 
 export async function researchLead(lead: Lead): Promise<{
   summary: string

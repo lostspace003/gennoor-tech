@@ -24,13 +24,21 @@ export async function GET(req: NextRequest) {
     if (leadId) {
       const lead = leads.find((l) => l.id === leadId)
       if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
-      if (!lead.email) return NextResponse.json({ configured: true, messages: [] })
-      const messages = await listInboundMessages(lead.email, 25)
+      // Match replies from the primary address AND any saved alternates
+      const addresses = [lead.email, ...(lead.altEmails || [])].filter(Boolean)
+      if (addresses.length === 0) return NextResponse.json({ configured: true, messages: [] })
+      const batches = await Promise.all(addresses.map((a) => listInboundMessages(a, 25).catch(() => [])))
+      const messages = batches.flat().sort((a, b) => b.receivedAt.localeCompare(a.receivedAt)).slice(0, 25)
       return NextResponse.json({ configured: true, messages })
     }
 
-    // Whole-CRM inbox: recent messages from any known lead
-    const byEmail = new Map(leads.filter((l) => l.email).map((l) => [l.email.toLowerCase(), l]))
+    // Whole-CRM inbox: recent messages from any known lead address (incl. alternates)
+    const byEmail = new Map<string, (typeof leads)[number]>()
+    for (const l of leads) {
+      for (const a of [l.email, ...(l.altEmails || [])]) {
+        if (a) byEmail.set(a.toLowerCase(), l)
+      }
+    }
     const recent = await listInboundMessages(undefined, 50)
     const matched = recent
       .filter((m) => byEmail.has(m.from.toLowerCase()))
