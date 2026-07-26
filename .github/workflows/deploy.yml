@@ -7,6 +7,13 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# One pipeline at a time: parallel runs used to hit the App Service together
+# and fail with OneDeploy 409 Conflict. Queue runs; never cancel a deploy
+# mid-flight.
+concurrency:
+  group: ci-cd-${{ github.ref }}
+  cancel-in-progress: false
+
 env:
   AZURE_WEBAPP_NAME: gennoor-tech
   NODE_VERSION: '22.x'
