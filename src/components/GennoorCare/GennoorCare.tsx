@@ -100,10 +100,18 @@ export default function GennoorCare() {
     } finally { setLeadBusy(false) }
   }
 
+  const endChat = () => {
+    setMsgs([])
+    setOfferLead(false)
+    setShowLead(false)
+    try { sessionStorage.removeItem('gcare.chat') } catch { /* ignore */ }
+    setOpen(false)
+  }
+
   const sendFeedback = async (helpful: boolean | null) => {
     setFeedbackDone(true)
     setShowFeedback(false)
-    setOpen(false)
+    endChat()
     if (helpful === null) return // skipped
     fetch('/api/gennoorcare/feedback', {
       method: 'POST',
@@ -115,7 +123,7 @@ export default function GennoorCare() {
   const handleClose = () => {
     // One light, skippable feedback ask — only after a real conversation
     if (msgs.filter((m) => m.role === 'user').length >= 2 && !feedbackDone) setShowFeedback(true)
-    else setOpen(false)
+    else endChat()
   }
 
   // Lightweight markdown rendering: paragraphs, bullets, **bold**,
@@ -181,7 +189,7 @@ export default function GennoorCare() {
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-400" />
             </span>
           </span>
-          <span className="text-sm font-semibold hidden sm:inline">Ask GennoorCare</span>
+          <span className="text-sm font-semibold hidden sm:inline">{msgs.length > 0 ? 'Continue chat' : 'Ask GennoorCare'}</span>
         </button>
       )}
 
@@ -197,7 +205,10 @@ export default function GennoorCare() {
                 <div className="text-[10px] text-blue-100 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" /> online — courses, training & POCs</div>
               </div>
             </div>
-            <button onClick={handleClose} className="p-1.5 hover:bg-white/15 rounded-lg text-xl leading-none" aria-label="Close">×</button>
+            <div className="flex items-center gap-0.5">
+              <button onClick={() => setOpen(false)} className="px-2 py-1 hover:bg-white/15 rounded-lg text-xl leading-none" aria-label="Minimize — your chat is saved" title="Minimize (chat is saved)">–</button>
+              <button onClick={handleClose} className="px-2 py-1 hover:bg-white/15 rounded-lg text-xl leading-none" aria-label="End chat" title="End chat">×</button>
+            </div>
           </div>
 
           {/* Messages */}
