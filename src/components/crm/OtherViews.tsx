@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Users, Activity, Mail, Brain, Calendar, Upload, FileText, Trash2, RefreshCw, Video } from 'lucide-react'
 import { Lead, PIPELINE_STAGES } from '@/lib/crm/types'
-import { StatusBadge, timeAgo, formatDateTime, api, STAGE_LABELS, Spinner } from './shared'
+import { StatusBadge, timeAgo, formatDateTime, api, STAGE_LABELS, Spinner, InfoTip } from './shared'
 import DocPreview from './DocPreview'
 
 /* ---------------- Dashboard (real metrics only) ---------------- */
@@ -41,7 +41,7 @@ export function DashboardView({ leads, onGoLeads, onOpenLead }: { leads: Lead[];
       {/* Pipeline & revenue snapshot — real data only */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <h3 className="text-sm font-semibold text-gray-800 mb-3">Pipeline funnel</h3>
+          <h3 className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-1.5">Pipeline funnel <InfoTip text="How many leads sit in each of the 5 journey stages. The ₹ value appears when deal values are set on leads (Overview → Edit)." /></h3>
           {(() => {
             const activeLeads = leads.filter((l) => !l.dumped)
             const max = Math.max(1, ...PIPELINE_STAGES.map((s) => activeLeads.filter((l) => l.stage === s).length))
@@ -128,7 +128,9 @@ export function PipelineView({ leads, onOpenLead }: { leads: Lead[]; onOpenLead:
                   <button key={l.id} onClick={() => onOpenLead(l.id)} className="w-full bg-white rounded-lg p-3 text-left border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
                     <div className="text-sm font-medium text-gray-900 truncate">{l.name}</div>
                     <div className="text-xs text-gray-500 truncate">{l.company || '—'}</div>
-                    <div className="mt-1.5 flex items-center gap-2"><StatusBadge status={l.status} /></div>
+                    <div className="mt-1.5 flex items-center gap-1.5 flex-wrap"><StatusBadge status={l.status} />
+                      <span className={`text-[10px] rounded-full px-1.5 py-0.5 ${l.owner ? 'bg-gray-100 text-gray-500' : 'bg-emerald-50 text-emerald-700'}`}>{l.owner ? l.owner.split('@')[0] : 'pool'}</span>
+                    </div>
                   </button>
                 ))}
                 {stageLeads.length === 0 && <p className="text-xs text-gray-400 text-center py-6">Empty</p>}
@@ -167,7 +169,7 @@ export function InboxView({ onOpenLead }: { onOpenLead: (id: string) => void }) 
   return (
     <div className="p-3 sm:p-5 space-y-3 max-w-4xl">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-800">Replies from leads (admin@gennoor.com inbox)</h3>
+        <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-1.5">Replies from leads (admin@gennoor.com inbox) <InfoTip text="Emails received in the admin mailbox from any known lead address. Click one to open that lead's conversation and reply with AI." /></h3>
         <button onClick={load} className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50"><RefreshCw className="w-4 h-4 text-gray-500" /></button>
       </div>
       {note && <p className="text-xs bg-amber-50 border border-amber-200 text-amber-800 rounded-lg px-3 py-2">{note}</p>}

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Brain, Lock, Send, Clock, PauseCircle, CheckCircle2, ArrowRight, Hand, Reply } from 'lucide-react'
 import { Lead } from '@/lib/crm/types'
-import { timeAgo } from './shared'
+import { timeAgo, InfoTip } from './shared'
 import { useCrm } from './CrmContext'
 
 const FOLLOW_UP_AFTER_DAYS = 5
@@ -119,7 +119,9 @@ export default function QueueView({ leads }: { leads: Lead[] }) {
   return (
     <div className="p-3 sm:p-5 space-y-4 max-w-5xl">
       <div className="flex flex-wrap items-center gap-3">
-        <h2 className="text-base font-semibold text-gray-900">{isManager ? 'Team work queue' : 'My work queue'}</h2>
+        <h2 className="text-base font-semibold text-gray-900 flex items-center gap-1.5">{isManager ? 'Team work queue' : 'My work queue'}
+          <InfoTip text="Every lead sits in exactly one bucket with its next action: pick up from Pool → Research → Finalize pitch → send First email → Follow up after 5 quiet days. Replies always jump to the top." />
+        </h2>
         <span className="text-xs bg-blue-50 text-blue-700 border border-blue-200 rounded-full px-2.5 py-1">
           {actionable} lead{actionable === 1 ? '' : 's'} need action
         </span>

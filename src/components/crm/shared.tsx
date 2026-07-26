@@ -93,6 +93,27 @@ export async function api<T = any>(url: string, init?: RequestInit): Promise<T> 
   return data as T
 }
 
+// Small ⓘ helper — one-tap plain-language explanation of a panel/option
+export function InfoTip({ text }: { text: string }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <span className="relative inline-flex align-middle">
+      <button
+        type="button"
+        onClick={(e) => { e.stopPropagation(); setOpen((o) => !o) }}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+        aria-label="What is this?"
+        className="w-4 h-4 rounded-full border border-gray-300 text-gray-400 hover:text-blue-600 hover:border-blue-400 text-[10px] leading-none inline-flex items-center justify-center italic shrink-0"
+      >i</button>
+      {open && (
+        <span className="absolute z-[80] top-5 left-1/2 -translate-x-1/2 w-60 bg-gray-900 text-white text-[11px] rounded-lg px-3 py-2 shadow-xl leading-relaxed normal-case font-normal text-left">
+          {text}
+        </span>
+      )}
+    </span>
+  )
+}
+
 // Tiny copy affordance for chat messages and AI outputs
 export function CopyMsg({ text, light }: { text: string; light?: boolean }) {
   const [copied, setCopied] = useState(false)

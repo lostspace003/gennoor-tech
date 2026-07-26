@@ -6,7 +6,7 @@ import {
   Calendar, Trash2, CheckCircle, MessageSquare, Lock, RefreshCw, Paperclip, Reply, Eye,
 } from 'lucide-react'
 import { Lead, ChatMessage, PIPELINE_STAGES } from '@/lib/crm/types'
-import { StatusBadge, ProcessDot, StageBar, api, formatDateTime, Spinner, STAGE_LABELS, CopyMsg } from './shared'
+import { StatusBadge, ProcessDot, StageBar, api, formatDateTime, Spinner, STAGE_LABELS, CopyMsg, InfoTip } from './shared'
 import { useCrm } from './CrmContext'
 import DocPreview from './DocPreview'
 
@@ -391,7 +391,9 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
       {/* Research results — scrolls within its own panel on desktop */}
       <div className="space-y-4 break-words lg:max-h-[calc(100dvh-12rem)] lg:overflow-y-auto lg:pr-2">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium text-gray-500">AI Research</h3>
+          <h3 className="text-sm font-medium text-gray-500 flex items-center gap-1.5">AI Research
+            <InfoTip text="Run research to profile this lead (web-grounded when available, sources cited). Then discuss the angle in the chat and hit Finalize pitch — that locked brief powers the email draft." />
+          </h3>
           <button onClick={runResearch} disabled={running} className="px-3 py-1.5 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 flex items-center gap-2 disabled:opacity-50">
             {running ? <Spinner /> : <Brain className="w-4 h-4" />}
             {lead.aiResearch ? 'Re-run research' : 'Run research'}
@@ -539,7 +541,9 @@ function EmailTab({ lead, onReload, notify, onSchedule }: { lead: Lead; onReload
   return (
     <div className="p-3 sm:p-5 space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-sm font-medium text-gray-500">Conversation with {lead.name}</h3>
+        <h3 className="text-sm font-medium text-gray-500 flex items-center gap-1.5">Conversation with {lead.name}
+          <InfoTip text="Sent emails and their replies in one thread. New email: AI drafts from the finalized pitch → refine by chatting → Final copy → attach documents → Send (admin@ always CC'd)." />
+        </h3>
         <div className="flex gap-2">
           <button onClick={loadInbox} className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50" title="Refresh replies"><RefreshCw className="w-4 h-4 text-gray-500" /></button>
           <button onClick={onSchedule} className="px-3 py-2 border border-gray-200 text-sm rounded-lg hover:bg-gray-50 flex items-center gap-2"><Calendar className="w-4 h-4" /> Schedule meet</button>
@@ -956,7 +960,9 @@ function ScheduleTab({ lead, onReload, notify }: { lead: Lead; onReload: () => P
     <div className="p-3 sm:p-5 grid grid-cols-1 lg:grid-cols-2 gap-4">
       {/* Teams meeting */}
       <div className="border border-gray-200 rounded-lg p-5 space-y-3">
-        <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2"><Calendar className="w-4 h-4 text-blue-500" /> Schedule Teams meeting</h3>
+        <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2"><Calendar className="w-4 h-4 text-blue-500" /> Schedule Teams meeting
+          <InfoTip text="Creates a real Teams meeting and emails the invite to the lead (plus any extra attendees). It appears in the Scheduler and on the admin calendar." />
+        </h3>
         {!lead.email && <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">This lead has no email — add one on the Overview tab first.</p>}
         <input value={meetForm.subject} onChange={(e) => setMeetForm({ ...meetForm, subject: e.target.value })} className={inputCls} placeholder="Meeting subject" />
         <div className="grid grid-cols-3 gap-2">
@@ -976,7 +982,9 @@ function ScheduleTab({ lead, onReload, notify }: { lead: Lead; onReload: () => P
 
       {/* Follow-up invites */}
       <div className="border border-gray-200 rounded-lg p-5 space-y-3">
-        <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2"><Mail className="w-4 h-4 text-emerald-500" /> Send follow-up invite</h3>
+        <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2"><Mail className="w-4 h-4 text-emerald-500" /> Send follow-up invite
+          <InfoTip text="The outreach playbook: 1st follow-up = free 2-hour webinar, 2nd = free 1-day training. Attach a poster from Documents if you have one — the invite emails the lead directly." />
+        </h3>
         <div className="flex gap-2">
           <button onClick={() => setFuForm({ ...fuForm, type: 'webinar' })} className={`flex-1 px-3 py-2 rounded-lg text-sm border ${fuForm.type === 'webinar' ? 'bg-emerald-600 text-white border-emerald-600' : 'border-gray-200 text-gray-600'}`}>1st: Free 2-hour webinar</button>
           <button onClick={() => setFuForm({ ...fuForm, type: 'training' })} className={`flex-1 px-3 py-2 rounded-lg text-sm border ${fuForm.type === 'training' ? 'bg-emerald-600 text-white border-emerald-600' : 'border-gray-200 text-gray-600'}`}>2nd: Free 1-day training</button>

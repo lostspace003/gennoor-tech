@@ -4,7 +4,7 @@ import { useMemo, useRef, useState } from 'react'
 import * as XLSX from 'xlsx'
 import { Search, Upload, Download, Trash2, Brain, Mail, X, Hand, Undo2, Archive, UserPlus } from 'lucide-react'
 import { Lead, LeadStatus, PipelineStage, ProcessStatus, PIPELINE_STAGES } from '@/lib/crm/types'
-import { StatusBadge, StageBar, timeAgo, api, STAGE_LABELS, Spinner } from './shared'
+import { StatusBadge, StageBar, timeAgo, api, STAGE_LABELS, Spinner, InfoTip } from './shared'
 import { useCrm } from './CrmContext'
 
 const CRM_TEAM = ['admin@gennoor.com', 'jalalkhan@gennoor.com', 'yusufchaudhary@gennoor.com', 'contact@gennoor.com', 'contacts@gennoor.com']
@@ -420,6 +420,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
         <div className="flex flex-wrap items-center justify-between gap-2">
           {/* Pool scope chips */}
           <div className="flex items-center gap-1.5">
+            <InfoTip text="All active = every working lead. Pool = unclaimed, anyone can pick up. My leads = claimed by you (locked to you until released). Dumped = parked as vague/duplicate, restorable." />
             {([
               ['all', `All active (${leads.filter((l) => !l.dumped).length})`],
               ['pool', `Pool — pick up (${leads.filter((l) => !l.dumped && !l.owner).length})`],
@@ -442,7 +443,9 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
       {/* Bulk actions */}
       {selected.length > 0 && (
         <div className="bg-blue-50 px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-2">
-          <span className="text-sm text-blue-700 font-medium">{selected.length} selected</span>
+          <span className="text-sm text-blue-700 font-medium flex items-center gap-1.5">{selected.length} selected
+            <InfoTip text="Pick up = claim for yourself. Release = back to the pool. Dump = park as vague/duplicate (with reason). Start/Pause/Stop = outreach process. Assign & Delete are manager-only." />
+          </span>
           <div className="flex flex-wrap items-center gap-2">
             {/* Pool actions */}
             {poolFilter === 'dumped' ? (
@@ -566,7 +569,10 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                     {lead.emailHistory.length > 0 && <span className="inline-flex items-center gap-1 text-blue-600"><Mail className="w-3.5 h-3.5" /> {lead.emailHistory.length}</span>}
                   </div>
                 </td>
-                <td className="px-4 py-3 text-xs text-gray-500">{timeAgo(lead.lastActivity)}</td>
+                <td className="px-4 py-3 text-xs text-gray-500">
+                  <div>{timeAgo(lead.lastActivity)}</div>
+                  {lead.activities?.[0] && <div className="text-[10px] text-gray-400 truncate max-w-[110px]" title={lead.activities[0].description}>{lead.activities[0].type}</div>}
+                </td>
               </tr>
             ))}
           </tbody>
