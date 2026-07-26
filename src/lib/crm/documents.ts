@@ -1,4 +1,4 @@
-import { BlobServiceClient } from '@azure/storage-blob'
+import { BlobServiceClient, BlobSASPermissions } from '@azure/storage-blob'
 
 // CRM document library: 2-page manuals (tech / non-tech), webinar posters,
 // and anything else the team attaches to outreach emails.
@@ -62,4 +62,16 @@ export async function downloadDocument(name: string): Promise<{ content: Buffer;
 export async function deleteDocument(name: string): Promise<void> {
   const container = getContainer()
   await container.getBlockBlobClient(name).deleteIfExists()
+}
+
+// Short-lived read-only SAS URL — used so the Office web viewer can render
+// docx/xlsx/pptx previews (it must fetch the file itself, so it gets a
+// time-boxed link rather than access to our authenticated endpoint).
+export async function getDocumentSasUrl(name: string, minutes = 10): Promise<string> {
+  const blob = getContainer().getBlockBlobClient(name)
+  return blob.generateSasUrl({
+    permissions: BlobSASPermissions.parse('r'),
+    startsOn: new Date(Date.now() - 60_000),
+    expiresOn: new Date(Date.now() + minutes * 60_000),
+  })
 }

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Users, Activity, Mail, Brain, Calendar, Upload, FileText, Trash2, RefreshCw, Video } from 'lucide-react'
 import { Lead, PIPELINE_STAGES } from '@/lib/crm/types'
 import { StatusBadge, timeAgo, formatDateTime, api, STAGE_LABELS, Spinner } from './shared'
+import DocPreview from './DocPreview'
 
 /* ---------------- Dashboard (real metrics only) ---------------- */
 
@@ -212,6 +213,7 @@ export function DocumentsView({ canManage, notify }: { canManage: boolean; notif
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
   const [folder, setFolder] = useState<'manuals' | 'posters' | 'general'>('manuals')
+  const [preview, setPreview] = useState<string | null>(null)
 
   const load = () => {
     setLoading(true)
@@ -272,12 +274,17 @@ export function DocumentsView({ canManage, notify }: { canManage: boolean; notif
                 <div className="text-xs text-gray-400">{(d.size / 1024).toFixed(0)} KB · {formatDateTime(d.lastModified)}</div>
               </div>
             </div>
-            {canManage && (
-              <button onClick={() => remove(d.name)} className="p-2 hover:bg-red-50 rounded text-red-500"><Trash2 className="w-4 h-4" /></button>
-            )}
+            <div className="flex items-center gap-1 shrink-0">
+              <button onClick={() => setPreview(d.name)} className="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-600 hover:bg-gray-50">Preview</button>
+              <a href={`/api/admin/leads/documents/file?name=${encodeURIComponent(d.name)}&download=1`} className="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-600 hover:bg-gray-50">Download</a>
+              {canManage && (
+                <button onClick={() => remove(d.name)} className="p-2 hover:bg-red-50 rounded text-red-500"><Trash2 className="w-4 h-4" /></button>
+              )}
+            </div>
           </div>
         ))}
       </div>
+      {preview && <DocPreview name={preview} onClose={() => setPreview(null)} />}
     </div>
   )
 }
