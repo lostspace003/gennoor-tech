@@ -44,7 +44,7 @@ export default function AIReadinessCTA() {
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3 leading-tight">
                 How AI-Ready Are You?
               </h2>
-              <p className="text-gray-300 text-base sm:text-lg max-w-xl mb-6 leading-relaxed">
+              <p className="text-gray-600 text-base sm:text-lg max-w-xl mb-6 leading-relaxed">
                 3 AI agents research your industry, analyze your skills, and build a personalized blueprint — with voice narration, tool recommendations, and a 90-day roadmap. Takes 2 minutes.
               </p>
 
@@ -55,17 +55,17 @@ export default function AIReadinessCTA() {
                 >
                   Check Your AI Readiness <ArrowRight className="w-4 h-4" />
                 </Link>
-                <span className="text-xs text-gray-400">No signup needed • Results in 60 seconds</span>
+                <span className="text-xs text-gray-500">No signup needed • Results in 60 seconds</span>
               </div>
 
               <div className="flex items-center gap-6 mt-7 pt-6 border-t border-gray-700/50">
                 <div className="flex items-center gap-2">
                   <Brain className="w-4 h-4 text-primary-400" />
-                  <span className="text-xs text-gray-400">Multi-Agent AI Analysis</span>
+                  <span className="text-xs text-gray-500">Multi-Agent AI Analysis</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Target className="w-4 h-4 text-accent-400" />
-                  <span className="text-xs text-gray-400">Personalized Roadmap</span>
+                  <span className="text-xs text-gray-500">Personalized Roadmap</span>
                 </div>
               </div>
             </div>

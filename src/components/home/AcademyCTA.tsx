@@ -60,7 +60,7 @@ export default function AcademyCTA() {
                   Everyone
                 </span>
               </h2>
-              <p className="text-lg text-white/50 mb-8 max-w-lg leading-relaxed">
+              <p className="text-lg text-white/80 mb-8 max-w-lg leading-relaxed">
                 Whether you&apos;re in tech, business, HR, or any domain — we have free, self-paced courses
                 to help you understand and apply AI in your role. No prior technical knowledge needed.
               </p>
@@ -79,14 +79,14 @@ export default function AcademyCTA() {
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                   <Link
                     href="/ai-academy/ab-100"
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 text-white/70 font-medium border border-white/10 rounded-xl hover:bg-white/5 transition-all duration-300"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 text-white/90 font-medium border border-white/20 rounded-xl hover:bg-white/5 transition-all duration-300"
                   >
                     View Course Details
                   </Link>
                 </motion.div>
               </div>
 
-              <p className="text-xs text-white/30 tracking-wide">
+              <p className="text-xs text-white/60 tracking-wide">
                 No credit card required • No login needed to start • Progress saved automatically
               </p>
             </div>
@@ -115,7 +115,7 @@ export default function AcademyCTA() {
                     <item.icon className="w-5 h-5 text-white" />
                   </div>
                   <h3 className="text-white font-semibold text-sm mb-1">{item.label}</h3>
-                  <p className="text-white/40 text-xs leading-relaxed">{item.desc}</p>
+                  <p className="text-white/70 text-xs leading-relaxed">{item.desc}</p>
                 </motion.div>
               ))}
             </div>

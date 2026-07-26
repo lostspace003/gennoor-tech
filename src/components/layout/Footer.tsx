@@ -42,7 +42,7 @@ export default function Footer() {
             <h2 className="text-2xl font-bold text-white mb-3">
               Stay Updated with AI Insights
             </h2>
-            <p className="text-blue-200/50 mb-8 text-sm">
+            <p className="text-blue-100/90 mb-8 text-sm">
               Monthly newsletter with enterprise AI trends, case studies, and exclusive content
             </p>
             <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
@@ -152,7 +152,7 @@ export default function Footer() {
                     <li key={link.name}>
                       <Link
                         href={link.href}
-                        className="text-gray-400 hover:text-gray-700 text-sm transition-colors duration-200"
+                        className="text-gray-500 hover:text-gray-800 text-sm transition-colors duration-200"
                       >
                         {link.name}
                       </Link>
@@ -166,10 +166,10 @@ export default function Footer() {
           {/* Certifications Bar */}
           <div className="mt-12 pt-8 border-t border-gray-100/60">
             <div className="text-center space-y-3">
-              <p className="text-xs text-gray-400 tracking-wide">
+              <p className="text-xs text-gray-500 tracking-wide">
                 Senior delivery by Microsoft Certified Trainers · 16+ active certifications · stack-flexible (Azure, AWS, GCP, open-source)
               </p>
-              <p className="text-xs text-gray-300">
+              <p className="text-xs text-gray-500">
                 Delivered transformation programs at: Microsoft • IBM • EY • Boeing • Saudi Aramco • HDFC Bank • Siemens • TCS
               </p>
             </div>
