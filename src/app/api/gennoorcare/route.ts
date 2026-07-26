@@ -36,7 +36,7 @@ function rateLimited(ip: string): string | null {
 }
 
 const HUMAN_FALLBACK = {
-  reply: "We're seeing high demand right now. Leave your email with the callback button below, or reach us directly — admin@gennoor.com / WhatsApp +91 9326352241 — and our team will get back to you personally.",
+  reply: "We're seeing high demand right now. Leave your email with the callback button below, or reach us directly — [admin@gennoor.com](mailto:admin@gennoor.com) / [WhatsApp +91 9326352241](https://wa.me/919326352241) — and our team will get back to you personally.",
   links: [],
   offerLead: true,
 }
@@ -91,7 +91,10 @@ export async function POST(req: NextRequest) {
     const meta = await loadIndexMeta()
     const vectors = meta ? await loadVectors(meta.updatedAt) : null
     if (!meta || !vectors) {
-      return NextResponse.json({ reply: 'I’m still learning the website. Meanwhile: explore gennoor.com/services and gennoor.com/academy, or write to admin@gennoor.com.', links: [] })
+      return NextResponse.json({
+        reply: 'I’m still learning the website — give me a little while. Meanwhile:\n- Explore [our services](https://www.gennoor.com/services)\n- Browse the free [Gennoor Academy](https://www.gennoor.com/academy)\n- Or write to [admin@gennoor.com](mailto:admin@gennoor.com)',
+        links: [],
+      })
     }
     const [qv] = await embedTexts([question])
     const top = topKChunks(Float32Array.from(qv), vectors, meta.chunks, TOP_K)

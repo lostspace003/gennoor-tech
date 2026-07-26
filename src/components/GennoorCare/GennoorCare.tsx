@@ -118,13 +118,50 @@ export default function GennoorCare() {
     else setOpen(false)
   }
 
-  // Minimal markdown: [title](url) links + line breaks
+  // Lightweight markdown rendering: paragraphs, bullets, **bold**,
+  // [title](url) links AND bare URLs/domains made clickable.
+  const renderInline = (text: string, keyBase: string) => {
+    const parts = text.split(/(\[[^\]]+\]\([^)]+\)|https?:\/\/[^\s)]+|(?:www\.)?gennoor\.com[^\s),]*|\*\*[^*]+\*\*|mailto:[^\s)]+|admin@gennoor\.com)/g)
+    return parts.filter(Boolean).map((p, i) => {
+      const key = `${keyBase}-${i}`
+      const md = p.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
+      if (md) {
+        const href = md[2].startsWith('http') || md[2].startsWith('/') || md[2].startsWith('mailto:') ? md[2] : `https://${md[2]}`
+        return <a key={key} href={href} className="text-blue-600 underline hover:text-blue-800 font-medium" target={href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer">{md[1]}</a>
+      }
+      if (/^\*\*[^*]+\*\*$/.test(p)) return <strong key={key}>{p.slice(2, -2)}</strong>
+      if (/^https?:\/\//.test(p)) return <a key={key} href={p} className="text-blue-600 underline hover:text-blue-800 break-all" target="_blank" rel="noopener noreferrer">{p.replace(/^https?:\/\/(www\.)?/, '')}</a>
+      if (/^(www\.)?gennoor\.com/.test(p)) return <a key={key} href={`https://${p.replace(/^www\./, 'www.') === p ? p : p}`} className="text-blue-600 underline hover:text-blue-800" target="_blank" rel="noopener noreferrer">{p}</a>
+      if (p === 'admin@gennoor.com') return <a key={key} href="mailto:admin@gennoor.com" className="text-blue-600 underline hover:text-blue-800">{p}</a>
+      if (/^mailto:/.test(p)) return <a key={key} href={p} className="text-blue-600 underline hover:text-blue-800">{p.slice(7)}</a>
+      return <span key={key}>{p}</span>
+    })
+  }
+
   const renderText = (text: string) => {
-    const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g)
-    return parts.map((p, i) => {
-      const m = p.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
-      if (m) return <a key={i} href={m[2]} className="text-blue-600 underline hover:text-blue-800" target={m[2].startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer">{m[1]}</a>
-      return <span key={i}>{p}</span>
+    const lines = text.split('\n')
+    return lines.map((line, i) => {
+      const t = line.trim()
+      if (!t) return <div key={i} className="h-2" />
+      const bullet = t.match(/^[-•*]\s+(.*)$/)
+      if (bullet) {
+        return (
+          <div key={i} className="flex gap-2 ml-0.5 my-0.5">
+            <span className="text-blue-500 shrink-0 leading-5">•</span>
+            <span className="min-w-0">{renderInline(bullet[1], `l${i}`)}</span>
+          </div>
+        )
+      }
+      const numbered = t.match(/^(\d+)[.)]\s+(.*)$/)
+      if (numbered) {
+        return (
+          <div key={i} className="flex gap-2 ml-0.5 my-0.5">
+            <span className="text-blue-500 font-medium shrink-0 leading-5">{numbered[1]}.</span>
+            <span className="min-w-0">{renderInline(numbered[2], `l${i}`)}</span>
+          </div>
+        )
+      }
+      return <p key={i} className="my-0.5">{renderInline(t, `l${i}`)}</p>
     })
   }
 
@@ -187,7 +224,7 @@ export default function GennoorCare() {
               </div>
             )}
             {msgs.map((m, i) => (
-              <div key={i} className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 text-sm whitespace-pre-line break-words ${m.role === 'user' ? 'ml-auto bg-blue-600 text-white rounded-br-md' : 'bg-white border border-gray-200 text-gray-800 rounded-bl-md'}`}>
+              <div key={i} className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 text-sm break-words ${m.role === 'user' ? 'ml-auto bg-blue-600 text-white rounded-br-md whitespace-pre-line' : 'bg-white border border-gray-200 text-gray-800 rounded-bl-md'}`}>
                 {m.role === 'assistant' ? renderText(m.content) : m.content}
                 {m.links && m.links.length > 0 && (
                   <div className="mt-2 space-y-1.5">
