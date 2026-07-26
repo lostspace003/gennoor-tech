@@ -2,12 +2,15 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import { Zap } from 'lucide-react'
 
 // Compact CRM pulse for the admin header (admin/jalal/yusuf see it; the
 // API 401s for anyone else and the tile stays hidden).
 export default function CrmStatsTile() {
   const router = useRouter()
+  const { data: session } = useSession()
+  const isManager = ['admin@gennoor.com', 'jalalkhan@gennoor.com', 'yusufchaudhary@gennoor.com'].includes(session?.user?.email?.toLowerCase() || '')
   const [stats, setStats] = useState<{ pool: number; action: number } | null>(null)
 
   useEffect(() => {
@@ -27,7 +30,7 @@ export default function CrmStatsTile() {
       .catch(() => {})
   }, [])
 
-  if (!stats) return null
+  if (!stats || !isManager) return null
 
   return (
     <button
