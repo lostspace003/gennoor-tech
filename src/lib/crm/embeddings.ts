@@ -57,23 +57,14 @@ export async function embedTexts(texts: string[]): Promise<number[][]> {
 }
 
 async function embed(texts: string[]): Promise<number[][]> {
-  const { foundryConfigured } = await import('./foundry')
-  if (!foundryConfigured()) throw new Error('Embeddings need the Foundry service principal')
-  // Same SP bearer token used for web search — role covers embeddings too
-  const { ConfidentialClientApplication } = await import('@azure/msal-node')
-  const cca = new ConfidentialClientApplication({
-    auth: {
-      clientId: process.env.FOUNDRY_CLIENT_ID!,
-      authority: `https://login.microsoftonline.com/${process.env.FOUNDRY_TENANT_ID}`,
-      clientSecret: process.env.FOUNDRY_CLIENT_SECRET!,
-    },
-  })
-  const token = await cca.acquireTokenByClientCredential({ scopes: ['https://cognitiveservices.azure.com/.default'] })
-  // 429s are routine on the shared deployment — wait out the window and retry
+  const { foundryConfigured, foundryAuthHeader } = await import('./foundry')
+  if (!foundryConfigured()) throw new Error('Embeddings not configured (FOUNDRY_API_KEY)')
+  const authHeader = await foundryAuthHeader()
+  // 429s are routine on shared deployments — wait out the window and retry
   for (let attempt = 0; attempt < 6; attempt++) {
     const res = await fetch(`${BASE}/openai/deployments/${DEPLOYMENT}/embeddings?api-version=2023-05-15`, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${token!.accessToken}`, 'Content-Type': 'application/json' },
+      headers: { ...authHeader, 'Content-Type': 'application/json' },
       body: JSON.stringify({ input: texts }),
     })
     if (res.status === 429) {

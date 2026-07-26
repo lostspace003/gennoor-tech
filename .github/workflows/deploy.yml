@@ -78,11 +78,9 @@ jobs:
         run: |
           RG=$(az webapp list --query "[?name=='${{ env.AZURE_WEBAPP_NAME }}'].resourceGroup" -o tsv)
           az webapp config appsettings set -g "$RG" -n "${{ env.AZURE_WEBAPP_NAME }}" --output none --settings \
-            FOUNDRY_TENANT_ID="${{ secrets.FOUNDRY_TENANT_ID }}" \
-            FOUNDRY_CLIENT_ID="${{ secrets.FOUNDRY_CLIENT_ID }}" \
-            FOUNDRY_CLIENT_SECRET="${{ secrets.FOUNDRY_CLIENT_SECRET }}" \
-            FOUNDRY_OPENAI_BASE="https://admin-5924-resource.openai.azure.com" \
-            FOUNDRY_WEB_MODEL="gpt-5" \
+            FOUNDRY_API_KEY="${{ secrets.FOUNDRY_API_KEY }}" \
+            FOUNDRY_OPENAI_BASE="https://admin-0564-resource.openai.azure.com" \
+            FOUNDRY_WEB_MODEL="gpt-5.4" \
             CRM_CRON_SECRET="${{ secrets.CRM_CRON_SECRET }}" \
             MS_GRAPH_TENANT_ID="${{ secrets.MS_GRAPH_TENANT_ID }}" \
             MS_GRAPH_CLIENT_ID="${{ secrets.MS_GRAPH_CLIENT_ID }}" \

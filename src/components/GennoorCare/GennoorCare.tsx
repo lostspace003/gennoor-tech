@@ -5,8 +5,6 @@ import { usePathname } from 'next/navigation'
 
 interface Msg { role: 'user' | 'assistant'; content: string; links?: Array<{ title: string; url: string }> }
 
-const CHIPS = ['What courses do you offer?', 'AI training for my team', 'What is a POC with Gennoor?', 'Book a free call']
-
 // Public GennoorCare — customer-facing assistant grounded in website content
 // (RAG via /api/gennoorcare). Journey: greet & name → converse with real
 // links → contextual callback capture → skippable feedback on close.
@@ -100,18 +98,10 @@ export default function GennoorCare() {
     } finally { setLeadBusy(false) }
   }
 
-  const endChat = () => {
-    setMsgs([])
-    setOfferLead(false)
-    setShowLead(false)
-    try { sessionStorage.removeItem('gcare.chat') } catch { /* ignore */ }
-    setOpen(false)
-  }
-
   const sendFeedback = async (helpful: boolean | null) => {
     setFeedbackDone(true)
     setShowFeedback(false)
-    endChat()
+    setOpen(false)
     if (helpful === null) return // skipped
     fetch('/api/gennoorcare/feedback', {
       method: 'POST',
@@ -121,9 +111,10 @@ export default function GennoorCare() {
   }
 
   const handleClose = () => {
-    // One light, skippable feedback ask — only after a real conversation
+    // One light, skippable feedback ask — only after a real conversation.
+    // Minimize NEVER clears the chat — the session always survives.
     if (msgs.filter((m) => m.role === 'user').length >= 2 && !feedbackDone) setShowFeedback(true)
-    else endChat()
+    else setOpen(false)
   }
 
   // Lightweight markdown rendering: paragraphs, bullets, **bold**,
@@ -135,7 +126,7 @@ export default function GennoorCare() {
       const md = p.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
       if (md) {
         const href = md[2].startsWith('http') || md[2].startsWith('/') || md[2].startsWith('mailto:') ? md[2] : `https://${md[2]}`
-        return <a key={key} href={href} className="text-blue-600 underline hover:text-blue-800 font-medium" target={href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer">{md[1]}</a>
+        return <a key={key} href={href} className="text-blue-600 underline hover:text-blue-800 font-medium" target="_blank" rel="noopener noreferrer">{md[1]}</a>
       }
       if (/^\*\*[^*]+\*\*$/.test(p)) return <strong key={key}>{p.slice(2, -2)}</strong>
       if (/^https?:\/\//.test(p)) return <a key={key} href={p} className="text-blue-600 underline hover:text-blue-800 break-all" target="_blank" rel="noopener noreferrer">{p.replace(/^https?:\/\/(www\.)?/, '')}</a>
@@ -183,30 +174,27 @@ export default function GennoorCare() {
           title={msgs.length > 0 ? 'Continue chat' : 'Ask GennoorCare'}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logos/gennoorbot-avatar.svg" alt="GennoorCare" className="w-16 h-16 drop-shadow-lg" />
+          <img src="/logos/gennoorbot-avatar.svg" alt="GennoorCare" className="w-14 h-14 drop-shadow-lg" />
         </button>
       )}
 
       {open && (
-        <div className="fixed bottom-0 right-0 sm:bottom-5 sm:right-5 z-50 w-full sm:w-[380px] h-[100dvh] sm:h-[560px] sm:max-h-[85dvh] bg-white sm:rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden">
+        <div className="fixed bottom-0 right-0 sm:bottom-5 sm:right-5 z-50 w-full sm:w-[330px] h-[100dvh] sm:h-[480px] sm:max-h-[78dvh] bg-white sm:rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden">
           {/* Header */}
-          <div className="px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white flex items-center justify-between shrink-0">
+          <div className="px-3.5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2.5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logos/gennoorbot-avatar.svg" alt="" className="w-9 h-9" />
+              <img src="/logos/gennoorbot-avatar.svg" alt="" className="w-8 h-8" />
               <div>
                 <div className="font-semibold text-sm leading-tight">GennoorCare</div>
                 <div className="text-[10px] text-blue-100 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" /> online — courses, training & POCs</div>
               </div>
             </div>
-            <div className="flex items-center gap-0.5">
-              <button onClick={() => setOpen(false)} className="px-2 py-1 hover:bg-white/15 rounded-lg text-xl leading-none" aria-label="Minimize — your chat is saved" title="Minimize (chat is saved)">–</button>
-              <button onClick={handleClose} className="px-2 py-1 hover:bg-white/15 rounded-lg text-xl leading-none" aria-label="End chat" title="End chat">×</button>
-            </div>
+            <button onClick={handleClose} className="px-2.5 py-1 hover:bg-white/15 rounded-lg text-2xl leading-none" aria-label="Minimize — your chat is saved" title="Minimize (chat is saved)">–</button>
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-3.5 space-y-2.5 min-h-0 bg-gray-50">
+          <div className="flex-1 overflow-y-auto p-3 space-y-2 min-h-0 bg-gray-50">
             {stage === 'greet' && (
               <div className="space-y-2.5 mt-3">
                 <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-md px-3.5 py-2.5 text-sm text-gray-800 max-w-[88%]">
@@ -217,19 +205,12 @@ export default function GennoorCare() {
               </div>
             )}
             {stage === 'chat' && msgs.length === 0 && (
-              <div className="space-y-2.5 mt-3">
-                <p className="text-sm text-gray-600 text-center px-4">
-                  {visitorName ? `Great to meet you, ${visitorName.split(' ')[0]}! ` : ''}What are you looking for?
-                </p>
-                {CHIPS.map((c) => (
-                  <button key={c} onClick={() => ask(c)} className="block w-full text-left text-sm px-3.5 py-2.5 rounded-xl bg-white border border-gray-200 hover:border-blue-300 hover:bg-blue-50 text-gray-700">
-                    {c}
-                  </button>
-                ))}
-              </div>
+              <p className="text-[13px] text-gray-600 text-center px-4 mt-4">
+                {visitorName ? `Great to meet you, ${visitorName.split(' ')[0]}! ` : ''}Ask me about courses, corporate training, POCs — anything on gennoor.com.
+              </p>
             )}
             {msgs.map((m, i) => (
-              <div key={i} className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 text-sm break-words ${m.role === 'user' ? 'ml-auto bg-blue-600 text-white rounded-br-md whitespace-pre-line' : 'bg-white border border-gray-200 text-gray-800 rounded-bl-md'}`}>
+              <div key={i} className={`max-w-[88%] rounded-2xl px-3 py-2 text-[13px] leading-relaxed break-words ${m.role === 'user' ? 'ml-auto bg-blue-600 text-white rounded-br-md whitespace-pre-line' : 'bg-white border border-gray-200 text-gray-800 rounded-bl-md'}`}>
                 {m.role === 'assistant' ? renderText(m.content) : m.content}
                 {m.links && m.links.length > 0 && (
                   <div className="mt-2 space-y-1.5">
@@ -295,9 +276,9 @@ export default function GennoorCare() {
                 onKeyDown={(e) => e.key === 'Enter' && ask()}
                 placeholder={stage === 'greet' ? 'Type your name...' : 'Ask about courses, training, POCs...'}
                 maxLength={500}
-                className="flex-1 px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="flex-1 px-3 py-2 border border-gray-200 rounded-xl text-[13px] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
-              <button onClick={() => ask()} disabled={busy || !input.trim()} className="px-4 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 text-sm font-medium">Send</button>
+              <button onClick={() => ask()} disabled={busy || !input.trim()} className="px-3.5 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 text-[13px] font-medium">Send</button>
             </div>
             <p className="text-center text-[9px] text-gray-300">Powered by Gennoor AI · answers come from gennoor.com content</p>
           </div>

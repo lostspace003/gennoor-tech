@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { mutateLeads } from '@/lib/crm/store'
 import { newLead } from '@/lib/crm/types'
 import { appendLog } from '@/lib/bot/store'
+import { sendEmail } from '@/lib/email-service'
+import { emailShell } from '@/lib/crm/email-theme'
+import { escapeHtml } from '@/lib/escape-html'
 
 // PUBLIC lead capture from the website bot → straight into the CRM pool.
 // Protections: honeypot field, per-IP daily cap, strict validation.
@@ -50,6 +53,25 @@ export async function POST(req: NextRequest) {
       leads.unshift(lead)
     })
     await appendLog({ at: new Date().toISOString(), sessionId: String(body.sessionId || 'anon').slice(0, 40), q: '[lead captured]', a: `${name} <${email}> ${company}`, links: [], leadCaptured: true })
+
+    // Instant heads-up to the team — a website visitor asked for a callback
+    sendEmail({
+      to: 'admin@gennoor.com',
+      from: process.env.EMAIL_FROM_INFO || 'info@gennoor.com',
+      fromName: 'GennoorCare',
+      subject: `🟢 Website lead: ${name}${company ? ` — ${company}` : ''}`,
+      html: emailShell(`
+        <h3 style="margin:0 0 12px;color:#0f172a">New callback request from the website bot</h3>
+        <table style="border-collapse:collapse;font-size:14px;width:100%">
+          <tr><td style="padding:6px 10px;border:1px solid #e2e8f0;width:110px;color:#64748b">Name</td><td style="padding:6px 10px;border:1px solid #e2e8f0"><strong>${escapeHtml(name)}</strong></td></tr>
+          <tr><td style="padding:6px 10px;border:1px solid #e2e8f0;color:#64748b">Email</td><td style="padding:6px 10px;border:1px solid #e2e8f0"><a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></td></tr>
+          ${company ? `<tr><td style="padding:6px 10px;border:1px solid #e2e8f0;color:#64748b">Company</td><td style="padding:6px 10px;border:1px solid #e2e8f0">${escapeHtml(company)}</td></tr>` : ''}
+          ${phone ? `<tr><td style="padding:6px 10px;border:1px solid #e2e8f0;color:#64748b">Phone</td><td style="padding:6px 10px;border:1px solid #e2e8f0">${escapeHtml(phone)}</td></tr>` : ''}
+          ${interest ? `<tr><td style="padding:6px 10px;border:1px solid #e2e8f0;color:#64748b">They asked</td><td style="padding:6px 10px;border:1px solid #e2e8f0">${escapeHtml(interest)}</td></tr>` : ''}
+        </table>
+        <p style="margin:16px 0 0"><a href="https://www.gennoor.com/crm/queue" style="display:inline-block;background:#2563EB;color:#fff;text-decoration:none;padding:9px 20px;border-radius:8px;font-size:14px">Open the Work Queue →</a></p>`,
+        { preheader: `Website lead: ${name}` }),
+    }).catch((e) => console.error('Lead notify email failed:', e))
 
     return NextResponse.json({ success: true, message: 'Thank you! Our team will reach out shortly.' })
   } catch (error) {

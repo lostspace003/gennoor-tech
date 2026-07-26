@@ -8,7 +8,16 @@ const BASE = process.env.FOUNDRY_OPENAI_BASE || 'https://admin-5924-resource.ope
 const MODEL = process.env.FOUNDRY_WEB_MODEL || 'gpt-5'
 
 export function foundryConfigured(): boolean {
-  return Boolean(process.env.FOUNDRY_TENANT_ID && process.env.FOUNDRY_CLIENT_ID && process.env.FOUNDRY_CLIENT_SECRET)
+  return Boolean(
+    process.env.FOUNDRY_API_KEY ||
+    (process.env.FOUNDRY_TENANT_ID && process.env.FOUNDRY_CLIENT_ID && process.env.FOUNDRY_CLIENT_SECRET)
+  )
+}
+
+// Auth header: api-key (lostspace003 account) preferred; SP bearer legacy.
+export async function foundryAuthHeader(): Promise<Record<string, string>> {
+  if (process.env.FOUNDRY_API_KEY) return { 'api-key': process.env.FOUNDRY_API_KEY }
+  return { Authorization: `Bearer ${await getToken()}` }
 }
 
 let cachedToken: { value: string; expires: number } | null = null
@@ -39,12 +48,11 @@ export interface WebSearchResult {
 // callers fall back to the non-web model.
 export async function webGroundedCompletion(instructions: string, input: string): Promise<WebSearchResult> {
   if (!foundryConfigured()) throw new Error('Foundry web search not configured')
-  const token = await getToken()
 
   for (let attempt = 0; attempt < 2; attempt++) {
     const response = await fetch(`${BASE}/openai/v1/responses`, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      headers: { ...(await foundryAuthHeader()), 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: MODEL,
         instructions,
