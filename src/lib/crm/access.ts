@@ -6,8 +6,9 @@ export const CRM_USERS = [
   'admin@gennoor.com',
   'jalalkhan@gennoor.com',
   'yusufchaudhary@gennoor.com',
-  'contact@gennoor.com',
-  'contacts@gennoor.com',
+  'aditya@gennoor.com',
+  'deepanshu@gennoor.com',
+  'zaid@gennoor.com',
 ]
 
 export const CRM_ADMIN = 'admin@gennoor.com'

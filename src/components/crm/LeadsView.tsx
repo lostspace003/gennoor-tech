@@ -7,7 +7,7 @@ import { Lead, LeadStatus, PipelineStage, ProcessStatus, PIPELINE_STAGES, COMPAN
 import { StatusBadge, StageBar, timeAgo, api, STAGE_LABELS, Spinner, InfoTip, MultiSelect, PriorityBadge, normPriority } from './shared'
 import { useCrm } from './CrmContext'
 
-const CRM_TEAM = ['admin@gennoor.com', 'jalalkhan@gennoor.com', 'yusufchaudhary@gennoor.com', 'contact@gennoor.com', 'contacts@gennoor.com']
+const CRM_TEAM = ['admin@gennoor.com', 'jalalkhan@gennoor.com', 'yusufchaudhary@gennoor.com', 'aditya@gennoor.com', 'deepanshu@gennoor.com', 'zaid@gennoor.com']
 
 const PAGE_SIZES = [10, 25, 50, 100]
 

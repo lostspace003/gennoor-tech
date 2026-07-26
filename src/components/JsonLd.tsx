@@ -20,6 +20,7 @@ export function OrganizationJsonLd() {
     sameAs: [
       'https://www.linkedin.com/in/lostspace003/',
       'https://github.com/lostspace003',
+      'https://www.youtube.com/@GennoorTech',
     ],
     contactPoint: {
       '@type': 'ContactPoint',
