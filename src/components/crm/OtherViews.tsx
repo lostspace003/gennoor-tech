@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { Users, Activity, Mail, Brain, Calendar, Upload, FileText, Trash2, RefreshCw, Video, Search, X, CalendarClock } from 'lucide-react'
-import { Lead, PIPELINE_STAGES } from '@/lib/crm/types'
+import { Users, Activity, Mail, Brain, Calendar, Upload, FileText, Trash2, RefreshCw, Video, Search, X, CalendarClock, MessageSquare, Eye } from 'lucide-react'
+import { Lead, PipelineStage, PIPELINE_STAGES } from '@/lib/crm/types'
 import { StatusBadge, timeAgo, formatDateTime, api, STAGE_LABELS, Spinner, InfoTip, MultiSelect, Pagination, DurationSlider, TimeSlider, LeadLocalTime } from './shared'
 import { istInstant, isoToIstParts } from '@/lib/crm/timezones'
 import DocPreview from './DocPreview'
@@ -113,34 +113,133 @@ export function DashboardView({ leads, onGoLeads, onOpenLead }: { leads: Lead[];
 
 /* ---------------- Pipeline ---------------- */
 
+// Board model: everyone's default board is the leads THEY picked. The dropdown
+// switches to a teammate's board (or the unclaimed pool) one at a time —
+// visible to all, but editable only on your own board (managers: any board).
 export function PipelineView({ leads, onOpenLead }: { leads: Lead[]; onOpenLead: (id: string) => void }) {
+  const { userEmail, isManager, reload, notify } = useCrm()
+  const me = userEmail.toLowerCase()
+  const [board, setBoard] = useState<'mine' | 'pool' | string>('mine')
+  const [dragId, setDragId] = useState<string | null>(null)
+  const [overStage, setOverStage] = useState<PipelineStage | null>(null)
+  const [busy, setBusy] = useState(false)
+
+  const active = useMemo(() => leads.filter((l) => !l.dumped), [leads])
+  const owners = useMemo(() => {
+    const set = new Set<string>()
+    active.forEach((l) => { if (l.owner) set.add(l.owner.toLowerCase()) })
+    set.delete(me)
+    return [...set].sort()
+  }, [active, me])
+
+  const boardLeads = active.filter((l) =>
+    board === 'mine' ? (l.owner || '').toLowerCase() === me
+    : board === 'pool' ? !l.owner
+    : (l.owner || '').toLowerCase() === board
+  )
+  const editable = board === 'mine' || isManager
+  const boardName = board === 'mine' ? 'My board' : board === 'pool' ? 'Pool' : `${board.split('@')[0]}'s board`
+
+  const moveStage = async (leadId: string, stage: PipelineStage) => {
+    const lead = leads.find((l) => l.id === leadId)
+    if (!lead || lead.stage === stage || busy) return
+    setBusy(true)
+    try {
+      await api('/api/admin/leads/update-stage', { method: 'POST', body: JSON.stringify({ leadId, stage }) })
+      await reload()
+      notify(`${lead.name} → ${STAGE_LABELS[stage]}`)
+    } catch (e: any) { notify(e.message, true) } finally { setBusy(false) }
+  }
+
+  const addComment = async (lead: Lead) => {
+    const note = prompt(`Comment on ${lead.name}:`)
+    if (!note?.trim()) return
+    try {
+      await api('/api/admin/leads/add-note', { method: 'POST', body: JSON.stringify({ leadId: lead.id, note: note.trim() }) })
+      await reload()
+      notify('Comment added')
+    } catch (e: any) { notify(e.message, true) }
+  }
+
   return (
-    <div className="p-3 sm:p-5 overflow-x-auto">
-      <div className="grid grid-cols-5 gap-4 min-w-[1000px]">
-        {PIPELINE_STAGES.map((stage, idx) => {
-          const stageLeads = leads.filter((l) => l.stage === stage)
-          return (
-            <div key={stage} className="bg-gray-100 rounded-lg p-3">
-              <div className="flex items-center justify-between mb-3 px-1">
-                <span className="text-sm font-semibold text-gray-700">{idx + 1}. {STAGE_LABELS[stage]}</span>
-                <span className="text-xs bg-white rounded-full px-2 py-0.5 text-gray-500">{stageLeads.length}</span>
-              </div>
-              <div className="space-y-2 max-h-[65vh] overflow-y-auto">
-                {stageLeads.map((l) => (
-                  <button key={l.id} onClick={() => onOpenLead(l.id)} className="w-full bg-white rounded-lg p-3 text-left border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
-                    <div className="text-sm font-medium text-gray-900 truncate">{l.name}</div>
-                    <div className="text-xs text-gray-500 truncate">{l.company || '—'}</div>
-                    <div className="mt-1.5 flex items-center gap-1.5 flex-wrap"><StatusBadge status={l.status} />
-                      <span className={`text-[10px] rounded-full px-1.5 py-0.5 ${l.owner ? 'bg-gray-100 text-gray-500' : 'bg-emerald-50 text-emerald-700'}`}>{l.owner ? l.owner.split('@')[0] : 'pool'}</span>
-                    </div>
-                  </button>
-                ))}
-                {stageLeads.length === 0 && <p className="text-xs text-gray-400 text-center py-6">Empty</p>}
-              </div>
-            </div>
-          )
-        })}
+    <div className="p-3 sm:p-5">
+      <div className="flex items-center gap-3 flex-wrap mb-4">
+        <select
+          value={board}
+          onChange={(e) => setBoard(e.target.value)}
+          className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 bg-white text-gray-800"
+        >
+          <option value="mine">My board ({active.filter((l) => (l.owner || '').toLowerCase() === me).length})</option>
+          <option value="pool">Pool — unclaimed ({active.filter((l) => !l.owner).length})</option>
+          {owners.map((o) => (
+            <option key={o} value={o}>{o.split('@')[0]}&apos;s board ({active.filter((l) => (l.owner || '').toLowerCase() === o).length})</option>
+          ))}
+        </select>
+        {editable ? (
+          <span className="text-xs text-gray-400">Drag cards between stages · 💬 to comment</span>
+        ) : (
+          <span className="inline-flex items-center gap-1 text-[11px] bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-2 py-1">
+            <Eye className="w-3 h-3" /> Viewing {boardName} — read-only
+          </span>
+        )}
       </div>
+      <div className="overflow-x-auto">
+        <div className="grid grid-cols-5 gap-4 min-w-[1000px]">
+          {PIPELINE_STAGES.map((stage, idx) => {
+            const stageLeads = boardLeads.filter((l) => l.stage === stage)
+            return (
+              <div
+                key={stage}
+                className={`bg-gray-100 rounded-lg p-3 transition-colors ${overStage === stage && dragId ? 'bg-blue-50 ring-2 ring-blue-300' : ''}`}
+                onDragOver={(e) => { if (editable && dragId) { e.preventDefault(); setOverStage(stage) } }}
+                onDragLeave={() => setOverStage((s) => (s === stage ? null : s))}
+                onDrop={(e) => { e.preventDefault(); setOverStage(null); if (dragId) { moveStage(dragId, stage); setDragId(null) } }}
+              >
+                <div className="flex items-center justify-between mb-3 px-1">
+                  <span className="text-sm font-semibold text-gray-700">{idx + 1}. {STAGE_LABELS[stage]}</span>
+                  <span className="text-xs bg-white rounded-full px-2 py-0.5 text-gray-500">{stageLeads.length}</span>
+                </div>
+                <div className="space-y-2 max-h-[65vh] overflow-y-auto">
+                  {stageLeads.map((l) => {
+                    const comments = l.activities.filter((a) => a.type === 'note').length
+                    return (
+                      <div
+                        key={l.id}
+                        draggable={editable}
+                        onDragStart={(e) => { setDragId(l.id); e.dataTransfer.effectAllowed = 'move' }}
+                        onDragEnd={() => { setDragId(null); setOverStage(null) }}
+                        onClick={() => onOpenLead(l.id)}
+                        className={`bg-white rounded-lg p-3 border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer ${editable ? 'active:cursor-grabbing' : ''} ${dragId === l.id ? 'opacity-40' : ''}`}
+                      >
+                        <div className="text-sm font-medium text-gray-900 truncate">{l.name}</div>
+                        <div className="text-xs text-gray-500 truncate">{l.company || '—'}</div>
+                        <div className="mt-1.5 flex items-center gap-1.5 flex-wrap">
+                          <StatusBadge status={l.status} />
+                          <span className={`text-[10px] rounded-full px-1.5 py-0.5 ${l.owner ? 'bg-gray-100 text-gray-500' : 'bg-emerald-50 text-emerald-700'}`}>{l.owner ? l.owner.split('@')[0] : 'pool'}</span>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); if (editable) addComment(l) }}
+                            disabled={!editable}
+                            title={editable ? 'Add comment' : 'Comments visible inside the lead'}
+                            className={`ml-auto inline-flex items-center gap-0.5 text-[10px] rounded-full px-1.5 py-0.5 ${editable ? 'bg-blue-50 text-blue-600 hover:bg-blue-100' : 'bg-gray-50 text-gray-400'}`}
+                          >
+                            <MessageSquare className="w-3 h-3" />{comments > 0 ? comments : ''}
+                          </button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                  {stageLeads.length === 0 && <p className="text-xs text-gray-400 text-center py-6">Empty</p>}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+      {boardLeads.length === 0 && (
+        <p className="text-sm text-gray-400 text-center mt-6">
+          {board === 'mine' ? 'You haven’t picked any leads yet — claim them from the pool in the Leads view.' : 'No leads on this board.'}
+        </p>
+      )}
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireCrmUser, canWorkLead, visibleLeads } from '@/lib/crm/access'
+import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
 import { getLeads, mutateLeads, touch } from '@/lib/crm/store'
 import { newLead, Lead } from '@/lib/crm/types'
 
@@ -8,7 +8,7 @@ export async function GET() {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
-    const leads = visibleLeads(await getLeads(), user)
+    const leads = await getLeads()
     return NextResponse.json({ leads, total: leads.length })
   } catch (error) {
     console.error('Error fetching leads:', error)

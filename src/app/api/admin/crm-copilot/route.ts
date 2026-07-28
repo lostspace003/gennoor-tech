@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { requireCrmUser, visibleLeads } from '@/lib/crm/access'
+import { requireCrmUser } from '@/lib/crm/access'
 import { getLeads } from '@/lib/crm/store'
 import { aiConfigured, chatCompletion, GENNOOR_CONTEXT } from '@/lib/crm/ai'
 import { foundryConfigured, webGroundedCompletion } from '@/lib/crm/foundry'
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'messages required' }, { status: 400 })
     }
 
-    const allLeads = visibleLeads(await getLeads(), user)
+    const allLeads = await getLeads()
 
     // Scale: small CRMs go in whole (most accurate); large ones use
     // embedding retrieval to select the leads relevant to the question.
