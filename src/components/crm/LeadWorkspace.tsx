@@ -15,6 +15,8 @@ import DOMPurify from 'dompurify'
 
 type Tab = 'overview' | 'research' | 'email' | 'schedule'
 
+const externalUrl = (url: string) => (/^https?:\/\//i.test(url) ? url : `https://${url}`)
+
 interface InboundMessage {
   id: string
   from: string
@@ -284,12 +286,12 @@ function OverviewTab({ lead, canManage, onReload, onClose, notify }: { lead: Lea
             <InfoRow icon={Building2} value={[lead.company, lead.sector].filter(Boolean).join(' · ')} placeholder="No company" />
             <InfoRow icon={Globe} value={[lead.city, lead.country, lead.region].filter(Boolean).join(', ')} placeholder="No location" />
             {lead.linkedin ? (
-              <a href={lead.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-blue-600 hover:underline">
+              <a href={externalUrl(lead.linkedin)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-blue-600 hover:underline">
                 <Linkedin className="w-4 h-4 text-gray-400" /> LinkedIn profile — connect
               </a>
             ) : <InfoRow icon={Linkedin} value="" placeholder="No LinkedIn" />}
             {lead.website ? (
-              <a href={lead.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-blue-600 hover:underline">
+              <a href={externalUrl(lead.website)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-blue-600 hover:underline">
                 <Globe className="w-4 h-4 text-gray-400" /> {lead.website}
               </a>
             ) : <InfoRow icon={Globe} value="" placeholder="No website" />}
