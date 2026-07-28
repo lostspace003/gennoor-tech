@@ -20,6 +20,9 @@ export interface LeadActivity {
   by: string
   type: 'created' | 'updated' | 'research' | 'chat' | 'email' | 'stage' | 'status' | 'followup' | 'imported' | 'note'
   description: string
+  // Pipeline stage the lead was in when this was logged — leads move, so notes
+  // keep the stage they were made in. Absent on activities from before this field.
+  stage?: PipelineStage
 }
 
 export interface EmailRecord {

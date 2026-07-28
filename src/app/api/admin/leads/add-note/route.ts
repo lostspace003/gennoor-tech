@@ -18,7 +18,7 @@ export async function POST(request: Request) {
       const lead = leads.find((l) => l.id === leadId)
       if (!lead) return 'notfound' as const
       if (!canWorkLead(lead, user)) return 'forbidden' as const
-      touch(lead, { at: new Date().toISOString(), by: user.email, type: 'note', description: note.slice(0, 1000) })
+      touch(lead, { at: new Date().toISOString(), by: user.email, type: 'note', description: note.slice(0, 1000), stage: lead.stage })
       return 'ok' as const
     })
 

@@ -123,6 +123,7 @@ export function PipelineView({ leads, onOpenLead }: { leads: Lead[]; onOpenLead:
   const [dragId, setDragId] = useState<string | null>(null)
   const [overStage, setOverStage] = useState<PipelineStage | null>(null)
   const [busy, setBusy] = useState(false)
+  const [commentLeadId, setCommentLeadId] = useState<string | null>(null)
 
   const active = useMemo(() => leads.filter((l) => !l.dumped), [leads])
   const owners = useMemo(() => {
@@ -151,15 +152,7 @@ export function PipelineView({ leads, onOpenLead }: { leads: Lead[]; onOpenLead:
     } catch (e: any) { notify(e.message, true) } finally { setBusy(false) }
   }
 
-  const addComment = async (lead: Lead) => {
-    const note = prompt(`Comment on ${lead.name}:`)
-    if (!note?.trim()) return
-    try {
-      await api('/api/admin/leads/add-note', { method: 'POST', body: JSON.stringify({ leadId: lead.id, note: note.trim() }) })
-      await reload()
-      notify('Comment added')
-    } catch (e: any) { notify(e.message, true) }
-  }
+  const commentLead = commentLeadId ? leads.find((l) => l.id === commentLeadId) : undefined
 
   return (
     <div className="p-3 sm:p-5">
@@ -176,7 +169,7 @@ export function PipelineView({ leads, onOpenLead }: { leads: Lead[]; onOpenLead:
           ))}
         </select>
         {editable ? (
-          <span className="text-xs text-gray-400">Drag cards between stages · 💬 to comment</span>
+          <span className="text-xs text-gray-400">Drag cards between stages · 💬 to view & add comments</span>
         ) : (
           <span className="inline-flex items-center gap-1 text-[11px] bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-2 py-1">
             <Eye className="w-3 h-3" /> Viewing {boardName} — read-only
@@ -217,10 +210,9 @@ export function PipelineView({ leads, onOpenLead }: { leads: Lead[]; onOpenLead:
                           <StatusBadge status={l.status} />
                           <span className={`text-[10px] rounded-full px-1.5 py-0.5 ${l.owner ? 'bg-gray-100 text-gray-500' : 'bg-emerald-50 text-emerald-700'}`}>{l.owner ? l.owner.split('@')[0] : 'pool'}</span>
                           <button
-                            onClick={(e) => { e.stopPropagation(); if (editable) addComment(l) }}
-                            disabled={!editable}
-                            title={editable ? 'Add comment' : 'Comments visible inside the lead'}
-                            className={`ml-auto inline-flex items-center gap-0.5 text-[10px] rounded-full px-1.5 py-0.5 ${editable ? 'bg-blue-50 text-blue-600 hover:bg-blue-100' : 'bg-gray-50 text-gray-400'}`}
+                            onClick={(e) => { e.stopPropagation(); setCommentLeadId(l.id) }}
+                            title={editable ? 'View / add comments' : 'View comments'}
+                            className="ml-auto inline-flex items-center gap-0.5 text-[10px] rounded-full px-1.5 py-0.5 bg-blue-50 text-blue-600 hover:bg-blue-100"
                           >
                             <MessageSquare className="w-3 h-3" />{comments > 0 ? comments : ''}
                           </button>
@@ -240,7 +232,82 @@ export function PipelineView({ leads, onOpenLead }: { leads: Lead[]; onOpenLead:
           {board === 'mine' ? 'You haven’t picked any leads yet — claim them from the pool in the Leads view.' : 'No leads on this board.'}
         </p>
       )}
+      {commentLead && (
+        <LeadCommentsModal
+          lead={commentLead}
+          editable={editable}
+          onClose={() => setCommentLeadId(null)}
+          onReload={reload}
+          notify={notify}
+        />
+      )}
       <WorkAnalysis leads={active} me={me} isManager={isManager} />
+    </div>
+  )
+}
+
+// Comment thread for a pipeline card. Leads move between stages, so every
+// comment carries the stage it was made in (older comments predate stage
+// stamping and show without one).
+function LeadCommentsModal({ lead, editable, onClose, onReload, notify }: {
+  lead: Lead; editable: boolean; onClose: () => void; onReload: () => Promise<void>; notify: (msg: string, isError?: boolean) => void
+}) {
+  const [text, setText] = useState('')
+  const [saving, setSaving] = useState(false)
+  const notes = lead.activities.filter((a) => a.type === 'note')
+
+  const send = async () => {
+    const note = text.trim()
+    if (!note || saving) return
+    setSaving(true)
+    try {
+      await api('/api/admin/leads/add-note', { method: 'POST', body: JSON.stringify({ leadId: lead.id, note }) })
+      setText('')
+      await onReload()
+      notify('Comment added')
+    } catch (e: any) { notify(e.message, true) } finally { setSaving(false) }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[80vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+        <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between gap-2">
+          <div className="min-w-0">
+            <div className="text-sm font-semibold text-gray-900 truncate">{lead.name}{lead.company ? ` · ${lead.company}` : ''}</div>
+            <div className="text-[11px] text-gray-400">Currently in {STAGE_LABELS[lead.stage]}</div>
+          </div>
+          <button onClick={onClose} className="p-1 rounded hover:bg-gray-100 text-gray-400 shrink-0"><X className="w-4 h-4" /></button>
+        </div>
+        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+          {notes.length === 0 && <p className="text-sm text-gray-400 text-center py-6">No comments yet.</p>}
+          {notes.map((a, i) => (
+            <div key={i} className="bg-gray-50 rounded-lg p-2.5">
+              <p className="text-sm text-gray-800 whitespace-pre-line break-words">{a.description}</p>
+              <div className="mt-1.5 flex items-center gap-1.5 flex-wrap text-[11px] text-gray-400">
+                {a.stage && <span className="bg-blue-50 text-blue-600 rounded-full px-1.5 py-0.5">in {STAGE_LABELS[a.stage]}</span>}
+                <span>{a.by.split('@')[0]}</span>
+                <span>· {formatDateTime(a.at)}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+        {editable ? (
+          <div className="px-4 py-3 border-t border-gray-100 flex gap-1.5">
+            <input
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') send() }}
+              placeholder={`Comment — logged in ${STAGE_LABELS[lead.stage]}`}
+              className="flex-1 text-sm border border-gray-300 rounded-lg px-3 py-1.5 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button onClick={send} disabled={!text.trim() || saving} className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50">
+              {saving ? '…' : 'Send'}
+            </button>
+          </div>
+        ) : (
+          <p className="px-4 py-3 border-t border-gray-100 text-[11px] text-gray-400">Read-only — comments can be added on your own board (managers: any board).</p>
+        )}
+      </div>
     </div>
   )
 }

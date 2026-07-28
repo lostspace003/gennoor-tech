@@ -320,7 +320,10 @@ function OverviewTab({ lead, canManage, onReload, onClose, notify }: { lead: Lea
               <div className="w-2 h-2 mt-1.5 rounded-full bg-blue-400 shrink-0" />
               <div className="min-w-0">
                 <p className="text-sm text-gray-800">{a.description}</p>
-                <p className="text-xs text-gray-400">{formatDateTime(a.at)} · {a.by.split('@')[0]}</p>
+                <p className="text-xs text-gray-400">
+                  {formatDateTime(a.at)} · {a.by.split('@')[0]}
+                  {a.stage && <span className="ml-1.5 bg-blue-50 text-blue-600 rounded-full px-1.5 py-0.5 text-[10px]">in {STAGE_LABELS[a.stage]}</span>}
+                </p>
               </div>
             </div>
           ))}
