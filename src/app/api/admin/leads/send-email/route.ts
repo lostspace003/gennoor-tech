@@ -6,7 +6,8 @@ import { sendEmail } from '@/lib/email-service'
 import { emailShell, textToHtml } from '@/lib/crm/email-theme'
 
 const ADMIN_CC = process.env.EMAIL_ADMIN || 'admin@gennoor.com'
-const FROM = process.env.EMAIL_FROM_SALES || process.env.EMAIL_FROM_INFO || 'info@gennoor.com'
+// Outreach ALWAYS goes out as sales@gennoor.com (user rule, 2026-07-28)
+const FROM = process.env.EMAIL_FROM_SALES || 'sales@gennoor.com'
 
 function wrapHtml(bodyText: string): string {
   // Signature carries the sending address + admin@ (never a phone number)
@@ -47,8 +48,9 @@ export async function POST(request: Request) {
     const results: Array<{ leadId: string; to: string; success: boolean; error?: string }> = []
 
     // One email per lead so each lead gets an individually addressed message.
-    // admin@ is ALWAYS on CC regardless of what the caller passes.
-    const ccList = [ADMIN_CC, ...(Array.isArray(extraCc) ? extraCc.filter(Boolean) : [])]
+    // admin@ AND the team member sending are ALWAYS on CC regardless of what
+    // the caller passes — the sender sees replies in their own mailbox too.
+    const ccList = [ADMIN_CC, user.email, ...(Array.isArray(extraCc) ? extraCc.filter(Boolean) : [])]
     const bccList = Array.isArray(bcc) ? bcc.filter(Boolean) : []
     for (const lead of sendable) {
       const to = [lead.email, ...(Array.isArray(extraTo) ? extraTo.filter(Boolean) : [])]
@@ -98,7 +100,7 @@ export async function POST(request: Request) {
       failed: failed.length,
       skippedNoEmail: missingEmail.map((l) => l.name),
       errors: failed.map((f) => `${f.to}: ${f.error}`),
-      message: `Sent ${sent}/${sendable.length} emails (CC ${ADMIN_CC})`,
+      message: `Sent ${sent}/${sendable.length} emails from ${FROM} (CC ${ADMIN_CC} + you)`,
     })
   } catch (error) {
     console.error('Email send error:', error)

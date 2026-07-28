@@ -9,7 +9,8 @@ import { FollowUp } from '@/lib/crm/types'
 import { IST, istInstant, leadTimeZone, formatInZone } from '@/lib/crm/timezones'
 
 const ADMIN_CC = process.env.EMAIL_ADMIN || 'admin@gennoor.com'
-const FROM = process.env.EMAIL_FROM_WEBINAR || process.env.EMAIL_FROM_INFO || 'info@gennoor.com'
+// Outreach ALWAYS goes out as sales@gennoor.com (user rule, 2026-07-28)
+const FROM = process.env.EMAIL_FROM_SALES || 'sales@gennoor.com'
 
 // Follow-up sequence per the outreach playbook:
 //   1st follow-up → free 2-hour webinar tailored to their needs
@@ -86,7 +87,8 @@ export async function POST(request: Request) {
 
     const result = await sendEmail({
       to: lead.email,
-      cc: ADMIN_CC,
+      // admin@ + the sender always on CC so replies reach both mailboxes
+      cc: [...new Set([ADMIN_CC, user.email])],
       from: FROM,
       fromName: 'Gennoor Tech',
       subject: isWebinar

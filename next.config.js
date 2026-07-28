@@ -36,7 +36,9 @@ const nextConfig = {
     ]
   },
   output: 'standalone',
-  serverExternalPackages: ['applicationinsights', '@azure/data-tables', '@azure/storage-blob', 'pdf-parse', '@azure/identity', '@microsoft/microsoft-graph-client'],
+  // pdfkit MUST stay external: bundling it strips the .afm font data files it
+  // reads from disk at runtime (PDF generation then fails at "Helvetica").
+  serverExternalPackages: ['applicationinsights', '@azure/data-tables', '@azure/storage-blob', 'pdf-parse', '@azure/identity', '@microsoft/microsoft-graph-client', 'pdfkit'],
   images: {
     remotePatterns: [
       {

@@ -587,7 +587,7 @@ export function InboxView({ onOpenLead }: { onOpenLead: (id: string) => void }) 
   return (
     <div className="p-3 sm:p-5 space-y-3 max-w-4xl">
       <div className="flex flex-wrap items-center gap-2">
-        <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-1.5">Replies from leads (admin@gennoor.com inbox) <InfoTip text="Emails received in the admin mailbox from any known lead address. Narrow by date, sender or search; group by lead when several threads are running. Click one to open that lead's conversation and reply with AI." /></h3>
+        <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-1.5">Replies from leads (sales@ + admin@ inboxes) <InfoTip text="Emails received in the sales@ and admin@ mailboxes from any known lead address (outreach goes out as sales@gennoor.com). Narrow by date, sender or search; group by lead when several threads are running. Click one to open that lead's conversation and reply with AI." /></h3>
         <div className="ml-auto flex items-center gap-2 flex-wrap">
           <div className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />

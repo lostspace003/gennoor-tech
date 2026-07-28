@@ -615,7 +615,7 @@ function EmailTab({ lead, onReload, notify, onSchedule }: { lead: Lead; onReload
     <div className="p-3 sm:p-5 space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h3 className="text-sm font-medium text-gray-500 flex items-center gap-1.5">Conversation with {lead.name}
-          <InfoTip text="Sent emails and their replies in one thread. New email: AI drafts from the finalized pitch → refine by chatting → Final copy → attach documents → Send (admin@ always CC'd)." />
+          <InfoTip text="Sent emails and their replies in one thread. New email: AI drafts from the locked pitch → refine by chatting → Final copy → attach documents → Send. Everything goes out as sales@gennoor.com with admin@ + you on CC." />
         </h3>
         <div className="flex gap-2">
           <button onClick={loadInbox} className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50" title="Refresh replies"><RefreshCw className="w-4 h-4 text-gray-500" /></button>
@@ -891,7 +891,7 @@ function EmailComposer({ lead, replyTo, preset, onClose, onSent, notify }: { lea
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between shrink-0">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">{replyTo ? `Reply to ${lead.name}` : `Email ${lead.name}`}</h3>
-            <p className="text-xs text-gray-500">To: {lead.email} · CC: admin@gennoor.com (always)</p>
+            <p className="text-xs text-gray-500">From: sales@gennoor.com · To: {lead.email} · CC: admin@gennoor.com + you (always)</p>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded"><X className="w-5 h-5 text-gray-500" /></button>
         </div>
@@ -912,7 +912,7 @@ function EmailComposer({ lead, replyTo, preset, onClose, onSent, notify }: { lea
             <textarea value={body} onChange={(e) => { setBody(e.target.value); setFinalized(false) }} placeholder="Write the email, or click AI draft..." className="flex-1 min-h-40 px-3 py-2 border border-gray-200 rounded-lg text-sm resize-none font-mono" />
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <input value={extraTo} onChange={(e) => setExtraTo(e.target.value)} placeholder="More To: (comma-separated)" className="px-3 py-2 border border-gray-200 rounded-lg text-xs" />
-              <input value={extraCc} onChange={(e) => setExtraCc(e.target.value)} placeholder="CC: (admin@ always added)" className="px-3 py-2 border border-gray-200 rounded-lg text-xs" />
+              <input value={extraCc} onChange={(e) => setExtraCc(e.target.value)} placeholder="CC: (admin@ + you always added)" className="px-3 py-2 border border-gray-200 rounded-lg text-xs" />
               <input value={bcc} onChange={(e) => setBcc(e.target.value)} placeholder="BCC: (optional)" className="px-3 py-2 border border-gray-200 rounded-lg text-xs" />
             </div>
             <div className="border border-gray-200 rounded-lg p-2.5 max-h-32 overflow-y-auto">
@@ -1108,7 +1108,7 @@ function ScheduleTab({ lead, onReload, notify }: { lead: Lead; onReload: () => P
           </div>
         </div>
         <button onClick={sendFollowUp} disabled={busy === 'followup' || !lead.email} className="w-full px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm hover:bg-emerald-700 disabled:opacity-50">
-          {busy === 'followup' ? 'Sending...' : 'Send invite (CC admin@gennoor.com)'}
+          {busy === 'followup' ? 'Sending...' : 'Send invite (from sales@ · CC admin@ + you)'}
         </button>
 
         {lead.followUps.length > 0 && (
