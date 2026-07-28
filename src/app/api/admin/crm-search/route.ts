@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { requireCrmUser } from '@/lib/crm/access'
+import { requireCrmUser, visibleLeads } from '@/lib/crm/access'
 import { getLeads } from '@/lib/crm/store'
 import { searchConfigured, searchLeads, syncSearchIndex, IndexMissingError } from '@/lib/crm/search'
 
@@ -33,7 +33,8 @@ export async function GET(request: Request) {
       await syncSearchIndex(leads)
       hits = await searchLeads(q, top)
     }
-    const byId = new Map(leads.map((l) => [l.id, l]))
+    // Index holds every lead; drop hits outside the caller's read scope.
+    const byId = new Map(visibleLeads(leads, user).map((l) => [l.id, l]))
     const results = hits
       .filter((h) => byId.has(h.id))
       .map((h) => ({ score: h.score, lead: byId.get(h.id) }))

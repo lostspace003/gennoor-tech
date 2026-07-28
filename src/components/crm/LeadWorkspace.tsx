@@ -5,7 +5,7 @@ import {
   X, Mail, Phone, Building2, Linkedin, Globe, Brain, Send, Sparkles,
   Calendar, Trash2, CheckCircle, MessageSquare, Lock, RefreshCw, Paperclip, Reply, Eye,
 } from 'lucide-react'
-import { Lead, ChatMessage, PIPELINE_STAGES, COMPANY_SIZES, BUSINESS_FUNCTIONS, LEAD_INTERESTS, DECISION_ROLES } from '@/lib/crm/types'
+import { Lead, ChatMessage, PipelineStage, PIPELINE_STAGES, COMPANY_SIZES, BUSINESS_FUNCTIONS, LEAD_INTERESTS, DECISION_ROLES } from '@/lib/crm/types'
 import { StatusBadge, ProcessDot, StageBar, api, formatDateTime, Spinner, STAGE_LABELS, CopyMsg, InfoTip, DurationSlider, TimeSlider, LeadLocalTime } from './shared'
 import { istInstant } from '@/lib/crm/timezones'
 import { useCrm } from './CrmContext'
@@ -44,6 +44,15 @@ export default function LeadWorkspace({ lead, canManage, onClose, onReload, noti
 
   const isMine = lead.owner?.toLowerCase() === userEmail.toLowerCase()
   const workable = isManager || !lead.owner || isMine
+
+  const setStage = async (s: PipelineStage) => {
+    if (s === lead.stage) return
+    try {
+      await api('/api/admin/leads/update-stage', { method: 'POST', body: JSON.stringify({ leadId: lead.id, stage: s }) })
+      await onReload()
+      notify(`Stage set to ${STAGE_LABELS[s]}`)
+    } catch (e: any) { notify(e.message, true) }
+  }
 
   const poolAction = async (action: 'claim' | 'release' | 'dump' | 'restore') => {
     let reason: string | undefined
@@ -100,16 +109,19 @@ export default function LeadWorkspace({ lead, canManage, onClose, onReload, noti
               <span className="text-[11px] bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-2 py-1">Owned by {lead.owner.split('@')[0]} — read-only for you</span>
             )}
           </div>
-          <StageBar
-            stage={lead.stage}
-            onSelect={async (s) => {
-              try {
-                await api('/api/admin/leads/update-stage', { method: 'POST', body: JSON.stringify({ leadId: lead.id, stage: s }) })
-                await onReload()
-                notify(`Stage set to ${STAGE_LABELS[s]}`)
-              } catch (e: any) { notify(e.message, true) }
-            }}
-          />
+          <div className="flex items-center gap-2">
+            <StageBar stage={lead.stage} onSelect={setStage} />
+            <select
+              value={lead.stage}
+              onChange={(e) => setStage(e.target.value as PipelineStage)}
+              className="text-xs border border-gray-300 rounded-lg px-2 py-1.5 bg-white text-gray-700 hover:border-blue-400 cursor-pointer"
+              title="Move this lead to another pipeline stage"
+            >
+              {PIPELINE_STAGES.map((s, i) => (
+                <option key={s} value={s}>{i + 1}. {STAGE_LABELS[s]}</option>
+              ))}
+            </select>
+          </div>
         </div>
         {/* Tabs — horizontally scrollable on small screens */}
         <div className="flex items-center gap-1 mt-3 -mb-3 overflow-x-auto">

@@ -50,7 +50,7 @@ export function StageBar({ stage, onSelect }: { stage: PipelineStage; onSelect?:
             key={s}
             type="button"
             disabled={!onSelect}
-            onClick={() => onSelect?.(s)}
+            onClick={(e) => { e.stopPropagation(); onSelect?.(s) }}
             className={`flex-1 transition-colors ${idx <= currentIdx ? 'bg-blue-600' : 'bg-gray-200'} ${idx > 0 ? 'border-l border-white' : ''} ${onSelect ? 'hover:bg-blue-400 cursor-pointer' : 'cursor-default'}`}
             title={`${idx + 1}. ${STAGE_LABELS[s]}${onSelect ? ' — click to set' : ''}`}
           />

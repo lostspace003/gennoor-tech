@@ -61,7 +61,7 @@ function rowToLead(row: Record<string, any>): Partial<Lead> | null {
 }
 
 export default function LeadsView({ leads, canManage, onOpenLead, onReload, notify }: Props) {
-  const { userEmail } = useCrm()
+  const { userEmail, isManager } = useCrm()
   const [poolFilter, setPoolFilter] = useState<'all' | 'pool' | 'mine' | 'dumped'>('all')
   const [searchTerm, setSearchTerm] = useState('')
   const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'week' | 'month' | 'custom'>('all')
@@ -85,6 +85,16 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const resetPage = () => setPage(1)
+
+  // Stage is workable straight from the list for pool leads, own leads, or any lead if manager.
+  const canSetStage = (lead: Lead) => !lead.dumped && (isManager || !lead.owner || lead.owner.toLowerCase() === userEmail.toLowerCase())
+  const setStage = async (leadId: string, s: PipelineStage) => {
+    try {
+      await api('/api/admin/leads/update-stage', { method: 'POST', body: JSON.stringify({ leadId, stage: s }) })
+      await onReload()
+      notify(`Stage set to ${STAGE_LABELS[s]}`)
+    } catch (e: any) { notify(e.message, true) }
+  }
 
   const filtered = useMemo(() => {
     const term = searchTerm.toLowerCase()
@@ -663,7 +673,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                 <td className="px-4 py-3 text-xs text-gray-600">
                   {[lead.city, lead.country].filter(Boolean).join(', ') || lead.region || '—'}
                 </td>
-                <td className="px-4 py-3"><StageBar stage={lead.stage} /></td>
+                <td className="px-4 py-3"><StageBar stage={lead.stage} onSelect={canSetStage(lead) ? (s) => setStage(lead.id, s) : undefined} /></td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-1.5">
                     <StatusBadge status={lead.status} />

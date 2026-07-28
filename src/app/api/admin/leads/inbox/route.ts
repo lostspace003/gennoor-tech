@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireCrmUser } from '@/lib/crm/access'
+import { requireCrmUser, visibleLeads } from '@/lib/crm/access'
 import { getLeads } from '@/lib/crm/store'
 import { graphConfigured, listInboundMessages } from '@/lib/crm/graph'
 
@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const leadId = req.nextUrl.searchParams.get('leadId')
-    const leads = await getLeads()
+    const leads = visibleLeads(await getLeads(), user)
 
     if (leadId) {
       const lead = leads.find((l) => l.id === leadId)
