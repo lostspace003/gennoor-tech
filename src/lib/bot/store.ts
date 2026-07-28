@@ -205,3 +205,18 @@ export async function readLogs(days: number): Promise<BotLogEntry[]> {
   }
   return out.sort((a, b) => b.at.localeCompare(a.at))
 }
+
+// Logs for an explicit calendar range (inclusive YYYY-MM-DD dates) — powers
+// the custom from→to filter in the CRM. Capped at 92 daily blobs per read.
+export async function readLogsBetween(from: string, to: string): Promise<BotLogEntry[]> {
+  const start = new Date(`${from}T00:00:00Z`).getTime()
+  const end = new Date(`${to}T00:00:00Z`).getTime()
+  if (isNaN(start) || isNaN(end) || end < start) return []
+  const out: BotLogEntry[] = []
+  for (let t = start, n = 0; t <= end && n < 92; t += 86_400_000, n++) {
+    const date = new Date(t).toISOString().slice(0, 10)
+    const entries = await readJson<BotLogEntry[]>(`bot-logs/${date}.json`)
+    if (entries) out.push(...entries)
+  }
+  return out.sort((a, b) => b.at.localeCompare(a.at))
+}

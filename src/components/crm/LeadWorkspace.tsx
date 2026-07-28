@@ -3,13 +3,14 @@
 import { useEffect, useState } from 'react'
 import {
   X, Mail, Phone, Building2, Linkedin, Globe, Brain, Send, Sparkles,
-  Calendar, Trash2, CheckCircle, MessageSquare, Lock, RefreshCw, Paperclip, Reply, Eye,
+  Calendar, Trash2, CheckCircle, MessageSquare, Lock, RefreshCw, Paperclip, Reply, Eye, FileText,
 } from 'lucide-react'
 import { Lead, ChatMessage, PipelineStage, PIPELINE_STAGES, COMPANY_SIZES, BUSINESS_FUNCTIONS, LEAD_INTERESTS, DECISION_ROLES } from '@/lib/crm/types'
 import { StatusBadge, ProcessDot, StageBar, api, formatDateTime, Spinner, STAGE_LABELS, CopyMsg, InfoTip, DurationSlider, TimeSlider, LeadLocalTime } from './shared'
 import { istInstant } from '@/lib/crm/timezones'
 import { useCrm } from './CrmContext'
 import DocPreview from './DocPreview'
+import PitchDocModal from './PitchDoc'
 import DOMPurify from 'dompurify'
 
 type Tab = 'overview' | 'research' | 'email' | 'schedule'
@@ -303,7 +304,9 @@ function OverviewTab({ lead, canManage, onReload, onClose, notify }: { lead: Lea
 
         {lead.finalizedPitch && (
           <div>
-            <h3 className="text-sm font-medium text-gray-500 mb-2 flex items-center gap-2"><Lock className="w-4 h-4 text-green-600" /> Finalized pitch</h3>
+            <h3 className="text-sm font-medium text-gray-500 mb-2 flex items-center gap-2">
+              <Lock className="w-4 h-4 text-green-600" /> Finalized pitch{lead.pitchLockedV ? ` (pitch doc v${lead.pitchLockedV} — see Research Copilot)` : ''}
+            </h3>
             <p className="bg-green-50 border border-green-200 rounded-lg p-4 text-sm text-gray-700 whitespace-pre-line break-words">{lead.finalizedPitch}</p>
           </div>
         )}
@@ -376,11 +379,16 @@ function InfoRow({ icon: Icon, value, placeholder }: { icon: any; value: string;
 /* ---------------- Research Copilot ---------------- */
 
 function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onReload: () => Promise<void>; notify: Props['notify']; onGoEmail: () => void }) {
+  const { userEmail, isManager } = useCrm()
   const [running, setRunning] = useState(false)
   const [chatInput, setChatInput] = useState('')
   const [chat, setChat] = useState<ChatMessage[]>(lead.researchChat)
   const [chatting, setChatting] = useState(false)
-  const [finalizing, setFinalizing] = useState(false)
+  const [pitchOpen, setPitchOpen] = useState(false)
+
+  const workable = isManager || !lead.owner || lead.owner.toLowerCase() === userEmail.toLowerCase()
+  const pitchCount = lead.pitchVersions?.length || 0
+  const latestPitch = pitchCount ? lead.pitchVersions![pitchCount - 1] : undefined
 
   useEffect(() => setChat(lead.researchChat), [lead.id, lead.researchChat])
 
@@ -409,15 +417,6 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
       notify(e.message, true)
       setChat((c) => c.slice(0, -1))
     } finally { setChatting(false) }
-  }
-
-  const finalize = async () => {
-    setFinalizing(true)
-    try {
-      await api('/api/admin/leads/research-chat', { method: 'POST', body: JSON.stringify({ leadId: lead.id, mode: 'finalize' }) })
-      await onReload()
-      notify('Pitch finalized — view it on the Overview tab and use it in the email draft')
-    } catch (e: any) { notify(e.message, true) } finally { setFinalizing(false) }
   }
 
   return (
@@ -470,17 +469,39 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
             )}
           </div>
         )}
-        {lead.finalizedPitch && (
+        {(pitchCount > 0 || lead.finalizedPitch) && (
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <div className="flex items-center justify-between gap-2 mb-2">
-              <div className="flex items-center gap-2 text-sm font-medium text-green-800"><Lock className="w-4 h-4" /> Finalized pitch (locked)</div>
-              <button onClick={onGoEmail} className="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 flex items-center gap-1.5 shrink-0">
-                Continue to email <Send className="w-3.5 h-3.5" />
-              </button>
+            <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
+              <div className="flex items-center gap-2 text-sm font-medium text-green-800">
+                <FileText className="w-4 h-4" />
+                {pitchCount > 0
+                  ? <>One-page pitch — {pitchCount} version{pitchCount === 1 ? '' : 's'}{lead.pitchLockedV ? <span className="inline-flex items-center gap-1 ml-1 text-[11px] bg-green-600 text-white rounded-full px-2 py-0.5"><Lock className="w-3 h-3" /> v{lead.pitchLockedV} locked</span> : <span className="text-[11px] text-amber-700 ml-1">nothing locked yet</span>}</>
+                  : <>Finalized pitch (locked)</>}
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                {pitchCount > 0 && (
+                  <button onClick={() => setPitchOpen(true)} className="px-3 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 flex items-center gap-1.5">
+                    <FileText className="w-3.5 h-3.5" /> Open pitch doc
+                  </button>
+                )}
+                {(lead.pitchLockedV || (pitchCount === 0 && lead.finalizedPitch)) && (
+                  <button onClick={onGoEmail} className="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 flex items-center gap-1.5">
+                    Continue to email <Send className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
             </div>
-            <p className="text-sm text-gray-700 whitespace-pre-line break-words">{lead.finalizedPitch}</p>
-            <CopyMsg text={lead.finalizedPitch} />
-            <p className="text-xs text-green-700 mt-2">Next step: draft the email — the AI draft is built from this brief.</p>
+            {pitchCount > 0 && latestPitch ? (
+              <p className="text-xs text-green-700">
+                Latest: v{latestPitch.v} — {formatDateTime(latestPitch.at)} by {latestPitch.by.split('@')[0]}. The locked version powers the AI email draft; docx & PDF are in Documents → pitches/.
+              </p>
+            ) : lead.finalizedPitch && (
+              <>
+                <p className="text-sm text-gray-700 whitespace-pre-line break-words">{lead.finalizedPitch}</p>
+                <CopyMsg text={lead.finalizedPitch} />
+                <p className="text-xs text-green-700 mt-2">Legacy pitch brief — open the pitch doc to upgrade it into the versioned one-pager.</p>
+              </>
+            )}
           </div>
         )}
       </div>
@@ -489,14 +510,18 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
       <div className="flex flex-col h-[70dvh] lg:h-[calc(100dvh-12rem)] border border-gray-200 rounded-lg">
         <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
           <span className="text-sm font-medium text-gray-700 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-purple-500" /> Discuss with copilot</span>
-          <button onClick={finalize} disabled={finalizing || chat.length === 0} className="px-3 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 flex items-center gap-1.5 disabled:opacity-50" title={chat.length === 0 ? 'Chat first, then finalize' : 'Lock the final pitch content'}>
-            <Lock className="w-3.5 h-3.5" /> {finalizing ? 'Finalizing...' : 'Finalize pitch'}
+          <button
+            onClick={() => setPitchOpen(true)}
+            className="px-3 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 flex items-center gap-1.5"
+            title="One-page client pitch: generate → refine → lock a version → it powers the email draft"
+          >
+            <FileText className="w-3.5 h-3.5" /> Pitch doc{pitchCount > 0 ? ` · v${latestPitch!.v}` : ''}
           </button>
         </div>
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {chat.length === 0 && (
             <p className="text-sm text-gray-400 text-center mt-8">
-              Discuss the research here — e.g. &quot;what angle works for a bank?&quot; or &quot;they're non-technical, what do we lead with?&quot;. Then hit <strong>Finalize pitch</strong>.
+              Discuss the research here — e.g. &quot;what angle works for a bank?&quot; or &quot;they're non-technical, what do we lead with?&quot;. Then open the <strong>Pitch doc</strong> to generate the one-page pitch.
             </p>
           )}
           {chat.map((m, i) => (
@@ -520,6 +545,17 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
           </button>
         </div>
       </div>
+
+      {pitchOpen && (
+        <PitchDocModal
+          lead={lead}
+          editable={workable}
+          onClose={() => setPitchOpen(false)}
+          onReload={onReload}
+          notify={notify}
+          onGoEmail={onGoEmail}
+        />
+      )}
     </div>
   )
 }
@@ -745,6 +781,9 @@ function EmailComposer({ lead, replyTo, preset, onClose, onSent, notify }: { lea
   const [bcc, setBcc] = useState('')
   const [preview, setPreview] = useState<string | null>(null)
   const [uploadingAttach, setUploadingAttach] = useState(false)
+  // Files uploaded from inside the composer are one-off attachments — they go
+  // to email-attachments/ and are removed from the library after the send.
+  const [ephemeral, setEphemeral] = useState<string[]>([])
 
   const uploadAndAttach = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -753,12 +792,13 @@ function EmailComposer({ lead, replyTo, preset, onClose, onSent, notify }: { lea
     try {
       const form = new FormData()
       form.append('file', file)
-      form.append('folder', 'general')
+      form.append('folder', 'email-attachments')
       const res = await fetch('/api/admin/leads/documents', { method: 'POST', body: form })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Upload failed')
       setDocs((d) => [{ name: data.name, size: file.size }, ...d.filter((x) => x.name !== data.name)])
       setAttach((a) => [...new Set([...a, data.name])])
+      setEphemeral((x) => [...new Set([...x, data.name])])
       notify(`Attached ${file.name}`)
     } catch (err: any) { notify(err.message, true) } finally { setUploadingAttach(false); e.target.value = '' }
   }
@@ -834,7 +874,14 @@ function EmailComposer({ lead, replyTo, preset, onClose, onSent, notify }: { lea
           bcc: bcc.split(',').map((s) => s.trim()).filter(Boolean),
         }),
       })
-      if (res.sent > 0) { notify(res.message); await onSent() } else { notify(res.errors?.join('; ') || 'Send failed', true) }
+      if (res.sent > 0) {
+        // One-off uploads travelled with the email — clean them out of the library
+        for (const name of ephemeral) {
+          api(`/api/admin/leads/documents?name=${encodeURIComponent(name)}`, { method: 'DELETE' }).catch(() => {})
+        }
+        notify(res.message)
+        await onSent()
+      } else { notify(res.errors?.join('; ') || 'Send failed', true) }
     } catch (e: any) { notify(e.message, true) } finally { setBusy('') }
   }
 

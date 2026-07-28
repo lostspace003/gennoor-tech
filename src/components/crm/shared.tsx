@@ -292,6 +292,88 @@ export function MultiSelect({ label, options, values, onChange }: {
   )
 }
 
+/* ---------------- Date range filter (shared by Bot log, Inbox, Team, Scheduler) ---------------- */
+
+// days > 0 = rolling preset ("last N days"); days === 0 = custom from→to (inclusive dates)
+export interface DateRange { days: number; from: string; to: string }
+
+export const todayYMD = () => new Date().toISOString().slice(0, 10)
+export const daysAgoYMD = (n: number) => new Date(Date.now() - n * 86_400_000).toISOString().slice(0, 10)
+
+// Millisecond bounds for client-side filtering. "Today" (days=1) starts at local
+// midnight; other presets roll back from now. Custom covers whole calendar days.
+export function rangeBounds(r: DateRange): { fromMs: number; toMs: number } {
+  if (r.days === 1) {
+    const start = new Date(); start.setHours(0, 0, 0, 0)
+    return { fromMs: start.getTime(), toMs: Date.now() + 60_000 }
+  }
+  if (r.days > 0) return { fromMs: Date.now() - r.days * 86_400_000, toMs: Date.now() + 60_000 }
+  const from = r.from ? new Date(`${r.from}T00:00:00`).getTime() : 0
+  const to = r.to ? new Date(`${r.to}T23:59:59.999`).getTime() : Date.now() + 60_000
+  return { fromMs: from, toMs: to }
+}
+
+export function rangeLabel(r: DateRange): string {
+  if (r.days === 1) return 'today'
+  if (r.days > 0) return `last ${r.days} days`
+  if (r.from && r.to) return `${r.from} → ${r.to}`
+  return r.from ? `since ${r.from}` : r.to ? `until ${r.to}` : 'all time'
+}
+
+// Preset chips + a Custom chip that opens "from → to" date inputs.
+export function DateRangeFilter({ value, onChange, presets = [{ days: 1, label: 'Today' }, { days: 7, label: 'Week' }, { days: 30, label: 'Month' }], allowFuture }: {
+  value: DateRange
+  onChange: (r: DateRange) => void
+  presets?: Array<{ days: number; label: string }>
+  // Scheduler filters forward-looking dates; everything else caps at today
+  allowFuture?: boolean
+}) {
+  const custom = value.days === 0
+  return (
+    <span className="inline-flex items-center gap-1 flex-wrap">
+      {presets.map((p) => (
+        <button
+          key={p.days}
+          type="button"
+          onClick={() => onChange({ days: p.days, from: '', to: '' })}
+          className={`px-2.5 py-1 text-xs rounded-full border ${value.days === p.days ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+        >
+          {p.label}
+        </button>
+      ))}
+      <button
+        type="button"
+        onClick={() => { if (!custom) onChange({ days: 0, from: value.from || daysAgoYMD(7), to: value.to || todayYMD() }) }}
+        className={`px-2.5 py-1 text-xs rounded-full border ${custom ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+      >
+        Custom
+      </button>
+      {custom && (
+        <span className="inline-flex items-center gap-1 ml-1">
+          <input
+            type="date"
+            value={value.from}
+            max={value.to || (allowFuture ? undefined : todayYMD())}
+            onChange={(e) => onChange({ ...value, from: e.target.value })}
+            className="text-xs border border-gray-200 rounded-lg px-2 py-1 text-gray-700"
+            aria-label="From date"
+          />
+          <span className="text-[11px] text-gray-400">to</span>
+          <input
+            type="date"
+            value={value.to}
+            min={value.from || undefined}
+            max={allowFuture ? undefined : todayYMD()}
+            onChange={(e) => onChange({ ...value, to: e.target.value })}
+            className="text-xs border border-gray-200 rounded-lg px-2 py-1 text-gray-700"
+            aria-label="To date"
+          />
+        </span>
+      )}
+    </span>
+  )
+}
+
 // Lead priority helpers — free-text priority normalised to three buckets
 export function normPriority(p: string | undefined): 'high' | 'medium' | 'low' | '' {
   const v = (p || '').trim().toLowerCase()

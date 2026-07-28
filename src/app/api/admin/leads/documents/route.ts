@@ -29,8 +29,10 @@ export async function POST(req: NextRequest) {
     const folder = String(form.get('folder') || 'general')
     if (!file) return NextResponse.json({ error: 'file is required' }, { status: 400 })
     if (file.size > MAX_SIZE) return NextResponse.json({ error: 'File too large (max 15 MB)' }, { status: 400 })
-    if (!['manuals', 'posters', 'general'].includes(folder)) {
-      return NextResponse.json({ error: 'folder must be manuals, posters or general' }, { status: 400 })
+    // email-attachments/ holds one-off composer uploads; they are deleted
+    // automatically after the email is sent.
+    if (!['manuals', 'posters', 'general', 'email-attachments'].includes(folder)) {
+      return NextResponse.json({ error: 'folder must be manuals, posters, general or email-attachments' }, { status: 400 })
     }
 
     const safeName = file.name.replace(/[^a-zA-Z0-9._ -]/g, '_')
@@ -47,11 +49,17 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   const user = await requireCrmUser()
-  if (!user?.isManager) return NextResponse.json({ error: 'Only managers can delete documents' }, { status: 403 })
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
     const name = req.nextUrl.searchParams.get('name')
     if (!name) return NextResponse.json({ error: 'name required' }, { status: 400 })
+    // One-off composer uploads can be cleaned up by anyone on the team
+    // (that's how the composer removes them after a send); everything else
+    // stays manager-only.
+    if (!name.startsWith('email-attachments/') && !user.isManager) {
+      return NextResponse.json({ error: 'Only managers can delete documents' }, { status: 403 })
+    }
     await deleteDocument(name)
     return NextResponse.json({ success: true })
   } catch (error) {

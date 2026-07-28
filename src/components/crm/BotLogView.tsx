@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { MessageCircle, FileText, RefreshCw, Send, Mail, ShieldAlert, Sparkles, Globe, Search } from 'lucide-react'
-import { formatDateTime, Spinner, CopyMsg, api, MultiSelect, Pagination } from './shared'
+import { formatDateTime, Spinner, CopyMsg, api, MultiSelect, Pagination, DateRangeFilter, DateRange, rangeLabel } from './shared'
 
 interface LogEntry { at: string; sessionId: string; q: string; a: string; links: string[]; cached?: boolean; leadCaptured?: boolean }
 
@@ -14,15 +14,15 @@ const RANGES = [
   { days: 7, label: 'Week' },
   { days: 14, label: '2 weeks' },
   { days: 30, label: 'Month' },
-] as const
+]
 
 export default function BotLogView({ isManager, notify }: { isManager: boolean; notify: (m: string, e?: boolean) => void }) {
   const [tab, setTab] = useState<'report' | 'conversations' | 'index'>('report')
   const [logs, setLogs] = useState<LogEntry[]>([])
   const [stats, setStats] = useState({ total: 0, leads: 0 })
-  const [days, setDays] = useState<number>(7)
+  const [range, setRange] = useState<DateRange>({ days: 7, from: '', to: '' })
   const [report, setReport] = useState('')
-  const [reportDays, setReportDays] = useState(0)
+  const [reportLabel, setReportLabel] = useState('')
   const [busy, setBusy] = useState('')
   const [chat, setChat] = useState<Array<{ role: 'user' | 'assistant'; content: string }>>([])
   const [question, setQuestion] = useState('')
@@ -34,12 +34,15 @@ export default function BotLogView({ isManager, notify }: { isManager: boolean; 
   const [logPage, setLogPage] = useState(1)
   const [expandedLog, setExpandedLog] = useState<number | null>(null)
 
+  // Custom range only fires once both dates are picked
+  const rangeQuery = range.days > 0 ? `days=${range.days}` : range.from && range.to ? `from=${range.from}&to=${range.to}` : ''
+
   useEffect(() => {
-    if (!isManager) return
-    api<{ logs: LogEntry[]; total: number; leads: number }>(`/api/admin/bot-insights?days=${days}`)
+    if (!isManager || !rangeQuery) return
+    api<{ logs: LogEntry[]; total: number; leads: number }>(`/api/admin/bot-insights?${rangeQuery}`)
       .then((r) => { setLogs(r.logs); setStats({ total: r.total, leads: r.leads }); setLogPage(1); setExpandedLog(null) })
       .catch((e) => notify(e.message, true))
-  }, [isManager, days]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isManager, rangeQuery]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!isManager) return
@@ -67,12 +70,15 @@ export default function BotLogView({ isManager, notify }: { isManager: boolean; 
     )
   }
 
+  const rangeBody = range.days > 0 ? { days: range.days } : { from: range.from, to: range.to }
+
   const generate = async () => {
+    if (range.days === 0 && (!range.from || !range.to)) { notify('Pick both custom dates first', true); return }
     setBusy('report')
     try {
-      const r = await api<{ report: string }>('/api/admin/bot-insights', { method: 'POST', body: JSON.stringify({ action: 'report', days }) })
+      const r = await api<{ report: string }>('/api/admin/bot-insights', { method: 'POST', body: JSON.stringify({ action: 'report', ...rangeBody }) })
       setReport(r.report)
-      setReportDays(days)
+      setReportLabel(rangeLabel(range))
       setChat([])
     } catch (e: any) { notify(e.message, true) } finally { setBusy('') }
   }
@@ -84,7 +90,7 @@ export default function BotLogView({ isManager, notify }: { isManager: boolean; 
     setChat((c) => [...c, { role: 'user', content: q }])
     setBusy('chat')
     try {
-      const r = await api<{ reply: string }>('/api/admin/bot-insights', { method: 'POST', body: JSON.stringify({ action: 'chat', report, question: q }) })
+      const r = await api<{ reply: string }>('/api/admin/bot-insights', { method: 'POST', body: JSON.stringify({ action: 'chat', report, question: q, ...rangeBody }) })
       setChat((c) => [...c, { role: 'assistant', content: r.reply }])
     } catch (e: any) { notify(e.message, true) } finally { setBusy('') }
   }
@@ -143,19 +149,11 @@ export default function BotLogView({ isManager, notify }: { isManager: boolean; 
     <div className="p-3 sm:p-5 max-w-4xl space-y-4">
       <div className="flex flex-wrap items-center gap-3">
         <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2"><MessageCircle className="w-4 h-4 text-blue-500" /> GennoorCare — website bot</h2>
-        <span className="text-xs bg-blue-50 text-blue-700 border border-blue-200 rounded-full px-2.5 py-1">{stats.total} conversations ({days}d)</span>
+        <span className="text-xs bg-blue-50 text-blue-700 border border-blue-200 rounded-full px-2.5 py-1">{stats.total} conversations ({rangeLabel(range)})</span>
         <span className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-2.5 py-1">{stats.leads} leads captured</span>
         {/* Range applies to both the data below and the generated report */}
-        <div className="ml-auto flex items-center gap-1">
-          {RANGES.map((r) => (
-            <button
-              key={r.days}
-              onClick={() => setDays(r.days)}
-              className={`px-2.5 py-1 text-xs rounded-full border ${days === r.days ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
-            >
-              {r.label}
-            </button>
-          ))}
+        <div className="ml-auto">
+          <DateRangeFilter value={range} onChange={setRange} presets={RANGES} />
         </div>
       </div>
 
@@ -171,9 +169,9 @@ export default function BotLogView({ isManager, notify }: { isManager: boolean; 
         <div className="space-y-3">
           <div className="flex flex-wrap items-center gap-2">
             <button onClick={generate} disabled={busy === 'report'} className="px-3 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 flex items-center gap-2 disabled:opacity-50">
-              <Sparkles className="w-4 h-4" /> {busy === 'report' ? `Analyzing the last ${days} days...` : report ? `Regenerate (last ${days} days)` : `Generate business report — last ${days} days`}
+              <Sparkles className="w-4 h-4" /> {busy === 'report' ? `Analyzing ${rangeLabel(range)}...` : report ? `Regenerate (${rangeLabel(range)})` : `Generate business report — ${rangeLabel(range)}`}
             </button>
-            {report && reportDays > 0 && <span className="text-[11px] text-gray-400">covers the last {reportDays} days{reportDays !== days ? ` — switch above and regenerate for ${days}d` : ''}</span>}
+            {report && reportLabel && <span className="text-[11px] text-gray-400">covers {reportLabel}{reportLabel !== rangeLabel(range) ? ` — switch above and regenerate for ${rangeLabel(range)}` : ''}</span>}
             {report && <CopyMsg text={report} />}
           </div>
 

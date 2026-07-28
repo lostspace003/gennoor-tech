@@ -64,6 +64,18 @@ export interface ChatMessage {
   content: string
 }
 
+// One-page client-facing pitch document, version-controlled. Every generate
+// or copilot refinement appends a new version ("v3 — 28 Jul 2026, 9:12 pm").
+// Locking a version freezes it as THE pitch: it becomes the basis for the
+// email draft and is exported as .docx into the document library.
+export interface PitchVersion {
+  v: number
+  at: string
+  by: string
+  content: string // markdown one-pager
+  instruction?: string // what was asked of the copilot to produce this version
+}
+
 export interface Lead {
   id: string
   name: string
@@ -100,7 +112,11 @@ export interface Lead {
   techProfile?: TechProfile
   aiResearch?: AIResearch
   researchChat: ChatMessage[]
+  // Locked pitch content (kept in sync with the locked pitch-doc version so
+  // email drafting keeps working); pitchVersions holds the full history.
   finalizedPitch?: string
+  pitchVersions?: PitchVersion[]
+  pitchLockedV?: number
   emailHistory: EmailRecord[]
   activities: LeadActivity[]
   followUps: FollowUp[]
@@ -145,6 +161,8 @@ export function newLead(partial: Partial<Lead> & { name: string }, by: string): 
     aiResearch: partial.aiResearch,
     researchChat: partial.researchChat || [],
     finalizedPitch: partial.finalizedPitch,
+    pitchVersions: partial.pitchVersions,
+    pitchLockedV: partial.pitchLockedV,
     emailHistory: partial.emailHistory || [],
     activities: partial.activities || [{ at: now, by, type: 'created', description: 'Lead created' }],
     followUps: partial.followUps || [],

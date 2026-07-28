@@ -238,6 +238,51 @@ ${leadContext(lead)}`,
   ])
 }
 
+// One-page CLIENT-FACING pitch document (markdown). Fresh generate pulls from
+// research + copilot discussion; refine revises an existing version per the
+// team's instruction. This is what gets exported to Word and emailed.
+const PITCH_DOC_FORMAT = `STRUCTURE — pure Markdown, exactly these sections, nothing else before or after:
+
+# AI Enablement Pitch — {company or lead name}
+*Prepared for {name}{, designation if known} · Gennoor Tech*
+
+## Where you are
+(2-3 sentences on their situation and likely need, grounded in the research — inferred statements say "likely")
+
+## What Gennoor proposes
+(3-5 one-line bullets mapped to the journey: Diagnose, Train, POC, Development, Sustain — only the steps that fit)
+
+## Start free, zero obligation
+(the free 2-hour webinar and/or free 1-day training, with a suggested topic tailored to them)
+
+## Why Gennoor
+(2-3 honest bullets — training + build capability, technical & non-technical tracks, hand-holding through Sustain. NO invented stats or client counts)
+
+## Next step
+(one sentence inviting a short call · contact: admin@gennoor.com · +91 9326352241)
+
+HARD RULES: under 280 words total; client-facing tone (they will read this document); no internal jargon like "lead" or "pipeline"; no invented facts.`
+
+export async function generatePitchDoc(lead: Lead, history: ChatMessage[], base?: string, instruction?: string): Promise<string> {
+  if (base && instruction) {
+    return chatCompletion([
+      {
+        role: 'system',
+        content: `${GENNOOR_CONTEXT}\n\nYou maintain the one-page client-facing pitch document for this lead. Revise the current version according to the team's instruction and return the FULL revised document.\n\n${PITCH_DOC_FORMAT}\n\nLead data:\n${leadContext(lead)}`,
+      },
+      { role: 'user', content: `CURRENT DOCUMENT:\n${base}\n\nINSTRUCTION: ${instruction}\n\nReturn the full revised one-pager now.` },
+    ])
+  }
+  return chatCompletion([
+    {
+      role: 'system',
+      content: `${GENNOOR_CONTEXT}\n\nWrite the one-page client-facing pitch document for this lead, using the research and the team's copilot discussion below as grounding.\n\n${PITCH_DOC_FORMAT}\n\nLead data:\n${leadContext(lead)}${lead.aiResearch ? `\n\nResearch insights:\n- ${lead.aiResearch.insights.join('\n- ')}\nWhat to pitch:\n- ${lead.aiResearch.opportunities.join('\n- ')}\nApproach: ${lead.aiResearch.approach}` : ''}`,
+    },
+    ...history.slice(-20).map((m) => ({ role: m.role, content: m.content })),
+    { role: 'user', content: 'Write the one-page pitch document now — the sections only.' },
+  ])
+}
+
 export const YOUTUBE_CHANNEL_URL = 'https://www.youtube.com/@GennoorTech'
 
 // Safety net: if a draft mentions the YouTube channel but the model dropped

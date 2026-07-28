@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireCrmUser } from '@/lib/crm/access'
-import { readLogs } from '@/lib/bot/store'
+import { readLogs, readLogsBetween } from '@/lib/bot/store'
 import { aiConfigured, chatCompletion } from '@/lib/crm/ai'
 import { sendEmail } from '@/lib/email-service'
 import { emailShell, markdownToEmailHtml } from '@/lib/crm/email-theme'
@@ -19,11 +19,17 @@ function logsDigest(logs: Awaited<ReturnType<typeof readLogs>>): string {
 // POST → {action:'report'} weekly business MD document
 //        {action:'chat', report, question} interact with the report
 //        {action:'email', report, recipients[]} forward it to the team
+const YMD = /^\d{4}-\d{2}-\d{2}$/
+
 export async function GET(req: NextRequest) {
   const user = await requireCrmUser()
   if (!user?.isManager) return NextResponse.json({ error: 'Managers only' }, { status: 403 })
-  const days = Math.min(Number(req.nextUrl.searchParams.get('days')) || 7, 30)
-  const logs = await readLogs(days)
+  const from = req.nextUrl.searchParams.get('from') || ''
+  const to = req.nextUrl.searchParams.get('to') || ''
+  // Custom from→to takes precedence over the rolling ?days window
+  const logs = YMD.test(from) && YMD.test(to)
+    ? await readLogsBetween(from, to)
+    : await readLogs(Math.min(Number(req.nextUrl.searchParams.get('days')) || 7, 30))
   return NextResponse.json({
     logs: logs.slice(0, 400),
     total: logs.length,
@@ -36,15 +42,20 @@ export async function POST(req: NextRequest) {
   if (!user?.isManager) return NextResponse.json({ error: 'Managers only' }, { status: 403 })
 
   try {
-    const { action, report, question, recipients, days: rawDays } = await req.json()
-    // Range is selectable in the UI: week (7), fortnight (14), month (30)
+    const { action, report, question, recipients, days: rawDays, from, to } = await req.json()
+    // Range is selectable in the UI: week (7), fortnight (14), month (30),
+    // or an explicit custom from→to window.
+    const custom = typeof from === 'string' && typeof to === 'string' && YMD.test(from) && YMD.test(to)
     const days = Math.min(Math.max(Number(rawDays) || 7, 1), 31)
-    const rangeLabel = days <= 7 ? 'Weekly' : days <= 14 ? 'Fortnight' : 'Monthly'
+    const rangeLabel = custom ? 'Custom-range' : days <= 7 ? 'Weekly' : days <= 14 ? 'Fortnight' : 'Monthly'
+    const rangeStart = custom ? from : new Date(Date.now() - (days - 1) * 864e5).toISOString().slice(0, 10)
+    const rangeEnd = custom ? to : new Date().toISOString().slice(0, 10)
+    const getLogs = () => (custom ? readLogsBetween(from, to) : readLogs(days))
 
     if (action === 'report') {
       if (!aiConfigured()) return NextResponse.json({ error: 'AI not configured' }, { status: 503 })
-      const logs = await readLogs(days)
-      if (logs.length === 0) return NextResponse.json({ report: `# GennoorCare — ${rangeLabel} Business Report\n\nNo visitor conversations in the last ${days} days yet. The report fills up as the bot talks to website visitors.` })
+      const logs = await getLogs()
+      if (logs.length === 0) return NextResponse.json({ report: `# GennoorCare — ${rangeLabel} Business Report\n\nNo visitor conversations in the ${custom ? `${from} → ${to} window` : `last ${days} days`} yet. The report fills up as the bot talks to website visitors.` })
       const leads = logs.filter((l) => l.leadCaptured)
       const md = await chatCompletion(
         [
@@ -52,7 +63,7 @@ export async function POST(req: NextRequest) {
             role: 'system',
             content: `You write a ${rangeLabel.toLowerCase()} BUSINESS report for Gennoor Tech's leadership from their GennoorCare website-bot logs. Output pure Markdown, ready to forward to the team. Structure exactly:
 
-# GennoorCare — ${rangeLabel} Business Report (${new Date(Date.now() - (days - 1) * 864e5).toISOString().slice(0, 10)} to ${new Date().toISOString().slice(0, 10)})
+# GennoorCare — ${rangeLabel} Business Report (${rangeStart} to ${rangeEnd})
 
 ## Headline numbers
 (conversations, unique topics, leads captured — one line each)
@@ -83,7 +94,7 @@ Business tone, concise, numbers first, no fluff. Only facts from the logs — ne
 
     if (action === 'chat') {
       if (!question || !report) return NextResponse.json({ error: 'question and report required' }, { status: 400 })
-      const logs = await readLogs(days)
+      const logs = await getLogs()
       const reply = await chatCompletion(
         [
           { role: 'system', content: `You are the analyst behind this weekly bot report. Answer the manager's question using the report and the raw logs. Concise, business tone.\n\nREPORT:\n${String(report).slice(0, 8000)}\n\nRAW LOGS:\n${logsDigest(logs).slice(0, 8000)}` },

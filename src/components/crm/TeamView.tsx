@@ -1,14 +1,15 @@
 'use client'
 
+import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { Users, Brain, Mail, Calendar, Activity, ShieldAlert } from 'lucide-react'
 import { Lead, LeadActivity } from '@/lib/crm/types'
-import { formatDateTime, timeAgo } from './shared'
+import { formatDateTime, timeAgo, DateRangeFilter, DateRange, rangeBounds, rangeLabel } from './shared'
 
 interface MemberStats {
   email: string
   today: number
-  week: number
+  inRange: number
   researched: number
   emails: number
   followups: number
@@ -18,8 +19,47 @@ interface MemberStats {
 }
 
 // Manager-only visibility: what every team member is doing, computed from
-// the activity trail on every lead.
+// the activity trail on every lead. All counters (except leads owned, which
+// is a point-in-time fact) respect the selected date range.
 export default function TeamView({ leads, isManager }: { leads: Lead[]; isManager: boolean }) {
+  const [range, setRange] = useState<DateRange>({ days: 7, from: '', to: '' })
+
+  const rows = useMemo(() => {
+    const dayStart = new Date(); dayStart.setHours(0, 0, 0, 0)
+    const { fromMs, toMs } = rangeBounds(range)
+    const members = new Map<string, MemberStats>()
+
+    const get = (email: string): MemberStats => {
+      if (!members.has(email)) {
+        members.set(email, { email, today: 0, inRange: 0, researched: 0, emails: 0, followups: 0, owned: 0, recent: [] })
+      }
+      return members.get(email)!
+    }
+
+    for (const lead of leads) {
+      if (lead.owner) get(lead.owner.toLowerCase()).owned++
+      for (const a of lead.activities) {
+        const m = get(a.by.toLowerCase())
+        const t = new Date(a.at).getTime()
+        const entry = { ...a, leadId: lead.id, leadName: lead.name }
+        if (!m.lastActivity || a.at > m.lastActivity.at) m.lastActivity = entry
+        if (t >= dayStart.getTime()) m.today++
+        if (t < fromMs || t > toMs) continue
+        m.inRange++
+        if (a.type === 'research') m.researched++
+        if (a.type === 'email') m.emails++
+        if (a.type === 'followup') m.followups++
+        if (m.recent.length < 50) m.recent.push(entry)
+      }
+    }
+
+    const out = [...members.values()]
+      .filter((m) => m.email.includes('@'))
+      .sort((a, b) => b.inRange - a.inRange || b.owned - a.owned)
+    for (const m of out) m.recent.sort((a, b) => b.at.localeCompare(a.at))
+    return out
+  }, [leads, range])
+
   if (!isManager) {
     return (
       <div className="p-8 max-w-md mx-auto text-center">
@@ -29,44 +69,19 @@ export default function TeamView({ leads, isManager }: { leads: Lead[]; isManage
     )
   }
 
-  const dayStart = new Date(); dayStart.setHours(0, 0, 0, 0)
-  const weekAgo = Date.now() - 7 * 86_400_000
-  const members = new Map<string, MemberStats>()
-
-  const get = (email: string): MemberStats => {
-    if (!members.has(email)) {
-      members.set(email, { email, today: 0, week: 0, researched: 0, emails: 0, followups: 0, owned: 0, recent: [] })
-    }
-    return members.get(email)!
-  }
-
-  for (const lead of leads) {
-    if (lead.owner) get(lead.owner.toLowerCase()).owned++
-    for (const a of lead.activities) {
-      const m = get(a.by.toLowerCase())
-      const t = new Date(a.at).getTime()
-      if (t >= dayStart.getTime()) m.today++
-      if (t >= weekAgo) m.week++
-      if (a.type === 'research') m.researched++
-      if (a.type === 'email') m.emails++
-      if (a.type === 'followup') m.followups++
-      const entry = { ...a, leadId: lead.id, leadName: lead.name }
-      if (!m.lastActivity || a.at > m.lastActivity.at) m.lastActivity = entry
-      if (m.recent.length < 30) m.recent.push(entry)
-    }
-  }
-
-  const rows = [...members.values()]
-    .filter((m) => m.email.includes('@'))
-    .sort((a, b) => b.week - a.week)
-  for (const m of rows) m.recent.sort((a, b) => b.at.localeCompare(a.at))
-
   return (
     <div className="p-3 sm:p-5 space-y-4 max-w-5xl">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         <Users className="w-4 h-4 text-blue-500" />
         <h2 className="text-base font-semibold text-gray-900">Team activity</h2>
         <span className="text-xs text-gray-400">computed from every action recorded on leads</span>
+        <div className="ml-auto">
+          <DateRangeFilter
+            value={range}
+            onChange={setRange}
+            presets={[{ days: 1, label: 'Today' }, { days: 7, label: 'Week' }, { days: 30, label: 'Month' }]}
+          />
+        </div>
       </div>
 
       {rows.length === 0 && (
@@ -85,7 +100,7 @@ export default function TeamView({ leads, isManager }: { leads: Lead[]; isManage
               </div>
               <div className="flex items-center gap-3 text-xs text-gray-500 shrink-0">
                 <span title="actions today" className="font-semibold text-gray-800">{m.today} today</span>
-                <span title="actions this week">{m.week} / wk</span>
+                <span title={`actions ${rangeLabel(range)}`}>{m.inRange} / {rangeLabel(range)}</span>
               </div>
             </div>
             <div className="px-4 py-2.5 grid grid-cols-4 gap-2 text-center border-b border-gray-100">
@@ -95,7 +110,8 @@ export default function TeamView({ leads, isManager }: { leads: Lead[]; isManage
               <Stat icon={Calendar} label="invites" value={m.followups} />
             </div>
             <div className="max-h-48 overflow-y-auto divide-y divide-gray-50">
-              {m.recent.slice(0, 10).map((a, i) => (
+              {m.recent.length === 0 && <p className="px-4 py-3 text-xs text-gray-400">No actions {rangeLabel(range)}.</p>}
+              {m.recent.slice(0, 15).map((a, i) => (
                 <Link key={i} href={`/crm/leads/${encodeURIComponent(a.leadId)}`} className="px-4 py-2 flex items-start gap-2 hover:bg-gray-50 block">
                   <Activity className="w-3.5 h-3.5 text-gray-300 mt-0.5 shrink-0" />
                   <div className="min-w-0">
