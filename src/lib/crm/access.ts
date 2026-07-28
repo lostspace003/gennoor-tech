@@ -18,7 +18,6 @@ export const CRM_ADMIN = 'admin@gennoor.com'
 // Everyone else can work leads (research, email, stages) but not manage data.
 export const CRM_MANAGERS = [
   'admin@gennoor.com',
-  'jalalkhan@gennoor.com',
   'yusufchaudhary@gennoor.com',
 ]
 

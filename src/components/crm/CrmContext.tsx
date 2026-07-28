@@ -17,7 +17,7 @@ interface CrmContextValue {
 
 // Mirrors CRM_MANAGERS in src/lib/crm/access.ts (API is the enforcer;
 // this only controls what the UI offers).
-const MANAGERS = ['admin@gennoor.com', 'jalalkhan@gennoor.com', 'yusufchaudhary@gennoor.com']
+const MANAGERS = ['admin@gennoor.com', 'yusufchaudhary@gennoor.com']
 
 const CrmContext = createContext<CrmContextValue | null>(null)
 
