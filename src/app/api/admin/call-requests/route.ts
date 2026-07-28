@@ -9,6 +9,7 @@ import {
   getConfiguredBusinessId,
   type CreateAppointmentPayload,
 } from '@/lib/microsoft-graph'
+import { IST, istInstant, leadTimeZone, formatInZone } from '@/lib/crm/timezones'
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -37,10 +38,11 @@ function buildConfirmationEmail(opts: {
   name: string
   serviceName: string
   when: { dateLabel: string; timeLabel: string; durationLabel: string }
+  localTimeLabel?: string
   joinWebUrl?: string
   topic?: string
 }) {
-  const { name, serviceName, when, joinWebUrl, topic } = opts
+  const { name, serviceName, when, localTimeLabel, joinWebUrl, topic } = opts
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.gennoor.com'
   const row = (label: string, value: string) =>
     `<tr>
@@ -64,6 +66,7 @@ function buildConfirmationEmail(opts: {
             ${row('Service', esc(serviceName))}
             ${row('Date', when.dateLabel)}
             ${row('Time', when.timeLabel)}
+            ${localTimeLabel ? row('Your local time', esc(localTimeLabel)) : ''}
             ${row('Duration', when.durationLabel)}
             ${row('Host', 'Jalal Khan · Founder &amp; Principal AI Consultant, Gennoor Tech')}
             ${row('Format', 'Online · Microsoft Teams (link below)')}
@@ -329,6 +332,13 @@ export async function POST(request: NextRequest) {
       const result = await createBookingAppointment(businessId, appointment)
 
       const when = formatWhenIST(date, time, durationMinutes)
+      // Customer-local time when their country (from the call-request form)
+      // maps to a time zone — shown as an extra row in the confirmation.
+      const custTz = leadTimeZone(req.whatsappCountry)
+      let localTimeLabel = ''
+      if (custTz && custTz !== IST) {
+        try { localTimeLabel = formatInZone(istInstant(date, time), custTz) } catch {}
+      }
       const emailRes = await sendEmail({
         to: req.email,
         cc: process.env.EMAIL_ADMIN || 'admin@gennoor.com',
@@ -339,6 +349,7 @@ export async function POST(request: NextRequest) {
           name: req.name || 'there',
           serviceName: service.displayName,
           when,
+          localTimeLabel,
           joinWebUrl: result.joinWebUrl,
           topic: req.message,
         }),

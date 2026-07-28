@@ -5,6 +5,8 @@ import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import GennoorCareTile from '@/components/admin/GennoorCareTile'
 import CrmStatsTile from '@/components/admin/CrmStatsTile'
+import { TimeSlider, LeadLocalTime } from '@/components/crm/shared'
+import { istInstant, isoToIstParts, leadTimeZone, formatInZone } from '@/lib/crm/timezones'
 import dynamic from 'next/dynamic'
 import {
   BarChart3, Eye, MessageSquare, Mail, Globe, MapPin,
@@ -290,6 +292,22 @@ export default function AdminDashboard() {
     } catch {} finally { setBookingsAction(null); closeModal() }
   }
 
+  // Reschedule pickers are IST wall-clock; the bookings API stores UTC —
+  // convert here. End time is only sent when it lands on the same UTC date
+  // after start; otherwise the server falls back to the service duration.
+  function confirmReschedule() {
+    if (!bookingModal || !modalResched.date || !modalResched.startTime) return
+    const sIso = istInstant(modalResched.date, modalResched.startTime).toISOString()
+    const eIso = modalResched.endTime ? istInstant(modalResched.date, modalResched.endTime).toISOString() : ''
+    const sameUtcDay = eIso && eIso.slice(0, 10) === sIso.slice(0, 10) && eIso > sIso
+    handleBookingAction(bookingModal.booking.rowKey, 'reschedule', {
+      message: modalMessage,
+      newDate: sIso.slice(0, 10),
+      newStartTime: sIso.slice(11, 16),
+      ...(sameUtcDay ? { newEndTime: eIso.slice(11, 16) } : {}),
+    })
+  }
+
   function openModal(type: 'outcome' | 'reply' | 'reschedule' | 'reject', booking: BookingAppointment) {
     setBookingModal({ type, booking })
     setModalMessage('')
@@ -303,7 +321,14 @@ export default function AdminDashboard() {
       setModalMessage('')
     }
     if (type === 'reschedule') {
-      setModalResched({ date: booking.date, startTime: booking.startTime, endTime: booking.endTime })
+      // Bookings are stored as UTC wall-clock; the picker works in IST
+      try {
+        const s = isoToIstParts(`${booking.date}T${booking.startTime}:00Z`)
+        const e = isoToIstParts(`${booking.date}T${(booking.endTime || booking.startTime)}:00Z`)
+        setModalResched({ date: s.date, startTime: s.time, endTime: e.time })
+      } catch {
+        setModalResched({ date: booking.date, startTime: booking.startTime, endTime: booking.endTime })
+      }
       setModalMessage('')
     }
     if (type === 'reject') {
@@ -1509,6 +1534,8 @@ export default function AdminDashboard() {
                         className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500" />
                     </div>
                   </div>
+                  <TimeSlider value={callSchedule.time} onChange={time => setCallSchedule(s => s && ({ ...s, time }))} label="Call time (IST)" />
+                  <LeadLocalTime date={callSchedule.date} time={callSchedule.time} country={callSchedule.req.whatsappCountry} who="Customer" />
                   <div>
                     <label className="block text-xs font-medium text-slate-500 mb-1">Service</label>
                     <select value={callSchedule.serviceId} onChange={e => setCallSchedule(s => s && ({ ...s, serviceId: e.target.value }))}
@@ -1559,7 +1586,8 @@ export default function AdminDashboard() {
                   </div>
                   <p className="text-slate-600"><strong>{bookingModal.booking.name}</strong> &middot; {bookingModal.booking.email}</p>
                   {bookingModal.booking.whatsapp && <p className="text-slate-500">WhatsApp: {bookingModal.booking.whatsapp}</p>}
-                  <p className="text-slate-500">{bookingModal.booking.date} &middot; {bookingModal.booking.startTime}{bookingModal.booking.endTime !== bookingModal.booking.startTime ? ` – ${bookingModal.booking.endTime}` : ''} UTC</p>
+                  <p className="text-slate-500">{bookingModal.booking.date} &middot; {bookingModal.booking.startTime}{bookingModal.booking.endTime !== bookingModal.booking.startTime ? ` – ${bookingModal.booking.endTime}` : ''} UTC
+                    {(() => { try { const p = isoToIstParts(`${bookingModal.booking.date}T${bookingModal.booking.startTime}:00Z`); return ` (${p.date} ${p.time} IST)` } catch { return '' } })()}</p>
                   {bookingModal.booking.topic && <p className="text-slate-500 mt-1">Topic: {bookingModal.booking.topic}</p>}
                   {bookingModal.booking.country && <p className="text-slate-500">{bookingModal.booking.country}{bookingModal.booking.timezone !== 'UTC' ? ` (${bookingModal.booking.timezone})` : ''}</p>}
                 </div>
@@ -1632,19 +1660,33 @@ export default function AdminDashboard() {
                       <input type="date" value={modalResched.date} onChange={e => setModalResched(p => ({ ...p, date: e.target.value }))} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">Start (UTC)</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">Start (IST)</label>
                       <input type="time" value={modalResched.startTime} onChange={e => setModalResched(p => ({ ...p, startTime: e.target.value }))} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">End (UTC)</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">End (IST)</label>
                       <input type="time" value={modalResched.endTime} onChange={e => setModalResched(p => ({ ...p, endTime: e.target.value }))} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
                   </div>
+                  <TimeSlider value={modalResched.startTime} onChange={startTime => setModalResched(p => ({ ...p, startTime }))} label="Start time (IST)" />
+                  {(() => {
+                    const b = bookingModal.booking
+                    const tz = (b.timezone && b.timezone !== 'UTC') ? b.timezone : leadTimeZone(b.country)
+                    if (!tz || !modalResched.date || !modalResched.startTime) return null
+                    try {
+                      const local = formatInZone(istInstant(modalResched.date, modalResched.startTime), tz)
+                      return (
+                        <p className="text-xs text-blue-800 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+                          Customer&apos;s local time{b.country ? ` (${b.country})` : ''}: <strong>{local}</strong>
+                        </p>
+                      )
+                    } catch { return null }
+                  })()}
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Note to Customer (optional)</label>
                     <textarea value={modalMessage} onChange={e => setModalMessage(e.target.value)} placeholder="Reason for rescheduling..." className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" rows={2} />
                   </div>
-                  <button onClick={() => handleBookingAction(bookingModal.booking.rowKey, 'reschedule', { message: modalMessage, newDate: modalResched.date, newStartTime: modalResched.startTime, newEndTime: modalResched.endTime })} disabled={bookingsAction === bookingModal.booking.rowKey || !modalResched.date || !modalResched.startTime} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                  <button onClick={confirmReschedule} disabled={bookingsAction === bookingModal.booking.rowKey || !modalResched.date || !modalResched.startTime} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-colors disabled:opacity-50">
                     {bookingsAction === bookingModal.booking.rowKey ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Calendar className="w-4 h-4" />} Confirm Reschedule
                   </button>
                 </div>

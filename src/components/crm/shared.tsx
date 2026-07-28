@@ -201,8 +201,8 @@ export function TimeSlider({ value, onChange, label = 'Time (IST)', step = 15 }:
 // Live preview of the selected IST slot in the lead's own time zone, resolved
 // from their country/city. Shown under every schedule picker so the team sees
 // the conversion before anything is sent.
-export function LeadLocalTime({ date, time, country, city }: {
-  date: string; time: string; country?: string; city?: string
+export function LeadLocalTime({ date, time, country, city, who = 'Lead' }: {
+  date: string; time: string; country?: string; city?: string; who?: string
 }) {
   if (!date || !time) return null
   const tz = leadTimeZone(country, city)
@@ -212,17 +212,17 @@ export function LeadLocalTime({ date, time, country, city }: {
         Couldn&apos;t map &quot;{country}&quot; to a time zone — the invite will show IST only.
       </p>
     ) : (
-      <p className="text-[11px] text-gray-400 px-1">Lead has no country set — the invite will show IST only.</p>
+      <p className="text-[11px] text-gray-400 px-1">{who} has no country set — the invite will show IST only.</p>
     )
   }
   const instant = istInstant(date, time)
   if (isNaN(instant.getTime())) return null
   if (tz === IST) {
-    return <p className="text-[11px] text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">Lead is in the same time zone (IST) — no conversion needed.</p>
+    return <p className="text-[11px] text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">{who} is in the same time zone (IST) — no conversion needed.</p>
   }
   return (
     <p className="text-[11px] text-blue-800 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
-      Lead&apos;s local time{country ? ` (${country})` : ''}: <strong>{formatInZone(instant, tz)}</strong>
+      {who}&apos;s local time{country ? ` (${country})` : ''}: <strong>{formatInZone(instant, tz)}</strong>
     </p>
   )
 }

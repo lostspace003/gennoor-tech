@@ -10,6 +10,7 @@ import { getPendingBookings, updatePendingBooking, deletePendingBooking } from '
 import { sendEmail } from '@/lib/email-service'
 import { trackEvent, initAppInsights } from '@/lib/analytics'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
+import { leadTimeZone, formatInZone } from '@/lib/crm/timezones'
 
 // User-supplied values (booking form fields, admin free text) get interpolated
 // into email HTML — escape them so markup/scripts can't be injected.
@@ -443,6 +444,14 @@ export async function PATCH(request: NextRequest) {
         adminMessage: adminMessage || '',
       })
 
+      // Customer's own zone: the booking widget stored their IANA timezone;
+      // fall back to mapping their country. Their local time leads the email.
+      const custTz = (booking.timezone && booking.timezone !== 'UTC') ? booking.timezone : leadTimeZone(booking.country)
+      let localWhen = ''
+      if (custTz) {
+        try { localWhen = formatInZone(new Date(`${newDate}T${newStartTime}:00Z`), custTz) } catch {}
+      }
+
       await sendEmail({
         to: booking.email,
         from: process.env.EMAIL_FROM_SCHEDULE || 'schedule@gennoor.com',
@@ -458,8 +467,11 @@ export async function PATCH(request: NextRequest) {
               </p>
               <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:16px;margin:0 0 16px">
                 <p style="margin:0 0 6px;font-size:14px;color:#111827"><strong>${service.displayName}</strong></p>
-                <p style="margin:0 0 4px;font-size:13px;color:#6b7280">New Date: <strong style="color:#374151">${newDate}</strong></p>
-                <p style="margin:0 0 4px;font-size:13px;color:#6b7280">New Time: <strong style="color:#374151">${newStartTime} UTC</strong></p>
+                ${localWhen
+                  ? `<p style="margin:0 0 4px;font-size:13px;color:#6b7280">New Time: <strong style="color:#374151">${esc(localWhen)}</strong> (your local time)</p>
+                <p style="margin:0 0 4px;font-size:12px;color:#9ca3af">${newDate}, ${newStartTime} UTC</p>`
+                  : `<p style="margin:0 0 4px;font-size:13px;color:#6b7280">New Date: <strong style="color:#374151">${newDate}</strong></p>
+                <p style="margin:0 0 4px;font-size:13px;color:#6b7280">New Time: <strong style="color:#374151">${newStartTime} UTC</strong></p>`}
                 <p style="margin:0;font-size:13px;color:#6b7280">With: <strong style="color:#374151">Jalal Khan</strong></p>
               </div>
               ${result.joinWebUrl ? `
