@@ -17,7 +17,7 @@ To start, we'd love to offer ${lead.company || 'your organization'} two things, 
 - A 2-hour webinar tailored to your team's needs
 - A 1-day online AI training for your people
 
-These are relationship-building sessions — no strings attached. You can also see our work on enterprise AI agent development on our YouTube channel.
+These are relationship-building sessions — no strings attached. You can also see our work on enterprise AI agent development on our YouTube channel: https://www.youtube.com/@GennoorTech
 
 Would a short call this week work to pick a topic your team would benefit from most?
 

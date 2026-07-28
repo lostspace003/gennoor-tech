@@ -11,7 +11,7 @@ export default function DashboardPage() {
     <DashboardView
       leads={leads}
       onGoLeads={() => router.push('/crm/leads')}
-      onOpenLead={(id) => router.push(`/crm/leads/${id}`)}
+      onOpenLead={(id) => router.push(`/crm/leads/${encodeURIComponent(id)}`)}
     />
   )
 }

@@ -32,9 +32,19 @@ export function emailShell(bodyHtml: string, opts?: { preheader?: string; sender
   </div>`
 }
 
+// Bare URLs in plain-text drafts become clickable links (runs on already
+// escaped text, so `&` appears as `&amp;` — valid inside href too).
+function linkifyUrls(escaped: string): string {
+  return escaped.replace(/https?:\/\/[^\s<]+/g, (m) => {
+    const url = m.replace(/[.,;:!?)]+$/, '')
+    const trail = m.slice(url.length)
+    return `<a href="${url}" style="color:#2563EB;text-decoration:underline">${url}</a>${trail}`
+  })
+}
+
 // Plain-text body → clean paragraphs
 export function textToHtml(bodyText: string): string {
-  return escapeHtml(bodyText)
+  return linkifyUrls(escapeHtml(bodyText))
     .split(/\n{2,}/)
     .map((p) => `<p style="margin:0 0 14px;white-space:pre-line">${p}</p>`)
     .join('')

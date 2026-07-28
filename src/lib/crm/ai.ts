@@ -133,7 +133,7 @@ Offerings follow a 5-step client journey:
 3. POC — demo / proof of concept with a web link
 4. Product development
 5. Sustain — maintenance with complementary hand-holding for 3-6 months
-Free relationship-building offers used in outreach: a free 2-hour webinar tailored to the company's needs, and a free 1-day online training. There is also a YouTube channel on enterprise AI agent development.
+Free relationship-building offers used in outreach: a free 2-hour webinar tailored to the company's needs, and a free 1-day online training. There is also a YouTube channel on enterprise AI agent development: https://www.youtube.com/@GennoorTech — whenever an email mentions the channel, include this exact link.
 Contact: admin@gennoor.com, +91 9326352241.
 STRICT RULES for anything you write: never invent statistics, client counts, or case studies. No fabricated claims like "100+ implementations" or "40% cost reduction". Be honest, specific and concise.
 STYLE — business-grade brevity, always: lead with the point; short sentences; bullets over paragraphs; no filler ("I hope this helps", "it's worth noting"), no restating the question, no hedging boilerplate. Outreach emails stay under 170 words. Answers to the team: only the detail they need to act, nothing more.`
@@ -238,6 +238,16 @@ ${leadContext(lead)}`,
   ])
 }
 
+export const YOUTUBE_CHANNEL_URL = 'https://www.youtube.com/@GennoorTech'
+
+// Safety net: if a draft mentions the YouTube channel but the model dropped
+// the URL, splice it in so the lead always gets a clickable link.
+export function ensureYouTubeLink(body: string): string {
+  if (!body || body.includes('youtube.com')) return body
+  if (/YouTube channel/i.test(body)) return body.replace(/YouTube channel/i, (m) => `${m} (${YOUTUBE_CHANNEL_URL})`)
+  return body
+}
+
 export async function draftEmail(lead: Lead, instructions?: string): Promise<{ subject: string; body: string }> {
   const content = await chatCompletion(
     [
@@ -249,7 +259,7 @@ Write a personalized first-touch outreach email for this lead. Requirements:
 - Address the person by name; reference their company/role naturally
 - Briefly explain how Gennoor helps (diagnose -> train -> POC -> development -> sustain), matched to their likely needs
 - Clearly offer the free 2-hour webinar tailored to their organization AND the free 1-day online training — make clear these are relationship-building, no-obligation offers
-- Mention the YouTube channel on enterprise AI agent development as a resource
+- Mention the YouTube channel on enterprise AI agent development as a resource, with its link: https://www.youtube.com/@GennoorTech
 - Plain, warm, professional tone. No hype, no invented numbers.
 - Return JSON: {"subject": "...", "body": "..."} where body is plain text (no HTML), signed "Team Gennoor Tech" with admin@gennoor.com and +91 9326352241.
 ${lead.finalizedPitch ? `\nUse this finalized pitch content as the basis:\n${lead.finalizedPitch}` : ''}`,
@@ -261,6 +271,6 @@ ${lead.finalizedPitch ? `\nUse this finalized pitch content as the basis:\n${lea
   const parsed = JSON.parse(content)
   return {
     subject: parsed.subject || `Gennoor Tech — AI enablement for ${lead.company || 'your team'}`,
-    body: parsed.body || '',
+    body: ensureYouTubeLink(parsed.body || ''),
   }
 }

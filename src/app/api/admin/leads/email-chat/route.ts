@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
 import { getLead } from '@/lib/crm/store'
-import { aiConfigured, chatCompletion, leadContext, GENNOOR_CONTEXT } from '@/lib/crm/ai'
+import { aiConfigured, chatCompletion, leadContext, GENNOOR_CONTEXT, ensureYouTubeLink } from '@/lib/crm/ai'
 
 // Interactive email copilot: iterate on a draft via chat, then "finalize"
 // returns the polished final copy for review before sending.
@@ -47,7 +47,7 @@ ${leadContext(lead)}`,
         { json: true }
       )
       const parsed = JSON.parse(content)
-      return NextResponse.json({ subject: parsed.subject || subject, body: parsed.body || body, final: true })
+      return NextResponse.json({ subject: parsed.subject || subject, body: ensureYouTubeLink(parsed.body || body), final: true })
     }
 
     if (!message) return NextResponse.json({ error: 'message required' }, { status: 400 })
@@ -71,7 +71,7 @@ ${leadContext(lead)}`,
     return NextResponse.json({
       reply: parsed.reply || 'Draft updated.',
       subject: parsed.subject || subject,
-      body: parsed.body || body,
+      body: ensureYouTubeLink(parsed.body || body),
     })
   } catch (error) {
     console.error('Email chat error:', error)

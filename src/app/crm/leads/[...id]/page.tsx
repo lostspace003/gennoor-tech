@@ -5,13 +5,18 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useCrm } from '@/components/crm/CrmContext'
 import LeadWorkspace from '@/components/crm/LeadWorkspace'
 
-export default function LeadPage({ params }: { params: Promise<{ id: string }> }) {
+export default function LeadPage({ params }: { params: Promise<{ id: string[] }> }) {
   const { id } = use(params)
   const router = useRouter()
   const searchParams = useSearchParams()
   const { leads, loading, isManager, reload, notify } = useCrm()
 
-  const lead = leads.find((l) => l.id === decodeURIComponent(id))
+  // Lead ids can contain slashes (linkedin.com/in/...). Encoded links arrive
+  // as one segment; older unencoded links arrive split — rejoin either way.
+  const leadId = (Array.isArray(id) ? id : [id])
+    .map((s) => { try { return decodeURIComponent(s) } catch { return s } })
+    .join('/')
+  const lead = leads.find((l) => l.id === leadId)
 
   if (!lead) {
     return (

@@ -6,7 +6,8 @@ import {
   Calendar, Trash2, CheckCircle, MessageSquare, Lock, RefreshCw, Paperclip, Reply, Eye,
 } from 'lucide-react'
 import { Lead, ChatMessage, PIPELINE_STAGES, COMPANY_SIZES, BUSINESS_FUNCTIONS, LEAD_INTERESTS, DECISION_ROLES } from '@/lib/crm/types'
-import { StatusBadge, ProcessDot, StageBar, api, formatDateTime, Spinner, STAGE_LABELS, CopyMsg, InfoTip, DurationSlider } from './shared'
+import { StatusBadge, ProcessDot, StageBar, api, formatDateTime, Spinner, STAGE_LABELS, CopyMsg, InfoTip, DurationSlider, TimeSlider, LeadLocalTime } from './shared'
+import { istInstant } from '@/lib/crm/timezones'
 import { useCrm } from './CrmContext'
 import DocPreview from './DocPreview'
 import DOMPurify from 'dompurify'
@@ -926,8 +927,8 @@ function EmailComposer({ lead, replyTo, preset, onClose, onSent, notify }: { lea
 /* ---------------- Meetings & Follow-ups ---------------- */
 
 function ScheduleTab({ lead, onReload, notify }: { lead: Lead; onReload: () => Promise<void>; notify: Props['notify'] }) {
-  const [meetForm, setMeetForm] = useState({ subject: `Gennoor Tech <> ${lead.company || lead.name} — discovery call`, date: '', time: '', duration: 30, agenda: '', extra: '' })
-  const [fuForm, setFuForm] = useState({ type: 'webinar' as 'webinar' | 'training', title: '', date: '', time: '', notes: '', posterBlob: '' })
+  const [meetForm, setMeetForm] = useState({ subject: `Gennoor Tech <> ${lead.company || lead.name} — discovery call`, date: '', time: '10:00', duration: 30, agenda: '', extra: '' })
+  const [fuForm, setFuForm] = useState({ type: 'webinar' as 'webinar' | 'training', title: '', date: '', time: '10:00', notes: '', posterBlob: '' })
   const [posters, setPosters] = useState<CrmDocument[]>([])
   const [busy, setBusy] = useState('')
   const [uploadingPoster, setUploadingPoster] = useState(false)
@@ -942,7 +943,9 @@ function ScheduleTab({ lead, onReload, notify }: { lead: Lead; onReload: () => P
     if (!meetForm.date || !meetForm.time) { notify('Pick a date and time', true); return }
     setBusy('meet')
     try {
-      const start = new Date(`${meetForm.date}T${meetForm.time}`).toISOString()
+      // Selected wall-clock time is IST — anchor explicitly so browser/server
+      // time zones can't shift the actual instant.
+      const start = istInstant(meetForm.date, meetForm.time).toISOString()
       const res = await api<{ meeting: { joinUrl?: string } }>('/api/admin/leads/schedule-meeting', {
         method: 'POST',
         body: JSON.stringify({
@@ -983,7 +986,7 @@ function ScheduleTab({ lead, onReload, notify }: { lead: Lead; onReload: () => P
       await api('/api/admin/leads/schedule-followup', { method: 'POST', body: JSON.stringify({ leadId: lead.id, ...fuForm }) })
       await onReload()
       notify(`${fuForm.type === 'webinar' ? 'Webinar' : 'Training'} invite sent to ${lead.email}`)
-      setFuForm({ type: 'webinar', title: '', date: '', time: '', notes: '', posterBlob: '' })
+      setFuForm({ type: 'webinar', title: '', date: '', time: '10:00', notes: '', posterBlob: '' })
     } catch (e: any) { notify(e.message, true) } finally { setBusy('') }
   }
 
@@ -1000,8 +1003,10 @@ function ScheduleTab({ lead, onReload, notify }: { lead: Lead; onReload: () => P
         <input value={meetForm.subject} onChange={(e) => setMeetForm({ ...meetForm, subject: e.target.value })} className={inputCls} placeholder="Meeting subject" />
         <div className="grid grid-cols-2 gap-2">
           <input type="date" value={meetForm.date} onChange={(e) => setMeetForm({ ...meetForm, date: e.target.value })} className={inputCls} />
-          <input type="time" value={meetForm.time} onChange={(e) => setMeetForm({ ...meetForm, time: e.target.value })} className={inputCls} />
+          <input type="time" value={meetForm.time} onChange={(e) => setMeetForm({ ...meetForm, time: e.target.value })} className={inputCls} title="Time in IST — or use the slider below" />
         </div>
+        <TimeSlider value={meetForm.time} onChange={(time) => setMeetForm({ ...meetForm, time })} label="Meeting time (IST)" />
+        <LeadLocalTime date={meetForm.date} time={meetForm.time} country={lead.country} city={lead.city} />
         <DurationSlider value={meetForm.duration} onChange={(duration) => setMeetForm({ ...meetForm, duration })} />
         <input value={meetForm.extra} onChange={(e) => setMeetForm({ ...meetForm, extra: e.target.value })} className={inputCls} placeholder="More attendees (comma-separated emails, optional)" />
         <textarea value={meetForm.agenda} onChange={(e) => setMeetForm({ ...meetForm, agenda: e.target.value })} rows={2} className={inputCls} placeholder="Agenda (optional)" />
@@ -1023,8 +1028,10 @@ function ScheduleTab({ lead, onReload, notify }: { lead: Lead; onReload: () => P
         <input value={fuForm.title} onChange={(e) => setFuForm({ ...fuForm, title: e.target.value })} className={inputCls} placeholder={fuForm.type === 'webinar' ? 'Webinar topic (as per their need)' : 'Training title'} />
         <div className="grid grid-cols-2 gap-2">
           <input type="date" value={fuForm.date} onChange={(e) => setFuForm({ ...fuForm, date: e.target.value })} className={inputCls} />
-          <input type="time" value={fuForm.time} onChange={(e) => setFuForm({ ...fuForm, time: e.target.value })} className={inputCls} />
+          <input type="time" value={fuForm.time} onChange={(e) => setFuForm({ ...fuForm, time: e.target.value })} className={inputCls} title="Time in IST — or use the slider below" />
         </div>
+        <TimeSlider value={fuForm.time} onChange={(time) => setFuForm({ ...fuForm, time })} label={`${fuForm.type === 'webinar' ? 'Webinar' : 'Training'} time (IST)`} />
+        <LeadLocalTime date={fuForm.date} time={fuForm.time} country={lead.country} city={lead.city} />
         <textarea value={fuForm.notes} onChange={(e) => setFuForm({ ...fuForm, notes: e.target.value })} rows={2} className={inputCls} placeholder="Extra details for the invite (optional)" />
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">

@@ -6,6 +6,7 @@ import { sendEmail } from '@/lib/email-service'
 import { escapeHtml } from '@/lib/escape-html'
 import { emailShell } from '@/lib/crm/email-theme'
 import { FollowUp } from '@/lib/crm/types'
+import { IST, istInstant, leadTimeZone, formatInZone } from '@/lib/crm/timezones'
 
 const ADMIN_CC = process.env.EMAIL_ADMIN || 'admin@gennoor.com'
 const FROM = process.env.EMAIL_FROM_WEBINAR || process.env.EMAIL_FROM_INFO || 'info@gennoor.com'
@@ -57,11 +58,13 @@ export async function POST(request: Request) {
     }
 
     const first = (lead.name || 'there').split(/\s+/)[0]
-    const dateLabel = new Date(`${date}T${time}`).toLocaleString('en-IN', {
-      dateStyle: 'full',
-      timeStyle: 'short',
-      timeZone: 'Asia/Kolkata',
-    })
+    // The picked time is IST wall-clock; anchoring with +05:30 keeps the
+    // instant correct even though the server runs in UTC. When we know the
+    // lead's time zone (from country/city) the invite leads with THEIR time.
+    const startAt = istInstant(date, time)
+    const istLabel = formatInZone(startAt, IST)
+    const leadTz = leadTimeZone(lead.country, lead.city)
+    const leadLabel = leadTz && leadTz !== IST ? formatInZone(startAt, leadTz) : null
 
     const html = emailShell(`
       <p style="margin:0 0 14px">Dear ${escapeHtml(first)},</p>
@@ -72,7 +75,10 @@ export async function POST(request: Request) {
       </p>
       <div style="background:#f8fafc;border-left:4px solid #2563EB;padding:16px 18px;border-radius:0 8px 8px 0;margin:0 0 18px">
         <p style="margin:0 0 4px;font-size:16px"><strong>${escapeHtml(title)}</strong></p>
-        <p style="margin:0;color:#475569">${dateLabel} IST · Online (${isWebinar ? '2 hours' : 'full day'})</p>
+        ${leadLabel
+          ? `<p style="margin:0;color:#0f172a"><strong>${leadLabel}</strong>${lead.country ? ` (${escapeHtml(lead.country)} time)` : ''}</p>
+        <p style="margin:2px 0 0;color:#64748b;font-size:13px">${istLabel} · Online (${isWebinar ? '2 hours' : 'full day'})</p>`
+          : `<p style="margin:0;color:#475569">${istLabel} · Online (${isWebinar ? '2 hours' : 'full day'})</p>`}
       </div>
       ${notes ? `<p style="margin:0 0 14px;white-space:pre-line">${escapeHtml(notes)}</p>` : ''}
       <p style="margin:0 0 14px">Reply to this email to confirm and we'll send the joining link.</p>

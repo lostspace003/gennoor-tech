@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Lead, LeadStatus, PipelineStage, PIPELINE_STAGES } from '@/lib/crm/types'
+import { IST, istInstant, leadTimeZone, formatInZone } from '@/lib/crm/timezones'
 
 export const STAGE_LABELS: Record<PipelineStage, string> = {
   diagnose: 'Diagnose',
@@ -160,6 +161,69 @@ export function DurationSlider({ value, onChange, stops = [15, 30, 45, 60, 90, 1
         {stops.map((s) => <span key={s} className="text-[10px] text-gray-400">{s < 60 ? s : `${s / 60}h`}</span>)}
       </div>
     </div>
+  )
+}
+
+// Slider for picking a time of day in IST — 15-min steps, syncs with any
+// native time input holding the same "HH:MM" value.
+export function TimeSlider({ value, onChange, label = 'Time (IST)', step = 15 }: {
+  value: string; onChange: (hhmm: string) => void; label?: string; step?: number
+}) {
+  const mins = /^\d{2}:\d{2}$/.test(value) ? Number(value.slice(0, 2)) * 60 + Number(value.slice(3, 5)) : 10 * 60
+  const toHHMM = (m: number) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
+  const fmt = (m: number) => {
+    const h = Math.floor(m / 60), mm = m % 60
+    return `${h % 12 || 12}:${String(mm).padStart(2, '0')} ${h >= 12 ? 'PM' : 'AM'}`
+  }
+  return (
+    <div className="px-1">
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-xs text-gray-500">{label}</span>
+        <span className="text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5">{fmt(mins)} IST</span>
+      </div>
+      <input
+        type="range"
+        min={0}
+        max={1440 - step}
+        step={step}
+        value={mins - (mins % step)}
+        onChange={(e) => onChange(toHHMM(Number(e.target.value)))}
+        className="w-full h-1.5 bg-gray-200 rounded-full appearance-none cursor-pointer accent-blue-600"
+        aria-label={label}
+      />
+      <div className="flex justify-between mt-0.5 text-[10px] text-gray-400">
+        <span>12 AM</span><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>12 AM</span>
+      </div>
+    </div>
+  )
+}
+
+// Live preview of the selected IST slot in the lead's own time zone, resolved
+// from their country/city. Shown under every schedule picker so the team sees
+// the conversion before anything is sent.
+export function LeadLocalTime({ date, time, country, city }: {
+  date: string; time: string; country?: string; city?: string
+}) {
+  if (!date || !time) return null
+  const tz = leadTimeZone(country, city)
+  if (!tz) {
+    return country ? (
+      <p className="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+        Couldn&apos;t map &quot;{country}&quot; to a time zone — the invite will show IST only.
+      </p>
+    ) : (
+      <p className="text-[11px] text-gray-400 px-1">Lead has no country set — the invite will show IST only.</p>
+    )
+  }
+  const instant = istInstant(date, time)
+  if (isNaN(instant.getTime())) return null
+  if (tz === IST) {
+    return <p className="text-[11px] text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">Lead is in the same time zone (IST) — no conversion needed.</p>
+  }
+  return (
+    <p className="text-[11px] text-blue-800 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+      Lead&apos;s local time{country ? ` (${country})` : ''}: <strong>{formatInZone(instant, tz)}</strong>
+    </p>
   )
 }
 

@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Users, Activity, Mail, Brain, Calendar, Upload, FileText, Trash2, RefreshCw, Video, Search, X, CalendarClock } from 'lucide-react'
 import { Lead, PIPELINE_STAGES } from '@/lib/crm/types'
-import { StatusBadge, timeAgo, formatDateTime, api, STAGE_LABELS, Spinner, InfoTip, MultiSelect, Pagination, DurationSlider } from './shared'
+import { StatusBadge, timeAgo, formatDateTime, api, STAGE_LABELS, Spinner, InfoTip, MultiSelect, Pagination, DurationSlider, TimeSlider, LeadLocalTime } from './shared'
+import { istInstant, isoToIstParts } from '@/lib/crm/timezones'
 import DocPreview from './DocPreview'
 import { useCrm } from './CrmContext'
 
@@ -237,7 +238,7 @@ interface Meeting { id: string; subject: string; start: string; end: string; att
 interface FollowUpRow { id: string; type: string; title: string; date: string; time: string; leadId: string; leadName: string; leadCompany: string; sentAt?: string }
 
 export function SchedulerView({ onOpenLead }: { onOpenLead: (id: string) => void }) {
-  const { notify } = useCrm()
+  const { notify, leads } = useCrm()
   const [meetings, setMeetings] = useState<Meeting[]>([])
   const [followUps, setFollowUps] = useState<FollowUpRow[]>([])
   const [note, setNote] = useState('')
@@ -307,6 +308,10 @@ export function SchedulerView({ onOpenLead }: { onOpenLead: (id: string) => void
       {editing && (
         <RescheduleModal
           meeting={editing}
+          lead={leads.find((l) => {
+            const att = new Set(editing.attendees.map((a) => a.toLowerCase()))
+            return [l.email, ...(l.altEmails || [])].some((e) => e && att.has(e.toLowerCase()))
+          })}
           onClose={() => setEditing(null)}
           onDone={async () => { setEditing(null); notify('Meeting updated — attendees received the new invite'); await load() }}
           notify={notify}
@@ -329,16 +334,17 @@ export function SchedulerView({ onOpenLead }: { onOpenLead: (id: string) => void
 
 // Reschedule an existing Teams meeting: new date/time + duration slider +
 // message to attendees. Server allows the lead's owner or a manager.
-function RescheduleModal({ meeting, onClose, onDone, notify }: {
+function RescheduleModal({ meeting, lead, onClose, onDone, notify }: {
   meeting: Meeting
+  lead?: Lead
   onClose: () => void
   onDone: () => Promise<void>
   notify: (m: string, e?: boolean) => void
 }) {
-  const startLocal = meeting.start ? new Date(meeting.start) : new Date()
-  const pad = (n: number) => String(n).padStart(2, '0')
-  const [date, setDate] = useState(`${startLocal.getFullYear()}-${pad(startLocal.getMonth() + 1)}-${pad(startLocal.getDate())}`)
-  const [time, setTime] = useState(`${pad(startLocal.getHours())}:${pad(startLocal.getMinutes())}`)
+  // Current start rendered as IST wall-clock — the picker always works in IST
+  const istStart = isoToIstParts(meeting.start || new Date().toISOString())
+  const [date, setDate] = useState(istStart.date)
+  const [time, setTime] = useState(istStart.time)
   const [duration, setDuration] = useState(Math.max(15, Math.round((new Date(meeting.end).getTime() - new Date(meeting.start).getTime()) / 60_000) || 30))
   const [comment, setComment] = useState('')
   const [saving, setSaving] = useState(false)
@@ -349,7 +355,7 @@ function RescheduleModal({ meeting, onClose, onDone, notify }: {
     try {
       await api('/api/admin/leads/schedule-meeting', {
         method: 'PATCH',
-        body: JSON.stringify({ meetingId: meeting.id, start: new Date(`${date}T${time}`).toISOString(), durationMinutes: duration, comment: comment.trim() || undefined }),
+        body: JSON.stringify({ meetingId: meeting.id, start: istInstant(date, time).toISOString(), durationMinutes: duration, comment: comment.trim() || undefined }),
       })
       await onDone()
     } catch (e: any) { notify(e.message, true) } finally { setSaving(false) }
@@ -369,8 +375,10 @@ function RescheduleModal({ meeting, onClose, onDone, notify }: {
         <div className="p-5 space-y-3">
           <div className="grid grid-cols-2 gap-2">
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} />
-            <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} />
+            <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} title="Time in IST — or use the slider below" />
           </div>
+          <TimeSlider value={time} onChange={setTime} label="New time (IST)" />
+          <LeadLocalTime date={date} time={time} country={lead?.country} city={lead?.city} />
           <DurationSlider value={duration} onChange={setDuration} />
           <textarea value={comment} onChange={(e) => setComment(e.target.value)} rows={2} className={inputCls} placeholder="Message to attendees (optional — included in the update email)" />
           <p className="text-[11px] text-gray-400">Everyone on the invite gets the updated meeting by email, so the change also shows up in the lead's conversation thread.</p>
