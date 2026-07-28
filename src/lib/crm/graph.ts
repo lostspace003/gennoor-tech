@@ -1,15 +1,17 @@
 import { ConfidentialClientApplication } from '@azure/msal-node'
 import { Client } from '@microsoft/microsoft-graph-client'
+import { CRM_USERS } from './access'
 
-// Microsoft Graph access for the CRM: reading replies in the admin mailbox
+// Microsoft Graph access for the CRM: reading replies in team mailboxes
 // and scheduling Teams meetings. Uses the same app credentials that already
 // power Sent-Items sync in email-service.ts.
 const MAILBOX = process.env.OUTLOOK_SENDER_MAILBOX || 'admin@gennoor.com'
-// Outreach goes out as sales@ (2026-07-28 rule), so plain replies land in the
-// sales mailbox — the CRM inbox reads BOTH mailboxes and merges the results.
-// Mail.Read is an application-wide grant, so no extra permission is needed.
+// Outreach goes out as sales@ with the sender CC'd (2026-07-28 rule), so a
+// lead's reply can land in ANY team member's mailbox. The CRM inbox sweeps
+// every CRM mailbox and merges the results, tagging each message with where
+// it landed. Mail.Read is an application-wide grant — no per-user setup.
 const SALES_MAILBOX = process.env.EMAIL_FROM_SALES || 'sales@gennoor.com'
-const INBOX_MAILBOXES = [...new Set([MAILBOX, SALES_MAILBOX].map((m) => m.toLowerCase()))]
+const INBOX_MAILBOXES = [...new Set([MAILBOX, SALES_MAILBOX, ...CRM_USERS].map((m) => m.toLowerCase()))]
 
 export function graphConfigured(): boolean {
   return Boolean(
@@ -43,6 +45,8 @@ export interface InboundMessage {
   body: string
   receivedAt: string
   isRead: boolean
+  // Which CRM mailboxes this message landed in (a reply-all can hit several)
+  mailboxes: string[]
 }
 
 // Recent messages received by the admin + sales mailboxes, optionally filtered
@@ -63,7 +67,7 @@ async function listMailboxInbound(client: Client, mailbox: string, fromEmail?: s
   const result = await request.get()
   return (result.value || []).map((m: any) => ({
     // internetMessageId is stable across mailboxes → dedupes a reply-all that
-    // landed in both admin@ and sales@
+    // landed in several team inboxes
     id: m.internetMessageId || m.id,
     from: m.from?.emailAddress?.address || '',
     fromName: m.from?.emailAddress?.name || '',
@@ -72,6 +76,7 @@ async function listMailboxInbound(client: Client, mailbox: string, fromEmail?: s
     body: m.body?.content || '',
     receivedAt: m.receivedDateTime || '',
     isRead: Boolean(m.isRead),
+    mailboxes: [mailbox],
   }))
 }
 
@@ -86,14 +91,14 @@ export async function listInboundMessages(fromEmail?: string, top = 25): Promise
       })
     )
   )
-  const seen = new Set<string>()
-  const merged: InboundMessage[] = []
+  // Merge: one entry per message, carrying every mailbox it was found in
+  const byId = new Map<string, InboundMessage>()
   for (const m of batches.flat().sort((a, b) => b.receivedAt.localeCompare(a.receivedAt))) {
-    if (seen.has(m.id)) continue
-    seen.add(m.id)
-    merged.push(m)
+    const existing = byId.get(m.id)
+    if (existing) existing.mailboxes = [...new Set([...existing.mailboxes, ...m.mailboxes])]
+    else byId.set(m.id, m)
   }
-  return merged.slice(0, top)
+  return [...byId.values()].slice(0, top)
 }
 
 export interface MeetingRequest {

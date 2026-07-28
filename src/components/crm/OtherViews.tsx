@@ -525,7 +525,11 @@ function WorkAnalysis({ leads, me, isManager }: { leads: Lead[]; me: string; isM
 interface InboxMessage {
   id: string; from: string; fromName: string; subject: string; preview: string
   receivedAt: string; leadId: string; leadName: string; leadCompany: string
+  mailboxes?: string[]
 }
+
+// "sales, jalalkhan" — compact usernames for the mailbox(es) a reply landed in
+const mailboxNames = (m: InboxMessage) => (m.mailboxes || []).map((x) => x.split('@')[0]).join(', ')
 
 const INBOX_PER_PAGE = 10
 
@@ -558,17 +562,26 @@ export function InboxView({ onOpenLead }: { onOpenLead: (id: string) => void }) 
     return [...map.entries()].map(([value, name]) => ({ value, label: `${name} · ${value}` }))
   }, [messages])
 
+  // Which team mailbox(es) replies landed in — filter by team member
+  const [mailboxFilter, setMailboxFilter] = useState<string[]>([])
+  const mailboxOptions = useMemo(() => {
+    const set = new Set<string>()
+    for (const m of messages) for (const mb of m.mailboxes || []) set.add(mb.toLowerCase())
+    return [...set].sort().map((mb) => ({ value: mb, label: mb.split('@')[0] }))
+  }, [messages])
+
   const filtered = useMemo(() => {
     const term = search.toLowerCase()
     const { fromMs, toMs } = rangeBounds(range)
     return messages.filter((m) => {
       const t = new Date(m.receivedAt).getTime()
       return (fromFilter.length === 0 || fromFilter.includes(m.from.toLowerCase())) &&
+        (mailboxFilter.length === 0 || (m.mailboxes || []).some((mb) => mailboxFilter.includes(mb.toLowerCase()))) &&
         t >= fromMs && t <= toMs &&
         (!term || m.subject.toLowerCase().includes(term) || m.preview.toLowerCase().includes(term) ||
           m.from.toLowerCase().includes(term) || m.leadName.toLowerCase().includes(term) || (m.leadCompany || '').toLowerCase().includes(term))
     })
-  }, [messages, search, fromFilter, range])
+  }, [messages, search, fromFilter, mailboxFilter, range])
 
   // Grouped view: one section per lead, newest thread first
   const groups = useMemo(() => {
@@ -587,7 +600,7 @@ export function InboxView({ onOpenLead }: { onOpenLead: (id: string) => void }) 
   return (
     <div className="p-3 sm:p-5 space-y-3 max-w-4xl">
       <div className="flex flex-wrap items-center gap-2">
-        <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-1.5">Replies from leads (sales@ + admin@ inboxes) <InfoTip text="Emails received in the sales@ and admin@ mailboxes from any known lead address (outreach goes out as sales@gennoor.com). Narrow by date, sender or search; group by lead when several threads are running. Click one to open that lead's conversation and reply with AI." /></h3>
+        <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-1.5">Replies from leads (all team inboxes) <InfoTip text="Emails from any known lead address, swept across every team mailbox (sales@, admin@ and each member — outreach goes out as sales@ with the sender CC'd, so replies can land anywhere). Filter by date, sender, or which mailbox received it; group by lead for threads. Click one to open that lead's conversation and reply with AI." /></h3>
         <div className="ml-auto flex items-center gap-2 flex-wrap">
           <div className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
@@ -599,6 +612,7 @@ export function InboxView({ onOpenLead }: { onOpenLead: (id: string) => void }) 
             />
           </div>
           <MultiSelect label="Email" options={senders} values={fromFilter} onChange={(v) => { setFromFilter(v); setPage(1) }} />
+          <MultiSelect label="Received in" options={mailboxOptions} values={mailboxFilter} onChange={(v) => { setMailboxFilter(v); setPage(1) }} />
           <button
             onClick={() => setGrouped((g) => !g)}
             title="Group messages by lead"
@@ -635,7 +649,10 @@ export function InboxView({ onOpenLead }: { onOpenLead: (id: string) => void }) 
                   <button key={m.id} onClick={() => onOpenLead(m.leadId)} className="w-full text-left px-3 py-2 hover:bg-gray-50">
                     <div className="flex items-center justify-between gap-3">
                       <div className="text-[13px] text-gray-900 truncate">{m.subject || '(no subject)'}</div>
-                      <div className="text-[11px] text-gray-400 shrink-0">{formatDateTime(m.receivedAt)}</div>
+                      <div className="text-[11px] text-gray-400 shrink-0 flex items-center gap-1.5">
+                        {mailboxNames(m) && <span className="bg-blue-50 text-blue-600 rounded-full px-1.5 py-0.5" title="Team mailbox(es) this reply landed in">→ {mailboxNames(m)}</span>}
+                        {formatDateTime(m.receivedAt)}
+                      </div>
                     </div>
                     <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{m.preview}</p>
                   </button>
@@ -653,7 +670,10 @@ export function InboxView({ onOpenLead }: { onOpenLead: (id: string) => void }) 
                   <div className="text-sm font-medium text-gray-900 truncate">{m.subject || '(no subject)'}</div>
                   <div className="text-[11px] text-gray-400 shrink-0">{formatDateTime(m.receivedAt)}</div>
                 </div>
-                <div className="text-[11px] text-emerald-700 mt-0.5 truncate">{m.leadName} · {m.leadCompany || m.from}</div>
+                <div className="text-[11px] mt-0.5 flex items-center gap-1.5 min-w-0">
+                  <span className="text-emerald-700 truncate">{m.leadName} · {m.leadCompany || m.from}</span>
+                  {mailboxNames(m) && <span className="bg-blue-50 text-blue-600 rounded-full px-1.5 py-0.5 shrink-0" title="Team mailbox(es) this reply landed in">→ {mailboxNames(m)}</span>}
+                </div>
                 <p className="text-xs text-gray-600 mt-1 line-clamp-1">{m.preview}</p>
               </button>
             ))}

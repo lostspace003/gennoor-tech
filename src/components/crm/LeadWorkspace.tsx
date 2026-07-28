@@ -22,6 +22,7 @@ interface InboundMessage {
   preview: string
   body: string
   receivedAt: string
+  mailboxes?: string[]
 }
 
 interface CrmDocument { name: string; size: number }
@@ -602,7 +603,7 @@ function EmailTab({ lead, onReload, notify, onSchedule }: { lead: Lead; onReload
     })),
     ...inbound.map((m) => ({
       kind: 'received' as const, at: m.receivedAt, subject: m.subject,
-      detail: `from ${m.from}`, status: 'received',
+      detail: `from ${m.from}${m.mailboxes?.length ? ` → ${m.mailboxes.map((x) => x.split('@')[0]).join(', ')}` : ''}`, status: 'received',
       // Plain-text version for the collapsed 2-line preview
       body: (m.body || m.preview).replace(/<style[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, ' ').replace(/\s{3,}/g, '\n').trim(),
       // Full HTML (sanitized at render time) for the expanded view — keeps bold, lists, links
