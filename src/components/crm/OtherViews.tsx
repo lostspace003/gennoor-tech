@@ -240,6 +240,83 @@ export function PipelineView({ leads, onOpenLead }: { leads: Lead[]; onOpenLead:
           {board === 'mine' ? 'You haven’t picked any leads yet — claim them from the pool in the Leads view.' : 'No leads on this board.'}
         </p>
       )}
+      <WorkAnalysis leads={active} me={me} isManager={isManager} />
+    </div>
+  )
+}
+
+// Work analysis under the pipeline: managers see every member's numbers,
+// everyone else sees the same table with just their own row.
+function WorkAnalysis({ leads, me, isManager }: { leads: Lead[]; me: string; isManager: boolean }) {
+  const members = useMemo(() => {
+    if (!isManager) return [me]
+    const set = new Set<string>([me])
+    for (const l of leads) {
+      if (l.owner) set.add(l.owner.toLowerCase())
+      for (const a of l.activities) if (a.by?.includes('@')) set.add(a.by.toLowerCase())
+    }
+    return [...set]
+  }, [leads, me, isManager])
+
+  const rows = useMemo(() => members.map((m) => {
+    const held = leads.filter((l) => (l.owner || '').toLowerCase() === m)
+    const acts = leads.flatMap((l) => l.activities.filter((a) => a.by?.toLowerCase() === m))
+    const emails = leads.reduce((n, l) => n + l.emailHistory.filter((e) => e.status === 'sent' && e.by?.toLowerCase() === m).length, 0)
+    const last = acts.reduce((max, a) => (a.at > max ? a.at : max), '')
+    return {
+      member: m,
+      held: held.length,
+      stages: PIPELINE_STAGES.map((s) => held.filter((l) => l.stage === s).length),
+      won: held.filter((l) => l.status === 'won').length,
+      lost: held.filter((l) => l.status === 'lost').length,
+      emails,
+      meetings: acts.filter((a) => a.type === 'followup').length,
+      comments: acts.filter((a) => a.type === 'note').length,
+      moves: acts.filter((a) => a.type === 'stage').length,
+      last,
+    }
+  }).sort((a, b) => b.held - a.held || b.emails - a.emails), [members, leads])
+
+  return (
+    <div className="mt-6 bg-white rounded-lg border border-gray-200">
+      <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-1.5">
+        <h3 className="text-sm font-semibold text-gray-800">{isManager ? 'Team work analysis' : 'My work analysis'}</h3>
+        <InfoTip text="Leads held per stage plus what each person has actually done — emails sent, meetings/invites, stage moves and comments are counted from the activity trail." />
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="text-left text-gray-500 uppercase text-[10px]">
+              <th className="px-4 py-2">Member</th>
+              <th className="px-3 py-2">Leads</th>
+              {PIPELINE_STAGES.map((s, i) => <th key={s} className="px-2 py-2" title={STAGE_LABELS[s]}>{i + 1}</th>)}
+              <th className="px-3 py-2 text-green-700">Won</th>
+              <th className="px-3 py-2 text-red-600">Lost</th>
+              <th className="px-3 py-2">Emails</th>
+              <th className="px-3 py-2">Meetings</th>
+              <th className="px-3 py-2">Moves</th>
+              <th className="px-3 py-2">Comments</th>
+              <th className="px-3 py-2">Last active</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {rows.map((r) => (
+              <tr key={r.member} className={r.member === me ? 'bg-blue-50/50' : ''}>
+                <td className="px-4 py-2 font-medium text-gray-800">{r.member === me ? `${r.member.split('@')[0]} (you)` : r.member.split('@')[0]}</td>
+                <td className="px-3 py-2 font-semibold text-gray-900">{r.held}</td>
+                {r.stages.map((n, i) => <td key={i} className={`px-2 py-2 ${n ? 'text-gray-800' : 'text-gray-300'}`}>{n}</td>)}
+                <td className="px-3 py-2 text-green-700">{r.won || <span className="text-gray-300">0</span>}</td>
+                <td className="px-3 py-2 text-red-600">{r.lost || <span className="text-gray-300">0</span>}</td>
+                <td className="px-3 py-2">{r.emails}</td>
+                <td className="px-3 py-2">{r.meetings}</td>
+                <td className="px-3 py-2">{r.moves}</td>
+                <td className="px-3 py-2">{r.comments}</td>
+                <td className="px-3 py-2 text-gray-500">{r.last ? timeAgo(r.last) : '—'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
