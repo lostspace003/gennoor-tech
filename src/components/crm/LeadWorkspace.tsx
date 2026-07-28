@@ -464,7 +464,7 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
                 <ul className="space-y-0.5">
                   {lead.aiResearch.sources.map((s, i) => (
                     <li key={i}>
-                      <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline break-all">{s.title || s.url}</a>
+                      <a href={externalUrl(s.url)} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline break-all">{s.title || s.url}</a>
                     </li>
                   ))}
                 </ul>
