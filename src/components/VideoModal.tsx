@@ -285,9 +285,9 @@ export default function VideoModal({
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40">
               <div className="bg-black/70 backdrop-blur-md px-8 py-4 rounded-lg animate-pulse">
                 <div className="flex items-center space-x-3">
-                  <div className="w-3 h-3 bg-primary-500 rounded-full animate-bounce"></div>
+                  <div className="w-3 h-3 bg-primary-600 rounded-full animate-bounce"></div>
                   <span className="text-white text-lg font-medium">Transitioning to next slide...</span>
-                  <div className="w-3 h-3 bg-primary-500 rounded-full animate-bounce delay-100"></div>
+                  <div className="w-3 h-3 bg-primary-600 rounded-full animate-bounce delay-100"></div>
                 </div>
                 <div className="mt-2 text-center text-gray-300 text-sm">
                   Slide {nextSlideIndex + 1} of {slideBreakpoints?.length || 0}

@@ -854,7 +854,7 @@ export default function ForSMBPage() {
                   <span className="absolute top-4 right-5 text-2xl font-extrabold text-gray-100">
                     {String(i + 1).padStart(2, '0')}
                   </span>
-                  <div className="w-11 h-11 rounded-xl bg-primary-500 flex items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
+                  <div className="w-11 h-11 rounded-xl bg-primary-600 flex items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
                     <Icon className="w-5 h-5 text-white" />
                   </div>
                   <h3 className="text-base font-bold text-gray-900 mb-2 pr-10">{step.title}</h3>

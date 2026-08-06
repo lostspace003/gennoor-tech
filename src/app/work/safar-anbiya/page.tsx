@@ -116,7 +116,7 @@ const palette = [
 
 export default function SafarAnbiyaPage() {
   return (
-    <main className="text-indigo-50 bg-[#0C0820]">
+    <main className="text-primary-50 bg-[#0C0820]">
       {/* ── Hero ───────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(160deg,#0C0820_0%,#1A1140_55%,#0C0820_100%)]" />
@@ -125,7 +125,7 @@ export default function SafarAnbiyaPage() {
         <div className="container relative z-10 mx-auto px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
           <Link
             href="/"
-            className="mb-8 inline-flex items-center gap-2 text-sm text-indigo-200/70 transition-colors hover:text-amber-200"
+            className="mb-8 inline-flex items-center gap-2 text-sm text-primary-200/70 transition-colors hover:text-amber-200"
           >
             <ArrowLeft className="h-4 w-4" /> Back to Gennoor Tech
           </Link>
@@ -150,7 +150,7 @@ export default function SafarAnbiyaPage() {
               </div>
               <p className="mb-6 text-xl font-medium text-amber-200/90">Journey of the Prophets</p>
 
-              <p className="mb-8 max-w-xl text-lg leading-relaxed text-indigo-100/80">
+              <p className="mb-8 max-w-xl text-lg leading-relaxed text-primary-100/80">
                 Religious education for children is usually static — text to read or videos to watch
                 passively, and kids disengage. We turned the lives of all 25 prophets into something a
                 5–10 year old <em>chooses</em> to open, the way they open a game: story → a moral
@@ -205,7 +205,7 @@ export default function SafarAnbiyaPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-6xl">
             <h2 className="mb-3 text-2xl font-bold text-white lg:text-3xl">What it does</h2>
-            <p className="mb-10 max-w-2xl text-indigo-100/70">
+            <p className="mb-10 max-w-2xl text-primary-100/70">
               Every prophet is played as a sequence of nine beats — a small, complete story arc with a
               lesson, a verse and a reward.
             </p>
@@ -216,7 +216,7 @@ export default function SafarAnbiyaPage() {
                   className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition-colors hover:border-amber-300/30"
                 >
                   <h3 className="mb-2 font-semibold text-amber-200">{f.title}</h3>
-                  <p className="text-sm leading-relaxed text-indigo-100/70">{f.body}</p>
+                  <p className="text-sm leading-relaxed text-primary-100/70">{f.body}</p>
                 </div>
               ))}
             </div>
@@ -229,7 +229,7 @@ export default function SafarAnbiyaPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-6xl">
             <h2 className="mb-3 text-2xl font-bold text-white lg:text-3xl">The journey, beat by beat</h2>
-            <p className="mb-10 max-w-2xl text-indigo-100/70">
+            <p className="mb-10 max-w-2xl text-primary-100/70">
               Real screens from the running app — the prophet Adam (AS), captured live, not mockups.
             </p>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
@@ -246,7 +246,7 @@ export default function SafarAnbiyaPage() {
                   </div>
                   <figcaption className="mt-2.5 px-0.5">
                     <span className="text-sm font-semibold text-amber-200">{b.label}</span>
-                    <span className="mt-0.5 block text-xs text-indigo-100/55">{b.note}</span>
+                    <span className="mt-0.5 block text-xs text-primary-100/55">{b.note}</span>
                   </figcaption>
                 </figure>
               ))}
@@ -260,7 +260,7 @@ export default function SafarAnbiyaPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-6xl">
             <h2 className="mb-3 text-2xl font-bold text-white lg:text-3xl">A closer look</h2>
-            <p className="mb-10 max-w-2xl text-indigo-100/70">
+            <p className="mb-10 max-w-2xl text-primary-100/70">
               Two full screens from the running app — the bilingual welcome and the gamified journey map.
             </p>
             <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-8">
@@ -279,7 +279,7 @@ export default function SafarAnbiyaPage() {
                   </div>
                   <figcaption className="mt-5 max-w-xs">
                     <span className="block font-semibold text-amber-200">{s.title}</span>
-                    <span className="mt-1.5 block text-sm leading-relaxed text-indigo-100/65">{s.body}</span>
+                    <span className="mt-1.5 block text-sm leading-relaxed text-primary-100/65">{s.body}</span>
                   </figcaption>
                 </figure>
               ))}
@@ -293,7 +293,7 @@ export default function SafarAnbiyaPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-6xl">
             <h2 className="mb-3 text-2xl font-bold text-white lg:text-3xl">How it&rsquo;s built</h2>
-            <p className="mb-10 max-w-2xl text-indigo-100/70">
+            <p className="mb-10 max-w-2xl text-primary-100/70">
               A single installable app on the front, a swappable Azure service layer behind it, and a
               pre-generated media pipeline that keeps narration instant and offline-ready.
             </p>
@@ -308,12 +308,12 @@ export default function SafarAnbiyaPage() {
                     {i + 1}
                   </div>
                   <h3 className="mb-2 font-semibold text-white">{layer.title}</h3>
-                  <p className="mb-4 text-sm leading-relaxed text-indigo-100/70">{layer.body}</p>
+                  <p className="mb-4 text-sm leading-relaxed text-primary-100/70">{layer.body}</p>
                   <div className="flex flex-wrap gap-2">
                     {layer.tags.map((t) => (
                       <span
                         key={t}
-                        className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-medium text-indigo-100/80"
+                        className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-medium text-primary-100/80"
                       >
                         {t}
                       </span>
@@ -325,7 +325,7 @@ export default function SafarAnbiyaPage() {
 
             {/* Brand palette */}
             <div className="mt-12">
-              <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-indigo-200/50">
+              <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-primary-200/50">
                 Brand — twilight navy &amp; gold
               </h3>
               <div className="flex flex-wrap gap-3">
@@ -334,7 +334,7 @@ export default function SafarAnbiyaPage() {
                     <span className="h-6 w-6 rounded-md border border-white/20" style={{ background: c.hex }} />
                     <span className="text-xs">
                       <span className="block font-semibold text-white">{c.name}</span>
-                      <span className="block font-mono text-[10px] text-indigo-100/50">{c.hex}</span>
+                      <span className="block font-mono text-[10px] text-primary-100/50">{c.hex}</span>
                     </span>
                   </div>
                 ))}
@@ -352,7 +352,7 @@ export default function SafarAnbiyaPage() {
             <h2 className="mb-4 text-3xl font-black text-white lg:text-4xl">
               Got an idea sitting in a doc?
             </h2>
-            <p className="mb-8 text-lg text-indigo-100/75">
+            <p className="mb-8 text-lg text-primary-100/75">
               This is what we do at Gennoor Tech — we partner with small and medium businesses to
               design, build and ship real products: web &amp; mobile apps, cloud backends and AI
               features, without the agency bloat or the year-long timeline.

@@ -81,7 +81,7 @@ export default function PortfolioPage() {
                   className="group rounded-2xl p-7 transition-all duration-500 glass-card glow-border"
                 >
                   <div className="flex items-start justify-between mb-5">
-                    <div className="w-12 h-12 rounded-xl bg-primary-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary-500/15">
+                    <div className="w-12 h-12 rounded-xl bg-primary-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary-500/15">
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                     <span className="text-xs font-bold text-primary-600 bg-primary-50/80 px-3 py-1 rounded-lg border border-primary-100/60">
@@ -100,7 +100,7 @@ export default function PortfolioPage() {
                   <div className="space-y-1.5 mb-5">
                     {section.examples.map((example, idx) => (
                       <div key={idx} className="flex items-center text-sm text-gray-400">
-                        <span className="w-1 h-1 bg-primary-500 rounded-full mr-2.5" />
+                        <span className="w-1 h-1 bg-primary-600 rounded-full mr-2.5" />
                         {example}
                       </div>
                     ))}

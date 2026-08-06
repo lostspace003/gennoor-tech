@@ -224,7 +224,7 @@ export default function AIReadinessSelector() {
             <div className="flex justify-center lg:justify-end">
               <div className="glass-card w-full max-w-[380px] rounded-3xl p-8 sm:p-10 relative">
                 {/* Subtle gradient accent on top edge */}
-                <div className="absolute top-0 left-8 right-8 h-1 rounded-b-full bg-primary-500" />
+                <div className="absolute top-0 left-8 right-8 h-1 rounded-b-full bg-primary-600" />
 
                 <div className="text-center mb-8">
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-[2px] mb-3">Your Score</p>

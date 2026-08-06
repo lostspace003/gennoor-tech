@@ -11,10 +11,10 @@ export const metadata: Metadata = {
 }
 
 const industryColors = {
-  'Banking & Financial Services': 'from-blue-500 to-blue-600',
-  'Professional Services': 'from-purple-500 to-purple-600',
+  'Banking & Financial Services': 'from-primary-500 to-primary-600',
+  'Professional Services': 'from-gray-500 to-gray-600',
   'Technology': 'from-green-500 to-green-600',
-  'Education & Training': 'from-orange-500 to-orange-600',
+  'Education & Training': 'from-amber-500 to-amber-600',
 }
 
 export default function CaseStudiesPage() {
@@ -196,19 +196,19 @@ export default function CaseStudiesPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
               <div>
                 <div className="text-3xl font-bold text-white">6+</div>
-                <div className="text-blue-100">Countries</div>
+                <div className="text-primary-100">Countries</div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-white">80+</div>
-                <div className="text-blue-100">Programs Delivered</div>
+                <div className="text-primary-100">Programs Delivered</div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-white">50+</div>
-                <div className="text-blue-100">C-Suite Leaders</div>
+                <div className="text-primary-100">C-Suite Leaders</div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-white">60%</div>
-                <div className="text-blue-100">Avg. Time Saved</div>
+                <div className="text-primary-100">Avg. Time Saved</div>
               </div>
             </div>
           </div>

@@ -62,7 +62,7 @@ export default async function PoCDetailPage({ params }: PageProps) {
           <span className="text-[10px] font-bold tracking-widest uppercase text-primary-700 bg-primary-50 px-2 py-1 rounded">
             {poc.category}
           </span>
-          <span className="text-[10px] font-bold tracking-widest uppercase text-secondary-700 bg-secondary-50 px-2 py-1 rounded">
+          <span className="text-[10px] font-bold tracking-widest uppercase text-gray-700 bg-gray-50 px-2 py-1 rounded">
             {poc.phaseTag}
           </span>
         </div>
@@ -107,7 +107,7 @@ export default async function PoCDetailPage({ params }: PageProps) {
       {poc.architecture && (
         <section className="max-w-5xl mx-auto px-6 pb-12">
           <div className="bg-gray-900 text-white rounded-2xl p-6 overflow-x-auto">
-            <h2 className="text-sm font-bold uppercase tracking-widest text-secondary-300 mb-4">Architecture</h2>
+            <h2 className="text-sm font-bold uppercase tracking-widest text-gray-300 mb-4">Architecture</h2>
             <pre className="text-xs leading-relaxed font-mono text-white/80 whitespace-pre">{poc.architecture}</pre>
           </div>
         </section>
@@ -148,7 +148,7 @@ export default async function PoCDetailPage({ params }: PageProps) {
       {/* Paired course */}
       {poc.pairedCourseTitle && (
         <section className="max-w-5xl mx-auto px-6 pb-12">
-          <div className="bg-secondary-50 rounded-2xl border border-gray-200 p-6 flex items-center gap-4">
+          <div className="bg-gray-50 rounded-2xl border border-gray-200 p-6 flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center flex-shrink-0">
               <GraduationCap className="w-6 h-6 text-primary-700" />
             </div>
@@ -191,9 +191,9 @@ export default async function PoCDetailPage({ params }: PageProps) {
               <div className="flex flex-wrap gap-2">
                 {poc.functions.map(f => {
                   const slug = functionNameToSlug.get(f.toLowerCase())
-                  const cls = 'text-xs font-medium text-secondary-700 bg-secondary-50 px-3 py-1.5 rounded-full'
+                  const cls = 'text-xs font-medium text-gray-700 bg-gray-50 px-3 py-1.5 rounded-full'
                   return slug ? (
-                    <Link key={f} href={`/functions/${slug}`} className={`${cls} hover:bg-secondary-100 transition-colors`}>
+                    <Link key={f} href={`/functions/${slug}`} className={`${cls} hover:bg-gray-100 transition-colors`}>
                       {f} →
                     </Link>
                   ) : (

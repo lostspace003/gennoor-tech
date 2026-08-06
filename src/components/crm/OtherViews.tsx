@@ -14,12 +14,12 @@ export function DashboardView({ leads, onGoLeads, onOpenLead }: { leads: Lead[];
   const today = new Date().toDateString()
   const weekAgo = Date.now() - 7 * 86_400_000
   const metrics = [
-    { label: "Today's new leads", value: leads.filter((l) => new Date(l.createdAt).toDateString() === today).length, icon: Users, color: 'text-blue-500' },
-    { label: 'This week', value: leads.filter((l) => new Date(l.createdAt).getTime() >= weekAgo).length, icon: Calendar, color: 'text-indigo-500' },
+    { label: "Today's new leads", value: leads.filter((l) => new Date(l.createdAt).toDateString() === today).length, icon: Users, color: 'text-primary-500' },
+    { label: 'This week', value: leads.filter((l) => new Date(l.createdAt).getTime() >= weekAgo).length, icon: Calendar, color: 'text-primary-500' },
     { label: 'Total leads', value: leads.length, icon: Users, color: 'text-gray-500' },
     { label: 'Active process', value: leads.filter((l) => l.processStatus === 'active').length, icon: Activity, color: 'text-green-500' },
-    { label: 'Researched', value: leads.filter((l) => l.aiResearch).length, icon: Brain, color: 'text-purple-500' },
-    { label: 'Emailed', value: leads.filter((l) => l.emailHistory.some((e) => e.status === 'sent')).length, icon: Mail, color: 'text-sky-500' },
+    { label: 'Researched', value: leads.filter((l) => l.aiResearch).length, icon: Brain, color: 'text-gray-500' },
+    { label: 'Emailed', value: leads.filter((l) => l.emailHistory.some((e) => e.status === 'sent')).length, icon: Mail, color: 'text-primary-500' },
   ]
 
   const recent = [...leads]
@@ -56,7 +56,7 @@ export function DashboardView({ leads, onGoLeads, onOpenLead }: { leads: Lead[];
                     <div key={s} className="flex items-center gap-2 text-xs">
                       <span className="w-24 text-gray-500 shrink-0">{i + 1}. {STAGE_LABELS[s]}</span>
                       <div className="flex-1 bg-gray-100 rounded-full h-4 overflow-hidden">
-                        <div className="h-full bg-blue-500 rounded-full flex items-center justify-end pr-1.5 text-[10px] text-white min-w-[1.25rem]" style={{ width: `${(inStage.length / max) * 100}%` }}>
+                        <div className="h-full bg-primary-600 rounded-full flex items-center justify-end pr-1.5 text-[10px] text-white min-w-[1.25rem]" style={{ width: `${(inStage.length / max) * 100}%` }}>
                           {inStage.length}
                         </div>
                       </div>
@@ -81,8 +81,8 @@ export function DashboardView({ leads, onGoLeads, onOpenLead }: { leads: Lead[];
               <div className="grid grid-cols-2 gap-3 text-center">
                 <div className="bg-green-50 rounded-lg p-3"><div className="text-xl font-bold text-green-700">{won.length}</div><div className="text-[11px] text-green-700">won{wonValue > 0 ? ` · ₹${(wonValue / 1000).toFixed(0)}K` : ''}</div></div>
                 <div className="bg-red-50 rounded-lg p-3"><div className="text-xl font-bold text-red-600">{lost.length}</div><div className="text-[11px] text-red-600">lost</div></div>
-                <div className="bg-sky-50 rounded-lg p-3"><div className="text-xl font-bold text-sky-700">{emails7d}</div><div className="text-[11px] text-sky-700">emails sent (7d)</div></div>
-                <div className="bg-emerald-50 rounded-lg p-3"><div className="text-xl font-bold text-emerald-700">{invites}</div><div className="text-[11px] text-emerald-700">webinar/training invites</div></div>
+                <div className="bg-primary-50 rounded-lg p-3"><div className="text-xl font-bold text-primary-700">{emails7d}</div><div className="text-[11px] text-primary-700">emails sent (7d)</div></div>
+                <div className="bg-green-50 rounded-lg p-3"><div className="text-xl font-bold text-green-700">{invites}</div><div className="text-[11px] text-green-700">webinar/training invites</div></div>
               </div>
             )
           })()}
@@ -92,7 +92,7 @@ export function DashboardView({ leads, onGoLeads, onOpenLead }: { leads: Lead[];
       <div className="bg-white rounded-lg border border-gray-200">
         <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
           <h3 className="text-sm font-semibold text-gray-800">Recent activity</h3>
-          <button onClick={onGoLeads} className="text-xs text-blue-600 hover:underline">View all leads →</button>
+          <button onClick={onGoLeads} className="text-xs text-primary-600 hover:underline">View all leads →</button>
         </div>
         <div className="divide-y divide-gray-100">
           {recent.length === 0 && <p className="px-5 py-10 text-center text-sm text-gray-400">No leads yet — upload your Excel from the Leads page.</p>}
@@ -212,7 +212,7 @@ export function PipelineView({ leads, onOpenLead }: { leads: Lead[]; onOpenLead:
               key={id}
               onClick={() => setView(id)}
               title={`${label} view`}
-              className={`px-2.5 py-1.5 text-xs flex items-center gap-1 ${view === id ? 'bg-blue-600 text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
+              className={`px-2.5 py-1.5 text-xs flex items-center gap-1 ${view === id ? 'bg-primary-600 text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
             >
               <Icon className="w-3.5 h-3.5" /> {label}
             </button>
@@ -242,7 +242,7 @@ export function PipelineView({ leads, onOpenLead }: { leads: Lead[]; onOpenLead:
               key={s}
               onClick={() => { setStageFocus(stageFocus === s ? null : s); setListPage(1) }}
               title={stageFocus === s ? 'Show all stages' : `Focus on ${STAGE_LABELS[s]}`}
-              className={`text-xs rounded-full px-2.5 py-1 border ${stageFocus === s ? 'bg-blue-600 text-white border-blue-600' : n ? 'border-gray-200 text-gray-700 hover:bg-gray-50' : 'border-gray-100 text-gray-300'}`}
+              className={`text-xs rounded-full px-2.5 py-1 border ${stageFocus === s ? 'bg-primary-600 text-white border-primary-600' : n ? 'border-gray-200 text-gray-700 hover:bg-gray-50' : 'border-gray-100 text-gray-300'}`}
             >
               {i + 1}. {STAGE_LABELS[s]} · {n}
             </button>
@@ -259,7 +259,7 @@ export function PipelineView({ leads, onOpenLead }: { leads: Lead[]; onOpenLead:
               return (
                 <div
                   key={stage}
-                  className={`bg-gray-100 rounded-lg p-3 transition-colors ${overStage === stage && dragId ? 'bg-blue-50 ring-2 ring-blue-300' : ''}`}
+                  className={`bg-gray-100 rounded-lg p-3 transition-colors ${overStage === stage && dragId ? 'bg-primary-50 ring-2 ring-primary-300' : ''}`}
                   onDragOver={(e) => { if (editable && dragId) { e.preventDefault(); setOverStage(stage) } }}
                   onDragLeave={() => setOverStage((s) => (s === stage ? null : s))}
                   onDrop={(e) => { e.preventDefault(); setOverStage(null); if (dragId) { moveStage(dragId, stage); setDragId(null) } }}
@@ -278,7 +278,7 @@ export function PipelineView({ leads, onOpenLead }: { leads: Lead[]; onOpenLead:
                           onDragStart={(e) => { setDragId(l.id); e.dataTransfer.effectAllowed = 'move' }}
                           onDragEnd={() => { setDragId(null); setOverStage(null) }}
                           onClick={() => onOpenLead(l.id)}
-                          className={`bg-white rounded-lg px-2.5 py-2 border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer ${editable ? 'active:cursor-grabbing' : ''} ${dragId === l.id ? 'opacity-40' : ''}`}
+                          className={`bg-white rounded-lg px-2.5 py-2 border border-gray-200 hover:border-primary-300 hover:shadow-sm transition-all cursor-pointer ${editable ? 'active:cursor-grabbing' : ''} ${dragId === l.id ? 'opacity-40' : ''}`}
                         >
                           <div className="text-[13px] font-medium text-gray-900 truncate leading-tight">{l.name}</div>
                           <div className="flex items-center gap-1.5 mt-1">
@@ -287,7 +287,7 @@ export function PipelineView({ leads, onOpenLead }: { leads: Lead[]; onOpenLead:
                             <button
                               onClick={(e) => { e.stopPropagation(); setCommentLeadId(l.id) }}
                               title={editable ? 'View / add comments' : 'View comments'}
-                              className="ml-auto inline-flex items-center gap-0.5 text-[10px] rounded-full px-1.5 py-0.5 bg-blue-50 text-blue-600 hover:bg-blue-100 shrink-0"
+                              className="ml-auto inline-flex items-center gap-0.5 text-[10px] rounded-full px-1.5 py-0.5 bg-primary-50 text-primary-600 hover:bg-primary-100 shrink-0"
                             >
                               <MessageSquare className="w-3 h-3" />{comments > 0 ? comments : ''}
                             </button>
@@ -338,11 +338,11 @@ export function PipelineView({ leads, onOpenLead }: { leads: Lead[]; onOpenLead:
                       )}
                     </td>
                     <td className="px-3 py-2"><StatusBadge status={l.status} /></td>
-                    <td className="px-3 py-2 text-gray-500">{l.owner ? l.owner.split('@')[0] : <span className="text-emerald-600">pool</span>}</td>
+                    <td className="px-3 py-2 text-gray-500">{l.owner ? l.owner.split('@')[0] : <span className="text-green-600">pool</span>}</td>
                     <td className="px-3 py-2" onClick={(e) => e.stopPropagation()}>
                       <button
                         onClick={() => setCommentLeadId(l.id)}
-                        className="inline-flex items-center gap-0.5 text-[10px] rounded-full px-1.5 py-0.5 bg-blue-50 text-blue-600 hover:bg-blue-100"
+                        className="inline-flex items-center gap-0.5 text-[10px] rounded-full px-1.5 py-0.5 bg-primary-50 text-primary-600 hover:bg-primary-100"
                       >
                         <MessageSquare className="w-3 h-3" />{comments > 0 ? comments : ''}
                       </button>
@@ -416,7 +416,7 @@ function LeadCommentsModal({ lead, editable, onClose, onReload, notify }: {
             <div key={i} className="bg-gray-50 rounded-lg p-2.5">
               <p className="text-sm text-gray-800 whitespace-pre-line break-words">{a.description}</p>
               <div className="mt-1.5 flex items-center gap-1.5 flex-wrap text-[11px] text-gray-400">
-                {a.stage && <span className="bg-blue-50 text-blue-600 rounded-full px-1.5 py-0.5">in {STAGE_LABELS[a.stage]}</span>}
+                {a.stage && <span className="bg-primary-50 text-primary-600 rounded-full px-1.5 py-0.5">in {STAGE_LABELS[a.stage]}</span>}
                 <span>{a.by.split('@')[0]}</span>
                 <span>· {formatDateTime(a.at)}</span>
               </div>
@@ -430,9 +430,9 @@ function LeadCommentsModal({ lead, editable, onClose, onReload, notify }: {
               onChange={(e) => setText(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') send() }}
               placeholder={`Comment — logged in ${STAGE_LABELS[lead.stage]}`}
-              className="flex-1 text-sm border border-gray-300 rounded-lg px-3 py-1.5 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 text-sm border border-gray-300 rounded-lg px-3 py-1.5 text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
-            <button onClick={send} disabled={!text.trim() || saving} className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50">
+            <button onClick={send} disabled={!text.trim() || saving} className="px-3 py-1.5 bg-primary-600 text-white rounded-lg text-sm hover:bg-primary-700 disabled:opacity-50">
               {saving ? '…' : 'Send'}
             </button>
           </div>
@@ -500,7 +500,7 @@ function WorkAnalysis({ leads, me, isManager }: { leads: Lead[]; me: string; isM
           </thead>
           <tbody className="divide-y divide-gray-100">
             {rows.map((r) => (
-              <tr key={r.member} className={r.member === me ? 'bg-blue-50/50' : ''}>
+              <tr key={r.member} className={r.member === me ? 'bg-primary-50/50' : ''}>
                 <td className="px-4 py-2 font-medium text-gray-800">{r.member === me ? `${r.member.split('@')[0]} (you)` : r.member.split('@')[0]}</td>
                 <td className="px-3 py-2 font-semibold text-gray-900">{r.held}</td>
                 {r.stages.map((n, i) => <td key={i} className={`px-2 py-2 ${n ? 'text-gray-800' : 'text-gray-300'}`}>{n}</td>)}
@@ -616,7 +616,7 @@ export function InboxView({ onOpenLead }: { onOpenLead: (id: string) => void }) 
           <button
             onClick={() => setGrouped((g) => !g)}
             title="Group messages by lead"
-            className={`px-2.5 py-2 text-xs border rounded-lg flex items-center gap-1 ${grouped ? 'bg-blue-50 border-blue-300 text-blue-700' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+            className={`px-2.5 py-2 text-xs border rounded-lg flex items-center gap-1 ${grouped ? 'bg-primary-50 border-primary-300 text-primary-700' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
           >
             <Users className="w-3.5 h-3.5" /> By lead
           </button>
@@ -641,7 +641,7 @@ export function InboxView({ onOpenLead }: { onOpenLead: (id: string) => void }) 
           {groups.map((g) => (
             <div key={g.leadId} className="bg-white border border-gray-200 rounded-lg overflow-hidden">
               <button onClick={() => onOpenLead(g.leadId)} className="w-full text-left px-3 py-2 bg-gray-50 border-b border-gray-100 flex items-center justify-between gap-2 hover:bg-gray-100">
-                <span className="text-sm font-medium text-emerald-700 truncate">{g.leadName}{g.leadCompany ? ` · ${g.leadCompany}` : ''}</span>
+                <span className="text-sm font-medium text-green-700 truncate">{g.leadName}{g.leadCompany ? ` · ${g.leadCompany}` : ''}</span>
                 <span className="text-[11px] text-gray-400 shrink-0">{g.msgs.length} message{g.msgs.length === 1 ? '' : 's'} · open lead →</span>
               </button>
               <div className="divide-y divide-gray-50">
@@ -650,7 +650,7 @@ export function InboxView({ onOpenLead }: { onOpenLead: (id: string) => void }) 
                     <div className="flex items-center justify-between gap-3">
                       <div className="text-[13px] text-gray-900 truncate">{m.subject || '(no subject)'}</div>
                       <div className="text-[11px] text-gray-400 shrink-0 flex items-center gap-1.5">
-                        {mailboxNames(m) && <span className="bg-blue-50 text-blue-600 rounded-full px-1.5 py-0.5" title="Team mailbox(es) this reply landed in">→ {mailboxNames(m)}</span>}
+                        {mailboxNames(m) && <span className="bg-primary-50 text-primary-600 rounded-full px-1.5 py-0.5" title="Team mailbox(es) this reply landed in">→ {mailboxNames(m)}</span>}
                         {formatDateTime(m.receivedAt)}
                       </div>
                     </div>
@@ -665,14 +665,14 @@ export function InboxView({ onOpenLead }: { onOpenLead: (id: string) => void }) 
         <>
           <div className="space-y-1.5">
             {pageMsgs.map((m) => (
-              <button key={m.id} onClick={() => onOpenLead(m.leadId)} className="w-full text-left bg-white border border-gray-200 rounded-lg px-3 py-2.5 hover:border-blue-300 hover:shadow-sm transition-all">
+              <button key={m.id} onClick={() => onOpenLead(m.leadId)} className="w-full text-left bg-white border border-gray-200 rounded-lg px-3 py-2.5 hover:border-primary-300 hover:shadow-sm transition-all">
                 <div className="flex items-center justify-between gap-3">
                   <div className="text-sm font-medium text-gray-900 truncate">{m.subject || '(no subject)'}</div>
                   <div className="text-[11px] text-gray-400 shrink-0">{formatDateTime(m.receivedAt)}</div>
                 </div>
                 <div className="text-[11px] mt-0.5 flex items-center gap-1.5 min-w-0">
-                  <span className="text-emerald-700 truncate">{m.leadName} · {m.leadCompany || m.from}</span>
-                  {mailboxNames(m) && <span className="bg-blue-50 text-blue-600 rounded-full px-1.5 py-0.5 shrink-0" title="Team mailbox(es) this reply landed in">→ {mailboxNames(m)}</span>}
+                  <span className="text-green-700 truncate">{m.leadName} · {m.leadCompany || m.from}</span>
+                  {mailboxNames(m) && <span className="bg-primary-50 text-primary-600 rounded-full px-1.5 py-0.5 shrink-0" title="Team mailbox(es) this reply landed in">→ {mailboxNames(m)}</span>}
                 </div>
                 <p className="text-xs text-gray-600 mt-1 line-clamp-1">{m.preview}</p>
               </button>
@@ -764,7 +764,7 @@ export function SchedulerView({ onOpenLead }: { onOpenLead: (id: string) => void
     <div className="p-3 sm:p-5 grid grid-cols-1 xl:grid-cols-2 gap-4">
       <div className="space-y-3">
         <div className="flex items-center justify-between gap-2 flex-wrap">
-          <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2"><Video className="w-4 h-4 text-blue-500" /> Meetings ({forwardLabel(range)})</h3>
+          <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2"><Video className="w-4 h-4 text-primary-500" /> Meetings ({forwardLabel(range)})</h3>
           <button onClick={load} className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50"><RefreshCw className="w-4 h-4 text-gray-500" /></button>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -790,7 +790,7 @@ export function SchedulerView({ onOpenLead }: { onOpenLead: (id: string) => void
               <div key={m.id} className="bg-white border border-gray-200 rounded-lg p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div className="text-sm font-medium text-gray-900">{m.subject}</div>
-                  {m.joinUrl && <a href={m.joinUrl} target="_blank" rel="noopener noreferrer" className="text-xs bg-blue-600 text-white rounded-lg px-2.5 py-1.5 hover:bg-blue-700 shrink-0">Join Teams</a>}
+                  {m.joinUrl && <a href={m.joinUrl} target="_blank" rel="noopener noreferrer" className="text-xs bg-primary-600 text-white rounded-lg px-2.5 py-1.5 hover:bg-primary-700 shrink-0">Join Teams</a>}
                 </div>
                 <div className="text-xs text-gray-500 mt-1">{formatDateTime(m.start)} → {formatDateTime(m.end)}</div>
                 <div className="text-xs text-gray-400 mt-1 truncate">With: {m.attendees.join(', ') || '—'}</div>
@@ -836,13 +836,13 @@ export function SchedulerView({ onOpenLead }: { onOpenLead: (id: string) => void
       )}
 
       <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2"><Mail className="w-4 h-4 text-emerald-500" /> Webinar & training invites sent</h3>
+        <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2"><Mail className="w-4 h-4 text-green-500" /> Webinar & training invites sent</h3>
         {followUps.length === 0 && <div className="bg-gray-50 rounded-lg p-8 text-center text-sm text-gray-400">No follow-up invites yet.</div>}
         {upcomingInvites.length > 0 && (
           <div className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Upcoming <span className="text-gray-300 normal-case">· {upcomingInvites.length}</span></div>
         )}
         {upcomingInvites.map((f) => (
-          <button key={`${f.leadId}-${f.id}`} onClick={() => onOpenLead(f.leadId)} className="w-full text-left bg-white border border-gray-200 rounded-lg p-4 hover:border-emerald-300 transition-all">
+          <button key={`${f.leadId}-${f.id}`} onClick={() => onOpenLead(f.leadId)} className="w-full text-left bg-white border border-gray-200 rounded-lg p-4 hover:border-green-300 transition-all">
             <div className="text-sm font-medium text-gray-900">{f.type === 'webinar' ? '🎓 Webinar' : '📚 1-day training'}: {f.title}</div>
             <div className="text-xs text-gray-500 mt-1">{dayHeading(`${f.date}T00:00:00`)} · {f.date} at {f.time} · {f.leadName} ({f.leadCompany || '—'})</div>
           </button>
@@ -856,7 +856,7 @@ export function SchedulerView({ onOpenLead }: { onOpenLead: (id: string) => void
           </button>
         )}
         {showPastInvites && pastInvites.map((f) => (
-          <button key={`${f.leadId}-${f.id}`} onClick={() => onOpenLead(f.leadId)} className="w-full text-left bg-white border border-gray-100 rounded-lg p-3 hover:border-emerald-300 transition-all opacity-70">
+          <button key={`${f.leadId}-${f.id}`} onClick={() => onOpenLead(f.leadId)} className="w-full text-left bg-white border border-gray-100 rounded-lg p-3 hover:border-green-300 transition-all opacity-70">
             <div className="text-[13px] text-gray-700">{f.type === 'webinar' ? '🎓 Webinar' : '📚 1-day training'}: {f.title}</div>
             <div className="text-[11px] text-gray-400 mt-0.5">{f.date} at {f.time} · {f.leadName} ({f.leadCompany || '—'})</div>
           </button>
@@ -895,7 +895,7 @@ function RescheduleModal({ meeting, lead, onClose, onDone, notify }: {
     } catch (e: any) { notify(e.message, true) } finally { setSaving(false) }
   }
 
-  const inputCls = 'w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+  const inputCls = 'w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent'
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl w-full max-w-md flex flex-col">
@@ -919,7 +919,7 @@ function RescheduleModal({ meeting, lead, onClose, onDone, notify }: {
         </div>
         <div className="px-5 py-3.5 border-t border-gray-200 flex justify-end gap-2">
           <button onClick={onClose} className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50">Cancel</button>
-          <button onClick={save} disabled={saving} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2">
+          <button onClick={save} disabled={saving} className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm hover:bg-primary-700 disabled:opacity-50 flex items-center gap-2">
             <CalendarClock className="w-4 h-4" /> {saving ? 'Updating…' : 'Update & notify attendees'}
           </button>
         </div>
@@ -992,7 +992,7 @@ export function DocumentsView({ canManage, notify }: { canManage: boolean; notif
 
   return (
     <div className="p-3 sm:p-5 max-w-3xl space-y-3">
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
+      <div className="bg-primary-50 border border-primary-200 rounded-lg p-4 text-sm text-primary-800">
         Upload the <strong>2-page manuals</strong> (technical & non-technical) under <em>manuals</em>, and <strong>webinar posters</strong> under <em>posters</em>. These become attachable in the email composer and follow-up invites. <strong>Pitches</strong> are generated automatically from each lead's pitch doc (docx + PDF per version); <strong>email one-offs</strong> are composer uploads that clean themselves up after sending.
       </div>
       <div className="flex items-center gap-2 flex-wrap">
@@ -1001,7 +1001,7 @@ export function DocumentsView({ canManage, notify }: { canManage: boolean; notif
           <option value="posters">posters/ (webinar posters)</option>
           <option value="general">general/</option>
         </select>
-        <label className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg cursor-pointer hover:bg-blue-700 flex items-center gap-2">
+        <label className="px-4 py-2 bg-primary-600 text-white text-sm rounded-lg cursor-pointer hover:bg-primary-700 flex items-center gap-2">
           <Upload className="w-4 h-4" /> {uploading ? 'Uploading...' : 'Upload file'}
           <input type="file" onChange={upload} className="hidden" disabled={uploading} />
         </label>
@@ -1030,7 +1030,7 @@ export function DocumentsView({ canManage, notify }: { canManage: boolean; notif
             <button
               key={f.key}
               onClick={() => setFolderFilter(folderFilter === f.key ? '' : f.key)}
-              className={`text-xs rounded-full px-2.5 py-1 border ${folderFilter === f.key ? 'bg-blue-600 text-white border-blue-600' : n ? 'border-gray-200 text-gray-700 hover:bg-gray-50' : 'border-gray-100 text-gray-300'}`}
+              className={`text-xs rounded-full px-2.5 py-1 border ${folderFilter === f.key ? 'bg-primary-600 text-white border-primary-600' : n ? 'border-gray-200 text-gray-700 hover:bg-gray-50' : 'border-gray-100 text-gray-300'}`}
             >
               {f.label} · {n}
             </button>

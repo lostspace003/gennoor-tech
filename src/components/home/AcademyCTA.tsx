@@ -50,8 +50,8 @@ export default function AcademyCTA() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
               >
-                <span className="w-1.5 h-1.5 bg-secondary-400 rounded-full animate-pulse" />
-                <span className="text-secondary-400 text-xs font-bold tracking-wider uppercase">100% Free</span>
+                <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-pulse" />
+                <span className="text-gray-400 text-xs font-bold tracking-wider uppercase">100% Free</span>
               </motion.div>
 
               <h2 className="text-3xl lg:text-4xl font-bold text-white mb-5 leading-tight">
@@ -69,7 +69,7 @@ export default function AcademyCTA() {
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                   <Link
                     href="/ai-academy"
-                    className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-accent-500 text-white font-bold rounded-xl shadow-lg shadow-accent-500/20 transition-all duration-300 group"
+                    className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-primary-600 text-white font-bold rounded-xl shadow-lg shadow-primary-500/20 transition-all duration-300 group"
                   >
                     <Play className="w-4 h-4" />
                     Start Learning Free

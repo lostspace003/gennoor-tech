@@ -99,17 +99,17 @@ export default function FounderPage() {
                   <Shield className="w-6 h-6 mr-3" />
                   <div>
                     <p className="font-bold">Microsoft Certified Trainer (MCT)</p>
-                    <p className="text-sm text-blue-100">Active since {mctStatus.since} • Authorized worldwide trainer</p>
+                    <p className="text-sm text-primary-100">Active since {mctStatus.since} • Authorized worldwide trainer</p>
                   </div>
                 </div>
                 <MCTCertificateButton pdfUrl={`${BLOB_URL}/certificates/0-mct-certifcate.pdf`} />
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
-                <div className="inline-flex items-center bg-yellow-600 text-white rounded-xl px-6 py-3 shadow-lg shadow-yellow-500/15">
+                <div className="inline-flex items-center bg-amber-600 text-white rounded-xl px-6 py-3 shadow-lg shadow-amber-500/15">
                   <Award className="w-6 h-6 mr-3" />
                   <div>
                     <p className="font-bold">AI CERTs Certified Trainer (AICT)</p>
-                    <p className="text-sm text-yellow-100">Active since {aictStatus.since} • ID: {aictStatus.id}</p>
+                    <p className="text-sm text-amber-100">Active since {aictStatus.since} • ID: {aictStatus.id}</p>
                   </div>
                 </div>
               </div>

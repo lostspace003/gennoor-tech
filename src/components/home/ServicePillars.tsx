@@ -64,7 +64,7 @@ function GlassCard({ service, index }: { service: typeof siteConfig.services[0];
 
         {/* Icon */}
         <motion.div
-          className="w-14 h-14 rounded-xl bg-primary-500 flex items-center justify-center mb-5 shadow-lg shadow-primary-500/15"
+          className="w-14 h-14 rounded-xl bg-primary-600 flex items-center justify-center mb-5 shadow-lg shadow-primary-500/15"
           whileHover={{ scale: 1.08, rotate: 3 }}
           transition={{ type: 'spring', stiffness: 400, damping: 20 }}
         >

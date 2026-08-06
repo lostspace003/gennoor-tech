@@ -148,9 +148,9 @@ export default function BotLogView({ isManager, notify }: { isManager: boolean; 
   return (
     <div className="p-3 sm:p-5 max-w-4xl space-y-4">
       <div className="flex flex-wrap items-center gap-3">
-        <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2"><MessageCircle className="w-4 h-4 text-blue-500" /> GennoorCare — website bot</h2>
-        <span className="text-xs bg-blue-50 text-blue-700 border border-blue-200 rounded-full px-2.5 py-1">{stats.total} conversations ({rangeLabel(range)})</span>
-        <span className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-2.5 py-1">{stats.leads} leads captured</span>
+        <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2"><MessageCircle className="w-4 h-4 text-primary-500" /> GennoorCare — website bot</h2>
+        <span className="text-xs bg-primary-50 text-primary-700 border border-primary-200 rounded-full px-2.5 py-1">{stats.total} conversations ({rangeLabel(range)})</span>
+        <span className="text-xs bg-green-50 text-green-700 border border-green-200 rounded-full px-2.5 py-1">{stats.leads} leads captured</span>
         {/* Range applies to both the data below and the generated report */}
         <div className="ml-auto">
           <DateRangeFilter value={range} onChange={setRange} presets={RANGES} />
@@ -159,7 +159,7 @@ export default function BotLogView({ isManager, notify }: { isManager: boolean; 
 
       <div className="flex items-center gap-1 border-b border-gray-200">
         {([['report', 'Report', FileText], ['conversations', 'Conversations', MessageCircle], ['index', 'Knowledge index', Globe]] as const).map(([id, label, Icon]) => (
-          <button key={id} onClick={() => setTab(id)} className={`px-3 py-2 text-sm font-medium border-b-2 flex items-center gap-1.5 ${tab === id ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-800'}`}>
+          <button key={id} onClick={() => setTab(id)} className={`px-3 py-2 text-sm font-medium border-b-2 flex items-center gap-1.5 ${tab === id ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-800'}`}>
             <Icon className="w-4 h-4" /> {label}
           </button>
         ))}
@@ -168,7 +168,7 @@ export default function BotLogView({ isManager, notify }: { isManager: boolean; 
       {tab === 'report' && (
         <div className="space-y-3">
           <div className="flex flex-wrap items-center gap-2">
-            <button onClick={generate} disabled={busy === 'report'} className="px-3 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 flex items-center gap-2 disabled:opacity-50">
+            <button onClick={generate} disabled={busy === 'report'} className="px-3 py-2 bg-gray-600 text-white text-sm rounded-lg hover:bg-gray-700 flex items-center gap-2 disabled:opacity-50">
               <Sparkles className="w-4 h-4" /> {busy === 'report' ? `Analyzing ${rangeLabel(range)}...` : report ? `Regenerate (${rangeLabel(range)})` : `Generate business report — ${rangeLabel(range)}`}
             </button>
             {report && reportLabel && <span className="text-[11px] text-gray-400">covers {reportLabel}{reportLabel !== rangeLabel(range) ? ` — switch above and regenerate for ${rangeLabel(range)}` : ''}</span>}
@@ -183,7 +183,7 @@ export default function BotLogView({ isManager, notify }: { isManager: boolean; 
               <div className="flex flex-wrap items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg p-2.5">
                 <Mail className="w-4 h-4 text-gray-400 shrink-0" />
                 <input value={recipients} onChange={(e) => setRecipients(e.target.value)} placeholder="team emails, comma-separated" className="flex-1 min-w-48 px-3 py-1.5 border border-gray-200 rounded-lg text-xs" />
-                <button onClick={emailReport} disabled={busy === 'email'} className="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 disabled:opacity-50">
+                <button onClick={emailReport} disabled={busy === 'email'} className="px-3 py-1.5 bg-primary-600 text-white text-xs rounded-lg hover:bg-primary-700 disabled:opacity-50">
                   {busy === 'email' ? 'Sending...' : 'Forward to team'}
                 </button>
               </div>
@@ -194,7 +194,7 @@ export default function BotLogView({ isManager, notify }: { isManager: boolean; 
                 <div className="p-3.5 space-y-2 max-h-64 overflow-y-auto">
                   {chat.length === 0 && <p className="text-xs text-gray-400">e.g. “which sector asked most about POCs?” · “draft a plan to close the top gap”</p>}
                   {chat.map((m, i) => (
-                    <div key={i} className={`max-w-[88%] rounded-lg px-3 py-2 text-sm whitespace-pre-line break-words ${m.role === 'user' ? 'ml-auto bg-blue-600 text-white' : 'bg-gray-100 text-gray-800'}`}>
+                    <div key={i} className={`max-w-[88%] rounded-lg px-3 py-2 text-sm whitespace-pre-line break-words ${m.role === 'user' ? 'ml-auto bg-primary-600 text-white' : 'bg-gray-100 text-gray-800'}`}>
                       {m.content}
                       <CopyMsg text={m.content} light={m.role === 'user'} />
                     </div>
@@ -203,7 +203,7 @@ export default function BotLogView({ isManager, notify }: { isManager: boolean; 
                 </div>
                 <div className="p-2.5 border-t border-gray-100 flex gap-2">
                   <input value={question} onChange={(e) => setQuestion(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && askReport()} placeholder="Ask the analyst..." className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm" />
-                  <button onClick={askReport} disabled={!!busy || !question.trim()} className="px-3 py-2 bg-purple-600 text-white rounded-lg disabled:opacity-50"><Send className="w-4 h-4" /></button>
+                  <button onClick={askReport} disabled={!!busy || !question.trim()} className="px-3 py-2 bg-gray-600 text-white rounded-lg disabled:opacity-50"><Send className="w-4 h-4" /></button>
                 </div>
               </div>
             </>
@@ -240,10 +240,10 @@ export default function BotLogView({ isManager, notify }: { isManager: boolean; 
             const idx = (safeLogPage - 1) * LOGS_PER_PAGE + i
             const open = expandedLog === idx
             return (
-              <div key={idx} className={`rounded-lg border ${l.leadCaptured ? 'border-emerald-300 bg-emerald-50' : l.q === '[feedback]' ? 'border-purple-200 bg-purple-50' : 'border-gray-200 bg-white'}`}>
+              <div key={idx} className={`rounded-lg border ${l.leadCaptured ? 'border-green-300 bg-green-50' : l.q === '[feedback]' ? 'border-gray-200 bg-gray-50' : 'border-gray-200 bg-white'}`}>
                 <button onClick={() => setExpandedLog(open ? null : idx)} className="w-full text-left px-3 py-2 flex items-center gap-2">
                   <span className="text-[11px] text-gray-400 shrink-0">{formatDateTime(l.at)}</span>
-                  {l.leadCaptured && <span className="text-[10px] bg-emerald-600 text-white rounded-full px-1.5 py-0.5 shrink-0">LEAD</span>}
+                  {l.leadCaptured && <span className="text-[10px] bg-green-600 text-white rounded-full px-1.5 py-0.5 shrink-0">LEAD</span>}
                   <span className={`text-sm text-gray-900 min-w-0 ${open ? 'break-words' : 'truncate'}`}>{l.q}</span>
                   <span className="text-gray-300 text-xs ml-auto shrink-0">{open ? '▴' : '▾'}</span>
                 </button>
@@ -273,10 +273,10 @@ export default function BotLogView({ isManager, notify }: { isManager: boolean; 
               <div className="text-amber-700">The website hasn't been indexed yet — GennoorCare can't answer until the first index run.</div>
             )}
             {indexInfo?.job?.state === 'running' && (
-              <div className="text-xs text-blue-600 flex items-center gap-1.5"><RefreshCw className="w-3 h-3 animate-spin" /> {indexInfo.job.progress || 'indexing...'}</div>
+              <div className="text-xs text-primary-600 flex items-center gap-1.5"><RefreshCw className="w-3 h-3 animate-spin" /> {indexInfo.job.progress || 'indexing...'}</div>
             )}
           </div>
-          <button onClick={reindex} disabled={busy === 'index'} className="px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 flex items-center gap-2 disabled:opacity-50">
+          <button onClick={reindex} disabled={busy === 'index'} className="px-3 py-2 bg-primary-600 text-white text-sm rounded-lg hover:bg-primary-700 flex items-center gap-2 disabled:opacity-50">
             <RefreshCw className={`w-4 h-4 ${busy === 'index' ? 'animate-spin' : ''}`} /> {busy === 'index' ? 'Indexing (takes a few minutes)...' : 'Reindex website now'}
           </button>
           <p className="text-xs text-gray-400">Automatic reindex runs on the 1st of every month; only changed pages are re-embedded. Use this button after publishing important new content.</p>

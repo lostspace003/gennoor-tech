@@ -583,7 +583,7 @@ export default function TrustAndSecurityPage() {
             return (
               <div key={p.title} className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-primary-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary-500/15">
+                  <div className="w-10 h-10 rounded-xl bg-primary-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary-500/15">
                     <Icon className="w-5 h-5 text-white" />
                   </div>
                   <div>

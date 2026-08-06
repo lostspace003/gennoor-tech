@@ -424,7 +424,7 @@ export default function TeamAndDeliveryPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                   <div className="lg:col-span-3">
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="w-10 h-10 rounded-xl bg-primary-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary-500/15">
+                      <div className="w-10 h-10 rounded-xl bg-primary-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary-500/15">
                         <Icon className="w-5 h-5 text-white" />
                       </div>
                       <h3 className="text-base font-bold text-gray-900 leading-tight">
@@ -480,7 +480,7 @@ export default function TeamAndDeliveryPage() {
                 className="rounded-2xl p-5 bg-white border border-gray-200/70 shadow-sm flex flex-col sm:flex-row sm:items-start gap-4"
               >
                 <div className="flex items-center gap-3 sm:w-56 flex-shrink-0">
-                  <div className="w-9 h-9 rounded-xl bg-primary-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary-500/15">
+                  <div className="w-9 h-9 rounded-xl bg-primary-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary-500/15">
                     <Icon className="w-4 h-4 text-white" />
                   </div>
                   <span className="text-sm font-bold text-gray-900">{c.rhythm}</span>

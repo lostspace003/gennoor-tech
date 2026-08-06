@@ -49,15 +49,15 @@ export default function IndustriesHubPage() {
         <section className="relative overflow-hidden bg-gray-900 text-white">
           <div className="absolute inset-0 opacity-30">
             <div className="absolute top-0 right-1/4 w-[40rem] h-[40rem] bg-primary-500/30 rounded-full blur-3xl" />
-            <div className="absolute bottom-0 left-1/4 w-[35rem] h-[35rem] bg-secondary-400/20 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 left-1/4 w-[35rem] h-[35rem] bg-gray-400/20 rounded-full blur-3xl" />
           </div>
           <div className="relative max-w-6xl mx-auto px-6 py-24 lg:py-32 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs tracking-widest text-secondary-300 mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs tracking-widest text-gray-300 mb-6">
               INDUSTRIES
             </div>
             <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
               Built for your sector.
-              <span className="block text-secondary-300 mt-2">Not a generic “AI consulting” deck.</span>
+              <span className="block text-gray-300 mt-2">Not a generic “AI consulting” deck.</span>
             </h1>
             <p className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto">
               Each industry has its own regulator, its own data shape, and its own non-negotiables.
@@ -96,7 +96,7 @@ export default function IndustriesHubPage() {
 
         {/* Other sectors note */}
         <section className="max-w-5xl mx-auto px-6 pb-20">
-          <div className="bg-secondary-50 rounded-2xl border border-gray-200 p-8 md:p-10 text-center">
+          <div className="bg-gray-50 rounded-2xl border border-gray-200 p-8 md:p-10 text-center">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">Not your sector?</h2>
             <p className="text-gray-600 max-w-2xl mx-auto mb-6">
               Telecom, hospitality, legal services, real estate, agriculture — we deliver in all of them.

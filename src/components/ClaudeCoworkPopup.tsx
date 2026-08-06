@@ -50,7 +50,7 @@ export default function ClaudeCoworkPopup() {
                 </span>
               </div>
 
-              <div className="inline-block bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-3">
+              <div className="inline-block bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-3">
                 Event Completed
               </div>
 

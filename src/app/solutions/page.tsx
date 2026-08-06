@@ -84,12 +84,12 @@ export default function SolutionsHubPage() {
 
             <Link
               href="/solutions/for-enterprise"
-              className="group relative bg-white rounded-2xl border border-gray-200/70 shadow-sm hover:border-secondary-300 hover:shadow-md transition-all duration-300 p-8 md:p-10 flex flex-col"
+              className="group relative bg-white rounded-2xl border border-gray-200/70 shadow-sm hover:border-gray-300 hover:shadow-md transition-all duration-300 p-8 md:p-10 flex flex-col"
             >
-              <div className="w-14 h-14 rounded-2xl bg-secondary-100 text-secondary-700 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <div className="w-14 h-14 rounded-2xl bg-gray-100 text-gray-700 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <Building2 className="w-7 h-7" />
               </div>
-              <div className="text-xs uppercase tracking-widest text-secondary-700 font-bold mb-2">For Enterprise</div>
+              <div className="text-xs uppercase tracking-widest text-gray-700 font-bold mb-2">For Enterprise</div>
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">250+ person organizations</h2>
               <p className="text-gray-600 leading-relaxed mb-6">
                 Custom engagement models — diagnostics, multi-PoC programs, agent factories, and
@@ -99,7 +99,7 @@ export default function SolutionsHubPage() {
                 <li>· Readiness Diagnostic · PoC Programs · Agent Factory</li>
                 <li>· Center of Excellence · Sustainment Retainers · Sovereign Deployments</li>
               </ul>
-              <div className="mt-auto inline-flex items-center gap-1 text-secondary-700 font-semibold group-hover:gap-2 transition-all">
+              <div className="mt-auto inline-flex items-center gap-1 text-gray-700 font-semibold group-hover:gap-2 transition-all">
                 See the 6 enterprise models <ArrowRight className="w-4 h-4" />
               </div>
             </Link>

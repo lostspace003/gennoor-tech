@@ -113,8 +113,8 @@ export default function BookCallModal({ isOpen, onClose, programTitle }: BookCal
                 <p className="text-gray-600 mb-3">
                   We've received your request regarding <strong>{programTitle}</strong>.
                 </p>
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
-                  <p className="text-sm text-blue-800">
+                <div className="bg-primary-50 border border-primary-200 rounded-lg p-4 text-left">
+                  <p className="text-sm text-primary-800">
                     A confirmation has been sent to your email from <strong>training@gennoor.com</strong>.
                     Our team will revert back to you shortly to schedule the call.
                   </p>

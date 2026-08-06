@@ -131,7 +131,7 @@ function SummarizeButton({ onClick }: { onClick: () => void }) {
     <>
       <button
         onClick={onClick}
-        className="poc-sparkle-btn relative inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold text-white bg-orange-500 hover:from-orange-600 hover:to-amber-600 shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 transition-all group overflow-hidden"
+        className="poc-sparkle-btn relative inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold text-white bg-amber-500 shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 transition-all group overflow-hidden"
       >
         <span className="poc-shimmer absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0" />
         <svg className="poc-sparkle-icon h-3.5 w-3.5 relative" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -91,7 +91,7 @@ export default function PageHero({
 
           {eyebrow && (
             <div className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-[11px] font-semibold text-primary-700 bg-primary-50/90 border border-primary-100/70">
-              <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary-500 mr-2 animate-pulse" />
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary-600 mr-2 animate-pulse" />
               {eyebrow}
             </div>
           )}

@@ -138,13 +138,13 @@ export default function GennoorCare() {
       const md = p.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
       if (md) {
         const href = md[2].startsWith('http') || md[2].startsWith('/') || md[2].startsWith('mailto:') ? md[2] : `https://${md[2]}`
-        return <a key={key} href={href} className="text-blue-600 underline hover:text-blue-800 font-medium" target="_blank" rel="noopener noreferrer">{md[1]}</a>
+        return <a key={key} href={href} className="text-primary-600 underline hover:text-primary-800 font-medium" target="_blank" rel="noopener noreferrer">{md[1]}</a>
       }
       if (/^\*\*[^*]+\*\*$/.test(p)) return <strong key={key}>{p.slice(2, -2)}</strong>
-      if (/^https?:\/\//.test(p)) return <a key={key} href={p} className="text-blue-600 underline hover:text-blue-800 break-all" target="_blank" rel="noopener noreferrer">{p.replace(/^https?:\/\/(www\.)?/, '')}</a>
-      if (/^(www\.)?gennoor\.com/.test(p)) return <a key={key} href={`https://${p.replace(/^www\./, 'www.') === p ? p : p}`} className="text-blue-600 underline hover:text-blue-800" target="_blank" rel="noopener noreferrer">{p}</a>
-      if (p === 'admin@gennoor.com') return <a key={key} href="mailto:admin@gennoor.com" className="text-blue-600 underline hover:text-blue-800">{p}</a>
-      if (/^mailto:/.test(p)) return <a key={key} href={p} className="text-blue-600 underline hover:text-blue-800">{p.slice(7)}</a>
+      if (/^https?:\/\//.test(p)) return <a key={key} href={p} className="text-primary-600 underline hover:text-primary-800 break-all" target="_blank" rel="noopener noreferrer">{p.replace(/^https?:\/\/(www\.)?/, '')}</a>
+      if (/^(www\.)?gennoor\.com/.test(p)) return <a key={key} href={`https://${p.replace(/^www\./, 'www.') === p ? p : p}`} className="text-primary-600 underline hover:text-primary-800" target="_blank" rel="noopener noreferrer">{p}</a>
+      if (p === 'admin@gennoor.com') return <a key={key} href="mailto:admin@gennoor.com" className="text-primary-600 underline hover:text-primary-800">{p}</a>
+      if (/^mailto:/.test(p)) return <a key={key} href={p} className="text-primary-600 underline hover:text-primary-800">{p.slice(7)}</a>
       return <span key={key}>{p}</span>
     })
   }
@@ -158,7 +158,7 @@ export default function GennoorCare() {
       if (bullet) {
         return (
           <div key={i} className="flex gap-2 ml-0.5 my-0.5">
-            <span className="text-blue-500 shrink-0 leading-5">•</span>
+            <span className="text-primary-500 shrink-0 leading-5">•</span>
             <span className="min-w-0">{renderInline(bullet[1], `l${i}`)}</span>
           </div>
         )
@@ -167,7 +167,7 @@ export default function GennoorCare() {
       if (numbered) {
         return (
           <div key={i} className="flex gap-2 ml-0.5 my-0.5">
-            <span className="text-blue-500 font-medium shrink-0 leading-5">{numbered[1]}.</span>
+            <span className="text-primary-500 font-medium shrink-0 leading-5">{numbered[1]}.</span>
             <span className="min-w-0">{renderInline(numbered[2], `l${i}`)}</span>
           </div>
         )
@@ -181,7 +181,7 @@ export default function GennoorCare() {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-40 rounded-full transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+          className="fixed bottom-6 right-6 z-40 rounded-full transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2"
           aria-label={msgs.length > 0 ? 'Continue your GennoorCare chat' : 'Chat with GennoorCare'}
           title={msgs.length > 0 ? 'Continue chat' : 'Ask GennoorCare'}
         >
@@ -193,13 +193,13 @@ export default function GennoorCare() {
       {open && (
         <div className="fixed bottom-0 right-0 sm:bottom-5 sm:right-5 z-50 w-full sm:w-[330px] h-[100dvh] sm:h-[480px] sm:max-h-[78dvh] bg-white sm:rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden">
           {/* Header */}
-          <div className="px-3.5 py-2.5 bg-blue-600 text-white flex items-center justify-between shrink-0">
+          <div className="px-3.5 py-2.5 bg-primary-600 text-white flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2.5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/logos/gennoorbot-avatar.svg" alt="" className="w-8 h-8" />
               <div>
                 <div className="font-semibold text-sm leading-tight">GennoorCare</div>
-                <div className="text-[10px] text-blue-100 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" /> online — courses, training & POCs</div>
+                <div className="text-[10px] text-primary-100 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" /> online — courses, training & POCs</div>
               </div>
             </div>
             <button onClick={handleClose} className="px-2.5 py-1 hover:bg-white/15 rounded-lg text-2xl leading-none" aria-label="Minimize — your chat is saved" title="Minimize (chat is saved)">–</button>
@@ -222,13 +222,13 @@ export default function GennoorCare() {
               </p>
             )}
             {msgs.map((m, i) => (
-              <div key={i} className={`max-w-[88%] rounded-2xl px-3 py-2 text-[13px] leading-relaxed break-words ${m.role === 'user' ? 'ml-auto bg-blue-600 text-white rounded-br-md whitespace-pre-line' : 'bg-white border border-gray-200 text-gray-800 rounded-bl-md'}`}>
+              <div key={i} className={`max-w-[88%] rounded-2xl px-3 py-2 text-[13px] leading-relaxed break-words ${m.role === 'user' ? 'ml-auto bg-primary-600 text-white rounded-br-md whitespace-pre-line' : 'bg-white border border-gray-200 text-gray-800 rounded-bl-md'}`}>
                 {m.role === 'assistant' ? renderText(m.content) : m.content}
                 {/* Only add chips for links the reply text doesn't already contain — no duplicates */}
                 {m.links && m.links.filter((l) => !linkInContent(m.content, l.url)).length > 0 && (
                   <div className="mt-2 space-y-1.5">
                     {m.links.filter((l) => !linkInContent(m.content, l.url)).map((l) => (
-                      <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer" className="block px-3 py-2 rounded-lg bg-blue-50 border border-blue-100 hover:border-blue-300 text-blue-700 text-xs font-medium truncate">
+                      <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer" className="block px-3 py-2 rounded-lg bg-primary-50 border border-primary-100 hover:border-primary-300 text-primary-700 text-xs font-medium truncate">
                         {decodeEntities(l.title)} →
                       </a>
                     ))}
@@ -244,7 +244,7 @@ export default function GennoorCare() {
 
             {/* Lead form */}
             {showLead && !leadDone && (
-              <div className="bg-white border border-blue-200 rounded-xl p-3.5 space-y-2">
+              <div className="bg-white border border-primary-200 rounded-xl p-3.5 space-y-2">
                 <p className="text-xs font-medium text-gray-700">Leave your details — our team will reach out:</p>
                 <input value={lead.name} onChange={(e) => setLead({ ...lead, name: e.target.value })} placeholder="Your name *" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" />
                 <input value={lead.email} onChange={(e) => setLead({ ...lead, email: e.target.value })} placeholder="Work email *" type="email" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" />
@@ -254,7 +254,7 @@ export default function GennoorCare() {
                 </div>
                 <input value={lead.website_hp} onChange={(e) => setLead({ ...lead, website_hp: e.target.value })} className="hidden" tabIndex={-1} autoComplete="off" aria-hidden="true" />
                 <div className="flex gap-2">
-                  <button onClick={submitLead} disabled={leadBusy || !lead.name || !lead.email} className="flex-1 px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 disabled:opacity-50">
+                  <button onClick={submitLead} disabled={leadBusy || !lead.name || !lead.email} className="flex-1 px-3 py-2 bg-primary-600 text-white text-sm rounded-lg hover:bg-primary-700 disabled:opacity-50">
                     {leadBusy ? 'Sending...' : 'Request callback'}
                   </button>
                   <button onClick={() => setShowLead(false)} className="px-3 py-2 border border-gray-200 text-sm rounded-lg text-gray-600">Later</button>
@@ -264,10 +264,10 @@ export default function GennoorCare() {
 
             {/* Skippable exit feedback */}
             {showFeedback && (
-              <div className="bg-white border border-purple-200 rounded-xl p-3.5 space-y-2">
+              <div className="bg-white border border-gray-200 rounded-xl p-3.5 space-y-2">
                 <p className="text-xs font-medium text-gray-700">Before you go — was this helpful?</p>
                 <div className="flex gap-2">
-                  <button onClick={() => sendFeedback(true)} className="flex-1 px-3 py-2 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700">👍 Yes</button>
+                  <button onClick={() => sendFeedback(true)} className="flex-1 px-3 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700">👍 Yes</button>
                   <button onClick={() => sendFeedback(false)} className="flex-1 px-3 py-2 bg-gray-600 text-white text-sm rounded-lg hover:bg-gray-700">👎 Not really</button>
                 </div>
                 <input value={feedbackNote} onChange={(e) => setFeedbackNote(e.target.value)} placeholder="One line of feedback (optional)" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs" />
@@ -280,7 +280,7 @@ export default function GennoorCare() {
           {/* Footer */}
           <div className="p-2.5 border-t border-gray-100 bg-white shrink-0 space-y-1.5">
             {!leadDone && stage === 'chat' && (msgs.length > 0 || offerLead) && !showLead && (
-              <button onClick={() => setShowLead(true)} className="text-[11px] text-blue-600 hover:underline">📞 Request a callback from our team</button>
+              <button onClick={() => setShowLead(true)} className="text-[11px] text-primary-600 hover:underline">📞 Request a callback from our team</button>
             )}
             <div className="flex gap-2">
               <input
@@ -289,9 +289,9 @@ export default function GennoorCare() {
                 onKeyDown={(e) => e.key === 'Enter' && ask()}
                 placeholder={stage === 'greet' ? 'Type your name...' : 'Ask about courses, training, POCs...'}
                 maxLength={500}
-                className="flex-1 px-3 py-2 border border-gray-200 rounded-xl text-[13px] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="flex-1 px-3 py-2 border border-gray-200 rounded-xl text-[13px] focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />
-              <button onClick={() => ask()} disabled={busy || !input.trim()} className="px-3.5 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 text-[13px] font-medium">Send</button>
+              <button onClick={() => ask()} disabled={busy || !input.trim()} className="px-3.5 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700 disabled:opacity-50 text-[13px] font-medium">Send</button>
             </div>
             <p className="text-center text-[9px] text-gray-300">Powered by Gennoor AI · answers come from gennoor.com content</p>
           </div>

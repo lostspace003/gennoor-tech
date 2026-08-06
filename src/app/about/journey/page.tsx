@@ -87,7 +87,7 @@ export default function JourneyPage() {
                       </div>
                       <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
                       <p className="text-sm text-gray-500 leading-relaxed mb-4">{item.description}</p>
-                      <div className="flex items-center gap-2 text-xs text-emerald-600 bg-emerald-50/80 rounded-lg px-3 py-2 w-fit border border-emerald-100/60">
+                      <div className="flex items-center gap-2 text-xs text-green-600 bg-green-50/80 rounded-lg px-3 py-2 w-fit border border-green-100/60">
                         <Award className="w-3.5 h-3.5 flex-shrink-0" />
                         <span className="font-semibold">{item.highlight}</span>
                       </div>
@@ -108,7 +108,7 @@ export default function JourneyPage() {
                     </span>
                   </div>
                   <p className="text-sm text-gray-500 leading-relaxed mb-4">{item.description}</p>
-                  <div className="flex items-center gap-2 text-xs text-emerald-600 bg-emerald-50/80 rounded-lg px-3 py-2 w-fit border border-emerald-100/60">
+                  <div className="flex items-center gap-2 text-xs text-green-600 bg-green-50/80 rounded-lg px-3 py-2 w-fit border border-green-100/60">
                     <Award className="w-3.5 h-3.5 flex-shrink-0" />
                     <span className="font-semibold">{item.highlight}</span>
                   </div>

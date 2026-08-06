@@ -130,11 +130,11 @@ export default function EnquiryFormModal({
               </div>
             ) : (
               <>
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                  <p className="text-sm text-blue-800">
+                <div className="bg-primary-50 border border-primary-200 rounded-lg p-3 mb-4">
+                  <p className="text-sm text-primary-800">
                     <strong>Course:</strong> {programTitle}
                   </p>
-                  <p className="text-xs text-blue-600 mt-1">
+                  <p className="text-xs text-primary-600 mt-1">
                     PDF course outline will be sent to your email
                   </p>
                 </div>

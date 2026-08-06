@@ -42,7 +42,7 @@ export default function Footer() {
             <h2 className="text-2xl font-bold text-white mb-3">
               Stay Updated with AI Insights
             </h2>
-            <p className="text-blue-100/90 mb-8 text-sm">
+            <p className="text-primary-100/90 mb-8 text-sm">
               Monthly newsletter with enterprise AI trends, case studies, and exclusive content
             </p>
             <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">

@@ -66,7 +66,7 @@ const PieChartComponent = dynamic(() => import('recharts').then(m => {
 }), { ssr: false, loading: () => <ChartLoader /> })
 
 function ChartLoader() {
-  return <div className="h-[280px] bg-slate-50 rounded-lg animate-pulse flex items-center justify-center"><span className="text-slate-400 text-sm">Loading chart...</span></div>
+  return <div className="h-[280px] bg-gray-50 rounded-lg animate-pulse flex items-center justify-center"><span className="text-gray-400 text-sm">Loading chart...</span></div>
 }
 
 // ─── Types ───────────────────────────────────────────────────
@@ -505,10 +505,10 @@ export default function AdminDashboard() {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen bg-blue-50 flex items-center justify-center">
+      <div className="min-h-screen bg-primary-50 flex items-center justify-center">
         <div className="flex items-center gap-3">
-          <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />
-          <span className="text-slate-600">Loading session...</span>
+          <RefreshCw className="w-5 h-5 animate-spin text-primary-600" />
+          <span className="text-gray-600">Loading session...</span>
         </div>
       </div>
     )
@@ -522,12 +522,12 @@ export default function AdminDashboard() {
   // Load failure: without this branch the page would sit on the loading
   // spinner forever (error is set but `data` never becomes truthy).
   if (!data && error && !loading) return (
-    <div className="min-h-screen bg-blue-50 flex items-center justify-center">
+    <div className="min-h-screen bg-primary-50 flex items-center justify-center">
       <div className="text-center">
         <p className="text-red-600 font-medium mb-4">{error}</p>
         <button
           onClick={() => fetchAll(days)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors"
         >
           <RefreshCw className="w-4 h-4" />
           Retry
@@ -537,10 +537,10 @@ export default function AdminDashboard() {
   )
 
   if (!data) return (
-    <div className="min-h-screen bg-blue-50 flex items-center justify-center">
+    <div className="min-h-screen bg-primary-50 flex items-center justify-center">
       <div className="flex items-center gap-3">
-        <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />
-        <span className="text-slate-600">Loading dashboard data...</span>
+        <RefreshCw className="w-5 h-5 animate-spin text-primary-600" />
+        <span className="text-gray-600">Loading dashboard data...</span>
       </div>
     </div>
   )
@@ -610,24 +610,24 @@ export default function AdminDashboard() {
   const sidebarTabs = activeGroupData?.tabs || []
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800">
+    <div className="min-h-screen bg-gray-50 text-gray-800">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
+            <div className="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center">
               <BarChart3 className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-slate-800">Gennoor Admin</h1>
-              <p className="text-xs text-slate-500">
+              <h1 className="text-lg font-bold text-gray-800">Gennoor Admin</h1>
+              <p className="text-xs text-gray-500">
                 {session?.user?.email || 'Dashboard'} &middot; {setupData?.environment || ''}
                 {lastUpdated && <> &middot; Updated {lastUpdated.toLocaleTimeString()}</>}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="flex bg-slate-100 rounded-lg p-0.5">
+            <div className="flex bg-gray-100 rounded-lg p-0.5">
               {[
                 { label: 'Today', days: 0, key: 'today' },
                 { label: 'Yesterday', days: 1, key: 'yesterday' },
@@ -635,32 +635,32 @@ export default function AdminDashboard() {
                 { label: '14d', days: 14, key: '14' },
                 { label: '30d', days: 30, key: '30' },
               ].map(f => (
-                <button key={f.key} onClick={() => handleDaysChange(f.days, f.key)} className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${activeFilter === f.key ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>{f.label}</button>
+                <button key={f.key} onClick={() => handleDaysChange(f.days, f.key)} className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${activeFilter === f.key ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>{f.label}</button>
               ))}
             </div>
             <div className="relative">
-              <input type="date" value={customDate} onChange={e => handleCustomDate(e.target.value)} max={new Date().toISOString().slice(0, 10)} className={`px-2.5 py-1.5 text-xs rounded-md border transition-colors w-[130px] ${activeFilter === 'custom' ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300'}`} title="Custom date: show data from this date to today" />
+              <input type="date" value={customDate} onChange={e => handleCustomDate(e.target.value)} max={new Date().toISOString().slice(0, 10)} className={`px-2.5 py-1.5 text-xs rounded-md border transition-colors w-[130px] ${activeFilter === 'custom' ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'}`} title="Custom date: show data from this date to today" />
             </div>
-            <button onClick={() => setAutoRefresh(!autoRefresh)} className={`px-2.5 py-1.5 text-xs rounded-md transition-colors ${autoRefresh ? 'bg-teal-100 text-teal-700' : 'text-slate-400 hover:text-slate-600'}`} title={autoRefresh ? 'Auto-refresh ON (60s)' : 'Auto-refresh OFF'}>
+            <button onClick={() => setAutoRefresh(!autoRefresh)} className={`px-2.5 py-1.5 text-xs rounded-md transition-colors ${autoRefresh ? 'bg-gray-100 text-gray-700' : 'text-gray-400 hover:text-gray-600'}`} title={autoRefresh ? 'Auto-refresh ON (60s)' : 'Auto-refresh OFF'}>
               <Clock className="w-3.5 h-3.5" />
             </button>
             <CrmStatsTile />
             <GennoorCareTile />
-            <button onClick={() => router.push('/crm')} className="px-3 py-1.5 text-xs font-medium bg-purple-600 text-white rounded-md hover:shadow-md transition-all flex items-center gap-1.5">
+            <button onClick={() => router.push('/crm')} className="px-3 py-1.5 text-xs font-medium bg-gray-600 text-white rounded-md hover:shadow-md transition-all flex items-center gap-1.5">
               <Bot className="w-3.5 h-3.5" />
               CRM System
             </button>
-            <button onClick={handleRefresh} disabled={loading} className="p-2 text-slate-400 hover:text-blue-600 transition-colors"><RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /></button>
-            <button onClick={handleLogout} className="p-2 text-slate-400 hover:text-red-500 transition-colors"><LogOut className="w-4 h-4" /></button>
+            <button onClick={handleRefresh} disabled={loading} className="p-2 text-gray-400 hover:text-primary-600 transition-colors"><RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /></button>
+            <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-red-500 transition-colors"><LogOut className="w-4 h-4" /></button>
           </div>
         </div>
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
         {/* Main Horizontal Tabs */}
-        <div className="flex gap-1 bg-white rounded-xl p-1 mb-5 border border-slate-200 shadow-sm">
+        <div className="flex gap-1 bg-white rounded-xl p-1 mb-5 border border-gray-200 shadow-sm">
           {groups.map(group => (
-            <button key={group.key} onClick={() => { setActiveGroup(group.key); setActiveTab(group.tabs[0].key) }} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex-1 justify-center ${activeGroup === group.key ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}>
+            <button key={group.key} onClick={() => { setActiveGroup(group.key); setActiveTab(group.tabs[0].key) }} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex-1 justify-center ${activeGroup === group.key ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}>
               <group.icon className="w-4 h-4" />
               {group.label}
               {group.badge !== undefined && group.badge > 0 && <span className={`ml-0.5 px-1.5 py-0.5 text-[10px] rounded-full ${activeGroup === group.key ? 'bg-white/25 text-white' : 'bg-red-500 text-white'}`}>{group.badge}</span>}
@@ -672,9 +672,9 @@ export default function AdminDashboard() {
           {/* Vertical Sub-tabs (sidebar) */}
           {sidebarTabs.length > 1 && (
             <div className="w-44 flex-shrink-0">
-              <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden sticky top-[72px]">
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden sticky top-[72px]">
                 {sidebarTabs.map(tab => (
-                  <button key={tab.key} onClick={() => setActiveTab(tab.key)} className={`flex items-center gap-2 w-full px-4 py-3 text-sm font-medium transition-colors border-l-[3px] ${activeTab === tab.key ? 'bg-blue-50 text-blue-700 border-blue-600' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50 border-transparent'}`}>
+                  <button key={tab.key} onClick={() => setActiveTab(tab.key)} className={`flex items-center gap-2 w-full px-4 py-3 text-sm font-medium transition-colors border-l-[3px] ${activeTab === tab.key ? 'bg-primary-50 text-primary-700 border-primary-600' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50 border-transparent'}`}>
                     <tab.icon className="w-4 h-4" />
                     {tab.label}
                     {tab.badge !== undefined && tab.badge > 0 && <span className="ml-auto px-1.5 py-0.5 bg-red-500 text-white text-[10px] rounded-full">{tab.badge}</span>}
@@ -691,18 +691,18 @@ export default function AdminDashboard() {
         {activeTab === 'overview' && (
           <div className="space-y-6 animate-fadeIn">
             {/* Live now banner — refreshes every 30s */}
-            <div className="admin-card flex items-center justify-between gap-4 px-5 py-3 bg-emerald-50 border border-emerald-200 rounded-xl shadow-sm">
+            <div className="admin-card flex items-center justify-between gap-4 px-5 py-3 bg-green-50 border border-green-200 rounded-xl shadow-sm">
               <div className="flex items-center gap-3">
                 <span className="relative flex h-3 w-3">
-                  <span className={`${liveVisitors.count > 0 ? 'animate-ping' : ''} absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75`}></span>
-                  <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-500"></span>
+                  <span className={`${liveVisitors.count > 0 ? 'animate-ping' : ''} absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75`}></span>
+                  <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500"></span>
                 </span>
-                <p className="text-sm font-medium text-emerald-900">
+                <p className="text-sm font-medium text-green-900">
                   <span className="text-lg font-bold">{liveVisitors.count}</span> {liveVisitors.count === 1 ? 'visitor' : 'visitors'} on the site right now
                 </p>
               </div>
               {liveVisitors.byPage.length > 0 && (
-                <p className="text-xs text-emerald-700 truncate max-w-[40%]">Hot: {liveVisitors.byPage[0].page}</p>
+                <p className="text-xs text-green-700 truncate max-w-[40%]">Hot: {liveVisitors.byPage[0].page}</p>
               )}
             </div>
 
@@ -747,10 +747,10 @@ export default function AdminDashboard() {
                     return (
                       <div key={step.step} className="flex-1 text-center max-w-[160px]">
                         <div className="mx-auto rounded-t-lg" style={{ height: barHeight, background: colors[i] || '#2563eb' }} />
-                        <p className="text-lg font-bold text-slate-800 mt-2">{step.users}</p>
-                        <p className="text-xs text-slate-500 font-medium">{step.step}</p>
+                        <p className="text-lg font-bold text-gray-800 mt-2">{step.users}</p>
+                        <p className="text-xs text-gray-500 font-medium">{step.step}</p>
                         {i > 0 && dropOff > 0 && <p className="text-xs text-red-500 mt-0.5">-{dropOff}%</p>}
-                        {i > 0 && dropOff <= 0 && step.users > 0 && <p className="text-xs text-emerald-500 mt-0.5">retained</p>}
+                        {i > 0 && dropOff <= 0 && step.users > 0 && <p className="text-xs text-green-500 mt-0.5">retained</p>}
                       </div>
                     )
                   })}
@@ -828,9 +828,9 @@ export default function AdminDashboard() {
             </Panel>
             <Panel title="Recent Enquiries" action={data.recentEnquiries.length > 0 ? <ExportButton onClick={() => downloadCSV(data.recentEnquiries as any, 'enquiries')} /> : undefined}>
               {data.recentEnquiries.length === 0 ? <Empty text="No enquiries yet" /> : (
-                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-500 border-b border-slate-200"><th className="text-left py-2 px-3 font-medium">Type</th><th className="text-left py-2 px-3 font-medium">Name</th><th className="text-left py-2 px-3 font-medium">Email</th><th className="text-left py-2 px-3 font-medium">Course</th><th className="text-left py-2 px-3 font-medium">Date</th></tr></thead>
+                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-gray-500 border-b border-gray-200"><th className="text-left py-2 px-3 font-medium">Type</th><th className="text-left py-2 px-3 font-medium">Name</th><th className="text-left py-2 px-3 font-medium">Email</th><th className="text-left py-2 px-3 font-medium">Course</th><th className="text-left py-2 px-3 font-medium">Date</th></tr></thead>
                 <tbody>{data.recentEnquiries.map((e, i) => (
-                  <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50"><td className="py-2.5 px-3"><span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-medium capitalize">{e.type}</span></td><td className="py-2.5 px-3 text-slate-800">{e.name || (e as any).fullName}</td><td className="py-2.5 px-3 text-slate-600">{e.email}</td><td className="py-2.5 px-3 text-slate-500 max-w-[200px] truncate">{e.course || (e as any).company || '-'}</td><td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{new Date(e.createdAt).toLocaleDateString()}</td></tr>
+                  <tr key={i} className="border-b border-gray-100 hover:bg-primary-50/50"><td className="py-2.5 px-3"><span className="px-2 py-0.5 bg-primary-100 text-primary-700 rounded text-xs font-medium capitalize">{e.type}</span></td><td className="py-2.5 px-3 text-gray-800">{e.name || (e as any).fullName}</td><td className="py-2.5 px-3 text-gray-600">{e.email}</td><td className="py-2.5 px-3 text-gray-500 max-w-[200px] truncate">{e.course || (e as any).company || '-'}</td><td className="py-2.5 px-3 text-gray-400 whitespace-nowrap">{new Date(e.createdAt).toLocaleDateString()}</td></tr>
                 ))}</tbody></table></div>
               )}
             </Panel>
@@ -852,7 +852,7 @@ export default function AdminDashboard() {
             </div>
             <Panel title="All Registrations" subtitle={`${filteredCoworkRegs.length} total — ${getFilterLabel()}`} action={filteredCoworkRegs.length > 0 ? <ExportButton onClick={() => downloadCSV(filteredCoworkRegs as any, 'cowork-registrations')} /> : undefined}>
               {filteredCoworkRegs.length === 0 ? <Empty text="No registrations yet" /> : (
-                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-500 border-b border-slate-200">
+                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-gray-500 border-b border-gray-200">
                   <th className="text-left py-2 px-3 font-medium">Name</th>
                   <th className="text-left py-2 px-3 font-medium">Email</th>
                   <th className="text-left py-2 px-3 font-medium">Country</th>
@@ -862,14 +862,14 @@ export default function AdminDashboard() {
                   <th className="text-left py-2 px-3 font-medium">Date</th>
                 </tr></thead>
                 <tbody>{filteredCoworkRegs.map((r, i) => (
-                  <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50">
-                    <td className="py-2.5 px-3 text-slate-800 font-medium">{r.fullName}</td>
-                    <td className="py-2.5 px-3 text-slate-600">{r.email}</td>
-                    <td className="py-2.5 px-3 text-slate-600">{r.country}</td>
-                    <td className="py-2.5 px-3 text-slate-500 text-xs">{r.timeZone}</td>
-                    <td className="py-2.5 px-3 text-slate-500">{r.role || '-'}</td>
-                    <td className="py-2.5 px-3 text-slate-500">{r.company || '-'}</td>
-                    <td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{new Date(r.createdAt).toLocaleDateString()}</td>
+                  <tr key={i} className="border-b border-gray-100 hover:bg-primary-50/50">
+                    <td className="py-2.5 px-3 text-gray-800 font-medium">{r.fullName}</td>
+                    <td className="py-2.5 px-3 text-gray-600">{r.email}</td>
+                    <td className="py-2.5 px-3 text-gray-600">{r.country}</td>
+                    <td className="py-2.5 px-3 text-gray-500 text-xs">{r.timeZone}</td>
+                    <td className="py-2.5 px-3 text-gray-500">{r.role || '-'}</td>
+                    <td className="py-2.5 px-3 text-gray-500">{r.company || '-'}</td>
+                    <td className="py-2.5 px-3 text-gray-400 whitespace-nowrap">{new Date(r.createdAt).toLocaleDateString()}</td>
                   </tr>
                 ))}</tbody></table></div>
               )}
@@ -921,7 +921,7 @@ export default function AdminDashboard() {
 
             <Panel title="All Learners" subtitle={`${learners.length} registered`} action={learners.length > 0 ? <ExportButton onClick={() => downloadCSV(learners as any, 'academy-learners')} /> : undefined}>
               {learners.length === 0 ? <Empty text="No learners yet" /> : (
-                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-500 border-b border-slate-200">
+                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-gray-500 border-b border-gray-200">
                   <th className="text-left py-2 px-3 font-medium">Name</th>
                   <th className="text-left py-2 px-3 font-medium">Email</th>
                   <th className="text-left py-2 px-3 font-medium">Provider</th>
@@ -929,12 +929,12 @@ export default function AdminDashboard() {
                   <th className="text-left py-2 px-3 font-medium">Joined</th>
                 </tr></thead>
                 <tbody>{learners.slice(0, 50).map((l, i) => (
-                  <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50">
-                    <td className="py-2.5 px-3 text-slate-800 font-medium">{l.name || '-'}</td>
-                    <td className="py-2.5 px-3 text-slate-600">{l.email}</td>
-                    <td className="py-2.5 px-3"><span className={`px-2 py-0.5 rounded text-xs font-medium ${l.provider === 'google' ? 'bg-red-100 text-red-700' : l.provider === 'microsoft' ? 'bg-blue-100 text-blue-700' : 'bg-teal-100 text-teal-700'}`}>{l.provider === 'otp' ? 'Email' : l.provider}</span></td>
-                    <td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{l.lastLogin ? new Date(l.lastLogin).toLocaleDateString() : '-'}</td>
-                    <td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{l.createdAt ? new Date(l.createdAt).toLocaleDateString() : '-'}</td>
+                  <tr key={i} className="border-b border-gray-100 hover:bg-primary-50/50">
+                    <td className="py-2.5 px-3 text-gray-800 font-medium">{l.name || '-'}</td>
+                    <td className="py-2.5 px-3 text-gray-600">{l.email}</td>
+                    <td className="py-2.5 px-3"><span className={`px-2 py-0.5 rounded text-xs font-medium ${l.provider === 'google' ? 'bg-red-100 text-red-700' : l.provider === 'microsoft' ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-700'}`}>{l.provider === 'otp' ? 'Email' : l.provider}</span></td>
+                    <td className="py-2.5 px-3 text-gray-400 whitespace-nowrap">{l.lastLogin ? new Date(l.lastLogin).toLocaleDateString() : '-'}</td>
+                    <td className="py-2.5 px-3 text-gray-400 whitespace-nowrap">{l.createdAt ? new Date(l.createdAt).toLocaleDateString() : '-'}</td>
                   </tr>
                 ))}</tbody></table></div>
               )}
@@ -942,16 +942,16 @@ export default function AdminDashboard() {
 
             {summary.byCourse.length > 0 && (
               <Panel title="Course Breakdown" subtitle="Learners and completions per course">
-                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-500 border-b border-slate-200">
+                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-gray-500 border-b border-gray-200">
                   <th className="text-left py-2 px-3 font-medium">Course</th>
                   <th className="text-left py-2 px-3 font-medium">Learners</th>
                   <th className="text-left py-2 px-3 font-medium">Chapter Completions</th>
                 </tr></thead>
                 <tbody>{summary.byCourse.map((c, i) => (
-                  <tr key={i} className="border-b border-slate-100">
-                    <td className="py-2.5 px-3 text-slate-800 font-medium">{c.courseId}</td>
-                    <td className="py-2.5 px-3 text-slate-600">{c.learners}</td>
-                    <td className="py-2.5 px-3 text-slate-600">{c.completions}</td>
+                  <tr key={i} className="border-b border-gray-100">
+                    <td className="py-2.5 px-3 text-gray-800 font-medium">{c.courseId}</td>
+                    <td className="py-2.5 px-3 text-gray-600">{c.learners}</td>
+                    <td className="py-2.5 px-3 text-gray-600">{c.completions}</td>
                   </tr>
                 ))}</tbody></table></div>
               </Panel>
@@ -990,25 +990,25 @@ export default function AdminDashboard() {
             </div>
 
             {/* Inner filter tabs */}
-            <div className="flex gap-1 bg-white rounded-lg p-1 border border-slate-200">
+            <div className="flex gap-1 bg-white rounded-lg p-1 border border-gray-200">
               {emailInnerTabs.map(t => (
-                <button key={t.key} onClick={() => setEmailFilter(t.key)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${emailFilter === t.key ? t.key === 'failed' ? 'bg-red-600 text-white' : 'bg-slate-800 text-white' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}>
+                <button key={t.key} onClick={() => setEmailFilter(t.key)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${emailFilter === t.key ? t.key === 'failed' ? 'bg-red-600 text-white' : 'bg-gray-800 text-white' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}>
                   {t.label}
-                  <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${emailFilter === t.key ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}`}>{t.count}</span>
+                  <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${emailFilter === t.key ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500'}`}>{t.count}</span>
                 </button>
               ))}
             </div>
 
             <Panel title={`${emailInnerTabs.find(t => t.key === emailFilter)?.label || 'All'} Emails`} subtitle={`${filteredLogs.length} email${filteredLogs.length !== 1 ? 's' : ''}`} action={filteredLogs.length > 0 ? <ExportButton onClick={() => downloadCSV(filteredLogs as any, `emails-${emailFilter}`)} /> : undefined}>
               {filteredLogs.length === 0 ? <Empty text="No emails in this category" /> : (
-                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-500 border-b border-slate-200"><th className="text-left py-2 px-3 font-medium">Status</th><th className="text-left py-2 px-3 font-medium">To</th><th className="text-left py-2 px-3 font-medium">From</th><th className="text-left py-2 px-3 font-medium">Subject</th><th className="text-left py-2 px-3 font-medium">Date</th></tr></thead>
+                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-gray-500 border-b border-gray-200"><th className="text-left py-2 px-3 font-medium">Status</th><th className="text-left py-2 px-3 font-medium">To</th><th className="text-left py-2 px-3 font-medium">From</th><th className="text-left py-2 px-3 font-medium">Subject</th><th className="text-left py-2 px-3 font-medium">Date</th></tr></thead>
                 <tbody>{filteredLogs.map((log, i) => (
-                  <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50">
+                  <tr key={i} className="border-b border-gray-100 hover:bg-primary-50/50">
                     <td className="py-2.5 px-3"><span className={`px-2 py-0.5 rounded text-xs font-medium ${log.status === 'sent' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{log.status}</span></td>
-                    <td className="py-2.5 px-3 text-slate-800 truncate max-w-[180px]">{log.to}</td>
-                    <td className="py-2.5 px-3 text-slate-500 truncate max-w-[160px]">{log.from}</td>
-                    <td className="py-2.5 px-3 text-slate-600 max-w-[250px] truncate">{log.subject}</td>
-                    <td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{new Date(log.createdAt).toLocaleString()}</td>
+                    <td className="py-2.5 px-3 text-gray-800 truncate max-w-[180px]">{log.to}</td>
+                    <td className="py-2.5 px-3 text-gray-500 truncate max-w-[160px]">{log.from}</td>
+                    <td className="py-2.5 px-3 text-gray-600 max-w-[250px] truncate">{log.subject}</td>
+                    <td className="py-2.5 px-3 text-gray-400 whitespace-nowrap">{new Date(log.createdAt).toLocaleString()}</td>
                   </tr>
                 ))}</tbody></table></div>
               )}
@@ -1050,9 +1050,9 @@ export default function AdminDashboard() {
             </div>
             <Panel title="Recent Sessions" subtitle={getFilterLabel()} action={filteredSessions.length > 0 ? <ExportButton onClick={() => downloadCSV(filteredSessions as any, 'career-sessions')} /> : undefined}>
               {filteredSessions.length === 0 ? <Empty text="No career sessions yet" /> : (
-                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-500 border-b border-slate-200"><th className="text-left py-2 px-3 font-medium">Agent</th><th className="text-left py-2 px-3 font-medium">Status</th><th className="text-left py-2 px-3 font-medium">Resume</th><th className="text-left py-2 px-3 font-medium">Date</th></tr></thead>
+                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-gray-500 border-b border-gray-200"><th className="text-left py-2 px-3 font-medium">Agent</th><th className="text-left py-2 px-3 font-medium">Status</th><th className="text-left py-2 px-3 font-medium">Resume</th><th className="text-left py-2 px-3 font-medium">Date</th></tr></thead>
                 <tbody>{filteredSessions.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || '')).slice(0, 20).map((s, i) => (
-                  <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50"><td className="py-2.5 px-3 text-slate-800">{s.agentName || s.agentId}</td><td className="py-2.5 px-3"><StatusBadge status={s.status} /></td><td className="py-2.5 px-3 text-slate-500 truncate max-w-[200px]">{s.resumeBlobPath ? (<a href={`/api/admin/resume-download?path=${encodeURIComponent(s.resumeBlobPath)}`} className="text-blue-600 hover:underline inline-flex items-center gap-1" download><Download className="w-3 h-3" /> {s.resumeFileName || 'resume'}</a>) : (s.resumeFileName || '-')}</td><td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{s.updatedAt ? new Date(s.updatedAt).toLocaleDateString() : '-'}</td></tr>
+                  <tr key={i} className="border-b border-gray-100 hover:bg-primary-50/50"><td className="py-2.5 px-3 text-gray-800">{s.agentName || s.agentId}</td><td className="py-2.5 px-3"><StatusBadge status={s.status} /></td><td className="py-2.5 px-3 text-gray-500 truncate max-w-[200px]">{s.resumeBlobPath ? (<a href={`/api/admin/resume-download?path=${encodeURIComponent(s.resumeBlobPath)}`} className="text-primary-600 hover:underline inline-flex items-center gap-1" download><Download className="w-3 h-3" /> {s.resumeFileName || 'resume'}</a>) : (s.resumeFileName || '-')}</td><td className="py-2.5 px-3 text-gray-400 whitespace-nowrap">{s.updatedAt ? new Date(s.updatedAt).toLocaleDateString() : '-'}</td></tr>
                 ))}</tbody></table></div>
               )}
             </Panel>
@@ -1084,7 +1084,7 @@ export default function AdminDashboard() {
               subtitle={`${visibleCallRequests.length} of ${callRequests.length} · from the website "Book a Call" form`}
               action={
                 <div className="flex items-center gap-2 flex-wrap">
-                  <select value={callRequestFilter} onChange={e => { setCallRequestFilter(e.target.value as 'all' | 'new' | 'replied'); setCallRequestPage(1) }} className="px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  <select value={callRequestFilter} onChange={e => { setCallRequestFilter(e.target.value as 'all' | 'new' | 'replied'); setCallRequestPage(1) }} className="px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg bg-white text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500">
                     <option value="all">All ({callRequests.length})</option>
                     <option value="new">New ({callRequests.filter(c => !c.replied).length})</option>
                     <option value="replied">Replied ({callRequests.filter(c => c.replied).length})</option>
@@ -1094,7 +1094,7 @@ export default function AdminDashboard() {
                       <Trash2 className={`w-3.5 h-3.5 ${callRequestsDeleting ? 'animate-spin' : ''}`} /> Delete ({selectedCallRequests.size})
                     </button>
                   )}
-                  <button onClick={refreshCallRequests} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 border border-slate-200 rounded-lg transition-colors">
+                  <button onClick={refreshCallRequests} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-gray-100 hover:bg-primary-50 text-gray-600 hover:text-primary-600 border border-gray-200 rounded-lg transition-colors">
                     <RefreshCw className={`w-3.5 h-3.5 ${callRequestsLoading ? 'animate-spin' : ''}`} /> Refresh
                   </button>
                 </div>
@@ -1102,77 +1102,77 @@ export default function AdminDashboard() {
             >
               {visibleCallRequests.length === 0 ? <Empty text="No call requests" /> : (
                 <div className="space-y-3">
-                  <label className="flex items-center gap-2 px-1 py-1 text-xs text-slate-500 cursor-pointer select-none w-fit">
+                  <label className="flex items-center gap-2 px-1 py-1 text-xs text-gray-500 cursor-pointer select-none w-fit">
                     <input type="checkbox" checked={crAllSelected} onChange={() => {
                       if (crAllSelected) { setSelectedCallRequests(new Set()) } else { setSelectedCallRequests(new Set(visibleCallRequests.map(c => c.rowKey))) }
-                    }} className="w-3.5 h-3.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                    }} className="w-3.5 h-3.5 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
                     Select all ({visibleCallRequests.length})
                   </label>
                   {pagedCallRequests.map(cr => {
                     const submitted = cr.timestamp || cr.createdAt
                     const crSelected = selectedCallRequests.has(cr.rowKey)
                     return (
-                      <div key={cr.rowKey} className={`border rounded-xl p-4 shadow-sm ${crSelected ? 'ring-2 ring-indigo-400 border-indigo-300' : ''} ${cr.replied ? 'bg-slate-50 border-slate-200' : 'bg-indigo-50/40 border-indigo-200'}`}>
+                      <div key={cr.rowKey} className={`border rounded-xl p-4 shadow-sm ${crSelected ? 'ring-2 ring-primary-400 border-primary-300' : ''} ${cr.replied ? 'bg-gray-50 border-gray-200' : 'bg-primary-50/40 border-primary-200'}`}>
                         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                           <input type="checkbox" checked={crSelected} onChange={() => {
                             const next = new Set(selectedCallRequests)
                             if (crSelected) next.delete(cr.rowKey); else next.add(cr.rowKey)
                             setSelectedCallRequests(next)
-                          }} className="w-4 h-4 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 shrink-0" />
+                          }} className="w-4 h-4 mt-0.5 rounded border-gray-300 text-primary-600 focus:ring-primary-500 shrink-0" />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap mb-1">
-                              <h3 className="text-sm font-semibold text-slate-800">{cr.name || 'Unknown'}</h3>
+                              <h3 className="text-sm font-semibold text-gray-800">{cr.name || 'Unknown'}</h3>
                               {cr.scheduled
-                                ? <span className="px-2 py-0.5 rounded text-xs font-medium bg-teal-100 text-teal-700">Scheduled</span>
+                                ? <span className="px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700">Scheduled</span>
                                 : cr.replied
-                                  ? <span className="px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">Replied</span>
-                                  : <span className="px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-700">New</span>}
-                              {cr.programTitle && <span className="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600">{cr.programTitle}</span>}
+                                  ? <span className="px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">Replied</span>
+                                  : <span className="px-2 py-0.5 rounded text-xs font-medium bg-primary-100 text-primary-700">New</span>}
+                              {cr.programTitle && <span className="px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">{cr.programTitle}</span>}
                             </div>
                             <div className="grid sm:grid-cols-2 gap-x-4 gap-y-1 mt-2 text-sm">
-                              <div className="flex items-center gap-1.5 text-slate-600">
-                                <Mail className="w-3.5 h-3.5 text-slate-400" />
-                                <a href={`mailto:${cr.email}`} className="text-blue-600 hover:underline truncate">{cr.email}</a>
+                              <div className="flex items-center gap-1.5 text-gray-600">
+                                <Mail className="w-3.5 h-3.5 text-gray-400" />
+                                <a href={`mailto:${cr.email}`} className="text-primary-600 hover:underline truncate">{cr.email}</a>
                               </div>
                               {cr.whatsapp && (
-                                <div className="flex items-center gap-1.5 text-slate-600">
-                                  <Phone className="w-3.5 h-3.5 text-slate-400" />
-                                  <a href={`https://wa.me/${cr.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{cr.whatsapp}</a>
+                                <div className="flex items-center gap-1.5 text-gray-600">
+                                  <Phone className="w-3.5 h-3.5 text-gray-400" />
+                                  <a href={`https://wa.me/${cr.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:underline">{cr.whatsapp}</a>
                                 </div>
                               )}
                               {cr.company && (
-                                <div className="flex items-center gap-1.5 text-slate-600">
-                                  <Database className="w-3.5 h-3.5 text-slate-400" />
+                                <div className="flex items-center gap-1.5 text-gray-600">
+                                  <Database className="w-3.5 h-3.5 text-gray-400" />
                                   <span className="truncate">{cr.company}{cr.designation ? ` · ${cr.designation}` : ''}</span>
                                 </div>
                               )}
                               {submitted && (
-                                <div className="flex items-center gap-1.5 text-slate-500">
-                                  <Clock className="w-3.5 h-3.5 text-slate-400" />
+                                <div className="flex items-center gap-1.5 text-gray-500">
+                                  <Clock className="w-3.5 h-3.5 text-gray-400" />
                                   <span>{new Date(submitted).toLocaleString()}</span>
                                 </div>
                               )}
                             </div>
                             {cr.message && (
-                              <div className="mt-2 p-2 bg-white/70 rounded-lg text-xs text-slate-600 border border-slate-100 whitespace-pre-wrap">
-                                <span className="font-medium text-slate-700">Message:</span> {cr.message}
+                              <div className="mt-2 p-2 bg-white/70 rounded-lg text-xs text-gray-600 border border-gray-100 whitespace-pre-wrap">
+                                <span className="font-medium text-gray-700">Message:</span> {cr.message}
                               </div>
                             )}
                             {cr.replied && cr.repliedAt && !cr.scheduled && (
-                              <p className="mt-2 text-xs text-emerald-700">Replied {new Date(cr.repliedAt).toLocaleString()}{cr.lastSubject ? ` · "${cr.lastSubject}"` : ''}</p>
+                              <p className="mt-2 text-xs text-green-700">Replied {new Date(cr.repliedAt).toLocaleString()}{cr.lastSubject ? ` · "${cr.lastSubject}"` : ''}</p>
                             )}
                             {cr.scheduled && cr.scheduledDate && (
-                              <p className="mt-2 text-xs text-teal-700">
+                              <p className="mt-2 text-xs text-gray-700">
                                 Meeting scheduled · {cr.scheduledDate} at {cr.scheduledTime} IST{cr.scheduledServiceName ? ` · ${cr.scheduledServiceName}` : ''}
                                 {cr.joinWebUrl && <> · <a href={cr.joinWebUrl} target="_blank" rel="noopener noreferrer" className="underline font-medium">Teams link</a></>}
                               </p>
                             )}
                           </div>
                           <div className="flex flex-wrap sm:flex-col gap-2 shrink-0">
-                            <button onClick={() => openCallSchedule(cr)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors">
+                            <button onClick={() => openCallSchedule(cr)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors">
                               <Calendar className="w-3.5 h-3.5" /> {cr.scheduled ? 'Reschedule' : 'Schedule meeting'}
                             </button>
-                            <button onClick={() => openCallDraft(cr)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors">
+                            <button onClick={() => openCallDraft(cr)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
                               <Bot className="w-3.5 h-3.5" /> {cr.replied ? 'Draft again' : 'Draft & send reply'}
                             </button>
                             <button onClick={() => deleteCallRequest(cr.rowKey, cr.name)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-lg transition-colors">
@@ -1184,21 +1184,21 @@ export default function AdminDashboard() {
                     )
                   })}
                   {crTotalPages > 1 && (
-                    <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                      <span className="text-xs text-slate-400">
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                      <span className="text-xs text-gray-400">
                         {(crSafePage - 1) * crPerPage + 1}–{Math.min(crSafePage * crPerPage, visibleCallRequests.length)} of {visibleCallRequests.length}
                       </span>
                       <div className="flex items-center gap-1">
-                        <button onClick={() => setCallRequestPage(p => Math.max(1, p - 1))} disabled={crSafePage === 1} className="px-2.5 py-1.5 text-xs font-medium rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">Prev</button>
+                        <button onClick={() => setCallRequestPage(p => Math.max(1, p - 1))} disabled={crSafePage === 1} className="px-2.5 py-1.5 text-xs font-medium rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">Prev</button>
                         {(() => {
                           const pages: number[] = []
                           const start = Math.max(1, Math.min(crSafePage, crTotalPages - 4))
                           for (let i = start; i <= Math.min(start + 4, crTotalPages); i++) pages.push(i)
                           return pages.map(p => (
-                            <button key={p} onClick={() => setCallRequestPage(p)} className={`w-8 h-8 text-xs font-medium rounded-lg transition-colors ${p === crSafePage ? 'bg-indigo-600 text-white' : 'border border-slate-200 hover:bg-slate-50 text-slate-600'}`}>{p}</button>
+                            <button key={p} onClick={() => setCallRequestPage(p)} className={`w-8 h-8 text-xs font-medium rounded-lg transition-colors ${p === crSafePage ? 'bg-primary-600 text-white' : 'border border-gray-200 hover:bg-gray-50 text-gray-600'}`}>{p}</button>
                           ))
                         })()}
-                        <button onClick={() => setCallRequestPage(p => Math.min(crTotalPages, p + 1))} disabled={crSafePage === crTotalPages} className="px-2.5 py-1.5 text-xs font-medium rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">Next</button>
+                        <button onClick={() => setCallRequestPage(p => Math.min(crTotalPages, p + 1))} disabled={crSafePage === crTotalPages} className="px-2.5 py-1.5 text-xs font-medium rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">Next</button>
                       </div>
                     </div>
                   )}
@@ -1221,19 +1221,19 @@ export default function AdminDashboard() {
                 <Panel title="Funnel" subtitle={`All dates · ${total} ${bookingStatusFilter === 'all' ? 'total' : bookingStatusFilter} bookings`}>
                   <div className="flex items-center gap-2 text-sm">
                     <div className="flex-1 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2"><p className="text-xs text-amber-700">Requested</p><p className="text-lg font-bold text-amber-900">{total}</p></div>
-                    <span className="text-slate-300">{'>'}</span>
-                    <div className="flex-1 bg-teal-50 border border-teal-200 rounded-lg px-3 py-2"><p className="text-xs text-teal-700">Accepted</p><p className="text-lg font-bold text-teal-900">{accepted} <span className="text-xs font-normal text-teal-600">({acceptRate}%)</span></p></div>
-                    <span className="text-slate-300">{'>'}</span>
-                    <div className="flex-1 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2"><p className="text-xs text-rose-700">Rejected</p><p className="text-lg font-bold text-rose-900">{rejected}</p></div>
-                    <span className="text-slate-300">{'>'}</span>
-                    <div className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2"><p className="text-xs text-slate-600">Open</p><p className="text-lg font-bold text-slate-800">{pending}</p></div>
+                    <span className="text-gray-300">{'>'}</span>
+                    <div className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2"><p className="text-xs text-gray-700">Accepted</p><p className="text-lg font-bold text-gray-900">{accepted} <span className="text-xs font-normal text-gray-600">({acceptRate}%)</span></p></div>
+                    <span className="text-gray-300">{'>'}</span>
+                    <div className="flex-1 bg-red-50 border border-red-200 rounded-lg px-3 py-2"><p className="text-xs text-red-700">Rejected</p><p className="text-lg font-bold text-red-900">{rejected}</p></div>
+                    <span className="text-gray-300">{'>'}</span>
+                    <div className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2"><p className="text-xs text-gray-600">Open</p><p className="text-lg font-bold text-gray-800">{pending}</p></div>
                   </div>
                 </Panel>
               )
             })()}
             <Panel title="Booking Requests" subtitle={`${filteredBookings.length} ${bookingStatusFilter === 'all' ? 'total' : bookingStatusFilter} · all dates`} action={
               <div className="flex items-center gap-2 flex-wrap">
-                <select value={bookingStatusFilter} onChange={e => { setBookingStatusFilter(e.target.value); setBookingPage(1) }} className="px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <select value={bookingStatusFilter} onChange={e => { setBookingStatusFilter(e.target.value); setBookingPage(1) }} className="px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg bg-white text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500">
                   <option value="all">All statuses</option>
                   <option value="pending">Pending</option>
                   <option value="accepted">Accepted</option>
@@ -1251,7 +1251,7 @@ export default function AdminDashboard() {
                         return { Name: b.name, Email: b.email, Date: b.date, Time: `${b.startTime}${b.endTime && b.endTime !== b.startTime ? ' - ' + b.endTime : ''} UTC`, Service: b.serviceName, Status: b.status, Outcome: outcome }
                       })
                       downloadCSV(csvData, `bookings-report-${new Date().toISOString().slice(0, 10)}`)
-                    }} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-lg transition-colors">
+                    }} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-green-50 hover:bg-green-100 text-green-700 border border-green-200 rounded-lg transition-colors">
                       <Download className="w-3.5 h-3.5" /> Download Report ({selectedBookings.size})
                     </button>
                     <button onClick={async () => {
@@ -1266,7 +1266,7 @@ export default function AdminDashboard() {
                     </button>
                   </>
                 )}
-                <button onClick={async () => { setBookingsLoading(true); try { const r = await fetch('/api/bookings/appointments'); if (r.ok) { const d = await r.json(); setBookingsData(d.appointments || []) } } catch {} finally { setBookingsLoading(false) } }} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 border border-slate-200 rounded-lg transition-colors">
+                <button onClick={async () => { setBookingsLoading(true); try { const r = await fetch('/api/bookings/appointments'); if (r.ok) { const d = await r.json(); setBookingsData(d.appointments || []) } } catch {} finally { setBookingsLoading(false) } }} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-gray-100 hover:bg-primary-50 text-gray-600 hover:text-primary-600 border border-gray-200 rounded-lg transition-colors">
                   <RefreshCw className={`w-3.5 h-3.5 ${bookingsLoading ? 'animate-spin' : ''}`} /> Refresh
                 </button>
               </div>
@@ -1274,15 +1274,15 @@ export default function AdminDashboard() {
               {filteredBookings.length === 0 ? <Empty text={bookingStatusFilter === 'all' ? 'No bookings yet' : `No ${bookingStatusFilter} bookings`} /> : (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <label className="flex items-center gap-2 px-1 py-1 text-xs text-slate-500 cursor-pointer select-none">
+                    <label className="flex items-center gap-2 px-1 py-1 text-xs text-gray-500 cursor-pointer select-none">
                       <input type="checkbox" checked={isAllSelected} onChange={() => {
                         if (isAllSelected) { setSelectedBookings(new Set()) } else { setSelectedBookings(new Set(filteredBookings.map(b => b.rowKey))) }
-                      }} className="w-3.5 h-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+                      }} className="w-3.5 h-3.5 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
                       Select all ({filteredBookings.length})
                     </label>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-slate-400">Per page:</span>
-                      <select value={bookingsPerPage} onChange={e => { setBookingsPerPage(Number(e.target.value)); setBookingPage(1) }} className="px-2 py-1 text-xs border border-slate-200 rounded-lg bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                      <span className="text-xs text-gray-400">Per page:</span>
+                      <select value={bookingsPerPage} onChange={e => { setBookingsPerPage(Number(e.target.value)); setBookingPage(1) }} className="px-2 py-1 text-xs border border-gray-200 rounded-lg bg-white text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500">
                         {[10, 15, 25, 50, 100].map(n => <option key={n} value={n}>{n}</option>)}
                       </select>
                     </div>
@@ -1290,23 +1290,23 @@ export default function AdminDashboard() {
                   {pagedBookings.map(apt => {
                     const bookingDate = apt.date ? new Date(apt.date + 'T00:00:00') : null
                     const isPast = bookingDate ? bookingDate < new Date() : false
-                    const statusColor = apt.status === 'accepted' ? 'bg-emerald-100 text-emerald-700' : apt.status === 'rejected' ? 'bg-red-100 text-red-700' : apt.status === 'cancelled' ? 'bg-red-100 text-red-700' : apt.status === 'change-requested' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'
+                    const statusColor = apt.status === 'accepted' ? 'bg-green-100 text-green-700' : apt.status === 'rejected' ? 'bg-red-100 text-red-700' : apt.status === 'cancelled' ? 'bg-red-100 text-red-700' : apt.status === 'change-requested' ? 'bg-primary-100 text-primary-700' : 'bg-amber-100 text-amber-700'
                     const isSelected = selectedBookings.has(apt.rowKey)
                     return (
-                      <div key={apt.rowKey} className={`border rounded-xl p-4 shadow-sm ${isSelected ? 'ring-2 ring-blue-400 border-blue-300' : ''} ${isPast && apt.status !== 'pending' ? 'bg-slate-50 border-slate-200 opacity-75' : apt.status === 'pending' ? 'bg-amber-50/30 border-amber-200' : 'bg-white border-slate-200'}`}>
+                      <div key={apt.rowKey} className={`border rounded-xl p-4 shadow-sm ${isSelected ? 'ring-2 ring-primary-400 border-primary-300' : ''} ${isPast && apt.status !== 'pending' ? 'bg-gray-50 border-gray-200 opacity-75' : apt.status === 'pending' ? 'bg-amber-50/30 border-amber-200' : 'bg-white border-gray-200'}`}>
                         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                           <div className="flex flex-col items-center gap-2 shrink-0">
                             <input type="checkbox" checked={isSelected} onChange={() => {
                               const next = new Set(selectedBookings)
                               if (isSelected) next.delete(apt.rowKey); else next.add(apt.rowKey)
                               setSelectedBookings(next)
-                            }} className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+                            }} className="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
                             <div className="w-16 text-center">
                               {bookingDate && (
                                 <>
-                                  <div className="text-xs text-slate-500 uppercase">{bookingDate.toLocaleDateString('en-US', { month: 'short' })}</div>
-                                  <div className="text-2xl font-bold text-slate-800">{bookingDate.getDate()}</div>
-                                  <div className="text-xs text-slate-500">{bookingDate.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+                                  <div className="text-xs text-gray-500 uppercase">{bookingDate.toLocaleDateString('en-US', { month: 'short' })}</div>
+                                  <div className="text-2xl font-bold text-gray-800">{bookingDate.getDate()}</div>
+                                  <div className="text-xs text-gray-500">{bookingDate.toLocaleDateString('en-US', { weekday: 'short' })}</div>
                                 </>
                               )}
                             </div>
@@ -1314,52 +1314,52 @@ export default function AdminDashboard() {
 
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap mb-1">
-                              <h3 className="text-sm font-semibold text-slate-800">{apt.serviceName}</h3>
+                              <h3 className="text-sm font-semibold text-gray-800">{apt.serviceName}</h3>
                               <span className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${statusColor}`}>{apt.status}</span>
-                              {isPast && apt.status !== 'pending' && <span className="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500">Past</span>}
+                              {isPast && apt.status !== 'pending' && <span className="px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">Past</span>}
                             </div>
 
                             <div className="grid sm:grid-cols-2 gap-x-4 gap-y-1 mt-2 text-sm">
-                              <div className="flex items-center gap-1.5 text-slate-600">
-                                <Users className="w-3.5 h-3.5 text-slate-400" />
+                              <div className="flex items-center gap-1.5 text-gray-600">
+                                <Users className="w-3.5 h-3.5 text-gray-400" />
                                 <span className="font-medium">{apt.name}</span>
                               </div>
-                              <div className="flex items-center gap-1.5 text-slate-600">
-                                <Mail className="w-3.5 h-3.5 text-slate-400" />
-                                <a href={`mailto:${apt.email}`} className="text-blue-600 hover:underline truncate">{apt.email}</a>
+                              <div className="flex items-center gap-1.5 text-gray-600">
+                                <Mail className="w-3.5 h-3.5 text-gray-400" />
+                                <a href={`mailto:${apt.email}`} className="text-primary-600 hover:underline truncate">{apt.email}</a>
                               </div>
                               {apt.whatsapp && (
-                                <div className="flex items-center gap-1.5 text-slate-600">
-                                  <Phone className="w-3.5 h-3.5 text-slate-400" />
-                                  <a href={`https://wa.me/${apt.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{apt.whatsapp}</a>
+                                <div className="flex items-center gap-1.5 text-gray-600">
+                                  <Phone className="w-3.5 h-3.5 text-gray-400" />
+                                  <a href={`https://wa.me/${apt.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:underline">{apt.whatsapp}</a>
                                 </div>
                               )}
-                              <div className="flex items-center gap-1.5 text-slate-600">
-                                <Clock className="w-3.5 h-3.5 text-slate-400" />
+                              <div className="flex items-center gap-1.5 text-gray-600">
+                                <Clock className="w-3.5 h-3.5 text-gray-400" />
                                 <span>{apt.startTime}{apt.endTime && apt.endTime !== apt.startTime ? ` – ${apt.endTime}` : ''} UTC</span>
                               </div>
                               {apt.country && (
-                                <div className="flex items-center gap-1.5 text-slate-600">
-                                  <Globe className="w-3.5 h-3.5 text-slate-400" />
+                                <div className="flex items-center gap-1.5 text-gray-600">
+                                  <Globe className="w-3.5 h-3.5 text-gray-400" />
                                   <span>{apt.country}</span>
                                 </div>
                               )}
                               {apt.timezone && apt.timezone !== 'UTC' && (
-                                <div className="flex items-center gap-1.5 text-slate-600">
-                                  <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                                <div className="flex items-center gap-1.5 text-gray-600">
+                                  <MapPin className="w-3.5 h-3.5 text-gray-400" />
                                   <span>{apt.timezone}</span>
                                 </div>
                               )}
                             </div>
 
                             {apt.topic && (
-                              <div className="mt-2 p-2 bg-slate-50 rounded-lg text-xs text-slate-600 border border-slate-100">
-                                <span className="font-medium text-slate-700">Topic:</span> {apt.topic}
+                              <div className="mt-2 p-2 bg-gray-50 rounded-lg text-xs text-gray-600 border border-gray-100">
+                                <span className="font-medium text-gray-700">Topic:</span> {apt.topic}
                               </div>
                             )}
 
                             {apt.adminMessage && apt.status !== 'pending' && (
-                              <div className="mt-2 p-2 bg-blue-50 rounded-lg text-xs text-blue-700 border border-blue-100">
+                              <div className="mt-2 p-2 bg-primary-50 rounded-lg text-xs text-primary-700 border border-primary-100">
                                 <span className="font-medium">Admin note:</span> {apt.adminMessage}
                               </div>
                             )}
@@ -1368,12 +1368,12 @@ export default function AdminDashboard() {
 
                           <div className="flex flex-wrap sm:flex-col gap-2 shrink-0">
                             {apt.joinWebUrl && (
-                              <a href={apt.joinWebUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                              <a href={apt.joinWebUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
                                 <Video className="w-3.5 h-3.5" /> Join Teams
                               </a>
                             )}
                             {apt.status === 'pending' && (
-                              <button onClick={() => handleBookingAction(apt.rowKey, 'accept')} disabled={bookingsAction === apt.rowKey} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg transition-colors disabled:opacity-50">
+                              <button onClick={() => handleBookingAction(apt.rowKey, 'accept')} disabled={bookingsAction === apt.rowKey} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition-colors disabled:opacity-50">
                                 {bookingsAction === apt.rowKey ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle className="w-3.5 h-3.5" />} Accept
                               </button>
                             )}
@@ -1392,10 +1392,10 @@ export default function AdminDashboard() {
                                 <XCircle className="w-3.5 h-3.5" /> Cancel
                               </button>
                             )}
-                            <button onClick={() => openModal('outcome', apt)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg transition-colors">
+                            <button onClick={() => openModal('outcome', apt)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors">
                               <FileText className="w-3.5 h-3.5" /> Outcome
                             </button>
-                            <button onClick={() => openModal('reply', apt)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors">
+                            <button onClick={() => openModal('reply', apt)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors">
                               <Mail className="w-3.5 h-3.5" /> Reply
                             </button>
                           </div>
@@ -1404,21 +1404,21 @@ export default function AdminDashboard() {
                     )
                   })}
                   {totalPages > 1 && (
-                    <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                      <span className="text-xs text-slate-400">
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                      <span className="text-xs text-gray-400">
                         {(safePage - 1) * bookingsPerPage + 1}–{Math.min(safePage * bookingsPerPage, filteredBookings.length)} of {filteredBookings.length}
                       </span>
                       <div className="flex items-center gap-1">
-                        <button onClick={() => setBookingPage(p => Math.max(1, p - 1))} disabled={safePage === 1} className="px-2.5 py-1.5 text-xs font-medium rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">Prev</button>
+                        <button onClick={() => setBookingPage(p => Math.max(1, p - 1))} disabled={safePage === 1} className="px-2.5 py-1.5 text-xs font-medium rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">Prev</button>
                         {(() => {
                           const pages: number[] = []
                           const start = Math.max(1, Math.min(safePage, totalPages - 4))
                           for (let i = start; i <= Math.min(start + 4, totalPages); i++) pages.push(i)
                           return pages.map(p => (
-                            <button key={p} onClick={() => setBookingPage(p)} className={`w-8 h-8 text-xs font-medium rounded-lg transition-colors ${p === safePage ? 'bg-blue-600 text-white' : 'border border-slate-200 hover:bg-slate-50 text-slate-600'}`}>{p}</button>
+                            <button key={p} onClick={() => setBookingPage(p)} className={`w-8 h-8 text-xs font-medium rounded-lg transition-colors ${p === safePage ? 'bg-primary-600 text-white' : 'border border-gray-200 hover:bg-gray-50 text-gray-600'}`}>{p}</button>
                           ))
                         })()}
-                        <button onClick={() => setBookingPage(p => Math.min(totalPages, p + 1))} disabled={safePage === totalPages} className="px-2.5 py-1.5 text-xs font-medium rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">Next</button>
+                        <button onClick={() => setBookingPage(p => Math.min(totalPages, p + 1))} disabled={safePage === totalPages} className="px-2.5 py-1.5 text-xs font-medium rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">Next</button>
                       </div>
                     </div>
                   )}
@@ -1432,30 +1432,30 @@ export default function AdminDashboard() {
         {callDraft && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50" onClick={() => setCallDraft(null)}>
             <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-              <div className="flex items-center justify-between p-5 border-b border-slate-200">
+              <div className="flex items-center justify-between p-5 border-b border-gray-200">
                 <div>
-                  <h2 className="text-lg font-semibold text-slate-800">Reply to {callDraft.req.name || 'call request'}</h2>
-                  <p className="text-xs text-slate-500 mt-0.5">To {callDraft.req.email} · from admin@gennoor.com (CC admin@gennoor.com)</p>
+                  <h2 className="text-lg font-semibold text-gray-800">Reply to {callDraft.req.name || 'call request'}</h2>
+                  <p className="text-xs text-gray-500 mt-0.5">To {callDraft.req.email} · from admin@gennoor.com (CC admin@gennoor.com)</p>
                 </div>
-                <button onClick={() => setCallDraft(null)} className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"><X className="w-5 h-5" /></button>
+                <button onClick={() => setCallDraft(null)} className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"><X className="w-5 h-5" /></button>
               </div>
 
               {callDraft.sent ? (
                 <div className="p-5 text-center">
-                  <CheckCircle className="w-10 h-10 text-emerald-500 mx-auto mb-3" />
-                  <p className="text-slate-800 font-medium">Reply sent to {callDraft.req.email}</p>
-                  <p className="text-sm text-slate-500 mt-1">A copy was CC&apos;d to admin@gennoor.com.</p>
-                  <button onClick={() => setCallDraft(null)} className="mt-4 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition-colors">Close</button>
+                  <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-3" />
+                  <p className="text-gray-800 font-medium">Reply sent to {callDraft.req.email}</p>
+                  <p className="text-sm text-gray-500 mt-1">A copy was CC&apos;d to admin@gennoor.com.</p>
+                  <button onClick={() => setCallDraft(null)} className="mt-4 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors">Close</button>
                 </div>
               ) : (
                 <div className="p-5 space-y-4">
                   <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Instructions for the AI (which day & times to offer)</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Instructions for the AI (which day & times to offer)</label>
                     <textarea value={callDraft.instructions} onChange={e => setCallDraft(d => d && ({ ...d, instructions: e.target.value }))} rows={2}
-                      className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y" />
+                      className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-y" />
                   </div>
                   <button onClick={generateCallDraft} disabled={callDraft.drafting}
-                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors disabled:opacity-50">
                     {callDraft.drafting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Bot className="w-4 h-4" />}
                     {callDraft.drafting ? 'Drafting with GPT-5.4…' : (callDraft.bodyHtml ? 'Regenerate draft' : 'Generate draft')}
                   </button>
@@ -1463,29 +1463,29 @@ export default function AdminDashboard() {
                   {callDraft.error && <p className="text-sm text-red-600">{callDraft.error}</p>}
 
                   <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Subject</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Subject</label>
                     <input value={callDraft.subject} onChange={e => setCallDraft(d => d && ({ ...d, subject: e.target.value }))}
-                      className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                      className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500" />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Body (editable HTML — wrapped in Gennoor branding on send)</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Body (editable HTML — wrapped in Gennoor branding on send)</label>
                     <textarea value={callDraft.bodyHtml} onChange={e => setCallDraft(d => d && ({ ...d, bodyHtml: e.target.value }))} rows={8}
                       placeholder="Click “Generate draft”, or write the email body here."
-                      className="w-full px-3 py-2 text-sm font-mono border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y" />
+                      className="w-full px-3 py-2 text-sm font-mono border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-y" />
                   </div>
 
                   {callDraft.bodyHtml && (
                     <div>
-                      <label className="block text-xs font-medium text-slate-500 mb-1">Preview</label>
-                      <div className="border border-slate-200 rounded-lg p-4 bg-slate-50 text-sm text-slate-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: callDraft.bodyHtml }} />
+                      <label className="block text-xs font-medium text-gray-500 mb-1">Preview</label>
+                      <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 text-sm text-gray-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: callDraft.bodyHtml }} />
                     </div>
                   )}
 
-                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-                    <button onClick={() => setCallDraft(null)} className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">Cancel</button>
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-100">
+                    <button onClick={() => setCallDraft(null)} className="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
                     <button onClick={sendCallDraft} disabled={callDraft.sending || !callDraft.bodyHtml.trim()}
-                      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50">
                       {callDraft.sending ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                       {callDraft.sending ? 'Sending…' : 'Send reply'}
                     </button>
@@ -1500,58 +1500,58 @@ export default function AdminDashboard() {
         {callSchedule && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50" onClick={() => setCallSchedule(null)}>
             <div className="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-              <div className="flex items-center justify-between p-5 border-b border-slate-200">
+              <div className="flex items-center justify-between p-5 border-b border-gray-200">
                 <div>
-                  <h2 className="text-lg font-semibold text-slate-800">Schedule meeting</h2>
-                  <p className="text-xs text-slate-500 mt-0.5">With {callSchedule.req.name || callSchedule.req.email} · creates a Microsoft Teams meeting</p>
+                  <h2 className="text-lg font-semibold text-gray-800">Schedule meeting</h2>
+                  <p className="text-xs text-gray-500 mt-0.5">With {callSchedule.req.name || callSchedule.req.email} · creates a Microsoft Teams meeting</p>
                 </div>
-                <button onClick={() => setCallSchedule(null)} className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"><X className="w-5 h-5" /></button>
+                <button onClick={() => setCallSchedule(null)} className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"><X className="w-5 h-5" /></button>
               </div>
 
               {callSchedule.done ? (
                 <div className="p-5 text-center">
-                  <CheckCircle className="w-10 h-10 text-emerald-500 mx-auto mb-3" />
-                  <p className="text-slate-800 font-medium">Meeting scheduled with {callSchedule.req.name || callSchedule.req.email}</p>
-                  <p className="text-sm text-slate-500 mt-1">A branded confirmation with the Teams link was emailed (CC admin@gennoor.com).</p>
+                  <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-3" />
+                  <p className="text-gray-800 font-medium">Meeting scheduled with {callSchedule.req.name || callSchedule.req.email}</p>
+                  <p className="text-sm text-gray-500 mt-1">A branded confirmation with the Teams link was emailed (CC admin@gennoor.com).</p>
                   {callSchedule.joinUrl && (
-                    <a href={callSchedule.joinUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
+                    <a href={callSchedule.joinUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm font-medium transition-colors">
                       <Calendar className="w-4 h-4" /> Open Teams meeting
                     </a>
                   )}
-                  <div><button onClick={() => setCallSchedule(null)} className="mt-4 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition-colors">Close</button></div>
+                  <div><button onClick={() => setCallSchedule(null)} className="mt-4 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors">Close</button></div>
                 </div>
               ) : (
                 <div className="p-5 space-y-4">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-slate-500 mb-1">Date</label>
+                      <label className="block text-xs font-medium text-gray-500 mb-1">Date</label>
                       <input type="date" value={callSchedule.date} onChange={e => setCallSchedule(s => s && ({ ...s, date: e.target.value }))}
-                        className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500" />
+                        className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500" />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-slate-500 mb-1">Time (IST)</label>
+                      <label className="block text-xs font-medium text-gray-500 mb-1">Time (IST)</label>
                       <input type="time" value={callSchedule.time} onChange={e => setCallSchedule(s => s && ({ ...s, time: e.target.value }))}
-                        className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500" />
+                        className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500" />
                     </div>
                   </div>
                   <TimeSlider value={callSchedule.time} onChange={time => setCallSchedule(s => s && ({ ...s, time }))} label="Call time (IST)" />
                   <LeadLocalTime date={callSchedule.date} time={callSchedule.time} country={callSchedule.req.whatsappCountry} who="Customer" />
                   <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Service</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Service</label>
                     <select value={callSchedule.serviceId} onChange={e => setCallSchedule(s => s && ({ ...s, serviceId: e.target.value }))}
-                      className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+                      className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-gray-500">
                       <option value="">Discovery Call (default)</option>
                       {bookingServices.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                     </select>
                   </div>
-                  <p className="text-xs text-slate-500">Times are in IST. The customer gets a branded confirmation with the Teams join link; admin@gennoor.com is CC&apos;d.</p>
+                  <p className="text-xs text-gray-500">Times are in IST. The customer gets a branded confirmation with the Teams join link; admin@gennoor.com is CC&apos;d.</p>
 
                   {callSchedule.error && <p className="text-sm text-red-600">{callSchedule.error}</p>}
 
-                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-                    <button onClick={() => setCallSchedule(null)} className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">Cancel</button>
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-100">
+                    <button onClick={() => setCallSchedule(null)} className="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
                     <button onClick={submitCallSchedule} disabled={callSchedule.submitting || !callSchedule.date || !callSchedule.time}
-                      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors disabled:opacity-50">
                       {callSchedule.submitting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Calendar className="w-4 h-4" />}
                       {callSchedule.submitting ? 'Scheduling…' : 'Schedule & notify'}
                     </button>
@@ -1567,29 +1567,29 @@ export default function AdminDashboard() {
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50" onClick={closeModal}>
             <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
               {/* Header */}
-              <div className="flex items-center justify-between p-5 border-b border-slate-200">
-                <h2 className="text-lg font-semibold text-slate-800">
+              <div className="flex items-center justify-between p-5 border-b border-gray-200">
+                <h2 className="text-lg font-semibold text-gray-800">
                   {bookingModal.type === 'outcome' && 'Meeting Outcome'}
                   {bookingModal.type === 'reply' && 'Reply to Customer'}
                   {bookingModal.type === 'reschedule' && 'Reschedule Booking'}
                   {bookingModal.type === 'reject' && (bookingModal.booking.status === 'accepted' ? 'Cancel Booking' : 'Reject / Suggest Change')}
                 </h2>
-                <button onClick={closeModal} className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors"><X className="w-5 h-5 text-slate-500" /></button>
+                <button onClick={closeModal} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"><X className="w-5 h-5 text-gray-500" /></button>
               </div>
 
               {/* Booking details (shown in all modals) */}
               <div className="px-5 pt-4 pb-2">
-                <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 text-sm">
+                <div className="bg-gray-50 rounded-xl p-3 border border-gray-100 text-sm">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-semibold text-slate-800">{bookingModal.booking.serviceName}</span>
-                    <span className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${bookingModal.booking.status === 'accepted' ? 'bg-emerald-100 text-emerald-700' : bookingModal.booking.status === 'rejected' ? 'bg-red-100 text-red-700' : bookingModal.booking.status === 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>{bookingModal.booking.status}</span>
+                    <span className="font-semibold text-gray-800">{bookingModal.booking.serviceName}</span>
+                    <span className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${bookingModal.booking.status === 'accepted' ? 'bg-green-100 text-green-700' : bookingModal.booking.status === 'rejected' ? 'bg-red-100 text-red-700' : bookingModal.booking.status === 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>{bookingModal.booking.status}</span>
                   </div>
-                  <p className="text-slate-600"><strong>{bookingModal.booking.name}</strong> &middot; {bookingModal.booking.email}</p>
-                  {bookingModal.booking.whatsapp && <p className="text-slate-500">WhatsApp: {bookingModal.booking.whatsapp}</p>}
-                  <p className="text-slate-500">{bookingModal.booking.date} &middot; {bookingModal.booking.startTime}{bookingModal.booking.endTime !== bookingModal.booking.startTime ? ` – ${bookingModal.booking.endTime}` : ''} UTC
+                  <p className="text-gray-600"><strong>{bookingModal.booking.name}</strong> &middot; {bookingModal.booking.email}</p>
+                  {bookingModal.booking.whatsapp && <p className="text-gray-500">WhatsApp: {bookingModal.booking.whatsapp}</p>}
+                  <p className="text-gray-500">{bookingModal.booking.date} &middot; {bookingModal.booking.startTime}{bookingModal.booking.endTime !== bookingModal.booking.startTime ? ` – ${bookingModal.booking.endTime}` : ''} UTC
                     {(() => { try { const p = isoToIstParts(`${bookingModal.booking.date}T${bookingModal.booking.startTime}:00Z`); return ` (${p.date} ${p.time} IST)` } catch { return '' } })()}</p>
-                  {bookingModal.booking.topic && <p className="text-slate-500 mt-1">Topic: {bookingModal.booking.topic}</p>}
-                  {bookingModal.booking.country && <p className="text-slate-500">{bookingModal.booking.country}{bookingModal.booking.timezone !== 'UTC' ? ` (${bookingModal.booking.timezone})` : ''}</p>}
+                  {bookingModal.booking.topic && <p className="text-gray-500 mt-1">Topic: {bookingModal.booking.topic}</p>}
+                  {bookingModal.booking.country && <p className="text-gray-500">{bookingModal.booking.country}{bookingModal.booking.timezone !== 'UTC' ? ` (${bookingModal.booking.timezone})` : ''}</p>}
                 </div>
               </div>
 
@@ -1598,21 +1598,21 @@ export default function AdminDashboard() {
                 <div className="p-5 space-y-4">
                   {modalNotes.length > 0 && (
                     <div className="space-y-2">
-                      <h3 className="text-sm font-medium text-slate-700">Previous Notes</h3>
+                      <h3 className="text-sm font-medium text-gray-700">Previous Notes</h3>
                       {modalNotes.map((note, i) => (
-                        <div key={i} className="p-3 bg-purple-50 rounded-lg border border-purple-100">
-                          <p className="text-sm text-slate-700">{note.text}</p>
-                          <p className="text-xs text-slate-400 mt-1">{new Date(note.createdAt).toLocaleString()}</p>
+                        <div key={i} className="p-3 bg-gray-50 rounded-lg border border-gray-100">
+                          <p className="text-sm text-gray-700">{note.text}</p>
+                          <p className="text-xs text-gray-400 mt-1">{new Date(note.createdAt).toLocaleString()}</p>
                         </div>
                       ))}
                     </div>
                   )}
-                  {modalNotes.length === 0 && <p className="text-sm text-slate-400">No outcome notes yet.</p>}
+                  {modalNotes.length === 0 && <p className="text-sm text-gray-400">No outcome notes yet.</p>}
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Add Note</label>
-                    <textarea value={modalNewNote} onChange={e => setModalNewNote(e.target.value)} placeholder="Meeting outcome, follow-ups, action items..." className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none" rows={3} />
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Add Note</label>
+                    <textarea value={modalNewNote} onChange={e => setModalNewNote(e.target.value)} placeholder="Meeting outcome, follow-ups, action items..." className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 resize-none" rows={3} />
                   </div>
-                  <button onClick={saveOutcomeNote} disabled={modalSending || !modalNewNote.trim()} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                  <button onClick={saveOutcomeNote} disabled={modalSending || !modalNewNote.trim()} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors disabled:opacity-50">
                     {modalSending ? <RefreshCw className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />} Save Note
                   </button>
                 </div>
@@ -1623,29 +1623,29 @@ export default function AdminDashboard() {
                 <div className="p-5 space-y-4">
                   {bookingModal.booking.adminMessage && (
                     <div>
-                      <h3 className="text-sm font-medium text-slate-700 mb-1">Previous Admin Message</h3>
-                      <div className="p-3 bg-blue-50 rounded-lg border border-blue-100 text-sm text-blue-800">{bookingModal.booking.adminMessage}</div>
+                      <h3 className="text-sm font-medium text-gray-700 mb-1">Previous Admin Message</h3>
+                      <div className="p-3 bg-primary-50 rounded-lg border border-primary-100 text-sm text-primary-800">{bookingModal.booking.adminMessage}</div>
                     </div>
                   )}
                   {(() => { try { const notes: OutcomeNote[] = bookingModal.booking.outcomeNotes ? JSON.parse(bookingModal.booking.outcomeNotes) : []; return notes.length > 0 ? (
                     <div>
-                      <h3 className="text-sm font-medium text-slate-700 mb-1">Outcome Notes</h3>
+                      <h3 className="text-sm font-medium text-gray-700 mb-1">Outcome Notes</h3>
                       {notes.map((n, i) => (
-                        <div key={i} className="p-2 bg-slate-50 rounded-lg border border-slate-100 text-sm text-slate-600 mb-1">
-                          {n.text} <span className="text-xs text-slate-400">— {new Date(n.createdAt).toLocaleDateString()}</span>
+                        <div key={i} className="p-2 bg-gray-50 rounded-lg border border-gray-100 text-sm text-gray-600 mb-1">
+                          {n.text} <span className="text-xs text-gray-400">— {new Date(n.createdAt).toLocaleDateString()}</span>
                         </div>
                       ))}
                     </div>
                   ) : null } catch { return null } })()}
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Subject</label>
-                    <input type="text" value={modalSubject} onChange={e => setModalSubject(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                    <input type="text" value={modalSubject} onChange={e => setModalSubject(e.target.value)} className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Message</label>
-                    <textarea value={modalMessage} onChange={e => setModalMessage(e.target.value)} placeholder="Type your reply..." className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" rows={4} />
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                    <textarea value={modalMessage} onChange={e => setModalMessage(e.target.value)} placeholder="Type your reply..." className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none" rows={4} />
                   </div>
-                  <button onClick={sendReplyEmail} disabled={modalSending || !modalMessage.trim()} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                  <button onClick={sendReplyEmail} disabled={modalSending || !modalMessage.trim()} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors disabled:opacity-50">
                     {modalSending ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />} Send Email
                   </button>
                 </div>
@@ -1656,16 +1656,16 @@ export default function AdminDashboard() {
                 <div className="p-5 space-y-4">
                   <div className="grid grid-cols-3 gap-3">
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">New Date</label>
-                      <input type="date" value={modalResched.date} onChange={e => setModalResched(p => ({ ...p, date: e.target.value }))} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                      <label className="block text-sm font-medium text-gray-700 mb-1">New Date</label>
+                      <input type="date" value={modalResched.date} onChange={e => setModalResched(p => ({ ...p, date: e.target.value }))} className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">Start (IST)</label>
-                      <input type="time" value={modalResched.startTime} onChange={e => setModalResched(p => ({ ...p, startTime: e.target.value }))} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Start (IST)</label>
+                      <input type="time" value={modalResched.startTime} onChange={e => setModalResched(p => ({ ...p, startTime: e.target.value }))} className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">End (IST)</label>
-                      <input type="time" value={modalResched.endTime} onChange={e => setModalResched(p => ({ ...p, endTime: e.target.value }))} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                      <label className="block text-sm font-medium text-gray-700 mb-1">End (IST)</label>
+                      <input type="time" value={modalResched.endTime} onChange={e => setModalResched(p => ({ ...p, endTime: e.target.value }))} className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500" />
                     </div>
                   </div>
                   <TimeSlider value={modalResched.startTime} onChange={startTime => setModalResched(p => ({ ...p, startTime }))} label="Start time (IST)" />
@@ -1676,15 +1676,15 @@ export default function AdminDashboard() {
                     try {
                       const local = formatInZone(istInstant(modalResched.date, modalResched.startTime), tz)
                       return (
-                        <p className="text-xs text-blue-800 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+                        <p className="text-xs text-primary-800 bg-primary-50 border border-primary-200 rounded-lg px-3 py-2">
                           Customer&apos;s local time{b.country ? ` (${b.country})` : ''}: <strong>{local}</strong>
                         </p>
                       )
                     } catch { return null }
                   })()}
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Note to Customer (optional)</label>
-                    <textarea value={modalMessage} onChange={e => setModalMessage(e.target.value)} placeholder="Reason for rescheduling..." className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" rows={2} />
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Note to Customer (optional)</label>
+                    <textarea value={modalMessage} onChange={e => setModalMessage(e.target.value)} placeholder="Reason for rescheduling..." className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none" rows={2} />
                   </div>
                   <button onClick={confirmReschedule} disabled={bookingsAction === bookingModal.booking.rowKey || !modalResched.date || !modalResched.startTime} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-colors disabled:opacity-50">
                     {bookingsAction === bookingModal.booking.rowKey ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Calendar className="w-4 h-4" />} Confirm Reschedule
@@ -1696,8 +1696,8 @@ export default function AdminDashboard() {
               {bookingModal.type === 'reject' && (
                 <div className="p-5 space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Message to Customer (optional)</label>
-                    <textarea value={modalMessage} onChange={e => setModalMessage(e.target.value)} placeholder="Reason for cancellation or suggestion..." className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 resize-none" rows={3} />
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Message to Customer (optional)</label>
+                    <textarea value={modalMessage} onChange={e => setModalMessage(e.target.value)} placeholder="Reason for cancellation or suggestion..." className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 resize-none" rows={3} />
                   </div>
                   <div className="flex gap-2">
                     {bookingModal.booking.status === 'pending' && (
@@ -1705,7 +1705,7 @@ export default function AdminDashboard() {
                         <button onClick={() => handleBookingAction(bookingModal.booking.rowKey, 'reject', { message: modalMessage })} disabled={bookingsAction === bookingModal.booking.rowKey} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50">
                           {bookingsAction === bookingModal.booking.rowKey ? <RefreshCw className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />} Reject
                         </button>
-                        <button onClick={() => handleBookingAction(bookingModal.booking.rowKey, 'suggest-change', { message: modalMessage })} disabled={bookingsAction === bookingModal.booking.rowKey} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50">
+                        <button onClick={() => handleBookingAction(bookingModal.booking.rowKey, 'suggest-change', { message: modalMessage })} disabled={bookingsAction === bookingModal.booking.rowKey} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors disabled:opacity-50">
                           {bookingsAction === bookingModal.booking.rowKey ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />} Suggest Change
                         </button>
                       </>
@@ -1737,9 +1737,9 @@ export default function AdminDashboard() {
             </div>
             <Panel title="Recent Files" subtitle={getFilterLabel()} action={filteredBlobs.length > 0 ? <ExportButton onClick={() => downloadCSV(filteredBlobs as any, 'storage-files')} /> : undefined}>
               {filteredBlobs.length === 0 ? <Empty text="No files found" /> : (
-                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-500 border-b border-slate-200"><th className="text-left py-2 px-3 font-medium">File</th><th className="text-left py-2 px-3 font-medium">Container</th><th className="text-left py-2 px-3 font-medium">Size</th><th className="text-left py-2 px-3 font-medium">Modified</th></tr></thead>
+                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-gray-500 border-b border-gray-200"><th className="text-left py-2 px-3 font-medium">File</th><th className="text-left py-2 px-3 font-medium">Container</th><th className="text-left py-2 px-3 font-medium">Size</th><th className="text-left py-2 px-3 font-medium">Modified</th></tr></thead>
                 <tbody>{filteredBlobs.map((b, i) => (
-                  <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/50"><td className="py-2.5 px-3 text-slate-800 truncate max-w-[250px]">{b.name}</td><td className="py-2.5 px-3"><span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs">{b.containerName}</span></td><td className="py-2.5 px-3 text-slate-500">{formatBytes(b.size)}</td><td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{b.lastModified ? new Date(b.lastModified).toLocaleDateString() : '-'}</td></tr>
+                  <tr key={i} className="border-b border-gray-100 hover:bg-primary-50/50"><td className="py-2.5 px-3 text-gray-800 truncate max-w-[250px]">{b.name}</td><td className="py-2.5 px-3"><span className="px-2 py-0.5 bg-primary-100 text-primary-700 rounded text-xs">{b.containerName}</span></td><td className="py-2.5 px-3 text-gray-500">{formatBytes(b.size)}</td><td className="py-2.5 px-3 text-gray-400 whitespace-nowrap">{b.lastModified ? new Date(b.lastModified).toLocaleDateString() : '-'}</td></tr>
                 ))}</tbody></table></div>
               )}
             </Panel>
@@ -1750,7 +1750,7 @@ export default function AdminDashboard() {
         {activeTab === 'insights' && (
           <div className="space-y-6">
             {!insightsData || insightsData.error ? (
-              <Panel title="Application Insights"><div className="text-center py-12"><Activity className="w-12 h-12 text-slate-300 mx-auto mb-3" /><p className="text-slate-500">App Insights not configured or unavailable</p><p className="text-xs text-slate-400 mt-1">Set APPINSIGHTS_APP_ID and APPINSIGHTS_API_KEY in your environment</p></div></Panel>
+              <Panel title="Application Insights"><div className="text-center py-12"><Activity className="w-12 h-12 text-gray-300 mx-auto mb-3" /><p className="text-gray-500">App Insights not configured or unavailable</p><p className="text-xs text-gray-400 mt-1">Set APPINSIGHTS_APP_ID and APPINSIGHTS_API_KEY in your environment</p></div></Panel>
             ) : (<>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard icon={Server} label="Server Requests" value={Math.round(serverRequests)} color="blue" />
@@ -1791,18 +1791,18 @@ export default function AdminDashboard() {
           <Panel title="Blog Comments" subtitle={`${data.activeComments} active / ${data.totalComments} total`}>
             {data.recentComments.length === 0 ? <Empty text="No comments yet" /> : (
               <div className="space-y-3">{data.recentComments.map(c => (
-                <div key={c.rowKey} className={`bg-slate-50 border border-slate-200 rounded-lg p-4 ${c.status === 'hidden' ? 'opacity-40' : ''}`}>
+                <div key={c.rowKey} className={`bg-gray-50 border border-gray-200 rounded-lg p-4 ${c.status === 'hidden' ? 'opacity-40' : ''}`}>
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="font-medium text-slate-800 text-sm">{c.authorName}</span>
-                        <span className="text-slate-400 text-xs">{c.authorEmail}</span>
+                        <span className="font-medium text-gray-800 text-sm">{c.authorName}</span>
+                        <span className="text-gray-400 text-xs">{c.authorEmail}</span>
                         {c.status === 'hidden' && <span className="px-1.5 py-0.5 bg-red-100 text-red-600 rounded text-xs">hidden</span>}
                       </div>
-                      <p className="text-slate-600 text-sm">{c.content}</p>
+                      <p className="text-gray-600 text-sm">{c.content}</p>
                       <div className="flex items-center gap-3 mt-2">
-                        <span className="text-xs text-slate-400">on <span className="text-blue-600">{c.slug}</span></span>
-                        <span className="text-xs text-slate-400">{new Date(c.createdAt).toLocaleString()}</span>
+                        <span className="text-xs text-gray-400">on <span className="text-primary-600">{c.slug}</span></span>
+                        <span className="text-xs text-gray-400">{new Date(c.createdAt).toLocaleString()}</span>
                       </div>
                     </div>
                     {c.status !== 'hidden' && <button onClick={() => hideComment(c.slug, c.rowKey)} className="px-3 py-1.5 text-xs bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 rounded-lg transition-colors shrink-0">Hide</button>}
@@ -1828,19 +1828,19 @@ export default function AdminDashboard() {
               return (
                 <Panel key={section.category} title={section.category} subtitle={totalAuto > 0 ? `${passCount}/${totalAuto} automated checks passing` : 'Manual verification needed'}>
                   <div className="space-y-3">{section.items.map((item, i) => (
-                    <div key={i} className={`flex items-start gap-3 p-3 rounded-lg border ${item.status === 'pass' ? 'bg-emerald-50 border-emerald-200' : item.status === 'fail' ? 'bg-red-50 border-red-200' : item.status === 'warning' ? 'bg-amber-50 border-amber-200' : 'bg-slate-50 border-slate-200'}`}>
+                    <div key={i} className={`flex items-start gap-3 p-3 rounded-lg border ${item.status === 'pass' ? 'bg-green-50 border-green-200' : item.status === 'fail' ? 'bg-red-50 border-red-200' : item.status === 'warning' ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-200'}`}>
                       <div className="mt-0.5 shrink-0">
-                        {item.status === 'pass' && <CheckCircle2 className="w-5 h-5 text-emerald-600" />}
+                        {item.status === 'pass' && <CheckCircle2 className="w-5 h-5 text-green-600" />}
                         {item.status === 'fail' && <XCircle className="w-5 h-5 text-red-600" />}
                         {item.status === 'warning' && <AlertTriangle className="w-5 h-5 text-amber-600" />}
-                        {item.status === 'manual' && <Search className="w-5 h-5 text-slate-400" />}
+                        {item.status === 'manual' && <Search className="w-5 h-5 text-gray-400" />}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-slate-800">{item.label}</p>
-                        <p className="text-xs text-slate-500 mt-0.5">{item.description}</p>
-                        <p className={`text-xs mt-1 ${item.status === 'pass' ? 'text-emerald-600' : item.status === 'fail' ? 'text-red-600' : item.status === 'warning' ? 'text-amber-600' : 'text-slate-400'}`}>{item.status === 'manual' ? 'Verify manually: ' : ''}{item.action}</p>
+                        <p className="text-sm font-medium text-gray-800">{item.label}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">{item.description}</p>
+                        <p className={`text-xs mt-1 ${item.status === 'pass' ? 'text-green-600' : item.status === 'fail' ? 'text-red-600' : item.status === 'warning' ? 'text-amber-600' : 'text-gray-400'}`}>{item.status === 'manual' ? 'Verify manually: ' : ''}{item.action}</p>
                       </div>
-                      {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors shrink-0"><ExternalLink className="w-4 h-4" /></a>}
+                      {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="p-1.5 text-gray-400 hover:text-primary-600 transition-colors shrink-0"><ExternalLink className="w-4 h-4" /></a>}
                     </div>
                   ))}</div>
                 </Panel>
@@ -1848,10 +1848,10 @@ export default function AdminDashboard() {
             })}
             <Panel title="Key Pages Health" subtitle="HTTP status of important pages">
               <div className="grid sm:grid-cols-2 gap-2">{seoData.pageChecks.map(page => (
-                <div key={page.path} className="flex items-center gap-3 p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
-                  {page.ok ? <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /> : <XCircle className="w-4 h-4 text-red-600 shrink-0" />}
-                  <div className="flex-1 min-w-0"><p className="text-sm text-slate-800 truncate">{page.label}</p><p className="text-xs text-slate-400 truncate">{page.path}</p></div>
-                  <span className={`text-xs font-mono shrink-0 ${page.ok ? 'text-emerald-600' : 'text-red-600'}`}>{page.status || '---'}</span>
+                <div key={page.path} className="flex items-center gap-3 p-2.5 bg-gray-50 border border-gray-200 rounded-lg">
+                  {page.ok ? <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0" /> : <XCircle className="w-4 h-4 text-red-600 shrink-0" />}
+                  <div className="flex-1 min-w-0"><p className="text-sm text-gray-800 truncate">{page.label}</p><p className="text-xs text-gray-400 truncate">{page.path}</p></div>
+                  <span className={`text-xs font-mono shrink-0 ${page.ok ? 'text-green-600' : 'text-red-600'}`}>{page.status || '---'}</span>
                 </div>
               ))}</div>
             </Panel>
@@ -1870,52 +1870,52 @@ export default function AdminDashboard() {
 
             <Panel title="Automation" subtitle="One GitHub Actions workflow runs both Bing + Google in parallel">
               <div className="space-y-3">
-                <div className="flex items-start gap-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
-                  <div className="w-10 h-10 bg-white border border-emerald-300 rounded-lg flex items-center justify-center shrink-0"><Zap className="w-5 h-5 text-emerald-600" /></div>
+                <div className="flex items-start gap-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="w-10 h-10 bg-white border border-green-300 rounded-lg flex items-center justify-center shrink-0"><Zap className="w-5 h-5 text-green-600" /></div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-slate-800">SEO Re-index workflow — Bing + Google in one shot</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Auto-fires after every successful main deploy (90s wait so Azure propagates), plus safety cron every 4 days at 03:00 UTC. Two parallel jobs: <strong>IndexNow</strong> submits every <code className="text-xs px-1 py-0.5 bg-white rounded border border-emerald-200">/sitemap.xml</code> URL to Bing / Yandex / Naver / Seznam; <strong>GSC</strong> PUTs the sitemap to Google Search Console via OAuth.</p>
+                    <p className="text-sm font-semibold text-gray-800">SEO Re-index workflow — Bing + Google in one shot</p>
+                    <p className="text-xs text-gray-500 mt-0.5">Auto-fires after every successful main deploy (90s wait so Azure propagates), plus safety cron every 4 days at 03:00 UTC. Two parallel jobs: <strong>IndexNow</strong> submits every <code className="text-xs px-1 py-0.5 bg-white rounded border border-green-200">/sitemap.xml</code> URL to Bing / Yandex / Naver / Seznam; <strong>GSC</strong> PUTs the sitemap to Google Search Console via OAuth.</p>
                   </div>
-                  <a href="https://github.com/lostspace003/gennoor-tech/actions/workflows/seo-reindex.yml" target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-emerald-600 transition-colors shrink-0" title="View workflow runs"><ExternalLink className="w-4 h-4" /></a>
+                  <a href="https://github.com/lostspace003/gennoor-tech/actions/workflows/seo-reindex.yml" target="_blank" rel="noopener noreferrer" className="p-1.5 text-gray-400 hover:text-green-600 transition-colors shrink-0" title="View workflow runs"><ExternalLink className="w-4 h-4" /></a>
                 </div>
               </div>
             </Panel>
 
             <Panel title="Google Coverage" subtitle={gscData?.checkedAt ? `Live from Search Console API — checked ${new Date(gscData.checkedAt).toLocaleString()}` : 'Live from Search Console API'}>
               {!gscData ? (
-                <div className="flex items-center gap-3 p-4 bg-slate-50 border border-slate-200 rounded-lg"><RefreshCw className="w-4 h-4 animate-spin text-slate-400" /><p className="text-sm text-slate-500">Loading Google data...</p></div>
+                <div className="flex items-center gap-3 p-4 bg-gray-50 border border-gray-200 rounded-lg"><RefreshCw className="w-4 h-4 animate-spin text-gray-400" /><p className="text-sm text-gray-500">Loading Google data...</p></div>
               ) : gscData.configured === false ? (
                 <div className="flex items-start gap-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
                   <div className="w-10 h-10 bg-white border border-amber-300 rounded-lg flex items-center justify-center shrink-0"><AlertTriangle className="w-5 h-5 text-amber-600" /></div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-slate-800">Not yet configured</p>
-                    <p className="text-xs text-slate-500 mt-0.5">{gscData.reason || gscData.error || 'See workflow logs for details.'}</p>
+                    <p className="text-sm font-semibold text-gray-800">Not yet configured</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{gscData.reason || gscData.error || 'See workflow logs for details.'}</p>
                     <div className="mt-2 flex flex-wrap gap-3 text-xs">
-                      <a href="https://console.developers.google.com/apis/api/searchconsole.googleapis.com/overview?project=406342268554" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Enable Search Console API →</a>
-                      <a href="https://search.google.com/search-console/users" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Add service account to GSC →</a>
+                      <a href="https://console.developers.google.com/apis/api/searchconsole.googleapis.com/overview?project=406342268554" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:underline">Enable Search Console API →</a>
+                      <a href="https://search.google.com/search-console/users" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:underline">Add service account to GSC →</a>
                     </div>
                   </div>
                 </div>
               ) : (
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                    <div className="p-3 bg-slate-50 rounded-lg"><p className="text-xs text-slate-500">Indexed (last 90d)</p><p className="text-xl font-bold text-slate-800">{gscData.indexedCount?.toLocaleString() || 0}</p></div>
-                    <div className="p-3 bg-slate-50 rounded-lg"><p className="text-xs text-slate-500">Clicks (28d)</p><p className="text-xl font-bold text-slate-800">{Math.round(gscData.summary28d?.clicks || 0).toLocaleString()}</p></div>
-                    <div className="p-3 bg-slate-50 rounded-lg"><p className="text-xs text-slate-500">Impressions (28d)</p><p className="text-xl font-bold text-slate-800">{Math.round(gscData.summary28d?.impressions || 0).toLocaleString()}</p></div>
-                    <div className="p-3 bg-slate-50 rounded-lg"><p className="text-xs text-slate-500">Avg Position (28d)</p><p className="text-xl font-bold text-slate-800">{(gscData.summary28d?.position || 0).toFixed(1)}</p></div>
+                    <div className="p-3 bg-gray-50 rounded-lg"><p className="text-xs text-gray-500">Indexed (last 90d)</p><p className="text-xl font-bold text-gray-800">{gscData.indexedCount?.toLocaleString() || 0}</p></div>
+                    <div className="p-3 bg-gray-50 rounded-lg"><p className="text-xs text-gray-500">Clicks (28d)</p><p className="text-xl font-bold text-gray-800">{Math.round(gscData.summary28d?.clicks || 0).toLocaleString()}</p></div>
+                    <div className="p-3 bg-gray-50 rounded-lg"><p className="text-xs text-gray-500">Impressions (28d)</p><p className="text-xl font-bold text-gray-800">{Math.round(gscData.summary28d?.impressions || 0).toLocaleString()}</p></div>
+                    <div className="p-3 bg-gray-50 rounded-lg"><p className="text-xs text-gray-500">Avg Position (28d)</p><p className="text-xl font-bold text-gray-800">{(gscData.summary28d?.position || 0).toFixed(1)}</p></div>
                   </div>
                   {gscData.sitemaps && gscData.sitemaps.length > 0 && (
                     <div>
-                      <p className="text-xs font-medium text-slate-500 mb-2">Sitemaps known to Google</p>
+                      <p className="text-xs font-medium text-gray-500 mb-2">Sitemaps known to Google</p>
                       <div className="space-y-2">
                         {gscData.sitemaps.map(s => (
-                          <div key={s.path} className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
-                            <FileText className="w-4 h-4 text-slate-400 shrink-0" />
+                          <div key={s.path} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                            <FileText className="w-4 h-4 text-gray-400 shrink-0" />
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs font-medium text-slate-800 truncate">{s.path}</p>
-                              <p className="text-[11px] text-slate-500">Submitted {s.lastSubmitted ? new Date(s.lastSubmitted).toLocaleDateString() : '—'} · Downloaded {s.lastDownloaded ? new Date(s.lastDownloaded).toLocaleDateString() : '—'}</p>
+                              <p className="text-xs font-medium text-gray-800 truncate">{s.path}</p>
+                              <p className="text-[11px] text-gray-500">Submitted {s.lastSubmitted ? new Date(s.lastSubmitted).toLocaleDateString() : '—'} · Downloaded {s.lastDownloaded ? new Date(s.lastDownloaded).toLocaleDateString() : '—'}</p>
                             </div>
-                            {s.errors && parseInt(s.errors) > 0 ? <span className="text-[11px] px-2 py-0.5 bg-rose-100 text-rose-700 rounded">{s.errors} errors</span> : s.warnings && parseInt(s.warnings) > 0 ? <span className="text-[11px] px-2 py-0.5 bg-amber-100 text-amber-700 rounded">{s.warnings} warnings</span> : <span className="text-[11px] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded">OK</span>}
+                            {s.errors && parseInt(s.errors) > 0 ? <span className="text-[11px] px-2 py-0.5 bg-red-100 text-red-700 rounded">{s.errors} errors</span> : s.warnings && parseInt(s.warnings) > 0 ? <span className="text-[11px] px-2 py-0.5 bg-amber-100 text-amber-700 rounded">{s.warnings} warnings</span> : <span className="text-[11px] px-2 py-0.5 bg-green-100 text-green-700 rounded">OK</span>}
                           </div>
                         ))}
                       </div>
@@ -1923,15 +1923,15 @@ export default function AdminDashboard() {
                   )}
                   {gscData.topPages && gscData.topPages.length > 0 && (
                     <div>
-                      <p className="text-xs font-medium text-slate-500 mb-2">Top pages by clicks (28d)</p>
-                      <div className="overflow-x-auto"><table className="w-full text-xs"><thead><tr className="text-slate-500 border-b border-slate-200"><th className="text-left py-2 px-2 font-medium">Page</th><th className="text-right py-2 px-2 font-medium">Clicks</th><th className="text-right py-2 px-2 font-medium">Impr.</th><th className="text-right py-2 px-2 font-medium">CTR</th><th className="text-right py-2 px-2 font-medium">Pos.</th></tr></thead>
+                      <p className="text-xs font-medium text-gray-500 mb-2">Top pages by clicks (28d)</p>
+                      <div className="overflow-x-auto"><table className="w-full text-xs"><thead><tr className="text-gray-500 border-b border-gray-200"><th className="text-left py-2 px-2 font-medium">Page</th><th className="text-right py-2 px-2 font-medium">Clicks</th><th className="text-right py-2 px-2 font-medium">Impr.</th><th className="text-right py-2 px-2 font-medium">CTR</th><th className="text-right py-2 px-2 font-medium">Pos.</th></tr></thead>
                       <tbody>{gscData.topPages.map((p, i) => (
-                        <tr key={i} className="border-b border-slate-100">
-                          <td className="py-2 px-2 text-slate-700 max-w-[280px] truncate"><a href={p.page} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 hover:underline">{p.page.replace('https://gennoor.com', '')}</a></td>
-                          <td className="py-2 px-2 text-right text-slate-800 font-medium">{Math.round(p.clicks).toLocaleString()}</td>
-                          <td className="py-2 px-2 text-right text-slate-600">{Math.round(p.impressions).toLocaleString()}</td>
-                          <td className="py-2 px-2 text-right text-slate-500">{((p.ctr || 0) * 100).toFixed(1)}%</td>
-                          <td className="py-2 px-2 text-right text-slate-500">{(p.position || 0).toFixed(1)}</td>
+                        <tr key={i} className="border-b border-gray-100">
+                          <td className="py-2 px-2 text-gray-700 max-w-[280px] truncate"><a href={p.page} target="_blank" rel="noopener noreferrer" className="hover:text-primary-600 hover:underline">{p.page.replace('https://gennoor.com', '')}</a></td>
+                          <td className="py-2 px-2 text-right text-gray-800 font-medium">{Math.round(p.clicks).toLocaleString()}</td>
+                          <td className="py-2 px-2 text-right text-gray-600">{Math.round(p.impressions).toLocaleString()}</td>
+                          <td className="py-2 px-2 text-right text-gray-500">{((p.ctr || 0) * 100).toFixed(1)}%</td>
+                          <td className="py-2 px-2 text-right text-gray-500">{(p.position || 0).toFixed(1)}</td>
                         </tr>
                       ))}</tbody></table></div>
                     </div>
@@ -1949,13 +1949,13 @@ export default function AdminDashboard() {
                         }
                       }}
                       disabled={gscResubmit.submitting}
-                      className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white rounded-lg text-xs font-medium transition-colors flex items-center gap-2"
+                      className="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-400 text-white rounded-lg text-xs font-medium transition-colors flex items-center gap-2"
                     >
                       {gscResubmit.submitting ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Resubmitting...</> : <><Send className="w-3.5 h-3.5" /> Resubmit sitemap to Google</>}
                     </button>
                   </div>
                   {gscResubmit.result && (
-                    <p className={`text-xs text-right ${gscResubmit.result.success ? 'text-emerald-600' : 'text-rose-600'}`}>{gscResubmit.result.success ? '✓ Sitemap resubmitted' : `✗ ${gscResubmit.result.message}`}</p>
+                    <p className={`text-xs text-right ${gscResubmit.result.success ? 'text-green-600' : 'text-red-600'}`}>{gscResubmit.result.success ? '✓ Sitemap resubmitted' : `✗ ${gscResubmit.result.message}`}</p>
                   )}
                 </div>
               )}
@@ -1966,24 +1966,24 @@ export default function AdminDashboard() {
                 <div className="flex items-center gap-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
                   <div className="w-10 h-10 bg-white border border-amber-300 rounded-lg flex items-center justify-center shrink-0"><Search className="w-5 h-5 text-amber-600" /></div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-slate-800">Google</p>
-                    <p className="text-xs text-slate-500">{gscData?.configured ? `${gscData.indexedCount?.toLocaleString() || 0} pages indexed of ${seoData?.sitemapUrls || 0} (live from Search Console API). Sitemap auto-resubmitted every 4 days.` : 'Google does NOT participate in IndexNow. Sitemap is auto-resubmitted via Search Console API every 4 days (once you enable the API).'}</p>
+                    <p className="text-sm font-semibold text-gray-800">Google</p>
+                    <p className="text-xs text-gray-500">{gscData?.configured ? `${gscData.indexedCount?.toLocaleString() || 0} pages indexed of ${seoData?.sitemapUrls || 0} (live from Search Console API). Sitemap auto-resubmitted every 4 days.` : 'Google does NOT participate in IndexNow. Sitemap is auto-resubmitted via Search Console API every 4 days (once you enable the API).'}</p>
                   </div>
-                  <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors shrink-0"><ExternalLink className="w-4 h-4" /></a>
+                  <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer" className="p-1.5 text-gray-400 hover:text-primary-600 transition-colors shrink-0"><ExternalLink className="w-4 h-4" /></a>
                 </div>
-                <div className="flex items-center gap-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                  <div className="w-10 h-10 bg-white border border-blue-300 rounded-lg flex items-center justify-center shrink-0"><Globe className="w-5 h-5 text-blue-600" /></div>
+                <div className="flex items-center gap-4 p-4 bg-primary-50 border border-primary-200 rounded-lg">
+                  <div className="w-10 h-10 bg-white border border-primary-300 rounded-lg flex items-center justify-center shrink-0"><Globe className="w-5 h-5 text-primary-600" /></div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-slate-800">Bing / Yandex / Naver / Seznam</p>
-                    <p className="text-xs text-slate-500">Receive every sitemap URL via IndexNow on each cron run ({seoData?.sitemapUrls || 0} URLs per cycle). Engines typically crawl within hours. Verify the site in Bing Webmaster Tools for the live indexed count.</p>
+                    <p className="text-sm font-semibold text-gray-800">Bing / Yandex / Naver / Seznam</p>
+                    <p className="text-xs text-gray-500">Receive every sitemap URL via IndexNow on each cron run ({seoData?.sitemapUrls || 0} URLs per cycle). Engines typically crawl within hours. Verify the site in Bing Webmaster Tools for the live indexed count.</p>
                   </div>
-                  <a href="https://www.bing.com/webmasters" target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors shrink-0"><ExternalLink className="w-4 h-4" /></a>
+                  <a href="https://www.bing.com/webmasters" target="_blank" rel="noopener noreferrer" className="p-1.5 text-gray-400 hover:text-primary-600 transition-colors shrink-0"><ExternalLink className="w-4 h-4" /></a>
                 </div>
-                <div className="flex items-center gap-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
-                  <div className="w-10 h-10 bg-white border border-emerald-300 rounded-lg flex items-center justify-center shrink-0"><CheckCircle className="w-5 h-5 text-emerald-600" /></div>
+                <div className="flex items-center gap-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="w-10 h-10 bg-white border border-green-300 rounded-lg flex items-center justify-center shrink-0"><CheckCircle className="w-5 h-5 text-green-600" /></div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-slate-800">SEO Fixes Applied</p>
-                    <p className="text-xs text-slate-500">www → non-www 301 redirect active. Canonical domain: gennoor.com. IndexNow key live. Sitemap covers home, services, academy, blog, case studies, training, certs, industries, and PoCs.</p>
+                    <p className="text-sm font-semibold text-gray-800">SEO Fixes Applied</p>
+                    <p className="text-xs text-gray-500">www → non-www 301 redirect active. Canonical domain: gennoor.com. IndexNow key live. Sitemap covers home, services, academy, blog, case studies, training, certs, industries, and PoCs.</p>
                   </div>
                 </div>
               </div>
@@ -1991,10 +1991,10 @@ export default function AdminDashboard() {
 
             <Panel title="Manual Push" subtitle="On-demand submit between cron runs">
               <div className="flex items-center justify-between gap-4 flex-wrap">
-                <div className="text-sm text-slate-600">
-                  <p>Submits <strong>all {seoData?.sitemapUrls || 0}</strong> URLs from <code className="text-xs px-1.5 py-0.5 bg-slate-100 rounded">/sitemap.xml</code> to IndexNow immediately. Use after publishing time-sensitive content (the cron handles the rest every 4 days).</p>
+                <div className="text-sm text-gray-600">
+                  <p>Submits <strong>all {seoData?.sitemapUrls || 0}</strong> URLs from <code className="text-xs px-1.5 py-0.5 bg-gray-100 rounded">/sitemap.xml</code> to IndexNow immediately. Use after publishing time-sensitive content (the cron handles the rest every 4 days).</p>
                   {indexNowState.result && (
-                    <p className={`mt-2 text-xs ${indexNowState.result.success ? 'text-emerald-600' : 'text-rose-600'}`}>
+                    <p className={`mt-2 text-xs ${indexNowState.result.success ? 'text-green-600' : 'text-red-600'}`}>
                       {indexNowState.result.success
                         ? `✓ Submitted ${indexNowState.result.submitted}/${indexNowState.result.total} URLs at ${new Date(indexNowState.result.submittedAt!).toLocaleString()}`
                         : `✗ ${indexNowState.result.error || 'Failed'}`}
@@ -2013,7 +2013,7 @@ export default function AdminDashboard() {
                     }
                   }}
                   disabled={indexNowState.pushing}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                  className="px-4 py-2 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-400 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
                 >
                   {indexNowState.pushing ? <><RefreshCw className="w-4 h-4 animate-spin" /> Pushing...</> : <><Send className="w-4 h-4" /> Push Now</>}
                 </button>
@@ -2030,10 +2030,10 @@ export default function AdminDashboard() {
                 { title: 'Robots.txt', description: 'View crawl directives', href: '/robots.txt', icon: Shield },
                 { title: 'IndexNow Key', description: 'Verify key file is live', href: '/1774b0e00b584216b04f41a75b9de8e2.txt', icon: Lock },
               ].map(link => (
-                <a key={link.title} href={link.href} target={link.href.startsWith('/') ? '_self' : '_blank'} rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-slate-50 hover:bg-blue-50 border border-slate-200 rounded-lg transition-colors group">
-                  <div className="w-9 h-9 bg-white border border-slate-200 group-hover:border-blue-300 rounded-lg flex items-center justify-center shrink-0"><link.icon className="w-4 h-4 text-slate-600 group-hover:text-blue-600" /></div>
-                  <div className="flex-1 min-w-0"><p className="text-sm font-medium text-slate-800">{link.title}</p><p className="text-xs text-slate-500 truncate">{link.description}</p></div>
-                  <ExternalLink className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <a key={link.title} href={link.href} target={link.href.startsWith('/') ? '_self' : '_blank'} rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-primary-50 border border-gray-200 rounded-lg transition-colors group">
+                  <div className="w-9 h-9 bg-white border border-gray-200 group-hover:border-primary-300 rounded-lg flex items-center justify-center shrink-0"><link.icon className="w-4 h-4 text-gray-600 group-hover:text-primary-600" /></div>
+                  <div className="flex-1 min-w-0"><p className="text-sm font-medium text-gray-800">{link.title}</p><p className="text-xs text-gray-500 truncate">{link.description}</p></div>
+                  <ExternalLink className="w-3.5 h-3.5 text-gray-400 shrink-0" />
                 </a>
               ))}</div>
             </Panel>
@@ -2059,13 +2059,13 @@ export default function AdminDashboard() {
                 {(certData?.recent?.length || 0) === 0 ? <Empty text="No certificates issued yet" /> : (
                   <div className="max-h-[500px] overflow-y-auto -mx-2 px-2 space-y-2">
                     {(certData?.recent || []).slice(0, 30).map(c => (
-                      <div key={c.certId} className="flex items-center gap-3 p-2.5 border border-slate-100 hover:border-blue-200 hover:bg-blue-50/40 rounded-lg transition-all duration-150">
+                      <div key={c.certId} className="flex items-center gap-3 p-2.5 border border-gray-100 hover:border-primary-200 hover:bg-primary-50/40 rounded-lg transition-all duration-150">
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-slate-800 truncate">{c.recipientName}</p>
-                          <p className="text-xs text-slate-500 truncate">{c.workshopTitle || c.workshopSlug}</p>
+                          <p className="text-sm font-medium text-gray-800 truncate">{c.recipientName}</p>
+                          <p className="text-xs text-gray-500 truncate">{c.workshopTitle || c.workshopSlug}</p>
                         </div>
-                        <span className="text-xs text-slate-400 whitespace-nowrap">{c.createdAt ? new Date(c.createdAt).toLocaleDateString() : '-'}</span>
-                        {c.verifyUrl && <a href={c.verifyUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors" title="Verify"><ExternalLink className="w-3.5 h-3.5" /></a>}
+                        <span className="text-xs text-gray-400 whitespace-nowrap">{c.createdAt ? new Date(c.createdAt).toLocaleDateString() : '-'}</span>
+                        {c.verifyUrl && <a href={c.verifyUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 text-gray-400 hover:text-primary-600 transition-colors" title="Verify"><ExternalLink className="w-3.5 h-3.5" /></a>}
                       </div>
                     ))}
                   </div>
@@ -2090,9 +2090,9 @@ export default function AdminDashboard() {
                   <div className="space-y-2.5">
                     {(feedbackData?.perCourse || []).slice(0, 12).map(c => (
                       <div key={c.courseId} className="flex items-center gap-3">
-                        <span className="text-sm text-slate-700 flex-1 truncate" title={c.courseId}>{c.courseId}</span>
-                        <span className={`text-xs font-medium ${c.avgRating >= 4 ? 'text-emerald-600' : c.avgRating >= 3 ? 'text-amber-600' : 'text-rose-600'}`}>{c.avgRating}★</span>
-                        <span className="text-xs text-slate-400 w-12 text-right">{c.count} {c.count === 1 ? 'review' : 'reviews'}</span>
+                        <span className="text-sm text-gray-700 flex-1 truncate" title={c.courseId}>{c.courseId}</span>
+                        <span className={`text-xs font-medium ${c.avgRating >= 4 ? 'text-green-600' : c.avgRating >= 3 ? 'text-amber-600' : 'text-red-600'}`}>{c.avgRating}★</span>
+                        <span className="text-xs text-gray-400 w-12 text-right">{c.count} {c.count === 1 ? 'review' : 'reviews'}</span>
                       </div>
                     ))}
                   </div>
@@ -2102,13 +2102,13 @@ export default function AdminDashboard() {
                 {(feedbackData?.recent?.length || 0) === 0 ? <Empty text="No feedback yet" /> : (
                   <div className="max-h-[500px] overflow-y-auto -mx-2 px-2 space-y-2">
                     {(feedbackData?.recent || []).slice(0, 30).map((r, i) => (
-                      <div key={i} className="p-2.5 border border-slate-100 hover:border-blue-200 hover:bg-blue-50/40 rounded-lg transition-all duration-150">
+                      <div key={i} className="p-2.5 border border-gray-100 hover:border-primary-200 hover:bg-primary-50/40 rounded-lg transition-all duration-150">
                         <div className="flex items-center justify-between gap-3 mb-1">
-                          <span className="text-sm font-medium text-slate-800 truncate">{r.learnerName || r.learnerEmail}</span>
-                          <span className={`text-xs font-medium ${r.rating >= 4 ? 'text-emerald-600' : r.rating >= 3 ? 'text-amber-600' : 'text-rose-600'}`}>{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</span>
+                          <span className="text-sm font-medium text-gray-800 truncate">{r.learnerName || r.learnerEmail}</span>
+                          <span className={`text-xs font-medium ${r.rating >= 4 ? 'text-green-600' : r.rating >= 3 ? 'text-amber-600' : 'text-red-600'}`}>{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</span>
                         </div>
-                        <p className="text-xs text-slate-500 mb-1 truncate">{r.courseId}</p>
-                        {r.comments && <p className="text-xs text-slate-600 italic">&ldquo;{r.comments}&rdquo;</p>}
+                        <p className="text-xs text-gray-500 mb-1 truncate">{r.courseId}</p>
+                        {r.comments && <p className="text-xs text-gray-600 italic">&ldquo;{r.comments}&rdquo;</p>}
                       </div>
                     ))}
                   </div>
@@ -2132,7 +2132,7 @@ export default function AdminDashboard() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="text-slate-500 border-b border-slate-200">
+                      <tr className="text-gray-500 border-b border-gray-200">
                         <th className="text-left py-2 px-3 font-medium">When</th>
                         <th className="text-left py-2 px-3 font-medium">Admin</th>
                         <th className="text-left py-2 px-3 font-medium">IP</th>
@@ -2141,11 +2141,11 @@ export default function AdminDashboard() {
                     </thead>
                     <tbody>
                       {authLog.map((l, i) => (
-                        <tr key={l.rowKey || i} className="border-b border-slate-100 hover:bg-blue-50/50">
-                          <td className="py-2.5 px-3 text-slate-700 whitespace-nowrap">{new Date(l.loginAt).toLocaleString()}</td>
-                          <td className="py-2.5 px-3 text-slate-800">{l.name || l.email}</td>
-                          <td className="py-2.5 px-3 text-slate-500 font-mono text-xs">{l.ip}</td>
-                          <td className="py-2.5 px-3 text-slate-500 text-xs truncate max-w-[400px]">{l.userAgent}</td>
+                        <tr key={l.rowKey || i} className="border-b border-gray-100 hover:bg-primary-50/50">
+                          <td className="py-2.5 px-3 text-gray-700 whitespace-nowrap">{new Date(l.loginAt).toLocaleString()}</td>
+                          <td className="py-2.5 px-3 text-gray-800">{l.name || l.email}</td>
+                          <td className="py-2.5 px-3 text-gray-500 font-mono text-xs">{l.ip}</td>
+                          <td className="py-2.5 px-3 text-gray-500 text-xs truncate max-w-[400px]">{l.userAgent}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -2159,23 +2159,23 @@ export default function AdminDashboard() {
         {/* ─── SETUP ─────────────────────────────────────── */}
         {activeTab === 'setup' && setupData && (
           <div className="space-y-6">
-            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
               <div className="flex items-center justify-between flex-wrap gap-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center"><Server className="w-6 h-6 text-white" /></div>
+                  <div className="w-12 h-12 bg-primary-600 rounded-xl flex items-center justify-center"><Server className="w-6 h-6 text-white" /></div>
                   <div>
-                    <h2 className="text-lg font-semibold text-slate-800">Environment</h2>
+                    <h2 className="text-lg font-semibold text-gray-800">Environment</h2>
                     <div className="flex items-center gap-3 mt-1">
-                      <span className="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium">{setupData.platform}</span>
-                      <span className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-sm">{setupData.environment}</span>
+                      <span className="px-2.5 py-1 bg-primary-100 text-primary-700 rounded-lg text-sm font-medium">{setupData.platform}</span>
+                      <span className="px-2.5 py-1 bg-gray-100 text-gray-600 rounded-lg text-sm">{setupData.environment}</span>
                     </div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-3xl font-bold text-slate-800">{setupData.configuredCount}/{setupData.totalChecks}</div>
-                  <p className="text-xs text-slate-500 mt-0.5">services configured</p>
-                  <div className="w-32 bg-slate-200 rounded-full h-2 mt-2 overflow-hidden">
-                    <div className={`h-full rounded-full transition-all ${setupData.configuredCount === setupData.totalChecks ? 'bg-emerald-500' : 'bg-amber-500'}`} style={{ width: `${(setupData.configuredCount / setupData.totalChecks) * 100}%` }} />
+                  <div className="text-3xl font-bold text-gray-800">{setupData.configuredCount}/{setupData.totalChecks}</div>
+                  <p className="text-xs text-gray-500 mt-0.5">services configured</p>
+                  <div className="w-32 bg-gray-200 rounded-full h-2 mt-2 overflow-hidden">
+                    <div className={`h-full rounded-full transition-all ${setupData.configuredCount === setupData.totalChecks ? 'bg-green-500' : 'bg-amber-500'}`} style={{ width: `${(setupData.configuredCount / setupData.totalChecks) * 100}%` }} />
                   </div>
                 </div>
               </div>
@@ -2183,16 +2183,16 @@ export default function AdminDashboard() {
             <div className="grid gap-3">{Object.entries(setupData.checks).map(([key, check]) => {
               const Icon = ICON_MAP[key] || Settings
               return (
-                <div key={key} className={`bg-white border rounded-xl p-4 flex items-center gap-4 shadow-sm ${check.configured ? 'border-slate-200' : 'border-red-300'}`}>
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${check.configured ? 'bg-emerald-100' : 'bg-red-100'}`}>
-                    <Icon className={`w-5 h-5 ${check.configured ? 'text-emerald-600' : 'text-red-600'}`} />
+                <div key={key} className={`bg-white border rounded-xl p-4 flex items-center gap-4 shadow-sm ${check.configured ? 'border-gray-200' : 'border-red-300'}`}>
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${check.configured ? 'bg-green-100' : 'bg-red-100'}`}>
+                    <Icon className={`w-5 h-5 ${check.configured ? 'text-green-600' : 'text-red-600'}`} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2"><h3 className="text-sm font-semibold text-slate-800">{check.label}</h3>{check.configured ? <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /> : <XCircle className="w-4 h-4 text-red-600 shrink-0" />}</div>
-                    <p className="text-xs text-slate-500 mt-0.5">{check.description}</p>
-                    {check.value && <p className="text-xs text-slate-400 mt-1 font-mono truncate">{check.value}</p>}
+                    <div className="flex items-center gap-2"><h3 className="text-sm font-semibold text-gray-800">{check.label}</h3>{check.configured ? <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0" /> : <XCircle className="w-4 h-4 text-red-600 shrink-0" />}</div>
+                    <p className="text-xs text-gray-500 mt-0.5">{check.description}</p>
+                    {check.value && <p className="text-xs text-gray-400 mt-1 font-mono truncate">{check.value}</p>}
                   </div>
-                  <span className={`px-2.5 py-1 rounded-lg text-xs font-medium shrink-0 ${check.configured ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>{check.configured ? 'Active' : 'Missing'}</span>
+                  <span className={`px-2.5 py-1 rounded-lg text-xs font-medium shrink-0 ${check.configured ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{check.configured ? 'Active' : 'Missing'}</span>
                 </div>
               )
             })}</div>
@@ -2204,10 +2204,10 @@ export default function AdminDashboard() {
                 { title: 'Sitemap', description: 'View XML sitemap', href: '/sitemap.xml', icon: FileText },
                 { title: 'Hostinger', description: 'Domain & DNS management', href: 'https://www.hostinger.com/cpanel-login', icon: Globe },
               ].map(link => (
-                <a key={link.title} href={link.href} target={link.href.startsWith('/') ? '_self' : '_blank'} rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-slate-50 hover:bg-blue-50 border border-slate-200 rounded-lg transition-colors group">
-                  <div className="w-9 h-9 bg-white border border-slate-200 group-hover:border-blue-300 rounded-lg flex items-center justify-center shrink-0"><link.icon className="w-4 h-4 text-slate-600 group-hover:text-blue-600" /></div>
-                  <div className="flex-1 min-w-0"><p className="text-sm font-medium text-slate-800">{link.title}</p><p className="text-xs text-slate-500 truncate">{link.description}</p></div>
-                  <ExternalLink className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <a key={link.title} href={link.href} target={link.href.startsWith('/') ? '_self' : '_blank'} rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-primary-50 border border-gray-200 rounded-lg transition-colors group">
+                  <div className="w-9 h-9 bg-white border border-gray-200 group-hover:border-primary-300 rounded-lg flex items-center justify-center shrink-0"><link.icon className="w-4 h-4 text-gray-600 group-hover:text-primary-600" /></div>
+                  <div className="flex-1 min-w-0"><p className="text-sm font-medium text-gray-800">{link.title}</p><p className="text-xs text-gray-500 truncate">{link.description}</p></div>
+                  <ExternalLink className="w-3.5 h-3.5 text-gray-400 shrink-0" />
                 </a>
               ))}</div>
             </Panel>
@@ -2239,7 +2239,7 @@ export default function AdminDashboard() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="text-left text-xs text-slate-500 border-b border-slate-200">
+                        <tr className="text-left text-xs text-gray-500 border-b border-gray-200">
                           <th className="pb-2 pr-4 font-medium">Name</th>
                           <th className="pb-2 pr-4 font-medium">Email</th>
                           <th className="pb-2 pr-4 font-medium">Type</th>
@@ -2249,16 +2249,16 @@ export default function AdminDashboard() {
                       </thead>
                       <tbody>
                         {filteredAiReports.slice(0, 25).map((r: any, i: number) => (
-                          <tr key={i} className="border-b border-slate-100 hover:bg-slate-50">
-                            <td className="py-2.5 pr-4 font-medium text-slate-800">{r.name || '-'}</td>
-                            <td className="py-2.5 pr-4 text-slate-600 text-xs">{r.email}</td>
+                          <tr key={i} className="border-b border-gray-100 hover:bg-gray-50">
+                            <td className="py-2.5 pr-4 font-medium text-gray-800">{r.name || '-'}</td>
+                            <td className="py-2.5 pr-4 text-gray-600 text-xs">{r.email}</td>
                             <td className="py-2.5 pr-4">
-                              <span className={`px-2 py-0.5 rounded text-xs font-medium ${r.reportType === 'quick-scan' || r.reportType === 'deep-dive' ? 'bg-teal-100 text-teal-700' : r.reportType === 'blueprint' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
+                              <span className={`px-2 py-0.5 rounded text-xs font-medium ${r.reportType === 'quick-scan' || r.reportType === 'deep-dive' ? 'bg-gray-100 text-gray-700' : r.reportType === 'blueprint' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600'}`}>
                                 {r.reportType === 'quick-scan' || r.reportType === 'deep-dive' ? 'Quick Scan' : r.reportType === 'blueprint' ? 'Deep Dive' : r.reportType || 'Unknown'}
                               </span>
                             </td>
-                            <td className="py-2.5 pr-4 font-semibold text-slate-800">{r.overallScore || '-'}</td>
-                            <td className="py-2.5 text-slate-500 text-xs">{r.generatedAt ? new Date(r.generatedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}</td>
+                            <td className="py-2.5 pr-4 font-semibold text-gray-800">{r.overallScore || '-'}</td>
+                            <td className="py-2.5 text-gray-500 text-xs">{r.generatedAt ? new Date(r.generatedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -2272,7 +2272,7 @@ export default function AdminDashboard() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="text-left text-xs text-slate-500 border-b border-slate-200">
+                        <tr className="text-left text-xs text-gray-500 border-b border-gray-200">
                           <th className="pb-2 pr-4 font-medium">Name</th>
                           <th className="pb-2 pr-4 font-medium">Email</th>
                           <th className="pb-2 pr-4 font-medium">Company</th>
@@ -2282,12 +2282,12 @@ export default function AdminDashboard() {
                       </thead>
                       <tbody>
                         {(aiReadinessData.leads || []).slice(0, 30).map((l: any, i: number) => (
-                          <tr key={i} className="border-b border-slate-100 hover:bg-blue-50/40 transition-colors duration-150">
-                            <td className="py-2.5 pr-4 font-medium text-slate-800">{l.name || '-'}</td>
-                            <td className="py-2.5 pr-4 text-slate-600 text-xs">{l.email}</td>
-                            <td className="py-2.5 pr-4 text-slate-600 text-xs">{l.company || '-'}</td>
-                            <td className="py-2.5 pr-4 text-slate-500 text-xs">{l.option || '-'}</td>
-                            <td className="py-2.5 text-slate-500 text-xs">{l.submittedAt ? new Date(l.submittedAt).toLocaleDateString() : '-'}</td>
+                          <tr key={i} className="border-b border-gray-100 hover:bg-primary-50/40 transition-colors duration-150">
+                            <td className="py-2.5 pr-4 font-medium text-gray-800">{l.name || '-'}</td>
+                            <td className="py-2.5 pr-4 text-gray-600 text-xs">{l.email}</td>
+                            <td className="py-2.5 pr-4 text-gray-600 text-xs">{l.company || '-'}</td>
+                            <td className="py-2.5 pr-4 text-gray-500 text-xs">{l.option || '-'}</td>
+                            <td className="py-2.5 text-gray-500 text-xs">{l.submittedAt ? new Date(l.submittedAt).toLocaleDateString() : '-'}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -2300,21 +2300,21 @@ export default function AdminDashboard() {
                 {filteredAiFeedback.length === 0 ? <Empty text="No feedback yet" /> : (
                   <div className="space-y-2">
                     {filteredAiFeedback.slice(0, 15).map((f: any, i: number) => (
-                      <div key={i} className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                      <div key={i} className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
                         <div className="flex items-center gap-0.5">
                           {Array.from({ length: 5 }, (_, s) => (
-                            <svg key={s} className={`w-4 h-4 ${s < f.rating ? 'text-amber-400' : 'text-slate-200'}`} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                            <svg key={s} className={`w-4 h-4 ${s < f.rating ? 'text-amber-400' : 'text-gray-200'}`} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
                           ))}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm text-slate-800 font-medium truncate">{f.name || f.email}</p>
-                          {f.comment && <p className="text-xs text-slate-500 mt-0.5 truncate">{f.comment}</p>}
+                          <p className="text-sm text-gray-800 font-medium truncate">{f.name || f.email}</p>
+                          {f.comment && <p className="text-xs text-gray-500 mt-0.5 truncate">{f.comment}</p>}
                         </div>
-                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${f.reportType === 'quick-scan' || f.reportType === 'deep-dive' ? 'bg-teal-100 text-teal-700' : f.reportType === 'blueprint' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
+                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${f.reportType === 'quick-scan' || f.reportType === 'deep-dive' ? 'bg-gray-100 text-gray-700' : f.reportType === 'blueprint' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600'}`}>
                           {f.reportType === 'quick-scan' || f.reportType === 'deep-dive' ? 'Quick Scan' : f.reportType === 'blueprint' ? 'Deep Dive' : f.reportType || '-'}
                         </span>
                         {f.orgInterest === 'yes' && <span className="px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">Org Lead</span>}
-                        <span className="text-xs text-slate-400">{f.submittedAt ? new Date(f.submittedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) : ''}</span>
+                        <span className="text-xs text-gray-400">{f.submittedAt ? new Date(f.submittedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) : ''}</span>
                       </div>
                     ))}
                   </div>
@@ -2334,12 +2334,12 @@ export default function AdminDashboard() {
 // ─── Reusable Components ─────────────────────────────────────
 
 function StatCard({ icon: Icon, label, value, color, subtitle }: { icon: any; label: string; value: number; color: 'blue' | 'teal' | 'amber' | 'purple'; subtitle?: string }) {
-  const colors = { blue: 'bg-blue-100 text-blue-600', teal: 'bg-teal-100 text-teal-600', amber: 'bg-amber-100 text-amber-600', purple: 'bg-purple-100 text-purple-600' }
+  const colors = { blue: 'bg-primary-100 text-primary-600', teal: 'bg-gray-100 text-gray-600', amber: 'bg-amber-100 text-amber-600', purple: 'bg-gray-100 text-gray-600' }
   return (
-    <div className="admin-card bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+    <div className="admin-card bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
       <div className="flex items-center gap-3">
         <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${colors[color]}`}><Icon className="w-5 h-5" /></div>
-        <div><p className="text-2xl font-bold text-slate-800">{subtitle || value.toLocaleString()}</p><p className="text-xs text-slate-500">{label}</p></div>
+        <div><p className="text-2xl font-bold text-gray-800">{subtitle || value.toLocaleString()}</p><p className="text-xs text-gray-500">{label}</p></div>
       </div>
     </div>
   )
@@ -2347,9 +2347,9 @@ function StatCard({ icon: Icon, label, value, color, subtitle }: { icon: any; la
 
 function Panel({ title, subtitle, children, action }: { title: string; subtitle?: string; children: React.ReactNode; action?: React.ReactNode }) {
   return (
-    <div className="admin-card bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+    <div className="admin-card bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <div><h2 className="text-base font-semibold text-slate-800">{title}</h2>{subtitle && <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>}</div>
+        <div><h2 className="text-base font-semibold text-gray-800">{title}</h2>{subtitle && <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>}</div>
         {action}
       </div>
       {children}
@@ -2361,18 +2361,18 @@ function RankedList({ items }: { items: [string, number][] }) {
   const max = Math.max(...items.map(i => i[1]), 1)
   return (<div className="space-y-2">{items.map(([name, count], i) => (
     <div key={name} className="flex items-center gap-3">
-      <span className="text-xs text-slate-400 w-5 text-right">{i + 1}</span>
-      <span className="text-sm text-slate-700 flex-1 truncate" title={name}>{name}</span>
-      <div className="w-24 bg-slate-100 rounded-full h-2 overflow-hidden"><div className="h-full bg-blue-500 rounded-full" style={{ width: `${(count / max) * 100}%` }} /></div>
-      <span className="text-xs text-slate-500 w-10 text-right">{count}</span>
+      <span className="text-xs text-gray-400 w-5 text-right">{i + 1}</span>
+      <span className="text-sm text-gray-700 flex-1 truncate" title={name}>{name}</span>
+      <div className="w-24 bg-gray-100 rounded-full h-2 overflow-hidden"><div className="h-full bg-primary-600 rounded-full" style={{ width: `${(count / max) * 100}%` }} /></div>
+      <span className="text-xs text-gray-500 w-10 text-right">{count}</span>
     </div>
   ))}</div>)
 }
 
-function Empty({ text }: { text?: string }) { return <p className="text-slate-400 text-center py-8 text-sm">{text || 'No data yet'}</p> }
-function ExportButton({ onClick }: { onClick: () => void }) { return <button onClick={onClick} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 border border-slate-200 rounded-lg transition-colors"><Download className="w-3.5 h-3.5" />CSV</button> }
+function Empty({ text }: { text?: string }) { return <p className="text-gray-400 text-center py-8 text-sm">{text || 'No data yet'}</p> }
+function ExportButton({ onClick }: { onClick: () => void }) { return <button onClick={onClick} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-gray-100 hover:bg-primary-50 text-gray-600 hover:text-primary-600 border border-gray-200 rounded-lg transition-colors"><Download className="w-3.5 h-3.5" />CSV</button> }
 function StatusBadge({ status }: { status: string }) {
   const s = status?.toLowerCase() || 'unknown'
-  const color = s === 'completed' ? 'bg-emerald-100 text-emerald-700' : s === 'pending' || s === 'submitted' ? 'bg-amber-100 text-amber-700' : s === 'error' || s === 'failed' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'
+  const color = s === 'completed' ? 'bg-green-100 text-green-700' : s === 'pending' || s === 'submitted' ? 'bg-amber-100 text-amber-700' : s === 'error' || s === 'failed' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-600'
   return <span className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${color}`}>{status || 'unknown'}</span>
 }

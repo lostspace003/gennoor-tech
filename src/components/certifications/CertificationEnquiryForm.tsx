@@ -100,8 +100,8 @@ export default function CertificationEnquiryForm({
       ) : (
         <>
           {selectedCertification && !embedded && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-              <p className="text-sm text-blue-800">
+            <div className="bg-primary-50 border border-primary-200 rounded-lg p-3 mb-4">
+              <p className="text-sm text-primary-800">
                 <strong>Selected Certification:</strong> {selectedCertification.code} - {selectedCertification.title}
               </p>
             </div>

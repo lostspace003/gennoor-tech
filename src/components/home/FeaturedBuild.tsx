@@ -94,7 +94,7 @@ export default function FeaturedBuild() {
                 </h2>
               </div>
 
-              <p className="mb-6 max-w-xl text-lg leading-relaxed text-indigo-100/80">
+              <p className="mb-6 max-w-xl text-lg leading-relaxed text-primary-100/80">
                 A cinematic, gamified learning app for children that turns the lives of all 25
                 prophets into an interactive adventure — story, a moral choice, the real Qur&rsquo;anic
                 verse, a quiz and a reward, all wrapped in a light-and-stars progress journey.
@@ -103,7 +103,7 @@ export default function FeaturedBuild() {
 
               <ul className="mb-8 space-y-2.5">
                 {highlights.map((h) => (
-                  <li key={h} className="flex items-start gap-3 text-sm text-indigo-100/85">
+                  <li key={h} className="flex items-start gap-3 text-sm text-primary-100/85">
                     <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-amber-300" />
                     <span>{h}</span>
                   </li>

@@ -172,14 +172,14 @@ const demos: Demo[] = [
 ]
 
 const categoryColors = {
-  'Flagship Product': 'from-amber-500 to-yellow-500',
-  'AI Media Production': 'from-emerald-600 to-teal-500',
-  'Document Processing': 'from-blue-500 to-blue-600',
+  'Flagship Product': 'from-amber-500 to-amber-500',
+  'AI Media Production': 'from-green-600 to-gray-500',
+  'Document Processing': 'from-primary-500 to-primary-600',
   'Fraud Detection': 'from-red-500 to-red-600',
-  'AI/ML': 'from-purple-500 to-purple-600',
+  'AI/ML': 'from-gray-500 to-gray-600',
   'Enterprise Integration': 'from-green-500 to-green-600',
-  'Workflow Automation': 'from-orange-500 to-orange-600',
-  'Training Materials': 'from-indigo-500 to-indigo-600',
+  'Workflow Automation': 'from-amber-500 to-amber-600',
+  'Training Materials': 'from-primary-500 to-primary-600',
 }
 
 export default function DemosPage() {

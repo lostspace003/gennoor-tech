@@ -181,7 +181,7 @@ export default function TrainingPage() {
             {pdfsByTrack.map(group => (
               <div key={group.track}>
                 <div className="flex items-center gap-3 mb-5">
-                  <div className="w-8 h-8 rounded-lg bg-primary-500 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center">
                     <Layers className="w-4 h-4 text-white" />
                   </div>
                   <div>
@@ -291,9 +291,9 @@ export default function TrainingPage() {
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { color: 'bg-blue-600', name: 'Microsoft', certs: ['AI-901, AI-103, AI-300', 'AB-100, AB-730, AB-731', 'AZ + PL platform series'] },
+                { color: 'bg-primary-600', name: 'Microsoft', certs: ['AI-901, AI-103, AI-300', 'AB-100, AB-730, AB-731', 'AZ + PL platform series'] },
                 { color: 'bg-red-600', name: 'Google Cloud', certs: ['Cloud Digital Leader', 'ML Engineer', 'Cloud Architect'] },
-                { color: 'bg-orange-600', name: 'AWS', certs: ['Cloud Practitioner', 'AI Practitioner', 'ML Engineer + Specialty'] },
+                { color: 'bg-amber-600', name: 'AWS', certs: ['Cloud Practitioner', 'AI Practitioner', 'ML Engineer + Specialty'] },
                 { color: 'bg-gray-800', name: 'GitHub', certs: ['GH-900 Foundations', 'GH-300 Actions', 'GH-200 Copilot'] },
               ].map(p => (
                 <div key={p.name} className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-4">

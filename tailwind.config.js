@@ -7,26 +7,41 @@
  * that exists only so genuine status text stays legible — never so a page can
  * be decorated with it.
  *
- * The decorative families (purple, teal, indigo, pink, …) are deliberately
- * re-pointed at the neutral ramp. That is not laziness: ~700 existing class
- * names across the site reference them, and re-pointing the token is how they
- * all go quiet at once without touching 100+ files or losing any content.
+ * The source now names only five families: gray, primary, green, amber, red.
+ * The decorative families below (purple, teal, indigo, pink, …) are no longer
+ * referenced anywhere — they are kept, re-pointed at the system, purely as a
+ * **guardrail**. Delete them and Tailwind's own vivid defaults come back, so a
+ * stray `bg-purple-500` would silently punch a hole in the palette instead of
+ * quietly resolving to grey.
+ *
  * Adding a new colour here should feel like a big decision. It is.
  */
 
-// Apple system neutrals — the iCloud sidebar/canvas greys.
+/**
+ * Apple system neutrals.
+ *
+ * Two constraints drove the exact values, and both are easy to break:
+ *
+ *  1. `gray-50` is the panel surface (~185 usages: heroes, alternating
+ *     sections, soft cards). It must be *visible* against white. At #fbfbfd
+ *     it was a 1.03 contrast ratio — imperceptible — and the whole page
+ *     collapsed into one flat white blur. #f5f5f7 is iCloud's actual sidebar
+ *     grey and reads as a panel. Do not lighten it.
+ *  2. `gray-400` is tertiary text (~285 usages). Below #8e8e93 it drops
+ *     under 3:1 on white and stops being legible.
+ */
 const neutral = {
-  50: '#fbfbfd',
-  100: '#f5f5f7',
-  200: '#e8e8ed',
-  300: '#d2d2d7',
-  400: '#aeaeb2',
-  500: '#86868b',
-  600: '#6e6e73',
-  700: '#48484a',
+  50: '#f5f5f7',   // panel — the iCloud surface
+  100: '#ebebef',  // deeper panel / row hover
+  200: '#e0e0e5',  // hairline
+  300: '#c7c7cc',  // strong hairline
+  400: '#8e8e93',  // tertiary ink  (3.5:1 on white)
+  500: '#6e6e73',  // secondary ink (5.1:1)
+  600: '#545458',  // body ink      (7.4:1)
+  700: '#3a3a3c',
   800: '#2c2c2e',
-  900: '#1d1d1f',
-  950: '#111113',
+  900: '#1d1d1f',  // primary ink
+  950: '#000000',
 }
 
 // The single accent. Used for links, active nav, and primary buttons. Nothing else.
@@ -90,9 +105,10 @@ module.exports = {
         red: err,
         rose: err,
 
-        // ── Re-pointed decoratives ──────────────────────────────────
-        // These names survive only so existing class strings keep compiling.
-        // They all resolve to the system; none of them add a colour.
+        // ── Guardrail aliases ───────────────────────────────────────
+        // Unreferenced by design. They exist so that if anyone reaches for an
+        // off-system hue, it resolves to the system instead of Tailwind's
+        // vivid default. None of them adds a colour.
         accent: accentBlue,
         blue: accentBlue,
         sky: accentBlue,

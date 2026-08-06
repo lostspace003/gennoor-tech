@@ -127,7 +127,7 @@ export default function AcademyPage() {
                   className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm transition-all duration-300"
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-primary-500 flex items-center justify-center shadow-lg shadow-primary-500/15">
+                    <div className="w-10 h-10 rounded-xl bg-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/15">
                       <Layers className="w-5 h-5 text-white" />
                     </div>
                     <span className="text-xs font-bold tracking-widest text-gray-400">
@@ -239,7 +239,7 @@ export default function AcademyPage() {
           <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
             Want this for your whole team?
           </h2>
-          <p className="text-lg text-blue-200/60 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-primary-200/60 mb-8 max-w-2xl mx-auto">
             Every course pairs with an optional 2-day workshop (up to 25 people) and a
             4-week pilot. Same content, applied to your data, with senior delivery.
           </p>

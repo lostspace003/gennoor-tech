@@ -51,11 +51,11 @@ function LoginContent() {
 
   if (autoSigning && !error) {
     return (
-      <div className="min-h-screen bg-purple-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logos/gennoor-tech-horizontal-transparent.svg" alt="Gennoor Tech" className="h-16 w-auto mx-auto mb-5" />
-          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <div className="w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
           <p className="text-sm text-gray-600">Signing you in with Microsoft…</p>
           <button onClick={() => setAutoSigning(false)} className="mt-4 text-xs text-gray-400 hover:text-gray-600 underline">
             Taking too long? Sign in manually
@@ -66,7 +66,7 @@ function LoginContent() {
   }
 
   return (
-    <div className="min-h-screen bg-purple-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
@@ -96,7 +96,7 @@ function LoginContent() {
           <button
             onClick={handleMicrosoftSignIn}
             disabled={loading}
-            className="w-full py-3 px-4 bg-blue-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-blue-800 transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+            className="w-full py-3 px-4 bg-primary-600 text-white font-medium rounded-lg transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
           >
             {loading ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -135,7 +135,7 @@ export default function LoginPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-gray-600 border-t-transparent rounded-full animate-spin" />
       </div>
     }>
       <LoginContent />

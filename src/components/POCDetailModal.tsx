@@ -17,13 +17,13 @@ export default function POCDetailModal({ isOpen, onClose }: POCDetailModalProps)
       icon: <BarChart3 className="w-5 h-5" />,
       title: 'Real-Time Analytics',
       description: 'Live dashboards pulling data from Azure Table Storage, Blob Storage, and Application Insights — visualized with interactive Plotly charts.',
-      color: 'bg-blue-50 text-blue-600',
+      color: 'bg-primary-50 text-primary-600',
     },
     {
       icon: <Shield className="w-5 h-5" />,
       title: 'Secure & Private',
       description: 'Password-protected with httpOnly cookie auth. No public data exposure — enterprise-grade security.',
-      color: 'bg-purple-50 text-purple-600',
+      color: 'bg-gray-50 text-gray-600',
     },
     {
       icon: <Zap className="w-5 h-5" />,
@@ -58,14 +58,14 @@ export default function POCDetailModal({ isOpen, onClose }: POCDetailModalProps)
 
         {/* Header */}
         <div className="bg-primary-600 px-6 py-8 rounded-t-2xl">
-          <div className="inline-flex items-center rounded-full px-3 py-1 mb-3 text-xs font-medium bg-white/15 text-blue-100 backdrop-blur-sm">
+          <div className="inline-flex items-center rounded-full px-3 py-1 mb-3 text-xs font-medium bg-white/15 text-primary-100 backdrop-blur-sm">
             <span className="flex h-2 w-2 rounded-full bg-green-400 mr-2 animate-pulse" />
             Live Proof of Concept
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
             Enterprise Analytics Dashboard
           </h2>
-          <p className="text-blue-100 text-sm">
+          <p className="text-primary-100 text-sm">
             A complete BI dashboard transforming raw Azure data into actionable insights — at zero cost.
           </p>
         </div>

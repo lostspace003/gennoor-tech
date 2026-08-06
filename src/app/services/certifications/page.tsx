@@ -54,11 +54,11 @@ export default function CertificationPreparationPage() {
       case 'Fundamentals':
         return 'bg-green-100 text-green-800 border-green-200'
       case 'Associate':
-        return 'bg-blue-100 text-blue-800 border-blue-200'
+        return 'bg-primary-100 text-primary-800 border-primary-200'
       case 'Expert':
-        return 'bg-purple-100 text-purple-800 border-purple-200'
+        return 'bg-gray-100 text-gray-800 border-gray-200'
       case 'Specialty':
-        return 'bg-orange-100 text-orange-800 border-orange-200'
+        return 'bg-amber-100 text-amber-800 border-amber-200'
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200'
     }
@@ -67,15 +67,15 @@ export default function CertificationPreparationPage() {
   const getProviderColor = (provider: string) => {
     switch (provider) {
       case 'Microsoft':
-        return 'bg-blue-600'
+        return 'bg-primary-600'
       case 'Google':
         return 'bg-red-600'
       case 'AWS':
-        return 'bg-orange-600'
+        return 'bg-amber-600'
       case 'GitHub':
         return 'bg-gray-800'
       case 'AI CERTs':
-        return 'bg-yellow-600'
+        return 'bg-amber-600'
       default:
         return 'bg-gray-600'
     }

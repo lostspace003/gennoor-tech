@@ -20,17 +20,18 @@
 
 @layer base {
   :root {
-    /* Surfaces */
+    /* Surfaces. --panel must stay perceptibly off-white or the page flattens
+       into a single white field; #f5f5f7 is iCloud's own sidebar grey. */
     --canvas: #ffffff;
-    --panel: #f5f5f7;      /* iCloud sidebar grey */
-    --panel-soft: #fbfbfd;
-    --hairline: #e8e8ed;
-    --hairline-strong: #d2d2d7;
+    --panel: #f5f5f7;
+    --panel-soft: #fafafb;
+    --hairline: #e0e0e5;
+    --hairline-strong: #c7c7cc;
 
     /* Ink */
     --ink: #1d1d1f;
-    --ink-secondary: #6e6e73;
-    --ink-tertiary: #86868b;
+    --ink-secondary: #545458;
+    --ink-tertiary: #8e8e93;
 
     /* The one accent */
     --accent: #0071e3;
@@ -51,8 +52,8 @@
     --secondary-foreground: 240 6% 12%;
     --accent-foreground: 240 6% 12%;
     --muted: 240 7% 96%;
-    --muted-foreground: 240 2% 44%;
-    --border: 240 11% 92%;
+    --muted-foreground: 240 2% 33%;
+    --border: 240 9% 89%;
     --radius: 0.625rem;
 
     /* Legacy names — flattened, not removed */

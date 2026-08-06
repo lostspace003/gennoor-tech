@@ -79,7 +79,7 @@ export default function ServicesPage() {
                   className="group flex flex-col md:flex-row gap-6 rounded-2xl p-7 transition-all duration-500 bg-white border border-gray-200/70 shadow-sm hover:shadow-lg glow-border"
                 >
                   <div className="flex-shrink-0">
-                    <div className="w-14 h-14 rounded-xl bg-primary-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary-500/15">
+                    <div className="w-14 h-14 rounded-xl bg-primary-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary-500/15">
                       <Icon className="w-7 h-7 text-white" />
                     </div>
                   </div>

@@ -19,11 +19,11 @@ export default function TrainingCard({ program }: TrainingCardProps) {
       case 'beginner':
         return 'bg-green-100 text-green-800'
       case 'intermediate':
-        return 'bg-blue-100 text-blue-800'
+        return 'bg-primary-100 text-primary-800'
       case 'advanced':
-        return 'bg-purple-100 text-purple-800'
+        return 'bg-gray-100 text-gray-800'
       case 'executive':
-        return 'bg-orange-100 text-orange-800'
+        return 'bg-amber-100 text-amber-800'
       default:
         return 'bg-gray-100 text-gray-800'
     }
@@ -63,7 +63,7 @@ export default function TrainingCard({ program }: TrainingCardProps) {
           <div className="flex flex-wrap gap-2 mb-4">
             {/* Technology Badge */}
             {program.technology !== 'Cross-Platform' && (
-              <span className="px-2 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded">
+              <span className="px-2 py-1 bg-primary-50 text-primary-700 text-xs font-medium rounded">
                 {program.technology}
               </span>
             )}
@@ -77,7 +77,7 @@ export default function TrainingCard({ program }: TrainingCardProps) {
 
             {/* Bootcamp Intensive Badge */}
             {program.category === 'bootcamp' && (
-              <span className="px-2 py-1 bg-orange-50 text-orange-700 text-xs font-medium rounded">
+              <span className="px-2 py-1 bg-amber-50 text-amber-700 text-xs font-medium rounded">
                 <BarChart className="w-3 h-3 inline mr-1" />
                 Intensive
               </span>

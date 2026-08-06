@@ -144,7 +144,7 @@ export default function InteractiveCoursesCatalog({ courses }: Props) {
             {grouped.map(group => (
               <div key={group.trackId}>
                 <div className="flex items-center gap-3 mb-5">
-                  <div className="w-8 h-8 rounded-lg bg-primary-500 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center">
                     <Layers className="w-4 h-4 text-white" />
                   </div>
                   <div>

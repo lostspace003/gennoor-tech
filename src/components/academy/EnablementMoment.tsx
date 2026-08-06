@@ -42,7 +42,7 @@ export default function EnablementMoment({ course, relatedCourses }: EnablementM
               href="/solutions/for-smb#s4"
               className="group rounded-2xl p-6 glass-card glow-border transition-all duration-300 flex flex-col"
             >
-              <div className="w-12 h-12 rounded-xl bg-primary-500 flex items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
+              <div className="w-12 h-12 rounded-xl bg-primary-600 flex items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
                 <Users className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-base font-bold text-gray-900 mb-2">
@@ -90,7 +90,7 @@ export default function EnablementMoment({ course, relatedCourses }: EnablementM
               href="/contact"
               className="group rounded-2xl p-6 glass-card glow-border transition-all duration-300 flex flex-col"
             >
-              <div className="w-12 h-12 rounded-xl bg-primary-500 flex items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
+              <div className="w-12 h-12 rounded-xl bg-primary-600 flex items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
                 <MessageCircle className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-base font-bold text-gray-900 mb-2">

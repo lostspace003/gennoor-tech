@@ -103,7 +103,7 @@ export default function ReportEmailGate({ isOpen, onClose, onUnlock, reportType,
           <button
             onClick={handleSubmit}
             disabled={sending || !email.trim() || !name.trim()}
-            className="w-full py-3.5 bg-primary-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-primary-200/50"
+            className="w-full py-3.5 bg-primary-600 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-primary-200/50"
           >
             {sending ? (
               <>

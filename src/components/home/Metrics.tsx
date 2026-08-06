@@ -100,10 +100,10 @@ export default function Metrics() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <span className="flex h-2 w-2 rounded-full bg-primary-400 mr-2.5 animate-pulse" />
+            <span className="flex h-2 w-2 rounded-full bg-primary-600 mr-2.5 animate-pulse" />
             <span className="text-white/80">What We've Shipped</span>
           </motion.div>
-          <p className="text-blue-200/60 text-lg max-w-3xl mx-auto">
+          <p className="text-primary-200/60 text-lg max-w-3xl mx-auto">
             Delivering AI transformation programs across GCC, Africa, and South Asia — with senior, Microsoft-certified expertise on every engagement.
           </p>
         </div>
@@ -134,10 +134,10 @@ export default function Metrics() {
                 <div className="text-4xl lg:text-5xl font-bold text-white mb-2">
                   <AnimatedNumber value={metric.value} inView={isInView} />
                 </div>
-                <div className="text-blue-200/70 font-semibold mb-1 text-sm">
+                <div className="text-primary-200/70 font-semibold mb-1 text-sm">
                   {metric.label}
                 </div>
-                <div className="text-blue-300/40 text-xs">
+                <div className="text-primary-300/40 text-xs">
                   {metric.description}
                 </div>
               </motion.div>

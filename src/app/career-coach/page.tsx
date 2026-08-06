@@ -95,11 +95,11 @@ const AGENTS: Record<string, AgentConfig> = {
 }
 
 const COLORS: Record<string, { bg: string; border: string; text: string; light: string; bar: string }> = {
-  teal:   { bg: 'bg-teal-50',   border: 'border-teal-200',   text: 'text-teal-700',   light: 'bg-teal-100',   bar: 'bg-teal-500' },
-  blue:   { bg: 'bg-blue-50',   border: 'border-blue-200',   text: 'text-blue-700',   light: 'bg-blue-100',   bar: 'bg-blue-500' },
-  orange: { bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-700', light: 'bg-orange-100', bar: 'bg-orange-500' },
+  teal:   { bg: 'bg-gray-50',   border: 'border-gray-200',   text: 'text-gray-700',   light: 'bg-gray-100',   bar: 'bg-gray-500' },
+  blue:   { bg: 'bg-primary-50',   border: 'border-primary-200',   text: 'text-primary-700',   light: 'bg-primary-100',   bar: 'bg-primary-600' },
+  orange: { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', light: 'bg-amber-100', bar: 'bg-amber-500' },
   amber:  { bg: 'bg-amber-50',  border: 'border-amber-200',  text: 'text-amber-700',  light: 'bg-amber-100',  bar: 'bg-amber-500' },
-  pink:   { bg: 'bg-pink-50',   border: 'border-pink-200',   text: 'text-pink-700',   light: 'bg-pink-100',   bar: 'bg-pink-500' },
+  pink:   { bg: 'bg-gray-50',   border: 'border-gray-200',   text: 'text-gray-700',   light: 'bg-gray-100',   bar: 'bg-gray-500' },
 }
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -588,8 +588,8 @@ export default function CareerCoachPage() {
               />
             </div>
             <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">Career Coach</span>
-            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-dark-800 leading-tight tracking-tight mb-3">Career Assistant Agent</h1>
-            <p className="text-lg text-dark-500 max-w-2xl mx-auto">
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-800 leading-tight tracking-tight mb-3">Career Assistant Agent</h1>
+            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
               5 AI agents working together to transform your career. Choose an agent below or let the orchestrator chain the right ones for your goal.
             </p>
           </div>
@@ -613,7 +613,7 @@ export default function CareerCoachPage() {
                     </div>
                     <h3 className={`text-lg font-bold ${ac.text}`}>{a.name}</h3>
                   </div>
-                  <p className="text-sm text-dark-500 mb-4">{a.desc}</p>
+                  <p className="text-sm text-gray-500 mb-4">{a.desc}</p>
                   <div className="flex flex-wrap gap-1.5">
                     {a.steps.map(s => (
                       <span key={s} className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${ac.light} ${ac.text}`}>{s}</span>
@@ -633,7 +633,7 @@ export default function CareerCoachPage() {
                 </div>
                 <h3 className="text-lg font-bold text-primary-700">Full Career Package</h3>
               </div>
-              <p className="text-sm text-dark-500 mb-4">
+              <p className="text-sm text-gray-500 mb-4">
                 The AI orchestrator analyzes your input and chains multiple agents together for a comprehensive career transformation plan.
               </p>
               <div className="flex flex-wrap gap-1.5">
@@ -660,7 +660,7 @@ export default function CareerCoachPage() {
         <div className="absolute inset-0 opacity-50" />
         <div className="relative container">
           <div className="flex items-center gap-4">
-            <button onClick={() => { setSelectedAgent(null); reset() }} className="rounded-lg border border-gray-200 p-2 text-dark-500 hover:bg-gray-100 transition-colors">
+            <button onClick={() => { setSelectedAgent(null); reset() }} className="rounded-lg border border-gray-200 p-2 text-gray-500 hover:bg-gray-100 transition-colors">
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             </button>
             <div className="flex items-center gap-3">
@@ -672,12 +672,12 @@ export default function CareerCoachPage() {
                 className="rounded-full shadow-sm ring-1 ring-gray-200"
               />
               <div>
-                <h2 className="text-xl font-bold text-dark-800 flex items-center gap-2"><AgentIcon name={agent!.icon} className="h-5 w-5" /> {agent!.name}</h2>
-                <p className="text-sm text-dark-400">{agent!.desc}</p>
+                <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2"><AgentIcon name={agent!.icon} className="h-5 w-5" /> {agent!.name}</h2>
+                <p className="text-sm text-gray-400">{agent!.desc}</p>
               </div>
             </div>
             {status === 'streaming' && (
-              <span className="ml-auto text-sm font-mono text-dark-400 tabular-nums">{fmt(elapsed)}</span>
+              <span className="ml-auto text-sm font-mono text-gray-400 tabular-nums">{fmt(elapsed)}</span>
             )}
           </div>
         </div>
@@ -705,10 +705,10 @@ export default function CareerCoachPage() {
                 {(isExtracting || isAnalyzing) ? (
                   <div className="flex flex-col items-center gap-3 py-8">
                     <span className="h-8 w-8 animate-spin rounded-full border-3 border-primary-600 border-t-transparent" />
-                    <p className="text-sm font-medium text-dark-600">
+                    <p className="text-sm font-medium text-gray-600">
                       {isAnalyzing ? 'AI is analyzing your document and filling fields...' : `Extracting text from ${uploadedFileName}...`}
                     </p>
-                    {isAnalyzing && <p className="text-xs text-dark-400">This may take a few seconds</p>}
+                    {isAnalyzing && <p className="text-xs text-gray-400">This may take a few seconds</p>}
                   </div>
 
                 /* Success State */
@@ -734,10 +734,10 @@ export default function CareerCoachPage() {
                       </svg>
                     </div>
                     <div className="text-center">
-                      <p className="text-sm font-semibold text-dark-700">
+                      <p className="text-sm font-semibold text-gray-700">
                         {selectedAgent === 'profile_optimizer' ? 'Upload your LinkedIn Profile PDF' : 'Upload your resume or document'}
                       </p>
-                      <p className="text-xs text-dark-400 mt-1">
+                      <p className="text-xs text-gray-400 mt-1">
                         {selectedAgent === 'profile_optimizer'
                           ? 'LinkedIn PDF recommended for best results'
                           : 'PDF or TXT — AI will auto-fill the form for you'}
@@ -753,14 +753,14 @@ export default function CareerCoachPage() {
                       {selectedAgent === 'profile_optimizer' && (
                         <button
                           onClick={() => setShowLinkedInTip(true)}
-                          className="relative rounded-full w-7 h-7 flex items-center justify-center bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors text-xs font-bold"
+                          className="relative rounded-full w-7 h-7 flex items-center justify-center bg-primary-100 text-primary-600 hover:bg-primary-200 transition-colors text-xs font-bold"
                           title="How to export LinkedIn PDF"
                         >
                           i
                         </button>
                       )}
                     </div>
-                    <p className="text-[10px] text-dark-300">or drag & drop here • skip to fill manually</p>
+                    <p className="text-[10px] text-gray-300">or drag & drop here • skip to fill manually</p>
                   </div>
                 )}
               </div>
@@ -770,8 +770,8 @@ export default function CareerCoachPage() {
             {!showAutoFillReview && (
               <div className="glass-card p-6">
                 <div className="flex items-center gap-2 mb-4">
-                  <h3 className="text-sm font-semibold text-dark-600">Fill in your details</h3>
-                  <span className="text-[10px] text-dark-400">(<span className="text-red-500">*</span> = required)</span>
+                  <h3 className="text-sm font-semibold text-gray-600">Fill in your details</h3>
+                  <span className="text-[10px] text-gray-400">(<span className="text-red-500">*</span> = required)</span>
                 </div>
                 <div className="space-y-4">
                   {agent!.fields.map(field => {
@@ -779,7 +779,7 @@ export default function CareerCoachPage() {
                     const wasAutoFilled = autoFilledKeys.includes(field.key)
                     return (
                       <div key={field.key} id={`field-${field.key}`}>
-                        <label className="block text-sm font-medium text-dark-600 mb-1.5">
+                        <label className="block text-sm font-medium text-gray-600 mb-1.5">
                           {field.label}
                           {field.required && <span className="text-red-500 ml-0.5">*</span>}
                           {wasAutoFilled && fields[field.key]?.trim() && (
@@ -792,7 +792,7 @@ export default function CareerCoachPage() {
                             onChange={e => handleFieldChange(field.key, e.target.value)}
                             placeholder={field.placeholder}
                             rows={field.rows || 3}
-                            className={`w-full rounded-lg border ${hasError ? 'border-red-400 ring-1 ring-red-300 bg-red-50' : 'border-gray-300 bg-white'} px-3 py-2 text-sm text-dark-700 placeholder-dark-300 focus:border-primary-400 focus:ring-1 focus:ring-primary-400 outline-none resize-none transition-all`}
+                            className={`w-full rounded-lg border ${hasError ? 'border-red-400 ring-1 ring-red-300 bg-red-50' : 'border-gray-300 bg-white'} px-3 py-2 text-sm text-gray-700 placeholder-gray-300 focus:border-primary-400 focus:ring-1 focus:ring-primary-400 outline-none resize-none transition-all`}
                             disabled={status === 'streaming'}
                           />
                         ) : (
@@ -801,7 +801,7 @@ export default function CareerCoachPage() {
                             value={fields[field.key] || ''}
                             onChange={e => handleFieldChange(field.key, e.target.value)}
                             placeholder={field.placeholder}
-                            className={`w-full rounded-lg border ${hasError ? 'border-red-400 ring-1 ring-red-300 bg-red-50' : 'border-gray-300 bg-white'} px-3 py-2 text-sm text-dark-700 placeholder-dark-300 focus:border-primary-400 focus:ring-1 focus:ring-primary-400 outline-none transition-all`}
+                            className={`w-full rounded-lg border ${hasError ? 'border-red-400 ring-1 ring-red-300 bg-red-50' : 'border-gray-300 bg-white'} px-3 py-2 text-sm text-gray-700 placeholder-gray-300 focus:border-primary-400 focus:ring-1 focus:ring-primary-400 outline-none transition-all`}
                             disabled={status === 'streaming'}
                           />
                         )}
@@ -813,12 +813,12 @@ export default function CareerCoachPage() {
                   })}
                 </div>
                 <div className="flex items-center justify-between pt-4 mt-4 border-t border-gray-200">
-                  <span className="text-xs text-dark-400">
+                  <span className="text-xs text-gray-400">
                     {Object.values(fields).reduce((s, v) => s + (v?.length || 0), 0)} characters
                   </span>
                   <div className="flex items-center gap-3">
                     {(status === 'complete' || status === 'error') && (
-                      <button onClick={reset} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-dark-600 hover:bg-gray-100 transition-colors">
+                      <button onClick={reset} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">
                         Reset
                       </button>
                     )}
@@ -848,7 +848,7 @@ export default function CareerCoachPage() {
             {plan && (
               <div className="rounded-xl border border-primary-200 bg-primary-50 p-4">
                 <h4 className="text-sm font-semibold text-primary-700 mb-2">Execution Plan</h4>
-                <p className="text-xs text-dark-500 mb-3">{plan.summary}</p>
+                <p className="text-xs text-gray-500 mb-3">{plan.summary}</p>
                 <div className="flex flex-wrap gap-2">
                   {(plan.plan || []).map((step: any, i: number) => {
                     const a = AGENTS[step.agent]
@@ -879,7 +879,7 @@ export default function CareerCoachPage() {
                         const isActive = activeResultTab === id
                         return (
                           <button key={id} onClick={() => setActiveResultTab(id)}
-                            className={`flex items-center gap-1.5 px-3 py-2 rounded-t-lg text-xs font-medium transition-all ${isActive ? `${ac.light} ${ac.text} border-b-2 ${ac.border}` : 'text-dark-400 hover:text-dark-600 hover:bg-gray-50'}`}>
+                            className={`flex items-center gap-1.5 px-3 py-2 rounded-t-lg text-xs font-medium transition-all ${isActive ? `${ac.light} ${ac.text} border-b-2 ${ac.border}` : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'}`}>
                             <AgentIcon name={a.icon} className="h-3.5 w-3.5" /> {a.short}
                           </button>
                         )
@@ -888,11 +888,11 @@ export default function CareerCoachPage() {
                   )}
 
                   <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-white">
-                    <h3 className="text-sm font-semibold text-dark-700">
+                    <h3 className="text-sm font-semibold text-gray-700">
                       {AGENTS[activeResultTab || '']?.name || 'Agent'} Results
                     </h3>
                     <div className="flex items-center gap-2">
-                      <button onClick={handleCopy} className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-dark-500 hover:bg-gray-50 transition-colors">
+                      <button onClick={handleCopy} className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-500 hover:bg-gray-50 transition-colors">
                         {copied ? '✓ Copied!' : 'Copy'}
                       </button>
                       {status === 'complete' && (
@@ -904,14 +904,14 @@ export default function CareerCoachPage() {
                           Download PDF
                         </button>
                       )}
-                      <button onClick={() => setExpanded(!expanded)} className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-dark-500 hover:bg-gray-50 transition-colors">
+                      <button onClick={() => setExpanded(!expanded)} className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-500 hover:bg-gray-50 transition-colors">
                         {expanded ? 'Exit Fullscreen' : 'Expand'}
                       </button>
                     </div>
                   </div>
 
                   <div className={`p-5 bg-white ${expanded ? 'flex-1 overflow-y-auto' : 'max-h-[70vh] overflow-y-auto'}`}>
-                    <div className="prose prose-sm max-w-none prose-headings:text-dark-800 prose-p:text-dark-600 prose-li:text-dark-600 prose-strong:text-dark-700 prose-a:text-primary-600">
+                    <div className="prose prose-sm max-w-none prose-headings:text-gray-800 prose-p:text-gray-600 prose-li:text-gray-600 prose-strong:text-gray-700 prose-a:text-primary-600">
                       <ReactMarkdown>{results[activeResultTab || ''] || 'No results yet.'}</ReactMarkdown>
                     </div>
                   </div>
@@ -938,8 +938,8 @@ export default function CareerCoachPage() {
                         <AgentIcon name={a.icon} className={`h-4 w-4 ${ac.text}`} />
                       </div>
                       <div>
-                        <h4 className="text-sm font-semibold text-dark-700">{a.name}</h4>
-                        <p className="text-[10px] text-dark-400 font-mono">
+                        <h4 className="text-sm font-semibold text-gray-700">{a.name}</h4>
+                        <p className="text-[10px] text-gray-400 font-mono">
                           {isAllDone ? `completed in ${fmt(elapsed)}` : isRunning ? 'running...' : 'pending'}
                         </p>
                       </div>
@@ -967,7 +967,7 @@ export default function CareerCoachPage() {
                               <div className="w-3 h-3 rounded-full border border-gray-200 bg-gray-50" />
                             )}
                           </div>
-                          <span className={`text-xs ${isDone ? 'text-dark-600' : isActive ? 'text-dark-800 font-medium' : 'text-dark-300'}`}>
+                          <span className={`text-xs ${isDone ? 'text-gray-600' : isActive ? 'text-gray-800 font-medium' : 'text-gray-300'}`}>
                             {stepName}
                           </span>
                           {isActive && <span className={`ml-auto text-[10px] ${ac.text} font-medium`}>running</span>}
@@ -988,8 +988,8 @@ export default function CareerCoachPage() {
 
             {status === 'idle' && (
               <div className="glass-card p-4">
-                <h4 className="text-xs font-semibold text-dark-400 uppercase tracking-wider mb-3">Tips for best results</h4>
-                <ul className="space-y-2 text-xs text-dark-500">
+                <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Tips for best results</h4>
+                <ul className="space-y-2 text-xs text-gray-500">
                   {['Upload your resume to auto-fill fields instantly', 'Fill in all required fields marked with *', 'Include specific skills, years of experience, and metrics', 'Be specific about your target role or career goal'].map((t, i) => (
                     <li key={i} className="flex items-start gap-2">
                       <span className={`w-1.5 h-1.5 rounded-full ${c!.bar} mt-1.5 flex-shrink-0`} />
@@ -1035,18 +1035,18 @@ export default function CareerCoachPage() {
                 return (
                   <div key={field.key} className={`rounded-lg p-3 ${isMissing ? 'bg-red-50 border border-red-200' : wasFilled ? 'bg-green-50 border border-green-200' : 'bg-gray-50 border border-gray-200'}`}>
                     <div className="flex items-center justify-between mb-1">
-                      <p className="text-xs font-semibold text-dark-600">
+                      <p className="text-xs font-semibold text-gray-600">
                         {field.label}
                         {field.required && <span className="text-red-500 ml-0.5">*</span>}
                       </p>
                       {wasFilled && val && <span className="text-[10px] text-green-600 font-medium">auto-filled</span>}
                       {isMissing && <span className="text-[10px] text-red-600 font-medium">needs input</span>}
-                      {!wasFilled && !isMissing && !val && <span className="text-[10px] text-dark-400">optional</span>}
+                      {!wasFilled && !isMissing && !val && <span className="text-[10px] text-gray-400">optional</span>}
                     </div>
                     {val ? (
-                      <p className="text-xs text-dark-600 line-clamp-3 whitespace-pre-wrap">{val}</p>
+                      <p className="text-xs text-gray-600 line-clamp-3 whitespace-pre-wrap">{val}</p>
                     ) : (
-                      <p className="text-xs text-dark-300 italic">{isMissing ? 'Required — please fill manually' : 'Empty (optional)'}</p>
+                      <p className="text-xs text-gray-300 italic">{isMissing ? 'Required — please fill manually' : 'Empty (optional)'}</p>
                     )}
                   </div>
                 )
@@ -1076,8 +1076,8 @@ export default function CareerCoachPage() {
           <div className="absolute inset-0 bg-black/40" role="presentation" onClick={() => setShowReviewModal(false)} />
           <div className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4 overflow-hidden animate-slideUp">
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <h3 className="text-base font-bold text-dark-800">Review before submitting</h3>
-              <button onClick={() => setShowReviewModal(false)} className="rounded-full p-1.5 text-dark-400 hover:bg-gray-100 transition-colors">
+              <h3 className="text-base font-bold text-gray-800">Review before submitting</h3>
+              <button onClick={() => setShowReviewModal(false)} className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 transition-colors">
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
@@ -1087,16 +1087,16 @@ export default function CareerCoachPage() {
                 if (!val) return null
                 return (
                   <div key={field.key}>
-                    <p className="text-xs font-semibold text-dark-500">{field.label}</p>
-                    <p className="text-sm text-dark-700 mt-0.5 whitespace-pre-wrap line-clamp-4">{val}</p>
+                    <p className="text-xs font-semibold text-gray-500">{field.label}</p>
+                    <p className="text-sm text-gray-700 mt-0.5 whitespace-pre-wrap line-clamp-4">{val}</p>
                   </div>
                 )
               })}
             </div>
             <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex items-center justify-between">
-              <p className="text-xs text-dark-400">Please confirm your inputs are correct</p>
+              <p className="text-xs text-gray-400">Please confirm your inputs are correct</p>
               <div className="flex items-center gap-3">
-                <button onClick={() => setShowReviewModal(false)} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-dark-600 hover:bg-gray-100 transition-colors">
+                <button onClick={() => setShowReviewModal(false)} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">
                   Edit
                 </button>
                 <button onClick={confirmSubmit} className="bg-primary-600 text-white rounded-xl transition-all duration-300 px-5 py-2 text-sm font-semibold flex items-center gap-2">
@@ -1134,7 +1134,7 @@ export default function CareerCoachPage() {
 
             <div className="px-6 py-5 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-dark-600 mb-1.5">
+                <label className="block text-sm font-medium text-gray-600 mb-1.5">
                   Full Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -1142,14 +1142,14 @@ export default function CareerCoachPage() {
                   value={downloadContact.name}
                   onChange={e => { setDownloadContact(p => ({ ...p, name: e.target.value })); setDownloadErrors(p => p.filter(k => k !== 'name')) }}
                   placeholder="e.g., Jalal Ahmed"
-                  className={`w-full rounded-lg border ${downloadErrors.includes('name') ? 'border-red-400 ring-1 ring-red-300 bg-red-50' : 'border-gray-300 bg-white'} px-3 py-2 text-sm text-dark-700 placeholder-dark-300 focus:border-primary-400 focus:ring-1 focus:ring-primary-400 outline-none`}
+                  className={`w-full rounded-lg border ${downloadErrors.includes('name') ? 'border-red-400 ring-1 ring-red-300 bg-red-50' : 'border-gray-300 bg-white'} px-3 py-2 text-sm text-gray-700 placeholder-gray-300 focus:border-primary-400 focus:ring-1 focus:ring-primary-400 outline-none`}
                   disabled={isGeneratingPdf}
                 />
                 {downloadErrors.includes('name') && <p className="text-xs text-red-500 mt-1">Name is required</p>}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-dark-600 mb-1.5">
+                <label className="block text-sm font-medium text-gray-600 mb-1.5">
                   Email <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -1157,7 +1157,7 @@ export default function CareerCoachPage() {
                   value={downloadContact.email}
                   onChange={e => { setDownloadContact(p => ({ ...p, email: e.target.value })); setDownloadErrors(p => p.filter(k => k !== 'email')) }}
                   placeholder="e.g., you@example.com"
-                  className={`w-full rounded-lg border ${downloadErrors.includes('email') ? 'border-red-400 ring-1 ring-red-300 bg-red-50' : 'border-gray-300 bg-white'} px-3 py-2 text-sm text-dark-700 placeholder-dark-300 focus:border-primary-400 focus:ring-1 focus:ring-primary-400 outline-none`}
+                  className={`w-full rounded-lg border ${downloadErrors.includes('email') ? 'border-red-400 ring-1 ring-red-300 bg-red-50' : 'border-gray-300 bg-white'} px-3 py-2 text-sm text-gray-700 placeholder-gray-300 focus:border-primary-400 focus:ring-1 focus:ring-primary-400 outline-none`}
                   disabled={isGeneratingPdf}
                 />
                 {downloadErrors.includes('email') && <p className="text-xs text-red-500 mt-1">Valid email is required</p>}
@@ -1187,7 +1187,7 @@ export default function CareerCoachPage() {
                   <><svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg> Download PDF Report</>
                 )}
               </button>
-              <p className="text-[10px] text-dark-400 text-center mt-2">Your details are stored securely and never shared</p>
+              <p className="text-[10px] text-gray-400 text-center mt-2">Your details are stored securely and never shared</p>
             </div>
           </div>
         </div>
@@ -1198,16 +1198,16 @@ export default function CareerCoachPage() {
         <div className="fixed inset-0 z-[60] flex items-center justify-center">
           <div className="absolute inset-0 bg-black/40" role="presentation" onClick={() => setShowLinkedInTip(false)} />
           <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden animate-slideUp">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-blue-50">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-primary-50">
               <div className="flex items-center gap-3">
-                <div className="rounded-full bg-blue-100 p-2">
-                  <svg className="h-5 w-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" /></svg>
+                <div className="rounded-full bg-primary-100 p-2">
+                  <svg className="h-5 w-5 text-primary-600" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" /></svg>
                 </div>
-                <h3 className="text-base font-bold text-blue-800">How to Export LinkedIn Profile as PDF</h3>
+                <h3 className="text-base font-bold text-primary-800">How to Export LinkedIn Profile as PDF</h3>
               </div>
               <button
                 onClick={() => setShowLinkedInTip(false)}
-                className="rounded-full p-1.5 text-blue-500 hover:bg-blue-100 transition-colors"
+                className="rounded-full p-1.5 text-primary-500 hover:bg-primary-100 transition-colors"
               >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
@@ -1215,20 +1215,20 @@ export default function CareerCoachPage() {
 
             <div className="px-6 py-5 space-y-4">
               <div className="flex items-start gap-3">
-                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center">1</span>
-                <p className="text-sm text-dark-600">Go to <span className="font-semibold">linkedin.com</span> and open <span className="font-semibold">your profile page</span></p>
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary-100 text-primary-700 text-xs font-bold flex items-center justify-center">1</span>
+                <p className="text-sm text-gray-600">Go to <span className="font-semibold">linkedin.com</span> and open <span className="font-semibold">your profile page</span></p>
               </div>
               <div className="flex items-start gap-3">
-                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center">2</span>
-                <p className="text-sm text-dark-600">Click the <span className="font-semibold">"More"</span> button (three dots <span className="font-mono bg-gray-100 px-1 rounded">...</span>) below your profile photo</p>
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary-100 text-primary-700 text-xs font-bold flex items-center justify-center">2</span>
+                <p className="text-sm text-gray-600">Click the <span className="font-semibold">"More"</span> button (three dots <span className="font-mono bg-gray-100 px-1 rounded">...</span>) below your profile photo</p>
               </div>
               <div className="flex items-start gap-3">
-                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center">3</span>
-                <p className="text-sm text-dark-600">Select <span className="font-semibold">"Save to PDF"</span> from the dropdown menu</p>
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary-100 text-primary-700 text-xs font-bold flex items-center justify-center">3</span>
+                <p className="text-sm text-gray-600">Select <span className="font-semibold">"Save to PDF"</span> from the dropdown menu</p>
               </div>
               <div className="flex items-start gap-3">
-                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center">4</span>
-                <p className="text-sm text-dark-600">A PDF of your full profile will download — <span className="font-semibold">upload it here</span> and our AI will extract all your information</p>
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary-100 text-primary-700 text-xs font-bold flex items-center justify-center">4</span>
+                <p className="text-sm text-gray-600">A PDF of your full profile will download — <span className="font-semibold">upload it here</span> and our AI will extract all your information</p>
               </div>
 
               <div className="rounded-lg bg-green-50 border border-green-200 p-3 mt-2">

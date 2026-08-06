@@ -196,7 +196,7 @@ export default function Testimonials() {
             {/* Progress bar */}
             <div className="mt-5 h-[2px] bg-gray-100 rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-primary-500 rounded-full"
+                className="h-full bg-primary-600 rounded-full"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -213,7 +213,7 @@ export default function Testimonials() {
                   }}
                   className={`h-1.5 rounded-full transition-all duration-400 ${
                     index === current
-                      ? 'w-6 bg-primary-500'
+                      ? 'w-6 bg-primary-600'
                       : 'w-1.5 bg-gray-200 hover:bg-gray-300'
                   }`}
                   aria-label={`Go to testimonial ${index + 1}`}

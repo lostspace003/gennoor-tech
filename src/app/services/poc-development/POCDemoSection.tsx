@@ -16,7 +16,7 @@ export default function POCDemoSection() {
       icon: <Shield className="w-6 h-6" />,
       title: 'Secure & Private',
       description: 'Password-protected access with httpOnly cookie authentication. No public data exposure — enterprise-grade security on a zero-cost stack.',
-      color: 'bg-purple-50 text-purple-600',
+      color: 'bg-gray-50 text-gray-600',
     },
     {
       icon: <Zap className="w-6 h-6" />,

@@ -116,7 +116,7 @@ export default function PortalSidebar({
         className={cn(
           'fixed top-0 left-0 z-50 lg:z-40 h-dvh lg:h-[calc(100dvh-var(--portal-topbar-h))]',
           'lg:top-[var(--portal-topbar-h)]',
-          'bg-gray-100 border-r border-gray-200 flex flex-col',
+          'bg-gray-50 border-r border-gray-200 flex flex-col',
           'transition-[width,transform] duration-200 ease-out',
           // Width — desktop
           collapsed ? 'lg:w-[var(--portal-rail-w-collapsed)]' : 'lg:w-[var(--portal-rail-w-expanded)]',

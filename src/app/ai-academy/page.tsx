@@ -146,7 +146,7 @@ export default function AcademyPage() {
               <div key={item.step} className="text-center p-6 rounded-2xl bg-white border border-gray-200/70 shadow-sm">
                 <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary-100 mb-4">
                   <item.icon className="w-7 h-7 text-primary-600" />
-                  <span className="absolute -top-2 -right-2 w-7 h-7 bg-secondary-400 text-dark-900 text-xs font-bold rounded-full flex items-center justify-center">
+                  <span className="absolute -top-2 -right-2 w-7 h-7 bg-gray-400 text-gray-900 text-xs font-bold rounded-full flex items-center justify-center">
                     {item.step}
                   </span>
                 </div>

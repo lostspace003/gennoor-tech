@@ -53,17 +53,17 @@ export default function CertificationsPage() {
                   <Shield className="w-5 h-5 mr-3" />
                   <div>
                     <p className="font-bold text-sm">Microsoft Certified Trainer (MCT)</p>
-                    <p className="text-xs text-blue-200/70">Active since {mctStatus.since} • Authorized worldwide trainer</p>
+                    <p className="text-xs text-primary-200/70">Active since {mctStatus.since} • Authorized worldwide trainer</p>
                   </div>
                 </div>
                 <MCTCertificateButton pdfUrl={`${BLOB_URL}/certificates/0-mct-certifcate.pdf`} />
               </div>
               <div>
-                <div className="inline-flex items-center bg-yellow-600 text-white rounded-xl px-6 py-3 shadow-lg shadow-yellow-500/15">
+                <div className="inline-flex items-center bg-amber-600 text-white rounded-xl px-6 py-3 shadow-lg shadow-amber-500/15">
                   <Award className="w-5 h-5 mr-3" />
                   <div>
                     <p className="font-bold text-sm">AI CERTs Certified Trainer (AICT)</p>
-                    <p className="text-xs text-yellow-200/70">Active since {aictStatus.since} • ID: {aictStatus.id}</p>
+                    <p className="text-xs text-amber-200/70">Active since {aictStatus.since} • ID: {aictStatus.id}</p>
                   </div>
                 </div>
               </div>

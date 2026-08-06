@@ -806,7 +806,7 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
                       >
                         <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold flex-shrink-0 ${
                           tick === 'done'
-                            ? 'bg-emerald-500/20 text-emerald-400'
+                            ? 'bg-green-500/20 text-green-400'
                             : isActive ? 'bg-primary-500/30 text-primary-300' : 'bg-white/10 text-white/50'
                         }`}>
                           {tick === 'done' ? <CheckCircle className="w-4 h-4" /> : String(ch.number).padStart(2, '0')}
@@ -845,7 +845,7 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
         {showEndOverlay && nextChapter && (
           <div className="absolute inset-0 z-40 bg-black/75 backdrop-blur-sm flex items-center justify-center p-6 animate-fade-in">
             <div className="max-w-md w-full text-center text-white">
-              <div className="inline-flex items-center gap-2 text-emerald-400 text-sm font-semibold mb-4">
+              <div className="inline-flex items-center gap-2 text-green-400 text-sm font-semibold mb-4">
                 <CheckCircle className="w-5 h-5" />
                 Chapter complete
               </div>
@@ -961,7 +961,7 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
             {/* Chapter progress bar (legacy has no continuous timeline) */}
             <div className="relative flex-1 min-w-[60px] h-1.5 bg-white/20 rounded-full overflow-hidden">
               <div
-                className="absolute inset-y-0 left-0 bg-primary-400 rounded-full transition-all duration-300"
+                className="absolute inset-y-0 left-0 bg-primary-600 rounded-full transition-all duration-300"
                 style={{ width: `${slidePercent}%` }}
               />
             </div>

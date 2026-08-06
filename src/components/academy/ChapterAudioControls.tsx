@@ -506,7 +506,7 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
         >
           <div className="relative w-full h-1.5 group-hover:h-2.5 bg-white/20 rounded-full transition-all">
             <div
-              className="absolute inset-y-0 left-0 bg-primary-400 rounded-full"
+              className="absolute inset-y-0 left-0 bg-primary-600 rounded-full"
               style={{ width: duration > 0 ? `${(currentTime / duration) * 100}%` : '0%' }}
             />
             {slideTicks.map(c => (

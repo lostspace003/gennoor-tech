@@ -207,7 +207,7 @@ export default function AudioPlayer({ audioDir, currentSlide, totalSlides, steps
           onClick={togglePlay}
           className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-bold transition-colors ${
             isPlaying
-              ? 'bg-secondary-400 text-dark-900'
+              ? 'bg-gray-400 text-gray-900'
               : 'bg-white/10 hover:bg-white/20 text-white'
           }`}
           title={isPlaying ? 'Pause (Space)' : autoPlay ? 'Resume (Space)' : 'Play & auto-advance (Space)'}
@@ -218,7 +218,7 @@ export default function AudioPlayer({ audioDir, currentSlide, totalSlides, steps
 
         {/* Auto-play indicator */}
         {autoPlay && !isPlaying && (
-          <span className="text-[10px] text-secondary-400 font-bold">AUTO</span>
+          <span className="text-[10px] text-gray-400 font-bold">AUTO</span>
         )}
 
         {/* Speed */}
@@ -237,7 +237,7 @@ export default function AudioPlayer({ audioDir, currentSlide, totalSlides, steps
             onClick={handleSeek}
           >
             <div
-              className="h-full bg-secondary-400 rounded-full transition-all"
+              className="h-full bg-gray-400 rounded-full transition-all"
               style={{ width: `${(currentTime / duration) * 100}%` }}
             />
           </div>

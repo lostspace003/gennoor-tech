@@ -709,7 +709,7 @@ export default function ForEnterprisePage() {
                   {/* HEADER */}
                   <header className="flex flex-col lg:flex-row lg:items-start gap-6 mb-8 pb-8 border-b border-gray-100">
                     <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 rounded-2xl bg-primary-500 flex items-center justify-center shadow-lg shadow-primary-500/15 flex-shrink-0">
+                      <div className="w-16 h-16 rounded-2xl bg-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/15 flex-shrink-0">
                         <Icon className="w-8 h-8 text-white" />
                       </div>
                       <div>
@@ -887,7 +887,7 @@ export default function ForEnterprisePage() {
                   key={item.title}
                   className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-500"
                 >
-                  <div className="w-11 h-11 rounded-xl bg-primary-500 flex items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
+                  <div className="w-11 h-11 rounded-xl bg-primary-600 flex items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
                     <Icon className="w-5 h-5 text-white" />
                   </div>
                   <h3 className="text-base font-bold text-gray-900 mb-2">{item.title}</h3>

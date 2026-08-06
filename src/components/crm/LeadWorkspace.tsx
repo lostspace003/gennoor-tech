@@ -95,18 +95,18 @@ export default function LeadWorkspace({ lead, canManage, onClose, onReload, noti
             {lead.dumped ? (
               <>
                 <span className="text-[11px] bg-gray-200 text-gray-600 rounded-full px-2 py-1" title={lead.dumped.reason}>Dumped: {lead.dumped.reason.slice(0, 30)}</span>
-                <button onClick={() => poolAction('restore')} disabled={poolBusy} className="px-2.5 py-1.5 bg-emerald-600 text-white text-xs rounded-lg hover:bg-emerald-700 disabled:opacity-50">Restore</button>
+                <button onClick={() => poolAction('restore')} disabled={poolBusy} className="px-2.5 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 disabled:opacity-50">Restore</button>
               </>
             ) : !lead.owner ? (
               <>
-                <span className="text-[11px] bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-2 py-1">In pool</span>
-                <button onClick={() => poolAction('claim')} disabled={poolBusy} className="px-2.5 py-1.5 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 disabled:opacity-50">Pick up</button>
+                <span className="text-[11px] bg-green-50 text-green-700 border border-green-200 rounded-full px-2 py-1">In pool</span>
+                <button onClick={() => poolAction('claim')} disabled={poolBusy} className="px-2.5 py-1.5 bg-primary-600 text-white text-xs rounded-lg hover:bg-primary-700 disabled:opacity-50">Pick up</button>
                 <button onClick={() => poolAction('dump')} disabled={poolBusy} className="px-2.5 py-1.5 border border-gray-300 text-gray-600 text-xs rounded-lg hover:bg-gray-100 disabled:opacity-50">Dump</button>
               </>
             ) : isMine || isManager ? (
               <>
-                <span className="text-[11px] bg-blue-100 text-blue-700 rounded-full px-2 py-1">{isMine ? 'My lead' : `Owner: ${lead.owner.split('@')[0]}`}</span>
-                <button onClick={() => poolAction('release')} disabled={poolBusy} className="px-2.5 py-1.5 border border-blue-300 text-blue-700 text-xs rounded-lg hover:bg-blue-50 disabled:opacity-50">Release</button>
+                <span className="text-[11px] bg-primary-100 text-primary-700 rounded-full px-2 py-1">{isMine ? 'My lead' : `Owner: ${lead.owner.split('@')[0]}`}</span>
+                <button onClick={() => poolAction('release')} disabled={poolBusy} className="px-2.5 py-1.5 border border-primary-300 text-primary-700 text-xs rounded-lg hover:bg-primary-50 disabled:opacity-50">Release</button>
                 <button onClick={() => poolAction('dump')} disabled={poolBusy} className="px-2.5 py-1.5 border border-gray-300 text-gray-600 text-xs rounded-lg hover:bg-gray-100 disabled:opacity-50">Dump</button>
               </>
             ) : (
@@ -118,7 +118,7 @@ export default function LeadWorkspace({ lead, canManage, onClose, onReload, noti
             <select
               value={lead.stage}
               onChange={(e) => setStage(e.target.value as PipelineStage)}
-              className="text-xs border border-gray-300 rounded-lg px-2 py-1.5 bg-white text-gray-700 hover:border-blue-400 cursor-pointer"
+              className="text-xs border border-gray-300 rounded-lg px-2 py-1.5 bg-white text-gray-700 hover:border-primary-400 cursor-pointer"
               title="Move this lead to another pipeline stage"
             >
               {PIPELINE_STAGES.map((s, i) => (
@@ -138,7 +138,7 @@ export default function LeadWorkspace({ lead, canManage, onClose, onReload, noti
             <button
               key={id}
               onClick={() => setTab(id)}
-              className={`px-3 py-2 text-sm font-medium border-b-2 flex items-center gap-1.5 whitespace-nowrap transition-colors ${tab === id ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-800'}`}
+              className={`px-3 py-2 text-sm font-medium border-b-2 flex items-center gap-1.5 whitespace-nowrap transition-colors ${tab === id ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-800'}`}
             >
               <Icon className="w-4 h-4" /> {label}
             </button>
@@ -202,7 +202,7 @@ function OverviewTab({ lead, canManage, onReload, onClose, notify }: { lead: Lea
         type={type}
         value={(form[key] as string) || ''}
         onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
       />
     </div>
   )
@@ -264,7 +264,7 @@ function OverviewTab({ lead, canManage, onReload, onClose, notify }: { lead: Lea
                   min={0}
                   value={form.value ?? 0}
                   onChange={(e) => setForm({ ...form, value: Number(e.target.value) || 0 })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -274,7 +274,7 @@ function OverviewTab({ lead, canManage, onReload, onClose, notify }: { lead: Lea
             </div>
             <div className="flex justify-end gap-2">
               <button onClick={() => setEditing(false)} className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50">Cancel</button>
-              <button onClick={save} disabled={saving} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50">
+              <button onClick={save} disabled={saving} className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm hover:bg-primary-700 disabled:opacity-50">
                 {saving ? 'Saving...' : 'Save changes'}
               </button>
             </div>
@@ -286,12 +286,12 @@ function OverviewTab({ lead, canManage, onReload, onClose, notify }: { lead: Lea
             <InfoRow icon={Building2} value={[lead.company, lead.sector].filter(Boolean).join(' · ')} placeholder="No company" />
             <InfoRow icon={Globe} value={[lead.city, lead.country, lead.region].filter(Boolean).join(', ')} placeholder="No location" />
             {lead.linkedin ? (
-              <a href={externalUrl(lead.linkedin)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-blue-600 hover:underline">
+              <a href={externalUrl(lead.linkedin)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-primary-600 hover:underline">
                 <Linkedin className="w-4 h-4 text-gray-400" /> LinkedIn profile — connect
               </a>
             ) : <InfoRow icon={Linkedin} value="" placeholder="No LinkedIn" />}
             {lead.website ? (
-              <a href={externalUrl(lead.website)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-blue-600 hover:underline">
+              <a href={externalUrl(lead.website)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-primary-600 hover:underline">
                 <Globe className="w-4 h-4 text-gray-400" /> {lead.website}
               </a>
             ) : <InfoRow icon={Globe} value="" placeholder="No website" />}
@@ -323,12 +323,12 @@ function OverviewTab({ lead, canManage, onReload, onClose, notify }: { lead: Lea
           {lead.activities.length === 0 && <p className="text-sm text-gray-400">No activity yet.</p>}
           {lead.activities.map((a, i) => (
             <div key={i} className="flex gap-3">
-              <div className="w-2 h-2 mt-1.5 rounded-full bg-blue-400 shrink-0" />
+              <div className="w-2 h-2 mt-1.5 rounded-full bg-primary-600 shrink-0" />
               <div className="min-w-0">
                 <p className="text-sm text-gray-800">{a.description}</p>
                 <p className="text-xs text-gray-400">
                   {formatDateTime(a.at)} · {a.by.split('@')[0]}
-                  {a.stage && <span className="ml-1.5 bg-blue-50 text-blue-600 rounded-full px-1.5 py-0.5 text-[10px]">in {STAGE_LABELS[a.stage]}</span>}
+                  {a.stage && <span className="ml-1.5 bg-primary-50 text-primary-600 rounded-full px-1.5 py-0.5 text-[10px]">in {STAGE_LABELS[a.stage]}</span>}
                 </p>
               </div>
             </div>
@@ -361,7 +361,7 @@ function NoteInput({ leadId, onReload, notify }: { leadId: string; onReload: () 
         onChange={(e) => setNote(e.target.value)}
         onKeyDown={(e) => e.key === 'Enter' && save()}
         placeholder="Log a note — meeting outcome, call summary..."
-        className="flex-1 px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        className="flex-1 px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-primary-500 focus:border-transparent"
       />
       <button onClick={save} disabled={saving || !note.trim()} className="px-2.5 py-1.5 bg-gray-800 text-white text-xs rounded-lg hover:bg-gray-900 disabled:opacity-40">
         {saving ? '...' : 'Log'}
@@ -430,7 +430,7 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
           <h3 className="text-sm font-medium text-gray-500 flex items-center gap-1.5">AI Research
             <InfoTip text="Run research to profile this lead (web-grounded when available, sources cited). Then discuss the angle in the chat and hit Finalize pitch — that locked brief powers the email draft." />
           </h3>
-          <button onClick={runResearch} disabled={running} className="px-3 py-1.5 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 flex items-center gap-2 disabled:opacity-50">
+          <button onClick={runResearch} disabled={running} className="px-3 py-1.5 bg-gray-600 text-white text-sm rounded-lg hover:bg-gray-700 flex items-center gap-2 disabled:opacity-50">
             {running ? <Spinner /> : <Brain className="w-4 h-4" />}
             {lead.aiResearch ? 'Re-run research' : 'Run research'}
           </button>
@@ -441,19 +441,19 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
           </div>
         )}
         {lead.aiResearch && (
-          <div className="bg-purple-50 rounded-lg p-4 space-y-4">
+          <div className="bg-gray-50 rounded-lg p-4 space-y-4">
             <div className="flex items-center gap-2">
-              <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${lead.aiResearch.techOrNonTech === 'technical' ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'}`}>
+              <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${lead.aiResearch.techOrNonTech === 'technical' ? 'bg-primary-100 text-primary-700' : 'bg-green-100 text-green-700'}`}>
                 {lead.aiResearch.techOrNonTech}
               </span>
               {lead.aiResearch.webGrounded && (
-                <span className="px-2 py-0.5 text-xs rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">🌐 live web research</span>
+                <span className="px-2 py-0.5 text-xs rounded-full bg-green-50 text-green-700 border border-green-200">🌐 live web research</span>
               )}
               <span className="text-xs text-gray-500">updated {formatDateTime(lead.aiResearch.lastUpdated)}</span>
             </div>
             <Section title="Summary"><p>{lead.aiResearch.summary}</p></Section>
             <Section title="Insights">
-              <ul className="space-y-1">{lead.aiResearch.insights.map((x, i) => <li key={i} className="flex gap-2"><Sparkles className="w-3.5 h-3.5 text-purple-500 mt-0.5 shrink-0" />{x}</li>)}</ul>
+              <ul className="space-y-1">{lead.aiResearch.insights.map((x, i) => <li key={i} className="flex gap-2"><Sparkles className="w-3.5 h-3.5 text-gray-500 mt-0.5 shrink-0" />{x}</li>)}</ul>
             </Section>
             <Section title="What to pitch">
               <ul className="space-y-1">{lead.aiResearch.opportunities.map((x, i) => <li key={i} className="flex gap-2"><CheckCircle className="w-3.5 h-3.5 text-green-500 mt-0.5 shrink-0" />{x}</li>)}</ul>
@@ -464,7 +464,7 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
                 <ul className="space-y-0.5">
                   {lead.aiResearch.sources.map((s, i) => (
                     <li key={i}>
-                      <a href={externalUrl(s.url)} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline break-all">{s.title || s.url}</a>
+                      <a href={externalUrl(s.url)} target="_blank" rel="noopener noreferrer" className="text-xs text-primary-600 hover:underline break-all">{s.title || s.url}</a>
                     </li>
                   ))}
                 </ul>
@@ -488,7 +488,7 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
                   </button>
                 )}
                 {(lead.pitchLockedV || (pitchCount === 0 && lead.finalizedPitch)) && (
-                  <button onClick={onGoEmail} className="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 flex items-center gap-1.5">
+                  <button onClick={onGoEmail} className="px-3 py-1.5 bg-primary-600 text-white text-xs rounded-lg hover:bg-primary-700 flex items-center gap-1.5">
                     Continue to email <Send className="w-3.5 h-3.5" />
                   </button>
                 )}
@@ -512,7 +512,7 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
       {/* Discussion + finalize */}
       <div className="flex flex-col h-[70dvh] lg:h-[calc(100dvh-12rem)] border border-gray-200 rounded-lg">
         <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-700 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-purple-500" /> Discuss with copilot</span>
+          <span className="text-sm font-medium text-gray-700 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-gray-500" /> Discuss with copilot</span>
           <button
             onClick={() => setPitchOpen(true)}
             className="px-3 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 flex items-center gap-1.5"
@@ -528,7 +528,7 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
             </p>
           )}
           {chat.map((m, i) => (
-            <div key={i} className={`max-w-[85%] rounded-lg px-3 py-2 text-sm whitespace-pre-line break-words ${m.role === 'user' ? 'ml-auto bg-blue-600 text-white' : 'bg-gray-100 text-gray-800'}`}>
+            <div key={i} className={`max-w-[85%] rounded-lg px-3 py-2 text-sm whitespace-pre-line break-words ${m.role === 'user' ? 'ml-auto bg-primary-600 text-white' : 'bg-gray-100 text-gray-800'}`}>
               {m.content}
               <CopyMsg text={m.content} light={m.role === 'user'} />
             </div>
@@ -541,9 +541,9 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
             onChange={(e) => setChatInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && sendChat()}
             placeholder="Ask the copilot about this lead..."
-            className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-500 focus:border-transparent"
           />
-          <button onClick={sendChat} disabled={chatting || !chatInput.trim()} className="px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50">
+          <button onClick={sendChat} disabled={chatting || !chatInput.trim()} className="px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50">
             <Send className="w-4 h-4" />
           </button>
         </div>
@@ -566,7 +566,7 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <div className="text-xs font-semibold text-purple-900 uppercase mb-1">{title}</div>
+      <div className="text-xs font-semibold text-gray-900 uppercase mb-1">{title}</div>
       <div className="text-sm text-gray-700">{children}</div>
     </div>
   )
@@ -627,7 +627,7 @@ function EmailTab({ lead, onReload, notify, onSchedule }: { lead: Lead; onReload
             onClick={() => { setReplyTo(null); setPreset(''); setComposing(true) }}
             disabled={!lead.email}
             title={lead.email ? '' : 'Add an email address first (Overview → Edit)'}
-            className="px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 flex items-center gap-2 disabled:opacity-50"
+            className="px-3 py-2 bg-primary-600 text-white text-sm rounded-lg hover:bg-primary-700 flex items-center gap-2 disabled:opacity-50"
           >
             <Mail className="w-4 h-4" /> New email
           </button>
@@ -646,14 +646,14 @@ function EmailTab({ lead, onReload, notify, onSchedule }: { lead: Lead; onReload
           <div className="bg-gray-50 rounded-lg p-8 text-center text-sm text-gray-400">No emails yet. Draft the first outreach with the AI composer.</div>
         )}
         {thread.map((item, i) => (
-          <div key={i} className={`rounded-lg border p-3 ${item.kind === 'received' ? 'border-emerald-200 bg-emerald-50' : 'border-gray-200 bg-white'}`}>
+          <div key={i} className={`rounded-lg border p-3 ${item.kind === 'received' ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-white'}`}>
             <div className="flex items-center justify-between gap-3">
               <button className="min-w-0 text-left flex-1" onClick={() => setExpanded(expanded === i ? null : i)} title={expanded === i ? 'Collapse' : 'Expand'}>
                 <div className="text-sm font-medium text-gray-900 truncate">{item.subject || '(no subject)'}</div>
                 <div className="text-xs text-gray-500">{item.kind === 'received' ? '↩ Received' : '↗ Sent'} {item.detail} · {formatDateTime(item.at)}{item.status === 'failed' ? ' · FAILED' : ''}</div>
               </button>
               {item.kind === 'received' && (
-                <button onClick={() => { setReplyTo((item as any).raw); setPreset(''); setComposing(true) }} className="px-2.5 py-1.5 bg-emerald-600 text-white text-xs rounded-lg hover:bg-emerald-700 flex items-center gap-1.5 shrink-0">
+                <button onClick={() => { setReplyTo((item as any).raw); setPreset(''); setComposing(true) }} className="px-2.5 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 flex items-center gap-1.5 shrink-0">
                   <Reply className="w-3.5 h-3.5" /> Reply with AI
                 </button>
               )}
@@ -664,7 +664,7 @@ function EmailTab({ lead, onReload, notify, onSchedule }: { lead: Lead; onReload
                     setPreset(`Write a brief follow-up to the previous email "${item.subject}" sent on ${item.at.slice(0, 10)}. Do not repeat its content — reference it lightly, add one new useful angle, and re-offer the free webinar or 1-day training.`)
                     setComposing(true)
                   }}
-                  className="px-2.5 py-1.5 border border-blue-200 text-blue-600 text-xs rounded-lg hover:bg-blue-50 flex items-center gap-1.5 shrink-0"
+                  className="px-2.5 py-1.5 border border-primary-200 text-primary-600 text-xs rounded-lg hover:bg-primary-50 flex items-center gap-1.5 shrink-0"
                 >
                   <Sparkles className="w-3.5 h-3.5" /> Follow up with AI
                 </button>
@@ -681,7 +681,7 @@ function EmailTab({ lead, onReload, notify, onSchedule }: { lead: Lead; onReload
               )
             )}
             {item.body && (
-              <button onClick={() => setExpanded(expanded === i ? null : i)} className="text-[11px] text-blue-600 hover:underline mt-1">
+              <button onClick={() => setExpanded(expanded === i ? null : i)} className="text-[11px] text-primary-600 hover:underline mt-1">
                 {expanded === i ? 'Collapse' : 'Read full'}
               </button>
             )}
@@ -734,10 +734,10 @@ function FindEmailPanel({ lead, onReload, notify }: { lead: Lead; onReload: () =
   }
 
   return (
-    <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 space-y-3">
+    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="text-sm text-purple-900 font-medium flex items-center gap-2"><Sparkles className="w-4 h-4" /> No email address for this lead</div>
-        <button onClick={find} disabled={busy === 'find'} className="px-3 py-1.5 bg-purple-600 text-white text-xs rounded-lg hover:bg-purple-700 disabled:opacity-50">
+        <div className="text-sm text-gray-900 font-medium flex items-center gap-2"><Sparkles className="w-4 h-4" /> No email address for this lead</div>
+        <button onClick={find} disabled={busy === 'find'} className="px-3 py-1.5 bg-gray-600 text-white text-xs rounded-lg hover:bg-gray-700 disabled:opacity-50">
           {busy === 'find' ? 'Searching patterns...' : candidates.length ? 'Search again' : 'Find email with AI'}
         </button>
       </div>
@@ -745,7 +745,7 @@ function FindEmailPanel({ lead, onReload, notify }: { lead: Lead; onReload: () =
         <>
           <div className="space-y-1.5">
             {candidates.map((c) => (
-              <label key={c.email} className="flex items-center gap-2.5 bg-white border border-gray-200 rounded-lg px-3 py-2 cursor-pointer hover:border-purple-300">
+              <label key={c.email} className="flex items-center gap-2.5 bg-white border border-gray-200 rounded-lg px-3 py-2 cursor-pointer hover:border-gray-300">
                 <input
                   type="checkbox"
                   checked={picked.includes(c.email)}
@@ -757,14 +757,14 @@ function FindEmailPanel({ lead, onReload, notify }: { lead: Lead; onReload: () =
               </label>
             ))}
           </div>
-          <p className="text-[11px] text-purple-700">{note}</p>
+          <p className="text-[11px] text-gray-700">{note}</p>
           <button onClick={save} disabled={busy === 'save' || picked.length === 0} className="px-3 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 disabled:opacity-50">
             {busy === 'save' ? 'Saving...' : `Save ${picked.length} selected (first = primary)`}
           </button>
         </>
       )}
       {candidates.length === 0 && (
-        <p className="text-xs text-purple-700">The AI suggests likely addresses from the person's name and company domain. You pick which to keep — a LinkedIn message asking for their email is still the most reliable route.</p>
+        <p className="text-xs text-gray-700">The AI suggests likely addresses from the person's name and company domain. You pick which to keep — a LinkedIn message asking for their email is still the most reliable route.</p>
       )}
     </div>
   )
@@ -903,7 +903,7 @@ function EmailComposer({ lead, replyTo, preset, onClose, onSent, notify }: { lea
           {/* Draft editor */}
           <div className="lg:col-span-3 p-5 flex flex-col gap-3 min-h-0 border-r border-gray-100">
             <div className="flex gap-2">
-              <button onClick={() => aiDraft()} disabled={!!busy} className="px-3 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 flex items-center gap-2 disabled:opacity-50">
+              <button onClick={() => aiDraft()} disabled={!!busy} className="px-3 py-2 bg-gray-600 text-white text-sm rounded-lg hover:bg-gray-700 flex items-center gap-2 disabled:opacity-50">
                 <Sparkles className="w-4 h-4" /> {busy === 'draft' ? 'Drafting...' : body ? 'Redraft with AI' : 'AI draft'}
               </button>
               <button onClick={finalize} disabled={!!busy || !body} className="px-3 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 flex items-center gap-2 disabled:opacity-50">
@@ -929,19 +929,19 @@ function EmailComposer({ lead, replyTo, preset, onClose, onSent, notify }: { lea
               <div className="flex flex-wrap gap-1.5">
                 {docs.length === 0 && <span className="text-[11px] text-gray-400">No documents yet — upload one, or add manuals/posters via the Documents page.</span>}
                 {docs.map((d) => (
-                  <span key={d.name} className={`inline-flex items-center rounded text-xs border overflow-hidden ${attach.includes(d.name) ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-200 text-gray-600'}`}>
+                  <span key={d.name} className={`inline-flex items-center rounded text-xs border overflow-hidden ${attach.includes(d.name) ? 'bg-primary-600 text-white border-primary-600' : 'border-gray-200 text-gray-600'}`}>
                     <button
                       onClick={() => setAttach(attach.includes(d.name) ? attach.filter((n) => n !== d.name) : [...attach, d.name])}
-                      className={`px-2 py-1 ${attach.includes(d.name) ? 'hover:bg-blue-700' : 'hover:bg-gray-50'}`}
+                      className={`px-2 py-1 ${attach.includes(d.name) ? 'hover:bg-primary-700' : 'hover:bg-gray-50'}`}
                       title={attach.includes(d.name) ? 'Attached — click to remove' : 'Click to attach'}
                     >
                       {d.name.split('/').pop()}
                     </button>
-                    <button onClick={() => setPreview(d.name)} className={`px-1.5 py-1 border-l ${attach.includes(d.name) ? 'border-blue-500 hover:bg-blue-700' : 'border-gray-200 hover:bg-gray-50'}`} title="Preview">
+                    <button onClick={() => setPreview(d.name)} className={`px-1.5 py-1 border-l ${attach.includes(d.name) ? 'border-primary-500 hover:bg-primary-700' : 'border-gray-200 hover:bg-gray-50'}`} title="Preview">
                       <Eye className="w-3 h-3" />
                     </button>
                     {attach.includes(d.name) && (
-                      <button onClick={() => setAttach(attach.filter((n) => n !== d.name))} className="px-1.5 py-1 border-l border-blue-500 hover:bg-red-500" title="Remove from this email">
+                      <button onClick={() => setAttach(attach.filter((n) => n !== d.name))} className="px-1.5 py-1 border-l border-primary-500 hover:bg-red-500" title="Remove from this email">
                         <X className="w-3 h-3" />
                       </button>
                     )}
@@ -952,7 +952,7 @@ function EmailComposer({ lead, replyTo, preset, onClose, onSent, notify }: { lea
             {preview && <DocPreview name={preview} onClose={() => setPreview(null)} />}
             <div className="flex justify-end gap-2">
               <button onClick={onClose} className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50">Cancel</button>
-              <button onClick={send} disabled={!!busy || !subject || !body} className="px-5 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 flex items-center gap-2 disabled:opacity-50">
+              <button onClick={send} disabled={!!busy || !subject || !body} className="px-5 py-2 bg-primary-600 text-white rounded-lg text-sm hover:bg-primary-700 flex items-center gap-2 disabled:opacity-50">
                 <Send className="w-4 h-4" /> {busy === 'send' ? 'Sending...' : 'Send email'}
               </button>
             </div>
@@ -961,14 +961,14 @@ function EmailComposer({ lead, replyTo, preset, onClose, onSent, notify }: { lea
           {/* AI refine chat */}
           <div className="lg:col-span-2 flex flex-col min-h-0">
             <div className="px-4 py-3 border-b border-gray-100 text-sm font-medium text-gray-700 flex items-center gap-2 shrink-0">
-              <MessageSquare className="w-4 h-4 text-purple-500" /> Refine with copilot
+              <MessageSquare className="w-4 h-4 text-gray-500" /> Refine with copilot
             </div>
             <div className="flex-1 overflow-y-auto p-4 space-y-2.5 min-h-0">
               {chatLog.length === 0 && (
                 <p className="text-xs text-gray-400 text-center mt-6">Tell the copilot how to change the draft — &quot;shorter&quot;, &quot;more formal&quot;, &quot;lead with the webinar&quot;, &quot;mention their fintech focus&quot;...</p>
               )}
               {chatLog.map((m, i) => (
-                <div key={i} className={`max-w-[90%] rounded-lg px-3 py-2 text-xs whitespace-pre-line break-words ${m.role === 'user' ? 'ml-auto bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'}`}>{m.content}<CopyMsg text={m.content} light={m.role === 'user'} /></div>
+                <div key={i} className={`max-w-[90%] rounded-lg px-3 py-2 text-xs whitespace-pre-line break-words ${m.role === 'user' ? 'ml-auto bg-primary-600 text-white' : 'bg-gray-100 text-gray-700'}`}>{m.content}<CopyMsg text={m.content} light={m.role === 'user'} /></div>
               ))}
               {busy === 'refine' && <Spinner label="Revising..." />}
             </div>
@@ -980,7 +980,7 @@ function EmailComposer({ lead, replyTo, preset, onClose, onSent, notify }: { lea
                 placeholder="Instruction for the copilot..."
                 className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm"
               />
-              <button onClick={refine} disabled={!!busy || !instruction.trim()} className="px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50"><Send className="w-4 h-4" /></button>
+              <button onClick={refine} disabled={!!busy || !instruction.trim()} className="px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50"><Send className="w-4 h-4" /></button>
             </div>
           </div>
         </div>
@@ -1055,13 +1055,13 @@ function ScheduleTab({ lead, onReload, notify }: { lead: Lead; onReload: () => P
     } catch (e: any) { notify(e.message, true) } finally { setBusy('') }
   }
 
-  const inputCls = 'w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+  const inputCls = 'w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent'
 
   return (
     <div className="p-3 sm:p-5 grid grid-cols-1 lg:grid-cols-2 gap-4">
       {/* Teams meeting */}
       <div className="border border-gray-200 rounded-lg p-5 space-y-3">
-        <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2"><Calendar className="w-4 h-4 text-blue-500" /> Schedule Teams meeting
+        <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2"><Calendar className="w-4 h-4 text-primary-500" /> Schedule Teams meeting
           <InfoTip text="Creates a real Teams meeting and emails the invite to the lead (plus any extra attendees). It appears in the Scheduler and on the admin calendar." />
         </h3>
         {!lead.email && <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">This lead has no email — add one on the Overview tab first.</p>}
@@ -1075,7 +1075,7 @@ function ScheduleTab({ lead, onReload, notify }: { lead: Lead; onReload: () => P
         <DurationSlider value={meetForm.duration} onChange={(duration) => setMeetForm({ ...meetForm, duration })} />
         <input value={meetForm.extra} onChange={(e) => setMeetForm({ ...meetForm, extra: e.target.value })} className={inputCls} placeholder="More attendees (comma-separated emails, optional)" />
         <textarea value={meetForm.agenda} onChange={(e) => setMeetForm({ ...meetForm, agenda: e.target.value })} rows={2} className={inputCls} placeholder="Agenda (optional)" />
-        <button onClick={scheduleMeeting} disabled={busy === 'meet' || !lead.email} className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50">
+        <button onClick={scheduleMeeting} disabled={busy === 'meet' || !lead.email} className="w-full px-4 py-2 bg-primary-600 text-white rounded-lg text-sm hover:bg-primary-700 disabled:opacity-50">
           {busy === 'meet' ? 'Scheduling...' : `Schedule & invite ${lead.email || ''}`}
         </button>
         <p className="text-xs text-gray-400">Creates a Teams meeting on the admin@gennoor.com calendar; the lead (and extra attendees) get the invite. It appears in the Scheduler view.</p>
@@ -1083,12 +1083,12 @@ function ScheduleTab({ lead, onReload, notify }: { lead: Lead; onReload: () => P
 
       {/* Follow-up invites */}
       <div className="border border-gray-200 rounded-lg p-5 space-y-3">
-        <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2"><Mail className="w-4 h-4 text-emerald-500" /> Send follow-up invite
+        <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2"><Mail className="w-4 h-4 text-green-500" /> Send follow-up invite
           <InfoTip text="The outreach playbook: 1st follow-up = free 2-hour webinar, 2nd = free 1-day training. Attach a poster from Documents if you have one — the invite emails the lead directly." />
         </h3>
         <div className="flex gap-2">
-          <button onClick={() => setFuForm({ ...fuForm, type: 'webinar' })} className={`flex-1 px-3 py-2 rounded-lg text-sm border ${fuForm.type === 'webinar' ? 'bg-emerald-600 text-white border-emerald-600' : 'border-gray-200 text-gray-600'}`}>1st: Free 2-hour webinar</button>
-          <button onClick={() => setFuForm({ ...fuForm, type: 'training' })} className={`flex-1 px-3 py-2 rounded-lg text-sm border ${fuForm.type === 'training' ? 'bg-emerald-600 text-white border-emerald-600' : 'border-gray-200 text-gray-600'}`}>2nd: Free 1-day training</button>
+          <button onClick={() => setFuForm({ ...fuForm, type: 'webinar' })} className={`flex-1 px-3 py-2 rounded-lg text-sm border ${fuForm.type === 'webinar' ? 'bg-green-600 text-white border-green-600' : 'border-gray-200 text-gray-600'}`}>1st: Free 2-hour webinar</button>
+          <button onClick={() => setFuForm({ ...fuForm, type: 'training' })} className={`flex-1 px-3 py-2 rounded-lg text-sm border ${fuForm.type === 'training' ? 'bg-green-600 text-white border-green-600' : 'border-gray-200 text-gray-600'}`}>2nd: Free 1-day training</button>
         </div>
         <input value={fuForm.title} onChange={(e) => setFuForm({ ...fuForm, title: e.target.value })} className={inputCls} placeholder={fuForm.type === 'webinar' ? 'Webinar topic (as per their need)' : 'Training title'} />
         <div className="grid grid-cols-2 gap-2">
@@ -1110,7 +1110,7 @@ function ScheduleTab({ lead, onReload, notify }: { lead: Lead; onReload: () => P
             </label>
           </div>
         </div>
-        <button onClick={sendFollowUp} disabled={busy === 'followup' || !lead.email} className="w-full px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm hover:bg-emerald-700 disabled:opacity-50">
+        <button onClick={sendFollowUp} disabled={busy === 'followup' || !lead.email} className="w-full px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700 disabled:opacity-50">
           {busy === 'followup' ? 'Sending...' : 'Send invite (from sales@ · CC admin@ + you)'}
         </button>
 
@@ -1120,7 +1120,7 @@ function ScheduleTab({ lead, onReload, notify }: { lead: Lead; onReload: () => P
             <div className="space-y-1.5">
               {lead.followUps.map((f) => (
                 <div key={f.id} className="text-xs text-gray-600 flex items-center gap-2">
-                  <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
+                  <CheckCircle className="w-3.5 h-3.5 text-green-500" />
                   {f.type === 'webinar' ? 'Webinar' : 'Training'}: {f.title} — {f.date} {f.time}
                 </div>
               ))}

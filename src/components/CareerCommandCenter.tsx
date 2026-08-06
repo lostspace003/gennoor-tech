@@ -21,8 +21,8 @@ export default function CareerCommandCenter() {
       >
         {showPulse && (
           <span className="absolute -top-1 -right-1 flex h-4 w-4">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-secondary-400 opacity-75" />
-            <span className="relative inline-flex h-4 w-4 rounded-full bg-secondary-500" />
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gray-400 opacity-75" />
+            <span className="relative inline-flex h-4 w-4 rounded-full bg-gray-500" />
           </span>
         )}
         <span className="h-5 w-5 flex items-center justify-center">

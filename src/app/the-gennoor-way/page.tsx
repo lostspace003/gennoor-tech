@@ -328,7 +328,7 @@ export default function TheGennoorWayPage() {
                       <span className="text-xs font-bold tracking-widest text-gray-300">
                         {phase.number}
                       </span>
-                      <div className="w-10 h-10 rounded-xl bg-primary-500 flex items-center justify-center shadow-lg shadow-primary-500/15 group-hover:scale-105 transition-transform">
+                      <div className="w-10 h-10 rounded-xl bg-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/15 group-hover:scale-105 transition-transform">
                         <Icon className="w-5 h-5 text-white" />
                       </div>
                     </div>
@@ -385,7 +385,7 @@ export default function TheGennoorWayPage() {
                   {/* Header */}
                   <div className="flex flex-col sm:flex-row sm:items-start gap-6 mb-8">
                     <div className="flex-shrink-0">
-                      <div className="w-16 h-16 rounded-2xl bg-primary-500 flex items-center justify-center shadow-lg shadow-primary-500/15">
+                      <div className="w-16 h-16 rounded-2xl bg-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/15">
                         <Icon className="w-8 h-8 text-white" />
                       </div>
                     </div>
@@ -511,7 +511,7 @@ export default function TheGennoorWayPage() {
                   key={scenario.title}
                   className="rounded-2xl p-7 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-500"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-primary-500 flex items-center justify-center mb-5 shadow-lg shadow-primary-500/15">
+                  <div className="w-12 h-12 rounded-xl bg-primary-600 flex items-center justify-center mb-5 shadow-lg shadow-primary-500/15">
                     <Icon className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-gray-900 mb-2">{scenario.title}</h3>

@@ -231,17 +231,17 @@ export default function EnterpriseAITrainingGuide() {
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Link href="/services/certifications/ai-901-azure-ai-fundamentals" className="glass-card p-6 hover:shadow-md transition-shadow group">
-                  <span className="text-xl font-bold text-blue-600">AI-901</span>
+                  <span className="text-xl font-bold text-primary-600">AI-901</span>
                   <h3 className="font-semibold text-gray-900 mt-1 group-hover:text-primary-600">Azure AI Fundamentals</h3>
                   <p className="text-sm text-gray-600 mt-1">Best starting point for all roles</p>
                 </Link>
                 <Link href="/services/certifications/ai-103-azure-ai-app-and-agent-developer-associate" className="glass-card p-6 hover:shadow-md transition-shadow group">
-                  <span className="text-xl font-bold text-blue-600">AI-103</span>
+                  <span className="text-xl font-bold text-primary-600">AI-103</span>
                   <h3 className="font-semibold text-gray-900 mt-1 group-hover:text-primary-600">AI App & Agent Developer</h3>
                   <p className="text-sm text-gray-600 mt-1">For developers building AI applications</p>
                 </Link>
                 <Link href="/services/certifications/ab-100-agentic-ai-business-solutions-architect" className="glass-card p-6 hover:shadow-md transition-shadow group">
-                  <span className="text-xl font-bold text-blue-600">AB-100</span>
+                  <span className="text-xl font-bold text-primary-600">AB-100</span>
                   <h3 className="font-semibold text-gray-900 mt-1 group-hover:text-primary-600">Agentic AI Architect</h3>
                   <p className="text-sm text-gray-600 mt-1">For architects designing agent systems</p>
                 </Link>
