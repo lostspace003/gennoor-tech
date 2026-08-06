@@ -726,7 +726,7 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
     >
       {/* Top bar — minimal: hamburger · title · close */}
       <div
-        className={`flex-shrink-0 bg-[#0C1426] text-white flex items-center px-3 gap-3 z-20 transition-all duration-300 ${
+        className={`flex-shrink-0 bg-gray-900 text-white flex items-center px-3 gap-3 z-20 transition-all duration-300 ${
           barsHidden ? 'h-0 opacity-0 overflow-hidden' : 'h-12'
         }`}
       >
@@ -779,7 +779,7 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
               onClick={() => setDrawerOpen(false)}
               aria-hidden="true"
             />
-            <aside className="absolute left-0 top-0 bottom-0 z-40 w-80 max-w-[85vw] bg-[#0C1426] text-white overflow-y-auto shadow-2xl animate-fade-in">
+            <aside className="absolute left-0 top-0 bottom-0 z-40 w-80 max-w-[85vw] bg-gray-900 text-white overflow-y-auto shadow-2xl animate-fade-in">
               <div className="p-4">
                 <div className="flex items-center justify-between mb-1">
                   <h3 className="text-xs font-bold tracking-widest text-white/40 uppercase">
@@ -890,7 +890,7 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
 
       {/* Bottom control bar — VLC-style */}
       <div
-        className={`flex-shrink-0 bg-[#0C1426] text-white flex items-center px-3 gap-2 z-20 transition-all duration-300 ${
+        className={`flex-shrink-0 bg-gray-900 text-white flex items-center px-3 gap-2 z-20 transition-all duration-300 ${
           barsHidden ? 'h-0 opacity-0 overflow-hidden' : 'h-14'
         }`}
       >
@@ -1003,7 +1003,7 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
         {nextChapter && (
           <button
             onClick={() => swapChapter(nextChapter)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue transition-all flex-shrink-0"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-primary-600 transition-all flex-shrink-0"
             title={`Next: ${nextChapter.title}`}
           >
             <span className="hidden sm:inline">Next</span>

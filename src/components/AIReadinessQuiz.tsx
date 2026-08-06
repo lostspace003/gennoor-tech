@@ -376,7 +376,7 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
             <button
               onClick={handleSendOTP}
               disabled={sending || !email.trim()}
-              className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full py-3 bg-primary-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {sending ? 'Sending...' : <><ArrowRight className="w-4 h-4" /> Send verification code</>}
             </button>
@@ -426,7 +426,7 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
             <button
               onClick={handleVerifyOTP}
               disabled={sending || otp.length < 6 || otpTimer <= 0}
-              className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50"
+              className="w-full py-3 bg-primary-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50"
             >
               {sending ? 'Verifying...' : 'Verify & Start'}
             </button>
@@ -589,7 +589,7 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
         </div>
 
         {/* Quick Win */}
-        <div className={`bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-6 transition-all duration-700 ${revealIndex >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+        <div className={` bg-amber-50 rounded-2xl border border-amber-200 p-6 transition-all duration-700 ${revealIndex >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <div className="flex items-start gap-3 mb-3">
             <Lightbulb className="w-5 h-5 text-amber-600 flex-shrink-0" />
             <div>
@@ -692,7 +692,7 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
         </div>
         <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-primary-500 to-accent-500 rounded-full transition-all duration-500 ease-out"
+            className="h-full bg-primary-500 rounded-full transition-all duration-500 ease-out"
             style={{ width: `${progress}%` }}
           />
         </div>

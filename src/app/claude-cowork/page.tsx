@@ -20,7 +20,7 @@ const topics = [
 
 export default function ClaudeCoworkPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0F1729] via-[#1B2845] to-[#0F1729]">
+    <div className="min-h-screen bg-gray-900">
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">

@@ -181,7 +181,7 @@ export default function CertificateClaimForm({ courseId, onClaimed }: Props) {
           <button
             onClick={sendCode}
             disabled={sending}
-            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-sm font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-primary-600 text-white text-sm font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
           >
             {sending ? (
               <>
@@ -236,7 +236,7 @@ export default function CertificateClaimForm({ courseId, onClaimed }: Props) {
           <button
             onClick={claim}
             disabled={step === 'claiming' || otp.trim().length !== 6}
-            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-sm font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-primary-600 text-white text-sm font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
           >
             {step === 'claiming' ? (
               <>

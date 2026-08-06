@@ -15,8 +15,8 @@ export default function CTASection() {
   return (
     <section className="py-14 lg:py-20 relative overflow-hidden">
       {/* Ambient gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#f0f4ff] via-white to-[#f0fdf8]" />
-      <div className="absolute inset-0 bg-gradient-mesh" />
+      <div className="absolute inset-0 bg-gray-50" />
+      <div className="absolute inset-0" />
 
       {/* Ambient glow */}
       <motion.div
@@ -69,7 +69,7 @@ export default function CTASection() {
               <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                 <Link
                   href="/resources/calendar"
-                  className="inline-flex items-center justify-center px-8 py-4 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue transition-all duration-300 group"
+                  className="inline-flex items-center justify-center px-8 py-4 text-sm font-semibold rounded-xl text-white bg-primary-600 transition-all duration-300 group"
                 >
                   Book a Discovery Call
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />

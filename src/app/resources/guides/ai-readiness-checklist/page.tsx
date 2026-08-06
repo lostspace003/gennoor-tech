@@ -89,7 +89,7 @@ export default function AIReadinessChecklist() {
         {/* Hero */}
         <section className="relative py-10 lg:py-16 overflow-hidden">
           <div className="absolute inset-0 bg-white" />
-          <div className="absolute inset-0 bg-gradient-mesh" />
+          <div className="absolute inset-0" />
           <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
           <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl">
@@ -103,7 +103,7 @@ export default function AIReadinessChecklist() {
                 25 critical checkpoints across 5 dimensions. Assess your organization&apos;s readiness for
                 AI adoption — based on 14+ years of enterprise AI consulting across 6 countries.
               </p>
-              <Link href="/contact#book" className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300">
+              <Link href="/contact#book" className="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-medium rounded-xl transition-all duration-300">
                 Get Expert Assessment
               </Link>
             </div>
@@ -196,7 +196,7 @@ export default function AIReadinessChecklist() {
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               Book a free 30-minute discovery call. We&apos;ll review your checklist results and recommend next steps.
             </p>
-            <Link href="/contact#book" className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300">
+            <Link href="/contact#book" className="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-medium rounded-xl transition-all duration-300">
               Book Free Assessment Call
             </Link>
           </div>

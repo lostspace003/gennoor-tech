@@ -82,7 +82,6 @@ export default function POCShowcase() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1, duration: 0.5 }}
-                  whileHover={{ y: -2 }}
                 >
                   <div className={`w-10 h-10 ${feature.color} rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform`}>
                     <feature.icon className="w-5 h-5" />

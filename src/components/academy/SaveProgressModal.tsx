@@ -30,7 +30,7 @@ export default function SaveProgressModal({ isVisible, onDismiss, onLoginSuccess
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 animate-slide-up">
-      <div className="bg-[#0C1426] text-white px-4 sm:px-6 py-4 shadow-2xl border-t-2 border-secondary-400">
+      <div className="bg-gray-900 text-white px-4 sm:px-6 py-4 shadow-2xl border-t-2 border-secondary-400">
         <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-secondary-400/20 flex items-center justify-center flex-shrink-0">

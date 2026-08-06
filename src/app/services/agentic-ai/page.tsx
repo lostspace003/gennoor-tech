@@ -293,7 +293,7 @@ export default function AgenticAIPage() {
       {/* CTA */}
       <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">
             Ready to Build Your AI Agent Team?
@@ -303,7 +303,7 @@ export default function AgenticAIPage() {
           </p>
           <Link
             href="/contact#book"
-            className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300"
+            className="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-medium rounded-xl transition-all duration-300"
           >
             Schedule Agent Strategy Session
           </Link>

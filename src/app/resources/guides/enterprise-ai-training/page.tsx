@@ -84,7 +84,7 @@ export default function EnterpriseAITrainingGuide() {
         {/* Hero */}
         <section className="relative py-10 lg:py-16 overflow-hidden">
           <div className="absolute inset-0 bg-white" />
-          <div className="absolute inset-0 bg-gradient-mesh" />
+          <div className="absolute inset-0" />
           <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
           <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl">
@@ -99,7 +99,7 @@ export default function EnterpriseAITrainingGuide() {
                 Based on training 2000+ professionals across Fortune 500 companies in 6 countries.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link href="/services/training" className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300">
+                <Link href="/services/training" className="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-medium rounded-xl transition-all duration-300">
                   View Training Programs
                 </Link>
                 <Link href="/contact#book" className="inline-flex items-center px-8 py-4 border-2 border-primary-600 text-primary-700 font-medium rounded-xl hover:bg-primary-50 transition-colors">
@@ -280,7 +280,7 @@ export default function EnterpriseAITrainingGuide() {
               Get a customized training roadmap for your organization. We&apos;ll assess your current maturity and recommend the right programs.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link href="/contact#book" className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300">
+              <Link href="/contact#book" className="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-medium rounded-xl transition-all duration-300">
                 Get Training Roadmap
               </Link>
               <Link href="/services/training" className="inline-flex items-center px-8 py-4 border-2 border-primary-600 text-primary-700 font-medium rounded-xl hover:bg-primary-50 transition-colors">

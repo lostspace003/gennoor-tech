@@ -29,7 +29,7 @@ export default function Footer() {
     <footer className="relative border-t border-gray-100/60">
       {/* Newsletter Section */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0f1729] via-[#111b33] to-[#0c1524]" />
+        <div className="absolute inset-0 bg-gray-900" />
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{

@@ -89,7 +89,7 @@ export default function CrmCopilot() {
               : 'top-12 right-0 bottom-0 w-full sm:w-[400px] sm:rounded-tl-xl border-r-0'
           }`}
         >
-          <div className="px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white flex items-center justify-between shrink-0 rounded-t-[inherit]">
+          <div className="px-4 py-3 bg-blue-600 text-white flex items-center justify-between shrink-0 rounded-t-[inherit]">
             <div className="flex items-center gap-2.5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/logos/gennoorbot-avatar.svg" alt="GennoorBot" className="w-8 h-8" />

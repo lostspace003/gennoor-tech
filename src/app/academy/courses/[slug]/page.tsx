@@ -112,7 +112,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
       {/* HERO */}
       <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
 
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
@@ -176,7 +176,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
 
             <a
               href="#interactive-course"
-              className="mt-7 inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-amber-500 to-amber-600 hover:shadow-lg hover:shadow-amber-500/25 hover:-translate-y-0.5 transition-all"
+              className="mt-7 inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl text-white bg-amber-500 hover:shadow-lg hover:shadow-amber-500/25 transition-all"
             >
               {course.interactiveUrl
                 ? 'Take the interactive course'
@@ -359,7 +359,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
                   <div className="flex flex-col gap-2 flex-shrink-0">
                     <Link
                       href={course.interactiveUrl}
-                      className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-amber-500 to-amber-600 hover:shadow-lg hover:shadow-amber-500/25 hover:-translate-y-0.5 transition-all"
+                      className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl text-white bg-amber-500 hover:shadow-lg hover:shadow-amber-500/25 transition-all"
                     >
                       Take the interactive course
                       <ArrowRight className="w-4 h-4" />
@@ -392,7 +392,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
                   </div>
                   <Link
                     href="/contact"
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue transition-all flex-shrink-0"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl text-white bg-primary-600 transition-all flex-shrink-0"
                   >
                     Get notified when chapters ship
                     <ArrowRight className="w-4 h-4" />
@@ -412,7 +412,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
                   </div>
                   <Link
                     href="/contact"
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue transition-all flex-shrink-0"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl text-white bg-primary-600 transition-all flex-shrink-0"
                   >
                     Request early access
                     <ArrowRight className="w-4 h-4" />

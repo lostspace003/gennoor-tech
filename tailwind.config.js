@@ -1,4 +1,67 @@
 /** @type {import('tailwindcss').Config} */
+
+/**
+ * ── Gennoor "iCloud-calm" palette ───────────────────────────────────────────
+ *
+ * One neutral ramp + one accent. Everything else is a *muted* semantic ramp
+ * that exists only so genuine status text stays legible — never so a page can
+ * be decorated with it.
+ *
+ * The decorative families (purple, teal, indigo, pink, …) are deliberately
+ * re-pointed at the neutral ramp. That is not laziness: ~700 existing class
+ * names across the site reference them, and re-pointing the token is how they
+ * all go quiet at once without touching 100+ files or losing any content.
+ * Adding a new colour here should feel like a big decision. It is.
+ */
+
+// Apple system neutrals — the iCloud sidebar/canvas greys.
+const neutral = {
+  50: '#fbfbfd',
+  100: '#f5f5f7',
+  200: '#e8e8ed',
+  300: '#d2d2d7',
+  400: '#aeaeb2',
+  500: '#86868b',
+  600: '#6e6e73',
+  700: '#48484a',
+  800: '#2c2c2e',
+  900: '#1d1d1f',
+  950: '#111113',
+}
+
+// The single accent. Used for links, active nav, and primary buttons. Nothing else.
+const accentBlue = {
+  50: '#f0f7ff',
+  100: '#e8f0fe',
+  200: '#cfe3fd',
+  300: '#a6cbfa',
+  400: '#5aa9f3',
+  500: '#1a8cf0',
+  600: '#0071e3',
+  700: '#0058b0',
+  800: '#004488',
+  900: '#00336b',
+  950: '#002450',
+}
+
+// Muted semantics. Tints (50/100) sit a hair off white so old `bg-green-50`
+// panels read as paper, while 600/700 stays dark enough for accessible text.
+const ok = {
+  50: '#f3f8f4', 100: '#e4efe8', 200: '#c6dfcf', 300: '#98c6a7',
+  400: '#5fa77a', 500: '#318f56', 600: '#1d8348', 700: '#17663a',
+  800: '#14512f', 900: '#113f27', 950: '#0b2a1a',
+}
+const warn = {
+  50: '#fbf8f0', 100: '#f5eeda', 200: '#e9dcb3', 300: '#d8c283',
+  400: '#c2a455', 500: '#a98634', 600: '#9a6700', 700: '#7c5400',
+  800: '#63430a', 900: '#52380c', 950: '#372408',
+}
+const err = {
+  50: '#fdf4f3', 100: '#fbe7e5', 200: '#f4cbc7', 300: '#eaa59d',
+  400: '#d9746a', 500: '#ca4d41', 600: '#c0392b', 700: '#9b2c21',
+  800: '#7d251c', 900: '#682019', 950: '#3f120e',
+}
+
 module.exports = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -8,62 +71,43 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
-        },
-        secondary: {
-          50: '#fffbeb',
-          100: '#fef3c7',
-          200: '#fde68a',
-          300: '#fcd34d',
-          400: '#fbbf24',
-          500: '#f59e0b',
-          600: '#d97706',
-          700: '#b45309',
-          800: '#92400e',
-          900: '#78350f',
-        },
-        accent: {
-          50: '#f0fdfa',
-          100: '#ccfbf1',
-          200: '#99f6e4',
-          300: '#5eead4',
-          400: '#2dd4bf',
-          500: '#14b8a6',
-          600: '#0d9488',
-          700: '#0f766e',
-          800: '#115e59',
-          900: '#134e4a',
-        },
-        dark: {
-          50: '#f8fafc',
-          100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#64748b',
-          600: '#475569',
-          700: '#334155',
-          800: '#1e293b',
-          900: '#0f172a',
-        },
-        success: '#10b981',
-        warning: '#f59e0b',
-        error: '#ef4444',
-        glass: {
-          white: 'rgba(255, 255, 255, 0.08)',
-          border: 'rgba(255, 255, 255, 0.12)',
-          hover: 'rgba(255, 255, 255, 0.16)',
-        },
+        // ── The system ──────────────────────────────────────────────
+        primary: accentBlue,
+        gray: neutral,
+        slate: neutral,
+        zinc: neutral,
+        neutral: neutral,
+        stone: neutral,
+        dark: neutral,
+
+        // ── Muted semantics ─────────────────────────────────────────
+        green: ok,
+        emerald: ok,
+        lime: ok,
+        amber: warn,
+        yellow: warn,
+        orange: warn,
+        red: err,
+        rose: err,
+
+        // ── Re-pointed decoratives ──────────────────────────────────
+        // These names survive only so existing class strings keep compiling.
+        // They all resolve to the system; none of them add a colour.
+        accent: accentBlue,
+        blue: accentBlue,
+        sky: accentBlue,
+        indigo: accentBlue,
+        secondary: neutral,
+        purple: neutral,
+        violet: neutral,
+        fuchsia: neutral,
+        pink: neutral,
+        teal: neutral,
+        cyan: neutral,
+
+        success: ok[600],
+        warning: warn[600],
+        error: err[600],
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'Inter', 'system-ui', 'sans-serif'],
@@ -72,28 +116,32 @@ module.exports = {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-        'gradient-primary': 'linear-gradient(135deg, #2563eb 0%, #0d9488 100%)',
-        'gradient-glass': 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
-        'gradient-glow': 'radial-gradient(ellipse at center, rgba(37,99,235,0.15) 0%, transparent 70%)',
-        'gradient-ambient': 'radial-gradient(ellipse at top, rgba(37,99,235,0.08) 0%, transparent 50%)',
-        'gradient-mesh': 'radial-gradient(at 40% 20%, rgba(37,99,235,0.06) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(13,148,136,0.06) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(37,99,235,0.04) 0px, transparent 50%)',
+        // Flattened: the old brand gradients now resolve to solid accent/paper.
+        'gradient-primary': accentBlue[600],
+        'gradient-glass': neutral[50],
+        'gradient-glow': 'none',
+        'gradient-ambient': 'none',
+        'gradient-mesh': 'none',
       },
       boxShadow: {
-        'glass': '0 8px 32px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-        'glass-lg': '0 16px 48px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-        'glass-glow': '0 8px 32px rgba(37, 99, 235, 0.12), 0 0 0 1px rgba(37, 99, 235, 0.06)',
-        'card-hover': '0 2px 4px rgba(15, 23, 42, 0.05), 0 24px 48px -16px rgba(15, 23, 42, 0.12)',
-        'ambient': '0 0 80px rgba(37, 99, 235, 0.08)',
-        'glow-blue': '0 0 40px rgba(37, 99, 235, 0.2)',
-        'glow-teal': '0 0 40px rgba(13, 148, 136, 0.2)',
+        // Depth comes from 1px hairlines and whitespace, not blur or glow.
+        // The glow-* names are kept and neutered so no file needs editing.
+        'glass': '0 1px 2px rgba(0, 0, 0, 0.04)',
+        'glass-lg': '0 4px 16px -4px rgba(0, 0, 0, 0.08)',
+        'glass-glow': '0 1px 2px rgba(0, 0, 0, 0.04)',
+        'card-hover': '0 4px 16px -4px rgba(0, 0, 0, 0.08)',
+        'ambient': 'none',
+        'glow-blue': '0 1px 2px rgba(0, 0, 0, 0.06)',
+        'glow-teal': '0 1px 2px rgba(0, 0, 0, 0.06)',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'slide-up': 'slideUp 0.3s ease-out',
         'slide-down': 'slideDown 0.3s ease-out',
-        'gradient-shift': 'gradientShift 8s ease infinite',
-        'float': 'float 6s ease-in-out infinite',
-        'glow': 'glowPulse 3s ease-in-out infinite',
+        // Ambient motion is off; names kept so existing classes stay valid.
+        'gradient-shift': 'none',
+        'float': 'none',
+        'glow': 'none',
         'shimmer': 'shimmer 2s linear infinite',
       },
       keyframes: {
@@ -108,18 +156,6 @@ module.exports = {
         slideDown: {
           '0%': { transform: 'translateY(-10px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
-        },
-        gradientShift: {
-          '0%, 100%': { backgroundPosition: '0% 50%' },
-          '50%': { backgroundPosition: '100% 50%' },
-        },
-        float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-12px)' },
-        },
-        glowPulse: {
-          '0%, 100%': { opacity: '0.4' },
-          '50%': { opacity: '0.8' },
         },
         shimmer: {
           '0%': { transform: 'translateX(-100%)' },

@@ -27,14 +27,14 @@ const categoryOrder = [
 ]
 
 const categoryColors: Record<string, string> = {
-  'AI Transformation': 'from-purple-500 to-purple-600',
-  'Agentic AI': 'from-indigo-500 to-indigo-600',
-  'AI CERTs': 'from-yellow-500 to-yellow-600',
-  'Expert': 'from-red-500 to-red-600',
-  'Associate': 'from-blue-500 to-blue-600',
-  'Fundamentals': 'from-green-500 to-green-600',
-  'GitHub': 'from-gray-600 to-gray-700',
-  'Applied Skills': 'from-orange-500 to-orange-600',
+  'AI Transformation': 'bg-gray-400',
+  'Agentic AI': 'bg-gray-400',
+  'AI CERTs': 'bg-gray-400',
+  'Expert': 'bg-gray-400',
+  'Associate': 'bg-gray-400',
+  'Fundamentals': 'bg-gray-400',
+  'GitHub': 'bg-gray-400',
+  'Applied Skills': 'bg-gray-400',
 }
 
 export default function FounderPage() {
@@ -95,7 +95,7 @@ export default function FounderPage() {
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Credentials</h2>
             <div className="flex flex-col gap-4">
               <div className="flex flex-col sm:flex-row gap-4">
-                <div className="inline-flex items-center bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl px-6 py-3 shadow-lg shadow-primary-500/15">
+                <div className="inline-flex items-center bg-primary-600 text-white rounded-xl px-6 py-3 shadow-lg shadow-primary-500/15">
                   <Shield className="w-6 h-6 mr-3" />
                   <div>
                     <p className="font-bold">Microsoft Certified Trainer (MCT)</p>
@@ -105,7 +105,7 @@ export default function FounderPage() {
                 <MCTCertificateButton pdfUrl={`${BLOB_URL}/certificates/0-mct-certifcate.pdf`} />
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
-                <div className="inline-flex items-center bg-gradient-to-r from-yellow-600 to-yellow-700 text-white rounded-xl px-6 py-3 shadow-lg shadow-yellow-500/15">
+                <div className="inline-flex items-center bg-yellow-600 text-white rounded-xl px-6 py-3 shadow-lg shadow-yellow-500/15">
                   <Award className="w-6 h-6 mr-3" />
                   <div>
                     <p className="font-bold">AI CERTs Certified Trainer (AICT)</p>
@@ -144,7 +144,7 @@ export default function FounderPage() {
                 href="https://learn.microsoft.com/en-us/users/lostspace003/transcript/vjw63s4jxnmmwre?tab=credentials-tab"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:shadow-glow-blue transition-all duration-300 text-sm font-semibold"
+                className="inline-flex items-center px-5 py-2.5 bg-primary-600 text-white rounded-xl transition-all duration-300 text-sm font-semibold"
               >
                 <Trophy className="w-4 h-4 mr-2" />
                 <span>View Full Microsoft Learn Profile</span>
@@ -167,7 +167,7 @@ export default function FounderPage() {
               return (
                 <div key={category} className="mb-12">
                   <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
-                    <div className={`w-1 h-8 bg-gradient-to-b ${categoryColors[category as keyof typeof categoryColors]} mr-3`} />
+                    <div className={`w-1 h-8 ${categoryColors[category as keyof typeof categoryColors]} mr-3`} />
                     {category}
                   </h3>
 
@@ -216,7 +216,7 @@ export default function FounderPage() {
           <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               href="/contact"
-              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-sm font-semibold rounded-xl hover:shadow-glow-blue transition-all duration-300"
+              className="inline-flex items-center px-6 py-3 bg-primary-600 text-white text-sm font-semibold rounded-xl transition-all duration-300"
             >
               Work with Gennoor Tech
               <ArrowRight className="ml-2 w-4 h-4" />

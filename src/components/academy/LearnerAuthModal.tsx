@@ -207,7 +207,7 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in">
         {/* Header */}
-        <div className="bg-gradient-to-r from-primary-600 to-accent-600 px-6 py-5">
+        <div className="bg-primary-600 px-6 py-5">
           <button onClick={onClose} className="absolute top-4 right-4 text-white/70 hover:text-white">
             <X className="w-5 h-5" />
           </button>

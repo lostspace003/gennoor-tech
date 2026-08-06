@@ -331,7 +331,7 @@ export default function CertificationEnquiryForm({
       <div className="relative z-10 w-full max-w-2xl my-8">
         <div className="bg-white rounded-lg shadow-xl max-h-[90vh] flex flex-col overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b flex-shrink-0 bg-gradient-to-r from-primary-50 to-primary-100">
+          <div className="flex items-center justify-between p-6 border-b flex-shrink-0 bg-primary-50">
             <div>
               <h2 className="text-xl font-bold text-gray-900">Certification Preparation Enquiry</h2>
               <p className="text-sm text-gray-600 mt-1">Get personalized guidance for your certification journey</p>

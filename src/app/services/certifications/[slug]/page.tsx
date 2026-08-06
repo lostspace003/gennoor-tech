@@ -315,7 +315,7 @@ export default async function CertificationGuidePage({ params }: Props) {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/contact#book"
-                className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-xl hover:shadow-glow-blue transition-all duration-300"
+                className="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-semibold rounded-xl transition-all duration-300"
               >
                 Start Preparation
               </Link>

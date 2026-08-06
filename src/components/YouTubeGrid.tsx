@@ -29,7 +29,7 @@ export function VideoCard({ video }: { video: YouTubeVideo }) {
   const [playing, setPlaying] = useState(false)
 
   return (
-    <div className="group rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-out bg-white border border-gray-100">
+    <div className="group rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 ease-out bg-white border border-gray-100">
       <div className="relative aspect-video bg-gray-100">
         {playing ? (
           <iframe

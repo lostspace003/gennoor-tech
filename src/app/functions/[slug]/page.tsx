@@ -45,7 +45,7 @@ export default async function FunctionDetailPage({ params }: PageProps) {
           { name: fn.name, url: `https://gennoor.com/functions/${fn.slug}` },
         ]}
       />
-      <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
+      <div className="min-h-screen bg-white">
         <div className="max-w-5xl mx-auto px-6 pt-8">
           <Link href="/functions" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-secondary-700 transition-colors">
             <ArrowLeft className="w-4 h-4" /> All functions
@@ -121,7 +121,7 @@ export default async function FunctionDetailPage({ params }: PageProps) {
         )}
 
         <section className="max-w-5xl mx-auto px-6 pb-20">
-          <div className="bg-gradient-to-br from-secondary-600 to-secondary-800 rounded-2xl p-8 md:p-12 text-white">
+          <div className="bg-secondary-600 rounded-2xl p-8 md:p-12 text-white">
             <h2 className="text-2xl md:text-3xl font-bold mb-3">Want a {fn.name} AI roadmap in 90 days?</h2>
             <p className="text-white/80 mb-6 max-w-2xl">
               Book a 30-minute call. We’ll map the three problems above to your reality and come back with a fixed-scope proposal in 5 working days.

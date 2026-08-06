@@ -415,7 +415,7 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
             <input type="text" placeholder="Your name (optional)" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400" />
             <input type="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSendOTP()} className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400" autoFocus />
             {error && <p className="text-sm text-red-500">{error}</p>}
-            <button onClick={handleSendOTP} disabled={sending || !email.trim()} className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+            <button onClick={handleSendOTP} disabled={sending || !email.trim()} className="w-full py-3 bg-primary-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2">
               {sending ? 'Sending...' : <><ArrowRight className="w-4 h-4" /> Send verification code</>}
             </button>
           </div>
@@ -451,7 +451,7 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
               )}
             </div>
             {error && <p className="text-sm text-red-500">{error}</p>}
-            <button onClick={handleVerifyOTP} disabled={sending || otp.length < 6 || otpTimer <= 0} className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50">
+            <button onClick={handleVerifyOTP} disabled={sending || otp.length < 6 || otpTimer <= 0} className="w-full py-3 bg-primary-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50">
               {sending ? 'Verifying...' : 'Verify & Start'}
             </button>
           </div>
@@ -525,7 +525,7 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
 
           {/* Progress bar */}
           <div className="h-1 bg-gray-100">
-            <div className="h-full bg-gradient-to-r from-primary-500 to-accent-500 transition-all duration-500" style={{ width: `${progressPct}%` }} />
+            <div className="h-full bg-primary-500 transition-all duration-500" style={{ width: `${progressPct}%` }} />
           </div>
 
           {/* Slide content */}
@@ -574,7 +574,7 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
                         <span className="text-sm font-bold text-gray-900">{p.score}</span>
                       </div>
                       <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-gradient-to-r from-primary-500 to-accent-500 rounded-full transition-all duration-1000" style={{ width: `${p.score}%` }} />
+                        <div className="h-full bg-primary-500 rounded-full transition-all duration-1000" style={{ width: `${p.score}%` }} />
                       </div>
                       <p className="text-xs text-gray-500 mt-1">{p.insight}</p>
                     </div>
@@ -696,7 +696,7 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
         <div className="mt-8 space-y-4">
           {!isPlaying && currentSlide === 0 && (
             <div className="text-center">
-              <button onClick={startPresentation} className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all shadow-lg">
+              <button onClick={startPresentation} className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all shadow-lg">
                 <Play className="w-4 h-4" /> Play my report
               </button>
             </div>
@@ -745,7 +745,7 @@ export default function AIReadinessQuizV2({ onLock, onUnlock }: QuizV2Props) {
           <span className="text-sm font-medium text-primary-600">{Math.round(progress)}%</span>
         </div>
         <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-primary-500 to-accent-500 rounded-full transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
+          <div className="h-full bg-primary-500 rounded-full transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
         </div>
       </div>
 

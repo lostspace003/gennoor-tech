@@ -93,7 +93,7 @@ export default async function CurriculumViewerPage({ params }: Props) {
               <a
                 href={pdfUrl}
                 download={`${course.slug}.pdf`}
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue text-white text-sm font-semibold rounded-xl transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-xl transition-all duration-300"
               >
                 <Download className="w-4 h-4" />
                 Download PDF
@@ -167,7 +167,7 @@ export default async function CurriculumViewerPage({ params }: Props) {
               </p>
               <Link
                 href="/contact#book"
-                className="block w-full text-center px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue text-white text-xs font-semibold rounded-xl transition-all duration-300"
+                className="block w-full text-center px-4 py-2 bg-primary-600 text-white text-xs font-semibold rounded-xl transition-all duration-300"
               >
                 Request quote
               </Link>
@@ -223,7 +223,7 @@ export default async function CurriculumViewerPage({ params }: Props) {
               </div>
             )}
 
-            <div className="rounded-2xl bg-gradient-to-br from-primary-600 to-primary-700 p-6 sm:p-8 text-white">
+            <div className="rounded-2xl bg-primary-600 p-6 sm:p-8 text-white">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
                 <div className="flex-1 min-w-0">
                   <h3 className="font-heading text-xl font-bold mb-1.5">

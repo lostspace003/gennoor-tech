@@ -33,8 +33,8 @@ export default function PoCCatalogClient() {
   )
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#0C1426] via-[#0F1B33] to-[#1A2547] text-white">
+    <div className="min-h-screen bg-white">
+      <section className="relative overflow-hidden bg-gray-900 text-white">
         <div className="absolute inset-0 opacity-30">
           <div className="absolute top-0 left-1/4 w-[40rem] h-[40rem] bg-primary-500/30 rounded-full blur-3xl" />
           <div className="absolute bottom-0 right-1/4 w-[35rem] h-[35rem] bg-secondary-400/20 rounded-full blur-3xl" />
@@ -126,7 +126,7 @@ export default function PoCCatalogClient() {
         </div>
       </section>
 
-      <section id="custom-build" className="bg-gradient-to-br from-secondary-50 via-white to-primary-50 border-y border-gray-200">
+      <section id="custom-build" className="bg-secondary-50 border-y border-gray-200">
         <div className="max-w-6xl mx-auto px-6 py-20">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-100 text-secondary-700 text-xs tracking-widest font-bold mb-4">

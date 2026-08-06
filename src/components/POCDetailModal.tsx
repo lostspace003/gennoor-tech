@@ -57,7 +57,7 @@ export default function POCDetailModal({ isOpen, onClose }: POCDetailModalProps)
         </button>
 
         {/* Header */}
-        <div className="bg-gradient-to-br from-primary-600 to-primary-800 px-6 py-8 rounded-t-2xl">
+        <div className="bg-primary-600 px-6 py-8 rounded-t-2xl">
           <div className="inline-flex items-center rounded-full px-3 py-1 mb-3 text-xs font-medium bg-white/15 text-blue-100 backdrop-blur-sm">
             <span className="flex h-2 w-2 rounded-full bg-green-400 mr-2 animate-pulse" />
             Live Proof of Concept

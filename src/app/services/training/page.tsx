@@ -51,7 +51,7 @@ export default function TrainingPage() {
       {/* ===== HERO — Train phase of the Gennoor Way ===== */}
       <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
@@ -107,7 +107,7 @@ export default function TrainingPage() {
             <div className="flex flex-wrap gap-3">
               <a
                 href="#catalog"
-                className="inline-flex items-center px-7 py-3.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-sm font-semibold rounded-xl hover:shadow-glow-blue transition-all duration-300"
+                className="inline-flex items-center px-7 py-3.5 bg-primary-600 text-white text-sm font-semibold rounded-xl transition-all duration-300"
               >
                 <BookOpen className="w-4 h-4 mr-2" />
                 Browse 2-day curriculum ({allCoursePdfs.length} courses)
@@ -181,7 +181,7 @@ export default function TrainingPage() {
             {pdfsByTrack.map(group => (
               <div key={group.track}>
                 <div className="flex items-center gap-3 mb-5">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg bg-primary-500 flex items-center justify-center">
                     <Layers className="w-4 h-4 text-white" />
                   </div>
                   <div>
@@ -325,7 +325,7 @@ export default function TrainingPage() {
       <section className="relative py-10 lg:py-16">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-10 lg:p-12 text-center">
+          <div className="bg-primary-600 rounded-2xl p-10 lg:p-12 text-center">
             <Globe className="w-16 h-16 text-white mx-auto mb-5" />
             <h2 className="text-3xl font-bold text-white mb-3">Delivery across GCC, Africa, South Asia</h2>
             <p className="text-lg text-white/90 mb-6 max-w-3xl mx-auto leading-relaxed">
@@ -371,7 +371,7 @@ export default function TrainingPage() {
       {/* ===== CTA ===== */}
       <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready for your team?</h2>
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
@@ -380,7 +380,7 @@ export default function TrainingPage() {
           <div className="flex flex-wrap justify-center gap-3">
             <Link
               href="/contact#book"
-              className="inline-flex items-center px-7 py-3.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-sm font-semibold rounded-xl hover:shadow-glow-blue transition-all duration-300"
+              className="inline-flex items-center px-7 py-3.5 bg-primary-600 text-white text-sm font-semibold rounded-xl transition-all duration-300"
             >
               Get training proposal
             </Link>

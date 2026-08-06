@@ -502,7 +502,7 @@ export default function TrustAndSecurityPage() {
       {/* HERO — short, factual */}
       <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
 
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
@@ -583,7 +583,7 @@ export default function TrustAndSecurityPage() {
             return (
               <div key={p.title} className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary-500/15">
+                  <div className="w-10 h-10 rounded-xl bg-primary-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary-500/15">
                     <Icon className="w-5 h-5 text-white" />
                   </div>
                   <div>
@@ -965,7 +965,7 @@ export default function TrustAndSecurityPage() {
       {/* 12. CONTACT */}
       <section id="contact" className="section-padding relative overflow-hidden">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
-        <div className="absolute inset-0 bg-gradient-mesh opacity-50" />
+        <div className="absolute inset-0 opacity-50" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <div className="inline-flex items-center rounded-full px-3 py-1 mb-4 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
@@ -983,7 +983,7 @@ export default function TrustAndSecurityPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl">
               <a
                 href="mailto:contact@gennoor.com?subject=Security%20Questionnaire%20Request"
-                className="group rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-300 hover:-translate-y-1"
+                className="group rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-300"
               >
                 <Mail className="w-6 h-6 text-primary-500 mb-3" />
                 <h3 className="text-base font-bold text-gray-900 mb-1">
@@ -999,7 +999,7 @@ export default function TrustAndSecurityPage() {
               </a>
               <Link
                 href="/contact"
-                className="group rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-300 hover:-translate-y-1"
+                className="group rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-300"
               >
                 <FileText className="w-6 h-6 text-primary-500 mb-3" />
                 <h3 className="text-base font-bold text-gray-900 mb-1">

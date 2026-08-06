@@ -193,7 +193,7 @@ export default function DashboardClient() {
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 text-white">
+      <section className="bg-slate-800 text-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-14 max-w-5xl">
           <p className="text-xs font-bold uppercase tracking-widest text-orange-400 mb-2">Your Gennoor Academy dashboard</p>
           <h1 className="font-heading text-3xl sm:text-4xl font-bold mb-2">

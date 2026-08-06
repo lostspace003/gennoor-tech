@@ -193,7 +193,7 @@ export default function GennoorCare() {
       {open && (
         <div className="fixed bottom-0 right-0 sm:bottom-5 sm:right-5 z-50 w-full sm:w-[330px] h-[100dvh] sm:h-[480px] sm:max-h-[78dvh] bg-white sm:rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden">
           {/* Header */}
-          <div className="px-3.5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white flex items-center justify-between shrink-0">
+          <div className="px-3.5 py-2.5 bg-blue-600 text-white flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2.5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/logos/gennoorbot-avatar.svg" alt="" className="w-8 h-8" />

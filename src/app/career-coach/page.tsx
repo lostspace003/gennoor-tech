@@ -575,7 +575,7 @@ export default function CareerCoachPage() {
         {/* Hero */}
         <section className="relative py-10 lg:py-16 overflow-hidden">
           <div className="absolute inset-0 bg-white" />
-          <div className="absolute inset-0 bg-gradient-mesh" />
+          <div className="absolute inset-0" />
           <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
           <div className="relative container text-center">
             <div className="mb-4">
@@ -657,7 +657,7 @@ export default function CareerCoachPage() {
       {/* Workspace Hero */}
       <section className="relative py-8 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh opacity-50" />
+        <div className="absolute inset-0 opacity-50" />
         <div className="relative container">
           <div className="flex items-center gap-4">
             <button onClick={() => { setSelectedAgent(null); reset() }} className="rounded-lg border border-gray-200 p-2 text-dark-500 hover:bg-gray-100 transition-colors">
@@ -746,7 +746,7 @@ export default function CareerCoachPage() {
                     <div className="flex items-center gap-3">
                       <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:shadow-glow-blue transition-all duration-300 px-5 py-2 text-sm font-medium"
+                        className="bg-primary-600 text-white rounded-xl transition-all duration-300 px-5 py-2 text-sm font-medium"
                       >
                         Choose File
                       </button>
@@ -825,7 +825,7 @@ export default function CareerCoachPage() {
                     <button
                       onClick={trySubmit}
                       disabled={status === 'streaming'}
-                      className="bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:shadow-glow-blue transition-all duration-300 px-6 py-2 text-sm font-semibold disabled:opacity-50 flex items-center gap-2"
+                      className="bg-primary-600 text-white rounded-xl transition-all duration-300 px-6 py-2 text-sm font-semibold disabled:opacity-50 flex items-center gap-2"
                     >
                       {status === 'streaming' ? (
                         <><span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> Processing...</>
@@ -1061,7 +1061,7 @@ export default function CareerCoachPage() {
               )}
               <button
                 onClick={() => setShowAutoFillReview(false)}
-                className="w-full bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:shadow-glow-blue transition-all duration-300 px-5 py-2.5 text-sm font-semibold"
+                className="w-full bg-primary-600 text-white rounded-xl transition-all duration-300 px-5 py-2.5 text-sm font-semibold"
               >
                 Review & Complete Form
               </button>
@@ -1099,7 +1099,7 @@ export default function CareerCoachPage() {
                 <button onClick={() => setShowReviewModal(false)} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-dark-600 hover:bg-gray-100 transition-colors">
                   Edit
                 </button>
-                <button onClick={confirmSubmit} className="bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:shadow-glow-blue transition-all duration-300 px-5 py-2 text-sm font-semibold flex items-center gap-2">
+                <button onClick={confirmSubmit} className="bg-primary-600 text-white rounded-xl transition-all duration-300 px-5 py-2 text-sm font-semibold flex items-center gap-2">
                   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                   Confirm & Run
                 </button>
@@ -1179,7 +1179,7 @@ export default function CareerCoachPage() {
               <button
                 onClick={handleDownloadPdf}
                 disabled={isGeneratingPdf || !dlEmailVerified}
-                className="w-full bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:shadow-glow-blue transition-all duration-300 px-5 py-2.5 text-sm font-semibold disabled:opacity-60 flex items-center justify-center gap-2"
+                className="w-full bg-primary-600 text-white rounded-xl transition-all duration-300 px-5 py-2.5 text-sm font-semibold disabled:opacity-60 flex items-center justify-center gap-2"
               >
                 {isGeneratingPdf ? (
                   <><span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> Generating PDF...</>
@@ -1241,7 +1241,7 @@ export default function CareerCoachPage() {
             <div className="px-6 py-4 border-t border-gray-100 bg-gray-50">
               <button
                 onClick={() => { setShowLinkedInTip(false); fileInputRef.current?.click() }}
-                className="w-full bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:shadow-glow-blue transition-all duration-300 px-5 py-2.5 text-sm font-semibold"
+                className="w-full bg-primary-600 text-white rounded-xl transition-all duration-300 px-5 py-2.5 text-sm font-semibold"
               >
                 Got it — Upload LinkedIn PDF
               </button>

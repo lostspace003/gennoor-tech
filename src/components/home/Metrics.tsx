@@ -59,7 +59,7 @@ export default function Metrics() {
   return (
     <section className="py-14 lg:py-20 relative overflow-hidden">
       {/* Premium gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0f1729] via-[#111b33] to-[#0c1524]" />
+      <div className="absolute inset-0 bg-gray-900" />
 
       {/* Ambient glow orbs */}
       <motion.div
@@ -100,7 +100,7 @@ export default function Metrics() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <span className="flex h-2 w-2 rounded-full bg-primary-400 mr-2.5 animate-pulse shadow-glow-blue" />
+            <span className="flex h-2 w-2 rounded-full bg-primary-400 mr-2.5 animate-pulse" />
             <span className="text-white/80">What We've Shipped</span>
           </motion.div>
           <p className="text-blue-200/60 text-lg max-w-3xl mx-auto">

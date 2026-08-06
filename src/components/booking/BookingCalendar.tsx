@@ -295,7 +295,7 @@ export default function BookingCalendar() {
           </p>
           <Link
             href="/"
-            className="inline-block bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl px-6 py-3 font-medium hover:shadow-glow-blue transition-all duration-300"
+            className="inline-block bg-primary-600 text-white rounded-xl px-6 py-3 font-medium transition-all duration-300"
           >
             Back to Home
           </Link>
@@ -610,7 +610,7 @@ export default function BookingCalendar() {
             <button
               type="submit"
               disabled={!selectedDate || !selectedSlot || !emailVerified || status === 'submitting'}
-              className="w-full bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl py-3 font-medium hover:shadow-glow-blue transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full bg-primary-600 text-white rounded-xl py-3 font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {status === 'submitting' ? (
                 <>

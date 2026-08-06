@@ -84,7 +84,7 @@ export default function BookCallModal({ isOpen, onClose, programTitle }: BookCal
       <div className="relative z-10 w-full max-w-md my-8">
         <div className="bg-white rounded-lg shadow-xl max-h-[90vh] flex flex-col overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b flex-shrink-0 bg-gradient-to-r from-primary-600 to-primary-700">
+          <div className="flex items-center justify-between p-6 border-b flex-shrink-0 bg-primary-600">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
                 <Phone className="w-5 h-5 text-white" />

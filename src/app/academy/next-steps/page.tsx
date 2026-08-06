@@ -78,7 +78,7 @@ const options = [
 
 export default function NextStepsPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-orange-50/30">
+    <main className="min-h-screen bg-gray-50">
       {/* Hero */}
       <section className="pt-20 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
@@ -106,7 +106,7 @@ export default function NextStepsPage() {
               return (
                 <article
                   key={opt.id}
-                  className={`bg-gradient-to-br ${opt.accent} rounded-2xl ring-1 ${opt.accentRing} p-6 sm:p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col`}
+                  className={`bg-gradient-to-br ${opt.accent} rounded-2xl ring-1 ${opt.accentRing} p-6 sm:p-8 transition-all duration-300 hover:shadow-xl flex flex-col`}
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="w-12 h-12 rounded-xl bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-sm">
@@ -132,7 +132,7 @@ export default function NextStepsPage() {
                   <div className="space-y-2 mt-auto">
                     <Link
                       href={opt.primaryCta.href}
-                      className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white text-sm font-bold rounded-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                      className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white text-sm font-bold rounded-lg transition-all duration-200 hover:shadow-md"
                     >
                       {opt.primaryCta.label}
                       <ArrowRight className="w-4 h-4" />

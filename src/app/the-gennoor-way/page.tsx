@@ -267,7 +267,7 @@ export default function TheGennoorWayPage() {
       {/* ═══════════════════════════════════════════════════════════════ */}
       <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
 
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
@@ -299,7 +299,7 @@ export default function TheGennoorWayPage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 href="/ai-readiness"
-                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue transition-all duration-300"
+                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-primary-600 transition-all duration-300"
               >
                 Run the 15-minute Diagnostic
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -322,13 +322,13 @@ export default function TheGennoorWayPage() {
                   <a
                     key={phase.slug}
                     href={`#${phase.slug}`}
-                    className="group block rounded-2xl p-5 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-300 hover:-translate-y-1 relative"
+                    className="group block rounded-2xl p-5 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-300 relative"
                   >
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-xs font-bold tracking-widest text-gray-300">
                         {phase.number}
                       </span>
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/15 group-hover:scale-105 transition-transform">
+                      <div className="w-10 h-10 rounded-xl bg-primary-500 flex items-center justify-center shadow-lg shadow-primary-500/15 group-hover:scale-105 transition-transform">
                         <Icon className="w-5 h-5 text-white" />
                       </div>
                     </div>
@@ -385,7 +385,7 @@ export default function TheGennoorWayPage() {
                   {/* Header */}
                   <div className="flex flex-col sm:flex-row sm:items-start gap-6 mb-8">
                     <div className="flex-shrink-0">
-                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/15">
+                      <div className="w-16 h-16 rounded-2xl bg-primary-500 flex items-center justify-center shadow-lg shadow-primary-500/15">
                         <Icon className="w-8 h-8 text-white" />
                       </div>
                     </div>
@@ -509,9 +509,9 @@ export default function TheGennoorWayPage() {
               return (
                 <div
                   key={scenario.title}
-                  className="rounded-2xl p-7 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-500 hover:-translate-y-1"
+                  className="rounded-2xl p-7 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-500"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center mb-5 shadow-lg shadow-primary-500/15">
+                  <div className="w-12 h-12 rounded-xl bg-primary-500 flex items-center justify-center mb-5 shadow-lg shadow-primary-500/15">
                     <Icon className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-gray-900 mb-2">{scenario.title}</h3>
@@ -583,7 +583,7 @@ export default function TheGennoorWayPage() {
       {/* ═══════════════════════════════════════════════════════════════ */}
       <section className="section-padding relative overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-5">
             Ready to find your phase?
@@ -595,7 +595,7 @@ export default function TheGennoorWayPage() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href="/ai-readiness"
-              className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue transition-all duration-300"
+              className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-primary-600 transition-all duration-300"
             >
               Run the Diagnostic
               <ArrowRight className="ml-2 h-4 w-4" />

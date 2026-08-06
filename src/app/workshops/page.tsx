@@ -19,7 +19,7 @@ const workshops: { title: string; description: string; href: string; status: Wor
     seats: '32 attended',
     topics: 8,
     instructor: 'Jalal Khan',
-    gradient: 'from-[#1B2845] to-[#2d4a7a]',
+    gradient: 'bg-gray-900',
     accent: '#FFD23F',
   },
   {
@@ -31,7 +31,7 @@ const workshops: { title: string; description: string; href: string; status: Wor
     seats: 'TBD',
     topics: 0,
     instructor: 'Jalal Khan',
-    gradient: 'from-blue-900 to-blue-700',
+    gradient: 'bg-gray-900',
     accent: '#60a5fa',
   },
   {
@@ -43,7 +43,7 @@ const workshops: { title: string; description: string; href: string; status: Wor
     seats: 'TBD',
     topics: 0,
     instructor: 'Jalal Khan',
-    gradient: 'from-purple-900 to-purple-700',
+    gradient: 'bg-gray-900',
     accent: '#c084fc',
   },
 ]
@@ -53,7 +53,7 @@ export default function WorkshopsPage() {
     <main className="min-h-screen">
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0C1426] via-[#111b33] to-[#0d3b66]" />
+        <div className="absolute inset-0 bg-gray-900" />
         <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:60px_60px]" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
           <div className="max-w-3xl mx-auto text-center">
@@ -85,7 +85,7 @@ export default function WorkshopsPage() {
                   }`}
                 >
                   {/* Gradient Header */}
-                  <div className={`relative h-44 bg-gradient-to-br ${workshop.gradient} p-6 flex flex-col justify-between`}>
+                  <div className={`relative h-44 ${workshop.gradient} p-6 flex flex-col justify-between`}>
                     <div className="flex items-start justify-between">
                       {(() => {
                         const status: WorkshopStatus = workshop.status

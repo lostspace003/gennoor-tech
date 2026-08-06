@@ -58,7 +58,7 @@ export default function PdfViewerModal({ title, pdfUrl, onClose }: PdfViewerModa
       <div
         ref={containerRef}
         onClick={e => e.stopPropagation()}
-        className="w-full max-w-5xl h-full max-h-[92vh] bg-[#0C1426] rounded-2xl overflow-hidden flex flex-col shadow-2xl"
+        className="w-full max-w-5xl h-full max-h-[92vh] bg-gray-900 rounded-2xl overflow-hidden flex flex-col shadow-2xl"
       >
         {/* Toolbar */}
         <div className="flex-shrink-0 h-14 flex items-center gap-3 px-4 text-white">

@@ -44,9 +44,9 @@ export default function IndustriesHubPage() {
           { name: 'Industries', url: 'https://gennoor.com/industries' },
         ]}
       />
-      <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
+      <div className="min-h-screen bg-white">
         {/* Hero */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-[#0C1426] via-[#0F1B33] to-[#1A2547] text-white">
+        <section className="relative overflow-hidden bg-gray-900 text-white">
           <div className="absolute inset-0 opacity-30">
             <div className="absolute top-0 right-1/4 w-[40rem] h-[40rem] bg-primary-500/30 rounded-full blur-3xl" />
             <div className="absolute bottom-0 left-1/4 w-[35rem] h-[35rem] bg-secondary-400/20 rounded-full blur-3xl" />
@@ -96,7 +96,7 @@ export default function IndustriesHubPage() {
 
         {/* Other sectors note */}
         <section className="max-w-5xl mx-auto px-6 pb-20">
-          <div className="bg-gradient-to-br from-secondary-50 via-white to-primary-50 rounded-2xl border border-gray-200 p-8 md:p-10 text-center">
+          <div className="bg-secondary-50 rounded-2xl border border-gray-200 p-8 md:p-10 text-center">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">Not your sector?</h2>
             <p className="text-gray-600 max-w-2xl mx-auto mb-6">
               Telecom, hospitality, legal services, real estate, agriculture — we deliver in all of them.

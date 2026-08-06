@@ -17,11 +17,11 @@ export default function CourseCard({ course, overallProgress = 0 }: CourseCardPr
   return (
     <Link
       href={`/ai-academy/${course.id}`}
-      className="group block bg-white rounded-2xl border border-gray-200/70 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden"
+      className="group block bg-white rounded-2xl border border-gray-200/70 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden"
     >
       {/* Themed header */}
       <div
-        className={`relative h-52 p-6 flex flex-col justify-between ${course.theme ? '' : 'bg-gradient-to-br from-primary-600 via-primary-700 to-accent-600'}`}
+        className={`relative h-52 p-6 flex flex-col justify-between ${course.theme ? '' : ' bg-primary-600 '}`}
         style={headerStyle}
       >
         <div className="flex items-start justify-between">

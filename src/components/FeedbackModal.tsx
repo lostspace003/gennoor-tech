@@ -68,7 +68,7 @@ export default function FeedbackModal({ onSubmit, onClose }: FeedbackModalProps)
         <button
           onClick={handleSubmit}
           disabled={rating === 0}
-          className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-40"
+          className="w-full py-3 bg-primary-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-40"
         >
           Submit & Continue
         </button>

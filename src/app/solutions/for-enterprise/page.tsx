@@ -616,7 +616,7 @@ export default function ForEnterprisePage() {
       {/* HERO */}
       <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
 
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
@@ -639,7 +639,7 @@ export default function ForEnterprisePage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue transition-all duration-300"
+                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-primary-600 transition-all duration-300"
               >
                 Request a scoping conversation
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -709,7 +709,7 @@ export default function ForEnterprisePage() {
                   {/* HEADER */}
                   <header className="flex flex-col lg:flex-row lg:items-start gap-6 mb-8 pb-8 border-b border-gray-100">
                     <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg shadow-primary-500/15 flex-shrink-0">
+                      <div className="w-16 h-16 rounded-2xl bg-primary-500 flex items-center justify-center shadow-lg shadow-primary-500/15 flex-shrink-0">
                         <Icon className="w-8 h-8 text-white" />
                       </div>
                       <div>
@@ -885,9 +885,9 @@ export default function ForEnterprisePage() {
               return (
                 <div
                   key={item.title}
-                  className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-500 hover:-translate-y-1"
+                  className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-500"
                 >
-                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
+                  <div className="w-11 h-11 rounded-xl bg-primary-500 flex items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
                     <Icon className="w-5 h-5 text-white" />
                   </div>
                   <h3 className="text-base font-bold text-gray-900 mb-2">{item.title}</h3>
@@ -1016,7 +1016,7 @@ export default function ForEnterprisePage() {
       {/* FINAL CTA */}
       <section className="section-padding relative overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-5">
             Ready for a scoping conversation?
@@ -1030,7 +1030,7 @@ export default function ForEnterprisePage() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue transition-all duration-300"
+              className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-primary-600 transition-all duration-300"
             >
               Request a scoping call
               <ArrowRight className="ml-2 h-4 w-4" />

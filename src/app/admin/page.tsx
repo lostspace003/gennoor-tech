@@ -505,7 +505,7 @@ export default function AdminDashboard() {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 flex items-center justify-center">
+      <div className="min-h-screen bg-blue-50 flex items-center justify-center">
         <div className="flex items-center gap-3">
           <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />
           <span className="text-slate-600">Loading session...</span>
@@ -522,7 +522,7 @@ export default function AdminDashboard() {
   // Load failure: without this branch the page would sit on the loading
   // spinner forever (error is set but `data` never becomes truthy).
   if (!data && error && !loading) return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 flex items-center justify-center">
+    <div className="min-h-screen bg-blue-50 flex items-center justify-center">
       <div className="text-center">
         <p className="text-red-600 font-medium mb-4">{error}</p>
         <button
@@ -537,7 +537,7 @@ export default function AdminDashboard() {
   )
 
   if (!data) return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 flex items-center justify-center">
+    <div className="min-h-screen bg-blue-50 flex items-center justify-center">
       <div className="flex items-center gap-3">
         <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />
         <span className="text-slate-600">Loading dashboard data...</span>
@@ -615,7 +615,7 @@ export default function AdminDashboard() {
       <header className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-teal-500 rounded-lg flex items-center justify-center">
+            <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
               <BarChart3 className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -646,7 +646,7 @@ export default function AdminDashboard() {
             </button>
             <CrmStatsTile />
             <GennoorCareTile />
-            <button onClick={() => router.push('/crm')} className="px-3 py-1.5 text-xs font-medium bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-md hover:shadow-md transition-all flex items-center gap-1.5">
+            <button onClick={() => router.push('/crm')} className="px-3 py-1.5 text-xs font-medium bg-purple-600 text-white rounded-md hover:shadow-md transition-all flex items-center gap-1.5">
               <Bot className="w-3.5 h-3.5" />
               CRM System
             </button>
@@ -691,7 +691,7 @@ export default function AdminDashboard() {
         {activeTab === 'overview' && (
           <div className="space-y-6 animate-fadeIn">
             {/* Live now banner — refreshes every 30s */}
-            <div className="admin-card flex items-center justify-between gap-4 px-5 py-3 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl shadow-sm">
+            <div className="admin-card flex items-center justify-between gap-4 px-5 py-3 bg-emerald-50 border border-emerald-200 rounded-xl shadow-sm">
               <div className="flex items-center gap-3">
                 <span className="relative flex h-3 w-3">
                   <span className={`${liveVisitors.count > 0 ? 'animate-ping' : ''} absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75`}></span>
@@ -2162,7 +2162,7 @@ export default function AdminDashboard() {
             <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
               <div className="flex items-center justify-between flex-wrap gap-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-teal-500 rounded-xl flex items-center justify-center"><Server className="w-6 h-6 text-white" /></div>
+                  <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center"><Server className="w-6 h-6 text-white" /></div>
                   <div>
                     <h2 className="text-lg font-semibold text-slate-800">Environment</h2>
                     <div className="flex items-center gap-3 mt-1">

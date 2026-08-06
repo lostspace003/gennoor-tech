@@ -20,7 +20,7 @@ export default function AcademyPage() {
     <main className="min-h-screen">
       {/* Banner — part of the broader Gennoor Academy */}
       <section className="relative">
-        <div className="bg-gradient-to-r from-primary-50 via-amber-50 to-primary-50 border-b border-primary-100/60">
+        <div className="bg-primary-50 border-b border-primary-100/60">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
             <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-center">
               <div className="inline-flex items-center gap-1.5 text-xs text-gray-600">
@@ -45,7 +45,7 @@ export default function AcademyPage() {
       {/* Hero */}
       <section className="relative py-16 lg:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
@@ -65,7 +65,7 @@ export default function AcademyPage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <a
                 href="#courses"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-sm font-semibold rounded-xl hover:shadow-glow-blue transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 px-7 py-3 bg-primary-600 text-white text-sm font-semibold rounded-xl transition-all duration-300"
               >
                 Browse the {totalCourses} courses
                 <ArrowRight className="w-4 h-4" />
@@ -90,7 +90,7 @@ export default function AcademyPage() {
           <div className="max-w-3xl mx-auto">
             <Link
               href="/academy"
-              className="group block rounded-2xl p-8 text-center bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-500 hover:-translate-y-1"
+              className="group block rounded-2xl p-8 text-center bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-500"
             >
               <div className="w-14 h-14 rounded-full bg-primary-50/80 flex items-center justify-center mb-4 mx-auto">
                 <GraduationCap className="w-7 h-7 text-primary-500" />

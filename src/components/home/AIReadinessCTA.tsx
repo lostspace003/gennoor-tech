@@ -27,7 +27,7 @@ export default function AIReadinessCTA() {
   return (
     <section className="py-12 sm:py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 shadow-2xl">
+        <div className="relative overflow-hidden rounded-2xl bg-gray-900 border border-gray-700/50 shadow-2xl">
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute top-0 right-0 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl" />
             <div className="absolute bottom-0 left-0 w-72 h-72 bg-accent-500/10 rounded-full blur-3xl" />
@@ -51,7 +51,7 @@ export default function AIReadinessCTA() {
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                 <Link
                   href="/ai-readiness"
-                  className="inline-flex items-center gap-2.5 px-7 py-3.5 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 text-sm sm:text-base"
+                  className="inline-flex items-center gap-2.5 px-7 py-3.5 bg-primary-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl text-sm sm:text-base"
                 >
                   Check Your AI Readiness <ArrowRight className="w-4 h-4" />
                 </Link>

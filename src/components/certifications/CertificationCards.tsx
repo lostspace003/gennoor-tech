@@ -37,7 +37,7 @@ export default function CertificationCards({ certs, category, categoryColor }: C
                   {cert.code}
                 </p>
               </div>
-              <Award className={`w-8 h-8 text-gradient bg-gradient-to-br ${categoryColor} text-white rounded p-1.5`} />
+              <Award className={`w-8 h-8 ${categoryColor} text-white rounded p-1.5`} />
             </div>
 
             {cert.description && (

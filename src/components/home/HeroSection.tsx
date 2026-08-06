@@ -37,7 +37,7 @@ export default function HeroSection() {
     <section className="relative overflow-hidden min-h-[90vh] flex items-center">
       {/* Ambient gradient mesh background */}
       <div className="absolute inset-0 bg-white" />
-      <div className="absolute inset-0 bg-gradient-mesh" />
+      <div className="absolute inset-0" />
 
       {/* Animated ambient orbs */}
       <div className="absolute inset-0 overflow-hidden">
@@ -146,7 +146,7 @@ export default function HeroSection() {
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                   <Link
                     href={siteConfig.hero.cta1.href}
-                    className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue transition-all duration-300 group"
+                    className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-primary-600 transition-all duration-300 group"
                   >
                     {siteConfig.hero.cta1.text}
                     <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -183,9 +183,6 @@ export default function HeroSection() {
               transition={{ delay: 2.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
               <div className="relative w-[280px] sm:w-[320px] lg:w-[360px] max-w-full lg:mr-8">
-                {/* Ambient glow behind video */}
-                <div className="absolute -inset-8 bg-gradient-to-br from-primary-500/8 to-accent-500/8 rounded-3xl blur-2xl" />
-
                 <div className="relative mb-6">
                   <div className="rounded-2xl overflow-hidden glass-card p-1">
                     <InlineVideoPlayer

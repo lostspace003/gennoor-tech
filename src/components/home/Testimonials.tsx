@@ -196,7 +196,7 @@ export default function Testimonials() {
             {/* Progress bar */}
             <div className="mt-5 h-[2px] bg-gray-100 rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-gradient-to-r from-primary-500 to-accent-500 rounded-full"
+                className="h-full bg-primary-500 rounded-full"
                 style={{ width: `${progress}%` }}
               />
             </div>

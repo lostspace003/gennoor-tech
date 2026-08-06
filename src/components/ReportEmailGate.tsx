@@ -71,7 +71,7 @@ export default function ReportEmailGate({ isOpen, onClose, onUnlock, reportType,
         </button>
 
         <div className="text-center mb-6">
-          <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-primary-50 to-accent-50 border border-primary-100 flex items-center justify-center">
+          <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-primary-50 border border-primary-100 flex items-center justify-center">
             <Lock className="w-6 h-6 text-primary-600" />
           </div>
           <h3 className="text-xl font-bold text-gray-900 mb-2">Unlock Your Full Report</h3>
@@ -103,7 +103,7 @@ export default function ReportEmailGate({ isOpen, onClose, onUnlock, reportType,
           <button
             onClick={handleSubmit}
             disabled={sending || !email.trim() || !name.trim()}
-            className="w-full py-3.5 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-primary-200/50"
+            className="w-full py-3.5 bg-primary-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-primary-200/50"
           >
             {sending ? (
               <>

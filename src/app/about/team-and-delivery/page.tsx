@@ -292,7 +292,7 @@ export default function TeamAndDeliveryPage() {
       {/* HERO */}
       <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
 
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
@@ -424,7 +424,7 @@ export default function TeamAndDeliveryPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                   <div className="lg:col-span-3">
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary-500/15">
+                      <div className="w-10 h-10 rounded-xl bg-primary-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary-500/15">
                         <Icon className="w-5 h-5 text-white" />
                       </div>
                       <h3 className="text-base font-bold text-gray-900 leading-tight">
@@ -480,7 +480,7 @@ export default function TeamAndDeliveryPage() {
                 className="rounded-2xl p-5 bg-white border border-gray-200/70 shadow-sm flex flex-col sm:flex-row sm:items-start gap-4"
               >
                 <div className="flex items-center gap-3 sm:w-56 flex-shrink-0">
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary-500/15">
+                  <div className="w-9 h-9 rounded-xl bg-primary-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary-500/15">
                     <Icon className="w-4 h-4 text-white" />
                   </div>
                   <span className="text-sm font-bold text-gray-900">{c.rhythm}</span>
@@ -730,7 +730,7 @@ export default function TeamAndDeliveryPage() {
       {/* FINAL CTA */}
       <section className="section-padding relative overflow-hidden">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
-        <div className="absolute inset-0 bg-gradient-mesh opacity-50" />
+        <div className="absolute inset-0 opacity-50" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-5">
@@ -751,7 +751,7 @@ export default function TeamAndDeliveryPage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue transition-all duration-300"
+                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-primary-600 transition-all duration-300"
               >
                 Request a scoping call
                 <ArrowRight className="ml-2 h-4 w-4" />

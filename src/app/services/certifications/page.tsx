@@ -86,7 +86,7 @@ export default function CertificationPreparationPage() {
       {/* Hero Section */}
       <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white"></div>
-        <div className="absolute inset-0 bg-gradient-mesh"></div>
+        <div className="absolute inset-0"></div>
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
@@ -272,7 +272,7 @@ export default function CertificationPreparationPage() {
                           </button>
                           <button
                             onClick={() => handleEnquiry(cert)}
-                            className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-sm font-semibold rounded-xl hover:shadow-glow-blue transition-all duration-300"
+                            className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-xl transition-all duration-300"
                           >
                             <Send className="w-4 h-4 mr-2" />
                             Enquire

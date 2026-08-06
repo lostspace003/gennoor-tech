@@ -45,7 +45,7 @@ export default async function PoCDetailPage({ params }: PageProps) {
   if (!poc) notFound()
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
+    <div className="min-h-screen bg-white">
       {/* Back link */}
       <div className="max-w-5xl mx-auto px-6 pt-8">
         <Link
@@ -106,7 +106,7 @@ export default async function PoCDetailPage({ params }: PageProps) {
       {/* Architecture */}
       {poc.architecture && (
         <section className="max-w-5xl mx-auto px-6 pb-12">
-          <div className="bg-[#0C1426] text-white rounded-2xl p-6 overflow-x-auto">
+          <div className="bg-gray-900 text-white rounded-2xl p-6 overflow-x-auto">
             <h2 className="text-sm font-bold uppercase tracking-widest text-secondary-300 mb-4">Architecture</h2>
             <pre className="text-xs leading-relaxed font-mono text-white/80 whitespace-pre">{poc.architecture}</pre>
           </div>
@@ -148,7 +148,7 @@ export default async function PoCDetailPage({ params }: PageProps) {
       {/* Paired course */}
       {poc.pairedCourseTitle && (
         <section className="max-w-5xl mx-auto px-6 pb-12">
-          <div className="bg-gradient-to-r from-secondary-50 to-primary-50 rounded-2xl border border-gray-200 p-6 flex items-center gap-4">
+          <div className="bg-secondary-50 rounded-2xl border border-gray-200 p-6 flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center flex-shrink-0">
               <GraduationCap className="w-6 h-6 text-primary-700" />
             </div>
@@ -217,7 +217,7 @@ export default async function PoCDetailPage({ params }: PageProps) {
 
       {/* CTAs */}
       <section className="max-w-5xl mx-auto px-6 pb-20">
-        <div className="bg-gradient-to-br from-primary-600 to-primary-800 rounded-2xl p-8 md:p-12 text-white">
+        <div className="bg-primary-600 rounded-2xl p-8 md:p-12 text-white">
           <h2 className="text-2xl md:text-3xl font-bold mb-3">Ready to scope this PoC?</h2>
           <p className="text-white/80 mb-6 max-w-2xl">
             Book a 30-minute discovery call. We’ll write a fixed-scope, fixed-price proposal within 5 working days.

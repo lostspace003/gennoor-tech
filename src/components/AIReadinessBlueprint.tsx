@@ -748,7 +748,7 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
             <input type="text" placeholder="Your name (optional)" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400" />
             <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSendOTP()} className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400" autoFocus />
             {error && <p className="text-sm text-red-500">{error}</p>}
-            <button onClick={handleSendOTP} disabled={sending || !email.trim()} className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+            <button onClick={handleSendOTP} disabled={sending || !email.trim()} className="w-full py-3 bg-primary-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2">
               {sending ? 'Sending...' : <><ArrowRight className="w-4 h-4" /> Send verification code</>}
             </button>
           </div>
@@ -782,7 +782,7 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
               )}
             </div>
             {error && <p className="text-sm text-red-500">{error}</p>}
-            <button onClick={handleVerifyOTP} disabled={sending || otp.length < 6 || otpTimer <= 0} className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50">
+            <button onClick={handleVerifyOTP} disabled={sending || otp.length < 6 || otpTimer <= 0} className="w-full py-3 bg-primary-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50">
               {sending ? 'Verifying...' : 'Verify & Start'}
             </button>
           </div>
@@ -876,7 +876,7 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
             <span className="text-sm font-medium text-primary-600">{Math.round(progress)}%</span>
           </div>
           <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-primary-500 to-accent-500 rounded-full transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
+            <div className="h-full bg-primary-500 rounded-full transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
           </div>
         </div>
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
@@ -954,7 +954,7 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
             <button onClick={() => { setStep('questions'); setCurrentQ(totalQuestions - 1) }} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition-colors">
               <ChevronLeft className="w-4 h-4" /> Back
             </button>
-            <button onClick={handleSubmitBlueprint} className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all shadow-lg hover:shadow-xl">
+            <button onClick={handleSubmitBlueprint} className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all shadow-lg hover:shadow-xl">
               Generate my Blueprint <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -1013,7 +1013,7 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
           <button onClick={() => { setError(''); setStep('open-ended') }} className="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
             Edit Answers
           </button>
-          <button onClick={handleSubmitBlueprint} className="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all shadow-lg hover:shadow-xl">
+          <button onClick={handleSubmitBlueprint} className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all shadow-lg hover:shadow-xl">
             <Zap className="w-4 h-4" /> Retry Generation
           </button>
         </div>
@@ -1063,7 +1063,7 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
 
           {/* Progress bar */}
           <div className="h-1 bg-gray-100">
-            <div className="h-full bg-gradient-to-r from-primary-500 to-accent-500 transition-all duration-700 ease-in-out" style={{ width: `${progressPct}%` }} />
+            <div className="h-full bg-primary-500 transition-all duration-700 ease-in-out" style={{ width: `${progressPct}%` }} />
           </div>
 
           {/* Slide content */}
@@ -1326,7 +1326,7 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
               />
 
               {/* Org interest consent */}
-              <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-5 border border-primary-100 mb-5">
+              <div className="bg-primary-50 rounded-xl p-5 border border-primary-100 mb-5">
                 <p className="text-sm font-semibold text-gray-900 mb-1">Interested in AI readiness for your team or organization?</p>
                 <p className="text-xs text-gray-500 mb-4">We can build a custom assessment on your organization&apos;s data, run AI training workshops, or set up AI tools for your team.</p>
                 <div className="flex flex-wrap gap-2">
@@ -1350,7 +1350,7 @@ export default function AIReadinessBlueprint({ onLock, onUnlock }: BlueprintProp
               <button
                 onClick={handleFeedbackAndEmail}
                 disabled={feedbackRating === 0 || !orgInterest || emailingReport}
-                className="w-full py-3.5 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-40 flex items-center justify-center gap-2"
+                className="w-full py-3.5 bg-primary-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-40 flex items-center justify-center gap-2"
               >
                 <Send className="w-4 h-4" />
                 {emailingReport ? 'Sending your report...' : 'Submit & Send Report to Email'}

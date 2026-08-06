@@ -42,8 +42,8 @@ export default function FunctionsHubPage() {
           { name: 'Functions', url: 'https://gennoor.com/functions' },
         ]}
       />
-      <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
-        <section className="relative overflow-hidden bg-gradient-to-br from-[#0C1426] via-[#0F1B33] to-[#1A2547] text-white">
+      <div className="min-h-screen bg-white">
+        <section className="relative overflow-hidden bg-gray-900 text-white">
           <div className="absolute inset-0 opacity-30">
             <div className="absolute top-0 right-1/4 w-[40rem] h-[40rem] bg-secondary-400/30 rounded-full blur-3xl" />
             <div className="absolute bottom-0 left-1/4 w-[35rem] h-[35rem] bg-primary-500/20 rounded-full blur-3xl" />
