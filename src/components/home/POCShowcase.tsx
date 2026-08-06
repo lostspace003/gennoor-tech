@@ -17,13 +17,13 @@ const features = [
     icon: Zap,
     title: 'Zero Cost Stack',
     description: 'Vercel free tier + serverless — enterprise analytics at $0/month',
-    color: 'text-emerald-600 bg-emerald-50',
+    color: 'text-green-600 bg-green-50',
   },
   {
     icon: Shield,
     title: 'Secure & Private',
     description: 'Password-protected with httpOnly cookies — no public data exposure',
-    color: 'text-violet-600 bg-violet-50',
+    color: 'text-gray-600 bg-gray-50',
   },
 ]
 
@@ -42,7 +42,7 @@ export default function POCShowcase() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2 animate-pulse" />
+              <span className="flex h-1.5 w-1.5 rounded-full bg-green-500 mr-2 animate-pulse" />
               Live Proof of Concept
             </motion.div>
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
@@ -82,7 +82,6 @@ export default function POCShowcase() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1, duration: 0.5 }}
-                  whileHover={{ y: -2 }}
                 >
                   <div className={`w-10 h-10 ${feature.color} rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform`}>
                     <feature.icon className="w-5 h-5" />

@@ -246,11 +246,11 @@ export default function InlineVideoPlayer({
             >
               <div className={`w-full bg-white/40 transition-all duration-200 ${isHoveringProgress ? 'h-2' : 'h-1'} rounded-full overflow-hidden`}>
                 <div
-                  className="h-full bg-primary-500 rounded-full transition-[width] duration-100 ease-linear relative"
+                  className="h-full bg-primary-600 rounded-full transition-[width] duration-100 ease-linear relative"
                   style={{ width: `${progress}%` }}
                 >
                   {isHoveringProgress && (
-                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-primary-500 rounded-full shadow-md ring-2 ring-white/80" />
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-primary-600 rounded-full shadow-md ring-2 ring-white/80" />
                   )}
                 </div>
               </div>

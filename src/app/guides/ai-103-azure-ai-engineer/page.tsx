@@ -88,11 +88,11 @@ export default function AI103StudyGuidePage() {
 
       {/* Hero */}
       <section className="relative py-10 lg:py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#f0f4ff] via-white to-[#f0fdf8]" aria-hidden="true" />
-        <div className="absolute inset-0 bg-gradient-mesh" aria-hidden="true" />
+        <div className="absolute inset-0 bg-gray-50" aria-hidden="true" />
+        <div className="absolute inset-0" aria-hidden="true" />
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-[11px] font-semibold text-primary-700 bg-primary-50/90 border border-primary-100/70">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary-500 mr-2 animate-pulse" />
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary-600 mr-2 animate-pulse" />
             AI-103 Study Guide
           </span>
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold mb-5 text-gray-900 tracking-tight leading-tight">
@@ -337,8 +337,8 @@ export default function AI103StudyGuidePage() {
 
       {/* CTA */}
       <section className="py-10 lg:py-16 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#f0f4ff] via-white to-[#f0fdf8]" aria-hidden="true" />
-        <div className="absolute inset-0 bg-gradient-mesh" aria-hidden="true" />
+        <div className="absolute inset-0 bg-gray-50" aria-hidden="true" />
+        <div className="absolute inset-0" aria-hidden="true" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <div className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-[11px] font-semibold text-primary-700 bg-primary-50/90 border border-primary-100/70">
             Get Started
@@ -352,7 +352,7 @@ export default function AI103StudyGuidePage() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href="/contact#book"
-              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue transition-all group"
+              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-primary-600 transition-all group"
             >
               Book AI-103 Training
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -382,7 +382,7 @@ function SkillBlock({ weight, title, items }: { weight: string; title: string; i
       <ul className="space-y-1.5">
         {items.map((it, i) => (
           <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
-            <span className="w-1 h-1 rounded-full bg-primary-400 flex-shrink-0 mt-2" />
+            <span className="w-1 h-1 rounded-full bg-primary-600 flex-shrink-0 mt-2" />
             <span className="leading-relaxed">{it}</span>
           </li>
         ))}

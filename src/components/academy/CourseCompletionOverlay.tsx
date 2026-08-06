@@ -258,7 +258,7 @@ export default function CourseCompletionOverlay({
               <button
                 onClick={submitFeedback}
                 disabled={currentStep === 'submitting' || rating < 1}
-                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 text-white text-sm font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 text-white text-sm font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                 style={themedBg}
               >
                 {currentStep === 'submitting' ? (
@@ -312,7 +312,7 @@ export default function CourseCompletionOverlay({
                 href={`/verify/${certId}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 text-white text-sm font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5"
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 text-white text-sm font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
                 style={themedBg}
               >
                 <Award className="w-4 h-4" />
@@ -351,7 +351,7 @@ export default function CourseCompletionOverlay({
                   <Link
                     key={c.href}
                     href={c.href}
-                    className="group flex flex-col gap-2 p-4 rounded-xl ring-1 ring-gray-200 hover:ring-gray-300 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 bg-white"
+                    className="group flex flex-col gap-2 p-4 rounded-xl ring-1 ring-gray-200 hover:ring-gray-300 hover:shadow-md transition-all duration-200 bg-white"
                   >
                     <div className="flex items-center gap-2">
                       <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={themedAccentBg}>

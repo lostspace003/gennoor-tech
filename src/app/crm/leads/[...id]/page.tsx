@@ -24,7 +24,7 @@ export default function LeadPage({ params }: { params: Promise<{ id: string[] }>
         {loading ? 'Loading lead...' : (
           <>
             Lead not found.{' '}
-            <button onClick={() => router.push('/crm/leads')} className="text-blue-600 underline">Back to leads</button>
+            <button onClick={() => router.push('/crm/leads')} className="text-primary-600 underline">Back to leads</button>
           </>
         )}
       </div>

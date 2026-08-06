@@ -531,7 +531,7 @@ export default function ForSMBPage() {
       {/* HERO */}
       <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
 
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
@@ -553,7 +553,7 @@ export default function ForSMBPage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue transition-all duration-300"
+                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-primary-600 transition-all duration-300"
               >
                 Book a 30-minute call
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -610,7 +610,7 @@ export default function ForSMBPage() {
             {decisionPaths.map((path) => (
               <div
                 key={path.if}
-                className="rounded-2xl p-5 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-300 hover:-translate-y-0.5 grid grid-cols-1 md:grid-cols-12 gap-4 items-center"
+                className="rounded-2xl p-5 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-300 grid grid-cols-1 md:grid-cols-12 gap-4 items-center"
               >
                 <div className="md:col-span-5">
                   <p className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
@@ -673,7 +673,7 @@ export default function ForSMBPage() {
                   {/* HEADER */}
                   <header className="flex flex-col lg:flex-row lg:items-start gap-6 mb-8 pb-8 border-b border-gray-100">
                     <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/15 flex-shrink-0">
+                      <div className="w-16 h-16 rounded-2xl bg-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/15 flex-shrink-0">
                         <Icon className="w-8 h-8 text-white" />
                       </div>
                       <div>
@@ -849,12 +849,12 @@ export default function ForSMBPage() {
               return (
                 <div
                   key={step.title}
-                  className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 relative transition-all duration-500 hover:-translate-y-1"
+                  className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 relative transition-all duration-500"
                 >
                   <span className="absolute top-4 right-5 text-2xl font-extrabold text-gray-100">
                     {String(i + 1).padStart(2, '0')}
                   </span>
-                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
+                  <div className="w-11 h-11 rounded-xl bg-primary-600 flex items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
                     <Icon className="w-5 h-5 text-white" />
                   </div>
                   <h3 className="text-base font-bold text-gray-900 mb-2 pr-10">{step.title}</h3>
@@ -970,7 +970,7 @@ export default function ForSMBPage() {
       {/* FINAL CTA */}
       <section className="section-padding relative overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-5">
             Ready to start small and ship fast?
@@ -983,7 +983,7 @@ export default function ForSMBPage() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue transition-all duration-300"
+              className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-primary-600 transition-all duration-300"
             >
               Book a 30-minute call
               <ArrowRight className="ml-2 h-4 w-4" />

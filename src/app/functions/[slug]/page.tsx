@@ -45,17 +45,17 @@ export default async function FunctionDetailPage({ params }: PageProps) {
           { name: fn.name, url: `https://gennoor.com/functions/${fn.slug}` },
         ]}
       />
-      <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
+      <div className="min-h-screen bg-white">
         <div className="max-w-5xl mx-auto px-6 pt-8">
-          <Link href="/functions" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-secondary-700 transition-colors">
+          <Link href="/functions" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition-colors">
             <ArrowLeft className="w-4 h-4" /> All functions
           </Link>
         </div>
 
         <section className="max-w-5xl mx-auto px-6 pt-6 pb-16">
-          <div className="text-xs uppercase tracking-widest text-secondary-700 font-bold mb-2">FUNCTION PLAYBOOK</div>
+          <div className="text-xs uppercase tracking-widest text-gray-700 font-bold mb-2">FUNCTION PLAYBOOK</div>
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-5">
-            AI for <span className="text-secondary-700">{fn.name}</span>
+            AI for <span className="text-gray-700">{fn.name}</span>
           </h1>
           <p className="text-xl text-gray-700 leading-relaxed max-w-3xl mb-8">{fn.tagline}</p>
           <p className="text-lg text-gray-600 leading-relaxed max-w-3xl">{fn.hero}</p>
@@ -87,12 +87,12 @@ export default async function FunctionDetailPage({ params }: PageProps) {
                 <Link
                   key={p.id}
                   href={`/resources/pocs/${p.id}`}
-                  className="group bg-white rounded-xl border border-gray-200 hover:border-secondary-300 hover:shadow-md transition-all p-5 flex flex-col"
+                  className="group bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all p-5 flex flex-col"
                 >
-                  <div className="text-[10px] font-bold tracking-widest uppercase text-secondary-700 bg-secondary-50 px-2 py-0.5 rounded inline-block self-start mb-2">
+                  <div className="text-[10px] font-bold tracking-widest uppercase text-gray-700 bg-gray-50 px-2 py-0.5 rounded inline-block self-start mb-2">
                     {p.category}
                   </div>
-                  <h3 className="font-bold text-gray-900 group-hover:text-secondary-700 transition-colors mb-1">{p.title}</h3>
+                  <h3 className="font-bold text-gray-900 group-hover:text-gray-700 transition-colors mb-1">{p.title}</h3>
                   <p className="text-sm text-gray-600 line-clamp-2 mb-3">{p.problem}</p>
                   <div className="mt-auto text-xs text-gray-500">
                     {p.timeline} · {p.priceBand.smb ? `SMB ${p.priceBand.smb} · ` : ''}Enterprise {p.priceBand.enterprise}
@@ -106,14 +106,14 @@ export default async function FunctionDetailPage({ params }: PageProps) {
         {fn.flagshipCourse && (
           <section className="max-w-5xl mx-auto px-6 pb-16">
             <div className="bg-white rounded-2xl border border-gray-200 p-6 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-secondary-100 flex items-center justify-center flex-shrink-0">
-                <GraduationCap className="w-6 h-6 text-secondary-700" />
+              <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
+                <GraduationCap className="w-6 h-6 text-gray-700" />
               </div>
               <div className="flex-1">
                 <div className="text-xs uppercase tracking-widest text-gray-500 mb-0.5">Companion course</div>
                 <div className="font-bold text-gray-900">{fn.flagshipCourse}</div>
               </div>
-              <Link href="/ai-academy" className="inline-flex items-center gap-1 px-4 py-2 bg-secondary-600 text-white font-semibold rounded-lg hover:bg-secondary-700 transition-all text-sm">
+              <Link href="/ai-academy" className="inline-flex items-center gap-1 px-4 py-2 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-700 transition-all text-sm">
                 Browse academy <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -121,14 +121,14 @@ export default async function FunctionDetailPage({ params }: PageProps) {
         )}
 
         <section className="max-w-5xl mx-auto px-6 pb-20">
-          <div className="bg-gradient-to-br from-secondary-600 to-secondary-800 rounded-2xl p-8 md:p-12 text-white">
+          <div className="bg-gray-600 rounded-2xl p-8 md:p-12 text-white">
             <h2 className="text-2xl md:text-3xl font-bold mb-3">Want a {fn.name} AI roadmap in 90 days?</h2>
             <p className="text-white/80 mb-6 max-w-2xl">
               Book a 30-minute call. We’ll map the three problems above to your reality and come back with a fixed-scope proposal in 5 working days.
             </p>
             <Link
               href={`/contact?intent=diagnostic&function=${fn.slug}`}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-secondary-700 font-bold rounded-xl hover:shadow-lg transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-700 font-bold rounded-xl hover:shadow-lg transition-all"
             >
               Book a call <ArrowRight className="w-4 h-4" />
             </Link>

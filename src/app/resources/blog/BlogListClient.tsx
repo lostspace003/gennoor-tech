@@ -255,7 +255,7 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
               <Link
                 key={post.slug}
                 href={`/resources/blog/${post.slug}`}
-                className="group rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                className="group rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300"
                 style={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb' }}
               >
                 <article>
@@ -358,7 +358,7 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
                   <div className={`lg:col-span-5 space-y-5 ${isEven ? 'order-2' : 'order-1'}`}>
                     {smallCards.map(post => (
                       <Link key={post.slug} href={`/resources/blog/${post.slug}`}
-                        className="group block rounded-xl p-5 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
+                        className="group block rounded-xl p-5 hover:shadow-lg transition-all duration-300"
                         style={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb' }}>
                         <article className="flex items-start gap-4">
                           <div className="w-14 h-14 shrink-0 rounded-xl flex items-center justify-center"
@@ -389,7 +389,7 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
               <div key={groupIdx} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {group.map(post => (
                   <Link key={post.slug} href={`/resources/blog/${post.slug}`}
-                    className="group rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
+                    className="group rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300"
                     style={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb' }}>
                     <article>
                       <div className="relative h-32 flex flex-col justify-end p-4" style={{ backgroundColor: post.coverColor }}>

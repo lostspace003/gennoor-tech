@@ -95,8 +95,8 @@ export default async function TrainingProgramPage({ params }: Props) {
       <main className="min-h-screen">
         {/* Hero Section */}
         <section className="relative overflow-hidden py-10 lg:py-16">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#f0f4ff] via-white to-[#f0fdf8]" />
-          <div className="absolute inset-0 bg-gradient-mesh" />
+          <div className="absolute inset-0 bg-gray-50" />
+          <div className="absolute inset-0" />
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <Link
               href="/services/training"
@@ -152,7 +152,7 @@ export default async function TrainingProgramPage({ params }: Props) {
               <div className="flex flex-wrap gap-3">
                 <Link
                   href="/contact#book"
-                  className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue transition-all"
+                  className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl text-white bg-primary-600 transition-all"
                 >
                   <Phone className="w-4 h-4" />
                   Enquire Now

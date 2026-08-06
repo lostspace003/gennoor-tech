@@ -144,7 +144,7 @@ export default function SitemapIndexPage() {
     <div className="min-h-screen bg-white">
       <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
@@ -168,7 +168,7 @@ export default function SitemapIndexPage() {
           {sections.map((section) => (
             <div
               key={section.heading}
-              className="glass-card p-6 transition-transform hover:-translate-y-0.5"
+              className="glass-card p-6 transition-transform"
             >
               <h2 className="text-lg font-bold text-gray-900 mb-3">
                 {section.heading}{' '}

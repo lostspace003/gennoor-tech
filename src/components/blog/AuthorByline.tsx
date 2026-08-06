@@ -70,7 +70,7 @@ function Avatar({ author, size, onDark = false }: { author: AuthorProfile; size:
   const fontSize = Math.round(size * 0.4)
   return (
     <div
-      className="rounded-full bg-gradient-to-br from-primary-600 to-accent-600 flex items-center justify-center shrink-0"
+      className="rounded-full bg-primary-600 flex items-center justify-center shrink-0"
       style={{
         width: size,
         height: size,

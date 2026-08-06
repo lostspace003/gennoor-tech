@@ -60,25 +60,10 @@ export default function PageHero({
   const centered = align === 'center'
   return (
     <section className="relative overflow-hidden">
-      {/* Light brand-tinted mesh background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#f0f4ff] via-white to-[#f0fdf8]" aria-hidden="true" />
-      <div className="absolute inset-0 bg-gradient-mesh" aria-hidden="true" />
-
-      {/* Ambient blurred orbs — pure CSS, no JS animation */}
-      <div
-        aria-hidden="true"
-        className="absolute -top-32 right-[5%] w-[420px] h-[420px] rounded-full blur-3xl"
-        style={{
-          background: 'radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%)',
-        }}
-      />
-      <div
-        aria-hidden="true"
-        className="absolute -bottom-32 left-[5%] w-[360px] h-[360px] rounded-full blur-3xl"
-        style={{
-          background: 'radial-gradient(circle, rgba(13, 148, 136, 0.06) 0%, transparent 70%)',
-        }}
-      />
+      {/* The hero is a flat panel. Its separation from the page below comes
+          from the surface change plus the hairline — not from tinted orbs. */}
+      <div className="absolute inset-0 bg-gray-50" aria-hidden="true" />
+      <div className="absolute inset-x-0 bottom-0 h-px bg-gray-200" aria-hidden="true" />
 
       <div
         className={cn(
@@ -106,7 +91,7 @@ export default function PageHero({
 
           {eyebrow && (
             <div className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-[11px] font-semibold text-primary-700 bg-primary-50/90 border border-primary-100/70">
-              <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary-500 mr-2 animate-pulse" />
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary-600 mr-2 animate-pulse" />
               {eyebrow}
             </div>
           )}
@@ -148,7 +133,7 @@ export default function PageHero({
                     'inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-300',
                     c.variant === 'ghost'
                       ? 'text-gray-700 bg-white/80 backdrop-blur-sm ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700'
-                      : 'text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue'
+                      : 'text-white bg-primary-600'
                   )}
                 >
                   {c.label}

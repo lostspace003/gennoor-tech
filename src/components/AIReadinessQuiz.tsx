@@ -115,10 +115,10 @@ const PILLAR_ICONS: Record<string, typeof Zap> = {
 }
 
 const PILLAR_COLORS: Record<string, { text: string; bar: string }> = {
-  'Mindset': { text: 'text-blue-600', bar: 'bg-blue-500' },
-  'Skills': { text: 'text-teal-600', bar: 'bg-teal-500' },
-  'Workflow': { text: 'text-purple-600', bar: 'bg-purple-500' },
-  'Readiness': { text: 'text-orange-600', bar: 'bg-orange-500' },
+  'Mindset': { text: 'text-primary-600', bar: 'bg-primary-600' },
+  'Skills': { text: 'text-gray-600', bar: 'bg-gray-500' },
+  'Workflow': { text: 'text-gray-600', bar: 'bg-gray-500' },
+  'Readiness': { text: 'text-amber-600', bar: 'bg-amber-500' },
 }
 
 interface QuizProps {
@@ -376,7 +376,7 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
             <button
               onClick={handleSendOTP}
               disabled={sending || !email.trim()}
-              className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full py-3 bg-primary-600 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {sending ? 'Sending...' : <><ArrowRight className="w-4 h-4" /> Send verification code</>}
             </button>
@@ -426,7 +426,7 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
             <button
               onClick={handleVerifyOTP}
               disabled={sending || otp.length < 6 || otpTimer <= 0}
-              className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50"
+              className="w-full py-3 bg-primary-600 text-white font-semibold rounded-xl transition-all disabled:opacity-50"
             >
               {sending ? 'Verifying...' : 'Verify & Start'}
             </button>
@@ -460,7 +460,7 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
         <div className="relative w-20 h-20 mx-auto mb-8">
           <div className="absolute inset-0 rounded-full border-4 border-gray-100" />
           <div className="absolute inset-0 rounded-full border-4 border-primary-500 border-t-transparent animate-spin" />
-          <div className="absolute inset-3 rounded-full border-4 border-accent-400 border-b-transparent animate-spin [animation-direction:reverse] [animation-duration:1.5s]" />
+          <div className="absolute inset-3 rounded-full border-4 border-primary-400 border-b-transparent animate-spin [animation-direction:reverse] [animation-duration:1.5s]" />
         </div>
         <h3 className="text-xl font-bold text-gray-900 mb-2">AI is analyzing your answers</h3>
         <p className="text-gray-500 text-sm">Generating your personalized report with voice narration...</p>
@@ -471,8 +471,8 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
 
   // ─── Results ─────────────────────────────────────────────
   if (step === 'results' && report) {
-    const scoreColor = report.score >= 70 ? 'text-green-600' : report.score >= 45 ? 'text-blue-600' : 'text-orange-600'
-    const scoreBg = report.score >= 70 ? 'from-green-50 to-emerald-50 border-green-200' : report.score >= 45 ? 'from-blue-50 to-indigo-50 border-blue-200' : 'from-orange-50 to-amber-50 border-orange-200'
+    const scoreColor = report.score >= 70 ? 'text-green-600' : report.score >= 45 ? 'text-primary-600' : 'text-amber-600'
+    const scoreBg = report.score >= 70 ? 'from-green-50 to-green-50 border-green-200' : report.score >= 45 ? 'from-primary-50 to-primary-50 border-primary-200' : 'from-amber-50 to-amber-50 border-amber-200'
 
     return (
       <div className="max-w-2xl mx-auto space-y-6">
@@ -589,7 +589,7 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
         </div>
 
         {/* Quick Win */}
-        <div className={`bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-6 transition-all duration-700 ${revealIndex >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+        <div className={` bg-amber-50 rounded-2xl border border-amber-200 p-6 transition-all duration-700 ${revealIndex >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <div className="flex items-start gap-3 mb-3">
             <Lightbulb className="w-5 h-5 text-amber-600 flex-shrink-0" />
             <div>
@@ -620,7 +620,7 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
           <div className="space-y-3 ml-8">
             {report.thirtyDayPlan.map((item, i) => (
               <div key={i} className="flex items-start gap-3 text-sm">
-                <div className="w-2 h-2 rounded-full bg-primary-400 mt-1.5 flex-shrink-0" />
+                <div className="w-2 h-2 rounded-full bg-primary-600 mt-1.5 flex-shrink-0" />
                 <p className="text-gray-700">{item}</p>
               </div>
             ))}
@@ -692,7 +692,7 @@ export default function AIReadinessQuiz({ onLock, onUnlock }: QuizProps) {
         </div>
         <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-primary-500 to-accent-500 rounded-full transition-all duration-500 ease-out"
+            className="h-full bg-primary-600 rounded-full transition-all duration-500 ease-out"
             style={{ width: `${progress}%` }}
           />
         </div>

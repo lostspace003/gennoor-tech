@@ -12,26 +12,48 @@ export const STAGE_LABELS: Record<PipelineStage, string> = {
   sustain: 'Sustain',
 }
 
+/**
+ * Lead status is a *progression*, not seven unrelated categories, so it reads
+ * as one: a neutral chip while the lead is in play, the accent once there's a
+ * live commercial motion, and a semantic colour only at the two terminal
+ * states. The leading dot darkens along the way, which is what separates
+ * adjacent steps — earlier these relied on unrelated hues, and once the
+ * palette collapsed to one accent, new/qualified and proposal/negotiation
+ * became indistinguishable chips.
+ */
 export const STATUS_COLORS: Record<LeadStatus, string> = {
-  new: 'bg-slate-100 text-slate-700',
-  contacted: 'bg-blue-100 text-blue-700',
-  qualified: 'bg-purple-100 text-purple-700',
-  proposal: 'bg-yellow-100 text-yellow-700',
-  negotiation: 'bg-orange-100 text-orange-700',
+  new: 'bg-gray-100 text-gray-600',
+  contacted: 'bg-gray-100 text-gray-700',
+  qualified: 'bg-gray-100 text-gray-900',
+  proposal: 'bg-primary-100 text-primary-700',
+  negotiation: 'bg-primary-100 text-primary-700',
   won: 'bg-green-100 text-green-700',
   lost: 'bg-red-100 text-red-700',
 }
 
+const STATUS_DOTS: Record<LeadStatus, string> = {
+  new: 'bg-gray-300',
+  contacted: 'bg-gray-400',
+  qualified: 'bg-gray-600',
+  proposal: 'bg-primary-400',
+  negotiation: 'bg-primary-600',
+  won: 'bg-green-600',
+  lost: 'bg-red-600',
+}
+
 export function StatusBadge({ status }: { status: LeadStatus }) {
   return (
-    <span className={`px-2 py-0.5 text-xs rounded-full capitalize ${STATUS_COLORS[status] || STATUS_COLORS.new}`}>
+    <span
+      className={`inline-flex items-center gap-1.5 px-2 py-0.5 text-xs rounded-full capitalize ${STATUS_COLORS[status] || STATUS_COLORS.new}`}
+    >
+      <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${STATUS_DOTS[status] || STATUS_DOTS.new}`} />
       {status}
     </span>
   )
 }
 
 export function ProcessDot({ status }: { status: Lead['processStatus'] }) {
-  const color = status === 'active' ? 'bg-green-500' : status === 'paused' ? 'bg-yellow-500' : 'bg-red-500'
+  const color = status === 'active' ? 'bg-green-500' : status === 'paused' ? 'bg-amber-500' : 'bg-red-500'
   return (
     <span className="inline-flex items-center gap-1.5">
       <span className={`w-2 h-2 rounded-full ${color}`} />
@@ -51,7 +73,7 @@ export function StageBar({ stage, onSelect }: { stage: PipelineStage; onSelect?:
             type="button"
             disabled={!onSelect}
             onClick={(e) => { e.stopPropagation(); onSelect?.(s) }}
-            className={`flex-1 transition-colors ${idx <= currentIdx ? 'bg-blue-600' : 'bg-gray-200'} ${idx > 0 ? 'border-l border-white' : ''} ${onSelect ? 'hover:bg-blue-400 cursor-pointer' : 'cursor-default'}`}
+            className={`flex-1 transition-colors ${idx <= currentIdx ? 'bg-primary-600' : 'bg-gray-200'} ${idx > 0 ? 'border-l border-white' : ''} ${onSelect ? 'hover:bg-primary-700 cursor-pointer' : 'cursor-default'}`}
             title={`${idx + 1}. ${STAGE_LABELS[s]}${onSelect ? ' — click to set' : ''}`}
           />
         ))}
@@ -104,7 +126,7 @@ export function InfoTip({ text }: { text: string }) {
         onClick={(e) => { e.stopPropagation(); setOpen((o) => !o) }}
         onBlur={() => setTimeout(() => setOpen(false), 150)}
         aria-label="What is this?"
-        className="w-4 h-4 rounded-full border border-gray-300 text-gray-400 hover:text-blue-600 hover:border-blue-400 text-[10px] leading-none inline-flex items-center justify-center italic shrink-0"
+        className="w-4 h-4 rounded-full border border-gray-300 text-gray-400 hover:text-primary-600 hover:border-primary-400 text-[10px] leading-none inline-flex items-center justify-center italic shrink-0"
       >i</button>
       {open && (
         <span className="absolute z-[80] top-5 left-1/2 -translate-x-1/2 w-60 bg-gray-900 text-white text-[11px] rounded-lg px-3 py-2 shadow-xl leading-relaxed normal-case font-normal text-left">
@@ -127,7 +149,7 @@ export function CopyMsg({ text, light }: { text: string; light?: boolean }) {
           setTimeout(() => setCopied(false), 1500)
         })
       }}
-      className={`mt-1 block text-[10px] ${light ? 'text-blue-100 hover:text-white' : 'text-gray-400 hover:text-gray-600'}`}
+      className={`mt-1 block text-[10px] ${light ? 'text-primary-100 hover:text-white' : 'text-gray-400 hover:text-gray-600'}`}
       title="Copy message"
     >
       {copied ? '✓ copied' : 'copy'}
@@ -145,7 +167,7 @@ export function DurationSlider({ value, onChange, stops = [15, 30, 45, 60, 90, 1
     <div className="px-1">
       <div className="flex items-center justify-between mb-1">
         <span className="text-xs text-gray-500">{label}</span>
-        <span className="text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5">{fmt(stops[idx] ?? value)}</span>
+        <span className="text-xs font-semibold text-primary-700 bg-primary-50 border border-primary-200 rounded-full px-2 py-0.5">{fmt(stops[idx] ?? value)}</span>
       </div>
       <input
         type="range"
@@ -154,7 +176,7 @@ export function DurationSlider({ value, onChange, stops = [15, 30, 45, 60, 90, 1
         step={1}
         value={idx}
         onChange={(e) => onChange(stops[Number(e.target.value)])}
-        className="w-full h-1.5 bg-gray-200 rounded-full appearance-none cursor-pointer accent-blue-600"
+        className="w-full h-1.5 bg-gray-200 rounded-full appearance-none cursor-pointer accent-primary-600"
         aria-label={label}
       />
       <div className="flex justify-between mt-0.5">
@@ -179,7 +201,7 @@ export function TimeSlider({ value, onChange, label = 'Time (IST)', step = 15 }:
     <div className="px-1">
       <div className="flex items-center justify-between mb-1">
         <span className="text-xs text-gray-500">{label}</span>
-        <span className="text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5">{fmt(mins)} IST</span>
+        <span className="text-xs font-semibold text-primary-700 bg-primary-50 border border-primary-200 rounded-full px-2 py-0.5">{fmt(mins)} IST</span>
       </div>
       <input
         type="range"
@@ -188,7 +210,7 @@ export function TimeSlider({ value, onChange, label = 'Time (IST)', step = 15 }:
         step={step}
         value={mins - (mins % step)}
         onChange={(e) => onChange(toHHMM(Number(e.target.value)))}
-        className="w-full h-1.5 bg-gray-200 rounded-full appearance-none cursor-pointer accent-blue-600"
+        className="w-full h-1.5 bg-gray-200 rounded-full appearance-none cursor-pointer accent-primary-600"
         aria-label={label}
       />
       <div className="flex justify-between mt-0.5 text-[10px] text-gray-400">
@@ -218,10 +240,10 @@ export function LeadLocalTime({ date, time, country, city, who = 'Lead' }: {
   const instant = istInstant(date, time)
   if (isNaN(instant.getTime())) return null
   if (tz === IST) {
-    return <p className="text-[11px] text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">{who} is in the same time zone (IST) — no conversion needed.</p>
+    return <p className="text-[11px] text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">{who} is in the same time zone (IST) — no conversion needed.</p>
   }
   return (
-    <p className="text-[11px] text-blue-800 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+    <p className="text-[11px] text-primary-800 bg-primary-50 border border-primary-200 rounded-lg px-3 py-2">
       {who}&apos;s local time{country ? ` (${country})` : ''}: <strong>{formatInZone(instant, tz)}</strong>
     </p>
   )
@@ -243,7 +265,7 @@ export function Pagination({ page, total, perPage, onPage }: { page: number; tot
             {i > 0 && n - nums[i - 1] > 1 && <span className="text-xs text-gray-300 px-0.5">…</span>}
             <button
               onClick={() => onPage(n)}
-              className={`min-w-[1.75rem] px-2 py-1 text-xs rounded-lg border ${n === page ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+              className={`min-w-[1.75rem] px-2 py-1 text-xs rounded-lg border ${n === page ? 'bg-primary-600 text-white border-primary-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
             >
               {n}
             </button>
@@ -270,9 +292,9 @@ export function MultiSelect({ label, options, values, onChange }: {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className={`text-sm border rounded-lg px-2.5 py-2 flex items-center gap-1.5 ${values.length ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}`}
+        className={`text-sm border rounded-lg px-2.5 py-2 flex items-center gap-1.5 ${values.length ? 'border-primary-300 bg-primary-50 text-primary-700' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}`}
       >
-        {label}{values.length > 0 && <span className="text-[10px] bg-blue-600 text-white rounded-full px-1.5 py-0.5 leading-none">{values.length}</span>}
+        {label}{values.length > 0 && <span className="text-[10px] bg-primary-600 text-white rounded-full px-1.5 py-0.5 leading-none">{values.length}</span>}
         <span className="text-gray-400 text-[10px]">▾</span>
       </button>
       {open && (
@@ -284,7 +306,7 @@ export function MultiSelect({ label, options, values, onChange }: {
             </label>
           ))}
           {values.length > 0 && (
-            <button type="button" onClick={() => onChange([])} className="w-full text-left px-2 py-1.5 text-xs text-blue-600 hover:bg-blue-50 rounded-md">Clear ({values.length})</button>
+            <button type="button" onClick={() => onChange([])} className="w-full text-left px-2 py-1.5 text-xs text-primary-600 hover:bg-primary-50 rounded-md">Clear ({values.length})</button>
           )}
         </span>
       )}
@@ -336,7 +358,7 @@ export function DateRangeFilter({ value, onChange, presets = [{ days: 1, label: 
           key={p.days}
           type="button"
           onClick={() => onChange({ days: p.days, from: '', to: '' })}
-          className={`px-2.5 py-1 text-xs rounded-full border ${value.days === p.days ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+          className={`px-2.5 py-1 text-xs rounded-full border ${value.days === p.days ? 'bg-primary-600 text-white border-primary-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
         >
           {p.label}
         </button>
@@ -344,7 +366,7 @@ export function DateRangeFilter({ value, onChange, presets = [{ days: 1, label: 
       <button
         type="button"
         onClick={() => { if (!custom) onChange({ days: 0, from: value.from || daysAgoYMD(7), to: value.to || todayYMD() }) }}
-        className={`px-2.5 py-1 text-xs rounded-full border ${custom ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+        className={`px-2.5 py-1 text-xs rounded-full border ${custom ? 'bg-primary-600 text-white border-primary-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
       >
         Custom
       </button>
@@ -387,14 +409,14 @@ export function normPriority(p: string | undefined): 'high' | 'medium' | 'low' |
 export function PriorityBadge({ priority }: { priority: string | undefined }) {
   const p = normPriority(priority)
   if (!p) return <span className="text-[11px] text-gray-300">—</span>
-  const cls = p === 'high' ? 'bg-red-50 text-red-700 border-red-200' : p === 'medium' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-slate-50 text-slate-600 border-slate-200'
+  const cls = p === 'high' ? 'bg-red-50 text-red-700 border-red-200' : p === 'medium' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-gray-50 text-gray-600 border-gray-200'
   return <span className={`text-[11px] border rounded-full px-2 py-0.5 capitalize ${cls}`}>{p}</span>
 }
 
 export function Spinner({ label }: { label?: string }) {
   return (
     <span className="inline-flex items-center gap-2 text-sm text-gray-500">
-      <span className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      <span className="w-4 h-4 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
       {label}
     </span>
   )

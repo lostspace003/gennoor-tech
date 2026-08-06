@@ -62,7 +62,7 @@ export default function RouteProgress() {
     >
       <div
         ref={barRef}
-        className="h-full w-0 bg-gradient-to-r from-primary-500 to-accent-500 opacity-0"
+        className="h-full w-0 bg-primary-600 opacity-0"
       />
     </div>
   )

@@ -182,7 +182,7 @@ export default function AcademyCatalog({ allCourses }: AcademyCatalogProps) {
                   </button>
                   <Link
                     href="/contact"
-                    className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue transition-all"
+                    className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 text-sm font-semibold rounded-xl text-white bg-primary-600 transition-all"
                   >
                     Talk to us about a custom course
                     <ArrowRight className="w-4 h-4" />
@@ -240,7 +240,7 @@ function CourseCard({ course }: { course: Course }) {
   return (
     <Link
       href={`/academy/courses/${course.slug}`}
-      className="group block rounded-2xl p-7 bg-white border border-gray-200/70 shadow-sm hover:shadow-lg transition-all duration-500 hover:-translate-y-1 flex flex-col h-full"
+      className="group block rounded-2xl p-7 bg-white border border-gray-200/70 shadow-sm hover:shadow-lg transition-all duration-500 flex flex-col h-full"
     >
       <div className="flex items-start justify-between gap-2 mb-4">
         <div className="flex items-center gap-1.5 flex-wrap">

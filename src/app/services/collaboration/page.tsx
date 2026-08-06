@@ -26,7 +26,7 @@ export default function CollaborationPage() {
       {/* Hero Section */}
       <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white"></div>
-        <div className="absolute inset-0 bg-gradient-mesh"></div>
+        <div className="absolute inset-0"></div>
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto">
@@ -50,7 +50,7 @@ export default function CollaborationPage() {
             </p>
             <Link
               href="/"
-              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-xl hover:shadow-glow-blue transition-all duration-300"
+              className="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-semibold rounded-xl transition-all duration-300"
             >
               Back to Home
             </Link>

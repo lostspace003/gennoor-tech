@@ -68,7 +68,7 @@ export default function AboutPage() {
                   href={section.href}
                   className="group rounded-2xl p-7 transition-all duration-300 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary-500/15">
+                  <div className="w-12 h-12 rounded-xl bg-primary-600 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary-500/15">
                     <Icon className="w-6 h-6 text-white" />
                   </div>
 

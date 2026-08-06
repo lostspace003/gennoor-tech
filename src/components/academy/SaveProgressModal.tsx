@@ -30,11 +30,11 @@ export default function SaveProgressModal({ isVisible, onDismiss, onLoginSuccess
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 animate-slide-up">
-      <div className="bg-[#0C1426] text-white px-4 sm:px-6 py-4 shadow-2xl border-t-2 border-secondary-400">
+      <div className="bg-gray-900 text-white px-4 sm:px-6 py-4 shadow-2xl border-t-2 border-gray-400">
         <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-secondary-400/20 flex items-center justify-center flex-shrink-0">
-              <Bookmark className="w-5 h-5 text-secondary-400" />
+            <div className="w-10 h-10 rounded-full bg-gray-400/20 flex items-center justify-center flex-shrink-0">
+              <Bookmark className="w-5 h-5 text-gray-400" />
             </div>
             <div>
               <p className="font-semibold text-sm">
@@ -48,7 +48,7 @@ export default function SaveProgressModal({ isVisible, onDismiss, onLoginSuccess
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <button
               onClick={() => setShowAuth(true)}
-              className="flex-1 sm:flex-initial px-5 py-2 bg-secondary-400 text-dark-900 text-sm font-bold rounded-lg hover:bg-secondary-300 transition-colors"
+              className="flex-1 sm:flex-initial px-5 py-2 bg-gray-400 text-gray-900 text-sm font-bold rounded-lg hover:bg-gray-300 transition-colors"
             >
               Sign in
             </button>

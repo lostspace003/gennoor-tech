@@ -17,7 +17,7 @@ interface EnablementMomentProps {
 export default function EnablementMoment({ course, relatedCourses }: EnablementMomentProps) {
   return (
     <section className="py-16 lg:py-20 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-mesh opacity-40" />
+      <div className="absolute inset-0 opacity-40" />
 
       <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
@@ -40,9 +40,9 @@ export default function EnablementMoment({ course, relatedCourses }: EnablementM
             {/* Workshop for team */}
             <Link
               href="/solutions/for-smb#s4"
-              className="group rounded-2xl p-6 glass-card glow-border transition-all duration-300 hover:-translate-y-1 flex flex-col"
+              className="group rounded-2xl p-6 glass-card glow-border transition-all duration-300 flex flex-col"
             >
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
+              <div className="w-12 h-12 rounded-xl bg-primary-600 flex items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
                 <Users className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-base font-bold text-gray-900 mb-2">
@@ -64,9 +64,9 @@ export default function EnablementMoment({ course, relatedCourses }: EnablementM
             {/* Apply with pilot */}
             <Link
               href="/solutions/for-smb#s3"
-              className="group rounded-2xl p-6 glass-card glow-border transition-all duration-300 hover:-translate-y-1 flex flex-col"
+              className="group rounded-2xl p-6 glass-card glow-border transition-all duration-300 flex flex-col"
             >
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center mb-4 shadow-lg shadow-amber-500/15">
+              <div className="w-12 h-12 rounded-xl bg-amber-500 flex items-center justify-center mb-4 shadow-lg shadow-amber-500/15">
                 <Hammer className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-base font-bold text-gray-900 mb-2">
@@ -88,9 +88,9 @@ export default function EnablementMoment({ course, relatedCourses }: EnablementM
             {/* Just talk */}
             <Link
               href="/contact"
-              className="group rounded-2xl p-6 glass-card glow-border transition-all duration-300 hover:-translate-y-1 flex flex-col"
+              className="group rounded-2xl p-6 glass-card glow-border transition-all duration-300 flex flex-col"
             >
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
+              <div className="w-12 h-12 rounded-xl bg-primary-600 flex items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
                 <MessageCircle className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-base font-bold text-gray-900 mb-2">

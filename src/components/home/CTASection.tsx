@@ -15,8 +15,8 @@ export default function CTASection() {
   return (
     <section className="py-14 lg:py-20 relative overflow-hidden">
       {/* Ambient gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#f0f4ff] via-white to-[#f0fdf8]" />
-      <div className="absolute inset-0 bg-gradient-mesh" />
+      <div className="absolute inset-0 bg-gray-50" />
+      <div className="absolute inset-0" />
 
       {/* Ambient glow */}
       <motion.div
@@ -59,7 +59,7 @@ export default function CTASection() {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.08 }}
                 >
-                  <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                  <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
                   <span className="text-xs font-medium">{benefit}</span>
                 </motion.div>
               ))}
@@ -69,7 +69,7 @@ export default function CTASection() {
               <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                 <Link
                   href="/resources/calendar"
-                  className="inline-flex items-center justify-center px-8 py-4 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue transition-all duration-300 group"
+                  className="inline-flex items-center justify-center px-8 py-4 text-sm font-semibold rounded-xl text-white bg-primary-600 transition-all duration-300 group"
                 >
                   Book a Discovery Call
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -78,7 +78,7 @@ export default function CTASection() {
               <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                 <Link
                   href="/ai-academy"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 text-sm font-semibold rounded-xl text-accent-700 glass-card border-accent-200/50 hover:border-accent-300 transition-all duration-300"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 text-sm font-semibold rounded-xl text-primary-700 glass-card border-primary-200/50 hover:border-primary-300 transition-all duration-300"
                 >
                   <BookOpen className="h-4 w-4" />
                   Start Free Academy

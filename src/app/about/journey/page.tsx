@@ -65,7 +65,7 @@ export default function JourneyPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <div className="relative">
-              <div className="absolute left-6 lg:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-primary-200 via-gray-200 to-gray-100" />
+              <div className="absolute left-6 lg:left-8 top-0 bottom-0 w-px bg-primary-200" />
 
               {timeline.slice(0, 3).map((item, index) => {
                 const Icon = ICONS[item.icon]
@@ -87,7 +87,7 @@ export default function JourneyPage() {
                       </div>
                       <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
                       <p className="text-sm text-gray-500 leading-relaxed mb-4">{item.description}</p>
-                      <div className="flex items-center gap-2 text-xs text-emerald-600 bg-emerald-50/80 rounded-lg px-3 py-2 w-fit border border-emerald-100/60">
+                      <div className="flex items-center gap-2 text-xs text-green-600 bg-green-50/80 rounded-lg px-3 py-2 w-fit border border-green-100/60">
                         <Award className="w-3.5 h-3.5 flex-shrink-0" />
                         <span className="font-semibold">{item.highlight}</span>
                       </div>
@@ -108,7 +108,7 @@ export default function JourneyPage() {
                     </span>
                   </div>
                   <p className="text-sm text-gray-500 leading-relaxed mb-4">{item.description}</p>
-                  <div className="flex items-center gap-2 text-xs text-emerald-600 bg-emerald-50/80 rounded-lg px-3 py-2 w-fit border border-emerald-100/60">
+                  <div className="flex items-center gap-2 text-xs text-green-600 bg-green-50/80 rounded-lg px-3 py-2 w-fit border border-green-100/60">
                     <Award className="w-3.5 h-3.5 flex-shrink-0" />
                     <span className="font-semibold">{item.highlight}</span>
                   </div>
@@ -136,7 +136,7 @@ export default function JourneyPage() {
 
             {/* CTA */}
             <div className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Link href="/about/certifications" className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-sm font-semibold rounded-xl hover:shadow-glow-blue transition-all duration-300">
+              <Link href="/about/certifications" className="inline-flex items-center px-6 py-3 bg-primary-600 text-white text-sm font-semibold rounded-xl transition-all duration-300">
                 View my certifications <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
               <Link href="/contact" className="inline-flex items-center px-6 py-3 text-sm font-semibold text-gray-700 rounded-xl bg-white ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700 transition-all duration-300">

@@ -72,7 +72,7 @@ export default function TeamView({ leads, isManager }: { leads: Lead[]; isManage
   return (
     <div className="p-3 sm:p-5 space-y-4 max-w-5xl">
       <div className="flex items-center gap-2 flex-wrap">
-        <Users className="w-4 h-4 text-blue-500" />
+        <Users className="w-4 h-4 text-primary-500" />
         <h2 className="text-base font-semibold text-gray-900">Team activity</h2>
         <span className="text-xs text-gray-400">computed from every action recorded on leads</span>
         <div className="ml-auto">

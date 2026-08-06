@@ -50,7 +50,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
     return (
       <div className="h-dvh flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <div className="w-10 h-10 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
           <p className="text-sm text-gray-500">Loading Gennoor CRM...</p>
         </div>
       </div>
@@ -111,7 +111,7 @@ function Frame({ children }: { children: React.ReactNode }) {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center justify-between px-3 py-2 rounded-lg mb-0.5 transition-all ${isActive ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100'}`}
+              className={`flex items-center justify-between px-3 py-2 rounded-lg mb-0.5 transition-all ${isActive ? 'bg-primary-50 text-primary-600' : 'text-gray-700 hover:bg-gray-100'}`}
             >
               <span className="flex items-center gap-2.5">
                 <item.icon className="w-4 h-4" />
@@ -119,7 +119,7 @@ function Frame({ children }: { children: React.ReactNode }) {
               </span>
               {item.href === '/crm/leads' && <span className="text-[11px] bg-gray-100 px-1.5 py-0.5 rounded-full">{leads.length}</span>}
               {item.href === '/crm/inbox' && inboxUnseen > 0 && (
-                <span className="text-[11px] bg-emerald-600 text-white px-1.5 py-0.5 rounded-full animate-pulse">{inboxUnseen}</span>
+                <span className="text-[11px] bg-green-600 text-white px-1.5 py-0.5 rounded-full animate-pulse">{inboxUnseen}</span>
               )}
             </Link>
           )

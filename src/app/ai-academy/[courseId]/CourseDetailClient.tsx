@@ -80,7 +80,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Hero */}
-      <section className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 overflow-hidden">
+      <section className="relative bg-gray-900 overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA2MCAwIEwgMCAwIDAgNjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-40" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
           <Link
@@ -93,7 +93,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
 
           <div className="max-w-3xl">
             <div className="flex flex-wrap items-center gap-3 mb-4">
-              <span className="inline-flex items-center px-3 py-1 text-[10px] font-bold bg-secondary-400 text-dark-900 rounded-full uppercase tracking-[0.2em]">
+              <span className="inline-flex items-center px-3 py-1 text-[10px] font-bold bg-gray-400 text-gray-900 rounded-full uppercase tracking-[0.2em]">
                 {course.badge}
               </span>
               <span className="text-white/60 text-sm">{course.certification}</span>
@@ -110,7 +110,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
               {continueChapter && !lastAccessedChapter?.completed ? (
                 <Link
                   href={`/ai-academy/${course.id}/${continueChapter.slug}`}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-secondary-400 text-dark-900 font-bold rounded-lg hover:bg-secondary-300 transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gray-400 text-gray-900 font-bold rounded-lg hover:bg-gray-300 transition-colors"
                 >
                   <PlayCircle className="w-5 h-5" />
                   Continue: {continueChapter.title}
@@ -118,7 +118,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
               ) : (
                 <Link
                   href={`/ai-academy/${course.id}/${firstChapter.slug}`}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-secondary-400 text-dark-900 font-bold rounded-lg hover:bg-secondary-300 transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gray-400 text-gray-900 font-bold rounded-lg hover:bg-gray-300 transition-colors"
                 >
                   <PlayCircle className="w-5 h-5" />
                   {firstChapter.number === 0 ? 'Start Course' : 'Start Chapter 01'}

@@ -29,7 +29,7 @@ export default function Footer() {
     <footer className="relative border-t border-gray-100/60">
       {/* Newsletter Section */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0f1729] via-[#111b33] to-[#0c1524]" />
+        <div className="absolute inset-0 bg-gray-900" />
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
@@ -42,7 +42,7 @@ export default function Footer() {
             <h2 className="text-2xl font-bold text-white mb-3">
               Stay Updated with AI Insights
             </h2>
-            <p className="text-blue-100/90 mb-8 text-sm">
+            <p className="text-primary-100/90 mb-8 text-sm">
               Monthly newsletter with enterprise AI trends, case studies, and exclusive content
             </p>
             <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">

@@ -111,7 +111,7 @@ export default function CompanyPage() {
             <div className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
                 href="/about/journey"
-                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-sm font-semibold rounded-xl hover:shadow-glow-blue transition-all duration-300"
+                className="inline-flex items-center px-6 py-3 bg-primary-600 text-white text-sm font-semibold rounded-xl transition-all duration-300"
               >
                 Meet the Founder
                 <ArrowRight className="ml-2 w-4 h-4" />

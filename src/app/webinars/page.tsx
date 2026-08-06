@@ -5,7 +5,7 @@ export default function WebinarsPage() {
   return (
     <div className="min-h-screen relative overflow-hidden flex items-center justify-center">
       <div className="absolute inset-0 bg-white" />
-      <div className="absolute inset-0 bg-gradient-mesh" />
+      <div className="absolute inset-0" />
       <div className="relative text-center max-w-2xl mx-auto px-4 py-24">
         <div className="text-6xl mb-8">&#127908;</div>
         <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 leading-tight tracking-tight mb-6">
@@ -33,7 +33,7 @@ export default function WebinarsPage() {
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
             href="/"
-            className="px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-xl hover:shadow-glow-blue transition-all duration-300"
+            className="px-6 py-3 bg-primary-600 text-white font-semibold rounded-xl transition-all duration-300"
           >
             Back to Home
           </Link>

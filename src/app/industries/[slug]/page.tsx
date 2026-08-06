@@ -45,7 +45,7 @@ export default async function IndustryDetailPage({ params }: PageProps) {
           { name: industry.name, url: `https://gennoor.com/industries/${industry.slug}` },
         ]}
       />
-      <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
+      <div className="min-h-screen bg-white">
         {/* Back */}
         <div className="max-w-5xl mx-auto px-6 pt-8">
           <Link href="/industries" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-primary-700 transition-colors">
@@ -65,10 +65,10 @@ export default async function IndustryDetailPage({ params }: PageProps) {
 
         {/* Why now */}
         <section className="max-w-5xl mx-auto px-6 pb-16">
-          <div className="bg-gradient-to-br from-primary-50 via-white to-secondary-50 rounded-2xl border border-gray-200 p-8">
+          <div className="bg-primary-50 rounded-2xl border border-gray-200 p-8">
             <div className="flex items-center gap-2 mb-3">
-              <Sparkles className="w-5 h-5 text-secondary-600" />
-              <h2 className="text-xs uppercase tracking-widest font-bold text-secondary-700">Why now</h2>
+              <Sparkles className="w-5 h-5 text-gray-600" />
+              <h2 className="text-xs uppercase tracking-widest font-bold text-gray-700">Why now</h2>
             </div>
             <p className="text-lg text-gray-700 leading-relaxed">{industry.whyNow}</p>
           </div>
@@ -122,8 +122,8 @@ export default async function IndustryDetailPage({ params }: PageProps) {
         {industry.flagshipCourse && (
           <section className="max-w-5xl mx-auto px-6 pb-16">
             <div className="bg-white rounded-2xl border border-gray-200 p-6 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-secondary-100 flex items-center justify-center flex-shrink-0">
-                <GraduationCap className="w-6 h-6 text-secondary-700" />
+              <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
+                <GraduationCap className="w-6 h-6 text-gray-700" />
               </div>
               <div className="flex-1">
                 <div className="text-xs uppercase tracking-widest text-gray-500 mb-0.5">Companion course</div>
@@ -141,7 +141,7 @@ export default async function IndustryDetailPage({ params }: PageProps) {
 
         {/* CTA */}
         <section className="max-w-5xl mx-auto px-6 pb-20">
-          <div className="bg-gradient-to-br from-primary-600 to-primary-800 rounded-2xl p-8 md:p-12 text-white">
+          <div className="bg-primary-600 rounded-2xl p-8 md:p-12 text-white">
             <h2 className="text-2xl md:text-3xl font-bold mb-3">Start with a 30-minute call</h2>
             <p className="text-white/80 mb-6 max-w-2xl">
               Tell us the regulator, the data shape, and the deadline. We’ll come back with a fixed-scope proposal in 5 working days.

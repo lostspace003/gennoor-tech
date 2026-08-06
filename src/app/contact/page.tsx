@@ -249,7 +249,7 @@ export default function ContactPage() {
       {/* HERO */}
       <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
 
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
@@ -292,7 +292,7 @@ export default function ContactPage() {
                 <Wrapper
                   key={intent.code}
                   href={intent.cta.href}
-                  className="group rounded-3xl p-7 lg:p-8 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-500 hover:-translate-y-1 flex flex-col"
+                  className="group rounded-3xl p-7 lg:p-8 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-500 flex flex-col"
                 >
                   <div
                     className={`inline-flex w-14 h-14 rounded-2xl bg-gradient-to-br ${intent.accent} items-center justify-center mb-5 shadow-lg shadow-primary-500/15 group-hover:scale-105 transition-transform`}
@@ -424,9 +424,9 @@ export default function ContactPage() {
                   key={c.label}
                   href={c.href}
                   {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                  className="group rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-500 hover:-translate-y-1 text-center"
+                  className="group rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-500 text-center"
                 >
-                  <div className="inline-flex w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
+                  <div className="inline-flex w-12 h-12 rounded-xl bg-primary-600 items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
                     <Icon className="w-5 h-5 text-white" />
                   </div>
                   <h3 className="text-base font-bold text-gray-900 mb-1">{c.label}</h3>
@@ -581,12 +581,12 @@ export default function ContactPage() {
 
       {/* FOOTER CTA */}
       <section className="section-padding relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0f1729] via-[#111b33] to-[#0c1524]" />
+        <div className="absolute inset-0 bg-gray-900" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
             Still not sure where to start?
           </h2>
-          <p className="text-lg text-blue-200/60 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-primary-200/60 mb-8 max-w-2xl mx-auto">
             Read the methodology first. The Gennoor Way page walks through the five phases
             and tells you which one you&apos;re probably in.
           </p>

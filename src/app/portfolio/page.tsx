@@ -50,7 +50,7 @@ export default function PortfolioPage() {
       {/* Hero */}
       <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
@@ -81,7 +81,7 @@ export default function PortfolioPage() {
                   className="group rounded-2xl p-7 transition-all duration-500 glass-card glow-border"
                 >
                   <div className="flex items-start justify-between mb-5">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary-500/15">
+                    <div className="w-12 h-12 rounded-xl bg-primary-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary-500/15">
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                     <span className="text-xs font-bold text-primary-600 bg-primary-50/80 px-3 py-1 rounded-lg border border-primary-100/60">
@@ -100,7 +100,7 @@ export default function PortfolioPage() {
                   <div className="space-y-1.5 mb-5">
                     {section.examples.map((example, idx) => (
                       <div key={idx} className="flex items-center text-sm text-gray-400">
-                        <span className="w-1 h-1 bg-primary-500 rounded-full mr-2.5" />
+                        <span className="w-1 h-1 bg-primary-600 rounded-full mr-2.5" />
                         {example}
                       </div>
                     ))}

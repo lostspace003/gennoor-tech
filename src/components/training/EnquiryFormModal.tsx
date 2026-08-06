@@ -100,7 +100,7 @@ export default function EnquiryFormModal({
       <div className="relative z-10 w-full max-w-md my-8">
         <div className="bg-white rounded-lg shadow-xl max-h-[90vh] flex flex-col overflow-hidden">
           {/* Header - Fixed */}
-          <div className="flex items-center justify-between p-6 border-b flex-shrink-0 bg-gradient-to-r from-primary-50 to-primary-100">
+          <div className="flex items-center justify-between p-6 border-b flex-shrink-0 bg-primary-50">
             <div>
               <h2 className="text-xl font-bold text-gray-900">Course Enquiry</h2>
               <p className="text-sm text-gray-600 mt-1">Get course details via email</p>
@@ -130,11 +130,11 @@ export default function EnquiryFormModal({
               </div>
             ) : (
               <>
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                  <p className="text-sm text-blue-800">
+                <div className="bg-primary-50 border border-primary-200 rounded-lg p-3 mb-4">
+                  <p className="text-sm text-primary-800">
                     <strong>Course:</strong> {programTitle}
                   </p>
-                  <p className="text-xs text-blue-600 mt-1">
+                  <p className="text-xs text-primary-600 mt-1">
                     PDF course outline will be sent to your email
                   </p>
                 </div>

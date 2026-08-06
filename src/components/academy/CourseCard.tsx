@@ -17,15 +17,15 @@ export default function CourseCard({ course, overallProgress = 0 }: CourseCardPr
   return (
     <Link
       href={`/ai-academy/${course.id}`}
-      className="group block bg-white rounded-2xl border border-gray-200/70 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden"
+      className="group block bg-white rounded-2xl border border-gray-200/70 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden"
     >
       {/* Themed header */}
       <div
-        className={`relative h-52 p-6 flex flex-col justify-between ${course.theme ? '' : 'bg-gradient-to-br from-primary-600 via-primary-700 to-accent-600'}`}
+        className={`relative h-52 p-6 flex flex-col justify-between ${course.theme ? '' : ' bg-primary-600 '}`}
         style={headerStyle}
       >
         <div className="flex items-start justify-between">
-          <span className="inline-flex items-center px-2.5 py-1 text-[10px] font-bold bg-secondary-400 text-dark-900 rounded-full uppercase tracking-[0.2em]">
+          <span className="inline-flex items-center px-2.5 py-1 text-[10px] font-bold bg-gray-400 text-gray-900 rounded-full uppercase tracking-[0.2em]">
             {course.badge}
           </span>
           <span className="text-white/80 text-sm font-medium">{course.shortTitle}</span>
@@ -35,7 +35,7 @@ export default function CourseCard({ course, overallProgress = 0 }: CourseCardPr
         </div>
         {overallProgress > 0 && (
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
-            <div className="h-full bg-secondary-400 transition-all duration-500" style={{ width: `${overallProgress}%` }} />
+            <div className="h-full bg-gray-400 transition-all duration-500" style={{ width: `${overallProgress}%` }} />
           </div>
         )}
       </div>
@@ -89,7 +89,7 @@ export default function CourseCard({ course, overallProgress = 0 }: CourseCardPr
         {/* Open-access signal */}
         {overallProgress === 0 && (
           <p className="text-xs text-gray-500 mb-4">
-            <span className="font-semibold text-emerald-600">Every chapter open</span>
+            <span className="font-semibold text-green-600">Every chapter open</span>
             {' · no account needed · certificate on completion'}
           </p>
         )}

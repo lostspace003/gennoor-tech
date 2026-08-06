@@ -11,10 +11,10 @@ export const metadata: Metadata = {
 }
 
 const industryColors = {
-  'Banking & Financial Services': 'from-blue-500 to-blue-600',
-  'Professional Services': 'from-purple-500 to-purple-600',
+  'Banking & Financial Services': 'from-primary-500 to-primary-600',
+  'Professional Services': 'from-gray-500 to-gray-600',
   'Technology': 'from-green-500 to-green-600',
-  'Education & Training': 'from-orange-500 to-orange-600',
+  'Education & Training': 'from-amber-500 to-amber-600',
 }
 
 export default function CaseStudiesPage() {
@@ -23,7 +23,7 @@ export default function CaseStudiesPage() {
       {/* Hero Section */}
       <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
@@ -189,26 +189,26 @@ export default function CaseStudiesPage() {
           </div>
 
           {/* Stats Section */}
-          <div className="mt-16 bg-gradient-to-br from-[#0C1426] via-[#1E3A8A] to-accent-700 rounded-2xl p-8 max-w-4xl mx-auto">
+          <div className="mt-16 bg-gray-900 rounded-2xl p-8 max-w-4xl mx-auto">
             <h3 className="text-2xl font-bold text-white mb-6 text-center">
               Impact Across Industries
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
               <div>
                 <div className="text-3xl font-bold text-white">6+</div>
-                <div className="text-blue-100">Countries</div>
+                <div className="text-primary-100">Countries</div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-white">80+</div>
-                <div className="text-blue-100">Programs Delivered</div>
+                <div className="text-primary-100">Programs Delivered</div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-white">50+</div>
-                <div className="text-blue-100">C-Suite Leaders</div>
+                <div className="text-primary-100">C-Suite Leaders</div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-white">60%</div>
-                <div className="text-blue-100">Avg. Time Saved</div>
+                <div className="text-primary-100">Avg. Time Saved</div>
               </div>
             </div>
           </div>

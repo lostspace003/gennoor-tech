@@ -5,16 +5,16 @@ import { ArrowRight, BookOpen, Headphones, Award, Play } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 const features = [
-  { icon: BookOpen, label: '100% Self-Paced', desc: 'No schedules, no deadlines — learn on your own time, at your own speed', color: 'from-blue-500 to-blue-600' },
-  { icon: Headphones, label: 'Built-in Audio', desc: 'Every chapter has narration so you can listen while you follow along', color: 'from-teal-500 to-teal-600' },
-  { icon: Award, label: 'Real Certificates', desc: 'Finish a course and claim a verifiable certificate — no account needed', color: 'from-amber-500 to-amber-600' },
-  { icon: Play, label: 'Free Forever', desc: 'No paywalls, no upsells — full courses completely free, always', color: 'from-purple-500 to-purple-600' },
+  { icon: BookOpen, label: '100% Self-Paced', desc: 'No schedules, no deadlines — learn on your own time, at your own speed', color: 'bg-white/10' },
+  { icon: Headphones, label: 'Built-in Audio', desc: 'Every chapter has narration so you can listen while you follow along', color: 'bg-white/10' },
+  { icon: Award, label: 'Real Certificates', desc: 'Finish a course and claim a verifiable certificate — no account needed', color: 'bg-white/10' },
+  { icon: Play, label: 'Free Forever', desc: 'No paywalls, no upsells — full courses completely free, always', color: 'bg-white/10' },
 ]
 
 export default function AcademyCTA() {
   return (
     <section className="relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0C1426] via-[#132040] to-[#0d3b66]" />
+      <div className="absolute inset-0 bg-gray-900" />
 
       {/* Ambient orbs */}
       <div className="absolute inset-0 overflow-hidden">
@@ -50,13 +50,13 @@ export default function AcademyCTA() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
               >
-                <span className="w-1.5 h-1.5 bg-secondary-400 rounded-full animate-pulse" />
-                <span className="text-secondary-400 text-xs font-bold tracking-wider uppercase">100% Free</span>
+                <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-pulse" />
+                <span className="text-gray-400 text-xs font-bold tracking-wider uppercase">100% Free</span>
               </motion.div>
 
               <h2 className="text-3xl lg:text-4xl font-bold text-white mb-5 leading-tight">
                 AI Courses for{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-400 to-secondary-400">
+                <span className="text-primary-600">
                   Everyone
                 </span>
               </h2>
@@ -69,7 +69,7 @@ export default function AcademyCTA() {
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                   <Link
                     href="/ai-academy"
-                    className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-gradient-to-r from-accent-500 to-accent-600 text-white font-bold rounded-xl hover:shadow-glow-teal shadow-lg shadow-accent-500/20 transition-all duration-300 group"
+                    className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-primary-600 text-white font-bold rounded-xl shadow-lg shadow-primary-500/20 transition-all duration-300 group"
                   >
                     <Play className="w-4 h-4" />
                     Start Learning Free
@@ -111,7 +111,7 @@ export default function AcademyCTA() {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.08 }}
                 >
-                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center mb-3 group-hover:scale-105 transition-transform`}>
+                  <div className={`w-10 h-10 rounded-xl ${item.color} flex items-center justify-center mb-3 group-hover:scale-105 transition-transform`}>
                     <item.icon className="w-5 h-5 text-white" />
                   </div>
                   <h3 className="text-white font-semibold text-sm mb-1">{item.label}</h3>

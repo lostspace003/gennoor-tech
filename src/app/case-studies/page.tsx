@@ -31,19 +31,19 @@ export default function CaseStudiesIndexPage() {
           { name: 'Case Studies', url: 'https://gennoor.com/case-studies' },
         ]}
       />
-      <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
-        <section className="relative overflow-hidden bg-gradient-to-br from-[#0C1426] via-[#0F1B33] to-[#1A2547] text-white">
+      <div className="min-h-screen bg-white">
+        <section className="relative overflow-hidden bg-gray-900 text-white">
           <div className="absolute inset-0 opacity-30">
             <div className="absolute top-0 right-1/4 w-[40rem] h-[40rem] bg-primary-500/30 rounded-full blur-3xl" />
-            <div className="absolute bottom-0 left-1/4 w-[35rem] h-[35rem] bg-secondary-400/20 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 left-1/4 w-[35rem] h-[35rem] bg-gray-400/20 rounded-full blur-3xl" />
           </div>
           <div className="relative max-w-6xl mx-auto px-6 py-10 lg:py-16 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs tracking-widest text-secondary-300 mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs tracking-widest text-gray-300 mb-6">
               CASE STUDIES
             </div>
             <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold leading-tight tracking-tight mb-6">
               Real engagements.
-              <span className="block text-secondary-300 mt-2">Not vendor-deck screenshots.</span>
+              <span className="block text-gray-300 mt-2">Not vendor-deck screenshots.</span>
             </h1>
             <p className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto">
               Senior-led AI work delivered for Fortune 500 and government clients across GCC, Africa, and South Asia —
@@ -78,7 +78,7 @@ export default function CaseStudiesIndexPage() {
                   <ul className="text-xs text-gray-500 space-y-1 mb-4">
                     {cs.outcomes.slice(0, 2).map((o, i) => (
                       <li key={i} className="flex gap-2">
-                        <span className="text-secondary-600 flex-shrink-0">→</span>
+                        <span className="text-gray-600 flex-shrink-0">→</span>
                         <span className="line-clamp-1">{o}</span>
                       </li>
                     ))}
@@ -93,7 +93,7 @@ export default function CaseStudiesIndexPage() {
         </section>
 
         <section className="max-w-5xl mx-auto px-6 pb-20">
-          <div className="bg-gradient-to-br from-primary-600 to-primary-800 rounded-2xl p-8 md:p-12 text-white text-center">
+          <div className="bg-primary-600 rounded-2xl p-8 md:p-12 text-white text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-3">Want to be the next one?</h2>
             <p className="text-white/80 mb-6 max-w-2xl mx-auto">
               We run the journey from diagnostic to deployed agents — and we stay for sustainment. Book a 30-minute call.

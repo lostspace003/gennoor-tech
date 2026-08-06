@@ -54,9 +54,9 @@ export default function ThreePledges({ heading, subhead, compact = false }: Thre
             return (
               <div
                 key={pledge.title}
-                className="rounded-2xl p-7 glass-card glow-border transition-all duration-500 hover:-translate-y-1"
+                className="rounded-2xl p-7 glass-card glow-border transition-all duration-500"
               >
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center mb-5 shadow-lg shadow-primary-500/15">
+                <div className="w-12 h-12 rounded-xl bg-primary-600 flex items-center justify-center mb-5 shadow-lg shadow-primary-500/15">
                   <Icon className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">{pledge.title}</h3>

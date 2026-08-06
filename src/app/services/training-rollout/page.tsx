@@ -310,7 +310,7 @@ export default function TrainingRolloutPage() {
           <div className="space-y-4">
             {fitSignals.map((signal, index) => (
               <div key={index} className="bg-white rounded-xl p-6 ring-1 ring-gray-100 flex gap-4">
-                <CheckCircle className="w-6 h-6 text-emerald-600 flex-shrink-0 mt-0.5" />
+                <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">{signal.title}</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">{signal.description}</p>

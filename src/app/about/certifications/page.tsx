@@ -16,14 +16,14 @@ export const metadata: Metadata = {
 const categoryOrder = ['AI Transformation', 'Agentic AI', 'AI CERTs', 'Expert', 'Associate', 'Fundamentals', 'GitHub', 'Applied Skills']
 
 const categoryColors: Record<string, string> = {
-  'AI Transformation': 'from-purple-500 to-purple-600',
-  'Agentic AI': 'from-indigo-500 to-indigo-600',
-  'AI CERTs': 'from-yellow-500 to-yellow-600',
-  'Expert': 'from-red-500 to-red-600',
-  'Associate': 'from-blue-500 to-blue-600',
-  'Fundamentals': 'from-green-500 to-green-600',
-  'GitHub': 'from-gray-600 to-gray-700',
-  'Applied Skills': 'from-orange-500 to-orange-600',
+  'AI Transformation': 'bg-gray-400',
+  'Agentic AI': 'bg-gray-400',
+  'AI CERTs': 'bg-gray-400',
+  'Expert': 'bg-gray-400',
+  'Associate': 'bg-gray-400',
+  'Fundamentals': 'bg-gray-400',
+  'GitHub': 'bg-gray-400',
+  'Applied Skills': 'bg-gray-400',
 }
 
 export default function CertificationsPage() {
@@ -32,7 +32,7 @@ export default function CertificationsPage() {
       {/* Hero */}
       <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
@@ -49,21 +49,21 @@ export default function CertificationsPage() {
             {/* Trainer Badges */}
             <div className="flex flex-col gap-3">
               <div className="flex flex-col sm:flex-row gap-3">
-                <div className="inline-flex items-center bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl px-6 py-3 shadow-lg shadow-primary-500/15">
+                <div className="inline-flex items-center bg-primary-600 text-white rounded-xl px-6 py-3 shadow-lg shadow-primary-500/15">
                   <Shield className="w-5 h-5 mr-3" />
                   <div>
                     <p className="font-bold text-sm">Microsoft Certified Trainer (MCT)</p>
-                    <p className="text-xs text-blue-200/70">Active since {mctStatus.since} • Authorized worldwide trainer</p>
+                    <p className="text-xs text-primary-200/70">Active since {mctStatus.since} • Authorized worldwide trainer</p>
                   </div>
                 </div>
                 <MCTCertificateButton pdfUrl={`${BLOB_URL}/certificates/0-mct-certifcate.pdf`} />
               </div>
               <div>
-                <div className="inline-flex items-center bg-gradient-to-r from-yellow-600 to-yellow-700 text-white rounded-xl px-6 py-3 shadow-lg shadow-yellow-500/15">
+                <div className="inline-flex items-center bg-amber-600 text-white rounded-xl px-6 py-3 shadow-lg shadow-amber-500/15">
                   <Award className="w-5 h-5 mr-3" />
                   <div>
                     <p className="font-bold text-sm">AI CERTs Certified Trainer (AICT)</p>
-                    <p className="text-xs text-yellow-200/70">Active since {aictStatus.since} • ID: {aictStatus.id}</p>
+                    <p className="text-xs text-amber-200/70">Active since {aictStatus.since} • ID: {aictStatus.id}</p>
                   </div>
                 </div>
               </div>
@@ -96,7 +96,7 @@ export default function CertificationsPage() {
               href="https://learn.microsoft.com/en-us/users/lostspace003/transcript/vjw63s4jxnmmwre?tab=credentials-tab"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:shadow-glow-blue transition-all duration-300 text-sm font-semibold"
+              className="inline-flex items-center px-5 py-2.5 bg-primary-600 text-white rounded-xl transition-all duration-300 text-sm font-semibold"
             >
               <Trophy className="w-4 h-4 mr-2" />
               View Full Microsoft Learn Profile
@@ -116,7 +116,7 @@ export default function CertificationsPage() {
               return (
                 <div key={category} className="mb-14">
                   <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                    <div className={`w-1 h-7 rounded-full bg-gradient-to-b ${categoryColors[category as keyof typeof categoryColors]} mr-3`} />
+                    <div className={`w-1 h-7 rounded-full ${categoryColors[category as keyof typeof categoryColors]} mr-3`} />
                     {category}
                   </h2>
                   <CertificationCards

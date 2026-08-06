@@ -35,7 +35,7 @@ export default function CrmStatsTile() {
   return (
     <button
       onClick={() => router.push('/crm/queue')}
-      className="px-3 py-1.5 text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors flex items-center gap-1.5"
+      className="px-3 py-1.5 text-xs font-medium bg-primary-50 text-primary-700 border border-primary-200 rounded-md hover:bg-primary-100 transition-colors flex items-center gap-1.5"
       title="CRM work queue — click to open"
     >
       <Zap className="w-3.5 h-3.5" />

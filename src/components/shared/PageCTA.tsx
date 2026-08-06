@@ -36,18 +36,9 @@ export default function PageCTA({
 }: PageCTAProps) {
   return (
     <section className="py-16 lg:py-24 relative overflow-hidden">
-      {/* Light brand-tinted mesh background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#f0f4ff] via-white to-[#f0fdf8]" aria-hidden="true" />
-      <div className="absolute inset-0 bg-gradient-mesh" aria-hidden="true" />
-
-      {/* Ambient blurred orb — pure CSS */}
-      <div
-        aria-hidden="true"
-        className="absolute top-[20%] left-[30%] w-[400px] h-[400px] rounded-full blur-3xl"
-        style={{
-          background: 'radial-gradient(circle, rgba(37, 99, 235, 0.06) 0%, transparent 70%)',
-        }}
-      />
+      {/* Flat closing panel, separated by its surface and a top hairline. */}
+      <div className="absolute inset-0 bg-gray-50" aria-hidden="true" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gray-200" aria-hidden="true" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
@@ -74,7 +65,7 @@ export default function PageCTA({
                   'inline-flex items-center justify-center gap-2 px-7 py-3.5 text-sm font-semibold rounded-xl transition-all duration-300 group',
                   c.variant === 'ghost'
                     ? 'text-gray-700 bg-white/80 backdrop-blur-sm ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700'
-                    : 'text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue'
+                    : 'text-white bg-primary-600'
                 )}
               >
                 {c.label}

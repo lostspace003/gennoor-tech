@@ -119,16 +119,9 @@ export default function RootLayout({
         <GoogleAnalytics />
         <TrackingPixels />
         <PageViewTracker />
-        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-primary-600 focus:text-white focus:rounded-lg">
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-primary-700 focus:text-white focus:rounded-lg">
           Skip to main content
         </a>
-        {/* Ambient background */}
-        <div className="ambient-bg" aria-hidden="true">
-          <div className="ambient-orb ambient-orb-1" />
-          <div className="ambient-orb ambient-orb-2" />
-          <div className="ambient-orb ambient-orb-3" />
-        </div>
-        <div className="noise-overlay" aria-hidden="true" />
 
         <div className="relative z-10">
           <PortalShell>

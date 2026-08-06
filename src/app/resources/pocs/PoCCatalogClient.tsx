@@ -33,24 +33,24 @@ export default function PoCCatalogClient() {
   )
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#0C1426] via-[#0F1B33] to-[#1A2547] text-white">
+    <div className="min-h-screen bg-white">
+      <section className="relative overflow-hidden bg-gray-900 text-white">
         <div className="absolute inset-0 opacity-30">
           <div className="absolute top-0 left-1/4 w-[40rem] h-[40rem] bg-primary-500/30 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-[35rem] h-[35rem] bg-secondary-400/20 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 w-[35rem] h-[35rem] bg-gray-400/20 rounded-full blur-3xl" />
         </div>
         <div className="relative max-w-6xl mx-auto px-6 py-24 lg:py-32">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs tracking-widest text-secondary-300 mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs tracking-widest text-gray-300 mb-6">
             <Sparkles className="w-3.5 h-3.5" /> POC CATALOG
           </div>
           <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
             18 production-ready PoC blueprints.
-            <span className="block text-secondary-300 mt-2">Pick one. We deliver it in 4–8 weeks.</span>
+            <span className="block text-gray-300 mt-2">Pick one. We deliver it in 4–8 weeks.</span>
           </h1>
           <p className="text-lg md:text-xl text-white/80 max-w-3xl">
             Fixed scope. Fixed price. Code transferred to your environment. The catalog below is what
             we ship most often — if your use case isn’t here, jump to{' '}
-            <Link href="#custom-build" className="text-secondary-300 underline underline-offset-2 hover:text-secondary-200">
+            <Link href="#custom-build" className="text-gray-300 underline underline-offset-2 hover:text-gray-200">
               Custom Build
             </Link>
             .
@@ -92,7 +92,7 @@ export default function PoCCatalogClient() {
                 <span className="text-[10px] font-bold tracking-widest uppercase text-primary-700 bg-primary-50 px-2 py-1 rounded">
                   {p.category}
                 </span>
-                <span className="text-[10px] font-bold tracking-widest uppercase text-secondary-700 bg-secondary-50 px-2 py-1 rounded">
+                <span className="text-[10px] font-bold tracking-widest uppercase text-gray-700 bg-gray-50 px-2 py-1 rounded">
                   {p.phaseTag}
                 </span>
               </div>
@@ -126,10 +126,10 @@ export default function PoCCatalogClient() {
         </div>
       </section>
 
-      <section id="custom-build" className="bg-gradient-to-br from-secondary-50 via-white to-primary-50 border-y border-gray-200">
+      <section id="custom-build" className="bg-gray-50 border-y border-gray-200">
         <div className="max-w-6xl mx-auto px-6 py-20">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-100 text-secondary-700 text-xs tracking-widest font-bold mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs tracking-widest font-bold mb-4">
               <Hammer className="w-3.5 h-3.5" /> CUSTOM BUILD
             </div>
             <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4">

@@ -48,13 +48,13 @@ export default function CopilotLicensingClient() {
   }, [total, heavy, moderate, light, pilotSpend])
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#0C1426] via-[#0F1B33] to-[#1A2547] text-white">
+    <div className="min-h-screen bg-white">
+      <section className="relative overflow-hidden bg-gray-900 text-white">
         <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-0 right-1/4 w-[40rem] h-[40rem] bg-secondary-400/30 rounded-full blur-3xl" />
+          <div className="absolute top-0 right-1/4 w-[40rem] h-[40rem] bg-gray-400/30 rounded-full blur-3xl" />
         </div>
         <div className="relative max-w-5xl mx-auto px-6 py-20 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs tracking-widest text-secondary-300 mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs tracking-widest text-gray-300 mb-6">
             <Sparkles className="w-3.5 h-3.5" /> COPILOT LICENSING
           </div>
           <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-4">
@@ -84,7 +84,7 @@ export default function CopilotLicensingClient() {
           </div>
 
           {/* Output */}
-          <div className="bg-gradient-to-br from-secondary-600 to-secondary-800 text-white rounded-2xl p-6 md:p-8 sticky top-6 self-start">
+          <div className="bg-gray-600 text-white rounded-2xl p-6 md:p-8 sticky top-6 self-start">
             <h2 className="text-sm font-bold uppercase tracking-widest text-primary-200 mb-6">Recommended mix</h2>
 
             <Row label={`Heavy users (license all)`} value={`${calc.heavyUsers.toLocaleString()} licenses`} />
@@ -100,7 +100,7 @@ export default function CopilotLicensingClient() {
 
             <Link
               href={`/contact?intent=pilot&fromCalc=copilot-licensing&licenses=${calc.recommendedLicenses}`}
-              className="mt-6 inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-white text-secondary-700 font-bold rounded-xl hover:shadow-lg transition-all"
+              className="mt-6 inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-white text-gray-700 font-bold rounded-xl hover:shadow-lg transition-all"
             >
               Plan our rollout — book a call <ArrowRight className="w-4 h-4" />
             </Link>
@@ -152,7 +152,7 @@ function Slider({
     <div className="mb-5">
       <div className="flex items-center justify-between mb-2">
         <label className="text-sm font-semibold text-gray-700">{label}</label>
-        <span className="text-sm font-bold text-secondary-700 tabular-nums">
+        <span className="text-sm font-bold text-gray-700 tabular-nums">
           {prefix}
           {value.toLocaleString()}
           {suffix && ` ${suffix}`}
@@ -165,7 +165,7 @@ function Slider({
         step={step}
         value={value}
         onChange={e => setValue(Number(e.target.value))}
-        className="w-full h-1.5 accent-secondary-600 cursor-pointer"
+        className="w-full h-1.5 accent-gray-600 cursor-pointer"
       />
     </div>
   )
@@ -189,7 +189,7 @@ function Divider() {
 function Tip({ icon: Icon, title, body }: { icon: typeof TrendingUp; title: string; body: string }) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5">
-      <Icon className="w-5 h-5 text-secondary-600 mb-2" />
+      <Icon className="w-5 h-5 text-gray-600 mb-2" />
       <h3 className="font-bold text-gray-900 mb-1 text-sm">{title}</h3>
       <p className="text-xs text-gray-600 leading-relaxed">{body}</p>
     </div>

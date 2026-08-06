@@ -40,13 +40,13 @@ export default function AIROICalculatorClient() {
   }, [team, hoursPerWeek, loadedCost, programSpend, adoption, sustainmentMonthly])
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#0C1426] via-[#0F1B33] to-[#1A2547] text-white">
+    <div className="min-h-screen bg-white">
+      <section className="relative overflow-hidden bg-gray-900 text-white">
         <div className="absolute inset-0 opacity-30">
           <div className="absolute top-0 right-1/4 w-[40rem] h-[40rem] bg-primary-500/30 rounded-full blur-3xl" />
         </div>
         <div className="relative max-w-5xl mx-auto px-6 py-20 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs tracking-widest text-secondary-300 mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs tracking-widest text-gray-300 mb-6">
             <Calculator className="w-3.5 h-3.5" /> ROI CALCULATOR
           </div>
           <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-4">
@@ -72,8 +72,8 @@ export default function AIROICalculatorClient() {
           </div>
 
           {/* Outputs */}
-          <div className="bg-gradient-to-br from-primary-600 to-primary-800 text-white rounded-2xl p-6 md:p-8 sticky top-6 self-start">
-            <h2 className="text-sm font-bold uppercase tracking-widest text-secondary-300 mb-6">Estimated outcome</h2>
+          <div className="bg-primary-600 text-white rounded-2xl p-6 md:p-8 sticky top-6 self-start">
+            <h2 className="text-sm font-bold uppercase tracking-widest text-gray-300 mb-6">Estimated outcome</h2>
 
             <OutcomeRow label="Active users (after adoption)" value={`${Math.round(calc.activeUsers).toLocaleString()} people`} />
             <OutcomeRow label="Hours saved / year" value={`${Math.round(calc.hoursSavedYear).toLocaleString()} hrs`} />
@@ -156,7 +156,7 @@ function OutcomeRow({ label, value, large, highlight }: { label: string; value: 
   return (
     <div className="flex items-center justify-between py-2">
       <span className="text-sm text-white/70">{label}</span>
-      <span className={`tabular-nums font-bold ${large ? 'text-2xl' : 'text-base'} ${highlight ? 'text-secondary-300' : 'text-white'}`}>
+      <span className={`tabular-nums font-bold ${large ? 'text-2xl' : 'text-base'} ${highlight ? 'text-gray-300' : 'text-white'}`}>
         {value}
       </span>
     </div>

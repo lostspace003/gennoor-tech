@@ -129,62 +129,62 @@ export const post: BlogPost = {
 <table class="w-full border-collapse text-sm">
 <thead>
 <tr>
-<th class="border border-slate-300 dark:border-slate-700 px-3 py-2 text-left">Capability</th>
-<th class="border border-slate-300 dark:border-slate-700 px-3 py-2 text-left">Meta Incognito Chat</th>
-<th class="border border-slate-300 dark:border-slate-700 px-3 py-2 text-left">OpenAI Temporary Chat</th>
-<th class="border border-slate-300 dark:border-slate-700 px-3 py-2 text-left">Anthropic Claude (No Memory)</th>
-<th class="border border-slate-300 dark:border-slate-700 px-3 py-2 text-left">Apple Private Cloud Compute</th>
+<th class="border border-gray-300 dark:border-gray-700 px-3 py-2 text-left">Capability</th>
+<th class="border border-gray-300 dark:border-gray-700 px-3 py-2 text-left">Meta Incognito Chat</th>
+<th class="border border-gray-300 dark:border-gray-700 px-3 py-2 text-left">OpenAI Temporary Chat</th>
+<th class="border border-gray-300 dark:border-gray-700 px-3 py-2 text-left">Anthropic Claude (No Memory)</th>
+<th class="border border-gray-300 dark:border-gray-700 px-3 py-2 text-left">Apple Private Cloud Compute</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">Provider can read prompt in flight</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2"><strong>No</strong> (attested CVM)</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">Yes</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">Yes</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2"><strong>No</strong> (PCC)</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">Provider can read prompt in flight</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2"><strong>No</strong> (attested CVM)</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">Yes</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">Yes</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2"><strong>No</strong> (PCC)</td>
 </tr>
 <tr>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">Conversation logged on provider servers</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">No</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">Short-term, then deleted</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">No conversation memory</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">No</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">Conversation logged on provider servers</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">No</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">Short-term, then deleted</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">No conversation memory</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">No</td>
 </tr>
 <tr>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">Used for training</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">No</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">No (opt-out by default in temp chat)</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">No</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">No</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">Used for training</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">No</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">No (opt-out by default in temp chat)</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">No</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">No</td>
 </tr>
 <tr>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">Third-party auditable attestation</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">Yes (whitepaper)</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">No</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">No</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">Yes</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">Third-party auditable attestation</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">Yes (whitepaper)</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">No</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">No</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">Yes</td>
 </tr>
 <tr>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">Available inside a billion-DAU surface</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">Yes (WhatsApp)</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">No</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">No</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">Apple devices only</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">Available inside a billion-DAU surface</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">Yes (WhatsApp)</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">No</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">No</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">Apple devices only</td>
 </tr>
 <tr>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">Multimodal in this private mode</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">Text-only at launch</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">Yes</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">Yes</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">Yes</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">Multimodal in this private mode</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">Text-only at launch</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">Yes</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">Yes</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">Yes</td>
 </tr>
 <tr>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">Underlying model class</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">Muse Spark</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">GPT-5.x</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">Claude (current)</td>
-<td class="border border-slate-300 dark:border-slate-700 px-3 py-2">Apple Intelligence + GPT escalation</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">Underlying model class</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">Muse Spark</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">GPT-5.x</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">Claude (current)</td>
+<td class="border border-gray-300 dark:border-gray-700 px-3 py-2">Apple Intelligence + GPT escalation</td>
 </tr>
 </tbody>
 </table>

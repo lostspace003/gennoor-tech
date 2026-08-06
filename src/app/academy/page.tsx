@@ -50,7 +50,7 @@ export default function AcademyPage() {
       {/* HERO */}
       <section className="relative py-14 lg:py-20 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
 
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
@@ -85,7 +85,7 @@ export default function AcademyPage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <a
                 href="#catalog"
-                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:shadow-glow-blue transition-all duration-300"
+                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-primary-600 transition-all duration-300"
               >
                 Browse the catalog
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -124,10 +124,10 @@ export default function AcademyPage() {
               return (
                 <div
                   key={track.id}
-                  className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm transition-all duration-300 hover:-translate-y-1"
+                  className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm transition-all duration-300"
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/15">
+                    <div className="w-10 h-10 rounded-xl bg-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/15">
                       <Layers className="w-5 h-5 text-white" />
                     </div>
                     <span className="text-xs font-bold tracking-widest text-gray-400">
@@ -157,7 +157,7 @@ export default function AcademyPage() {
           <div className="max-w-4xl mx-auto">
             <div className="rounded-3xl p-7 lg:p-10 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-amber-500/15">
+                <div className="w-12 h-12 rounded-xl bg-amber-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-amber-500/15">
                   <Sparkles className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-grow">
@@ -234,12 +234,12 @@ export default function AcademyPage() {
 
       {/* FINAL CTA */}
       <section className="section-padding relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0f1729] via-[#111b33] to-[#0c1524]" />
+        <div className="absolute inset-0 bg-gray-900" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
             Want this for your whole team?
           </h2>
-          <p className="text-lg text-blue-200/60 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-primary-200/60 mb-8 max-w-2xl mx-auto">
             Every course pairs with an optional 2-day workshop (up to 25 people) and a
             4-week pilot. Same content, applied to your data, with senior delivery.
           </p>

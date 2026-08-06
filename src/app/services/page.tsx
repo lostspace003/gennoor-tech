@@ -79,7 +79,7 @@ export default function ServicesPage() {
                   className="group flex flex-col md:flex-row gap-6 rounded-2xl p-7 transition-all duration-500 bg-white border border-gray-200/70 shadow-sm hover:shadow-lg glow-border"
                 >
                   <div className="flex-shrink-0">
-                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary-500/15">
+                    <div className="w-14 h-14 rounded-xl bg-primary-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary-500/15">
                       <Icon className="w-7 h-7 text-white" />
                     </div>
                   </div>
@@ -152,7 +152,7 @@ export default function ServicesPage() {
       {/* CTA */}
       <section className="py-10 lg:py-16 relative overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-5">Not Sure Where to Start?</h2>
           <p className="text-lg text-gray-500 mb-8 max-w-2xl mx-auto leading-relaxed">
@@ -160,7 +160,7 @@ export default function ServicesPage() {
           </p>
           <Link
             href="/contact#book"
-            className="inline-flex items-center px-7 py-3.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-xl hover:shadow-glow-blue transition-all duration-300"
+            className="inline-flex items-center px-7 py-3.5 bg-primary-600 text-white font-semibold rounded-xl transition-all duration-300"
           >
             Book a Free Call
           </Link>

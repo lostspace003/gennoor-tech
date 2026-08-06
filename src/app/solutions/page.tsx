@@ -35,11 +35,11 @@ export default function SolutionsHubPage() {
   return (
     <>
       <BreadcrumbJsonLd items={[{ name: 'Home', url: 'https://gennoor.com' }, { name: 'Solutions', url: 'https://gennoor.com/solutions' }]} />
-      <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
+      <div className="min-h-screen bg-white">
         {/* Hero */}
         <section className="relative overflow-hidden">
           <div className="absolute inset-0 bg-white" />
-          <div className="absolute inset-0 bg-gradient-mesh" />
+          <div className="absolute inset-0" />
           <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
           <div className="relative max-w-6xl mx-auto px-6 py-10 lg:py-16 text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50/80 border border-primary-100/60 text-xs tracking-widest font-semibold text-primary-600 mb-6">
@@ -84,12 +84,12 @@ export default function SolutionsHubPage() {
 
             <Link
               href="/solutions/for-enterprise"
-              className="group relative bg-white rounded-2xl border border-gray-200/70 shadow-sm hover:border-secondary-300 hover:shadow-md transition-all duration-300 p-8 md:p-10 flex flex-col"
+              className="group relative bg-white rounded-2xl border border-gray-200/70 shadow-sm hover:border-gray-300 hover:shadow-md transition-all duration-300 p-8 md:p-10 flex flex-col"
             >
-              <div className="w-14 h-14 rounded-2xl bg-secondary-100 text-secondary-700 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <div className="w-14 h-14 rounded-2xl bg-gray-100 text-gray-700 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <Building2 className="w-7 h-7" />
               </div>
-              <div className="text-xs uppercase tracking-widest text-secondary-700 font-bold mb-2">For Enterprise</div>
+              <div className="text-xs uppercase tracking-widest text-gray-700 font-bold mb-2">For Enterprise</div>
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">250+ person organizations</h2>
               <p className="text-gray-600 leading-relaxed mb-6">
                 Custom engagement models — diagnostics, multi-PoC programs, agent factories, and
@@ -99,7 +99,7 @@ export default function SolutionsHubPage() {
                 <li>· Readiness Diagnostic · PoC Programs · Agent Factory</li>
                 <li>· Center of Excellence · Sustainment Retainers · Sovereign Deployments</li>
               </ul>
-              <div className="mt-auto inline-flex items-center gap-1 text-secondary-700 font-semibold group-hover:gap-2 transition-all">
+              <div className="mt-auto inline-flex items-center gap-1 text-gray-700 font-semibold group-hover:gap-2 transition-all">
                 See the 6 enterprise models <ArrowRight className="w-4 h-4" />
               </div>
             </Link>
@@ -107,7 +107,7 @@ export default function SolutionsHubPage() {
         </section>
 
         {/* Phases mini */}
-        <section className="bg-gradient-to-br from-primary-50 via-white to-secondary-50 border-y border-gray-200">
+        <section className="bg-primary-50 border-y border-gray-200">
           <div className="max-w-6xl mx-auto px-6 py-10 lg:py-16">
             <div className="text-center mb-12">
               <div className="text-xs uppercase tracking-widest text-primary-700 font-bold mb-2">The Gennoor Way</div>
@@ -151,7 +151,7 @@ export default function SolutionsHubPage() {
           </p>
           <Link
             href="/contact?intent=diagnostic"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-xl hover:shadow-glow-blue transition-all duration-300"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-primary-600 text-white font-semibold rounded-xl transition-all duration-300"
           >
             Book a 30-minute call <ArrowRight className="w-5 h-5" />
           </Link>

@@ -17,7 +17,7 @@ export default function ShortsStrip({ videos }: { videos: YouTubeVideo[] }) {
           href={`https://www.youtube.com/shorts/${video.id}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="group relative w-40 sm:w-44 shrink-0 aspect-[9/16] rounded-xl overflow-hidden bg-gray-100 border border-gray-100 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-out"
+          className="group relative w-40 sm:w-44 shrink-0 aspect-[9/16] rounded-xl overflow-hidden bg-gray-100 border border-gray-100 shadow-md hover:shadow-xl transition-all duration-300 ease-out"
         >
           {video.thumbnail && (
             <Image src={video.thumbnail} alt={video.title} fill className="object-cover" sizes="176px" />

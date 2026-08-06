@@ -45,7 +45,7 @@ export default function CaseStudyPage({ params }: { params: { id: string } }) {
   return (
     <>
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-50 to-accent-50 py-10 lg:py-16">
+      <section className="bg-primary-50 py-10 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <Link
             href="/portfolio/case-studies"
@@ -171,7 +171,7 @@ export default function CaseStudyPage({ params }: { params: { id: string } }) {
             {/* Testimonial */}
             {caseStudy.testimonial && (
               <div className="mb-12">
-                <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-8 border-l-4 border-primary-600">
+                <div className="bg-primary-50 rounded-xl p-8 border-l-4 border-primary-600">
                   <p className="text-lg text-gray-700 italic mb-4">
                     "{caseStudy.testimonial.quote}"
                   </p>
@@ -197,7 +197,7 @@ export default function CaseStudyPage({ params }: { params: { id: string } }) {
               )}
               <Link
                 href="/contact"
-                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl font-semibold hover:shadow-glow-blue transition-all duration-300"
+                className="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-xl font-semibold transition-all duration-300"
               >
                 Discuss Similar Project
               </Link>

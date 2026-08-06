@@ -53,9 +53,9 @@ export default function PitchDocModal({ lead, editable, onClose, onReload, notif
     /^\*\*[^*]+\*\*$/.test(part) ? <strong key={j} className="font-semibold text-gray-900">{part.slice(2, -2)}</strong> : part
   )
   const renderMd = (md: string) => md.split('\n').map((line, i) => {
-    if (line.startsWith('# ')) return <h2 key={i} className="text-lg font-bold text-blue-700 mb-1">{line.slice(2)}</h2>
+    if (line.startsWith('# ')) return <h2 key={i} className="text-lg font-bold text-primary-700 mb-1">{line.slice(2)}</h2>
     if (/^\*[^*].*\*$/.test(line.trim())) return <p key={i} className="text-xs italic text-gray-400 border-b border-gray-100 pb-2 mb-2">{line.trim().slice(1, -1)}</p>
-    if (line.startsWith('## ')) return <h3 key={i} className="text-[13px] font-semibold text-blue-700 uppercase tracking-wide mt-4 mb-1">{line.slice(3)}</h3>
+    if (line.startsWith('## ')) return <h3 key={i} className="text-[13px] font-semibold text-primary-700 uppercase tracking-wide mt-4 mb-1">{line.slice(3)}</h3>
     if (line.startsWith('- ') || line.startsWith('* ')) return <li key={i} className="text-sm text-gray-700 ml-4 list-disc">{renderBold(line.slice(2))}</li>
     if (!line.trim()) return <div key={i} className="h-1.5" />
     return <p key={i} className="text-sm text-gray-700">{renderBold(line)}</p>
@@ -69,7 +69,7 @@ export default function PitchDocModal({ lead, editable, onClose, onReload, notif
       <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="px-5 py-3.5 border-b border-gray-200 flex items-center gap-2 flex-wrap shrink-0">
-          <FileText className="w-4 h-4 text-blue-600" />
+          <FileText className="w-4 h-4 text-primary-600" />
           <h3 className="text-base font-semibold text-gray-900">One-page pitch — {lead.company || lead.name}</h3>
           <InfoTip text="The final client-facing pitch on one page. Generate it from the research, refine it by telling the copilot what to change (each change = a new version), and Lock the version you'll send. The locked version drives the AI email draft; every version is also saved as docx + PDF in Documents → pitches." />
           {versions.length > 0 && (
@@ -97,7 +97,7 @@ export default function PitchDocModal({ lead, editable, onClose, onReload, notif
                 No pitch document yet. Generate a one-page, client-ready pitch from the research{lead.researchChat.length ? ' and your copilot discussion' : ''}.
               </p>
               {editable ? (
-                <button onClick={generate} disabled={!!busy} className="px-4 py-2.5 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 inline-flex items-center gap-2 disabled:opacity-50">
+                <button onClick={generate} disabled={!!busy} className="px-4 py-2.5 bg-gray-600 text-white text-sm rounded-lg hover:bg-gray-700 inline-flex items-center gap-2 disabled:opacity-50">
                   <Sparkles className="w-4 h-4" /> {busy === 'generate' ? 'Writing the one-pager...' : 'Generate one-page pitch'}
                 </button>
               ) : (
@@ -135,9 +135,9 @@ export default function PitchDocModal({ lead, editable, onClose, onReload, notif
                   onChange={(e) => setInstruction(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && refine()}
                   placeholder='Tell the copilot what to change — "shorter", "lead with the POC", "mention their Elm acquisition"...'
-                  className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                 />
-                <button onClick={refine} disabled={!!busy || !instruction.trim()} className="px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 text-sm inline-flex items-center gap-1.5">
+                <button onClick={refine} disabled={!!busy || !instruction.trim()} className="px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50 text-sm inline-flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4" /> Refine → v{versions[versions.length - 1].v + 1}
                 </button>
               </div>
@@ -165,7 +165,7 @@ export default function PitchDocModal({ lead, editable, onClose, onReload, notif
                   onClick={() => { onClose(); onGoEmail() }}
                   disabled={!lockedV}
                   title={lockedV ? 'The AI email draft is built from the locked pitch' : 'Lock a version first — the email draft is built from it'}
-                  className="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 inline-flex items-center gap-1.5 disabled:opacity-50"
+                  className="px-3 py-1.5 bg-primary-600 text-white text-xs rounded-lg hover:bg-primary-700 inline-flex items-center gap-1.5 disabled:opacity-50"
                 >
                   Use in email <Send className="w-3.5 h-3.5" />
                 </button>

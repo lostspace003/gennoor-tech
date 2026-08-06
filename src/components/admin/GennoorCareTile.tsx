@@ -22,7 +22,7 @@ export default function GennoorCareTile() {
   return (
     <button
       onClick={() => router.push('/crm/botlog')}
-      className="px-3 py-1.5 text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-md hover:bg-emerald-100 transition-colors flex items-center gap-1.5"
+      className="px-3 py-1.5 text-xs font-medium bg-green-50 text-green-700 border border-green-200 rounded-md hover:bg-green-100 transition-colors flex items-center gap-1.5"
       title="GennoorCare website bot — last 7 days. Click for conversations & weekly report."
     >
       <MessageCircle className="w-3.5 h-3.5" />

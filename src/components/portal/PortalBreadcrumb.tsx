@@ -24,7 +24,7 @@ export default function PortalBreadcrumb() {
             <li key={b.href} className="flex items-center gap-1 flex-shrink-0">
               {i > 0 && <ChevronRight className="w-3 h-3 text-gray-300" aria-hidden="true" />}
               {isLast ? (
-                <span className="font-semibold text-gray-900 truncate max-w-[280px]">
+                <span className="font-medium text-gray-900 truncate max-w-[280px]">
                   {b.label}
                 </span>
               ) : (

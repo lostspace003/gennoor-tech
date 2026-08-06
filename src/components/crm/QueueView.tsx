@@ -64,11 +64,11 @@ export function buildQueue(leads: Lead[], mine?: string): { buckets: Bucket[]; p
 }
 
 const ACCENTS: Record<string, { border: string; bg: string; text: string; btn: string }> = {
-  purple: { border: 'border-purple-200', bg: 'bg-purple-50', text: 'text-purple-700', btn: 'bg-purple-600 hover:bg-purple-700' },
-  indigo: { border: 'border-indigo-200', bg: 'bg-indigo-50', text: 'text-indigo-700', btn: 'bg-indigo-600 hover:bg-indigo-700' },
-  blue: { border: 'border-blue-200', bg: 'bg-blue-50', text: 'text-blue-700', btn: 'bg-blue-600 hover:bg-blue-700' },
+  purple: { border: 'border-gray-200', bg: 'bg-gray-50', text: 'text-gray-700', btn: 'bg-gray-600 hover:bg-gray-700' },
+  indigo: { border: 'border-primary-200', bg: 'bg-primary-50', text: 'text-primary-700', btn: 'bg-primary-600 hover:bg-primary-700' },
+  blue: { border: 'border-primary-200', bg: 'bg-primary-50', text: 'text-primary-700', btn: 'bg-primary-600 hover:bg-primary-700' },
   amber: { border: 'border-amber-200', bg: 'bg-amber-50', text: 'text-amber-700', btn: 'bg-amber-600 hover:bg-amber-700' },
-  emerald: { border: 'border-emerald-200', bg: 'bg-emerald-50', text: 'text-emerald-700', btn: 'bg-emerald-600 hover:bg-emerald-700' },
+  emerald: { border: 'border-green-200', bg: 'bg-green-50', text: 'text-green-700', btn: 'bg-green-600 hover:bg-green-700' },
 }
 
 export default function QueueView({ leads }: { leads: Lead[] }) {
@@ -122,7 +122,7 @@ export default function QueueView({ leads }: { leads: Lead[] }) {
         <h2 className="text-base font-semibold text-gray-900 flex items-center gap-1.5">{isManager ? 'Team work queue' : 'My work queue'}
           <InfoTip text="Every lead sits in exactly one bucket with its next action: pick up from Pool → Research → Finalize pitch → send First email → Follow up after 5 quiet days. Replies always jump to the top." />
         </h2>
-        <span className="text-xs bg-blue-50 text-blue-700 border border-blue-200 rounded-full px-2.5 py-1">
+        <span className="text-xs bg-primary-50 text-primary-700 border border-primary-200 rounded-full px-2.5 py-1">
           {actionable} lead{actionable === 1 ? '' : 's'} need action
         </span>
         {(paused.length > 0 || stopped.length > 0) && (
@@ -132,13 +132,13 @@ export default function QueueView({ leads }: { leads: Lead[] }) {
 
       {/* Replies — hottest bucket, always on top */}
       {replied.length > 0 && (
-        <div className="rounded-xl border border-rose-300 overflow-hidden">
-          <div className="bg-rose-50 px-4 py-2.5 flex items-center justify-between gap-2">
+        <div className="rounded-xl border border-red-300 overflow-hidden">
+          <div className="bg-red-50 px-4 py-2.5 flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0">
-              <Reply className="w-4 h-4 text-rose-600 shrink-0" />
-              <span className="text-sm font-semibold text-rose-700">Reply received — act now</span>
+              <Reply className="w-4 h-4 text-red-600 shrink-0" />
+              <span className="text-sm font-semibold text-red-700">Reply received — act now</span>
             </div>
-            <span className="text-xs font-medium text-rose-700">{replied.length}</span>
+            <span className="text-xs font-medium text-red-700">{replied.length}</span>
           </div>
           <div className="divide-y divide-gray-100 bg-white">
             {replied.map((l) => (
@@ -147,7 +147,7 @@ export default function QueueView({ leads }: { leads: Lead[] }) {
                   <div className="text-sm font-medium text-gray-900 truncate">{l.name} <span className="text-gray-400 font-normal">· {l.company || '—'}</span></div>
                   <div className="text-xs text-gray-400">{l.owner ? l.owner.split('@')[0] : 'pool'}</div>
                 </div>
-                <Link href={`/crm/leads/${encodeURIComponent(l.id)}?tab=email`} className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs rounded-lg flex items-center gap-1.5 shrink-0">
+                <Link href={`/crm/leads/${encodeURIComponent(l.id)}?tab=email`} className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs rounded-lg flex items-center gap-1.5 shrink-0">
                   Open reply <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
@@ -157,24 +157,24 @@ export default function QueueView({ leads }: { leads: Lead[] }) {
       )}
 
       {/* Pool — pick up new work */}
-      <div className="rounded-xl border border-emerald-200 overflow-hidden">
-        <div className="bg-emerald-50 px-4 py-2.5 flex items-center justify-between gap-2">
+      <div className="rounded-xl border border-green-200 overflow-hidden">
+        <div className="bg-green-50 px-4 py-2.5 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
-            <Hand className="w-4 h-4 text-emerald-700 shrink-0" />
-            <span className="text-sm font-semibold text-emerald-700">Pool — unclaimed leads</span>
+            <Hand className="w-4 h-4 text-green-700 shrink-0" />
+            <span className="text-sm font-semibold text-green-700">Pool — unclaimed leads</span>
             <span className="text-xs text-gray-500 hidden sm:inline truncate">— pick one up to start working it</span>
           </div>
-          <span className="text-xs font-medium text-emerald-700">{pool.length}</span>
+          <span className="text-xs font-medium text-green-700">{pool.length}</span>
         </div>
         {pool.length > 0 && (
           <div className="divide-y divide-gray-100 bg-white">
             {pool.slice(0, 6).map((l) => (
               <div key={l.id} className="px-4 py-2.5 flex items-center justify-between gap-3">
-                <Link href={`/crm/leads/${encodeURIComponent(l.id)}`} className="min-w-0 hover:text-blue-700">
+                <Link href={`/crm/leads/${encodeURIComponent(l.id)}`} className="min-w-0 hover:text-primary-700">
                   <div className="text-sm font-medium text-gray-900 truncate">{l.name} <span className="text-gray-400 font-normal">· {l.company || '—'}</span></div>
                   <div className="text-xs text-gray-400">{l.priority && `${l.priority} priority · `}{[l.country, l.sector].filter(Boolean).join(' · ') || timeAgo(l.createdAt)}</div>
                 </Link>
-                <button onClick={() => pickUp(l.id)} className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded-lg flex items-center gap-1.5 shrink-0">
+                <button onClick={() => pickUp(l.id)} className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs rounded-lg flex items-center gap-1.5 shrink-0">
                   <Hand className="w-3.5 h-3.5" /> Pick up
                 </button>
               </div>

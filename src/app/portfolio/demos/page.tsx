@@ -172,14 +172,14 @@ const demos: Demo[] = [
 ]
 
 const categoryColors = {
-  'Flagship Product': 'from-amber-500 to-yellow-500',
-  'AI Media Production': 'from-emerald-600 to-teal-500',
-  'Document Processing': 'from-blue-500 to-blue-600',
+  'Flagship Product': 'from-amber-500 to-amber-500',
+  'AI Media Production': 'from-green-600 to-gray-500',
+  'Document Processing': 'from-primary-500 to-primary-600',
   'Fraud Detection': 'from-red-500 to-red-600',
-  'AI/ML': 'from-purple-500 to-purple-600',
+  'AI/ML': 'from-gray-500 to-gray-600',
   'Enterprise Integration': 'from-green-500 to-green-600',
-  'Workflow Automation': 'from-orange-500 to-orange-600',
-  'Training Materials': 'from-indigo-500 to-indigo-600',
+  'Workflow Automation': 'from-amber-500 to-amber-600',
+  'Training Materials': 'from-primary-500 to-primary-600',
 }
 
 export default function DemosPage() {
@@ -188,7 +188,7 @@ export default function DemosPage() {
       {/* Hero Section */}
       <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
@@ -343,7 +343,7 @@ export default function DemosPage() {
             </p>
             <Link
               href="/contact"
-              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-glow-blue transition-all duration-300"
+              className="inline-flex items-center px-6 py-3 bg-primary-600 text-white font-medium rounded-xl transition-all duration-300"
             >
               Discuss Your Requirements
             </Link>

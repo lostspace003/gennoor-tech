@@ -132,7 +132,7 @@ export default function ClaudeCoworkRecapPage() {
       {/* Hero */}
       <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
 
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -151,7 +151,7 @@ export default function ClaudeCoworkRecapPage() {
                 <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 leading-tight tracking-tight">
                   Claude for Productivity
                 </h1>
-                <span className="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full border border-emerald-200">
+                <span className="inline-flex items-center gap-1.5 bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full border border-green-200">
                   <CheckCircle className="w-3 h-3" />
                   Completed
                 </span>
@@ -163,7 +163,7 @@ export default function ClaudeCoworkRecapPage() {
 
               <div className="flex items-center gap-5 mb-5">
                 <div className="relative shrink-0">
-                  <div className="absolute -inset-1 bg-gradient-to-br from-primary-400 via-secondary-400 to-accent-400 rounded-xl opacity-30 blur-sm" />
+                  <div className="absolute -inset-1 bg-primary-600 rounded-xl opacity-30 blur-sm" />
                   <Image
                     src="/media/workshops/jalal-hd.png"
                     alt="Jalal Khan — Microsoft Certified Trainer"
@@ -185,10 +185,10 @@ export default function ClaudeCoworkRecapPage() {
               <div className="flex flex-wrap gap-2 text-xs">
                 {[
                   { icon: Clock, text: '4h 17m live', color: 'bg-primary-50 text-primary-700 border-primary-200' },
-                  { icon: Monitor, text: '8 modules', color: 'bg-accent-50 text-accent-700 border-accent-200' },
+                  { icon: Monitor, text: '8 modules', color: 'bg-primary-50 text-primary-700 border-primary-200' },
                   { icon: Users, text: '32 attended', color: 'bg-primary-50 text-primary-700 border-primary-200' },
-                  { icon: Star, text: '4.9★ Trustpilot', color: 'bg-secondary-50 text-secondary-700 border-secondary-200' },
-                  { icon: Award, text: 'MCT-Led', color: 'bg-accent-50 text-accent-700 border-accent-200' },
+                  { icon: Star, text: '4.9★ Trustpilot', color: 'bg-gray-50 text-gray-700 border-gray-200' },
+                  { icon: Award, text: 'MCT-Led', color: 'bg-primary-50 text-primary-700 border-primary-200' },
                 ].map((item) => (
                   <span key={item.text} className={`flex items-center gap-1.5 border px-3 py-1.5 rounded-full ${item.color}`}>
                     <item.icon className="w-3.5 h-3.5" />
@@ -200,7 +200,7 @@ export default function ClaudeCoworkRecapPage() {
 
             {/* Right — YouTube Video */}
             <div className="relative">
-              <div className="absolute -inset-1 bg-gradient-to-br from-primary-400 via-secondary-300 to-accent-400 rounded-2xl opacity-20 blur-sm" />
+              <div className="absolute -inset-1 bg-primary-600 rounded-2xl opacity-20 blur-sm" />
               <div className="relative rounded-xl overflow-hidden shadow-xl ring-1 ring-primary-200 aspect-video">
                 <iframe
                   src="https://www.youtube.com/embed/LTOjD3kr71U?rel=0"
@@ -222,7 +222,7 @@ export default function ClaudeCoworkRecapPage() {
             {eventStats.map((stat) => (
               <div
                 key={stat.label}
-                className="glass-card p-4 text-center hover:shadow-md transition-all duration-300 hover:-translate-y-1"
+                className="glass-card p-4 text-center hover:shadow-md transition-all duration-300"
               >
                 <stat.icon className="w-4 h-4 mx-auto mb-1.5 text-primary-600" />
                 <p className="text-xl font-extrabold text-gray-900">{stat.value}</p>
@@ -277,7 +277,7 @@ export default function ClaudeCoworkRecapPage() {
               href="https://drive.google.com/file/d/18wl79ZheYRci7gpZAAX14hBs0RepAT95/view?usp=sharing"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white px-4 py-2 rounded-xl font-semibold text-sm hover:shadow-glow-blue transition-all duration-300 shrink-0"
+              className="inline-flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300 shrink-0"
             >
               Download Materials
               <ArrowRight className="w-4 h-4" />
@@ -342,7 +342,7 @@ export default function ClaudeCoworkRecapPage() {
                 <p className="text-gray-500 text-sm">4.9/5 — 7 reviews</p>
               </div>
             </div>
-            <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1.5 rounded-full border border-emerald-200 self-start">
+            <div className="inline-flex items-center gap-2 bg-green-50 text-green-700 text-xs font-bold px-3 py-1.5 rounded-full border border-green-200 self-start">
               <Star className="w-3 h-3 fill-current" />
               Trustpilot Verified
             </div>
@@ -352,7 +352,7 @@ export default function ClaudeCoworkRecapPage() {
             {reviews.map((review, i) => (
               <div
                 key={i}
-                className="glass-card p-4 hover:shadow-md transition-all duration-300 hover:-translate-y-1 flex flex-col"
+                className="glass-card p-4 hover:shadow-md transition-all duration-300 flex flex-col"
               >
                 <div className="flex items-center gap-0.5 mb-2">
                   {[1, 2, 3, 4, 5].map((s) => (
@@ -384,7 +384,7 @@ export default function ClaudeCoworkRecapPage() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href="/workshops"
-              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-glow-blue transition-all duration-300"
+              className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300"
             >
               Browse All Workshops
               <ArrowRight className="w-4 h-4" />

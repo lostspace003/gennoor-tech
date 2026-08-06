@@ -76,17 +76,17 @@ export default async function CertificationGuidePage({ params }: Props) {
     .slice(0, 3)
 
   const providerColor: Record<string, string> = {
-    Microsoft: 'from-blue-600 to-blue-800',
+    Microsoft: 'from-primary-600 to-primary-800',
     Google: 'from-red-600 to-red-800',
-    AWS: 'from-orange-600 to-orange-800',
+    AWS: 'from-amber-600 to-amber-800',
     GitHub: 'from-gray-700 to-gray-900',
   }
 
   const levelColor: Record<string, string> = {
     Fundamentals: 'bg-green-100 text-green-800',
-    Associate: 'bg-blue-100 text-blue-800',
-    Expert: 'bg-purple-100 text-purple-800',
-    Specialty: 'bg-orange-100 text-orange-800',
+    Associate: 'bg-primary-100 text-primary-800',
+    Expert: 'bg-gray-100 text-gray-800',
+    Specialty: 'bg-amber-100 text-amber-800',
   }
 
   return (
@@ -315,7 +315,7 @@ export default async function CertificationGuidePage({ params }: Props) {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/contact#book"
-                className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-xl hover:shadow-glow-blue transition-all duration-300"
+                className="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-semibold rounded-xl transition-all duration-300"
               >
                 Start Preparation
               </Link>

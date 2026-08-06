@@ -17,7 +17,7 @@ const tracks = [
       'Single Agent Build from $25k · 6 weeks',
     ],
     cta: { text: 'Explore SMB Solutions', href: '/solutions/for-smb' },
-    accent: 'from-amber-500 to-amber-600',
+    accent: 'bg-gray-900',
     accentLight: 'amber-50',
   },
   {
@@ -32,7 +32,7 @@ const tracks = [
       'Transformation Programs · 9–20 weeks',
     ],
     cta: { text: 'Explore Enterprise Solutions', href: '/solutions/for-enterprise' },
-    accent: 'from-primary-500 to-primary-700',
+    accent: 'bg-gray-900',
     accentLight: 'primary-50',
   },
 ]
@@ -71,21 +71,15 @@ export default function DualAudienceSelector() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                whileHover={{ y: -4 }}
               >
                 <Link
                   href={track.cta.href}
                   className="group block h-full rounded-3xl p-8 lg:p-10 glass-card glow-border transition-all duration-500 relative overflow-hidden"
                 >
-                  {/* Subtle accent glow on hover */}
-                  <div
-                    className={`absolute -top-24 -right-24 w-64 h-64 rounded-full bg-gradient-to-br ${track.accent} opacity-0 group-hover:opacity-[0.08] blur-3xl transition-opacity duration-700`}
-                  />
-
                   <div className="relative">
                     {/* Icon */}
                     <div
-                      className={`inline-flex w-14 h-14 rounded-2xl bg-gradient-to-br ${track.accent} items-center justify-center mb-5 shadow-lg shadow-primary-500/15 group-hover:scale-105 transition-transform`}
+                      className={`inline-flex w-14 h-14 rounded-2xl ${track.accent} items-center justify-center mb-5`}
                     >
                       <Icon className="w-7 h-7 text-white" />
                     </div>

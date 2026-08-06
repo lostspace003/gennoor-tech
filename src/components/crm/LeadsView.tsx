@@ -396,7 +396,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
               placeholder="Search name, company, email, sector, country..."
               value={searchTerm}
               onChange={(e) => { setSearchTerm(e.target.value); resetPage() }}
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             />
           </div>
           <select value={dateFilter} onChange={(e) => { setDateFilter(e.target.value as any); resetPage() }} className="text-sm border border-gray-200 rounded-lg px-2 py-2 text-gray-700">
@@ -470,7 +470,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
           <div className="ml-auto flex items-center gap-2">
             <button
               onClick={() => setAdding(true)}
-              className="px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 flex items-center gap-2"
+              className="px-3 py-2 bg-primary-600 text-white text-sm rounded-lg hover:bg-primary-700 flex items-center gap-2"
               title="Add a single lead manually — it will be saved under your name"
             >
               <UserPlus className="w-4 h-4" /> Add lead
@@ -491,7 +491,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                   } catch (e: any) { notify(e.message, true) } finally { setBusy('') }
                 }}
                 disabled={busy === 'prioritize'}
-                className="px-3 py-2 border border-purple-300 text-purple-700 text-sm rounded-lg hover:bg-purple-50 flex items-center gap-2 disabled:opacity-50"
+                className="px-3 py-2 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50 flex items-center gap-2 disabled:opacity-50"
                 title="AI fills ONLY empty priorities. Scope it with the date filter (today / week / month / custom dates) or by selecting leads."
               >
                 <Sparkles className="w-4 h-4" /> {busy === 'prioritize' ? 'Prioritizing…' : `AI priority${(() => { const scope = selected.length ? filtered.filter((l) => selected.includes(l.id)) : filtered; const n = scope.filter((l) => !(l.priority || '').trim()).length; return n ? ` (${n} empty)` : '' })()}`}
@@ -548,7 +548,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
               <button
                 key={key}
                 onClick={() => { setPoolFilter(key); resetPage(); setSelected([]) }}
-                className={`px-2.5 py-1 text-xs rounded-full border transition-colors ${poolFilter === key ? (key === 'dumped' ? 'bg-gray-700 text-white border-gray-700' : 'bg-blue-600 text-white border-blue-600') : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+                className={`px-2.5 py-1 text-xs rounded-full border transition-colors ${poolFilter === key ? (key === 'dumped' ? 'bg-gray-700 text-white border-gray-700' : 'bg-primary-600 text-white border-primary-600') : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
               >
                 {label}
               </button>
@@ -560,22 +560,22 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
 
       {/* Bulk actions */}
       {selected.length > 0 && (
-        <div className="bg-blue-50 px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-2">
-          <span className="text-sm text-blue-700 font-medium flex items-center gap-1.5">{selected.length} selected
+        <div className="bg-primary-50 px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-2">
+          <span className="text-sm text-primary-700 font-medium flex items-center gap-1.5">{selected.length} selected
             <InfoTip text="Pick up = claim for yourself. Release = back to the pool. Dump = park as vague/duplicate (with reason). Start/Pause/Stop = outreach process. Assign & Delete are manager-only." />
           </span>
           <div className="flex flex-wrap items-center gap-2">
             {/* Pool actions */}
             {poolFilter === 'dumped' ? (
-              <button onClick={() => poolAction('restore')} disabled={!!busy} className="px-3 py-1.5 bg-emerald-600 text-white text-xs rounded hover:bg-emerald-700 flex items-center gap-1.5 disabled:opacity-50">
+              <button onClick={() => poolAction('restore')} disabled={!!busy} className="px-3 py-1.5 bg-green-600 text-white text-xs rounded hover:bg-green-700 flex items-center gap-1.5 disabled:opacity-50">
                 <Undo2 className="w-3.5 h-3.5" /> Restore to pool
               </button>
             ) : (
               <>
-                <button onClick={() => poolAction('claim')} disabled={!!busy} className="px-3 py-1.5 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 flex items-center gap-1.5 disabled:opacity-50">
+                <button onClick={() => poolAction('claim')} disabled={!!busy} className="px-3 py-1.5 bg-primary-600 text-white text-xs rounded hover:bg-primary-700 flex items-center gap-1.5 disabled:opacity-50">
                   <Hand className="w-3.5 h-3.5" /> Pick up
                 </button>
-                <button onClick={() => poolAction('release')} disabled={!!busy} className="px-3 py-1.5 border border-blue-300 text-blue-700 text-xs rounded hover:bg-blue-50 flex items-center gap-1.5 disabled:opacity-50">
+                <button onClick={() => poolAction('release')} disabled={!!busy} className="px-3 py-1.5 border border-primary-300 text-primary-700 text-xs rounded hover:bg-primary-50 flex items-center gap-1.5 disabled:opacity-50">
                   <Undo2 className="w-3.5 h-3.5" /> Release
                 </button>
                 <button onClick={() => poolAction('dump')} disabled={!!busy} className="px-3 py-1.5 border border-gray-300 text-gray-600 text-xs rounded hover:bg-gray-100 flex items-center gap-1.5 disabled:opacity-50">
@@ -586,7 +586,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                     defaultValue=""
                     onChange={(e) => { if (e.target.value) { poolAction('assign', e.target.value); e.target.value = '' } }}
                     disabled={!!busy}
-                    className="px-2 py-1.5 border border-purple-300 text-purple-700 text-xs rounded bg-white disabled:opacity-50"
+                    className="px-2 py-1.5 border border-gray-300 text-gray-700 text-xs rounded bg-white disabled:opacity-50"
                   >
                     <option value="" disabled>Assign to…</option>
                     {CRM_TEAM.map((u) => <option key={u} value={u}>{u.split('@')[0]}</option>)}
@@ -596,7 +596,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
             )}
             <div className="flex items-center rounded overflow-hidden border border-gray-200">
               <button onClick={() => setProcess('active')} disabled={!!busy} className="px-3 py-1.5 bg-green-600 text-white text-xs hover:bg-green-700 disabled:opacity-50">Start</button>
-              <button onClick={() => setProcess('paused')} disabled={!!busy} className="px-3 py-1.5 bg-yellow-500 text-white text-xs hover:bg-yellow-600 disabled:opacity-50">Pause</button>
+              <button onClick={() => setProcess('paused')} disabled={!!busy} className="px-3 py-1.5 bg-amber-500 text-white text-xs hover:bg-amber-600 disabled:opacity-50">Pause</button>
               <button onClick={() => setProcess('stopped')} disabled={!!busy} className="px-3 py-1.5 bg-red-600 text-white text-xs hover:bg-red-700 disabled:opacity-50">Stop</button>
             </div>
             {canManage && (
@@ -678,7 +678,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                   <div className="flex items-center gap-1.5">
                     <StatusBadge status={lead.status} />
                     {lead.processStatus !== 'active' && (
-                      <span className={`text-[10px] rounded-full px-1.5 py-0.5 ${lead.processStatus === 'paused' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`} title={`Process ${lead.processStatus}`}>{lead.processStatus}</span>
+                      <span className={`text-[10px] rounded-full px-1.5 py-0.5 ${lead.processStatus === 'paused' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`} title={`Process ${lead.processStatus}`}>{lead.processStatus}</span>
                     )}
                   </div>
                 </td>
@@ -686,17 +686,17 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                   {lead.dumped ? (
                     <span className="text-[11px] bg-gray-200 text-gray-600 rounded-full px-2 py-0.5" title={lead.dumped.reason}>dumped</span>
                   ) : lead.owner ? (
-                    <span className={`text-[11px] rounded-full px-2 py-0.5 ${lead.owner.toLowerCase() === userEmail.toLowerCase() ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-600'}`}>
+                    <span className={`text-[11px] rounded-full px-2 py-0.5 ${lead.owner.toLowerCase() === userEmail.toLowerCase() ? 'bg-primary-100 text-primary-700 font-medium' : 'bg-gray-100 text-gray-600'}`}>
                       {lead.owner.toLowerCase() === userEmail.toLowerCase() ? 'me' : lead.owner.split('@')[0]}
                     </span>
                   ) : (
-                    <span className="text-[11px] bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-2 py-0.5">pool</span>
+                    <span className="text-[11px] bg-green-50 text-green-700 border border-green-200 rounded-full px-2 py-0.5">pool</span>
                   )}
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2 text-xs">
-                    {lead.aiResearch ? <span className="inline-flex items-center gap-1 text-purple-600"><Brain className="w-3.5 h-3.5" /> done</span> : <span className="text-gray-400">—</span>}
-                    {lead.emailHistory.length > 0 && <span className="inline-flex items-center gap-1 text-blue-600"><Mail className="w-3.5 h-3.5" /> {lead.emailHistory.length}</span>}
+                    {lead.aiResearch ? <span className="inline-flex items-center gap-1 text-gray-600"><Brain className="w-3.5 h-3.5" /> done</span> : <span className="text-gray-400">—</span>}
+                    {lead.emailHistory.length > 0 && <span className="inline-flex items-center gap-1 text-primary-600"><Mail className="w-3.5 h-3.5" /> {lead.emailHistory.length}</span>}
                   </div>
                 </td>
                 <td className="px-4 py-3 text-xs text-gray-500">
@@ -727,7 +727,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
               else if (safePage >= totalPages - 3) p = totalPages - 6 + i
               else p = safePage - 3 + i
               return (
-                <button key={p} onClick={() => setPage(p)} className={`px-3 py-1 rounded text-sm ${safePage === p ? 'bg-blue-600 text-white' : 'border border-gray-200 hover:bg-gray-50'}`}>
+                <button key={p} onClick={() => setPage(p)} className={`px-3 py-1 rounded text-sm ${safePage === p ? 'bg-primary-600 text-white' : 'border border-gray-200 hover:bg-gray-50'}`}>
                   {p}
                 </button>
               )
@@ -770,7 +770,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
             </div>
             <div className="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
               <button onClick={() => setUpload(null)} className="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-sm">Cancel</button>
-              <button onClick={confirmImport} disabled={busy === 'import' || upload.valid.length === 0} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm disabled:opacity-50">
+              <button onClick={confirmImport} disabled={busy === 'import' || upload.valid.length === 0} className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 text-sm disabled:opacity-50">
                 {busy === 'import' ? <Spinner label="Importing..." /> : `Import ${upload.valid.length} lead(s)`}
               </button>
             </div>
@@ -797,7 +797,7 @@ function AddLeadModal({ userEmail, onClose, onAdded, notify }: {
   const [saving, setSaving] = useState(false)
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }))
-  const inputCls = 'w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+  const inputCls = 'w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent'
 
   const save = async () => {
     if (!form.name.trim()) { notify('Name is required', true); return }
@@ -861,7 +861,7 @@ function AddLeadModal({ userEmail, onClose, onAdded, notify }: {
         </div>
         <div className="px-5 py-3.5 border-t border-gray-200 flex justify-end gap-2 shrink-0">
           <button onClick={onClose} className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50">Cancel</button>
-          <button onClick={save} disabled={saving || !form.name.trim()} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2">
+          <button onClick={save} disabled={saving || !form.name.trim()} className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm hover:bg-primary-700 disabled:opacity-50 flex items-center gap-2">
             <UserPlus className="w-4 h-4" /> {saving ? 'Saving…' : 'Add lead'}
           </button>
         </div>

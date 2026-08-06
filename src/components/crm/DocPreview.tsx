@@ -42,7 +42,7 @@ export default function DocPreview({ name, onClose }: { name: string; onClose: (
             <FileText className="w-4 h-4 text-gray-400 shrink-0" /> {name}
           </div>
           <div className="flex items-center gap-1.5 shrink-0">
-            <a href={downloadUrl} className="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 flex items-center gap-1.5">
+            <a href={downloadUrl} className="px-3 py-1.5 bg-primary-600 text-white text-xs rounded-lg hover:bg-primary-700 flex items-center gap-1.5">
               <Download className="w-3.5 h-3.5" /> Download
             </a>
             <button onClick={onClose} className="p-1.5 hover:bg-gray-100 rounded-lg"><X className="w-4 h-4 text-gray-500" /></button>
@@ -78,7 +78,7 @@ function FallbackCard({ ext, name, downloadUrl, note }: { ext: string; name: str
     <div className="h-full flex flex-col items-center justify-center gap-3 text-center p-6">
       <FileText className="w-10 h-10 text-gray-300" />
       <p className="text-sm text-gray-500 max-w-sm">{note || `No inline preview for .${ext} files — download to open it in the right app.`}</p>
-      <a href={downloadUrl} className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 flex items-center gap-2">
+      <a href={downloadUrl} className="px-4 py-2 bg-primary-600 text-white text-sm rounded-lg hover:bg-primary-700 flex items-center gap-2">
         <Download className="w-4 h-4" /> Download {name.split('/').pop()}
       </a>
     </div>

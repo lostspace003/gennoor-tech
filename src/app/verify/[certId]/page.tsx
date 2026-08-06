@@ -77,7 +77,7 @@ export default async function VerifyPage({ params }: Props) {
 
   if (!cert) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-[#f5f0eb] via-white to-[#fff8f0] flex items-center justify-center px-4 py-20">
+      <main className="min-h-screen bg-[#f5f0eb] flex items-center justify-center px-4 py-20">
         <ScrollReveal>
           <div className="max-w-lg w-full bg-white rounded-2xl shadow-xl p-10 text-center border border-red-100">
             <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-red-50 flex items-center justify-center">
@@ -90,13 +90,13 @@ export default async function VerifyPage({ params }: Props) {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-[#1B2845] text-white font-semibold hover:bg-[#2a3960] transition-all duration-300 hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-[#1B2845] text-white font-semibold hover:bg-[#2a3960] transition-all duration-300"
               >
                 Contact Support
               </Link>
               <Link
                 href="/"
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full border-2 border-[#1B2845] text-[#1B2845] font-semibold hover:bg-[#1B2845] hover:text-white transition-all duration-300 hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full border-2 border-[#1B2845] text-[#1B2845] font-semibold hover:bg-[#1B2845] hover:text-white transition-all duration-300"
               >
                 Go to Homepage
               </Link>
@@ -116,7 +116,7 @@ export default async function VerifyPage({ params }: Props) {
   const academyCourse = isAcademy ? configCourses.find(c => c.id === cert.workshopSlug) : undefined
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#f5f0eb] via-white to-[#fff8f0] py-12 sm:py-20 px-4 scroll-smooth">
+    <main className="min-h-screen bg-[#f5f0eb] py-12 sm:py-20 px-4 scroll-smooth">
       <div className="max-w-4xl mx-auto">
         <ScrollReveal>
           <div className="inline-flex items-center gap-2 bg-green-50 border border-green-200 rounded-full px-4 py-2 mb-6">
@@ -216,7 +216,7 @@ export default async function VerifyPage({ params }: Props) {
                     href={linkedInAddUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[#0A66C2] text-white font-semibold hover:bg-[#084d92] transition-all duration-300 hover:-translate-y-0.5 shadow-md hover:shadow-lg"
+                    className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[#0A66C2] text-white font-semibold hover:bg-[#084d92] transition-all duration-300 shadow-md hover:shadow-lg"
                   >
                     <Linkedin className="w-5 h-5" />
                     Add to LinkedIn Profile
@@ -225,7 +225,7 @@ export default async function VerifyPage({ params }: Props) {
                     href={linkedInShareUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white border-2 border-[#0A66C2] text-[#0A66C2] font-semibold hover:bg-[#0A66C2] hover:text-white transition-all duration-300 hover:-translate-y-0.5"
+                    className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white border-2 border-[#0A66C2] text-[#0A66C2] font-semibold hover:bg-[#0A66C2] hover:text-white transition-all duration-300"
                   >
                     <Share2 className="w-5 h-5" />
                     Share on LinkedIn
@@ -235,7 +235,7 @@ export default async function VerifyPage({ params }: Props) {
                       href={pdfUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[#FF6B35] text-white font-semibold hover:bg-[#e55a25] transition-all duration-300 hover:-translate-y-0.5 shadow-md hover:shadow-lg"
+                      className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[#FF6B35] text-white font-semibold hover:bg-[#e55a25] transition-all duration-300 shadow-md hover:shadow-lg"
                     >
                       <Download className="w-5 h-5" />
                       Download PDF

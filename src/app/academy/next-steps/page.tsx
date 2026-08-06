@@ -32,9 +32,9 @@ const options = [
     ],
     primaryCta: { label: 'See how we operate', href: '/services/training-rollout' },
     secondaryCta: { label: 'Book an intro call', href: '/contact#book' },
-    accent: 'from-orange-50 to-amber-50',
-    accentRing: 'ring-orange-200 hover:ring-orange-400',
-    accentText: 'text-orange-700',
+    accent: 'from-amber-50 to-amber-50',
+    accentRing: 'ring-amber-200 hover:ring-amber-400',
+    accentText: 'text-amber-700',
   },
   {
     id: 'training',
@@ -51,9 +51,9 @@ const options = [
     ],
     primaryCta: { label: 'See training services', href: '/services/training' },
     secondaryCta: { label: 'Book an intro call', href: '/contact#book' },
-    accent: 'from-slate-50 to-gray-50',
-    accentRing: 'ring-slate-200 hover:ring-slate-400',
-    accentText: 'text-slate-700',
+    accent: 'from-gray-50 to-gray-50',
+    accentRing: 'ring-gray-200 hover:ring-gray-400',
+    accentText: 'text-gray-700',
   },
   {
     id: 'strategy',
@@ -70,24 +70,24 @@ const options = [
     ],
     primaryCta: { label: 'See the workshop', href: '/services/enterprise-ai-roadmap-workshop' },
     secondaryCta: { label: 'Book a strategy call', href: '/contact#book' },
-    accent: 'from-indigo-50 to-blue-50',
-    accentRing: 'ring-indigo-200 hover:ring-indigo-400',
-    accentText: 'text-indigo-700',
+    accent: 'from-primary-50 to-primary-50',
+    accentRing: 'ring-primary-200 hover:ring-primary-400',
+    accentText: 'text-primary-700',
   },
 ];
 
 export default function NextStepsPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-orange-50/30">
+    <main className="min-h-screen bg-gray-50">
       {/* Hero */}
       <section className="pt-20 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-100 text-orange-800 text-xs font-bold tracking-widest uppercase mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100 text-amber-800 text-xs font-bold tracking-widest uppercase mb-6">
             <Sparkles className="w-3.5 h-3.5" />
             You just finished a course
           </div>
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-            What's the next move — for <em className="text-orange-600 not-italic">you and your team</em>?
+            What's the next move — for <em className="text-amber-600 not-italic">you and your team</em>?
           </h1>
           <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
             Three concrete ways Gennoor can help, depending on where you sit. Pick the one
@@ -106,7 +106,7 @@ export default function NextStepsPage() {
               return (
                 <article
                   key={opt.id}
-                  className={`bg-gradient-to-br ${opt.accent} rounded-2xl ring-1 ${opt.accentRing} p-6 sm:p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col`}
+                  className={`bg-gradient-to-br ${opt.accent} rounded-2xl ring-1 ${opt.accentRing} p-6 sm:p-8 transition-all duration-300 hover:shadow-xl flex flex-col`}
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="w-12 h-12 rounded-xl bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-sm">
@@ -132,7 +132,7 @@ export default function NextStepsPage() {
                   <div className="space-y-2 mt-auto">
                     <Link
                       href={opt.primaryCta.href}
-                      className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white text-sm font-bold rounded-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                      className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white text-sm font-bold rounded-lg transition-all duration-200 hover:shadow-md"
                     >
                       {opt.primaryCta.label}
                       <ArrowRight className="w-4 h-4" />
@@ -155,7 +155,7 @@ export default function NextStepsPage() {
               Not ready for any of these yet? That's fine. The course you just finished stays in your
               account — come back to refresh it anytime, or
               {' '}
-              <Link href="/academy" className="text-orange-600 hover:text-orange-700 font-semibold underline">
+              <Link href="/academy" className="text-amber-600 hover:text-amber-700 font-semibold underline">
                 browse other courses in the academy
               </Link>
               .

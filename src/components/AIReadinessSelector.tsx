@@ -99,7 +99,7 @@ export default function AIReadinessSelector() {
             {/* Deep Dive Card */}
             <button
               onClick={() => setSelectedMode('deep')}
-              className="glass-card glow-border group relative flex flex-col items-start p-7 sm:p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+              className="glass-card glow-border group relative flex flex-col items-start p-7 sm:p-8 text-left transition-all duration-300 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
             >
               <div className="relative z-10 flex flex-col items-start w-full">
                 <div className="flex items-center justify-between w-full mb-5">
@@ -125,7 +125,7 @@ export default function AIReadinessSelector() {
             {/* Custom Blueprint Card */}
             <button
               onClick={() => setSelectedMode('blueprint')}
-              className="glass-card glow-border group relative flex flex-col items-start p-7 sm:p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+              className="glass-card glow-border group relative flex flex-col items-start p-7 sm:p-8 text-left transition-all duration-300 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
             >
               <div className="relative z-10 flex flex-col items-start w-full">
                 <div className="flex items-center justify-between w-full mb-5">
@@ -165,7 +165,7 @@ export default function AIReadinessSelector() {
       {/* Hero section */}
       <section className="relative py-10 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
 
         <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
@@ -178,10 +178,10 @@ export default function AIReadinessSelector() {
               {/* Title */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.05] tracking-tight mb-6">
                 <span className="text-gray-900">How </span>
-                <span className="bg-gradient-to-r from-primary-600 via-primary-700 to-blue-600 bg-clip-text text-transparent">AI-Ready</span>
+                <span className="text-primary-600">AI-Ready</span>
                 <br className="hidden sm:block" />
                 <span className="text-gray-900"> Are You, </span>
-                <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">Really?</span>
+                <span className="text-primary-600">Really?</span>
               </h1>
 
               {/* Subtitle */}
@@ -207,7 +207,7 @@ export default function AIReadinessSelector() {
               {/* CTA Button */}
               <button
                 onClick={() => setStarted(true)}
-                className="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-lg font-bold rounded-xl hover:shadow-glow-blue transition-all duration-300 hover:-translate-y-0.5"
+                className="group inline-flex items-center gap-3 px-8 py-4 bg-primary-600 text-white text-lg font-bold rounded-xl transition-all duration-300"
               >
                 <Play className="w-5 h-5 fill-current" />
                 Let&apos;s Get Started
@@ -224,26 +224,26 @@ export default function AIReadinessSelector() {
             <div className="flex justify-center lg:justify-end">
               <div className="glass-card w-full max-w-[380px] rounded-3xl p-8 sm:p-10 relative">
                 {/* Subtle gradient accent on top edge */}
-                <div className="absolute top-0 left-8 right-8 h-1 rounded-b-full bg-gradient-to-r from-primary-500 via-blue-500 to-accent-500" />
+                <div className="absolute top-0 left-8 right-8 h-1 rounded-b-full bg-primary-600" />
 
                 <div className="text-center mb-8">
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-[2px] mb-3">Your Score</p>
-                  <div className="text-8xl sm:text-9xl font-extrabold bg-gradient-to-b from-green-500 to-green-700 bg-clip-text text-transparent leading-none mb-2">73</div>
+                  <div className="text-8xl sm:text-9xl font-extrabold text-primary-600 leading-none mb-2">73</div>
                   <p className="text-lg text-gray-500 font-semibold">out of 100</p>
                 </div>
 
                 {/* Dimension bars */}
                 <div className="space-y-3">
                   {[
-                    { label: 'Mindset', width: '82%', color: 'from-primary-500 to-primary-400' },
-                    { label: 'Skills', width: '65%', color: 'from-blue-500 to-blue-400' },
-                    { label: 'Workflow', width: '58%', color: 'from-green-500 to-green-400' },
-                    { label: 'Readiness', width: '74%', color: 'from-amber-500 to-amber-400' },
+                    { label: 'Mindset', width: '82%', color: 'bg-primary-600' },
+                    { label: 'Skills', width: '65%', color: 'bg-primary-600' },
+                    { label: 'Workflow', width: '58%', color: 'bg-primary-600' },
+                    { label: 'Readiness', width: '74%', color: 'bg-primary-600' },
                   ].map(({ label, width, color }) => (
                     <div key={label} className="flex items-center gap-3">
                       <span className="text-xs text-gray-500 font-medium w-20 text-right">{label}</span>
                       <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                        <div className={`h-full bg-gradient-to-r ${color} rounded-full`} style={{ width }} />
+                        <div className={`h-full ${color} rounded-full`} style={{ width }} />
                       </div>
                     </div>
                   ))}
@@ -297,7 +297,7 @@ export default function AIReadinessSelector() {
           <div className="text-center mt-10">
             <button
               onClick={() => setStarted(true)}
-              className="group inline-flex items-center gap-2 px-7 py-3.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-bold rounded-xl hover:shadow-glow-blue transition-all duration-300 hover:-translate-y-0.5"
+              className="group inline-flex items-center gap-2 px-7 py-3.5 bg-primary-600 text-white font-bold rounded-xl transition-all duration-300"
             >
               Get Started Now
               <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
