@@ -1,29 +1,35 @@
 'use client'
 
 import { siteConfig } from '@/lib/site-config'
-import { motion, useInView } from 'framer-motion'
+import { useInView } from 'framer-motion'
 import { useRef, useState, useEffect } from 'react'
+
+/**
+ * "What we've shipped" — the dark #1d1d1f metrics band from the Home
+ * prototype: huge white count-up numerals, and the section unveils itself
+ * through an expanding circular clip as it scrolls into view.
+ */
 
 const metrics = [
   {
     value: siteConfig.metrics.trainingPrograms,
-    label: 'Training Programs Delivered',
+    label: 'Training programs delivered',
     description: 'For teams at global enterprises',
   },
   {
     value: siteConfig.metrics.certifications,
-    label: 'Active Microsoft Certifications',
+    label: 'Microsoft certifications',
     description: 'Including MCT & Agentic AI',
   },
   {
     value: siteConfig.metrics.cSuiteLeaders,
-    label: 'C-Suite Leaders Trained',
+    label: 'C-suite leaders trained',
     description: 'In AI strategy & adoption',
   },
   {
     value: siteConfig.metrics.countries,
     label: 'Countries',
-    description: 'International delivery experience',
+    description: 'International delivery',
   },
 ]
 
@@ -35,8 +41,7 @@ function AnimatedNumber({ value, inView }: { value: string; inView: boolean }) {
 
   useEffect(() => {
     if (!inView || !numMatch) return
-    let start = 0
-    const duration = 1500
+    const duration = 1400
     const startTime = performance.now()
     const step = (now: number) => {
       const elapsed = now - startTime
@@ -46,102 +51,76 @@ function AnimatedNumber({ value, inView }: { value: string; inView: boolean }) {
       if (progress < 1) requestAnimationFrame(step)
     }
     requestAnimationFrame(step)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView, target])
 
   if (!numMatch) return <span>{value}</span>
-  return <span>{displayed}{suffix}</span>
+  return (
+    <span>
+      {displayed}
+      {suffix}
+    </span>
+  )
+}
+
+/** Scroll-driven circular unveil, as in the prototype's data-circle-reveal. */
+function useCircleReveal(ref: React.RefObject<HTMLElement | null>) {
+  const [clipPath, setClipPath] = useState<string | undefined>(undefined)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    let raf = 0
+    const update = () => {
+      const r = el.getBoundingClientRect()
+      const vh = window.innerHeight
+      const p = Math.min(Math.max((vh - r.top) / (vh * 0.85), 0), 1)
+      const radius = 8 + p * 142
+      setClipPath(radius >= 150 ? undefined : `circle(${radius}% at 50% 60%)`)
+    }
+    const onScroll = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(update)
+    }
+    update()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      cancelAnimationFrame(raf)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  return clipPath
 }
 
 export default function Metrics() {
-  const ref = useRef<HTMLDivElement>(null)
+  const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '0px 0px -100px 0px' })
+  const clipPath = useCircleReveal(ref)
 
   return (
-    <section className="py-14 lg:py-20 relative overflow-hidden">
-      {/* Premium gradient background */}
-      <div className="absolute inset-0 bg-gray-900" />
+    <section
+      ref={ref}
+      className="bg-[#1d1d1f] py-20 lg:py-[110px] px-8"
+      style={clipPath ? { clipPath } : undefined}
+    >
+      <div className="max-w-[1080px] mx-auto text-center">
+        <p className="text-sm font-semibold tracking-[0.14em] uppercase text-[#86868b] mb-14">
+          What we&rsquo;ve shipped
+        </p>
 
-      {/* Ambient glow orbs */}
-      <motion.div
-        className="absolute top-0 left-[20%] w-[500px] h-[500px] rounded-full opacity-30"
-        style={{
-          background: 'radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, transparent 70%)',
-          filter: 'blur(80px)',
-        }}
-        animate={{ y: [0, -15, 10, 0], scale: [1, 1.05, 0.97, 1] }}
-        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute bottom-0 right-[15%] w-[400px] h-[400px] rounded-full opacity-25"
-        style={{
-          background: 'radial-gradient(circle, rgba(13, 148, 136, 0.2) 0%, transparent 70%)',
-          filter: 'blur(80px)',
-        }}
-        animate={{ y: [0, 12, -18, 0], scale: [1, 0.96, 1.04, 1] }}
-        transition={{ duration: 13, repeat: Infinity, ease: 'easeInOut', delay: 3 }}
-      />
-
-      {/* Subtle grid */}
-      <div
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
-        }}
-      />
-
-      <div ref={ref} className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header */}
-        <div className="text-center mb-14">
-          <motion.div
-            className="inline-flex items-center justify-center px-5 py-2 mb-4 text-sm font-semibold rounded-full border border-white/10"
-            style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(12px)' }}
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <span className="flex h-2 w-2 rounded-full bg-primary-600 mr-2.5 animate-pulse" />
-            <span className="text-white/80">What We've Shipped</span>
-          </motion.div>
-          <p className="text-primary-200/60 text-lg max-w-3xl mx-auto">
-            Delivering AI transformation programs across GCC, Africa, and South Asia — with senior, Microsoft-certified expertise on every engagement.
-          </p>
-        </div>
-
-        {/* Metrics Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
-          {metrics.map((metric, index) => (
-            <motion.div
-              key={index}
-              className="text-center group"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <motion.div
-                className="rounded-2xl p-7 transition-all duration-500 border border-white/[0.06]"
-                style={{
-                  background: 'rgba(255, 255, 255, 0.03)',
-                  backdropFilter: 'blur(8px)',
-                }}
-                whileHover={{
-                  y: -4,
-                  background: 'rgba(255, 255, 255, 0.06)',
-                  borderColor: 'rgba(37, 99, 235, 0.15)',
-                }}
-              >
-                <div className="text-4xl lg:text-5xl font-bold text-white mb-2">
-                  <AnimatedNumber value={metric.value} inView={isInView} />
-                </div>
-                <div className="text-primary-200/70 font-semibold mb-1 text-sm">
-                  {metric.label}
-                </div>
-                <div className="text-primary-300/40 text-xs">
-                  {metric.description}
-                </div>
-              </motion.div>
-            </motion.div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+          {metrics.map(metric => (
+            <div key={metric.label}>
+              <div className="text-[clamp(48px,5vw,72px)] font-bold tracking-[-0.03em] text-white leading-none">
+                <AnimatedNumber value={metric.value} inView={isInView} />
+              </div>
+              <div className="text-sm font-semibold text-[#f5f5f7] mt-3">{metric.label}</div>
+              <div className="text-xs text-[#86868b] mt-1">{metric.description}</div>
+            </div>
           ))}
         </div>
       </div>

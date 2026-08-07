@@ -1,117 +1,61 @@
 'use client'
 
 import Link from 'next/link'
-import { motion } from 'framer-motion'
-import { Building2, Rocket, ArrowRight, Check } from 'lucide-react'
 
-const tracks = [
-  {
-    icon: Rocket,
-    eyebrow: 'For SMB & Growing Businesses',
-    title: 'Ship your first AI pilot in 6 weeks.',
-    blurb:
-      'Productized offers from $3k. Fixed price. Fixed scope. Built in your environment, owned by your team.',
-    bullets: [
-      'AI Readiness Kit from $3k · 1 week',
-      'Copilot Kickstart from $10k · 4 weeks',
-      'Single Agent Build from $25k · 6 weeks',
-    ],
-    cta: { text: 'Explore SMB Solutions', href: '/solutions/for-smb' },
-    accent: 'bg-gray-900',
-    accentLight: 'amber-50',
-  },
-  {
-    icon: Building2,
-    eyebrow: 'For Enterprises',
-    title: 'Transformation programs that survive the org chart.',
-    blurb:
-      'Multi-quarter delivery with executive sponsorship, governance, procurement-ready, and senior delivery in your region.',
-    bullets: [
-      'Strategic Diagnostic · 4 weeks',
-      'Executive & Functional Bootcamps',
-      'Transformation Programs · 9–20 weeks',
-    ],
-    cta: { text: 'Explore Enterprise Solutions', href: '/solutions/for-enterprise' },
-    accent: 'bg-gray-900',
-    accentLight: 'primary-50',
-  },
-]
+/**
+ * The SMB / Enterprise track selector — a light card and a dark card, per
+ * the Home prototype's "Two tracks" section.
+ */
 
 export default function DualAudienceSelector() {
   return (
-    <section className="py-14 lg:py-20 relative">
-      <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
+    <section className="bg-white py-16 lg:py-24 px-8">
+      <div className="max-w-[1080px] mx-auto">
+        <h2 className="display-section text-center mb-14">Two paths. Same rigor.</h2>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <motion.div
-            className="inline-flex items-center rounded-full px-3 py-1 mb-4 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60"
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            Pick Your Track
-          </motion.div>
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            Two paths. Same Gennoor Way.
-          </h2>
-          <p className="text-lg text-gray-500 leading-relaxed">
-            Whether you're a 30-person mid-cap in Nairobi or a 30,000-person bank in Riyadh,
-            we deliver the same five-phase journey — scoped, priced, and paced to fit.
-          </p>
-        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          {/* SMB — light card */}
+          <div className="bg-[#f5f5f7] rounded-3xl px-8 py-10 lg:px-10 lg:py-11 flex flex-col">
+            <div className="kicker !tracking-[0.14em]">For SMB</div>
+            <h3 className="text-[28px] font-bold tracking-[-0.02em] leading-[1.15] text-gray-900 mt-3 mb-2.5">
+              Your first AI pilot, in six weeks.
+            </h3>
+            <p className="text-[15px] text-[#6e6e73] leading-normal mb-6">
+              Productized offers. Fixed scope, fixed price, built in your
+              environment, owned by your team.
+            </p>
+            <div className="flex flex-col gap-2.5 mb-7 text-sm text-gray-900">
+              <div>AI Readiness Kit &nbsp;·&nbsp; from $3k &nbsp;·&nbsp; 1 week</div>
+              <div>Copilot Kickstart &nbsp;·&nbsp; from $10k &nbsp;·&nbsp; 4 weeks</div>
+              <div>Single Agent Build &nbsp;·&nbsp; from $25k &nbsp;·&nbsp; 6 weeks</div>
+            </div>
+            <Link href="/solutions/for-smb" className="link-arrow mt-auto">
+              Explore SMB solutions ›
+            </Link>
+          </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
-          {tracks.map((track, i) => {
-            const Icon = track.icon
-            return (
-              <motion.div
-                key={track.eyebrow}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <Link
-                  href={track.cta.href}
-                  className="group block h-full rounded-3xl p-8 lg:p-10 glass-card glow-border transition-all duration-500 relative overflow-hidden"
-                >
-                  <div className="relative">
-                    {/* Icon */}
-                    <div
-                      className={`inline-flex w-14 h-14 rounded-2xl ${track.accent} items-center justify-center mb-5`}
-                    >
-                      <Icon className="w-7 h-7 text-white" />
-                    </div>
-
-                    <p className="text-xs font-bold tracking-widest uppercase text-gray-400 mb-2">
-                      {track.eyebrow}
-                    </p>
-                    <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3 leading-tight">
-                      {track.title}
-                    </h3>
-                    <p className="text-base text-gray-500 leading-relaxed mb-6">
-                      {track.blurb}
-                    </p>
-
-                    <ul className="space-y-2.5 mb-7">
-                      {track.bullets.map((b) => (
-                        <li key={b} className="flex items-start gap-2.5 text-sm text-gray-600">
-                          <Check className="w-4 h-4 text-primary-500 flex-shrink-0 mt-0.5" />
-                          <span>{b}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <div className="inline-flex items-center text-primary-600 font-semibold group-hover:text-primary-700 transition-colors">
-                      <span>{track.cta.text}</span>
-                      <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-            )
-          })}
+          {/* Enterprise — dark card */}
+          <div className="bg-[#1d1d1f] rounded-3xl px-8 py-10 lg:px-10 lg:py-11 flex flex-col">
+            <div className="kicker !tracking-[0.14em]">For Enterprise</div>
+            <h3 className="text-[28px] font-bold tracking-[-0.02em] leading-[1.15] text-white mt-3 mb-2.5">
+              Programs that survive the org chart.
+            </h3>
+            <p className="text-[15px] text-[#a1a1a6] leading-normal mb-6">
+              Multi-quarter delivery with executive sponsorship, governance, and
+              senior engineers in your region. Procurement-ready.
+            </p>
+            <div className="flex flex-col gap-2.5 mb-7 text-sm text-[#f5f5f7]">
+              <div>Strategic Diagnostic &nbsp;·&nbsp; 4 weeks</div>
+              <div>Executive &amp; functional bootcamps</div>
+              <div>Transformation programs &nbsp;·&nbsp; 9–20 weeks</div>
+            </div>
+            <Link
+              href="/solutions/for-enterprise"
+              className="text-[16px] font-medium text-[#2997ff] hover:text-[#52a8ff] transition-colors mt-auto"
+            >
+              Explore enterprise solutions ›
+            </Link>
+          </div>
         </div>
       </div>
     </section>

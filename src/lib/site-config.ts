@@ -99,6 +99,7 @@ export const siteConfig = {
           { name: 'Gennoor Academy', href: '/academy' },
           { name: 'Blog', href: '/resources/blog' },
           { name: 'Videos', href: '/resources/videos' },
+          { name: 'Webinars & Workshops', href: '/webinars' },
           { name: 'AI Readiness', href: '/ai-readiness' },
         ]
       },
@@ -108,7 +109,7 @@ export const siteConfig = {
           { name: 'My Journey', href: '/about/journey' },
           { name: 'Team & Delivery', href: '/about/team-and-delivery' },
           { name: 'Trust & Security', href: '/about/trust-and-security' },
-          { name: 'Certifications', href: '/about/certifications' },
+          { name: 'Contact', href: '/contact' },
         ]
       },
     ]
@@ -143,26 +144,26 @@ export const siteConfig = {
   // Service pillars
   services: [
     {
-      title: 'AI Strategy & Consulting',
-      description: 'Enterprise AI roadmaps, ROI modeling, and governance frameworks',
+      title: 'AI Strategy',
+      description: 'Enterprise roadmaps, ROI modeling, governance frameworks.',
       icon: 'Strategy',
       href: '/services/ai-strategy'
     },
     {
       title: 'Corporate Training',
-      description: 'Executive bootcamps and technical workshops on Azure AI, Copilot, Power Platform',
+      description: 'Bootcamps and workshops on Azure AI, Copilot, Power Platform.',
       icon: 'GraduationCap',
       href: '/services/training'
     },
     {
       title: 'PoC Development',
-      description: 'Production-ready prototypes for document intelligence, chatbots, and automation',
+      description: 'Production-ready prototypes for documents, chat, automation.',
       icon: 'Code2',
       href: '/services/poc-development'
     },
     {
-      title: 'Agentic AI Solutions',
-      description: 'Multi-agent orchestration with LangChain, CrewAI, and Copilot Studio',
+      title: 'Agentic AI',
+      description: 'Multi-agent orchestration with LangChain, CrewAI, Copilot Studio.',
       icon: 'Bot',
       href: '/services/agentic-ai'
     }

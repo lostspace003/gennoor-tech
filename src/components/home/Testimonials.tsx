@@ -1,8 +1,14 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { ChevronLeft, ChevronRight, Quote } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+
+/**
+ * Testimonials as a single large centered quote — the prototype's
+ * Testimonial section typography — while keeping the full eight-quote
+ * auto-rotating carousel (pause on hover, arrows, dots) from before.
+ */
 
 const testimonials = [
   {
@@ -55,172 +61,89 @@ const testimonials = [
   },
 ]
 
-const slideVariants = {
-  enter: (direction: number) => ({
-    x: direction > 0 ? 40 : -40,
-    opacity: 0,
-    filter: 'blur(6px)',
-  }),
-  center: {
-    x: 0,
-    opacity: 1,
-    filter: 'blur(0px)',
-    transition: { type: 'spring' as const, stiffness: 300, damping: 30 },
-  },
-  exit: (direction: number) => ({
-    x: direction < 0 ? 40 : -40,
-    opacity: 0,
-    filter: 'blur(6px)',
-    transition: { duration: 0.2 },
-  }),
-}
-
 export default function Testimonials() {
   const [current, setCurrent] = useState(0)
   const [direction, setDirection] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
-  const [progress, setProgress] = useState(0)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
-  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
   const navigate = (dir: number) => {
     setDirection(dir)
-    setProgress(0)
-    setCurrent((prev) => (prev + dir + testimonials.length) % testimonials.length)
+    setCurrent(prev => (prev + dir + testimonials.length) % testimonials.length)
   }
 
   useEffect(() => {
     if (!isPaused) {
-      setProgress(0)
-      progressIntervalRef.current = setInterval(() => {
-        setProgress((prev) => (prev >= 100 ? 0 : prev + 1))
-      }, 100)
       intervalRef.current = setInterval(() => {
         navigate(1)
       }, 10000)
-    } else {
-      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current)
-      if (intervalRef.current) clearInterval(intervalRef.current)
+    } else if (intervalRef.current) {
+      clearInterval(intervalRef.current)
     }
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current)
-      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPaused, current])
 
+  const t = testimonials[current]
+
   return (
-    <section className="py-14 lg:py-20 relative overflow-hidden">
-      {/* Subtle background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white" />
-
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-14">
+    <section className="bg-white pt-10 pb-24 lg:pb-[110px] px-8">
+      <div
+        className="max-w-[760px] mx-auto text-center"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
+        <AnimatePresence mode="wait" custom={direction}>
           <motion.div
-            className="inline-flex items-center rounded-full px-3 py-1 mb-4 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60"
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            key={current}
+            custom={direction}
+            initial={{ opacity: 0, x: direction >= 0 ? 32 : -32 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: direction >= 0 ? -32 : 32 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
           >
-            Testimonials
+            <p className="text-[clamp(22px,2.6vw,30px)] font-semibold tracking-[-0.01em] leading-[1.35] text-gray-900 m-0">
+              &ldquo;{t.quote}&rdquo;
+            </p>
+            <div className="text-sm text-[#6e6e73] mt-[22px]">
+              {t.author} · {t.company} · {t.program}
+            </div>
           </motion.div>
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            What Clients Say
-          </h2>
-          <p className="text-lg text-gray-500">
-            Feedback from executives and managers who've experienced the transformation
-          </p>
-        </div>
+        </AnimatePresence>
 
-        <div className="max-w-4xl mx-auto">
-          <div className="relative">
-            {/* Quote accent */}
-            <Quote className="absolute -top-3 -left-2 w-10 h-10 text-primary-100" />
-
-            {/* Testimonial Card — Glass */}
-            <div
-              className="glass-card rounded-2xl p-8 lg:p-12 min-h-[280px]"
-              onMouseEnter={() => setIsPaused(true)}
-              onMouseLeave={() => setIsPaused(false)}
-            >
-              <AnimatePresence mode="wait" custom={direction}>
-                <motion.div
-                  key={current}
-                  custom={direction}
-                  variants={slideVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                >
-                  <p className="text-lg lg:text-xl text-gray-600 leading-relaxed mb-8 italic">
-                    &ldquo;{testimonials[current].quote}&rdquo;
-                  </p>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-semibold text-gray-900">
-                        {testimonials[current].author}
-                      </p>
-                      <p className="text-gray-500 text-sm">
-                        {testimonials[current].company}
-                      </p>
-                      <p className="text-sm text-primary-600 mt-1 font-medium">
-                        {testimonials[current].program}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-1.5">
-                      <motion.button
-                        onClick={() => navigate(-1)}
-                        className="p-2.5 rounded-xl hover:bg-gray-100/60 transition-colors"
-                        aria-label="Previous testimonial"
-                        whileHover={{ scale: 1.08 }}
-                        whileTap={{ scale: 0.92 }}
-                      >
-                        <ChevronLeft className="w-4 h-4 text-gray-500" />
-                      </motion.button>
-                      <motion.button
-                        onClick={() => navigate(1)}
-                        className="p-2.5 rounded-xl hover:bg-gray-100/60 transition-colors"
-                        aria-label="Next testimonial"
-                        whileHover={{ scale: 1.08 }}
-                        whileTap={{ scale: 0.92 }}
-                      >
-                        <ChevronRight className="w-4 h-4 text-gray-500" />
-                      </motion.button>
-                    </div>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            {/* Progress bar */}
-            <div className="mt-5 h-[2px] bg-gray-100 rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-primary-600 rounded-full"
-                style={{ width: `${progress}%` }}
+        {/* Controls — quiet, below the quote */}
+        <div className="flex items-center justify-center gap-3 mt-8">
+          <button
+            onClick={() => navigate(-1)}
+            className="p-2 rounded-full text-gray-400 hover:text-gray-700 hover:bg-[#f5f5f7] transition-colors"
+            aria-label="Previous testimonial"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <div className="flex gap-1.5">
+            {testimonials.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  setDirection(index > current ? 1 : -1)
+                  setCurrent(index)
+                }}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  index === current ? 'w-5 bg-gray-900' : 'w-1.5 bg-[#d2d2d7] hover:bg-[#a1a1a6]'
+                }`}
+                aria-label={`Go to testimonial ${index + 1}`}
               />
-            </div>
-
-            {/* Dots */}
-            <div className="flex justify-center mt-4 gap-1.5">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => {
-                    setDirection(index > current ? 1 : -1)
-                    setCurrent(index)
-                    setProgress(0)
-                  }}
-                  className={`h-1.5 rounded-full transition-all duration-400 ${
-                    index === current
-                      ? 'w-6 bg-primary-600'
-                      : 'w-1.5 bg-gray-200 hover:bg-gray-300'
-                  }`}
-                  aria-label={`Go to testimonial ${index + 1}`}
-                />
-              ))}
-            </div>
+            ))}
           </div>
+          <button
+            onClick={() => navigate(1)}
+            className="p-2 rounded-full text-gray-400 hover:text-gray-700 hover:bg-[#f5f5f7] transition-colors"
+            aria-label="Next testimonial"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </section>
