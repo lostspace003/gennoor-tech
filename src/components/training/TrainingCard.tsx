@@ -1,10 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { Clock, Users, BarChart, Eye, Mail, ChevronRight } from 'lucide-react'
 import { TrainingProgram } from '@/data/training-programs'
 import ContentModal from './ContentModal'
 import EnquiryFormModal from './EnquiryFormModal'
+
+/**
+ * Bootcamp card in the prototype's program-card idiom: kind badge + cert
+ * badge header row, title, meta line, description, topics row above a
+ * hairline. The content-viewer and enquiry modals are unchanged.
+ */
 
 interface TrainingCardProps {
   program: TrainingProgram
@@ -14,117 +19,45 @@ export default function TrainingCard({ program }: TrainingCardProps) {
   const [showContentModal, setShowContentModal] = useState(false)
   const [showEnquiryModal, setShowEnquiryModal] = useState(false)
 
-  const getLevelColor = (level: string) => {
-    switch (level.toLowerCase()) {
-      case 'beginner':
-        return 'bg-green-100 text-green-800'
-      case 'intermediate':
-        return 'bg-primary-100 text-primary-800'
-      case 'advanced':
-        return 'bg-gray-100 text-gray-800'
-      case 'executive':
-        return 'bg-amber-100 text-amber-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
-  }
-
   return (
     <>
-      <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group">
-        {/* Card Header */}
-        <div className="p-6 pb-4">
-          <div className="flex items-start justify-between mb-3">
-            <h3 className="text-xl font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">
-              {program.title}
-            </h3>
-            <span className={`px-2 py-1 text-xs font-medium rounded-full ${getLevelColor(program.level)}`}>
-              {program.level}
-            </span>
-          </div>
-
-          <p className="text-gray-600 mb-4 line-clamp-2">
-            {program.description}
-          </p>
-
-          {/* Meta Information */}
-          <div className="flex flex-wrap gap-3 mb-4 text-sm">
-            <div className="flex items-center text-gray-500">
-              <Clock className="w-4 h-4 mr-1" />
-              {program.duration}
-            </div>
-            <div className="flex items-center text-gray-500">
-              <Users className="w-4 h-4 mr-1" />
-              {program.audience}
-            </div>
-          </div>
-
-          {/* Additional Info Badges */}
-          <div className="flex flex-wrap gap-2 mb-4">
-            {/* Technology Badge */}
-            {program.technology !== 'Cross-Platform' && (
-              <span className="px-2 py-1 bg-primary-50 text-primary-700 text-xs font-medium rounded">
-                {program.technology}
-              </span>
-            )}
-
-            {/* Certification Badge */}
-            {program.certification === 'Yes' && (
-              <span className="px-2 py-1 bg-green-50 text-green-700 text-xs font-medium rounded">
-                ✓ Certification
-              </span>
-            )}
-
-            {/* Bootcamp Intensive Badge */}
-            {program.category === 'bootcamp' && (
-              <span className="px-2 py-1 bg-amber-50 text-amber-700 text-xs font-medium rounded">
-                <BarChart className="w-3 h-3 inline mr-1" />
-                Intensive
-              </span>
-            )}
-          </div>
-
-          {/* Highlights */}
-          {program.highlights.length > 0 && (
-            <div className="mb-4">
-              <p className="text-sm font-medium text-gray-700 mb-2">Key Topics:</p>
-              <div className="flex flex-wrap gap-2">
-                {program.highlights.slice(0, 3).map((highlight, idx) => (
-                  <span
-                    key={idx}
-                    className="px-2 py-1 bg-primary-50 text-primary-700 text-xs rounded-md"
-                  >
-                    {highlight}
-                  </span>
-                ))}
-                {program.highlights.length > 3 && (
-                  <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md">
-                    +{program.highlights.length - 3} more
-                  </span>
-                )}
-              </div>
-            </div>
+      <div className="bg-white border border-[#e8e8ed] hover:border-[#d2d2d7] rounded-[18px] px-6 py-[26px] flex flex-col transition-colors">
+        <div className="flex justify-between items-center mb-3">
+          <span className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#86868b]">
+            Bootcamp
+          </span>
+          {program.certification === 'Yes' && (
+            <span className="text-[11px] font-semibold text-primary-600">Certification</span>
           )}
         </div>
 
-        {/* Card Footer */}
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100">
-          <div className="flex gap-2">
-            <button
-              onClick={() => setShowContentModal(true)}
-              className="flex-1 flex items-center justify-center px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              <Eye className="w-4 h-4 mr-2" />
-              View Content
-            </button>
-            <button
-              onClick={() => setShowEnquiryModal(true)}
-              className="flex-1 flex items-center justify-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors"
-            >
-              <Mail className="w-4 h-4 mr-2" />
-              Enquiry
-            </button>
+        <h3 className="text-[17px] font-bold leading-[1.25] text-gray-900 mb-1.5">{program.title}</h3>
+        <div className="text-[12.5px] text-[#86868b] mb-2.5">
+          {program.duration} · {program.level} · {program.audience}
+        </div>
+        <p className="text-[13px] leading-normal text-[#6e6e73] mb-3.5 line-clamp-2">
+          {program.description}
+        </p>
+
+        {program.highlights.length > 0 && (
+          <div className="text-xs leading-[1.7] text-[#6e6e73] border-t border-[#f0f0f2] pt-3 mt-auto">
+            {program.highlights.slice(0, 4).join(' · ')}
           </div>
+        )}
+
+        <div className="flex items-center gap-4 mt-3.5">
+          <button
+            onClick={() => setShowEnquiryModal(true)}
+            className="text-[13px] font-semibold text-primary-600 hover:text-[#0077ed] transition-colors"
+          >
+            Enquire ›
+          </button>
+          <button
+            onClick={() => setShowContentModal(true)}
+            className="text-[12.5px] font-semibold text-[#6e6e73] hover:text-gray-900 transition-colors"
+          >
+            View content
+          </button>
         </div>
       </div>
 
