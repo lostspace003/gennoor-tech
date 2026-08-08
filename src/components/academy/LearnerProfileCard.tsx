@@ -6,6 +6,8 @@ import { Loader2, ShieldCheck, LogOut, Check } from 'lucide-react'
 interface ProfileData {
   email: string
   name: string
+  username: string
+  suggestedUsername: string
   organization: string
   role: string
   provider: string
@@ -37,6 +39,7 @@ export default function LearnerProfileCard({ onSignOut }: { onSignOut: () => voi
 
   // Profile form
   const [name, setName] = useState('')
+  const [username, setUsername] = useState('')
   const [organization, setOrganization] = useState('')
   const [role, setRole] = useState('')
   const [saving, setSaving] = useState(false)
@@ -59,6 +62,7 @@ export default function LearnerProfileCard({ onSignOut }: { onSignOut: () => voi
         if (cancelled || !d) return
         setProfile(d)
         setName(d.name || '')
+        setUsername(d.username || d.suggestedUsername || '')
         setOrganization(d.organization || '')
         setRole(d.role || '')
       })
@@ -74,7 +78,7 @@ export default function LearnerProfileCard({ onSignOut }: { onSignOut: () => voi
       const res = await fetch('/api/learner/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, organization, role }),
+        body: JSON.stringify({ name, username, organization, role }),
       })
       if (res.ok) {
         setSaved(true)
@@ -170,6 +174,20 @@ export default function LearnerProfileCard({ onSignOut }: { onSignOut: () => voi
           <div>
             <label className={labelCls}>Full name</label>
             <input value={name} onChange={e => setName(e.target.value)} placeholder="Your name" className={inputCls} maxLength={80} />
+          </div>
+          <div>
+            <label className={labelCls}>Username</label>
+            <input
+              value={username}
+              onChange={e => setUsername(e.target.value.toLowerCase())}
+              placeholder="e.g. jalal.khan"
+              className={inputCls}
+              maxLength={24}
+              spellCheck={false}
+            />
+            <p className="text-[11.5px] text-[#a1a1a6] mt-1.5 leading-snug">
+              Sign in or reset your password with this if you forget which email you used.
+            </p>
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
             <div>

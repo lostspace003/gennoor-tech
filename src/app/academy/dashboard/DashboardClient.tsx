@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { Award, ArrowRight, CheckCircle2, Circle, PlayCircle, Loader2, ExternalLink, UserCircle2 } from 'lucide-react'
+import { Award, ArrowRight, CheckCircle2, Circle, PlayCircle, Loader2, ExternalLink, UserCircle2, Search, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { courses as allCourses } from '@/config/courses'
 import { getAllLocalProgress } from '@/lib/progress-store'
 import { useLearnerAuth } from '@/hooks/useLearnerAuth'
@@ -10,8 +10,15 @@ import LearnerAuthModal from '@/components/academy/LearnerAuthModal'
 import LearnerProfileCard from '@/components/academy/LearnerProfileCard'
 import LearnerAnalytics from '@/components/academy/LearnerAnalytics'
 import AcademyLiveSessions from '@/components/academy/AcademyLiveSessions'
+import LearnerAccountMenu from '@/components/academy/LearnerAccountMenu'
+import ProfileSetupGate from '@/components/academy/ProfileSetupGate'
 
 const LOCAL_CERTS_KEY = 'gennoor:academy:certs'
+
+/** Two rows of the three-up grid per page — enough to scan without scrolling far. */
+const COURSES_PER_PAGE = 9
+
+type StatusFilter = 'all' | 'in-progress' | 'completed' | 'not-started'
 
 interface LocalCertRecord {
   certId: string
@@ -51,6 +58,9 @@ export default function DashboardClient() {
   const [error, setError] = useState<string | null>(null)
   const [localCerts, setLocalCerts] = useState<Record<string, LocalCertRecord>>({})
   const [authOpen, setAuthOpen] = useState(false)
+  const [courseQuery, setCourseQuery] = useState('')
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
+  const [page, setPage] = useState(1)
 
   // Certificates claimed on this device without an account (OTP claim flow).
   useEffect(() => {
@@ -191,6 +201,38 @@ export default function DashboardClient() {
     notStarted: courseSummaries.filter(s => s.notStarted).length,
   }), [courseSummaries])
 
+  // ── Course browser: search, status filter, pagination ──────────────────
+  // The catalog outgrew a plain list — dozens of full-width rows meant
+  // scrolling past everything to find one course.
+  const visibleCourses = useMemo(() => {
+    const q = courseQuery.trim().toLowerCase()
+    return courseSummaries.filter(s => {
+      if (statusFilter === 'in-progress' && (s.isCompleted || s.notStarted)) return false
+      if (statusFilter === 'completed' && !s.isCompleted) return false
+      if (statusFilter === 'not-started' && !s.notStarted) return false
+      if (!q) return true
+      // Match the things a learner actually remembers about a course.
+      const haystack = [
+        s.course.title,
+        s.course.description,
+        s.course.duration,
+        ...(s.course.tags || []),
+        ...s.course.chapters.map(c => c.title),
+      ].join(' ').toLowerCase()
+      return haystack.includes(q)
+    })
+  }, [courseSummaries, courseQuery, statusFilter])
+
+  const pageCount = Math.max(1, Math.ceil(visibleCourses.length / COURSES_PER_PAGE))
+  const currentPage = Math.min(page, pageCount)
+  const pagedCourses = useMemo(
+    () => visibleCourses.slice((currentPage - 1) * COURSES_PER_PAGE, currentPage * COURSES_PER_PAGE),
+    [visibleCourses, currentPage],
+  )
+
+  // Narrowing the results while parked on page 4 would otherwise show nothing.
+  useEffect(() => { setPage(1) }, [courseQuery, statusFilter])
+
   const handleSignOut = async () => {
     await logout()
     window.location.reload()
@@ -217,6 +259,9 @@ export default function DashboardClient() {
         subtitle="Your progress, certificates, and analytics — saved across devices."
       />
 
+      {/* Catches accounts created before the compulsory step existed. */}
+      {isLoggedIn && <ProfileSetupGate />}
+
       {/* Header */}
       <section className="bg-white border-b border-[#e8e8ed]">
         <div className="mx-auto px-6 lg:px-10 py-10 max-w-[1040px]">
@@ -233,7 +278,9 @@ export default function DashboardClient() {
                 {!isLoggedIn && <span className="text-[#86868b]"> Progress is saved on this device.</span>}
               </p>
             </div>
-            {!isLoggedIn && (
+            {isLoggedIn ? (
+              <LearnerAccountMenu className="self-start sm:self-auto" />
+            ) : (
               <button
                 onClick={() => setAuthOpen(true)}
                 className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-[#0077ed] text-white text-[14px] font-medium rounded-full transition-colors self-start sm:self-auto"
@@ -351,8 +398,65 @@ export default function DashboardClient() {
           </div>
         )}
 
-        <div className="space-y-3">
-          {courseSummaries.map(s => {
+        {/* Search + status filter */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-5">
+          <div className="relative flex-1">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#a1a1a6] pointer-events-none" />
+            <input
+              value={courseQuery}
+              onChange={e => setCourseQuery(e.target.value)}
+              placeholder="Search courses, topics, or chapters…"
+              aria-label="Search courses"
+              className="w-full pl-10 pr-9 py-2.5 bg-white border border-[#e8e8ed] rounded-xl text-[14px] text-gray-900 placeholder:text-[#a1a1a6] focus:outline-none focus:ring-2 focus:ring-primary-600/30 focus:border-primary-600 transition-colors"
+            />
+            {courseQuery && (
+              <button
+                onClick={() => setCourseQuery('')}
+                aria-label="Clear search"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a1a1a6] hover:text-gray-900"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+          <div className="flex gap-1 p-1 bg-white border border-[#e8e8ed] rounded-xl overflow-x-auto">
+            {([
+              ['all', 'All', courseSummaries.length],
+              ['in-progress', 'In progress', statusCounts.inProgress],
+              ['completed', 'Completed', statusCounts.completed],
+              ['not-started', 'Not started', statusCounts.notStarted],
+            ] as const).map(([value, label, count]) => (
+              <button
+                key={value}
+                onClick={() => setStatusFilter(value)}
+                className={`px-3 py-1.5 text-[12.5px] font-medium rounded-lg whitespace-nowrap transition-colors ${
+                  statusFilter === value
+                    ? 'bg-gray-900 text-white'
+                    : 'text-[#6e6e73] hover:text-gray-900 hover:bg-[#f5f5f7]'
+                }`}
+              >
+                {label} <span className="tabular-nums opacity-60">{count}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {visibleCourses.length === 0 ? (
+          <div className="bg-white border border-[#e8e8ed] rounded-2xl px-6 py-12 text-center">
+            <p className="text-[15px] font-semibold text-gray-900">No courses match that.</p>
+            <p className="text-[13.5px] text-[#6e6e73] mt-1">
+              Try a different word, or clear the filters.
+            </p>
+            <button
+              onClick={() => { setCourseQuery(''); setStatusFilter('all') }}
+              className="mt-4 text-[13px] font-semibold text-primary-600 hover:text-[#0077ed]"
+            >
+              Clear filters
+            </button>
+          </div>
+        ) : (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {pagedCourses.map(s => {
             const theme = s.course.theme
             const accent = theme?.accent || '#F97316'
             const statusBadge = s.isCompleted
@@ -370,59 +474,61 @@ export default function DashboardClient() {
               <Link
                 key={s.course.id}
                 href={ctaHref}
-                className="group block bg-white rounded-2xl ring-1 ring-gray-200 hover:ring-gray-300 hover:shadow-md transition-all"
+                className="group flex flex-col bg-white rounded-2xl ring-1 ring-gray-200 hover:ring-gray-300 hover:shadow-md transition-all overflow-hidden"
               >
-                <div className="p-5 flex flex-col sm:flex-row sm:items-center gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                      <span className={`text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ring-1 ${statusBadge.cls}`}>
-                        {statusBadge.label}
+                {/* Accent keeps courses visually distinguishable at a glance */}
+                <div className="h-1" style={{ backgroundColor: accent }} />
+                <div className="p-5 flex flex-col flex-1">
+                  <div className="flex items-center gap-2 mb-2 flex-wrap">
+                    <span className={`text-[10.5px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ring-1 ${statusBadge.cls}`}>
+                      {statusBadge.label}
+                    </span>
+                    {s.cert && (
+                      <span className="text-[10.5px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ring-1 bg-amber-50 text-amber-700 ring-amber-200 inline-flex items-center gap-1">
+                        <Award className="w-3 h-3" />
+                        Certified
                       </span>
-                      {s.cert && (
-                        <span className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ring-1 bg-amber-50 text-amber-700 ring-amber-200 inline-flex items-center gap-1">
-                          <Award className="w-3 h-3" />
-                          Certified
-                        </span>
-                      )}
-                      <span className="text-xs text-gray-500">{s.course.duration}</span>
-                    </div>
-                    <h3 className="text-base font-bold text-gray-900 leading-tight mb-1">
-                      {s.course.title}
-                    </h3>
+                    )}
+                    <span className="text-[11.5px] text-gray-500">{s.course.duration}</span>
+                  </div>
+
+                  <h3 className="text-[15px] font-bold text-gray-900 leading-snug mb-1.5 line-clamp-2">
+                    {s.course.title}
+                  </h3>
+
+                  <p className="text-xs text-gray-500 leading-relaxed line-clamp-2 mb-3">
+                    {s.course.description}
+                  </p>
+
+                  {/* Progress sits directly above the CTA so the card bottoms align */}
+                  <div className="mt-auto">
                     {!s.notStarted && (
                       <>
-                        <div className="flex items-center gap-3 mt-2 mb-1">
+                        <div className="flex items-center gap-2.5 mb-1.5">
                           <div className="flex-1 h-1.5 rounded-full bg-gray-100 overflow-hidden">
                             <div
                               className="h-full transition-all duration-500"
                               style={{ width: `${s.percentComplete}%`, backgroundColor: accent }}
                             />
                           </div>
-                          <span className="text-xs font-semibold text-gray-700 tabular-nums">
-                            {s.completedChapters} / {s.totalChapters}
+                          <span className="text-[11px] font-semibold text-gray-700 tabular-nums shrink-0">
+                            {s.completedChapters}/{s.totalChapters}
                           </span>
                         </div>
                         {!s.isCompleted && s.nextChapter && (
-                          <p className="text-xs text-gray-500 mt-1.5 truncate">
+                          <p className="text-[11.5px] text-gray-500 truncate mb-3">
                             Up next: <span className="text-gray-700 font-medium">{s.nextChapter.title}</span>
                           </p>
                         )}
                       </>
                     )}
-                    {s.notStarted && (
-                      <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">
-                        {s.course.description}
-                      </p>
-                    )}
-                  </div>
-                  <div className="sm:flex-shrink-0">
                     <span
-                      className="inline-flex items-center gap-1.5 text-sm font-bold px-4 py-2 rounded-xl group-hover:gap-2 transition-all"
+                      className="w-full inline-flex items-center justify-center gap-1.5 text-[13px] font-bold px-4 py-2.5 rounded-xl transition-all"
                       style={{ backgroundColor: accent, color: '#fff' }}
                     >
                       {s.isCompleted ? <CheckCircle2 className="w-4 h-4" /> : s.inProgress ? <PlayCircle className="w-4 h-4" /> : <Circle className="w-4 h-4" />}
                       {ctaLabel}
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                     </span>
                   </div>
                 </div>
@@ -430,6 +536,49 @@ export default function DashboardClient() {
             )
           })}
         </div>
+        )}
+
+        {/* Pagination */}
+        {pageCount > 1 && (
+          <div className="mt-6 flex items-center justify-between gap-4">
+            <p className="text-[12.5px] text-[#86868b] tabular-nums">
+              {(currentPage - 1) * COURSES_PER_PAGE + 1}–
+              {Math.min(currentPage * COURSES_PER_PAGE, visibleCourses.length)} of {visibleCourses.length}
+            </p>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                aria-label="Previous page"
+                className="w-9 h-9 inline-flex items-center justify-center rounded-lg bg-white border border-[#e8e8ed] text-[#6e6e73] hover:text-gray-900 hover:border-gray-300 disabled:opacity-40 disabled:hover:text-[#6e6e73] transition-colors"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              {Array.from({ length: pageCount }, (_, i) => i + 1).map(n => (
+                <button
+                  key={n}
+                  onClick={() => setPage(n)}
+                  aria-current={n === currentPage ? 'page' : undefined}
+                  className={`min-w-9 h-9 px-2.5 inline-flex items-center justify-center rounded-lg text-[13px] font-medium tabular-nums transition-colors ${
+                    n === currentPage
+                      ? 'bg-gray-900 text-white'
+                      : 'bg-white border border-[#e8e8ed] text-[#6e6e73] hover:text-gray-900 hover:border-gray-300'
+                  }`}
+                >
+                  {n}
+                </button>
+              ))}
+              <button
+                onClick={() => setPage(p => Math.min(pageCount, p + 1))}
+                disabled={currentPage === pageCount}
+                aria-label="Next page"
+                className="w-9 h-9 inline-flex items-center justify-center rounded-lg bg-white border border-[#e8e8ed] text-[#6e6e73] hover:text-gray-900 hover:border-gray-300 disabled:opacity-40 disabled:hover:text-[#6e6e73] transition-colors"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="mt-8 text-center">
           <Link

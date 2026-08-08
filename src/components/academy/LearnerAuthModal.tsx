@@ -2,6 +2,10 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { X, Mail, Loader2, KeyRound, Eye, EyeOff } from 'lucide-react'
+import LearnerProfileSetupForm, {
+  fetchLearnerProfile,
+  type LearnerProfileSnapshot,
+} from './LearnerProfileSetupForm'
 
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
 
@@ -19,7 +23,16 @@ declare global {
   }
 }
 
-type Step = 'choose' | 'password' | 'otp-email' | 'otp-verify' | 'forgot-email' | 'forgot-reset'
+type Step =
+  | 'choose'
+  | 'password'
+  | 'otp-email'
+  | 'otp-verify'
+  | 'forgot-email'
+  | 'forgot-reset'
+  // Compulsory registration details, shown after a successful sign-in and
+  // before the learner reaches any course.
+  | 'profile-setup'
 
 interface LearnerAuthModalProps {
   isOpen: boolean
@@ -47,6 +60,7 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [loading, setLoading] = useState(false)
+  const [setupProfile, setSetupProfile] = useState<LearnerProfileSnapshot | null>(null)
   const otpRefs = useRef<(HTMLInputElement | null)[]>([])
   const googleBtnRef = useRef<HTMLDivElement>(null)
 
@@ -62,8 +76,31 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
       setOtp(['', '', '', '', '', ''])
       setError('')
       setNotice('')
+      setSetupProfile(null)
     }
   }, [isOpen])
+
+  /**
+   * Every successful sign-in funnels through here. A learner missing any
+   * registration detail is held on the compulsory setup step; only a complete
+   * profile is allowed through to the course.
+   *
+   * Declared above the Google effect on purpose — that effect lists it as a
+   * dependency, and dependency arrays are evaluated during render.
+   */
+  const finishSignIn = useCallback(async () => {
+    const profile = await fetchLearnerProfile()
+    if (profile && !profile.profileComplete) {
+      setSetupProfile(profile)
+      setStep('profile-setup')
+      setError('')
+      setNotice('')
+      setLoading(false)
+      return
+    }
+    onLoginSuccess()
+    onClose()
+  }, [onLoginSuccess, onClose])
 
   // Load Google Identity Services and render the official sign-in button when available
   useEffect(() => {
@@ -79,8 +116,7 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
           body: JSON.stringify({ credential: response.credential }),
         })
         if (res.ok) {
-          onLoginSuccess()
-          onClose()
+          await finishSignIn()
         } else {
           const data = await res.json().catch(() => ({}))
           setError(data.error || 'Google sign-in failed')
@@ -117,7 +153,7 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
     script.defer = true
     script.onload = init
     document.head.appendChild(script)
-  }, [isOpen, step, onLoginSuccess, onClose])
+  }, [isOpen, step, finishSignIn])
 
   const goTo = useCallback((next: Step) => {
     setStep(next)
@@ -184,8 +220,7 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
         body: JSON.stringify({ email, name: name || undefined }),
       })
       if (loginRes.ok) {
-        onLoginSuccess()
-        onClose()
+        await finishSignIn()
       } else {
         setError('Login failed. Please try again.')
       }
@@ -197,8 +232,10 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
   }
 
   const handlePasswordLogin = async () => {
-    if (!validEmail(email)) {
-      setError('Please enter a valid email')
+    // The field takes an email address OR a username — a learner who has
+    // forgotten which address they used can still get in.
+    if (!email.trim()) {
+      setError('Please enter your email or username')
       return
     }
     if (!password) {
@@ -211,14 +248,45 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
       const res = await fetch('/api/learner/login-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ identifier: email.trim(), password }),
       })
       if (res.ok) {
-        onLoginSuccess()
-        onClose()
+        await finishSignIn()
       } else {
         const data = await res.json().catch(() => ({}))
         setError(data.error || 'Sign-in failed')
+      }
+    } catch {
+      setError('Network error')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  /**
+   * Forgot-password start. The field accepts an email address OR a username,
+   * so a learner who has lost track of which address they signed up with can
+   * still recover — the code always goes to the address on file.
+   */
+  const sendResetCode = async () => {
+    if (!email.trim()) {
+      setError('Enter your email address or username')
+      return
+    }
+    setLoading(true)
+    setError('')
+    try {
+      const res = await fetch('/api/learner/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier: email.trim() }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (res.ok) {
+        goTo('forgot-reset')
+        setNotice(`We sent a 6-digit code to ${data.maskedEmail || 'your email'}.`)
+      } else {
+        setError(data.error || 'Failed to send code')
       }
     } catch {
       setError('Network error')
@@ -247,7 +315,7 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
       const res = await fetch('/api/learner/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp: code, newPassword }),
+        body: JSON.stringify({ identifier: email.trim(), otp: code, newPassword }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
@@ -259,11 +327,10 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
       const loginRes = await fetch('/api/learner/login-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password: newPassword }),
+        body: JSON.stringify({ identifier: email.trim(), password: newPassword }),
       })
       if (loginRes.ok) {
-        onLoginSuccess()
-        onClose()
+        await finishSignIn()
       } else {
         setPassword('')
         goTo('password')
@@ -333,27 +400,42 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
     : step === 'otp-verify' ? 'Check your inbox'
     : step === 'forgot-email' ? 'Reset your password'
     : step === 'forgot-reset' ? 'Choose a new password'
+    : step === 'profile-setup' ? 'Complete your profile'
     : title || 'Sign in to Gennoor Academy'
 
   const subheading =
-    step === 'password' ? 'Use the password you set in your learner profile.'
+    step === 'password' ? 'Sign in with your email address or username.'
     : step === 'otp-email' ? 'We’ll email you a one-time code — no password needed.'
     : step === 'otp-verify' ? `Enter the 6-digit code we sent to ${email}.`
-    : step === 'forgot-email' ? 'We’ll email you a code to verify it’s you.'
-    : step === 'forgot-reset' ? `Enter the code sent to ${email}, then pick a new password.`
+    : step === 'forgot-email' ? 'Enter your email or username — we’ll send a code to the address on file.'
+    : step === 'forgot-reset' ? 'Enter the code from your email, then pick a new password.'
+    : step === 'profile-setup' ? 'One quick step before your course opens. These details appear on your certificates.'
     : subtitle || 'Your progress and certificates, saved across devices.'
+
+  // The compulsory step has no exit: closing it would leave a signed-in
+  // learner without the details every certificate and sign-in path depends on.
+  const dismissible = step !== 'profile-setup'
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-[22px] shadow-2xl w-full max-w-[400px] overflow-hidden animate-fade-in">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 inline-flex items-center justify-center rounded-full text-[#86868b] hover:text-gray-900 hover:bg-[#f5f5f7] transition-colors"
-          aria-label="Close"
-        >
-          <X className="w-4.5 h-4.5 w-[18px] h-[18px]" />
-        </button>
+      <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        onClick={dismissible ? onClose : undefined}
+      />
+      <div
+        className={`relative bg-white rounded-[22px] shadow-2xl w-full overflow-hidden animate-fade-in ${
+          step === 'profile-setup' ? 'max-w-[440px] max-h-[92vh] overflow-y-auto' : 'max-w-[400px]'
+        }`}
+      >
+        {dismissible && (
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 w-8 h-8 inline-flex items-center justify-center rounded-full text-[#86868b] hover:text-gray-900 hover:bg-[#f5f5f7] transition-colors"
+            aria-label="Close"
+          >
+            <X className="w-[18px] h-[18px]" />
+          </button>
+        )}
 
         <div className="px-7 pt-8 pb-7">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#86868b] mb-2">Gennoor Academy</p>
@@ -417,13 +499,14 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
           {step === 'password' && (
             <div className="space-y-3.5">
               <input
-                type="email"
+                type="text"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder="Email or username"
                 className={inputCls}
                 autoFocus
-                autoComplete="email"
+                autoComplete="username"
+                spellCheck={false}
               />
               <div className="relative">
                 <input
@@ -520,18 +603,19 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
           {step === 'forgot-email' && (
             <div className="space-y-3.5">
               <input
-                type="email"
+                type="text"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder="Email or username"
                 className={inputCls}
                 autoFocus
-                autoComplete="email"
-                onKeyDown={e => e.key === 'Enter' && sendOtp('forgot-reset')}
+                autoComplete="username"
+                spellCheck={false}
+                onKeyDown={e => e.key === 'Enter' && sendResetCode()}
               />
               <div className="flex gap-3 pt-1">
                 <button onClick={() => goTo('password')} className={backBtnCls}>Back</button>
-                <button onClick={() => sendOtp('forgot-reset')} disabled={loading} className={primaryBtnCls}>
+                <button onClick={sendResetCode} disabled={loading} className={primaryBtnCls}>
                   {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                   Send code
                 </button>
@@ -577,12 +661,22 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
                 </button>
               </div>
               <button
-                onClick={() => sendOtp('forgot-reset')}
+                onClick={sendResetCode}
                 className="w-full text-[13px] text-primary-600 hover:text-[#0077ed]"
               >
                 Resend code
               </button>
             </div>
+          )}
+
+          {step === 'profile-setup' && setupProfile && (
+            <LearnerProfileSetupForm
+              profile={setupProfile}
+              onDone={() => {
+                onLoginSuccess()
+                onClose()
+              }}
+            />
           )}
         </div>
       </div>

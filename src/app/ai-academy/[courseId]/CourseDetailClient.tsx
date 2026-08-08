@@ -6,6 +6,8 @@ import { ArrowLeft, BookOpen, Clock, BarChart3, Award, PlayCircle, CheckCircle2,
 import ChapterList from '@/components/academy/ChapterList'
 import type { ChapterProgress } from '@/components/academy/ChapterList'
 import PdfViewerModal from '@/components/academy/PdfViewerModal'
+import LearnerAccountMenu from '@/components/academy/LearnerAccountMenu'
+import ProfileSetupGate from '@/components/academy/ProfileSetupGate'
 import { getLocalProgress } from '@/lib/progress-store'
 import type { Course } from '@/config/courses'
 
@@ -79,17 +81,24 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
 
   return (
     <main className="min-h-screen bg-gray-50">
+      {/* A signed-in learner finishes registering before the course opens.
+          Renders nothing for signed-out visitors — the academy stays free. */}
+      <ProfileSetupGate />
+
       {/* Hero */}
       <section className="relative bg-gray-900 overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA2MCAwIEwgMCAwIDAgNjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-40" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
-          <Link
-            href="/ai-academy"
-            className="inline-flex items-center gap-1.5 text-sm text-white/70 hover:text-white transition-colors mb-6"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to AI Academy
-          </Link>
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <Link
+              href="/ai-academy"
+              className="inline-flex items-center gap-1.5 text-sm text-white/70 hover:text-white transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to AI Academy
+            </Link>
+            <LearnerAccountMenu variant="dark" />
+          </div>
 
           <div className="max-w-3xl">
             <div className="flex flex-wrap items-center gap-3 mb-4">

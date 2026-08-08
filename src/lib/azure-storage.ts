@@ -430,14 +430,24 @@ export async function getEmailLogs(days: number = 30) {
 
 // ─── Learners ───────────────────────────────────────────────
 
+/** The row key a learner's record lives under. */
+const learnerKey = (email: string) =>
+  email.toLowerCase().trim().replace(/[^a-z0-9@._-]/g, '')
+
 export async function saveLearner(data: {
   email: string
   name: string
-  provider: 'otp' | 'google' | 'microsoft'
+  provider: 'otp' | 'google' | 'microsoft' | 'password'
 }) {
   await ensureTable('Learners')
   const client = getTableClient('Learners')
-  const sanitizedEmail = data.email.toLowerCase().trim().replace(/[^a-z0-9@._-]/g, '')
+  const sanitizedEmail = learnerKey(data.email)
+
+  // createdAt is written ONLY on first sight. A 'Merge' upsert overwrites every
+  // property it carries, so including it unconditionally used to reset the
+  // signup date on every single login — which is what made the profile card
+  // say "Learner since" the current month for everyone.
+  const existing = await getLearner(data.email)
 
   await client.upsertEntity({
     partitionKey: 'learner',
@@ -446,7 +456,7 @@ export async function saveLearner(data: {
     name: data.name,
     provider: data.provider,
     lastLogin: new Date().toISOString(),
-    createdAt: new Date().toISOString(),
+    ...(existing?.createdAt ? {} : { createdAt: new Date().toISOString() }),
   }, 'Merge')
 }
 
@@ -455,10 +465,9 @@ export async function saveLearner(data: {
 export async function updateLearnerFields(email: string, fields: Record<string, unknown>) {
   await ensureTable('Learners')
   const client = getTableClient('Learners')
-  const sanitizedEmail = email.toLowerCase().trim().replace(/[^a-z0-9@._-]/g, '')
   await client.upsertEntity({
     partitionKey: 'learner',
-    rowKey: sanitizedEmail,
+    rowKey: learnerKey(email),
     email: email.toLowerCase().trim(),
     ...fields,
   }, 'Merge')
@@ -467,12 +476,71 @@ export async function updateLearnerFields(email: string, fields: Record<string, 
 export async function getLearner(email: string) {
   await ensureTable('Learners')
   const client = getTableClient('Learners')
-  const sanitizedEmail = email.toLowerCase().trim().replace(/[^a-z0-9@._-]/g, '')
   try {
-    return await client.getEntity('learner', sanitizedEmail)
+    return await client.getEntity('learner', learnerKey(email))
   } catch {
     return null
   }
+}
+
+// ─── Username → email index ─────────────────────────────────
+// Lives in the same Learners table under a separate partition, so a lookup is
+// a single point read rather than a scan of every learner.
+
+/** The email a username points at, or null when the username is unclaimed. */
+export async function getEmailForUsername(username: string): Promise<string | null> {
+  const key = username.toLowerCase().trim()
+  if (!key) return null
+  await ensureTable('Learners')
+  const client = getTableClient('Learners')
+  try {
+    const entity = await client.getEntity('username', key)
+    return (entity.email as string) || null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Claim a username for an email address, releasing any previous handle the
+ * learner held. Returns false when someone else already owns it.
+ */
+export async function claimUsername(username: string, email: string): Promise<boolean> {
+  const key = username.toLowerCase().trim()
+  const owner = email.toLowerCase().trim()
+  if (!key || !owner) return false
+
+  const existingOwner = await getEmailForUsername(key)
+  if (existingOwner && existingOwner !== owner) return false
+  if (existingOwner === owner) return true
+
+  await ensureTable('Learners')
+  const client = getTableClient('Learners')
+
+  // Free the learner's old handle so it doesn't linger as a dead pointer.
+  const record = await getLearner(owner)
+  const previous = (record?.username as string | undefined)?.toLowerCase().trim()
+  if (previous && previous !== key) {
+    try { await client.deleteEntity('username', previous) } catch { /* already gone */ }
+  }
+
+  // createEntity (not upsert) so two people claiming the same handle at the
+  // same moment can't both win — the loser gets a 409 from the table.
+  try {
+    await client.createEntity({ partitionKey: 'username', rowKey: key, email: owner })
+  } catch (err: any) {
+    if (err?.statusCode === 409) return false
+    throw err
+  }
+  return true
+}
+
+/** Resolve an email address OR a username to the learner's email. */
+export async function resolveLearnerEmail(identifier: string): Promise<string | null> {
+  const value = String(identifier || '').trim().toLowerCase()
+  if (!value) return null
+  if (value.includes('@')) return value
+  return getEmailForUsername(value)
 }
 
 // ─── Course Progress ────────────────────────────────────────

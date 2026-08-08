@@ -173,7 +173,7 @@ export default function AdminDashboard() {
   const [bookingServices, setBookingServices] = useState<{ id: string; name: string; duration: string }[]>([])
   const [coworkData, setCoworkData] = useState<{ total: number; registrations: Array<{ fullName: string; email: string; country: string; timeZone: string; role: string; company: string; biggestWorkflow: string; createdAt: string }>; byCountry: Array<{ name: string; value: number }>; byTimezone: Array<{ name: string; value: number }> } | null>(null)
   const [indexingData, setIndexingData] = useState<{ google: Array<{ url: string; status: string }>; bing: Array<{ url: string; status: string }> } | null>(null)
-  const [academyData, setAcademyData] = useState<{ learners: Array<{ email: string; name: string; provider: string; lastLogin: string; createdAt: string }>; progress: Array<{ email: string; courseId: string; chapterId: string; completionPercent: number; completed: boolean; lastAccessed: string }>; summary: { totalLearners: number; activeLearners: number; learnersWithCompletion: number; totalProgressEntries: number; byProvider: Record<string, number>; byCourse: Array<{ courseId: string; learners: number; completions: number }> }; chapterStats: Record<string, { views: number; completions: number; avgPercent: number }> } | null>(null)
+  const [academyData, setAcademyData] = useState<{ learners: Array<{ email: string; name: string; username: string; organization: string; role: string; provider: string; hasPassword: boolean; profileComplete: boolean; lastLogin: string; createdAt: string }>; progress: Array<{ email: string; courseId: string; chapterId: string; completionPercent: number; completed: boolean; lastAccessed: string }>; summary: { totalLearners: number; activeLearners: number; learnersWithCompletion: number; totalProgressEntries: number; byProvider: Record<string, number>; byCourse: Array<{ courseId: string; learners: number; completions: number }> }; chapterStats: Record<string, { views: number; completions: number; avgPercent: number }> } | null>(null)
   const [indexNowState, setIndexNowState] = useState<{ pushing: boolean; result?: { success: boolean; submitted?: number; total?: number; error?: string; submittedAt?: string } }>({ pushing: false })
   const [gscData, setGscData] = useState<{
     configured: boolean
@@ -923,16 +923,28 @@ export default function AdminDashboard() {
               {learners.length === 0 ? <Empty text="No learners yet" /> : (
                 <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-gray-500 border-b border-gray-200">
                   <th className="text-left py-2 px-3 font-medium">Name</th>
+                  <th className="text-left py-2 px-3 font-medium">Username</th>
                   <th className="text-left py-2 px-3 font-medium">Email</th>
+                  <th className="text-left py-2 px-3 font-medium">Organization</th>
+                  <th className="text-left py-2 px-3 font-medium">Role</th>
                   <th className="text-left py-2 px-3 font-medium">Provider</th>
+                  <th className="text-left py-2 px-3 font-medium">Profile</th>
                   <th className="text-left py-2 px-3 font-medium">Last Login</th>
                   <th className="text-left py-2 px-3 font-medium">Joined</th>
                 </tr></thead>
                 <tbody>{learners.slice(0, 50).map((l, i) => (
                   <tr key={i} className="border-b border-gray-100 hover:bg-primary-50/50">
                     <td className="py-2.5 px-3 text-gray-800 font-medium">{l.name || '-'}</td>
+                    <td className="py-2.5 px-3 text-gray-500 font-mono text-xs">{l.username ? `@${l.username}` : '-'}</td>
                     <td className="py-2.5 px-3 text-gray-600">{l.email}</td>
+                    <td className="py-2.5 px-3 text-gray-600">{l.organization || '-'}</td>
+                    <td className="py-2.5 px-3 text-gray-600">{l.role || '-'}</td>
                     <td className="py-2.5 px-3"><span className={`px-2 py-0.5 rounded text-xs font-medium ${l.provider === 'google' ? 'bg-red-100 text-red-700' : l.provider === 'microsoft' ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-700'}`}>{l.provider === 'otp' ? 'Email' : l.provider}</span></td>
+                    <td className="py-2.5 px-3">
+                      <span className={`px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap ${l.profileComplete ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                        {l.profileComplete ? 'Complete' : l.hasPassword ? 'Details missing' : 'No password'}
+                      </span>
+                    </td>
                     <td className="py-2.5 px-3 text-gray-400 whitespace-nowrap">{l.lastLogin ? new Date(l.lastLogin).toLocaleDateString() : '-'}</td>
                     <td className="py-2.5 px-3 text-gray-400 whitespace-nowrap">{l.createdAt ? new Date(l.createdAt).toLocaleDateString() : '-'}</td>
                   </tr>

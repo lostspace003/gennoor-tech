@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { BookOpen, Trophy, ArrowRight, GraduationCap, BarChart3, Layers, Sparkles } from 'lucide-react'
 import InteractiveCoursesCatalog, { type EnrichedCourse } from '@/components/academy/InteractiveCoursesCatalog'
+import LearnerAccountMenu from '@/components/academy/LearnerAccountMenu'
+import ProfileSetupGate from '@/components/academy/ProfileSetupGate'
 import { courses as configCourses } from '@/config/courses'
 import { courses as academyCourses } from '@/data/academy/courses'
 
@@ -18,25 +20,31 @@ const totalAcademyCatalog = academyCourses.length
 export default function AcademyPage() {
   return (
     <main className="min-h-screen">
+      {/* Signed-in learners finish registering before going any further. */}
+      <ProfileSetupGate />
+
       {/* Banner — part of the broader Gennoor Academy */}
       <section className="relative">
         <div className="bg-primary-50 border-b border-primary-100/60">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-center">
-              <div className="inline-flex items-center gap-1.5 text-xs text-gray-600">
-                <Layers className="w-3.5 h-3.5 text-primary-500" />
-                <span>
-                  <strong className="text-gray-900">Interactive Courses</strong> · part of{' '}
-                  <strong className="text-gray-900">Gennoor Academy</strong>
-                </span>
+            <div className="flex items-center justify-center gap-2 sm:gap-4">
+              <div className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-center">
+                <div className="inline-flex items-center gap-1.5 text-xs text-gray-600">
+                  <Layers className="w-3.5 h-3.5 text-primary-500" />
+                  <span>
+                    <strong className="text-gray-900">Interactive Courses</strong> · part of{' '}
+                    <strong className="text-gray-900">Gennoor Academy</strong>
+                  </span>
+                </div>
+                <Link
+                  href="/academy"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-primary-600 hover:text-primary-700 transition-colors"
+                >
+                  Browse all {totalAcademyCatalog} courses across 6 tracks
+                  <ArrowRight className="w-3 h-3" />
+                </Link>
               </div>
-              <Link
-                href="/academy"
-                className="inline-flex items-center gap-1 text-xs font-semibold text-primary-600 hover:text-primary-700 transition-colors"
-              >
-                Browse all {totalAcademyCatalog} courses across 6 tracks
-                <ArrowRight className="w-3 h-3" />
-              </Link>
+              <LearnerAccountMenu className="shrink-0" />
             </div>
           </div>
         </div>

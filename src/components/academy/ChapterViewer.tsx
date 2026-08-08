@@ -11,6 +11,7 @@ import { useLearnerAuth } from '@/hooks/useLearnerAuth'
 import CourseCompletionOverlay from './CourseCompletionOverlay'
 import AudioPlayer from './AudioPlayer'
 import ChapterAudioControls, { type ChapterAudioControlsHandle } from './ChapterAudioControls'
+import LearnerAccountMenu from './LearnerAccountMenu'
 
 interface ChapterViewerProps {
   courseId: string
@@ -869,6 +870,9 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
             <span className="hidden sm:inline text-xs text-white/40 flex-shrink-0">{slideInfo}</span>
           )}
         </div>
+
+        {/* Account + sign out, mirroring every other academy surface */}
+        <LearnerAccountMenu variant="dark" className="flex-shrink-0" />
 
         <button
           onClick={() => router.push(`/ai-academy/${courseId}`)}

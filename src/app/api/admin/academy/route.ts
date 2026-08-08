@@ -14,14 +14,29 @@ export async function POST(request: NextRequest) {
     try {
       const client = TableClient.fromConnectionString(connStr, 'Learners')
       for await (const entity of client.listEntities()) {
+        // The table also holds the username→email index under its own
+        // partition; those rows are pointers, not learners.
+        if (entity.partitionKey !== 'learner') continue
+        const name = (entity.name as string) || ''
+        const organization = (entity.organization as string) || ''
+        const role = (entity.role as string) || ''
+        const username = (entity.username as string) || ''
+        const hasPassword = !!entity.passwordHash
         learners.push({
           email: entity.email || entity.rowKey,
-          name: entity.name || '',
+          name,
+          username,
+          organization,
+          role,
           provider: entity.provider || '',
+          hasPassword,
+          profileComplete: !!(name && organization && role && username && hasPassword),
           lastLogin: entity.lastLogin || '',
           createdAt: entity.createdAt || '',
         })
       }
+      // Newest registrations first — that is what an admin scans for.
+      learners.sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))
     } catch { /* table may not exist yet */ }
 
     const progress: any[] = []
