@@ -8,6 +8,7 @@ import PortalBreadcrumb from './PortalBreadcrumb'
 import RouteProgress from './RouteProgress'
 import SearchModal from '@/components/SearchModal'
 import { cn } from '@/lib/utils'
+import { isChromelessRoute } from '@/lib/chrome'
 
 const PIN_STORAGE_KEY = 'gennoor.portal.pinned'
 
@@ -72,9 +73,9 @@ export default function PortalShell({ children }: { children: React.ReactNode })
   // collapsed rail explains its icons with tooltips instead.)
   const collapsed = !pinned
 
-  // App surfaces (CRM, admin) render their own full-screen shells — no site
-  // topbar/sidebar/breadcrumb/padding around them.
-  if (pathname.startsWith('/crm') || pathname.startsWith('/admin')) {
+  // App surfaces (CRM, admin, the chapter player) render their own
+  // full-screen shells — no site topbar/sidebar/breadcrumb/padding.
+  if (isChromelessRoute(pathname)) {
     return <>{children}</>
   }
 

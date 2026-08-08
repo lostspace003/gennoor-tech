@@ -408,15 +408,27 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
     return () => window.removeEventListener('message', handler)
   }, [isNewAudioPattern])
 
-  // ── Zoom / fullscreen ────────────────────────────────────────────────────
+  // ── Zoom / auto-fit / fullscreen ─────────────────────────────────────────
+  // Chapter decks are authored for ~1200px desktop layouts. On narrow
+  // stages (phones, portrait tablets) we render the deck at its design
+  // width and scale the whole thing down to fit — video-style letterfit —
+  // instead of letting it overflow enlarged. The manual zoom control
+  // multiplies on top of the fit factor.
+  const DECK_DESIGN_WIDTH = 1200
+
+  const fitFactor = useCallback(() => {
+    const stageW = iframeRef.current?.clientWidth ?? (typeof window !== 'undefined' ? window.innerWidth : DECK_DESIGN_WIDTH)
+    return stageW < 900 ? stageW / DECK_DESIGN_WIDTH : 1
+  }, [])
+
   const applyZoom = useCallback((level: number) => {
     try {
       const iframeDoc = iframeRef.current?.contentDocument
       if (!iframeDoc) return
-      const scale = level / 100
+      const scale = (level / 100) * fitFactor()
       iframeDoc.documentElement.style.cssText = `transform: scale(${scale}); transform-origin: top left; width: ${100 / scale}%; height: ${100 / scale}%;`
     } catch { /* cross-origin */ }
-  }, [])
+  }, [fitFactor])
 
   const handleZoomChange = useCallback((level: number) => {
     const clamped = Math.max(50, Math.min(125, level))
@@ -523,8 +535,8 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
       const iframeDoc = iframeRef.current?.contentDocument
       if (!iframeDoc) return
 
-      // Apply zoom
-      const scale = zoomLevel / 100
+      // Apply zoom × auto-fit (scales desktop-authored decks down on phones)
+      const scale = (zoomLevel / 100) * fitFactor()
       iframeDoc.documentElement.style.cssText = `transform: scale(${scale}); transform-origin: top left; width: ${100 / scale}%; height: ${100 / scale}%;`
 
       const script = iframeDoc.createElement('script')
@@ -768,7 +780,21 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
       // Cross-origin or sandboxing may prevent access — fail silently
     }
     setStageReady(true)
-  }, [chapter.id, zoomLevel, isNewAudioPattern])
+  }, [chapter.id, zoomLevel, isNewAudioPattern, fitFactor])
+
+  // Re-fit on resize, device rotation, and fullscreen transitions — the
+  // stage width changes in all three and the deck scale must follow.
+  useEffect(() => {
+    const refit = () => applyZoom(zoomLevel)
+    window.addEventListener('resize', refit)
+    window.addEventListener('orientationchange', refit)
+    document.addEventListener('fullscreenchange', refit)
+    return () => {
+      window.removeEventListener('resize', refit)
+      window.removeEventListener('orientationchange', refit)
+      document.removeEventListener('fullscreenchange', refit)
+    }
+  }, [applyZoom, zoomLevel])
 
   // ── End-of-chapter overlay + autoplay countdown ──────────────────────────
   const handleAudioEnded = useCallback(() => {
