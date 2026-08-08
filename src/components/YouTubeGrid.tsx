@@ -29,7 +29,7 @@ export function VideoCard({ video }: { video: YouTubeVideo }) {
   const [playing, setPlaying] = useState(false)
 
   return (
-    <div className="group rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 ease-out bg-white border border-gray-100">
+    <div className="group rounded-[18px] overflow-hidden transition-colors duration-200 bg-white border border-[#e8e8ed] hover:border-[#d2d2d7]">
       <div className="relative aspect-video bg-gray-100">
         {playing ? (
           <iframe
@@ -45,7 +45,7 @@ export function VideoCard({ video }: { video: YouTubeVideo }) {
               <Image src={video.thumbnail} alt={video.title} fill className="object-cover" />
             )}
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-            <div className="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-medium px-1.5 py-0.5 rounded">
+            <div className="absolute bottom-2 right-2.5 bg-[#1d1d1f]/85 text-white text-[11px] font-semibold px-[7px] py-0.5 rounded-[5px]">
               {video.duration}
             </div>
             <button
@@ -54,8 +54,8 @@ export function VideoCard({ video }: { video: YouTubeVideo }) {
               className="absolute inset-0 flex items-center justify-center cursor-pointer"
               aria-label={`Play ${video.title}`}
             >
-              <div className="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-lg opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300">
-                <Play className="w-6 h-6 text-white ml-0.5 fill-white" />
+              <div className="w-11 h-11 bg-[#1d1d1f]/85 rounded-full flex items-center justify-center opacity-90 group-hover:opacity-100 transition-opacity duration-200">
+                <Play className="w-4 h-4 text-white ml-0.5 fill-white" />
               </div>
             </button>
           </>
@@ -120,10 +120,10 @@ function FilterPill({ active, onClick, children }: { active: boolean; onClick: (
     <button
       onClick={onClick}
       type="button"
-      className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 whitespace-nowrap border ${
+      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 whitespace-nowrap border ${
         active
-          ? 'bg-primary-600 text-white border-primary-600 shadow-sm shadow-primary-200'
-          : 'bg-white text-gray-600 border-gray-200 hover:border-primary-300 hover:text-primary-600'
+          ? 'bg-primary-600 text-white border-primary-600'
+          : 'bg-white text-[#6e6e73] border-[#d2d2d7] hover:text-gray-900'
       }`}
     >
       {children}
@@ -289,7 +289,7 @@ export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
   return (
     <div>
       {/* Sticky filter bar */}
-      <div className="sticky top-20 z-40 bg-white/80 backdrop-blur-md -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-4 border-b border-gray-100 shadow-sm">
+      <div className="sticky top-[52px] lg:top-0 z-40 bg-white/85 backdrop-blur-md -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-4 border-b border-[#e8e8ed]">
         {/* Top row: Search + Series + Results */}
         <div className="flex items-center gap-3 mb-3">
           <div className="relative flex-1">
@@ -299,7 +299,7 @@ export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
               placeholder="Search videos..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 rounded-lg border border-gray-200 bg-gray-50/80 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400 focus:bg-white transition-all duration-200"
+              className="w-full pl-9 pr-4 py-2 rounded-full border border-[#d2d2d7] bg-white text-sm text-gray-900 placeholder:text-[#86868b] focus:outline-none focus:ring-0 focus:border-primary-600 transition-colors duration-200"
             />
           </div>
           {allPlaylists.length > 0 && (
@@ -373,7 +373,7 @@ export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
                 <button
                   onClick={() => { setCurrentPage(safeCurrentPage - 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
                   disabled={safeCurrentPage === 1}
-                  className="px-3 py-2 text-sm font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  className="px-3.5 py-2 text-sm font-medium rounded-full border border-[#d2d2d7] text-[#6e6e73] hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   Previous
                 </button>
@@ -381,10 +381,10 @@ export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
                   <button
                     key={page}
                     onClick={() => { setCurrentPage(page); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
-                    className={`w-9 h-9 text-sm font-medium rounded-lg transition-colors ${
+                    className={`w-9 h-9 text-sm font-medium rounded-full transition-colors ${
                       page === safeCurrentPage
-                        ? 'bg-primary-600 text-white shadow-sm'
-                        : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
+                        ? 'bg-primary-600 text-white'
+                        : 'border border-[#d2d2d7] text-[#6e6e73] hover:bg-gray-50'
                     }`}
                   >
                     {page}
@@ -393,7 +393,7 @@ export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
                 <button
                   onClick={() => { setCurrentPage(safeCurrentPage + 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
                   disabled={safeCurrentPage === totalPages}
-                  className="px-3 py-2 text-sm font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  className="px-3.5 py-2 text-sm font-medium rounded-full border border-[#d2d2d7] text-[#6e6e73] hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   Next
                 </button>
