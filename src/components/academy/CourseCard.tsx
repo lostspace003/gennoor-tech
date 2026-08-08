@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Clock, BarChart3, Award, BookOpen, ArrowRight } from 'lucide-react'
+import { Clock, BarChart3, Award, BookOpen } from 'lucide-react'
 import type { Course } from '@/config/courses'
 
 interface CourseCardProps {
@@ -11,47 +11,42 @@ interface CourseCardProps {
 
 export default function CourseCard({ course, overallProgress = 0 }: CourseCardProps) {
   const headerStyle = course.theme
-    ? { background: `linear-gradient(135deg, ${course.theme.primary} 0%, ${course.theme.primaryDeep} 60%, ${course.theme.accent} 100%)` }
+    ? { background: course.theme.primaryDeep }
     : undefined
 
   return (
     <Link
       href={`/ai-academy/${course.id}`}
-      className="group block bg-white rounded-2xl border border-gray-200/70 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden"
+      className="group block bg-white rounded-[18px] border border-[#e8e8ed] hover:border-[#d2d2d7] transition-colors duration-200 overflow-hidden"
     >
       {/* Themed header */}
       <div
-        className={`relative h-52 p-6 flex flex-col justify-between ${course.theme ? '' : ' bg-primary-600 '}`}
+        className={`relative h-48 p-6 flex flex-col justify-between ${course.theme ? '' : ' bg-[#1d1d1f] '}`}
         style={headerStyle}
       >
         <div className="flex items-start justify-between">
-          <span className="inline-flex items-center px-2.5 py-1 text-[10px] font-bold bg-gray-400 text-gray-900 rounded-full uppercase tracking-[0.2em]">
+          <span className="inline-flex items-center text-[10.5px] font-semibold text-white/70 uppercase tracking-[0.12em]">
             {course.badge}
           </span>
-          <span className="text-white/80 text-sm font-medium">{course.shortTitle}</span>
+          <span className="text-white/70 text-[13px] font-medium">{course.shortTitle}</span>
         </div>
         <div>
-          <h3 className="text-white font-heading font-extrabold tracking-tight text-2xl leading-tight">{course.title}</h3>
+          <h3 className="text-white font-bold tracking-[-0.01em] text-[22px] leading-tight">{course.title}</h3>
         </div>
         {overallProgress > 0 && (
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
-            <div className="h-full bg-gray-400 transition-all duration-500" style={{ width: `${overallProgress}%` }} />
+            <div className="h-full bg-white/70 transition-all duration-500" style={{ width: `${overallProgress}%` }} />
           </div>
         )}
       </div>
 
       {/* Body */}
       <div className="p-6">
-        {/* Micro-badges */}
-        <div className="flex flex-wrap gap-1.5 mb-4">
-          <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.2em] text-amber-700 bg-amber-50 border border-amber-200/60 rounded-full">
-            Free
-          </span>
-          <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-700 bg-white border border-gray-300 rounded-full">
-            {course.totalChapters} chapters
-          </span>
-          <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-700 bg-white border border-gray-300 rounded-full">
-            Audio
+        {/* Micro-meta line */}
+        <div className="text-[11px] font-semibold tracking-[0.1em] uppercase text-[#1d8348] mb-3.5">
+          Free · Interactive
+          <span className="text-[#86868b] font-medium normal-case tracking-normal">
+            {' '}· {course.totalChapters} chapters · audio included
           </span>
         </div>
 
@@ -78,28 +73,22 @@ export default function CourseCard({ course, overallProgress = 0 }: CourseCardPr
         </div>
 
         {/* Tags */}
-        <div className="flex flex-wrap gap-1.5 mb-5">
-          {course.tags.slice(0, 4).map(tag => (
-            <span key={tag} className="px-2 py-0.5 text-xs font-medium bg-primary-50 text-primary-700 rounded-full">
-              {tag}
-            </span>
-          ))}
+        <div className="text-xs text-[#86868b] mb-5">
+          {course.tags.slice(0, 4).join(' · ')}
         </div>
 
         {/* Open-access signal */}
         {overallProgress === 0 && (
-          <p className="text-xs text-gray-500 mb-4">
-            <span className="font-semibold text-green-600">Every chapter open</span>
-            {' · no account needed · certificate on completion'}
+          <p className="text-xs text-[#86868b] mb-4">
+            Every chapter open · no account needed · certificate on completion
           </p>
         )}
 
         {/* CTA */}
-        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-          <span className="text-sm font-semibold text-primary-600 group-hover:text-primary-700 transition-colors">
-            {overallProgress > 0 ? 'Continue Learning' : 'Start Learning'}
+        <div className="flex items-center justify-between pt-3.5 border-t border-[#f0f0f2]">
+          <span className="text-[13px] font-semibold text-primary-600 group-hover:text-[#0077ed] transition-colors">
+            {overallProgress > 0 ? 'Continue learning ›' : 'Start learning ›'}
           </span>
-          <ArrowRight className="w-5 h-5 text-primary-500 group-hover:translate-x-1 transition-transform" />
         </div>
       </div>
     </Link>

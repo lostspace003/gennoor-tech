@@ -191,46 +191,37 @@ export default function DashboardClient() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      {/* Hero */}
-      <section className="bg-gray-800 text-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-14 max-w-5xl">
-          <p className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-2">Your Gennoor Academy dashboard</p>
-          <h1 className="font-heading text-3xl sm:text-4xl font-bold mb-2">
-            Your learning dashboard{session?.name ? `, ${session.name.split(' ')[0]}` : ''}
-          </h1>
-          <p className="text-white/75 text-sm max-w-xl">
-            Here is everything you have started, completed, and earned.
+    <main className="min-h-screen bg-[#f5f5f7]">
+      {/* Header */}
+      <section className="bg-white border-b border-[#e8e8ed]">
+        <div className="mx-auto px-6 lg:px-10 py-10 max-w-[1040px]">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#86868b] mb-2">
+            Gennoor Academy · Learner dashboard
           </p>
-          {!isLoggedIn && (
-            <p className="text-white/50 text-xs mt-2">
-              Progress is saved on this device.
-            </p>
-          )}
+          <h1 className="text-[30px] font-bold tracking-[-0.02em] text-gray-900">
+            Welcome back{session?.name ? `, ${session.name.split(' ')[0]}` : ''}.
+          </h1>
+          <p className="text-sm text-[#6e6e73] mt-1">
+            Here is everything you have started, completed, and earned.
+            {!isLoggedIn && <span className="text-[#86868b]"> Progress is saved on this device.</span>}
+          </p>
         </div>
       </section>
 
       {/* Stats */}
-      <section className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-5xl">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: BookOpen, label: 'Courses started', value: String(stats.started), color: 'text-gray-700' },
-              { icon: CheckCircle2, label: 'Courses completed', value: String(stats.completed), color: 'text-green-600' },
-              { icon: Award, label: 'Certificates earned', value: String(stats.certs), color: 'text-amber-600' },
-              { icon: Clock, label: 'Minutes invested', value: String(stats.minutes), color: 'text-gray-700' },
-            ].map(s => (
-              <div key={s.label} className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0">
-                  <s.icon className={`w-5 h-5 ${s.color}`} />
-                </div>
-                <div>
-                  <p className="text-xl font-bold text-gray-900 leading-none">{s.value}</p>
-                  <p className="text-xs text-gray-500 mt-1">{s.label}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+      <section className="mx-auto px-6 lg:px-10 pt-8 max-w-[1040px]">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+          {[
+            { label: 'Courses started', value: String(stats.started) },
+            { label: 'Courses completed', value: String(stats.completed) },
+            { label: 'Certificates earned', value: String(stats.certs) },
+            { label: 'Minutes invested', value: String(stats.minutes) },
+          ].map(s => (
+            <div key={s.label} className="bg-white border border-[#e8e8ed] rounded-2xl px-5 py-4">
+              <p className="text-[30px] font-bold tracking-[-0.02em] text-gray-900 leading-none">{s.value}</p>
+              <p className="text-xs text-[#86868b] mt-1.5">{s.label}</p>
+            </div>
+          ))}
         </div>
       </section>
 

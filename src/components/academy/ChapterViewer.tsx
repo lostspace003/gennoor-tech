@@ -46,6 +46,7 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
   const chapter = activeChapter
 
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [stageReady, setStageReady] = useState(false)
   const [slideInfo, setSlideInfo] = useState('')
   const [slidePercent, setSlidePercent] = useState(0)
   const [currentSlideNum, setCurrentSlideNum] = useState(1)
@@ -78,12 +79,20 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
   const course = useMemo(() => allCourses.find(c => c.id === courseId), [courseId])
   const theme = course?.theme
 
+  // The next course in the catalog order — powers course-to-course movement
+  // from the player drawer without leaving the learning flow.
+  const nextCourse = useMemo(() => {
+    const idx = allCourses.findIndex(c => c.id === courseId)
+    return idx >= 0 && idx < allCourses.length - 1 ? allCourses[idx + 1] : null
+  }, [courseId])
+
   const isNewAudioPattern = !!chapter.chapterAudio
 
   // ── In-place chapter swap ────────────────────────────────────────────────
   const swapChapter = useCallback((target: Chapter, pushUrl = true) => {
     setShowEndOverlay(false)
     setDrawerOpen(false)
+    setStageReady(false)
     setSlideInfo('')
     setSlidePercent(0)
     setCurrentSlideNum(1)
@@ -416,11 +425,19 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
   }, [applyZoom])
 
   const toggleFullscreen = useCallback(() => {
-    if (!containerRef.current) return
-    if (document.fullscreenElement) {
-      document.exitFullscreen()
+    const el = containerRef.current
+    if (!el) return
+    type FsElement = HTMLElement & { webkitRequestFullscreen?: () => Promise<void> | void }
+    type FsDocument = Document & { webkitExitFullscreen?: () => Promise<void> | void; webkitFullscreenElement?: Element | null }
+    const doc = document as FsDocument
+    const fsEl = doc.fullscreenElement ?? doc.webkitFullscreenElement
+    if (fsEl) {
+      const exit = doc.exitFullscreen?.bind(doc) ?? doc.webkitExitFullscreen?.bind(doc)
+      try { void Promise.resolve(exit?.()).catch(() => {}) } catch { /* ignore */ }
     } else {
-      containerRef.current.requestFullscreen()
+      const target = el as FsElement
+      const request = target.requestFullscreen?.bind(target) ?? target.webkitRequestFullscreen?.bind(target)
+      try { void Promise.resolve(request?.()).catch(() => {}) } catch { /* ignore */ }
     }
   }, [])
 
@@ -429,6 +446,22 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
     document.addEventListener('fullscreenchange', handler)
     return () => document.removeEventListener('fullscreenchange', handler)
   }, [])
+
+  // Player hotkeys pressed INSIDE the iframe (F fullscreen, J/L seek).
+  // Without this, fullscreen and seek keys silently stop working the moment
+  // the learner clicks the slide content (focus moves into the iframe).
+  useEffect(() => {
+    const handler = (e: MessageEvent) => {
+      if (!e || !e.data) return
+      if (e.data.type === 'gennoor-academy:fullscreen-toggle') {
+        toggleFullscreen()
+      } else if (e.data.type === 'gennoor-academy:seek-by' && typeof e.data.seconds === 'number') {
+        audioControlsRef.current?.seekBy(e.data.seconds)
+      }
+    }
+    window.addEventListener('message', handler)
+    return () => window.removeEventListener('message', handler)
+  }, [toggleFullscreen])
 
   // Auto-hide the control bars in fullscreen after 3s idle (VLC behaviour).
   const pokeControls = useCallback(() => {
@@ -631,25 +664,27 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
             var isNav = e.key === 'ArrowRight' || e.key === 'ArrowLeft' ||
                         e.key === 'PageDown' || e.key === 'PageUp';
             var isSpace = e.code === 'Space' || e.key === ' ';
-            if (!isNav && !isSpace) return;
+            var isFull = e.key === 'f' || e.key === 'F';
+            var isSeekBack = e.key === 'j' || e.key === 'J';
+            var isSeekFwd = e.key === 'l' || e.key === 'L';
+            if (!isNav && !isSpace && !isFull && !isSeekBack && !isSeekFwd) return;
             var tag = (e.target && e.target.tagName) || '';
             if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
             // Space inside a button/anchor should still activate it.
             if (isSpace && (tag === 'BUTTON' || tag === 'A')) return;
             e.stopImmediatePropagation();
             e.preventDefault();
-            if (isSpace) {
-              try {
-                window.parent.postMessage({ type: 'gennoor-academy:play-toggle' }, '*');
-              } catch (err) {}
-              return;
-            }
-            var dir = (e.key === 'ArrowRight' || e.key === 'PageDown') ? 'next' : 'prev';
             try {
-              window.parent.postMessage(
-                { type: 'gennoor-academy:nav-request', dir: dir },
-                '*'
-              );
+              if (isSpace) {
+                window.parent.postMessage({ type: 'gennoor-academy:play-toggle' }, '*');
+              } else if (isFull) {
+                window.parent.postMessage({ type: 'gennoor-academy:fullscreen-toggle' }, '*');
+              } else if (isSeekBack || isSeekFwd) {
+                window.parent.postMessage({ type: 'gennoor-academy:seek-by', seconds: isSeekBack ? -10 : 10 }, '*');
+              } else {
+                var dir = (e.key === 'ArrowRight' || e.key === 'PageDown') ? 'next' : 'prev';
+                window.parent.postMessage({ type: 'gennoor-academy:nav-request', dir: dir }, '*');
+              }
             } catch (err) {}
           }, true);
 
@@ -672,10 +707,19 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
         })();
       `
       iframeDoc.body.appendChild(script)
+
+      // A freshly (re)loaded deck starts at slide 1 regardless of where the
+      // narration is (resume seek, chapter swap mid-seek, dev reloads).
+      // Ask the audio engine to re-post the authoritative state for its
+      // current position once the deck has initialised.
+      if (isNewAudioPattern) {
+        setTimeout(() => { audioControlsRef.current?.resync() }, 350)
+      }
     } catch {
       // Cross-origin or sandboxing may prevent access — fail silently
     }
-  }, [chapter.id, zoomLevel])
+    setStageReady(true)
+  }, [chapter.id, zoomLevel, isNewAudioPattern])
 
   // ── End-of-chapter overlay + autoplay countdown ──────────────────────────
   const handleAudioEnded = useCallback(() => {
@@ -765,7 +809,9 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
           key={chapter.id}
           ref={iframeRef}
           src={`/api/content${chapter.htmlFile}`}
-          className="w-full h-full border-0 bg-gray-100"
+          className={`w-full h-full border-0 bg-gray-100 transition-opacity duration-300 ${
+            stageReady ? 'opacity-100' : 'opacity-0'
+          }`}
           sandbox="allow-scripts allow-same-origin"
           title={chapter.title}
           onLoad={handleIframeLoad}
@@ -836,6 +882,42 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
                     </div>
                   )}
                 </nav>
+
+                {/* Course-to-course movement — always one tap away */}
+                <div className="pt-3 mt-3 border-t border-white/10 space-y-0.5">
+                  {nextCourse && (
+                    <Link
+                      href={`/ai-academy/${nextCourse.id}`}
+                      className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm text-white/80 hover:bg-white/5 hover:text-white transition-colors"
+                    >
+                      <span className="min-w-0">
+                        <span className="block text-[10px] font-bold tracking-widest text-white/40 uppercase">
+                          Next course
+                        </span>
+                        <span className="block truncate">{nextCourse.shortTitle || nextCourse.title}</span>
+                      </span>
+                      <ArrowRight className="w-4 h-4 flex-shrink-0 text-white/40" />
+                    </Link>
+                  )}
+                  <Link
+                    href={`/ai-academy/${courseId}`}
+                    className="block px-3 py-2 rounded-xl text-[13px] text-white/60 hover:bg-white/5 hover:text-white transition-colors"
+                  >
+                    Course home
+                  </Link>
+                  <Link
+                    href="/academy"
+                    className="block px-3 py-2 rounded-xl text-[13px] text-white/60 hover:bg-white/5 hover:text-white transition-colors"
+                  >
+                    All Academy courses
+                  </Link>
+                  <Link
+                    href="/academy/dashboard"
+                    className="block px-3 py-2 rounded-xl text-[13px] text-white/60 hover:bg-white/5 hover:text-white transition-colors"
+                  >
+                    My dashboard
+                  </Link>
+                </div>
               </div>
             </aside>
           </>

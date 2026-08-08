@@ -1,13 +1,5 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import {
-  GraduationCap,
-  ArrowRight,
-  Sparkles,
-  BookOpen,
-  Layers,
-  Award,
-} from 'lucide-react'
 import { BreadcrumbJsonLd } from '@/components/JsonLd'
 import AcademyCatalog from '@/components/academy/AcademyCatalog'
 import { courses } from '@/data/academy/courses'
@@ -37,6 +29,13 @@ export const metadata: Metadata = {
   },
 }
 
+/**
+ * Academy landing in the Apple idiom, per the redesign handoff: display
+ * hero with dashboard CTA, six track cards on the grey band, the live
+ * filterable catalog, hairline how-it-works grid, custom-courses card,
+ * and the dark team CTA. All data stays live from src/data.
+ */
+
 export default function AcademyPage() {
   return (
     <>
@@ -47,219 +46,124 @@ export default function AcademyPage() {
         ]}
       />
 
-      {/* HERO */}
-      <section className="relative py-14 lg:py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0" />
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
-
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center rounded-full border border-gray-300 bg-white px-4 py-1.5 mb-6 text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-900">
-              <GraduationCap className="w-3 h-3 mr-2" />
-              Free AI Academy
-            </div>
-            <h1 className="font-heading text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 mb-8 leading-[1.05]">
-              Courses that end in a shipped system,
-              not a certificate.
-            </h1>
-            <p className="text-lg sm:text-xl text-gray-500 mb-10 leading-relaxed max-w-3xl mx-auto">
-              Masterclass-grade B2B courses across six tracks — Foundations, Function,
-              Leadership, Industry, Builder, Applied. Free. No account needed. Certificate
-              on completion. Every course pairs with an optional 4-week pilot that turns
-              what you learned into a working system inside your environment.
-            </p>
-
-            <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm text-gray-500 mb-8">
-              <span className="inline-flex items-center gap-1.5">
-                <BookOpen className="w-4 h-4 text-primary-500" />
-                {courses.length} courses in catalog · {interactiveCourses.length} fully interactive · scaffolds rolling out through 2026
-              </span>
-              <span className="text-gray-300">·</span>
-              <span className="inline-flex items-center gap-1.5">
-                <Award className="w-4 h-4 text-primary-500" />
-                Free · no credit card
-              </span>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <a
-                href="#catalog"
-                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-primary-600 transition-all duration-300"
-              >
-                Browse the catalog
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </a>
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 bg-white ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700 transition-all duration-300"
-              >
-                Run this for your team
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* TRACKS */}
-      <section className="py-10 lg:py-16 relative">
-        <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <p className="text-xs font-bold tracking-widest text-primary-600 uppercase mb-3">
-              Six Tracks
-            </p>
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Six paths through the catalog.
-            </h2>
-            <p className="text-base text-gray-500 leading-relaxed">
-              Pick a track to focus, or use the filters below to combine tracks with
-              function, industry, audience, level, and stack.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
-            {tracks.map((track) => {
-              const trackCourses = courses.filter((c) => c.track === track.id)
-              return (
-                <div
-                  key={track.id}
-                  className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm transition-all duration-300"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/15">
-                      <Layers className="w-5 h-5 text-white" />
-                    </div>
-                    <span className="text-xs font-bold tracking-widest text-gray-400">
-                      {trackCourses.length} live
-                    </span>
-                  </div>
-                  <h3 className="text-base font-bold text-gray-900 mb-1">{track.label}</h3>
-                  <p className="text-xs font-semibold text-primary-600 mb-2">
-                    {track.tagline}
-                  </p>
-                  <p className="text-sm text-gray-500 leading-relaxed">{track.description}</p>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* CATALOG (client filter) */}
-      <div id="catalog" className="scroll-mt-24" />
-      <AcademyCatalog allCourses={courses} />
-
-      {/* CUSTOM CONTENT CTA */}
-      <section className="section-padding relative">
-        <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="rounded-3xl p-7 lg:p-10 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-amber-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-amber-500/15">
-                  <Sparkles className="w-6 h-6 text-white" />
-                </div>
-                <div className="flex-grow">
-                  <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3 leading-tight">
-                    Don&apos;t see your topic?
-                    <br />
-                    We build custom courses for client engagements.
-                  </h2>
-                  <p className="text-base text-gray-600 leading-relaxed mb-5">
-                    The published catalog covers our most-requested topics. For client
-                    engagements, we co-author bespoke courses built around your data, your
-                    workflows, and your industry context — typically 4–6 weeks for a
-                    function-specific custom course with team workshop.
-                  </p>
-                  <Link
-                    href="/contact"
-                    className="inline-flex items-center gap-2 text-primary-600 font-semibold hover:text-primary-700 transition-colors"
-                  >
-                    Talk to us about a custom course
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section className="section-padding relative">
-        <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <p className="text-xs font-bold tracking-widest text-primary-600 uppercase mb-3">
-              How the Academy works
-            </p>
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Free to learn. Optional to apply.
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-6xl mx-auto">
-            {[
-              {
-                step: '01',
-                title: 'Pick a course',
-                body:
-                  'Browse the catalog by track, level, function, industry, audience, or stack. Most courses are 45–65 minutes, broken into 6–9 chapters.',
-              },
-              {
-                step: '02',
-                title: 'Work through it',
-                body:
-                  'Read or watch, complete the exercises, take the chapter quizzes, and ship the capstone — applied to your own organization.',
-              },
-              {
-                step: '03',
-                title: 'Apply it where you work',
-                body:
-                  'At the end of every course, you get three concrete options to apply it: run it for your team, scope a pilot built on your data, or just talk.',
-              },
-            ].map((s) => (
-              <div key={s.step} className="rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 relative">
-                <span className="absolute top-4 right-5 text-2xl font-extrabold text-gray-100">
-                  {s.step}
-                </span>
-                <h3 className="text-base font-bold text-gray-900 mb-2 pr-10">{s.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{s.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FINAL CTA */}
-      <section className="section-padding relative overflow-hidden">
-        <div className="absolute inset-0 bg-gray-900" />
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-            Want this for your whole team?
-          </h2>
-          <p className="text-lg text-primary-200/60 mb-8 max-w-2xl mx-auto">
-            Every course pairs with an optional 2-day workshop (up to 25 people) and a
-            4-week pilot. Same content, applied to your data, with senior delivery.
+      <main className="min-h-screen bg-white">
+        {/* ===== Hero ===== */}
+        <section className="px-8 pt-20 lg:pt-[110px] pb-[72px] text-center">
+          <div className="kicker mb-5">Gennoor Academy · Free</div>
+          <h1 className="text-[clamp(40px,4.8vw,64px)] leading-[1.06] tracking-[-0.03em] font-bold text-gray-900 max-w-[820px] mx-auto">
+            Courses that end in a shipped system, not a certificate.
+          </h1>
+          <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.45] text-[#6e6e73] max-w-[640px] mx-auto mt-[22px]">
+            {courses.length} masterclass-grade courses across six tracks. Free, no
+            account needed. Every course pairs with an optional 4-week pilot in
+            your environment.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="flex flex-col sm:flex-row gap-5 sm:gap-[22px] justify-center items-center mt-8">
+            <Link href="/academy/dashboard" className="pill-primary-sm">
+              Open the learner dashboard
+            </Link>
+            <Link href="/contact" className="text-[15px] font-medium text-primary-600 hover:text-[#0077ed]">
+              Run this for your team ›
+            </Link>
+          </div>
+          <p className="text-[13px] text-[#86868b] mt-9">
+            {courses.length} courses in catalog &nbsp;·&nbsp; {interactiveCourses.length} fully
+            interactive &nbsp;·&nbsp; certificate on completion &nbsp;·&nbsp; no credit card
+          </p>
+        </section>
+
+        {/* ===== Tracks ===== */}
+        <section className="bg-[#f5f5f7] px-8 py-20">
+          <div className="max-w-[1080px] mx-auto">
+            <h2 className="display-card text-center mb-12">Six paths through the catalog.</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {tracks.map(track => {
+                const trackCourses = courses.filter(c => c.track === track.id)
+                return (
+                  <div key={track.id} className="bg-white border border-[#e8e8ed] rounded-[18px] px-[26px] py-7">
+                    <div className="flex justify-between items-baseline mb-2.5">
+                      <h3 className="text-[18px] font-bold text-gray-900">{track.label}</h3>
+                      <span className="text-[11px] font-semibold tracking-[0.1em] uppercase text-[#86868b]">
+                        {trackCourses.length} live
+                      </span>
+                    </div>
+                    <p className="text-[12.5px] font-semibold text-primary-600 mb-2">{track.tagline}</p>
+                    <p className="text-[13.5px] leading-[1.55] text-[#6e6e73]">{track.description}</p>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* ===== Catalog (client filter) ===== */}
+        <div id="catalog" className="scroll-mt-16" />
+        <AcademyCatalog allCourses={courses} />
+
+        {/* ===== How it works ===== */}
+        <section className="px-8 py-16 lg:py-24">
+          <div className="max-w-[1080px] mx-auto">
+            <h2 className="display-card text-center mb-3">Free to learn. Optional to apply.</h2>
+            <p className="text-[18px] text-[#6e6e73] text-center mb-14">
+              Most courses run 45–65 minutes across 6–9 chapters.
+            </p>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-[#e8e8ed] border border-[#e8e8ed] rounded-[18px] overflow-hidden">
+              {[
+                { step: '01', title: 'Pick a course', body: 'Browse by track, level, function, industry, or stack.' },
+                { step: '02', title: 'Work through it', body: 'Chapters, quizzes, and a capstone applied to your own organization.' },
+                { step: '03', title: 'Apply it at work', body: 'Run it for your team, scope a pilot on your data, or just talk.' },
+              ].map(s => (
+                <div key={s.step} className="bg-white px-7 py-8">
+                  <div className="text-[13px] font-bold text-[#d2d2d7] tracking-[0.08em] mb-3">{s.step}</div>
+                  <h3 className="text-[18px] font-bold text-gray-900 mb-2">{s.title}</h3>
+                  <p className="text-sm leading-[1.55] text-[#6e6e73]">{s.body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ===== Custom courses ===== */}
+        <section className="bg-[#f5f5f7] px-8 py-20">
+          <div className="max-w-[920px] mx-auto bg-white rounded-3xl px-8 py-12 lg:px-12 lg:py-[52px] text-center">
+            <h2 className="text-[clamp(26px,3vw,36px)] font-bold tracking-[-0.02em] text-gray-900 mb-2.5">
+              Don&rsquo;t see your topic?
+            </h2>
+            <p className="text-[16px] leading-[1.55] text-[#6e6e73] max-w-[560px] mx-auto mb-6">
+              We co-author bespoke courses around your data, workflows, and
+              industry — typically 4–6 weeks for a function-specific course with
+              a team workshop.
+            </p>
+            <Link href="/contact" className="link-arrow !text-[15px]">
+              Talk to us about a custom course ›
+            </Link>
+          </div>
+        </section>
+
+        {/* ===== Team CTA ===== */}
+        <section className="bg-[#1d1d1f] px-8 py-[90px] text-center">
+          <h2 className="display-card !text-white">Want this for your whole team?</h2>
+          <p className="text-[18px] text-[#a1a1a6] mt-3 mb-7 max-w-[560px] mx-auto">
+            Every course pairs with an optional 2-day workshop (up to 25 people)
+            and a 4-week pilot. Same content, applied to your data, with senior
+            delivery.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-5 sm:gap-[22px] justify-center items-center">
             <Link
               href="/solutions/for-smb"
-              className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 px-7 py-3.5 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-all duration-300"
+              className="inline-flex items-center justify-center bg-white text-gray-900 text-[15px] font-medium px-6 py-3 rounded-full hover:bg-[#f5f5f7] transition-colors"
             >
               SMB packages from $5k
-              <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               href="/solutions/for-enterprise"
-              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-sm font-semibold text-white border border-white/20 hover:bg-white/5 transition-all duration-300"
+              className="text-[15px] font-medium text-[#2997ff] hover:text-[#52a8ff]"
             >
-              Enterprise programs
+              Enterprise programs ›
             </Link>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
     </>
   )
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
-import { Pause, Play, RotateCcw, RotateCw } from 'lucide-react'
+import { Pause, Play, RotateCcw, RotateCw, Volume2, VolumeX } from 'lucide-react'
 
 interface Cue {
   at: number
@@ -27,6 +27,11 @@ export interface ChapterAudioControlsHandle {
   togglePlay: () => void
   /** Relative time seek (VLC-style ±10s). */
   seekBy: (seconds: number) => void
+  /** Re-post the authoritative deck state for the CURRENT audio position.
+   *  Called by the parent whenever the chapter iframe (re)loads, so a deck
+   *  that loaded after a seek/resume immediately shows the right slide
+   *  instead of waiting for the next cue boundary. */
+  resync: () => void
 }
 
 interface ChapterAudioControlsProps {
@@ -57,11 +62,12 @@ function formatTime(t: number) {
 }
 
 /**
- * Parent-level player engine + VLC-style control strip for the
- * timestamp-fire pattern: one MP3 per chapter plus a cues.json. Audio
- * position is the single source of truth — every cue advance posts down to
- * the iframe, and every user-driven seek additionally posts an authoritative
- * apply-state so the deck is correct in BOTH directions.
+ * Parent-level player engine + control strip for the timestamp-fire pattern:
+ * one MP3 per chapter plus a cues.json. Audio position is the single source
+ * of truth — every cue advance posts down to the iframe, and every
+ * user-driven seek additionally posts an authoritative apply-state so the
+ * deck is correct in BOTH directions. The scrubber supports pointer-drag
+ * scrubbing with live visual sync, exactly like a video player.
  */
 const RESUME_PREFIX = 'gennoor:academy:resume:'
 // Don't restore within this many seconds of the end — the user is effectively
@@ -80,17 +86,16 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
     const [duration, setDuration] = useState(0)
     const [audioReady, setAudioReady] = useState(false)
     const [audioError, setAudioError] = useState(false)
+    const [muted, setMuted] = useState(false)
+    const [scrubbing, setScrubbing] = useState(false)
     const currentCueIdxRef = useRef(-1)
+    const timelineRef = useRef<HTMLDivElement>(null)
     // Stores a seek target that couldn't be applied yet because the audio
     // wasn't loaded enough to seek. Re-applied in onCanPlay / onLoadedData.
     // Without this, slide-nav buttons clicked before the user hits Play
     // would silently fail to seek, and Play would then start from 0 —
     // making the iframe show e.g. slide 4 while audio plays slide 1.
     const pendingSeekRef = useRef<number | null>(null)
-    // Resume position: read from localStorage once per audio src, queued as
-    // a pending seek so it survives the metadata-not-ready race. Reset to
-    // null after the first successful apply so manual seeks aren't fought.
-    const resumeAppliedRef = useRef(false)
     const lastSaveAtRef = useRef(0)
 
     const applySeek = useCallback((timestamp: number) => {
@@ -129,6 +134,16 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       return () => { cancelled = true }
     }, [cuesSrc])
 
+    /** Latest cue index at or before time t, or -1 when t precedes all cues. */
+    const resolveCueIdx = useCallback((t: number) => {
+      let idx = -1
+      for (let i = 0; i < cues.length; i++) {
+        if (cues[i].at <= t + 0.05) idx = i
+        else break
+      }
+      return idx
+    }, [cues])
+
     const postCue = useCallback((idx: number, userDriven = false) => {
       const iframe = iframeRef.current
       if (!iframe || !iframe.contentWindow) return
@@ -159,11 +174,33 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       } catch {}
     }, [cues, iframeRef])
 
+    /** Reset the deck to the very start (before the first cue). */
+    const postDeckReset = useCallback(() => {
+      try {
+        iframeRef.current?.contentWindow?.postMessage(
+          { type: 'gennoor-academy:apply-state', slide: 1, step: null },
+          '*',
+        )
+      } catch {}
+    }, [iframeRef])
+
+    /** Push cue + authoritative state for the audio's CURRENT position.
+     *  The one true "make the deck match the sound" primitive — used after
+     *  resume seeks, on iframe (re)load, and after drag-scrubs. */
+    const syncDeckToTime = useCallback((t: number) => {
+      const idx = resolveCueIdx(t)
+      currentCueIdxRef.current = idx
+      if (idx >= 0) {
+        postCue(idx)
+        postApplyState(idx)
+      } else if (cues.length > 0) {
+        postDeckReset()
+      }
+    }, [resolveCueIdx, postCue, postApplyState, postDeckReset, cues.length])
+
     // After a user-driven seek, also start playback. Without this, manually
     // advancing while paused would seek silently and the user would still
-    // need to hit Play before hearing the new slide's narration. The user
-    // expectation (verified) is: "moving to the next slide plays that
-    // slide's voice".
+    // need to hit Play before hearing the new slide's narration.
     const playAfterSeek = useCallback(() => {
       const audio = audioRef.current
       if (!audio) return
@@ -195,25 +232,9 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       if (!audio || !duration) return
       const clamped = Math.max(0, Math.min(duration, t))
       try { audio.currentTime = clamped } catch { pendingSeekRef.current = clamped }
-      let idx = -1
-      for (let i = 0; i < cues.length; i++) {
-        if (cues[i].at <= clamped + 0.05) idx = i
-        else break
-      }
-      currentCueIdxRef.current = idx
-      if (idx >= 0) {
-        postCue(idx)
-        postApplyState(idx)
-      } else if (cues.length > 0) {
-        // Before the first cue — reset to the very start of the deck.
-        try {
-          iframeRef.current?.contentWindow?.postMessage(
-            { type: 'gennoor-academy:apply-state', slide: 1, step: null },
-            '*',
-          )
-        } catch {}
-      }
-    }, [cues, duration, postCue, postApplyState, iframeRef])
+      setCurrentTime(clamped)
+      syncDeckToTime(clamped)
+    }, [duration, syncDeckToTime])
 
     const seekBy = useCallback((seconds: number) => {
       const audio = audioRef.current
@@ -250,6 +271,7 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       const cue = cues[idx]
       currentCueIdxRef.current = idx
       applySeek(cue.at)
+      setCurrentTime(cue.at)
       // Mirror the visual state down immediately — handles the paused case.
       // Do NOT mark userDriven: we want the same progressive reveal that
       // happens on auto-advance, so bullets fade in as the voice mentions
@@ -271,8 +293,17 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       } else if (direction === 'prev-step') {
         target = Math.max(0, cur - 1)
       } else if (direction === 'next-slide') {
+        let found = false
         for (let i = cur + 1; i < cues.length; i++) {
-          if (cues[i].slide > curCue.slide && cues[i].step === undefined) { target = i; break }
+          if (cues[i].slide > curCue.slide && cues[i].step === undefined) { target = i; found = true; break }
+        }
+        // Already on the last slide — glide to the end of the narration so
+        // the chapter finishes naturally (raising the Up-next overlay)
+        // instead of the button silently doing nothing.
+        if (!found && duration > 0) {
+          seekToTime(Math.max(0, duration - 0.25))
+          playAfterSeek()
+          return
         }
       } else if (direction === 'prev-slide') {
         // Mid-slide → return to current slide's start. Otherwise → prev slide's start.
@@ -290,10 +321,11 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       const cue = cues[target]
       currentCueIdxRef.current = target
       applySeek(cue.at)
+      setCurrentTime(cue.at)
       postCue(target)
       postApplyState(target)
       playAfterSeek()
-    }, [cues, postCue, postApplyState, applySeek, playAfterSeek])
+    }, [cues, duration, seekToTime, postCue, postApplyState, applySeek, playAfterSeek])
 
     const togglePlay = useCallback(() => {
       const audio = audioRef.current
@@ -328,12 +360,23 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       audio.play().catch(() => {})
     }, [])
 
-    useImperativeHandle(ref, () => ({ seekToCue, step: stepNav, togglePlay, seekBy }), [seekToCue, stepNav, togglePlay, seekBy])
+    const resync = useCallback(() => {
+      const audio = audioRef.current
+      if (!audio) return
+      // A pending (not yet applied) seek is the truth if present.
+      const t = pendingSeekRef.current ?? audio.currentTime
+      syncDeckToTime(t)
+    }, [syncDeckToTime])
+
+    useImperativeHandle(
+      ref,
+      () => ({ seekToCue, step: stepNav, togglePlay, seekBy, resync }),
+      [seekToCue, stepNav, togglePlay, seekBy, resync],
+    )
 
     useEffect(() => {
       currentCueIdxRef.current = -1
       pendingSeekRef.current = null
-      resumeAppliedRef.current = false
       lastSaveAtRef.current = 0
       setCurrentTime(0)
       setDuration(0)
@@ -354,23 +397,30 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
       }
     }, [audioSrc, resumeKey])
 
-    // Re-apply any pending seek when the audio becomes seekable. Called from
-    // both onLoadedMetadata and onCanPlay so it fires at the earliest point
-    // the browser will honour a currentTime assignment.
+    // Re-apply any pending seek when the audio becomes seekable, then bring
+    // the DECK to the same position — restoring audio time without the
+    // matching slide state was the visible "resume out of sync" glitch.
     const flushPendingSeek = useCallback(() => {
       const audio = audioRef.current
       if (!audio || pendingSeekRef.current === null) return
       try {
-        audio.currentTime = pendingSeekRef.current
+        const t = pendingSeekRef.current
+        audio.currentTime = t
         pendingSeekRef.current = null
+        setCurrentTime(t)
+        syncDeckToTime(t)
       } catch {
         // try again on next ready event
       }
-    }, [])
+    }, [syncDeckToTime])
 
     useEffect(() => {
       if (audioRef.current) audioRef.current.playbackRate = SPEEDS[speedIndex]
     }, [speedIndex])
+
+    useEffect(() => {
+      if (audioRef.current) audioRef.current.muted = muted
+    }, [muted])
 
     // Stop playback on unmount — a detached audio element otherwise keeps
     // narrating after the learner navigates away from the chapter.
@@ -395,7 +445,9 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
 
     function handleTimeUpdate(e: React.SyntheticEvent<HTMLAudioElement>) {
       const t = e.currentTarget.currentTime
-      setCurrentTime(t)
+      // While the user is dragging the scrubber the drag position owns the
+      // UI; don't fight it with stale timeupdates.
+      if (!scrubbing) setCurrentTime(t)
       // Throttled resume save — every RESUME_SAVE_INTERVAL_SEC.
       if (t - lastSaveAtRef.current >= RESUME_SAVE_INTERVAL_SEC) {
         lastSaveAtRef.current = t
@@ -432,16 +484,48 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
 
     function cycleSpeed() { setSpeedIndex(prev => (prev + 1) % SPEEDS.length) }
 
-    function handleSeek(e: React.MouseEvent<HTMLDivElement>) {
+    // ── Pointer-drag scrubbing ────────────────────────────────────────────
+    // Live scrub like a video player: pointerdown seeks, dragging keeps
+    // seeking, pointerup releases. Pointer capture keeps the drag alive
+    // even when the cursor leaves the bar.
+    const timeAtPointer = useCallback((clientX: number) => {
+      const el = timelineRef.current
+      if (!el || !duration) return null
+      const rect = el.getBoundingClientRect()
+      const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
+      return ratio * duration
+    }, [duration])
+
+    const onScrubDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
       if (!duration) return
-      const rect = e.currentTarget.getBoundingClientRect()
-      const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
-      seekToTime(ratio * duration)
-    }
+      e.preventDefault()
+      try { e.currentTarget.setPointerCapture(e.pointerId) } catch {}
+      setScrubbing(true)
+      const t = timeAtPointer(e.clientX)
+      if (t !== null) seekToTime(t)
+    }, [duration, timeAtPointer, seekToTime])
+
+    const onScrubMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+      if (!scrubbing) return
+      const t = timeAtPointer(e.clientX)
+      if (t !== null) seekToTime(t)
+    }, [scrubbing, timeAtPointer, seekToTime])
+
+    const onScrubUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+      if (!scrubbing) return
+      try { e.currentTarget.releasePointerCapture(e.pointerId) } catch {}
+      setScrubbing(false)
+      const t = timeAtPointer(e.clientX)
+      if (t !== null) {
+        seekToTime(t)
+        saveResume(t)
+      }
+    }, [scrubbing, timeAtPointer, seekToTime, saveResume])
 
     if (audioError) return null
 
     const speed = SPEEDS[speedIndex]
+    const progressRatio = duration > 0 ? currentTime / duration : 0
     // Slide-start cue positions for the scrubber tick marks (skip slide 1 — it's the origin).
     const slideTicks = duration > 0
       ? cues.filter(c => c.step === undefined && c.slide > 1 && c.at < duration)
@@ -466,16 +550,17 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
           onEnded={() => { setIsPlaying(false); clearResume(); onEnded?.() }}
         />
 
-        {/* Play / pause — the primary control, VLC-prominent */}
+        {/* Play / pause — the primary control */}
         <button
           onClick={togglePlay}
           disabled={!audioReady}
           className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${
             audioReady
-              ? 'bg-white text-gray-900 hover:bg-gray-200'
+              ? 'bg-white text-gray-900 hover:bg-[#e8e8ed]'
               : 'bg-white/20 text-white/40 cursor-not-allowed'
           }`}
           title={isPlaying ? 'Pause (Space)' : 'Play (Space)'}
+          aria-label={isPlaying ? 'Pause' : 'Play'}
         >
           {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
         </button>
@@ -484,30 +569,43 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
         <button
           onClick={() => seekBy(-10)}
           disabled={!audioReady}
-          className="p-1.5 rounded hover:bg-white/10 text-white/70 hover:text-white transition-colors flex-shrink-0 disabled:opacity-30"
+          className="p-1.5 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors flex-shrink-0 disabled:opacity-30"
           title="Back 10 seconds (J)"
+          aria-label="Back 10 seconds"
         >
           <RotateCcw className="w-4 h-4" />
         </button>
         <button
           onClick={() => seekBy(10)}
           disabled={!audioReady}
-          className="p-1.5 rounded hover:bg-white/10 text-white/70 hover:text-white transition-colors flex-shrink-0 disabled:opacity-30"
+          className="p-1.5 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors flex-shrink-0 disabled:opacity-30"
           title="Forward 10 seconds (L)"
+          aria-label="Forward 10 seconds"
         >
           <RotateCw className="w-4 h-4" />
         </button>
 
-        {/* Timeline scrubber — the continuous chapter timeline with slide tick marks */}
+        {/* Timeline scrubber — continuous chapter timeline with slide ticks,
+            drag-scrubbable with pointer capture */}
         <div
-          className="relative flex-1 min-w-[80px] h-6 flex items-center cursor-pointer group"
-          onClick={handleSeek}
+          ref={timelineRef}
+          className="relative flex-1 min-w-[80px] h-6 flex items-center cursor-pointer group touch-none select-none"
+          onPointerDown={onScrubDown}
+          onPointerMove={onScrubMove}
+          onPointerUp={onScrubUp}
+          onPointerCancel={onScrubUp}
           title="Seek"
+          role="slider"
+          aria-label="Chapter timeline"
+          aria-valuemin={0}
+          aria-valuemax={Math.round(duration)}
+          aria-valuenow={Math.round(currentTime)}
+          aria-valuetext={`${formatTime(currentTime)} of ${formatTime(duration)}`}
         >
-          <div className="relative w-full h-1.5 group-hover:h-2.5 bg-white/20 rounded-full transition-all">
+          <div className={`relative w-full ${scrubbing ? 'h-2.5' : 'h-1.5 group-hover:h-2.5'} bg-white/20 rounded-full transition-all`}>
             <div
               className="absolute inset-y-0 left-0 bg-primary-600 rounded-full"
-              style={{ width: duration > 0 ? `${(currentTime / duration) * 100}%` : '0%' }}
+              style={{ width: `${progressRatio * 100}%` }}
             />
             {slideTicks.map(c => (
               <span
@@ -518,8 +616,10 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
               />
             ))}
             <span
-              className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white shadow opacity-0 group-hover:opacity-100 transition-opacity"
-              style={{ left: duration > 0 ? `calc(${(currentTime / duration) * 100}% - 6px)` : '0%' }}
+              className={`absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white shadow transition-opacity ${
+                scrubbing ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+              }`}
+              style={{ left: `calc(${progressRatio * 100}% - 6px)` }}
             />
           </div>
         </div>
@@ -528,9 +628,19 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
           {formatTime(currentTime)} / {formatTime(duration)}
         </span>
 
+        {/* Mute */}
+        <button
+          onClick={() => setMuted(m => !m)}
+          className="p-1.5 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors flex-shrink-0"
+          title={muted ? 'Unmute' : 'Mute'}
+          aria-label={muted ? 'Unmute' : 'Mute'}
+        >
+          {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+        </button>
+
         <button
           onClick={cycleSpeed}
-          className="px-2 py-1 text-[11px] font-bold bg-white/10 hover:bg-white/20 text-white rounded transition-colors flex-shrink-0"
+          className="px-2 py-1 text-[11px] font-bold bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors flex-shrink-0"
           title="Cycle playback speed"
         >
           {speed.toFixed(1)}x
