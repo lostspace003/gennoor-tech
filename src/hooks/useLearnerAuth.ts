@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback } from 'react'
 interface LearnerSession {
   email: string
   name: string
-  provider: 'otp' | 'google' | 'microsoft'
+  provider: 'otp' | 'google' | 'microsoft' | 'password'
 }
 
 export function useLearnerAuth() {

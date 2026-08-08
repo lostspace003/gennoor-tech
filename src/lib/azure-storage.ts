@@ -450,6 +450,20 @@ export async function saveLearner(data: {
   }, 'Merge')
 }
 
+
+/** Merge arbitrary fields onto a learner record (profile, password hash…). */
+export async function updateLearnerFields(email: string, fields: Record<string, unknown>) {
+  await ensureTable('Learners')
+  const client = getTableClient('Learners')
+  const sanitizedEmail = email.toLowerCase().trim().replace(/[^a-z0-9@._-]/g, '')
+  await client.upsertEntity({
+    partitionKey: 'learner',
+    rowKey: sanitizedEmail,
+    email: email.toLowerCase().trim(),
+    ...fields,
+  }, 'Merge')
+}
+
 export async function getLearner(email: string) {
   await ensureTable('Learners')
   const client = getTableClient('Learners')

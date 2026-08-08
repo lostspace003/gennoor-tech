@@ -99,35 +99,51 @@ envision that had no backing system yet.
 
 ---
 
-## 2.5 REQUESTED NEXT FEATURE — Learner accounts (spec on record)
+## 2.5 LEARNER ACCOUNTS — ✅ BUILT (shipped in this release)
 
 Requested: learners sign in with **Microsoft** or **any email**; email signups
 verified by **OTP via ACS**; **password with OTP-based reset**; a saved
 **learner profile**; and a **data/analytics section** in the dashboard.
+All of it is now implemented and live in the codebase:
 
-What already exists (build on, don't duplicate):
-- Passwordless OTP login: `/api/learner/login-otp`, `/api/verify-otp`,
-  `useLearnerAuth` (JWT via `LEARNER_JWT_SECRET`), `LearnerAuthModal`.
-- Per-learner progress + certificates storage and the `/academy/dashboard`
-  surface. ACS email transport is live.
+Code shipped (no action needed unless noted):
+1. **Sign-in modal** (`LearnerAuthModal`) — Microsoft, Google (when
+   `NEXT_PUBLIC_GOOGLE_CLIENT_ID` is set), email one-time code, and
+   **password sign-in** + **forgot-password** (OTP → new password →
+   auto sign-in). Apple-idiom restyle.
+2. **Password on top of OTP** — `scrypt` hash on the learner record
+   (`src/lib/learner-password.ts`); routes:
+   - `POST /api/learner/login-password` — email+password sign-in
+   - `POST /api/learner/set-password` — set/change (authed; requires
+     current password when one exists)
+   - `POST /api/learner/reset-password` — `{email, otp, newPassword}`
+     using the existing `/api/send-otp` ACS flow
+   OTP remains the always-available fallback — nobody gets locked out.
+3. **Profile** — `GET/PUT /api/learner/profile` (name, organization, role,
+   provider, member-since) + the **Profile & security** cards on
+   `/academy/dashboard` (edit profile, set/change password, sign out).
+4. **Dashboard analytics** — "Your analytics" section on
+   `/academy/dashboard`: weekly learning-minutes bar chart + course-status
+   donut (recharts), computed live from progress rows. Works signed-out
+   (device-local rows) and signed-in (server rows). No new Azure resources.
+5. **Academy overview** — "The Academy at a glance" dark campus band on
+   `/academy` (live counts, 4-step journey, six-track directory).
 
-To build (code side):
-1. **Microsoft sign-in for learners** — separate Entra app registration
-   (multitenant + personal accounts), then `LEARNER_AZURE_AD_CLIENT_ID`
-   (+ secret/tenant) app settings; OAuth callback route issuing the same
-   learner JWT.
-2. **Password on top of OTP** — `scrypt` hash stored on the learner record;
-   routes: set/change password (authed), login-with-password, and
-   forgot-password = existing OTP flow + new-password submit. OTP remains
-   the fallback sign-in, so nobody is ever locked out.
-3. **Profile** — name/email (+ optional org, role) on the learner record,
-   editable from the dashboard.
-4. **Dashboard analytics** — minutes-per-week chart, per-course completion,
-   certificates timeline; client-rendered (recharts already in deps) from
-   the existing progress rows. No new Azure resources needed.
+Azure config still needed from you (ONE item, only for the Microsoft
+button): a learner Entra app registration (multitenant + personal
+accounts), then set app settings `LEARNER_AZURE_AD_CLIENT_ID`,
+`LEARNER_AZURE_AD_CLIENT_SECRET` (+ tenant if single-tenant). Redirect
+URI: `https://gennoor.com/api/learner/login-microsoft/callback`. Until set, the
+route falls back to `AZURE_AD_CLIENT_ID`. Verify with:
 
-Azure config this will need from you: ONLY the learner Entra app
-registration (item 1). Everything else runs on existing settings.
+```bash
+az webapp config appsettings list -g <RG> -n gennoor-tech \
+  --query "[?contains(name,'LEARNER')].{n:name}" -o table
+```
+
+Everything else (OTP email, JWT, Table Storage `Learners`) runs on
+existing settings — `LEARNER_JWT_SECRET` should be set in production
+(falls back to `AUTH_SECRET`).
 
 ## 3. Follow-up polish (not gaps, listed for completeness)
 - **Admin dashboard internals** (`src/app/admin/page.tsx`, ~2,400 lines) kept the
