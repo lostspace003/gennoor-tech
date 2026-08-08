@@ -66,8 +66,16 @@
 
     --nav-height: 5rem;
     --portal-topbar-h: 52px;
-    --portal-rail-w-expanded: 260px;
+    --portal-rail-w-expanded: 248px;
     --portal-rail-w-collapsed: 56px;
+
+    /* Apple-style ink steps used by the redesign */
+    --ink-soft: #6e6e73;
+    --ink-quiet: #86868b;
+    --hairline-soft: #e8e8ed;
+    --accent-bright: #0077ed;
+    /* Accent link on dark surfaces (Apple's blue for #1d1d1f backgrounds) */
+    --accent-on-dark: #2997ff;
   }
 }
 
@@ -83,7 +91,7 @@
   body {
     background: var(--canvas);
     color: var(--ink);
-    font-family: var(--font-inter), 'Inter', system-ui, sans-serif;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
     font-size: 16px;
     line-height: 1.65;
   }
@@ -209,8 +217,102 @@
 
   /* ── Rhythm ────────────────────────────────────────────────────── */
 
-  .section-padding { @apply py-12 lg:py-16; }
-  .section-padding-sm { @apply py-8 lg:py-12; }
+  .section-padding { @apply py-16 lg:py-24; }
+  .section-padding-sm { @apply py-10 lg:py-14; }
+
+  /* ── Apple-style display type ──────────────────────────────────── */
+
+  /* Hero headline — Home-scale display type */
+  .display-hero {
+    font-size: clamp(44px, 5.6vw, 76px);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  /* Section headline — "One partner. Five phases." scale */
+  .display-section {
+    font-size: clamp(32px, 4vw, 48px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  /* Sub-section headline — card feature scale */
+  .display-card {
+    font-size: clamp(30px, 3.6vw, 44px);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  /* Uppercase kicker above headlines */
+  .kicker {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-quiet);
+  }
+
+  /* Section lede below headlines */
+  .lede {
+    font-size: 19px;
+    line-height: 1.45;
+    color: var(--ink-soft);
+  }
+
+  /* ── Apple pill actions ────────────────────────────────────────── */
+
+  .pill-primary {
+    @apply inline-flex items-center justify-center transition-colors duration-150;
+    background: var(--accent);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 13px 26px;
+    border-radius: 980px;
+  }
+
+  .pill-primary:hover { background: var(--accent-bright); color: #fff; }
+
+  .pill-primary-sm {
+    @apply inline-flex items-center justify-center transition-colors duration-150;
+    background: var(--accent);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 12px 24px;
+    border-radius: 980px;
+  }
+
+  .pill-primary-sm:hover { background: var(--accent-bright); color: #fff; }
+
+  .pill-secondary {
+    @apply inline-flex items-center justify-center transition-colors duration-150;
+    background: #fff;
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 22px;
+    border-radius: 980px;
+    border: 1px solid #d2d2d7;
+  }
+
+  .pill-secondary:hover { border-color: var(--ink-quiet); }
+
+  /* Quiet accent text link with trailing chevron supplied in markup */
+  .link-arrow {
+    color: var(--accent);
+    font-size: 16px;
+    font-weight: 500;
+    transition: color 150ms ease;
+  }
+
+  .link-arrow:hover { color: var(--accent-bright); }
 
   /* ── Neutralised legacy decoratives ────────────────────────────── */
 

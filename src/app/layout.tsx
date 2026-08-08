@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Inter, Sora } from 'next/font/google'
 import '@/styles/globals.css'
 import PortalShell from '@/components/portal/PortalShell'
 import Footer from '@/components/layout/Footer'
@@ -11,19 +10,6 @@ import PageViewTracker from '@/components/PageViewTracker'
 import RippleProvider from '@/components/RippleProvider'
 import { OrganizationJsonLd, WebSiteJsonLd } from '@/components/JsonLd'
 import { siteConfig, BLOB_URL } from '@/lib/site-config'
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-})
-
-const sora = Sora({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
-  variable: '--font-heading',
-  display: 'swap',
-})
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -114,7 +100,7 @@ export default function RootLayout({
           async
         />
       </head>
-      <body className={`${inter.variable} ${sora.variable} antialiased`}>
+      <body className="antialiased">
         <RippleProvider />
         <GoogleAnalytics />
         <TrackingPixels />

@@ -1,58 +1,293 @@
+'use client'
+
+import { useState } from 'react'
 import Link from 'next/link'
-import { Youtube } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
+import { upcomingWebinars, pastWebinars, type UpcomingWebinar } from '@/data/webinars'
+
+/**
+ * Webinars in the Apple idiom, per the redesign handoff's "Learn live."
+ * page. Fully data-driven from src/data/webinars.ts:
+ *  - upcoming sessions render the prototype rows with a working
+ *    "Register free" flow (POST /api/webinar-register → confirmation
+ *    email + admin notification)
+ *  - past sessions render with "Watch recording ›" links
+ *  - with no events published, the schedule area states that honestly.
+ */
 
 export default function WebinarsPage() {
+  const [registering, setRegistering] = useState<UpcomingWebinar | null>(null)
+
   return (
-    <div className="min-h-screen relative overflow-hidden flex items-center justify-center">
-      <div className="absolute inset-0 bg-white" />
-      <div className="absolute inset-0" />
-      <div className="relative text-center max-w-2xl mx-auto px-4 py-24">
-        <div className="text-6xl mb-8">&#127908;</div>
-        <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 leading-tight tracking-tight mb-6">
-          Something exciting is brewing.
+    <main className="min-h-screen bg-white">
+      {/* ===== Hero ===== */}
+      <section className="px-8 pt-20 lg:pt-[100px] pb-12 text-center">
+        <div className="kicker mb-5">Resources · Webinars &amp; Workshops</div>
+        <h1 className="text-[clamp(40px,4.8vw,64px)] leading-[1.06] tracking-[-0.03em] font-bold text-gray-900">
+          Learn live.
         </h1>
-        <p className="text-xl text-gray-400 mb-4 italic">
-          &ldquo;Tell me and I forget, teach me and I may remember, involve me and I learn.&rdquo;
+        <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.45] text-[#6e6e73] max-w-[560px] mx-auto mt-5">
+          Free monthly webinars and hands-on workshops. Bring your questions —
+          recordings if you can&rsquo;t make it.
         </p>
-        <p className="text-sm text-gray-300 mb-8">— Benjamin Franklin</p>
-        <p className="text-lg text-gray-500 mb-6 leading-relaxed">
-          Live webinars on AI strategy, hands-on workshops, and expert panels are coming soon. Be the first to know.
-        </p>
-        <p className="text-base text-gray-500 mb-10">
-          Webinars will also be available on our YouTube channel{' '}
-          <a
-            href="https://www.youtube.com/@GennoorTech"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-red-600 font-semibold hover:text-red-700 transition-colors"
-          >
-            <Youtube className="h-4 w-4" />
-            GennoorTech
-          </a>
-        </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link
-            href="/"
-            className="px-6 py-3 bg-primary-600 text-white font-semibold rounded-xl transition-all duration-300"
-          >
-            Back to Home
-          </Link>
-          <a
-            href="https://www.youtube.com/@GennoorTech"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 transition-all duration-300"
-          >
-            <Youtube className="h-5 w-5" />
-            Subscribe on YouTube
-          </a>
-          <Link
-            href="/contact"
-            className="inline-flex items-center justify-center px-6 py-3 font-semibold rounded-xl bg-white text-gray-700 ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700 transition-all duration-300"
-          >
-            Get Notified
-          </Link>
+      </section>
+
+      {/* ===== Schedule ===== */}
+      <section className="bg-[#f5f5f7] px-8 py-16 pb-24">
+        <div className="max-w-[920px] mx-auto">
+          <h2 className="text-[22px] font-bold tracking-[-0.01em] text-gray-900 mb-5">Upcoming</h2>
+
+          {upcomingWebinars.length > 0 ? (
+            <div className="flex flex-col gap-3">
+              {upcomingWebinars.map(s => (
+                <div
+                  key={s.id}
+                  className="bg-white border border-[#e8e8ed] rounded-2xl px-6 py-[22px] grid grid-cols-[70px_1fr] sm:grid-cols-[90px_1fr_auto] gap-4 sm:gap-6 items-center"
+                >
+                  <div className="text-center bg-[#f5f5f7] rounded-xl py-2.5">
+                    <div className="text-[11px] font-semibold uppercase text-[#86868b]">{s.month}</div>
+                    <div className="text-[22px] font-bold tracking-[-0.02em] text-gray-900">{s.day}</div>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <span className="text-[15.5px] font-bold text-gray-900">{s.title}</span>
+                      <span
+                        className={`text-[10.5px] font-semibold tracking-[0.08em] uppercase ${
+                          s.type === 'Workshop' ? 'text-[#1d8348]' : 'text-primary-600'
+                        }`}
+                      >
+                        {s.type}
+                      </span>
+                    </div>
+                    <div className="text-[12.5px] text-[#86868b] mt-0.5">{s.meta}</div>
+                  </div>
+                  <button
+                    onClick={() => setRegistering(s)}
+                    className="justify-self-start sm:justify-self-auto col-span-2 sm:col-span-1 text-[12.5px] font-semibold bg-primary-600 hover:bg-[#0077ed] text-white px-5 py-[9px] rounded-full transition-colors"
+                  >
+                    Register free
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-white border border-[#e8e8ed] rounded-2xl px-8 py-12 text-center">
+              <p className="text-[15.5px] font-bold text-gray-900 mb-1.5">
+                First public dates announcing soon.
+              </p>
+              <p className="text-[13.5px] text-[#6e6e73] max-w-[440px] mx-auto mb-6">
+                Live webinars on AI strategy, hands-on workshops, and expert
+                panels are in the works. Sessions will also stream on our YouTube
+                channel.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-[22px] justify-center items-center">
+                <a
+                  href="https://www.youtube.com/@GennoorTech?sub_confirmation=1"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="pill-primary-sm"
+                >
+                  Subscribe on YouTube
+                </a>
+                <Link href="/contact" className="text-[15px] font-medium text-primary-600 hover:text-[#0077ed]">
+                  Get notified ›
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {/* Past sessions — appears once recordings are published */}
+          {pastWebinars.length > 0 && (
+            <>
+              <h2 className="text-[22px] font-bold tracking-[-0.01em] text-gray-900 mt-14 mb-5">
+                Past sessions
+              </h2>
+              <div className="bg-white border border-[#e8e8ed] rounded-2xl overflow-hidden">
+                {pastWebinars.map((p, i) => (
+                  <div
+                    key={`${p.title}-${p.date}`}
+                    className={`grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] gap-2 sm:gap-5 px-6 py-[15px] items-baseline ${
+                      i < pastWebinars.length - 1 ? 'border-b border-[#f5f5f7]' : ''
+                    }`}
+                  >
+                    <span className="text-sm font-semibold text-gray-900">{p.title}</span>
+                    <span className="text-xs text-[#86868b]">{p.date}</span>
+                    {p.recordingUrl ? (
+                      <a
+                        href={p.recordingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[12.5px] font-semibold text-primary-600 hover:text-[#0077ed]"
+                      >
+                        Watch recording ›
+                      </a>
+                    ) : (
+                      <span className="text-[12.5px] text-[#86868b]">Recording soon</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          <h2 className="text-[22px] font-bold tracking-[-0.01em] text-gray-900 mt-14 mb-5">
+            In the meantime
+          </h2>
+          <div className="bg-white border border-[#e8e8ed] rounded-2xl overflow-hidden">
+            {[
+              { title: 'Free hands-on workshops', detail: 'Claude Cowork and more — run regularly across GCC, India, and East Africa.', href: '/workshops', cta: 'See workshops ›' },
+              { title: 'Training excerpts and walkthroughs', detail: 'Full sessions and deep dives on the video library.', href: '/resources/videos', cta: 'Watch videos ›' },
+              { title: 'The free Academy', detail: 'Self-paced courses for executives, functions, and engineers.', href: '/academy', cta: 'Browse the Academy ›' },
+            ].map((row, i, arr) => (
+              <div
+                key={row.title}
+                className={`grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 sm:gap-5 px-6 py-4 items-baseline ${
+                  i < arr.length - 1 ? 'border-b border-[#f5f5f7]' : ''
+                }`}
+              >
+                <div>
+                  <span className="text-sm font-semibold text-gray-900">{row.title}</span>
+                  <span className="text-xs text-[#86868b]"> — {row.detail}</span>
+                </div>
+                <Link href={row.href} className="text-[12.5px] font-semibold text-primary-600 hover:text-[#0077ed]">
+                  {row.cta}
+                </Link>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-[13px] text-[#86868b] mt-5 text-center">
+            Want a private session for your team?{' '}
+            <Link href="/contact" className="font-medium text-primary-600 hover:text-[#0077ed]">
+              Talk to us
+            </Link>{' '}
+            — we run these in-house with your data.
+          </p>
         </div>
+      </section>
+
+      {registering && (
+        <RegisterModal webinar={registering} onClose={() => setRegistering(null)} />
+      )}
+    </main>
+  )
+}
+
+/** Minimal registration modal — name, email, optional company. */
+function RegisterModal({ webinar, onClose }: { webinar: UpcomingWebinar; onClose: () => void }) {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [company, setCompany] = useState('')
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setStatus('submitting')
+    try {
+      const res = await fetch('/api/webinar-register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          company,
+          webinarId: webinar.id,
+          webinarTitle: webinar.title,
+          webinarDate: `${webinar.month} ${webinar.day} · ${webinar.meta}`,
+        }),
+      })
+      if (!res.ok) throw new Error('failed')
+      setStatus('success')
+    } catch {
+      setStatus('error')
+    }
+  }
+
+  const FIELD =
+    'w-full box-border text-[14px] px-3.5 py-[11px] border border-[#d2d2d7] rounded-xl bg-white text-gray-900 placeholder:text-[#86868b] outline-none focus:border-primary-600 focus:ring-0 transition-colors'
+
+  return (
+    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-white rounded-3xl w-full max-w-md p-7 border border-[#e8e8ed]">
+        {status === 'success' ? (
+          <div className="text-center py-6">
+            <div className="text-[44px] font-bold text-[#1d8348] mb-3">✓</div>
+            <h3 className="text-[20px] font-bold text-gray-900 mb-2">You&rsquo;re registered.</h3>
+            <p className="text-[14px] text-[#6e6e73] mb-6">
+              Confirmation sent to your email. The joining link arrives before
+              the session.
+            </p>
+            <button onClick={onClose} className="pill-secondary">
+              Done
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#86868b] mb-1.5">
+              Register free · {webinar.type}
+            </div>
+            <h3 className="text-[19px] font-bold text-gray-900 mb-1">{webinar.title}</h3>
+            <p className="text-[12.5px] text-[#86868b] mb-5">
+              {webinar.month} {webinar.day} · {webinar.meta}
+            </p>
+            <form onSubmit={submit} className="space-y-3">
+              {status === 'error' && (
+                <p className="text-sm text-[#9b2c21] border border-[#eaa59d] bg-[#fdf4f3] rounded-xl px-4 py-3">
+                  Something went wrong — please try again or email webinar@gennoor.com.
+                </p>
+              )}
+              <input
+                type="text"
+                required
+                value={name}
+                onChange={e => setName(e.target.value)}
+                placeholder="Your name"
+                aria-label="Your name"
+                className={FIELD}
+              />
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="Work email"
+                aria-label="Work email"
+                className={FIELD}
+              />
+              <input
+                type="text"
+                value={company}
+                onChange={e => setCompany(e.target.value)}
+                placeholder="Company (optional)"
+                aria-label="Company"
+                className={FIELD}
+              />
+              <div className="flex items-center gap-3 pt-1.5">
+                <button
+                  type="submit"
+                  disabled={status === 'submitting'}
+                  className="inline-flex items-center gap-2 bg-primary-600 hover:bg-[#0077ed] text-white text-[14px] font-semibold px-6 py-2.5 rounded-full transition-colors disabled:opacity-50"
+                >
+                  {status === 'submitting' ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" /> Registering…
+                    </>
+                  ) : (
+                    'Register free'
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="text-[13px] font-medium text-[#6e6e73] hover:text-gray-900"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </>
+        )}
       </div>
     </div>
   )

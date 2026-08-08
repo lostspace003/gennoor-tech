@@ -6,6 +6,13 @@ import { type BlogPostMeta } from '@/data/blog-posts'
 import { CheckCircle, ArrowUpDown, Calendar } from 'lucide-react'
 import EmailOTP from '@/components/EmailOTP'
 
+/**
+ * Blog list in the Apple idiom, per the redesign handoff: dark featured
+ * card, pill filter chips on the grey band, uniform white post cards.
+ * Every feature survives — category/sort/time filters, the OTP-verified
+ * newsletter subscription, and all post links.
+ */
+
 type SortOrder = 'newest' | 'oldest'
 type TimeFilter = 'all' | 'week' | 'month'
 
@@ -13,6 +20,8 @@ interface BlogListClientProps {
   posts: BlogPostMeta[]
   categories: string[]
 }
+
+const QUIET_TOGGLE = 'px-3 py-1 text-xs font-medium rounded-full transition-colors'
 
 export default function BlogListClient({ posts, categories }: BlogListClientProps) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
@@ -57,9 +66,7 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
   }, [posts, activeCategory, sortOrder, timeFilter])
 
   const hero = filtered.find(p => p.featured === 'hero') || filtered[0]
-  const spotlights = filtered.filter(p => p.featured === 'spotlight' && p.slug !== hero?.slug).slice(0, 3)
-  const spotlightSlugs = new Set([hero?.slug, ...spotlights.map(s => s.slug)])
-  const rest = filtered.filter(p => !spotlightSlugs.has(p.slug))
+  const rest = filtered.filter(p => p.slug !== hero?.slug)
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -81,15 +88,57 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
 
   return (
     <>
-      {/* Category Filter + Sort/Time Filters */}
-      <div className="sticky top-0 z-40" style={{ backgroundColor: '#ffffff', borderBottom: '1px solid #f3f4f6' }}>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          {/* Category pills */}
-          <div className="flex flex-wrap gap-1.5 justify-center" role="tablist" aria-label="Filter articles by category">
+      {/* ===== Featured post — dark card on white ===== */}
+      {hero && (
+        <section className="px-8 pt-6 pb-14">
+          <Link href={`/resources/blog/${hero.slug}`} className="group block max-w-[1080px] mx-auto">
+            <article className="grid grid-cols-1 lg:grid-cols-2 bg-[#1d1d1f] rounded-3xl overflow-hidden">
+              <div className="p-9 lg:px-12 lg:py-[52px]">
+                <div className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#86868b] mb-3.5">
+                  Featured · {hero.category}
+                </div>
+                <h2 className="text-[clamp(24px,2.6vw,32px)] font-bold tracking-[-0.02em] leading-[1.2] text-white">
+                  {hero.title}
+                </h2>
+                <p className="text-[15px] leading-[1.55] text-[#a1a1a6] mt-3 line-clamp-3">
+                  {hero.excerpt}
+                </p>
+                <div className="text-[13px] text-[#86868b] mt-5">
+                  {new Date(hero.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} · {hero.readTime} · Jalal Ahmed Khan
+                </div>
+              </div>
+              <div className="hidden lg:flex items-center justify-center min-h-[280px]" aria-hidden="true">
+                <svg className="w-48 h-48 group-hover:scale-105 transition-transform duration-500" viewBox="0 0 200 200" fill="none" aria-hidden="true">
+                  <circle cx="100" cy="100" r="60" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5"/>
+                  <circle cx="100" cy="100" r="30" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5"/>
+                  <circle cx="100" cy="100" r="6" fill="rgba(255,255,255,0.4)"/>
+                  <circle cx="100" cy="40" r="4" fill="rgba(255,255,255,0.3)"/>
+                  <circle cx="100" cy="160" r="4" fill="rgba(255,255,255,0.3)"/>
+                  <circle cx="40" cy="100" r="4" fill="rgba(255,255,255,0.3)"/>
+                  <circle cx="160" cy="100" r="4" fill="rgba(255,255,255,0.3)"/>
+                  <line x1="100" y1="40" x2="100" y2="70" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
+                  <line x1="100" y1="130" x2="100" y2="160" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
+                  <line x1="40" y1="100" x2="70" y2="100" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
+                  <line x1="130" y1="100" x2="160" y2="100" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
+                </svg>
+              </div>
+            </article>
+          </Link>
+        </section>
+      )}
+
+      {/* ===== Post list — grey band ===== */}
+      <section className="bg-[#f5f5f7] px-8 pt-16 pb-24">
+        <div className="max-w-[1080px] mx-auto">
+          {/* Category chips */}
+          <div className="flex gap-2 flex-wrap mb-4" role="tablist" aria-label="Filter articles by category">
             <button
               onClick={() => setActiveCategory(null)}
-              className="px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all"
-              style={!activeCategory ? { backgroundColor: '#111827', color: '#ffffff' } : { color: '#6b7280' }}
+              className={`text-[12.5px] font-medium px-3.5 py-[7px] rounded-full border transition-all duration-200 ${
+                !activeCategory
+                  ? 'border-primary-600 bg-primary-600 text-white'
+                  : 'border-[#d2d2d7] bg-white text-gray-900'
+              }`}
               role="tab"
               aria-selected={!activeCategory}
             >
@@ -99,8 +148,11 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className="px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all hover:bg-gray-100"
-                style={activeCategory === cat ? { backgroundColor: '#111827', color: '#ffffff' } : { color: '#6b7280' }}
+                className={`text-[12.5px] font-medium px-3.5 py-[7px] rounded-full border transition-all duration-200 ${
+                  activeCategory === cat
+                    ? 'border-primary-600 bg-primary-600 text-white'
+                    : 'border-[#d2d2d7] bg-white text-gray-900'
+                }`}
                 role="tab"
                 aria-selected={activeCategory === cat}
               >
@@ -109,324 +161,138 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
             ))}
           </div>
 
-          {/* Sort & Time filter row */}
-          <div className="flex flex-wrap items-center justify-center gap-3 mt-3 pt-3" style={{ borderTop: '1px solid #f3f4f6' }}>
-            {/* Sort toggle */}
+          {/* Sort & time — quiet secondary controls */}
+          <div className="flex flex-wrap items-center gap-3 mb-7">
             <div className="flex items-center gap-1.5" role="group" aria-label="Sort order">
-              <ArrowUpDown className="w-3.5 h-3.5" style={{ color: '#9ca3af' }} aria-hidden="true" />
-              <button
-                onClick={() => setSortOrder('newest')}
-                className="px-3 py-1 text-xs font-medium rounded-md transition-all"
-                style={sortOrder === 'newest'
-                  ? { backgroundColor: '#4f46e5', color: '#ffffff' }
-                  : { backgroundColor: '#f3f4f6', color: '#6b7280' }}
-                aria-pressed={sortOrder === 'newest'}
-              >
-                Latest First
-              </button>
-              <button
-                onClick={() => setSortOrder('oldest')}
-                className="px-3 py-1 text-xs font-medium rounded-md transition-all"
-                style={sortOrder === 'oldest'
-                  ? { backgroundColor: '#4f46e5', color: '#ffffff' }
-                  : { backgroundColor: '#f3f4f6', color: '#6b7280' }}
-                aria-pressed={sortOrder === 'oldest'}
-              >
-                Oldest First
-              </button>
+              <ArrowUpDown className="w-3.5 h-3.5 text-[#86868b]" aria-hidden="true" />
+              {([['newest', 'Latest first'], ['oldest', 'Oldest first']] as [SortOrder, string][]).map(([v, label]) => (
+                <button
+                  key={v}
+                  onClick={() => setSortOrder(v)}
+                  className={`${QUIET_TOGGLE} ${
+                    sortOrder === v ? 'bg-gray-900 text-white' : 'text-[#6e6e73] hover:text-gray-900'
+                  }`}
+                  aria-pressed={sortOrder === v}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
-
-            <div className="w-px h-5" style={{ backgroundColor: '#e5e7eb' }} aria-hidden="true" />
-
-            {/* Time filter */}
+            <div className="w-px h-4 bg-[#d2d2d7]" aria-hidden="true" />
             <div className="flex items-center gap-1.5" role="group" aria-label="Time range filter">
-              <Calendar className="w-3.5 h-3.5" style={{ color: '#9ca3af' }} aria-hidden="true" />
-              <button
-                onClick={() => setTimeFilter('all')}
-                className="px-3 py-1 text-xs font-medium rounded-md transition-all"
-                style={timeFilter === 'all'
-                  ? { backgroundColor: '#4f46e5', color: '#ffffff' }
-                  : { backgroundColor: '#f3f4f6', color: '#6b7280' }}
-                aria-pressed={timeFilter === 'all'}
-              >
-                All Time
-              </button>
-              <button
-                onClick={() => setTimeFilter('week')}
-                className="px-3 py-1 text-xs font-medium rounded-md transition-all"
-                style={timeFilter === 'week'
-                  ? { backgroundColor: '#4f46e5', color: '#ffffff' }
-                  : { backgroundColor: '#f3f4f6', color: '#6b7280' }}
-                aria-pressed={timeFilter === 'week'}
-              >
-                This Week
-              </button>
-              <button
-                onClick={() => setTimeFilter('month')}
-                className="px-3 py-1 text-xs font-medium rounded-md transition-all"
-                style={timeFilter === 'month'
-                  ? { backgroundColor: '#4f46e5', color: '#ffffff' }
-                  : { backgroundColor: '#f3f4f6', color: '#6b7280' }}
-                aria-pressed={timeFilter === 'month'}
-              >
-                This Month
-              </button>
+              <Calendar className="w-3.5 h-3.5 text-[#86868b]" aria-hidden="true" />
+              {([['all', 'All time'], ['week', 'This week'], ['month', 'This month']] as [TimeFilter, string][]).map(([v, label]) => (
+                <button
+                  key={v}
+                  onClick={() => setTimeFilter(v)}
+                  className={`${QUIET_TOGGLE} ${
+                    timeFilter === v ? 'bg-gray-900 text-white' : 'text-[#6e6e73] hover:text-gray-900'
+                  }`}
+                  aria-pressed={timeFilter === v}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
-
-            {/* Result count */}
-            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ backgroundColor: '#f3f4f6', color: '#9ca3af' }} aria-live="polite">
+            <span className="text-[13px] text-[#86868b] ml-auto" aria-live="polite">
               {filtered.length} {filtered.length === 1 ? 'article' : 'articles'}
             </span>
           </div>
-        </div>
-      </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-
-        {/* Empty state */}
-        {filtered.length === 0 && (
-          <div className="text-center py-20">
-            <p className="text-lg font-semibold mb-2" style={{ color: '#111827' }}>No articles found</p>
-            <p className="text-sm mb-6" style={{ color: '#6b7280' }}>
-              Try adjusting your filters or selecting a different time range.
-            </p>
-            <button
-              onClick={() => { setActiveCategory(null); setTimeFilter('all'); setSortOrder('newest') }}
-              className="px-4 py-2 text-sm font-semibold rounded-lg transition-colors"
-              style={{ backgroundColor: '#4f46e5', color: '#ffffff' }}
-            >
-              Reset Filters
-            </button>
-          </div>
-        )}
-
-        {/* HERO CARD */}
-        {hero && (
-          <Link href={`/resources/blog/${hero.slug}`} className="group block mb-8">
-            <article className="relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500"
-              style={{ backgroundColor: hero.coverColor }}>
-              <div className="relative grid grid-cols-1 lg:grid-cols-5 gap-0">
-                <div className="lg:col-span-3 p-8 sm:p-10 lg:p-14 flex flex-col justify-center">
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="inline-block px-3 py-1 text-xs font-bold rounded-full tracking-wide uppercase w-fit"
-                      style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: '#ffffff' }}>
-                      Featured
-                    </span>
-                    <span className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.6)' }}>
-                      {new Date(hero.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </span>
-                  </div>
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-tight mb-4 group-hover:translate-x-1 transition-transform duration-300"
-                    style={{ color: '#ffffff' }}>
-                    {hero.title}
-                  </h2>
-                  <p className="leading-relaxed mb-6 text-sm sm:text-base line-clamp-3" style={{ color: 'rgba(255,255,255,0.85)' }}>
-                    {hero.excerpt}
-                  </p>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>{hero.readTime}</span>
-                    <span className="text-sm font-semibold group-hover:translate-x-1 transition-transform" style={{ color: '#ffffff' }}>Read article &rarr;</span>
-                  </div>
-                </div>
-                <div className="hidden lg:flex lg:col-span-2 items-center justify-center p-8" aria-hidden="true">
-                  <svg className="w-48 h-48 group-hover:scale-105 transition-transform duration-500" viewBox="0 0 200 200" fill="none" aria-hidden="true">
-                    <circle cx="100" cy="100" r="60" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5"/>
-                    <circle cx="100" cy="100" r="30" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5"/>
-                    <circle cx="100" cy="100" r="6" fill="rgba(255,255,255,0.4)"/>
-                    <circle cx="100" cy="40" r="4" fill="rgba(255,255,255,0.3)"/>
-                    <circle cx="100" cy="160" r="4" fill="rgba(255,255,255,0.3)"/>
-                    <circle cx="40" cy="100" r="4" fill="rgba(255,255,255,0.3)"/>
-                    <circle cx="160" cy="100" r="4" fill="rgba(255,255,255,0.3)"/>
-                    <line x1="100" y1="40" x2="100" y2="70" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
-                    <line x1="100" y1="130" x2="100" y2="160" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
-                    <line x1="40" y1="100" x2="70" y2="100" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
-                    <line x1="130" y1="100" x2="160" y2="100" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
-                  </svg>
-                </div>
-              </div>
-            </article>
-          </Link>
-        )}
-
-        {/* SPOTLIGHT ROW */}
-        {spotlights.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-            {spotlights.map(post => (
-              <Link
-                key={post.slug}
-                href={`/resources/blog/${post.slug}`}
-                className="group rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300"
-                style={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb' }}
+          {/* Empty state */}
+          {filtered.length === 0 && (
+            <div className="text-center py-20">
+              <p className="text-lg font-semibold text-gray-900 mb-2">No articles found</p>
+              <p className="text-sm text-[#6e6e73] mb-6">
+                Try adjusting your filters or selecting a different time range.
+              </p>
+              <button
+                onClick={() => { setActiveCategory(null); setTimeFilter('all'); setSortOrder('newest') }}
+                className="pill-secondary"
               >
-                <article>
-                  <div className="relative h-44 flex flex-col justify-end p-5" style={{ backgroundColor: post.coverColor }}>
-                    <span className="absolute top-3 left-3 px-2.5 py-1 text-[10px] font-bold rounded-full tracking-wide uppercase"
-                      style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: '#ffffff' }}>
+                Reset filters
+              </button>
+            </div>
+          )}
+
+          {/* Post grid */}
+          {rest.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {rest.map(post => (
+                <Link
+                  key={post.slug}
+                  href={`/resources/blog/${post.slug}`}
+                  className="bg-white border border-[#e8e8ed] hover:border-[#d2d2d7] rounded-[18px] px-6 py-[26px] flex flex-col min-h-[190px] text-gray-900 transition-colors"
+                >
+                  <article className="flex flex-col flex-1">
+                    <div className="text-[10.5px] font-semibold tracking-[0.12em] uppercase text-primary-600 mb-2.5">
                       {post.category}
-                    </span>
-                    <span className="absolute top-3 right-3 text-[10px] font-medium" style={{ color: 'rgba(255,255,255,0.6)' }}>
-                      {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                    </span>
-                    <h3 className="text-lg font-bold leading-snug line-clamp-2 group-hover:translate-x-0.5 transition-transform"
-                      style={{ color: '#ffffff' }}>
+                    </div>
+                    <h3 className="text-[16.5px] font-bold leading-[1.3] tracking-[-0.01em] mb-2">
                       {post.title}
                     </h3>
-                  </div>
-                  <div className="p-5">
-                    <p className="text-sm line-clamp-2 mb-3" style={{ color: '#6b7280' }}>{post.excerpt}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs" style={{ color: '#9ca3af' }}>{post.readTime}</span>
-                      <span className="text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: '#4f46e5' }}>Read &rarr;</span>
+                    <p className="text-[13px] leading-normal text-[#6e6e73] mb-3.5 line-clamp-3">
+                      {post.excerpt}
+                    </p>
+                    <div className="text-xs text-[#86868b] mt-auto">
+                      {new Date(post.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} · {post.readTime}
                     </div>
-                  </div>
-                </article>
-              </Link>
-            ))}
-          </div>
-        )}
+                  </article>
+                </Link>
+              ))}
+            </div>
+          )}
 
-        {/* Newsletter Banner */}
-        <div className="mb-8 rounded-xl overflow-hidden" style={{ backgroundColor: '#1e293b' }}>
-          <div className="px-6 sm:px-10 py-7 flex flex-col sm:flex-row items-center justify-between gap-4">
+          {/* Newsletter — preserved feature, quiet dark panel */}
+          <div className="mt-10 bg-[#1d1d1f] rounded-3xl px-7 sm:px-10 py-7">
             {subscribed ? (
-              <div className="flex items-center gap-3" style={{ color: '#ffffff' }}>
-                <CheckCircle className="h-5 w-5" style={{ color: '#4ade80' }} aria-hidden="true" />
-                <p className="text-sm font-medium">Subscribed! You&apos;ll receive the latest AI insights from across the globe.</p>
+              <div className="flex items-center gap-3 text-white">
+                <CheckCircle className="h-5 w-5 text-[#5fa77a]" aria-hidden="true" />
+                <p className="text-sm font-medium">
+                  Subscribed! You&apos;ll receive the latest AI insights from across the globe.
+                </p>
               </div>
             ) : (
-              <>
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div>
-                  <h3 className="font-bold text-base mb-1" style={{ color: '#ffffff' }}>Stay ahead of the curve</h3>
-                  <p className="text-sm" style={{ color: '#94a3b8' }}>Enterprise AI insights delivered to your inbox. No spam.</p>
+                  <h3 className="text-[15px] font-bold text-white mb-0.5">Get new posts by email</h3>
+                  <p className="text-[13px] text-[#a1a1a6]">Enterprise AI insights delivered to your inbox. No spam.</p>
                 </div>
-                <form onSubmit={handleSubscribe} className="flex gap-2 w-full sm:w-auto">
-                  <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="Your email"
+                <form onSubmit={handleSubscribe} className="flex flex-wrap gap-2 w-full sm:w-auto">
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    placeholder="Your email"
                     aria-label="Email address for newsletter"
-                    className="flex-1 sm:w-56 px-4 py-2.5 rounded-lg text-sm focus:outline-none"
-                    style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.1)' }} />
+                    className="flex-1 sm:w-56 px-4 py-2.5 rounded-full text-sm bg-white/10 text-white placeholder:text-[#86868b] border border-white/10 focus:outline-none focus:border-primary-600"
+                  />
                   <EmailOTP email={email} onVerified={() => setEmailVerified(true)} verified={emailVerified} compact />
-                  <button type="submit" disabled={!emailVerified} className="shrink-0 px-5 py-2.5 font-semibold text-sm rounded-lg transition-colors"
-                    style={{ backgroundColor: '#4f46e5', color: '#ffffff', opacity: !emailVerified ? 0.5 : 1 }}>
+                  <button
+                    type="submit"
+                    disabled={!emailVerified}
+                    className="shrink-0 px-5 py-2.5 bg-primary-600 hover:bg-[#0077ed] text-white font-semibold text-sm rounded-full transition-colors disabled:opacity-50"
+                  >
                     Subscribe
                   </button>
                 </form>
-              </>
+              </div>
             )}
           </div>
         </div>
+      </section>
 
-        {/* NEWSPAPER GRID */}
-        <div className="space-y-5">
-          {Array.from({ length: Math.ceil(rest.length / 5) }).map((_, groupIdx) => {
-            const start = groupIdx * 5
-            const group = rest.slice(start, start + 5)
-            const isEven = groupIdx % 2 === 0
-
-            if (group.length >= 5) {
-              const largeCards = isEven ? group.slice(0, 2) : group.slice(3, 5)
-              const smallCards = isEven ? group.slice(2, 5) : group.slice(0, 3)
-              return (
-                <div key={groupIdx} className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-                  {/* Large horizontal cards */}
-                  <div className={`lg:col-span-7 space-y-5 ${isEven ? 'order-1' : 'order-2'}`}>
-                    {largeCards.map(post => (
-                      <Link key={post.slug} href={`/resources/blog/${post.slug}`}
-                        className="group flex rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300"
-                        style={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb' }}>
-                        <article className="flex w-full">
-                          <div className="relative w-36 sm:w-48 shrink-0 flex flex-col justify-end p-4"
-                            style={{ backgroundColor: post.coverColor }}>
-                            <span className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(255,255,255,0.7)' }}>{post.category}</span>
-                            <h4 className="text-sm font-bold leading-snug line-clamp-3" style={{ color: '#ffffff' }}>
-                              {post.title}
-                            </h4>
-                          </div>
-                          <div className="p-5 flex flex-col justify-center min-w-0">
-                            <p className="text-sm line-clamp-3 mb-2" style={{ color: '#6b7280' }}>{post.excerpt}</p>
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs" style={{ color: '#9ca3af' }}>
-                                {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} · {post.readTime}
-                              </span>
-                              <span className="text-xs font-semibold group-hover:translate-x-0.5 transition-transform" style={{ color: post.coverColor }}>Read &rarr;</span>
-                            </div>
-                          </div>
-                        </article>
-                      </Link>
-                    ))}
-                  </div>
-                  {/* Compact cards */}
-                  <div className={`lg:col-span-5 space-y-5 ${isEven ? 'order-2' : 'order-1'}`}>
-                    {smallCards.map(post => (
-                      <Link key={post.slug} href={`/resources/blog/${post.slug}`}
-                        className="group block rounded-xl p-5 hover:shadow-lg transition-all duration-300"
-                        style={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb' }}>
-                        <article className="flex items-start gap-4">
-                          <div className="w-14 h-14 shrink-0 rounded-xl flex items-center justify-center"
-                            style={{ backgroundColor: post.coverColor }}>
-                            <span className="text-xs font-bold" style={{ color: '#ffffff' }}>
-                              {post.category.split(' ').map(w => w[0]).join('')}
-                            </span>
-                          </div>
-                          <div className="min-w-0">
-                            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: post.coverColor }}>
-                              {post.category} &middot; {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} &middot; {post.readTime}
-                            </span>
-                            <h3 className="text-sm font-bold leading-snug mt-1 line-clamp-2 group-hover:text-primary-600 transition-colors"
-                              style={{ color: '#111827' }}>
-                              {post.title}
-                            </h3>
-                          </div>
-                        </article>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )
-            }
-
-            // Remainder cards
-            return (
-              <div key={groupIdx} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {group.map(post => (
-                  <Link key={post.slug} href={`/resources/blog/${post.slug}`}
-                    className="group rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300"
-                    style={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb' }}>
-                    <article>
-                      <div className="relative h-32 flex flex-col justify-end p-4" style={{ backgroundColor: post.coverColor }}>
-                        <span className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(255,255,255,0.7)' }}>{post.category}</span>
-                        <h3 className="text-sm font-bold leading-snug line-clamp-2" style={{ color: '#ffffff' }}>
-                          {post.title}
-                        </h3>
-                      </div>
-                      <div className="p-4">
-                        <p className="text-sm line-clamp-2 mb-2" style={{ color: '#6b7280' }}>{post.excerpt}</p>
-                        <span className="text-xs" style={{ color: '#9ca3af' }}>
-                          {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · {post.readTime}
-                        </span>
-                      </div>
-                    </article>
-                  </Link>
-                ))}
-              </div>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* Bottom CTA */}
-      <section style={{ backgroundColor: '#ffffff', borderTop: '1px solid #e5e7eb' }}>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-14 text-center">
-          <h2 className="text-2xl font-bold mb-3" style={{ color: '#111827' }}>
-            Want AI insights tailored to your organization?
-          </h2>
-          <p className="mb-8 max-w-xl mx-auto text-sm" style={{ color: '#6b7280' }}>
-            From strategy workshops to hands-on implementation, we help enterprises turn AI potential into measurable results.
-          </p>
-          <Link href="/contact" className="inline-flex px-6 py-3 font-semibold text-sm rounded-lg transition-colors hover:opacity-90"
-            style={{ backgroundColor: '#111827', color: '#ffffff' }}>
-            Book a Discovery Call
-          </Link>
-        </div>
+      {/* ===== Bottom CTA ===== */}
+      <section className="bg-white px-8 py-16 lg:py-20 text-center">
+        <h2 className="display-card mb-3">Want insights tailored to your organization?</h2>
+        <p className="text-[17px] text-[#6e6e73] max-w-[520px] mx-auto mb-7">
+          From strategy workshops to hands-on implementation, we help
+          enterprises turn AI potential into measurable results.
+        </p>
+        <Link href="/contact" className="pill-primary-sm">
+          Book a discovery call
+        </Link>
       </section>
     </>
   )

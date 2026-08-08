@@ -1,120 +1,37 @@
 'use client'
 
 import Link from 'next/link'
-import { Brain, GraduationCap, Code2, Bot, ArrowRight } from 'lucide-react'
 import { siteConfig } from '@/lib/site-config'
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
-import { useRef } from 'react'
 
-const icons = {
-  Strategy: Brain,
-  GraduationCap: GraduationCap,
-  Code2: Code2,
-  Bot: Bot,
-}
-
-function GlassCard({ service, index }: { service: typeof siteConfig.services[0]; index: number }) {
-  const Icon = icons[service.icon as keyof typeof icons]
-  const cardRef = useRef<HTMLDivElement>(null)
-
-  const mouseX = useMotionValue(0)
-  const mouseY = useMotionValue(0)
-
-  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [4, -4]), { stiffness: 300, damping: 30 })
-  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-4, 4]), { stiffness: 300, damping: 30 })
-
-  const handleMouse = (e: React.MouseEvent) => {
-    const el = cardRef.current
-    if (!el) return
-    const rect = el.getBoundingClientRect()
-    mouseX.set((e.clientX - rect.left) / rect.width - 0.5)
-    mouseY.set((e.clientY - rect.top) / rect.height - 0.5)
-  }
-
-  const resetMouse = () => {
-    mouseX.set(0)
-    mouseY.set(0)
-  }
-
-  const glowX = useTransform(mouseX, [-0.5, 0.5], ['20%', '80%'])
-  const glowY = useTransform(mouseY, [-0.5, 0.5], ['20%', '80%'])
-
-  return (
-    <motion.div
-      ref={cardRef}
-      onMouseMove={handleMouse}
-      onMouseLeave={resetMouse}
-      style={{ rotateX, rotateY, transformPerspective: 800 }}
-      className="relative"
-    >
-      <Link
-        href={service.href}
-        className="group relative block rounded-2xl p-7 transition-all duration-500 glass-card glow-border overflow-hidden"
-      >
-        {/* Cursor-reactive glow */}
-        <motion.div
-          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"
-          style={{
-            background: useTransform(
-              [glowX, glowY],
-              ([x, y]) => `radial-gradient(300px circle at ${x} ${y}, rgba(37, 99, 235, 0.06), transparent 60%)`
-            ),
-          }}
-        />
-
-        {/* Icon */}
-        <motion.div
-          className="w-14 h-14 rounded-xl bg-primary-600 flex items-center justify-center mb-5 shadow-lg shadow-primary-500/15"
-          whileHover={{ scale: 1.08, rotate: 3 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-        >
-          <Icon className="w-7 h-7 text-white" />
-        </motion.div>
-
-        <h3 className="text-xl font-bold text-gray-900 mb-3">
-          {service.title}
-        </h3>
-        <p className="text-gray-500 text-sm leading-relaxed mb-5">
-          {service.description}
-        </p>
-
-        {/* Learn More */}
-        <div className="flex items-center text-primary-600 text-sm font-semibold">
-          <span>Learn more</span>
-          <ArrowRight className="ml-1.5 w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
-        </div>
-      </Link>
-    </motion.div>
-  )
-}
+/**
+ * "What we do." — four quiet white cards on the #f5f5f7 panel, per the Home
+ * prototype's Services section. Data stays in siteConfig.services.
+ */
 
 export default function ServicePillars() {
   return (
-    <section className="py-14 lg:py-20 relative">
-      {/* Section divider */}
-      <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
+    <section className="bg-[#f5f5f7] py-16 lg:py-24 px-8">
+      <div className="max-w-[1080px] mx-auto">
+        <h2 className="display-section text-center mb-3">What we do.</h2>
+        <p className="lede text-center mb-14">
+          Strategy, training, and working software. Priced up front.
+        </p>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16 lg:mb-20">
-          <motion.div
-            className="inline-flex items-center rounded-full border border-gray-300 bg-white px-4 py-1.5 mb-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-900"
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            Our Services
-          </motion.div>
-          <h2 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-gray-900 mb-5">
-            What we do
-          </h2>
-          <p className="text-lg text-gray-500 leading-relaxed">
-            Strategy, training, and working software — priced up front, delivered by senior engineers.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {siteConfig.services.map((service, index) => (
-            <GlassCard key={service.title} service={service} index={index} />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {siteConfig.services.map(service => (
+            <Link
+              key={service.title}
+              href={service.href}
+              className="bg-white border border-[#e8e8ed] hover:border-[#d2d2d7] rounded-[18px] px-6 py-7 flex flex-col text-gray-900 transition-colors"
+            >
+              <div className="text-[17px] font-bold mb-2">{service.title}</div>
+              <div className="text-[13px] leading-normal text-[#6e6e73] mb-[18px]">
+                {service.description}
+              </div>
+              <div className="text-[13px] font-semibold text-primary-600 mt-auto">
+                Learn more ›
+              </div>
+            </Link>
           ))}
         </div>
       </div>

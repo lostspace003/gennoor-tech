@@ -81,10 +81,8 @@ export default function PortalShell({ children }: { children: React.ReactNode })
     <>
       <RouteProgress />
 
+      {/* Mobile-only bar — desktop has no top chrome in the Apple idiom */}
       <PortalTopBar
-        pinned={pinned}
-        collapsed={collapsed}
-        onTogglePin={() => setPinned(p => !p)}
         onMobileOpen={() => setMobileOpen(true)}
         onSearchOpen={() => setSearchOpen(true)}
       />
@@ -95,13 +93,15 @@ export default function PortalShell({ children }: { children: React.ReactNode })
         mobileOpen={mobileOpen}
         onMobileClose={() => setMobileOpen(false)}
         onHoverChange={setHovering}
+        onTogglePin={() => setPinned(p => !p)}
+        onSearchOpen={() => setSearchOpen(true)}
       />
 
       {/* Content area — pushes right of the rail on desktop, full width on mobile.
           On hover-expand we DON'T shift content (rail floats over it, Azure-style). */}
       <div
         className={cn(
-          'min-h-screen pt-[var(--portal-topbar-h)] transition-[padding-left] duration-200 ease-out',
+          'min-h-screen pt-[var(--portal-topbar-h)] lg:pt-0 transition-[padding-left] duration-200 ease-out',
           // When pinned & expanded → push content. Otherwise rail floats over content.
           pinned ? 'lg:pl-[var(--portal-rail-w-expanded)]' : 'lg:pl-[var(--portal-rail-w-collapsed)]'
         )}

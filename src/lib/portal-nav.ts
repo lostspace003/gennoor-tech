@@ -108,10 +108,11 @@ export const portalNav: PortalNavSection[] = [
     name: 'AI Academy',
     href: '/academy',
     icon: Sparkles,
-    children: [
-      { name: 'All Courses', href: '/academy', icon: BookOpen, badge: 'Free' },
-      { name: 'AI Readiness Diagnostic', href: '/ai-readiness', icon: Activity },
-    ],
+  },
+  {
+    name: 'AI Readiness',
+    href: '/ai-readiness',
+    icon: Activity,
   },
   {
     name: 'Resources',
@@ -146,16 +147,6 @@ export const portalNav: PortalNavSection[] = [
     href: '/contact',
     icon: Mail,
   },
-]
-
-/**
- * Pinned shortcuts surfaced at the very top of the rail.
- * Kept short — these are the actions a logged-in user would reach for first.
- */
-export const portalPinned: PortalNavChild[] = [
-  { name: 'Book a Call', href: '/resources/calendar', icon: Phone },
-  { name: 'AI Readiness', href: '/ai-readiness', icon: Activity },
-  { name: 'AI Academy', href: '/academy', icon: Sparkles, badge: 'Free' },
 ]
 
 /**

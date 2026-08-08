@@ -37,22 +37,15 @@ export default function BlogPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Masthead — server-rendered for SEO */}
-      <header className="relative py-10 lg:py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0" />
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
-            Insights &amp; Perspectives
-          </span>
-          <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 leading-tight tracking-tight">
-            The Gennoor Tech Blog
-          </h1>
-          <div className="section-divider w-24 mx-auto mt-6 mb-4" aria-hidden="true" />
-          <p className="text-sm max-w-lg mx-auto text-gray-500">
-            Practitioner insights on enterprise AI, agentic systems, and real-world implementation strategies
-          </p>
-        </div>
+      <header className="px-8 pt-20 lg:pt-[100px] pb-12 text-center">
+        <div className="kicker mb-5">Resources · Blog</div>
+        <h1 className="text-[clamp(40px,4.8vw,64px)] leading-[1.06] tracking-[-0.03em] font-bold text-gray-900">
+          Field notes.
+        </h1>
+        <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.45] text-[#6e6e73] max-w-[540px] mx-auto mt-5">
+          What we learn on live engagements, written down. No fluff, no press
+          releases.
+        </p>
       </header>
 
       {/* Interactive content — client component for filters/sort */}

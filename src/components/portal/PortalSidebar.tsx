@@ -2,26 +2,26 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { ChevronRight, X } from 'lucide-react'
+import { ChevronRight, X, Search, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
   portalNav,
-  portalPinned,
   isItemActive,
   isSectionActive,
   type PortalNavSection,
 } from '@/lib/portal-nav'
 
 /**
- * The site rail / mobile drawer, in the iCloud idiom:
+ * The site rail in the Apple idiom (per the redesign handoff):
  *
- *  - the rail is a grey panel, the content beside it is white — that contrast
- *    alone separates them, so the rail needs no shadow and no heavy divider
- *  - selection is a filled rounded pill, not a left edge marker
- *  - icons are monochrome and inherit the row's state; the only colour in the
- *    whole rail is the accent on the selected row
- *  - badges are quiet uppercase text, never a coloured chip
+ *  - a #f5f5f7 panel with a hairline border, logo card at the top,
+ *    one filled pill ("Book a call") at the bottom
+ *  - selection is a filled tint (#e8f0fe) with accent text — no edge markers
+ *  - rows are 13.5px, icons 17px monochrome; the only colour in the rail is
+ *    the accent on the selected row
+ *  - the desktop top bar is gone; search and collapse live here instead
  */
 
 interface Props {
@@ -35,30 +35,18 @@ interface Props {
   onMobileClose: () => void
   /** Hover handlers for the auto-expand-on-hover behaviour when collapsed. */
   onHoverChange?: (hovering: boolean) => void
+  /** Toggle the pinned state (desktop only). */
+  onTogglePin?: () => void
+  /** Open the ⌘K search modal. */
+  onSearchOpen?: () => void
 }
 
-/** Shared row geometry so pinned items, sections and children line up exactly. */
-const ROW = 'flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13.5px] transition-colors duration-100'
-const ROW_IDLE = 'text-gray-800 hover:bg-gray-200/60'
-const ROW_ACTIVE = 'bg-primary-100 text-primary-700 font-medium'
-const ICON_IDLE = 'text-gray-500'
+/** Shared row geometry so sections and children line up exactly. */
+const ROW = 'flex items-center gap-[11px] rounded-lg px-3 py-2 text-[13.5px] transition-colors duration-100'
+const ROW_IDLE = 'text-gray-900 font-normal hover:bg-[#eaeaef]'
+const ROW_ACTIVE = 'bg-primary-100 text-primary-600 font-semibold'
+const ICON_IDLE = 'text-[#86868b]'
 const ICON_ACTIVE = 'text-primary-600'
-
-function Badge({ label }: { label: string }) {
-  return (
-    <span className="ml-auto text-[10px] font-semibold uppercase tracking-wide text-gray-500">
-      {label}
-    </span>
-  )
-}
-
-function GroupLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="px-2.5 pt-3 pb-1 text-[11px] font-semibold tracking-wide text-gray-500">
-      {children}
-    </p>
-  )
-}
 
 export default function PortalSidebar({
   pinned,
@@ -66,6 +54,8 @@ export default function PortalSidebar({
   mobileOpen,
   onMobileClose,
   onHoverChange,
+  onTogglePin,
+  onSearchOpen,
 }: Props) {
   const pathname = usePathname()
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
@@ -114,9 +104,8 @@ export default function PortalSidebar({
 
       <aside
         className={cn(
-          'fixed top-0 left-0 z-50 lg:z-40 h-dvh lg:h-[calc(100dvh-var(--portal-topbar-h))]',
-          'lg:top-[var(--portal-topbar-h)]',
-          'bg-gray-50 border-r border-gray-200 flex flex-col',
+          'fixed top-0 left-0 z-50 lg:z-40 h-dvh',
+          'bg-[#f5f5f7] border-r border-[#e8e8ed] flex flex-col',
           'transition-[width,transform] duration-200 ease-out',
           // Width — desktop
           collapsed ? 'lg:w-[var(--portal-rail-w-collapsed)]' : 'lg:w-[var(--portal-rail-w-expanded)]',
@@ -130,52 +119,92 @@ export default function PortalSidebar({
         aria-label="Primary navigation"
       >
         {/* Mobile header — only renders on mobile */}
-        <div className="flex items-center justify-between h-[52px] pl-4 pr-2 border-b border-gray-200 lg:hidden">
+        <div className="flex items-center justify-between h-[52px] pl-4 pr-2 border-b border-[#e8e8ed] lg:hidden">
           <span className="text-[15px] font-semibold text-gray-900">Menu</span>
           <button
             type="button"
             onClick={onMobileClose}
-            className="p-2 rounded-lg text-gray-500 hover:bg-gray-200/70 transition-colors"
+            className="p-2 rounded-lg text-gray-500 hover:bg-[#eaeaef] transition-colors"
             aria-label="Close navigation"
           >
             <X className="w-[18px] h-[18px]" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-2 pb-3">
-          {/* Pinned shortcuts */}
-          {showLabels && (
-            <>
-              <GroupLabel>Quick links</GroupLabel>
-              <div className="space-y-px">
-                {portalPinned.map(p => {
-                  const Icon = p.icon
-                  const active = isItemActive(p.href, pathname)
-                  return (
-                    <Link
-                      key={p.name}
-                      href={p.href}
-                      className={cn(ROW, active ? ROW_ACTIVE : ROW_IDLE)}
-                    >
-                      {Icon && (
-                        <Icon
-                          className={cn('w-[17px] h-[17px] flex-shrink-0', active ? ICON_ACTIVE : ICON_IDLE)}
-                          strokeWidth={1.75}
-                        />
-                      )}
-                      <span className="truncate">{p.name}</span>
-                      {p.badge && <Badge label={p.badge} />}
-                    </Link>
-                  )
-                })}
-              </div>
-            </>
+        {/* Logo card — desktop only; the mobile drawer has its own header */}
+        <div className={cn('hidden lg:block', showLabels ? 'px-4 pt-[18px] pb-3' : 'px-2 pt-3 pb-2')}>
+          {showLabels ? (
+            <div className="relative group/logo">
+              <Link href="/" aria-label="Gennoor Tech home" className="block">
+                <Image
+                  src="/logos/gennoor-tech-compact-white_600x140_navbar.png"
+                  alt="Gennoor Tech"
+                  width={600}
+                  height={140}
+                  priority
+                  className="w-full h-auto block rounded-[10px] border border-[#e8e8ed] bg-white"
+                />
+              </Link>
+              {onTogglePin && (
+                <button
+                  type="button"
+                  onClick={onTogglePin}
+                  className="absolute -right-1.5 -top-1.5 p-1.5 rounded-lg bg-white border border-[#e8e8ed] text-gray-400 opacity-0 group-hover/logo:opacity-100 hover:text-gray-700 transition-all"
+                  aria-label={pinned ? 'Collapse navigation' : 'Pin navigation open'}
+                  title={pinned ? 'Collapse navigation' : 'Pin navigation open'}
+                >
+                  {pinned ? (
+                    <PanelLeftClose className="w-[14px] h-[14px]" strokeWidth={1.75} />
+                  ) : (
+                    <PanelLeftOpen className="w-[14px] h-[14px]" strokeWidth={1.75} />
+                  )}
+                </button>
+              )}
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={onTogglePin}
+              className="w-full flex items-center justify-center p-2 rounded-lg text-gray-500 hover:bg-[#eaeaef] transition-colors"
+              aria-label="Pin navigation open"
+              title="Pin navigation open"
+            >
+              <PanelLeftOpen className="w-[17px] h-[17px]" strokeWidth={1.75} />
+            </button>
           )}
+        </div>
 
+        {/* Search row — opens the ⌘K modal */}
+        {onSearchOpen && (
+          <div className={cn('hidden lg:block', showLabels ? 'px-3 pb-1' : 'px-2 pb-1')}>
+            <button
+              type="button"
+              onClick={onSearchOpen}
+              className={cn(
+                ROW,
+                'w-full text-left text-[#6e6e73] hover:bg-[#eaeaef]',
+                !showLabels && 'justify-center px-0'
+              )}
+              aria-label="Search the website"
+              title={!showLabels ? 'Search' : undefined}
+            >
+              <Search className={cn('w-[17px] h-[17px] flex-shrink-0', ICON_IDLE)} strokeWidth={1.7} />
+              {showLabels && (
+                <>
+                  <span className="truncate flex-1">Search</span>
+                  <kbd className="text-[10.5px] font-medium text-gray-500 bg-white border border-[#e8e8ed] px-1.5 py-0.5 rounded-md leading-none">
+                    ⌘K
+                  </kbd>
+                </>
+              )}
+            </button>
+          </div>
+        )}
+
+        <div className="flex-1 overflow-y-auto px-3 py-1.5">
           {/* Main nav */}
           <nav aria-label="Site sections">
-            {showLabels && <GroupLabel>Browse</GroupLabel>}
-            <ul className={cn('space-y-px', !showLabels && 'pt-3')}>
+            <ul className="space-y-0.5">
               {portalNav.map(section => (
                 <SectionRow
                   key={section.name}
@@ -190,18 +219,29 @@ export default function PortalSidebar({
           </nav>
         </div>
 
-        {/* Footer hint when expanded */}
-        {showLabels && (
-          <div className="border-t border-gray-200 px-4 py-2.5">
-            <p className="text-[11px] text-gray-500">
-              Press{' '}
-              <kbd className="font-sans text-gray-600 bg-white border border-gray-200 px-1.5 py-0.5 rounded-md">
-                ⌘K
-              </kbd>{' '}
-              to search
-            </p>
-          </div>
-        )}
+        {/* Bottom block — the one filled action, plus the delivery footprint */}
+        <div className={cn('border-t border-[#e8e8ed]', showLabels ? 'p-4' : 'p-2')}>
+          {showLabels ? (
+            <div className="flex flex-col gap-2.5">
+              <Link
+                href="/resources/calendar"
+                className="flex items-center justify-center bg-primary-600 text-white text-[13px] font-semibold py-2.5 rounded-full hover:bg-[#0077ed] transition-colors"
+              >
+                Book a call
+              </Link>
+              <p className="text-[11px] text-[#86868b] text-center">GCC · Africa · South Asia</p>
+            </div>
+          ) : (
+            <Link
+              href="/resources/calendar"
+              className="flex items-center justify-center w-9 h-9 mx-auto bg-primary-600 text-white rounded-full hover:bg-[#0077ed] transition-colors"
+              aria-label="Book a call"
+              title="Book a call"
+            >
+              <ChevronRight className="w-4 h-4" strokeWidth={2} />
+            </Link>
+          )}
+        </div>
       </aside>
     </>
   )
@@ -240,7 +280,7 @@ function SectionRow({
         >
           <Icon
             className={cn('w-[17px] h-[17px] flex-shrink-0', exact ? ICON_ACTIVE : ICON_IDLE)}
-            strokeWidth={1.75}
+            strokeWidth={1.7}
           />
           {showLabels && <span className="truncate">{section.name}</span>}
         </Link>
@@ -259,7 +299,7 @@ function SectionRow({
         className={cn(
           ROW,
           'w-full text-left',
-          active ? 'text-gray-900 font-medium hover:bg-gray-200/60' : ROW_IDLE,
+          active ? 'text-gray-900 font-medium hover:bg-[#eaeaef]' : ROW_IDLE,
           !showLabels && 'justify-center px-0'
         )}
         aria-expanded={isExpanded}
@@ -267,7 +307,7 @@ function SectionRow({
       >
         <Icon
           className={cn('w-[17px] h-[17px] flex-shrink-0', active ? 'text-gray-700' : ICON_IDLE)}
-          strokeWidth={1.75}
+          strokeWidth={1.7}
         />
         {showLabels && (
           <>
@@ -295,12 +335,16 @@ function SectionRow({
                   href={child.href}
                   className={cn(
                     ROW,
-                    'pl-[34px] text-[13px]',
-                    childActive ? ROW_ACTIVE : 'text-gray-600 hover:bg-gray-200/60 hover:text-gray-900'
+                    'pl-[40px] text-[13px]',
+                    childActive ? ROW_ACTIVE : 'text-[#6e6e73] hover:bg-[#eaeaef] hover:text-gray-900'
                   )}
                 >
                   <span className="truncate">{child.name}</span>
-                  {child.badge && <Badge label={child.badge} />}
+                  {child.badge && (
+                    <span className="ml-auto text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+                      {child.badge}
+                    </span>
+                  )}
                 </Link>
               </li>
             )

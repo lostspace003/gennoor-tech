@@ -1,19 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import {
-  Compass,
-  GraduationCap,
-  Lightbulb,
-  Hammer,
-  RefreshCcw,
-  ArrowRight,
-  Check,
-  Rocket,
-  Building2,
-  TrendingDown,
-} from 'lucide-react'
 import { BreadcrumbJsonLd, FAQJsonLd } from '@/components/JsonLd'
-import ThreePledges from '@/components/ThreePledges'
 
 export const metadata: Metadata = {
   title: 'The Gennoor Way — Enterprise AI Transformation Framework',
@@ -38,6 +25,14 @@ export const metadata: Metadata = {
   },
 }
 
+/**
+ * The Gennoor Way in the Apple idiom, per the redesign handoff: display
+ * hero with the phase strip, five white phase cards on the #f5f5f7 panel,
+ * the six principles, and the "Phase one takes 15 minutes." CTA. The deep
+ * playbook content (goals, inputs, price bands, who-buys), entry scenarios,
+ * and the full FAQ (with FAQ JSON-LD) all survive.
+ */
+
 // ────────────────────────────────────────────────────────────────────────────
 // DATA
 // ────────────────────────────────────────────────────────────────────────────
@@ -47,9 +42,10 @@ const phases = [
     number: '01',
     slug: 'diagnose',
     name: 'Diagnose',
-    icon: Compass,
-    promise: 'Establish the truth about where your organization stands.',
     duration: '1–4 weeks',
+    intro:
+      'Before anything is built or bought, we measure where you actually stand — data, people, infrastructure, and governance.',
+    deliverables: ['AI Readiness Score', 'Use-case backlog, ranked by ROI', '12-month roadmap', 'Governance charter'],
     smbPrice: '$3k–$10k',
     enterprisePrice: '$25k–$80k',
     goal: 'Establish a credible, evidence-based starting point for AI transformation — so every subsequent investment has a defensible reason.',
@@ -68,15 +64,17 @@ const phases = [
       'Governance & Risk Charter',
       'Executive briefing deck and board-ready summary',
     ],
-    boughtBy: 'Organizations that need a credible plan before they spend on AI — especially boards, audit committees, and CEOs about to allocate capital.',
+    boughtBy:
+      'Organizations that need a credible plan before they spend on AI — especially boards, audit committees, and CEOs about to allocate capital.',
   },
   {
     number: '02',
     slug: 'train',
     name: 'Train',
-    icon: GraduationCap,
-    promise: 'Raise your organization’s AI literacy ceiling and floor — at the same time.',
     duration: '2–8 weeks',
+    intro:
+      'Adoption fails on people, not models. We train every layer of the organization with custom curricula built on your data.',
+    deliverables: ['C-suite strategy sessions', 'Functional cohorts (HR, finance, sales)', 'Technical bootcamps', 'Prompt libraries per role'],
     smbPrice: '$5k–$20k per cohort',
     enterprisePrice: '$30k–$150k per program',
     goal: 'Build the skills, vocabulary, and confidence the org needs so that AI is adopted, not feared — and so the next phases have an informed audience.',
@@ -92,15 +90,17 @@ const phases = [
       'Custom labs using your own data scenarios',
       'Post-training adoption playbook (this is the bridge to Phase 3)',
     ],
-    boughtBy: 'Organizations that already have direction but need their people moving in it. Every cohort ends with a pilot-scoping session — that’s the trojan horse into Phase 3.',
+    boughtBy:
+      'Organizations that already have direction but need their people moving in it. Every cohort ends with a pilot-scoping session — that’s the trojan horse into Phase 3.',
   },
   {
     number: '03',
     slug: 'innovate',
     name: 'Innovate',
-    icon: Lightbulb,
-    promise: 'Turn the highest-value use case into a working PoC the team can touch.',
     duration: '4–8 weeks',
+    intro:
+      'One high-value use case becomes a working PoC in your environment — with evaluation criteria agreed before we write code.',
+    deliverables: ['Working PoC in your tenant', 'Fixed scope and price', 'Evaluation report', 'Go / no-go recommendation'],
     smbPrice: '$15k–$40k',
     enterprisePrice: '$50k–$180k',
     goal: 'Take one use case from the backlog and ship a real, working prototype in your environment — not a slide deck, not a demo on our laptop.',
@@ -117,15 +117,17 @@ const phases = [
       'Go / no-go business case for Phase 4',
       'Code transferred to your repository on day one',
     ],
-    boughtBy: 'Teams ready to stop talking about AI and ship something. Fixed scope, fixed price — no "T&M PoCs" that drift.',
+    boughtBy:
+      'Teams ready to stop talking about AI and ship something. Fixed scope, fixed price — no "T&M PoCs" that drift.',
   },
   {
     number: '04',
     slug: 'build',
     name: 'Build',
-    icon: Hammer,
-    promise: 'Scale the PoC into a production system your team owns and operates.',
     duration: '8–20 weeks',
+    intro:
+      'The PoC that earned it goes to production — with the MLOps, security review, and knowledge transfer to make it stick.',
+    deliverables: ['Production deployment', 'MLOps and monitoring', 'Security & compliance review', 'Handover to your team'],
     smbPrice: '$30k–$100k',
     enterprisePrice: '$150k–$600k+',
     goal: 'Take what worked in Phase 3 and harden it into a system that runs at scale — with the operations team that will own it after we leave.',
@@ -142,23 +144,21 @@ const phases = [
       'Adoption metrics dashboard',
       'Full knowledge transfer to client team — knowledge transfer is contractual, not optional',
     ],
-    boughtBy: 'Organizations with a green-lit pilot ready to go live. We lead; your engineers take over by Go-Live.',
+    boughtBy:
+      'Organizations with a green-lit pilot ready to go live. We lead; your engineers take over by Go-Live.',
   },
   {
     number: '05',
     slug: 'sustain',
     name: 'Sustain',
-    icon: RefreshCcw,
-    promise: 'Keep the system — and the team — performant long after launch.',
-    duration: 'Quarterly retainer · ongoing',
+    duration: 'Ongoing',
+    intro:
+      'AI systems drift and costs creep. We stay on a light retainer to keep what we built healthy — and find what to build next.',
+    deliverables: ['Quarterly health checks', 'Cost audits', 'Continuous L&D', 'Expansion roadmap'],
     smbPrice: '$2k–$6k/month',
     enterprisePrice: '$15k–$60k/month',
     goal: 'Make sure the AI system that went live in Phase 4 is still working — technically, economically, and organizationally — six months and six years from now.',
-    inputs: [
-      'Live system in production',
-      'Ongoing use-case pipeline',
-      'Model evaluation feedback',
-    ],
+    inputs: ['Live system in production', 'Ongoing use-case pipeline', 'Model evaluation feedback'],
     outputs: [
       'Quarterly health check — model drift, evaluation, governance refresh',
       'Cost & token spend audit with optimization recommendations',
@@ -166,27 +166,34 @@ const phases = [
       'Annual strategy day — where the AI portfolio goes next year',
       'New use-case incubation pipeline (loops back to Phase 1 / 3)',
     ],
-    boughtBy: 'Every Build-phase client should be a Sustain-phase client. This is the phase most consultancies skip — and the phase most AI projects die in.',
+    boughtBy:
+      'Every Build-phase client should be a Sustain-phase client. This is the phase most consultancies skip — and the phase most AI projects die in.',
   },
+]
+
+const principles = [
+  { title: 'Fixed price, fixed scope', body: 'Every phase is priced before it starts. No time-and-materials drift.' },
+  { title: 'Senior-only delivery', body: 'The person who scopes your engagement is the person who delivers it.' },
+  { title: 'Your environment, your IP', body: 'We build in your tenant. Everything we make is yours when we leave.' },
+  { title: 'Evaluation before enthusiasm', body: 'PoCs ship with agreed success criteria — and an honest go / no-go.' },
+  { title: 'Start at any phase', body: 'Already trained? Skip to Innovate. Already have a PoC? Start at Build.' },
+  { title: 'Exit ramps everywhere', body: 'Every phase ends with a deliverable that stands alone. Leave whenever.' },
 ]
 
 const entryScenarios = [
   {
-    icon: Rocket,
     title: 'Starting from zero',
     profile: 'You’ve heard about AI, you have budget, but you don’t know where to begin.',
     entry: 'Phase 1 · Diagnose',
     journey: 'Full five-phase journey, typically 9–18 months end-to-end.',
   },
   {
-    icon: Building2,
     title: 'Strategy already done',
     profile: 'You have a roadmap (in-house or from a Big-4 firm) and you’re ready to execute.',
     entry: 'Phase 2 · Train  →  Phase 3 · Innovate',
     journey: 'Skip Diagnose, run a training cohort + a pilot in parallel. ~12 weeks to first working system.',
   },
   {
-    icon: TrendingDown,
     title: 'Live model that’s drifting',
     profile: 'You shipped an AI system months ago. Adoption is sliding, costs are climbing, accuracy is degrading.',
     entry: 'Phase 5 · Sustain',
@@ -262,353 +269,189 @@ export default function TheGennoorWayPage() {
       />
       <FAQJsonLd faqs={faqs} />
 
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      {/* HERO                                                              */}
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      <section className="relative py-10 lg:py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0" />
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+      <main className="min-h-screen bg-white">
+        {/* ===== Hero ===== */}
+        <section className="px-8 pt-20 lg:pt-[110px] pb-20 text-center">
+          <div className="kicker mb-5">The Gennoor Way</div>
+          <h1 className="text-[clamp(40px,4.8vw,64px)] leading-[1.06] tracking-[-0.03em] font-bold text-gray-900 max-w-[800px] mx-auto">
+            Five phases. One methodology.
+          </h1>
+          <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.45] text-[#6e6e73] max-w-[600px] mx-auto mt-[22px]">
+            Every engagement — a $3k readiness kit or a $350k transformation —
+            runs the same disciplined arc. Start at any phase.
+          </p>
+          <p className="text-[15px] font-semibold text-gray-900 tracking-[0.02em] mt-9">
+            Diagnose&nbsp; →&nbsp; Train&nbsp; →&nbsp; Innovate&nbsp; →&nbsp; Build&nbsp; →&nbsp; Sustain
+          </p>
+        </section>
 
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
-              The Methodology
-            </div>
-            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-6 leading-tight tracking-tight">
-              The <span className="gradient-text">Gennoor</span> Way
-            </h1>
-            <p className="font-heading text-base sm:text-lg font-semibold tracking-wide text-gray-700 mb-6">
-              <span>Diagnose</span>
-              <span className="text-amber-500">.</span>{' '}
-              <span>Train</span>
-              <span className="text-amber-500">.</span>{' '}
-              <span>Innovate</span>
-              <span className="text-amber-500">.</span>{' '}
-              <span>Build</span>
-              <span className="text-amber-500">.</span>{' '}
-              <span>Sustain</span>
-              <span className="text-amber-500">.</span>
-            </p>
-            <p className="text-lg sm:text-xl text-gray-500 mb-10 leading-relaxed max-w-3xl mx-auto">
-              One partner. Five phases. Your AI transformation, end-to-end — diagnosed,
-              trained, prototyped, built, and sustained by one team. Enter at any phase.
-              Exit only when you choose to.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                href="/ai-readiness"
-                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-primary-600 transition-all duration-300"
+        {/* ===== Phases ===== */}
+        <section className="bg-[#f5f5f7] px-8 py-20">
+          <div className="max-w-[920px] mx-auto flex flex-col gap-4">
+            {phases.map(phase => (
+              <div
+                key={phase.slug}
+                id={phase.slug}
+                className="scroll-mt-16 bg-white rounded-3xl px-7 py-8 lg:px-11 lg:py-10 grid grid-cols-1 md:grid-cols-[120px_1fr] gap-6 md:gap-9"
               >
-                Run the 15-minute Diagnostic
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 bg-white ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700 transition-all duration-300"
-              >
-                Talk to our team
-              </Link>
-            </div>
-          </div>
+                {/* Number + duration */}
+                <div>
+                  <div className="text-[44px] font-bold tracking-[-0.03em] leading-none text-[#d2d2d7]">
+                    {phase.number}
+                  </div>
+                  <div className="text-[13px] font-semibold text-primary-600 mt-2.5">{phase.duration}</div>
+                </div>
 
-          {/* Five-phase flow */}
-          <div className="mt-16 max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-3">
-              {phases.map((phase, i) => {
-                const Icon = phase.icon
-                return (
-                  <a
-                    key={phase.slug}
-                    href={`#${phase.slug}`}
-                    className="group block rounded-2xl p-5 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-300 relative"
-                  >
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-xs font-bold tracking-widest text-gray-300">
-                        {phase.number}
-                      </span>
-                      <div className="w-10 h-10 rounded-xl bg-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/15 group-hover:scale-105 transition-transform">
-                        <Icon className="w-5 h-5 text-white" />
+                {/* Body */}
+                <div>
+                  <h2 className="text-[26px] font-bold tracking-[-0.02em] text-gray-900 mb-2">{phase.name}</h2>
+                  <p className="text-[15px] leading-[1.55] text-[#6e6e73] mb-[18px]">{phase.intro}</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-6">
+                    {phase.deliverables.map(d => (
+                      <div key={d} className="text-[13.5px] text-gray-900 flex gap-2">
+                        <span className="text-primary-600 font-bold">›</span>
+                        {d}
                       </div>
-                    </div>
-                    <h3 className="text-base font-bold text-gray-900 mb-1">{phase.name}</h3>
-                    <p className="text-xs font-semibold text-primary-600 tracking-wide">
-                      {phase.duration}
-                    </p>
-                    {i < phases.length - 1 && (
-                      <div className="hidden lg:flex absolute top-1/2 -right-2 -translate-y-1/2 z-10 pointer-events-none">
-                        <ArrowRight className="w-4 h-4 text-primary-300" />
-                      </div>
-                    )}
-                  </a>
-                )
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      {/* THE THREE PLEDGES                                                 */}
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      <ThreePledges />
-
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      {/* PHASE DEEP-DIVES                                                  */}
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      <section className="section-padding relative">
-        <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <div className="inline-flex items-center rounded-full px-3 py-1 mb-4 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
-              Phase Detail
-            </div>
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Five phases. One playbook each.
-            </h2>
-            <p className="text-lg text-gray-500 leading-relaxed">
-              Goals, inputs, outputs, timelines, and price bands for every phase.
-              Pick one, several, or all five.
-            </p>
-          </div>
-
-          <div className="max-w-5xl mx-auto space-y-12">
-            {phases.map((phase) => {
-              const Icon = phase.icon
-              return (
-                <div
-                  key={phase.slug}
-                  id={phase.slug}
-                  className="scroll-mt-24 rounded-3xl p-7 lg:p-10 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70"
-                >
-                  {/* Header */}
-                  <div className="flex flex-col sm:flex-row sm:items-start gap-6 mb-8">
-                    <div className="flex-shrink-0">
-                      <div className="w-16 h-16 rounded-2xl bg-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/15">
-                        <Icon className="w-8 h-8 text-white" />
-                      </div>
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-baseline gap-3 mb-2">
-                        <span className="text-xs font-bold tracking-widest text-gray-300">
-                          PHASE {phase.number}
-                        </span>
-                        <span className="text-xs font-semibold text-primary-600">
-                          {phase.duration}
-                        </span>
-                      </div>
-                      <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
-                        {phase.name}
-                      </h3>
-                      <p className="text-lg text-gray-600 leading-relaxed">
-                        {phase.promise}
-                      </p>
-                    </div>
+                    ))}
                   </div>
 
-                  {/* Goal */}
-                  <div className="mb-7">
-                    <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-2">
-                      Goal
-                    </h4>
-                    <p className="text-base text-gray-700 leading-relaxed">{phase.goal}</p>
-                  </div>
-
-                  {/* Inputs + Outputs grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-7 mb-7">
-                    <div>
-                      <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-3">
-                        Inputs we work with
-                      </h4>
-                      <ul className="space-y-2">
-                        {phase.inputs.map((input) => (
-                          <li
-                            key={input}
-                            className="flex items-start gap-2 text-sm text-gray-600"
-                          >
-                            <Check className="w-4 h-4 text-primary-500 flex-shrink-0 mt-0.5" />
-                            <span>{input}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-3">
-                        Outputs you walk away with
-                      </h4>
-                      <ul className="space-y-2">
-                        {phase.outputs.map((output) => (
-                          <li
-                            key={output}
-                            className="flex items-start gap-2 text-sm text-gray-600"
-                          >
-                            <Check className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
-                            <span>{output}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-
-                  {/* Price band + Who buys */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-6 border-t border-gray-100">
-                    <div className="rounded-2xl p-5 bg-primary-50/50">
-                      <h4 className="text-xs font-bold tracking-widest text-gray-500 uppercase mb-3">
-                        Price band
-                      </h4>
-                      <div className="space-y-1.5 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">SMB</span>
+                  {/* Full playbook — the deep content, kept behind a quiet toggle */}
+                  <details className="group mt-5 border-t border-[#f0f0f2] pt-4">
+                    <summary className="cursor-pointer list-none text-[13px] font-semibold text-primary-600 hover:text-[#0077ed]">
+                      <span className="group-open:hidden">Full playbook ›</span>
+                      <span className="hidden group-open:inline">Hide playbook</span>
+                    </summary>
+                    <div className="mt-4 space-y-4">
+                      <p className="text-[13.5px] leading-[1.6] text-[#6e6e73]">{phase.goal}</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                          <p className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#86868b] mb-2">
+                            Inputs we work with
+                          </p>
+                          <ul className="space-y-1.5">
+                            {phase.inputs.map(input => (
+                              <li key={input} className="text-[13px] text-[#6e6e73] flex gap-2">
+                                <span className="text-[#d2d2d7]">·</span>
+                                {input}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#86868b] mb-2">
+                            Outputs you walk away with
+                          </p>
+                          <ul className="space-y-1.5">
+                            {phase.outputs.map(output => (
+                              <li key={output} className="text-[13px] text-[#6e6e73] flex gap-2">
+                                <span className="text-[#d2d2d7]">·</span>
+                                {output}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-x-8 gap-y-2 border-t border-[#f0f0f2] pt-3.5 text-[13px]">
+                        <div>
+                          <span className="text-[#86868b]">SMB </span>
                           <span className="font-semibold text-gray-900">{phase.smbPrice}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">Enterprise</span>
-                          <span className="font-semibold text-gray-900">
-                            {phase.enterprisePrice}
-                          </span>
+                        <div>
+                          <span className="text-[#86868b]">Enterprise </span>
+                          <span className="font-semibold text-gray-900">{phase.enterprisePrice}</span>
                         </div>
                       </div>
+                      <p className="text-[13px] leading-[1.6] text-[#6e6e73]">
+                        <span className="font-semibold text-gray-900">Who buys this alone: </span>
+                        {phase.boughtBy}
+                      </p>
                     </div>
-                    <div className="rounded-2xl p-5 bg-amber-50/50">
-                      <h4 className="text-xs font-bold tracking-widest text-gray-500 uppercase mb-3">
-                        Who buys this alone
-                      </h4>
-                      <p className="text-sm text-gray-600 leading-relaxed">{phase.boughtBy}</p>
-                    </div>
-                  </div>
+                  </details>
                 </div>
-              )
-            })}
+              </div>
+            ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      {/* ENTRY POINTS                                                      */}
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      <section className="section-padding relative">
-        <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-14">
-            <div className="inline-flex items-center rounded-full px-3 py-1 mb-4 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
-              Enter at Any Phase
+        {/* ===== Principles ===== */}
+        <section className="px-8 py-16 lg:py-24">
+          <div className="max-w-[1080px] mx-auto">
+            <h2 className="display-section text-center mb-14">How we keep it honest.</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-10 gap-x-12">
+              {principles.map(p => (
+                <div key={p.title}>
+                  <div className="text-[16px] font-bold text-gray-900 mb-1.5">{p.title}</div>
+                  <div className="text-sm leading-[1.55] text-[#6e6e73]">{p.body}</div>
+                </div>
+              ))}
             </div>
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Which phase are you in?
-            </h2>
-            <p className="text-lg text-gray-500 leading-relaxed">
-              The Gennoor Way is a loop, not a waterfall. Three common starting points
-              — most clients fit one.
-            </p>
           </div>
+        </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-6xl mx-auto">
-            {entryScenarios.map((scenario) => {
-              const Icon = scenario.icon
-              return (
-                <div
-                  key={scenario.title}
-                  className="rounded-2xl p-7 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-500"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-primary-600 flex items-center justify-center mb-5 shadow-lg shadow-primary-500/15">
-                    <Icon className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">{scenario.title}</h3>
-                  <p className="text-sm text-gray-500 leading-relaxed mb-5">
-                    {scenario.profile}
-                  </p>
-                  <div className="pt-4 border-t border-gray-100">
-                    <p className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1.5">
+        {/* ===== Entry points ===== */}
+        <section className="bg-[#f5f5f7] px-8 py-16 lg:py-24">
+          <div className="max-w-[1080px] mx-auto">
+            <h2 className="display-card text-center mb-3">Which phase are you in?</h2>
+            <p className="text-[18px] text-[#6e6e73] text-center mb-12">
+              The Gennoor Way is a loop, not a waterfall. Three common starting points.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {entryScenarios.map(scenario => (
+                <div key={scenario.title} className="bg-white border border-[#e8e8ed] rounded-[18px] px-6 py-7 flex flex-col">
+                  <h3 className="text-[17px] font-bold text-gray-900 mb-2">{scenario.title}</h3>
+                  <p className="text-[13.5px] leading-[1.55] text-[#6e6e73] mb-5">{scenario.profile}</p>
+                  <div className="border-t border-[#f0f0f2] pt-3.5 mt-auto">
+                    <p className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#86868b] mb-1">
                       Recommended entry
                     </p>
-                    <p className="text-sm font-semibold text-primary-600 mb-3">
-                      {scenario.entry}
-                    </p>
-                    <p className="text-xs text-gray-500 leading-relaxed">{scenario.journey}</p>
+                    <p className="text-[13.5px] font-semibold text-primary-600 mb-2">{scenario.entry}</p>
+                    <p className="text-xs leading-[1.55] text-[#6e6e73]">{scenario.journey}</p>
                   </div>
                 </div>
-              )
-            })}
-          </div>
-
-          <p className="text-center text-sm text-gray-500 mt-10">
-            Not sure which fits?{' '}
-            <Link
-              href="/ai-readiness"
-              className="text-primary-600 font-semibold hover:text-primary-700 transition-colors"
-            >
-              Run the 15-minute diagnostic →
-            </Link>
-          </p>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      {/* FAQ                                                               */}
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      <section className="section-padding relative">
-        <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto">
-            <div className="text-center mb-12">
-              <div className="inline-flex items-center rounded-full px-3 py-1 mb-4 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
-                Frequently Asked
-              </div>
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                Questions before you start.
-              </h2>
+              ))}
             </div>
+            <p className="text-center text-sm text-[#6e6e73] mt-9">
+              Not sure which fits?{' '}
+              <Link href="/ai-readiness" className="text-primary-600 font-medium hover:text-[#0077ed]">
+                Run the 15-minute diagnostic ›
+              </Link>
+            </p>
+          </div>
+        </section>
 
-            <div className="space-y-4">
-              {faqs.map((faq) => (
-                <details
-                  key={faq.question}
-                  className="group rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm transition-all duration-300"
-                >
-                  <summary className="flex justify-between items-start gap-4 cursor-pointer list-none">
-                    <h3 className="text-base font-semibold text-gray-900">{faq.question}</h3>
-                    <ArrowRight className="w-4 h-4 text-gray-300 flex-shrink-0 mt-1 transition-transform duration-300 group-open:rotate-90" />
+        {/* ===== FAQ ===== */}
+        <section className="px-8 py-16 lg:py-24">
+          <div className="max-w-[720px] mx-auto">
+            <h2 className="display-card text-center mb-12">Questions before you start.</h2>
+            <div className="border-t border-[#e8e8ed]">
+              {faqs.map(faq => (
+                <details key={faq.question} className="group border-b border-[#e8e8ed] py-5">
+                  <summary className="relative cursor-pointer list-none pr-8 text-[16px] font-semibold text-gray-900">
+                    {faq.question}
                   </summary>
-                  <p className="mt-4 text-sm text-gray-600 leading-relaxed">{faq.answer}</p>
+                  <p className="text-sm text-[#6e6e73] mt-3 leading-relaxed">{faq.answer}</p>
                 </details>
               ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      {/* FINAL CTA                                                         */}
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      <section className="section-padding relative overflow-hidden">
-        <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0" />
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-5">
-            Ready to find your phase?
-          </h2>
-          <p className="text-lg text-gray-500 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Start with the free 15-minute diagnostic, or book a 30-minute call with our
-            team. Either way, you walk away knowing exactly where to start.
+        {/* ===== CTA ===== */}
+        <section className="bg-[#f5f5f7] px-8 py-[90px] text-center">
+          <h2 className="display-section">Phase one takes 15 minutes.</h2>
+          <p className="text-[18px] text-[#6e6e73] mt-3 mb-7 max-w-[460px] mx-auto">
+            The diagnostic is where every engagement begins.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              href="/ai-readiness"
-              className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-white bg-primary-600 transition-all duration-300"
-            >
-              Run the Diagnostic
-              <ArrowRight className="ml-2 h-4 w-4" />
+          <div className="flex flex-col sm:flex-row gap-5 sm:gap-[22px] justify-center items-center">
+            <Link href="/ai-readiness" className="pill-primary-sm">
+              Run the diagnostic
             </Link>
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 bg-white ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700 transition-all duration-300"
-            >
-              Book a 30-minute call
+            <Link href="/contact" className="text-[15px] font-medium text-primary-600 hover:text-[#0077ed]">
+              Book a call ›
             </Link>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
     </>
   )
 }

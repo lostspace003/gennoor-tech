@@ -1,19 +1,5 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import {
-  Compass,
-  FileText,
-  Calendar,
-  Mail,
-  MessageCircle,
-  Linkedin,
-  ArrowRight,
-  Clock,
-  Globe,
-  CheckCircle2,
-  MapPin,
-  Activity,
-} from 'lucide-react'
 import ContactForm from '@/components/contact/ContactForm'
 import TrustpilotWidget from '@/components/TrustpilotWidget'
 import BookingCalendar from '@/components/booking/BookingCalendar'
@@ -38,6 +24,14 @@ export const metadata: Metadata = {
     url: 'https://gennoor.com/contact',
   },
 }
+
+/**
+ * Contact page in the Apple idiom, per the redesign handoff: "Let's talk."
+ * hero, grey form section with the real proposal form beside a quiet side
+ * stack (email / WhatsApp / dark book-a-call card / elsewhere). The booking
+ * calendar, Trustpilot widget, regions, FAQ, and both JSON-LD schemas all
+ * survive.
+ */
 
 // Schema
 const localBusinessSchema = {
@@ -132,96 +126,27 @@ const faqSchema = {
   })),
 }
 
-// Three intents — the core of the page
 const intents = [
   {
-    code: 'A',
-    title: 'Run the 15-minute Readiness Diagnostic',
-    icon: Compass,
-    accent: 'from-amber-500 to-amber-600',
-    eyebrow: 'Top of funnel · Free',
+    eyebrow: 'Free · 15 minutes',
+    title: 'Run the Readiness Diagnostic',
     blurb:
-      'Not sure where you are in your AI journey? Answer a structured set of questions on strategy, data, people, tech, and governance. Get a written AI Readiness Score and a 1-page summary you can share with your leadership team — in about 15 minutes.',
-    bullets: [
-      'Free · no commitment · no email gate to start',
-      '5-dimension AI Readiness Score',
-      'Written summary you keep',
-      'Recommended next step based on your score',
-    ],
-    cta: { label: 'Start the diagnostic', href: '/ai-readiness' },
-    type: 'link' as const,
+      'Not sure where you are in your AI journey? Get a written AI Readiness Score and a summary you can share with leadership.',
+    cta: { label: 'Start the diagnostic ›', href: '/ai-readiness' },
   },
   {
-    code: 'B',
-    title: 'Request a scoped engagement proposal',
-    icon: FileText,
-    accent: 'from-primary-500 to-primary-700',
-    eyebrow: 'Middle of funnel · 5 working days',
+    eyebrow: '5 working days',
+    title: 'Request a scoped proposal',
     blurb:
-      'Already know what you want to build, scope, or scale? Tell us the situation in the form below. Within 5 working days you get a written proposal — fixed scope, fixed price, fixed timeline — that your procurement team can act on.',
-    bullets: [
-      'Written proposal in 5 working days',
-      'Fixed scope · fixed price for Diagnose/Train/Innovate',
-      'No PowerPoint deck — plain English',
-      'NDA exchanged before any sensitive data sharing',
-    ],
-    cta: { label: 'Jump to the form', href: '#proposal' },
-    type: 'anchor' as const,
+      'Already know what you want to build, scope, or scale? Tell us the situation and get a written, fixed-price proposal.',
+    cta: { label: 'Jump to the form ›', href: '#proposal' },
   },
   {
-    code: 'C',
-    title: 'Book a 30-minute exploratory call',
-    icon: Calendar,
-    accent: 'from-primary-500 to-primary-700',
-    eyebrow: 'Anywhere in funnel · Free',
+    eyebrow: 'Free · 30 minutes',
+    title: 'Book an exploratory call',
     blurb:
-      'Prefer to talk first? Book a 30-minute call. We listen, ask awkward questions, and tell you honestly which package or engagement fits — or whether AI is the right answer for this problem yet. No deck, no pitch.',
-    bullets: [
-      'Free · no commitment',
-      'Direct calendar booking — no back-and-forth',
-      'You walk away with a clear next step (even if it isn\'t us)',
-      'Recording available on request',
-    ],
-    cta: {
-      label: 'Book a call',
-      href: '#book',
-      external: false,
-    },
-    type: 'anchor' as const,
-  },
-]
-
-const directChannels = [
-  {
-    icon: Mail,
-    label: 'Email',
-    value: 'contact@gennoor.com',
-    href: 'mailto:contact@gennoor.com',
-    note: 'Response within 24 hours',
-  },
-  {
-    icon: MessageCircle,
-    label: 'WhatsApp',
-    value: 'Message us',
-    href: 'https://wa.me/919326352241?text=Hi%20Gennoor%2C%20I%20visited%20gennoor.com%20and%20would%20like%20to%20discuss%20an%20AI%20engagement.',
-    note: 'Fastest channel · usually same day',
-    external: true,
-  },
-  {
-    icon: Linkedin,
-    label: 'LinkedIn',
-    value: 'Jalal Ahmed Khan',
-    href: 'https://www.linkedin.com/in/lostspace003/',
-    note: 'Founder — connect or message',
-    external: true,
-  },
-  {
-    icon: Calendar,
-    label: 'Book a slot',
-    value: 'Pick a time below',
-    href: '#book',
-    note: 'Direct 30-min slot booking · Microsoft Bookings',
-    external: false,
+      'Prefer to talk first? We listen, ask awkward questions, and tell you honestly which engagement fits — no deck, no pitch.',
+    cta: { label: 'Book a call ›', href: '#book' },
   },
 ]
 
@@ -233,6 +158,9 @@ const regions = [
   { name: 'Southeast Asia', detail: 'Singapore, Malaysia · remote-first, on-site on request' },
   { name: 'Global remote', detail: 'EU, UK, US, Africa elsewhere · live virtual delivery' },
 ]
+
+const WHATSAPP_URL =
+  'https://wa.me/919326352241?text=Hi%20Gennoor%2C%20I%20visited%20gennoor.com%20and%20would%20like%20to%20discuss%20an%20AI%20engagement.'
 
 export default function ContactPage() {
   return (
@@ -246,367 +174,203 @@ export default function ContactPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
       />
 
-      {/* HERO */}
-      <section className="relative py-10 lg:py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0" />
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+      <main className="min-h-screen bg-white">
+        {/* ===== Hero ===== */}
+        <section className="px-8 pt-20 lg:pt-[100px] pb-10 text-center">
+          <div className="kicker mb-5">Contact</div>
+          <h1 className="text-[clamp(40px,4.8vw,64px)] leading-[1.06] tracking-[-0.03em] font-bold text-gray-900">
+            Let&rsquo;s talk.
+          </h1>
+          <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.45] text-[#6e6e73] max-w-[520px] mx-auto mt-5">
+            Thirty minutes, no deck, no pitch. Senior person on the call, always.
+          </p>
+          <p className="text-[13px] text-[#86868b] mt-4">
+            Procurement, legal, or security reference?{' '}
+            <Link href="/about/trust-and-security" className="text-primary-600 font-medium hover:text-[#0077ed]">
+              Trust &amp; Security ›
+            </Link>
+          </p>
+        </section>
 
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
-              <MessageCircle className="w-3 h-3 mr-1.5" />
-              Get in touch
-            </div>
-            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-5 leading-tight tracking-tight">
-              Three ways to <span className="gradient-text">start</span>.
-            </h1>
-            <p className="text-lg text-gray-500 mb-2 leading-relaxed max-w-3xl mx-auto">
-              Pick the entry point that fits where you are — top of funnel, middle, or
-              bottom. All three are free. We respond within 24 hours; WhatsApp is the
-              fastest path.
-            </p>
-            <p className="text-sm text-gray-400 leading-relaxed">
-              For procurement / legal / security reference materials, see{' '}
-              <Link
-                href="/about/trust-and-security"
-                className="text-primary-600 font-semibold hover:text-primary-700 transition-colors"
-              >
-                Trust &amp; Security
-              </Link>
-              .
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* THREE INTENTS */}
-      <section className="py-10 lg:py-14 relative">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-            {intents.map((intent) => {
-              const Icon = intent.icon
-              const Wrapper: React.ElementType = intent.type === 'anchor' ? 'a' : Link
-
-              return (
-                <Wrapper
-                  key={intent.code}
+        {/* ===== Three ways to start ===== */}
+        <section className="px-8 pb-14">
+          <div className="max-w-[1080px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-4">
+            {intents.map(intent => (
+              <div key={intent.title} className="bg-white border border-[#e8e8ed] hover:border-[#d2d2d7] rounded-[18px] px-6 py-7 flex flex-col transition-colors">
+                <div className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#86868b] mb-2.5">
+                  {intent.eyebrow}
+                </div>
+                <h2 className="text-[17px] font-bold text-gray-900 mb-2">{intent.title}</h2>
+                <p className="text-[13.5px] leading-[1.55] text-[#6e6e73] mb-4">{intent.blurb}</p>
+                <a
                   href={intent.cta.href}
-                  className="group rounded-3xl p-7 lg:p-8 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-500 flex flex-col"
+                  className="text-[13px] font-semibold text-primary-600 hover:text-[#0077ed] mt-auto"
                 >
-                  <div
-                    className={`inline-flex w-14 h-14 rounded-2xl bg-gradient-to-br ${intent.accent} items-center justify-center mb-5 shadow-lg shadow-primary-500/15 group-hover:scale-105 transition-transform`}
-                  >
-                    <Icon className="w-7 h-7 text-white" />
-                  </div>
-                  <p className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-2">
-                    Intent {intent.code} · {intent.eyebrow}
-                  </p>
-                  <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-3 leading-tight">
-                    {intent.title}
-                  </h2>
-                  <p className="text-sm text-gray-500 leading-relaxed mb-5">{intent.blurb}</p>
-                  <ul className="space-y-2 mb-6 flex-grow">
-                    {intent.bullets.map((b) => (
-                      <li
-                        key={b}
-                        className="flex items-start gap-2 text-sm text-gray-600"
-                      >
-                        <CheckCircle2 className="w-4 h-4 text-primary-500 flex-shrink-0 mt-0.5" />
-                        <span>{b}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="inline-flex items-center text-primary-600 font-semibold group-hover:text-primary-700 transition-colors">
-                    <span>{intent.cta.label}</span>
-                    <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
-                  </div>
-                </Wrapper>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* INTENT B — proposal form */}
-      <section id="proposal" className="scroll-mt-24 section-padding relative">
-        <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14">
-              <div className="lg:col-span-5">
-                <p className="text-xs font-bold tracking-widest text-primary-600 uppercase mb-3">
-                  Intent B · Engagement proposal
-                </p>
-                <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-5 leading-tight">
-                  Tell us the situation. Get a written proposal in 5 working days.
-                </h2>
-                <p className="text-base text-gray-600 leading-relaxed mb-6">
-                  Use this form if you already know roughly what you want — a specific PoC,
-                  a Copilot rollout, a custom build, a multi-quarter transformation program.
-                  We respond within 24 hours to acknowledge and within 5 working days with a
-                  written proposal you can act on.
-                </p>
-                <div className="space-y-3 text-sm text-gray-600">
-                  <div className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary-500 flex-shrink-0 mt-0.5" />
-                    <span>
-                      Fixed scope and fixed price for Diagnose / Train / Innovate phases
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary-500 flex-shrink-0 mt-0.5" />
-                    <span>
-                      Mutual NDA exchanged before sensitive data shared (2–5 working days)
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary-500 flex-shrink-0 mt-0.5" />
-                    <span>No sales pitch, no PowerPoint deck — plain-English proposal</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary-500 flex-shrink-0 mt-0.5" />
-                    <span>
-                      If we can&apos;t take on the engagement, we say so and recommend partners
-                    </span>
-                  </div>
-                </div>
-                <div className="mt-7 rounded-2xl p-5 bg-amber-50/40 border border-amber-100/50">
-                  <p className="text-sm text-gray-700 leading-relaxed">
-                    <strong className="text-gray-900">Just exploring?</strong>{' '}
-                    The 15-minute{' '}
-                    <Link
-                      href="/ai-readiness"
-                      className="text-primary-600 font-semibold hover:text-primary-700 transition-colors"
-                    >
-                      Readiness Diagnostic
-                    </Link>{' '}
-                    or a 30-minute{' '}
-                    <a
-                      href="#book"
-                      className="text-primary-600 font-semibold hover:text-primary-700 transition-colors"
-                    >
-                      exploratory call
-                    </a>{' '}
-                    are better starting points than the proposal form.
-                  </p>
-                </div>
+                  {intent.cta.label}
+                </a>
               </div>
-              <div className="lg:col-span-7">
-                <div className="rounded-3xl p-7 lg:p-8 bg-white border border-gray-200/70 shadow-sm">
-                  <ContactForm />
+            ))}
+          </div>
+        </section>
+
+        {/* ===== Form + side stack ===== */}
+        <section id="proposal" className="scroll-mt-16 bg-[#f5f5f7] px-8 pt-16 pb-24">
+          <div className="max-w-[980px] mx-auto grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-4 items-start">
+            {/* Form card */}
+            <div className="bg-white rounded-3xl p-7 lg:p-10">
+              <h2 className="text-[22px] font-bold tracking-[-0.01em] text-gray-900 mb-1.5">
+                Tell us the situation.
+              </h2>
+              <p className="text-[14px] text-[#6e6e73] mb-7">
+                Written proposal in 5 working days — fixed scope, fixed price,
+                plain English. NDA before any sensitive data is shared.
+              </p>
+              <ContactForm />
+            </div>
+
+            {/* Side stack */}
+            <div className="flex flex-col gap-3.5">
+              <div className="bg-white rounded-[20px] p-[26px]">
+                <div className="text-sm font-bold text-gray-900 mb-1">Email</div>
+                <a href="mailto:contact@gennoor.com" className="text-sm text-primary-600 hover:text-[#0077ed]">
+                  contact@gennoor.com
+                </a>
+                <div className="text-xs text-[#86868b] mt-1.5">Response within 24 hours</div>
+              </div>
+
+              <div className="bg-white rounded-[20px] p-[26px]">
+                <div className="text-sm font-bold text-gray-900 mb-1">WhatsApp</div>
+                <p className="text-[13.5px] leading-normal text-[#6e6e73]">
+                  Fastest for GCC, Africa, and South Asia hours.
+                </p>
+                <a
+                  href={WHATSAPP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block text-[13.5px] font-medium text-primary-600 hover:text-[#0077ed] mt-1.5"
+                >
+                  Message us ›
+                </a>
+              </div>
+
+              <div className="bg-[#1d1d1f] rounded-[20px] p-[26px]">
+                <div className="text-sm font-bold text-white mb-1">Book a call</div>
+                <p className="text-[13.5px] leading-normal text-[#a1a1a6] mb-3">
+                  Pick a slot that suits your timezone.
+                </p>
+                <a
+                  href="#book"
+                  className="inline-block bg-primary-600 hover:bg-[#0077ed] text-white text-[13px] font-semibold px-[18px] py-[9px] rounded-full transition-colors"
+                >
+                  Open calendar
+                </a>
+              </div>
+
+              <div className="bg-white rounded-[20px] p-[26px]">
+                <div className="text-sm font-bold text-gray-900 mb-1">Elsewhere</div>
+                <div className="flex gap-4 mt-1.5">
+                  <a
+                    href="https://www.linkedin.com/in/lostspace003/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[13.5px] font-medium text-primary-600 hover:text-[#0077ed]"
+                  >
+                    LinkedIn
+                  </a>
+                  <a
+                    href="https://www.youtube.com/@GennoorTech"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[13.5px] font-medium text-primary-600 hover:text-[#0077ed]"
+                  >
+                    YouTube
+                  </a>
+                  <a
+                    href="https://github.com/lostspace003"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[13.5px] font-medium text-primary-600 hover:text-[#0077ed]"
+                  >
+                    GitHub
+                  </a>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* DIRECT CHANNELS */}
-      <section className="py-10 lg:py-16 relative">
-        <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-10">
-            <p className="text-xs font-bold tracking-widest text-primary-600 uppercase mb-3">
-              Or reach out directly
-            </p>
-            <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">
-              Four channels — pick what suits you.
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto">
-            {directChannels.map((c) => {
-              const Icon = c.icon
-              const isExternal = !!c.external
-              const Tag: React.ElementType = 'a'
-              return (
-                <Tag
-                  key={c.label}
-                  href={c.href}
-                  {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                  className="group rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm hover:shadow-md hover:border-primary-200/70 transition-all duration-500 text-center"
-                >
-                  <div className="inline-flex w-12 h-12 rounded-xl bg-primary-600 items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
-                    <Icon className="w-5 h-5 text-white" />
-                  </div>
-                  <h3 className="text-base font-bold text-gray-900 mb-1">{c.label}</h3>
-                  <p className="text-sm text-gray-700 mb-1 font-medium">{c.value}</p>
-                  <p className="text-xs text-gray-400">{c.note}</p>
-                </Tag>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* INTENT C — book a call */}
-      <section id="book" className="scroll-mt-24 section-padding relative">
-        <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-10">
-            <p className="text-xs font-bold tracking-widest text-primary-600 uppercase mb-3">
-              Intent C · Exploratory call
-            </p>
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Book a 30-minute call. Pick a time below.
-            </h2>
-            <p className="text-base text-gray-500 leading-relaxed">
-              Free, no commitment. We listen, ask awkward questions, and tell you honestly
-              which engagement fits — or whether AI is the right answer yet.
+        {/* ===== Book a call ===== */}
+        <section id="book" className="scroll-mt-16 px-8 py-16 lg:py-24">
+          <div className="text-center max-w-[560px] mx-auto mb-10">
+            <h2 className="display-card mb-3">Pick a time.</h2>
+            <p className="text-[17px] text-[#6e6e73]">
+              Free, no commitment. We listen, ask awkward questions, and tell you
+              honestly which engagement fits — or whether AI is the right answer yet.
             </p>
           </div>
           <BookingCalendar />
+        </section>
+
+        {/* ===== Trustpilot ===== */}
+        <div className="max-w-[1080px] mx-auto px-8">
+          <TrustpilotWidget />
         </div>
-      </section>
 
-      {/* TRUSTPILOT */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <TrustpilotWidget />
-      </div>
-
-      {/* REGIONS + RESPONSE TIME */}
-      <section className="section-padding relative">
-        <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-              <div className="lg:col-span-5">
-                <p className="text-xs font-bold tracking-widest text-primary-600 uppercase mb-3">
-                  Where we deliver
-                </p>
-                <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-5 leading-tight">
-                  Regional presence and remote everywhere.
-                </h2>
-                <p className="text-base text-gray-600 leading-relaxed mb-6">
-                  On-the-ground delivery experience across GCC, India, East Africa, and SEA.
-                  Remote delivery worldwide. Engagement language: English (Hindi, Urdu, and
-                  Arabic co-facilitation available on request).
-                </p>
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <Clock className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-bold text-gray-900 mb-0.5">
-                        Response within 24 hours
-                      </p>
-                      <p className="text-sm text-gray-500 leading-relaxed">
-                        WhatsApp is faster — typically same-day, often within a few hours.
-                        For sev-1 incidents on Sustain retainers, 4-hour senior practitioner
-                        SLA applies 24/7.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Activity className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-bold text-gray-900 mb-0.5">
-                        Core hours: 9am–7pm IST
-                      </p>
-                      <p className="text-sm text-gray-500 leading-relaxed">
-                        Covers GCC, Africa, and APAC business hours. Outside core hours,
-                        async Slack and WhatsApp work for active engagements.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Globe className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-bold text-gray-900 mb-0.5">
-                        Invoicing
-                      </p>
-                      <p className="text-sm text-gray-500 leading-relaxed">
-                        INR (GST-compliant) via Gennoor Tech Private Limited. International
-                        invoicing in USD, EUR, SAR, AED supported.
-                      </p>
-                    </div>
-                  </div>
+        {/* ===== Regions ===== */}
+        <section className="bg-[#f5f5f7] px-8 py-16 lg:py-24 mt-14">
+          <div className="max-w-[1080px] mx-auto">
+            <h2 className="display-card text-center mb-3">Regional presence. Remote everywhere.</h2>
+            <p className="text-[17px] text-[#6e6e73] text-center max-w-[620px] mx-auto mb-12">
+              English engagement language — Hindi, Urdu, and Arabic co-facilitation
+              on request. Core hours 9am–7pm IST; 4-hour senior-practitioner SLA
+              for sev-1 incidents on Sustain retainers. INR (GST-compliant), USD,
+              EUR, SAR, and AED invoicing.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-[#e8e8ed] border border-[#e8e8ed] rounded-[18px] overflow-hidden">
+              {regions.map(r => (
+                <div key={r.name} className="bg-white px-6 py-6">
+                  <div className="text-[15px] font-bold text-gray-900 mb-1">{r.name}</div>
+                  <div className="text-[13px] leading-[1.55] text-[#6e6e73]">{r.detail}</div>
                 </div>
-              </div>
-              <div className="lg:col-span-7">
-                <div className="rounded-3xl p-7 lg:p-8 bg-white border border-gray-200/70 shadow-sm">
-                  <h3 className="text-base font-bold text-gray-900 mb-5">
-                    Regions we serve
-                  </h3>
-                  <div className="space-y-3">
-                    {regions.map((r) => (
-                      <div key={r.name} className="flex items-start gap-3">
-                        <MapPin className="w-4 h-4 text-primary-500 flex-shrink-0 mt-1" />
-                        <div>
-                          <p className="text-sm font-bold text-gray-900 mb-0.5">{r.name}</p>
-                          <p className="text-xs text-gray-500 leading-relaxed">{r.detail}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* FAQ */}
-      <section className="section-padding relative">
-        <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto">
-            <div className="text-center mb-10">
-              <p className="text-xs font-bold tracking-widest text-primary-600 uppercase mb-3">
-                FAQ
-              </p>
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                Before you reach out.
-              </h2>
-              <p className="text-base text-gray-500 leading-relaxed">
-                What people commonly ask before sending the first message.
-              </p>
-            </div>
-            <div className="space-y-3">
-              {faqs.map((faq) => (
-                <details
-                  key={faq.question}
-                  className="group rounded-2xl p-5 bg-white border border-gray-200/70 shadow-sm transition-all duration-300"
-                >
-                  <summary className="flex justify-between items-start gap-4 cursor-pointer list-none">
-                    <h3 className="text-sm font-semibold text-gray-900">{faq.question}</h3>
-                    <ArrowRight className="w-4 h-4 text-gray-300 flex-shrink-0 mt-0.5 transition-transform duration-300 group-open:rotate-90" />
+        {/* ===== FAQ ===== */}
+        <section className="px-8 py-16 lg:py-24">
+          <div className="max-w-[720px] mx-auto">
+            <h2 className="display-card text-center mb-12">Before you reach out.</h2>
+            <div className="border-t border-[#e8e8ed]">
+              {faqs.map(faq => (
+                <details key={faq.question} className="group border-b border-[#e8e8ed] py-5">
+                  <summary className="relative cursor-pointer list-none pr-8 text-[15px] font-semibold text-gray-900">
+                    {faq.question}
                   </summary>
-                  <p className="mt-3 text-sm text-gray-600 leading-relaxed">{faq.answer}</p>
+                  <p className="text-sm text-[#6e6e73] mt-3 leading-relaxed">{faq.answer}</p>
                 </details>
               ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* FOOTER CTA */}
-      <section className="section-padding relative overflow-hidden">
-        <div className="absolute inset-0 bg-gray-900" />
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-            Still not sure where to start?
-          </h2>
-          <p className="text-lg text-primary-200/60 mb-8 max-w-2xl mx-auto">
-            Read the methodology first. The Gennoor Way page walks through the five phases
-            and tells you which one you&apos;re probably in.
+        {/* ===== Final CTA ===== */}
+        <section className="bg-[#f5f5f7] px-8 py-[90px] text-center">
+          <h2 className="display-section">Still not sure where to start?</h2>
+          <p className="text-[18px] text-[#6e6e73] mt-3 mb-7 max-w-[520px] mx-auto">
+            The Gennoor Way walks through the five phases and tells you which one
+            you&rsquo;re probably in.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              href="/the-gennoor-way"
-              className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 px-7 py-3.5 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-all duration-300"
-            >
+          <div className="flex flex-col sm:flex-row gap-5 sm:gap-[22px] justify-center items-center">
+            <Link href="/the-gennoor-way" className="pill-primary-sm">
               Read the methodology
-              <ArrowRight className="w-4 h-4" />
             </Link>
-            <Link
-              href="/ai-readiness"
-              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-sm font-semibold text-white border border-white/20 hover:bg-white/5 transition-all duration-300"
-            >
-              Run the 15-min diagnostic
+            <Link href="/ai-readiness" className="text-[15px] font-medium text-primary-600 hover:text-[#0077ed]">
+              Run the 15-min diagnostic ›
             </Link>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
     </>
   )
 }

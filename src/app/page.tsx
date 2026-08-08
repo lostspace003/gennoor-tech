@@ -35,32 +35,30 @@ export default function HomePage() {
       </ScrollReveal>
 
       <ScrollReveal>
-        <TrustedBy />
-      </ScrollReveal>
-
-      <ScrollReveal>
         <ServicePillars />
       </ScrollReveal>
 
-      <ScrollReveal>
-        <Metrics />
-      </ScrollReveal>
+      <Metrics />
 
       <ScrollReveal>
-        <POCShowcase />
+        <TrustedBy />
       </ScrollReveal>
 
       <ScrollReveal>
         <AcademyCTA />
       </ScrollReveal>
 
-      {/* Founder credibility — moved down to footer-of-page position */}
       <ScrollReveal>
-        <IntroVideo />
+        <Testimonials />
       </ScrollReveal>
 
       <ScrollReveal>
-        <Testimonials />
+        <POCShowcase />
+      </ScrollReveal>
+
+      {/* Founder credibility — anchored toward the footer of the page */}
+      <ScrollReveal>
+        <IntroVideo />
       </ScrollReveal>
 
       <ScrollReveal>

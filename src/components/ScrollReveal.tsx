@@ -33,7 +33,7 @@ export default function ScrollReveal({
       initial={{ opacity: 0, ...directionOffset[direction] }}
       animate={isInView ? { opacity: 1, x: 0, y: 0 } : undefined}
       transition={{
-        duration: 0.7,
+        duration: 0.9,
         delay: delay / 1000,
         ease: [0.16, 1, 0.3, 1],
       }}

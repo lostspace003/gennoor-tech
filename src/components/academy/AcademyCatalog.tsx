@@ -190,7 +190,7 @@ export default function AcademyCatalog({ allCourses }: AcademyCatalogProps) {
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filtered.map((course) => (
                   <CourseCard key={course.slug} course={course} />
                 ))}
@@ -220,7 +220,7 @@ function FilterSelect({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full text-sm rounded-xl px-3 py-2 glass-card glow-border bg-white/60 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
+        className="w-full text-[13px] rounded-full px-3.5 py-2 bg-white border border-[#d2d2d7] text-gray-900 focus:outline-none focus:ring-0 focus:border-primary-600 cursor-pointer"
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
@@ -240,44 +240,34 @@ function CourseCard({ course }: { course: Course }) {
   return (
     <Link
       href={`/academy/courses/${course.slug}`}
-      className="group block rounded-2xl p-7 bg-white border border-gray-200/70 shadow-sm hover:shadow-lg transition-all duration-500 flex flex-col h-full"
+      className="group rounded-[18px] px-6 py-[26px] bg-white border border-[#e8e8ed] hover:border-[#d2d2d7] transition-colors duration-200 flex flex-col h-full"
     >
-      <div className="flex items-start justify-between gap-2 mb-4">
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-900 bg-white border border-gray-300">
-            {trackInfo?.label ?? course.track}
-          </span>
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-700 bg-white border border-gray-300">
-            {levelInfo?.label ?? course.level}
-          </span>
-          {course.interactiveUrl && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] text-amber-700 bg-amber-50 border border-amber-200/60">
-              Interactive
-            </span>
-          )}
-        </div>
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <span className="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-primary-600">
+          {trackInfo?.label ?? course.track}
+          <span className="text-[#86868b]"> · {levelInfo?.label ?? course.level}</span>
+          {course.interactiveUrl && <span className="text-[#1d8348]"> · Interactive</span>}
+        </span>
         {!isAvailable && (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] text-amber-700 bg-amber-50 border border-amber-100/60 flex-shrink-0">
+          <span className="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-[#9a6700] flex-shrink-0">
             {course.status === 'coming-soon' ? 'Coming soon' : 'In development'}
           </span>
         )}
       </div>
-      <h3 className="text-xl font-extrabold tracking-tight text-gray-900 mb-3 leading-tight group-hover:text-primary-600 transition-colors">
+      <h3 className="text-[17px] font-bold tracking-[-0.01em] text-gray-900 mb-2 leading-[1.25]">
         {course.title}
       </h3>
-      <p className="text-sm text-gray-500 leading-relaxed mb-4 flex-grow">
+      <p className="text-[13px] text-[#6e6e73] leading-normal mb-4 flex-grow">
         {course.hookSentence}
       </p>
-      <div className="flex items-center justify-between text-xs text-gray-400 pt-3 border-t border-gray-100">
+      <div className="flex items-center justify-between text-xs text-[#86868b] pt-3 border-t border-[#f0f0f2]">
         <span className="inline-flex items-center gap-1.5">
           <Clock className="w-3 h-3" /> {course.duration}
         </span>
         <span className="inline-flex items-center gap-1.5">
           <Layers className="w-3 h-3" /> {course.chapterCount} chapters
         </span>
-        <span className="inline-flex items-center gap-1 text-primary-600 font-semibold group-hover:translate-x-1 transition-transform">
-          View <ArrowRight className="w-3 h-3" />
-        </span>
+        <span className="text-primary-600 font-semibold">View ›</span>
       </div>
     </Link>
   )

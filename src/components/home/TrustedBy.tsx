@@ -2,7 +2,12 @@
 
 import Image from 'next/image'
 import { siteConfig, BLOB_URL } from '@/lib/site-config'
-import { motion } from 'framer-motion'
+
+/**
+ * "Teams we've trained at" — a quiet grayscale logo band with a hairline
+ * bottom border, per the Home prototype's Trusted-by section. The real
+ * company logo assets are kept (the prototype fell back to text).
+ */
 
 const companyLogos: Record<string, { src: string; width: number; height: number }> = {
   'Microsoft': { src: `${BLOB_URL}/logos/companies/microsoft.svg`, width: 160, height: 35 },
@@ -19,44 +24,33 @@ const companyLogos: Record<string, { src: string; width: number; height: number 
 
 export default function TrustedBy() {
   return (
-    <section className="py-14 relative">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <p className="text-center text-xs font-semibold text-gray-400 mb-10 uppercase tracking-[0.2em]">
-          Delivered training to professionals at
-        </p>
-        <div className="flex flex-wrap justify-center items-center gap-8 lg:gap-14">
-          {siteConfig.trustedBy.map((company, index) => {
+    <section className="bg-white py-[72px] px-8 border-b border-[#e8e8ed]">
+      <div className="max-w-[1080px] mx-auto text-center">
+        <div className="kicker !tracking-[0.14em] mb-6">Teams we&rsquo;ve trained at</div>
+        <div className="flex flex-wrap justify-center items-center gap-y-3.5 gap-x-9">
+          {siteConfig.trustedBy.map(company => {
             const logo = companyLogos[company]
             if (logo) {
               return (
-                <motion.div
+                <div
                   key={company}
-                  className="opacity-40 hover:opacity-80 transition-all duration-500"
                   title={company}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 0.4, y: 0 }}
-                  whileHover={{ opacity: 0.8, scale: 1.08 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05, duration: 0.5 }}
+                  className="opacity-40 hover:opacity-80 transition-opacity duration-300"
                 >
                   <Image
                     src={logo.src}
                     alt={`${company} logo`}
                     width={logo.width}
                     height={logo.height}
-                    className="object-contain grayscale hover:grayscale-0 transition-all duration-500"
+                    className="object-contain grayscale"
                   />
-                </motion.div>
+                </div>
               )
             }
             return (
-              <div
-                key={company}
-                className="flex items-center justify-center h-10 px-6 rounded-xl glass-card"
-                title={company}
-              >
-                <span className="text-lg font-semibold text-gray-500">{company}</span>
-              </div>
+              <span key={company} title={company} className="text-[17px] font-semibold text-[#a1a1a6]">
+                {company}
+              </span>
             )
           })}
         </div>

@@ -15,7 +15,7 @@ export default function PortalBreadcrumb() {
   return (
     <nav
       aria-label="Breadcrumb"
-      className="sticky top-[var(--portal-topbar-h)] z-30 bg-white/95 backdrop-blur-sm border-b border-gray-200/70"
+      className="sticky top-[var(--portal-topbar-h)] lg:top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-gray-200/70"
     >
       <ol className="flex items-center gap-1 px-4 sm:px-6 lg:px-8 py-2 text-xs text-gray-500 overflow-x-auto">
         {trail.map((b, i) => {

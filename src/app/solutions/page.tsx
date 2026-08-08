@@ -1,7 +1,5 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, Rocket, Building2, Compass, GraduationCap, Lightbulb, Hammer, RefreshCcw } from 'lucide-react'
-import ThreePledges from '@/components/ThreePledges'
 import { BreadcrumbJsonLd } from '@/components/JsonLd'
 
 export const metadata: Metadata = {
@@ -23,140 +21,222 @@ export const metadata: Metadata = {
   },
 }
 
-const phases = [
-  { name: 'Diagnose', icon: Compass, copy: 'Establish the truth about where you stand.' },
-  { name: 'Train', icon: GraduationCap, copy: 'Build the people layer before the tech layer.' },
-  { name: 'Innovate', icon: Lightbulb, copy: 'Pick the right PoCs and prove value early.' },
-  { name: 'Build', icon: Hammer, copy: 'Ship to production in your environment.' },
-  { name: 'Sustain', icon: RefreshCcw, copy: 'We stay — governance, drift, refresh.' },
+/**
+ * The Services page from the redesign handoff: display hero, SMB/Enterprise
+ * price cards, the four service-area rows, custom builds, and the dark PoC
+ * band. Deep links into the SMB/Enterprise package pages are kept alongside
+ * the prototype's contact links.
+ */
+
+const areas = [
+  {
+    phase: 'Phase 1 — Diagnose',
+    title: 'AI Strategy & Consulting',
+    href: '/services/ai-strategy',
+    description:
+      'Readiness assessment, use-case backlog, ROI modeling, governance charter, and a 12-month roadmap your board can approve.',
+  },
+  {
+    phase: 'Phase 2 — Train',
+    title: 'Corporate Training',
+    href: '/services/training',
+    description:
+      'Executive bootcamps and technical workshops on Azure AI, Copilot, and open-source stacks — custom curricula on your data.',
+  },
+  {
+    phase: 'Phase 3 — Innovate',
+    title: 'PoC Development',
+    href: '/services/poc-development',
+    description:
+      'Production-grade prototypes for document intelligence, chat, and automation. Fixed scope, fixed price, real evaluation criteria.',
+  },
+  {
+    phase: 'Phase 4 — Build',
+    title: 'Agentic AI Solutions',
+    href: '/services/agentic-ai',
+    description:
+      'Multi-agent orchestration with LangGraph, CrewAI, Semantic Kernel, and Copilot Studio — deployed, monitored, and handed over.',
+  },
+]
+
+const customs = [
+  { title: 'Custom ML for credit scoring', detail: 'Built on your data, deployed in your Azure ML workspace, with explainability dashboards and model card.' },
+  { title: 'Custom analytics platform', detail: 'Semantic layer, dashboards, and natural-language query over your warehouse — Snowflake, Fabric, or Synapse.' },
+  { title: 'Domain forecast engines', detail: 'Cement output, hospitality occupancy, hospital admissions — with what-if scenario planning.' },
+  { title: 'Data pipeline + AI layer', detail: 'End-to-end MLOps: ingestion, cleaning, feature store, model serving, monitoring.' },
+  { title: 'Custom multi-agent systems', detail: 'Beyond Copilot Studio — LangGraph, Semantic Kernel, or CrewAI with custom tools and memory.' },
+  { title: 'Sovereign / on-prem AI', detail: 'For regulated clients who can’t use public cloud LLMs. Private models, air-gapped option.' },
 ]
 
 export default function SolutionsHubPage() {
   return (
     <>
       <BreadcrumbJsonLd items={[{ name: 'Home', url: 'https://gennoor.com' }, { name: 'Solutions', url: 'https://gennoor.com/solutions' }]} />
-      <div className="min-h-screen bg-white">
-        {/* Hero */}
-        <section className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-white" />
-          <div className="absolute inset-0" />
-          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
-          <div className="relative max-w-6xl mx-auto px-6 py-10 lg:py-16 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50/80 border border-primary-100/60 text-xs tracking-widest font-semibold text-primary-600 mb-6">
-              SOLUTIONS
-            </div>
-            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 leading-tight tracking-tight mb-6">
-              Two tracks. One methodology.
-              <span className="block gradient-text mt-2">Built for whoever you are.</span>
-            </h1>
-            <p className="text-lg md:text-xl text-gray-500 max-w-3xl mx-auto">
-              We don’t make SMBs feel priced out. We don’t make enterprises feel under-served.
-              The same five-phase framework — <span className="text-primary-600 font-semibold">Diagnose. Train. Innovate. Build. Sustain.</span> —
-              runs both motions, just sized differently.
-            </p>
-          </div>
-        </section>
-
-        {/* Two-track selector */}
-        <section className="max-w-6xl mx-auto px-6 py-10 lg:py-16">
-          <div className="grid md:grid-cols-2 gap-6">
-            <Link
-              href="/solutions/for-smb"
-              className="group relative bg-white rounded-2xl border border-gray-200/70 shadow-sm hover:border-primary-300 hover:shadow-md transition-all duration-300 p-8 md:p-10 flex flex-col"
-            >
-              <div className="w-14 h-14 rounded-2xl bg-primary-100 text-primary-700 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <Rocket className="w-7 h-7" />
-              </div>
-              <div className="text-xs uppercase tracking-widest text-primary-700 font-bold mb-2">For SMB</div>
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">10–250 person businesses</h2>
-              <p className="text-gray-600 leading-relaxed mb-6">
-                Productized packages from $3k. Fixed price. Fixed scope. Code transferred on day one.
-                Ship your first AI pilot in 6 weeks.
-              </p>
-              <ul className="space-y-2 text-sm text-gray-700 mb-8">
-                <li>· AI Readiness Kit · Copilot Adoption Sprint · 6-Week AI Pilot</li>
-                <li>· Compliance Foundation · Ongoing Fractional Capacity</li>
-              </ul>
-              <div className="mt-auto inline-flex items-center gap-1 text-primary-700 font-semibold group-hover:gap-2 transition-all">
-                See the 5 SMB packages <ArrowRight className="w-4 h-4" />
-              </div>
+      <main className="min-h-screen bg-white">
+        {/* ===== Hero ===== */}
+        <section className="px-8 pt-20 lg:pt-[110px] pb-[72px] text-center">
+          <div className="kicker mb-5">Build &amp; Consulting</div>
+          <h1 className="text-[clamp(40px,4.8vw,64px)] leading-[1.06] tracking-[-0.03em] font-bold text-gray-900 max-w-[760px] mx-auto">
+            Working software, not slideware.
+          </h1>
+          <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.45] text-[#6e6e73] max-w-[620px] mx-auto mt-[22px]">
+            Strategy, PoCs, and production agents — fixed scope, fixed price,
+            senior engineers on every engagement.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-5 sm:gap-[22px] justify-center items-center mt-8">
+            <Link href="/contact" className="pill-primary-sm">
+              Talk to our team
             </Link>
-
-            <Link
-              href="/solutions/for-enterprise"
-              className="group relative bg-white rounded-2xl border border-gray-200/70 shadow-sm hover:border-gray-300 hover:shadow-md transition-all duration-300 p-8 md:p-10 flex flex-col"
-            >
-              <div className="w-14 h-14 rounded-2xl bg-gray-100 text-gray-700 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <Building2 className="w-7 h-7" />
-              </div>
-              <div className="text-xs uppercase tracking-widest text-gray-700 font-bold mb-2">For Enterprise</div>
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">250+ person organizations</h2>
-              <p className="text-gray-600 leading-relaxed mb-6">
-                Custom engagement models — diagnostics, multi-PoC programs, agent factories, and
-                multi-year sustainment retainers. Senior, Microsoft-certified, boutique-fast.
-              </p>
-              <ul className="space-y-2 text-sm text-gray-700 mb-8">
-                <li>· Readiness Diagnostic · PoC Programs · Agent Factory</li>
-                <li>· Center of Excellence · Sustainment Retainers · Sovereign Deployments</li>
-              </ul>
-              <div className="mt-auto inline-flex items-center gap-1 text-gray-700 font-semibold group-hover:gap-2 transition-all">
-                See the 6 enterprise models <ArrowRight className="w-4 h-4" />
-              </div>
+            <Link href="/resources/pocs" className="text-[15px] font-medium text-primary-600 hover:text-[#0077ed]">
+              Browse the PoC catalog ›
             </Link>
           </div>
         </section>
 
-        {/* Phases mini */}
-        <section className="bg-primary-50 border-y border-gray-200">
-          <div className="max-w-6xl mx-auto px-6 py-10 lg:py-16">
-            <div className="text-center mb-12">
-              <div className="text-xs uppercase tracking-widest text-primary-700 font-bold mb-2">The Gennoor Way</div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">One journey, five phases</h2>
-              <p className="text-gray-600 mt-3 max-w-2xl mx-auto">
-                Both tracks share the same backbone — you can enter at any phase, and you can stop at any phase.
+        {/* ===== Two tracks ===== */}
+        <section className="bg-[#f5f5f7] px-8 py-20">
+          <div className="max-w-[1080px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {/* SMB — white card */}
+            <div className="bg-white rounded-3xl px-8 py-10 lg:px-10 lg:py-11 flex flex-col">
+              <div className="kicker !tracking-[0.14em]">For SMB</div>
+              <h2 className="text-[26px] font-bold tracking-[-0.02em] leading-[1.15] text-gray-900 mt-3 mb-2.5">
+                Productized. Priced. Six weeks.
+              </h2>
+              <p className="text-[15px] text-[#6e6e73] leading-normal mb-6">
+                Start small, own everything. Built in your environment, handed to
+                your team.
               </p>
-            </div>
-            <div className="grid md:grid-cols-5 gap-4">
-              {phases.map(p => (
-                <div key={p.name} className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-5 text-center hover:shadow-md transition-all">
-                  <div className="w-10 h-10 mx-auto mb-3 rounded-lg bg-primary-100 text-primary-700 flex items-center justify-center">
-                    <p.icon className="w-5 h-5" />
+              <div className="flex flex-col text-sm">
+                {[
+                  ['AI Readiness Kit', 'from $3k · 1 week'],
+                  ['Copilot Kickstart', 'from $10k · 4 weeks'],
+                  ['Single Agent Build', 'from $25k · 6 weeks'],
+                ].map(([name, price], i, arr) => (
+                  <div
+                    key={name}
+                    className={`flex justify-between py-3 border-t border-[#f0f0f2] ${
+                      i === arr.length - 1 ? 'border-b' : ''
+                    }`}
+                  >
+                    <span className="font-semibold text-gray-900">{name}</span>
+                    <span className="text-[#6e6e73]">{price}</span>
                   </div>
-                  <div className="font-bold text-gray-900 mb-1">{p.name}</div>
-                  <p className="text-xs text-gray-600 leading-relaxed">{p.copy}</p>
+                ))}
+              </div>
+              <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
+                <Link href="/contact" className="text-[15px] font-medium text-primary-600 hover:text-[#0077ed]">
+                  Start an SMB engagement ›
+                </Link>
+                <Link href="/solutions/for-smb" className="text-[13px] font-medium text-[#6e6e73] hover:text-gray-900">
+                  See all 5 SMB packages ›
+                </Link>
+              </div>
+            </div>
+
+            {/* Enterprise — dark card */}
+            <div className="bg-[#1d1d1f] rounded-3xl px-8 py-10 lg:px-10 lg:py-11 flex flex-col">
+              <div className="kicker !tracking-[0.14em]">For Enterprise</div>
+              <h2 className="text-[26px] font-bold tracking-[-0.02em] leading-[1.15] text-white mt-3 mb-2.5">
+                Governed. Sponsored. Procurement-ready.
+              </h2>
+              <p className="text-[15px] text-[#a1a1a6] leading-normal mb-6">
+                Multi-quarter programs with executive sponsorship and senior
+                delivery in your region.
+              </p>
+              <div className="flex flex-col text-sm">
+                {[
+                  ['Strategic Diagnostic', '4 weeks'],
+                  ['Executive & Functional Bootcamps', '2–8 weeks'],
+                  ['Transformation Programs', '9–20 weeks'],
+                ].map(([name, dur], i, arr) => (
+                  <div
+                    key={name}
+                    className={`flex justify-between py-3 border-t border-[#3a3a3c] ${
+                      i === arr.length - 1 ? 'border-b' : ''
+                    }`}
+                  >
+                    <span className="font-semibold text-[#f5f5f7]">{name}</span>
+                    <span className="text-[#86868b]">{dur}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
+                <Link href="/contact" className="text-[15px] font-medium text-[#2997ff] hover:text-[#52a8ff]">
+                  Start an enterprise program ›
+                </Link>
+                <Link href="/solutions/for-enterprise" className="text-[13px] font-medium text-[#86868b] hover:text-[#f5f5f7]">
+                  See all 6 enterprise models ›
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ===== Service areas ===== */}
+        <section className="px-8 py-16 lg:py-24">
+          <div className="max-w-[1080px] mx-auto">
+            <h2 className="display-section text-center mb-3">Four ways we work.</h2>
+            <p className="text-[18px] text-[#6e6e73] text-center mb-14">
+              Every engagement maps to a phase of the Gennoor Way.
+            </p>
+            <div className="flex flex-col">
+              {areas.map(area => (
+                <div
+                  key={area.title}
+                  className="grid grid-cols-1 md:grid-cols-[200px_1fr_auto] gap-4 md:gap-8 md:items-center px-2 py-8 border-t border-[#e8e8ed]"
+                >
+                  <div>
+                    <div className="text-xs font-semibold text-primary-600 mb-1">{area.phase}</div>
+                    <Link
+                      href={area.href}
+                      className="text-[20px] font-bold tracking-[-0.01em] text-gray-900 hover:text-primary-600 transition-colors"
+                    >
+                      {area.title}
+                    </Link>
+                  </div>
+                  <p className="text-[14.5px] leading-[1.55] text-[#6e6e73]">{area.description}</p>
+                  <Link
+                    href="/contact"
+                    className="text-sm font-semibold text-primary-600 hover:text-[#0077ed] whitespace-nowrap"
+                  >
+                    Enquire ›
+                  </Link>
                 </div>
               ))}
             </div>
-            <div className="text-center mt-10">
-              <Link
-                href="/the-gennoor-way"
-                className="inline-flex items-center gap-2 text-primary-700 font-semibold hover:text-primary-800"
-              >
-                Read the full methodology <ArrowRight className="w-4 h-4" />
-              </Link>
+          </div>
+        </section>
+
+        {/* ===== Custom builds ===== */}
+        <section className="bg-[#f5f5f7] px-8 py-16 lg:py-24">
+          <div className="max-w-[1080px] mx-auto">
+            <h2 className="display-section text-center mb-3">Beyond the catalog.</h2>
+            <p className="text-[18px] text-[#6e6e73] text-center mb-12">
+              Custom builds we&rsquo;ve scoped and shipped.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {customs.map(c => (
+                <div key={c.title} className="bg-white border border-[#e8e8ed] rounded-[18px] px-6 py-[26px]">
+                  <div className="text-[15.5px] font-bold leading-[1.3] text-gray-900 mb-2">{c.title}</div>
+                  <div className="text-[13px] leading-[1.55] text-[#6e6e73]">{c.detail}</div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
-        <ThreePledges />
-
-        {/* Final CTA */}
-        <section className="max-w-5xl mx-auto px-6 py-10 lg:py-16 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Not sure which track fits?
-          </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto mb-8">
-            Book a 30-minute call. We’ll listen, ask three honest questions, and tell you which side of the door to walk through —
-            even if the answer is “neither, you need someone else.”
+        {/* ===== PoC band ===== */}
+        <section className="bg-[#1d1d1f] px-8 py-[90px] text-center">
+          <h2 className="display-section !text-white">18 PoCs. Scoped and priced.</h2>
+          <p className="text-[18px] text-[#a1a1a6] mt-3 mb-7 max-w-[520px] mx-auto">
+            Documents, agents, forecasting, industry builds — each with a
+            timeline and a price band.
           </p>
-          <Link
-            href="/contact?intent=diagnostic"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-primary-600 text-white font-semibold rounded-xl transition-all duration-300"
-          >
-            Book a 30-minute call <ArrowRight className="w-5 h-5" />
+          <Link href="/resources/pocs" className="pill-primary-sm">
+            Browse the catalog
           </Link>
         </section>
-      </div>
+      </main>
     </>
   )
 }
