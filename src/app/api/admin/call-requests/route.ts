@@ -10,6 +10,7 @@ import {
   type CreateAppointmentPayload,
 } from '@/lib/microsoft-graph'
 import { IST, istInstant, leadTimeZone, formatInZone } from '@/lib/crm/timezones'
+import { formatCstTime } from '@/lib/format-time'
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -26,9 +27,12 @@ function formatWhenIST(date: string, time: string, durationMinutes: number) {
     h = h % 12 || 12
     return `${h}:${String(m).padStart(2, '0')} ${ampm}`
   }
+  // The same moment in US Central, for readers on that side of the world.
+  const realStart = istInstant(date, time)
+  const realEnd = new Date(realStart.getTime() + durationMinutes * 60000)
   return {
     dateLabel: `${WEEKDAYS[start.getUTCDay()]}, ${start.getUTCDate()} ${MONTHS[start.getUTCMonth()]} ${start.getUTCFullYear()}`,
-    timeLabel: `${clock(start)} – ${clock(end)} (IST)`,
+    timeLabel: `${clock(start)} – ${clock(end)} IST (${formatCstTime(realStart)} – ${formatCstTime(realEnd)})`,
     durationLabel: durationMinutes >= 60 ? `${Math.floor(durationMinutes / 60)}h ${durationMinutes % 60 ? (durationMinutes % 60) + 'm' : ''}`.trim() : `${durationMinutes} minutes`,
   }
 }

@@ -4,6 +4,7 @@ import { readLogs, readLogsBetween } from '@/lib/bot/store'
 import { aiConfigured, chatCompletion } from '@/lib/crm/ai'
 import { sendEmail } from '@/lib/email-service'
 import { emailShell, markdownToEmailHtml } from '@/lib/crm/email-theme'
+import { formatIstCst } from '@/lib/format-time'
 
 const FROM = process.env.EMAIL_FROM_INFO || 'info@gennoor.com'
 
@@ -109,10 +110,10 @@ Business tone, concise, numbers first, no fluff. Only facts from the logs — ne
       if (!report || !Array.isArray(recipients) || recipients.length === 0) {
         return NextResponse.json({ error: 'report and recipients required' }, { status: 400 })
       }
-      const sentAt = new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kolkata' })
+      const sentAt = formatIstCst(new Date())
       const html = emailShell(`
         <p style="color:#64748b;font-size:13px;margin:0 0 16px;border-left:3px solid #2563EB;padding-left:10px">
-          ${rangeLabel} GennoorCare business report · forwarded by <strong>${user.email.split('@')[0]}</strong> · ${sentAt} IST
+          ${rangeLabel} GennoorCare business report · forwarded by <strong>${user.email.split('@')[0]}</strong> · ${sentAt}
         </p>
         ${markdownToEmailHtml(String(report))}
         <p style="margin:20px 0 0"><a href="https://www.gennoor.com/crm/botlog" style="display:inline-block;background:#2563EB;color:#ffffff;text-decoration:none;padding:10px 22px;border-radius:8px;font-size:14px">Open in CRM →</a></p>`,

@@ -4,6 +4,7 @@ import { trackEvent, trackException, initAppInsights } from '@/lib/analytics'
 import { saveEnquiry } from '@/lib/azure-storage'
 import { rateLimit, clientIp } from '@/lib/rate-limit'
 import { escapeHtml } from '@/lib/escape-html'
+import { formatIstCst } from '@/lib/format-time'
 
 export async function POST(request: Request) {
   try {
@@ -173,7 +174,7 @@ export async function POST(request: Request) {
             <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Target Date</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${escapeHtml(targetDate)}</td></tr>
             <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Training Mode</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${escapeHtml(trainingMode)}</td></tr>
             <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Message</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${escapeHtml(message) || 'N/A'}</td></tr>
-            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Timestamp</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${escapeHtml(timestamp)}</td></tr>
+            <tr><td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 600;">Submitted</td><td style="padding: 8px; border: 1px solid #e2e8f0;">${escapeHtml(formatIstCst(timestamp) || formatIstCst(new Date()))}</td></tr>
           </table>
 
           <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin-top: 20px;">

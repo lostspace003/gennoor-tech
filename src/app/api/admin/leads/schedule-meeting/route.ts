@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireCrmUser, canWorkLead, CrmSessionUser } from '@/lib/crm/access'
 import { mutateLeads, getLead, getLeads, touch } from '@/lib/crm/store'
 import { graphConfigured, createTeamsMeeting, listUpcomingMeetings, getMeeting, updateMeeting, cancelMeeting } from '@/lib/crm/graph'
+import { formatIstCstFull } from '@/lib/format-time'
 
 // GET → upcoming meetings (the scheduler view)
 export async function GET() {
@@ -70,7 +71,7 @@ export async function POST(req: NextRequest) {
         at: new Date().toISOString(),
         by: user.email,
         type: 'followup',
-        description: `Teams meeting scheduled: ${subject} (${new Date(start).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST)`,
+        description: `Teams meeting scheduled: ${subject} (${formatIstCstFull(start)})`,
       })
     })
 
@@ -126,7 +127,7 @@ export async function PATCH(req: NextRequest) {
     if ('error' in authz) return NextResponse.json({ error: authz.error }, { status: authz.status })
 
     await updateMeeting(meetingId, { start, durationMinutes: Number(durationMinutes) || 30, subject, comment })
-    const when = start ? ` to ${new Date(start).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST` : ''
+    const when = start ? ` to ${formatIstCstFull(start)}` : ''
     await logOnLeads(authz.matched.map((l) => l.id), user.email, `Meeting rescheduled${when}: ${authz.meeting.subject}${comment ? ` — "${String(comment).slice(0, 140)}"` : ''}`)
     return NextResponse.json({ success: true })
   } catch (error) {

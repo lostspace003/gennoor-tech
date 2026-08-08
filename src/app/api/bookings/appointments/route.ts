@@ -11,6 +11,7 @@ import { sendEmail } from '@/lib/email-service'
 import { trackEvent, initAppInsights } from '@/lib/analytics'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 import { leadTimeZone, formatInZone } from '@/lib/crm/timezones'
+import { IST_ZONE, CST_ZONE, formatCstTime, formatIstCstFull } from '@/lib/format-time'
 
 // User-supplied values (booking form fields, admin free text) get interpolated
 // into email HTML — escape them so markup/scripts can't be injected.
@@ -21,23 +22,21 @@ const esc = (s: unknown) =>
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
 
-const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-
 // Human-friendly date/time for emails. date = 'YYYY-MM-DD', time = 'HH:MM' (UTC).
+// Slots are STORED in UTC but never shown that way: the date is the IST
+// calendar date, and the time carries both IST and US Central.
 function formatWhen(date: string, time: string, durationMinutes: number) {
   const start = new Date(`${date}T${time}:00Z`)
   const end = new Date(start.getTime() + durationMinutes * 60000)
-  const clock = (d: Date) => {
-    let h = d.getUTCHours()
-    const m = d.getUTCMinutes()
-    const ampm = h < 12 ? 'AM' : 'PM'
-    h = h % 12 || 12
-    return `${h}:${String(m).padStart(2, '0')} ${ampm}`
-  }
+  const clock = (d: Date, timeZone: string, locale: string) =>
+    d.toLocaleString(locale, { hour: 'numeric', minute: '2-digit', hour12: true, timeZone })
+  const istRange = `${clock(start, IST_ZONE, 'en-IN')} – ${clock(end, IST_ZONE, 'en-IN')} IST`
+  const cstRange = `${clock(start, CST_ZONE, 'en-US')} – ${formatCstTime(end)}`
   return {
-    dateLabel: `${WEEKDAYS[start.getUTCDay()]}, ${start.getUTCDate()} ${MONTHS[start.getUTCMonth()]} ${start.getUTCFullYear()}`,
-    timeLabel: `${clock(start)} – ${clock(end)} (UTC)`,
+    dateLabel: start.toLocaleDateString('en-IN', {
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: IST_ZONE,
+    }),
+    timeLabel: `${istRange} (${cstRange})`,
     durationLabel: durationMinutes >= 60 ? `${Math.floor(durationMinutes / 60)}h ${durationMinutes % 60 ? (durationMinutes % 60) + 'm' : ''}`.trim() : `${durationMinutes} minutes`,
   }
 }
@@ -260,7 +259,7 @@ export async function PATCH(request: NextRequest) {
                 Hi <strong>${esc(booking.name)}</strong>,
               </p>
               <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
-                Unfortunately, we&rsquo;re unable to confirm your booking for <strong>${esc(booking.serviceName)}</strong> on ${booking.date} at ${booking.startTime} UTC.
+                Unfortunately, we&rsquo;re unable to confirm your booking for <strong>${esc(booking.serviceName)}</strong> on ${esc(formatIstCstFull(`${booking.date}T${booking.startTime}:00Z`))}.
               </p>
               ${adminMessage ? `
                 <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:12px 16px;margin:0 0 16px">
@@ -305,7 +304,7 @@ export async function PATCH(request: NextRequest) {
                 Hi <strong>${esc(booking.name)}</strong>,
               </p>
               <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
-                We&rsquo;d love to meet, but the requested time for <strong>${esc(booking.serviceName)}</strong> on ${booking.date} at ${booking.startTime} UTC doesn&rsquo;t work for us.
+                We&rsquo;d love to meet, but the requested time for <strong>${esc(booking.serviceName)}</strong> on ${esc(formatIstCstFull(`${booking.date}T${booking.startTime}:00Z`))} doesn&rsquo;t work for us.
               </p>
               ${adminMessage ? `
                 <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;margin:0 0 16px">
@@ -357,7 +356,7 @@ export async function PATCH(request: NextRequest) {
                 Hi <strong>${esc(booking.name)}</strong>,
               </p>
               <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
-                Your booking for <strong>${esc(booking.serviceName)}</strong> on ${booking.date} at ${booking.startTime} UTC has been cancelled.
+                Your booking for <strong>${esc(booking.serviceName)}</strong> on ${esc(formatIstCstFull(`${booking.date}T${booking.startTime}:00Z`))} has been cancelled.
               </p>
               ${adminMessage ? `
                 <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px 16px;margin:0 0 16px">
@@ -469,9 +468,8 @@ export async function PATCH(request: NextRequest) {
                 <p style="margin:0 0 6px;font-size:14px;color:#111827"><strong>${service.displayName}</strong></p>
                 ${localWhen
                   ? `<p style="margin:0 0 4px;font-size:13px;color:#6b7280">New Time: <strong style="color:#374151">${esc(localWhen)}</strong> (your local time)</p>
-                <p style="margin:0 0 4px;font-size:12px;color:#9ca3af">${newDate}, ${newStartTime} UTC</p>`
-                  : `<p style="margin:0 0 4px;font-size:13px;color:#6b7280">New Date: <strong style="color:#374151">${newDate}</strong></p>
-                <p style="margin:0 0 4px;font-size:13px;color:#6b7280">New Time: <strong style="color:#374151">${newStartTime} UTC</strong></p>`}
+                <p style="margin:0 0 4px;font-size:12px;color:#9ca3af">${esc(formatIstCstFull(`${newDate}T${newStartTime}:00Z`))}</p>`
+                  : `<p style="margin:0 0 4px;font-size:13px;color:#6b7280">New Time: <strong style="color:#374151">${esc(formatIstCstFull(`${newDate}T${newStartTime}:00Z`))}</strong></p>`}
                 <p style="margin:0;font-size:13px;color:#6b7280">With: <strong style="color:#374151">Jalal Khan</strong></p>
               </div>
               ${result.joinWebUrl ? `

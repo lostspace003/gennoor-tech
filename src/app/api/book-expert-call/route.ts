@@ -4,6 +4,7 @@ import { trackEvent, trackException, initAppInsights } from '@/lib/analytics'
 import { saveEnquiry } from '@/lib/azure-storage'
 import { rateLimit, clientIp } from '@/lib/rate-limit'
 import { escapeHtml } from '@/lib/escape-html'
+import { formatIstCst } from '@/lib/format-time'
 
 export async function POST(request: Request) {
   try {
@@ -207,7 +208,7 @@ export async function POST(request: Request) {
             </tr>
             <tr>
               <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: 600;">Submitted</td>
-              <td style="padding: 10px; border: 1px solid #e2e8f0;">${escapeHtml(timestamp)}</td>
+              <td style="padding: 10px; border: 1px solid #e2e8f0;">${escapeHtml(formatIstCst(timestamp) || formatIstCst(new Date()))}</td>
             </tr>
           </table>
 

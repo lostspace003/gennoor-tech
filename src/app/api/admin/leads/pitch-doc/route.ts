@@ -5,6 +5,7 @@ import { aiConfigured, generatePitchDoc } from '@/lib/crm/ai'
 import { buildPitchDocx, buildPitchPdf, pitchDocName } from '@/lib/crm/pitch-docx'
 import { uploadDocument } from '@/lib/crm/documents'
 import { PitchVersion } from '@/lib/crm/types'
+import { formatIstCst } from '@/lib/format-time'
 
 // One-page client-facing pitch document, version-controlled per lead.
 // POST {action:'generate'}                 → AI writes v1 (or the next version) from research + copilot chat
@@ -16,7 +17,7 @@ import { PitchVersion } from '@/lib/crm/types'
 // to emails — attaching stays a deliberate choice in the composer.
 
 const footerLine = (v: number, by: string, at: string) =>
-  `Gennoor Tech · www.gennoor.com · v${v} · prepared by ${by.split('@')[0]} · ${new Date(at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kolkata' })} IST`
+  `Gennoor Tech · www.gennoor.com · v${v} · prepared by ${by.split('@')[0]} · ${formatIstCst(at)}`
 
 async function saveToLibrary(leadName: string, company: string, ver: PitchVersion): Promise<string | null> {
   try {

@@ -5,6 +5,15 @@ import { savePendingBooking } from '@/lib/azure-storage'
 import { sendEmail } from '@/lib/email-service'
 import { rateLimit, clientIp } from '@/lib/rate-limit'
 import { escapeHtml } from '@/lib/escape-html'
+import { formatIstCstFull } from '@/lib/format-time'
+
+/**
+ * Slots are stored as UTC wall-clock (`date` + `startTime`). Emails must never
+ * show that raw — readers get IST with the US Central equivalent.
+ */
+function slotStamp(date: string, time: string): string {
+  return formatIstCstFull(`${date}T${time}:00Z`) || `${date} ${time} UTC`
+}
 
 export async function POST(request: Request) {
   try {
@@ -66,8 +75,7 @@ export async function POST(request: Request) {
             </p>
             <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:16px;margin:0 0 16px">
               <p style="margin:0 0 6px;font-size:14px;color:#6b7280"><strong style="color:#111827">${service.displayName}</strong></p>
-              <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Date: <strong style="color:#374151">${escapeHtml(date)}</strong></p>
-              <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Time: <strong style="color:#374151">${escapeHtml(startTime)} UTC</strong></p>
+              <p style="margin:0 0 4px;font-size:13px;color:#6b7280">When: <strong style="color:#374151">${escapeHtml(slotStamp(date, startTime))}</strong></p>
               <p style="margin:0;font-size:13px;color:#6b7280">With: <strong style="color:#374151">Jalal Khan</strong></p>
             </div>
             <p style="color:#6b7280;font-size:13px;line-height:1.5;margin:0">
@@ -98,8 +106,8 @@ export async function POST(request: Request) {
               <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Customer: <strong style="color:#374151">${escapeHtml(name)}</strong></p>
               <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Email: <strong style="color:#374151">${escapeHtml(email)}</strong></p>
               ${whatsapp ? `<p style="margin:0 0 4px;font-size:13px;color:#6b7280">WhatsApp: <strong style="color:#374151">${escapeHtml(whatsapp)}</strong></p>` : ''}
-              <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Date: <strong style="color:#374151">${escapeHtml(date)}</strong></p>
-              <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Time: <strong style="color:#374151">${escapeHtml(startTime)} – ${escapeHtml(endTime)} UTC</strong></p>
+              <p style="margin:0 0 4px;font-size:13px;color:#6b7280">When: <strong style="color:#374151">${escapeHtml(slotStamp(date, startTime))}</strong></p>
+              <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Ends: <strong style="color:#374151">${escapeHtml(slotStamp(date, endTime || startTime))}</strong></p>
               ${topic ? `<p style="margin:0;font-size:13px;color:#6b7280">Topic: <strong style="color:#374151">${escapeHtml(topic)}</strong></p>` : ''}
             </div>
             <a href="${siteUrl}/admin" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600">

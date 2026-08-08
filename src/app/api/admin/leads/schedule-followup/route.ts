@@ -7,6 +7,7 @@ import { escapeHtml } from '@/lib/escape-html'
 import { emailShell } from '@/lib/crm/email-theme'
 import { FollowUp } from '@/lib/crm/types'
 import { IST, istInstant, leadTimeZone, formatInZone } from '@/lib/crm/timezones'
+import { formatCstTime } from '@/lib/format-time'
 
 const ADMIN_CC = process.env.EMAIL_ADMIN || 'admin@gennoor.com'
 // Outreach ALWAYS goes out as sales@gennoor.com (user rule, 2026-07-28)
@@ -63,7 +64,9 @@ export async function POST(request: Request) {
     // instant correct even though the server runs in UTC. When we know the
     // lead's time zone (from country/city) the invite leads with THEIR time.
     const startAt = istInstant(date, time)
-    const istLabel = formatInZone(startAt, IST)
+    // IST always carries its US Central equivalent — the two zones the team
+    // and most of the audience actually work in.
+    const istLabel = `${formatInZone(startAt, IST)} (${formatCstTime(startAt)})`
     const leadTz = leadTimeZone(lead.country, lead.city)
     const leadLabel = leadTz && leadTz !== IST ? formatInZone(startAt, leadTz) : null
 

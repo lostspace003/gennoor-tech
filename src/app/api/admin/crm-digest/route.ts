@@ -5,6 +5,7 @@ import { sendEmail } from '@/lib/email-service'
 import { graphConfigured, listUpcomingMeetings } from '@/lib/crm/graph'
 import { emailShell } from '@/lib/crm/email-theme'
 import { CRM_USERS } from '@/lib/crm/access'
+import { formatIstCstTime } from '@/lib/format-time'
 
 const ADMIN = process.env.EMAIL_ADMIN || 'admin@gennoor.com'
 const FROM = process.env.EMAIL_FROM_INFO || 'info@gennoor.com'
@@ -84,7 +85,7 @@ export async function POST(req: NextRequest) {
         const meetings = (await listUpcomingMeetings(1)).slice(0, 6)
         if (meetings.length) {
           meetingsHtml = `<h3 style="margin:18px 0 6px;font-size:14px">Today's meetings</h3><ul style="margin:0;padding-left:18px">${meetings
-            .map((m) => `<li>${m.subject} — ${new Date(m.start).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kolkata' })} IST</li>`)
+            .map((m) => `<li>${m.subject} — ${formatIstCstTime(m.start)}</li>`)
             .join('')}</ul>`
         }
       } catch { /* calendar optional in digest */ }
