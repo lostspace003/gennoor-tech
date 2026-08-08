@@ -150,7 +150,7 @@ export async function PATCH(request: NextRequest) {
           <div style="font-family:'Segoe UI',Arial,sans-serif;background:#f1f5f9;padding:24px 12px;margin:0">
             <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e2e8f0">
               <!-- header -->
-              <div style="background:linear-gradient(135deg,#2563eb 0%,#7c3aed 100%);padding:34px 28px;text-align:center">
+              <div style="background: #0C1426;padding:34px 28px;text-align:center">
                 <div style="font-size:30px;line-height:1;margin-bottom:8px">✅</div>
                 <h1 style="color:#ffffff;margin:0;font-size:22px;font-weight:700">Your call is confirmed</h1>
                 <p style="color:#dbeafe;margin:6px 0 0;font-size:14px">Gennoor Tech · ${esc(service.displayName)}</p>

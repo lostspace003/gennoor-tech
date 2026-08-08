@@ -59,7 +59,7 @@ export async function POST(request: Request) {
       attachments: catalog ? [catalog] : undefined,
       html: `
         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); padding: 40px 30px; text-align: center; border-radius: 10px 10px 0 0;">
+          <div style="background: #0C1426; padding: 40px 30px; text-align: center; border-radius: 10px 10px 0 0;">
             <h1 style="color: white; margin: 0; font-size: 28px;">Gennoor Tech</h1>
             <p style="color: #bfdbfe; margin: 10px 0 0; font-size: 16px;">Enterprise AI Training & Solutions</p>
           </div>
@@ -78,27 +78,38 @@ export async function POST(request: Request) {
               </p>
             </div>
 
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 25px 0;">
-              <h3 style="color: #334155; margin-top: 0; font-size: 16px;">Your Request Summary:</h3>
-              <table style="width: 100%; border-collapse: collapse; color: #475569;">
-                <tr>
-                  <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; width: 40%;"><strong>Program:</strong></td>
-                  <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;">${escapeHtml(programTitle)}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;"><strong>Organization:</strong></td>
-                  <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;">${escapeHtml(company)}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;"><strong>Country:</strong></td>
-                  <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;">${escapeHtml(whatsappCountry)}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 8px 0;"><strong>Role:</strong></td>
-                  <td style="padding: 8px 0;">${escapeHtml(designation)}</td>
-                </tr>
-              </table>
-            </div>
+            ${
+              // Rows are omitted when empty — this block previously rendered
+              // "Organization:", "Country:" and "Role:" as three blank lines
+              // for anyone who did not supply them.
+              [
+                ['Program', programTitle],
+                ['Organization', company],
+                ['Country', whatsappCountry],
+                ['Role', designation],
+              ].filter(([, v]) => v).length
+                ? `<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 25px 0;">
+                     <h3 style="color: #334155; margin-top: 0; font-size: 16px;">Your request summary</h3>
+                     <table role="presentation" style="width: 100%; border-collapse: collapse; color: #475569;">
+                       ${[
+                         ['Program', programTitle],
+                         ['Organization', company],
+                         ['Country', whatsappCountry],
+                         ['Role', designation],
+                       ]
+                         .filter(([, v]) => v)
+                         .map(
+                           ([label, value]) =>
+                             `<tr>
+                                <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; width: 40%;"><strong>${label}:</strong></td>
+                                <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;">${escapeHtml(value)}</td>
+                              </tr>`
+                         )
+                         .join('')}
+                     </table>
+                   </div>`
+                : ''
+            }
 
             <h3 style="color: #1f2937; margin-top: 30px;">What to Expect:</h3>
             <ol style="color: #4b5563; line-height: 2.2; padding-left: 20px;">
@@ -118,7 +129,7 @@ export async function POST(request: Request) {
 
             <div style="border-top: 2px solid #e5e7eb; padding-top: 25px; margin-top: 35px;">
               <h4 style="color: #1f2937; margin-bottom: 15px;">Reach Us Anytime:</h4>
-              <table style="width: 100%; color: #4b5563; line-height: 2;">
+              <table role="presentation" style="width: 100%; color: #4b5563; line-height: 2;">
                 <tr>
                   <td style="padding: 3px 0;">Email:</td>
                   <td><a href="mailto:training@gennoor.com" style="color: #2563eb; text-decoration: none;">training@gennoor.com</a></td>
@@ -157,7 +168,7 @@ export async function POST(request: Request) {
         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px;">
           <h2 style="color: #1e293b; border-bottom: 2px solid #2563eb; padding-bottom: 10px;">New Expert Call Request</h2>
 
-          <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+          <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 16px 0;">
             <tr style="background: #f8fafc;">
               <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: 600; width: 35%;">Program</td>
               <td style="padding: 10px; border: 1px solid #e2e8f0;">${escapeHtml(programTitle)}</td>

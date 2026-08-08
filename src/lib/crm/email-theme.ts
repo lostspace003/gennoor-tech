@@ -6,7 +6,20 @@ import { escapeHtml } from '@/lib/escape-html'
 const LOGO = 'https://www.gennoor.com/logos/gennoor-tech-horizontal-dark-bright_760x260_email-header.png'
 const SITE = 'https://www.gennoor.com'
 
-export function emailShell(bodyHtml: string, opts?: { preheader?: string; senderEmail?: string; senderName?: string }): string {
+export function emailShell(
+  bodyHtml: string,
+  opts?: {
+    preheader?: string
+    senderEmail?: string
+    senderName?: string
+    /**
+     * Marketing mail only. Renders the unsubscribe line in the footer; pair it
+     * with `unsubscribeUrl` on sendEmail so the List-Unsubscribe headers match.
+     * Never set on transactional mail (OTP, certificates, booking confirmations).
+     */
+    unsubscribeUrl?: string
+  }
+): string {
   // Signature: no phone numbers — the sender's address plus admin@ (always)
   const sender = (opts?.senderEmail || '').trim().toLowerCase()
   const emails = [...new Set([sender, 'admin@gennoor.com'].filter(Boolean))]
@@ -27,6 +40,14 @@ export function emailShell(bodyHtml: string, opts?: { preheader?: string; sender
           ${emails.map((e) => `<a href="mailto:${e}" style="color:#93b4ff;text-decoration:none">${e}</a>`).join(' · ')} ·
           <a href="${SITE}" style="color:#93b4ff;text-decoration:none">www.gennoor.com</a>
         </p>
+        ${
+          opts?.unsubscribeUrl
+            ? `<p style="color:#64748b;margin:10px 0 0;font-size:11px;line-height:1.5">
+                 You are receiving this because you subscribed on gennoor.com.
+                 <a href="${opts.unsubscribeUrl}" style="color:#94a3b8;text-decoration:underline">Unsubscribe</a>
+               </p>`
+            : ''
+        }
       </div>
     </div>
   </div>`

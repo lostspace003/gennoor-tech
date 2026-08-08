@@ -30,16 +30,10 @@ export default function Footer() {
     e.preventDefault()
     if (!email) return
     try {
-      await fetch('/api/book-expert-call', {
+      await fetch('/api/newsletter-subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: 'Newsletter Subscriber',
-          email,
-          programTitle: 'Newsletter Subscription (Footer)',
-          message: 'Subscribed via site footer',
-          timestamp: new Date().toISOString(),
-        }),
+        body: JSON.stringify({ email, source: 'footer' }),
       })
     } catch { /* show success regardless — the OTP already verified the address */ }
     setSubscribed(true)

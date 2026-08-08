@@ -71,7 +71,7 @@ export async function POST(request: Request) {
       attachments: catalog ? [catalog] : undefined,
       html: `
         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); padding: 40px 30px; text-align: center; border-radius: 10px 10px 0 0;">
+          <div style="background: #0C1426; padding: 40px 30px; text-align: center; border-radius: 10px 10px 0 0;">
             <h1 style="color: white; margin: 0; font-size: 28px;">Gennoor Tech</h1>
             <p style="color: #c4b5fd; margin: 10px 0 0; font-size: 16px;">Certification Training Excellence</p>
           </div>
@@ -119,7 +119,7 @@ export async function POST(request: Request) {
 
             <div style="border-top: 2px solid #e5e7eb; padding-top: 25px; margin-top: 35px;">
               <h4 style="color: #1f2937; margin-bottom: 15px;">Get in Touch:</h4>
-              <table style="width: 100%; color: #4b5563; line-height: 2;">
+              <table role="presentation" style="width: 100%; color: #4b5563; line-height: 2;">
                 <tr>
                   <td>Email:</td>
                   <td><a href="mailto:training@gennoor.com" style="color: #2563eb;">training@gennoor.com</a></td>
@@ -158,7 +158,7 @@ export async function POST(request: Request) {
         <div style="font-family: 'Segoe UI', Arial, sans-serif;">
           <h2 style="color: #1e293b; border-bottom: 2px solid #7c3aed; padding-bottom: 10px;">New Certification Enquiry</h2>
 
-          <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+          <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 16px 0;">
             <tr style="background: ${leadScore === 'HOT' ? '#fee2e2' : leadScore === 'WARM' ? '#fef3c7' : '#f1f5f9'};">
               <td colspan="2" style="padding: 10px; border: 1px solid #e2e8f0; font-weight: 600;">Lead Score: ${leadScore}</td>
             </tr>

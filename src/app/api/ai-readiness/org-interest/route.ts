@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
 
     const orgHtml = `
       <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: linear-gradient(135deg, #059669 0%, #047857 100%); padding: 36px 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <div style="background: #0C1426; padding: 36px 30px; text-align: center; border-radius: 10px 10px 0 0;">
           <h1 style="color: #ffffff; margin: 0; font-size: 22px;">AI Readiness for Your Organization</h1>
           <p style="color: #d1fae5; margin: 8px 0 0; font-size: 14px;">Gennoor Tech — AI Transformation Partner</p>
         </div>
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
 
           <div style="text-align: center; margin: 28px 0;">
             <a href="${baseUrl}/resources/calendar?topic=ai-readiness&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}"
-               style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #059669 0%, #047857 100%); color: #ffffff; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 14px; margin: 6px;">
+               style="display: inline-block; padding: 14px 28px; background: #2563EB; color: #ffffff; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 14px; margin: 6px;">
               Yes, Interested!
             </a>
           </div>

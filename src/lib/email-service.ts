@@ -14,12 +14,75 @@ interface EmailConfig {
   fromName?: string
   subject: string
   html: string
+  /**
+   * Plain-text alternative. Omit and one is derived from `html` — every major
+   * spam filter penalises HTML-only mail, and text-only clients/screen readers
+   * need it. Pass explicitly when the derived version would read badly.
+   */
+  text?: string
+  /**
+   * One-click unsubscribe target for marketing mail. Adds List-Unsubscribe and
+   * List-Unsubscribe-Post headers (RFC 8058), which Gmail and Outlook expect
+   * from bulk senders. Never set this on transactional mail such as OTP codes
+   * or certificates — recipients must not be able to opt out of those.
+   */
+  unsubscribeUrl?: string
   attachments?: Array<{
     filename: string
     path?: string
     content?: Buffer | string
     contentType?: string
   }>
+}
+
+/**
+ * Derive a readable plain-text body from an HTML email.
+ *
+ * Deliberately simple: strips head-ish elements entirely, turns block edges
+ * into newlines, keeps link targets alongside their text, then collapses the
+ * runs of whitespace that HTML templates inevitably leave behind.
+ */
+export function htmlToPlainText(html: string): string {
+  return html
+    // Drop anything whose text content is not body copy.
+    .replace(/<(style|script|head|title)[\s\S]*?<\/\1>/gi, '')
+    // Hidden preheader divs would otherwise duplicate the opening line.
+    .replace(/<div[^>]*display:\s*none[\s\S]*?<\/div>/gi, '')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/(p|div|tr|h[1-6]|li|table|section)>/gi, '\n')
+    .replace(/<li[^>]*>/gi, '  - ')
+    .replace(/<\/td>\s*<td[^>]*>/gi, ': ')
+    // Keep the destination of a link, not just its label.
+    .replace(/<a\b[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/gi, (_m, href, label) => {
+      const text = String(label).replace(/<[^>]+>/g, '').trim()
+      const url = String(href).trim()
+      if (!url || url.startsWith('#')) return text
+      if (url.startsWith('mailto:')) return text || url.slice(7)
+      return text && text !== url ? `${text} (${url})` : url
+    })
+    .replace(/<[^>]+>/g, '')
+    // Entities that survive tag stripping. Named set first, then any numeric
+    // entity, so typographic characters (&mdash; &rsquo; &hellip;) don't leak
+    // through as literal text.
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&(mdash|ndash);/g, '—')
+    .replace(/&(lsquo|rsquo|apos);/g, "'")
+    .replace(/&(ldquo|rdquo);/g, '"')
+    .replace(/&hellip;/g, '…')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#(\d+);/g, (_m, code) => String.fromCharCode(Number(code)))
+    .replace(/&#x([0-9a-f]+);/gi, (_m, code) => String.fromCharCode(parseInt(code, 16)))
+    // &amp; last so a double-escaped entity doesn't resurrect as markup.
+    .replace(/&amp;/g, '&')
+    // A label cell ending in ':' plus the ': ' row separator yields '::'.
+    .replace(/:\s*:/g, ':')
+    // Whitespace cleanup — templates leave heavy indentation behind.
+    .replace(/[ \t]+/g, ' ')
+    .replace(/ *\n */g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
 }
 
 function toAddressList(emails: string | string[]): Array<{ address: string; displayName?: string }> {
@@ -109,10 +172,22 @@ export async function sendEmail(config: EmailConfig) {
       content: {
         subject: config.subject,
         html: config.html,
+        // Always ship multipart — HTML-only mail is a spam signal and is
+        // unreadable in text-only clients and screen readers.
+        plainText: config.text || htmlToPlainText(config.html),
       },
       recipients: {
         to: toAddressList(config.to),
       },
+    }
+
+    // RFC 8058 one-click unsubscribe — bulk senders are expected to honour it.
+    if (config.unsubscribeUrl) {
+      message.headers = {
+        ...(message.headers || {}),
+        'List-Unsubscribe': `<${config.unsubscribeUrl}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      }
     }
 
     if (config.cc) {
@@ -256,6 +331,39 @@ export async function sendAcademyWelcomeEmail(data: { name: string; email: strin
   })
 }
 
+/**
+ * Form values arrive as slugs ('1-month', 'immediate', 'team'). Rendering them
+ * raw put strings like "Timeline: 1-month" in front of customers.
+ */
+const TIMELINE_LABELS: Record<string, string> = {
+  immediate: 'As soon as possible',
+  '1-month': 'Within 1 month',
+  '2-months': 'Within 2 months',
+  '3-months': 'Within 3 months',
+  '6-months': 'Within 6 months',
+  exploring: 'Just exploring for now',
+  flexible: 'Flexible',
+}
+
+const TRAINING_FOR_LABELS: Record<string, string> = {
+  self: 'Myself',
+  team: 'My team',
+  organization: 'The whole organisation',
+  organisation: 'The whole organisation',
+}
+
+function humanLabel(map: Record<string, string>, value?: string): string {
+  const v = String(value || '').trim()
+  if (!v) return ''
+  return map[v.toLowerCase()] || v
+}
+
+/** A table row that disappears entirely when it has no value. */
+function optionalRow(label: string, value: string): string {
+  if (!value) return ''
+  return `<tr><td style="padding:5px 0;"><strong>${label}:</strong></td><td>${value}</td></tr>`
+}
+
 export async function sendTrainingEnquiryEmail(data: {
   name: string
   email: string
@@ -275,6 +383,15 @@ export async function sendTrainingEnquiryEmail(data: {
     : data.timeline === '2-months'
     ? 'WARM'
     : 'COLD'
+
+  // 'bootcamp' | 'course' — used mid-sentence, so it must never be empty or
+  // the copy reads "the detailed  PDF" / "our Program ." with a stray space.
+  const programKind = String(data.programType || '').trim() || 'program'
+  const timelineLabel = humanLabel(TIMELINE_LABELS, data.timeline)
+  const trainingForLabel =
+    String(data.trainingFor || '').toLowerCase() === 'team' && data.teamSize
+      ? `My team (${escapeHtml(data.teamSize)} people)`
+      : humanLabel(TRAINING_FOR_LABELS, data.trainingFor)
 
   const attachmentFilename = `${data.programTitle.replace(/[^a-z0-9]/gi, '_')}_Details.pdf`
   const attachment = await attachPDF(
@@ -299,7 +416,7 @@ export async function sendTrainingEnquiryEmail(data: {
 
   const userEmailHtml = `
     <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center; border-radius: 10px 10px 0 0;">
+      <div style="background: #0C1426; padding: 40px 30px; text-align: center; border-radius: 10px 10px 0 0;">
         <h1 style="color: white; margin: 0; font-size: 28px;">Gennoor Tech</h1>
         <p style="color: white; margin: 10px 0 0; font-size: 16px;">AI Training & Consulting Excellence</p>
       </div>
@@ -308,12 +425,12 @@ export async function sendTrainingEnquiryEmail(data: {
         <h2 style="color: #333; margin-top: 0; font-size: 24px;">Dear ${safe.name},</h2>
 
         <p style="color: #555; line-height: 1.8; font-size: 16px;">
-          Thank you for your interest in our <strong>${safe.programTitle}</strong> ${safe.programType}.
+          Thank you for your interest in our <strong>${safe.programTitle}</strong> ${escapeHtml(programKind)}.
         </p>
 
-        <div style="background: #f8f9fa; border-left: 4px solid #667eea; padding: 20px; margin: 25px 0; border-radius: 5px;">
+        <div style="background: #f8f9fa; border-left: 4px solid #2563EB; padding: 20px; margin: 25px 0; border-radius: 5px;">
           <p style="color: #555; margin: 0; line-height: 1.8;">
-            We've attached the detailed ${safe.programType} PDF including curriculum,
+            We've attached the detailed ${escapeHtml(programKind)} PDF including curriculum,
             learning objectives, and delivery format. This comprehensive outline will help you understand
             how our training can accelerate your team's AI journey.
           </p>
@@ -338,28 +455,31 @@ export async function sendTrainingEnquiryEmail(data: {
 
         <h3 style="color: #333; margin-top: 30px;">Your Training Requirements:</h3>
         <div style="background: #ffffff; border: 1px solid #e0e0e0; padding: 20px; border-radius: 5px;">
-          <table style="width: 100%; color: #555;">
-            <tr><td style="padding: 5px 0;"><strong>Organization:</strong></td><td>${safe.company}</td></tr>
-            <tr><td style="padding: 5px 0;"><strong>Training For:</strong></td><td>${data.trainingFor === 'team' ? `Team (${safe.teamSize} members)` : safe.trainingFor}</td></tr>
-            <tr><td style="padding: 5px 0;"><strong>Timeline:</strong></td><td>${safe.timeline}</td></tr>
-            ${data.message ? `<tr><td style="padding: 5px 0; vertical-align: top;"><strong>Special Requirements:</strong></td><td>${safe.message}</td></tr>` : ''}
+          <table role="presentation" style="width: 100%; color: #555;">
+            ${optionalRow('Organization', safe.company)}
+            ${optionalRow('Training for', trainingForLabel)}
+            ${optionalRow('Timeline', escapeHtml(timelineLabel))}
+            ${data.message ? `<tr><td style="padding: 5px 0; vertical-align: top;"><strong>Special requirements:</strong></td><td>${safe.message}</td></tr>` : ''}
           </table>
         </div>
 
-        <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 20px; margin: 30px 0;">
-          <p style="color: #856404; margin: 0; font-size: 16px;">
-            <strong>Special Offer:</strong> Book your training early and receive:
-          </p>
-          <ul style="color: #856404; margin: 10px 0 0; padding-left: 20px;">
-            <li>Early bird discount</li>
-            <li>Free certification voucher for one participant</li>
-            <li>Extended post-training support</li>
-          </ul>
-        </div>
+        ${
+          // Previously unconditional: every enquirer was promised an early-bird
+          // discount and a free certification voucher automatically, with no
+          // terms or expiry. That is a commercial commitment, so it is now an
+          // explicit opt-in — set TRAINING_OFFER_ENABLED=true to run it.
+          process.env.TRAINING_OFFER_ENABLED === 'true'
+            ? `<div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 20px; margin: 30px 0;">
+                 <p style="color: #856404; margin: 0; font-size: 16px;">
+                   <strong>Current offer:</strong> ${escapeHtml(process.env.TRAINING_OFFER_TEXT || 'Ask your training specialist about current early-booking benefits.')}
+                 </p>
+               </div>`
+            : ''
+        }
 
         <h3 style="color: #333; margin-top: 30px;">Next Steps:</h3>
         <ol style="color: #555; line-height: 2;">
-          <li>Review the attached ${safe.programType} details</li>
+          <li>Review the attached ${escapeHtml(programKind)} details</li>
           <li>Our training specialist will contact you soon</li>
           <li>Schedule a free consultation call to discuss customization</li>
           <li>Receive a tailored proposal with pricing options</li>
@@ -367,35 +487,35 @@ export async function sendTrainingEnquiryEmail(data: {
 
         <div style="text-align: center; margin: 40px 0;">
           <a href="mailto:training@gennoor.com?subject=Schedule%20Consultation%20-%20${encodeURIComponent(data.programTitle)}"
-             style="display: inline-block; padding: 15px 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 16px;">
+             style="display: inline-block; padding: 15px 40px; background: #2563EB; color: white; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 16px;">
             Schedule Free Consultation
           </a>
         </div>
 
         <div style="border-top: 2px solid #e0e0e0; padding-top: 30px; margin-top: 40px;">
           <h4 style="color: #333; margin-bottom: 15px;">Get in Touch:</h4>
-          <table style="width: 100%; color: #555; line-height: 1.8;">
+          <table role="presentation" style="width: 100%; color: #555; line-height: 1.8;">
             <tr>
               <td style="padding: 5px 0;">Email:</td>
-              <td><a href="mailto:training@gennoor.com" style="color: #667eea;">training@gennoor.com</a></td>
+              <td><a href="mailto:training@gennoor.com" style="color: #2563EB;">training@gennoor.com</a></td>
             </tr>
             <tr>
               <td style="padding: 5px 0;">WhatsApp:</td>
-              <td><a href="https://wa.me/919326352241" style="color: #667eea;">+91 9326352241</a></td>
+              <td><a href="https://wa.me/919326352241" style="color: #2563EB;">+91 9326352241</a></td>
             </tr>
             <tr>
               <td style="padding: 5px 0;">Website:</td>
-              <td><a href="https://www.gennoor.com" style="color: #667eea;">www.gennoor.com</a></td>
+              <td><a href="https://www.gennoor.com" style="color: #2563EB;">www.gennoor.com</a></td>
             </tr>
           </table>
         </div>
       </div>
 
-      <div style="background: #2c3e50; padding: 30px; text-align: center; border-radius: 0 0 10px 10px;">
-        <p style="color: #ecf0f1; margin: 0; font-size: 14px;">
+      <div style="background: #0C1426; padding: 30px; text-align: center; border-radius: 0 0 10px 10px;">
+        <p style="color: #ffffff; margin: 0; font-size: 14px;">
           &copy; ${new Date().getFullYear()} Gennoor Tech. All rights reserved.
         </p>
-        <p style="color: #95a5a6; margin: 10px 0 0; font-size: 13px;">
+        <p style="color: #94a3b8; margin: 10px 0 0; font-size: 13px;">
           Empowering Organizations with AI Excellence
         </p>
       </div>
@@ -418,18 +538,18 @@ export async function sendTrainingEnquiryEmail(data: {
 
   const adminEmailHtml = `
     <h2>[${leadScore}] New Training Enquiry - ${safe.programTitle}</h2>
-    <table border="1" cellpadding="8" style="border-collapse: collapse;">
+    <table role="presentation" border="1" cellpadding="8" style="border-collapse: collapse;">
       <tr style="background: ${leadScore === 'HOT' ? '#ffcccc' : leadScore === 'WARM' ? '#ffffcc' : '#cccccc'};">
         <td colspan="2"><strong>Lead Score: ${leadScore}</strong></td>
       </tr>
-      <tr><td><strong>Program:</strong></td><td>${safe.programTitle} (${safe.programType})</td></tr>
+      <tr><td><strong>Program:</strong></td><td>${safe.programTitle}${data.programType ? ` (${escapeHtml(programKind)})` : ''}</td></tr>
       <tr><td><strong>Name:</strong></td><td>${safe.name}</td></tr>
       <tr><td><strong>Email:</strong></td><td>${safe.email}</td></tr>
-      <tr><td><strong>Phone:</strong></td><td>${safe.phone}</td></tr>
-      <tr><td><strong>Company:</strong></td><td>${safe.company}</td></tr>
-      <tr><td><strong>Designation:</strong></td><td>${safe.designation}</td></tr>
-      <tr><td><strong>Training For:</strong></td><td>${safe.trainingFor}${data.teamSize ? ` (${safe.teamSize})` : ''}</td></tr>
-      <tr><td><strong>Timeline:</strong></td><td>${safe.timeline}</td></tr>
+      ${optionalRow('Phone', safe.phone)}
+      ${optionalRow('Company', safe.company)}
+      ${optionalRow('Designation', safe.designation)}
+      ${optionalRow('Training for', trainingForLabel)}
+      ${optionalRow('Timeline', escapeHtml(timelineLabel))}
       <tr><td><strong>Message:</strong></td><td>${safe.message || 'None'}</td></tr>
     </table>
     <h3>Recommended Actions:</h3>

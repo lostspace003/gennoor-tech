@@ -72,7 +72,7 @@ export async function POST(request: Request) {
           Your message reached us and a member of the team will reply shortly —
           usually within one business day.
         </p>
-        <table style="border-collapse:collapse;font-size:14px;width:100%">
+        <table role="presentation" style="border-collapse:collapse;font-size:14px;width:100%">
           ${service ? `<tr><td style="padding:6px 10px;border:1px solid #e2e8f0;width:130px;color:#64748b">Interested in</td><td style="padding:6px 10px;border:1px solid #e2e8f0">${escapeHtml(service)}</td></tr>` : ''}
           ${company ? `<tr><td style="padding:6px 10px;border:1px solid #e2e8f0;color:#64748b">Organisation</td><td style="padding:6px 10px;border:1px solid #e2e8f0">${escapeHtml(company)}</td></tr>` : ''}
           ${message ? `<tr><td style="padding:6px 10px;border:1px solid #e2e8f0;color:#64748b">Your message</td><td style="padding:6px 10px;border:1px solid #e2e8f0">${escapeHtml(message)}</td></tr>` : ''}
@@ -96,7 +96,7 @@ export async function POST(request: Request) {
       html: emailShell(
         `
         <h3 style="margin:0 0 12px;color:#0f172a">New contact form submission</h3>
-        <table style="border-collapse:collapse;font-size:14px;width:100%">
+        <table role="presentation" style="border-collapse:collapse;font-size:14px;width:100%">
           <tr><td style="padding:6px 10px;border:1px solid #e2e8f0;width:130px;color:#64748b">Name</td><td style="padding:6px 10px;border:1px solid #e2e8f0"><strong>${escapeHtml(name)}</strong></td></tr>
           <tr><td style="padding:6px 10px;border:1px solid #e2e8f0;color:#64748b">Email</td><td style="padding:6px 10px;border:1px solid #e2e8f0"><a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></td></tr>
           ${whatsapp ? `<tr><td style="padding:6px 10px;border:1px solid #e2e8f0;color:#64748b">WhatsApp</td><td style="padding:6px 10px;border:1px solid #e2e8f0"><a href="https://wa.me/${String(whatsapp).replace(/[^0-9]/g, '')}">${escapeHtml(whatsapp)}</a></td></tr>` : ''}

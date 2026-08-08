@@ -88,7 +88,7 @@ export async function POST(request: Request) {
 
     const adminEmailHtml = `
       <h2>New webinar registration</h2>
-      <table border="1" cellpadding="8" style="border-collapse: collapse; font-family: Arial, sans-serif;">
+      <table role="presentation" border="1" cellpadding="8" style="border-collapse: collapse; font-family: Arial, sans-serif;">
         <tr><td><strong>Session:</strong></td><td>${safeTitle} (${escapeHtml(webinarId)})</td></tr>
         <tr><td><strong>Date:</strong></td><td>${safeDate}</td></tr>
         <tr><td><strong>Name:</strong></td><td>${escapeHtml(name)}</td></tr>

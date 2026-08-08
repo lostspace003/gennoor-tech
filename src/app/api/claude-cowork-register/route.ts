@@ -56,7 +56,7 @@ export async function POST(request: Request) {
           </p>
 
           <div style="background: #FFF8F0; border-left: 4px solid #FF6B35; padding: 20px; margin: 25px 0; border-radius: 0 8px 8px 0;">
-            <table style="width: 100%; color: #1B2845; font-size: 15px;">
+            <table role="presentation" style="width: 100%; color: #1B2845; font-size: 15px;">
               <tr>
                 <td style="padding: 8px 0; font-weight: 700;">When:</td>
                 <td style="padding: 8px 0;">4 hours in your local time zone (${escapeHtml(timeZone)}) — schedule details sent separately</td>
@@ -136,7 +136,7 @@ export async function POST(request: Request) {
 
     const adminEmailHtml = `
       <h2>New Claude Cowork Registration</h2>
-      <table border="1" cellpadding="8" style="border-collapse: collapse; font-family: Arial, sans-serif;">
+      <table role="presentation" border="1" cellpadding="8" style="border-collapse: collapse; font-family: Arial, sans-serif;">
         <tr style="background: #FFD23F;"><td colspan="2"><strong>Claude Cowork Workshop Registration</strong></td></tr>
         <tr><td><strong>Name:</strong></td><td>${escapeHtml(fullName)}</td></tr>
         <tr><td><strong>Email:</strong></td><td>${escapeHtml(email)}</td></tr>
