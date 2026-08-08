@@ -480,6 +480,19 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
     return () => { if (idleTimerRef.current) clearTimeout(idleTimerRef.current) }
   }, [isFullscreen, pokeControls])
 
+  // Mouse/touch activity INSIDE the chapter iframe. In fullscreen the iframe
+  // covers essentially the whole screen, so the parent container's own
+  // onMouseMove never fires — without this, the control bars hide after 3s
+  // and hovering the content can never bring them back.
+  useEffect(() => {
+    const handler = (e: MessageEvent) => {
+      if (!e || !e.data || e.data.type !== 'gennoor-academy:activity') return
+      if (document.fullscreenElement) pokeControls()
+    }
+    window.addEventListener('message', handler)
+    return () => window.removeEventListener('message', handler)
+  }, [pokeControls])
+
   const barsHidden = isFullscreen && controlsIdle && !drawerOpen && !showEndOverlay && !showCelebration
 
   // ── Iframe injection (progress tracking + authoritative deck state) ──────
@@ -586,6 +599,20 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
           document.addEventListener('keydown', function() {
             setTimeout(function() { reportProgress(); }, 150);
           });
+
+          // Forward pointer activity to the parent (throttled) so its
+          // fullscreen idle-hide timer resets while the mouse moves over the
+          // chapter content — the iframe swallows these events otherwise.
+          var lastActivityAt = 0;
+          function reportActivity() {
+            var now = Date.now();
+            if (now - lastActivityAt < 300) return;
+            lastActivityAt = now;
+            try { window.parent.postMessage({ type: 'gennoor-academy:activity' }, '*'); } catch (err) {}
+          }
+          document.addEventListener('mousemove', reportActivity, true);
+          document.addEventListener('pointerdown', reportActivity, true);
+          document.addEventListener('touchstart', reportActivity, { passive: true, capture: true });
 
           var nextBtn = document.getElementById('nextBtn');
           var prevBtn = document.getElementById('prevBtn');
@@ -768,11 +795,13 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
       className="fixed inset-0 z-[60] bg-gray-950 flex flex-col"
       onMouseMove={isFullscreen ? pokeControls : undefined}
     >
-      {/* Top bar — minimal: hamburger · title · close */}
+      {/* Top bar — minimal: hamburger · title · close.
+          In fullscreen it overlays the stage (video-player style) and slides
+          away when idle instead of collapsing the layout. */}
       <div
-        className={`flex-shrink-0 bg-gray-900 text-white flex items-center px-3 gap-3 z-20 transition-all duration-300 ${
-          barsHidden ? 'h-0 opacity-0 overflow-hidden' : 'h-12'
-        }`}
+        className={`bg-gray-900 text-white flex items-center h-12 px-3 gap-3 z-20 transition-all duration-300 ${
+          isFullscreen ? 'absolute top-0 left-0 right-0' : 'flex-shrink-0'
+        } ${barsHidden ? '-translate-y-full opacity-0 pointer-events-none' : 'translate-y-0'}`}
       >
         <button
           onClick={() => setDrawerOpen(o => !o)}
@@ -970,11 +999,31 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
         )}
       </div>
 
-      {/* Bottom control bar — VLC-style */}
+      {/* Hover hot-zones — while the bars are hidden in fullscreen, the top
+          and bottom screen edges wake them even though the iframe owns the
+          rest of the pointer events. */}
+      {barsHidden && (
+        <>
+          <div
+            className="absolute top-0 left-0 right-0 h-12 z-10"
+            onMouseEnter={pokeControls}
+            onMouseMove={pokeControls}
+            aria-hidden="true"
+          />
+          <div
+            className="absolute bottom-0 left-0 right-0 h-20 z-10"
+            onMouseEnter={pokeControls}
+            onMouseMove={pokeControls}
+            aria-hidden="true"
+          />
+        </>
+      )}
+
+      {/* Bottom control bar — VLC-style. Overlays + slides in fullscreen. */}
       <div
-        className={`flex-shrink-0 bg-gray-900 text-white flex items-center px-3 gap-2 z-20 transition-all duration-300 ${
-          barsHidden ? 'h-0 opacity-0 overflow-hidden' : 'h-14'
-        }`}
+        className={`bg-gray-900 text-white flex items-center h-14 px-3 gap-2 z-20 transition-all duration-300 ${
+          isFullscreen ? 'absolute bottom-0 left-0 right-0' : 'flex-shrink-0'
+        } ${barsHidden ? 'translate-y-full opacity-0 pointer-events-none' : 'translate-y-0'}`}
       >
         {chapter.isMockExam ? (
           <>
