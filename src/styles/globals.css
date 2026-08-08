@@ -406,15 +406,19 @@ details[open] summary::after { content: "\2212"; }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Opacity ONLY — never animate transform here. A transform animation on this
-   wrapper makes it the containing block for every position:fixed descendant
-   in Chromium (the Academy player, enquiry modals, overlays), pinning them
-   inside the page instead of the viewport. */
+/* Opacity ONLY, fill BACKWARDS only — two hard constraints:
+   1. Never animate transform here: a transform animation on this wrapper
+      makes it the containing block for every position:fixed descendant
+      (the Academy player, enquiry modals), pinning them inside the page.
+   2. Never fill forwards: a filled animation keeps this wrapper a stacking
+      context forever, so fixed overlays inside it can never paint above
+      the site topbar/bubbles no matter their z-index. With `backwards`
+      the context ends with the 0.24s fade. */
 @keyframes pageEnter {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
-.animate-page-enter { animation: pageEnter 0.24s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-page-enter { animation: pageEnter 0.24s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
 @media (prefers-reduced-motion: reduce) {
   .animate-page-enter { animation: none; }
 }

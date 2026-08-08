@@ -145,7 +145,107 @@ gating UI would need to be added. Recommended: keep it frictionless.
 
 ---
 
-## 6. Post-deploy verification script (run once after merge)
+## 6. RUN THIS IN VS CODE WITH CLAUDE CODE — az / gh wiring check
+
+> **How to use:** open this repo in VS Code, start Claude Code, and say:
+> *"Read newinclusioncheck/AZURE-GITHUB-SETUP.md section 6 and run the
+> wiring check — report anything missing, then help me set it."*
+> Prerequisites on your machine: `az login` (subscription with the
+> `gennoor-tech` App Service) and `gh auth login` (repo access).
+
+### 6.1 Find your resource group (once)
+
+```bash
+az webapp list --query "[?name=='gennoor-tech'].{name:name, rg:resourceGroup, state:state, host:defaultHostName}" -o table
+# Put the rg value into RG below.
+```
+
+### 6.2 Check ALL runtime settings the code reads
+
+```bash
+RG="<your-resource-group>"   # from 6.1
+APP="gennoor-tech"
+
+REQUIRED_VARS=(
+  # Storage + email (every form, analytics, media)
+  AZURE_STORAGE_CONNECTION_STRING AZURE_COMMUNICATION_CONNECTION_STRING
+  EMAIL_FROM_INFO EMAIL_FROM_TRAINING EMAIL_FROM_ENQUIRY EMAIL_FROM_SCHEDULE
+  EMAIL_FROM_SALES EMAIL_FROM_WEBINAR EMAIL_ADMIN
+  # Auth (CRM/admin)
+  NEXTAUTH_SECRET NEXTAUTH_URL AZURE_AD_CLIENT_ID AZURE_AD_CLIENT_SECRET AZURE_AD_TENANT_ID
+  # Graph / Bookings
+  MS_GRAPH_CLIENT_ID MS_GRAPH_CLIENT_SECRET MS_GRAPH_TENANT_ID MS_BOOKINGS_BUSINESS_ID
+  OUTLOOK_SENDER_MAILBOX
+  # AI (bot, readiness, copilot)
+  AZURE_OPENAI_ENDPOINT AZURE_OPENAI_API_KEY AZURE_OPENAI_DEPLOYMENT AZURE_OPENAI_API_VERSION
+  AZURE_OPENAI_READINESS_ENDPOINT AZURE_OPENAI_READINESS_KEY AZURE_OPENAI_READINESS_DEPLOYMENT
+  FOUNDRY_API_KEY FOUNDRY_OPENAI_BASE
+  # Speech (readiness narration + academy TTS)
+  AZURE_SPEECH_KEY AZURE_SPEECH_REGION AZURE_SPEECH_ACADEMY_KEY AZURE_SPEECH_ACADEMY_REGION
+  # Learner system
+  LEARNER_JWT_SECRET
+  # Media + misc
+  NEXT_PUBLIC_BLOB_URL YOUTUBE_API_KEY APPLICATIONINSIGHTS_CONNECTION_STRING
+  NEXT_PUBLIC_GA_MEASUREMENT_ID CRM_CRON_SECRET
+)
+
+HAVE=$(az webapp config appsettings list -g "$RG" -n "$APP" --query "[].name" -o tsv)
+for v in "${REQUIRED_VARS[@]}"; do
+  echo "$HAVE" | grep -qx "$v" && echo "OK       $v" || echo "MISSING  $v"
+done
+```
+
+Set a missing one (value never echoes back once set):
+
+```bash
+az webapp config appsettings set -g "$RG" -n "$APP" --settings NAME="value"
+```
+
+### 6.3 Sanity-check the Azure resources behind the settings
+
+```bash
+# Table Storage — enquiry/analytics tables exist and are reachable
+az storage table list --connection-string "$(az webapp config appsettings list -g "$RG" -n "$APP" --query "[?name=='AZURE_STORAGE_CONNECTION_STRING'].value" -o tsv)" -o table
+
+# Azure Communication Services — the email domain/sender must be verified
+az communication list -o table
+az communication email domain list --email-service-name <acs-email-service> -g "$RG" -o table 2>/dev/null || echo "check ACS email domains in the portal"
+
+# App Service is running + latest deploy state
+az webapp show -g "$RG" -n "$APP" --query "{state:state, lastModified:lastModifiedTimeUtc}" -o table
+az webapp log deployment show -g "$RG" -n "$APP" 2>/dev/null | tail -20
+```
+
+### 6.4 GitHub side (gh CLI)
+
+```bash
+REPO="lostspace003/gennoor-tech"
+
+# Secrets the workflows reference — names only (values are write-only)
+gh secret list -R "$REPO"
+
+# Compare against the list in §4 above; set any missing:
+gh secret set NAME -R "$REPO"        # prompts for the value
+
+# Latest pipeline runs on main
+gh run list -R "$REPO" --branch main --limit 5
+gh run view -R "$REPO" --log-failed   # if the latest failed
+```
+
+### 6.5 New-in-this-release checks (webinars + footer newsletter)
+
+```bash
+# EMAIL_FROM_WEBINAR present? (6.2 covers it) Then live-test the endpoint:
+curl -s -X POST https://gennoor.com/api/webinar-register \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"Wiring Test","email":"<your-email>","webinarId":"wiring-test","webinarTitle":"Wiring Test"}'
+# Expect {"success":true,...}, a confirmation email to you, an admin email,
+# and a WebinarRegistration row in Table Storage. Delete the test row after.
+```
+
+---
+
+## 7. Post-deploy verification script (run once after merge)
 
 1. **Contact form** → submit on `/contact` → expect confirmation UI + email
    to `EMAIL_ADMIN` + entry in Table Storage (`ContactEnquiry`).
