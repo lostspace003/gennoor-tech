@@ -63,6 +63,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/portfolio/testimonials`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
 
     // Resources
+    { url: `${baseUrl}/resources`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
     { url: `${baseUrl}/resources/blog`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
     { url: `${baseUrl}/resources/videos`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
     { url: `${baseUrl}/resources/calendar`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },

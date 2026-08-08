@@ -23,6 +23,13 @@ export interface BlogPostMeta {
   tags: string[]
   hashtags: string[]
   coverColor: string
+  /**
+   * Optional real cover image (absolute URL, usually blob-hosted via
+   * BLOB_URL). When present the featured card renders this instead of the
+   * brand orbital graphic. Closes gap 2.3 in newinclusioncheck/README.md —
+   * posts without one keep the current look, so this is purely additive.
+   */
+  coverImage?: string
   icon: string
   featured?: 'hero' | 'spotlight' | null
   tldr?: string

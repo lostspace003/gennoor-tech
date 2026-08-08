@@ -116,9 +116,10 @@ export const portalNav: PortalNavSection[] = [
   },
   {
     name: 'Resources',
-    href: '/resources/blog',
+    href: '/resources',
     icon: BookOpen,
     children: [
+      { name: 'All resources', href: '/resources', icon: BookOpen },
       { name: 'Blog', href: '/resources/blog', icon: FileText },
       { name: 'Videos', href: '/resources/videos', icon: Video },
       { name: 'Webinars', href: '/webinars', icon: CalendarDays },

@@ -15,6 +15,18 @@
  * follow-up automation closer to the date.
  */
 
+/**
+ * Where a session is advertised.
+ *  - 'Public'  → /webinars only (the default)
+ *  - 'Academy' → the Academy dashboard only (learner-facing live sessions)
+ *  - 'Both'    → shown in both places
+ *
+ * This is what lets the Academy "Live sessions" area run off the same
+ * event source as /webinars — closing gap 1.3 in newinclusioncheck/README.md
+ * without a second system to maintain.
+ */
+export type WebinarAudience = 'Public' | 'Academy' | 'Both'
+
 export interface UpcomingWebinar {
   /** Stable id — used as the registration reference (e.g. 'data-integration-2026-08') */
   id: string
@@ -26,6 +38,10 @@ export interface UpcomingWebinar {
   day: string
   /** One meta line, e.g. '10:00–12:00 GST · Jalal Ahmed Khan · Q&A included' */
   meta: string
+  /** Defaults to 'Public' when omitted. */
+  audience?: WebinarAudience
+  /** Optional course id to tie an Academy session to a track. */
+  courseId?: string
 }
 
 export interface PastWebinar {
@@ -53,3 +69,16 @@ export interface PastWebinar {
 export const upcomingWebinars: UpcomingWebinar[] = []
 
 export const pastWebinars: PastWebinar[] = []
+
+/** Sessions advertised on the public /webinars page. */
+export function getPublicWebinars(): UpcomingWebinar[] {
+  return upcomingWebinars.filter(w => (w.audience ?? 'Public') !== 'Academy')
+}
+
+/** Sessions surfaced to signed-in learners on the Academy dashboard. */
+export function getAcademyWebinars(): UpcomingWebinar[] {
+  return upcomingWebinars.filter(w => {
+    const audience = w.audience ?? 'Public'
+    return audience === 'Academy' || audience === 'Both'
+  })
+}

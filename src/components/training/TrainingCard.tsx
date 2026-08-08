@@ -27,7 +27,9 @@ export default function TrainingCard({ program }: TrainingCardProps) {
             Bootcamp
           </span>
           {program.certification === 'Yes' && (
-            <span className="text-[11px] font-semibold text-primary-600">Certification</span>
+            <span className="text-[11px] font-semibold text-primary-600">
+              {program.certCode ?? 'Certification'}
+            </span>
           )}
         </div>
 

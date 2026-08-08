@@ -15,6 +15,17 @@ export interface TrainingProgram {
   pdfFile?: string
   technology: string
   certification: string
+  /**
+   * Specific exam code shown on the catalogue badge instead of the generic
+   * "Certification" label — e.g. 'AI-103', 'AB-100'. Closes gap 2.2 in
+   * newinclusioncheck/README.md.
+   *
+   * Only set this where the program genuinely maps to one named exam. Leave
+   * it undefined for programs that prepare for a vendor credential with no
+   * single code (Applied Skills, multi-exam tracks) — those keep the generic
+   * badge, which stays accurate.
+   */
+  certCode?: string
   industry: string
 }
 
@@ -219,6 +230,7 @@ export const bootcamps: TrainingProgram[] = [
     docFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-8-Microsoft-AI-for-Developers.docx`,
     technology: 'Microsoft',
     certification: 'Yes',
+    certCode: 'AI-103',
     industry: 'Cross-Industry'
   },
   {
@@ -282,6 +294,7 @@ export const bootcamps: TrainingProgram[] = [
     pdfFile: `${BLOB_URL}/Gennoor-Bootcamp-Brochures/Gennoor-Bootcamp-11-AB100-Certification-Prep.pdf`,
     technology: 'Cross-Platform',
     certification: 'Yes',
+    certCode: 'AB-100',
     industry: 'Technology'
   },
   {
@@ -516,6 +529,7 @@ export const courses: TrainingProgram[] = [
     docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/08-Microsoft-AI-for-Developers.docx`,
     technology: 'Microsoft',
     certification: 'Yes',
+    certCode: 'AI-103',
     industry: 'Cross-Industry'
   },
   {
@@ -579,6 +593,7 @@ export const courses: TrainingProgram[] = [
     docFile: `${BLOB_URL}/Gennoor-Tech-Course-TOCs/11-AB100-Certification-Prep.docx`,
     technology: 'Cross-Platform',
     certification: 'Yes',
+    certCode: 'AB-100',
     industry: 'Technology'
   },
   {

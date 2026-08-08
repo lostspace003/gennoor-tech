@@ -10,6 +10,15 @@ envision that had no backing system yet.
 > PR — code side complete, using only existing Azure settings. What remains
 > on your side is configuration/verification, spelled out step-by-step in
 > **[AZURE-GITHUB-SETUP.md](./AZURE-GITHUB-SETUP.md)** in this folder.
+>
+> **STATUS UPDATE 2 (2026-08-08):** the remaining code-side gaps are now
+> **BUILT** too — 1.3 (Academy live sessions), 1.5 (derived search index),
+> 2.1 (Resources hub), 2.2 (cert codes), 2.3 (blog cover images), and 2.4
+> (design-system doc). Details under each item below.
+>
+> **The only item left is 1.6** — live email/booking verification, which can
+> only be done against the deployed site with real Azure credentials. Run
+> the checklist in §7 of AZURE-GITHUB-SETUP.md after this deploys.
 
 ---
 
@@ -38,11 +47,22 @@ envision that had no backing system yet.
   the YouTube library. The redesigned page is structured so the Upcoming list
   can drop straight in.
 
-### 1.3 Academy "Live sessions" have no backing system
-- **The Academy Dashboard prototype** shows a dark "Next live session" card and a
-  Live Sessions section with registration. No such system exists (same root gap
-  as 1.2). The shipped dashboard shows real progress/certificates only.
-- **To close:** Same events system as 1.2, filtered to Academy sessions.
+### 1.3 Academy "Live sessions" — ✅ BUILT
+- **The Academy Dashboard prototype** showed a dark "Next live session" card and a
+  Live Sessions section with registration. No such system existed (same root gap
+  as 1.2).
+- **Closed by:** `src/components/academy/AcademyLiveSessions.tsx`, mounted on
+  `/academy/dashboard`. It reads the **same source as /webinars**
+  (`src/data/webinars.ts`) filtered by a new `audience` field
+  (`'Public' | 'Academy' | 'Both'`, defaults to `Public`), so there is no
+  second events system to maintain. Registration goes through the existing
+  `POST /api/webinar-register` via a shared
+  `src/components/webinars/WebinarRegisterModal.tsx` (extracted from
+  `/webinars`, prefilled with the signed-in learner's name/email).
+- **To publish an Academy session:** add an entry to `upcomingWebinars` with
+  `audience: 'Academy'` (dashboard only) or `'Both'` (dashboard + /webinars).
+- With nothing published it shows an honest empty state linking to the public
+  schedule — never an invented session.
 
 ### 1.4 CRM "New lead" quick action not in the header
 - **The CRM prototype** has a "New lead" primary pill in the 52px header. Lead
@@ -50,14 +70,22 @@ envision that had no backing system yet.
 - **To close:** A header button opening the existing create-lead flow — small,
   purely additive.
 
-### 1.5 Search index is hand-maintained (operational risk, not a bug)
-- `src/components/SearchModal.tsx` uses a **hardcoded ~31-entry index** — it is
-  not derived from `portal-nav.ts` or `site-config.ts`. Any route added or
-  renamed in future silently disappears from ⌘K search until the array is
-  updated by hand. No routes changed in this redesign, so search is currently
-  correct.
-- **To close:** Generate the index from `portal-nav.ts` + a static page list at
-  build time.
+### 1.5 Search index is hand-maintained — ✅ BUILT
+- `src/components/SearchModal.tsx` used a **hardcoded ~31-entry index** not
+  derived from `portal-nav.ts`, so any route added or renamed silently
+  disappeared from ⌘K search until someone edited the array by hand.
+- **Closed by:** `src/lib/search-index.ts`. Every entry in `portalNav`
+  (sections + children) is now indexed automatically — add a page to the rail
+  and it is searchable with no extra step; rename an href and search follows.
+  Rich descriptions/keywords live in an additive `PAGE_META` map, so a route
+  with no metadata still gets indexed from its nav label rather than vanishing.
+  `STANDALONE_ROUTES` covers real pages deliberately kept out of the rail, and
+  `PRIVATE_PREFIXES` keeps `/crm`, `/admin`, `/dev`, `/demo` and `/api` out.
+- **Side effect worth knowing:** the audit assumed search was "currently
+  correct". It was not — the hardcoded list was missing ~20 live pages
+  (Solutions for SMB/Enterprise, The Gennoor Way, PoC Catalog, both
+  calculators, Team & Delivery, Trust & Security, several guides, the legal
+  pages). They are all searchable now.
 
 ### 1.6 Live-email verification requires the deployed environment
 - The dev sandbox has no Azure credentials, so contact-form → email,
@@ -72,30 +100,55 @@ envision that had no backing system yet.
 
 ## 2. Content missing vs. the design prototypes
 
-### 2.1 Resources hub page (optional)
+### 2.1 Resources hub page — ✅ BUILT
 - The handoff includes `Resources.dc.html` — a hub with six tiles (Blog, Videos,
-  Webinars, Workshops, PoC Catalog, AI Readiness). The live site has **no
-  `/resources` index route**; the rail's "Resources" entry opens `/resources/blog`
-  with children links. Everything is reachable; only the hub page itself is a
-  design nicety not yet built.
+  Webinars, Workshops, PoC Catalog, AI Readiness). The live site had **no
+  `/resources` index route**; the rail's "Resources" entry opened
+  `/resources/blog`.
+- **Closed by:** `src/app/resources/page.tsx` — the six tiles plus a dark
+  Academy band, a guides/exam-prep list, and the two free calculators. The rail
+  (`portal-nav.ts`), the footer nav (`site-config.ts`) and `sitemap.ts` now all
+  point at `/resources`, with "All resources" added as the first child link.
 
-### 2.2 Certification exam codes on training data (minor)
-- The prototype's catalogue shows specific cert badges ("AI-103", "AI-901") on
-  two programs. `src/data/training-programs.ts` models certification only as
-  Yes/No, so the live cards show the generic "Certification" badge. Add an
-  optional `certCode` field to the data if the specific codes matter.
+### 2.2 Certification exam codes on training data — ✅ BUILT
+- `src/data/training-programs.ts` modelled certification only as Yes/No, so
+  every cert-aligned card showed the generic "Certification" badge.
+- **Closed by:** an optional `certCode` field on `TrainingProgram`, rendered by
+  `TrainingCard.tsx` and the program detail page (badge + FAQ answer), falling
+  back to the generic label when absent.
+- **Populated conservatively — read this before adding more.** Codes are
+  factual commercial claims, so only programs that map to exactly one named
+  exam were filled in: **`AI-103`** on both *Microsoft AI for Developers*
+  entries and **`AB-100`** on both *AB100 Certification Prep* entries (its
+  description names that exam outright). Both codes match the site's own
+  catalogue in `src/data/certification-prep.ts`.
+- Deliberately left blank: *AI on Google Cloud*, *AI on AWS*, *Microsoft
+  Applied Skills Bootcamp*, *Power Platform + AI*, *GenAI Copilot Mastery*,
+  *Agentic AI Engineering* — these prepare for vendor credentials with no
+  single unambiguous code. **Do not guess these**; take the code from
+  `certification-prep.ts` or the vendor, then add it.
 
-### 2.3 Blog post cover images
-- The prototype's featured card uses a cover-image pane (rendered as a styled
-  placeholder). Real posts have `coverColor` but no cover images; the shipped
-  featured card uses the brand orbital graphic instead. Optional: add real
-  `coverImage` assets per post.
+### 2.3 Blog post cover images — ✅ SUPPORT BUILT (assets are yours to add)
+- The prototype's featured card uses a cover-image pane; real posts have
+  `coverColor` but no images, so the featured card used the brand orbital.
+- **Closed by:** an optional `coverImage` field on `BlogPostMeta`. When set,
+  the featured card on `/resources/blog` renders that image (object-cover,
+  lazy-loaded); when absent it keeps the orbital graphic exactly as before.
+- **Still yours:** no image assets were invented. Add real cover art per post
+  by setting `coverImage` to a blob URL — the rendering is already live.
 
-### 2.4 Docs drift: `docs/DESIGN-SYSTEM.md`
-- The design-system doc still describes the previous Inter/Sora setup and old
-  section rhythm. The source of truth is now the code (system font stack,
-  `.display-*`/`.kicker`/`.pill-*` utilities in `src/styles/globals.css`).
-  The doc should be rewritten to match — documentation only, no runtime impact.
+### 2.4 Docs drift: `docs/DESIGN-SYSTEM.md` — ✅ FIXED
+- The doc described the retired Inter/Sora setup and omitted the shipped
+  utilities.
+- **Closed by:** the Foundations "Type" entry now states the real system font
+  stack (`system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif` — no
+  webfont is loaded), plus new tables documenting `.display-hero`,
+  `.display-section`, `.display-card`, `.kicker`, `.lede` and the
+  `.pill-primary` / `.pill-primary-sm` / `.pill-secondary` buttons with their
+  actual values from `globals.css`. Section rhythm now notes that redesigned
+  pages set `px-8 py-16` bands directly rather than using `.section-padding`,
+  and the site-chrome section records that ⌘K search derives from
+  `portal-nav.ts`.
 
 ---
 

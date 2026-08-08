@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Loader2 } from 'lucide-react'
-import { upcomingWebinars, pastWebinars, type UpcomingWebinar } from '@/data/webinars'
+import { getPublicWebinars, pastWebinars, type UpcomingWebinar } from '@/data/webinars'
+import WebinarRegisterModal from '@/components/webinars/WebinarRegisterModal'
 
 /**
  * Webinars in the Apple idiom, per the redesign handoff's "Learn live."
@@ -17,6 +17,8 @@ import { upcomingWebinars, pastWebinars, type UpcomingWebinar } from '@/data/web
 
 export default function WebinarsPage() {
   const [registering, setRegistering] = useState<UpcomingWebinar | null>(null)
+  // Academy-only sessions are surfaced on the Academy dashboard, not here.
+  const upcomingWebinars = getPublicWebinars()
 
   return (
     <main className="min-h-screen bg-white">
@@ -167,128 +169,8 @@ export default function WebinarsPage() {
       </section>
 
       {registering && (
-        <RegisterModal webinar={registering} onClose={() => setRegistering(null)} />
+        <WebinarRegisterModal webinar={registering} onClose={() => setRegistering(null)} />
       )}
     </main>
-  )
-}
-
-/** Minimal registration modal — name, email, optional company. */
-function RegisterModal({ webinar, onClose }: { webinar: UpcomingWebinar; onClose: () => void }) {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [company, setCompany] = useState('')
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
-
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setStatus('submitting')
-    try {
-      const res = await fetch('/api/webinar-register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name,
-          email,
-          company,
-          webinarId: webinar.id,
-          webinarTitle: webinar.title,
-          webinarDate: `${webinar.month} ${webinar.day} · ${webinar.meta}`,
-        }),
-      })
-      if (!res.ok) throw new Error('failed')
-      setStatus('success')
-    } catch {
-      setStatus('error')
-    }
-  }
-
-  const FIELD =
-    'w-full box-border text-[14px] px-3.5 py-[11px] border border-[#d2d2d7] rounded-xl bg-white text-gray-900 placeholder:text-[#86868b] outline-none focus:border-primary-600 focus:ring-0 transition-colors'
-
-  return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-3xl w-full max-w-md p-7 border border-[#e8e8ed]">
-        {status === 'success' ? (
-          <div className="text-center py-6">
-            <div className="text-[44px] font-bold text-[#1d8348] mb-3">✓</div>
-            <h3 className="text-[20px] font-bold text-gray-900 mb-2">You&rsquo;re registered.</h3>
-            <p className="text-[14px] text-[#6e6e73] mb-6">
-              Confirmation sent to your email. The joining link arrives before
-              the session.
-            </p>
-            <button onClick={onClose} className="pill-secondary">
-              Done
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#86868b] mb-1.5">
-              Register free · {webinar.type}
-            </div>
-            <h3 className="text-[19px] font-bold text-gray-900 mb-1">{webinar.title}</h3>
-            <p className="text-[12.5px] text-[#86868b] mb-5">
-              {webinar.month} {webinar.day} · {webinar.meta}
-            </p>
-            <form onSubmit={submit} className="space-y-3">
-              {status === 'error' && (
-                <p className="text-sm text-[#9b2c21] border border-[#eaa59d] bg-[#fdf4f3] rounded-xl px-4 py-3">
-                  Something went wrong — please try again or email webinar@gennoor.com.
-                </p>
-              )}
-              <input
-                type="text"
-                required
-                value={name}
-                onChange={e => setName(e.target.value)}
-                placeholder="Your name"
-                aria-label="Your name"
-                className={FIELD}
-              />
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="Work email"
-                aria-label="Work email"
-                className={FIELD}
-              />
-              <input
-                type="text"
-                value={company}
-                onChange={e => setCompany(e.target.value)}
-                placeholder="Company (optional)"
-                aria-label="Company"
-                className={FIELD}
-              />
-              <div className="flex items-center gap-3 pt-1.5">
-                <button
-                  type="submit"
-                  disabled={status === 'submitting'}
-                  className="inline-flex items-center gap-2 bg-primary-600 hover:bg-[#0077ed] text-white text-[14px] font-semibold px-6 py-2.5 rounded-full transition-colors disabled:opacity-50"
-                >
-                  {status === 'submitting' ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" /> Registering…
-                    </>
-                  ) : (
-                    'Register free'
-                  )}
-                </button>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="text-[13px] font-medium text-[#6e6e73] hover:text-gray-900"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </>
-        )}
-      </div>
-    </div>
   )
 }

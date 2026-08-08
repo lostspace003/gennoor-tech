@@ -107,6 +107,18 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
                   {new Date(hero.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} · {hero.readTime} · Jalal Ahmed Khan
                 </div>
               </div>
+              {/* Real cover image when the post has one; brand orbital otherwise. */}
+              {hero.coverImage ? (
+                <div className="hidden lg:block relative min-h-[280px] overflow-hidden">
+                  <img
+                    src={hero.coverImage}
+                    alt=""
+                    aria-hidden="true"
+                    loading="lazy"
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+              ) : (
               <div className="hidden lg:flex items-center justify-center min-h-[280px]" aria-hidden="true">
                 <svg className="w-48 h-48 group-hover:scale-105 transition-transform duration-500" viewBox="0 0 200 200" fill="none" aria-hidden="true">
                   <circle cx="100" cy="100" r="60" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5"/>
@@ -122,6 +134,7 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
                   <line x1="130" y1="100" x2="160" y2="100" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
                 </svg>
               </div>
+              )}
             </article>
           </Link>
         </section>

@@ -47,7 +47,7 @@ export const siteConfig = {
       { name: 'The Gennoor Way', href: '/the-gennoor-way' },
       {
         name: 'Resources',
-        href: '/resources/blog',
+        href: '/resources',
         children: [
           { name: 'Gennoor Academy', href: '/academy', description: '42 courses across 6 tracks · interactive AB-100 included', badge: 'New' },
           { name: 'Blog', href: '/resources/blog', description: 'AI insights & articles' },

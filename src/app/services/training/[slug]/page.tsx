@@ -58,7 +58,7 @@ function generateFaqs(program: NonNullable<ReturnType<typeof getProgramBySlug>>)
       question: `Does the ${program.title} program include certification?`,
       answer: program.certification === 'No'
         ? 'This program focuses on practical skills. While it does not directly map to a certification exam, the skills learned are applicable to related industry certifications.'
-        : `Yes, this program aligns with certification preparation (${program.certification === 'Yes' ? 'relevant industry certifications' : program.certification}). Our trainer holds 16+ active certifications with a 98% student pass rate.`,
+        : `Yes, this program aligns with certification preparation (${program.certCode ?? (program.certification === 'Yes' ? 'relevant industry certifications' : program.certification)}). Our trainer holds 16+ active certifications with a 98% student pass rate.`,
     },
   ]
 }
@@ -139,7 +139,7 @@ export default async function TrainingProgramPage({ params }: Props) {
                 </div>
                 <div className="bg-white/80 backdrop-blur-sm ring-1 ring-gray-200 rounded-xl p-4 text-center">
                   <Award className="w-5 h-5 text-primary-600 mx-auto mb-2" />
-                  <div className="text-sm font-bold text-gray-900">{program.certification === 'No' ? 'Practical' : 'Cert-Aligned'}</div>
+                  <div className="text-sm font-bold text-gray-900">{program.certification === 'No' ? 'Practical' : (program.certCode ?? 'Cert-Aligned')}</div>
                   <div className="text-gray-500 text-xs">Certification</div>
                 </div>
                 <div className="bg-white/80 backdrop-blur-sm ring-1 ring-gray-200 rounded-xl p-4 text-center">

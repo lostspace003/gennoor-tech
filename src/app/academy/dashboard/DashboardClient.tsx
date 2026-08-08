@@ -9,6 +9,7 @@ import { useLearnerAuth } from '@/hooks/useLearnerAuth'
 import LearnerAuthModal from '@/components/academy/LearnerAuthModal'
 import LearnerProfileCard from '@/components/academy/LearnerProfileCard'
 import LearnerAnalytics from '@/components/academy/LearnerAnalytics'
+import AcademyLiveSessions from '@/components/academy/AcademyLiveSessions'
 
 const LOCAL_CERTS_KEY = 'gennoor:academy:certs'
 
@@ -285,6 +286,18 @@ export default function DashboardClient() {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* Live sessions — same event source as /webinars, Academy-filtered */}
+      <section className="mx-auto px-6 lg:px-10 pt-10 max-w-[1040px]">
+        <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gray-900 mb-1">Live sessions</h2>
+        <p className="text-sm text-[#6e6e73] mb-5">
+          Cohort sessions and Q&amp;A clinics you can join live — recordings follow.
+        </p>
+        <AcademyLiveSessions
+          learnerName={session?.name ?? data?.learner.name ?? ''}
+          learnerEmail={session?.email ?? data?.learner.email ?? ''}
+        />
       </section>
 
       {/* Analytics */}
