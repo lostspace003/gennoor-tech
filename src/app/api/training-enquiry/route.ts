@@ -28,6 +28,13 @@ export async function POST(request: Request) {
       timestamp
     } = body
 
+    if (!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email))) {
+      return NextResponse.json(
+        { success: false, message: 'Please provide your name and a valid email address.' },
+        { status: 400 }
+      )
+    }
+
     console.log('Training Enquiry Received:', {
       name, email, phone, company, designation, trainingFor, teamSize,
       timeline, message, programTitle, programType, requestedFile, timestamp

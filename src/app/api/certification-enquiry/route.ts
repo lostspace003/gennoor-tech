@@ -28,6 +28,15 @@ export async function POST(request: Request) {
       timestamp
     } = body
 
+    // Without this the route accepted an empty body and emailed the team a
+    // notification reading "Certification Enquiry - undefined".
+    if (!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email))) {
+      return NextResponse.json(
+        { success: false, message: 'Please provide your name and a valid email address.' },
+        { status: 400 }
+      )
+    }
+
     console.log('Certification Enquiry Received:', {
       name, email, phone, company, designation, certifications, currentLevel,
       targetDate, trainingMode, message, selectedCertification, timestamp
