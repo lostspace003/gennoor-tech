@@ -33,8 +33,6 @@ interface Props {
   mobileOpen: boolean
   /** Close handler — used by mobile drawer and route changes. */
   onMobileClose: () => void
-  /** Hover handlers for the auto-expand-on-hover behaviour when collapsed. */
-  onHoverChange?: (hovering: boolean) => void
   /** Toggle the pinned state (desktop only). */
   onTogglePin?: () => void
   /** Open the ⌘K search modal. */
@@ -48,12 +46,20 @@ const ROW_ACTIVE = 'bg-primary-100 text-primary-600 font-semibold'
 const ICON_IDLE = 'text-[#86868b]'
 const ICON_ACTIVE = 'text-primary-600'
 
+/** Tooltip shown beside collapsed-rail icons — explains what each icon is. */
+function RailTip({ label }: { label: string }) {
+  return (
+    <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-2.5 py-1.5 rounded-lg bg-[#1d1d1f] text-white text-[11.5px] font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-[70] shadow-lg">
+      {label}
+    </span>
+  )
+}
+
 export default function PortalSidebar({
   pinned,
   collapsed,
   mobileOpen,
   onMobileClose,
-  onHoverChange,
   onTogglePin,
   onSearchOpen,
 }: Props) {
@@ -114,8 +120,6 @@ export default function PortalSidebar({
           // Mobile show/hide
           mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
-        onMouseEnter={() => onHoverChange?.(true)}
-        onMouseLeave={() => onHoverChange?.(false)}
         aria-label="Primary navigation"
       >
         {/* Mobile header — only renders on mobile */}
@@ -165,11 +169,11 @@ export default function PortalSidebar({
             <button
               type="button"
               onClick={onTogglePin}
-              className="w-full flex items-center justify-center p-2 rounded-lg text-gray-500 hover:bg-[#eaeaef] transition-colors"
-              aria-label="Pin navigation open"
-              title="Pin navigation open"
+              className="group relative w-full flex items-center justify-center p-2 rounded-lg text-gray-500 hover:bg-[#eaeaef] transition-colors"
+              aria-label="Expand navigation"
             >
               <PanelLeftOpen className="w-[17px] h-[17px]" strokeWidth={1.75} />
+              <RailTip label="Expand navigation" />
             </button>
           )}
         </div>
@@ -183,25 +187,26 @@ export default function PortalSidebar({
               className={cn(
                 ROW,
                 'w-full text-left text-[#6e6e73] hover:bg-[#eaeaef]',
-                !showLabels && 'justify-center px-0'
+                !showLabels && 'group relative justify-center px-0'
               )}
               aria-label="Search the website"
-              title={!showLabels ? 'Search' : undefined}
             >
               <Search className={cn('w-[17px] h-[17px] flex-shrink-0', ICON_IDLE)} strokeWidth={1.7} />
-              {showLabels && (
+              {showLabels ? (
                 <>
                   <span className="truncate flex-1">Search</span>
                   <kbd className="text-[10.5px] font-medium text-gray-500 bg-white border border-[#e8e8ed] px-1.5 py-0.5 rounded-md leading-none">
                     ⌘K
                   </kbd>
                 </>
+              ) : (
+                <RailTip label="Search  ⌘K" />
               )}
             </button>
           </div>
         )}
 
-        <div className="flex-1 overflow-y-auto px-3 py-1.5">
+        <div className={cn('flex-1 px-3 py-1.5', showLabels ? 'overflow-y-auto' : 'overflow-visible')}>
           {/* Main nav */}
           <nav aria-label="Site sections">
             <ul className="space-y-0.5">
@@ -234,11 +239,11 @@ export default function PortalSidebar({
           ) : (
             <Link
               href="/resources/calendar"
-              className="flex items-center justify-center w-9 h-9 mx-auto bg-primary-600 text-white rounded-full hover:bg-[#0077ed] transition-colors"
+              className="group relative flex items-center justify-center w-9 h-9 mx-auto bg-primary-600 text-white rounded-full hover:bg-[#0077ed] transition-colors"
               aria-label="Book a call"
-              title="Book a call"
             >
               <ChevronRight className="w-4 h-4" strokeWidth={2} />
+              <RailTip label="Book a call" />
             </Link>
           )}
         </div>
@@ -264,6 +269,27 @@ function SectionRow({
   const active = isSectionActive(section, pathname)
   const hasChildren = !!(section.children && section.children.length > 0)
 
+  // Collapsed rail — every section renders as an icon link with a tooltip
+  // naming it. Parents navigate to their section landing page directly.
+  if (!showLabels && section.href) {
+    const on = hasChildren ? active : isItemActive(section.href, pathname)
+    return (
+      <li>
+        <Link
+          href={section.href}
+          className={cn(ROW, 'group relative justify-center px-0', on ? ROW_ACTIVE : ROW_IDLE)}
+        >
+          <Icon
+            className={cn('w-[17px] h-[17px] flex-shrink-0', on ? ICON_ACTIVE : ICON_IDLE)}
+            strokeWidth={1.7}
+          />
+          <span className="sr-only">{section.name}</span>
+          <RailTip label={section.name} />
+        </Link>
+      </li>
+    )
+  }
+
   // Leaf row (no children) — renders as a plain link
   if (!hasChildren && section.href) {
     const exact = isItemActive(section.href, pathname)
@@ -271,18 +297,13 @@ function SectionRow({
       <li>
         <Link
           href={section.href}
-          className={cn(
-            ROW,
-            exact ? ROW_ACTIVE : ROW_IDLE,
-            !showLabels && 'justify-center px-0'
-          )}
-          title={!showLabels ? section.name : undefined}
+          className={cn(ROW, exact ? ROW_ACTIVE : ROW_IDLE)}
         >
           <Icon
             className={cn('w-[17px] h-[17px] flex-shrink-0', exact ? ICON_ACTIVE : ICON_IDLE)}
             strokeWidth={1.7}
           />
-          {showLabels && <span className="truncate">{section.name}</span>}
+          <span className="truncate">{section.name}</span>
         </Link>
       </li>
     )
@@ -299,28 +320,22 @@ function SectionRow({
         className={cn(
           ROW,
           'w-full text-left',
-          active ? 'text-gray-900 font-medium hover:bg-[#eaeaef]' : ROW_IDLE,
-          !showLabels && 'justify-center px-0'
+          active ? 'text-gray-900 font-medium hover:bg-[#eaeaef]' : ROW_IDLE
         )}
         aria-expanded={isExpanded}
-        title={!showLabels ? section.name : undefined}
       >
         <Icon
           className={cn('w-[17px] h-[17px] flex-shrink-0', active ? 'text-gray-700' : ICON_IDLE)}
           strokeWidth={1.7}
         />
-        {showLabels && (
-          <>
-            <span className="truncate flex-1">{section.name}</span>
-            <ChevronRight
-              className={cn(
-                'w-3.5 h-3.5 flex-shrink-0 text-gray-400 transition-transform duration-200',
-                isExpanded && 'rotate-90'
-              )}
-              strokeWidth={2}
-            />
-          </>
-        )}
+        <span className="truncate flex-1">{section.name}</span>
+        <ChevronRight
+          className={cn(
+            'w-3.5 h-3.5 flex-shrink-0 text-gray-400 transition-transform duration-200',
+            isExpanded && 'rotate-90'
+          )}
+          strokeWidth={2}
+        />
       </button>
 
       {showLabels && isExpanded && section.children && (
