@@ -12,7 +12,7 @@ const JWT_EXPIRY = '30d'
 export interface LearnerPayload {
   email: string
   name: string
-  provider: 'otp' | 'google' | 'microsoft'
+  provider: 'otp' | 'google' | 'microsoft' | 'password'
 }
 
 export async function createLearnerToken(payload: LearnerPayload): Promise<string> {

@@ -2,10 +2,13 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { BookOpen, Clock, Award, ArrowRight, CheckCircle2, Circle, PlayCircle, Loader2, ExternalLink } from 'lucide-react'
+import { Award, ArrowRight, CheckCircle2, Circle, PlayCircle, Loader2, ExternalLink, UserCircle2 } from 'lucide-react'
 import { courses as allCourses } from '@/config/courses'
 import { getAllLocalProgress } from '@/lib/progress-store'
 import { useLearnerAuth } from '@/hooks/useLearnerAuth'
+import LearnerAuthModal from '@/components/academy/LearnerAuthModal'
+import LearnerProfileCard from '@/components/academy/LearnerProfileCard'
+import LearnerAnalytics from '@/components/academy/LearnerAnalytics'
 
 const LOCAL_CERTS_KEY = 'gennoor:academy:certs'
 
@@ -41,11 +44,12 @@ interface DashboardData {
 }
 
 export default function DashboardClient() {
-  const { isLoggedIn, loading: authLoading, session } = useLearnerAuth()
+  const { isLoggedIn, loading: authLoading, session, logout } = useLearnerAuth()
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [localCerts, setLocalCerts] = useState<Record<string, LocalCertRecord>>({})
+  const [authOpen, setAuthOpen] = useState(false)
 
   // Certificates claimed on this device without an account (OTP claim flow).
   useEffect(() => {
@@ -92,6 +96,29 @@ export default function DashboardClient() {
     return merged
   }, [data, localCerts])
 
+  // The progress rows powering both the course list and the analytics —
+  // server rows when signed in, device-local rows otherwise.
+  const progressRows = useMemo<ProgressRow[]>(() => {
+    if (data) return data.progress
+    const rows: ProgressRow[] = []
+    const local = getAllLocalProgress()
+    for (const courseId in local) {
+      for (const chId in local[courseId].chapters) {
+        const ch = local[courseId].chapters[chId]
+        rows.push({
+          chapterId: ch.chapterId,
+          courseId: ch.courseId,
+          currentSlide: ch.currentSlide,
+          totalSlides: ch.totalSlides,
+          completionPercent: ch.completionPercent,
+          completed: ch.completed,
+          lastAccessed: ch.lastAccessed,
+        })
+      }
+    }
+    return rows
+  }, [data])
+
   // Per-course summary: combine config + progress rows + cert.
   const courseSummaries = useMemo(() => {
     const progressByCourse = new Map<string, ProgressRow[]>()
@@ -100,32 +127,10 @@ export default function DashboardClient() {
     for (const c of certificates) {
       certByCourse.set(c.workshopSlug, c)
     }
-
-    if (data) {
-      for (const row of data.progress) {
-        const arr = progressByCourse.get(row.courseId) || []
-        arr.push(row)
-        progressByCourse.set(row.courseId, arr)
-      }
-    } else {
-      // Fallback to localStorage for non-logged-in users
-      const local = getAllLocalProgress()
-      for (const courseId in local) {
-        const rows: ProgressRow[] = []
-        for (const chId in local[courseId].chapters) {
-          const ch = local[courseId].chapters[chId]
-          rows.push({
-            chapterId: ch.chapterId,
-            courseId: ch.courseId,
-            currentSlide: ch.currentSlide,
-            totalSlides: ch.totalSlides,
-            completionPercent: ch.completionPercent,
-            completed: ch.completed,
-            lastAccessed: ch.lastAccessed,
-          })
-        }
-        progressByCourse.set(courseId, rows)
-      }
+    for (const row of progressRows) {
+      const arr = progressByCourse.get(row.courseId) || []
+      arr.push(row)
+      progressByCourse.set(row.courseId, arr)
     }
 
     return allCourses
@@ -161,7 +166,7 @@ export default function DashboardClient() {
         if (a.lastTouched && b.lastTouched) return b.lastTouched.localeCompare(a.lastTouched)
         return 0
       })
-  }, [data, certificates])
+  }, [progressRows, certificates])
 
   const stats = useMemo(() => {
     const started = courseSummaries.filter(s => !s.notStarted).length
@@ -179,6 +184,17 @@ export default function DashboardClient() {
     return { started, completed, certs, minutes }
   }, [courseSummaries, certificates])
 
+  const statusCounts = useMemo(() => ({
+    completed: courseSummaries.filter(s => s.isCompleted).length,
+    inProgress: courseSummaries.filter(s => !s.isCompleted && !s.notStarted).length,
+    notStarted: courseSummaries.filter(s => s.notStarted).length,
+  }), [courseSummaries])
+
+  const handleSignOut = async () => {
+    await logout()
+    window.location.reload()
+  }
+
   if (authLoading || loading) {
     return (
       <main className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -192,21 +208,67 @@ export default function DashboardClient() {
 
   return (
     <main className="min-h-screen bg-[#f5f5f7]">
+      <LearnerAuthModal
+        isOpen={authOpen}
+        onClose={() => setAuthOpen(false)}
+        onLoginSuccess={() => window.location.reload()}
+        title="Sign in to Gennoor Academy"
+        subtitle="Your progress, certificates, and analytics — saved across devices."
+      />
+
       {/* Header */}
       <section className="bg-white border-b border-[#e8e8ed]">
         <div className="mx-auto px-6 lg:px-10 py-10 max-w-[1040px]">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#86868b] mb-2">
-            Gennoor Academy · Learner dashboard
-          </p>
-          <h1 className="text-[30px] font-bold tracking-[-0.02em] text-gray-900">
-            Welcome back{session?.name ? `, ${session.name.split(' ')[0]}` : ''}.
-          </h1>
-          <p className="text-sm text-[#6e6e73] mt-1">
-            Here is everything you have started, completed, and earned.
-            {!isLoggedIn && <span className="text-[#86868b]"> Progress is saved on this device.</span>}
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#86868b] mb-2">
+                Gennoor Academy · Learner dashboard
+              </p>
+              <h1 className="text-[30px] font-bold tracking-[-0.02em] text-gray-900">
+                Welcome back{session?.name ? `, ${session.name.split(' ')[0]}` : ''}.
+              </h1>
+              <p className="text-sm text-[#6e6e73] mt-1">
+                Here is everything you have started, completed, and earned.
+                {!isLoggedIn && <span className="text-[#86868b]"> Progress is saved on this device.</span>}
+              </p>
+            </div>
+            {!isLoggedIn && (
+              <button
+                onClick={() => setAuthOpen(true)}
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-[#0077ed] text-white text-[14px] font-medium rounded-full transition-colors self-start sm:self-auto"
+              >
+                <UserCircle2 className="w-[18px] h-[18px]" />
+                Sign in
+              </button>
+            )}
+          </div>
         </div>
       </section>
+
+      {/* Sign-in prompt for device-only learners */}
+      {!isLoggedIn && (
+        <section className="mx-auto px-6 lg:px-10 pt-8 max-w-[1040px]">
+          <div className="bg-white border border-[#e8e8ed] rounded-2xl px-6 py-6 sm:px-8 flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="flex-1">
+              <h2 className="text-[17px] font-bold tracking-[-0.01em] text-gray-900">
+                Keep your progress everywhere.
+              </h2>
+              <p className="text-[13.5px] text-[#6e6e73] mt-1 leading-[1.5]">
+                Create a free learner account with Microsoft, Google, or any email —
+                your chapters, certificates, and analytics sync across every device.
+                Right now they live only in this browser.
+              </p>
+            </div>
+            <button
+              onClick={() => setAuthOpen(true)}
+              className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 bg-primary-600 hover:bg-[#0077ed] text-white text-[14px] font-medium rounded-full transition-colors shrink-0"
+            >
+              Create account or sign in
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </section>
+      )}
 
       {/* Stats */}
       <section className="mx-auto px-6 lg:px-10 pt-8 max-w-[1040px]">
@@ -225,11 +287,20 @@ export default function DashboardClient() {
         </div>
       </section>
 
+      {/* Analytics */}
+      <section className="mx-auto px-6 lg:px-10 pt-8 max-w-[1040px]">
+        <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gray-900 mb-1">Your analytics</h2>
+        <p className="text-sm text-[#6e6e73] mb-5">
+          A live view of your learning — updated every time you open a chapter.
+        </p>
+        <LearnerAnalytics progressRows={progressRows} statusCounts={statusCounts} />
+      </section>
+
       {/* Certificates */}
       {certificates.length > 0 && (
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 max-w-5xl">
-          <h2 className="font-heading text-2xl font-bold text-gray-900 mb-1">Your certificates</h2>
-          <p className="text-sm text-gray-500 mb-5">Download the PDF, add to LinkedIn, or share the verification link.</p>
+        <section className="mx-auto px-6 lg:px-10 pt-10 max-w-[1040px]">
+          <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gray-900 mb-1">Your certificates</h2>
+          <p className="text-sm text-[#6e6e73] mb-5">Download the PDF, add to LinkedIn, or share the verification link.</p>
           <div className="grid sm:grid-cols-2 gap-4">
             {certificates.map(c => (
               <Link
@@ -237,7 +308,7 @@ export default function DashboardClient() {
                 href={`/verify/${c.certId}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col gap-2 p-5 rounded-2xl bg-white ring-1 ring-gray-200 hover:ring-amber-300 hover:shadow-md transition-all"
+                className="group flex flex-col gap-2 p-5 rounded-2xl bg-white border border-[#e8e8ed] hover:border-amber-300 hover:shadow-md transition-all"
               >
                 <div className="flex items-center gap-2">
                   <Award className="w-5 h-5 text-amber-500" />
@@ -257,9 +328,9 @@ export default function DashboardClient() {
       )}
 
       {/* Course list */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 max-w-5xl">
-        <h2 className="font-heading text-2xl font-bold text-gray-900 mb-1">All courses</h2>
-        <p className="text-sm text-gray-500 mb-5">Continue what you started, or pick up a new one.</p>
+      <section className="mx-auto px-6 lg:px-10 py-10 max-w-[1040px]">
+        <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gray-900 mb-1">All courses</h2>
+        <p className="text-sm text-[#6e6e73] mb-5">Continue what you started, or pick up a new one.</p>
 
         {error && (
           <div className="mb-4 p-3 rounded-lg bg-red-50 text-red-700 text-sm ring-1 ring-red-200">
@@ -357,6 +428,17 @@ export default function DashboardClient() {
           </Link>
         </div>
       </section>
+
+      {/* Profile & security */}
+      {isLoggedIn && (
+        <section className="mx-auto px-6 lg:px-10 pb-16 max-w-[1040px]">
+          <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gray-900 mb-1">Profile &amp; security</h2>
+          <p className="text-sm text-[#6e6e73] mb-5">
+            Your details, your password, your account — all in one place.
+          </p>
+          <LearnerProfileCard onSignOut={handleSignOut} />
+        </section>
+      )}
     </main>
   )
 }

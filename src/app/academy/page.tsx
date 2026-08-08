@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { BreadcrumbJsonLd } from '@/components/JsonLd'
 import AcademyCatalog from '@/components/academy/AcademyCatalog'
 import AcademyShowcase from '@/components/academy/AcademyShowcase'
+import AcademyOverview from '@/components/academy/AcademyOverview'
 import { courses } from '@/data/academy/courses'
 import { tracks } from '@/data/academy/taxonomy'
 import { courses as interactiveCourses } from '@/config/courses'
@@ -79,6 +80,9 @@ export default function AcademyPage() {
             <AcademyShowcase />
           </div>
         </section>
+
+        {/* ===== The Academy at a glance (dark campus band) ===== */}
+        <AcademyOverview />
 
         {/* ===== Tracks ===== */}
         <section className="bg-[#f5f5f7] px-8 py-20">
