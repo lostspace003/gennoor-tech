@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { isChromelessRoute } from '@/lib/chrome'
 import { usePathname } from 'next/navigation'
 
 interface Msg { role: 'user' | 'assistant'; content: string; links?: Array<{ title: string; url: string }> }
@@ -37,8 +38,8 @@ export default function GennoorCare() {
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [msgs, busy, showLead, showFeedback])
 
-  // App surfaces have their own copilot
-  if (pathname?.startsWith('/crm') || pathname?.startsWith('/admin')) return null
+  // App surfaces (CRM, admin, chapter player) have their own copilot
+  if (isChromelessRoute(pathname)) return null
 
   const saveName = (raw: string) => {
     const name = raw.trim().replace(/[^a-zA-Z .'-]/g, '').slice(0, 40)

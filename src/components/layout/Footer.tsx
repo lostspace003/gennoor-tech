@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { siteConfig } from '@/lib/site-config'
+import { isChromelessRoute } from '@/lib/chrome'
 import EmailOTP from '@/components/EmailOTP'
 
 /**
@@ -44,8 +45,8 @@ export default function Footer() {
     setSubscribed(true)
   }
 
-  // App surfaces (CRM, admin) have no marketing footer
-  if (pathname.startsWith('/crm') || pathname.startsWith('/admin')) return null
+  // App surfaces (CRM, admin, chapter player) have no marketing footer
+  if (isChromelessRoute(pathname)) return null
 
   return (
     <footer className="bg-[#f5f5f7] border-t border-[#e8e8ed]">

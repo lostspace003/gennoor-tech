@@ -99,6 +99,36 @@ envision that had no backing system yet.
 
 ---
 
+## 2.5 REQUESTED NEXT FEATURE — Learner accounts (spec on record)
+
+Requested: learners sign in with **Microsoft** or **any email**; email signups
+verified by **OTP via ACS**; **password with OTP-based reset**; a saved
+**learner profile**; and a **data/analytics section** in the dashboard.
+
+What already exists (build on, don't duplicate):
+- Passwordless OTP login: `/api/learner/login-otp`, `/api/verify-otp`,
+  `useLearnerAuth` (JWT via `LEARNER_JWT_SECRET`), `LearnerAuthModal`.
+- Per-learner progress + certificates storage and the `/academy/dashboard`
+  surface. ACS email transport is live.
+
+To build (code side):
+1. **Microsoft sign-in for learners** — separate Entra app registration
+   (multitenant + personal accounts), then `LEARNER_AZURE_AD_CLIENT_ID`
+   (+ secret/tenant) app settings; OAuth callback route issuing the same
+   learner JWT.
+2. **Password on top of OTP** — `scrypt` hash stored on the learner record;
+   routes: set/change password (authed), login-with-password, and
+   forgot-password = existing OTP flow + new-password submit. OTP remains
+   the fallback sign-in, so nobody is ever locked out.
+3. **Profile** — name/email (+ optional org, role) on the learner record,
+   editable from the dashboard.
+4. **Dashboard analytics** — minutes-per-week chart, per-course completion,
+   certificates timeline; client-rendered (recharts already in deps) from
+   the existing progress rows. No new Azure resources needed.
+
+Azure config this will need from you: ONLY the learner Entra app
+registration (item 1). Everything else runs on existing settings.
+
 ## 3. Follow-up polish (not gaps, listed for completeness)
 - **Admin dashboard internals** (`src/app/admin/page.tsx`, ~2,400 lines) kept the
   existing calm system rather than a deep prototype restyle — it is consistent

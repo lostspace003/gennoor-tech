@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
@@ -65,6 +65,9 @@ export default function PortalSidebar({
 }: Props) {
   const pathname = usePathname()
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
+  // Collapsed-rail flyout: which section's submenu panel is open
+  const [flyout, setFlyout] = useState<string | null>(null)
+  const asideRef = useRef<HTMLElement>(null)
 
   // Auto-expand any section that contains the active route
   useEffect(() => {
@@ -78,11 +81,34 @@ export default function PortalSidebar({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname])
 
-  // Close mobile drawer on route change
+  // Close mobile drawer + any flyout on route change
   useEffect(() => {
     if (mobileOpen) onMobileClose()
+    setFlyout(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname])
+
+  // Flyout housekeeping: close when the rail expands, when clicking
+  // anywhere outside the rail, or on Escape.
+  useEffect(() => {
+    if (!collapsed) setFlyout(null)
+  }, [collapsed])
+
+  useEffect(() => {
+    if (!flyout) return
+    const onPointerDown = (e: PointerEvent) => {
+      if (asideRef.current && !asideRef.current.contains(e.target as Node)) setFlyout(null)
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setFlyout(null)
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [flyout])
 
   const toggleSection = (name: string) => {
     setExpanded(prev => {
@@ -109,6 +135,7 @@ export default function PortalSidebar({
       />
 
       <aside
+        ref={asideRef}
         className={cn(
           'fixed top-0 left-0 z-50 lg:z-40 h-dvh',
           'bg-[#f5f5f7] border-r border-[#e8e8ed] flex flex-col',
@@ -218,6 +245,10 @@ export default function PortalSidebar({
                   showLabels={showLabels}
                   isExpanded={expanded.has(section.name)}
                   onToggle={() => toggleSection(section.name)}
+                  flyoutOpen={flyout === section.name}
+                  onFlyoutToggle={() =>
+                    setFlyout(f => (f === section.name ? null : section.name))
+                  }
                 />
               ))}
             </ul>
@@ -258,21 +289,97 @@ function SectionRow({
   showLabels,
   isExpanded,
   onToggle,
+  flyoutOpen,
+  onFlyoutToggle,
 }: {
   section: PortalNavSection
   pathname: string
   showLabels: boolean
   isExpanded: boolean
   onToggle: () => void
+  flyoutOpen: boolean
+  onFlyoutToggle: () => void
 }) {
   const Icon = section.icon
   const active = isSectionActive(section, pathname)
   const hasChildren = !!(section.children && section.children.length > 0)
 
-  // Collapsed rail — every section renders as an icon link with a tooltip
-  // naming it. Parents navigate to their section landing page directly.
+  // Collapsed rail + section WITH children — clicking the icon opens a
+  // flyout submenu beside the rail listing the section page and every
+  // child, so nothing is more than two taps away while collapsed.
+  if (!showLabels && hasChildren) {
+    return (
+      <li className="relative">
+        <button
+          type="button"
+          onClick={onFlyoutToggle}
+          className={cn(
+            ROW,
+            'group relative w-full justify-center px-0',
+            active || flyoutOpen ? ROW_ACTIVE : ROW_IDLE
+          )}
+          aria-expanded={flyoutOpen}
+          aria-haspopup="menu"
+        >
+          <Icon
+            className={cn(
+              'w-[17px] h-[17px] flex-shrink-0',
+              active || flyoutOpen ? ICON_ACTIVE : ICON_IDLE
+            )}
+            strokeWidth={1.7}
+          />
+          <span className="sr-only">{section.name}</span>
+          {!flyoutOpen && <RailTip label={section.name} />}
+        </button>
+
+        {flyoutOpen && (
+          <div
+            className="absolute left-full top-0 ml-2 w-60 bg-white border border-[#e8e8ed] rounded-xl shadow-lg p-1.5 z-[70]"
+            role="menu"
+            aria-label={`${section.name} submenu`}
+          >
+            {section.href && (
+              <Link
+                href={section.href}
+                className="block px-3 py-2 rounded-lg text-[13px] font-semibold text-gray-900 hover:bg-[#f5f5f7]"
+                role="menuitem"
+              >
+                {section.name}
+              </Link>
+            )}
+            <div className="my-1 border-t border-[#f0f0f2]" />
+            {section.children!.map(child => {
+              const childActive = isItemActive(child.href, pathname)
+              return (
+                <Link
+                  key={child.name}
+                  href={child.href}
+                  className={cn(
+                    'flex items-center px-3 py-2 rounded-lg text-[13px]',
+                    childActive
+                      ? 'bg-primary-100 text-primary-600 font-semibold'
+                      : 'text-[#6e6e73] hover:bg-[#f5f5f7] hover:text-gray-900'
+                  )}
+                  role="menuitem"
+                >
+                  <span className="truncate">{child.name}</span>
+                  {child.badge && (
+                    <span className="ml-auto text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+                      {child.badge}
+                    </span>
+                  )}
+                </Link>
+              )
+            })}
+          </div>
+        )}
+      </li>
+    )
+  }
+
+  // Collapsed rail + leaf section — an icon link with a tooltip naming it.
   if (!showLabels && section.href) {
-    const on = hasChildren ? active : isItemActive(section.href, pathname)
+    const on = isItemActive(section.href, pathname)
     return (
       <li>
         <Link
