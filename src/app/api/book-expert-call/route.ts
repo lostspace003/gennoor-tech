@@ -25,6 +25,15 @@ export async function POST(request: Request) {
       timestamp
     } = body
 
+    // Newsletter signups (footer + blog) post only name/email/programTitle —
+    // every other field is optional and must never be dereferenced directly.
+    if (!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email))) {
+      return NextResponse.json(
+        { success: false, message: 'A name and a valid email are required.' },
+        { status: 400 }
+      )
+    }
+
     console.log('Expert Call Booking Received:', {
       name, email, whatsapp, whatsappCountry, company, designation, message, programTitle, timestamp
     })
@@ -143,7 +152,7 @@ export async function POST(request: Request) {
       ],
       from: process.env.EMAIL_FROM_INFO || 'info@gennoor.com',
       fromName: 'Gennoor Tech Website',
-      subject: `[CALL REQUEST] ${name} from ${company} (${whatsappCountry}) – ${programTitle}`,
+      subject: `[CALL REQUEST] ${name}${company ? ` from ${company}` : ''}${whatsappCountry ? ` (${whatsappCountry})` : ''} – ${programTitle || 'General enquiry'}`,
       html: `
         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px;">
           <h2 style="color: #1e293b; border-bottom: 2px solid #2563eb; padding-bottom: 10px;">New Expert Call Request</h2>
@@ -163,7 +172,11 @@ export async function POST(request: Request) {
             </tr>
             <tr>
               <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: 600;">WhatsApp</td>
-              <td style="padding: 10px; border: 1px solid #e2e8f0;"><a href="https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}">${escapeHtml(whatsapp)}</a></td>
+              <td style="padding: 10px; border: 1px solid #e2e8f0;">${
+                whatsapp
+                  ? `<a href="https://wa.me/${String(whatsapp).replace(/[^0-9]/g, '')}">${escapeHtml(whatsapp)}</a>`
+                  : 'N/A'
+              }</td>
             </tr>
             <tr>
               <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: 600;">Country</td>
