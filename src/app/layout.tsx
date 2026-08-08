@@ -5,7 +5,6 @@ import Footer from '@/components/layout/Footer'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import GennoorCare from '@/components/GennoorCare/GennoorCare'
-import TrackingPixels from '@/components/TrackingPixels'
 import PageViewTracker from '@/components/PageViewTracker'
 import RippleProvider from '@/components/RippleProvider'
 import { OrganizationJsonLd, WebSiteJsonLd } from '@/components/JsonLd'
@@ -103,7 +102,6 @@ export default function RootLayout({
       <body className="antialiased">
         <RippleProvider />
         <GoogleAnalytics />
-        <TrackingPixels />
         <PageViewTracker />
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-primary-700 focus:text-white focus:rounded-lg">
           Skip to main content

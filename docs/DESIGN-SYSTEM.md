@@ -141,8 +141,9 @@ Trustpilot green (`#00b67a`) — brand requirement. Don't normalise these.
 
 ## Do-not-touch (wiring)
 
-Analytics (`GoogleAnalytics`, `PageViewTracker`, `TrackingPixels`, Trustpilot)
-in `layout.tsx`; form payload field names in the 6 form components
+Analytics (`GoogleAnalytics`, `PageViewTracker`, Trustpilot) in `layout.tsx`
+(`TrackingPixels` was removed 2026-08-08 — the Meta/LinkedIn tags never had IDs
+and the privacy policy declares no advertising cookies); form payload field names in the 6 form components
 (EnquiryFormModal, CertificationEnquiryForm, BookCallModal, BookingCalendar,
 EmailOTP, ClaudeCoworkPopup); `/api/**`, `/media/**` URLs; `middleware.ts`;
 `.github/workflows`; `sitemap.ts`; `public/`.

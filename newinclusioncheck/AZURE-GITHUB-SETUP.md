@@ -77,7 +77,7 @@ from memory.
 | 14 | Media (videos, logos, PDFs) via secured proxy | `/media/*` | Blob Storage (private) | `NEXT_PUBLIC_BLOB_URL`, `AZURE_STORAGE_CONNECTION_STRING`, `AZURE_STORAGE_KEY` |
 | 15 | YouTube auto-sync (videos page + home) | build/ISR-time fetch | YouTube Data API | `YOUTUBE_API_KEY` |
 | 16 | SEO automations (IndexNow, GSC resubmit, sitemaps) | `scripts/*`, `/api/admin/gsc-*` | Google APIs | `GSC_OAUTH_CLIENT_ID`, `GSC_OAUTH_CLIENT_SECRET`, `GSC_OAUTH_REFRESH_TOKEN`, `GOOGLE_SERVICE_ACCOUNT_KEY` |
-| 17 | Tracking pixels | client | — | `NEXT_PUBLIC_GA_MEASUREMENT_ID`, `NEXT_PUBLIC_FB_PIXEL_ID`, `NEXT_PUBLIC_LINKEDIN_PARTNER_ID` |
+| 17 | Google Analytics | client | — | `NEXT_PUBLIC_GA_MEASUREMENT_ID` |
 
 **None of rows 1–5, 7–17 changed in this PR** — verify they carry the same
 values as before; nothing to add.
@@ -113,12 +113,21 @@ Actions secrets; values are write-only and cannot be read back):
 `CRM_CRON_SECRET`, `FOUNDRY_API_KEY`, `GSC_OAUTH_CLIENT_ID`,
 `GSC_OAUTH_CLIENT_SECRET`, `GSC_OAUTH_REFRESH_TOKEN`, `MS_GRAPH_CLIENT_ID`,
 `MS_GRAPH_CLIENT_SECRET`, `MS_GRAPH_TENANT_ID`, `NEXTAUTH_SECRET`,
-`NEXT_PUBLIC_CAREER_API_URL`, `NEXT_PUBLIC_FB_PIXEL_ID`,
-`NEXT_PUBLIC_GA_MEASUREMENT_ID`, `NEXT_PUBLIC_LINKEDIN_PARTNER_ID`,
+`NEXT_PUBLIC_CAREER_API_URL`, `NEXT_PUBLIC_GA_MEASUREMENT_ID`,
 `YOUTUBE_API_KEY`
 
 **This PR adds no new secret.** The webinar flow reuses the existing email +
 storage secrets.
+
+> **2026-08-08:** `NEXT_PUBLIC_FB_PIXEL_ID` and
+> `NEXT_PUBLIC_LINKEDIN_PARTNER_ID` were **removed** — no pixel IDs existed on
+> either platform, the tags never rendered, and the privacy policy states the
+> site uses no advertising or tracking cookies. The Meta Pixel and LinkedIn
+> Insight Tag code, the `TrackingPixels` component, and both workflow lines are
+> deleted. `NEXT_PUBLIC_GA_MEASUREMENT_ID` was added as an Actions secret the
+> same day — it had been set on the App Service but **not** in Actions, and
+> because `NEXT_PUBLIC_*` is inlined at build time, Google Analytics was absent
+> from the deployed bundle entirely.
 
 ---
 
