@@ -14,7 +14,6 @@ const PIN_STORAGE_KEY = 'gennoor.portal.pinned'
 export default function PortalShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const [pinned, setPinned] = useState(true) // SSR default — expanded on desktop
-  const [hovering, setHovering] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -68,8 +67,10 @@ export default function PortalShell({ children }: { children: React.ReactNode })
     return () => document.removeEventListener('keydown', onKey)
   }, [])
 
-  // Desktop collapsed state — collapsed when not pinned AND not hovered
-  const collapsed = !pinned && !hovering
+  // Desktop collapsed state — simple: collapsed exactly when not pinned.
+  // (No hover-to-expand: collapsing must take effect immediately, and the
+  // collapsed rail explains its icons with tooltips instead.)
+  const collapsed = !pinned
 
   // App surfaces (CRM, admin) render their own full-screen shells — no site
   // topbar/sidebar/breadcrumb/padding around them.
@@ -92,7 +93,6 @@ export default function PortalShell({ children }: { children: React.ReactNode })
         collapsed={collapsed}
         mobileOpen={mobileOpen}
         onMobileClose={() => setMobileOpen(false)}
-        onHoverChange={setHovering}
         onTogglePin={() => setPinned(p => !p)}
         onSearchOpen={() => setSearchOpen(true)}
       />

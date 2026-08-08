@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { BreadcrumbJsonLd } from '@/components/JsonLd'
 import AcademyCatalog from '@/components/academy/AcademyCatalog'
+import AcademyShowcase from '@/components/academy/AcademyShowcase'
 import { courses } from '@/data/academy/courses'
 import { tracks } from '@/data/academy/taxonomy'
 import { courses as interactiveCourses } from '@/config/courses'
@@ -70,6 +71,13 @@ export default function AcademyPage() {
             {courses.length} courses in catalog &nbsp;·&nbsp; {interactiveCourses.length} fully
             interactive &nbsp;·&nbsp; certificate on completion &nbsp;·&nbsp; no credit card
           </p>
+        </section>
+
+        {/* ===== Showcase — see the product before you start ===== */}
+        <section className="px-8 pb-20">
+          <div className="max-w-[1080px] mx-auto">
+            <AcademyShowcase />
+          </div>
         </section>
 
         {/* ===== Tracks ===== */}
