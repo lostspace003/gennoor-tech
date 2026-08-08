@@ -100,50 +100,71 @@ function Frame({ children }: { children: React.ReactNode }) {
 
   const sidebar = (
     <div className="h-full flex flex-col bg-white">
-      <div className="px-4 py-4 border-b border-gray-100">
+      <Link href="/" className="block px-4 pt-[18px] pb-3.5 border-b border-[#f0f0f2]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logos/gennoor-tech-horizontal-transparent.svg" alt="Gennoor Tech" className="h-16 w-auto -ml-1" />
-      </div>
-      <nav className="flex-1 px-2.5 py-3">
+        <img
+          src="/logos/gennoor-tech-compact-white_600x140_navbar.png"
+          alt="Gennoor Tech"
+          className="w-full h-auto rounded-lg"
+        />
+      </Link>
+      <nav className="flex-1 px-2.5 py-2.5 overflow-y-auto">
         {NAV.filter((item) => !item.managerOnly || isManager).map((item) => {
           const isActive = pathname?.startsWith(item.href)
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center justify-between px-3 py-2 rounded-lg mb-0.5 transition-all ${isActive ? 'bg-primary-50 text-primary-600' : 'text-gray-700 hover:bg-gray-100'}`}
+              className={`flex items-center justify-between px-3 py-2 rounded-lg mb-px transition-colors ${
+                isActive
+                  ? 'bg-primary-100 text-primary-600 font-semibold'
+                  : 'text-gray-900 hover:bg-[#f5f5f7]'
+              }`}
             >
               <span className="flex items-center gap-2.5">
-                <item.icon className="w-4 h-4" />
-                <span className="text-sm font-medium">{item.label}</span>
+                <item.icon className={`w-4 h-4 ${isActive ? 'text-primary-600' : 'text-[#86868b]'}`} strokeWidth={1.75} />
+                <span className="text-[13px]">{item.label}</span>
               </span>
-              {item.href === '/crm/leads' && <span className="text-[11px] bg-gray-100 px-1.5 py-0.5 rounded-full">{leads.length}</span>}
+              {item.href === '/crm/leads' && (
+                <span className="text-[10.5px] font-semibold bg-[#f0f0f2] text-[#6e6e73] px-[7px] py-px rounded-full">
+                  {leads.length}
+                </span>
+              )}
               {item.href === '/crm/inbox' && inboxUnseen > 0 && (
-                <span className="text-[11px] bg-green-600 text-white px-1.5 py-0.5 rounded-full animate-pulse">{inboxUnseen}</span>
+                <span className="text-[10.5px] font-semibold bg-[#1d8348] text-white px-[7px] py-px rounded-full">
+                  {inboxUnseen}
+                </span>
               )}
             </Link>
           )
         })}
       </nav>
-      <div className="px-3 py-3 border-t border-gray-100 space-y-2">
-        <div className="px-1 min-w-0">
-          <div className="text-sm font-medium text-gray-900 truncate">{session?.user?.email?.split('@')[0]}</div>
-          <div className="text-[11px] text-gray-400">{isAdmin ? 'Administrator' : isManager ? 'Manager' : 'Team member'}</div>
+      <div className="px-4 py-3.5 border-t border-[#f0f0f2]">
+        <div className="text-[13px] font-semibold text-gray-900 truncate">
+          {session?.user?.email?.split('@')[0]}
         </div>
-        <button
-          onClick={() => signOut({ callbackUrl: '/admin/login' })}
-          className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-red-600 hover:bg-red-50 rounded-lg"
-        >
-          <LogOut className="w-4 h-4" /> Sign out
-        </button>
+        <div className="text-[11px] text-[#86868b]">
+          {isAdmin ? 'Administrator' : isManager ? 'Manager' : 'Team member'}
+        </div>
+        <div className="flex items-center gap-3 mt-2">
+          <Link href="/" className="text-xs font-medium text-primary-600 hover:text-[#0077ed]">
+            ‹ Back to site
+          </Link>
+          <button
+            onClick={() => signOut({ callbackUrl: '/admin/login' })}
+            className="inline-flex items-center gap-1 text-xs font-medium text-[#c0392b] hover:text-[#9b2c21]"
+          >
+            <LogOut className="w-3 h-3" /> Sign out
+          </button>
+        </div>
       </div>
     </div>
   )
 
   return (
-    <div className="h-dvh bg-gray-50 flex overflow-hidden">
+    <div className="h-dvh bg-[#f5f5f7] flex overflow-hidden">
       {/* Desktop sidebar */}
-      <aside className="hidden lg:block w-56 border-r border-gray-200 shrink-0">{sidebar}</aside>
+      <aside className="hidden lg:block w-[216px] border-r border-[#e8e8ed] shrink-0">{sidebar}</aside>
 
       {/* Mobile drawer */}
       {drawerOpen && (
@@ -160,16 +181,21 @@ function Frame({ children }: { children: React.ReactNode }) {
 
       {/* Main column */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-        <header className="h-12 bg-white border-b border-gray-200 px-3 sm:px-4 flex items-center justify-between gap-2 shrink-0">
+        <header className="h-[52px] bg-white border-b border-[#e8e8ed] px-3 sm:px-6 flex items-center justify-between gap-2 shrink-0">
           <div className="flex items-center gap-2 min-w-0">
-            <button onClick={() => setDrawerOpen(true)} className="p-1.5 hover:bg-gray-100 rounded-lg lg:hidden">
+            <button onClick={() => setDrawerOpen(true)} className="p-1.5 hover:bg-[#f5f5f7] rounded-lg lg:hidden">
               <Menu className="w-5 h-5 text-gray-600" />
             </button>
             <h1 className="text-[15px] font-semibold text-gray-900 truncate">{title}</h1>
           </div>
-          <div className="flex items-center gap-2">
-            <button onClick={() => reload().then(() => notify('Refreshed'))} className="p-1.5 hover:bg-gray-100 rounded-lg" title="Refresh data">
-              <RefreshCw className={`w-4.5 h-4.5 w-[18px] h-[18px] text-gray-600 ${loading ? 'animate-spin' : ''}`} />
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => reload().then(() => notify('Refreshed'))}
+              className="inline-flex items-center gap-1.5 border border-[#d2d2d7] hover:border-[#86868b] bg-white text-xs font-semibold text-gray-900 px-3.5 py-1.5 rounded-full transition-colors"
+              title="Refresh data"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 text-gray-600 ${loading ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">Refresh</span>
             </button>
             <CrmCopilot />
           </div>
