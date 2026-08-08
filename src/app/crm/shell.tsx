@@ -197,6 +197,13 @@ function Frame({ children }: { children: React.ReactNode }) {
               <RefreshCw className={`w-3.5 h-3.5 text-gray-600 ${loading ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline">Refresh</span>
             </button>
+            <Link
+              href="/crm/leads?new=1"
+              className="inline-flex items-center text-xs font-semibold text-white bg-primary-600 hover:bg-[#0077ed] px-3.5 py-[7px] rounded-full transition-colors"
+              title="Add a lead"
+            >
+              New lead
+            </Link>
             <CrmCopilot />
           </div>
         </header>

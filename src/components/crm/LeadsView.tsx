@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import * as XLSX from 'xlsx'
 import { Search, Upload, Download, Trash2, Brain, Mail, X, Hand, Undo2, Archive, UserPlus, Sparkles } from 'lucide-react'
 import { Lead, LeadStatus, PipelineStage, ProcessStatus, PIPELINE_STAGES, COMPANY_SIZES, BUSINESS_FUNCTIONS, LEAD_INTERESTS, DECISION_ROLES } from '@/lib/crm/types'
@@ -82,6 +82,19 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
   const [busy, setBusy] = useState('')
   const [upload, setUpload] = useState<ParsedUpload | null>(null)
   const [adding, setAdding] = useState(false)
+
+  // The shell header's "New lead" shortcut deep-links here as /crm/leads?new=1
+  // — open the add-lead modal once and clean the URL so refreshes don't reopen it.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('new') === '1') {
+      setAdding(true)
+      params.delete('new')
+      const qs = params.toString()
+      window.history.replaceState(null, '', window.location.pathname + (qs ? `?${qs}` : ''))
+    }
+  }, [])
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const resetPage = () => setPage(1)

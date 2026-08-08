@@ -1,10 +1,15 @@
 # New Inclusion Check — gaps found during the Apple-style redesign
 
-This is the honest audit of **automations and content the site does not have yet**,
+This is the honest audit of **automations and content the site did not have**,
 surfaced while implementing the redesign (PR #23). Nothing in this list was broken
 by the redesign — these are pre-existing gaps or things the design prototypes
-envision that have no backing system yet. Each item says what exists today, what
-is missing, and what it would take.
+envision that had no backing system yet.
+
+> **STATUS UPDATE:** items 1.1 (footer newsletter), 1.2 (webinars/events
+> architecture), and 1.4 (CRM "New lead" shortcut) are now **BUILT** in this
+> PR — code side complete, using only existing Azure settings. What remains
+> on your side is configuration/verification, spelled out step-by-step in
+> **[AZURE-GITHUB-SETUP.md](./AZURE-GITHUB-SETUP.md)** in this folder.
 
 ---
 

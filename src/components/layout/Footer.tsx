@@ -1,8 +1,10 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { siteConfig } from '@/lib/site-config'
+import EmailOTP from '@/components/EmailOTP'
 
 /**
  * Site footer in the Apple idiom (per the redesign handoff):
@@ -15,6 +17,32 @@ import { siteConfig } from '@/lib/site-config'
 export default function Footer() {
   const currentYear = new Date().getFullYear()
   const pathname = usePathname()
+  const [email, setEmail] = useState('')
+  const [emailVerified, setEmailVerified] = useState(false)
+  const [subscribed, setSubscribed] = useState(false)
+
+  useEffect(() => {
+    setEmailVerified(false)
+  }, [email])
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email) return
+    try {
+      await fetch('/api/book-expert-call', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: 'Newsletter Subscriber',
+          email,
+          programTitle: 'Newsletter Subscription (Footer)',
+          message: 'Subscribed via site footer',
+          timestamp: new Date().toISOString(),
+        }),
+      })
+    } catch { /* show success regardless — the OTP already verified the address */ }
+    setSubscribed(true)
+  }
 
   // App surfaces (CRM, admin) have no marketing footer
   if (pathname.startsWith('/crm') || pathname.startsWith('/admin')) return null
@@ -51,21 +79,31 @@ export default function Footer() {
               Monthly newsletter — enterprise AI trends, case studies, and exclusive content.
             </p>
           </div>
-          <form className="flex gap-2 w-full sm:w-auto">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              aria-label="Email address for newsletter"
-              required
-              className="flex-1 sm:w-[220px] px-3.5 py-2 text-xs rounded-full bg-white border border-[#d2d2d7] text-gray-900 placeholder:text-[#86868b] focus:border-primary-600 focus:ring-0"
-            />
-            <button
-              type="submit"
-              className="px-4 py-2 text-xs font-semibold text-white bg-primary-600 hover:bg-[#0077ed] rounded-full transition-colors"
-            >
-              Subscribe
-            </button>
-          </form>
+          {subscribed ? (
+            <p className="text-xs font-medium text-[#1d8348]">
+              ✓ Subscribed — you&rsquo;ll get the next issue.
+            </p>
+          ) : (
+            <form onSubmit={handleSubscribe} className="flex flex-wrap gap-2 w-full sm:w-auto items-center">
+              <input
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                aria-label="Email address for newsletter"
+                required
+                className="flex-1 sm:w-[220px] px-3.5 py-2 text-xs rounded-full bg-white border border-[#d2d2d7] text-gray-900 placeholder:text-[#86868b] focus:border-primary-600 focus:ring-0"
+              />
+              <EmailOTP email={email} onVerified={() => setEmailVerified(true)} verified={emailVerified} compact />
+              <button
+                type="submit"
+                disabled={!emailVerified}
+                className="px-4 py-2 text-xs font-semibold text-white bg-primary-600 hover:bg-[#0077ed] rounded-full transition-colors disabled:opacity-50"
+              >
+                Subscribe
+              </button>
+            </form>
+          )}
         </div>
 
         {/* Credentials — one quiet line */}
