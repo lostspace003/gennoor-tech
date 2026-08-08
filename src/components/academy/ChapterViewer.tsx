@@ -437,12 +437,34 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
     } else {
       const target = el as FsElement
       const request = target.requestFullscreen?.bind(target) ?? target.webkitRequestFullscreen?.bind(target)
-      try { void Promise.resolve(request?.()).catch(() => {}) } catch { /* ignore */ }
+      try {
+        void Promise.resolve(request?.())
+          .then(() => {
+            // Phones/tablets: rotate the lesson into landscape like a video
+            // app. Only attempt on touch-first devices; silently ignored on
+            // platforms that don't allow orientation lock (e.g. iOS Safari).
+            const touchFirst = window.matchMedia('(pointer: coarse)').matches
+            if (!touchFirst) return
+            const orientation = screen.orientation as ScreenOrientation & {
+              lock?: (o: string) => Promise<void>
+            }
+            orientation?.lock?.('landscape').catch(() => {})
+          })
+          .catch(() => {})
+      } catch { /* ignore */ }
     }
   }, [])
 
   useEffect(() => {
-    const handler = () => setIsFullscreen(!!document.fullscreenElement)
+    const handler = () => {
+      const fs = !!document.fullscreenElement
+      setIsFullscreen(fs)
+      // Leaving fullscreen: release any landscape lock we took on entry.
+      if (!fs) {
+        const orientation = screen.orientation as ScreenOrientation & { unlock?: () => void }
+        try { orientation?.unlock?.() } catch { /* ignore */ }
+      }
+    }
     document.addEventListener('fullscreenchange', handler)
     return () => document.removeEventListener('fullscreenchange', handler)
   }, [])
@@ -1021,7 +1043,7 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
 
       {/* Bottom control bar — VLC-style. Overlays + slides in fullscreen. */}
       <div
-        className={`bg-gray-900 text-white flex items-center h-14 px-3 gap-2 z-20 transition-all duration-300 ${
+        className={`bg-gray-900 text-white flex items-center h-14 px-2 sm:px-3 gap-1.5 sm:gap-2 z-20 transition-all duration-300 ${
           isFullscreen ? 'absolute bottom-0 left-0 right-0' : 'flex-shrink-0'
         } ${barsHidden ? 'translate-y-full opacity-0 pointer-events-none' : 'translate-y-0'}`}
       >
@@ -1052,14 +1074,15 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
               onEnded={handleAudioEnded}
             />
             <div className="w-px h-6 bg-white/15 flex-shrink-0 hidden sm:block" />
-            <div className="hidden sm:flex items-center flex-shrink-0">
-              <button onClick={retreatSlideInIframe} className="p-1.5 rounded hover:bg-white/10 transition-colors" title="Previous slide (←)">
+            {/* Slide nav stays visible on phones — touch users have no arrow keys */}
+            <div className="flex items-center flex-shrink-0">
+              <button onClick={retreatSlideInIframe} className="p-1.5 rounded hover:bg-white/10 transition-colors" title="Previous slide (←)" aria-label="Previous slide">
                 <ChevronLeft className="w-4 h-4 text-white/70" />
               </button>
-              <span className="text-[11px] text-white/50 tabular-nums w-12 text-center">
+              <span className="text-[11px] text-white/50 tabular-nums w-10 sm:w-12 text-center">
                 {currentSlideNum}/{totalSlidesNum || '—'}
               </span>
-              <button onClick={advanceSlideInIframe} className="p-1.5 rounded hover:bg-white/10 transition-colors" title="Next slide (→)">
+              <button onClick={advanceSlideInIframe} className="p-1.5 rounded hover:bg-white/10 transition-colors" title="Next slide (→)" aria-label="Next slide">
                 <ChevronRight className="w-4 h-4 text-white/70" />
               </button>
             </div>

@@ -569,7 +569,7 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
         <button
           onClick={() => seekBy(-10)}
           disabled={!audioReady}
-          className="p-1.5 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors flex-shrink-0 disabled:opacity-30"
+          className="hidden min-[480px]:inline-flex p-1.5 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors flex-shrink-0 disabled:opacity-30"
           title="Back 10 seconds (J)"
           aria-label="Back 10 seconds"
         >
@@ -578,7 +578,7 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
         <button
           onClick={() => seekBy(10)}
           disabled={!audioReady}
-          className="p-1.5 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors flex-shrink-0 disabled:opacity-30"
+          className="hidden min-[480px]:inline-flex p-1.5 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors flex-shrink-0 disabled:opacity-30"
           title="Forward 10 seconds (L)"
           aria-label="Forward 10 seconds"
         >
@@ -624,14 +624,14 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
           </div>
         </div>
 
-        <span className="text-[11px] text-white/60 tabular-nums flex-shrink-0">
+        <span className="hidden min-[420px]:inline text-[11px] text-white/60 tabular-nums flex-shrink-0">
           {formatTime(currentTime)} / {formatTime(duration)}
         </span>
 
         {/* Mute */}
         <button
           onClick={() => setMuted(m => !m)}
-          className="p-1.5 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors flex-shrink-0"
+          className="hidden min-[380px]:inline-flex p-1.5 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors flex-shrink-0"
           title={muted ? 'Unmute' : 'Mute'}
           aria-label={muted ? 'Unmute' : 'Mute'}
         >
@@ -640,7 +640,7 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
 
         <button
           onClick={cycleSpeed}
-          className="px-2 py-1 text-[11px] font-bold bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors flex-shrink-0"
+          className="hidden min-[480px]:inline-block px-2 py-1 text-[11px] font-bold bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors flex-shrink-0"
           title="Cycle playback speed"
         >
           {speed.toFixed(1)}x
