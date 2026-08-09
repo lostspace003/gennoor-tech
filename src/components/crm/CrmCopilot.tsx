@@ -166,12 +166,7 @@ export default function CrmCopilot() {
       >
         <span className="relative flex">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <span className="relative inline-flex w-10 h-10 transition-transform duration-200 group-hover:scale-105">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logos/gennoorbot-avatar-live.svg" alt="" aria-hidden="true" className="absolute inset-0 w-10 h-10" />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logos/gennoorbot-face-live.webp" alt="" className="absolute inset-[5px] w-[30px] h-[30px] rounded-full object-cover" />
-          </span>
+          <img src="/logos/gennoorbot-face-live.webp" alt="" className="w-10 h-10 rounded-full object-cover transition-transform duration-200 group-hover:scale-105" />
           {/* presence: green when idle, amber ping when a reply is waiting */}
           <span className="absolute -bottom-0.5 -right-0.5 flex h-3 w-3">
             {unseen && <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-amber-400" />}

@@ -233,12 +233,7 @@ export default function GennoorCare() {
           title={msgs.length > 0 ? 'Continue chat' : 'Ask GennoorCare'}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <span className="relative inline-flex w-14 h-14">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logos/gennoorbot-avatar-live.svg" alt="" aria-hidden="true" className="absolute inset-0 w-14 h-14" />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logos/gennoorbot-face-live.webp" alt="GennoorCare" className="absolute inset-[7px] w-10 h-10 rounded-full object-cover" />
-          </span>
+          <img src="/logos/gennoorbot-face-live.webp" alt="GennoorCare" className="w-14 h-14 rounded-full object-cover drop-shadow-lg" />
         </button>
       )}
 
