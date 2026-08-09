@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import Link from 'next/link'
 import { Users, Activity, Mail, Brain, Calendar, Upload, FileText, Trash2, RefreshCw, Video, Search, X, CalendarClock, MessageSquare, Eye, LayoutGrid, List } from 'lucide-react'
 import { Lead, LeadStatus, PipelineStage, PIPELINE_STAGES } from '@/lib/crm/types'
 import { StatusBadge, timeAgo, formatDateTime, api, STAGE_LABELS, Spinner, InfoTip, MultiSelect, Pagination, DurationSlider, TimeSlider, LeadLocalTime, DateRangeFilter, DateRange, rangeBounds, rangeLabel } from './shared'
@@ -1022,7 +1023,20 @@ export function DocumentsView({ canManage, notify }: { canManage: boolean; notif
       for (const o of f.older) rows.push({ info: o, family: f.key, older: [], isOlder: true })
     }
   }
-  const filtersActive = Boolean(folderFilter || leadFilter || formatFilter || term || range.days || range.from || range.to)
+  const filtersActive = Boolean(folderFilter || leadFilter || formatFilter || originFilter || term || range.days || range.from || range.to)
+
+  // With one lead selected, its proposals get a dedicated reader above the
+  // list — pick a version, see it. Versions come from the lead itself (which
+  // knows who wrote each one and which is locked) and are matched to the
+  // rendered files in blob storage.
+  const selectedLead = leadFilter ? leads.find((l) => l.id === leadFilter) : undefined
+  const proposalFiles = useMemo(
+    () => infos.filter((i) => i.isProposal && i.leadId === leadFilter),
+    [infos, leadFilter]
+  )
+  const showProposalPanel = Boolean(selectedLead && proposalFiles.length > 0)
+  // Don't repeat them in the list underneath the reader
+  const listRows = showProposalPanel ? rows.filter((r) => !r.info.isProposal) : rows
 
   const upload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -1157,15 +1171,19 @@ export function DocumentsView({ canManage, notify }: { canManage: boolean; notif
             <strong className="text-gray-700">Proposals are internal reference.</strong> Generated per lead — pick the lead on the left, then open a version. The pitch goes into the email body via <strong className="text-gray-700">Insert pitch</strong>, not as an attachment. Manuals, posters and your own uploads attach freely.
           </p>
 
+          {showProposalPanel && selectedLead && (
+            <ProposalReader lead={selectedLead} files={proposalFiles} />
+          )}
+
           {loading && <Spinner label="Loading library..." />}
-          {!loading && rows.length === 0 && (
+          {!loading && listRows.length === 0 && !showProposalPanel && (
             <div className="bg-gray-50 rounded-lg p-10 text-center text-sm text-gray-400">
               {docs.length === 0 ? 'Nothing in the library yet.' : 'Nothing matches the current filters.'}
             </div>
           )}
 
           <div className="space-y-1.5">
-            {rows.map(({ info, family, older, isOlder }) => {
+            {listRows.map(({ info, family, older, isOlder }) => {
               const d = info.doc
               const lead = info.leadId ? leads.find((l) => l.id === info.leadId) : undefined
               const leadLabel = lead ? [lead.name, lead.company].filter(Boolean).join(' · ') : info.leadLabel
@@ -1236,6 +1254,163 @@ export function DocumentsView({ canManage, notify }: { canManage: boolean; notif
         </div>
       </div>
       {preview && <DocPreview name={preview} onClose={() => setPreview(null)} />}
+    </div>
+  )
+}
+
+
+/**
+ * Per-lead proposal reader: pick a version on the left, read it on the right.
+ *
+ * Versions are merged from two places. The lead itself knows the real history
+ * — when each version was written, by whom, what instruction produced it, and
+ * which one is locked — while blob storage holds the rendered PDF and docx.
+ * Merging them means a version still lists even if its file copy failed, and
+ * the reader can say so rather than silently omitting it.
+ */
+function ProposalReader({ lead, files }: { lead: Lead; files: Array<DocInfo<Doc>> }) {
+  const versions = useMemo(() => {
+    const byV = new Map<number, {
+      v: number
+      at?: string
+      by?: string
+      instruction?: string
+      pdf?: DocInfo<Doc>
+      docx?: DocInfo<Doc>
+    }>()
+    for (const f of files) {
+      const entry = byV.get(f.version) || { v: f.version }
+      if (f.ext === 'pdf') entry.pdf = f
+      else if (f.ext === 'docx') entry.docx = f
+      byV.set(f.version, entry)
+    }
+    for (const pv of lead.pitchVersions || []) {
+      const entry = byV.get(pv.v) || { v: pv.v }
+      entry.at = pv.at
+      entry.by = pv.by
+      entry.instruction = pv.instruction
+      byV.set(pv.v, entry)
+    }
+    return [...byV.values()].sort((a, b) => b.v - a.v)
+  }, [files, lead.pitchVersions])
+
+  // Open on the locked version — that's the one that matters — else the newest
+  const [selected, setSelected] = useState<number>(
+    () => (lead.pitchLockedV && versions.some((x) => x.v === lead.pitchLockedV) ? lead.pitchLockedV : versions[0]?.v) ?? 0
+  )
+  useEffect(() => {
+    setSelected((lead.pitchLockedV && versions.some((x) => x.v === lead.pitchLockedV) ? lead.pitchLockedV : versions[0]?.v) ?? 0)
+  }, [lead.id, lead.pitchLockedV, versions])
+
+  const current = versions.find((x) => x.v === selected) || versions[0]
+  if (!current) return null
+
+  const fileUrl = (info?: DocInfo<Doc>) =>
+    info ? `/api/admin/leads/documents/file?name=${encodeURIComponent(info.doc.name)}` : ''
+  // The on-demand renderer works even when the blob copy failed
+  const onDemand = (format: 'pdf' | 'docx') =>
+    `/api/admin/leads/pitch-doc?leadId=${encodeURIComponent(lead.id)}&v=${current.v}&format=${format}`
+
+  return (
+    <div className="border border-gray-200 rounded-xl bg-white overflow-hidden">
+      <div className="px-4 py-3 border-b border-gray-200 flex items-center gap-2 flex-wrap">
+        <FileText className="w-4 h-4 text-amber-500" />
+        <span className="text-sm font-semibold text-gray-900">
+          Proposal — {[lead.name, lead.company].filter(Boolean).join(' · ')}
+        </span>
+        <span className="text-[10px] rounded-full px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200">
+          internal reference
+        </span>
+        <span className="ml-auto text-[11px] text-gray-500">
+          {versions.length} version{versions.length === 1 ? '' : 's'}
+        </span>
+      </div>
+
+      <div className="flex flex-col lg:flex-row min-h-[26rem]">
+        {/* Versions */}
+        <div className="lg:w-56 shrink-0 border-b lg:border-b-0 lg:border-r border-gray-200 bg-[#fafafa] p-2 space-y-1 max-h-64 lg:max-h-[32rem] overflow-y-auto">
+          {versions.map((v) => {
+            const isLocked = v.v === lead.pitchLockedV
+            const active = v.v === current.v
+            return (
+              <button
+                key={v.v}
+                onClick={() => setSelected(v.v)}
+                className={`w-full text-left px-2.5 py-2 rounded-lg border transition-colors ${
+                  active ? 'bg-white border-gray-300 shadow-sm' : 'border-transparent hover:bg-white/70'
+                }`}
+              >
+                <div className="flex items-center gap-1.5">
+                  <span className={`text-[13px] font-semibold ${active ? 'text-gray-900' : 'text-gray-700'}`}>v{v.v}</span>
+                  {isLocked && (
+                    <span className="text-[9.5px] rounded-full px-1.5 py-px bg-green-600 text-white">locked</span>
+                  )}
+                  {!v.pdf && !v.docx && (
+                    <span className="text-[9.5px] rounded-full px-1.5 py-px bg-gray-200 text-gray-600" title="No stored file — rendered on demand">
+                      on demand
+                    </span>
+                  )}
+                </div>
+                {v.at && <div className="text-[10.5px] text-gray-500 mt-0.5">{formatDateTime(v.at)}</div>}
+                {v.by && <div className="text-[10.5px] text-gray-400">{v.by.split('@')[0]}</div>}
+                {v.instruction && (
+                  <div className="text-[10px] text-gray-400 italic truncate mt-0.5" title={v.instruction}>
+                    “{v.instruction}”
+                  </div>
+                )}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Reader */}
+        <div className="flex-1 min-w-0 flex flex-col">
+          <div className="px-4 py-2 border-b border-gray-100 flex items-center gap-2 flex-wrap">
+            <span className="text-xs text-gray-500">
+              Viewing <strong className="text-gray-800">v{current.v}</strong>
+              {current.v === lead.pitchLockedV ? ' — the locked version that powers the email draft' : ''}
+            </span>
+            <div className="ml-auto flex items-center gap-1.5">
+              <a
+                href={current.pdf ? `${fileUrl(current.pdf)}&download=1` : onDemand('pdf')}
+                className="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 hover:bg-gray-50"
+              >
+                PDF
+              </a>
+              <a
+                href={current.docx ? `${fileUrl(current.docx)}&download=1` : onDemand('docx')}
+                className="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 hover:bg-gray-50"
+              >
+                Word
+              </a>
+              <Link
+                href={`/crm/leads/${encodeURIComponent(lead.id)}?tab=email`}
+                className="px-2.5 py-1.5 bg-primary-600 text-white rounded-lg text-xs hover:bg-primary-700"
+                title="The pitch goes into the email body — not as an attachment"
+              >
+                Use in email
+              </Link>
+            </div>
+          </div>
+
+          {current.pdf ? (
+            <iframe
+              key={current.pdf.doc.name}
+              src={fileUrl(current.pdf)}
+              className="w-full flex-1 min-h-[24rem] bg-gray-50"
+              title={`Proposal v${current.v}`}
+            />
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center gap-2 p-8 text-center">
+              <FileText className="w-8 h-8 text-gray-300" />
+              <p className="text-sm text-gray-500">No stored PDF for v{current.v}.</p>
+              <p className="text-xs text-gray-400 max-w-sm">
+                It can still be rendered on demand from the saved content — use the PDF or Word button above.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
