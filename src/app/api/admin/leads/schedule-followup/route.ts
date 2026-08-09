@@ -5,6 +5,7 @@ import { downloadDocument } from '@/lib/crm/documents'
 import { sendEmail } from '@/lib/email-service'
 import { escapeHtml } from '@/lib/escape-html'
 import { emailShell } from '@/lib/crm/email-theme'
+import { teamMember } from '@/lib/crm/team'
 import { FollowUp } from '@/lib/crm/types'
 import { IST, istInstant, leadTimeZone, formatInZone } from '@/lib/crm/timezones'
 import { formatCstTime } from '@/lib/format-time'
@@ -70,6 +71,8 @@ export async function POST(request: Request) {
     const leadTz = leadTimeZone(lead.country, lead.city)
     const leadLabel = leadTz && leadTz !== IST ? formatInZone(startAt, leadTz) : null
 
+    // Signed by whoever sent the invite — the lead calls them, not a queue.
+    const signer = teamMember(user.email)
     const html = emailShell(`
       <p style="margin:0 0 14px">Dear ${escapeHtml(first)},</p>
       <p style="margin:0 0 14px">
@@ -86,7 +89,9 @@ export async function POST(request: Request) {
       </div>
       ${notes ? `<p style="margin:0 0 14px;white-space:pre-line">${escapeHtml(notes)}</p>` : ''}
       <p style="margin:0 0 14px">Reply to this email to confirm and we'll send the joining link.</p>
-      <p style="margin:0">Best regards,<br/><strong>Team Gennoor Tech</strong></p>`, { senderEmail: FROM })
+      <p style="margin:0">Best regards,<br/><strong>${escapeHtml(signer.name)}</strong><br/>
+        <span style="color:#64748b;font-size:13px">Gennoor Tech · ${escapeHtml(signer.phones.join(' / '))} · ${escapeHtml(signer.email)}</span></p>`,
+      { signature: { name: signer.name, email: signer.email, phones: signer.phones } })
 
     const result = await sendEmail({
       to: lead.email,

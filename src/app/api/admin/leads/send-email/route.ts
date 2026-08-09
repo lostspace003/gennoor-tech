@@ -4,14 +4,20 @@ import { mutateLeads, getLeads, touch } from '@/lib/crm/store'
 import { downloadDocument } from '@/lib/crm/documents'
 import { sendEmail } from '@/lib/email-service'
 import { emailShell, textToHtml } from '@/lib/crm/email-theme'
+import { teamMember } from '@/lib/crm/team'
 
 const ADMIN_CC = process.env.EMAIL_ADMIN || 'admin@gennoor.com'
 // Outreach ALWAYS goes out as sales@gennoor.com (user rule, 2026-07-28)
 const FROM = process.env.EMAIL_FROM_SALES || 'sales@gennoor.com'
 
-function wrapHtml(bodyText: string): string {
-  // Signature carries the sending address + admin@ (never a phone number)
-  return emailShell(textToHtml(bodyText), { preheader: bodyText.split('\n')[0]?.slice(0, 90), senderEmail: FROM })
+// Mail leaves as sales@, but the footer signs the person who worked the lead:
+// their name, direct number and own gennoor.com address (admin@ stays listed).
+function wrapHtml(bodyText: string, senderEmail: string): string {
+  const signer = teamMember(senderEmail)
+  return emailShell(textToHtml(bodyText), {
+    preheader: bodyText.split('\n')[0]?.slice(0, 90),
+    signature: { name: signer.name, email: signer.email, phones: signer.phones },
+  })
 }
 
 export async function POST(request: Request) {
@@ -44,7 +50,7 @@ export async function POST(request: Request) {
       }
     }
 
-    const html = wrapHtml(body)
+    const html = wrapHtml(body, user.email)
     const results: Array<{ leadId: string; to: string; success: boolean; error?: string }> = []
 
     // One email per lead so each lead gets an individually addressed message.

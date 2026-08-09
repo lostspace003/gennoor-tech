@@ -32,13 +32,29 @@ export async function POST(request: Request) {
     let leads = allLeads
     let scopeNote = ''
     if (allLeads.length > 150) {
+      const question = String([...messages].reverse().find((m: any) => m.role === 'user')?.content || '')
       try {
-        const { retrieveRelevantLeads } = await import('@/lib/crm/embeddings')
-        const question = [...messages].reverse().find((m: any) => m.role === 'user')?.content || ''
-        leads = await retrieveRelevantLeads(allLeads, String(question), 30)
+        // FAISS semantic retrieval over the `leads` namespace. The index is
+        // kept current by /api/admin/leads/vector-sync; ids map back to leads.
+        const { searchVectors, vectorServiceConfigured } = await import('@/lib/crm/vector-service')
+        if (!vectorServiceConfigured()) throw new Error('vector service not configured')
+        const hits = await searchVectors('leads', question, 30)
+        const byId = new Map(allLeads.map((l) => [l.id, l]))
+        const found = hits.map((h) => byId.get(h.id)).filter(Boolean) as typeof allLeads
+        if (found.length === 0) throw new Error('index empty — run the vector sync')
+        leads = found
         scopeNote = ` (retrieved the ${leads.length} most relevant of ${allLeads.length} leads for this question)`
       } catch (error: any) {
-        console.error('Embedding retrieval failed, using full snapshot:', error?.message)
+        // Legacy blob-embedding path, then the full snapshot. Never let
+        // retrieval trouble turn into "the copilot is down".
+        console.error('FAISS retrieval failed, falling back:', error?.message)
+        try {
+          const { retrieveRelevantLeads } = await import('@/lib/crm/embeddings')
+          leads = await retrieveRelevantLeads(allLeads, question, 30)
+          scopeNote = ` (retrieved ${leads.length} of ${allLeads.length} leads — fallback retrieval)`
+        } catch (fallbackError: any) {
+          console.error('Legacy retrieval failed too, using full snapshot:', fallbackError?.message)
+        }
       }
     }
 

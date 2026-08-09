@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server'
 import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
 import { mutateLeads, getLead, touch } from '@/lib/crm/store'
-import { aiConfigured, researchChat, finalizePitch } from '@/lib/crm/ai'
+import { aiConfigured, researchChat, finalizePitch, suggestQuestions } from '@/lib/crm/ai'
 import { ChatMessage } from '@/lib/crm/types'
 
-// Chat with the copilot about a lead; mode "finalize" locks the discussion
-// into final pitch content stored on the lead.
+// Chat with the copilot about a lead.
+//   mode "finalize" — locks the discussion into final pitch content
+//   mode "suggest"  — returns research-grounded next questions for the chips
+// Every reply also carries fresh suggestions so the chips follow the
+// conversation instead of repeating the research.
 export async function POST(request: Request) {
   const user = await requireCrmUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -38,6 +41,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ pitch })
     }
 
+    // Chips only — asked when the tab opens, before anything is typed
+    if (mode === 'suggest') {
+      try {
+        return NextResponse.json({ suggestions: await suggestQuestions(lead, lead.researchChat) })
+      } catch (error: any) {
+        console.error('Suggestion generation failed:', error?.message)
+        return NextResponse.json({ suggestions: [] })
+      }
+    }
+
     if (!message || typeof message !== 'string') {
       return NextResponse.json({ error: 'message required' }, { status: 400 })
     }
@@ -54,7 +67,16 @@ export async function POST(request: Request) {
       touch(l)
     })
 
-    return NextResponse.json({ reply, chat: updatedChat })
+    // Follow-ups for what was just discussed. Best-effort: a failure here must
+    // never cost the user their reply.
+    let suggestions: string[] = []
+    try {
+      suggestions = await suggestQuestions(lead, updatedChat)
+    } catch (error: any) {
+      console.error('Suggestion generation failed:', error?.message)
+    }
+
+    return NextResponse.json({ reply, chat: updatedChat, suggestions })
   } catch (error) {
     console.error('Research chat error:', error)
     return NextResponse.json({ error: 'Chat failed. Check Azure OpenAI configuration.' }, { status: 500 })

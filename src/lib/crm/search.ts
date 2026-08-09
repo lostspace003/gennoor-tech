@@ -1,5 +1,6 @@
 import { Lead } from './types'
-import { embedTexts } from './embeddings'
+import { embedTexts } from './vector-service'
+import { leadIndexText } from './lead-text'
 
 // Semantic lead search backed by Azure AI Search (free tier — 50 MB, ~8k
 // vectors, plenty for this CRM). Hybrid queries: keyword + vector over one
@@ -10,7 +11,10 @@ const ENDPOINT = (process.env.AZURE_SEARCH_ENDPOINT || '').replace(/\/$/, '')
 const KEY = process.env.AZURE_SEARCH_ADMIN_KEY || ''
 const INDEX = 'crm-leads'
 const API = '2024-07-01'
-const DIMENSIONS = 1536 // text-embedding-3-small
+// nomic-embed-text-v2-moe. Changing the model changes this, and the index is
+// delete-and-recreated on every sync, so a dimension change needs no migration
+// beyond re-running the sync. Vectors from two models are never comparable.
+const DIMENSIONS = Number(process.env.VECTOR_DIMENSIONS || 768)
 
 export function searchConfigured(): boolean {
   return Boolean(ENDPOINT && KEY)
@@ -23,13 +27,8 @@ async function searchFetch(path: string, init?: RequestInit): Promise<Response> 
   })
 }
 
-function leadSearchText(l: Lead): string {
-  return [
-    l.name, l.designation, l.company, l.sector, l.leadType, l.region, l.country, l.city,
-    l.stage, l.status, l.processStatus, l.priority, l.owner, l.notes,
-    l.aiResearch?.summary, ...(l.aiResearch?.insights || []),
-  ].filter(Boolean).join(' | ')
-}
+// Shared with the copilot's blob embeddings — see src/lib/crm/lead-text.ts
+const leadSearchText = leadIndexText
 
 // Delete + recreate so a sync always leaves the index exactly matching the
 // current leads (no stale documents from renames/deletes).
@@ -86,7 +85,8 @@ export interface SearchHit { id: string; score: number }
 // Hybrid search: keyword relevance and vector similarity fused by the service
 // (RRF). Returns lead ids ranked by relevance.
 export async function searchLeads(query: string, topK = 20): Promise<SearchHit[]> {
-  const [qv] = await embedTexts([query])
+  // 'query' side of the asymmetric prefix pair — see vector-service.embedTexts
+  const [qv] = await embedTexts([query], 'query')
   const res = await searchFetch(`/indexes/${INDEX}/docs/search`, {
     method: 'POST',
     body: JSON.stringify({

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   X, Mail, Phone, Building2, Linkedin, Globe, Brain, Send, Sparkles,
   Calendar, Trash2, CheckCircle, MessageSquare, Lock, RefreshCw, Paperclip, Reply, Eye, FileText,
@@ -8,6 +8,8 @@ import {
 import { Lead, ChatMessage, PipelineStage, PIPELINE_STAGES, COMPANY_SIZES, BUSINESS_FUNCTIONS, LEAD_INTERESTS, DECISION_ROLES } from '@/lib/crm/types'
 import { StatusBadge, ProcessDot, StageBar, api, formatDateTime, Spinner, STAGE_LABELS, CopyMsg, InfoTip, DurationSlider, TimeSlider, LeadLocalTime } from './shared'
 import { istInstant } from '@/lib/crm/timezones'
+import { docInfo, belongsToLead, groupVersions, type DocInfo } from '@/lib/crm/doc-meta'
+import { qualificationGaps } from '@/lib/crm/lead-text'
 import { useCrm } from './CrmContext'
 import DocPreview from './DocPreview'
 import PitchDocModal from './PitchDoc'
@@ -27,7 +29,7 @@ interface InboundMessage {
   mailboxes?: string[]
 }
 
-interface CrmDocument { name: string; size: number }
+interface CrmDocument { name: string; size: number; lastModified: string; metadata?: Record<string, string> }
 
 interface Props {
   lead: Lead
@@ -308,7 +310,7 @@ function OverviewTab({ lead, canManage, onReload, onClose, notify }: { lead: Lea
         {lead.finalizedPitch && (
           <div>
             <h3 className="text-sm font-medium text-gray-500 mb-2 flex items-center gap-2">
-              <Lock className="w-4 h-4 text-green-600" /> Finalized pitch{lead.pitchLockedV ? ` (pitch doc v${lead.pitchLockedV} — see Research Copilot)` : ''}
+              <Lock className="w-4 h-4 text-green-600" /> Locked proposal{lead.pitchLockedV ? ` (v${lead.pitchLockedV} — see Research Copilot)` : ''}
             </h3>
             <p className="bg-green-50 border border-green-200 rounded-lg p-4 text-sm text-gray-700 whitespace-pre-line break-words">{lead.finalizedPitch}</p>
           </div>
@@ -388,34 +390,61 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
   const [chat, setChat] = useState<ChatMessage[]>(lead.researchChat)
   const [chatting, setChatting] = useState(false)
   const [pitchOpen, setPitchOpen] = useState(false)
+  // Research-derived prompts for the chat. Seeded from the research pass, then
+  // refreshed after every exchange so they follow the discussion.
+  const [suggestions, setSuggestions] = useState<string[]>(lead.aiResearch?.suggestedQuestions || [])
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false)
 
   const workable = isManager || !lead.owner || lead.owner.toLowerCase() === userEmail.toLowerCase()
   const pitchCount = lead.pitchVersions?.length || 0
   const latestPitch = pitchCount ? lead.pitchVersions![pitchCount - 1] : undefined
+  const research = lead.aiResearch
+  const matches = (research?.offeringMatches || []).slice().sort((a, b) => a.priority - b.priority)
 
   useEffect(() => setChat(lead.researchChat), [lead.id, lead.researchChat])
+  useEffect(() => setSuggestions(lead.aiResearch?.suggestedQuestions || []), [lead.id, lead.aiResearch?.suggestedQuestions])
+
+  // Once a conversation is under way the stored suggestions are stale — pull
+  // fresh ones grounded in what's already been asked.
+  const refreshSuggestions = async () => {
+    if (!research || loadingSuggestions) return
+    setLoadingSuggestions(true)
+    try {
+      const res = await api<{ suggestions: string[] }>('/api/admin/leads/research-chat', {
+        method: 'POST',
+        body: JSON.stringify({ leadId: lead.id, mode: 'suggest' }),
+      })
+      if (res.suggestions?.length) setSuggestions(res.suggestions)
+    } catch { /* chips are a convenience — never surface their failure */ }
+    finally { setLoadingSuggestions(false) }
+  }
 
   const runResearch = async () => {
     setRunning(true)
     try {
-      await api('/api/admin/leads/ai-research', { method: 'POST', body: JSON.stringify({ leadId: lead.id }) })
+      const res = await api<{ research: { passes?: string[]; offeringMatches?: unknown[] } }>('/api/admin/leads/ai-research', {
+        method: 'POST',
+        body: JSON.stringify({ leadId: lead.id }),
+      })
       await onReload()
-      notify('Research completed')
+      const n = res.research?.offeringMatches?.length || 0
+      notify(`Research completed — ${res.research?.passes?.join(' → ') || 'single pass'}${n ? `, ${n} offering(s) matched` : ''}`)
     } catch (e: any) { notify(e.message, true) } finally { setRunning(false) }
   }
 
-  const sendChat = async () => {
-    const message = chatInput.trim()
+  const sendChat = async (text?: string) => {
+    const message = (text ?? chatInput).trim()
     if (!message || chatting) return
     setChatInput('')
     setChat((c) => [...c, { role: 'user', content: message }])
     setChatting(true)
     try {
-      const res = await api<{ reply: string; chat: ChatMessage[] }>('/api/admin/leads/research-chat', {
+      const res = await api<{ reply: string; chat: ChatMessage[]; suggestions?: string[] }>('/api/admin/leads/research-chat', {
         method: 'POST',
         body: JSON.stringify({ leadId: lead.id, message }),
       })
       setChat(res.chat)
+      if (res.suggestions?.length) setSuggestions(res.suggestions)
     } catch (e: any) {
       notify(e.message, true)
       setChat((c) => c.slice(0, -1))
@@ -428,41 +457,96 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
       <div className="space-y-4 break-words lg:max-h-[calc(100dvh-12rem)] lg:overflow-y-auto lg:pr-2">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-medium text-gray-500 flex items-center gap-1.5">AI Research
-            <InfoTip text="Run research to profile this lead (web-grounded when available, sources cited). Then discuss the angle in the chat and hit Finalize pitch — that locked brief powers the email draft." />
+            <InfoTip text="Run research to profile this lead (web-grounded when available, sources cited). Then discuss the angle in the chat and open the Proposal — the locked version powers the email draft." />
           </h3>
           <button onClick={runResearch} disabled={running} className="px-3 py-1.5 bg-gray-600 text-white text-sm rounded-lg hover:bg-gray-700 flex items-center gap-2 disabled:opacity-50">
             {running ? <Spinner /> : <Brain className="w-4 h-4" />}
             {lead.aiResearch ? 'Re-run research' : 'Run research'}
           </button>
         </div>
-        {!lead.aiResearch && !running && (
-          <div className="bg-gray-50 rounded-lg p-8 text-center text-sm text-gray-400">
-            Run research to profile this lead: what they likely need, tech vs non-tech, and which Gennoor offerings fit.
+        <QualificationNudge lead={lead} onReload={onReload} notify={notify} />
+        {!research && !running && (
+          <div className="bg-gray-50 rounded-lg p-6 text-center text-sm text-gray-500 space-y-2">
+            <p>Three passes, not one guess:</p>
+            <p className="text-xs text-gray-400">
+              <strong className="text-gray-600">1. The company</strong> — web-grounded, with the pages it used ·{' '}
+              <strong className="text-gray-600">2. The person</strong> — remit, seniority, what they&apos;re measured on ·{' '}
+              <strong className="text-gray-600">3. The fit</strong> — our real catalogue scored against what it found, training first
+            </p>
+            <p className="text-xs text-gray-400">Fill in sector, function, interest and decision role on the Overview tab first — research weighs what you know above anything it infers.</p>
           </div>
         )}
-        {lead.aiResearch && (
+        {running && (
+          <div className="bg-gray-50 rounded-lg p-6 text-center">
+            <Spinner label="Researching the company, then the person, then the offering fit… (~20-40s)" />
+          </div>
+        )}
+        {research && (
           <div className="bg-gray-50 rounded-lg p-4 space-y-4">
-            <div className="flex items-center gap-2">
-              <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${lead.aiResearch.techOrNonTech === 'technical' ? 'bg-primary-100 text-primary-700' : 'bg-green-100 text-green-700'}`}>
-                {lead.aiResearch.techOrNonTech}
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${research.techOrNonTech === 'technical' ? 'bg-primary-100 text-primary-700' : 'bg-green-100 text-green-700'}`}>
+                {research.techOrNonTech}
               </span>
-              {lead.aiResearch.webGrounded && (
+              {research.webGrounded && (
                 <span className="px-2 py-0.5 text-xs rounded-full bg-green-50 text-green-700 border border-green-200">🌐 live web research</span>
               )}
-              <span className="text-xs text-gray-500">updated {formatDateTime(lead.aiResearch.lastUpdated)}</span>
+              {research.passes?.length && (
+                <span className="px-2 py-0.5 text-xs rounded-full bg-white border border-gray-200 text-gray-500" title="Which research passes ran for this lead">
+                  {research.passes.join(' → ')}
+                </span>
+              )}
+              <span className="text-xs text-gray-500">updated {formatDateTime(research.lastUpdated)}</span>
             </div>
-            <Section title="Summary"><p>{lead.aiResearch.summary}</p></Section>
-            <Section title="Insights">
-              <ul className="space-y-1">{lead.aiResearch.insights.map((x, i) => <li key={i} className="flex gap-2"><Sparkles className="w-3.5 h-3.5 text-gray-500 mt-0.5 shrink-0" />{x}</li>)}</ul>
+
+            {/* Pass 1 & 2 — kept separate so it's obvious what's known about
+                the company vs. the person, and where the gaps are. */}
+            {research.companyProfile
+              ? <Section title="The company"><p>{research.companyProfile}</p></Section>
+              : <Section title="Summary"><p>{research.summary}</p></Section>}
+            {research.personProfile && <Section title="The person"><p>{research.personProfile}</p></Section>}
+
+            <Section title="Findings">
+              <ul className="space-y-1">{research.insights.map((x, i) => <li key={i} className="flex gap-2"><Sparkles className="w-3.5 h-3.5 text-gray-500 mt-0.5 shrink-0" />{x}</li>)}</ul>
             </Section>
-            <Section title="What to pitch">
-              <ul className="space-y-1">{lead.aiResearch.opportunities.map((x, i) => <li key={i} className="flex gap-2"><CheckCircle className="w-3.5 h-3.5 text-green-500 mt-0.5 shrink-0" />{x}</li>)}</ul>
-            </Section>
-            <Section title="Recommended approach"><p>{lead.aiResearch.approach}</p></Section>
-            {lead.aiResearch.sources && lead.aiResearch.sources.length > 0 && (
+
+            {/* Pass 3 — the intersect. Ordered, evidenced, and only ever real
+                catalogue entries (unresolvable codes are dropped server-side). */}
+            {matches.length > 0 && (
+              <Section title="Offering fit — what we lead with">
+                <div className="space-y-2">
+                  {matches.map((m) => (
+                    <div key={m.code} className="bg-white border border-gray-200 rounded-lg p-2.5">
+                      <div className="flex items-start gap-2 flex-wrap">
+                        <span className="w-5 h-5 shrink-0 rounded-full bg-primary-600 text-white text-[11px] font-semibold flex items-center justify-center">{m.priority}</span>
+                        <span className="text-sm font-medium text-gray-900">{m.title}</span>
+                        <span className="text-[10px] uppercase tracking-wide bg-gray-100 text-gray-600 rounded-full px-2 py-0.5">{STAGE_LABELS[m.phase] || m.phase}</span>
+                        <span className={`text-[10px] rounded-full px-2 py-0.5 border ${m.confidence === 'high' ? 'bg-green-50 text-green-700 border-green-200' : m.confidence === 'low' ? 'bg-gray-50 text-gray-500 border-gray-200' : 'bg-amber-50 text-amber-700 border-amber-200'}`}>
+                          {m.confidence} confidence
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-700 mt-1.5"><span className="text-gray-400">Answers:</span> {m.need}</p>
+                      <p className="text-xs text-gray-600"><span className="text-gray-400">Why this one:</span> {m.why}</p>
+                    </div>
+                  ))}
+                </div>
+              </Section>
+            )}
+            {research.entryPlan && (
+              <Section title="How we get in">
+                <p className="bg-primary-50 border border-primary-200 rounded-lg p-3 text-sm text-primary-900">{research.entryPlan}</p>
+              </Section>
+            )}
+
+            {research.opportunities.length > 0 && (
+              <Section title="Where we can help">
+                <ul className="space-y-1">{research.opportunities.map((x, i) => <li key={i} className="flex gap-2"><CheckCircle className="w-3.5 h-3.5 text-green-500 mt-0.5 shrink-0" />{x}</li>)}</ul>
+              </Section>
+            )}
+            <Section title="Recommended approach"><p>{research.approach}</p></Section>
+            {research.sources && research.sources.length > 0 && (
               <Section title="Sources">
                 <ul className="space-y-0.5">
-                  {lead.aiResearch.sources.map((s, i) => (
+                  {research.sources.map((s, i) => (
                     <li key={i}>
                       <a href={externalUrl(s.url)} target="_blank" rel="noopener noreferrer" className="text-xs text-primary-600 hover:underline break-all">{s.title || s.url}</a>
                     </li>
@@ -478,13 +562,13 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
               <div className="flex items-center gap-2 text-sm font-medium text-green-800">
                 <FileText className="w-4 h-4" />
                 {pitchCount > 0
-                  ? <>One-page pitch — {pitchCount} version{pitchCount === 1 ? '' : 's'}{lead.pitchLockedV ? <span className="inline-flex items-center gap-1 ml-1 text-[11px] bg-green-600 text-white rounded-full px-2 py-0.5"><Lock className="w-3 h-3" /> v{lead.pitchLockedV} locked</span> : <span className="text-[11px] text-amber-700 ml-1">nothing locked yet</span>}</>
-                  : <>Finalized pitch (locked)</>}
+                  ? <>One-page proposal — {pitchCount} version{pitchCount === 1 ? '' : 's'}{lead.pitchLockedV ? <span className="inline-flex items-center gap-1 ml-1 text-[11px] bg-green-600 text-white rounded-full px-2 py-0.5"><Lock className="w-3 h-3" /> v{lead.pitchLockedV} locked</span> : <span className="text-[11px] text-amber-700 ml-1">nothing locked yet</span>}</>
+                  : <>Finalized brief (locked)</>}
               </div>
               <div className="flex items-center gap-1.5 shrink-0">
                 {pitchCount > 0 && (
                   <button onClick={() => setPitchOpen(true)} className="px-3 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 flex items-center gap-1.5">
-                    <FileText className="w-3.5 h-3.5" /> Open pitch doc
+                    <FileText className="w-3.5 h-3.5" /> Open proposal
                   </button>
                 )}
                 {(lead.pitchLockedV || (pitchCount === 0 && lead.finalizedPitch)) && (
@@ -496,13 +580,13 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
             </div>
             {pitchCount > 0 && latestPitch ? (
               <p className="text-xs text-green-700">
-                Latest: v{latestPitch.v} — {formatDateTime(latestPitch.at)} by {latestPitch.by.split('@')[0]}. The locked version powers the AI email draft; docx & PDF are in Documents → pitches/.
+                Latest: v{latestPitch.v} — {formatDateTime(latestPitch.at)} by {latestPitch.by.split('@')[0]}. The locked version powers the AI email draft; docx & PDF are in Documents, filed under this lead.
               </p>
             ) : lead.finalizedPitch && (
               <>
                 <p className="text-sm text-gray-700 whitespace-pre-line break-words">{lead.finalizedPitch}</p>
                 <CopyMsg text={lead.finalizedPitch} />
-                <p className="text-xs text-green-700 mt-2">Legacy pitch brief — open the pitch doc to upgrade it into the versioned one-pager.</p>
+                <p className="text-xs text-green-700 mt-2">Legacy pitch brief — open the proposal to upgrade it into the versioned one-pager.</p>
               </>
             )}
           </div>
@@ -516,15 +600,17 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
           <button
             onClick={() => setPitchOpen(true)}
             className="px-3 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 flex items-center gap-1.5"
-            title="One-page client pitch: generate → refine → lock a version → it powers the email draft"
+            title="One-page client proposal: generate → refine → lock a version → it powers the email draft"
           >
-            <FileText className="w-3.5 h-3.5" /> Pitch doc{pitchCount > 0 ? ` · v${latestPitch!.v}` : ''}
+            <FileText className="w-3.5 h-3.5" /> Proposal{pitchCount > 0 ? ` · v${latestPitch!.v}` : ''}
           </button>
         </div>
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {chat.length === 0 && (
             <p className="text-sm text-gray-400 text-center mt-8">
-              Discuss the research here — e.g. &quot;what angle works for a bank?&quot; or &quot;they're non-technical, what do we lead with?&quot;. Then open the <strong>Pitch doc</strong> to generate the one-page pitch.
+              {research
+                ? 'Pick a question below, or ask your own. The copilot answers from this lead’s research and our actual catalogue.'
+                : 'Run research first — then the copilot can discuss this lead specifically instead of in general.'}
             </p>
           )}
           {chat.map((m, i) => (
@@ -535,6 +621,40 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
           ))}
           {chatting && <Spinner label="Thinking..." />}
         </div>
+
+        {/* Research-grounded next questions. Generated from the findings and
+            refreshed after each exchange — not a fixed list. */}
+        {research && suggestions.length > 0 && (
+          <div className="px-3 pb-1 pt-2 border-t border-gray-100">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 flex items-center gap-1">
+                <Sparkles className="w-3 h-3" /> Suggested from the research
+              </span>
+              <button
+                onClick={refreshSuggestions}
+                disabled={loadingSuggestions}
+                className="text-[10px] text-gray-400 hover:text-primary-600 disabled:opacity-50"
+                title="Regenerate based on what's been discussed"
+              >
+                {loadingSuggestions ? 'thinking…' : 'refresh'}
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {suggestions.map((s, i) => (
+                <button
+                  key={i}
+                  onClick={() => sendChat(s)}
+                  disabled={chatting}
+                  className="text-left text-[11px] px-2.5 py-1.5 rounded-full border border-gray-200 text-gray-700 hover:border-primary-300 hover:bg-primary-50 disabled:opacity-50 max-w-full truncate"
+                  title={s}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="p-3 border-t border-gray-100 flex gap-2">
           <input
             value={chatInput}
@@ -543,7 +663,7 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
             placeholder="Ask the copilot about this lead..."
             className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-500 focus:border-transparent"
           />
-          <button onClick={sendChat} disabled={chatting || !chatInput.trim()} className="px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50">
+          <button onClick={() => sendChat()} disabled={chatting || !chatInput.trim()} className="px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50">
             <Send className="w-4 h-4" />
           </button>
         </div>
@@ -559,6 +679,51 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
           onGoEmail={onGoEmail}
         />
       )}
+    </div>
+  )
+}
+
+/**
+ * Sits above the research panel because that's where the cost of a thin row
+ * actually shows up: the passes weigh these fields above anything they infer,
+ * so filling them before running research is what stops the output reading
+ * generic. One click fills only what's blank — typed values are never touched.
+ */
+function QualificationNudge({ lead, onReload, notify }: { lead: Lead; onReload: () => Promise<void>; notify: Props['notify'] }) {
+  const [busy, setBusy] = useState(false)
+  const gaps = qualificationGaps(lead)
+  if (gaps.length === 0) return null
+
+  const fill = async () => {
+    setBusy(true)
+    try {
+      const res = await api<{ updated: number; note?: string }>('/api/admin/leads/enrich', {
+        method: 'POST',
+        body: JSON.stringify({ leadIds: [lead.id] }),
+      })
+      await onReload()
+      notify(res.updated ? 'Filled what could be inferred — check it on the Overview tab' : (res.note || 'Nothing could be inferred confidently — fill it in on Overview'), !res.updated)
+    } catch (e: any) { notify(e.message, true) } finally { setBusy(false) }
+  }
+
+  return (
+    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2.5 flex-wrap">
+      <div className="flex-1 min-w-[14rem]">
+        <p className="text-xs font-medium text-amber-900">
+          Missing: {gaps.map((g) => g.label).join(', ')}
+        </p>
+        <p className="text-[11px] text-amber-800 mt-0.5">
+          Research trusts these as facts and weighs them above its own guesses — filling them is the difference between a specific profile and a generic one.
+        </p>
+      </div>
+      <button
+        onClick={fill}
+        disabled={busy}
+        className="px-3 py-1.5 bg-amber-600 text-white text-xs rounded-lg hover:bg-amber-700 disabled:opacity-50 inline-flex items-center gap-1.5 shrink-0"
+        title="Infers only the blank fields from title, company and notes. Never overwrites what you typed."
+      >
+        <Sparkles className="w-3.5 h-3.5" /> {busy ? 'Filling…' : 'Fill with AI'}
+      </button>
     </div>
   )
 }
@@ -618,7 +783,7 @@ function EmailTab({ lead, onReload, notify, onSchedule }: { lead: Lead; onReload
     <div className="p-3 sm:p-5 space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h3 className="text-sm font-medium text-gray-500 flex items-center gap-1.5">Conversation with {lead.name}
-          <InfoTip text="Sent emails and their replies in one thread. New email: AI drafts from the locked pitch → refine by chatting → Final copy → attach documents → Send. Everything goes out as sales@gennoor.com with admin@ + you on CC." />
+          <InfoTip text="Sent emails and their replies in one thread. New email: AI drafts from the locked proposal → refine by chatting → Final copy → attach documents → Send. Everything goes out as sales@gennoor.com with admin@ + you on CC, signed with your name and direct number." />
         </h3>
         <div className="flex gap-2">
           <button onClick={loadInbox} className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50" title="Refresh replies"><RefreshCw className="w-4 h-4 text-gray-500" /></button>
@@ -784,6 +949,9 @@ function EmailComposer({ lead, replyTo, preset, onClose, onSent, notify }: { lea
   const [bcc, setBcc] = useState('')
   const [preview, setPreview] = useState<string | null>(null)
   const [uploadingAttach, setUploadingAttach] = useState(false)
+  const [showAllDocs, setShowAllDocs] = useState(false)
+  // Families whose older versions the user chose to reveal (keyed by family id)
+  const [openHistory, setOpenHistory] = useState<string[]>([])
   // Files uploaded from inside the composer are one-off attachments — they go
   // to email-attachments/ and are removed from the library after the send.
   const [ephemeral, setEphemeral] = useState<string[]>([])
@@ -796,15 +964,45 @@ function EmailComposer({ lead, replyTo, preset, onClose, onSent, notify }: { lea
       const form = new FormData()
       form.append('file', file)
       form.append('folder', 'email-attachments')
+      // Tag it to this lead so it shows up under them, not in everyone's list
+      form.append('leadId', lead.id)
+      form.append('leadName', lead.name)
+      form.append('company', lead.company || '')
       const res = await fetch('/api/admin/leads/documents', { method: 'POST', body: form })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Upload failed')
-      setDocs((d) => [{ name: data.name, size: file.size }, ...d.filter((x) => x.name !== data.name)])
+      const fresh: CrmDocument = {
+        name: data.name,
+        size: file.size,
+        lastModified: new Date().toISOString(),
+        metadata: { leadid: lead.id, leadname: lead.name, company: lead.company || '', kind: 'upload' },
+      }
+      setDocs((d) => [fresh, ...d.filter((x) => x.name !== data.name)])
       setAttach((a) => [...new Set([...a, data.name])])
       setEphemeral((x) => [...new Set([...x, data.name])])
       notify(`Attached ${file.name}`)
     } catch (err: any) { notify(err.message, true) } finally { setUploadingAttach(false); e.target.value = '' }
   }
+
+  // What the composer offers, in the order it offers it:
+  //   1. documents prepared for THIS lead — latest version only
+  //   2. shared collateral (manuals, posters) — not tied to any lead
+  //   3. everything else, only if the user asks for it
+  // Other leads' proposals never appear: they were written for another case.
+  const { leadDocs, collateral, otherDocs } = useMemo(() => {
+    const mine: DocInfo<CrmDocument>[] = []
+    const shared: DocInfo<CrmDocument>[] = []
+    const rest: DocInfo<CrmDocument>[] = []
+    for (const info of docs.map(docInfo)) {
+      if (belongsToLead(info, lead)) mine.push(info)
+      else if (!info.leadId && !info.isProposal && ['manuals', 'posters', 'general'].includes(info.folder)) shared.push(info)
+      else rest.push(info)
+    }
+    return { leadDocs: groupVersions(mine), collateral: groupVersions(shared), otherDocs: groupVersions(rest) }
+  }, [docs, lead])
+
+  const toggleAttach = (name: string) =>
+    setAttach((a) => (a.includes(name) ? a.filter((n) => n !== name) : [...a, name]))
 
   useEffect(() => {
     api<{ documents: CrmDocument[] }>('/api/admin/leads/documents').then((r) => setDocs(r.documents)).catch(() => {})
@@ -918,36 +1116,56 @@ function EmailComposer({ lead, replyTo, preset, onClose, onSent, notify }: { lea
               <input value={extraCc} onChange={(e) => setExtraCc(e.target.value)} placeholder="CC: (admin@ + you always added)" className="px-3 py-2 border border-gray-200 rounded-lg text-xs" />
               <input value={bcc} onChange={(e) => setBcc(e.target.value)} placeholder="BCC: (optional)" className="px-3 py-2 border border-gray-200 rounded-lg text-xs" />
             </div>
-            <div className="border border-gray-200 rounded-lg p-2.5 max-h-32 overflow-y-auto">
-              <div className="text-xs font-medium text-gray-500 mb-1.5 flex items-center justify-between gap-2">
-                <span className="flex items-center gap-1.5"><Paperclip className="w-3.5 h-3.5" /> Attachments {attach.length > 0 ? `(${attach.length} on this email)` : '(none — nothing is attached unless you select it)'}</span>
-                <label className="px-2 py-1 border border-gray-200 rounded text-[11px] cursor-pointer hover:bg-gray-50">
+            <div className="border border-gray-200 rounded-lg p-2.5 max-h-44 overflow-y-auto space-y-2">
+              <div className="text-xs font-medium text-gray-500 flex items-center justify-between gap-2">
+                <span className="flex items-center gap-1.5">
+                  <Paperclip className="w-3.5 h-3.5" /> Attachments {attach.length > 0 ? `(${attach.length} on this email)` : '(none — nothing is attached unless you select it)'}
+                  <InfoTip text="Only documents prepared for this lead are suggested, latest version first — other leads' documents are never offered. Shared collateral (manuals, posters) sits below. Older versions are hidden until you ask for them." />
+                </span>
+                <label className="px-2 py-1 border border-gray-200 rounded text-[11px] cursor-pointer hover:bg-gray-50 shrink-0">
                   {uploadingAttach ? 'Uploading…' : '+ Upload & attach'}
                   <input type="file" onChange={uploadAndAttach} className="hidden" disabled={uploadingAttach} />
                 </label>
               </div>
-              <div className="flex flex-wrap gap-1.5">
-                {docs.length === 0 && <span className="text-[11px] text-gray-400">No documents yet — upload one, or add manuals/posters via the Documents page.</span>}
-                {docs.map((d) => (
-                  <span key={d.name} className={`inline-flex items-center rounded text-xs border overflow-hidden ${attach.includes(d.name) ? 'bg-primary-600 text-white border-primary-600' : 'border-gray-200 text-gray-600'}`}>
-                    <button
-                      onClick={() => setAttach(attach.includes(d.name) ? attach.filter((n) => n !== d.name) : [...attach, d.name])}
-                      className={`px-2 py-1 ${attach.includes(d.name) ? 'hover:bg-primary-700' : 'hover:bg-gray-50'}`}
-                      title={attach.includes(d.name) ? 'Attached — click to remove' : 'Click to attach'}
-                    >
-                      {d.name.split('/').pop()}
-                    </button>
-                    <button onClick={() => setPreview(d.name)} className={`px-1.5 py-1 border-l ${attach.includes(d.name) ? 'border-primary-500 hover:bg-primary-700' : 'border-gray-200 hover:bg-gray-50'}`} title="Preview">
-                      <Eye className="w-3 h-3" />
-                    </button>
-                    {attach.includes(d.name) && (
-                      <button onClick={() => setAttach(attach.filter((n) => n !== d.name))} className="px-1.5 py-1 border-l border-primary-500 hover:bg-red-500" title="Remove from this email">
-                        <X className="w-3 h-3" />
-                      </button>
-                    )}
-                  </span>
-                ))}
-              </div>
+
+              <DocSection
+                title={`For ${lead.company || lead.name}`}
+                families={leadDocs}
+                attach={attach}
+                onToggle={toggleAttach}
+                onPreview={setPreview}
+                openHistory={openHistory}
+                onToggleHistory={(k) => setOpenHistory((h) => (h.includes(k) ? h.filter((x) => x !== k) : [...h, k]))}
+                empty="No document prepared for this lead yet — generate the proposal in Research Copilot, or upload one above."
+              />
+              {collateral.length > 0 && (
+                <DocSection
+                  title="Shared collateral"
+                  families={collateral}
+                  attach={attach}
+                  onToggle={toggleAttach}
+                  onPreview={setPreview}
+                  openHistory={openHistory}
+                  onToggleHistory={(k) => setOpenHistory((h) => (h.includes(k) ? h.filter((x) => x !== k) : [...h, k]))}
+                />
+              )}
+              {otherDocs.length > 0 && (
+                showAllDocs ? (
+                  <DocSection
+                    title="Everything else in the library"
+                    families={otherDocs}
+                    attach={attach}
+                    onToggle={toggleAttach}
+                    onPreview={setPreview}
+                    openHistory={openHistory}
+                    onToggleHistory={(k) => setOpenHistory((h) => (h.includes(k) ? h.filter((x) => x !== k) : [...h, k]))}
+                  />
+                ) : (
+                  <button onClick={() => setShowAllDocs(true)} className="text-[11px] text-gray-400 hover:text-primary-600 underline">
+                    Show the other {otherDocs.length} file(s) in the library
+                  </button>
+                )
+              )}
             </div>
             {preview && <DocPreview name={preview} onClose={() => setPreview(null)} />}
             <div className="flex justify-end gap-2">
@@ -986,6 +1204,83 @@ function EmailComposer({ lead, replyTo, preset, onClose, onSent, notify }: { lea
         </div>
       </div>
     </div>
+  )
+}
+
+// One group of attachable documents. Each row is a document, not a file
+// revision: the newest version is the row, and superseded versions stay folded
+// away behind "n older" so nobody attaches v1 by accident.
+function DocSection({ title, families, attach, onToggle, onPreview, openHistory, onToggleHistory, empty }: {
+  title: string
+  families: Array<{ key: string; latest: DocInfo<CrmDocument>; older: Array<DocInfo<CrmDocument>> }>
+  attach: string[]
+  onToggle: (name: string) => void
+  onPreview: (name: string) => void
+  openHistory: string[]
+  onToggleHistory: (key: string) => void
+  empty?: string
+}) {
+  if (families.length === 0 && !empty) return null
+  return (
+    <div>
+      <div className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-1">{title}</div>
+      {families.length === 0 ? (
+        <p className="text-[11px] text-gray-400">{empty}</p>
+      ) : (
+        <div className="flex flex-wrap gap-1.5">
+          {families.map((f) => (
+            <span key={f.key} className="inline-flex items-center gap-1">
+              <DocChip info={f.latest} attached={attach.includes(f.latest.doc.name)} onToggle={onToggle} onPreview={onPreview} />
+              {f.older.length > 0 && (
+                <button
+                  onClick={() => onToggleHistory(f.key)}
+                  className="text-[10px] text-gray-400 hover:text-primary-600 px-1"
+                  title={`${f.older.length} superseded version(s) — the latest is attached by default`}
+                >
+                  {openHistory.includes(f.key) ? 'hide older' : `+${f.older.length} older`}
+                </button>
+              )}
+              {openHistory.includes(f.key) &&
+                f.older.map((o) => (
+                  <DocChip key={o.doc.name} info={o} attached={attach.includes(o.doc.name)} onToggle={onToggle} onPreview={onPreview} muted />
+                ))}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function DocChip({ info, attached, onToggle, onPreview, muted }: {
+  info: DocInfo<CrmDocument>
+  attached: boolean
+  onToggle: (name: string) => void
+  onPreview: (name: string) => void
+  muted?: boolean
+}) {
+  const name = info.doc.name
+  return (
+    <span className={`inline-flex items-center rounded text-xs border overflow-hidden ${attached ? 'bg-primary-600 text-white border-primary-600' : muted ? 'border-gray-100 text-gray-400' : 'border-gray-200 text-gray-600'}`}>
+      <button
+        onClick={() => onToggle(name)}
+        className={`px-2 py-1 ${attached ? 'hover:bg-primary-700' : 'hover:bg-gray-50'}`}
+        title={attached ? 'Attached — click to remove' : `Click to attach · ${formatDateTime(info.doc.lastModified)}`}
+      >
+        {info.fileName}
+        {info.version > 0 && (
+          <span className={`ml-1 text-[9.5px] rounded-full px-1 ${attached ? 'bg-white/25' : 'bg-gray-100 text-gray-500'}`}>v{info.version}</span>
+        )}
+      </button>
+      <button onClick={() => onPreview(name)} className={`px-1.5 py-1 border-l ${attached ? 'border-primary-500 hover:bg-primary-700' : 'border-gray-200 hover:bg-gray-50'}`} title="Preview">
+        <Eye className="w-3 h-3" />
+      </button>
+      {attached && (
+        <button onClick={() => onToggle(name)} className="px-1.5 py-1 border-l border-primary-500 hover:bg-red-500" title="Remove from this email">
+          <X className="w-3 h-3" />
+        </button>
+      )}
+    </span>
   )
 }
 
@@ -1038,7 +1333,7 @@ function ScheduleTab({ lead, onReload, notify }: { lead: Lead; onReload: () => P
       const res = await fetch('/api/admin/leads/documents', { method: 'POST', body: form })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Upload failed')
-      setPosters((p) => [{ name: data.name, size: file.size }, ...p.filter((x) => x.name !== data.name)])
+      setPosters((p) => [{ name: data.name, size: file.size, lastModified: new Date().toISOString() }, ...p.filter((x) => x.name !== data.name)])
       setFuForm((f) => ({ ...f, posterBlob: data.name }))
       notify('Poster uploaded')
     } catch (err: any) { notify(err.message, true) } finally { setUploadingPoster(false); e.target.value = '' }

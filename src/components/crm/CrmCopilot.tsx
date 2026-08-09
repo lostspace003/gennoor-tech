@@ -13,9 +13,11 @@ const SUGGESTIONS = [
   'List GCC leads without research',
 ]
 
-// GennoorBot — CRM copilot over all lead data. Renders as a compact floater
-// in the top bar with a pulsing presence light; the panel can be minimized
-// back to the floater (chat is kept) or maximized for focused work.
+// GennoorBot — CRM copilot over all lead data. Lives as a floating action
+// button in the bottom-left of the workspace (never over the sidebar: the
+// parent positions it inside the content column), with a pulsing presence
+// light. The panel rises from the button, can be minimized back to it (chat
+// is kept) or maximized for focused work.
 export default function CrmCopilot() {
   const [open, setOpen] = useState(false)
   const [maximized, setMaximized] = useState(false)
@@ -62,31 +64,35 @@ export default function CrmCopilot() {
 
   return (
     <>
-      {/* Top floater with presence light */}
+      {/* Bottom-left floater: avatar, live presence ring, hover label */}
       <button
         onClick={() => setOpen((o) => !o)}
-        className="relative rounded-full transition-transform hover:scale-110 focus:outline-none"
+        className="group absolute bottom-5 left-5 z-[55] flex items-center gap-2.5 rounded-full bg-white pl-1.5 pr-1.5 py-1.5 shadow-[0_6px_24px_rgba(15,23,42,0.18)] border border-[#e8e8ed] hover:pr-4 hover:shadow-[0_10px_30px_rgba(15,23,42,0.22)] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
         title="GennoorBot — CRM copilot"
         aria-label="Open GennoorBot"
+        aria-expanded={open}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logos/gennoorbot-avatar.svg" alt="GennoorBot" className="w-9 h-9" />
-        {/* amber overlay when a reply arrived while minimized */}
-        {unseen && (
-          <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-amber-400" />
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-400 border border-white" />
+        <span className="relative flex">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logos/gennoorbot-avatar.svg" alt="" className="w-10 h-10 transition-transform duration-200 group-hover:scale-105" />
+          {/* presence: green when idle, amber ping when a reply is waiting */}
+          <span className="absolute -bottom-0.5 -right-0.5 flex h-3 w-3">
+            {unseen && <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-amber-400" />}
+            <span className={`relative inline-flex rounded-full h-3 w-3 border-2 border-white ${unseen ? 'bg-amber-400' : 'bg-green-500'}`} />
           </span>
-        )}
+        </span>
+        <span className="max-w-0 overflow-hidden whitespace-nowrap text-[13px] font-semibold text-gray-900 opacity-0 transition-all duration-200 group-hover:max-w-[9rem] group-hover:opacity-100">
+          {open ? 'Hide GennoorBot' : 'Ask GennoorBot'}
+        </span>
       </button>
 
-      {/* Panel */}
+      {/* Panel — rises from the floater, or takes the screen when maximized */}
       {open && (
         <div
-          className={`fixed z-[60] bg-white shadow-2xl border border-gray-200 flex flex-col transition-all duration-200 ${
+          className={`z-[60] bg-white shadow-2xl border border-gray-200 flex flex-col transition-all duration-200 rounded-xl ${
             maximized
-              ? 'inset-2 sm:inset-6 rounded-xl'
-              : 'top-12 right-0 bottom-0 w-full sm:w-[400px] sm:rounded-tl-xl border-r-0'
+              ? 'fixed inset-2 sm:inset-6'
+              : 'absolute left-3 right-3 bottom-[5.5rem] h-[min(34rem,calc(100%-8rem))] sm:left-5 sm:right-auto sm:w-[400px]'
           }`}
         >
           <div className="px-4 py-3 bg-primary-600 text-white flex items-center justify-between shrink-0 rounded-t-[inherit]">

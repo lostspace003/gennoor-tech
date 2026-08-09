@@ -15,6 +15,12 @@ export interface CrmDocument {
   size: number
   contentType: string
   lastModified: string
+  /**
+   * Blob metadata — Azure lower-cases the keys. We write `leadid`, `leadname`,
+   * `company`, `version` and `kind` on generated proposals so the library can
+   * be filtered by lead and collapsed to the latest version.
+   */
+  metadata?: Record<string, string>
 }
 
 export async function listDocuments(): Promise<CrmDocument[]> {
@@ -22,22 +28,45 @@ export async function listDocuments(): Promise<CrmDocument[]> {
   const exists = await container.exists()
   if (!exists) return []
   const docs: CrmDocument[] = []
-  for await (const blob of container.listBlobsFlat()) {
+  for await (const blob of container.listBlobsFlat({ includeMetadata: true })) {
     docs.push({
       name: blob.name,
       size: blob.properties.contentLength || 0,
       contentType: blob.properties.contentType || 'application/octet-stream',
       lastModified: blob.properties.lastModified?.toISOString() || '',
+      metadata: blob.metadata && Object.keys(blob.metadata).length ? blob.metadata : undefined,
     })
   }
   return docs.sort((a, b) => b.lastModified.localeCompare(a.lastModified))
 }
 
-export async function uploadDocument(name: string, content: Buffer, contentType: string): Promise<void> {
+// Azure rejects metadata values that aren't printable ASCII, and keys that
+// aren't valid identifiers — lead names carry accents and punctuation, so
+// everything is scrubbed before it goes near a header.
+function safeMetadata(metadata?: Record<string, string>): Record<string, string> | undefined {
+  if (!metadata) return undefined
+  const out: Record<string, string> = {}
+  for (const [key, raw] of Object.entries(metadata)) {
+    const k = key.toLowerCase().replace(/[^a-z0-9_]/g, '')
+    const v = String(raw ?? '').replace(/[^\x20-\x7E]/g, '').trim().slice(0, 250)
+    if (k && v) out[k] = v
+  }
+  return Object.keys(out).length ? out : undefined
+}
+
+export async function uploadDocument(
+  name: string,
+  content: Buffer,
+  contentType: string,
+  metadata?: Record<string, string>
+): Promise<void> {
   const container = getContainer()
   await container.createIfNotExists()
   const blob = container.getBlockBlobClient(name)
-  await blob.upload(content, content.length, { blobHTTPHeaders: { blobContentType: contentType } })
+  await blob.upload(content, content.length, {
+    blobHTTPHeaders: { blobContentType: contentType },
+    metadata: safeMetadata(metadata),
+  })
 }
 
 export async function downloadDocument(name: string): Promise<{ content: Buffer; contentType: string } | null> {

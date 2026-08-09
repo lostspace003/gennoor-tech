@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
 import { getLead } from '@/lib/crm/store'
-import { aiConfigured, chatCompletion, leadContext, GENNOOR_CONTEXT, ensureYouTubeLink } from '@/lib/crm/ai'
+import { aiConfigured, chatCompletion, leadContext, GENNOOR_CONTEXT, ensureYouTubeLink, signOffInstruction } from '@/lib/crm/ai'
 
 // Interactive email copilot: iterate on a draft via chat, then "finalize"
 // returns the polished final copy for review before sending.
@@ -37,7 +37,8 @@ export async function POST(request: Request) {
             role: 'system',
             content: `${GENNOOR_CONTEXT}
 
-Polish this outreach email into its FINAL version. Fix tone, tighten wording, keep it honest (no invented numbers), keep the free webinar / 1-day training offer clear if present. Return JSON: {"subject": "...", "body": "..."} with body as plain text.${replyContext}
+Polish this outreach email into its FINAL version. Fix tone, tighten wording, keep it honest (no invented numbers), keep the free webinar / 1-day training offer clear if present. Return JSON: {"subject": "...", "body": "..."} with body as plain text.
+${signOffInstruction(user.email)}${replyContext}
 
 Lead data:
 ${leadContext(lead)}`,
@@ -58,7 +59,8 @@ ${leadContext(lead)}`,
           role: 'system',
           content: `${GENNOOR_CONTEXT}
 
-You are the email copilot. The team gives you an instruction; you revise the draft accordingly and briefly say what you changed. Never invent statistics. Return JSON: {"reply": "one sentence on what you changed", "subject": "...", "body": "..."} with body as plain text.${replyContext}
+You are the email copilot. The team gives you an instruction; you revise the draft accordingly and briefly say what you changed. Never invent statistics. Return JSON: {"reply": "one sentence on what you changed", "subject": "...", "body": "..."} with body as plain text.
+${signOffInstruction(user.email)}${replyContext}
 
 Lead data:
 ${leadContext(lead)}`,

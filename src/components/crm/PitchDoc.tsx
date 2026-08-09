@@ -5,10 +5,11 @@ import { X, FileText, Lock, Sparkles, Send, Download, RefreshCw } from 'lucide-r
 import { Lead } from '@/lib/crm/types'
 import { api, formatDateTime, Spinner, InfoTip } from './shared'
 
-// One-page sales pitch document: generated from research + copilot discussion,
+// One-page client proposal: generated from research + copilot discussion,
 // refined by instruction, version-controlled (v1 — date, time), locked when
-// final. The locked version powers the AI email draft; docx/pdf downloads and
-// a copy in the Documents library (pitches/) come free with every version.
+// final. Deliberately not a sales flyer — it states the client's need and what
+// we'd do about it. The locked version powers the AI email draft; docx/pdf
+// downloads and a copy in the Documents library (pitches/) come with each one.
 
 interface Props {
   lead: Lead
@@ -39,7 +40,7 @@ export default function PitchDocModal({ lead, editable, onClose, onReload, notif
     } catch (e: any) { notify(e.message, true) } finally { setBusy('') }
   }
 
-  const generate = () => run({ action: 'generate' }, 'generate', (r) => `Pitch doc v${r.version.v} ready`)
+  const generate = () => run({ action: 'generate' }, 'generate', (r) => `Proposal v${r.version.v} ready`)
   const refine = () => {
     const text = instruction.trim()
     if (!text || busy) return
@@ -70,8 +71,8 @@ export default function PitchDocModal({ lead, editable, onClose, onReload, notif
         {/* Header */}
         <div className="px-5 py-3.5 border-b border-gray-200 flex items-center gap-2 flex-wrap shrink-0">
           <FileText className="w-4 h-4 text-primary-600" />
-          <h3 className="text-base font-semibold text-gray-900">One-page pitch — {lead.company || lead.name}</h3>
-          <InfoTip text="The final client-facing pitch on one page. Generate it from the research, refine it by telling the copilot what to change (each change = a new version), and Lock the version you'll send. The locked version drives the AI email draft; every version is also saved as docx + PDF in Documents → pitches." />
+          <h3 className="text-base font-semibold text-gray-900">One-page proposal — {lead.company || lead.name}</h3>
+          <InfoTip text="The client-facing proposal on one page — their need and what we'd do about it, not a sales flyer. Generate it from the research, refine it by telling the copilot what to change (each change = a new version), and Lock the version you'll send. The locked version drives the AI email draft; every version is also saved as docx + PDF in Documents, filed under this lead." />
           {versions.length > 0 && (
             <select
               value={selected?.v}
@@ -94,11 +95,11 @@ export default function PitchDocModal({ lead, editable, onClose, onReload, notif
             <div className="max-w-md mx-auto text-center mt-16 space-y-4">
               <FileText className="w-10 h-10 text-gray-300 mx-auto" />
               <p className="text-sm text-gray-500">
-                No pitch document yet. Generate a one-page, client-ready pitch from the research{lead.researchChat.length ? ' and your copilot discussion' : ''}.
+                No proposal yet. Generate a one-page, client-ready proposal from the research{lead.researchChat.length ? ' and your copilot discussion' : ''}.
               </p>
               {editable ? (
                 <button onClick={generate} disabled={!!busy} className="px-4 py-2.5 bg-gray-600 text-white text-sm rounded-lg hover:bg-gray-700 inline-flex items-center gap-2 disabled:opacity-50">
-                  <Sparkles className="w-4 h-4" /> {busy === 'generate' ? 'Writing the one-pager...' : 'Generate one-page pitch'}
+                  <Sparkles className="w-4 h-4" /> {busy === 'generate' ? 'Writing the one-pager...' : 'Generate one-page proposal'}
                 </button>
               ) : (
                 <p className="text-xs text-amber-700">Read-only — the owner (or a manager) generates the pitch.</p>
@@ -154,7 +155,7 @@ export default function PitchDocModal({ lead, editable, onClose, onReload, notif
               <a href={dl('pdf')} className="px-2.5 py-1.5 border border-gray-200 text-gray-600 text-xs rounded-lg hover:bg-gray-50 inline-flex items-center gap-1.5">
                 <Download className="w-3.5 h-3.5" /> .pdf
               </a>
-              <span className="text-[10px] text-gray-400 hidden sm:inline">also in Documents → pitches/</span>
+              <span className="text-[10px] text-gray-400 hidden sm:inline">also in Documents, filed under this lead</span>
               <div className="ml-auto flex items-center gap-2">
                 {editable && selected && selected.v !== lockedV && (
                   <button onClick={lock} disabled={!!busy} className="px-3 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 inline-flex items-center gap-1.5 disabled:opacity-50">
@@ -164,7 +165,7 @@ export default function PitchDocModal({ lead, editable, onClose, onReload, notif
                 <button
                   onClick={() => { onClose(); onGoEmail() }}
                   disabled={!lockedV}
-                  title={lockedV ? 'The AI email draft is built from the locked pitch' : 'Lock a version first — the email draft is built from it'}
+                  title={lockedV ? 'The AI email draft is built from the locked proposal' : 'Lock a version first — the email draft is built from it'}
                   className="px-3 py-1.5 bg-primary-600 text-white text-xs rounded-lg hover:bg-primary-700 inline-flex items-center gap-1.5 disabled:opacity-50"
                 >
                   Use in email <Send className="w-3.5 h-3.5" />
@@ -172,7 +173,7 @@ export default function PitchDocModal({ lead, editable, onClose, onReload, notif
               </div>
             </div>
             {lockedV && selected && selected.v !== lockedV && (
-              <p className="px-4 pb-2 text-[11px] text-amber-600">v{lockedV} is the locked final — you're viewing v{selected.v}. Lock this one to make it the pitch.</p>
+              <p className="px-4 pb-2 text-[11px] text-amber-600">v{lockedV} is the locked final — you're viewing v{selected.v}. Lock this one to make it the proposal.</p>
             )}
           </div>
         )}

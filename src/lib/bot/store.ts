@@ -8,7 +8,10 @@ import crypto from 'crypto'
 //   bot-cache/<sha1>.json   — 24h cached answers for repeated questions
 //   bot-logs/YYYY-MM-DD.json — conversation log (rendered in CRM, AI-summarized weekly)
 const CONTAINER = 'gennoorbot'
-export const EMBED_DIM = 1536
+// Dimension of the active embedding model. nomic-embed-text-v2-moe = 768,
+// bge-m3 = 1024. Changing it invalidates every stored vector, so the site
+// index must be rebuilt from scratch after a change (POST /api/admin/site-index).
+export const EMBED_DIM = Number(process.env.VECTOR_DIMENSIONS || 768)
 
 export interface SiteChunk {
   id: string
@@ -72,7 +75,12 @@ export async function loadVectors(updatedAt: string): Promise<Float32Array | nul
   }
 }
 
-export function topKChunks(query: Float32Array, vectors: Float32Array, chunks: SiteChunk[], k: number): SiteChunk[] {
+export function topKScored(
+  query: Float32Array,
+  vectors: Float32Array,
+  chunks: SiteChunk[],
+  k: number
+): Array<{ chunk: SiteChunk; score: number }> {
   const scored: Array<{ i: number; s: number }> = []
   for (let i = 0; i < chunks.length; i++) {
     let dot = 0
@@ -80,7 +88,14 @@ export function topKChunks(query: Float32Array, vectors: Float32Array, chunks: S
     for (let d = 0; d < EMBED_DIM; d++) dot += query[d] * vectors[off + d]
     scored.push({ i, s: dot }) // embeddings are unit-normalized → dot = cosine
   }
-  return scored.sort((a, b) => b.s - a.s).slice(0, k).map((x) => chunks[x.i])
+  return scored
+    .sort((a, b) => b.s - a.s)
+    .slice(0, k)
+    .map((x) => ({ chunk: chunks[x.i], score: x.s }))
+}
+
+export function topKChunks(query: Float32Array, vectors: Float32Array, chunks: SiteChunk[], k: number): SiteChunk[] {
+  return topKScored(query, vectors, chunks, k).map((x) => x.chunk)
 }
 
 /* ---------- index job status (async indexing) ---------- */
@@ -90,7 +105,19 @@ export interface IndexStatus {
   startedAt: string
   finishedAt?: string
   progress?: string
-  result?: { pages: number; chunks: number; changedPages: number; embedded: number; fetchErrors: number }
+  result?: {
+    pages: number
+    chunks: number
+    changedPages: number
+    embedded: number
+    fetchErrors: number
+    /** Chunks built from structured catalogue data (courses, POCs, cases…) */
+    catalogueChunks?: number
+    /** Course PDFs / brochures read out of blob storage */
+    blobDocuments?: number
+    blobSkipped?: number
+    sources?: Record<string, number>
+  }
   error?: string
 }
 

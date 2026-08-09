@@ -1,13 +1,36 @@
-import { Document, Packer, Paragraph, TextRun, BorderStyle } from 'docx'
+import fs from 'fs/promises'
+import path from 'path'
+import { Document, Packer, Paragraph, TextRun, BorderStyle, ImageRun, AlignmentType } from 'docx'
 import PDFDocument from 'pdfkit'
 
-// Renders a pitch-doc markdown one-pager into a .docx buffer. Understands the
+// Renders a proposal markdown one-pager into a .docx buffer. Understands the
 // exact structure generatePitchDoc emits: # title, *italic subtitle*, ## section
 // headings, - bullets, **bold** inline, plain paragraphs.
 
 const BRAND = '2563EB' // Gennoor blue
 const INK = '1F2937'
 const MUTED = '6B7280'
+const HEADER_BG = '0C1426' // same navy band the branded emails use
+
+// The white wordmark sits on the navy band at the top of every proposal — the
+// same asset and band colour the branded emails use, so a proposal and the
+// email carrying it look like one thing. (The `-white` files are white-BACKGROUND
+// cards; on navy they'd read as a white box.) Read from public/ at request
+// time; if it's ever missing the document still builds, just without the mark.
+const LOGO_PATH = path.join(process.cwd(), 'public', 'logos', 'gennoor-tech-horizontal-dark-bright_760x260_email-header.png')
+const LOGO_RATIO = 260 / 760
+
+let logoCache: Buffer | null | undefined
+async function whiteLogo(): Promise<Buffer | null> {
+  if (logoCache !== undefined) return logoCache
+  try {
+    logoCache = await fs.readFile(LOGO_PATH)
+  } catch (e) {
+    console.error('Proposal logo missing:', e)
+    logoCache = null
+  }
+  return logoCache
+}
 
 function inlineRuns(text: string, base?: Partial<{ bold: boolean; italics: boolean; color: string; size: number }>): TextRun[] {
   return text.split(/(\*\*[^*]+\*\*)/g).filter(Boolean).map((part) =>
@@ -19,6 +42,24 @@ function inlineRuns(text: string, base?: Partial<{ bold: boolean; italics: boole
 
 export async function buildPitchDocx(markdown: string, footer: string): Promise<Buffer> {
   const children: Paragraph[] = []
+
+  // Branded header: white wordmark on the navy band, full text-column width
+  const logo = await whiteLogo()
+  if (logo) {
+    const width = 170
+    children.push(new Paragraph({
+      shading: { fill: HEADER_BG },
+      alignment: AlignmentType.LEFT,
+      spacing: { before: 0, after: 260 },
+      children: [
+        new ImageRun({
+          data: logo,
+          type: 'png',
+          transformation: { width, height: Math.round(width * LOGO_RATIO) },
+        }),
+      ],
+    }))
+  }
 
   for (const raw of markdown.split('\n')) {
     const line = raw.trimEnd()
@@ -85,6 +126,16 @@ export async function buildPitchPdf(markdown: string, footer: string): Promise<B
     doc.on('error', reject)
   })
 
+  // Branded header: full-bleed navy band with the white wordmark on it
+  const logo = await whiteLogo()
+  if (logo) {
+    const bandHeight = 74
+    const logoWidth = 150
+    doc.save().rect(0, 0, doc.page.width, bandHeight).fill(`#${HEADER_BG}`).restore()
+    doc.image(logo, doc.page.margins.left, (bandHeight - logoWidth * LOGO_RATIO) / 2, { width: logoWidth })
+    doc.y = bandHeight + 28
+  }
+
   // Inline **bold** rendering via pdfkit's continued-text API
   const writeInline = (text: string, size: number, color: string) => {
     const parts = text.split(/(\*\*[^*]+\*\*)/g).filter(Boolean)
@@ -129,8 +180,10 @@ export async function buildPitchPdf(markdown: string, footer: string): Promise<B
   return done
 }
 
-// Safe blob/file name for a lead's pitch doc version
+// Safe blob/file name for one version of a lead's proposal. The lead sees this
+// filename on the attachment, so it reads as a proposal for them — never as a
+// "pitch". (The blob folder stays `pitches/` so existing files keep working.)
 export function pitchDocName(leadName: string, company: string, v: number, ext: 'docx' | 'pdf'): string {
   const base = (company || leadName || 'lead').replace(/[^a-zA-Z0-9 _-]/g, '').trim().replace(/\s+/g, '-').slice(0, 40)
-  return `pitches/${base}-pitch-v${v}.${ext}`
+  return `pitches/${base}-proposal-v${v}.${ext}`
 }

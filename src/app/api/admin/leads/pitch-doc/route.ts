@@ -7,7 +7,7 @@ import { uploadDocument } from '@/lib/crm/documents'
 import { PitchVersion } from '@/lib/crm/types'
 import { formatIstCst } from '@/lib/format-time'
 
-// One-page client-facing pitch document, version-controlled per lead.
+// One-page client-facing proposal, version-controlled per lead.
 // POST {action:'generate'}                 → AI writes v1 (or the next version) from research + copilot chat
 // POST {action:'refine', v, instruction}   → copilot revises version v into a new version
 // POST {action:'lock', v}                  → freeze v as THE pitch (powers the email draft)
@@ -19,17 +19,20 @@ import { formatIstCst } from '@/lib/format-time'
 const footerLine = (v: number, by: string, at: string) =>
   `Gennoor Tech · www.gennoor.com · v${v} · prepared by ${by.split('@')[0]} · ${formatIstCst(at)}`
 
-async function saveToLibrary(leadName: string, company: string, ver: PitchVersion): Promise<string | null> {
+async function saveToLibrary(leadId: string, leadName: string, company: string, ver: PitchVersion): Promise<string | null> {
   try {
     const footer = footerLine(ver.v, ver.by, ver.at)
     const [docx, pdf] = await Promise.all([buildPitchDocx(ver.content, footer), buildPitchPdf(ver.content, footer)])
+    // Metadata is what lets the library filter by lead and show only the
+    // latest version instead of every copy ever generated.
+    const meta = { leadid: leadId, leadname: leadName, company, version: String(ver.v), kind: 'proposal' }
     await Promise.all([
-      uploadDocument(pitchDocName(leadName, company, ver.v, 'docx'), docx, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'),
-      uploadDocument(pitchDocName(leadName, company, ver.v, 'pdf'), pdf, 'application/pdf'),
+      uploadDocument(pitchDocName(leadName, company, ver.v, 'docx'), docx, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', meta),
+      uploadDocument(pitchDocName(leadName, company, ver.v, 'pdf'), pdf, 'application/pdf', meta),
     ])
     return null
   } catch (e: any) {
-    console.error('Pitch doc library save failed:', e)
+    console.error('Proposal library save failed:', e)
     return 'Version saved, but the file copy to the Documents library failed.'
   }
 }
@@ -61,7 +64,7 @@ export async function POST(request: Request) {
         if (!l) return
         l.pitchLockedV = target.v
         l.finalizedPitch = target.content
-        touch(l, { at: new Date().toISOString(), by: user.email, type: 'chat', description: `Pitch doc v${target.v} locked as final`, stage: l.stage })
+        touch(l, { at: new Date().toISOString(), by: user.email, type: 'chat', description: `Proposal v${target.v} locked as final`, stage: l.stage })
       })
       return NextResponse.json({ lockedV: target.v })
     }
@@ -70,13 +73,13 @@ export async function POST(request: Request) {
       let base: PitchVersion | undefined
       if (action === 'refine') {
         base = versions.find((x) => x.v === Number(v)) || versions[versions.length - 1]
-        if (!base) return NextResponse.json({ error: 'Nothing to refine yet — generate the pitch doc first' }, { status: 400 })
+        if (!base) return NextResponse.json({ error: 'Nothing to refine yet — generate the proposal first' }, { status: 400 })
         if (!instruction || typeof instruction !== 'string') {
           return NextResponse.json({ error: 'instruction required for refine' }, { status: 400 })
         }
       }
 
-      const content = await generatePitchDoc(lead, lead.researchChat, base?.content, instruction)
+      const content = await generatePitchDoc(lead, lead.researchChat, base?.content, instruction, user.email)
       if (!content.trim()) return NextResponse.json({ error: 'AI returned an empty document — try again' }, { status: 502 })
 
       const saved = await mutateLeads<PitchVersion | null>((leads) => {
@@ -93,21 +96,21 @@ export async function POST(request: Request) {
         l.pitchVersions = [...(l.pitchVersions || []), ver].slice(-25)
         touch(l, {
           at: ver.at, by: user.email, type: 'chat',
-          description: action === 'refine' ? `Pitch doc v${nextV} — refined (“${ver.instruction!.slice(0, 60)}”)` : `Pitch doc v${nextV} generated`,
+          description: action === 'refine' ? `Proposal v${nextV} — refined (“${ver.instruction!.slice(0, 60)}”)` : `Proposal v${nextV} generated`,
           stage: l.stage,
         })
         return ver
       })
       if (!saved) return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
 
-      const warning = await saveToLibrary(lead.name, lead.company, saved)
+      const warning = await saveToLibrary(lead.id, lead.name, lead.company, saved)
       return NextResponse.json({ version: saved, warning })
     }
 
     return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
   } catch (error) {
-    console.error('Pitch doc error:', error)
-    return NextResponse.json({ error: 'Pitch doc failed. Check Azure OpenAI configuration.' }, { status: 500 })
+    console.error('Proposal doc error:', error)
+    return NextResponse.json({ error: 'Proposal generation failed. Check Azure OpenAI configuration.' }, { status: 500 })
   }
 }
 
@@ -138,7 +141,7 @@ export async function GET(req: NextRequest) {
       },
     })
   } catch (error) {
-    console.error('Pitch doc download error:', error)
+    console.error('Proposal download error:', error)
     return NextResponse.json({ error: 'Download failed' }, { status: 500 })
   }
 }

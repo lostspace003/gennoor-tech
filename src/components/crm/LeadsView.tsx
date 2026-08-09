@@ -2,9 +2,11 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as XLSX from 'xlsx'
-import { Search, Upload, Download, Trash2, Brain, Mail, X, Hand, Undo2, Archive, UserPlus, Sparkles } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Search, Upload, Download, Trash2, Brain, Mail, X, Hand, Undo2, Archive, UserPlus, Sparkles, Columns3, Wand2 } from 'lucide-react'
 import { Lead, LeadStatus, PipelineStage, ProcessStatus, PIPELINE_STAGES, COMPANY_SIZES, BUSINESS_FUNCTIONS, LEAD_INTERESTS, DECISION_ROLES } from '@/lib/crm/types'
 import { StatusBadge, StageBar, timeAgo, api, STAGE_LABELS, Spinner, InfoTip, MultiSelect, PriorityBadge, normPriority } from './shared'
+import { qualificationGaps } from '@/lib/crm/lead-text'
 import { useCrm } from './CrmContext'
 
 const CRM_TEAM = ['admin@gennoor.com', 'jalalkhan@gennoor.com', 'yusufchaudhary@gennoor.com', 'aditya@gennoor.com', 'deepanshu@gennoor.com', 'zaid@gennoor.com', 'sales@gennoor.com']
@@ -62,6 +64,7 @@ function rowToLead(row: Record<string, any>): Partial<Lead> | null {
 
 export default function LeadsView({ leads, canManage, onOpenLead, onReload, notify }: Props) {
   const { userEmail, isManager } = useCrm()
+  const router = useRouter()
   const [poolFilter, setPoolFilter] = useState<'all' | 'pool' | 'mine' | 'dumped'>('all')
   const [searchTerm, setSearchTerm] = useState('')
   const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'week' | 'month' | 'custom'>('all')
@@ -76,6 +79,9 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
   const [interestFilter, setInterestFilter] = useState<string[]>([])
   const [roleFilter, setRoleFilter] = useState<string[]>([])
   const [sourceFilter, setSourceFilter] = useState<string[]>([])
+  // Finds the thin rows: research trusts the qualification fields as facts, so
+  // leads missing them get a generic profile no matter how good the prompts are.
+  const [gapsOnly, setGapsOnly] = useState(false)
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
   const [selected, setSelected] = useState<string[]>([])
@@ -83,14 +89,27 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
   const [upload, setUpload] = useState<ParsedUpload | null>(null)
   const [adding, setAdding] = useState(false)
 
-  // The shell header's "New lead" shortcut deep-links here as /crm/leads?new=1
-  // — open the add-lead modal once and clean the URL so refreshes don't reopen it.
+  // Two deep-links land here, both consumed once and cleaned out of the URL so
+  // a refresh doesn't replay them:
+  //   ?new=1      — the shell header's "New lead" shortcut opens the add modal
+  //   ?scope=mine — closing the multi-lead view returns the list to My leads
   useEffect(() => {
     if (typeof window === 'undefined') return
     const params = new URLSearchParams(window.location.search)
+    let touched = false
     if (params.get('new') === '1') {
       setAdding(true)
       params.delete('new')
+      touched = true
+    }
+    if (params.get('scope') === 'mine') {
+      setPoolFilter('mine')
+      setPage(1)
+      setSelected([])
+      params.delete('scope')
+      touched = true
+    }
+    if (touched) {
       const qs = params.toString()
       window.history.replaceState(null, '', window.location.pathname + (qs ? `?${qs}` : ''))
     }
@@ -150,8 +169,9 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
     if (interestFilter.length) result = result.filter((l) => interestFilter.includes(l.interest || 'none'))
     if (roleFilter.length) result = result.filter((l) => roleFilter.includes(l.decisionRole || 'none'))
     if (sourceFilter.length) result = result.filter((l) => sourceFilter.includes(l.source || 'none'))
+    if (gapsOnly) result = result.filter((l) => qualificationGaps(l).length > 0)
     return result
-  }, [leads, searchTerm, dateFilter, dateFrom, dateTo, processFilter, stageFilter, statusFilter, priorityFilter, sizeFilter, functionFilter, interestFilter, roleFilter, sourceFilter, poolFilter, userEmail])
+  }, [leads, searchTerm, dateFilter, dateFrom, dateTo, processFilter, stageFilter, statusFilter, priorityFilter, sizeFilter, functionFilter, interestFilter, roleFilter, sourceFilter, poolFilter, gapsOnly, userEmail])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
   const safePage = Math.min(page, totalPages)
@@ -488,6 +508,28 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
             >
               <UserPlus className="w-4 h-4" /> Add lead
             </button>
+            <button
+              onClick={async () => {
+                // Empty-only, same discipline as AI priority: anything a human
+                // typed is left alone. Scope = selection, else current filter.
+                const scope = selected.length ? filtered.filter((l) => selected.includes(l.id)) : filtered
+                const targets = scope.filter((l) => qualificationGaps(l).length > 0).map((l) => l.id)
+                if (targets.length === 0) { notify('Nothing to fill — every lead in scope is already qualified', true); return }
+                setBusy('enrich')
+                try {
+                  const res = await api<{ updated: number; note?: string }>('/api/admin/leads/enrich', {
+                    method: 'POST', body: JSON.stringify({ leadIds: targets.slice(0, 40) }),
+                  })
+                  await onReload()
+                  notify(res.updated ? `AI filled blank fields on ${res.updated} lead(s) — existing values untouched` : (res.note || 'Nothing could be inferred confidently'), !res.updated)
+                } catch (e: any) { notify(e.message, true) } finally { setBusy('') }
+              }}
+              disabled={busy === 'enrich'}
+              className="px-3 py-2 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50 flex items-center gap-2 disabled:opacity-50"
+              title="Fills ONLY blank qualification fields (sector, size, function, interest, decision role) from title, company and notes. Research trusts these as facts, so filling them is what stops proposals reading generic. Never overwrites what you typed."
+            >
+              <Wand2 className="w-4 h-4" /> {busy === 'enrich' ? 'Filling…' : `AI qualify${(() => { const scope = selected.length ? filtered.filter((l) => selected.includes(l.id)) : filtered; const n = scope.filter((l) => qualificationGaps(l).length > 0).length; return n ? ` (${n} thin)` : '' })()}`}
+            </button>
             {canManage && (
               <button
                 onClick={async () => {
@@ -567,7 +609,24 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
               </button>
             ))}
           </div>
-          <div className="text-xs text-gray-500">Showing {filtered.length} of {leads.length} leads</div>
+          <div className="flex items-center gap-2">
+            {/* Data-quality scope: research treats these fields as facts, so a
+                thin row produces a generic profile however good the prompts are. */}
+            {(() => {
+              const thin = leads.filter((l) => !l.dumped && qualificationGaps(l).length > 0).length
+              if (!thin && !gapsOnly) return null
+              return (
+                <button
+                  onClick={() => { setGapsOnly((g) => !g); resetPage(); setSelected([]) }}
+                  className={`px-2.5 py-1 text-xs rounded-full border transition-colors ${gapsOnly ? 'bg-amber-500 text-white border-amber-500' : 'border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100'}`}
+                  title="Leads missing sector, size, function, interest or decision role. Research weighs these above anything it infers — fill them and the profile sharpens."
+                >
+                  Missing qualification ({thin})
+                </button>
+              )
+            })()}
+            <div className="text-xs text-gray-500">Showing {filtered.length} of {leads.length} leads</div>
+          </div>
         </div>
       </div>
 
@@ -575,9 +634,22 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
       {selected.length > 0 && (
         <div className="bg-primary-50 px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-2">
           <span className="text-sm text-primary-700 font-medium flex items-center gap-1.5">{selected.length} selected
-            <InfoTip text="Pick up = claim for yourself. Release = back to the pool. Dump = park as vague/duplicate (with reason). Start/Pause/Stop = outreach process. Assign & Delete are manager-only." />
+            <InfoTip text="Open opens every selected lead as tabs on one CRM page — close a tab to drop that lead, close the page to come back to My leads. Pick up = claim for yourself. Release = back to the pool. Dump = park as vague/duplicate (with reason). Start/Pause/Stop = outreach process. Assign & Delete are manager-only." />
           </span>
           <div className="flex flex-wrap items-center gap-2">
+            {/* Open the whole selection as one multi-lead workspace */}
+            <button
+              onClick={() => {
+                const qs = selected.slice(0, 12).map((id) => `id=${encodeURIComponent(id)}`).join('&')
+                if (selected.length > 12) notify('Opening the first 12 selected leads')
+                router.push(`/crm/leads/multi?${qs}`)
+              }}
+              disabled={!!busy}
+              className="px-3 py-1.5 bg-gray-900 text-white text-xs rounded hover:bg-black flex items-center gap-1.5 disabled:opacity-50"
+              title="Open the selected leads as tabs on one page"
+            >
+              <Columns3 className="w-3.5 h-3.5" /> Open {selected.length} lead{selected.length === 1 ? '' : 's'}
+            </button>
             {/* Pool actions */}
             {poolFilter === 'dumped' ? (
               <button onClick={() => poolAction('restore')} disabled={!!busy} className="px-3 py-1.5 bg-green-600 text-white text-xs rounded hover:bg-green-700 flex items-center gap-1.5 disabled:opacity-50">

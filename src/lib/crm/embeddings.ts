@@ -1,6 +1,7 @@
 import { BlobServiceClient } from '@azure/storage-blob'
 import crypto from 'crypto'
 import { Lead } from './types'
+import { leadIndexText } from './lead-text'
 
 // Embedding retrieval for GennoorBot. Below SMALL_CRM_LIMIT leads the copilot
 // passes the whole snapshot directly (more accurate); above it, we embed each
@@ -15,13 +16,8 @@ const BASE = process.env.FOUNDRY_OPENAI_BASE || 'https://admin-5924-resource.ope
 interface StoredVector { hash: string; vector: number[] }
 type VectorStore = Record<string, StoredVector>
 
-function leadText(l: Lead): string {
-  return [
-    l.name, l.designation, l.company, l.sector, l.leadType, l.region, l.country, l.city,
-    l.stage, l.status, l.processStatus, l.priority, l.owner, l.notes,
-    l.aiResearch?.summary, ...(l.aiResearch?.insights || []),
-  ].filter(Boolean).join(' | ')
-}
+// Shared with the Azure AI Search index — see src/lib/crm/lead-text.ts
+const leadText = leadIndexText
 
 function hashOf(text: string): string {
   return crypto.createHash('sha1').update(text).digest('hex')

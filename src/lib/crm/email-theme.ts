@@ -13,6 +13,12 @@ export function emailShell(
     senderEmail?: string
     senderName?: string
     /**
+     * CRM outreach: the team member who actually worked the lead. Their name,
+     * direct number and own gennoor.com address replace the generic block, so
+     * the lead knows exactly who to reply to or call back.
+     */
+    signature?: { name: string; email: string; phones?: string[] }
+    /**
      * Marketing mail only. Renders the unsubscribe line in the footer; pair it
      * with `unsubscribeUrl` on sendEmail so the List-Unsubscribe headers match.
      * Never set on transactional mail (OTP, certificates, booking confirmations).
@@ -20,9 +26,15 @@ export function emailShell(
     unsubscribeUrl?: string
   }
 ): string {
-  // Signature: no phone numbers — the sender's address plus admin@ (always)
-  const sender = (opts?.senderEmail || '').trim().toLowerCase()
+  const sig = opts?.signature
+  // Contact line: the signer's own address first, admin@ always reachable.
+  const sender = (sig?.email || opts?.senderEmail || '').trim().toLowerCase()
   const emails = [...new Set([sender, 'admin@gennoor.com'].filter(Boolean))]
+  const displayName = sig?.name || opts?.senderName || 'Gennoor Tech'
+  const phoneHtml = (sig?.phones || [])
+    .filter(Boolean)
+    .map((p) => `<a href="tel:+${p.replace(/[^\d]/g, '')}" style="color:#93b4ff;text-decoration:none">${escapeHtml(p)}</a> · `)
+    .join('')
   return `
   <div style="background:#f1f5f9;padding:24px 12px;margin:0">
     ${opts?.preheader ? `<div style="display:none;max-height:0;overflow:hidden">${escapeHtml(opts.preheader)}</div>` : ''}
@@ -34,10 +46,10 @@ export function emailShell(
         ${bodyHtml}
       </div>
       <div style="background:#0C1426;padding:18px 28px">
-        <p style="color:#ffffff;margin:0 0 2px;font-size:13px;font-weight:600">${escapeHtml(opts?.senderName || 'Gennoor Tech')}</p>
-        <p style="color:#A8C3EF;margin:0 0 8px;font-size:11px;letter-spacing:1px">TRAIN · INNOVATE · BUILD</p>
+        <p style="color:#ffffff;margin:0 0 2px;font-size:13px;font-weight:600">${escapeHtml(displayName)}</p>
+        <p style="color:#A8C3EF;margin:0 0 8px;font-size:11px;letter-spacing:1px">${sig ? 'GENNOOR TECH · TRAIN · INNOVATE · BUILD' : 'TRAIN · INNOVATE · BUILD'}</p>
         <p style="color:#94a3b8;margin:0;font-size:12px">
-          ${emails.map((e) => `<a href="mailto:${e}" style="color:#93b4ff;text-decoration:none">${e}</a>`).join(' · ')} ·
+          ${phoneHtml}${emails.map((e) => `<a href="mailto:${e}" style="color:#93b4ff;text-decoration:none">${e}</a>`).join(' · ')} ·
           <a href="${SITE}" style="color:#93b4ff;text-decoration:none">www.gennoor.com</a>
         </p>
         ${

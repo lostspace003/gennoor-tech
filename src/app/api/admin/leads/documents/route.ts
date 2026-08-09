@@ -38,7 +38,18 @@ export async function POST(req: NextRequest) {
     const safeName = file.name.replace(/[^a-zA-Z0-9._ -]/g, '_')
     const blobName = `${folder}/${safeName}`
     const buffer = Buffer.from(await file.arrayBuffer())
-    await uploadDocument(blobName, buffer, file.type || 'application/octet-stream')
+    // Uploads made from inside a lead (composer attachment, webinar poster)
+    // carry that lead so the library can filter by it.
+    const leadId = String(form.get('leadId') || '')
+    const metadata = leadId
+      ? {
+          leadid: leadId,
+          leadname: String(form.get('leadName') || ''),
+          company: String(form.get('company') || ''),
+          kind: 'upload',
+        }
+      : undefined
+    await uploadDocument(blobName, buffer, file.type || 'application/octet-stream', metadata)
 
     return NextResponse.json({ success: true, name: blobName })
   } catch (error) {

@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireCrmUser } from '@/lib/crm/access'
-import { embedTexts } from '@/lib/crm/embeddings'
+import { embedTexts } from '@/lib/crm/vector-service'
 import {
   loadIndexMeta, saveIndex, loadVectors, EMBED_DIM, SiteChunk, SiteIndexMeta,
   readIndexStatus, writeIndexStatus,
 } from '@/lib/bot/store'
+import { knowledgeChunks, knowledgeSummary } from '@/lib/bot/knowledge'
+import { blobDocumentChunks } from '@/lib/bot/blob-docs'
 import crypto from 'crypto'
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.gennoor.com'
@@ -78,6 +80,44 @@ async function runIndex() {
       }
     }
 
+    // Structured catalogue content on top of the crawl. Rendered pages don't
+    // print every module, timeline or price band, so a visitor asking "how
+    // long does a fraud build take?" needs the source data, not the HTML.
+    // Deduped by chunk id — a crawl chunk and a knowledge chunk never collide
+    // because their ids hash different text.
+    const knowledge = knowledgeChunks()
+    const seenIds = new Set(chunks.map((c) => c.id))
+    for (const k of knowledge) {
+      if (seenIds.has(k.id)) continue
+      seenIds.add(k.id)
+      chunks.push(k)
+      // Give each synthetic source a page entry so delta detection works
+      pages[k.url] = pages[k.url] || k.hash
+    }
+    // Course PDFs, brochures and outlines out of blob storage. The pages link
+    // to these but never contain their text, so without this the bot can point
+    // at a PDF it cannot read. Allowlisted paths only — see blob-docs.ts.
+    let blobDocs = { chunks: [] as SiteChunk[], documents: 0, skipped: 0, errors: [] as string[] }
+    try {
+      blobDocs = await blobDocumentChunks()
+      for (const d of blobDocs.chunks) {
+        if (seenIds.has(d.id)) continue
+        seenIds.add(d.id)
+        chunks.push(d)
+        pages[d.url] = pages[d.url] || d.hash
+      }
+      if (blobDocs.errors.length) console.error('Blob document errors:', blobDocs.errors)
+    } catch (error: any) {
+      // A storage hiccup must not cost us the whole index run
+      console.error('Blob document pass failed:', error?.message)
+    }
+
+    await writeIndexStatus({
+      state: 'running',
+      startedAt: new Date().toISOString(),
+      progress: `crawled ${urls.length} pages, ${knowledge.length} catalogue chunks, ${blobDocs.documents} documents`,
+    }).catch(() => {})
+
     const vectors = new Float32Array(chunks.length * EMBED_DIM)
     const toEmbed: number[] = []
     chunks.forEach((c, i) => {
@@ -88,18 +128,18 @@ async function runIndex() {
         toEmbed.push(i)
       }
     })
-    // Pace embeddings under the deployment's tokens-per-minute limit:
-    // 24 chunks (~19K tokens) per call, 12s between calls. A full first
-    // index takes ~25 quiet minutes; monthly deltas take seconds.
-    const EMBED_BATCH = 24
+    // The self-hosted embedding container has no tokens-per-minute limit, so
+    // the old 12-second pacing between batches is gone — a full rebuild now
+    // runs at wire speed instead of taking ~25 quiet minutes. Batches stay
+    // modest to keep memory flat on the container, not to dodge a quota.
+    const EMBED_BATCH = 32
     for (let i = 0; i < toEmbed.length; i += EMBED_BATCH) {
       const idxs = toEmbed.slice(i, i + EMBED_BATCH)
-      const embedded = await embedTexts(idxs.map((x) => `${chunks[x].title}\n${chunks[x].text}`))
+      const embedded = await embedTexts(idxs.map((x) => `${chunks[x].title}\n${chunks[x].text}`), 'document')
       idxs.forEach((x, j) => vectors.set(embedded[j], x * EMBED_DIM))
       if ((i / EMBED_BATCH) % 5 === 0) {
         await writeIndexStatus({ state: 'running', startedAt: new Date().toISOString(), progress: `embedded ${Math.min(i + EMBED_BATCH, toEmbed.length)}/${toEmbed.length} chunks` }).catch(() => {})
       }
-      if (i + EMBED_BATCH < toEmbed.length) await new Promise((r) => setTimeout(r, 12_000))
     }
 
     const meta: SiteIndexMeta = { chunks, pages, updatedAt: new Date().toISOString() }
@@ -108,7 +148,17 @@ async function runIndex() {
       state: 'done',
       startedAt: new Date().toISOString(),
       finishedAt: new Date().toISOString(),
-      result: { pages: Object.keys(pages).length, chunks: chunks.length, changedPages, embedded: toEmbed.length, fetchErrors },
+      result: {
+        pages: Object.keys(pages).length,
+        chunks: chunks.length,
+        changedPages,
+        embedded: toEmbed.length,
+        fetchErrors,
+        catalogueChunks: knowledge.length,
+        blobDocuments: blobDocs.documents,
+        blobSkipped: blobDocs.skipped,
+        sources: knowledgeSummary(),
+      },
     })
   } catch (error: any) {
     console.error('Site index error:', error)

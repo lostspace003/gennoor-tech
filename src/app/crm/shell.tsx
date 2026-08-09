@@ -7,6 +7,7 @@ import { SessionProvider, useSession, signOut } from 'next-auth/react'
 import {
   LayoutGrid, Users, TrendingUp, Inbox, Calendar, FolderOpen,
   LogOut, RefreshCw, Menu, X, AlertCircle, Zap, UsersRound, MessageCircle,
+  PanelLeftClose, PanelLeftOpen,
 } from 'lucide-react'
 import { CrmProvider, useCrm } from '@/components/crm/CrmContext'
 import CrmCopilot from '@/components/crm/CrmCopilot'
@@ -22,6 +23,10 @@ const NAV = [
   { href: '/crm/team', label: 'Team', icon: UsersRound, managerOnly: true },
   { href: '/crm/botlog', label: 'GennoorCare', icon: MessageCircle, managerOnly: true },
 ] as Array<{ href: string; label: string; icon: any; managerOnly?: boolean }>
+
+// Same idiom as the site rail: the hamburger collapses the sidebar to an icon
+// rail on desktop (choice remembered) and opens the drawer on mobile.
+const RAIL_STORAGE_KEY = 'crm.sidebar.collapsed'
 
 export default function CrmShell({ children }: { children: React.ReactNode }) {
   return (
@@ -64,9 +69,22 @@ function Frame({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession()
   const { leads, loading, loadError, reload, notify, isAdmin, isManager } = useCrm()
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [collapsed, setCollapsed] = useState(false)
   const [inboxUnseen, setInboxUnseen] = useState(0)
 
   useEffect(() => setDrawerOpen(false), [pathname])
+
+  // Remember the rail choice across sessions (SSR renders expanded)
+  useEffect(() => {
+    try { setCollapsed(window.localStorage.getItem(RAIL_STORAGE_KEY) === '1') } catch { /* ignore */ }
+  }, [])
+  const toggleRail = () => {
+    setCollapsed((c) => {
+      const next = !c
+      try { window.localStorage.setItem(RAIL_STORAGE_KEY, next ? '1' : '0') } catch { /* ignore */ }
+      return next
+    })
+  }
 
   // Auto-pull replies: poll the inbox every 3 minutes while the CRM is open;
   // badge counts messages newer than the last time the Inbox page was viewed.
@@ -98,80 +116,112 @@ function Frame({ children }: { children: React.ReactNode }) {
   const active = NAV.find((n) => pathname?.startsWith(n.href))
   const title = pathname?.match(/^\/crm\/leads\/./) ? 'Lead Workspace' : active?.label || 'CRM'
 
-  const sidebar = (
+  // `rail` = desktop icon-only mode. The mobile drawer always shows labels.
+  const sidebarContent = (rail: boolean) => (
     <div className="h-full flex flex-col bg-white">
-      <Link href="/" className="block px-4 pt-[18px] pb-3.5 border-b border-[#f0f0f2]">
+      <Link href="/" className={`block border-b border-[#f0f0f2] ${rail ? 'px-2 py-3' : 'px-4 pt-[18px] pb-3.5'}`} title="Gennoor Tech — back to site">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/logos/gennoor-tech-compact-white_600x140_navbar.png"
+          src={rail ? '/logos/gennoor-tech-icon-dark_128x128_icon-small.png' : '/logos/gennoor-tech-compact-white_600x140_navbar.png'}
           alt="Gennoor Tech"
-          className="w-full h-auto rounded-lg"
+          className={rail ? 'w-8 h-8 mx-auto rounded-lg' : 'w-full h-auto rounded-lg'}
         />
       </Link>
-      <nav className="flex-1 px-2.5 py-2.5 overflow-y-auto">
+      <nav className={`flex-1 py-2.5 overflow-y-auto overflow-x-visible ${rail ? 'px-1.5' : 'px-2.5'}`}>
         {NAV.filter((item) => !item.managerOnly || isManager).map((item) => {
           const isActive = pathname?.startsWith(item.href)
+          const badge =
+            item.href === '/crm/leads' ? leads.length :
+            item.href === '/crm/inbox' && inboxUnseen > 0 ? inboxUnseen : null
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center justify-between px-3 py-2 rounded-lg mb-px transition-colors ${
+              title={rail ? item.label : undefined}
+              className={`group relative flex items-center rounded-lg mb-px transition-colors ${rail ? 'justify-center px-2 py-2.5' : 'justify-between px-3 py-2'} ${
                 isActive
                   ? 'bg-primary-100 text-primary-600 font-semibold'
                   : 'text-gray-900 hover:bg-[#f5f5f7]'
               }`}
             >
-              <span className="flex items-center gap-2.5">
-                <item.icon className={`w-4 h-4 ${isActive ? 'text-primary-600' : 'text-[#86868b]'}`} strokeWidth={1.75} />
-                <span className="text-[13px]">{item.label}</span>
+              <span className={`flex items-center ${rail ? '' : 'gap-2.5'}`}>
+                <span className="relative">
+                  <item.icon className={`w-4 h-4 ${isActive ? 'text-primary-600' : 'text-[#86868b]'}`} strokeWidth={1.75} />
+                  {/* Collapsed: the count rides the icon so nothing is lost */}
+                  {rail && item.href === '/crm/inbox' && inboxUnseen > 0 && (
+                    <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#1d8348] border border-white" />
+                  )}
+                </span>
+                {!rail && <span className="text-[13px]">{item.label}</span>}
               </span>
-              {item.href === '/crm/leads' && (
-                <span className="text-[10.5px] font-semibold bg-[#f0f0f2] text-[#6e6e73] px-[7px] py-px rounded-full">
-                  {leads.length}
+              {!rail && badge !== null && (
+                <span className={`text-[10.5px] font-semibold px-[7px] py-px rounded-full ${item.href === '/crm/inbox' ? 'bg-[#1d8348] text-white' : 'bg-[#f0f0f2] text-[#6e6e73]'}`}>
+                  {badge}
                 </span>
               )}
-              {item.href === '/crm/inbox' && inboxUnseen > 0 && (
-                <span className="text-[10.5px] font-semibold bg-[#1d8348] text-white px-[7px] py-px rounded-full">
-                  {inboxUnseen}
+              {rail && (
+                <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2.5 py-1.5 rounded-lg bg-[#1d1d1f] text-white text-[11.5px] font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-[70] shadow-lg">
+                  {item.label}{badge !== null ? ` · ${badge}` : ''}
                 </span>
               )}
             </Link>
           )
         })}
       </nav>
-      <div className="px-4 py-3.5 border-t border-[#f0f0f2]">
-        <div className="text-[13px] font-semibold text-gray-900 truncate">
-          {session?.user?.email?.split('@')[0]}
-        </div>
-        <div className="text-[11px] text-[#86868b]">
-          {isAdmin ? 'Administrator' : isManager ? 'Manager' : 'Team member'}
-        </div>
-        <div className="flex items-center gap-3 mt-2">
-          <Link href="/" className="text-xs font-medium text-primary-600 hover:text-[#0077ed]">
-            ‹ Back to site
-          </Link>
-          <button
-            onClick={() => signOut({ callbackUrl: '/admin/login' })}
-            className="inline-flex items-center gap-1 text-xs font-medium text-[#c0392b] hover:text-[#9b2c21]"
-          >
-            <LogOut className="w-3 h-3" /> Sign out
-          </button>
-        </div>
+      <div className={`border-t border-[#f0f0f2] ${rail ? 'px-1.5 py-3 space-y-2' : 'px-4 py-3.5'}`}>
+        {rail ? (
+          <>
+            <div className="text-[10px] text-center text-[#86868b] truncate" title={session?.user?.email || ''}>
+              {session?.user?.email?.split('@')[0]?.slice(0, 8)}
+            </div>
+            <button
+              onClick={() => signOut({ callbackUrl: '/admin/login' })}
+              className="w-full flex justify-center p-2 rounded-lg text-[#c0392b] hover:bg-red-50"
+              title="Sign out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </>
+        ) : (
+          <>
+            <div className="text-[13px] font-semibold text-gray-900 truncate">
+              {session?.user?.email?.split('@')[0]}
+            </div>
+            <div className="text-[11px] text-[#86868b]">
+              {isAdmin ? 'Administrator' : isManager ? 'Manager' : 'Team member'}
+            </div>
+            <div className="flex items-center gap-3 mt-2">
+              <Link href="/" className="text-xs font-medium text-primary-600 hover:text-[#0077ed]">
+                ‹ Back to site
+              </Link>
+              <button
+                onClick={() => signOut({ callbackUrl: '/admin/login' })}
+                className="inline-flex items-center gap-1 text-xs font-medium text-[#c0392b] hover:text-[#9b2c21]"
+              >
+                <LogOut className="w-3 h-3" /> Sign out
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
 
   return (
     <div className="h-dvh bg-[#f5f5f7] flex overflow-hidden">
-      {/* Desktop sidebar */}
-      <aside className="hidden lg:block w-[216px] border-r border-[#e8e8ed] shrink-0">{sidebar}</aside>
+      {/* Desktop sidebar — expanded panel or collapsed icon rail */}
+      <aside
+        className={`hidden lg:block border-r border-[#e8e8ed] shrink-0 transition-[width] duration-200 ease-out ${collapsed ? 'w-[60px]' : 'w-[216px]'}`}
+      >
+        {sidebarContent(collapsed)}
+      </aside>
 
       {/* Mobile drawer */}
       {drawerOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setDrawerOpen(false)} />
           <aside className="absolute left-0 top-0 bottom-0 w-64 shadow-xl">
-            {sidebar}
+            {sidebarContent(false)}
             <button onClick={() => setDrawerOpen(false)} className="absolute top-3 right-3 p-1.5 bg-gray-100 rounded-lg">
               <X className="w-4 h-4 text-gray-600" />
             </button>
@@ -179,12 +229,28 @@ function Frame({ children }: { children: React.ReactNode }) {
         </div>
       )}
 
-      {/* Main column */}
-      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+      {/* Main column — `relative` so the GennoorBot floater anchors to the
+          workspace's bottom-left instead of sitting on top of the sidebar */}
+      <div className="relative flex-1 flex flex-col overflow-hidden min-w-0">
         <header className="h-[52px] bg-white border-b border-[#e8e8ed] px-3 sm:px-6 flex items-center justify-between gap-2 shrink-0">
           <div className="flex items-center gap-2 min-w-0">
-            <button onClick={() => setDrawerOpen(true)} className="p-1.5 hover:bg-[#f5f5f7] rounded-lg lg:hidden">
+            <button
+              onClick={() => setDrawerOpen(true)}
+              className="p-1.5 hover:bg-[#f5f5f7] rounded-lg lg:hidden"
+              aria-label="Open menu"
+            >
               <Menu className="w-5 h-5 text-gray-600" />
+            </button>
+            <button
+              onClick={toggleRail}
+              className="hidden lg:inline-flex p-1.5 hover:bg-[#f5f5f7] rounded-lg"
+              title={collapsed ? 'Expand menu' : 'Collapse menu'}
+              aria-label={collapsed ? 'Expand menu' : 'Collapse menu'}
+              aria-expanded={!collapsed}
+            >
+              {collapsed
+                ? <PanelLeftOpen className="w-5 h-5 text-gray-600" />
+                : <PanelLeftClose className="w-5 h-5 text-gray-600" />}
             </button>
             <h1 className="text-[15px] font-semibold text-gray-900 truncate">{title}</h1>
           </div>
@@ -204,7 +270,6 @@ function Frame({ children }: { children: React.ReactNode }) {
             >
               New lead
             </Link>
-            <CrmCopilot />
           </div>
         </header>
 
@@ -217,6 +282,9 @@ function Frame({ children }: { children: React.ReactNode }) {
         )}
 
         <main className="flex-1 overflow-y-auto min-w-0">{children}</main>
+
+        {/* GennoorBot lives here: bottom-left of the workspace, above content */}
+        <CrmCopilot />
       </div>
     </div>
   )

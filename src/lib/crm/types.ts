@@ -48,6 +48,25 @@ export interface FollowUp {
   createdAt: string
 }
 
+/**
+ * One catalogue offering matched to something we actually observed about the
+ * lead. `code` resolves against src/lib/crm/offerings.ts — a match that can't
+ * be resolved is dropped rather than shown, so the team never pitches a
+ * programme that doesn't exist.
+ */
+export interface OfferingMatch {
+  code: string
+  title: string
+  phase: PipelineStage
+  /** The observed need this answers, in the lead's terms. */
+  need: string
+  /** Why this specific offering, not a neighbouring one. */
+  why: string
+  /** 1 = lead with this. Training-first, POC-second unless the lead says otherwise. */
+  priority: number
+  confidence: 'high' | 'medium' | 'low'
+}
+
 export interface AIResearch {
   summary: string
   insights: string[]
@@ -57,6 +76,19 @@ export interface AIResearch {
   lastUpdated: string
   sources?: Array<{ title: string; url: string }>
   webGrounded?: boolean
+  // ---- Deep research (multi-pass). Absent on research run before this existed.
+  /** Pass 1: what the company is and what's going on there. */
+  companyProfile?: string
+  /** Pass 2: the person — seniority, likely remit, what they'd care about. */
+  personProfile?: string
+  /** Pass 3: the intersect — our catalogue against their observed needs. */
+  offeringMatches?: OfferingMatch[]
+  /** How to enter: which training first, which POC it sets up. */
+  entryPlan?: string
+  /** Research-derived prompts the team can fire into the copilot chat. */
+  suggestedQuestions?: string[]
+  /** Which passes actually ran — surfaced so partial research is honest. */
+  passes?: string[]
 }
 
 export interface ChatMessage {

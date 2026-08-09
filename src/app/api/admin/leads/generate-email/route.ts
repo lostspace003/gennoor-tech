@@ -2,10 +2,12 @@ import { NextResponse } from 'next/server'
 import { requireCrmUser } from '@/lib/crm/access'
 import { getLead } from '@/lib/crm/store'
 import { aiConfigured, draftEmail } from '@/lib/crm/ai'
+import { teamMember, signOffText } from '@/lib/crm/team'
 import { Lead } from '@/lib/crm/types'
 
 // Honest fallback used when AI is unavailable — no invented statistics.
-function fallbackDraft(lead: Lead): { subject: string; body: string } {
+// Signed by the team member drafting it, same as the AI path.
+function fallbackDraft(lead: Lead, senderEmail: string): { subject: string; body: string } {
   const first = (lead.name || 'there').split(/\s+/)[0]
   return {
     subject: `AI enablement for ${lead.company || 'your team'} — free webinar from Gennoor Tech`,
@@ -21,10 +23,7 @@ These are relationship-building sessions — no strings attached. You can also s
 
 Would a short call this week work to pick a topic your team would benefit from most?
 
-Best regards,
-Team Gennoor Tech
-admin@gennoor.com | +91 9326352241
-www.gennoor.com`,
+${signOffText(teamMember(senderEmail))}`,
   }
 }
 
@@ -40,15 +39,15 @@ export async function POST(request: Request) {
     if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
 
     if (!aiConfigured()) {
-      return NextResponse.json({ ...fallbackDraft(lead), source: 'template' })
+      return NextResponse.json({ ...fallbackDraft(lead, user.email), source: 'template' })
     }
 
     try {
-      const draft = await draftEmail(lead, instructions)
+      const draft = await draftEmail(lead, instructions, user.email)
       return NextResponse.json({ ...draft, source: 'ai' })
     } catch (error) {
       console.error('AI draft failed, using template:', error)
-      return NextResponse.json({ ...fallbackDraft(lead), source: 'template' })
+      return NextResponse.json({ ...fallbackDraft(lead, user.email), source: 'template' })
     }
   } catch (error) {
     console.error('Error generating email:', error)

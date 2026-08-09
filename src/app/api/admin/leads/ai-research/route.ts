@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
 import { mutateLeads, getLead, touch } from '@/lib/crm/store'
-import { aiConfigured, researchLead, researchLeadWeb } from '@/lib/crm/ai'
+import { aiConfigured, researchLead, researchLeadWeb, researchLeadDeep } from '@/lib/crm/ai'
 import { foundryConfigured } from '@/lib/crm/foundry'
 
 export async function POST(request: Request) {
@@ -25,27 +25,46 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: `Lead is owned by ${lead.owner.split('@')[0]} — claim it or ask them/a manager.` }, { status: 403 })
     }
 
-    // Prefer live web-grounded research; fall back to data-only when the
-    // shared gpt-5 deployment is busy or Foundry isn't configured.
-    let research
-    let webGrounded = false
-    if (foundryConfigured()) {
-      try {
-        research = await researchLeadWeb(lead)
-        webGrounded = true
-      } catch (error: any) {
-        console.error('Web research failed, falling back to data-only:', error?.message)
+    // Three-pass research (company → person → offering fit), web-grounded on
+    // the company pass when Foundry is up. Each pass degrades on its own; the
+    // old single-shot calls remain the last resort so a lead is never left
+    // without research because one pass misbehaved.
+    let research: Awaited<ReturnType<typeof researchLeadDeep>> | undefined
+    try {
+      research = await researchLeadDeep(lead, { web: foundryConfigured() })
+    } catch (error: any) {
+      console.error('Deep research failed, falling back to single-pass:', error?.message)
+      let webGrounded = false
+      let basic
+      if (foundryConfigured()) {
+        try {
+          basic = await researchLeadWeb(lead)
+          webGrounded = true
+        } catch (webError: any) {
+          console.error('Web research failed, falling back to data-only:', webError?.message)
+        }
       }
+      if (!basic) basic = await researchLead(lead)
+      research = { ...basic, webGrounded, passes: ['single-pass fallback'] }
     }
-    if (!research) research = await researchLead(lead)
-    const aiResearch = { ...research, webGrounded, lastUpdated: new Date().toISOString() }
+
+    const aiResearch = { ...research, lastUpdated: new Date().toISOString() }
+    const matched = aiResearch.offeringMatches?.length
+      ? ` — ${aiResearch.offeringMatches.length} offering(s) matched, leading with ${aiResearch.offeringMatches[0].title}`
+      : ''
 
     await mutateLeads((leads) => {
       const l = leads.find((x) => x.id === leadId)
       if (!l) return
       l.aiResearch = aiResearch
-      l.techProfile = research.techOrNonTech
-      touch(l, { at: new Date().toISOString(), by: user.email, type: 'research', description: 'AI research completed' })
+      l.techProfile = aiResearch.techOrNonTech
+      touch(l, {
+        at: new Date().toISOString(),
+        by: user.email,
+        type: 'research',
+        description: `AI research completed (${aiResearch.passes?.join(', ') || 'single pass'})${matched}`,
+        stage: l.stage,
+      })
     })
 
     return NextResponse.json({ research: aiResearch })
