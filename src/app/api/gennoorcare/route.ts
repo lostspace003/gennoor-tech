@@ -128,6 +128,19 @@ export interface BotCard {
  * and trimmed because the model occasionally returns a dozen of them, which
  * would not fit the chat window.
  */
+/**
+ * When a card is present the prose must not also ask. The model still tends to
+ * write "Could you tell me more about your team?" directly above its own card
+ * — the double-asking that made the bot feel like an interrogation.
+ */
+function dropTrailingQuestion(text: string): string {
+  const lines = text.split('\n').map((l) => l.trimEnd()).filter((l) => l.trim())
+  if (lines.length < 2) return text.trim()
+  const last = lines[lines.length - 1].trim()
+  if (last.endsWith('?') && last.length <= 180) return lines.slice(0, -1).join('\n').trim()
+  return lines.join('\n').trim()
+}
+
 function extractCard(raw: string): { text: string; card?: BotCard } {
   const match = raw.match(/<card>\s*([\s\S]*?)\s*<\/card>/i)
   if (!match) return { text: raw }
@@ -156,7 +169,7 @@ function extractCard(raw: string): { text: string; card?: BotCard } {
 
     if (fields.length === 0) return { text }
     return {
-      text,
+      text: dropTrailingQuestion(text),
       card: {
         title: String(parsed.title || 'A couple of quick questions').slice(0, 80),
         fields,
