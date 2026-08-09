@@ -18,7 +18,9 @@ export default function WhatsAppButton() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat on WhatsApp"
-      className="fixed bottom-24 right-6 z-40 flex items-center justify-center w-14 h-14 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+      // Sits clear of the GennoorCare floater at bottom-6: that button is ~64px
+      // tall, so anything below bottom-32 crowds it to a few pixels' gap.
+      className="fixed bottom-32 right-6 z-40 flex items-center justify-center w-14 h-14 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
     >
       <MessageCircle className="w-7 h-7" />
     </a>

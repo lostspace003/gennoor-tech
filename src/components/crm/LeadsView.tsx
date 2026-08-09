@@ -82,6 +82,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
   // Finds the thin rows: research trusts the qualification fields as facts, so
   // leads missing them get a generic profile no matter how good the prompts are.
   const [gapsOnly, setGapsOnly] = useState(false)
+  const [ownerFilter, setOwnerFilter] = useState<string[]>([])
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
   const [selected, setSelected] = useState<string[]>([])
@@ -169,9 +170,10 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
     if (interestFilter.length) result = result.filter((l) => interestFilter.includes(l.interest || 'none'))
     if (roleFilter.length) result = result.filter((l) => roleFilter.includes(l.decisionRole || 'none'))
     if (sourceFilter.length) result = result.filter((l) => sourceFilter.includes(l.source || 'none'))
+    if (ownerFilter.length) result = result.filter((l) => ownerFilter.includes(l.owner ? l.owner.toLowerCase() : 'pool'))
     if (gapsOnly) result = result.filter((l) => qualificationGaps(l).length > 0)
     return result
-  }, [leads, searchTerm, dateFilter, dateFrom, dateTo, processFilter, stageFilter, statusFilter, priorityFilter, sizeFilter, functionFilter, interestFilter, roleFilter, sourceFilter, poolFilter, gapsOnly, userEmail])
+  }, [leads, searchTerm, dateFilter, dateFrom, dateTo, processFilter, stageFilter, statusFilter, priorityFilter, sizeFilter, functionFilter, interestFilter, roleFilter, sourceFilter, poolFilter, gapsOnly, ownerFilter, userEmail])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
   const safePage = Math.min(page, totalPages)
@@ -493,6 +495,21 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
             options={[...DECISION_ROLES.map((s) => ({ value: s, label: s })), { value: 'none', label: 'Not set' }]}
             values={roleFilter}
             onChange={(v) => { setRoleFilter(v); resetPage() }}
+          />
+          {/*
+            Anyone can filter by owner and see how a colleague's book is
+            moving — who holds what, which stage, what's stalled. Read-only by
+            construction: the existing owner rules still gate every write, so
+            seeing someone's leads never grants the ability to work them.
+          */}
+          <MultiSelect
+            label="Owner"
+            options={[
+              { value: 'pool', label: 'Pool (unclaimed)' },
+              ...CRM_TEAM.map((u) => ({ value: u, label: u.split('@')[0] })),
+            ]}
+            values={ownerFilter}
+            onChange={(v) => { setOwnerFilter(v); resetPage() }}
           />
           <MultiSelect
             label="Source"

@@ -16,6 +16,16 @@ import { Spinner, CopyMsg } from './shared'
  * need custom handling anyway.
  */
 function renderReply(text: string, onOpenLead: (id: string) => void): React.ReactNode {
+  // A long list can hit the token cap mid-marker, leaving "[[lead:LEAD-2026-07-28-"
+  // dangling in the output. Drop any unterminated marker and the partial line
+  // it sits on rather than showing the visitor our wiring.
+  // [\s\S] rather than the /s flag — the tsconfig target predates dotAll.
+  const cleaned = text
+    .replace(/\[\[lead:[^\]|]*$/, '')
+    .replace(/\[\[lead:[^\]|]+\|[^\]]*$/, '')
+    .replace(/^[\s\-*\d.)]+$/gm, '')
+    .trimEnd()
+
   const inline = (s: string, keyBase: string): React.ReactNode[] =>
     // Split on lead markers first so a bolded name inside one still works
     s.split(/(\[\[lead:[^\]|]+\|[^\]]+\]\])/g).flatMap((part, i) => {
@@ -40,7 +50,7 @@ function renderReply(text: string, onOpenLead: (id: string) => void): React.Reac
       )
     })
 
-  return text.split('\n').map((raw, i) => {
+  return cleaned.split('\n').map((raw, i) => {
     const line = raw.trimEnd()
     if (!line.trim()) return <div key={i} className="h-1.5" />
     const bullet = line.match(/^\s*[-*]\s+(.*)$/)
@@ -218,8 +228,10 @@ export default function CrmCopilot() {
                 ))}
               </div>
             )}
+            {/* Long answers (a 30-lead list) scroll inside their own bubble so
+                the conversation above stays reachable. */}
             {messages.map((m, i) => (
-              <div key={i} className={`max-w-[88%] rounded-xl px-3 py-2 text-sm break-words ${m.role === 'user' ? 'ml-auto bg-primary-600 text-white whitespace-pre-line' : 'bg-gray-100 text-gray-800 space-y-0.5'}`}>
+              <div key={i} className={`max-w-[88%] rounded-xl px-3 py-2 text-sm break-words ${m.role === 'user' ? 'ml-auto bg-primary-600 text-white whitespace-pre-line' : 'bg-gray-100 text-gray-800 space-y-0.5 max-h-[26rem] overflow-y-auto overscroll-contain'}`}>
                 {m.role === 'assistant' ? renderReply(m.content, openLead) : m.content}
                 <CopyMsg text={plainText(m.content)} light={m.role === 'user'} />
                 {m.usedWeb && <div className="mt-1.5 text-[10px] text-green-600 flex items-center gap-1"><Globe className="w-3 h-3" /> answered with live web search</div>}
