@@ -76,6 +76,11 @@ const RESUME_TAIL_GUARD_SEC = 3
 // Throttle saves on timeupdate so we don't write to localStorage every 250ms.
 const RESUME_SAVE_INTERVAL_SEC = 5
 
+/** Narration is quiet by default, so the player opens boosted. */
+const DEFAULT_VOLUME = 200
+const MAX_VOLUME = 200
+const VOLUME_KEY = 'gennoor.academy.volume'
+
 const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudioControlsProps>(
   function ChapterAudioControls({ chapterAudio, chapterCues, iframeRef, resumeKey, onEnded }, ref) {
     const audioRef = useRef<HTMLAudioElement>(null)
@@ -87,6 +92,14 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
     const [audioReady, setAudioReady] = useState(false)
     const [audioError, setAudioError] = useState(false)
     const [muted, setMuted] = useState(false)
+    // Recorded narration sits well below the platform's own loudness, so the
+    // element's own 0-100% ceiling isn't enough. A Web Audio gain stage lifts
+    // it past 100% the way VLC does, and a limiter after it keeps peaks from
+    // clipping — boosting raw gain alone would distort the loudest syllables.
+    const [volume, setVolume] = useState(DEFAULT_VOLUME)
+    const [showVolume, setShowVolume] = useState(false)
+    const audioCtxRef = useRef<AudioContext | null>(null)
+    const gainRef = useRef<GainNode | null>(null)
     const [scrubbing, setScrubbing] = useState(false)
     const currentCueIdxRef = useRef(-1)
     const timelineRef = useRef<HTMLDivElement>(null)
@@ -119,6 +132,65 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
     }, [])
 
     const audioSrc = useMemo(() => `/api/content${chapterAudio}`, [chapterAudio])
+
+    // Restore a remembered level; first-time listeners get the boost.
+    useEffect(() => {
+      try {
+        const saved = Number(window.localStorage.getItem(VOLUME_KEY))
+        if (Number.isFinite(saved) && saved > 0 && saved <= MAX_VOLUME) setVolume(saved)
+      } catch { /* private mode — the default is fine */ }
+    }, [])
+
+    /**
+     * Build the gain chain lazily on first play. Browsers refuse to start an
+     * AudioContext before a user gesture, and createMediaElementSource can
+     * only be called once per element — so both are guarded and reused.
+     *
+     * Chain: element → gain (up to 2x) → limiter → speakers.
+     * The limiter is a DynamicsCompressor with a high ratio just under 0 dBFS,
+     * which catches peaks the raw gain would otherwise clip into distortion.
+     */
+    const ensureGainChain = useCallback(() => {
+      const audio = audioRef.current
+      if (!audio || gainRef.current) return
+      const Ctor = window.AudioContext || (window as any).webkitAudioContext
+      if (!Ctor) return // no Web Audio: element volume still works up to 100%
+      try {
+        const ctx: AudioContext = new Ctor()
+        const source = ctx.createMediaElementSource(audio)
+        const gain = ctx.createGain()
+        gain.gain.value = volume / 100
+
+        const limiter = ctx.createDynamicsCompressor()
+        limiter.threshold.value = -3 // dBFS — engage just below full scale
+        limiter.knee.value = 0
+        limiter.ratio.value = 20
+        limiter.attack.value = 0.003
+        limiter.release.value = 0.25
+
+        source.connect(gain)
+        gain.connect(limiter)
+        limiter.connect(ctx.destination)
+        audioCtxRef.current = ctx
+        gainRef.current = gain
+      } catch {
+        // Already-connected element or blocked context — fall back silently
+        // to the plain element, which still plays at up to 100%.
+      }
+    }, [volume])
+
+    // Keep the live gain in step with the slider and persist the choice
+    useEffect(() => {
+      if (gainRef.current) gainRef.current.gain.value = volume / 100
+      const audio = audioRef.current
+      // Without Web Audio the element itself caps at 1.0 — honour the slider
+      // as far as it goes rather than ignoring it.
+      if (audio && !gainRef.current) audio.volume = Math.min(1, volume / 100)
+      try { window.localStorage.setItem(VOLUME_KEY, String(volume)) } catch { /* ignore */ }
+    }, [volume])
+
+    // Release the context when the player unmounts
+    useEffect(() => () => { audioCtxRef.current?.close().catch(() => {}) }, [])
     const cuesSrc = useMemo(() => (chapterCues ? `/api/content${chapterCues}` : null), [chapterCues])
 
     useEffect(() => {
@@ -330,6 +402,10 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
     const togglePlay = useCallback(() => {
       const audio = audioRef.current
       if (!audio) return
+      // First play is the user gesture the AudioContext needs; build the gain
+      // chain here and resume it if the browser auto-suspended it.
+      ensureGainChain()
+      if (audioCtxRef.current?.state === 'suspended') audioCtxRef.current.resume().catch(() => {})
       if (!audio.paused) { audio.pause(); return }
 
       // If we have a queued seek (slide-nav clicked before audio was loaded
@@ -628,15 +704,40 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
           {formatTime(currentTime)} / {formatTime(duration)}
         </span>
 
-        {/* Mute */}
-        <button
-          onClick={() => setMuted(m => !m)}
-          className="hidden min-[380px]:inline-flex p-1.5 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors flex-shrink-0"
-          title={muted ? 'Unmute' : 'Mute'}
-          aria-label={muted ? 'Unmute' : 'Mute'}
+        {/* Volume — click to mute, hover for the 0-200% slider */}
+        <div
+          className="hidden min-[380px]:block relative flex-shrink-0"
+          onMouseEnter={() => setShowVolume(true)}
+          onMouseLeave={() => setShowVolume(false)}
         >
-          {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-        </button>
+          <button
+            onClick={() => setMuted(m => !m)}
+            onFocus={() => setShowVolume(true)}
+            className="p-1.5 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors"
+            title={muted ? 'Unmute' : `Volume ${volume}% — hover to adjust`}
+            aria-label={muted ? 'Unmute' : 'Mute'}
+          >
+            {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+          </button>
+          {showVolume && !muted && (
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2.5 rounded-lg bg-[#1d1d1f] shadow-xl border border-white/10 flex flex-col items-center gap-1.5 z-50">
+              <span className="text-[10px] text-white/70 tabular-nums whitespace-nowrap">{volume}%</span>
+              <input
+                type="range"
+                min={0}
+                max={MAX_VOLUME}
+                step={10}
+                value={volume}
+                onChange={(e) => setVolume(Number(e.target.value))}
+                className="w-24 h-1 accent-primary-500 cursor-pointer"
+                aria-label="Volume"
+              />
+              {volume > 100 && (
+                <span className="text-[9px] text-white/40 whitespace-nowrap">boosted · limiter on</span>
+              )}
+            </div>
+          )}
+        </div>
 
         <button
           onClick={cycleSpeed}

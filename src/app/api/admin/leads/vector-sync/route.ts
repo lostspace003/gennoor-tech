@@ -34,9 +34,16 @@ export async function GET() {
   }
 }
 
+// The monthly GitHub workflow re-syncs on a schedule, authenticating with the
+// same shared secret the site indexer uses rather than a manager session.
+function cronAuthorized(req: NextRequest): boolean {
+  return Boolean(process.env.CRM_CRON_SECRET && req.headers.get('x-cron-secret') === process.env.CRM_CRON_SECRET)
+}
+
 export async function POST(req: NextRequest) {
-  const user = await requireCrmUser()
-  if (!user?.isManager) return NextResponse.json({ error: 'Managers only' }, { status: 403 })
+  const cronOk = cronAuthorized(req)
+  const user = cronOk ? null : await requireCrmUser()
+  if (!cronOk && !user?.isManager) return NextResponse.json({ error: 'Managers only' }, { status: 403 })
   if (!vectorServiceConfigured()) {
     return NextResponse.json({ error: 'Vector service not configured' }, { status: 503 })
   }

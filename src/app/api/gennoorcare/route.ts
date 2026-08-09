@@ -12,21 +12,120 @@ import {
 const MAX_INPUT = 500
 const MAX_HISTORY = 6
 /**
- * The question isn't covered by the website. Rather than a dead end, answer it
- * from live web search — then bring it back to what Gennoor actually does.
+ * Shared voice rules for both answer paths.
  *
- * The honesty rules matter more than the bridge: the answer must be clearly
- * marked as general knowledge rather than something from gennoor.com, and the
- * bridge is only allowed when a genuinely relevant offering exists. A forced
- * link to an unrelated course is exactly the sales-pitch behaviour we don't
- * want. Returns null when web search is unavailable so the caller can fall
- * back to the honest "I don't have that" reply.
+ * Two things this fixes, both observed in production:
+ *  - The bot narrated its own sourcing ("that's general background rather than
+ *    something from our site"). Visitors don't need our retrieval plumbing
+ *    explained; it reads as hedging and breaks the conversation.
+ *  - It recommended other training providers by name. We can name Microsoft —
+ *    we deliver their official curriculum as a Certified Trainer — but sending
+ *    a visitor to a competing platform is not what this assistant is for.
+ *
+ * Honesty is preserved where it counts: never claim an offering we don't have,
+ * never invent numbers, clients, prices or dates.
  */
+const VOICE_RULES = `WHO WE ARE — the difference that matters, use it rather than listing features:
+Most AI training stops at the course. We train your team, then build a working pilot WITH them on their own data and workflow, then stay 3-6 months while it beds in (Diagnose → Train → POC → Development → Sustain). Our trainers are Microsoft Certified Trainers delivering official Microsoft curriculum, and we have delivered to organisations including Bank of Tanzania, MCIT Saudi Arabia, EY and Indian banks.
+
+ANSWERING:
+- Answer the actual question first, briefly and usefully. Then, in the SAME message, connect it to what Gennoor does and why that is different. One message — do not make them ask twice.
+- End with ONE short question that moves them forward (which track, what team, what goal).
+- Short follow-ups ("explain", "more", "why", "how") continue YOUR PREVIOUS ANSWER. Never reply by asking what they'd like explained — you already know the topic from the conversation.
+
+NEVER:
+- Never narrate where your information came from. No "that's general background", no "from our site", no "I don't see a page on this". Just answer.
+- Never name or recommend another training provider, platform or course marketplace. Microsoft is the ONE exception — name their certifications (AI-900, AI-102, AB-100, Applied Skills) because we deliver that curriculum officially.
+- Never claim Gennoor offers something not present in the material you were given.
+- Never invent statistics, client names, prices, dates or durations.
+
+STYLE — small chat window: under 110 words, short sentences, plain "- " bullets (max 4), no headings, tables or code blocks.`
+
+/**
+ * Adaptive card protocol. The model appends a card when the useful answer
+ * genuinely depends on things it doesn't know yet — role, team size, goal —
+ * instead of guessing or dumping every option. Free text always available so
+ * a visitor is never trapped in our dropdowns.
+ */
+const CARD_RULES = `ADAPTIVE CARD (optional, use sparingly):
+If a genuinely useful answer depends on facts you don't have — who it's for, team size, goal, timeline — append ONE card after your text. Do NOT use a card for questions you can already answer well.
+Format, on its own line at the very end, nothing after it:
+<card>{"title":"short heading","fields":[{"id":"audience","label":"Who is this for?","type":"select","options":["Whole team","Managers","Engineers","Just me"]},{"id":"goal","label":"What's the goal?","type":"select","options":["Awareness","Certification","Build something"]},{"id":"notes","label":"Anything specific?","type":"text","placeholder":"optional"}],"submitLabel":"Show me options"}</card>
+Rules: 2-4 fields maximum. At least one select. Always include one "text" field so they can type instead. Options must be short and mutually exclusive. Valid JSON on ONE line.`
+
+/**
+ * The question isn't covered by the website. Answer it from live web search,
+ * then bring it back to what Gennoor actually does — in one message, without
+ * narrating the source or naming competitors. Returns null when web search is
+ * unavailable so the caller can fall back to the site-content path.
+ */
+export interface BotCardField {
+  id: string
+  label: string
+  type: 'select' | 'text'
+  options?: string[]
+  placeholder?: string
+}
+
+export interface BotCard {
+  title: string
+  fields: BotCardField[]
+  submitLabel: string
+}
+
+/**
+ * Pull a trailing <card>{…}</card> out of a reply and validate it hard.
+ *
+ * Anything malformed is dropped silently and the text still renders — a
+ * broken card must never cost the visitor their answer. Options are capped
+ * and trimmed because the model occasionally returns a dozen of them, which
+ * would not fit the chat window.
+ */
+function extractCard(raw: string): { text: string; card?: BotCard } {
+  const match = raw.match(/<card>\s*([\s\S]*?)\s*<\/card>/i)
+  if (!match) return { text: raw }
+  const text = raw.replace(match[0], '').trim()
+  try {
+    const parsed = JSON.parse(match[1])
+    const fields: BotCardField[] = (Array.isArray(parsed.fields) ? parsed.fields : [])
+      .map((f: any, i: number) => {
+        const type = f?.type === 'text' ? 'text' : 'select'
+        const options = Array.isArray(f?.options)
+          ? f.options.map((o: any) => String(o).slice(0, 60)).filter(Boolean).slice(0, 6)
+          : []
+        // A select with no options is unusable — demote it to free text
+        if (type === 'select' && options.length < 2) {
+          return { id: String(f?.id || `f${i}`).slice(0, 40), label: String(f?.label || '').slice(0, 90), type: 'text' as const, placeholder: 'Type your answer' }
+        }
+        return {
+          id: String(f?.id || `f${i}`).slice(0, 40),
+          label: String(f?.label || '').slice(0, 90),
+          type,
+          ...(type === 'select' ? { options } : { placeholder: String(f?.placeholder || 'Type your answer').slice(0, 60) }),
+        }
+      })
+      .filter((f: BotCardField) => f.label)
+      .slice(0, 4)
+
+    if (fields.length === 0) return { text }
+    return {
+      text,
+      card: {
+        title: String(parsed.title || 'A couple of quick questions').slice(0, 80),
+        fields,
+        submitLabel: String(parsed.submitLabel || 'Continue').slice(0, 30),
+      },
+    }
+  } catch {
+    return { text }
+  }
+}
+
 async function answerFromWeb(
   question: string,
   nearby: Array<{ title: string; url: string; text: string }>,
   visitorName?: string
-): Promise<{ reply: string; links: Array<{ title: string; url: string }> } | null> {
+): Promise<{ reply: string; links: Array<{ title: string; url: string }>; card?: BotCard } | null> {
   try {
     const { foundryConfigured, webGroundedCompletion } = await import('@/lib/crm/foundry')
     if (!foundryConfigured()) return null
@@ -40,27 +139,21 @@ async function answerFromWeb(
     const result = await webGroundedCompletion(
       `You are GennoorCare, the assistant on gennoor.com. Gennoor Tech does AI training, proofs of concept and AI product development (TRAIN. INNOVATE. BUILD.).
 
-This visitor asked something the website does not cover. Answer it properly using live web search, then connect it to Gennoor — honestly.
+Use live web search to get the facts right, then answer as Gennoor's assistant.
 
-HOW TO ANSWER:
-1. Answer the actual question first, factually and briefly, from what you find. This is general knowledge, not Gennoor material.
-2. Make that boundary explicit in a short natural clause — e.g. "that's general background rather than something from our site".
-3. THEN, only if one of the Gennoor offerings below genuinely relates, add one line connecting it: what we do and the page link. If nothing genuinely relates, say plainly that this isn't an area Gennoor works in and point to admin@gennoor.com. Do NOT force a link.
+${VOICE_RULES}
 
-HONESTY RULES — these override everything:
-- Never claim Gennoor offers something not listed below.
-- Never invent statistics, client names, prices or dates.
-- Never present general web information as if it came from gennoor.com.
-- One link maximum, and only from the list below. Never invent a URL.
+LINKS: at most one, and only from the offerings listed below. Never invent a URL. If nothing below genuinely relates, skip the link and point to admin@gennoor.com instead — do not force an unrelated course.
+${visitorName ? `The visitor's name is ${visitorName}; use it naturally, not in every message.` : ''}
 
-STYLE: small chat window. Under 110 words. Short sentences, plain "- " bullets if listing (max 3). No headings, tables or code blocks.${visitorName ? ` The visitor's name is ${visitorName}; use it naturally, not every message.` : ''}
+${CARD_RULES}
 
 GENNOOR OFFERINGS CLOSEST TO THIS QUESTION:
-${catalogue || '(nothing on the site is close to this topic)'}`,
+${catalogue || '(nothing in the catalogue is close to this topic)'}`,
       question
     )
 
-    const reply = (result.text || '').trim()
+    const { text: reply, card } = extractCard((result.text || '').trim())
     if (!reply) return null
     // Only surface links the model actually used, and only ours
     const links = nearby
@@ -68,7 +161,7 @@ ${catalogue || '(nothing on the site is close to this topic)'}`,
       .map((c) => ({ title: c.title, url: c.url }))
       .filter((l, i, arr) => arr.findIndex((x) => x.url === l.url) === i)
       .slice(0, 2)
-    return { reply, links }
+    return { reply, links, card }
   } catch (error: any) {
     console.error('GennoorCare web fallback failed:', error?.message)
     return null
@@ -188,28 +281,23 @@ export async function POST(req: NextRequest) {
     }
 
     const context = top.map((c, i) => `[${i + 1}] ${c.title} (${c.url})\n${c.text.slice(0, 1600)}`).join('\n\n')
-    const reply = await chatCompletion(
+    const rawReply = await chatCompletion(
       [
         {
           role: 'system',
           content: `You are GennoorCare, the assistant on gennoor.com (Gennoor Tech: AI training, POCs, and AI product development — TRAIN. INNOVATE. BUILD.). You help visitors find the right courses, programs and services.
 
-ANSWER SHAPE — every substantive reply covers, briefly:
-1. Show you understood THEIR need (one clause, mirrored back)
-2. WHAT Gennoor provides for it (the specific course/program/service — not everything)
-3. HOW it's delivered (online/duration/format — only if stated in the content)
-4. HOW to connect (the relevant page link; callback button for companies)
+${VOICE_RULES}
 
-RULES:
-- Answer ONLY from the WEBSITE CONTENT below. If it doesn't contain the answer, say EXACTLY that in one honest line — "I don't have that on the website" — then give the human route (admin@gennoor.com / +91 9326352241). NEVER improvise to sound helpful; a wrong answer is worse than a short one.
-- If the visitor's question is vague, ask ONE short clarifying question instead of dumping options.
-- Always include relevant page links in markdown [title](url) — links must come from the content below, never invented.
-- Business-grade brevity: lead with the answer, max ~100 words. No filler.
-- FORMAT for a small chat window: short sentences; plain "- " bullets for lists (max 4); NEVER use headings (#), tables, code blocks or long paragraphs.
-- Prices, dates, durations: only if stated in the content. Never guess.
-- If the visitor sounds like a company wanting training/POC, end with ONE line offering a free tailored webinar and suggest the callback button.
-- Stay on Gennoor topics; politely decline anything else in one line.
+GROUNDING:
+- Specifics — course names, durations, prices, dates, modules — come ONLY from the WEBSITE CONTENT below. Never guess them.
+- Where the content doesn't cover a detail, answer the part you can and move to the next step. Don't announce the gap.
+- Include relevant page links as markdown [title](url), taken from the content below. Never invent a URL.
+- If a company sounds ready, offer the free tailored 2-hour webinar or free 1-day training as the starting point.
+- Off-topic requests: decline in one line and steer back.
 ${visitorName ? `- The visitor's name is ${visitorName} — address them naturally by first name, not in every message.` : ''}
+
+${CARD_RULES}
 
 WEBSITE CONTENT:
 ${context}`,
@@ -219,6 +307,7 @@ ${context}`,
       { maxTokens: 450 }
     )
 
+    const { text: reply, card } = extractCard(rawReply)
     const links = top
       .filter((c) => reply.includes(c.url))
       .map((c) => ({ title: c.title, url: c.url }))
@@ -227,10 +316,12 @@ ${context}`,
 
     // Rough token accounting: context + history + reply
     await addUsage(Math.round((context.length + question.length + reply.length) / 4))
-    if (isOpening) await setCachedAnswer(cacheKey, reply, links)
+    // Cards are conversation state, not a cacheable answer — a cached card
+    // would replay someone else's questions at the wrong moment.
+    if (isOpening && !card) await setCachedAnswer(cacheKey, reply, links)
     await appendLog({ at: new Date().toISOString(), sessionId, q: question, a: reply, links: links.map((l) => l.url) })
 
-    return NextResponse.json({ reply, links })
+    return NextResponse.json({ reply, links, card })
   } catch (error) {
     console.error('GennoorCare error:', error)
     return NextResponse.json(HUMAN_FALLBACK)

@@ -4,7 +4,33 @@ import { useEffect, useRef, useState } from 'react'
 import { isChromelessRoute } from '@/lib/chrome'
 import { usePathname } from 'next/navigation'
 
-interface Msg { role: 'user' | 'assistant'; content: string; links?: Array<{ title: string; url: string }> }
+interface CardField {
+  id: string
+  label: string
+  type: 'select' | 'text'
+  options?: string[]
+  placeholder?: string
+}
+
+/**
+ * A short structured prompt the assistant can attach when a useful answer
+ * depends on things it doesn't know yet. Dropdowns keep it one tap; every
+ * card also carries a free-text field so nobody is trapped in our options.
+ */
+interface BotCard {
+  title: string
+  fields: CardField[]
+  submitLabel: string
+}
+
+interface Msg {
+  role: 'user' | 'assistant'
+  content: string
+  links?: Array<{ title: string; url: string }>
+  card?: BotCard
+  /** Set once answered so the card collapses instead of inviting a re-submit. */
+  cardAnswered?: boolean
+}
 
 // Public GennoorCare — customer-facing assistant grounded in website content
 // (RAG via /api/gennoorcare). Journey: greet & name → converse with real
@@ -70,13 +96,33 @@ export default function GennoorCare() {
         }),
       })
       const data = await res.json()
-      setMsgs([...next, { role: 'assistant', content: data.reply || 'Please try again in a moment.', links: data.links }])
+      setMsgs([...next, { role: 'assistant', content: data.reply || 'Please try again in a moment.', links: data.links, card: data.card }])
       if (data.offerLead) setOfferLead(true)
       // Contextual capture: after the 3rd visitor question, surface the callback offer once
       if (next.filter((m) => m.role === 'user').length === 3 && !leadDone) setOfferLead(true)
     } catch {
       setMsgs([...next, { role: 'assistant', content: 'Connection hiccup — please try again, or write to admin@gennoor.com.' }])
     } finally { setBusy(false) }
+  }
+
+  /**
+   * Card answers re-enter the conversation as a normal visitor message, so the
+   * assistant needs no special handling and the transcript stays readable.
+   * The card is marked answered first so it collapses and can't be sent twice.
+   */
+  const submitCard = async (msgIndex: number, answers: Record<string, string>) => {
+    const card = msgs[msgIndex]?.card
+    if (!card || busy) return
+    const summary = card.fields
+      .map((f) => {
+        const value = (answers[f.id] || '').trim()
+        return value ? `${f.label} ${value}` : ''
+      })
+      .filter(Boolean)
+      .join(' · ')
+    if (!summary) return
+    setMsgs((m) => m.map((msg, i) => (i === msgIndex ? { ...msg, cardAnswered: true } : msg)))
+    await ask(summary)
   }
 
   const submitLead = async () => {
@@ -235,6 +281,9 @@ export default function GennoorCare() {
                     ))}
                   </div>
                 )}
+                {m.card && !m.cardAnswered && (
+                  <AdaptiveCard card={m.card} disabled={busy} onSubmit={(answers) => submitCard(i, answers)} />
+                )}
               </div>
             ))}
             {busy && (
@@ -299,6 +348,62 @@ export default function GennoorCare() {
         </div>
       )}
     </>
+  )
+}
+
+/**
+ * Renders an assistant-generated card: dropdowns for the known dimensions,
+ * always at least one free-text field so a visitor whose situation doesn't
+ * match the options can still say so. Submit is enabled as soon as anything
+ * is filled — partial answers are more useful than an abandoned card.
+ */
+function AdaptiveCard({ card, disabled, onSubmit }: {
+  card: BotCard
+  disabled: boolean
+  onSubmit: (answers: Record<string, string>) => void
+}) {
+  const [answers, setAnswers] = useState<Record<string, string>>({})
+  const set = (id: string, value: string) => setAnswers((a) => ({ ...a, [id]: value }))
+  const hasAnswer = Object.values(answers).some((v) => v.trim())
+
+  return (
+    <div className="mt-2.5 rounded-xl border border-primary-200 bg-primary-50/60 p-3 space-y-2.5">
+      <div className="text-[12px] font-semibold text-primary-900">{card.title}</div>
+      {card.fields.map((f) => (
+        <label key={f.id} className="block">
+          <span className="block text-[11px] text-gray-600 mb-1">{f.label}</span>
+          {f.type === 'select' ? (
+            <select
+              value={answers[f.id] || ''}
+              onChange={(e) => set(f.id, e.target.value)}
+              disabled={disabled}
+              className="w-full px-2.5 py-1.5 rounded-lg border border-gray-200 bg-white text-[12px] text-gray-800 focus:ring-2 focus:ring-primary-400 focus:border-transparent disabled:opacity-60"
+            >
+              <option value="">Select…</option>
+              {(f.options || []).map((o) => <option key={o} value={o}>{o}</option>)}
+            </select>
+          ) : (
+            <input
+              type="text"
+              value={answers[f.id] || ''}
+              onChange={(e) => set(f.id, e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter' && hasAnswer && !disabled) onSubmit(answers) }}
+              placeholder={f.placeholder || 'Type your answer'}
+              disabled={disabled}
+              maxLength={200}
+              className="w-full px-2.5 py-1.5 rounded-lg border border-gray-200 bg-white text-[12px] text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-primary-400 focus:border-transparent disabled:opacity-60"
+            />
+          )}
+        </label>
+      ))}
+      <button
+        onClick={() => onSubmit(answers)}
+        disabled={disabled || !hasAnswer}
+        className="w-full px-3 py-1.5 rounded-lg bg-primary-600 text-white text-[12px] font-semibold hover:bg-primary-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+      >
+        {card.submitLabel}
+      </button>
+    </div>
   )
 }
 
