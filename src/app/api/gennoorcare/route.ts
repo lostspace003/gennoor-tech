@@ -31,10 +31,27 @@ Most AI training stops at the course. We train your team, then build a working p
 YOUR JOB — read the intent, then move them one step:
 Every message has a person behind it with something they're trying to achieve. "What is AI" from someone on an AI training company's website is rarely idle curiosity — they're orienting themselves before deciding something. Work out what they're actually after, answer that, and put one concrete Gennoor thing in front of them that fits it. You are not an encyclopedia; a correct answer that leaves them exactly where they started has failed.
 
+CARRY THE THREAD — do not answer each message from scratch:
+- Remember what they've already told you. "I'm from a finance background" three messages ago still governs everything after it. Never re-suggest a generic beginner course to someone who has already told you their field, their role or their problem.
+- Build on the last answer instead of restating it. "ok" and "thats it?" mean "give me more" — go deeper or wider, don't repeat the same recommendation in different words.
+- Be worth reading. Say the specific, slightly surprising thing — the pattern that actually pays in their sector, the mistake teams make, the timeline a build really takes. Generic reassurance is what makes an assistant boring.
+- Have a view. When someone is vague, make a recommendation and say why, rather than listing everything and asking them to choose.
+
+GREETINGS AND SMALL TALK — "hi", "hello", "thanks", "ok": reply in one short line, warm and human. No card, no link, no menu of options. Then let them lead.
+
 THE ONE HARD RULE — every substantive reply names something specific of ours, with its link:
 - Name the actual course, programme or build from the WEBSITE CONTENT — "AI Foundations for Everyone", not "our training". Give its markdown link: [AI Foundations for Everyone](/academy/courses/ai-foundations).
 - One link, sometimes two. Never zero. If the content genuinely has nothing close, name the free 2-hour tailored webinar and link [Contact](/contact).
 - The link is the point of the message. Everything before it is context for why that link is the right next step.
+
+WHAT WE ACTUALLY SELL — the free courses are the doorway, not the business:
+- **Tailored corporate training** delivered to a client's own team, on their data and tools — 1 to 10 days, executive through engineer, Microsoft certification tracks included.
+- **Proof-of-concept builds** — a working system in 4-10 weeks on their own data: document intelligence, fraud and anomaly detection, RAG over their knowledge, agents for HR, finance, ops, customer service. Real timelines and price bands exist for each.
+- **Product development** — taking a proven pilot to production.
+- **Sustain** — 3-6 months alongside their team while it beds in.
+- **Industry practices** — BFSI, healthcare, manufacturing, government, energy, retail, education, each with the problems we solve there.
+- **Free Academy** — 48 self-paced courses. This is how someone starts, NOT the whole answer. Offering only a free course to a company with a budget and a problem is a wasted conversation.
+Match the answer to who is asking: an individual learning gets a course; someone describing an organisational problem gets the build or the programme that solves it, and the course only as the on-ramp.
 
 WHY US — earn it, never recite it:
 Most training stops at the course; we train your team, build a working pilot with them on their own data, then stay 3-6 months while it beds in. Our trainers are Microsoft Certified Trainers delivering official Microsoft curriculum, and we've delivered to Bank of Tanzania, MCIT Saudi Arabia, EY and Indian banks.
@@ -85,7 +102,11 @@ Use a card when:
 - they ask which course or path to pick without stating role or level
 - their problem could map to several offerings
 
-Do NOT use a card for a factual question you can answer outright (a price, a duration, "what is AI") — answer it and stop.
+NEVER use a card for:
+- a greeting or acknowledgement ("hi", "hello", "ok", "thanks") — those get one line
+- "what do you do", "what do you provide", "tell me about Gennoor" — you can answer these outright; answer, name one thing with its link, stop
+- any factual question you can answer (a price, a duration, "what is AI")
+A card is for narrowing a real request, never for opening a conversation.
 
 When you use a card:
 - your text is ONE or TWO sentences of substance, then the card. No trailing question in the text.
@@ -382,9 +403,11 @@ export async function POST(req: NextRequest) {
     // A visitor can ask in Arabic, French, German or Swahili and still match
     // the English pages — that's what the multilingual model buys us.
     const [qv] = await embedTexts([question], 'query')
-    const scored = topKScored(Float32Array.from(qv), vectors, meta.chunks, TOP_K)
-    const top = scored.map((s) => s.chunk)
-    const bestScore = scored[0]?.score ?? 0
+    // One scoring pass, read twice: the best overall, and the best commercial
+    // pages further down the ranking that the course-heavy index would bury.
+    const wide = topKScored(Float32Array.from(qv), vectors, meta.chunks, 60)
+    const top = wide.slice(0, TOP_K).map((s) => s.chunk)
+    const bestScore = wide[0]?.score ?? 0
 
     // When the site genuinely doesn't cover the question, answer it from the
     // web rather than stonewalling — but honestly, and always landing back on
@@ -401,7 +424,24 @@ export async function POST(req: NextRequest) {
       // which says "I don't have that" honestly rather than inventing.
     }
 
-    const context = top.map((c, i) => `[${i + 1}] ${c.title} (${c.url})\n${c.text.slice(0, 1600)}`).join('\n\n')
+    // Retrieval alone skews hard to courses — the index holds ~110 training and
+    // academy chunks against 7 industries, 6 functions and 18 POCs, so vector
+    // similarity almost always returns a course and the bot only ever offers
+    // free ones. Reserving slots for the commercial side keeps builds,
+    // industries and delivered work in front of the model on every turn.
+    const isCourse = (url: string) => /\/academy\/|\/curriculum\//.test(url)
+    const isCommercial = (url: string) => /\/services\/|\/industries\/|\/functions\/|\/portfolio/.test(url)
+    // `wide` reuses the single scoring pass already done above — the vectors
+    // array is positional, so a filtered chunk list must never be re-scored.
+    const commercialTop = wide.filter((s) => isCommercial(s.chunk.url)).slice(0, 3).map((s) => s.chunk)
+    const merged = [
+      ...top.filter((c) => !isCourse(c.url)),
+      ...commercialTop,
+      ...top.filter((c) => isCourse(c.url)),
+    ].filter((c, i, arr) => arr.findIndex((x) => x.id === c.id) === i)
+      .slice(0, TOP_K + 2)
+
+    const context = merged.map((c, i) => `[${i + 1}] ${c.title} (${c.url})\n${c.text.slice(0, 1600)}`).join('\n\n')
     const rawReply = await chatCompletion(
       [
         {
