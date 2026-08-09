@@ -50,17 +50,27 @@ export default function AcademyPage() {
 
       <main className="min-h-screen bg-white">
         {/* ===== Hero ===== */}
-        <section className="px-8 pt-20 lg:pt-[110px] pb-[72px] text-center">
+        <section className="px-8 pt-20 lg:pt-[110px] pb-10 text-center">
           <div className="kicker mb-5">Gennoor Academy · Free</div>
           <h1 className="text-[clamp(40px,4.8vw,64px)] leading-[1.06] tracking-[-0.03em] font-bold text-gray-900 max-w-[820px] mx-auto">
             Courses that end in a shipped system, not a certificate.
           </h1>
           <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.45] text-[#6e6e73] max-w-[640px] mx-auto mt-[22px]">
             {courses.length} masterclass-grade courses across six tracks. Free, no
-            account needed. Every course pairs with an optional 4-week pilot in
-            your environment.
+            account needed.
           </p>
-          <div className="flex flex-col sm:flex-row gap-5 sm:gap-[22px] justify-center items-center mt-8">
+        </section>
+
+        {/* ===== Showcase — the product, straight after the headline ===== */}
+        <section className="px-8 pb-12">
+          <div className="max-w-[1080px] mx-auto">
+            <AcademyShowcase />
+          </div>
+        </section>
+
+        {/* ===== Hero CTAs ===== */}
+        <section className="px-8 pb-20 text-center">
+          <div className="flex flex-col sm:flex-row gap-5 sm:gap-[22px] justify-center items-center">
             <Link href="/academy/dashboard" className="pill-primary-sm">
               Open the learner dashboard
             </Link>
@@ -72,13 +82,6 @@ export default function AcademyPage() {
             {courses.length} courses in catalog &nbsp;·&nbsp; {interactiveCourses.length} fully
             interactive &nbsp;·&nbsp; certificate on completion &nbsp;·&nbsp; no credit card
           </p>
-        </section>
-
-        {/* ===== Showcase — see the product before you start ===== */}
-        <section className="px-8 pb-20">
-          <div className="max-w-[1080px] mx-auto">
-            <AcademyShowcase />
-          </div>
         </section>
 
         {/* ===== The Academy at a glance (dark campus band) ===== */}

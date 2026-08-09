@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { Award, ArrowRight, CheckCircle2, Circle, PlayCircle, Loader2, ExternalLink, UserCircle2, Search, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { courses as allCourses } from '@/config/courses'
+import { courses as catalogCourses } from '@/data/academy/courses'
+import { CatalogFilterBar, useCatalogFilters } from '@/components/academy/CatalogFilters'
 import { getAllLocalProgress } from '@/lib/progress-store'
 import { useLearnerAuth } from '@/hooks/useLearnerAuth'
 import LearnerAuthModal from '@/components/academy/LearnerAuthModal'
@@ -14,6 +16,14 @@ import LearnerAccountMenu from '@/components/academy/LearnerAccountMenu'
 import ProfileSetupGate from '@/components/academy/ProfileSetupGate'
 
 const LOCAL_CERTS_KEY = 'gennoor:academy:certs'
+
+/**
+ * The runtime course configs carry no taxonomy — track, level, audience and the
+ * rest live in the public catalog, where every course is keyed by a slug equal
+ * to the runtime course id. This is the join that lets the dashboard offer the
+ * same six-facet filter as /academy.
+ */
+const catalogBySlug = new Map(catalogCourses.map(c => [c.slug, c]))
 
 /** Two rows of the three-up grid per page — enough to scan without scrolling far. */
 const COURSES_PER_PAGE = 9
@@ -61,6 +71,7 @@ export default function DashboardClient() {
   const [courseQuery, setCourseQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [page, setPage] = useState(1)
+  const catalogFilters = useCatalogFilters()
   /**
    * The page used to be one scroll: welcome, stats, sessions, analytics,
    * certificates, and then the entire 48-course catalogue with its own search
@@ -166,6 +177,7 @@ export default function DashboardClient() {
         const nextChapter = gated.find(ch => !rows.find(r => r.chapterId === ch.id)?.completed)
         return {
           course,
+          catalog: catalogBySlug.get(course.id),
           rows,
           totalChapters: gated.length,
           completedChapters: completed,
@@ -217,15 +229,18 @@ export default function DashboardClient() {
     notStarted: courseSummaries.filter(s => s.notStarted).length,
   }), [courseSummaries])
 
-  // ── Course browser: search, status filter, pagination ──────────────────
+  // ── Course browser: search, status filter, taxonomy facets, pagination ──
   // The catalog outgrew a plain list — dozens of full-width rows meant
   // scrolling past everything to find one course.
+  const { matches: catalogMatches, reset: resetCatalogFilters, activeCount: catalogActiveCount } = catalogFilters
+
   const visibleCourses = useMemo(() => {
     const q = courseQuery.trim().toLowerCase()
     return courseSummaries.filter(s => {
       if (statusFilter === 'in-progress' && (s.isCompleted || s.notStarted)) return false
       if (statusFilter === 'completed' && !s.isCompleted) return false
       if (statusFilter === 'not-started' && !s.notStarted) return false
+      if (!catalogMatches(s.catalog)) return false
       if (!q) return true
       // Match the things a learner actually remembers about a course.
       const haystack = [
@@ -237,7 +252,7 @@ export default function DashboardClient() {
       ].join(' ').toLowerCase()
       return haystack.includes(q)
     })
-  }, [courseSummaries, courseQuery, statusFilter])
+  }, [courseSummaries, courseQuery, statusFilter, catalogMatches])
 
   const pageCount = Math.max(1, Math.ceil(visibleCourses.length / COURSES_PER_PAGE))
   const currentPage = Math.min(page, pageCount)
@@ -247,7 +262,7 @@ export default function DashboardClient() {
   )
 
   // Narrowing the results while parked on page 4 would otherwise show nothing.
-  useEffect(() => { setPage(1) }, [courseQuery, statusFilter])
+  useEffect(() => { setPage(1) }, [courseQuery, statusFilter, catalogActiveCount, catalogMatches])
 
   const handleSignOut = async () => {
     await logout()
@@ -548,6 +563,14 @@ export default function DashboardClient() {
           </div>
         </div>
 
+        {/* The same six taxonomy facets as the public catalog */}
+        <CatalogFilterBar
+          filters={catalogFilters}
+          showing={visibleCourses.length}
+          total={courseSummaries.length}
+          className="mb-6"
+        />
+
         {visibleCourses.length === 0 ? (
           <div className="bg-white border border-[#e8e8ed] rounded-2xl px-6 py-12 text-center">
             <p className="text-[15px] font-semibold text-gray-900">No courses match that.</p>
@@ -555,7 +578,7 @@ export default function DashboardClient() {
               Try a different word, or clear the filters.
             </p>
             <button
-              onClick={() => { setCourseQuery(''); setStatusFilter('all') }}
+              onClick={() => { setCourseQuery(''); setStatusFilter('all'); resetCatalogFilters() }}
               className="mt-4 text-[13px] font-semibold text-primary-600 hover:text-[#0077ed]"
             >
               Clear filters
