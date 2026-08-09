@@ -19,7 +19,7 @@ const NAV = [
   { href: '/crm/pipeline', label: 'Pipeline', icon: TrendingUp },
   { href: '/crm/inbox', label: 'Inbox', icon: Inbox },
   { href: '/crm/scheduler', label: 'Scheduler', icon: Calendar },
-  { href: '/crm/documents', label: 'Documents', icon: FolderOpen },
+  { href: '/crm/documents', label: 'Sales Library', icon: FolderOpen },
   { href: '/crm/team', label: 'Team', icon: UsersRound, managerOnly: true },
   { href: '/crm/botlog', label: 'GennoorCare', icon: MessageCircle, managerOnly: true },
 ] as Array<{ href: string; label: string; icon: any; managerOnly?: boolean }>

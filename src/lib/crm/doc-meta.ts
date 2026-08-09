@@ -31,6 +31,15 @@ export interface DocInfo<T extends DocLike = DocLike> {
   family: string
   /** Generated client-facing proposal (vs. uploaded collateral). */
   isProposal: boolean
+  /** Who put this here — '' for files predating attribution. */
+  uploadedBy: string
+  /**
+   * Where it came from:
+   *   generated — produced by the proposal flow (internal reference only)
+   *   admin     — company collateral published by a manager
+   *   team      — uploaded by a salesperson
+   */
+  origin: 'generated' | 'admin' | 'team' | 'unknown'
 }
 
 export const folderOf = (name: string) => (name.includes('/') ? name.split('/')[0] : 'general')
@@ -46,6 +55,12 @@ export function docInfo<T extends DocLike>(doc: T): DocInfo<T> {
   const stem = fileName.replace(/-v\d+(\.[a-z0-9]+)$/i, '$1').replace(/\.[a-z0-9]+$/i, '')
   const leadId = meta.leadid || ''
   const leadLabel = meta.company || meta.leadname || ''
+  const isProposal = folder === 'pitches' || meta.kind === 'proposal'
+  const origin: DocInfo['origin'] = isProposal
+    ? 'generated'
+    : meta.origin === 'admin' || meta.origin === 'team'
+      ? meta.origin
+      : 'unknown'
   return {
     doc,
     folder,
@@ -56,7 +71,9 @@ export function docInfo<T extends DocLike>(doc: T): DocInfo<T> {
     leadLabel,
     // Without a leadId (legacy files) the stem alone identifies the family.
     family: `${folder}/${leadId || stem}/${stem}/${ext}`,
-    isProposal: folder === 'pitches' || meta.kind === 'proposal',
+    isProposal,
+    uploadedBy: meta.uploadedby || meta.by || '',
+    origin,
   }
 }
 

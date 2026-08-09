@@ -72,7 +72,7 @@ export default function PitchDocModal({ lead, editable, onClose, onReload, notif
         <div className="px-5 py-3.5 border-b border-gray-200 flex items-center gap-2 flex-wrap shrink-0">
           <FileText className="w-4 h-4 text-primary-600" />
           <h3 className="text-base font-semibold text-gray-900">One-page proposal — {lead.company || lead.name}</h3>
-          <InfoTip text="The client-facing proposal on one page — their need and what we'd do about it, not a sales flyer. Generate it from the research, refine it by telling the copilot what to change (each change = a new version), and Lock the version you'll send. The locked version drives the AI email draft; every version is also saved as docx + PDF in Documents, filed under this lead." />
+          <InfoTip text="The client-facing proposal on one page — their need and what we'd do about it, not a sales flyer. Generate it from the research, refine it by telling the copilot what to change (each change = a new version), and Lock the version you'll send. The locked version drives the AI email draft; every version is also saved as docx + PDF in Sales Library, filed under this lead." />
           {versions.length > 0 && (
             <select
               value={selected?.v}
@@ -155,7 +155,7 @@ export default function PitchDocModal({ lead, editable, onClose, onReload, notif
               <a href={dl('pdf')} className="px-2.5 py-1.5 border border-gray-200 text-gray-600 text-xs rounded-lg hover:bg-gray-50 inline-flex items-center gap-1.5">
                 <Download className="w-3.5 h-3.5" /> .pdf
               </a>
-              <span className="text-[10px] text-gray-400 hidden sm:inline">also in Documents, filed under this lead</span>
+              <span className="text-[10px] text-gray-400 hidden sm:inline">also in Sales Library, filed under this lead</span>
               <div className="ml-auto flex items-center gap-2">
                 {editable && selected && selected.v !== lockedV && (
                   <button onClick={lock} disabled={!!busy} className="px-3 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 inline-flex items-center gap-1.5 disabled:opacity-50">

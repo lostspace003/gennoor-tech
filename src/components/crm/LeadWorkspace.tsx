@@ -623,7 +623,7 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
             </div>
             {pitchCount > 0 && latestPitch ? (
               <p className="text-xs text-green-700">
-                Latest: v{latestPitch.v} — {formatDateTime(latestPitch.at)} by {latestPitch.by.split('@')[0]}. The locked version powers the AI email draft; docx & PDF are in Documents, filed under this lead.
+                Latest: v{latestPitch.v} — {formatDateTime(latestPitch.at)} by {latestPitch.by.split('@')[0]}. The locked version powers the AI email draft; docx & PDF are in Sales Library, filed under this lead.
               </p>
             ) : lead.finalizedPitch && (
               <>
@@ -1044,8 +1044,42 @@ function EmailComposer({ lead, replyTo, preset, onClose, onSent, notify }: { lea
     return { leadDocs: groupVersions(mine), collateral: groupVersions(shared), otherDocs: groupVersions(rest) }
   }, [docs, lead])
 
-  const toggleAttach = (name: string) =>
+  /**
+   * Proposals are internal reference material, not client attachments — the
+   * pitch belongs in the body of the email, where it gets read, rather than
+   * behind a download the lead may never open. Selecting one explains that
+   * and offers to insert it instead of attaching it.
+   */
+  const toggleAttach = (name: string, info?: DocInfo<CrmDocument>) => {
+    if (info?.isProposal && !attach.includes(name)) {
+      notify('Proposals are internal — written into the email body instead. Use "Insert pitch", or view versions in Sales Library.', true)
+      return
+    }
     setAttach((a) => (a.includes(name) ? a.filter((n) => n !== name) : [...a, name]))
+  }
+
+  /**
+   * Write the locked proposal into the draft as markdown. send-email renders
+   * markdown, so headings and bullets arrive as real formatting rather than
+   * a wall of text — and the lead reads the pitch without opening anything.
+   */
+  const insertPitch = () => {
+    const locked = lead.pitchVersions?.find((v) => v.v === lead.pitchLockedV)
+    const content = locked?.content || lead.finalizedPitch
+    if (!content) {
+      notify('No locked proposal yet — lock a version in Research Copilot first', true)
+      return
+    }
+    // Drop the document title/subtitle lines; an email doesn't need a cover.
+    const trimmed = content
+      .split('\n')
+      .filter((l) => !l.startsWith('# ') && !/^\*[^*].*\*$/.test(l.trim()))
+      .join('\n')
+      .trim()
+    setBody((b) => (b.trim() ? `${b.trim()}\n\n${trimmed}` : trimmed))
+    setFinalized(false)
+    notify(`Pitch from v${lead.pitchLockedV || '—'} added to the email body`)
+  }
 
   useEffect(() => {
     api<{ documents: CrmDocument[] }>('/api/admin/leads/documents').then((r) => setDocs(r.documents)).catch(() => {})
@@ -1150,6 +1184,14 @@ function EmailComposer({ lead, replyTo, preset, onClose, onSent, notify }: { lea
               <button onClick={finalize} disabled={!!busy || !body} className="px-3 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 flex items-center gap-2 disabled:opacity-50">
                 <Lock className="w-4 h-4" /> {busy === 'finalize' ? 'Polishing...' : 'Final copy'}
               </button>
+              <button
+                onClick={insertPitch}
+                disabled={!!busy || !lead.pitchLockedV}
+                title={lead.pitchLockedV ? `Write the locked proposal (v${lead.pitchLockedV}) into the email body` : 'Lock a proposal version in Research Copilot first'}
+                className="px-3 py-2 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50 flex items-center gap-2 disabled:opacity-50"
+              >
+                <FileText className="w-4 h-4" /> Insert pitch{lead.pitchLockedV ? ` (v${lead.pitchLockedV})` : ''}
+              </button>
               {finalized && <span className="self-center text-xs text-green-700 bg-green-50 border border-green-200 rounded-full px-2.5 py-1">Final — review &amp; send</span>}
             </div>
             <input value={subject} onChange={(e) => { setSubject(e.target.value); setFinalized(false) }} placeholder="Subject" className="px-3 py-2 border border-gray-200 rounded-lg text-sm font-medium" />
@@ -1179,7 +1221,7 @@ function EmailComposer({ lead, replyTo, preset, onClose, onSent, notify }: { lea
                 onPreview={setPreview}
                 openHistory={openHistory}
                 onToggleHistory={(k) => setOpenHistory((h) => (h.includes(k) ? h.filter((x) => x !== k) : [...h, k]))}
-                empty="No document prepared for this lead yet — generate the proposal in Research Copilot, or upload one above."
+                empty="Nothing uploaded for this lead yet. The proposal lives in Sales Library as internal reference — use Insert pitch to put it in the email."
               />
               {collateral.length > 0 && (
                 <DocSection
@@ -1257,7 +1299,7 @@ function DocSection({ title, families, attach, onToggle, onPreview, openHistory,
   title: string
   families: Array<{ key: string; latest: DocInfo<CrmDocument>; older: Array<DocInfo<CrmDocument>> }>
   attach: string[]
-  onToggle: (name: string) => void
+  onToggle: (name: string, info: DocInfo<CrmDocument>) => void
   onPreview: (name: string) => void
   openHistory: string[]
   onToggleHistory: (key: string) => void
@@ -1298,28 +1340,34 @@ function DocSection({ title, families, attach, onToggle, onPreview, openHistory,
 function DocChip({ info, attached, onToggle, onPreview, muted }: {
   info: DocInfo<CrmDocument>
   attached: boolean
-  onToggle: (name: string) => void
+  onToggle: (name: string, info: DocInfo<CrmDocument>) => void
   onPreview: (name: string) => void
   muted?: boolean
 }) {
   const name = info.doc.name
+  const internal = info.isProposal
   return (
-    <span className={`inline-flex items-center rounded text-xs border overflow-hidden ${attached ? 'bg-primary-600 text-white border-primary-600' : muted ? 'border-gray-100 text-gray-400' : 'border-gray-200 text-gray-600'}`}>
+    <span className={`inline-flex items-center rounded text-xs border overflow-hidden ${attached ? 'bg-primary-600 text-white border-primary-600' : internal ? 'border-amber-200 bg-amber-50/60 text-amber-800' : muted ? 'border-gray-100 text-gray-400' : 'border-gray-200 text-gray-600'}`}>
       <button
-        onClick={() => onToggle(name)}
-        className={`px-2 py-1 ${attached ? 'hover:bg-primary-700' : 'hover:bg-gray-50'}`}
-        title={attached ? 'Attached — click to remove' : `Click to attach · ${formatDateTime(info.doc.lastModified)}`}
+        onClick={() => onToggle(name, info)}
+        className={`px-2 py-1 ${attached ? 'hover:bg-primary-700' : internal ? 'cursor-not-allowed' : 'hover:bg-gray-50'}`}
+        title={
+          internal
+            ? 'Internal reference — the pitch goes in the email body, not as an attachment'
+            : attached ? 'Attached — click to remove' : `Click to attach · ${formatDateTime(info.doc.lastModified)}`
+        }
       >
         {info.fileName}
         {info.version > 0 && (
           <span className={`ml-1 text-[9.5px] rounded-full px-1 ${attached ? 'bg-white/25' : 'bg-gray-100 text-gray-500'}`}>v{info.version}</span>
         )}
+        {internal && <span className="ml-1 text-[9.5px] rounded-full px-1 bg-amber-200 text-amber-900">internal</span>}
       </button>
       <button onClick={() => onPreview(name)} className={`px-1.5 py-1 border-l ${attached ? 'border-primary-500 hover:bg-primary-700' : 'border-gray-200 hover:bg-gray-50'}`} title="Preview">
         <Eye className="w-3 h-3" />
       </button>
       {attached && (
-        <button onClick={() => onToggle(name)} className="px-1.5 py-1 border-l border-primary-500 hover:bg-red-500" title="Remove from this email">
+        <button onClick={() => onToggle(name, info)} className="px-1.5 py-1 border-l border-primary-500 hover:bg-red-500" title="Remove from this email">
           <X className="w-3 h-3" />
         </button>
       )}

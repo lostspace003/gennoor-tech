@@ -38,17 +38,23 @@ export async function POST(req: NextRequest) {
     const safeName = file.name.replace(/[^a-zA-Z0-9._ -]/g, '_')
     const blobName = `${folder}/${safeName}`
     const buffer = Buffer.from(await file.arrayBuffer())
+    // Every upload records who put it there and when, so the library can show
+    // "added by Deepanshu" rather than an anonymous file, and separate team
+    // uploads from company collateral an admin published.
+    const leadId = String(form.get('leadId') || '')
+    const metadata: Record<string, string> = {
+      uploadedby: user.email,
+      uploadedat: new Date().toISOString(),
+      origin: user.isManager ? 'admin' : 'team',
+      kind: 'upload',
+    }
     // Uploads made from inside a lead (composer attachment, webinar poster)
     // carry that lead so the library can filter by it.
-    const leadId = String(form.get('leadId') || '')
-    const metadata = leadId
-      ? {
-          leadid: leadId,
-          leadname: String(form.get('leadName') || ''),
-          company: String(form.get('company') || ''),
-          kind: 'upload',
-        }
-      : undefined
+    if (leadId) {
+      metadata.leadid = leadId
+      metadata.leadname = String(form.get('leadName') || '')
+      metadata.company = String(form.get('company') || '')
+    }
     await uploadDocument(blobName, buffer, file.type || 'application/octet-stream', metadata)
 
     return NextResponse.json({ success: true, name: blobName })

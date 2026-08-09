@@ -3,7 +3,7 @@ import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
 import { mutateLeads, getLeads, touch } from '@/lib/crm/store'
 import { downloadDocument } from '@/lib/crm/documents'
 import { sendEmail } from '@/lib/email-service'
-import { emailShell, textToHtml } from '@/lib/crm/email-theme'
+import { emailShell, textToHtml, markdownToEmailHtml } from '@/lib/crm/email-theme'
 import { teamMember } from '@/lib/crm/team'
 
 const ADMIN_CC = process.env.EMAIL_ADMIN || 'admin@gennoor.com'
@@ -14,7 +14,11 @@ const FROM = process.env.EMAIL_FROM_SALES || 'sales@gennoor.com'
 // their name, direct number and own gennoor.com address (admin@ stays listed).
 function wrapHtml(bodyText: string, senderEmail: string): string {
   const signer = teamMember(senderEmail)
-  return emailShell(textToHtml(bodyText), {
+  // The pitch is written into the body as markdown now rather than attached,
+  // so headings and bullets have to survive into the email. Plain drafts with
+  // no markdown render identically either way, so this is safe for all mail.
+  const looksMarkdown = /^\s*(##?\s|[-*]\s)/m.test(bodyText) || /\*\*[^*]+\*\*/.test(bodyText)
+  return emailShell(looksMarkdown ? markdownToEmailHtml(bodyText) : textToHtml(bodyText), {
     preheader: bodyText.split('\n')[0]?.slice(0, 90),
     signature: { name: signer.name, email: signer.email, phones: signer.phones },
   })

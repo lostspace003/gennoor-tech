@@ -599,7 +599,7 @@ export function InboxView({ onOpenLead }: { onOpenLead: (id: string) => void }) 
   const pageMsgs = filtered.slice((safePage - 1) * INBOX_PER_PAGE, safePage * INBOX_PER_PAGE)
 
   return (
-    <div className="p-3 sm:p-5 space-y-3 max-w-4xl">
+    <div className="p-3 sm:p-5 space-y-3 max-w-6xl">
       <div className="flex flex-wrap items-center gap-2">
         <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-1.5">Replies from leads (all team inboxes) <InfoTip text="Emails from any known lead address, swept across every team mailbox (sales@, admin@ and each member — outreach goes out as sales@ with the sender CC'd, so replies can land anywhere). Filter by date, sender, or which mailbox received it; group by lead for threads. Click one to open that lead's conversation and reply with AI." /></h3>
         <div className="ml-auto flex items-center gap-2 flex-wrap">
@@ -937,11 +937,19 @@ interface Doc { name: string; size: number; lastModified: string; metadata?: Rec
 // (one docx + pdf per version); email-attachments/ are one-off composer
 // uploads that normally clean themselves up after sending.
 const DOC_FOLDERS = [
-  { key: 'pitches', label: 'Proposals' },
+  { key: 'pitches', label: 'Proposals (internal)' },
   { key: 'manuals', label: 'Manuals' },
   { key: 'posters', label: 'Posters' },
   { key: 'general', label: 'General' },
   { key: 'email-attachments', label: 'Email one-offs' },
+] as const
+
+// Where a file came from. Proposals are generated and internal-only; the rest
+// is collateral, either published by an admin or uploaded by a salesperson.
+const ORIGIN_FILTERS = [
+  { key: 'generated', label: 'Generated proposals' },
+  { key: 'admin', label: 'From admin' },
+  { key: 'team', label: 'Team uploads' },
 ] as const
 
 const FORMAT_FILTERS = [
@@ -965,6 +973,7 @@ export function DocumentsView({ canManage, notify }: { canManage: boolean; notif
   const [range, setRange] = useState<DateRange>({ days: 0, from: '', to: '' })
   const [latestOnly, setLatestOnly] = useState(true)
   const [expanded, setExpanded] = useState<string[]>([])
+  const [originFilter, setOriginFilter] = useState('')
 
   const load = () => {
     setLoading(true)
@@ -995,6 +1004,7 @@ export function DocumentsView({ canManage, notify }: { canManage: boolean; notif
   const filtered = infos.filter((info) => {
     if (folderFilter && info.folder !== folderFilter) return false
     if (leadFilter && info.leadId !== leadFilter) return false
+    if (originFilter && info.origin !== originFilter) return false
     if (activeFormat && !(activeFormat.exts as readonly string[]).includes(info.ext)) return false
     if (term && !`${info.doc.name} ${info.leadLabel}`.toLowerCase().includes(term)) return false
     const at = new Date(info.doc.lastModified).getTime()
@@ -1040,154 +1050,207 @@ export function DocumentsView({ canManage, notify }: { canManage: boolean; notif
   }
 
   return (
-    <div className="p-3 sm:p-5 max-w-4xl space-y-3">
-      <div className="bg-primary-50 border border-primary-200 rounded-lg p-4 text-sm text-primary-800">
-        <strong>Proposals</strong> are generated per lead from the Research Copilot (docx + PDF per version) and are filed under that lead — filter by lead below to see only their documents. Upload the <strong>2-page manuals</strong> under <em>manuals</em> and <strong>webinar posters</strong> under <em>posters</em>; those are shared collateral, attachable to any email. <strong>Email one-offs</strong> are composer uploads that clean themselves up after sending.
-      </div>
-
-      <div className="flex items-center gap-2 flex-wrap">
-        <select value={folder} onChange={(e) => setFolder(e.target.value as any)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm">
-          <option value="manuals">manuals/ (2-page decks)</option>
-          <option value="posters">posters/ (webinar posters)</option>
-          <option value="general">general/</option>
-        </select>
-        <label className="px-4 py-2 bg-primary-600 text-white text-sm rounded-lg cursor-pointer hover:bg-primary-700 flex items-center gap-2">
-          <Upload className="w-4 h-4" /> {uploading ? 'Uploading...' : 'Upload file'}
-          <input type="file" onChange={upload} className="hidden" disabled={uploading} />
-        </label>
-        <div className="relative ml-auto">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search files or lead..."
-            className="pl-8 pr-3 py-2 border border-gray-200 rounded-lg text-xs w-52"
-          />
+    <div className="flex h-full min-h-0">
+      {/* Filters live in a rail so the list itself gets the whole panel.
+          Three stacked filter rows used to push the documents below the fold. */}
+      <aside className="hidden lg:flex w-60 shrink-0 flex-col gap-4 border-r border-gray-200 bg-[#fafafa] p-4 overflow-y-auto">
+        <div>
+          <label className="px-4 py-2 w-full bg-primary-600 text-white text-sm rounded-lg cursor-pointer hover:bg-primary-700 flex items-center justify-center gap-2">
+            <Upload className="w-4 h-4" /> {uploading ? 'Uploading…' : 'Upload file'}
+            <input type="file" onChange={upload} className="hidden" disabled={uploading} />
+          </label>
+          <select value={folder} onChange={(e) => setFolder(e.target.value as any)} className="mt-2 w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white">
+            <option value="manuals">into manuals/</option>
+            <option value="posters">into posters/</option>
+            <option value="general">into general/</option>
+          </select>
         </div>
-      </div>
 
-      {/* Lead · format · date filters */}
-      <div className="flex items-center gap-2 flex-wrap">
-        <select
-          value={leadFilter}
-          onChange={(e) => setLeadFilter(e.target.value)}
-          className="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 max-w-64"
-          title="Show only documents prepared for one lead"
-        >
-          <option value="">All leads ({leadOptions.length} with documents)</option>
-          {leadOptions.map((l) => <option key={l.id} value={l.id}>{l.label} · {l.count}</option>)}
-        </select>
-        <MultiSelect
-          label="Format"
-          options={FORMAT_FILTERS.map((f) => ({ value: f.key, label: f.label }))}
-          values={formatFilter ? [formatFilter] : []}
-          onChange={(v) => setFormatFilter(v.length ? v[v.length - 1] : '')}
-        />
-        <DateRangeFilter value={range} onChange={setRange} />
-        <label className="inline-flex items-center gap-1.5 text-xs text-gray-600 cursor-pointer">
-          <input type="checkbox" className="rounded" checked={latestOnly} onChange={(e) => { setLatestOnly(e.target.checked); setExpanded([]) }} />
-          Latest version only
-          <InfoTip text="On (default): one row per document, showing its newest version — older versions fold underneath. Off: every version is listed separately." />
+        <div>
+          <div className="text-[10.5px] font-semibold uppercase tracking-wide text-gray-400 mb-1.5">Lead</div>
+          <select
+            value={leadFilter}
+            onChange={(e) => setLeadFilter(e.target.value)}
+            className="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white"
+          >
+            <option value="">All leads</option>
+            {leadOptions.map((l) => <option key={l.id} value={l.id}>{l.label} · {l.count}</option>)}
+          </select>
+        </div>
+
+        <div>
+          <div className="text-[10.5px] font-semibold uppercase tracking-wide text-gray-400 mb-1.5">Source</div>
+          <div className="space-y-1">
+            <FilterRow label="Everything" count={docs.length} active={!originFilter} onClick={() => setOriginFilter('')} />
+            {ORIGIN_FILTERS.map((o) => (
+              <FilterRow
+                key={o.key}
+                label={o.label}
+                count={infos.filter((i) => i.origin === o.key).length}
+                active={originFilter === o.key}
+                onClick={() => setOriginFilter(originFilter === o.key ? '' : o.key)}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <div className="text-[10.5px] font-semibold uppercase tracking-wide text-gray-400 mb-1.5">Folder</div>
+          <div className="space-y-1">
+            {DOC_FOLDERS.map((f) => (
+              <FilterRow
+                key={f.key}
+                label={f.label}
+                count={infos.filter((i) => i.folder === f.key).length}
+                active={folderFilter === f.key}
+                onClick={() => setFolderFilter(folderFilter === f.key ? '' : f.key)}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <div className="text-[10.5px] font-semibold uppercase tracking-wide text-gray-400 mb-1.5">Added</div>
+          <DateRangeFilter value={range} onChange={setRange} />
+        </div>
+
+        <label className="inline-flex items-start gap-1.5 text-xs text-gray-600 cursor-pointer">
+          <input type="checkbox" className="rounded mt-0.5" checked={latestOnly} onChange={(e) => { setLatestOnly(e.target.checked); setExpanded([]) }} />
+          <span>Latest version only</span>
         </label>
+
         {filtersActive && (
           <button
-            onClick={() => { setFolderFilter(''); setLeadFilter(''); setFormatFilter(''); setSearch(''); setRange({ days: 0, from: '', to: '' }) }}
-            className="text-xs text-primary-600 hover:underline"
+            onClick={() => { setFolderFilter(''); setLeadFilter(''); setFormatFilter(''); setOriginFilter(''); setSearch(''); setRange({ days: 0, from: '', to: '' }) }}
+            className="text-xs text-primary-600 hover:underline text-left"
           >
-            Clear filters
+            Clear all filters
           </button>
         )}
-      </div>
+      </aside>
 
-      {/* Folder chips with live counts */}
-      <div className="flex items-center gap-1.5 flex-wrap">
-        <button
-          onClick={() => setFolderFilter('')}
-          className={`text-xs rounded-full px-2.5 py-1 border ${!folderFilter ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
-        >
-          All · {docs.length}
-        </button>
-        {DOC_FOLDERS.map((f) => {
-          const n = infos.filter((i) => i.folder === f.key).length
-          return (
-            <button
-              key={f.key}
-              onClick={() => setFolderFilter(folderFilter === f.key ? '' : f.key)}
-              className={`text-xs rounded-full px-2.5 py-1 border ${folderFilter === f.key ? 'bg-primary-600 text-white border-primary-600' : n ? 'border-gray-200 text-gray-700 hover:bg-gray-50' : 'border-gray-100 text-gray-300'}`}
-            >
-              {f.label} · {n}
-            </button>
-          )
-        })}
-        <span className="ml-auto text-xs text-gray-500">
-          {families.length} document{families.length === 1 ? '' : 's'}
-          {latestOnly && supersededCount > 0 && ` · ${supersededCount} older version${supersededCount === 1 ? '' : 's'} hidden`}
-          {` · ${rangeLabel(range)}`}
-        </span>
-      </div>
+      {/* List */}
+      <div className="flex-1 min-w-0 overflow-y-auto">
+        <div className="px-4 sm:px-6 py-4 space-y-4">
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="relative flex-1 min-w-56 max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search files, leads, or who uploaded…"
+                className="w-full pl-10 pr-3 py-2 border border-gray-200 rounded-lg text-sm"
+              />
+            </div>
+            {/* Mobile keeps the essentials inline; the rail is desktop-only */}
+            <select value={originFilter} onChange={(e) => setOriginFilter(e.target.value)} className="lg:hidden px-2.5 py-2 border border-gray-200 rounded-lg text-xs text-gray-700">
+              <option value="">All sources</option>
+              {ORIGIN_FILTERS.map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}
+            </select>
+            <span className="ml-auto text-xs text-gray-500">
+              {families.length} document{families.length === 1 ? '' : 's'}
+              {latestOnly && supersededCount > 0 && ` · ${supersededCount} older hidden`}
+            </span>
+          </div>
 
-      {loading && <Spinner label="Loading documents..." />}
-      {!loading && rows.length === 0 && (
-        <div className="bg-gray-50 rounded-lg p-8 text-center text-sm text-gray-400">
-          {docs.length === 0 ? 'No documents yet.' : 'Nothing matches the current filters.'}
-        </div>
-      )}
-      <div className="space-y-2">
-        {rows.map(({ info, family, older, isOlder }) => {
-          const d = info.doc
-          const lead = info.leadId ? leads.find((l) => l.id === info.leadId) : undefined
-          const leadLabel = lead ? [lead.name, lead.company].filter(Boolean).join(' · ') : info.leadLabel
-          return (
-            <div
-              key={d.name}
-              className={`bg-white border rounded-lg px-4 py-3 flex items-center justify-between ${isOlder ? 'border-gray-100 ml-6 opacity-70' : 'border-gray-200'}`}
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <FileText className={`w-4 h-4 shrink-0 ${info.isProposal ? 'text-green-500' : 'text-gray-400'}`} />
-                <div className="min-w-0">
-                  <div className="text-sm text-gray-900 truncate flex items-center gap-1.5">
-                    {info.fileName}
-                    {info.version > 0 && (
-                      <span className={`text-[10px] rounded-full px-1.5 py-0.5 ${isOlder ? 'bg-gray-100 text-gray-400' : 'bg-green-50 text-green-700 border border-green-200'}`}>
-                        v{info.version}{isOlder ? '' : ' · latest'}
-                      </span>
-                    )}
-                  </div>
-                  <div className="text-xs text-gray-400 flex items-center gap-1.5 flex-wrap">
-                    <span className="bg-gray-100 rounded-full px-1.5 py-0.5">{info.folder}</span>
+          <p className="text-xs text-gray-500 bg-[#fafafa] border border-gray-200 rounded-lg px-3 py-2 leading-relaxed">
+            <strong className="text-gray-700">Proposals are internal reference.</strong> Generated per lead — pick the lead on the left, then open a version. The pitch goes into the email body via <strong className="text-gray-700">Insert pitch</strong>, not as an attachment. Manuals, posters and your own uploads attach freely.
+          </p>
+
+          {loading && <Spinner label="Loading library..." />}
+          {!loading && rows.length === 0 && (
+            <div className="bg-gray-50 rounded-lg p-10 text-center text-sm text-gray-400">
+              {docs.length === 0 ? 'Nothing in the library yet.' : 'Nothing matches the current filters.'}
+            </div>
+          )}
+
+          <div className="space-y-1.5">
+            {rows.map(({ info, family, older, isOlder }) => {
+              const d = info.doc
+              const lead = info.leadId ? leads.find((l) => l.id === info.leadId) : undefined
+              const leadLabel = lead ? [lead.name, lead.company].filter(Boolean).join(' · ') : info.leadLabel
+              return (
+                <div
+                  key={d.name}
+                  className={`bg-white border rounded-lg px-4 py-3 flex items-center gap-4 ${isOlder ? 'border-gray-100 ml-8 opacity-70' : 'border-gray-200 hover:border-gray-300'}`}
+                >
+                  <FileText className={`w-5 h-5 shrink-0 ${info.isProposal ? 'text-amber-500' : 'text-gray-400'}`} />
+
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm text-gray-900 truncate flex items-center gap-2">
+                      {info.fileName}
+                      {info.version > 0 && (
+                        <span className={`text-[10px] rounded-full px-1.5 py-0.5 shrink-0 ${isOlder ? 'bg-gray-100 text-gray-400' : 'bg-green-50 text-green-700 border border-green-200'}`}>
+                          v{info.version}{isOlder ? '' : ' latest'}
+                        </span>
+                      )}
+                      {info.isProposal && !isOlder && (
+                        <span className="text-[10px] rounded-full px-1.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 shrink-0">internal</span>
+                      )}
+                    </div>
                     {leadLabel && (
                       <button
                         onClick={() => info.leadId && setLeadFilter(info.leadId)}
-                        className="text-primary-600 hover:underline truncate max-w-[16rem]"
-                        title="Filter to this lead"
+                        className="text-xs text-primary-600 hover:underline truncate max-w-full block text-left"
                       >
                         {leadLabel}
                       </button>
                     )}
-                    <span>{(d.size / 1024).toFixed(0)} KB · {formatDateTime(d.lastModified)}</span>
+                  </div>
+
+                  <div className="hidden md:block w-40 shrink-0 text-xs text-gray-500 truncate">
+                    {info.origin === 'generated'
+                      ? 'Generated'
+                      : info.uploadedBy
+                        ? <>Added by <span className="text-gray-700">{info.uploadedBy.split('@')[0]}</span></>
+                        : '—'}
+                    <div className="text-[11px] text-gray-400">
+                      {info.origin === 'admin' ? 'admin' : info.origin === 'team' ? 'team upload' : ''}
+                    </div>
+                  </div>
+
+                  <div className="hidden sm:block w-32 shrink-0 text-xs text-gray-400">
+                    {formatDateTime(d.lastModified)}
+                    <div className="text-[11px]">{(d.size / 1024).toFixed(0)} KB</div>
+                  </div>
+
+                  <div className="flex items-center gap-1 shrink-0">
                     {latestOnly && older.length > 0 && (
                       <button
                         onClick={() => setExpanded((x) => (x.includes(family) ? x.filter((k) => k !== family) : [...x, family]))}
-                        className="text-primary-600 hover:underline"
+                        className="px-2 py-1.5 text-xs text-primary-600 hover:underline whitespace-nowrap"
                       >
-                        {expanded.includes(family) ? 'hide older versions' : `${older.length} older version${older.length === 1 ? '' : 's'}`}
+                        {expanded.includes(family) ? 'hide' : `${older.length} older`}
                       </button>
+                    )}
+                    <button onClick={() => setPreview(d.name)} className="px-3 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 hover:bg-gray-50">View</button>
+                    <a href={`/api/admin/leads/documents/file?name=${encodeURIComponent(d.name)}&download=1`} className="px-3 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 hover:bg-gray-50">Download</a>
+                    {(canManage || d.name.startsWith('email-attachments/')) && (
+                      <button onClick={() => remove(d.name)} className="p-2 hover:bg-red-50 rounded text-red-500"><Trash2 className="w-4 h-4" /></button>
                     )}
                   </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-1 shrink-0">
-                <button onClick={() => setPreview(d.name)} className="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-600 hover:bg-gray-50">Preview</button>
-                <a href={`/api/admin/leads/documents/file?name=${encodeURIComponent(d.name)}&download=1`} className="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-600 hover:bg-gray-50">Download</a>
-                {(canManage || d.name.startsWith('email-attachments/')) && (
-                  <button onClick={() => remove(d.name)} className="p-2 hover:bg-red-50 rounded text-red-500"><Trash2 className="w-4 h-4" /></button>
-                )}
-              </div>
-            </div>
-          )
-        })}
+              )
+            })}
+          </div>
+        </div>
       </div>
       {preview && <DocPreview name={preview} onClose={() => setPreview(null)} />}
     </div>
+  )
+}
+
+/** One line in the filter rail: label left, count right, selected state. */
+function FilterRow({ label, count, active, onClick }: { label: string; count: number; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full flex items-center justify-between gap-2 px-2 py-1.5 rounded-md text-xs transition-colors ${
+        active ? 'bg-primary-600 text-white' : count ? 'text-gray-700 hover:bg-gray-100' : 'text-gray-300'
+      }`}
+    >
+      <span className="truncate">{label}</span>
+      <span className={`tabular-nums ${active ? 'text-white/70' : 'text-gray-400'}`}>{count}</span>
+    </button>
   )
 }
