@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Lead, LeadStatus, PipelineStage, PIPELINE_STAGES } from '@/lib/crm/types'
 import { IST, istInstant, leadTimeZone, formatInZone } from '@/lib/crm/timezones'
 
@@ -116,22 +117,62 @@ export async function api<T = any>(url: string, init?: RequestInit): Promise<T> 
   return data as T
 }
 
-// Small ⓘ helper — one-tap plain-language explanation of a panel/option
+/**
+ * Small ⓘ helper — one-tap plain-language explanation of a panel/option.
+ *
+ * The bubble renders in a portal with fixed positioning rather than absolutely
+ * inside its parent: every panel that uses this sits in an `overflow-y-auto`
+ * column, which clipped the tooltip so only the left half of each line showed.
+ * Portalling to <body> takes it out of the clipping context entirely, and the
+ * position is flipped/clamped so it never runs off screen either.
+ */
 export function InfoTip({ text }: { text: string }) {
   const [open, setOpen] = useState(false)
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null)
+  const btnRef = useRef<HTMLButtonElement>(null)
+
+  const place = () => {
+    const rect = btnRef.current?.getBoundingClientRect()
+    if (!rect) return
+    const width = 260
+    const margin = 8
+    // Keep the bubble inside the viewport horizontally
+    const left = Math.min(Math.max(margin, rect.left + rect.width / 2 - width / 2), window.innerWidth - width - margin)
+    // Flip above when there isn't room below
+    const below = rect.bottom + 6
+    const flip = below + 130 > window.innerHeight && rect.top > 140
+    setPos({ top: flip ? rect.top - 6 : below, left })
+  }
+
+  useEffect(() => {
+    if (!open) return
+    const close = () => setOpen(false)
+    window.addEventListener('scroll', close, true)
+    window.addEventListener('resize', close)
+    return () => {
+      window.removeEventListener('scroll', close, true)
+      window.removeEventListener('resize', close)
+    }
+  }, [open])
+
   return (
-    <span className="relative inline-flex align-middle">
+    <span className="inline-flex align-middle">
       <button
+        ref={btnRef}
         type="button"
-        onClick={(e) => { e.stopPropagation(); setOpen((o) => !o) }}
+        onClick={(e) => { e.stopPropagation(); if (!open) place(); setOpen((o) => !o) }}
         onBlur={() => setTimeout(() => setOpen(false), 150)}
         aria-label="What is this?"
         className="w-4 h-4 rounded-full border border-gray-300 text-gray-400 hover:text-primary-600 hover:border-primary-400 text-[10px] leading-none inline-flex items-center justify-center italic shrink-0"
       >i</button>
-      {open && (
-        <span className="absolute z-[80] top-5 left-1/2 -translate-x-1/2 w-60 bg-gray-900 text-white text-[11px] rounded-lg px-3 py-2 shadow-xl leading-relaxed normal-case font-normal text-left">
+      {open && pos && typeof document !== 'undefined' && createPortal(
+        <span
+          className="fixed z-[200] w-[260px] bg-gray-900 text-white text-[11px] rounded-lg px-3 py-2 shadow-xl leading-relaxed normal-case font-normal text-left pointer-events-none"
+          style={{ top: pos.top, left: pos.left }}
+        >
           {text}
-        </span>
+        </span>,
+        document.body
       )}
     </span>
   )

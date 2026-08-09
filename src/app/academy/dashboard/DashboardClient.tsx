@@ -61,6 +61,16 @@ export default function DashboardClient() {
   const [courseQuery, setCourseQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [page, setPage] = useState(1)
+  /**
+   * The page used to be one scroll: welcome, stats, sessions, analytics,
+   * certificates, and then the entire 48-course catalogue with its own search
+   * and filters. Two different jobs — "where was I?" and "what else is there?"
+   * — competing in one column, which is what made it feel confusing.
+   *
+   * Now they're separate modes. Learning is the default because a returning
+   * learner almost always wants to resume; browsing is one tap away.
+   */
+  const [view, setView] = useState<'learning' | 'browse'>('learning')
 
   // Certificates claimed on this device without an account (OTP claim flow).
   useEffect(() => {
@@ -195,6 +205,12 @@ export default function DashboardClient() {
     return { started, completed, certs, minutes }
   }, [courseSummaries, certificates])
 
+  // In-progress courses, furthest along first — the resume strip at the top.
+  const resumeCourses = useMemo(
+    () => courseSummaries.filter(s => s.inProgress && !s.isCompleted).sort((a, b) => b.percentComplete - a.percentComplete).slice(0, 3),
+    [courseSummaries]
+  )
+
   const statusCounts = useMemo(() => ({
     completed: courseSummaries.filter(s => s.isCompleted).length,
     inProgress: courseSummaries.filter(s => !s.isCompleted && !s.notStarted).length,
@@ -318,22 +334,109 @@ export default function DashboardClient() {
         </section>
       )}
 
-      {/* Stats */}
-      <section className="mx-auto px-6 lg:px-10 pt-8 max-w-[1040px]">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-          {[
-            { label: 'Courses started', value: String(stats.started) },
-            { label: 'Courses completed', value: String(stats.completed) },
-            { label: 'Certificates earned', value: String(stats.certs) },
-            { label: 'Minutes invested', value: String(stats.minutes) },
-          ].map(s => (
-            <div key={s.label} className="bg-white border border-[#e8e8ed] rounded-2xl px-5 py-4">
-              <p className="text-[30px] font-bold tracking-[-0.02em] text-gray-900 leading-none">{s.value}</p>
-              <p className="text-xs text-[#86868b] mt-1.5">{s.label}</p>
-            </div>
+      {/* Mode switch — the two jobs this page does, kept apart */}
+      <section className="mx-auto px-6 lg:px-10 pt-6 max-w-[1040px]">
+        <div className="inline-flex gap-1 p-1 bg-white border border-[#e8e8ed] rounded-xl">
+          {([
+            ['learning', 'My learning', stats.started],
+            ['browse', 'Browse courses', courseSummaries.length],
+          ] as const).map(([value, label, count]) => (
+            <button
+              key={value}
+              onClick={() => setView(value)}
+              className={`px-4 py-2 text-[13.5px] font-medium rounded-lg whitespace-nowrap transition-colors ${
+                view === value ? 'bg-gray-900 text-white' : 'text-[#6e6e73] hover:text-gray-900 hover:bg-[#f5f5f7]'
+              }`}
+            >
+              {label} <span className="tabular-nums opacity-60">{count}</span>
+            </button>
           ))}
         </div>
       </section>
+
+      {view === 'learning' && (
+        <>
+          {/* Resume — the one thing a returning learner came for */}
+          {resumeCourses.length > 0 && (
+            <section className="mx-auto px-6 lg:px-10 pt-6 max-w-[1040px]">
+              <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gray-900 mb-1">Pick up where you left off</h2>
+              <p className="text-sm text-[#6e6e73] mb-5">{resumeCourses.length === 1 ? 'One course in progress.' : `${resumeCourses.length} courses in progress.`}</p>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {resumeCourses.map(s => {
+                  const accent = s.course.theme?.accent || '#F97316'
+                  const href = s.nextChapter ? `/ai-academy/${s.course.id}/${s.nextChapter.slug}` : `/ai-academy/${s.course.id}`
+                  return (
+                    <Link
+                      key={s.course.id}
+                      href={href}
+                      className="group bg-white border border-[#e8e8ed] rounded-2xl p-5 hover:border-gray-300 hover:shadow-md transition-all flex flex-col"
+                    >
+                      <p className="text-[15px] font-bold text-gray-900 leading-snug line-clamp-2">{s.course.title}</p>
+                      <div className="mt-3 h-1.5 rounded-full bg-[#f0f0f2] overflow-hidden">
+                        <div className="h-full rounded-full transition-all" style={{ width: `${s.percentComplete}%`, background: accent }} />
+                      </div>
+                      <p className="text-[11.5px] text-[#86868b] mt-1.5 tabular-nums">{s.percentComplete}% complete</p>
+                      {s.nextChapter && (
+                        <p className="text-[12.5px] text-[#6e6e73] mt-2 line-clamp-1">
+                          Up next: <span className="text-gray-900 font-medium">{s.nextChapter.title}</span>
+                        </p>
+                      )}
+                      <span className="mt-4 inline-flex items-center gap-1 text-[13px] font-semibold text-primary-600 group-hover:gap-1.5 transition-all">
+                        Continue <ArrowRight className="w-3.5 h-3.5" />
+                      </span>
+                    </Link>
+                  )
+                })}
+              </div>
+            </section>
+          )}
+
+          {/* Nothing started yet — sell the thing rather than show four zeros */}
+          {stats.started === 0 && (
+            <section className="mx-auto px-6 lg:px-10 pt-6 max-w-[1040px]">
+              <div className="bg-white border border-[#e8e8ed] rounded-2xl px-6 py-8 sm:px-8">
+                <h2 className="text-[20px] font-bold tracking-[-0.01em] text-gray-900">Start your first course.</h2>
+                <p className="text-[14px] text-[#6e6e73] mt-1.5 leading-[1.55] max-w-[620px]">
+                  {courseSummaries.length} interactive courses — narrated slides, chapter quizzes and a
+                  certificate at the end. Free, and your progress saves as you go.
+                </p>
+                <div className="grid sm:grid-cols-3 gap-3 mt-6">
+                  {courseSummaries.slice(0, 3).map(s => (
+                    <Link
+                      key={s.course.id}
+                      href={`/ai-academy/${s.course.id}`}
+                      className="group border border-[#e8e8ed] rounded-xl p-4 hover:border-gray-300 hover:shadow-sm transition-all"
+                    >
+                      <p className="text-[13.5px] font-semibold text-gray-900 leading-snug line-clamp-2">{s.course.title}</p>
+                      <span className="mt-2 inline-flex items-center gap-1 text-[12px] font-semibold text-primary-600">
+                        Start <ArrowRight className="w-3 h-3" />
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+                <button onClick={() => setView('browse')} className="mt-5 text-[13px] font-semibold text-primary-600 hover:text-[#0077ed]">
+                  Browse all {courseSummaries.length} courses ›
+                </button>
+              </div>
+            </section>
+          )}
+
+          {/* Stats */}
+          <section className="mx-auto px-6 lg:px-10 pt-8 max-w-[1040px]">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+              {[
+                { label: 'Courses started', value: String(stats.started) },
+                { label: 'Courses completed', value: String(stats.completed) },
+                { label: 'Certificates earned', value: String(stats.certs) },
+                { label: 'Minutes invested', value: String(stats.minutes) },
+              ].map(s => (
+                <div key={s.label} className="bg-white border border-[#e8e8ed] rounded-2xl px-5 py-4">
+                  <p className="text-[30px] font-bold tracking-[-0.02em] text-gray-900 leading-none">{s.value}</p>
+                  <p className="text-xs text-[#86868b] mt-1.5">{s.label}</p>
+                </div>
+              ))}
+            </div>
+          </section>
 
       {/* Live sessions — same event source as /webinars, Academy-filtered */}
       <section className="mx-auto px-6 lg:px-10 pt-10 max-w-[1040px]">
@@ -386,11 +489,15 @@ export default function DashboardClient() {
           </div>
         </section>
       )}
+        </>
+      )}
 
-      {/* Course list */}
+      {/* Course catalogue — its own mode, so browsing never competes with
+          progress for attention */}
+      {view === 'browse' && (
       <section className="mx-auto px-6 lg:px-10 py-10 max-w-[1040px]">
         <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gray-900 mb-1">All courses</h2>
-        <p className="text-sm text-[#6e6e73] mb-5">Continue what you started, or pick up a new one.</p>
+        <p className="text-sm text-[#6e6e73] mb-5">Search the full catalogue, or filter by where you are with each one.</p>
 
         {error && (
           <div className="mb-4 p-3 rounded-lg bg-red-50 text-red-700 text-sm ring-1 ring-red-200">
@@ -582,14 +689,15 @@ export default function DashboardClient() {
 
         <div className="mt-8 text-center">
           <Link
-            href="/ai-academy"
+            href="/academy"
             className="text-sm text-gray-600 hover:text-gray-900 transition-colors inline-flex items-center gap-1"
           >
-            Browse all academy courses
+            See the full Academy catalogue and tracks
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
       </section>
+      )}
 
       {/* Profile & security */}
       {isLoggedIn && (

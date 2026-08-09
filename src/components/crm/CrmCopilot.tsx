@@ -1,8 +1,72 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Bot, Send, X, Sparkles, Minus, Maximize2, Minimize2, Globe } from 'lucide-react'
+import { Bot, Send, X, Sparkles, Minus, Maximize2, Minimize2, Globe, RotateCcw } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { Spinner, CopyMsg } from './shared'
+
+/**
+ * Renders a copilot reply: markdown (bold, bullets, numbered lists) plus the
+ * [[lead:<id>|<name>]] markers the API emits, turned into buttons that open
+ * the lead. Previously the panel printed raw text, so replies arrived full of
+ * literal ** asterisks and every lead name had to be copied out by hand.
+ *
+ * Deliberately a small hand-rolled renderer rather than a markdown library:
+ * the copilot only ever emits these four constructs, and the lead markers
+ * need custom handling anyway.
+ */
+function renderReply(text: string, onOpenLead: (id: string) => void): React.ReactNode {
+  const inline = (s: string, keyBase: string): React.ReactNode[] =>
+    // Split on lead markers first so a bolded name inside one still works
+    s.split(/(\[\[lead:[^\]|]+\|[^\]]+\]\])/g).flatMap((part, i) => {
+      const lead = part.match(/^\[\[lead:([^\]|]+)\|([^\]]+)\]\]$/)
+      if (lead) {
+        const [, id, label] = lead
+        return [
+          <button
+            key={`${keyBase}-l${i}`}
+            onClick={() => onOpenLead(id)}
+            className="text-primary-700 font-semibold underline decoration-primary-300 underline-offset-2 hover:decoration-primary-600 hover:text-primary-800"
+            title="Open this lead"
+          >
+            {label}
+          </button>,
+        ]
+      }
+      return part.split(/(\*\*[^*]+\*\*)/g).filter(Boolean).map((chunk, j) =>
+        /^\*\*[^*]+\*\*$/.test(chunk)
+          ? <strong key={`${keyBase}-b${i}-${j}`} className="font-semibold text-gray-900">{chunk.slice(2, -2)}</strong>
+          : <span key={`${keyBase}-t${i}-${j}`}>{chunk}</span>
+      )
+    })
+
+  return text.split('\n').map((raw, i) => {
+    const line = raw.trimEnd()
+    if (!line.trim()) return <div key={i} className="h-1.5" />
+    const bullet = line.match(/^\s*[-*]\s+(.*)$/)
+    if (bullet) {
+      return (
+        <div key={i} className="flex gap-1.5 pl-1">
+          <span className="text-gray-400 select-none shrink-0">•</span>
+          <span className="min-w-0">{inline(bullet[1], `b${i}`)}</span>
+        </div>
+      )
+    }
+    const numbered = line.match(/^\s*(\d+)[.)]\s+(.*)$/)
+    if (numbered) {
+      return (
+        <div key={i} className="flex gap-1.5">
+          <span className="text-gray-400 select-none shrink-0 tabular-nums">{numbered[1]}.</span>
+          <span className="min-w-0">{inline(numbered[2], `n${i}`)}</span>
+        </div>
+      )
+    }
+    return <div key={i}>{inline(line, `p${i}`)}</div>
+  })
+}
+
+/** Strip the markers so the copy button yields clean, pasteable text. */
+const plainText = (s: string) => s.replace(/\[\[lead:[^\]|]+\|([^\]]+)\]\]/g, '$1')
 
 interface Message { role: 'user' | 'assistant'; content: string; usedWeb?: boolean; note?: string }
 
@@ -28,6 +92,24 @@ export default function CrmCopilot() {
   const [unseen, setUnseen] = useState(false)
   const [webSearch, setWebSearch] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
+
+  /**
+   * Open a lead from a chat answer. The panel lives in the CRM shell, which
+   * survives route changes, so the conversation is still here when they come
+   * back. Minimising keeps it too — only "New chat" clears it.
+   */
+  const openLead = (id: string) => {
+    router.push(`/crm/leads/${encodeURIComponent(id)}`)
+    setMaximized(false)
+  }
+
+  const newChat = () => {
+    setMessages([])
+    setError('')
+    setInput('')
+    setUnseen(false)
+  }
 
   useEffect(() => {
     if (open) {
@@ -105,13 +187,21 @@ export default function CrmCopilot() {
               </div>
             </div>
             <div className="flex items-center gap-0.5">
+              <button
+                onClick={newChat}
+                disabled={messages.length === 0}
+                className="p-1.5 hover:bg-white/15 rounded-lg disabled:opacity-40"
+                title="New chat — clears this conversation"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </button>
               <button onClick={() => setMaximized((m) => !m)} className="p-1.5 hover:bg-white/15 rounded-lg" title={maximized ? 'Restore' : 'Maximize'}>
                 {maximized ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
               </button>
-              <button onClick={() => setOpen(false)} className="p-1.5 hover:bg-white/15 rounded-lg" title="Minimize (chat is kept)">
+              <button onClick={() => setOpen(false)} className="p-1.5 hover:bg-white/15 rounded-lg" title="Minimize — the conversation is kept">
                 <Minus className="w-4 h-4" />
               </button>
-              <button onClick={() => { setOpen(false); setMessages([]); setError('') }} className="p-1.5 hover:bg-white/15 rounded-lg" title="Close & clear chat">
+              <button onClick={() => { setOpen(false); newChat() }} className="p-1.5 hover:bg-white/15 rounded-lg" title="Close & clear chat">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -129,9 +219,9 @@ export default function CrmCopilot() {
               </div>
             )}
             {messages.map((m, i) => (
-              <div key={i} className={`max-w-[88%] rounded-xl px-3 py-2 text-sm whitespace-pre-line break-words ${m.role === 'user' ? 'ml-auto bg-primary-600 text-white' : 'bg-gray-100 text-gray-800'}`}>
-                {m.content}
-                <CopyMsg text={m.content} light={m.role === 'user'} />
+              <div key={i} className={`max-w-[88%] rounded-xl px-3 py-2 text-sm break-words ${m.role === 'user' ? 'ml-auto bg-primary-600 text-white whitespace-pre-line' : 'bg-gray-100 text-gray-800 space-y-0.5'}`}>
+                {m.role === 'assistant' ? renderReply(m.content, openLead) : m.content}
+                <CopyMsg text={plainText(m.content)} light={m.role === 'user'} />
                 {m.usedWeb && <div className="mt-1.5 text-[10px] text-green-600 flex items-center gap-1"><Globe className="w-3 h-3" /> answered with live web search</div>}
                 {m.note && <div className="mt-1.5 text-[10px] text-amber-600">{m.note}</div>}
               </div>

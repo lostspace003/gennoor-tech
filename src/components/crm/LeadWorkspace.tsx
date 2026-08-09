@@ -282,22 +282,65 @@ function OverviewTab({ lead, canManage, onReload, onClose, notify }: { lead: Lea
             </div>
           </div>
         ) : (
-          <div className="bg-gray-50 rounded-lg p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-            <InfoRow icon={Mail} value={lead.email} placeholder="No email — add one to enable outreach" />
-            <InfoRow icon={Phone} value={lead.phone} placeholder="No phone" />
-            <InfoRow icon={Building2} value={[lead.company, lead.sector].filter(Boolean).join(' · ')} placeholder="No company" />
-            <InfoRow icon={Globe} value={[lead.city, lead.country, lead.region].filter(Boolean).join(', ')} placeholder="No location" />
-            {lead.linkedin ? (
-              <a href={externalUrl(lead.linkedin)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-primary-600 hover:underline">
-                <Linkedin className="w-4 h-4 text-gray-400" /> LinkedIn profile — connect
-              </a>
-            ) : <InfoRow icon={Linkedin} value="" placeholder="No LinkedIn" />}
-            {lead.website ? (
-              <a href={externalUrl(lead.website)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-primary-600 hover:underline">
-                <Globe className="w-4 h-4 text-gray-400" /> {lead.website}
-              </a>
-            ) : <InfoRow icon={Globe} value="" placeholder="No website" />}
-          </div>
+          <>
+            <div className="bg-gray-50 rounded-lg p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+              <InfoRow icon={Mail} value={lead.email} placeholder="No email — add one to enable outreach" />
+              <InfoRow icon={Phone} value={lead.phone} placeholder="No phone" />
+              <InfoRow icon={Building2} value={[lead.company, lead.sector].filter(Boolean).join(' · ')} placeholder="No company" />
+              <InfoRow icon={Globe} value={[lead.city, lead.country, lead.region].filter(Boolean).join(', ')} placeholder="No location" />
+              {lead.linkedin ? (
+                <a href={externalUrl(lead.linkedin)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-primary-600 hover:underline">
+                  <Linkedin className="w-4 h-4 text-gray-400" /> LinkedIn profile — connect
+                </a>
+              ) : <InfoRow icon={Linkedin} value="" placeholder="No LinkedIn" />}
+              {lead.website ? (
+                <a href={externalUrl(lead.website)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-primary-600 hover:underline">
+                  <Globe className="w-4 h-4 text-gray-400" /> {lead.website}
+                </a>
+              ) : <InfoRow icon={Globe} value="" placeholder="No website" />}
+            </div>
+
+            {/*
+              Every remaining field Edit can set, shown whether filled or not.
+              Blanks used to be invisible here, so nobody knew what was missing
+              without opening Edit — and these are exactly the fields research
+              weighs above its own inferences, so a blank one costs accuracy.
+            */}
+            <div className="mt-3 bg-gray-50 rounded-lg p-4">
+              <div className="text-xs font-medium text-gray-500 mb-2.5 flex items-center gap-1.5">
+                Qualification &amp; details
+                <InfoTip text="These drive research quality and targeting. Anything marked 'not set' is a gap the AI has to guess at — fill it, or use Fill with AI on the Research tab." />
+              </div>
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-2.5">
+                {([
+                  ['Priority', lead.priority],
+                  ['Company size', lead.companySize],
+                  ['Function', lead.businessFunction],
+                  ['Interest', lead.interest],
+                  ['Decision role', lead.decisionRole],
+                  ['Sector', lead.sector],
+                  ['Region', lead.region],
+                  ['Country', lead.country],
+                  ['City', lead.city],
+                  ['Lead type', lead.leadType],
+                  ['Source', lead.source],
+                  ['Deal value', lead.value ? `₹${lead.value.toLocaleString('en-IN')}` : ''],
+                  ['Status', lead.status],
+                  ['Owner', lead.owner ? lead.owner.split('@')[0] : 'pool'],
+                  ['Added', lead.createdAt ? formatDateTime(lead.createdAt) : ''],
+                ] as Array<[string, string | undefined]>).map(([label, value]) => (
+                  <div key={label} className="min-w-0">
+                    <div className="text-[10.5px] uppercase tracking-wide text-gray-400">{label}</div>
+                    {value ? (
+                      <div className="text-[13px] text-gray-900 truncate capitalize" title={value}>{value}</div>
+                    ) : (
+                      <div className="text-[13px] text-amber-600">not set</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
         )}
 
         {lead.notes && !editing && (

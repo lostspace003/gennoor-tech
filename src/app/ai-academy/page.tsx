@@ -50,7 +50,8 @@ export default function AcademyPage() {
         </div>
       </section>
 
-      {/* Hero */}
+      {/* Hero — leads with the Academy's positioning, same promise as
+          /academy, before narrowing to the interactive format below. */}
       <section className="relative py-16 lg:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0" />
@@ -62,8 +63,15 @@ export default function AcademyPage() {
               Free AI Academy · {totalCourses} interactive courses
             </div>
             <h1 className="font-heading text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 leading-[1.05] mb-6">
-              Interactive Courses
+              Courses that end in a shipped system, not a certificate.
             </h1>
+            <p className="text-lg sm:text-xl text-gray-600 leading-relaxed mb-8 max-w-2xl mx-auto">
+              {totalAcademyCatalog} masterclass-grade courses across six tracks. Free, no account
+              needed. Every course pairs with an optional 4-week pilot in your environment.
+            </p>
+            <h2 className="font-heading text-2xl lg:text-3xl font-bold tracking-tight text-gray-900 mb-4">
+              Interactive Courses
+            </h2>
             <p className="text-base sm:text-lg text-gray-500 leading-relaxed mb-10 max-w-2xl mx-auto">
               {totalCourses} fully interactive courses — slides, narrated audio, quizzes, progress
               tracked as you go. From AI foundations to building agents with Copilot Studio.

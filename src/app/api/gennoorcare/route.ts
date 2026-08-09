@@ -28,10 +28,14 @@ const MAX_HISTORY = 6
 const VOICE_RULES = `WHO WE ARE — the difference that matters, use it rather than listing features:
 Most AI training stops at the course. We train your team, then build a working pilot WITH them on their own data and workflow, then stay 3-6 months while it beds in (Diagnose → Train → POC → Development → Sustain). Our trainers are Microsoft Certified Trainers delivering official Microsoft curriculum, and we have delivered to organisations including Bank of Tanzania, MCIT Saudi Arabia, EY and Indian banks.
 
-ANSWERING:
-- Answer the actual question first, briefly and usefully. Then, in the SAME message, connect it to what Gennoor does and why that is different. One message — do not make them ask twice.
-- End with ONE short question that moves them forward (which track, what team, what goal).
-- Short follow-ups ("explain", "more", "why", "how") continue YOUR PREVIOUS ANSWER. Never reply by asking what they'd like explained — you already know the topic from the conversation.
+ANSWERING — talk like a knowledgeable colleague, not a brochure:
+- Match the length to the question. A one-line question gets a one-line answer. Most replies are 2-4 sentences (~40-60 words). 110 words is a hard ceiling you should rarely reach, not a target.
+- LAND THE ANSWER. Finish the thought. Do NOT end every message with a question — that makes the visitor do all the work. Most messages should simply end.
+- Ask something only when you genuinely cannot proceed without it. When that happens, use a CARD (below) — never write the choices out as prose.
+- Vary your shape. Do not repeat the same "answer → what makes us different → question" template every turn. Once they know the difference, stop restating it.
+- Short follow-ups ("explain", "more", "why", "ok") continue the CURRENT topic. Never ask what they meant.
+- Typos and half-words ("mamager", "trainin") are obvious — read the intent and answer it. NEVER reply "did you mean…". Never ask someone to clarify a word you already understood.
+- Acknowledgements ("ok", "thanks", "got it") get one short line, not a menu of options.
 
 SCOPE — you are an assistant on a company website, not a general search engine:
 - In scope: AI, data, technology, training, skills, careers in tech, and how organisations adopt any of it. Answer these properly.
@@ -48,7 +52,7 @@ CAPABILITY vs SPECIFICS — the distinction that matters most:
 - SPECIFICS must be real: named courses, durations, prices, certification codes, client names and dates come only from the material you were given. When you don't have the specific, describe what we'd do and offer to scope it — don't invent a course name or a number to fill the gap.
 - Say no only when it is genuinely outside what we do (a university degree, legal or medical advice, hardware supply).
 
-STYLE — small chat window: under 110 words, short sentences, plain "- " bullets (max 4), no headings, tables or code blocks.`
+STYLE — small chat window: short sentences, plain "- " bullets only when genuinely listing (max 4), no headings, tables or code blocks. Bullets are not mandatory — most answers are plain sentences.`
 
 /**
  * Adaptive card protocol. The model appends a card when the useful answer
@@ -56,13 +60,20 @@ STYLE — small chat window: under 110 words, short sentences, plain "- " bullet
  * instead of guessing or dumping every option. Free text always available so
  * a visitor is never trapped in our dropdowns.
  */
-const CARD_RULES = `ADAPTIVE CARD:
-When your answer would be much sharper if you knew a couple of things, append ONE card INSTEAD of ending with a plain question. Use a card whenever the visitor:
-- asks about training/a pilot for their organisation without saying who it's for, how many people, or what outcome they want ("we want AI training", "can you train my team", "we need AI for our company")
-- asks "which course/programme should we pick" without stating role or level
-- describes a problem that could map to several offerings
-Do NOT use a card for a simple factual question you can fully answer (a price, a duration, "what is X").
-When you use a card, your text stays SHORT — a sentence or two — and does NOT also ask a question; the card is the question.
+const CARD_RULES = `ADAPTIVE CARD — this is your ONLY way to ask a question:
+
+THE RULE: if your reply would offer the visitor a choice, or ask which/who/what-kind, you MUST express that as a card instead of prose. Writing "Which fits — executive, manager, or practitioner?" as text is WRONG. That exact sentence is a card.
+
+Use a card when:
+- they ask about training or a pilot without saying who it's for, the level, or the goal ("AI training", "we want AI training", "can you train my team")
+- they ask which course or path to pick without stating role or level
+- their problem could map to several offerings
+
+Do NOT use a card for a factual question you can answer outright (a price, a duration, "what is AI") — answer it and stop.
+
+When you use a card:
+- your text is ONE or TWO sentences of substance, then the card. No trailing question in the text.
+- never restate the card's options in the prose above it.
 Format, on its own line at the very end, nothing after it:
 <card>{"title":"short heading","fields":[{"id":"audience","label":"Who is this for?","type":"select","options":["Whole team","Managers","Engineers","Just me"]},{"id":"goal","label":"What's the goal?","type":"select","options":["Awareness","Certification","Build something"]},{"id":"notes","label":"Anything specific?","type":"text","placeholder":"optional"}],"submitLabel":"Show me options"}</card>
 Rules: 2-4 fields maximum. At least one select. Always include one "text" field so they can type instead. Options must be short and mutually exclusive. Valid JSON on ONE line.`
@@ -154,6 +165,48 @@ function extractCard(raw: string): { text: string; card?: BotCard } {
     }
   } catch {
     return { text }
+  }
+}
+
+/**
+ * Backstop for the "which — a, b, or c?" sentence.
+ *
+ * The prompt says choice-questions must be cards, but the model still writes
+ * them as prose sometimes, which is exactly the behaviour that made the bot
+ * feel like an interrogation. When we spot a trailing choice-question and no
+ * card was emitted, lift the options out of the sentence into a real card and
+ * drop the sentence — the visitor taps instead of typing.
+ *
+ * Deliberately conservative: only a final-line question containing an "or"
+ * list of 2-4 short options qualifies. Anything else is left alone.
+ */
+function choiceQuestionToCard(text: string): { text: string; card?: BotCard } {
+  const lines = text.split('\n').map((l) => l.trim()).filter(Boolean)
+  const last = lines[lines.length - 1]
+  if (!last || !last.endsWith('?') || last.length > 160) return { text }
+
+  // "Which fits — executive, manager, or practitioner?" → the part after the
+  // final dash/colon, or after "is it" / "are you", split on commas and "or".
+  const tail = last.replace(/\?$/, '').split(/[—:–-]\s*/).pop() || ''
+  const parts = tail
+    .split(/,| or /i)
+    .map((p) => p.trim().replace(/^(the|a|an)\s+/i, '').replace(/\.$/, ''))
+    .filter((p) => p.length > 1 && p.length <= 32 && !/\s{0,}\bhttps?:/i.test(p))
+  if (parts.length < 2 || parts.length > 4) return { text }
+  // Guard against splitting an ordinary sentence: options are short phrases
+  if (parts.some((p) => p.split(/\s+/).length > 4)) return { text }
+
+  const label = last.replace(/\s*[—:–-]\s*[^—:–-]*\?$/, '?').trim()
+  return {
+    text: lines.slice(0, -1).join('\n').trim(),
+    card: {
+      title: label.length > 4 && label.endsWith('?') ? label : 'Which fits best?',
+      fields: [
+        { id: 'choice', label: 'Pick one', type: 'select', options: parts.map((p) => p[0].toUpperCase() + p.slice(1)) },
+        { id: 'notes', label: 'Or tell us in your words', type: 'text', placeholder: 'optional' },
+      ],
+      submitLabel: 'Continue',
+    },
   }
 }
 
@@ -343,11 +396,17 @@ ${context}`,
         },
         ...history,
       ],
-      { maxTokens: 450 }
+      // A hard ceiling on verbosity. Prompt rules alone let every answer drift
+      // to ~110 words; this makes brevity structural. Enough headroom for a
+      // substantive answer plus a card, not enough for an essay.
+      { maxTokens: 320 }
     )
 
-    const { text: siteText, card } = extractCard(rawReply)
-    const reply = stripForeignLinks(siteText)
+    const extracted = extractCard(rawReply)
+    // If it asked a choice-question in prose instead of emitting a card, convert it
+    const promoted = extracted.card ? extracted : choiceQuestionToCard(extracted.text)
+    const card = extracted.card || promoted.card
+    const reply = stripForeignLinks(promoted.text)
     const links = top
       .filter((c) => reply.includes(c.url))
       .map((c) => ({ title: c.title, url: c.url }))
