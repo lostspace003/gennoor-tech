@@ -233,7 +233,12 @@ export default function GennoorCare() {
           title={msgs.length > 0 ? 'Continue chat' : 'Ask GennoorCare'}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logos/gennoorbot-avatar.svg" alt="GennoorCare" className="w-14 h-14 drop-shadow-lg" />
+          <span className="relative inline-flex w-14 h-14">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logos/gennoorbot-avatar-live.svg" alt="" aria-hidden="true" className="absolute inset-0 w-14 h-14" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logos/gennoorbot-face-live.webp" alt="GennoorCare" className="absolute inset-[7px] w-10 h-10 rounded-full object-cover" />
+          </span>
         </button>
       )}
 
@@ -243,7 +248,7 @@ export default function GennoorCare() {
           <div className="px-3.5 py-2.5 bg-primary-600 text-white flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2.5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logos/gennoorbot-avatar.svg" alt="" className="w-8 h-8" />
+              <img src="/logos/gennoorbot-face-live.webp" alt="" className="w-8 h-8 rounded-full object-cover" />
               <div>
                 <div className="font-semibold text-sm leading-tight">GennoorCare</div>
                 <div className="text-[10px] text-primary-100 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" /> online — courses, training & POCs</div>
