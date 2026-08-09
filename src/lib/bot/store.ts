@@ -168,8 +168,36 @@ export async function getUsage(date: string): Promise<DayUsage> {
 
 /* ---------- answer cache ---------- */
 
+/**
+ * Normalised cache key for a question.
+ *
+ * This used to strip everything outside [a-z0-9 ], which was harmless while
+ * the bot was English-only — but once it answered Arabic, Hindi and Chinese,
+ * every non-Latin question normalised to the SAME empty string and therefore
+ * the same cache entry. One visitor's answer was served to the next. Matching
+ * on any Unicode letter or number keeps scripts distinct.
+ */
+function normalizeQuestion(q: string): string {
+  return q
+    .toLowerCase()
+    .normalize('NFKC')
+    .replace(/[^\p{L}\p{N} ]/gu, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 export function questionKey(q: string): string {
-  return crypto.createHash('sha1').update(q.toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim()).digest('hex')
+  return crypto.createHash('sha1').update(normalizeQuestion(q)).digest('hex')
+}
+
+/**
+ * Whether an opening question is distinctive enough to cache. "?", "hi" and
+ * emoji-only messages carry no intent — caching them means replaying an
+ * unrelated answer at whoever types one next.
+ */
+export function isCacheableQuestion(q: string): boolean {
+  const norm = normalizeQuestion(q)
+  return norm.length >= 12 && norm.split(' ').filter(Boolean).length >= 3
 }
 
 export async function getCachedAnswer(key: string): Promise<{ answer: string; links: any[] } | null> {

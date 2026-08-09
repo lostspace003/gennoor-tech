@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { chatCompletion, aiConfigured } from '@/lib/crm/ai'
 import { embedTexts } from '@/lib/crm/vector-service'
 import {
-  loadIndexMeta, loadVectors, topKScored, addUsage, getUsage,
+  loadIndexMeta, loadVectors, topKScored, addUsage, getUsage, isCacheableQuestion,
   questionKey, getCachedAnswer, setCachedAnswer, appendLog, EMBED_DIM,
 } from '@/lib/bot/store'
 
@@ -33,11 +33,20 @@ ANSWERING:
 - End with ONE short question that moves them forward (which track, what team, what goal).
 - Short follow-ups ("explain", "more", "why", "how") continue YOUR PREVIOUS ANSWER. Never reply by asking what they'd like explained — you already know the topic from the conversation.
 
+SCOPE — you are an assistant on a company website, not a general search engine:
+- In scope: AI, data, technology, training, skills, careers in tech, and how organisations adopt any of it. Answer these properly.
+- Out of scope: weather, news, sport, travel, politics, health, personal advice, anything unrelated to the above. Decline in ONE short line and offer what you can help with instead. Do NOT answer the out-of-scope question, even partially, and do NOT cite outside sources for it.
+
 NEVER:
 - Never narrate where your information came from. No "that's general background", no "from our site", no "I don't see a page on this". Just answer.
+- Never link to any website other than gennoor.com. No citations, no external sources, no reference URLs — not even to support a fact.
 - Never name or recommend another training provider, platform or course marketplace. Microsoft is the ONE exception — name their certifications (AI-900, AI-102, AB-100, Applied Skills) because we deliver that curriculum officially.
-- Never claim Gennoor offers something not present in the material you were given.
 - Never invent statistics, client names, prices, dates or durations.
+
+CAPABILITY vs SPECIFICS — the distinction that matters most:
+- Our CAPABILITY is wider than any single page. We train and build across AI: agentic systems and AI agents, LLMs and RAG, classic machine learning and forecasting, MLOps, computer vision, Microsoft/Azure AI, AWS and Google Cloud AI, plus responsible AI and governance. If someone asks about an AI or data topic with no listed course, the answer is YES — we can deliver it as a programme scoped to their team. Never answer "we don't have that" for something inside AI, data or technology enablement.
+- SPECIFICS must be real: named courses, durations, prices, certification codes, client names and dates come only from the material you were given. When you don't have the specific, describe what we'd do and offer to scope it — don't invent a course name or a number to fill the gap.
+- Say no only when it is genuinely outside what we do (a university degree, legal or medical advice, hardware supply).
 
 STYLE — small chat window: under 110 words, short sentences, plain "- " bullets (max 4), no headings, tables or code blocks.`
 
@@ -47,8 +56,13 @@ STYLE — small chat window: under 110 words, short sentences, plain "- " bullet
  * instead of guessing or dumping every option. Free text always available so
  * a visitor is never trapped in our dropdowns.
  */
-const CARD_RULES = `ADAPTIVE CARD (optional, use sparingly):
-If a genuinely useful answer depends on facts you don't have — who it's for, team size, goal, timeline — append ONE card after your text. Do NOT use a card for questions you can already answer well.
+const CARD_RULES = `ADAPTIVE CARD:
+When your answer would be much sharper if you knew a couple of things, append ONE card INSTEAD of ending with a plain question. Use a card whenever the visitor:
+- asks about training/a pilot for their organisation without saying who it's for, how many people, or what outcome they want ("we want AI training", "can you train my team", "we need AI for our company")
+- asks "which course/programme should we pick" without stating role or level
+- describes a problem that could map to several offerings
+Do NOT use a card for a simple factual question you can fully answer (a price, a duration, "what is X").
+When you use a card, your text stays SHORT — a sentence or two — and does NOT also ask a question; the card is the question.
 Format, on its own line at the very end, nothing after it:
 <card>{"title":"short heading","fields":[{"id":"audience","label":"Who is this for?","type":"select","options":["Whole team","Managers","Engineers","Just me"]},{"id":"goal","label":"What's the goal?","type":"select","options":["Awareness","Certification","Build something"]},{"id":"notes","label":"Anything specific?","type":"text","placeholder":"optional"}],"submitLabel":"Show me options"}</card>
 Rules: 2-4 fields maximum. At least one select. Always include one "text" field so they can type instead. Options must be short and mutually exclusive. Valid JSON on ONE line.`
@@ -59,6 +73,28 @@ Rules: 2-4 fields maximum. At least one select. Always include one "text" field 
  * narrating the source or naming competitors. Returns null when web search is
  * unavailable so the caller can fall back to the site-content path.
  */
+/**
+ * Strip links to anywhere that isn't ours.
+ *
+ * The web-grounded path cites its sources by habit, and a prompt rule alone
+ * doesn't reliably stop it — production returned a weather answer linking to
+ * arabiaweather.com and accuweather.com. This enforces it structurally:
+ * markdown links keep their text and lose the URL, bare foreign URLs go
+ * entirely. gennoor.com and mailto:/tel: links pass through.
+ */
+function stripForeignLinks(text: string): string {
+  const ours = (url: string) => /^(mailto:|tel:|\/)/i.test(url) || /(^|\/\/|\.)gennoor\.com/i.test(url) || /^https?:\/\/wa\.me\//i.test(url)
+  return text
+    // [label](url) → label, unless the url is ours
+    .replace(/\[([^\]]+)\]\(([^)\s]+)[^)]*\)/g, (match, label, url) => (ours(String(url)) ? match : String(label)))
+    // Bare URLs and parenthesised citations like "(example.com)"
+    .replace(/\((?:https?:\/\/)?(?:www\.)?[a-z0-9-]+(?:\.[a-z]{2,})+[^)]*\)/gi, (m) => (ours(m.replace(/[()]/g, '')) ? m : ''))
+    .replace(/https?:\/\/[^\s)]+/gi, (m) => (ours(m) ? m : ''))
+    .replace(/[ \t]{2,}/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
+
 export interface BotCardField {
   id: string
   label: string
@@ -153,7 +189,9 @@ ${catalogue || '(nothing in the catalogue is close to this topic)'}`,
       question
     )
 
-    const { text: reply, card } = extractCard((result.text || '').trim())
+    const { text: rawText, card } = extractCard((result.text || '').trim())
+    // The grounded model cites its sources — none of which may reach a visitor
+    const reply = stripForeignLinks(rawText)
     if (!reply) return null
     // Only surface links the model actually used, and only ours
     const links = nearby
@@ -237,8 +275,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(HUMAN_FALLBACK)
     }
 
-    // Cache — only for opening questions (no conversation context)
-    const isOpening = history.filter((m) => m.role === 'user').length === 1
+    // Cache — only opening questions, and only ones distinctive enough that a
+    // shared answer is safe. "?" and greetings are deliberately never cached.
+    const isOpening = history.filter((m) => m.role === 'user').length === 1 && isCacheableQuestion(question)
     const cacheKey = questionKey(question)
     if (isOpening) {
       const hit = await getCachedAnswer(cacheKey)
@@ -307,7 +346,8 @@ ${context}`,
       { maxTokens: 450 }
     )
 
-    const { text: reply, card } = extractCard(rawReply)
+    const { text: siteText, card } = extractCard(rawReply)
+    const reply = stripForeignLinks(siteText)
     const links = top
       .filter((c) => reply.includes(c.url))
       .map((c) => ({ title: c.title, url: c.url }))
