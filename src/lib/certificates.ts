@@ -126,7 +126,9 @@ export async function saveCertificate(cert: Omit<Certificate, 'createdAt' | 'sta
     createdAt: now,
   }
   await client.upsertEntity(entity, 'Replace')
-  return { ...entity } as unknown as Certificate
+  // The entity stores the id as rowKey — callers (issue-cert, claim-cert,
+  // the completion overlay) read cert.certId.
+  return { ...entity, certId: cert.certId } as unknown as Certificate
 }
 
 export async function getCertificate(certId: string): Promise<Certificate | null> {
