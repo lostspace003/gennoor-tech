@@ -271,6 +271,19 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
           }),
         })
 
+        // The client gate above passed on this device's progress; make sure
+        // the server's copy agrees before issue-cert checks it. Chapters
+        // finished while logged out, on a dropped 5s debounce, or later
+        // overwritten would otherwise fail the server gate.
+        const local = getLocalProgress(courseId)
+        if (local) {
+          await fetch('/api/learner/progress/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ progress: { [courseId]: local } }),
+          }).catch(() => { /* issue-cert reports what's still missing */ })
+        }
+
         const res = await fetch(`/api/learner/courses/${courseId}/issue-cert`, { method: 'POST' })
         if (!res.ok) {
           const data = await res.json().catch(() => ({}))

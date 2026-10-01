@@ -556,16 +556,26 @@ export async function saveCourseProgress(data: {
 }) {
   await ensureTable('CourseProgress')
   const client = getTableClient('CourseProgress')
+  const partitionKey = data.email.toLowerCase().trim()
+  const rowKey = `${data.courseId}:${data.chapterId}`
+
+  // Completion is sticky: revisiting a finished chapter (scrolling back to
+  // slide 1) must never flip completed=true back to false, or the cert gate
+  // in issue-cert rejects a learner who genuinely finished the course.
+  let prev: { completed?: boolean; completionPercent?: number } | null = null
+  try {
+    prev = await client.getEntity<{ completed?: boolean; completionPercent?: number }>(partitionKey, rowKey)
+  } catch { /* first write for this chapter */ }
 
   await client.upsertEntity({
-    partitionKey: data.email.toLowerCase().trim(),
-    rowKey: `${data.courseId}:${data.chapterId}`,
+    partitionKey,
+    rowKey,
     courseId: data.courseId,
     chapterId: data.chapterId,
     currentSlide: data.currentSlide,
     totalSlides: data.totalSlides,
-    completionPercent: data.completionPercent,
-    completed: data.completed,
+    completionPercent: Math.max(data.completionPercent, Number(prev?.completionPercent) || 0),
+    completed: data.completed || prev?.completed === true,
     lastAccessed: new Date().toISOString(),
   }, 'Merge')
 }

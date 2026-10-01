@@ -40,8 +40,10 @@ export async function POST(request: NextRequest) {
       const localPercent = clampPct(localChapter.completionPercent)
       const serverPercent = serverChapter?.completionPercent || 0
 
-      // Keep whichever has higher progress
-      if (!serverChapter || localPercent > serverPercent) {
+      // Keep whichever has higher progress — and push a local completion the
+      // server never heard about (debounced sync dropped, or done logged out).
+      const localCompleted = localChapter.completed === true || localPercent >= 95
+      if (!serverChapter || localPercent > serverPercent || (localCompleted && !serverChapter.completed)) {
         await saveCourseProgress({
           email: learner.email,
           courseId,
@@ -49,7 +51,7 @@ export async function POST(request: NextRequest) {
           currentSlide: Math.max(0, Number(localChapter.currentSlide) || 0),
           totalSlides: Math.max(0, Number(localChapter.totalSlides) || 0),
           completionPercent: localPercent,
-          completed: localChapter.completed === true || localPercent >= 95,
+          completed: localCompleted,
         })
       }
     }

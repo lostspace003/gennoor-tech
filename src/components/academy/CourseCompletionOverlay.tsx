@@ -114,7 +114,9 @@ export default function CourseCompletionOverlay({
       setStep(certId ? 'cert' : 'issuing')
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Network error — try again in a moment.'
-      setSubmitError(msg)
+      // If issuance itself failed, that's the real problem — the feedback
+      // 403 ("no issued certificate") just reads like a failed course.
+      setSubmitError(!certId && error ? error : msg)
       setStep('rating')
     }
   }
