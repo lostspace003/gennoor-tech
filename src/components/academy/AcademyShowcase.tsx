@@ -130,10 +130,10 @@ const SLIDES: Slide[] = [
     key: 'dashboard',
     kicker: 'Your learning home',
     title: 'Pick up exactly where you left off.',
-    body: 'A learner dashboard that tracks every chapter, course, and certificate — no account needed to start.',
+    body: 'A learner dashboard that tracks every chapter, course, and certificate — one free sign-in to start.',
     points: ['Progress saved automatically', 'All courses, one place', 'Certificates in your pocket'],
     cta: { label: 'Open the dashboard', href: '/academy/dashboard' },
-    secondary: { label: 'Browse courses ›', href: '/academy' },
+    secondary: { label: 'Browse courses ›', href: '/studio' },
     panel: 'bg-[#1d1d1f]',
     dark: true,
     Mock: DashboardMock,
@@ -145,7 +145,7 @@ const SLIDES: Slide[] = [
     body: 'Narrated chapters with a real timeline — scrub, jump slides, go fullscreen. The voice stays in sync in both directions.',
     points: ['Human-quality narration', 'Scrub like YouTube', 'Fullscreen, distraction-free'],
     cta: { label: 'Try a chapter free', href: '/ai-academy/ab-100/course-introduction' },
-    secondary: { label: 'All courses ›', href: '/academy' },
+    secondary: { label: 'All courses ›', href: '/studio' },
     panel: 'bg-[#f5f5f7]',
     Mock: PlayerMock,
   },
@@ -155,8 +155,8 @@ const SLIDES: Slide[] = [
     title: 'Finish. Claim. Verify.',
     body: 'Every completed course ends in a verifiable certificate — claimed with just your email, checkable by anyone at a public link.',
     points: ['OTP-verified claim', 'Public verification page', 'LinkedIn-ready'],
-    cta: { label: 'Start a course', href: '/academy' },
-    secondary: { label: 'How the Academy works ›', href: '/academy' },
+    cta: { label: 'Start a course', href: '/studio' },
+    secondary: { label: 'How the Academy works ›', href: '/studio' },
     panel: 'bg-white border border-[#e8e8ed]',
     Mock: CertificateMock,
   },
@@ -188,7 +188,7 @@ export default function AcademyShowcase() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       role="region"
-      aria-label="Inside the Gennoor Academy"
+      aria-label="Inside the Learning Studio"
     >
       {/* Viewport */}
       <div className="overflow-hidden rounded-3xl">

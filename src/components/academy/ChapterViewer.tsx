@@ -101,7 +101,7 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
     setActiveChapter(target)
     if (pushUrl && typeof window !== 'undefined') {
       window.history.pushState(null, '', `/ai-academy/${courseId}/${target.slug}`)
-      document.title = `${target.title} — ${course?.shortTitle ?? 'Gennoor Academy'}`
+      document.title = `${target.title} — ${course?.shortTitle ?? 'Learning Studio'}`
     }
   }, [courseId, course?.shortTitle])
 
@@ -1000,7 +1000,7 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
                     Course home
                   </Link>
                   <Link
-                    href="/academy"
+                    href="/studio"
                     className="block px-3 py-2 rounded-xl text-[13px] text-white/60 hover:bg-white/5 hover:text-white transition-colors"
                   >
                     All Academy courses

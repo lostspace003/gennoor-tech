@@ -37,7 +37,7 @@ export default function ProfileSetupGate({ onComplete }: { onComplete?: () => vo
       <div className="relative bg-white rounded-[22px] shadow-2xl w-full max-w-[440px] max-h-[92vh] overflow-y-auto animate-fade-in">
         <div className="px-7 pt-8 pb-7">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#86868b] mb-2">
-            Gennoor Academy
+            Learning Studio
           </p>
           <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gray-900 leading-tight">
             Complete your profile

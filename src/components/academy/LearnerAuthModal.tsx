@@ -401,7 +401,7 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
     : step === 'forgot-email' ? 'Reset your password'
     : step === 'forgot-reset' ? 'Choose a new password'
     : step === 'profile-setup' ? 'Complete your profile'
-    : title || 'Sign in to Gennoor Academy'
+    : title || 'Sign in to Learning Studio'
 
   const subheading =
     step === 'password' ? 'Sign in with your email address or username.'
@@ -438,7 +438,7 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
         )}
 
         <div className="px-7 pt-8 pb-7">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#86868b] mb-2">Gennoor Academy</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#86868b] mb-2">Learning Studio</p>
           <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gray-900 leading-tight">{heading}</h2>
           <p className="text-[13.5px] leading-[1.5] text-[#6e6e73] mt-1.5 mb-5">{subheading}</p>
 

@@ -40,15 +40,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params
   const course = getCourseBySlug(slug)
   if (!course) {
-    return { title: 'Course not found — Gennoor Academy' }
+    return { title: 'Course not found — Learning Studio' }
   }
   return {
-    title: `${course.title} — Gennoor Academy`,
+    title: `${course.title} — Learning Studio`,
     description: course.subtitle,
     keywords: [
       course.title,
       'AI course',
-      'Gennoor Academy',
+      'Learning Studio',
       ...(course.functions?.map((f) => functionLabels[f]) ?? []),
       ...(course.industries?.map((i) => industryLabels[i]) ?? []),
     ],
@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       canonical: `https://gennoor.com/academy/courses/${course.slug}`,
     },
     openGraph: {
-      title: `${course.title} — Gennoor Academy`,
+      title: `${course.title} — Learning Studio`,
       description: course.subtitle,
       url: `https://gennoor.com/academy/courses/${course.slug}`,
     },
@@ -118,7 +118,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <Link
-              href="/academy"
+              href="/studio"
               className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-primary-600 transition-colors mb-6"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -175,7 +175,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
             <p className="text-xs text-gray-400">Last updated: {course.lastUpdated}</p>
 
             <a
-              href="#interactive-course"
+              href={course.interactiveUrl ?? '#interactive-course'}
               className="mt-7 inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl text-white bg-amber-500 hover:shadow-lg hover:shadow-amber-500/25 transition-all"
             >
               {course.interactiveUrl
@@ -526,7 +526,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
       <section className="py-12 relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Link
-            href="/academy"
+            href="/studio"
             className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-primary-600 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />

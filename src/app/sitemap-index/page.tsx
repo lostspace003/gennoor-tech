@@ -46,8 +46,6 @@ export default function SitemapIndexPage() {
         { href: '/services/ai-training-saudi-arabia', label: 'AI Training — Saudi Arabia' },
         { href: '/services/ai-training-india', label: 'AI Training — India' },
         { href: '/services/ai-training-remote', label: 'AI Training — Remote' },
-        { href: '/services/copilot-studio-training', label: 'Copilot Studio Training' },
-        { href: '/services/azure-ai-foundry-workshop', label: 'Azure AI Foundry Workshop' },
         { href: '/services/enterprise-ai-roadmap-workshop', label: 'Enterprise AI Roadmap Workshop' },
       ],
     },
@@ -109,9 +107,12 @@ export default function SitemapIndexPage() {
       ],
     },
     {
-      heading: 'AI Academy',
+      heading: 'Learning Studio',
       links: [
-        { href: '/ai-academy', label: 'AI Academy Home' },
+        { href: '/studio', label: 'Learning Studio' },
+        { href: '/studio/ai-103', label: 'Learning Studio — AI-103' },
+        { href: '/studio/ai-500', label: 'Learning Studio — AI-500' },
+        { href: '/ai-academy', label: 'AI Essentials' },
         ...courses.flatMap((course) => [
           { href: `/ai-academy/${course.id}`, label: `${course.shortTitle || course.title}` },
           ...course.chapters.map((ch) => ({

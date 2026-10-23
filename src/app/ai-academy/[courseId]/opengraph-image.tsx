@@ -6,7 +6,7 @@ import { ImageResponse } from 'next/og'
 import { getCourseById } from '@/config/courses'
 
 export const runtime = 'edge'
-export const alt = 'Gennoor Academy course'
+export const alt = 'Learning Studio course'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -16,7 +16,7 @@ interface Props {
 
 export default async function CourseOgImage({ params }: Props) {
   const course = getCourseById(params.courseId)
-  const title = course?.title ?? 'Gennoor Academy'
+  const title = course?.title ?? 'Learning Studio'
   const tagline = course?.description?.slice(0, 180) ?? 'Train, innovate, build.'
   const duration = course?.duration ?? ''
   const level = course?.level ?? ''

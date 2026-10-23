@@ -47,8 +47,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/services/ai-training-remote`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
 
     // Course landing pages
-    { url: `${baseUrl}/services/copilot-studio-training`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${baseUrl}/services/azure-ai-foundry-workshop`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${baseUrl}/services/enterprise-ai-roadmap-workshop`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
 
     // Featured work
@@ -99,6 +97,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // AI Academy pages
   const academyPages: MetadataRoute.Sitemap = [
     { url: `${baseUrl}/ai-academy`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
+    { url: `${baseUrl}/studio`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
+    ...['ai-103', 'ai-500'].map(slug => ({ url: `${baseUrl}/studio/${slug}`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.8 })),
   ]
   for (const course of courses) {
     academyPages.push({
@@ -159,7 +159,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // New Academy structure pages
   const newAcademyPages: MetadataRoute.Sitemap = [
-    { url: `${baseUrl}/academy`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
     ...academyCourses.map((c) => ({
       url: `${baseUrl}/academy/courses/${c.slug}`,
       lastModified: new Date(),

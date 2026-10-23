@@ -49,7 +49,6 @@ export async function POST(request: NextRequest) {
       { path: '/services', label: 'Services' },
       { path: '/services/training', label: 'Training' },
       { path: '/services/certifications', label: 'Certifications' },
-      { path: '/services/copilot-studio-training', label: 'Copilot Studio Training' },
       { path: '/services/ai-training-saudi-arabia', label: 'AI Training Saudi Arabia' },
       { path: '/services/ai-training-india', label: 'AI Training India' },
       { path: '/resources/blog', label: 'Blog' },

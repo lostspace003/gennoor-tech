@@ -79,16 +79,6 @@ const PAGE_META: Record<string, PageMeta> = {
     category: 'Programs',
     keywords: ['curriculum', 'catalog', 'catalogue', 'syllabus', 'modules', 'courses', 'outline'],
   },
-  '/services/azure-ai-foundry-workshop': {
-    description: 'Hands-on Azure AI workshop',
-    category: 'Programs',
-    keywords: ['azure', 'microsoft', 'foundry', 'hands-on', 'workshop', 'cloud AI', 'cognitive services'],
-  },
-  '/services/copilot-studio-training': {
-    description: 'Build AI copilots with Microsoft',
-    category: 'Programs',
-    keywords: ['copilot', 'microsoft', 'chatbot', 'low-code', 'power platform', 'virtual agent'],
-  },
   '/services/enterprise-ai-roadmap-workshop': {
     description: 'Strategic AI planning workshop',
     category: 'Programs',
@@ -202,17 +192,17 @@ const PAGE_META: Record<string, PageMeta> = {
     category: 'Resources',
     keywords: ['resources', 'hub', 'library', 'learn', 'materials', 'index'],
   },
-  '/academy': {
-    title: 'AI Academy',
-    description: 'Free AI courses and learning paths',
+  '/studio': {
+    title: 'Learning Studio',
+    description: 'Certification and project courses, taught hands-on with labs and quizzes',
     category: 'Resources',
-    keywords: ['free course', 'learn', 'academy', 'education', 'self-paced', 'AB-100', 'beginner', 'fundamentals'],
+    keywords: ['video course', 'project', 'lab', 'AI-103', 'AI-500', 'certification', 'microsoft', 'studio'],
   },
   '/ai-academy': {
-    title: 'AI Academy',
-    description: 'Free AI courses and learning paths',
+    title: 'AI Essentials',
+    description: 'Free interactive AI courses you finish in an hour',
     category: 'Resources',
-    keywords: ['free course', 'learn', 'academy', 'education', 'self-paced'],
+    keywords: ['free course', 'learn', 'academy', 'interactive', 'self-paced', 'essentials'],
   },
   '/academy/dashboard': {
     title: 'Academy Dashboard',
@@ -488,7 +478,7 @@ const SECTION_CATEGORY: Record<string, SearchCategory> = {
   Resources: 'Resources',
   About: 'About',
   Contact: 'Contact',
-  'AI Academy': 'Resources',
+  'Learning Studio': 'Resources',
   'AI Readiness': 'Resources',
   'The Gennoor Way': 'Services',
   Home: 'Resources',

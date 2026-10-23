@@ -1,5 +1,6 @@
 'use client'
 
+import { ClaudePartnerFooterLine } from '@/components/ClaudePartner'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -100,6 +101,8 @@ export default function Footer() {
             </form>
           )}
         </div>
+
+        <ClaudePartnerFooterLine />
 
         {/* Credentials — one quiet line */}
         <p className="text-[11px] text-[#86868b] text-center mt-8">

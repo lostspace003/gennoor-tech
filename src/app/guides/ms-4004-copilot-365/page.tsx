@@ -377,7 +377,7 @@ export default function MS4004StudyGuidePage() {
               <p className="text-gray-600">
                 My{' '}
                 <Link
-                  href="/services/copilot-studio-training"
+                  href="/services/training"
                   className="text-primary-600 hover:text-primary-700 underline"
                 >
                   Copilot training sessions

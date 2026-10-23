@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { BlobServiceClient } from '@azure/storage-blob'
+import { verifyLearnerSession } from '@/lib/learner-auth'
 
 const CONTAINER = 'website-content'
 
@@ -45,6 +46,15 @@ export async function GET(
     return NextResponse.json({ error: 'Invalid path' }, { status: 400 })
   }
 
+  // Gennoor Academy course material (chapter decks, narration, course PDFs)
+  // opens for signed-in learners only. Logos and the public training
+  // brochures (courses/pdfs/) stay open.
+  const gated = (blobPath.startsWith('courses/') && !blobPath.startsWith('courses/pdfs/')) || blobPath.startsWith('courses-pdfs/')
+  if (gated && !(await verifyLearnerSession())) {
+    return NextResponse.json({ error: 'Sign in required' }, { status: 401, headers: { 'Cache-Control': 'private, no-store' } })
+  }
+  const cacheControl = gated ? 'private, max-age=3600' : 'public, max-age=86400'
+
   const connStr = process.env.AZURE_STORAGE_CONNECTION_STRING
   if (!connStr) {
     return NextResponse.json({ error: 'Storage not configured' }, { status: 500 })
@@ -84,7 +94,7 @@ export async function GET(
             'Content-Range': `bytes ${start}-${end}/${totalLength}`,
             'Content-Length': String(end - start + 1),
             'Accept-Ranges': 'bytes',
-            'Cache-Control': 'public, max-age=86400',
+            'Cache-Control': cacheControl,
           },
         })
       }
@@ -97,7 +107,7 @@ export async function GET(
 
     const headers: Record<string, string> = {
       'Content-Type': contentType,
-      'Cache-Control': 'public, max-age=86400, stale-while-revalidate=3600',
+      'Cache-Control': gated ? cacheControl : 'public, max-age=86400, stale-while-revalidate=3600',
     }
     if (totalLength > 0) headers['Content-Length'] = String(totalLength)
     if (contentType.startsWith('audio/') || contentType.startsWith('video/')) {

@@ -80,7 +80,7 @@ export default function CourseCard({ course, overallProgress = 0 }: CourseCardPr
         {/* Open-access signal */}
         {overallProgress === 0 && (
           <p className="text-xs text-[#86868b] mb-4">
-            Every chapter open · no account needed · certificate on completion
+            Free with sign-in · certificate on completion
           </p>
         )}
 

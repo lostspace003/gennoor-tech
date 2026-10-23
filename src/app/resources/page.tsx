@@ -147,14 +147,14 @@ export default function ResourcesPage() {
             <Sparkles className="w-6 h-6 text-white" />
           </div>
           <h2 className="text-[clamp(26px,2.6vw,34px)] leading-[1.15] tracking-[-0.02em] font-bold text-white">
-            The AI Academy is free.
+            The Learning Studio is free.
           </h2>
           <p className="text-[15.5px] leading-[1.5] text-white/70 max-w-[520px] mx-auto mt-4 mb-7">
             Self-paced courses for executives, business functions, and engineers —
             with certificates you can actually claim.
           </p>
           <Link
-            href="/academy"
+            href="/studio"
             className="inline-flex items-center bg-white hover:bg-white/90 text-gray-900 text-[14px] font-semibold px-6 py-2.5 rounded-full transition-colors"
           >
             Browse the Academy

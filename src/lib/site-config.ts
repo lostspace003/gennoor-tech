@@ -26,8 +26,6 @@ export const siteConfig = {
         href: '/services/training',
         children: [
           { name: 'Training Programs', href: '/services/training', description: 'Corporate AI training courses' },
-          { name: 'Azure AI Foundry Workshop', href: '/services/azure-ai-foundry-workshop', description: 'Hands-on Azure AI workshop' },
-          { name: 'Copilot Studio Training', href: '/services/copilot-studio-training', description: 'Build AI copilots with Microsoft' },
           { name: 'Enterprise AI Roadmap', href: '/services/enterprise-ai-roadmap-workshop', description: 'Strategic AI planning workshop' },
           { name: 'Certifications', href: '/services/certifications', description: 'Microsoft certification prep' },
         ]
@@ -49,7 +47,7 @@ export const siteConfig = {
         name: 'Resources',
         href: '/resources',
         children: [
-          { name: 'Gennoor Academy', href: '/academy', description: '42 courses across 6 tracks · interactive AB-100 included', badge: 'New' },
+          { name: 'Learning Studio', href: '/studio', description: '42 courses across 6 tracks · interactive AB-100 included', badge: 'New' },
           { name: 'Blog', href: '/resources/blog', description: 'AI insights & articles' },
           { name: 'Videos', href: '/resources/videos', description: 'Training videos & tutorials' },
           { name: 'Webinars', href: '/webinars', description: 'Live & recorded sessions' },
@@ -79,8 +77,6 @@ export const siteConfig = {
         title: 'Training',
         links: [
           { name: 'Training Programs', href: '/services/training' },
-          { name: 'Azure AI Foundry Workshop', href: '/services/azure-ai-foundry-workshop' },
-          { name: 'Copilot Studio Training', href: '/services/copilot-studio-training' },
           { name: 'Certifications', href: '/services/certifications' },
         ]
       },
@@ -96,7 +92,7 @@ export const siteConfig = {
       {
         title: 'Resources',
         links: [
-          { name: 'Gennoor Academy', href: '/academy' },
+          { name: 'Learning Studio', href: '/studio' },
           { name: 'Blog', href: '/resources/blog' },
           { name: 'Videos', href: '/resources/videos' },
           { name: 'Webinars & Workshops', href: '/webinars' },

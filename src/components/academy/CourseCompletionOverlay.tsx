@@ -124,7 +124,7 @@ export default function CourseCompletionOverlay({
   const offerCards = [
     {
       icon: GraduationCap,
-      title: 'More Gennoor Academy courses',
+      title: 'More Learning Studio courses',
       blurb: 'Continue the curriculum — 20+ courses, all free, citation-rigorous.',
       href: '/ai-academy',
       cta: 'Browse courses',

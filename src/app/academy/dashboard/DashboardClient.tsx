@@ -286,7 +286,7 @@ export default function DashboardClient() {
         isOpen={authOpen}
         onClose={() => setAuthOpen(false)}
         onLoginSuccess={() => window.location.reload()}
-        title="Sign in to Gennoor Academy"
+        title="Sign in to Learning Studio"
         subtitle="Your progress, certificates, and analytics — saved across devices."
       />
 
@@ -299,7 +299,7 @@ export default function DashboardClient() {
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#86868b] mb-2">
-                Gennoor Academy · Learner dashboard
+                Learning Studio · Learner dashboard
               </p>
               <h1 className="text-[30px] font-bold tracking-[-0.02em] text-gray-900">
                 Welcome back{session?.name ? `, ${session.name.split(' ')[0]}` : ''}.
@@ -712,7 +712,7 @@ export default function DashboardClient() {
 
         <div className="mt-8 text-center">
           <Link
-            href="/academy"
+            href="/studio"
             className="text-sm text-gray-600 hover:text-gray-900 transition-colors inline-flex items-center gap-1"
           >
             See the full Academy catalogue and tracks
