@@ -308,7 +308,7 @@ export function PipelineView({ leads, onOpenLead }: { leads: Lead[]; onOpenLead:
         <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
-              <tr className="text-left text-gray-500 uppercase text-[10px] border-b border-gray-100">
+              <tr className="text-left text-gray-500 text-[10px] border-b border-gray-100">
                 <th className="px-4 py-2">Lead</th>
                 <th className="px-3 py-2">Stage</th>
                 <th className="px-3 py-2">Status</th>
@@ -487,7 +487,7 @@ function WorkAnalysis({ leads, me, isManager }: { leads: Lead[]; me: string; isM
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
-            <tr className="text-left text-gray-500 uppercase text-[10px]">
+            <tr className="text-left text-gray-500 text-[10px]">
               <th className="px-4 py-2">Member</th>
               <th className="px-3 py-2">Leads</th>
               {PIPELINE_STAGES.map((s, i) => <th key={s} className="px-2 py-2" title={STAGE_LABELS[s]}>{i + 1}</th>)}
@@ -787,7 +787,7 @@ export function SchedulerView({ onOpenLead }: { onOpenLead: (id: string) => void
         )}
         {meetingDays.map((g) => (
           <div key={g.day} className="space-y-2">
-            <div className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide pt-1">{g.day} <span className="text-gray-300 normal-case">· {g.items.length}</span></div>
+            <div className="text-[11px] font-semibold text-gray-500 pt-1">{g.day} <span className="text-gray-300 normal-case">· {g.items.length}</span></div>
             {g.items.map((m) => (
               <div key={m.id} className="bg-white border border-gray-200 rounded-lg p-4">
                 <div className="flex items-center justify-between gap-3">
@@ -841,7 +841,7 @@ export function SchedulerView({ onOpenLead }: { onOpenLead: (id: string) => void
         <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2"><Mail className="w-4 h-4 text-green-500" /> Webinar & training invites sent</h3>
         {followUps.length === 0 && <div className="bg-gray-50 rounded-lg p-8 text-center text-sm text-gray-400">No follow-up invites yet.</div>}
         {upcomingInvites.length > 0 && (
-          <div className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Upcoming <span className="text-gray-300 normal-case">· {upcomingInvites.length}</span></div>
+          <div className="text-[11px] font-semibold text-gray-500">Upcoming <span className="text-gray-300 normal-case">· {upcomingInvites.length}</span></div>
         )}
         {upcomingInvites.map((f) => (
           <button key={`${f.leadId}-${f.id}`} onClick={() => onOpenLead(f.leadId)} className="w-full text-left bg-white border border-gray-200 rounded-lg p-4 hover:border-green-300 transition-all">
@@ -852,7 +852,7 @@ export function SchedulerView({ onOpenLead }: { onOpenLead: (id: string) => void
         {pastInvites.length > 0 && (
           <button
             onClick={() => setShowPastInvites((s) => !s)}
-            className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-1 hover:text-gray-700"
+            className="text-[11px] font-semibold text-gray-500 flex items-center gap-1 hover:text-gray-700"
           >
             Past <span className="text-gray-300 normal-case">· {pastInvites.length}</span> <span className="text-gray-300">{showPastInvites ? '▴' : '▾'}</span>
           </button>
@@ -1081,7 +1081,7 @@ export function DocumentsView({ canManage, notify }: { canManage: boolean; notif
         </div>
 
         <div>
-          <div className="text-[10.5px] font-semibold uppercase tracking-wide text-gray-400 mb-1.5">Lead</div>
+          <div className="text-[10.5px] font-semibold text-gray-400 mb-1.5">Lead</div>
           <select
             value={leadFilter}
             onChange={(e) => setLeadFilter(e.target.value)}
@@ -1093,7 +1093,7 @@ export function DocumentsView({ canManage, notify }: { canManage: boolean; notif
         </div>
 
         <div>
-          <div className="text-[10.5px] font-semibold uppercase tracking-wide text-gray-400 mb-1.5">Source</div>
+          <div className="text-[10.5px] font-semibold text-gray-400 mb-1.5">Source</div>
           <div className="space-y-1">
             <FilterRow label="Everything" count={docs.length} active={!originFilter} onClick={() => setOriginFilter('')} />
             {ORIGIN_FILTERS.map((o) => (
@@ -1109,7 +1109,7 @@ export function DocumentsView({ canManage, notify }: { canManage: boolean; notif
         </div>
 
         <div>
-          <div className="text-[10.5px] font-semibold uppercase tracking-wide text-gray-400 mb-1.5">Folder</div>
+          <div className="text-[10.5px] font-semibold text-gray-400 mb-1.5">Folder</div>
           <div className="space-y-1">
             {DOC_FOLDERS.map((f) => (
               <FilterRow
@@ -1124,7 +1124,7 @@ export function DocumentsView({ canManage, notify }: { canManage: boolean; notif
         </div>
 
         <div>
-          <div className="text-[10.5px] font-semibold uppercase tracking-wide text-gray-400 mb-1.5">Added</div>
+          <div className="text-[10.5px] font-semibold text-gray-400 mb-1.5">Added</div>
           <DateRangeFilter value={range} onChange={setRange} />
         </div>
 

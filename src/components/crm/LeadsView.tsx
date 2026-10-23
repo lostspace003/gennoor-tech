@@ -86,6 +86,9 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
   const [selected, setSelected] = useState<string[]>([])
+  const [moreFilters, setMoreFilters] = useState(false)
+  // a filter hidden under "More filters" must never be silently active
+  const secondaryActive = [statusFilter, processFilter, sizeFilter, functionFilter, interestFilter, roleFilter, sourceFilter].some((f) => f.length > 0)
   const [busy, setBusy] = useState('')
   const [upload, setUpload] = useState<ParsedUpload | null>(null)
   const [adding, setAdding] = useState(false)
@@ -460,42 +463,6 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
             values={stageFilter}
             onChange={(v) => { setStageFilter(v); resetPage() }}
           />
-          <MultiSelect
-            label="Status"
-            options={(['new', 'contacted', 'qualified', 'proposal', 'negotiation', 'won', 'lost'] as LeadStatus[]).map((s) => ({ value: s, label: s[0].toUpperCase() + s.slice(1) }))}
-            values={statusFilter}
-            onChange={(v) => { setStatusFilter(v); resetPage() }}
-          />
-          <MultiSelect
-            label="Process"
-            options={[{ value: 'active', label: 'Active' }, { value: 'paused', label: 'Paused' }, { value: 'stopped', label: 'Stopped' }]}
-            values={processFilter}
-            onChange={(v) => { setProcessFilter(v); resetPage() }}
-          />
-          <MultiSelect
-            label="Size"
-            options={[...COMPANY_SIZES.map((s) => ({ value: s, label: s })), { value: 'none', label: 'Not set' }]}
-            values={sizeFilter}
-            onChange={(v) => { setSizeFilter(v); resetPage() }}
-          />
-          <MultiSelect
-            label="Function"
-            options={[...BUSINESS_FUNCTIONS.map((s) => ({ value: s, label: s })), { value: 'none', label: 'Not set' }]}
-            values={functionFilter}
-            onChange={(v) => { setFunctionFilter(v); resetPage() }}
-          />
-          <MultiSelect
-            label="Interest"
-            options={[...LEAD_INTERESTS.map((s) => ({ value: s, label: s })), { value: 'none', label: 'Not set' }]}
-            values={interestFilter}
-            onChange={(v) => { setInterestFilter(v); resetPage() }}
-          />
-          <MultiSelect
-            label="Role"
-            options={[...DECISION_ROLES.map((s) => ({ value: s, label: s })), { value: 'none', label: 'Not set' }]}
-            values={roleFilter}
-            onChange={(v) => { setRoleFilter(v); resetPage() }}
-          />
           {/*
             Anyone can filter by owner and see how a colleague's book is
             moving — who holds what, which stage, what's stalled. Read-only by
@@ -511,12 +478,60 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
             values={ownerFilter}
             onChange={(v) => { setOwnerFilter(v); resetPage() }}
           />
-          <MultiSelect
-            label="Source"
-            options={[...new Set(leads.map((l) => l.source).filter(Boolean))].sort().map((s) => ({ value: s, label: s }))}
-            values={sourceFilter}
-            onChange={(v) => { setSourceFilter(v); resetPage() }}
-          />
+          <button
+            type="button"
+            onClick={() => setMoreFilters((v) => !v)}
+            aria-expanded={moreFilters || secondaryActive}
+            className={`text-sm border rounded-lg px-3 py-2 ${moreFilters || secondaryActive ? 'border-primary-300 bg-primary-50 text-primary-700' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}`}
+          >
+            {moreFilters || secondaryActive ? 'Fewer filters' : 'More filters'}
+          </button>
+          {(moreFilters || secondaryActive) && (
+            <div className="basis-full flex flex-wrap items-center gap-3">
+            <MultiSelect
+              label="Status"
+              options={(['new', 'contacted', 'qualified', 'proposal', 'negotiation', 'won', 'lost'] as LeadStatus[]).map((s) => ({ value: s, label: s[0].toUpperCase() + s.slice(1) }))}
+              values={statusFilter}
+              onChange={(v) => { setStatusFilter(v); resetPage() }}
+            />
+            <MultiSelect
+              label="Process"
+              options={[{ value: 'active', label: 'Active' }, { value: 'paused', label: 'Paused' }, { value: 'stopped', label: 'Stopped' }]}
+              values={processFilter}
+              onChange={(v) => { setProcessFilter(v); resetPage() }}
+            />
+            <MultiSelect
+              label="Size"
+              options={[...COMPANY_SIZES.map((s) => ({ value: s, label: s })), { value: 'none', label: 'Not set' }]}
+              values={sizeFilter}
+              onChange={(v) => { setSizeFilter(v); resetPage() }}
+            />
+            <MultiSelect
+              label="Function"
+              options={[...BUSINESS_FUNCTIONS.map((s) => ({ value: s, label: s })), { value: 'none', label: 'Not set' }]}
+              values={functionFilter}
+              onChange={(v) => { setFunctionFilter(v); resetPage() }}
+            />
+            <MultiSelect
+              label="Interest"
+              options={[...LEAD_INTERESTS.map((s) => ({ value: s, label: s })), { value: 'none', label: 'Not set' }]}
+              values={interestFilter}
+              onChange={(v) => { setInterestFilter(v); resetPage() }}
+            />
+            <MultiSelect
+              label="Role"
+              options={[...DECISION_ROLES.map((s) => ({ value: s, label: s })), { value: 'none', label: 'Not set' }]}
+              values={roleFilter}
+              onChange={(v) => { setRoleFilter(v); resetPage() }}
+            />
+            <MultiSelect
+              label="Source"
+              options={[...new Set(leads.map((l) => l.source).filter(Boolean))].sort().map((s) => ({ value: s, label: s }))}
+              values={sourceFilter}
+              onChange={(v) => { setSourceFilter(v); resetPage() }}
+            />
+            </div>
+          )}
           <div className="ml-auto flex items-center gap-2">
             <button
               onClick={() => setAdding(true)}
@@ -525,6 +540,12 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
             >
               <UserPlus className="w-4 h-4" /> Add lead
             </button>
+            <details className="relative">
+              <summary className="list-none cursor-pointer after:!content-none px-3 py-2 border border-gray-200 text-sm rounded-lg hover:bg-gray-50 text-gray-700 select-none [&::-webkit-details-marker]:hidden">Tools</summary>
+              <div
+                onClick={(e) => { e.currentTarget.closest('details')?.removeAttribute('open') }}
+                className="absolute right-0 mt-1 w-60 bg-white border border-gray-200 rounded-xl shadow-lg p-1.5 z-30 flex flex-col [&>button]:w-full [&>button]:justify-start [&>button]:border-0 [&>button]:py-2 [&>a]:w-full [&>a]:justify-start [&>a]:border-0 [&>a]:py-2"
+              >
             <button
               onClick={async () => {
                 // Empty-only, same discipline as AI priority: anything a human
@@ -597,6 +618,8 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
             <a href="/api/admin/template" className="px-3 py-2 border border-gray-200 text-sm rounded-lg hover:bg-gray-50 flex items-center gap-2">
               <Download className="w-4 h-4" /> Template
             </a>
+              </div>
+            </details>
             {canManage && (
               <>
                 <input ref={fileInputRef} type="file" accept=".xlsx,.xls,.csv,.pdf,.docx,.md,.txt" multiple onChange={handleFile} className="hidden" />
@@ -713,7 +736,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
 
       {/* Table */}
       <div className="bg-white overflow-x-auto">
-        <table className="w-full min-w-[900px]">
+        <table className="w-full min-w-[760px]">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="px-4 py-3 text-left w-10">
@@ -724,23 +747,18 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                   onChange={(e) => setSelected(e.target.checked ? [...new Set([...selected, ...pageLeads.map((l) => l.id)])] : selected.filter((id) => !pageLeads.some((l) => l.id === id)))}
                 />
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lead</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Priority</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Size · Function</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Interest</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Company</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stage</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Owner</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Research</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Activity</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Lead</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Company</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Priority</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Stage</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Status</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Owner</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {pageLeads.length === 0 && (
               <tr>
-                <td colSpan={12} className="px-6 py-16 text-center text-gray-400 text-sm">
+                <td colSpan={7} className="px-6 py-16 text-center text-gray-400 text-sm">
                   {leads.length === 0 ? 'No leads yet. Download the template, fill it, and upload it here.' : 'No leads match the current filters.'}
                 </td>
               </tr>
@@ -758,23 +776,18 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                 <td className="px-4 py-3">
                   <div className="text-sm font-medium text-gray-900">{lead.name}</div>
                   <div className="text-xs text-gray-500">{lead.email || <span className="text-amber-500">no email</span>}</div>
+                  <div className="text-[11px] text-gray-400 mt-0.5 flex items-center gap-2">
+                    <span>{timeAgo(lead.lastActivity)}</span>
+                    {lead.aiResearch && <span className="inline-flex items-center gap-1"><Brain className="w-3 h-3" /> researched</span>}
+                    {lead.emailHistory.length > 0 && <span className="inline-flex items-center gap-1 text-primary-600"><Mail className="w-3 h-3" /> {lead.emailHistory.length}</span>}
+                  </div>
+                </td>
+                <td className="px-4 py-3 max-w-[260px]">
+                  <div className="text-sm text-gray-900">{lead.company || '—'}</div>
+                  <div className="text-xs text-gray-500 truncate" title={lead.designation}>{lead.designation}</div>
+                  <div className="text-[11px] text-gray-400">{[lead.city, lead.country].filter(Boolean).join(', ') || lead.region || ''}</div>
                 </td>
                 <td className="px-4 py-3"><PriorityBadge priority={lead.priority} /></td>
-                <td className="px-4 py-3 text-xs">
-                  <div className="text-gray-700">{lead.companySize || <span className="text-gray-300">—</span>}</div>
-                  <div className="text-gray-400">{lead.businessFunction || ''}</div>
-                </td>
-                <td className="px-4 py-3 text-xs">
-                  <div className="text-gray-700">{lead.interest || <span className="text-gray-300">—</span>}</div>
-                  <div className="text-gray-400">{lead.decisionRole || ''}</div>
-                </td>
-                <td className="px-4 py-3">
-                  <div className="text-sm text-gray-900">{lead.company || '—'}</div>
-                  <div className="text-xs text-gray-500">{lead.designation}</div>
-                </td>
-                <td className="px-4 py-3 text-xs text-gray-600">
-                  {[lead.city, lead.country].filter(Boolean).join(', ') || lead.region || '—'}
-                </td>
                 <td className="px-4 py-3"><StageBar stage={lead.stage} onSelect={canSetStage(lead) ? (s) => setStage(lead.id, s) : undefined} /></td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-1.5">
@@ -794,16 +807,6 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                   ) : (
                     <span className="text-[11px] bg-green-50 text-green-700 border border-green-200 rounded-full px-2 py-0.5">pool</span>
                   )}
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-2 text-xs">
-                    {lead.aiResearch ? <span className="inline-flex items-center gap-1 text-gray-600"><Brain className="w-3.5 h-3.5" /> done</span> : <span className="text-gray-400">—</span>}
-                    {lead.emailHistory.length > 0 && <span className="inline-flex items-center gap-1 text-primary-600"><Mail className="w-3.5 h-3.5" /> {lead.emailHistory.length}</span>}
-                  </div>
-                </td>
-                <td className="px-4 py-3 text-xs text-gray-500">
-                  <div>{timeAgo(lead.lastActivity)}</div>
-                  {lead.activities?.[0] && <div className="text-[10px] text-gray-400 truncate max-w-[110px]" title={lead.activities[0].description}>{lead.activities[0].type}</div>}
                 </td>
               </tr>
             ))}

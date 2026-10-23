@@ -119,12 +119,9 @@ export default function QueueView({ leads }: { leads: Lead[] }) {
   return (
     <div className="p-3 sm:p-5 space-y-4 max-w-5xl">
       <div className="flex flex-wrap items-center gap-3">
-        <h2 className="text-base font-semibold text-gray-900 flex items-center gap-1.5">{isManager ? 'Team work queue' : 'My work queue'}
+        <h2 className="text-base font-semibold text-gray-900 flex items-center gap-1.5">{actionable} lead{actionable === 1 ? '' : 's'} need action
           <InfoTip text="Every lead sits in exactly one bucket with its next action: pick up from Pool → Research → Finalize pitch → send First email → Follow up after 5 quiet days. Replies always jump to the top." />
         </h2>
-        <span className="text-xs bg-primary-50 text-primary-700 border border-primary-200 rounded-full px-2.5 py-1">
-          {actionable} lead{actionable === 1 ? '' : 's'} need action
-        </span>
         {(paused.length > 0 || stopped.length > 0) && (
           <span className="text-xs text-gray-400">{paused.length} paused · {stopped.length} stopped</span>
         )}
