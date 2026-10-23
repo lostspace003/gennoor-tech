@@ -72,7 +72,14 @@ export const portalNav: PortalNavSection[] = [
   { name: 'Claude', href: '/claude', icon: Sparkles },
   { name: 'Training', href: '/training', icon: GraduationCap },
   { name: 'Automation', href: '/automation', icon: Wrench },
-  { name: 'Learning Studio', href: '/studio', icon: BookOpen },
+  {
+    name: 'Learning Studio',
+    icon: BookOpen,
+    children: [
+      { name: 'Courses', href: '/studio' },
+      { name: 'Community', href: '/community' },
+    ],
+  },
   { name: 'About', href: '/about', icon: Info },
   { name: 'Contact', href: '/contact', icon: Mail },
 ]

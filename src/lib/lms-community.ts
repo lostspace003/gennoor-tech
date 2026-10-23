@@ -134,15 +134,21 @@ export interface Post {
   createdAt: string
   hidden: boolean
   mine?: boolean
+  /** how many learners liked it, and whether the viewer did */
+  likes: number
+  liked?: boolean
 }
 
-interface PostRow extends Post { email: string }
+interface PostRow extends Post { email: string; likers: string[] }
 
 function toPost(e: Record<string, unknown>): PostRow {
+  let likers: string[] = []
+  try { likers = e.likes ? JSON.parse(String(e.likes)) : [] } catch { likers = [] }
   return {
     id: String(e.rowKey), scope: String(e.partitionKey), parentId: String(e.parentId || ''), title: String(e.title || ''),
     body: String(e.body || ''), author: String(e.author || 'Learner'), isTeam: e.isTeam === true || e.isTeam === 'true',
     createdAt: String(e.createdAt || ''), hidden: e.hidden === true || e.hidden === 'true', email: String(e.email || ''),
+    likers, likes: likers.length,
   }
 }
 
@@ -155,7 +161,7 @@ export async function addPost(p: { scope: string; parentId?: string; title?: str
     partitionKey: p.scope, rowKey: id, parentId: p.parentId || '', title: (p.title || '').slice(0, 140),
     body: p.body.slice(0, 4000), author, email: p.email.toLowerCase(), isTeam: !!p.isTeam, createdAt, hidden: false,
   })
-  return { id, scope: p.scope, parentId: p.parentId || '', title: p.title || '', body: p.body, author, isTeam: !!p.isTeam, createdAt, hidden: false }
+  return { id, scope: p.scope, parentId: p.parentId || '', title: p.title || '', body: p.body, author, isTeam: !!p.isTeam, createdAt, hidden: false, likes: 0 }
 }
 
 async function postsIn(scope: string): Promise<PostRow[]> {
@@ -165,7 +171,7 @@ async function postsIn(scope: string): Promise<PostRow[]> {
   return out.sort((a, b) => a.id.localeCompare(b.id))
 }
 
-const strip = (p: PostRow, me: string): Post => { const { email, ...rest } = p; return { ...rest, mine: !!me && email === me } }
+const strip = (p: PostRow, me: string): Post => { const { email, likers, ...rest } = p; return { ...rest, mine: !!me && email === me, liked: !!me && likers.includes(me) } }
 
 export interface ThreadRow extends Post { replies: number; lastAt: string }
 
@@ -191,6 +197,20 @@ export async function getThread(scope: string, id: string, viewerEmail?: string)
 export async function getPostRaw(scope: string, id: string): Promise<PostRow | null> {
   const t = await table(POSTS)
   try { return toPost((await t.getEntity(scope, id)) as Record<string, unknown>) } catch { return null }
+}
+
+/** Like or unlike a post. Returns the new count and whether the viewer now likes it. */
+export async function toggleLike(scope: string, id: string, email: string): Promise<{ likes: number; liked: boolean } | null> {
+  const t = await table(POSTS)
+  let e: Record<string, unknown>
+  try { e = (await t.getEntity(scope, id)) as Record<string, unknown> } catch { return null }
+  let likers: string[] = []
+  try { likers = e.likes ? JSON.parse(String(e.likes)) : [] } catch { likers = [] }
+  const me = email.toLowerCase()
+  const liked = !likers.includes(me)
+  likers = liked ? [...likers, me] : likers.filter(x => x !== me)
+  await t.updateEntity({ partitionKey: scope, rowKey: id, likes: JSON.stringify(likers) }, 'Merge')
+  return { likes: likers.length, liked }
 }
 
 export async function setPostHidden(scope: string, id: string, hidden: boolean): Promise<void> {

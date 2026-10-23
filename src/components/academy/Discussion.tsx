@@ -1,9 +1,11 @@
 'use client'
 
 import { useCallback, useEffect, useState, FormEvent } from 'react'
-import { Loader2, MessageSquare, Trash2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Heart, Loader2, MessageSquare, Trash2 } from 'lucide-react'
+import LearnerAuthModal from './LearnerAuthModal'
 
-interface Post { id: string; title: string; body: string; author: string; isTeam: boolean; createdAt: string; mine?: boolean }
+interface Post { id: string; title: string; body: string; author: string; isTeam: boolean; createdAt: string; mine?: boolean; likes?: number; liked?: boolean }
 interface Thread extends Post { replies: number; lastAt: string }
 
 const ago = (iso: string) => {
@@ -27,7 +29,9 @@ function Author({ p }: { p: Post }) {
 }
 
 /** Discussion for one scope: a course (its slug) or the whole community ("community"). */
-export default function Discussion({ scope, emptyText }: { scope: string; emptyText?: string }) {
+export default function Discussion({ scope, emptyText, signedIn = true }: { scope: string; emptyText?: string; signedIn?: boolean }) {
+  const router = useRouter()
+  const [authOpen, setAuthOpen] = useState(false)
   const [threads, setThreads] = useState<Thread[] | null>(null)
   const [open, setOpen] = useState<{ thread: Post; replies: Post[] } | null>(null)
   const [composing, setComposing] = useState(false)
@@ -75,7 +79,39 @@ export default function Discussion({ scope, emptyText }: { scope: string; emptyT
     if (isThread) { setOpen(null); loadList() } else if (open) openThread(open.thread.id)
   }
 
+  // Liking needs a sign-in; signed-out visitors are asked to sign in.
+  const like = async (id: string) => {
+    if (!signedIn) { setAuthOpen(true); return }
+    const r = await fetch('/api/lms/discussion', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ scope, id }) })
+    const d = await r.json().catch(() => ({}))
+    if (!r.ok) { setError(d.error || 'Could not like that.'); return }
+    setThreads(ts => (ts ?? []).map(t => (t.id === id ? { ...t, likes: d.likes, liked: d.liked } : t)))
+    setOpen(o => o && ({
+      thread: o.thread.id === id ? { ...o.thread, likes: d.likes, liked: d.liked } : o.thread,
+      replies: o.replies.map(x => (x.id === id ? { ...x, likes: d.likes, liked: d.liked } : x)),
+    }))
+  }
+  const Like = ({ p }: { p: Post }) => (
+    <button type="button" onClick={e => { e.stopPropagation(); like(p.id) }} aria-pressed={!!p.liked} aria-label={p.liked ? 'Unlike' : 'Like'}
+      className={`inline-flex items-center gap-1 text-[13px] ${p.liked ? 'text-rose-600' : 'text-[#86868b] hover:text-gray-900'}`}>
+      <Heart className="w-4 h-4" fill={p.liked ? 'currentColor' : 'none'} strokeWidth={1.8} />{p.likes ? p.likes : ''}
+    </button>
+  )
+  const SignInButton = ({ label }: { label: string }) => (
+    <button type="button" onClick={() => setAuthOpen(true)} className="pill-primary">{label}</button>
+  )
+
   const FIELD = 'w-full border border-[#d2d2d7] rounded-xl px-3.5 py-2.5 text-[14.5px] text-gray-900 focus:outline-none focus:border-primary-600'
+
+  const authModal = (
+    <LearnerAuthModal
+      isOpen={authOpen}
+      onClose={() => setAuthOpen(false)}
+      onLoginSuccess={() => { setAuthOpen(false); router.refresh() }}
+      title="Sign in to Learning Studio"
+      subtitle="One account for every course and the community."
+    />
+  )
 
   if (open) {
     return (
@@ -83,30 +119,43 @@ export default function Discussion({ scope, emptyText }: { scope: string; emptyT
         <button type="button" onClick={() => { setOpen(null); loadList() }} className="text-[14px] text-primary-600 hover:underline">‹ All topics</button>
         <article className="mt-4">
           <h2 className="font-heading text-[24px] font-bold tracking-[-0.02em] text-gray-900">{open.thread.title}</h2>
-          <div className="mt-3 flex items-center justify-between"><Author p={open.thread} />{open.thread.mine && <button type="button" aria-label="Delete topic" onClick={() => remove(open.thread.id, true)} className="p-1.5 text-[#86868b] hover:text-red-600"><Trash2 className="w-4 h-4" /></button>}</div>
+          <div className="mt-3 flex items-center justify-between"><Author p={open.thread} /><span className="inline-flex items-center gap-2"><Like p={open.thread} />{open.thread.mine && <button type="button" aria-label="Delete topic" onClick={() => remove(open.thread.id, true)} className="p-1.5 text-[#86868b] hover:text-red-600"><Trash2 className="w-4 h-4" /></button>}</span></div>
           <p className="mt-3 text-[15.5px] leading-[1.65] text-[#3a3a3f] whitespace-pre-line">{open.thread.body}</p>
         </article>
         <h3 className="mt-10 mb-2 text-[14px] font-semibold text-gray-900">{open.replies.length} {open.replies.length === 1 ? 'reply' : 'replies'}</h3>
         <ul className="divide-y divide-[#e8e8ed] border-t border-[#e8e8ed]">
           {open.replies.map(p => (
             <li key={p.id} className={`py-4 ${p.isTeam ? 'bg-primary-50/50 -mx-3 px-3 rounded-lg' : ''}`}>
-              <div className="flex items-center justify-between"><Author p={p} />{p.mine && <button type="button" aria-label="Delete reply" onClick={() => remove(p.id, false)} className="p-1.5 text-[#86868b] hover:text-red-600"><Trash2 className="w-4 h-4" /></button>}</div>
+              <div className="flex items-center justify-between"><Author p={p} /><span className="inline-flex items-center gap-2"><Like p={p} />{p.mine && <button type="button" aria-label="Delete reply" onClick={() => remove(p.id, false)} className="p-1.5 text-[#86868b] hover:text-red-600"><Trash2 className="w-4 h-4" /></button>}</span></div>
               <p className="mt-2 text-[15px] leading-[1.6] text-[#3a3a3f] whitespace-pre-line">{p.body}</p>
             </li>
           ))}
         </ul>
+        {!signedIn ? (
+          <div className="mt-6 rounded-2xl bg-[#f5f6f8] p-5 flex flex-wrap items-center gap-4">
+            <p className="text-[14.5px] text-gray-900">Sign in to Learning Studio to reply or like.</p>
+            <SignInButton label="Sign in" />
+          </div>
+        ) : (
         <form onSubmit={sendReply} className="mt-6 space-y-3">
           <textarea value={reply} onChange={e => setReply(e.target.value)} rows={3} maxLength={4000} placeholder="Write a reply" aria-label="Your reply" className={FIELD} />
           {error && <p className="text-[13px] text-red-600">{error}</p>}
           <button type="submit" disabled={busy || !reply.trim()} className="pill-primary inline-flex items-center gap-2 disabled:opacity-50">{busy && <Loader2 className="w-4 h-4 animate-spin" />} Reply</button>
         </form>
+        )}
+        {authModal}
       </div>
     )
   }
 
   return (
     <div>
-      {!composing ? (
+      {!signedIn ? (
+        <div className="rounded-2xl bg-[#f5f6f8] p-5 flex flex-wrap items-center gap-4 max-w-[640px]">
+          <p className="text-[14.5px] text-gray-900">Anyone can read. Sign in to Learning Studio to post, reply or like.</p>
+          <SignInButton label="Sign in to join" />
+        </div>
+      ) : !composing ? (
         <button type="button" onClick={() => setComposing(true)} className="pill-primary">Start a topic</button>
       ) : (
         <form onSubmit={newTopic} className="rounded-2xl bg-[#f5f6f8] p-5 space-y-3 max-w-[640px]">
@@ -132,6 +181,7 @@ export default function Discussion({ scope, emptyText }: { scope: string; emptyT
                 <div className="mt-1 flex items-center gap-3 text-[13px] text-[#86868b]">
                   <span>{t.author}{t.isTeam ? ' (team)' : ''}</span>
                   <span className="inline-flex items-center gap-1"><MessageSquare className="w-3.5 h-3.5" />{t.replies}</span>
+                  <span className="inline-flex items-center gap-1"><Heart className="w-3.5 h-3.5" />{t.likes ?? 0}</span>
                   <span>{ago(t.lastAt)}</span>
                 </div>
               </button>
@@ -139,6 +189,7 @@ export default function Discussion({ scope, emptyText }: { scope: string; emptyT
           ))}
         </ul>
       )}
+      {authModal}
     </div>
   )
 }

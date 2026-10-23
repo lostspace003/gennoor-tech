@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { verifyLearnerSession } from '@/lib/learner-auth'
 import { getEnrollments, listLmsCourses } from '@/lib/lms'
 import AcademyBar from '@/components/academy/AcademyBar'
-import SignInGate from '@/components/academy/SignInGate'
 import Discussion from '@/components/academy/Discussion'
 import { COMMUNITY_SCOPE } from '@/lib/lms-community'
 
@@ -16,11 +15,13 @@ export const metadata: Metadata = {
 }
 
 export default async function CommunityPage() {
+  // Anyone can read. Posting, replying and liking need a Learning Studio sign-in.
   const learner = await verifyLearnerSession()
-  if (!learner) return <SignInGate heading="Sign in to join the community" body="Talk with other learners and the Gennoor team about AI, your courses and your projects." />
-
-  const enrolled = await getEnrollments(learner.email).catch(() => ({} as Record<string, string>))
-  const mine = (await listLmsCourses()).filter(c => c.slug in enrolled)
+  let mine: { slug: string; code: string }[] = []
+  if (learner) {
+    const enrolled = await getEnrollments(learner.email).catch(() => ({} as Record<string, string>))
+    mine = (await listLmsCourses()).filter(c => c.slug in enrolled).map(c => ({ slug: c.slug, code: c.code }))
+  }
 
   return (
     <main className="bg-white min-h-screen">
@@ -40,7 +41,7 @@ export default async function CommunityPage() {
         )}
 
         <div className="mt-10">
-          <Discussion scope={COMMUNITY_SCOPE} emptyText="No topics yet. Start the first one." />
+          <Discussion scope={COMMUNITY_SCOPE} signedIn={!!learner} emptyText="No topics yet. Start the first one." />
         </div>
       </div>
     </main>
