@@ -29,6 +29,11 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/work/:path*',
+        destination: '/portfolio/demos',
+        permanent: true,
+      },
+      {
         source: '/academy',
         destination: '/studio',
         permanent: true,

@@ -25,39 +25,6 @@ export const metadata: Metadata = {
 
 const demos: Demo[] = [
   {
-    title: 'Safar-e-Anbiya — Journey of the Prophets',
-    category: 'Flagship Product',
-    icon: Sparkles,
-    description: 'A cinematic, installable kids’ learning app we designed, built and shipped end-to-end: 25 interactive prophet journeys with bilingual neural narration, authentic Qur’an recitation, gamified progress, and a full Azure cloud backend.',
-    features: [
-      '25 interactive prophet journeys',
-      'Bilingual neural-voice narration (EN + UR)',
-      'Authentic Qur’an verses + recitation',
-      'Gamified progress, stars & badges',
-      'Installable PWA — works offline'
-    ],
-    technologies: ['Next.js 15', 'React 19', 'Azure SQL', 'Blob Storage', 'Azure Speech', 'PWA'],
-    detailUrl: '/work/safar-anbiya',
-    liveUrl: 'https://safar-anbiya.gennoor.com',
-    impact: 'Shipped end-to-end — live in production'
-  },
-  {
-    title: 'Nanhe Momin — Animated Seerah Series for Kids',
-    category: 'AI Media Production',
-    icon: Sparkles,
-    description: 'An animated children’s series produced end-to-end by one automated AI pipeline: a one-line theme goes in — screenplay, animation, natural Hindi-Urdu voices, lipsync and quality checks come out as a finished, source-cited episode.',
-    features: [
-      'One-line theme → finished episode',
-      'AI screenplay, animation & voices',
-      'Natural Hindi-Urdu dialogue',
-      'Authentic Seerah sources cited on screen',
-      'Automated lipsync & quality checks'
-    ],
-    technologies: ['AI video generation', 'Neural TTS', 'Lipsync', 'Automated QC', 'Hindi-Urdu'],
-    detailUrl: '/work/nanhe-momin',
-    impact: 'Episode 1 produced without a studio, cast or animators'
-  },
-  {
     title: 'Banking Document Intelligence Pipeline',
     category: 'Document Processing',
     icon: FileText,

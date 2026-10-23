@@ -9,8 +9,6 @@ import IntroVideo from '@/components/home/IntroVideo'
 import Metrics from '@/components/home/Metrics'
 import Testimonials from '@/components/home/Testimonials'
 import POCShowcase from '@/components/home/POCShowcase'
-import FeaturedBuild from '@/components/home/FeaturedBuild'
-import FeaturedNanheMomin from '@/components/home/FeaturedNanheMomin'
 import YouTubeVideos from '@/components/home/YouTubeVideos'
 import AIin45SecondsShorts from '@/components/home/AIin45SecondsShorts'
 import LatestBlog from '@/components/home/LatestBlog'
@@ -78,16 +76,6 @@ export default function HomePage() {
 
       <ScrollReveal>
         <CTASection />
-      </ScrollReveal>
-
-      {/* Flagship product we shipped end-to-end — anchored just below the CTA */}
-      <ScrollReveal>
-        <FeaturedBuild />
-      </ScrollReveal>
-
-      {/* Newest PoC — an animated series produced end-to-end by our AI pipeline */}
-      <ScrollReveal>
-        <FeaturedNanheMomin />
       </ScrollReveal>
     </>
   )
