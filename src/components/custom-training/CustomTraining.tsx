@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, FormEvent } from 'react'
 import { usePathname } from 'next/navigation'
-import { Loader2, Sparkles, X } from 'lucide-react'
+import { GraduationCap, Loader2, X } from 'lucide-react'
 
 /** Any button on the site can open the form with: window.dispatchEvent(new Event('open-custom-training')) */
 export const OPEN_EVENT = 'open-custom-training'
@@ -78,7 +78,7 @@ export default function CustomTraining() {
           className="fixed z-40 top-[calc(var(--portal-topbar-h)+8px)] lg:top-4 right-3 lg:right-5 inline-flex items-center gap-1.5 h-9 pl-3 pr-3.5 rounded-full text-[13px] font-medium text-gray-900 bg-white/90 backdrop-blur border border-[#d2d2d7] shadow-sm hover:border-primary-600 hover:text-primary-700 transition-colors"
           aria-label="Ask for custom training"
         >
-          <Sparkles className="w-3.5 h-3.5 text-primary-600" strokeWidth={2} />
+          <GraduationCap className="w-4 h-4 text-primary-600" strokeWidth={1.8} />
           Custom training
         </button>
       )}

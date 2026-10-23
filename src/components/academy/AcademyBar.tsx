@@ -20,7 +20,14 @@ export default function AcademyBar({ section }: { section: string }) {
               </span>
             </div>
           </div>
-          <Link href="/community" className="shrink-0 text-xs font-medium text-gray-600 hover:text-primary-700">Community</Link>
+          <nav aria-label="Learning Studio" className="shrink-0 inline-flex rounded-lg bg-white/70 p-0.5 text-xs font-semibold">
+            {[['Courses', '/studio', section !== 'Community'], ['Community', '/community', section === 'Community']].map(([label, href, on]) => (
+              <Link key={String(label)} href={String(href)} aria-current={on ? 'page' : undefined}
+                className={`px-3 py-1 rounded-md transition-colors ${on ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}>
+                {String(label)}
+              </Link>
+            ))}
+          </nav>
           <LearnerAccountMenu className="shrink-0" />
         </div>
       </div>
