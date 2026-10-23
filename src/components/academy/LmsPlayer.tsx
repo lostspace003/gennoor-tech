@@ -533,17 +533,18 @@ function LecturePane({
     }
   }, [hlsUrl, load, slug, lecture.id])
 
-  const save = useCallback(
-    (force = false) => {
-      const v = videoRef.current
-      if (!v || !v.duration) return
-      const now = Date.now()
-      if (!force && now - lastSave.current < SAVE_EVERY_MS) return
-      lastSave.current = now
-      onPosition(v.currentTime >= v.duration - 5 ? 0 : v.currentTime)
-    },
-    [onPosition],
-  )
+  // `onPosition` is a new function on every render of the parent. Keeping it in a ref keeps `save` stable:
+  // a changing `save` re-ran the page-hide effect below, whose cleanup saves again - an endless render loop.
+  const onPositionRef = useRef(onPosition)
+  onPositionRef.current = onPosition
+  const save = useCallback((force = false) => {
+    const v = videoRef.current
+    if (!v || !v.duration) return
+    const now = Date.now()
+    if (!force && now - lastSave.current < SAVE_EVERY_MS) return
+    lastSave.current = now
+    onPositionRef.current(v.currentTime >= v.duration - 5 ? 0 : v.currentTime)
+  }, [])
 
   // Closing the tab, switching apps or locking the phone: save where you are.
   useEffect(() => {

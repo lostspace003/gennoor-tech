@@ -9,10 +9,12 @@ import LearnerAuthModal from './LearnerAuthModal'
 export default function EnrollButton({
   slug,
   enrolled,
+  startLabel = 'Start the course',
   className = '',
 }: {
   slug: string
   enrolled: boolean
+  startLabel?: string
   className?: string
 }) {
   const router = useRouter()
@@ -36,7 +38,8 @@ export default function EnrollButton({
         return
       }
       if (!res.ok) throw new Error()
-      router.push(learnHref)
+      // Stay on the course page: it now shows where to start or resume.
+      router.refresh()
     } catch {
       setError('Could not enroll. Please try again.')
     } finally {
@@ -51,7 +54,7 @@ export default function EnrollButton({
         onClick={() => router.push(learnHref)}
         className={`inline-flex items-center justify-center gap-2 px-7 py-3 bg-primary-600 hover:bg-[#0077ed] text-white text-sm font-semibold rounded-full transition-colors ${className}`}
       >
-        <PlayCircle className="w-4 h-4" /> Continue learning
+        <PlayCircle className="w-4 h-4" /> {startLabel}
       </button>
     )
   }

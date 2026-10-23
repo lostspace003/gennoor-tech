@@ -3,7 +3,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Check } from 'lucide-react'
 import { verifyLearnerSession } from '@/lib/learner-auth'
-import { getLmsCourse, imageUrl, isEnrolled, promoUrl, toCard } from '@/lib/lms'
+import { getLmsCourse, getLmsProgress, imageUrl, isEnrolled, promoUrl, toCard, type LmsProgressEntry } from '@/lib/lms'
+import { resumePoint } from '@/lib/lms-resume'
+import ResumePanel from '@/components/academy/ResumePanel'
 import { kindOf, KIND_COLOR } from '@/lib/lms-kind'
 import AcademyBar from '@/components/academy/AcademyBar'
 import EnrollButton from '@/components/academy/EnrollButton'
@@ -40,6 +42,8 @@ export default async function LabsCoursePage({ params }: PageProps) {
 
   const learner = await verifyLearnerSession()
   const enrolled = learner ? await isEnrolled(learner.email, slug).catch(() => false) : false
+  const progress: Record<string, LmsProgressEntry> = learner && enrolled ? await getLmsProgress(learner.email, slug).catch(() => ({})) : {}
+  const point = enrolled ? resumePoint(course, progress) : null
   const totalItems = course.sections.reduce((n, s) => n + s.items.length, 0)
   const card = toCard(course)
   const promo = promoUrl(course)
@@ -73,10 +77,14 @@ export default async function LabsCoursePage({ params }: PageProps) {
                 {course.title}
               </h1>
               <p className="text-[18px] leading-[1.5] text-[#aab6c8] mt-5 max-w-xl">{course.subtitle}</p>
+              {point && point.kind !== 'start' ? (
+                <div className="mt-8"><ResumePanel slug={slug} point={point} dark /></div>
+              ) : (
               <div className="mt-8 flex flex-wrap items-center gap-4">
                 <EnrollButton slug={slug} enrolled={enrolled} />
                 {!learner && <p className="text-[13px] text-[#8d9bb0]">Free. You sign in once to start.</p>}
               </div>
+              )}
               <dl className="flex flex-wrap gap-x-8 gap-y-2 mt-8 text-[15px]">
                 {[
                   [course.stats.sections, 'modules'],
@@ -128,7 +136,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
 
           <section>
             <h2 className="font-heading text-[28px] font-bold tracking-[-0.02em] text-gray-900 mb-2">Curriculum</h2>
-            <p className="text-[#6e6e73] mb-6">{totalItems} items (lessons and quizzes) across {course.sections.length} modules. Open a module to see its lessons.</p>
+            <p className="text-[#6e6e73] mb-6">{totalItems} items (lessons and quizzes) across {course.sections.length} modules. {enrolled ? 'Pick any lesson to play it.' : 'Open a module to see its lessons.'}</p>
             <div className="border-t border-[#e8e8ed]">
               {course.sections.map((s, i) => (
                 <details key={i} className="group border-b border-[#e8e8ed]" open={i === Math.min(1, course.sections.length - 1)}>
@@ -142,9 +150,19 @@ export default async function LabsCoursePage({ params }: PageProps) {
                   </summary>
                   <ul className="pb-5 grid gap-px">
                     {s.items.map(it => (
-                      <li key={it.id} className="flex items-start gap-3 py-1.5 text-[14.5px] leading-snug text-[#424245]">
-                        <span className="w-1.5 h-4 rounded-[1px] mt-0.5 shrink-0" style={{ background: KIND_COLOR[kindOf(it)] }} />
-                        {it.title}
+                      <li key={it.id}>
+                        {enrolled ? (
+                          <Link href={`/studio/${slug}/learn?item=${it.id}`} className="flex items-start gap-3 py-1.5 text-[14.5px] leading-snug text-[#424245] hover:text-primary-600 transition-colors">
+                            <span className="w-1.5 h-4 rounded-[1px] mt-0.5 shrink-0" style={{ background: KIND_COLOR[kindOf(it)] }} />
+                            <span className="flex-1">{it.title}</span>
+                            {progress[it.id]?.done && <Check className="w-4 h-4 mt-0.5 shrink-0 text-emerald-600" strokeWidth={2.5} />}
+                          </Link>
+                        ) : (
+                          <span className="flex items-start gap-3 py-1.5 text-[14.5px] leading-snug text-[#424245]">
+                            <span className="w-1.5 h-4 rounded-[1px] mt-0.5 shrink-0" style={{ background: KIND_COLOR[kindOf(it)] }} />
+                            {it.title}
+                          </span>
+                        )}
                       </li>
                     ))}
                   </ul>

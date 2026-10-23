@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { ChevronRight, X, Search, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
+import { ChevronRight, X, Search, PanelLeftClose, PanelLeftOpen, MessageCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
   portalNav,
@@ -47,6 +47,31 @@ const ICON_IDLE = 'text-[#86868b]'
 const ICON_ACTIVE = 'text-primary-600'
 
 /** Tooltip shown beside collapsed-rail icons — explains what each icon is. */
+const WHATSAPP_URL =
+  'https://wa.me/919326352241?text=' +
+  encodeURIComponent('Hi Jalal, I visited gennoor.com and would like to talk about AI training and automation for my organization.')
+
+/** WhatsApp, always just above "Book a call". The label shows on hover or keyboard focus. */
+function WhatsAppLink({ compact }: { compact?: boolean }) {
+  return (
+    <a
+      href={WHATSAPP_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Connect to WhatsApp"
+      className={cn(
+        'group relative flex items-center justify-center rounded-full bg-[#25d366] hover:bg-[#1fb857] text-white shadow-sm hover:shadow-md transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25d366]',
+        compact ? 'w-9 h-9 mx-auto mb-2' : 'w-10 h-10',
+      )}
+    >
+      <MessageCircle className={compact ? 'w-[18px] h-[18px]' : 'w-5 h-5'} />
+      <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-2.5 py-1.5 rounded-lg bg-[#1d1d1f] text-white text-[11.5px] font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-150 z-[70] shadow-lg">
+        Connect to WhatsApp
+      </span>
+    </a>
+  )
+}
+
 function RailTip({ label }: { label: string }) {
   return (
     <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-2.5 py-1.5 rounded-lg bg-[#1d1d1f] text-white text-[11.5px] font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-[70] shadow-lg">
@@ -259,6 +284,7 @@ export default function PortalSidebar({
         <div className={cn('border-t border-[#e8e8ed]', showLabels ? 'p-4' : 'p-2')}>
           {showLabels ? (
             <div className="flex flex-col gap-2.5">
+              <WhatsAppLink />
               <Link
                 href="/resources/calendar"
                 className="flex items-center justify-center bg-primary-600 text-white text-[13px] font-semibold py-2.5 rounded-full hover:bg-[#0077ed] transition-colors"
@@ -268,6 +294,8 @@ export default function PortalSidebar({
               <p className="text-[11px] text-[#86868b] text-center">GCC · Africa · South Asia</p>
             </div>
           ) : (
+            <>
+            <WhatsAppLink compact />
             <Link
               href="/resources/calendar"
               className="group relative flex items-center justify-center w-9 h-9 mx-auto bg-primary-600 text-white rounded-full hover:bg-[#0077ed] transition-colors"
@@ -276,6 +304,7 @@ export default function PortalSidebar({
               <ChevronRight className="w-4 h-4" strokeWidth={2} />
               <RailTip label="Book a call" />
             </Link>
+            </>
           )}
         </div>
       </aside>
