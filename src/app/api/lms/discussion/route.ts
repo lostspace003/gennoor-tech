@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyLearnerSession } from '@/lib/learner-auth'
 import { getLmsCourse, isEnrolled } from '@/lib/lms'
-import { COMMUNITY_SCOPE, addPost, deletePost, getPostRaw, getThread, listThreads, toggleLike } from '@/lib/lms-community'
+import { COMMUNITY_SCOPE, addPost, castVote, deletePost, getPostRaw, getThread, listThreads, toggleLike, type PostKind } from '@/lib/lms-community'
+import { htmlToText, sanitizeHtml } from '@/lib/rich-text'
 import { rateLimit } from '@/lib/rate-limit'
 import { noStore } from '@/lib/lms-guard'
 
@@ -45,17 +46,34 @@ export async function POST(req: NextRequest) {
   const learner = g.learner!
   if (!rateLimit(`lms-post:${learner.email}`, 20, 30 * 60_000)) return NextResponse.json({ error: 'You are posting quickly. Please wait a few minutes.' }, { status: 429 })
 
-  const body = String(b.body ?? '').trim()
+  // Rich text arrives as HTML and is cleaned here; plain text (older clients) still works.
+  const html = b.html ? sanitizeHtml(String(b.html)) : ''
+  const body = (html ? htmlToText(html) : String(b.body ?? '')).trim().slice(0, 4000)
   const title = String(b.title ?? '').trim()
   const parentId = String(b.parentId ?? '')
-  if (!body) return NextResponse.json({ error: 'Write something first.' }, { status: 400 })
+  // Learners can write topics and polls; announcements and quizzes are the team's.
+  const kind: PostKind = !parentId && b.kind === 'poll' ? 'poll' : 'topic'
+  const options = kind === 'poll' && Array.isArray(b.options) ? b.options.map(String).map((o: string) => o.trim()).filter(Boolean) : []
+  if (!body && !(kind === 'poll' && options.length >= 2)) return NextResponse.json({ error: 'Write something first.' }, { status: 400 })
   if (!parentId && !title) return NextResponse.json({ error: 'Give your topic a title.' }, { status: 400 })
+  if (kind === 'poll' && options.length < 2) return NextResponse.json({ error: 'A poll needs at least two choices.' }, { status: 400 })
   if (parentId) {
     const parent = await getPostRaw(scope!, parentId)
     if (!parent || parent.parentId || parent.hidden) return NextResponse.json({ error: 'That topic is not available.' }, { status: 404 })
   }
-  const post = await addPost({ scope: scope!, parentId, title, body, email: learner.email, name: learner.name })
+  const post = await addPost({ scope: scope!, parentId, title, body, html, email: learner.email, name: learner.name, kind, options })
   return NextResponse.json({ post: { ...post, mine: true } }, { headers: noStore })
+}
+
+/** Answer a poll or a quiz. */
+export async function PATCH(req: NextRequest) {
+  const b = await req.json().catch(() => ({}))
+  const scope = typeof b.scope === 'string' ? b.scope : null
+  const g = await gate(scope, true)
+  if (g.error) return g.error
+  if (!rateLimit(`lms-vote:${g.learner!.email}`, 60, 10 * 60_000)) return NextResponse.json({ error: 'Slow down a little.' }, { status: 429 })
+  const r = await castVote(scope!, String(b.id ?? ''), g.learner!.email, Number(b.option))
+  return r.error ? NextResponse.json({ error: r.error }, { status: 400 }) : NextResponse.json({ results: r.results }, { headers: noStore })
 }
 
 /** Like or unlike a topic or a reply. */
