@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { isChromelessRoute } from '@/lib/chrome'
+import { isChromelessRoute, isLearnRoute } from '@/lib/chrome'
 import { usePathname } from 'next/navigation'
 
 interface CardField {
@@ -65,7 +65,7 @@ export default function GennoorCare() {
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [msgs, busy, showLead, showFeedback])
 
   // App surfaces (CRM, admin, chapter player) have their own copilot
-  if (isChromelessRoute(pathname)) return null
+  if (isChromelessRoute(pathname) && !isLearnRoute(pathname)) return null
 
   const saveName = (raw: string) => {
     const name = raw.trim().replace(/[^a-zA-Z .'-]/g, '').slice(0, 40)

@@ -1,196 +1,60 @@
 import type { MetadataRoute } from 'next'
 import { blogPostsMeta } from '@/data/blog-posts'
 import { courses } from '@/config/courses'
-import { caseStudies } from '@/data/case-studies'
 import { getAllPrograms } from '@/data/training-programs'
 import { getAllCertifications } from '@/data/certification-prep'
 import { allCoursePdfs } from '@/data/course-pdfs'
-import { courses as academyCourses } from '@/data/academy/courses'
-import { industries } from '@/data/industries'
-import { pocs } from '@/data/pocs'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://gennoor.com'
+  const page = (path: string, priority: number, changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'] = 'monthly', lastModified: Date = new Date()) => ({
+    url: `${baseUrl}${path}`,
+    lastModified,
+    changeFrequency,
+    priority,
+  })
 
   const staticPages: MetadataRoute.Sitemap = [
-    { url: baseUrl, lastModified: new Date(), changeFrequency: 'weekly', priority: 1.0 },
-    { url: `${baseUrl}/about`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${baseUrl}/about/company`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${baseUrl}/about/journey`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${baseUrl}/about/certifications`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${baseUrl}/about/founder`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${baseUrl}/about/team-and-delivery`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${baseUrl}/about/trust-and-security`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${baseUrl}/contact`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${baseUrl}/privacy`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${baseUrl}/terms`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${baseUrl}/the-gennoor-way`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${baseUrl}/sitemap-index`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.4 },
-
-    // Services
-    { url: `${baseUrl}/services`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${baseUrl}/services/ai-strategy`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${baseUrl}/services/training`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
-    { url: `${baseUrl}/services/poc-development`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${baseUrl}/services/agentic-ai`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${baseUrl}/services/certifications`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${baseUrl}/services/collaboration`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-
-    // Solutions hubs
-    { url: `${baseUrl}/solutions`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${baseUrl}/solutions/for-smb`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${baseUrl}/solutions/for-enterprise`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
-
-    // Location pages
-    { url: `${baseUrl}/services/ai-training-saudi-arabia`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${baseUrl}/services/ai-training-india`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${baseUrl}/services/ai-training-remote`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-
-    // Course landing pages
-    { url: `${baseUrl}/services/enterprise-ai-roadmap-workshop`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-
-    // Featured work
-
-    // Portfolio
-    { url: `${baseUrl}/portfolio`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${baseUrl}/portfolio/case-studies`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${baseUrl}/portfolio/demos`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${baseUrl}/portfolio/open-source`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${baseUrl}/portfolio/testimonials`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
-
-    // Resources
-    { url: `${baseUrl}/resources`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${baseUrl}/resources/blog`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
-    { url: `${baseUrl}/resources/videos`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
-    { url: `${baseUrl}/resources/calendar`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
-    { url: `${baseUrl}/resources/pocs`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${baseUrl}/resources/guides/agentic-ai`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${baseUrl}/resources/guides/ai-readiness-checklist`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${baseUrl}/resources/guides/enterprise-ai-training`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${baseUrl}/resources/guides/microsoft-copilot-studio`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-
-    // Industries hub
-    { url: `${baseUrl}/industries`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-
-    // Case studies root
-    { url: `${baseUrl}/case-studies`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-
-    // Certification guides
-    { url: `${baseUrl}/guides/ai-103-azure-ai-engineer`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${baseUrl}/guides/ai-102-azure-ai-engineer`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${baseUrl}/guides/pl-300-power-bi-analyst`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${baseUrl}/guides/ms-4004-copilot-365`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-
-    // Workshops
-    { url: `${baseUrl}/workshops`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${baseUrl}/workshops/claude-cowork`, lastModified: new Date('2026-05-10'), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${baseUrl}/claude-cowork`, lastModified: new Date('2026-05-10'), changeFrequency: 'monthly', priority: 0.7 },
-
-    // Tools & features
-    { url: `${baseUrl}/ai-readiness`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${baseUrl}/webinars`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
-    { url: `${baseUrl}/career-coach`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    page('', 1.0, 'weekly'),
+    page('/claude', 0.9),
+    page('/training', 0.9),
+    page('/automation', 0.9),
+    page('/studio', 0.9, 'weekly'),
+    page('/ai-academy', 0.8, 'weekly'),
+    page('/about', 0.8),
+    page('/about/founder', 0.6),
+    page('/about/certifications', 0.6),
+    page('/contact', 0.8),
+    page('/join', 0.5),
+    page('/services/training', 0.8, 'weekly'),
+    page('/services/certifications', 0.7),
+    page('/workshops', 0.6, 'weekly'),
+    page('/workshops/claude-cowork', 0.6, 'monthly', new Date('2026-05-10')),
+    page('/webinars', 0.5, 'weekly'),
+    page('/resources/blog', 0.6, 'daily'),
+    page('/guides/ai-103-azure-ai-engineer', 0.6),
+    page('/guides/ai-102-azure-ai-engineer', 0.5),
+    page('/guides/pl-300-power-bi-analyst', 0.5),
+    page('/guides/ms-4004-copilot-365', 0.5),
+    page('/privacy', 0.3, 'yearly'),
+    page('/terms', 0.3, 'yearly'),
+    page('/sitemap-index', 0.3, 'weekly'),
   ]
 
-  // AI Academy pages
-  const academyPages: MetadataRoute.Sitemap = [
-    { url: `${baseUrl}/ai-academy`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
-    { url: `${baseUrl}/studio`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
-    ...['ai-103', 'ai-500'].map(slug => ({ url: `${baseUrl}/studio/${slug}`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.8 })),
-  ]
+  // Learning Studio: video courses
+  const studioPages: MetadataRoute.Sitemap = ['ai-103', 'ai-500'].map(slug => page(`/studio/${slug}`, 0.8))
+
+  // AI Essentials: interactive courses and their chapters
+  const essentialsPages: MetadataRoute.Sitemap = []
   for (const course of courses) {
-    academyPages.push({
-      url: `${baseUrl}/ai-academy/${course.id}`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.9,
-    })
-    for (const chapter of course.chapters) {
-      academyPages.push({
-        url: `${baseUrl}/ai-academy/${course.id}/${chapter.slug}`,
-        lastModified: new Date(),
-        changeFrequency: 'monthly' as const,
-        priority: 0.7,
-      })
-    }
+    essentialsPages.push(page(`/ai-academy/${course.id}`, 0.7, 'weekly'))
+    for (const chapter of course.chapters) essentialsPages.push(page(`/ai-academy/${course.id}/${chapter.slug}`, 0.5))
   }
 
-  // Blog post pages
-  const blogPages: MetadataRoute.Sitemap = blogPostsMeta.map((post) => ({
-    url: `${baseUrl}/resources/blog/${post.slug}`,
-    lastModified: new Date(post.date),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  }))
+  const blogPages: MetadataRoute.Sitemap = blogPostsMeta.map(post => page(`/resources/blog/${post.slug}`, 0.5, 'monthly', new Date(post.date)))
+  const trainingPages: MetadataRoute.Sitemap = getAllPrograms().map(p => page(`/services/training/${p.slug}`, 0.6))
+  const curriculumPages: MetadataRoute.Sitemap = allCoursePdfs.map(c => page(`/services/training/curriculum/${c.slug}`, 0.6))
+  const certPages: MetadataRoute.Sitemap = getAllCertifications().map(c => page(`/services/certifications/${c.slug}`, 0.6))
 
-  // Case study pages
-  const caseStudyPages: MetadataRoute.Sitemap = caseStudies.map((cs) => ({
-    url: `${baseUrl}/portfolio/case-studies/${cs.id}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  }))
-
-  // Training program pages
-  const trainingPages: MetadataRoute.Sitemap = getAllPrograms().map((p) => ({
-    url: `${baseUrl}/services/training/${p.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  }))
-
-  // Certification prep pages
-  const certPages: MetadataRoute.Sitemap = getAllCertifications().map((c) => ({
-    url: `${baseUrl}/services/certifications/${c.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  }))
-
-  // Course curriculum pages (22 paid 2-day course PDFs)
-  const curriculumPages: MetadataRoute.Sitemap = allCoursePdfs.map((c) => ({
-    url: `${baseUrl}/services/training/curriculum/${c.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: 0.8,
-  }))
-
-  // New Academy structure pages
-  const newAcademyPages: MetadataRoute.Sitemap = [
-    ...academyCourses.map((c) => ({
-      url: `${baseUrl}/academy/courses/${c.slug}`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    })),
-  ]
-
-  // Industry detail pages
-  const industryPages: MetadataRoute.Sitemap = industries.map((i) => ({
-    url: `${baseUrl}/industries/${i.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  }))
-
-  // PoC catalog detail pages
-  const pocPages: MetadataRoute.Sitemap = pocs.map((p) => ({
-    url: `${baseUrl}/resources/pocs/${p.id}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  }))
-
-  return [
-    ...staticPages,
-    ...academyPages,
-    ...newAcademyPages,
-    ...blogPages,
-    ...caseStudyPages,
-    ...trainingPages,
-    ...certPages,
-    ...curriculumPages,
-    ...industryPages,
-    ...pocPages,
-  ]
+  return [...staticPages, ...studioPages, ...essentialsPages, ...blogPages, ...trainingPages, ...curriculumPages, ...certPages]
 }

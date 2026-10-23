@@ -70,9 +70,9 @@ export default function Footer() {
         {/* Newsletter — kept from the previous footer, restated quietly */}
         <div className="border-t border-[#d2d2d7] mt-9 pt-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
           <div className="flex-1">
-            <p className="text-xs font-semibold text-gray-900">Stay updated with AI insights</p>
+            <p className="text-xs font-semibold text-gray-900">Stay in touch</p>
             <p className="text-xs text-[#86868b] mt-0.5">
-              Monthly newsletter — enterprise AI trends, case studies, and exclusive content.
+              Occasional notes on AI training and automation.
             </p>
           </div>
           {subscribed ? (
@@ -104,17 +104,12 @@ export default function Footer() {
 
         <ClaudePartnerFooterLine />
 
-        {/* Credentials — one quiet line */}
-        <p className="text-[11px] text-[#86868b] text-center mt-8">
-          Senior delivery by Microsoft Certified Trainers · 16+ active certifications ·
-          stack-flexible (Azure, AWS, GCP, open-source) · programs delivered at Microsoft,
-          IBM, EY, Boeing, Saudi Aramco, HDFC Bank, Siemens, TCS
-        </p>
+        <p className="text-[11px] text-[#86868b] text-center mt-8">Gennoor Tech · Mumbai, India</p>
 
         {/* Bottom bar */}
         <div className="border-t border-[#d2d2d7] mt-4 pt-4 flex flex-wrap justify-between gap-3">
           <p className="text-xs text-[#86868b]">
-            © {currentYear} Gennoor Tech. Diagnose. Train. Innovate. Build. Sustain.
+            © {currentYear} Gennoor Tech. Mumbai, India.
           </p>
           <div className="flex flex-wrap items-center gap-4">
             <Link href="/crm" className="text-xs text-[#6e6e73] hover:underline">

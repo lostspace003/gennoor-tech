@@ -322,6 +322,8 @@ export interface LmsCourseCard {
   thumbnailUrl: string | null
   /** signed link to the promo, for the preview pop-up */
   promoUrl: string | null
+  /** average review rating and how many people rated, when any */
+  rating?: { average: number; count: number }
 }
 
 /** Catalog-card view of a course, with a signed link for its thumbnail. */

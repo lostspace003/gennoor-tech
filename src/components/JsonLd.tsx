@@ -5,12 +5,13 @@ export function OrganizationJsonLd() {
     name: 'Gennoor Tech',
     url: 'https://gennoor.com',
     logo: 'https://gennoor.com/media/logos/gennoor-tech-icon-white_180x180_apple-touch-icon.png',
-    description: 'Enterprise AI Training & Solutions. Expert-led training from strategy to implementation, drawing from 14+ years working with Fortune 500 companies across 6 countries.',
+    description: 'Gennoor Tech trains organizations to work with AI and Claude, and builds the automations they use. Certified in the Claude Partner Network. Based in Mumbai, India.',
+    address: { '@type': 'PostalAddress', addressLocality: 'Mumbai', addressCountry: 'IN' },
     founder: {
       '@type': 'Person',
       name: 'Jalal Ahmed Khan',
-      jobTitle: 'Microsoft Certified Trainer & Enterprise AI Consultant',
-      url: 'https://gennoor.com/about/journey',
+      jobTitle: 'Microsoft Certified Trainer',
+      url: 'https://gennoor.com/about',
       sameAs: [
         'https://www.linkedin.com/in/lostspace003/',
         'https://github.com/lostspace003',
@@ -18,7 +19,7 @@ export function OrganizationJsonLd() {
       ],
     },
     sameAs: [
-      'https://www.linkedin.com/in/lostspace003/',
+      'https://www.linkedin.com/company/gennoor-tech-private-limited/',
       'https://github.com/lostspace003',
       'https://www.youtube.com/@GennoorTech',
     ],
@@ -28,20 +29,12 @@ export function OrganizationJsonLd() {
       contactType: 'customer service',
       availableLanguage: ['English', 'Hindi', 'Urdu'],
     },
-    areaServed: [
-      { '@type': 'Country', name: 'India' },
-      { '@type': 'Country', name: 'Saudi Arabia' },
-      { '@type': 'Country', name: 'United Arab Emirates' },
-      { '@type': 'Country', name: 'United States' },
-    ],
     knowsAbout: [
-      'Artificial Intelligence',
+      'AI training',
+      'AI automation',
+      'Claude',
       'Microsoft Azure AI',
-      'Microsoft Copilot Studio',
-      'Enterprise AI Strategy',
-      'Agentic AI',
-      'Power Platform',
-      'AI Training',
+      'Learning platforms',
     ],
   }
 
@@ -58,22 +51,19 @@ export function PersonJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: 'Jalal Ahmed Khan',
-    jobTitle: 'Microsoft Certified Trainer & Enterprise AI Consultant',
-    url: 'https://gennoor.com/about/journey',
+    jobTitle: 'Microsoft Certified Trainer',
+    url: 'https://gennoor.com/about',
     worksFor: {
       '@type': 'Organization',
       name: 'Gennoor Tech',
       url: 'https://gennoor.com',
     },
-    description: '14+ years of experience in enterprise AI transformation. Microsoft Certified Trainer with 16 active certifications. Trained 50+ C-suite leaders across 6 countries including at Fortune 500 companies like Boeing, Saudi Aramco, HDFC Bank, and Siemens.',
+    description: 'Jalal Ahmed Khan runs Gennoor Tech in Mumbai, India: AI training for organizations, AI automation, and the Learning Studio courses.',
     knowsAbout: [
+      'AI training',
+      'AI automation',
+      'Claude',
       'Azure AI',
-      'Microsoft Copilot Studio',
-      'Agentic AI',
-      'Enterprise AI Strategy',
-      'Power Platform',
-      'LangChain',
-      'CrewAI',
     ],
     hasCredential: [
       { '@type': 'EducationalOccupationalCredential', name: 'Microsoft Certified Trainer (MCT)' },
@@ -101,7 +91,7 @@ export function WebSiteJsonLd() {
     '@type': 'WebSite',
     name: 'Gennoor Tech',
     url: 'https://gennoor.com',
-    description: 'Enterprise AI Training & Solutions',
+    description: 'AI training and automation, with Claude. Mumbai, India.',
     publisher: {
       '@type': 'Organization',
       name: 'Gennoor Tech',
@@ -128,12 +118,7 @@ export function ServiceJsonLd({ name, description, url }: { name: string; descri
       name: 'Gennoor Tech',
       url: 'https://gennoor.com',
     },
-    areaServed: [
-      { '@type': 'Country', name: 'India' },
-      { '@type': 'Country', name: 'Saudi Arabia' },
-      { '@type': 'Country', name: 'United Arab Emirates' },
-    ],
-    serviceType: 'AI Training and Consulting',
+    serviceType: 'AI training and automation',
   }
 
   return (
@@ -286,7 +271,7 @@ export function ArticleJsonLd({
     author: {
       '@type': 'Person',
       name: authorName,
-      url: 'https://gennoor.com/about/journey',
+      url: 'https://gennoor.com/about/founder',
     },
     publisher: {
       '@type': 'Organization',

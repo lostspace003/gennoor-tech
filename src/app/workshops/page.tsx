@@ -66,7 +66,6 @@ export default function WorkshopsPage() {
             </h1>
             <p className="text-lg sm:text-xl text-white/50 leading-relaxed max-w-2xl mx-auto">
               Free, hands-on live sessions on AI tools and workflows.
-              Watch demos, learn real-world applications, and level up — no matter your role.
             </p>
           </div>
         </div>

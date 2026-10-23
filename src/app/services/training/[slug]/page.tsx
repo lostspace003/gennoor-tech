@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
-    keywords: [program.title, `${program.title} training`, `${program.title} course`, program.technology, 'enterprise AI training', 'corporate training'],
+    keywords: [program.title, `${program.title} training`, `${program.title} course`, program.technology, 'AI training'],
     alternates: { canonical: `https://gennoor.com/services/training/${program.slug}` },
     openGraph: {
       title,
@@ -86,7 +86,7 @@ export default async function TrainingProgramPage({ params }: Props) {
       />
       <BreadcrumbJsonLd items={[
         { name: 'Home', url: 'https://gennoor.com' },
-        { name: 'Services', url: 'https://gennoor.com/services' },
+        { name: 'Training', url: 'https://gennoor.com/training' },
         { name: 'Training', url: 'https://gennoor.com/services/training' },
         { name: program.title, url: `https://gennoor.com/services/training/${program.slug}` },
       ]} />
@@ -270,17 +270,8 @@ export default async function TrainingProgramPage({ params }: Props) {
                     <CheckCircle className="w-5 h-5 text-primary-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">98% Satisfaction Rate</h3>
-                    <p className="text-sm text-gray-600">Consistently rated excellent by 2000+ professionals across Fortune 500 companies</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Globe className="w-5 h-5 text-primary-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900">Global Delivery</h3>
-                    <p className="text-sm text-gray-600">Training delivered across India, Saudi Arabia, UAE, East Africa, and Southeast Asia</p>
+                    <h3 className="font-semibold text-gray-900">Built around your team</h3>
+                    <p className="text-sm text-gray-600">We adapt the program to the work your people do and the tools they use</p>
                   </div>
                 </div>
               </div>

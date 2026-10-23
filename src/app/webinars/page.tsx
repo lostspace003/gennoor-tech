@@ -24,13 +24,11 @@ export default function WebinarsPage() {
     <main className="min-h-screen bg-white">
       {/* ===== Hero ===== */}
       <section className="px-8 pt-20 lg:pt-[100px] pb-12 text-center">
-        <div className="kicker mb-5">Resources · Webinars &amp; Workshops</div>
         <h1 className="text-[clamp(40px,4.8vw,64px)] leading-[1.06] tracking-[-0.03em] font-bold text-gray-900">
           Learn live.
         </h1>
         <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.45] text-[#6e6e73] max-w-[560px] mx-auto mt-5">
-          Free monthly webinars and hands-on workshops. Bring your questions —
-          recordings if you can&rsquo;t make it.
+          Free webinars and hands-on workshops, with recordings if you miss one.
         </p>
       </section>
 
@@ -137,9 +135,9 @@ export default function WebinarsPage() {
           </h2>
           <div className="bg-white border border-[#e8e8ed] rounded-2xl overflow-hidden">
             {[
-              { title: 'Free hands-on workshops', detail: 'Claude Cowork and more — run regularly across GCC, India, and East Africa.', href: '/workshops', cta: 'See workshops ›' },
-              { title: 'Training excerpts and walkthroughs', detail: 'Full sessions and deep dives on the video library.', href: '/resources/videos', cta: 'Watch videos ›' },
-              { title: 'The free Academy', detail: 'Self-paced courses for executives, functions, and engineers.', href: '/academy', cta: 'Browse the Academy ›' },
+              { title: 'Free hands-on workshops', detail: 'Claude Cowork and more — run regularly online.', href: '/workshops', cta: 'See workshops ›' },
+              { title: 'Training excerpts and walkthroughs', detail: 'Full video courses with labs, quizzes and certificates.', href: '/studio', cta: 'Open the Learning Studio ›' },
+              { title: 'AI Essentials', detail: 'Self-paced courses for executives, functions, and engineers.', href: '/ai-academy', cta: 'Browse AI Essentials ›' },
             ].map((row, i, arr) => (
               <div
                 key={row.title}

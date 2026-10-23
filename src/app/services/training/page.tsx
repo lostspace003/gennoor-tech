@@ -60,20 +60,19 @@ export default function TrainingPage() {
     <main className="min-h-screen">
       {/* ===== Hero ===== */}
       <section className="bg-white px-8 pt-20 lg:pt-[110px] pb-[72px] text-center">
-        <div className="kicker mb-5">Programs</div>
         <h1 className="text-[clamp(40px,4.8vw,64px)] leading-[1.06] tracking-[-0.03em] font-bold text-gray-900 max-w-[760px] mx-auto">
-          Training that sticks.
+          Programs we teach.
         </h1>
         <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.45] text-[#6e6e73] max-w-[620px] mx-auto mt-[22px]">
-          {bootcamps.length} bootcamps and {allCoursePdfs.length} instructor-led courses — executive
-          to engineer, delivered on your data, in your environment, in your region.
+          {bootcamps.length} bootcamps and {allCoursePdfs.length} instructor-led courses, from leaders to engineers.
+          Every program is adapted to your team and the work they do.
         </p>
         <div className="flex flex-col sm:flex-row gap-5 sm:gap-[22px] justify-center items-center mt-8">
           <Link href="/contact#book" className="pill-primary-sm">
             Plan a cohort
           </Link>
-          <Link href="/academy" className="text-[15px] font-medium text-primary-600 hover:text-[#0077ed]">
-            Free self-paced Academy ›
+          <Link href="/studio" className="text-[15px] font-medium text-primary-600 hover:text-[#0077ed]">
+            Learning Studio ›
           </Link>
         </div>
       </section>
@@ -184,15 +183,15 @@ export default function TrainingPage() {
             {[
               {
                 title: 'On-site',
-                body: 'Instructor in your office — GCC, Africa, and South Asia. Labs run in your tenant.',
+                body: 'An instructor at your office, with labs in your own environment.',
               },
               {
                 title: 'Live virtual',
-                body: 'Timezone-friendly cohorts with hands-on labs, recordings, and office hours.',
+                body: 'Live sessions online, with hands-on labs.',
               },
               {
                 title: 'Hybrid',
-                body: 'Executive sessions on-site, technical deep-dives online. One curriculum.',
+                body: 'Leadership sessions on site, technical sessions online. One curriculum.',
               },
             ].map(cell => (
               <div key={cell.title} className="bg-white px-7 py-8">
@@ -202,9 +201,9 @@ export default function TrainingPage() {
             ))}
           </div>
           <p className="text-center text-[13px] text-[#86868b] mt-6">
-            India, KSA, UAE, Tanzania, Kenya, Malaysia delivered to date.{' '}
-            <Link href="/contact#book" className="text-primary-600 font-medium hover:text-[#0077ed]">
-              Schedule international training ›
+            We are based in Mumbai, India.{' '}
+            <Link href="/contact" className="text-primary-600 font-medium hover:text-[#0077ed]">
+              Plan a session ›
             </Link>
           </p>
         </div>
@@ -216,8 +215,7 @@ export default function TrainingPage() {
           <div className="text-center mb-12">
             <h2 className="display-card mb-3">Certification exam preparation.</h2>
             <p className="text-[17px] text-[#6e6e73] max-w-[560px] mx-auto">
-              Trainer with 16+ active certifications across Microsoft, Google Cloud, AWS, and
-              GitHub. 98% student pass rate. 2,000+ students certified.
+              Preparation for Microsoft, Google Cloud, AWS and GitHub exams.
             </p>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -251,12 +249,12 @@ export default function TrainingPage() {
           <h2 className="display-card text-center mb-12">Questions, answered.</h2>
           <div className="border-t border-[#e8e8ed]">
             {[
-              { question: 'How does the 2-day curriculum work?', answer: 'Each curriculum is a paid, instructor-led 2-day (16-hour) course delivered on-site or virtual to your team. The PDF is the full curriculum document — outcomes, modules, topic breakdown — that you can review before booking. Customised to your industry, your data, your tools.' },
+              { question: 'How does the 2-day curriculum work?', answer: 'Each curriculum is an instructor-led 2-day (16-hour) course delivered on-site or virtual to your team. The PDF is the full curriculum document — outcomes, modules, topic breakdown — that you can review before booking. Customised to your industry, your data, your tools.' },
               { question: 'What\'s the difference between a 2-day curriculum and a longer bootcamp?', answer: '2-day curriculum courses are focused, single-topic intensives — one core skill mastered across 16 hours. Bootcamps are 3–10 day deep dives that combine multiple skills and include hands-on labs on your live environment. Most teams start with a 2-day course and scale up from there.' },
               { question: 'How are bootcamps customised?', answer: 'Every bootcamp is tailored to your industry, tech stack, and team skill level. We conduct a pre-training assessment to understand your goals and design the curriculum around your specific use cases and data.' },
               { question: 'What is the minimum batch size?', answer: 'Five participants minimum. Max 15–20 for personalised attention. For larger groups we run parallel batches.' },
-              { question: 'Do you include certification preparation?', answer: 'Yes, many bootcamps include cert prep for Microsoft, AWS, Google Cloud, GitHub exams. Trainer holds 16+ active certs with 98% student pass rate.' },
-              { question: 'Which industries do you serve?', answer: 'BFSI, insurance, healthcare, manufacturing, oil & gas, telecom, government, technology. Clients include Boeing, Saudi Aramco, HDFC Bank, Siemens, EY.' },
+              { question: 'Do you include certification preparation?', answer: 'Yes, many bootcamps include preparation for Microsoft, AWS, Google Cloud and GitHub exams.' },
+              { question: 'Can the training be built around our work?', answer: 'Yes. We start from what your people do every day and use your own examples wherever you allow it.' },
             ].map(faq => (
               <details key={faq.question} className="group border-b border-[#e8e8ed] py-5">
                 <summary className="relative cursor-pointer list-none pr-8 text-[16px] font-semibold text-gray-900">
@@ -273,19 +271,11 @@ export default function TrainingPage() {
       <section className="bg-[#f5f5f7] px-8 py-[90px] text-center">
         <h2 className="display-card">Not sure where to start?</h2>
         <p className="text-[18px] text-[#6e6e73] mt-3 mb-7 max-w-[480px] mx-auto">
-          The diagnostic maps your team&rsquo;s gaps to a training plan in one week.
+          Tell us what your team needs to be able to do. We will suggest a program and a format.
         </p>
-        <Link href="/ai-readiness" className="pill-primary-sm">
-          Run the diagnostic
+        <Link href="/contact" className="pill-primary-sm">
+          Talk to us
         </Link>
-        <p className="mt-6 text-sm">
-          <Link href="/contact#book" className="text-primary-600 font-medium hover:text-[#0077ed] mr-6">
-            Get training proposal ›
-          </Link>
-          <Link href="/resources/calendar" className="text-primary-600 font-medium hover:text-[#0077ed]">
-            View training calendar ›
-          </Link>
-        </p>
       </section>
     </main>
   )

@@ -24,6 +24,17 @@ import { formatIstCst } from '@/lib/format-time'
  * team.
  */
 
+// Each topic on the contact form is copied to the mailbox that handles it.
+function routeCc(service: unknown): string {
+  const sales = process.env.EMAIL_FROM_SALES || 'sales@gennoor.com'
+  const training = process.env.EMAIL_FROM_TRAINING || 'training@gennoor.com'
+  const support = process.env.EMAIL_FROM_SUPPORT || 'support@gennoor.com'
+  const s = String(service || '')
+  if (s === 'training') return training
+  if (s === 'learning-studio') return support
+  return sales
+}
+
 export async function POST(request: Request) {
   try {
     const ip = clientIp(request.headers)
@@ -80,8 +91,8 @@ export async function POST(request: Request) {
         </table>
         <p style="margin:16px 0 0;color:#475569;line-height:1.7;font-size:15px">
           In the meantime you're welcome to explore the
-          <a href="https://www.gennoor.com/resources" style="color:#2563EB;text-decoration:none">resources library</a>
-          or the free <a href="https://www.gennoor.com/academy" style="color:#2563EB;text-decoration:none">AI Academy</a>.
+          <a href="https://www.gennoor.com/resources/blog" style="color:#2563EB;text-decoration:none">resources library</a>
+          or the free <a href="https://www.gennoor.com/ai-academy" style="color:#2563EB;text-decoration:none">AI Essentials</a> courses.
         </p>`,
         { preheader: 'We received your message and will reply shortly.', senderEmail: fromAddress }
       ),
@@ -90,7 +101,7 @@ export async function POST(request: Request) {
     // ── Notification to the team ───────────────────────────────────────────
     await sendEmail({
       to: process.env.EMAIL_ADMIN || 'admin@gennoor.com',
-      cc: process.env.EMAIL_FROM_SALES || 'sales@gennoor.com',
+      cc: routeCc(service),
       from: fromAddress,
       fromName: 'Gennoor Tech Website',
       subject: `[CONTACT] ${name}${company ? ` — ${company}` : ''}${service ? ` · ${service}` : ''}`,

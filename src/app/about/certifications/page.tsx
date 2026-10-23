@@ -40,10 +40,10 @@ export default function CertificationsPage() {
               Credentials
             </div>
             <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-5 leading-tight tracking-tight">
-              Certifications & Credentials
+              Credentials
             </h1>
             <p className="text-base sm:text-lg text-gray-600 mb-8 leading-relaxed">
-              Continuously learning and staying ahead of the AI curve with industry-leading certifications
+              Certifications held by our trainer.
             </p>
 
             {/* Trainer Badges */}

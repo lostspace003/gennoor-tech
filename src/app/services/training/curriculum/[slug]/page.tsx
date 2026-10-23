@@ -244,10 +244,10 @@ export default async function CurriculumViewerPage({ params }: Props) {
                     Book a discovery call
                   </Link>
                   <Link
-                    href="/services"
+                    href="/training"
                     className="inline-flex items-center justify-center gap-2 px-5 py-2.5 border border-white/30 text-white text-sm font-semibold rounded-lg hover:bg-white/10 transition-colors"
                   >
-                    See full AI Enablement
+                    How we train organizations
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>

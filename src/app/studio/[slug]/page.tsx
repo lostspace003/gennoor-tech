@@ -11,6 +11,9 @@ import AcademyBar from '@/components/academy/AcademyBar'
 import EnrollButton from '@/components/academy/EnrollButton'
 import PromoPlayer from '@/components/academy/PromoPlayer'
 import CourseAbout from '@/components/academy/CourseAbout'
+import CourseReviews from '@/components/academy/CourseReviews'
+import { Stars } from '@/components/academy/Stars'
+import { getReviews } from '@/lib/lms-community'
 import { CourseStrip, StripLegend } from '@/components/academy/CourseStrip'
 import { BreadcrumbJsonLd } from '@/components/JsonLd'
 
@@ -50,6 +53,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
   const counts = { hours: card.hours, lecture: 0, lab: 0, demo: 0, quiz: 0 }
   for (const s of course.sections) for (const i of s.items) counts[kindOf(i)] += 1
   const badge = imageUrl(course, course.badge)
+  const { summary } = await getReviews(slug).catch(() => ({ summary: { average: 0, count: 0, counts: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } } }))
 
   return (
     <main className="bg-white">
@@ -77,6 +81,13 @@ export default async function LabsCoursePage({ params }: PageProps) {
                 {course.title}
               </h1>
               <p className="text-[18px] leading-[1.5] text-[#aab6c8] mt-5 max-w-xl">{course.subtitle}</p>
+              {summary.count > 0 && (
+                <a href="#reviews" className="mt-4 inline-flex items-center gap-2 text-[15px] text-white">
+                  <span className="font-semibold tabular-nums">{summary.average.toFixed(1)}</span>
+                  <Stars value={summary.average} size={16} />
+                  <span className="text-[#8d9bb0] underline-offset-2 hover:underline">({summary.count} {summary.count === 1 ? 'rating' : 'ratings'})</span>
+                </a>
+              )}
               {point && point.kind !== 'start' ? (
                 <div className="mt-8"><ResumePanel slug={slug} point={point} dark /></div>
               ) : (
@@ -181,6 +192,8 @@ export default async function LabsCoursePage({ params }: PageProps) {
               </div>
             )}
           </section>
+
+          <CourseReviews slug={slug} enrolled={enrolled} />
         </div>
 
         <aside className="lg:sticky lg:top-24 self-start space-y-10">
@@ -203,6 +216,12 @@ export default async function LabsCoursePage({ params }: PageProps) {
               {course.audience.map(r => <li key={r}>{r}</li>)}
             </ul>
           </div>
+          {enrolled && (
+            <Link href={`/studio/${slug}/discussion`} className="block rounded-2xl border border-[#e2e5ec] p-5 hover:border-primary-400 transition-colors">
+              <div className="font-heading font-semibold text-gray-900">Course discussion</div>
+              <div className="text-[14px] text-[#6e6e73] mt-1">Ask questions and talk with other learners and the team.</div>
+            </Link>
+          )}
           {course.instructor && <p className="text-[13.5px] text-[#6e6e73] px-1">Taught by Jalal Khan, {course.instructor}.</p>}
         </aside>
       </div>

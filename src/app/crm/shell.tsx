@@ -7,22 +7,23 @@ import { SessionProvider, useSession, signOut } from 'next-auth/react'
 import {
   LayoutGrid, Users, TrendingUp, Inbox, Calendar, FolderOpen,
   LogOut, RefreshCw, Menu, X, AlertCircle, Zap, UsersRound, MessageCircle,
-  PanelLeftClose, PanelLeftOpen,
+  PanelLeftClose, PanelLeftOpen, ChevronDown,
 } from 'lucide-react'
 import { CrmProvider, useCrm } from '@/components/crm/CrmContext'
 import CrmCopilot from '@/components/crm/CrmCopilot'
 
+// The four everyday screens are always shown; the rest sit under "More".
 const NAV = [
-  { href: '/crm/queue', label: 'Work Queue', icon: Zap },
-  { href: '/crm/dashboard', label: 'Dashboard', icon: LayoutGrid },
+  { href: '/crm/queue', label: 'Today', icon: Zap },
   { href: '/crm/leads', label: 'Leads', icon: Users },
   { href: '/crm/pipeline', label: 'Pipeline', icon: TrendingUp },
   { href: '/crm/inbox', label: 'Inbox', icon: Inbox },
-  { href: '/crm/scheduler', label: 'Scheduler', icon: Calendar },
-  { href: '/crm/documents', label: 'Sales Library', icon: FolderOpen },
-  { href: '/crm/team', label: 'Team', icon: UsersRound, managerOnly: true },
-  { href: '/crm/botlog', label: 'GennoorCare', icon: MessageCircle, managerOnly: true },
-] as Array<{ href: string; label: string; icon: any; managerOnly?: boolean }>
+  { href: '/crm/dashboard', label: 'Dashboard', icon: LayoutGrid, more: true },
+  { href: '/crm/scheduler', label: 'Scheduler', icon: Calendar, more: true },
+  { href: '/crm/documents', label: 'Sales Library', icon: FolderOpen, more: true },
+  { href: '/crm/team', label: 'Team', icon: UsersRound, managerOnly: true, more: true },
+  { href: '/crm/botlog', label: 'GennoorCare', icon: MessageCircle, managerOnly: true, more: true },
+] as Array<{ href: string; label: string; icon: any; managerOnly?: boolean; more?: boolean }>
 
 // Same idiom as the site rail: the hamburger collapses the sidebar to an icon
 // rail on desktop (choice remembered) and opens the drawer on mobile.
@@ -71,6 +72,7 @@ function Frame({ children }: { children: React.ReactNode }) {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
   const [inboxUnseen, setInboxUnseen] = useState(0)
+  const [moreOpen, setMoreOpen] = useState(false)
 
   useEffect(() => setDrawerOpen(false), [pathname])
 
@@ -128,7 +130,7 @@ function Frame({ children }: { children: React.ReactNode }) {
         />
       </Link>
       <nav className={`flex-1 py-2.5 overflow-y-auto overflow-x-visible ${rail ? 'px-1.5' : 'px-2.5'}`}>
-        {NAV.filter((item) => !item.managerOnly || isManager).map((item) => {
+        {NAV.filter((item) => (!item.managerOnly || isManager) && (rail || !item.more || moreOpen || pathname?.startsWith(item.href))).map((item) => {
           const isActive = pathname?.startsWith(item.href)
           const badge =
             item.href === '/crm/leads' ? leads.length :
@@ -167,6 +169,17 @@ function Frame({ children }: { children: React.ReactNode }) {
             </Link>
           )
         })}
+        {!rail && (
+          <button
+            type="button"
+            onClick={() => setMoreOpen((o) => !o)}
+            aria-expanded={moreOpen}
+            className="w-full flex items-center gap-2.5 px-3 py-2 mt-1 rounded-lg text-[13px] text-[#6e6e73] hover:bg-[#f5f5f7]"
+          >
+            <ChevronDown className={`w-4 h-4 transition-transform ${moreOpen ? 'rotate-180' : ''}`} strokeWidth={1.75} />
+            {moreOpen ? 'Less' : 'More'}
+          </button>
+        )}
       </nav>
       <div className={`border-t border-[#f0f0f2] ${rail ? 'px-1.5 py-3 space-y-2' : 'px-4 py-3.5'}`}>
         {rail ? (

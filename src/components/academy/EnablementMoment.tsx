@@ -39,7 +39,7 @@ export default function EnablementMoment({ course, relatedCourses }: EnablementM
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
             {/* Workshop for team */}
             <Link
-              href="/solutions/for-smb#s4"
+              href="/training"
               className="group rounded-2xl p-6 glass-card glow-border transition-all duration-300 flex flex-col"
             >
               <div className="w-12 h-12 rounded-xl bg-primary-600 flex items-center justify-center mb-4 shadow-lg shadow-primary-500/15">
@@ -63,7 +63,7 @@ export default function EnablementMoment({ course, relatedCourses }: EnablementM
 
             {/* Apply with pilot */}
             <Link
-              href="/solutions/for-smb#s3"
+              href="/training"
               className="group rounded-2xl p-6 glass-card glow-border transition-all duration-300 flex flex-col"
             >
               <div className="w-12 h-12 rounded-xl bg-amber-500 flex items-center justify-center mb-4 shadow-lg shadow-amber-500/15">

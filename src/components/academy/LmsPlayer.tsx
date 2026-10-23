@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
+import CourseChat from './CourseChat'
+import ReviewPrompt from './ReviewPrompt'
 import { useRouter } from 'next/navigation'
 import {
   Award, CheckCircle2, ChevronDown, ChevronRight, Download, FileText, ListVideo, Loader2, Maximize, Maximize2, Minimize, Minimize2,
@@ -180,7 +182,9 @@ export default function LmsPlayer({
   const resources = item.type === 'lecture' ? item.resources.filter(r => /\.pdf$/i.test(r.name) || /(lab files|student files)\.zip$/i.test(r.name)) : []
 
   return (
-    <div className="bg-[#eef0f4] min-h-[calc(100vh-4rem)]">
+    <div className="bg-[#eef0f4] min-h-screen">
+      <FullScreenHint />
+      <ReviewPrompt course={course} progress={progress} />
       <style>{`
         @keyframes lms-fade { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
         .lms-fade { animation: lms-fade .28s cubic-bezier(.2,.7,.2,1) both }
@@ -188,12 +192,15 @@ export default function LmsPlayer({
         @media (prefers-reduced-motion: reduce) { .lms-fade { animation: none } }
       `}</style>
       <div className="bg-[#0f1824] text-white px-4 sm:px-6 py-3 flex items-center gap-3 text-sm">
-        <Link href={`/studio/${course.slug}`} className="text-[#8d9bb0] hover:text-white shrink-0 transition-colors">
-          {course.code}
+        <Link href={`/studio/${course.slug}`} className="inline-flex items-center gap-1 text-[#c3cddc] hover:text-white shrink-0 transition-colors" aria-label={`Back to ${course.code}`}>
+          <span aria-hidden>‹</span> Back
         </Link>
         <span className="text-[#4b5a70]">/</span>
+        <span className="text-[#8d9bb0] shrink-0">{course.code}</span>
+        <span className="text-[#4b5a70]">/</span>
         <span className="truncate font-medium">{item.title}</span>
-        <span className="ml-auto text-[12px] text-[#8d9bb0] tabular-nums shrink-0 hidden sm:block">{pct}% complete</span>
+        <Link href={`/studio/${course.slug}/discussion`} className="ml-auto text-[13px] text-[#c3cddc] hover:text-white shrink-0 transition-colors">Discussion</Link>
+        <span className="text-[12px] text-[#8d9bb0] tabular-nums shrink-0 hidden sm:block">{pct}% complete</span>
       </div>
 
       <div className="max-w-[1500px] mx-auto flex flex-col lg:flex-row gap-6 p-4 sm:p-6">
@@ -223,6 +230,7 @@ export default function LmsPlayer({
               onNext={() => next && select(next.id)}
             />
           )}
+          <CourseChat slug={course.slug} itemId={item.id} />
         </div>
 
         <aside style={{ ['--sw' as string]: `${sideW}px` }} className="relative lg:w-[var(--sw)] lg:shrink-0 bg-white rounded-2xl border border-[#e2e5ec] overflow-hidden flex flex-col max-h-[80vh] lg:max-h-none lg:h-[calc(100vh-8.5rem)] lg:sticky lg:top-[5.5rem]">
@@ -803,6 +811,28 @@ function LecturePane({
 const ZOOMS = [50, 75, 100, 125, 150, 200, 300]
 
 /** Gennoor Tech certificate of completion, available once the whole course is done. */
+/** One-time note, the first time someone opens the lesson screen. */
+function FullScreenHint() {
+  const [show, setShow] = useState(false)
+  useEffect(() => {
+    try {
+      if (localStorage.getItem('gennoor.lms.f11')) return
+      if (window.innerHeight >= screen.height - 4) return
+      setShow(true)
+      localStorage.setItem('gennoor.lms.f11', '1')
+    } catch { /* storage blocked: skip the hint */ }
+    const t = setTimeout(() => setShow(false), 9000)
+    return () => clearTimeout(t)
+  }, [])
+  if (!show) return null
+  return (
+    <div role="status" className="fixed z-50 top-14 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-[#0f1824] text-white text-[13px] pl-4 pr-2 py-2 rounded-full shadow-lg border border-white/10">
+      Press <kbd className="px-1.5 py-0.5 rounded bg-white/15 text-[12px] font-semibold">F11</kbd> for full screen
+      <button type="button" onClick={() => setShow(false)} aria-label="Dismiss" className="w-6 h-6 rounded-full hover:bg-white/15 flex items-center justify-center">×</button>
+    </div>
+  )
+}
+
 function CertificateCard({ slug, dark = false }: { slug: string; dark?: boolean }) {
   const [cert, setCert] = useState<{ verifyUrl: string; pdfUrl: string } | null>(null)
   const [busy, setBusy] = useState(false)

@@ -2,13 +2,12 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import { blogPostsMeta } from '@/data/blog-posts'
 import { courses } from '@/config/courses'
-import { caseStudies } from '@/data/case-studies'
 import { getAllPrograms } from '@/data/training-programs'
 import { getAllCertifications } from '@/data/certification-prep'
 
 export const metadata: Metadata = {
   title: 'Sitemap | Gennoor Tech',
-  description: 'Complete index of every page on gennoor.com — services, training, certifications, case studies, blog posts, and AI Academy courses.',
+  description: 'Complete index of every page on gennoor.com — training, automation, certifications, blog posts, and AI Academy courses.',
   alternates: { canonical: 'https://gennoor.com/sitemap-index' },
 }
 
@@ -24,29 +23,22 @@ export default function SitemapIndexPage() {
       links: [
         { href: '/', label: 'Home' },
         { href: '/about', label: 'About' },
-        { href: '/about/company', label: 'About — Company' },
-        { href: '/about/journey', label: 'About — Journey' },
         { href: '/about/certifications', label: 'About — Certifications' },
         { href: '/about/founder', label: 'About — Founder' },
         { href: '/contact', label: 'Contact' },
+        { href: '/join', label: 'Work with us' },
         { href: '/privacy', label: 'Privacy Policy' },
         { href: '/terms', label: 'Terms of Service' },
       ],
     },
     {
-      heading: 'Services',
+      heading: 'What we do',
       links: [
-        { href: '/services', label: 'Services Overview' },
-        { href: '/services/ai-strategy', label: 'AI Strategy' },
-        { href: '/services/training', label: 'AI Training' },
-        { href: '/services/poc-development', label: 'PoC Development' },
-        { href: '/services/agentic-ai', label: 'Agentic AI' },
-        { href: '/services/certifications', label: 'Certifications Prep' },
-        { href: '/services/collaboration', label: 'Collaboration' },
-        { href: '/services/ai-training-saudi-arabia', label: 'AI Training — Saudi Arabia' },
-        { href: '/services/ai-training-india', label: 'AI Training — India' },
-        { href: '/services/ai-training-remote', label: 'AI Training — Remote' },
-        { href: '/services/enterprise-ai-roadmap-workshop', label: 'Enterprise AI Roadmap Workshop' },
+        { href: '/claude', label: 'Claude' },
+        { href: '/training', label: 'Training' },
+        { href: '/automation', label: 'Automation' },
+        { href: '/services/training', label: 'Training catalog' },
+        { href: '/services/certifications', label: 'Certification prep' },
       ],
     },
     {
@@ -68,33 +60,13 @@ export default function SitemapIndexPage() {
       links: [
         { href: '/workshops', label: 'Workshops Overview' },
         { href: '/workshops/claude-cowork', label: 'Claude Cowork — Workshop' },
-        { href: '/claude-cowork', label: 'Claude Cowork — Landing' },
-      ],
-    },
-    {
-      heading: 'Portfolio',
-      links: [
-        { href: '/portfolio', label: 'Portfolio Overview' },
-        { href: '/portfolio/case-studies', label: 'Case Studies' },
-        { href: '/portfolio/demos', label: 'Demos' },
-        { href: '/portfolio/open-source', label: 'Open Source' },
-        { href: '/portfolio/testimonials', label: 'Testimonials' },
-        ...caseStudies.map((cs) => ({
-          href: `/portfolio/case-studies/${cs.id}`,
-          label: `Case Study — ${cs.title}`,
-        })),
       ],
     },
     {
       heading: 'Resources',
       links: [
         { href: '/resources/blog', label: 'Blog' },
-        { href: '/resources/videos', label: 'Videos' },
         { href: '/resources/calendar', label: 'Calendar / Book a Call' },
-        { href: '/resources/guides/agentic-ai', label: 'Guide — Agentic AI' },
-        { href: '/resources/guides/ai-readiness-checklist', label: 'Guide — AI Readiness Checklist' },
-        { href: '/resources/guides/enterprise-ai-training', label: 'Guide — Enterprise AI Training' },
-        { href: '/resources/guides/microsoft-copilot-studio', label: 'Guide — Microsoft Copilot Studio' },
       ],
     },
     {

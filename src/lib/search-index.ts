@@ -61,17 +61,36 @@ interface PageMeta {
 const PAGE_META: Record<string, PageMeta> = {
   '/': {
     title: 'Home',
-    description: 'Enterprise AI training, consulting and delivery',
+    description: 'AI training and automation, Mumbai, India',
     category: 'Resources',
     keywords: ['home', 'gennoor', 'start', 'main', 'landing'],
+  },
+
+  '/claude': {
+    title: 'Claude',
+    description: 'Claude Partner Network, Claude training and automation',
+    category: 'Services',
+    keywords: ['claude', 'anthropic', 'partner network', 'cowork', 'claude code'],
+  },
+  '/training': {
+    title: 'Training',
+    description: 'Training for organizations',
+    category: 'Services',
+    keywords: ['training', 'teams', 'organization', 'smb', 'custom course'],
+  },
+  '/automation': {
+    title: 'Automation',
+    description: 'Automation built one process at a time',
+    category: 'Services',
+    keywords: ['automation', 'workflow', 'process', 'build', 'agents'],
   },
 
   // ---- Programs -----------------------------------------------------------
   '/services/training': {
     title: 'Training Programs',
-    description: 'Corporate AI training courses & bootcamps',
+    description: 'Training course catalog',
     category: 'Programs',
-    keywords: ['corporate training', 'bootcamp', 'workshop', 'learn', 'upskill', 'course catalog', 'AI training'],
+    keywords: ['bootcamp', 'workshop', 'learn', 'upskill', 'course catalog', 'AI training'],
   },
   '/services/training#catalog': {
     title: 'Course Curriculum',
@@ -79,36 +98,11 @@ const PAGE_META: Record<string, PageMeta> = {
     category: 'Programs',
     keywords: ['curriculum', 'catalog', 'catalogue', 'syllabus', 'modules', 'courses', 'outline'],
   },
-  '/services/enterprise-ai-roadmap-workshop': {
-    description: 'Strategic AI planning workshop',
-    category: 'Programs',
-    keywords: ['strategy', 'roadmap', 'planning', 'executive', 'C-suite', 'transformation', 'digital'],
-  },
   '/services/certifications': {
     title: 'Certifications',
     description: 'Microsoft certification prep courses',
     category: 'Programs',
     keywords: ['exam', 'cert', 'microsoft certified', 'badge', 'credential', 'prep', 'study', 'AZ', 'AI', 'PL', 'SC', 'DP'],
-  },
-  '/services/training-rollout': {
-    description: 'How a training rollout runs end to end',
-    category: 'Programs',
-    keywords: ['rollout', 'delivery', 'onboarding', 'implementation', 'programme', 'schedule'],
-  },
-  '/services/ai-training-india': {
-    description: 'AI training delivery in India',
-    category: 'Programs',
-    keywords: ['india', 'bangalore', 'mumbai', 'delhi', 'onsite', 'training', 'region'],
-  },
-  '/services/ai-training-saudi-arabia': {
-    description: 'AI training delivery in Saudi Arabia',
-    category: 'Programs',
-    keywords: ['saudi', 'ksa', 'riyadh', 'jeddah', 'gulf', 'onsite', 'training', 'region'],
-  },
-  '/services/ai-training-remote': {
-    description: 'Remote and virtual AI training delivery',
-    category: 'Programs',
-    keywords: ['remote', 'virtual', 'online', 'live online', 'distributed', 'training'],
   },
   '/workshops/claude-cowork': {
     title: 'Claude for Productivity',
@@ -118,80 +112,10 @@ const PAGE_META: Record<string, PageMeta> = {
   },
 
   // ---- Services -----------------------------------------------------------
-  '/services': {
-    title: 'Services',
-    description: 'Everything Gennoor delivers, in one place',
-    category: 'Services',
-    keywords: ['services', 'offerings', 'what we do', 'capabilities'],
-  },
-  '/services/ai-strategy': {
-    title: 'AI Strategy & Consulting',
-    description: 'Enterprise AI roadmaps & governance frameworks',
-    category: 'Services',
-    keywords: ['consulting', 'strategy', 'governance', 'ROI', 'advisory', 'digital transformation', 'enterprise'],
-  },
-  '/services/poc-development': {
-    title: 'PoC Development',
-    description: 'Production-ready AI prototypes & demos',
-    category: 'Services',
-    keywords: ['prototype', 'proof of concept', 'demo', 'MVP', 'build', 'development', 'document intelligence', 'chatbot'],
-  },
-  '/services/agentic-ai': {
-    title: 'Agentic AI Solutions',
-    description: 'Multi-agent orchestration with LangChain & CrewAI',
-    category: 'Services',
-    keywords: ['agent', 'langchain', 'crewai', 'autogen', 'orchestration', 'multi-agent', 'autonomous', 'LLM'],
-  },
-  '/services/collaboration': {
-    title: 'Collaboration',
-    description: 'Partnership and collaboration opportunities',
-    category: 'Services',
-    keywords: ['partner', 'collaborate', 'joint venture', 'work together', 'alliance'],
-  },
-  '/the-gennoor-way': {
-    title: 'The Gennoor Way',
-    description: 'How we work — our delivery method and principles',
-    category: 'Services',
-    keywords: ['method', 'approach', 'process', 'how we work', 'principles', 'philosophy', 'delivery'],
-  },
-  '/industries': {
-    description: 'AI work by industry and sector',
-    category: 'Services',
-    keywords: ['industry', 'sector', 'vertical', 'banking', 'healthcare', 'retail', 'government'],
-  },
-  '/functions': {
-    description: 'AI use cases by business function',
-    category: 'Services',
-    keywords: ['function', 'department', 'HR', 'finance', 'marketing', 'operations', 'use case'],
-  },
 
   // ---- Solutions ----------------------------------------------------------
-  '/solutions': {
-    title: 'Solutions',
-    description: 'Packaged AI solutions by organisation size',
-    category: 'Solutions',
-    keywords: ['solutions', 'packages', 'offerings'],
-  },
-  '/solutions/for-smb': {
-    title: 'For SMB',
-    description: 'AI solutions for small and mid-size businesses',
-    category: 'Solutions',
-    keywords: ['SMB', 'small business', 'startup', 'mid-market', 'affordable', 'SME'],
-  },
-  '/solutions/for-enterprise': {
-    title: 'For Enterprise',
-    description: 'AI solutions for large enterprises',
-    category: 'Solutions',
-    keywords: ['enterprise', 'large', 'corporate', 'scale', 'governance', 'compliance'],
-  },
 
   // ---- Resources ----------------------------------------------------------
-  '/resources': {
-    title: 'Resources',
-    description: 'Blog, videos, webinars, workshops, PoCs and assessments',
-    category: 'Resources',
-    keywords: ['resources', 'hub', 'library', 'learn', 'materials', 'index'],
-  },
   '/studio': {
     title: 'Learning Studio',
     description: 'Certification and project courses, taught hands-on with labs and quizzes',
@@ -216,12 +140,6 @@ const PAGE_META: Record<string, PageMeta> = {
     category: 'Resources',
     keywords: ['article', 'post', 'tutorial', 'insights', 'news', 'write-up', 'thought leadership'],
   },
-  '/resources/videos': {
-    title: 'Videos',
-    description: 'Training videos & tutorials',
-    category: 'Resources',
-    keywords: ['video', 'youtube', 'tutorial', 'watch', 'recording', 'demo'],
-  },
   '/webinars': {
     title: 'Webinars',
     description: 'Live and recorded webinar sessions',
@@ -234,29 +152,11 @@ const PAGE_META: Record<string, PageMeta> = {
     category: 'Resources',
     keywords: ['workshop', 'hands-on', 'live', 'free session', 'claude cowork', 'bootcamp'],
   },
-  '/resources/pocs': {
-    title: 'PoC Catalog',
-    description: 'Browse proof-of-concept builds you can commission',
-    category: 'Resources',
-    keywords: ['PoC', 'proof of concept', 'catalog', 'catalogue', 'prototype', 'demo', 'builds'],
-  },
   '/ai-readiness': {
     title: 'AI Readiness Assessment',
     description: "Check your organisation's AI readiness",
     category: 'Resources',
     keywords: ['assessment', 'readiness', 'quiz', 'score', 'evaluate', 'maturity', 'checklist'],
-  },
-  '/resources/calculators/ai-roi': {
-    title: 'AI ROI Calculator',
-    description: 'Estimate the return on an AI investment',
-    category: 'Resources',
-    keywords: ['ROI', 'calculator', 'cost', 'savings', 'business case', 'payback', 'estimate'],
-  },
-  '/resources/calculators/copilot-licensing': {
-    title: 'Copilot Licensing Calculator',
-    description: 'Work out Microsoft Copilot licensing costs',
-    category: 'Resources',
-    keywords: ['copilot', 'licensing', 'license', 'cost', 'calculator', 'M365', 'pricing', 'seats'],
   },
   '/resources/calendar': {
     title: 'Book a Discovery Call',
@@ -290,61 +190,13 @@ const PAGE_META: Record<string, PageMeta> = {
     category: 'Guides',
     keywords: ['PL-300', 'power BI', 'analyst', 'data visualization', 'exam guide'],
   },
-  '/resources/guides/agentic-ai': {
-    title: 'Agentic AI Guide',
-    description: 'Complete guide to agentic AI systems',
-    category: 'Guides',
-    keywords: ['agentic', 'agent', 'autonomous AI', 'guide', 'multi-agent'],
-  },
-  '/resources/guides/enterprise-ai-training': {
-    title: 'Enterprise AI Training Guide',
-    description: 'Guide to corporate AI training programs',
-    category: 'Guides',
-    keywords: ['enterprise', 'corporate training', 'guide', 'L&D', 'upskilling'],
-  },
-  '/resources/guides/microsoft-copilot-studio': {
-    title: 'Microsoft Copilot Studio Guide',
-    description: 'Guide to building with Copilot Studio',
-    category: 'Guides',
-    keywords: ['copilot studio', 'microsoft', 'guide', 'chatbot', 'virtual agent'],
-  },
-  '/resources/guides/ai-readiness-checklist': {
-    title: 'AI Readiness Checklist',
-    description: 'A practical checklist before you start an AI programme',
-    category: 'Guides',
-    keywords: ['checklist', 'readiness', 'guide', 'prepare', 'assessment', 'before you start'],
-  },
 
   // ---- About --------------------------------------------------------------
   '/about': {
     title: 'About',
-    description: 'About Gennoor Tech and the team',
+    description: 'About Gennoor Tech',
     category: 'About',
     keywords: ['about', 'company', 'who we are'],
-  },
-  '/about/journey': {
-    title: 'My Journey',
-    description: '14+ years in enterprise AI across 6 countries',
-    category: 'About',
-    keywords: ['about', 'jalal', 'journey', 'experience', 'background', 'bio', 'who'],
-  },
-  '/about/company': {
-    title: 'Gennoor Tech',
-    description: 'About the company and mission',
-    category: 'About',
-    keywords: ['company', 'about us', 'mission', 'vision', 'gennoor'],
-  },
-  '/about/team-and-delivery': {
-    title: 'Team & Delivery',
-    description: 'Who delivers the work and how the team is structured',
-    category: 'About',
-    keywords: ['team', 'delivery', 'people', 'consultants', 'capacity', 'structure'],
-  },
-  '/about/trust-and-security': {
-    title: 'Trust & Security',
-    description: 'Security posture, data handling and compliance',
-    category: 'About',
-    keywords: ['trust', 'security', 'compliance', 'GDPR', 'data protection', 'privacy', 'ISO'],
   },
   '/about/certifications': {
     title: 'Professional Certifications',
@@ -356,47 +208,6 @@ const PAGE_META: Record<string, PageMeta> = {
     description: 'About the founder',
     category: 'About',
     keywords: ['founder', 'jalal', 'owner', 'leadership', 'bio'],
-  },
-  '/about/story': {
-    description: 'The Gennoor story',
-    category: 'About',
-    keywords: ['story', 'history', 'origin', 'background', 'why'],
-  },
-  '/portfolio/case-studies': {
-    title: 'Case Studies',
-    description: 'Client success stories & outcomes',
-    category: 'About',
-    keywords: ['case study', 'success story', 'client', 'results', 'outcome', 'portfolio'],
-  },
-  '/portfolio/testimonials': {
-    title: 'Client Testimonials',
-    description: 'What clients say about our work',
-    category: 'About',
-    keywords: ['testimonial', 'review', 'feedback', 'client says', 'recommendation'],
-  },
-  '/portfolio/open-source': {
-    title: 'Open Source',
-    description: 'Community contributions & projects',
-    category: 'About',
-    keywords: ['open source', 'github', 'contribution', 'community', 'projects'],
-  },
-  '/portfolio/demos': {
-    title: 'Demos',
-    description: 'Interactive product and build demos',
-    category: 'About',
-    keywords: ['demo', 'interactive', 'try', 'showcase', 'sandbox'],
-  },
-  '/portfolio': {
-    title: 'Portfolio',
-    description: 'Case studies, demos and open-source work',
-    category: 'About',
-    keywords: ['portfolio', 'work', 'projects', 'showcase'],
-  },
-  '/case-studies': {
-    title: 'Case Studies',
-    description: 'Client success stories & outcomes',
-    category: 'About',
-    keywords: ['case study', 'success story', 'client', 'results'],
   },
 
   // ---- Contact / legal ----------------------------------------------------
@@ -426,35 +237,14 @@ const PAGE_META: Record<string, PageMeta> = {
  */
 const STANDALONE_ROUTES = [
   '/',
-  '/services',
-  '/services/training-rollout',
-  '/services/ai-training-india',
-  '/services/ai-training-saudi-arabia',
-  '/services/ai-training-remote',
-  '/solutions',
-  '/industries',
-  '/functions',
-  '/resources',
   '/academy/dashboard',
   '/workshops/claude-cowork',
-  '/resources/calculators/ai-roi',
-  '/resources/calculators/copilot-licensing',
   '/guides/ai-103-azure-ai-engineer',
   '/guides/ai-102-azure-ai-engineer',
   '/guides/ms-4004-copilot-365',
   '/guides/pl-300-power-bi-analyst',
-  '/resources/guides/agentic-ai',
-  '/resources/guides/enterprise-ai-training',
-  '/resources/guides/microsoft-copilot-studio',
-  '/resources/guides/ai-readiness-checklist',
   '/about',
   '/about/founder',
-  '/about/story',
-  '/portfolio',
-  '/portfolio/case-studies',
-  '/portfolio/testimonials',
-  '/portfolio/open-source',
-  '/portfolio/demos',
   '/privacy',
   '/terms',
 ]

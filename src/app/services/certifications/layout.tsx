@@ -31,7 +31,7 @@ export default function CertificationsLayout({ children }: { children: React.Rea
       />
       <BreadcrumbJsonLd items={[
         { name: 'Home', url: 'https://gennoor.com' },
-        { name: 'Services', url: 'https://gennoor.com/services' },
+        { name: 'Training', url: 'https://gennoor.com/training' },
         { name: 'Certifications', url: 'https://gennoor.com/services/certifications' },
       ]} />
       <FAQJsonLd faqs={certFaqs} />
