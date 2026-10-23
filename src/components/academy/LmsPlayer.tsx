@@ -436,6 +436,8 @@ function LecturePane({
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const [src, setSrc] = useState<string | null>(null)
+  const [hlsUrl, setHlsUrl] = useState<string | null>(null)
+  const hlsRetries = useRef(0)
   const [captionUrl, setCaptionUrl] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [playing, setPlaying] = useState(false)
@@ -463,8 +465,10 @@ function LecturePane({
     const d = await res.json()
     setError('')
     setCaptionUrl(d.captionUrl)
-    setSrc(d.videoUrl)
-    return d.expiresInSec as number
+    // Protected courses stream encrypted HLS; older ones still use a signed MP4 link.
+    setHlsUrl(d.hlsUrl ?? null)
+    setSrc(d.hlsUrl ? null : d.videoUrl)
+    return d.hlsUrl ? null : (d.expiresInSec as number)
   }, [slug, lecture.id])
 
   useEffect(() => {
@@ -484,6 +488,50 @@ function LecturePane({
     cycle()
     return () => clearTimeout(timer)
   }, [load])
+
+  // Encrypted HLS: hls.js everywhere it works, the browser's own player where it does not (older iPhones).
+  useEffect(() => {
+    if (!hlsUrl) return
+    let hls: { destroy: () => void; recoverMediaError: () => void } | null = null
+    let cancelled = false
+    ;(async () => {
+      const v = videoRef.current
+      if (!v) return
+      const { default: Hls } = await import('hls.js')
+      if (cancelled) return
+      if (Hls.isSupported()) {
+        const h = new Hls({ maxBufferLength: 40, enableWorker: true })
+        hls = h
+        h.on(Hls.Events.ERROR, (_e, data) => {
+          if (!data.fatal) return
+          if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+            h.recoverMediaError()
+            return
+          }
+          // Links expired or the connection dropped: ask for fresh ones and carry on from the same second.
+          if (hlsRetries.current < 3) {
+            hlsRetries.current += 1
+            resumeAt.current = videoRef.current?.currentTime ?? 0
+            wasPlaying.current = !(videoRef.current?.paused ?? false)
+            load()
+          } else setError('The video could not be loaded. Check your connection and refresh the page.')
+        })
+        h.on(Hls.Events.MANIFEST_PARSED, () => { hlsRetries.current = 0 })
+        h.loadSource(hlsUrl)
+        h.attachMedia(v)
+      } else if (v.canPlayType('application/vnd.apple.mpegurl')) {
+        // The browser's own HLS player may fetch the playlist more than once: ask for a link that allows it.
+        const r = await fetch(`/api/lms/play?slug=${slug}&item=${lecture.id}&native=1`, { cache: 'no-store' })
+        v.src = r.ok ? (await r.json()).hlsUrl : hlsUrl
+      } else {
+        setError('This browser cannot play the course video. Please use a recent Chrome, Edge, Safari or Firefox.')
+      }
+    })()
+    return () => {
+      cancelled = true
+      hls?.destroy()
+    }
+  }, [hlsUrl, load, slug, lecture.id])
 
   const save = useCallback(
     (force = false) => {
@@ -555,7 +603,7 @@ function LecturePane({
     apply()
     v.textTracks.addEventListener('addtrack', apply)
     return () => v.textTracks.removeEventListener('addtrack', apply)
-  }, [cc, captionUrl, src])
+  }, [cc, captionUrl, src, hlsUrl])
 
   const toggleFull = () => {
     if (document.fullscreenElement) document.exitFullscreen()
@@ -608,10 +656,10 @@ function LecturePane({
         className="gnr-stage relative bg-black rounded-2xl overflow-hidden aspect-video select-none outline-none focus-visible:ring-2 focus-visible:ring-primary-600"
         style={{ cursor: showUi || !playing ? 'default' : 'none' }}
       >
-        {src && (
+        {(src || hlsUrl) && (
           <video
             ref={videoRef}
-            src={src}
+            src={hlsUrl ? undefined : (src ?? undefined)}
             autoPlay
             playsInline
             preload="auto"
@@ -648,7 +696,7 @@ function LecturePane({
               if (!done && v.duration && v.currentTime / v.duration > 0.9) onDone()
             }}
             onEnded={() => { setEnded(true); onDone(); onPosition(0) }}
-            onError={() => setError('The video stopped loading. Refreshing the link…')}
+            onError={() => { if (!hlsUrl) setError('The video stopped loading. Refreshing the link…') }}
           >
             {captionUrl && <track kind="captions" src={captionUrl} srcLang="en" label="English" default />}
           </video>
@@ -662,14 +710,14 @@ function LecturePane({
           {email}
         </div>
 
-        {(!src || buffering) && !error && (
+        {(!(src || hlsUrl) || buffering) && !error && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none"><Loader2 className="w-9 h-9 animate-spin text-white/80" /></div>
         )}
         {error && (
           <div className="absolute inset-0 flex items-center justify-center text-white/80 text-sm px-8 text-center bg-black/60">{error}</div>
         )}
 
-        {src && !playing && !buffering && !error && !ended && (
+        {(src || hlsUrl) && !playing && !buffering && !error && !ended && (
           <button type="button" onClick={toggle} aria-label="Play" className="absolute inset-0 m-auto w-20 h-20 rounded-full bg-white/15 backdrop-blur flex items-center justify-center hover:bg-white/25 hover:scale-105 transition duration-200">
             <Play className="w-9 h-9 text-white fill-white ml-1" />
           </button>

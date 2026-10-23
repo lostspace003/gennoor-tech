@@ -70,6 +70,10 @@ export interface LmsCourse {
   domains?: string[]
   /** blob in the course container, shown on cards and as the video poster */
   thumbnail?: string
+  /** true when the lectures are encrypted HLS (no plain MP4 is ever linked) */
+  protected?: boolean
+  /** number of files in the imported Learning Studio package (for copy progress) */
+  packageFiles?: number
   /** promo video blob in the course container; autoplays on the course page */
   promo?: string
   /** certification badge image, shown on the course page */
@@ -172,6 +176,10 @@ export function isLabFilesZip(name: string): boolean {
 }
 
 // ---------------------------------------------------------------- storage
+
+export function getStorage() {
+  return parseConnection()
+}
 
 function parseConnection() {
   const conn = process.env.LMS_STORAGE_CONNECTION_STRING || process.env.AZURE_STORAGE_CONNECTION_STRING

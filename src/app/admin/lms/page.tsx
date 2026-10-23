@@ -11,6 +11,7 @@ interface Row {
   title: string
   stats: { sections: number; lectures: number; quizzes: number }
   published: boolean
+  protected?: boolean
   vendor: string
   kind: string
   level: string
@@ -77,16 +78,22 @@ export default function AdminLmsPage() {
     setBusy(true)
     setMsg(null)
     try {
-      const r = await fetch('/api/admin/lms/import', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sasUrl, slug: slug || undefined, vendor: vendor || undefined, kind: kind || undefined, topics: impTopics.length ? impTopics : undefined, domains: impDomains }),
-      })
-      const d = await r.json()
-      if (!r.ok) throw new Error(d.error || 'Import failed')
+      // Big courses are thousands of small files: keep calling until nothing is left to start.
+      let d: any
+      for (let round = 1; round <= 200; round++) {
+        const r = await fetch('/api/admin/lms/import', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sasUrl, slug: slug || undefined, vendor: vendor || undefined, kind: kind || undefined, topics: impTopics.length ? impTopics : undefined, domains: impDomains }),
+        })
+        d = await r.json()
+        if (!r.ok) throw new Error(d.error || 'Import failed')
+        setMsg({ ok: true, text: `Copying ${d.title}… ${d.remaining > 0 ? `${d.remaining} files still to start` : 'all files started'}` })
+        if (!d.remaining) break
+      }
       setMsg({
         ok: true,
-        text: `${d.title}: ${d.stats.lectures} lectures, ${d.stats.quizzes} quizzes. ${d.copy.started} files copying, ${d.copy.skipped} already there${d.copy.failed.length ? `, ${d.copy.failed.length} failed to start` : ''}. Saved as a draft - publish it when the copy finishes.`,
+        text: `${d.title}: ${d.stats.lectures} lectures, ${d.stats.quizzes} quizzes, ${d.files} files. ${d.protected ? 'Video is encrypted.' : 'Older package: video is NOT encrypted - rebuild it with the Studio package tool.'} Saved as a draft - publish it when every file shows as copied.`,
       })
       setSasUrl('')
       load()
@@ -252,7 +259,7 @@ export default function AdminLmsPage() {
             return (
               <div key={r.slug} className="p-5 flex flex-wrap items-center justify-between gap-4">
                 <div className="min-w-0">
-                  <div className="font-semibold text-gray-900">{r.code} · {r.title}</div>
+                  <div className="font-semibold text-gray-900">{r.code} · {r.title}{r.protected ? '' : ' (video not encrypted)'}</div>
                   <div className="text-xs text-gray-500 mt-1">
                     {r.stats.lectures} lectures · {r.stats.quizzes} quizzes ·{' '}
                     {r.copy

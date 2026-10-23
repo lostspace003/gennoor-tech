@@ -6811,5 +6811,6 @@
   "Security & Governance",
   "DevOps & CI/CD"
  ],
- "domains": []
+ "domains": [],
+ "protected": true
 }
