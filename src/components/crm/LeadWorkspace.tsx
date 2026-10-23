@@ -6,7 +6,7 @@ import {
   Calendar, Trash2, CheckCircle, MessageSquare, Lock, RefreshCw, Paperclip, Reply, Eye, FileText,
 } from 'lucide-react'
 import { Lead, ChatMessage, PipelineStage, PIPELINE_STAGES, COMPANY_SIZES, BUSINESS_FUNCTIONS, LEAD_INTERESTS, DECISION_ROLES } from '@/lib/crm/types'
-import { StatusBadge, ProcessDot, StageBar, api, formatDateTime, Spinner, STAGE_LABELS, CopyMsg, InfoTip, DurationSlider, TimeSlider, LeadLocalTime } from './shared'
+import { StatusBadge, ProcessDot, StageBar, api, formatDateTime, Spinner, STAGE_LABELS, OFFER_KIND_LABELS, CopyMsg, InfoTip, DurationSlider, TimeSlider, LeadLocalTime } from './shared'
 import { istInstant } from '@/lib/crm/timezones'
 import { docInfo, belongsToLead, groupVersions, type DocInfo } from '@/lib/crm/doc-meta'
 import { qualificationGaps } from '@/lib/crm/lead-text'
@@ -562,7 +562,7 @@ function ResearchTab({ lead, onReload, notify, onGoEmail }: { lead: Lead; onRelo
                       <div className="flex items-start gap-2 flex-wrap">
                         <span className="w-5 h-5 shrink-0 rounded-full bg-primary-600 text-white text-[11px] font-semibold flex items-center justify-center">{m.priority}</span>
                         <span className="text-sm font-medium text-gray-900">{m.title}</span>
-                        <span className="text-[10px] bg-gray-100 text-gray-600 rounded-full px-2 py-0.5">{STAGE_LABELS[m.phase] || m.phase}</span>
+                        <span className="text-[10px] bg-gray-100 text-gray-600 rounded-full px-2 py-0.5">{OFFER_KIND_LABELS[m.phase] || m.phase}</span>
                         <span className={`text-[10px] rounded-full px-2 py-0.5 border ${m.confidence === 'high' ? 'bg-green-50 text-green-700 border-green-200' : m.confidence === 'low' ? 'bg-gray-50 text-gray-500 border-gray-200' : 'bg-amber-50 text-amber-700 border-amber-200'}`}>
                           {m.confidence} confidence
                         </span>

@@ -92,7 +92,7 @@ function buildConfirmationEmail(opts: {
         </div>
         <div style="background:#0f172a;padding:22px 28px;text-align:center">
           <p style="color:#cbd5e1;margin:0;font-size:13px;font-weight:600">Gennoor Tech</p>
-          <p style="color:#64748b;margin:5px 0 0;font-size:11px">Enterprise AI Training, Certification &amp; Solutions</p>
+          <p style="color:#64748b;margin:5px 0 0;font-size:11px">AI training and automation</p>
           <p style="color:#475569;margin:8px 0 0;font-size:11px">
             <a href="mailto:schedule@gennoor.com" style="color:#94a3b8;text-decoration:none">schedule@gennoor.com</a> ·
             <a href="${siteUrl}" style="color:#94a3b8;text-decoration:none">www.gennoor.com</a>
@@ -180,22 +180,21 @@ async function callModel(deployment: string, systemPrompt: string, userMessage: 
 }
 
 async function generateDraft(req: any, instructions: string) {
-  const systemPrompt = `You draft warm, concise, professional reply emails for Gennoor Tech (enterprise AI training & consulting), delivered by Jalal Ahmed Khan, Microsoft Certified Trainer. The sender is admin@gennoor.com. A prospect has reached out (often via the website "Book a Call" form) and may be asking about offerings, delivery approach, engagement process, budget, or references. Your job is to write a reply that gives a brief, relevant overview and moves them toward a discovery call.
+  const systemPrompt = `You draft warm, concise, professional reply emails for Gennoor Tech (AI training and automation, Mumbai, India). Gennoor is Certified in the Claude Partner Network (use exactly that wording, nothing more). The sender is admin@gennoor.com. A prospect has reached out (often via the website "Book a Call" form) and may be asking about offerings, how we work, or budget. Your job is to write a reply that gives a brief, relevant overview and moves them toward a discovery call.
 
-Gennoor Tech offerings (mention ONLY the ones relevant to the prospect's request — do not dump the whole list):
-- AI Strategy & Consulting — AI-readiness assessments, roadmaps, ROI modeling, governance.
-- Corporate AI Training — executive bootcamps + hands-on technical workshops (Azure AI, Microsoft Copilot Studio, Power Platform); live, customized per team; on-site in India / Saudi Arabia or remote worldwide.
-- PoC Development — production-ready prototypes in 2–6 weeks (document intelligence, chatbots, process automation, predictive analytics).
-- Agentic AI Solutions — multi-agent systems (Copilot Studio, LangChain, CrewAI, AutoGen).
-- Certification Preparation — Microsoft Azure AI, Power BI, Copilot, GitHub.
+Gennoor Tech offerings (mention ONLY the ones relevant to the prospect's request, do not dump the whole list):
+- Training for organizations: live, custom training for a team on Claude and other AI tools (Claude, Microsoft AI, Azure AI, Copilot Studio), built around the work the team does. Online or at the client's office.
+- Automation: one process at a time, scoped in writing first, built with Claude and other AI tools.
+- Learning Studio: self-paced video courses with labs, quizzes and certificates.
+- Certification preparation: Microsoft Azure AI, Power BI, Copilot, GitHub.
 
-Useful links (include 1–3 that fit the request): services https://www.gennoor.com/services · case studies https://www.gennoor.com/case-studies · our approach https://www.gennoor.com/the-gennoor-way · book a slot https://www.gennoor.com/resources/calendar
+Useful links (include 1-3 that fit the request): training https://www.gennoor.com/training · automation https://www.gennoor.com/automation · Learning Studio https://www.gennoor.com/studio · book a slot https://www.gennoor.com/resources/calendar
 
 Rules:
 - Address the person by their first name.
 - Briefly acknowledge their specific request/context (use their message).
 - When they ask about offerings, give a tight, relevant overview (a short <ul> of the 2–4 offerings that fit) — not a generic brochure.
-- BUDGET: never quote a blind price or invent numbers. If they ask about budget/pricing, explain it scales with scope and ask 2–3 scoping questions (team size & which functions, on-site location vs remote, target timeline) so a meaningful range can be shared on the call.
+- BUDGET: never quote a blind price or invent numbers. If they ask about budget/pricing, explain it scales with scope and ask 2-3 scoping questions (team size and roles, online or at their office, target timeline) so it can be scoped on the call.
 - Follow the admin's instructions for which day(s) and time windows to offer. If none given, propose two windows on the next suitable weekday (morning 9:00 AM–12:00 PM and afternoon 2:00 PM–5:00 PM, IST / Asia Kolkata).
 - Ask them to reply with a preferred time (or use the booking link); mention a Microsoft Teams calendar invite will follow.
 - Keep it to a few short paragraphs. No pricing promises.
@@ -233,7 +232,7 @@ function wrapEmail(innerHtml: string) {
       <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e2e8f0">
         <div style="background-color:#1d4ed8;background: #0C1426;padding:28px;text-align:center">
           <h1 style="color:#ffffff;margin:0;font-size:22px;font-weight:700;mso-line-height-rule:exactly">Gennoor Tech</h1>
-          <p style="color:#dbeafe;margin:6px 0 0;font-size:13px">Enterprise AI Training, Certification &amp; Solutions</p>
+          <p style="color:#dbeafe;margin:6px 0 0;font-size:13px">AI training and automation</p>
         </div>
         <div style="padding:30px 28px;color:#374151;font-size:15px;line-height:1.7">
           ${innerHtml}

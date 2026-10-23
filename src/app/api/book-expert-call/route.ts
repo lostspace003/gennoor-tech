@@ -62,7 +62,7 @@ export async function POST(request: Request) {
         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #0C1426; padding: 40px 30px; text-align: center; border-radius: 10px 10px 0 0;">
             <h1 style="color: white; margin: 0; font-size: 28px;">Gennoor Tech</h1>
-            <p style="color: #bfdbfe; margin: 10px 0 0; font-size: 16px;">Enterprise AI Training & Solutions</p>
+            <p style="color: #bfdbfe; margin: 10px 0 0; font-size: 16px;">AI training and automation</p>
           </div>
 
           <div style="padding: 40px 30px; background: #ffffff; border: 1px solid #e0e0e0; border-top: none;">
@@ -149,7 +149,7 @@ export async function POST(request: Request) {
 
           <div style="background: #1e293b; padding: 25px; text-align: center; border-radius: 0 0 10px 10px;">
             <p style="color: #94a3b8; margin: 0; font-size: 14px;">© 2026 Gennoor Tech. All rights reserved.</p>
-            <p style="color: #64748b; margin: 5px 0 0; font-size: 12px;">Enterprise AI Training & Solutions</p>
+            <p style="color: #64748b; margin: 5px 0 0; font-size: 12px;">AI training and automation</p>
           </div>
         </div>
       `

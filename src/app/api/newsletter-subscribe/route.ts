@@ -67,7 +67,7 @@ export async function POST(request: Request) {
         <h3 style="margin:0 0 12px;color:#0f172a;font-size:19px">You're subscribed.</h3>
         <p style="margin:0 0 16px;color:#475569;line-height:1.7;font-size:15px">
           Thanks for signing up. You'll get an occasional email when we publish
-          something worth your time — field notes on enterprise AI, new guides,
+          something worth your time — practical notes on AI, new guides,
           and dates for free webinars and workshops.
         </p>
         <p style="margin:0 0 16px;color:#475569;line-height:1.7;font-size:15px">

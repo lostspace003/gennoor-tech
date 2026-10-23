@@ -5,12 +5,22 @@ import { createPortal } from 'react-dom'
 import { Lead, LeadStatus, PipelineStage, PIPELINE_STAGES } from '@/lib/crm/types'
 import { IST, istInstant, leadTimeZone, formatInZone } from '@/lib/crm/timezones'
 
+// Where the relationship stands. The stored keys are older names, kept so no data needs moving.
 export const STAGE_LABELS: Record<PipelineStage, string> = {
-  diagnose: 'Diagnose',
-  train: 'Train',
-  poc: 'POC',
-  development: 'Development',
-  sustain: 'Sustain',
+  diagnose: 'Prospect',
+  train: 'Talking',
+  poc: 'Scoping',
+  development: 'Delivering',
+  sustain: 'Customer',
+}
+
+// What kind of offering a match is (training, automation), shown on AI matches.
+export const OFFER_KIND_LABELS: Record<string, string> = {
+  train: 'Training',
+  development: 'Automation',
+  poc: 'Automation',
+  diagnose: 'Advice',
+  sustain: 'Support',
 }
 
 /**

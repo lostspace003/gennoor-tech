@@ -28,6 +28,9 @@ export function fmt(sec: number): string {
   return h ? `${h}:${String(m).padStart(2, '0')}:${String(r).padStart(2, '0')}` : `${m}:${String(r).padStart(2, '0')}`
 }
 
+// Set once the learner presses play. Until then a lesson opens paused (at the saved spot).
+let playedThisVisit = false
+
 function fmtTotal(sec: number): string {
   const h = Math.floor(sec / 3600)
   const m = Math.round((sec % 3600) / 60)
@@ -183,7 +186,6 @@ export default function LmsPlayer({
 
   return (
     <div className="bg-[#eef0f4] min-h-screen">
-      <FullScreenHint />
       <ReviewPrompt course={course} progress={progress} />
       <style>{`
         @keyframes lms-fade { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
@@ -199,6 +201,7 @@ export default function LmsPlayer({
         <span className="text-[#8d9bb0] shrink-0">{course.code}</span>
         <span className="text-[#4b5a70]">/</span>
         <span className="truncate font-medium">{item.title}</span>
+        <FullScreenInfo />
         <Link href={`/studio/${course.slug}/discussion`} className="ml-auto text-[13px] text-[#c3cddc] hover:text-white shrink-0 transition-colors">Discussion</Link>
         <span className="text-[12px] text-[#8d9bb0] tabular-nums shrink-0 hidden sm:block">{pct}% complete</span>
       </div>
@@ -440,7 +443,7 @@ function LecturePane({
   const videoRef = useRef<HTMLVideoElement>(null)
   const lastSave = useRef(0)
   const resumeAt = useRef(savedPosition)
-  const wasPlaying = useRef(true)
+  const wasPlaying = useRef(playedThisVisit)
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const [src, setSrc] = useState<string | null>(null)
@@ -669,7 +672,7 @@ function LecturePane({
           <video
             ref={videoRef}
             src={hlsUrl ? undefined : (src ?? undefined)}
-            autoPlay
+            autoPlay={playedThisVisit}
             playsInline
             preload="auto"
             controlsList="nodownload noremoteplayback noplaybackrate"
@@ -689,7 +692,7 @@ function LecturePane({
             }}
             onDurationChange={e => { if (isFinite(e.currentTarget.duration)) setDur(e.currentTarget.duration) }}
             onLoadedData={() => setReady(true)}
-            onPlay={() => { setPlaying(true); setEnded(false); poke() }}
+            onPlay={() => { playedThisVisit = true; setPlaying(true); setEnded(false); poke() }}
             onPause={() => { setPlaying(false); setShowUi(true); save(true) }}
             onWaiting={() => setBuffering(true)}
             onCanPlay={() => setBuffering(false)}
@@ -811,25 +814,64 @@ function LecturePane({
 const ZOOMS = [50, 75, 100, 125, 150, 200, 300]
 
 /** Gennoor Tech certificate of completion, available once the whole course is done. */
-/** One-time note, the first time someone opens the lesson screen. */
-function FullScreenHint() {
-  const [show, setShow] = useState(false)
-  useEffect(() => {
-    try {
-      if (localStorage.getItem('gennoor.lms.f11')) return
-      if (window.innerHeight >= screen.height - 4) return
-      setShow(true)
-      localStorage.setItem('gennoor.lms.f11', '1')
-    } catch { /* storage blocked: skip the hint */ }
-    const t = setTimeout(() => setShow(false), 9000)
-    return () => clearTimeout(t)
+/**
+ * An "i" in the top bar. It opens by itself when the lesson screen opens, when you scroll
+ * down and when you open the chat, then fades away. Click it any time to see it again.
+ * Hidden once the browser is already full screen.
+ */
+function FullScreenInfo() {
+  const [open, setOpen] = useState(false)
+  const [full, setFull] = useState(false)
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const scrolled = useRef(false)
+
+  const isFull = () => !!document.fullscreenElement || window.innerHeight >= screen.height - 4
+  const flash = useCallback(() => {
+    if (isFull()) return
+    setOpen(true)
+    if (timer.current) clearTimeout(timer.current)
+    timer.current = setTimeout(() => setOpen(false), 6500)
   }, [])
-  if (!show) return null
+
+  useEffect(() => {
+    const check = () => setFull(isFull())
+    check()
+    const first = setTimeout(flash, 1200)
+    const onScroll = () => { if (!scrolled.current && window.scrollY > 160) { scrolled.current = true; flash() } }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('gennoor:chat-open', flash)
+    window.addEventListener('resize', check)
+    document.addEventListener('fullscreenchange', check)
+    return () => {
+      clearTimeout(first)
+      if (timer.current) clearTimeout(timer.current)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('gennoor:chat-open', flash)
+      window.removeEventListener('resize', check)
+      document.removeEventListener('fullscreenchange', check)
+    }
+  }, [flash])
+
+  if (full) return null
   return (
-    <div role="status" className="fixed z-50 top-14 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-[#0f1824] text-white text-[13px] pl-4 pr-2 py-2 rounded-full shadow-lg border border-white/10">
-      Press <kbd className="px-1.5 py-0.5 rounded bg-white/15 text-[12px] font-semibold">F11</kbd> for full screen
-      <button type="button" onClick={() => setShow(false)} aria-label="Dismiss" className="w-6 h-6 rounded-full hover:bg-white/15 flex items-center justify-center">×</button>
-    </div>
+    <span className="relative shrink-0">
+      <button
+        type="button"
+        aria-label="Tip: use full screen"
+        aria-expanded={open}
+        onClick={() => { if (timer.current) clearTimeout(timer.current); setOpen(o => !o) }}
+        className="w-6 h-6 rounded-full border border-[#4b5a70] text-[12px] font-semibold italic text-[#c3cddc] hover:text-white hover:border-white transition-colors flex items-center justify-center"
+      >
+        i
+      </button>
+      <span
+        role="status"
+        className={`absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[290px] rounded-xl bg-white text-gray-900 shadow-xl border border-[#e2e5ec] px-3.5 py-2.5 text-[12.5px] leading-snug z-50 transition-all duration-300 ${open ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1 pointer-events-none'}`}
+      >
+        <span className="font-semibold">Press F11 for the best view.</span> Full screen shows the video and chat properly.
+        <span className="block text-[#6e6e73] mt-1">Windows and Linux: F11 (Fn+F11 on some laptops). Mac: Ctrl+Cmd+F.</span>
+      </span>
+    </span>
   )
 }
 

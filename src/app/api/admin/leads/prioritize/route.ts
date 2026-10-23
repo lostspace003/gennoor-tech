@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       [
         {
           role: 'system',
-          content: `You prioritize B2B sales leads for Gennoor Tech (enterprise AI training, POCs and development for GCC/Africa/South Asia).
+          content: `You prioritize B2B sales leads for Gennoor Tech (AI training for organizations and automation).
 High = decision-maker at a sizeable org, clear budget/AI need, strategic sector. Medium = promising but unclear authority or need. Low = weak fit, junior role, or no signal.
 Reply with ONLY a JSON object mapping each lead id to "High", "Medium" or "Low". No other text.`,
         },
