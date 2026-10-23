@@ -10,16 +10,16 @@ import { Lead } from '@/lib/crm/types'
 function fallbackDraft(lead: Lead, senderEmail: string): { subject: string; body: string } {
   const first = (lead.name || 'there').split(/\s+/)[0]
   return {
-    subject: `AI enablement for ${lead.company || 'your team'} — free webinar from Gennoor Tech`,
+    subject: `AI training for ${lead.company || 'your team'}: free webinar from Gennoor Tech`,
     body: `Dear ${first},
 
-I'm reaching out from Gennoor Tech. We help organizations adopt AI through a clear journey: we diagnose where AI fits your work, train your team (technical and non-technical tracks), build a proof of concept you can see working, develop it into a product, and stay on for 3-6 months of hand-holding.
+I'm reaching out from Gennoor Tech. We train teams to work with AI and Claude, built around the work they do, and we automate processes one at a time.
 
 To start, we'd love to offer ${lead.company || 'your organization'} two things, completely free:
 - A 2-hour webinar tailored to your team's needs
 - A 1-day online AI training for your people
 
-These are relationship-building sessions — no strings attached. You can also see our work on enterprise AI agent development on our YouTube channel: https://www.youtube.com/@GennoorTech
+These are relationship-building sessions — no strings attached. You can also see our work on AI agent development on our YouTube channel: https://www.youtube.com/@GennoorTech
 
 Would a short call this week work to pick a topic your team would benefit from most?
 

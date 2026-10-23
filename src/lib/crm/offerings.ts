@@ -1,33 +1,23 @@
 import { allPrograms, type TrainingProgram } from '@/data/training-programs'
 import { courses as academyCourses } from '@/data/academy/courses'
 import type { Course as AcademyCourse } from '@/data/academy/types'
-import { pocs, type PoC } from '@/data/pocs'
-import { caseStudies, type CaseStudy } from '@/data/case-studies'
 
 /**
- * What Gennoor can actually sell, in a form a model can reason over.
- *
- * Before this existed, every research and proposal prompt knew our offerings
- * only as a ten-line paragraph ("diagnose → train → POC → develop → sustain"),
- * so the best it could ever say was "training". The catalogue on the site —
- * ~45 programmes, ~28 POCs and the delivered case studies — was invisible to
- * it. This module turns that catalogue into a compact, code-addressable index
- * so the AI can name the specific programme or POC that fits a lead, and so we
- * can resolve its answer back to something real (no invented course names).
- *
- * Server-side only in practice (it pulls the site data files), but it holds no
- * server-only imports itself.
+ * What Gennoor can actually sell, in a form a model can reason over: the training
+ * programme catalogue, the Academy courses, automation, Claude training and the
+ * Learning Studio courses. Each entry has a short code the model must quote, so its
+ * answer can be resolved back to something real (no invented course names).
  */
 
-export type OfferingKind = 'training' | 'poc' | 'case'
+export type OfferingKind = 'training' | 'automation' | 'studio'
 export type JourneyPhase = 'diagnose' | 'train' | 'poc' | 'development' | 'sustain'
 
 export interface OfferingRef {
-  /** Stable, model-quotable id: TRN-bootcamp-1, POC-hr-onboarding-copilot, CASE-… */
+  /** Stable, model-quotable id: TRN-bootcamp-1, AUTO-process, STUDIO-ai-103 */
   code: string
   kind: OfferingKind
   title: string
-  /** Where it sits on the 5-step journey. */
+  /** Training is 'train'; automation is 'development'. */
   phase: JourneyPhase
   industries: string[]
   functions: string[]
@@ -83,7 +73,7 @@ function academyRef(c: AcademyCourse): OfferingRef {
     phase: 'train',
     industries: c.industries || [],
     functions: c.functions || [],
-    href: `/academy/courses/${c.slug}`,
+    href: "/ai-academy",
     line: [
       `TRN-${c.slug}`,
       c.title,
@@ -96,53 +86,34 @@ function academyRef(c: AcademyCourse): OfferingRef {
   }
 }
 
-// POCs are the Build step but carry the problem they solve — that problem
-// statement is what makes a match feel specific rather than catalogue-shaped.
-function pocRef(p: PoC): OfferingRef {
-  const phase: JourneyPhase = p.phaseTag.includes('Train') ? 'train'
-    : p.phaseTag.includes('Diagnose') ? 'diagnose'
-    : p.phaseTag.includes('Sustain') ? 'sustain'
-    : 'poc'
-  return {
-    code: `POC-${p.id}`,
-    kind: 'poc',
-    title: p.title,
-    phase,
-    industries: p.industries || [],
-    functions: p.functions || [],
-    href: '/automation',
-    line: [
-      `POC-${p.id}`,
-      p.title,
-      p.timeline,
-      `industries: ${(p.industries || []).join(', ') || 'any'}`,
-      p.functions?.length ? `functions: ${p.functions.join(', ')}` : '',
-      `solves: ${clip(p.problem, 150)}`,
-      p.pairedCourseTitle ? `pairs with training: ${p.pairedCourseTitle}` : '',
-    ].filter(Boolean).join(' | '),
-  }
-}
-
-// Delivered work. Not something to sell — something to cite honestly when a
-// lead asks "have you done this before?". Keeps the AI off invented proof.
-function caseRef(c: CaseStudy): OfferingRef {
-  return {
-    code: `CASE-${c.id}`,
-    kind: 'case',
-    title: c.title,
-    phase: 'train',
-    industries: c.industry ? [c.industry] : [],
-    functions: [],
-    href: '/about',
-    line: [
-      `CASE-${c.id}`,
-      c.title,
-      `client: ${c.client} (${c.industry})`,
-      [c.duration, c.participants].filter(Boolean).join(' · '),
-      `did: ${clip(c.approach?.[0], 120)}`,
-    ].filter(Boolean).join(' | '),
-  }
-}
+// What we offer besides the programme catalogue. Kept short and factual: no prices, no timelines.
+const SERVICE_REFS: OfferingRef[] = [
+  {
+    code: 'AUTO-process', kind: 'automation', title: 'Automation, one process at a time', phase: 'development',
+    industries: [], functions: [], href: '/automation',
+    line: 'AUTO-process | Automation, one process at a time | scoped in writing first, built with Claude and other AI tools, tested on the team\'s own examples | for: a process that costs a team hours every week | honest about what is not worth automating',
+  },
+  {
+    code: 'AUTO-custom-course', kind: 'automation', title: 'Custom course to automate your own process', phase: 'train',
+    industries: [], functions: [], href: '/training',
+    line: 'AUTO-custom-course | Custom course to automate your own process | live course built around one process the team runs, so they learn to automate it themselves | for: teams that want to own the automation',
+  },
+  {
+    code: 'TRN-claude', kind: 'training', title: 'Claude training for teams', phase: 'train',
+    industries: [], functions: [], href: '/claude',
+    line: 'TRN-claude | Claude training for teams | live sessions on Claude for everyday work, Claude Cowork and Claude Code, built around what the team does | Gennoor is Certified in the Claude Partner Network',
+  },
+  {
+    code: 'STUDIO-ai-103', kind: 'studio', title: 'AI-103: Build and Ship AI Agents on Microsoft Azure', phase: 'train',
+    industries: [], functions: ['it-engineering'], href: '/studio/ai-103',
+    line: 'STUDIO-ai-103 | AI-103: Build and Ship AI Agents on Microsoft Azure | self-paced video course with labs, quizzes and a certificate | for: developers and architects building AI agents on Azure',
+  },
+  {
+    code: 'STUDIO-ai-500', kind: 'studio', title: 'AI-500: Designing and Implementing Multi-Agent AI Solutions', phase: 'train',
+    industries: [], functions: ['it-engineering'], href: '/studio/ai-500',
+    line: 'STUDIO-ai-500 | AI-500: Designing and Implementing Multi-Agent AI Solutions | self-paced video course with labs, quizzes and a certificate | for: engineers designing multi-agent systems',
+  },
+]
 
 let cached: OfferingRef[] | null = null
 
@@ -151,8 +122,7 @@ export function allOfferings(): OfferingRef[] {
     cached = [
       ...allPrograms.map(trainingRef),
       ...academyCourses.map(academyRef),
-      ...pocs.map(pocRef),
-      ...caseStudies.map(caseRef),
+      ...SERVICE_REFS,
     ]
   }
   return cached
@@ -248,15 +218,16 @@ function score(o: OfferingRef, f: OfferingFilter): number {
 
   // Stated interest steers the KIND of thing we lead with
   if (interest.includes('train') && o.kind === 'training') n += 4
-  if ((interest.includes('poc') || interest.includes('development')) && o.kind === 'poc') n += 4
-  if (interest.includes('advisory') && o.phase === 'diagnose') n += 3
+  if ((interest.includes('automat') || interest.includes('poc') || interest.includes('development')) && o.kind === 'automation') n += 4
+  if (interest.includes('claude') && /claude/i.test(o.line)) n += 4
+  if ((interest.includes('studio') || interest.includes('course')) && o.kind === 'studio') n += 4
 
   if (f.techProfile === 'technical' && /technical|engineer|developer|advanced|builder/i.test(o.line)) n += 2
   if (f.techProfile === 'non-technical' && /executive|business|leader|foundational|beginner|all-staff|manager/i.test(o.line)) n += 2
 
-  // Training first, POC second — the house order, applied as a tiebreak
+  // Training first, automation second: the house order, applied as a tiebreak
   if (o.kind === 'training') n += 1.5
-  else if (o.kind === 'poc') n += 1
+  else if (o.kind === 'automation') n += 1
   return n
 }
 
@@ -264,8 +235,8 @@ function score(o: OfferingRef, f: OfferingFilter): number {
  * The catalogue as prompt text. `filter` biases which entries survive the cap;
  * everything relevant to the lead's sector/function stays, the rest is trimmed.
  */
-export function offeringsIndex(filter: OfferingFilter = {}, limits?: { training?: number; poc?: number; cases?: number }): string {
-  const cap = { training: limits?.training ?? 22, poc: limits?.poc ?? 16, cases: limits?.cases ?? 5 }
+export function offeringsIndex(filter: OfferingFilter = {}, limits?: { training?: number }): string {
+  const cap = limits?.training ?? 22
   const pick = (kind: OfferingKind, n: number) =>
     allOfferings()
       .filter((o) => o.kind === kind)
@@ -275,14 +246,14 @@ export function offeringsIndex(filter: OfferingFilter = {}, limits?: { training?
       .map((x) => x.o.line)
 
   return [
-    'TRAINING PROGRAMMES (the Train step — bootcamps and courses we actually run):',
-    ...pick('training', cap.training),
+    'TRAINING PROGRAMMES (what we teach live, plus Claude training):',
+    ...pick('training', cap),
     '',
-    'PROOF-OF-CONCEPT BUILDS (the POC step — each with the problem it solves and a typical timeline):',
-    ...pick('poc', cap.poc),
+    'AUTOMATION (what we build and teach people to build):',
+    ...pick('automation', 5),
     '',
-    'DELIVERED WORK (real engagements — cite these for credibility; never invent others):',
-    ...pick('case', cap.cases),
+    'LEARNING STUDIO COURSES (self-paced, with labs and certificates):',
+    ...pick('studio', 5),
   ].join('\n')
 }
 

@@ -139,7 +139,7 @@ export async function POST(request: Request) {
 
           <div style="background: #1e293b; padding: 25px; text-align: center; border-radius: 0 0 10px 10px;">
             <p style="color: #94a3b8; margin: 0; font-size: 14px;">© 2026 Gennoor Tech. All rights reserved.</p>
-            <p style="color: #64748b; margin: 5px 0 0; font-size: 12px;">Enterprise AI Training & Solutions</p>
+            <p style="color: #64748b; margin: 5px 0 0; font-size: 12px;">AI training and automation</p>
           </div>
         </div>
       `

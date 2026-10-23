@@ -165,14 +165,13 @@ export function researchContext(lead: Lead): string {
   ].filter(Boolean).join('\n')
 }
 
-export const GENNOOR_CONTEXT = `Gennoor Tech (www.gennoor.com) is an AI training and consulting company. Tagline: TRAIN. INNOVATE. BUILD.
-Offerings follow a 5-step client journey:
-1. Diagnose — company profile research, understand what they need (technical or non-technical audience)
-2. Train — technical + non-technical AI training, or provide a skilled AI worker embedded in their team
-3. POC — demo / proof of concept with a web link
-4. Product development
-5. Sustain — maintenance with complementary hand-holding for 3-6 months
-Free relationship-building offers used in outreach: a free 2-hour webinar tailored to the company's needs, and a free 1-day online training. There is also a YouTube channel on enterprise AI agent development: https://www.youtube.com/@GennoorTech — whenever an email mentions the channel, include this exact link.
+export const GENNOOR_CONTEXT = `Gennoor Tech (www.gennoor.com) is an AI training and automation company in Mumbai, India. Gennoor is Certified in the Claude Partner Network (use exactly that wording, nothing more).
+What Gennoor offers:
+1. Training for organizations — live, custom training for a team on Claude and other AI tools (Claude, Microsoft AI, Azure AI, Copilot Studio), built around the work the team does. For smaller teams and larger organizations.
+2. Automation — one process at a time, scoped in writing first, built with Claude and other AI tools. Honest about what is and is not worth automating.
+3. Learning Studio — self-paced video courses with labs, quizzes and certificates (AI-103 and AI-500 are live), free AI Essentials courses, and Claude courses by domain being prepared.
+Never quote prices, timelines or discounts. If cost comes up, say it depends on scope and suggest a short call.
+Free relationship-building offers used in outreach: a free 2-hour webinar tailored to the company's needs, and a free 1-day online training. There is also a YouTube channel on AI agent development: https://www.youtube.com/@GennoorTech — whenever an email mentions the channel, include this exact link.
 Contact: admin@gennoor.com, +91 9326352241.
 STRICT RULES for anything you write: never invent statistics, client counts, or case studies. No fabricated claims like "100+ implementations" or "40% cost reduction". Be honest, specific and concise.
 STYLE — business-grade brevity, always: lead with the point; short sentences; bullets over paragraphs; no filler ("I hope this helps", "it's worth noting"), no restating the question, no hedging boilerplate. Outreach emails stay under 170 words. Answers to the team: only the detail they need to act, nothing more.`
@@ -194,7 +193,7 @@ You research sales leads for Gennoor's team. Based ONLY on the information given
 {
   "summary": "2-3 sentence profile of this lead and company based on the data given",
   "insights": ["3-5 short observations relevant to selling AI training/consulting"],
-  "opportunities": ["2-4 concrete Gennoor offerings that fit, mapped to the 5-step journey"],
+  "opportunities": ["2-4 concrete Gennoor offerings that fit (training, automation, Learning Studio)"],
   "approach": "2-3 sentences: recommended first-touch approach for this lead",
   "techOrNonTech": "technical" or "non-technical" (judge from designation/company)
 }`,
@@ -228,7 +227,7 @@ export async function researchLeadWeb(lead: Lead): Promise<{
     `${GENNOOR_CONTEXT}
 
 Research this sales lead using LIVE WEB SEARCH: look up the company (what it does, size, industry, recent news) and, where public, the person. Then return ONLY a JSON object (no markdown fences):
-{"summary":"2-3 sentences grounded in what you found","insights":["3-5 findings relevant to selling AI training/consulting"],"opportunities":["2-4 Gennoor offerings that fit, mapped to the 5-step journey"],"approach":"2-3 sentences: recommended first touch","techOrNonTech":"technical|non-technical"}
+{"summary":"2-3 sentences grounded in what you found","insights":["3-5 findings relevant to selling AI training/consulting"],"opportunities":["2-4 Gennoor offerings that fit (training, automation, Learning Studio)"],"approach":"2-3 sentences: recommended first touch","techOrNonTech":"technical|non-technical"}
 Facts you cannot verify stay out — no invention.`,
     leadContext(lead)
   )
@@ -350,7 +349,7 @@ Say "likely" for anything inferred. Invent nothing about them personally.`,
 
 // Pass 3 — the intersect. THIS is the pass that was missing: the real
 // catalogue, scored against what passes 1 and 2 found, with training-first /
-// POC-second ordering made explicit rather than left to the model's taste.
+// automation-second ordering made explicit rather than left to the model's taste.
 export async function matchOfferingsPass(
   lead: Lead,
   company: CompanyPass,
@@ -384,10 +383,10 @@ PASS 3 of 3 — THE INTERSECT. You have research on the company and the person, 
 ${catalogue}
 
 RULES FOR MATCHING — these are what make the answer useful instead of generic:
-- Every match must cite a code from the catalogue EXACTLY as written (TRN-…, POC-…, CASE-…). Never invent a programme, and never describe an offering that isn't listed.
+- Every match must cite a code from the catalogue EXACTLY as written (TRN-…, AUTO-…, STUDIO-…). Never invent a programme, and never describe an offering that isn't listed.
 - Every match must name the OBSERVED need it answers, drawn from the findings — not a generic benefit. If you cannot point at a specific finding, drop the match.
 - 3-5 matches maximum. Fewer, well-argued matches beat a catalogue dump.
-- ENTRY ORDER: training first, POC second. Training is how the relationship starts (it's low-risk and it's where the free webinar / 1-day session leads); a POC is the natural second step once they've seen us teach. Give priority 1 to a training programme unless the lead's stated interest says otherwise (e.g. interest = "POC" or they already train internally) — if you invert the order, say why in entryPlan.
+- ENTRY ORDER: training first, automation second. Training is how the relationship starts (it's low-risk and it's where the free webinar / 1-day session leads); automation is the natural second step once they've seen us teach. Give priority 1 to a training programme unless the lead's stated interest says otherwise (e.g. interest = "POC" or they already train internally) — if you invert the order, say why in entryPlan.
 - Match the audience: technical people get the technical tracks, business/leadership get the executive ones.
 - confidence: "high" only when a finding directly supports it; "low" when it's a reasonable guess.
 
@@ -396,7 +395,7 @@ Return ONLY JSON:
  "insights":["3-5 short observations that matter for selling AI training/consulting"],
  "opportunities":["2-4 lines describing where we can help, in their language"],
  "approach":"2-3 sentences: the recommended first touch for THIS person",
- "offeringMatches":[{"code":"TRN-…","title":"exact catalogue title","phase":"diagnose|train|poc|development|sustain","need":"the observed need, quoting the finding","why":"why this offering specifically","priority":1,"confidence":"high|medium|low"}],
+ "offeringMatches":[{"code":"TRN-…","title":"exact catalogue title","phase":"train|development","need":"the observed need, quoting the finding","why":"why this offering specifically","priority":1,"confidence":"high|medium|low"}],
  "entryPlan":"2-3 sentences: which offering we lead with, what it sets up next, and why that order for this lead",
  "suggestedQuestions":["4-5 questions the sales team should ask the copilot next about THIS lead — each grounded in a specific finding, phrased as the team would type it, under 90 characters"]}`,
         },
@@ -575,7 +574,7 @@ export async function finalizePitch(lead: Lead, history: ChatMessage[]): Promise
 
 Based on the research discussion below, write the FINAL locked pitch brief for this lead. This is an INTERNAL brief for the outreach team — NOT an email. STRICT FORMAT, exactly these four numbered sections and NOTHING else (no greeting, no sign-off, no subject line, no draft email, no closing remarks after section 4):
 1) Likely need — one or two sentences
-2) What we pitch — mapped to diagnose/train/POC/development/sustain
+2) What we pitch — training, automation or a Learning Studio course
 3) Free offer to lead with — 2-hour webinar or 1-day training, and the suggested topic
 4) Tone — technical or non-technical, with one guidance sentence
 Keep the whole brief under 180 words. Lead data:
@@ -656,7 +655,7 @@ export async function generatePitchDoc(
         businessFunction: lead.businessFunction,
         interest: lead.interest,
         techProfile: lead.aiResearch?.techOrNonTech,
-      }, { training: 12, poc: 8, cases: 3 })}`
+      }, { training: 12 })}`
 
   return chatCompletion([
     {
@@ -693,9 +692,9 @@ export async function draftEmail(lead: Lead, instructions?: string, senderEmail?
 
 Write a personalized first-touch outreach email for this lead. Requirements:
 - Address the person by name; reference their company/role naturally
-- Briefly explain how Gennoor helps (diagnose -> train -> POC -> development -> sustain), matched to their likely needs
+- Briefly explain how Gennoor helps (training for their team, automation of one process, or Learning Studio courses), matched to their likely needs
 - Clearly offer the free 2-hour webinar tailored to their organization AND the free 1-day online training — make clear these are relationship-building, no-obligation offers
-- Mention the YouTube channel on enterprise AI agent development as a resource, with its link: https://www.youtube.com/@GennoorTech
+- Mention the YouTube channel on AI agent development as a resource, with its link: https://www.youtube.com/@GennoorTech
 - Plain, warm, professional tone. No hype, no invented numbers.
 - Return JSON: {"subject": "...", "body": "..."} where body is plain text (no HTML).
 - ${signOffInstruction(senderEmail)}

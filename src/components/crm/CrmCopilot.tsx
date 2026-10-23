@@ -83,8 +83,8 @@ interface Message { role: 'user' | 'assistant'; content: string; usedWeb?: boole
 const SUGGESTIONS = [
   'Which leads have not been contacted yet?',
   'Summarize this week’s activity',
-  'Who is stuck in the diagnose stage?',
-  'List GCC leads without research',
+  'Who is still a prospect?',
+  'List leads without research',
 ]
 
 // GennoorBot — CRM copilot over all lead data. Lives as a floating action

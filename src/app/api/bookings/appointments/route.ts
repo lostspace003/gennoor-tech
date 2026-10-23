@@ -220,7 +220,7 @@ export async function PATCH(request: NextRequest) {
               <!-- footer -->
               <div style="background:#0f172a;padding:22px 28px;text-align:center">
                 <p style="color:#cbd5e1;margin:0;font-size:13px;font-weight:600">Gennoor Tech</p>
-                <p style="color:#64748b;margin:5px 0 0;font-size:11px">Enterprise AI Training, Certification &amp; Solutions</p>
+                <p style="color:#64748b;margin:5px 0 0;font-size:11px">AI training and automation</p>
                 <p style="color:#475569;margin:8px 0 0;font-size:11px">© ${new Date().getFullYear()} Gennoor Tech. See you on the call!</p>
               </div>
             </div>

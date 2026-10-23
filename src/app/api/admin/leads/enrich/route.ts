@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
       [
         {
           role: 'system',
-          content: `You qualify B2B sales leads for Gennoor Tech (enterprise AI training, POCs and development).
+          content: `You qualify B2B sales leads for Gennoor Tech (AI training for organizations and automation).
 
 For each lead, fill ONLY the fields listed in its NEEDS list, inferring from job title, company, website domain and notes. This is classification from evidence, not research — you have no web access.
 

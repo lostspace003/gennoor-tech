@@ -3,6 +3,8 @@
 
 export type LeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal' | 'negotiation' | 'won' | 'lost'
 export type ProcessStatus = 'active' | 'paused' | 'stopped'
+// Stored keys are older names; the screens show Prospect, Talking, Scoping, Delivering, Customer (see STAGE_LABELS).
+// Stored keys are older names; the screens show Prospect, Talking, Scoping, Delivering, Customer (see STAGE_LABELS).
 export type PipelineStage = 'diagnose' | 'train' | 'poc' | 'development' | 'sustain'
 export type TechProfile = 'technical' | 'non-technical'
 
@@ -12,7 +14,7 @@ export const PIPELINE_STAGES: PipelineStage[] = ['diagnose', 'train', 'poc', 'de
 // Stored as free strings so imports with other spellings still land.
 export const COMPANY_SIZES = ['Small', 'Medium', 'Large', 'Enterprise']
 export const BUSINESS_FUNCTIONS = ['IT & Tech', 'HR & L&D', 'Finance', 'Operations', 'Sales & Marketing', 'Leadership / C-suite', 'Other']
-export const LEAD_INTERESTS = ['Training', 'POC', 'Development', 'Advisory']
+export const LEAD_INTERESTS = ['Training', 'Automation', 'Claude', 'Learning Studio']
 export const DECISION_ROLES = ['Decision-maker', 'Influencer', 'End-user']
 
 export interface LeadActivity {
@@ -62,7 +64,7 @@ export interface OfferingMatch {
   need: string
   /** Why this specific offering, not a neighbouring one. */
   why: string
-  /** 1 = lead with this. Training-first, POC-second unless the lead says otherwise. */
+  /** 1 = lead with this. Training first, automation second, unless the lead says otherwise. */
   priority: number
   confidence: 'high' | 'medium' | 'low'
 }
@@ -83,7 +85,7 @@ export interface AIResearch {
   personProfile?: string
   /** Pass 3: the intersect — our catalogue against their observed needs. */
   offeringMatches?: OfferingMatch[]
-  /** How to enter: which training first, which POC it sets up. */
+  /** How to enter: which training first, and what it can lead to. */
   entryPlan?: string
   /** Research-derived prompts the team can fire into the copilot chat. */
   suggestedQuestions?: string[]
