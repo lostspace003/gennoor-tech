@@ -717,3 +717,13 @@ input[type="range"]::-moz-range-thumb {
 .noise-overlay {
   display: none !important;
 }
+
+/* Rich text in the community and discussions */
+.rich-body p { margin: 0 0 .6em; }
+.rich-body p:last-child { margin-bottom: 0; }
+.rich-body h3 { font-size: 1.1em; font-weight: 700; margin: .8em 0 .35em; }
+.rich-body ul { list-style: disc; padding-left: 1.4em; margin: .4em 0; }
+.rich-body ol { list-style: decimal; padding-left: 1.4em; margin: .4em 0; }
+.rich-body blockquote { border-left: 3px solid #d2d2d7; padding-left: .9em; color: #6e6e73; margin: .6em 0; }
+.rich-body a { color: #0071e3; text-decoration: underline; }
+.rich-body code, .rich-body pre { font-family: ui-monospace, monospace; background: #f5f5f7; border-radius: 6px; padding: .1em .35em; }
