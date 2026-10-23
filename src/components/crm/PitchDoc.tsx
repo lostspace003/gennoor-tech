@@ -56,7 +56,7 @@ export default function PitchDocModal({ lead, editable, onClose, onReload, notif
   const renderMd = (md: string) => md.split('\n').map((line, i) => {
     if (line.startsWith('# ')) return <h2 key={i} className="text-lg font-bold text-primary-700 mb-1">{line.slice(2)}</h2>
     if (/^\*[^*].*\*$/.test(line.trim())) return <p key={i} className="text-xs italic text-gray-400 border-b border-gray-100 pb-2 mb-2">{line.trim().slice(1, -1)}</p>
-    if (line.startsWith('## ')) return <h3 key={i} className="text-[13px] font-semibold text-primary-700 uppercase tracking-wide mt-4 mb-1">{line.slice(3)}</h3>
+    if (line.startsWith('## ')) return <h3 key={i} className="text-[13px] font-semibold text-primary-700 mt-4 mb-1">{line.slice(3)}</h3>
     if (line.startsWith('- ') || line.startsWith('* ')) return <li key={i} className="text-sm text-gray-700 ml-4 list-disc">{renderBold(line.slice(2))}</li>
     if (!line.trim()) return <div key={i} className="h-1.5" />
     return <p key={i} className="text-sm text-gray-700">{renderBold(line)}</p>

@@ -116,13 +116,57 @@ export default function AdminLmsPage() {
   return (
     <main className="max-w-4xl mx-auto px-6 py-10">
       <Link href="/admin" className="text-sm text-gray-500 hover:text-gray-800">‹ Admin</Link>
-      <h1 className="text-2xl font-bold text-gray-900 mt-3">Learning Studio - video courses</h1>
-      <p className="text-gray-600 mt-1">
-        Paste a container SAS URL and the course is imported: its curriculum, quizzes, videos, captions and PDFs are copied into the LMS storage. The SAS is used for the import only and is not saved.
-      </p>
+      <h1 className="text-2xl font-bold text-gray-900 mt-3">Learning Studio courses</h1>
+      <p className="text-gray-600 mt-1">Publish or unpublish a course, add a new one, or change how it is filed.</p>
+      <section className="mt-8">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-lg font-semibold text-gray-900">Courses</h2>
+          <button type="button" onClick={load} className="text-sm text-gray-500 hover:text-gray-800 inline-flex items-center gap-1"><RefreshCw className="w-3.5 h-3.5" /> Refresh</button>
+        </div>
+        <div className="divide-y divide-gray-200 border border-gray-200 rounded-2xl bg-white">
+          {rows.map(r => {
+            const done = r.copy ? r.copy.success === r.copy.total : false
+            return (
+              <div key={r.slug} className="p-5 flex flex-wrap items-center justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="font-semibold text-gray-900">{r.code} · {r.title}{r.protected ? '' : ' (video not encrypted)'}</div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    {r.stats.lectures} lectures · {r.stats.quizzes} quizzes ·{' '}
+                    {r.copy
+                      ? done
+                        ? `all ${r.copy.total} files in storage`
+                        : `${r.copy.success}/${r.copy.total} files copied${r.copy.pending ? `, ${r.copy.pending} copying` : ''}${r.copy.failed ? `, ${r.copy.failed} failed` : ''}${r.copy.missing ? `, ${r.copy.missing} not started` : ''}`
+                      : 'storage status unavailable'}
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${r.published ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
+                    {r.published ? 'Published' : 'Draft'}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={!r.published && !done}
+                    onClick={() => publish(r, !r.published)}
+                    title={!r.published && !done ? 'Wait until every file has copied' : ''}
+                    className="text-sm font-semibold px-4 py-1.5 rounded-full border border-gray-300 hover:border-gray-900 disabled:opacity-40"
+                  >
+                    {r.published ? 'Unpublish' : 'Publish'}
+                  </button>
+                </div>
+              </div>
+            )
+          })}
+          {rows.length === 0 && <div className="p-6 text-sm text-gray-500">No courses yet.</div>}
+        </div>
+      </section>
 
-      <section className="mt-8 rounded-2xl border border-gray-200 p-6 bg-white">
-        <label className="block text-sm font-semibold text-gray-800 mb-1">Container SAS URL</label>
+      <details className="mt-4 group rounded-2xl border border-gray-200 bg-white">
+        <summary className="cursor-pointer list-none px-6 py-4 flex items-center justify-between after:!content-none [&::-webkit-details-marker]:hidden">
+          <span><span className="block font-semibold text-gray-900">Add a new course</span><span className="block text-sm text-gray-500 mt-0.5">Paste the container link of a finished course package.</span></span>
+          <span className="text-gray-400 transition-transform group-open:rotate-90" aria-hidden>›</span>
+        </summary>
+        <div className="px-6 pb-6 pt-1">
+
         <textarea
           value={sasUrl}
           onChange={e => setSasUrl(e.target.value)}
@@ -165,11 +209,16 @@ export default function AdminLmsPage() {
           {busy ? 'Importing - this can take a minute…' : 'Import course'}
         </button>
         {msg && <p className={`mt-4 text-sm ${msg.ok ? 'text-emerald-700' : 'text-red-600'}`}>{msg.text}</p>}
-      </section>
+        </div>
+      </details>
 
-      <section className="mt-8 rounded-2xl border border-gray-200 p-6 bg-white">
-        <h2 className="text-lg font-semibold text-gray-900">Add a promo video or thumbnail</h2>
-        <p className="text-sm text-gray-500 mt-1">The promo plays automatically when someone opens the course. Paste the SAS URL of the single file.</p>
+      <details className="mt-4 group rounded-2xl border border-gray-200 bg-white">
+        <summary className="cursor-pointer list-none px-6 py-4 flex items-center justify-between after:!content-none [&::-webkit-details-marker]:hidden">
+          <span><span className="block font-semibold text-gray-900">Add a promo video or thumbnail</span><span className="block text-sm text-gray-500 mt-0.5">Plays automatically when someone opens the course.</span></span>
+          <span className="text-gray-400 transition-transform group-open:rotate-90" aria-hidden>›</span>
+        </summary>
+        <div className="px-6 pb-6 pt-1">
+
         <div className="grid sm:grid-cols-2 gap-4 mt-4">
           <select value={assetSlug} onChange={e => setAssetSlug(e.target.value)} className="rounded-lg border border-gray-300 px-3 py-2 text-sm">
             <option value="">Choose a course</option>
@@ -205,11 +254,16 @@ export default function AdminLmsPage() {
           {assetBusy ? 'Copying…' : 'Save to course'}
         </button>
         {assetMsg && <p className={`mt-3 text-sm ${assetMsg.ok ? 'text-emerald-700' : 'text-red-600'}`}>{assetMsg.text}</p>}
-      </section>
+        </div>
+      </details>
 
-      <section className="mt-8 rounded-2xl border border-gray-200 p-6 bg-white">
-        <h2 className="text-lg font-semibold text-gray-900">Edit how a course is filed</h2>
-        <p className="text-sm text-gray-500 mt-1">Company, type, level, topics and domains decide where the course appears in the Learning Studio filters.</p>
+      <details className="mt-4 group rounded-2xl border border-gray-200 bg-white">
+        <summary className="cursor-pointer list-none px-6 py-4 flex items-center justify-between after:!content-none [&::-webkit-details-marker]:hidden">
+          <span><span className="block font-semibold text-gray-900">Change how a course is filed</span><span className="block text-sm text-gray-500 mt-0.5">Company, type, level, topics and domains decide where it shows in the filters.</span></span>
+          <span className="text-gray-400 transition-transform group-open:rotate-90" aria-hidden>›</span>
+        </summary>
+        <div className="px-6 pb-6 pt-1">
+
         <select
           value={tagSlug}
           onChange={e => {
@@ -246,49 +300,9 @@ export default function AdminLmsPage() {
             {tagMsg && <p className="mt-3 text-sm text-emerald-700">{tagMsg}</p>}
           </>
         )}
-      </section>
+        </div>
+      </details>
 
-      <section className="mt-10">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-gray-900">Courses</h2>
-          <button type="button" onClick={load} className="text-sm text-gray-500 hover:text-gray-800 inline-flex items-center gap-1"><RefreshCw className="w-3.5 h-3.5" /> Refresh</button>
-        </div>
-        <div className="divide-y divide-gray-200 border border-gray-200 rounded-2xl bg-white">
-          {rows.map(r => {
-            const done = r.copy ? r.copy.success === r.copy.total : false
-            return (
-              <div key={r.slug} className="p-5 flex flex-wrap items-center justify-between gap-4">
-                <div className="min-w-0">
-                  <div className="font-semibold text-gray-900">{r.code} · {r.title}{r.protected ? '' : ' (video not encrypted)'}</div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    {r.stats.lectures} lectures · {r.stats.quizzes} quizzes ·{' '}
-                    {r.copy
-                      ? done
-                        ? `all ${r.copy.total} files in storage`
-                        : `${r.copy.success}/${r.copy.total} files copied${r.copy.pending ? `, ${r.copy.pending} copying` : ''}${r.copy.failed ? `, ${r.copy.failed} failed` : ''}${r.copy.missing ? `, ${r.copy.missing} not started` : ''}`
-                      : 'storage status unavailable'}
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${r.published ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
-                    {r.published ? 'Published' : 'Draft'}
-                  </span>
-                  <button
-                    type="button"
-                    disabled={!r.published && !done}
-                    onClick={() => publish(r, !r.published)}
-                    title={!r.published && !done ? 'Wait until every file has copied' : ''}
-                    className="text-sm font-semibold px-4 py-1.5 rounded-full border border-gray-300 hover:border-gray-900 disabled:opacity-40"
-                  >
-                    {r.published ? 'Unpublish' : 'Publish'}
-                  </button>
-                </div>
-              </div>
-            )
-          })}
-          {rows.length === 0 && <div className="p-6 text-sm text-gray-500">No courses yet.</div>}
-        </div>
-      </section>
     </main>
   )
 }
