@@ -152,7 +152,6 @@ export default function Discussion({ scope, emptyText, signedIn = true }: { scop
     <div>
       {!signedIn ? (
         <div className="rounded-2xl bg-[#f5f6f8] p-5 flex flex-wrap items-center gap-4 max-w-[640px]">
-          <p className="text-[14.5px] text-gray-900">Anyone can read. Sign in to Learning Studio to post, reply or like.</p>
           <SignInButton label="Sign in to join" />
         </div>
       ) : !composing ? (
