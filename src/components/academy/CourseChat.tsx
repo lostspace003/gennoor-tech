@@ -121,7 +121,7 @@ export default function CourseChat({ slug, itemId }: { slug: string; itemId: str
         <MessageCircle className="w-[18px] h-[18px] text-primary-600" />
         <div className="min-w-0">
           <div className="font-semibold text-[14.5px] text-gray-900 leading-tight">Ask about this course</div>
-          <div className="text-[11.5px] text-[#86868b]">Answers come from the web. Hard questions go to the team.</div>
+          <div className="text-[11.5px] text-[#86868b]">Course questions only. Lab problems go to the discussion.</div>
         </div>
         <div className="ml-auto flex items-center gap-0.5">
           <button type="button" onClick={() => setMode('min')} aria-label="Minimise" title="Minimise" className="p-1.5 rounded-lg text-[#6e6e73] hover:bg-gray-100"><Minus className="w-4 h-4" /></button>
@@ -134,7 +134,7 @@ export default function CourseChat({ slug, itemId }: { slug: string; itemId: str
 
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
         {msgs.length === 0 && !busy && (
-          <p className="text-[14px] leading-relaxed text-[#6e6e73]">Ask anything about this lesson or the course. If we cannot answer it here, the team will, and you will get the reply by email.</p>
+          <p className="text-[14px] leading-relaxed text-[#6e6e73]">Ask about this lesson or the topics this course teaches. For lab problems or code, the discussion is the best place: other learners and the team can help.</p>
         )}
         {msgs.map(m => (
           m.role === 'learner' ? (
