@@ -32,7 +32,7 @@ export const MAILBOXES: MailboxInfo[] = [
   { address: 'webinar@gennoor.com', group: 'Site', purpose: 'Webinar sign-ups', uses: ['sends'],
     usedFor: 'Sends webinar registration confirmations.' },
   { address: 'support@gennoor.com', group: 'Site', purpose: 'Learner support', uses: ['sends', 'receives'],
-    usedFor: 'Course chat: gets an alert when a learner asks a question the assistant cannot answer, and sends your replies with any files to the learner.' },
+    usedFor: 'Sends learners their sign-in codes and password resets. Learner replies land here.' },
   { address: 'hr@gennoor.com', group: 'Site', purpose: 'Work with us', uses: ['sends', 'receives'],
     usedFor: 'Applications from the Work with us page (/join) arrive here with the resume attached, and the applicant gets a confirmation from it.' },
   { address: 'contact@gennoor.com', group: 'Site', purpose: 'Public contact address', uses: ['receives'],
