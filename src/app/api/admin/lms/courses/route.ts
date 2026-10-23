@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 import { listAllLmsCourses, type LmsCourse } from '@/lib/lms'
 import { copyStatus } from '@/lib/lms-import'
+import { studioCopyStatus } from '@/lib/lms-studio-package'
 
 function expectedBlobs(c: LmsCourse): string[] {
   const out = new Set<string>()
@@ -34,7 +35,10 @@ export async function GET(req: NextRequest) {
       level: c.level || '',
       topics: c.topics_tags || [],
       domains: c.domains || [],
-      copy: conn ? await copyStatus(conn, c.slug, expectedBlobs(c)).catch(() => null) : null,
+      protected: !!c.protected,
+      copy: conn
+        ? await (c.protected && c.packageFiles ? studioCopyStatus(conn, c) : copyStatus(conn, c.slug, expectedBlobs(c))).catch(() => null)
+        : null,
     })),
   )
   return NextResponse.json({ courses: rows })
