@@ -29,6 +29,31 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/academy',
+        destination: '/studio',
+        permanent: true,
+      },
+      {
+        source: '/labs/:path*',
+        destination: '/studio/:path*',
+        permanent: true,
+      },
+      {
+        source: '/video-courses/:path*',
+        destination: '/studio/:path*',
+        permanent: true,
+      },
+      {
+        source: '/services/copilot-studio-training',
+        destination: '/services/training',
+        permanent: true,
+      },
+      {
+        source: '/services/azure-ai-foundry-workshop',
+        destination: '/services/training',
+        permanent: true,
+      },
+      {
         source: '/services',
         destination: '/solutions',
         permanent: true,

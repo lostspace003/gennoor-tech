@@ -10,9 +10,9 @@ import {
 } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'You finished a course — what next? | Gennoor Academy',
+  title: 'You finished a course — what next? | Learning Studio',
   description:
-    'Three concrete next steps after completing a Gennoor Academy course. Whether you need a workforce-wide rollout, a training partner for ongoing programs, or an executive AI strategy workshop — pick the one that fits and book a call.',
+    'Three concrete next steps after completing a Learning Studio course. Whether you need a workforce-wide rollout, a training partner for ongoing programs, or an executive AI strategy workshop — pick the one that fits and book a call.',
   robots: { index: false, follow: false }, // private learner destination
 };
 
@@ -155,7 +155,7 @@ export default function NextStepsPage() {
               Not ready for any of these yet? That's fine. The course you just finished stays in your
               account — come back to refresh it anytime, or
               {' '}
-              <Link href="/academy" className="text-amber-600 hover:text-amber-700 font-semibold underline">
+              <Link href="/studio" className="text-amber-600 hover:text-amber-700 font-semibold underline">
                 browse other courses in the academy
               </Link>
               .

@@ -17,7 +17,7 @@ export default function AcademyCTA() {
     <section className="bg-white py-16 lg:py-24 px-8">
       <div className="max-w-[1080px] mx-auto">
         <div className="text-center mb-10">
-          <div className="kicker !tracking-[0.14em]">Gennoor Academy</div>
+          <div className="kicker !tracking-[0.14em]">Learning Studio</div>
           <h2 className="display-card mt-3.5 mb-2.5">
             {catalogCourses.length} courses. {tracks.length} tracks. Free.
           </h2>

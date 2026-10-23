@@ -78,7 +78,8 @@ function CourseCard({ course }: { course: Course }) {
 
   return (
     <Link
-      href={`/academy/courses/${course.slug}`}
+      // Interactive courses open straight into the course - no extra detail page in between.
+      href={course.interactiveUrl ?? `/academy/courses/${course.slug}`}
       className="group rounded-[18px] px-6 py-[26px] bg-white border border-[#e8e8ed] hover:border-[#d2d2d7] transition-colors duration-200 flex flex-col h-full"
     >
       <div className="flex items-start justify-between gap-3 mb-3">
@@ -106,7 +107,7 @@ function CourseCard({ course }: { course: Course }) {
         <span className="inline-flex items-center gap-1.5">
           <Layers className="w-3 h-3" /> {course.chapterCount} chapters
         </span>
-        <span className="text-primary-600 font-semibold">View ›</span>
+        <span className="text-primary-600 font-semibold">{course.interactiveUrl ? 'Start ›' : 'View ›'}</span>
       </div>
     </Link>
   )

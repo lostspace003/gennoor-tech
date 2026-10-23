@@ -1,0 +1,2563 @@
+{
+ "slug": "ai-103",
+ "code": "AI-103",
+ "container": "ai-103",
+ "title": "AI-103: Build and Ship AI Agents on Microsoft Azure",
+ "subtitle": "Build AI apps and agents in Python on Microsoft Foundry, ship one to production, and prepare for exam AI-103",
+ "level": "Intermediate",
+ "description": [
+  "Most AI courses teach Azure services one at a time. This one tells one story: you build a single AI agent, module by module, and ship it to production.",
+  "You join Meridian Travel Group, a travel company whose contact center answers the same questions all day, whose policies and invoices sit in an archive, and whose customers write and call in many languages. Every module adds new skills to the same agent, so by the end you have built something real, not a set of disconnected demos.",
+  "What you build\n- Module 1, Generative AI apps: a Python chat app on Microsoft Foundry. You choose, deploy and evaluate models, call the Responses API, add code interpreter, web search, file search and function calling, tune the system message, and protect the app with guardrails.\n- Module 2, AI agents: the app becomes an agent that acts, with custom tools, an MCP server, Foundry IQ knowledge, workflows, the Microsoft Agent Framework, a multi-agent team and tracing in Application Insights.\n- Module 3, Natural language: text analysis with Azure Language, speech apps with Azure Speech, the Language and Speech MCP servers, a real-time phone agent with Voice Live, and translation with Azure Translator.\n- Module 4, Visual data: vision models, image and video generation, Content Understanding for photos, invoices and calls, and knowledge mining over a document archive with Azure AI Search.\n- Module 5, Capstone: the agent goes to production as a Foundry hosted agent with its own identity, one toolbox for every tool, a web page for travelers, and a GitHub Actions pipeline that builds and deploys every change, with traces and a one-step rollback.",
+  "How every module works",
+  "A short story chapter sets up Meridian's problem. The concept builds up step by step on screen. You see real Python code with the current SDK names. Then come the hands-on lab videos, where every line is typed and run on camera, and short portal demos that show the same features with no code.",
+  "What you get\n- 8.9 hours of video: 48 lectures, 92 lab videos, 22 portal demos and 2 setup videos\n- A complete lab in every module, built in parts that join into one working application\n- Downloadable materials for every module: the full lab code and sample data, lab guides, demo guides with screenshots, and the slides of every section (PDF)\n- 10 quizzes with 100 exam-style questions on concepts, code and the portal, plus a knowledge check for Modules 1 to 4\n- English captions on every video",
+  "Exam AI-103 and beyond",
+  "The course covers all five skill domains of Microsoft exam AI-103, Developing AI Apps and Agents on Azure, which leads to the Microsoft Certified: Azure AI App and Agent Developer Associate certification. Wherever Microsoft is retiring a feature, you learn its successor, and every module closes with a Keep current slide. The capstone then goes further than the exam and takes the agent all the way to production, the way you would do it at work.",
+  "By the end, you can design, build, secure and ship AI apps and agents on Azure, and you are ready to prepare for exam day with confidence."
+ ],
+ "outcomes": [
+  "Build a Python chat app on Microsoft Foundry with the Responses API, tools, file search grounding and responsible AI guardrails",
+  "Create AI agents that take action with custom function tools, MCP servers and Foundry IQ knowledge bases",
+  "Orchestrate workflows and multi-agent teams in Python with the Microsoft Agent Framework, and trace them in Application Insights",
+  "Add text analysis, speech, real-time voice with Voice Live and translation with Azure Language, Azure Speech and Azure Translator",
+  "Turn images, documents, audio and video into structured data with vision models, Content Understanding and Azure AI Search",
+  "Ship an agent to production as a Foundry hosted agent with its own identity, a toolbox, a web front end and GitHub Actions CI/CD",
+  "Secure AI apps with keyless Microsoft Entra ID sign-in, and monitor, trace and roll back agents in production",
+  "Prepare for Microsoft exam AI-103, Developing AI Apps and Agents on Azure, across all five skill domains"
+ ],
+ "requirements": [
+  "Basic Python: you can read and write functions, loops and simple classes",
+  "Some experience with Microsoft Azure: you have created a resource in the Azure portal before",
+  "An Azure subscription and a free GitHub account to do the labs yourself (some Azure services incur small charges)",
+  "No data science or machine learning background is needed"
+ ],
+ "audience": [
+  "Developers who want to build generative AI apps and AI agents on Microsoft Azure",
+  "Candidates preparing for Microsoft exam AI-103 and the Azure AI App and Agent Developer Associate certification",
+  "AI-102 holders moving to the new AI-103 exam and to the Microsoft Foundry platform",
+  "Engineers and architects who want to see an AI agent taken all the way to production on Azure"
+ ],
+ "instructor": "Microsoft Certified Trainer | Azure and Conversational AI",
+ "topics": [
+  "Microsoft AI-103",
+  "AI Agents",
+  "Microsoft Azure",
+  "Generative AI"
+ ],
+ "stats": {
+  "sections": 6,
+  "lectures": 164,
+  "quizzes": 10
+ },
+ "sections": [
+  {
+   "title": "Course Introduction: The Meridian Story and the AI-103 Exam",
+   "items": [
+    {
+     "id": "i001",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Welcome: Course Roadmap, the Meridian Story and the AI-103 Exam",
+     "description": "Start here. You meet your instructor, Microsoft Certified Trainer Jalal Khan, and Meridian Travel Group, the fictitious company whose flooded support inbox you turn into a production agent. You see the course map: generative AI apps, AI agents, natural language and speech, visual data, and a capstone that ships the agent as a Foundry hosted agent with an App Service front end and GitHub Actions CI/CD. You learn the five AI-103 skill domains and their weighting, the exam format, and why the course teaches successors instead of retiring features such as Foundry visual workflows, classic agents and prompt flow. Finally, you see how each section runs: story, concept, Python code, one lab per module, and a Keep current slide.",
+     "preview": true,
+     "video": "AI103 Udemy/001 - M0 Lecture 0.00 - Course Introduction.mp4",
+     "caption": "AI103 Udemy/001 - M0 Lecture 0.00 - Course Introduction.vtt",
+     "resources": [
+      {
+       "name": "Module 0 - Introduction.pdf",
+       "blob": "AI103 Udemy - Resources/Module 0 - Introduction.pdf"
+      },
+      {
+       "name": "AI-103 - All course materials.zip",
+       "blob": "AI103 Udemy - Resources/AI-103 - All course materials.zip"
+      }
+     ],
+     "durationSec": 686
+    }
+   ]
+  },
+  {
+   "title": "Module 1: Build Generative AI Apps on Microsoft Foundry",
+   "items": [
+    {
+     "id": "i002",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Module 1 Introduction: Meridian's First Chat Assistant on Foundry",
+     "description": "Welcome to Module 1. You see how Meridian Travel Group builds its first customer-facing chat assistant on Microsoft Foundry, and what you will have done by the end: planned the solution, chosen and deployed a model, built the chat loop in Python, added tools, tuned the model's behavior and switched on guardrails. You follow the ten-chapter road from a flooded support inbox to a live assistant. You also preview the module lab, built in seven parts, which takes you from a Foundry project and a deployed model to file search over policy documents, a booking lookup function and a custom guardrail tested with a prompt attack.",
+     "preview": true,
+     "video": "AI103 Udemy/002 - M1 Lecture 1.00 - Module 1 Introduction.mp4",
+     "caption": "AI103 Udemy/002 - M1 Lecture 1.00 - Module 1 Introduction.vtt",
+     "resources": [
+      {
+       "name": "Module 1 - Intro.pdf",
+       "blob": "AI103 Udemy - Resources/Module 1 - Intro.pdf"
+      }
+     ],
+     "durationSec": 176
+    },
+    {
+     "id": "i003",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: Get Your Azure Subscription",
+     "description": "You create a free Azure account and protect it with multi-factor authentication. You verify your identity with a debit card without being charged, and you find your active subscription in the Azure portal. You see how the subscription comes with a Microsoft Entra tenant where you can add internal or external users and grant them access through role assignments.",
+     "preview": false,
+     "video": "AI103 Udemy/003 - M1 Demo 1 - Get your Azure subscription.mp4",
+     "caption": "AI103 Udemy/003 - M1 Demo 1 - Get your Azure subscription.vtt",
+     "resources": [
+      {
+       "name": "AI-103 - Setup guide - Part 1 - Get your Azure subscription.pdf",
+       "blob": "AI103 Udemy - Resources/AI-103 - Setup guide - Part 1 - Get your Azure subscription.pdf"
+      },
+      {
+       "name": "Module 1 - Demo guide.pdf",
+       "blob": "AI103 Udemy - Resources/Module 1 - Demo guide.pdf"
+      }
+     ],
+     "durationSec": 265
+    },
+    {
+     "id": "i004",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: AI Services on Azure",
+     "description": "You explore the AI and machine learning services in the Azure portal and understand what a service is. You review pre-built AI services like Face, Language, Speech and Translator that solve specific problems with pre-trained models. You meet Microsoft Foundry, the one-stop platform that brings together large language models, agents, data, search and all the AI services in a single resource.",
+     "preview": false,
+     "video": "AI103 Udemy/004 - M1 Demo 2 - AI services on Azure.mp4",
+     "caption": "AI103 Udemy/004 - M1 Demo 2 - AI services on Azure.vtt",
+     "resources": [],
+     "durationSec": 286
+    },
+    {
+     "id": "i005",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: Microsoft Foundry on Azure",
+     "description": "You tour the Foundry portal at ai.azure.com and explore your project's endpoint, keys and user access. You navigate the Discover menu to find models, agents, tools, services and solution templates. You review the Operate section for monitoring alerts, costs and compliance, and you locate quota management for tokens per minute and provisioned throughput.",
+     "preview": false,
+     "video": "AI103 Udemy/005 - M1 Demo 3 - Microsoft Foundry on Azure.mp4",
+     "caption": "AI103 Udemy/005 - M1 Demo 3 - Microsoft Foundry on Azure.vtt",
+     "resources": [],
+     "durationSec": 315
+    },
+    {
+     "id": "i006",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: A Model, End to End",
+     "description": "You take one model from the catalog to working code in the Microsoft Foundry portal, with no code of your own. You compare models on the leaderboard by quality, safety, throughput and cost, deploy gpt-4.1 to your project, and test it in the chat playground with a system message. Then you open View code to see the Python behind the playground and find the project and Azure OpenAI v1 endpoints you use in the labs.",
+     "preview": false,
+     "video": "AI103 Udemy/006 - M1 Demo 4 - A model, end to end.mp4",
+     "caption": "AI103 Udemy/006 - M1 Demo 4 - A model, end to end.vtt",
+     "resources": [],
+     "durationSec": 283
+    },
+    {
+     "id": "i007",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Setup: Install Python 3.13",
+     "description": "You install Python 3.13, the version every lab in this course uses. You find the right installer on python.org for Windows, ARM laptops and Mac, and see what Linux users do instead. You walk through the Windows installer, including pip, the py launcher and adding Python to PATH, and then check the install in a terminal with python --version and pip --version.",
+     "preview": false,
+     "video": "AI103 Udemy/007 - M1 Setup 2 - Install Python 3.13.mp4",
+     "caption": "AI103 Udemy/007 - M1 Setup 2 - Install Python 3.13.vtt",
+     "resources": [
+      {
+       "name": "AI-103 - Setup guide - Part 2 - Install Python 3.13.pdf",
+       "blob": "AI103 Udemy - Resources/AI-103 - Setup guide - Part 2 - Install Python 3.13.pdf"
+      }
+     ],
+     "durationSec": 165
+    },
+    {
+     "id": "i008",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Setup: Install VS Code and Run Python",
+     "description": "You install Visual Studio Code and run your first Python file in it. You choose between the user and system installers, start with a fresh VS Code, and add the Python extension from Microsoft, which brings Pylance for code completion. Then you create hello.py, make a .venv virtual environment with Python 3.13, select it as the interpreter, and run the file in the terminal.",
+     "preview": false,
+     "video": "AI103 Udemy/008 - M1 Setup 3 - Install VS Code and run Python.mp4",
+     "caption": "AI103 Udemy/008 - M1 Setup 3 - Install VS Code and run Python.vtt",
+     "resources": [
+      {
+       "name": "AI-103 - Setup guide - Part 3 - Install VS Code and run Python.pdf",
+       "blob": "AI103 Udemy - Resources/AI-103 - Setup guide - Part 3 - Install VS Code and run Python.pdf"
+      }
+     ],
+     "durationSec": 231
+    },
+    {
+     "id": "i009",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Setup: Overview and Setup",
+     "description": "You set up the Module 1 lab environment once so every lab part runs smoothly. You create a Python virtual environment, install the Foundry SDK and dependencies from requirements.txt, and configure your .env file with the project endpoint. You run az login to enable keyless authentication with DefaultAzureCredential, and you review the lab guide, data files and folder structure for the seven-part build.",
+     "preview": false,
+     "video": "AI103 Udemy/009 - M1 Lab 0 - Overview and setup.mp4",
+     "caption": "AI103 Udemy/009 - M1 Lab 0 - Overview and setup.vtt",
+     "resources": [
+      {
+       "name": "Module 1 - Lab files.zip",
+       "blob": "AI103 Udemy - Resources/Module 1 - Lab files.zip"
+      },
+      {
+       "name": "Module 1 - Lab guide.pdf",
+       "blob": "AI103 Udemy - Resources/Module 1 - Lab guide.pdf"
+      }
+     ],
+     "durationSec": 228
+    },
+    {
+     "id": "i010",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Meet Microsoft Foundry: Resources, Projects, Foundry Tools and SDKs",
+     "description": "Before you write any code, you map the platform you build on. You learn the two layers of Microsoft Foundry: the Foundry resource in your Azure subscription, where billing and networking are configured, and the Foundry project, an isolated work environment holding models, agents, tools and knowledge. You meet the prebuilt Foundry Tools, formerly Azure AI services: Azure Language, Speech, Translator, Document Intelligence and Content Understanding. You see the developer tooling, Visual Studio Code with the Microsoft Foundry extension, GitHub Copilot and the Azure CLI, and learn when to pick each SDK: the Microsoft Foundry SDK (azure-ai-projects), the OpenAI SDK, the Microsoft Agent Framework and the Foundry Tools SDKs.",
+     "preview": false,
+     "video": "AI103 Udemy/010 - M1 Lecture 1.01 - Meet Microsoft Foundry.mp4",
+     "caption": "AI103 Udemy/010 - M1 Lecture 1.01 - Meet Microsoft Foundry.vtt",
+     "resources": [
+      {
+       "name": "Module 1 - Section-01 - Meet Microsoft Foundry.pdf",
+       "blob": "AI103 Udemy - Resources/Module 1 - Section-01 - Meet Microsoft Foundry.pdf"
+      }
+     ],
+     "durationSec": 264
+    },
+    {
+     "id": "i011",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Endpoints, Keyless Identity, Foundry Roles and Responsible AI Principles",
+     "description": "You learn which endpoint to call and why. The Foundry project endpoint is used by the Foundry SDK, routes to the Responses API with platform tools, and is the only endpoint for agents and evaluations. The Azure OpenAI v1 endpoint serves the OpenAI SDK for embeddings, Chat Completions and the lowest latency, and Claude models use a separate Anthropic endpoint. You then replace API keys with Microsoft Entra ID through DefaultAzureCredential, which uses your az login session locally and managed identity in production. You meet the renamed roles, Foundry User, Foundry Project Manager and Foundry Account Owner, and finish with Microsoft's six responsible AI principles, applied to Meridian's assistant.",
+     "preview": false,
+     "video": "AI103 Udemy/011 - M1 Lecture 1.02 - Endpoints, Identity and Principles.mp4",
+     "caption": "AI103 Udemy/011 - M1 Lecture 1.02 - Endpoints, Identity and Principles.vtt",
+     "resources": [
+      {
+       "name": "Module 1 - Section-02 - Endpoints Identity and Principles.pdf",
+       "blob": "AI103 Udemy - Resources/Module 1 - Section-02 - Endpoints Identity and Principles.pdf"
+      }
+     ],
+     "durationSec": 260
+    },
+    {
+     "id": "i012",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Choosing a Model: The Foundry Model Catalog and Benchmarks",
+     "description": "You learn to pick a model with data instead of opinion. You search and filter the model catalog by curated collections, capabilities, provider, inference task, fine-tuning support and industry. You see the two commercial groups: Foundry Models sold directly by Azure, billed through your subscription and available on the project endpoint with the full set of platform tools, and models from partners and the community, purchased through Azure Marketplace, where you check endpoint and tool support first. Then you compare a shortlist on the leaderboard across four dimensions, quality index, attack success rate, output tokens per second and cost per million tokens, and see how Meridian weighs them for a public website assistant.",
+     "preview": false,
+     "video": "AI103 Udemy/012 - M1 Lecture 1.03 - Choosing a Model.mp4",
+     "caption": "AI103 Udemy/012 - M1 Lecture 1.03 - Choosing a Model.vtt",
+     "resources": [
+      {
+       "name": "Module 1 - Section-03 - Choosing a Model.pdf",
+       "blob": "AI103 Udemy - Resources/Module 1 - Section-03 - Choosing a Model.pdf"
+      }
+     ],
+     "durationSec": 141
+    },
+    {
+     "id": "i013",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Deploying and Evaluating Models, Plus Lab Part 1: Project and First Call",
+     "description": "You learn what deploying a model does and how the deployment type decides where requests are processed and how capacity is billed. You combine a scope, Global, Data Zone or Regional, with a billing model, Standard, Provisioned or Batch, and see why Meridian starts with Global Standard and plans Data Zone Provisioned for European production traffic. You then gather evidence: manual evaluation in the playground, including side-by-side model comparison, and automated evaluation on a dataset scored for fluency, groundedness, relevance and coherence, plus safety evaluators. In lab part 1 you create the project, deploy gpt-4.1, authenticate with DefaultAzureCredential and call responses.create from Python.",
+     "preview": false,
+     "video": "AI103 Udemy/013 - M1 Lecture 1.04 - Deploying and Evaluating.mp4",
+     "caption": "AI103 Udemy/013 - M1 Lecture 1.04 - Deploying and Evaluating.vtt",
+     "resources": [
+      {
+       "name": "Module 1 - Section-04 - Deploying and Evaluating.pdf",
+       "blob": "AI103 Udemy - Resources/Module 1 - Section-04 - Deploying and Evaluating.pdf"
+      }
+     ],
+     "durationSec": 224
+    },
+    {
+     "id": "i014",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 1.1: Deploy the Model",
+     "description": "You deploy the gpt-4.1 model in the Foundry portal with custom settings. You choose Global Standard as the deployment type for pay-per-token billing with the highest quota. You set the deployment name to gpt-4.1 so your code can reference it, and you verify the deployment succeeded with its endpoint visible in the models list.",
+     "preview": false,
+     "video": "AI103 Udemy/014 - M1 Lab 1.1 - Deploy the model.mp4",
+     "caption": "AI103 Udemy/014 - M1 Lab 1.1 - Deploy the model.vtt",
+     "resources": [],
+     "durationSec": 96
+    },
+    {
+     "id": "i015",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 1.2: The First Call",
+     "description": "You write first_call.py to call your deployed gpt-4.1 model from Python without a key in the code. You use load_dotenv to read settings, DefaultAzureCredential to sign in with your az login identity, and the Foundry SDK's get_openai_client to connect. You send one request with responses.create and print the welcome sentence, completing your first keyless Foundry call.",
+     "preview": false,
+     "video": "AI103 Udemy/015 - M1 Lab 1.2 - The first call.mp4",
+     "caption": "AI103 Udemy/015 - M1 Lab 1.2 - The first call.vtt",
+     "resources": [],
+     "durationSec": 134
+    },
+    {
+     "id": "i016",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "From Playground to Code: View Code, Endpoints and SDK Choice, Lab Part 2",
+     "description": "You test a deployed model in the Foundry playground before writing code: send prompts, watch responses in real time, adjust temperature and maximum tokens, add a system message and switch models to compare configurations. You use View code to generate sample code for the exact configuration, choosing Responses or Chat Completions, the programming language, and SDK or REST. Then you make the key architectural choice: the Microsoft Foundry SDK on the project endpoint, where an AIProjectClient hands you an OpenAI client, or the OpenAI SDK directly on the Azure OpenAI v1 endpoint. In lab part 2 you write Meridian's persona and rules, test three traveler questions and copy the system message into config.py.",
+     "preview": false,
+     "video": "AI103 Udemy/016 - M1 Lecture 1.05 - From Playground to Code.mp4",
+     "caption": "AI103 Udemy/016 - M1 Lecture 1.05 - From Playground to Code.vtt",
+     "resources": [
+      {
+       "name": "Module 1 - Section-05 - From Playground to Code.pdf",
+       "blob": "AI103 Udemy - Resources/Module 1 - Section-05 - From Playground to Code.pdf"
+      }
+     ],
+     "durationSec": 191
+    },
+    {
+     "id": "i017",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 2.1: The Persona in the Playground",
+     "description": "You write Meridian's assistant persona in system_message.md with clear scope and rules: be concise, ask for booking references, answer from documents, never invent data, and decline off-topic questions. You paste the system message into the playground's instructions and test it with three questions to see the model ask for references, refuse to invent booking details, and politely decline investment advice.",
+     "preview": false,
+     "video": "AI103 Udemy/017 - M1 Lab 2.1 - The persona in the playground.mp4",
+     "caption": "AI103 Udemy/017 - M1 Lab 2.1 - The persona in the playground.vtt",
+     "resources": [],
+     "durationSec": 154
+    },
+    {
+     "id": "i018",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 2.2: The Same Rules From Code",
+     "description": "You build try_system_message.py to load the tested system message from the markdown file and send it with every request. You send the same three test questions from code using the instructions parameter in responses.create. You verify the model follows the rules from code exactly as it did in the playground, ensuring consistency between portal and application behavior.",
+     "preview": false,
+     "video": "AI103 Udemy/018 - M1 Lab 2.2 - The same rules from code.mp4",
+     "caption": "AI103 Udemy/018 - M1 Lab 2.2 - The same rules from code.vtt",
+     "resources": [],
+     "durationSec": 107
+    },
+    {
+     "id": "i019",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Two Chat APIs: Chat Completions vs Responses API in Python, Lab Part 3",
+     "description": "You learn the two ways to keep a conversation. With Chat Completions, your code stores the messages array and sends all of it every turn, so each request grows, and you read choices[0].message.content. With the Responses API, the service stores the thread, each request carries only the newest input and previous_response_id, and you read output_text. You follow the five-step per-turn loop, then read a full Python chat app for each API, built on client.responses.create and client.chat.completions.create, noting that model is your deployment name. You see why Responses is the API to prefer for new work. In lab part 3 you build a terminal loop that chains turns with previous_response_id.",
+     "preview": false,
+     "video": "AI103 Udemy/019 - M1 Lecture 1.06 - Two Chat APIs.mp4",
+     "caption": "AI103 Udemy/019 - M1 Lecture 1.06 - Two Chat APIs.vtt",
+     "resources": [
+      {
+       "name": "Module 1 - Section-06 - Two Chat APIs.pdf",
+       "blob": "AI103 Udemy - Resources/Module 1 - Section-06 - Two Chat APIs.pdf"
+      }
+     ],
+     "durationSec": 327
+    },
+    {
+     "id": "i020",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 3.1: Chat Loop with the Responses API",
+     "description": "You build a multi-turn chat loop using the Responses API where the service keeps the conversation history for you. You send each new user message with previous_response_id to link turns together, and the service maintains context. You test it by asking about a Lisbon city break and then changing to five nights without repeating Lisbon, proving the conversation state works.",
+     "preview": false,
+     "video": "AI103 Udemy/020 - M1 Lab 3.1 - Chat loop with the Responses API.mp4",
+     "caption": "AI103 Udemy/020 - M1 Lab 3.1 - Chat loop with the Responses API.vtt",
+     "resources": [],
+     "durationSec": 129
+    },
+    {
+     "id": "i021",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 3.2: The Chat Completions Way",
+     "description": "You rebuild the chat loop using Chat Completions where your code owns the conversation history in a messages list. You send the entire message list on every turn and append each new user message and model reply to the list. You run the same two-turn conversation to compare: Responses sends only new turns while Chat Completions resends everything, giving you full control of the history.",
+     "preview": false,
+     "video": "AI103 Udemy/021 - M1 Lab 3.2 - The Chat Completions way.mp4",
+     "caption": "AI103 Udemy/021 - M1 Lab 3.2 - The Chat Completions way.vtt",
+     "resources": [],
+     "durationSec": 111
+    },
+    {
+     "id": "i022",
+     "type": "quiz",
+     "title": "Module 1 Quiz 1: Sections 1.01 to 1.06",
+     "description": "Ten exam-style questions on Microsoft Foundry, endpoints and identity, model choice and deployment, the Responses and Chat Completions APIs, tools, grounding, prompt tuning and guardrails.",
+     "questionCount": 10,
+     "passPercent": 70
+    },
+    {
+     "id": "i023",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Giving the Model Tools: Code Interpreter and Web Search, Lab Part 4",
+     "description": "You learn why tools matter: a language model on its own cannot browse and is unreliable at math. You meet the four common Responses API tools, code interpreter, web search, file search and function, and the key idea that the model decides when a tool is needed from your instructions and the tool descriptions. You follow a fare calculation through code interpreter, which writes and runs Python in an isolated sandbox container, and a Lisbon weather question through web search, which searches live and returns a grounded answer, typically with source links. You see the tools list to add to responses.create. In lab part 4 you add both tools and print which one the model chose.",
+     "preview": false,
+     "video": "AI103 Udemy/022 - M1 Lecture 1.07 - Giving the Model Tools.mp4",
+     "caption": "AI103 Udemy/022 - M1 Lecture 1.07 - Giving the Model Tools.vtt",
+     "resources": [
+      {
+       "name": "Module 1 - Section-07 - Giving the Model Tools.pdf",
+       "blob": "AI103 Udemy - Resources/Module 1 - Section-07 - Giving the Model Tools.pdf"
+      }
+     ],
+     "durationSec": 267
+    },
+    {
+     "id": "i024",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 4.1: code_interpreter",
+     "description": "You add the code_interpreter built-in tool so the assistant calculates amounts with real Python instead of guessing. You extend the system message with a tool hint that tells the model when to run Python code. You build an ask helper that sends a question with tools and prints which tools were used, and you verify the model calculates a cost split correctly by running Python in a Foundry sandbox.",
+     "preview": false,
+     "video": "AI103 Udemy/023 - M1 Lab 4.1 - code_interpreter.mp4",
+     "caption": "AI103 Udemy/023 - M1 Lab 4.1 - code_interpreter.vtt",
+     "resources": [],
+     "durationSec": 137
+    },
+    {
+     "id": "i025",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 4.2: web_search",
+     "description": "You add the web_search tool to let the assistant look up information using Grounding with Bing Search. You send two questions: one that needs calculation gets code_interpreter, and one that needs the weather gets web_search with cited sources. You test a third question that needs no tool and confirm the model chooses when to use the tools instead of always calling them.",
+     "preview": false,
+     "video": "AI103 Udemy/024 - M1 Lab 4.2 - web_search.mp4",
+     "caption": "AI103 Udemy/024 - M1 Lab 4.2 - web_search.vtt",
+     "resources": [],
+     "durationSec": 109
+    },
+    {
+     "id": "i026",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Grounding and Functions: File Search and Function Calling, Lab Part 5",
+     "description": "You ground answers in your own documents and your own code. For file search, you create a vector store, upload files that are chunked, embedded and indexed automatically, and let relevant passages be retrieved as context, with optional chunk-level citations. You see the calls: vector_stores.create, vector_stores.files.upload_and_poll and responses.create with a file search tool pointing at the vector store id. For function calling, you define and describe get_booking, register it with its name, description and parameters, run it yourself when the model emits a function call, append the function call output with the same call id, and call the API again for the final answer. In lab part 5 you build both.",
+     "preview": false,
+     "video": "AI103 Udemy/025 - M1 Lecture 1.08 - Grounding and Functions.mp4",
+     "caption": "AI103 Udemy/025 - M1 Lecture 1.08 - Grounding and Functions.vtt",
+     "resources": [
+      {
+       "name": "Module 1 - Section-08 - Grounding and Functions.pdf",
+       "blob": "AI103 Udemy - Resources/Module 1 - Section-08 - Grounding and Functions.pdf"
+      }
+     ],
+     "durationSec": 211
+    },
+    {
+     "id": "i027",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 5.1: Policy PDFs in a Vector Store",
+     "description": "You create a vector store called meridian-policies and upload Meridian's baggage, cancellation and payment policy files with setup_vector_store.py. The Foundry service extracts text from the PDF and Word documents, chunks them, and embeds them so they can be searched by meaning. You copy the vector store ID into your .env file so the assistant can reference it.",
+     "preview": false,
+     "video": "AI103 Udemy/026 - M1 Lab 5.1 - Policy PDFs in a vector store.mp4",
+     "caption": "AI103 Udemy/026 - M1 Lab 5.1 - Policy PDFs in a vector store.vtt",
+     "resources": [],
+     "durationSec": 119
+    },
+    {
+     "id": "i028",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 5.2: The Booking Lookup",
+     "description": "You build meridian_assistant.py with file_search pointing at your policy vector store and a get_booking function tool. You write the run_turn loop that sends questions, runs your Python functions when the model requests them, and sends results back until the final answer arrives. You test it by asking policy questions that retrieve from the vector store and booking lookups that call your code.",
+     "preview": false,
+     "video": "AI103 Udemy/027 - M1 Lab 5.2 - The booking lookup.mp4",
+     "caption": "AI103 Udemy/027 - M1 Lab 5.2 - The booking lookup.vtt",
+     "resources": [],
+     "durationSec": 208
+    },
+    {
+     "id": "i029",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Optimizing Behavior: Prompt Engineering, RAG or Fine-Tuning, Lab Part 6",
+     "description": "You learn to choose the right fix by asking what is wrong. If the model lacks knowledge, it is a context problem and you use retrieval augmented generation. If it behaves inconsistently in format, tone or style, you start with prompt engineering and fine-tune if that is not enough. You write a detailed system message and use three prompt patterns: format template, chain of thought and few-shot examples. You see RAG as retrieve, augment and generate, with file search as managed RAG, and fine-tuning as extra training on example prompts and responses that makes tone and structure consistent but does not reliably add knowledge. In lab part 6 you tune the system message and re-run ten test questions.",
+     "preview": false,
+     "video": "AI103 Udemy/028 - M1 Lecture 1.09 - Optimizing Behavior.mp4",
+     "caption": "AI103 Udemy/028 - M1 Lecture 1.09 - Optimizing Behavior.vtt",
+     "resources": [
+      {
+       "name": "Module 1 - Section-09 - Optimizing Behavior.pdf",
+       "blob": "AI103 Udemy - Resources/Module 1 - Section-09 - Optimizing Behavior.pdf"
+      }
+     ],
+     "durationSec": 272
+    },
+    {
+     "id": "i030",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 6.1: A Better System Message",
+     "description": "You write version two of the system message with a structured answer format: one direct sentence, up to three short bullets, and one question only if needed. You add two examples that teach the format concretely: a luggage answer in the exact structure and a one-sentence refusal for off-topic questions. You review the changes side by side to see what improved.",
+     "preview": false,
+     "video": "AI103 Udemy/029 - M1 Lab 6.1 - A better system message.mp4",
+     "caption": "AI103 Udemy/029 - M1 Lab 6.1 - A better system message.vtt",
+     "resources": [],
+     "durationSec": 65
+    },
+    {
+     "id": "i031",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 6.2: Test v1 Against v2",
+     "description": "You build prompt_tuning.py to load ten test questions and ask each one with both system message versions. You compare answers side by side using the same model so differences come only from the prompt. You identify that version two fixes format, brevity and refusals, but policy facts still need file_search, and you copy version two back into the main system_message.md file.",
+     "preview": false,
+     "video": "AI103 Udemy/030 - M1 Lab 6.2 - Test v1 against v2.mp4",
+     "caption": "AI103 Udemy/030 - M1 Lab 6.2 - Test v1 against v2.vtt",
+     "resources": [],
+     "durationSec": 148
+    },
+    {
+     "id": "i032",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Guardrails: Responsible Generative AI and Prompt Shields, Lab Part 7",
+     "description": "You learn Microsoft's four-step approach to responsible generative AI: map potential harms, measure how often they appear, mitigate them at multiple layers, and manage the solution with a phased rollout and incident response. You see the four mitigation layers: model, safety system, system message and grounding, and user experience. Then you explore Foundry guardrails on prompts and completions: severity thresholds for violence, hate, sexual content and self-harm, prompt shields for user prompt attacks and indirect attacks, spotlighting, protected material detection, groundedness detection and PII detection. In lab part 7 you apply a stricter custom guardrail, add a blocklist for competitor names and check that three prompt injection attempts are refused.",
+     "preview": false,
+     "video": "AI103 Udemy/031 - M1 Lecture 1.10 - Guardrails.mp4",
+     "caption": "AI103 Udemy/031 - M1 Lecture 1.10 - Guardrails.vtt",
+     "resources": [
+      {
+       "name": "Module 1 - Section-10 - Guardrails.pdf",
+       "blob": "AI103 Udemy - Resources/Module 1 - Section-10 - Guardrails.pdf"
+      }
+     ],
+     "durationSec": 229
+    },
+    {
+     "id": "i033",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 7.1: A Stricter Guardrail",
+     "description": "You create a custom blocklist in the Foundry portal called meridian-competitors with two competitor names as exact matches. You build a new guardrail called meridian-strict that blocks jailbreak attacks on input, blocks harm categories at medium threshold on input and output, filters protected material on output, and applies your blocklist. You attach the guardrail to your gpt-4.1 deployment.",
+     "preview": false,
+     "video": "AI103 Udemy/032 - M1 Lab 7.1 - A stricter guardrail.mp4",
+     "caption": "AI103 Udemy/032 - M1 Lab 7.1 - A stricter guardrail.vtt",
+     "resources": [],
+     "durationSec": 119
+    },
+    {
+     "id": "i034",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 7.2: The Attack Test",
+     "description": "You build guardrails_test.py with four attacks: a jailbreak asking for the system prompt, a fake override requesting all bookings, a smuggling cash request, and a question naming a blocklisted competitor. You send each attack to the model and catch HTTP 400 content_filter errors to see which layer stopped it. You verify the guardrail and system message work as two defensive layers.",
+     "preview": false,
+     "video": "AI103 Udemy/033 - M1 Lab 7.2 - The attack test.mp4",
+     "caption": "AI103 Udemy/033 - M1 Lab 7.2 - The attack test.vtt",
+     "resources": [],
+     "durationSec": 155
+    },
+    {
+     "id": "i035",
+     "type": "quiz",
+     "title": "Module 1 Quiz 2: Sections 1.07 to 1.10",
+     "description": "Ten exam-style questions on Microsoft Foundry, endpoints and identity, model choice and deployment, the Responses and Chat Completions APIs, tools, grounding, prompt tuning and guardrails.",
+     "questionCount": 10,
+     "passPercent": 70
+    },
+    {
+     "id": "i036",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Module 1 Wrap-up: Lab Complete, Keep Current and What's Next",
+     "description": "You close Module 1 with a complete customer assistant for Meridian that chats, uses tools, reads policy documents and looks up bookings. You review every lab part and finish any open one before the knowledge check. You then get the Keep current list: the Assistants API and classic agents retire on 31 March 2027, with the Responses API as the successor; prompt flow retires on 20 April 2027, in favor of Foundry evaluations and Agent Framework workflows; the Foundry RBAC roles were renamed with unchanged permissions; and AI-102 retired on 30 June 2026, so this course targets AI-103. Finally, you preview Module 2: custom tools, MCP servers, Foundry IQ, Microsoft 365 publishing and multi-agent orchestration.",
+     "preview": false,
+     "video": "AI103 Udemy/034 - M1 Lecture 1.11 - Module 1 Wrap-up.mp4",
+     "caption": "AI103 Udemy/034 - M1 Lecture 1.11 - Module 1 Wrap-up.vtt",
+     "resources": [
+      {
+       "name": "Module 1 - Wrap-up.pdf",
+       "blob": "AI103 Udemy - Resources/Module 1 - Wrap-up.pdf"
+      },
+      {
+       "name": "Module 1 - Knowledge check.pdf",
+       "blob": "AI103 Udemy - Resources/Module 1 - Knowledge check.pdf"
+      }
+     ],
+     "durationSec": 143
+    }
+   ]
+  },
+  {
+   "title": "Module 2: Build AI Agents That Act",
+   "items": [
+    {
+     "id": "i037",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Module 2 Introduction: From Assistant to Agent - Road Map and Lab",
+     "description": "In this module, Meridian Travel Group's assistant becomes an agent, something that acts instead of only answering. You see the nine-section road: create the agent in Foundry Agent Service, give it custom tools that reach the booking system, connect partner systems through MCP, ground answers in current policy with Foundry IQ, publish it into Microsoft Teams, run refund approvals as workflows, move to code-first agents with the Microsoft Agent Framework, orchestrate a team of agents, and take it to production as a hosted agent. You also get a tour of the eight-part module lab that builds Meridian's booking agent, with a printable guide, data files, a small MCP server and complete code.",
+     "preview": true,
+     "video": "AI103 Udemy/035 - M2 Lecture 2.00 - Module 2 Introduction.mp4",
+     "caption": "AI103 Udemy/035 - M2 Lecture 2.00 - Module 2 Introduction.vtt",
+     "resources": [
+      {
+       "name": "Module 2 - Intro.pdf",
+       "blob": "AI103 Udemy - Resources/Module 2 - Intro.pdf"
+      }
+     ],
+     "durationSec": 205
+    },
+    {
+     "id": "i038",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Setup: Overview and Setup",
+     "description": "You set up the Module 2 lab environment to build Meridian's booking agent in eight parts. You create a Python virtual environment, install the Foundry SDK version 2 with the Agent Framework, MCP, pypdf and Azure Monitor packages. You copy .env.example to .env and paste your project endpoint, and you run az login for keyless authentication used by both DefaultAzureCredential and AzureCliCredential.",
+     "preview": false,
+     "video": "AI103 Udemy/036 - M2 Lab 0 - Overview and setup.mp4",
+     "caption": "AI103 Udemy/036 - M2 Lab 0 - Overview and setup.vtt",
+     "resources": [
+      {
+       "name": "Module 2 - Lab files.zip",
+       "blob": "AI103 Udemy - Resources/Module 2 - Lab files.zip"
+      },
+      {
+       "name": "Module 2 - Lab guide.pdf",
+       "blob": "AI103 Udemy - Resources/Module 2 - Lab guide.pdf"
+      }
+     ],
+     "durationSec": 193
+    },
+    {
+     "id": "i039",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Agents in Foundry: What an Agent Is and Your First Agent in Python",
+     "description": "You learn the three parts of an AI agent that the exam expects you to name: the model that reasons, the instructions that set the role, rules and goal, and the tools that retrieve information, call APIs and remember. You follow the eight-step agent development workflow and see which resources are required, a Foundry project and a model deployment, and which are optional, such as Azure AI Search, Storage, Key Vault and Azure Functions. You compare the Foundry portal with Visual Studio Code and the Foundry extension. Then you create an agent version in Python with AIProjectClient and PromptAgentDefinition, and talk to it through a conversation on the Responses API. Lab part 1 creates Meridian's booking agent.",
+     "preview": false,
+     "video": "AI103 Udemy/037 - M2 Lecture 2.01 - Agents in Foundry.mp4",
+     "caption": "AI103 Udemy/037 - M2 Lecture 2.01 - Agents in Foundry.vtt",
+     "resources": [
+      {
+       "name": "Module 2 - Section-01 - Agents in Foundry.pdf",
+       "blob": "AI103 Udemy - Resources/Module 2 - Section-01 - Agents in Foundry.pdf"
+      }
+     ],
+     "durationSec": 372
+    },
+    {
+     "id": "i040",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 1.1: The Agent in the Portal",
+     "description": "You create meridian-booking-agent in the Foundry portal and switch its model to your gpt-4.1 deployment. You write the agent's instructions to confirm dates and budget before changes and to ask for booking references. You remove the web_search tool and save the agent, then test it in the portal chat to verify it follows its instructions before you recreate it in code.",
+     "preview": false,
+     "video": "AI103 Udemy/038 - M2 Lab 1.1 - The agent in the portal.mp4",
+     "caption": "AI103 Udemy/038 - M2 Lab 1.1 - The agent in the portal.vtt",
+     "resources": [],
+     "durationSec": 116
+    },
+    {
+     "id": "i041",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 1.2: The Agent in Code",
+     "description": "You build create_agent.py to create the same booking agent from Python using the Foundry SDK. You define a PromptAgentDefinition with your gpt-4.1 model and instructions, then create an immutable agent version in Foundry. You start a conversation that the service keeps, send messages with the agent reference in extra_body, and verify the agent follows its instructions from code.",
+     "preview": false,
+     "video": "AI103 Udemy/039 - M2 Lab 1.2 - The agent in code.mp4",
+     "caption": "AI103 Udemy/039 - M2 Lab 1.2 - The agent in code.vtt",
+     "resources": [],
+     "durationSec": 175
+    },
+    {
+     "id": "i042",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Custom Tools: Function Calling, Azure Functions, OpenAPI and Logic Apps",
+     "description": "You see why built-in tools such as code interpreter and file search cover only generic needs, and how custom tools connect an agent to your own systems. A key point: the model never calls the API itself; it produces a structured tool call that your code or the platform executes. You compare the four implementation options the exam likes to ask about, custom functions, Azure Functions, OpenAPI 3.0 specifications and Azure Logic Apps, and when each fits. Then you walk through function calling with the Responses API: a FunctionTool with a JSON schema, the function call item, and the function call output sent back with the call id. In lab part 2 you build change_booking.",
+     "preview": false,
+     "video": "AI103 Udemy/040 - M2 Lecture 2.02 - Custom Tools.mp4",
+     "caption": "AI103 Udemy/040 - M2 Lecture 2.02 - Custom Tools.vtt",
+     "resources": [
+      {
+       "name": "Module 2 - Section-02 - Custom Tools.pdf",
+       "blob": "AI103 Udemy - Resources/Module 2 - Section-02 - Custom Tools.pdf"
+      }
+     ],
+     "durationSec": 276
+    },
+    {
+     "id": "i043",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 2.1: Describe the Tools",
+     "description": "You define two function tools with FunctionTool: get_booking to look up an itinerary and change_booking to reschedule a departure date. Each tool has a name, a description that tells the model when to use it, and a JSON schema for its parameters. You map the tool names to real Python functions in bookings.py and add the tools to your agent definition.",
+     "preview": false,
+     "video": "AI103 Udemy/041 - M2 Lab 2.1 - Describe the tools.mp4",
+     "caption": "AI103 Udemy/041 - M2 Lab 2.1 - Describe the tools.vtt",
+     "resources": [],
+     "durationSec": 135
+    },
+    {
+     "id": "i044",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 2.2: Run the Tools",
+     "description": "You write the run_turn loop that collects function_call outputs from the agent, looks up the Python function by name, runs it with the model's arguments, and sends the results back. You test it by looking up booking MT-48213 and rescheduling it to May 14th. You verify in bookings.json that the agent changed real data through your code.",
+     "preview": false,
+     "video": "AI103 Udemy/042 - M2 Lab 2.2 - Run the tools.mp4",
+     "caption": "AI103 Udemy/042 - M2 Lab 2.2 - Run the tools.vtt",
+     "resources": [],
+     "durationSec": 166
+    },
+    {
+     "id": "i045",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "The Model Context Protocol: Connect MCP Servers to Your Foundry Agent",
+     "description": "You learn what the Model Context Protocol is: an open standard for connecting agents to tools and data, where the agent connects to an MCP server once and discovers every tool it offers. You compare one integration per tool with the MCP approach, then follow both sides of the flow: tools decorated with @mcp.tool on the server, and the five client steps of initialize a session, list tools, wrap, register and call tool. You see how Foundry Agent Service does that client work for you, and configure an MCPTool with a server label, server URL, allowed tools list and require approval set to never or always. In lab part 3 you connect the partner hotels MCP server.",
+     "preview": false,
+     "video": "AI103 Udemy/043 - M2 Lecture 2.03 - The Model Context Protocol.mp4",
+     "caption": "AI103 Udemy/043 - M2 Lecture 2.03 - The Model Context Protocol.vtt",
+     "resources": [
+      {
+       "name": "Module 2 - Section-03 - The Model Context Protocol.pdf",
+       "blob": "AI103 Udemy - Resources/Module 2 - Section-03 - The Model Context Protocol.pdf"
+      }
+     ],
+     "durationSec": 273
+    },
+    {
+     "id": "i046",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 3.1: The Partner Hotels MCP Server",
+     "description": "You build partner_hotels_server.py using FastMCP to publish two MCP tools over HTTP. You load the hotels.csv rate sheet and define search_rooms to find available rooms in a city and hold_room to create a hold with an expiring reference. You start the server on port 8000 with streamable HTTP transport and leave it running for MCP clients to discover the tools.",
+     "preview": false,
+     "video": "AI103 Udemy/044 - M2 Lab 3.1 - The partner hotels MCP server.mp4",
+     "caption": "AI103 Udemy/044 - M2 Lab 3.1 - The partner hotels MCP server.vtt",
+     "resources": [],
+     "durationSec": 163
+    },
+    {
+     "id": "i047",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 3.2: A Tunnel to the Server",
+     "description": "You run devtunnel host on port 8000 with allow-anonymous to give your local MCP server a public HTTPS address on devtunnels.ms. You paste the tunnel URL into your .env file with the /mcp path appended so the Foundry Agent Service running in the cloud can reach your local server. You keep the tunnel running in a second terminal.",
+     "preview": false,
+     "video": "AI103 Udemy/045 - M2 Lab 3.2 - A tunnel to the server.mp4",
+     "caption": "AI103 Udemy/045 - M2 Lab 3.2 - A tunnel to the server.vtt",
+     "resources": [],
+     "durationSec": 79
+    },
+    {
+     "id": "i048",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 3.3: The Agent Uses MCP",
+     "description": "You add an MCPTool to your agent pointing at the tunnel URL with allowed_tools limiting it to search_rooms and hold_room. You keep the change_booking function tool and update run_turn to print MCP calls that Foundry already executed for you. You test the agent by holding a double room in Lisbon and verify it calls both MCP tools through the tunnel to your server.",
+     "preview": false,
+     "video": "AI103 Udemy/046 - M2 Lab 3.3 - The agent uses MCP.mp4",
+     "caption": "AI103 Udemy/046 - M2 Lab 3.3 - The agent uses MCP.vtt",
+     "resources": [],
+     "durationSec": 203
+    },
+    {
+     "id": "i049",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Foundry IQ: Ground Your Agent with RAG, Knowledge Bases and Citations",
+     "description": "You recap how RAG fixes four weaknesses of a plain agent, stale knowledge, no private data, no context about your policies and confident fabrication, through retrieve, augment and generate. Then you meet Foundry IQ, a managed knowledge platform powered by Azure AI Search: define a knowledge base once, connect knowledge sources, and let any number of agents use it as a tool that is an MCP endpoint under the hood, with indexing, continuous sync, hybrid search, reranking and citations handled for you. You compare the indexed, direct and real-time source types the exam tests, and write retrieval instructions: when to retrieve, how to cite and what to do when unsure. Lab part 4 builds the policy knowledge base.",
+     "preview": false,
+     "video": "AI103 Udemy/047 - M2 Lecture 2.04 - Foundry IQ.mp4",
+     "caption": "AI103 Udemy/047 - M2 Lecture 2.04 - Foundry IQ.vtt",
+     "resources": [
+      {
+       "name": "Module 2 - Section-04 - Foundry IQ.pdf",
+       "blob": "AI103 Udemy - Resources/Module 2 - Section-04 - Foundry IQ.pdf"
+      }
+     ],
+     "durationSec": 346
+    },
+    {
+     "id": "i050",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: Agent Tools in the Portal",
+     "description": "You create meridian-hotel-analyst in the Foundry portal and add Code Interpreter with the hotels.csv data file. You ask the agent to compute average prices per city and watch it write Python with pandas, run it in a sandbox, and return a table. You review the agent versions, examine the YAML definition with the tool and file, and see the continue in code pattern for calling this agent from your application.",
+     "preview": false,
+     "video": "AI103 Udemy/048 - M2 Demo 1 - Agent tools in the portal.mp4",
+     "caption": "AI103 Udemy/048 - M2 Demo 1 - Agent tools in the portal.vtt",
+     "resources": [
+      {
+       "name": "Module 2 - Demo guide.pdf",
+       "blob": "AI103 Udemy - Resources/Module 2 - Demo guide.pdf"
+      }
+     ],
+     "durationSec": 161
+    },
+    {
+     "id": "i051",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: An MCP Tool From the Catalog",
+     "description": "You create meridian-docs-helper and add the Microsoft Learn MCP server from the Foundry tool catalog in a few clicks. You connect the server at learn.microsoft.com/api/mcp with no authentication required. You ask how to create a new agent version with the SDK and approve the MCP call, and the agent returns code and links grounded in Microsoft Learn documentation.",
+     "preview": false,
+     "video": "AI103 Udemy/049 - M2 Demo 2 - An MCP tool from the catalog.mp4",
+     "caption": "AI103 Udemy/049 - M2 Demo 2 - An MCP tool from the catalog.vtt",
+     "resources": [],
+     "durationSec": 139
+    },
+    {
+     "id": "i052",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 4.1: Connect Foundry IQ",
+     "description": "You connect Foundry IQ to an Azure AI Search resource in the Foundry portal with keyless authentication using the project's managed identity. You configure the necessary Search roles for the project identity so it can sign in without keys. You verify the connection succeeded and see the free agentic retrieval plan, ready to create knowledge bases.",
+     "preview": false,
+     "video": "AI103 Udemy/050 - M2 Lab 4.1 - Connect Foundry IQ.mp4",
+     "caption": "AI103 Udemy/050 - M2 Lab 4.1 - Connect Foundry IQ.vtt",
+     "resources": [],
+     "durationSec": 86
+    },
+    {
+     "id": "i053",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 4.2: The Policy Knowledge Base",
+     "description": "You create the meridian-policies knowledge base in Foundry IQ and upload Meridian's baggage, cancellation and payment policy files. The service splits them into chunks, embeds each chunk with text-embedding-3-large, and indexes them for semantic search. You select your gpt-4.1 model for retrieval planning with minimal reasoning effort and extractive data output mode.",
+     "preview": false,
+     "video": "AI103 Udemy/051 - M2 Lab 4.2 - The policy knowledge base.mp4",
+     "caption": "AI103 Udemy/051 - M2 Lab 4.2 - The policy knowledge base.vtt",
+     "resources": [],
+     "durationSec": 101
+    },
+    {
+     "id": "i054",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: Foundry IQ Knowledge",
+     "description": "You explore the knowledge source types in Foundry IQ: Work IQ for Microsoft 365 content, Fabric IQ for data, Azure Blob Storage, the web through Bing, and existing Azure AI Search indexes. You review the retrieval reasoning effort levels from minimal to medium that control how much the model plans searches. You attach meridian-policies to an agent in the portal and see answers with citations to the policy documents.",
+     "preview": false,
+     "video": "AI103 Udemy/052 - M2 Demo 3 - Foundry IQ knowledge.mp4",
+     "caption": "AI103 Udemy/052 - M2 Demo 3 - Foundry IQ knowledge.vtt",
+     "resources": [],
+     "durationSec": 135
+    },
+    {
+     "id": "i055",
+     "type": "quiz",
+     "title": "Module 2 Quiz 1: Sections 2.01 to 2.04",
+     "description": "Ten exam-style questions on Foundry agents, custom tools, MCP, Foundry IQ, Microsoft 365 publishing, workflows, the Agent Framework, orchestration and production.",
+     "questionCount": 10,
+     "passPercent": 70
+    },
+    {
+     "id": "i056",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Microsoft 365: Publish Your Agent to Teams and Copilot, and Use Work IQ",
+     "description": "You learn what happens when you publish a Foundry agent: an Agent Application resource with a stable invocation URL across agent versions, a distinct Microsoft Entra agent identity, and user data isolation, plus Azure Bot Service to bridge Teams. You walk through the six publishing steps in the portal, including the metadata Teams requires, such as icons, privacy policy and terms of use URLs. You compare shared scope, available immediately under Your agents, with organization scope, which needs admin approval and appears under Built by your org. Finally, you meet Work IQ, a CLI and MCP server that gives agents Microsoft 365 mail, calendar, files, people and chats through Microsoft Graph, with user permissions honored.",
+     "preview": false,
+     "video": "AI103 Udemy/053 - M2 Lecture 2.05 - Agents in Microsoft 365.mp4",
+     "caption": "AI103 Udemy/053 - M2 Lecture 2.05 - Agents in Microsoft 365.vtt",
+     "resources": [
+      {
+       "name": "Module 2 - Section-05 - Microsoft 365.pdf",
+       "blob": "AI103 Udemy - Resources/Module 2 - Section-05 - Microsoft 365.pdf"
+      }
+     ],
+     "durationSec": 229
+    },
+    {
+     "id": "i057",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Agent Workflows: Executors, Edges and Events with the Agent Framework",
+     "description": "You learn why a single agent improvising the steps of a process is unreliable, and how a workflow declares an explicit graph of steps while the framework manages execution and state. You compare three patterns, sequential, human-in-the-loop and group chat, then learn the building blocks: executors that are agents or custom code, edges that are direct, conditional, switch-case, fan-out or fan-in, and one event type, WorkflowEvent, whose type tells you what happened, including request info for a human approval. You read Meridian's sequential refund workflow in Python: triage, policy and approver agents wired by WorkflowBuilder, run for its output or streamed event by event. In lab part 5 you build it, and can publish the booking agent to Teams.",
+     "preview": false,
+     "video": "AI103 Udemy/054 - M2 Lecture 2.06 - Agent Workflows.mp4",
+     "caption": "AI103 Udemy/054 - M2 Lecture 2.06 - Agent Workflows.vtt",
+     "resources": [
+      {
+       "name": "Module 2 - Section-06 - Workflows.pdf",
+       "blob": "AI103 Udemy - Resources/Module 2 - Section-06 - Workflows.pdf"
+      }
+     ],
+     "durationSec": 333
+    },
+    {
+     "id": "i058",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: Publish an Agent",
+     "description": "You explore the publish menu in Foundry to deploy an agent to users. You preview the agent as a web app and see it answer with the same tools and instructions, then share the link or download the code. You walk through publishing to Teams and Microsoft 365 Copilot with developer details and publisher options, choosing between just you or your entire organization after admin approval.",
+     "preview": false,
+     "video": "AI103 Udemy/055 - M2 Demo 4 - Publish an agent.mp4",
+     "caption": "AI103 Udemy/055 - M2 Demo 4 - Publish an agent.vtt",
+     "resources": [],
+     "durationSec": 147
+    },
+    {
+     "id": "i059",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 5.1: Three Agents for Refunds",
+     "description": "You build refund_workflow.py using the Microsoft Agent Framework with three specialist agents. The triage agent classifies requests and restates facts, the policy agent computes the refund using the full cancellation policy text loaded from the PDF with pypdf, and the approver drafts a four-line decision for a manager. You create a FoundryChatClient with AzureCliCredential so all agents share your gpt-4.1 deployment.",
+     "preview": false,
+     "video": "AI103 Udemy/056 - M2 Lab 5.1 - Three agents for refunds.mp4",
+     "caption": "AI103 Udemy/056 - M2 Lab 5.1 - Three agents for refunds.vtt",
+     "resources": [],
+     "durationSec": 147
+    },
+    {
+     "id": "i060",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 5.2: Wire, Run and Approve",
+     "description": "You build the workflow with WorkflowBuilder by connecting triage to policy to approver in sequence. You run a refund request for booking MT-48213 departing May 12th with the request made April 20th, and the workflow produces a draft recommending fifty percent refund. You test changing the request date to May 8th and see the draft recommend manual review because it falls within seven days.",
+     "preview": false,
+     "video": "AI103 Udemy/057 - M2 Lab 5.2 - Wire, run and approve.mp4",
+     "caption": "AI103 Udemy/057 - M2 Lab 5.2 - Wire, run and approve.vtt",
+     "resources": [],
+     "durationSec": 158
+    },
+    {
+     "id": "i061",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "The Microsoft Agent Framework: Code-First Agents with Tools and Sessions",
+     "description": "You meet the Microsoft Agent Framework, the open-source SDK that is generally available since April 2026, succeeds Semantic Kernel and AutoGen, and powers the workflows and hosted agents in this module. You tour its six core components: agents, chat providers, function tools, built-in tools, conversation management and workflow orchestration. Then you build an agent in Python: a typed function with a docstring decorated with @tool, AzureCliCredential, a FoundryChatClient with your project endpoint and model deployment, and an Agent with a name, instructions and tools. A session carries the context, so a second run can simply say move it to the fourteenth of May. In lab part 6 you port the booking agent to the framework.",
+     "preview": false,
+     "video": "AI103 Udemy/058 - M2 Lecture 2.07 - The Microsoft Agent Framework.mp4",
+     "caption": "AI103 Udemy/058 - M2 Lecture 2.07 - The Microsoft Agent Framework.vtt",
+     "resources": [
+      {
+       "name": "Module 2 - Section-07 - The Microsoft Agent Framework.pdf",
+       "blob": "AI103 Udemy - Resources/Module 2 - Section-07 - The Microsoft Agent Framework.pdf"
+      }
+     ],
+     "durationSec": 241
+    },
+    {
+     "id": "i062",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 6.1: Tools as Python Functions",
+     "description": "You define get_booking and change_booking as plain Python functions decorated with @tool from the Agent Framework. The framework reads the function name, type hints and docstring to build the tool schema automatically, eliminating hand-written JSON schemas. Each function simply calls the bookings.py methods to look up or reschedule bookings.",
+     "preview": false,
+     "video": "AI103 Udemy/059 - M2 Lab 6.1 - Tools as Python functions.mp4",
+     "caption": "AI103 Udemy/059 - M2 Lab 6.1 - Tools as Python functions.vtt",
+     "resources": [],
+     "durationSec": 96
+    },
+    {
+     "id": "i063",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 6.2: The Agent and Its Session",
+     "description": "You create an Agent with the FoundryChatClient, instructions and your two tool functions, and the framework handles tool calls for you. You create a session that keeps the conversation and run agent.run with the session for each user message. You test looking up and rescheduling booking MT-51877 and verify the session remembers the reference across turns.",
+     "preview": false,
+     "video": "AI103 Udemy/060 - M2 Lab 6.2 - The agent and its session.mp4",
+     "caption": "AI103 Udemy/060 - M2 Lab 6.2 - The agent and its session.vtt",
+     "resources": [],
+     "durationSec": 142
+    },
+    {
+     "id": "i064",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Multi-Agent Orchestration: Five Patterns and a Sequential Trip Planner",
+     "description": "You compare the five orchestration patterns in the Microsoft Agent Framework, a classic exam question: concurrent for speed, sequential for predictable step-by-step work, group chat for brainstorming and synthesis, handoff for triage into specialists, and Magentic for complex, open-ended problems where an orchestrator plans, delegates and adapts. You see that any of them can include a human-in-the-loop step. Then you follow the three-step orchestration workflow and build a sequential orchestration with SequentialBuilder, where flights, hotel and policy agents each add their part. You learn that swapping to ConcurrentBuilder, GroupChatBuilder, HandoffBuilder or MagenticBuilder is one line. In lab part 7 you chain a researcher, a planner and a writer.",
+     "preview": false,
+     "video": "AI103 Udemy/061 - M2 Lecture 2.08 - Multi-Agent Orchestration.mp4",
+     "caption": "AI103 Udemy/061 - M2 Lecture 2.08 - Multi-Agent Orchestration.vtt",
+     "resources": [
+      {
+       "name": "Module 2 - Section-08 - Multi-agent Orchestration.pdf",
+       "blob": "AI103 Udemy - Resources/Module 2 - Section-08 - Multi-agent Orchestration.pdf"
+      }
+     ],
+     "durationSec": 216
+    },
+    {
+     "id": "i065",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 7.1: Specialist Agents",
+     "description": "You build trip_planner.py with three specialist agents using the sequential orchestration pattern. You define search_flights and search_hotels as tool-decorated Python functions that return simulated flights and real hotel data from hotels.csv. You create three agents with narrow instructions: flights picks flights, hotel adds a hotel within budget, and policy checks the total against the budget.",
+     "preview": false,
+     "video": "AI103 Udemy/062 - M2 Lab 7.1 - Specialist agents.mp4",
+     "caption": "AI103 Udemy/062 - M2 Lab 7.1 - Specialist agents.vtt",
+     "resources": [],
+     "durationSec": 126
+    },
+    {
+     "id": "i066",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 7.2: Run the Team",
+     "description": "You connect the three specialists with SequentialBuilder so each sees the previous agent's output and builds on it. You run one request to plan a Lisbon trip from London for two people with an 1800 euro budget. The workflow executes in order: flights searches and picks, hotel searches partners and proposes rooms, and policy totals the cost and confirms it fits the budget.",
+     "preview": false,
+     "video": "AI103 Udemy/063 - M2 Lab 7.2 - Run the team.mp4",
+     "caption": "AI103 Udemy/063 - M2 Lab 7.2 - Run the team.vtt",
+     "resources": [],
+     "durationSec": 107
+    },
+    {
+     "id": "i067",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Agents in Production: Lifecycle, Hosted Agents, Memory and Observability",
+     "description": "You follow the seven-stage agent lifecycle in Foundry, create, test, trace, evaluate, optimize, publish and monitor, and see why the stages loop. You compare prompt agents with hosted agents: your Agent Framework code, wrapped with the Foundry agent server, packaged as a container image in Azure Container Registry, and run with its own Entra identity, a dedicated endpoint and a VM-isolated session sandbox, with tools from a Toolbox behind one MCP endpoint. You cover session, user and procedural memory, OpenTelemetry traces in Application Insights, continuous evaluations, and security practices: agent identity, on-behalf-of, Key Vault connections and private networking. In lab part 8 you enable tracing and read the hosted agent Dockerfile.",
+     "preview": false,
+     "video": "AI103 Udemy/064 - M2 Lecture 2.09 - Agents in Production.mp4",
+     "caption": "AI103 Udemy/064 - M2 Lecture 2.09 - Agents in Production.vtt",
+     "resources": [
+      {
+       "name": "Module 2 - Section-09 - Production.pdf",
+       "blob": "AI103 Udemy - Resources/Module 2 - Section-09 - Production.pdf"
+      }
+     ],
+     "durationSec": 320
+    },
+    {
+     "id": "i068",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 8.1: Connect Application Insights",
+     "description": "You connect an Application Insights resource to your Foundry project in the portal's monitor settings. You review the privacy notice that prompts and answers may be logged when tracing is enabled. The connection applies to all agents in the project so their runs can send traces to Azure Monitor for debugging and observability.",
+     "preview": false,
+     "video": "AI103 Udemy/065 - M2 Lab 8.1 - Connect Application Insights.mp4",
+     "caption": "AI103 Udemy/065 - M2 Lab 8.1 - Connect Application Insights.vtt",
+     "resources": [],
+     "durationSec": 70
+    },
+    {
+     "id": "i069",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 8.2: Traces From Code",
+     "description": "You build traced_agent.py with your travel agent and add configure_azure_monitor to send traces, metrics and logs to Application Insights. You enable sensitive data recording to capture prompts and answers during development. You run the agent to answer a question about booking MT-51877, and every model call and tool execution becomes a span in the trace.",
+     "preview": false,
+     "video": "AI103 Udemy/066 - M2 Lab 8.2 - Traces from code.mp4",
+     "caption": "AI103 Udemy/066 - M2 Lab 8.2 - Traces from code.vtt",
+     "resources": [],
+     "durationSec": 131
+    },
+    {
+     "id": "i070",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 8.3: Read the Trace",
+     "description": "You open Application Insights in the Azure portal and query the dependencies table with Kusto to see the spans of your agent run. You examine the operation ID that ties all spans together, the duration of each chat call and tool execution, and you see the model calls take most of the time. You verify the prompts and answers are recorded because you enabled sensitive data.",
+     "preview": false,
+     "video": "AI103 Udemy/067 - M2 Lab 8.3 - Read the trace.mp4",
+     "caption": "AI103 Udemy/067 - M2 Lab 8.3 - Read the trace.vtt",
+     "resources": [],
+     "durationSec": 107
+    },
+    {
+     "id": "i071",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: Evaluate an Agent",
+     "description": "You evaluate meridian-booking-agent in the Foundry portal by creating a one-time evaluation targeting the latest agent version. You generate a synthetic test dataset with fifteen questions about travelers checking, moving or canceling Meridian bookings. You select agent evaluators like task adherence, quality evaluators like relevance and coherence, and safety evaluators, then review the scores row by row to identify where to improve.",
+     "preview": false,
+     "video": "AI103 Udemy/068 - M2 Demo 5 - Evaluate an agent.mp4",
+     "caption": "AI103 Udemy/068 - M2 Demo 5 - Evaluate an agent.vtt",
+     "resources": [],
+     "durationSec": 156
+    },
+    {
+     "id": "i072",
+     "type": "quiz",
+     "title": "Module 2 Quiz 2: Sections 2.05 to 2.09",
+     "description": "Ten exam-style questions on Foundry agents, custom tools, MCP, Foundry IQ, Microsoft 365 publishing, workflows, the Agent Framework, orchestration and production.",
+     "questionCount": 10,
+     "passPercent": 70
+    },
+    {
+     "id": "i073",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Module 2 Wrap-up: Lab Checklist and Platform Changes to Keep Current",
+     "description": "You review the eight completed parts of the Module 2 lab, from creating the agent with the SDK to tracing runs in Application Insights, and finish any open part before the knowledge check. Then you go through the Keep current list: the Foundry portal visual workflow designer retires on 1 December 2026, classic agents on the Assistants API on 31 March 2027, and prompt flow on 20 April 2027. You see the successors this module used instead, including Foundry Agent Service on the Responses API and the Microsoft Agent Framework, and the GA renames of ChatAgent, AgentThread and AzureAIAgentClient to Agent, AgentSession and FoundryChatClient. Finally, you preview Module 3.",
+     "preview": false,
+     "video": "AI103 Udemy/069 - M2 Lecture 2.10 - Module 2 Wrap-up and Keep Current.mp4",
+     "caption": "AI103 Udemy/069 - M2 Lecture 2.10 - Module 2 Wrap-up and Keep Current.vtt",
+     "resources": [
+      {
+       "name": "Module 2 - Wrap-up.pdf",
+       "blob": "AI103 Udemy - Resources/Module 2 - Wrap-up.pdf"
+      },
+      {
+       "name": "Module 2 - Knowledge check.pdf",
+       "blob": "AI103 Udemy - Resources/Module 2 - Knowledge check.pdf"
+      }
+     ],
+     "durationSec": 153
+    }
+   ]
+  },
+  {
+   "title": "Module 3: Natural Language: Text, Speech, Voice and Translation",
+   "items": [
+    {
+     "id": "i074",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Module 3 Introduction: Give the Agent Ears and a Voice",
+     "description": "Module 3 gives Meridian's agent ears and a voice. You see where the story stands: the agent can act, but the contact center still reads emails in six languages and answers phones by hand. You follow the seven-chapter road: analyze text with Azure Language, reach it through the Language MCP server, transcribe and speak with gpt-4o-transcribe and gpt-4o-mini-tts, build a real-time kiosk with the Azure Speech SDK, connect the Speech MCP server, run a live voice agent with Voice Live, and translate text and speech. You also preview the module lab, which you build in parts after the sections, with a printable guide, sample emails, voicemail audio and complete code.",
+     "preview": true,
+     "video": "AI103 Udemy/070 - M3 Lecture 3.00 - Module 3 Introduction - Natural Language Solutions.mp4",
+     "caption": "AI103 Udemy/070 - M3 Lecture 3.00 - Module 3 Introduction - Natural Language Solutions.vtt",
+     "resources": [
+      {
+       "name": "Module 3 - Intro.pdf",
+       "blob": "AI103 Udemy - Resources/Module 3 - Intro.pdf"
+      }
+     ],
+     "durationSec": 208
+    },
+    {
+     "id": "i075",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Setup: Overview and Setup",
+     "description": "You explore the module-3 folder structure and complete the initial setup for all Natural Language labs. You create a virtual environment, install required packages including azure-ai-projects, azure-ai-textanalytics, azure-cognitiveservices-speech, and azure-ai-translation-text. You configure your .env file with Foundry project endpoint, resource name, Language endpoint, and Translator credentials. At the end, your environment is ready to build agents with Language, Speech, and Translator capabilities for Meridian Travel Group.",
+     "preview": false,
+     "video": "AI103 Udemy/071 - M3 Lab 0 - Overview and setup.mp4",
+     "caption": "AI103 Udemy/071 - M3 Lab 0 - Overview and setup.vtt",
+     "resources": [
+      {
+       "name": "Module 3 - Lab files.zip",
+       "blob": "AI103 Udemy - Resources/Module 3 - Lab files.zip"
+      },
+      {
+       "name": "Module 3 - Lab guide.pdf",
+       "blob": "AI103 Udemy - Resources/Module 3 - Lab guide.pdf"
+      }
+     ],
+     "durationSec": 268
+    },
+    {
+     "id": "i076",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Analyze Text with Azure Language: Language Detection, NER and PII Redaction",
+     "description": "Meridian's inbox gets hundreds of emails a day in six languages, and before anyone can route them, the team needs three facts about each one. You learn which Azure Language prebuilt features to build on: language detection, named entity recognition, PII detection, custom NER and Text Analytics for health. You also learn the eight features that retire on 31 March 2029, such as sentiment analysis and summarization, and why a generative model with a prompt is their successor. Then you use TextAnalyticsClient from azure-ai-textanalytics with DefaultAzureCredential to batch documents, detect language, recognize entities and get redacted text. In lab part 1, you analyze 20 sample emails and write inbox_analysis.json.",
+     "preview": false,
+     "video": "AI103 Udemy/072 - M3 Lecture 3.01 - Analyze Text with Azure Language.mp4",
+     "caption": "AI103 Udemy/072 - M3 Lecture 3.01 - Analyze Text with Azure Language.vtt",
+     "resources": [
+      {
+       "name": "Module 3 - Section-01 - Analyze Text with Azure Language.pdf",
+       "blob": "AI103 Udemy - Resources/Module 3 - Section-01 - Analyze Text with Azure Language.pdf"
+      }
+     ],
+     "durationSec": 256
+    },
+    {
+     "id": "i077",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 1.1: The Language Client",
+     "description": "You build the Language client in analyze_inbox.py to process Meridian's inbox messages. You create a TextAnalyticsClient with DefaultAzureCredential for keyless authentication and load twenty messages from inbox.csv. You set up batch processing to call four Language methods: detect_language, analyze_sentiment, recognize_entities, and recognize_pii_entities. At the end, you have four lists holding language detection, sentiment analysis, entity recognition, and personal data redaction results for all messages.",
+     "preview": false,
+     "video": "AI103 Udemy/073 - M3 Lab 1.1 - The Language client.mp4",
+     "caption": "AI103 Udemy/073 - M3 Lab 1.1 - The Language client.vtt",
+     "resources": [],
+     "durationSec": 140
+    },
+    {
+     "id": "i078",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 1.2: Run the Analysis",
+     "description": "You complete analyze_inbox.py by writing analysis results to inbox_analysis.csv. You run the program to process twenty messages in multiple languages through the Language service in batches of five. You examine the output showing detected languages, sentiment (positive, neutral, negative), extracted entities with categories, and redacted text with personal data masked. At the end, you have a structured CSV file with analyzed and safe-to-store message content, and you learn which Language features are retiring.",
+     "preview": false,
+     "video": "AI103 Udemy/074 - M3 Lab 1.2 - Run the analysis.mp4",
+     "caption": "AI103 Udemy/074 - M3 Lab 1.2 - Run the analysis.vtt",
+     "resources": [],
+     "durationSec": 207
+    },
+    {
+     "id": "i079",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: The Language Playground",
+     "description": "You explore the Language playground in the Foundry portal to test Language service features without code. You detect languages, redact personal data with PII redaction, and extract health information using Text Analytics for health. You review which Language features are retiring and try their successor: a generative model with a JSON-structured prompt. You examine the code tab showing the same TextAnalyticsClient pattern used in the labs. At the end, you understand how to prototype Language features in the portal before coding.",
+     "preview": false,
+     "video": "AI103 Udemy/075 - M3 Demo 1 - The Language playground.mp4",
+     "caption": "AI103 Udemy/075 - M3 Demo 1 - The Language playground.vtt",
+     "resources": [
+      {
+       "name": "Module 3 - Demo guide.pdf",
+       "blob": "AI103 Udemy - Resources/Module 3 - Demo guide.pdf"
+      }
+     ],
+     "durationSec": 213
+    },
+    {
+     "id": "i080",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "The Language MCP Server: Text Analysis Tools for Your Foundry Agent",
+     "description": "Writing a custom function tool for every Azure Language feature is glue code you have to maintain. Instead, you add the Language MCP server from the Foundry Tool Catalog as one tool, and the agent discovers language detection, entities, PII redaction, Text Analytics for health and more. You follow the six steps of how it works, see the remote endpoint and the self-hosted local server on GitHub, and learn why deterministic results matter for compliance. In Python, you create an MCPTool with a label, the server URL and a project connection for authentication, set require approval, and tell the model when to use it. In lab part 2, you attach it to your module 2 booking agent.",
+     "preview": false,
+     "video": "AI103 Udemy/076 - M3 Lecture 3.02 - The Language MCP Server.mp4",
+     "caption": "AI103 Udemy/076 - M3 Lecture 3.02 - The Language MCP Server.vtt",
+     "resources": [
+      {
+       "name": "Module 3 - Section-02 - The Language MCP Server.pdf",
+       "blob": "AI103 Udemy - Resources/Module 3 - Section-02 - The Language MCP Server.pdf"
+      }
+     ],
+     "durationSec": 245
+    },
+    {
+     "id": "i081",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 2.1: Connect the Foundry Resource",
+     "description": "You create a project connection to enable the agent to call the Language service. You assign the Cognitive Services User role to your Foundry project's managed identity on the Foundry resource. You connect the Azure Language in Foundry Tools from the tool catalog, choosing Microsoft Entra authentication with the project managed identity. You copy the project connection ID to your .env file. At the end, your agent can reach Language tools through a secure, keyless connection.",
+     "preview": false,
+     "video": "AI103 Udemy/077 - M3 Lab 2.1 - Connect the Foundry resource.mp4",
+     "caption": "AI103 Udemy/077 - M3 Lab 2.1 - Connect the Foundry resource.vtt",
+     "resources": [],
+     "durationSec": 205
+    },
+    {
+     "id": "i082",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 2.2: The Language MCP Tool",
+     "description": "You build an inbox triage agent in language_mcp_agent.py using the Language MCP server. You create an MCP tool pointing to the Language server on your Foundry resource and attach it to a new agent with triage instructions. You send the first Portuguese message from the inbox and watch Foundry automatically call detect_language_from_text, redact_pii_from_text, and summarize_text. At the end, you receive a complete triage summary with language detected, redacted text, one-line request summary, and assigned team.",
+     "preview": false,
+     "video": "AI103 Udemy/078 - M3 Lab 2.2 - The Language MCP tool.mp4",
+     "caption": "AI103 Udemy/078 - M3 Lab 2.2 - The Language MCP tool.vtt",
+     "resources": [],
+     "durationSec": 259
+    },
+    {
+     "id": "i083",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 2.3: A Second Message",
+     "description": "You modify language_mcp_agent.py to process a different inbox message and compare results with Part 1. You replace the Portuguese message with a German baggage claim message and run the agent again. You observe how the agent independently chooses appropriate Language tools and correctly routes the message to the baggage team. You learn that Language tools provide deterministic results while the agent's wording may vary. At the end, you understand how agents select skills dynamically based on message content.",
+     "preview": false,
+     "video": "AI103 Udemy/079 - M3 Lab 2.3 - A second message.mp4",
+     "caption": "AI103 Udemy/079 - M3 Lab 2.3 - A second message.vtt",
+     "resources": [],
+     "durationSec": 160
+    },
+    {
+     "id": "i084",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: The Language MCP Tool in the Portal",
+     "description": "You examine the Language MCP server connection in the Foundry portal that you created in Lab Part 2. You review the tool page showing the project connection configuration, authentication method (project managed identity), and the connection ID. You understand how the MCP server address is constructed from your resource name. You see how project connections enable agents to call external services securely without keys in code. At the end, you understand the connection architecture between your agent and Language tools.",
+     "preview": false,
+     "video": "AI103 Udemy/080 - M3 Demo 2 - The Language MCP tool in the portal.mp4",
+     "caption": "AI103 Udemy/080 - M3 Demo 2 - The Language MCP tool in the portal.vtt",
+     "resources": [],
+     "durationSec": 180
+    },
+    {
+     "id": "i085",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Speech-Capable Models: gpt-4o-transcribe and gpt-4o-mini-tts in Foundry",
+     "description": "Meridian's contact center closes at eight, and every morning someone spends an hour listening to voicemails and typing them up. You fix that with speech-capable models deployed in Foundry and called through the same OpenAI client from module 1. You learn the two families: gpt-4o-transcribe and gpt-4o-mini-transcribe turn audio files into text, with a prompt to bias spelling and streamed partial results, while gpt-4o-mini-tts turns text into audio with a voice and tone instructions. You learn when to choose these models and when to choose Azure Speech instead. In code, you call audio.transcriptions.create and audio.speech.create, and in lab part 3 you transcribe five voicemails and speak the agent's replies.",
+     "preview": false,
+     "video": "AI103 Udemy/081 - M3 Lecture 3.03 - Speech-Capable Generative Models.mp4",
+     "caption": "AI103 Udemy/081 - M3 Lecture 3.03 - Speech-Capable Generative Models.vtt",
+     "resources": [
+      {
+       "name": "Module 3 - Section-03 - Speech-capable Generative Models.pdf",
+       "blob": "AI103 Udemy - Resources/Module 3 - Section-03 - Speech-capable Generative Models.pdf"
+      }
+     ],
+     "durationSec": 243
+    },
+    {
+     "id": "i086",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 3.1: The Audio Models",
+     "description": "You deploy audio models gpt-4o-transcribe and gpt-4o-mini-tts in the Foundry portal for speech processing. You examine three voicemail scripts in voicemail_scripts.md covering Portuguese, English, and German messages. You run make_voicemails.py to generate real voicemail audio files using gpt-4o-mini-tts with specific voice and instruction parameters. At the end, you have three MP3 voicemail files in the out folder ready for transcription in the next step.",
+     "preview": false,
+     "video": "AI103 Udemy/082 - M3 Lab 3.1 - The audio models.mp4",
+     "caption": "AI103 Udemy/082 - M3 Lab 3.1 - The audio models.vtt",
+     "resources": [],
+     "durationSec": 225
+    },
+    {
+     "id": "i087",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 3.2: Transcribe and Reply",
+     "description": "You build voicemail_batch.py to process voicemails automatically. You create two Azure OpenAI clients: one for the project endpoint (chat model) and one for the Foundry resource (audio models). For each voicemail, you transcribe with gpt-4o-transcribe using a vocabulary prompt, draft a reply with the chat model in the caller's language, and speak it with gpt-4o-mini-tts. At the end, you have three spoken reply MP3 files matching each voicemail.",
+     "preview": false,
+     "video": "AI103 Udemy/083 - M3 Lab 3.2 - Transcribe and reply.mp4",
+     "caption": "AI103 Udemy/083 - M3 Lab 3.2 - Transcribe and reply.vtt",
+     "resources": [],
+     "durationSec": 221
+    },
+    {
+     "id": "i088",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 3.3: Listen and Tune the Voice",
+     "description": "You experiment with voice tuning in voicemail_batch.py by modifying voice selection and instruction parameters. You change the voice from coral to sage and adjust instructions from warm and calm to bright and quick. You compare the original and modified spoken replies to understand how voice and instructions control delivery tone. You learn the rule for choosing between generative models and Azure Speech. At the end, you understand how to tune text-to-speech output through natural language instructions.",
+     "preview": false,
+     "video": "AI103 Udemy/084 - M3 Lab 3.3 - Listen and tune the voice.mp4",
+     "caption": "AI103 Udemy/084 - M3 Lab 3.3 - Listen and tune the voice.vtt",
+     "resources": [],
+     "durationSec": 195
+    },
+    {
+     "id": "i089",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Build Speech Apps with Azure Speech: Speech to Text, Text to Speech and SSML",
+     "description": "Travelers at Meridian's Lisbon airport kiosks talk to a screen that cannot listen. You learn the three Azure Speech capability areas for the exam: speech to text, text to speech with hundreds of neural voices in over 140 locales, and speech translation. You see how one SpeechConfig holds the credentials, recognition language and synthesis voice. You then build speech to text with AudioConfig and SpeechRecognizer, check result.reason for RecognizedSpeech, NoMatch and Canceled, and use continuous recognition for conversations. Finally, you use SpeechSynthesizer and SSML elements such as voice, express-as, break, say-as and prosody to control how answers sound. In lab part 4, you build the kiosk loop.",
+     "preview": false,
+     "video": "AI103 Udemy/085 - M3 Lecture 3.04 - Speech Apps with Azure Speech.mp4",
+     "caption": "AI103 Udemy/085 - M3 Lecture 3.04 - Speech Apps with Azure Speech.vtt",
+     "resources": [
+      {
+       "name": "Module 3 - Section-04 - Speech Apps with Azure Speech.pdf",
+       "blob": "AI103 Udemy - Resources/Module 3 - Section-04 - Speech Apps with Azure Speech.pdf"
+      }
+     ],
+     "durationSec": 307
+    },
+    {
+     "id": "i090",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 4.1: Ears and Voice for the Kiosk",
+     "description": "You set up the Speech SDK components in kiosk_loop.py for a talking airport kiosk. You create a keyless SpeechConfig using DefaultAzureCredential with your Foundry resource endpoint. You configure a SpeechRecognizer for British English with default microphone input and a SpeechSynthesizer for voice output using the Sonia neural voice. You prepare an SSML template with friendly speaking style. At the end, your kiosk has ears, voice, and a speaking style ready for conversation.",
+     "preview": false,
+     "video": "AI103 Udemy/086 - M3 Lab 4.1 - Ears and voice for the kiosk.mp4",
+     "caption": "AI103 Udemy/086 - M3 Lab 4.1 - Ears and voice for the kiosk.vtt",
+     "resources": [],
+     "durationSec": 165
+    },
+    {
+     "id": "i091",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 4.2: Talk to the Kiosk",
+     "description": "You complete the kiosk conversation loop in kiosk_loop.py using Azure Speech SDK. You implement recognize_once for speech input, handle recognition results and errors, and generate responses using the chat model with kiosk-specific instructions. You speak each answer using the SpeechSynthesizer with SSML formatting. You run the program and interact with the talking kiosk that listens, processes questions, and speaks answers with gate numbers spelled as separate characters. At the end, you have a working voice-enabled kiosk in your terminal.",
+     "preview": false,
+     "video": "AI103 Udemy/087 - M3 Lab 4.2 - Talk to the kiosk.mp4",
+     "caption": "AI103 Udemy/087 - M3 Lab 4.2 - Talk to the kiosk.vtt",
+     "resources": [],
+     "durationSec": 188
+    },
+    {
+     "id": "i092",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 4.3: SSML and Portuguese",
+     "description": "You enhance the kiosk with SSML tags and language switching in kiosk_loop.py. You add a break tag for pauses and a say-as tag to spell gate numbers character by character. You switch the kiosk to Portuguese by changing the recognition language and voice to Raquel, updating both the SpeechConfig and SSML template. You test with a Portuguese question and hear the correctly pronounced response. At the end, you have a multilingual kiosk with fine-grained voice control through SSML.",
+     "preview": false,
+     "video": "AI103 Udemy/088 - M3 Lab 4.3 - SSML and Portuguese.mp4",
+     "caption": "AI103 Udemy/088 - M3 Lab 4.3 - SSML and Portuguese.vtt",
+     "resources": [],
+     "durationSec": 188
+    },
+    {
+     "id": "i093",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: The Speech Playground",
+     "description": "You explore Azure Speech capabilities in the Foundry portal's Speech playground. You transcribe a voicemail from a file to text, improve recognition accuracy using phrase lists, and browse the voice gallery of hundreds of neural voices. You experiment with SSML tags including speak, voice, express-as styles, break pauses, say-as character spelling, and prosody for rate and pitch control. You learn about the three Speech modes: real-time, fast transcription, and batch transcription. At the end, you understand Speech features before implementing them in code.",
+     "preview": false,
+     "video": "AI103 Udemy/089 - M3 Demo 3 - The Speech playground.mp4",
+     "caption": "AI103 Udemy/089 - M3 Demo 3 - The Speech playground.vtt",
+     "resources": [],
+     "durationSec": 228
+    },
+    {
+     "id": "i094",
+     "type": "quiz",
+     "title": "Module 3 Quiz 1: Sections 3.01 to 3.04",
+     "description": "Ten exam-style questions on analyzing, hearing, speaking and translating language with Azure Language, Speech, Voice Live and Translator in Foundry.",
+     "questionCount": 10,
+     "passPercent": 70
+    },
+    {
+     "id": "i095",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "The Speech MCP Server: Audio Tools for Your Agent via Blob Storage",
+     "description": "Not every message in Meridian's inbox is text: travelers send voice notes and partners forward call recordings. You give the agent ears with the Azure Speech MCP server, which follows the Language server pattern with one extra piece, storage. You follow six steps: Speech in your Foundry resource, a Storage account with input and output audio containers and the Storage Blob Data Contributor role, the server added from the catalog with a key as bearer authorization, and speech to text and text to speech tools that read audio by SAS URL. You also learn the security rules: keep keys and SAS URLs out of prompts and source control, use the shortest practical expiry, scope to one container, and rotate keys.",
+     "preview": false,
+     "video": "AI103 Udemy/090 - M3 Lecture 3.05 - The Speech MCP Server.mp4",
+     "caption": "AI103 Udemy/090 - M3 Lecture 3.05 - The Speech MCP Server.vtt",
+     "resources": [
+      {
+       "name": "Module 3 - Section-05 - The Speech MCP Server.pdf",
+       "blob": "AI103 Udemy - Resources/Module 3 - Section-05 - The Speech MCP Server.pdf"
+      }
+     ],
+     "durationSec": 178
+    },
+    {
+     "id": "i096",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 5.1: Storage for the Audio",
+     "description": "You create an Azure storage account for audio file exchange with the Speech MCP server. You assign the Storage Blob Data Contributor role to both your own identity and the Foundry project's managed identity. You configure the storage account URL in your .env file and run upload_audio.py to create the audio container and upload the three voicemail MP3 files using BlobServiceClient with DefaultAzureCredential. At the end, your voicemails are stored in Blob Storage accessible to both your code and Foundry.",
+     "preview": false,
+     "video": "AI103 Udemy/091 - M3 Lab 5.1 - Storage for the audio.mp4",
+     "caption": "AI103 Udemy/091 - M3 Lab 5.1 - Storage for the audio.vtt",
+     "resources": [],
+     "durationSec": 205
+    },
+    {
+     "id": "i097",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 5.2: Add the Speech MCP Server",
+     "description": "You connect the Speech MCP server to your Foundry project through a new project connection. You create the connection using the Speech playground, providing your storage account name and container, and selecting key-based authentication with your resource key. You copy the project connection ID to your .env file and verify the Speech server address format. At the end, your agent can call Speech tools that access audio files through the configured storage connection.",
+     "preview": false,
+     "video": "AI103 Udemy/092 - M3 Lab 5.2 - Add the Speech MCP server.mp4",
+     "caption": "AI103 Udemy/092 - M3 Lab 5.2 - Add the Speech MCP server.vtt",
+     "resources": [],
+     "durationSec": 198
+    },
+    {
+     "id": "i098",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 5.3: The Voice Agent",
+     "description": "You build a voice-enabled agent in speech_mcp_agent.py that uses the Speech MCP server tools. You create an MCP tool pointing to the Speech server with your connection ID and attach it to an agent with voicemail processing instructions. You send a request referencing a voicemail blob URL and watch the agent automatically call transcribe and create_speech tools. At the end, the agent transcribes the voicemail, generates a reply, and produces a spoken response MP3 in Blob Storage.",
+     "preview": false,
+     "video": "AI103 Udemy/093 - M3 Lab 5.3 - The voice agent.mp4",
+     "caption": "AI103 Udemy/093 - M3 Lab 5.3 - The voice agent.vtt",
+     "resources": [],
+     "durationSec": 245
+    },
+    {
+     "id": "i099",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Voice Live: Build Real-Time Speech-to-Speech Voice Agents",
+     "description": "Meridian's callers wait for a human who speaks their language. You learn Voice Live, one real-time API for speech-to-speech conversations: your app streams caller audio over a WebSocket, and Voice Live recognizes the speech, runs a model or your Foundry agent, and streams back a neural voice. You see the built-in server-side turn detection, noise suppression, echo cancellation and interruption handling, the optional avatar over WebRTC, the supported audio formats, and which agent types are GA or preview. You then build it two ways: audio mode in the Foundry playground, and code with azure-ai-voicelive, using connect, session.update and the speech started, audio delta and response done events. In lab part 6, you handle interruptions.",
+     "preview": false,
+     "video": "AI103 Udemy/094 - M3 Lecture 3.06 - Live Voice Agents with Voice Live.mp4",
+     "caption": "AI103 Udemy/094 - M3 Lecture 3.06 - Live Voice Agents with Voice Live.vtt",
+     "resources": [
+      {
+       "name": "Module 3 - Section-06 - Voice Live.pdf",
+       "blob": "AI103 Udemy - Resources/Module 3 - Section-06 - Voice Live.pdf"
+      }
+     ],
+     "durationSec": 251
+    },
+    {
+     "id": "i100",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 6.1: The Voice Live Playground",
+     "description": "You explore real-time voice conversation in the Voice Live playground using gpt-realtime. You configure the playground with voice selection, turn-ending settings (voice activity detection), and noise suppression options. You start a simulated phone call and observe the assistant responding in about one second and handling mid-speech interruption (barge-in) automatically. You review the conversation transcript showing both sides turn by turn. At the end, you understand Voice Live's real-time capabilities before writing code.",
+     "preview": false,
+     "video": "AI103 Udemy/095 - M3 Lab 6.1 - The Voice Live playground.mp4",
+     "caption": "AI103 Udemy/095 - M3 Lab 6.1 - The Voice Live playground.vtt",
+     "resources": [],
+     "durationSec": 187
+    },
+    {
+     "id": "i101",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 6.2: The Phone Agent in Code",
+     "description": "You build a real-time phone assistant in phone_agent.py using the Voice Live SDK. You create a VoiceLiveSession with gpt-realtime model, configure session parameters including voice and turn detection settings, and implement event handlers for state changes and errors. You define process_call to manage the call lifecycle with connect, start_listening, and disconnect. At the end, you have a complete Voice Live implementation ready to handle phone calls with real-time audio processing.",
+     "preview": false,
+     "video": "AI103 Udemy/096 - M3 Lab 6.2 - The phone agent in code.mp4",
+     "caption": "AI103 Udemy/096 - M3 Lab 6.2 - The phone agent in code.vtt",
+     "resources": [],
+     "durationSec": 167
+    },
+    {
+     "id": "i102",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 6.3: Make the Call",
+     "description": "You run phone_agent.py to conduct a live Voice Live phone call. You start the session and observe the connection states (connecting, connected, listening) in real time. You interact with the phone assistant by asking about a booking change, and hear immediate responses with confirmed booking references. You watch the transcript display both caller and assistant turns. At the end, you complete a full-duplex voice conversation demonstrating Voice Live's real-time audio capabilities with barge-in support.",
+     "preview": false,
+     "video": "AI103 Udemy/097 - M3 Lab 6.3 - Make the call.mp4",
+     "caption": "AI103 Udemy/097 - M3 Lab 6.3 - Make the call.vtt",
+     "resources": [],
+     "durationSec": 191
+    },
+    {
+     "id": "i103",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: Voice Mode for an Agent",
+     "description": "You try voice mode for a Foundry agent in the portal chat interface. You enable voice input and output for an existing agent, configuring speech recognition language and synthesis voice. You interact with the agent by speaking questions and hearing spoken responses while seeing the text transcript. You observe how voice mode integrates Azure Speech with agent conversations seamlessly. At the end, you understand how to enable voice capabilities for any Foundry agent through the portal interface.",
+     "preview": false,
+     "video": "AI103 Udemy/098 - M3 Demo 4 - Voice mode for an agent.mp4",
+     "caption": "AI103 Udemy/098 - M3 Demo 4 - Voice mode for an agent.vtt",
+     "resources": [],
+     "durationSec": 193
+    },
+    {
+     "id": "i104",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Translate Text and Speech: Azure Translator, Speech SDK and Generative Models",
+     "description": "Meridian's specialists sit at an English-speaking desk, but messages arrive in six languages. You learn the three ways to translate in Azure and the rule of thumb for picking one: Azure Translator for text at scale, the Speech SDK for live speech, and a generative model for tone and rewriting. With azure-ai-translation-text, you create a TextTranslationClient, translate to several targets with automatic source detection, transliterate between scripts, and list supported languages. With the Speech SDK, you use SpeechTranslationConfig and a TranslationRecognizer, read result.translations, and compare event-based and manual synthesis. In lab part 7, you finish the build: any language in, the same language out.",
+     "preview": false,
+     "video": "AI103 Udemy/099 - M3 Lecture 3.07 - Translate Text and Speech.mp4",
+     "caption": "AI103 Udemy/099 - M3 Lecture 3.07 - Translate Text and Speech.vtt",
+     "resources": [
+      {
+       "name": "Module 3 - Section-07 - Translation.pdf",
+       "blob": "AI103 Udemy - Resources/Module 3 - Section-07 - Translation.pdf"
+      }
+     ],
+     "durationSec": 311
+    },
+    {
+     "id": "i105",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 7.1: Translate the Messages",
+     "description": "You implement text translation in translate_text.py using the Translator service. You create a TextTranslationClient with key-based authentication (the one service in this module requiring a key) and load eight messages in different languages from traveler_messages.csv. You call translate to automatically detect source languages and translate to both English and Portuguese simultaneously. You also test transliterate to convert Japanese text to Latin letters and query supported_languages. At the end, you have all messages translated with confidence scores.",
+     "preview": false,
+     "video": "AI103 Udemy/100 - M3 Lab 7.1 - Translate the messages.mp4",
+     "caption": "AI103 Udemy/100 - M3 Lab 7.1 - Translate the messages.vtt",
+     "resources": [],
+     "durationSec": 209
+    },
+    {
+     "id": "i106",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 7.2: Translate Speech",
+     "description": "You add speech translation to translate_speech.py using the Speech SDK. You configure a SpeechTranslationConfig to translate from Portuguese to both English and German target languages. You implement recognizers for one-time and continuous speech translation, receiving translated text in multiple languages simultaneously. You synthesize the German translation to audio using the SpeechSynthesizer. At the end, you understand how to translate spoken input to multiple target languages with optional speech output.",
+     "preview": false,
+     "video": "AI103 Udemy/101 - M3 Lab 7.2 - Translate speech.mp4",
+     "caption": "AI103 Udemy/101 - M3 Lab 7.2 - Translate speech.vtt",
+     "resources": [],
+     "durationSec": 199
+    },
+    {
+     "id": "i107",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 7.3: Wire It Together",
+     "description": "You build the complete multilingual desk in multilingual_desk.py integrating Language, Translation, Chat, and Speech capabilities. You create three clients for Language, chat model, and audio, then process each message by detecting its language with Language service, redacting PII, generating a response in the original language, and speaking it with gpt-4o-mini-tts. You run the program to handle messages in Portuguese, German, and French with appropriate spoken responses. At the end, you have a full contact center solution that reads, listens, speaks, and translates in any language.",
+     "preview": false,
+     "video": "AI103 Udemy/102 - M3 Lab 7.3 - Wire it together.mp4",
+     "caption": "AI103 Udemy/102 - M3 Lab 7.3 - Wire it together.vtt",
+     "resources": [],
+     "durationSec": 282
+    },
+    {
+     "id": "i108",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: Translator in the Portal",
+     "description": "You explore the Translator playground in the Foundry portal for text and document translation. You translate messages with automatic language detection, compare Azure MT (Translator) with a language model for tone control, and examine token versus character pricing differences. You review document translation capabilities requiring Blob Storage for input and output files. You see the code tab showing the TextTranslationClient used in labs. At the end, you understand when to use Translator versus generative models for translation tasks.",
+     "preview": false,
+     "video": "AI103 Udemy/103 - M3 Demo 5 - Translator in the portal.mp4",
+     "caption": "AI103 Udemy/103 - M3 Demo 5 - Translator in the portal.vtt",
+     "resources": [],
+     "durationSec": 192
+    },
+    {
+     "id": "i109",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: Customize with Your Own Data",
+     "description": "You learn how to customize Language, Speech, and Translator services with your own data in the Azure portal. You explore Custom Translator for domain-specific terminology, custom neural voices for branded voice experiences, and custom entity recognition for business-specific entities. You review the training data requirements, model creation process, and deployment options for each custom feature. At the end, you understand the customization capabilities available to adapt Azure AI services to your organization's specific needs.",
+     "preview": false,
+     "video": "AI103 Udemy/104 - M3 Demo 6 - Customize with your own data.mp4",
+     "caption": "AI103 Udemy/104 - M3 Demo 6 - Customize with your own data.vtt",
+     "resources": [],
+     "durationSec": 200
+    },
+    {
+     "id": "i110",
+     "type": "quiz",
+     "title": "Module 3 Quiz 2: Sections 3.04 to 3.07",
+     "description": "Ten exam-style questions on analyzing, hearing, speaking and translating language with Azure Language, Speech, Voice Live and Translator in Foundry.",
+     "questionCount": 10,
+     "passPercent": 70
+    },
+    {
+     "id": "i111",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Module 3 Wrap-up: Lab Recap and Platform Changes to Keep Current",
+     "description": "You close Module 3 by checking off every part of the lab: inbox analysis, the Language MCP server, voicemails, the kiosk loop, the Speech MCP server with Blob Storage, Voice Live, translation, and the final wiring where any input gets a reply in kind. If a part is still open, you finish it before the knowledge check. Then you review the platform changes that touch this module: Language Studio retiring on 20 March 2027, eight Language features retiring on 31 March 2029 in favor of generative models, LUIS and QnA Maker already retired, and older Speech to text REST API versions replaced by the 2025-10-15 version or the Speech SDK. Finally, you preview Module 4.",
+     "preview": false,
+     "video": "AI103 Udemy/105 - M3 Lecture 3.08 - Module 3 Wrap-up and Keep Current.mp4",
+     "caption": "AI103 Udemy/105 - M3 Lecture 3.08 - Module 3 Wrap-up and Keep Current.vtt",
+     "resources": [
+      {
+       "name": "Module 3 - Wrap-up.pdf",
+       "blob": "AI103 Udemy - Resources/Module 3 - Wrap-up.pdf"
+      },
+      {
+       "name": "Module 3 - Knowledge check.pdf",
+       "blob": "AI103 Udemy - Resources/Module 3 - Knowledge check.pdf"
+      }
+     ],
+     "durationSec": 154
+    }
+   ]
+  },
+  {
+   "title": "Module 4: Visual Data: Vision, Media, Content Understanding, Search",
+   "items": [
+    {
+     "id": "i112",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Module 4 Introduction: Extract Insights from Visual Data in Azure",
+     "description": "Start module four here. You see why Meridian's agent still cannot see: travelers send photos of damaged luggage, hotel partners send thousands of property pictures, finance receives invoices as scans, and twenty years of contracts and brochures sit in an archive nobody can search. You follow the five chapters of the module: send photos to a vision-capable model, generate hero images and teaser videos, turn hotel photos into structured fields with a Content Understanding image analyzer, read invoices, call recordings and partner videos with the same service, and index the archive with Azure AI Search and a knowledge store. Finally, you preview the module lab, built in five parts.",
+     "preview": true,
+     "video": "AI103 Udemy/106 - M4 Lecture 4.00 - Module 4 Introduction - Visual Data in Azure.mp4",
+     "caption": "AI103 Udemy/106 - M4 Lecture 4.00 - Module 4 Introduction - Visual Data in Azure.vtt",
+     "resources": [
+      {
+       "name": "Module 4 - Intro.pdf",
+       "blob": "AI103 Udemy - Resources/Module 4 - Intro.pdf"
+      }
+     ],
+     "durationSec": 214
+    },
+    {
+     "id": "i113",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Setup: Overview and Setup",
+     "description": "You explore the module-4 folder structure and set up for Visual Data labs. You review the lab guide and examine the data folder containing hotel photos, invoices, support call script, and archive documents. You create a virtual environment and install required packages including azure-ai-projects, azure-ai-contentsafety, azure-ai-vision, and azure-search-documents. You configure your .env file with Foundry project settings, chat model deployment, and embedding model deployment. At the end, your environment is ready to build vision-enabled applications for Meridian Travel Group.",
+     "preview": false,
+     "video": "AI103 Udemy/107 - M4 Lab 0 - Overview and setup.mp4",
+     "caption": "AI103 Udemy/107 - M4 Lab 0 - Overview and setup.vtt",
+     "resources": [
+      {
+       "name": "Module 4 - Lab files.zip",
+       "blob": "AI103 Udemy - Resources/Module 4 - Lab files.zip"
+      },
+      {
+       "name": "Module 4 - Lab guide.pdf",
+       "blob": "AI103 Udemy - Resources/Module 4 - Lab guide.pdf"
+      }
+     ],
+     "durationSec": 258
+    },
+    {
+     "id": "i114",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Build a Vision-Enabled App: Send Images to Multimodal Models in Python",
+     "description": "Travelers email photos of damaged luggage, and you teach Meridian's agent to read them. You learn the structure of a vision prompt: one developer or system message, then one user message whose content is a list of parts, an input text part and an input image part. You send the image as a web URL or as a base64 data URL, and you find vision-capable models in the Foundry catalog, from GPT-4.1 and newer to Phi-4-multimodal-instruct. You write the Responses API call in Python, then repeat it with Chat Completions and learn the four name changes: system role, text and image url parts, the nested url object, and choices zero. Lab part one follows.",
+     "preview": false,
+     "video": "AI103 Udemy/108 - M4 Lecture 4.01 - Build a Vision-Enabled App.mp4",
+     "caption": "AI103 Udemy/108 - M4 Lecture 4.01 - Build a Vision-Enabled App.vtt",
+     "resources": [
+      {
+       "name": "Module 4 - Section-01 - Build a Vision-enabled App.pdf",
+       "blob": "AI103 Udemy - Resources/Module 4 - Section-01 - Build a Vision-enabled App.pdf"
+      }
+     ],
+     "durationSec": 295
+    },
+    {
+     "id": "i115",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 1.1: Generate the Sample Photos",
+     "description": "You create sample luggage damage photos using Azure OpenAI in generate_photos.py. You build a client using DefaultAzureCredential and call images.generate with gpt-image-2 to create a photo of damaged luggage from a text prompt. You examine the returned Image object and decode the base64-encoded image data. You save the generated PNG file to the data folder. At the end, you have synthetic damage photos to use in the vision analysis labs without needing real claim photos.",
+     "preview": false,
+     "video": "AI103 Udemy/109 - M4 Lab 1.1 - Generate the sample photos.mp4",
+     "caption": "AI103 Udemy/109 - M4 Lab 1.1 - Generate the sample photos.vtt",
+     "resources": [],
+     "durationSec": 183
+    },
+    {
+     "id": "i116",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 1.2: Describe the Damage",
+     "description": "You build a vision-enabled claims assessment tool in describe_damage.py using the Responses API. You create an OpenAI client and construct a user message with both input_text and input_image parts, sending a damage photo and claims question together. You receive a structured response with damage description, classification (minor, repairable, or write-off), and settlement estimate following the four-hundred-euro cap rule. At the end, you have automated damage assessment using multimodal AI.",
+     "preview": false,
+     "video": "AI103 Udemy/110 - M4 Lab 1.2 - Describe the damage.mp4",
+     "caption": "AI103 Udemy/110 - M4 Lab 1.2 - Describe the damage.vtt",
+     "resources": [],
+     "durationSec": 199
+    },
+    {
+     "id": "i117",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 1.3: Compare with Chat Completions",
+     "description": "You rebuild the vision query in describe_damage_chat.py using the Chat Completions API format. You construct messages with system role (instead of developer), content parts as type text and type image_url with nested url objects. You observe the response structure differences: choices[0].message.content versus output.text. You learn which API format works with open models like Phi-4-multimodal-instruct. At the end, you understand the two API shapes for vision tasks and can recognize each in exam questions.",
+     "preview": false,
+     "video": "AI103 Udemy/111 - M4 Lab 1.3 - Compare with Chat Completions.mp4",
+     "caption": "AI103 Udemy/111 - M4 Lab 1.3 - Compare with Chat Completions.vtt",
+     "resources": [],
+     "durationSec": 171
+    },
+    {
+     "id": "i118",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: Vision in the Playground",
+     "description": "You explore vision capabilities in the Foundry portal's chat playground. You search the model catalog for multimodal models like Phi-4-multimodal-instruct and examine their input/output types and retirement information. You attach the damaged suitcase photo to a chat message, ask for damage assessment, and receive a detailed response with classification and estimate. You review the code tab showing the Responses API client and structure. At the end, you understand how to prototype vision queries before writing code.",
+     "preview": false,
+     "video": "AI103 Udemy/112 - M4 Demo 1 - Vision in the playground.mp4",
+     "caption": "AI103 Udemy/112 - M4 Demo 1 - Vision in the playground.vtt",
+     "resources": [
+      {
+       "name": "Module 4 - Demo guide.pdf",
+       "blob": "AI103 Udemy - Resources/Module 4 - Demo guide.pdf"
+      }
+     ],
+     "durationSec": 177
+    },
+    {
+     "id": "i119",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Generate Images and Video: Images API, Video Prompts and the Video Job",
+     "description": "You generate Meridian's marketing visuals with models in Foundry. You find image models with the text to image catalog filter: the GPT-Image family, which replaced DALL-E 3, and FLUX models such as FLUX.1 Kontext pro, which can edit a reference image. You call images.generate with a model, prompt, n and size, decode the base64 result and save a PNG, building the prompt from the itinerary so every image looks like one campaign. You then write a video prompt the way a storyboard describes one shot: framing, subject, action in small steps, then light, palette and style. Finally, you run the asynchronous video job: create, poll, and download the MP4.",
+     "preview": false,
+     "video": "AI103 Udemy/113 - M4 Lecture 4.02 - Generate Images and Video.mp4",
+     "caption": "AI103 Udemy/113 - M4 Lecture 4.02 - Generate Images and Video.vtt",
+     "resources": [
+      {
+       "name": "Module 4 - Section-02 - Generate Images and Video.pdf",
+       "blob": "AI103 Udemy - Resources/Module 4 - Section-02 - Generate Images and Video.pdf"
+      }
+     ],
+     "durationSec": 320
+    },
+    {
+     "id": "i120",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 2.1: Deploy the Image and Video Models",
+     "description": "You deploy image and video generation models in the Foundry portal. You deploy gpt-image-2 for creating images from text prompts and sora-2 for generating video clips. You review deployment settings including size, quality, and format options for image generation. You examine the model catalog showing model capabilities, input/output types, and retirement dates. At the end, you have both generative media models deployed and ready for the marketing team to use.",
+     "preview": false,
+     "video": "AI103 Udemy/114 - M4 Lab 2.1 - Deploy the image and video models.mp4",
+     "caption": "AI103 Udemy/114 - M4 Lab 2.1 - Deploy the image and video models.vtt",
+     "resources": [],
+     "durationSec": 179
+    },
+    {
+     "id": "i121",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 2.2: The Hero Image",
+     "description": "You generate a marketing hero image in hero_image.py using the Images API. You call images.generate with gpt-image-2, providing a detailed prompt for a Lisbon travel scene with specific requirements (yellow tram, wet cobbled street, no text). You specify image size and quality parameters. You decode and save the base64 image data as a PNG file. At the end, you have a custom-generated hero image for Meridian's website created entirely through code without stock photography.",
+     "preview": false,
+     "video": "AI103 Udemy/115 - M4 Lab 2.2 - The hero image.mp4",
+     "caption": "AI103 Udemy/115 - M4 Lab 2.2 - The hero image.vtt",
+     "resources": [],
+     "durationSec": 204
+    },
+    {
+     "id": "i122",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 2.3: The Teaser Video",
+     "description": "You create a marketing video in teaser_video.py using the Video API with sora-2. You provide a detailed video prompt specifying scene, camera movement, duration, and visual style. You call videos.generate with appropriate resolution and duration parameters. You wait for the asynchronous generation to complete and save the resulting MP4 file. At the end, you have a six-second teaser video clip generated from text, ready for Meridian's social media campaigns.",
+     "preview": false,
+     "video": "AI103 Udemy/116 - M4 Lab 2.3 - The teaser video.mp4",
+     "caption": "AI103 Udemy/116 - M4 Lab 2.3 - The teaser video.vtt",
+     "resources": [],
+     "durationSec": 284
+    },
+    {
+     "id": "i123",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: The Image Playground",
+     "description": "You generate images in the image playground without writing code. You enter a detailed prompt (yellow Lisbon tram at night on wet cobbled street), configure size and quality settings, and generate the image. You attach a reference image to edit the generated result by describing changes (add rain). You examine view code showing the images.generate call with all parameters. You learn about content filters applied to all image generation. At the end, you understand how to tune prompts and settings in the portal before coding.",
+     "preview": false,
+     "video": "AI103 Udemy/117 - M4 Demo 2 - The image playground.mp4",
+     "caption": "AI103 Udemy/117 - M4 Demo 2 - The image playground.vtt",
+     "resources": [],
+     "durationSec": 141
+    },
+    {
+     "id": "i124",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: The Video Playground",
+     "description": "You create video clips in the video playground using sora-2. You enter a detailed video prompt specifying scene, camera movement, duration, and style. You configure video resolution and duration settings and start generation. You wait for the asynchronous video generation to complete and preview the result. You review the code tab showing the videos.generate API call. You learn about video model retirement dates from the catalog. At the end, you understand video generation capabilities and limitations.",
+     "preview": false,
+     "video": "AI103 Udemy/118 - M4 Demo 3 - The video playground.mp4",
+     "caption": "AI103 Udemy/118 - M4 Demo 3 - The video playground.vtt",
+     "resources": [],
+     "durationSec": 193
+    },
+    {
+     "id": "i125",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Analyze Images with Content Understanding: Analyzers, Schemas and the SDK",
+     "description": "Meridian's 800 partner hotels send photos with only a file name, and you turn each one into the same structured fields. You learn what Azure Content Understanding is: the information extraction service in Foundry Tools that takes images, documents and forms, audio and video, and returns structured data through an analyzer. You see how an analyzer pairs a field schema with models, how each field is extracted, generated or classified, and how prebuilt analyzers differ from custom ones shaped from one sample or a few. In Python, you create a ContentUnderstandingClient with Entra ID, call begin analyze binary, and read room type, amenities and a description, each with a confidence score. Lab part three follows.",
+     "preview": false,
+     "video": "AI103 Udemy/119 - M4 Lecture 4.03 - Analyze Images with Content Understanding.mp4",
+     "caption": "AI103 Udemy/119 - M4 Lecture 4.03 - Analyze Images with Content Understanding.vtt",
+     "resources": [
+      {
+       "name": "Module 4 - Section-03 - Analyze Images with Content Understanding.pdf",
+       "blob": "AI103 Udemy - Resources/Module 4 - Section-03 - Analyze Images with Content Understanding.pdf"
+      }
+     ],
+     "durationSec": 243
+    },
+    {
+     "id": "i126",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 3.1: Default Models for Content Understanding",
+     "description": "You configure default model mappings for Content Understanding in set_defaults.py as a one-time resource setup. You create a ContentUnderstandingClient on your Foundry resource endpoint with DefaultAzureCredential. You call update_defaults to map model names to your deployed models: the chat model deployment and text-embedding-3-large embedding deployment. You verify the resource now has model defaults that all analyzers will use. At the end, Content Understanding knows which deployments to use for analysis operations.",
+     "preview": false,
+     "video": "AI103 Udemy/120 - M4 Lab 3.1 - Default models for Content Understanding.mp4",
+     "caption": "AI103 Udemy/120 - M4 Lab 3.1 - Default models for Content Understanding.vtt",
+     "resources": [],
+     "durationSec": 135
+    },
+    {
+     "id": "i127",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 3.2: Build the Photo Analyzer",
+     "description": "You create a custom analyzer for hotel photos in create_photo_analyzer.py. You define an AnalyzerDefinition with base_analyzer as analyze_image and a schema containing four fields: RoomType (classify from a list), Amenities (array generate), View (generate), and AltText (generate one sentence). You configure the models to use and call create_analyzer with meridian_hotel_rooms as the ID. At the end, you have a reusable analyzer that extracts consistent structured data from any room photo.",
+     "preview": false,
+     "video": "AI103 Udemy/121 - M4 Lab 3.2 - Build the photo analyzer.mp4",
+     "caption": "AI103 Udemy/121 - M4 Lab 3.2 - Build the photo analyzer.vtt",
+     "resources": [],
+     "durationSec": 143
+    },
+    {
+     "id": "i128",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 3.3: Tag the Hotel Photos",
+     "description": "You apply the photo analyzer in tag_hotel_photos.py to extract structured data from room images. You loop through PNG files in the data folder, calling begin_analyze_binary with your analyzer ID and image bytes. You extract and print the four fields from each result: room type, amenities array, view description, and alt text. At the end, you have a structured photo catalog with consistent metadata for every hotel room image, ready for website integration.",
+     "preview": false,
+     "video": "AI103 Udemy/122 - M4 Lab 3.3 - Tag the hotel photos.mp4",
+     "caption": "AI103 Udemy/122 - M4 Lab 3.3 - Tag the hotel photos.vtt",
+     "resources": [],
+     "durationSec": 118
+    },
+    {
+     "id": "i129",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 3.4: Add a Field",
+     "description": "You extend the photo analyzer by adding a BedCount field in create_photo_analyzer.py. You add the new field definition as a number type using the generate method with appropriate description. You update the existing analyzer using allow_replace=True to modify it in place. You run tag_hotel_photos.py again without code changes and observe that all results now include the bed count. At the end, you understand how analyzer schemas work and the three field methods: extract, generate, and classify.",
+     "preview": false,
+     "video": "AI103 Udemy/123 - M4 Lab 3.4 - Add a field.mp4",
+     "caption": "AI103 Udemy/123 - M4 Lab 3.4 - Add a field.vtt",
+     "resources": [],
+     "durationSec": 107
+    },
+    {
+     "id": "i130",
+     "type": "quiz",
+     "title": "Module 4 Quiz 1: Sections 4.01 to 4.03",
+     "description": "Ten exam-style questions on vision prompts, image and video generation, Content Understanding analyzers, and knowledge mining with Azure AI Search.",
+     "questionCount": 10,
+     "passPercent": 70
+    },
+    {
+     "id": "i131",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Documents, Audio and Video with Content Understanding: Custom Analyzers",
+     "description": "You extend Content Understanding from images to three more content types. For documents and forms, you extract invoice fields such as vendor, total and due date; for audio, the analyzer transcribes first and then summarizes calls or scores sentiment; for video, you get key points and segments with time ranges. You build a custom analyzer from a base analyzer id, a field schema where each field has a type, method and description, and completion and embedding models, then create it with begin create analyzer or in the Foundry portal from one sample. You read typed values and confidence scores, and pay invoices automatically above 0.9 while routing the rest to review.",
+     "preview": false,
+     "video": "AI103 Udemy/124 - M4 Lecture 4.04 - Documents, Audio and Video with Content Understanding.mp4",
+     "caption": "AI103 Udemy/124 - M4 Lecture 4.04 - Documents, Audio and Video with Content Understanding.vtt",
+     "resources": [
+      {
+       "name": "Module 4 - Section-04 - Documents Audio and Video.pdf",
+       "blob": "AI103 Udemy - Resources/Module 4 - Section-04 - Documents Audio and Video.pdf"
+      }
+     ],
+     "durationSec": 304
+    },
+    {
+     "id": "i132",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 4.1: The Invoice Analyzer",
+     "description": "You build an invoice analyzer in create_invoice_analyzer.py for automated payment processing. You create an AnalyzerDefinition with base_analyzer as prebuilt_document and define fields: VendorName, InvoiceNumber, InvoiceTotal, and DueDate using extract, plus Summary (generate) and Category (classify). You enable estimate_field_source_and_confidence in the config to get confidence scores for extracted values. You create the analyzer as meridian_invoice. At the end, you have a document analyzer that extracts invoice data with confidence scores for payment automation.",
+     "preview": false,
+     "video": "AI103 Udemy/125 - M4 Lab 4.1 - The invoice analyzer.mp4",
+     "caption": "AI103 Udemy/125 - M4 Lab 4.1 - The invoice analyzer.vtt",
+     "resources": [],
+     "durationSec": 142
+    },
+    {
+     "id": "i133",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 4.2: Pay or Review",
+     "description": "You implement automated invoice payment logic in pay_invoices.py with a confidence threshold. You analyze three PDF invoices using begin_analyze_binary with the invoice analyzer. You apply a business rule: invoices with all required fields above ninety percent confidence get scheduled for payment, while those with weak fields (low confidence or missing values) route to human review. You print detailed results showing vendor, total, due date with confidence scores, category, and summary. At the end, you have safe invoice automation that knows when to defer to human judgment.",
+     "preview": false,
+     "video": "AI103 Udemy/126 - M4 Lab 4.2 - Pay or review.mp4",
+     "caption": "AI103 Udemy/126 - M4 Lab 4.2 - Pay or review.vtt",
+     "resources": [],
+     "durationSec": 197
+    },
+    {
+     "id": "i134",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 4.3: The Support Call",
+     "description": "You generate a synthetic support call recording in make_call.py for audio analysis testing. You read a support call script with two roles (customer and agent) discussing a damaged suitcase claim. You use gpt-4o-mini-tts to synthesize speech for each line with appropriate voices and instructions. You combine the audio segments into a single MP3 file representing the complete support call. At the end, you have a realistic call recording to analyze without needing actual customer service audio.",
+     "preview": false,
+     "video": "AI103 Udemy/127 - M4 Lab 4.3 - The support call.mp4",
+     "caption": "AI103 Udemy/127 - M4 Lab 4.3 - The support call.vtt",
+     "resources": [],
+     "durationSec": 154
+    },
+    {
+     "id": "i135",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 4.4: Analyze the Call",
+     "description": "You build an audio analyzer in analyze_call.py using Content Understanding with prebuilt_audio base. You define fields for BookingReference (generate), Reason and Sentiment (classify), Commitments (array of promises), and Summary. You send the support call MP3 using begin_analyze_binary with content type audio/mpeg. You extract and print all fields plus the first three hundred characters of the markdown transcript with timestamps and speaker labels. At the end, you have structured case file data extracted from unstructured audio conversations.",
+     "preview": false,
+     "video": "AI103 Udemy/128 - M4 Lab 4.4 - Analyze the call.mp4",
+     "caption": "AI103 Udemy/128 - M4 Lab 4.4 - Analyze the call.vtt",
+     "resources": [],
+     "durationSec": 134
+    },
+    {
+     "id": "i136",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: Content Understanding in the Portal",
+     "description": "You explore Content Understanding analyzers in the Foundry portal. You create a custom analyzer using the portal's schema designer, defining fields with extract, generate, and classify methods. You upload a sample document or image and run analysis to see field extraction results. You review confidence scores and grounding information for extracted values. You examine how to configure model defaults and analyzer settings. At the end, you understand how to prototype and test analyzers before implementing them in code.",
+     "preview": false,
+     "video": "AI103 Udemy/129 - M4 Demo 4 - Content Understanding in the portal.mp4",
+     "caption": "AI103 Udemy/129 - M4 Demo 4 - Content Understanding in the portal.vtt",
+     "resources": [],
+     "durationSec": 150
+    },
+    {
+     "id": "i137",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: Audio and Video in the Portal",
+     "description": "You analyze audio and video in the Content Understanding playground using prebuilt analyzers. You upload the support call MP3 to the audio search analyzer and receive a WebVTT transcript with speaker labels, timestamps, and a summary. You upload the Lisbon teaser video to the video search analyzer and get shot segmentation, key frames, and scene descriptions. You review the code tab showing the API structure. At the end, you understand prebuilt audio and video analysis capabilities.",
+     "preview": false,
+     "video": "AI103 Udemy/130 - M4 Demo 5 - Audio and video in the portal.mp4",
+     "caption": "AI103 Udemy/130 - M4 Demo 5 - Audio and video in the portal.vtt",
+     "resources": [],
+     "durationSec": 117
+    },
+    {
+     "id": "i138",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Knowledge Mining with Azure AI Search: Indexers, Skillsets, Knowledge Store",
+     "description": "You turn Meridian's twenty-year archive of scanned contracts and brochures into data. You learn the three jobs of Azure AI Search and the knowledge mining vocabulary: data source, indexer, skillset, index and knowledge store, including how document cracking pulls text and images from each file. You enrich documents with built-in skills that wrap Foundry Tools, such as language detection, entities, key phrases, PII redaction, OCR, image analysis and multimodal embeddings, and with custom skills, typically on an Azure Function. You set field attributes, then query from Python with a SearchClient using filters, order by and facets. Finally, you add a knowledge store and learn which projection gives a relational schema: table.",
+     "preview": false,
+     "video": "AI103 Udemy/131 - M4 Lecture 4.05 - Knowledge Mining with Azure AI Search.mp4",
+     "caption": "AI103 Udemy/131 - M4 Lecture 4.05 - Knowledge Mining with Azure AI Search.vtt",
+     "resources": [
+      {
+       "name": "Module 4 - Section-05 - Knowledge Mining with Azure AI Search.pdf",
+       "blob": "AI103 Udemy - Resources/Module 4 - Section-05 - Knowledge Mining with Azure AI Search.pdf"
+      }
+     ],
+     "durationSec": 417
+    },
+    {
+     "id": "i139",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 5.1: Upload the Archive",
+     "description": "You upload Meridian's document archive to Blob Storage in upload_archive.py. You create a BlobServiceClient with DefaultAzureCredential (no account key needed) and create the archive container. You loop through five documents (hotel agreements, rate card, brochure, safety briefing), guess content types, and upload each with overwrite enabled. You print the container URL. At the end, all archive documents are in cloud storage ready for the search service to index.",
+     "preview": false,
+     "video": "AI103 Udemy/132 - M4 Lab 5.1 - Upload the archive.mp4",
+     "caption": "AI103 Udemy/132 - M4 Lab 5.1 - Upload the archive.vtt",
+     "resources": [],
+     "durationSec": 114
+    },
+    {
+     "id": "i140",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 5.2: The Search Service Identity",
+     "description": "You configure identity and permissions for Azure AI Search to access your resources. You enable a system-assigned managed identity on the search service in the Azure portal. You assign three roles: Storage Blob Data Reader (to read archive documents), Cognitive Services User (to call Language for enrichment), and Cognitive Services OpenAI User (to generate embeddings). At the end, your search service can securely access storage, Language, and the chat model for the indexing pipeline.",
+     "preview": false,
+     "video": "AI103 Udemy/133 - M4 Lab 5.2 - The search service identity.mp4",
+     "caption": "AI103 Udemy/133 - M4 Lab 5.2 - The search service identity.vtt",
+     "resources": [],
+     "durationSec": 117
+    },
+    {
+     "id": "i141",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 5.3: Build the Index",
+     "description": "You build a complete search index in build_index.py with data source, skillset, index, and indexer. You create a data source pointing to the archive container, a skillset with EntityRecognition (locations), KeyPhraseExtraction, and AzureOpenAIEmbedding skills plus a knowledge store table projection. You define an index with searchable fields including a vector field for content_vector. You create an indexer to run the pipeline and wait for completion. At the end, your five documents are indexed with enrichments and ready for semantic search.",
+     "preview": false,
+     "video": "AI103 Udemy/134 - M4 Lab 5.3 - Build the index.mp4",
+     "caption": "AI103 Udemy/134 - M4 Lab 5.3 - Build the index.vtt",
+     "resources": [],
+     "durationSec": 155
+    },
+    {
+     "id": "i142",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 5.4: Query the Archive",
+     "description": "You query the indexed archive in query_archive.py using multiple search techniques. You perform keyword search with facets on locations, apply filters using OData syntax, and execute vector search by embedding a query and finding similar documents. You examine results showing titles, locations, key phrases, and similarity scores. You also query the knowledge store table in Blob Storage to see the enriched data. At the end, you understand how to combine keyword, faceted, filtered, and semantic search.",
+     "preview": false,
+     "video": "AI103 Udemy/135 - M4 Lab 5.4 - Query the archive.mp4",
+     "caption": "AI103 Udemy/135 - M4 Lab 5.4 - Query the archive.vtt",
+     "resources": [],
+     "durationSec": 118
+    },
+    {
+     "id": "i143",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 5.5: The Archive Agent",
+     "description": "You give an agent search capability in archive_agent.py by creating an Azure AI Search tool. You build a search connection, define a SearchTool pointing to your index with both keyword and vector search modes, and attach it to an agent with appropriate instructions. You send questions about Meridian's policies and watch the agent retrieve relevant document passages and answer based on the archive. At the end, you have an agent that grounds its responses in your organization's knowledge base through semantic search.",
+     "preview": false,
+     "video": "AI103 Udemy/136 - M4 Lab 5.5 - The archive agent.mp4",
+     "caption": "AI103 Udemy/136 - M4 Lab 5.5 - The archive agent.vtt",
+     "resources": [],
+     "durationSec": 140
+    },
+    {
+     "id": "i144",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: The Search Pipeline in the Portal",
+     "description": "You examine the search indexing pipeline in the Azure portal. You review the indexer execution history showing run status, duration, document counts, and errors. You inspect the skillset JSON showing EntityRecognition, KeyPhraseExtraction, AzureOpenAIEmbedding skills, and the knowledge store projection. You explore the index schema showing field attributes (retrievable, filterable, sortable, facetable, searchable). You configure the indexer schedule for recurring runs. At the end, you understand how to monitor and manage the indexing pipeline.",
+     "preview": false,
+     "video": "AI103 Udemy/137 - M4 Demo 6 - The search pipeline in the portal.mp4",
+     "caption": "AI103 Udemy/137 - M4 Demo 6 - The search pipeline in the portal.vtt",
+     "resources": [],
+     "durationSec": 140
+    },
+    {
+     "id": "i145",
+     "type": "lecture",
+     "kind": "demo",
+     "title": "Demo: Query the Archive in the Portal",
+     "description": "You query the search index using the search explorer in the Azure portal. You write JSON requests with keyword search, count, facets on locations, OData filters, and field selection. You examine results showing matched document count, facet counts, and selected fields. You open the knowledge store table in the storage account to view enriched data rows accessible to Power BI and analytics tools. At the end, you understand how to test search queries in the portal before implementing them in code.",
+     "preview": false,
+     "video": "AI103 Udemy/138 - M4 Demo 7 - Query the archive in the portal.mp4",
+     "caption": "AI103 Udemy/138 - M4 Demo 7 - Query the archive in the portal.vtt",
+     "resources": [],
+     "durationSec": 109
+    },
+    {
+     "id": "i146",
+     "type": "quiz",
+     "title": "Module 4 Quiz 2: Sections 4.04 to 4.05",
+     "description": "Ten exam-style questions on vision prompts, image and video generation, Content Understanding analyzers, and knowledge mining with Azure AI Search.",
+     "questionCount": 10,
+     "passPercent": 70
+    },
+    {
+     "id": "i147",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Module 4 Wrap-up: Lab Recap, Platform Changes and What Comes Next",
+     "description": "You close module four by reviewing the completed lab: luggage damage described, a Lisbon hero image and teaser video generated, hotel photos tagged, invoices routed by confidence, a call and a video analyzed, the archive indexed with a knowledge store, and everything wired into the agent. You then check the platform changes: DALL-E 3 retired in February 2026 in favor of GPT-Image and FLUX, the first Sora and then Sora 2 retired while the create, poll, download pattern stays, Azure Cognitive Search is now Azure AI Search, and multimodal models and Content Understanding replace the AI-102 image and video APIs. Finally, you preview the module five capstone.",
+     "preview": false,
+     "video": "AI103 Udemy/139 - M4 Lecture 4.06 - Module 4 Wrap-up and Keep Current.mp4",
+     "caption": "AI103 Udemy/139 - M4 Lecture 4.06 - Module 4 Wrap-up and Keep Current.vtt",
+     "resources": [
+      {
+       "name": "Module 4 - Wrap-up.pdf",
+       "blob": "AI103 Udemy - Resources/Module 4 - Wrap-up.pdf"
+      },
+      {
+       "name": "Module 4 - Knowledge check.pdf",
+       "blob": "AI103 Udemy - Resources/Module 4 - Knowledge check.pdf"
+      }
+     ],
+     "durationSec": 153
+    }
+   ]
+  },
+  {
+   "title": "Module 5: Capstone: Ship Meridian's Agent to Production",
+   "items": [
+    {
+     "id": "i148",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Capstone Introduction: Ship Meridian's Agent to Production",
+     "description": "Your Meridian agent chats, acts, listens, speaks and sees, but it still runs in one developer's terminal. In this module you ship it. You see the five-chapter road: what a Foundry hosted agent is, packaging the agent as a container image in Azure Container Registry, choosing protocols and calling the endpoint from Python, giving the agent its own identity, Key Vault-backed secrets and one toolbox, and adding an App Service web front end with a GitHub Actions pipeline. Then you walk the whole architecture in three lanes, ship, serve and operate, and preview the five-part lab that builds it. The finished repository is in the capstone folder.",
+     "preview": true,
+     "video": "AI103 Udemy/140 - M5 Lecture 5.00 - Capstone Introduction.mp4",
+     "caption": "AI103 Udemy/140 - M5 Lecture 5.00 - Capstone Introduction.vtt",
+     "resources": [
+      {
+       "name": "Module 5 - Intro.pdf",
+       "blob": "AI103 Udemy - Resources/Module 5 - Intro.pdf"
+      }
+     ],
+     "durationSec": 249
+    },
+    {
+     "id": "i149",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Setup: Overview and Setup",
+     "description": "You explore the capstone folder structure and set up the virtual environment for all Module 5 labs. You install the required packages, configure the .env file with your Azure resource names, and prepare to ship Meridian's agent into production. You learn how to use DefaultAzureCredential for keyless authentication and see how one environment file drives every deployment script. At the end, you have a ready workspace with all dependencies installed and configured resource names.",
+     "preview": false,
+     "video": "AI103 Udemy/141 - M5 Lab 0 - Overview and setup.mp4",
+     "caption": "AI103 Udemy/141 - M5 Lab 0 - Overview and setup.vtt",
+     "resources": [
+      {
+       "name": "Module 5 - Lab files.zip",
+       "blob": "AI103 Udemy - Resources/Module 5 - Lab files.zip"
+      },
+      {
+       "name": "Capstone - Lab guide.pdf",
+       "blob": "AI103 Udemy - Resources/Capstone - Lab guide.pdf"
+      }
+     ],
+     "durationSec": 213
+    },
+    {
+     "id": "i150",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Setup 0.1: Provision the Resources",
+     "description": "You run the provision script to create all Azure resources the capstone needs. You deploy the container registry, Azure AI Search service, storage account, and project connections for Search, Language, and Speech services. You learn how to assign managed identity roles for keyless access and see how the script verifies each resource and role assignment. At the end, you have a complete Azure infrastructure ready for the hosted agent.",
+     "preview": false,
+     "video": "AI103 Udemy/142 - M5 Lab 0.1 - Provision the resources.mp4",
+     "caption": "AI103 Udemy/142 - M5 Lab 0.1 - Provision the resources.vtt",
+     "resources": [],
+     "durationSec": 165
+    },
+    {
+     "id": "i151",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Setup 0.2: The Archive Index",
+     "description": "You rebuild the Meridian archive index from Module 4 using three scripts. You upload five contract documents to Blob Storage, create the search index with vector fields, skillset, and indexer, and verify the index with keyword and vector searches. You learn how the indexer recognizes locations, extracts key phrases, and calls the embedding model. At the end, you have a working search index ready for the agent to query.",
+     "preview": false,
+     "video": "AI103 Udemy/143 - M5 Lab 0.2 - The archive index.mp4",
+     "caption": "AI103 Udemy/143 - M5 Lab 0.2 - The archive index.vtt",
+     "resources": [],
+     "durationSec": 135
+    },
+    {
+     "id": "i152",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "From Laptop to Hosted Agent: Prompt Agents vs Hosted Agents",
+     "description": "You learn the two kinds of agent in Foundry Agent Service and how to choose between them, a decision the exam expects you to make. A prompt agent is a declarative definition of a model, instructions and tools; a hosted agent is your own code in a container image, with a dedicated endpoint, an Entra agent identity and a VM-isolated sandbox per session. You follow the deployment order: build a linux/amd64 image listening on port 8088, push it to Azure Container Registry with a unique tag, create a version, and serve sessions whose compute is released after a 15-minute default idle timeout. In the lab, you run the full Meridian agent locally.",
+     "preview": false,
+     "video": "AI103 Udemy/144 - M5 Lecture 5.01 - From Laptop to Hosted Agent.mp4",
+     "caption": "AI103 Udemy/144 - M5 Lecture 5.01 - From Laptop to Hosted Agent.vtt",
+     "resources": [
+      {
+       "name": "Module 5 - Section-01 - From Laptop to Hosted Agent.pdf",
+       "blob": "AI103 Udemy - Resources/Module 5 - Section-01 - From Laptop to Hosted Agent.pdf"
+      }
+     ],
+     "durationSec": 296
+    },
+    {
+     "id": "i153",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 1.1: The Agent on the Laptop",
+     "description": "You run Meridian's complete agent locally using Microsoft Agent Framework and the Responses protocol. You explore the agent code in main.py, the three booking tools in tools.py, and the instructions.md rules. You learn how the same code runs on your laptop and in Foundry, with no keys or secrets, using DefaultAzureCredential. At the end, you have the agent listening on localhost port 8088.",
+     "preview": false,
+     "video": "AI103 Udemy/145 - M5 Lab 1.1 - The agent on the laptop.mp4",
+     "caption": "AI103 Udemy/145 - M5 Lab 1.1 - The agent on the laptop.vtt",
+     "resources": [],
+     "durationSec": 170
+    },
+    {
+     "id": "i154",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 1.2: Talk to It",
+     "description": "You talk to the local agent from a second terminal using test_local.py client. You send two turns to move a booking, confirm the change, and verify the updated bookings file. You learn how the agent follows its instructions to look up bookings before changing them and to confirm new dates before committing. At the end, you have tested the complete agent workflow locally.",
+     "preview": false,
+     "video": "AI103 Udemy/146 - M5 Lab 1.2 - Talk to it.mp4",
+     "caption": "AI103 Udemy/146 - M5 Lab 1.2 - Talk to it.vtt",
+     "resources": [],
+     "durationSec": 139
+    },
+    {
+     "id": "i155",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Package and Deploy: Container Image, ACR and the First Agent Version",
+     "description": "You change three lines of the module two agent: FoundryChatClient reads the injected project endpoint and model deployment, DefaultAzureCredential becomes the agent's own identity, and ResponsesHostServer replaces the terminal loop to serve the Responses protocol on port 8088. You write a seven-line Dockerfile, learn the two build rules, linux/amd64 only and a unique tag per build, never latest, and build in Azure with az acr build, no local Docker needed. Then you register the image with AIProjectClient and agents.create_version, poll until the version is active, and see how rollback works and which roles are required. In the lab, you create meridian-agent version one.",
+     "preview": false,
+     "video": "AI103 Udemy/147 - M5 Lecture 5.02 - Package and Deploy.mp4",
+     "caption": "AI103 Udemy/147 - M5 Lecture 5.02 - Package and Deploy.vtt",
+     "resources": [
+      {
+       "name": "Module 5 - Section-02 - Package and Deploy.pdf",
+       "blob": "AI103 Udemy - Resources/Module 5 - Section-02 - Package and Deploy.pdf"
+      }
+     ],
+     "durationSec": 298
+    },
+    {
+     "id": "i156",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 2.1: Build the Image",
+     "description": "You build a Docker container image of the agent in Azure Container Registry without needing Docker on your laptop. You examine the seven-line Dockerfile and run the build_image.py script with tag one. You learn how the registry builds the image in the cloud and how the image contains no endpoints or secrets. At the end, you have meridian-agent:1 ready in the registry.",
+     "preview": false,
+     "video": "AI103 Udemy/148 - M5 Lab 2.1 - Build the image.mp4",
+     "caption": "AI103 Udemy/148 - M5 Lab 2.1 - Build the image.vtt",
+     "resources": [],
+     "durationSec": 138
+    },
+    {
+     "id": "i157",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 2.2: Create the Hosted Agent",
+     "description": "You register the container image as a hosted agent in Foundry using create_version.py. You configure the container's environment variables, CPU and memory allocation, and Responses protocol version. You learn how Foundry assigns the agent its own Microsoft Entra identity and how each version is immutable. At the end, you have version one active with its own identity and endpoint.",
+     "preview": false,
+     "video": "AI103 Udemy/149 - M5 Lab 2.2 - Create the hosted agent.mp4",
+     "caption": "AI103 Udemy/149 - M5 Lab 2.2 - Create the hosted agent.vtt",
+     "resources": [],
+     "durationSec": 140
+    },
+    {
+     "id": "i158",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 2.3: The Agent in the Portal",
+     "description": "You explore the hosted agent in the Foundry portal and talk to it in the playground. You see the agent info, environment variables, container logs, and the Entra identity that Foundry created. You learn the difference between prompt agents and hosted agents and how to verify the agent configuration without opening the code. At the end, you have tested the agent in the portal playground.",
+     "preview": false,
+     "video": "AI103 Udemy/150 - M5 Lab 2.3 - The agent in the portal.mp4",
+     "caption": "AI103 Udemy/150 - M5 Lab 2.3 - The agent in the portal.vtt",
+     "resources": [],
+     "durationSec": 141
+    },
+    {
+     "id": "i159",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Protocols and Sessions: Responses, Invocations and WebSocket",
+     "description": "Meridian wants one agent behind three channels: website chat, a baggage-scanner webhook and a phone line. You learn to match each protocol to its scenario, as the exam asks: Responses for conversations with stored history, streaming and background mode; Invocations for raw HTTP webhooks and batch jobs; and Invocations over WebSocket for full-duplex voice. You also recognize the Activity protocol and A2A, and stop mixing up session, conversation and version. Then you call the hosted agent from Python with get_openai_client and responses.create, chain turns with previous_response_id, see the underlying REST URL and token scope, and run long work with store and background.",
+     "preview": false,
+     "video": "AI103 Udemy/151 - M5 Lecture 5.03 - Protocols and Sessions.mp4",
+     "caption": "AI103 Udemy/151 - M5 Lecture 5.03 - Protocols and Sessions.vtt",
+     "resources": [
+      {
+       "name": "Module 5 - Section-03 - Protocols and Sessions.pdf",
+       "blob": "AI103 Udemy - Resources/Module 5 - Section-03 - Protocols and Sessions.pdf"
+      }
+     ],
+     "durationSec": 260
+    },
+    {
+     "id": "i160",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 3.1: Talk to the Endpoint",
+     "description": "You talk to the hosted agent's endpoint using the chat.py client with the Responses API. You hold a multi-turn conversation about a booking, learning how the previous response ID maintains context. You learn how the OpenAI client binds to the agent's endpoint and signs in with your Entra identity. At the end, you have verified that the agent remembers conversation context across turns.",
+     "preview": false,
+     "video": "AI103 Udemy/152 - M5 Lab 3.1 - Talk to the endpoint.mp4",
+     "caption": "AI103 Udemy/152 - M5 Lab 3.1 - Talk to the endpoint.vtt",
+     "resources": [],
+     "durationSec": 143
+    },
+    {
+     "id": "i161",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 3.2: Traces and Sessions",
+     "description": "You examine the conversation in the Foundry portal using traces and session views. You see each turn's duration, tokens, estimated cost, and span tree showing model calls and tool executions. You learn how to diagnose agent behavior by reviewing the trace spans, session logs, and container files. At the end, you understand how to troubleshoot hosted agents using Foundry's monitoring tools.",
+     "preview": false,
+     "video": "AI103 Udemy/153 - M5 Lab 3.2 - Traces and sessions.mp4",
+     "caption": "AI103 Udemy/153 - M5 Lab 3.2 - Traces and sessions.vtt",
+     "resources": [],
+     "durationSec": 128
+    },
+    {
+     "id": "i162",
+     "type": "quiz",
+     "title": "Module 5 Quiz 1: Sections 5.01 to 5.03",
+     "description": "Test your knowledge of hosted agents in Foundry, containers, identity, the toolbox, the web front end, the GitHub Actions pipeline, traces and rollback.",
+     "questionCount": 10,
+     "passPercent": 70
+    },
+    {
+     "id": "i163",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Identity, Secrets and Tools: Agent Identity, Key Vault and Toolbox",
+     "description": "You learn the three identities that exam questions hinge on: the agent identity, an Entra service principal created per hosted agent that gets least-privilege roles such as Search Index Data Reader and Storage Blob Data Reader; the project managed identity, which pulls the container image and needs Container Registry Repository Reader; and the deployer, which needs Foundry Project Manager and AcrPush. You keep secrets out of the image with a Key Vault-backed project connection, referenced by a connections placeholder resolved at sandbox start. Then you build meridian-toolbox with the tools of every module, create it with a script or azd ai toolbox create, and connect with FoundryToolbox, so tool changes need no redeploy.",
+     "preview": false,
+     "video": "AI103 Udemy/154 - M5 Lecture 5.04 - Identity, Secrets and Tools.mp4",
+     "caption": "AI103 Udemy/154 - M5 Lecture 5.04 - Identity, Secrets and Tools.vtt",
+     "resources": [
+      {
+       "name": "Module 5 - Section-04 - Identity Secrets and Tools.pdf",
+       "blob": "AI103 Udemy - Resources/Module 5 - Section-04 - Identity Secrets and Tools.pdf"
+      }
+     ],
+     "durationSec": 337
+    },
+    {
+     "id": "i164",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 4.1: The Agent's Own Identity",
+     "description": "You grant the agent's Entra identity three role assignments using grant_agent_identity.py. You assign Search Index Data Reader, Storage Blob Data Reader, and Cognitive Services User roles. You learn the principle of least privilege for agent permissions and how to store secrets in project connections instead of the code. At the end, the agent can reach the archive, Language, and Speech services with its own identity.",
+     "preview": false,
+     "video": "AI103 Udemy/155 - M5 Lab 4.1 - The agent's own identity.mp4",
+     "caption": "AI103 Udemy/155 - M5 Lab 4.1 - The agent's own identity.vtt",
+     "resources": [],
+     "durationSec": 138
+    },
+    {
+     "id": "i165",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 4.2: One Toolbox",
+     "description": "You create a Foundry toolbox that groups all tools behind one MCP endpoint using create_toolbox.py. You configure archive search with vector simple hybrid queries, web search, and Azure Language and Speech MCP servers. You learn how the toolbox uses project connections for keyless access and how the endpoint goes into the agent's environment. At the end, you have meridian-toolbox with four tools ready for the agent.",
+     "preview": false,
+     "video": "AI103 Udemy/156 - M5 Lab 4.2 - One toolbox.mp4",
+     "caption": "AI103 Udemy/156 - M5 Lab 4.2 - One toolbox.vtt",
+     "resources": [],
+     "durationSec": 144
+    },
+    {
+     "id": "i166",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 4.3: Version Two",
+     "description": "You build and deploy version two of the agent with the toolbox endpoint in its environment. You ask questions about hotel agreements, tour brochures, and language detection that version one could not answer. You learn how configuration changes ship new versions without code changes and how the agent uses archive search and Language tools through the toolbox. At the end, the agent answers contract questions from the archive with its own identity.",
+     "preview": false,
+     "video": "AI103 Udemy/157 - M5 Lab 4.3 - Version two.mp4",
+     "caption": "AI103 Udemy/157 - M5 Lab 4.3 - Version two.vtt",
+     "resources": [],
+     "durationSec": 212
+    },
+    {
+     "id": "i167",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Front End and Pipeline: App Service, GitHub Actions and Rollback",
+     "description": "You build a deliberately small FastAPI front end on App Service that calls the agent with its managed identity and the Foundry User role, so no key exists anywhere, the browser never sees the endpoint or a token, and the previous response id keeps the chat multi-turn. You deploy it once with a script, then add a two-job GitHub Actions workflow that signs in with OpenID Connect, runs az acr build with gh plus the run number as the tag, creates a new agent version and deploys the web app. Finally, you read OpenTelemetry traces in Application Insights, stream live logs with azd ai agent monitor, roll back to an older version, and learn how sessions are billed.",
+     "preview": false,
+     "video": "AI103 Udemy/158 - M5 Lecture 5.05 - Front End and Pipeline.mp4",
+     "caption": "AI103 Udemy/158 - M5 Lecture 5.05 - Front End and Pipeline.vtt",
+     "resources": [
+      {
+       "name": "Module 5 - Section-05 - Front End and Pipeline.pdf",
+       "blob": "AI103 Udemy - Resources/Module 5 - Section-05 - Front End and Pipeline.pdf"
+      }
+     ],
+     "durationSec": 322
+    },
+    {
+     "id": "i168",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 5.1: A Page for Travelers",
+     "description": "You deploy a FastAPI web page to Azure App Service that talks to the hosted agent. You explore app.py and deploy_web.py, configure the web app's managed identity, and assign the Foundry User role. You learn how the web app uses DefaultAzureCredential to call the agent endpoint without keys and how the page maintains conversation context. At the end, travelers have a working web page that reaches the agent, tools, and archive.",
+     "preview": false,
+     "video": "AI103 Udemy/159 - M5 Lab 5.1 - A page for travelers.mp4",
+     "caption": "AI103 Udemy/159 - M5 Lab 5.1 - A page for travelers.vtt",
+     "resources": [],
+     "durationSec": 272
+    },
+    {
+     "id": "i169",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 5.2: Sign in From GitHub Without Secrets",
+     "description": "You set up GitHub OIDC authentication to Azure using setup_github_oidc.py and the ship.yml workflow. You create an app registration, configure federated credentials for the repository and main branch, and assign pipeline roles. You learn how GitHub requests short-lived tokens instead of storing passwords and how repository variables carry non-secret identifiers. At the end, GitHub can sign in to Azure and ship changes without storing any secrets.",
+     "preview": false,
+     "video": "AI103 Udemy/160 - M5 Lab 5.2 - Sign in from GitHub without secrets.mp4",
+     "caption": "AI103 Udemy/160 - M5 Lab 5.2 - Sign in from GitHub without secrets.vtt",
+     "resources": [],
+     "durationSec": 180
+    },
+    {
+     "id": "i170",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 5.3: Ship a Change with a Push",
+     "description": "You change the agent's instructions to close every answer with a friendly line, commit, and push to main. You watch the GitHub Actions workflow build the image with the run number tag, create version three, and redeploy the web app. You learn how the pipeline tags images for traceability and how one push reaches all clients through the agent endpoint. At the end, the web page serves version three with the new closing line.",
+     "preview": false,
+     "video": "AI103 Udemy/161 - M5 Lab 5.3 - Ship a change with a push.mp4",
+     "caption": "AI103 Udemy/161 - M5 Lab 5.3 - Ship a change with a push.vtt",
+     "resources": [],
+     "durationSec": 202
+    },
+    {
+     "id": "i171",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Lab Part 5.4: Traces and Rollback",
+     "description": "You examine version three's traces in the Foundry portal and practice rolling back to version two. You review the span tree showing model calls and tool executions, inspect tool arguments and results, and change the active version in the portal. You learn how immutable versions make rollbacks safe and how Application Insights receives the same traces for alerting. At the end, you have rolled back the agent and verified the change from the travelers' page.",
+     "preview": false,
+     "video": "AI103 Udemy/162 - M5 Lab 5.4 - Traces and rollback.mp4",
+     "caption": "AI103 Udemy/162 - M5 Lab 5.4 - Traces and rollback.vtt",
+     "resources": [],
+     "durationSec": 219
+    },
+    {
+     "id": "i172",
+     "type": "quiz",
+     "title": "Module 5 Quiz 2: Sections 5.04 to 5.05",
+     "description": "Test your knowledge of hosted agents in Foundry, containers, identity, the toolbox, the web front end, the GitHub Actions pipeline, traces and rollback.",
+     "questionCount": 10,
+     "passPercent": 70
+    },
+    {
+     "id": "i173",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Capstone Wrap-up: Platform Changes to Watch and Course Conclusion",
+     "description": "You check off all eight cards of the capstone lab, from running the agent locally to the GitHub Actions pipeline with tracing, and finish any open part before the knowledge check. Then you review the Keep current changes for production agents: classic agents on the Assistants API retire on 31 March 2027, the visual workflow designer on 1 December 2026 and prompt flow on 20 April 2027, the first hosted agent backend on Azure Container Apps is superseded, and the Azure AI roles are renamed Foundry User, Foundry Project Manager and Foundry Account Owner. Finally, you recap the course and get two exam tips.",
+     "preview": false,
+     "video": "AI103 Udemy/163 - M5 Lecture 5.06 - Capstone Wrap-up and Course Conclusion.mp4",
+     "caption": "AI103 Udemy/163 - M5 Lecture 5.06 - Capstone Wrap-up and Course Conclusion.vtt",
+     "resources": [
+      {
+       "name": "Module 5 - Wrap-up.pdf",
+       "blob": "AI103 Udemy - Resources/Module 5 - Wrap-up.pdf"
+      }
+     ],
+     "durationSec": 172
+    },
+    {
+     "id": "i174",
+     "type": "lecture",
+     "kind": "lecture",
+     "title": "Bonus Lecture: Congratulations and Your Next Course",
+     "description": "You complete AI-103 and review what you built across all five modules. You learn next steps for exam preparation including module quizzes, the Microsoft Learn practice assessment, and booking your AI-103 exam. You discover AI-500, Designing and Implementing Multi-Agent AI Solutions, the expert-level course for production multi-agent systems on Azure. At the end, you are ready to pursue certification and continue your learning journey.",
+     "preview": false,
+     "video": "AI103 Udemy/164 - M5 Lecture 5.07 - Congratulations and next steps.mp4",
+     "caption": "AI103 Udemy/164 - M5 Lecture 5.07 - Congratulations and next steps.vtt",
+     "resources": [],
+     "durationSec": 161
+    }
+   ]
+  }
+ ],
+ "vendor": "Microsoft",
+ "kind": "certification",
+ "thumbnail": "_public/thumbnail.jpg",
+ "promo": "_public/promo.mp4",
+ "badge": "_public/badge.jpg",
+ "congrats": "_public/congrats.mp4",
+ "about": [
+  {
+   "t": "p",
+   "text": "Most AI courses teach Azure services one at a time. This one tells one story: you build a single AI agent, module by module, and ship it to production."
+  },
+  {
+   "t": "p",
+   "text": "You join Meridian Travel Group, a travel company whose contact center answers the same questions all day, whose policies and invoices sit in an archive, and whose customers write and call in many languages. Every module adds new skills to the same agent, so by the end you have built something real, not a set of disconnected demos."
+  },
+  {
+   "t": "h",
+   "text": "What you build"
+  },
+  {
+   "t": "ul",
+   "items": [
+    {
+     "label": "Module 1, Generative AI apps",
+     "text": "a Python chat app on Microsoft Foundry. You choose, deploy and evaluate models, call the Responses API, add code interpreter, web search, file search and function calling, tune the system message, and protect the app with guardrails."
+    },
+    {
+     "label": "Module 2, AI agents",
+     "text": "the app becomes an agent that acts, with custom tools, an MCP server, Foundry IQ knowledge, workflows, the Microsoft Agent Framework, a multi-agent team and tracing in Application Insights."
+    },
+    {
+     "label": "Module 3, Natural language",
+     "text": "text analysis with Azure Language, speech apps with Azure Speech, the Language and Speech MCP servers, a real-time phone agent with Voice Live, and translation with Azure Translator."
+    },
+    {
+     "label": "Module 4, Visual data",
+     "text": "vision models, image and video generation, Content Understanding for photos, invoices and calls, and knowledge mining over a document archive with Azure AI Search."
+    },
+    {
+     "label": "Module 5, Capstone",
+     "text": "the agent goes to production as a Foundry hosted agent with its own identity, one toolbox for every tool, a web page for travelers, and a GitHub Actions pipeline that builds and deploys every change, with traces and a one-step rollback."
+    }
+   ]
+  },
+  {
+   "t": "h",
+   "text": "How every module works"
+  },
+  {
+   "t": "p",
+   "text": "A short story chapter sets up Meridian's problem. The concept builds up step by step on screen. You see real Python code with the current SDK names. Then come the hands-on lab videos, where every line is typed and run on camera, and short portal demos that show the same features with no code."
+  },
+  {
+   "t": "h",
+   "text": "What you get"
+  },
+  {
+   "t": "ul",
+   "items": [
+    {
+     "text": "8.9 hours of video: 48 lectures, 92 lab videos, 22 portal demos and 2 setup videos"
+    },
+    {
+     "text": "A complete lab in every module, built in parts that join into one working application"
+    },
+    {
+     "label": "Downloadable materials for every module",
+     "text": "the full lab code and sample data, lab guides, demo guides with screenshots, and the slides of every section (PDF)"
+    },
+    {
+     "text": "10 quizzes with 100 exam-style questions on concepts, code and the portal, plus a knowledge check for Modules 1 to 4"
+    },
+    {
+     "text": "English captions on every video"
+    }
+   ]
+  },
+  {
+   "t": "h",
+   "text": "Exam AI-103 and beyond"
+  },
+  {
+   "t": "p",
+   "text": "The course covers all five skill domains of Microsoft exam AI-103, Developing AI Apps and Agents on Azure, which leads to the Microsoft Certified: Azure AI App and Agent Developer Associate certification. Wherever Microsoft is retiring a feature, you learn its successor, and every module closes with a Keep current slide. The capstone then goes further than the exam and takes the agent all the way to production, the way you would do it at work."
+  },
+  {
+   "t": "p",
+   "text": "By the end, you can design, build, secure and ship AI apps and agents on Azure, and you are ready to prepare for exam day with confidence."
+  }
+ ],
+ "topics_tags": [
+  "Generative AI",
+  "AI Agents",
+  "DevOps & CI/CD"
+ ],
+ "domains": []
+}

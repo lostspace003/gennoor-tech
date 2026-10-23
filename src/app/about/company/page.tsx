@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { ClaudePartnerSection } from '@/components/ClaudePartner'
 import { Target, Rocket, GraduationCap, Globe, Building2, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import PageHero from '@/components/shared/PageHero'
@@ -63,6 +64,8 @@ export default function CompanyPage() {
           </div>
         </div>
       </section>
+
+      <ClaudePartnerSection />
 
       {/* Core Objectives */}
       <section className="py-10 lg:py-16 relative">

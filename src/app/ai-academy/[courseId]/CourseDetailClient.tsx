@@ -95,7 +95,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
               className="inline-flex items-center gap-1.5 text-sm text-white/70 hover:text-white transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
-              Back to AI Academy
+              Back to Learning Studio
             </Link>
             <LearnerAccountMenu variant="dark" />
           </div>

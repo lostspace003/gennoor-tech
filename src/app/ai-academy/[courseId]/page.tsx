@@ -20,19 +20,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   // OG image — Next.js auto-detects opengraph-image.tsx in this folder if present.
   // Fallback to the global brand OG image for now.
   return {
-    title: `${course.title} — Gennoor Academy`,
+    title: `${course.title} — Learning Studio`,
     description: course.description,
     alternates: { canonical: url },
     openGraph: {
       type: 'website',
       url,
-      title: `${course.title} — Gennoor Academy`,
+      title: `${course.title} — Learning Studio`,
       description: course.description,
       siteName: 'Gennoor Tech',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${course.title} — Gennoor Academy`,
+      title: `${course.title} — Learning Studio`,
       description: course.description,
     },
     keywords: course.tags,
@@ -58,7 +58,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
       <BreadcrumbJsonLd
         items={[
           { name: 'Home', url: 'https://gennoor.com' },
-          { name: 'AI Academy', url: 'https://gennoor.com/ai-academy' },
+          { name: 'Learning Studio', url: 'https://gennoor.com/ai-academy' },
           { name: course.title, url },
         ]}
       />

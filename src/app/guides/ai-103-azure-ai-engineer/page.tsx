@@ -358,7 +358,7 @@ export default function AI103StudyGuidePage() {
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
-              href="/services/azure-ai-foundry-workshop"
+              href="/services/training"
               className="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 bg-white/80 backdrop-blur-sm ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700 transition-all"
             >
               See the Foundry Workshop

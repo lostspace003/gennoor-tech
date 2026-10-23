@@ -218,7 +218,7 @@ export default function LearnerAccountModal({
 
         <div className="px-6 pt-7 pb-6">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#86868b] mb-2">
-            Gennoor Academy
+            Learning Studio
           </p>
           <h2 className="text-[20px] font-bold tracking-[-0.02em] text-gray-900 leading-tight">
             Your account

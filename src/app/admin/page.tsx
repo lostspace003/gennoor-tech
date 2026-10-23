@@ -645,6 +645,7 @@ export default function AdminDashboard() {
               <Clock className="w-3.5 h-3.5" />
             </button>
             <CrmStatsTile />
+            <a href="/admin/lms" className="block rounded-xl border border-gray-200 bg-white p-4 mb-4 hover:border-gray-900 transition-colors"><div className="font-semibold text-gray-900">Academy video courses</div><div className="text-sm text-gray-500">Import a course from a SAS URL, publish it to the LMS</div></a>
             <GennoorCareTile />
             <button onClick={() => router.push('/crm')} className="px-3 py-1.5 text-xs font-medium bg-gray-600 text-white rounded-md hover:shadow-md transition-all flex items-center gap-1.5">
               <Bot className="w-3.5 h-3.5" />

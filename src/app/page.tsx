@@ -16,6 +16,7 @@ import AIin45SecondsShorts from '@/components/home/AIin45SecondsShorts'
 import LatestBlog from '@/components/home/LatestBlog'
 import CTASection from '@/components/home/CTASection'
 import AcademyCTA from '@/components/home/AcademyCTA'
+import { ClaudePartnerStrip } from '@/components/ClaudePartner'
 
 export default function HomePage() {
   return (
@@ -39,6 +40,8 @@ export default function HomePage() {
       </ScrollReveal>
 
       <Metrics />
+
+      <ClaudePartnerStrip />
 
       <ScrollReveal>
         <TrustedBy />

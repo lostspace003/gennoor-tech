@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import DashboardClient from './DashboardClient'
 
 export const metadata: Metadata = {
-  title: 'Your Gennoor Academy dashboard',
+  title: 'Your Learning Studio dashboard',
   description: 'See your course progress, what you have completed, what is pending, and the certificates you have earned.',
 }
 

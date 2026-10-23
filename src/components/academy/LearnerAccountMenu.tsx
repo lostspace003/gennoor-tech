@@ -81,7 +81,7 @@ export default function LearnerAccountMenu({
           isOpen={authOpen}
           onClose={() => setAuthOpen(false)}
           onLoginSuccess={() => { refreshSession(); loadUsername() }}
-          title="Sign in to Gennoor Academy"
+          title="Sign in to Learning Studio"
           subtitle="Save your progress and claim certificates across devices."
         />
       </>

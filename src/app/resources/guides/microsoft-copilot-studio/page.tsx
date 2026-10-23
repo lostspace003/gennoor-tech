@@ -67,7 +67,7 @@ export default function CopilotStudioGuide() {
                 multi-step agents integrated with Dataverse and Power Platform.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link href="/services/copilot-studio-training" className="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-medium rounded-xl transition-all duration-300">
+                <Link href="/services/training" className="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-medium rounded-xl transition-all duration-300">
                   Copilot Studio Training
                 </Link>
                 <Link href="/contact#book" className="inline-flex items-center px-8 py-4 border-2 border-primary-600 text-primary-700 font-medium rounded-xl hover:bg-primary-50 transition-colors">
@@ -172,7 +172,7 @@ export default function CopilotStudioGuide() {
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Training & Certification</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Link href="/services/copilot-studio-training" className="glass-card p-6 hover:shadow-md transition-shadow group">
+                <Link href="/services/training" className="glass-card p-6 hover:shadow-md transition-shadow group">
                   <Zap className="w-8 h-8 text-primary-600 mb-3" />
                   <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary-600">Copilot Studio Training</h3>
                   <p className="text-sm text-gray-600">Dedicated hands-on workshop for building enterprise copilots</p>
@@ -214,7 +214,7 @@ export default function CopilotStudioGuide() {
               Get hands-on training or let us build your first enterprise copilot.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link href="/services/copilot-studio-training" className="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-medium rounded-xl transition-all duration-300">
+              <Link href="/services/training" className="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-medium rounded-xl transition-all duration-300">
                 Start Training
               </Link>
               <Link href="/contact#book" className="inline-flex items-center px-8 py-4 border-2 border-primary-600 text-primary-700 font-medium rounded-xl hover:bg-primary-50 transition-colors">
