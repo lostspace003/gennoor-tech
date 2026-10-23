@@ -4,6 +4,8 @@ import { verifyLearnerSession } from '@/lib/learner-auth'
 import { flattenItems, getLmsCourse, getLmsProgress, isEnrolled, videoUrl } from '@/lib/lms'
 import SignInGate from '@/components/academy/SignInGate'
 import LmsPlayer from '@/components/academy/LmsPlayer'
+import ResumeGate from '@/components/academy/ResumeGate'
+import { resumePoint } from '@/lib/lms-resume'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,14 +34,13 @@ export default async function LearnPage({ params, searchParams }: PageProps) {
 
   const progress = await getLmsProgress(learner.email, slug)
   const items = flattenItems(course)
-  // Pick up where this account left off - the lesson touched most recently,
-  // on any browser or device (progress lives on the server, keyed by account).
-  const last = items
-    .map((i, n) => ({ i, n, at: progress[i.id]?.updatedAt || '' }))
-    .filter(x => x.at)
-    .sort((a, b) => b.at.localeCompare(a.at))[0]
-  const resume = last ? (progress[last.i.id]?.done ? items[last.n + 1] ?? last.i : last.i) : items[0]
-  const initial = items.find(i => i.id === item)?.id ?? resume.id
+  const point = resumePoint(course, progress)
+
+  // Opened without choosing a lesson (after signing in, from a bookmark): never start playing by itself.
+  // Someone who has already watched part of the course is asked whether to resume.
+  if (!item && point.kind !== 'start') return <ResumeGate course={course} point={point} />
+
+  const initial = items.find(i => i.id === item)?.id ?? items[0].id
 
   return <LmsPlayer course={course} learnerEmail={learner.email} initialItem={initial} initialProgress={progress} congratsUrl={videoUrl(course, course.congrats)} />
 }

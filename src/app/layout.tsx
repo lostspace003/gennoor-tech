@@ -3,7 +3,6 @@ import '@/styles/globals.css'
 import PortalShell from '@/components/portal/PortalShell'
 import Footer from '@/components/layout/Footer'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
-import WhatsAppButton from '@/components/WhatsAppButton'
 import GennoorCare from '@/components/GennoorCare/GennoorCare'
 import PageViewTracker from '@/components/PageViewTracker'
 import RippleProvider from '@/components/RippleProvider'
@@ -114,7 +113,6 @@ export default function RootLayout({
             </main>
             <Footer />
           </PortalShell>
-          <WhatsAppButton />
           <GennoorCare />
         </div>
       </body>
