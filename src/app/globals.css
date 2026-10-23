@@ -165,3 +165,31 @@ nav a {
   .m-normal { margin: 0.75rem; }
   .m-comfortable { margin: 1rem; }
 }
+
+/* ---- illustrations: quiet motion, off for reduced-motion ---- */
+@media (prefers-reduced-motion: no-preference) {
+  .ill-bars rect { transform-box: fill-box; transform-origin: bottom; animation: ill-grow 4s ease-in-out infinite; }
+  .ill-bars rect:nth-child(2) { animation-delay: .25s; }
+  .ill-bars rect:nth-child(3) { animation-delay: .5s; }
+  .ill-tick { stroke-dasharray: 14; animation: ill-draw 4s ease-in-out infinite; }
+  .ill-pulse { transform-box: fill-box; transform-origin: center; animation: ill-pulse 2.8s ease-in-out infinite; }
+  .ill-travel { animation: ill-travel 3.6s ease-in-out infinite; }
+  .ill-spin { transform-box: fill-box; transform-origin: center; animation: ill-spin 9s linear infinite; }
+  .ill-progress { transform-box: fill-box; transform-origin: left; animation: ill-fill 5s ease-in-out infinite; }
+  .ill-float { animation: ill-float 3.4s ease-in-out infinite; }
+  .ill-bubble-a { animation: ill-float 4s ease-in-out infinite; }
+  .ill-bubble-b { animation: ill-float 4s ease-in-out infinite reverse; }
+  .ill-line { stroke-dasharray: 30; animation: ill-draw 5s ease-in-out infinite; }
+  .ill-line.l2 { animation-delay: .4s; }
+  .ill-line.l3 { animation-delay: .8s; }
+  .ill-rise { transform-box: fill-box; transform-origin: bottom; animation: ill-grow 4.5s ease-in-out infinite; }
+  .ill-pass { animation: ill-pass 3.6s ease-in-out infinite; }
+}
+@keyframes ill-grow { 0%, 12% { transform: scaleY(.25); } 40%, 100% { transform: scaleY(1); } }
+@keyframes ill-draw { 0% { stroke-dashoffset: 30; } 35%, 85% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 30; } }
+@keyframes ill-pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: .55; } }
+@keyframes ill-travel { 0% { cx: 32; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { cx: 88; opacity: 0; } }
+@keyframes ill-spin { to { transform: rotate(360deg); } }
+@keyframes ill-fill { 0% { transform: scaleX(.15); } 70%, 100% { transform: scaleX(1); } }
+@keyframes ill-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes ill-pass { 0% { transform: translateX(-14px); } 50% { transform: translateX(14px); } 100% { transform: translateX(-14px); } }

@@ -176,10 +176,10 @@ export default function ContactForm() {
           className={FIELD}
         >
           <option value="">Select a topic…</option>
-          <option value="ai-strategy">AI Strategy Consulting</option>
-          <option value="training">AI Training Programs</option>
-          <option value="poc-development">PoC Development</option>
-          <option value="agentic-ai">Agentic AI Solutions</option>
+          <option value="training">Training for my organization</option>
+          <option value="automation">Automating a process</option>
+          <option value="claude">Claude</option>
+          <option value="learning-studio">Learning Studio courses</option>
           <option value="other">Something else</option>
         </select>
       </div>

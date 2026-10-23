@@ -4,164 +4,65 @@ export const BLOB_URL = process.env.NEXT_PUBLIC_BLOB_URL || '/media'
 
 export const siteConfig = {
   name: 'Gennoor Tech',
-  tagline: 'Enterprise AI Transformation',
-  brandPromise: 'Diagnose. Train. Innovate. Build. Sustain.',
-  description: 'Enterprise AI transformation partner for organizations across GCC, Africa, and South Asia — from readiness diagnostic to deployed agents to long-term sustainment. Senior Microsoft-certified delivery, boutique speed, transparent pricing.',
+  tagline: 'AI training and automation',
+  description:
+    'Gennoor Tech trains organizations to work with AI and Claude, and builds the automations they use. Certified in the Claude Partner Network. Based in Mumbai, India.',
   url: 'https://gennoor.com',
   email: 'contact@gennoor.com',
-  phone: '+91-XXXXXXXXXX',
+  location: 'Mumbai, India',
   social: {
-    linkedin: 'https://www.linkedin.com/in/lostspace003/',
+    linkedin: 'https://www.linkedin.com/company/gennoor-tech-private-limited/',
     github: 'https://github.com/lostspace003',
     microsoftLearn: 'https://learn.microsoft.com/en-us/users/lostspace003/transcript/vjw63s4jxnmmwre?tab=credentials-tab',
     youtube: 'https://www.youtube.com/@GennoorTech',
     twitter: '',
   },
 
-  // Navigation structure — 6 tabs, competitor-benchmarked for SEO & discoverability
+  // Navigation structure (the left rail is built from src/lib/portal-nav.ts)
   navigation: {
     main: [
-      {
-        name: 'Training',
-        href: '/services/training',
-        children: [
-          { name: 'Training Programs', href: '/services/training', description: 'Corporate AI training courses' },
-          { name: 'Enterprise AI Roadmap', href: '/services/enterprise-ai-roadmap-workshop', description: 'Strategic AI planning workshop' },
-          { name: 'Certifications', href: '/services/certifications', description: 'Microsoft certification prep' },
-        ]
-      },
-      {
-        name: 'Build & Consulting',
-        href: '/services',
-        children: [
-          { name: 'For SMB', href: '/solutions/for-smb', description: 'Productized AI packages from $3k · 6-week pilots' },
-          { name: 'For Enterprise', href: '/solutions/for-enterprise', description: 'Multi-quarter transformation programs · procurement-ready' },
-          { name: 'AI Strategy & Consulting', href: '/services/ai-strategy', description: 'Enterprise AI roadmaps & governance' },
-          { name: 'PoC Development', href: '/services/poc-development', description: 'Production-ready AI prototypes' },
-          { name: 'Agentic AI Solutions', href: '/services/agentic-ai', description: 'Multi-agent orchestration' },
-          { name: 'Collaboration', href: '/services/collaboration', description: 'Partnership opportunities' },
-        ]
-      },
-      { name: 'The Gennoor Way', href: '/the-gennoor-way' },
-      {
-        name: 'Resources',
-        href: '/resources',
-        children: [
-          { name: 'Learning Studio', href: '/studio', description: '42 courses across 6 tracks · interactive AB-100 included', badge: 'New' },
-          { name: 'Blog', href: '/resources/blog', description: 'AI insights & articles' },
-          { name: 'Videos', href: '/resources/videos', description: 'Training videos & tutorials' },
-          { name: 'Webinars', href: '/webinars', description: 'Live & recorded sessions' },
-          { name: 'Workshops', href: '/workshops', description: 'Hands-on free workshops' },
-          { name: 'AI Readiness', href: '/ai-readiness', description: 'Assess your AI readiness' },
-        ]
-      },
-      {
-        name: 'About',
-        href: '/about',
-        children: [
-          { name: 'My Journey', href: '/about/journey', description: '14+ years in enterprise AI' },
-          { name: 'Gennoor Tech', href: '/about/company', description: 'About the company' },
-          { name: 'Team & Delivery', href: '/about/team-and-delivery', description: 'Senior-only model · operating cadence · capacity' },
-          { name: 'Trust & Security', href: '/about/trust-and-security', description: 'Data, IP, compliance, sub-processors, stack' },
-          { name: 'Certifications', href: '/about/certifications', description: '16 professional credentials' },
-          { name: 'Case Studies', href: '/portfolio/case-studies', description: 'Client success stories' },
-          { name: 'Testimonials', href: '/portfolio/testimonials', description: 'What clients say' },
-          { name: 'Open Source', href: '/portfolio/open-source', description: 'Community contributions' },
-        ]
-      },
+      { name: 'Claude', href: '/claude' },
+      { name: 'Training', href: '/training' },
+      { name: 'Automation', href: '/automation' },
+      { name: 'Learning Studio', href: '/studio' },
+      { name: 'About', href: '/about' },
       { name: 'Contact', href: '/contact' },
-    ],
+    ] as { name: string; href: string; children?: { name: string; href: string; description?: string; badge?: string }[] }[],
 
     footer: [
       {
-        title: 'Training',
+        title: 'Claude',
         links: [
-          { name: 'Training Programs', href: '/services/training' },
-          { name: 'Certifications', href: '/services/certifications' },
-        ]
+          { name: 'Claude Partner Network', href: '/claude' },
+          { name: 'Claude workshop recap', href: '/workshops/claude-cowork' },
+        ],
       },
       {
-        title: 'Build & Consulting',
+        title: 'Training and automation',
         links: [
-          { name: 'For SMB', href: '/solutions/for-smb' },
-          { name: 'For Enterprise', href: '/solutions/for-enterprise' },
-          { name: 'The Gennoor Way', href: '/the-gennoor-way' },
-          { name: 'PoC Development', href: '/services/poc-development' },
-        ]
+          { name: 'Training for organizations', href: '/training' },
+          { name: 'Automation we build', href: '/automation' },
+          { name: 'Training programs', href: '/services/training' },
+          { name: 'Certification preparation', href: '/services/certifications' },
+        ],
       },
       {
-        title: 'Resources',
+        title: 'Learning Studio',
         links: [
-          { name: 'Learning Studio', href: '/studio' },
+          { name: 'Certifications & Projects', href: '/studio' },
+          { name: 'AI Essentials', href: '/ai-academy' },
+          { name: 'Community', href: '/community' },
+        ],
+      },
+      {
+        title: 'Company',
+        links: [
+          { name: 'About', href: '/about' },
           { name: 'Blog', href: '/resources/blog' },
-          { name: 'Videos', href: '/resources/videos' },
-          { name: 'Webinars & Workshops', href: '/webinars' },
-          { name: 'AI Readiness', href: '/ai-readiness' },
-        ]
-      },
-      {
-        title: 'About',
-        links: [
-          { name: 'My Journey', href: '/about/journey' },
-          { name: 'Team & Delivery', href: '/about/team-and-delivery' },
-          { name: 'Trust & Security', href: '/about/trust-and-security' },
+          { name: 'Work with us', href: '/join' },
           { name: 'Contact', href: '/contact' },
-        ]
+        ],
       },
-    ]
+    ],
   },
-
-  // Hero section content
-  hero: {
-    badge: 'AI training · Production agents · GCC · Africa · South Asia',
-    headline: 'We train your team and build your first production AI agent — fixed price, from $3k, live in 6 weeks.',
-    brandPromise: 'Diagnose. Train. Innovate. Build. Sustain.',
-    subheadline: 'Three things, one partner: we train your people, build your production AI agents, and advise your leadership — from first diagnostic to hundredth deployed agent.',
-    cta1: { text: 'Run AI Readiness Diagnostic', href: '/ai-readiness' },
-    cta2: { text: 'Talk to our team', href: '/contact' },
-  },
-
-  // Trusted by companies
-  trustedBy: [
-    'Microsoft', 'IBM', 'EY', 'Boeing', 'Saudi Aramco',
-    'HDFC Bank', 'Siemens', 'TCS', 'Capgemini', 'Wipro'
-  ],
-
-  // Key metrics
-  metrics: {
-    trainingPrograms: '80+',
-    certifications: '16',
-    cSuiteLeaders: '50+',
-    webinarParticipants: '500+',
-    countries: '6+',
-    yearsExperience: '14+'
-  },
-
-  // Service pillars
-  services: [
-    {
-      title: 'AI Strategy',
-      description: 'Enterprise roadmaps, ROI modeling, governance frameworks.',
-      icon: 'Strategy',
-      href: '/services/ai-strategy'
-    },
-    {
-      title: 'Corporate Training',
-      description: 'Bootcamps and workshops on Azure AI, Copilot, Power Platform.',
-      icon: 'GraduationCap',
-      href: '/services/training'
-    },
-    {
-      title: 'PoC Development',
-      description: 'Production-ready prototypes for documents, chat, automation.',
-      icon: 'Code2',
-      href: '/services/poc-development'
-    },
-    {
-      title: 'Agentic AI',
-      description: 'Multi-agent orchestration with LangChain, CrewAI, Copilot Studio.',
-      icon: 'Bot',
-      href: '/services/agentic-ai'
-    }
-  ]
 }

@@ -11,9 +11,16 @@
  * GennoorCare all consult this — keep them in lockstep by never
  * duplicating the pattern list elsewhere.
  */
+/** /studio/<course>/learn: the immersive lesson screen. */
+export function isLearnRoute(pathname: string | null | undefined): boolean {
+  return /^\/studio\/[^/]+\/learn\/?$/.test(pathname || '')
+}
+
 export function isChromelessRoute(pathname: string | null | undefined): boolean {
   if (!pathname) return false
   if (pathname.startsWith('/crm') || pathname.startsWith('/admin')) return true
+  // Lesson screen: immersive, no rail or breadcrumb
+  if (isLearnRoute(pathname)) return true
   // /ai-academy/{courseId}/{chapterSlug} → exactly 3+ segments under ai-academy
   if (pathname.startsWith('/ai-academy/')) {
     const segments = pathname.split('/').filter(Boolean)

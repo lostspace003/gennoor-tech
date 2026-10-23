@@ -38,13 +38,11 @@ export default function BlogPage() {
     <div className="min-h-screen bg-white">
       {/* Masthead — server-rendered for SEO */}
       <header className="px-8 pt-20 lg:pt-[100px] pb-12 text-center">
-        <div className="kicker mb-5">Resources · Blog</div>
         <h1 className="text-[clamp(40px,4.8vw,64px)] leading-[1.06] tracking-[-0.03em] font-bold text-gray-900">
           Field notes.
         </h1>
         <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.45] text-[#6e6e73] max-w-[540px] mx-auto mt-5">
-          What we learn on live engagements, written down. No fluff, no press
-          releases.
+          Practical notes on AI, written plainly.
         </p>
       </header>
 

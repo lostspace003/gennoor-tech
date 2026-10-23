@@ -68,84 +68,13 @@ export interface PortalNavSection {
  * The primary left-rail tree.
  */
 export const portalNav: PortalNavSection[] = [
-  {
-    name: 'Home',
-    href: '/',
-    icon: Home,
-  },
-  {
-    name: 'Programs',
-    href: '/services/training',
-    icon: GraduationCap,
-    children: [
-      { name: 'Training Programs', href: '/services/training', icon: Layers },
-      { name: 'Course Curriculum (22)', href: '/services/training#catalog', icon: BookOpen },
-      { name: 'Enterprise AI Roadmap', href: '/services/enterprise-ai-roadmap-workshop', icon: Map },
-      { name: 'Get Certified', href: '/services/certifications', icon: BadgeCheck },
-    ],
-  },
-  {
-    name: 'Services',
-    href: '/services',
-    icon: Briefcase,
-    children: [
-      { name: 'For SMB', href: '/solutions/for-smb', icon: Building2 },
-      { name: 'For Enterprise', href: '/solutions/for-enterprise', icon: Users },
-      { name: 'AI Strategy & Consulting', href: '/services/ai-strategy', icon: Lightbulb },
-      { name: 'PoC Development', href: '/services/poc-development', icon: FlaskConical },
-      { name: 'Agentic AI Solutions', href: '/services/agentic-ai', icon: Bot },
-      { name: 'Collaboration', href: '/services/collaboration', icon: Handshake },
-    ],
-  },
-  {
-    name: 'The Gennoor Way',
-    href: '/the-gennoor-way',
-    icon: Compass,
-  },
-  {
-    name: 'Learning Studio',
-    href: '/studio',
-    icon: Sparkles,
-  },
-  {
-    name: 'AI Readiness',
-    href: '/ai-readiness',
-    icon: Activity,
-  },
-  {
-    name: 'Resources',
-    href: '/resources',
-    icon: BookOpen,
-    children: [
-      { name: 'All resources', href: '/resources', icon: BookOpen },
-      { name: 'Blog', href: '/resources/blog', icon: FileText },
-      { name: 'Videos', href: '/resources/videos', icon: Video },
-      { name: 'Webinars', href: '/webinars', icon: CalendarDays },
-      { name: 'Workshops', href: '/workshops', icon: Wrench },
-      { name: 'PoC Catalog', href: '/resources/pocs', icon: FlaskConical },
-      { name: 'Book a Call', href: '/resources/calendar', icon: Phone },
-    ],
-  },
-  {
-    name: 'About',
-    href: '/about',
-    icon: Info,
-    children: [
-      { name: 'My Journey', href: '/about/journey', icon: Route },
-      { name: 'Gennoor Tech', href: '/about/company', icon: Building },
-      { name: 'Team & Delivery', href: '/about/team-and-delivery', icon: Users },
-      { name: 'Trust & Security', href: '/about/trust-and-security', icon: ShieldCheck },
-      { name: 'Our Credentials', href: '/about/certifications', icon: Award },
-      { name: 'Case Studies', href: '/portfolio/case-studies', icon: FolderOpen },
-      { name: 'Testimonials', href: '/portfolio/testimonials', icon: Star },
-      { name: 'Open Source', href: '/portfolio/open-source', icon: Github },
-    ],
-  },
-  {
-    name: 'Contact',
-    href: '/contact',
-    icon: Mail,
-  },
+  { name: 'Home', href: '/', icon: Home },
+  { name: 'Claude', href: '/claude', icon: Sparkles },
+  { name: 'Training', href: '/training', icon: GraduationCap },
+  { name: 'Automation', href: '/automation', icon: Wrench },
+  { name: 'Learning Studio', href: '/studio', icon: BookOpen },
+  { name: 'About', href: '/about', icon: Info },
+  { name: 'Contact', href: '/contact', icon: Mail },
 ]
 
 /**
@@ -154,51 +83,42 @@ export const portalNav: PortalNavSection[] = [
  */
 const BREADCRUMB_LABELS: Record<string, string> = {
   '/': 'Home',
-  '/services': 'Services',
-  '/services/training': 'Training Programs',
+  '/claude': 'Claude',
+  '/training': 'Training',
+  '/automation': 'Automation',
+  '/services/training': 'Training programs',
   '/services/training/curriculum': 'Curriculum',
-  '/services/enterprise-ai-roadmap-workshop': 'Enterprise AI Roadmap',
-  '/services/certifications': 'Get Certified',
-  '/services/ai-strategy': 'AI Strategy & Consulting',
-  '/services/poc-development': 'PoC Development',
-  '/services/agentic-ai': 'Agentic AI Solutions',
-  '/services/collaboration': 'Collaboration',
-  '/solutions': 'Solutions',
-  '/solutions/for-smb': 'For SMB',
-  '/solutions/for-enterprise': 'For Enterprise',
-  '/the-gennoor-way': 'The Gennoor Way',
-  '/ai-academy': 'AI Essentials',
+  '/services/certifications': 'Certification preparation',
   '/studio': 'Learning Studio',
+  '/ai-academy': 'AI Essentials',
   '/ai-readiness': 'AI Readiness',
   '/resources': 'Resources',
   '/resources/blog': 'Blog',
-  '/resources/videos': 'Videos',
-  '/resources/pocs': 'PoCs',
-  '/resources/calendar': 'Book a Call',
+  '/resources/calendar': 'Book a call',
   '/webinars': 'Webinars',
   '/workshops': 'Workshops',
+  '/workshops/claude-cowork': 'Claude workshop recap',
   '/about': 'About',
-  '/about/journey': 'My Journey',
-  '/about/company': 'Gennoor Tech',
-  '/about/team-and-delivery': 'Team & Delivery',
-  '/about/trust-and-security': 'Trust & Security',
-  '/about/certifications': 'Our Credentials',
-  '/portfolio': 'Portfolio',
-  '/portfolio/case-studies': 'Case Studies',
-  '/portfolio/testimonials': 'Testimonials',
-  '/portfolio/open-source': 'Open Source',
+  '/about/certifications': 'Credentials',
+  '/about/founder': 'Jalal Ahmed Khan',
   '/contact': 'Contact',
+  '/join': 'Work with us',
+  '/community': 'Community',
 }
 
 export function labelForPath(path: string): string {
   if (BREADCRUMB_LABELS[path]) return BREADCRUMB_LABELS[path]
   const last = path.split('/').filter(Boolean).pop() ?? ''
   if (!last) return 'Home'
+  if (/^[a-z]{1,3}-\d{2,3}$/i.test(last)) return last.toUpperCase() // course codes: ai-103 -> AI-103
   return last
     .split('-')
     .map(w => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ')
 }
+
+// Path prefixes that have no page of their own, so they are left out of the trail.
+const NO_PAGE = new Set(['/services', '/resources', '/guides', '/services/training/curriculum'])
 
 export function breadcrumbsFor(pathname: string): { label: string; href: string }[] {
   if (!pathname || pathname === '/') {
@@ -209,6 +129,7 @@ export function breadcrumbsFor(pathname: string): { label: string; href: string 
   let acc = ''
   for (const s of segs) {
     acc += `/${s}`
+    if (NO_PAGE.has(acc)) continue
     trail.push({ label: labelForPath(acc), href: acc })
   }
   return trail

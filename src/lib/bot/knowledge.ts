@@ -4,11 +4,7 @@ import crypto from 'crypto'
 import { allCoursePdfs } from '@/data/course-pdfs'
 import { allPrograms } from '@/data/training-programs'
 import { courses as academyCourses } from '@/data/academy/courses'
-import { pocs } from '@/data/pocs'
-import { caseStudies } from '@/data/case-studies'
 import { certifications, mctStatus } from '@/data/certifications'
-import { industries } from '@/data/industries'
-import { functions as businessFunctions } from '@/data/functions'
 import { upcomingWebinars, pastWebinars } from '@/data/webinars'
 
 /**
@@ -83,12 +79,6 @@ function courseCatalogSources(): Source[] {
       c.modules?.length
         ? `Modules: ${c.modules.map((m) => `${m.number} ${m.title} (${(m.topics || []).join(', ')})`).join(' | ')}`
         : '',
-      c.aiEnablementSummary ? `How this fits AI enablement: ${c.aiEnablementSummary}` : '',
-      c.aiEnablementPhases?.length
-        ? `Enablement journey: ${c.aiEnablementPhases.map((p) => `${p.phase} — ${p.action}`).join('; ')}`
-        : '',
-      c.pilotPriceBand ? `Indicative pilot price band: ${c.pilotPriceBand}.` : '',
-      c.pilotTimeline ? `Pilot timeline: ${c.pilotTimeline}.` : '',
     ].filter(Boolean).join('\n'),
   }))
 }
@@ -113,8 +103,8 @@ function programSources(): Source[] {
 // ── Academy self-paced courses ────────────────────────────────────────────
 function academySources(): Source[] {
   return academyCourses.map((c) => ({
-    url: `/academy/courses/${c.slug}`,
-    title: `${c.title} — Gennoor Academy`,
+    url: `/ai-academy`,
+    title: `${c.title} — AI Essentials`,
     body: [
       `${c.title}. ${c.subtitle || ''}`,
       c.hookSentence || '',
@@ -125,43 +115,6 @@ function academySources(): Source[] {
       c.whoThisIsFor ? `Who this is for: ${c.whoThisIsFor}` : '',
       c.whatYoullLearn?.length ? `What you will learn: ${c.whatYoullLearn.join('; ')}` : '',
       c.chapters?.length ? `Chapters: ${c.chapters.map((ch) => ch.title).join('; ')}` : '',
-    ].filter(Boolean).join('\n'),
-  }))
-}
-
-// ── Proof-of-concept builds (with real timelines and price bands) ─────────
-function pocSources(): Source[] {
-  return pocs.map((p) => ({
-    url: `/services/poc-development#${p.id}`,
-    title: `${p.title} — proof of concept`,
-    body: [
-      `${p.title}. ${p.phaseTag}.`,
-      `Problem it solves: ${p.problem}`,
-      p.build?.length ? `What we build: ${p.build.join('; ')}` : '',
-      `Typical timeline: ${p.timeline}.`,
-      `Indicative price: ${[p.priceBand?.smb ? `SMB ${p.priceBand.smb}` : '', `Enterprise ${p.priceBand?.enterprise}`].filter(Boolean).join(', ')}.`,
-      p.sustainmentBand ? `Ongoing support: ${p.sustainmentBand}.` : '',
-      p.industries?.length ? `Industries: ${p.industries.join(', ')}.` : '',
-      p.functions?.length ? `Functions: ${p.functions.join(', ')}.` : '',
-      p.technologies?.length ? `Technologies: ${p.technologies.join(', ')}.` : '',
-      p.pairedCourseTitle ? `Paired training: ${p.pairedCourseTitle}.` : '',
-    ].filter(Boolean).join('\n'),
-  }))
-}
-
-// ── Delivered work — the only honest source of proof ──────────────────────
-function caseStudySources(): Source[] {
-  return caseStudies.map((c) => ({
-    url: '/portfolio',
-    title: `${c.title} — ${c.client}`,
-    body: [
-      `Client: ${c.client} (${c.industry}). Duration: ${c.duration}.`,
-      c.participants ? `Participants: ${c.participants}.` : '',
-      `Challenge: ${c.challenge}`,
-      c.approach?.length ? `What we did: ${c.approach.join('; ')}` : '',
-      c.outcomes?.length ? `Outcomes: ${c.outcomes.join('; ')}` : '',
-      c.technologies?.length ? `Technologies: ${c.technologies.join(', ')}.` : '',
-      c.testimonial ? `Testimonial from ${c.testimonial.author}, ${c.testimonial.role}: "${c.testimonial.quote}"` : '',
     ].filter(Boolean).join('\n'),
   }))
 }
@@ -183,32 +136,6 @@ function certificationSources(): Source[] {
     },
   ]
   return out
-}
-
-// ── Industry and function pages — problems in the visitor's own words ─────
-function verticalSources(): Source[] {
-  const ind = industries.map((i) => ({
-    url: `/industries/${i.slug}`,
-    title: `AI for ${i.name} (${i.shortName})`,
-    body: [
-      `${i.name} — ${i.tagline}`,
-      i.hero,
-      i.whyNow ? `Why now: ${i.whyNow}` : '',
-      i.problems?.length ? `Problems we solve: ${i.problems.map((p) => `${p.title} — ${p.detail}`).join('; ')}` : '',
-      i.flagshipCourse ? `Flagship training: ${i.flagshipCourse}.` : '',
-    ].filter(Boolean).join('\n'),
-  }))
-  const fns = businessFunctions.map((f) => ({
-    url: `/functions/${f.slug}`,
-    title: `AI for ${f.name}`,
-    body: [
-      `${f.name} — ${f.tagline}`,
-      f.hero,
-      f.problems?.length ? `Problems we solve: ${f.problems.map((p) => `${p.title} — ${p.detail}`).join('; ')}` : '',
-      f.flagshipCourse ? `Flagship training: ${f.flagshipCourse}.` : '',
-    ].filter(Boolean).join('\n'),
-  }))
-  return [...ind, ...fns]
 }
 
 // ── Webinars and live sessions ────────────────────────────────────────────
@@ -239,10 +166,7 @@ export function knowledgeChunks(): SiteChunk[] {
     ...toChunks(courseCatalogSources(), 'course'),
     ...toChunks(programSources(), 'program'),
     ...toChunks(academySources(), 'academy'),
-    ...toChunks(pocSources(), 'poc'),
-    ...toChunks(caseStudySources(), 'case'),
     ...toChunks(certificationSources(), 'cert'),
-    ...toChunks(verticalSources(), 'vertical'),
     ...toChunks(webinarSources(), 'webinar'),
   ]
 }
@@ -253,10 +177,6 @@ export function knowledgeSummary(): Record<string, number> {
     courses: allCoursePdfs.length,
     programs: allPrograms.length,
     academy: academyCourses.length,
-    pocs: pocs.length,
-    caseStudies: caseStudies.length,
-    industries: industries.length,
-    functions: businessFunctions.length,
     webinars: upcomingWebinars.length + pastWebinars.length,
   }
 }

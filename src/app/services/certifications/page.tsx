@@ -95,11 +95,10 @@ export default function CertificationPreparationPage() {
             </span>
 
             <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-6 leading-tight tracking-tight">
-              Certification Exam Preparation
+              Certification preparation
             </h1>
             <p className="text-xl text-gray-600 mb-8">
-              Prepare for industry-recognized certifications with expert guidance from a Microsoft Certified Trainer & AI CERTs Certified Trainer
-              with 20+ active certifications across Microsoft, AWS, Google Cloud, GitHub, and AI CERTs.
+              Prepare for Microsoft, AWS, Google Cloud, GitHub and AI CERTs exams with a Microsoft Certified Trainer.
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -234,10 +233,6 @@ export default function CertificationPreparationPage() {
                           <div className="flex items-center text-sm text-gray-500">
                             <Target className="w-4 h-4 mr-2" />
                             Pass Score: {cert.passingScore}
-                          </div>
-                          <div className="flex items-center text-sm text-gray-500">
-                            <DollarSign className="w-4 h-4 mr-2" />
-                            Exam Fee: {cert.price}
                           </div>
                         </div>
 

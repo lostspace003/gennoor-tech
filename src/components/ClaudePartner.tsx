@@ -4,19 +4,19 @@
  * tasks/Gennoor-CPN-Certified-Kit/cpn/PRESENTATION-GUIDE.md. Do not paraphrase
  * the tier line, recolor the badge, or add tier/ranking claims.
  */
-const PROGRAM_URL = 'https://claude.com/partners'
-const TIER_LINE = 'Gennoor is Certified in the Claude Partner Network.'
-const BOILERPLATE =
+export const PROGRAM_URL = 'https://claude.com/partners'
+export const TIER_LINE = 'Gennoor is Certified in the Claude Partner Network.'
+export const BOILERPLATE =
   'The Claude Partner Network is how Anthropic works with the firms that put Claude into production for customers. The Services Track recognizes partners for building a certified delivery team, delivering Claude use cases for clients, and proving the work through public customer references. Partners advance through Certified, Select, Preferred, and Global Premier tiers.'
 
 const ALT = 'Claude Partner Network - Certified'
 
 function Badge({ kind, width }: { kind: 'horizontal' | 'vertical' | 'chip'; width: number }) {
   return (
-    <a href={PROGRAM_URL} target="_blank" rel="noopener" className="inline-block leading-[0]" aria-label={ALT}>
+    <span className="inline-block leading-[0]">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={`/cpn/cpn-certified-${kind}.svg`} width={width} alt={ALT} className="h-auto" />
-    </a>
+    </span>
   )
 }
 
@@ -45,10 +45,6 @@ export function ClaudePartnerSection() {
             <h2 className="font-heading text-2xl font-bold text-gray-900 mb-3">Claude Partner Network</h2>
             <p className="font-semibold text-gray-900 mb-3">{TIER_LINE}</p>
             <p className="text-gray-600 leading-relaxed mb-3">{BOILERPLATE}</p>
-            <p className="text-gray-600 leading-relaxed">
-              Our consultants hold Claude certifications and deliver Claude solutions for clients.{' '}
-              <a href={PROGRAM_URL} target="_blank" rel="noopener" className="text-primary-600 hover:underline">Learn more about the program</a>.
-            </p>
           </div>
         </div>
       </div>
@@ -62,6 +58,30 @@ export function ClaudePartnerFooterLine() {
     <div className="flex flex-wrap items-center justify-center gap-3 mt-8">
       <Badge kind="horizontal" width={150} />
       <p className="text-xs text-[#6e6e73]">{TIER_LINE}</p>
+    </div>
+  )
+}
+
+/** Slim bar at the top of every page: the first thing a visitor sees. */
+export function ClaudePartnerBar() {
+  return (
+    <div className="bg-[#faf9f5] border-b border-[#ece9e0]">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+        <Badge kind="horizontal" width={112} />
+        <p className="text-[13px] text-[#3d3d3a]">
+          <span className="font-medium">{TIER_LINE}</span>
+        </p>
+      </div>
+    </div>
+  )
+}
+
+/** Hero block: badge and the approved line, centred, directly under the headline. */
+export function ClaudePartnerHero() {
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <Badge kind="horizontal" width={300} />
+      <p className="text-[16px] font-medium text-gray-800">{TIER_LINE}</p>
     </div>
   )
 }

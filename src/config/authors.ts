@@ -17,25 +17,21 @@ export interface AuthorProfile {
 }
 
 export const authors: Record<string, AuthorProfile> = {
-  'jalal-ahmed-khan': {
-    id: 'jalal-ahmed-khan',
-    name: 'Jalal Ahmed Khan',
-    initials: 'JK',
-    role: 'Founder, Gennoor Tech',
-    credentials: 'Microsoft Certified Trainer · 16+ active certifications',
-    bio: '14+ years in enterprise AI and cloud technologies. Delivered AI transformation programs for Fortune 500 companies across 6 countries including Boeing, Aramco, HDFC Bank, and Siemens. Holds 16 active Microsoft certifications including Azure AI Engineer (AI-102), Power BI Analyst (PL-300), and Copilot specialist credentials.',
-    photoUrl: '/api/content/intro-content/founder.png',
+  'gennoor-team': {
+    id: 'gennoor-team',
+    name: 'Gennoor Tech Team',
+    initials: 'G',
+    role: 'Gennoor Tech',
+    credentials: 'AI training and automation, Mumbai',
+    bio: 'Written by the Gennoor Tech team.',
     links: {
-      linkedin: 'https://www.linkedin.com/in/lostspace003/',
-      github: 'https://github.com/lostspace003',
-      microsoftLearn: 'https://learn.microsoft.com/en-us/users/lostspace003/transcript/vjw63s4jxnmmwre?tab=credentials-tab',
-      about: '/about/founder',
-      certifications: '/about/certifications',
+      linkedin: 'https://www.linkedin.com/company/gennoor-tech-private-limited/',
+      about: '/about',
     },
   },
 }
 
-export const DEFAULT_AUTHOR_ID = 'jalal-ahmed-khan'
+export const DEFAULT_AUTHOR_ID = 'gennoor-team'
 
 export function resolveAuthor(authorField: string): AuthorProfile {
   const direct = authors[authorField]

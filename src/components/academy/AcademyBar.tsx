@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Layers } from 'lucide-react'
 import LearnerAccountMenu from './LearnerAccountMenu'
 
@@ -19,6 +20,7 @@ export default function AcademyBar({ section }: { section: string }) {
               </span>
             </div>
           </div>
+          <Link href="/community" className="shrink-0 text-xs font-medium text-gray-600 hover:text-primary-700">Community</Link>
           <LearnerAccountMenu className="shrink-0" />
         </div>
       </div>

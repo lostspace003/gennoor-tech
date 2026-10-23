@@ -291,7 +291,7 @@ export default function PortalSidebar({
               >
                 Book a call
               </Link>
-              <p className="text-[11px] text-[#86868b] text-center">GCC · Africa · South Asia</p>
+              <p className="text-[11px] text-[#86868b] text-center">Mumbai, India</p>
             </div>
           ) : (
             <>

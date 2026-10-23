@@ -9,6 +9,8 @@ import RouteProgress from './RouteProgress'
 import SearchModal from '@/components/SearchModal'
 import { cn } from '@/lib/utils'
 import { isChromelessRoute } from '@/lib/chrome'
+import { ClaudePartnerBar } from '@/components/ClaudePartner'
+import CustomTraining from '@/components/custom-training/CustomTraining'
 
 const PIN_STORAGE_KEY = 'gennoor.portal.pinned'
 
@@ -107,12 +109,14 @@ export default function PortalShell({ children }: { children: React.ReactNode })
           pinned ? 'lg:pl-[var(--portal-rail-w-expanded)]' : 'lg:pl-[var(--portal-rail-w-collapsed)]'
         )}
       >
+        {pathname !== '/' && <ClaudePartnerBar />}
         <PortalBreadcrumb />
         <div key={pathname} className="animate-page-enter">
           {children}
         </div>
       </div>
 
+      <CustomTraining />
       <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   )

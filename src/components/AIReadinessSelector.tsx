@@ -163,7 +163,6 @@ export default function AIReadinessSelector() {
     <div className="animate-fade-in">
       {/* Hero */}
       <section className="bg-white px-8 pt-20 lg:pt-[100px] pb-14 text-center">
-        <div className="kicker mb-5">AI Readiness Diagnostic</div>
         <h1 className="text-[clamp(40px,4.8vw,64px)] leading-[1.06] tracking-[-0.03em] font-bold text-gray-900 max-w-[720px] mx-auto">
           Know where you stand.
         </h1>

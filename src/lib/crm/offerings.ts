@@ -110,7 +110,7 @@ function pocRef(p: PoC): OfferingRef {
     phase,
     industries: p.industries || [],
     functions: p.functions || [],
-    href: `/services/poc-development#${p.id}`,
+    href: '/automation',
     line: [
       `POC-${p.id}`,
       p.title,
@@ -133,7 +133,7 @@ function caseRef(c: CaseStudy): OfferingRef {
     phase: 'train',
     industries: c.industry ? [c.industry] : [],
     functions: [],
-    href: '/portfolio',
+    href: '/about',
     line: [
       `CASE-${c.id}`,
       c.title,

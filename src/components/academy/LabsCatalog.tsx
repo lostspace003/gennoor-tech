@@ -1,10 +1,11 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { ChevronDown, Filter, Layers, Play, X } from 'lucide-react'
 import type { LmsCourseCard } from '@/lib/lms'
 import PreviewModal from './PreviewModal'
+import { Stars } from './Stars'
 import { ALL_PLATFORMS, DOMAINS, KINDS, LEVELS, PRIMARY_PLATFORMS, TOPICS } from '@/lib/lms-taxonomy'
 
 const KIND_LABEL: Record<string, string> = Object.fromEntries(KINDS.map(k => [k.id, k.label]))
@@ -43,6 +44,12 @@ export default function LabsCatalog({ courses }: { courses: LmsCourseCard[] }) {
   const [topic, setTopic] = useState('all')
   const [domain, setDomain] = useState('all')
   const [more, setMore] = useState(false)
+
+  // /studio?company=Claude (linked from the Claude page) opens with that company selected
+  useEffect(() => {
+    const c = new URLSearchParams(window.location.search).get('company')
+    if (c) setVendor(c)
+  }, [])
   const [preview, setPreview] = useState<LmsCourseCard | null>(null)
 
   // Always offer the platforms we are building towards, plus any other platform that has a course.
@@ -169,6 +176,13 @@ export default function LabsCatalog({ courses }: { courses: LmsCourseCard[] }) {
                           <Link href={`/studio/${c.slug}`} className="after:absolute after:inset-0 focus:outline-none">{c.title}</Link>
                         </h4>
                         <p className="text-[14px] leading-[1.5] text-[#6e6e73] mt-2 line-clamp-2">{c.subtitle}</p>
+                        {c.rating && (
+                          <p className="mt-3 flex items-center gap-1.5 text-[13px] text-[#6e6e73]">
+                            <span className="font-semibold text-gray-900 tabular-nums">{c.rating.average.toFixed(1)}</span>
+                            <Stars value={c.rating.average} size={13} />
+                            <span>({c.rating.count})</span>
+                          </p>
+                        )}
                         <p className="text-[13px] text-[#86868b] mt-auto pt-4 tabular-nums">
                           {c.lectures} lessons{c.hours ? `, ${c.hours} hours` : ''}
                         </p>

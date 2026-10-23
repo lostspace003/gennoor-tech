@@ -38,7 +38,7 @@ function generateFaqs(cert: NonNullable<ReturnType<typeof getCertificationBySlug
     },
     {
       question: `How long is the ${cert.code} exam?`,
-      answer: `The ${cert.code} exam duration is ${cert.examDuration}. The passing score is ${cert.passingScore}. The exam fee is ${cert.price}.`,
+      answer: `The ${cert.code} exam duration is ${cert.examDuration}. The passing score is ${cert.passingScore}.`,
     },
     {
       question: `What topics does the ${cert.code} exam cover?`,
@@ -98,7 +98,7 @@ export default async function CertificationGuidePage({ params }: Props) {
       />
       <BreadcrumbJsonLd items={[
         { name: 'Home', url: 'https://gennoor.com' },
-        { name: 'Services', url: 'https://gennoor.com/services' },
+        { name: 'Training', url: 'https://gennoor.com/training' },
         { name: 'Certifications', url: 'https://gennoor.com/services/certifications' },
         { name: `${cert.code}: ${cert.title}`, url: `https://gennoor.com/services/certifications/${cert.slug}` },
       ]} />
@@ -144,11 +144,6 @@ export default async function CertificationGuidePage({ params }: Props) {
                   <Target className="w-6 h-6 text-white mx-auto mb-2" />
                   <div className="text-lg font-bold text-white">{cert.passingScore}</div>
                   <div className="text-white/80 text-sm">Passing Score</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
-                  <DollarSign className="w-6 h-6 text-white mx-auto mb-2" />
-                  <div className="text-lg font-bold text-white">{cert.price}</div>
-                  <div className="text-white/80 text-sm">Exam Fee</div>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
                   <Calendar className="w-6 h-6 text-white mx-auto mb-2" />
