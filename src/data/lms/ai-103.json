@@ -2559,5 +2559,6 @@
   "AI Agents",
   "DevOps & CI/CD"
  ],
- "domains": []
+ "domains": [],
+ "protected": true
 }
