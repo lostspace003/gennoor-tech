@@ -264,16 +264,6 @@ const PAGE_META: Record<string, PageMeta> = {
     category: 'Contact',
     keywords: ['book', 'call', 'schedule', 'meeting', 'consultation', 'calendar', 'appointment'],
   },
-  '/work/safar-anbiya': {
-    description: 'Showcase build — Safar-e-Anbiya',
-    category: 'Resources',
-    keywords: ['showcase', 'work', 'portfolio', 'safar', 'anbiya', 'animation', 'production'],
-  },
-  '/work/nanhe-momin': {
-    description: 'Showcase build — Nanhe Momin',
-    category: 'Resources',
-    keywords: ['showcase', 'work', 'portfolio', 'nanhe', 'momin', 'animation', 'series'],
-  },
 
   // ---- Guides -------------------------------------------------------------
   '/guides/ai-103-azure-ai-engineer': {
@@ -465,8 +455,6 @@ const STANDALONE_ROUTES = [
   '/portfolio/testimonials',
   '/portfolio/open-source',
   '/portfolio/demos',
-  '/work/safar-anbiya',
-  '/work/nanhe-momin',
   '/privacy',
   '/terms',
 ]

@@ -50,8 +50,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/services/enterprise-ai-roadmap-workshop`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
 
     // Featured work
-    { url: `${baseUrl}/work/safar-anbiya`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${baseUrl}/work/nanhe-momin`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
 
     // Portfolio
     { url: `${baseUrl}/portfolio`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
