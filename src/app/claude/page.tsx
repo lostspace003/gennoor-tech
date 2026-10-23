@@ -22,8 +22,8 @@ const WHAT = [
   },
   {
     art: AutomationIllustration,
-    title: 'Automation and platforms built with Claude',
-    body: 'Automations scoped one process at a time, and learning platforms. The Learning Studio on this site was built with Claude.',
+    title: 'Automation and learning platforms',
+    body: 'Automations scoped one process at a time, and learning platforms such as the Learning Studio on this site.',
   },
 ]
 

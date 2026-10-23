@@ -26,7 +26,7 @@ const WHAT_WE_DO = [
   {
     art: PlatformIllustration,
     title: 'Learning platforms',
-    body: 'Built with Claude. The Learning Studio is one: video courses, quizzes and certificates.',
+    body: 'The Learning Studio is one: video courses, quizzes and certificates.',
     href: '/studio',
     cta: 'Open the Learning Studio',
   },

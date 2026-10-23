@@ -24,7 +24,7 @@ export default function AboutPage() {
             Gennoor Tech is run by <strong>Jalal Ahmed Khan</strong>, a Microsoft Certified Trainer. He started as an engineering teacher and has spent the years since teaching teams to work with Microsoft&rsquo;s AI and cloud tools.
           </p>
           <p>
-            Today the work is training organizations to use Claude and other AI tools, building automations with them, and building learning platforms. The Learning Studio on this site is one of those platforms, built with Claude.
+            Today the work is training organizations to use Claude and other AI tools, building automations with them, and building learning platforms. The Learning Studio on this site is one of those platforms.
           </p>
           <p>
             We are based in Mumbai, India. You can reach us on the <Link href="/contact" className="text-primary-600 hover:underline">contact page</Link>.

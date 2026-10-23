@@ -123,12 +123,29 @@ export async function listAllReviewsForAdmin(): Promise<Array<Review & { slug: s
 
 // ---------- Discussion ----------
 
+export type PostKind = 'topic' | 'announcement' | 'poll' | 'quiz'
+
+export interface PostResults {
+  counts: number[]
+  total: number
+  myVote: number | null
+  /** quiz only: shown once the viewer has answered */
+  correct?: number
+  explanation?: string
+}
+
 export interface Post {
   id: string
   scope: string // course slug or "community"
   parentId: string // '' for a thread, thread id for a reply
   title: string // threads only
-  body: string
+  body: string // plain text of the post
+  /** sanitized rich text; empty for posts written before the editor existed */
+  html: string
+  kind: PostKind
+  options: string[] // poll and quiz choices
+  closed: boolean // poll or quiz no longer takes answers
+  results?: PostResults
   author: string // display name
   isTeam: boolean
   createdAt: string
@@ -139,29 +156,41 @@ export interface Post {
   liked?: boolean
 }
 
-interface PostRow extends Post { email: string; likers: string[] }
+interface PostRow extends Post { email: string; likers: string[]; votes: Record<string, number>; answer: number; explanation: string }
+
+const parseJson = <T,>(v: unknown, fallback: T): T => { try { return v ? (JSON.parse(String(v)) as T) : fallback } catch { return fallback } }
 
 function toPost(e: Record<string, unknown>): PostRow {
-  let likers: string[] = []
-  try { likers = e.likes ? JSON.parse(String(e.likes)) : [] } catch { likers = [] }
+  const likers = parseJson<string[]>(e.likes, [])
+  const kind = (['announcement', 'poll', 'quiz'].includes(String(e.kind)) ? String(e.kind) : 'topic') as PostKind
   return {
     id: String(e.rowKey), scope: String(e.partitionKey), parentId: String(e.parentId || ''), title: String(e.title || ''),
-    body: String(e.body || ''), author: String(e.author || 'Learner'), isTeam: e.isTeam === true || e.isTeam === 'true',
+    body: String(e.body || ''), html: String(e.html || ''), kind, options: parseJson<string[]>(e.options, []),
+    closed: e.closed === true || e.closed === 'true', author: String(e.author || 'Learner'), isTeam: e.isTeam === true || e.isTeam === 'true',
     createdAt: String(e.createdAt || ''), hidden: e.hidden === true || e.hidden === 'true', email: String(e.email || ''),
-    likers, likes: likers.length,
+    likers, likes: likers.length, votes: parseJson<Record<string, number>>(e.votes, {}),
+    answer: e.answer === undefined || e.answer === '' ? -1 : Number(e.answer), explanation: String(e.explanation || ''),
   }
 }
 
-export async function addPost(p: { scope: string; parentId?: string; title?: string; body: string; email: string; name: string; isTeam?: boolean }): Promise<Post> {
+export async function addPost(p: {
+  scope: string; parentId?: string; title?: string; body: string; html?: string; email: string; name: string; isTeam?: boolean
+  kind?: PostKind; options?: string[]; answer?: number; explanation?: string
+}): Promise<Post> {
   const t = await table(POSTS)
   const id = newId()
   const createdAt = new Date().toISOString()
   const author = p.isTeam ? 'Gennoor team' : displayName(p.name, p.email)
-  await t.createEntity({
+  const kind = p.kind || 'topic'
+  const options = (p.options || []).map(o => o.trim().slice(0, 120)).filter(Boolean).slice(0, 8)
+  const entity: Record<string, unknown> = {
     partitionKey: p.scope, rowKey: id, parentId: p.parentId || '', title: (p.title || '').slice(0, 140),
-    body: p.body.slice(0, 4000), author, email: p.email.toLowerCase(), isTeam: !!p.isTeam, createdAt, hidden: false,
-  })
-  return { id, scope: p.scope, parentId: p.parentId || '', title: p.title || '', body: p.body, author, isTeam: !!p.isTeam, createdAt, hidden: false, likes: 0 }
+    body: p.body.slice(0, 4000), html: (p.html || '').slice(0, 12000), author, email: p.email.toLowerCase(), isTeam: !!p.isTeam, createdAt, hidden: false, kind,
+  }
+  if (kind === 'poll' || kind === 'quiz') { entity.options = JSON.stringify(options); entity.closed = false; entity.votes = '{}' }
+  if (kind === 'quiz') { entity.answer = Math.min(Math.max(0, p.answer ?? 0), Math.max(0, options.length - 1)); entity.explanation = (p.explanation || '').slice(0, 600) }
+  await t.createEntity(entity as never)
+  return { id, scope: p.scope, parentId: p.parentId || '', title: p.title || '', body: p.body, html: p.html || '', kind, options, closed: false, author, isTeam: !!p.isTeam, createdAt, hidden: false, likes: 0 }
 }
 
 async function postsIn(scope: string): Promise<PostRow[]> {
@@ -171,7 +200,20 @@ async function postsIn(scope: string): Promise<PostRow[]> {
   return out.sort((a, b) => a.id.localeCompare(b.id))
 }
 
-const strip = (p: PostRow, me: string): Post => { const { email, likers, ...rest } = p; return { ...rest, mine: !!me && email === me, liked: !!me && likers.includes(me) } }
+function resultsOf(p: PostRow, me: string, reveal: boolean): PostResults | undefined {
+  if (p.kind !== 'poll' && p.kind !== 'quiz') return undefined
+  const counts = p.options.map(() => 0)
+  for (const v of Object.values(p.votes)) if (v >= 0 && v < counts.length) counts[v] += 1
+  const myVote = me && me in p.votes ? p.votes[me] : null
+  const r: PostResults = { counts, total: counts.reduce((a, b) => a + b, 0), myVote }
+  if (p.kind === 'quiz' && (reveal || myVote !== null)) { r.correct = p.answer; r.explanation = p.explanation }
+  return r
+}
+
+const strip = (p: PostRow, me: string): Post => {
+  const { email, likers, votes, answer, explanation, ...rest } = p
+  return { ...rest, results: resultsOf(p, me, false), mine: !!me && email === me, liked: !!me && likers.includes(me) }
+}
 
 export interface ThreadRow extends Post { replies: number; lastAt: string }
 
@@ -183,7 +225,7 @@ export async function listThreads(scope: string, viewerEmail?: string): Promise<
   return all.filter(p => !p.parentId).map(p => {
     const r = replies.get(p.id) ?? []
     return { ...strip(p, me), replies: r.length, lastAt: r.length ? r[r.length - 1].createdAt : p.createdAt }
-  }).sort((a, b) => b.lastAt.localeCompare(a.lastAt))
+  }).sort((a, b) => (a.kind === 'announcement' ? 0 : 1) - (b.kind === 'announcement' ? 0 : 1) || b.lastAt.localeCompare(a.lastAt))
 }
 
 export async function getThread(scope: string, id: string, viewerEmail?: string): Promise<{ thread: Post; replies: Post[] } | null> {
@@ -204,13 +246,38 @@ export async function toggleLike(scope: string, id: string, email: string): Prom
   const t = await table(POSTS)
   let e: Record<string, unknown>
   try { e = (await t.getEntity(scope, id)) as Record<string, unknown> } catch { return null }
-  let likers: string[] = []
-  try { likers = e.likes ? JSON.parse(String(e.likes)) : [] } catch { likers = [] }
+  let likers = parseJson<string[]>(e.likes, [])
   const me = email.toLowerCase()
   const liked = !likers.includes(me)
   likers = liked ? [...likers, me] : likers.filter(x => x !== me)
   await t.updateEntity({ partitionKey: scope, rowKey: id, likes: JSON.stringify(likers) }, 'Merge')
   return { likes: likers.length, liked }
+}
+
+/** Answer a poll (the vote can be changed) or a quiz (one answer). Returns the viewer's results. */
+export async function castVote(scope: string, id: string, email: string, option: number): Promise<{ error?: string; results?: PostResults }> {
+  const p = await getPostRaw(scope, id)
+  if (!p || p.hidden || (p.kind !== 'poll' && p.kind !== 'quiz')) return { error: 'Not found' }
+  if (p.closed) return { error: 'This one is closed.' }
+  if (!Number.isInteger(option) || option < 0 || option >= p.options.length) return { error: 'Pick one of the choices.' }
+  const me = email.toLowerCase()
+  if (p.kind === 'quiz' && me in p.votes) return { error: 'You have already answered.' }
+  const votes = { ...p.votes, [me]: option }
+  const t = await table(POSTS)
+  await t.updateEntity({ partitionKey: scope, rowKey: id, votes: JSON.stringify(votes) }, 'Merge')
+  return { results: resultsOf({ ...p, votes }, me, false) }
+}
+
+export async function setPostClosed(scope: string, id: string, closed: boolean): Promise<void> {
+  const t = await table(POSTS)
+  await t.updateEntity({ partitionKey: scope, rowKey: id, closed }, 'Merge')
+}
+
+/** Admin view of a poll or quiz: counts plus who chose what (by email). */
+export function adminResults(p: PostRow): (PostResults & { voters: { email: string; option: number }[] }) | undefined {
+  const r = resultsOf(p, '', true)
+  if (!r) return undefined
+  return { ...r, correct: p.kind === 'quiz' ? p.answer : undefined, explanation: p.explanation, voters: Object.entries(p.votes).map(([email, option]) => ({ email, option })) }
 }
 
 export async function setPostHidden(scope: string, id: string, hidden: boolean): Promise<void> {
