@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Award, Clock, DollarSign, Target, BookOpen, CheckCircle, Info, Send, Filter, X, Users, Globe } from 'lucide-react'
 import Link from 'next/link'
-import { PlatformIllustration } from '@/components/illustrations/Illustrations'
+import { ExamPrepIllustration } from '@/components/illustrations/Illustrations'
 import { microsoftCertifications, googleCertifications, awsCertifications, githubCertifications, aiCertsCertifications } from '@/data/certification-prep'
 import CertificationDetailsModal from '@/components/certifications/CertificationDetailsModal'
 import CertificationEnquiryForm from '@/components/certifications/CertificationEnquiryForm'
@@ -122,7 +122,7 @@ export default function CertificationPreparationPage() {
               </div>
             </div>
           </div>
-          <PlatformIllustration className="w-[128px] h-[128px] lg:w-[180px] lg:h-[180px] mx-auto lg:mx-0 shrink-0" />
+          <ExamPrepIllustration className="w-[128px] h-[128px] lg:w-[180px] lg:h-[180px] mx-auto lg:mx-0 shrink-0" />
           </div>
         </div>
       </section>
