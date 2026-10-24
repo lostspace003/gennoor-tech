@@ -6,13 +6,18 @@ import type { LmsCourse, LmsProgressEntry } from '@/lib/lms'
 import ReviewForm from './ReviewForm'
 
 /**
- * Asks for a rating once a module is finished (not after every video). It only appears when
- * the learner completes a module during this visit, never twice for the same module, and
- * never once they have reviewed the course.
+ * Asks every learner for a rating at least once, and stops asking once they have given one.
+ * It appears (a) when a module is finished, (b) after every 5th finished lesson, and (c) when the whole
+ * course is finished. Each moment is asked about only once per browser, so "Not now" is respected until
+ * the next moment. A star rating is quick and the words are optional.
  */
 export default function ReviewPrompt({ course, progress }: { course: LmsCourse; progress: Record<string, LmsProgressEntry> }) {
   const doneSections = course.sections.map(s => s.items.length > 0 && s.items.every(i => progress[i.id]?.done)).map(Boolean)
-  const count = doneSections.filter(Boolean).length
+  const lessonsDone = course.sections.reduce((n, s) => n + s.items.filter(i => progress[i.id]?.done).length, 0)
+  const total = course.sections.reduce((n, s) => n + s.items.length, 0)
+  const finished = total > 0 && lessonsDone === total
+  // one number that goes up whenever a new "moment" is reached
+  const count = doneSections.filter(Boolean).length * 1000 + Math.floor(lessonsDone / 5) + (finished ? 100000 : 0)
   const last = useRef<number | null>(null)
   const reviewed = useRef<boolean | null>(null)
   const [show, setShow] = useState(false)
@@ -23,7 +28,7 @@ export default function ReviewPrompt({ course, progress }: { course: LmsCourse; 
     if (last.current === null) { last.current = count; return } // first render: whatever was already done is not "new"
     if (count <= last.current) { last.current = count; return }
     last.current = count
-    const idx = doneSections.lastIndexOf(true)
+    const idx = count
     let asked: number[] = []
     try { asked = JSON.parse(localStorage.getItem(key) || '[]') } catch { /* ignore */ }
     if (asked.includes(idx)) return
@@ -47,7 +52,7 @@ export default function ReviewPrompt({ course, progress }: { course: LmsCourse; 
         <p className="text-[15px] font-medium text-gray-900 pr-6">Thank you for your review. You can change it any time on the course page.</p>
       ) : (
         <>
-          <h3 className="font-heading text-[16px] font-bold text-gray-900 pr-6">You finished a module. How is the course so far?</h3>
+          <h3 className="font-heading text-[16px] font-bold text-gray-900 pr-6">{finished ? 'You finished the course. How was it?' : 'How is the course going so far?'}</h3>
           <div className="mt-3">
             <ReviewForm slug={course.slug} onDone={() => { reviewed.current = true; setShow(false); setThanks(true); setTimeout(() => setThanks(false), 5000) }} onCancel={() => setShow(false)} />
           </div>
