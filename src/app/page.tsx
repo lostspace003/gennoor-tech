@@ -66,7 +66,7 @@ export default async function HomePage() {
       <section className="bg-[#f5f5f7] px-6 py-16 lg:py-[90px]">
         <div className="max-w-[980px] mx-auto text-center">
           <h2 className="display-section">See how the Learning Studio works.</h2>
-          <p className="lede mt-3.5 max-w-[600px] mx-auto">From the first click to your first lesson, in about eight minutes. Find a course, ask questions, and start learning for free.</p>
+          <p className="lede mt-3.5 max-w-[600px] mx-auto">From the first click to your first lesson, in about nine minutes. Find a course, ask questions, and start learning for free.</p>
           <WalkthroughVideo className="mt-10" />
           <div className="mt-10">
             <Link href="/studio" className="pill-primary">Open the Learning Studio</Link>
