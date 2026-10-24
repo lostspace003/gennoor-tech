@@ -18,6 +18,7 @@ interface Row {
   topics: string[]
   domains: string[]
   track: string
+  builtIn?: boolean
   copy: { total: number; success: number; pending: number; failed: number; missing: number } | null
 }
 
@@ -114,6 +115,21 @@ export default function AdminLmsPage() {
     load()
   }
 
+  const remove = async (row: Row) => {
+    const typed = window.prompt(
+      `Delete "${row.title}" for good?\n\nThis removes the course, its videos, keys, documents and search entries. Learner accounts, enrollments and certificates stay.\n\nType ${row.slug} to confirm.`,
+    )
+    if (typed === null) return
+    const res = await fetch('/api/admin/lms/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slug: row.slug, confirm: typed.trim() }),
+    })
+    const body = await res.json().catch(() => ({}))
+    setMsg(res.ok ? { ok: true, text: `Deleted ${row.title}.` } : { ok: false, text: body.error || 'Could not delete.' })
+    load()
+  }
+
   return (
     <main className="max-w-4xl mx-auto px-6 py-10">
       <Link href="/admin" className="text-sm text-gray-500 hover:text-gray-800">‹ Admin</Link>
@@ -153,6 +169,15 @@ export default function AdminLmsPage() {
                   >
                     {r.published ? 'Unpublish' : 'Publish'}
                   </button>
+                  {!r.builtIn && (
+                    <button
+                      type="button"
+                      onClick={() => remove(r)}
+                      className="text-sm font-semibold px-4 py-1.5 rounded-full border border-red-200 text-red-700 hover:bg-red-50"
+                    >
+                      Delete
+                    </button>
+                  )}
                 </div>
               </div>
             )

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
-import { listAllLmsCourses, type LmsCourse } from '@/lib/lms'
+import { isBuiltInCourse, listAllLmsCourses, type LmsCourse } from '@/lib/lms'
 import { copyStatus } from '@/lib/lms-import'
 import { studioCopyStatus } from '@/lib/lms-studio-package'
 
@@ -36,6 +36,7 @@ export async function GET(req: NextRequest) {
       topics: c.topics_tags || [],
       domains: c.domains || [],
       track: c.track || '',
+      builtIn: isBuiltInCourse(c.slug),
       protected: !!c.protected,
       copy: conn
         ? await (c.protected && c.packageFiles ? studioCopyStatus(conn, c) : copyStatus(conn, c.slug, expectedBlobs(c))).catch(() => null)
