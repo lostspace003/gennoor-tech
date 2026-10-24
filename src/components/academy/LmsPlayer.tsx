@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 import type { LmsCourse, LmsItem, LmsProgressEntry } from '@/lib/lms'
 import { KIND_COLOR, kindOf } from '@/lib/lms-kind'
-import { CourseStrip } from './CourseStrip'
+import { CourseStrip, longestLesson } from './CourseStrip'
 import { RichInline, RichText, paragraphize } from './RichText'
 
 type Lecture = Extract<LmsItem, { type: 'lecture' }>
@@ -368,7 +368,7 @@ export default function LmsPlayer({
                         <span className="flex-1 min-w-0">
                           <span className="block text-[13.5px] font-semibold text-gray-900 leading-snug">{s.title}</span>
                           <span className="block text-[12px] text-[#86868b] mt-1 tabular-nums">{sectionDone}/{s.items.length}{secTime ? `, ${fmtTotal(secTime)}` : ''}</span>
-                          <span className="block mt-2 pr-2"><CourseStrip sections={[s]} done={doneMap} height={8} /></span>
+                          <span className="block mt-2 pr-2"><CourseStrip sections={[s]} done={doneMap} height={8} maxSeconds={longestLesson(course.sections)} /></span>
                         </span>
                       </button>
                       {open[si] && (

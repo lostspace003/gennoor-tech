@@ -62,6 +62,9 @@ export default function AboutPage() {
         <div className="text-center mt-10">
           <Link href="/studio" className="pill-primary">Open the Learning Studio</Link>
         </div>
+        <p className="text-center text-[14px] text-[#6e6e73] mt-6">
+          Taught by Microsoft Certified Trainers. <Link href="/about/certifications" className="text-primary-600 hover:underline">See the credentials ›</Link>
+        </p>
       </section>
 
       {/* ===== What we stand for ===== */}

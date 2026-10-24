@@ -110,7 +110,8 @@ export default function PortalShell({ children }: { children: React.ReactNode })
         )}
       >
         
-        {pathname !== '/' && <ClaudePartnerBar />}
+        {/* The home page and the Claude page show the partner badge and line themselves, so no bar above them. */}
+        {pathname !== '/' && pathname !== '/claude' && !pathname.startsWith('/claude/') && <ClaudePartnerBar />}
         <PortalBreadcrumb />
         <div key={pathname} className="animate-page-enter">
           {children}

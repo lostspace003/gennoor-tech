@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     await updateLearnerFields(email, { lastLogin: new Date().toISOString() })
     const token = await createLearnerToken({ email: email.toLowerCase().trim(), name, provider: 'password' })
     const response = NextResponse.json({ success: true, name, email })
-    response.cookies.set(learnerCookieOptions(token))
+    response.cookies.set(learnerCookieOptions(token, request))
     return response
   } catch {
     return NextResponse.json({ error: 'Login failed' }, { status: 500 })

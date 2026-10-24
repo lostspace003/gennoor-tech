@@ -33,8 +33,9 @@ report lists "format warnings": clear them before sharing the SAS URL.
 
 ## Course map bars
 
-`CourseStrip` draws one bar per lesson, coloured by type, as wide as the video is long (`durationSec`); a quiz has no video and gets a
-fixed share. Every lecture, lab and demo in the package needs its duration.
+`CourseStrip` draws one thin bar per lesson, all the same width, coloured by type and as TALL as the video is long (`durationSec`, on the
+scale of the longest lesson of the course, eased so short demos stay visible); a quiz has no video and gets one fixed lower height.
+Every lecture, lab and demo in the package needs its duration.
 
 ## Learner rules
 

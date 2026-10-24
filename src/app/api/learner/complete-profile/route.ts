@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
       provider: learner.provider,
       tid: learner.tid,
     })
-    response.cookies.set(learnerCookieOptions(token))
+    response.cookies.set(learnerCookieOptions(token, request))
     return response
   } catch {
     return NextResponse.json({ error: 'Could not save your profile. Please try again.' }, { status: 500 })

@@ -1,161 +1,94 @@
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Award, ExternalLink, Shield, Trophy, BookOpen } from 'lucide-react'
-import { certifications, getCertificationsByCategory, microsoftLearnStats, mctStatus, aictStatus } from '@/data/certifications'
+import { getCertificationsByCategory } from '@/data/certifications'
+import { credentials, credentialsAsOf, learnStats, monthYear, transcriptUrl } from '@/data/credentials'
 import { BLOB_URL } from '@/lib/site-config'
 import CertificationCards from '@/components/certifications/CertificationCards'
+import CredentialTimeline from '@/components/certifications/CredentialTimeline'
 import MCTCertificateButton from '@/components/certifications/MCTCertificateButton'
 
 export const metadata: Metadata = {
-  title: 'Certifications & Credentials — 20+ Active Certifications',
-  description: 'Microsoft Certified Trainer (MCT) & AI CERTs Certified Trainer (AICT) with 20+ active certifications including Azure AI, AI+ Security, AI+ Executive, and GitHub. 376+ hours on Microsoft Learn.',
-  keywords: ['Microsoft certifications', 'MCT trainer', 'Azure AI certifications', 'AI CERTs', 'AICT trainer', 'AI+ Security', 'AI+ Executive'],
+  title: 'Credentials — Gennoor Tech',
+  description: `The credentials behind the courses: ${credentials.length} active Microsoft and GitHub certifications and Microsoft Certified Trainer status, verified on Microsoft Learn.`,
   alternates: { canonical: 'https://gennoor.com/about/certifications' },
 }
 
-const categoryOrder = ['AI Transformation', 'Agentic AI', 'AI CERTs', 'Expert', 'Associate', 'Fundamentals', 'GitHub', 'Applied Skills']
+const BACKGROUND = [
+  { when: 'Before 2021', what: 'Ten years teaching engineering, then a move into enterprise AI and cloud training.' },
+  { when: 'Since 2021', what: 'Training and programs for teams on Azure, AI and DevOps, including government and financial-sector programs.' },
+  { when: `Since ${learnStats.mctSince}`, what: 'Microsoft Certified Trainer: official Microsoft AI, data and DevOps courses delivered through Microsoft Learning Partners.' },
+  { when: '2026', what: 'Gennoor Learning Studio, and Gennoor is Certified in the Claude Partner Network.' },
+]
 
-const categoryColors: Record<string, string> = {
-  'AI Transformation': 'bg-gray-400',
-  'Agentic AI': 'bg-gray-400',
-  'AI CERTs': 'bg-gray-400',
-  'Expert': 'bg-gray-400',
-  'Associate': 'bg-gray-400',
-  'Fundamentals': 'bg-gray-400',
-  'GitHub': 'bg-gray-400',
-  'Applied Skills': 'bg-gray-400',
-}
+export default function CredentialsPage() {
+  const other = getCertificationsByCategory('AI CERTs')
+  const stats = [
+    { value: String(credentials.length), label: 'active certifications' },
+    { value: String(learnStats.examsPassed), label: 'exams passed' },
+    { value: `${learnStats.learningHours}+`, label: 'learning hours' },
+    { value: `${learnStats.mctSince}`, label: 'Microsoft Certified Trainer since' },
+  ]
 
-export default function CertificationsPage() {
   return (
-    <>
-      {/* Hero */}
-      <section className="relative py-10 lg:py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0" />
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl">
-            <div className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
-              Credentials
-            </div>
-            <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-5 leading-tight tracking-tight">
-              Credentials
-            </h1>
-            <p className="text-base sm:text-lg text-gray-600 mb-8 leading-relaxed">
-              Certifications held by our trainer.
-            </p>
-
-            {/* Trainer Badges */}
-            <div className="flex flex-col gap-3">
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="inline-flex items-center bg-primary-600 text-white rounded-xl px-6 py-3 shadow-lg shadow-primary-500/15">
-                  <Shield className="w-5 h-5 mr-3" />
-                  <div>
-                    <p className="font-bold text-sm">Microsoft Certified Trainer (MCT)</p>
-                    <p className="text-xs text-primary-200/70">Active since {mctStatus.since} • Authorized worldwide trainer</p>
-                  </div>
-                </div>
-                <MCTCertificateButton pdfUrl={`${BLOB_URL}/certificates/0-mct-certifcate.pdf`} />
-              </div>
-              <div>
-                <div className="inline-flex items-center bg-amber-600 text-white rounded-xl px-6 py-3 shadow-lg shadow-amber-500/15">
-                  <Award className="w-5 h-5 mr-3" />
-                  <div>
-                    <p className="font-bold text-sm">AI CERTs Certified Trainer (AICT)</p>
-                    <p className="text-xs text-amber-200/70">Active since {aictStatus.since} • ID: {aictStatus.id}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+    <main className="bg-white">
+      <section className="hero-backdrop px-6 pt-16 lg:pt-[100px] pb-12 text-center">
+        <h1 className="display-hero max-w-[820px] mx-auto">The credentials behind the courses.</h1>
+        <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.5] text-[#6e6e73] max-w-[640px] mx-auto mt-6">
+          Every course is built and taught by a practitioner who sits the same exams, and holds the certification a course prepares you for.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-5 sm:gap-[22px] justify-center items-center mt-8">
+          <a href={transcriptUrl} target="_blank" rel="noopener noreferrer" className="pill-primary">Verify on Microsoft Learn</a>
+          <MCTCertificateButton pdfUrl={`${BLOB_URL}/certificates/0-mct-certifcate.pdf`} />
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-10 lg:py-14 relative">
-        <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-5xl mx-auto">
-            {[
-              { value: '20', label: 'Active Certifications' },
-              { value: microsoftLearnStats.hours, label: 'Learning Hours' },
-              { value: microsoftLearnStats.modules, label: 'Modules Completed' },
-              { value: microsoftLearnStats.learningPaths, label: 'Learning Paths' },
-              { value: microsoftLearnStats.exams, label: 'Exams Passed' },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center p-4 rounded-xl bg-white border border-gray-200/70 shadow-sm">
-                <div className="text-2xl font-bold text-primary-600">{stat.value}</div>
-                <div className="text-xs text-gray-500 mt-1">{stat.label}</div>
-              </div>
+      <section className="px-6 pb-14">
+        <dl className="max-w-[900px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
+          {stats.map(s => (
+            <div key={s.label} className="rounded-[18px] bg-[#f5f5f7] px-5 py-6 text-center">
+              <dt className="font-heading text-[34px] font-bold tracking-[-0.02em] text-gray-900 tabular-nums">{s.value}</dt>
+              <dd className="text-[13.5px] text-[#6e6e73] mt-1 leading-snug">{s.label}</dd>
+            </div>
+          ))}
+        </dl>
+        <p className="text-center text-[13px] text-[#86868b] mt-4">
+          Read from the Microsoft Learn transcript on {monthYear(credentialsAsOf)}. The transcript is the source of truth; role-based certifications renew every year.
+        </p>
+      </section>
+
+      <section className="px-6 pb-20 lg:pb-[100px]">
+        <div className="max-w-[900px] mx-auto">
+          <h2 className="display-section text-center mb-10">Year by year.</h2>
+          <CredentialTimeline items={credentials} />
+        </div>
+      </section>
+
+      <section className="bg-[#f5f5f7] px-6 py-16 lg:py-[90px]">
+        <div className="max-w-[900px] mx-auto">
+          <h2 className="display-section text-center mb-10">Instructor background.</h2>
+          <ol className="space-y-5">
+            {BACKGROUND.map(b => (
+              <li key={b.when} className="grid sm:grid-cols-[150px_1fr] gap-1 sm:gap-6 items-baseline">
+                <span className="font-heading text-[17px] font-bold text-gray-900">{b.when}</span>
+                <span className="text-[16px] leading-[1.55] text-[#3a3a3f]">{b.what}</span>
+              </li>
             ))}
-          </div>
-
-          <div className="mt-6 text-center">
-            <a
-              href="https://learn.microsoft.com/en-us/users/lostspace003/transcript/vjw63s4jxnmmwre?tab=credentials-tab"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center px-5 py-2.5 bg-primary-600 text-white rounded-xl transition-all duration-300 text-sm font-semibold"
-            >
-              <Trophy className="w-4 h-4 mr-2" />
-              View Full Microsoft Learn Profile
-              <ExternalLink className="w-3.5 h-3.5 ml-2" />
-            </a>
-          </div>
+          </ol>
+          <p className="text-[14px] text-[#6e6e73] mt-8">
+            Lead instructor: Jalal Khan, founder of Gennoor Tech. <Link href="/about" className="text-primary-600 hover:underline">About Gennoor ›</Link>
+          </p>
         </div>
       </section>
 
-      {/* Certifications by Category */}
-      <section className="section-padding">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto">
-            {categoryOrder.map((category) => {
-              const certs = getCertificationsByCategory(category as any)
-              if (certs.length === 0) return null
-              return (
-                <div key={category} className="mb-14">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                    <div className={`w-1 h-7 rounded-full ${categoryColors[category as keyof typeof categoryColors]} mr-3`} />
-                    {category}
-                  </h2>
-                  <CertificationCards
-                    certs={certs}
-                    category={category}
-                    categoryColor={categoryColors[category as keyof typeof categoryColors]}
-                  />
-                </div>
-              )
-            })}
+      {other.length > 0 && (
+        <section className="px-6 py-16 lg:py-[90px]">
+          <div className="max-w-[900px] mx-auto">
+            <h2 className="display-section text-center mb-3">Other credentials.</h2>
+            <p className="text-center text-[15px] text-[#6e6e73] mb-10">Not on the Microsoft transcript. Each has its own certificate.</p>
+            <CertificationCards certs={other} category="AI CERTs" categoryColor="bg-gray-400" />
           </div>
-
-          {/* Applied Skills Note */}
-          <div className="max-w-4xl mx-auto mt-12 rounded-2xl p-6 bg-white border border-gray-200/70 shadow-sm">
-            <h3 className="text-base font-semibold text-gray-900 mb-2">15+ Microsoft Applied Skills</h3>
-            <p className="text-sm text-gray-500 mb-2 leading-relaxed">
-              In addition to role-based certifications, I've completed 15+ Microsoft Applied Skills
-              assessments covering specific scenarios and hands-on implementations.
-            </p>
-            <p className="text-xs text-gray-400">
-              Applied Skills demonstrate proficiency in scenario-based, hands-on tasks validated
-              through interactive lab experiences.
-            </p>
-          </div>
-
-          <div className="max-w-4xl mx-auto mt-8 text-center">
-            <a
-              href="https://learn.microsoft.com/en-us/users/lostspace003/transcript/vjw63s4jxnmmwre?tab=credentials-tab"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center text-primary-600 font-semibold text-sm hover:text-primary-700 transition-colors"
-            >
-              <BookOpen className="w-4 h-4 mr-2" />
-              View my complete Microsoft Learn profile
-              <ExternalLink className="w-3.5 h-3.5 ml-1" />
-            </a>
-          </div>
-        </div>
-      </section>
-    </>
+        </section>
+      )}
+    </main>
   )
 }
