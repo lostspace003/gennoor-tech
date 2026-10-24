@@ -4,9 +4,9 @@ export const BLOB_URL = process.env.NEXT_PUBLIC_BLOB_URL || '/media'
 
 export const siteConfig = {
   name: 'Gennoor Tech',
-  tagline: 'AI training and automation',
+  tagline: 'Practical AI and cloud knowledge',
   description:
-    'Gennoor Tech trains organizations to work with AI and Claude, and builds the automations they use. Certified in the Claude Partner Network. Based in Mumbai, India.',
+    'Gennoor Tech gives people practical AI and cloud knowledge through certification courses, real projects and interactive learning. Certified in the Claude Partner Network. Based in Mumbai, India.',
   url: 'https://gennoor.com',
   email: 'contact@gennoor.com',
   location: 'Mumbai, India',

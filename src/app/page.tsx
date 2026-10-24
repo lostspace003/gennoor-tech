@@ -5,40 +5,27 @@ import HomeCourses from '@/components/home/HomeCourses'
 import WalkthroughVideo from '@/components/WalkthroughVideo'
 import HeroCarousel, { type HeroSlide } from '@/components/home/HeroCarousel'
 import { listLmsCourses, toCard } from '@/lib/lms'
-import { AutomationIllustration, DeliverIllustration, HandoverIllustration, PlatformIllustration, ScopeIllustration, TalkIllustration, TrainingIllustration } from '@/components/illustrations/Illustrations'
+import { CloudAiIllustration, ExamplesIllustration, PlatformIllustration, TrainingIllustration } from '@/components/illustrations/Illustrations'
 
 // Preview links are signed for 2 hours; rebuild the page well inside that.
 export const revalidate = 1800
 
-const WHAT_WE_DO = [
-  {
-    art: TrainingIllustration,
-    title: 'Training for organizations',
-    body: 'Custom courses built around the work your people do. Claude, Microsoft AI and other tools, taught live.',
-    href: '/training',
-    cta: 'About training',
-  },
-  {
-    art: AutomationIllustration,
-    title: 'Automation we build',
-    body: 'One process at a time, scoped in writing first, built with the people who will use it.',
-    href: '/automation',
-    cta: 'About automation',
-  },
+const PILLARS = [
   {
     art: PlatformIllustration,
-    title: 'Learning platforms',
-    body: 'The Learning Studio is one: video courses, quizzes and certificates.',
-    href: '/studio',
-    cta: 'Open the Learning Studio',
+    title: 'Certification',
+    body: 'Courses that prepare you for recognised exams in cloud and AI, with labs and quizzes along the way.',
   },
-]
-
-const STEPS = [
-  { art: TalkIllustration, title: 'We talk', body: 'You tell us what you want your team to be able to do, or which process costs you time.' },
-  { art: ScopeIllustration, title: 'We write it down', body: 'A short scope: what we will do, what we will not, and what we need from you.' },
-  { art: DeliverIllustration, title: 'We deliver', body: 'Training sessions or a working automation, built with your people.' },
-  { art: HandoverIllustration, title: 'We hand over', body: 'Your team can run it without us. We stay reachable if something needs a second look.' },
+  {
+    art: CloudAiIllustration,
+    title: 'Projects',
+    body: 'Project-based courses built on the problems teams face in production, solved step by step.',
+  },
+  {
+    art: ExamplesIllustration,
+    title: 'Interactive learning',
+    body: 'Self-paced interactive courses for every role and domain, with a short quiz at the end of each chapter.',
+  },
 ]
 
 export default async function HomePage() {
@@ -65,10 +52,10 @@ export default async function HomePage() {
           <div className="text-center lg:text-left">
             <div className="lg:[&>div]:items-start"><ClaudePartnerHero /></div>
             <h1 className="display-hero mt-10 lg:!text-left">
-              Train your team on AI. Automate the rest.
+              Learn what the job actually asks for.
             </h1>
             <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.5] text-[#6e6e73] max-w-[620px] mx-auto lg:mx-0 mt-6">
-              Custom training on Claude and other AI tools, automations built one process at a time, and courses you can take yourself in the Learning Studio.
+              Certification courses, project-based courses and interactive courses, all in the Learning Studio.
             </p>
             <div className="flex flex-col sm:flex-row gap-5 sm:gap-[22px] justify-center lg:justify-start items-center mt-10">
               <Link href="/studio" className="pill-primary">Explore the Learning Studio</Link>
@@ -107,52 +94,49 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ===== What we do ===== */}
+      {/* ===== Vision ===== */}
       <section className="bg-white px-6 py-16 lg:py-[90px]">
         <div className="max-w-[1080px] mx-auto">
-          <h2 className="display-section text-center mb-12">What we do.</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {WHAT_WE_DO.map(w => (
-              <div key={w.title} className="rounded-[18px] border border-[#e8e8ed] p-7 flex flex-col">
-                <w.art className="w-[84px] h-[84px] mb-5" />
-                <h3 className="font-heading text-[19px] font-bold tracking-[-0.01em] text-gray-900">{w.title}</h3>
-                <p className="text-[15px] leading-[1.55] text-[#6e6e73] mt-3 flex-1">{w.body}</p>
-                <Link href={w.href} className="link-arrow !text-[15px] mt-6">{w.cta} ›</Link>
+          <div className="max-w-[820px] mx-auto text-center">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-primary-600">Our vision</p>
+            <h2 className="display-section mt-4">A world where anyone can learn the skills that work asks for, and prove them.</h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6 mt-12">
+            {PILLARS.map(p => (
+              <div key={p.title} className="rounded-[18px] border border-[#e8e8ed] p-7">
+                <p.art className="w-[84px] h-[84px] mb-5" />
+                <h3 className="font-heading text-[19px] font-bold tracking-[-0.01em] text-gray-900">{p.title}</h3>
+                <p className="text-[15px] leading-[1.55] text-[#6e6e73] mt-3">{p.body}</p>
               </div>
             ))}
+          </div>
+          <div className="text-center mt-10">
+            <Link href="/about" className="link-arrow">About Gennoor ›</Link>
           </div>
         </div>
       </section>
 
-      {/* ===== How we work ===== */}
+      {/* ===== Live training, separate from the Learning Studio ===== */}
       <section className="bg-[#f5f5f7] px-6 py-16 lg:py-[90px]">
-        <div className="max-w-[1080px] mx-auto">
-          <h2 className="display-section text-center mb-12">How we work.</h2>
-          <ol className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {STEPS.map(s => (
-              <li key={s.title} className="bg-white rounded-[18px] p-6">
-                <s.art className="w-[72px] h-[72px] mb-4" />
-                <h3 className="font-heading text-[17px] font-bold text-gray-900">{s.title}</h3>
-                <p className="text-[14.5px] leading-[1.55] text-[#6e6e73] mt-2">{s.body}</p>
-              </li>
-            ))}
-          </ol>
+        <div className="max-w-[1080px] mx-auto grid md:grid-cols-[auto_1fr] gap-8 items-center rounded-[22px] bg-white p-8 lg:p-10">
+          <TrainingIllustration className="w-[96px] h-[96px] mx-auto md:mx-0" />
+          <div className="text-center md:text-left">
+            <h2 className="font-heading text-[clamp(22px,2.4vw,28px)] font-bold tracking-[-0.02em] text-gray-900">We also deliver live training.</h2>
+            <p className="text-[16px] leading-[1.55] text-[#6e6e73] mt-2">Instructor-led sessions and workshops on Claude, Microsoft AI and cloud, taught live from Mumbai.</p>
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-center md:items-start sm:justify-center md:justify-start mt-5">
+              <Link href="/training" className="link-arrow">About training ›</Link>
+              <Link href="/webinars" className="link-arrow">Expert sessions ›</Link>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ===== Mission ===== */}
-      <section className="bg-white px-6 py-16 lg:py-[90px] text-center">
-        <p className="font-heading text-[clamp(24px,3vw,36px)] leading-[1.25] tracking-[-0.02em] text-gray-900 max-w-[780px] mx-auto">
-          To help every organization use AI with confidence, by training its people and automating the work that slows them down.
-        </p>
-      </section>
-
       {/* ===== Contact ===== */}
-      <section className="bg-[#f5f5f7] px-6 py-16 lg:py-[100px] text-center">
-        <h2 className="display-section max-w-[720px] mx-auto">Tell us what you want your team to be able to do.</h2>
+      <section className="bg-white px-6 py-16 lg:py-[100px] text-center">
+        <h2 className="display-section max-w-[720px] mx-auto">Questions? Talk to us.</h2>
         <div className="flex flex-col sm:flex-row gap-5 sm:gap-[22px] justify-center items-center mt-8">
           <Link href="/contact" className="pill-primary">Contact us</Link>
-          <Link href="/about" className="link-arrow">About Gennoor ›</Link>
+          <Link href="/studio" className="link-arrow">Explore the Learning Studio ›</Link>
         </div>
       </section>
     </>
