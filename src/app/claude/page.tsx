@@ -14,16 +14,22 @@ const WHAT = [
     art: TrainingIllustration,
     title: 'Claude training for teams',
     body: 'Live sessions on Claude for everyday work, Claude Cowork and Claude Code, built around what your team actually does.',
+    href: '/workshops/claude-cowork',
+    cta: 'Claude workshop recap',
   },
   {
     art: PlatformIllustration,
-    title: 'Courses built around your processes',
+    title: 'Custom Claude courses',
     body: 'A custom course that teaches your people to automate a process they run, using Claude.',
+    href: '/training',
+    cta: 'Training for organizations',
   },
   {
     art: AutomationIllustration,
     title: 'Claude courses by use case',
     body: 'Courses in the Learning Studio built around the problems people face at work, organised by domain.',
+    href: '/studio?company=Claude',
+    cta: 'See Claude courses',
   },
 ]
 
@@ -75,17 +81,13 @@ export default function ClaudePage() {
           <h2 className="display-section text-center mb-12">What we do with Claude.</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {WHAT.map(w => (
-              <div key={w.title} className="rounded-[18px] border border-[#e8e8ed] p-7">
-                <w.art className="w-[84px] h-[84px] mb-5" />
+              <div key={w.title} className="rounded-[18px] border border-[#e8e8ed] p-7 flex flex-col items-center text-center">
+                <w.art className="w-[104px] h-[104px] mb-5" />
                 <h3 className="font-heading text-[19px] font-bold text-gray-900">{w.title}</h3>
-                <p className="text-[15px] leading-[1.55] text-[#6e6e73] mt-3">{w.body}</p>
+                <p className="text-[15px] leading-[1.55] text-[#6e6e73] mt-2 flex-1">{w.body}</p>
+                <Link href={w.href} className="link-arrow !text-[15px] mt-5">{w.cta} ›</Link>
               </div>
             ))}
-          </div>
-          <div className="flex flex-col sm:flex-row gap-5 sm:gap-[22px] justify-center items-center mt-10">
-            <Link href="/training" className="link-arrow">Training for organizations ›</Link>
-            <Link href="/automation" className="link-arrow">Automation we build ›</Link>
-            <Link href="/workshops/claude-cowork" className="link-arrow">Claude workshop recap ›</Link>
           </div>
         </div>
       </section>
