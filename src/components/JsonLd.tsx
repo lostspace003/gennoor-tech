@@ -292,3 +292,72 @@ export function ArticleJsonLd({
     />
   )
 }
+
+export interface CourseSeo {
+  slug: string
+  code: string
+  title: string
+  description: string
+  level: string
+  vendor: string
+  hours: number
+  outcomes: string[]
+  imageUrl: string
+  hasPromo: boolean
+  uploadDate: string
+  rating?: { average: number; count: number }
+}
+
+/** Course (+ preview video) structured data for a Learning Studio course page. Real data only. */
+export function LmsCourseJsonLd({ c }: { c: CourseSeo }) {
+  const url = `https://gennoor.com/studio/${c.slug}`
+  const provider = { '@type': 'Organization', name: 'Gennoor Tech', url: 'https://gennoor.com' }
+  const workload = c.hours > 0 ? `PT${Math.max(1, Math.round(c.hours))}H` : undefined
+  const course: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'Course',
+    '@id': `${url}#course`,
+    name: c.title,
+    description: c.description,
+    url,
+    courseCode: c.code,
+    inLanguage: 'en',
+    educationalLevel: c.level,
+    image: c.imageUrl,
+    provider,
+    author: { '@type': 'Person', name: 'Jalal Ahmed Khan', url: 'https://gennoor.com/about/founder' },
+    teaches: c.outcomes.slice(0, 12),
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', category: 'Free', price: '0', priceCurrency: 'INR', availability: 'https://schema.org/InStock', url },
+    hasCourseInstance: {
+      '@type': 'CourseInstance',
+      courseMode: 'online',
+      courseWorkload: workload,
+      instructor: { '@type': 'Person', name: 'Jalal Ahmed Khan' },
+    },
+  }
+  if (workload) course.timeRequired = workload
+  if (c.rating && c.rating.count > 0) {
+    course.aggregateRating = { '@type': 'AggregateRating', ratingValue: c.rating.average.toFixed(1), ratingCount: c.rating.count, bestRating: 5, worstRating: 1 }
+  }
+  const graph: Record<string, unknown>[] = [course]
+  if (c.hasPromo) {
+    graph.push({
+      '@context': 'https://schema.org',
+      '@type': 'VideoObject',
+      name: `${c.title}: course preview`,
+      description: c.description,
+      thumbnailUrl: [c.imageUrl],
+      uploadDate: c.uploadDate,
+      isAccessibleForFree: true,
+      publisher: provider,
+    })
+  }
+  return (
+    <>
+      {graph.map((g, i) => (
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(g) }} />
+      ))}
+    </>
+  )
+}

@@ -15,7 +15,9 @@ import CourseReviews from '@/components/academy/CourseReviews'
 import { Stars } from '@/components/academy/Stars'
 import { getReviews } from '@/lib/lms-community'
 import { CourseStrip, StripLegend } from '@/components/academy/CourseStrip'
-import { BreadcrumbJsonLd } from '@/components/JsonLd'
+import { BreadcrumbJsonLd, LmsCourseJsonLd } from '@/components/JsonLd'
+
+const FALLBACK_UPDATED = '2026-10-01T00:00:00.000Z'
 
 export const dynamic = 'force-dynamic'
 
@@ -30,11 +32,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const course = await getLmsCourse(slug)
   if (!course) return {}
   const url = `https://gennoor.com/studio/${slug}`
+  const card = toCard(course)
+  const facts = [`${course.stats.lectures} video lessons`, course.stats.quizzes ? `${course.stats.quizzes} quizzes` : '', card.hours ? `${card.hours} hours of video` : ''].filter(Boolean).join(', ')
+  const description = `${course.subtitle} ${facts}. Free with a Learning Studio account.`.slice(0, 300)
+  const keywords = [course.title, course.code, card.vendor, ...(course.topics_tags || []), ...(course.topics || [])].filter(Boolean)
   return {
-    title: `${course.title} - Learning Studio`,
-    description: course.subtitle,
+    // absolute: the site title template would push long course titles past what search results show
+    title: { absolute: `${course.title} | Gennoor` },
+    description,
+    keywords,
     alternates: { canonical: url },
-    openGraph: { type: 'website', url, title: course.title, description: course.subtitle },
+    openGraph: { type: 'website', url, title: course.title, description, siteName: 'Gennoor Tech' },
+    twitter: { card: 'summary_large_image', title: course.title, description },
   }
 }
 
@@ -63,6 +72,23 @@ export default async function LabsCoursePage({ params }: PageProps) {
           { name: 'Learning Studio', url: 'https://gennoor.com/studio' },
           { name: course.title, url: `https://gennoor.com/studio/${slug}` },
         ]}
+      />
+
+      <LmsCourseJsonLd
+        c={{
+          slug,
+          code: course.code,
+          title: course.title,
+          description: course.subtitle,
+          level: card.level,
+          vendor: card.vendor,
+          hours: card.hours,
+          outcomes: course.outcomes,
+          imageUrl: `https://gennoor.com/studio/${slug}/opengraph-image`,
+          hasPromo: !!course.promo,
+          uploadDate: course.updatedAt || FALLBACK_UPDATED,
+          rating: summary.count > 0 ? { average: summary.average, count: summary.count } : undefined,
+        }}
       />
 
       <AcademyBar section="Certifications & Projects" />

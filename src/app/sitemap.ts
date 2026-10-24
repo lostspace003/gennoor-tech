@@ -4,8 +4,14 @@ import { courses } from '@/config/courses'
 import { getAllPrograms } from '@/data/training-programs'
 import { getAllCertifications } from '@/data/certification-prep'
 import { allCoursePdfs } from '@/data/course-pdfs'
+import { listLmsCourses } from '@/lib/lms'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+// Rebuilt at most hourly, so a newly published course is listed without a deploy.
+export const revalidate = 3600
+
+const FALLBACK_UPDATED = new Date('2026-10-01')
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://gennoor.com'
   const page = (path: string, priority: number, changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'] = 'monthly', lastModified: Date = new Date()) => ({
     url: `${baseUrl}${path}`,
@@ -20,6 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     page('/training', 0.9),
     page('/automation', 0.9),
     page('/studio', 0.9, 'weekly'),
+    page('/community', 0.6, 'weekly'),
     page('/ai-academy', 0.8, 'weekly'),
     page('/about', 0.8),
     page('/about/founder', 0.6),
@@ -42,7 +49,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ]
 
   // Learning Studio: video courses
-  const studioPages: MetadataRoute.Sitemap = ['ai-103', 'ai-500'].map(slug => page(`/studio/${slug}`, 0.8))
+  // Every published course, read from the catalog, so new courses appear on their own.
+  let studioCourses: { slug: string; updatedAt?: string }[] = []
+  try {
+    studioCourses = await listLmsCourses()
+  } catch {
+    // storage unreachable at build time: use the built-in courses, the next revalidate fixes it
+  }
+  if (studioCourses.length === 0) studioCourses = [{ slug: 'ai-103' }, { slug: 'ai-500' }]
+  const studioPages: MetadataRoute.Sitemap = studioCourses.map(c =>
+    page(`/studio/${c.slug}`, 0.8, 'weekly', c.updatedAt ? new Date(c.updatedAt) : FALLBACK_UPDATED),
+  )
 
   // AI Essentials: interactive courses and their chapters
   const essentialsPages: MetadataRoute.Sitemap = []
