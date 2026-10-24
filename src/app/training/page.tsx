@@ -63,6 +63,7 @@ export default function TrainingPage() {
         <div className="flex flex-col sm:flex-row gap-5 sm:gap-[22px] justify-center items-center mt-9">
           <OpenCustomTraining className="pill-primary">Ask for custom training</OpenCustomTraining>
           <Link href="/services/training" className="link-arrow">See the programs ›</Link>
+          <Link href="/webinars" className="link-arrow">Expert sessions ›</Link>
         </div>
       </section>
 
