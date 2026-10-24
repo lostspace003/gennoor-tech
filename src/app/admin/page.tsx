@@ -71,7 +71,7 @@ function ChartLoader() {
 
 // ─── Types ───────────────────────────────────────────────────
 
-type TabKey = 'overview' | 'traffic' | 'enquiries' | 'emails' | 'sessions' | 'bookings' | 'storage' | 'insights' | 'comments' | 'seo' | 'setup' | 'ai-readiness' | 'cowork' | 'indexing' | 'academy' | 'auth-log' | 'certificates' | 'course-feedback'
+type TabKey = 'overview' | 'traffic' | 'enquiries' | 'emails' | 'bookings' | 'storage' | 'insights' | 'comments' | 'seo' | 'setup' | 'cowork' | 'indexing' | 'academy' | 'auth-log' | 'certificates' | 'course-feedback'
 type GroupKey = 'analytics' | 'communications' | 'bookings' | 'system'
 
 interface AnalyticsData {
@@ -85,7 +85,6 @@ interface SetupCheck { label: string; description: string; configured: boolean; 
 interface SetupData { environment: string; platform: string; totalChecks: number; configuredCount: number; checks: Record<string, SetupCheck> }
 interface SeoCheckItem { label: string; description: string; status: 'pass' | 'fail' | 'warning' | 'manual'; action: string; link?: string }
 interface SeoData { sitemapUrls: number; pagesUp: number; totalKeyPages: number; totalBlogPosts: number; blogCategories: string[]; latestPost: { title: string; slug: string; date: string } | null; ga4Configured: boolean; ga4Id: string; pageChecks: Array<{ path: string; label: string; status: number; ok: boolean }>; checklist: Array<{ category: string; items: SeoCheckItem[] }> }
-interface SessionRecord { rowKey: string; agentId: string; agentName: string; status: string; resumeFileName: string; resumeBlobPath?: string; updatedAt: string }
 interface AuthLogEntry { rowKey: string; email: string; name?: string; ip: string; userAgent: string; loginAt: string }
 interface ContainerStats { name: string; blobCount: number; totalSizeBytes: number; lastModified: string }
 interface BlobInfo { name: string; containerName: string; size: number; contentType: string; lastModified: string }
@@ -143,10 +142,8 @@ export default function AdminDashboard() {
   const [emailLogs, setEmailLogs] = useState<{ logs: Array<Record<string, any>>; totalSent: number; totalFailed: number; uniqueRecipients: number; total: number } | null>(null)
   const [setupData, setSetupData] = useState<SetupData | null>(null)
   const [seoData, setSeoData] = useState<SeoData | null>(null)
-  const [sessions, setSessions] = useState<SessionRecord[]>([])
   const [storageData, setStorageData] = useState<StorageData | null>(null)
   const [insightsData, setInsightsData] = useState<any>(null)
-  const [aiReadinessData, setAiReadinessData] = useState<any>(null)
   const [bookingsData, setBookingsData] = useState<BookingAppointment[]>([])
   const [bookingsLoading, setBookingsLoading] = useState(false)
   const [bookingsAction, setBookingsAction] = useState<string | null>(null)
@@ -198,30 +195,28 @@ export default function AdminDashboard() {
     try {
       const headers = { 'Content-Type': 'application/json' }
       const body = (extra: any = {}) => JSON.stringify(extra)
-      const [analyticsRes, setupRes, seoRes, sessionsRes, storageRes, insightsRes, emailLogsRes, aiReadinessRes, certRes, feedbackRes] = await Promise.all([
+      const [analyticsRes, setupRes, seoRes, storageRes, insightsRes, emailLogsRes, certRes, feedbackRes] = await Promise.all([
         fetch('/api/admin/analytics', { method: 'POST', headers, body: body({ days: numDays }) }),
         fetch('/api/admin/setup-status', { method: 'POST', headers, body: body() }),
         fetch('/api/admin/seo-health', { method: 'POST', headers, body: body() }),
-        fetch('/api/admin/sessions', { method: 'POST', headers, body: body() }),
         fetch('/api/admin/storage', { method: 'POST', headers, body: body() }),
         fetch('/api/admin/insights', { method: 'POST', headers, body: body({ metric: 'all', timespan: ts }) }),
         fetch('/api/admin/email-logs', { method: 'POST', headers, body: body({ days: numDays }) }),
-        fetch('/api/admin/ai-readiness', { method: 'POST', headers, body: body() }),
         fetch('/api/admin/certificates', { method: 'POST', headers, body: body() }),
         fetch('/api/admin/course-feedback', { method: 'POST', headers, body: body() }),
       ])
       if (analyticsRes.status === 401) { setError('Session expired. Please login again.'); router.push('/admin/login'); return }
-      const [analyticsData, setupResult, seoResult, sessionsResult, storageResult, insightsResult, emailLogsResult, aiReadinessResult, certResult, feedbackResult] = await Promise.all([
+      const [analyticsData, setupResult, seoResult, storageResult, insightsResult, emailLogsResult, certResult, feedbackResult] = await Promise.all([
         analyticsRes.ok ? analyticsRes.json() : null, setupRes.ok ? setupRes.json() : null, seoRes.ok ? seoRes.json() : null,
-        sessionsRes.ok ? sessionsRes.json() : [], storageRes.ok ? storageRes.json() : null, insightsRes.ok ? insightsRes.json() : null,
-        emailLogsRes.ok ? emailLogsRes.json() : null, aiReadinessRes.ok ? aiReadinessRes.json() : null,
+        storageRes.ok ? storageRes.json() : null, insightsRes.ok ? insightsRes.json() : null,
+        emailLogsRes.ok ? emailLogsRes.json() : null,
         certRes.ok ? certRes.json() : null, feedbackRes.ok ? feedbackRes.json() : null,
       ])
       if (!analyticsData) setError('Failed to load analytics data')
       setCertData(certResult)
       setFeedbackData(feedbackResult)
       setData(analyticsData); setSetupData(setupResult); setSeoData(seoResult)
-      setSessions(Array.isArray(sessionsResult) ? sessionsResult : []); setStorageData(storageResult); setInsightsData(insightsResult); setEmailLogs(emailLogsResult); setAiReadinessData(aiReadinessResult)
+      setStorageData(storageResult); setInsightsData(insightsResult); setEmailLogs(emailLogsResult)
       try { const cwRes = await fetch('/api/admin/cowork-registrations', { method: 'POST', headers }); if (cwRes.ok) setCoworkData(await cwRes.json()) } catch {}
       try { const acRes = await fetch('/api/admin/academy', { method: 'POST', headers }); if (acRes.ok) setAcademyData(await acRes.json()) } catch {}
       try { const gRes = await fetch('/api/admin/gsc-coverage', { method: 'POST', headers }); if (gRes.ok) setGscData(await gRes.json()) } catch {}
@@ -561,17 +556,11 @@ export default function AdminDashboard() {
   })()
   const isInDateRange = (dateStr: string | undefined) => { if (!dateStr) return false; return new Date(dateStr) >= filterStartDate }
   const filteredBookings = bookingsData.filter(b => isInDateRange(b.date) || isInDateRange(b.createdAt))
-  const filteredSessions = sessions.filter(s => isInDateRange(s.updatedAt))
   const filteredCoworkRegs = coworkData?.registrations?.filter(r => isInDateRange(r.createdAt)) || []
   const filteredCoworkByCountry = Object.entries(filteredCoworkRegs.reduce((acc: Record<string, number>, r) => { acc[r.country] = (acc[r.country] || 0) + 1; return acc }, {})).map(([name, value]) => ({ name, value }))
   const filteredCoworkByTz = Object.entries(filteredCoworkRegs.reduce((acc: Record<string, number>, r) => { acc[r.timeZone] = (acc[r.timeZone] || 0) + 1; return acc }, {})).map(([name, value]) => ({ name, value }))
   const filteredBlobs = storageData?.recentBlobs?.filter(b => isInDateRange(b.lastModified)) || []
-  const filteredAiReports = (aiReadinessData?.recentReports || []).filter((r: any) => isInDateRange(r.generatedAt))
-  const filteredAiFeedback = (aiReadinessData?.feedback || []).filter((f: any) => isInDateRange(f.submittedAt))
 
-  const completedSessions = filteredSessions.filter(s => s.status === 'completed' || s.status === 'Completed').length
-  const pendingSessions = filteredSessions.filter(s => s.status === 'pending' || s.status === 'submitted').length
-  const errorSessions = filteredSessions.filter(s => s.status === 'error' || s.status === 'failed').length
   const totalFiles = storageData?.containers.reduce((a, c) => a + c.blobCount, 0) || 0
   const totalSize = storageData?.containers.reduce((a, c) => a + c.totalSizeBytes, 0) || 0
   const serverRequests = insightsData ? extractMetricValue(insightsData.requests) : 0
@@ -584,7 +573,6 @@ export default function AdminDashboard() {
       { key: 'overview', label: 'Overview', icon: BarChart3 },
       { key: 'traffic', label: 'Traffic', icon: TrendingUp },
       { key: 'insights', label: 'Insights', icon: Activity },
-      { key: 'ai-readiness', label: 'AI Readiness', icon: Bot },
       { key: 'academy', label: 'Academy', icon: BookOpen, badge: academyData?.summary?.totalLearners || undefined },
       { key: 'certificates', label: 'Certificates', icon: GraduationCap, badge: certData?.summary?.issued || undefined },
       { key: 'course-feedback', label: 'Course Feedback', icon: MessageSquare, badge: feedbackData?.summary?.lowRated || undefined },
@@ -594,7 +582,6 @@ export default function AdminDashboard() {
       { key: 'cowork', label: 'Cowork', icon: Users, badge: coworkData?.total || undefined },
       { key: 'emails', label: 'Emails', icon: Send, badge: emailLogs?.totalFailed || undefined },
       { key: 'comments', label: 'Comments', icon: MessageSquare },
-      { key: 'sessions', label: 'Sessions', icon: Bot },
     ]},
     { key: 'bookings', label: 'Bookings', icon: Calendar, badge: (bookingsData.filter(b => b.status === 'pending').length + callRequests.filter(c => !c.replied).length) || undefined, tabs: [
       { key: 'bookings', label: 'All Requests', icon: Calendar, badge: (bookingsData.filter(b => b.status === 'pending').length + callRequests.filter(c => !c.replied).length) || undefined },
@@ -1051,30 +1038,6 @@ export default function AdminDashboard() {
           </div>
           )
         })()}
-
-        {/* ─── CAREER SESSIONS ───────────────────────────── */}
-        {activeTab === 'sessions' && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <StatCard icon={Bot} label="Total Sessions" value={filteredSessions.length} color="blue" />
-              <StatCard icon={CheckCircle2} label="Completed" value={completedSessions} color="teal" />
-              <StatCard icon={Clock} label="Pending" value={pendingSessions} color="amber" />
-              <StatCard icon={AlertTriangle} label="Errors" value={errorSessions} color="purple" />
-            </div>
-            <div className="grid md:grid-cols-2 gap-5">
-              <Panel title="Sessions by Agent" subtitle={getFilterLabel()}>{filteredSessions.length === 0 ? <Empty /> : <PieChartComponent data={Object.entries(filteredSessions.reduce((acc: any, s) => { acc[s.agentName || 'Unknown'] = (acc[s.agentName || 'Unknown'] || 0) + 1; return acc }, {})).map(([name, value]) => ({ name, value: value as number }))} />}</Panel>
-              <Panel title="Session Status" subtitle={getFilterLabel()}>{filteredSessions.length === 0 ? <Empty /> : <PieChartComponent data={Object.entries(filteredSessions.reduce((acc: any, s) => { acc[s.status || 'unknown'] = (acc[s.status || 'unknown'] || 0) + 1; return acc }, {})).map(([name, value]) => ({ name, value: value as number }))} />}</Panel>
-            </div>
-            <Panel title="Recent Sessions" subtitle={getFilterLabel()} action={filteredSessions.length > 0 ? <ExportButton onClick={() => downloadCSV(filteredSessions as any, 'career-sessions')} /> : undefined}>
-              {filteredSessions.length === 0 ? <Empty text="No career sessions yet" /> : (
-                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-gray-500 border-b border-gray-200"><th className="text-left py-2 px-3 font-medium">Agent</th><th className="text-left py-2 px-3 font-medium">Status</th><th className="text-left py-2 px-3 font-medium">Resume</th><th className="text-left py-2 px-3 font-medium">Date</th></tr></thead>
-                <tbody>{filteredSessions.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || '')).slice(0, 20).map((s, i) => (
-                  <tr key={i} className="border-b border-gray-100 hover:bg-primary-50/50"><td className="py-2.5 px-3 text-gray-800">{s.agentName || s.agentId}</td><td className="py-2.5 px-3"><StatusBadge status={s.status} /></td><td className="py-2.5 px-3 text-gray-500 truncate max-w-[200px]">{s.resumeBlobPath ? (<a href={`/api/admin/resume-download?path=${encodeURIComponent(s.resumeBlobPath)}`} className="text-primary-600 hover:underline inline-flex items-center gap-1" download><Download className="w-3 h-3" /> {s.resumeFileName || 'resume'}</a>) : (s.resumeFileName || '-')}</td><td className="py-2.5 px-3 text-gray-400 whitespace-nowrap">{s.updatedAt ? new Date(s.updatedAt).toLocaleDateString() : '-'}</td></tr>
-                ))}</tbody></table></div>
-              )}
-            </Panel>
-          </div>
-        )}
 
         {/* ─── BOOKINGS ──────────────────────────────────── */}
         {activeTab === 'bookings' && (() => {
@@ -2242,116 +2205,6 @@ export default function AdminDashboard() {
                 </a>
               ))}</div>
             </Panel>
-          </div>
-        )}
-
-        {activeTab === 'ai-readiness' && (
-          <div className="space-y-6">
-            {!aiReadinessData ? <Empty text="Loading AI Readiness data..." /> : (<>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <StatCard icon={BookOpen} label="Quick Scans" value={filteredAiReports.filter((r: any) => r.reportType === 'quick-scan' || r.reportType === 'deep-dive').length} color="teal" />
-                <StatCard icon={FileText} label="Deep Dives" value={filteredAiReports.filter((r: any) => r.reportType === 'blueprint').length} color="amber" />
-                <StatCard icon={Bot} label="Total Reports" value={filteredAiReports.length} color="purple" />
-              </div>
-              <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-                <StatCard icon={Download} label="Downloads" value={aiReadinessData.summary?.downloads || 0} color="blue" />
-                <StatCard icon={Send} label="Emails Sent" value={aiReadinessData.summary?.emailsSent || 0} color="teal" />
-                <StatCard icon={TrendingUp} label="Avg Rating" value={0} subtitle={`${aiReadinessData.summary?.avgRating || 0}/5`} color="amber" />
-                <StatCard icon={MessageSquare} label="Feedback" value={filteredAiFeedback.length} color="purple" />
-                <StatCard icon={Users} label="Org Leads" value={filteredAiFeedback.filter((f: any) => f.orgInterest === 'yes').length} color="teal" />
-              </div>
-
-              <Panel title="Score Distribution" subtitle="All assessment scores by range (last 90 days)">
-                <BarChartComponent data={aiReadinessData.scoreDist || []} color="#2563eb" />
-              </Panel>
-
-              <Panel title="Recent Submissions" subtitle={`${filteredAiReports.length} reports — ${getFilterLabel()}`}>
-                {filteredAiReports.length === 0 ? <Empty text="No submissions yet" /> : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="text-left text-xs text-gray-500 border-b border-gray-200">
-                          <th className="pb-2 pr-4 font-medium">Name</th>
-                          <th className="pb-2 pr-4 font-medium">Email</th>
-                          <th className="pb-2 pr-4 font-medium">Type</th>
-                          <th className="pb-2 pr-4 font-medium">Score</th>
-                          <th className="pb-2 font-medium">Date</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredAiReports.slice(0, 25).map((r: any, i: number) => (
-                          <tr key={i} className="border-b border-gray-100 hover:bg-gray-50">
-                            <td className="py-2.5 pr-4 font-medium text-gray-800">{r.name || '-'}</td>
-                            <td className="py-2.5 pr-4 text-gray-600 text-xs">{r.email}</td>
-                            <td className="py-2.5 pr-4">
-                              <span className={`px-2 py-0.5 rounded text-xs font-medium ${r.reportType === 'quick-scan' || r.reportType === 'deep-dive' ? 'bg-gray-100 text-gray-700' : r.reportType === 'blueprint' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600'}`}>
-                                {r.reportType === 'quick-scan' || r.reportType === 'deep-dive' ? 'Quick Scan' : r.reportType === 'blueprint' ? 'Deep Dive' : r.reportType || 'Unknown'}
-                              </span>
-                            </td>
-                            <td className="py-2.5 pr-4 font-semibold text-gray-800">{r.overallScore || '-'}</td>
-                            <td className="py-2.5 text-gray-500 text-xs">{r.generatedAt ? new Date(r.generatedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </Panel>
-
-              <Panel title="Interest-form Leads" subtitle={`${(aiReadinessData.leads || []).length} leads — pipeline from AI Readiness funnel`} action={(aiReadinessData.leads?.length || 0) > 0 ? <ExportButton onClick={() => downloadCSV(aiReadinessData.leads as any, 'ai-readiness-leads')} /> : undefined}>
-                {(aiReadinessData.leads || []).length === 0 ? <Empty text="No interest-form leads yet" /> : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="text-left text-xs text-gray-500 border-b border-gray-200">
-                          <th className="pb-2 pr-4 font-medium">Name</th>
-                          <th className="pb-2 pr-4 font-medium">Email</th>
-                          <th className="pb-2 pr-4 font-medium">Company</th>
-                          <th className="pb-2 pr-4 font-medium">Interested in</th>
-                          <th className="pb-2 font-medium">When</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {(aiReadinessData.leads || []).slice(0, 30).map((l: any, i: number) => (
-                          <tr key={i} className="border-b border-gray-100 hover:bg-primary-50/40 transition-colors duration-150">
-                            <td className="py-2.5 pr-4 font-medium text-gray-800">{l.name || '-'}</td>
-                            <td className="py-2.5 pr-4 text-gray-600 text-xs">{l.email}</td>
-                            <td className="py-2.5 pr-4 text-gray-600 text-xs">{l.company || '-'}</td>
-                            <td className="py-2.5 pr-4 text-gray-500 text-xs">{l.option || '-'}</td>
-                            <td className="py-2.5 text-gray-500 text-xs">{l.submittedAt ? new Date(l.submittedAt).toLocaleDateString() : '-'}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </Panel>
-
-              <Panel title="User Feedback" subtitle={`${filteredAiFeedback.length} responses — ${getFilterLabel()}`}>
-                {filteredAiFeedback.length === 0 ? <Empty text="No feedback yet" /> : (
-                  <div className="space-y-2">
-                    {filteredAiFeedback.slice(0, 15).map((f: any, i: number) => (
-                      <div key={i} className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                        <div className="flex items-center gap-0.5">
-                          {Array.from({ length: 5 }, (_, s) => (
-                            <svg key={s} className={`w-4 h-4 ${s < f.rating ? 'text-amber-400' : 'text-gray-200'}`} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                          ))}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm text-gray-800 font-medium truncate">{f.name || f.email}</p>
-                          {f.comment && <p className="text-xs text-gray-500 mt-0.5 truncate">{f.comment}</p>}
-                        </div>
-                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${f.reportType === 'quick-scan' || f.reportType === 'deep-dive' ? 'bg-gray-100 text-gray-700' : f.reportType === 'blueprint' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600'}`}>
-                          {f.reportType === 'quick-scan' || f.reportType === 'deep-dive' ? 'Quick Scan' : f.reportType === 'blueprint' ? 'Deep Dive' : f.reportType || '-'}
-                        </span>
-                        {f.orgInterest === 'yes' && <span className="px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">Org Lead</span>}
-                        <span className="text-xs text-gray-400">{f.submittedAt ? new Date(f.submittedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) : ''}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </Panel>
-            </>)}
           </div>
         )}
 
