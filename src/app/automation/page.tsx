@@ -39,7 +39,7 @@ const PRINCIPLES = [
 export default function AutomationPage() {
   return (
     <main className="bg-white">
-      <section className="px-6 pt-16 lg:pt-[100px] pb-16 text-center">
+      <section className="hero-backdrop px-6 pt-16 lg:pt-[100px] pb-16 text-center">
         <h1 className="display-hero max-w-[820px] mx-auto">Automation, one process at a time.</h1>
         <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.5] text-[#6e6e73] max-w-[560px] mx-auto mt-6">
           We automate the part that costs your team the most time, with Claude and other AI tools.

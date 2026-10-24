@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <main className="bg-white">
-      <section className="px-6 pt-16 lg:pt-[100px] pb-12 text-center">
+      <section className="hero-backdrop px-6 pt-16 lg:pt-[100px] pb-12 text-center">
         <h1 className="display-hero max-w-[820px] mx-auto">Gennoor Tech.</h1>
         <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.5] text-[#6e6e73] max-w-[640px] mx-auto mt-6">
           A training and automation company in Mumbai, India. We teach teams to work with AI and Claude, and we build the automations they use.
