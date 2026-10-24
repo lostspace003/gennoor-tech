@@ -12,6 +12,7 @@ import CourseCompletionOverlay from './CourseCompletionOverlay'
 import AudioPlayer from './AudioPlayer'
 import ChapterAudioControls, { type ChapterAudioControlsHandle } from './ChapterAudioControls'
 import LearnerAccountMenu from './LearnerAccountMenu'
+import { AskDock, AskTab, useAcademyAsk } from './AcademyAsk'
 
 interface ChapterViewerProps {
   courseId: string
@@ -47,6 +48,7 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
   const chapter = activeChapter
 
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [askOpen, setAskOpen] = useState(false)
   const [stageReady, setStageReady] = useState(false)
   const [slideInfo, setSlideInfo] = useState('')
   const [slidePercent, setSlidePercent] = useState(0)
@@ -78,6 +80,7 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
   const nextChapter = chapterIndex >= 0 && chapterIndex < allChapters.length - 1 ? allChapters[chapterIndex + 1] : null
 
   const course = useMemo(() => allCourses.find(c => c.id === courseId), [courseId])
+  const ask = useAcademyAsk(courseId, chapter.id)
   const theme = course?.theme
 
   // The next course in the catalog order — powers course-to-course movement
@@ -796,6 +799,9 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
     setStageReady(true)
   }, [chapter.id, zoomLevel, isNewAudioPattern, fitFactor])
 
+  // The Ask panel changes the stage width: tell the deck to re-fit.
+  useEffect(() => { window.dispatchEvent(new Event('resize')) }, [askOpen])
+
   // Re-fit on resize, device rotation, and fullscreen transitions — the
   // stage width changes in all three and the deck scale must follow.
   useEffect(() => {
@@ -897,8 +903,11 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
         </button>
       </div>
 
-      {/* Stage */}
-      <div className="flex-1 min-h-0 relative">
+      {/* Stage: the lesson, with the Ask panel docked beside it when open */}
+      <div className="flex-1 min-h-0 relative flex">
+        {askOpen && <AskDock ask={ask} chapterTitle={chapter.title} onClose={() => setAskOpen(false)} />}
+        <div className="flex-1 min-w-0 relative">
+        {!askOpen && !chapter.isMockExam && <AskTab onClick={() => setAskOpen(true)} />}
         <iframe
           key={chapter.id}
           ref={iframeRef}
@@ -1062,6 +1071,7 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
             </div>
           </div>
         )}
+        </div>
       </div>
 
       {/* Hover hot-zones — while the bars are hidden in fullscreen, the top

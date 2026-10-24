@@ -7,6 +7,7 @@ import ChapterList from '@/components/academy/ChapterList'
 import type { ChapterProgress } from '@/components/academy/ChapterList'
 import PdfViewerModal from '@/components/academy/PdfViewerModal'
 import LearnerAccountMenu from '@/components/academy/LearnerAccountMenu'
+import { AskCard } from '@/components/academy/AcademyAsk'
 import ProfileSetupGate from '@/components/academy/ProfileSetupGate'
 import { getLocalProgress } from '@/lib/progress-store'
 import type { Course } from '@/config/courses'
@@ -100,48 +101,51 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
             <LearnerAccountMenu variant="dark" />
           </div>
 
-          <div className="max-w-3xl">
-            <div className="flex flex-wrap items-center gap-3 mb-4">
-              <span className="inline-flex items-center px-3 py-1 text-[10px] font-bold bg-gray-400 text-gray-900 rounded-full uppercase tracking-[0.2em]">
-                {course.badge}
-              </span>
-              <span className="text-white/60 text-sm">{course.certification}</span>
-            </div>
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_400px] lg:items-center">
+            <div className="max-w-3xl">
+              <div className="flex flex-wrap items-center gap-3 mb-4">
+                <span className="inline-flex items-center px-3 py-1 text-[10px] font-bold bg-gray-400 text-gray-900 rounded-full uppercase tracking-[0.2em]">
+                  {course.badge}
+                </span>
+                <span className="text-white/60 text-sm">{course.certification}</span>
+              </div>
 
-            <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight mb-4">
-              {course.title}
-            </h1>
-            <p className="text-lg text-white/85 leading-relaxed mb-8 max-w-2xl">
-              {heroLead}
-            </p>
+              <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight mb-4">
+                {course.title}
+              </h1>
+              <p className="text-lg text-white/85 leading-relaxed mb-8 max-w-2xl">
+                {heroLead}
+              </p>
 
-            <div className="flex flex-wrap gap-4">
-              {continueChapter && !lastAccessedChapter?.completed ? (
-                <Link
-                  href={`/ai-academy/${course.id}/${continueChapter.slug}`}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-gray-400 text-gray-900 font-bold rounded-lg hover:bg-gray-300 transition-colors"
+              <div className="flex flex-wrap gap-4">
+                {continueChapter && !lastAccessedChapter?.completed ? (
+                  <Link
+                    href={`/ai-academy/${course.id}/${continueChapter.slug}`}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-gray-400 text-gray-900 font-bold rounded-lg hover:bg-gray-300 transition-colors"
+                  >
+                    <PlayCircle className="w-5 h-5" />
+                    Continue: {continueChapter.title}
+                  </Link>
+                ) : (
+                  <Link
+                    href={`/ai-academy/${course.id}/${firstChapter.slug}`}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-gray-400 text-gray-900 font-bold rounded-lg hover:bg-gray-300 transition-colors"
+                  >
+                    <PlayCircle className="w-5 h-5" />
+                    {firstChapter.number === 0 ? 'Start Course' : 'Start Chapter 01'}
+                  </Link>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setPdfOpen(true)}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg ring-1 ring-white/20 hover:ring-white/40 transition-all backdrop-blur-sm"
                 >
-                  <PlayCircle className="w-5 h-5" />
-                  Continue: {continueChapter.title}
-                </Link>
-              ) : (
-                <Link
-                  href={`/ai-academy/${course.id}/${firstChapter.slug}`}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-gray-400 text-gray-900 font-bold rounded-lg hover:bg-gray-300 transition-colors"
-                >
-                  <PlayCircle className="w-5 h-5" />
-                  {firstChapter.number === 0 ? 'Start Course' : 'Start Chapter 01'}
-                </Link>
-              )}
-              <button
-                type="button"
-                onClick={() => setPdfOpen(true)}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg ring-1 ring-white/20 hover:ring-white/40 transition-all backdrop-blur-sm"
-              >
-                <BookOpen className="w-5 h-5" />
-                View course PDF
-              </button>
+                  <BookOpen className="w-5 h-5" />
+                  View course PDF
+                </button>
+              </div>
             </div>
+            <AskCard courseId={course.id} title={course.shortTitle || course.title} />
           </div>
         </div>
       </section>
