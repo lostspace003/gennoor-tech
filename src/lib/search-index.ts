@@ -152,12 +152,6 @@ const PAGE_META: Record<string, PageMeta> = {
     category: 'Resources',
     keywords: ['workshop', 'hands-on', 'live', 'free session', 'claude cowork', 'bootcamp'],
   },
-  '/ai-readiness': {
-    title: 'AI Readiness Assessment',
-    description: "Check your organisation's AI readiness",
-    category: 'Resources',
-    keywords: ['assessment', 'readiness', 'quiz', 'score', 'evaluate', 'maturity', 'checklist'],
-  },
   '/resources/calendar': {
     title: 'Book a Discovery Call',
     description: 'Schedule a free consultation',

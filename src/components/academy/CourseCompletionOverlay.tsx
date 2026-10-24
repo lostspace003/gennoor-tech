@@ -137,13 +137,6 @@ export default function CourseCompletionOverlay({
       cta: 'Book a call',
     },
     {
-      icon: Gauge,
-      title: 'AI Readiness assessment',
-      blurb: 'Diagnose where your organisation actually stands — 12 questions, 8 minutes.',
-      href: '/ai-readiness',
-      cta: 'Take the assessment',
-    },
-    {
       icon: Compass,
       title: 'How we operate',
       blurb: 'See how we deliver — the engagement model, deliverables, timeline.',

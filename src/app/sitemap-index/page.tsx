@@ -97,9 +97,7 @@ export default function SitemapIndexPage() {
     {
       heading: 'Tools & Engagement',
       links: [
-        { href: '/ai-readiness', label: 'AI Readiness Assessment' },
         { href: '/webinars', label: 'Webinars' },
-        { href: '/career-coach', label: 'Career Coach' },
       ],
     },
     {
