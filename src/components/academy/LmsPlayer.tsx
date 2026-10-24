@@ -819,7 +819,7 @@ const ZOOMS = [50, 75, 100, 125, 150, 200, 300]
  * down and when you open the chat, then fades away. Click it any time to see it again.
  * Hidden once the browser is already full screen.
  */
-function FullScreenInfo() {
+export function FullScreenInfo() {
   const [open, setOpen] = useState(false)
   const [full, setFull] = useState(false)
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
