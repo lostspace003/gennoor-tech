@@ -124,9 +124,9 @@ const PAGE_META: Record<string, PageMeta> = {
   },
   '/ai-academy': {
     title: 'AI Essentials',
-    description: 'Free interactive AI courses you finish in an hour',
+    description: 'Interactive AI courses you finish in an hour',
     category: 'Resources',
-    keywords: ['free course', 'learn', 'academy', 'interactive', 'self-paced', 'essentials'],
+    keywords: ['learn', 'academy', 'interactive', 'self-paced', 'essentials'],
   },
   '/academy/dashboard': {
     title: 'Academy Dashboard',

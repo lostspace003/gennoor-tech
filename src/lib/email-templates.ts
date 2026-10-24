@@ -14,7 +14,7 @@ export function welcomeEmailHtml(name: string, siteUrl = SITE): string {
   return emailShell(
     emailTitle(
       `Welcome, ${first(name)}.`,
-      'Your Gennoor Learning Studio account is ready. Free, self-paced, and your progress follows you to any device.'
+      'Your Gennoor Learning Studio account is ready. Self-paced, and your progress follows you to any device.'
     ) +
       emailSteps(
         [
