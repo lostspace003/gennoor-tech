@@ -70,7 +70,15 @@ export interface PortalNavSection {
 export const portalNav: PortalNavSection[] = [
   { name: 'Home', href: '/', icon: Home },
   { name: 'Claude', href: '/claude', icon: Sparkles },
-  { name: 'Training', href: '/training', icon: GraduationCap },
+  {
+    name: 'Training',
+    icon: GraduationCap,
+    children: [
+      { name: 'Training for teams', href: '/training' },
+      { name: 'Certification preparation', href: '/services/certifications' },
+      { name: 'Webinars and expert sessions', href: '/webinars' },
+    ],
+  },
   { name: 'Automation', href: '/automation', icon: Wrench },
   {
     name: 'Learning Studio',
@@ -80,6 +88,7 @@ export const portalNav: PortalNavSection[] = [
       { name: 'Community', href: '/community' },
     ],
   },
+  { name: 'Blog', href: '/resources/blog', icon: FileText },
   { name: 'About', href: '/about', icon: Info },
   { name: 'Contact', href: '/contact', icon: Mail },
 ]
