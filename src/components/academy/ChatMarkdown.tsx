@@ -5,7 +5,7 @@ import React from 'react'
  * code blocks and links. Nothing is passed to the page as HTML, so it is safe for any text.
  */
 
-function inline(text: string, keyBase: string): React.ReactNode[] {
+export function renderInline(text: string, keyBase: string): React.ReactNode[] {
   const out: React.ReactNode[] = []
   // [label](https://url), **bold**, `code`
   const re = /(\[([^\]]+)\]\((https?:\/\/[^\s)]+)\))|(\*\*([^*]+)\*\*)|(`([^`]+)`)/g
@@ -34,22 +34,22 @@ function blocks(text: string, keyBase: string): React.ReactNode[] {
     if (!line.trim()) { i++; continue }
     const key = `${keyBase}-b${n++}`
     const h = /^(#{1,4})\s+(.*)$/.exec(line)
-    if (h) { nodes.push(<p key={key} className="font-semibold text-gray-900 mt-3 first:mt-0">{inline(h[2], key)}</p>); i++; continue }
+    if (h) { nodes.push(<p key={key} className="font-semibold text-gray-900 mt-3 first:mt-0">{renderInline(h[2], key)}</p>); i++; continue }
     if (/^\s*([-*•])\s+/.test(line)) {
       const items: string[] = []
       while (i < lines.length && /^\s*([-*•])\s+/.test(lines[i])) { items.push(lines[i].replace(/^\s*([-*•])\s+/, '')); i++ }
-      nodes.push(<ul key={key} className="list-disc pl-5 space-y-1 my-2">{items.map((t, k) => <li key={k}>{inline(t, `${key}-${k}`)}</li>)}</ul>)
+      nodes.push(<ul key={key} className="list-disc pl-5 space-y-1 my-2">{items.map((t, k) => <li key={k}>{renderInline(t, `${key}-${k}`)}</li>)}</ul>)
       continue
     }
     if (/^\s*\d+[.)]\s+/.test(line)) {
       const items: string[] = []
       while (i < lines.length && /^\s*\d+[.)]\s+/.test(lines[i])) { items.push(lines[i].replace(/^\s*\d+[.)]\s+/, '')); i++ }
-      nodes.push(<ol key={key} className="list-decimal pl-5 space-y-1 my-2">{items.map((t, k) => <li key={k}>{inline(t, `${key}-${k}`)}</li>)}</ol>)
+      nodes.push(<ol key={key} className="list-decimal pl-5 space-y-1 my-2">{items.map((t, k) => <li key={k}>{renderInline(t, `${key}-${k}`)}</li>)}</ol>)
       continue
     }
     const para: string[] = []
     while (i < lines.length && lines[i].trim() && !/^(#{1,4})\s+/.test(lines[i]) && !/^\s*([-*•])\s+/.test(lines[i]) && !/^\s*\d+[.)]\s+/.test(lines[i])) { para.push(lines[i]); i++ }
-    nodes.push(<p key={key} className="my-2 first:mt-0 last:mb-0">{inline(para.join(' '), key)}</p>)
+    nodes.push(<p key={key} className="my-2 first:mt-0 last:mb-0">{renderInline(para.join(' '), key)}</p>)
   }
   return nodes
 }

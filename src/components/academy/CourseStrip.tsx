@@ -1,12 +1,19 @@
 import { KIND_COLOR, KIND_LABEL, kindOf, type LmsKind } from '@/lib/lms-kind'
 
-interface StripItem { id: string; type: string; kind?: string }
+interface StripItem { id: string; type: string; kind?: string; durationSec?: number }
 interface StripSection { items: StripItem[] }
 
+// A quiz has no video, so it gets a fixed share. Anything with a video is as wide as the video is long.
+const QUIZ_SECONDS = 240
+const MIN_SECONDS = 20
+
+const weightOf = (i: StripItem) => (i.type === 'quiz' ? QUIZ_SECONDS : Math.max(i.durationSec || 0, MIN_SECONDS))
+
 /**
- * The shape of a course: one tick per lesson, grouped by module, coloured by
- * what the lesson is. With `done`, finished lessons are solid and the rest
- * stay faint, so the same strip doubles as a progress bar.
+ * The shape of a course: one tick per lesson, grouped by module, coloured by what the lesson is.
+ * Each tick is as wide as its video is long (a quiz gets a fixed share), so a long module looks long.
+ * With `done`, finished lessons are solid and the rest stay faint, so the same strip doubles as a
+ * progress bar.
  */
 export function CourseStrip({
   sections,
@@ -28,30 +35,34 @@ export function CourseStrip({
           @media (prefers-reduced-motion: reduce) { .lms-strip-anim { animation: none } }
         `}</style>
       )}
-      <div className="flex items-end w-full" style={{ height, gap: Math.max(3, height / 8) }} role="img" aria-label="Course map">
-        {sections.map((s, si) => (
-          <div
-            key={si}
-            className={`flex items-end h-full min-w-[2px] ${animate ? 'lms-strip-anim' : ''}`}
-            style={{ flex: s.items.length, gap: 1, animationDelay: animate ? `${si * 45}ms` : undefined }}
-          >
-            {s.items.map(i => {
-              const kind = kindOf(i)
-              const isDone = done ? !!done[i.id] : true
-              return (
-                <span
-                  key={i.id}
-                  className="flex-1 min-w-0 rounded-[1px]"
-                  style={{
-                    height: kind === 'quiz' ? '58%' : kind === 'lab' ? '82%' : '100%',
-                    background: KIND_COLOR[kind],
-                    opacity: isDone ? 1 : 0.22,
-                  }}
-                />
-              )
-            })}
-          </div>
-        ))}
+      <div className="flex items-end w-full" style={{ height, gap: Math.max(3, height / 8) }} role="img" aria-label="Course map: each bar is as long as its lesson">
+        {sections.map((s, si) => {
+          const total = s.items.reduce((n, i) => n + weightOf(i), 0)
+          return (
+            <div
+              key={si}
+              className={`flex items-end h-full min-w-[2px] ${animate ? 'lms-strip-anim' : ''}`}
+              style={{ flex: `${total} 1 0%`, gap: 1, animationDelay: animate ? `${si * 45}ms` : undefined }}
+            >
+              {s.items.map(i => {
+                const kind = kindOf(i)
+                const isDone = done ? !!done[i.id] : true
+                return (
+                  <span
+                    key={i.id}
+                    className="min-w-0 rounded-[1px]"
+                    style={{
+                      flex: `${weightOf(i)} 1 0%`,
+                      height: kind === 'quiz' ? '58%' : kind === 'lab' ? '82%' : '100%',
+                      background: KIND_COLOR[kind],
+                      opacity: isDone ? 1 : 0.22,
+                    }}
+                  />
+                )
+              })}
+            </div>
+          )
+        })}
       </div>
     </>
   )

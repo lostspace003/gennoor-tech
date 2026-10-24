@@ -7,7 +7,9 @@ export async function GET(request: NextRequest) {
   const publicOrigin = process.env.NEXTAUTH_URL || request.nextUrl.origin
   try {
     const code = request.nextUrl.searchParams.get('code')
-    const returnTo = request.nextUrl.searchParams.get('state') || '/ai-academy'
+    // only ever send the learner back to a page on this site
+    const state = request.nextUrl.searchParams.get('state') || ''
+    const returnTo = state.startsWith('/') && !state.startsWith('//') && !state.includes('\\') ? state : '/ai-academy'
 
     if (!code) {
       return NextResponse.redirect(new URL('/ai-academy?error=no_code', publicOrigin))

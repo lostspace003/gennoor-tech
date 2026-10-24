@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic'
 
 interface PageProps {
   params: Promise<{ slug: string }>
-  searchParams: Promise<{ item?: string }>
+  searchParams: Promise<{ item?: string; resume?: string }>
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function LearnPage({ params, searchParams }: PageProps) {
   const { slug } = await params
-  const { item } = await searchParams
+  const { item, resume } = await searchParams
   const course = await getLmsCourse(slug)
   if (!course) notFound()
 
@@ -42,5 +42,6 @@ export default async function LearnPage({ params, searchParams }: PageProps) {
 
   const initial = items.find(i => i.id === item)?.id ?? items[0].id
 
-  return <LmsPlayer course={course} learnerEmail={learner.email} initialItem={initial} initialProgress={progress} congratsUrl={videoUrl(course, course.congrats)} />
+  // Every lesson opens paused and from its first second. Only the Resume button (?resume=1) goes back to where the learner stopped.
+  return <LmsPlayer course={course} learnerEmail={learner.email} initialItem={initial} initialProgress={progress} resumeSaved={resume === '1'} congratsUrl={videoUrl(course, course.congrats)} />
 }
