@@ -3,8 +3,9 @@
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { type BlogPostMeta } from '@/data/blog-posts'
-import { CheckCircle, ArrowUpDown, Calendar } from 'lucide-react'
+import { CheckCircle } from 'lucide-react'
 import EmailOTP from '@/components/EmailOTP'
+import { FilterBar, Pagination, usePage } from '@/components/academy/CatalogControls'
 
 /**
  * Blog list in the Apple idiom, per the redesign handoff: dark featured
@@ -20,8 +21,6 @@ interface BlogListClientProps {
   posts: BlogPostMeta[]
   categories: string[]
 }
-
-const QUIET_TOGGLE = 'px-3 py-1 text-xs font-medium rounded-full transition-colors'
 
 export default function BlogListClient({ posts, categories }: BlogListClientProps) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
@@ -67,6 +66,8 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
 
   const hero = filtered.find(p => p.featured === 'hero') || filtered[0]
   const rest = filtered.filter(p => p.slug !== hero?.slug)
+  const pg = usePage(`${activeCategory}|${sortOrder}|${timeFilter}`, rest.length, 9)
+  const activeFilters = (activeCategory ? 1 : 0) + (timeFilter !== 'all' ? 1 : 0)
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -138,74 +139,22 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
       {/* ===== Post list — grey band ===== */}
       <section className="bg-[#f5f5f7] px-8 pt-16 pb-24">
         <div className="max-w-[1080px] mx-auto">
-          {/* Category chips */}
-          <div className="flex gap-2 flex-wrap mb-4" role="tablist" aria-label="Filter articles by category">
-            <button
-              onClick={() => setActiveCategory(null)}
-              className={`text-[12.5px] font-medium px-3.5 py-[7px] rounded-full border transition-all duration-200 ${
-                !activeCategory
-                  ? 'border-primary-600 bg-primary-600 text-white'
-                  : 'border-[#d2d2d7] bg-white text-gray-900'
-              }`}
-              role="tab"
-              aria-selected={!activeCategory}
-            >
-              All
-            </button>
-            {categories.map(cat => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`text-[12.5px] font-medium px-3.5 py-[7px] rounded-full border transition-all duration-200 ${
-                  activeCategory === cat
-                    ? 'border-primary-600 bg-primary-600 text-white'
-                    : 'border-[#d2d2d7] bg-white text-gray-900'
-                }`}
-                role="tab"
-                aria-selected={activeCategory === cat}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-
-          {/* Sort & time — quiet secondary controls */}
-          <div className="flex flex-wrap items-center gap-3 mb-7">
-            <div className="flex items-center gap-1.5" role="group" aria-label="Sort order">
-              <ArrowUpDown className="w-3.5 h-3.5 text-[#86868b]" aria-hidden="true" />
-              {([['newest', 'Latest first'], ['oldest', 'Oldest first']] as [SortOrder, string][]).map(([v, label]) => (
-                <button
-                  key={v}
-                  onClick={() => setSortOrder(v)}
-                  className={`${QUIET_TOGGLE} ${
-                    sortOrder === v ? 'bg-gray-900 text-white' : 'text-[#6e6e73] hover:text-gray-900'
-                  }`}
-                  aria-pressed={sortOrder === v}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-            <div className="w-px h-4 bg-[#d2d2d7]" aria-hidden="true" />
-            <div className="flex items-center gap-1.5" role="group" aria-label="Time range filter">
-              <Calendar className="w-3.5 h-3.5 text-[#86868b]" aria-hidden="true" />
-              {([['all', 'All time'], ['week', 'This week'], ['month', 'This month']] as [TimeFilter, string][]).map(([v, label]) => (
-                <button
-                  key={v}
-                  onClick={() => setTimeFilter(v)}
-                  className={`${QUIET_TOGGLE} ${
-                    timeFilter === v ? 'bg-gray-900 text-white' : 'text-[#6e6e73] hover:text-gray-900'
-                  }`}
-                  aria-pressed={timeFilter === v}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-            <span className="text-[13px] text-[#86868b] ml-auto" aria-live="polite">
-              {filtered.length} {filtered.length === 1 ? 'article' : 'articles'}
-            </span>
-          </div>
+          <div id="catalog-top" />
+          <FilterBar
+            quickKey="category"
+            activeCount={activeFilters}
+            onReset={() => { setActiveCategory(null); setTimeFilter('all'); setSortOrder('newest') }}
+            sort="date"
+            desc={sortOrder === 'newest'}
+            onDirection={() => setSortOrder(o => (o === 'newest' ? 'oldest' : 'newest'))}
+            groups={[
+              { key: 'category', label: 'Category', allLabel: 'All', value: activeCategory ?? 'all', onChange: id => setActiveCategory(id === 'all' ? null : id), options: categories.map(c => ({ id: c, label: c })) },
+              { key: 'time', label: 'Time range', allLabel: 'All time', value: timeFilter, onChange: id => setTimeFilter(id as TimeFilter), options: [{ id: 'week', label: 'This week' }, { id: 'month', label: 'This month' }] },
+            ]}
+          />
+          <p className="text-[13px] text-[#86868b] mb-5 -mt-4" aria-live="polite">
+            {filtered.length} {filtered.length === 1 ? 'article' : 'articles'}
+          </p>
 
           {/* Empty state */}
           {filtered.length === 0 && (
@@ -226,7 +175,7 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
           {/* Post grid */}
           {rest.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {rest.map(post => (
+              {rest.slice(pg.start, pg.end).map(post => (
                 <Link
                   key={post.slug}
                   href={`/resources/blog/${post.slug}`}
@@ -250,6 +199,7 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
               ))}
             </div>
           )}
+          <Pagination page={pg.page} pages={pg.pages} onPage={pg.setPage} />
 
           {/* Newsletter — preserved feature, quiet dark panel */}
           <div className="mt-10 bg-[#1d1d1f] rounded-3xl px-7 sm:px-10 py-7">
