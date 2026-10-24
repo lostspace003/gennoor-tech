@@ -3,6 +3,7 @@ import { PersonJsonLd } from '@/components/JsonLd'
 import { ClaudePartnerHero } from '@/components/ClaudePartner'
 import HomeCourses from '@/components/home/HomeCourses'
 import WalkthroughVideo from '@/components/WalkthroughVideo'
+import HeroCarousel, { type HeroSlide } from '@/components/home/HeroCarousel'
 import { listLmsCourses, toCard } from '@/lib/lms'
 import { AutomationIllustration, DeliverIllustration, HandoverIllustration, PlatformIllustration, ScopeIllustration, TalkIllustration, TrainingIllustration } from '@/components/illustrations/Illustrations'
 
@@ -43,22 +44,38 @@ const STEPS = [
 export default async function HomePage() {
   const courses = (await listLmsCourses()).map(toCard).filter(c => c.promoUrl || c.thumbnailUrl).slice(0, 2)
 
+  const heroSlides: HeroSlide[] = [
+    ...courses.filter(c => c.promoUrl).map(c => ({
+      id: c.slug,
+      title: c.title,
+      caption: `${c.lectures} lessons${c.hours ? `, ${c.hours} hours` : ''}`,
+      href: `/studio/${c.slug}`,
+      src: c.promoUrl as string,
+      poster: c.thumbnailUrl || undefined,
+    })),
+  ]
+
   return (
     <>
       <PersonJsonLd />
 
       {/* ===== Hero: the Claude Partner Network first ===== */}
-      <section className="hero-backdrop bg-white px-6 pt-16 lg:pt-[100px] pb-16 lg:pb-[90px] text-center">
-        <ClaudePartnerHero />
-        <h1 className="display-hero max-w-[860px] mx-auto mt-12">
-          Train your team on AI. Automate the rest.
-        </h1>
-        <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.5] text-[#6e6e73] max-w-[620px] mx-auto mt-6">
-          Custom training on Claude and other AI tools, automations built one process at a time, and courses you can take yourself in the Learning Studio.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-5 sm:gap-[22px] justify-center items-center mt-10">
-          <Link href="/contact" className="pill-primary">Talk to us</Link>
-          <Link href="/studio" className="link-arrow">Explore the Learning Studio ›</Link>
+      <section className="hero-backdrop bg-white px-6 pt-14 lg:pt-[90px] pb-16 lg:pb-[90px]">
+        <div className="max-w-[1180px] mx-auto grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] gap-12 lg:gap-14 items-center">
+          <div className="text-center lg:text-left">
+            <div className="lg:[&>div]:items-start"><ClaudePartnerHero /></div>
+            <h1 className="display-hero mt-10 lg:!text-left">
+              Train your team on AI. Automate the rest.
+            </h1>
+            <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.5] text-[#6e6e73] max-w-[620px] mx-auto lg:mx-0 mt-6">
+              Custom training on Claude and other AI tools, automations built one process at a time, and courses you can take yourself in the Learning Studio.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-5 sm:gap-[22px] justify-center lg:justify-start items-center mt-10">
+              <Link href="/studio" className="pill-primary">Explore the Learning Studio</Link>
+              <Link href="/contact" className="link-arrow">Talk to us ›</Link>
+            </div>
+          </div>
+          <HeroCarousel slides={heroSlides} />
         </div>
       </section>
 
