@@ -7,6 +7,7 @@ import PortalSidebar from './PortalSidebar'
 import PortalBreadcrumb from './PortalBreadcrumb'
 import RouteProgress from './RouteProgress'
 import SearchModal from '@/components/SearchModal'
+import { ClaudePartnerBar } from '@/components/ClaudePartner'
 import { cn } from '@/lib/utils'
 import { isChromelessRoute } from '@/lib/chrome'
 import CustomTraining from '@/components/custom-training/CustomTraining'
@@ -109,6 +110,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
         )}
       >
         
+        {pathname !== '/' && <ClaudePartnerBar />}
         <PortalBreadcrumb />
         <div key={pathname} className="animate-page-enter">
           {children}
