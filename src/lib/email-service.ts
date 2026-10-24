@@ -1,3 +1,4 @@
+import { welcomeEmailHtml, trainingConfirmationHtml } from '@/lib/email-templates'
 import { EmailClient, KnownEmailSendStatus } from '@azure/communication-email'
 import { readFile } from 'fs/promises'
 import path from 'path'
@@ -292,40 +293,14 @@ export async function catalogExcelAttachment() {
 
 // Welcome email sent once, on a learner's first Academy sign-in. Carries the catalog.
 export async function sendAcademyWelcomeEmail(data: { name: string; email: string }) {
-  const firstName = (data.name || 'there').trim().split(/\s+/)[0] || 'there'
   const catalog = await catalogExcelAttachment()
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.gennoor.com'
-  const html = `
-    <div style="font-family:'Segoe UI',Arial,sans-serif;background:#f1f5f9;padding:24px 12px;margin:0">
-      <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e2e8f0">
-        <div style="background:#0C1426;padding:30px 28px;text-align:center">
-          <h1 style="color:#ffffff;margin:0;font-size:24px;font-weight:800">Gennoor Tech</h1>
-          <p style="color:#93b4ff;margin:6px 0 0;font-size:12px;letter-spacing:2px">TRAIN. INNOVATE. BUILD.</p>
-        </div>
-        <div style="padding:32px 28px;color:#374151;font-size:15px;line-height:1.7">
-          <h2 style="color:#0f172a;margin:0 0 12px;font-size:20px">Welcome to Gennoor AI Academy, ${firstName} 🎓</h2>
-          <p style="margin:0 0 16px">You're in. You now have free, self-paced access to our full course library — interactive lessons, videos, and readings across foundations, function, leadership, industry, builder, and applied tracks.</p>
-          <div style="background:#f8fafc;border-left:4px solid #2563EB;padding:16px 18px;border-radius:0 8px 8px 0;margin:0 0 20px">
-            <p style="margin:0;color:#334155"><strong>Attached:</strong> our full catalog (Excel) — every course, PoC blueprint, and free resource in one place.</p>
-          </div>
-          <div style="text-align:center;margin:24px 0">
-            <a href="${siteUrl}/academy" style="display:inline-block;background:#2563EB;color:#ffffff;text-decoration:none;padding:13px 34px;border-radius:9px;font-size:15px;font-weight:700">Start learning</a>
-          </div>
-          <p style="margin:0;color:#64748b;font-size:13px">Want something tailored for your team? Reach us at
-            <a href="mailto:admin@gennoor.com" style="color:#2563EB">admin@gennoor.com</a> or +91 9326352241.</p>
-        </div>
-        <div style="background:#0C1426;padding:18px 28px;text-align:center">
-          <p style="color:#94a3b8;margin:0;font-size:11px">
-            <a href="mailto:admin@gennoor.com" style="color:#93b4ff;text-decoration:none">admin@gennoor.com</a> ·
-            <a href="${siteUrl}" style="color:#93b4ff;text-decoration:none">www.gennoor.com</a></p>
-        </div>
-      </div>
-    </div>`
+  const html = welcomeEmailHtml(data.name, siteUrl)
   return sendEmail({
     to: data.email,
     from: process.env.EMAIL_FROM_INFO || 'info@gennoor.com',
-    fromName: 'Gennoor AI Academy',
-    subject: 'Welcome to Gennoor AI Academy 🎓',
+    fromName: 'Gennoor Learning Studio',
+    subject: 'Welcome to the Gennoor Learning Studio',
     html,
     attachments: catalog ? [catalog] : undefined,
   })
@@ -414,113 +389,19 @@ export async function sendTrainingEnquiryEmail(data: {
     programType: escapeHtml(data.programType),
   }
 
-  const userEmailHtml = `
-    <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <div style="background: #0C1426; padding: 40px 30px; text-align: center; border-radius: 10px 10px 0 0;">
-        <h1 style="color: white; margin: 0; font-size: 28px;">Gennoor Tech</h1>
-        <p style="color: white; margin: 10px 0 0; font-size: 16px;">AI Training & Consulting Excellence</p>
-      </div>
-
-      <div style="padding: 40px 30px; background: #ffffff; border: 1px solid #e0e0e0; border-top: none;">
-        <h2 style="color: #333; margin-top: 0; font-size: 24px;">Dear ${safe.name},</h2>
-
-        <p style="color: #555; line-height: 1.8; font-size: 16px;">
-          Thank you for your interest in our <strong>${safe.programTitle}</strong> ${escapeHtml(programKind)}.
-        </p>
-
-        <div style="background: #f8f9fa; border-left: 4px solid #2563EB; padding: 20px; margin: 25px 0; border-radius: 5px;">
-          <p style="color: #555; margin: 0; line-height: 1.8;">
-            We've attached the detailed ${escapeHtml(programKind)} PDF including curriculum,
-            learning objectives, and delivery format. This comprehensive outline will help you understand
-            how our training can accelerate your team's AI journey.
-          </p>
-        </div>
-
-        <h3 style="color: #333; margin-top: 30px;">What's Included:</h3>
-        <ul style="color: #555; line-height: 2;">
-          <li>Complete curriculum breakdown</li>
-          <li>Learning objectives and outcomes</li>
-          <li>Hands-on labs and projects</li>
-          <li>Certification preparation (if applicable)</li>
-          <li>Post-training support details</li>
-        </ul>
-
-        <div style="background: #f8fafc; border-left: 4px solid #2563eb; padding: 20px; margin: 25px 0; border-radius: 0 8px 8px 0;">
-          <p style="color: #1e293b; margin: 0 0 6px; font-weight: 600; font-size: 16px;">📎 Explore our full catalog</p>
-          <p style="color: #475569; margin: 0; line-height: 1.7; font-size: 15px;">
-            Along with this program's details, we've attached our full catalog (Excel): every training program,
-            PoC blueprint, and free resource in one place — so you can see everything we offer at a glance.
-          </p>
-        </div>
-
-        <h3 style="color: #333; margin-top: 30px;">Your Training Requirements:</h3>
-        <div style="background: #ffffff; border: 1px solid #e0e0e0; padding: 20px; border-radius: 5px;">
-          <table role="presentation" style="width: 100%; color: #555;">
-            ${optionalRow('Organization', safe.company)}
-            ${optionalRow('Training for', trainingForLabel)}
-            ${optionalRow('Timeline', escapeHtml(timelineLabel))}
-            ${data.message ? `<tr><td style="padding: 5px 0; vertical-align: top;"><strong>Special requirements:</strong></td><td>${safe.message}</td></tr>` : ''}
-          </table>
-        </div>
-
-        ${
-          // Previously unconditional: every enquirer was promised an early-bird
-          // discount and a free certification voucher automatically, with no
-          // terms or expiry. That is a commercial commitment, so it is now an
-          // explicit opt-in — set TRAINING_OFFER_ENABLED=true to run it.
-          process.env.TRAINING_OFFER_ENABLED === 'true'
-            ? `<div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 20px; margin: 30px 0;">
-                 <p style="color: #856404; margin: 0; font-size: 16px;">
-                   <strong>Current offer:</strong> ${escapeHtml(process.env.TRAINING_OFFER_TEXT || 'Ask your training specialist about current early-booking benefits.')}
-                 </p>
-               </div>`
-            : ''
-        }
-
-        <h3 style="color: #333; margin-top: 30px;">Next Steps:</h3>
-        <ol style="color: #555; line-height: 2;">
-          <li>Review the attached ${escapeHtml(programKind)} details</li>
-          <li>Our training specialist will contact you soon</li>
-          <li>Schedule a free consultation call to discuss customization</li>
-          <li>Receive a tailored proposal with pricing options</li>
-        </ol>
-
-        <div style="text-align: center; margin: 40px 0;">
-          <a href="mailto:training@gennoor.com?subject=Schedule%20Consultation%20-%20${encodeURIComponent(data.programTitle)}"
-             style="display: inline-block; padding: 15px 40px; background: #2563EB; color: white; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 16px;">
-            Schedule Free Consultation
-          </a>
-        </div>
-
-        <div style="border-top: 2px solid #e0e0e0; padding-top: 30px; margin-top: 40px;">
-          <h4 style="color: #333; margin-bottom: 15px;">Get in Touch:</h4>
-          <table role="presentation" style="width: 100%; color: #555; line-height: 1.8;">
-            <tr>
-              <td style="padding: 5px 0;">Email:</td>
-              <td><a href="mailto:training@gennoor.com" style="color: #2563EB;">training@gennoor.com</a></td>
-            </tr>
-            <tr>
-              <td style="padding: 5px 0;">WhatsApp:</td>
-              <td><a href="https://wa.me/919326352241" style="color: #2563EB;">+91 9326352241</a></td>
-            </tr>
-            <tr>
-              <td style="padding: 5px 0;">Website:</td>
-              <td><a href="https://www.gennoor.com" style="color: #2563EB;">www.gennoor.com</a></td>
-            </tr>
-          </table>
-        </div>
-      </div>
-
-      <div style="background: #0C1426; padding: 30px; text-align: center; border-radius: 0 0 10px 10px;">
-        <p style="color: #ffffff; margin: 0; font-size: 14px;">
-          &copy; ${new Date().getFullYear()} Gennoor Tech. All rights reserved.
-        </p>
-        <p style="color: #94a3b8; margin: 10px 0 0; font-size: 13px;">
-          Empowering Organizations with AI Excellence
-        </p>
-      </div>
-    </div>
-  `
+  const userEmailHtml = trainingConfirmationHtml({
+    name: data.name,
+    programTitle: data.programTitle,
+    programKind,
+    company: data.company,
+    trainingForLabel,
+    timelineLabel,
+    message: data.message,
+    // An opt-in commercial commitment: set TRAINING_OFFER_ENABLED=true to run it.
+    offerText: process.env.TRAINING_OFFER_ENABLED === 'true'
+      ? process.env.TRAINING_OFFER_TEXT || 'Ask your training specialist about current early-booking benefits.'
+      : undefined,
+  })
 
   const catalog = await catalogExcelAttachment()
   const trainingAttachments = [attachment, catalog].filter(

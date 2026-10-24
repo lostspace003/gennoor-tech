@@ -1,3 +1,4 @@
+import { coworkHtml } from '@/lib/email-templates'
 import { NextResponse } from 'next/server'
 import { readFile } from 'fs/promises'
 import path from 'path'
@@ -40,81 +41,7 @@ export async function POST(request: Request) {
       biggestWorkflow: biggestWorkflow || '',
     })
 
-    const userEmailHtml = `
-      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: #1B2845; padding: 40px 30px; text-align: center; border-radius: 10px 10px 0 0;">
-          <div style="display: inline-block; background: #FFD23F; color: #1B2845; font-weight: 900; font-size: 14px; padding: 8px 18px; border-radius: 50px; margin-bottom: 16px;">100% FREE</div>
-          <h1 style="color: white; margin: 0; font-size: 26px; font-weight: 800;">You're In — Claude Cowork Workshop</h1>
-          <p style="color: #FFD23F; margin: 10px 0 0; font-size: 14px; letter-spacing: 2px;">GENNOOR PRESENTS</p>
-        </div>
-
-        <div style="padding: 40px 30px; background: #ffffff; border: 1px solid #e0e0e0; border-top: none;">
-          <h2 style="color: #1B2845; margin-top: 0; font-size: 22px;">Hi ${escapeHtml(fullName.split(' ')[0])},</h2>
-
-          <p style="color: #5C6784; line-height: 1.8; font-size: 16px;">
-            You're confirmed for the free <strong>Claude Cowork Workshop</strong>. Here's what to expect:
-          </p>
-
-          <div style="background: #FFF8F0; border-left: 4px solid #FF6B35; padding: 20px; margin: 25px 0; border-radius: 0 8px 8px 0;">
-            <table role="presentation" style="width: 100%; color: #1B2845; font-size: 15px;">
-              <tr>
-                <td style="padding: 8px 0; font-weight: 700;">When:</td>
-                <td style="padding: 8px 0;">4 hours in your local time zone (${escapeHtml(timeZone)}) — schedule details sent separately</td>
-              </tr>
-              <tr>
-                <td style="padding: 8px 0; font-weight: 700;">Where:</td>
-                <td style="padding: 8px 0;">Online — joining link and timings will be shared via email</td>
-              </tr>
-              <tr>
-                <td style="padding: 8px 0; font-weight: 700;">What to bring:</td>
-                <td style="padding: 8px 0;">Nothing! Just show up. You'll sit back, watch live demos, and learn. No setup required.</td>
-              </tr>
-            </table>
-          </div>
-
-          <h3 style="color: #1B2845; margin-top: 30px; font-size: 18px;">What we'll cover in 4 hours:</h3>
-          <ul style="color: #5C6784; line-height: 2.2; font-size: 15px; padding-left: 20px;">
-            <li>What is Claude — introduction to Claude and its capabilities</li>
-            <li>Claude Chat vs Claude Cowork — when to use each</li>
-            <li>Understand &amp; Organize Data — messy files to polished outputs</li>
-            <li>Create Reports &amp; Presentations — data to deliverables in minutes</li>
-            <li>Connect to Enterprise Systems — Google Drive, integrations, and more</li>
-            <li>Claude Cowork in Chrome — use Cowork right inside your browser</li>
-            <li>Schedule Flows using Claude — automate recurring tasks</li>
-            <li>What's Next? — your roadmap to AI-powered productivity</li>
-          </ul>
-
-          <div style="background: #FFD23F; border-radius: 10px; padding: 20px; margin: 30px 0; text-align: center;">
-            <p style="color: #1B2845; margin: 0; font-size: 16px; font-weight: 700;">
-              Two things to do today:
-            </p>
-            <ol style="color: #1B2845; text-align: left; margin: 12px 0 0; padding-left: 24px; font-size: 15px; line-height: 2;">
-              <li>Keep an eye on your inbox for the session timings and joining link</li>
-              <li>Forward this email to one colleague who could also use a free 5-hours-a-week boost</li>
-            </ol>
-          </div>
-
-          <p style="color: #5C6784; line-height: 1.8; font-size: 15px;">
-            Questions? Reply to this email — we read every one.
-          </p>
-
-          <p style="color: #1B2845; font-weight: 700; font-size: 15px; margin-top: 30px;">
-            Welcome aboard,<br />
-            <span style="font-weight: 400; color: #5C6784;">The Gennoor Team</span><br />
-            <a href="https://gennoor.com/claude-cowork" style="color: #FF6B35; text-decoration: none;">gennoor.com/claude-cowork</a>
-          </p>
-        </div>
-
-        <div style="background: #1B2845; padding: 24px; text-align: center; border-radius: 0 0 10px 10px;">
-          <p style="color: #5C6784; margin: 0; font-size: 13px;">
-            © ${new Date().getFullYear()} Gennoor Tech. All rights reserved.
-          </p>
-          <p style="color: #FFD23F; margin: 8px 0 0; font-size: 12px;">
-            100% free · No upsell · Open to anyone, anywhere
-          </p>
-        </div>
-      </div>
-    `
+    const userEmailHtml = coworkHtml({ name: fullName, timeZone })
 
     let pdfAttachment: { filename: string; content: Buffer; contentType: string } | undefined
     try {
