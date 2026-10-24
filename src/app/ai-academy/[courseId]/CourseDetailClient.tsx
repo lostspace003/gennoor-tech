@@ -105,7 +105,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
             <div className="max-w-3xl">
               <div className="flex flex-wrap items-center gap-3 mb-4">
                 <span className="inline-flex items-center px-3 py-1 text-[10px] font-bold bg-gray-400 text-gray-900 rounded-full uppercase tracking-[0.2em]">
-                  {course.badge}
+                  Interactive
                 </span>
                 <span className="text-white/60 text-sm">{course.certification}</span>
               </div>

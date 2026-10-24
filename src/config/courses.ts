@@ -61,7 +61,7 @@ export const courses: Course[] = [
     shortTitle: 'AB-100',
     description: 'Self-paced course for the Microsoft AB-100 certification. Master agentic AI architecture with Copilot Studio, Azure AI Foundry, and Dynamics 365.',
     longDescription: 'A comprehensive 13-chapter course covering everything you need to architect agentic AI business solutions — from analyzing business requirements and developing AI strategy to designing solutions, orchestrating prebuilt agents, and managing governance. Includes a 50-question mock exam matching the real AB-100 format.',
-    thumbnail: '/courses/ab-100/thumbnail.png',
+    thumbnail: '/courses/ab-100/thumbnail.webp',
     level: 'Advanced',
     duration: '~20 hours',
     certification: 'Microsoft AB-100',
@@ -244,7 +244,7 @@ export const courses: Course[] = [
       'A ~40-minute foundations course for non-technical professionals — calibrated literacy, not hype or fear. What AI is, how LLMs work in plain English, where AI fits, the risks to watch, how to evaluate claims, 5 prompt patterns, durable habits, a 2-week starter plan.',
     longDescription:
       'For non-technical professionals starting their AI journey in 2026. Eight chapters across the foundations of calibrated AI literacy: the landscape (Stanford AI Index 78% adoption, McKinsey 71% gen-AI use, Gartner trough of disillusionment); how LLMs actually work (tokens, training, next-token prediction, why hallucinations happen, retrieval grounding); where AI fits in everyday work (5 categories that work — drafting, summarising, translating, classifying, code — 3 that don\'t — open-ended research, judgement calls, identity facts); privacy + bias risks anchored on 3 verifiable cases (Mata v. Avianca S.D.N.Y. Jun 2023, Moffatt v. Air Canada BC CRT Feb 2024, Bloomberg resume study Mar 2024); evaluating AI claims (Tetlock calibration > confidence, 3 questions for any vendor productivity number); hands-on prompts that work (5 patterns: role+task+format+constraints+examples, outline-first, verify-the-citation, rewrite-for-audience, critique-my-draft); habits that stick (use-it-Monday, pair with one colleague, track simply, WEF Future of Jobs framing); and the close — a 2-week starter plan with interactive builder, 4 trust trip-wires, and the through-line: calibrated literacy, not hype, not fear.',
-    thumbnail: '/courses/ai-foundations/thumbnail.png',
+    thumbnail: '/courses/ai-foundations/thumbnail.webp',
     level: 'Foundational',
     duration: '~40 min',
     certification: 'No',
@@ -322,7 +322,7 @@ export const courses: Course[] = [
       'A ~40-minute strategic brief for CEOs, CIOs, CDOs and board directors. Capital discipline, talent design, governance posture, momentum past year 1. Grounded in Stanford AI Index, McKinsey, BCG/MIT, EU AI Act, NIST AI RMF.',
     longDescription:
       'For CEOs, CIOs, CDOs and board directors past basic AI literacy. Eight chapters across the C-suite AI surface: the strategic landscape (Stanford AI Index 2025 $33.9B corporate AI investment, McKinsey 71% gen-AI adoption, Gartner <30% deliver business value, BCG/MIT leaders vs laggards 1.5–2x gap, IBM IBV 64% CEO competitive edge view, KPMG 70% top priority); the 4 AI value patterns (productivity per MIT/BCG/Harvard/Goldman 15–40%, products with Salesforce Agentforce, decisions with structured-data ML maturity, automation as the frontier); capital allocation (3 rules: concentrate · stage-gate · measure; Deloitte 25% have ROI frameworks); talent + org design (WEF 86% expect transformation, 3 talent moves, the CoE trap, hub-and-spoke + AI council); governance the regulators accept (EU AI Act Annex III + Art. 26 + Art. 50 + Art. 99 fines, US EO landscape Biden→Trump→AI Action Plan, NIST AI RMF, 4-pillar governance, Mata + Air Canada cross-domain liability); sustaining momentum past year 1 (the year-2 trap, kill 2 of every 3 pilots, scale by embedding, AI-augmented work as default, Anthropic RSP + OpenAI Preparedness vendor safety); board reporting (Tetlock calibration > confidence, 5-metric 1-page dashboard, Big-4 audit-committee questions, confidence labels); and the close — your AI strategy on one page with interactive builder, 4 trust trip-wires, through-line: capital discipline · talent design · governance posture · momentum.',
-    thumbnail: '/courses/ai-strategy-c-suite/thumbnail.png',
+    thumbnail: '/courses/ai-strategy-c-suite/thumbnail.webp',
     level: 'Intermediate',
     duration: '~40 min',
     certification: 'No',
@@ -400,7 +400,7 @@ export const courses: Course[] = [
       'A ~40-minute brief for board directors, audit committee members, risk officers, CISOs, GCs. Risk classification, register, NIST 4 functions controls, vendor posture, board questions, incident response, governance charter. Grounded in EU AI Act, NIST AI RMF, ISO 42001.',
     longDescription:
       'For board directors, audit committee members, risk officers, CISOs, GCs past basic AI literacy. Eight chapters across the AI governance surface: the 2026 landscape (EU AI Act Reg. 2024/1689 in tranches through Aug 2 2026, NIST AI RMF as de facto US standard, ISO 42001 audit-able certification, US EO Biden→Trump→AI Action Plan, OECD principles across 47+ countries); AI risk classification (EU 4-tier framing + NIST context-based, 5-category taxonomy: bias, hallucination, security, IP, operational); the AI risk register (5-column structure, quarterly cadence, 3 escalation triggers, Deloitte ACP Q4 2025: 62% want disclosure, 31% want sample-testing); NIST AI RMF 4 functions (Govern, Map — Mata failure mode, Measure — Air Canada failure mode, Manage); vendor + supply-chain risk (3 enterprise terms settings, Anthropic RSP + OpenAI Preparedness, third-party concentration, open-source trade-offs); the 7 board-level questions every director must answer in 1 minute (cross-domain Charlotin tracker of 100+ AI-fabricated court filings as governance signal); incident response (5 categories, 4-24-72 timeline, EU AI Act Art. 27 FRIA, WEF Global Risks 2025 misinformation as #1 short-term risk); and the close — 1-page AI governance charter with interactive builder, 4 trust trip-wires, through-line: audit-defensible posture, calibration over confidence, concrete obligations.',
-    thumbnail: '/courses/ai-governance-risk-boards/thumbnail.png',
+    thumbnail: '/courses/ai-governance-risk-boards/thumbnail.webp',
     level: 'Intermediate',
     duration: '~40 min',
     certification: 'No',
@@ -478,7 +478,7 @@ export const courses: Course[] = [
       'A ~40-minute course for CFOs, controllers, FP&A heads, audit partners. Forecasting, narratives, close cycle, audit + SOX, AP/AR/treasury/tax, standards landscape. Grounded in Gartner, KPMG, Big-4, IFRS 18, PCAOB, NIST.',
     longDescription:
       'For CFOs, controllers, FP&A heads, finance ops leaders, audit partners past basic AI literacy. Eight chapters across the finance AI surface: the landscape (Gartner Q4 2025 67% CFO adoption, KPMG 1.4-day median close reduction, Hackett $0.85→$0.55 per $1K revenue, SAP/Oracle/Workday/Vic.ai/BlackLine/MS Copilot for Finance); forecasting + FP&A (M5 LightGBM dominance, Hyndman canonical, Tetlock calibration, FVA discipline); reporting + variance narratives (KPMG 50–70% time savings on MD&A, quote-or-cut rule, confabulated-source failure mode anchored on Mata v. Avianca cross-domain analog, Deloitte ACP Q4 2025 62%/31%); close cycle automation (BlackLine/Trintech 35–50% rec hours, Vic.ai/Trintech 85–92% routine accruals, Big-4 acceptance criteria, drafter/preparer/reviewer/approver quad-eye); audit + SOX (SOX 404 + COSO ERM 2024 + PCAOB QC 1000 + IAASB ISA 220, 3 controls: AI input/output review/tool documentation, EY 78% CFO concern); AP/AR/treasury/tax (Vic.ai/AppZen/Tipalti/Stampli, Kyriba, Vertex/Avalara/Trintax, customer-facing AR quote-or-cut); standards landscape (IFRS 18 effective 2027, SEC AI disclosure, EU CSRD, India IndAS, MS Copilot for Finance GA Nov 2024); and the close — 2-quarter finance AI roadmap with interactive builder, 4 trust trip-wires, through-line: AI on routine work, quad-eye on every material entry, the controller still signs the close.',
-    thumbnail: '/courses/ai-for-finance-accounting/thumbnail.png',
+    thumbnail: '/courses/ai-for-finance-accounting/thumbnail.webp',
     level: 'Intermediate',
     duration: '~40 min',
     certification: 'No',
@@ -556,7 +556,7 @@ export const courses: Course[] = [
       'A ~40-minute brief for BFSI execs, risk officers, GCs. Credit, fraud/AML/KYC, insurance, capital markets, customer-facing, regulatory posture. Grounded in EU AI Act, SR 11-7, CFPB/DOJ, FCA Consumer Duty, RBI master direction.',
     longDescription:
       'For bank execs, insurance leaders, capital markets, fintech, regulators-adjacent past basic AI literacy. Eight chapters across the BFSI AI surface: the landscape (McKinsey banking 20–40% productivity gains, JPM IndexGPT/COIN, Bloomberg BloombergGPT, Mastercard Decision Intelligence, Zest/Upstart, Tractable/Lemonade, Citadel/Bridgewater, EU AI Act Annex III + US SR 11-7 + UK FCA Consumer Duty + India RBI); credit + underwriting AI (EU AI Act high-risk Annex III + Art. 6-29 + Art. 27 FRIA + Art. 99 fines, CFPB+DOJ 2024 disparate impact, SR 11-7 Model Risk Management); fraud + AML + KYC (Mastercard Decision Intelligence, AML 95% → 70-80% false-positive compression, SAR drafting with quote-or-cut + Mata cross-domain analog, ComplyAdvantage/Refinitiv/Trulioo); insurance AI (Tractable claims AI, Lemonade gen-AI underwriting, EU AI Act insurance pricing high-risk, US state commissioners examining); capital markets (Renaissance/Two Sigma/Citadel quant tradition, Bloomberg 50B finance LLM, Goldman Marquee AI, research summarisation with quote-or-cut); customer-facing AI (BofA Erica/JPM In-App/Wells Fargo Fargo, Air Canada cross-domain analog applies to BFSI directly, EU Art. 50 + FCA Consumer Duty + RBI); regulatory posture (4-quadrant compliance: EU + US SR 11-7/CFPB/NIST + UK FCA/PRA + India RBI/DPDPA, 5-section compliance document); and the close — 2-quarter BFSI AI roadmap with interactive builder, 4 trust trip-wires, through-line: regulator-aware, audit-defensible, customer-protective.',
-    thumbnail: '/courses/ai-in-financial-services/thumbnail.png',
+    thumbnail: '/courses/ai-in-financial-services/thumbnail.webp',
     level: 'Intermediate',
     duration: '~40 min',
     certification: 'No',
@@ -634,7 +634,7 @@ export const courses: Course[] = [
       'A ~40-minute course for mid + senior managers. The 4 skills that separate AI-leveraged leaders: framing use cases, evaluating vendors, running pilots that scale, measuring outcomes. Grounded in Stanford, McKinsey, MIT/BCG/Harvard productivity studies.',
     longDescription:
       'For mid-level and senior managers across functions past basic AI literacy. Eight chapters across the manager AI surface: the 2026 landscape (Stanford 78% / McKinsey 71% adoption, Gartner trough cleanup, Andy Grove leverage framing, WEF 86% transformation); framing use cases (4-question framework: task/cost/data/failure mode, 5 categories that work, 3 that don\'t); evaluating vendors (Tetlock calibration > confidence, 3 questions for any productivity claim, enterprise terms baseline of training opt-out + tenant isolation + retention); build vs buy (McKinsey + BCG: build only when proprietary data + workflow is the moat, 3 categories — off-the-shelf, configure with vendor, build custom — Gartner <30% deliver value caution); running pilots that scale (stage-gate: pilot/scale/embed, kill discipline, MS Work Trend active-user reality, 3-thing measurement framework); risks managers must know (3 verifiable cases — Mata + Air Canada + Bloomberg, personal-data rule, EU AI Act Art. 50 + Annex III + Art. 99, 3 risk categories: legal/reputational/customer-data); leading the team through change (WEF future of jobs, 3 manager moves — model/expect/measure, Grove leverage applied to people, 3 hard conversations); and the close — 90-day GenAI plan with interactive builder, 4 trust trip-wires, through-line: framing beats using · evaluating beats trusting · piloting beats deploying · measuring beats hoping.',
-    thumbnail: '/courses/generative-ai-for-business/thumbnail.png',
+    thumbnail: '/courses/generative-ai-for-business/thumbnail.webp',
     level: 'Foundational',
     duration: '~40 min',
     certification: 'No',
@@ -712,7 +712,7 @@ export const courses: Course[] = [
       'A ~40-minute course for CHROs, HR ops, talent leaders. Recruiting, screening (with 4 bias mitigations), structured interviews, candidate experience, onboarding/L&D, compliance posture. <strong>The 3 lines we don\'t cross: no AI ratings, no AI stack ranking, no flight-risk prediction.</strong>',
     longDescription:
       'For CHROs, HR ops leaders, people-ops, talent leaders past basic AI literacy. Eight chapters across the HR AI surface: the landscape (EU AI Act Annex III §4 employment AI = high-risk, EEOC+DOJ 2024 disparate-impact statement, NYC LL144, IL AIVIA, CO SB24-205, India DPDPA, Bloomberg + Wilson-Caliskan bias evidence, Mobley v. Workday vendor-as-agent doctrine); recruiting AI (LinkedIn Hiring Assistant/hireEZ/Findem/Eightfold sourcing automation, 3-5x candidate flow, AI-spam trap with LinkedIn 87% InMail caps, GDPR Art. 6(1)(f) legitimate interest); screening + 4 bias mitigations (blind data, calibrated thresholds with 4/5ths rule, audit logs, human override); interview prep + Sackett 2022 (structured interviews r ≈ 0.42, HireVue cautionary lessons); candidate experience (Talent Board CandE 29%/48%, 3-sentence disclosure pattern, the 3 lines we don\'t cross); onboarding + L&D + people analytics (program-level not individual, employee choice as output, surveillance line); compliance posture across 4 quadrants (EU/US/India/works councils, 5-section posture document); and the close — 2-quarter HR AI roadmap with interactive builder, 4 trust trip-wires (no ratings · no stack rank · no flight-risk · no "set and forget").',
-    thumbnail: '/courses/ai-for-hr-people-teams/thumbnail.png',
+    thumbnail: '/courses/ai-for-hr-people-teams/thumbnail.webp',
     level: 'Intermediate',
     duration: '~40 min',
     certification: 'No',
@@ -800,7 +800,7 @@ export const courses: Course[] = [
       'Defend a 5-section compliance + ethics document with FDA / HIPAA / EU AI Act / NIST AI RMF / ABIM, AMA, CMS',
       'Walk out with a 2-quarter hospital AI roadmap and 4 trust trip-wires (physician responsibility · patient consent · no AI-only denials · no set-and-forget)',
     ],
-    thumbnail: '/courses/ai-in-healthcare/thumbnail.png',
+    thumbnail: '/courses/ai-in-healthcare/thumbnail.webp',
     level: 'Intermediate',
     duration: '~40 min',
     certification: 'No',
@@ -878,7 +878,7 @@ export const courses: Course[] = [
       'A ~36-minute playbook for CIOs, IT leaders, and change managers — adoption is the challenge, not licensing. Active-user fraction is the metric. The 3-phase pilot/scale/embed pattern with 4 trust trip-wires.',
     longDescription:
       'Microsoft 365 Copilot went GA November 2023 at $30/user/month — for a 5K-person organisation that\'s $1.8M annually. Microsoft\'s Work Trend Index reports ~30% time savings on routine documents. But analyst surveys 2024–25 consistently show only 30–40% of licensed Copilot users become active. The other 60–70% try it, don\'t see value, drift back to old habits. This course is the honest playbook. The thesis: adoption is the challenge, not licensing. The 5 anchor use cases (Word · Excel · PowerPoint · Outlook · Teams) and where the boundary is. Three licensing patterns (universal · manager-tier · opt-in pilot first) and the worked business case. The IT-admin work — tenant isolation, Microsoft Graph permission inheritance, Purview DLP, Defender for Cloud Apps, EU AI Act + HIPAA + DPDPA. The most important chapter — change management — with three moves: champions network, office hours, visible tracking via MS Adoption Score + Viva Insights. When to extend with Copilot Studio (and when not to). Tetlock-calibrated measurement with three numbers. And an interactive builder that produces the rollout plan you take to the CIO. Built for IT leaders, change managers, and CIOs running real rollouts in real organisations.',
-    thumbnail: '/courses/m365-copilot-adoption/thumbnail.png',
+    thumbnail: '/courses/m365-copilot-adoption/thumbnail.webp',
     level: 'Intermediate',
     duration: '~36 min',
     certification: 'No',
@@ -998,7 +998,7 @@ export const courses: Course[] = [
       'A ~36-minute revenue playbook — augment human judgement, don\'t replace it. 6 plays that ship, 3 that disappoint. The disciplined prospecting workflow, two-layer lead scoring, claim register, brand voice anchor, the creepy line, and call AI coaching loop.',
     longDescription:
       'Andy Grove\'s "High Output Management" framing applied to revenue AI: manager output equals the output of the organisation under their influence. AI augments human judgement — it doesn\'t replace it. This course is the honest revenue playbook. The 6 plays that consistently ship value: disciplined prospecting research, two-layer lead scoring (ML predictive + LLM signal extraction), CRM-grounded proposal generation, content production with brand voice anchored, tiered personalisation that stops at the creepy line, and call AI with the 2-2-2 weekly coaching loop. The 3 plays that disappoint — fully automated AI cold outreach (Google + Yahoo bulk-sender rules collapsed the economics in Feb 2024), AI agents that "close" deals without humans, and AI deal-level price optimisation in B2B. The disciplined workflow that doubles response rates against the AI-spam pattern. The GDPR Article 22 boundary on automated decisions. The claim register and legal-review gate that keeps Mata + Air Canada from becoming your collateral. The brand voice anchor with style-guide-as-system-prompt + 2 human edits + quarterly fingerprint audit. Three creepy-line categories you don\'t cross, with consent posture across GDPR, India DPDPA, and CCPA. Call AI with 4 extractions (commitments, blockers, next steps, signals) and the weekly 2-2-2 coaching loop that drops new-rep ramp time 30-50%. Tetlock-calibrated measurement against vendor productivity claims. And an interactive Markdown roadmap builder that produces the document you take to your CRO or VP Marketing.',
-    thumbnail: '/courses/ai-for-sales-marketing/thumbnail.png',
+    thumbnail: '/courses/ai-for-sales-marketing/thumbnail.webp',
     level: 'Intermediate',
     duration: '~36 min',
     certification: 'No',
@@ -1118,7 +1118,7 @@ export const courses: Course[] = [
       'A ~36-minute playbook for CX leaders, support directors, contact centre ops heads. 6 plays, 3 anti-plays, the disciplined assist + scoped-bot stack, 12-week rollout. Grounded in Air Canada Moffatt + NYC MyCity + EU AI Act Article 50.',
     longDescription:
       'For CX leaders, support directors, contact centre operations heads, and the heads of digital who own customer-facing AI. AI for volume. Humans for value. Customer service is the function where AI is most visible to customers — and most visibly disappointing when it goes wrong (Air Canada Moffatt, NYC MyCity, Klarna). Six plays that consistently ship: agent assist as baseline (20-40% productivity gain on routine queries), scoped deflection bots for narrow high-volume queries, multilingual + accessibility support with high-stakes human review, knowledge-base AI with strict grounding (Air Canada Moffatt cross-domain), sentiment-aware escalation with 5 triggers and warm handoff, quality assurance at 100% sampling with the weekly 2-2-2 coaching loop, voice support AI with sub-second latency and disclosure (EU AI Act Article 50). Three anti-plays: full-bot replacement of human support, chatbots without grounding, AI gate-keeping access to humans. Adoption with frontline teams via training + champions + weekly listening. A 12-week rollout with 4 trust trip-wires and an interactive Markdown builder for your VP CX or Chief Customer Officer.',
-    thumbnail: '/courses/ai-for-customer-service-support/thumbnail.png',
+    thumbnail: '/courses/ai-for-customer-service-support/thumbnail.webp',
     level: 'Intermediate',
     duration: '~36 min',
     certification: 'No',
@@ -1196,7 +1196,7 @@ export const courses: Course[] = [
       'A ~36-minute playbook for COOs and supply chain leaders. 6 plays, 3 anti-plays, the AI+OR principle, the data-stable filter, and 4 trust trip-wires. Voice: Andrew.',
     longDescription:
       'For COOs, Chief Supply Chain Officers, VPs of operations, plant-and-network leaders, and demand planning + procurement + logistics + maintenance heads. Operational AI quietly compounds — customers don\'t see it, but every percentage point of working capital, every reduction in stock-out, every gain in efficiency flows straight to the P&L. Six plays that consistently ship: demand forecasting at SKU+location (hierarchical reality + FVA discipline), procurement automation (document AI + supplier matching + contract intelligence with 3-tier human-in-loop), logistics optimisation (the AI+OR principle — AI improves inputs, OR does optimisation), predictive maintenance (sensor + narrative pattern with the safety constraint that AI never eliminates inspection), inventory intelligence (dynamic safety stock + allocation + markdown timing), supplier risk monitoring (5 signal sources + 4-phase response cadence). Three anti-plays: autonomous decisions on high-stakes ops moves, pure ML without operations-research integration, set-and-forget models. The data-stable filter sequences your roadmap. And an 18-month rollout with 4 trust trip-wires + an interactive Markdown builder for your COO conversation.',
-    thumbnail: '/courses/ai-for-operations-supply-chain/thumbnail.png',
+    thumbnail: '/courses/ai-for-operations-supply-chain/thumbnail.webp',
     level: 'Intermediate',
     duration: '~36 min',
     certification: 'No',
@@ -1274,7 +1274,7 @@ export const courses: Course[] = [
       'A ~36-minute playbook for plant managers and VPs of manufacturing. 6 plays, 3 anti-plays, the OT/IT bridge filter, and 4 trust trip-wires. Voice: Emma.',
     longDescription:
       'For plant managers, VPs of manufacturing, plant engineers, quality + maintenance leaders, and operations directors. Manufacturing AI is plant-floor reality, not vendor demo — sensors fail, lighting changes, operators make judgement calls, networks go down. Six plays that consistently ship: predictive maintenance (with sensor coverage decisions + the narrative layer engineers actually act on), quality vision AI (with the operator labelling loop + false-confidence year-2 discipline), process optimisation (AI surfaces, operators decide, with 3 overfitting guards), plant-floor supply chain integration (3 signal flows + 3 re-planning cadences), safety AI as support-not-surveillance (with the charter signed by safety + ops + union before deployment), pragmatic digital twin (6-month bounded scope, ONE specific use case, plant engineers in design). Three anti-plays: autonomous decisions on safety-critical equipment, eighteen-month digital-twin megaprojects, AI without OT system integration. The OT/IT bridge filter sequences your plant. And a 12-month plant roadmap with 4 trust trip-wires + interactive Markdown builder for your plant manager.',
-    thumbnail: '/courses/ai-in-manufacturing/thumbnail.png',
+    thumbnail: '/courses/ai-in-manufacturing/thumbnail.webp',
     level: 'Intermediate',
     duration: '~36 min',
     certification: 'No',
@@ -1352,7 +1352,7 @@ export const courses: Course[] = [
       'A ~30-minute production-readiness course for Power Platform builders. 6 components, 4-question topic framework, 12-item production gate. Voice: Andrew.',
     longDescription:
       'For Power Platform makers, Copilot Studio architects, ITSM leads, and IT teams owning agent estates. Copilot Studio is a stack, not a single product — six components with three architectural decisions made deliberately at the start. The 4-question framework for topic vs generative answers (deterministic · compliance · small known set · frequency) and the topic-explosion anti-pattern most teams hit by their 20th topic. Plugins and connectors at production scale with the 4-component auth model and 3 production failure modes (errors · rate limits · latency variance). Agents and agent flows with state isolation tested under concurrent load before launch. Knowledge sources including SharePoint, files, web, MCP, and Dataverse with the 4-check grounding discipline (RLS · security roles · field-level · cross-role test). Deployment through 3 environments with managed solutions and pipelines that scale. Governance with 3 layers (tenant · environment · per-agent), 5 monitoring signals, and 3 estate-management rhythms. Production-grade design document + 12-item gate (4 architecture · 4 security · 4 operations) + interactive builder.',
-    thumbnail: '/courses/building-ai-agents-copilot-studio/thumbnail.png',
+    thumbnail: '/courses/building-ai-agents-copilot-studio/thumbnail.webp',
     level: 'Intermediate',
     duration: '~30 min',
     certification: 'No',
@@ -1430,7 +1430,7 @@ export const courses: Course[] = [
       'A ~30-minute playbook for AI champions building cases finance will fund. 6-component framework, 7 cost buckets, 5 named risks, 4 CFO questions. Voice: Emma.',
     longDescription:
       'For AI champions, business case authors, transformation leads, function heads making the case for AI investment, and finance partners reviewing AI cases. Most AI business cases fail not because the AI doesn\'t work — but because the case is built wrong (inflated benefits · missing costs · risk treated as zero). The 6-component framework finance respects: problem statement in business terms, benefits with the direct vs indirect discipline and 3-scenario modelling, costs across 7 buckets (licenses · services · internal team time · change management · data prep · infrastructure · ongoing operations), risk register with 5 named AI-specific risks and mitigations, financial metrics (NPV · IRR · payback) chosen deliberately per stakeholder, and a stakeholder map by name. The productivity benefit trap. The year-2 cost surprise. Sensitivity analysis on 3-5 variables. The 4 CFO questions you must be able to answer in 3 minutes. The pre-mortem discipline. The 4-quarter realisation cadence that earns the next case credibility. A 2-week build cadence + 5 trust trip-wires + interactive Markdown design-doc builder.',
-    thumbnail: '/courses/ai-roi-business-case-building/thumbnail.png',
+    thumbnail: '/courses/ai-roi-business-case-building/thumbnail.webp',
     level: 'Intermediate',
     duration: '~30 min',
     certification: 'No',
@@ -1508,7 +1508,7 @@ export const courses: Course[] = [
       'A ~36-minute end-to-end walkthrough — use case selection, Azure OpenAI + Copilot Studio + Dataverse, evaluation, pilot rollout, lessons learned. Voice: Emma.',
     longDescription:
       'For technical leaders, solution architects, IT managers, and HR-tech sponsors who learn best by walking through a real build. A real onboarding copilot for a 5,000-employee enterprise across India, GCC, and SEA — anonymised but structurally honest. The impact × feasibility filter that picked HR onboarding Q&A over the more exciting recruiting AI, and the three use cases the team consciously skipped. Stack Fit Assessment for Azure OpenAI + Copilot Studio + Dataverse with three integration gotchas that only surface at pilot scale. Architecture and grounding with two patterns (policy doc + HRIS data) and row-level security tested cross-role before launch. The conversation flow that shipped (five deterministic topics + generative answers + escalation) and the earlier 50-topic prototype that failed. Eval set built from real HR tickets with the weekly iteration cycle that caught two pre-launch hallucinations. Three-cohort four-week pilot rollout with four kill criteria signed by HR + IT + Legal pre-launch. The week-4-to-8 adoption playbook that sustained usage at 50% past the cliff. Five lessons + four trust trip-wires + interactive build-plan builder.',
-    thumbnail: '/courses/building-an-hr-copilot-case-study/thumbnail.png',
+    thumbnail: '/courses/building-an-hr-copilot-case-study/thumbnail.webp',
     level: 'Intermediate',
     duration: '~36 min',
     certification: 'No',
@@ -1586,7 +1586,7 @@ export const courses: Course[] = [
       'A ~36-minute walk through a real bank multimodal RAG build — Azure AI Search + Vision + GPT-4o, document cracking, MRM submission. Voice: Andrew.',
     longDescription:
       'For technical leaders, ML engineers, and product managers learning by walking through a real bank multimodal RAG build. A real bank that shipped text-only RAG and pivoted to multimodal when chart, table, and scanned annexure queries exposed the gaps. Three text-RAG failure modes (table semantics destroyed, charts invisible, scanned annexures unusable) and four success criteria the business pre-committed to. Stack Fit Assessment for Azure AI Search, Vision, and GPT-4o mapped across a three-stage pipeline. Document cracking discipline for text, tables (small whole / medium row-group / large individual-row), and charts (extract + vision pass + store + inline at query time). Nine-field index schema with embedding choices and chunk-size discipline. Hybrid search tuned for financial vocabulary with three-component (vector + BM25 + semantic ranker) configuration. Three-layer evaluation (retrieval + grounding + answer accuracy) that MRM actually accepts. Five-section MRM submission structure with the five questions regional regulators (RBI, SAMA, EU AI Act) consistently ask. Five lessons + four trust trip-wires + interactive build-plan builder.',
-    thumbnail: '/courses/banking-multimodal-rag-case-study/thumbnail.png',
+    thumbnail: '/courses/banking-multimodal-rag-case-study/thumbnail.webp',
     level: 'Advanced',
     duration: '~36 min',
     certification: 'No',
@@ -1664,7 +1664,7 @@ export const courses: Course[] = [
       'A ~36-minute working session for audit committee chairs and internal audit leaders — the questions that surface real AI risk. Voice: Emma.',
     longDescription:
       'For audit committee chairs, audit committee members, chief audit executives, and internal audit leaders. AI risk doesn\'t fit cleanly into the existing risk universe — most audit committees still treat it as an operational subcategory when it\'s actually four risk types at once. The four buckets AI touches (operational, compliance, strategic, reputational) and the three risks that don\'t map cleanly to legacy buckets (model behaviour drift, bias risk, cognitive offloading at decision boundaries). Inherent vs residual risk applied honestly with the controls-assumed anti-pattern made visible. Mapping AI onto COSO, three-lines, and ISO 31000 with NIST AI Risk Management Framework overlaying the gaps. A 9-question line of inquiry the audit committee can press through — and how to distinguish maturity from rehearsal in the answers. First, second, third-line assurance approaches for AI, with a 12-month internal audit AI plan. A 1-page board view that surfaces real shifts (not heatmap-as-theatre). Cross-committee coordination across audit, risk, technology, and ESG. A one-page playbook + 4 trust trip-wires + interactive playbook builder.',
-    thumbnail: '/courses/ai-risk-for-audit-committees/thumbnail.png',
+    thumbnail: '/courses/ai-risk-for-audit-committees/thumbnail.webp',
     level: 'Intermediate',
     duration: '~36 min',
     certification: 'No',
@@ -1742,7 +1742,7 @@ export const courses: Course[] = [
       'A ~36-minute brief for CIOs balancing AI inside a real technology portfolio — infra, build vs buy, talent, risk, board reporting. Voice: Andrew.',
     longDescription:
       'For CIOs, deputy CIOs, heads of enterprise architecture, and senior IT leaders accountable for AI alongside ERP modernization, cloud migration, cybersecurity, and run-the-bank operations. AI is one workload competing for CIO attention — six decisions that determine whether it stays additive or quietly eats the portfolio. The run-grow-transform allocation with AI integrated explicitly (not bolted on). Infrastructure decisions across hyperscaler, sovereign cloud, on-prem, and hybrid with a 5-criterion test and regional forcing factors. Build vs buy in AI — and the third option (compose) most pitches skip. Talent strategy per capability bucket (data engineering, MLOps, prompt/feature dev, governance) and the SI dependency trap. Operational risks unique to AI (vendor model updates, cost variability, non-deterministic incidents, supply chain) with BCDR for AI services and graceful degradation patterns. A three-metric board reporting structure that holds AI alongside ERP, cloud, and security honestly. A four-rhythm operating cadence with three cross-functional partners. A one-page CIO AI portfolio statement + 4 trust trip-wires + interactive portfolio builder.',
-    thumbnail: '/courses/ai-strategy-for-cio/thumbnail.png',
+    thumbnail: '/courses/ai-strategy-for-cio/thumbnail.webp',
     level: 'Advanced',
     duration: '~36 min',
     certification: 'No',
@@ -1820,7 +1820,7 @@ export const courses: Course[] = [
       'A ~36-minute strategic brief for Chief Data Officers — running AI and data strategy as one portfolio without losing either. Voice: Emma.',
     longDescription:
       'For Chief Data Officers, Chief Data & Analytics Officers, heads of enterprise data, and senior data leaders now also accountable for AI strategy. The CDO mandate doubled when AI landed on top — headcount and budget rarely did. Three boundary fights every CDO is having with the CIO, CTO, and CISO, and three resolution patterns that work (joint charter, defined escalation path, quarterly portfolio review). A "minimum viable data foundation" filter that separates data work that unblocks AI from data work that doesn\'t. A three-pillar RACI for AI governance with the CISO and CRO that holds past month six. Three-horizon allocation across data and AI investment with CFO-defensible framing. Vendor management across MDM/catalog, data platforms, MLOps, and AI platforms — and the 4-vendor trap to avoid. Four board KPIs that survive 12 months of director scrutiny (and four to retire). A three-tier delegation model and four-rhythm operating cadence that keeps the CDO from becoming the bottleneck. A one-page CDO-CIO-CISO joint charter + 4 trust trip-wires + interactive charter builder.',
-    thumbnail: '/courses/ai-strategy-for-cdo/thumbnail.png',
+    thumbnail: '/courses/ai-strategy-for-cdo/thumbnail.webp',
     level: 'Advanced',
     duration: '~36 min',
     certification: 'No',
@@ -1898,7 +1898,7 @@ export const courses: Course[] = [
       'A ~36-minute discipline brief for procurement, VMOs, and IT sourcing — running AI vendors with the same discipline as any other critical supplier. Voice: Andrew.',
     longDescription:
       'For CPOs, vendor management office leads, IT sourcing leaders, category managers for technology, and contracts directors. Every software vendor is selling "AI" — and the job of vendor management is to run all four archetypes (hyperscalers, established ISVs, AI-native boutiques, SI partners) with the same diligence rigor, contract teeth, and exit plan. The three over-promise patterns to scrutinise (ISV thin wrappers, SI bench gap, boutique demo→prod gap). A 12-item AI-specific diligence checklist with five red-flag answers and a three-tier rule that scales diligence without watering it down. Six AI-specific contract clauses standard MSAs miss (data use, sub-processor disclosure, model lineage, performance + drift remedies, IP, exit cooperation) with the training-data trap and regulator-driven extras for BFSI, healthcare, EU AI Act. Performance SLAs across four dimensions with remedies including termination right. Four lock-in tests with realistic mitigations. Five signal sources with four-phase response and three audit rhythms. Pre-written offboarding addressing the three AI-specific exit risks (data deletion proof, model retention, retraining echoes). A one-page playbook + 4 trust trip-wires + interactive playbook builder.',
-    thumbnail: '/courses/ai-vendor-management/thumbnail.png',
+    thumbnail: '/courses/ai-vendor-management/thumbnail.webp',
     level: 'Intermediate',
     duration: '~36 min',
     certification: 'No',
@@ -1976,7 +1976,7 @@ export const courses: Course[] = [
       'A ~36-minute discipline brief for managers and senior ICs — using AI as a decision input without quietly handing over the decision. Voice: Emma.',
     longDescription:
       'For managers, directors, and senior individual contributors who already use AI in their decision workflow and want a disciplined approach to the cognitive risks. AI is a decision input, not the decision — and the better the model gets, the more tempting deference becomes. Three decision modes (AI-as-input, AI-assisted, AI-as-decider) and the drift toward delegation. The cognitive offloading risk grounded in Kahneman\'s System 1 / System 2 framing, with two countermeasures (pre-commitment + periodic AI-free decisions). Three override signals (context the model can\'t see, recency, regional specifics) and the deference trap that hides overrides. The 80/20 verification rule with three categories that need 100% verification (external fact claims, individual-rights decisions, legal disclosure). Team-level decision norms that survive tool churn and turnover. Scenario planning with AI without the false-confidence trap. Quarterly decision audit with model-drift checks. A one-page AI decision charter + 4 trust trip-wires + interactive charter builder.',
-    thumbnail: '/courses/ai-decision-making/thumbnail.png',
+    thumbnail: '/courses/ai-decision-making/thumbnail.webp',
     level: 'Advanced',
     duration: '~36 min',
     certification: 'No',
@@ -2054,7 +2054,7 @@ export const courses: Course[] = [
       'A ~36-minute decision guide for senior engineers and tech directors evaluating or operating open-source LLMs at enterprise scale. Voice: Andrew.',
     longDescription:
       'For senior engineers, ML platform leads, and tech directors evaluating or operating open-source LLMs at scale. Open-source isn\'t free — it\'s a different cost curve. The three real reasons enterprises move to open-source (sovereignty + residency, cost at scale, roadmap control) and three cases where hosted APIs still win (small volume, capability gap, small ops team). Four model families compared (Llama, Mistral, Phi, Qwen) with license traps and the size discipline that resists "bigger is better." Self-hosting paths (Ollama, vLLM, TGI, Azure ML) with practical vLLM sizing and the gap between demo-grade and production-grade. Fine-tuning approaches (LoRA, QLoRA, full fine-tune) and the "try retrieval first" discipline. Five-component TCO with honest breakeven math (real ≈ 20-50M tokens/day) and concurrency reality. Three sovereign deployment tiers and what regulators + CISOs actually accept in India, GCC, US, EU. Operational discipline across upgrades, patches, and observability. A 4-section decision pack + 4 trust trip-wires + interactive decision-pack builder for your steering committee.',
-    thumbnail: '/courses/open-source-llms-for-enterprise/thumbnail.png',
+    thumbnail: '/courses/open-source-llms-for-enterprise/thumbnail.webp',
     level: 'Intermediate',
     duration: '~36 min',
     certification: 'No',
@@ -2132,7 +2132,7 @@ export const courses: Course[] = [
       'A ~36-minute builder\'s tour of Azure AI Foundry. Hub-project-connections, model catalog, identity, evaluation harness, deployment types, cost monitoring, 20-item production-readiness checklist. Voice: Emma.',
     longDescription:
       'For Azure-native engineers, ML platform teams, and solution architects taking LLM workloads from prototype to production on Microsoft\'s stack. Foundry is the consolidation layer on top of Azure AI — three layers (hub, project, connections), model catalog navigation (Azure OpenAI, open-weight, partner, custom fine-tunes), and the migration path from raw Azure OpenAI. Identity discipline that prevents production incidents: managed identity + Key Vault + private endpoints for regulated workloads. Built-in evaluators (groundedness, relevance, coherence, safety) plus 3 custom evaluator patterns. Four deployment types compared (serverless, PTU, managed compute, batch) with three latency rules. Cost monitoring across Azure Monitor, Cost Management, and Foundry dashboards with three alerts that fire before invoice day and three mandated tags. A 20-item production-readiness checklist across security, evaluation, observability, and rollback — with three disqualifiers nobody crosses. Interactive sign-off pack builder for your platform team.',
-    thumbnail: '/courses/azure-ai-foundry-essentials/thumbnail.png',
+    thumbnail: '/courses/azure-ai-foundry-essentials/thumbnail.webp',
     level: 'Intermediate',
     duration: '~36 min',
     certification: 'No',
@@ -2210,7 +2210,7 @@ export const courses: Course[] = [
       'A ~36-minute advanced course for ML and platform engineers. 5 LLM-vs-classical-ML differences, 3 drift types, 4 cost patterns, 60-sec rollback discipline, 4 incident types, the eval-case-it post-mortem. Voice: Andrew.',
     longDescription:
       'For ML engineers, platform engineers, SREs, and on-call leads operating LLM systems in production. LLMs don\'t fail like classical ML — they hallucinate confidently, get silently worse when the vendor updates, cost 10x more when users get clever, and require a different on-call playbook. Five differences between LLMOps and MLOps (non-determinism, generative outputs, third-party black boxes, per-request cost variability, adversarial users) and what carries over (versioning, observability, CI/CD, incident response). Production evaluation with 3-tier sampling (light + targeted + gold), LLM-as-judge done right, and PII discipline for regulated contexts. Drift detection across 3 distinct types (input, output, behavioral) with actionable alerts. Cost optimization with 4 patterns that work and 3 anti-patterns that break things. Versioning prompts + models + evals as one artifact with 60-second rollback. Observability with OpenTelemetry GenAI semantic conventions, MLflow + LangSmith stacks, and A/B testing on traces. 4 incident types (quality, drift, abuse, vendor outage) with 5-question triage and the eval-case-it post-mortem that produces durable regression tests. A 5-section LLMOps runbook + 4 trust trip-wires + interactive runbook builder for your platform team.',
-    thumbnail: '/courses/mlops-for-llms/thumbnail.png',
+    thumbnail: '/courses/mlops-for-llms/thumbnail.webp',
     level: 'Advanced',
     duration: '~36 min',
     certification: 'No',
@@ -2288,7 +2288,7 @@ export const courses: Course[] = [
       'A ~36-minute engineer\'s tour of retrieval-augmented generation. Embeddings, vector stores, hybrid search, re-ranking, evaluation, 6 failure modes, 5-component production architecture. Voice: Emma.',
     longDescription:
       'For backend engineers, ML engineers, applied scientists, and AI architects building retrieval-augmented systems. RAG looks simple in the diagram and brutal in production — retrieval quality drives 80% of system quality, and is exactly what most teams under-invest in. When RAG fits (large/changing knowledge base, citations required, long-tail facts) and the 3 cases when it\'s the wrong architecture (structural transformation, reasoning over the prompt, knowledge fits in context). Embeddings — what they encode well (topic, paraphrase, semantic relations) and miss (IDs, negation, numerics, recency). 4 vector stores compared (pgvector, Pinecone, Azure AI Search, Weaviate) with a scale guide. Hybrid search (BM25 + vector + semantic ranking) with RRF/weighted/cascade fusion. 3 re-ranker types with the cost-quality curve. Evaluation in two distinct layers (retrieval vs answer) using RAGAS metrics. 6 production failure modes with targeted fixes (chunking, query rewriting, OOD threshold, context overflow, metadata filtering, stale knowledge). And a 5-component production architecture with 4 trust trip-wires + interactive architecture-decision-record builder.',
-    thumbnail: '/courses/rag-architectures-foundations/thumbnail.png',
+    thumbnail: '/courses/rag-architectures-foundations/thumbnail.webp',
     level: 'Intermediate',
     duration: '~36 min',
     certification: 'No',
@@ -2366,7 +2366,7 @@ export const courses: Course[] = [
       'A ~30-minute playbook for school + higher-ed leaders. 6 plays, 3 anti-plays, the pedagogy-first filter, FERPA/COPPA/GDPR posture. Voice: Andrew.',
     longDescription:
       'For superintendents, heads of school, provosts, deans, curriculum directors, IT and academic affairs leaders, and the teachers + faculty who own AI deployment at the classroom level. AI in education succeeds when it augments teachers and supports learners — not when it replaces either. Six plays that ship: AI literacy as a discipline (4 components · age-appropriate sequencing from elementary through higher ed), AI tutoring + writing partner (with the supplement-not-substitute discipline), AI for educators (4 use cases that return time to teaching + the grading line), academic integrity in the AI era (3 pillars + 3-tier disclosure model · why detection-only fails), equity + access (3 benefits + 3 risks · the two-direction reality), privacy + safety (FERPA · COPPA · GDPR/DPDPA · 3 contract essentials · child-safety guardrails). Three anti-plays: AI replacing teachers, surveillance-heavy AI, autonomous high-stakes grading. The pedagogy-first filter sequences your school or institution. A 12-month rollout with 4 trust trip-wires + interactive Markdown builder for your superintendent · head of school · provost · dean.',
-    thumbnail: '/courses/ai-in-education/thumbnail.png',
+    thumbnail: '/courses/ai-in-education/thumbnail.webp',
     level: 'Intermediate',
     duration: '~30 min',
     certification: 'No',
@@ -2441,7 +2441,7 @@ export const courses: Course[] = [
       'A 40-minute foundations course for HR, Marketing, Sales, and Ops — no code, no jargon, just where AI actually helps your day-to-day.',
     longDescription:
       'For individual contributors and managers in non-technical functions who are being asked to use AI in their day-to-day. Six chapters: distinguishing rules-based, machine learning, and generative AI in plain English; prompting as a learnable skill (Goal · Context · Source · Expectations); where AI helps you specifically by function; the risks every non-technical user should know — with real named cases (Air Canada, iTutorGroup, Samsung); ten prompts to try this week; and a one-page week-one plan. No capstone. The whole course is built around what you can actually do at your desk on Monday.',
-    thumbnail: '/courses/ai-literacy-non-technical-teams/thumbnail.png',
+    thumbnail: '/courses/ai-literacy-non-technical-teams/thumbnail.webp',
     level: 'Foundational',
     duration: '~40 min',
     certification: 'No',
@@ -2541,7 +2541,7 @@ export const courses: Course[] = [
       'A 55-minute deep dive for power users and developers — structured outputs, chain-of-thought, few-shot, evaluation, and the prompt-library habits that compound.',
     longDescription:
       'For analysts, developers, and senior individual contributors who already use ChatGPT, Claude, or Copilot every day and want to move from ad-hoc prompts to repeatable, evaluable patterns. Eight chapters: principles that separate amateur from professional prompts; reliable JSON via structured outputs; chain-of-thought where it earns its keep; few-shot patterns that generalise; eval-driven iteration instead of vibe-checking; library structure, ownership, and versioning; the adversarial / prompt-injection chapter with real 2025 CVEs (EchoLeak, CamoLeak, Slack AI); and the close — the four things that decide whether the library lives past month three.',
-    thumbnail: '/courses/prompting-mastery/thumbnail.png',
+    thumbnail: '/courses/prompting-mastery/thumbnail.webp',
     level: 'Intermediate',
     duration: '~55 min',
     certification: 'No',
@@ -2665,7 +2665,7 @@ export const courses: Course[] = [
       'A 50-minute practical guide for professionals already using M365 Copilot, GitHub Copilot, or ChatGPT Enterprise — when to lean in, when to skip it.',
     longDescription:
       'For analysts, managers, and individual contributors already issued M365 Copilot, GitHub Copilot, or ChatGPT Enterprise. Seven chapters: the three-layer mental model (chat / grounded / agentic); the time-to-decent-draft test for when to use Copilot at all; the four Office workflows (Word, Excel, Outlook, Teams) plus the wrong-file trap; GitHub Copilot for non-developers (spreadsheets, regex, scripts); the three things ChatGPT Enterprise does that M365 Copilot can\'t (deep research, Operator agents, Canvas); security and data-exposure boundaries with Microsoft\'s own quotes on Restricted SharePoint Search and the EU Data Boundary gotcha; and the close — your one-page operating manual with 5 always-use tasks, 3 nevers, and the Friday review.',
-    thumbnail: '/courses/working-with-copilots/thumbnail.png',
+    thumbnail: '/courses/working-with-copilots/thumbnail.webp',
     level: 'Intermediate',
     duration: '~50 min',
     certification: 'No',
@@ -2777,7 +2777,7 @@ export const courses: Course[] = [
       'A 45-minute discipline for professionals reviewing AI-generated work — spotting hallucinations, checking sources, building a verification habit.',
     longDescription:
       'For ICs and managers reviewing AI-generated work — their own, their team\'s, or a vendor\'s. Seven chapters: the fluency illusion (Microsoft FAccT 2024, Anthropic sycophancy, Stanford HAI 2026); accuracy vs. usefulness as separate tests; three hallucination patterns (confident fabrication, plausible detail, stale fact) anchored in NIST AI 600-1 and the Vectara HHEM leaderboard; citation evaluation with the Mata v. Avianca anchor, 1,353+ court cases, Sixth Circuit $30K sanctions, and Deloitte Australia\'s AU$290K refund; demographic and regional bias with named cases (Bloomberg study, EEOC iTutorGroup, Workday Mobley class action); the verification habit grounded in Lally\'s 66-day study and BJ Fogg\'s B=MAP formula; and the close — your one-page verification playbook with three never-skip checks, one escalation rule, and the Friday review.',
-    thumbnail: '/courses/evaluating-ai-output/thumbnail.png',
+    thumbnail: '/courses/evaluating-ai-output/thumbnail.webp',
     level: 'Intermediate',
     duration: '~45 min',
     certification: 'No',
@@ -2889,7 +2889,7 @@ export const courses: Course[] = [
       'A 55-minute intermediate course for recruiters and TA leaders — sourcing, screening, interviewing, offer — with EEOC and EU AI Act guardrails baked in.',
     longDescription:
       'For recruiters, TA leaders, and HR ops past basic AI literacy. Eight chapters across the full hiring funnel: intent-based sourcing automation (LinkedIn Hiring Assistant, hireEZ, Findem); resume screening with the four bias mitigations (blind data, calibrated thresholds, audit logs, human override) anchored in Bloomberg + Wilson & Caliskan; structured-interview AI grounded in Sackett 2022; candidate experience copilots with the three-sentence disclosure pattern; offer + onboarding AI with comp guardrails and the surveillance line; workforce planning AI with the historical-data trap; compliance posture across the 2026 quadrant (US federal Mobley v. Workday vendor-as-agent doctrine, US state laws, EU AI Act Art. 26 from Aug 2026, India DPDP); and the close — a two-quarter rollout playbook the CHRO will sign off on.',
-    thumbnail: '/courses/recruiting-ai-in-practice/thumbnail.png',
+    thumbnail: '/courses/recruiting-ai-in-practice/thumbnail.webp',
     level: 'Intermediate',
     duration: '~55 min',
     certification: 'No',
@@ -3013,7 +3013,7 @@ export const courses: Course[] = [
       'A ~40-minute course for RevOps leaders — forecasting, pipeline hygiene, territory scoring, narratives, data, comp, tooling, two-quarter rollout — grounded in 2025–26 vendor evidence.',
     longDescription:
       'For RevOps leaders, Sales Ops, and CROs past basic AI literacy. Eight chapters across the full revenue operations surface: forecasting with prediction intervals (Salesforce State of Sales 2026 87% adoption, Microsoft Sales Agent 10% more meetings + 1.7 hrs/week, three failure patterns); pipeline hygiene with the 5 nudge-design rules (Salesforce Pipeline Inspection scoring 1-99, ZoomInfo +14pt close-rate + 11.5 hrs/week, Gartner "<40% of sellers will report AI improved productivity by 2028"); territory + account signal scoring (6sense Rithum 3× adoption + 58% of opps + 37% higher AOV, grandfather in-flight deals); analytics narratives with the click-or-cut rule (HBR workslop 41% / $9M/year, Air Canada CA$812 precedent, Einstein grounding); GTM data cleanup (continuous loop, identity resolution, $12.9M/year cost, 22.5-30% B2B decay); comp modelling (CaptivateIQ Catalyst Aug 2025, Xactly Incent AI Dec 2025, Larkin HBS gaming risk, 3 stress tests); tooling stack decisions (Gartner MQ 2025 Salesforce/Microsoft/Oracle, M365 Copilot $30 + Copilot for Sales $50, the 3-question framework, 150K agents-by-2028 sprawl warning); and the close — a two-quarter rollout playbook with a 3-use-case builder and a data quality bar your CRO and CDO both sign off on.',
-    thumbnail: '/courses/revops-automation-with-ai/thumbnail.png',
+    thumbnail: '/courses/revops-automation-with-ai/thumbnail.webp',
     level: 'Intermediate',
     duration: '~40 min',
     certification: 'No',
@@ -3137,7 +3137,7 @@ export const courses: Course[] = [
       'A ~40-minute course for CS leaders, Support Ops, and CX Ops — containment math, knowledge grounding, escalation triggers, conversational design, voice, quality monitoring, 2-quarter rollout. Grounded in 2024–26 cases.',
     longDescription:
       'For CS leaders and CX Ops past basic AI literacy. Eight chapters across the support-bot surface: the CS AI landscape (Zendesk CX Trends 2026 84% strategic priority, Klarna up-then-down, Salesforce Agentforce 36% F100); containment vs deflection vs resolution math (McKinsey cost stack $9–14 human vs $1.50–3 autonomous); knowledge grounding (Air Canada Moffatt precedent, NYC MyCity, McKinsey 1-in-12 vs 1-in-200+ with retrieval); the 5 escalation triggers (Gallup CSAT-decline #1 reason, Chevy Tahoe $1, warm-handoff design); conversational design + disclosure (EU AI Act Art. 50 Aug 2 2026, Pew 70% prefer disclosure, DPD haiku, 6 design rules + 3-sentence pattern); voice support AI (Talkdesk 25% inbound, Cognigy 250+ F2000, assist vs autonomous architectures, <900ms latency); quality monitoring (Forrester #3 failure, Salesforce 27-point gap, 5 metrics + shadow QA); and the close — 2-quarter rollout playbook with interactive builder, 4 trust trip-wires, and the through-line: AI for volume, humans for value.',
-    thumbnail: '/courses/building-trusted-support-bots/thumbnail.png',
+    thumbnail: '/courses/building-trusted-support-bots/thumbnail.webp',
     level: 'Intermediate',
     duration: '~40 min',
     certification: 'No',
@@ -3261,7 +3261,7 @@ export const courses: Course[] = [
       'A ~37-minute course for GCs, legal ops, compliance officers, DPOs — landscape, hallucination tax, contract review, DPIA/FRIA, 4-jurisdiction posture, privilege, quality framework, 2-quarter rollout.',
     longDescription:
       'For GCs, legal ops, compliance officers, and DPOs past basic AI literacy. Eight chapters across the legal-AI surface: the landscape (TR 79% adoption, Harvey + Spellbook + CoCounsel + Vincent, BigLaw 25–40% time savings, Vals 80%+ accuracy); the hallucination tax (Mata v. Avianca, Park v. Kim, Iovino, Charlotin\'s 100+ tracker, Stanford 17–34%); contract review done right (extract · compare · redline · 4-step workflow); privacy and DPIA reviews (GDPR Art. 35, EU AI Act Art. 27 FRIA from Aug 2 2026, India DPDPA, propose-and-confirm); the 4-jurisdiction compliance posture (EU AI Act Annex III + Art. 26 + Art. 99, US states, India DPDPA, ABA Op. 512 + Res. 604); privilege and confidentiality (NY Bar Op. 1239, 3 vendor settings, the junior-associate-at-home failure mode); the quality framework (4 operational guardrails — citation verification, human-in-the-loop, audit trail, quarterly accuracy review); and the close — 2-quarter rollout playbook with interactive builder, 4 trust trip-wires, and the through-line: the lawyer is accountable, the firm is accountable, the tool is just the tool.',
-    thumbnail: '/courses/ai-for-legal-compliance/thumbnail.png',
+    thumbnail: '/courses/ai-for-legal-compliance/thumbnail.webp',
     level: 'Intermediate',
     duration: '~37 min',
     certification: 'No',
@@ -3336,7 +3336,7 @@ export const courses: Course[] = [
       'A ~35-minute course for controllers, FP&A heads, CFOs — variance narratives, accrual proposals, reconciliation copilots, JE AI, SOX audit trail, quality framework, 2-quarter rollout.',
     longDescription:
       'For controllers, finance ops leaders, FP&A heads, CFOs past basic AI literacy. Eight chapters across the close-cycle surface: the close landscape (Gartner Q4 2025 67% adoption / 39% in close, KPMG 1.4-day median reduction, Hackett $0.85 → $0.55 per $1K revenue, Vic.ai/BlackLine/Trintech/FloQast/Copilot for Finance); variance narratives (KPMG 50–70% time savings, WSJ Aug 2025 confabulated-clause case, quote-or-cut rule); accrual proposals (85–92% accuracy on routine accruals, materiality threshold filter, judgement-accruals stay manual); reconciliation copilots (BlackLine/Trintech 35–50% manual hours saved, auto-clear threshold, exception flow); journal-entry AI (Big-4 acceptance condition: traceable source + human approves + audit trail, drafter/preparer/reviewer/approver quad-eye, SOX 404); SOX-friendly audit trail (3 controls: input control, output review, AI tool documentation, PCAOB QC 1000, IAASB ISA 220, EY 78% CFO concern); the quality framework (quad-eye principle, materiality threshold, quarterly accuracy review, Deloitte ACP 62% want disclosure); and the close — 2-quarter rollout playbook with interactive builder, 4 trust trip-wires, and the through-line: AI works with the controls, not around them.',
-    thumbnail: '/courses/ai-augmented-month-end-close/thumbnail.png',
+    thumbnail: '/courses/ai-augmented-month-end-close/thumbnail.webp',
     level: 'Intermediate',
     duration: '~35 min',
     certification: 'No',
@@ -3411,7 +3411,7 @@ export const courses: Course[] = [
       'A ~35-minute course for CSCOs, S&OP heads, demand planners — landscape, accuracy and the MAPE trap, model choice, demand sensing, promo uplifts, NPI, S&OP integration, 2-quarter rollout.',
     longDescription:
       'For CSCOs, S&OP heads, demand planners, operations directors past basic AI literacy. Eight chapters across the demand-forecasting surface: the forecasting landscape (Gartner 78% adoption / 41% measurable lift, McKinsey 15–30% MAPE reduction / top-decile 30–50%, M5 LightGBM domination, Hyndman canonical reference, Tetlock calibration > confidence); accuracy and the MAPE trap (APICS +5–12% structural bias, MAPE asymmetry, sMAPE/MASE/RMSSE alternatives, M5 used RMSSE, APICS $0.5–1.5M per percentage point); choosing the right model (3-variable decision tree — history × signal × granularity, LightGBM granular, classical aggregated, Croston intermittent, ensemble options); demand sensing (Blue Yonder + o9, POS/weather/social signals, 5–15% lift on 4-week horizon, confidence-weighted overrides, noise-chasing risk); promotional uplifts (Coca-Cola/Unilever/Carrefour 20–40% improvement, 3-component pattern, calendar drift failure mode); NPI (P&G McKinsey case 2024, analog-product lookup + first 4-week signal, judgement layer); S&OP integration (SCC 38% gap, FVA analysis, LokadTech LLM hallucination case, quote-or-cut narrative); and the close — 2-quarter rollout playbook with interactive builder, 4 trust trip-wires, through-line: planners with ML beat planners without it, planners plus ML still beats ML alone, calibration matters more than confidence.',
-    thumbnail: '/courses/demand-forecasting-in-practice/thumbnail.png',
+    thumbnail: '/courses/demand-forecasting-in-practice/thumbnail.webp',
     level: 'Intermediate',
     duration: '~35 min',
     certification: 'No',
@@ -3489,7 +3489,7 @@ export const courses: Course[] = [
       'A ~36-minute strategic diagnostic for CIOs, transformation heads, CDOs, and executive sponsors. 5 readiness dimensions, 12-question diagnostic, 3 maturity bands. Calibration over confidence.',
     longDescription:
       'For CIOs, transformation leaders, chief data officers, and executive sponsors who own AI as a portfolio. The Tetlock-calibrated alternative to green-dashboard AI readiness assessments. Five readiness dimensions scored independently — data, talent, governance, infrastructure, leadership commitment. Three failure modes per dimension explained from real enterprise patterns. A 12-question diagnostic with three honest scoring rules — specifically not aspirationally, anchored on evidence, accept that most dimensions will be amber or red. Three administration patterns: self, committee, external. Three result bands — operationalising (5+ greens), building (mostly amber, the most common 2026 band), foundations (multiple reds). A different rollout roadmap for each band. Four trust trip-wires: green dashboards without evidence, sponsorship without budget, pilots-permanent-pilots loops, governance as afterthought. Grounded in NIST AI RMF 1.0, EU AI Act 2024/1689, ISO/IEC 42001:2023, McKinsey "State of AI" patterns, and Tetlock\'s calibration framework. Closes with an interactive Markdown roadmap builder you take to your CEO or board.',
-    thumbnail: '/courses/ai-readiness-assessment-deep-dive/thumbnail.png',
+    thumbnail: '/courses/ai-readiness-assessment-deep-dive/thumbnail.webp',
     level: 'Advanced',
     duration: '~36 min',
     certification: 'No',
@@ -3567,7 +3567,7 @@ export const courses: Course[] = [
       'A ~36-minute foundations course for CDOs, data platform leaders, architects — most AI projects fail at the data step. 5 pillars, data product pattern, data contracts, vendor reality, 18-month roadmap.',
     longDescription:
       'For chief data officers, data platform leaders, and architects making the platform decisions today that will define AI capability for the next five years. The honest version: most AI projects fail at the data step — not the model step. Five pillars of data foundations — quality, lineage, governance, privacy, platform pattern. Three anti-patterns named explicitly so budget redirects — buying a platform without fixing data, ocean-boiling cleanup projects, a data team disconnected from business. The DAMA-DMBOK quality framework. Three lineage layers (source-to-sink, transformation, semantic) with the EU AI Act Article 15, NIST AI RMF measure function, and GDPR Article 30 traceability expectations. Multi-jurisdiction governance (GDPR + DPDPA + CCPA + PIPL). Three privacy techniques (masking, tokenisation, differential privacy) matched to four use scenarios. The lakehouse + federated-with-central-platform architecture pattern. Data products as the most important shift of the last few years. Data contracts as the reliability layer. Vendor consolidation reality. Three-phase 18-month rollout with four trust trip-wires. Interactive Markdown roadmap builder.',
-    thumbnail: '/courses/enterprise-data-foundations-for-ai/thumbnail.png',
+    thumbnail: '/courses/enterprise-data-foundations-for-ai/thumbnail.webp',
     level: 'Advanced',
     duration: '~36 min',
     certification: 'No',
@@ -3645,7 +3645,7 @@ export const courses: Course[] = [
       'A ~36-minute delivery playbook for AI program leaders, transformation directors, PMO heads. Portfolio shape, stage-gating, vendor mgmt, model lifecycle, ops handoff, team design, 90-day bootstrap.',
     longDescription:
       'For AI program leaders, transformation directors, and PMO heads who own delivery across an AI portfolio. Most enterprise AI fails at delivery — not technology. The PMO is what changes that curve. Make AI a portfolio you manage, not pilots you accumulate. The pyramid pattern of healthy portfolio shape — 10-15 pilots, 3-5 scaled, 1-2 embedded — vs the inverted funnel most enterprises have. Stage-gating discipline with explicit kill criteria and 60-80% pilot-to-scale kill rates. Vendor management for AI with the 4 contract pillars — training data rights, model update transparency, sunset rights, liability allocation. Model lifecycle management with 4 retraining triggers and a single source-of-truth registry. The ops handoff pattern with 4 artifacts (runbook, model card, dashboard, escalation tree) and a deliberate shadow period. PMO team design with 5 roles and honest sizing (50 initiatives = 6-10 people, not 1). A 90-day bootstrap roadmap with 4 trust trip-wires and an interactive Markdown builder for your CIO or transformation director.',
-    thumbnail: '/courses/ai-program-management-pmo/thumbnail.png',
+    thumbnail: '/courses/ai-program-management-pmo/thumbnail.webp',
     level: 'Advanced',
     duration: '~36 min',
     certification: 'No',
@@ -3723,7 +3723,7 @@ export const courses: Course[] = [
       'A ~36-minute talent playbook for CHROs, talent heads, CIOs co-owning AI capability. 3 segments, build/buy/borrow, 5 core roles, hiring/retention patterns, fluency build, org design, 12-month roadmap.',
     longDescription:
       'For CHROs, heads of talent, and CIOs/CTOs co-owning AI capability-building. AI talent is the bottleneck — not the technology. The technology is broadly accessible. The talent to apply it to real business problems, ship it safely, and operate it for years is genuinely scarce, and scarcity is asymmetric. Three segments of AI talent (senior specialist, applied practitioner, AI-augmented domain professional) with different markets, different economics, different leverage. The build/buy/borrow framework matched to capability and timeline. Five core AI roles with three emerging ones. Hiring patterns that work in a tight market — convert internals, hire at senior not principal, hire from adjacent fields. Three evaluation principles. Four retention drivers in priority order (interesting work + resources > comp). The 3-12 month flight-risk window. The AI fluency build as 5-10x leverage move vs hiring. Hub-and-spoke org design for orgs above 500 people. A 12-month rollout roadmap with 4 trust trip-wires and an interactive Markdown builder for your CHRO or CEO.',
-    thumbnail: '/courses/ai-talent-strategy/thumbnail.png',
+    thumbnail: '/courses/ai-talent-strategy/thumbnail.webp',
     level: 'Advanced',
     duration: '~36 min',
     certification: 'No',
@@ -3801,7 +3801,7 @@ export const courses: Course[] = [
       'A ~36-minute regulator-aware playbook for utility execs, grid operators, generation planners, digital transformation heads. 5 plays, operator-in-the-loop, OT+IT+AI cyber, 18-month roadmap.',
     longDescription:
       'For utility executives, grid operators, generation planners, and heads of digital transformation in energy companies. AI must augment operational reliability, not threaten it — grid stability and human safety are not negotiable. This is different from most enterprise AI. In retail, AI getting it wrong loses a sale. In utilities, AI getting it wrong can blackout a city or kill a worker. Five high-value plays: demand forecasting (most mature, modern ML adds 5-15% accuracy lift), grid management (operator-in-the-loop is non-negotiable), generation optimisation for renewables, predictive maintenance for T+D assets, and customer operations with the bright-line that AI never makes autonomous disconnection decisions. The OT-IT-AI cybersecurity layer with 4 attack vectors (data poisoning, model evasion, exfiltration, supply chain) and 3 defensive patterns. The regulatory frame across NERC, FERC, PUC, EU AI Act Annex III (energy = critical infrastructure), and the Network Code on Cybersecurity. An 18-month rollout roadmap with 4 trust trip-wires and an interactive Markdown builder for your CIO, COO, or board.',
-    thumbnail: '/courses/ai-for-energy-utilities/thumbnail.png',
+    thumbnail: '/courses/ai-for-energy-utilities/thumbnail.webp',
     level: 'Advanced',
     duration: '~36 min',
     certification: 'No',
@@ -3879,7 +3879,7 @@ export const courses: Course[] = [
       'A ~36-minute playbook for retail CEOs, CDOs, eCom GMs, merchandising + pricing + CX heads. 5 plays, 3 anti-plays, the creepy line, guardrail discipline, 12-month roadmap.',
     longDescription:
       'For retail CEOs, CDOs, eCommerce GMs, and the heads of merchandising, pricing, and customer experience. AI scales fast in retail but breaks brand fast. The data is plentiful, the use cases are obvious, the temptation to over-personalise and over-automate is real — and brand integrity, customer trust, and fair pricing are the lines that don\'t move. Five plays that consistently ship value: merchandising and assortment, pricing within guardrails, personalisation with the creepy line drawn, fulfilment and inventory (the most reliable retail AI ROI), returns and fraud. Three anti-plays named explicitly: fully automated dynamic pricing without guardrails, surveillance-level personalisation, AI-only customer service. The SKU-store forecasting reality (<20% MAPE is top-quartile, 30-40% is common). The personalised pricing trap. Three personalisation tiers with the creepy line in three categories. Brand-voice protection with style-guide-as-system-prompt and quarterly fingerprint audit. EU AI Act Article 50 disclosure. The experimentation discipline. A 12-month roadmap with 4 trust trip-wires and an interactive Markdown builder.',
-    thumbnail: '/courses/ai-for-retail-ecommerce/thumbnail.png',
+    thumbnail: '/courses/ai-for-retail-ecommerce/thumbnail.webp',
     level: 'Intermediate',
     duration: '~36 min',
     certification: 'No',
@@ -3957,7 +3957,7 @@ export const courses: Course[] = [
       'A ~36-minute SOC playbook for CISOs, SOC directors, detection engineering leads. 5 plays, 3 anti-plays, human-in-the-loop principle, AI\'s own attack surface, 12-month roadmap.',
     longDescription:
       'For CISOs, SOC directors, security operations leaders, and heads of detection engineering. AI in cybersecurity is an analyst force multiplier — not an analyst replacement. The best SOCs in 2026 use AI to compress repetitive work so analysts focus on actual investigation. The worst chase an analyst-free future and get breached when novel threats appear that the AI has never seen. Five high-value plays: alert triage and noise reduction (biggest pain point in most SOCs), threat detection augmentation (UEBA + LLM-augmented analysis), incident investigation assistance with explicit human-in-the-loop, threat intelligence synthesis with verification discipline, and security automation with limited autonomous response. Three anti-plays. The Mata v. Avianca cross-domain applied to AI threat intel. The verification requirement on AI-generated attribution. AI\'s own attack surface — 4 attack vectors (model evasion, prompt injection, training data poisoning, model exfiltration) with 4 defensive patterns. The discipline of defence in depth even with AI. A 12-month roadmap with 4 trust trip-wires and an interactive Markdown builder for your CISO. Grounded in NIST Cybersecurity Framework v2, MITRE ATT&CK, ISO 27001.',
-    thumbnail: '/courses/ai-for-cybersecurity-soc/thumbnail.png',
+    thumbnail: '/courses/ai-for-cybersecurity-soc/thumbnail.webp',
     level: 'Advanced',
     duration: '~36 min',
     certification: 'No',
@@ -4035,7 +4035,7 @@ export const courses: Course[] = [
       'A ~36-minute playbook for agency heads, government CIOs, Chief AI Officers. Citizens are not customers. 5 plays, 3 fail patterns, OMB M-24-10 + EU AI Act + UK ATRS + India DPDPA frame.',
     longDescription:
       'For agency heads, government CIOs, Chief AI Officers in public-sector roles, and the leaders running citizen-facing service modernisation. In government, AI must serve the public — and be accountable to it. Citizens are not customers. They cannot easily switch suppliers, exit the relationship, or refuse the service. That changes everything. Accountability, transparency, due process, and equal treatment are not optional — they are the constraint within which government AI operates. Five plays that consistently ship value: service delivery automation, case work augmentation, fraud detection (with bias-audit discipline), intelligent search across government records, and translation and accessibility. Three patterns that fail: algorithmic decisions affecting rights without human review, chatbots representing the government without verification, opaque AI in high-stakes contexts. The disclosure discipline, the escalation path requirement, the case-worker decision boundary, the bias risk in fraud detection, source verification from Mata v. Avianca cross-domain. Public AI inventory, impact assessments, appeal pathways, named accountability. Four trust trip-wires and an interactive Markdown builder for your agency head or Chief AI Officer. Grounded in OMB M-24-10, EU AI Act Annex III, UK ATRS, India DPDPA.',
-    thumbnail: '/courses/ai-for-public-sector/thumbnail.png',
+    thumbnail: '/courses/ai-for-public-sector/thumbnail.webp',
     level: 'Advanced',
     duration: '~36 min',
     certification: 'No',
@@ -4113,7 +4113,7 @@ export const courses: Course[] = [
       'A ~36-minute playbook for biopharma execs, R&D heads, clinical ops + regulatory affairs leaders. 5 plays within GxP guardrails. Grounded in FDA GMLP + EMA AI reflection + ICH + 21 CFR Part 11.',
     longDescription:
       'For biopharma executives, heads of R&D, clinical operations leaders, regulatory affairs heads, and chief digital officers in life sciences. AI accelerates discovery and operations — within the GxP guardrails. Patient safety, data integrity, and regulatory accountability are non-negotiable. This is different from clinical AI in hospital settings: pharma AI lives in research, development, regulatory submissions, manufacturing, and post-market surveillance, each heavily regulated. Five high-value plays: drug discovery (with the disappointment pattern honestly named), clinical trial operations within Good Clinical Practice, regulatory submission preparation with strict citation discipline (Mata v. Avianca cross-domain), pharmacovigilance and real-world evidence with medical review preserved, commercial and medical affairs through MLR compliance. The validation, audit, and GxP-fit discipline that makes everything defensible — 4 components (intended use, performance, risk, change control) and the audit-readiness expectation. An 18-month rollout with 4 trust trip-wires and an interactive Markdown builder. Grounded in FDA Good Machine Learning Practice (2021), Action Plan for AI/ML SaMD, 2025 AI in drug development draft, 21 CFR Part 11, EMA AI reflection paper, ICH guidelines, and GxP standards.',
-    thumbnail: '/courses/ai-in-pharma-life-sciences/thumbnail.png',
+    thumbnail: '/courses/ai-in-pharma-life-sciences/thumbnail.webp',
     level: 'Advanced',
     duration: '~36 min',
     certification: 'No',
@@ -4191,7 +4191,7 @@ export const courses: Course[] = [
       'A ~36-minute playbook for AI PMs, heads of product, engineering leaders. 5 capabilities (JTBD · eval harnesses · telemetry · guardrails · honest communication). 3 anti-patterns. 12-month roadmap.',
     longDescription:
       'For product managers, heads of product, and engineering leaders building AI features into products customers actually use. AI products are evaluated like products — not like models. Users do not care about model accuracy in the abstract; they care whether the product works for their job in their context. Five capabilities every AI PM needs: framing the AI job-to-be-done, designing with eval harnesses, designing with telemetry, building guardrails, communicating honestly to customers. Three anti-patterns: chasing benchmarks over user outcomes, shipping AI without eval and telemetry, pushing AI on every feature. The 3-part frame (user job, success criterion, failure modes). The acceptance rate metric — single most useful AI product metric. The 3 eval categories and 4 case types. The 4 telemetry signals with privacy frame. Refusal as feature. Adversarial testing required. The unit economics problem (inference is not free). Honest communication that builds trust (Air Canada Moffatt cross-domain). 5 core roles, the operating cadence (weekly/monthly/quarterly), customer feedback loop. 12-month roadmap with 4 trust trip-wires and an interactive Markdown builder for your head of product or CPO.',
-    thumbnail: '/courses/ai-product-management/thumbnail.png',
+    thumbnail: '/courses/ai-product-management/thumbnail.webp',
     level: 'Intermediate',
     duration: '~36 min',
     certification: 'No',
