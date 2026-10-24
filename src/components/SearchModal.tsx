@@ -12,6 +12,8 @@ import {
 } from '@/lib/search-index'
 
 
+interface LessonHit { courseTitle: string; lessonTitle: string; href: string; snippet: string }
+
 const fuseOptions: IFuseOptions<SearchablePage> = {
   keys: [
     { name: 'title', weight: 0.4 },
@@ -31,6 +33,7 @@ export default function SearchModal({ open, onClose }: { open: boolean; onClose:
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
+  const [lessons, setLessons] = useState<LessonHit[]>([])
 
   const fuse = useMemo(() => new Fuse(searchablePages, fuseOptions), [])
 
@@ -42,7 +45,9 @@ export default function SearchModal({ open, onClose }: { open: boolean; onClose:
     .map(cat => ({ category: cat, items: filtered.filter(p => p.category === cat) }))
     .filter(g => g.items.length > 0)
 
-  const flatItems = grouped.flatMap(g => g.items)
+  const pageItems = grouped.flatMap(g => g.items)
+  const lessonItems = query.trim().length >= 3 ? lessons : []
+  const flatItems: Array<{ href: string }> = [...pageItems, ...lessonItems]
 
   const navigate = useCallback((href: string) => {
     onClose()
@@ -61,6 +66,20 @@ export default function SearchModal({ open, onClose }: { open: boolean; onClose:
   useEffect(() => {
     setSelectedIndex(0)
   }, [query])
+
+  // Lessons from the course content, once typing pauses. A failure just means no Lessons section.
+  useEffect(() => {
+    const term = query.trim()
+    if (!open || term.length < 3) { setLessons([]); return }
+    const ctl = new AbortController()
+    const timer = setTimeout(() => {
+      fetch(`/api/search/lessons?q=${encodeURIComponent(term)}`, { signal: ctl.signal })
+        .then(r => (r.ok ? r.json() : { lessons: [] }))
+        .then(d => setLessons(Array.isArray(d.lessons) ? d.lessons : []))
+        .catch(() => {})
+    }, 350)
+    return () => { clearTimeout(timer); ctl.abort() }
+  }, [query, open])
 
   useEffect(() => {
     if (!open) return
@@ -129,7 +148,7 @@ export default function SearchModal({ open, onClose }: { open: boolean; onClose:
                   {group.category}
                 </div>
                 {group.items.map(item => {
-                  const idx = flatItems.indexOf(item)
+                  const idx = pageItems.indexOf(item)
                   return (
                     <button
                       key={item.href}
@@ -155,6 +174,32 @@ export default function SearchModal({ open, onClose }: { open: boolean; onClose:
                 })}
               </div>
             ))
+          )}
+
+          {lessonItems.length > 0 && (
+            <div>
+              <div className="px-4 pt-3 pb-1 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Lessons</div>
+              {lessonItems.map((item, i) => {
+                const idx = pageItems.length + i
+                return (
+                  <button
+                    key={`${item.href}-${i}`}
+                    data-index={idx}
+                    onClick={() => navigate(item.href)}
+                    className={cn(
+                      'w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors',
+                      idx === selectedIndex ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-50'
+                    )}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium truncate">{item.lessonTitle}</div>
+                      <div className="text-xs text-gray-400 truncate">{item.courseTitle}{item.snippet ? ` · ${item.snippet}` : ''}</div>
+                    </div>
+                    <ArrowRight className={cn('w-4 h-4 shrink-0 transition-opacity', idx === selectedIndex ? 'opacity-100' : 'opacity-0')} />
+                  </button>
+                )
+              })}
+            </div>
           )}
         </div>
 
