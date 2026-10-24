@@ -35,6 +35,7 @@ export async function GET(req: NextRequest) {
       level: c.level || '',
       topics: c.topics_tags || [],
       domains: c.domains || [],
+      track: c.track || '',
       protected: !!c.protected,
       copy: conn
         ? await (c.protected && c.packageFiles ? studioCopyStatus(conn, c) : copyStatus(conn, c.slug, expectedBlobs(c))).catch(() => null)

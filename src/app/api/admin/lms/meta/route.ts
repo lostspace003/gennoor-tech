@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 import { getLmsQuizzes, listAllLmsCourses, saveCatalogCourse } from '@/lib/lms'
-import { ALL_PLATFORMS, DOMAINS, KINDS, LEVELS, TOPICS } from '@/lib/lms-taxonomy'
+import { ALL_PLATFORMS, DOMAINS, KINDS, LEVELS, TOPICS, TRACKS } from '@/lib/lms-taxonomy'
 
 // Change how a course is classified: company, type, level, topics, domains.
 export async function POST(req: NextRequest) {
@@ -21,6 +21,7 @@ export async function POST(req: NextRequest) {
   if (topics) next.topics_tags = topics
   const domains = pick(body.domains, DOMAINS)
   if (domains) next.domains = domains
+  if (typeof body.track === 'string' && (body.track === '' || TRACKS.some(t => t.id === body.track))) next.track = body.track
 
   await saveCatalogCourse(next, await getLmsQuizzes(course.slug))
   return NextResponse.json({ ok: true })

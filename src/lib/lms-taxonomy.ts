@@ -19,7 +19,19 @@ export const ALL_PLATFORMS: string[] = [...PRIMARY_PLATFORMS, ...OTHER_PLATFORMS
 export const KINDS = [
   { id: 'certification', label: 'Certification prep' },
   { id: 'project', label: 'Project' },
-  { id: 'course', label: 'Skills course' },
+  { id: 'course', label: 'Use case' },
+] as const
+
+/**
+ * Where a use-case course sits (filter: Area). Same five tracks as the interactive AI Essentials
+ * courses, so a video course lines up with the course it replaces.
+ */
+export const TRACKS = [
+  { id: 'foundations', label: 'Foundations', line: 'Understand AI and use it well' },
+  { id: 'leadership', label: 'Leadership', line: 'Strategy, risk and governance for decision makers' },
+  { id: 'function', label: 'Teams & functions', line: 'AI for HR, sales, support, operations and more' },
+  { id: 'industry', label: 'Industries', line: 'AI applied to finance, healthcare, retail and more' },
+  { id: 'builder', label: 'Builders', line: 'Build agents and RAG with real tools' },
 ] as const
 
 export const LEVELS = ['Beginner', 'Intermediate', 'Expert'] as const

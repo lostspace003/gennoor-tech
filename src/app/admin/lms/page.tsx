@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Loader2, RefreshCw, UploadCloud } from 'lucide-react'
-import { ALL_PLATFORMS, DOMAINS, KINDS, LEVELS, TOPICS } from '@/lib/lms-taxonomy'
+import { ALL_PLATFORMS, DOMAINS, KINDS, LEVELS, TOPICS, TRACKS } from '@/lib/lms-taxonomy'
 
 interface Row {
   slug: string
@@ -17,6 +17,7 @@ interface Row {
   level: string
   topics: string[]
   domains: string[]
+  track: string
   copy: { total: number; success: number; pending: number; failed: number; missing: number } | null
 }
 
@@ -53,7 +54,7 @@ export default function AdminLmsPage() {
   const [impTopics, setImpTopics] = useState<string[]>([])
   const [impDomains, setImpDomains] = useState<string[]>([])
   const [tagSlug, setTagSlug] = useState('')
-  const [tag, setTag] = useState<{ vendor: string; kind: string; level: string; topics: string[]; domains: string[] }>({ vendor: '', kind: '', level: '', topics: [], domains: [] })
+  const [tag, setTag] = useState<{ vendor: string; kind: string; level: string; topics: string[]; domains: string[]; track: string }>({ vendor: '', kind: '', level: '', topics: [], domains: [], track: '' })
   const [tagMsg, setTagMsg] = useState('')
   const [assetSlug, setAssetSlug] = useState('')
   const [assetKind, setAssetKind] = useState<'promo' | 'thumbnail'>('promo')
@@ -269,7 +270,7 @@ export default function AdminLmsPage() {
           onChange={e => {
             setTagSlug(e.target.value)
             const row = rows.find(x => x.slug === e.target.value)
-            if (row) setTag({ vendor: row.vendor, kind: row.kind, level: row.level, topics: row.topics, domains: row.domains })
+            if (row) setTag({ vendor: row.vendor, kind: row.kind, level: row.level, topics: row.topics, domains: row.domains, track: row.track })
             setTagMsg('')
           }}
           className="mt-4 rounded-lg border border-gray-300 px-3 py-2 text-sm"
@@ -279,10 +280,14 @@ export default function AdminLmsPage() {
         </select>
         {tagSlug && (
           <>
-            <div className="grid sm:grid-cols-3 gap-4 mt-4">
+            <div className="grid sm:grid-cols-4 gap-4 mt-4">
               <select value={tag.vendor} onChange={e => setTag({ ...tag, vendor: e.target.value })} className="rounded-lg border border-gray-300 px-3 py-2 text-sm">{ALL_PLATFORMS.map(v => <option key={v}>{v}</option>)}</select>
               <select value={tag.kind} onChange={e => setTag({ ...tag, kind: e.target.value })} className="rounded-lg border border-gray-300 px-3 py-2 text-sm">{KINDS.map(k => <option key={k.id} value={k.id}>{k.label}</option>)}</select>
               <select value={tag.level} onChange={e => setTag({ ...tag, level: e.target.value })} className="rounded-lg border border-gray-300 px-3 py-2 text-sm">{LEVELS.map(l => <option key={l}>{l}</option>)}</select>
+              <select value={tag.track} onChange={e => setTag({ ...tag, track: e.target.value })} className="rounded-lg border border-gray-300 px-3 py-2 text-sm" aria-label="Track (short courses)">
+                <option value="">No track</option>
+                {TRACKS.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
+              </select>
             </div>
             <Checks label="Topics" options={TOPICS} value={tag.topics} onChange={v => setTag({ ...tag, topics: v })} />
             <Checks label="Domains" options={DOMAINS} value={tag.domains} onChange={v => setTag({ ...tag, domains: v })} />
