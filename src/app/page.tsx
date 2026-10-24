@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { PersonJsonLd } from '@/components/JsonLd'
 import { ClaudePartnerHero } from '@/components/ClaudePartner'
 import HomeCourses from '@/components/home/HomeCourses'
+import WalkthroughVideo from '@/components/WalkthroughVideo'
 import { listLmsCourses, toCard } from '@/lib/lms'
 import { AutomationIllustration, DeliverIllustration, HandoverIllustration, PlatformIllustration, ScopeIllustration, TalkIllustration, TrainingIllustration } from '@/components/illustrations/Illustrations'
 
@@ -58,6 +59,18 @@ export default async function HomePage() {
         <div className="flex flex-col sm:flex-row gap-5 sm:gap-[22px] justify-center items-center mt-10">
           <Link href="/contact" className="pill-primary">Talk to us</Link>
           <Link href="/studio" className="link-arrow">Explore the Learning Studio ›</Link>
+        </div>
+      </section>
+
+      {/* ===== How the Learning Studio works ===== */}
+      <section className="bg-[#f5f5f7] px-6 py-16 lg:py-[90px]">
+        <div className="max-w-[980px] mx-auto text-center">
+          <h2 className="display-section">See how the Learning Studio works.</h2>
+          <p className="lede mt-3.5 max-w-[600px] mx-auto">From the first click to your first lesson, in about eight minutes. Find a course, ask questions, and start learning for free.</p>
+          <WalkthroughVideo className="mt-10" />
+          <div className="mt-10">
+            <Link href="/studio" className="pill-primary">Open the Learning Studio</Link>
+          </div>
         </div>
       </section>
 
