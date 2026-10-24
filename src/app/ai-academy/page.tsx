@@ -1,5 +1,6 @@
 'use client'
 
+import WalkthroughVideo from '@/components/WalkthroughVideo'
 import Link from 'next/link'
 import { BookOpen, Trophy, ArrowRight, GraduationCap, BarChart3, Layers, Sparkles } from 'lucide-react'
 import InteractiveCoursesCatalog, { type EnrichedCourse } from '@/components/academy/InteractiveCoursesCatalog'
@@ -55,6 +56,11 @@ export default function AcademyPage() {
             </div>
           </div>
         </div>
+      </section>
+
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 pb-14">
+        <p className="text-center text-[13px] font-semibold uppercase tracking-[0.14em] text-gray-500 mb-4">How the Learning Studio works</p>
+        <WalkthroughVideo />
       </section>
 
       {/* Course Catalog (grouped + filterable) */}
