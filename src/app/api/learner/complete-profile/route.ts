@@ -74,6 +74,7 @@ export async function POST(request: NextRequest) {
       email: learner.email,
       name,
       provider: learner.provider,
+      tid: learner.tid,
     })
     response.cookies.set(learnerCookieOptions(token))
     return response

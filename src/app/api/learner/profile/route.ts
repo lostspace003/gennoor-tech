@@ -82,7 +82,7 @@ export async function PUT(request: NextRequest) {
 
     const response = NextResponse.json({ success: true })
     if (name && name !== learner.name) {
-      const token = await createLearnerToken({ email: learner.email, name, provider: learner.provider })
+      const token = await createLearnerToken({ email: learner.email, name, provider: learner.provider, tid: learner.tid })
       response.cookies.set(learnerCookieOptions(token))
     }
     return response
