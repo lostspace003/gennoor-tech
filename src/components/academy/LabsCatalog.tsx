@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Filter, Layers, Play, X } from 'lucide-react'
 import { FilterBar, Pagination, usePage, type SortKey } from './CatalogControls'
 import type { LmsCourseCard } from '@/lib/lms'
-import PreviewModal from './PreviewModal'
+import PromoPlayer from './PromoPlayer'
 import { Stars } from './Stars'
 import { ALL_PLATFORMS, DOMAINS, KINDS, LEVELS, TOPICS, TRACKS } from '@/lib/lms-taxonomy'
 
@@ -20,7 +20,8 @@ export default function LabsCatalog({ courses }: { courses: LmsCourseCard[] }) {
   const [domain, setDomain] = useState('all')
   const [sort, setSort] = useState<SortKey>('default')
   const [desc, setDesc] = useState(false)
-  const [preview, setPreview] = useState<LmsCourseCard | null>(null)
+  // Slug of the card playing its preview in place. One at a time.
+  const [preview, setPreview] = useState<string | null>(null)
 
   // /studio?company=Claude (linked from the Claude page) opens with that company selected
   useEffect(() => {
@@ -60,6 +61,9 @@ export default function LabsCatalog({ courses }: { courses: LmsCourseCard[] }) {
   }, [vendor, kind, area, level, topic, domain, courses, sort, desc])
   const pg = usePage(`${vendor}|${kind}|${area}|${level}|${topic}|${domain}|${sort}|${desc}`, ordered.length, 9)
   const pageItems = ordered.slice(pg.start, pg.end)
+  // A preview stops when its card leaves the page, so it never comes back playing with sound.
+  const previewShown = pageItems.some(c => c.slug === preview)
+  useEffect(() => { if (preview && !previewShown) setPreview(null) }, [preview, previewShown])
   const grouped = useMemo(
     () => KINDS.map(k => ({ id: k.id as string, label: k.label as string, items: pageItems.filter(c => c.kind === k.id) })).filter(g => g.items.length > 0),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -138,21 +142,30 @@ export default function LabsCatalog({ courses }: { courses: LmsCourseCard[] }) {
                       className="group relative bg-white rounded-2xl overflow-hidden border border-[#e2e5ec] flex flex-col transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-18px_rgba(15,24,36,.35)] focus-within:outline focus-within:outline-2 focus-within:outline-offset-4 focus-within:outline-primary-600"
                     >
                       <div className="relative aspect-video bg-[#0f1824] overflow-hidden">
-                        {c.thumbnailUrl ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={c.thumbnailUrl} alt="" loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+                        {preview === c.slug && c.promoUrl ? (
+                          // Above the card's stretched link, so clicks reach the player
+                          <div className="relative z-10">
+                            <PromoPlayer src={c.promoUrl} poster={c.thumbnailUrl} startMuted={false} framed={false} />
+                          </div>
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-white/80 text-3xl font-bold tracking-tight">{c.code}</div>
+                          <>
+                            {c.thumbnailUrl ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={c.thumbnailUrl} alt="" loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-white/80 text-3xl font-bold tracking-tight">{c.code}</div>
+                            )}
+                            <span className="absolute left-3 top-3 rounded-full bg-black/55 backdrop-blur px-3 py-1 text-[12px] font-medium text-white">{c.vendor}</span>
+                          </>
                         )}
-                        <span className="absolute left-3 top-3 rounded-full bg-black/55 backdrop-blur px-3 py-1 text-[12px] font-medium text-white">{c.vendor}</span>
                       </div>
                       {c.promoUrl && (
                         <button
                           type="button"
-                          onClick={() => setPreview(c)}
+                          onClick={() => setPreview(preview === c.slug ? null : c.slug)}
                           className="relative z-10 flex items-center justify-center gap-2 py-2.5 border-b border-[#eef0f4] bg-[#f8f9fb] text-[13.5px] font-semibold text-gray-900 hover:bg-primary-50 hover:text-primary-700 transition-colors"
                         >
-                          <Play className="w-4 h-4 fill-current" /> Watch preview
+                          {preview === c.slug ? <><X className="w-4 h-4" /> Close preview</> : <><Play className="w-4 h-4 fill-current" /> Watch preview</>}
                         </button>
                       )}
                       <div className="p-5 flex flex-col flex-1">
@@ -181,8 +194,6 @@ export default function LabsCatalog({ courses }: { courses: LmsCourseCard[] }) {
           </div>
         )}
       </div>
-
-      {preview?.promoUrl && <PreviewModal title={preview.title} src={preview.promoUrl} poster={preview.thumbnailUrl} onClose={() => setPreview(null)} />}
     </section>
   )
 }

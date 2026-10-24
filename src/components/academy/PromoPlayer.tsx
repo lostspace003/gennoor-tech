@@ -12,8 +12,9 @@ function fmt(sec: number): string {
 /**
  * Course promo: starts by itself as the page opens (muted, as browsers require)
  * with an always-visible control bar: play or pause, time, seek, sound, full screen.
+ * framed={false} drops the rounded frame and shadow so it fills a course card's picture area.
  */
-export default function PromoPlayer({ src, poster, startMuted = true }: { src: string; poster?: string | null; startMuted?: boolean }) {
+export default function PromoPlayer({ src, poster, startMuted = true, framed = true }: { src: string; poster?: string | null; startMuted?: boolean; framed?: boolean }) {
   const boxRef = useRef<HTMLDivElement>(null)
   const ref = useRef<HTMLVideoElement>(null)
   const [playing, setPlaying] = useState(false)
@@ -46,8 +47,17 @@ export default function PromoPlayer({ src, poster, startMuted = true }: { src: s
     else v.pause()
   }
 
+  // iPhone Safari can't put a div full screen, only the video itself.
+  const fullScreen = () => {
+    if (document.fullscreenElement) return void document.exitFullscreen()
+    const box = boxRef.current
+    const v = ref.current as (HTMLVideoElement & { webkitEnterFullscreen?: () => void }) | null
+    if (box?.requestFullscreen) box.requestFullscreen().catch(() => {})
+    else v?.webkitEnterFullscreen?.()
+  }
+
   return (
-    <div ref={boxRef} className="relative aspect-video rounded-2xl overflow-hidden bg-black shadow-[0_30px_60px_-20px_rgba(0,0,0,.6)] ring-1 ring-white/10">
+    <div ref={boxRef} className={`relative aspect-video overflow-hidden bg-black ${framed ? 'rounded-2xl shadow-[0_30px_60px_-20px_rgba(0,0,0,.6)] ring-1 ring-white/10' : ''}`}>
       <video
         ref={ref}
         src={src}
@@ -113,7 +123,7 @@ export default function PromoPlayer({ src, poster, startMuted = true }: { src: s
           <button
             type="button"
             aria-label={full ? 'Exit full screen' : 'Full screen'}
-            onClick={() => (document.fullscreenElement ? document.exitFullscreen() : boxRef.current?.requestFullscreen?.())}
+            onClick={fullScreen}
             className="w-9 h-9 rounded-md flex items-center justify-center hover:bg-white/15 transition-colors"
           >
             {full ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
