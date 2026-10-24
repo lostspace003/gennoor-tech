@@ -109,7 +109,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
           pinned ? 'lg:pl-[var(--portal-rail-w-expanded)]' : 'lg:pl-[var(--portal-rail-w-collapsed)]'
         )}
       >
-        {pathname !== '/' && <ClaudePartnerBar />}
+        {pathname !== '/' && pathname !== '/claude' && <ClaudePartnerBar />}
         <PortalBreadcrumb />
         <div key={pathname} className="animate-page-enter">
           {children}

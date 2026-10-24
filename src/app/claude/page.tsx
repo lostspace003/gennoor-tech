@@ -48,7 +48,7 @@ const DOMAINS = [
 export default function ClaudePage() {
   return (
     <main className="bg-white">
-      <section className="px-6 pt-16 lg:pt-[100px] pb-14 text-center">
+      <section className="hero-backdrop px-6 pt-16 lg:pt-[100px] pb-14 text-center">
         <h1 className="display-hero max-w-[820px] mx-auto">Claude at Gennoor.</h1>
         <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.5] text-[#6e6e73] max-w-[640px] mx-auto mt-6">
           Training for teams, courses built around their work, and automation built with Claude.
