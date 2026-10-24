@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { Fragment, useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ChevronLeft, ChevronRight, X, Search, PanelLeftOpen, MessageCircle } from 'lucide-react'
@@ -270,18 +270,25 @@ export default function PortalSidebar({
           <nav aria-label="Site sections">
             <ul className="space-y-0.5">
               {portalNav.map(section => (
-                <SectionRow
-                  key={section.name}
-                  section={section}
-                  pathname={pathname}
-                  showLabels={showLabels}
-                  isExpanded={expanded.has(section.name)}
-                  onToggle={() => toggleSection(section.name)}
-                  flyoutOpen={flyout === section.name}
-                  onFlyoutToggle={() =>
-                    setFlyout(f => (f === section.name ? null : section.name))
-                  }
-                />
+                <Fragment key={section.name}>
+                  {/* Group break — padding, not margin, because space-y owns the margins */}
+                  {section.startsGroup && (
+                    <li aria-hidden="true" className="py-1.5">
+                      <div className={cn('border-t border-[#e8e8ed]', showLabels ? 'mx-3' : 'mx-2')} />
+                    </li>
+                  )}
+                  <SectionRow
+                    section={section}
+                    pathname={pathname}
+                    showLabels={showLabels}
+                    isExpanded={expanded.has(section.name)}
+                    onToggle={() => toggleSection(section.name)}
+                    flyoutOpen={flyout === section.name}
+                    onFlyoutToggle={() =>
+                      setFlyout(f => (f === section.name ? null : section.name))
+                    }
+                  />
+                </Fragment>
               ))}
             </ul>
           </nav>

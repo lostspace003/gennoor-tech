@@ -62,19 +62,17 @@ export interface PortalNavSection {
   href?: string
   icon: LucideIcon
   children?: PortalNavChild[]
+  /** Draws a hairline above this row: the first row of a new group. */
+  startsGroup?: boolean
 }
 
 /**
- * The primary left-rail tree.
+ * The primary left-rail tree, in the order a visitor reads it:
+ * learn on your own, then what we do for teams, then talks and posts,
+ * then the company.
  */
 export const portalNav: PortalNavSection[] = [
   { name: 'Home', href: '/', icon: Home },
-  { name: 'Claude', href: '/claude', icon: Sparkles },
-  { name: 'Training', href: '/training', icon: GraduationCap },
-  { name: 'Exam Prep', href: '/services/certifications', icon: BadgeCheck },
-  { name: 'Webinar & Expert Talks', href: '/webinars', icon: Video },
-  { name: 'Post & Blogs', href: '/resources/blog', icon: FileText },
-  { name: 'Automation', href: '/automation', icon: Wrench },
   {
     name: 'Learning Studio',
     icon: BookOpen,
@@ -83,7 +81,13 @@ export const portalNav: PortalNavSection[] = [
       { name: 'Community', href: '/community' },
     ],
   },
-  { name: 'About', href: '/about', icon: Info },
+  { name: 'Exam Prep', href: '/services/certifications', icon: BadgeCheck },
+  { name: 'Claude', href: '/claude', icon: Sparkles, startsGroup: true },
+  { name: 'Training', href: '/training', icon: GraduationCap },
+  { name: 'Automation', href: '/automation', icon: Wrench },
+  { name: 'Webinar & Expert Talks', href: '/webinars', icon: Video, startsGroup: true },
+  { name: 'Post & Blogs', href: '/resources/blog', icon: FileText },
+  { name: 'About', href: '/about', icon: Info, startsGroup: true },
   { name: 'Contact', href: '/contact', icon: Mail },
 ]
 
