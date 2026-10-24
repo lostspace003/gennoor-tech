@@ -103,24 +103,6 @@ export default function CertificationPreparationPage() {
               Prepare for Microsoft, AWS, Google Cloud, GitHub and AI CERTs exams with a Microsoft Certified Trainer.
             </p>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <div className="glass-card p-4 text-center">
-                <div className="text-3xl font-bold text-primary-600">20+</div>
-                <div className="text-gray-600 text-sm">Active Certifications</div>
-              </div>
-              <div className="glass-card p-4 text-center">
-                <div className="text-3xl font-bold text-primary-600">98%</div>
-                <div className="text-gray-600 text-sm">Pass Rate</div>
-              </div>
-              <div className="glass-card p-4 text-center">
-                <div className="text-3xl font-bold text-primary-600">2000+</div>
-                <div className="text-gray-600 text-sm">Students Certified</div>
-              </div>
-              <div className="glass-card p-4 text-center">
-                <div className="text-3xl font-bold text-primary-600">5</div>
-                <div className="text-gray-600 text-sm">Certification Providers</div>
-              </div>
-            </div>
           </div>
           <ExamPrepIllustration className="w-[128px] h-[128px] lg:w-[180px] lg:h-[180px] mx-auto lg:mx-0 shrink-0" />
           </div>
@@ -332,9 +314,9 @@ export default function CertificationPreparationPage() {
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Target className="w-8 h-8 text-primary-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">98% Pass Rate</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Exam Guidance</h3>
               <p className="text-gray-600">
-                Proven track record with over 2000+ professionals certified
+                Help choosing the certification that fits your role and your timeline
               </p>
             </div>
 

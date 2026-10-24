@@ -58,7 +58,7 @@ function generateFaqs(program: NonNullable<ReturnType<typeof getProgramBySlug>>)
       question: `Does the ${program.title} program include certification?`,
       answer: program.certification === 'No'
         ? 'This program focuses on practical skills. While it does not directly map to a certification exam, the skills learned are applicable to related industry certifications.'
-        : `Yes, this program aligns with certification preparation (${program.certCode ?? (program.certification === 'Yes' ? 'relevant industry certifications' : program.certification)}). Our trainer holds 16+ active certifications with a 98% student pass rate.`,
+        : `Yes, this program aligns with certification preparation (${program.certCode ?? (program.certification === 'Yes' ? 'relevant industry certifications' : program.certification)}). Our trainer holds 16+ active certifications.`,
     },
   ]
 }

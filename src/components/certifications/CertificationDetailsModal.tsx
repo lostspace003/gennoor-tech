@@ -209,10 +209,6 @@ export default function CertificationDetailsModal({
             <ul className="space-y-2">
               <li className="flex items-center">
                 <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
-                <span className="text-gray-700">98% first-attempt pass rate</span>
-              </li>
-              <li className="flex items-center">
-                <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
                 <span className="text-gray-700">Free retake session if you don't pass</span>
               </li>
               <li className="flex items-center">

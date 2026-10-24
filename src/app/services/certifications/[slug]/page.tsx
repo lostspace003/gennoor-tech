@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!cert) return {}
 
   const title = `${cert.code}: ${cert.title} Exam Guide — ${cert.provider} Certification | Gennoor Tech`
-  const description = `Complete ${cert.code} ${cert.title} exam preparation guide. ${cert.description} Exam duration: ${cert.examDuration}, passing score: ${cert.passingScore}. Expert-led preparation with 98% pass rate.`
+  const description = `Complete ${cert.code} ${cert.title} exam preparation guide. ${cert.description} Exam duration: ${cert.examDuration}, passing score: ${cert.passingScore}. Expert-led preparation.`
 
   return {
     title,
@@ -56,7 +56,7 @@ function generateFaqs(cert: NonNullable<ReturnType<typeof getCertificationBySlug
     },
     {
       question: `Does Gennoor Tech offer ${cert.code} preparation training?`,
-      answer: `Yes, we offer expert-led ${cert.code} preparation with hands-on labs, practice exams, and personalized guidance. Our trainer holds 16+ active certifications with a 98% student pass rate across all exams.`,
+      answer: `Yes, we offer expert-led ${cert.code} preparation with hands-on labs, practice exams, and personalized guidance. Our trainer holds 16+ active certifications.`,
     },
   ]
 }
@@ -246,7 +246,7 @@ export default async function CertificationGuidePage({ params }: Props) {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Expert Guidance</h3>
-                    <p className="text-sm text-gray-600 mt-1">Learn from a trainer with 16+ active certifications and 98% student pass rate</p>
+                    <p className="text-sm text-gray-600 mt-1">Learn from a trainer with 16+ active certifications</p>
                   </div>
                 </div>
               </div>
@@ -305,7 +305,7 @@ export default async function CertificationGuidePage({ params }: Props) {
               Ready to Pass the {cert.code} Exam?
             </h2>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Get expert preparation with hands-on labs and practice exams. Join 2000+ professionals who passed on their first attempt.
+              Get expert preparation with hands-on labs and practice exams.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link
