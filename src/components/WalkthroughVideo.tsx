@@ -38,7 +38,7 @@ export default function WalkthroughVideo({ className = '' }: { className?: strin
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0071e3]">
               <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="#fff" /></svg>
             </span>
-            <span className="text-[15px] font-semibold text-gray-900">Watch · 8 min</span>
+            <span className="text-[15px] font-semibold text-gray-900">Watch · 9 min</span>
           </span>
         </button>
       )}
