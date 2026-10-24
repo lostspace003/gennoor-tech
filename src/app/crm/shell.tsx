@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { SessionProvider, useSession, signOut } from 'next-auth/react'
 import {
-  LayoutGrid, Users, TrendingUp, Inbox, Calendar, FolderOpen,
+  LayoutGrid, Users, TrendingUp, Inbox, Calendar, FolderOpen, Mail,
   LogOut, RefreshCw, Menu, X, AlertCircle, Zap, UsersRound, MessageCircle,
   PanelLeftClose, PanelLeftOpen, ChevronDown,
 } from 'lucide-react'
@@ -18,6 +18,7 @@ const NAV = [
   { href: '/crm/leads', label: 'Leads', icon: Users },
   { href: '/crm/pipeline', label: 'Pipeline', icon: TrendingUp },
   { href: '/crm/inbox', label: 'Inbox', icon: Inbox },
+  { href: '/crm/enquiries', label: 'Enquiries', icon: Mail },
   { href: '/crm/dashboard', label: 'Dashboard', icon: LayoutGrid, more: true },
   { href: '/crm/scheduler', label: 'Scheduler', icon: Calendar, more: true },
   { href: '/crm/documents', label: 'Sales Library', icon: FolderOpen, more: true },

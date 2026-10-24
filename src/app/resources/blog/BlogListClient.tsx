@@ -99,7 +99,7 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
                   {hero.excerpt}
                 </p>
                 <div className="text-[13px] text-[#86868b] mt-5">
-                  {new Date(hero.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} · {hero.readTime} · Jalal Ahmed Khan
+                  {new Date(hero.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} · {hero.readTime} · Gennoor Technical Team
                 </div>
               </div>
               {/* Real cover image when the post has one; brand orbital otherwise. */}

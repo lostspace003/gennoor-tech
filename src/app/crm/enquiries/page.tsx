@@ -1,0 +1,108 @@
+'use client'
+
+import { useEffect, useMemo, useState } from 'react'
+
+interface Row {
+  type: string; rowKey: string; createdAt: string; status: string; note: string
+  name: string; email: string; phone: string; organization: string; about: string; message: string
+  source: string; campaign: string; referrer: string; landing: string; page: string
+}
+
+const TYPE_LABEL: Record<string, string> = {
+  ContactEnquiry: 'Contact form', CustomTraining: 'Custom training', ExpertCallBooking: 'Call booking',
+  TrainingEnquiry: 'Training enquiry', CertificationEnquiry: 'Certification enquiry', WebinarRegistration: 'Webinar',
+  ClaudeCoworkRegistration: 'Claude workshop', JoinApplication: 'Work with us', NewsletterSubscription: 'Newsletter',
+}
+const STATUSES = ['New', 'Replied', 'Closed']
+const tone: Record<string, string> = { New: 'bg-[#fff4e5] text-[#b45309]', Replied: 'bg-[#e8f1ff] text-[#0b5ed7]', Closed: 'bg-[#eef0f4] text-[#6e6e73]' }
+
+export default function EnquiriesPage() {
+  const [rows, setRows] = useState<Row[] | null>(null)
+  const [error, setError] = useState('')
+  const [type, setType] = useState('')
+  const [status, setStatus] = useState('')
+  const [q, setQ] = useState('')
+  const [open, setOpen] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch('/api/admin/enquiries?days=180', { cache: 'no-store' })
+      .then(async r => { const d = await r.json(); if (!r.ok) throw new Error(d.error || 'Could not load'); setRows(d.rows) })
+      .catch(e => setError(e.message))
+  }, [])
+
+  const update = async (r: Row, patch: { status?: string; note?: string }) => {
+    setRows(rs => rs && rs.map(x => (x.rowKey === r.rowKey && x.type === r.type ? { ...x, ...patch } : x)))
+    await fetch('/api/admin/enquiries', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: r.type, rowKey: r.rowKey, ...patch }) })
+  }
+
+  const shown = useMemo(() => (rows || []).filter(r =>
+    (!type || r.type === type) && (!status || r.status === status) &&
+    (!q || `${r.name} ${r.email} ${r.organization} ${r.about} ${r.message} ${r.source} ${r.page}`.toLowerCase().includes(q.toLowerCase()))), [rows, type, status, q])
+  const types = useMemo(() => Array.from(new Set((rows || []).map(r => r.type))), [rows])
+  const bySource = useMemo(() => {
+    const m = new Map<string, number>()
+    for (const r of rows || []) { const k = r.source || r.referrer || 'direct'; m.set(k, (m.get(k) || 0) + 1) }
+    return Array.from(m.entries()).sort((a, b) => b[1] - a[1]).slice(0, 6)
+  }, [rows])
+
+  if (error) return <p className="p-6 text-[14px] text-red-600">{error}</p>
+  if (!rows) return <p className="p-6 text-[14px] text-[#6e6e73]">Loading…</p>
+
+  return (
+    <div className="p-4 sm:p-6 max-w-[1200px]">
+      <div className="flex flex-wrap items-center gap-2.5 mb-4">
+        <select value={type} onChange={e => setType(e.target.value)} className="border border-[#d2d2d7] rounded-lg px-3 py-2 text-[13px] bg-white">
+          <option value="">All forms</option>
+          {types.map(t => <option key={t} value={t}>{TYPE_LABEL[t] || t}</option>)}
+        </select>
+        <select value={status} onChange={e => setStatus(e.target.value)} className="border border-[#d2d2d7] rounded-lg px-3 py-2 text-[13px] bg-white">
+          <option value="">Any status</option>
+          {STATUSES.map(s => <option key={s}>{s}</option>)}
+        </select>
+        <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search name, email, page…" className="border border-[#d2d2d7] rounded-lg px-3 py-2 text-[13px] bg-white w-[240px]" />
+        <span className="text-[13px] text-[#6e6e73] ml-auto">{shown.length} of {rows.length} · last 180 days</span>
+      </div>
+
+      {bySource.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-5 text-[12.5px]">
+          <span className="text-[#6e6e73] mr-1">Where they came from:</span>
+          {bySource.map(([k, n]) => <span key={k} className="px-2.5 py-1 rounded-full bg-[#f5f5f7] text-[#3a3a3f]">{k} <b className="tabular-nums">{n}</b></span>)}
+        </div>
+      )}
+
+      <div className="bg-white border border-[#e2e5ec] rounded-xl overflow-hidden">
+        {shown.length === 0 && <p className="p-6 text-[14px] text-[#6e6e73]">No enquiries yet.</p>}
+        {shown.map(r => {
+          const id = `${r.type}:${r.rowKey}`
+          const isOpen = open === id
+          return (
+            <div key={id} className="border-b border-[#f0f0f2] last:border-0">
+              <button type="button" onClick={() => setOpen(isOpen ? null : id)} className="w-full text-left px-4 py-3 grid grid-cols-[110px_1fr_auto] sm:grid-cols-[110px_180px_1fr_150px_auto] gap-3 items-center hover:bg-[#fafafa]">
+                <span className="text-[12px] text-[#86868b] tabular-nums">{new Date(r.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })} {new Date(r.createdAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</span>
+                <span className="text-[13.5px] font-medium text-gray-900 truncate">{r.name || r.email}</span>
+                <span className="hidden sm:block text-[13px] text-[#3a3a3f] truncate">{TYPE_LABEL[r.type] || r.type}{r.about ? ` · ${r.about}` : ''}</span>
+                <span className="hidden sm:block text-[12.5px] text-[#6e6e73] truncate">{r.source || r.referrer || 'direct'}</span>
+                <span className={`text-[11.5px] font-semibold px-2 py-0.5 rounded-full ${tone[r.status] || tone.New}`}>{r.status}</span>
+              </button>
+              {isOpen && (
+                <div className="px-4 pb-4 grid sm:grid-cols-2 gap-x-8 gap-y-2 text-[13px] text-[#3a3a3f]">
+                  <p><b>Email</b> <a className="text-primary-600" href={`mailto:${r.email}`}>{r.email}</a>{r.phone ? ` · ${r.phone}` : ''}</p>
+                  <p><b>Organization</b> {r.organization || '–'}</p>
+                  <p className="sm:col-span-2 whitespace-pre-wrap"><b>Message</b> {r.message || '–'}</p>
+                  <p><b>Came from</b> {r.source || r.referrer || 'direct'}{r.campaign ? ` · ${r.campaign}` : ''}</p>
+                  <p><b>Landed on</b> {r.landing || '–'} · <b>Sent from</b> {r.page || '–'}</p>
+                  <div className="sm:col-span-2 flex flex-wrap items-center gap-2 mt-1">
+                    {STATUSES.map(s => (
+                      <button key={s} type="button" onClick={() => update(r, { status: s })} className={`px-3 py-1 rounded-full border text-[12.5px] ${r.status === s ? 'bg-[#0071e3] border-[#0071e3] text-white' : 'border-[#d2d2d7] hover:border-[#86868b]'}`}>{s}</button>
+                    ))}
+                    <input defaultValue={r.note} onBlur={e => e.target.value !== r.note && update(r, { note: e.target.value })} placeholder="Note" className="flex-1 min-w-[200px] border border-[#d2d2d7] rounded-lg px-3 py-1.5 text-[13px]" />
+                  </div>
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
