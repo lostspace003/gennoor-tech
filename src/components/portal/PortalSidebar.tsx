@@ -2,9 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { ChevronRight, X, Search, PanelLeftClose, PanelLeftOpen, MessageCircle } from 'lucide-react'
+import { ChevronLeft, ChevronRight, X, Search, PanelLeftOpen, MessageCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
   portalNav,
@@ -77,6 +76,27 @@ function RailTip({ label }: { label: string }) {
     <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-2.5 py-1.5 rounded-lg bg-[#1d1d1f] text-white text-[11.5px] font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-[70] shadow-lg">
       {label}
     </span>
+  )
+}
+
+/** The Gennoor Tech logo drawn inline: same colours as the brand SVG, tagline large enough to read. */
+function RailLogo() {
+  const arc: Array<[number, number]> = [[105.8, 84.0], [93.4, 99.9], [75.4, 108.8], [55.3, 108.9], [37.1, 100.3], [24.5, 84.6], [20.0, 65.0], [24.5, 45.4], [37.1, 29.7], [55.3, 21.1], [75.4, 21.2], [93.4, 30.1]]
+  return (
+    <Link href="/" aria-label="Gennoor Tech home" className="block select-none">
+      <div className="flex items-center gap-2.5">
+        <svg viewBox="10 10 110 110" className="h-[48px] w-[48px] flex-shrink-0" aria-hidden="true">
+          {arc.map(([cx, cy], i) => <circle key={i} cx={cx} cy={cy} r={6.4} fill="#2563EB" />)}
+          <circle cx={80} cy={65} r={6.4} fill="#F59E0B" />
+          <circle cx={95} cy={65} r={6.4} fill="#F59E0B" />
+          <circle cx={110} cy={65} r={6.4} fill="#2563EB" />
+        </svg>
+        <span className="font-heading text-[21.5px] font-extrabold leading-none tracking-[-0.01em] whitespace-nowrap">
+          <span className="text-[#2D3748]">Ge</span><span className="text-[#2563EB]">nn</span><span className="text-[#F59E0B]">oo</span><span className="text-[#2563EB]">r</span><span className="text-[#4A5568]"> Tech</span>
+        </span>
+      </div>
+      <div className="mt-1.5 whitespace-nowrap text-[11.5px] font-bold uppercase tracking-[0.16em] text-[#475569]">Train. Innovate. Build.</div>
+    </Link>
   )
 }
 
@@ -187,36 +207,23 @@ export default function PortalSidebar({
           </button>
         </div>
 
-        {/* Logo card — desktop only; the mobile drawer has its own header */}
-        <div className={cn('hidden lg:block', showLabels ? 'px-4 pt-[18px] pb-3' : 'px-2 pt-3 pb-2')}>
+        {/* Logo — desktop only; the mobile drawer has its own header. Drawn inline so it sits on the rail, no card. */}
+        <div className={cn('hidden lg:block relative', showLabels ? 'px-4 pt-5 pb-3' : 'px-2 pt-3 pb-2')}>
           {showLabels ? (
-            <div className="relative group/logo">
-              <Link href="/" aria-label="Gennoor Tech home" className="block">
-                <Image
-                  src="/logos/gennoor-tech-compact-white_600x140_navbar.png"
-                  alt="Gennoor Tech"
-                  width={600}
-                  height={140}
-                  priority
-                  className="w-full h-auto block rounded-[10px] border border-[#e8e8ed] bg-white"
-                />
-              </Link>
+            <>
+              <RailLogo />
               {onTogglePin && (
                 <button
                   type="button"
                   onClick={onTogglePin}
-                  className="absolute -right-1.5 -top-1.5 p-1.5 rounded-lg bg-white border border-[#e8e8ed] text-gray-400 opacity-0 group-hover/logo:opacity-100 hover:text-gray-700 transition-all"
+                  className="absolute -right-3 top-[30px] z-10 flex h-6 w-6 items-center justify-center rounded-full bg-white border border-[#d2d2d7] text-gray-600 shadow-sm hover:text-gray-900 hover:border-gray-400 transition-colors"
                   aria-label={pinned ? 'Collapse navigation' : 'Pin navigation open'}
                   title={pinned ? 'Collapse navigation' : 'Pin navigation open'}
                 >
-                  {pinned ? (
-                    <PanelLeftClose className="w-[14px] h-[14px]" strokeWidth={1.75} />
-                  ) : (
-                    <PanelLeftOpen className="w-[14px] h-[14px]" strokeWidth={1.75} />
-                  )}
+                  {pinned ? <ChevronLeft className="w-[14px] h-[14px]" strokeWidth={2.25} /> : <ChevronRight className="w-[14px] h-[14px]" strokeWidth={2.25} />}
                 </button>
               )}
-            </div>
+            </>
           ) : (
             <button
               type="button"
