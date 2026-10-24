@@ -1,3 +1,4 @@
+import { certificationHtml } from '@/lib/email-templates'
 import { NextResponse } from 'next/server'
 import { sendEmail, catalogExcelAttachment } from '@/lib/email-service'
 import { trackEvent, trackException, initAppInsights } from '@/lib/analytics'
@@ -70,79 +71,7 @@ export async function POST(request: Request) {
       fromName: 'Gennoor Tech Certification Team',
       subject: `Certification Preparation Guide: ${selectedCertification} | Gennoor Tech`,
       attachments: catalog ? [catalog] : undefined,
-      html: `
-        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: #0C1426; padding: 40px 30px; text-align: center; border-radius: 10px 10px 0 0;">
-            <h1 style="color: white; margin: 0; font-size: 28px;">Gennoor Tech</h1>
-            <p style="color: #c4b5fd; margin: 10px 0 0; font-size: 16px;">Certification Training Excellence</p>
-          </div>
-
-          <div style="padding: 40px 30px; background: #ffffff; border: 1px solid #e0e0e0; border-top: none;">
-            <h2 style="color: #1f2937; margin-top: 0;">Dear ${escapeHtml(name)},</h2>
-
-            <p style="color: #4b5563; line-height: 1.8; font-size: 16px;">
-              Thank you for your interest in certification preparation with Gennoor Tech.
-            </p>
-
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 25px 0;">
-              <h3 style="color: #334155; margin-top: 0;">Your Enquiry Details:</h3>
-              <ul style="color: #4b5563; line-height: 2; padding-left: 20px;">
-                <li><strong>Selected Certification:</strong> ${escapeHtml(selectedCertification)}</li>
-                <li><strong>Current Level:</strong> ${escapeHtml(currentLevel)}</li>
-                <li><strong>Target Date:</strong> ${escapeHtml(targetDate)}</li>
-                <li><strong>Preferred Mode:</strong> ${escapeHtml(trainingMode)}</li>
-              </ul>
-            </div>
-
-            <h3 style="color: #1f2937;">What's Next?</h3>
-            <ol style="color: #4b5563; line-height: 2.2; padding-left: 20px;">
-              <li>Our certification expert will review your requirements</li>
-              <li>You'll receive a detailed preparation plan</li>
-              <li>We'll schedule a free consultation call</li>
-              <li>Get access to sample questions and study materials</li>
-            </ol>
-
-            <h3 style="color: #1f2937; margin-top: 30px;">Why Choose Gennoor Tech?</h3>
-            <ul style="color: #4b5563; line-height: 2; padding-left: 20px;">
-              <li>Expert trainer with 16+ active Microsoft certifications</li>
-              <li>Official curriculum and practice tests</li>
-              <li>Hands-on labs and real-world scenarios</li>
-              <li>Post-training support</li>
-              <li>Free retake session if needed</li>
-            </ul>
-
-            <div style="background: #f8fafc; border-left: 4px solid #2563eb; padding: 20px; margin: 25px 0; border-radius: 0 8px 8px 0;">
-              <p style="color: #1e293b; margin: 0 0 6px; font-weight: 600; font-size: 16px;">📎 Explore our full catalog</p>
-              <p style="color: #475569; margin: 0; line-height: 1.7; font-size: 15px;">
-                We've attached it (Excel): certification tracks plus our full training programs, PoC blueprints, and free resources — all in one place.
-              </p>
-            </div>
-
-            <div style="border-top: 2px solid #e5e7eb; padding-top: 25px; margin-top: 35px;">
-              <h4 style="color: #1f2937; margin-bottom: 15px;">Get in Touch:</h4>
-              <table role="presentation" style="width: 100%; color: #4b5563; line-height: 2;">
-                <tr>
-                  <td>Email:</td>
-                  <td><a href="mailto:training@gennoor.com" style="color: #2563eb;">training@gennoor.com</a></td>
-                </tr>
-                <tr>
-                  <td>Phone:</td>
-                  <td><a href="tel:+919326352241" style="color: #2563eb;">+91 9326352241</a></td>
-                </tr>
-                <tr>
-                  <td>WhatsApp:</td>
-                  <td><a href="https://wa.me/919326352241" style="color: #2563eb;">+91 9326352241</a></td>
-                </tr>
-              </table>
-            </div>
-          </div>
-
-          <div style="background: #1e293b; padding: 25px; text-align: center; border-radius: 0 0 10px 10px;">
-            <p style="color: #94a3b8; margin: 0; font-size: 14px;">© 2026 Gennoor Tech. All rights reserved.</p>
-            <p style="color: #64748b; margin: 5px 0 0; font-size: 12px;">AI training and automation</p>
-          </div>
-        </div>
-      `
+      html: certificationHtml({ name, certification: selectedCertification, level: currentLevel, targetDate, mode: trainingMode }),
     })
 
     // Send admin notification
