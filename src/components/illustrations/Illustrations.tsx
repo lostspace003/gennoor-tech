@@ -238,3 +238,60 @@ export function ShieldIllustration({ className, title = 'Checked, with people in
     </Frame>
   )
 }
+
+/** Exam prep: an answer sheet with ticks, a graduation cap and a pass badge. */
+export function ExamPrepIllustration({ className, title = 'An exam sheet with answers ticked and a pass badge' }: Partial<Props>) {
+  return (
+    <Frame className={className} title={title}>
+      <rect x="28" y="24" width="52" height="68" rx="6" fill="#fff" {...stroke} />
+      <path d="M36 40h8M36 56h8M36 72h8" stroke={GREY} strokeWidth="2.6" strokeLinecap="round" />
+      <path d="M50 40h20M50 56h20M50 72h14" stroke={GREY} strokeWidth="2.6" strokeLinecap="round" />
+      <path d="M34 40l2.5 2.5L41 37" fill="none" {...stroke} stroke={BLUE} strokeWidth="2.2" className="ill-tick" />
+      <path d="M34 56l2.5 2.5L41 53" fill="none" {...stroke} stroke={BLUE} strokeWidth="2.2" className="ill-tick" />
+      <path d="M34 72l2.5 2.5L41 69" fill="none" {...stroke} stroke={BLUE} strokeWidth="2.2" className="ill-tick" />
+      <g className="ill-float">
+        <path d="M78 52l16-7 16 7-16 7z" fill={BLUE} stroke={INK} strokeWidth="2.4" strokeLinejoin="round" />
+        <path d="M84 58v7c0 3 5 5 10 5s10-2 10-5v-7" fill="#fff" {...stroke} />
+        <path d="M110 52v10" fill="none" {...stroke} strokeWidth="2" />
+      </g>
+      <circle cx="88" cy="86" r="10" fill={AMBER} stroke={INK} strokeWidth="2.4" />
+      <path d="M83 86l3.5 3.5 6-7" fill="none" {...stroke} strokeWidth="2.4" />
+    </Frame>
+  )
+}
+
+/** Webinars and expert talks: a speaker on screen, a live dot, and a question coming in. */
+export function WebinarIllustration({ className, title = 'An expert speaking live to an audience online' }: Partial<Props>) {
+  return (
+    <Frame className={className} title={title}>
+      <rect x="20" y="28" width="80" height="54" rx="6" fill="#fff" {...stroke} />
+      <path d="M46 92h28M60 82v10" fill="none" {...stroke} />
+      <circle cx="48" cy="50" r="8" fill={BLUE} stroke={INK} strokeWidth="2.4" />
+      <path d="M36 72c0-7 5-11 12-11s12 4 12 11" fill="none" {...stroke} />
+      <path d="M68 46h22M68 54h16M68 62h20" stroke={GREY} strokeWidth="2.6" strokeLinecap="round" className="ill-line l1" />
+      <circle cx="30" cy="38" r="3" fill={AMBER} className="ill-pulse" />
+      <g className="ill-bubble-b">
+        <path d="M84 16h22a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5h-4v7l-8-7H84a5 5 0 0 1-5-5V21a5 5 0 0 1 5-5z" fill={BLUE} stroke={INK} strokeWidth="2.4" strokeLinejoin="round" />
+        <path d="M91 27h12" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" />
+      </g>
+    </Frame>
+  )
+}
+
+/** Posts and blogs: an article with a headline, picture and lines, and a pen writing it. */
+export function BlogIllustration({ className, title = 'An article being written' }: Partial<Props>) {
+  return (
+    <Frame className={className} title={title}>
+      <rect x="26" y="24" width="60" height="72" rx="6" fill="#fff" {...stroke} />
+      <path d="M34 36h30" stroke={INK} strokeWidth="3.2" strokeLinecap="round" />
+      <rect x="34" y="46" width="44" height="18" rx="3" fill={TINT} stroke={BLUE} strokeWidth="2" />
+      <path d="M38 60l8-8 7 6 5-4 8 6" fill="none" {...stroke} stroke={BLUE} strokeWidth="2" />
+      <path d="M34 74h44" stroke={GREY} strokeWidth="2.6" strokeLinecap="round" className="ill-line l1" />
+      <path d="M34 84h30" stroke={GREY} strokeWidth="2.6" strokeLinecap="round" className="ill-line l2" />
+      <g className="ill-float">
+        <path d="M96 56l-24 26-3 9 9-3 24-26z" fill={AMBER} stroke={INK} strokeWidth="2.4" strokeLinejoin="round" />
+        <path d="M91 61l8 8" fill="none" {...stroke} strokeWidth="2" />
+      </g>
+    </Frame>
+  )
+}
