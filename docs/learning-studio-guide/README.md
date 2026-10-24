@@ -20,7 +20,7 @@ Scroll to **Available Courses**. Filter by company, type (for example Certificat
 ![Filters](03-filters.jpg)
 
 ### 4. Watch a preview
-Every card has **Watch preview**. A short video plays in a pop-up. Close it with the X.
+Every card has **Watch preview**. The short video plays right in the card. Use the full-screen button to make it big, and **Close preview** to put the picture back.
 
 ![Preview](04-preview.jpg)
 
