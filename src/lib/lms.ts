@@ -160,6 +160,19 @@ export async function saveCatalogCourse(course: LmsCourse & { published?: boolea
   invalidateLmsCatalog()
 }
 
+/** Built-in courses ship with the code, so they can be hidden but not deleted. */
+export function isBuiltInCourse(slug: string): boolean {
+  return STATIC_COURSES.some(c => c.slug === slug)
+}
+
+/** Remove an imported course from the catalog (its manifest and quiz bank). */
+export async function deleteCatalogCourse(slug: string) {
+  const { client } = await catalogBlobs()
+  await client.getBlobClient(`${slug}.json`).deleteIfExists()
+  await client.getBlobClient(`${slug}.quizzes.json`).deleteIfExists()
+  invalidateLmsCatalog()
+}
+
 export function findLmsItem(course: LmsCourse, itemId: string): LmsItem | undefined {
   for (const s of course.sections) {
     const hit = s.items.find(i => i.id === itemId)
