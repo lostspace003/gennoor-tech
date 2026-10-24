@@ -13,7 +13,7 @@ const ALT = 'Claude Partner Network - Certified'
 
 function Badge({ kind, width }: { kind: 'horizontal' | 'vertical' | 'chip'; width: number }) {
   return (
-    <span className="inline-block leading-[0]">
+    <span className="inline-block leading-[0] overflow-hidden rounded-[inherit]">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={`/cpn/cpn-certified-${kind}.svg`} width={width} alt={ALT} className="h-auto" />
     </span>
@@ -56,7 +56,7 @@ export function ClaudePartnerSection() {
 export function ClaudePartnerFooterLine() {
   return (
     <div className="mt-8 flex justify-center">
-      <div className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-2 rounded-full bg-[#f0eee6] pl-1.5 pr-5 py-1.5">
+      <div className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-2 rounded-[12px] bg-[#f0eee6] pl-0 pr-5 py-0">
         <Badge kind="horizontal" width={130} />
         <p className="text-xs font-medium text-[#141413]">{TIER_LINE}</p>
       </div>
@@ -68,7 +68,7 @@ export function ClaudePartnerFooterLine() {
 export function ClaudePartnerBar() {
   return (
     <div className="flex justify-center px-4 pt-5 pb-1">
-      <div className="inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-full bg-[#f0eee6] pl-1.5 pr-5 py-1.5 shadow-[0_2px_10px_rgba(20,20,19,0.07)]">
+      <div className="inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-[14px] bg-[#f0eee6] pl-0 pr-5 py-0 shadow-[0_2px_10px_rgba(20,20,19,0.07)]">
         <Badge kind="horizontal" width={150} />
         <p className="text-[14.5px] font-semibold text-[#141413]">{TIER_LINE}</p>
       </div>
