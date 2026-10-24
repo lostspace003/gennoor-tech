@@ -101,6 +101,7 @@ export async function readStudioPackage(sasUrl: string, slugIn?: string): Promis
     domains: raw.domains || [],
     vendor: raw.platform || 'Vendor-neutral',
     kind: raw.kind || 'course',
+    track: raw.track || '',
     protected: true,
     thumbnail: raw.thumbnail || undefined,
     promo: raw.promo || undefined,
