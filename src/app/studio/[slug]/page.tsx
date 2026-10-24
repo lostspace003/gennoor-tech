@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const url = `https://gennoor.com/studio/${slug}`
   const card = toCard(course)
   const facts = [`${course.stats.lectures} video lessons`, course.stats.quizzes ? `${course.stats.quizzes} quizzes` : '', card.hours ? `${card.hours} hours of video` : ''].filter(Boolean).join(', ')
-  const description = `${course.subtitle} ${facts}. Free with a Learning Studio account.`.slice(0, 300)
+  const description = `${course.subtitle} ${facts}. Learn on Gennoor Learning Studio.`.slice(0, 300)
   const keywords = [course.title, course.code, card.vendor, ...(course.topics_tags || []), ...(course.topics || [])].filter(Boolean)
   return {
     // absolute: the site title template would push long course titles past what search results show
@@ -119,7 +119,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
               ) : (
               <div className="mt-8 flex flex-wrap items-center gap-4">
                 <EnrollButton slug={slug} enrolled={enrolled} />
-                {!learner && <p className="text-[13px] text-[#8d9bb0]">Free. You sign in once to start.</p>}
+                {!learner && <p className="text-[13px] text-[#8d9bb0]">You sign in once to start.</p>}
               </div>
               )}
               <dl className="flex flex-wrap gap-x-8 gap-y-2 mt-8 text-[15px]">

@@ -227,7 +227,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                   </li>
                   <li className="flex items-start gap-2.5">
                     <Award className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: themeAccent }} />
-                    <span>Free verifiable certificate on completion</span>
+                    <span>Verifiable certificate on completion</span>
                   </li>
                 </ul>
               </div>

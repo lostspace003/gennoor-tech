@@ -39,7 +39,6 @@ export default function AcademyOverview() {
     { value: String(courses.length), label: 'courses in catalog' },
     { value: String(tracks.length), label: 'learning tracks' },
     { value: String(interactiveCourses.length), label: 'fully interactive' },
-    { value: '100%', label: 'free to learn' },
   ]
 
   return (

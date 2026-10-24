@@ -27,7 +27,7 @@ function DashboardMock() {
         {[
           [String(catalogCourses.length), 'Courses'],
           [String(tracks.length), 'Tracks'],
-          ['Free', 'Forever'],
+          ['Certificate', 'On completion'],
         ].map(([v, l]) => (
           <div key={l} className="bg-[#f5f5f7] rounded-xl px-2 py-2.5 text-center">
             <div className="text-[17px] font-bold tracking-[-0.02em] text-gray-900 leading-none">{v}</div>
@@ -130,7 +130,7 @@ const SLIDES: Slide[] = [
     key: 'dashboard',
     kicker: 'Your learning home',
     title: 'Pick up exactly where you left off.',
-    body: 'A learner dashboard that tracks every chapter, course, and certificate — one free sign-in to start.',
+    body: 'A learner dashboard that tracks every chapter, course, and certificate — one sign-in to start.',
     points: ['Progress saved automatically', 'All courses, one place', 'Certificates in your pocket'],
     cta: { label: 'Open the dashboard', href: '/academy/dashboard' },
     secondary: { label: 'Browse courses ›', href: '/studio' },
@@ -144,7 +144,7 @@ const SLIDES: Slide[] = [
     title: 'Press play. The course teaches itself.',
     body: 'Narrated chapters with a real timeline — scrub, jump slides, go fullscreen. The voice stays in sync in both directions.',
     points: ['Human-quality narration', 'Scrub like YouTube', 'Fullscreen, distraction-free'],
-    cta: { label: 'Try a chapter free', href: '/ai-academy/ab-100/course-introduction' },
+    cta: { label: 'Try a chapter', href: '/ai-academy/ab-100/course-introduction' },
     secondary: { label: 'All courses ›', href: '/studio' },
     panel: 'bg-[#f5f5f7]',
     Mock: PlayerMock,

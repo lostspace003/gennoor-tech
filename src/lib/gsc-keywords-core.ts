@@ -86,7 +86,7 @@ export function buildBrief(title: string, subtitle: string, queries: KeywordRow[
   const fit = (s: string, max: number) => (s.length <= max ? s : s.slice(0, max).replace(/\s+\S*$/, '').replace(/[\s:|,-]+$/, ''))
   const shortTitle = title.replace(/^([A-Z]{1,4}-?\d{2,4}):.*$/, '$1')
   const suggestedTitle = lead ? fit(`${shortTitle}: ${titleCase(lead)}`, 60) : fit(title, 60)
-  const suggestedDescription = `${subtitle} Covers ${words.slice(0, 5).join(', ')}. Free with a Learning Studio account.`.slice(0, 300)
+  const suggestedDescription = `${subtitle} Covers ${words.slice(0, 5).join(', ')}. Learn on Gennoor Learning Studio.`.slice(0, 300)
   const h2 = top
     .filter(q => q.query.split(' ').length >= 2)
     .slice(0, 6)

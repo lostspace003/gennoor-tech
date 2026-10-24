@@ -6,7 +6,7 @@ import CourseChat from './CourseChat'
 import ReviewPrompt from './ReviewPrompt'
 import { useRouter } from 'next/navigation'
 import {
-  Award, CheckCircle2, ChevronDown, ChevronRight, Download, FileText, ListVideo, Loader2, Maximize, Maximize2, Minimize, Minimize2,
+  Award, CheckCircle2, ChevronDown, ChevronRight, Download, FileText, Info, ListVideo, Loader2, Maximize, Maximize2, Minimize, Minimize2,
   Pause, Play, RotateCcw, RotateCw, Subtitles, Volume2, VolumeX, X, ZoomIn, ZoomOut,
 } from 'lucide-react'
 import type { LmsCourse, LmsItem, LmsProgressEntry } from '@/lib/lms'
@@ -64,6 +64,7 @@ export default function LmsPlayer({
   const [pdfMax, setPdfMax] = useState(false)
   const [showCongrats, setShowCongrats] = useState(false)
   const [sideW, setSideW] = useState(400)
+  const [infoOpen, setInfoOpen] = useState(true)
   const ctl = useRef<VideoCtl | null>(null)
   const resumeAfterMax = useRef(false)
   const item = items.find(i => i.id === itemId) ?? items[0]
@@ -147,8 +148,9 @@ export default function LmsPlayer({
 
   // Drag the left edge of the side panel to make it wider or narrower.
   useEffect(() => {
-    try { const w = Number(localStorage.getItem('gnr-side-w')); if (w >= 320) setSideW(w) } catch { /* private mode */ }
+    try { const w = Number(localStorage.getItem('gnr-side-w')); if (w >= 320) setSideW(w); if (localStorage.getItem('gnr-info-open') === '0') setInfoOpen(false) } catch { /* private mode */ }
   }, [])
+  const toggleInfo = (v: boolean) => { setInfoOpen(v); try { localStorage.setItem('gnr-info-open', v ? '1' : '0') } catch { /* ignore */ } }
   const startResize = (e: React.PointerEvent) => {
     e.preventDefault()
     const startX = e.clientX
@@ -206,6 +208,7 @@ export default function LmsPlayer({
         <span className="text-[12px] text-[#8d9bb0] tabular-nums shrink-0 hidden sm:block">{pct}% complete</span>
       </div>
 
+      <div className="lg:pl-[var(--chat-w,0px)] transition-[padding] duration-200">
       <div className="max-w-[1500px] mx-auto flex flex-col lg:flex-row gap-6 p-4 sm:p-6">
         <div className="flex-1 min-w-0">
           {item.type === 'lecture' ? (
@@ -236,13 +239,16 @@ export default function LmsPlayer({
           <CourseChat slug={course.slug} itemId={item.id} courseTitle={course.title} />
         </div>
 
-        <aside style={{ ['--sw' as string]: `${sideW}px` }} className="relative lg:w-[var(--sw)] lg:shrink-0 bg-white rounded-2xl border border-[#e2e5ec] overflow-hidden flex flex-col max-h-[80vh] lg:max-h-none lg:h-[calc(100vh-8.5rem)] lg:sticky lg:top-[5.5rem]">
+        {infoOpen && <aside style={{ ['--sw' as string]: `${sideW}px` }} className="relative lg:w-[var(--sw)] lg:shrink-0 bg-white rounded-2xl border border-[#e2e5ec] overflow-hidden flex flex-col max-h-[80vh] lg:max-h-none lg:h-[calc(100vh-8.5rem)] lg:sticky lg:top-[5.5rem]">
           <div
             onPointerDown={startResize}
             title="Drag to resize"
             className="hidden lg:block absolute left-0 top-0 bottom-0 w-1.5 z-10 cursor-col-resize hover:bg-primary-400/40 active:bg-primary-500/50 transition-colors"
           />
-          <div className="flex border-b border-[#e8e8ed] text-[14px] font-semibold shrink-0" role="tablist">
+          <button type="button" onClick={() => toggleInfo(false)} aria-label="Hide lecture details" title="Hide this panel" className="flex absolute top-2.5 right-2.5 z-10 w-8 h-8 lg:w-7 lg:h-7 items-center justify-center rounded-full text-[#6e6e73] hover:bg-gray-100">
+            <X className="w-4 h-4" />
+          </button>
+          <div className="flex border-b border-[#e8e8ed] text-[14px] font-semibold shrink-0 pr-11" role="tablist">
             {([['details', 'Lecture details'], ['content', 'Course content']] as const).map(([k, label]) => (
               <button
                 key={k}
@@ -393,8 +399,16 @@ export default function LmsPlayer({
             )}
           </div>
           )}
-        </aside>
+        </aside>}
       </div>
+      </div>
+      {!infoOpen && (
+        <button type="button" onClick={() => toggleInfo(true)} aria-label="Show lecture details and course content" title="Lecture details and course content"
+          className="fixed z-40 right-0 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1.5 bg-[#0f1824] text-white pr-2 pl-2.5 py-3.5 rounded-l-2xl shadow-lg hover:bg-[#1b2a3f] transition-colors">
+          <Info className="w-5 h-5" />
+          <span className="text-[11px] font-semibold [writing-mode:vertical-rl]">Details</span>
+        </button>
+      )}
 
       {showCongrats && congratsUrl && (
         <div className="fixed inset-0 z-[110] bg-black/85 flex flex-col items-center justify-center p-4 lms-fade" onContextMenu={e => e.preventDefault()}>

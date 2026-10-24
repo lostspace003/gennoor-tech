@@ -9,7 +9,7 @@ import LabsCatalog from '@/components/academy/LabsCatalog'
 export const metadata: Metadata = {
   title: `${STUDIO_NAME} - Hands-on certification and project courses`,
   description:
-    'Hands-on video courses and real projects for Microsoft, Google, AWS and Claude. Labs run on camera, quizzes check you as you go, and your progress follows you to any device. Free with a Gennoor Academy account.',
+    'Hands-on video courses and real projects for Microsoft, Google, AWS and Claude. Labs run on camera, quizzes check you as you go, and your progress follows you to any device.',
   alternates: { canonical: 'https://gennoor.com/studio' },
 }
 

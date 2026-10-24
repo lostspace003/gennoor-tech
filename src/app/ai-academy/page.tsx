@@ -42,7 +42,7 @@ export default function AcademyPage() {
               Learn something useful in an hour.
             </h1>
             <p className="text-lg sm:text-xl text-gray-600 leading-relaxed mb-10 max-w-2xl mx-auto">
-              {totalCourses} interactive courses with animated slides, narration and a short quiz. Free with one sign-in, with a certificate when you finish.
+              {totalCourses} interactive courses with animated slides, narration and a short quiz. A certificate when you finish.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -84,8 +84,8 @@ export default function AcademyPage() {
               {
                 step: '01',
                 icon: BookOpen,
-                title: 'Start free',
-                description: 'Create a free account once and every course opens. Pick a course; open it; learn.',
+                title: 'Get started',
+                description: 'Create an account once and every course opens. Pick a course; open it; learn.',
               },
               {
                 step: '02',

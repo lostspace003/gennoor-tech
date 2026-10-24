@@ -30,7 +30,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
           <div style={{ display: 'flex', fontSize: title.length > 60 ? 54 : 66, fontWeight: 800, lineHeight: 1.08, letterSpacing: -1.5 }}>{title}</div>
           <div style={{ display: 'flex', fontSize: 30, color: '#cdd8eb', marginTop: 28 }}>{facts}</div>
         </div>
-        <div style={{ display: 'flex', fontSize: 26, color: '#a8c3ef' }}>gennoor.com/studio · Free with one sign-in</div>
+        <div style={{ display: 'flex', fontSize: 26, color: '#a8c3ef' }}>gennoor.com/studio</div>
       </div>
     ),
     { ...size },
