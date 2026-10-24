@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, FormEvent } from 'react'
 import { Loader2, Maximize2, MessageCircle, Minimize2, Minus, Send, X } from 'lucide-react'
 import ChatMarkdown from './ChatMarkdown'
+import { CopyPairButton, ExportChatMenu } from './ChatTools'
 
 interface Msg { id: string; role: 'learner' | 'assistant' | 'team'; text: string; at: string; attachments?: string[] }
 type Mode = 'closed' | 'open' | 'min' | 'max'
@@ -13,7 +14,7 @@ type Mode = 'closed' | 'open' | 'min' | 'max'
  * still recorded for the team. Replies from the team that you have not seen yet are shown
  * when the chat opens.
  */
-export default function CourseChat({ slug, itemId }: { slug: string; itemId: string }) {
+export default function CourseChat({ slug, itemId, courseTitle }: { slug: string; itemId: string; courseTitle?: string }) {
   const [mode, setMode] = useState<Mode>('closed')
   const [msgs, setMsgs] = useState<Msg[]>([])
   const [text, setText] = useState('')
@@ -80,7 +81,8 @@ export default function CourseChat({ slug, itemId }: { slug: string; itemId: str
       })
       const d = await r.json().catch(() => ({}))
       if (!r.ok) throw new Error(d.error || 'Could not send your question.')
-      setMsgs(m => [...m.filter(x => x.id !== temp.id), ...d.messages])
+      const now = new Date().toISOString()
+      setMsgs(m => [...m.filter(x => x.id !== temp.id), ...(d.messages as Msg[]).map(x => ({ ...x, at: x.at || now }))])
     } catch (err) {
       setMsgs(m => m.filter(x => x.id !== temp.id))
       setText(q)
@@ -124,6 +126,7 @@ export default function CourseChat({ slug, itemId }: { slug: string; itemId: str
           <div className="text-[11.5px] text-[#86868b]">Course questions only. Lab problems go to the discussion.</div>
         </div>
         <div className="ml-auto flex items-center gap-0.5">
+          <ExportChatMenu msgs={msgs} courseTitle={courseTitle || slug} />
           <button type="button" onClick={() => setMode('min')} aria-label="Minimise" title="Minimise" className="p-1.5 rounded-lg text-[#6e6e73] hover:bg-gray-100"><Minus className="w-4 h-4" /></button>
           <button type="button" onClick={() => setMode(wide ? 'open' : 'max')} aria-label={wide ? 'Make smaller' : 'Make bigger'} title={wide ? 'Make smaller' : 'Make bigger'} className="p-1.5 rounded-lg text-[#6e6e73] hover:bg-gray-100">
             {wide ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
@@ -136,7 +139,7 @@ export default function CourseChat({ slug, itemId }: { slug: string; itemId: str
         {msgs.length === 0 && !busy && (
           <p className="text-[14px] leading-relaxed text-[#6e6e73]">Ask about this lesson or the topics this course teaches. For lab problems or code, the discussion is the best place: other learners and the team can help.</p>
         )}
-        {msgs.map(m => (
+        {msgs.map((m, i) => (
           m.role === 'learner' ? (
             <div key={m.id} className="flex justify-end">
               <div className="max-w-[88%] rounded-2xl rounded-br-md bg-primary-600 text-white px-3.5 py-2 text-[14px] leading-relaxed whitespace-pre-wrap break-words">{m.text}</div>
@@ -147,6 +150,7 @@ export default function CourseChat({ slug, itemId }: { slug: string; itemId: str
                 {m.role === 'team' && <div className="text-[11.5px] font-semibold text-emerald-700 mb-1">Reply from the Gennoor team</div>}
                 <ChatMarkdown text={m.text} />
                 {m.attachments?.length ? <div className="text-xs text-[#6e6e73] mt-2">Files sent to your email: {m.attachments.join(', ')}</div> : null}
+                <div><CopyPairButton msgs={msgs} index={i} /></div>
               </div>
             </div>
           )

@@ -905,7 +905,7 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
 
       {/* Stage: the lesson, with the Ask panel docked beside it when open */}
       <div className="flex-1 min-h-0 relative flex">
-        {askOpen && <AskDock ask={ask} chapterTitle={chapter.title} onClose={() => setAskOpen(false)} />}
+        {askOpen && <AskDock ask={ask} chapterTitle={chapter.title} courseTitle={course?.shortTitle || course?.title} onClose={() => setAskOpen(false)} />}
         <div className="flex-1 min-w-0 relative">
         {!askOpen && !chapter.isMockExam && <AskTab onClick={() => setAskOpen(true)} />}
         <iframe
