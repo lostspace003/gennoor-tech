@@ -127,6 +127,9 @@ export default function EnquiryFormModal({
                 <p className="text-sm text-gray-500">
                   We'll send the course details to your email from <strong>training@gennoor.com</strong>
                 </p>
+                <p className="text-[11px] leading-snug text-gray-400 mt-4 max-w-[340px] mx-auto">
+                  If Word or Excel says a file has “limited permissions”, that notice comes from your own Office or work account, not from us. Close it to carry on.
+                </p>
               </div>
             ) : (
               <>
