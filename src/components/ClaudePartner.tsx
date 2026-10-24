@@ -55,9 +55,11 @@ export function ClaudePartnerSection() {
 /** Footer, every page. */
 export function ClaudePartnerFooterLine() {
   return (
-    <div className="flex flex-wrap items-center justify-center gap-3 mt-8">
-      <Badge kind="horizontal" width={150} />
-      <p className="text-xs text-[#6e6e73]">{TIER_LINE}</p>
+    <div className="mt-8 flex justify-center">
+      <div className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-2 rounded-full bg-[#f0eee6] pl-1.5 pr-5 py-1.5">
+        <Badge kind="horizontal" width={130} />
+        <p className="text-xs font-medium text-[#141413]">{TIER_LINE}</p>
+      </div>
     </div>
   )
 }
@@ -66,9 +68,9 @@ export function ClaudePartnerFooterLine() {
 export function ClaudePartnerBar() {
   return (
     <div className="flex justify-center px-4 pt-5 pb-1">
-      <div className="inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-full border border-[#e8e3d6] bg-white px-4 py-2 shadow-[0_1px_8px_rgba(20,20,19,0.06)]">
+      <div className="inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-full bg-[#f0eee6] pl-1.5 pr-5 py-1.5 shadow-[0_2px_10px_rgba(20,20,19,0.07)]">
         <Badge kind="horizontal" width={150} />
-        <p className="text-[14.5px] font-semibold text-gray-900">{TIER_LINE}</p>
+        <p className="text-[14.5px] font-semibold text-[#141413]">{TIER_LINE}</p>
       </div>
     </div>
   )
