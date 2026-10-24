@@ -3,7 +3,7 @@ import { requireCrmUser } from '@/lib/crm/access'
 import { getLeads } from '@/lib/crm/store'
 import { searchConfigured, searchLeads, syncSearchIndex, IndexMissingError } from '@/lib/crm/search'
 
-// Semantic lead search over the Azure AI Search index (free tier).
+// Semantic lead search over the Qdrant collection.
 // GET ?q=...  → leads ranked by hybrid keyword+vector relevance.
 // POST        → full reindex (managers only).
 // Self-healing: a search against a missing index builds it once, then retries.
@@ -13,7 +13,7 @@ export async function GET(request: Request) {
 
   if (!searchConfigured()) {
     return NextResponse.json(
-      { error: 'Search is not configured. Set AZURE_SEARCH_ENDPOINT and AZURE_SEARCH_ADMIN_KEY.' },
+      { error: 'Search is not configured. Set QDRANT_URL and QDRANT_API_KEY.' },
       { status: 503 }
     )
   }
@@ -44,14 +44,18 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST() {
-  const user = await requireCrmUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  if (!user.isManager) return NextResponse.json({ error: 'Managers only' }, { status: 403 })
+export async function POST(request: Request) {
+  // The monthly index workflow calls this with the cron secret; otherwise it is a manager's button.
+  const cronOk = Boolean(process.env.CRM_CRON_SECRET && request.headers.get('x-cron-secret') === process.env.CRM_CRON_SECRET)
+  if (!cronOk) {
+    const user = await requireCrmUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!user.isManager) return NextResponse.json({ error: 'Managers only' }, { status: 403 })
+  }
 
   if (!searchConfigured()) {
     return NextResponse.json(
-      { error: 'Search is not configured. Set AZURE_SEARCH_ENDPOINT and AZURE_SEARCH_ADMIN_KEY.' },
+      { error: 'Search is not configured. Set QDRANT_URL and QDRANT_API_KEY.' },
       { status: 503 }
     )
   }

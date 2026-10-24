@@ -16,7 +16,8 @@ Without the settings below nothing changes: the bots answer as before.
 
 ## Every new course
 
-- Publishing a video course in the admin indexes it in the background.
+- Nothing to do: two minutes after the app starts (so after every deploy) it indexes every published course, video or interactive, that has nothing in Qdrant yet (`src/instrumentation.ts`). When everything is indexed it does nothing. A manager can also run it on demand: `POST /api/admin/course-index`.
+- Publishing a video course in the admin indexes it in the background straight away.
 - Or run the workflow / script with the course slug (`ai-103`, `ia-ab-100` for interactive courses), `--new` (only courses with nothing indexed yet) or `--all`.
 - Re-running is safe: chunks have fixed ids and a lesson's old chunks are replaced first.
 - `--dry-run` shows chunk counts and the embedding cost without calling Qdrant or the embedding service.
