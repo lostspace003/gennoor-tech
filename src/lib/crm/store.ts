@@ -1,5 +1,6 @@
 import { BlobServiceClient, BlockBlobClient } from '@azure/storage-blob'
 import { Lead, LeadActivity } from './types'
+import { scheduleSearchSync } from './search'
 
 // Leads live as one JSON blob in the existing storage account — the same
 // pattern every other persisted feature on the site uses. At CRM scale
@@ -67,6 +68,8 @@ export async function mutateLeads<T>(mutate: (leads: Lead[]) => T): Promise<T> {
     const result = mutate(leads)
     try {
       await writeAll(leads, etag)
+      // keep the lead search current: rebuilt shortly after the last change
+      scheduleSearchSync(getLeads)
       return result
     } catch (error: any) {
       // 412 = blob changed under us; re-read and retry
