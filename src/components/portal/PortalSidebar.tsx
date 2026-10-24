@@ -83,19 +83,19 @@ function RailTip({ label }: { label: string }) {
 function RailLogo() {
   const arc: Array<[number, number]> = [[105.8, 84.0], [93.4, 99.9], [75.4, 108.8], [55.3, 108.9], [37.1, 100.3], [24.5, 84.6], [20.0, 65.0], [24.5, 45.4], [37.1, 29.7], [55.3, 21.1], [75.4, 21.2], [93.4, 30.1]]
   return (
-    <Link href="/" aria-label="Gennoor Tech home" className="block select-none">
-      <div className="flex items-center gap-2.5">
-        <svg viewBox="10 10 110 110" className="h-[48px] w-[48px] flex-shrink-0" aria-hidden="true">
-          {arc.map(([cx, cy], i) => <circle key={i} cx={cx} cy={cy} r={6.4} fill="#2563EB" />)}
-          <circle cx={80} cy={65} r={6.4} fill="#F59E0B" />
-          <circle cx={95} cy={65} r={6.4} fill="#F59E0B" />
-          <circle cx={110} cy={65} r={6.4} fill="#2563EB" />
-        </svg>
-        <span className="font-heading text-[21.5px] font-extrabold leading-none tracking-[-0.01em] whitespace-nowrap">
+    <Link href="/" aria-label="Gennoor Tech home" className="flex select-none items-center gap-2.5">
+      <svg viewBox="10 10 110 110" className="h-[46px] w-[46px] flex-shrink-0" aria-hidden="true">
+        {arc.map(([cx, cy], i) => <circle key={i} cx={cx} cy={cy} r={6.4} fill="#2563EB" />)}
+        <circle cx={80} cy={65} r={6.4} fill="#F59E0B" />
+        <circle cx={95} cy={65} r={6.4} fill="#F59E0B" />
+        <circle cx={110} cy={65} r={6.4} fill="#2563EB" />
+      </svg>
+      <div className="min-w-0">
+        <div className="font-heading text-[21px] font-extrabold leading-none tracking-[-0.01em] whitespace-nowrap">
           <span className="text-[#2D3748]">Ge</span><span className="text-[#2563EB]">nn</span><span className="text-[#F59E0B]">oo</span><span className="text-[#2563EB]">r</span><span className="text-[#4A5568]"> Tech</span>
-        </span>
+        </div>
+        <div className="mt-1.5 whitespace-nowrap text-[10.5px] font-bold uppercase tracking-[0.1em] text-[#475569]">Train. Innovate. Build.</div>
       </div>
-      <div className="mt-1.5 whitespace-nowrap text-[11.5px] font-bold uppercase tracking-[0.16em] text-[#475569]">Train. Innovate. Build.</div>
     </Link>
   )
 }
