@@ -1,0 +1,31 @@
+name: Index course content
+
+# Run by hand after adding or editing a course (publishing a course in the admin also indexes it).
+# Needs the repository secrets QDRANT_URL, QDRANT_API_KEY, FOUNDRY_API_KEY and the storage connection string.
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Course slug (for example ai-103), ia-<id> for an interactive course, or --new / --all'
+        required: true
+        default: '--new'
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: npm
+      - run: npm ci
+      - name: Index
+        env:
+          QDRANT_URL: ${{ secrets.QDRANT_URL }}
+          QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
+          FOUNDRY_API_KEY: ${{ secrets.FOUNDRY_API_KEY }}
+          FOUNDRY_OPENAI_BASE: https://admin-0564-resource.openai.azure.com
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+          LMS_STORAGE_CONNECTION_STRING: ${{ secrets.LMS_STORAGE_CONNECTION_STRING }}
+        run: npx tsx scripts/index-course.ts ${{ github.event.inputs.target }}
