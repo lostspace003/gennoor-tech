@@ -150,7 +150,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
           </div>
 
           <div className="mt-12">
-            <CourseStrip sections={course.sections} height={52} animate />
+            <CourseStrip sections={course.sections} height={26} animate />
             <div className="mt-4">
               <StripLegend sections={course.sections} dark />
             </div>
@@ -183,7 +183,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
                   <summary className="cursor-pointer list-none py-5 flex items-center gap-5 [&::-webkit-details-marker]:hidden">
                     <div className="min-w-0 flex-1">
                       <div className="font-semibold text-gray-900 text-[16px] leading-snug group-open:text-primary-600 transition-colors">{s.title}</div>
-                      <div className="mt-3 max-w-xs"><CourseStrip sections={[s]} height={14} maxSeconds={longestLesson(course.sections)} /></div>
+                      <div className="mt-3 max-w-xs"><CourseStrip sections={[s]} height={8} maxSeconds={longestLesson(course.sections)} /></div>
                     </div>
                     <span className="text-[13px] text-[#86868b] tabular-nums shrink-0">{s.items.length} {s.items.length === 1 ? "lesson" : "lessons"}</span>
                     <span className="text-[#86868b] transition-transform group-open:rotate-90" aria-hidden>›</span>

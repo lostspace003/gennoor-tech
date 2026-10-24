@@ -33,12 +33,15 @@ export function CourseStrip({
   height = 40,
   animate = false,
   maxSeconds,
+  barWidth = 2,
 }: {
   sections: StripSection[]
   done?: Record<string, boolean>
   height?: number
   animate?: boolean
   maxSeconds?: number
+  /** width of one bar in px: thin on purpose; bars only get narrower when the strip runs out of room */
+  barWidth?: number
 }) {
   const max = maxSeconds ?? longestLesson(sections)
   return (
@@ -50,12 +53,12 @@ export function CourseStrip({
           @media (prefers-reduced-motion: reduce) { .lms-strip-anim { animation: none } }
         `}</style>
       )}
-      <div className="flex items-end w-full" style={{ height, gap: Math.max(3, height / 8) }} role="img" aria-label="Course map: one bar per lesson, as tall as the lesson is long">
+      <div className="flex items-end w-full" style={{ height, gap: Math.max(3, height / 6) }} role="img" aria-label="Course map: one bar per lesson, as tall as the lesson is long">
         {sections.map((s, si) => (
           <div
             key={si}
-            className={`flex items-end h-full min-w-[2px] ${animate ? 'lms-strip-anim' : ''}`}
-            style={{ flex: s.items.length, gap: 1, animationDelay: animate ? `${si * 45}ms` : undefined }}
+            className={`flex items-end h-full min-w-0 ${animate ? 'lms-strip-anim' : ''}`}
+            style={{ flex: `0 1 ${s.items.length * (barWidth + 1)}px`, gap: 1, animationDelay: animate ? `${si * 45}ms` : undefined }}
           >
             {s.items.map(i => {
               const kind = kindOf(i)
@@ -63,8 +66,9 @@ export function CourseStrip({
               return (
                 <span
                   key={i.id}
-                  className="flex-1 min-w-0 rounded-[1px]"
+                  className="min-w-0 rounded-[1px]"
                   style={{
+                    flex: `0 1 ${barWidth}px`,
                     height: `${Math.round(shareOf(i, max) * 100)}%`,
                     background: KIND_COLOR[kind],
                     opacity: isDone ? 1 : 0.22,
