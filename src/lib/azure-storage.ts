@@ -343,34 +343,6 @@ export async function deletePendingBooking(rowKey: string) {
 
 // ─── Career Sessions ─────────────────────────────────────────
 
-export async function saveCareerSession(data: {
-  sessionId: string
-  agentId: string
-  agentName: string
-  inputFields: Record<string, any>
-  aiResults: Record<string, any>
-  resumeFileName?: string
-  resumeBlobPath?: string
-  contactInfo?: Record<string, any>
-  status: string
-}) {
-  await ensureTable('CareerSessions')
-  const client = getTableClient('CareerSessions')
-
-  await client.upsertEntity({
-    partitionKey: data.agentId,
-    rowKey: data.sessionId,
-    agentName: data.agentName,
-    inputFields: JSON.stringify(data.inputFields),
-    aiResults: JSON.stringify(data.aiResults),
-    resumeFileName: data.resumeFileName || '',
-    resumeBlobPath: data.resumeBlobPath || '',
-    contactInfo: data.contactInfo ? JSON.stringify(data.contactInfo) : '',
-    status: data.status,
-    updatedAt: new Date().toISOString(),
-  }, 'Merge')
-}
-
 export async function uploadResume(
   sessionId: string,
   fileName: string,
