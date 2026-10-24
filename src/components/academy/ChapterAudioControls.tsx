@@ -15,6 +15,23 @@ interface CuesDoc {
   expectedDurationSeconds?: number
 }
 
+/** Index of the cue to land on for a "previous slide" press. Exported for tests. */
+export function prevSlideStartIdx(
+  cues: Array<{ slide: number; step?: number }>,
+  cur: number,
+): number {
+  const curCue = cues[cur]
+  if (!curCue) return cur
+  for (let j = cur - 1; j >= 0; j--) {
+    if (cues[j].slide < curCue.slide && cues[j].step === undefined) return j
+  }
+  // First slide: restart it
+  for (let i = 0; i <= cur; i++) {
+    if (cues[i].slide === curCue.slide && cues[i].step === undefined) return i
+  }
+  return cur
+}
+
 export interface ChapterAudioControlsHandle {
   /** Seek the audio to the cue matching (slide, step?) and also post it down
    *  to the iframe so the visual updates even if audio is paused. */
@@ -378,18 +395,12 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
           return
         }
       } else if (direction === 'prev-slide') {
-        // Mid-slide → return to current slide's start. Otherwise → prev slide's start.
-        if (curCue.step !== undefined) {
-          for (let i = cur - 1; i >= 0; i--) {
-            if (cues[i].slide === curCue.slide && cues[i].step === undefined) { target = i; break }
-          }
-        } else {
-          for (let j = cur - 1; j >= 0; j--) {
-            if (cues[j].slide < curCue.slide && cues[j].step === undefined) { target = j; break }
-          }
-        }
+        // Always the previous slide's start. Only on the first slide does it
+        // restart that slide (there is nothing before it). Restart / small
+        // rewinds live on the replay and -10s buttons.
+        target = prevSlideStartIdx(cues, cur)
       }
-      if (target === cur) return
+      if (target === cur && direction !== 'prev-slide') return
       const cue = cues[target]
       currentCueIdxRef.current = target
       applySeek(cue.at)
@@ -630,7 +641,7 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
         <button
           onClick={togglePlay}
           disabled={!audioReady}
-          className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${
+          className={`h-9 min-w-9 sm:pr-3 sm:pl-2 rounded-full flex items-center justify-center gap-1.5 flex-shrink-0 text-[13px] font-semibold transition-colors ${
             audioReady
               ? 'bg-white text-gray-900 hover:bg-[#e8e8ed]'
               : 'bg-white/20 text-white/40 cursor-not-allowed'
@@ -639,6 +650,7 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
           aria-label={isPlaying ? 'Pause' : 'Play'}
         >
           {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
+          <span className="hidden sm:inline">{isPlaying ? 'Pause' : 'Play'}</span>
         </button>
 
         {/* ±10s */}
@@ -649,7 +661,7 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
           title="Back 10 seconds (J)"
           aria-label="Back 10 seconds"
         >
-          <RotateCcw className="w-4 h-4" />
+          <span className="relative inline-flex"><RotateCcw className="w-5 h-5" /><span className="absolute inset-0 flex items-center justify-center text-[7px] font-bold leading-none pt-[1px]">10</span></span>
         </button>
         <button
           onClick={() => seekBy(10)}
@@ -658,7 +670,7 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
           title="Forward 10 seconds (L)"
           aria-label="Forward 10 seconds"
         >
-          <RotateCw className="w-4 h-4" />
+          <span className="relative inline-flex"><RotateCw className="w-5 h-5" /><span className="absolute inset-0 flex items-center justify-center text-[7px] font-bold leading-none pt-[1px]">10</span></span>
         </button>
 
         {/* Timeline scrubber — continuous chapter timeline with slide ticks,

@@ -1,5 +1,6 @@
 'use client'
 
+import { FullScreenInfo } from './LmsPlayer'
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -730,6 +731,12 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
           if (controlsTop) controlsTop.style.display = 'none';
           var stepInd = document.getElementById('stepIndicator');
           if (stepInd) stepInd.style.display = 'none';
+          // One control set: the chapter file's own SLIDE < n/N > Play block
+          // (it overlapped itself and drove a muted second audio) is hidden;
+          // the parent bar below is the single place for slide + play controls.
+          ['.slide-nav', '#playPauseBtn', '#audioStatus'].forEach(function(sel) {
+            document.querySelectorAll(sel).forEach(function(el) { el.style.display = 'none'; });
+          });
 
           // Intercept arrow keys in capture phase so the iframe's own
           // PLAYER_JS handler does NOT fire (its audio is muted, so the
@@ -885,6 +892,7 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
             {chapter.isMockExam ? 'EXAM' : `CH ${String(chapter.number).padStart(2, '0')}`}
           </span>
           <span className="text-sm font-medium truncate">{chapter.title}</span>
+          <FullScreenInfo />
           {slideInfo && (
             <span className="hidden sm:inline text-xs text-white/40 flex-shrink-0">{slideInfo}</span>
           )}
