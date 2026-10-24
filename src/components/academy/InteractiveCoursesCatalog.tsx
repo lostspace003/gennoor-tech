@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { X, Filter, Layers } from 'lucide-react'
+import { FilterBar, Pagination, usePage, type SortKey } from './CatalogControls'
 import CourseCard from './CourseCard'
 import type { Course as ConfigCourse } from '@/config/courses'
 import type { Course as AcademyCourse } from '@/data/academy/types'
@@ -23,6 +24,8 @@ export default function InteractiveCoursesCatalog({ courses }: Props) {
   const [level, setLevel] = useState<Level | 'all'>('all')
   const [audience, setAudience] = useState<Audience | 'all'>('all')
   const [industry, setIndustry] = useState<Industry | 'all'>('all')
+  const [sort, setSort] = useState<SortKey>('default')
+  const [desc, setDesc] = useState(false)
 
   // Which filters are available based on what courses actually exist
   const availableLevels = useMemo(() => {
@@ -53,23 +56,32 @@ export default function InteractiveCoursesCatalog({ courses }: Props) {
     })
   }, [courses, level, audience, industry])
 
-  // Group by track
-  const grouped = useMemo(() => {
-    const map = new Map<string, EnrichedCourse[]>()
-    filtered.forEach(c => {
-      const track = c.meta?.track ?? 'other'
-      const arr = map.get(track) ?? []
-      arr.push(c)
-      map.set(track, arr)
-    })
-    return TRACK_ORDER
-      .filter(t => map.has(t))
-      .map(t => ({
+  const ordered = useMemo(() => {
+    let list: EnrichedCourse[]
+    if (sort === 'default') {
+      list = TRACK_ORDER.flatMap(t => filtered.filter(c => (c.meta?.track ?? 'other') === t))
+    } else {
+      list = [...filtered]
+      if (sort === 'alpha') list.sort((x, y) => x.config.title.localeCompare(y.config.title))
+      if (sort === 'date') list.sort((x, y) => (x.meta?.lastUpdated || '').localeCompare(y.meta?.lastUpdated || ''))
+      if (desc) list.reverse()
+    }
+    return list
+  }, [filtered, sort, desc])
+  const pg = usePage(`${level}|${audience}|${industry}|${sort}|${desc}`, ordered.length, 9)
+  const pageItems = ordered.slice(pg.start, pg.end)
+
+  // Group the visible page by track
+  const grouped = useMemo(
+    () =>
+      TRACK_ORDER.map(t => ({
         trackId: t,
         info: tracks.find(x => x.id === t)!,
-        items: map.get(t) ?? [],
-      }))
-  }, [filtered])
+        items: pageItems.filter(c => (c.meta?.track ?? 'other') === t),
+      })).filter(g => g.items.length > 0),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [ordered, pg.page],
+  )
 
   const activeCount = [level !== 'all', audience !== 'all', industry !== 'all'].filter(Boolean).length
 
@@ -91,30 +103,21 @@ export default function InteractiveCoursesCatalog({ courses }: Props) {
           </p>
         </div>
 
-        {/* Filter bar */}
-        <div className="max-w-6xl mx-auto mb-10">
-          <div className="flex items-center justify-between gap-4 mb-4">
-            <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-gray-400" />
-              <span className="text-sm font-bold tracking-widest text-gray-400 uppercase">Filter</span>
-            </div>
-            {activeCount > 0 && (
-              <button
-                onClick={reset}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-primary-600 hover:text-primary-700 transition-colors"
-              >
-                <X className="w-3 h-3" />
-                Clear {activeCount} filter{activeCount > 1 ? 's' : ''}
-              </button>
-            )}
-          </div>
-
-          <div className="space-y-3">
-            <FilterRow label="Level" items={[{ id: 'all' as const, label: 'All levels' }, ...availableLevels.map(l => ({ id: l.id, label: l.label }))]} active={level} onSelect={(id) => setLevel(id as Level | 'all')} />
-            <FilterRow label="Audience" items={[{ id: 'all' as const, label: 'All audiences' }, ...availableAudiences.map(a => ({ id: a, label: audienceLabels[a] }))]} active={audience} onSelect={(id) => setAudience(id as Audience | 'all')} />
-            <FilterRow label="Industry" items={[{ id: 'all' as const, label: 'All industries' }, ...availableIndustries.map(i => ({ id: i, label: industryLabels[i] }))]} active={industry} onSelect={(id) => setIndustry(id as Industry | 'all')} />
-          </div>
-        </div>
+        <div id="catalog-top" />
+        <FilterBar
+          quickKey="level"
+          activeCount={activeCount}
+          onReset={reset}
+          sort={sort}
+          desc={desc}
+          onSort={s => { setSort(s); setDesc(s === 'date') }}
+          onDirection={() => setDesc(d => !d)}
+          groups={[
+            { key: 'level', label: 'Level', allLabel: 'All levels', value: level, onChange: id => setLevel(id as Level | 'all'), options: availableLevels.map(l => ({ id: l.id, label: l.label })) },
+            { key: 'audience', label: 'Audience', allLabel: 'All audiences', value: audience, onChange: id => setAudience(id as Audience | 'all'), options: availableAudiences.map(a => ({ id: a, label: audienceLabels[a] })) },
+            { key: 'industry', label: 'Industry', allLabel: 'All industries', value: industry, onChange: id => setIndustry(id as Industry | 'all'), options: availableIndustries.map(i => ({ id: i, label: industryLabels[i] })) },
+          ]}
+        />
 
         {/* Result count */}
         <div className="max-w-6xl mx-auto mb-6 text-sm text-gray-500 text-center">
@@ -159,42 +162,10 @@ export default function InteractiveCoursesCatalog({ courses }: Props) {
                 </div>
               </div>
             ))}
+            <Pagination page={pg.page} pages={pg.pages} onPage={pg.setPage} />
           </div>
         )}
       </div>
     </section>
-  )
-}
-
-interface FilterRowProps {
-  label: string
-  items: Array<{ id: string; label: string }>
-  active: string
-  onSelect: (id: string) => void
-}
-
-function FilterRow({ label, items, active, onSelect }: FilterRowProps) {
-  return (
-    <div className="flex items-center gap-3 flex-wrap">
-      <span className="text-xs font-semibold text-gray-500 w-20 flex-shrink-0">{label}</span>
-      <div className="flex flex-wrap gap-2">
-        {items.map(item => {
-          const isActive = active === item.id
-          return (
-            <button
-              key={item.id}
-              onClick={() => onSelect(item.id)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-all duration-200 ${
-                isActive
-                  ? 'bg-primary-600 text-white shadow-sm'
-                  : 'bg-white text-gray-600 ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700'
-              }`}
-            >
-              {item.label}
-            </button>
-          )
-        })}
-      </div>
-    </div>
   )
 }

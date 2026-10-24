@@ -1,11 +1,12 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { ArrowRight, Clock, Layers } from 'lucide-react'
 import type { Course } from '@/data/academy/types'
 import { tracks, levels } from '@/data/academy/taxonomy'
 import { CatalogFilterBar, useCatalogFilters } from './CatalogFilters'
+import { Pagination, usePage, type SortKey } from './CatalogControls'
 
 interface AcademyCatalogProps {
   allCourses: Course[]
@@ -15,7 +16,18 @@ export default function AcademyCatalog({ allCourses }: AcademyCatalogProps) {
   const filters = useCatalogFilters()
   const { matches, reset } = filters
 
-  const filtered = useMemo(() => allCourses.filter(matches), [allCourses, matches])
+  const [sort, setSort] = useState<SortKey>('default')
+  const [desc, setDesc] = useState(false)
+
+  const filtered = useMemo(() => {
+    const list = allCourses.filter(matches)
+    if (sort === 'alpha') list.sort((a, b) => a.title.localeCompare(b.title))
+    if (sort === 'date') list.sort((a, b) => a.lastUpdated.localeCompare(b.lastUpdated))
+    if (sort !== 'default' && desc) list.reverse()
+    return list
+  }, [allCourses, matches, sort, desc])
+
+  const pg = usePage(`${filters.activeCount}|${filters.track}|${filters.level}|${filters.audience}|${filters.func}|${filters.industry}|${filters.stack}|${sort}|${desc}`, filtered.length, 9)
 
   return (
     <>
@@ -23,7 +35,16 @@ export default function AcademyCatalog({ allCourses }: AcademyCatalogProps) {
       <section className="py-8 lg:py-10 relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            <CatalogFilterBar filters={filters} showing={filtered.length} total={allCourses.length} />
+            <div id="catalog-top" />
+            <CatalogFilterBar
+              filters={filters}
+              showing={filtered.length}
+              total={allCourses.length}
+              sort={sort}
+              desc={desc}
+              onSort={s => { setSort(s); setDesc(s === 'date') }}
+              onDirection={() => setDesc(d => !d)}
+            />
           </div>
         </div>
       </section>
@@ -58,11 +79,14 @@ export default function AcademyCatalog({ allCourses }: AcademyCatalogProps) {
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filtered.map((course) => (
-                  <CourseCard key={course.slug} course={course} />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {filtered.slice(pg.start, pg.end).map((course) => (
+                    <CourseCard key={course.slug} course={course} />
+                  ))}
+                </div>
+                <Pagination page={pg.page} pages={pg.pages} onPage={pg.setPage} />
+              </>
             )}
           </div>
         </div>

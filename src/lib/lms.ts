@@ -342,6 +342,7 @@ export interface LmsCourseCard {
   thumbnailUrl: string | null
   /** signed link to the promo, for the preview pop-up */
   promoUrl: string | null
+  updatedAt?: string
   /** average review rating and how many people rated, when any */
   rating?: { average: number; count: number }
 }
@@ -371,6 +372,7 @@ export function toCard(c: LmsCourse): LmsCourseCard {
     hours: Math.round((seconds / 3600) * 10) / 10,
     thumbnailUrl,
     promoUrl: promoUrl(c),
+    updatedAt: c.updatedAt,
   }
 }
 

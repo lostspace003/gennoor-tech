@@ -1,7 +1,7 @@
 'use client'
 
-import { useCallback, useMemo, useState } from 'react'
-import { Filter, X } from 'lucide-react'
+import { useCallback, useState } from 'react'
+import { FilterBar, type SortKey } from './CatalogControls'
 import type { Course, Track, Level, Audience, Func, Industry, Stack } from '@/data/academy/types'
 import {
   tracks,
@@ -88,88 +88,46 @@ export function CatalogFilterBar({
   showing,
   total,
   className = '',
+  sort,
+  desc,
+  onSort,
+  onDirection,
+  dateSort,
 }: {
   filters: CatalogFilters
   showing: number
   total: number
   className?: string
+  sort?: SortKey
+  desc?: boolean
+  onSort?: (s: SortKey) => void
+  onDirection?: () => void
+  dateSort?: boolean
 }) {
-  const options = useMemo(
-    () => ({
-      audience: Object.entries(audienceLabels).map(([value, label]) => ({ value, label })),
-      func: Object.entries(functionLabels).map(([value, label]) => ({ value, label })),
-      industry: Object.entries(industryLabels).map(([value, label]) => ({ value, label })),
-      stack: Object.entries(stackLabels).map(([value, label]) => ({ value, label })),
-    }),
-    [],
-  )
-
+  const toOpts = (labels: Record<string, string>) => Object.entries(labels).map(([id, label]) => ({ id, label }))
   return (
     <div className={className}>
-      <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-5">
-        <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-gray-400" />
-          <h2 className="text-sm font-bold tracking-widest text-gray-400 uppercase">
-            Filter the catalog
-          </h2>
-          {filters.activeCount > 0 && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-primary-50 text-primary-600">
-              {filters.activeCount} active
-            </span>
-          )}
-        </div>
-        {filters.activeCount > 0 && (
-          <button
-            onClick={filters.reset}
-            className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-primary-600 transition-colors self-start"
-          >
-            <X className="w-3 h-3" />
-            Clear filters
-          </button>
-        )}
-        <div className="lg:ml-auto text-sm text-gray-500">
-          Showing <strong className="text-gray-900">{showing}</strong> of {total} courses
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        <FilterSelect
-          label="Track"
-          value={filters.track}
-          onChange={v => filters.setTrack(v as Track | 'all')}
-          options={[{ value: 'all', label: 'All tracks' }, ...tracks.map(t => ({ value: t.id, label: t.label }))]}
-        />
-        <FilterSelect
-          label="Level"
-          value={filters.level}
-          onChange={v => filters.setLevel(v as Level | 'all')}
-          options={[{ value: 'all', label: 'All levels' }, ...levels.map(l => ({ value: l.id, label: l.label }))]}
-        />
-        <FilterSelect
-          label="Audience"
-          value={filters.audience}
-          onChange={v => filters.setAudience(v as Audience | 'all')}
-          options={[{ value: 'all', label: 'All audiences' }, ...options.audience]}
-        />
-        <FilterSelect
-          label="Function"
-          value={filters.func}
-          onChange={v => filters.setFunc(v as Func | 'all')}
-          options={[{ value: 'all', label: 'All functions' }, ...options.func]}
-        />
-        <FilterSelect
-          label="Industry"
-          value={filters.industry}
-          onChange={v => filters.setIndustry(v as Industry | 'all')}
-          options={[{ value: 'all', label: 'All industries' }, ...options.industry]}
-        />
-        <FilterSelect
-          label="Stack"
-          value={filters.stack}
-          onChange={v => filters.setStack(v as Stack | 'all')}
-          options={[{ value: 'all', label: 'All stacks' }, ...options.stack]}
-        />
-      </div>
+      <FilterBar
+        quickKey="track"
+        activeCount={filters.activeCount}
+        onReset={filters.reset}
+        sort={sort}
+        desc={desc}
+        onSort={onSort}
+        onDirection={onDirection}
+        dateSort={dateSort}
+        groups={[
+          { key: 'track', label: 'Track', allLabel: 'All tracks', value: filters.track, onChange: v => filters.setTrack(v as Track | 'all'), options: tracks.map(t => ({ id: t.id, label: t.label })) },
+          { key: 'level', label: 'Level', allLabel: 'All levels', value: filters.level, onChange: v => filters.setLevel(v as Level | 'all'), options: levels.map(l => ({ id: l.id, label: l.label })) },
+          { key: 'audience', label: 'Audience', allLabel: 'All audiences', value: filters.audience, onChange: v => filters.setAudience(v as Audience | 'all'), options: toOpts(audienceLabels) },
+          { key: 'func', label: 'Function', allLabel: 'All functions', value: filters.func, onChange: v => filters.setFunc(v as Func | 'all'), options: toOpts(functionLabels) },
+          { key: 'industry', label: 'Industry', allLabel: 'All industries', value: filters.industry, onChange: v => filters.setIndustry(v as Industry | 'all'), options: toOpts(industryLabels) },
+          { key: 'stack', label: 'Stack', allLabel: 'All stacks', value: filters.stack, onChange: v => filters.setStack(v as Stack | 'all'), options: toOpts(stackLabels) },
+        ]}
+      />
+      <p className="text-sm text-gray-500 -mt-4 mb-4 max-w-6xl mx-auto">
+        Showing <strong className="text-gray-900">{showing}</strong> of {total} courses
+      </p>
     </div>
   )
 }

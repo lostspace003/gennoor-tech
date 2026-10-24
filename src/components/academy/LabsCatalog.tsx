@@ -3,38 +3,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { Filter, Layers, Play, X } from 'lucide-react'
+import { FilterBar, Pagination, usePage, type SortKey } from './CatalogControls'
 import type { LmsCourseCard } from '@/lib/lms'
 import PreviewModal from './PreviewModal'
 import { Stars } from './Stars'
 import { ALL_PLATFORMS, DOMAINS, KINDS, LEVELS, TOPICS, TRACKS } from '@/lib/lms-taxonomy'
 
 const KIND_LABEL: Record<string, string> = Object.fromEntries(KINDS.map(k => [k.id, k.label]))
-
-function FilterRow({ label, items, active, onSelect }: { label: string; items: { id: string; label: string }[]; active: string; onSelect: (id: string) => void }) {
-  return (
-    <div className="flex items-center gap-3 flex-wrap">
-      <span className="text-xs font-semibold text-gray-500 w-20 flex-shrink-0">{label}</span>
-      <div className="flex flex-wrap gap-2">
-        {items.map(item => {
-          const isActive = active === item.id
-          return (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => onSelect(item.id)}
-              aria-pressed={isActive}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-all duration-200 ${
-                isActive ? 'bg-primary-600 text-white shadow-sm' : 'bg-white text-gray-600 ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700'
-              }`}
-            >
-              {item.label}
-            </button>
-          )
-        })}
-      </div>
-    </div>
-  )
-}
 
 export default function LabsCatalog({ courses }: { courses: LmsCourseCard[] }) {
   const [vendor, setVendor] = useState('all')
@@ -43,6 +18,8 @@ export default function LabsCatalog({ courses }: { courses: LmsCourseCard[] }) {
   const [level, setLevel] = useState('all')
   const [topic, setTopic] = useState('all')
   const [domain, setDomain] = useState('all')
+  const [sort, setSort] = useState<SortKey>('default')
+  const [desc, setDesc] = useState(false)
   const [preview, setPreview] = useState<LmsCourseCard | null>(null)
 
   // /studio?company=Claude (linked from the Claude page) opens with that company selected
@@ -72,11 +49,21 @@ export default function LabsCatalog({ courses }: { courses: LmsCourseCard[] }) {
   const activeCount = [vendor, kind, area, level, topic, domain].filter(v => v !== 'all').length
   const reset = () => { setVendor('all'); setKind('all'); setArea('all'); setLevel('all'); setTopic('all'); setDomain('all') }
 
-  // Certification prep, then projects, then use cases; inside a type, group by area when it has one.
-  const grouped = useMemo(
-    () => KINDS.map(k => ({ id: k.id as string, label: k.label as string, items: filtered.filter(c => c.kind === k.id) })).filter(g => g.items.length > 0),
+  // Default order: certification prep, then projects, then use cases. Alphabetical / date sorts run across all types.
+  const ordered = useMemo(() => {
+    const list = sort === 'default' ? KINDS.flatMap(k => filtered.filter(c => c.kind === k.id)) : [...filtered]
+    if (sort === 'alpha') list.sort((x, y) => x.title.localeCompare(y.title))
+    if (sort === 'date') list.sort((x, y) => (x.updatedAt || '').localeCompare(y.updatedAt || ''))
+    if (sort !== 'default' && desc) list.reverse()
+    return list
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [vendor, kind, area, level, topic, domain, courses],
+  }, [vendor, kind, area, level, topic, domain, courses, sort, desc])
+  const pg = usePage(`${vendor}|${kind}|${area}|${level}|${topic}|${domain}|${sort}|${desc}`, ordered.length, 9)
+  const pageItems = ordered.slice(pg.start, pg.end)
+  const grouped = useMemo(
+    () => KINDS.map(k => ({ id: k.id as string, label: k.label as string, items: pageItems.filter(c => c.kind === k.id) })).filter(g => g.items.length > 0),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [ordered, pg.page],
   )
   const KIND_LINE: Record<string, string> = {
     certification: 'Prepare for the exam and build the real thing',
@@ -94,32 +81,27 @@ export default function LabsCatalog({ courses }: { courses: LmsCourseCard[] }) {
           </p>
         </div>
 
-        {/* Filter bar */}
-        <div className="max-w-6xl mx-auto mb-10">
-          <div className="flex items-center justify-between gap-4 mb-4">
-            <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-gray-400" />
-              <span className="text-sm font-bold tracking-widest text-gray-400 uppercase">Filter</span>
-            </div>
-            {activeCount > 0 && (
-              <button type="button" onClick={reset} className="inline-flex items-center gap-1 text-xs font-semibold text-primary-600 hover:text-primary-700 transition-colors">
-                <X className="w-3 h-3" />
-                Clear {activeCount} filter{activeCount > 1 ? 's' : ''}
-              </button>
-            )}
-          </div>
-          <div className="space-y-3">
-            {kinds.length > 1 && <FilterRow label="Type" items={[{ id: 'all', label: 'All types' }, ...kinds.map(k => ({ id: k.id as string, label: k.label as string }))]} active={kind} onSelect={setKind} />}
-            {areas.length > 0 && <FilterRow label="Area" items={[{ id: 'all', label: 'All areas' }, ...areas.map(t => ({ id: t.id as string, label: t.label as string }))]} active={area} onSelect={setArea} />}
-            {vendors.length > 1 && <FilterRow label="Company" items={[{ id: 'all', label: 'All companies' }, ...vendors.map(v => ({ id: v, label: v }))]} active={vendor} onSelect={setVendor} />}
-            {levels.length > 1 && <FilterRow label="Level" items={[{ id: 'all', label: 'All levels' }, ...levels.map(l => ({ id: l, label: l }))]} active={level} onSelect={setLevel} />}
-            {topics.length > 0 && <FilterRow label="Topic" items={[{ id: 'all', label: 'All topics' }, ...topics.map(t => ({ id: t as string, label: t as string }))]} active={topic} onSelect={setTopic} />}
-            {domains.length > 0 && <FilterRow label="Industry" items={[{ id: 'all', label: 'All industries' }, ...domains.map(d => ({ id: d as string, label: d as string }))]} active={domain} onSelect={setDomain} />}
-          </div>
-        </div>
+        <div id="catalog-top" />
+        <FilterBar
+          quickKey="kind"
+          activeCount={activeCount}
+          onReset={reset}
+          sort={sort}
+          desc={desc}
+          onSort={s => { setSort(s); setDesc(s === 'date') }}
+          onDirection={() => setDesc(d => !d)}
+          groups={[
+            { key: 'kind', label: 'Type', allLabel: 'All types', value: kind, onChange: setKind, options: kinds.map(k => ({ id: k.id as string, label: k.label as string })) },
+            ...(areas.length > 0 ? [{ key: 'area', label: 'Area', allLabel: 'All areas', value: area, onChange: setArea, options: areas.map(t => ({ id: t.id as string, label: t.label as string })) }] : []),
+            ...(vendors.length > 1 ? [{ key: 'vendor', label: 'Company', allLabel: 'All companies', value: vendor, onChange: setVendor, options: vendors.map(v => ({ id: v, label: v })) }] : []),
+            ...(levels.length > 1 ? [{ key: 'level', label: 'Level', allLabel: 'All levels', value: level, onChange: setLevel, options: levels.map(l => ({ id: l, label: l })) }] : []),
+            ...(topics.length > 0 ? [{ key: 'topic', label: 'Topic', allLabel: 'All topics', value: topic, onChange: setTopic, options: topics.map(t => ({ id: t as string, label: t as string })) }] : []),
+            ...(domains.length > 0 ? [{ key: 'domain', label: 'Industry', allLabel: 'All industries', value: domain, onChange: setDomain, options: domains.map(d => ({ id: d as string, label: d as string })) }] : []),
+          ]}
+        />
 
         <div className="max-w-6xl mx-auto mb-6 text-sm text-gray-500 text-center">
-          {filtered.length === courses.length ? `Showing all ${courses.length} courses` : `${filtered.length} of ${courses.length} courses match`}
+          {filtered.length === courses.length ? `${courses.length} courses` : `${filtered.length} of ${courses.length} courses match`}{ordered.length > 9 ? `, showing ${pg.start + 1}-${Math.min(pg.end, ordered.length)}` : ''}
         </div>
 
         {filtered.length === 0 ? (
@@ -195,6 +177,7 @@ export default function LabsCatalog({ courses }: { courses: LmsCourseCard[] }) {
                 </div>
               </div>
             ))}
+            <Pagination page={pg.page} pages={pg.pages} onPage={pg.setPage} />
           </div>
         )}
       </div>

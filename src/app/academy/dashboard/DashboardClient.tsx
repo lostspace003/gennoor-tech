@@ -6,6 +6,7 @@ import { Award, ArrowRight, CheckCircle2, Circle, PlayCircle, Loader2, ExternalL
 import { courses as allCourses } from '@/config/courses'
 import { courses as catalogCourses } from '@/data/academy/courses'
 import { CatalogFilterBar, useCatalogFilters } from '@/components/academy/CatalogFilters'
+import { Pagination, type SortKey } from '@/components/academy/CatalogControls'
 import { getAllLocalProgress } from '@/lib/progress-store'
 import { useLearnerAuth } from '@/hooks/useLearnerAuth'
 import LearnerAuthModal from '@/components/academy/LearnerAuthModal'
@@ -71,6 +72,8 @@ export default function DashboardClient() {
   const [courseQuery, setCourseQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [page, setPage] = useState(1)
+  const [sort, setSort] = useState<SortKey>('default')
+  const [desc, setDesc] = useState(false)
   const catalogFilters = useCatalogFilters()
   /**
    * The page used to be one scroll: welcome, stats, sessions, analytics,
@@ -236,7 +239,7 @@ export default function DashboardClient() {
 
   const visibleCourses = useMemo(() => {
     const q = courseQuery.trim().toLowerCase()
-    return courseSummaries.filter(s => {
+    const list = courseSummaries.filter(s => {
       if (statusFilter === 'in-progress' && (s.isCompleted || s.notStarted)) return false
       if (statusFilter === 'completed' && !s.isCompleted) return false
       if (statusFilter === 'not-started' && !s.notStarted) return false
@@ -252,7 +255,10 @@ export default function DashboardClient() {
       ].join(' ').toLowerCase()
       return haystack.includes(q)
     })
-  }, [courseSummaries, courseQuery, statusFilter, catalogMatches])
+    if (sort === 'alpha') list.sort((a, b) => a.course.title.localeCompare(b.course.title))
+    if (sort !== 'default' && desc) list.reverse()
+    return list
+  }, [courseSummaries, courseQuery, statusFilter, catalogMatches, sort, desc])
 
   const pageCount = Math.max(1, Math.ceil(visibleCourses.length / COURSES_PER_PAGE))
   const currentPage = Math.min(page, pageCount)
@@ -262,7 +268,7 @@ export default function DashboardClient() {
   )
 
   // Narrowing the results while parked on page 4 would otherwise show nothing.
-  useEffect(() => { setPage(1) }, [courseQuery, statusFilter, catalogActiveCount, catalogMatches])
+  useEffect(() => { setPage(1) }, [courseQuery, statusFilter, catalogActiveCount, catalogMatches, sort, desc])
 
   const handleSignOut = async () => {
     await logout()
@@ -569,6 +575,11 @@ export default function DashboardClient() {
           showing={visibleCourses.length}
           total={courseSummaries.length}
           className="mb-6"
+          sort={sort}
+          desc={desc}
+          dateSort={false}
+          onSort={s => { setSort(s); setDesc(false) }}
+          onDirection={() => setDesc(d => !d)}
         />
 
         {visibleCourses.length === 0 ? (
@@ -668,47 +679,7 @@ export default function DashboardClient() {
         </div>
         )}
 
-        {/* Pagination */}
-        {pageCount > 1 && (
-          <div className="mt-6 flex items-center justify-between gap-4">
-            <p className="text-[12.5px] text-[#86868b] tabular-nums">
-              {(currentPage - 1) * COURSES_PER_PAGE + 1}–
-              {Math.min(currentPage * COURSES_PER_PAGE, visibleCourses.length)} of {visibleCourses.length}
-            </p>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => setPage(p => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                aria-label="Previous page"
-                className="w-9 h-9 inline-flex items-center justify-center rounded-lg bg-white border border-[#e8e8ed] text-[#6e6e73] hover:text-gray-900 hover:border-gray-300 disabled:opacity-40 disabled:hover:text-[#6e6e73] transition-colors"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              {Array.from({ length: pageCount }, (_, i) => i + 1).map(n => (
-                <button
-                  key={n}
-                  onClick={() => setPage(n)}
-                  aria-current={n === currentPage ? 'page' : undefined}
-                  className={`min-w-9 h-9 px-2.5 inline-flex items-center justify-center rounded-lg text-[13px] font-medium tabular-nums transition-colors ${
-                    n === currentPage
-                      ? 'bg-gray-900 text-white'
-                      : 'bg-white border border-[#e8e8ed] text-[#6e6e73] hover:text-gray-900 hover:border-gray-300'
-                  }`}
-                >
-                  {n}
-                </button>
-              ))}
-              <button
-                onClick={() => setPage(p => Math.min(pageCount, p + 1))}
-                disabled={currentPage === pageCount}
-                aria-label="Next page"
-                className="w-9 h-9 inline-flex items-center justify-center rounded-lg bg-white border border-[#e8e8ed] text-[#6e6e73] hover:text-gray-900 hover:border-gray-300 disabled:opacity-40 disabled:hover:text-[#6e6e73] transition-colors"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        )}
+        <Pagination page={currentPage} pages={pageCount} onPage={p => setPage(Math.min(Math.max(1, p), pageCount))} />
 
         <div className="mt-8 text-center">
           <Link
