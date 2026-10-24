@@ -224,6 +224,23 @@ export async function searchCourse(query: string, opts: { courseSlug: string; li
   }
 }
 
+/** Best chunks across every course, for the website search. Returns [] (never throws) when Qdrant is unset or down. */
+export async function searchAllCourses(query: string, limit = 24): Promise<CourseHit[]> {
+  if (!qdrantConfigured()) return []
+  try {
+    const [vector] = await embedTexts([query.slice(0, 300)])
+    const r = await q(
+      `/collections/${COLLECTION()}/points/search`,
+      { body: { vector, limit, with_payload: true } },
+      5_000,
+    )
+    return (r?.result ?? []).filter((h: any) => h?.payload?.text).map((h: any) => ({ ...(h.payload as ChunkPayload), score: h.score }))
+  } catch (e) {
+    console.error('course-index site search failed:', e instanceof Error ? e.message : e)
+    return []
+  }
+}
+
 /** The grounding block for the model, plus instructions on how to use and cite it. */
 export function groundingBlock(hits: CourseHit[]): string {
   if (!hits.length) return ''
