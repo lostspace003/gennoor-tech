@@ -31,14 +31,15 @@ export default function ReviewPrompt({ course, progress }: { course: LmsCourse; 
     const idx = count
     let asked: number[] = []
     try { asked = JSON.parse(localStorage.getItem(key) || '[]') } catch { /* ignore */ }
-    if (asked.includes(idx)) return
+    // the end of the course is asked on every visit until a rating exists; other moments only once
+    if (asked.includes(idx) && !finished) return
     ;(async () => {
       if (reviewed.current === null) {
         const r = await fetch(`/api/lms/reviews?slug=${encodeURIComponent(course.slug)}`, { cache: 'no-store' }).catch(() => null)
         reviewed.current = r?.ok ? !!(await r.json()).mine : false
       }
       if (reviewed.current) return
-      try { localStorage.setItem(key, JSON.stringify([...asked, idx])) } catch { /* ignore */ }
+      if (!finished) { try { localStorage.setItem(key, JSON.stringify([...asked, idx])) } catch { /* ignore */ } }
       setShow(true)
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
