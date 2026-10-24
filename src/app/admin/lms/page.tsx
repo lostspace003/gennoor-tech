@@ -117,7 +117,7 @@ export default function AdminLmsPage() {
 
   const remove = async (row: Row) => {
     const typed = window.prompt(
-      `Delete "${row.title}" for good?\n\nThis removes the course, its videos, keys, documents and search entries. Learner accounts, enrollments and certificates stay.\n\nType ${row.slug} to confirm.`,
+      `Delete "${row.title}" for good?\n\nThis removes it from the Learning Studio and the site search. Its files stay in blob storage, and learner accounts, enrollments and certificates stay.\n\nType ${row.slug} to confirm.`,
     )
     if (typed === null) return
     const res = await fetch('/api/admin/lms/delete', {
