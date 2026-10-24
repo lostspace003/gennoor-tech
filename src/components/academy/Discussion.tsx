@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
-import { BarChart3, Check, HelpCircle, Heart, Loader2, Megaphone, MessageSquare, Plus, Trash2, X } from 'lucide-react'
+import { BarChart3, Check, EyeOff, HelpCircle, Heart, Loader2, Lock, Megaphone, MessageSquare, Plus, ShieldCheck, Trash2, X } from 'lucide-react'
 import LearnerAuthModal from './LearnerAuthModal'
 import RichEditor, { RichText } from './RichEditor'
 
@@ -13,6 +13,8 @@ interface Post {
   author: string; isTeam: boolean; createdAt: string; mine?: boolean; likes?: number; liked?: boolean
 }
 interface Thread extends Post { replies: number; lastAt: string }
+interface AdminView { voters: { email: string; option: number }[] }
+type Composing = 'topic' | 'poll' | 'announcement' | 'quiz'
 
 const ago = (iso: string) => {
   const s = (Date.now() - new Date(iso).getTime()) / 1000
@@ -91,8 +93,12 @@ export default function Discussion({ scope, emptyText, signedIn = true }: { scop
   const router = useRouter()
   const [authOpen, setAuthOpen] = useState(false)
   const [threads, setThreads] = useState<Thread[] | null>(null)
-  const [open, setOpen] = useState<{ thread: Post; replies: Post[] } | null>(null)
-  const [composing, setComposing] = useState<'topic' | 'poll' | null>(null)
+  const [open, setOpen] = useState<{ thread: Post; replies: Post[]; adminResults?: AdminView } | null>(null)
+  const [composing, setComposing] = useState<Composing | null>(null)
+  // Set by the server for the studio admin session only; nothing admin is rendered without it.
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [answer, setAnswer] = useState(0)
+  const [explanation, setExplanation] = useState('')
   const [title, setTitle] = useState('')
   const [html, setHtml] = useState('')
   const [pollOptions, setPollOptions] = useState(['', ''])
@@ -106,6 +112,7 @@ export default function Discussion({ scope, emptyText, signedIn = true }: { scop
     const d = await r.json().catch(() => ({}))
     if (!r.ok) { setError(d.error || 'Could not load the discussion.'); setThreads([]); return }
     setThreads(d.threads)
+    setIsAdmin(!!d.isAdmin)
   }, [api])
   useEffect(() => { loadList() }, [loadList])
 
@@ -124,12 +131,12 @@ export default function Discussion({ scope, emptyText, signedIn = true }: { scop
     } catch (e) { setError(e instanceof Error ? e.message : 'Could not post.'); return false } finally { setBusy(false) }
   }
 
-  const resetComposer = () => { setTitle(''); setHtml(''); setPollOptions(['', '']); setComposing(null); setError('') }
+  const resetComposer = () => { setTitle(''); setHtml(''); setPollOptions(['', '']); setAnswer(0); setExplanation(''); setComposing(null); setError('') }
   const newTopic = async (e: FormEvent) => {
     e.preventDefault()
-    const ok = composing === 'poll'
-      ? await post({ kind: 'poll', title, html, options: pollOptions })
-      : await post({ title, html })
+    const ok = composing === 'poll' || composing === 'quiz'
+      ? await post({ kind: composing, title, html, options: pollOptions, ...(composing === 'quiz' ? { answer, explanation } : {}) })
+      : await post({ kind: composing, title, html })
     if (ok) { resetComposer(); loadList() }
   }
   const sendReply = async (e: FormEvent) => {
@@ -140,6 +147,12 @@ export default function Discussion({ scope, emptyText, signedIn = true }: { scop
     if (!window.confirm(isThread ? 'Delete this topic and its replies?' : 'Delete this reply?')) return
     await fetch(`/api/lms/discussion?scope=${encodeURIComponent(scope)}&id=${encodeURIComponent(id)}`, { method: 'DELETE' })
     if (isThread) { setOpen(null); loadList() } else if (open) openThread(open.thread.id)
+  }
+
+  const adminAct = async (id: string, action: 'close' | 'reopen' | 'hide') => {
+    const r = await fetch('/api/lms/discussion', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ scope, id, action }) })
+    if (!r.ok) { const d = await r.json().catch(() => ({})); setError(d.error || 'Could not do that.'); return }
+    if (action === 'hide') { setOpen(null); loadList() } else openThread(id)
   }
 
   // Liking and voting need a sign-in; signed-out visitors are asked to sign in.
@@ -196,17 +209,33 @@ export default function Discussion({ scope, emptyText, signedIn = true }: { scop
         <article className="mt-4">
           <div className="flex items-center gap-2"><KindBadge kind={t.kind} /></div>
           <h2 className="font-heading text-[24px] font-bold tracking-[-0.02em] text-gray-900 mt-1">{t.title}</h2>
-          <div className="mt-3 flex items-center justify-between"><Author p={t} /><span className="inline-flex items-center gap-2"><Like p={t} />{t.mine && <button type="button" aria-label="Delete topic" onClick={() => remove(t.id, true)} className="p-1.5 text-[#86868b] hover:text-red-600"><Trash2 className="w-4 h-4" /></button>}</span></div>
+          <div className="mt-3 flex items-center justify-between"><Author p={t} /><span className="inline-flex items-center gap-2"><Like p={t} />{(t.mine || isAdmin) && <button type="button" aria-label="Delete topic" onClick={() => remove(t.id, true)} className="p-1.5 text-[#86868b] hover:text-red-600"><Trash2 className="w-4 h-4" /></button>}</span></div>
           <div className="mt-3"><Body p={t} big /></div>
           <Choices p={t} canVote={signedIn} onVote={o => vote(t.id, o)} />
           {!signedIn && (t.kind === 'poll' || t.kind === 'quiz') && <p className="mt-2 text-[13px] text-[#6e6e73]">Sign in to answer.</p>}
+          {isAdmin && (
+            <div className="mt-4 max-w-[560px] rounded-xl border border-dashed border-primary-300 bg-primary-50/40 px-4 py-3 text-[13px] text-[#3a3a3f]">
+              <p className="inline-flex items-center gap-1.5 font-semibold text-primary-700"><ShieldCheck className="w-3.5 h-3.5" />Admin</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {(t.kind === 'poll' || t.kind === 'quiz') && (
+                  <button type="button" onClick={() => adminAct(t.id, t.closed ? 'reopen' : 'close')} className="inline-flex items-center gap-1 rounded-full border border-[#d2d2d7] bg-white px-3 py-1 hover:border-primary-600"><Lock className="w-3.5 h-3.5" />{t.closed ? 'Reopen' : 'Close'}</button>
+                )}
+                <button type="button" onClick={() => adminAct(t.id, 'hide')} className="inline-flex items-center gap-1 rounded-full border border-[#d2d2d7] bg-white px-3 py-1 hover:border-primary-600"><EyeOff className="w-3.5 h-3.5" />Hide</button>
+              </div>
+              {open.adminResults && open.adminResults.voters.length > 0 && (
+                <ul className="mt-3 space-y-0.5">
+                  {open.adminResults.voters.map(v => <li key={v.email}>{v.email}: {t.options?.[v.option] ?? '-'}</li>)}
+                </ul>
+              )}
+            </div>
+          )}
           {error && <p className="mt-3 text-[13px] text-red-600">{error}</p>}
         </article>
         <h3 className="mt-10 mb-2 text-[14px] font-semibold text-gray-900">{open.replies.length} {open.replies.length === 1 ? 'reply' : 'replies'}</h3>
         <ul className="divide-y divide-[#e8e8ed] border-t border-[#e8e8ed]">
           {open.replies.map(p => (
             <li key={p.id} className={`py-4 ${p.isTeam ? 'bg-primary-50/50 -mx-3 px-3 rounded-lg' : ''}`}>
-              <div className="flex items-center justify-between"><Author p={p} /><span className="inline-flex items-center gap-2"><Like p={p} />{p.mine && <button type="button" aria-label="Delete reply" onClick={() => remove(p.id, false)} className="p-1.5 text-[#86868b] hover:text-red-600"><Trash2 className="w-4 h-4" /></button>}</span></div>
+              <div className="flex items-center justify-between"><Author p={p} /><span className="inline-flex items-center gap-2"><Like p={p} />{(p.mine || isAdmin) && <button type="button" aria-label="Delete reply" onClick={() => remove(p.id, false)} className="p-1.5 text-[#86868b] hover:text-red-600"><Trash2 className="w-4 h-4" /></button>}</span></div>
               <div className="mt-2"><Body p={p} /></div>
             </li>
           ))}
@@ -227,7 +256,7 @@ export default function Discussion({ scope, emptyText, signedIn = true }: { scop
     )
   }
 
-  const canPost = composing === 'poll'
+  const canPost = composing === 'poll' || composing === 'quiz'
     ? !!title.trim() && pollOptions.filter(o => o.trim()).length >= 2
     : !!title.trim() && !!html.replace(/<[^>]*>/g, '').trim()
 
@@ -241,16 +270,27 @@ export default function Discussion({ scope, emptyText, signedIn = true }: { scop
         <div className="flex flex-wrap gap-3">
           <button type="button" onClick={() => setComposing('topic')} className="pill-primary">Start a topic</button>
           <button type="button" onClick={() => setComposing('poll')} className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full border border-[#d2d2d7] text-[14.5px] font-medium text-gray-900 hover:border-primary-600"><BarChart3 className="w-4 h-4" />Create a poll</button>
+          {isAdmin && (
+            <>
+              <button type="button" onClick={() => setComposing('announcement')} className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full border border-amber-300 bg-amber-50 text-[14.5px] font-medium text-amber-900 hover:border-amber-500"><Megaphone className="w-4 h-4" />Announcement</button>
+              <button type="button" onClick={() => setComposing('quiz')} className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full border border-emerald-300 bg-emerald-50 text-[14.5px] font-medium text-emerald-900 hover:border-emerald-500"><HelpCircle className="w-4 h-4" />Quiz</button>
+              <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-primary-700 self-center"><ShieldCheck className="w-3.5 h-3.5" />Admin</span>
+            </>
+          )}
         </div>
       ) : (
         <form onSubmit={newTopic} className="rounded-2xl bg-[#f5f6f8] p-5 space-y-3 max-w-[680px]">
-          <input value={title} onChange={e => setTitle(e.target.value)} maxLength={140} placeholder={composing === 'poll' ? 'Your question' : 'Topic title'} aria-label="Title" className={FIELD} />
-          <RichEditor value={html} onChange={setHtml} placeholder={composing === 'poll' ? 'Add some context (optional)' : 'What would you like to discuss?'} minHeight={composing === 'poll' ? 70 : 130} />
-          {composing === 'poll' && (
+          <input value={title} onChange={e => setTitle(e.target.value)} maxLength={140} placeholder={composing === 'poll' || composing === 'quiz' ? 'Your question' : composing === 'announcement' ? 'Announcement title' : 'Topic title'} aria-label="Title" className={FIELD} />
+          <RichEditor value={html} onChange={setHtml} placeholder={composing === 'poll' || composing === 'quiz' ? 'Add some context (optional)' : composing === 'announcement' ? 'Write the announcement' : 'What would you like to discuss?'} minHeight={composing === 'poll' || composing === 'quiz' ? 70 : 130} />
+          {(composing === 'poll' || composing === 'quiz') && (
             <div className="space-y-2">
               {pollOptions.map((o, i) => (
-                <input key={i} value={o} onChange={e => setPollOptions(p => p.map((x, j) => (j === i ? e.target.value : x)))} maxLength={120} placeholder={`Choice ${i + 1}`} aria-label={`Choice ${i + 1}`} className={FIELD} />
+                <div key={i} className="flex items-center gap-2">
+                  {composing === 'quiz' && <input type="radio" name="quiz-answer" checked={answer === i} onChange={() => setAnswer(i)} aria-label={`Choice ${i + 1} is correct`} />}
+                  <input value={o} onChange={e => setPollOptions(p => p.map((x, j) => (j === i ? e.target.value : x)))} maxLength={120} placeholder={`Choice ${i + 1}`} aria-label={`Choice ${i + 1}`} className={FIELD} />
+                </div>
               ))}
+              {composing === 'quiz' && <input value={explanation} onChange={e => setExplanation(e.target.value)} maxLength={600} placeholder="Explanation, shown after answering (optional)" aria-label="Explanation" className={FIELD} />}
               {pollOptions.length < 6 && <button type="button" onClick={() => setPollOptions(p => [...p, ''])} className="inline-flex items-center gap-1 text-[13.5px] text-primary-600 hover:underline"><Plus className="w-3.5 h-3.5" />Add a choice</button>}
             </div>
           )}

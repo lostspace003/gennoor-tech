@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { LogOut, Settings, ChevronDown, Loader2 } from 'lucide-react'
+import { LogOut, Settings, ChevronDown, Loader2, ShieldCheck } from 'lucide-react'
 import { useLearnerAuth } from '@/hooks/useLearnerAuth'
 import LearnerAuthModal from './LearnerAuthModal'
 import LearnerAccountModal from './LearnerAccountModal'
@@ -131,6 +131,17 @@ export default function LearnerAccountMenu({
             <Settings className="w-4 h-4 text-[#86868b]" />
             Profile &amp; password
           </button>
+
+          {session?.isAdmin && (
+            <a
+              role="menuitem"
+              href="/admin/community"
+              className="w-full flex items-center gap-2.5 px-4 py-2.5 text-[13.5px] text-primary-700 font-medium hover:bg-primary-50 transition-colors"
+            >
+              <ShieldCheck className="w-4 h-4" />
+              Admin
+            </a>
+          )}
 
           <button
             role="menuitem"

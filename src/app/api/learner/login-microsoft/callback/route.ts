@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
         console.error('Academy welcome email failed:', err),
       )
     }
-    const token = await createLearnerToken({ email, name, provider: 'microsoft' })
+    const token = await createLearnerToken({ email, name, provider: 'microsoft', tid: typeof payload.tid === 'string' ? payload.tid : undefined })
 
     const response = NextResponse.redirect(new URL(returnTo, publicOrigin))
     response.cookies.set(learnerCookieOptions(token))

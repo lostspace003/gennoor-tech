@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createRemoteJWKSet, jwtVerify } from 'jose'
-import { createLearnerToken, learnerCookieOptions } from '@/lib/learner-auth'
+import { createLearnerToken, learnerCookieOptions, isReservedAdminEmail } from '@/lib/learner-auth'
 import { saveLearner, getLearner } from '@/lib/azure-storage'
 import { sendAcademyWelcomeEmail } from '@/lib/email-service'
 
@@ -30,6 +30,8 @@ export async function POST(request: NextRequest) {
     if (!email) {
       return NextResponse.json({ error: 'No email in Google token' }, { status: 400 })
     }
+
+    if (isReservedAdminEmail(email)) return NextResponse.json({ error: 'This address signs in with Microsoft only.' }, { status: 403 })
 
     const isNewLearner = !(await getLearner(email))
     await saveLearner({ email, name, provider: 'google' })

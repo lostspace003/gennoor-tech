@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createLearnerToken, learnerCookieOptions } from '@/lib/learner-auth'
+import { createLearnerToken, learnerCookieOptions, isReservedAdminEmail } from '@/lib/learner-auth'
 import { getLearner, updateLearnerFields, resolveLearnerEmail } from '@/lib/azure-storage'
 import { verifyPassword } from '@/lib/learner-password'
 import { rateLimit, clientIp } from '@/lib/rate-limit'
@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
     const email = await resolveLearnerEmail(identifier)
     if (!email) return wrong
 
+    if (isReservedAdminEmail(email)) return wrong
     const learner = await getLearner(email)
     const hash = learner?.passwordHash as string | undefined
     if (!learner || !hash) return wrong

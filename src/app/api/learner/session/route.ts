@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { verifyLearnerSession } from '@/lib/learner-auth'
+import { verifyLearnerSession, isStudioAdmin } from '@/lib/learner-auth'
 
 export async function GET() {
   const learner = await verifyLearnerSession()
@@ -11,5 +11,6 @@ export async function GET() {
     email: learner.email,
     name: learner.name,
     provider: learner.provider,
+    ...(isStudioAdmin(learner) ? { isAdmin: true } : {}),
   })
 }

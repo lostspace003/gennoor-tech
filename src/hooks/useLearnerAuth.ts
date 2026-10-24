@@ -6,6 +6,7 @@ interface LearnerSession {
   email: string
   name: string
   provider: 'otp' | 'google' | 'microsoft' | 'password'
+  isAdmin?: boolean
 }
 
 export function useLearnerAuth() {

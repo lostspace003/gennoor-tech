@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { isEmailVerified, clearVerification } from '@/lib/otp-store'
-import { createLearnerToken, learnerCookieOptions } from '@/lib/learner-auth'
+import { createLearnerToken, learnerCookieOptions, isReservedAdminEmail } from '@/lib/learner-auth'
 import { saveLearner, getLearner } from '@/lib/azure-storage'
 import { sendAcademyWelcomeEmail } from '@/lib/email-service'
 
@@ -11,6 +11,8 @@ export async function POST(request: NextRequest) {
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 })
     }
+
+    if (isReservedAdminEmail(email)) return NextResponse.json({ error: 'This address signs in with Microsoft only.' }, { status: 403 })
 
     if (!isEmailVerified(email)) {
       return NextResponse.json({ error: 'Email not verified. Please complete OTP verification first.' }, { status: 401 })
