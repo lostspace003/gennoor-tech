@@ -68,6 +68,8 @@ export interface LmsCourse {
   topics_tags?: string[]
   /** lines of work it is applied to, from the shared taxonomy (filter: Domain) */
   domains?: string[]
+  /** short courses only: foundations | leadership | function | industry | builder */
+  track?: string
   /** blob in the course container, shown on cards and as the video poster */
   thumbnail?: string
   /** true when the lectures are encrypted HLS (no plain MP4 is ever linked) */
@@ -321,6 +323,7 @@ export interface LmsCourseCard {
   kind: LmsCourse['kind']
   topics: string[]
   domains: string[]
+  track: string
   lectures: number
   hours: number
   thumbnailUrl: string | null
@@ -350,6 +353,7 @@ export function toCard(c: LmsCourse): LmsCourseCard {
     kind: c.kind || 'course',
     topics: c.topics_tags || [],
     domains: c.domains || [],
+    track: c.track || '',
     lectures: c.stats.lectures,
     hours: Math.round((seconds / 3600) * 10) / 10,
     thumbnailUrl,

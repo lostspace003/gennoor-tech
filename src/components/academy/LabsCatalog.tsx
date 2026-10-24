@@ -2,15 +2,15 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { ChevronDown, Filter, Layers, Play, X } from 'lucide-react'
+import { Filter, Layers, Play, X } from 'lucide-react'
 import type { LmsCourseCard } from '@/lib/lms'
 import PreviewModal from './PreviewModal'
 import { Stars } from './Stars'
-import { ALL_PLATFORMS, DOMAINS, KINDS, LEVELS, PRIMARY_PLATFORMS, TOPICS } from '@/lib/lms-taxonomy'
+import { ALL_PLATFORMS, DOMAINS, KINDS, LEVELS, TOPICS, TRACKS } from '@/lib/lms-taxonomy'
 
 const KIND_LABEL: Record<string, string> = Object.fromEntries(KINDS.map(k => [k.id, k.label]))
 
-function FilterRow({ label, items, active, onSelect }: { label: string; items: { id: string; label: string; count?: number }[]; active: string; onSelect: (id: string) => void }) {
+function FilterRow({ label, items, active, onSelect }: { label: string; items: { id: string; label: string }[]; active: string; onSelect: (id: string) => void }) {
   return (
     <div className="flex items-center gap-3 flex-wrap">
       <span className="text-xs font-semibold text-gray-500 w-20 flex-shrink-0">{label}</span>
@@ -28,7 +28,6 @@ function FilterRow({ label, items, active, onSelect }: { label: string; items: {
               }`}
             >
               {item.label}
-              {item.count !== undefined && <span className={`ml-1.5 tabular-nums ${isActive ? 'text-white/80' : item.count === 0 ? 'text-gray-300' : 'text-gray-400'}`}>{item.count}</span>}
             </button>
           )
         })}
@@ -40,39 +39,50 @@ function FilterRow({ label, items, active, onSelect }: { label: string; items: {
 export default function LabsCatalog({ courses }: { courses: LmsCourseCard[] }) {
   const [vendor, setVendor] = useState('all')
   const [kind, setKind] = useState('all')
+  const [area, setArea] = useState('all')
   const [level, setLevel] = useState('all')
   const [topic, setTopic] = useState('all')
   const [domain, setDomain] = useState('all')
-  const [more, setMore] = useState(false)
+  const [preview, setPreview] = useState<LmsCourseCard | null>(null)
 
   // /studio?company=Claude (linked from the Claude page) opens with that company selected
   useEffect(() => {
     const c = new URLSearchParams(window.location.search).get('company')
     if (c) setVendor(c)
   }, [])
-  const [preview, setPreview] = useState<LmsCourseCard | null>(null)
 
-  // Always offer the platforms we are building towards, plus any other platform that has a course.
-  const vendors = useMemo(() => [...PRIMARY_PLATFORMS as readonly string[], ...ALL_PLATFORMS.filter(p => !(PRIMARY_PLATFORMS as readonly string[]).includes(p) && courses.some(c => c.vendor === p)), ...Array.from(new Set(courses.map(c => c.vendor))).filter(v => !ALL_PLATFORMS.includes(v))], [courses])
-  const levels = useMemo(() => [...LEVELS as readonly string[], ...Array.from(new Set(courses.map(c => c.level))).filter(l => l && !(LEVELS as readonly string[]).includes(l))], [courses])
+  // Only offer what exists: a chip never leads to an empty page.
+  const inOrder = (order: readonly string[], have: string[]) => [...order.filter(o => have.includes(o)), ...have.filter(h => h && !order.includes(h))]
+  const uniq = (xs: string[]) => Array.from(new Set(xs))
+  const vendors = useMemo(() => inOrder(ALL_PLATFORMS, uniq(courses.map(c => c.vendor))), [courses])
+  const levels = useMemo(() => inOrder(LEVELS, uniq(courses.map(c => c.level))), [courses])
+  const topics = useMemo(() => TOPICS.filter(t => courses.some(c => c.topics.includes(t))), [courses])
+  const domains = useMemo(() => DOMAINS.filter(d => courses.some(c => c.domains.includes(d))), [courses])
+  const kinds = useMemo(() => KINDS.filter(k => courses.some(c => c.kind === k.id)), [courses])
+  const areas = useMemo(() => TRACKS.filter(t => courses.some(c => c.track === t.id)), [courses])
 
-  const matches = (c: LmsCourseCard, skip?: string) =>
-    (skip === 'vendor' || vendor === 'all' || c.vendor === vendor) &&
-    (skip === 'kind' || kind === 'all' || c.kind === kind) &&
-    (skip === 'level' || level === 'all' || c.level === level) &&
-    (skip === 'topic' || topic === 'all' || c.topics.includes(topic)) &&
-    (skip === 'domain' || domain === 'all' || c.domains.includes(domain))
-  const filtered = courses.filter(c => matches(c))
-  // Each chip's count is "how many courses you would see if you picked it", given the other filters.
-  const count = (skip: string, test: (c: LmsCourseCard) => boolean) => courses.filter(c => matches(c, skip) && test(c)).length
-  const activeCount = [vendor, kind, level, topic, domain].filter(v => v !== 'all').length
-  const reset = () => { setVendor('all'); setKind('all'); setLevel('all'); setTopic('all'); setDomain('all') }
-
-  const grouped = useMemo(
-    () => vendors.map(v => ({ vendor: v, items: filtered.filter(c => c.vendor === v) })).filter(g => g.items.length > 0),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [vendors, vendor, kind, level, topic, domain, courses],
+  const filtered = courses.filter(c =>
+    (vendor === 'all' || c.vendor === vendor) &&
+    (kind === 'all' || c.kind === kind) &&
+    (area === 'all' || c.track === area) &&
+    (level === 'all' || c.level === level) &&
+    (topic === 'all' || c.topics.includes(topic)) &&
+    (domain === 'all' || c.domains.includes(domain)),
   )
+  const activeCount = [vendor, kind, area, level, topic, domain].filter(v => v !== 'all').length
+  const reset = () => { setVendor('all'); setKind('all'); setArea('all'); setLevel('all'); setTopic('all'); setDomain('all') }
+
+  // Certification prep, then projects, then use cases; inside a type, group by area when it has one.
+  const grouped = useMemo(
+    () => KINDS.map(k => ({ id: k.id as string, label: k.label as string, items: filtered.filter(c => c.kind === k.id) })).filter(g => g.items.length > 0),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [vendor, kind, area, level, topic, domain, courses],
+  )
+  const KIND_LINE: Record<string, string> = {
+    certification: 'Prepare for the exam and build the real thing',
+    project: 'Build one real project from start to finish',
+    course: 'One business problem, taught end to end',
+  }
 
   return (
     <section className="section-padding relative">
@@ -80,7 +90,7 @@ export default function LabsCatalog({ courses }: { courses: LmsCourseCard[] }) {
         <div className="text-center mb-10">
           <h2 className="font-heading text-3xl lg:text-4xl font-extrabold tracking-tight text-gray-900 mb-3">Available Courses</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            {courses.length} certification and project courses, taught hands-on. Filter by company, type, level, topic or domain.
+            {courses.length} video courses: certification prep, projects and use cases. Filter by type, company, level or topic.
           </p>
         </div>
 
@@ -99,20 +109,13 @@ export default function LabsCatalog({ courses }: { courses: LmsCourseCard[] }) {
             )}
           </div>
           <div className="space-y-3">
-            <FilterRow label="Company" items={[{ id: 'all', label: 'All companies', count: count('vendor', () => true) }, ...vendors.map(v => ({ id: v, label: v, count: count('vendor', c => c.vendor === v) }))]} active={vendor} onSelect={setVendor} />
-            <FilterRow label="Type" items={[{ id: 'all', label: 'All types', count: count('kind', () => true) }, ...KINDS.map(k => ({ id: k.id as string, label: k.label, count: count('kind', c => c.kind === k.id) }))]} active={kind} onSelect={setKind} />
-            <FilterRow label="Level" items={[{ id: 'all', label: 'All levels', count: count('level', () => true) }, ...levels.map(l => ({ id: l, label: l, count: count('level', c => c.level === l) }))]} active={level} onSelect={setLevel} />
-            {(more || topic !== 'all' || domain !== 'all') && (
-              <>
-                <FilterRow label="Topic" items={[{ id: 'all', label: 'All topics', count: count('topic', () => true) }, ...TOPICS.map(t => ({ id: t as string, label: t, count: count('topic', c => c.topics.includes(t)) }))]} active={topic} onSelect={setTopic} />
-                <FilterRow label="Domain" items={[{ id: 'all', label: 'All domains', count: count('domain', () => true) }, ...DOMAINS.map(d => ({ id: d as string, label: d, count: count('domain', c => c.domains.includes(d)) }))]} active={domain} onSelect={setDomain} />
-              </>
-            )}
+            {kinds.length > 1 && <FilterRow label="Type" items={[{ id: 'all', label: 'All types' }, ...kinds.map(k => ({ id: k.id as string, label: k.label as string }))]} active={kind} onSelect={setKind} />}
+            {areas.length > 0 && <FilterRow label="Area" items={[{ id: 'all', label: 'All areas' }, ...areas.map(t => ({ id: t.id as string, label: t.label as string }))]} active={area} onSelect={setArea} />}
+            {vendors.length > 1 && <FilterRow label="Company" items={[{ id: 'all', label: 'All companies' }, ...vendors.map(v => ({ id: v, label: v }))]} active={vendor} onSelect={setVendor} />}
+            {levels.length > 1 && <FilterRow label="Level" items={[{ id: 'all', label: 'All levels' }, ...levels.map(l => ({ id: l, label: l }))]} active={level} onSelect={setLevel} />}
+            {topics.length > 0 && <FilterRow label="Topic" items={[{ id: 'all', label: 'All topics' }, ...topics.map(t => ({ id: t as string, label: t as string }))]} active={topic} onSelect={setTopic} />}
+            {domains.length > 0 && <FilterRow label="Industry" items={[{ id: 'all', label: 'All industries' }, ...domains.map(d => ({ id: d as string, label: d as string }))]} active={domain} onSelect={setDomain} />}
           </div>
-          <button type="button" onClick={() => setMore(m => !m)} className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-primary-600 hover:text-primary-700 transition-colors">
-            <ChevronDown className={`w-3.5 h-3.5 transition-transform ${more ? 'rotate-180' : ''}`} />
-            {more ? 'Fewer filters' : 'More filters: topic and domain'}
-          </button>
         </div>
 
         <div className="max-w-6xl mx-auto mb-6 text-sm text-gray-500 text-center">
@@ -136,14 +139,14 @@ export default function LabsCatalog({ courses }: { courses: LmsCourseCard[] }) {
         ) : (
           <div className="max-w-6xl mx-auto space-y-12">
             {grouped.map(group => (
-              <div key={group.vendor}>
+              <div key={group.id}>
                 <div className="flex items-center gap-3 mb-5">
                   <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center">
                     <Layers className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-heading text-lg font-bold text-gray-900">{group.vendor}</h3>
-                    <p className="text-xs text-gray-500">{group.items.length} course{group.items.length > 1 ? 's' : ''}</p>
+                    <h3 className="font-heading text-lg font-bold text-gray-900">{group.label}</h3>
+                    <p className="text-xs text-gray-500">{KIND_LINE[group.id]} · {group.items.length} course{group.items.length > 1 ? 's' : ''}</p>
                   </div>
                 </div>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
