@@ -55,11 +55,11 @@ export const LEARNER_COOKIE_NAME = COOKIE_NAME
  * Learning Studio admins. An admin is the owner's Microsoft (Entra ID) work account, and only when the
  * session came from "Continue with Microsoft". The same address signing in by email code, Google or
  * password is refused (see isReservedAdminEmail), so nobody can become admin by typing the address.
- * STUDIO_ADMIN_EMAILS: comma separated, default admin@gennoor.com.
+ * STUDIO_ADMIN_EMAILS: comma separated, default admin@gennoor.com, jalalkhan@gennoor.com, yusufchaudhary@gennoor.com.
  * STUDIO_ADMIN_TENANT_ID (optional): also require the Entra tenant to match.
  */
 const adminEmails = (): string[] =>
-  (process.env.STUDIO_ADMIN_EMAILS || 'admin@gennoor.com').split(',').map(e => e.trim().toLowerCase()).filter(Boolean)
+  (process.env.STUDIO_ADMIN_EMAILS || 'admin@gennoor.com,jalalkhan@gennoor.com,yusufchaudhary@gennoor.com').split(',').map(e => e.trim().toLowerCase()).filter(Boolean)
 
 export function isReservedAdminEmail(email: string | undefined | null): boolean {
   return !!email && adminEmails().includes(email.trim().toLowerCase())
