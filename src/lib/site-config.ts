@@ -44,6 +44,7 @@ export const siteConfig = {
           { name: 'Automation we build', href: '/automation' },
           { name: 'Training programs', href: '/services/training' },
           { name: 'Certification preparation', href: '/services/certifications' },
+          { name: 'Webinars and expert sessions', href: '/webinars' },
         ],
       },
       {

@@ -102,7 +102,7 @@ const BREADCRUMB_LABELS: Record<string, string> = {
   '/resources': 'Resources',
   '/resources/blog': 'Blog',
   '/resources/calendar': 'Book a call',
-  '/webinars': 'Webinars',
+  '/webinars': 'Webinars and expert sessions',
   '/workshops': 'Workshops',
   '/workshops/claude-cowork': 'Claude workshop recap',
   '/about': 'About',
