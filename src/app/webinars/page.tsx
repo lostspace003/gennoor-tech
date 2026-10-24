@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { TrainingIllustration } from '@/components/illustrations/Illustrations'
 import { getPublicWebinars, pastWebinars, type UpcomingWebinar } from '@/data/webinars'
 import WebinarRegisterModal from '@/components/webinars/WebinarRegisterModal'
 import SessionCarousel, { type SessionPhoto } from '@/components/webinars/SessionCarousel'
@@ -34,6 +35,7 @@ export default function WebinarsPage() {
     <main className="min-h-screen bg-white">
       {/* ===== Hero ===== */}
       <section className="px-8 pt-20 lg:pt-[100px] pb-12 text-center">
+        <TrainingIllustration className="w-[112px] h-[112px] mx-auto mb-6" />
         <h1 className="text-[clamp(40px,4.8vw,64px)] leading-[1.06] tracking-[-0.03em] font-bold text-gray-900">
           Learn live.
         </h1>

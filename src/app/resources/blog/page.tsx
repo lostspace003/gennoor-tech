@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
+import { ScopeIllustration } from '@/components/illustrations/Illustrations'
 import { blogPostsMeta, blogCategories } from '@/data/blog-posts'
 import { siteConfig, BLOB_URL } from '@/lib/site-config'
 import BlogListClient from './BlogListClient'
@@ -38,6 +39,7 @@ export default function BlogPage() {
     <div className="min-h-screen bg-white">
       {/* Masthead — server-rendered for SEO */}
       <header className="px-8 pt-20 lg:pt-[100px] pb-12 text-center">
+        <ScopeIllustration className="w-[112px] h-[112px] mx-auto mb-6" />
         <h1 className="text-[clamp(40px,4.8vw,64px)] leading-[1.06] tracking-[-0.03em] font-bold text-gray-900">
           Field notes.
         </h1>
