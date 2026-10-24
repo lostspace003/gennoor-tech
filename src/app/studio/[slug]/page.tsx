@@ -15,6 +15,7 @@ import CourseReviews from '@/components/academy/CourseReviews'
 import { Stars } from '@/components/academy/Stars'
 import { getReviews } from '@/lib/lms-community'
 import { CourseStrip, StripLegend } from '@/components/academy/CourseStrip'
+import { OutlineGate, OutlineLesson } from '@/components/academy/OutlineGate'
 import { BreadcrumbJsonLd, LmsCourseJsonLd } from '@/components/JsonLd'
 
 const FALLBACK_UPDATED = '2026-10-01T00:00:00.000Z'
@@ -173,7 +174,8 @@ export default async function LabsCoursePage({ params }: PageProps) {
 
           <section>
             <h2 className="font-heading text-[28px] font-bold tracking-[-0.02em] text-gray-900 mb-2">Curriculum</h2>
-            <p className="text-[#6e6e73] mb-6">{totalItems} items (lessons and quizzes) across {course.sections.length} modules. {enrolled ? 'Pick any lesson to play it.' : 'Open a module to see its lessons.'}</p>
+            <p className="text-[#6e6e73] mb-6">{totalItems} items (lessons and quizzes) across {course.sections.length} modules. {enrolled ? 'Pick any lesson to open it.' : 'Pick any lesson to open it. You will sign in first if you have not already.'}</p>
+            <OutlineGate slug={slug}>
             <div className="border-t border-[#e8e8ed]">
               {course.sections.map((s, i) => (
                 <details key={i} className="group border-b border-[#e8e8ed]" open={i === Math.min(1, course.sections.length - 1)}>
@@ -195,10 +197,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
                             {progress[it.id]?.done && <Check className="w-4 h-4 mt-0.5 shrink-0 text-emerald-600" strokeWidth={2.5} />}
                           </Link>
                         ) : (
-                          <span className="flex items-start gap-3 py-1.5 text-[14.5px] leading-snug text-[#424245]">
-                            <span className="w-1.5 h-4 rounded-[1px] mt-0.5 shrink-0" style={{ background: KIND_COLOR[kindOf(it)] }} />
-                            {it.title}
-                          </span>
+                          <OutlineLesson id={it.id} title={it.title} color={KIND_COLOR[kindOf(it)]} />
                         )}
                       </li>
                     ))}
@@ -206,6 +205,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
                 </details>
               ))}
             </div>
+            </OutlineGate>
           </section>
 
           <section>

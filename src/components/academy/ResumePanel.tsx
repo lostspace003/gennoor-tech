@@ -6,7 +6,7 @@ import { formatTime, type ResumePoint } from '@/lib/lms-resume'
  * learner chooses. `dark` is for the dark course hero.
  */
 export default function ResumePanel({ slug, point, dark = false }: { slug: string; point: ResumePoint; dark?: boolean }) {
-  const learn = (id: string) => `/studio/${slug}/learn?item=${id}`
+  const learn = (id: string, resume = false) => `/studio/${slug}/learn?item=${id}${resume ? '&resume=1' : ''}`
   const complete = point.kind === 'complete'
 
   return (
@@ -24,7 +24,7 @@ export default function ResumePanel({ slug, point, dark = false }: { slug: strin
       )}
       <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
         {!complete && (
-          <Link href={learn(point.item.id)} className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-primary-600 hover:bg-[#0077ed] text-white text-sm font-semibold transition-colors">
+          <Link href={learn(point.item.id, true)} className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-primary-600 hover:bg-[#0077ed] text-white text-sm font-semibold transition-colors">
             Resume
           </Link>
         )}

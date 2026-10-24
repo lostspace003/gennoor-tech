@@ -12,6 +12,7 @@ import {
 import type { LmsCourse, LmsItem, LmsProgressEntry } from '@/lib/lms'
 import { KIND_COLOR, kindOf } from '@/lib/lms-kind'
 import { CourseStrip } from './CourseStrip'
+import { RichInline, RichText, paragraphize } from './RichText'
 
 type Lecture = Extract<LmsItem, { type: 'lecture' }>
 interface VideoCtl { pause: () => boolean; resume: () => void }
@@ -28,9 +29,6 @@ export function fmt(sec: number): string {
   return h ? `${h}:${String(m).padStart(2, '0')}:${String(r).padStart(2, '0')}` : `${m}:${String(r).padStart(2, '0')}`
 }
 
-// Set once the learner presses play. Until then a lesson opens paused (at the saved spot).
-let playedThisVisit = false
-
 function fmtTotal(sec: number): string {
   const h = Math.floor(sec / 3600)
   const m = Math.round((sec % 3600) / 60)
@@ -42,12 +40,15 @@ export default function LmsPlayer({
   learnerEmail,
   initialItem,
   initialProgress,
+  resumeSaved = false,
   congratsUrl,
 }: {
   course: LmsCourse
   learnerEmail: string
   initialItem: string
   initialProgress: Record<string, LmsProgressEntry>
+  /** Open the first lesson at the spot the learner stopped (the Resume button). Every other way in starts at 0:00. */
+  resumeSaved?: boolean
   congratsUrl?: string | null
 }) {
   const router = useRouter()
@@ -64,6 +65,9 @@ export default function LmsPlayer({
   const [pdfMax, setPdfMax] = useState(false)
   const [showCongrats, setShowCongrats] = useState(false)
   const [sideW, setSideW] = useState(400)
+  // Lessons open paused. Once the learner has pressed play in this visit, the next lesson they pick plays by itself.
+  const [played, setPlayed] = useState(false)
+  const [resumeId, setResumeId] = useState<string | null>(resumeSaved ? initialItem : null)
   const [infoOpen, setInfoOpen] = useState(true)
   const ctl = useRef<VideoCtl | null>(null)
   const resumeAfterMax = useRef(false)
@@ -75,6 +79,7 @@ export default function LmsPlayer({
   const select = useCallback(
     (id: string) => {
       setItemId(id)
+      setResumeId(null)
       setPdf(null)
       setPdfMax(false)
       resumeAfterMax.current = false
@@ -217,7 +222,9 @@ export default function LmsPlayer({
               slug={course.slug}
               lecture={item}
               email={learnerEmail}
-              savedPosition={progress[item.id]?.positionSec ?? 0}
+              savedPosition={item.id === resumeId ? progress[item.id]?.positionSec ?? 0 : 0}
+              autoStart={played}
+              onPlayed={() => setPlayed(true)}
               done={!!progress[item.id]?.done}
               onPosition={s => mark(item.id, { positionSec: s })}
               onDone={() => mark(item.id, { done: true })}
@@ -301,7 +308,7 @@ export default function LmsPlayer({
                   </div>
                 </div>
 
-                {item.description && <p className="text-[14px] leading-[1.65] text-[#3a3a3f]">{item.description}</p>}
+                {item.description && <RichText text={paragraphize(item.description)} className="text-[14px] leading-[1.65] text-[#3a3a3f]" />}
 
                 {resources.length > 0 && (
                 <div>
@@ -435,6 +442,8 @@ function LecturePane({
   lecture,
   email,
   savedPosition,
+  autoStart,
+  onPlayed,
   done,
   onPosition,
   onDone,
@@ -446,6 +455,8 @@ function LecturePane({
   lecture: Lecture
   email: string
   savedPosition: number
+  autoStart: boolean
+  onPlayed: () => void
   done: boolean
   onPosition: (s: number) => void
   onDone: () => void
@@ -457,7 +468,7 @@ function LecturePane({
   const videoRef = useRef<HTMLVideoElement>(null)
   const lastSave = useRef(0)
   const resumeAt = useRef(savedPosition)
-  const wasPlaying = useRef(playedThisVisit)
+  const wasPlaying = useRef(autoStart)
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const [src, setSrc] = useState<string | null>(null)
@@ -686,7 +697,7 @@ function LecturePane({
           <video
             ref={videoRef}
             src={hlsUrl ? undefined : (src ?? undefined)}
-            autoPlay={playedThisVisit}
+            autoPlay={autoStart}
             playsInline
             preload="auto"
             controlsList="nodownload noremoteplayback noplaybackrate"
@@ -706,7 +717,7 @@ function LecturePane({
             }}
             onDurationChange={e => { if (isFinite(e.currentTarget.duration)) setDur(e.currentTarget.duration) }}
             onLoadedData={() => setReady(true)}
-            onPlay={() => { playedThisVisit = true; setPlaying(true); setEnded(false); poke() }}
+            onPlay={() => { onPlayed(); setPlaying(true); setEnded(false); poke() }}
             onPause={() => { setPlaying(false); setShowUi(true); save(true) }}
             onWaiting={() => setBuffering(true)}
             onCanPlay={() => setBuffering(false)}
@@ -1056,7 +1067,10 @@ function QuizPane({
       <ol className="space-y-8">
         {quiz.questions.map((q, qi) => (
           <li key={qi}>
-            <p className="font-medium text-gray-900 mb-3 leading-snug">{qi + 1}. {q.question}</p>
+            <div className="flex gap-2 font-medium text-gray-900 mb-3 leading-snug">
+              <span className="shrink-0 tabular-nums">{qi + 1}.</span>
+              <RichText text={q.question} className="min-w-0 flex-1 [&_p]:my-0 [&_p+pre]:mt-3 [&_pre+p]:mt-3 [&_pre]:font-normal" />
+            </div>
             <div className="space-y-2">
               {q.answers.map((a, ai) => {
                 const r = result?.results[qi]
@@ -1078,12 +1092,12 @@ function QuizPane({
                     onClick={() => setPicks(p => { const n = [...p]; n[qi] = ai; return n })}
                     className={`w-full text-left px-4 py-2.5 rounded-lg border text-[14px] text-gray-800 transition-colors duration-150 ${tone}`}
                   >
-                    {a}
+                    <RichInline text={a} />
                   </button>
                 )
               })}
             </div>
-            {result?.results[qi] && <p className="mt-2 text-[13px] text-[#6e6e73]">{result.results[qi].explanation}</p>}
+            {result?.results[qi] && <RichText text={result.results[qi].explanation} className="mt-2 text-[13px] text-[#6e6e73]" />}
           </li>
         ))}
       </ol>

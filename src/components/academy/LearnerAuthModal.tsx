@@ -371,7 +371,7 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
   }
 
   const handleMicrosoftLogin = () => {
-    const returnTo = typeof window !== 'undefined' ? window.location.pathname : '/ai-academy'
+    const returnTo = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/ai-academy'
     window.location.href = `/api/learner/login-microsoft?returnTo=${encodeURIComponent(returnTo)}`
   }
 
