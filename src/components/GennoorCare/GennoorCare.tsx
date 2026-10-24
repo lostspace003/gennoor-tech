@@ -185,7 +185,8 @@ export default function GennoorCare() {
       const md = p.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
       if (md) {
         const href = md[2].startsWith('http') || md[2].startsWith('/') || md[2].startsWith('mailto:') ? md[2] : `https://${md[2]}`
-        return <a key={key} href={href} className="text-primary-600 underline hover:text-primary-800 font-medium" target="_blank" rel="noopener noreferrer">{md[1]}</a>
+        const internal = href.startsWith('/') || /^https?:\/\/(www\.)?gennoor\.com/i.test(href)
+        return <a key={key} href={href} className="text-primary-600 underline hover:text-primary-800 font-medium" {...(internal ? {} : { target: '_blank', rel: 'noopener noreferrer' })}>{md[1]}</a>
       }
       if (/^\*\*[^*]+\*\*$/.test(p)) return <strong key={key}>{p.slice(2, -2)}</strong>
       if (/^https?:\/\//.test(p)) return <a key={key} href={p} className="text-primary-600 underline hover:text-primary-800 break-all" target="_blank" rel="noopener noreferrer">{p.replace(/^https?:\/\/(www\.)?/, '')}</a>
@@ -275,7 +276,7 @@ export default function GennoorCare() {
                 {m.links && m.links.filter((l) => !linkInContent(m.content, l.url)).length > 0 && (
                   <div className="mt-2 space-y-1.5">
                     {m.links.filter((l) => !linkInContent(m.content, l.url)).map((l) => (
-                      <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer" className="block px-3 py-2 rounded-lg bg-primary-50 border border-primary-100 hover:border-primary-300 text-primary-700 text-xs font-medium truncate">
+                      <a key={l.url} href={l.url} className="block px-3 py-2 rounded-lg bg-primary-50 border border-primary-100 hover:border-primary-300 text-primary-700 text-xs font-medium truncate">
                         {decodeEntities(l.title)} →
                       </a>
                     ))}

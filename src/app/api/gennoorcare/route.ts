@@ -5,10 +5,13 @@ import {
   loadIndexMeta, loadVectors, topKScored, addUsage, getUsage, isCacheableQuestion,
   questionKey, getCachedAnswer, setCachedAnswer, appendLog, EMBED_DIM,
 } from '@/lib/bot/store'
+import { getStudioCourses, studioBlock, matchStudioCourses, ensureStudioLinks } from '@/lib/bot/studio-courses'
 
 // PUBLIC endpoint — every protection is server-side:
 // kill switch, per-IP rate limits, size caps, retrieval-only grounding,
 // answer cache, daily token budget breaker, full audit log.
+// Local testing against real services without writing logs, usage or cache.
+const READONLY = process.env.GENNOORBOT_READONLY === 'true'
 const MAX_INPUT = 500
 const MAX_HISTORY = 6
 /**
@@ -261,7 +264,8 @@ function choiceQuestionToCard(text: string): { text: string; card?: BotCard } {
 async function answerFromWeb(
   question: string,
   nearby: Array<{ title: string; url: string; text: string }>,
-  visitorName?: string
+  visitorName?: string,
+  studioText = ''
 ): Promise<{ reply: string; links: Array<{ title: string; url: string }>; card?: BotCard } | null> {
   try {
     const { foundryConfigured, webGroundedCompletion } = await import('@/lib/crm/foundry')
@@ -280,13 +284,15 @@ Use live web search to get the facts right, then answer as Gennoor's assistant.
 
 ${VOICE_RULES}
 
-LINKS: exactly one, from the offerings listed below, written as markdown [title](url). Never invent a URL. Only when nothing below genuinely relates may you skip it and point to [Contact](/contact) instead — but look hard first; a visitor who leaves with no next step is a failed answer.
+LINKS: exactly one, from the offerings or Learning Studio courses listed below, written as markdown [title](url). Never invent a URL. Only when nothing below genuinely relates may you skip it and point to [Contact](/contact) instead — but look hard first; a visitor who leaves with no next step is a failed answer.
 ${visitorName ? `The visitor's name is ${visitorName}; use it naturally, not in every message.` : ''}
 
 ${CARD_RULES}
 
 GENNOOR OFFERINGS CLOSEST TO THIS QUESTION:
-${catalogue || '(nothing in the catalogue is close to this topic)'}`,
+${catalogue || '(nothing in the catalogue is close to this topic)'}
+
+${studioText}`,
       question
     )
 
@@ -376,6 +382,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(HUMAN_FALLBACK)
     }
 
+    const studio = await getStudioCourses()
+
     // Cache — only opening questions, and only ones distinctive enough that a
     // shared answer is safe. "?" and greetings are deliberately never cached.
     const isOpening = history.filter((m) => m.role === 'user').length === 1 && isCacheableQuestion(question)
@@ -383,8 +391,11 @@ export async function POST(req: NextRequest) {
     if (isOpening) {
       const hit = await getCachedAnswer(cacheKey)
       if (hit) {
-        await appendLog({ at: new Date().toISOString(), sessionId, q: question, a: hit.answer, links: hit.links.map((l: any) => l.url), cached: true })
-        return NextResponse.json({ reply: hit.answer, links: hit.links, cached: true })
+        // Answers cached before the Studio courses were known get the link added now
+        const fixed = ensureStudioLinks(hit.answer, matchStudioCourses(question, studio))
+        const cachedLinks = [...fixed.links, ...hit.links.filter((l: any) => !fixed.links.some((x) => x.url === l.url))]
+        if (!READONLY) await appendLog({ at: new Date().toISOString(), sessionId, q: question, a: fixed.reply, links: cachedLinks.map((l: any) => l.url), cached: true })
+        return NextResponse.json({ reply: fixed.reply, links: cachedLinks, cached: true })
       }
     }
 
@@ -412,11 +423,15 @@ export async function POST(req: NextRequest) {
     // what Gennoor actually does. Threshold is low because this model's
     // cosine scores are compressed (a correct match lands around 0.30-0.40).
     if (bestScore < WEAK_MATCH) {
-      const grounded = await answerFromWeb(question, top, visitorName)
+      const grounded = await answerFromWeb(question, top, visitorName, studioBlock(studio))
       if (grounded) {
-        await addUsage(Math.round((question.length + grounded.reply.length) / 4))
-        await appendLog({ at: new Date().toISOString(), sessionId, q: question, a: grounded.reply, links: grounded.links.map((l) => l.url) })
-        return NextResponse.json(grounded)
+        const fixed = ensureStudioLinks(grounded.reply, matchStudioCourses(question, studio))
+        const out = { ...grounded, reply: fixed.reply, links: [...fixed.links, ...grounded.links.filter((l) => !fixed.links.some((x) => x.url === l.url))].slice(0, 4) }
+        if (!READONLY) {
+          await addUsage(Math.round((question.length + out.reply.length) / 4))
+          await appendLog({ at: new Date().toISOString(), sessionId, q: question, a: out.reply, links: out.links.map((l) => l.url) })
+        }
+        return NextResponse.json(out)
       }
       // Web unavailable (Foundry busy) — fall through to the site-only path,
       // which says "I don't have that" honestly rather than inventing.
@@ -459,7 +474,9 @@ ${visitorName ? `- The visitor's name is ${visitorName} — address them natural
 ${CARD_RULES}
 
 WEBSITE CONTENT:
-${context}`,
+${context}
+
+${studioBlock(studio)}`,
         },
         ...history,
       ],
@@ -472,19 +489,26 @@ ${context}`,
     // If it asked a choice-question in prose instead of emitting a card, convert it
     const promoted = extracted.card ? extracted : choiceQuestionToCard(extracted.text)
     const card = extracted.card || promoted.card
-    const reply = stripForeignLinks(promoted.text)
-    const links = top
-      .filter((c) => reply.includes(c.url))
-      .map((c) => ({ title: c.title, url: c.url }))
+    // A matching Studio course always gets its link, even if the model left it out
+    const fixed = ensureStudioLinks(stripForeignLinks(promoted.text), matchStudioCourses(question, studio))
+    const reply = fixed.reply
+    const links = [
+      ...fixed.links,
+      ...top
+        .filter((c) => reply.includes(c.url))
+        .map((c) => ({ title: c.title, url: c.url })),
+    ]
       .filter((l, i, arr) => arr.findIndex((x) => x.url === l.url) === i)
       .slice(0, 4)
 
     // Rough token accounting: context + history + reply
-    await addUsage(Math.round((context.length + question.length + reply.length) / 4))
-    // Cards are conversation state, not a cacheable answer — a cached card
-    // would replay someone else's questions at the wrong moment.
-    if (isOpening && !card) await setCachedAnswer(cacheKey, reply, links)
-    await appendLog({ at: new Date().toISOString(), sessionId, q: question, a: reply, links: links.map((l) => l.url) })
+    if (!READONLY) {
+      await addUsage(Math.round((context.length + question.length + reply.length) / 4))
+      // Cards are conversation state, not a cacheable answer — a cached card
+      // would replay someone else's questions at the wrong moment.
+      if (isOpening && !card) await setCachedAnswer(cacheKey, reply, links)
+      await appendLog({ at: new Date().toISOString(), sessionId, q: question, a: reply, links: links.map((l) => l.url) })
+    }
 
     return NextResponse.json({ reply, links, card })
   } catch (error) {
