@@ -64,7 +64,7 @@ export default function LmsPlayer({
   const [docBusy, setDocBusy] = useState('')
   const [pdfMax, setPdfMax] = useState(false)
   const [showCongrats, setShowCongrats] = useState(false)
-  const [sideW, setSideW] = useState(400)
+  const [sideW, setSideW] = useState(425)
   // Lessons open paused. Once the learner has pressed play in this visit, the next lesson they pick plays by itself.
   const [played, setPlayed] = useState(false)
   const [resumeId, setResumeId] = useState<string | null>(resumeSaved ? initialItem : null)
@@ -214,7 +214,7 @@ export default function LmsPlayer({
       </div>
 
       <div className="lg:pl-[var(--chat-w,0px)] transition-[padding] duration-200">
-      <div className="max-w-[1500px] mx-auto flex flex-col lg:flex-row gap-6 p-4 sm:p-6">
+      <div className="max-w-[1880px] mx-auto flex flex-col lg:flex-row gap-6 p-4 sm:p-6">
         <div className="flex-1 min-w-0">
           {item.type === 'lecture' ? (
             <LecturePane
