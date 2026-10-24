@@ -32,6 +32,14 @@ export default async function HomePage() {
   const courses = (await listLmsCourses()).map(toCard).filter(c => c.promoUrl || c.thumbnailUrl).slice(0, 2)
 
   const heroSlides: HeroSlide[] = [
+    {
+      id: 'walkthrough',
+      title: 'How the Learning Studio works',
+      caption: 'From the first click to your first lesson',
+      href: '/studio',
+      src: '/videos/learning-studio-walkthrough.mp4',
+      poster: '/videos/learning-studio-walkthrough-poster.jpg',
+    },
     ...courses.filter(c => c.promoUrl).map(c => ({
       id: c.slug,
       title: c.title,
