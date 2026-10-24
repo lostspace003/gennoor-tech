@@ -175,6 +175,7 @@ export default function AdminDashboard() {
   const [indexingData, setIndexingData] = useState<{ google: Array<{ url: string; status: string }>; bing: Array<{ url: string; status: string }> } | null>(null)
   const [academyData, setAcademyData] = useState<{ learners: Array<{ email: string; name: string; username: string; organization: string; role: string; provider: string; hasPassword: boolean; profileComplete: boolean; lastLogin: string; createdAt: string }>; progress: Array<{ email: string; courseId: string; chapterId: string; completionPercent: number; completed: boolean; lastAccessed: string }>; summary: { totalLearners: number; activeLearners: number; learnersWithCompletion: number; totalProgressEntries: number; byProvider: Record<string, number>; byCourse: Array<{ courseId: string; learners: number; completions: number }> }; chapterStats: Record<string, { views: number; completions: number; avgPercent: number }> } | null>(null)
   const [indexNowState, setIndexNowState] = useState<{ pushing: boolean; result?: { success: boolean; submitted?: number; total?: number; error?: string; submittedAt?: string } }>({ pushing: false })
+  const [kwData, setKwData] = useState<{ configured?: boolean; reason?: string; d28?: { striking: { query: string; page: string; impressions: number; clicks: number; position: number }[] } } | null>(null)
   const [gscData, setGscData] = useState<{
     configured: boolean
     reason?: string
@@ -224,6 +225,7 @@ export default function AdminDashboard() {
       try { const cwRes = await fetch('/api/admin/cowork-registrations', { method: 'POST', headers }); if (cwRes.ok) setCoworkData(await cwRes.json()) } catch {}
       try { const acRes = await fetch('/api/admin/academy', { method: 'POST', headers }); if (acRes.ok) setAcademyData(await acRes.json()) } catch {}
       try { const gRes = await fetch('/api/admin/gsc-coverage', { method: 'POST', headers }); if (gRes.ok) setGscData(await gRes.json()) } catch {}
+      try { const kRes = await fetch('/api/admin/gsc-keywords', { method: 'POST', headers, body: '{}' }); if (kRes.ok) setKwData(await kRes.json()) } catch {}
       setLastUpdated(new Date())
       try { const bRes = await fetch('/api/bookings/appointments'); if (bRes.ok) { const bData = await bRes.json(); setBookingsData(bData.appointments || []) } } catch {}
       try { const crRes = await fetch('/api/admin/call-requests'); if (crRes.ok) { const crData = await crRes.json(); setCallRequests(crData.requests || []) } } catch {}
@@ -1947,6 +1949,20 @@ export default function AdminDashboard() {
                           <td className="py-2 px-2 text-right text-gray-600">{Math.round(p.impressions).toLocaleString()}</td>
                           <td className="py-2 px-2 text-right text-gray-500">{((p.ctr || 0) * 100).toFixed(1)}%</td>
                           <td className="py-2 px-2 text-right text-gray-500">{(p.position || 0).toFixed(1)}</td>
+                        </tr>
+                      ))}</tbody></table></div>
+                    </div>
+                  )}
+                  {kwData?.configured && kwData.d28 && kwData.d28.striking.length > 0 && (
+                    <div>
+                      <p className="text-xs font-medium text-gray-500 mb-2">Search keywords close to page 1 (position 8 to 20, last 28 days)</p>
+                      <div className="overflow-x-auto"><table className="w-full text-xs"><thead><tr className="text-gray-500 border-b border-gray-200"><th className="text-left py-2 px-2 font-medium">Query</th><th className="text-left py-2 px-2 font-medium">Page</th><th className="text-right py-2 px-2 font-medium">Impr.</th><th className="text-right py-2 px-2 font-medium">Pos.</th></tr></thead>
+                      <tbody>{kwData.d28.striking.slice(0, 10).map((k, i) => (
+                        <tr key={i} className="border-b border-gray-100">
+                          <td className="py-2 px-2 text-gray-800 font-medium">{k.query}</td>
+                          <td className="py-2 px-2 text-gray-600 max-w-[220px] truncate">{k.page.replace('https://gennoor.com', '') || '/'}</td>
+                          <td className="py-2 px-2 text-right text-gray-600">{Math.round(k.impressions).toLocaleString()}</td>
+                          <td className="py-2 px-2 text-right text-gray-500">{k.position.toFixed(1)}</td>
                         </tr>
                       ))}</tbody></table></div>
                     </div>

@@ -82,6 +82,8 @@ export interface LmsCourse {
   congrats?: string
   stats: { sections: number; lectures: number; quizzes: number }
   sections: LmsSection[]
+  /** when the course was last saved (catalog blob time); drives sitemap lastmod and structured data */
+  updatedAt?: string
 }
 
 const STATIC_COURSES = [ai103, ai500] as unknown as LmsCourse[]
@@ -107,7 +109,9 @@ async function loadDynamic(force = false): Promise<(LmsCourse & { published?: bo
     for await (const b of client.listBlobsFlat()) {
       if (!b.name.endsWith('.json') || b.name.endsWith('.quizzes.json')) continue
       const buf = await client.getBlobClient(b.name).downloadToBuffer()
-      courses.push(JSON.parse(buf.toString('utf8')))
+      const c = JSON.parse(buf.toString('utf8'))
+      if (!c.updatedAt && b.properties.lastModified) c.updatedAt = b.properties.lastModified.toISOString()
+      courses.push(c)
     }
   } catch {
     // storage not configured / unreachable: the bundled courses still work
