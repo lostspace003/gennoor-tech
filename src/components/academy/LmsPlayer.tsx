@@ -891,7 +891,7 @@ export function FullScreenInfo() {
       </button>
       <span
         role="status"
-        className={`absolute left-full top-1/2 -translate-y-1/2 ml-3 w-[290px] rounded-xl bg-white text-gray-900 shadow-xl border border-[#e2e5ec] px-3.5 py-2.5 text-[12.5px] leading-snug z-50 transition-all duration-300 ${open ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-1 pointer-events-none'}`}
+        className={`absolute left-full top-0 ml-3 w-[min(480px,calc(100vw-5rem))] rounded-xl bg-white text-gray-900 shadow-xl border border-[#e2e5ec] px-4 py-3 text-[13px] leading-snug z-50 transition-all duration-300 ${open ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-1 pointer-events-none'}`}
       >
         <span className="font-semibold">Press F11 for the best view.</span> Full screen shows the video and chat properly.
         <span className="block text-[#6e6e73] mt-1">Windows and Linux: F11 (Fn+F11 on some laptops). Mac: Ctrl+Cmd+F.</span>
