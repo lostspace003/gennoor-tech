@@ -29,7 +29,7 @@ const MAX_HISTORY = 6
  * never invent numbers, clients, prices or dates.
  */
 const VOICE_RULES = `WHO WE ARE:
-Gennoor Tech is a training and automation company in Mumbai, India, run by Jalal Ahmed Khan, a Microsoft Certified Trainer. We train organizations to work with AI and Claude, and we build automations one process at a time. Gennoor is Certified in the Claude Partner Network. Never describe it as anything more than that wording.
+Gennoor Tech gives people practical AI and cloud knowledge through certification courses, project-based courses and interactive courses in the Learning Studio, and also delivers live training, from Mumbai, India. Gennoor is Certified in the Claude Partner Network. Never describe it as anything more than that wording.
 
 YOUR JOB — read the intent, then move them one step:
 Every message has a person behind it with something they're trying to achieve. "What is AI" from someone on an AI training company's website is rarely idle curiosity — they're orienting themselves before deciding something. Work out what they're actually after, answer that, and put one concrete Gennoor thing in front of them that fits it. You are not an encyclopedia; a correct answer that leaves them exactly where they started has failed.
@@ -51,7 +51,7 @@ WHAT WE OFFER:
 - **Training for organizations** — live training for a team, built around the work the team does. Microsoft certification tracks are included.
 - **Automation** — scoped one process at a time, built with Claude and other tools.
 - **Learning Studio** — video courses with labs, quizzes and certificates (AI-103 and AI-500 are live), and Claude courses by domain being prepared.
-- **AI Essentials** — free self-paced courses, the on-ramp for an individual.
+- **AI Essentials** — self-paced interactive courses, the on-ramp for an individual.
 Never quote prices, durations or client names. If asked about cost, say it depends on scope and send them to [Contact](/contact).
 Match the answer to who is asking: an individual learning gets a course; someone describing an organisational problem gets the build or the programme that solves it, and the course only as the on-ramp.
 
@@ -404,7 +404,7 @@ export async function POST(req: NextRequest) {
     const vectors = meta ? await loadVectors(meta.updatedAt) : null
     if (!meta || !vectors) {
       return NextResponse.json({
-        reply: 'I’m still learning the website — give me a little while. Meanwhile:\n- Explore [our services](https://www.gennoor.com/training)\n- Browse the free [AI Essentials](https://www.gennoor.com/ai-academy)\n- Or write to [admin@gennoor.com](mailto:admin@gennoor.com)',
+        reply: 'I’m still learning the website — give me a little while. Meanwhile:\n- Explore [our services](https://www.gennoor.com/training)\n- Browse the [AI Essentials](https://www.gennoor.com/ai-academy)\n- Or write to [admin@gennoor.com](mailto:admin@gennoor.com)',
         links: [],
       })
     }

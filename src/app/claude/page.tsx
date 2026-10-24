@@ -22,8 +22,8 @@ const WHAT = [
   },
   {
     art: AutomationIllustration,
-    title: 'Automation and learning platforms',
-    body: 'Automations scoped one process at a time, and learning platforms such as the Learning Studio on this site.',
+    title: 'Claude courses by use case',
+    body: 'Courses in the Learning Studio built around the problems people face at work, organised by domain.',
   },
 ]
 
