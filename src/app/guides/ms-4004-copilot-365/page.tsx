@@ -5,7 +5,7 @@ import { BookOpen, CheckCircle, Clock, Award, Target, Lightbulb, HelpCircle, Arr
 export const metadata: Metadata = {
   title: 'MS-4004 Microsoft 365 Copilot: Exam Prep Guide 2026 | Gennoor Tech',
   description:
-    'Comprehensive MS-4004 Microsoft 365 Copilot exam preparation guide for 2026. Exam overview, skills measured, study resources, and expert tips from Microsoft Certified Trainer Jalal Ahmed Khan.',
+    'Comprehensive MS-4004 Microsoft 365 Copilot exam preparation guide for 2026. Exam overview, skills measured, study resources, and expert tips from the Gennoor technical team.',
   keywords: [
     'MS-4004',
     'Microsoft 365 Copilot',
@@ -72,11 +72,7 @@ export default function MS4004StudyGuidePage() {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: 'MS-4004 Microsoft 365 Copilot: Exam Prep Guide 2026',
-    author: {
-      '@type': 'Person',
-      name: 'Jalal Ahmed Khan',
-      jobTitle: 'Microsoft Certified Trainer',
-    },
+    author: { '@type': 'Organization', name: 'Gennoor Technical Team' },
     publisher: {
       '@type': 'Organization',
       name: 'Gennoor Tech',
@@ -114,7 +110,7 @@ export default function MS4004StudyGuidePage() {
           <p className="text-xl text-gray-600 mb-8 leading-relaxed">
             Your complete preparation guide for the MS-4004 exam — learn how to demonstrate
             mastery of Microsoft 365 Copilot for workforce productivity, with expert strategies
-            from a Microsoft Certified Trainer.
+            from the Gennoor technical team.
           </p>
           <div className="flex flex-wrap gap-6 text-gray-500">
             <div className="flex items-center gap-2">
@@ -507,7 +503,7 @@ export default function MS4004StudyGuidePage() {
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to Pass the MS-4004 Exam?</h2>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Get expert-led Microsoft 365 Copilot training with hands-on practice, real business
-            scenarios, and exam preparation strategies from a Microsoft Certified Trainer who has
+            scenarios, and exam preparation strategies from the Gennoor technical team who has
             guided organizations through successful Copilot adoption.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

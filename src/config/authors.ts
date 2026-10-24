@@ -19,11 +19,11 @@ export interface AuthorProfile {
 export const authors: Record<string, AuthorProfile> = {
   'gennoor-team': {
     id: 'gennoor-team',
-    name: 'Gennoor Tech Team',
+    name: 'Gennoor Technical Team',
     initials: 'G',
     role: 'Gennoor Tech',
     credentials: 'AI training and automation, Mumbai',
-    bio: 'Written by the Gennoor Tech team.',
+    bio: 'Written by the Gennoor technical team.',
     links: {
       linkedin: 'https://www.linkedin.com/company/gennoor-tech-private-limited/',
       about: '/about',

@@ -5,6 +5,7 @@ import Footer from '@/components/layout/Footer'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import GennoorCare from '@/components/GennoorCare/GennoorCare'
 import PageViewTracker from '@/components/PageViewTracker'
+import AttributionTracker from '@/components/AttributionTracker'
 import RippleProvider from '@/components/RippleProvider'
 import { OrganizationJsonLd, WebSiteJsonLd } from '@/components/JsonLd'
 import { siteConfig, BLOB_URL } from '@/lib/site-config'
@@ -95,6 +96,7 @@ export default function RootLayout({
         <RippleProvider />
         <GoogleAnalytics />
         <PageViewTracker />
+        <AttributionTracker />
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-primary-700 focus:text-white focus:rounded-lg">
           Skip to main content
         </a>

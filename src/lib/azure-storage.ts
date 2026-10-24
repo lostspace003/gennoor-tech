@@ -188,6 +188,26 @@ function toTableSafe(data: Record<string, any>): Record<string, any> {
   return out
 }
 
+/**
+ * Where this enquiry came from: the small tag the browser attaches to every form (see AttributionTracker).
+ * Read from the request that is being handled; empty when there is none (scripts) or the tag is missing.
+ */
+async function sourceOfRequest(): Promise<Record<string, string>> {
+  try {
+    const { headers } = await import('next/headers')
+    const raw = (await headers()).get('x-gnr-attr')
+    if (!raw) return {}
+    const a = JSON.parse(decodeURIComponent(raw)) as Record<string, string>
+    const clip = (v: unknown) => String(v ?? '').slice(0, 200)
+    return {
+      srcTag: clip(a.src), srcMedium: clip(a.medium), srcCampaign: clip(a.campaign),
+      srcReferrer: clip(a.referrer), srcLanding: clip(a.landing), srcPage: clip(a.page),
+    }
+  } catch {
+    return {}
+  }
+}
+
 export async function saveEnquiry(type: string, data: Record<string, any>) {
   const tableName = 'Enquiries'
   await ensureTable(tableName)
@@ -199,6 +219,8 @@ export async function saveEnquiry(type: string, data: Record<string, any>) {
     partitionKey: type,
     rowKey,
     ...toTableSafe(data),
+    ...(await sourceOfRequest()),
+    status: 'New',
     createdAt: now.toISOString(),
   })
 

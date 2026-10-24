@@ -5,7 +5,7 @@ import { BookOpen, CheckCircle, Clock, Award, Target, Lightbulb, HelpCircle, Arr
 export const metadata: Metadata = {
   title: 'Azure AI-102 Certification: Complete Study Guide 2026 | Gennoor Tech',
   description:
-    'Comprehensive AI-102 Azure AI Engineer Associate study guide for 2026. Exam overview, skills measured, study resources, and expert tips from Microsoft Certified Trainer Jalal Ahmed Khan.',
+    'Comprehensive AI-102 Azure AI Engineer Associate study guide for 2026. Exam overview, skills measured, study resources, and expert tips from the Gennoor technical team.',
   keywords: [
     'AI-102',
     'Azure AI Engineer',
@@ -50,7 +50,7 @@ const faqData = [
   {
     question: 'How long does it take to prepare for the AI-102 exam?',
     answer:
-      'Preparation time varies based on experience. For someone with Azure fundamentals and programming experience, 6-8 weeks of focused study is typical. With structured training from a Microsoft Certified Trainer, many candidates feel exam-ready in 3-4 weeks of dedicated preparation.',
+      'Preparation time varies based on experience. For someone with Azure fundamentals and programming experience, 6-8 weeks of focused study is typical. With structured training from the Gennoor technical team, many candidates feel exam-ready in 3-4 weeks of dedicated preparation.',
   },
 ];
 
@@ -72,11 +72,7 @@ export default function AI102StudyGuidePage() {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: 'Azure AI-102 Certification: Complete Study Guide 2026',
-    author: {
-      '@type': 'Person',
-      name: 'Jalal Ahmed Khan',
-      jobTitle: 'Microsoft Certified Trainer',
-    },
+    author: { '@type': 'Organization', name: 'Gennoor Technical Team' },
     publisher: {
       '@type': 'Organization',
       name: 'Gennoor Tech',
@@ -128,8 +124,7 @@ export default function AI102StudyGuidePage() {
           </h1>
           <p className="text-xl text-gray-600 mb-8 leading-relaxed">
             Everything you need to pass the AI-102 Azure AI Engineer Associate exam — from skills
-            measured to study strategies, written by a Microsoft Certified Trainer with 16
-            certifications.
+            measured to study strategies, written by the Gennoor technical team.
           </p>
           <div className="flex flex-wrap gap-6 text-gray-500">
             <div className="flex items-center gap-2">
@@ -409,7 +404,7 @@ export default function AI102StudyGuidePage() {
                 Instructor-Led Training
               </h3>
               <p className="text-gray-600 mb-2">
-                A structured training program with a Microsoft Certified Trainer accelerates your
+                A structured training program with the Gennoor technical team accelerates your
                 preparation significantly. My{' '}
                 <Link
                   href="/services/training"
@@ -538,7 +533,7 @@ export default function AI102StudyGuidePage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to Pass the AI-102 Exam?</h2>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Get expert-led AI-102 preparation training from a Microsoft Certified Trainer with
+            Get expert-led AI-102 preparation training from the Gennoor technical team with
             real-world Azure AI project experience and a proven track record of helping candidates
             succeed.
           </p>

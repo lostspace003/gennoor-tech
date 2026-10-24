@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Azure AI-103 Certification: Complete Study Guide 2026',
     description:
-      'Master the AI-103 exam — Developing AI Apps and Agents on Azure. Skills measured, Microsoft Foundry coverage, and expert preparation tips from a Microsoft Certified Trainer.',
+      'Master the AI-103 exam — Developing AI Apps and Agents on Azure. Skills measured, Microsoft Foundry coverage, and expert preparation tips from the Gennoor technical team.',
     url: 'https://gennoor.com/guides/ai-103-azure-ai-engineer',
     siteName: 'Gennoor Tech',
     type: 'article',
@@ -73,7 +73,7 @@ export default function AI103StudyGuidePage() {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: 'Azure AI-103 Certification: Complete Study Guide 2026',
-    author: { '@type': 'Person', name: 'Jalal Ahmed Khan', jobTitle: 'Microsoft Certified Trainer' },
+    author: { '@type': 'Organization', name: 'Gennoor Technical Team' },
     publisher: { '@type': 'Organization', name: 'Gennoor Tech', url: 'https://gennoor.com' },
     datePublished: '2026-04-20',
     dateModified: '2026-05-21',
@@ -101,7 +101,7 @@ export default function AI103StudyGuidePage() {
           <p className="text-base sm:text-lg text-gray-600 mb-7 leading-relaxed">
             Everything you need to pass <strong>AI-103: Developing AI Apps and Agents on Azure</strong> —
             the successor to AI-102. Skills measured, Microsoft Foundry coverage, and expert strategy
-            from a Microsoft Certified Trainer with 16 active certifications.
+            from the Gennoor technical team.
           </p>
           <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-gray-500">
             <span className="inline-flex items-center gap-1.5">
@@ -345,8 +345,7 @@ export default function AI103StudyGuidePage() {
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to Pass the AI-103 Exam?</h2>
           <p className="text-base sm:text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Get expert-led AI-103 preparation from a Microsoft Certified Trainer with 16 active
-            certifications. Hands-on Microsoft Foundry labs, agent-building practice, and the
+            Get expert-led AI-103 preparation from the Gennoor technical team. Hands-on Microsoft Foundry labs, agent-building practice, and the
             exam strategy that has worked for hundreds of candidates.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">

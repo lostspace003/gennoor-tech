@@ -5,7 +5,7 @@ import { BookOpen, CheckCircle, Clock, Award, Target, Lightbulb, HelpCircle, Arr
 export const metadata: Metadata = {
   title: 'PL-300 Power BI Certification: Complete Study Guide 2026 | Gennoor Tech',
   description:
-    'Comprehensive PL-300 Microsoft Power BI Data Analyst study guide for 2026. Exam overview, skills measured, study resources, and expert tips from Microsoft Certified Trainer Jalal Ahmed Khan.',
+    'Comprehensive PL-300 Microsoft Power BI Data Analyst study guide for 2026. Exam overview, skills measured, study resources, and expert tips from the Gennoor technical team.',
   keywords: [
     'PL-300',
     'Power BI certification',
@@ -72,11 +72,7 @@ export default function PL300StudyGuidePage() {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: 'PL-300 Power BI Certification: Complete Study Guide 2026',
-    author: {
-      '@type': 'Person',
-      name: 'Jalal Ahmed Khan',
-      jobTitle: 'Microsoft Certified Trainer',
-    },
+    author: { '@type': 'Organization', name: 'Gennoor Technical Team' },
     publisher: {
       '@type': 'Organization',
       name: 'Gennoor Tech',
@@ -509,7 +505,7 @@ export default function PL300StudyGuidePage() {
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to Pass the PL-300 Exam?</h2>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Get expert-led PL-300 preparation training with hands-on labs, real-world datasets, and
-            exam strategies from a Microsoft Certified Trainer who has trained hundreds of
+            exam strategies from the Gennoor technical team who has trained hundreds of
             successful Power BI analysts.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
