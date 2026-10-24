@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Award, Clock, DollarSign, Target, BookOpen, CheckCircle, Info, Send, Filter, X, Users, Globe } from 'lucide-react'
 import Link from 'next/link'
+import { PlatformIllustration } from '@/components/illustrations/Illustrations'
 import { microsoftCertifications, googleCertifications, awsCertifications, githubCertifications, aiCertsCertifications } from '@/data/certification-prep'
 import CertificationDetailsModal from '@/components/certifications/CertificationDetailsModal'
 import CertificationEnquiryForm from '@/components/certifications/CertificationEnquiryForm'
@@ -89,13 +90,14 @@ export default function CertificationPreparationPage() {
         <div className="absolute inset-0"></div>
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col-reverse lg:flex-row lg:items-center lg:justify-between gap-8">
           <div className="max-w-4xl">
             <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
               Certifications
             </span>
 
             <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-6 leading-tight tracking-tight">
-              Certification preparation
+              Exam Prep
             </h1>
             <p className="text-xl text-gray-600 mb-8">
               Prepare for Microsoft, AWS, Google Cloud, GitHub and AI CERTs exams with a Microsoft Certified Trainer.
@@ -119,6 +121,8 @@ export default function CertificationPreparationPage() {
                 <div className="text-gray-600 text-sm">Certification Providers</div>
               </div>
             </div>
+          </div>
+          <PlatformIllustration className="w-[128px] h-[128px] lg:w-[180px] lg:h-[180px] mx-auto lg:mx-0 shrink-0" />
           </div>
         </div>
       </section>
