@@ -112,6 +112,8 @@ export default async function HomePage() {
           </div>
           <div className="text-center mt-10">
             <Link href="/about" className="link-arrow">About Gennoor ›</Link>
+            <span className="mx-3 text-[#d2d2d7]" aria-hidden>·</span>
+            <Link href="/about/certifications" className="link-arrow">Credentials ›</Link>
           </div>
         </div>
       </section>

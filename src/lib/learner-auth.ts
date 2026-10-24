@@ -1,5 +1,6 @@
 import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
+import type { NextResponse } from 'next/server'
 
 const COOKIE_NAME = 'learner-session'
 if (!process.env.LEARNER_JWT_SECRET && !process.env.AUTH_SECRET) {
@@ -37,7 +38,20 @@ export async function verifyLearnerSession(): Promise<LearnerPayload | null> {
   }
 }
 
-export function learnerCookieOptions(token: string) {
+/**
+ * gennoor.com and www.gennoor.com both serve the site, and a cookie is normally kept only for the exact host
+ * it was set on, so signing in on one address looked signed out on the other. On the site's own hosts the
+ * sign-in cookie is set for the whole domain. On any other host (the azurewebsites address, localhost) nothing
+ * changes: the cookie stays on that host.
+ */
+function siteDomain(request?: { headers: Headers }): string | undefined {
+  const raw = request?.headers.get('x-forwarded-host') || request?.headers.get('host') || ''
+  const host = raw.split(',')[0].trim().toLowerCase().replace(/:\d+$/, '')
+  return host === 'gennoor.com' || host.endsWith('.gennoor.com') ? 'gennoor.com' : undefined
+}
+
+export function learnerCookieOptions(token: string, request?: { headers: Headers }) {
+  const domain = siteDomain(request)
   return {
     name: COOKIE_NAME,
     value: token,
@@ -46,7 +60,14 @@ export function learnerCookieOptions(token: string) {
     sameSite: 'lax' as const,
     maxAge: 30 * 24 * 60 * 60,
     path: '/',
+    ...(domain ? { domain } : {}),
   }
+}
+
+/** Sign out: remove the cookie for the exact host (older sign-ins) and for the whole domain (current ones). */
+export function clearLearnerCookies(response: NextResponse) {
+  response.cookies.delete(COOKIE_NAME)
+  response.cookies.set({ name: COOKIE_NAME, value: '', maxAge: 0, path: '/', domain: 'gennoor.com', secure: process.env.NODE_ENV === 'production', httpOnly: true, sameSite: 'lax' })
 }
 
 export const LEARNER_COOKIE_NAME = COOKIE_NAME

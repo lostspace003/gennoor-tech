@@ -14,8 +14,9 @@ import CourseAbout from '@/components/academy/CourseAbout'
 import CourseReviews from '@/components/academy/CourseReviews'
 import { Stars } from '@/components/academy/Stars'
 import { getReviews } from '@/lib/lms-community'
-import { CourseStrip, StripLegend } from '@/components/academy/CourseStrip'
+import { CourseStrip, StripLegend, longestLesson } from '@/components/academy/CourseStrip'
 import { OutlineGate, OutlineLesson } from '@/components/academy/OutlineGate'
+import InstructorCredentials from '@/components/academy/InstructorCredentials'
 import { BreadcrumbJsonLd, LmsCourseJsonLd } from '@/components/JsonLd'
 
 const FALLBACK_UPDATED = '2026-10-01T00:00:00.000Z'
@@ -149,7 +150,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
           </div>
 
           <div className="mt-12">
-            <CourseStrip sections={course.sections} height={52} animate />
+            <CourseStrip sections={course.sections} height={26} animate />
             <div className="mt-4">
               <StripLegend sections={course.sections} dark />
             </div>
@@ -182,7 +183,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
                   <summary className="cursor-pointer list-none py-5 flex items-center gap-5 [&::-webkit-details-marker]:hidden">
                     <div className="min-w-0 flex-1">
                       <div className="font-semibold text-gray-900 text-[16px] leading-snug group-open:text-primary-600 transition-colors">{s.title}</div>
-                      <div className="mt-3 max-w-xs"><CourseStrip sections={[s]} height={14} /></div>
+                      <div className="mt-3 max-w-xs"><CourseStrip sections={[s]} height={8} maxSeconds={longestLesson(course.sections)} /></div>
                     </div>
                     <span className="text-[13px] text-[#86868b] tabular-nums shrink-0">{s.items.length} {s.items.length === 1 ? "lesson" : "lessons"}</span>
                     <span className="text-[#86868b] transition-transform group-open:rotate-90" aria-hidden>›</span>
@@ -248,7 +249,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
               <div className="text-[14px] text-[#6e6e73] mt-1">Ask questions and talk with other learners and the team.</div>
             </Link>
           )}
-          {course.instructor && <p className="text-[13.5px] text-[#6e6e73] px-1">Taught by Jalal Khan, {course.instructor}.</p>}
+          {course.instructor && <InstructorCredentials slug={slug} instructor={course.instructor} />}
         </aside>
       </div>
     </main>

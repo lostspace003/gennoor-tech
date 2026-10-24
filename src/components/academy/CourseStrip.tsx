@@ -3,29 +3,47 @@ import { KIND_COLOR, KIND_LABEL, kindOf, type LmsKind } from '@/lib/lms-kind'
 interface StripItem { id: string; type: string; kind?: string; durationSec?: number }
 interface StripSection { items: StripItem[] }
 
-// A quiz has no video, so it gets a fixed share. Anything with a video is as wide as the video is long.
-const QUIZ_SECONDS = 240
-const MIN_SECONDS = 20
+// Height of a bar, as a share of the strip: the longer the video, the taller the bar. Lengths are
+// compared with the longest lesson of the whole course and eased (square root) so a 40 second demo is
+// still visible next to a 25 minute lecture. A quiz has no video and gets one fixed, lower height.
+const MIN_SHARE = 0.14
+const QUIZ_SHARE = 0.34
 
-const weightOf = (i: StripItem) => (i.type === 'quiz' ? QUIZ_SECONDS : Math.max(i.durationSec || 0, MIN_SECONDS))
+export function longestLesson(sections: StripSection[]): number {
+  let max = 0
+  for (const s of sections) for (const i of s.items) if (i.type !== 'quiz') max = Math.max(max, i.durationSec || 0)
+  return max
+}
+
+function shareOf(i: StripItem, max: number): number {
+  if (i.type === 'quiz') return QUIZ_SHARE
+  if (!max || !i.durationSec) return 1
+  return MIN_SHARE + (1 - MIN_SHARE) * Math.sqrt(Math.min(i.durationSec, max) / max)
+}
 
 /**
- * The shape of a course: one tick per lesson, grouped by module, coloured by what the lesson is.
- * Each tick is as wide as its video is long (a quiz gets a fixed share), so a long module looks long.
- * With `done`, finished lessons are solid and the rest stay faint, so the same strip doubles as a
- * progress bar.
+ * The shape of a course: one thin bar per lesson, grouped by module, coloured by what the lesson is and
+ * as tall as its video is long. With `done`, finished lessons are solid and the rest stay faint, so the
+ * same strip doubles as a progress bar. `maxSeconds` is the longest lesson of the whole course; pass it
+ * when drawing a single module so its bars are on the same scale as the full strip.
  */
 export function CourseStrip({
   sections,
   done,
   height = 40,
   animate = false,
+  maxSeconds,
+  barWidth = 2,
 }: {
   sections: StripSection[]
   done?: Record<string, boolean>
   height?: number
   animate?: boolean
+  maxSeconds?: number
+  /** width of one bar in px: thin on purpose; bars only get narrower when the strip runs out of room */
+  barWidth?: number
 }) {
+  const max = maxSeconds ?? longestLesson(sections)
   return (
     <>
       {animate && (
@@ -35,34 +53,31 @@ export function CourseStrip({
           @media (prefers-reduced-motion: reduce) { .lms-strip-anim { animation: none } }
         `}</style>
       )}
-      <div className="flex items-end w-full" style={{ height, gap: Math.max(3, height / 8) }} role="img" aria-label="Course map: each bar is as long as its lesson">
-        {sections.map((s, si) => {
-          const total = s.items.reduce((n, i) => n + weightOf(i), 0)
-          return (
-            <div
-              key={si}
-              className={`flex items-end h-full min-w-[2px] ${animate ? 'lms-strip-anim' : ''}`}
-              style={{ flex: `${total} 1 0%`, gap: 1, animationDelay: animate ? `${si * 45}ms` : undefined }}
-            >
-              {s.items.map(i => {
-                const kind = kindOf(i)
-                const isDone = done ? !!done[i.id] : true
-                return (
-                  <span
-                    key={i.id}
-                    className="min-w-0 rounded-[1px]"
-                    style={{
-                      flex: `${weightOf(i)} 1 0%`,
-                      height: kind === 'quiz' ? '58%' : kind === 'lab' ? '82%' : '100%',
-                      background: KIND_COLOR[kind],
-                      opacity: isDone ? 1 : 0.22,
-                    }}
-                  />
-                )
-              })}
-            </div>
-          )
-        })}
+      <div className="flex items-end w-full" style={{ height, gap: Math.max(3, height / 6) }} role="img" aria-label="Course map: one bar per lesson, as tall as the lesson is long">
+        {sections.map((s, si) => (
+          <div
+            key={si}
+            className={`flex items-end h-full min-w-0 ${animate ? 'lms-strip-anim' : ''}`}
+            style={{ flex: `0 1 ${s.items.length * (barWidth + 1)}px`, gap: 1, animationDelay: animate ? `${si * 45}ms` : undefined }}
+          >
+            {s.items.map(i => {
+              const kind = kindOf(i)
+              const isDone = done ? !!done[i.id] : true
+              return (
+                <span
+                  key={i.id}
+                  className="min-w-0 rounded-[1px]"
+                  style={{
+                    flex: `0 1 ${barWidth}px`,
+                    height: `${Math.round(shareOf(i, max) * 100)}%`,
+                    background: KIND_COLOR[kind],
+                    opacity: isDone ? 1 : 0.22,
+                  }}
+                />
+              )
+            })}
+          </div>
+        ))}
       </div>
     </>
   )

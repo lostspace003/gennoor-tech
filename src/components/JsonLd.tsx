@@ -1,3 +1,5 @@
+import { credentials } from '@/data/credentials'
+
 export function OrganizationJsonLd() {
   const data = {
     '@context': 'https://schema.org',
@@ -67,8 +69,13 @@ export function PersonJsonLd() {
     ],
     hasCredential: [
       { '@type': 'EducationalOccupationalCredential', name: 'Microsoft Certified Trainer (MCT)' },
-      { '@type': 'EducationalOccupationalCredential', name: 'Microsoft Certified: Azure AI Engineer Associate' },
-      { '@type': 'EducationalOccupationalCredential', name: 'Microsoft Certified: Power BI Data Analyst Associate' },
+      ...credentials.map(c => ({
+        '@type': 'EducationalOccupationalCredential',
+        name: `${c.issuer === 'GitHub' ? 'GitHub Certified' : 'Microsoft Certified'}: ${c.name}${c.level === 'Expert' || c.level === 'Associate' ? ` ${c.level}` : ''}`,
+        credentialCategory: 'certification',
+        recognizedBy: { '@type': 'Organization', name: c.issuer },
+        dateCreated: c.earned,
+      })),
     ],
     sameAs: [
       'https://www.linkedin.com/in/lostspace003/',

@@ -320,7 +320,7 @@ export default function CertificationPreparationPage() {
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Expert Trainer</h3>
               <p className="text-gray-600">
-                Learn from a Microsoft & AI CERTs Certified Trainer with 20+ active certifications
+                Learn from a Microsoft Certified Trainer who holds the certifications you are preparing for
               </p>
             </div>
 

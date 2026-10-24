@@ -262,10 +262,10 @@ export const getActiveCertificationsCount = () => {
 
 // Microsoft Learn Stats
 export const microsoftLearnStats = {
-  hours: '376+',
-  modules: 506,
-  learningPaths: 126,
-  exams: 20,
+  hours: '388+',
+  modules: 521,
+  learningPaths: 131,
+  exams: 27,
   trophies: 88,
   points: 45000, // Update with actual
   profileUrl: 'https://learn.microsoft.com/en-us/users/lostspace003/transcript/vjw63s4jxnmmwre?tab=credentials-tab'

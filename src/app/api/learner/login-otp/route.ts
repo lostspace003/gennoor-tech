@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     const token = await createLearnerToken({ email, name: displayName, provider: 'otp' })
     const response = NextResponse.json({ success: true, name: displayName, email })
-    response.cookies.set(learnerCookieOptions(token))
+    response.cookies.set(learnerCookieOptions(token, request))
     return response
   } catch {
     return NextResponse.json({ error: 'Login failed' }, { status: 500 })

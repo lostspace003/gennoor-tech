@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     const token = await createLearnerToken({ email, name, provider: 'google' })
 
     const response = NextResponse.json({ success: true, name, email })
-    response.cookies.set(learnerCookieOptions(token))
+    response.cookies.set(learnerCookieOptions(token, request))
     return response
   } catch (err) {
     return NextResponse.json({ error: 'Google authentication failed' }, { status: 401 })
