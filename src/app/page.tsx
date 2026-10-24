@@ -47,7 +47,7 @@ export default async function HomePage() {
       <PersonJsonLd />
 
       {/* ===== Hero: the Claude Partner Network first ===== */}
-      <section className="bg-white px-6 pt-16 lg:pt-[100px] pb-16 lg:pb-[90px] text-center">
+      <section className="hero-backdrop bg-white px-6 pt-16 lg:pt-[100px] pb-16 lg:pb-[90px] text-center">
         <ClaudePartnerHero />
         <h1 className="display-hero max-w-[860px] mx-auto mt-12">
           Train your team on AI. Automate the rest.

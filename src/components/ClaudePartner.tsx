@@ -62,15 +62,13 @@ export function ClaudePartnerFooterLine() {
   )
 }
 
-/** Slim bar at the top of every page: the first thing a visitor sees. */
+/** Partner line at the top of every inner page: a clear pill, centred above the page. */
 export function ClaudePartnerBar() {
   return (
-    <div className="bg-[#faf9f5] border-b border-[#ece9e0]">
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
-        <Badge kind="horizontal" width={112} />
-        <p className="text-[13px] text-[#3d3d3a]">
-          <span className="font-medium">{TIER_LINE}</span>
-        </p>
+    <div className="flex justify-center px-4 pt-5 pb-1">
+      <div className="inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-full border border-[#e8e3d6] bg-white px-4 py-2 shadow-[0_1px_8px_rgba(20,20,19,0.06)]">
+        <Badge kind="horizontal" width={150} />
+        <p className="text-[14.5px] font-semibold text-gray-900">{TIER_LINE}</p>
       </div>
     </div>
   )

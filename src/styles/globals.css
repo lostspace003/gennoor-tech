@@ -727,3 +727,23 @@ input[type="range"]::-moz-range-thumb {
 .rich-body blockquote { border-left: 3px solid #d2d2d7; padding-left: .9em; color: #6e6e73; margin: .6em 0; }
 .rich-body a { color: #0071e3; text-decoration: underline; }
 .rich-body code, .rich-body pre { font-family: ui-monospace, monospace; background: #f5f5f7; border-radius: 6px; padding: .1em .35em; }
+
+/* Soft backdrop for page heroes: warm glow and a faint dot grid that fades out downward. */
+.hero-backdrop {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.hero-backdrop::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(520px 320px at 12% 18%, rgba(0, 113, 227, 0.16), transparent 70%),
+    radial-gradient(560px 340px at 88% 8%, rgba(99, 102, 241, 0.16), transparent 70%),
+    radial-gradient(480px 300px at 50% 100%, rgba(0, 113, 227, 0.10), transparent 70%),
+    radial-gradient(rgba(20, 20, 19, 0.2) 1px, transparent 1.5px) 0 0 / 22px 22px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+}
