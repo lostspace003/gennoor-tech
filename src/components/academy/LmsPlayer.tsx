@@ -1092,7 +1092,7 @@ function QuizPane({
                     onClick={() => setPicks(p => { const n = [...p]; n[qi] = ai; return n })}
                     className={`w-full text-left px-4 py-2.5 rounded-lg border text-[14px] text-gray-800 transition-colors duration-150 ${tone}`}
                   >
-                    <RichInline text={a} />
+                    {a.includes('\n') ? <RichText text={a} className="[&_p]:my-0 [&_pre]:text-[12px]" /> : <RichInline text={a} />}
                   </button>
                 )
               })}
