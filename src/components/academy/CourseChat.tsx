@@ -16,6 +16,7 @@ type Mode = 'closed' | 'open' | 'min' | 'max'
  */
 export default function CourseChat({ slug, itemId, courseTitle }: { slug: string; itemId: string; courseTitle?: string }) {
   const [mode, setMode] = useState<Mode>('closed')
+  const [w, setW] = useState(380)
   const [msgs, setMsgs] = useState<Msg[]>([])
   const [text, setText] = useState('')
   const [busy, setBusy] = useState(false)
@@ -64,6 +65,37 @@ export default function CourseChat({ slug, itemId, courseTitle }: { slug: string
     setTimeout(() => inputRef.current?.focus(), 50)
   }
   const closeChat = () => { setMode('closed'); setMsgs([]); setText(''); setError('') }
+
+  useEffect(() => {
+    try { const v = Number(localStorage.getItem('gnr-chat-w')); if (v >= 300) setW(v) } catch { /* private mode */ }
+  }, [])
+
+  // While the chat is docked, tell the page how much room it takes so the video moves over and resizes.
+  const docked = mode === 'open' || mode === 'max'
+  const shown = mode === 'max' ? Math.max(w, 640) : w
+  useEffect(() => {
+    const root = document.documentElement
+    if (docked) root.style.setProperty('--chat-w', `${shown}px`)
+    else root.style.removeProperty('--chat-w')
+    return () => { root.style.removeProperty('--chat-w') }
+  }, [docked, shown])
+
+  const startResize = (e: React.PointerEvent) => {
+    e.preventDefault()
+    const startX = e.clientX
+    const startW = shown
+    const move = (ev: PointerEvent) => setW(Math.max(300, Math.min(startW + (ev.clientX - startX), Math.min(900, window.innerWidth - 460))))
+    const up = () => {
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', up)
+      document.body.style.userSelect = ''
+      setMode('open')
+      setW(x => { try { localStorage.setItem('gnr-chat-w', String(x)) } catch { /* ignore */ } return x })
+    }
+    document.body.style.userSelect = 'none'
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', up)
+  }
 
   useEffect(() => { endRef.current?.scrollIntoView({ block: 'end' }) }, [msgs, busy, mode])
 
@@ -117,8 +149,10 @@ export default function CourseChat({ slug, itemId, courseTitle }: { slug: string
   return (
     <aside
       role="dialog" aria-label="Ask about this course"
-      className={`fixed z-40 left-0 top-12 bottom-0 flex flex-col bg-white shadow-[8px_0_30px_-12px_rgba(0,0,0,.35)] border-r border-[#e2e5ec] transition-[width] duration-200 ${wide ? 'w-[min(760px,100vw)]' : 'w-[min(380px,100vw)]'}`}
+      style={{ width: `min(${shown}px, 100vw)` }}
+      className="fixed z-40 left-0 top-12 bottom-0 flex flex-col bg-white shadow-[8px_0_30px_-12px_rgba(0,0,0,.35)] border-r border-[#e2e5ec]"
     >
+      <div onPointerDown={startResize} title="Drag to resize" className="hidden lg:block absolute right-0 top-0 bottom-0 w-1.5 z-10 cursor-col-resize hover:bg-primary-400/40 active:bg-primary-500/50 transition-colors" />
       <div className="flex items-center gap-2 px-4 py-3 border-b border-[#e8e8ed] shrink-0">
         <MessageCircle className="w-[18px] h-[18px] text-primary-600" />
         <div className="min-w-0">

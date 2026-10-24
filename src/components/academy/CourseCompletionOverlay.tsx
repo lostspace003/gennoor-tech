@@ -125,7 +125,7 @@ export default function CourseCompletionOverlay({
     {
       icon: GraduationCap,
       title: 'More Learning Studio courses',
-      blurb: 'Continue the curriculum — 20+ courses, all free, citation-rigorous.',
+      blurb: 'Continue the curriculum — 20+ courses, citation-rigorous.',
       href: '/ai-academy',
       cta: 'Browse courses',
     },

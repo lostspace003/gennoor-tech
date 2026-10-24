@@ -65,7 +65,7 @@ export default async function CourseOgImage({ params }: Props) {
               letterSpacing: 1.5,
             }}
           >
-            FREE · SELF-PACED
+            SELF-PACED
           </span>
         </div>
 
@@ -112,7 +112,7 @@ export default async function CourseOgImage({ params }: Props) {
           <div style={{ display: 'flex', gap: 28, fontSize: 16, color: 'rgba(255,255,255,0.8)' }}>
             {duration && <span>⏱ {duration.replace(/^~/, '')}</span>}
             {level && <span>● {level}</span>}
-            <span>📜 Free Certificate</span>
+            <span>📜 Certificate</span>
           </div>
           <span style={{ fontSize: 16, color: 'rgba(255,255,255,0.7)' }}>gennoor.com</span>
         </div>

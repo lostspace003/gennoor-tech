@@ -41,7 +41,7 @@ export default function SaveProgressModal({ isVisible, onDismiss, onLoginSuccess
                 Save your progress on {completedChapters} chapter{completedChapters !== 1 ? 's' : ''}?
               </p>
               <p className="text-xs text-white/60">
-                10 seconds · free forever · no credit card · no spam
+                10 seconds · no spam
               </p>
             </div>
           </div>

@@ -11,7 +11,7 @@ import LearnerAuthModal from './LearnerAuthModal'
  */
 export default function SignInGate({
   heading = 'Sign in to open this course',
-  body = 'Every Learning Studio course is free, and opens after you sign in.',
+  body = 'Every Learning Studio course opens after you sign in.',
 }: {
   heading?: string
   body?: string

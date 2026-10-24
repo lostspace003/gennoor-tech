@@ -68,7 +68,7 @@ export default function EnrollButton({
         className={`inline-flex items-center justify-center gap-2 px-7 py-3 bg-primary-600 hover:bg-[#0077ed] text-white text-sm font-semibold rounded-full transition-colors disabled:opacity-60 ${className}`}
       >
         {busy && <Loader2 className="w-4 h-4 animate-spin" />}
-        Enroll free
+        Enroll
       </button>
       {error && <span className="text-xs text-red-600">{error}</span>}
       <LearnerAuthModal

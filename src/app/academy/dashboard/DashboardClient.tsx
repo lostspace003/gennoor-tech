@@ -333,7 +333,7 @@ export default function DashboardClient() {
                 Keep your progress everywhere.
               </h2>
               <p className="text-[13.5px] text-[#6e6e73] mt-1 leading-[1.5]">
-                Create a free learner account with Microsoft, Google, or any email —
+                Create a learner account with Microsoft, Google, or any email —
                 your chapters, certificates, and analytics sync across every device.
                 Right now they live only in this browser.
               </p>
@@ -413,7 +413,7 @@ export default function DashboardClient() {
                 <h2 className="text-[20px] font-bold tracking-[-0.01em] text-gray-900">Start your first course.</h2>
                 <p className="text-[14px] text-[#6e6e73] mt-1.5 leading-[1.55] max-w-[620px]">
                   {courseSummaries.length} interactive courses — narrated slides, chapter quizzes and a
-                  certificate at the end. Free, and your progress saves as you go.
+                  certificate at the end. Your progress saves as you go.
                 </p>
                 <div className="grid sm:grid-cols-3 gap-3 mt-6">
                   {courseSummaries.slice(0, 3).map(s => (

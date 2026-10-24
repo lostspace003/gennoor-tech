@@ -44,7 +44,7 @@ export default function CourseCard({ course, overallProgress = 0 }: CourseCardPr
       <div className="p-6">
         {/* Micro-meta line */}
         <div className="text-[11px] font-semibold tracking-[0.1em] uppercase text-[#1d8348] mb-3.5">
-          Free · Interactive
+          Interactive
           <span className="text-[#86868b] font-medium normal-case tracking-normal">
             {' '}· {course.totalChapters} chapters · audio included
           </span>
@@ -80,7 +80,7 @@ export default function CourseCard({ course, overallProgress = 0 }: CourseCardPr
         {/* Open-access signal */}
         {overallProgress === 0 && (
           <p className="text-xs text-[#86868b] mb-4">
-            Free with sign-in · certificate on completion
+            Sign in to start · certificate on completion
           </p>
         )}
 

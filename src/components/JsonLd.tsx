@@ -226,9 +226,6 @@ export function CourseJsonLd({
     },
     offers: {
       '@type': 'Offer',
-      price: '0',
-      priceCurrency: 'USD',
-      category: 'free',
       availability: 'https://schema.org/InStock',
       url,
     },
@@ -327,8 +324,7 @@ export function LmsCourseJsonLd({ c }: { c: CourseSeo }) {
     provider,
     author: { '@type': 'Person', name: 'Jalal Ahmed Khan', url: 'https://gennoor.com/about/founder' },
     teaches: c.outcomes.slice(0, 12),
-    isAccessibleForFree: true,
-    offers: { '@type': 'Offer', category: 'Free', price: '0', priceCurrency: 'INR', availability: 'https://schema.org/InStock', url },
+    offers: { '@type': 'Offer', availability: 'https://schema.org/InStock', url },
     hasCourseInstance: {
       '@type': 'CourseInstance',
       courseMode: 'online',

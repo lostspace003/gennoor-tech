@@ -169,7 +169,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
               <span className="text-gray-300">·</span>
               <span className="inline-flex items-center gap-1.5">
                 <Award className="w-4 h-4 text-primary-500" />
-                Free
+                Certificate
               </span>
             </div>
             <p className="text-xs text-gray-400">Last updated: {course.lastUpdated}</p>
@@ -345,7 +345,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                   <div className="flex-grow">
                     <p className="text-xs font-bold tracking-widest text-amber-700 uppercase mb-1">
-                      Interactive Course · Free
+                      Interactive Course
                     </p>
                     <h3 className="text-base font-bold text-gray-900 mb-1">
                       Full web-rendered experience available now.
