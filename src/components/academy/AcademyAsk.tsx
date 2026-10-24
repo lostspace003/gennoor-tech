@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, FormEvent } from 'react'
 import { Loader2, MessageCircle, Send, X } from 'lucide-react'
 import ChatMarkdown from './ChatMarkdown'
+import { CopyPairButton, ExportChatMenu } from './ChatTools'
 
 interface Msg { id: string; role: 'learner' | 'assistant'; text: string; at: string }
 
@@ -28,7 +29,8 @@ export function useAcademyAsk(courseId: string, chapterId?: string) {
       })
       const d = await r.json().catch(() => ({}))
       if (!r.ok) throw new Error(d.error || 'Could not send your question.')
-      setMsgs(m => [...m.filter(x => x.id !== temp.id), ...d.messages])
+      const now = new Date().toISOString()
+      setMsgs(m => [...m.filter(x => x.id !== temp.id), ...(d.messages as Msg[]).map(x => ({ ...x, at: x.at || now }))])
       return true
     } catch (err) {
       setMsgs(m => m.filter(x => x.id !== temp.id))
@@ -76,7 +78,7 @@ function AskBody({ ask, autoFocus, suggestions = SUGGESTIONS }: { ask: Ask; auto
             </div>
           </div>
         )}
-        {ask.msgs.map(m => (
+        {ask.msgs.map((m, i) => (
           m.role === 'learner' ? (
             <div key={m.id} className="flex justify-end">
               <div className="max-w-[88%] rounded-2xl rounded-br-md bg-primary-600 text-white px-3.5 py-2 text-[14px] leading-relaxed whitespace-pre-wrap break-words">{m.text}</div>
@@ -85,6 +87,7 @@ function AskBody({ ask, autoFocus, suggestions = SUGGESTIONS }: { ask: Ask; auto
             <div key={m.id} className="flex">
               <div className="max-w-full rounded-2xl rounded-bl-md px-3.5 py-2.5 text-[14px] leading-relaxed break-words bg-[#f5f5f7] text-gray-900">
                 <ChatMarkdown text={m.text} />
+                <div><CopyPairButton msgs={ask.msgs} index={i} /></div>
               </div>
             </div>
           )
@@ -108,7 +111,7 @@ function AskBody({ ask, autoFocus, suggestions = SUGGESTIONS }: { ask: Ask; auto
   )
 }
 
-function AskHeader({ subtitle, onClose }: { subtitle: string; onClose?: () => void }) {
+function AskHeader({ subtitle, onClose, msgs, courseTitle }: { subtitle: string; onClose?: () => void; msgs: Msg[]; courseTitle: string }) {
   return (
     <div className="flex items-center gap-2 px-4 py-3 border-b border-[#e8e8ed] shrink-0 bg-white">
       <MessageCircle className="w-[18px] h-[18px] text-primary-600" />
@@ -116,9 +119,12 @@ function AskHeader({ subtitle, onClose }: { subtitle: string; onClose?: () => vo
         <div className="font-semibold text-[14.5px] text-gray-900 leading-tight">Ask about this course</div>
         <div className="text-[11.5px] text-[#86868b] truncate">{subtitle}</div>
       </div>
-      {onClose && (
-        <button type="button" onClick={onClose} aria-label="Close" title="Close" className="ml-auto p-1.5 rounded-lg text-[#6e6e73] hover:bg-gray-100"><X className="w-4 h-4" /></button>
-      )}
+      <div className="ml-auto flex items-center gap-0.5">
+        <ExportChatMenu msgs={msgs} courseTitle={courseTitle} />
+        {onClose && (
+          <button type="button" onClick={onClose} aria-label="Close" title="Close" className="p-1.5 rounded-lg text-[#6e6e73] hover:bg-gray-100"><X className="w-4 h-4" /></button>
+        )}
+      </div>
     </div>
   )
 }
@@ -135,11 +141,11 @@ export function AskTab({ onClick }: { onClick: () => void }) {
 }
 
 /** Ask panel beside the lesson: docked on wide screens (the lesson makes room), a bottom sheet on phones. */
-export function AskDock({ ask, chapterTitle, onClose }: { ask: Ask; chapterTitle: string; onClose: () => void }) {
+export function AskDock({ ask, chapterTitle, courseTitle, onClose }: { ask: Ask; chapterTitle: string; courseTitle?: string; onClose: () => void }) {
   return (
     <aside role="dialog" aria-label="Ask about this course"
       className="z-30 flex flex-col bg-white border-[#e2e5ec] absolute inset-x-0 bottom-0 h-[62%] rounded-t-2xl border-t shadow-[0_-12px_30px_-12px_rgba(0,0,0,.4)] lg:static lg:h-auto lg:w-[360px] lg:shrink-0 lg:rounded-none lg:border-t-0 lg:border-r lg:shadow-none">
-      <AskHeader subtitle={`You are on: ${chapterTitle}`} onClose={onClose} />
+      <AskHeader subtitle={`You are on: ${chapterTitle}`} onClose={onClose} msgs={ask.msgs} courseTitle={courseTitle || chapterTitle} />
       <AskBody ask={ask} autoFocus />
     </aside>
   )
@@ -151,7 +157,7 @@ export function AskCard({ courseId, title }: { courseId: string; title: string }
   return (
     <section aria-label="Ask about this course"
       className="flex flex-col rounded-2xl bg-white text-gray-900 shadow-[0_20px_50px_-20px_rgba(0,0,0,.6)] overflow-hidden h-[400px] lg:h-[420px]">
-      <AskHeader subtitle={title} />
+      <AskHeader subtitle={title} msgs={ask.msgs} courseTitle={title} />
       <AskBody ask={ask} suggestions={['What will I learn?', 'Who is this course for?', 'Where should I start?']} />
     </section>
   )

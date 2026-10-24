@@ -233,7 +233,7 @@ export default function LmsPlayer({
               onNext={() => next && select(next.id)}
             />
           )}
-          <CourseChat slug={course.slug} itemId={item.id} />
+          <CourseChat slug={course.slug} itemId={item.id} courseTitle={course.title} />
         </div>
 
         <aside style={{ ['--sw' as string]: `${sideW}px` }} className="relative lg:w-[var(--sw)] lg:shrink-0 bg-white rounded-2xl border border-[#e2e5ec] overflow-hidden flex flex-col max-h-[80vh] lg:max-h-none lg:h-[calc(100vh-8.5rem)] lg:sticky lg:top-[5.5rem]">
