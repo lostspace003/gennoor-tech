@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPageViews, getAllComments, getEnquiries } from '@/lib/azure-storage'
+import { getPageViews, getAllComments, getEnquiries, getEvents, getVisitorFirstSeen } from '@/lib/azure-storage'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 
 export async function POST(request: NextRequest) {
@@ -9,11 +9,21 @@ export async function POST(request: NextRequest) {
 
     const { days = 7 } = await request.json()
 
-    const [pageViews, comments, enquiries] = await Promise.all([
+    const [rawPageViews, comments, enquiries, events, firstSeen] = await Promise.all([
       getPageViews(days).catch((err) => { console.error('Failed to fetch page views:', err); return [] }),
       getAllComments().catch((err) => { console.error('Failed to fetch comments:', err); return [] }),
       getEnquiries(undefined, days).catch((err) => { console.error('Failed to fetch enquiries:', err); return [] }),
+      getEvents(days).catch((err) => { console.error('Failed to fetch events:', err); return [] }),
+      getVisitorFirstSeen().catch((err) => { console.error('Failed to fetch visitors:', err); return new Map<string, string>() }),
     ])
+
+    // WHERE is_internal IS FALSE: developer / admin traffic never reaches a public KPI or chart
+    const pageViews = rawPageViews.filter((v) => !v.isInternal)
+
+    // Range start as a YYYY-MM-DD partition (UTC), same cut getPageViews uses
+    const rangeStart = new Date(Date.now() - days * 86_400_000).toISOString().slice(0, 10)
+    // Rows written before visitor ids existed are keyed by IP so history still counts
+    const visitorOf = (v: { visitorId?: string; ip?: string }) => v.visitorId || `ip:${v.ip || 'unknown'}`
 
     // Aggregate page views by date
     const viewsByDate: Record<string, number> = {}
@@ -78,70 +88,66 @@ export async function POST(request: NextRequest) {
     // --- Session-based metrics ---
     const SESSION_GAP_MS = 30 * 60 * 1000 // 30 minutes
 
-    // Group page views by IP+date
-    const ipDateGroups: Record<string, Array<{ page: string; ts: number }>> = {}
-    const ipDates: Record<string, Set<string>> = {} // IP -> set of dates (for new vs returning)
+    // Group page views per visitor across the whole range (a 30-minute gap starts a new session,
+    // mirroring the client's rolling session id). Grouping per visitor, not per IP+day, stops one
+    // long-lived tab or a shared office IP from becoming a single 3000s "session".
+    const byVisitor: Record<string, Array<{ page: string; ts: number; date: string }>> = {}
     const hourlyBuckets: number[] = new Array(24).fill(0)
 
     for (const v of pageViews) {
       const page = v.page || v.url || 'unknown'
       const ts = v.timestamp ? new Date(v.timestamp).getTime() : 0
-      const ip = v.ip || 'unknown'
-      const date = v.date || 'unknown'
-
-      // Group by IP+date for session building
-      const key = `${ip}|${date}`
-      if (!ipDateGroups[key]) ipDateGroups[key] = []
-      ipDateGroups[key].push({ page, ts })
-
-      // Track IP -> dates for new vs returning
-      if (!ipDates[ip]) ipDates[ip] = new Set()
-      ipDates[ip].add(date)
+      const key = visitorOf(v)
+      if (!byVisitor[key]) byVisitor[key] = []
+      byVisitor[key].push({ page, ts, date: v.date || 'unknown' })
 
       // Hourly traffic
       if (v.timestamp) {
-        const hour = new Date(v.timestamp).getHours()
+        const hour = new Date(v.timestamp).getUTCHours() // chart is labelled UTC
         hourlyBuckets[hour]++
       }
     }
 
-    // Build sessions from IP+date groups
+    // Build sessions
     type Session = Array<{ page: string; ts: number }>
     const allSessions: Session[] = []
     const sessionsByDate: Record<string, number> = {}
 
-    // Sets for conversion funnel unique IPs
-    const allVisitorIPs = new Set<string>()
-    const servicesIPs = new Set<string>()
-    const calendarIPs = new Set<string>()
+    // Distinct visitor_ids per funnel step, all over the selected range
+    const allVisitors = new Set<string>()
+    const servicesVisitors = new Set<string>()
+    const calendarVisitors = new Set<string>()
+    let newVisitors = 0
+    let returningVisitors = 0
 
-    for (const [key, views] of Object.entries(ipDateGroups)) {
-      const ip = key.split('|')[0]
-      const date = key.split('|')[1]
+    for (const [key, views] of Object.entries(byVisitor)) {
+      allVisitors.add(key)
 
-      allVisitorIPs.add(ip)
-
-      // Check funnel pages for this IP
       for (const v of views) {
-        if (v.page.startsWith('/services')) servicesIPs.add(ip)
-        if (v.page === '/resources/calendar') calendarIPs.add(ip)
+        if (v.page.startsWith('/services')) servicesVisitors.add(key)
+        if (v.page === '/resources/calendar') calendarVisitors.add(key)
       }
 
-      // Sort by timestamp within group
+      // New = first ever visit falls inside the range; Returning = active in range, first visit before it.
+      // Only visitors with a profile can be classified; legacy IP-keyed rows have no first-seen date.
+      const first = firstSeen.get(key)
+      if (first) {
+        if (first.slice(0, 10) >= rangeStart) newVisitors++
+        else returningVisitors++
+      }
+
       views.sort((a, b) => a.ts - b.ts)
 
-      // Split into sessions by 30-min gap
       let sessionStart = 0
       for (let i = 1; i < views.length; i++) {
         if (views[i].ts - views[i - 1].ts > SESSION_GAP_MS) {
           allSessions.push(views.slice(sessionStart, i))
-          sessionsByDate[date] = (sessionsByDate[date] || 0) + 1
+          sessionsByDate[views[sessionStart].date] = (sessionsByDate[views[sessionStart].date] || 0) + 1
           sessionStart = i
         }
       }
-      // Push last session
       allSessions.push(views.slice(sessionStart))
-      sessionsByDate[date] = (sessionsByDate[date] || 0) + 1
+      sessionsByDate[views[sessionStart].date] = (sessionsByDate[views[sessionStart].date] || 0) + 1
     }
 
     const totalSessions = allSessions.length
@@ -228,22 +234,51 @@ export async function POST(request: NextRequest) {
           : 0,
       }))
 
-    // Conversion funnel — use unique emails for enquiries to match IP-based visitor counts
-    const uniqueEnquiryEmails = new Set(enquiries.map((e: any) => e.email).filter(Boolean))
-    const enquiryCount = Math.min(uniqueEnquiryEmails.size, allVisitorIPs.size)
+    // Conversion funnel: distinct visitors over the range. An enquiry counts by its stitched visitor_id,
+    // or by email for older enquiries that predate stitching.
+    const enquirers = new Set<string>(
+      enquiries
+        .map((e: any) => e.visitorId || (e.email ? `email:${String(e.email).toLowerCase()}` : ''))
+        .filter(Boolean),
+    )
     const conversionFunnel = [
-      { step: 'All Visitors', users: allVisitorIPs.size },
-      { step: 'Viewed Services', users: servicesIPs.size },
-      { step: 'Viewed Calendar', users: calendarIPs.size },
-      { step: 'Submitted Enquiry', users: enquiryCount },
+      { step: 'All Visitors', users: allVisitors.size },
+      { step: 'Viewed Services', users: servicesVisitors.size },
+      { step: 'Viewed Calendar', users: calendarVisitors.size },
+      { step: 'Submitted Enquiry', users: Math.min(enquirers.size, allVisitors.size) },
     ]
 
-    // New vs returning visitors
-    let newVisitors = 0
-    let returningVisitors = 0
-    for (const dates of Object.values(ipDates)) {
-      if (dates.size > 1) returningVisitors++
-      else newVisitors++
+    // Behaviour events (internal ones are never stored)
+    const ctaClicks: Record<string, number> = {}
+    const scrollReach: Record<string, Set<string>> = { '25': new Set(), '50': new Set(), '75': new Set(), '100': new Set() }
+    const abandonedFields: Record<string, number> = {}
+    for (const ev of events) {
+      if (ev.type === 'cta_click') {
+        const label = String(ev.meta.label || 'unknown')
+        ctaClicks[label] = (ctaClicks[label] || 0) + 1
+      } else if (ev.type === 'scroll_depth') {
+        scrollReach[String(ev.meta.depth)]?.add(`${ev.visitorId}|${ev.page}`)
+      } else if (ev.type === 'form_abandon') {
+        const field = String(ev.meta.last_field || 'unknown')
+        abandonedFields[field] = (abandonedFields[field] || 0) + 1
+      }
+    }
+    const top = (o: Record<string, number>) => Object.entries(o).sort((a, b) => b[1] - a[1]).slice(0, 10)
+    const behavior = {
+      topCtas: top(ctaClicks),
+      scrollDepth: Object.entries(scrollReach).map(([depth, s]) => ({ depth: Number(depth), readers: s.size })),
+      abandonedFields: top(abandonedFields),
+    }
+
+    // Acquisition channel of every visitor seen in range (first touch)
+    const channels: Record<string, number> = {}
+    const seenForChannel = new Set<string>()
+    for (const v of pageViews) {
+      const k = visitorOf(v)
+      if (seenForChannel.has(k)) continue
+      seenForChannel.add(k)
+      const ch = v.firstSource || 'direct / organic'
+      channels[ch] = (channels[ch] || 0) + 1
     }
 
     return NextResponse.json({
@@ -270,6 +305,8 @@ export async function POST(request: NextRequest) {
       sessionsByDate,
       newVisitors,
       returningVisitors,
+      behavior,
+      channels: top(channels),
       recentEnquiries: enquiries
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         .slice(0, 20)

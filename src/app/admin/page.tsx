@@ -750,6 +750,26 @@ export default function AdminDashboard() {
               </Panel>
             )}
 
+            {/* Acquisition + behaviour */}
+            <div className="grid md:grid-cols-2 gap-5">
+              <Panel title="Acquisition Channels" subtitle="First touch, per visitor">
+                {(() => { const ch = (data as any).channels as [string, number][] | undefined; return !ch || ch.length === 0 ? <Empty /> : <BarChartComponent data={ch.map(([name, value]) => ({ name, value }))} color="#0ea5e9" /> })()}
+              </Panel>
+              <Panel title="Engagement" subtitle="Guide scroll depth, CTA clicks, abandoned forms">
+                {(() => {
+                  const b = (data as any).behavior as { topCtas: [string, number][]; scrollDepth: { depth: number; readers: number }[]; abandonedFields: [string, number][] } | undefined
+                  if (!b) return <Empty />
+                  return (
+                    <div className="space-y-3 text-sm text-gray-700">
+                      <p><span className="font-medium">Guide readers reaching</span> {b.scrollDepth.map(s => `${s.depth}%: ${s.readers}`).join(' · ')}</p>
+                      <p><span className="font-medium">Top CTAs</span> {b.topCtas.length ? b.topCtas.slice(0, 5).map(([l, n]) => `${l} (${n})`).join(', ') : 'none yet'}</p>
+                      <p><span className="font-medium">Form abandoned at</span> {b.abandonedFields.length ? b.abandonedFields.slice(0, 5).map(([f, n]) => `${f} (${n})`).join(', ') : 'none yet'}</p>
+                    </div>
+                  )
+                })()}
+              </Panel>
+            </div>
+
             {/* Hourly traffic + top pages */}
             <div className="grid md:grid-cols-2 gap-5">
               <Panel title="Traffic by Hour (UTC)" subtitle="When visitors come">

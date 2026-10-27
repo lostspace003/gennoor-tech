@@ -2,28 +2,29 @@
 
 import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
+import { getAttribution, getSession, getVisitor, isInternalClient, send } from '@/lib/track-client'
 
 export default function PageViewTracker() {
   const pathname = usePathname()
 
   useEffect(() => {
-    const payload = {
+    if (isInternalClient()) return
+    const visitor = getVisitor()
+    const session = getSession()
+    const { first, last } = getAttribution()
+
+    send('/api/log-pageview', {
       page: pathname,
       url: window.location.href,
       referrer: document.referrer || '',
       userAgent: navigator.userAgent || '',
-      ip: '',
-      country: '',
-      city: '',
       timestamp: new Date().toISOString(),
-    }
-
-    fetch('/api/log-pageview', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    }).catch((err) => {
-      console.error('PageView tracking failed:', err)
+      visitorId: visitor.id,
+      sessionId: session.id,
+      isNewVisitor: visitor.isNew,
+      isNewSession: session.isNew,
+      firstTouch: first,
+      lastTouch: last,
     })
   }, [pathname])
 
