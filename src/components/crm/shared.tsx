@@ -171,6 +171,9 @@ export function InfoTip({ text }: { text: string }) {
         ref={btnRef}
         type="button"
         onClick={(e) => { e.stopPropagation(); if (!open) place(); setOpen((o) => !o) }}
+        onMouseEnter={() => { place(); setOpen(true) }}
+        onMouseLeave={() => setOpen(false)}
+        onFocus={() => { place(); setOpen(true) }}
         onBlur={() => setTimeout(() => setOpen(false), 150)}
         aria-label="What is this?"
         className="w-4 h-4 rounded-full border border-gray-300 text-gray-400 hover:text-primary-600 hover:border-primary-400 text-[10px] leading-none inline-flex items-center justify-center italic shrink-0"
