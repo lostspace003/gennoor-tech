@@ -5,7 +5,8 @@ import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import GennoorCareTile from '@/components/admin/GennoorCareTile'
 import CrmStatsTile from '@/components/admin/CrmStatsTile'
-import { TimeSlider, LeadLocalTime } from '@/components/crm/shared'
+import { TimeSlider, LeadLocalTime, InfoTip } from '@/components/crm/shared'
+import { ADMIN_GLOSSARY } from '@/lib/admin-glossary'
 import { istInstant, isoToIstParts, leadTimeZone, formatInZone } from '@/lib/crm/timezones'
 import dynamic from 'next/dynamic'
 import {
@@ -807,9 +808,9 @@ export default function AdminDashboard() {
           <div className="space-y-6">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <StatCard icon={Eye} label="Page Views" value={data.totalViews} color="blue" />
-              <StatCard icon={Users} label="Countries" value={data.topCountries.length} color="teal" />
-              <StatCard icon={MapPin} label="Cities" value={data.topCities.length} color="amber" />
-              <StatCard icon={ExternalLink} label="Referrers" value={data.topReferrers.length} color="purple" />
+              <StatCard icon={Users} label="Countries" tip="How many different countries your visitors came from." value={data.topCountries.length} color="teal" />
+              <StatCard icon={MapPin} label="Cities" tip="How many different cities your visitors came from." value={data.topCities.length} color="amber" />
+              <StatCard icon={ExternalLink} label="Referrers" tip="How many different websites sent visitors to you." value={data.topReferrers.length} color="purple" />
             </div>
             <Panel title="Traffic Trend" subtitle={getFilterLabel()}>
               {chartDates.length === 0 ? <Empty /> : <AreaChartComponent data={chartDates} color="#2563eb" />}
@@ -853,14 +854,14 @@ export default function AdminDashboard() {
         {activeTab === 'cowork' && (
           <div className="space-y-6">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <StatCard icon={Users} label="Total Registrations" value={filteredCoworkRegs.length} color="blue" />
-              <StatCard icon={Globe} label="Countries" value={filteredCoworkByCountry.length} color="teal" />
-              <StatCard icon={Clock} label="Timezones" value={filteredCoworkByTz.length} color="amber" />
-              <StatCard icon={Users} label="With Company" value={filteredCoworkRegs.filter(r => r.company).length} color="purple" />
+              <StatCard icon={Users} label="Total Registrations" tip="People who registered for the Cowork session in the selected dates." value={filteredCoworkRegs.length} color="blue" />
+              <StatCard icon={Globe} label="Countries" tip="How many different countries the Cowork registrations came from." value={filteredCoworkByCountry.length} color="teal" />
+              <StatCard icon={Clock} label="Timezones" tip="How many different timezones the Cowork registrants are in. Helps pick a session time." value={filteredCoworkByTz.length} color="amber" />
+              <StatCard icon={Users} label="With Company" tip="Registrations that included a company name. A rough sign of business interest." value={filteredCoworkRegs.filter(r => r.company).length} color="purple" />
             </div>
             <div className="grid lg:grid-cols-2 gap-5">
-              <Panel title="By Country" subtitle={getFilterLabel()}>{filteredCoworkByCountry.length > 0 ? <PieChartComponent data={filteredCoworkByCountry} /> : <Empty text="No registrations yet" />}</Panel>
-              <Panel title="By Timezone" subtitle={getFilterLabel()}>{filteredCoworkByTz.length > 0 ? <BarChartComponent data={filteredCoworkByTz.slice(0, 10)} dataKey="value" color="#0d9488" /> : <Empty text="No registrations yet" />}</Panel>
+              <Panel title="By Country" tip="Where Cowork registrants are located." subtitle={getFilterLabel()}>{filteredCoworkByCountry.length > 0 ? <PieChartComponent data={filteredCoworkByCountry} /> : <Empty text="No registrations yet" />}</Panel>
+              <Panel title="By Timezone" tip="The timezones of Cowork registrants. Helps pick a session time that suits most." subtitle={getFilterLabel()}>{filteredCoworkByTz.length > 0 ? <BarChartComponent data={filteredCoworkByTz.slice(0, 10)} dataKey="value" color="#0d9488" /> : <Empty text="No registrations yet" />}</Panel>
             </div>
             <Panel title="All Registrations" subtitle={`${filteredCoworkRegs.length} total — ${getFilterLabel()}`} action={filteredCoworkRegs.length > 0 ? <ExportButton onClick={() => downloadCSV(filteredCoworkRegs as any, 'cowork-registrations')} /> : undefined}>
               {filteredCoworkRegs.length === 0 ? <Empty text="No registrations yet" /> : (
@@ -1218,7 +1219,7 @@ export default function AdminDashboard() {
               const pending = filteredBookings.filter(b => b.status === 'pending').length
               const acceptRate = total ? Math.round((accepted / total) * 100) : 0
               return (
-                <Panel title="Funnel" subtitle={`All dates · ${total} ${bookingStatusFilter === 'all' ? 'total' : bookingStatusFilter} bookings`}>
+                <Panel title="Funnel" tip="How call requests are spread across Pending, Accepted, Rejected and Change Requested." subtitle={`All dates · ${total} ${bookingStatusFilter === 'all' ? 'total' : bookingStatusFilter} bookings`}>
                   <div className="flex items-center gap-2 text-sm">
                     <div className="flex-1 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2"><p className="text-xs text-amber-700">Requested</p><p className="text-lg font-bold text-amber-900">{total}</p></div>
                     <span className="text-gray-300">{'>'}</span>
@@ -2237,23 +2238,23 @@ export default function AdminDashboard() {
 
 // ─── Reusable Components ─────────────────────────────────────
 
-function StatCard({ icon: Icon, label, value, color, subtitle }: { icon: any; label: string; value: number; color: 'blue' | 'teal' | 'amber' | 'purple'; subtitle?: string }) {
+function StatCard({ icon: Icon, label, value, color, subtitle, tip }: { icon: any; label: string; value: number; color: 'blue' | 'teal' | 'amber' | 'purple'; subtitle?: string; tip?: string }) {
   const colors = { blue: 'bg-primary-100 text-primary-600', teal: 'bg-gray-100 text-gray-600', amber: 'bg-amber-100 text-amber-600', purple: 'bg-gray-100 text-gray-600' }
   return (
     <div className="admin-card bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
       <div className="flex items-center gap-3">
         <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${colors[color]}`}><Icon className="w-5 h-5" /></div>
-        <div><p className="text-2xl font-bold text-gray-800">{subtitle || value.toLocaleString()}</p><p className="text-xs text-gray-500">{label}</p></div>
+        <div><p className="text-2xl font-bold text-gray-800">{subtitle || value.toLocaleString()}</p><p className="text-xs text-gray-500 flex items-center gap-1">{label}{(tip || ADMIN_GLOSSARY[label]) && <InfoTip text={tip || ADMIN_GLOSSARY[label]} />}</p></div>
       </div>
     </div>
   )
 }
 
-function Panel({ title, subtitle, children, action }: { title: string; subtitle?: string; children: React.ReactNode; action?: React.ReactNode }) {
+function Panel({ title, subtitle, children, action, tip }: { title: string; subtitle?: string; children: React.ReactNode; action?: React.ReactNode; tip?: string }) {
   return (
     <div className="admin-card bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <div><h2 className="text-base font-semibold text-gray-800">{title}</h2>{subtitle && <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>}</div>
+        <div><h2 className="text-base font-semibold text-gray-800 flex items-center gap-1.5">{title}{(tip || ADMIN_GLOSSARY[title]) && <InfoTip text={tip || ADMIN_GLOSSARY[title]} />}</h2>{subtitle && <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>}</div>
         {action}
       </div>
       {children}
