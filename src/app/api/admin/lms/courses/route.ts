@@ -36,6 +36,7 @@ export async function GET(req: NextRequest) {
       topics: c.topics_tags || [],
       domains: c.domains || [],
       track: c.track || '',
+      lessons: c.sections.flatMap(sec => sec.items.map(i => ({ id: i.id, title: i.title, section: sec.title }))),
       builtIn: isBuiltInCourse(c.slug),
       protected: !!c.protected,
       copy: conn
