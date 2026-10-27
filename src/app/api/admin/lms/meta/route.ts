@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 import { getLmsQuizzes, listAllLmsCourses, saveCatalogCourse } from '@/lib/lms'
-import { ALL_PLATFORMS, DOMAINS, KINDS, LEVELS, TOPICS, TRACKS } from '@/lib/lms-taxonomy'
+import { TRACKS, mergedOptions } from '@/lib/lms-taxonomy'
+import { getCustomTaxonomy } from '@/lib/lms-taxonomy-store'
 
 // Change how a course is classified: company, type, level, topics, domains.
 export async function POST(req: NextRequest) {
@@ -12,14 +13,15 @@ export async function POST(req: NextRequest) {
   const course = (await listAllLmsCourses()).find(c => c.slug === body.slug)
   if (!course) return NextResponse.json({ error: 'Unknown course' }, { status: 404 })
 
+  const opts = mergedOptions(await getCustomTaxonomy(true))
   const pick = (v: unknown, allowed: readonly string[]) => (Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string' && allowed.includes(x)) : undefined)
   const next = { ...course, published: (course as { published?: boolean }).published !== false }
-  if (typeof body.vendor === 'string' && ALL_PLATFORMS.includes(body.vendor)) next.vendor = body.vendor
-  if (KINDS.some(k => k.id === body.kind)) next.kind = body.kind
-  if (typeof body.level === 'string' && (LEVELS as readonly string[]).includes(body.level)) next.level = body.level
-  const topics = pick(body.topics, TOPICS)
+  if (typeof body.vendor === 'string' && opts.vendors.includes(body.vendor)) next.vendor = body.vendor
+  if (opts.kinds.some(k => k.id === body.kind)) next.kind = body.kind
+  if (typeof body.level === 'string' && opts.levels.includes(body.level)) next.level = body.level
+  const topics = pick(body.topics, opts.topics)
   if (topics) next.topics_tags = topics
-  const domains = pick(body.domains, DOMAINS)
+  const domains = pick(body.domains, opts.domains)
   if (domains) next.domains = domains
   if (typeof body.track === 'string' && (body.track === '' || TRACKS.some(t => t.id === body.track))) next.track = body.track
 

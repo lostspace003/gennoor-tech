@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Loader2, RefreshCw, UploadCloud } from 'lucide-react'
-import { ALL_PLATFORMS, DOMAINS, KINDS, LEVELS, TOPICS, TRACKS } from '@/lib/lms-taxonomy'
+import { EMPTY_CUSTOM, TRACKS, mergedOptions, type CustomTaxonomy, type Facet } from '@/lib/lms-taxonomy'
 
 interface Row {
   slug: string
@@ -19,7 +19,58 @@ interface Row {
   domains: string[]
   track: string
   builtIn?: boolean
+  lessons?: { id: string; title: string; section: string }[]
   copy: { total: number; success: number; pending: number; failed: number; missing: number } | null
+}
+
+/** "+ Add new" box for one filter: creates a custom value, saves it, and hands the new value back. */
+function AddNew({ facet, noun, onAdded }: { facet: Facet; noun: string; onAdded: (name: string, id: string, custom: CustomTaxonomy) => void }) {
+  const [open, setOpen] = useState(false)
+  const [name, setName] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [note, setNote] = useState<{ ok: boolean; text: string } | null>(null)
+  const add = async () => {
+    setBusy(true)
+    setNote(null)
+    try {
+      const r = await fetch('/api/admin/lms/taxonomy', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ facet, name }) })
+      const d = await r.json().catch(() => ({}))
+      if (!r.ok) throw new Error(d.error || 'Could not add it.')
+      setNote({ ok: true, text: `Added "${d.name}". It is now in this list, and in the public filters once a course uses it.` })
+      setName('')
+      onAdded(d.name, d.id, d.custom)
+    } catch (e: any) {
+      setNote({ ok: false, text: e.message })
+    } finally {
+      setBusy(false)
+    }
+  }
+  if (!open) {
+    return (
+      <button type="button" onClick={() => setOpen(true)} className="mt-2 text-xs font-semibold text-gray-700 underline underline-offset-2 hover:text-gray-900">
+        + Add new {noun}
+      </button>
+    )
+  }
+  const example = facet === 'vendor' ? 'Databricks' : facet === 'topic' ? 'Data Engineering' : facet === 'domain' ? 'Telecom' : facet === 'level' ? 'Advanced' : 'Workshop'
+  return (
+    <div className="mt-2">
+      <div className="flex flex-wrap items-center gap-2">
+        <input
+          value={name}
+          onChange={e => setName(e.target.value)}
+          onKeyDown={e => { if (e.key === 'Enter' && name.trim() && !busy) { e.preventDefault(); add() } }}
+          maxLength={40}
+          aria-label={`New ${noun} name`}
+          placeholder={`New ${noun}, e.g. ${example}`}
+          className="min-w-0 flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm"
+        />
+        <button type="button" onClick={add} disabled={busy || !name.trim()} className="px-4 py-1.5 bg-gray-900 text-white text-xs font-semibold rounded-full disabled:opacity-50">{busy ? 'Adding…' : 'Add'}</button>
+        <button type="button" onClick={() => { setOpen(false); setNote(null) }} className="text-xs text-gray-500 hover:text-gray-800">Close</button>
+      </div>
+      {note && <p role="status" className={`mt-1 text-xs ${note.ok ? 'text-emerald-700' : 'text-red-600'}`}>{note.text}</p>}
+    </div>
+  )
 }
 
 function Checks({ label, options, value, onChange }: { label: string; options: readonly string[]; value: string[]; onChange: (v: string[]) => void }) {
@@ -64,10 +115,20 @@ export default function AdminLmsPage() {
   const [assetBusy, setAssetBusy] = useState(false)
   const [busy, setBusy] = useState(false)
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null)
+  const [custom, setCustom] = useState<CustomTaxonomy>(EMPTY_CUSTOM)
+  const opts = mergedOptions(custom)
+  const [lessonSlug, setLessonSlug] = useState('')
+  const [lessonId, setLessonId] = useState('')
+  const [lessonTitle, setLessonTitle] = useState('')
+  const [lessonMsg, setLessonMsg] = useState<{ ok: boolean; text: string } | null>(null)
 
   const load = useCallback(async () => {
     const r = await fetch('/api/admin/lms/courses', { cache: 'no-store' })
     if (r.ok) setRows((await r.json()).courses)
+  }, [])
+
+  useEffect(() => {
+    fetch('/api/admin/lms/taxonomy', { cache: 'no-store' }).then(r => (r.ok ? r.json() : null)).then(d => d && setCustom(d.custom)).catch(() => {})
   }, [])
 
   useEffect(() => {
@@ -212,18 +273,22 @@ export default function AdminLmsPage() {
           <label className="text-sm font-semibold text-gray-800">Company
             <select value={vendor} onChange={e => setVendor(e.target.value)} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm font-normal">
               <option value="">Detect from the course title</option>
-              {ALL_PLATFORMS.map(v => <option key={v}>{v}</option>)}
+              {opts.vendors.map(v => <option key={v}>{v}</option>)}
             </select>
+            <AddNew facet="vendor" noun="company" onAdded={(n, _id, c) => { setCustom(c); setVendor(n) }} />
           </label>
           <label className="text-sm font-semibold text-gray-800">Type
             <select value={kind} onChange={e => setKind(e.target.value)} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm font-normal">
               <option value="">Detect from the course title</option>
-              {KINDS.map(k => <option key={k.id} value={k.id}>{k.label}</option>)}
+              {opts.kinds.map(k => <option key={k.id} value={k.id}>{k.label}</option>)}
             </select>
+            <AddNew facet="kind" noun="type" onAdded={(_n, id, c) => { setCustom(c); setKind(id) }} />
           </label>
         </div>
-        <Checks label="Topics (blank = detect from the course)" options={TOPICS} value={impTopics} onChange={setImpTopics} />
-        <Checks label="Domains (the lines of work it applies to)" options={DOMAINS} value={impDomains} onChange={setImpDomains} />
+        <Checks label="Topics (blank = detect from the course)" options={opts.topics} value={impTopics} onChange={setImpTopics} />
+        <AddNew facet="topic" noun="topic" onAdded={(n, _id, c) => { setCustom(c); setImpTopics(v => [...v, n]) }} />
+        <Checks label="Domains (the lines of work it applies to)" options={opts.domains} value={impDomains} onChange={setImpDomains} />
+        <AddNew facet="domain" noun="domain" onAdded={(n, _id, c) => { setCustom(c); setImpDomains(v => [...v, n]) }} />
         <p className="text-xs text-gray-500 mt-2">The course image and a promo video are picked up automatically when the package has them.</p>
         <button
           type="button"
@@ -306,16 +371,28 @@ export default function AdminLmsPage() {
         {tagSlug && (
           <>
             <div className="grid sm:grid-cols-4 gap-4 mt-4">
-              <select value={tag.vendor} onChange={e => setTag({ ...tag, vendor: e.target.value })} className="rounded-lg border border-gray-300 px-3 py-2 text-sm">{ALL_PLATFORMS.map(v => <option key={v}>{v}</option>)}</select>
-              <select value={tag.kind} onChange={e => setTag({ ...tag, kind: e.target.value })} className="rounded-lg border border-gray-300 px-3 py-2 text-sm">{KINDS.map(k => <option key={k.id} value={k.id}>{k.label}</option>)}</select>
-              <select value={tag.level} onChange={e => setTag({ ...tag, level: e.target.value })} className="rounded-lg border border-gray-300 px-3 py-2 text-sm">{LEVELS.map(l => <option key={l}>{l}</option>)}</select>
-              <select value={tag.track} onChange={e => setTag({ ...tag, track: e.target.value })} className="rounded-lg border border-gray-300 px-3 py-2 text-sm" aria-label="Track (short courses)">
+              <div>
+                <select aria-label="Company" value={tag.vendor} onChange={e => setTag({ ...tag, vendor: e.target.value })} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">{opts.vendors.map(v => <option key={v}>{v}</option>)}</select>
+                <AddNew facet="vendor" noun="company" onAdded={(n, _id, c) => { setCustom(c); setTag(t => ({ ...t, vendor: n })) }} />
+              </div>
+              <div>
+                <select aria-label="Type" value={tag.kind} onChange={e => setTag({ ...tag, kind: e.target.value })} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">{opts.kinds.map(k => <option key={k.id} value={k.id}>{k.label}</option>)}</select>
+                <AddNew facet="kind" noun="type" onAdded={(_n, id, c) => { setCustom(c); setTag(t => ({ ...t, kind: id })) }} />
+              </div>
+              <div>
+                <select aria-label="Level" value={tag.level} onChange={e => setTag({ ...tag, level: e.target.value })} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">{opts.levels.map(l => <option key={l}>{l}</option>)}</select>
+                <AddNew facet="level" noun="level" onAdded={(n, _id, c) => { setCustom(c); setTag(t => ({ ...t, level: n })) }} />
+              </div>
+              <select value={tag.track} onChange={e => setTag({ ...tag, track: e.target.value })} className="self-start rounded-lg border border-gray-300 px-3 py-2 text-sm" aria-label="Track (short courses)">
                 <option value="">No track</option>
                 {TRACKS.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
               </select>
             </div>
-            <Checks label="Topics" options={TOPICS} value={tag.topics} onChange={v => setTag({ ...tag, topics: v })} />
-            <Checks label="Domains" options={DOMAINS} value={tag.domains} onChange={v => setTag({ ...tag, domains: v })} />
+            <Checks label="Topics" options={opts.topics} value={tag.topics} onChange={v => setTag({ ...tag, topics: v })} />
+            <AddNew facet="topic" noun="topic" onAdded={(n, _id, c) => { setCustom(c); setTag(t => ({ ...t, topics: [...t.topics, n] })) }} />
+            <Checks label="Domains" options={opts.domains} value={tag.domains} onChange={v => setTag({ ...tag, domains: v })} />
+            <AddNew facet="domain" noun="domain" onAdded={(n, _id, c) => { setCustom(c); setTag(t => ({ ...t, domains: [...t.domains, n] })) }} />
+            <p className="mt-3 text-xs text-gray-500">A new value is saved at once and selected here. It shows in the public filters after you press Save tags on a course that uses it.</p>
             <button
               type="button"
               onClick={async () => {
@@ -330,6 +407,50 @@ export default function AdminLmsPage() {
             {tagMsg && <p className="mt-3 text-sm text-emerald-700">{tagMsg}</p>}
           </>
         )}
+        </div>
+      </details>
+
+      <details className="mt-4 group rounded-2xl border border-gray-200 bg-white">
+        <summary className="cursor-pointer list-none px-6 py-4 flex items-center justify-between after:!content-none [&::-webkit-details-marker]:hidden">
+          <span><span className="block font-semibold text-gray-900">Rename a lesson</span><span className="block text-sm text-gray-500 mt-0.5">Fix a lesson or quiz title without importing the course again.</span></span>
+          <span className="text-gray-400 transition-transform group-open:rotate-90" aria-hidden>›</span>
+        </summary>
+        <div className="px-6 pb-6 pt-1">
+          <div className="grid sm:grid-cols-2 gap-4 mt-4">
+            <select aria-label="Course" value={lessonSlug} onChange={e => { setLessonSlug(e.target.value); setLessonId(''); setLessonTitle(''); setLessonMsg(null) }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm">
+              <option value="">Choose a course</option>
+              {rows.map(x => <option key={x.slug} value={x.slug}>{x.code}</option>)}
+            </select>
+            <select
+              aria-label="Lesson"
+              value={lessonId}
+              disabled={!lessonSlug}
+              onChange={e => { setLessonId(e.target.value); setLessonTitle(rows.find(x => x.slug === lessonSlug)?.lessons?.find(l => l.id === e.target.value)?.title || ''); setLessonMsg(null) }}
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm min-w-0"
+            >
+              <option value="">Choose a lesson</option>
+              {(rows.find(x => x.slug === lessonSlug)?.lessons || []).map(l => <option key={l.id} value={l.id}>{l.title}</option>)}
+            </select>
+          </div>
+          {lessonId && (
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <input value={lessonTitle} onChange={e => setLessonTitle(e.target.value)} maxLength={140} aria-label="New lesson title" className="min-w-0 flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+              <button
+                type="button"
+                disabled={!lessonTitle.trim()}
+                onClick={async () => {
+                  const res = await fetch('/api/admin/lms/lesson', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug: lessonSlug, itemId: lessonId, title: lessonTitle }) })
+                  const d = await res.json().catch(() => ({}))
+                  setLessonMsg(res.ok ? { ok: true, text: `Renamed to "${d.title}".` } : { ok: false, text: d.error || 'Could not rename.' })
+                  load()
+                }}
+                className="px-5 py-2 bg-gray-900 text-white text-sm font-semibold rounded-full disabled:opacity-50"
+              >
+                Save title
+              </button>
+            </div>
+          )}
+          {lessonMsg && <p role="status" className={`mt-3 text-sm ${lessonMsg.ok ? 'text-emerald-700' : 'text-red-600'}`}>{lessonMsg.text}</p>}
         </div>
       </details>
 

@@ -4,6 +4,7 @@ import { ratingSummaries } from '@/lib/lms-community'
 import AcademyBar from '@/components/academy/AcademyBar'
 import AcademySwitch, { STUDIO_NAME } from '@/components/academy/AcademySwitch'
 import WalkthroughVideo from '@/components/WalkthroughVideo'
+import { getCustomTaxonomy } from '@/lib/lms-taxonomy-store'
 import LabsCatalog from '@/components/academy/LabsCatalog'
 
 export const metadata: Metadata = {
@@ -35,7 +36,7 @@ export default async function LabsPage() {
         <p className="text-center text-[13px] font-semibold uppercase tracking-[0.14em] text-[#6e6e73] mb-4">How the Learning Studio works</p>
         <WalkthroughVideo />
       </section>
-      <LabsCatalog courses={courses} />
+      <LabsCatalog courses={courses} custom={await getCustomTaxonomy()} />
     </main>
   )
 }

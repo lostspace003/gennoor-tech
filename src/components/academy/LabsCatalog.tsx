@@ -7,11 +7,13 @@ import { FilterBar, Pagination, usePage, type SortKey } from './CatalogControls'
 import type { LmsCourseCard } from '@/lib/lms'
 import PromoPlayer from './PromoPlayer'
 import { Stars } from './Stars'
-import { ALL_PLATFORMS, DOMAINS, KINDS, LEVELS, TOPICS, TRACKS } from '@/lib/lms-taxonomy'
+import { EMPTY_CUSTOM, TRACKS, mergedOptions, type CustomTaxonomy } from '@/lib/lms-taxonomy'
 
-const KIND_LABEL: Record<string, string> = Object.fromEntries(KINDS.map(k => [k.id, k.label]))
-
-export default function LabsCatalog({ courses }: { courses: LmsCourseCard[] }) {
+export default function LabsCatalog({ courses, custom = EMPTY_CUSTOM }: { courses: LmsCourseCard[]; custom?: CustomTaxonomy }) {
+  // built-in options plus the ones the admin created
+  const opt = useMemo(() => mergedOptions(custom), [custom])
+  const KINDS = opt.kinds
+  const KIND_LABEL: Record<string, string> = Object.fromEntries(KINDS.map(k => [k.id, k.label]))
   const [vendor, setVendor] = useState('all')
   const [kind, setKind] = useState('all')
   const [area, setArea] = useState('all')
@@ -32,11 +34,11 @@ export default function LabsCatalog({ courses }: { courses: LmsCourseCard[] }) {
   // Only offer what exists: a chip never leads to an empty page.
   const inOrder = (order: readonly string[], have: string[]) => [...order.filter(o => have.includes(o)), ...have.filter(h => h && !order.includes(h))]
   const uniq = (xs: string[]) => Array.from(new Set(xs))
-  const vendors = useMemo(() => inOrder(ALL_PLATFORMS, uniq(courses.map(c => c.vendor))), [courses])
-  const levels = useMemo(() => inOrder(LEVELS, uniq(courses.map(c => c.level))), [courses])
-  const topics = useMemo(() => TOPICS.filter(t => courses.some(c => c.topics.includes(t))), [courses])
-  const domains = useMemo(() => DOMAINS.filter(d => courses.some(c => c.domains.includes(d))), [courses])
-  const kinds = useMemo(() => KINDS.filter(k => courses.some(c => c.kind === k.id)), [courses])
+  const vendors = useMemo(() => inOrder(opt.vendors, uniq(courses.map(c => c.vendor))), [courses, opt])
+  const levels = useMemo(() => inOrder(opt.levels, uniq(courses.map(c => c.level))), [courses, opt])
+  const topics = useMemo(() => opt.topics.filter(t => courses.some(c => c.topics.includes(t))), [courses, opt])
+  const domains = useMemo(() => opt.domains.filter(d => courses.some(c => c.domains.includes(d))), [courses, opt])
+  const kinds = useMemo(() => KINDS.filter(k => courses.some(c => c.kind === k.id)), [courses, KINDS])
   const areas = useMemo(() => TRACKS.filter(t => courses.some(c => c.track === t.id)), [courses])
 
   const filtered = courses.filter(c =>
@@ -58,7 +60,7 @@ export default function LabsCatalog({ courses }: { courses: LmsCourseCard[] }) {
     if (sort !== 'default' && desc) list.reverse()
     return list
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vendor, kind, area, level, topic, domain, courses, sort, desc])
+  }, [vendor, kind, area, level, topic, domain, courses, sort, desc, KINDS])
   const pg = usePage(`${vendor}|${kind}|${area}|${level}|${topic}|${domain}|${sort}|${desc}`, ordered.length, 9)
   const pageItems = ordered.slice(pg.start, pg.end)
   // A preview stops when its card leaves the page, so it never comes back playing with sound.
@@ -95,7 +97,7 @@ export default function LabsCatalog({ courses }: { courses: LmsCourseCard[] }) {
           onSort={s => { setSort(s); setDesc(s === 'date') }}
           onDirection={() => setDesc(d => !d)}
           groups={[
-            { key: 'kind', label: 'Type', allLabel: 'All types', value: kind, onChange: setKind, options: kinds.map(k => ({ id: k.id as string, label: k.label as string })) },
+            { key: 'kind', label: 'Type', allLabel: 'All types', value: kind, onChange: setKind, options: kinds.map(k => ({ id: k.id, label: k.label })) },
             ...(areas.length > 0 ? [{ key: 'area', label: 'Area', allLabel: 'All areas', value: area, onChange: setArea, options: areas.map(t => ({ id: t.id as string, label: t.label as string })) }] : []),
             ...(vendors.length > 1 ? [{ key: 'vendor', label: 'Company', allLabel: 'All companies', value: vendor, onChange: setVendor, options: vendors.map(v => ({ id: v, label: v })) }] : []),
             ...(levels.length > 1 ? [{ key: 'level', label: 'Level', allLabel: 'All levels', value: level, onChange: setLevel, options: levels.map(l => ({ id: l, label: l })) }] : []),
