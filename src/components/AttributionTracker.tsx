@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
+import { getVisitor } from '@/lib/track-client'
 
 /**
  * Remembers where a visitor came from (the campaign tag in the link, the site that sent them, the page they
@@ -56,7 +57,7 @@ export default function AttributionTracker() {
         const url = typeof input === 'string' ? input : input instanceof URL ? input.pathname : (input as Request).url
         if (init?.method?.toUpperCase() === 'POST' && ENQUIRY_ENDPOINTS.test(url)) {
           const a = read()
-          const payload = { ...a, page: window.location.pathname + window.location.search.replace(/[?&](src|utm_[a-z]+)=[^&]*/g, '') }
+          const payload = { ...a, visitorId: getVisitor().id, page: window.location.pathname + window.location.search.replace(/[?&](src|utm_[a-z]+)=[^&]*/g, '') }
           const headers = new Headers(init.headers)
           headers.set('x-gnr-attr', encodeURIComponent(JSON.stringify(payload)))
           return original(input, { ...init, headers })

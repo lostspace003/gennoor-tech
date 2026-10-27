@@ -32,6 +32,7 @@ export async function GET(request: Request) {
         referrer: r.srcReferrer || '',
         landing: r.srcLanding || '',
         page: r.srcPage || r.page || '',
+        hasJourney: !!r.visitorId,
       }))
       .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))
     return NextResponse.json({ rows })

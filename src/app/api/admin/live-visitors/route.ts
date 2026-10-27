@@ -21,7 +21,8 @@ export async function GET(request: NextRequest) {
     })) {
       const ts = new Date(String(entity.timestamp || ''))
       if (ts < since) continue
-      const ip = String(entity.ip || '')
+      if (entity.isInternal === true) continue
+      const ip = String(entity.visitorId || entity.ip || '')
       if (ip) uniqueIps.add(ip)
       const page = String(entity.page || entity.url || '')
       if (page) byPage.set(page, (byPage.get(page) || 0) + 1)

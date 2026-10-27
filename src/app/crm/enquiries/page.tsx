@@ -5,7 +5,18 @@ import { useEffect, useMemo, useState } from 'react'
 interface Row {
   type: string; rowKey: string; createdAt: string; status: string; note: string
   name: string; email: string; phone: string; organization: string; about: string; message: string
-  source: string; campaign: string; referrer: string; landing: string; page: string
+  source: string; campaign: string; referrer: string; landing: string; page: string; hasJourney?: boolean
+}
+
+// Pages the lead viewed before sending the form, loaded when the row is opened
+function Journey({ type, rowKey }: { type: string; rowKey: string }) {
+  const [steps, setSteps] = useState<string[] | null>(null)
+  useEffect(() => {
+    fetch(`/api/admin/enquiries/journey?type=${encodeURIComponent(type)}&rowKey=${encodeURIComponent(rowKey)}`, { cache: 'no-store' })
+      .then(r => r.json()).then(d => setSteps(d.steps || [])).catch(() => setSteps([]))
+  }, [type, rowKey])
+  if (!steps || steps.length === 0) return null
+  return <p className="sm:col-span-2"><b>Journey</b> {steps.join(' → ')}</p>
 }
 
 const TYPE_LABEL: Record<string, string> = {
@@ -91,6 +102,7 @@ export default function EnquiriesPage() {
                   <p className="sm:col-span-2 whitespace-pre-wrap"><b>Message</b> {r.message || '–'}</p>
                   <p><b>Came from</b> {r.source || r.referrer || 'direct'}{r.campaign ? ` · ${r.campaign}` : ''}</p>
                   <p><b>Landed on</b> {r.landing || '–'} · <b>Sent from</b> {r.page || '–'}</p>
+                  {r.hasJourney && <Journey type={r.type} rowKey={r.rowKey} />}
                   <div className="sm:col-span-2 flex flex-wrap items-center gap-2 mt-1">
                     {STATUSES.map(s => (
                       <button key={s} type="button" onClick={() => update(r, { status: s })} className={`px-3 py-1 rounded-full border text-[12.5px] ${r.status === s ? 'bg-[#0071e3] border-[#0071e3] text-white' : 'border-[#d2d2d7] hover:border-[#86868b]'}`}>{s}</button>

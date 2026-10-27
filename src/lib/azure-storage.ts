@@ -23,7 +23,12 @@ async function ensureTable(tableName: string) {
 
 // ─── Page Views ──────────────────────────────────────────────
 
-export async function savePageView(data: {
+// Table Storage is schemaless: the identity / attribution columns below are simply added to new rows.
+// Rows written before this change have no visitorId; readers fall back to "ip:<ip>" so history still counts.
+
+export type Touch = Record<string, string>
+
+export interface PageViewInput {
   page: string
   url: string
   referrer?: string
@@ -31,7 +36,35 @@ export async function savePageView(data: {
   ip?: string
   country?: string
   city?: string
-}) {
+  visitorId?: string
+  sessionId?: string
+  isNewVisitor?: boolean
+  isInternal?: boolean
+  firstTouch?: Touch
+  lastTouch?: Touch
+}
+
+const clip = (v: unknown, n = 200) => String(v ?? '').slice(0, n)
+
+/** Keep only the known marketing keys, clipped; drops anything else a client sends. */
+export function cleanTouch(t: unknown): Touch {
+  const out: Touch = {}
+  if (!t || typeof t !== 'object') return out
+  for (const k of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid', 'referrer', 'landing']) {
+    const v = (t as Record<string, unknown>)[k]
+    if (typeof v === 'string' && v) out[k] = clip(v)
+  }
+  return out
+}
+
+const touchColumns = (prefix: string, t: Touch = {}) => ({
+  [`${prefix}Source`]: t.utm_source || '', [`${prefix}Medium`]: t.utm_medium || '', [`${prefix}Campaign`]: t.utm_campaign || '',
+  [`${prefix}Content`]: t.utm_content || '', [`${prefix}Term`]: t.utm_term || '',
+  [`${prefix}Gclid`]: t.gclid || '', [`${prefix}Fbclid`]: t.fbclid || '',
+  [`${prefix}Referrer`]: t.referrer || '', [`${prefix}Landing`]: t.landing || '',
+})
+
+export async function savePageView(data: PageViewInput) {
   await ensureTable('PageViews')
   const client = getTableClient('PageViews')
   const now = new Date()
@@ -49,7 +82,51 @@ export async function savePageView(data: {
     country: data.country || '',
     city: data.city || '',
     timestamp: now.toISOString(),
+    visitorId: data.visitorId || '',
+    sessionId: data.sessionId || '',
+    isInternal: !!data.isInternal,
+    ...touchColumns('first', data.firstTouch),
+    ...touchColumns('last', data.lastTouch),
   })
+
+  // One profile row per visitor: first seen (+ first touch) is written once, last seen / last touch each visit.
+  if (data.visitorId && !data.isInternal) {
+    await upsertVisitor(data.visitorId, now.toISOString(), data.firstTouch, data.lastTouch, data.country)
+  }
+}
+
+async function upsertVisitor(id: string, nowIso: string, first?: Touch, last?: Touch, country?: string) {
+  await ensureTable('Visitors')
+  const client = getTableClient('Visitors')
+  try {
+    await client.createEntity({
+      partitionKey: 'v', rowKey: id, firstSeen: nowIso, lastSeen: nowIso, country: country || '', email: '',
+      ...touchColumns('first', first), ...touchColumns('last', last || first),
+    })
+  } catch (err: any) {
+    if (err?.statusCode !== 409) throw err
+    await client.updateEntity({ partitionKey: 'v', rowKey: id, lastSeen: nowIso, ...touchColumns('last', last) }, 'Merge')
+  }
+}
+
+/** Anonymous → identified: stamp the lead's email on the visitor profile. */
+export async function linkVisitorToLead(visitorId: string, email: string) {
+  if (!visitorId || !email) return
+  try {
+    await ensureTable('Visitors')
+    await getTableClient('Visitors').upsertEntity({ partitionKey: 'v', rowKey: visitorId, email: clip(email, 254), convertedAt: new Date().toISOString() }, 'Merge')
+  } catch (err) {
+    console.error('linkVisitorToLead failed:', err)
+  }
+}
+
+export async function getVisitorProfile(visitorId: string): Promise<Record<string, any> | null> {
+  try {
+    await ensureTable('Visitors')
+    return (await getTableClient('Visitors').getEntity('v', visitorId)) as Record<string, any>
+  } catch {
+    return null
+  }
 }
 
 export async function getPageViews(days: number = 7) {
@@ -73,10 +150,72 @@ export async function getPageViews(days: number = 7) {
       country: entity.country,
       city: entity.city,
       timestamp: entity.timestamp,
+      ip: entity.ip,
+      visitorId: entity.visitorId || '',
+      sessionId: entity.sessionId || '',
+      isInternal: entity.isInternal === true,
+      firstSource: entity.firstSource || '',
+      lastSource: entity.lastSource || '',
     })
   }
 
   return views
+}
+
+/** Pages one visitor viewed, oldest first, from `fromIso` up to `toIso` (the enquiry's pre-submission journey). */
+export async function getVisitorJourney(visitorId: string, fromIso: string, toIso: string) {
+  await ensureTable('PageViews')
+  const client = getTableClient('PageViews')
+  const out: Array<{ page: string; at: string; referrer: string }> = []
+  const query = client.listEntities({
+    queryOptions: { filter: `PartitionKey ge '${fromIso.slice(0, 10)}' and PartitionKey le '${toIso.slice(0, 10)}' and visitorId eq '${visitorId.replace(/[^a-zA-Z0-9-]/g, '')}'` },
+  })
+  for await (const e of query) {
+    const at = String(e.timestamp || '')
+    if (at && at <= toIso) out.push({ page: String(e.page || ''), at, referrer: String(e.referrer || '') })
+  }
+  return out.sort((a, b) => a.at.localeCompare(b.at))
+}
+
+// ─── Behaviour events (scroll depth, CTA clicks, form abandonment) ───
+
+export async function saveEvent(data: { type: string; page: string; visitorId: string; sessionId: string; meta: Record<string, unknown> }) {
+  await ensureTable('AnalyticsEvents')
+  const now = new Date()
+  await getTableClient('AnalyticsEvents').createEntity({
+    partitionKey: now.toISOString().slice(0, 10),
+    rowKey: `${now.getTime()}-${Math.random().toString(36).slice(2, 8)}`,
+    type: data.type,
+    page: data.page,
+    visitorId: data.visitorId,
+    sessionId: data.sessionId,
+    meta: JSON.stringify(data.meta).slice(0, 2000),
+    timestamp: now.toISOString(),
+    isInternal: false,
+  })
+}
+
+export async function getEvents(days: number = 7) {
+  await ensureTable('AnalyticsEvents')
+  const since = new Date()
+  since.setDate(since.getDate() - days)
+  const out: Array<{ type: string; page: string; visitorId: string; meta: Record<string, any>; date: string }> = []
+  for await (const e of getTableClient('AnalyticsEvents').listEntities({ queryOptions: { filter: `PartitionKey ge '${since.toISOString().slice(0, 10)}'` } })) {
+    let meta: Record<string, any> = {}
+    try { meta = JSON.parse(String(e.meta || '{}')) } catch { /* keep empty */ }
+    out.push({ type: String(e.type), page: String(e.page), visitorId: String(e.visitorId || ''), meta, date: String(e.partitionKey) })
+  }
+  return out
+}
+
+/** First-seen date for every visitor: the source of truth for new vs returning. */
+export async function getVisitorFirstSeen(): Promise<Map<string, string>> {
+  await ensureTable('Visitors')
+  const m = new Map<string, string>()
+  for await (const e of getTableClient('Visitors').listEntities({ queryOptions: { select: ['RowKey', 'firstSeen'] } })) {
+    m.set(String(e.rowKey), String(e.firstSeen || ''))
+  }
+  return m
 }
 
 // ─── Blog Comments ───────────────────────────────────────────
@@ -202,6 +341,7 @@ async function sourceOfRequest(): Promise<Record<string, string>> {
     return {
       srcTag: clip(a.src), srcMedium: clip(a.medium), srcCampaign: clip(a.campaign),
       srcReferrer: clip(a.referrer), srcLanding: clip(a.landing), srcPage: clip(a.page),
+      visitorId: /^[a-zA-Z0-9-]{8,64}$/.test(String(a.visitorId)) ? String(a.visitorId) : '',
     }
   } catch {
     return {}
@@ -215,14 +355,18 @@ export async function saveEnquiry(type: string, data: Record<string, any>) {
   const now = new Date()
   const rowKey = `${now.getTime()}-${Math.random().toString(36).slice(2, 8)}`
 
+  const source = await sourceOfRequest()
   await client.createEntity({
     partitionKey: type,
     rowKey,
     ...toTableSafe(data),
-    ...(await sourceOfRequest()),
+    ...source,
     status: 'New',
     createdAt: now.toISOString(),
   })
+
+  // Stitch the anonymous visitor to this lead so the journey and first/last touch can be read back later
+  if (source.visitorId && typeof data.email === 'string') await linkVisitorToLead(source.visitorId, data.email)
 
   return { partitionKey: type, rowKey }
 }
@@ -242,6 +386,15 @@ export async function deleteEnquiry(type: string, rowKey: string) {
   await ensureTable(tableName)
   const client = getTableClient(tableName)
   await client.deleteEntity(type, rowKey)
+}
+
+export async function getEnquiry(type: string, rowKey: string): Promise<Record<string, any> | null> {
+  try {
+    await ensureTable('Enquiries')
+    return (await getTableClient('Enquiries').getEntity(type, rowKey)) as Record<string, any>
+  } catch {
+    return null
+  }
 }
 
 export async function getEnquiries(type?: string, days: number = 30) {
