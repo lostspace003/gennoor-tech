@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { AutomationIllustration, PlatformIllustration, TrainingIllustration } from '@/components/illustrations/Illustrations'
 import { BOILERPLATE, TIER_LINE } from '@/components/ClaudePartner'
+import { tocCourses, TOC_DOMAINS } from '@/lib/toc-courses'
 
 export const metadata: Metadata = {
   title: 'Claude — Gennoor Tech',
@@ -89,6 +90,29 @@ export default function ClaudePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Course catalogue: always open, no tab or click needed to see the courses */}
+      <section id="courses" className="bg-white px-6 py-16 lg:py-[90px]">
+        <div className="max-w-[1080px] mx-auto">
+          <h2 className="display-section text-center">Claude courses with a live trainer.</h2>
+          <p className="lede mt-3.5 max-w-[620px] mx-auto text-center">Hands-on training, online or at your destination, with an outline, a promo video and a call with our team.</p>
+          {TOC_DOMAINS.map(domain => (
+            <div key={domain} className="mt-14">
+              <h3 className="font-heading text-[22px] font-bold tracking-[-0.01em] text-gray-900 mb-5">{domain}</h3>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {tocCourses.filter(c => c.domain === domain).map(c => (
+                  <Link key={c.slug} href={`/claude/courses/${c.slug}`} className="rounded-[18px] border border-[#e8e8ed] p-6 flex flex-col hover:border-primary-600 transition-colors">
+                    <h4 className="font-heading text-[17px] font-bold text-gray-900 leading-snug">{c.title}</h4>
+                    <p className="text-[14.5px] leading-[1.5] text-[#6e6e73] mt-2 flex-1">{c.tagline}.</p>
+                    <p className="text-[13px] text-[#86868b] mt-4">{c.days} days · {c.hours} hours · live trainer</p>
+                    <span className="link-arrow !text-[14.5px] mt-3">View course ›</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
