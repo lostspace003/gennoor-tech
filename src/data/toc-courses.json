@@ -32,7 +32,8 @@
   "promo": "TOC-output/Credential and Access Management Automation with Claude/Promo Video/Credential and Access Management Automation with Claude - Promo.mp4",
   "captions": "TOC-output/Credential and Access Management Automation with Claude/Promo Video/Credential and Access Management Automation with Claude - Promo Captions.srt",
   "outlineHtml": "TOC-output/Credential and Access Management Automation with Claude/TOC/Credential and Access Management Automation with Claude - Course Outline.html",
-  "outlinePdf": "TOC-output/Credential and Access Management Automation with Claude/TOC/Credential and Access Management Automation with Claude - Course Outline - Gennoor.pdf"
+  "outlinePdf": "TOC-output/Credential and Access Management Automation with Claude/TOC/Credential and Access Management Automation with Claude - Course Outline - Gennoor.pdf",
+  "thumbnail": "TOC-output/Credential and Access Management Automation with Claude/Thumbnail/Credential and Access Management Automation with Claude - Thumbnail.png"
  },
  {
   "slug": "cisco-aci-upgrade-automation-with-claude",
@@ -66,7 +67,8 @@
   "promo": "TOC-output/Cisco ACI Upgrade Automation with Claude/Promo Video/Cisco ACI Upgrade Automation with Claude - Promo.mp4",
   "captions": "TOC-output/Cisco ACI Upgrade Automation with Claude/Promo Video/Cisco ACI Upgrade Automation with Claude - Promo Captions.srt",
   "outlineHtml": "TOC-output/Cisco ACI Upgrade Automation with Claude/TOC/Cisco ACI Upgrade Automation with Claude - Course Outline.html",
-  "outlinePdf": "TOC-output/Cisco ACI Upgrade Automation with Claude/TOC/Cisco ACI Upgrade Automation with Claude - Course Outline - Gennoor.pdf"
+  "outlinePdf": "TOC-output/Cisco ACI Upgrade Automation with Claude/TOC/Cisco ACI Upgrade Automation with Claude - Course Outline - Gennoor.pdf",
+  "thumbnail": "TOC-output/Cisco ACI Upgrade Automation with Claude/Thumbnail/Cisco ACI Upgrade Automation with Claude - Thumbnail.png"
  },
  {
   "slug": "bill-creation-automation-with-claude",
@@ -99,7 +101,8 @@
   "promo": "TOC-output/Bill Creation Automation with Claude/Promo Video/Bill Creation Automation with Claude - Promo.mp4",
   "captions": "TOC-output/Bill Creation Automation with Claude/Promo Video/Bill Creation Automation with Claude - Promo Captions.srt",
   "outlineHtml": "TOC-output/Bill Creation Automation with Claude/TOC/Bill Creation Automation with Claude - Course Outline.html",
-  "outlinePdf": "TOC-output/Bill Creation Automation with Claude/TOC/Bill Creation Automation with Claude - Course Outline - Gennoor.pdf"
+  "outlinePdf": "TOC-output/Bill Creation Automation with Claude/TOC/Bill Creation Automation with Claude - Course Outline - Gennoor.pdf",
+  "thumbnail": "TOC-output/Bill Creation Automation with Claude/Thumbnail/Bill Creation Automation with Claude - Thumbnail.png"
  },
  {
   "slug": "certificate-renewal-automation-with-claude",
@@ -133,7 +136,8 @@
   "promo": "TOC-output/Certificate Renewal Automation with Claude/Promo Video/Certificate Renewal Automation with Claude - Promo.mp4",
   "captions": "TOC-output/Certificate Renewal Automation with Claude/Promo Video/Certificate Renewal Automation with Claude - Promo Captions.srt",
   "outlineHtml": "TOC-output/Certificate Renewal Automation with Claude/TOC/Certificate Renewal Automation with Claude - Course Outline.html",
-  "outlinePdf": "TOC-output/Certificate Renewal Automation with Claude/TOC/Certificate Renewal Automation with Claude - Course Outline - Gennoor.pdf"
+  "outlinePdf": "TOC-output/Certificate Renewal Automation with Claude/TOC/Certificate Renewal Automation with Claude - Course Outline - Gennoor.pdf",
+  "thumbnail": "TOC-output/Certificate Renewal Automation with Claude/Thumbnail/Certificate Renewal Automation with Claude - Thumbnail.png"
  },
  {
   "slug": "configuration-comparison-automation-with-claude",
@@ -168,7 +172,8 @@
   "promo": "TOC-output/Configuration Comparison Automation with Claude/Promo Video/Configuration Comparison Automation with Claude - Promo.mp4",
   "captions": "TOC-output/Configuration Comparison Automation with Claude/Promo Video/Configuration Comparison Automation with Claude - Promo Captions.srt",
   "outlineHtml": "TOC-output/Configuration Comparison Automation with Claude/TOC/Configuration Comparison Automation with Claude - Course Outline.html",
-  "outlinePdf": "TOC-output/Configuration Comparison Automation with Claude/TOC/Configuration Comparison Automation with Claude - Course Outline - Gennoor.pdf"
+  "outlinePdf": "TOC-output/Configuration Comparison Automation with Claude/TOC/Configuration Comparison Automation with Claude - Course Outline - Gennoor.pdf",
+  "thumbnail": "TOC-output/Configuration Comparison Automation with Claude/Thumbnail/Configuration Comparison Automation with Claude - Thumbnail.png"
  },
  {
   "slug": "traffic-and-flow-diagram-automation-with-claude",
@@ -203,7 +208,8 @@
   "promo": "TOC-output/Traffic and Flow Diagram Automation with Claude/Promo Video/Traffic and Flow Diagram Automation with Claude - Promo.mp4",
   "captions": "TOC-output/Traffic and Flow Diagram Automation with Claude/Promo Video/Traffic and Flow Diagram Automation with Claude - Promo Captions.srt",
   "outlineHtml": "TOC-output/Traffic and Flow Diagram Automation with Claude/TOC/Traffic and Flow Diagram Automation with Claude - Course Outline.html",
-  "outlinePdf": "TOC-output/Traffic and Flow Diagram Automation with Claude/TOC/Traffic and Flow Diagram Automation with Claude - Course Outline - Gennoor.pdf"
+  "outlinePdf": "TOC-output/Traffic and Flow Diagram Automation with Claude/TOC/Traffic and Flow Diagram Automation with Claude - Course Outline - Gennoor.pdf",
+  "thumbnail": "TOC-output/Traffic and Flow Diagram Automation with Claude/Thumbnail/Traffic and Flow Diagram Automation with Claude - Thumbnail.png"
  },
  {
   "slug": "device-health-monitoring-automation-with-claude",
@@ -238,7 +244,8 @@
   "promo": "TOC-output/Device Health Monitoring Automation with Claude/Promo Video/Device Health Monitoring Automation with Claude - Promo.mp4",
   "captions": "TOC-output/Device Health Monitoring Automation with Claude/Promo Video/Device Health Monitoring Automation with Claude - Promo Captions.srt",
   "outlineHtml": "TOC-output/Device Health Monitoring Automation with Claude/TOC/Device Health Monitoring Automation with Claude - Course Outline.html",
-  "outlinePdf": "TOC-output/Device Health Monitoring Automation with Claude/TOC/Device Health Monitoring Automation with Claude - Course Outline - Gennoor.pdf"
+  "outlinePdf": "TOC-output/Device Health Monitoring Automation with Claude/TOC/Device Health Monitoring Automation with Claude - Course Outline - Gennoor.pdf",
+  "thumbnail": "TOC-output/Device Health Monitoring Automation with Claude/Thumbnail/Device Health Monitoring Automation with Claude - Thumbnail.png"
  },
  {
   "slug": "hr-hiring-flow-automation-with-claude",
@@ -272,7 +279,8 @@
   "promo": "TOC-output/HR Hiring Flow Automation with Claude/Promo Video/HR Hiring Flow Automation with Claude - Promo.mp4",
   "captions": "TOC-output/HR Hiring Flow Automation with Claude/Promo Video/HR Hiring Flow Automation with Claude - Promo Captions.srt",
   "outlineHtml": "TOC-output/HR Hiring Flow Automation with Claude/TOC/HR Hiring Flow Automation with Claude - Course Outline.html",
-  "outlinePdf": "TOC-output/HR Hiring Flow Automation with Claude/TOC/HR Hiring Flow Automation with Claude - Course Outline - Gennoor.pdf"
+  "outlinePdf": "TOC-output/HR Hiring Flow Automation with Claude/TOC/HR Hiring Flow Automation with Claude - Course Outline - Gennoor.pdf",
+  "thumbnail": "TOC-output/HR Hiring Flow Automation with Claude/Thumbnail/HR Hiring Flow Automation with Claude - Thumbnail.png"
  },
  {
   "slug": "terraform-and-github-automation-with-claude",
@@ -307,7 +315,8 @@
   "promo": "TOC-output/Terraform and GitHub Automation with Claude/Promo Video/Terraform and GitHub Automation with Claude - Promo.mp4",
   "captions": "TOC-output/Terraform and GitHub Automation with Claude/Promo Video/Terraform and GitHub Automation with Claude - Promo Captions.srt",
   "outlineHtml": "TOC-output/Terraform and GitHub Automation with Claude/TOC/Terraform and GitHub Automation with Claude - Course Outline.html",
-  "outlinePdf": "TOC-output/Terraform and GitHub Automation with Claude/TOC/Terraform and GitHub Automation with Claude - Course Outline - Gennoor.pdf"
+  "outlinePdf": "TOC-output/Terraform and GitHub Automation with Claude/TOC/Terraform and GitHub Automation with Claude - Course Outline - Gennoor.pdf",
+  "thumbnail": "TOC-output/Terraform and GitHub Automation with Claude/Thumbnail/Terraform and GitHub Automation with Claude - Thumbnail.png"
  },
  {
   "slug": "troubleshooting-automation-with-claude",
@@ -342,7 +351,8 @@
   "promo": "TOC-output/Troubleshooting Automation with Claude/Promo Video/Troubleshooting Automation with Claude - Promo.mp4",
   "captions": "TOC-output/Troubleshooting Automation with Claude/Promo Video/Troubleshooting Automation with Claude - Promo Captions.srt",
   "outlineHtml": "TOC-output/Troubleshooting Automation with Claude/TOC/Troubleshooting Automation with Claude - Course Outline.html",
-  "outlinePdf": "TOC-output/Troubleshooting Automation with Claude/TOC/Troubleshooting Automation with Claude - Course Outline - Gennoor.pdf"
+  "outlinePdf": "TOC-output/Troubleshooting Automation with Claude/TOC/Troubleshooting Automation with Claude - Course Outline - Gennoor.pdf",
+  "thumbnail": "TOC-output/Troubleshooting Automation with Claude/Thumbnail/Troubleshooting Automation with Claude - Thumbnail.png"
  },
  {
   "slug": "device-upgrade-automation-with-claude",
@@ -377,7 +387,8 @@
   "promo": "TOC-output/Device Upgrade Automation with Claude/Promo Video/Device Upgrade Automation with Claude - Promo.mp4",
   "captions": "TOC-output/Device Upgrade Automation with Claude/Promo Video/Device Upgrade Automation with Claude - Promo Captions.srt",
   "outlineHtml": "TOC-output/Device Upgrade Automation with Claude/TOC/Device Upgrade Automation with Claude - Course Outline.html",
-  "outlinePdf": "TOC-output/Device Upgrade Automation with Claude/TOC/Device Upgrade Automation with Claude - Course Outline - Gennoor.pdf"
+  "outlinePdf": "TOC-output/Device Upgrade Automation with Claude/TOC/Device Upgrade Automation with Claude - Course Outline - Gennoor.pdf",
+  "thumbnail": "TOC-output/Device Upgrade Automation with Claude/Thumbnail/Device Upgrade Automation with Claude - Thumbnail.png"
  },
  {
   "slug": "agentic-virtual-patching-platform",
@@ -410,7 +421,8 @@
   "promo": "TOC-output/Agentic Virtual Patching Platform/Promo Video/Agentic Virtual Patching Platform - Promo.mp4",
   "captions": "TOC-output/Agentic Virtual Patching Platform/Promo Video/Agentic Virtual Patching Platform - Promo Captions.srt",
   "outlineHtml": "TOC-output/Agentic Virtual Patching Platform/TOC/Agentic Virtual Patching Platform - Course Outline.html",
-  "outlinePdf": "TOC-output/Agentic Virtual Patching Platform/TOC/Agentic Virtual Patching Platform - Course Outline - Gennoor.pdf"
+  "outlinePdf": "TOC-output/Agentic Virtual Patching Platform/TOC/Agentic Virtual Patching Platform - Course Outline - Gennoor.pdf",
+  "thumbnail": "TOC-output/Agentic Virtual Patching Platform/Thumbnail/Agentic Virtual Patching Platform - Thumbnail.png"
  },
  {
   "slug": "agentic-ai-vulnerability-management",
@@ -443,7 +455,8 @@
   "promo": "TOC-output/Agentic AI Vulnerability Management/Promo Video/Agentic AI Vulnerability Management - Promo.mp4",
   "captions": "TOC-output/Agentic AI Vulnerability Management/Promo Video/Agentic AI Vulnerability Management - Promo Captions.srt",
   "outlineHtml": "TOC-output/Agentic AI Vulnerability Management/TOC/Agentic AI Vulnerability Management - Course Outline.html",
-  "outlinePdf": "TOC-output/Agentic AI Vulnerability Management/TOC/Agentic AI Vulnerability Management - Course Outline - Gennoor.pdf"
+  "outlinePdf": "TOC-output/Agentic AI Vulnerability Management/TOC/Agentic AI Vulnerability Management - Course Outline - Gennoor.pdf",
+  "thumbnail": "TOC-output/Agentic AI Vulnerability Management/Thumbnail/Agentic AI Vulnerability Management - Thumbnail.png"
  },
  {
   "slug": "agentic-attack-surface-management",
@@ -476,7 +489,8 @@
   "promo": "TOC-output/Agentic Attack Surface Management/Promo Video/Agentic Attack Surface Management - Promo.mp4",
   "captions": "TOC-output/Agentic Attack Surface Management/Promo Video/Agentic Attack Surface Management - Promo Captions.srt",
   "outlineHtml": "TOC-output/Agentic Attack Surface Management/TOC/Agentic Attack Surface Management - Course Outline.html",
-  "outlinePdf": "TOC-output/Agentic Attack Surface Management/TOC/Agentic Attack Surface Management - Course Outline - Gennoor.pdf"
+  "outlinePdf": "TOC-output/Agentic Attack Surface Management/TOC/Agentic Attack Surface Management - Course Outline - Gennoor.pdf",
+  "thumbnail": "TOC-output/Agentic Attack Surface Management/Thumbnail/Agentic Attack Surface Management - Thumbnail.png"
  },
  {
   "slug": "agentic-configuration-reviewer",
@@ -506,7 +520,8 @@
   "promo": "TOC-output/Agentic Configuration Reviewer/Promo Video/Agentic Configuration Reviewer - Promo.mp4",
   "captions": "TOC-output/Agentic Configuration Reviewer/Promo Video/Agentic Configuration Reviewer - Promo Captions.srt",
   "outlineHtml": "TOC-output/Agentic Configuration Reviewer/TOC/Agentic Configuration Reviewer - Course Outline.html",
-  "outlinePdf": "TOC-output/Agentic Configuration Reviewer/TOC/Agentic Configuration Reviewer - Course Outline - Gennoor.pdf"
+  "outlinePdf": "TOC-output/Agentic Configuration Reviewer/TOC/Agentic Configuration Reviewer - Course Outline - Gennoor.pdf",
+  "thumbnail": "TOC-output/Agentic Configuration Reviewer/Thumbnail/Agentic Configuration Reviewer - Thumbnail.png"
  },
  {
   "slug": "agentic-architecture-reviewer",
@@ -539,6 +554,7 @@
   "promo": "TOC-output/Agentic Architecture Reviewer/Promo Video/Agentic Architecture Reviewer - Promo.mp4",
   "captions": "TOC-output/Agentic Architecture Reviewer/Promo Video/Agentic Architecture Reviewer - Promo Captions.srt",
   "outlineHtml": "TOC-output/Agentic Architecture Reviewer/TOC/Agentic Architecture Reviewer - Course Outline.html",
-  "outlinePdf": "TOC-output/Agentic Architecture Reviewer/TOC/Agentic Architecture Reviewer - Course Outline - Gennoor.pdf"
+  "outlinePdf": "TOC-output/Agentic Architecture Reviewer/TOC/Agentic Architecture Reviewer - Course Outline - Gennoor.pdf",
+  "thumbnail": "TOC-output/Agentic Architecture Reviewer/Thumbnail/Agentic Architecture Reviewer - Thumbnail.png"
  }
 ]
