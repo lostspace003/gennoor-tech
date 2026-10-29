@@ -94,7 +94,7 @@ export default async function HomePage() {
           <div className="max-w-[1080px] mx-auto">
             <div className="text-center mb-12">
               <h2 className="display-section">Courses at Gennoor.</h2>
-              <p className="lede mt-3.5 max-w-[560px] mx-auto">Learning Studio courses you can start today, and Claude courses with a live trainer. Pick one to open it.</p>
+              <p className="lede mt-3.5 max-w-[560px] mx-auto">Learning Studio courses you can start today, and Claude courses with instructor-led training. Pick one to open it.</p>
             </div>
             <CourseCarousel cards={catalogue} label="All courses" />
             <div className="text-center mt-12">

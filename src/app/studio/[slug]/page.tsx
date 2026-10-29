@@ -141,7 +141,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
 
             <div>
               {promo ? (
-                <PromoPlayer src={promo} poster={card.thumbnailUrl} />
+                <PromoPlayer src={promo} poster={card.thumbnailUrl} resumeKey={`studio-${slug}`} />
               ) : card.thumbnailUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={card.thumbnailUrl} alt="" className="w-full aspect-video object-cover rounded-2xl shadow-[0_30px_60px_-20px_rgba(0,0,0,.6)] ring-1 ring-white/10" />

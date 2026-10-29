@@ -14,9 +14,31 @@ function fmt(sec: number): string {
  * with an always-visible control bar: play or pause, time, seek, sound, full screen.
  * framed={false} drops the rounded frame and shadow so it fills a course card's picture area.
  */
-export default function PromoPlayer({ src, poster, startMuted = true, framed = true, autoPlay = true }: { src: string; poster?: string | null; startMuted?: boolean; framed?: boolean; autoPlay?: boolean }) {
+export default function PromoPlayer({ src, poster, startMuted = true, framed = true, autoPlay = true, resumeKey }: { src: string; poster?: string | null; startMuted?: boolean; framed?: boolean; autoPlay?: boolean; resumeKey?: string }) {
   const boxRef = useRef<HTMLDivElement>(null)
   const ref = useRef<HTMLVideoElement>(null)
+  const lastSaved = useRef(0)
+
+  // resumeKey: the same promo opened from a card popup and from its course page continues from where it stopped (kept in this browser only)
+  useEffect(() => {
+    const v = ref.current
+    if (!v || !resumeKey) return
+    try {
+      const t = parseFloat(localStorage.getItem(`promo:${resumeKey}`) || '0')
+      if (t > 1) {
+        const seek = () => { if (isFinite(v.duration) && t < v.duration - 3) v.currentTime = t }
+        if (v.readyState >= 1) seek()
+        else v.addEventListener('loadedmetadata', seek, { once: true })
+      }
+    } catch { /* storage blocked: start from the beginning */ }
+  }, [resumeKey])
+  const savePos = (t: number, ended = false) => {
+    if (!resumeKey) return
+    try {
+      if (ended) localStorage.removeItem(`promo:${resumeKey}`)
+      else if (Math.abs(t - lastSaved.current) > 2) { localStorage.setItem(`promo:${resumeKey}`, String(t)); lastSaved.current = t }
+    } catch { /* ignore */ }
+  }
   const [playing, setPlaying] = useState(false)
   const [muted, setMuted] = useState(autoPlay && startMuted)
   const [cur, setCur] = useState(0)
@@ -72,7 +94,8 @@ export default function PromoPlayer({ src, poster, startMuted = true, framed = t
         onLoadedMetadata={e => setDur(e.currentTarget.duration)}
         onDurationChange={e => { if (isFinite(e.currentTarget.duration)) setDur(e.currentTarget.duration) }}
         onCanPlay={e => { if (isFinite(e.currentTarget.duration)) setDur(e.currentTarget.duration) }}
-        onTimeUpdate={e => setCur(e.currentTarget.currentTime)}
+        onTimeUpdate={e => { setCur(e.currentTarget.currentTime); savePos(e.currentTarget.currentTime) }}
+        onEnded={() => savePos(0, true)}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
         onVolumeChange={e => setMuted(e.currentTarget.muted)}
