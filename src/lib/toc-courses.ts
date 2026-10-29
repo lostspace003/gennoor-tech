@@ -1,0 +1,23 @@
+import data from '@/data/toc-courses.json'
+import { signBlobUrl } from '@/lib/lms'
+
+export interface TocCourse {
+  slug: string; title: string; domain: string; tagline: string; level: string; audience: string
+  days: number; hours: number; outcomes: string[]; modules: string[]; capstone: string
+  promo: string; captions: string; outlineHtml: string; outlinePdf: string
+}
+
+// Outlines and promo videos live in the private blob container; pages hand out short-lived read links.
+export const TOC_CONTAINER = 'toc-and-promotional-videos'
+export const TOC_DOMAINS = ['Automation with Claude', 'Agentic Cybersecurity'] as const
+
+export const tocCourses = data as TocCourse[]
+export const getTocCourse = (slug: string) => tocCourses.find(c => c.slug === slug)
+
+export function tocLinks(c: TocCourse) {
+  return {
+    promo: signBlobUrl(TOC_CONTAINER, c.promo, 180, { contentType: 'video/mp4' }),
+    outlineHtml: signBlobUrl(TOC_CONTAINER, c.outlineHtml, 180, { contentType: 'text/html' }),
+    outlinePdf: signBlobUrl(TOC_CONTAINER, c.outlinePdf, 180, { inline: false, filename: `${c.title} - Course Outline.pdf`, contentType: 'application/pdf' }),
+  }
+}
