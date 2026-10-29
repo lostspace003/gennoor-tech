@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import ClaudeCourseCarousels from '@/components/training/ClaudeCourseCarousels'
 import { OpenCustomTraining } from '@/components/custom-training/CustomTraining'
 import { AutomationIllustration, ClaudeIllustration, CloudAiIllustration, OrgIllustration, ScopeIllustration, SmallTeamIllustration, TalkIllustration, TrainingIllustration } from '@/components/illustrations/Illustrations'
 
@@ -66,6 +67,8 @@ export default function TrainingPage() {
           <Link href="/webinars" className="link-arrow">Expert sessions ›</Link>
         </div>
       </section>
+
+      <ClaudeCourseCarousels className="bg-[#f5f5f7]" />
 
       <section className="bg-[#f5f5f7] px-6 py-16 lg:py-[90px]">
         <div className="max-w-[1000px] mx-auto">

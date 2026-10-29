@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import { PersonJsonLd } from '@/components/JsonLd'
 import { ClaudePartnerHero } from '@/components/ClaudePartner'
-import HomeCourses from '@/components/home/HomeCourses'
+import CourseCarousel from '@/components/home/CourseCarousel'
+import { allCards } from '@/lib/catalogue'
 import WalkthroughVideo from '@/components/WalkthroughVideo'
 import HeroCarousel, { type HeroSlide } from '@/components/home/HeroCarousel'
 import { listLmsCourses, toCard } from '@/lib/lms'
@@ -29,6 +30,7 @@ const PILLARS = [
 ]
 
 export default async function HomePage() {
+  const catalogue = await allCards()
   const courses = (await listLmsCourses()).map(toCard).filter(c => c.promoUrl || c.thumbnailUrl).slice(0, 2)
 
   const heroSlides: HeroSlide[] = [
@@ -86,15 +88,15 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ===== Course previews ===== */}
-      {courses.length > 0 && (
+      {/* ===== Courses: every Studio course plus the Claude courses, added automatically ===== */}
+      {catalogue.length > 0 && (
         <section className="bg-[#f5f5f7] px-6 py-16 lg:py-[90px]">
           <div className="max-w-[1080px] mx-auto">
             <div className="text-center mb-12">
-              <h2 className="display-section">Two courses you can start today.</h2>
-              <p className="lede mt-3.5 max-w-[560px] mx-auto">Watch the preview, then open the full course in the Learning Studio.</p>
+              <h2 className="display-section">Courses at Gennoor.</h2>
+              <p className="lede mt-3.5 max-w-[560px] mx-auto">Learning Studio courses you can start today, and Claude courses with a live trainer. Pick one to open it.</p>
             </div>
-            <HomeCourses courses={courses} />
+            <CourseCarousel cards={catalogue} label="All courses" />
             <div className="text-center mt-12">
               <Link href="/studio" className="pill-primary">Go to the Learning Studio</Link>
             </div>

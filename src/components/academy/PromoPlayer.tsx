@@ -14,11 +14,11 @@ function fmt(sec: number): string {
  * with an always-visible control bar: play or pause, time, seek, sound, full screen.
  * framed={false} drops the rounded frame and shadow so it fills a course card's picture area.
  */
-export default function PromoPlayer({ src, poster, startMuted = true, framed = true }: { src: string; poster?: string | null; startMuted?: boolean; framed?: boolean }) {
+export default function PromoPlayer({ src, poster, startMuted = true, framed = true, autoPlay = true }: { src: string; poster?: string | null; startMuted?: boolean; framed?: boolean; autoPlay?: boolean }) {
   const boxRef = useRef<HTMLDivElement>(null)
   const ref = useRef<HTMLVideoElement>(null)
   const [playing, setPlaying] = useState(false)
-  const [muted, setMuted] = useState(startMuted)
+  const [muted, setMuted] = useState(autoPlay && startMuted)
   const [cur, setCur] = useState(0)
   const [dur, setDur] = useState(0)
   const [full, setFull] = useState(false)
@@ -62,10 +62,10 @@ export default function PromoPlayer({ src, poster, startMuted = true, framed = t
         ref={ref}
         src={src}
         poster={poster || undefined}
-        autoPlay
-        muted={startMuted}
+        autoPlay={autoPlay}
+        muted={autoPlay && startMuted}
         playsInline
-        preload="auto"
+        preload={autoPlay ? 'auto' : 'metadata'}
         disablePictureInPicture
         className="w-full h-full"
         onClick={toggle}
