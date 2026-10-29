@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import ProgramCarousel from '@/components/training/ProgramCarousel'
+import { getAllPrograms } from '@/data/training-programs'
 import ClaudeCourseCarousels from '@/components/training/ClaudeCourseCarousels'
 import { OpenCustomTraining } from '@/components/custom-training/CustomTraining'
 import { AutomationIllustration, ClaudeIllustration, CloudAiIllustration, OrgIllustration, ScopeIllustration, SmallTeamIllustration, TalkIllustration, TrainingIllustration } from '@/components/illustrations/Illustrations'
@@ -54,6 +56,7 @@ const BUILD = [
 ]
 
 export default function TrainingPage() {
+  const programs = getAllPrograms().map(p => ({ slug: p.slug, title: p.title, duration: p.duration, level: p.level, description: p.description, category: p.category }))
   return (
     <main className="bg-white">
       <section className="hero-backdrop px-6 pt-16 lg:pt-[100px] pb-16 text-center">
@@ -65,6 +68,15 @@ export default function TrainingPage() {
           <OpenCustomTraining className="pill-primary">Ask for custom training</OpenCustomTraining>
           <Link href="/services/training" className="link-arrow">See the programs ›</Link>
           <Link href="/webinars" className="link-arrow">Expert sessions ›</Link>
+        </div>
+      </section>
+
+      <section id="programs" className="bg-white px-6 py-16 lg:py-[90px]">
+        <div className="max-w-[1080px] mx-auto">
+          <h2 className="display-section text-center">Training programs.</h2>
+          <p className="lede mt-3.5 max-w-[600px] mx-auto text-center mb-12">Bootcamps and courses for teams. Pick one to see the outline and what it covers.</p>
+          <ProgramCarousel programs={programs} />
+          <div className="text-center mt-10"><Link href="/services/training" className="link-arrow">See all programs ›</Link></div>
         </div>
       </section>
 
