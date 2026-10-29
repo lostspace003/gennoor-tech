@@ -4,7 +4,8 @@ import { saveEnquiry } from '@/lib/azure-storage'
 import { trackEvent, trackException, initAppInsights } from '@/lib/analytics'
 import { rateLimit, clientIp } from '@/lib/rate-limit'
 import { escapeHtml } from '@/lib/escape-html'
-import { getTocCourse, tocPdfUrl } from '@/lib/toc-courses'
+import { getTocCourse, tocPdfUrl, TOC_CONTAINER } from '@/lib/toc-courses'
+import { signBlobUrl } from '@/lib/lms'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,7 +36,23 @@ export async function POST(request: Request) {
       subject: `[OUTLINE DOWNLOAD] ${name}: ${course.title}`,
       html: `<p>Someone downloaded a course outline.</p><p><strong>Course:</strong> ${escapeHtml(course.title)}<br><strong>Name:</strong> ${escapeHtml(name)}<br><strong>Email:</strong> ${escapeHtml(email)}<br><strong>Phone:</strong> ${escapeHtml(phone)}</p>`,
     }).catch(() => {})
-    return NextResponse.json({ url: tocPdfUrl(course) })
+    // the visitor gets the PDF by email too; a failure here must not block the on-screen download
+    let emailed = false
+    try {
+      const pdf = await fetch(signBlobUrl(TOC_CONTAINER, course.outlinePdf, 5), { cache: 'no-store' })
+      if (pdf.ok) {
+        await sendEmail({
+          to: email,
+          from: process.env.EMAIL_FROM_INFO || 'info@gennoor.com',
+          fromName: 'Gennoor Tech',
+          subject: `${course.title}: your course outline`,
+          html: `<p>Hello ${escapeHtml(name)},</p><p>Thank you for your interest in <strong>${escapeHtml(course.title)}</strong>. The course outline is attached as a PDF.</p><p>To talk about dates, a private batch or training at your site, reply to this email or book a call at <a href="https://gennoor.com/claude/courses/${course.slug}">gennoor.com</a>.</p><p>Gennoor Tech</p>`,
+          attachments: [{ filename: `${course.title} - Course Outline.pdf`, content: Buffer.from(await pdf.arrayBuffer()), contentType: 'application/pdf' }],
+        })
+        emailed = true
+      }
+    } catch (e) { console.error('outline email failed', e) }
+    return NextResponse.json({ url: tocPdfUrl(course), emailed })
   } catch (e) {
     console.error('outline-download failed', e)
     trackException(e instanceof Error ? e : new Error(String(e)), { route: 'outline-download' })

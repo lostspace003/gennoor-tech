@@ -1,5 +1,5 @@
 import { listLmsCourses, toCard } from '@/lib/lms'
-import { tocCourses, tocThumbnailUrl, tocPromoUrl, TOC_DOMAINS } from '@/lib/toc-courses'
+import { tocCourses, tocPromoUrl, TOC_DOMAINS } from '@/lib/toc-courses'
 
 /** One card in a course carousel, whatever kind of course it is. */
 export interface CatalogueCard {
@@ -34,9 +34,9 @@ export function claudeCards(domain?: string): CatalogueCard[] {
   return tocCourses
     .filter(c => !domain || c.domain === domain)
     .map(c => {
-      let image: string | null = null
+      const image = `/api/toc-thumb/${c.slug}` // served by us: cached and retried, no storage link in the page
       let video: string | null = null
-      try { image = tocThumbnailUrl(c); video = tocPromoUrl(c) } catch { /* storage not configured */ }
+      try { video = tocPromoUrl(c) } catch { /* storage not configured */ }
       return { id: `claude-${c.slug}`, title: c.title, href: `/claude/courses/${c.slug}`, image, video, meta: `${c.days} days · ${c.hours} hours · instructor-led`, group: c.domain }
     })
 }

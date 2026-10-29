@@ -5,6 +5,7 @@ import { Check } from 'lucide-react'
 import PromoPlayer from '@/components/academy/PromoPlayer'
 import LiveTrainerPointers from '@/components/training/LiveTrainerPointers'
 import OutlinePdfButton from '@/components/training/OutlinePdfButton'
+import OutlineViewer from '@/components/training/OutlineViewer'
 import ScheduleCallButton from '@/components/training/ScheduleCallButton'
 import { getTocCourse, tocLinks } from '@/lib/toc-courses'
 
@@ -71,7 +72,7 @@ export default async function TocCoursePage({ params }: PageProps) {
           <div className="rounded-2xl border border-[#e8e8ed] p-6">
             <p className="text-sm font-semibold text-gray-900">Course outline</p>
             <div className="mt-3 flex flex-col gap-2 text-[15px]">
-              <a href={links.outlineHtml} target="_blank" rel="noopener" className="link-arrow !text-[15px]">View the outline ›</a>
+              <OutlineViewer slug={c.slug} title={c.title} />
               <OutlinePdfButton slug={c.slug} title={c.title} />
             </div>
           </div>
