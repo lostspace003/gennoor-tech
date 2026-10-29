@@ -35,7 +35,7 @@ export default async function TocCoursePage({ params }: PageProps) {
             <p className="text-[18px] leading-[1.5] text-[#c4cede] mt-4">{c.tagline}.</p>
             <div className="mt-8"><ScheduleCallButton course={c.title} courseSlug={c.slug} /></div>
           </div>
-          <div><PromoPlayer src={links.promo} /></div>
+          <div><PromoPlayer src={links.promo} poster={links.thumbnail} /></div>
         </div>
       </section>
 
