@@ -3,7 +3,7 @@ import { Users, Clock, CalendarDays, SlidersHorizontal } from 'lucide-react'
 /** Short pointers under a course promo. Duration comes from the table of contents (1 day = 8 hours). */
 export default function LiveTrainerPointers({ days, hours }: { days: number; hours: number }) {
   const items = [
-    { icon: Users, text: 'Live trainer: Online or Destination' },
+    { icon: Users, text: 'Instructor-led training: Online or Destination' },
     { icon: Clock, text: `${days} ${days === 1 ? 'day' : 'days'} · ${hours} hours` },
     { icon: CalendarDays, text: 'Starts in about 3 weeks' },
     { icon: SlidersHorizontal, text: 'Flexible and customizable' },

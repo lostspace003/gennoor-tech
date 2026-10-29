@@ -1,5 +1,5 @@
 import { listLmsCourses, toCard } from '@/lib/lms'
-import { tocCourses, tocThumbnailUrl, TOC_DOMAINS } from '@/lib/toc-courses'
+import { tocCourses, tocThumbnailUrl, tocPromoUrl, TOC_DOMAINS } from '@/lib/toc-courses'
 
 /** One card in a course carousel, whatever kind of course it is. */
 export interface CatalogueCard {
@@ -7,6 +7,7 @@ export interface CatalogueCard {
   title: string
   href: string
   image: string | null
+  video: string | null
   meta: string
   group: string
 }
@@ -19,6 +20,7 @@ export async function studioCards(): Promise<CatalogueCard[]> {
       title: c.title,
       href: `/studio/${c.slug}`,
       image: c.thumbnailUrl,
+      video: c.promoUrl || null,
       meta: `${c.lectures} lessons${c.hours ? ` · ${c.hours} hours` : ''}`,
       group: 'Learning Studio',
     }))
@@ -27,14 +29,15 @@ export async function studioCards(): Promise<CatalogueCard[]> {
   }
 }
 
-/** The Claude courses with a live trainer, optionally for one domain. */
+/** The instructor-led Claude courses, optionally for one domain. */
 export function claudeCards(domain?: string): CatalogueCard[] {
   return tocCourses
     .filter(c => !domain || c.domain === domain)
     .map(c => {
       let image: string | null = null
-      try { image = tocThumbnailUrl(c) } catch { /* storage not configured */ }
-      return { id: `claude-${c.slug}`, title: c.title, href: `/claude/courses/${c.slug}`, image, meta: `${c.days} days · ${c.hours} hours · live trainer`, group: c.domain }
+      let video: string | null = null
+      try { image = tocThumbnailUrl(c); video = tocPromoUrl(c) } catch { /* storage not configured */ }
+      return { id: `claude-${c.slug}`, title: c.title, href: `/claude/courses/${c.slug}`, image, video, meta: `${c.days} days · ${c.hours} hours · instructor-led`, group: c.domain }
     })
 }
 

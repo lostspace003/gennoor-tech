@@ -17,11 +17,15 @@ export const getTocCourse = (slug: string) => tocCourses.find(c => c.slug === sl
 /** Just the card image (a short-lived read link), for the course lists. */
 export const tocThumbnailUrl = (c: TocCourse) => signBlobUrl(TOC_CONTAINER, c.thumbnail, 180, { contentType: 'image/png' })
 
+/** The promo video link (short-lived), for the card popup. */
+export const tocPromoUrl = (c: TocCourse) => signBlobUrl(TOC_CONTAINER, c.promo, 180, { contentType: 'video/mp4' })
+
+export const tocPdfUrl = (c: TocCourse) => signBlobUrl(TOC_CONTAINER, c.outlinePdf, 10, { inline: false, filename: `${c.title} - Course Outline.pdf`, contentType: 'application/pdf' })
+
 export function tocLinks(c: TocCourse) {
   return {
     promo: signBlobUrl(TOC_CONTAINER, c.promo, 180, { contentType: 'video/mp4' }),
     thumbnail: signBlobUrl(TOC_CONTAINER, c.thumbnail, 180, { contentType: 'image/png' }),
     outlineHtml: signBlobUrl(TOC_CONTAINER, c.outlineHtml, 180, { contentType: 'text/html' }),
-    outlinePdf: signBlobUrl(TOC_CONTAINER, c.outlinePdf, 180, { inline: false, filename: `${c.title} - Course Outline.pdf`, contentType: 'application/pdf' }),
   }
 }

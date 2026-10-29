@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Check } from 'lucide-react'
 import PromoPlayer from '@/components/academy/PromoPlayer'
 import LiveTrainerPointers from '@/components/training/LiveTrainerPointers'
+import OutlinePdfButton from '@/components/training/OutlinePdfButton'
 import ScheduleCallButton from '@/components/training/ScheduleCallButton'
 import { getTocCourse, tocLinks } from '@/lib/toc-courses'
 
@@ -16,7 +17,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!c) return {}
   return {
     title: `${c.title} | Gennoor Tech`,
-    description: `${c.tagline}. ${c.days} days (${c.hours} hours) with a live trainer, online or at your destination.`.slice(0, 300),
+    description: `${c.tagline}. ${c.days} days (${c.hours} hours) with instructor-led training, online or at your destination.`.slice(0, 300),
     alternates: { canonical: `https://gennoor.com/claude/courses/${c.slug}` },
   }
 }
@@ -35,7 +36,7 @@ export default async function TocCoursePage({ params }: PageProps) {
             <p className="text-[18px] leading-[1.5] text-[#c4cede] mt-4">{c.tagline}.</p>
             <div className="mt-8"><ScheduleCallButton course={c.title} courseSlug={c.slug} /></div>
           </div>
-          <div><PromoPlayer src={links.promo} poster={links.thumbnail} autoPlay={false} startMuted={false} /></div>
+          <div><PromoPlayer src={links.promo} poster={links.thumbnail} autoPlay={false} startMuted={false} resumeKey={`claude-${c.slug}`} /></div>
         </div>
       </section>
 
@@ -71,7 +72,7 @@ export default async function TocCoursePage({ params }: PageProps) {
             <p className="text-sm font-semibold text-gray-900">Course outline</p>
             <div className="mt-3 flex flex-col gap-2 text-[15px]">
               <a href={links.outlineHtml} target="_blank" rel="noopener" className="link-arrow !text-[15px]">View the outline ›</a>
-              <a href={links.outlinePdf} className="link-arrow !text-[15px]">Download the PDF ›</a>
+              <OutlinePdfButton slug={c.slug} title={c.title} />
             </div>
           </div>
           <div className="rounded-2xl border border-[#e8e8ed] p-6">
