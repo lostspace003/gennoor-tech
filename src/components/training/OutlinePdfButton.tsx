@@ -15,6 +15,7 @@ export default function OutlinePdfButton({ slug, title }: { slug: string; title:
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [done, setDone] = useState(false)
+  const [emailed, setEmailed] = useState(false)
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -23,6 +24,7 @@ export default function OutlinePdfButton({ slug, title }: { slug: string; title:
       const r = await fetch('/api/outline-download', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, name, email, phone }) })
       const d = await r.json().catch(() => ({}))
       if (!r.ok || !d.url) { setError(d.error || 'Could not prepare the download.'); return }
+      setEmailed(!!d.emailed)
       setDone(true)
       window.location.href = d.url // the link has a download header, so the page stays put
     } finally { setBusy(false) }
@@ -39,7 +41,7 @@ export default function OutlinePdfButton({ slug, title }: { slug: string; title:
             <h2 className="font-heading text-xl font-bold text-gray-900 pr-8">Download the course outline</h2>
             <p className="text-sm text-[#6e6e73] mt-1">{title}</p>
             {done ? (
-              <p className="mt-6 text-[15px] text-gray-800">Thank you. Your download should start now. If it does not, send the form again.</p>
+              <p className="mt-6 text-[15px] text-gray-800">Thank you. Your download should start now.{emailed ? ` We have also emailed the PDF to ${email}.` : ''} If the download does not start, send the form again.</p>
             ) : (
               <div className="mt-5 space-y-4">
                 <div><label htmlFor="op-name" className="block text-sm font-medium text-gray-700 mb-1">Full name *</label><input id="op-name" required value={name} onChange={e => setName(e.target.value)} className={FIELD} autoComplete="name" /></div>
