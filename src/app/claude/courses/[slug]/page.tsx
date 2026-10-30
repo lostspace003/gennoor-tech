@@ -33,7 +33,7 @@ export default async function TocCoursePage({ params }: PageProps) {
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
           <div>
             <p className="text-sm font-semibold text-[#8fb8ff] mb-3">{c.domain}</p>
-            <h1 className="font-heading text-[clamp(30px,4vw,48px)] font-bold tracking-[-0.02em] leading-[1.1]">{c.title}</h1>
+            <h1 className="font-heading text-white text-[clamp(30px,4vw,48px)] font-bold tracking-[-0.02em] leading-[1.1]">{c.title}</h1>
             <p className="text-[18px] leading-[1.5] text-[#c4cede] mt-4">{c.tagline}.</p>
             <div className="mt-8"><ScheduleCallButton course={c.title} courseSlug={c.slug} /></div>
           </div>
