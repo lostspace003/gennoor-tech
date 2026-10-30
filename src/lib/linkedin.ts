@@ -122,18 +122,18 @@ export async function fetchAdminOrg(token: string): Promise<{ urn: string; name:
   }
 }
 
-export async function publishArticle(opts: {
-  token: string; author: string; commentary: string; url: string; title: string; description: string
-}): Promise<string> {
+type PostContent = { article: { source: string; title: string; description: string } } | { media: { id: string; altText?: string } }
+
+async function createPost(token: string, author: string, commentary: string, content?: PostContent): Promise<string> {
   const res = await fetch('https://api.linkedin.com/rest/posts', {
     method: 'POST',
-    headers: restHeaders(opts.token),
+    headers: restHeaders(token),
     body: JSON.stringify({
-      author: opts.author,
-      commentary: opts.commentary,
+      author,
+      commentary,
       visibility: 'PUBLIC',
       distribution: { feedDistribution: 'MAIN_FEED', targetEntities: [], thirdPartyDistributionChannels: [] },
-      content: { article: { source: opts.url, title: opts.title, description: opts.description } },
+      ...(content ? { content } : {}),
       lifecycleState: 'PUBLISHED',
       isReshareDisabledByAuthor: false,
     }),
@@ -143,4 +143,31 @@ export async function publishArticle(opts: {
     throw new Error(body.message || `LinkedIn rejected the post (${res.status})`)
   }
   return res.headers.get('x-restli-id') || ''
+}
+
+export function publishArticle(opts: {
+  token: string; author: string; commentary: string; url: string; title: string; description: string
+}): Promise<string> {
+  return createPost(opts.token, opts.author, opts.commentary, { article: { source: opts.url, title: opts.title, description: opts.description } })
+}
+
+/** Uploads the image to LinkedIn, then posts it. Text-only when no image is given. */
+export async function publishPost(opts: {
+  token: string; author: string; commentary: string; image?: Buffer; altText?: string
+}): Promise<string> {
+  if (!opts.image) return createPost(opts.token, opts.author, opts.commentary)
+  const init = await fetch('https://api.linkedin.com/rest/images?action=initializeUpload', {
+    method: 'POST',
+    headers: restHeaders(opts.token),
+    body: JSON.stringify({ initializeUploadRequest: { owner: opts.author } }),
+  })
+  const initJson = await init.json().catch(() => ({}))
+  if (!init.ok || !initJson.value?.uploadUrl) throw new Error(initJson.message || `LinkedIn image upload init failed (${init.status})`)
+  const put = await fetch(initJson.value.uploadUrl, {
+    method: 'PUT',
+    headers: { Authorization: `Bearer ${opts.token}`, 'Content-Type': 'application/octet-stream' },
+    body: new Uint8Array(opts.image),
+  })
+  if (!put.ok) throw new Error(`LinkedIn image upload failed (${put.status})`)
+  return createPost(opts.token, opts.author, opts.commentary, { media: { id: initJson.value.image, altText: opts.altText } })
 }
