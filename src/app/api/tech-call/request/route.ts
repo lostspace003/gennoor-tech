@@ -6,7 +6,7 @@ import { rateLimit, clientIp } from '@/lib/rate-limit'
 import { escapeHtml } from '@/lib/escape-html'
 import { isEmailVerified } from '@/lib/otp-store'
 import { istInstant, formatInZone, IST } from '@/lib/crm/timezones'
-import { COUNTRIES, TECH_CALL_TYPE, isOfferedSlot, slotKey, zoneForCountry } from '@/lib/tech-call'
+import { COUNTRIES, TECH_CALL_TYPE, heldSlotKeys, isOfferedSlot, slotKey, zoneForCountry } from '@/lib/tech-call'
 
 export const dynamic = 'force-dynamic'
 
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     if (!isOfferedSlot(slotDate, slotTime)) return NextResponse.json({ error: 'That time is not available. Please pick another.' }, { status: 400 })
 
     const rows = await getEnquiries(TECH_CALL_TYPE, 60)
-    const taken = rows.some(r => (r.callStatus === 'pending' || r.callStatus === 'approved') && slotKey(String(r.slotDate), String(r.slotTime)) === slotKey(slotDate, slotTime))
+    const taken = heldSlotKeys(rows).has(slotKey(slotDate, slotTime))
     if (taken) return NextResponse.json({ error: 'That time was just taken. Please pick another.' }, { status: 409 })
 
     const tz = zoneForCountry(country)

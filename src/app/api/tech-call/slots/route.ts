@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getEnquiries } from '@/lib/azure-storage'
-import { SLOT_STARTS, TECH_CALL_TYPE, isOfferedSlot, offeredDates, slotKey } from '@/lib/tech-call'
+import { SLOT_STARTS, TECH_CALL_TYPE, heldSlotKeys, isOfferedSlot, offeredDates, slotKey } from '@/lib/tech-call'
 import { rateLimit, clientIp } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
@@ -11,7 +11,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Too many requests.' }, { status: 429 })
   }
   const rows = await getEnquiries(TECH_CALL_TYPE, 60).catch(() => [])
-  const held = new Set(rows.filter(r => r.callStatus === 'pending' || r.callStatus === 'approved').map(r => slotKey(String(r.slotDate), String(r.slotTime))))
+  const held = heldSlotKeys(rows)
   const days = offeredDates().map(date => ({
     date,
     slots: SLOT_STARTS.filter(t => isOfferedSlot(date, t)).map(time => ({ time, open: !held.has(slotKey(date, time)) })),
