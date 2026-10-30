@@ -10,10 +10,16 @@ const BASE = process.env.FOUNDRY_OPENAI_BASE || 'https://admin-5924-resource.ope
 const TEXT_MODEL = process.env.FOUNDRY_POST_MODEL || process.env.FOUNDRY_WEB_MODEL || 'gpt-5.4'
 const IMAGE_DEPLOYMENT = process.env.FOUNDRY_IMAGE_DEPLOYMENT || 'gpt-image-2'
 
+export type DraftKind = 'post' | 'poll'
+export type PollDuration = 'ONE_DAY' | 'THREE_DAYS' | 'SEVEN_DAYS' | 'FOURTEEN_DAYS'
+export interface PollSpec { question: string; options: string[]; duration: PollDuration }
+
 export type DraftStatus = 'draft' | 'approved' | 'published'
 
 export interface Draft {
   id: string
+  kind?: DraftKind
+  poll?: PollSpec
   topic: string
   status: DraftStatus
   text: string
@@ -91,20 +97,28 @@ async function foundry(path: string, body: unknown): Promise<any> {
 const WRITER = `You write LinkedIn posts for Gennoor Tech, an enterprise AI and Microsoft training company (India). Voice: practical, credible, no hype, no emoji spam. Write 120-220 words, short paragraphs, a strong first line, one concrete takeaway, a soft call to action, and 3-4 relevant hashtags at the end. Never invent statistics or quotes. Also write an image prompt for a clean, on-brand, text-free illustration (dark navy and electric blue palette, modern, no logos, no readable text).
 Reply as JSON only: {"text": string, "imagePrompt": string}`
 
+const POLL_WRITER = `You write LinkedIn polls for Gennoor Tech, an enterprise AI and Microsoft training company (India). Write a short intro (40-90 words, plain, a clear reason to vote, 3 relevant hashtags at the end) and a poll. LinkedIn limits: question max 140 characters, 2 to 4 options, each option max 30 characters. Options must be distinct and balanced. Never invent statistics.
+Reply as JSON only: {"text": string, "question": string, "options": string[]}`
+
 /** The post-writing agent: topic in, reviewed-by-human draft out. */
-export async function createDraft(topic: string, brief = ''): Promise<Draft> {
+export async function createDraft(topic: string, brief = '', kind: DraftKind = 'post'): Promise<Draft> {
   const json = await foundry('/openai/v1/responses', {
     model: TEXT_MODEL,
-    instructions: WRITER,
+    instructions: kind === 'poll' ? POLL_WRITER : WRITER,
     input: `Topic: ${topic}${brief ? `\nNotes from the editor: ${brief}` : ''}`,
   })
   const out: string = json.output_text
     || (json.output || []).flatMap((o: any) => o.content || []).map((c: any) => c.text || '').join('')
-  let parsed: { text?: string; imagePrompt?: string } = {}
+  let parsed: { text?: string; imagePrompt?: string; question?: string; options?: string[] } = {}
   try { parsed = JSON.parse(out.slice(out.indexOf('{'), out.lastIndexOf('}') + 1)) } catch { parsed = { text: out } }
   const now = new Date().toISOString()
   const d: Draft = {
-    id: randomBytes(6).toString('hex'), topic, status: 'draft',
+    id: randomBytes(6).toString('hex'), topic, status: 'draft', kind,
+    ...(kind === 'poll' ? { poll: {
+      question: (parsed.question || topic).slice(0, 140),
+      options: (parsed.options?.length ? parsed.options : ['Yes', 'No']).slice(0, 4).map(o => String(o).slice(0, 30)),
+      duration: 'SEVEN_DAYS' as PollDuration,
+    } } : {}),
     text: (parsed.text || '').trim(), imagePrompt: (parsed.imagePrompt || '').trim(),
     hasImage: false, createdAt: now, updatedAt: now, published: [],
   }

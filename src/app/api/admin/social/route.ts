@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   const topic = String(b.topic || '').trim()
   if (!topic) return NextResponse.json({ error: 'Give the agent a topic.' }, { status: 400 })
   try {
-    return NextResponse.json({ draft: await createDraft(topic, String(b.brief || '').trim()) })
+    return NextResponse.json({ draft: await createDraft(topic, String(b.brief || '').trim(), b.kind === 'poll' ? 'poll' : 'post') })
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || 'Draft failed' }, { status: 502 })
   }

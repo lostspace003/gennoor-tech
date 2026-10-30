@@ -18,13 +18,16 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const d = await getDraft(id)
   if (!d) return NextResponse.json({ error: 'Not found.' }, { status: 404 })
   if (d.status === 'draft') return NextResponse.json({ error: 'Approve the draft before publishing.' }, { status: 409 })
+  if (d.kind === 'poll' && (!d.poll?.question.trim() || (d.poll?.options.length ?? 0) < 2)) {
+    return NextResponse.json({ error: 'A poll needs a question and at least 2 options.' }, { status: 400 })
+  }
   if (!d.text.trim()) return NextResponse.json({ error: 'The post is empty.' }, { status: 400 })
 
   const s = await getLinkedInState()
   if (!s.accessToken || !s.expiresAt || new Date(s.expiresAt) < new Date()) {
     return NextResponse.json({ error: 'LinkedIn is not connected or the token expired. Reconnect on the LinkedIn page.' }, { status: 409 })
   }
-  const image = d.hasImage ? (await getImage(id)) || undefined : undefined
+  const image = d.kind !== 'poll' && d.hasImage ? (await getImage(id)) || undefined : undefined
 
   const done: { as: 'member' | 'organization'; urn: string; at: string }[] = []
   const errors: string[] = []
@@ -33,7 +36,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     if (!author) { errors.push(`${t}: not available with this connection`); continue }
     if (d.published.some(p => p.as === t)) { errors.push(`${t}: already posted`); continue }
     try {
-      const urn = await publishPost({ token: s.accessToken, author, commentary: d.text, image, altText: d.topic })
+      const urn = await publishPost({ token: s.accessToken, author, commentary: d.text, image, altText: d.topic, poll: d.kind === 'poll' ? d.poll : undefined })
       done.push({ as: t, urn, at: new Date().toISOString() })
     } catch (e: any) {
       errors.push(`${t}: ${e?.message || 'failed'}`)

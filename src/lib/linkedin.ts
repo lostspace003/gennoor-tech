@@ -122,7 +122,10 @@ export async function fetchAdminOrg(token: string): Promise<{ urn: string; name:
   }
 }
 
-type PostContent = { article: { source: string; title: string; description: string } } | { media: { id: string; altText?: string } }
+export type PollDuration = 'ONE_DAY' | 'THREE_DAYS' | 'SEVEN_DAYS' | 'FOURTEEN_DAYS'
+export interface PollInput { question: string; options: string[]; duration: PollDuration }
+
+type PostContent = { poll: { question: string; options: { text: string }[]; settings: { duration: PollDuration } } } | { article: { source: string; title: string; description: string } } | { media: { id: string; altText?: string } }
 
 async function createPost(token: string, author: string, commentary: string, content?: PostContent): Promise<string> {
   const res = await fetch('https://api.linkedin.com/rest/posts', {
@@ -153,8 +156,13 @@ export function publishArticle(opts: {
 
 /** Uploads the image to LinkedIn, then posts it. Text-only when no image is given. */
 export async function publishPost(opts: {
-  token: string; author: string; commentary: string; image?: Buffer; altText?: string
+  token: string; author: string; commentary: string; image?: Buffer; altText?: string; poll?: PollInput
 }): Promise<string> {
+  if (opts.poll) {
+    return createPost(opts.token, opts.author, opts.commentary, {
+      poll: { question: opts.poll.question, options: opts.poll.options.map(text => ({ text })), settings: { duration: opts.poll.duration } },
+    })
+  }
   if (!opts.image) return createPost(opts.token, opts.author, opts.commentary)
   const init = await fetch('https://api.linkedin.com/rest/images?action=initializeUpload', {
     method: 'POST',

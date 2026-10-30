@@ -6,7 +6,7 @@ import { Loader2 } from 'lucide-react'
 import InfoTip from '@/components/admin/InfoTip'
 
 interface Draft {
-  id: string; topic: string; status: 'draft' | 'approved' | 'published'; text: string; imagePrompt: string; hasImage: boolean
+  id: string; kind?: 'post' | 'poll'; poll?: { question: string; options: string[]; duration: string }; topic: string; status: 'draft' | 'approved' | 'published'; text: string; imagePrompt: string; hasImage: boolean
   createdAt: string; published: { as: string; at: string }[]
 }
 
@@ -17,6 +17,7 @@ export default function SocialStudioPage() {
   const [sel, setSel] = useState('')
   const [topic, setTopic] = useState('')
   const [brief, setBrief] = useState('')
+  const [kind, setKind] = useState<'post' | 'poll'>('post')
   const [busy, setBusy] = useState('')
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
@@ -44,12 +45,12 @@ export default function SocialStudioPage() {
   const json = (body: unknown): RequestInit => ({ method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
 
   async function create() {
-    const j = await call('create', '/api/admin/social', json({ topic, brief }))
+    const j = await call('create', '/api/admin/social', json({ topic, brief, kind }))
     if (j.draft) { setTopic(''); setBrief(''); await load(); setSel(j.draft.id) }
   }
   async function save(status?: 'draft' | 'approved') {
     if (!cur) return
-    const j = await call('save', `/api/admin/social/${cur.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: cur.text, imagePrompt: cur.imagePrompt, ...(status ? { status } : {}) }) })
+    const j = await call('save', `/api/admin/social/${cur.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: cur.text, imagePrompt: cur.imagePrompt, poll: cur.poll, ...(status ? { status } : {}) }) })
     if (j.draft) { patchLocal(cur.id, j.draft); setNotice(status === 'approved' ? 'Approved.' : 'Saved.') }
   }
   async function image() {
@@ -85,6 +86,12 @@ export default function SocialStudioPage() {
       <div className="grid md:grid-cols-[300px_1fr] gap-5">
         <div>
           <div className="rounded-lg border border-gray-200 bg-white p-3 mb-3">
+            <div className="flex items-center gap-2 mb-2 text-xs">
+              {(['post', 'poll'] as const).map(k => (
+                <button key={k} onClick={() => setKind(k)} className={`px-2.5 py-1 rounded-md border ${kind === k ? 'bg-gray-700 text-white border-gray-700' : 'border-gray-200'}`}>{k === 'post' ? 'Post + image' : 'Poll'}</button>
+              ))}
+              <InfoTip text="Post + image: text with an AI illustration. Poll: a native LinkedIn poll (question, 2 to 4 options, 1 to 14 days) with a short intro." />
+            </div>
             <input value={topic} onChange={e => setTopic(e.target.value)} placeholder="Topic, e.g. Claude Code for finance teams" className="w-full text-sm border border-gray-200 rounded-md px-2 py-1.5 mb-2" />
             <textarea value={brief} onChange={e => setBrief(e.target.value)} placeholder="Notes for the agent (optional)" rows={2} className="w-full text-sm border border-gray-200 rounded-md px-2 py-1.5 mb-2" />
             <button disabled={!topic.trim() || !!busy} onClick={create} className="w-full px-3 py-1.5 text-xs font-medium bg-gray-700 text-white rounded-md disabled:opacity-40">
@@ -113,12 +120,28 @@ export default function SocialStudioPage() {
               <label className="text-xs font-medium text-gray-600">Post text ({cur.text.length}/3000)<InfoTip text="The exact text that will go on LinkedIn. LinkedIn allows up to 3000 characters. Edit freely, then Save." /></label>
               <textarea disabled={locked} value={cur.text} onChange={e => patchLocal(cur.id, { text: e.target.value })} rows={11} className="w-full text-sm border border-gray-200 rounded-md px-2 py-1.5 mt-1" />
             </div>
-            <div>
+            {cur.kind === 'poll' && cur.poll && (
+              <div className="rounded-md border border-gray-200 p-3 space-y-2">
+                <label className="text-xs font-medium text-gray-600">Poll question ({cur.poll.question.length}/140)<InfoTip text="Shown above the options. LinkedIn allows up to 140 characters." /></label>
+                <input disabled={locked} value={cur.poll.question} onChange={e => patchLocal(cur.id, { poll: { ...cur.poll!, question: e.target.value } })} className="w-full text-sm border border-gray-200 rounded-md px-2 py-1.5" />
+                {cur.poll.options.map((o, i) => (
+                  <input key={i} disabled={locked} value={o} maxLength={30} placeholder={`Option ${i + 1}`} onChange={e => patchLocal(cur.id, { poll: { ...cur.poll!, options: cur.poll!.options.map((x, j) => (j === i ? e.target.value : x)) } })} className="w-full text-sm border border-gray-200 rounded-md px-2 py-1.5" />
+                ))}
+                <div className="flex items-center gap-2 text-xs">
+                  {cur.poll.options.length < 4 && !locked && <button className={btn} onClick={() => patchLocal(cur.id, { poll: { ...cur.poll!, options: [...cur.poll!.options, ''] } })}>Add option</button>}
+                  <select disabled={locked} value={cur.poll.duration} onChange={e => patchLocal(cur.id, { poll: { ...cur.poll!, duration: e.target.value } })} className="border border-gray-200 rounded-md px-2 py-1.5">
+                    <option value="ONE_DAY">1 day</option><option value="THREE_DAYS">3 days</option><option value="SEVEN_DAYS">7 days</option><option value="FOURTEEN_DAYS">14 days</option>
+                  </select>
+                  <InfoTip text="How long people can vote. Each option is limited to 30 characters; LinkedIn needs 2 to 4 options." />
+                </div>
+              </div>
+            )}
+            {cur.kind !== 'poll' && <div>
               <label className="text-xs font-medium text-gray-600">Image prompt<InfoTip text="The instruction sent to the image model (gpt-image-2). Change it and press Regenerate to get a different picture. Images are text-free by design so nothing is misspelled." /></label>
               <textarea disabled={locked} value={cur.imagePrompt} onChange={e => patchLocal(cur.id, { imagePrompt: e.target.value })} rows={3} className="w-full text-sm border border-gray-200 rounded-md px-2 py-1.5 mt-1" />
               <button disabled={locked || !!busy || !cur.imagePrompt.trim()} onClick={image} className={`${btn} mt-2`}>{busy === 'image' ? 'Generating…' : cur.hasImage ? 'Regenerate image' : 'Generate image'}</button>
-            </div>
-            {cur.hasImage && /* eslint-disable-next-line @next/next/no-img-element */ <img src={`/api/admin/social/${cur.id}/image?v=${imgV}`} alt="" className="rounded-md border border-gray-200 max-h-80" />}
+            </div>}
+            {cur.kind !== 'poll' && cur.hasImage && /* eslint-disable-next-line @next/next/no-img-element */ <img src={`/api/admin/social/${cur.id}/image?v=${imgV}`} alt="" className="rounded-md border border-gray-200 max-h-80" />}
 
             <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-gray-100">
               <button disabled={locked || !!busy} onClick={() => save()} className={btn}>Save</button>
