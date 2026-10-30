@@ -17,7 +17,8 @@ export default function SocialStudioPage() {
   const [sel, setSel] = useState('')
   const [topic, setTopic] = useState('')
   const [brief, setBrief] = useState('')
-  const [kind, setKind] = useState<'post' | 'poll'>('post')
+  const [kind, setKind] = useState<'post' | 'poll' | 'webinar'>('post')
+  const [wb, setWb] = useState({ title: '', when: '', link: 'https://www.gennoor.com/webinars' })
   const [busy, setBusy] = useState('')
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
@@ -45,7 +46,9 @@ export default function SocialStudioPage() {
   const json = (body: unknown): RequestInit => ({ method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
 
   async function create() {
-    const j = await call('create', '/api/admin/social', json({ topic, brief, kind }))
+    const j = await call('create', '/api/admin/social', json(kind === 'webinar'
+      ? { topic: `Webinar announcement: ${wb.title}`, brief: `Invite people to register for a free webinar. Title: ${wb.title}. When: ${wb.when}. Registration link (include it in the post): ${wb.link}. ${brief}`.trim(), kind: 'post' }
+      : { topic, brief, kind }))
     if (j.draft) { setTopic(''); setBrief(''); await load(); setSel(j.draft.id) }
   }
   async function save(status?: 'draft' | 'approved') {
@@ -87,14 +90,22 @@ export default function SocialStudioPage() {
         <div>
           <div className="rounded-lg border border-gray-200 bg-white p-3 mb-3">
             <div className="flex items-center gap-2 mb-2 text-xs">
-              {(['post', 'poll'] as const).map(k => (
-                <button key={k} onClick={() => setKind(k)} className={`px-2.5 py-1 rounded-md border ${kind === k ? 'bg-gray-700 text-white border-gray-700' : 'border-gray-200'}`}>{k === 'post' ? 'Post + image' : 'Poll'}</button>
+              {(['post', 'poll', 'webinar'] as const).map(k => (
+                <button key={k} onClick={() => setKind(k)} className={`px-2.5 py-1 rounded-md border ${kind === k ? 'bg-gray-700 text-white border-gray-700' : 'border-gray-200'}`}>{k === 'post' ? 'Post + image' : k === 'poll' ? 'Poll' : 'Webinar'}</button>
               ))}
-              <InfoTip text="Post + image: text with an AI illustration. Poll: a native LinkedIn poll (question, 2 to 4 options, 1 to 14 days) with a short intro." />
+              <InfoTip text="Post + image: text with an AI illustration. Poll: a native LinkedIn poll (question, 2 to 4 options, 1 to 14 days) with a short intro. Webinar: type the title, date and link and the AI writes the announcement." />
             </div>
+            {kind === 'webinar' ? (
+              <div className="space-y-2 mb-2">
+                <input value={wb.title} onChange={e => setWb({ ...wb, title: e.target.value })} placeholder="Webinar title" className="w-full text-sm border border-gray-200 rounded-md px-2 py-1.5" />
+                <input value={wb.when} onChange={e => setWb({ ...wb, when: e.target.value })} placeholder="When, e.g. Sat 15 Nov, 7 PM IST" className="w-full text-sm border border-gray-200 rounded-md px-2 py-1.5" />
+                <input value={wb.link} onChange={e => setWb({ ...wb, link: e.target.value })} placeholder="Registration link" className="w-full text-sm border border-gray-200 rounded-md px-2 py-1.5" />
+              </div>
+            ) : (
             <input value={topic} onChange={e => setTopic(e.target.value)} placeholder="Topic, e.g. Claude Code for finance teams" className="w-full text-sm border border-gray-200 rounded-md px-2 py-1.5 mb-2" />
+            )}
             <textarea value={brief} onChange={e => setBrief(e.target.value)} placeholder="Notes for the agent (optional)" rows={2} className="w-full text-sm border border-gray-200 rounded-md px-2 py-1.5 mb-2" />
-            <button disabled={!topic.trim() || !!busy} onClick={create} className="w-full px-3 py-1.5 text-xs font-medium bg-gray-700 text-white rounded-md disabled:opacity-40">
+            <button disabled={(kind === 'webinar' ? !wb.title.trim() || !wb.when.trim() : !topic.trim()) || !!busy} onClick={create} className="w-full px-3 py-1.5 text-xs font-medium bg-gray-700 text-white rounded-md disabled:opacity-40">
               {busy === 'create' ? 'Writing…' : 'Draft with AI'}
             </button>
             <div className="text-[11px] text-gray-500 mt-1">Topic and notes<InfoTip text="The topic is what the post is about. Notes are optional guidance such as audience, angle or a fact to include. The AI writes a first draft only; you edit it." /></div>

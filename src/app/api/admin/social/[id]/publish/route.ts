@@ -33,10 +33,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const errors: string[] = []
   for (const t of targets) {
     const author = t === 'member' ? s.memberUrn : s.orgUrn
-    if (!author) { errors.push(`${t}: not available with this connection`); continue }
+    const token = t === 'member' ? s.accessToken : (s.orgAccessToken && s.orgExpiresAt && new Date(s.orgExpiresAt) > new Date() ? s.orgAccessToken : '')
+    if (!author || !token) { errors.push(`${t}: not available with this connection`); continue }
     if (d.published.some(p => p.as === t)) { errors.push(`${t}: already posted`); continue }
     try {
-      const urn = await publishPost({ token: s.accessToken, author, commentary: d.text, image, altText: d.topic, poll: d.kind === 'poll' ? d.poll : undefined })
+      const urn = await publishPost({ token, author, commentary: d.text, image, altText: d.topic, poll: d.kind === 'poll' ? d.poll : undefined })
       done.push({ as: t, urn, at: new Date().toISOString() })
     } catch (e: any) {
       errors.push(`${t}: ${e?.message || 'failed'}`)

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 import { siteUrl } from '@/lib/tech-call-mail'
-import { oauthOrigin, exchangeCode, fetchAdminOrg, fetchMember, getLinkedInState, saveLinkedInState } from '@/lib/linkedin'
+import { pageAppConfigured, oauthOrigin, exchangeCode, fetchAdminOrg, fetchMember, getLinkedInState, saveLinkedInState } from '@/lib/linkedin'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,21 +19,28 @@ export async function GET(req: NextRequest) {
   if (!code || !state || state !== req.cookies.get('li_state')?.value) return back('error=State+mismatch,+please+try+connecting+again')
 
   try {
-    const token = await exchangeCode(code, oauthOrigin(req, siteUrl()))
-    const member = await fetchMember(token.access_token)
-    const org = (token.scope || '').includes('w_organization_social') ? await fetchAdminOrg(token.access_token) : null
+    const forPage = state.endsWith('.org') && pageAppConfigured()
+    const token = await exchangeCode(code, oauthOrigin(req, siteUrl()), forPage)
     const prev = await getLinkedInState()
-    await saveLinkedInState({
-      shares: prev.shares,
-      accessToken: token.access_token,
-      expiresAt: new Date(Date.now() + token.expires_in * 1000).toISOString(),
-      scope: token.scope,
-      memberUrn: member.urn,
-      memberName: member.name,
-      orgUrn: org?.urn,
-      orgName: org?.name,
-      connectedAt: new Date().toISOString(),
-    })
+    const expiresAt = new Date(Date.now() + token.expires_in * 1000).toISOString()
+    if (forPage) {
+      // Page app: keep the member connection as is, add the page token and page.
+      const org = await fetchAdminOrg(token.access_token)
+      await saveLinkedInState({ ...prev, orgAccessToken: token.access_token, orgExpiresAt: expiresAt, orgUrn: org?.urn || prev.orgUrn, orgName: org?.name || prev.orgName })
+    } else {
+      const member = await fetchMember(token.access_token)
+      const org = (token.scope || '').includes('w_organization_social') ? await fetchAdminOrg(token.access_token) : null
+      await saveLinkedInState({
+        ...prev,
+        accessToken: token.access_token,
+        expiresAt,
+        scope: token.scope,
+        memberUrn: member.urn,
+        memberName: member.name,
+        ...(org ? { orgUrn: org.urn, orgName: org.name, orgAccessToken: token.access_token, orgExpiresAt: expiresAt } : {}),
+        connectedAt: new Date().toISOString(),
+      })
+    }
     const res = back('connected=1')
     res.cookies.delete({ name: 'li_state', path: '/api/linkedin' })
     return res
