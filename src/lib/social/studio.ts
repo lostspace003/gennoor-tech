@@ -7,8 +7,8 @@ import { foundryAuthHeader, foundryConfigured } from '@/lib/crm/foundry'
 const CONTAINER = 'crm-data'
 const DRAFTS = 'social/drafts.json'
 const BASE = process.env.FOUNDRY_OPENAI_BASE || 'https://admin-5924-resource.openai.azure.com'
-const TEXT_MODEL = process.env.FOUNDRY_POST_MODEL || process.env.FOUNDRY_WEB_MODEL || 'gpt-5'
-const IMAGE_DEPLOYMENT = process.env.FOUNDRY_IMAGE_DEPLOYMENT || 'gpt-image-1'
+const TEXT_MODEL = process.env.FOUNDRY_POST_MODEL || process.env.FOUNDRY_WEB_MODEL || 'gpt-5.4'
+const IMAGE_DEPLOYMENT = process.env.FOUNDRY_IMAGE_DEPLOYMENT || 'gpt-image-2'
 
 export type DraftStatus = 'draft' | 'approved' | 'published'
 

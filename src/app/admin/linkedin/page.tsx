@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Loader2 } from 'lucide-react'
+import InfoTip from '@/components/admin/InfoTip'
 
 interface Share { urn: string; as: 'member' | 'organization'; at: string }
 interface Status {
@@ -45,7 +46,7 @@ export default function LinkedInPage() {
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-semibold">LinkedIn publishing</h1>
+        <h1 className="text-xl font-semibold">LinkedIn publishing<InfoTip text="Share Gennoor blog posts on LinkedIn through the official LinkedIn developer API. Connect once, then post with one click." /></h1>
         <Link href="/admin" className="text-sm text-gray-600 hover:underline">← Admin</Link>
       </div>
 
@@ -67,13 +68,13 @@ export default function LinkedInPage() {
 
           <div className="rounded-lg border border-gray-200 bg-white p-4 mb-5 text-sm">
             <div className="flex flex-wrap items-center gap-x-6 gap-y-1 mb-3">
-              <span>{dot(s.connected)}{s.connected ? `Connected as ${s.memberName || 'member'}` : 'Not connected'}</span>
-              {s.connected && <span>{dot(s.canPostAsOrg)}{s.canPostAsOrg ? `Page: ${s.orgName}` : 'Company page not linked'}</span>}
-              {s.expiresAt && s.connected && <span className="text-gray-500">Token valid until {new Date(s.expiresAt).toLocaleDateString()}</span>}
+              <span>{dot(s.connected)}{s.connected ? `Connected as ${s.memberName || 'member'}` : 'Not connected'}<InfoTip text="Whether the site holds a valid LinkedIn login token for you. It lets the site post on your behalf; it never sees your password." /></span>
+              {s.connected && <span>{dot(s.canPostAsOrg)}{s.canPostAsOrg ? `Page: ${s.orgName}` : 'Company page not linked'}<InfoTip text="Posting as the Gennoor company page needs LinkedIn's Community Management API, which must be approved on the LinkedIn app first. Until then only 'Post as me' works." /></span>}
+              {s.expiresAt && s.connected && <span className="text-gray-500">Token valid until {new Date(s.expiresAt).toLocaleDateString()}<InfoTip text="LinkedIn logins last about 60 days and cannot renew themselves. Click Reconnect before this date, or posting stops." /></span>}
             </div>
             <div className="flex gap-2">
-              <a href="/api/linkedin/connect" className="px-3 py-1.5 text-xs font-medium bg-gray-700 text-white rounded-md">{s.connected ? 'Reconnect (member)' : 'Connect LinkedIn'}</a>
-              <a href="/api/linkedin/connect?org=1" className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400">Connect + company page</a>
+              <a href="/api/linkedin/connect" className="px-3 py-1.5 text-xs font-medium bg-gray-700 text-white rounded-md">{s.connected ? 'Reconnect (member)' : 'Connect LinkedIn'}</a><InfoTip text="Opens LinkedIn so you can approve the app. Grants permission to post as you (Share on LinkedIn)." />
+              <a href="/api/linkedin/connect?org=1" className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400">Connect + company page</a><InfoTip text="Also asks for company-page permissions. LinkedIn will refuse this until the Community Management API is approved for the app." />
             </div>
           </div>
 

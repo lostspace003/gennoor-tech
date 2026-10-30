@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Loader2 } from 'lucide-react'
+import InfoTip from '@/components/admin/InfoTip'
 
 interface Draft {
   id: string; topic: string; status: 'draft' | 'approved' | 'published'; text: string; imagePrompt: string; hasImage: boolean
@@ -75,7 +76,7 @@ export default function SocialStudioPage() {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-semibold">Social studio</h1>
+        <h1 className="text-xl font-semibold">Social studio<InfoTip text="Write, illustrate, review and publish posts. AI drafts them using your Azure AI Foundry models; nothing is posted until you approve and click Post." /></h1>
         <div className="flex gap-4 text-sm"><Link href="/admin/linkedin" className="text-gray-600 hover:underline">LinkedIn connection</Link><Link href="/admin" className="text-gray-600 hover:underline">← Admin</Link></div>
       </div>
       {error && <div className="mb-3 rounded-md bg-red-50 border border-red-200 text-red-800 text-sm px-3 py-2">{error}</div>}
@@ -89,6 +90,7 @@ export default function SocialStudioPage() {
             <button disabled={!topic.trim() || !!busy} onClick={create} className="w-full px-3 py-1.5 text-xs font-medium bg-gray-700 text-white rounded-md disabled:opacity-40">
               {busy === 'create' ? 'Writing…' : 'Draft with AI'}
             </button>
+            <div className="text-[11px] text-gray-500 mt-1">Topic and notes<InfoTip text="The topic is what the post is about. Notes are optional guidance such as audience, angle or a fact to include. The AI writes a first draft only; you edit it." /></div>
           </div>
           {!drafts ? <Loader2 className="w-5 h-5 animate-spin text-gray-400" /> : (
             <ul className="rounded-lg border border-gray-200 bg-white divide-y divide-gray-100">
@@ -108,11 +110,11 @@ export default function SocialStudioPage() {
         {!cur ? <div className="text-sm text-gray-500 p-6">Pick a draft, or give the agent a topic.</div> : (
           <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-4">
             <div>
-              <label className="text-xs font-medium text-gray-600">Post text ({cur.text.length}/3000)</label>
+              <label className="text-xs font-medium text-gray-600">Post text ({cur.text.length}/3000)<InfoTip text="The exact text that will go on LinkedIn. LinkedIn allows up to 3000 characters. Edit freely, then Save." /></label>
               <textarea disabled={locked} value={cur.text} onChange={e => patchLocal(cur.id, { text: e.target.value })} rows={11} className="w-full text-sm border border-gray-200 rounded-md px-2 py-1.5 mt-1" />
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-600">Image prompt</label>
+              <label className="text-xs font-medium text-gray-600">Image prompt<InfoTip text="The instruction sent to the image model (gpt-image-2). Change it and press Regenerate to get a different picture. Images are text-free by design so nothing is misspelled." /></label>
               <textarea disabled={locked} value={cur.imagePrompt} onChange={e => patchLocal(cur.id, { imagePrompt: e.target.value })} rows={3} className="w-full text-sm border border-gray-200 rounded-md px-2 py-1.5 mt-1" />
               <button disabled={locked || !!busy || !cur.imagePrompt.trim()} onClick={image} className={`${btn} mt-2`}>{busy === 'image' ? 'Generating…' : cur.hasImage ? 'Regenerate image' : 'Generate image'}</button>
             </div>
@@ -120,9 +122,9 @@ export default function SocialStudioPage() {
 
             <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-gray-100">
               <button disabled={locked || !!busy} onClick={() => save()} className={btn}>Save</button>
-              {cur.status === 'draft' && <button disabled={!!busy || !cur.text.trim()} onClick={() => save('approved')} className={btn}>Approve</button>}
+              {cur.status === 'draft' && <><button disabled={!!busy || !cur.text.trim()} onClick={() => save('approved')} className={btn}>Approve</button><InfoTip text="Marks the draft as reviewed. Posting is only possible after approval. You can send it back to draft." /></>}
               {cur.status === 'approved' && <button disabled={!!busy} onClick={() => save('draft')} className={btn}>Back to draft</button>}
-              <span className="flex-1" />
+              <span className="flex-1" /><InfoTip text="Draft = still being edited. Approved = reviewed and ready. Published = already on LinkedIn and locked. Post as me uses your profile; Post to page needs the company-page connection." />
               {cur.status === 'approved' && <>
                 <button disabled={!!busy} onClick={() => publish(['member'])} className="px-3 py-1.5 text-xs font-medium bg-gray-700 text-white rounded-md disabled:opacity-40">{busy === 'publish' ? 'Posting…' : 'Post as me'}</button>
                 <button disabled={!!busy} onClick={() => publish(['organization'])} className="px-3 py-1.5 text-xs font-medium bg-gray-700 text-white rounded-md disabled:opacity-40">Post to page</button>
