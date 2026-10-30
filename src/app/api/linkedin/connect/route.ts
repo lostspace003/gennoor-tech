@@ -13,8 +13,9 @@ export async function GET(req: NextRequest) {
   if (!linkedInConfigured()) {
     return NextResponse.json({ error: 'LINKEDIN_CLIENT_ID and LINKEDIN_CLIENT_SECRET are not set.' }, { status: 503 })
   }
-  const state = randomBytes(16).toString('hex')
-  const res = NextResponse.redirect(authorizeUrl(oauthOrigin(req, siteUrl()), state, req.nextUrl.searchParams.get('org') === '1'))
+  const withOrg = req.nextUrl.searchParams.get('org') === '1'
+  const state = `${randomBytes(16).toString('hex')}${withOrg ? '.org' : ''}`
+  const res = NextResponse.redirect(authorizeUrl(oauthOrigin(req, siteUrl()), state, withOrg))
   res.cookies.set('li_state', state, { httpOnly: true, secure: true, sameSite: 'lax', path: '/api/linkedin', maxAge: 600 })
   return res
 }

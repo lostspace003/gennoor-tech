@@ -20,6 +20,9 @@ export interface LinkedInState {
   memberName?: string
   orgUrn?: string
   orgName?: string
+  /** Token from the company-page app (Community Management API); separate from the member token. */
+  orgAccessToken?: string
+  orgExpiresAt?: string
   connectedAt?: string
   /** blog slug -> where it was shared */
   shares?: Record<string, LinkedInShare[]>
@@ -57,6 +60,15 @@ export function linkedInConfigured() {
   return !!(process.env.LINKEDIN_CLIENT_ID && process.env.LINKEDIN_CLIENT_SECRET)
 }
 
+/** Company-page posting runs on its own LinkedIn app (Community Management API must be the only product on its app). */
+export function pageAppConfigured() {
+  return !!(process.env.LINKEDIN_PAGE_CLIENT_ID && process.env.LINKEDIN_PAGE_CLIENT_SECRET)
+}
+
+const creds = (page: boolean) => page && pageAppConfigured()
+  ? { id: process.env.LINKEDIN_PAGE_CLIENT_ID!, secret: process.env.LINKEDIN_PAGE_CLIENT_SECRET! }
+  : { id: process.env.LINKEDIN_CLIENT_ID || '', secret: process.env.LINKEDIN_CLIENT_SECRET || '' }
+
 /** Public origin for the OAuth round trip: the host the admin is signed in on (both are registered on the LinkedIn app), else the configured site URL. */
 export function oauthOrigin(req: { headers: { get(name: string): string | null } }, fallback: string): string {
   const host = (req.headers.get('x-forwarded-host') || req.headers.get('host') || '').split(',')[0].trim().toLowerCase()
@@ -68,7 +80,7 @@ export const redirectUri = (origin: string) => `${origin}/api/linkedin/callback`
 export function authorizeUrl(origin: string, state: string, withOrg: boolean) {
   const q = new URLSearchParams({
     response_type: 'code',
-    client_id: process.env.LINKEDIN_CLIENT_ID || '',
+    client_id: creds(withOrg).id,
     redirect_uri: redirectUri(origin),
     state,
     scope: withOrg ? `${MEMBER_SCOPES} ${ORG_SCOPES}` : MEMBER_SCOPES,
@@ -76,7 +88,7 @@ export function authorizeUrl(origin: string, state: string, withOrg: boolean) {
   return `https://www.linkedin.com/oauth/v2/authorization?${q}`
 }
 
-export async function exchangeCode(code: string, origin: string): Promise<{ access_token: string; expires_in: number; scope?: string }> {
+export async function exchangeCode(code: string, origin: string, page = false): Promise<{ access_token: string; expires_in: number; scope?: string }> {
   const res = await fetch('https://www.linkedin.com/oauth/v2/accessToken', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -84,8 +96,8 @@ export async function exchangeCode(code: string, origin: string): Promise<{ acce
       grant_type: 'authorization_code',
       code,
       redirect_uri: redirectUri(origin),
-      client_id: process.env.LINKEDIN_CLIENT_ID || '',
-      client_secret: process.env.LINKEDIN_CLIENT_SECRET || '',
+      client_id: creds(page).id,
+      client_secret: creds(page).secret,
     }),
   })
   const json = await res.json().catch(() => ({}))

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 import { blogPostsMeta } from '@/data/blog-posts'
-import { getLinkedInState, linkedInConfigured, publishArticle, saveLinkedInState } from '@/lib/linkedin'
+import { getLinkedInState, linkedInConfigured, pageAppConfigured, publishArticle, saveLinkedInState } from '@/lib/linkedin'
 import { siteUrl } from '@/lib/tech-call-mail'
 
 export const dynamic = 'force-dynamic'
@@ -24,7 +24,8 @@ export async function GET(req: NextRequest) {
     expiringSoon: !!s.accessToken && daysLeft <= WARN_DAYS,
     memberName: s.memberName || '',
     orgName: s.orgName || '',
-    canPostAsOrg: !!s.orgUrn,
+    canPostAsOrg: !!s.orgUrn && !!s.orgAccessToken && !!s.orgExpiresAt && new Date(s.orgExpiresAt) > new Date(),
+    pageAppConfigured: pageAppConfigured(),
     posts: blogPostsMeta.map(p => ({ slug: p.slug, title: p.title, date: p.date, shares: s.shares?.[p.slug] || [] })),
   })
 }
@@ -57,8 +58,9 @@ export async function POST(req: NextRequest) {
     if (!author) { errors.push(`${t}: not available with this connection`); continue }
     if (s.shares[post.slug]?.some(x => x.as === t) && !b.force) { errors.push(`${t}: already shared`); continue }
     try {
+      const pageToken = s.orgAccessToken && s.orgExpiresAt && new Date(s.orgExpiresAt) > new Date() ? s.orgAccessToken : ''
       const urn = await publishArticle({
-        token: s.accessToken, author, commentary, url, title: post.title, description: post.excerpt.slice(0, 250),
+        token: t === 'member' ? s.accessToken : pageToken, author, commentary, url, title: post.title, description: post.excerpt.slice(0, 250),
       })
       s.shares[post.slug] = [...(s.shares[post.slug] || []), { urn, as: t, at: new Date().toISOString(), by: email || '' }]
       done.push(t)
