@@ -18,7 +18,7 @@ export default function SocialStudioPage() {
   const [topic, setTopic] = useState('')
   const [brief, setBrief] = useState('')
   const [kind, setKind] = useState<'post' | 'poll' | 'webinar'>('post')
-  const [wb, setWb] = useState({ title: '', when: '', link: 'https://www.gennoor.com/webinars' })
+  const [wb, setWb] = useState({ title: '', when: '', link: 'https://www.gennoor.com/webinars', startsAt: '', endsAt: '' })
   const [busy, setBusy] = useState('')
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
@@ -50,6 +50,10 @@ export default function SocialStudioPage() {
       ? { topic: `Webinar announcement: ${wb.title}`, brief: `Invite people to register for a free webinar. Title: ${wb.title}. When: ${wb.when}. Registration link (include it in the post): ${wb.link}. ${brief}`.trim(), kind: 'post' }
       : { topic, brief, kind }))
     if (j.draft) { setTopic(''); setBrief(''); await load(); setSel(j.draft.id) }
+  }
+  async function createEvent() {
+    const j = await call('event', '/api/admin/linkedin/event', json({ title: wb.title, url: wb.link, startsAt: new Date(wb.startsAt).toISOString(), endsAt: new Date(wb.endsAt).toISOString(), description: `${wb.when}` }))
+    if (j.ok) setNotice(`LinkedIn Event created (id ${j.eventId}).`)
   }
   async function save(status?: 'draft' | 'approved') {
     if (!cur) return
@@ -100,6 +104,10 @@ export default function SocialStudioPage() {
                 <input value={wb.title} onChange={e => setWb({ ...wb, title: e.target.value })} placeholder="Webinar title" className="w-full text-sm border border-gray-200 rounded-md px-2 py-1.5" />
                 <input value={wb.when} onChange={e => setWb({ ...wb, when: e.target.value })} placeholder="When, e.g. Sat 15 Nov, 7 PM IST" className="w-full text-sm border border-gray-200 rounded-md px-2 py-1.5" />
                 <input value={wb.link} onChange={e => setWb({ ...wb, link: e.target.value })} placeholder="Registration link" className="w-full text-sm border border-gray-200 rounded-md px-2 py-1.5" />
+                <div className="text-[11px] text-gray-500">LinkedIn Event (optional)<InfoTip text="Also creates an official LinkedIn Event on the Gennoor page that points to your registration link. Needs the company page connected through the second LinkedIn app. Times use your browser's timezone." /></div>
+                <input type="datetime-local" value={wb.startsAt} onChange={e => setWb({ ...wb, startsAt: e.target.value })} className="w-full text-sm border border-gray-200 rounded-md px-2 py-1.5" />
+                <input type="datetime-local" value={wb.endsAt} onChange={e => setWb({ ...wb, endsAt: e.target.value })} className="w-full text-sm border border-gray-200 rounded-md px-2 py-1.5" />
+                <button disabled={!wb.title.trim() || !wb.startsAt || !wb.endsAt || !!busy} onClick={createEvent} className="w-full px-3 py-1.5 text-xs font-medium rounded-md border border-gray-200 hover:border-gray-400 disabled:opacity-40">{busy === 'event' ? 'Creating…' : 'Create LinkedIn Event'}</button>
               </div>
             ) : (
             <input value={topic} onChange={e => setTopic(e.target.value)} placeholder="Topic, e.g. Claude Code for finance teams" className="w-full text-sm border border-gray-200 rounded-md px-2 py-1.5 mb-2" />
