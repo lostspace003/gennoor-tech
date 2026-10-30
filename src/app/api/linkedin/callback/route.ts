@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
+import { siteUrl } from '@/lib/tech-call-mail'
 import { exchangeCode, fetchAdminOrg, fetchMember, getLinkedInState, saveLinkedInState } from '@/lib/linkedin'
 
 export const dynamic = 'force-dynamic'
@@ -9,7 +10,7 @@ export async function GET(req: NextRequest) {
   const { authorized } = await verifyAdmin(req)
   if (!authorized) return unauthorizedResponse()
 
-  const back = (q: string) => NextResponse.redirect(`${req.nextUrl.origin}/admin/linkedin?${q}`)
+  const back = (q: string) => NextResponse.redirect(`${siteUrl()}/admin/linkedin?${q}`)
   const p = req.nextUrl.searchParams
   if (p.get('error')) return back(`error=${encodeURIComponent(p.get('error_description') || p.get('error') || 'denied')}`)
 
@@ -18,7 +19,7 @@ export async function GET(req: NextRequest) {
   if (!code || !state || state !== req.cookies.get('li_state')?.value) return back('error=State+mismatch,+please+try+connecting+again')
 
   try {
-    const token = await exchangeCode(code, req.nextUrl.origin)
+    const token = await exchangeCode(code, siteUrl())
     const member = await fetchMember(token.access_token)
     const org = (token.scope || '').includes('w_organization_social') ? await fetchAdminOrg(token.access_token) : null
     const prev = await getLinkedInState()
