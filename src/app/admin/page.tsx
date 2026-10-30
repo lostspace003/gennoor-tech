@@ -639,6 +639,7 @@ export default function AdminDashboard() {
             <a href="/admin/community" className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">Community</a>
             <a href="/admin/mailboxes" className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">Mailboxes</a>
             <a href="/admin/tech-calls" className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">Tech calls</a>
+            <a href="/admin/linkedin" className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">LinkedIn</a>
             <GennoorCareTile />
             <button onClick={() => router.push('/crm')} className="px-3 py-1.5 text-xs font-medium bg-gray-600 text-white rounded-md hover:shadow-md transition-all flex items-center gap-1.5">
               <Bot className="w-3.5 h-3.5" />
