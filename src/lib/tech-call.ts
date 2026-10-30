@@ -44,3 +44,17 @@ export function isOfferedSlot(date: string, time: string, now = new Date()): boo
 export function slotKey(date: string, time: string): string {
   return `${date} ${time}`
 }
+
+/**
+ * Slots that cannot be offered to anyone else: every pending or approved request holds its own slot,
+ * and a request that is waiting on the visitor's answer also holds the new time we proposed.
+ */
+export function heldSlotKeys(rows: Array<Record<string, any>>, exceptId?: string): Set<string> {
+  const held = new Set<string>()
+  for (const r of rows) {
+    if (exceptId && r.rowKey === exceptId) continue
+    if (r.callStatus === 'pending' || r.callStatus === 'approved') held.add(slotKey(String(r.slotDate), String(r.slotTime)))
+    if (r.proposalStatus === 'awaiting' && r.proposedDate) held.add(slotKey(String(r.proposedDate), String(r.proposedTime)))
+  }
+  return held
+}
