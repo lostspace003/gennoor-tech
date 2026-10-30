@@ -14,7 +14,7 @@ export default function PrivacyPage() {
       <PageHero
         eyebrow="Privacy Policy"
         title="Privacy Policy"
-        description="Last updated: July 6, 2026"
+        description="Last updated: October 31, 2026"
         size="compact"
       />
 
@@ -66,7 +66,8 @@ export default function PrivacyPage() {
             <ul className="list-disc pl-5 mt-2 space-y-1">
               <li><strong>Microsoft Azure</strong> — hosting, storage, and analytics</li>
               <li><strong>Hostinger SMTP</strong> — sending emails</li>
-              <li><strong>LinkedIn API</strong> — sharing blog content to our company page</li>
+              <li><strong>Microsoft Azure AI Foundry / Azure OpenAI</strong> — AI-assisted features such as drafting content and our website assistant</li>
+              <li><strong>LinkedIn APIs</strong> — publishing our own content to our company page, and measuring our own LinkedIn advertising (see &quot;LinkedIn API Services and Advertising Measurement&quot; below)</li>
             </ul>
             <p className="mt-2">We do not sell, rent, or share your personal data with third parties for marketing purposes.</p>
           </section>
@@ -74,7 +75,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-lg font-semibold text-gray-900 mb-2">Cookies</h2>
             <p>
-              We use essential cookies for site functionality (session affinity). We do not use advertising or tracking cookies.
+              We use essential cookies for site functionality (session affinity). We do not sell data or use cookies for cross-site profiling. If we run LinkedIn advertising campaigns, we may use the LinkedIn Insight Tag to measure the results of those campaigns, only where you have consented to such measurement.
             </p>
           </section>
 
@@ -88,6 +89,34 @@ export default function PrivacyPage() {
             </ul>
             <p className="mt-2">
               Email us at <a href="mailto:info@gennoor.com" className="text-primary-600 hover:underline">info@gennoor.com</a> for any privacy-related requests.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">LinkedIn API Services and Advertising Measurement</h2>
+            <p>
+              We use LinkedIn APIs through internal tools that only authorized Gennoor Tech staff can access.
+            </p>
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+              <li><strong>Publishing:</strong> we post our own blog articles, announcements, webinars and polls to our own LinkedIn profile and company page. Content is reviewed and approved by a staff member before it is posted.</li>
+              <li><strong>Advertising measurement:</strong> if we run LinkedIn campaigns, we may send our own conversion events (for example an enquiry, a webinar registration or a booked call on gennoor.com) to LinkedIn using the Conversions API, to measure and improve those campaigns. This is limited to our own advertising account and our own first-party data, and only where you have consented.</li>
+              <li>We do not use LinkedIn APIs to collect data about LinkedIn members for any other purpose, and we do not pass LinkedIn data to third parties.</li>
+              <li>Access tokens are stored in private Microsoft Azure storage and are never shared.</li>
+              <li>You can manage your LinkedIn ad and data preferences in your <a href="https://www.linkedin.com/psettings/advertising" className="text-primary-600 hover:underline" target="_blank" rel="noopener noreferrer">LinkedIn settings</a>.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">Privacy Responsibility and Grievance Contact</h2>
+            <p>
+              Privacy compliance at Gennoor Tech is the responsibility of our Founder &amp; CEO, who acts as our privacy and grievance contact and oversees how personal data is collected, used, stored and deleted, including under India&apos;s Digital Personal Data Protection Act, 2023. Reach us at <a href="mailto:info@gennoor.com" className="text-primary-600 hover:underline">info@gennoor.com</a> (subject: &quot;Privacy&quot;). We aim to respond within 30 days.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">Retention</h2>
+            <p>
+              We keep enquiry and booking data only as long as needed to respond to you and to maintain our business records, and delete it on request unless the law requires us to keep it.
             </p>
           </section>
 
