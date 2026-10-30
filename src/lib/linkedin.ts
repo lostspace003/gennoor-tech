@@ -8,6 +8,7 @@ const BLOB = 'linkedin.json'
 const API_VERSION = '202510'
 
 export const MEMBER_SCOPES = 'openid profile w_member_social'
+export const PAGE_APP_SCOPES = 'openid profile w_member_social rw_events r_events'
 export const ORG_SCOPES = 'w_organization_social rw_organization_admin'
 
 export interface LinkedInShare { urn: string; as: 'member' | 'organization'; at: string; by: string }
@@ -83,7 +84,8 @@ export function authorizeUrl(origin: string, state: string, withOrg: boolean) {
     client_id: creds(withOrg).id,
     redirect_uri: redirectUri(origin),
     state,
-    scope: withOrg ? `${MEMBER_SCOPES} ${ORG_SCOPES}` : MEMBER_SCOPES,
+    // The page app only asks for scopes it has been granted; asking for an unapproved scope fails the whole login.
+    scope: withOrg ? (pageAppConfigured() ? (process.env.LINKEDIN_PAGE_SCOPES || PAGE_APP_SCOPES) : `${MEMBER_SCOPES} ${ORG_SCOPES}`) : MEMBER_SCOPES,
   })
   return `https://www.linkedin.com/oauth/v2/authorization?${q}`
 }
@@ -196,4 +198,51 @@ export async function publishPost(opts: {
   })
   if (!put.ok) throw new Error(`LinkedIn image upload failed (${put.status})`)
   return createPost(opts.token, opts.author, opts.commentary, { media: { id: initJson.value.image, altText: opts.altText } })
+}
+
+/**
+ * Creates an external (hosted on our own site) online LinkedIn Event for the organization, then posts it so it
+ * becomes visible. Needs the rw_events scope and a token from a member who administers the page.
+ * Returns the event id.
+ */
+export async function createExternalEvent(opts: {
+  token: string; organizer: string; name: string; description?: string
+  startsAt: number; endsAt: number; url: string; privacyPolicyUrl: string
+}): Promise<{ eventId: string; postUrn: string }> {
+  const res = await fetch('https://api.linkedin.com/rest/events', {
+    method: 'POST',
+    headers: { ...restHeaders(opts.token), 'X-RestLi-Method': 'create' },
+    body: JSON.stringify({
+      name: { localized: { en_US: opts.name } },
+      ...(opts.description ? { description: { localized: { en_US: opts.description } } } : {}),
+      type: { online: { format: { external: { endsAt: opts.endsAt, url: opts.url } } } },
+      organizer: opts.organizer,
+      leadGenFormSpec: { privacyPolicyUrl: opts.privacyPolicyUrl },
+      startsAt: opts.startsAt,
+    }),
+  })
+  const body = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(body.message || `LinkedIn rejected the event (${res.status})`)
+  const eventId = String(body.id || res.headers.get('x-restli-id') || '')
+  if (!eventId) throw new Error('LinkedIn created the event but returned no id.')
+
+  // An event only becomes visible, fetchable and editable once it is posted.
+  const post = await fetch('https://api.linkedin.com/rest/posts', {
+    method: 'POST',
+    headers: restHeaders(opts.token),
+    body: JSON.stringify({
+      author: opts.organizer,
+      commentary: opts.name,
+      visibility: 'PUBLIC',
+      distribution: { feedDistribution: 'MAIN_FEED', targetEntities: [], thirdPartyDistributionChannels: [] },
+      content: { reference: { id: `urn:li:event:${eventId}` } },
+      lifecycleState: 'PUBLISHED',
+      isReshareDisabledByAuthor: false,
+    }),
+  })
+  if (!post.ok) {
+    const pb = await post.json().catch(() => ({}))
+    throw new Error(`Event ${eventId} was created but could not be posted: ${pb.message || post.status}`)
+  }
+  return { eventId, postUrn: post.headers.get('x-restli-id') || '' }
 }
