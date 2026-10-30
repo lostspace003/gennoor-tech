@@ -57,6 +57,12 @@ export function linkedInConfigured() {
   return !!(process.env.LINKEDIN_CLIENT_ID && process.env.LINKEDIN_CLIENT_SECRET)
 }
 
+/** Public origin for the OAuth round trip: the host the admin is signed in on (both are registered on the LinkedIn app), else the configured site URL. */
+export function oauthOrigin(req: { headers: { get(name: string): string | null } }, fallback: string): string {
+  const host = (req.headers.get('x-forwarded-host') || req.headers.get('host') || '').split(',')[0].trim().toLowerCase()
+  return host === 'www.gennoor.com' || host === 'gennoor.com' ? `https://${host}` : fallback
+}
+
 export const redirectUri = (origin: string) => `${origin}/api/linkedin/callback`
 
 export function authorizeUrl(origin: string, state: string, withOrg: boolean) {
