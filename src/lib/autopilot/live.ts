@@ -50,13 +50,26 @@ Rules:
 - Do not repeat these recent topics: ${recent.slice(-40).join(' | ') || 'none'}.
 - Only include sources you actually found.
 Reply with JSON only: {"ideas":[{"title": string (<=110 chars), "angle": string (the specific take, 1-2 sentences), "hook": string (a draft opening line), "vendor": string, "heat": number 1-10 (how widely discussed and shareable right now), "why": string, "sources":[{"title": string, "url": string}]}]}`
-  const res = await retry(() => webGroundedCompletion(instructions, `Today is ${date}. Find the topics.`), sleep)
+  // Several ideas with sources need far more room than a short answer; a cut-off JSON reply would read as "no topics".
+  const res = await retry(() => webGroundedCompletion(instructions, `Today is ${date}. Find the topics.`, 6000), sleep)
   const parsed = parseJson<{ ideas?: TopicIdea[] }>(res.text)
-  const urls = new Set(res.citations.map(c => c.url))
-  const ideas = (parsed?.ideas || []).map(i => {
-    const kept = (i.sources || []).filter(s => /^https?:\/\//.test(s.url) && urls.has(s.url))
-    return { ...i, sources: kept.length ? kept : res.citations.slice(0, 2) }
-  })
+  // Citation links carry tracking parameters (utm_source=...), so compare on host + path and keep the clean link.
+  const clean = (u: string) => { try { const x = new URL(u); [...x.searchParams.keys()].filter(k => /^utm_|^ref$/i.test(k)).forEach(k => x.searchParams.delete(k)); x.hash = ''; return x.toString().replace(/\/$/, '') } catch { return u } }
+  const norm = (u: string) => { try { const x = new URL(u); return `${x.hostname.replace(/^www\./, '')}${x.pathname}`.replace(/\/$/, '').toLowerCase() } catch { return u } }
+  const known = new Map(res.citations.map(c => [norm(c.url), { title: c.title, url: clean(c.url) }]))
+  // A listed link is only kept if the search really returned it, or (when the answer carried no citations) if it
+  // actually loads. That keeps invented links out of drafts.
+  const loads = async (u: string) => { try { const r = await fetch(u, { method: 'GET', redirect: 'follow', signal: AbortSignal.timeout(7000), headers: { 'User-Agent': 'GennoorResearch/1.0' } }); return r.status < 400 } catch { return false } }
+  const ideas: TopicIdea[] = []
+  for (const i of parsed?.ideas || []) {
+    const listed = (i.sources || []).filter(s => /^https?:\/\//.test(s.url)).slice(0, 4)
+    let kept = listed.filter(s => known.has(norm(s.url))).map(s => ({ title: s.title, url: known.get(norm(s.url))!.url }))
+    if (!kept.length) {
+      const checks = await Promise.all(listed.map(async s => ((await loads(s.url)) ? { title: s.title, url: clean(s.url) } : null)))
+      kept = checks.filter((x): x is { title: string; url: string } => !!x)
+    }
+    ideas.push({ ...i, sources: kept.length ? kept : [...known.values()].slice(0, 2) })
+  }
   // Hottest first, but never two of the same vendor in the top slots.
   ideas.sort((a, b) => (b.heat || 0) - (a.heat || 0))
   const seen = new Set<string>()

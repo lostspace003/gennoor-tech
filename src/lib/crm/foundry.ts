@@ -46,7 +46,7 @@ export interface WebSearchResult {
 
 // One web-grounded completion. Retries once on rate-limit, then throws —
 // callers fall back to the non-web model.
-export async function webGroundedCompletion(instructions: string, input: string): Promise<WebSearchResult> {
+export async function webGroundedCompletion(instructions: string, input: string, maxOutputTokens = 1800): Promise<WebSearchResult> {
   if (!foundryConfigured()) throw new Error('Foundry web search not configured')
 
   for (let attempt = 0; attempt < 2; attempt++) {
@@ -58,7 +58,7 @@ export async function webGroundedCompletion(instructions: string, input: string)
         instructions,
         input,
         tools: [{ type: 'web_search' }],
-        max_output_tokens: 1800,
+        max_output_tokens: maxOutputTokens,
       }),
     })
 

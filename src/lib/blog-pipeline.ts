@@ -54,15 +54,15 @@ export async function pipelineTick(deps: PipelineDeps): Promise<string[]> {
     if (p.stage === 'pr' && draft.pr) {
       try {
         const pr = await deps.getPr(draft.pr.number)
-        if (pr.merged) { await deps.update(id, d => { d.pipeline!.stage = 'merged'; d.pipeline!.mergedAt = iso(now); d.pipeline!.note = undefined }); out.push(`${tag}: merged`); continue }
-        if (pr.state === 'closed') { await deps.update(id, d => { d.pipeline!.stage = 'attention'; d.pipeline!.note = 'The pull request was closed without merging.' }); await deps.alert('A blog pull request was closed', `<p>The pull request for "${esc(title)}" was closed without merging, so the post is not on the website.</p>`, `blog-closed-${id}`); continue }
-        if (p.autoMerge) {
+        if (pr.merged) { await deps.update(id, d => { d.pipeline!.stage = 'merged'; d.pipeline!.mergedAt = iso(now); d.pipeline!.note = undefined }); out.push(`${tag}: merged`); p.stage = 'merged'; p.mergedAt = iso(now) }
+        else if (pr.state === 'closed') { await deps.update(id, d => { d.pipeline!.stage = 'attention'; d.pipeline!.note = 'The pull request was closed without merging.' }); await deps.alert('A blog pull request was closed', `<p>The pull request for "${esc(title)}" was closed without merging, so the post is not on the website.</p>`, `blog-closed-${id}`); continue }
+        else if (p.autoMerge) {
           if (p.mergeTries >= MAX_MERGE_TRIES) continue
           await deps.update(id, d => { d.pipeline!.busy = { what: 'merge', at: iso(now) } })
           try {
             await deps.merge(draft.pr.number, title)
             await deps.update(id, d => { d.pipeline!.stage = 'merged'; d.pipeline!.mergedAt = iso(deps.now()); d.pipeline!.busy = undefined; d.pipeline!.note = undefined })
-            out.push(`${tag}: merged automatically`)
+            out.push(`${tag}: merged automatically`); p.stage = 'merged'; p.mergedAt = iso(deps.now())
           } catch (e: any) {
             const tries = p.mergeTries + 1
             await deps.update(id, d => { d.pipeline!.busy = undefined; d.pipeline!.mergeTries = tries; d.pipeline!.note = `Could not merge yet: ${String(e?.message || e).slice(0, 200)}`; if (tries >= MAX_MERGE_TRIES) d.pipeline!.stage = 'attention' })
@@ -71,19 +71,19 @@ export async function pipelineTick(deps: PipelineDeps): Promise<string[]> {
           }
         }
       } catch (e: any) { out.push(`${tag}: could not read the pull request (${String(e?.message || e).slice(0, 80)})`) }
-      continue
+      if (p.stage === 'pr') continue
     }
 
     // 2. Merged -> live (the deploy takes several minutes)
     if (p.stage === 'merged') {
       let live = false
       try { live = await deps.isLive(draft.meta.slug) } catch { /* try again next time */ }
-      if (live) { await deps.update(id, d => { d.pipeline!.stage = 'live'; d.pipeline!.liveAt = iso(now) }); out.push(`${tag}: live on the website`); continue }
-      if (p.mergedAt && now.getTime() - Date.parse(p.mergedAt) > DEPLOY_WAIT_MS) {
+      if (live) { await deps.update(id, d => { d.pipeline!.stage = 'live'; d.pipeline!.liveAt = iso(now) }); out.push(`${tag}: live on the website`); p.stage = 'live' }
+      else if (p.mergedAt && now.getTime() - Date.parse(p.mergedAt) > DEPLOY_WAIT_MS) {
         await deps.update(id, d => { d.pipeline!.stage = 'attention'; d.pipeline!.note = 'The website has not shown the post 45 minutes after the merge. Check the deploy.' })
         await deps.alert('A blog post is not live yet', `<p>"${esc(title)}" was merged but is still not on the website after 45 minutes. Check the deploy on GitHub.</p>`, `blog-live-${id}`)
       }
-      continue
+      if (p.stage === 'merged') continue
     }
 
     // 3. Live -> shared on LinkedIn, company page first, then your profile

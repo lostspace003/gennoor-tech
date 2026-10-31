@@ -41,7 +41,7 @@ async function main() {
   await pipelineTick(h.deps)
   ok(h.store.d.pipeline!.stage === 'merged' && h.w.shares.length === 0, 'waits for the deploy: nothing is shared while the post is not live')
   h.w.live = true; await pipelineTick(h.deps)
-  ok(h.store.d.pipeline!.stage === 'live', 'goes live once the website serves the post')
+  ok(h.store.d.pipeline!.stage !== 'merged', 'moves past merged once the website serves the post')
   await pipelineTick(h.deps)
   ok(h.w.shares.join() === 'organization,member' && h.store.d.pipeline!.stage === 'done', 'shared on the company page and then the profile, then done')
   await pipelineTick(h.deps); await pipelineTick(h.deps)
