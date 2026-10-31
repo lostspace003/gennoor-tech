@@ -39,7 +39,7 @@ export default function SessionsPage() {
   return (
     <div className="max-w-4xl p-4">
       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-        <h1 className="text-lg font-semibold">Sessions<InfoTip text="Everything you did in the Social studio, Blog studio and LinkedIn hub, grouped into work sessions (activity with no gap longer than 45 minutes). Click an item to pick up where you left off." /></h1>
+        <h1 className="text-xl font-semibold tracking-tight">Sessions<InfoTip text="Everything you did in the Social studio, Blog studio and LinkedIn hub, grouped into work sessions (activity with no gap longer than 45 minutes). Click an item to pick up where you left off." /></h1>
         <div className="flex gap-1.5 text-xs">
           {(['all', 'social', 'blog', 'linkedin'] as const).map(k => <button key={k} onClick={() => setFilter(k)} className={`px-2.5 py-1 rounded-full border ${filter === k ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 bg-white hover:border-gray-400'}`}>{k === 'all' ? 'Everything' : AREAS[k].label}</button>)}
         </div>

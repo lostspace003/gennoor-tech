@@ -6,8 +6,8 @@ import { usePathname, useRouter } from 'next/navigation'
 // Site-wide circular page transition: on an internal link click a circle grows from the click point and
 // covers the page, the route changes underneath, then the circle shrinks back to reveal the new page.
 // Honours prefers-reduced-motion. Opt a link out with data-no-transition.
-const COVER = 320
-const REVEAL = 480
+const COVER = 220
+const REVEAL = 320
 
 export default function CircleTransition() {
   const router = useRouter()
@@ -29,6 +29,8 @@ export default function CircleTransition() {
       const url = new URL(a.href, window.location.href)
       if (url.origin !== window.location.origin) return
       if (url.pathname === window.location.pathname && url.search === window.location.search) return
+      // The admin centre has its own quiet fade; a full-screen wipe there only slows people down.
+      if (url.pathname.startsWith('/admin') || window.location.pathname.startsWith('/admin')) return
       const el = veil.current
       if (!el) return
       e.preventDefault()
@@ -56,5 +58,5 @@ export default function CircleTransition() {
 
   useEffect(() => { if (waiting.current) setTimeout(reveal, 60) }, [path])
 
-  return <div ref={veil} aria-hidden style={{ visibility: 'hidden', clipPath: 'circle(0px at 0 0)' }} className="fixed inset-0 z-[9999] pointer-events-none bg-gradient-to-br from-primary-600 to-primary-800" />
+  return <div ref={veil} aria-hidden style={{ visibility: 'hidden', clipPath: 'circle(0px at 0 0)' }} className="fixed inset-0 z-[9999] pointer-events-none bg-[#f5f5f7]" />
 }

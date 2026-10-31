@@ -100,7 +100,7 @@ export default function AdminCommentsPage() {
     <div className="w-full p-4 lg:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <h1 className="text-lg font-semibold text-gray-900 flex items-center gap-2"><MessageSquare className="w-5 h-5 text-primary-600" />Comments</h1>
+          <h1 className="text-xl font-semibold tracking-tight text-gray-900 flex items-center gap-2"><MessageSquare className="w-5 h-5 text-primary-600" />Comments</h1>
           <p className="text-xs text-gray-500 mt-0.5">{comments.length} total · {count('approved')} approved · {count('hidden')} hidden</p>
         </div>
         <button onClick={() => fetchComments()} disabled={loading} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-gray-300 bg-white text-gray-700 text-xs font-medium hover:bg-gray-50 disabled:opacity-50">

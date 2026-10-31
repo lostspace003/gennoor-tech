@@ -139,7 +139,7 @@ export default function LinkedInHubPage() {
   return (
     <div className="w-full p-4 lg:p-5">
       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-        <h1 className="text-lg font-semibold">LinkedIn hub<InfoTip text="Look things up and act on your LinkedIn account from the admin centre: feed, people, messages, companies and jobs. It works through your saved LinkedIn login, one careful request at a time. Publishing posts stays in the Social studio." /></h1>
+        <h1 className="text-xl font-semibold tracking-tight">LinkedIn hub<InfoTip text="Look things up and act on your LinkedIn account from the admin centre: feed, people, messages, companies and jobs. It works through your saved LinkedIn login, one careful request at a time. Publishing posts stays in the Social studio." /></h1>
         <div className="flex items-center gap-2 text-xs">
           {st && <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border ${svc === 'up' && sessionOk ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-800'}`}><i className={`w-1.5 h-1.5 rounded-full ${svc === 'up' && sessionOk ? 'bg-emerald-500' : 'bg-amber-500'}`} />{svc === 'not-configured' ? 'Not set up' : svc === 'down' ? 'Service unreachable' : sessionOk ? 'Signed in to LinkedIn' : unknown ? 'Connector running' : 'Sign-in needed'}</span>}
           <button onClick={load} className={btn}><RefreshCw className="w-3.5 h-3.5" />Refresh</button>

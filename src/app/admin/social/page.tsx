@@ -207,17 +207,18 @@ export default function SocialStudioPage() {
   const step = cur ? (cur.status === 'draft' ? 1 : cur.status === 'approved' ? 2 : 3) : 0
 
   return (
-    <div className="w-full p-4 lg:p-5">
-      <div className="flex items-center justify-between mb-3">
-        <h1 className="text-lg font-semibold">Social studio<InfoTip text="Draft, revise, illustrate and review a post exactly as it will appear, then approve and publish. Nothing goes to LinkedIn until you approve and click Post." /></h1>
-        <div className="flex flex-wrap items-center gap-3 text-sm"><span title="Estimated Azure AI spend on this studio (drafts, revisions, images)" className="px-2.5 py-1 rounded-full bg-gray-100 text-xs text-gray-700">This month <b>{usd(spend.month)}</b> · All time <b>{usd(spend.total)}</b></span><Link href="/admin/linkedin" className="text-gray-600 hover:underline">LinkedIn connection</Link><Link href="/admin" className="text-gray-600 hover:underline">← Admin</Link></div>
+    <div className="w-full h-full flex flex-col p-4 lg:p-5">
+      <div className="shrink-0 flex items-center justify-between mb-3">
+        <h1 className="text-xl font-semibold tracking-tight">Social studio<InfoTip text="Draft, revise, illustrate and review a post exactly as it will appear, then approve and publish. Nothing goes to LinkedIn until you approve and click Post." /></h1>
+        <div className="flex flex-wrap items-center gap-3 text-sm"><span title="Estimated Azure AI spend on this studio (drafts, revisions, images)" className="px-2.5 py-1 rounded-full bg-gray-100 text-xs text-gray-700">This month <b>{usd(spend.month)}</b> · All time <b>{usd(spend.total)}</b></span><Link href="/admin/linkedin" className="text-gray-600 hover:underline">LinkedIn connection</Link></div>
       </div>
       {error && <div className="mb-3 rounded-md bg-red-50 border border-red-200 text-red-800 text-sm px-3 py-2">{error}</div>}
       {notice && <div className="mb-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm px-3 py-2">{notice}</div>}
 
-      <div className="grid lg:grid-cols-[270px_1fr] gap-4 items-start">
+      {/* Workspace: drafts | post | tools. Each pane scrolls on its own, so the post and its actions never get lost off screen. */}
+      <div className="grid lg:grid-cols-[300px_minmax(0,1fr)] gap-4 flex-1 min-h-0">
         {/* Left: new draft + list */}
-        <div className="space-y-3">
+        <div className="space-y-3 min-h-0 lg:overflow-y-auto lg:pr-1">
           <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
             <div className="flex items-center gap-1.5 mb-2 text-xs">
               {(['post', 'poll', 'webinar'] as const).map(k => (
@@ -278,7 +279,7 @@ export default function SocialStudioPage() {
         {run ? <AgentTimeline run={run} onClose={() => setRun(null)} /> : !cur ? (
           <div className="rounded-xl border border-dashed border-gray-300 bg-white/50 text-sm text-gray-500 p-10 text-center">Pick a draft on the left, or give the agent a topic.</div>
         ) : (
-          <div className="space-y-3">
+          <div className="flex flex-col gap-3 min-h-0">
             {/* progress */}
             <div className="flex items-center gap-2 text-xs text-gray-500">
               {['Draft & revise', 'Approve', 'Published'].map((l, i) => (
@@ -290,9 +291,9 @@ export default function SocialStudioPage() {
               ))}
             </div>
 
-            <div className="grid xl:grid-cols-[minmax(0,1fr)_340px] gap-4 items-start">
+            <div className="grid xl:grid-cols-[minmax(0,1fr)_360px] gap-4 flex-1 min-h-0">
               {/* LinkedIn-style card, edited in place */}
-              <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-4">
+              <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-4 min-h-0 xl:overflow-y-auto">
                 <div className="flex items-center gap-2.5 mb-3">
                   <div className="w-11 h-11 rounded-full bg-gray-800 text-white text-lg font-bold flex items-center justify-center">G</div>
                   <div className="leading-tight"><div className="text-sm font-semibold">Gennoor Tech</div><div className="text-xs text-gray-500">Enterprise AI &amp; Microsoft training · Just now · 🌐</div></div>
@@ -335,8 +336,8 @@ export default function SocialStudioPage() {
                 <div className="mt-3 pt-2 border-t border-gray-100 flex gap-5 text-[13px] text-gray-500"><span>👍 Like</span><span>💬 Comment</span><span>🔁 Repost</span><span>✈️ Send</span></div>
               </div>
 
-              {/* Control panel */}
-              <div className="space-y-3">
+              {/* Tools: the action bar is pinned at the top, the rest scrolls beneath it */}
+              <div className="flex flex-col gap-3 min-h-0 xl:overflow-y-auto xl:pr-1">
                 {!locked && (
                   <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3">
                     <div className="text-xs font-semibold mb-2 flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5 text-gray-500" />Revise the {cur.kind === 'poll' ? 'poll' : 'post'} with AI<InfoTip text="Tell the AI what to change. It rewrites the draft and sends it back to Draft status so you re-approve." /></div>
@@ -411,7 +412,7 @@ export default function SocialStudioPage() {
                   </ul>
                   <div className="text-xs text-gray-400 mt-1">Estimate in USD from token usage and image count.</div>
                 </div>
-                <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3 space-y-2">
+                <div className="order-first sticky top-0 z-10 rounded-xl border border-gray-200 bg-white shadow-sm p-3 space-y-2">
                   {cur.motion && (
                     <div className="flex items-center gap-2 text-xs pb-2 border-b border-gray-100">
                       <span className="text-gray-500">Post to LinkedIn as</span>

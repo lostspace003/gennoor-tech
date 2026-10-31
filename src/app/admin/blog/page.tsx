@@ -158,7 +158,7 @@ export default function BlogStudioPage() {
   return (
     <div className="w-full p-4 lg:p-5">
       <div className="flex items-center justify-between mb-3">
-        <h1 className="text-lg font-semibold">Blog studio<InfoTip text="An AI team researches, writes, tags and reviews a post in the blog's exact format. You edit everything, approve it, and publishing opens a GitHub pull request; merging it puts the post live." /></h1>
+        <h1 className="text-xl font-semibold tracking-tight">Blog studio<InfoTip text="An AI team researches, writes, tags and reviews a post in the blog's exact format. You edit everything, approve it, and publishing opens a GitHub pull request; merging it puts the post live." /></h1>
         <span className="text-xs text-gray-500">{drafts ? `${drafts.length} draft${drafts.length === 1 ? '' : 's'} · ${tax.posts.length} published posts` : ''}</span>
       </div>
       {error && <div className="mb-3 rounded-md bg-red-50 border border-red-200 text-red-800 text-sm px-3 py-2">{error}</div>}

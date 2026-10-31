@@ -124,7 +124,7 @@ export default function AutopilotPage() {
   return (
     <div className="w-full p-4 lg:p-5">
       <div className="flex items-center justify-between mb-3">
-        <h1 className="text-lg font-semibold">LinkedIn autopilot<InfoTip text="Researches what the industry is talking about, writes four posts a day across Microsoft, Google, AWS and the wider AI world, and publishes them at audience-friendly times. Anything you post yourself first is skipped automatically." /></h1>
+        <h1 className="text-xl font-semibold tracking-tight">LinkedIn autopilot<InfoTip text="Researches what the industry is talking about, writes four posts a day across Microsoft, Google, AWS and the wider AI world, and publishes them at audience-friendly times. Anything you post yourself first is skipped automatically." /></h1>
       </div>
       {error && <div className="mb-3 rounded-md bg-red-50 border border-red-200 text-red-800 text-sm px-3 py-2">{error}</div>}
       {notice && <div className="mb-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm px-3 py-2">{notice}</div>}
