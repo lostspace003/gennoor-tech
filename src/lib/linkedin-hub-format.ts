@@ -34,27 +34,46 @@ function plainValue(v: any, depth = 0): string {
 const NOISE = /^(connect|follow|message|save|pending|view full profile|promoted|status is (online|offline)|•|1st|2nd|3rd\+?)$/i
 const DEGREE = /^•\s*(1st|2nd|3rd\+?)$/i
 
-/** The page text of a people search is one line per fact. Group it into one block per person: name, headline, place, current role, mutuals. */
-function groupPeople(text: string): string | null {
+export interface PersonRow { name: string; degree: string; title: string; company: string; location: string; current: string; mutual: string; linkedin?: string; group?: string }
+
+/** The page text of a people search is one line per fact; this reads it into one record per person (with the place heading it sat under). */
+export function parsePeople(text: string): PersonRow[] | null {
   const lines = text.replace(/\r/g, '').split('\n').map(l => l.trim()).filter(Boolean)
   if (lines.filter(l => DEGREE.test(l)).length < 2) return null
-  const people: { name: string; deg: string; rest: string[]; header?: boolean }[] = []
+  const blocks: { name: string; deg: string; rest: string[]; group?: string }[] = []
+  let group: string | undefined
   for (let i = 0; i < lines.length; i++) {
     const l = lines[i]
     if (DEGREE.test(l) && i > 0) {
       // The name is the line just before the degree badge; it was filed under the previous block, so take it back.
-      const cur = people[people.length - 1]
+      const cur = blocks[blocks.length - 1]
       const name = cur && cur.rest.length ? cur.rest.pop()! : lines[i - 1]
-      people.push({ name, deg: l.replace('•', '').trim(), rest: [] })
-    } else if (l.startsWith('## ')) people.push({ name: l, deg: '', rest: [], header: true })
-    else if (people.length && !NOISE.test(l)) people[people.length - 1].rest.push(l)
+      blocks.push({ name, deg: l.replace('•', '').trim(), rest: [], group })
+    } else if (l.startsWith('## ')) { group = l.slice(3).trim(); blocks.push({ name: '', deg: '', rest: [], group }) }
+    else if (blocks.length && !NOISE.test(l)) blocks[blocks.length - 1].rest.push(l)
   }
+  const out: PersonRow[] = []
+  for (const bl of blocks) {
+    if (!bl.name) continue
+    const [headline = '', place = '', ...more] = bl.rest
+    const current = more.find(m => /^Current:/i.test(m))?.replace(/^Current:\s*/i, '') || ''
+    const mutual = more.find(m => /mutual connection/i.test(m)) || ''
+    const src = current || headline
+    const at = src.match(/^(.*?)\s+(?:at|@)\s+(.+)$/i)
+    out.push({ name: bl.name, degree: bl.deg, title: at ? at[1] : headline, company: at ? at[2].trim() : '', location: place, current, mutual, group: bl.group })
+  }
+  return out.length ? out : null
+}
+
+function groupPeople(text: string): string | null {
+  const rows = parsePeople(text)
+  if (!rows) return null
   const out: string[] = []
-  for (const p of people) {
-    if (p.header) { out.push(p.name); continue }
-    const [headline, place, ...more] = p.rest
-    out.push(`#### ${p.name} · ${p.deg}`)
-    out.push([headline, place && `Based in ${place}`, ...more].filter(Boolean).map(x => `- ${x}`).join('\n'))
+  let g: string | undefined
+  for (const p of rows) {
+    if (p.group !== g && p.group) { out.push(`## ${p.group}`); g = p.group }
+    out.push(`#### ${p.name} · ${p.degree}`)
+    out.push([p.title || '', p.company ? `at ${p.company}` : p.current && `Current: ${p.current}`, p.location && `Based in ${p.location}`, p.mutual].filter(Boolean).map(x => `- ${x}`).join('\n'))
   }
   return out.join('\n')
 }
