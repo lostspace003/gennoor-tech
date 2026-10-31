@@ -16,7 +16,7 @@ $app = 'ca-linkedin-login'
 $main = 'ca-gennoor-linkedin-mcp'
 
 # Only one thing may use the saved browser profile at a time: stop the connector while you sign in.
-az containerapp update --subscription $sub -g $rg -n $main --min-replicas 0 --max-replicas 0 --output none
+# (the connector is scaled to zero when idle, so nothing else is using the profile)
 
 az containerapp create --subscription $sub -g $rg -n $app --environment $cae `
   --image docker.io/stickerdaniel/linkedin-mcp-server:latest --ingress external --target-port 6080 --cpu 1.0 --memory 2Gi `
@@ -31,7 +31,7 @@ properties:
         resources: { cpu: 1.0, memory: 2Gi }
         volumeMounts: [{ volumeName: profile, mountPath: /home/pwuser/.linkedin-mcp }]
     scale: { minReplicas: 1, maxReplicas: 1 }
-    volumes: [{ name: profile, storageType: AzureFile, storageName: $share }]
+    volumes: [{ name: profile, storageType: AzureFile, storageName: $share, mountOptions: 'uid=1000,gid=1000,file_mode=0600,dir_mode=0700,noperm,nobrl,mfsymlinks' }]
 "@
 $file = New-TemporaryFile
 Set-Content -Path $file -Value $yaml
@@ -43,10 +43,9 @@ Write-Host 'Waiting for the sign-in page to start...'
 Start-Sleep -Seconds 60
 $logs = az containerapp logs show --subscription $sub -g $rg -n $app --tail 100 --format text 2>$null | Out-String
 $token = [regex]::Match($logs, 'token=([A-Za-z0-9_\-]+)').Groups[1].Value
-if ($token) { Write-Host "`nOpen this link and sign in to LinkedIn (type your own password):`n  https://$fqdn/?token=$token`n" }
-else { Write-Host "`nOpen https://$fqdn/ . If it asks for a token, find the line containing 'token=' in:`n  az containerapp logs show -g $rg -n $app --tail 100`n" }
+if ($token) { Write-Host "`nOpen this link and sign in to LinkedIn (type your own password):`n  https://$fqdn/vnc_lite.html#?path=websockify%3Ftoken%3D$token&scale=true`n" }
+else { Write-Host "`nOpen https://$fqdn/ . If it asks for a token, find the line containing 'token=' in:`n  az containerapp logs show --subscription $sub -g $rg -n $app --tail 100`n" }
 
 Read-Host 'When the page says your session is saved, press Enter to finish'
 az containerapp delete --subscription $sub -g $rg -n $app --yes --output none
-az containerapp update --subscription $sub -g $rg -n $main --min-replicas 0 --max-replicas 1 --output none
 Write-Host 'Done. Open Admin > LinkedIn hub and press "Check sign-in".'

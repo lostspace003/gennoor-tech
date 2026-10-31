@@ -49,7 +49,7 @@ properties:
         resources: { cpu: 1.0, memory: 2Gi }
         volumeMounts: [{ volumeName: profile, mountPath: /home/pwuser/.linkedin-mcp }]
     scale: { minReplicas: 0, maxReplicas: 1 }
-    volumes: [{ name: profile, storageType: AzureFile, storageName: $share }]
+    volumes: [{ name: profile, storageType: AzureFile, storageName: $share, mountOptions: 'uid=1000,gid=1000,file_mode=0600,dir_mode=0700,noperm,nobrl,mfsymlinks' }]
 "@
 $file = New-TemporaryFile
 Set-Content -Path $file -Value $yaml
