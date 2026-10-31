@@ -44,6 +44,20 @@ export interface BlogPost extends BlogPostMeta {
 
 export const blogPostsMeta: BlogPostMeta[] = [
   {
+    slug: 'openai-servicenow-enterprise-ai-chat-to-workflow',
+    title: 'OpenAI + ServiceNow Signals the Enterprise AI Shift From Chat Interfaces to Workflow Execution',
+    excerpt: 'The OpenAI + ServiceNow story matters less as a partnership headline and more as a market signal. Enterprise AI is moving into embedded workflows, where value depends on orchestration, governance, process integration, and measurable task completion rather than generic copilot experiences.',
+    tldr: 'This piece should be read as strategic analysis based on limited reference material, not as a source-linked report of partnership specifics. The important signal is that enterprise AI is increasingly being evaluated in the context of workflow execution, where orchestration, governance, permissions, process integration, and measurable task completion matter more than chat quality alone. For enterprise IT and AI leaders, especially CIOs, architects, and AI teams, the key decision is whether workflow orchestration should live inside major business platforms, in a cross-platform agent layer, or in a hybrid model.',
+    author: 'Gennoor Tech',
+    date: '2026-10-31',
+    readTime: '14 min read',
+    category: 'AI Strategy',
+    tags: ['Enterprise AI', 'AI Strategy', 'AI Agents', 'AI Orchestration', 'AI Governance', 'Workflow Automation', 'Enterprise Architecture', 'ServiceNow'],
+    hashtags: ['#EnterpriseAI', '#AIStrategy', '#AIAgents', '#AIOrchestration', '#AIGovernance', '#WorkflowAutomation', '#EnterpriseArchitecture'],
+    coverColor: '#0B1020',
+    icon: '⚙️',
+  },
+  {
     slug: 'why-ai-agents-dominate-vs-agent-driven-product-development',
     title: 'Why AI Agents Dominate the Conversation While Agent-Driven Product Development Does Not',
     excerpt: 'The industry talks endlessly about building AI agents, but far less about building products with them. This gap matters in enterprises, where value depends on workflow design, governance, UX, evaluation, and business ownership. Agents execute tasks; product development turns that capability into measurable outcomes.',
@@ -930,6 +944,7 @@ export function getRelatedPostsMeta(currentSlug: string, category: string, limit
 
 // Load full blog post content on demand (only for individual post pages)
 const contentImports: Record<string, () => Promise<{ post: BlogPost }>> = {
+  'openai-servicenow-enterprise-ai-chat-to-workflow': () => import('./content/openai-servicenow-enterprise-ai-chat-to-workflow'),
   'why-ai-agents-dominate-vs-agent-driven-product-development': () => import('./content/why-ai-agents-dominate-vs-agent-driven-product-development'),
   'meta-incognito-chat-whatsapp-private-ai': () => import('./content/meta-incognito-chat-whatsapp-private-ai'),
   'openai-daybreak-google-ai-zero-day': () => import('./content/openai-daybreak-google-ai-zero-day'),
