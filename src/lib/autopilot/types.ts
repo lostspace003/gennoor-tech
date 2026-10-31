@@ -4,7 +4,7 @@ export type TargetKey = 'organization' | 'member'
 
 export interface SlotCfg { time: string; kind: Kind }
 export interface Config {
-  /** Master switch. Off until an admin turns it on. */
+  /** Master switch: the big button on the Autopilot page. On by default; stays as the admin leaves it. */
   enabled: boolean
   /** 'auto' publishes by itself; 'review' only prepares drafts and never publishes. */
   mode: 'auto' | 'review'
@@ -33,7 +33,7 @@ export interface Config {
 }
 
 export const DEFAULT_CONFIG: Config = {
-  enabled: false,
+  enabled: true,
   mode: 'auto',
   tz: 'Asia/Kolkata',
   // Chosen for the audience: India's morning commute and the Gulf morning, lunch, end of the workday plus Europe's
