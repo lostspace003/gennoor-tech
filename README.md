@@ -35,11 +35,11 @@ Dashboard · Leads (search is semantic, backed by Qdrant) · Pipeline · Inbox (
 
 ## Admin centre (`/admin`, staff only)
 
-Open the menu (top left) to reach every page.
+The menu on the left is open by default (collapse it with the round button; on phones it is a drawer behind the hamburger). **Dashboard** expands into its own sections (Analytics, Communications, Bookings, System) and their tabs, and each page shows where you are with one-click pills for the connected pages of its section. Moving between pages uses a thin progress line and a quick fade.
 
 | Page | What you do there |
 |---|---|
-| **Dashboard** | Tabbed analytics: Overview, Traffic, Enquiries, Emails, Bookings, Storage, Insights, Comments, SEO, Setup, Cowork, Indexing, Academy, Auth log, Certificates, Course feedback. Live visitors, CSV exports, auto-refresh. |
+| **Dashboard** | Analytics for the site, opened from the Dashboard section of the menu: Overview, Traffic, Insights, Academy, Certificates, Course feedback · Enquiries, Cowork, Emails, Comments · Bookings · Storage, SEO health, Indexing, Auth log, Setup. Days filter, live visitors, CSV exports, auto-refresh, CRM and GennoorCare summaries on the Overview. |
 | **Cost centre** `/admin/costs` | Azure spend for the whole subscription by billing month (the 13th to the 12th), quarter, week or day; split by service, resource group, type or region; INR or USD. |
 | **Sessions** `/admin/sessions` | One timeline of everything done in the studios and LinkedIn hub, grouped into work sessions, with links to resume. |
 | **Social studio** `/admin/social` | Draft LinkedIn posts, polls and webinar announcements from a topic, notes and attached sources (links, PDFs, Word, images). Edit in a LinkedIn-style card, revise with AI, generate or animate images, build motion graphics (GIF/MP4), run the AI agent team, approve, then publish to your profile or the company page. Published posts can be edited and updated or re-posted. Every visual carries the Gennoor logo and website. AI cost is shown per draft and per month. |
@@ -50,6 +50,18 @@ Open the menu (top left) to reach every page.
 | **Learning Studio** `/admin/lms` | Import and manage Learning Studio courses. |
 | **Comments / Community** | Moderate blog comments and learner community posts and reviews. |
 | **Tech calls / Mailboxes** | Technical-call requests, and the status of every sending and receiving mailbox. |
+
+## Automation at a glance
+
+One scheduled heartbeat (`autopilot.yml`, every 15 minutes) drives all of it. Each part has its own switch in the admin centre and does nothing while off.
+
+| What | How it behaves |
+|---|---|
+| **LinkedIn autopilot** | Researches what is being discussed across Microsoft, Google, AWS, OpenAI, Anthropic and open source, drafts four posts a day (weekday slots 08:30, 12:30, 17:30, 20:30 IST; weekend slots 09:30, 12:30, 17:00, 20:00), and publishes each at its slot to the company page and, 45 minutes later with a different opening line, to your profile. Anything you post yourself first is skipped. On by default. |
+| **Quality gate** | A reviewer must pass each draft (up to two rewrites). A banned-word screen runs on every draft. Failures are held and emailed, never posted. Missed slots are skipped, not posted late. Retries with back-off; locks prevent double posts. |
+| **Blog publishing flow** | **Approve & publish** opens the pull request and merges it; after the deploy, the article link goes out with a short post on the company page and on your profile. The Blog studio shows each step and a Merge button if needed. |
+| **Daily blog autopilot** | Every day at 09:00 IST: research a fresh topic, write the article, review it (up to two revisions), approve, publish and share. A draft that still fails review is held and emailed. On by default. |
+| **LinkedIn post format** | All posts share one format (see Content rules below). |
 
 ## Architecture
 
@@ -127,6 +139,15 @@ Names only; set them in `.env.local` locally and in App Service settings in prod
 - **Website:** merge to `main`. The pipeline builds and deploys automatically.
 - **Agent service:** `az acr build -r <registry> -t gennoor-studio:<tag> services/studio-agents`, then `az containerapp update -n ca-gennoor-studio --image <registry>.azurecr.io/gennoor-studio:<tag>`.
 - **LinkedIn connector:** `scripts/linkedin-mcp-setup.ps1` creates it once; `scripts/linkedin-mcp-login.ps1` signs in once (the saved login lasts about a year and lives on Azure storage).
+
+## Operations
+
+- **Reconnect LinkedIn:** logins last about 60 days. On `/admin/linkedin` press **Reconnect (member)** and **Connect + company page**. Automation emails you a week before they expire.
+- **LinkedIn hub sign-in:** done once with `scripts/linkedin-mcp-login.ps1` (you type your own password in a secure browser view). The saved login lasts about a year.
+- **Switch things off:** the big toggle on `/admin/autopilot`, and the On/Off switch in the Blog studio. Nothing is posted while off.
+- **Where state lives (Azure Blob container `crm-data`):** `social/drafts.json`, `social/spend.json` (AI cost ledger), `autopilot/state.json`, `blog/drafts.json`, `blog/automation.json`, `linkedin.json` (login tokens).
+- **Agent service settings (Container App):** `STUDIO_API_KEY`, `FOUNDRY_API_KEY`, `FOUNDRY_OPENAI_BASE`, `FOUNDRY_WEB_MODEL`, `LINKEDIN_MCP_URL`; optional `LI_MIN_GAP_SECONDS`, `LI_CACHE_SECONDS`, `BRAND_SITE`.
+- **Publishing from the Blog studio** needs `GITHUB_TOKEN` on the site with permission to create branches, commits and pull requests (and to merge) on this repository.
 
 ## Content rules
 
