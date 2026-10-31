@@ -51,6 +51,7 @@ export async function PATCH(req: NextRequest) {
   if (typeof b.tz === 'string' && tzOk(b.tz)) c.tz = b.tz
   if (b.weekdaySlots) { const v = slots(b.weekdaySlots); if (v.length) c.weekdaySlots = v }
   if (b.weekendSlots) { const v = slots(b.weekendSlots); if (v.length) c.weekendSlots = v }
+  if (b.profileMode === 'reshare' || b.profileMode === 'own') c.profileMode = b.profileMode
   if (b.targets) c.targets = { organization: !!b.targets.organization, member: !!b.targets.member }
   const num = (k: keyof Config, lo: number, hi: number) => { if (b[k] !== undefined && Number.isFinite(Number(b[k]))) (c as any)[k] = Math.min(hi, Math.max(lo, Math.round(Number(b[k])))) }
   num('staggerMinutes', 0, 480); num('draftLeadMinutes', 60, 720); num('missedGraceMinutes', 30, 480); num('dailyMax', 1, 6); num('minGapMinutes', 30, 360); num('maxRegens', 0, 3)

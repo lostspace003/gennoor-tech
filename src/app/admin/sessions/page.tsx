@@ -18,7 +18,7 @@ export default function SessionsPage() {
   const [filter, setFilter] = useState<'all' | Ev['area']>('all')
 
   useEffect(() => {
-    fetch('/api/admin/sessions').then(async r => { const j = await r.json().catch(() => ({})); if (!r.ok) setError(j.error || `Failed (${r.status})`); else setEvents(j.events) })
+    fetch('/api/admin/sessions').then(async r => { const j = await r.json().catch(() => ({})); if (!r.ok) setError(j.error || `Failed (${r.status})`); else setEvents(j.events || []) }).catch(() => setError('Could not load. Check your connection and refresh.'))
   }, [])
 
   const byArea = useMemo(() => (events || []).filter(e => filter === 'all' || e.area === filter), [events, filter])

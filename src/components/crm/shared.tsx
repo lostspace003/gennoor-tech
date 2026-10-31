@@ -176,12 +176,12 @@ export function InfoTip({ text }: { text: string }) {
         onFocus={() => { place(); setOpen(true) }}
         onBlur={() => setTimeout(() => setOpen(false), 150)}
         aria-label="What is this?"
-        className="w-4 h-4 rounded-full border border-gray-300 text-gray-400 hover:text-primary-600 hover:border-primary-400 text-[10px] leading-none inline-flex items-center justify-center italic shrink-0"
+        className="w-[18px] h-[18px] rounded-full border border-blue-500 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white text-[11px] font-bold leading-none inline-flex items-center justify-center shrink-0 cursor-help"
       >i</button>
       {open && pos && typeof document !== 'undefined' && createPortal(
         <span
           className="fixed z-[200] w-[260px] bg-gray-900 text-white text-[11px] rounded-lg px-3 py-2 shadow-xl leading-relaxed normal-case font-normal text-left pointer-events-none"
-          style={{ top: pos.top, left: pos.left }}
+          style={{ top: pos.top, left: pos.left, fontSize: 12 }}
         >
           {text}
         </span>,

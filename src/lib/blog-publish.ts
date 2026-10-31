@@ -1,5 +1,7 @@
 import { sendEmail } from '@/lib/email-service'
-import { getLinkedInState, publishArticle, saveLinkedInState } from '@/lib/linkedin'
+import { getLinkedInState, publishArticle, resharePost, saveLinkedInState } from '@/lib/linkedin'
+import { addFirstComment, repostLine } from '@/lib/linkedin-engage'
+import { loadState as loadAutopilot } from '@/lib/autopilot/live'
 import { githubConfigured, getPullRequest, mergePullRequest, openPullRequest, readFile } from '@/lib/github-pr'
 import { siteUrl } from '@/lib/tech-call-mail'
 import { formatForLinkedIn, LINKEDIN_STYLE_GUIDE } from '@/lib/linkedin-format'
@@ -134,10 +136,21 @@ export function liveBlogPipelineDeps(): PipelineDeps {
       if (!author || !token) throw new Error('not connected')
       const cached = d.shareText ?? (await shareTexts(d))
       if (!d.shareText) await mutateBlogDraft(d.id, x => { x.shareText = cached })
-      const urn = await publishArticle({
-        token, author, commentary: target === 'member' ? cached.profile : cached.page,
-        url: `${siteUrl()}/resources/blog/${d.meta.slug}`, title: d.meta.title, description: d.meta.excerpt.slice(0, 250),
-      })
+      const url = `${siteUrl()}/resources/blog/${d.meta.slug}`
+      const pageUrn = d.shared?.organization?.urn
+      const reshare = target === 'member' && !!pageUrn && ((await loadAutopilot().catch(() => null))?.config.profileMode ?? 'reshare') === 'reshare'
+      let urn: string
+      if (reshare) {
+        // The profile reposts the company page post with a short note of its own.
+        urn = await resharePost({ token, author, parentUrn: pageUrn!, commentary: await repostLine(cached.page, `blog-${d.id}`) })
+      } else {
+        urn = await publishArticle({ token, author, commentary: target === 'member' ? cached.profile : cached.page, url, title: d.meta.title, description: d.meta.excerpt.slice(0, 250) })
+      }
+      // Every share gets a meaningful first comment from its author. A failed comment never fails the share.
+      const c = await addFirstComment({ token, actor: author, postUrn: urn, post: `${d.meta.title}
+${d.meta.tldr}
+Key points: ${d.meta.keyTakeaways.slice(0, 4).join('; ')}`, spendId: `blog-${d.id}`, extra: `This is for a blog article on ${url}. Add a detail or question that is NOT already in the post; do not just repeat the link.` })
+      if (c.error) console.error('blog first comment failed', c.error)
       // Recorded where the LinkedIn page already looks, so it shows up there too.
       const st = await getLinkedInState()
       st.shares = st.shares || {}

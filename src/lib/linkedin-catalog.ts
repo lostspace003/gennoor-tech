@@ -43,3 +43,35 @@ export const TOOLS: ToolDef[] = [
 export const toolByName = (n: string) => TOOLS.find(t => t.name === n)
 /** Reads are capped too: heavy scraping is what gets accounts flagged. */
 export const DAILY_READ_CAP = Number(process.env.NEXT_PUBLIC_LI_DAILY_READ_CAP || 200)
+
+/** One-line plain explanations for the "i" next to each field. Nothing here needs a special format: plain words work. */
+export const FIELD_TIPS: Record<string, string> = {
+  keywords: 'Just type what you would say out loud, like "agentic AI" or "CIO banking Mumbai". No quotes, operators or special format needed.',
+  location: 'A city or country in plain words, for example "Bengaluru" or "United Arab Emirates". Leave empty for anywhere.',
+  current_company: 'A company name in plain words, for example "Infosys". Leave empty for any company.',
+  linkedin_username: "Paste the person's LinkedIn profile link, or just their username (the part after linkedin.com/in/). Either works.",
+  company_name: "Paste the company's LinkedIn link or just its name as it appears in the link, for example \"microsoft\".",
+  sections: 'Optional. Leave empty for the main overview. To get more, type the names separated by commas, for example: experience, education, posts.',
+  num_posts: 'How many posts to read. 10 is a good start; bigger numbers are slower and count more against your daily limit.',
+  max_pages: 'How many pages of results to read. 1 is fastest; 2 is the usual choice. More pages use more of your daily limit.',
+  limit: 'How many conversations to list.',
+  date_posted: 'Only show results from this period.',
+  thread_id: 'Paste the conversation link, or use Inbox first and press Open next to a conversation.',
+  job_id: 'Paste the job link or its number. Easiest: run Search jobs and press Details next to a result.',
+  note: 'Optional. One or two sentences saying why you want to connect. Specific notes get accepted more often.',
+  message: 'Write it as you would normally. It is sent exactly as typed.',
+  easy_apply: 'Tick to see only jobs you can apply to inside LinkedIn.',
+}
+
+/** Click-to-fill examples per tool, so there is always an easy way to start. */
+export const STARTERS: Record<string, { label: string; args: Record<string, string | number> }[]> = {
+  search_posts: [{ label: 'Agentic AI this week', args: { keywords: 'agentic AI', date_posted: 'past-week' } }, { label: 'Azure AI Foundry', args: { keywords: 'Azure AI Foundry', date_posted: 'past-month' } }, { label: 'MCP servers', args: { keywords: 'MCP server enterprise', date_posted: 'past-week' } }],
+  get_feed: [{ label: 'Latest 10 posts', args: { num_posts: 10 } }],
+  search_people: [{ label: 'CIOs in banking', args: { keywords: 'CIO banking' } }, { label: 'Heads of AI in Dubai', args: { keywords: 'head of AI', location: 'Dubai' } }, { label: 'L&D leaders at Infosys', args: { keywords: 'learning and development', current_company: 'Infosys' } }],
+  search_companies: [{ label: 'AI consulting firms', args: { keywords: 'AI consulting' } }, { label: 'IT training companies', args: { keywords: 'corporate IT training' } }],
+  get_company_profile: [{ label: 'Microsoft', args: { company_name: 'microsoft' } }],
+  search_jobs: [{ label: 'AI architect, India', args: { keywords: 'AI architect', location: 'India' } }, { label: 'Agent engineer, this week', args: { keywords: 'agent engineer', date_posted: 'past-week' } }],
+  search_conversations: [{ label: 'Messages about training', args: { keywords: 'training' } }],
+  get_inbox: [{ label: 'Latest 20 conversations', args: { limit: 20 } }],
+  get_my_profile: [{ label: 'Overview', args: { sections: '' } }, { label: 'With my posts', args: { sections: 'posts' } }],
+}

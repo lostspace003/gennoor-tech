@@ -10,7 +10,7 @@ type Kind = 'post' | 'poll' | 'motion'
 interface SlotCfg { time: string; kind: Kind }
 interface Config {
   enabled: boolean; mode: 'auto' | 'review'; tz: string; weekdaySlots: SlotCfg[]; weekendSlots: SlotCfg[]; targets: { organization: boolean; member: boolean }
-  staggerMinutes: number; researchTime: string; digestTime: string; draftLeadMinutes: number; missedGraceMinutes: number
+  profileMode?: 'reshare' | 'own'; staggerMinutes: number; researchTime: string; digestTime: string; draftLeadMinutes: number; missedGraceMinutes: number
   topics: string[]; avoid: string[]; avoidKeywords: string[]; weekendTheme: string; alertEmail: string; dailyMax: number; minGapMinutes: number; maxRegens: number
 }
 interface Target { status: string; at: string; attempts: number; urn?: string; reason?: string }
@@ -206,6 +206,7 @@ export default function AutopilotPage() {
             <label>Alert email<input value={cfg.alertEmail} onChange={e => set({ alertEmail: e.target.value })} className={field} /></label>
             <label>Research at<input type="time" value={cfg.researchTime} onChange={e => set({ researchTime: e.target.value })} className={field} /></label>
             <label>Morning summary email at<input type="time" value={cfg.digestTime} onChange={e => set({ digestTime: e.target.value })} className={field} /></label>
+            <label>Your profile shares it as<InfoTip text="Repost: your profile reposts the company page post with a short note from you, so the page post gets the reach. Own post: your profile publishes its own version with a different opening line. Either way, every post gets a meaningful first comment from its author." /><select value={cfg.profileMode ?? 'reshare'} onChange={e => set({ profileMode: e.target.value as 'reshare' | 'own' })} className={field}><option value="reshare">Repost of the page post, with a short note</option><option value="own">Its own post</option></select></label>
             <label>Profile post follows page by (min)<input type="number" value={cfg.staggerMinutes} onChange={e => set({ staggerMinutes: Number(e.target.value) })} className={field} /></label>
             <label>Skip a post if later than (min)<input type="number" value={cfg.missedGraceMinutes} onChange={e => set({ missedGraceMinutes: Number(e.target.value) })} className={field} /></label>
             <label className="flex items-center gap-2 col-span-1 text-xs text-gray-700"><input type="checkbox" checked={cfg.targets.organization} onChange={e => set({ targets: { ...cfg.targets, organization: e.target.checked } })} />Post to the company page</label>

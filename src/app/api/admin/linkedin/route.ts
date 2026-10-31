@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 import { blogPostsMeta } from '@/data/blog-posts'
 import { getLinkedInState, linkedInConfigured, pageAppConfigured, publishArticle, saveLinkedInState } from '@/lib/linkedin'
+import { addFirstComment } from '@/lib/linkedin-engage'
 import { siteUrl } from '@/lib/tech-call-mail'
 
 export const dynamic = 'force-dynamic'
@@ -22,6 +23,7 @@ export async function GET(req: NextRequest) {
     expiresAt: s.expiresAt || null,
     daysLeft,
     expiringSoon: !!s.accessToken && daysLeft <= WARN_DAYS,
+    orgDaysLeft: s.orgAccessToken && s.orgExpiresAt ? Math.floor((new Date(s.orgExpiresAt).getTime() - Date.now()) / 86_400_000) : null,
     memberName: s.memberName || '',
     orgName: s.orgName || '',
     canPostAsOrg: !!s.orgUrn && !!s.orgAccessToken && !!s.orgExpiresAt && new Date(s.orgExpiresAt) > new Date(),
@@ -59,11 +61,17 @@ export async function POST(req: NextRequest) {
     if (s.shares[post.slug]?.some(x => x.as === t) && !b.force) { errors.push(`${t}: already shared`); continue }
     try {
       const pageToken = s.orgAccessToken && s.orgExpiresAt && new Date(s.orgExpiresAt) > new Date() ? s.orgAccessToken : ''
+      const token = t === 'member' ? s.accessToken : pageToken
+      if (!token) { errors.push('organization: the company page login is missing or expired. Reconnect with the company page.'); continue }
       const urn = await publishArticle({
-        token: t === 'member' ? s.accessToken : pageToken, author, commentary, url, title: post.title, description: post.excerpt.slice(0, 250),
+        token, author, commentary, url, title: post.title, description: post.excerpt.slice(0, 250),
       })
       s.shares[post.slug] = [...(s.shares[post.slug] || []), { urn, as: t, at: new Date().toISOString(), by: email || '' }]
       done.push(t)
+      // Every share gets a meaningful first comment from its author; a failed comment never undoes the share.
+      const c = await addFirstComment({ token, actor: author, postUrn: urn, post: `${post.title}
+${post.excerpt}`, spendId: `blog-share-${post.slug}`, extra: `This is for a blog article on ${url}. Add a detail or question that is NOT already in the post; do not just repeat the link.` })
+      if (c.error) errors.push(`${t}: shared, but the first comment failed (${c.error})`)
     } catch (e: any) {
       errors.push(`${t}: ${e?.message || 'failed'}`)
     }

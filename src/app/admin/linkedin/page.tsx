@@ -8,7 +8,7 @@ import { ListToolbar, Pager, useListView } from '@/components/admin/ListControls
 
 interface Share { urn: string; as: 'member' | 'organization'; at: string }
 interface Status {
-  configured: boolean; connected: boolean; expired: boolean; expiresAt: string | null; daysLeft: number; expiringSoon: boolean
+  configured: boolean; connected: boolean; expired: boolean; expiresAt: string | null; daysLeft: number; expiringSoon: boolean; orgDaysLeft: number | null
   memberName: string; orgName: string; canPostAsOrg: boolean
   posts: { slug: string; title: string; date: string; shares: Share[] }[]
 }
@@ -21,8 +21,8 @@ export default function LinkedInPage() {
   const vp = useListView(s?.posts ?? [], { date: p => p.date, text: p => p.title, pageSize: 10 })
 
   const load = useCallback(async () => {
-    const r = await fetch('/api/admin/linkedin')
-    if (!r.ok) { setError(`Could not load (${r.status})`); return }
+    const r = await fetch('/api/admin/linkedin').catch(() => null)
+    if (!r || !r.ok) { setError(`Could not load (${r?.status ?? 'offline'})`); return }
     setS(await r.json())
   }, [])
   useEffect(() => {
@@ -67,6 +67,11 @@ export default function LinkedInPage() {
             </div>
           )}
 
+          {s.orgDaysLeft !== null && s.orgDaysLeft <= 10 && (
+            <div className="mb-3 rounded-md bg-amber-50 border border-amber-200 text-amber-900 text-sm px-3 py-2">
+              {s.orgDaysLeft < 0 ? 'The company page login has expired.' : `The company page login expires in ${s.orgDaysLeft} day${s.orgDaysLeft === 1 ? '' : 's'}.`} Use "Connect + company page" to renew it, or page posts stop.
+            </div>
+          )}
           <div className="rounded-lg border border-gray-200 bg-white p-3 mb-4 text-sm">
             <div className="flex flex-wrap items-center gap-x-6 gap-y-1 mb-3">
               <span>{dot(s.connected)}{s.connected ? `Connected as ${s.memberName || 'member'}` : 'Not connected'}<InfoTip text="Whether the site holds a valid LinkedIn login token for you. It lets the site post on your behalf; it never sees your password." /></span>
