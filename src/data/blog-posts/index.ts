@@ -44,6 +44,20 @@ export interface BlogPost extends BlogPostMeta {
 
 export const blogPostsMeta: BlogPostMeta[] = [
   {
+    slug: 'why-ai-agents-dominate-vs-agent-driven-product-development',
+    title: 'Why AI Agents Dominate the Conversation While Agent-Driven Product Development Does Not',
+    excerpt: 'The industry talks endlessly about building AI agents, but far less about building products with them. This gap matters in enterprises, where value depends on workflow design, governance, UX, evaluation, and business ownership. Agents execute tasks; product development turns that capability into measurable outcomes.',
+    tldr: 'AI agents get attention because they are easy to demo, easy to market, and increasingly easy to build. Product development through agents is harder because it requires cross-functional design, cognitive thinking, workflow redesign, governance, and measurable business value. For enterprises, the real challenge is not creating agents but turning agentic capability into reliable, user-centered products.',
+    author: 'Gennoor Tech',
+    date: '2026-10-31',
+    readTime: '13 min read',
+    category: 'AI Strategy',
+    tags: ['AI Agents', 'AI Strategy', 'Agentic AI', 'Enterprise AI', 'Enterprise Architecture', 'Production AI', 'Best Practices'],
+    hashtags: ['#AIAgents', '#AIStrategy', '#EnterpriseAI', '#AgenticAI', '#EnterpriseArchitecture', '#ProductionAI'],
+    coverColor: '#0B1020',
+    icon: '🧠',
+  },
+  {
     slug: 'meta-incognito-chat-whatsapp-private-ai',
     title: 'Incognito for AI: Meta Launches a Truly Private Way to Chat With AI on WhatsApp — Built on Muse Spark and Private Processing',
     featured: 'hero',
@@ -916,6 +930,7 @@ export function getRelatedPostsMeta(currentSlug: string, category: string, limit
 
 // Load full blog post content on demand (only for individual post pages)
 const contentImports: Record<string, () => Promise<{ post: BlogPost }>> = {
+  'why-ai-agents-dominate-vs-agent-driven-product-development': () => import('./content/why-ai-agents-dominate-vs-agent-driven-product-development'),
   'meta-incognito-chat-whatsapp-private-ai': () => import('./content/meta-incognito-chat-whatsapp-private-ai'),
   'openai-daybreak-google-ai-zero-day': () => import('./content/openai-daybreak-google-ai-zero-day'),
   'ai-jobs-future-bill-gates-three-professions': () => import('./content/ai-jobs-future-bill-gates-three-professions'),
