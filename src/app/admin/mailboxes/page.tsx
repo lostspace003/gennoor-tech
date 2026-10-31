@@ -25,7 +25,7 @@ export default function MailboxesPage() {
 
   return (
     <div className="w-full p-4 lg:p-5">
-      <h1 className="text-lg font-semibold text-gray-900">Mailboxes</h1>
+      <h1 className="text-xl font-semibold tracking-tight text-gray-900">Mailboxes</h1>
       <p className="text-sm text-gray-500 mt-0.5">Every Gennoor mailbox, what the site does with it, and whether it exists in Microsoft 365 right now.</p>
 
       {error && <p className="mt-4 text-sm text-red-700 bg-red-100 rounded-md px-3 py-2">{error}</p>}

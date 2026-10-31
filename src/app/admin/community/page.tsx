@@ -71,7 +71,7 @@ export default function CommunityAdminPage() {
 
   return (
     <div className="w-full p-4 lg:p-5">
-      <h1 className="text-lg font-semibold text-gray-900 flex items-center gap-2"><Users className="w-5 h-5 text-primary-600" />Community, announcements and polls</h1>
+      <h1 className="text-xl font-semibold tracking-tight text-gray-900 flex items-center gap-2"><Users className="w-5 h-5 text-primary-600" />Community, announcements and polls</h1>
       <p className="text-xs text-gray-500 mt-0.5 break-words">Publish announcements, polls and quizzes, answer learners as the team, see every result, and hide or delete anything that should not be shown.</p>
 
       <div className="mt-3 inline-flex rounded-md bg-gray-100 p-0.5 text-xs">

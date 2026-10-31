@@ -75,6 +75,31 @@ function ChartLoader() {
 type TabKey = 'overview' | 'traffic' | 'enquiries' | 'emails' | 'bookings' | 'storage' | 'insights' | 'comments' | 'seo' | 'setup' | 'cowork' | 'indexing' | 'academy' | 'auth-log' | 'certificates' | 'course-feedback'
 type GroupKey = 'analytics' | 'communications' | 'bookings' | 'system'
 
+// Which group each tab belongs to. The tabs themselves now live in the admin menu (left rail), which talks to this
+// page through browser events, so the menu and the page always show the same tab and a tab can be opened by link.
+const TAB_GROUP: Record<TabKey, GroupKey> = {
+  overview: 'analytics', traffic: 'analytics', insights: 'analytics', academy: 'analytics', certificates: 'analytics', 'course-feedback': 'analytics',
+  enquiries: 'communications', cowork: 'communications', emails: 'communications', comments: 'communications',
+  bookings: 'bookings',
+  storage: 'system', seo: 'system', indexing: 'system', 'auth-log': 'system', setup: 'system',
+}
+
+function MenuBridge({ activeTab, badges, onSelect }: { activeTab: string; badges: Record<string, number>; onSelect: (tab: string) => void }) {
+  useEffect(() => {
+    const h = (e: Event) => onSelect(String((e as CustomEvent).detail))
+    window.addEventListener('admin:select-tab', h)
+    return () => window.removeEventListener('admin:select-tab', h)
+  }, [onSelect])
+  useEffect(() => { const q = new URLSearchParams(window.location.search).get('tab'); if (q) onSelect(q) }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('admin:tab', { detail: activeTab }))
+    try { const u = new URL(window.location.href); u.searchParams.set('tab', activeTab); window.history.replaceState(null, '', u) } catch { /* ignore */ }
+  }, [activeTab])
+  const key = JSON.stringify(badges)
+  useEffect(() => { window.dispatchEvent(new CustomEvent('admin:badges', { detail: badges })) }, [key]) // eslint-disable-line react-hooks/exhaustive-deps
+  return null
+}
+
 interface AnalyticsData {
   totalViews: number; totalComments: number; totalEnquiries: number; activeComments: number
   viewsByDate: Record<string, number>; topPages: [string, number][]; topCountries: [string, number][]
@@ -596,13 +621,17 @@ export default function AdminDashboard() {
   const activeGroupData = groups.find(g => g.key === activeGroup)
   const sidebarTabs = activeGroupData?.tabs || []
 
+  const badges: Record<string, number> = {}
+  groups.forEach(g => { if (g.badge) badges[g.key] = g.badge; g.tabs.forEach(tb => { if (tb.badge) badges[tb.key] = tb.badge }) })
+  const selectFromMenu = (tab: string) => { if (tab in TAB_GROUP) { setActiveGroup(TAB_GROUP[tab as TabKey]); setActiveTab(tab as TabKey) } }
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800">
+      <MenuBridge activeTab={activeTab} badges={badges} onSelect={selectFromMenu} />
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-y-2 gap-x-3">
           <div className="flex items-center gap-3 min-w-0">
-            <img src="/logos/gennoor-tech-horizontal-transparent.svg" alt="Gennoor Tech" className="h-7 w-auto shrink-0" />
             <div>
               <h1 className="text-base font-semibold text-gray-800">Gennoor Admin</h1>
               <p className="text-xs text-gray-500 break-words">
@@ -629,59 +658,20 @@ export default function AdminDashboard() {
             <button onClick={() => setAutoRefresh(!autoRefresh)} className={`px-2.5 py-1.5 text-xs rounded-md transition-colors ${autoRefresh ? 'bg-gray-100 text-gray-700' : 'text-gray-400 hover:text-gray-600'}`} title={autoRefresh ? 'Auto-refresh ON (60s)' : 'Auto-refresh OFF'}>
               <Clock className="w-3.5 h-3.5" />
             </button>
-            <CrmStatsTile />
-            <a href="/admin/lms" className="px-3.5 py-2 text-[13px] font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">Learning Studio</a>
-            <a href="/admin/community" className="px-3.5 py-2 text-[13px] font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">Community</a>
-            <a href="/admin/mailboxes" className="px-3.5 py-2 text-[13px] font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">Mailboxes</a>
-            <a href="/admin/tech-calls" className="px-3.5 py-2 text-[13px] font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">Tech calls</a>
-            <a href="/admin/linkedin" className="px-3.5 py-2 text-[13px] font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">LinkedIn</a>
-            <a href="/admin/social" className="px-3.5 py-2 text-[13px] font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">Social studio</a>
-            <a href="/admin/comments" className="px-3.5 py-2 text-[13px] font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">Comments</a>
-            <GennoorCareTile />
-            <button onClick={() => router.push('/crm')} className="px-3.5 py-2 text-[13px] font-medium bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-all flex items-center gap-1.5">
-              <Bot className="w-3.5 h-3.5" />
-              CRM System
-            </button>
             <button onClick={handleRefresh} disabled={loading} className="p-2 text-gray-400 hover:text-primary-600 transition-colors"><RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /></button>
-            <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-red-500 transition-colors"><LogOut className="w-4 h-4" /></button>
           </div>
         </div>
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 overflow-x-hidden">
-        {/* Main Horizontal Tabs */}
-        <div className="flex gap-1 overflow-x-auto bg-white rounded-xl p-1 mb-5 border border-gray-200 shadow-sm">
-          {groups.map(group => (
-            <button key={group.key} onClick={() => { setActiveGroup(group.key); setActiveTab(group.tabs[0].key) }} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex-1 justify-center ${activeGroup === group.key ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}>
-              <group.icon className="w-4 h-4" />
-              {group.label}
-              {group.badge !== undefined && group.badge > 0 && <span className={`ml-0.5 px-1.5 py-0.5 text-xs rounded-full ${activeGroup === group.key ? 'bg-white/25 text-white' : 'bg-red-500 text-white'}`}>{group.badge}</span>}
-            </button>
-          ))}
-        </div>
-
         <div className="flex flex-col md:flex-row gap-4 md:gap-5">
-          {/* Vertical Sub-tabs (sidebar) */}
-          {sidebarTabs.length > 1 && (
-            <div className="w-full md:w-44 md:flex-shrink-0">
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-x-auto md:overflow-hidden flex md:block md:sticky md:top-[72px]">
-                {sidebarTabs.map(tab => (
-                  <button key={tab.key} onClick={() => setActiveTab(tab.key)} className={`flex items-center gap-2 md:w-full whitespace-nowrap px-4 py-2.5 text-[13px] font-medium transition-colors border-l-[3px] ${activeTab === tab.key ? 'bg-primary-50 text-primary-700 border-primary-600' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50 border-transparent'}`}>
-                    <tab.icon className="w-4 h-4" />
-                    {tab.label}
-                    {tab.badge !== undefined && tab.badge > 0 && <span className="ml-auto px-1.5 py-0.5 bg-red-500 text-white text-xs rounded-full">{tab.badge}</span>}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Content Area */}
           <div className="flex-1 min-w-0">
 
         {/* ─── OVERVIEW ──────────────────────────────────── */}
         {activeTab === 'overview' && (
           <div className="space-y-6 animate-fadeIn">
+            <div className="flex flex-wrap items-center gap-2"><CrmStatsTile /><GennoorCareTile /></div>
             {/* Live now banner — refreshes every 30s */}
             <div className="admin-card flex items-center justify-between gap-4 px-5 py-3 bg-green-50 border border-green-200 rounded-xl shadow-sm">
               <div className="flex items-center gap-3">

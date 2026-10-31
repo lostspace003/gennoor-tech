@@ -89,7 +89,7 @@ export default function CostCentrePage() {
   return (
     <div className="w-full p-4 lg:p-5">
       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-        <h1 className="text-lg font-semibold">Cost centre<InfoTip text={`Azure spend for the whole subscription: website, admin, CRM, AI, email, storage and everything else. Months and quarters follow your Visual Studio billing cycle (starts on day ${cycleDay}), so they match the invoice.`} /></h1>
+        <h1 className="text-xl font-semibold tracking-tight">Cost centre<InfoTip text={`Azure spend for the whole subscription: website, admin, CRM, AI, email, storage and everything else. Months and quarters follow your Visual Studio billing cycle (starts on day ${cycleDay}), so they match the invoice.`} /></h1>
         <div className="flex items-center gap-2 text-xs text-gray-500">
           {data && <span>Updated {new Date(data.fetchedAt).toLocaleTimeString()}</span>}
           <button onClick={load} disabled={loading} className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-gray-200 bg-white hover:border-gray-400 disabled:opacity-40"><RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />Refresh</button>

@@ -46,8 +46,7 @@ export default function LinkedInPage() {
   return (
     <div className="max-w-3xl p-4">
       <div className="flex items-center justify-between mb-3">
-        <h1 className="text-lg font-semibold">LinkedIn publishing<InfoTip text="Share Gennoor blog posts on LinkedIn through the official LinkedIn developer API. Connect once, then post with one click." /></h1>
-        <Link href="/admin" className="text-sm text-gray-600 hover:underline">← Admin</Link>
+        <h1 className="text-xl font-semibold tracking-tight">LinkedIn publishing<InfoTip text="Share Gennoor blog posts on LinkedIn through the official LinkedIn developer API. Connect once, then post with one click." /></h1>
       </div>
 
       {error && <div className="mb-3 rounded-md bg-red-50 border border-red-200 text-red-800 text-sm px-3 py-2">{error}</div>}

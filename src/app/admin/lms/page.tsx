@@ -192,7 +192,7 @@ export default function AdminLmsPage() {
 
   return (
     <div className="w-full p-4 lg:p-5">
-      <h1 className="text-lg font-semibold text-gray-900">Learning Studio courses</h1>
+      <h1 className="text-xl font-semibold tracking-tight text-gray-900">Learning Studio courses</h1>
       <p className="text-xs text-gray-500 mt-0.5">Publish or unpublish a course, add a new one, or change how it is filed.</p>
       <section className="mt-4">
         <div className="flex items-center justify-between mb-3">

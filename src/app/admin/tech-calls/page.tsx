@@ -62,7 +62,7 @@ export default function TechCallsPage() {
     <div className="w-full p-4 lg:p-5">
       <div className="mb-4">
         <div>
-          <h1 className="text-lg font-semibold text-gray-900">Tech calls</h1>
+          <h1 className="text-xl font-semibold tracking-tight text-gray-900">Tech calls</h1>
           <p className="text-sm text-gray-500 mt-0.5">Approving a request creates the Microsoft Teams meeting from admin@gennoor.com and emails the confirmation.</p>
         </div>
       </div>
