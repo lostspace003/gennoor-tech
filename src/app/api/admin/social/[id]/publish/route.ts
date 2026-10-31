@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 import { getLinkedInState, publishPost, publishVideoPost, updatePostText } from '@/lib/linkedin'
-import { getDraft, getImage, getMotion, mutateDraft } from '@/lib/social/studio'
+import { getDraft, getImage, getMotion, mutateDraft, prepareForPublish } from '@/lib/social/studio'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 120
@@ -34,6 +34,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const still = d.kind !== 'poll' && d.hasImage ? (await getImage(id)) || undefined : undefined
   const image = d.kind === 'poll' || video ? undefined : media === 'gif' && d.motion ? (await getMotion(id, 'gif')) || undefined : still
 
+  // Whatever was typed or generated, what goes to LinkedIn is tidied the same way (and given hashtags if it has none).
+  const text = await prepareForPublish(d.text, id)
+  if (text !== d.text) await mutateDraft(id, x => { x.text = text })
   const mode: 'new' | 'update' = b.mode === 'update' ? 'update' : 'new'
   const republish = b.republish === true
   const updated: ('member' | 'organization')[] = []
@@ -47,7 +50,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     if (mode === 'update') {
       if (!live) { errors.push(`${t}: nothing to update yet, post it first`); continue }
       try {
-        await updatePostText(token, live.urn, d.text)
+        await updatePostText(token, live.urn, text)
         updated.push(t)
       } catch (e: any) {
         errors.push(`${t}: ${e?.message || 'failed'}`)
@@ -57,8 +60,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     if (live && !republish) { errors.push(`${t}: already posted`); continue }
     try {
       const urn = video
-        ? await publishVideoPost({ token, author, commentary: d.text, video, title: d.topic.slice(0, 200) })
-        : await publishPost({ token, author, commentary: d.text, image, altText: d.topic, poll: d.kind === 'poll' ? d.poll : undefined })
+        ? await publishVideoPost({ token, author, commentary: text, video, title: d.topic.slice(0, 200) })
+        : await publishPost({ token, author, commentary: text, image, altText: d.topic, poll: d.kind === 'poll' ? d.poll : undefined })
       done.push({ as: t, urn, at: new Date().toISOString() })
     } catch (e: any) {
       errors.push(`${t}: ${e?.message || 'failed'}`)

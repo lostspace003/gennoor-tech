@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 import { deleteDraft, mutateDraft } from '@/lib/social/studio'
+import { formatForLinkedIn } from '@/lib/linkedin-format'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,7 +13,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const b = await req.json().catch(() => ({}))
   const d = await mutateDraft(id, x => {
     if (typeof b.removeRef === 'string') x.references = (x.references || []).filter(r => r.id !== b.removeRef)
-    if (typeof b.text === 'string') x.text = b.text.slice(0, 3000)
+    if (typeof b.text === 'string') x.text = formatForLinkedIn(b.text.slice(0, 3200)) // **bold** becomes Unicode bold, bullets and hashtags are tidied
     if (typeof b.imagePrompt === 'string') x.imagePrompt = b.imagePrompt.slice(0, 4000)
     if (b.poll && x.kind === 'poll') {
       const opts = (Array.isArray(b.poll.options) ? b.poll.options : []).map((o: unknown) => String(o).trim().slice(0, 30)).filter(Boolean).slice(0, 4)

@@ -140,6 +140,12 @@ export default function SocialStudioPage() {
     setBusy('')
     setRun(r => (r ? { ...r, done: true } : r))
   }
+  async function formatPost() {
+    if (!cur) return
+    await save()
+    const j = await call('format', `/api/admin/social/${cur.id}/format`, { method: 'POST' })
+    if (j.draft) { patchLocal(cur.id, j.draft); setNotice('Formatted for LinkedIn: bold opening line, short paragraphs, tidy bullets and hashtags.') }
+  }
   async function animate() {
     if (!cur) return
     await save()
@@ -341,6 +347,7 @@ export default function SocialStudioPage() {
                 {!locked && (
                   <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3">
                     <div className="text-xs font-semibold mb-2 flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5 text-gray-500" />Revise the {cur.kind === 'poll' ? 'poll' : 'post'} with AI<InfoTip text="Tell the AI what to change. It rewrites the draft and sends it back to Draft status so you re-approve." /></div>
+                    <button disabled={!!busy || !cur.text.trim()} onClick={formatPost} className={`${btn} w-full justify-center mb-2`} title="Bold opening line, short paragraphs, quiet bullets, a light bulb at most, and a tidy hashtag line. Also applied automatically when the post is published.">{busy === 'format' ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Formatting…</> : <><FileText className="w-3.5 h-3.5" />Format for LinkedIn</>}</button>
                     <div className="flex flex-wrap gap-1.5 mb-2">{POST_CHIPS.map(c => <button key={c} disabled={!!busy} onClick={() => revise(c, 'post')} className={chip}>{c}</button>)}</div>
                     <textarea value={rev} onChange={e => setRev(e.target.value)} rows={3} placeholder="Or type your own change, e.g. mention the 15 Nov date in the first line" className={field} />
                     <button disabled={!rev.trim() || !!busy} onClick={() => revise(rev, 'post')} className={`${primary} w-full justify-center mt-2`}>{busy === 'revise' ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Revising…</> : 'Revise with AI'}</button>
