@@ -1,0 +1,8 @@
+agent-framework==1.24.0
+agent-framework-openai==1.18.0
+fastapi==0.141.1
+uvicorn[standard]==0.54.0
+pydantic==2.14.2
+pillow==13.0.0
+imageio-ffmpeg==0.7.0
+mcp>=2.2,<3

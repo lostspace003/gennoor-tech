@@ -1,8 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import Link from 'next/link'
-import { Loader2, Plus } from 'lucide-react'
+import { Loader2, Plus, Users, Inbox } from 'lucide-react'
 import RichEditor, { RichText } from '@/components/academy/RichEditor'
 
 type Kind = 'topic' | 'announcement' | 'poll' | 'quiz'
@@ -17,8 +16,10 @@ interface Space { scope: string; name: string }
 const when = (iso: string) => new Date(iso).toLocaleString(undefined, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
 const spaceName = (scope: string) => (scope === 'community' ? 'Community' : scope.toUpperCase())
 const KIND_NAME: Record<Kind, string> = { topic: 'Topic', announcement: 'Announcement', poll: 'Poll', quiz: 'Quiz' }
-const KIND_CLS: Record<Kind, string> = { topic: 'bg-gray-100 text-gray-600', announcement: 'bg-amber-100 text-amber-800', poll: 'bg-blue-100 text-blue-800', quiz: 'bg-emerald-100 text-emerald-800' }
-const FIELD = 'w-full border border-gray-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-primary-600'
+const KIND_CLS: Record<Kind, string> = { topic: 'bg-gray-100 text-gray-600', announcement: 'bg-amber-100 text-amber-800', poll: 'bg-gray-100 text-gray-700', quiz: 'bg-emerald-100 text-emerald-800' }
+const FIELD = 'w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-primary-600'
+const PRIMARY = 'px-3 py-1.5 rounded-md bg-gray-800 text-white text-xs font-medium hover:bg-gray-700 disabled:opacity-50'
+const CARD = 'border border-gray-200 rounded-xl bg-white shadow-sm'
 
 export default function CommunityAdminPage() {
   const [tab, setTab] = useState<'discussion' | 'publish' | 'reviews'>('discussion')
@@ -69,25 +70,24 @@ export default function CommunityAdminPage() {
   const Body = ({ p }: { p: Post }) => (p.html ? <RichText html={p.html} className="text-sm text-gray-700 mt-1" /> : <p className="text-sm text-gray-700 mt-1 whitespace-pre-line">{p.body}</p>)
 
   return (
-    <main className="max-w-[960px] mx-auto px-5 py-10">
-      <Link href="/admin" className="text-sm text-gray-500 hover:text-gray-900">‹ Admin</Link>
-      <h1 className="text-2xl font-bold text-gray-900 mt-3">Community, announcements and polls</h1>
-      <p className="text-gray-600 mt-1">Publish announcements, polls and quizzes, answer learners as the team, see every result, and hide or delete anything that should not be shown.</p>
+    <div className="w-full p-4 lg:p-5">
+      <h1 className="text-lg font-semibold text-gray-900 flex items-center gap-2"><Users className="w-5 h-5 text-primary-600" />Community, announcements and polls</h1>
+      <p className="text-xs text-gray-500 mt-0.5 break-words">Publish announcements, polls and quizzes, answer learners as the team, see every result, and hide or delete anything that should not be shown.</p>
 
-      <div className="mt-6 inline-flex rounded-lg bg-gray-100 p-0.5 text-sm">
+      <div className="mt-3 inline-flex rounded-md bg-gray-100 p-0.5 text-xs">
         {([['discussion', 'Discussion'], ['publish', 'Publish'], ['reviews', 'Reviews']] as const).map(([t, label]) => (
-          <button key={t} onClick={() => { setTab(t); setNote('') }} className={`px-4 py-1.5 rounded-md font-medium ${tab === t ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500'}`}>{label}</button>
+          <button key={t} onClick={() => { setTab(t); setNote('') }} className={`px-3 py-1.5 rounded-md font-medium ${tab === t ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500'}`}>{label}</button>
         ))}
       </div>
-      {error && <p className="mt-4 text-red-600 text-sm">{error}</p>}
-      {note && <p className="mt-4 text-emerald-700 text-sm">{note}</p>}
-      {!posts && !error && <p className="mt-6 text-gray-500 flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Loading…</p>}
+      {error && <p className="mt-3 rounded-md bg-red-100 text-red-800 px-3 py-2 text-xs break-words">{error}</p>}
+      {note && <p className="mt-3 rounded-md bg-emerald-100 text-emerald-800 px-3 py-2 text-xs">{note}</p>}
+      {!posts && !error && <p className="mt-4 text-xs text-gray-500 flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Loading…</p>}
 
       {tab === 'publish' && (
-        <div className="mt-5 border border-gray-200 rounded-xl bg-white p-5 space-y-4 max-w-[720px]">
+        <div className={`mt-4 ${CARD} p-4 space-y-3 max-w-2xl`}>
           <div className="flex flex-wrap gap-2">
             {(['announcement', 'poll', 'quiz'] as const).map(k => (
-              <button key={k} type="button" onClick={() => setKind(k)} className={`px-4 py-1.5 rounded-full text-sm font-medium border ${kind === k ? 'bg-primary-600 text-white border-primary-600' : 'border-gray-300 text-gray-700 hover:border-gray-500'}`}>{KIND_NAME[k]}</button>
+              <button key={k} type="button" onClick={() => setKind(k)} className={`px-3 py-1.5 rounded-md text-xs font-medium border ${kind === k ? 'bg-gray-800 text-white border-gray-800' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'}`}>{KIND_NAME[k]}</button>
             ))}
           </div>
           <label className="block text-sm text-gray-700">Where to post it
@@ -110,22 +110,22 @@ export default function CommunityAdminPage() {
               {kind === 'quiz' && <textarea value={explanation} onChange={e => setExplanation(e.target.value)} rows={2} maxLength={600} placeholder="Why that answer is right (shown after learners answer)" className={FIELD} />}
             </div>
           )}
-          <button type="button" disabled={busy || !title.trim()} onClick={publish} className="px-5 py-2 rounded-full bg-primary-600 text-white text-sm font-medium disabled:opacity-50">Publish {KIND_NAME[kind].toLowerCase()}</button>
+          <button type="button" disabled={busy || !title.trim()} onClick={publish} className={PRIMARY}>Publish {KIND_NAME[kind].toLowerCase()}</button>
         </div>
       )}
 
       {posts && tab === 'discussion' && (
-        <div className="mt-5 space-y-4">
-          {threads.length === 0 && <p className="text-sm text-gray-500">Nothing here yet.</p>}
+        <div className="mt-4 space-y-3">
+          {threads.length === 0 && <div className={`${CARD} p-8 text-center text-sm text-gray-500 flex flex-col items-center gap-2`}><Inbox className="w-6 h-6 text-gray-400" />Nothing here yet.</div>}
           {threads.map(t => (
-            <article key={t.id} className={`border rounded-xl bg-white p-5 ${t.hidden ? 'border-amber-300 bg-amber-50/40' : 'border-gray-200'}`}>
+            <article key={t.id} className={`border rounded-xl bg-white shadow-sm p-4 ${t.hidden ? 'border-amber-300 bg-amber-100/30' : 'border-gray-200'}`}>
               <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
                 <span className={`px-2 py-0.5 rounded-full font-semibold ${KIND_CLS[t.kind]}`}>{KIND_NAME[t.kind]}</span>
                 <span className="font-semibold text-gray-700">{spaceName(t.scope)}</span><span>·</span><span>{t.author}</span><span>·</span><span>{when(t.createdAt)}</span>
                 {t.closed && <span className="text-gray-700 font-medium">Closed</span>}
                 {t.hidden && <span className="text-amber-700 font-medium">Hidden</span>}
               </div>
-              <h2 className="font-semibold text-gray-900 mt-1">{t.title}</h2>
+              <h2 className="text-sm font-semibold text-gray-900 mt-1 break-words">{t.title}</h2>
               <Body p={t} />
               {t.results && (
                 <div className="mt-3 space-y-1.5 max-w-[520px]">
@@ -140,7 +140,7 @@ export default function CommunityAdminPage() {
                   })}
                   <details className="text-xs text-gray-500">
                     <summary className="cursor-pointer">{t.results.total} {t.results.total === 1 ? 'answer' : 'answers'}, see who answered</summary>
-                    <ul className="mt-1 space-y-0.5">{t.results.voters.map(v => <li key={v.email}>{v.email}: {t.options[v.option]}</li>)}</ul>
+                    <ul className="mt-1 space-y-0.5 max-h-40 overflow-y-auto break-all">{t.results.voters.map(v => <li key={v.email}>{v.email}: {t.options[v.option]}</li>)}</ul>
                   </details>
                 </div>
               )}
@@ -167,7 +167,7 @@ export default function CommunityAdminPage() {
               {replying === t.id && (
                 <div className="mt-4 space-y-2">
                   <RichEditor value={replyHtml} onChange={setReplyHtml} placeholder="Your reply, shown as Gennoor team" minHeight={80} />
-                  <button type="button" disabled={busy || !replyHtml.replace(/<[^>]*>/g, '').trim()} onClick={async () => { if (await act({ action: 'reply', scope: t.scope, id: t.id, html: replyHtml })) { setReplying(null); setReplyHtml('') } }} className="px-4 py-2 rounded-full bg-primary-600 text-white text-sm font-medium disabled:opacity-50">Send reply</button>
+                  <button type="button" disabled={busy || !replyHtml.replace(/<[^>]*>/g, '').trim()} onClick={async () => { if (await act({ action: 'reply', scope: t.scope, id: t.id, html: replyHtml })) { setReplying(null); setReplyHtml('') } }} className={PRIMARY}>Send reply</button>
                 </div>
               )}
             </article>
@@ -176,22 +176,22 @@ export default function CommunityAdminPage() {
       )}
 
       {posts && tab === 'reviews' && (
-        <div className="mt-5 border border-gray-200 rounded-xl bg-white divide-y divide-gray-100">
-          {reviews.length === 0 && <p className="p-5 text-sm text-gray-500">No reviews yet.</p>}
+        <div className={`mt-4 ${CARD} divide-y divide-gray-100 max-h-[32rem] overflow-y-auto`}>
+          {reviews.length === 0 && <div className="p-8 text-center text-sm text-gray-500 flex flex-col items-center gap-2"><Inbox className="w-6 h-6 text-gray-400" />No reviews yet.</div>}
           {reviews.map(r => (
-            <div key={r.slug + r.id} className={`p-4 ${r.hidden ? 'bg-amber-50/40' : ''}`}>
+            <div key={r.slug + r.id} className={`p-4 ${r.hidden ? 'bg-amber-100/30' : ''}`}>
               <div className="flex flex-wrap items-center gap-2 text-sm">
                 <span className="font-semibold text-gray-900">{'★'.repeat(r.rating)}<span className="text-gray-300">{'★'.repeat(5 - r.rating)}</span></span>
                 <span className="text-gray-700">{r.name}</span>
-                <span className="text-xs text-gray-400">{r.email} · {r.slug.toUpperCase()} · {when(r.updatedAt)}</span>
+                <span className="text-xs text-gray-400 break-all">{r.email} · {r.slug.toUpperCase()} · {when(r.updatedAt)}</span>
                 {r.hidden && <span className="text-xs text-amber-700 font-medium">Hidden</span>}
                 <button disabled={busy} onClick={() => act({ action: r.hidden ? 'showReview' : 'hideReview', scope: r.slug, id: r.id })} className="ml-auto text-sm text-gray-600 hover:text-gray-900">{r.hidden ? 'Show' : 'Hide'}</button>
               </div>
-              {r.text && <p className="text-sm text-gray-700 mt-1 whitespace-pre-line">{r.text}</p>}
+              {r.text && <p className="text-sm text-gray-700 mt-1 whitespace-pre-line break-words">{r.text}</p>}
             </div>
           ))}
         </div>
       )}
-    </main>
+    </div>
   )
 }

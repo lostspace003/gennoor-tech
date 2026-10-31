@@ -67,25 +67,21 @@ function LoginContent() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <div className="text-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logos/gennoor-tech-horizontal-transparent.svg" alt="Gennoor Tech" className="h-24 w-auto mx-auto" />
-              <p className="text-sm text-gray-600 tracking-widest mt-2">TRAIN. INNOVATE. BUILD.</p>
-            </div>
-          </div>
-          <p className="text-gray-600 mt-2">CRM Lead Intelligence System</p>
+      <div className="w-full max-w-sm">
+        <div className="text-center mb-6">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logos/gennoor-tech-horizontal-transparent.svg" alt="Gennoor Tech" className="h-16 w-auto mx-auto" />
+          <p className="text-xs text-gray-500 tracking-widest mt-2">TRAIN. INNOVATE. BUILD.</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Sign in to CRM</h2>
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+          <h1 className="text-lg font-semibold text-gray-900">Sign in to CRM</h1>
+          <p className="text-sm text-gray-500 mt-0.5 mb-5">CRM Lead Intelligence System</p>
 
           {(error || urlError) && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
-              <AlertCircle className="w-5 h-5 text-red-500" />
-              <span className="text-sm text-red-700">
+            <div className="mb-4 p-3 bg-red-100 rounded-md flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 text-red-700 mt-0.5 shrink-0" />
+              <span className="text-sm text-red-800 break-words">
                 {error || (urlError === 'AccessDenied'
                   ? 'Access denied. Your account is not authorized.'
                   : 'Authentication error. Please try again.')}
@@ -96,7 +92,7 @@ function LoginContent() {
           <button
             onClick={handleMicrosoftSignIn}
             disabled={loading}
-            className="w-full py-3 px-4 bg-primary-600 text-white font-medium rounded-lg transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+            className="w-full py-2.5 px-4 bg-gray-800 text-white text-sm font-medium rounded-md hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
           >
             {loading ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -113,16 +109,13 @@ function LoginContent() {
             )}
           </button>
 
-          <div className="mt-6 pt-6 border-t border-gray-200">
+          <div className="mt-5 pt-4 border-t border-gray-100">
             <p className="text-xs text-gray-500 text-center">
               Secure access for authorized Gennoor team members only.
             </p>
-          </div>
-
-          <div className="mt-6 text-center">
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-400 text-center mt-2">
               <Shield className="w-3 h-3 inline mr-1" />
-              Secure CRM System • Gennoor Tech © 2024
+              Secure CRM System • Gennoor Tech
             </p>
           </div>
         </div>

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CPN Badge Snippets</title>
+<!--
+  Gennoor — Claude Partner Network (Certified) website snippets.
+  Open this file in a browser to preview. Copy each block between the
+  "COPY FROM" / "COPY TO" comments into your site.
+  Upload the files in /badges to your site (e.g. /assets/cpn/) and
+  update the src paths if your folder differs.
+-->
+<style>
+  /* ---------- COPY FROM: shared CSS ---------- */
+  .cpn-badge-link { display:inline-block; line-height:0; }
+  .cpn-badge-link img { height:auto; display:block; }
+  .cpn-trust { display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+               padding:20px 16px; justify-content:center; }
+  .cpn-trust p { margin:0; font:500 15px/1.4 system-ui, sans-serif; color:#333; }
+  .cpn-section { max-width:880px; margin:0 auto; padding:40px 16px;
+                 display:grid; grid-template-columns:200px 1fr; gap:32px; align-items:center;
+                 font:16px/1.6 system-ui, sans-serif; color:#222; }
+  .cpn-section h2 { margin:0 0 8px; font-size:22px; }
+  .cpn-section p { margin:0 0 12px; }
+  .cpn-chip-row { display:flex; align-items:center; gap:10px; font:14px system-ui, sans-serif; }
+  .cpn-footer { display:flex; align-items:center; gap:12px; font:13px system-ui, sans-serif;
+                color:#555; padding:16px; flex-wrap:wrap; }
+  @media (max-width:640px){ .cpn-section{ grid-template-columns:1fr; text-align:center; }
+                            .cpn-section img{ margin:0 auto; } }
+  /* ---------- COPY TO ---------- */
+  body { margin:0; background:#fff; }
+  .demo-label { font:600 12px system-ui; text-transform:uppercase; letter-spacing:.06em;
+                color:#888; padding:24px 16px 0; border-top:1px solid #eee; }
+</style>
+</head>
+<body>
+
+<div class="demo-label">1. Homepage trust strip (under the hero)</div>
+<!-- ---------- COPY FROM: homepage trust strip ---------- -->
+<div class="cpn-trust">
+  <a class="cpn-badge-link" href="https://claude.com/partners" target="_blank" rel="noopener">
+    <img src="badges/cpn-certified-horizontal.svg" width="200"
+         alt="Claude Partner Network — Certified">
+  </a>
+  <p>Gennoor is Certified in the Claude Partner Network.</p>
+</div>
+<!-- ---------- COPY TO ---------- -->
+
+<div class="demo-label">2. About page — Partnerships &amp; credentials section</div>
+<!-- ---------- COPY FROM: about section ---------- -->
+<section class="cpn-section" id="claude-partner-network">
+  <a class="cpn-badge-link" href="https://claude.com/partners" target="_blank" rel="noopener">
+    <img src="badges/cpn-certified-vertical.svg" width="160"
+         alt="Claude Partner Network — Certified">
+  </a>
+  <div>
+    <h2>Claude Partner Network</h2>
+    <p><strong>Gennoor is Certified in the Claude Partner Network.</strong></p>
+    <p>The Claude Partner Network is how Anthropic works with the firms that put Claude into
+       production for customers. The Services Track recognizes partners for building a certified
+       delivery team, delivering Claude use cases for clients, and proving the work through public
+       customer references. Partners advance through Certified, Select, Preferred, and Global
+       Premier tiers.</p>
+    <p>Our consultants hold Claude certifications and deliver Claude solutions for clients.
+       <a href="https://claude.com/partners" target="_blank" rel="noopener">Learn more about the program</a>.</p>
+  </div>
+</section>
+<!-- ---------- COPY TO ---------- -->
+
+<div class="demo-label">3. Services page / case-study card (chip)</div>
+<!-- ---------- COPY FROM: chip row ---------- -->
+<div class="cpn-chip-row" style="padding:16px">
+  <a class="cpn-badge-link" href="https://claude.com/partners" target="_blank" rel="noopener">
+    <img src="badges/cpn-certified-chip.svg" width="56" alt="Claude Partner Network — Certified">
+  </a>
+  <span>Gennoor is Certified in the Claude Partner Network.</span>
+</div>
+<!-- ---------- COPY TO ---------- -->
+
+<div class="demo-label">4. Site-wide footer</div>
+<!-- ---------- COPY FROM: footer ---------- -->
+<div class="cpn-footer">
+  <a class="cpn-badge-link" href="https://claude.com/partners" target="_blank" rel="noopener">
+    <img src="badges/cpn-certified-horizontal.svg" width="140" alt="Claude Partner Network — Certified">
+  </a>
+  <span>Gennoor is Certified in the Claude Partner Network.</span>
+</div>
+<!-- ---------- COPY TO ---------- -->
+
+<div class="demo-label">5. Email signature (paste into Outlook/Gmail as HTML; use the PNG hosted on your site)</div>
+<!-- ---------- COPY FROM: email signature ---------- -->
+<table cellpadding="0" cellspacing="0" style="font-family:Arial,sans-serif;font-size:13px;color:#333;margin:16px">
+  <tr><td><strong>[Your Name]</strong> | [Title], Gennoor</td></tr>
+  <tr><td style="padding:4px 0 8px">Gennoor is Certified in the Claude Partner Network</td></tr>
+  <tr><td>
+    <a href="https://claude.com/partners">
+      <img src="https://YOUR-SITE.com/assets/cpn/cpn-certified-horizontal.png" width="160"
+           alt="Claude Partner Network — Certified" style="display:block;border:0">
+    </a>
+  </td></tr>
+</table>
+<!-- ---------- COPY TO ---------- -->
+
+</body>
+</html>

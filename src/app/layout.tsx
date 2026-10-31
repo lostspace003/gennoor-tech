@@ -8,6 +8,7 @@ import PageViewTracker from '@/components/PageViewTracker'
 import BehaviorTracker from '@/components/BehaviorTracker'
 import AttributionTracker from '@/components/AttributionTracker'
 import RippleProvider from '@/components/RippleProvider'
+import CircleTransition from '@/components/CircleTransition'
 import { OrganizationJsonLd, WebSiteJsonLd } from '@/components/JsonLd'
 import { siteConfig, BLOB_URL } from '@/lib/site-config'
 
@@ -95,6 +96,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <RippleProvider />
+        <CircleTransition />
         <GoogleAnalytics />
         <PageViewTracker />
         <AttributionTracker />

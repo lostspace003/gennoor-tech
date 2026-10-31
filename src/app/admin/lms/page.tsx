@@ -1,8 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import Link from 'next/link'
-import { Loader2, RefreshCw, UploadCloud } from 'lucide-react'
+import { ChevronRight, Loader2, RefreshCw, UploadCloud } from 'lucide-react'
 import { EMPTY_CUSTOM, TRACKS, mergedOptions, type CustomTaxonomy, type Facet } from '@/lib/lms-taxonomy'
 
 interface Row {
@@ -47,7 +46,7 @@ function AddNew({ facet, noun, onAdded }: { facet: Facet; noun: string; onAdded:
   }
   if (!open) {
     return (
-      <button type="button" onClick={() => setOpen(true)} className="mt-2 text-xs font-semibold text-gray-700 underline underline-offset-2 hover:text-gray-900">
+      <button type="button" onClick={() => setOpen(true)} className="mt-2 text-xs font-semibold text-gray-700 underline underline-offset-2 hover:text-primary">
         + Add new {noun}
       </button>
     )
@@ -63,12 +62,12 @@ function AddNew({ facet, noun, onAdded }: { facet: Facet; noun: string; onAdded:
           maxLength={40}
           aria-label={`New ${noun} name`}
           placeholder={`New ${noun}, e.g. ${example}`}
-          className="min-w-0 flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm"
+          className="min-w-0 flex-1 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm"
         />
-        <button type="button" onClick={add} disabled={busy || !name.trim()} className="px-4 py-1.5 bg-gray-900 text-white text-xs font-semibold rounded-full disabled:opacity-50">{busy ? 'Adding…' : 'Add'}</button>
+        <button type="button" onClick={add} disabled={busy || !name.trim()} className="px-3 py-1.5 bg-gray-800 text-white text-xs font-medium rounded-md disabled:opacity-50">{busy ? 'Adding…' : 'Add'}</button>
         <button type="button" onClick={() => { setOpen(false); setNote(null) }} className="text-xs text-gray-500 hover:text-gray-800">Close</button>
       </div>
-      {note && <p role="status" className={`mt-1 text-xs ${note.ok ? 'text-emerald-700' : 'text-red-600'}`}>{note.text}</p>}
+      {note && <p role="status" className={`mt-1 text-xs break-words ${note.ok ? 'text-emerald-700' : 'text-red-600'}`}>{note.text}</p>}
     </div>
   )
 }
@@ -76,8 +75,8 @@ function AddNew({ facet, noun, onAdded }: { facet: Facet; noun: string; onAdded:
 function Checks({ label, options, value, onChange }: { label: string; options: readonly string[]; value: string[]; onChange: (v: string[]) => void }) {
   return (
     <fieldset className="mt-4">
-      <legend className="text-sm font-semibold text-gray-800 mb-2">{label}</legend>
-      <div className="flex flex-wrap gap-2">
+      <legend className="text-xs font-semibold text-gray-800 mb-2">{label}</legend>
+      <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto">
         {options.map(o => {
           const on = value.includes(o)
           return (
@@ -86,7 +85,7 @@ function Checks({ label, options, value, onChange }: { label: string; options: r
               type="button"
               aria-pressed={on}
               onClick={() => onChange(on ? value.filter(x => x !== o) : [...value, o])}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${on ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-900'}`}
+              className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${on ? 'bg-primary/10 text-primary border-primary' : 'bg-white text-gray-700 border-gray-300 hover:border-primary'}`}
             >
               {o}
             </button>
@@ -192,23 +191,22 @@ export default function AdminLmsPage() {
   }
 
   return (
-    <main className="max-w-4xl mx-auto px-6 py-10">
-      <Link href="/admin" className="text-sm text-gray-500 hover:text-gray-800">‹ Admin</Link>
-      <h1 className="text-2xl font-bold text-gray-900 mt-3">Learning Studio courses</h1>
-      <p className="text-gray-600 mt-1">Publish or unpublish a course, add a new one, or change how it is filed.</p>
-      <section className="mt-8">
+    <div className="w-full p-4 lg:p-5">
+      <h1 className="text-lg font-semibold text-gray-900">Learning Studio courses</h1>
+      <p className="text-xs text-gray-500 mt-0.5">Publish or unpublish a course, add a new one, or change how it is filed.</p>
+      <section className="mt-4">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-gray-900">Courses</h2>
-          <button type="button" onClick={load} className="text-sm text-gray-500 hover:text-gray-800 inline-flex items-center gap-1"><RefreshCw className="w-3.5 h-3.5" /> Refresh</button>
+          <h2 className="text-sm font-semibold text-gray-900">Courses</h2>
+          <button type="button" onClick={load} className="text-xs text-gray-600 hover:text-gray-900 inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-2.5 py-1"><RefreshCw className="w-3.5 h-3.5" /> Refresh</button>
         </div>
-        <div className="divide-y divide-gray-200 border border-gray-200 rounded-2xl bg-white">
+        <div className="divide-y divide-gray-200 border border-gray-200 rounded-xl bg-white shadow-sm max-h-[28rem] overflow-y-auto">
           {rows.map(r => {
             const done = r.copy ? r.copy.success === r.copy.total : false
             return (
-              <div key={r.slug} className="p-5 flex flex-wrap items-center justify-between gap-4">
+              <div key={r.slug} className="px-4 py-3 flex flex-wrap items-center justify-between gap-4">
                 <div className="min-w-0">
-                  <div className="font-semibold text-gray-900">{r.code} · {r.title}{r.protected ? '' : ' (video not encrypted)'}</div>
-                  <div className="text-xs text-gray-500 mt-1">
+                  <div className="text-sm font-semibold text-gray-900 break-words">{r.code} · {r.title}{r.protected ? '' : ' (video not encrypted)'}</div>
+                  <div className="text-xs text-gray-500 mt-0.5 break-words">
                     {r.stats.lectures} lectures · {r.stats.quizzes} quizzes ·{' '}
                     {r.copy
                       ? done
@@ -218,7 +216,7 @@ export default function AdminLmsPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${r.published ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
+                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${r.published ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
                     {r.published ? 'Published' : 'Draft'}
                   </span>
                   <button
@@ -226,7 +224,7 @@ export default function AdminLmsPage() {
                     disabled={!r.published && !done}
                     onClick={() => publish(r, !r.published)}
                     title={!r.published && !done ? 'Wait until every file has copied' : ''}
-                    className="text-sm font-semibold px-4 py-1.5 rounded-full border border-gray-300 hover:border-gray-900 disabled:opacity-40"
+                    className="text-xs font-medium px-3 py-1.5 rounded-md border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-40"
                   >
                     {r.published ? 'Unpublish' : 'Publish'}
                   </button>
@@ -234,7 +232,7 @@ export default function AdminLmsPage() {
                     <button
                       type="button"
                       onClick={() => remove(r)}
-                      className="text-sm font-semibold px-4 py-1.5 rounded-full border border-red-200 text-red-700 hover:bg-red-50"
+                      className="text-xs font-medium px-3 py-1.5 rounded-md border border-red-200 text-red-700 hover:bg-red-50"
                     >
                       Delete
                     </button>
@@ -243,42 +241,42 @@ export default function AdminLmsPage() {
               </div>
             )
           })}
-          {rows.length === 0 && <div className="p-6 text-sm text-gray-500">No courses yet.</div>}
+          {rows.length === 0 && <div className="p-4 text-xs text-gray-500">No courses yet.</div>}
         </div>
       </section>
 
-      <details className="mt-4 group rounded-2xl border border-gray-200 bg-white">
-        <summary className="cursor-pointer list-none px-6 py-4 flex items-center justify-between after:!content-none [&::-webkit-details-marker]:hidden">
-          <span><span className="block font-semibold text-gray-900">Add a new course</span><span className="block text-sm text-gray-500 mt-0.5">Paste the container link of a finished course package.</span></span>
-          <span className="text-gray-400 transition-transform group-open:rotate-90" aria-hidden>›</span>
+      <details className="mt-4 group rounded-xl border border-gray-200 bg-white shadow-sm">
+        <summary className="cursor-pointer list-none px-4 py-3 flex items-center justify-between after:!content-none [&::-webkit-details-marker]:hidden">
+          <span><span className="block text-sm font-semibold text-gray-900">Add a new course</span><span className="block text-xs text-gray-500 mt-0.5">Paste the container link of a finished course package.</span></span>
+          <ChevronRight className="w-4 h-4 text-gray-400 transition-transform group-open:rotate-90" aria-hidden />
         </summary>
-        <div className="px-6 pb-6 pt-1">
+        <div className="px-4 pb-4 pt-1">
 
         <textarea
           value={sasUrl}
           onChange={e => setSasUrl(e.target.value)}
           rows={3}
           placeholder="https://<account>.blob.core.windows.net/<container>?sp=rl&st=...&sig=..."
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono"
+          className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-mono"
         />
         <p className="text-xs text-gray-500 mt-1">Needs read + list permission on the container. The container must hold the course's "Upload package/course.json".</p>
-        <label className="block text-sm font-semibold text-gray-800 mt-4 mb-1">Course slug (optional)</label>
+        <label className="block text-xs font-semibold text-gray-800 mt-4 mb-1">Course slug (optional)</label>
         <input
           value={slug}
           onChange={e => setSlug(e.target.value)}
           placeholder="defaults to the container name, e.g. ai-103"
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+          className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm"
         />
         <div className="grid sm:grid-cols-2 gap-4 mt-4">
-          <label className="text-sm font-semibold text-gray-800">Company
-            <select value={vendor} onChange={e => setVendor(e.target.value)} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm font-normal">
+          <label className="text-xs font-semibold text-gray-800">Company
+            <select value={vendor} onChange={e => setVendor(e.target.value)} className="mt-1 w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-normal">
               <option value="">Detect from the course title</option>
               {opts.vendors.map(v => <option key={v}>{v}</option>)}
             </select>
             <AddNew facet="vendor" noun="company" onAdded={(n, _id, c) => { setCustom(c); setVendor(n) }} />
           </label>
-          <label className="text-sm font-semibold text-gray-800">Type
-            <select value={kind} onChange={e => setKind(e.target.value)} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm font-normal">
+          <label className="text-xs font-semibold text-gray-800">Type
+            <select value={kind} onChange={e => setKind(e.target.value)} className="mt-1 w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-normal">
               <option value="">Detect from the course title</option>
               {opts.kinds.map(k => <option key={k.id} value={k.id}>{k.label}</option>)}
             </select>
@@ -294,33 +292,33 @@ export default function AdminLmsPage() {
           type="button"
           onClick={importCourse}
           disabled={busy || !sasUrl.trim()}
-          className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-full disabled:opacity-50"
+          className="mt-5 inline-flex items-center gap-2 px-3 py-1.5 bg-gray-800 text-white text-xs font-medium rounded-md disabled:opacity-50"
         >
           {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
           {busy ? 'Importing - this can take a minute…' : 'Import course'}
         </button>
-        {msg && <p className={`mt-4 text-sm ${msg.ok ? 'text-emerald-700' : 'text-red-600'}`}>{msg.text}</p>}
+        {msg && <p className={`mt-4 text-xs break-words ${msg.ok ? 'text-emerald-700' : 'text-red-600'}`}>{msg.text}</p>}
         </div>
       </details>
 
-      <details className="mt-4 group rounded-2xl border border-gray-200 bg-white">
-        <summary className="cursor-pointer list-none px-6 py-4 flex items-center justify-between after:!content-none [&::-webkit-details-marker]:hidden">
-          <span><span className="block font-semibold text-gray-900">Add a promo video or thumbnail</span><span className="block text-sm text-gray-500 mt-0.5">Plays automatically when someone opens the course.</span></span>
-          <span className="text-gray-400 transition-transform group-open:rotate-90" aria-hidden>›</span>
+      <details className="mt-4 group rounded-xl border border-gray-200 bg-white shadow-sm">
+        <summary className="cursor-pointer list-none px-4 py-3 flex items-center justify-between after:!content-none [&::-webkit-details-marker]:hidden">
+          <span><span className="block text-sm font-semibold text-gray-900">Add a promo video or thumbnail</span><span className="block text-xs text-gray-500 mt-0.5">Plays automatically when someone opens the course.</span></span>
+          <ChevronRight className="w-4 h-4 text-gray-400 transition-transform group-open:rotate-90" aria-hidden />
         </summary>
-        <div className="px-6 pb-6 pt-1">
+        <div className="px-4 pb-4 pt-1">
 
         <div className="grid sm:grid-cols-2 gap-4 mt-4">
-          <select value={assetSlug} onChange={e => setAssetSlug(e.target.value)} className="rounded-lg border border-gray-300 px-3 py-2 text-sm">
+          <select value={assetSlug} onChange={e => setAssetSlug(e.target.value)} className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm">
             <option value="">Choose a course</option>
             {rows.map(r => <option key={r.slug} value={r.slug}>{r.code}</option>)}
           </select>
-          <select value={assetKind} onChange={e => setAssetKind(e.target.value as 'promo' | 'thumbnail')} className="rounded-lg border border-gray-300 px-3 py-2 text-sm">
+          <select value={assetKind} onChange={e => setAssetKind(e.target.value as 'promo' | 'thumbnail')} className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm">
             <option value="promo">Promo video (.mp4)</option>
             <option value="thumbnail">Thumbnail image</option>
           </select>
         </div>
-        <textarea value={assetUrl} onChange={e => setAssetUrl(e.target.value)} rows={2} placeholder="https://<account>.blob.core.windows.net/<container>/<file>?sp=r&st=...&sig=..." className="mt-4 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono" />
+        <textarea value={assetUrl} onChange={e => setAssetUrl(e.target.value)} rows={2} placeholder="https://<account>.blob.core.windows.net/<container>/<file>?sp=r&st=...&sig=..." className="mt-4 w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-mono" />
         <button
           type="button"
           disabled={assetBusy || !assetSlug || !assetUrl.trim()}
@@ -339,21 +337,21 @@ export default function AdminLmsPage() {
               setAssetBusy(false)
             }
           }}
-          className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-full disabled:opacity-50"
+          className="mt-4 inline-flex items-center gap-2 px-3 py-1.5 bg-gray-800 text-white text-xs font-medium rounded-md disabled:opacity-50"
         >
           {assetBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
           {assetBusy ? 'Copying…' : 'Save to course'}
         </button>
-        {assetMsg && <p className={`mt-3 text-sm ${assetMsg.ok ? 'text-emerald-700' : 'text-red-600'}`}>{assetMsg.text}</p>}
+        {assetMsg && <p className={`mt-3 text-xs ${assetMsg.ok ? 'text-emerald-700' : 'text-red-600'}`}>{assetMsg.text}</p>}
         </div>
       </details>
 
-      <details className="mt-4 group rounded-2xl border border-gray-200 bg-white">
-        <summary className="cursor-pointer list-none px-6 py-4 flex items-center justify-between after:!content-none [&::-webkit-details-marker]:hidden">
-          <span><span className="block font-semibold text-gray-900">Change how a course is filed</span><span className="block text-sm text-gray-500 mt-0.5">Company, type, level, topics and domains decide where it shows in the filters.</span></span>
-          <span className="text-gray-400 transition-transform group-open:rotate-90" aria-hidden>›</span>
+      <details className="mt-4 group rounded-xl border border-gray-200 bg-white shadow-sm">
+        <summary className="cursor-pointer list-none px-4 py-3 flex items-center justify-between after:!content-none [&::-webkit-details-marker]:hidden">
+          <span><span className="block text-sm font-semibold text-gray-900">Change how a course is filed</span><span className="block text-xs text-gray-500 mt-0.5">Company, type, level, topics and domains decide where it shows in the filters.</span></span>
+          <ChevronRight className="w-4 h-4 text-gray-400 transition-transform group-open:rotate-90" aria-hidden />
         </summary>
-        <div className="px-6 pb-6 pt-1">
+        <div className="px-4 pb-4 pt-1">
 
         <select
           value={tagSlug}
@@ -363,7 +361,7 @@ export default function AdminLmsPage() {
             if (row) setTag({ vendor: row.vendor, kind: row.kind, level: row.level, topics: row.topics, domains: row.domains, track: row.track })
             setTagMsg('')
           }}
-          className="mt-4 rounded-lg border border-gray-300 px-3 py-2 text-sm"
+          className="mt-4 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm"
         >
           <option value="">Choose a course</option>
           {rows.map(x => <option key={x.slug} value={x.slug}>{x.code}</option>)}
@@ -372,18 +370,18 @@ export default function AdminLmsPage() {
           <>
             <div className="grid sm:grid-cols-4 gap-4 mt-4">
               <div>
-                <select aria-label="Company" value={tag.vendor} onChange={e => setTag({ ...tag, vendor: e.target.value })} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">{opts.vendors.map(v => <option key={v}>{v}</option>)}</select>
+                <select aria-label="Company" value={tag.vendor} onChange={e => setTag({ ...tag, vendor: e.target.value })} className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm">{opts.vendors.map(v => <option key={v}>{v}</option>)}</select>
                 <AddNew facet="vendor" noun="company" onAdded={(n, _id, c) => { setCustom(c); setTag(t => ({ ...t, vendor: n })) }} />
               </div>
               <div>
-                <select aria-label="Type" value={tag.kind} onChange={e => setTag({ ...tag, kind: e.target.value })} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">{opts.kinds.map(k => <option key={k.id} value={k.id}>{k.label}</option>)}</select>
+                <select aria-label="Type" value={tag.kind} onChange={e => setTag({ ...tag, kind: e.target.value })} className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm">{opts.kinds.map(k => <option key={k.id} value={k.id}>{k.label}</option>)}</select>
                 <AddNew facet="kind" noun="type" onAdded={(_n, id, c) => { setCustom(c); setTag(t => ({ ...t, kind: id })) }} />
               </div>
               <div>
-                <select aria-label="Level" value={tag.level} onChange={e => setTag({ ...tag, level: e.target.value })} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">{opts.levels.map(l => <option key={l}>{l}</option>)}</select>
+                <select aria-label="Level" value={tag.level} onChange={e => setTag({ ...tag, level: e.target.value })} className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm">{opts.levels.map(l => <option key={l}>{l}</option>)}</select>
                 <AddNew facet="level" noun="level" onAdded={(n, _id, c) => { setCustom(c); setTag(t => ({ ...t, level: n })) }} />
               </div>
-              <select value={tag.track} onChange={e => setTag({ ...tag, track: e.target.value })} className="self-start rounded-lg border border-gray-300 px-3 py-2 text-sm" aria-label="Track (short courses)">
+              <select value={tag.track} onChange={e => setTag({ ...tag, track: e.target.value })} className="self-start rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm" aria-label="Track (short courses)">
                 <option value="">No track</option>
                 {TRACKS.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
               </select>
@@ -400,24 +398,24 @@ export default function AdminLmsPage() {
                 setTagMsg(res.ok ? 'Saved. The filters now use these tags.' : 'Could not save.')
                 load()
               }}
-              className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-full"
+              className="mt-4 inline-flex items-center gap-2 px-3 py-1.5 bg-gray-800 text-white text-xs font-medium rounded-md"
             >
               Save tags
             </button>
-            {tagMsg && <p className="mt-3 text-sm text-emerald-700">{tagMsg}</p>}
+            {tagMsg && <p className="mt-3 text-xs text-emerald-700">{tagMsg}</p>}
           </>
         )}
         </div>
       </details>
 
-      <details className="mt-4 group rounded-2xl border border-gray-200 bg-white">
-        <summary className="cursor-pointer list-none px-6 py-4 flex items-center justify-between after:!content-none [&::-webkit-details-marker]:hidden">
-          <span><span className="block font-semibold text-gray-900">Rename a lesson</span><span className="block text-sm text-gray-500 mt-0.5">Fix a lesson or quiz title without importing the course again.</span></span>
-          <span className="text-gray-400 transition-transform group-open:rotate-90" aria-hidden>›</span>
+      <details className="mt-4 group rounded-xl border border-gray-200 bg-white shadow-sm">
+        <summary className="cursor-pointer list-none px-4 py-3 flex items-center justify-between after:!content-none [&::-webkit-details-marker]:hidden">
+          <span><span className="block text-sm font-semibold text-gray-900">Rename a lesson</span><span className="block text-xs text-gray-500 mt-0.5">Fix a lesson or quiz title without importing the course again.</span></span>
+          <ChevronRight className="w-4 h-4 text-gray-400 transition-transform group-open:rotate-90" aria-hidden />
         </summary>
-        <div className="px-6 pb-6 pt-1">
+        <div className="px-4 pb-4 pt-1">
           <div className="grid sm:grid-cols-2 gap-4 mt-4">
-            <select aria-label="Course" value={lessonSlug} onChange={e => { setLessonSlug(e.target.value); setLessonId(''); setLessonTitle(''); setLessonMsg(null) }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm">
+            <select aria-label="Course" value={lessonSlug} onChange={e => { setLessonSlug(e.target.value); setLessonId(''); setLessonTitle(''); setLessonMsg(null) }} className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm">
               <option value="">Choose a course</option>
               {rows.map(x => <option key={x.slug} value={x.slug}>{x.code}</option>)}
             </select>
@@ -426,7 +424,7 @@ export default function AdminLmsPage() {
               value={lessonId}
               disabled={!lessonSlug}
               onChange={e => { setLessonId(e.target.value); setLessonTitle(rows.find(x => x.slug === lessonSlug)?.lessons?.find(l => l.id === e.target.value)?.title || ''); setLessonMsg(null) }}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm min-w-0"
+              className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm min-w-0"
             >
               <option value="">Choose a lesson</option>
               {(rows.find(x => x.slug === lessonSlug)?.lessons || []).map(l => <option key={l.id} value={l.id}>{l.title}</option>)}
@@ -434,7 +432,7 @@ export default function AdminLmsPage() {
           </div>
           {lessonId && (
             <div className="mt-4 flex flex-wrap items-center gap-2">
-              <input value={lessonTitle} onChange={e => setLessonTitle(e.target.value)} maxLength={140} aria-label="New lesson title" className="min-w-0 flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+              <input value={lessonTitle} onChange={e => setLessonTitle(e.target.value)} maxLength={140} aria-label="New lesson title" className="min-w-0 flex-1 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm" />
               <button
                 type="button"
                 disabled={!lessonTitle.trim()}
@@ -444,16 +442,16 @@ export default function AdminLmsPage() {
                   setLessonMsg(res.ok ? { ok: true, text: `Renamed to "${d.title}".` } : { ok: false, text: d.error || 'Could not rename.' })
                   load()
                 }}
-                className="px-5 py-2 bg-gray-900 text-white text-sm font-semibold rounded-full disabled:opacity-50"
+                className="px-3 py-1.5 bg-gray-800 text-white text-xs font-medium rounded-md disabled:opacity-50"
               >
                 Save title
               </button>
             </div>
           )}
-          {lessonMsg && <p role="status" className={`mt-3 text-sm ${lessonMsg.ok ? 'text-emerald-700' : 'text-red-600'}`}>{lessonMsg.text}</p>}
+          {lessonMsg && <p role="status" className={`mt-3 text-xs ${lessonMsg.ok ? 'text-emerald-700' : 'text-red-600'}`}>{lessonMsg.text}</p>}
         </div>
       </details>
 
-    </main>
+    </div>
   )
 }

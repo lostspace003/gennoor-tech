@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { MessageSquare, RefreshCw, Search, Loader2, Inbox, Eye, EyeOff } from 'lucide-react'
 
 interface Comment {
   partitionKey: string
@@ -93,126 +94,84 @@ export default function AdminCommentsPage() {
     return `${days}d ago`
   }
 
-  // Admin dashboard
+  const count = (st: string) => comments.filter(c => c.status === st).length
+
   return (
-    <div style={{ minHeight: '100vh', background: '#f8f9fa' }}>
-      {/* Header */}
-      <div style={{ background: '#fff', borderBottom: '1px solid #e5e7eb', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-        <div>
-          <h1 style={{ fontSize: '20px', fontWeight: 700, color: '#111827', margin: 0 }}>Comment Admin</h1>
-          <p style={{ fontSize: '13px', color: '#6b7280', margin: '4px 0 0' }}>
-            {comments.length} total &middot; {comments.filter(c => c.status === 'approved').length} approved &middot; {comments.filter(c => c.status === 'hidden').length} hidden
-          </p>
+    <div className="w-full p-4 lg:p-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-lg font-semibold text-gray-900 flex items-center gap-2"><MessageSquare className="w-5 h-5 text-primary-600" />Comments</h1>
+          <p className="text-xs text-gray-500 mt-0.5">{comments.length} total · {count('approved')} approved · {count('hidden')} hidden</p>
         </div>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-          <button onClick={() => fetchComments()} style={{ padding: '8px 16px', background: '#f3f4f6', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '13px', cursor: 'pointer' }}>
-            Refresh
-          </button>
-          <a href="/admin" style={{ padding: '8px 16px', background: '#eff6ff', color: '#2563eb', border: '1px solid #bfdbfe', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', textDecoration: 'none' }}>
-            Back to Admin
-          </a>
-        </div>
+        <button onClick={() => fetchComments()} disabled={loading} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-gray-300 bg-white text-gray-700 text-xs font-medium hover:bg-gray-50 disabled:opacity-50">
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />Refresh
+        </button>
       </div>
 
-      {/* Filters */}
-      <div style={{ padding: '16px 24px', display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
-        <input
-          type="text"
-          placeholder="Search by blog slug..."
-          value={searchSlug}
-          onChange={e => setSearchSlug(e.target.value)}
-          style={{ padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '13px', width: '260px', outline: 'none' }}
-        />
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <div className="relative">
+          <Search className="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            placeholder="Search by blog slug..."
+            value={searchSlug}
+            onChange={e => setSearchSlug(e.target.value)}
+            className="w-64 max-w-full border border-gray-300 rounded-md pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:border-primary-600"
+          />
+        </div>
         {(['all', 'approved', 'hidden'] as const).map(f => (
           <button
             key={f}
             onClick={() => setFilter(f)}
-            style={{
-              padding: '6px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: 500, cursor: 'pointer',
-              border: filter === f ? 'none' : '1px solid #d1d5db',
-              background: filter === f ? (f === 'hidden' ? '#dc2626' : f === 'approved' ? '#16a34a' : '#2563eb') : '#fff',
-              color: filter === f ? '#fff' : '#374151',
-            }}
+            className={`px-3 py-1.5 rounded-md text-xs font-medium border ${filter === f ? 'bg-gray-800 text-white border-gray-800' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`}
           >
             {f.charAt(0).toUpperCase() + f.slice(1)}
           </button>
         ))}
       </div>
 
-      {error && (
-        <div style={{ margin: '0 24px 16px', background: '#fef2f2', color: '#dc2626', padding: '12px', borderRadius: '8px', fontSize: '14px' }}>
-          {error}
-        </div>
-      )}
+      {error && <div className="mt-3 rounded-md bg-red-100 text-red-800 px-3 py-2 text-xs break-words">{error}</div>}
 
-      {/* Comments grouped by blog post */}
-      <div style={{ padding: '0 24px 40px' }}>
+      <div className="mt-4 space-y-4">
         {Object.keys(slugGroups).length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '60px 0', color: '#9ca3af' }}>
-            {loading ? 'Loading...' : 'No comments found'}
+          <div className="border border-gray-200 rounded-xl bg-white shadow-sm p-8 text-center text-sm text-gray-500">
+            {loading ? (
+              <span className="inline-flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" />Loading...</span>
+            ) : (
+              <span className="inline-flex flex-col items-center gap-2"><Inbox className="w-6 h-6 text-gray-400" />No comments found</span>
+            )}
           </div>
         ) : (
           Object.entries(slugGroups).map(([slug, slugComments]) => (
-            <div key={slug} style={{ marginBottom: '24px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                <h2 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', margin: 0 }}>{slug}</h2>
-                <span style={{ fontSize: '12px', color: '#9ca3af', background: '#f3f4f6', padding: '2px 8px', borderRadius: '10px' }}>
-                  {slugComments.length}
-                </span>
+            <section key={slug} className="border border-gray-200 rounded-xl bg-white shadow-sm">
+              <div className="flex items-center gap-2 px-4 py-2.5 border-b border-gray-100">
+                <h2 className="text-sm font-semibold text-gray-800 break-all">{slug}</h2>
+                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">{slugComments.length}</span>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <ul className="divide-y divide-gray-100 max-h-[28rem] overflow-y-auto">
                 {slugComments.map(c => (
-                  <div
-                    key={c.rowKey}
-                    style={{
-                      background: '#fff', borderRadius: '12px', padding: '16px',
-                      border: `1px solid ${c.status === 'hidden' ? '#fecaca' : '#e5e7eb'}`,
-                      opacity: c.status === 'hidden' ? 0.6 : 1,
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', flexWrap: 'wrap' }}>
-                      <div style={{ flex: 1, minWidth: '200px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
-                          <span style={{ fontWeight: 600, fontSize: '14px', color: '#111827' }}>{c.authorName}</span>
-                          {c.isAuthorReply && (
-                            <span style={{ fontSize: '11px', background: '#dbeafe', color: '#2563eb', padding: '2px 8px', borderRadius: '10px', fontWeight: 500 }}>Author</span>
-                          )}
-                          {c.parentId && (
-                            <span style={{ fontSize: '11px', background: '#f3f4f6', color: '#6b7280', padding: '2px 8px', borderRadius: '10px' }}>Reply</span>
-                          )}
-                          <span style={{
-                            fontSize: '11px', fontWeight: 500, padding: '2px 8px', borderRadius: '10px',
-                            background: c.status === 'approved' ? '#dcfce7' : '#fef2f2',
-                            color: c.status === 'approved' ? '#16a34a' : '#dc2626',
-                          }}>
-                            {c.status}
-                          </span>
-                        </div>
-                        <p style={{ fontSize: '13px', color: '#6b7280', margin: '0 0 8px' }}>
-                          {c.authorEmail} &middot; {timeAgo(c.timestamp)}
-                        </p>
-                        <p style={{ fontSize: '14px', color: '#374151', margin: 0, whiteSpace: 'pre-wrap', lineHeight: '1.5' }}>
-                          {c.content}
-                        </p>
+                  <li key={c.rowKey} className={`p-4 flex flex-wrap items-start justify-between gap-3 ${c.status === 'hidden' ? 'bg-red-100/30 opacity-70' : ''}`}>
+                    <div className="flex-1 min-w-[200px]">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="text-sm font-semibold text-gray-900 break-words">{c.authorName}</span>
+                        {c.isAuthorReply && <span className="text-xs font-medium bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full">Author</span>}
+                        {c.parentId && <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">Reply</span>}
+                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${c.status === 'approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}`}>{c.status}</span>
                       </div>
-                      <button
-                        onClick={() => toggleStatus(c)}
-                        disabled={actionLoading === c.rowKey}
-                        style={{
-                          padding: '6px 14px', borderRadius: '8px', fontSize: '12px', fontWeight: 500, cursor: 'pointer',
-                          border: 'none', flexShrink: 0,
-                          background: c.status === 'approved' ? '#fef2f2' : '#dcfce7',
-                          color: c.status === 'approved' ? '#dc2626' : '#16a34a',
-                          opacity: actionLoading === c.rowKey ? 0.5 : 1,
-                        }}
-                      >
-                        {actionLoading === c.rowKey ? '...' : c.status === 'approved' ? 'Hide' : 'Restore'}
-                      </button>
+                      <p className="text-xs text-gray-500 mt-1 break-all">{c.authorEmail} · {timeAgo(c.timestamp)}</p>
+                      <p className="text-sm text-gray-700 mt-1.5 whitespace-pre-wrap break-words leading-relaxed">{c.content}</p>
                     </div>
-                  </div>
+                    <button
+                      onClick={() => toggleStatus(c)}
+                      disabled={actionLoading === c.rowKey}
+                      className={`shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium disabled:opacity-50 ${c.status === 'approved' ? 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50' : 'bg-gray-800 text-white hover:bg-gray-700'}`}
+                    >
+                      {actionLoading === c.rowKey ? '...' : c.status === 'approved' ? (<><EyeOff className="w-3.5 h-3.5" />Hide</>) : (<><Eye className="w-3.5 h-3.5" />Restore</>)}
+                    </button>
+                  </li>
                 ))}
-              </div>
-            </div>
+              </ul>
+            </section>
           ))
         )}
       </div>
