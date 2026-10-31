@@ -15,6 +15,17 @@ async function gh(path: string, init?: RequestInit) {
   return j
 }
 
+export interface PrInfo { state: 'open' | 'closed'; merged: boolean; mergeable: boolean | null; url: string }
+export async function getPullRequest(number: number): Promise<PrInfo> {
+  const j = await gh(`/pulls/${number}`)
+  return { state: j.state, merged: !!j.merged, mergeable: j.mergeable, url: j.html_url }
+}
+
+/** Squash-merges a pull request. Throws with GitHub's reason when it cannot (conflict, branch rules, not yet mergeable). */
+export async function mergePullRequest(number: number, title: string): Promise<void> {
+  await gh(`/pulls/${number}/merge`, { method: 'PUT', body: JSON.stringify({ merge_method: 'squash', commit_title: `${title} (#${number})` }) })
+}
+
 export async function readFile(path: string, ref = BASE): Promise<string> {
   const j = await gh(`/contents/${path}?ref=${encodeURIComponent(ref)}`)
   return Buffer.from(j.content, 'base64').toString('utf-8')

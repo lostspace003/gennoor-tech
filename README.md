@@ -43,7 +43,7 @@ Open the menu (top left) to reach every page.
 | **Cost centre** `/admin/costs` | Azure spend for the whole subscription by billing month (the 13th to the 12th), quarter, week or day; split by service, resource group, type or region; INR or USD. |
 | **Sessions** `/admin/sessions` | One timeline of everything done in the studios and LinkedIn hub, grouped into work sessions, with links to resume. |
 | **Social studio** `/admin/social` | Draft LinkedIn posts, polls and webinar announcements from a topic, notes and attached sources (links, PDFs, Word, images). Edit in a LinkedIn-style card, revise with AI, generate or animate images, build motion graphics (GIF/MP4), run the AI agent team, approve, then publish to your profile or the company page. Published posts can be edited and updated or re-posted. Every visual carries the Gennoor logo and website. AI cost is shown per draft and per month. |
-| **Blog studio** `/admin/blog` | An AI team writes an article in the blog's exact file format with tl;dr, takeaways, FAQs and sources. Pick a category and tags (existing or new), edit everything, approve, and publishing opens a GitHub pull request. |
+| **Blog studio** `/admin/blog` | Write articles by hand or let the AI team research and write them in the blog's exact format with tl;dr, takeaways, FAQs, sources, category and tags (existing or new). **Approve & publish** opens the GitHub pull request, merges it automatically (a Merge button is there if GitHub needs a nudge), waits for the site to go live, then shares the article link with a short post on the company page and your profile. A **daily blog autopilot** does all of this by itself every day: research, write, review (revising up to twice), approve, publish and share; if a draft still fails review it is held for you instead. |
 | **LinkedIn autopilot** `/admin/autopilot` | Researches what the industry is discussing, writes four posts a day (seven days a week), and publishes each at its slot unless you posted it first. Safeguards: quality gate, banned-topic screen, retries, no double posts, missed-window skip, token-expiry alerts, review-only mode, and one switch to turn it off. Weekday and weekend slots are editable. |
 | **LinkedIn hub** `/admin/linkedin-hub` | Feed, people, inbox, companies and jobs through a saved LinkedIn login, with daily safety limits and an activity log. |
 | **LinkedIn connection** `/admin/linkedin` | Connect your profile and the company page, and share blog posts. |
@@ -91,7 +91,8 @@ npm install
 cp .env.example .env.local   # then fill in the values you need
 npm run dev                  # http://localhost:3000
 npm run build                # production build
-npx tsx scripts/autopilot-test.ts   # LinkedIn autopilot safeguard tests
+npx tsx scripts/autopilot-test.ts          # LinkedIn autopilot safeguard tests
+npx tsx scripts/blog-automation-test.ts    # blog publishing flow and daily blog autopilot tests
 ```
 
 The admin centre needs sign-in with an authorised work account. Most features degrade gracefully when an optional setting is missing.
@@ -115,7 +116,7 @@ Names only; set them in `.env.local` locally and in App Service settings in prod
 | Workflow | When | Does |
 |---|---|---|
 | `deploy.yml` | Push to `main` | Build, test, deploy to Azure App Service. |
-| `autopilot.yml` | Every 15 minutes | Runs one autopilot check (does nothing while the autopilot is off). |
+| `autopilot.yml` | Every 15 minutes | One heartbeat for the LinkedIn autopilot, the blog publishing flow (merge, live, share) and the daily blog autopilot; each does nothing while switched off. |
 | `crm-digest.yml` | Mon to Sat, 06:30 IST | Sends the CRM morning digest. |
 | `seo-reindex.yml` | Every 4 days | Resubmits URLs to Bing and Google. |
 | `site-index.yml` | Monthly | Refreshes the assistant's site index. |

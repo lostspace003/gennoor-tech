@@ -18,7 +18,27 @@ export interface BlogDraft {
   review?: { verdict: string; notes: string[] }
   trace?: { agent: string; label: string; output: string; usd: number }[]
   pr?: { url: string; number: number; branch: string }
+  /** Publishing flow after approval: pull request -> merged -> live on the website -> shared on LinkedIn. */
+  pipeline?: BlogPipeline
+  shared?: Partial<Record<'organization' | 'member', { urn: string; at: string }>>
+  /** Made by the daily blog autopilot rather than by hand. */
+  auto?: boolean
+  /** The short LinkedIn posts written for this article (company page and profile), kept so a retry reuses them. */
+  shareText?: { page: string; profile: string }
   createdAt: string; updatedAt: string
+}
+
+export interface BlogPipeline {
+  stage: 'pr' | 'merged' | 'live' | 'done' | 'attention'
+  autoMerge: boolean
+  shareToLinkedIn: boolean
+  mergedAt?: string
+  liveAt?: string
+  note?: string
+  mergeTries: number
+  shareTries: Partial<Record<'organization' | 'member', number>>
+  /** Set just before a merge or a LinkedIn post, so an interrupted run can never post twice. */
+  busy?: { what: string; at: string }
 }
 
 export const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 70)

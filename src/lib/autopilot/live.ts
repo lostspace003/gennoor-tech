@@ -34,11 +34,12 @@ function parseJson<T>(text: string): T | null {
   try { return JSON.parse(text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1)) as T } catch { return null }
 }
 
-async function research(ctx: Parameters<Deps['research']>[0], sleep: Deps['sleep']): Promise<TopicIdea[]> {
+/** Web-grounded topic research. Also used by the daily blog autopilot (`blog: true`, fewer ideas, more substance). */
+export async function researchIdeas(ctx: Parameters<Deps['research']>[0] & { count?: number; blog?: boolean }, sleep: Deps['sleep']): Promise<TopicIdea[]> {
   const { cfg, weekend, recent, date } = ctx
-  const n = (weekend ? cfg.weekendSlots : cfg.weekdaySlots).length + 3
+  const n = ctx.count ?? ((weekend ? cfg.weekendSlots : cfg.weekdaySlots).length + 3)
   const instructions = `You are the research editor for Gennoor Tech, an enterprise AI training company, whose LinkedIn audience is IT leaders, architects, developers and AI practitioners. Use web search to find what is genuinely being discussed RIGHT NOW (last 24-72 hours) across the whole industry, not one vendor.
-Pick ${n} topic ideas that will earn reach: widely discussed, relevant to a broad IT audience, with a real news item, release, incident, benchmark or debate behind each.
+${ctx.blog ? 'These are for a long-form blog article of about 1,800 words, so choose topics with enough substance, a clear enterprise angle and several credible sources, not a single press release.\n' : ''}Pick ${n} topic ideas that will earn reach: widely discussed, relevant to a broad IT audience, with a real news item, release, incident, benchmark or debate behind each.
 Rules:
 - Cover at least 3 different vendors or communities across the set (Microsoft, Google, AWS, OpenAI, Anthropic, Meta, open source, regulators). Never two ideas about the same vendor.
 - Prefer topics with a clear opinion to take or a practical consequence for IT teams over pure press-release summaries.
@@ -136,7 +137,7 @@ export function liveDeps(): Deps {
     load: loadState,
     save: saveState,
     sleep,
-    research: ctx => research(ctx, sleep),
+    research: ctx => researchIdeas(ctx, sleep),
     generate: ctx => generate(ctx, sleep),
     draft: async id => {
       const d = await getDraft(id)
