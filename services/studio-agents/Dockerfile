@@ -14,7 +14,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY assets ./assets
-COPY render.py agents.py li.py app.py ./
+COPY render.py agents.py li.py app.py palettes.py ./
 
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \

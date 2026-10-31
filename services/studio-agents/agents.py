@@ -26,7 +26,7 @@ USD_OUT = float(os.getenv("FOUNDRY_TEXT_USD_OUT", "10")) / 1e6
 
 BRAND = (
     "Gennoor Tech is an enterprise AI and Microsoft training company in India. Voice: practical, credible, no hype, "
-    "no emoji spam. Palette for visuals: dark navy and electric blue with cyan accents, modern, no logos."
+    "no emoji spam. Visual colours are set per post by the art director (they vary; never default to navy or blue), no logos."
 )
 
 RESEARCHER = (
@@ -46,7 +46,7 @@ DESIGNER_IMAGE = (
 DESIGNER_MOTION = (
     f"{BRAND}\nYou are the motion-graphics design agent. Design a 6-8 second looping square scene (1080x1080, 15 fps) that "
     "dramatises the post's single key idea with kinetic text, a counter or bars, and an accent line. Keep text short (max 12 "
-    "words on screen at once), stagger entrances, leave 0.6s of calm at the end. Use ONLY this JSON spec:\n"
+    "words on screen at once), stagger entrances, leave 0.6s of calm at the end. Colours are re-mapped afterwards to a palette chosen for this post, so just use white for text and #38bdf8 for every accent. Use ONLY this JSON spec:\n"
     '{"width":1080,"height":1080,"fps":15,"duration":7,"background":{"from":"#0b1b3a","to":"#1d4ed8","angle":135},'
     '"elements":[{"type":"text","text":"...","x":0.5,"y":0.3,"size":84,"color":"#ffffff","bold":true,"max_width":0.84,'
     '"in":{"at":0.3,"dur":0.7,"anim":"slide-up"},"out":{"at":6.4,"dur":0.4}},'

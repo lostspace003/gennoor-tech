@@ -19,7 +19,7 @@ export interface CostReport {
 }
 
 let cred: TokenCredential | undefined
-function credential() {
+export function credential() {
   if (cred) return cred
   const { AZURE_COST_CLIENT_ID: id, AZURE_COST_CLIENT_SECRET: secret, AZURE_COST_TENANT_ID: tenant } = process.env
   cred = id && secret && tenant ? new ClientSecretCredential(tenant, id, secret) : new ChainedTokenCredential(new ManagedIdentityCredential(), new AzureCliCredential({ subscription: SUB }))
