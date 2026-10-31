@@ -47,7 +47,7 @@ The menu on the left is open by default (collapse it with the round button; on p
 | **Social studio** `/admin/social` | Draft LinkedIn posts, polls and webinar announcements from a topic, notes and attached sources (links, PDFs, Word, images). Edit in a LinkedIn-style card, revise with AI, generate or animate images, build motion graphics (GIF/MP4), run the AI agent team, approve, then publish to your profile or the company page. Published posts can be edited and updated or re-posted. Every visual carries the Gennoor logo and website. AI cost is shown per draft and per month. |
 | **Blog studio** `/admin/blog` | Write articles by hand or let the AI team research and write them in the blog's exact format with tl;dr, takeaways, FAQs, sources, category and tags (existing or new). **Approve & publish** opens the GitHub pull request, merges it automatically (a Merge button is there if GitHub needs a nudge), waits for the site to go live, then shares the article on the company page, after which your profile reposts it with a short note (switchable to its own post). Every share gets a meaningful first comment from its author. A **daily blog autopilot** does all of this by itself every day: research, write, review (revising up to twice), approve, publish and share; if a draft still fails review it is held for you instead. |
 | **LinkedIn autopilot** `/admin/autopilot` | Researches what the industry is discussing, writes four posts a day (seven days a week), and publishes each at its slot unless you posted it first. The company page posts first, your profile reposts it with a short note (or posts its own version, a setting on the page), and every post gets a meaningful first comment. Safeguards: quality gate, banned-topic screen, retries, no double posts, missed-window skip, token-expiry alerts, review-only mode, and one switch to turn it off. Weekday and weekend slots are editable. |
-| **LinkedIn hub** `/admin/linkedin-hub` | Feed, people, inbox, companies and jobs through a saved LinkedIn login, with daily safety limits and an activity log. Searches take plain words (pasted profile, company and job links work too), with quick-start examples and "i" tips on every field. Results are shown as clean headings and bullets, can be copied with formatting kept, and can be emailed to any address. |
+| **LinkedIn hub** `/admin/linkedin-hub` | Feed, people, inbox, companies and jobs through a saved LinkedIn login, with daily safety limits and an activity log. Tick-box dropdowns for places (19 countries, cities in brackets) and profile sections; people results shown as a clean table with clickable names. The **Prospecting** tab finds work emails (Vibe Prospecting) and every people table downloads as Excel. Searches take plain words (pasted profile, company and job links work too), with quick-start examples and "i" tips on every field. Results are shown as clean headings and bullets, can be copied with formatting kept, and can be emailed to any address. |
 | **LinkedIn connection** `/admin/linkedin` | Connect your profile and the company page, and share blog posts (each share gets a first comment). Warns before either login expires. |
 | **Learning Studio** `/admin/lms` | Import and manage Learning Studio courses. |
 | **Comments / Community** | Moderate blog comments and learner community posts and reviews. |
@@ -121,10 +121,23 @@ Names only; set them in `.env.local` locally and in App Service settings in prod
 - **Email and Microsoft 365:** `AZURE_COMMUNICATION_CONNECTION_STRING`, `EMAIL_FROM_*`, `MS_GRAPH_*`, `MS_BOOKINGS_BUSINESS_ID`
 - **AI:** `FOUNDRY_API_KEY`, `FOUNDRY_OPENAI_BASE`, `FOUNDRY_*_MODEL`, `FOUNDRY_IMAGE_DEPLOYMENT`, `AZURE_OPENAI_*`; cost estimates via `FOUNDRY_TEXT_USD_IN`, `FOUNDRY_TEXT_USD_OUT`, `FOUNDRY_IMAGE_USD`
 - **Search and retrieval:** `QDRANT_*`, `VECTOR_SERVICE_URL`, `VECTOR_API_KEY`
+- **Prospecting:** `PROSPECTING_API_KEY` (optional "Server default" key; more keys are added in the hub's Prospecting tab)
 - **LinkedIn:** `LINKEDIN_CLIENT_ID/SECRET`, `LINKEDIN_PAGE_CLIENT_ID/SECRET`, `STUDIO_AGENTS_URL`, `STUDIO_AGENTS_KEY`
 - **Publishing and automation:** `GITHUB_TOKEN`, `GITHUB_REPO`, `CRM_CRON_SECRET`
 - **Cost centre:** `AZURE_COST_SUBSCRIPTION_ID`, `AZURE_BILLING_CYCLE_DAY`, `AZURE_COST_USD_INR`
 - **Analytics and SEO:** `APPINSIGHTS_*`, `NEXT_PUBLIC_GA_MEASUREMENT_ID`, `GOOGLE_SERVICE_ACCOUNT_KEY`
+
+## Prospecting: get an API key
+
+Vibe Prospecting runs on Explorium, so the key comes from there.
+
+1. Go to **admin.explorium.ai** and sign in.
+2. Open **Access & Authentication** in the left menu.
+3. Click **Getting Your API Key** and copy the key.
+4. In the hub, open the **Prospecting** tab, paste it under "Add or replace a key", name it and press **Add and connect**. It is checked at once and shows its credits.
+5. Run a People search, then use **Find email** on a person or **Find emails for all**. Each email costs about 2 credits. **Download Excel** saves the table.
+
+Add several keys and the one marked *In use* runs first; if it runs out of credits the next takes over. Keys are stored encrypted and only their last 4 characters are ever shown. To replace one, add the new key and remove the old.
 
 ## Scheduled jobs (GitHub Actions)
 

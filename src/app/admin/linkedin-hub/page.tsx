@@ -3,13 +3,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Copy, Check, Mail, Loader2, RefreshCw, Newspaper, Users, MessageSquare, Building2, Briefcase, UserCircle, Activity, LayoutGrid, ExternalLink, ShieldCheck, ChevronLeft, ChevronDown, Search } from 'lucide-react'
 import InfoTip from '@/components/admin/InfoTip'
+import ProspectTable from '@/components/admin/ProspectTable'
+import ProspectingPanel from '@/components/admin/ProspectingPanel'
 import SplitPane from '@/components/admin/SplitPane'
 import WarmSwitch from '@/components/admin/WarmSwitch'
 import { DateRangeFilter, rangeBounds, rangeLabel, type DateRange } from '@/components/crm/shared'
 import { GROUPS, TOOLS, FIELD_TIPS, STARTERS, type Field, type GroupKey, type ToolDef } from '@/lib/linkedin-catalog'
-import { markdownToHtml, normalizeArg, resultToMarkdown } from '@/lib/linkedin-hub-format'
+import { markdownToHtml, normalizeArg, parsePeople, resultToMarkdown } from '@/lib/linkedin-hub-format'
 
-type Tab = 'overview' | GroupKey | 'activity'
+type Tab = 'overview' | GroupKey | 'prospecting' | 'activity'
 interface Status {
   service: 'up' | 'down' | 'not-configured' | 'checking'; detail?: string; session: any; ok?: boolean; sessionUnknown?: boolean; available?: string[]
   usage: { reads: number; readCap: number }; caps: { tool: string; label: string; cap: number; used: number }[]
@@ -17,7 +19,7 @@ interface Status {
 }
 interface Result { tool: string; args: Record<string, any>; data: any; ok: boolean; cached?: boolean; at: number; ms?: number }
 
-const ICONS: Record<Tab, any> = { overview: LayoutGrid, feed: Newspaper, people: Users, inbox: MessageSquare, companies: Building2, jobs: Briefcase, me: UserCircle, activity: Activity }
+const ICONS: Record<Tab, any> = { overview: LayoutGrid, feed: Newspaper, people: Users, inbox: MessageSquare, companies: Building2, jobs: Briefcase, me: UserCircle, prospecting: Mail, activity: Activity }
 const field = 'w-full text-sm border border-gray-200 rounded-md px-2.5 py-1.5 focus:outline-none focus:border-blue-500 bg-white'
 const btn = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium rounded-md border border-gray-200 bg-white hover:border-gray-400 disabled:opacity-40'
 const primary = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium bg-gray-800 text-white rounded-md hover:bg-gray-900 disabled:opacity-40'
@@ -68,6 +70,13 @@ function ResultView({ r, label, onRun, busy }: { r: Result; label: string; onRun
   const d = r.data
   const refs = useMemo(() => collectRefs(d?.references ?? (Array.isArray(d) ? d : undefined)), [d])
   const md = useMemo(() => resultToMarkdown(label, r.args, d), [label, r, d])
+  const people = useMemo(() => {
+    const rows = typeof d?.text === 'string' ? parsePeople(d.text) : null
+    if (!rows) return null
+    const norm = (x: string) => x.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+    const prof = refs.filter(x => /\/in\//.test(x.url))
+    return rows.map(p => { const hit = prof.find(x => x.text && norm(x.text).startsWith(norm(p.name))); return { ...p, linkedin: hit ? absolute(hit.url).split('?')[0] : undefined } })
+  }, [d, refs])
   const [copied, setCopied] = useState(false)
   const [mailOpen, setMailOpen] = useState(false)
   const [to, setTo] = useState('')
@@ -110,7 +119,7 @@ function ResultView({ r, label, onRun, busy }: { r: Result; label: string; onRun
           {mail.msg && <span className={`text-xs ${mail.state === 'error' ? 'text-red-700' : 'text-emerald-700'}`}>{mail.msg}</span>}
         </form>
       )}
-      <div className="rounded-lg border border-gray-200 bg-white p-4 max-h-[70vh] overflow-y-auto"><Fmt md={md} /></div>
+      {people ? <ProspectTable rows={people} fileName="linkedin-people" /> : <div className="rounded-lg border border-gray-200 bg-white p-4 max-h-[70vh] overflow-y-auto"><Fmt md={md} /></div>}
       {refs.length > 0 && (
         <section className="rounded-lg border border-gray-200 bg-white">
           <div className="px-3 py-1.5 text-xs font-semibold border-b border-gray-100 bg-gray-50 rounded-t-lg">Do more with these ({Math.min(refs.length, 120)})<InfoTip text="Shortcuts for each link found: read a profile, open a conversation, see job details and so on. Each press runs one more lookup." /></div>
@@ -214,7 +223,7 @@ export default function LinkedInHubPage() {
     return !n || `${a.label} ${a.summary} ${a.area} ${a.error || ''}`.toLowerCase().includes(n)
   })
   const aPages = Math.max(1, Math.ceil(aRows.length / AP)), aAt = Math.min(aPage, aPages - 1)
-  const tabs: Tab[] = ['overview', ...GROUPS.map(g => g.key), 'activity']
+  const tabs: Tab[] = ['overview', ...GROUPS.map(g => g.key), 'prospecting', 'activity']
 
   return (
     <div className="w-full p-4 lg:p-5">
@@ -230,7 +239,7 @@ export default function LinkedInHubPage() {
 
       <div className="flex gap-1 overflow-x-auto border-b border-gray-200 mb-4 text-sm">
         {tabs.map(t => { const I = ICONS[t]; return (
-          <button key={t} onClick={() => go(t)} className={`inline-flex items-center gap-1.5 px-3 py-2 -mb-px border-b-2 whitespace-nowrap ${tab === t ? 'border-gray-800 font-medium' : 'border-transparent text-gray-500 hover:text-gray-800'}`}><I className="w-4 h-4" />{t === 'overview' ? 'Overview' : t === 'activity' ? 'Activity' : GROUPS.find(g => g.key === t)!.label}</button>
+          <button key={t} onClick={() => go(t)} className={`inline-flex items-center gap-1.5 px-3 py-2 -mb-px border-b-2 whitespace-nowrap ${tab === t ? 'border-gray-800 font-medium' : 'border-transparent text-gray-500 hover:text-gray-800'}`}><I className="w-4 h-4" />{t === 'overview' ? 'Overview' : t === 'activity' ? 'Activity' : t === 'prospecting' ? 'Prospecting' : GROUPS.find(g => g.key === t)!.label}</button>
         ) })}
       </div>
 
@@ -268,6 +277,8 @@ export default function LinkedInHubPage() {
               </ul>
             </div>
           </div>} />
+      ) : tab === 'prospecting' ? (
+        <ProspectingPanel />
       ) : tab === 'activity' ? (
         <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
           <div className="p-2.5 border-b border-gray-100 flex flex-wrap items-center gap-x-3 gap-y-2">
