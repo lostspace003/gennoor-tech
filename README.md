@@ -93,6 +93,7 @@ npm run dev                  # http://localhost:3000
 npm run build                # production build
 npx tsx scripts/autopilot-test.ts          # LinkedIn autopilot safeguard tests
 npx tsx scripts/blog-automation-test.ts    # blog publishing flow and daily blog autopilot tests
+npx tsx scripts/linkedin-format-test.ts    # LinkedIn post formatting tests
 ```
 
 The admin centre needs sign-in with an authorised work account. Most features degrade gracefully when an optional setting is missing.
@@ -134,6 +135,7 @@ Names only; set them in `.env.local` locally and in App Service settings in prod
 - Cards and their links stay aligned: icon, title, text, then the card's own link, centred, the same on every page.
 - Course and quiz text is markdown; see [`docs/lms-course-format.md`](docs/lms-course-format.md).
 - The credentials list lives in `src/data/credentials.ts`.
+- Every LinkedIn post (written by hand, by AI, by the autopilot, or the blog-share posts) is formatted by `src/lib/linkedin-format.ts`: bold Unicode opening line, short paragraphs, quiet `▪` bullets, no emoji except an occasional 💡 (plus `⚙` / `🔒`), and one tidy hashtag line. The "Format for LinkedIn" button in the Social studio applies it on demand, and it is applied again automatically just before publishing.
 
 ## More documentation
 

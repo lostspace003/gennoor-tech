@@ -2,6 +2,7 @@ import { sendEmail } from '@/lib/email-service'
 import { getLinkedInState, publishArticle, saveLinkedInState } from '@/lib/linkedin'
 import { githubConfigured, getPullRequest, mergePullRequest, openPullRequest, readFile } from '@/lib/github-pr'
 import { siteUrl } from '@/lib/tech-call-mail'
+import { formatForLinkedIn, LINKEDIN_STYLE_GUIDE } from '@/lib/linkedin-format'
 import { blogPostsMeta } from '@/data/blog-posts'
 import { contentFile, getBlogDraft, listBlogDrafts, mutateBlogDraft, patchIndex, type BlogDraft } from '@/lib/blog-studio'
 import { foundry, readBlob, recordSpend, textUsd, tokensOf, writeBlob } from '@/lib/social/studio'
@@ -70,20 +71,22 @@ export async function retryBlogPipeline(id: string): Promise<BlogDraft> {
 export async function shareTexts(d: BlogDraft): Promise<{ page: string; profile: string }> {
   const url = `${siteUrl()}/resources/blog/${d.meta.slug}`
   const tags = d.meta.hashtags.slice(0, 4).join(' ')
-  const fallback = `${d.meta.title}\n\n${d.meta.excerpt.slice(0, 260).trim()}\n\nRead the full article: ${url}\n\n${tags}`.slice(0, 1500)
+  const fallback = formatForLinkedIn(`**${d.meta.title}**\n\n${d.meta.excerpt.slice(0, 260).trim()}\n\n→ Read the full article: ${url}\n\n${tags}`)
   try {
     const j = await foundry('/openai/v1/responses', {
       model: TEXT_MODEL,
       instructions: `You write short LinkedIn posts that announce a new article. Write TWO versions as JSON only: {"page": string, "profile": string}.
 - "page": for the Gennoor Tech company page, 70-110 words, plain and credible: a strong first line, 2-3 short takeaways from the article, then "Read the full article: ${url}", then 3-4 hashtags.
 - "profile": the founder's personal version, first person ("I just published..."), same facts, a different opening line, a short reason it matters to IT leaders, the same link line and hashtags.
-Never invent facts beyond the article summary. No hype words. No emoji spam. Keep each under 1,300 characters.`,
+Never invent facts beyond the article summary. No hype words. Keep each under 1,300 characters.
+${LINKEDIN_STYLE_GUIDE}`,
       input: `Title: ${d.meta.title}\nSummary: ${d.meta.tldr}\nKey takeaways:\n- ${d.meta.keyTakeaways.slice(0, 5).join('\n- ')}\nHashtags: ${tags}`,
     })
     await recordSpend(`blog-${d.id}`, 'LinkedIn share text', textUsd(j), tokensOf(j))
     const out: string = j.output_text || (j.output || []).flatMap((o: any) => o.content || []).map((c: any) => c.text || '').join('')
     const p = JSON.parse(out.slice(out.indexOf('{'), out.lastIndexOf('}') + 1)) as { page?: string; profile?: string }
-    const fix = (s?: string) => { const t = (s || '').trim(); return t.length > 60 ? (t.includes(url) ? t : `${t}\n\nRead the full article: ${url}`).slice(0, 1500) : fallback }
+    // The link line sits before the hashtags; the formatter moves the hashtags to the end.
+    const fix = (s?: string) => { const t = (s || '').trim(); return t.length > 60 ? formatForLinkedIn(t.includes(url) ? t : `${t}\n\n→ Read the full article: ${url}`, { fallbackHashtags: d.meta.hashtags }) : fallback }
     return { page: fix(p.page), profile: fix(p.profile) }
   } catch { return { page: fallback, profile: fallback } }
 }

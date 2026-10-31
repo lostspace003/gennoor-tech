@@ -3,6 +3,7 @@ import { randomBytes } from 'crypto'
 import { agentFetch, agentServiceConfigured } from '@/lib/social/agent-service'
 import { withReferences, type Ref } from '@/lib/social/references'
 import { foundryAuthHeader, foundryConfigured } from '@/lib/crm/foundry'
+import { extractHashtags, formatForLinkedIn, LINKEDIN_STYLE_GUIDE } from '@/lib/linkedin-format'
 
 // Social studio drafts: one JSON blob for the drafts, one blob per generated image.
 // Same blob-store pattern as the rest of the admin tooling.
@@ -153,12 +154,39 @@ export async function createDraft(topic: string, brief = '', kind: DraftKind = '
       options: (parsed.options?.length ? parsed.options : ['Yes', 'No']).slice(0, 4).map(o => String(o).slice(0, 30)),
       duration: 'SEVEN_DAYS' as PollDuration,
     } } : {}),
-    text: (parsed.text || '').trim(), imagePrompt: (parsed.imagePrompt || '').trim(),
+    text: await polishPost((parsed.text || '').trim()), imagePrompt: (parsed.imagePrompt || '').trim(),
     hasImage: false, createdAt: now, updatedAt: now, published: [], ...(refs.length ? { references: refs } : {}),
   }
   await saveDrafts([d, ...(await listDrafts())])
   await recordSpend(d.id, 'Draft written', textUsd(json), tokensOf(json))
   return d
+}
+
+/**
+ * "Format for LinkedIn": keeps every fact and the author's voice, and gives the post the house shape: a bold hook,
+ * short paragraphs, quiet bullets, at most a light bulb and one plain symbol, and a tidy hashtag line. If the model is
+ * unavailable the deterministic formatter still runs, so a post is never left half-formatted.
+ */
+export async function polishPost(text: string, spendId = 'format'): Promise<string> {
+  const plain = (text || '').trim()
+  if (!plain) return plain
+  try {
+    const j = await foundry('/openai/v1/responses', {
+      model: TEXT_MODEL,
+      instructions: `You tidy LinkedIn posts for Gennoor Tech without changing their meaning. ${LINKEDIN_STYLE_GUIDE}\nKeep every fact, name, number and link exactly. Keep the author's voice. Do not add claims. If the post already has hashtags keep them; if it has none, add 3 to 5 relevant ones. Return only the final post text.`,
+      input: plain,
+    })
+    await recordSpend(spendId, 'Format for LinkedIn', textUsd(j), tokensOf(j))
+    const out: string = j.output_text || (j.output || []).flatMap((o: any) => o.content || []).map((c: any) => c.text || '').join('')
+    return formatForLinkedIn(out.trim().length > plain.length * 0.5 ? out : plain)
+  } catch {
+    return formatForLinkedIn(plain)
+  }
+}
+
+/** The text that actually goes to LinkedIn: always tidied, and given hashtags by the model when it has none. */
+export async function prepareForPublish(text: string, spendId = 'format'): Promise<string> {
+  return extractHashtags(text).length ? formatForLinkedIn(text) : polishPost(text, spendId)
 }
 
 /** Revision agent: current text + the editor's instruction in, rewritten text out. */
@@ -187,8 +215,9 @@ export async function reviseDraft(id: string, instruction: string, target: 'post
   let parsed: { text?: string; question?: string; options?: string[] } = {}
   try { parsed = JSON.parse(out.slice(out.indexOf('{'), out.lastIndexOf('}') + 1)) } catch { parsed = { text: out } }
   await recordSpend(id, 'Post revised', textUsd(json), tokensOf(json))
+  const polished = parsed.text?.trim() ? await polishPost(parsed.text.trim(), id) : ''
   return mutateDraft(id, x => {
-    if (parsed.text?.trim()) x.text = parsed.text.trim().slice(0, 3000)
+    if (polished) x.text = polished.slice(0, 3000)
     if (x.kind === 'poll' && x.poll && parsed.question) {
       x.poll.question = parsed.question.slice(0, 140)
       if (parsed.options?.length) x.poll.options = parsed.options.slice(0, 4).map(o => String(o).slice(0, 30))
@@ -240,7 +269,7 @@ export async function createAgentDraft(
   const now = new Date().toISOString()
   const d: Draft = {
     id: randomBytes(6).toString('hex'), topic, status: 'draft', kind: 'post',
-    text: (res.text || '').trim(), imagePrompt: (res.imagePrompt || '').trim(),
+    text: await polishPost((res.text || '').trim()), imagePrompt: (res.imagePrompt || '').trim(),
     hasImage: false, createdAt: now, updatedAt: now, published: [],
     ...(refs.length ? { references: refs } : {}), trace, ...(res.review ? { review: res.review } : {}),
   }

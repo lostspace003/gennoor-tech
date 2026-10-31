@@ -1,4 +1,5 @@
 import { webGroundedCompletion } from '@/lib/crm/foundry'
+import { toPlain } from '@/lib/linkedin-format'
 import { sendEmail } from '@/lib/email-service'
 import { getLinkedInState } from '@/lib/linkedin'
 import { agentFetch } from '@/lib/social/agent-service'
@@ -115,7 +116,7 @@ async function generate(ctx: Parameters<Deps['generate']>[0], sleep: Deps['sleep
     const p = draft.poll
     const ok = !!p && p.question.length >= 10 && p.options.length >= 2 && p.options.every(o => o.length >= 2) && draft.text.length >= 40
     const variant = ok ? await variantOf(draft.text, sleep) : undefined
-    return { draftId: draft.id, text: draft.text, verdict: ok ? 'pass' : 'revise', notes: ok ? [] : ['The poll needs a clear question and 2-4 distinct options with an intro.'], variant }
+    return { draftId: draft.id, text: toPlain(draft.text), verdict: ok ? 'pass' : 'revise', notes: ok ? [] : ['The poll needs a clear question and 2-4 distinct options with an intro.'], variant }
   }
 
   const mode = slot.kind === 'motion' ? 'motion' : 'post'
@@ -127,7 +128,8 @@ async function generate(ctx: Parameters<Deps['generate']>[0], sleep: Deps['sleep
   }
   const text = (await getDraft(draft.id))?.text || draft.text
   const verdict = result.review?.verdict === 'pass' && text.trim().length > 200 ? 'pass' : 'revise'
-  return { draftId: draft.id, text, verdict, notes: result.review?.notes || [], variant: verdict === 'pass' ? await variantOf(text, sleep) : undefined }
+  // The engine screens for banned words, so it gets plain letters, not the Unicode-bold ones.
+  return { draftId: draft.id, text: toPlain(text), verdict, notes: result.review?.notes || [], variant: verdict === 'pass' ? await variantOf(text, sleep) : undefined }
 }
 
 export function liveDeps(): Deps {

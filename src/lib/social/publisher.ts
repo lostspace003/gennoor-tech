@@ -1,5 +1,5 @@
 import { getLinkedInState, publishPost, publishVideoPost } from '@/lib/linkedin'
-import { getDraft, getImage, getMotion, mutateDraft } from '@/lib/social/studio'
+import { getDraft, getImage, getMotion, mutateDraft, prepareForPublish } from '@/lib/social/studio'
 
 /**
  * Publishes a draft as a NEW post to one target, the same way the Social studio does, and records it on the draft.
@@ -8,7 +8,7 @@ import { getDraft, getImage, getMotion, mutateDraft } from '@/lib/social/studio'
 export async function publishNew(id: string, target: 'member' | 'organization', opts: { commentary?: string; media?: 'gif' | 'video' | 'still' } = {}): Promise<{ urn: string }> {
   const d = await getDraft(id)
   if (!d) throw new Error('Draft not found.')
-  const text = (opts.commentary || d.text).trim()
+  const text = (await prepareForPublish((opts.commentary || d.text).trim(), id)).trim()
   if (!text) throw new Error('The post is empty.')
   if (d.kind === 'poll' && (!d.poll?.question.trim() || (d.poll?.options.length ?? 0) < 2)) throw new Error('A poll needs a question and at least 2 options.')
 
