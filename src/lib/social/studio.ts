@@ -34,7 +34,7 @@ export interface Draft {
   hasImage: boolean
   createdAt: string
   updatedAt: string
-  published: { as: 'member' | 'organization'; urn: string; at: string }[]
+  published: { as: 'member' | 'organization'; urn: string; at: string; reshare?: boolean; comment?: string; commentError?: string }[]
   references?: Ref[]
   /** Motion-graphic GIF (and MP4) produced by the agent service, plus the editable scene spec. */
   motion?: Motion

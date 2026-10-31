@@ -1,5 +1,6 @@
 'use client'
 
+import { ResizeGrid } from '@/components/admin/SplitPane'
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Loader2, Sparkles, ImageIcon, Check, Send, Trash2, Save, RotateCcw, Paperclip, Link2, FileText, X, Pencil, Bot, Film, Download, ChevronDown, Maximize2, Clock } from 'lucide-react'
@@ -252,7 +253,7 @@ export default function SocialStudioPage() {
       {notice && <div className="mb-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm px-3 py-2">{notice}</div>}
 
       {/* Workspace: drafts | post | tools. Each pane scrolls on its own, so the post and its actions never get lost off screen. */}
-      <div className="grid lg:grid-cols-[300px_minmax(0,1fr)] gap-4 flex-1 min-h-0">
+      <ResizeGrid id="social-main" initial={300} className="flex-1 min-h-0">
         {/* Left: new draft + list */}
         <div className="space-y-3 min-h-0 lg:overflow-y-auto lg:pr-1">
           <Fold title="New post" icon={<Sparkles className="w-3.5 h-3.5 text-gray-500" />} open={newOpen || (!!drafts && drafts.length === 0)} onToggle={() => setNewOpen(o => !o)}>
@@ -320,7 +321,7 @@ export default function SocialStudioPage() {
               ))}
             </div>
 
-            <div className="grid xl:grid-cols-[minmax(0,1fr)_360px] gap-4 flex-1 min-h-0">
+            <ResizeGrid id="social-post" fixed="second" initial={360} breakpoint={1280} className="flex-1 min-h-0">
               {/* LinkedIn-style card, edited in place */}
               <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-4 min-h-0 xl:overflow-y-auto">
                 <div className="flex items-center gap-2.5 mb-3">
@@ -498,10 +499,10 @@ export default function SocialStudioPage() {
                   {cur.published.length > 0 && <div className="text-xs text-emerald-700">Posted: {cur.published.map(p => p.as).join(', ')}</div>}
                 </div>
               </div>
-            </div>
+            </ResizeGrid>
           </div>
         )}
-      </div>
+      </ResizeGrid>
 
       {zoom && (
         <div className="fixed inset-0 z-[10000] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setZoom(null)} role="dialog" aria-modal="true">

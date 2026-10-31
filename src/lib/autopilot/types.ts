@@ -14,6 +14,8 @@ export interface Config {
   targets: Record<TargetKey, boolean>
   /** The profile post goes out this long after the company page post, with a different opening line. */
   staggerMinutes: number
+  /** 'reshare': the profile reposts the company page post with a short note of its own. 'own': the profile publishes its own post. */
+  profileMode: 'reshare' | 'own'
   researchTime: string
   digestTime: string
   /** Drafts are prepared this long before their slot, so there is time to review and retry. */
@@ -43,6 +45,7 @@ export const DEFAULT_CONFIG: Config = {
   weekendSlots: [{ time: '09:30', kind: 'post' }, { time: '12:30', kind: 'poll' }, { time: '17:00', kind: 'motion' }, { time: '20:00', kind: 'post' }],
   targets: { organization: true, member: true },
   staggerMinutes: 45,
+  profileMode: 'reshare',
   researchTime: '05:00',
   digestTime: '07:00',
   draftLeadMinutes: 240,

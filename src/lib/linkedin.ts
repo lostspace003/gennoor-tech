@@ -293,3 +293,40 @@ export async function createExternalEvent(opts: {
   }
   return { eventId, postUrn: post.headers.get('x-restli-id') || '' }
 }
+
+/** Reshares an existing post (LinkedIn's "repost with your thoughts"): the original shows inside, `commentary` is the short text on top. */
+export async function resharePost(opts: { token: string; author: string; parentUrn: string; commentary: string }): Promise<string> {
+  const res = await fetch('https://api.linkedin.com/rest/posts', {
+    method: 'POST',
+    headers: restHeaders(opts.token),
+    body: JSON.stringify({
+      author: opts.author,
+      commentary: opts.commentary,
+      visibility: 'PUBLIC',
+      distribution: { feedDistribution: 'MAIN_FEED', targetEntities: [], thirdPartyDistributionChannels: [] },
+      lifecycleState: 'PUBLISHED',
+      isReshareDisabledByAuthor: false,
+      reshareContext: { parent: opts.parentUrn },
+    }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}))
+    throw new Error(body.message || `LinkedIn rejected the repost (${res.status})`)
+  }
+  return res.headers.get('x-restli-id') || ''
+}
+
+/** Adds a comment to a post as `actor` (the member or the company page). Returns the comment id when LinkedIn gives one. */
+export async function commentOnPost(opts: { token: string; actor: string; postUrn: string; text: string }): Promise<string> {
+  const res = await fetch(`https://api.linkedin.com/rest/socialActions/${encodeURIComponent(opts.postUrn)}/comments`, {
+    method: 'POST',
+    headers: restHeaders(opts.token),
+    body: JSON.stringify({ actor: opts.actor, object: opts.postUrn, message: { text: opts.text } }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}))
+    throw new Error(body.message || `LinkedIn rejected the comment (${res.status})`)
+  }
+  const j = await res.json().catch(() => ({}))
+  return String(j.id || j.$URN || res.headers.get('x-restli-id') || '')
+}

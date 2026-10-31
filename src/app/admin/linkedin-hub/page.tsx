@@ -1,11 +1,13 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Loader2, RefreshCw, Newspaper, Users, MessageSquare, Building2, Briefcase, UserCircle, Activity, LayoutGrid, ExternalLink, ShieldCheck, ChevronLeft, Search } from 'lucide-react'
+import { Copy, Check, Mail, Loader2, RefreshCw, Newspaper, Users, MessageSquare, Building2, Briefcase, UserCircle, Activity, LayoutGrid, ExternalLink, ShieldCheck, ChevronLeft, Search } from 'lucide-react'
 import InfoTip from '@/components/admin/InfoTip'
+import SplitPane from '@/components/admin/SplitPane'
 import WarmSwitch from '@/components/admin/WarmSwitch'
 import { DateRangeFilter, rangeBounds, rangeLabel, type DateRange } from '@/components/crm/shared'
-import { GROUPS, TOOLS, type Field, type GroupKey, type ToolDef } from '@/lib/linkedin-catalog'
+import { GROUPS, TOOLS, FIELD_TIPS, STARTERS, type Field, type GroupKey, type ToolDef } from '@/lib/linkedin-catalog'
+import { markdownToHtml, normalizeArg, resultToMarkdown } from '@/lib/linkedin-hub-format'
 
 type Tab = 'overview' | GroupKey | 'activity'
 interface Status {
@@ -42,27 +44,76 @@ function collectRefs(v: any, out: { url: string; text?: string; kind?: string; c
   return out
 }
 
-function ResultView({ r, onRun, busy }: { r: Result; onRun: (tool: string, args: Record<string, any>) => void; busy: boolean }) {
+function Fmt({ md }: { md: string }) {
+  // Renders the same clean text that is copied and emailed, so what you see is what you get.
+  const out: React.ReactNode[] = []
+  let list: React.ReactNode[] = []
+  const flush = () => { if (list.length) { out.push(<ul key={`u${out.length}`} className="list-disc pl-5 space-y-1 mb-3">{list}</ul>); list = [] } }
+  const linkify = (t: string) => t.split(/(https?:\/\/[^\s]+)/g).map((p, i) => /^https?:/.test(p) ? <a key={i} href={p} target="_blank" rel="noreferrer" className="text-blue-700 hover:underline break-all">{p}</a> : p)
+  md.split('\n').forEach((raw, i) => {
+    const l = raw.trimEnd()
+    if (!l.trim()) { flush(); return }
+    if (l.startsWith('# ')) { flush(); out.push(<h2 key={i} className="text-base font-semibold mb-1">{l.slice(2)}</h2>) }
+    else if (l.startsWith('## ')) { flush(); out.push(<h3 key={i} className="text-[13px] font-semibold mt-4 mb-1.5 pb-1 border-b border-gray-200">{l.slice(3)}</h3>) }
+    else if (/^#{3,4} /.test(l)) { flush(); out.push(<h4 key={i} className="text-xs font-semibold mt-3 mb-1 text-gray-600">{l.replace(/^#+ /, '')}</h4>) }
+    else if (l.startsWith('- ')) list.push(<li key={i} className="break-words">{linkify(l.slice(2))}</li>)
+    else if (l.startsWith('  ') && list.length) list.push(<span key={i} className="block text-xs text-gray-500 break-all list-none">{linkify(l.trim())}</span>)
+    else { flush(); out.push(<p key={i} className={`mb-1.5 break-words ${/^_.+_$/.test(l) ? 'text-xs text-gray-500' : ''}`}>{linkify(l.replace(/^_(.+)_$/, '$1'))}</p>) }
+  })
+  flush()
+  return <div className="text-[13px] leading-6 text-gray-800">{out}</div>
+}
+
+function ResultView({ r, label, onRun, busy }: { r: Result; label: string; onRun: (tool: string, args: Record<string, any>) => void; busy: boolean }) {
   const d = r.data
-  const sections: Record<string, string> = d && typeof d.sections === 'object' && !Array.isArray(d.sections) ? d.sections : {}
   const refs = useMemo(() => collectRefs(d?.references ?? (Array.isArray(d) ? d : undefined)), [d])
-  const rest = d && typeof d === 'object' ? Object.fromEntries(Object.entries(d).filter(([k]) => !['sections', 'references'].includes(k))) : {}
-  const scalars = Object.entries(rest).filter(([, v]) => ['string', 'number', 'boolean'].includes(typeof v))
-  const [more, setMore] = useState<Record<string, boolean>>({})
-  if (typeof d === 'string' || d?.text) return <pre className="whitespace-pre-wrap break-words text-[13px] font-sans text-gray-700">{typeof d === 'string' ? d : d.text}</pre>
+  const md = useMemo(() => resultToMarkdown(label, r.args, d), [label, r, d])
+  const [copied, setCopied] = useState(false)
+  const [mailOpen, setMailOpen] = useState(false)
+  const [to, setTo] = useState('')
+  const [mail, setMail] = useState<{ state: 'idle' | 'sending' | 'sent' | 'error'; msg?: string }>({ state: 'idle' })
+  useEffect(() => { try { setTo(localStorage.getItem('hub-email-to') || '') } catch { /* ignore */ } }, [])
+  useEffect(() => { setMail({ state: 'idle' }); setCopied(false) }, [r])
+
+  const flash = () => { setCopied(true); setTimeout(() => setCopied(false), 2000) }
+  async function copy() {
+    try {
+      // Rich copy so pasting into Outlook, Gmail or Word keeps headings and bullets; plain text everywhere else.
+      if (navigator.clipboard && 'ClipboardItem' in window) await navigator.clipboard.write([new ClipboardItem({ 'text/plain': new Blob([md], { type: 'text/plain' }), 'text/html': new Blob([markdownToHtml(md)], { type: 'text/html' }) })])
+      else await navigator.clipboard.writeText(md)
+      flash()
+    } catch { try { await navigator.clipboard.writeText(md); flash() } catch { /* clipboard blocked */ } }
+  }
+  async function send(e: React.FormEvent) {
+    e.preventDefault()
+    setMail({ state: 'sending' })
+    try {
+      const res = await fetch('/api/admin/linkedin-hub/email', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ to, subject: `LinkedIn: ${label}`, text: md }) })
+      const j = await res.json().catch(() => ({}))
+      if (!res.ok) { setMail({ state: 'error', msg: j.error || `Failed (${res.status})` }); return }
+      try { localStorage.setItem('hub-email-to', to) } catch { /* ignore */ }
+      setMail({ state: 'sent', msg: `Sent to ${to}` })
+    } catch (err: any) { setMail({ state: 'error', msg: err?.message || 'Could not send' }) }
+  }
+
   return (
     <div className="space-y-3">
-      {scalars.length > 0 && <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">{scalars.map(([k, v]) => <span key={k}><b className="font-medium text-gray-600">{pretty(k)}:</b> {typeof v === 'string' && /^https?:/.test(v) ? <a href={v} target="_blank" rel="noreferrer" className="text-blue-700 hover:underline">{v.slice(0, 60)}</a> : String(v).slice(0, 120)}</span>)}</div>}
-      {Object.entries(sections).map(([k, text]) => text ? (
-        <section key={k} className="rounded-lg border border-gray-200 bg-white">
-          <div className="px-3 py-1.5 text-xs font-semibold border-b border-gray-100 bg-gray-50 rounded-t-lg">{pretty(k)}</div>
-          <pre className="px-3 py-2 whitespace-pre-wrap break-words text-[13px] leading-6 font-sans text-gray-700">{more[k] || String(text).length < 1600 ? String(text) : `${String(text).slice(0, 1600)}…`}</pre>
-          {String(text).length >= 1600 && <button onClick={() => setMore(m => ({ ...m, [k]: !m[k] }))} className="px-3 pb-2 text-xs text-blue-700">{more[k] ? 'Show less' : 'Show all'}</button>}
-        </section>
-      ) : null)}
+      <div className="flex flex-wrap items-center gap-2">
+        <button onClick={copy} className={btn}>{copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}{copied ? 'Copied' : 'Copy'}</button>
+        <button onClick={() => setMailOpen(o => !o)} className={btn}><Mail className="w-3.5 h-3.5" />Email this</button>
+        <InfoTip text="Copy puts the neat version on your clipboard (headings and bullets stay when you paste into an email or document). Email this sends the same neat version to any address you type." />
+      </div>
+      {mailOpen && (
+        <form onSubmit={send} className="flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 p-2.5">
+          <input type="email" required value={to} onChange={e => setTo(e.target.value)} placeholder="Email address to send to" className={`${field} max-w-xs`} />
+          <button disabled={mail.state === 'sending'} className={primary}>{mail.state === 'sending' ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Sending…</> : 'Send'}</button>
+          {mail.msg && <span className={`text-xs ${mail.state === 'error' ? 'text-red-700' : 'text-emerald-700'}`}>{mail.msg}</span>}
+        </form>
+      )}
+      <div className="rounded-lg border border-gray-200 bg-white p-4 max-h-[70vh] overflow-y-auto"><Fmt md={md} /></div>
       {refs.length > 0 && (
         <section className="rounded-lg border border-gray-200 bg-white">
-          <div className="px-3 py-1.5 text-xs font-semibold border-b border-gray-100 bg-gray-50 rounded-t-lg">Links found ({refs.length})</div>
+          <div className="px-3 py-1.5 text-xs font-semibold border-b border-gray-100 bg-gray-50 rounded-t-lg">Do more with these ({Math.min(refs.length, 120)})<InfoTip text="Shortcuts for each link found: read a profile, open a conversation, see job details and so on. Each press runs one more lookup." /></div>
           <ul className="divide-y divide-gray-100 max-h-[28rem] overflow-y-auto">
             {refs.slice(0, 120).map((x, i) => {
               const acts = linkActions(x.url)
@@ -77,7 +128,6 @@ function ResultView({ r, onRun, busy }: { r: Result; onRun: (tool: string, args:
           </ul>
         </section>
       )}
-      {!Object.keys(sections).length && !refs.length && <pre className="whitespace-pre-wrap break-words text-[13px] text-gray-600 bg-gray-50 rounded-lg p-3 max-h-96 overflow-y-auto">{JSON.stringify(d, null, 2)}</pre>}
       <details className="text-xs text-gray-400"><summary className="cursor-pointer">Raw response</summary><pre className="mt-1 whitespace-pre-wrap break-words bg-gray-50 rounded p-2 max-h-64 overflow-y-auto">{JSON.stringify(d, null, 2)}</pre></details>
     </div>
   )
@@ -137,6 +187,7 @@ export default function LinkedInHubPage() {
 
   async function run(name: string, args: Record<string, any>, o: { fresh?: boolean; confirmed?: boolean } = {}) {
     const def = TOOLS.find(t => t.name === name)!
+    args = Object.fromEntries(Object.entries(args).map(([k, v]) => [k, normalizeArg(k, v)]))
     if (def.group !== tab && tab !== 'overview') setTab(def.group)
     if (tab === 'overview') setTab(def.group)
     pickTool(def, args)
@@ -184,8 +235,8 @@ export default function LinkedInHubPage() {
       </div>
 
       {!st ? <Loader2 className="w-5 h-5 animate-spin text-gray-400" /> : tab === 'overview' ? (
-        <div className="grid lg:grid-cols-[1fr_340px] gap-4 items-start">
-          <div className="space-y-4">
+        <SplitPane id="hub-overview" initial={640} min={300}
+          left={<div className="space-y-4">
             {unknown && svc === 'up' && <div className="rounded-xl border border-gray-200 bg-white p-4 text-sm flex flex-wrap items-center gap-3"><span className="text-gray-700">The connector is running. Check that your LinkedIn sign-in is saved.</span><button onClick={() => run('get_my_profile', { sections: '' })} disabled={busy} className={primary}>Check sign-in</button></div>}
             {svc !== 'checking' && (svc !== 'up' || (!sessionOk && !unknown)) && (
               <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 space-y-2">
@@ -201,8 +252,8 @@ export default function LinkedInHubPage() {
                 </button>
               ) })}
             </div>
-          </div>
-          <div className="space-y-3">
+          </div>}
+          right={<div className="space-y-3">
             <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3">
               <div className="text-xs font-semibold mb-2 flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />Today's safety limits<InfoTip text="LinkedIn restricts accounts that look automated. These daily limits keep the hub within normal human use. They reset at midnight UTC." /></div>
               <Meter label="Lookups" used={st.usage.reads} cap={st.usage.readCap} />
@@ -216,8 +267,7 @@ export default function LinkedInHubPage() {
                 {st.activity.length === 0 && <li className="text-[13px] text-gray-400">Nothing yet.</li>}
               </ul>
             </div>
-          </div>
-        </div>
+          </div>} />
       ) : tab === 'activity' ? (
         <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
           <div className="p-2.5 border-b border-gray-100 flex flex-wrap items-center gap-x-3 gap-y-2">
@@ -235,20 +285,21 @@ export default function LinkedInHubPage() {
           {aRows.length > AP && <div className="flex items-center justify-between px-3 py-2 border-t border-gray-100 text-xs text-gray-500"><span>{aAt * AP + 1}–{Math.min(aRows.length, aAt * AP + AP)} of {aRows.length}</span><div className="flex items-center gap-1"><button disabled={aAt === 0} onClick={() => setAPage(aAt - 1)} className={btn}>Newer</button><span className="px-1">{aAt + 1}/{aPages}</span><button disabled={aAt >= aPages - 1} onClick={() => setAPage(aAt + 1)} className={btn}>Older</button></div></div>}
         </div>
       ) : (
-        <div className="grid lg:grid-cols-[320px_1fr] gap-4 items-start">
-          <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3">
+        <SplitPane id="hub-tools" initial={340}
+          left={<div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3">
             <div className="text-xs text-gray-500 mb-2">{group?.blurb}</div>
             <div className="flex flex-wrap gap-1.5 mb-3">{tools.map(t => <button key={t.name} onClick={() => { pickTool(t); setStack([]) }} className={`px-3 py-1.5 text-[13px] rounded-full border ${toolName === t.name ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 bg-white hover:border-gray-400'}`}>{t.label}{t.kind === 'action' && <span className="ml-1 opacity-60">●</span>}</button>)}</div>
             {tool && (
               <form onSubmit={e => { e.preventDefault(); run(tool.name, vals) }} className="space-y-2">
-                <div className="text-xs text-gray-500">{tool.help}{tool.kind === 'action' && <span className="text-gray-700"> This changes your account.</span>}</div>
+                <div className="text-xs text-gray-500">{tool.help} Plain words are fine, no special format.{tool.kind === 'action' && <span className="text-gray-700"> This changes your account.</span>}</div>
+                {STARTERS[tool.name] && <div><div className="text-xs text-gray-500 mb-1">Quick starts: click one, then Run<InfoTip text="Ready-made examples. Clicking one fills the form so you can see how it works, and you can change the words before running." /></div><div className="flex flex-wrap gap-1.5">{STARTERS[tool.name].map(x => <button type="button" key={x.label} onClick={() => pickTool(tool, x.args)} className="px-2.5 py-1 text-xs rounded-full border border-blue-200 bg-blue-50 text-blue-800 hover:bg-blue-100">{x.label}</button>)}</div></div>}
                 {tool.fields.map(f => <FieldInput key={f.name} f={f} v={vals[f.name]} set={v => setVals(s => ({ ...s, [f.name]: v }))} />)}
                 <button disabled={busy || st.service !== 'up'} className={`${primary} w-full justify-center`}>{busy ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Working…</> : tool.kind === 'action' ? 'Review & confirm…' : <><Search className="w-3.5 h-3.5" />Run</>}</button>
                 {busy && <div className="text-xs text-gray-400">LinkedIn pages load slowly on purpose. This can take up to a minute.</div>}
               </form>
             )}
-          </div>
-          <div className="min-w-0">
+          </div>}
+          right={<div className="min-w-0">
             {stack.length > 1 && <button onClick={() => setStack(s => s.slice(0, -1))} className={`${btn} mb-2`}><ChevronLeft className="w-3.5 h-3.5" />Back</button>}
             {!latest ? <div className="rounded-xl border border-dashed border-gray-300 bg-white/50 text-sm text-gray-500 p-10 text-center">{busy ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : 'Fill in the form and run it. Results appear here.'}</div> : (
               <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3">
@@ -258,11 +309,10 @@ export default function LinkedInHubPage() {
                   {!latest.ok && <span className="px-1.5 py-0.5 rounded bg-red-100 text-red-700 text-xs">LinkedIn reported a problem</span>}
                   <button disabled={busy} onClick={() => run(latest.tool, latest.args, { fresh: true })} className={`${btn} ml-auto`}><RefreshCw className="w-3 h-3" />Fetch fresh</button>
                 </div>
-                <ResultView r={latest} busy={busy} onRun={(t, a) => run(t, a)} />
+                <ResultView r={latest} label={TOOLS.find(t => t.name === latest.tool)?.label || latest.tool} busy={busy} onRun={(t, a) => run(t, a)} />
               </div>
             )}
-          </div>
-        </div>
+          </div>} />
       )}
 
       {confirm && (
@@ -295,7 +345,7 @@ function Meter({ label, used, cap }: { label: string; used: number; cap: number 
 
 function FieldInput({ f, v, set }: { f: Field; v: any; set: (v: any) => void }) {
   return (
-    <label className="block text-xs text-gray-500">{f.label}{f.required && <span className="text-red-500"> *</span>}
+    <label className="block text-xs text-gray-500">{f.label}{f.required && <span className="text-red-500"> *</span>}{FIELD_TIPS[f.name] && <InfoTip text={FIELD_TIPS[f.name]} />}
       {f.type === 'select' ? <select value={v} onChange={e => set(e.target.value)} className={`${field} mt-0.5`}>{f.options!.map(o => <option key={o.v} value={o.v}>{o.l}</option>)}</select>
         : f.type === 'bool' ? <span className="flex items-center gap-2 mt-1 text-sm text-gray-700"><input type="checkbox" checked={!!v} onChange={e => set(e.target.checked)} />Yes</span>
         : f.type === 'textarea' ? <textarea value={v} rows={4} placeholder={f.placeholder} onChange={e => set(e.target.value)} className={`${field} mt-0.5`} />

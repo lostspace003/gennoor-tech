@@ -13,7 +13,7 @@ export interface Deps {
   /** null when the draft was deleted. publishedAs lists targets it was already posted to (by hand or by us). */
   draft(id: string): Promise<{ text: string; publishedAs: TargetKey[] } | null>
   approve(id: string): Promise<void>
-  publish(id: string, target: TargetKey, opts: { commentary?: string }): Promise<{ urn: string }>
+  publish(id: string, target: TargetKey, opts: { commentary?: string; reshareOf?: string }): Promise<{ urn: string }>
   tokens(): Promise<Record<TargetKey, { ok: boolean; days: number }>>
   alert(subject: string, html: string, dedupeKey: string): Promise<void>
   sleep(ms: number): Promise<void>
@@ -212,6 +212,11 @@ export async function tick(d: Deps, opts: { force?: boolean } = {}): Promise<str
             }
             continue
           }
+          // The profile reposts the company page post, so it waits for that post to exist (or fails over to its own post).
+          const orgTs = slot.targets.organization
+          const reshare = (cfg.profileMode ?? 'reshare') === 'reshare'
+          const reshareOf = t === 'member' && reshare && orgTs?.status === 'done' ? orgTs.urn : undefined
+          if (t === 'member' && reshare && orgTs && ['pending', 'publishing'].includes(orgTs.status) && now.getTime() - due < cfg.missedGraceMinutes * 60_000 / 2) continue
           if (now.getTime() - due > cfg.missedGraceMinutes * 60_000) { ts.status = 'skipped'; ts.reason = 'missed its window, so it was not posted late'; out.push(`${slot.id}: ${t} missed window`); continue }
           if (!tok || !tok[t].ok) {
             ts.reason = `LinkedIn ${t === 'organization' ? 'company page' : 'profile'} connection has expired or is missing`
@@ -225,7 +230,7 @@ export async function tick(d: Deps, opts: { force?: boolean } = {}): Promise<str
           await d.save(s) // record intent first, so an interruption is detectable and never double-posts
           try {
             const commentary = t === 'member' && slot.variant ? slot.variant : undefined
-            const res = await withRetry(() => d.publish(slot.draftId!, t, { commentary }), { tries: 3, baseMs: 5000, sleep: d.sleep, retryable: isTransient })
+            const res = await withRetry(() => d.publish(slot.draftId!, t, { commentary, reshareOf }), { tries: 3, baseMs: 5000, sleep: d.sleep, retryable: isTransient })
             ts.status = 'done'; ts.urn = res.urn; ts.doneAt = iso(d.now()); ts.reason = undefined
             note(s, now, `Published ${slot.id} to ${t}`)
             out.push(`${slot.id}: published to ${t}`)

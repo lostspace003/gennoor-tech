@@ -1,5 +1,6 @@
 'use client'
 
+import { ResizeGrid } from '@/components/admin/SplitPane'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Loader2, Sparkles, Check, Save, Trash2, Download, GitPullRequest, Plus, X, Bot, ChevronDown, ExternalLink, Paperclip, Clock } from 'lucide-react'
 import InfoTip from '@/components/admin/InfoTip'
@@ -226,12 +227,12 @@ export default function BlogStudioPage() {
       {error && <div className="mb-3 rounded-md bg-red-50 border border-red-200 text-red-800 text-sm px-3 py-2">{error}</div>}
       {notice && <div className="mb-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm px-3 py-2">{notice}</div>}
 
-      <div className="grid lg:grid-cols-[270px_1fr] gap-4 items-start">
+      <ResizeGrid id="blog-main" initial={270} className="items-start">
         <div className="space-y-3">
           {auto && (
             <div className={`rounded-xl border p-3 shadow-sm ${auto.config.enabled ? 'border-emerald-200 bg-emerald-50/50' : 'border-gray-200 bg-white'}`}>
               <div className="flex items-center gap-2">
-                <div className="text-xs font-semibold flex items-center gap-1.5"><Bot className="w-3.5 h-3.5 text-gray-500" />Daily blog autopilot<InfoTip text="Every day it researches a topic, writes the article, reviews it (revising up to twice if the reviewer asks), approves it, merges it to the website and shares it on the company page and your profile, with nobody in the loop. If it still fails review after its revisions, it holds the draft for you instead." /></div>
+                <div className="text-xs font-semibold flex items-center gap-1.5"><Bot className="w-3.5 h-3.5 text-gray-500" />Daily blog autopilot<InfoTip text="Every day it researches a topic, writes the article, reviews it (revising up to twice if the reviewer asks), approves it, merges it to the website and shares it on the company page, then your profile reposts it with a short note (change this on the LinkedIn autopilot page). Each share gets a meaningful first comment, with nobody in the loop. If it still fails review after its revisions, it holds the draft for you instead." /></div>
                 <button onClick={() => patchAuto({ enabled: !auto.config.enabled })} aria-pressed={auto.config.enabled} className={`ml-auto text-xs font-medium px-2.5 py-1 rounded-full border ${auto.config.enabled ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-gray-700 border-gray-300'}`}>{auto.config.enabled ? 'On' : 'Off'}</button>
               </div>
               <div className="mt-2 text-xs text-gray-600">
@@ -279,7 +280,7 @@ export default function BlogStudioPage() {
               ))}
             </div>
 
-            <div className="grid xl:grid-cols-[minmax(0,1fr)_330px] gap-4 items-start">
+            <ResizeGrid id="blog-post" fixed="second" initial={330} breakpoint={1280} className="items-start">
               <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
                 <div className="px-4 pt-4">
                   <input disabled={locked} value={cur.meta.title} onChange={e => setMeta({ title: e.target.value })} className="w-full text-xl font-bold tracking-tight border border-transparent hover:border-gray-200 focus:border-blue-400 focus:outline-none rounded-md px-1.5 py-1 -mx-1.5" />
@@ -440,10 +441,10 @@ export default function BlogStudioPage() {
                   <div className="text-xs text-gray-400">AI cost for this post: {usd(spend[cur.id] || 0)}</div>
                 </div>
               </div>
-            </div>
+            </ResizeGrid>
           </div>
         )}
-      </div>
+      </ResizeGrid>
     </div>
   )
 }
