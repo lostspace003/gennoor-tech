@@ -15,11 +15,18 @@ interface Draft {
   id: string; topic: string; status: 'draft' | 'approved' | 'submitted'; meta: Meta; body: string
   review?: { verdict: string; notes: string[] }; trace?: { agent: string; label: string; output: string; usd: number }[]
   pr?: { url: string; number: number; branch: string }; createdAt: string
+  pipeline?: { stage: 'pr' | 'merged' | 'live' | 'done' | 'attention'; autoMerge: boolean; shareToLinkedIn: boolean; note?: string }
+  shared?: Partial<Record<'organization' | 'member', { urn: string; at: string }>>
+  auto?: boolean
 }
 interface Tax { categories: { name: string; count: number }[]; tags: { name: string; count: number }[]; posts: { slug: string; title: string }[] }
 
 const BADGE = { draft: 'bg-amber-100 text-amber-800', approved: 'bg-gray-100 text-gray-700', submitted: 'bg-emerald-100 text-emerald-800' }
-const LABEL = { draft: 'draft', approved: 'approved', submitted: 'in review (PR)' }
+const LABEL = { draft: 'draft', approved: 'approved', submitted: 'publishing' }
+const STAGE_LABEL = { pr: 'pull request open', merged: 'deploying', live: 'sharing on LinkedIn', done: 'published', attention: 'needs you' }
+const labelOf = (d: { status: 'draft' | 'approved' | 'submitted'; pipeline?: { stage: keyof typeof STAGE_LABEL } }) => (d.status === 'submitted' && d.pipeline ? STAGE_LABEL[d.pipeline.stage] : LABEL[d.status])
+const badgeOf = (d: { status: 'draft' | 'approved' | 'submitted'; pipeline?: { stage: string } }) => (d.pipeline?.stage === 'attention' ? 'bg-amber-100 text-amber-800' : BADGE[d.status])
+interface Auto { config: { enabled: boolean; time: string; perDay: number; autoMerge: boolean; shareToLinkedIn: boolean; maxRevisions: number }; days: { date: string; runs: { n: number; status: string; step: string; topic?: { title: string }; reason?: string; revisions: number }[] }[]; lastTick?: string }
 const CHIPS = ['Tighten it: cut 15% without losing facts', 'Stronger opening paragraph', 'Add a practical example', 'Sharper "what to do next" section', 'Improve the FAQs', 'Make the tone more direct']
 const field = 'w-full text-sm border border-gray-200 rounded-md px-2.5 py-1.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 bg-white'
 const usd = (n: number) => `$${n < 1 ? n.toFixed(3) : n.toFixed(2)}`
@@ -44,6 +51,9 @@ export default function BlogStudioPage() {
   const [revPart, setRevPart] = useState<'all' | 'body' | 'meta'>('all')
   const [newTag, setNewTag] = useState('')
   const [newCat, setNewCat] = useState(false)
+  const [auto, setAuto] = useState<Auto | null>(null)
+  const [autoMerge, setAutoMerge] = useState(true)
+  const [shareLi, setShareLi] = useState(true)
 
   const load = useCallback(async () => {
     const r = await fetch('/api/admin/blog')
@@ -51,7 +61,11 @@ export default function BlogStudioPage() {
     const j = await r.json()
     setDrafts(j.drafts); setTax(j.taxonomy); setSpend(j.spend || {}); setGithubReady(!!j.githubReady)
   }, [])
-  useEffect(() => { load() }, [load])
+  const loadAuto = useCallback(async () => { const r = await fetch('/api/admin/blog/automation'); if (r.ok) setAuto(await r.json()) }, [])
+  useEffect(() => { load(); loadAuto() }, [load, loadAuto])
+  // While a post is on its way to the website and LinkedIn, or the daily article is being written, keep the page fresh.
+  const busyFlow = !!drafts?.some(d => d.status === 'submitted' && d.pipeline && !['done', 'attention'].includes(d.pipeline.stage)) || !!auto?.days[0]?.runs.some(r => r.status === 'pending' && r.step !== 'topic')
+  useEffect(() => { if (!busyFlow) return; const t = setInterval(() => { load(); loadAuto() }, 20_000); return () => clearInterval(t) }, [busyFlow, load, loadAuto])
   // "Resume" links from the Sessions page and the autopilot open a specific draft.
   useEffect(() => { const q = new URLSearchParams(window.location.search).get('draft'); if (q) setSel(q) }, [])
 
@@ -137,8 +151,22 @@ export default function BlogStudioPage() {
     if (!cur) return
     const saved = await save('approved')
     if (!saved) return
-    const j = await call('publish', `/api/admin/blog/${cur.id}/publish`, { method: 'POST' })
-    if (j.draft) { patchLocal(cur.id, () => j.draft); setNotice('Pull request opened. Merge it on GitHub to publish the post.') }
+    const j = await call('publish', `/api/admin/blog/${cur.id}/publish`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ autoMerge, shareToLinkedIn: shareLi }) })
+    if (j.draft) { patchLocal(cur.id, () => j.draft); setNotice(j.draft.pipeline?.stage === 'merged' ? 'Approved and merged. The site is deploying; the LinkedIn posts follow once it is live.' : 'Pull request opened. Press Merge to put it on the website.') }
+  }
+  async function flow(action: 'merge' | 'retry') {
+    if (!cur) return
+    const j = await call(action, `/api/admin/blog/${cur.id}/pipeline`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action }) })
+    if (j.draft) { patchLocal(cur.id, () => j.draft); setNotice(action === 'merge' ? 'Merged. The site is deploying.' : 'Checked again.') }
+  }
+  async function patchAuto(body: Record<string, unknown>) {
+    const r = await fetch('/api/admin/blog/automation', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+    if (r.ok) loadAuto(); else setError('Could not save the setting.')
+  }
+  async function runAutoNow() {
+    setError(''); setNotice('The daily article is being written in the background. This takes several minutes; this page updates by itself.')
+    await fetch('/api/admin/blog/automation', { method: 'POST' })
+    setTimeout(loadAuto, 4000)
   }
   async function remove() {
     if (!cur || !confirm('Delete this draft?')) return
@@ -166,6 +194,23 @@ export default function BlogStudioPage() {
 
       <div className="grid lg:grid-cols-[270px_1fr] gap-4 items-start">
         <div className="space-y-3">
+          {auto && (
+            <div className={`rounded-xl border p-3 shadow-sm ${auto.config.enabled ? 'border-emerald-200 bg-emerald-50/50' : 'border-gray-200 bg-white'}`}>
+              <div className="flex items-center gap-2">
+                <div className="text-xs font-semibold flex items-center gap-1.5"><Bot className="w-3.5 h-3.5 text-gray-500" />Daily blog autopilot<InfoTip text="Every day it researches a topic, writes the article, reviews it (revising up to twice if the reviewer asks), approves it, merges it to the website and shares it on the company page and your profile, with nobody in the loop. If it still fails review after its revisions, it holds the draft for you instead." /></div>
+                <button onClick={() => patchAuto({ enabled: !auto.config.enabled })} aria-pressed={auto.config.enabled} className={`ml-auto text-xs font-medium px-2.5 py-1 rounded-full border ${auto.config.enabled ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-gray-700 border-gray-300'}`}>{auto.config.enabled ? 'On' : 'Off'}</button>
+              </div>
+              <div className="mt-2 text-xs text-gray-600">
+                {auto.days[0] ? auto.days[0].runs.map(r => (
+                  <div key={r.n} className="break-words">Today: <b className="font-medium">{r.status === 'submitted' ? 'published' : r.status === 'held' ? 'held for you' : r.status === 'failed' ? 'failed' : r.step === 'topic' ? 'waiting to start' : 'writing'}</b>{r.topic ? ` · ${r.topic.title}` : ''}{r.reason ? <span className="text-amber-700"> · {r.reason}</span> : null}</div>
+                )) : <div>Starts each day at {auto.config.time} (India time).</div>}
+              </div>
+              <div className="mt-2 flex items-center gap-2">
+                <button onClick={runAutoNow} className={`${btn} !px-2.5 !py-1.5`}>Write today's now</button>
+                <span className="text-xs text-gray-400">Daily at <input type="time" value={auto.config.time} onChange={e => patchAuto({ time: e.target.value })} className="border border-gray-200 rounded px-1 py-0.5 text-xs bg-white" /></span>
+              </div>
+            </div>
+          )}
           <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
             <div className="text-xs font-semibold mb-2 flex items-center gap-1.5"><Bot className="w-3.5 h-3.5 text-gray-500" />New article</div>
             <input value={topic} onChange={e => setTopic(e.target.value)} placeholder="Topic, e.g. MCP gateways for enterprise AI agents" className={`${field} mb-2`} />
@@ -182,7 +227,7 @@ export default function BlogStudioPage() {
                 <li key={d.id}>
                   <button onClick={() => { setSel(d.id); setRun(null); setNotice(''); setError('') }} className={`w-full text-left px-3 py-2 hover:bg-gray-50 border-l-2 ${sel === d.id ? 'bg-gray-100 border-gray-800' : 'border-transparent'}`}>
                     <div className="text-[13px] font-medium line-clamp-2">{d.meta.title}</div>
-                    <div className="flex items-center gap-2 mt-0.5"><span className={`text-xs px-1.5 py-0.5 rounded ${BADGE[d.status]}`}>{LABEL[d.status]}</span><span className="text-xs text-gray-400">{d.meta.category}</span><span className="text-xs text-gray-500 ml-auto">{usd(spend[d.id] || 0)}</span></div>
+                    <div className="flex items-center gap-2 mt-0.5"><span className={`text-xs px-1.5 py-0.5 rounded ${badgeOf(d)}`}>{labelOf(d)}</span>{d.auto && <span className="text-xs text-gray-400">auto</span>}<span className="text-xs text-gray-400">{d.meta.category}</span><span className="text-xs text-gray-500 ml-auto">{usd(spend[d.id] || 0)}</span></div>
                   </button>
                 </li>
               ))}
@@ -323,10 +368,29 @@ export default function BlogStudioPage() {
                     <button disabled={!!busy} onClick={remove} className={`${btn} text-red-700 ml-auto`}><Trash2 className="w-3.5 h-3.5" /></button>
                   </div>
                   {cur.status !== 'submitted' && (
-                    <button disabled={!!busy || missing.length > 0} onClick={publish} className={`${primary} w-full justify-center`}><GitPullRequest className="w-3.5 h-3.5" />{busy === 'publish' ? 'Opening pull request…' : 'Approve & open pull request'}</button>
+                    <div className="space-y-1.5">
+                      <label className="flex items-center gap-2 text-xs text-gray-700"><input type="checkbox" checked={autoMerge} onChange={e => setAutoMerge(e.target.checked)} />Merge to the website automatically</label>
+                      <label className="flex items-center gap-2 text-xs text-gray-700"><input type="checkbox" checked={shareLi} onChange={e => setShareLi(e.target.checked)} />Share on LinkedIn (company page and my profile) once it is live</label>
+                      <button disabled={!!busy || missing.length > 0} onClick={publish} className={`${primary} w-full justify-center`}><GitPullRequest className="w-3.5 h-3.5" />{busy === 'publish' ? 'Publishing…' : 'Approve & publish'}</button>
+                    </div>
                   )}
-                  {cur.status !== 'submitted' && !githubReady && <div className="text-xs text-gray-400">GitHub isn't connected yet (GITHUB_TOKEN). Until it is, use Export and add the file to the repo.</div>}
-                  {cur.pr && <a href={cur.pr.url} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-xs text-emerald-700 hover:underline"><GitPullRequest className="w-3.5 h-3.5" />Pull request #{cur.pr.number} is open. Merge it to publish.<ExternalLink className="w-3 h-3" /></a>}
+                  {cur.status === 'submitted' && cur.pipeline && (
+                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-2.5 space-y-1.5">
+                      {([['pr', 'Pull request opened'], ['merged', 'Merged, site deploying'], ['live', 'Live on the website'], ['done', 'Shared on LinkedIn']] as const).map(([k, l], i) => {
+                        const order = ['pr', 'merged', 'live', 'done']; const at = cur.pipeline!.stage === 'attention' ? (cur.pipeline!.autoMerge ? 1 : 0) : order.indexOf(cur.pipeline!.stage)
+                        const done = i < at || cur.pipeline!.stage === 'done' || (i === 0), now = i === at && cur.pipeline!.stage !== 'done'
+                        return <div key={k} className="flex items-center gap-2 text-xs"><span className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${done && !now ? 'bg-emerald-500 text-white' : now ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-400'}`}>{done && !now ? <Check className="w-2.5 h-2.5" /> : now ? <Loader2 className="w-2.5 h-2.5 animate-spin" /> : null}</span><span className={now ? 'font-medium text-gray-900' : done ? 'text-gray-700' : 'text-gray-400'}>{l}{k === 'done' && cur.shared ? ` (${[cur.shared.organization && 'page', cur.shared.member && 'profile'].filter(Boolean).join(' + ') || 'none yet'})` : ''}</span></div>
+                      })}
+                      {cur.pipeline.note && <div className="text-xs text-amber-700 break-words">{cur.pipeline.note}</div>}
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {cur.pipeline.stage === 'pr' && <button disabled={!!busy} onClick={() => flow('merge')} className={primary}>{busy === 'merge' ? 'Merging…' : 'Merge to main'}</button>}
+                        {cur.pipeline.stage === 'attention' && <button disabled={!!busy} onClick={() => flow('retry')} className={btn}>Check again</button>}
+                        {['live', 'done'].includes(cur.pipeline.stage) || cur.pipeline.stage === 'attention' ? <a href={`/resources/blog/${cur.meta.slug}`} target="_blank" rel="noreferrer" className={btn}>View on the website<ExternalLink className="w-3 h-3" /></a> : null}
+                      </div>
+                    </div>
+                  )}
+                  {cur.status !== 'submitted' && !githubReady && <div className="text-xs text-gray-400">GitHub isn't connected yet (GITHUB_TOKEN). Until it is, use Export and add the file to the repo by hand.</div>}
+                  {cur.pr && <a href={cur.pr.url} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-xs text-gray-600 hover:underline"><GitPullRequest className="w-3.5 h-3.5" />Pull request #{cur.pr.number} on GitHub<ExternalLink className="w-3 h-3" /></a>}
                   <div className="text-xs text-gray-400">AI cost for this post: {usd(spend[cur.id] || 0)}</div>
                 </div>
               </div>
