@@ -16,7 +16,7 @@ export interface BlogAutoConfig {
   shareToLinkedIn: boolean
   maxRevisions: number
 }
-export const DEFAULT_BLOG_AUTO: BlogAutoConfig = { enabled: true, time: '06:30', tz: 'Asia/Kolkata', perDay: 1, autoMerge: true, shareToLinkedIn: true, maxRevisions: 2 }
+export const DEFAULT_BLOG_AUTO: BlogAutoConfig = { enabled: true, time: '09:00', tz: 'Asia/Kolkata', perDay: 1, autoMerge: true, shareToLinkedIn: true, maxRevisions: 2 }
 
 export interface Run {
   n: number

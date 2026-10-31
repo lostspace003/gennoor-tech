@@ -87,7 +87,7 @@ async function main() {
   console.log('daily blog autopilot')
   function auto(over: Partial<AutoState['config']> = {}) {
     const store: { s: AutoState } = { s: { ...emptyAutoState(), config: { ...DEFAULT_BLOG_AUTO, ...over } } }
-    const w = { now: at('2026-11-02', '07:00'), ideas: ['Why MCP gateways matter for enterprise AI agents', 'Azure AI Foundry agent tracing explained'], genVerdict: 'pass' as string, reviews: [] as string[], revisions: 0, submits: [] as string[], alerts: [] as string[], gen: 0, researchFail: 0, text: 'A calm, useful article about agents. '.repeat(40), published: [] as string[] }
+    const w = { now: at('2026-11-02', '10:00'), ideas: ['Why MCP gateways matter for enterprise AI agents', 'Azure AI Foundry agent tracing explained'], genVerdict: 'pass' as string, reviews: [] as string[], revisions: 0, submits: [] as string[], alerts: [] as string[], gen: 0, researchFail: 0, text: 'A calm, useful article about agents. '.repeat(40), published: [] as string[] }
     const deps: AutoDeps = {
       now: () => w.now, sleep: async () => {},
       load: async () => JSON.parse(JSON.stringify(store.s)), save: async s => { store.s = JSON.parse(JSON.stringify(s)) },
@@ -102,12 +102,12 @@ async function main() {
   }
   let a = auto(); a.w.now = at('2026-11-02', '05:00')
   ok((await blogAutoTick(a.deps))[0] === 'before the daily start time', 'does nothing before the daily start time')
-  a = auto(); a.w.now = at('2026-11-02', '07:00')
+  a = auto(); a.w.now = at('2026-11-02', '10:00')
   await blogAutoTick(a.deps)
   ok(a.w.submits.length === 1 && a.store.s.days['2026-11-02'].runs[0].status === 'submitted', 'research, write, review passes: approved and sent to the website')
   await blogAutoTick(a.deps); await blogAutoTick(a.deps)
   ok(a.w.submits.length === 1, 'only one article per day')
-  a.w.now = at('2026-11-03', '07:00'); await blogAutoTick(a.deps)
+  a.w.now = at('2026-11-03', '10:00'); await blogAutoTick(a.deps)
   ok(a.w.submits.length === 2, 'a new day starts a new article')
 
   a = auto({ enabled: false }); await blogAutoTick(a.deps)
@@ -141,7 +141,7 @@ async function main() {
   for (let i = 0; i < 4; i++) await blogAutoTick(a.deps)
   ok(a.w.submits.length === 0 && a.w.alerts.some(x => /could not finish/.test(x)), 'research keeps failing: 3 attempts, then you are emailed')
 
-  a = auto(); a.w.now = at('2026-11-02', '07:00')
+  a = auto(); a.w.now = at('2026-11-02', '10:00')
   await Promise.all([blogAutoTick(a.deps), blogAutoTick(a.deps), blogAutoTick(a.deps)])
   ok(a.w.submits.length === 1, 'three simultaneous runs publish exactly one article')
 
