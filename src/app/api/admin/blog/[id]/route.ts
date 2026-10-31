@@ -30,7 +30,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (Array.isArray(m.keyTakeaways)) x.meta.keyTakeaways = strs(m.keyTakeaways, 8, 500)
     if (Array.isArray(m.faqs)) x.meta.faqs = m.faqs.map(f => ({ question: str(f?.question, 300).trim(), answer: str(f?.answer, 1200).trim() })).filter(f => f.question && f.answer).slice(0, 8)
     if (Array.isArray(m.references)) x.meta.references = m.references.map(r => ({ title: str(r?.title, 250).trim(), url: str(r?.url, 500).trim(), source: str(r?.source, 150).trim() })).filter(r => /^https?:\/\//.test(r.url) && r.title).slice(0, 14)
-    if (b.status === 'draft' || b.status === 'approved') x.status = b.status
+    if (b.status === 'draft' || b.status === 'approved') { x.status = b.status; if (b.status === 'draft') x.scheduled = undefined }
   })
   if (!d) return NextResponse.json({ error: 'Not found.' }, { status: 404 })
   return NextResponse.json({ draft: d })

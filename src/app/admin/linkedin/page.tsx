@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Loader2 } from 'lucide-react'
 import InfoTip from '@/components/admin/InfoTip'
+import { ListToolbar, Pager, useListView } from '@/components/admin/ListControls'
 
 interface Share { urn: string; as: 'member' | 'organization'; at: string }
 interface Status {
@@ -17,6 +18,7 @@ export default function LinkedInPage() {
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [busy, setBusy] = useState('')
+  const vp = useListView(s?.posts ?? [], { date: p => p.date, text: p => p.title, pageSize: 10 })
 
   const load = useCallback(async () => {
     const r = await fetch('/api/admin/linkedin')
@@ -77,8 +79,9 @@ export default function LinkedInPage() {
             </div>
           </div>
 
+          <ListToolbar v={vp} noun="post" />
           <ul className="divide-y divide-gray-100 rounded-lg border border-gray-200 bg-white">
-            {s.posts.map(p => {
+            {vp.rows.map(p => {
               const sharedMember = p.shares.some(x => x.as === 'member')
               const sharedOrg = p.shares.some(x => x.as === 'organization')
               return (
@@ -99,6 +102,7 @@ export default function LinkedInPage() {
               )
             })}
           </ul>
+          <Pager v={vp} />
         </>
       )}
     </div>

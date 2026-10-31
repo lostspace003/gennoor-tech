@@ -2,14 +2,16 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Loader2, Sparkles, ImageIcon, Check, Send, Trash2, Save, RotateCcw, Paperclip, Link2, FileText, X, Pencil, Bot, Film, Download, ChevronDown, Maximize2 } from 'lucide-react'
+import { Loader2, Sparkles, ImageIcon, Check, Send, Trash2, Save, RotateCcw, Paperclip, Link2, FileText, X, Pencil, Bot, Film, Download, ChevronDown, Maximize2, Clock } from 'lucide-react'
 import InfoTip from '@/components/admin/InfoTip'
+import DraftList, { Fold, type DraftRow } from '@/components/admin/DraftList'
 import RefBox, { type Ref } from '@/components/admin/RefBox'
 import AgentTimeline, { type RunStep } from '@/components/admin/AgentTimeline'
 
 interface Draft {
   id: string; kind?: 'post' | 'poll'; poll?: { question: string; options: string[]; duration: string }; topic: string; status: 'draft' | 'approved' | 'published'; text: string; imagePrompt: string; hasImage: boolean
   createdAt: string; published: { as: string; at: string }[]
+  scheduled?: { at: string; as: ('member' | 'organization')[]; media: string; state: 'pending' | 'publishing' | 'failed'; tries: number; error?: string }
   references?: Ref[]; publishedText?: string
   motion?: { scene: Record<string, unknown>; seconds: number; hasMp4: boolean }
   trace?: { agent: string; label: string; output: string; usd: number }[]
@@ -42,6 +44,8 @@ export default function SocialStudioPage() {
   const [anim, setAnim] = useState({ motion: 'zoom-in', seconds: 6, caption: '' })
   const [postMedia, setPostMedia] = useState<'gif' | 'video' | 'still'>('gif')
   const [team, setTeam] = useState(false)
+  const [newOpen, setNewOpen] = useState(false)
+  const [when, setWhen] = useState('') // datetime-local value; empty = post now
   const [teamOut, setTeamOut] = useState<'post' | 'motion'>('post')
   const [run, setRun] = useState<{ steps: RunStep[]; error: string; done: boolean } | null>(null)
   const [sceneText, setSceneText] = useState('')
@@ -206,10 +210,17 @@ export default function SocialStudioPage() {
   async function publish(as: ('member' | 'organization')[], mode: 'new' | 'update' = 'new') {
     if (!cur) return
     await save()
-    const j = await call('publish', `/api/admin/social/${cur.id}/publish`, json({ as, mode, republish: cur.published.length > 0, media: cur.motion ? postMedia : 'still' }))
+    const scheduleAt = when && mode === 'new' ? new Date(when).toISOString() : undefined
+    const j = await call('publish', `/api/admin/social/${cur.id}/publish`, json({ as, mode, scheduleAt, republish: cur.published.length > 0, media: cur.motion ? postMedia : 'still' }))
+    if (j.scheduled) { setNotice(`Scheduled for ${new Date(j.scheduled.at).toLocaleString()}. It posts itself then.`); setWhen('') }
     if (j.done?.length) setNotice(`Posted (${j.done.join(', ')}).`)
     if (j.updated?.length) setNotice(`Live post updated (${j.updated.join(', ')}).`)
     load()
+  }
+  async function cancelSchedule() {
+    if (!cur) return
+    await call('publish', `/api/admin/social/${cur.id}/publish`, json({ cancelSchedule: true }))
+    setNotice('Schedule cancelled.'); load()
   }
   async function remove() {
     if (!cur || !confirm('Delete this draft?')) return
@@ -244,7 +255,7 @@ export default function SocialStudioPage() {
       <div className="grid lg:grid-cols-[300px_minmax(0,1fr)] gap-4 flex-1 min-h-0">
         {/* Left: new draft + list */}
         <div className="space-y-3 min-h-0 lg:overflow-y-auto lg:pr-1">
-          <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
+          <Fold title="New post" icon={<Sparkles className="w-3.5 h-3.5 text-gray-500" />} open={newOpen || (!!drafts && drafts.length === 0)} onToggle={() => setNewOpen(o => !o)}>
             <div className="flex items-center gap-1.5 mb-2 text-xs">
               {(['post', 'poll', 'webinar'] as const).map(k => (
                 <button key={k} onClick={() => setKind(k)} className={`px-2.5 py-1 rounded-md border ${kind === k ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 hover:border-gray-400'}`}>{k === 'post' ? 'Post + image' : k === 'poll' ? 'Poll' : 'Webinar'}</button>
@@ -280,23 +291,16 @@ export default function SocialStudioPage() {
             <button disabled={(kind === 'webinar' ? !wb.title.trim() || !wb.when.trim() : !topic.trim()) || !!busy} onClick={team && kind !== 'poll' ? runTeam : create} className={`${primary} w-full justify-center`}>
               {team && kind !== 'poll' ? <Bot className="w-3.5 h-3.5" /> : <Sparkles className="w-3.5 h-3.5" />}{busy === 'create' ? 'Writing…' : busy === 'team' ? 'Team working…' : team && kind !== 'poll' ? 'Run the team' : 'Draft with AI'}
             </button>
-          </div>
+          </Fold>
           {!drafts ? <Loader2 className="w-5 h-5 animate-spin text-gray-400" /> : (
-            <ul className="rounded-xl border border-gray-200 bg-white divide-y divide-gray-100 overflow-hidden shadow-sm">
-              {drafts.length === 0 && <li className="p-3 text-sm text-gray-500">No drafts yet.</li>}
-              {drafts.map(d => (
-                <li key={d.id}>
-                  <button onClick={() => { setSel(d.id); setNotice(''); setError('') }} className={`w-full text-left px-3 py-2 hover:bg-gray-50 border-l-2 ${sel === d.id ? 'bg-gray-100 border-gray-800' : 'border-transparent'}`}>
-                    <div className="text-[13px] font-medium truncate">{d.topic}</div>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className={`text-xs px-1.5 py-0.5 rounded ${BADGE[d.status]}`}>{d.status}</span>
-                      <span className="text-xs text-gray-400">{d.kind === 'poll' ? 'poll' : 'post'} · {new Date(d.createdAt).toLocaleDateString()}</span>
-                      <span className="text-xs text-gray-500 ml-auto">{usd(spend.byDraft[d.id] || 0)}</span>
-                    </div>
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <DraftList noun="post" selectedId={sel} onSelect={id => { setSel(id); setNotice(''); setError('') }}
+              filters={[{ key: 'draft', label: 'Drafts' }, { key: 'approved', label: 'Approved' }, { key: 'scheduled', label: 'Scheduled' }, { key: 'published', label: 'Published' }]}
+              rows={drafts.map((d): DraftRow => ({
+                id: d.id, title: d.topic, date: d.createdAt,
+                group: d.scheduled && d.status !== 'published' ? 'scheduled' : d.status,
+                badge: d.scheduled ? { label: d.scheduled.state === 'failed' ? 'schedule failed' : `scheduled ${new Date(d.scheduled.at).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}`, tone: d.scheduled.state === 'failed' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800' } : { label: d.status, tone: BADGE[d.status] },
+                meta: [d.kind === 'poll' ? 'poll' : 'post', new Date(d.createdAt).toLocaleDateString()], right: usd(spend.byDraft[d.id] || 0),
+              }))} />
           )}
         </div>
 
@@ -471,10 +475,23 @@ export default function SocialStudioPage() {
                       <div className="text-xs text-gray-400">LinkedIn only lets the text of a live post change. To change the image or poll, post again.</div>
                     </div>
                   )}
-                  {cur.status === 'approved' && (
-                    <div className="flex gap-2 pt-2 border-t border-gray-100">
-                      <button disabled={!!busy} onClick={() => publish(['member'])} className={`${primary} flex-1 justify-center`}><Send className="w-3.5 h-3.5" />{busy === 'publish' ? 'Posting…' : 'Post as me'}</button>
-                      <button disabled={!!busy} onClick={() => publish(['organization'])} className={`${primary} flex-1 justify-center`}>Post to page</button>
+                  {cur.scheduled && cur.status !== 'published' && (
+                    <div className={`rounded-lg border p-2.5 text-xs ${cur.scheduled.state === 'failed' ? 'border-red-200 bg-red-50 text-red-800' : 'border-blue-200 bg-blue-50 text-blue-900'}`}>
+                      <div className="font-medium">{cur.scheduled.state === 'failed' ? 'Scheduled post did not go out' : `Scheduled for ${new Date(cur.scheduled.at).toLocaleString([], { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}`} · {cur.scheduled.as.map(a => a === 'member' ? 'profile' : 'page').join(' + ')}</div>
+                      {cur.scheduled.error && <div className="mt-0.5 break-words">{cur.scheduled.error}</div>}
+                      <button disabled={!!busy} onClick={cancelSchedule} className={`${btn} mt-2`}>{cur.scheduled.state === 'failed' ? 'Clear' : 'Cancel schedule'}</button>
+                    </div>
+                  )}
+                  {cur.status === 'approved' && !cur.scheduled && (
+                    <div className="pt-2 border-t border-gray-100 space-y-2">
+                      <label className="block text-xs text-gray-600">Post at <span className="text-gray-400">(optional, leave empty to post now)</span>
+                        <input type="datetime-local" value={when} min={new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)} onChange={e => setWhen(e.target.value)} className={`${field} mt-1`} />
+                      </label>
+                      <div className="flex gap-2">
+                        <button disabled={!!busy} onClick={() => publish(['member'])} className={`${primary} flex-1 justify-center`}>{when ? <Clock className="w-3.5 h-3.5" /> : <Send className="w-3.5 h-3.5" />}{busy === 'publish' ? (when ? 'Scheduling…' : 'Posting…') : when ? 'Schedule as me' : 'Post as me'}</button>
+                        <button disabled={!!busy} onClick={() => publish(['organization'])} className={`${primary} flex-1 justify-center`}>{when ? 'Schedule to page' : 'Post to page'}</button>
+                        {when && <button disabled={!!busy} onClick={() => publish(['organization', 'member'])} className={`${btn} justify-center`} title="Page and profile at the same time">Both</button>}
+                      </div>
                     </div>
                   )}
                   {cur.status === 'draft' && <div className="text-xs text-gray-500">Approve the draft to unlock posting to LinkedIn.</div>}

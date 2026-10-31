@@ -25,6 +25,8 @@ export interface BlogDraft {
   auto?: boolean
   /** The short LinkedIn posts written for this article (company page and profile), kept so a retry reuses them. */
   shareText?: { page: string; profile: string }
+  /** Set when the editor chose a publish time: the heartbeat opens the pull request then. */
+  scheduled?: { at: string; autoMerge: boolean; shareToLinkedIn: boolean; tries: number; failed?: boolean; error?: string }
   createdAt: string; updatedAt: string
 }
 

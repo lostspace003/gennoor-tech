@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import { ListToolbar, Pager, useListView } from '@/components/admin/ListControls'
 import { Loader2, Plus, Users, Inbox } from 'lucide-react'
 import RichEditor, { RichText } from '@/components/academy/RichEditor'
 
@@ -66,6 +67,8 @@ export default function CommunityAdminPage() {
   }
 
   const threads = (posts ?? []).filter(p => !p.parentId)
+  const vt = useListView(threads, { date: t => t.createdAt, text: t => `${t.title} ${t.body} ${t.author} ${t.scope}`, pageSize: 10 })
+  const vr = useListView(reviews, { date: r => r.updatedAt, text: r => `${r.name} ${r.email} ${r.slug} ${r.text}`, pageSize: 15 })
   const repliesOf = (id: string) => (posts ?? []).filter(p => p.parentId === id).sort((a, b) => a.id.localeCompare(b.id))
   const Body = ({ p }: { p: Post }) => (p.html ? <RichText html={p.html} className="text-sm text-gray-700 mt-1" /> : <p className="text-sm text-gray-700 mt-1 whitespace-pre-line">{p.body}</p>)
 
@@ -116,8 +119,9 @@ export default function CommunityAdminPage() {
 
       {posts && tab === 'discussion' && (
         <div className="mt-4 space-y-3">
+          <ListToolbar v={vt} noun="thread" />
           {threads.length === 0 && <div className={`${CARD} p-8 text-center text-sm text-gray-500 flex flex-col items-center gap-2`}><Inbox className="w-6 h-6 text-gray-400" />Nothing here yet.</div>}
-          {threads.map(t => (
+          {vt.rows.map(t => (
             <article key={t.id} className={`border rounded-xl bg-white shadow-sm p-4 ${t.hidden ? 'border-amber-300 bg-amber-100/30' : 'border-gray-200'}`}>
               <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
                 <span className={`px-2 py-0.5 rounded-full font-semibold ${KIND_CLS[t.kind]}`}>{KIND_NAME[t.kind]}</span>
@@ -172,13 +176,15 @@ export default function CommunityAdminPage() {
               )}
             </article>
           ))}
+          <Pager v={vt} />
         </div>
       )}
 
       {posts && tab === 'reviews' && (
-        <div className={`mt-4 ${CARD} divide-y divide-gray-100 max-h-[32rem] overflow-y-auto`}>
+        <div className="mt-4"><ListToolbar v={vr} noun="review" />
+        <div className={`${CARD} divide-y divide-gray-100`}>
           {reviews.length === 0 && <div className="p-8 text-center text-sm text-gray-500 flex flex-col items-center gap-2"><Inbox className="w-6 h-6 text-gray-400" />No reviews yet.</div>}
-          {reviews.map(r => (
+          {vr.rows.map(r => (
             <div key={r.slug + r.id} className={`p-4 ${r.hidden ? 'bg-amber-100/30' : ''}`}>
               <div className="flex flex-wrap items-center gap-2 text-sm">
                 <span className="font-semibold text-gray-900">{'★'.repeat(r.rating)}<span className="text-gray-300">{'★'.repeat(5 - r.rating)}</span></span>
@@ -190,6 +196,8 @@ export default function CommunityAdminPage() {
               {r.text && <p className="text-sm text-gray-700 mt-1 whitespace-pre-line break-words">{r.text}</p>}
             </div>
           ))}
+        </div>
+        <Pager v={vr} />
         </div>
       )}
     </div>

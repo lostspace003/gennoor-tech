@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 import { getLinkedInState, publishPost, publishVideoPost, updatePostText } from '@/lib/linkedin'
+import { parseScheduleAt } from '@/lib/scheduled-publish'
 import { getDraft, getImage, getMotion, mutateDraft, prepareForPublish } from '@/lib/social/studio'
 
 export const dynamic = 'force-dynamic'
@@ -12,6 +13,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   if (!authorized) return unauthorizedResponse()
   const { id } = await params
   const b = await req.json().catch(() => ({}))
+  if (b.cancelSchedule === true) {
+    const x = await mutateDraft(id, d => { d.scheduled = undefined })
+    return x ? NextResponse.json({ cancelled: true }) : NextResponse.json({ error: 'Not found.' }, { status: 404 })
+  }
   const targets: ('member' | 'organization')[] = (Array.isArray(b.as) ? b.as : []).filter((x: string) => x === 'member' || x === 'organization')
   if (!targets.length) return NextResponse.json({ error: 'Choose where to post.' }, { status: 400 })
 
@@ -23,6 +28,16 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }
   if (!d.text.trim()) return NextResponse.json({ error: 'The post is empty.' }, { status: 400 })
 
+  if (b.scheduleAt) {
+    let at: Date
+    try { at = parseScheduleAt(b.scheduleAt) } catch (e: any) { return NextResponse.json({ error: e.message }, { status: 400 }) }
+    if (b.mode === 'update') return NextResponse.json({ error: 'Updating a live post cannot be scheduled.' }, { status: 400 })
+    const media: 'gif' | 'video' | 'still' = b.media === 'video' ? 'video' : b.media === 'still' ? 'still' : d.motion ? 'gif' : 'still'
+    if (media === 'video' && !d.motion?.hasMp4) return NextResponse.json({ error: 'There is no MP4 for this draft. Render the motion graphic first.' }, { status: 400 })
+    const text = await prepareForPublish(d.text, id)
+    await mutateDraft(id, x => { x.text = text; x.scheduled = { at: at.toISOString(), as: targets, media, state: 'pending', tries: 0 } })
+    return NextResponse.json({ scheduled: { at: at.toISOString(), as: targets } })
+  }
   const s = await getLinkedInState()
   if (!s.accessToken || !s.expiresAt || new Date(s.expiresAt) < new Date()) {
     return NextResponse.json({ error: 'LinkedIn is not connected or the token expired. Reconnect on the LinkedIn page.' }, { status: 409 })

@@ -270,8 +270,20 @@ export function applyAction(s: State, slotId: string, action: Action, now: Date)
   if (!slot) throw new Error('Slot not found.')
   const targets = Object.values(slot.targets) as TargetState[]
   if (action === 'skip') { slot.status = 'skipped'; slot.reason = 'skipped by you'; for (const t of targets) if (['pending', 'held'].includes(t.status)) { t.status = 'skipped'; t.reason = 'skipped by you' } }
-  if (action === 'manual') { slot.manual = true; slot.reason = 'you are handling this one' }
-  if (action === 'resume') { slot.manual = false; slot.reason = undefined }
+  if (action === 'manual') {
+    // Taking over settles the slot: nothing here needs the editor any more, so no "needs you" badge and no reopening later.
+    slot.manual = true; slot.status = 'done'; slot.reason = 'handled by you'
+    for (const t of targets) if (['pending', 'held', 'failed'].includes(t.status)) { t.status = 'manual'; t.reason = 'you are handling this one' }
+  }
+  if (action === 'resume') {
+    // Handing back puts the slot in the queue again. Targets that were handed over become pending; the usual
+    // missed-window rule still stops anything from posting late.
+    slot.manual = false; slot.reason = undefined
+    if (slot.status === 'done' && targets.every(t => t.status === 'manual' && t.reason === 'you are handling this one')) {
+      slot.status = slot.draftId ? 'ready' : 'planned'; slot.genAttempts = 0
+      for (const t of targets) { t.status = 'pending'; t.attempts = 0; t.reason = undefined; t.at = iso(now) }
+    }
+  }
   if (action === 'release' || action === 'retry') {
     if (!slot.draftId) { slot.status = 'planned'; slot.genAttempts = 0; slot.reason = undefined }
     else { slot.status = 'ready'; slot.reason = undefined; for (const t of targets) if (t.status === 'held' || t.status === 'failed') { t.status = 'pending'; t.attempts = 0; t.reason = undefined; t.at = iso(now) } }
