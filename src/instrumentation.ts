@@ -5,17 +5,18 @@ export async function register() {
   // Heartbeat every 15 minutes for the LinkedIn autopilot, the blog publishing flow (merge, live, share) and the daily
   // blog. The GitHub schedule (autopilot.yml) triggers the same route, but GitHub can run it late or skip it, so the site
   // also beats by itself. Every run is locked and idempotent, so two triggers never double-post.
-  const heartbeatSecret = process.env.CRM_CRON_SECRET
-  if (heartbeatSecret) {
-    const beat = () => fetch(`http://127.0.0.1:${process.env.PORT || 3000}/api/cron/autopilot`, {
-      method: 'POST',
-      headers: { 'x-cron-secret': heartbeatSecret },
-      signal: AbortSignal.timeout(30_000),
-    }).then(r => console.log(`heartbeat: ${r.status}`)).catch(e => console.error('heartbeat failed -', e instanceof Error ? e.message : e))
-    setTimeout(beat, 150_000)
-    const timer = setInterval(beat, 15 * 60_000)
-    timer.unref?.()
+  // It runs the work directly rather than calling the route over HTTP, which can fail on the container's bind address.
+  const beat = async () => {
+    try {
+      console.log('heartbeat: start')
+      const { runHeartbeat } = await import('@/lib/heartbeat')
+      await runHeartbeat()
+      console.log('heartbeat: done')
+    } catch (e) { console.error('heartbeat failed -', e instanceof Error ? e.message : e) }
   }
+  setTimeout(beat, 150_000)
+  const timer = setInterval(beat, 15 * 60_000)
+  timer.unref?.()
 
   // Give the new version a couple of minutes to settle, then bring the indexes up to date.
   setTimeout(async () => {
