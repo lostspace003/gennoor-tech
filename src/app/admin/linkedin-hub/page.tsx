@@ -1,7 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Copy, Check, Mail, Loader2, RefreshCw, Newspaper, Users, MessageSquare, Building2, Briefcase, UserCircle, Activity, LayoutGrid, ExternalLink, ShieldCheck, ChevronLeft, Search } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Copy, Check, Mail, Loader2, RefreshCw, Newspaper, Users, MessageSquare, Building2, Briefcase, UserCircle, Activity, LayoutGrid, ExternalLink, ShieldCheck, ChevronLeft, ChevronDown, Search } from 'lucide-react'
 import InfoTip from '@/components/admin/InfoTip'
 import SplitPane from '@/components/admin/SplitPane'
 import WarmSwitch from '@/components/admin/WarmSwitch'
@@ -343,7 +343,35 @@ function Meter({ label, used, cap }: { label: string; used: number; cap: number 
   )
 }
 
+/** Tick-box dropdown. The value is the ticked options joined by commas, so it travels like any other text field. */
+function MultiSelect({ f, v, set }: { f: Field; v: any; set: (v: any) => void }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const close = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false) }
+    document.addEventListener('mousedown', close)
+    return () => document.removeEventListener('mousedown', close)
+  }, [])
+  const on = String(v || '').split(',').map(x => x.trim()).filter(Boolean)
+  const toggle = (o: string) => set((on.includes(o) ? on.filter(x => x !== o) : [...on, o]).join(','))
+  const names = on.map(x => f.options!.find(o => o.v === x)?.l.replace(/\s*\(.*\)$/, '') || x)
+  return (
+    <div ref={ref} className="relative mt-0.5">
+      <button type="button" onClick={() => setOpen(o => !o)} className={`${field} text-left flex items-center justify-between gap-2`}>
+        <span className={`truncate ${on.length ? 'text-gray-800' : 'text-gray-400'}`}>{on.length ? names.join(', ') : f.placeholder || 'Any'}</span><ChevronDown className="w-4 h-4 text-gray-400 shrink-0" />
+      </button>
+      {open && (
+        <div className="absolute z-20 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg max-h-64 overflow-y-auto py-1">
+          {f.options!.map(o => <label key={o.v} className="flex items-start gap-2 px-2.5 py-1.5 text-[13px] text-gray-700 hover:bg-gray-50 cursor-pointer"><input type="checkbox" className="mt-1" checked={on.includes(o.v)} onChange={() => toggle(o.v)} /><span>{o.l}</span></label>)}
+          {on.length > 0 && <button type="button" onClick={() => set('')} className="w-full text-left px-2.5 py-1.5 text-xs text-gray-500 border-t border-gray-100 hover:bg-gray-50">Clear all</button>}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function FieldInput({ f, v, set }: { f: Field; v: any; set: (v: any) => void }) {
+  if (f.type === 'multi') return <div className="block text-xs text-gray-500">{f.label}{f.required && <span className="text-red-500"> *</span>}{FIELD_TIPS[f.name] && <InfoTip text={FIELD_TIPS[f.name]} />}<MultiSelect f={f} v={v} set={set} /></div>
   return (
     <label className="block text-xs text-gray-500">{f.label}{f.required && <span className="text-red-500"> *</span>}{FIELD_TIPS[f.name] && <InfoTip text={FIELD_TIPS[f.name]} />}
       {f.type === 'select' ? <select value={v} onChange={e => set(e.target.value)} className={`${field} mt-0.5`}>{f.options!.map(o => <option key={o.v} value={o.v}>{o.l}</option>)}</select>

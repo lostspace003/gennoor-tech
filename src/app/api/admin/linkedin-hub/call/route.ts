@@ -36,9 +36,22 @@ export async function POST(req: NextRequest) {
   const started = Date.now()
   const log = (ok: boolean, cached: boolean, error?: string) => logActivity({ tool: def.name, label: def.label, kind: def.kind, area: String(b.area || 'hub').slice(0, 20), summary: summarise(def.name, args), ok, cached, ms: Date.now() - started, ...(error ? { error: error.slice(0, 300) } : {}) })
   try {
-    const res = await agentFetch('/li/call', { tool: def.name, args, fresh: b.fresh === true }, req.signal)
-    const j = await res.json().catch(() => ({}))
-    if (!res.ok) { await log(false, false, j.detail || `Service returned ${res.status}`); return NextResponse.json({ error: j.detail || `The LinkedIn service returned ${res.status}.` }, { status: 502 }) }
+    // Several ticked places: one lookup per place (the connector takes one at a time), joined under a heading each.
+    const places = (def.name === 'search_people' || def.name === 'search_jobs') && typeof args.location === 'string' ? args.location.split(',').map(x => x.trim()).filter(Boolean).slice(0, 5) : []
+    const label = (v: string) => toolByName(def.name)!.fields.find(f => f.name === 'location')?.options?.find(o => o.v === v)?.l.replace(/\s*\(.*\)$/, '') || v
+    const calls = places.length > 1 ? places : [null]
+    const outs: { place: string | null; j: any; ok: boolean; status: number }[] = []
+    for (const place of calls) {
+      const res = await agentFetch('/li/call', { tool: def.name, args: place ? { ...args, location: place } : args, fresh: b.fresh === true }, req.signal)
+      outs.push({ place, j: await res.json().catch(() => ({})), ok: res.ok, status: res.status })
+    }
+    const bad = outs.find(o => !o.ok)
+    if (bad) { await log(false, false, bad.j.detail || `Service returned ${bad.status}`); return NextResponse.json({ error: bad.j.detail || `The LinkedIn service returned ${bad.status}.` }, { status: 502 }) }
+    let j = outs[0].j
+    if (outs.length > 1) {
+      const text = (o: typeof outs[number]) => (typeof o.j.data === 'string' ? o.j.data : o.j.data?.text ? String(o.j.data.text) : o.j.ok === false ? String(o.j.error || o.j.data?.error || 'LinkedIn reported a problem') : JSON.stringify(o.j.data))
+      j = { ...outs[0].j, ok: outs.some(o => o.j.ok !== false), cached: outs.every(o => o.j.cached), data: { text: outs.map(o => `## ${label(o.place!)}\n${text(o)}`).join('\n\n') } }
+    }
     await log(j.ok !== false, !!j.cached, j.ok === false ? 'LinkedIn reported an error' : undefined)
     return NextResponse.json(j)
   } catch (e: any) {
