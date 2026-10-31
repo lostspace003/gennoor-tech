@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { ListToolbar, Pager, useListView } from '@/components/admin/ListControls'
 import { MessageSquare, RefreshCw, Search, Loader2, Inbox, Eye, EyeOff } from 'lucide-react'
 
 interface Comment {
@@ -77,7 +78,8 @@ export default function AdminCommentsPage() {
     return true
   })
 
-  const slugGroups = filtered.reduce<Record<string, Comment[]>>((acc, c) => {
+  const v = useListView(filtered, { date: c => c.timestamp, text: c => `${c.authorName} ${c.authorEmail} ${c.content}`, pageSize: 25 })
+  const slugGroups = v.rows.reduce<Record<string, Comment[]>>((acc, c) => {
     if (!acc[c.partitionKey]) acc[c.partitionKey] = []
     acc[c.partitionKey].push(c)
     return acc
@@ -130,6 +132,7 @@ export default function AdminCommentsPage() {
         ))}
       </div>
 
+      <div className="mt-3"><ListToolbar v={v} noun="comment" /></div>
       {error && <div className="mt-3 rounded-md bg-red-100 text-red-800 px-3 py-2 text-xs break-words">{error}</div>}
 
       <div className="mt-4 space-y-4">

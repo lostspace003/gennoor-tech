@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Loader2, Power, Play, SkipForward, Hand, RotateCcw, Send, ExternalLink, Settings2, ChevronDown, FileText, BarChart3, Film, Check } from 'lucide-react'
 import InfoTip from '@/components/admin/InfoTip'
+import { DateRangeFilter, daysAgoYMD, todayYMD, type DateRange } from '@/components/crm/shared'
 
 type Kind = 'post' | 'poll' | 'motion'
 interface SlotCfg { time: string; kind: Kind }
@@ -38,13 +39,17 @@ export default function AutopilotPage() {
   const [cfg, setCfg] = useState<Config | null>(null)
   const [dirty, setDirty] = useState(false)
   const [open, setOpen] = useState<string>('')
+  const [range, setRange] = useState<DateRange>({ days: 7, from: '', to: '' })
+  const [hist, setHist] = useState('all')
+  const [histPage, setHistPage] = useState(0)
 
   const load = useCallback(async () => {
-    const r = await fetch('/api/admin/autopilot')
+    const from = range.days > 0 ? daysAgoYMD(range.days) : range.from, to = range.days > 0 ? todayYMD() : range.to
+    const r = await fetch(`/api/admin/autopilot?${new URLSearchParams({ ...(from ? { from } : {}), ...(to ? { to } : {}) })}`)
     const j = await r.json().catch(() => ({}))
     if (!r.ok) { setError(j.error || `Could not load (${r.status})`); return }
     setD(j); setCfg(c => (c && dirty ? c : j.config))
-  }, [dirty])
+  }, [dirty, range])
   useEffect(() => { load(); const t = setInterval(load, 30_000); return () => clearInterval(t) }, [load])
 
   async function patch(body: Partial<Config>, msg?: string) {
@@ -155,12 +160,34 @@ export default function AutopilotPage() {
         <div className="rounded-xl border border-dashed border-gray-300 bg-white/50 text-sm text-gray-500 p-8 text-center mb-4">{on ? `Today's plan is made after ${d.config.researchTime} (${d.config.tz}). The next check will pick it up.` : 'Turn the autopilot on and today\'s four posts will appear here.'}</div>
       ) : <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-3 mb-4">{today.slots.map(s => <SlotCard key={s.id} s={s} />)}</div>}
 
-      {later.length > 0 && (
-        <details className="mb-4 group">
-          <summary className="text-sm font-semibold cursor-pointer list-none flex items-center gap-1.5">Earlier this week<ChevronDown className="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform" /></summary>
-          <div className="mt-2 space-y-4">{later.map(day => <div key={day.date}><div className="text-xs text-gray-500 mb-1.5">{dayLabel(day.date)}</div><div className="grid md:grid-cols-2 xl:grid-cols-4 gap-3">{day.slots.map(s => <SlotCard key={s.id} s={s} />)}</div></div>)}</div>
-        </details>
-      )}
+      <div className="rounded-xl border border-gray-200 bg-white shadow-sm mb-4">
+        <div className="px-3 py-2.5 flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-gray-100">
+          <h2 className="text-sm font-semibold">History</h2>
+          <DateRangeFilter value={range} onChange={r => { setRange(r); setHistPage(0) }} presets={[{ days: 7, label: 'Week' }, { days: 30, label: 'Month' }, { days: 90, label: '3 months' }]} />
+          <div className="flex flex-wrap gap-1 ml-auto">
+            {([['all', 'All'], ['done', 'Posted'], ['held', 'Needs you'], ['skipped', 'Skipped']] as const).map(([k, l]) => {
+              const n = later.reduce((a, day) => a + day.slots.filter(sl => k === 'all' || sl.status === k).length, 0)
+              return <button key={k} onClick={() => { setHist(k); setHistPage(0) }} className={`text-xs px-2 py-1 rounded-md border ${hist === k ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 text-gray-600 hover:border-gray-400'}`}>{l} <span className={hist === k ? 'text-gray-300' : 'text-gray-400'}>{n}</span></button>
+            })}
+          </div>
+        </div>
+        {(() => {
+          const dayList = later.map(day => ({ ...day, slots: day.slots.filter(sl => hist === 'all' || sl.status === hist) })).filter(day => day.slots.length)
+          const PER = 4, pages = Math.max(1, Math.ceil(dayList.length / PER)), pg = Math.min(histPage, pages - 1)
+          if (!dayList.length) return <div className="p-6 text-sm text-gray-500 text-center">Nothing in this period{hist !== 'all' ? ' with that status' : ''}.</div>
+          return (
+            <div className="p-3 space-y-4">
+              {dayList.slice(pg * PER, pg * PER + PER).map(day => <div key={day.date}><div className="text-xs text-gray-500 mb-1.5">{dayLabel(day.date)} · {day.slots.length} post{day.slots.length === 1 ? '' : 's'}</div><div className="grid md:grid-cols-2 xl:grid-cols-4 gap-3">{day.slots.map(s => <SlotCard key={s.id} s={s} />)}</div></div>)}
+              {dayList.length > PER && (
+                <div className="flex items-center justify-between text-xs text-gray-500 pt-1">
+                  <span>Days {pg * PER + 1}–{Math.min(dayList.length, pg * PER + PER)} of {dayList.length}</span>
+                  <div className="flex items-center gap-1"><button disabled={pg === 0} onClick={() => setHistPage(pg - 1)} className={btn}>Newer</button><span className="px-1">{pg + 1}/{pages}</span><button disabled={pg >= pages - 1} onClick={() => setHistPage(pg + 1)} className={btn}>Older</button></div>
+                </div>
+              )}
+            </div>
+          )
+        })()}
+      </div>
 
       <details className="rounded-xl border border-gray-200 bg-white shadow-sm mb-4 group" open={dirty}>
         <summary className="px-4 py-3 text-sm font-semibold cursor-pointer list-none flex items-center gap-2"><Settings2 className="w-4 h-4 text-gray-500" />Settings<span className="text-xs font-normal text-gray-400">times, topics, rules</span><ChevronDown className="w-4 h-4 ml-auto text-gray-400 group-open:rotate-180 transition-transform" /></summary>

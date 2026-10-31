@@ -1,8 +1,9 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Loader2, Sparkles, Check, Save, Trash2, Download, GitPullRequest, Plus, X, Bot, ChevronDown, ExternalLink, Paperclip } from 'lucide-react'
+import { Loader2, Sparkles, Check, Save, Trash2, Download, GitPullRequest, Plus, X, Bot, ChevronDown, ExternalLink, Paperclip, Clock } from 'lucide-react'
 import InfoTip from '@/components/admin/InfoTip'
+import DraftList, { Fold, type DraftRow } from '@/components/admin/DraftList'
 import RefBox, { type Ref } from '@/components/admin/RefBox'
 import AgentTimeline, { type RunState } from '@/components/admin/AgentTimeline'
 
@@ -18,6 +19,7 @@ interface Draft {
   pipeline?: { stage: 'pr' | 'merged' | 'live' | 'done' | 'attention'; autoMerge: boolean; shareToLinkedIn: boolean; note?: string }
   shared?: Partial<Record<'organization' | 'member', { urn: string; at: string }>>
   auto?: boolean
+  scheduled?: { at: string; autoMerge: boolean; shareToLinkedIn: boolean; tries: number; failed?: boolean; error?: string }
 }
 interface Tax { categories: { name: string; count: number }[]; tags: { name: string; count: number }[]; posts: { slug: string; title: string }[] }
 
@@ -54,6 +56,8 @@ export default function BlogStudioPage() {
   const [auto, setAuto] = useState<Auto | null>(null)
   const [autoMerge, setAutoMerge] = useState(true)
   const [shareLi, setShareLi] = useState(true)
+  const [newOpen, setNewOpen] = useState(false)
+  const [when, setWhen] = useState('') // datetime-local value; empty = publish now
 
   const load = useCallback(async () => {
     const r = await fetch('/api/admin/blog')
@@ -172,8 +176,17 @@ export default function BlogStudioPage() {
     if (!cur) return
     const saved = await save('approved')
     if (!saved) return
-    const j = await call('publish', `/api/admin/blog/${cur.id}/publish`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ autoMerge, shareToLinkedIn: shareLi }) })
-    if (j.draft) { patchLocal(cur.id, () => j.draft); setNotice(j.draft.pipeline?.stage === 'merged' ? 'Approved and merged. The site is deploying; the LinkedIn posts follow once it is live.' : 'Pull request opened. Press Merge to put it on the website.') }
+    const scheduleAt = when ? new Date(when).toISOString() : undefined
+    const j = await call('publish', `/api/admin/blog/${cur.id}/publish`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ autoMerge, shareToLinkedIn: shareLi, scheduleAt }) })
+    if (j.draft) {
+      patchLocal(cur.id, () => j.draft); setWhen('')
+      setNotice(scheduleAt ? `Scheduled for ${new Date(scheduleAt).toLocaleString()}. It publishes itself then.` : j.draft.pipeline?.stage === 'merged' ? 'Approved and merged. The site is deploying; the LinkedIn posts follow once it is live.' : 'Pull request opened. Press Merge to put it on the website.')
+    }
+  }
+  async function cancelSchedule() {
+    if (!cur) return
+    const j = await call('publish', `/api/admin/blog/${cur.id}/publish`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ cancelSchedule: true }) })
+    if (j.draft) { patchLocal(cur.id, () => j.draft); setNotice('Schedule cancelled. The post is still approved.') }
   }
   async function flow(action: 'merge' | 'retry') {
     if (!cur) return
@@ -226,33 +239,29 @@ export default function BlogStudioPage() {
                   <div key={r.n} className="break-words">Today: <b className="font-medium">{r.status === 'submitted' ? 'published' : r.status === 'held' ? 'held for you' : r.status === 'failed' ? 'failed' : r.step === 'topic' ? 'waiting to start' : 'writing'}</b>{r.topic ? ` · ${r.topic.title}` : ''}{r.reason ? <span className="text-amber-700"> · {r.reason}</span> : null}</div>
                 )) : <div>Starts each day at {auto.config.time} (India time).</div>}
               </div>
-              <div className="mt-2 flex items-center gap-2">
-                <button onClick={runAutoNow} className={`${btn} !px-2.5 !py-1.5`}>Write today's now</button>
+              <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                <button onClick={runAutoNow} className={`${btn} !px-2.5 !py-1.5 whitespace-nowrap`}>Write today's now</button>
                 <span className="text-xs text-gray-400">Daily at <input type="time" value={auto.config.time} onChange={e => patchAuto({ time: e.target.value })} className="border border-gray-200 rounded px-1 py-0.5 text-xs bg-white" /></span>
               </div>
             </div>
           )}
-          <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
-            <div className="text-xs font-semibold mb-2 flex items-center gap-1.5"><Bot className="w-3.5 h-3.5 text-gray-500" />New article</div>
+          <Fold title="New article" icon={<Plus className="w-3.5 h-3.5 text-gray-500" />} open={newOpen || (!!drafts && drafts.length === 0)} onToggle={() => setNewOpen(o => !o)}>
             <input value={topic} onChange={e => setTopic(e.target.value)} placeholder="Topic, e.g. MCP gateways for enterprise AI agents" className={`${field} mb-2`} />
             <textarea value={brief} onChange={e => setBrief(e.target.value)} placeholder="Angle, audience, must-include points (optional)" rows={3} className={`${field} mb-2`} />
             <div className="text-xs text-gray-500 mb-1 flex items-center gap-1"><Paperclip className="w-3 h-3" />Sources<InfoTip text="Paste news or documentation links, or attach PDFs and notes. The agents only cite URLs that appear in your sources, so add the primary ones." /></div>
             <RefBox refs={refs} busy={busy === 'ref'} url={refUrl} setUrl={setRefUrl} onUrl={() => addRef({ url: refUrl })} onFile={f => addRef({ file: f })} onRemove={id => setRefs(p => p.filter(r => r.id !== id))} />
             <button disabled={topic.trim().length < 3 || !!busy} onClick={runTeam} className={`${primary} w-full justify-center`}><Sparkles className="w-3.5 h-3.5" />{busy === 'team' ? 'Team working…' : 'Write with the AI team'}</button>
             <div className="text-xs text-gray-400 mt-1.5">Takes about a minute and costs roughly $0.08.</div>
-          </div>
+          </Fold>
           {!drafts ? <Loader2 className="w-5 h-5 animate-spin text-gray-400" /> : (
-            <ul className="rounded-xl border border-gray-200 bg-white divide-y divide-gray-100 overflow-hidden shadow-sm max-h-[60vh] overflow-y-auto">
-              {drafts.length === 0 && <li className="p-3 text-sm text-gray-500">No drafts yet.</li>}
-              {drafts.map(d => (
-                <li key={d.id}>
-                  <button onClick={() => { setSel(d.id); setRun(null); setNotice(''); setError('') }} className={`w-full text-left px-3 py-2 hover:bg-gray-50 border-l-2 ${sel === d.id ? 'bg-gray-100 border-gray-800' : 'border-transparent'}`}>
-                    <div className="text-[13px] font-medium line-clamp-2">{d.meta.title}</div>
-                    <div className="flex items-center gap-2 mt-0.5"><span className={`text-xs px-1.5 py-0.5 rounded ${badgeOf(d)}`}>{labelOf(d)}</span>{d.auto && <span className="text-xs text-gray-400">auto</span>}<span className="text-xs text-gray-400">{d.meta.category}</span><span className="text-xs text-gray-500 ml-auto">{usd(spend[d.id] || 0)}</span></div>
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <DraftList noun="article" selectedId={sel} onSelect={id => { setSel(id); setRun(null); setNotice(''); setError('') }}
+              filters={[{ key: 'draft', label: 'Drafts' }, { key: 'approved', label: 'Approved' }, { key: 'scheduled', label: 'Scheduled' }, { key: 'publishing', label: 'Publishing' }, { key: 'attention', label: 'Needs you' }, { key: 'published', label: 'Published' }]}
+              rows={drafts.map((d): DraftRow => ({
+                id: d.id, title: d.meta.title, date: d.createdAt, search: `${d.topic} ${d.meta.tags.join(' ')}`,
+                group: d.pipeline?.stage === 'attention' ? 'attention' : d.status === 'submitted' ? (d.pipeline?.stage === 'done' ? 'published' : 'publishing') : d.scheduled ? 'scheduled' : d.status,
+                badge: d.scheduled && d.status !== 'submitted' ? { label: `scheduled ${new Date(d.scheduled.at).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}`, tone: d.scheduled.failed ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800' } : { label: labelOf(d), tone: badgeOf(d) },
+                meta: [d.auto ? 'auto' : '', d.meta.category, new Date(d.createdAt).toLocaleDateString()], right: usd(spend[d.id] || 0),
+              }))} />
           )}
         </div>
 
@@ -392,7 +401,23 @@ export default function BlogStudioPage() {
                     <div className="space-y-1.5">
                       <label className="flex items-center gap-2 text-xs text-gray-700"><input type="checkbox" checked={autoMerge} onChange={e => setAutoMerge(e.target.checked)} />Merge to the website automatically</label>
                       <label className="flex items-center gap-2 text-xs text-gray-700"><input type="checkbox" checked={shareLi} onChange={e => setShareLi(e.target.checked)} />Share on LinkedIn (company page and my profile) once it is live</label>
-                      <button disabled={!!busy || missing.length > 0} onClick={publish} className={`${primary} w-full justify-center`}><GitPullRequest className="w-3.5 h-3.5" />{busy === 'publish' ? 'Publishing…' : 'Approve & publish'}</button>
+                      {cur.scheduled ? (
+                        <div className={`rounded-lg border p-2.5 text-xs ${cur.scheduled.failed ? 'border-red-200 bg-red-50 text-red-800' : 'border-blue-200 bg-blue-50 text-blue-900'}`}>
+                          <div className="font-medium">{cur.scheduled.failed ? 'Scheduled publish failed' : `Scheduled for ${new Date(cur.scheduled.at).toLocaleString([], { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}`}</div>
+                          {cur.scheduled.error && <div className="mt-0.5 break-words">{cur.scheduled.error}</div>}
+                          <div className="mt-2 flex gap-2">
+                            <button disabled={!!busy} onClick={cancelSchedule} className={btn}>Cancel schedule</button>
+                            <button disabled={!!busy || missing.length > 0} onClick={async () => { await cancelSchedule(); await publish() }} className={btn}>Publish now</button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <label className="block text-xs text-gray-600">Publish at <span className="text-gray-400">(optional, leave empty to publish now)</span>
+                            <input type="datetime-local" value={when} min={new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)} onChange={e => setWhen(e.target.value)} className={`${field} mt-1`} />
+                          </label>
+                          <button disabled={!!busy || missing.length > 0} onClick={publish} className={`${primary} w-full justify-center`}>{when ? <Clock className="w-3.5 h-3.5" /> : <GitPullRequest className="w-3.5 h-3.5" />}{busy === 'publish' ? (when ? 'Scheduling…' : 'Publishing…') : when ? 'Approve & schedule' : 'Approve & publish'}</button>
+                        </>
+                      )}
                     </div>
                   )}
                   {cur.status === 'submitted' && cur.pipeline && (

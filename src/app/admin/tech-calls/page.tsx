@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { Loader2, Video, CalendarClock } from 'lucide-react'
+import { ListToolbar, Pager, useListView } from '@/components/admin/ListControls'
 
 interface Call {
   id: string; status: 'pending' | 'approved' | 'declined'; createdAt: string; name: string; email: string; phone: string; country: string
@@ -56,7 +57,9 @@ export default function TechCallsPage() {
     await load()
   }
 
-  const shown = (calls || []).filter(c => filter === 'all' || c.status === filter)
+  const byStatus = (calls || []).filter(c => filter === 'all' || c.status === filter)
+  const v = useListView(byStatus, { date: c => c.createdAt, text: c => `${c.name} ${c.email} ${c.organization} ${c.country} ${c.course} ${c.note}`, pageSize: 8 })
+  const shown = v.rows
 
   return (
     <div className="w-full p-4 lg:p-5">
@@ -73,6 +76,7 @@ export default function TechCallsPage() {
           </button>
         ))}
       </div>
+      <ListToolbar v={v} noun="request" />
       {error && <p className="text-sm text-red-700 bg-red-100 rounded-md px-3 py-2 mb-4" role="alert">{error}</p>}
       {!calls ? <Loader2 className="w-5 h-5 animate-spin text-primary-600" /> : shown.length === 0 ? (
         <p className="text-gray-500 py-10 text-center">Nothing here.</p>
@@ -145,6 +149,7 @@ export default function TechCallsPage() {
           ))}
         </ul>
       )}
+      <Pager v={v} />
     </div>
   )
 }

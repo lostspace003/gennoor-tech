@@ -3,11 +3,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Loader2, RefreshCw, Newspaper, Users, MessageSquare, Building2, Briefcase, UserCircle, Activity, LayoutGrid, ExternalLink, ShieldCheck, ChevronLeft, Search } from 'lucide-react'
 import InfoTip from '@/components/admin/InfoTip'
+import { DateRangeFilter, rangeBounds, rangeLabel, type DateRange } from '@/components/crm/shared'
 import { GROUPS, TOOLS, type Field, type GroupKey, type ToolDef } from '@/lib/linkedin-catalog'
 
 type Tab = 'overview' | GroupKey | 'activity'
 interface Status {
-  service: 'up' | 'down' | 'not-configured'; detail?: string; session: any; ok?: boolean; sessionUnknown?: boolean; available?: string[]
+  service: 'up' | 'down' | 'not-configured' | 'checking'; detail?: string; session: any; ok?: boolean; sessionUnknown?: boolean; available?: string[]
   usage: { reads: number; readCap: number }; caps: { tool: string; label: string; cap: number; used: number }[]
   activity: { id: string; at: string; tool: string; label: string; kind: string; area: string; summary: string; ok: boolean; cached: boolean; ms: number; error?: string }[]
 }
@@ -92,12 +93,22 @@ export default function LinkedInHubPage() {
   const [confirm, setConfirm] = useState<{ tool: ToolDef; args: Record<string, any> } | null>(null)
   // True once any lookup has succeeded, which proves the saved LinkedIn login works.
   const [verified, setVerified] = useState(false)
+  const [aRange, setARange] = useState<DateRange | null>(null)
+  const [aQ, setAQ] = useState('')
+  const [aRes, setARes] = useState<'all' | 'ok' | 'fail'>('all')
+  const [aPage, setAPage] = useState(0)
 
   const load = useCallback(async () => {
-    const r = await fetch('/api/admin/linkedin-hub/status')
-    const j = await r.json().catch(() => ({}))
-    if (!r.ok) { setError(j.error || `Could not load (${r.status})`); return }
-    setSt(j)
+    // Open at once from the site's own records, then check the connector (it can take a while to wake up).
+    const quick = await fetch('/api/admin/linkedin-hub/status?fast=1').catch(() => null)
+    const q = quick ? await quick.json().catch(() => ({})) : {}
+    if (!quick?.ok) { setError(q.error || `Could not load (${quick?.status ?? 'offline'})`); setSt(s => s || { service: 'down', session: null, usage: { reads: 0, readCap: 0 }, caps: [], activity: [], detail: 'the page could not load its data' }); return }
+    setSt(s => ({ ...q, ...(s && s.service !== 'checking' ? { service: s.service, session: s.session, available: s.available, sessionUnknown: s.sessionUnknown, detail: s.detail } : {}) }))
+    try {
+      const r = await fetch('/api/admin/linkedin-hub/status', { signal: AbortSignal.timeout(60_000) })
+      const j = await r.json().catch(() => ({}))
+      if (r.ok) setSt(j); else setSt(s => (s ? { ...s, service: 'down', detail: j.error || `status ${r.status}` } : s))
+    } catch { setSt(s => (s ? { ...s, service: 'down', detail: 'it did not answer in time' } : s)) }
   }, [])
   useEffect(() => { load() }, [load])
 
@@ -134,6 +145,14 @@ export default function LinkedInHubPage() {
   const sessionOk = verified || (!!st?.session && (st.session.session?.stored === true || st.session.session?.profile || st.session.authenticated === true))
   const unknown = !sessionOk && !!st?.sessionUnknown
   const svc = st?.service
+  const AP = 25
+  const aRows = (st?.activity || []).filter(a => {
+    if (aRes !== 'all' && a.ok !== (aRes === 'ok')) return false
+    if (aRange) { const b = rangeBounds(aRange), t = Date.parse(a.at); if (!(t >= b.fromMs && t <= b.toMs)) return false }
+    const n = aQ.trim().toLowerCase()
+    return !n || `${a.label} ${a.summary} ${a.area} ${a.error || ''}`.toLowerCase().includes(n)
+  })
+  const aPages = Math.max(1, Math.ceil(aRows.length / AP)), aAt = Math.min(aPage, aPages - 1)
   const tabs: Tab[] = ['overview', ...GROUPS.map(g => g.key), 'activity']
 
   return (
@@ -141,7 +160,7 @@ export default function LinkedInHubPage() {
       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
         <h1 className="text-xl font-semibold tracking-tight">LinkedIn hub<InfoTip text="Look things up and act on your LinkedIn account from the admin centre: feed, people, messages, companies and jobs. It works through your saved LinkedIn login, one careful request at a time. Publishing posts stays in the Social studio." /></h1>
         <div className="flex items-center gap-2 text-xs">
-          {st && <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border ${svc === 'up' && sessionOk ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-800'}`}><i className={`w-1.5 h-1.5 rounded-full ${svc === 'up' && sessionOk ? 'bg-emerald-500' : 'bg-amber-500'}`} />{svc === 'not-configured' ? 'Not set up' : svc === 'down' ? 'Service unreachable' : sessionOk ? 'Signed in to LinkedIn' : unknown ? 'Connector running' : 'Sign-in needed'}</span>}
+          {st && <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border ${svc === 'up' && sessionOk ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-800'}`}><i className={`w-1.5 h-1.5 rounded-full ${svc === 'up' && sessionOk ? 'bg-emerald-500' : 'bg-amber-500'}`} />{svc === 'checking' ? 'Checking connector…' : svc === 'not-configured' ? 'Not set up' : svc === 'down' ? 'Service unreachable' : sessionOk ? 'Signed in to LinkedIn' : unknown ? 'Connector running' : 'Sign-in needed'}</span>}
           <button onClick={load} className={btn}><RefreshCw className="w-3.5 h-3.5" />Refresh</button>
         </div>
       </div>
@@ -157,7 +176,7 @@ export default function LinkedInHubPage() {
         <div className="grid lg:grid-cols-[1fr_340px] gap-4 items-start">
           <div className="space-y-4">
             {unknown && svc === 'up' && <div className="rounded-xl border border-gray-200 bg-white p-4 text-sm flex flex-wrap items-center gap-3"><span className="text-gray-700">The connector is running. Check that your LinkedIn sign-in is saved.</span><button onClick={() => run('get_my_profile', { sections: '' })} disabled={busy} className={primary}>Check sign-in</button></div>}
-            {(svc !== 'up' || (!sessionOk && !unknown)) && (
+            {svc !== 'checking' && (svc !== 'up' || (!sessionOk && !unknown)) && (
               <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 space-y-2">
                 <div className="font-semibold">{svc === 'not-configured' ? 'The LinkedIn connector is not set up yet' : svc === 'down' ? 'The LinkedIn connector is not responding' : 'Sign in to LinkedIn once'}</div>
                 <p className="text-[13px]">{svc === 'not-configured' ? 'The connector service needs to be deployed and its address added to the site settings.' : svc === 'down' ? `The service did not answer${st.detail ? ` (${st.detail})` : ''}. It may be starting up; refresh in a minute.` : 'The connector keeps a saved LinkedIn login so it stays signed in between uses. It has none yet. A one-time sign-in opens a secure browser view where you type your own password. Nothing is typed or stored by this site.'}</p>
@@ -190,10 +209,19 @@ export default function LinkedInHubPage() {
         </div>
       ) : tab === 'activity' ? (
         <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-          <div className="max-h-[70vh] overflow-auto"><table className="w-full text-[13px]">
+          <div className="p-2.5 border-b border-gray-100 flex flex-wrap items-center gap-x-3 gap-y-2">
+            <input value={aQ} onChange={e => { setAQ(e.target.value); setAPage(0) }} placeholder="Search activity" className="text-[13px] border border-gray-200 rounded-md px-2.5 py-1.5 w-48 focus:outline-none focus:border-blue-500" />
+            <span className="inline-flex flex-wrap items-center gap-1">
+              <button type="button" onClick={() => { setARange(null); setAPage(0) }} className={`px-2.5 py-1 text-xs rounded-full border ${!aRange ? 'bg-primary-600 text-white border-primary-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>All time</button>
+              <DateRangeFilter value={aRange || { days: -1, from: '', to: '' }} onChange={r => { setARange(r); setAPage(0) }} />
+            </span>
+            <span className="flex gap-1 ml-auto">{(['all', 'ok', 'fail'] as const).map(k => <button key={k} onClick={() => { setARes(k); setAPage(0) }} className={`text-xs px-2 py-1 rounded-md border ${aRes === k ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 text-gray-600 hover:border-gray-400'}`}>{k === 'all' ? 'All' : k === 'ok' ? 'Succeeded' : 'Failed'}</button>)}</span>
+          </div>
+          <div className="max-h-[60vh] overflow-auto"><table className="w-full text-[13px]">
             <thead className="sticky top-0 bg-gray-50 text-xs text-gray-500"><tr><th className="text-left px-3 py-1.5 font-medium">When</th><th className="text-left px-3 py-1.5 font-medium">What</th><th className="text-left px-3 py-1.5 font-medium">Type</th><th className="text-right px-3 py-1.5 font-medium">Result</th></tr></thead>
-            <tbody>{st.activity.map(a => <tr key={a.id} className="border-t border-gray-100 hover:bg-gray-50"><td className="px-3 py-1.5 whitespace-nowrap text-gray-500">{new Date(a.at).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</td><td className="px-3 py-1.5 break-words">{a.label}{a.summary ? ` · ${a.summary}` : ''}</td><td className="px-3 py-1.5"><span className={`text-xs px-1.5 py-0.5 rounded ${a.kind === 'action' ? 'bg-gray-100 text-gray-700' : 'bg-gray-100 text-gray-600'}`}>{a.kind === 'action' ? 'action' : 'lookup'}</span></td><td className={`px-3 py-1.5 text-right ${a.ok ? 'text-gray-500' : 'text-red-600'}`}>{a.ok ? (a.cached ? 'cached' : `${(a.ms / 1000).toFixed(1)}s`) : (a.error || 'failed')}</td></tr>)}</tbody>
-          </table></div>
+            <tbody>{aRows.slice(aAt * AP, aAt * AP + AP).map(a => <tr key={a.id} className="border-t border-gray-100 hover:bg-gray-50"><td className="px-3 py-1.5 whitespace-nowrap text-gray-500">{new Date(a.at).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</td><td className="px-3 py-1.5 break-words">{a.label}{a.summary ? ` · ${a.summary}` : ''}</td><td className="px-3 py-1.5"><span className={`text-xs px-1.5 py-0.5 rounded ${a.kind === 'action' ? 'bg-gray-100 text-gray-700' : 'bg-gray-100 text-gray-600'}`}>{a.kind === 'action' ? 'action' : 'lookup'}</span></td><td className={`px-3 py-1.5 text-right ${a.ok ? 'text-gray-500' : 'text-red-600'}`}>{a.ok ? (a.cached ? 'cached' : `${(a.ms / 1000).toFixed(1)}s`) : (a.error || 'failed')}</td></tr>)}</tbody>
+          </table>{aRows.length === 0 && <div className="p-6 text-sm text-gray-500 text-center">Nothing{aRange ? ` in ${rangeLabel(aRange)}` : ''} matches.</div>}</div>
+          {aRows.length > AP && <div className="flex items-center justify-between px-3 py-2 border-t border-gray-100 text-xs text-gray-500"><span>{aAt * AP + 1}–{Math.min(aRows.length, aAt * AP + AP)} of {aRows.length}</span><div className="flex items-center gap-1"><button disabled={aAt === 0} onClick={() => setAPage(aAt - 1)} className={btn}>Newer</button><span className="px-1">{aAt + 1}/{aPages}</span><button disabled={aAt >= aPages - 1} onClick={() => setAPage(aAt + 1)} className={btn}>Older</button></div></div>}
         </div>
       ) : (
         <div className="grid lg:grid-cols-[320px_1fr] gap-4 items-start">

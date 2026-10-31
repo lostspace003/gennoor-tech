@@ -42,6 +42,8 @@ export interface Draft {
   review?: { verdict: string; notes: string[] }
   /** Text as last sent to LinkedIn, so edits made after publishing can be detected. */
   publishedText?: string
+  /** Set when the editor chose a time: the heartbeat posts it then. Cleared once posted or cancelled. */
+  scheduled?: { at: string; as: ('member' | 'organization')[]; media: 'gif' | 'video' | 'still'; state: 'pending' | 'publishing' | 'failed'; tries: number; error?: string; busyAt?: string }
 }
 
 function container() {

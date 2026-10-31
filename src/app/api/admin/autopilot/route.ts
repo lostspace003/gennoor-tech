@@ -23,7 +23,12 @@ export async function GET(req: NextRequest) {
   const { authorized } = await verifyAdmin(req)
   if (!authorized) return unauthorizedResponse()
   const [s, li, drafts] = await Promise.all([loadState(), getLinkedInState().catch(() => ({} as any)), listDrafts()])
-  const days = Object.values(s.days).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 7)
+  // History window: ?from=YYYY-MM-DD&to=YYYY-MM-DD (default: the last 7 days), never more than 120 days at once.
+  const ymd = /^\d{4}-\d{2}-\d{2}$/
+  const q = req.nextUrl.searchParams
+  const to = ymd.test(q.get('to') || '') ? q.get('to')! : '9999-12-31'
+  const from = ymd.test(q.get('from') || '') ? q.get('from')! : new Date(Date.now() - 7 * 86_400_000).toISOString().slice(0, 10)
+  const days = Object.values(s.days).filter(x => x.date >= from && x.date <= to).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 120)
   const ids = new Set(days.flatMap(d => d.slots.map(x => x.draftId)).filter(Boolean))
   const previews: Record<string, { text: string; hasImage: boolean; motion: boolean; poll?: { question: string; options: string[] } }> = {}
   for (const d of drafts) if (ids.has(d.id)) previews[d.id] = { text: d.text, hasImage: d.hasImage, motion: !!d.motion, poll: d.poll ? { question: d.poll.question, options: d.poll.options } : undefined }

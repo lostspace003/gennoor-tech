@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { Loader2, Sparkles, PenLine, Linkedin, ArrowUpRight } from 'lucide-react'
 import InfoTip from '@/components/admin/InfoTip'
+import { ListToolbar, useListView } from '@/components/admin/ListControls'
 
 interface Ev { at: string; area: 'social' | 'blog' | 'linkedin'; title: string; detail: string; href?: string }
 const AREAS = { social: { label: 'Social studio', icon: Sparkles, tone: 'bg-gray-100 text-gray-700' }, blog: { label: 'Blog studio', icon: PenLine, tone: 'bg-gray-100 text-gray-700' }, linkedin: { label: 'LinkedIn hub', icon: Linkedin, tone: 'bg-gray-100 text-gray-700' } } as const
@@ -20,9 +21,11 @@ export default function SessionsPage() {
     fetch('/api/admin/sessions').then(async r => { const j = await r.json().catch(() => ({})); if (!r.ok) setError(j.error || `Failed (${r.status})`); else setEvents(j.events) })
   }, [])
 
+  const byArea = useMemo(() => (events || []).filter(e => filter === 'all' || e.area === filter), [events, filter])
+  const v = useListView(byArea, { date: e => e.at, text: e => `${e.title} ${e.detail}`, pageSize: 1000 })
   // A session is a run of activity with no gap longer than 45 minutes; sessions are grouped by day.
-  const days = useMemo(() => {
-    const list = (events || []).filter(e => filter === 'all' || e.area === filter)
+  const allDays = useMemo(() => {
+    const list = v.filtered
     const sessions: Session[] = []
     for (const e of list) {
       const t = Date.parse(e.at)
@@ -32,7 +35,12 @@ export default function SessionsPage() {
     const byDay = new Map<string, Session[]>()
     for (const s of sessions) { const k = new Date(s.end).toDateString(); byDay.set(k, [...(byDay.get(k) || []), s]) }
     return [...byDay.entries()]
-  }, [events, filter])
+  }, [v.filtered])
+  const DAYS = 5
+  const [dp, setDp] = useState(0)
+  useEffect(() => { setDp(0) }, [filter, v.q, v.range])
+  const dpages = Math.max(1, Math.ceil(allDays.length / DAYS)), dat = Math.min(dp, dpages - 1)
+  const days = allDays.slice(dat * DAYS, dat * DAYS + DAYS)
 
   const time = (t: number) => new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 
@@ -44,9 +52,10 @@ export default function SessionsPage() {
           {(['all', 'social', 'blog', 'linkedin'] as const).map(k => <button key={k} onClick={() => setFilter(k)} className={`px-2.5 py-1 rounded-full border ${filter === k ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 bg-white hover:border-gray-400'}`}>{k === 'all' ? 'Everything' : AREAS[k].label}</button>)}
         </div>
       </div>
+      <ListToolbar v={v} noun="event" />
       {error && <div className="mb-3 rounded-md bg-red-50 border border-red-200 text-red-800 text-sm px-3 py-2">{error}</div>}
       {!events && !error && <Loader2 className="w-5 h-5 animate-spin text-gray-400" />}
-      {events && days.length === 0 && <div className="rounded-xl border border-dashed border-gray-300 bg-white/50 text-sm text-gray-500 p-10 text-center">Nothing here yet. Work in the studios and it will show up.</div>}
+      {events && allDays.length === 0 && <div className="rounded-xl border border-dashed border-gray-300 bg-white/50 text-sm text-gray-500 p-10 text-center">Nothing here yet. Work in the studios and it will show up.</div>}
       <div className="space-y-6">
         {days.map(([day, sessions]) => (
           <section key={day}>
@@ -81,6 +90,12 @@ export default function SessionsPage() {
           </section>
         ))}
       </div>
+      {allDays.length > DAYS && (
+        <div className="flex items-center justify-between pt-4 text-xs text-gray-500">
+          <span>Days {dat * DAYS + 1}–{Math.min(allDays.length, dat * DAYS + DAYS)} of {allDays.length}</span>
+          <div className="flex items-center gap-1"><button disabled={dat === 0} onClick={() => setDp(dat - 1)} className="px-2.5 py-1 rounded border border-gray-200 bg-white disabled:opacity-30">Newer</button><span className="px-1.5">{dat + 1}/{dpages}</span><button disabled={dat >= dpages - 1} onClick={() => setDp(dat + 1)} className="px-2.5 py-1 rounded border border-gray-200 bg-white disabled:opacity-30">Older</button></div>
+        </div>
+      )}
     </div>
   )
 }

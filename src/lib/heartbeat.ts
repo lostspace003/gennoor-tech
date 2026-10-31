@@ -4,11 +4,12 @@ import { pipelineTick } from '@/lib/blog-pipeline'
 import { liveBlogPipelineDeps } from '@/lib/blog-publish'
 import { blogAutoTick } from '@/lib/blog-auto'
 import { liveAutoDeps } from '@/lib/blog-auto-live'
+import { blogScheduleTick, socialScheduleTick } from '@/lib/scheduled-publish'
 
 let running = false
 
 /**
- * One heartbeat drives: the LinkedIn autopilot, the blog publishing flow (merge, live, share) and the daily blog.
+ * One heartbeat drives: the LinkedIn autopilot, posts and blogs you scheduled by hand, the blog publishing flow (merge, live, share) and the daily blog.
  * Used by the cron route and by the in-app timer, so both do exactly the same work. A run already going is not doubled.
  */
 export async function runHeartbeat(): Promise<void> {
@@ -20,6 +21,8 @@ export async function runHeartbeat(): Promise<void> {
     }
     await run('autopilot', () => tick(liveDeps()))
     await run('blog-pipeline', () => pipelineTick(liveBlogPipelineDeps()))
+    await run('social-scheduled', () => socialScheduleTick())
+    await run('blog-scheduled', () => blogScheduleTick())
     await run('blog-auto', () => blogAutoTick(liveAutoDeps()))
   } finally {
     running = false

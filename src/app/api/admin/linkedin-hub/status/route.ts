@@ -15,16 +15,18 @@ export async function GET(req: NextRequest) {
   const usage = usageToday(activity)
   const caps = TOOLS.filter(t => t.kind === 'action' && t.cap).map(t => ({ tool: t.name, label: t.label, cap: t.cap!, used: usage.byTool[t.name] || 0 }))
   const base = { usage: { reads: usage.reads, readCap: usage.readCap }, caps, activity: activity.slice(-200).reverse() }
+  // ?fast=1 answers from the site's own records straight away, so the page opens at once; the connector is checked next.
+  if (req.nextUrl.searchParams.get('fast') === '1') return NextResponse.json({ ...base, service: 'checking', session: null })
   if (!agentServiceConfigured()) return NextResponse.json({ ...base, service: 'not-configured', session: null })
   try {
     // The connector's own tool list says what it can do (the hub hides the rest) and proves it is running.
-    const tl = await agentGet('/li/tools', req.signal)
+    const tl = await agentGet('/li/tools', AbortSignal.any([req.signal, AbortSignal.timeout(45_000)]))
     if (!tl.ok) { const j = await tl.json().catch(() => ({})); return NextResponse.json({ ...base, service: tl.status === 503 ? 'not-configured' : 'down', session: null, detail: j.detail || '' }) }
     const available: string[] = ((await tl.json().catch(() => ({}))).tools || []).map((x: { name: string }) => x.name)
     // get_session_status only inspects the saved login. Not every connector build offers it; without it, whether you
     // are signed in is learned from the first real lookup.
     if (!available.includes('get_session_status')) return NextResponse.json({ ...base, service: 'up', available, session: null, sessionUnknown: true })
-    const res = await agentFetch('/li/call', { tool: 'get_session_status', args: {}, fresh: true }, req.signal)
+    const res = await agentFetch('/li/call', { tool: 'get_session_status', args: {}, fresh: true }, AbortSignal.any([req.signal, AbortSignal.timeout(45_000)]))
     const j = await res.json().catch(() => ({}))
     return NextResponse.json({ ...base, service: 'up', available, session: res.ok ? j.data ?? null : null, sessionUnknown: !res.ok, ok: j.ok !== false })
   } catch (e: any) {
