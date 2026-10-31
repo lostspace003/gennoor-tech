@@ -44,6 +44,20 @@ export interface BlogPost extends BlogPostMeta {
 
 export const blogPostsMeta: BlogPostMeta[] = [
   {
+    slug: 'new-copilot-studio-features-enterprise-agent-builders',
+    title: 'New Copilot Studio Features: What Enterprise Agent Builders Should Actually Care About',
+    excerpt: 'Microsoft’s latest Copilot Studio updates push the platform beyond chatbot building into enterprise agent orchestration. For business users, the important story is not feature volume but which capabilities are practical for governed workflows, legacy system automation, and scalable agent deployment inside Microsoft-centric environments.',
+    tldr: 'Copilot Studio’s newer capabilities, including multi-agent orchestration, agent flows, computer use, and deeper customization patterns, make it more relevant for enterprise agent design. The key for business teams is to match each feature to workflow risk, integration needs, and governance maturity rather than treating every new capability as production-ready by default.',
+    author: 'Gennoor Tech',
+    date: '2026-10-31',
+    readTime: '10 min read',
+    category: 'Microsoft AI',
+    tags: ['Copilot Studio', 'AI Agents', 'Enterprise AI', 'Agent Flows', 'Automation', 'Power Platform', 'Microsoft', 'No-Code AI'],
+    hashtags: ['#CopilotStudio', '#AIAgents', '#EnterpriseAI', '#PowerPlatform', '#Automation', '#MicrosoftAI'],
+    coverColor: '#0B1530',
+    icon: '🧩',
+  },
+  {
     slug: 'openai-servicenow-enterprise-ai-chat-to-workflow',
     title: 'OpenAI + ServiceNow Signals the Enterprise AI Shift From Chat Interfaces to Workflow Execution',
     excerpt: 'The OpenAI + ServiceNow story matters less as a partnership headline and more as a market signal. Enterprise AI is moving into embedded workflows, where value depends on orchestration, governance, process integration, and measurable task completion rather than generic copilot experiences.',
@@ -944,6 +958,7 @@ export function getRelatedPostsMeta(currentSlug: string, category: string, limit
 
 // Load full blog post content on demand (only for individual post pages)
 const contentImports: Record<string, () => Promise<{ post: BlogPost }>> = {
+  'new-copilot-studio-features-enterprise-agent-builders': () => import('./content/new-copilot-studio-features-enterprise-agent-builders'),
   'openai-servicenow-enterprise-ai-chat-to-workflow': () => import('./content/openai-servicenow-enterprise-ai-chat-to-workflow'),
   'why-ai-agents-dominate-vs-agent-driven-product-development': () => import('./content/why-ai-agents-dominate-vs-agent-driven-product-development'),
   'meta-incognito-chat-whatsapp-private-ai': () => import('./content/meta-incognito-chat-whatsapp-private-ai'),
