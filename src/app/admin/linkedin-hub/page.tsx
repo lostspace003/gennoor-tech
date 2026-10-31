@@ -104,11 +104,20 @@ export default function LinkedInHubPage() {
     const q = quick ? await quick.json().catch(() => ({})) : {}
     if (!quick?.ok) { setError(q.error || `Could not load (${quick?.status ?? 'offline'})`); setSt(s => s || { service: 'down', session: null, usage: { reads: 0, readCap: 0 }, caps: [], activity: [], detail: 'the page could not load its data' }); return }
     setSt(s => ({ ...q, ...(s && s.service !== 'checking' ? { service: s.service, session: s.session, available: s.available, sessionUnknown: s.sessionUnknown, detail: s.detail } : {}) }))
-    try {
-      const r = await fetch('/api/admin/linkedin-hub/status', { signal: AbortSignal.timeout(60_000) })
-      const j = await r.json().catch(() => ({}))
-      if (r.ok) setSt(j); else setSt(s => (s ? { ...s, service: 'down', detail: j.error || `status ${r.status}` } : s))
-    } catch { setSt(s => (s ? { ...s, service: 'down', detail: 'it did not answer in time' } : s)) }
+    // The connector sleeps when idle, and waking it can outlast one check, so a slow first answer is retried a few times
+    // before the page says it is unreachable.
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const r = await fetch('/api/admin/linkedin-hub/status', { signal: AbortSignal.timeout(60_000) })
+        const j = await r.json().catch(() => ({}))
+        if (r.ok && j.service !== 'down') { setSt(j); return }
+        if (attempt === 2) { setSt(r.ok ? j : s => (s ? { ...s, service: 'down', detail: j.error || `status ${r.status}` } : s)); return }
+      } catch {
+        if (attempt === 2) { setSt(s => (s ? { ...s, service: 'down', detail: 'it did not answer in time' } : s)); return }
+      }
+      setSt(s => (s ? { ...s, service: 'checking' } : s)) // still waking up: keep saying so
+      await new Promise(res => setTimeout(res, 8000))
+    }
   }, [])
   useEffect(() => { load() }, [load])
 
