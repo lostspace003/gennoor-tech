@@ -2,6 +2,21 @@
 export async function register() {
   if (process.env.NEXT_RUNTIME !== 'nodejs' || process.env.NODE_ENV !== 'production') return
 
+  // Heartbeat every 15 minutes for the LinkedIn autopilot, the blog publishing flow (merge, live, share) and the daily
+  // blog. The GitHub schedule (autopilot.yml) triggers the same route, but GitHub can run it late or skip it, so the site
+  // also beats by itself. Every run is locked and idempotent, so two triggers never double-post.
+  const heartbeatSecret = process.env.CRM_CRON_SECRET
+  if (heartbeatSecret) {
+    const beat = () => fetch(`http://127.0.0.1:${process.env.PORT || 3000}/api/cron/autopilot`, {
+      method: 'POST',
+      headers: { 'x-cron-secret': heartbeatSecret },
+      signal: AbortSignal.timeout(30_000),
+    }).then(r => console.log(`heartbeat: ${r.status}`)).catch(e => console.error('heartbeat failed -', e instanceof Error ? e.message : e))
+    setTimeout(beat, 150_000)
+    const timer = setInterval(beat, 15 * 60_000)
+    timer.unref?.()
+  }
+
   // Give the new version a couple of minutes to settle, then bring the indexes up to date.
   setTimeout(async () => {
     // 1. Every published course is searchable for the Ask bot. Courses already indexed are skipped.
