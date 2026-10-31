@@ -65,7 +65,7 @@ async function ordered() {
   const s = await load()
   const act = activeOf(s)
   const all = s.keys.map(k => ({ id: k.id, label: k.label, key: open(k.enc) }))
-  if (envKey() && !all.some(k => k.key === envKey())) all.push({ id: ENV_ID, label: 'Server default', key: envKey() })
+  if (envKey()) all.push({ id: ENV_ID, label: 'Server default', key: envKey() })
   return all.sort((a, b) => (a.id === act ? -1 : b.id === act ? 1 : 0))
 }
 
@@ -87,10 +87,12 @@ export async function credits(key: string): Promise<{ ok: boolean; remaining?: n
 export async function keyStatuses() {
   const all = await ordered()
   const list = await listKeys()
-  return Promise.all(list.map(async k => ({ ...k, ...(await credits(all.find(a => a.id === k.id)!.key)) })))
+  return Promise.all(list.map(async k => { const m = all.find(a => a.id === k.id); return { ...k, ...(m ? await credits(m.key) : { ok: false, error: 'Key unavailable.' }) } }))
 }
 
 export async function addAndCheck(label: string, key: string) {
+  const known = (await ordered()).some(k => k.key === key.trim())
+  if (known) throw new Error('This key is already added. Paste a different one, or use "Use this one" on the key above.')
   const c = await credits(key.trim())
   if (!c.ok) throw new Error(c.error || 'This key was not accepted.')
   return addKey(label, key)
