@@ -29,6 +29,7 @@ from pydantic import BaseModel, Field
 
 import li
 import render as renderer
+from palettes import recolor
 from agents import run_blog, run_pipeline
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -158,6 +159,7 @@ async def run(b: RunBody):
                 if ev["type"] == "result" and b.mode == "motion" and ev.get("scene"):
                     yield json.dumps({"type": "step", "agent": "renderer", "label": "Render", "status": "running"}) + "\n"
                     try:
+                        ev["scene"] = recolor(ev["scene"])  # a palette of its own for every post
                         ev["render"] = await _render(ev["scene"], True)
                         yield json.dumps({"type": "step", "agent": "renderer", "label": "Render", "status": "done",
                                           "output": f"{ev['render']['frames']} frames, {ev['render']['seconds']}s"}) + "\n"

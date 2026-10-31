@@ -4,6 +4,7 @@ import { pipelineTick } from '@/lib/blog-pipeline'
 import { liveBlogPipelineDeps } from '@/lib/blog-publish'
 import { blogAutoTick } from '@/lib/blog-auto'
 import { liveAutoDeps } from '@/lib/blog-auto-live'
+import { warmTick } from '@/lib/linkedin-warm'
 import { blogScheduleTick, socialScheduleTick } from '@/lib/scheduled-publish'
 
 let running = false
@@ -23,6 +24,7 @@ export async function runHeartbeat(): Promise<void> {
     await run('blog-pipeline', () => pipelineTick(liveBlogPipelineDeps()))
     await run('social-scheduled', () => socialScheduleTick())
     await run('blog-scheduled', () => blogScheduleTick())
+    await run('linkedin-warm', () => warmTick())
     await run('blog-auto', () => blogAutoTick(liveAutoDeps()))
   } finally {
     running = false
