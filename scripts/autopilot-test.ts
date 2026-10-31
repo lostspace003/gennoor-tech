@@ -38,6 +38,8 @@ async function main() {
   ok(similar('AWS AgentCore goes GA', 'Google Gemini adds marketplace') < 0.2, 'different topics not flagged')
   ok(!!mentionsAvoided('Why the election will change AI policy', DEFAULT_CONFIG.avoidKeywords) !== null, 'avoid-list catches politics/elections')
   ok(mentionsAvoided('A cyber attack on agents: Azure AI Foundry adds tracing', DEFAULT_CONFIG.avoidKeywords) === null, 'avoid-list lets normal posts through')
+  ok(mentionsAvoided('A careful selection of tools and a data collection plan', DEFAULT_CONFIG.avoidKeywords) === null, 'a banned word inside another word ("selection") is not a match')
+  ok(mentionsAvoided('How elections and political risk shape AI roadmaps', DEFAULT_CONFIG.avoidKeywords) !== null, 'whole words and their plurals ("elections", "political") are still caught')
   const wd = slotsFor('2026-11-02', DEFAULT_CONFIG), we = slotsFor('2026-11-07', DEFAULT_CONFIG)
   ok(wd.length === 4 && !wd[0].weekend, 'weekday has 4 slots')
   ok(we.length === 4 && we[0].weekend && we[0].at.toISOString() === '2026-11-07T04:00:00.000Z', 'Saturday has 4 weekend slots (09:30 IST start)')
