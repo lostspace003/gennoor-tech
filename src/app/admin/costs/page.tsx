@@ -41,6 +41,8 @@ export default function CostCentrePage() {
   const [range, setRange] = useState<[string, string]>(() => presets(13, new Date())['Last 12 months'])
   const [gran, setGran] = useState<Gran>('cycle')
   const [groupBy, setGroupBy] = useState('ServiceName')
+  // Filters are only a draft until Apply is pressed; `applied` is what the report is actually showing.
+  const [applied, setApplied] = useState<{ range: [string, string]; gran: Gran; groupBy: string }>({ range: presets(13, new Date())['Last 12 months'], gran: 'cycle', groupBy: 'ServiceName' })
   const [usd, setUsd] = useState(false)
   const [data, setData] = useState<Report | null>(null)
   const [error, setError] = useState('')
@@ -48,14 +50,14 @@ export default function CostCentrePage() {
 
   const load = useCallback(async () => {
     setLoading(true); setError('')
-    const q = new URLSearchParams({ from: range[0], to: range[1], granularity: gran, groupBy })
+    const q = new URLSearchParams({ from: applied.range[0], to: applied.range[1], granularity: applied.gran, groupBy: applied.groupBy })
     const r = await fetch(`/api/admin/costs?${q}`)
     const j = await r.json().catch(() => ({}))
     setLoading(false)
     if (!r.ok) { setError(j.error || `Failed (${r.status})`); return }
     setData(j)
     if (j.cycleDay && j.cycleDay !== cycleDay) setCycleDay(j.cycleDay)
-  }, [range, gran, groupBy, cycleDay])
+  }, [applied, cycleDay])
   useEffect(() => { load() }, [load])
 
   function pick(name: string) {
@@ -79,7 +81,10 @@ export default function CostCentrePage() {
   const max = Math.max(1, ...(data?.buckets || []).map(b => b.total))
   const days = data ? Math.max(1, Math.round((Date.parse(data.to) - Date.parse(data.from)) / 86_400_000) + 1) : 1
   const top = data?.buckets.reduce((a, b) => (b.total > (a?.total ?? -1) ? b : a), undefined as Bucket | undefined)
-  const sel = 'text-sm border border-gray-200 rounded-md px-2 py-1.5 bg-white focus:outline-none focus:border-blue-500'
+  const sel = 'text-sm border border-gray-200 rounded-md px-2.5 py-2 bg-white focus:outline-none focus:border-gray-500 min-w-[180px]'
+  const dirty = range[0] !== applied.range[0] || range[1] !== applied.range[1] || gran !== applied.gran || groupBy !== applied.groupBy
+  const apply = () => setApplied({ range, gran, groupBy })
+  const reset = () => { setRange(applied.range); setGran(applied.gran); setGroupBy(applied.groupBy); setPreset(Object.entries(presets(cycleDay, today)).find(([, v]) => v[0] === applied.range[0] && v[1] === applied.range[1])?.[0] || 'Custom') }
 
   return (
     <div className="w-full p-4 lg:p-5">
@@ -101,6 +106,11 @@ export default function CostCentrePage() {
         </>}
         <label className="text-xs text-gray-500">View by<select value={gran} onChange={e => setGran(e.target.value as Gran)} className={`${sel} block mt-0.5`}>{GRANS.map(g => <option key={g.v} value={g.v}>{g.l}</option>)}</select></label>
         <label className="text-xs text-gray-500">Split by<select value={groupBy} onChange={e => setGroupBy(e.target.value)} className={`${sel} block mt-0.5`}>{GROUPS.map(g => <option key={g.v} value={g.v}>{g.l}</option>)}</select></label>
+        <div className="flex items-center gap-2">
+          <button onClick={apply} disabled={!dirty || loading} className="inline-flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium bg-gray-800 text-white rounded-md hover:bg-gray-900 disabled:opacity-40">{loading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : null}Apply</button>
+          {dirty && <button onClick={reset} className="px-3 py-2 text-[13px] rounded-md border border-gray-200 bg-white hover:border-gray-400">Reset</button>}
+          {dirty && <span className="text-xs text-amber-700">Filters changed. Press Apply to update.</span>}
+        </div>
         {data?.currency === 'INR' && (
           <div className="ml-auto flex rounded-md border border-gray-200 overflow-hidden text-xs">
             <button onClick={() => setUsd(false)} className={`px-3 py-1.5 ${!usd ? 'bg-gray-800 text-white' : 'bg-white'}`}>₹ INR</button>
