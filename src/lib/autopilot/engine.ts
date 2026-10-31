@@ -52,7 +52,8 @@ export function similar(a: string, b: string) {
 /** Hard screen: the first configured keyword the text contains, or null. Deliberately plain and conservative. */
 export function mentionsAvoided(text: string, keywords: string[]): string | null {
   const t = text.toLowerCase()
-  return keywords.map(k => k.trim().toLowerCase()).filter(Boolean).find(k => t.includes(k)) ?? null
+  // Matches at the START of a word, so "election" catches "elections" but not "selection", and "politic" catches "political".
+  return keywords.map(k => k.trim().toLowerCase()).filter(Boolean).find(k => new RegExp(`(^|[^a-z0-9])${k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(t)) ?? null
 }
 
 /** The day's slot times from config: validated for spacing and the daily cap. */

@@ -45,6 +45,8 @@ export async function POST(req: NextRequest) {
   const out = new ReadableStream({
     async start(ctrl) {
       const send = (o: unknown) => ctrl.enqueue(enc.encode(JSON.stringify(o) + '\n'))
+      // A tiny heartbeat every few seconds, so no proxy or browser ever sees a long silence while a step is thinking.
+      const beat = setInterval(() => { try { send({ type: 'ping' }) } catch { /* the browser has gone */ } }, 8000)
       const handle = async (line: string) => {
         if (!line.trim()) return
         const ev = JSON.parse(line)
@@ -75,7 +77,8 @@ export async function POST(req: NextRequest) {
       } catch (e: any) {
         send({ type: 'error', message: e?.message || 'Stream failed' })
       } finally {
-        ctrl.close()
+        clearInterval(beat)
+        try { ctrl.close() } catch { /* already closed */ }
       }
     },
   })

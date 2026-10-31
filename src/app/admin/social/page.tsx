@@ -100,6 +100,7 @@ export default function SocialStudioPage() {
     if (j.draft) patchLocal(cur.id, { references: j.draft.references || [] })
   }
   async function runTeam() {
+    const startedAt = Date.now()
     const body = kind === 'webinar'
       ? { topic: `Webinar announcement: ${wb.title}`, brief: `Invite people to register for a free webinar. Title: ${wb.title}. When: ${wb.when}. Registration link (include it in the post): ${wb.link}. ${brief}`.trim() }
       : { topic, brief }
@@ -129,16 +130,34 @@ export default function SocialStudioPage() {
           else if (ev.type === 'error') throw new Error(ev.message)
           else if (ev.type === 'result') {
             setTopic(''); setBrief(''); setPendingRefs([])
-            await load(); setSel(ev.draftId); setRun(null)
+            try { await load() } catch { /* the list refreshes by itself shortly */ }
+            setSel(ev.draftId); setRun(null)
             setNotice(`The team finished${ev.review?.verdict === 'revise' ? ' and the reviewer suggests changes' : ''}. Review the draft below.`)
           }
         }
       }
     } catch (e: any) {
-      setRun(r => (r ? { ...r, error: e?.message || 'The agent run failed.' } : r))
+      // The connection can drop after the team has finished and saved the draft; look for it before reporting a failure.
+      const id = await recoverDraft(startedAt)
+      if (id) { setSel(id); setRun(null); setNotice('The connection dropped, but your draft was saved. Review it below.') }
+      else setRun(r => (r ? { ...r, error: `${e?.message || 'The agent run failed.'} If you do not see the draft in the list on the left within a minute, run it again.` } : r))
     }
     setBusy('')
     setRun(r => (r ? { ...r, done: true } : r))
+  }
+  async function recoverDraft(since: number): Promise<string | null> {
+    for (let i = 0; i < 10; i++) {
+      try {
+        const r = await fetch('/api/admin/social')
+        if (r.ok) {
+          const j = await r.json()
+          const hit = (j.drafts as Draft[]).find(d => Date.parse(d.createdAt) >= since - 10_000)
+          if (hit) { setDrafts(j.drafts); if (j.spend) setSpend(j.spend); return hit.id }
+        }
+      } catch { /* try again */ }
+      await new Promise(r => setTimeout(r, 6000))
+    }
+    return null
   }
   async function formatPost() {
     if (!cur) return

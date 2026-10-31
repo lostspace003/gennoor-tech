@@ -95,6 +95,7 @@ export default function BlogStudioPage() {
   }
 
   async function runTeam() {
+    const startedAt = Date.now()
     setBusy('team'); setError(''); setNotice(''); setSel('')
     setRun({ steps: [], error: '', done: false })
     const upd = (agent: string, label: string, f: (s: RunState['steps'][number]) => Partial<RunState['steps'][number]>) => setRun(r => {
@@ -122,16 +123,36 @@ export default function BlogStudioPage() {
           else if (ev.type === 'error') throw new Error(ev.message)
           else if (ev.type === 'result') {
             setTopic(''); setBrief(''); setRefs([])
-            await load(); setSel(ev.draftId); setRun(null); setTab('preview')
+            try { await load() } catch { /* the list refreshes by itself shortly */ }
+            setSel(ev.draftId); setRun(null); setTab('preview')
             setNotice(`The team finished${ev.review?.verdict === 'revise' ? ' and the reviewer suggests changes' : ''}. Review it below, edit anything, then approve.`)
           }
         }
       }
     } catch (e: any) {
-      setRun(r => (r ? { ...r, error: e?.message || 'The agent run failed.' } : r))
+      // The connection can drop after the team has already finished and saved the article. Look for it before
+      // reporting a failure, so a network blip never hides finished work.
+      const id = await recoverDraft(startedAt)
+      if (id) { setSel(id); setRun(null); setTab('preview'); setNotice('The connection dropped, but your article was saved. Review it below, edit anything, then approve.') }
+      else setRun(r => (r ? { ...r, error: `${e?.message || 'The agent run failed.'} If you do not see the article in the list on the left within a minute, run it again.` } : r))
     }
     setBusy('')
     setRun(r => (r ? { ...r, done: true } : r))
+  }
+
+  async function recoverDraft(since: number): Promise<string | null> {
+    for (let i = 0; i < 10; i++) {
+      try {
+        const r = await fetch('/api/admin/blog')
+        if (r.ok) {
+          const j = await r.json()
+          const hit = (j.drafts as Draft[]).find(d => Date.parse(d.createdAt) >= since - 10_000 && !d.auto)
+          if (hit) { setDrafts(j.drafts); setTax(j.taxonomy); setSpend(j.spend || {}); return hit.id }
+        }
+      } catch { /* try again */ }
+      await new Promise(r => setTimeout(r, 6000))
+    }
+    return null
   }
 
   async function save(status?: 'draft' | 'approved') {
