@@ -30,13 +30,42 @@ function plainValue(v: any, depth = 0): string {
   return Object.entries(v).filter(([, x]) => x != null && x !== '').map(([k, x]) => (typeof x === 'object' ? `${'#'.repeat(Math.min(4, depth + 3))} ${pretty(k)}\n${plainValue(x, depth + 1)}` : `${pretty(k)}: ${x}`)).join('\n')
 }
 
+// Button and badge words LinkedIn's page puts between results; they are noise once the result is on our screen.
+const NOISE = /^(connect|follow|message|save|pending|view full profile|promoted|status is (online|offline)|•|1st|2nd|3rd\+?)$/i
+const DEGREE = /^•\s*(1st|2nd|3rd\+?)$/i
+
+/** The page text of a people search is one line per fact. Group it into one block per person: name, headline, place, current role, mutuals. */
+function groupPeople(text: string): string | null {
+  const lines = text.replace(/\r/g, '').split('\n').map(l => l.trim()).filter(Boolean)
+  if (lines.filter(l => DEGREE.test(l)).length < 2) return null
+  const people: { name: string; deg: string; rest: string[]; header?: boolean }[] = []
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i]
+    if (DEGREE.test(l) && i > 0) {
+      // The name is the line just before the degree badge; it was filed under the previous block, so take it back.
+      const cur = people[people.length - 1]
+      const name = cur && cur.rest.length ? cur.rest.pop()! : lines[i - 1]
+      people.push({ name, deg: l.replace('•', '').trim(), rest: [] })
+    } else if (l.startsWith('## ')) people.push({ name: l, deg: '', rest: [], header: true })
+    else if (people.length && !NOISE.test(l)) people[people.length - 1].rest.push(l)
+  }
+  const out: string[] = []
+  for (const p of people) {
+    if (p.header) { out.push(p.name); continue }
+    const [headline, place, ...more] = p.rest
+    out.push(`#### ${p.name} · ${p.deg}`)
+    out.push([headline, place && `Based in ${place}`, ...more].filter(Boolean).map(x => `- ${x}`).join('\n'))
+  }
+  return out.join('\n')
+}
+
 /** Markdown-lite: `# title`, `## section`, `- bullet`, paragraphs. */
 export function resultToMarkdown(title: string, args: Record<string, any>, data: any): string {
   const out: string[] = [`# ${title}`]
   const asked = Object.entries(args).filter(([, v]) => v !== '' && v != null && v !== false).map(([k, v]) => `${pretty(k)}: ${v === true ? 'yes' : v}`).join(' · ')
   if (asked) out.push(`_${asked}_`)
   if (typeof data === 'string') return tidy([...out, data].join('\n\n'))
-  if (data?.text) return tidy([...out, String(data.text)].join('\n\n'))
+  if (data?.text) return tidy([...out, groupPeople(String(data.text)) ?? String(data.text)].join('\n\n'))
   const sections: Record<string, string> = data && typeof data.sections === 'object' && !Array.isArray(data.sections) ? data.sections : {}
   const refs = collectRefs(data?.references ?? (Array.isArray(data) ? data : undefined))
   const scalars = data && typeof data === 'object' && !Array.isArray(data) ? Object.entries(data).filter(([k, v]) => !['sections', 'references'].includes(k) && ['string', 'number', 'boolean'].includes(typeof v)) : []
