@@ -190,41 +190,38 @@ export default function AdminDashboard() {
   const [feedbackData, setFeedbackData] = useState<{ summary: { total: number; avgRating: number; fiveStar: number; lowRated: number }; perCourse: Array<{ courseId: string; count: number; avgRating: number; commentsCount: number }>; recent: Array<{ courseId: string; learnerName: string; learnerEmail: string; rating: number; comments: string; createdAt: string }> } | null>(null)
   const [liveVisitors, setLiveVisitors] = useState<{ count: number; byPage: Array<{ page: string; hits: number }> }>({ count: 0, byPage: [] })
 
+  // Everything is requested at once and each section fills in as its own data arrives. The page appears as soon as
+  // analytics (what the Overview needs) is back; slower sources such as Search Console no longer hold it up.
   const fetchAll = useCallback(async (numDays: number) => {
     setLoading(true); setError('')
     const ts = numDays <= 1 ? 'PT24H' : numDays <= 2 ? 'P2D' : numDays <= 7 ? 'P7D' : numDays <= 14 ? 'P14D' : `P${numDays}D`
+    const headers = { 'Content-Type': 'application/json' }
+    const post = (url: string, extra: any = {}) => fetch(url, { method: 'POST', headers, body: JSON.stringify(extra) })
+    const json = async (r: Response) => (r.ok ? r.json() : null)
+    // A secondary source failing must never break the page.
+    const quiet = (p: Promise<Response>, apply: (j: any) => void) => p.then(json).then(j => { if (j !== null && j !== undefined) apply(j) }).catch(() => {})
+
+    quiet(post('/api/admin/setup-status'), setSetupData)
+    quiet(post('/api/admin/seo-health'), setSeoData)
+    quiet(post('/api/admin/storage'), setStorageData)
+    quiet(post('/api/admin/insights', { metric: 'all', timespan: ts }), setInsightsData)
+    quiet(post('/api/admin/email-logs', { days: numDays }), setEmailLogs)
+    quiet(post('/api/admin/certificates'), setCertData)
+    quiet(post('/api/admin/course-feedback'), setFeedbackData)
+    quiet(post('/api/admin/cowork-registrations'), setCoworkData)
+    quiet(post('/api/admin/academy'), setAcademyData)
+    quiet(post('/api/admin/gsc-coverage'), setGscData)
+    quiet(post('/api/admin/gsc-keywords'), setKwData)
+    quiet(fetch('/api/bookings/appointments'), j => setBookingsData(j.appointments || []))
+    quiet(fetch('/api/admin/call-requests'), j => setCallRequests(j.requests || []))
+
     try {
-      const headers = { 'Content-Type': 'application/json' }
-      const body = (extra: any = {}) => JSON.stringify(extra)
-      const [analyticsRes, setupRes, seoRes, storageRes, insightsRes, emailLogsRes, certRes, feedbackRes] = await Promise.all([
-        fetch('/api/admin/analytics', { method: 'POST', headers, body: body({ days: numDays }) }),
-        fetch('/api/admin/setup-status', { method: 'POST', headers, body: body() }),
-        fetch('/api/admin/seo-health', { method: 'POST', headers, body: body() }),
-        fetch('/api/admin/storage', { method: 'POST', headers, body: body() }),
-        fetch('/api/admin/insights', { method: 'POST', headers, body: body({ metric: 'all', timespan: ts }) }),
-        fetch('/api/admin/email-logs', { method: 'POST', headers, body: body({ days: numDays }) }),
-        fetch('/api/admin/certificates', { method: 'POST', headers, body: body() }),
-        fetch('/api/admin/course-feedback', { method: 'POST', headers, body: body() }),
-      ])
+      const analyticsRes = await post('/api/admin/analytics', { days: numDays })
       if (analyticsRes.status === 401) { setError('Session expired. Please login again.'); router.push('/admin/login'); return }
-      const [analyticsData, setupResult, seoResult, storageResult, insightsResult, emailLogsResult, certResult, feedbackResult] = await Promise.all([
-        analyticsRes.ok ? analyticsRes.json() : null, setupRes.ok ? setupRes.json() : null, seoRes.ok ? seoRes.json() : null,
-        storageRes.ok ? storageRes.json() : null, insightsRes.ok ? insightsRes.json() : null,
-        emailLogsRes.ok ? emailLogsRes.json() : null,
-        certRes.ok ? certRes.json() : null, feedbackRes.ok ? feedbackRes.json() : null,
-      ])
+      const analyticsData = await json(analyticsRes)
       if (!analyticsData) setError('Failed to load analytics data')
-      setCertData(certResult)
-      setFeedbackData(feedbackResult)
-      setData(analyticsData); setSetupData(setupResult); setSeoData(seoResult)
-      setStorageData(storageResult); setInsightsData(insightsResult); setEmailLogs(emailLogsResult)
-      try { const cwRes = await fetch('/api/admin/cowork-registrations', { method: 'POST', headers }); if (cwRes.ok) setCoworkData(await cwRes.json()) } catch {}
-      try { const acRes = await fetch('/api/admin/academy', { method: 'POST', headers }); if (acRes.ok) setAcademyData(await acRes.json()) } catch {}
-      try { const gRes = await fetch('/api/admin/gsc-coverage', { method: 'POST', headers }); if (gRes.ok) setGscData(await gRes.json()) } catch {}
-      try { const kRes = await fetch('/api/admin/gsc-keywords', { method: 'POST', headers, body: '{}' }); if (kRes.ok) setKwData(await kRes.json()) } catch {}
+      setData(analyticsData)
       setLastUpdated(new Date())
-      try { const bRes = await fetch('/api/bookings/appointments'); if (bRes.ok) { const bData = await bRes.json(); setBookingsData(bData.appointments || []) } } catch {}
-      try { const crRes = await fetch('/api/admin/call-requests'); if (crRes.ok) { const crData = await crRes.json(); setCallRequests(crData.requests || []) } } catch {}
     } catch { setError('Failed to load dashboard data') }
     finally { setLoading(false) }
   }, [router])
@@ -603,20 +600,18 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-gray-50 text-gray-800">
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center">
-              <BarChart3 className="w-5 h-5 text-white" />
-            </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-y-2 gap-x-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <img src="/logos/gennoor-tech-horizontal-transparent.svg" alt="Gennoor Tech" className="h-7 w-auto shrink-0" />
             <div>
-              <h1 className="text-lg font-bold text-gray-800">Gennoor Admin</h1>
-              <p className="text-xs text-gray-500">
+              <h1 className="text-base font-semibold text-gray-800">Gennoor Admin</h1>
+              <p className="text-xs text-gray-500 break-words">
                 {session?.user?.email || 'Dashboard'} &middot; {setupData?.environment || ''}
                 {lastUpdated && <> &middot; Updated {lastUpdated.toLocaleTimeString()}</>}
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <div className="flex bg-gray-100 rounded-lg p-0.5">
               {[
                 { label: 'Today', days: 0, key: 'today' },
@@ -625,7 +620,7 @@ export default function AdminDashboard() {
                 { label: '14d', days: 14, key: '14' },
                 { label: '30d', days: 30, key: '30' },
               ].map(f => (
-                <button key={f.key} onClick={() => handleDaysChange(f.days, f.key)} className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${activeFilter === f.key ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>{f.label}</button>
+                <button key={f.key} onClick={() => handleDaysChange(f.days, f.key)} className={`px-3.5 py-2 text-[13px] font-medium rounded-md transition-colors ${activeFilter === f.key ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>{f.label}</button>
               ))}
             </div>
             <div className="relative">
@@ -635,14 +630,15 @@ export default function AdminDashboard() {
               <Clock className="w-3.5 h-3.5" />
             </button>
             <CrmStatsTile />
-            <a href="/admin/lms" className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">Learning Studio</a>
-            <a href="/admin/community" className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">Community</a>
-            <a href="/admin/mailboxes" className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">Mailboxes</a>
-            <a href="/admin/tech-calls" className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">Tech calls</a>
-            <a href="/admin/linkedin" className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">LinkedIn</a>
-            <a href="/admin/social" className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">Social studio</a>
+            <a href="/admin/lms" className="px-3.5 py-2 text-[13px] font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">Learning Studio</a>
+            <a href="/admin/community" className="px-3.5 py-2 text-[13px] font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">Community</a>
+            <a href="/admin/mailboxes" className="px-3.5 py-2 text-[13px] font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">Mailboxes</a>
+            <a href="/admin/tech-calls" className="px-3.5 py-2 text-[13px] font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">Tech calls</a>
+            <a href="/admin/linkedin" className="px-3.5 py-2 text-[13px] font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">LinkedIn</a>
+            <a href="/admin/social" className="px-3.5 py-2 text-[13px] font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">Social studio</a>
+            <a href="/admin/comments" className="px-3.5 py-2 text-[13px] font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400 transition-colors">Comments</a>
             <GennoorCareTile />
-            <button onClick={() => router.push('/crm')} className="px-3 py-1.5 text-xs font-medium bg-gray-600 text-white rounded-md hover:shadow-md transition-all flex items-center gap-1.5">
+            <button onClick={() => router.push('/crm')} className="px-3.5 py-2 text-[13px] font-medium bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-all flex items-center gap-1.5">
               <Bot className="w-3.5 h-3.5" />
               CRM System
             </button>
@@ -652,28 +648,28 @@ export default function AdminDashboard() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 overflow-x-hidden">
         {/* Main Horizontal Tabs */}
-        <div className="flex gap-1 bg-white rounded-xl p-1 mb-5 border border-gray-200 shadow-sm">
+        <div className="flex gap-1 overflow-x-auto bg-white rounded-xl p-1 mb-5 border border-gray-200 shadow-sm">
           {groups.map(group => (
             <button key={group.key} onClick={() => { setActiveGroup(group.key); setActiveTab(group.tabs[0].key) }} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex-1 justify-center ${activeGroup === group.key ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}>
               <group.icon className="w-4 h-4" />
               {group.label}
-              {group.badge !== undefined && group.badge > 0 && <span className={`ml-0.5 px-1.5 py-0.5 text-[10px] rounded-full ${activeGroup === group.key ? 'bg-white/25 text-white' : 'bg-red-500 text-white'}`}>{group.badge}</span>}
+              {group.badge !== undefined && group.badge > 0 && <span className={`ml-0.5 px-1.5 py-0.5 text-xs rounded-full ${activeGroup === group.key ? 'bg-white/25 text-white' : 'bg-red-500 text-white'}`}>{group.badge}</span>}
             </button>
           ))}
         </div>
 
-        <div className="flex gap-5">
+        <div className="flex flex-col md:flex-row gap-4 md:gap-5">
           {/* Vertical Sub-tabs (sidebar) */}
           {sidebarTabs.length > 1 && (
-            <div className="w-44 flex-shrink-0">
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden sticky top-[72px]">
+            <div className="w-full md:w-44 md:flex-shrink-0">
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-x-auto md:overflow-hidden flex md:block md:sticky md:top-[72px]">
                 {sidebarTabs.map(tab => (
-                  <button key={tab.key} onClick={() => setActiveTab(tab.key)} className={`flex items-center gap-2 w-full px-4 py-3 text-sm font-medium transition-colors border-l-[3px] ${activeTab === tab.key ? 'bg-primary-50 text-primary-700 border-primary-600' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50 border-transparent'}`}>
+                  <button key={tab.key} onClick={() => setActiveTab(tab.key)} className={`flex items-center gap-2 md:w-full whitespace-nowrap px-4 py-2.5 text-[13px] font-medium transition-colors border-l-[3px] ${activeTab === tab.key ? 'bg-primary-50 text-primary-700 border-primary-600' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50 border-transparent'}`}>
                     <tab.icon className="w-4 h-4" />
                     {tab.label}
-                    {tab.badge !== undefined && tab.badge > 0 && <span className="ml-auto px-1.5 py-0.5 bg-red-500 text-white text-[10px] rounded-full">{tab.badge}</span>}
+                    {tab.badge !== undefined && tab.badge > 0 && <span className="ml-auto px-1.5 py-0.5 bg-red-500 text-white text-xs rounded-full">{tab.badge}</span>}
                   </button>
                 ))}
               </div>
@@ -844,9 +840,9 @@ export default function AdminDashboard() {
             </Panel>
             <Panel title="Recent Enquiries" action={data.recentEnquiries.length > 0 ? <ExportButton onClick={() => downloadCSV(data.recentEnquiries as any, 'enquiries')} /> : undefined}>
               {data.recentEnquiries.length === 0 ? <Empty text="No enquiries yet" /> : (
-                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-gray-500 border-b border-gray-200"><th className="text-left py-2 px-3 font-medium">Type</th><th className="text-left py-2 px-3 font-medium">Name</th><th className="text-left py-2 px-3 font-medium">Email</th><th className="text-left py-2 px-3 font-medium">Course</th><th className="text-left py-2 px-3 font-medium">Date</th></tr></thead>
+                <div className="overflow-x-auto max-h-[70vh] overflow-y-auto"><table className="w-full text-sm"><thead><tr className="sticky top-0 bg-gray-50 text-xs uppercase tracking-wide text-gray-500"><th className="text-left px-3 py-2 font-medium">Type</th><th className="text-left px-3 py-2 font-medium">Name</th><th className="text-left px-3 py-2 font-medium">Email</th><th className="text-left px-3 py-2 font-medium">Course</th><th className="text-left px-3 py-2 font-medium">Date</th></tr></thead>
                 <tbody>{data.recentEnquiries.map((e, i) => (
-                  <tr key={i} className="border-b border-gray-100 hover:bg-primary-50/50"><td className="py-2.5 px-3"><span className="px-2 py-0.5 bg-primary-100 text-primary-700 rounded text-xs font-medium capitalize">{e.type}</span></td><td className="py-2.5 px-3 text-gray-800">{e.name || (e as any).fullName}</td><td className="py-2.5 px-3 text-gray-600">{e.email}</td><td className="py-2.5 px-3 text-gray-500 max-w-[200px] truncate">{e.course || (e as any).company || '-'}</td><td className="py-2.5 px-3 text-gray-400 whitespace-nowrap">{new Date(e.createdAt).toLocaleDateString()}</td></tr>
+                  <tr key={i} className="border-t border-gray-100 hover:bg-gray-50"><td className="px-3 py-2 text-[13px] break-words"><span className="px-2 py-0.5 bg-primary-100 text-primary-700 rounded-md text-xs font-medium capitalize">{e.type}</span></td><td className="px-3 py-2 text-[13px] break-words text-gray-800">{e.name || (e as any).fullName}</td><td className="px-3 py-2 text-[13px] break-words text-gray-600">{e.email}</td><td className="px-3 py-2 text-[13px] break-words text-gray-500 max-w-[200px] truncate">{e.course || (e as any).company || '-'}</td><td className="px-3 py-2 text-[13px] break-words text-gray-400 whitespace-nowrap">{new Date(e.createdAt).toLocaleDateString()}</td></tr>
                 ))}</tbody></table></div>
               )}
             </Panel>
@@ -868,24 +864,24 @@ export default function AdminDashboard() {
             </div>
             <Panel title="All Registrations" subtitle={`${filteredCoworkRegs.length} total — ${getFilterLabel()}`} action={filteredCoworkRegs.length > 0 ? <ExportButton onClick={() => downloadCSV(filteredCoworkRegs as any, 'cowork-registrations')} /> : undefined}>
               {filteredCoworkRegs.length === 0 ? <Empty text="No registrations yet" /> : (
-                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-gray-500 border-b border-gray-200">
-                  <th className="text-left py-2 px-3 font-medium">Name</th>
-                  <th className="text-left py-2 px-3 font-medium">Email</th>
-                  <th className="text-left py-2 px-3 font-medium">Country</th>
-                  <th className="text-left py-2 px-3 font-medium">Timezone</th>
-                  <th className="text-left py-2 px-3 font-medium">Role</th>
-                  <th className="text-left py-2 px-3 font-medium">Company</th>
-                  <th className="text-left py-2 px-3 font-medium">Date</th>
+                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="sticky top-0 bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
+                  <th className="text-left px-3 py-2 font-medium">Name</th>
+                  <th className="text-left px-3 py-2 font-medium">Email</th>
+                  <th className="text-left px-3 py-2 font-medium">Country</th>
+                  <th className="text-left px-3 py-2 font-medium">Timezone</th>
+                  <th className="text-left px-3 py-2 font-medium">Role</th>
+                  <th className="text-left px-3 py-2 font-medium">Company</th>
+                  <th className="text-left px-3 py-2 font-medium">Date</th>
                 </tr></thead>
                 <tbody>{filteredCoworkRegs.map((r, i) => (
-                  <tr key={i} className="border-b border-gray-100 hover:bg-primary-50/50">
-                    <td className="py-2.5 px-3 text-gray-800 font-medium">{r.fullName}</td>
-                    <td className="py-2.5 px-3 text-gray-600">{r.email}</td>
-                    <td className="py-2.5 px-3 text-gray-600">{r.country}</td>
-                    <td className="py-2.5 px-3 text-gray-500 text-xs">{r.timeZone}</td>
-                    <td className="py-2.5 px-3 text-gray-500">{r.role || '-'}</td>
-                    <td className="py-2.5 px-3 text-gray-500">{r.company || '-'}</td>
-                    <td className="py-2.5 px-3 text-gray-400 whitespace-nowrap">{new Date(r.createdAt).toLocaleDateString()}</td>
+                  <tr key={i} className="border-t border-gray-100 hover:bg-gray-50">
+                    <td className="px-3 py-2 text-[13px] break-words text-gray-800 font-medium">{r.fullName}</td>
+                    <td className="px-3 py-2 text-[13px] break-words text-gray-600">{r.email}</td>
+                    <td className="px-3 py-2 text-[13px] break-words text-gray-600">{r.country}</td>
+                    <td className="px-3 py-2 text-[13px] break-words text-gray-500 text-xs">{r.timeZone}</td>
+                    <td className="px-3 py-2 text-[13px] break-words text-gray-500">{r.role || '-'}</td>
+                    <td className="px-3 py-2 text-[13px] break-words text-gray-500">{r.company || '-'}</td>
+                    <td className="px-3 py-2 text-[13px] break-words text-gray-400 whitespace-nowrap">{new Date(r.createdAt).toLocaleDateString()}</td>
                   </tr>
                 ))}</tbody></table></div>
               )}
@@ -937,32 +933,32 @@ export default function AdminDashboard() {
 
             <Panel title="All Learners" subtitle={`${learners.length} registered`} action={learners.length > 0 ? <ExportButton onClick={() => downloadCSV(learners as any, 'academy-learners')} /> : undefined}>
               {learners.length === 0 ? <Empty text="No learners yet" /> : (
-                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-gray-500 border-b border-gray-200">
-                  <th className="text-left py-2 px-3 font-medium">Name</th>
-                  <th className="text-left py-2 px-3 font-medium">Username</th>
-                  <th className="text-left py-2 px-3 font-medium">Email</th>
-                  <th className="text-left py-2 px-3 font-medium">Organization</th>
-                  <th className="text-left py-2 px-3 font-medium">Role</th>
-                  <th className="text-left py-2 px-3 font-medium">Provider</th>
-                  <th className="text-left py-2 px-3 font-medium">Profile</th>
-                  <th className="text-left py-2 px-3 font-medium">Last Login</th>
-                  <th className="text-left py-2 px-3 font-medium">Joined</th>
+                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="sticky top-0 bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
+                  <th className="text-left px-3 py-2 font-medium">Name</th>
+                  <th className="text-left px-3 py-2 font-medium">Username</th>
+                  <th className="text-left px-3 py-2 font-medium">Email</th>
+                  <th className="text-left px-3 py-2 font-medium">Organization</th>
+                  <th className="text-left px-3 py-2 font-medium">Role</th>
+                  <th className="text-left px-3 py-2 font-medium">Provider</th>
+                  <th className="text-left px-3 py-2 font-medium">Profile</th>
+                  <th className="text-left px-3 py-2 font-medium">Last Login</th>
+                  <th className="text-left px-3 py-2 font-medium">Joined</th>
                 </tr></thead>
                 <tbody>{learners.slice(0, 50).map((l, i) => (
-                  <tr key={i} className="border-b border-gray-100 hover:bg-primary-50/50">
-                    <td className="py-2.5 px-3 text-gray-800 font-medium">{l.name || '-'}</td>
-                    <td className="py-2.5 px-3 text-gray-500 font-mono text-xs">{l.username ? `@${l.username}` : '-'}</td>
-                    <td className="py-2.5 px-3 text-gray-600">{l.email}</td>
-                    <td className="py-2.5 px-3 text-gray-600">{l.organization || '-'}</td>
-                    <td className="py-2.5 px-3 text-gray-600">{l.role || '-'}</td>
-                    <td className="py-2.5 px-3"><span className={`px-2 py-0.5 rounded text-xs font-medium ${l.provider === 'google' ? 'bg-red-100 text-red-700' : l.provider === 'microsoft' ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-700'}`}>{l.provider === 'otp' ? 'Email' : l.provider}</span></td>
-                    <td className="py-2.5 px-3">
+                  <tr key={i} className="border-t border-gray-100 hover:bg-gray-50">
+                    <td className="px-3 py-2 text-[13px] break-words text-gray-800 font-medium">{l.name || '-'}</td>
+                    <td className="px-3 py-2 text-[13px] break-words text-gray-500 font-mono text-xs">{l.username ? `@${l.username}` : '-'}</td>
+                    <td className="px-3 py-2 text-[13px] break-words text-gray-600">{l.email}</td>
+                    <td className="px-3 py-2 text-[13px] break-words text-gray-600">{l.organization || '-'}</td>
+                    <td className="px-3 py-2 text-[13px] break-words text-gray-600">{l.role || '-'}</td>
+                    <td className="px-3 py-2 text-[13px] break-words"><span className={`px-2 py-0.5 rounded text-xs font-medium ${l.provider === 'google' ? 'bg-red-100 text-red-700' : l.provider === 'microsoft' ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-700'}`}>{l.provider === 'otp' ? 'Email' : l.provider}</span></td>
+                    <td className="px-3 py-2 text-[13px] break-words">
                       <span className={`px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap ${l.profileComplete ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
                         {l.profileComplete ? 'Complete' : l.hasPassword ? 'Details missing' : 'No password'}
                       </span>
                     </td>
-                    <td className="py-2.5 px-3 text-gray-400 whitespace-nowrap">{l.lastLogin ? new Date(l.lastLogin).toLocaleDateString() : '-'}</td>
-                    <td className="py-2.5 px-3 text-gray-400 whitespace-nowrap">{l.createdAt ? new Date(l.createdAt).toLocaleDateString() : '-'}</td>
+                    <td className="px-3 py-2 text-[13px] break-words text-gray-400 whitespace-nowrap">{l.lastLogin ? new Date(l.lastLogin).toLocaleDateString() : '-'}</td>
+                    <td className="px-3 py-2 text-[13px] break-words text-gray-400 whitespace-nowrap">{l.createdAt ? new Date(l.createdAt).toLocaleDateString() : '-'}</td>
                   </tr>
                 ))}</tbody></table></div>
               )}
@@ -970,16 +966,16 @@ export default function AdminDashboard() {
 
             {summary.byCourse.length > 0 && (
               <Panel title="Course Breakdown" subtitle="Learners and completions per course">
-                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-gray-500 border-b border-gray-200">
-                  <th className="text-left py-2 px-3 font-medium">Course</th>
-                  <th className="text-left py-2 px-3 font-medium">Learners</th>
-                  <th className="text-left py-2 px-3 font-medium">Chapter Completions</th>
+                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="sticky top-0 bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
+                  <th className="text-left px-3 py-2 font-medium">Course</th>
+                  <th className="text-left px-3 py-2 font-medium">Learners</th>
+                  <th className="text-left px-3 py-2 font-medium">Chapter Completions</th>
                 </tr></thead>
                 <tbody>{summary.byCourse.map((c, i) => (
-                  <tr key={i} className="border-b border-gray-100">
-                    <td className="py-2.5 px-3 text-gray-800 font-medium">{c.courseId}</td>
-                    <td className="py-2.5 px-3 text-gray-600">{c.learners}</td>
-                    <td className="py-2.5 px-3 text-gray-600">{c.completions}</td>
+                  <tr key={i} className="border-t border-gray-100 hover:bg-gray-50">
+                    <td className="px-3 py-2 text-[13px] break-words text-gray-800 font-medium">{c.courseId}</td>
+                    <td className="px-3 py-2 text-[13px] break-words text-gray-600">{c.learners}</td>
+                    <td className="px-3 py-2 text-[13px] break-words text-gray-600">{c.completions}</td>
                   </tr>
                 ))}</tbody></table></div>
               </Panel>
@@ -1022,21 +1018,21 @@ export default function AdminDashboard() {
               {emailInnerTabs.map(t => (
                 <button key={t.key} onClick={() => setEmailFilter(t.key)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${emailFilter === t.key ? t.key === 'failed' ? 'bg-red-600 text-white' : 'bg-gray-800 text-white' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}>
                   {t.label}
-                  <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${emailFilter === t.key ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500'}`}>{t.count}</span>
+                  <span className={`px-1.5 py-0.5 rounded-full text-xs ${emailFilter === t.key ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500'}`}>{t.count}</span>
                 </button>
               ))}
             </div>
 
             <Panel title={`${emailInnerTabs.find(t => t.key === emailFilter)?.label || 'All'} Emails`} subtitle={`${filteredLogs.length} email${filteredLogs.length !== 1 ? 's' : ''}`} action={filteredLogs.length > 0 ? <ExportButton onClick={() => downloadCSV(filteredLogs as any, `emails-${emailFilter}`)} /> : undefined}>
               {filteredLogs.length === 0 ? <Empty text="No emails in this category" /> : (
-                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-gray-500 border-b border-gray-200"><th className="text-left py-2 px-3 font-medium">Status</th><th className="text-left py-2 px-3 font-medium">To</th><th className="text-left py-2 px-3 font-medium">From</th><th className="text-left py-2 px-3 font-medium">Subject</th><th className="text-left py-2 px-3 font-medium">Date</th></tr></thead>
+                <div className="overflow-x-auto max-h-[70vh] overflow-y-auto"><table className="w-full text-sm"><thead><tr className="sticky top-0 bg-gray-50 text-xs uppercase tracking-wide text-gray-500"><th className="text-left px-3 py-2 font-medium">Status</th><th className="text-left px-3 py-2 font-medium">To</th><th className="text-left px-3 py-2 font-medium">From</th><th className="text-left px-3 py-2 font-medium">Subject</th><th className="text-left px-3 py-2 font-medium">Date</th></tr></thead>
                 <tbody>{filteredLogs.map((log, i) => (
-                  <tr key={i} className="border-b border-gray-100 hover:bg-primary-50/50">
-                    <td className="py-2.5 px-3"><span className={`px-2 py-0.5 rounded text-xs font-medium ${log.status === 'sent' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{log.status}</span></td>
-                    <td className="py-2.5 px-3 text-gray-800 truncate max-w-[180px]">{log.to}</td>
-                    <td className="py-2.5 px-3 text-gray-500 truncate max-w-[160px]">{log.from}</td>
-                    <td className="py-2.5 px-3 text-gray-600 max-w-[250px] truncate">{log.subject}</td>
-                    <td className="py-2.5 px-3 text-gray-400 whitespace-nowrap">{new Date(log.createdAt).toLocaleString()}</td>
+                  <tr key={i} className="border-t border-gray-100 hover:bg-gray-50">
+                    <td className="px-3 py-2 text-[13px] break-words"><span className={`px-2 py-0.5 rounded text-xs font-medium ${log.status === 'sent' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{log.status}</span></td>
+                    <td className="px-3 py-2 text-[13px] break-words text-gray-800 truncate max-w-[180px]">{log.to}</td>
+                    <td className="px-3 py-2 text-[13px] break-words text-gray-500 truncate max-w-[160px]">{log.from}</td>
+                    <td className="px-3 py-2 text-[13px] break-words text-gray-600 max-w-[250px] truncate">{log.subject}</td>
+                    <td className="px-3 py-2 text-[13px] break-words text-gray-400 whitespace-nowrap">{new Date(log.createdAt).toLocaleString()}</td>
                   </tr>
                 ))}</tbody></table></div>
               )}
@@ -1098,7 +1094,7 @@ export default function AdminDashboard() {
                       <Trash2 className={`w-3.5 h-3.5 ${callRequestsDeleting ? 'animate-spin' : ''}`} /> Delete ({selectedCallRequests.size})
                     </button>
                   )}
-                  <button onClick={refreshCallRequests} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-gray-100 hover:bg-primary-50 text-gray-600 hover:text-primary-600 border border-gray-200 rounded-lg transition-colors">
+                  <button onClick={refreshCallRequests} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 rounded-md transition-colors">
                     <RefreshCw className={`w-3.5 h-3.5 ${callRequestsLoading ? 'animate-spin' : ''}`} /> Refresh
                   </button>
                 </div>
@@ -1173,13 +1169,13 @@ export default function AdminDashboard() {
                             )}
                           </div>
                           <div className="flex flex-wrap sm:flex-col gap-2 shrink-0">
-                            <button onClick={() => openCallSchedule(cr)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors">
+                            <button onClick={() => openCallSchedule(cr)} className="inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors">
                               <Calendar className="w-3.5 h-3.5" /> {cr.scheduled ? 'Reschedule' : 'Schedule meeting'}
                             </button>
-                            <button onClick={() => openCallDraft(cr)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
+                            <button onClick={() => openCallDraft(cr)} className="inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
                               <Bot className="w-3.5 h-3.5" /> {cr.replied ? 'Draft again' : 'Draft & send reply'}
                             </button>
-                            <button onClick={() => deleteCallRequest(cr.rowKey, cr.name)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-lg transition-colors">
+                            <button onClick={() => deleteCallRequest(cr.rowKey, cr.name)} className="inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-lg transition-colors">
                               <Trash2 className="w-3.5 h-3.5" /> Delete
                             </button>
                           </div>
@@ -1372,34 +1368,34 @@ export default function AdminDashboard() {
 
                           <div className="flex flex-wrap sm:flex-col gap-2 shrink-0">
                             {apt.joinWebUrl && (
-                              <a href={apt.joinWebUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
+                              <a href={apt.joinWebUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
                                 <Video className="w-3.5 h-3.5" /> Join Teams
                               </a>
                             )}
                             {apt.status === 'pending' && (
-                              <button onClick={() => handleBookingAction(apt.rowKey, 'accept')} disabled={bookingsAction === apt.rowKey} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition-colors disabled:opacity-50">
+                              <button onClick={() => handleBookingAction(apt.rowKey, 'accept')} disabled={bookingsAction === apt.rowKey} className="inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition-colors disabled:opacity-50">
                                 {bookingsAction === apt.rowKey ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle className="w-3.5 h-3.5" />} Accept
                               </button>
                             )}
                             {(apt.status === 'pending' || apt.status === 'accepted') && (
-                              <button onClick={() => openModal('reschedule', apt)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-lg transition-colors">
+                              <button onClick={() => openModal('reschedule', apt)} className="inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-lg transition-colors">
                                 <Clock className="w-3.5 h-3.5" /> Reschedule
                               </button>
                             )}
                             {apt.status === 'pending' && (
-                              <button onClick={() => openModal('reject', apt)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors">
+                              <button onClick={() => openModal('reject', apt)} className="inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors">
                                 <XCircle className="w-3.5 h-3.5" /> Reject / Change
                               </button>
                             )}
                             {apt.status === 'accepted' && (
-                              <button onClick={() => openModal('reject', apt)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors">
+                              <button onClick={() => openModal('reject', apt)} className="inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors">
                                 <XCircle className="w-3.5 h-3.5" /> Cancel
                               </button>
                             )}
-                            <button onClick={() => openModal('outcome', apt)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors">
+                            <button onClick={() => openModal('outcome', apt)} className="inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors">
                               <FileText className="w-3.5 h-3.5" /> Outcome
                             </button>
-                            <button onClick={() => openModal('reply', apt)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors">
+                            <button onClick={() => openModal('reply', apt)} className="inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors">
                               <Mail className="w-3.5 h-3.5" /> Reply
                             </button>
                           </div>
@@ -1741,9 +1737,9 @@ export default function AdminDashboard() {
             </div>
             <Panel title="Recent Files" subtitle={getFilterLabel()} action={filteredBlobs.length > 0 ? <ExportButton onClick={() => downloadCSV(filteredBlobs as any, 'storage-files')} /> : undefined}>
               {filteredBlobs.length === 0 ? <Empty text="No files found" /> : (
-                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-gray-500 border-b border-gray-200"><th className="text-left py-2 px-3 font-medium">File</th><th className="text-left py-2 px-3 font-medium">Container</th><th className="text-left py-2 px-3 font-medium">Size</th><th className="text-left py-2 px-3 font-medium">Modified</th></tr></thead>
+                <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="sticky top-0 bg-gray-50 text-xs uppercase tracking-wide text-gray-500"><th className="text-left px-3 py-2 font-medium">File</th><th className="text-left px-3 py-2 font-medium">Container</th><th className="text-left px-3 py-2 font-medium">Size</th><th className="text-left px-3 py-2 font-medium">Modified</th></tr></thead>
                 <tbody>{filteredBlobs.map((b, i) => (
-                  <tr key={i} className="border-b border-gray-100 hover:bg-primary-50/50"><td className="py-2.5 px-3 text-gray-800 truncate max-w-[250px]">{b.name}</td><td className="py-2.5 px-3"><span className="px-2 py-0.5 bg-primary-100 text-primary-700 rounded text-xs">{b.containerName}</span></td><td className="py-2.5 px-3 text-gray-500">{formatBytes(b.size)}</td><td className="py-2.5 px-3 text-gray-400 whitespace-nowrap">{b.lastModified ? new Date(b.lastModified).toLocaleDateString() : '-'}</td></tr>
+                  <tr key={i} className="border-t border-gray-100 hover:bg-gray-50"><td className="px-3 py-2 text-[13px] break-words text-gray-800 truncate max-w-[250px]">{b.name}</td><td className="px-3 py-2 text-[13px] break-words"><span className="px-2 py-0.5 bg-primary-100 text-primary-700 rounded text-xs">{b.containerName}</span></td><td className="px-3 py-2 text-[13px] break-words text-gray-500">{formatBytes(b.size)}</td><td className="px-3 py-2 text-[13px] break-words text-gray-400 whitespace-nowrap">{b.lastModified ? new Date(b.lastModified).toLocaleDateString() : '-'}</td></tr>
                 ))}</tbody></table></div>
               )}
             </Panel>
@@ -1917,9 +1913,9 @@ export default function AdminDashboard() {
                             <FileText className="w-4 h-4 text-gray-400 shrink-0" />
                             <div className="flex-1 min-w-0">
                               <p className="text-xs font-medium text-gray-800 truncate">{s.path}</p>
-                              <p className="text-[11px] text-gray-500">Submitted {s.lastSubmitted ? new Date(s.lastSubmitted).toLocaleDateString() : '—'} · Downloaded {s.lastDownloaded ? new Date(s.lastDownloaded).toLocaleDateString() : '—'}</p>
+                              <p className="text-xs text-gray-500">Submitted {s.lastSubmitted ? new Date(s.lastSubmitted).toLocaleDateString() : '—'} · Downloaded {s.lastDownloaded ? new Date(s.lastDownloaded).toLocaleDateString() : '—'}</p>
                             </div>
-                            {s.errors && parseInt(s.errors) > 0 ? <span className="text-[11px] px-2 py-0.5 bg-red-100 text-red-700 rounded">{s.errors} errors</span> : s.warnings && parseInt(s.warnings) > 0 ? <span className="text-[11px] px-2 py-0.5 bg-amber-100 text-amber-700 rounded">{s.warnings} warnings</span> : <span className="text-[11px] px-2 py-0.5 bg-green-100 text-green-700 rounded">OK</span>}
+                            {s.errors && parseInt(s.errors) > 0 ? <span className="text-xs px-2 py-0.5 bg-red-100 text-red-700 rounded">{s.errors} errors</span> : s.warnings && parseInt(s.warnings) > 0 ? <span className="text-xs px-2 py-0.5 bg-amber-100 text-amber-700 rounded">{s.warnings} warnings</span> : <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded">OK</span>}
                           </div>
                         ))}
                       </div>
@@ -1928,14 +1924,14 @@ export default function AdminDashboard() {
                   {gscData.topPages && gscData.topPages.length > 0 && (
                     <div>
                       <p className="text-xs font-medium text-gray-500 mb-2">Top pages by clicks (28d)</p>
-                      <div className="overflow-x-auto"><table className="w-full text-xs"><thead><tr className="text-gray-500 border-b border-gray-200"><th className="text-left py-2 px-2 font-medium">Page</th><th className="text-right py-2 px-2 font-medium">Clicks</th><th className="text-right py-2 px-2 font-medium">Impr.</th><th className="text-right py-2 px-2 font-medium">CTR</th><th className="text-right py-2 px-2 font-medium">Pos.</th></tr></thead>
+                      <div className="overflow-x-auto max-h-[70vh] overflow-y-auto"><table className="w-full text-[13px]"><thead><tr className="sticky top-0 bg-gray-50 text-xs uppercase tracking-wide text-gray-500"><th className="text-left px-3 py-2 font-medium">Page</th><th className="text-right px-3 py-2 font-medium">Clicks</th><th className="text-right px-3 py-2 font-medium">Impr.</th><th className="text-right px-3 py-2 font-medium">CTR</th><th className="text-right px-3 py-2 font-medium">Pos.</th></tr></thead>
                       <tbody>{gscData.topPages.map((p, i) => (
-                        <tr key={i} className="border-b border-gray-100">
-                          <td className="py-2 px-2 text-gray-700 max-w-[280px] truncate"><a href={p.page} target="_blank" rel="noopener noreferrer" className="hover:text-primary-600 hover:underline">{p.page.replace('https://gennoor.com', '')}</a></td>
-                          <td className="py-2 px-2 text-right text-gray-800 font-medium">{Math.round(p.clicks).toLocaleString()}</td>
-                          <td className="py-2 px-2 text-right text-gray-600">{Math.round(p.impressions).toLocaleString()}</td>
-                          <td className="py-2 px-2 text-right text-gray-500">{((p.ctr || 0) * 100).toFixed(1)}%</td>
-                          <td className="py-2 px-2 text-right text-gray-500">{(p.position || 0).toFixed(1)}</td>
+                        <tr key={i} className="border-t border-gray-100 hover:bg-gray-50">
+                          <td className="px-3 py-2 text-[13px] text-gray-700 max-w-[280px] truncate"><a href={p.page} target="_blank" rel="noopener noreferrer" className="hover:text-primary-600 hover:underline">{p.page.replace('https://gennoor.com', '')}</a></td>
+                          <td className="px-3 py-2 text-[13px] text-right text-gray-800 font-medium">{Math.round(p.clicks).toLocaleString()}</td>
+                          <td className="px-3 py-2 text-[13px] text-right text-gray-600">{Math.round(p.impressions).toLocaleString()}</td>
+                          <td className="px-3 py-2 text-[13px] text-right text-gray-500">{((p.ctr || 0) * 100).toFixed(1)}%</td>
+                          <td className="px-3 py-2 text-[13px] text-right text-gray-500">{(p.position || 0).toFixed(1)}</td>
                         </tr>
                       ))}</tbody></table></div>
                     </div>
@@ -1943,13 +1939,13 @@ export default function AdminDashboard() {
                   {kwData?.configured && kwData.d28 && kwData.d28.striking.length > 0 && (
                     <div>
                       <p className="text-xs font-medium text-gray-500 mb-2">Search keywords close to page 1 (position 8 to 20, last 28 days)</p>
-                      <div className="overflow-x-auto"><table className="w-full text-xs"><thead><tr className="text-gray-500 border-b border-gray-200"><th className="text-left py-2 px-2 font-medium">Query</th><th className="text-left py-2 px-2 font-medium">Page</th><th className="text-right py-2 px-2 font-medium">Impr.</th><th className="text-right py-2 px-2 font-medium">Pos.</th></tr></thead>
+                      <div className="overflow-x-auto max-h-[70vh] overflow-y-auto"><table className="w-full text-[13px]"><thead><tr className="sticky top-0 bg-gray-50 text-xs uppercase tracking-wide text-gray-500"><th className="text-left px-3 py-2 font-medium">Query</th><th className="text-left px-3 py-2 font-medium">Page</th><th className="text-right px-3 py-2 font-medium">Impr.</th><th className="text-right px-3 py-2 font-medium">Pos.</th></tr></thead>
                       <tbody>{kwData.d28.striking.slice(0, 10).map((k, i) => (
-                        <tr key={i} className="border-b border-gray-100">
-                          <td className="py-2 px-2 text-gray-800 font-medium">{k.query}</td>
-                          <td className="py-2 px-2 text-gray-600 max-w-[220px] truncate">{k.page.replace('https://gennoor.com', '') || '/'}</td>
-                          <td className="py-2 px-2 text-right text-gray-600">{Math.round(k.impressions).toLocaleString()}</td>
-                          <td className="py-2 px-2 text-right text-gray-500">{k.position.toFixed(1)}</td>
+                        <tr key={i} className="border-t border-gray-100 hover:bg-gray-50">
+                          <td className="px-3 py-2 text-[13px] text-gray-800 font-medium">{k.query}</td>
+                          <td className="px-3 py-2 text-[13px] text-gray-600 max-w-[220px] truncate">{k.page.replace('https://gennoor.com', '') || '/'}</td>
+                          <td className="px-3 py-2 text-[13px] text-right text-gray-600">{Math.round(k.impressions).toLocaleString()}</td>
+                          <td className="px-3 py-2 text-[13px] text-right text-gray-500">{k.position.toFixed(1)}</td>
                         </tr>
                       ))}</tbody></table></div>
                     </div>
@@ -2150,20 +2146,20 @@ export default function AdminDashboard() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="text-gray-500 border-b border-gray-200">
-                        <th className="text-left py-2 px-3 font-medium">When</th>
-                        <th className="text-left py-2 px-3 font-medium">Admin</th>
-                        <th className="text-left py-2 px-3 font-medium">IP</th>
-                        <th className="text-left py-2 px-3 font-medium">User Agent</th>
+                      <tr className="sticky top-0 bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
+                        <th className="text-left px-3 py-2 font-medium">When</th>
+                        <th className="text-left px-3 py-2 font-medium">Admin</th>
+                        <th className="text-left px-3 py-2 font-medium">IP</th>
+                        <th className="text-left px-3 py-2 font-medium">User Agent</th>
                       </tr>
                     </thead>
                     <tbody>
                       {authLog.map((l, i) => (
-                        <tr key={l.rowKey || i} className="border-b border-gray-100 hover:bg-primary-50/50">
-                          <td className="py-2.5 px-3 text-gray-700 whitespace-nowrap">{new Date(l.loginAt).toLocaleString()}</td>
-                          <td className="py-2.5 px-3 text-gray-800">{l.name || l.email}</td>
-                          <td className="py-2.5 px-3 text-gray-500 font-mono text-xs">{l.ip}</td>
-                          <td className="py-2.5 px-3 text-gray-500 text-xs truncate max-w-[400px]">{l.userAgent}</td>
+                        <tr key={l.rowKey || i} className="border-t border-gray-100 hover:bg-gray-50">
+                          <td className="px-3 py-2 text-[13px] break-words text-gray-700 whitespace-nowrap">{new Date(l.loginAt).toLocaleString()}</td>
+                          <td className="px-3 py-2 text-[13px] break-words text-gray-800">{l.name || l.email}</td>
+                          <td className="px-3 py-2 text-[13px] break-words text-gray-500 font-mono text-xs">{l.ip}</td>
+                          <td className="px-3 py-2 text-[13px] break-words text-gray-500 text-xs truncate max-w-[400px]">{l.userAgent}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -2256,8 +2252,8 @@ function StatCard({ icon: Icon, label, value, color, subtitle, tip }: { icon: an
 function Panel({ title, subtitle, children, action, tip }: { title: string; subtitle?: string; children: React.ReactNode; action?: React.ReactNode; tip?: string }) {
   return (
     <div className="admin-card bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-      <div className="flex items-center justify-between mb-4">
-        <div><h2 className="text-base font-semibold text-gray-800 flex items-center gap-1.5">{title}{(tip || ADMIN_GLOSSARY[title]) && <InfoTip text={tip || ADMIN_GLOSSARY[title]} />}</h2>{subtitle && <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>}</div>
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <div className="min-w-0"><h2 className="text-sm font-semibold text-gray-800 flex items-center gap-1.5">{title}{(tip || ADMIN_GLOSSARY[title]) && <InfoTip text={tip || ADMIN_GLOSSARY[title]} />}</h2>{subtitle && <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>}</div>
         {action}
       </div>
       {children}
@@ -2270,8 +2266,8 @@ function RankedList({ items }: { items: [string, number][] }) {
   return (<div className="space-y-2">{items.map(([name, count], i) => (
     <div key={name} className="flex items-center gap-3">
       <span className="text-xs text-gray-400 w-5 text-right">{i + 1}</span>
-      <span className="text-sm text-gray-700 flex-1 truncate" title={name}>{name}</span>
-      <div className="w-24 bg-gray-100 rounded-full h-2 overflow-hidden"><div className="h-full bg-primary-600 rounded-full" style={{ width: `${(count / max) * 100}%` }} /></div>
+      <span className="text-[13px] text-gray-700 flex-1 min-w-0 truncate" title={name}>{name}</span>
+      <div className="w-20 sm:w-24 shrink-0 bg-gray-100 rounded-full h-2 overflow-hidden"><div className="h-full bg-primary-600 rounded-full" style={{ width: `${(count / max) * 100}%` }} /></div>
       <span className="text-xs text-gray-500 w-10 text-right">{count}</span>
     </div>
   ))}</div>)

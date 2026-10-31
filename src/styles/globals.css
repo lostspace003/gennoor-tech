@@ -747,3 +747,12 @@ input[type="range"]::-moz-range-thumb {
   -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
   mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
 }
+
+
+/* Admin centre: thin, quiet scrollbars on the page and on every scrolling box. */
+[data-admin] * { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
+[data-admin] *::-webkit-scrollbar { width: 8px; height: 8px; }
+[data-admin] *::-webkit-scrollbar-track { background: transparent; }
+[data-admin] *::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+[data-admin] *::-webkit-scrollbar-thumb:hover { background: #94a3b8; background-clip: content-box; }
+[data-admin] { font-size: 14px; }

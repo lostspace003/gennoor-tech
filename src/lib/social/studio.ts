@@ -1,5 +1,7 @@
 import { BlobServiceClient } from '@azure/storage-blob'
 import { randomBytes } from 'crypto'
+import { agentFetch, agentServiceConfigured } from '@/lib/social/agent-service'
+import { withReferences, type Ref } from '@/lib/social/references'
 import { foundryAuthHeader, foundryConfigured } from '@/lib/crm/foundry'
 
 // Social studio drafts: one JSON blob for the drafts, one blob per generated image.
@@ -16,6 +18,9 @@ export interface PollSpec { question: string; options: string[]; duration: PollD
 
 export type DraftStatus = 'draft' | 'approved' | 'published'
 
+export interface TraceStep { agent: string; label: string; output: string; usd: number }
+export interface Motion { scene: Record<string, unknown>; seconds: number; hasMp4: boolean }
+
 export interface Draft {
   id: string
   kind?: DraftKind
@@ -28,6 +33,14 @@ export interface Draft {
   createdAt: string
   updatedAt: string
   published: { as: 'member' | 'organization'; urn: string; at: string }[]
+  references?: Ref[]
+  /** Motion-graphic GIF (and MP4) produced by the agent service, plus the editable scene spec. */
+  motion?: Motion
+  /** What each agent did when the draft was made, kept so the process can be reviewed later. */
+  trace?: TraceStep[]
+  review?: { verdict: string; notes: string[] }
+  /** Text as last sent to LinkedIn, so edits made after publishing can be detected. */
+  publishedText?: string
 }
 
 function container() {
@@ -36,7 +49,7 @@ function container() {
   return BlobServiceClient.fromConnectionString(conn).getContainerClient(CONTAINER)
 }
 
-async function readBlob(name: string): Promise<Buffer | null> {
+export async function readBlob(name: string): Promise<Buffer | null> {
   try {
     const d = await container().getBlockBlobClient(name).download()
     const chunks: Buffer[] = []
@@ -48,7 +61,7 @@ async function readBlob(name: string): Promise<Buffer | null> {
   }
 }
 
-async function writeBlob(name: string, body: Buffer | string, type: string) {
+export async function writeBlob(name: string, body: Buffer | string, type: string) {
   const c = container()
   await c.createIfNotExists()
   const buf = typeof body === 'string' ? Buffer.from(body) : body
@@ -61,7 +74,7 @@ export async function listDrafts(): Promise<Draft[]> {
   return all.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
 }
 
-async function saveDrafts(all: Draft[]) { await writeBlob(DRAFTS, JSON.stringify(all), 'application/json') }
+export async function saveDrafts(all: Draft[]) { await writeBlob(DRAFTS, JSON.stringify(all), 'application/json') }
 
 export async function getDraft(id: string) { return (await listDrafts()).find(d => d.id === id) || null }
 
@@ -82,7 +95,28 @@ export async function deleteDraft(id: string) {
 
 export const getImage = (id: string) => readBlob(`social/${id}.png`)
 
-async function foundry(path: string, body: unknown): Promise<any> {
+// Spend ledger: one append-only blob, so deleting a draft never loses its cost. Prices are USD estimates
+// (set FOUNDRY_TEXT_USD_IN / _OUT per 1M tokens and FOUNDRY_IMAGE_USD per image to match your Azure rates).
+const LEDGER = 'social/spend.json'
+const USD_IN = Number(process.env.FOUNDRY_TEXT_USD_IN || 2.5) / 1e6
+const USD_OUT = Number(process.env.FOUNDRY_TEXT_USD_OUT || 10) / 1e6
+const USD_IMAGE = Number(process.env.FOUNDRY_IMAGE_USD || 0.17)
+
+export interface SpendEntry { draftId: string; at: string; label: string; usd: number; tokens?: number }
+
+export async function listSpend(): Promise<SpendEntry[]> {
+  const raw = await readBlob(LEDGER)
+  return raw ? JSON.parse(raw.toString('utf-8')) : []
+}
+export async function recordSpend(draftId: string, label: string, usd: number, tokens?: number) {
+  const all = await listSpend()
+  all.push({ draftId, at: new Date().toISOString(), label, usd, ...(tokens ? { tokens } : {}) })
+  await writeBlob(LEDGER, JSON.stringify(all), 'application/json')
+}
+export const textUsd = (j: any) => (j?.usage?.input_tokens || 0) * USD_IN + (j?.usage?.output_tokens || 0) * USD_OUT
+export const tokensOf = (j: any) => (j?.usage?.input_tokens || 0) + (j?.usage?.output_tokens || 0)
+
+export async function foundry(path: string, body: unknown): Promise<any> {
   if (!foundryConfigured()) throw new Error('Foundry is not configured (FOUNDRY_API_KEY).')
   const res = await fetch(`${BASE}${path}`, {
     method: 'POST',
@@ -101,11 +135,11 @@ const POLL_WRITER = `You write LinkedIn polls for Gennoor Tech, an enterprise AI
 Reply as JSON only: {"text": string, "question": string, "options": string[]}`
 
 /** The post-writing agent: topic in, reviewed-by-human draft out. */
-export async function createDraft(topic: string, brief = '', kind: DraftKind = 'post'): Promise<Draft> {
+export async function createDraft(topic: string, brief = '', kind: DraftKind = 'post', refs: Ref[] = []): Promise<Draft> {
   const json = await foundry('/openai/v1/responses', {
     model: TEXT_MODEL,
     instructions: kind === 'poll' ? POLL_WRITER : WRITER,
-    input: `Topic: ${topic}${brief ? `\nNotes from the editor: ${brief}` : ''}`,
+    input: await withReferences(`Topic: ${topic}${brief ? `\nNotes from the editor: ${brief}` : ''}`, refs),
   })
   const out: string = json.output_text
     || (json.output || []).flatMap((o: any) => o.content || []).map((c: any) => c.text || '').join('')
@@ -120,10 +154,47 @@ export async function createDraft(topic: string, brief = '', kind: DraftKind = '
       duration: 'SEVEN_DAYS' as PollDuration,
     } } : {}),
     text: (parsed.text || '').trim(), imagePrompt: (parsed.imagePrompt || '').trim(),
-    hasImage: false, createdAt: now, updatedAt: now, published: [],
+    hasImage: false, createdAt: now, updatedAt: now, published: [], ...(refs.length ? { references: refs } : {}),
   }
   await saveDrafts([d, ...(await listDrafts())])
+  await recordSpend(d.id, 'Draft written', textUsd(json), tokensOf(json))
   return d
+}
+
+/** Revision agent: current text + the editor's instruction in, rewritten text out. */
+export async function reviseDraft(id: string, instruction: string, target: 'post' | 'image' = 'post'): Promise<Draft | null> {
+  const d = await getDraft(id)
+  if (!d) return null
+  if (target === 'image') {
+    const j = await foundry('/openai/v1/responses', {
+      model: TEXT_MODEL,
+      instructions: 'You rewrite image-generation prompts for clean, on-brand, text-free LinkedIn illustrations (dark navy and electric blue palette, modern, no logos, no readable text). Apply the editor\'s instruction and reply as JSON only: {"imagePrompt": string}',
+      input: await withReferences(`Post:\n${d.text}\n\nCurrent image prompt:\n${d.imagePrompt}\n\nEditor's instruction: ${instruction}`, d.references),
+    })
+    const o: string = j.output_text || (j.output || []).flatMap((x: any) => x.content || []).map((c: any) => c.text || '').join('')
+    let p: { imagePrompt?: string } = {}
+    try { p = JSON.parse(o.slice(o.indexOf('{'), o.lastIndexOf('}') + 1)) } catch { p = { imagePrompt: o } }
+    await recordSpend(id, 'Image prompt revised', textUsd(j), tokensOf(j))
+    return mutateDraft(id, x => { if (p.imagePrompt?.trim()) x.imagePrompt = p.imagePrompt.trim().slice(0, 4000) })
+  }
+  const json = await foundry('/openai/v1/responses', {
+    model: TEXT_MODEL,
+    instructions: `${d.kind === 'poll' ? POLL_WRITER : WRITER}\nYou are revising an existing draft. Apply the editor's instruction, keep what already works, and return the full revised result in the same JSON shape.`,
+    input: await withReferences(`Topic: ${d.topic}\n\nCurrent post text:\n${d.text}${d.poll ? `\n\nCurrent poll: ${d.poll.question} | ${d.poll.options.join(' | ')}` : ''}\n\nEditor's instruction: ${instruction}`, d.references),
+  })
+  const out: string = json.output_text
+    || (json.output || []).flatMap((o: any) => o.content || []).map((c: any) => c.text || '').join('')
+  let parsed: { text?: string; question?: string; options?: string[] } = {}
+  try { parsed = JSON.parse(out.slice(out.indexOf('{'), out.lastIndexOf('}') + 1)) } catch { parsed = { text: out } }
+  await recordSpend(id, 'Post revised', textUsd(json), tokensOf(json))
+  return mutateDraft(id, x => {
+    if (parsed.text?.trim()) x.text = parsed.text.trim().slice(0, 3000)
+    if (x.kind === 'poll' && x.poll && parsed.question) {
+      x.poll.question = parsed.question.slice(0, 140)
+      if (parsed.options?.length) x.poll.options = parsed.options.slice(0, 4).map(o => String(o).slice(0, 30))
+    }
+    if (x.status !== 'published') x.status = 'draft'
+  })
 }
 
 /** Image agent: renders imagePrompt with gpt-image and stores the PNG. */
@@ -136,6 +207,44 @@ export async function generateImage(id: string): Promise<Draft | null> {
   })
   const b64 = json.data?.[0]?.b64_json
   if (!b64) throw new Error('The image model returned no image.')
-  await writeBlob(`social/${id}.png`, Buffer.from(b64, 'base64'), 'image/png')
+  // The real logo and website go on afterwards: an image model cannot be trusted to draw either correctly.
+  let finalB64 = b64
+  if (agentServiceConfigured()) {
+    try {
+      const r = await agentFetch('/brand', { image: b64 })
+      const j = await r.json().catch(() => ({}))
+      if (r.ok && j.image) finalB64 = j.image
+    } catch { /* keep the unbranded image rather than fail the draft */ }
+  }
+  await writeBlob(`social/${id}.png`, Buffer.from(finalB64, 'base64'), 'image/png')
+  await recordSpend(id, 'Image generated', USD_IMAGE)
   return mutateDraft(id, x => { x.hasImage = true })
+}
+
+// ---- Agent-service drafts (Microsoft Agent Framework pipeline + motion renderer) ----------------------------------
+
+export const getMotion = (id: string, type: 'gif' | 'mp4') => readBlob(`social/${id}.${type}`)
+
+export async function saveMotion(id: string, r: { gif: string; mp4: string | null; seconds: number }, scene: Record<string, unknown>) {
+  await writeBlob(`social/${id}.gif`, Buffer.from(r.gif, 'base64'), 'image/gif')
+  if (r.mp4) await writeBlob(`social/${id}.mp4`, Buffer.from(r.mp4, 'base64'), 'video/mp4')
+  return mutateDraft(id, x => { x.motion = { scene, seconds: r.seconds, hasMp4: !!r.mp4 } })
+}
+
+/** Persists the result of an agent run as a normal draft, so it flows through the same edit / approve / publish steps. */
+export async function createAgentDraft(
+  topic: string,
+  res: { text?: string; imagePrompt?: string; scene?: Record<string, unknown>; review?: { verdict: string; notes: string[] }; render?: { gif: string; mp4: string | null; seconds: number } },
+  trace: TraceStep[], refs: Ref[] = [],
+): Promise<Draft> {
+  const now = new Date().toISOString()
+  const d: Draft = {
+    id: randomBytes(6).toString('hex'), topic, status: 'draft', kind: 'post',
+    text: (res.text || '').trim(), imagePrompt: (res.imagePrompt || '').trim(),
+    hasImage: false, createdAt: now, updatedAt: now, published: [],
+    ...(refs.length ? { references: refs } : {}), trace, ...(res.review ? { review: res.review } : {}),
+  }
+  await saveDrafts([d, ...(await listDrafts())])
+  if (res.render && res.scene) return (await saveMotion(d.id, res.render, res.scene)) || d
+  return d
 }

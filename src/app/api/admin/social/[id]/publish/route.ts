@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
-import { getLinkedInState, publishPost } from '@/lib/linkedin'
-import { getDraft, getImage, mutateDraft } from '@/lib/social/studio'
+import { getLinkedInState, publishPost, publishVideoPost, updatePostText } from '@/lib/linkedin'
+import { getDraft, getImage, getMotion, mutateDraft } from '@/lib/social/studio'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 120
@@ -27,22 +27,43 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   if (!s.accessToken || !s.expiresAt || new Date(s.expiresAt) < new Date()) {
     return NextResponse.json({ error: 'LinkedIn is not connected or the token expired. Reconnect on the LinkedIn page.' }, { status: 409 })
   }
-  const image = d.kind !== 'poll' && d.hasImage ? (await getImage(id)) || undefined : undefined
+  // media: 'gif' (default for motion graphics) | 'video' (MP4) | 'still' (the AI image, or nothing).
+  const media: 'gif' | 'video' | 'still' = b.media === 'video' ? 'video' : b.media === 'still' ? 'still' : d.motion ? 'gif' : 'still'
+  const video = d.kind !== 'poll' && d.motion?.hasMp4 && media === 'video' ? (await getMotion(id, 'mp4')) || undefined : undefined
+  if (media === 'video' && !video) return NextResponse.json({ error: 'There is no MP4 for this draft. Render the motion graphic first.' }, { status: 400 })
+  const still = d.kind !== 'poll' && d.hasImage ? (await getImage(id)) || undefined : undefined
+  const image = d.kind === 'poll' || video ? undefined : media === 'gif' && d.motion ? (await getMotion(id, 'gif')) || undefined : still
 
+  const mode: 'new' | 'update' = b.mode === 'update' ? 'update' : 'new'
+  const republish = b.republish === true
+  const updated: ('member' | 'organization')[] = []
   const done: { as: 'member' | 'organization'; urn: string; at: string }[] = []
   const errors: string[] = []
   for (const t of targets) {
     const author = t === 'member' ? s.memberUrn : s.orgUrn
     const token = t === 'member' ? s.accessToken : (s.orgAccessToken && s.orgExpiresAt && new Date(s.orgExpiresAt) > new Date() ? s.orgAccessToken : '')
     if (!author || !token) { errors.push(`${t}: not available with this connection`); continue }
-    if (d.published.some(p => p.as === t)) { errors.push(`${t}: already posted`); continue }
+    const live = [...d.published].reverse().find(p => p.as === t)
+    if (mode === 'update') {
+      if (!live) { errors.push(`${t}: nothing to update yet, post it first`); continue }
+      try {
+        await updatePostText(token, live.urn, d.text)
+        updated.push(t)
+      } catch (e: any) {
+        errors.push(`${t}: ${e?.message || 'failed'}`)
+      }
+      continue
+    }
+    if (live && !republish) { errors.push(`${t}: already posted`); continue }
     try {
-      const urn = await publishPost({ token, author, commentary: d.text, image, altText: d.topic, poll: d.kind === 'poll' ? d.poll : undefined })
+      const urn = video
+        ? await publishVideoPost({ token, author, commentary: d.text, video, title: d.topic.slice(0, 200) })
+        : await publishPost({ token, author, commentary: d.text, image, altText: d.topic, poll: d.kind === 'poll' ? d.poll : undefined })
       done.push({ as: t, urn, at: new Date().toISOString() })
     } catch (e: any) {
       errors.push(`${t}: ${e?.message || 'failed'}`)
     }
   }
-  if (done.length) await mutateDraft(id, x => { x.published.push(...done); x.status = 'published' })
-  return NextResponse.json({ done: done.map(x => x.as), errors }, { status: done.length ? 200 : 502 })
+  if (done.length || updated.length) await mutateDraft(id, x => { x.published.push(...done); x.status = 'published'; x.publishedText = x.text })
+  return NextResponse.json({ done: done.map(x => x.as), updated, errors }, { status: done.length || updated.length ? 200 : 502 })
 }

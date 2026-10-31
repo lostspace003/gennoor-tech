@@ -5,10 +5,10 @@ import { BlobServiceClient } from '@azure/storage-blob'
 // not hand out refresh tokens to this app, so the admin re-authorizes then.
 const CONTAINER = 'crm-data'
 const BLOB = 'linkedin.json'
-const API_VERSION = '202510'
+const API_VERSION = '202609'
 
 export const MEMBER_SCOPES = 'openid profile w_member_social'
-export const PAGE_APP_SCOPES = 'openid profile w_member_social rw_events r_events'
+export const PAGE_APP_SCOPES = 'openid profile w_member_social rw_events r_events w_organization_social rw_organization_admin'
 export const ORG_SCOPES = 'w_organization_social rw_organization_admin'
 
 export interface LinkedInShare { urn: string; as: 'member' | 'organization'; at: string; by: string }
@@ -142,10 +142,23 @@ export async function fetchAdminOrg(token: string): Promise<{ urn: string; name:
   }
 }
 
+/** Edits the text of a live post. LinkedIn only allows the commentary to change; media and polls are fixed. */
+export async function updatePostText(token: string, postUrn: string, commentary: string): Promise<void> {
+  const res = await fetch(`https://api.linkedin.com/rest/posts/${encodeURIComponent(postUrn)}`, {
+    method: 'POST',
+    headers: { ...restHeaders(token), 'X-RestLi-Method': 'PARTIAL_UPDATE' },
+    body: JSON.stringify({ patch: { $set: { commentary } } }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}))
+    throw new Error(body.message || `LinkedIn rejected the edit (${res.status})`)
+  }
+}
+
 export type PollDuration = 'ONE_DAY' | 'THREE_DAYS' | 'SEVEN_DAYS' | 'FOURTEEN_DAYS'
 export interface PollInput { question: string; options: string[]; duration: PollDuration }
 
-type PostContent = { poll: { question: string; options: { text: string }[]; settings: { duration: PollDuration } } } | { article: { source: string; title: string; description: string } } | { media: { id: string; altText?: string } }
+type PostContent = { media: { id: string; altText?: string; title?: string } } | { poll: { question: string; options: { text: string }[]; settings: { duration: PollDuration } } } | { article: { source: string; title: string; description: string } } | { media: { id: string; altText?: string } }
 
 async function createPost(token: string, author: string, commentary: string, content?: PostContent): Promise<string> {
   const res = await fetch('https://api.linkedin.com/rest/posts', {
@@ -198,6 +211,40 @@ export async function publishPost(opts: {
   })
   if (!put.ok) throw new Error(`LinkedIn image upload failed (${put.status})`)
   return createPost(opts.token, opts.author, opts.commentary, { media: { id: initJson.value.image, altText: opts.altText } })
+}
+
+/** Uploads an MP4 through LinkedIn's Videos API (multipart), waits until it is processed, then posts it. */
+export async function publishVideoPost(opts: { token: string; author: string; commentary: string; video: Buffer; title?: string }): Promise<string> {
+  const init = await fetch('https://api.linkedin.com/rest/videos?action=initializeUpload', {
+    method: 'POST', headers: restHeaders(opts.token),
+    body: JSON.stringify({ initializeUploadRequest: { owner: opts.author, fileSizeBytes: opts.video.length, uploadCaptions: false, uploadThumbnail: false } }),
+  })
+  const initJson = await init.json().catch(() => ({}))
+  const v = initJson.value
+  if (!init.ok || !v?.video || !v.uploadInstructions?.length) throw new Error(initJson.message || `LinkedIn video upload init failed (${init.status})`)
+  const etags: string[] = []
+  for (const part of v.uploadInstructions as { uploadUrl: string; firstByte: number; lastByte: number }[]) {
+    const put = await fetch(part.uploadUrl, { method: 'PUT', headers: { 'Content-Type': 'application/octet-stream' }, body: new Uint8Array(opts.video.subarray(part.firstByte, part.lastByte + 1)) })
+    if (!put.ok) throw new Error(`LinkedIn video upload failed (${put.status})`)
+    const etag = put.headers.get('etag')
+    if (!etag) throw new Error('LinkedIn did not return an upload receipt for the video.')
+    etags.push(etag.replace(/"/g, ''))
+  }
+  const fin = await fetch('https://api.linkedin.com/rest/videos?action=finalizeUpload', {
+    method: 'POST', headers: restHeaders(opts.token),
+    body: JSON.stringify({ finalizeUploadRequest: { video: v.video, uploadToken: v.uploadToken || '', uploadedPartIds: etags } }),
+  })
+  if (!fin.ok) throw new Error((await fin.json().catch(() => ({}))).message || `LinkedIn video finalize failed (${fin.status})`)
+  // Processing is asynchronous; a post can only reference the video once it is AVAILABLE.
+  for (let i = 0; i < 24; i++) {
+    const st = await fetch(`https://api.linkedin.com/rest/videos/${encodeURIComponent(v.video)}`, { headers: restHeaders(opts.token) })
+    const status = (await st.json().catch(() => ({}))).status
+    if (status === 'AVAILABLE') break
+    if (status === 'PROCESSING_FAILED') throw new Error('LinkedIn could not process the video.')
+    if (i === 23) throw new Error('LinkedIn is still processing the video. Try again in a minute.')
+    await new Promise(r => setTimeout(r, 5000))
+  }
+  return createPost(opts.token, opts.author, opts.commentary, { media: { id: v.video, title: opts.title } })
 }
 
 /**
