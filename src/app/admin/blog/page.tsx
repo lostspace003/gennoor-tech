@@ -7,6 +7,7 @@ import InfoTip from '@/components/admin/InfoTip'
 import DraftList, { Fold, type DraftRow } from '@/components/admin/DraftList'
 import RefBox, { type Ref } from '@/components/admin/RefBox'
 import AgentTimeline, { type RunState } from '@/components/admin/AgentTimeline'
+import { StepLogButton } from '@/components/admin/StepLogModal'
 
 interface Meta {
   title: string; slug: string; excerpt: string; tldr: string
@@ -386,6 +387,7 @@ export default function BlogStudioPage() {
                     <summary className="text-xs font-semibold cursor-pointer list-none flex items-center gap-1.5"><Bot className="w-3.5 h-3.5 text-gray-500" />Editorial review{cur.review && <span className={`px-1.5 py-0.5 rounded text-xs ${cur.review.verdict === 'pass' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>{cur.review.verdict === 'pass' ? 'passed' : 'changes suggested'}</span>}<ChevronDown className="w-3.5 h-3.5 ml-auto text-gray-400 group-open:rotate-180 transition-transform" /></summary>
                     {cur.review?.notes?.length ? <ul className="mt-2 space-y-1 text-xs text-gray-700 list-disc pl-4">{cur.review.notes.map((n, i) => <li key={i} className="break-words">{n}</li>)}</ul> : null}
                     {cur.review?.verdict === 'revise' && !locked && <button disabled={!!busy} onClick={() => revise(`Apply the reviewer's notes: ${cur.review!.notes.join(' ')}`)} className={`${btn} mt-2`}><Sparkles className="w-3.5 h-3.5" />Apply reviewer notes</button>}
+                    {cur.trace?.length ? <div className="mt-2"><StepLogButton steps={cur.trace} title={`Step logs: ${cur.topic}`} /></div> : null}
                   </details>
                 )}
 

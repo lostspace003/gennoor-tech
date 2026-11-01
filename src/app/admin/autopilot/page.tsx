@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Loader2, Power, Play, SkipForward, Hand, RotateCcw, Send, ExternalLink, Settings2, ChevronDown, FileText, BarChart3, Film, Check } from 'lucide-react'
 import InfoTip from '@/components/admin/InfoTip'
+import { StepLogButton } from '@/components/admin/StepLogModal'
 import { DateRangeFilter, daysAgoYMD, todayYMD, type DateRange } from '@/components/crm/shared'
 
 type Kind = 'post' | 'poll' | 'motion'
@@ -17,7 +18,7 @@ interface Target { status: string; at: string; attempts: number; urn?: string; r
 interface Slot { id: string; date: string; at: string; kind: Kind; weekend: boolean; topic?: { title: string; angle: string; hook?: string; vendor?: string; heat?: number; sources: { title: string; url: string }[] }; draftId?: string; status: string; reason?: string; manual?: boolean; ownDraft?: boolean; regens: number; targets: Partial<Record<'organization' | 'member', Target>> }
 interface Day { date: string; slots: Slot[]; researchError?: string; researchAttempts: number }
 interface Data {
-  config: Config; days: Day[]; previews: Record<string, { text: string; hasImage: boolean; motion: boolean; poll?: { question: string; options: string[] } }>
+  config: Config; days: Day[]; previews: Record<string, { text: string; hasImage: boolean; motion: boolean; poll?: { question: string; options: string[] }; trace?: { label: string; output: string; usd: number }[] }>
   log: { at: string; msg: string }[]; lastTick?: string; lastTickNote?: string
   health: { agentService: boolean; member: { connected: boolean; days: number | null }; organization: { connected: boolean; days: number | null } }
 }
@@ -115,6 +116,7 @@ export default function AutopilotPage() {
           </div>
         )}
         <div className="mt-2.5 flex flex-wrap gap-1.5">
+          {p?.trace?.length ? <StepLogButton steps={p.trace} title={`Step logs: ${s.topic?.title || 'post'}`} className={btn} /> : null}
           {s.draftId && <Link href={`/admin/social?draft=${s.draftId}`} className={btn}><ExternalLink className="w-3 h-3" />Open &amp; edit</Link>}
           {!s.draftId && s.manual && <Link href={`/admin/social?task=${s.id}`} className={btn}><ExternalLink className="w-3 h-3" />Open in Social Studio</Link>}
           {s.draftId && !['done', 'skipped'].includes(s.status) && <button disabled={!!busy} onClick={() => act('post-now', s.id)} className={btn}><Send className="w-3 h-3" />Post now</button>}

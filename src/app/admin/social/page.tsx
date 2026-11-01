@@ -8,6 +8,7 @@ import InfoTip from '@/components/admin/InfoTip'
 import DraftList, { Fold, type DraftRow } from '@/components/admin/DraftList'
 import RefBox, { type Ref } from '@/components/admin/RefBox'
 import AgentTimeline, { type RunStep } from '@/components/admin/AgentTimeline'
+import { StepLogButton } from '@/components/admin/StepLogModal'
 
 interface Draft {
   id: string; kind?: 'post' | 'poll'; poll?: { question: string; options: string[]; duration: string }; topic: string; status: 'draft' | 'approved' | 'published'; text: string; imagePrompt: string; hasImage: boolean
@@ -495,6 +496,7 @@ export default function SocialStudioPage() {
                     <summary className="text-xs font-semibold cursor-pointer flex items-center gap-1.5 list-none"><Bot className="w-3.5 h-3.5 text-gray-500" />How this was made{cur.review && <span className={`ml-1 px-1.5 py-0.5 rounded text-xs ${cur.review.verdict === 'pass' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>{cur.review.verdict === 'pass' ? 'review passed' : 'review: changes suggested'}</span>}<ChevronDown className="w-3.5 h-3.5 ml-auto text-gray-400 group-open:rotate-180 transition-transform" /></summary>
                     {cur.review?.notes?.length ? <ul className="mt-2 space-y-1 text-xs text-gray-700 list-disc pl-4">{cur.review.notes.map((n, i) => <li key={i} className="break-words">{n}</li>)}</ul> : null}
                     {cur.review?.verdict === 'revise' && !locked && <button disabled={!!busy} onClick={() => revise(`Apply the reviewer's notes: ${cur.review!.notes.join(' ')}`, 'post')} className={`${btn} mt-2`}><Sparkles className="w-3.5 h-3.5" />Apply reviewer notes</button>}
+                    {cur.trace?.length ? <div className="mt-2"><StepLogButton steps={cur.trace} title={`Step logs: ${cur.topic}`} /></div> : null}
                     <div className="mt-2 space-y-2 max-h-72 overflow-y-auto">
                       {cur.trace?.map((s, i) => (
                         <div key={i} className="text-xs"><div className="font-medium text-gray-700">{s.label} <span className="text-gray-400 font-normal">{usd(s.usd)}</span></div><pre className="whitespace-pre-wrap break-words text-gray-500 font-sans">{s.output.slice(0, 700)}</pre></div>
