@@ -21,7 +21,7 @@ export interface PollSpec { question: string; options: string[]; duration: PollD
 export type DraftStatus = 'draft' | 'approved' | 'published'
 
 export interface TraceStep { agent: string; label: string; output: string; usd: number }
-export interface Motion { scene: Record<string, unknown>; seconds: number; hasMp4: boolean }
+export interface Motion { scene: Record<string, unknown>; seconds: number }
 
 export interface Draft {
   id: string
@@ -36,7 +36,7 @@ export interface Draft {
   updatedAt: string
   published: { as: 'member' | 'organization'; urn: string; at: string; reshare?: boolean; comment?: string; commentError?: string }[]
   references?: Ref[]
-  /** Motion-graphic GIF (and MP4) produced by the agent service, plus the editable scene spec. */
+  /** Motion-graphic GIF produced by the agent service, plus the editable scene spec. */
   motion?: Motion
   /** What each agent did when the draft was made, kept so the process can be reviewed later. */
   trace?: TraceStep[]
@@ -46,7 +46,7 @@ export interface Draft {
   /** Text as last sent to LinkedIn, so edits made after publishing can be detected. */
   publishedText?: string
   /** Set when the editor chose a time: the heartbeat posts it then. Cleared once posted or cancelled. */
-  scheduled?: { at: string; as: ('member' | 'organization')[]; media: 'gif' | 'video' | 'still'; state: 'pending' | 'publishing' | 'failed'; tries: number; error?: string; busyAt?: string }
+  scheduled?: { at: string; as: ('member' | 'organization')[]; media: 'gif' | 'still'; state: 'pending' | 'publishing' | 'failed'; tries: number; error?: string; busyAt?: string }
 }
 
 function container() {
@@ -260,18 +260,17 @@ export async function generateImage(id: string): Promise<Draft | null> {
 
 // ---- Agent-service drafts (Microsoft Agent Framework pipeline + motion renderer) ----------------------------------
 
-export const getMotion = (id: string, type: 'gif' | 'mp4') => readBlob(`social/${id}.${type}`)
+export const getMotion = (id: string) => readBlob(`social/${id}.gif`)
 
-export async function saveMotion(id: string, r: { gif: string; mp4: string | null; seconds: number }, scene: Record<string, unknown>) {
+export async function saveMotion(id: string, r: { gif: string; seconds: number }, scene: Record<string, unknown>) {
   await writeBlob(`social/${id}.gif`, Buffer.from(r.gif, 'base64'), 'image/gif')
-  if (r.mp4) await writeBlob(`social/${id}.mp4`, Buffer.from(r.mp4, 'base64'), 'video/mp4')
-  return mutateDraft(id, x => { x.motion = { scene, seconds: r.seconds, hasMp4: !!r.mp4 } })
+  return mutateDraft(id, x => { x.motion = { scene, seconds: r.seconds } })
 }
 
 /** Persists the result of an agent run as a normal draft, so it flows through the same edit / approve / publish steps. */
 export async function createAgentDraft(
   topic: string,
-  res: { text?: string; imagePrompt?: string; scene?: Record<string, unknown>; review?: { verdict: string; notes: string[] }; render?: { gif: string; mp4: string | null; seconds: number } },
+  res: { text?: string; imagePrompt?: string; scene?: Record<string, unknown>; review?: { verdict: string; notes: string[] }; render?: { gif: string; seconds: number } },
   trace: TraceStep[], refs: Ref[] = [],
 ): Promise<Draft> {
   const now = new Date().toISOString()

@@ -10,7 +10,7 @@ export const maxDuration = 120
 const MOTIONS = ['zoom-in', 'zoom-out', 'pan-left', 'pan-right']
 
 /**
- * "Animate an AI image": turns the draft's generated image into a short looping GIF + MP4 with camera motion and an
+ * "Animate an AI image": turns the draft's generated image into a short looping GIF with camera motion and an
  * optional caption. The scene refers to the picture as {ref: 'draft'}, so it stays small and editable; the image bytes
  * are filled in only when rendering. No AI model is called, so this is free.
  */
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     ],
   }
   try {
-    const res = await agentFetch('/render', { scene: withDraftImage(scene, img), mp4: true })
+    const res = await agentFetch('/render', { scene: withDraftImage(scene, img) })
     const j = await res.json().catch(() => ({}))
     if (!res.ok) return NextResponse.json({ error: j.detail || `Renderer returned ${res.status}.` }, { status: 502 })
     return NextResponse.json({ draft: await saveMotion(id, j, scene) })

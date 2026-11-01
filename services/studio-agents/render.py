@@ -1,5 +1,5 @@
 """
-Motion-graphic renderer: a JSON scene spec in, an animated GIF and an MP4 out.
+Motion-graphic renderer: a JSON scene spec in, an animated GIF out.
 
 The design agent writes the spec; this module only draws it, so a scene can be edited by hand and re-rendered
 without calling a model again. Everything is deterministic: frame N depends only on the spec and N.
@@ -26,12 +26,9 @@ import base64
 import io
 import math
 import os
-import subprocess
-import tempfile
 from dataclasses import dataclass
 from typing import Any
 
-import imageio_ffmpeg
 from PIL import Image, ImageDraw, ImageFont
 
 MAX_PIXELS = 1920 * 1080
@@ -299,8 +296,8 @@ class Scene:
         }.get(vis.anim, (0, 0))
 
 
-def render(spec: dict[str, Any], want_mp4: bool = True) -> dict[str, Any]:
-    """Returns {"gif": bytes, "mp4": bytes | None, "frames": int, "seconds": float, "width": int, "height": int}."""
+def render(spec: dict[str, Any]) -> dict[str, Any]:
+    """Returns {"gif": bytes, "frames": int, "seconds": float, "width": int, "height": int}."""
     scene = Scene(spec)
     frames = [scene.frame(n) for n in range(scene.frames)]
 
@@ -316,15 +313,4 @@ def render(spec: dict[str, Any], want_mp4: bool = True) -> dict[str, Any]:
     quant = [f.quantize(palette=pal, dither=Image.Dither.NONE) for f in frames]
     quant[0].save(gif, format="GIF", save_all=True, append_images=quant[1:], duration=int(1000 / scene.fps), loop=0, optimize=False, disposal=1)
 
-    mp4: bytes | None = None
-    if want_mp4:
-        with tempfile.TemporaryDirectory() as tmp:
-            out = os.path.join(tmp, "out.mp4")
-            cmd = [imageio_ffmpeg.get_ffmpeg_exe(), "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
-                   "-s", f"{scene.w}x{scene.h}", "-r", str(scene.fps), "-i", "-", "-an", "-c:v", "libx264", "-pix_fmt", "yuv420p",
-                   "-movflags", "+faststart", "-vf", "pad=ceil(iw/2)*2:ceil(ih/2)*2", out]
-            proc = subprocess.run(cmd, input=b"".join(f.tobytes() for f in frames), capture_output=True, timeout=120)
-            if proc.returncode == 0 and os.path.exists(out):
-                with open(out, "rb") as fh:
-                    mp4 = fh.read()
-    return {"gif": gif.getvalue(), "mp4": mp4, "frames": len(frames), "seconds": scene.duration, "width": scene.w, "height": scene.h}
+    return {"gif": gif.getvalue(), "frames": len(frames), "seconds": scene.duration, "width": scene.w, "height": scene.h}
