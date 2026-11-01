@@ -97,6 +97,8 @@ export interface Slot {
   regens: number
   /** The admin took this slot over: the autopilot prepares nothing more and never publishes it. */
   manual?: boolean
+  /** The admin wrote this slot's post in Social Studio (draftId points to it); handing back is then refused. */
+  ownDraft?: boolean
   targets: Partial<Record<TargetKey, TargetState>>
   updatedAt: string
 }

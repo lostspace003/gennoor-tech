@@ -13,7 +13,7 @@ export const maxDuration = 300
 
 const HHMM = /^([01]\d|2[0-3]):[0-5]\d$/
 const KINDS: Kind[] = ['post', 'poll', 'motion']
-const ACTIONS: Action[] = ['skip', 'manual', 'resume', 'release', 'retry', 'post-now']
+const ACTIONS: Action[] = ['skip', 'manual', 'resume', 'release', 'retry', 'post-now', 'link']
 
 const strs = (v: unknown, n: number, max: number) => (Array.isArray(v) ? v : []).map(x => String(x).trim().slice(0, max)).filter(Boolean).slice(0, n)
 const slots = (v: unknown) => (Array.isArray(v) ? v : []).map((s: any) => ({ time: String(s?.time || ''), kind: s?.kind as Kind })).filter(s => HHMM.test(s.time) && KINDS.includes(s.kind)).slice(0, 8)
@@ -79,8 +79,13 @@ export async function POST(req: NextRequest) {
   try {
     if (b.action === 'tick') return NextResponse.json({ result: await tick(liveDeps()) })
     if (!ACTIONS.includes(b.action)) return NextResponse.json({ error: 'Unknown action.' }, { status: 400 })
+    let draftId: string | undefined
+    if (b.action === 'link') {
+      draftId = String(b.draftId || '')
+      if (!(await listDrafts()).some(d => d.id === draftId)) return NextResponse.json({ error: 'Draft not found.' }, { status: 400 })
+    }
     const s = await loadState()
-    const status = applyAction(s, String(b.slotId || ''), b.action, new Date())
+    const status = applyAction(s, String(b.slotId || ''), b.action, new Date(), draftId)
     await saveState(s)
     return NextResponse.json({ status })
   } catch (e: any) {

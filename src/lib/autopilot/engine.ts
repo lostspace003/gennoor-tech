@@ -269,8 +269,8 @@ export async function tick(d: Deps, opts: { force?: boolean } = {}): Promise<str
 }
 
 // ---- Editor actions from the admin page -------------------------------------------------------------------------
-export type Action = 'skip' | 'manual' | 'resume' | 'release' | 'retry' | 'post-now'
-export function applyAction(s: State, slotId: string, action: Action, now: Date): string {
+export type Action = 'skip' | 'manual' | 'resume' | 'release' | 'retry' | 'post-now' | 'link'
+export function applyAction(s: State, slotId: string, action: Action, now: Date, draftId?: string): string {
   const slot = Object.values(s.days).flatMap(d => d.slots).find(x => x.id === slotId)
   if (!slot) throw new Error('Slot not found.')
   const targets = Object.values(slot.targets) as TargetState[]
@@ -280,7 +280,16 @@ export function applyAction(s: State, slotId: string, action: Action, now: Date)
     slot.manual = true; slot.status = 'done'; slot.reason = 'handled by you'
     for (const t of targets) if (['pending', 'held', 'failed'].includes(t.status)) { t.status = 'manual'; t.reason = 'you are handling this one' }
   }
+  if (action === 'link') {
+    // A slot you took over gets the draft you wrote for it in Social Studio, so both pages show the same post.
+    if (!slot.manual) throw new Error('Take this slot over first.')
+    if (slot.draftId) throw new Error('This slot already has a draft.')
+    if (!draftId) throw new Error('No draft given.')
+    slot.draftId = draftId; slot.ownDraft = true
+  }
   if (action === 'resume') {
+    // Your own Social Studio draft is posted from there; handing it back could post it twice.
+    if (slot.ownDraft) throw new Error('You wrote this post in Social Studio. Post it from there.')
     // Handing back puts the slot in the queue again. Targets that were handed over become pending; the usual
     // missed-window rule still stops anything from posting late.
     slot.manual = false; slot.reason = undefined

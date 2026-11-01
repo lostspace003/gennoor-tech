@@ -14,7 +14,7 @@ interface Config {
   topics: string[]; avoid: string[]; avoidKeywords: string[]; weekendTheme: string; alertEmail: string; dailyMax: number; minGapMinutes: number; maxRegens: number
 }
 interface Target { status: string; at: string; attempts: number; urn?: string; reason?: string }
-interface Slot { id: string; date: string; at: string; kind: Kind; weekend: boolean; topic?: { title: string; angle: string; hook?: string; vendor?: string; heat?: number; sources: { title: string; url: string }[] }; draftId?: string; status: string; reason?: string; manual?: boolean; regens: number; targets: Partial<Record<'organization' | 'member', Target>> }
+interface Slot { id: string; date: string; at: string; kind: Kind; weekend: boolean; topic?: { title: string; angle: string; hook?: string; vendor?: string; heat?: number; sources: { title: string; url: string }[] }; draftId?: string; status: string; reason?: string; manual?: boolean; ownDraft?: boolean; regens: number; targets: Partial<Record<'organization' | 'member', Target>> }
 interface Day { date: string; slots: Slot[]; researchError?: string; researchAttempts: number }
 interface Data {
   config: Config; days: Day[]; previews: Record<string, { text: string; hasImage: boolean; motion: boolean; poll?: { question: string; options: string[] } }>
@@ -116,10 +116,11 @@ export default function AutopilotPage() {
         )}
         <div className="mt-2.5 flex flex-wrap gap-1.5">
           {s.draftId && <Link href={`/admin/social?draft=${s.draftId}`} className={btn}><ExternalLink className="w-3 h-3" />Open &amp; edit</Link>}
+          {!s.draftId && s.manual && <Link href={`/admin/social?task=${s.id}`} className={btn}><ExternalLink className="w-3 h-3" />Open in Social Studio</Link>}
           {s.draftId && !['done', 'skipped'].includes(s.status) && <button disabled={!!busy} onClick={() => act('post-now', s.id)} className={btn}><Send className="w-3 h-3" />Post now</button>}
           {s.status === 'held' && <button disabled={!!busy} onClick={() => act('release', s.id)} className={btn}><Check className="w-3 h-3" />Release</button>}
           {!['done', 'skipped'].includes(s.status) && !s.manual && <button disabled={!!busy} onClick={() => act('manual', s.id)} className={btn} title="The autopilot will not touch this slot"><Hand className="w-3 h-3" />I'll handle it</button>}
-          {s.manual && <button disabled={!!busy} onClick={() => act('resume', s.id)} className={btn}><RotateCcw className="w-3 h-3" />Hand back</button>}
+          {s.manual && !s.ownDraft && <button disabled={!!busy} onClick={() => act('resume', s.id)} className={btn}><RotateCcw className="w-3 h-3" />Hand back</button>}
           {!['done', 'skipped'].includes(s.status) && <button disabled={!!busy} onClick={() => act('skip', s.id)} className={btn}><SkipForward className="w-3 h-3" />Skip</button>}
         </div>
       </div>

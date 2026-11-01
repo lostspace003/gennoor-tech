@@ -3,7 +3,7 @@
 import { ResizeGrid } from '@/components/admin/SplitPane'
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Loader2, Sparkles, ImageIcon, Check, Send, Trash2, Save, RotateCcw, Paperclip, Link2, FileText, X, Pencil, Bot, Film, Download, ChevronDown, Maximize2, Clock } from 'lucide-react'
+import { Loader2, Hand, Sparkles, ImageIcon, Check, Send, Trash2, Save, RotateCcw, Paperclip, Link2, FileText, X, Pencil, Bot, Film, Download, ChevronDown, Maximize2, Clock } from 'lucide-react'
 import InfoTip from '@/components/admin/InfoTip'
 import DraftList, { Fold, type DraftRow } from '@/components/admin/DraftList'
 import RefBox, { type Ref } from '@/components/admin/RefBox'
@@ -20,6 +20,17 @@ interface Draft {
 }
 
 const usd = (n: number) => `$${n < 1 ? n.toFixed(3) : n.toFixed(2)}`
+interface Task { id: string; at: string; kind: 'post' | 'poll' | 'motion'; manual?: boolean; draftId?: string; topic?: { title: string; angle: string; vendor?: string; heat?: number; sources: { title: string; url: string }[] } }
+const KIND_LABEL = { post: 'Post', poll: 'Poll', motion: 'Motion graphic' }
+/** Where a slot you took over stands, read from its Social Studio draft. */
+function taskState(t: Task, drafts: Draft[] | null): { label: string; tone: string; todo: boolean } {
+  if (!t.draftId) return { label: 'to write', tone: 'bg-amber-100 text-amber-800', todo: true }
+  const d = drafts?.find(x => x.id === t.draftId)
+  if (!d) return { label: 'draft missing', tone: 'bg-gray-100 text-gray-600', todo: false }
+  if (d.status === 'published') return { label: 'posted', tone: 'bg-emerald-100 text-emerald-800', todo: false }
+  if (d.scheduled) return { label: 'scheduled', tone: 'bg-blue-100 text-blue-800', todo: false }
+  return d.status === 'approved' ? { label: 'to post', tone: 'bg-amber-100 text-amber-800', todo: true } : { label: 'to approve', tone: 'bg-amber-100 text-amber-800', todo: true }
+}
 const BADGE = { draft: 'bg-amber-100 text-amber-800', approved: 'bg-gray-100 text-gray-700', published: 'bg-emerald-100 text-emerald-800' }
 const POST_CHIPS = ['Make it shorter', 'Stronger first line', 'More practical, less salesy', 'Add a clear call to action', 'Rewrite the hashtags', 'More formal tone']
 const IMAGE_CHIPS = ['Simpler composition', 'Brighter colours', 'More abstract', 'Show people collaborating']
@@ -52,6 +63,9 @@ export default function SocialStudioPage() {
   const [sceneText, setSceneText] = useState('')
   const [sceneFor, setSceneFor] = useState('')
   const [imgRev, setImgRev] = useState('')
+  // Autopilot slots you said you'd handle: they live here until you write and post them.
+  const [tasks, setTasks] = useState<Task[]>([])
+  const [task, setTask] = useState('')
 
   const load = useCallback(async () => {
     const r = await fetch('/api/admin/social')
@@ -61,10 +75,29 @@ export default function SocialStudioPage() {
     if (j.spend) setSpend(j.spend)
   }, [])
   useEffect(() => { load() }, [load])
+  const loadTasks = useCallback(async () => {
+    const from = new Date(Date.now() - 30 * 86_400_000).toISOString().slice(0, 10)
+    const r = await fetch(`/api/admin/autopilot?from=${from}`).catch(() => null)
+    if (!r?.ok) return
+    const j = await r.json()
+    setTasks((j.days as { slots: Task[] }[]).flatMap(d => d.slots).filter(x => x.manual && x.topic).sort((a, b) => b.at.localeCompare(a.at)))
+  }, [])
+  useEffect(() => { loadTasks() }, [loadTasks])
+  async function linkTask(slotId: string, draftId: string) {
+    const r = await fetch('/api/admin/autopilot', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'link', slotId, draftId }) })
+    if (!r.ok) { const j = await r.json().catch(() => ({})); setError(`The draft was saved, but could not be tied to the autopilot slot: ${j.error || r.status}`) }
+    await loadTasks(); setTask('')
+  }
   // "Resume" links from the Sessions page and the autopilot open a specific draft.
-  useEffect(() => { const q = new URLSearchParams(window.location.search).get('draft'); if (q) setSel(q) }, [])
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search)
+    if (q.get('draft')) setSel(q.get('draft')!)
+    // "Open in Social Studio" from an autopilot slot you took over.
+    if (q.get('task')) setTask(q.get('task')!)
+  }, [])
 
   const cur = drafts?.find(d => d.id === sel)
+  const curTask = tasks.find(t => t.id === task && !t.draftId)
   const patchLocal = (id: string, p: Partial<Draft>) => setDrafts(ds => ds && ds.map(d => (d.id === id ? { ...d, ...p } : d)))
 
   async function call(label: string, url: string, init?: RequestInit) {
@@ -79,12 +112,17 @@ export default function SocialStudioPage() {
   }
   const json = (body: unknown): RequestInit => ({ method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
 
-  async function create() {
+  async function create(over?: { topic: string; brief: string; kind: 'post' | 'poll'; slotId: string }) {
+    const topic_ = over?.topic ?? topic, brief_ = over?.brief ?? brief, kind_ = over?.kind ?? kind
     const withRefs = (b: Record<string, unknown>, refIds: string[]) => ({ ...b, refIds })
     const j = await call('create', '/api/admin/social', json(withRefs(kind === 'webinar'
       ? { topic: `Webinar announcement: ${wb.title}`, brief: `Invite people to register for a free webinar. Title: ${wb.title}. When: ${wb.when}. Registration link (include it in the post): ${wb.link}. ${brief}`.trim(), kind: 'post' }
-      : { topic, brief, kind }, pendingRefs.map(r => r.id))))
-    if (j.draft) { setTopic(''); setBrief(''); setPendingRefs([]); await load(); setSel(j.draft.id) }
+      : { topic: topic_, brief: brief_, kind: kind_ }, over ? [] : pendingRefs.map(r => r.id))))
+    if (j.draft) {
+      if (!over) { setTopic(''); setBrief(''); setPendingRefs([]) }
+      await load(); setSel(j.draft.id)
+      if (over) await linkTask(over.slotId, j.draft.id)
+    }
   }
   async function addRef(src: { file?: File; url?: string }, attach: boolean) {
     setBusy('ref'); setError('')
@@ -104,9 +142,9 @@ export default function SocialStudioPage() {
     const j = await call('save', `/api/admin/social/${cur.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ removeRef: id }) })
     if (j.draft) patchLocal(cur.id, { references: j.draft.references || [] })
   }
-  async function runTeam() {
+  async function runTeam(over?: { topic: string; brief: string; mode: 'post' | 'motion'; slotId: string }) {
     const startedAt = Date.now()
-    const body = kind === 'webinar'
+    const body = over ? { topic: over.topic, brief: over.brief } : kind === 'webinar'
       ? { topic: `Webinar announcement: ${wb.title}`, brief: `Invite people to register for a free webinar. Title: ${wb.title}. When: ${wb.when}. Registration link (include it in the post): ${wb.link}. ${brief}`.trim() }
       : { topic, brief }
     setBusy('team'); setError(''); setNotice(''); setSel('')
@@ -119,7 +157,7 @@ export default function SocialStudioPage() {
       return { ...r, steps: i >= 0 ? r.steps.map((s, k) => (k === i ? next : s)) : [...r.steps, next] }
     })
     try {
-      const res = await fetch('/api/admin/social/agent', json({ ...body, mode: teamOut, refIds: pendingRefs.map(r => r.id) }))
+      const res = await fetch('/api/admin/social/agent', json({ ...body, mode: over?.mode ?? teamOut, refIds: over ? [] : pendingRefs.map(r => r.id) }))
       if (!res.ok || !res.body) { const j = await res.json().catch(() => ({})); throw new Error(j.error || `Failed (${res.status})`) }
       const reader = res.body.getReader(); const dec = new TextDecoder(); let buf = ''
       for (;;) {
@@ -134,7 +172,8 @@ export default function SocialStudioPage() {
           else if (ev.type === 'delta') upd(ev.agent, ev.agent, s => ({ live: s.live + ev.text }))
           else if (ev.type === 'error') throw new Error(ev.message)
           else if (ev.type === 'result') {
-            setTopic(''); setBrief(''); setPendingRefs([])
+            if (!over) { setTopic(''); setBrief(''); setPendingRefs([]) }
+            if (over) await linkTask(over.slotId, ev.draftId)
             try { await load() } catch { /* the list refreshes by itself shortly */ }
             setSel(ev.draftId); setRun(null)
             setNotice(`The team finished${ev.review?.verdict === 'revise' ? ' and the reviewer suggests changes' : ''}. Review the draft below.`)
@@ -144,6 +183,7 @@ export default function SocialStudioPage() {
     } catch (e: any) {
       // The connection can drop after the team has finished and saved the draft; look for it before reporting a failure.
       const id = await recoverDraft(startedAt)
+      if (id && over) await linkTask(over.slotId, id)
       if (id) { setSel(id); setRun(null); setNotice('The connection dropped, but your draft was saved. Review it below.') }
       else setRun(r => (r ? { ...r, error: `${e?.message || 'The agent run failed.'} If you do not see the draft in the list on the left within a minute, run it again.` } : r))
     }
@@ -289,12 +329,29 @@ export default function SocialStudioPage() {
                 )}
               </div>
             )}
-            <button disabled={(kind === 'webinar' ? !wb.title.trim() || !wb.when.trim() : !topic.trim()) || !!busy} onClick={team && kind !== 'poll' ? runTeam : create} className={`${primary} w-full justify-center`}>
+            <button disabled={(kind === 'webinar' ? !wb.title.trim() || !wb.when.trim() : !topic.trim()) || !!busy} onClick={() => (team && kind !== 'poll' ? runTeam() : create())} className={`${primary} w-full justify-center`}>
               {team && kind !== 'poll' ? <Bot className="w-3.5 h-3.5" /> : <Sparkles className="w-3.5 h-3.5" />}{busy === 'create' ? 'Writing…' : busy === 'team' ? 'Team working…' : team && kind !== 'poll' ? 'Run the team' : 'Draft with AI'}
             </button>
           </Fold>
+          {tasks.length > 0 && (
+            <div className="rounded-xl border border-gray-200 bg-white p-3">
+              <div className="flex items-center gap-1.5 text-[13px] font-semibold mb-2"><Hand className="w-3.5 h-3.5 text-gray-500" />Handled by you<span className="font-normal text-gray-500">· {tasks.filter(t => taskState(t, drafts).todo).length} to do</span><InfoTip text="Autopilot posts you said you'd handle. Click one to see what it is about and write it. The autopilot never posts these." /></div>
+              <div className="space-y-1.5 max-h-72 overflow-y-auto">
+                {tasks.map(t => { const st = taskState(t, drafts); return (
+                  <button key={t.id} onClick={() => { setError(''); setNotice(''); if (t.draftId) { setSel(t.draftId); setTask('') } else { setSel(''); setTask(t.id) } }}
+                    className={`w-full text-left rounded-md border px-2.5 py-2 ${(t.draftId ? sel === t.draftId : task === t.id) ? 'border-gray-800 bg-gray-50' : 'border-gray-200 hover:border-gray-400'}`}>
+                    <div className="text-[13px] font-medium leading-snug line-clamp-2">{t.topic!.title}</div>
+                    <div className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-gray-500">
+                      <span className={`px-1.5 py-0.5 rounded ${st.tone}`}>{st.label}</span>
+                      <span>{KIND_LABEL[t.kind]} · {new Date(t.at).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                  </button>
+                ) })}
+              </div>
+            </div>
+          )}
           {!drafts ? <Loader2 className="w-5 h-5 animate-spin text-gray-400" /> : (
-            <DraftList noun="post" selectedId={sel} onSelect={id => { setSel(id); setNotice(''); setError('') }}
+            <DraftList noun="post" selectedId={sel} onSelect={id => { setSel(id); setTask(''); setNotice(''); setError('') }}
               filters={[{ key: 'draft', label: 'Drafts' }, { key: 'approved', label: 'Approved' }, { key: 'scheduled', label: 'Scheduled' }, { key: 'published', label: 'Published' }]}
               rows={drafts.map((d): DraftRow => ({
                 id: d.id, title: d.topic, date: d.createdAt,
@@ -306,7 +363,22 @@ export default function SocialStudioPage() {
         </div>
 
         {/* Right: composer */}
-        {run ? <AgentTimeline run={run} onClose={() => setRun(null)} /> : !cur ? (
+        {run ? <AgentTimeline run={run} onClose={() => setRun(null)} /> : !cur && curTask ? (
+          <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-3 lg:overflow-y-auto">
+            <div className="flex items-center gap-2 text-xs text-gray-500"><Hand className="w-3.5 h-3.5" />Autopilot slot you are handling · {KIND_LABEL[curTask.kind]} · {new Date(curTask.at).toLocaleString([], { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</div>
+            <h2 className="text-lg font-semibold leading-snug">{curTask.topic!.title}</h2>
+            {curTask.topic!.vendor && <div className="text-xs text-gray-500">{curTask.topic!.vendor}{curTask.topic!.heat ? ` · buzz ${curTask.topic!.heat}/10` : ''}</div>}
+            {curTask.topic!.angle && <div><div className="text-xs font-semibold text-gray-500 mb-1">Planned angle</div><p className="text-sm text-gray-700">{curTask.topic!.angle}</p></div>}
+            {(curTask.topic!.sources || []).length > 0 && <div><div className="text-xs font-semibold text-gray-500 mb-1">Sources</div><ul className="space-y-1">{curTask.topic!.sources.map(x => <li key={x.url}><a href={x.url} target="_blank" rel="noreferrer" className="text-sm text-blue-700 hover:underline break-words">{x.title || x.url}</a></li>)}</ul></div>}
+            <div className="rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-900 p-3">Nothing is written yet. Write it here, then approve and post it like any other draft. The autopilot will not post this one.</div>
+            <button disabled={!!busy} className={primary} onClick={() => {
+              const t = curTask
+              const brief_ = [t.topic!.angle, ...(t.topic!.sources || []).slice(0, 3).map(x => x.url)].filter(Boolean).join('\n')
+              if (t.kind === 'poll') create({ topic: t.topic!.title, brief: brief_, kind: 'poll', slotId: t.id })
+              else runTeam({ topic: t.topic!.title, brief: brief_, mode: t.kind === 'motion' ? 'motion' : 'post', slotId: t.id })
+            }}>{busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}{curTask.kind === 'motion' ? 'Write it as a motion graphic' : curTask.kind === 'poll' ? 'Write the poll' : 'Write it with AI'}</button>
+          </div>
+        ) : !cur ? (
           <div className="rounded-xl border border-dashed border-gray-300 bg-white/50 text-sm text-gray-500 p-10 text-center">Pick a draft on the left, or give the agent a topic.</div>
         ) : (
           <div className="flex flex-col gap-3 min-h-0">
