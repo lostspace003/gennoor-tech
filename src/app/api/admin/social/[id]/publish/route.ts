@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
-import { getLinkedInState, publishPost, publishVideoPost, updatePostText } from '@/lib/linkedin'
+import { getLinkedInState, publishPost, updatePostText } from '@/lib/linkedin'
 import { parseScheduleAt } from '@/lib/scheduled-publish'
 import { getDraft, getImage, getMotion, mutateDraft, prepareForPublish } from '@/lib/social/studio'
 
@@ -32,8 +32,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     let at: Date
     try { at = parseScheduleAt(b.scheduleAt) } catch (e: any) { return NextResponse.json({ error: e.message }, { status: 400 }) }
     if (b.mode === 'update') return NextResponse.json({ error: 'Updating a live post cannot be scheduled.' }, { status: 400 })
-    const media: 'gif' | 'video' | 'still' = b.media === 'video' ? 'video' : b.media === 'still' ? 'still' : d.motion ? 'gif' : 'still'
-    if (media === 'video' && !d.motion?.hasMp4) return NextResponse.json({ error: 'There is no MP4 for this draft. Render the motion graphic first.' }, { status: 400 })
+    const media: 'gif' | 'still' = b.media === 'still' ? 'still' : d.motion ? 'gif' : 'still'
     const text = await prepareForPublish(d.text, id)
     await mutateDraft(id, x => { x.text = text; x.scheduled = { at: at.toISOString(), as: targets, media, state: 'pending', tries: 0 } })
     return NextResponse.json({ scheduled: { at: at.toISOString(), as: targets } })
@@ -42,12 +41,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   if (!s.accessToken || !s.expiresAt || new Date(s.expiresAt) < new Date()) {
     return NextResponse.json({ error: 'LinkedIn is not connected or the token expired. Reconnect on the LinkedIn page.' }, { status: 409 })
   }
-  // media: 'gif' (default for motion graphics) | 'video' (MP4) | 'still' (the AI image, or nothing).
-  const media: 'gif' | 'video' | 'still' = b.media === 'video' ? 'video' : b.media === 'still' ? 'still' : d.motion ? 'gif' : 'still'
-  const video = d.kind !== 'poll' && d.motion?.hasMp4 && media === 'video' ? (await getMotion(id, 'mp4')) || undefined : undefined
-  if (media === 'video' && !video) return NextResponse.json({ error: 'There is no MP4 for this draft. Render the motion graphic first.' }, { status: 400 })
+  // media: 'gif' (default for motion graphics) | 'still' (the AI image, or nothing).
+  const media: 'gif' | 'still' = b.media === 'still' ? 'still' : d.motion ? 'gif' : 'still'
   const still = d.kind !== 'poll' && d.hasImage ? (await getImage(id)) || undefined : undefined
-  const image = d.kind === 'poll' || video ? undefined : media === 'gif' && d.motion ? (await getMotion(id, 'gif')) || undefined : still
+  const image = d.kind === 'poll' ? undefined : media === 'gif' && d.motion ? (await getMotion(id)) || undefined : still
 
   // Whatever was typed or generated, what goes to LinkedIn is tidied the same way (and given hashtags if it has none).
   const text = await prepareForPublish(d.text, id)
@@ -74,9 +71,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     }
     if (live && !republish) { errors.push(`${t}: already posted`); continue }
     try {
-      const urn = video
-        ? await publishVideoPost({ token, author, commentary: text, video, title: d.topic.slice(0, 200) })
-        : await publishPost({ token, author, commentary: text, image, altText: d.topic, poll: d.kind === 'poll' ? d.poll : undefined })
+      const urn = await publishPost({ token, author, commentary: text, image, altText: d.topic, poll: d.kind === 'poll' ? d.poll : undefined })
       done.push({ as: t, urn, at: new Date().toISOString() })
     } catch (e: any) {
       errors.push(`${t}: ${e?.message || 'failed'}`)

@@ -1,4 +1,4 @@
-import { getLinkedInState, publishPost, publishVideoPost, resharePost } from '@/lib/linkedin'
+import { getLinkedInState, publishPost, resharePost } from '@/lib/linkedin'
 import { addFirstComment, repostLine } from '@/lib/linkedin-engage'
 import { getDraft, getImage, getMotion, mutateDraft, prepareForPublish } from '@/lib/social/studio'
 
@@ -6,7 +6,7 @@ import { getDraft, getImage, getMotion, mutateDraft, prepareForPublish } from '@
  * Publishes a draft as a NEW post to one target, the same way the Social studio does, and records it on the draft.
  * Used by the autopilot. `commentary` overrides the text for this target only (the profile gets a different opening).
  */
-export async function publishNew(id: string, target: 'member' | 'organization', opts: { commentary?: string; media?: 'gif' | 'video' | 'still'; reshareOf?: string } = {}): Promise<{ urn: string }> {
+export async function publishNew(id: string, target: 'member' | 'organization', opts: { commentary?: string; media?: 'gif' | 'still'; reshareOf?: string } = {}): Promise<{ urn: string }> {
   const d = await getDraft(id)
   if (!d) throw new Error('Draft not found.')
   const text = (await prepareForPublish((opts.commentary || d.text).trim(), id)).trim()
@@ -30,13 +30,10 @@ export async function publishNew(id: string, target: 'member' | 'organization', 
   }
 
   // Motion graphics post as an animated GIF by default; AI images as a still; polls and text-only posts carry no media.
-  const media = opts.media ?? (d.motion ? 'gif' : 'still')
-  const video = d.kind !== 'poll' && media === 'video' && d.motion?.hasMp4 ? (await getMotion(id, 'mp4')) || undefined : undefined
-  const image = d.kind === 'poll' || video ? undefined : media === 'gif' && d.motion ? (await getMotion(id, 'gif')) || undefined : (d.hasImage ? (await getImage(id)) || undefined : undefined)
+  const media = opts.media === 'still' ? 'still' : d.motion ? 'gif' : 'still'
+  const image = d.kind === 'poll' ? undefined : media === 'gif' && d.motion ? (await getMotion(id)) || undefined : (d.hasImage ? (await getImage(id)) || undefined : undefined)
 
-  const urn = video
-    ? await publishVideoPost({ token, author, commentary: text, video, title: d.topic.slice(0, 200) })
-    : await publishPost({ token, author, commentary: text, image, altText: d.topic, poll: d.kind === 'poll' ? d.poll : undefined })
+  const urn = await publishPost({ token, author, commentary: text, image, altText: d.topic, poll: d.kind === 'poll' ? d.poll : undefined })
   // Every post gets a meaningful first comment from its own author. A failed comment never fails the post.
   const c = await addFirstComment({ token, actor: author, postUrn: urn, post: text, spendId: id })
   await mutateDraft(id, x => { x.published.push({ as: target, urn, at: new Date().toISOString(), comment: c.text, commentError: c.error }); x.status = 'published'; x.publishedText = x.text })

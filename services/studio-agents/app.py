@@ -2,12 +2,12 @@
 Gennoor Social Studio agent service.
 
 POST /run     NDJSON stream of the MAF pipeline (research -> write -> design -> review), then a final result.
-              When mode is 'motion' the designed scene is rendered to GIF + MP4 and returned as base64.
+              When mode is 'motion' the designed scene is rendered to an animated GIF and returned as base64.
 POST /blog    NDJSON stream of the blog pipeline (research -> write -> package -> review); returns body + metadata.
 GET  /li/tools   The LinkedIn MCP server's tools (names, hints, argument schemas).
 POST /li/call    One serialised, cached call to a LinkedIn MCP tool.
 POST /brand   Adds the logo + website footer to a generated image.
-POST /render  Renders a (hand-edited) scene spec to GIF + MP4 without calling any model.
+POST /render  Renders a (hand-edited) scene spec to an animated GIF without calling any model.
 GET  /health
 
 Auth: every call except /health needs the STUDIO_API_KEY in the X-Api-Key header. The service only ever returns
@@ -73,14 +73,13 @@ class BrandBody(BaseModel):
 
 class RenderBody(BaseModel):
     scene: dict[str, Any]
-    mp4: bool = True
 
 
-async def _render(scene: dict[str, Any], mp4: bool) -> dict[str, Any]:
+async def _render(scene: dict[str, Any]) -> dict[str, Any]:
     async with _render_lock:
-        r = await asyncio.to_thread(renderer.render, scene, mp4)
+        r = await asyncio.to_thread(renderer.render, scene)
     return {
-        "gif": base64.b64encode(r["gif"]).decode(), "mp4": base64.b64encode(r["mp4"]).decode() if r["mp4"] else None,
+        "gif": base64.b64encode(r["gif"]).decode(),
         "frames": r["frames"], "seconds": r["seconds"], "width": r["width"], "height": r["height"],
     }
 
@@ -103,7 +102,7 @@ async def brand(b: BrandBody):
 @app.post("/render", dependencies=[Depends(auth)])
 async def render_scene(b: RenderBody):
     try:
-        return await _render(b.scene, b.mp4)
+        return await _render(b.scene)
     except (ValueError, KeyError, TypeError) as e:
         raise HTTPException(400, f"Invalid scene: {e}")
 
@@ -160,7 +159,7 @@ async def run(b: RunBody):
                     yield json.dumps({"type": "step", "agent": "renderer", "label": "Render", "status": "running"}) + "\n"
                     try:
                         ev["scene"] = recolor(ev["scene"])  # a palette of its own for every post
-                        ev["render"] = await _render(ev["scene"], True)
+                        ev["render"] = await _render(ev["scene"])
                         yield json.dumps({"type": "step", "agent": "renderer", "label": "Render", "status": "done",
                                           "output": f"{ev['render']['frames']} frames, {ev['render']['seconds']}s"}) + "\n"
                     except Exception as e:  # keep the text result even if the scene cannot be drawn

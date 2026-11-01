@@ -14,7 +14,7 @@ interface Draft {
   createdAt: string; published: { as: string; at: string }[]
   scheduled?: { at: string; as: ('member' | 'organization')[]; media: string; state: 'pending' | 'publishing' | 'failed'; tries: number; error?: string }
   references?: Ref[]; publishedText?: string
-  motion?: { scene: Record<string, unknown>; seconds: number; hasMp4: boolean }
+  motion?: { scene: Record<string, unknown>; seconds: number }
   trace?: { agent: string; label: string; output: string; usd: number }[]
   review?: { verdict: string; notes: string[] }
 }
@@ -51,10 +51,9 @@ export default function SocialStudioPage() {
   const [rev, setRev] = useState('')
   const [pendingRefs, setPendingRefs] = useState<Ref[]>([])
   const [refUrl, setRefUrl] = useState('')
-  const [zoom, setZoom] = useState<{ id: string; kind: 'image' | 'motion'; hasMp4: boolean } | null>(null)
-  const [zoomVideo, setZoomVideo] = useState(false)
+  const [zoom, setZoom] = useState<{ id: string; kind: 'image' | 'motion' } | null>(null)
   const [anim, setAnim] = useState({ motion: 'zoom-in', seconds: 6, caption: '' })
-  const [postMedia, setPostMedia] = useState<'gif' | 'video' | 'still'>('gif')
+  const [postMedia, setPostMedia] = useState<'gif' | 'still'>('gif')
   const [team, setTeam] = useState(false)
   const [newOpen, setNewOpen] = useState(false)
   const [when, setWhen] = useState('') // datetime-local value; empty = post now
@@ -428,10 +427,10 @@ export default function SocialStudioPage() {
                   <div className="mt-3">
                     {cur.motion
                       /* eslint-disable-next-line @next/next/no-img-element */
-                      ? <button type="button" onClick={() => { setZoomVideo(false); setZoom({ id: cur.id, kind: 'motion', hasMp4: cur.motion!.hasMp4 }) }} className="relative block w-full group cursor-zoom-in" title="Click to enlarge"><img src={`/api/admin/social/${cur.id}/motion?v=${imgV}`} alt="" className="rounded-lg w-full border border-gray-100" /><span className="absolute top-2 right-2 rounded-md bg-black/60 text-white p-1.5 opacity-0 group-hover:opacity-100 transition-opacity"><Maximize2 className="w-3.5 h-3.5" /></span></button>
+                      ? <button type="button" onClick={() => setZoom({ id: cur.id, kind: 'motion' })} className="relative block w-full group cursor-zoom-in" title="Click to enlarge"><img src={`/api/admin/social/${cur.id}/motion?v=${imgV}`} alt="" className="rounded-lg w-full border border-gray-100" /><span className="absolute top-2 right-2 rounded-md bg-black/60 text-white p-1.5 opacity-0 group-hover:opacity-100 transition-opacity"><Maximize2 className="w-3.5 h-3.5" /></span></button>
                       : cur.hasImage
                       /* eslint-disable-next-line @next/next/no-img-element */
-                      ? <button type="button" onClick={() => setZoom({ id: cur.id, kind: 'image', hasMp4: false })} className="relative block w-full group cursor-zoom-in" title="Click to enlarge"><img src={`/api/admin/social/${cur.id}/image?v=${imgV}`} alt="" className="rounded-lg w-full border border-gray-100" /><span className="absolute top-2 right-2 rounded-md bg-black/60 text-white p-1.5 opacity-0 group-hover:opacity-100 transition-opacity"><Maximize2 className="w-3.5 h-3.5" /></span></button>
+                      ? <button type="button" onClick={() => setZoom({ id: cur.id, kind: 'image' })} className="relative block w-full group cursor-zoom-in" title="Click to enlarge"><img src={`/api/admin/social/${cur.id}/image?v=${imgV}`} alt="" className="rounded-lg w-full border border-gray-100" /><span className="absolute top-2 right-2 rounded-md bg-black/60 text-white p-1.5 opacity-0 group-hover:opacity-100 transition-opacity"><Maximize2 className="w-3.5 h-3.5" /></span></button>
                       : <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 text-sm text-gray-500 py-12 text-center">No image yet. Use "Generate image" on the right.</div>}
                   </div>
                 )}
@@ -463,7 +462,7 @@ export default function SocialStudioPage() {
                       <button disabled={!!busy || !cur.imagePrompt.trim()} onClick={image} className={`${primary} w-full justify-center mt-2`}>{busy === 'image' ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Generating…</> : cur.hasImage ? <><RotateCcw className="w-3.5 h-3.5" />Regenerate image</> : 'Generate image'}</button>
                       {cur.hasImage && (
                         <div className="mt-3 pt-3 border-t border-gray-100">
-                          <div className="text-xs font-semibold mb-1.5 flex items-center gap-1.5"><Film className="w-3.5 h-3.5 text-gray-500" />Animate this image<InfoTip text="Turns the picture into a short looping GIF and MP4 with slow camera motion and an optional caption. Free: no AI call." /></div>
+                          <div className="text-xs font-semibold mb-1.5 flex items-center gap-1.5"><Film className="w-3.5 h-3.5 text-gray-500" />Animate this image<InfoTip text="Turns the picture into a short looping GIF with slow camera motion and an optional caption. Free: no AI call." /></div>
                           <div className="flex gap-1.5">
                             <select value={anim.motion} onChange={e => setAnim({ ...anim, motion: e.target.value })} className="flex-1 min-w-0 text-xs border border-gray-200 rounded-md px-2 py-1.5 bg-white">
                               <option value="zoom-in">Slow zoom in</option><option value="zoom-out">Slow zoom out</option><option value="pan-left">Pan left</option><option value="pan-right">Pan right</option>
@@ -487,7 +486,6 @@ export default function SocialStudioPage() {
                     <div className="flex flex-wrap gap-1.5 mt-2">
                       <button disabled={!!busy || sceneFor !== cur.id} onClick={rerender} className={primary}>{busy === 'rerender' ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Rendering…</> : 'Re-render'}</button>
                       <a href={`/api/admin/social/${cur.id}/motion?type=gif&download=1`} className={btn}><Download className="w-3.5 h-3.5" />GIF</a>
-                      {cur.motion.hasMp4 && <a href={`/api/admin/social/${cur.id}/motion?type=mp4&download=1`} className={btn}><Download className="w-3.5 h-3.5" />MP4</a>}
                     </div>
                     <div className="text-xs text-gray-400 mt-1.5">Edit the scene, then Re-render. Free: no AI call. LinkedIn posts the GIF. To change it with AI, use Revise.</div>
                   </div>
@@ -520,11 +518,11 @@ export default function SocialStudioPage() {
                     <div className="flex items-center gap-2 text-xs pb-2 border-b border-gray-100">
                       <span className="text-gray-500">Post to LinkedIn as</span>
                       <div className="flex rounded-md border border-gray-200 overflow-hidden">
-                        {([['gif', 'GIF'], ['video', 'Video (MP4)'], ['still', cur.hasImage ? 'Still image' : 'No media']] as const).map(([v, l]) => (
-                          <button key={v} disabled={v === 'video' && !cur.motion?.hasMp4} onClick={() => setPostMedia(v)} className={`px-2.5 py-1 disabled:opacity-40 ${postMedia === v ? 'bg-gray-800 text-white' : 'bg-white hover:bg-gray-50'}`}>{l}</button>
+                        {([['gif', 'GIF'], ['still', cur.hasImage ? 'Still image' : 'No media']] as const).map(([v, l]) => (
+                          <button key={v} onClick={() => setPostMedia(v)} className={`px-2.5 py-1 ${postMedia === v ? 'bg-gray-800 text-white' : 'bg-white hover:bg-gray-50'}`}>{l}</button>
                         ))}
                       </div>
-                      <InfoTip text="GIF plays silently in the feed. Video (MP4) is uploaded through LinkedIn's video API and can take a minute to process. Still posts the AI image or text only." />
+                      <InfoTip text="GIF plays silently in the feed. Still posts the AI image or text only." />
                     </div>
                   )}
                   <div className="flex flex-wrap items-center gap-2">
@@ -579,18 +577,10 @@ export default function SocialStudioPage() {
       {zoom && (
         <div className="fixed inset-0 z-[10000] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setZoom(null)} role="dialog" aria-modal="true">
           <div className="relative max-w-[min(92vw,900px)] max-h-[92vh] flex flex-col items-center gap-3" onClick={e => e.stopPropagation()}>
-            {zoom.kind === 'motion' && zoomVideo
-              ? <video src={`/api/admin/social/${zoom.id}/motion?type=mp4&v=${imgV}`} autoPlay loop muted playsInline controls className="rounded-lg max-h-[80vh] max-w-full bg-black" />
-              /* eslint-disable-next-line @next/next/no-img-element */
-              : <img src={zoom.kind === 'motion' ? `/api/admin/social/${zoom.id}/motion?v=${imgV}` : `/api/admin/social/${zoom.id}/image?v=${imgV}`} alt="" className="rounded-lg max-h-[80vh] max-w-full object-contain bg-black" />}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={zoom.kind === 'motion' ? `/api/admin/social/${zoom.id}/motion?v=${imgV}` : `/api/admin/social/${zoom.id}/image?v=${imgV}`} alt="" className="rounded-lg max-h-[80vh] max-w-full object-contain bg-black" />
             <div className="flex items-center gap-2">
-              {zoom.kind === 'motion' && zoom.hasMp4 && (
-                <div className="flex rounded-md overflow-hidden border border-white/30 text-xs">
-                  <button onClick={() => setZoomVideo(false)} className={`px-3 py-1.5 ${!zoomVideo ? 'bg-white text-gray-900' : 'text-white'}`}>GIF</button>
-                  <button onClick={() => setZoomVideo(true)} className={`px-3 py-1.5 ${zoomVideo ? 'bg-white text-gray-900' : 'text-white'}`}>MP4</button>
-                </div>
-              )}
-              <a href={zoom.kind === 'motion' ? `/api/admin/social/${zoom.id}/motion?type=${zoomVideo ? 'mp4' : 'gif'}&download=1` : `/api/admin/social/${zoom.id}/image`} download className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-md border border-white/30 text-white hover:bg-white/10"><Download className="w-3.5 h-3.5" />Download</a>
+              <a href={zoom.kind === 'motion' ? `/api/admin/social/${zoom.id}/motion?download=1` : `/api/admin/social/${zoom.id}/image`} download className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-md border border-white/30 text-white hover:bg-white/10"><Download className="w-3.5 h-3.5" />Download</a>
             </div>
             <button onClick={() => setZoom(null)} aria-label="Close" className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-white text-gray-800 shadow flex items-center justify-center"><X className="w-4 h-4" /></button>
           </div>
