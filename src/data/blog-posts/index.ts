@@ -44,6 +44,20 @@ export interface BlogPost extends BlogPostMeta {
 
 export const blogPostsMeta: BlogPostMeta[] = [
   {
+    slug: 'github-universe-2026-persistent-coding-agents-governance',
+    title: 'Why Enterprise Teams Need Runtime Governance for the Next Phase of AI-Assisted Coding',
+    excerpt: 'The important enterprise signal is not any single event post or product page. It is the broader shift toward AI-assisted coding workflows that span more of the developer platform. As coding assistance moves beyond isolated prompts, enterprises need clearer governance for runtime boundaries, tool access, identity, review, and auditability.',
+    tldr: 'Regardless of any one vendor event reference, enterprise teams should treat the next phase of AI-assisted coding as a governance and architecture problem. As coding workflows become more connected across tools and systems, organizations need runtime policy for execution boundaries, identity, integrations, approvals, logging, and model selection. The key issue is enterprise readiness for broader agentic coding trends, not unverified claims about one specific shipped behavior.',
+    author: 'Gennoor Tech',
+    date: '2026-11-01',
+    readTime: '11 min read',
+    category: 'AI Architecture',
+    tags: ['AI-Assisted Coding', 'Enterprise AI', 'AI Governance', 'Enterprise Architecture', 'AI Security', 'Developer Platform', 'Platform Engineering', 'Developer Experience'],
+    hashtags: ['#EnterpriseAI', '#AIGovernance', '#DeveloperPlatform', '#PlatformEngineering', '#AISecurity', '#AIAssistedCoding'],
+    coverColor: '#2F2A24',
+    icon: '🧠',
+  },
+  {
     slug: 'new-copilot-studio-features-enterprise-agent-builders',
     title: 'New Copilot Studio Features: What Enterprise Agent Builders Should Actually Care About',
     excerpt: 'Microsoft’s latest Copilot Studio updates push the platform beyond chatbot building into enterprise agent orchestration. For business users, the important story is not feature volume but which capabilities are practical for governed workflows, legacy system automation, and scalable agent deployment inside Microsoft-centric environments.',
@@ -958,6 +972,7 @@ export function getRelatedPostsMeta(currentSlug: string, category: string, limit
 
 // Load full blog post content on demand (only for individual post pages)
 const contentImports: Record<string, () => Promise<{ post: BlogPost }>> = {
+  'github-universe-2026-persistent-coding-agents-governance': () => import('./content/github-universe-2026-persistent-coding-agents-governance'),
   'new-copilot-studio-features-enterprise-agent-builders': () => import('./content/new-copilot-studio-features-enterprise-agent-builders'),
   'openai-servicenow-enterprise-ai-chat-to-workflow': () => import('./content/openai-servicenow-enterprise-ai-chat-to-workflow'),
   'why-ai-agents-dominate-vs-agent-driven-product-development': () => import('./content/why-ai-agents-dominate-vs-agent-driven-product-development'),
