@@ -159,7 +159,13 @@ async def run(b: RunBody):
                     yield json.dumps({"type": "step", "agent": "renderer", "label": "Render", "status": "running"}) + "\n"
                     try:
                         ev["scene"] = recolor(ev["scene"])  # a palette of its own for every post
-                        ev["render"] = await _render(ev["scene"])
+                        # Rendering is CPU-bound and silent; ping every few seconds so no proxy sees an idle connection and drops it.
+                        job = asyncio.create_task(_render(ev["scene"]))
+                        while not job.done():
+                            await asyncio.wait({job}, timeout=5)
+                            if not job.done():
+                                yield json.dumps({"type": "ping"}) + "\n"
+                        ev["render"] = job.result()
                         yield json.dumps({"type": "step", "agent": "renderer", "label": "Render", "status": "done",
                                           "output": f"{ev['render']['frames']} frames, {ev['render']['seconds']}s"}) + "\n"
                     except Exception as e:  # keep the text result even if the scene cannot be drawn
