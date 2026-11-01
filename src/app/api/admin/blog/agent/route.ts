@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
         if (!line.trim()) return
         const ev = JSON.parse(line)
         if (ev.type === 'step' && ev.status === 'done') {
-          trace.push({ agent: ev.agent, label: ev.label, output: String(ev.output || '').slice(0, 3000), usd: ev.usd || 0 })
+          trace.push({ agent: ev.agent, label: ev.label, output: String(ev.output || '').slice(0, 12000), usd: ev.usd || 0 })
           if (ev.usd) spend.push({ label: `${ev.label} agent`, usd: ev.usd, tokens: ev.tokens })
         }
         if (ev.type === 'result') {

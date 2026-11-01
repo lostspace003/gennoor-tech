@@ -30,8 +30,8 @@ export async function GET(req: NextRequest) {
   const from = ymd.test(q.get('from') || '') ? q.get('from')! : new Date(Date.now() - 7 * 86_400_000).toISOString().slice(0, 10)
   const days = Object.values(s.days).filter(x => x.date >= from && x.date <= to).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 120)
   const ids = new Set(days.flatMap(d => d.slots.map(x => x.draftId)).filter(Boolean))
-  const previews: Record<string, { text: string; hasImage: boolean; motion: boolean; poll?: { question: string; options: string[] } }> = {}
-  for (const d of drafts) if (ids.has(d.id)) previews[d.id] = { text: d.text, hasImage: d.hasImage, motion: !!d.motion, poll: d.poll ? { question: d.poll.question, options: d.poll.options } : undefined }
+  const previews: Record<string, { text: string; hasImage: boolean; motion: boolean; poll?: { question: string; options: string[] }; trace?: { label: string; output: string; usd: number }[] }> = {}
+  for (const d of drafts) if (ids.has(d.id)) previews[d.id] = { text: d.text, hasImage: d.hasImage, motion: !!d.motion, poll: d.poll ? { question: d.poll.question, options: d.poll.options } : undefined, trace: d.trace?.map(t => ({ label: t.label, output: t.output, usd: t.usd })) }
   const days_ = (iso?: string) => (iso ? Math.floor((Date.parse(iso) - Date.now()) / 86_400_000) : null)
   return NextResponse.json({
     config: s.config, days, previews, log: s.log.slice(-40).reverse(), lastTick: s.lastTick, lastTickNote: s.lastTickNote,

@@ -1,6 +1,7 @@
 'use client'
 
 import { Bot, Check, Loader2, X } from 'lucide-react'
+import { StepLogButton } from '@/components/admin/StepLogModal'
 
 export interface RunStep { agent: string; label: string; status: 'running' | 'done' | 'error'; output: string; live: string; usd: number }
 export interface RunState { steps: RunStep[]; error: string; done: boolean }
@@ -15,7 +16,10 @@ export default function AgentTimeline({ run, onClose, title = 'The AI team at wo
     <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="text-sm font-semibold flex items-center gap-2"><Bot className="w-4 h-4 text-gray-500" />{title}</div>
-        {(run.error || run.done) && <button onClick={onClose} className="text-xs text-gray-500 hover:text-gray-800">Close</button>}
+        <div className="flex items-center gap-3">
+          <StepLogButton title={title} steps={steps.map(s => ({ label: NAMES[s.agent] || s.label, output: (s.status === 'running' ? s.live : s.output) || '', usd: s.usd, status: s.status }))} className="text-xs text-gray-600 hover:text-gray-900 underline underline-offset-2 inline-flex items-center gap-1" />
+          {(run.error || run.done) && <button onClick={onClose} className="text-xs text-gray-500 hover:text-gray-800">Close</button>}
+        </div>
       </div>
       {run.error && <div className="mb-3 rounded-md bg-red-50 border border-red-200 text-red-800 text-sm px-3 py-2">{run.error}</div>}
       {steps.length === 0 && !run.error && <div className="flex items-center gap-2 text-sm text-gray-500"><Loader2 className="w-4 h-4 animate-spin" />Starting the team…</div>}
