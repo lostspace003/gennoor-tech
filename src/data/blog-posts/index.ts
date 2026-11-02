@@ -44,6 +44,20 @@ export interface BlogPost extends BlogPostMeta {
 
 export const blogPostsMeta: BlogPostMeta[] = [
   {
+    slug: 'ai-for-beginners-2027-building-agents-guide',
+    title: 'AI for Beginners in 2027: A Practical Starting Guide to Building Agents',
+    excerpt: 'AI beginners in 2027 do not need to start with model training. They need a practical path to building useful agents: choosing a narrow workflow, connecting the right data, adding controls, and learning when to use no-code, low-code, or code-first tools. A simple example like ticket triage shows how to start small and learn the right patterns.',
+    tldr: 'The best way to start with AI in 2027 is to build a small, well-bounded agent for a real workflow. Beginners should focus on task scope, context, tools, guardrails, and evaluation rather than model theory. Start narrow, use approved integrations, keep a human review step, and measure whether the agent completes useful work reliably. A practical first example is a ticket triage agent that summarizes requests, suggests categories, and prepares structured outputs for human review.',
+    author: 'Gennoor Tech',
+    date: '2026-10-31',
+    readTime: '15 min read',
+    category: 'AI Agents',
+    tags: ['AI Agents', 'Copilot Studio', 'MCP', 'Evaluation', 'Azure AI', 'Deployment', 'Enterprise AI', 'Agentic AI'],
+    hashtags: ['#AIAgents', '#CopilotStudio', '#MCP', '#Evaluation', '#AzureAI', '#Deployment', '#EnterpriseAI'],
+    coverColor: '#2F3A2E',
+    icon: '🤖',
+  },
+  {
     slug: 'github-enterprise-copilot-governance-not-seats',
     title: 'GitHub Enterprise Bundles Copilot: Why IT Leaders Should Focus on Governance, Not Seats',
     excerpt: 'For enterprise IT leaders, the important story in AI-assisted coding is governance, not packaging alone. The practical questions are operational: policy baselines, centrally administered settings, review guardrails, exception handling, and whether AI coding now belongs inside standard developer platform governance. Where vendor source details are not independently confirmed, leaders should avoid overclaiming and focus on building a defensible control model.',
@@ -986,6 +1000,7 @@ export function getRelatedPostsMeta(currentSlug: string, category: string, limit
 
 // Load full blog post content on demand (only for individual post pages)
 const contentImports: Record<string, () => Promise<{ post: BlogPost }>> = {
+  'ai-for-beginners-2027-building-agents-guide': () => import('./content/ai-for-beginners-2027-building-agents-guide'),
   'github-enterprise-copilot-governance-not-seats': () => import('./content/github-enterprise-copilot-governance-not-seats'),
   'github-universe-2026-persistent-coding-agents-governance': () => import('./content/github-universe-2026-persistent-coding-agents-governance'),
   'new-copilot-studio-features-enterprise-agent-builders': () => import('./content/new-copilot-studio-features-enterprise-agent-builders'),
