@@ -44,6 +44,20 @@ export interface BlogPost extends BlogPostMeta {
 
 export const blogPostsMeta: BlogPostMeta[] = [
   {
+    slug: 'github-enterprise-copilot-governance-not-seats',
+    title: 'GitHub Enterprise Bundles Copilot: Why IT Leaders Should Focus on Governance, Not Seats',
+    excerpt: 'For enterprise IT leaders, the important story in AI-assisted coding is governance, not packaging alone. The practical questions are operational: policy baselines, centrally administered settings, review guardrails, exception handling, and whether AI coding now belongs inside standard developer platform governance. Where vendor source details are not independently confirmed, leaders should avoid overclaiming and focus on building a defensible control model.',
+    tldr: 'Do not anchor enterprise decisions to unverified product-packaging claims. The more durable takeaway is that as AI-assisted coding becomes easier to provision inside core developer platforms, IT and engineering leaders need stronger governance: administrative controls, review standards, clear ownership, and risk-based rollout by repository type.',
+    author: 'Gennoor Tech',
+    date: '2026-11-02',
+    readTime: '9 min read',
+    category: 'AI Engineering',
+    tags: ['Enterprise AI', 'AI Governance', 'AI-Assisted Coding', 'Developer Platform', 'Platform Engineering', 'AI Strategy', 'AI Security', 'Code Review'],
+    hashtags: ['#EnterpriseAI', '#AIGovernance', '#AIAssistedCoding', '#DeveloperPlatform', '#PlatformEngineering', '#AISecurity'],
+    coverColor: '#2B1F1A',
+    icon: '🛠️',
+  },
+  {
     slug: 'github-universe-2026-persistent-coding-agents-governance',
     title: 'Why Enterprise Teams Need Runtime Governance for the Next Phase of AI-Assisted Coding',
     excerpt: 'The important enterprise signal is not any single event post or product page. It is the broader shift toward AI-assisted coding workflows that span more of the developer platform. As coding assistance moves beyond isolated prompts, enterprises need clearer governance for runtime boundaries, tool access, identity, review, and auditability.',
@@ -972,6 +986,7 @@ export function getRelatedPostsMeta(currentSlug: string, category: string, limit
 
 // Load full blog post content on demand (only for individual post pages)
 const contentImports: Record<string, () => Promise<{ post: BlogPost }>> = {
+  'github-enterprise-copilot-governance-not-seats': () => import('./content/github-enterprise-copilot-governance-not-seats'),
   'github-universe-2026-persistent-coding-agents-governance': () => import('./content/github-universe-2026-persistent-coding-agents-governance'),
   'new-copilot-studio-features-enterprise-agent-builders': () => import('./content/new-copilot-studio-features-enterprise-agent-builders'),
   'openai-servicenow-enterprise-ai-chat-to-workflow': () => import('./content/openai-servicenow-enterprise-ai-chat-to-workflow'),
