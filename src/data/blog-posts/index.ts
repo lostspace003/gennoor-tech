@@ -44,6 +44,20 @@ export interface BlogPost extends BlogPostMeta {
 
 export const blogPostsMeta: BlogPostMeta[] = [
   {
+    slug: 'microsoft-agent-infrastructure-platform-race',
+    title: 'Microsoft Turns Agent Infrastructure Into the Next Enterprise AI Platform Battle',
+    excerpt: 'Microsoft’s Copilot positioning, together with GitHub’s enterprise administration and policy signals, suggests enterprise AI evaluation is moving below the interface. For CIOs, architects, and engineering leaders, the practical focus should be runtime governance, enforceable settings, model policy, and operational consistency rather than demo quality alone.',
+    tldr: 'Recent Microsoft and GitHub enterprise AI announcements suggest buyers should evaluate copilots less as standalone apps and more as governed operating layers. The practical enterprise lens is runtime behavior, model governance, settings enforcement, tool boundaries, and operational consistency. Because some earlier date-specific sourcing was not safely verifiable for editorial review, this revised article avoids over-claiming chronology and focuses on what the announcements support more broadly.',
+    author: 'Gennoor Tech',
+    date: '2026-11-03',
+    readTime: '11 min read',
+    category: 'Microsoft AI',
+    tags: ['Microsoft', 'GitHub', 'Enterprise AI', 'AI Strategy', 'AI Governance', 'Enterprise Architecture', 'AI Operating Model'],
+    hashtags: ['#MicrosoftAI', '#GitHub', '#EnterpriseAI', '#AIGovernance', '#EnterpriseArchitecture', '#AIOperatingModel'],
+    coverColor: '#2F3A2C',
+    icon: '🧭',
+  },
+  {
     slug: 'ai-for-beginners-2027-building-agents-guide',
     title: 'AI for Beginners in 2027: A Practical Starting Guide to Building Agents',
     excerpt: 'AI beginners in 2027 do not need to start with model training. They need a practical path to building useful agents: choosing a narrow workflow, connecting the right data, adding controls, and learning when to use no-code, low-code, or code-first tools. A simple example like ticket triage shows how to start small and learn the right patterns.',
@@ -1000,6 +1014,7 @@ export function getRelatedPostsMeta(currentSlug: string, category: string, limit
 
 // Load full blog post content on demand (only for individual post pages)
 const contentImports: Record<string, () => Promise<{ post: BlogPost }>> = {
+  'microsoft-agent-infrastructure-platform-race': () => import('./content/microsoft-agent-infrastructure-platform-race'),
   'ai-for-beginners-2027-building-agents-guide': () => import('./content/ai-for-beginners-2027-building-agents-guide'),
   'github-enterprise-copilot-governance-not-seats': () => import('./content/github-enterprise-copilot-governance-not-seats'),
   'github-universe-2026-persistent-coding-agents-governance': () => import('./content/github-universe-2026-persistent-coding-agents-governance'),
