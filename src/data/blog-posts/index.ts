@@ -44,6 +44,20 @@ export interface BlogPost extends BlogPostMeta {
 
 export const blogPostsMeta: BlogPostMeta[] = [
   {
+    slug: 'ai-in-infrastructure-enterprise-capacity-power-governance',
+    title: 'AI in Infrastructure: Why Capacity, Power, and Governance Now Shape Enterprise AI',
+    excerpt: 'Enterprise AI is no longer limited by ideas alone. As compute scarcity, data architecture, power demand, and governance pressures grow, infrastructure has become the practical constraint on scaling AI reliably, compliantly, and cost-effectively across the business.',
+    tldr: 'AI infrastructure is now a core enterprise architecture issue, not just a cloud procurement topic. Leaders need to evaluate AI readiness across compute, data, networking, power dependency, and governance. The winning strategy is not cloud versus on-prem, but workload-specific placement backed by strong capacity planning, cost controls, and operational discipline.',
+    author: 'Gennoor Tech',
+    date: '2026-11-03',
+    readTime: '11 min read',
+    category: 'AI Architecture',
+    tags: ['Enterprise AI', 'Enterprise Architecture', 'AI Strategy', 'Azure AI', 'Platform Engineering', 'Deployment', 'Cost Optimization', 'AI Governance'],
+    hashtags: ['#EnterpriseAI', '#AIArchitecture', '#PlatformEngineering', '#AzureAI', '#AIGovernance', '#CostOptimization'],
+    coverColor: '#2F3A2E',
+    icon: '🏗️',
+  },
+  {
     slug: 'microsoft-agent-infrastructure-platform-race',
     title: 'Microsoft Turns Agent Infrastructure Into the Next Enterprise AI Platform Battle',
     excerpt: 'Microsoft’s Copilot positioning, together with GitHub’s enterprise administration and policy signals, suggests enterprise AI evaluation is moving below the interface. For CIOs, architects, and engineering leaders, the practical focus should be runtime governance, enforceable settings, model policy, and operational consistency rather than demo quality alone.',
@@ -1014,6 +1028,7 @@ export function getRelatedPostsMeta(currentSlug: string, category: string, limit
 
 // Load full blog post content on demand (only for individual post pages)
 const contentImports: Record<string, () => Promise<{ post: BlogPost }>> = {
+  'ai-in-infrastructure-enterprise-capacity-power-governance': () => import('./content/ai-in-infrastructure-enterprise-capacity-power-governance'),
   'microsoft-agent-infrastructure-platform-race': () => import('./content/microsoft-agent-infrastructure-platform-race'),
   'ai-for-beginners-2027-building-agents-guide': () => import('./content/ai-for-beginners-2027-building-agents-guide'),
   'github-enterprise-copilot-governance-not-seats': () => import('./content/github-enterprise-copilot-governance-not-seats'),
