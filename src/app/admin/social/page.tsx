@@ -260,7 +260,7 @@ export default function SocialStudioPage() {
     if (!cur || !file) return
     const fd = new FormData(); fd.append('file', file)
     const j = await call('image', `/api/admin/social/${cur.id}/image`, { method: 'PUT', body: fd })
-    if (j.draft) { patchLocal(cur.id, j.draft); setImgV(v => v + 1); setNotice('Your image is attached.') }
+    if (j.draft) { patchLocal(cur.id, j.draft); setImgV(v => v + 1); setNotice('Your image is attached with the Gennoor logo strip.') }
   }
   async function publish(as: ('member' | 'organization')[], mode: 'new' | 'update' = 'new') {
     if (!cur) return

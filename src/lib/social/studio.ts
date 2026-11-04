@@ -237,6 +237,17 @@ export async function reviseDraft(id: string, instruction: string, target: 'post
 }
 
 /** Image agent: renders imagePrompt with gpt-image and stores the PNG. */
+/** Adds the Gennoor logo + website strip under an image (same as generated images). Returns the original if the service is unreachable. */
+export async function brandImageBuffer(image: Buffer): Promise<{ data: Buffer; branded: boolean }> {
+  if (!agentServiceConfigured()) return { data: image, branded: false }
+  try {
+    const r = await agentFetch('/brand', { image: image.toString('base64') }, AbortSignal.timeout(120_000))
+    const j = await r.json().catch(() => ({}))
+    if (r.ok && j.image) return { data: Buffer.from(j.image, 'base64'), branded: true }
+  } catch { /* keep the unbranded image */ }
+  return { data: image, branded: false }
+}
+
 export async function generateImage(id: string): Promise<Draft | null> {
   const d = await getDraft(id)
   if (!d) return null
