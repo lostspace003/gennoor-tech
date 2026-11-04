@@ -4,7 +4,7 @@ import { sendEmail } from '@/lib/email-service'
 import { getLinkedInState } from '@/lib/linkedin'
 import { agentFetch } from '@/lib/social/agent-service'
 import { publishNew } from '@/lib/social/publisher'
-import { createAgentDraft, createDraft, foundry, generateImage, getDraft, mutateDraft, readBlob, recordSpend, textUsd, tokensOf, writeBlob, type TraceStep } from '@/lib/social/studio'
+import { createAgentDraft, createDraft, foundry, getDraft, mutateDraft, readBlob, recordSpend, textUsd, tokensOf, writeBlob, type TraceStep } from '@/lib/social/studio'
 import { isTransient, withRetry, type Deps } from './engine'
 import { emptyState, DEFAULT_CONFIG, type Slot, type State, type TargetKey, type TopicIdea } from './types'
 
@@ -138,14 +138,12 @@ async function generate(ctx: Parameters<Deps['generate']>[0], sleep: Deps['sleep
     return { draftId: draft.id, text: toPlain(draft.text), verdict: ok ? 'pass' : 'revise', notes: ok ? [] : ['The poll needs a clear question and 2-4 distinct options with an intro.'], variant }
   }
 
-  // GIF/motion posts are switched off: every slot produces a normal image post.
+  // GIF/motion posts are switched off: every slot produces a normal post.
   const mode = 'post'
   const { result, trace } = await runTeam(topic.title, brief, sourcesText(topic), mode)
   const draft = await createAgentDraft(topic.title, result, trace, [], topic.sources.map(x => x.url))
   for (const t of trace) if (t.usd) await recordSpend(draft.id, `Autopilot ${t.label}`, t.usd)
-  if (mode === 'post' && draft.imagePrompt) {
-    try { await retry(() => generateImage(draft.id), sleep, 3) } catch { /* a text-only post is better than none */ }
-  }
+  // Autopilot posts are text-only: no image is generated for them.
   const text = (await getDraft(draft.id))?.text || draft.text
   const verdict = result.review?.verdict === 'pass' && text.trim().length > 200 ? 'pass' : 'revise'
   // The engine screens for banned words, so it gets plain letters, not the Unicode-bold ones.
