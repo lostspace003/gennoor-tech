@@ -29,7 +29,7 @@ const STATUS: Record<string, { label: string; tone: string }> = {
   held: { label: 'Needs you', tone: 'bg-amber-100 text-amber-800' }, skipped: { label: 'Skipped', tone: 'bg-gray-100 text-gray-500' },
 }
 const TARGET: Record<string, string> = { pending: 'queued', publishing: 'posting…', done: 'posted', manual: 'posted by you', skipped: 'skipped', failed: 'failed', held: 'needs you' }
-const KIND = { post: { l: 'Post + image', i: FileText }, poll: { l: 'Poll', i: BarChart3 }, motion: { l: 'Motion graphic', i: Film } }
+const KIND = { post: { l: 'Text post', i: FileText }, poll: { l: 'Poll', i: BarChart3 }, motion: { l: 'Motion graphic', i: Film } }
 const field = 'w-full text-sm border border-gray-200 rounded-md px-2.5 py-1.5 focus:outline-none focus:border-blue-500 bg-white'
 
 export default function AutopilotPage() {
@@ -200,7 +200,7 @@ export default function AutopilotPage() {
               <div className="text-xs font-semibold mb-1.5">{k === 'weekdaySlots' ? 'Weekday times (Mon to Fri)' : 'Weekend times (Sat and Sun)'}<InfoTip text="When each post goes out, in the time zone below. Four times that catch India's morning and lunch, the Gulf and Europe in the afternoon, and the US East Coast morning." /></div>
               <div className="space-y-1.5">{cfg[k].map((s, i) => (
                 <div key={i} className="flex gap-2"><input type="time" value={s.time} onChange={e => set({ [k]: cfg[k].map((x, j) => (j === i ? { ...x, time: e.target.value } : x)) })} className={`${field} w-32`} />
-                  <select value={s.kind} onChange={e => set({ [k]: cfg[k].map((x, j) => (j === i ? { ...x, kind: e.target.value as Kind } : x)) })} className={field}><option value="post">Post + image</option><option value="poll">Poll</option></select></div>
+                  <select value={s.kind} onChange={e => set({ [k]: cfg[k].map((x, j) => (j === i ? { ...x, kind: e.target.value as Kind } : x)) })} className={field}><option value="post">Text post</option><option value="poll">Poll</option></select></div>
               ))}</div>
             </div>
           ))}
