@@ -40,9 +40,9 @@ export const DEFAULT_CONFIG: Config = {
   tz: 'Asia/Kolkata',
   // Chosen for the audience: India's morning commute and the Gulf morning, lunch, end of the workday plus Europe's
   // afternoon, and late evening India time = US East Coast morning.
-  weekdaySlots: [{ time: '08:30', kind: 'post' }, { time: '12:30', kind: 'poll' }, { time: '17:30', kind: 'post' }, { time: '20:30', kind: 'motion' }],
+  weekdaySlots: [{ time: '08:30', kind: 'post' }, { time: '12:30', kind: 'poll' }, { time: '17:30', kind: 'post' }, { time: '20:30', kind: 'post' }],
   // Weekends: later start, more to read and save.
-  weekendSlots: [{ time: '09:30', kind: 'post' }, { time: '12:30', kind: 'poll' }, { time: '17:00', kind: 'motion' }, { time: '20:00', kind: 'post' }],
+  weekendSlots: [{ time: '09:30', kind: 'post' }, { time: '12:30', kind: 'poll' }, { time: '17:00', kind: 'post' }, { time: '20:00', kind: 'post' }],
   targets: { organization: true, member: true },
   staggerMinutes: 45,
   profileMode: 'reshare',

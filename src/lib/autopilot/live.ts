@@ -17,7 +17,13 @@ export async function loadState(): Promise<State> {
   if (!raw) return emptyState()
   const s = JSON.parse(raw.toString('utf-8')) as State
   // Older saved configs get any newly added settings filled in.
-  return { ...emptyState(), ...s, config: { ...DEFAULT_CONFIG, ...s.config, targets: { ...DEFAULT_CONFIG.targets, ...s.config?.targets } } }
+  const merged = { ...emptyState(), ...s, config: { ...DEFAULT_CONFIG, ...s.config, targets: { ...DEFAULT_CONFIG.targets, ...s.config?.targets } } }
+  // Motion graphics are retired: saved motion slots become normal image posts.
+  const noMotion = (list: { time: string; kind: string }[]) => list.map(x => (x.kind === 'motion' ? { ...x, kind: 'post' } : x))
+  merged.config.weekdaySlots = noMotion(merged.config.weekdaySlots) as typeof merged.config.weekdaySlots
+  merged.config.weekendSlots = noMotion(merged.config.weekendSlots) as typeof merged.config.weekendSlots
+  for (const d of Object.values(merged.days)) for (const sl of d.slots) if ((sl.kind as string) === 'motion') sl.kind = 'post'
+  return merged
 }
 export async function saveState(s: State) { await writeBlob(FILE, JSON.stringify(s), 'application/json') }
 
