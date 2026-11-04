@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
-import { publishCarousel, recordPosted, schedule } from '@/lib/linkedin-queue'
+import { publishCarousel, publishUploadedPdf, recordPosted, schedule, scheduleUploadedPdf } from '@/lib/linkedin-queue'
+import { readUpload } from '@/lib/assets'
 import { planCarousel, renderCarouselPdf, type CarouselPlan } from '@/lib/social/carousel'
 import { addUrlRef, withReferences } from '@/lib/social/references'
 
@@ -15,6 +16,23 @@ export const maxDuration = 120
 export async function POST(req: NextRequest) {
   const { authorized } = await verifyAdmin(req)
   if (!authorized) return unauthorizedResponse()
+  // Your own carousel: multipart form with the PDF, a title, the caption, who posts, and an optional time.
+  if ((req.headers.get('content-type') || '').includes('multipart/form-data')) {
+    try {
+      const form = await req.formData()
+      const up = await readUpload(form, 'file', ['application/pdf'], 25)
+      const title = String(form.get('title') || up.name.replace(/\.pdf$/i, '')).trim().slice(0, 100) || 'Carousel'
+      const caption = String(form.get('caption') || '').trim() || title
+      const as = form.get('as') === 'organization' ? 'organization' : 'member'
+      const at = String(form.get('at') || '')
+      if (at) { const job = await scheduleUploadedPdf(up.data, title, caption, as, at); return NextResponse.json({ ok: true, scheduled: job.at }) }
+      const urn = await publishUploadedPdf(up.data, title, caption, as)
+      await recordPosted('carousel', as, title, urn)
+      return NextResponse.json({ ok: true, urn })
+    } catch (e: any) {
+      return NextResponse.json({ error: e?.message || 'Upload failed.' }, { status: 400 })
+    }
+  }
   const b = await req.json().catch(() => ({}))
   try {
     if (b.action === 'plan') {

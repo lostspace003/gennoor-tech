@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Loader2 } from 'lucide-react'
 import InfoTip from '@/components/admin/InfoTip'
+import CarouselPanel from '@/components/admin/CarouselPanel'
 import { ListToolbar, Pager, useListView } from '@/components/admin/ListControls'
 
 interface Share { urn: string; as: 'member' | 'organization'; at: string }
@@ -128,22 +129,8 @@ export default function LinkedInPage() {
           </div>
 
           <div className="rounded-lg border border-gray-200 bg-white p-3 mb-4 text-sm">
-            <div className="font-medium mb-2">Carousel PDF<InfoTip text="The agent turns a topic or a web page into swipeable cards (a PDF document post). Review the cards, download the PDF or publish it." /></div>
-            <input value={cTopic} onChange={e => setCTopic(e.target.value)} placeholder="Topic, e.g. Why AI agents need governance" className="w-full rounded-md border border-gray-200 px-3 py-2 mb-2" />
-            <input value={cUrl} onChange={e => setCUrl(e.target.value)} placeholder="Optional: a web page to base it on" className="w-full rounded-md border border-gray-200 px-3 py-2 mb-2" />
-            <button disabled={!!busy || (!cTopic && !cUrl)} onClick={() => carousel('plan')} className="px-3.5 py-2 text-[13px] font-medium bg-gray-800 text-white rounded-md disabled:opacity-40">{busy === 'c-plan' ? 'Writing cards…' : 'Write the cards'}</button>
-            {plan && (
-              <div className="mt-3">
-                <ol className="list-decimal pl-5 space-y-0.5 text-[13px]">{plan.slides.map((x, i) => <li key={i}>{x.title}</li>)}</ol>
-                <textarea value={plan.caption} onChange={e => setPlan({ ...plan, caption: e.target.value })} rows={4} className="w-full rounded-md border border-gray-200 px-3 py-2 mt-2 text-[13px]" />
-                <div className="flex flex-wrap items-center gap-2 mt-2 text-xs text-gray-600">Schedule for (optional)<input type="datetime-local" value={cAt} onChange={e => setCAt(e.target.value)} className="rounded-md border border-gray-200 px-2 py-1" /></div>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  <button disabled={!!busy} onClick={() => carousel('pdf')} className="px-3.5 py-2 text-[13px] rounded-md border border-gray-200 bg-white disabled:opacity-40">{busy === 'c-pdf' ? '…' : 'Download PDF'}</button>
-                  <button disabled={!!busy || !s.canPostAsOrg} onClick={() => carousel('publish', 'organization')} className="px-3.5 py-2 text-[13px] rounded-md border border-gray-200 bg-white disabled:opacity-40">{cAt ? 'Schedule on page' : 'Post to page'}</button>
-                  <button disabled={!!busy || !s.connected} onClick={() => carousel('publish', 'member')} className="px-3.5 py-2 text-[13px] rounded-md border border-gray-200 bg-white disabled:opacity-40">Post as me</button>
-                </div>
-              </div>
-            )}
+            <div className="font-medium mb-2">Carousel PDF<InfoTip text="The agent turns a topic or a web page into swipeable cards, or you upload your own PDF. Download it, post it now, or schedule it." /></div>
+            <CarouselPanel />
           </div>
 
           <div className="rounded-lg border border-gray-200 bg-white p-3 mb-4 text-sm">

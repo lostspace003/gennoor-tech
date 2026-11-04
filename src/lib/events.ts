@@ -31,6 +31,8 @@ export interface SiteEvent {
   linkedinEventId?: string
   linkedinPostUrn?: string
   cancelled?: boolean
+  /** An editor-uploaded cover image is stored at assets key events/<id>. */
+  hasImage?: boolean
   createdAt: string
   registrations: Registration[]
 }
@@ -85,7 +87,7 @@ export const newEventId = (title: string) =>
 /** What a visitor may see: never the Teams link, other people's registrations, or ids of LinkedIn objects. */
 export const publicView = (e: SiteEvent) => ({
   id: e.id, kind: e.kind, title: e.title, description: e.description, startsAt: e.startsAt, durationMinutes: e.durationMinutes,
-  full: !!e.capacity && e.registrations.length >= e.capacity, cancelled: !!e.cancelled,
+  full: !!e.capacity && e.registrations.length >= e.capacity, cancelled: !!e.cancelled, hasImage: !!e.hasImage,
 })
 
 export const eventUrl = (e: Pick<SiteEvent, 'id'>) => `${siteUrl()}/events/${e.id}`

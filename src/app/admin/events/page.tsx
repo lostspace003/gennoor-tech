@@ -7,7 +7,7 @@ import InfoTip from '@/components/admin/InfoTip'
 interface Kind { id: string; label: string; hint: string }
 interface Ev {
   id: string; kind: string; title: string; description: string; startsAt: string; durationMinutes: number; capacity?: number
-  teamsJoinUrl?: string; linkedinEventId?: string; cancelled?: boolean; url: string; registrations: { name: string; email: string; company?: string; at: string }[]
+  teamsJoinUrl?: string; linkedinEventId?: string; hasImage?: boolean; cancelled?: boolean; url: string; registrations: { name: string; email: string; company?: string; at: string }[]
 }
 
 const field = 'w-full rounded-md border border-gray-200 px-3 py-2 text-sm'
@@ -22,6 +22,14 @@ export default function EventsPage() {
   const [busy, setBusy] = useState('')
   const [open, setOpen] = useState('')
   const [at, setAt] = useState('')
+  const [cover, setCover] = useState<File | null>(null)
+  async function uploadCover(id: string, file: File) {
+    const fd = new FormData(); fd.append('id', id); fd.append('file', file)
+    const r = await fetch('/api/admin/events/image', { method: 'POST', body: fd })
+    const j = await r.json().catch(() => ({}))
+    if (!r.ok) { setError(j.error || 'Image upload failed.'); return false }
+    return true
+  }
   const when = () => (at ? { at: new Date(at).toISOString() } : {})
   const [f, setF] = useState({ kind: 'webinar', idea: '', title: '', description: '', startsAt: '', durationMinutes: 60, capacity: '' })
 
@@ -48,7 +56,8 @@ export default function EventsPage() {
   }
   async function create() {
     const j = await call('create', { ...f, startsAt: f.startsAt ? new Date(f.startsAt).toISOString() : '', capacity: f.capacity ? Number(f.capacity) : undefined })
-    if (j) { setNotice(j.note || 'Event created with a Teams link. Publish it to LinkedIn next.'); setF({ ...f, idea: '', title: '', description: '' }); load() }
+    if (j && cover) { const ok = await uploadCover(j.event.id, cover); if (!ok) setNotice('Event created, but the cover image did not upload. Add it from Details.') }
+    if (j) { setCover(null); if (!cover) setNotice(j.note || 'Event created with a Teams link. Publish it to LinkedIn next.'); setF({ ...f, idea: '', title: '', description: '' }); load() }
   }
 
   return (
@@ -77,6 +86,7 @@ export default function EventsPage() {
           <input type="number" min={15} className={`${field} !w-28`} value={f.durationMinutes} onChange={e => setF({ ...f, durationMinutes: Number(e.target.value) })} title="Minutes" />
           <input type="number" min={1} className={`${field} !w-32`} placeholder="Seats (optional)" value={f.capacity} onChange={e => setF({ ...f, capacity: e.target.value })} />
         </div>
+        <label className={`${btn} cursor-pointer inline-block`}>{cover ? `Cover image: ${cover.name}` : 'Add your own cover image (optional)'}<input type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={e => setCover(e.target.files?.[0] || null)} /></label>
         <button disabled={!!busy || !f.title || !f.startsAt} onClick={create} className="px-3.5 py-2 text-[13px] font-medium bg-gray-800 text-white rounded-md disabled:opacity-40">{busy === 'create' ? 'Creating…' : 'Create event + Teams link'}</button>
       </div>
 
@@ -89,7 +99,7 @@ export default function EventsPage() {
               <div className="flex items-center gap-2">
                 <div className="min-w-0 flex-1">
                   <div className="text-[13px] font-medium truncate">{e.title}{e.cancelled && <span className="ml-2 text-red-700">cancelled</span>}</div>
-                  <div className="text-xs text-gray-500">{new Date(e.startsAt).toLocaleString()} · {e.kind} · {e.registrations.length}{e.capacity ? `/${e.capacity}` : ''} registered{e.teamsJoinUrl ? ' · Teams link ✓' : ''}{e.linkedinEventId ? ' · on LinkedIn ✓' : ''}</div>
+                  <div className="text-xs text-gray-500">{new Date(e.startsAt).toLocaleString()} · {e.kind} · {e.registrations.length}{e.capacity ? `/${e.capacity}` : ''} registered{e.teamsJoinUrl ? ' · Teams link ✓' : ''}{e.hasImage ? ' · image ✓' : ''}{e.linkedinEventId ? ' · on LinkedIn ✓' : ''}</div>
                 </div>
                 <button className={btn} disabled={!!busy || !!e.linkedinEventId || e.cancelled} onClick={async () => { if (await call('linkedin', { id: e.id, ...when() }, `li-${e.id}`)) { setNotice(at ? 'Scheduled. It goes out at that time.' : 'Published as a LinkedIn Event.'); load() } }}>{busy === `li-${e.id}` ? '…' : 'LinkedIn event'}</button>
                 <button className={btn} disabled={!!busy || e.cancelled} onClick={async () => { const j = await call('announce', { id: e.id, as: 'organization', ...when() }, `an-${e.id}`); if (j) setNotice(at ? 'Announcement scheduled.' : 'Announcement posted to the page.') }}>{busy === `an-${e.id}` ? '…' : 'Announce'}</button>
@@ -101,6 +111,7 @@ export default function EventsPage() {
                   {e.teamsJoinUrl && <div>Teams link: <a className="text-blue-600" href={e.teamsJoinUrl} target="_blank" rel="noreferrer">open</a></div>}
                   <div className="max-h-40 overflow-auto">{e.registrations.map(r => <div key={r.email}>{r.name} · {r.email}{r.company ? ` · ${r.company}` : ''}</div>)}</div>
                   <div className="flex gap-2 pt-1">
+                    <label className={`${btn} cursor-pointer`}>{e.hasImage ? 'Replace image' : 'Upload image'}<input type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={async ev => { const f2 = ev.target.files?.[0]; ev.target.value = ''; if (f2 && await uploadCover(e.id, f2)) { setNotice('Cover image saved. It is used on the registration page and in LinkedIn posts you publish from now on.'); load() } }} /></label>
                     {!e.cancelled && <button className={btn} onClick={async () => { if (await call('cancel', { id: e.id })) load() }}>Cancel event</button>}
                     <button className={btn} onClick={async () => { if (confirm('Delete this event and its registrations?') && await call('delete', { id: e.id })) load() }}>Delete</button>
                   </div>
