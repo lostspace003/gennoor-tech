@@ -6,6 +6,7 @@ import { renderCarouselPdf, type CarouselPlan } from '@/lib/social/carousel'
 import { foundry, TEXT_MODEL } from '@/lib/social/studio'
 import { formatForLinkedIn } from '@/lib/linkedin-format'
 import { sendAdminAlert } from '@/lib/blog-publish'
+import { getAsset, putAsset } from '@/lib/assets'
 
 // Scheduled and already-posted LinkedIn items that are not blog/social drafts: carousels, event announcements and
 // LinkedIn Events. One small JSON blob. The heartbeat runs due jobs; finished ones stay listed so they can be deleted.
@@ -23,7 +24,7 @@ export interface Job {
   at: string
   as: Target
   title: string
-  payload: { plan?: CarouselPlan; eventId?: string }
+  payload: { plan?: CarouselPlan; eventId?: string; pdfKey?: string; caption?: string; docTitle?: string }
   state: 'pending' | 'publishing' | 'done' | 'failed' | 'deleted'
   tries: number
   error?: string
@@ -104,7 +105,8 @@ export async function announceEvent(ev: SiteEvent, as: Target): Promise<{ urn: s
     `You write LinkedIn event announcements for Gennoor Tech. ${NO_I} 70-120 words, a strong first line, short paragraphs, the date and time in IST, a call to register free at the link given, and 3-4 CamelCase hashtags at the end. Return only the post text.`,
     `Title: ${ev.title}\nWhen: ${when} IST, ${ev.durationMinutes} minutes, online on Microsoft Teams\nDetails: ${ev.description}\nRegister: ${eventUrl(ev)}`,
   )).trim())
-  return { urn: await publishPost({ token, author, commentary: text }), text }
+  const cover = ev.hasImage ? (await getAsset(`events/${ev.id}`))?.data : undefined
+  return { urn: await publishPost({ token, author, commentary: text, image: cover, altText: ev.title }), text }
 }
 
 export async function publishEventToLinkedIn(ev: SiteEvent): Promise<{ eventId: string; postUrn: string }> {
@@ -113,6 +115,7 @@ export async function publishEventToLinkedIn(ev: SiteEvent): Promise<{ eventId: 
   const r = await createExternalEvent({
     token, organizer: author, name: ev.title.slice(0, 120), description: ev.description.slice(0, 2000),
     startsAt: start, endsAt: start + ev.durationMinutes * 60_000, url: eventUrl(ev), privacyPolicyUrl: 'https://www.gennoor.com/privacy',
+    image: ev.hasImage ? (await getAsset(`events/${ev.id}`))?.data : undefined,
   })
   await mutateEvents((events) => { const e = events.find((x) => x.id === ev.id); if (e) { e.linkedinEventId = r.eventId; e.linkedinPostUrn = r.postUrn } })
   return r
@@ -123,7 +126,26 @@ export async function publishCarousel(plan: CarouselPlan, as: Target): Promise<s
   return publishDocument({ token, author, commentary: String(plan.caption || plan.title).slice(0, 3000), pdf: await renderCarouselPdf(plan), title: plan.title.slice(0, 100) })
 }
 
+/** Posts a PDF the editor uploaded (their own carousel). */
+export async function publishUploadedPdf(pdf: Buffer, title: string, caption: string, as: Target): Promise<string> {
+  const { token, author } = await auth(as)
+  return publishDocument({ token, author, commentary: caption.slice(0, 3000), pdf, title: title.slice(0, 100) })
+}
+
+/** Keeps an uploaded PDF until its scheduled time, then queues the post. */
+export async function scheduleUploadedPdf(pdf: Buffer, title: string, caption: string, as: Target, when: unknown): Promise<Job> {
+  parseWhen(when)
+  const pdfKey = `linkedin-uploads/${randomBytes(6).toString('hex')}.pdf`
+  await putAsset(pdfKey, pdf, 'application/pdf')
+  return schedule('carousel', as, title, { pdfKey, caption, docTitle: title }, when)
+}
+
 async function run(job: Job): Promise<string> {
+  if (job.kind === 'carousel' && job.payload.pdfKey) {
+    const f = await getAsset(job.payload.pdfKey)
+    if (!f) throw new Error('The uploaded PDF is no longer in storage.')
+    return publishUploadedPdf(f.data, job.payload.docTitle || job.title, job.payload.caption || job.title, job.as)
+  }
   if (job.kind === 'carousel') return publishCarousel(job.payload.plan!, job.as)
   const ev = await getEvent(job.payload.eventId || '')
   if (!ev || ev.cancelled) throw new Error('The event no longer exists or was cancelled.')

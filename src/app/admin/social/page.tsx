@@ -256,6 +256,12 @@ export default function SocialStudioPage() {
     const j = await call('image', `/api/admin/social/${cur.id}/image`, { method: 'POST' })
     if (j.draft) { patchLocal(cur.id, j.draft); setImgV(v => v + 1) }
   }
+  async function uploadImage(file: File | undefined) {
+    if (!cur || !file) return
+    const fd = new FormData(); fd.append('file', file)
+    const j = await call('image', `/api/admin/social/${cur.id}/image`, { method: 'PUT', body: fd })
+    if (j.draft) { patchLocal(cur.id, j.draft); setImgV(v => v + 1); setNotice('Your image is attached.') }
+  }
   async function publish(as: ('member' | 'organization')[], mode: 'new' | 'update' = 'new') {
     if (!cur) return
     await save()
@@ -474,6 +480,7 @@ export default function SocialStudioPage() {
                         <button disabled={!imgRev.trim() || !!busy} onClick={() => revise(imgRev, 'image')} className={btn}>Apply</button>
                       </div>
                       <button disabled={!!busy || !cur.imagePrompt.trim()} onClick={image} className={`${primary} w-full justify-center mt-2`}>{busy === 'image' ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Generating…</> : cur.hasImage ? <><RotateCcw className="w-3.5 h-3.5" />Regenerate image</> : 'Generate image'}</button>
+                      <label className={`${btn} w-full justify-center mt-2 cursor-pointer`}><Paperclip className="w-3.5 h-3.5" />Upload your own image<input type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={e => { uploadImage(e.target.files?.[0]); e.target.value = '' }} /></label>
                     </>}
                   </div>
                 )}

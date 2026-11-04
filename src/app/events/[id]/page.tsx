@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 
-interface Ev { id: string; kind: string; title: string; description: string; startsAt: string; durationMinutes: number; full: boolean }
+interface Ev { hasImage?: boolean; id: string; kind: string; title: string; description: string; startsAt: string; durationMinutes: number; full: boolean }
 
 export default function EventPage() {
   const { id } = useParams<{ id: string }>()
@@ -30,6 +30,8 @@ export default function EventPage() {
   const input = 'w-full rounded-md border border-gray-300 px-3 py-2 text-sm'
   return (
     <main className="max-w-xl mx-auto p-6 sm:p-10">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      {ev.hasImage && <img src={`/api/events/${ev.id}/image`} alt="" className="w-full rounded-xl mb-6 border border-gray-200" />}
       <p className="text-xs uppercase tracking-widest text-gray-500">{ev.kind.replace('-', ' ')} · online on Microsoft Teams</p>
       <h1 className="text-2xl font-semibold mt-1">{ev.title}</h1>
       <p className="text-gray-600 mt-2">{when} IST · {ev.durationMinutes} minutes</p>

@@ -17,6 +17,22 @@ export default function CarouselPanel() {
   const [busy, setBusy] = useState('')
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
+  const [file, setFile] = useState<File | null>(null)
+  const [upCaption, setUpCaption] = useState('')
+
+  async function uploadPost(as: 'organization' | 'member') {
+    if (!file) return
+    setBusy('up' + as); setError(''); setNotice('')
+    const fd = new FormData()
+    fd.append('file', file); fd.append('title', file.name.replace(/\.pdf$/i, '')); fd.append('caption', upCaption); fd.append('as', as)
+    if (at) fd.append('at', new Date(at).toISOString())
+    const r = await fetch('/api/admin/linkedin/carousel', { method: 'POST', body: fd })
+    const j = await r.json().catch(() => ({}))
+    setBusy('')
+    if (!r.ok) { setError(j.error || 'Upload failed.'); return }
+    setNotice(j.scheduled ? `Scheduled for ${new Date(j.scheduled).toLocaleString()}.` : 'Your PDF was posted to LinkedIn.')
+    setFile(null); setUpCaption('')
+  }
 
   async function run(action: 'plan' | 'pdf' | 'publish', as?: 'organization' | 'member') {
     setBusy(action + (as || '')); setError(''); setNotice('')
@@ -54,6 +70,20 @@ export default function CarouselPanel() {
           </div>
         </div>
       )}
+      <div className="mt-3 pt-3 border-t border-gray-100 space-y-2">
+        <div className="text-xs font-semibold text-gray-600">Or post your own carousel PDF</div>
+        <label className={`${btn} cursor-pointer w-full justify-center`}>{file ? file.name : 'Choose a PDF (up to 25 MB)'}
+          <input type="file" accept="application/pdf" className="hidden" onChange={e => setFile(e.target.files?.[0] || null)} /></label>
+        {file && <>
+          <textarea value={upCaption} onChange={e => setUpCaption(e.target.value)} rows={3} placeholder="Caption for the post" className={field} />
+          <div className="flex items-center gap-2 text-xs text-gray-600"><Clock className="w-3.5 h-3.5" />Schedule (optional)
+            <input type="datetime-local" value={at} onChange={e => setAt(e.target.value)} className="rounded-md border border-gray-200 px-2 py-1" /></div>
+          <div className="flex flex-wrap gap-2">
+            <button disabled={!!busy} onClick={() => uploadPost('organization')} className={btn}>{busy === 'uporganization' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}{at ? 'Schedule on page' : 'Post to page'}</button>
+            <button disabled={!!busy} onClick={() => uploadPost('member')} className={btn}>{busy === 'upmember' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}{at ? 'Schedule as me' : 'Post as me'}</button>
+          </div>
+        </>}
+      </div>
     </div>
   )
 }

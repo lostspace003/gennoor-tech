@@ -230,14 +230,31 @@ export async function publishPost(opts: {
  * becomes visible. Needs the rw_events scope and a token from a member who administers the page.
  * Returns the event id.
  */
+/** Uploads an image to LinkedIn for `owner` and returns its image URN. */
+export async function uploadLinkedInImage(token: string, owner: string, image: Buffer): Promise<string> {
+  const init = await fetch('https://api.linkedin.com/rest/images?action=initializeUpload', {
+    method: 'POST', headers: restHeaders(token), body: JSON.stringify({ initializeUploadRequest: { owner } }),
+  })
+  const j = await init.json().catch(() => ({}))
+  if (!init.ok || !j.value?.uploadUrl) throw new Error(j.message || `LinkedIn image upload init failed (${init.status})`)
+  const put = await fetch(j.value.uploadUrl, { method: 'PUT', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/octet-stream' }, body: new Uint8Array(image) })
+  if (!put.ok) throw new Error(`LinkedIn image upload failed (${put.status})`)
+  return j.value.image as string
+}
+
 export async function createExternalEvent(opts: {
   token: string; organizer: string; name: string; description?: string
   startsAt: number; endsAt: number; url: string; privacyPolicyUrl: string
-}): Promise<{ eventId: string; postUrn: string }> {
-  const res = await fetch('https://api.linkedin.com/rest/events', {
+  /** Optional cover image bytes; if LinkedIn will not take it the event is still created without it. */
+  image?: Buffer
+}): Promise<{ eventId: string; postUrn: string; imageApplied?: boolean }> {
+  let logo: string | undefined
+  if (opts.image) { try { logo = await uploadLinkedInImage(opts.token, opts.organizer, opts.image) } catch { /* create without the image */ } }
+  const create = (withLogo: boolean) => fetch('https://api.linkedin.com/rest/events', {
     method: 'POST',
     headers: { ...restHeaders(opts.token), 'X-RestLi-Method': 'create' },
     body: JSON.stringify({
+      ...(withLogo && logo ? { logo } : {}),
       name: { localized: { en_US: opts.name } },
       ...(opts.description ? { description: { localized: { en_US: opts.description } } } : {}),
       type: { online: { format: { external: { endsAt: opts.endsAt, url: opts.url } } } },
@@ -246,6 +263,10 @@ export async function createExternalEvent(opts: {
       startsAt: opts.startsAt,
     }),
   })
+  let res = await create(true)
+  let imageApplied = !!logo
+  // If LinkedIn will not accept the image on an event, the event is still created, just without it.
+  if (!res.ok && logo) { res = await create(false); imageApplied = false }
   const body = await res.json().catch(() => ({}))
   if (!res.ok) throw new Error(body.message || `LinkedIn rejected the event (${res.status})`)
   const eventId = String(body.id || res.headers.get('x-restli-id') || '')
@@ -269,7 +290,7 @@ export async function createExternalEvent(opts: {
     const pb = await post.json().catch(() => ({}))
     throw new Error(`Event ${eventId} was created but could not be posted: ${pb.message || post.status}`)
   }
-  return { eventId, postUrn: post.headers.get('x-restli-id') || '' }
+  return { eventId, postUrn: post.headers.get('x-restli-id') || '', imageApplied }
 }
 
 /** Reshares an existing post (LinkedIn's "repost with your thoughts"): the original shows inside, `commentary` is the short text on top. */
