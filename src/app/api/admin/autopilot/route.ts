@@ -12,11 +12,11 @@ export const dynamic = 'force-dynamic'
 export const maxDuration = 300
 
 const HHMM = /^([01]\d|2[0-3]):[0-5]\d$/
-const KINDS: Kind[] = ['post', 'poll', 'motion']
-const ACTIONS: Action[] = ['skip', 'manual', 'resume', 'release', 'retry', 'post-now', 'link']
+const KINDS: Kind[] = ['post', 'poll']
+const ACTIONS: Action[] = ['skip', 'manual', 'resume', 'release', 'retry', 'post-now', 'link', 'remove']
 
 const strs = (v: unknown, n: number, max: number) => (Array.isArray(v) ? v : []).map(x => String(x).trim().slice(0, max)).filter(Boolean).slice(0, n)
-const slots = (v: unknown) => (Array.isArray(v) ? v : []).map((s: any) => ({ time: String(s?.time || ''), kind: s?.kind as Kind })).filter(s => HHMM.test(s.time) && KINDS.includes(s.kind)).slice(0, 8)
+const slots = (v: unknown) => (Array.isArray(v) ? v : []).map((s: any) => ({ time: String(s?.time || ''), kind: (s?.kind === 'motion' ? 'post' : s?.kind) as Kind })).filter(s => HHMM.test(s.time) && KINDS.includes(s.kind)).slice(0, 8)
 const tzOk = (tz: string) => { try { new Intl.DateTimeFormat('en', { timeZone: tz }); return true } catch { return false } }
 
 export async function GET(req: NextRequest) {

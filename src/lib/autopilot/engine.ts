@@ -269,10 +269,15 @@ export async function tick(d: Deps, opts: { force?: boolean } = {}): Promise<str
 }
 
 // ---- Editor actions from the admin page -------------------------------------------------------------------------
-export type Action = 'skip' | 'manual' | 'resume' | 'release' | 'retry' | 'post-now' | 'link'
+export type Action = 'skip' | 'manual' | 'resume' | 'release' | 'retry' | 'post-now' | 'link' | 'remove'
 export function applyAction(s: State, slotId: string, action: Action, now: Date, draftId?: string): string {
   const slot = Object.values(s.days).flatMap(d => d.slots).find(x => x.id === slotId)
   if (!slot) throw new Error('Slot not found.')
+  if (action === 'remove') {
+    // Deletes the slot from the queue. A draft already written for it stays in Social Studio.
+    for (const d of Object.values(s.days)) { const i = d.slots.findIndex(x => x.id === slotId); if (i >= 0) { d.slots.splice(i, 1); break } }
+    return 'removed'
+  }
   const targets = Object.values(slot.targets) as TargetState[]
   if (action === 'skip') { slot.status = 'skipped'; slot.reason = 'skipped by you'; for (const t of targets) if (['pending', 'held'].includes(t.status)) { t.status = 'skipped'; t.reason = 'skipped by you' } }
   if (action === 'manual') {

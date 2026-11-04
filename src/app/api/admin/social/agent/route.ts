@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
   const b = await req.json().catch(() => ({}))
   const topic = String(b.topic || '').trim()
   if (topic.length < 3) return Response.json({ error: 'Give the agents a topic.' }, { status: 400 })
-  const mode = b.mode === 'motion' ? 'motion' : 'post'
+  const mode = 'post' // motion graphics are retired
   const refs = await getRefs(Array.isArray(b.refIds) ? b.refIds.map(String) : [])
 
   // Reference text for the service: only the extracted text blobs are read here (images are not sent to the agents).

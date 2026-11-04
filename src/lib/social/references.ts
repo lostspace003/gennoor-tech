@@ -2,6 +2,7 @@ import { randomBytes } from 'crypto'
 import dns from 'dns/promises'
 import net from 'net'
 import { readBlob, writeBlob } from '@/lib/social/studio'
+import { foundryConfigured, webGroundedCompletion } from '@/lib/crm/foundry'
 
 // Reference material for the writing and image agents: pasted URLs, documents and images.
 // Text is extracted once at upload and stored beside the draft data; images are kept as-is for vision input.
@@ -55,7 +56,20 @@ export async function addUrlRef(raw: string): Promise<Ref> {
     if (res.status >= 300 && res.status < 400 && loc) { u = new URL(loc, u); continue }
     break
   }
-  if (!res || !res.ok) throw new Error(`Could not read that link (${res?.status ?? 'no response'}).`)
+  if (!res || !res.ok) {
+    // Many course and news sites (Udemy, Coursera, paywalled news) refuse automated readers. Fall back to the AI's own
+    // web search for that page, so the link still gives the agent real content to work from.
+    if ([401, 403, 429, 503].includes(res?.status ?? 0) && foundryConfigured()) {
+      try {
+        const g = await webGroundedCompletion(
+          'You read web pages for a content team. Using web search, find the page at the given URL (or what is published about it) and write a faithful factual summary: title, who it is for, objectives or key points, curriculum or section headings, and any concrete numbers shown. Plain text, no opinions, never invent details. If you cannot find it, say exactly: NOT FOUND.',
+          u.toString(), 1500)
+        if (g.text && g.text.length > 120 && !/^\s*NOT FOUND/i.test(g.text)) return save('url', `${u.hostname} (via web search)`, `Source: ${u.toString()}
+${g.text}`)
+      } catch { /* fall through to the clear message */ }
+    }
+    throw new Error(`That site (${res?.status ?? 'no response'}) blocks automated readers. Paste the key points into the notes box instead.`)
+  }
   const buf = Buffer.from(await res.arrayBuffer())
   if (buf.length > 2 * 1024 * 1024) throw new Error('That page is too large to use as a reference.')
   const type = res.headers.get('content-type') || ''

@@ -200,7 +200,7 @@ export default function AutopilotPage() {
               <div className="text-xs font-semibold mb-1.5">{k === 'weekdaySlots' ? 'Weekday times (Mon to Fri)' : 'Weekend times (Sat and Sun)'}<InfoTip text="When each post goes out, in the time zone below. Four times that catch India's morning and lunch, the Gulf and Europe in the afternoon, and the US East Coast morning." /></div>
               <div className="space-y-1.5">{cfg[k].map((s, i) => (
                 <div key={i} className="flex gap-2"><input type="time" value={s.time} onChange={e => set({ [k]: cfg[k].map((x, j) => (j === i ? { ...x, time: e.target.value } : x)) })} className={`${field} w-32`} />
-                  <select value={s.kind} onChange={e => set({ [k]: cfg[k].map((x, j) => (j === i ? { ...x, kind: e.target.value as Kind } : x)) })} className={field}><option value="post">Post + image</option><option value="poll">Poll</option><option value="motion">Motion graphic</option></select></div>
+                  <select value={s.kind} onChange={e => set({ [k]: cfg[k].map((x, j) => (j === i ? { ...x, kind: e.target.value as Kind } : x)) })} className={field}><option value="post">Post + image</option><option value="poll">Poll</option></select></div>
               ))}</div>
             </div>
           ))}

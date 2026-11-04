@@ -9,6 +9,7 @@ import DraftList, { Fold, type DraftRow } from '@/components/admin/DraftList'
 import RefBox, { type Ref } from '@/components/admin/RefBox'
 import AgentTimeline, { type RunStep } from '@/components/admin/AgentTimeline'
 import { StepLogButton } from '@/components/admin/StepLogModal'
+import CarouselPanel from '@/components/admin/CarouselPanel'
 
 interface Draft {
   id: string; kind?: 'post' | 'poll'; poll?: { question: string; options: string[]; duration: string }; topic: string; status: 'draft' | 'approved' | 'published'; text: string; imagePrompt: string; hasImage: boolean
@@ -22,7 +23,7 @@ interface Draft {
 
 const usd = (n: number) => `$${n < 1 ? n.toFixed(3) : n.toFixed(2)}`
 interface Task { id: string; at: string; kind: 'post' | 'poll' | 'motion'; manual?: boolean; draftId?: string; topic?: { title: string; angle: string; vendor?: string; heat?: number; sources: { title: string; url: string }[] } }
-const KIND_LABEL = { post: 'Post', poll: 'Poll', motion: 'Motion graphic' }
+const KIND_LABEL = { post: 'Post', poll: 'Poll', motion: 'Post' }
 /** Where a slot you took over stands, read from its Social Studio draft. */
 function taskState(t: Task, drafts: Draft[] | null): { label: string; tone: string; todo: boolean } {
   if (!t.draftId) return { label: 'to write', tone: 'bg-amber-100 text-amber-800', todo: true }
@@ -43,7 +44,7 @@ export default function SocialStudioPage() {
   const [sel, setSel] = useState('')
   const [topic, setTopic] = useState('')
   const [brief, setBrief] = useState('')
-  const [kind, setKind] = useState<'post' | 'poll' | 'webinar'>('post')
+  const [kind, setKind] = useState<'post' | 'poll' | 'webinar' | 'carousel'>('post')
   const [wb, setWb] = useState({ title: '', when: '', link: 'https://www.gennoor.com/webinars', startsAt: '', endsAt: '' })
   const [busy, setBusy] = useState('')
   const [error, setError] = useState('')
@@ -83,6 +84,13 @@ export default function SocialStudioPage() {
     setTasks((j.days as { slots: Task[] }[]).flatMap(d => d.slots).filter(x => x.manual && x.topic).sort((a, b) => b.at.localeCompare(a.at)))
   }, [])
   useEffect(() => { loadTasks() }, [loadTasks])
+  async function removeTask(slotId: string, title: string) {
+    if (!confirm(`Remove "${title}" from this list? A draft already written for it stays in your drafts.`)) return
+    const r = await fetch('/api/admin/autopilot', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'remove', slotId }) })
+    if (!r.ok) { const j = await r.json().catch(() => ({})); setError(j.error || 'Could not remove it.'); return }
+    if (task === slotId) setTask('')
+    setNotice('Removed.'); await loadTasks()
+  }
   async function linkTask(slotId: string, draftId: string) {
     const r = await fetch('/api/admin/autopilot', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'link', slotId, draftId }) })
     if (!r.ok) { const j = await r.json().catch(() => ({})); setError(`The draft was saved, but could not be tied to the autopilot slot: ${j.error || r.status}`) }
@@ -298,11 +306,13 @@ export default function SocialStudioPage() {
         <div className="space-y-3 min-h-0 lg:overflow-y-auto lg:pr-1">
           <Fold title="New post" icon={<Sparkles className="w-3.5 h-3.5 text-gray-500" />} open={newOpen || (!!drafts && drafts.length === 0)} onToggle={() => setNewOpen(o => !o)}>
             <div className="flex items-center gap-1.5 mb-2 text-xs">
-              {(['post', 'poll', 'webinar'] as const).map(k => (
-                <button key={k} onClick={() => setKind(k)} className={`px-2.5 py-1 rounded-md border ${kind === k ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 hover:border-gray-400'}`}>{k === 'post' ? 'Post + image' : k === 'poll' ? 'Poll' : 'Webinar'}</button>
+              {(['post', 'poll', 'webinar', 'carousel'] as const).map(k => (
+                <button key={k} onClick={() => setKind(k)} className={`px-2.5 py-1 rounded-md border ${kind === k ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 hover:border-gray-400'}`}>{k === 'post' ? 'Post + image' : k === 'poll' ? 'Poll' : k === 'webinar' ? 'Webinar' : 'Carousel'}</button>
               ))}
-              <InfoTip text="Post + image: text with an AI illustration. Poll: a native LinkedIn poll with a short intro. Webinar: type the title, date and link and the AI writes the announcement." />
+              <InfoTip text="Post + image: text with an AI illustration. Poll: a native LinkedIn poll with a short intro. Webinar: type the title, date and link and the AI writes the announcement. Carousel: swipeable card PDF written from a topic or web page." />
             </div>
+            {kind === 'carousel' && <CarouselPanel />}
+            <div className={kind === 'carousel' ? 'hidden' : undefined}>
             {kind === 'webinar' ? (
               <div className="space-y-2 mb-2">
                 <input value={wb.title} onChange={e => setWb({ ...wb, title: e.target.value })} placeholder="Webinar title" className={field} />
@@ -324,7 +334,6 @@ export default function SocialStudioPage() {
                 {team && (
                   <div className="flex gap-1.5 mt-2 text-xs">
                     <button onClick={() => setTeamOut('post')} className={`flex-1 px-2 py-1 rounded-md border ${teamOut === 'post' ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 bg-white'}`}>Post + image</button>
-                    <button onClick={() => setTeamOut('motion')} className={`flex-1 px-2 py-1 rounded-md border inline-flex items-center justify-center gap-1 ${teamOut === 'motion' ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 bg-white'}`}><Film className="w-3 h-3" />Motion graphic</button>
                   </div>
                 )}
               </div>
@@ -332,13 +341,15 @@ export default function SocialStudioPage() {
             <button disabled={(kind === 'webinar' ? !wb.title.trim() || !wb.when.trim() : !topic.trim()) || !!busy} onClick={() => (team && kind !== 'poll' ? runTeam() : create())} className={`${primary} w-full justify-center`}>
               {team && kind !== 'poll' ? <Bot className="w-3.5 h-3.5" /> : <Sparkles className="w-3.5 h-3.5" />}{busy === 'create' ? 'Writing…' : busy === 'team' ? 'Team working…' : team && kind !== 'poll' ? 'Run the team' : 'Draft with AI'}
             </button>
+            </div>
           </Fold>
           {tasks.length > 0 && (
             <div className="rounded-xl border border-gray-200 bg-white p-3">
               <div className="flex items-center gap-1.5 text-[13px] font-semibold mb-2"><Hand className="w-3.5 h-3.5 text-gray-500" />Handled by you<span className="font-normal text-gray-500">· {tasks.filter(t => taskState(t, drafts).todo).length} to do</span><InfoTip text="Autopilot posts you said you'd handle. Click one to see what it is about and write it. The autopilot never posts these." /></div>
               <div className="space-y-1.5 max-h-72 overflow-y-auto">
                 {tasks.map(t => { const st = taskState(t, drafts); return (
-                  <button key={t.id} onClick={() => { setError(''); setNotice(''); if (t.draftId) { setSel(t.draftId); setTask('') } else { setSel(''); setTask(t.id) } }}
+                  <div key={t.id} className="relative">
+                  <button onClick={() => { setError(''); setNotice(''); if (t.draftId) { setSel(t.draftId); setTask('') } else { setSel(''); setTask(t.id) } }}
                     className={`w-full text-left rounded-md border px-2.5 py-2 ${(t.draftId ? sel === t.draftId : task === t.id) ? 'border-gray-800 bg-gray-50' : 'border-gray-200 hover:border-gray-400'}`}>
                     <div className="text-[13px] font-medium leading-snug line-clamp-2">{t.topic!.title}</div>
                     <div className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-gray-500">
@@ -346,6 +357,8 @@ export default function SocialStudioPage() {
                       <span>{KIND_LABEL[t.kind]} · {new Date(t.at).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
                     </div>
                   </button>
+                  <button title="Remove from this list" onClick={() => removeTask(t.id, t.topic!.title)} className="absolute top-1.5 right-1.5 p-1 rounded text-gray-400 hover:text-red-700 hover:bg-red-50"><Trash2 className="w-3.5 h-3.5" /></button>
+                  </div>
                 ) })}
               </div>
             </div>
@@ -375,8 +388,8 @@ export default function SocialStudioPage() {
               const t = curTask
               const brief_ = [t.topic!.angle, ...(t.topic!.sources || []).slice(0, 3).map(x => x.url)].filter(Boolean).join('\n')
               if (t.kind === 'poll') create({ topic: t.topic!.title, brief: brief_, kind: 'poll', slotId: t.id })
-              else runTeam({ topic: t.topic!.title, brief: brief_, mode: t.kind === 'motion' ? 'motion' : 'post', slotId: t.id })
-            }}>{busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}{curTask.kind === 'motion' ? 'Write it as a motion graphic' : curTask.kind === 'poll' ? 'Write the poll' : 'Write it with AI'}</button>
+              else runTeam({ topic: t.topic!.title, brief: brief_, mode: 'post', slotId: t.id })
+            }}>{busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}{curTask.kind === 'poll' ? 'Write the poll' : 'Write it with AI'}</button>
           </div>
         ) : !cur ? (
           <div className="rounded-xl border border-dashed border-gray-300 bg-white/50 text-sm text-gray-500 p-10 text-center">Pick a draft on the left, or give the agent a topic.</div>
@@ -461,21 +474,6 @@ export default function SocialStudioPage() {
                         <button disabled={!imgRev.trim() || !!busy} onClick={() => revise(imgRev, 'image')} className={btn}>Apply</button>
                       </div>
                       <button disabled={!!busy || !cur.imagePrompt.trim()} onClick={image} className={`${primary} w-full justify-center mt-2`}>{busy === 'image' ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Generating…</> : cur.hasImage ? <><RotateCcw className="w-3.5 h-3.5" />Regenerate image</> : 'Generate image'}</button>
-                      {cur.hasImage && (
-                        <div className="mt-3 pt-3 border-t border-gray-100">
-                          <div className="text-xs font-semibold mb-1.5 flex items-center gap-1.5"><Film className="w-3.5 h-3.5 text-gray-500" />Animate this image<InfoTip text="Turns the picture into a short looping GIF with slow camera motion and an optional caption. Free: no AI call." /></div>
-                          <div className="flex gap-1.5">
-                            <select value={anim.motion} onChange={e => setAnim({ ...anim, motion: e.target.value })} className="flex-1 min-w-0 text-xs border border-gray-200 rounded-md px-2 py-1.5 bg-white">
-                              <option value="zoom-in">Slow zoom in</option><option value="zoom-out">Slow zoom out</option><option value="pan-left">Pan left</option><option value="pan-right">Pan right</option>
-                            </select>
-                            <select value={anim.seconds} onChange={e => setAnim({ ...anim, seconds: Number(e.target.value) })} className="text-xs border border-gray-200 rounded-md px-2 py-1.5 bg-white">
-                              {[4, 6, 8, 10].map(s => <option key={s} value={s}>{s}s</option>)}
-                            </select>
-                          </div>
-                          <input value={anim.caption} onChange={e => setAnim({ ...anim, caption: e.target.value })} maxLength={120} placeholder="Caption on the animation (optional)" className="w-full text-xs border border-gray-200 rounded-md px-2 py-1.5 mt-1.5" />
-                          <button disabled={!!busy} onClick={animate} className={`${btn} w-full justify-center mt-1.5`}>{busy === 'animate' ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Rendering…</> : cur.motion ? 'Re-animate' : 'Animate image'}</button>
-                        </div>
-                      )}
                     </>}
                   </div>
                 )}
