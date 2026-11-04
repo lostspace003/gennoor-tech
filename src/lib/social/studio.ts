@@ -1,7 +1,7 @@
 import { BlobServiceClient } from '@azure/storage-blob'
 import { randomBytes } from 'crypto'
 import { agentFetch, agentServiceConfigured } from '@/lib/social/agent-service'
-import { withReferences, type Ref } from '@/lib/social/references'
+import { refSourceUrls, sourceImageFromUrl, withReferences, type Ref } from '@/lib/social/references'
 import { foundryAuthHeader, foundryConfigured } from '@/lib/crm/foundry'
 import { artBrief, artInstruction, pickArt, type Art } from '@/lib/social/art-direction'
 import { extractHashtags, formatForLinkedIn, LINKEDIN_STYLE_GUIDE } from '@/lib/linkedin-format'
@@ -11,7 +11,7 @@ import { extractHashtags, formatForLinkedIn, LINKEDIN_STYLE_GUIDE } from '@/lib/
 const CONTAINER = 'crm-data'
 const DRAFTS = 'social/drafts.json'
 const BASE = process.env.FOUNDRY_OPENAI_BASE || 'https://admin-5924-resource.openai.azure.com'
-const TEXT_MODEL = process.env.FOUNDRY_POST_MODEL || process.env.FOUNDRY_WEB_MODEL || 'gpt-5.4'
+export const TEXT_MODEL = process.env.FOUNDRY_POST_MODEL || process.env.FOUNDRY_WEB_MODEL || 'gpt-5.4'
 const IMAGE_DEPLOYMENT = process.env.FOUNDRY_IMAGE_DEPLOYMENT || 'gpt-image-2'
 
 export type DraftKind = 'post' | 'poll'
@@ -25,6 +25,8 @@ export interface Motion { scene: Record<string, unknown>; seconds: number }
 
 export interface Draft {
   id: string
+  /** Pages this post is about; their own picture is used as the base of the image. */
+  sourceUrls?: string[]
   kind?: DraftKind
   poll?: PollSpec
   topic: string
@@ -134,10 +136,10 @@ export async function foundry(path: string, body: unknown): Promise<any> {
   return json
 }
 
-const WRITER = `You write LinkedIn posts for Gennoor Tech, an enterprise AI and Microsoft training company (India). Voice: practical, credible, no hype, no emoji spam. Write 120-220 words, short paragraphs, a strong first line, one concrete takeaway, a soft call to action, and 3-4 relevant hashtags at the end. Never invent statistics or quotes. Also write an image prompt for a clean, on-brand, text-free illustration (styled exactly per the art direction you are given, no logos, no readable text).
+const WRITER = `You write LinkedIn posts for Gennoor Tech, an enterprise AI and Microsoft training company (India). Voice: practical, credible, no hype, no emoji spam. NEVER use first-person singular (no "I", "I'm", "I've", "my", "me"); write direct and impersonal, about the topic or "you". Write 120-220 words, short paragraphs, a strong first line, one concrete takeaway, a soft call to action, and 3-4 relevant hashtags at the end. Never invent statistics or quotes. Also write an image prompt for a realistic, text-free photograph of a believable real-world scene (styled per the art direction you are given, no logos, no readable text).
 Reply as JSON only: {"text": string, "imagePrompt": string}`
 
-const POLL_WRITER = `You write LinkedIn polls for Gennoor Tech, an enterprise AI and Microsoft training company (India). Write a short intro (40-90 words, plain, a clear reason to vote, 3 relevant hashtags at the end) and a poll. LinkedIn limits: question max 140 characters, 2 to 4 options, each option max 30 characters. Options must be distinct and balanced. Never invent statistics.
+const POLL_WRITER = `You write LinkedIn polls for Gennoor Tech, an enterprise AI and Microsoft training company (India). Never use first-person singular ("I", "my", "me"). Write a short intro (40-90 words, plain, a clear reason to vote, 3 relevant hashtags at the end) and a poll. LinkedIn limits: question max 140 characters, 2 to 4 options, each option max 30 characters. Options must be distinct and balanced. Never invent statistics.
 Reply as JSON only: {"text": string, "question": string, "options": string[]}`
 
 /** The post-writing agent: topic in, reviewed-by-human draft out. */
@@ -181,7 +183,7 @@ export async function polishPost(text: string, spendId = 'format'): Promise<stri
   try {
     const j = await foundry('/openai/v1/responses', {
       model: TEXT_MODEL,
-      instructions: `You tidy LinkedIn posts for Gennoor Tech without changing their meaning. ${LINKEDIN_STYLE_GUIDE}\nKeep every fact, name, number and link exactly. Keep the author's voice. Do not add claims. If the post already has hashtags keep them; if it has none, add 3 to 5 relevant ones. Return only the final post text.`,
+      instructions: `You tidy LinkedIn posts for Gennoor Tech without changing their meaning. ${LINKEDIN_STYLE_GUIDE}\nKeep every fact, name, number and link exactly. Rewrite any first-person singular ("I", "I'm", "I've", "my", "me") into a direct, impersonal voice. Do not add claims. If the post already has hashtags keep them; if it has none, add 3 to 5 relevant ones. Return only the final post text.`,
       input: plain,
     })
     await recordSpend(spendId, 'Format for LinkedIn', textUsd(j), tokensOf(j))
@@ -204,7 +206,7 @@ export async function reviseDraft(id: string, instruction: string, target: 'post
   if (target === 'image') {
     const j = await foundry('/openai/v1/responses', {
       model: TEXT_MODEL,
-      instructions: 'You rewrite image-generation prompts for distinctive, magazine-quality, text-free LinkedIn illustrations (keep the art direction already in the prompt unless the editor asks to change it; no logos, no readable text). Apply the editor\'s instruction and reply as JSON only: {"imagePrompt": string}',
+      instructions: 'You rewrite image-generation prompts for realistic, magazine-quality, text-free LinkedIn photographs (keep the art direction already in the prompt unless the editor asks to change it; no logos, no readable text). Apply the editor\'s instruction and reply as JSON only: {"imagePrompt": string}',
       input: await withReferences(`Post:\n${d.text}\n\nCurrent image prompt:\n${d.imagePrompt}\n\nEditor's instruction: ${instruction}`, d.references),
     })
     const o: string = j.output_text || (j.output || []).flatMap((x: any) => x.content || []).map((c: any) => c.text || '').join('')
@@ -240,8 +242,32 @@ export async function generateImage(id: string): Promise<Draft | null> {
   if (!d) return null
   if (!d.imagePrompt.trim()) throw new Error('Write an image prompt first.')
   const url = `/openai/deployments/${IMAGE_DEPLOYMENT}/images/generations?api-version=2025-04-01-preview`
-  // Highest quality first; if this deployment does not accept the setting, fall back to its default.
-  const json = await foundry(url, { prompt: d.imagePrompt, size: '1536x1024', n: 1, quality: 'high' }).catch(e => (/quality|unknown|unsupported|invalid/i.test(String(e?.message)) ? foundry(url, { prompt: d.imagePrompt, size: '1536x1024', n: 1 }) : Promise.reject(e)))
+  const REAL = 'Make it a realistic, natural-looking professional photograph with true-to-life lighting and proportions. No text, no logos, no illustration or CGI look.'
+  let json: any
+  // 1) Build on the real picture from the source page (when it has one): edit it into a clean, realistic hero image.
+  const sources = [...(d.sourceUrls || []), ...(await refSourceUrls(d.references))].slice(0, 3)
+  for (const src of sources) {
+    const base = await sourceImageFromUrl(src)
+    if (!base) continue
+    try {
+      const form = new FormData()
+      form.append('image', new Blob([new Uint8Array(base)], { type: 'image/png' }), 'source.png')
+      form.append('prompt', `${d.imagePrompt}
+
+Use the supplied photo as the real subject and setting; keep it recognisable and true to life, improve framing and lighting, extend it to a wide landscape composition. ${REAL}`)
+      form.append('size', '1536x1024')
+      const res = await fetch(`${BASE}/openai/deployments/${IMAGE_DEPLOYMENT}/images/edits?api-version=2025-04-01-preview`, { method: 'POST', headers: await foundryAuthHeader(), body: form })
+      const j = await res.json().catch(() => ({}))
+      if (res.ok && j.data?.[0]?.b64_json) { json = j; break }
+    } catch { /* try the next source, then plain generation */ }
+  }
+  // 2) Otherwise generate a realistic photograph from the prompt. Highest quality first; fall back if not accepted.
+  if (!json) {
+    const prompt = `${d.imagePrompt}
+
+${REAL}`
+    json = await foundry(url, { prompt, size: '1536x1024', n: 1, quality: 'high' }).catch(e => (/quality|unknown|unsupported|invalid/i.test(String(e?.message)) ? foundry(url, { prompt, size: '1536x1024', n: 1 }) : Promise.reject(e)))
+  }
   const b64 = json.data?.[0]?.b64_json
   if (!b64) throw new Error('The image model returned no image.')
   // The real logo and website go on afterwards: an image model cannot be trusted to draw either correctly.
@@ -271,7 +297,7 @@ export async function saveMotion(id: string, r: { gif: string; seconds: number }
 export async function createAgentDraft(
   topic: string,
   res: { text?: string; imagePrompt?: string; scene?: Record<string, unknown>; review?: { verdict: string; notes: string[] }; render?: { gif: string; seconds: number } },
-  trace: TraceStep[], refs: Ref[] = [],
+  trace: TraceStep[], refs: Ref[] = [], sourceUrls: string[] = [],
 ): Promise<Draft> {
   const now = new Date().toISOString()
   const art = pickArt((await listDrafts()).slice(0, 8).map(x => x.art).filter(Boolean) as Art[])
@@ -281,7 +307,7 @@ export async function createAgentDraft(
 
 ${artBrief(art)}` : '', art,
     hasImage: false, createdAt: now, updatedAt: now, published: [],
-    ...(refs.length ? { references: refs } : {}), trace, ...(res.review ? { review: res.review } : {}),
+    ...(sourceUrls.length ? { sourceUrls } : {}), ...(refs.length ? { references: refs } : {}), trace, ...(res.review ? { review: res.review } : {}),
   }
   await saveDrafts([d, ...(await listDrafts())])
   if (res.render && res.scene) return (await saveMotion(d.id, res.render, res.scene)) || d

@@ -119,3 +119,37 @@ export async function getRefs(ids: string[]): Promise<Ref[]> {
   }
   return out
 }
+
+/** The page's own hero picture (og:image / twitter:image), fetched safely. Null when there is none or it is unusable. */
+export async function sourceImageFromUrl(raw: string): Promise<Buffer | null> {
+  try {
+    let u = new URL(raw)
+    await assertPublicHttp(u)
+    const page = await fetch(u, { redirect: 'follow', signal: AbortSignal.timeout(10_000), headers: { 'User-Agent': 'GennoorStudio/1.0', Accept: 'text/html' } })
+    if (!page.ok) return null
+    const html = (await page.text()).slice(0, 400_000)
+    const m = html.match(/<meta[^>]+(?:property|name)=["'](?:og:image(?::secure_url)?|twitter:image)["'][^>]*content=["']([^"']+)["']/i)
+      || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+(?:property|name)=["'](?:og:image|twitter:image)["']/i)
+    if (!m) return null
+    u = new URL(m[1].replace(/&amp;/g, '&'), u)
+    await assertPublicHttp(u)
+    const img = await fetch(u, { signal: AbortSignal.timeout(12_000), headers: { 'User-Agent': 'GennoorStudio/1.0' } })
+    if (!img.ok || !/^image\/(png|jpe?g|webp)/i.test(img.headers.get('content-type') || '')) return null
+    const buf = Buffer.from(await img.arrayBuffer())
+    return buf.length > 1000 && buf.length < 8 * 1024 * 1024 ? buf : null
+  } catch { return null }
+}
+
+/** URLs the editor attached as references (they are stored as "Source: <url>" at the top of the saved text). */
+export async function refSourceUrls(refs: Ref[] | undefined): Promise<string[]> {
+  const out: string[] = []
+  for (const r of refs || []) {
+    if (r.kind !== 'url') continue
+    try {
+      const meta = JSON.parse((await readBlob(metaKey(r.id)))?.toString('utf-8') || '{}')
+      const url = String(meta.text || '').match(/^Source: (\S+)/)?.[1]
+      if (url) out.push(url)
+    } catch { /* skip */ }
+  }
+  return out
+}

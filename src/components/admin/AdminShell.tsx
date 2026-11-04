@@ -43,6 +43,7 @@ const GROUPS = [
     { href: '/admin/autopilot', label: 'LinkedIn autopilot', icon: Bot },
     { href: '/admin/linkedin-hub', label: 'LinkedIn hub', icon: Network },
     { href: '/admin/linkedin', label: 'LinkedIn connection', icon: Linkedin },
+    { href: '/admin/events', label: 'Events', icon: Calendar },
   ] },
   { title: 'Learning', items: [
     { href: '/admin/lms', label: 'Learning Studio', icon: GraduationCap },

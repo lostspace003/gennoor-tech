@@ -6,20 +6,14 @@ import { randomInt } from 'crypto'
 export interface Art { style: string; palette: string; composition: string }
 
 export const STYLES = [
-  'isometric 3D scene made of soft clay-like objects, gentle studio lighting',
-  'layered paper-cut collage with soft drop shadows and visible paper texture',
-  'bold editorial flat-vector illustration built from large geometric shapes',
-  'two-colour risograph print with grain and slightly offset layers',
-  'architectural blueprint-style line drawing with flat colour fills',
-  'glossy abstract 3D objects on a seamless backdrop, dramatic studio lighting',
-  'macro still-life photograph of physical objects acting as a metaphor, shallow depth of field',
-  'retro-futurist travel-poster illustration with simple shapes and a sun or moon',
-  'low-poly faceted landscape with crisp lighting',
-  'ink and watercolour wash editorial illustration with loose, confident brushwork',
-  'Swiss-style poster composition with oversized geometric forms and strong rhythm',
-  'neon-noir city at dusk with rain reflections, cinematic',
-  'abstract data sculpture: bars, ribbons and flows made of tactile materials like glass, wood and metal',
-  'miniature diorama with tilt-shift focus, tiny figures and props',
+  'realistic editorial photograph of a modern enterprise office or workspace, natural window light, shallow depth of field',
+  'realistic documentary-style photograph of professionals collaborating around a laptop and a large screen, candid, natural light',
+  'realistic close-up photograph of hands working on a laptop with a dashboard on screen, soft bokeh background',
+  'realistic wide photograph of a modern data centre aisle with clean server racks, cool balanced lighting',
+  'realistic top-down photograph of a tidy desk with a laptop, notebook, coffee and printed charts, soft daylight',
+  'realistic photograph of a team presenting at a whiteboard in a bright meeting room, natural expressions',
+  'realistic architectural photograph of a glass office building at golden hour, clean lines',
+  'realistic product-style photograph of a laptop and phone on a clean surface showing a plausible software interface, soft studio light',
 ]
 
 export const PALETTES = [
@@ -64,8 +58,8 @@ export function pickArt(recent: Art[] = []): Art {
 
 /** Appended to an image prompt so it carries this post's own look and overrides any default palette it mentions. */
 export function artBrief(a: Art): string {
-  return `Art direction for this image (follows over any palette or style mentioned above; do NOT use dark navy or electric blue unless the palette below says so): style: ${a.style}. Colour palette: ${a.palette}. Composition: ${a.composition}. Build a specific visual metaphor for this post's single idea; avoid generic glowing brains, circuit boards, network nodes and padlocks. Fresh and distinctive, magazine quality, no text, no letters, no logos, no watermarks. Keep the bottom 12% of the frame calm and uncluttered.`
+  return `Art direction for this image (follows over any palette or style mentioned above; do NOT use dark navy or electric blue unless the palette below says so): style: ${a.style}. Colour palette: ${a.palette}. Composition: ${a.composition}. The result must look like a REAL photograph taken by a professional photographer: believable people, real environments, natural lighting and true-to-life proportions. NOT an illustration, 3D render, clay, cartoon, collage, poster, neon or surreal concept art. Show a plausible real-world scene that fits the post's topic; avoid glowing brains, circuit boards, network nodes, padlocks and robots. No text, no letters, no logos, no watermarks. Keep the bottom 12% of the frame calm and uncluttered.`
 }
 
 /** The art-direction instruction for the post-writing model, so it writes an image prompt that fits. */
-export const artInstruction = (a: Art) => `\nFor the imagePrompt, use this art direction instead of any default palette: ${a.style}; palette: ${a.palette}; composition: ${a.composition}. Describe a specific visual metaphor for this post's one idea (no generic brains, circuit boards or glowing networks), no text in the image.`
+export const artInstruction = (a: Art) => `\nFor the imagePrompt, use this art direction instead of any default palette: ${a.style}; palette: ${a.palette}; composition: ${a.composition}. Describe a realistic photograph of a believable real-world scene that fits this post (not an illustration or render; no brains, circuit boards or glowing networks), no text in the image.`

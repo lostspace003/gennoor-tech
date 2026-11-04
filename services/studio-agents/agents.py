@@ -26,7 +26,9 @@ USD_OUT = float(os.getenv("FOUNDRY_TEXT_USD_OUT", "10")) / 1e6
 
 BRAND = (
     "Gennoor Tech is an enterprise AI and Microsoft training company in India. Voice: practical, credible, no hype, "
-    "no emoji spam. Visual colours are set per post by the art director (they vary; never default to navy or blue), no logos."
+    "no emoji spam. NEVER write in the first person singular: no \"I\", \"I'm\", \"I've\", \"my\", \"me\" in any post or blog "
+    "(also avoid \"we/our\" unless it is clearly the company speaking); write in a direct, impersonal voice about the topic, the reader's team, or \"you\". "
+    "Visual colours are set per post by the art director (they vary; never default to navy or blue), no logos."
 )
 
 RESEARCHER = (
@@ -40,7 +42,7 @@ WRITER = (
     'Reply as JSON only: {"text": string}'
 )
 DESIGNER_IMAGE = (
-    f"{BRAND}\nYou are the visual design agent. Write one image-generation prompt for a clean, text-free illustration that "
+    f"{BRAND}\nYou are the visual design agent. Write one image-generation prompt for a clean, text-free, realistic PHOTOGRAPH (not an illustration or 3D render) that "
     'fits the post. Reply as JSON only: {"imagePrompt": string}'
 )
 DESIGNER_MOTION = (
@@ -59,12 +61,12 @@ DESIGNER_MOTION = (
 )
 REVIEWER = (
     f"{BRAND}\nYou are the review agent. Check the post and the visual brief against these rules: no invented statistics or "
-    "quotes, 120-220 words, strong first line, hashtags present, no hype, visual text is short and matches the post. "
+    "quotes, 120-220 words, strong first line, hashtags present, no hype, NO first-person singular words (I, I'm, I've, my, me - flag every one), visual text is short and matches the post. "
     'Reply as JSON only: {"verdict": "pass" | "revise", "notes": [string]}. Notes must be specific and actionable.'
 )
 
 BLOG_STYLE = """House style of the Gennoor Tech blog (match it exactly):
-- Practitioner voice for enterprise AI and Microsoft/Azure teams. Plain, specific, no hype, no filler, no emoji.
+- Practitioner voice for enterprise AI and Microsoft/Azure teams. Plain, specific, no hype, no filler, no emoji. Never use first-person singular ("I", "my", "me"); keep an impersonal, direct voice.
 - Body is HTML only (no <html>/<body>/<h1>; the title is rendered separately). Start with <p><em>By Gennoor Tech · {date}</em></p>,
   then 2-3 short <p> intro paragraphs that state what happened/why it matters. Then 6-9 sections, each an <h2>, with <p> paragraphs
   (3-5 sentences), optional <h3>, <ul>/<li> for lists, <strong> for key terms. No tables, no images, no code unless essential.
