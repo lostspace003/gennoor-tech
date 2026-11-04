@@ -25,6 +25,18 @@ export interface LinkedInState {
   orgAccessToken?: string
   orgExpiresAt?: string
   connectedAt?: string
+  /** Token from the advertising app (Lead Sync + Conversions APIs); separate from the posting apps. */
+  adsAccessToken?: string
+  adsExpiresAt?: string
+  adsScope?: string
+  /** Ad account numeric id (Campaign Manager), e.g. 519832004. */
+  adsAccountId?: string
+  /** Conversion rule URNs created once on the ad account, keyed by CRM trigger. */
+  adsConversions?: Record<string, string>
+  /** Lead Sync progress. */
+  adsLastLeadAt?: number
+  adsLastSyncAt?: string
+  adsLeadsImported?: number
   /** blog slug -> where it was shared */
   shares?: Record<string, LinkedInShare[]>
 }
@@ -295,4 +307,34 @@ export async function commentOnPost(opts: { token: string; actor: string; postUr
   }
   const j = await res.json().catch(() => ({}))
   return String(j.id || j.$URN || res.headers.get('x-restli-id') || '')
+}
+
+/** Publishes a PDF as a swipeable document (carousel) post. */
+export async function publishDocument(opts: { token: string; author: string; commentary: string; pdf: Buffer; title: string }): Promise<string> {
+  const init = await fetch('https://api.linkedin.com/rest/documents?action=initializeUpload', {
+    method: 'POST',
+    headers: restHeaders(opts.token),
+    body: JSON.stringify({ initializeUploadRequest: { owner: opts.author } }),
+  })
+  const initJson = await init.json().catch(() => ({}))
+  if (!init.ok || !initJson.value?.uploadUrl) throw new Error(initJson.message || `LinkedIn document upload init failed (${init.status})`)
+  const put = await fetch(initJson.value.uploadUrl, {
+    method: 'PUT',
+    headers: { Authorization: `Bearer ${opts.token}`, 'Content-Type': 'application/octet-stream' },
+    body: new Uint8Array(opts.pdf),
+  })
+  if (!put.ok) throw new Error(`LinkedIn document upload failed (${put.status})`)
+  return createPost(opts.token, opts.author, opts.commentary, { media: { id: initJson.value.document, title: opts.title } } as any)
+}
+
+/** Deletes one of our posts (any post type, including documents/carousels and event announcements). */
+export async function deleteLinkedInPost(token: string, postUrn: string): Promise<void> {
+  const res = await fetch(`https://api.linkedin.com/rest/posts/${encodeURIComponent(postUrn)}`, {
+    method: 'DELETE',
+    headers: { ...restHeaders(token), 'X-RestLi-Method': 'DELETE' },
+  })
+  if (!res.ok && res.status !== 404) {
+    const body = await res.json().catch(() => ({}))
+    throw new Error(body.message || `LinkedIn would not delete the post (${res.status})`)
+  }
 }

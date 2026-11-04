@@ -5,6 +5,8 @@ import { liveBlogPipelineDeps } from '@/lib/blog-publish'
 import { blogAutoTick } from '@/lib/blog-auto'
 import { liveAutoDeps } from '@/lib/blog-auto-live'
 import { warmTick } from '@/lib/linkedin-warm'
+import { syncLeadGenLeads, adsAppConfigured } from '@/lib/linkedin-ads'
+import { jobsTick } from '@/lib/linkedin-queue'
 import { blogScheduleTick, socialScheduleTick } from '@/lib/scheduled-publish'
 
 let running = false
@@ -25,6 +27,8 @@ export async function runHeartbeat(): Promise<void> {
     await run('social-scheduled', () => socialScheduleTick())
     await run('blog-scheduled', () => blogScheduleTick())
     await run('linkedin-warm', () => warmTick())
+    await run('linkedin-jobs', () => jobsTick())
+    if (adsAppConfigured()) await run('linkedin-leadgen', async () => { const r = await syncLeadGenLeads(); return [`imported ${r.imported} of ${r.scanned}`] })
     await run('blog-auto', () => blogAutoTick(liveAutoDeps()))
   } finally {
     running = false

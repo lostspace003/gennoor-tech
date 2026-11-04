@@ -1,3 +1,4 @@
+import { sendLeadConversion } from '@/lib/linkedin-ads'
 import { NextRequest, NextResponse } from 'next/server'
 import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
 import { getLeads, mutateLeads, touch } from '@/lib/crm/store'
@@ -51,10 +52,12 @@ export async function PUT(req: NextRequest) {
     const data = await req.json()
     if (!data.id) return NextResponse.json({ error: 'Lead ID required' }, { status: 400 })
 
+    let previousStatus = ''
     const updated = await mutateLeads((leads) => {
       const lead = leads.find((l) => l.id === data.id)
       if (!lead) return null
       if (!canWorkLead(lead, user)) return 'forbidden' as const
+      previousStatus = lead.status
       for (const field of EDITABLE) {
         if (field in data) (lead as any)[field] = data[field]
       }
@@ -64,6 +67,10 @@ export async function PUT(req: NextRequest) {
 
     if (updated === 'forbidden') return NextResponse.json({ error: 'Lead is owned by someone else — claim it first.' }, { status: 403 })
     if (!updated) return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
+    // Tell LinkedIn about outcomes it can learn from (deduped on its side by lead id + kind)
+    if (updated.status !== previousStatus && (updated.status === 'qualified' || updated.status === 'won')) {
+      await sendLeadConversion(updated, updated.status)
+    }
     return NextResponse.json({ success: true, lead: updated })
   } catch (error) {
     console.error('Error updating lead:', error)

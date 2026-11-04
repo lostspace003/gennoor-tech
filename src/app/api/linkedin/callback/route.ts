@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
+import { exchangeAdsCode, listAdAccounts } from '@/lib/linkedin-ads'
 import { siteUrl } from '@/lib/tech-call-mail'
 import { pageAppConfigured, oauthOrigin, exchangeCode, fetchAdminOrg, fetchMember, getLinkedInState, saveLinkedInState } from '@/lib/linkedin'
 
@@ -17,6 +18,27 @@ export async function GET(req: NextRequest) {
   const state = p.get('state')
   const code = p.get('code')
   if (!code || !state || state !== req.cookies.get('li_state')?.value) return back('error=State+mismatch,+please+try+connecting+again')
+
+  if (state.endsWith('.ads')) {
+    try {
+      const token = await exchangeAdsCode(code, oauthOrigin(req, siteUrl()))
+      const prev = await getLinkedInState()
+      let accountId = prev.adsAccountId || process.env.LINKEDIN_ADS_ACCOUNT_ID
+      if (!accountId) accountId = (await listAdAccounts(token.access_token).catch(() => []))[0]?.id
+      await saveLinkedInState({
+        ...prev,
+        adsAccessToken: token.access_token,
+        adsExpiresAt: new Date(Date.now() + token.expires_in * 1000).toISOString(),
+        adsScope: token.scope,
+        adsAccountId: accountId,
+      })
+      const res = back('connected=1&ads=1')
+      res.cookies.delete({ name: 'li_state', path: '/api/linkedin' })
+      return res
+    } catch (e: any) {
+      return back(`error=${encodeURIComponent(e?.message || 'Connection failed')}`)
+    }
+  }
 
   try {
     const forPage = state.endsWith('.org') && pageAppConfigured()

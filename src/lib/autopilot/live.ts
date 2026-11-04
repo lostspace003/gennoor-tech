@@ -110,7 +110,7 @@ async function variantOf(text: string, sleep: Deps['sleep']): Promise<string | u
   try {
     const j = await retry(() => foundry('/openai/v1/responses', {
       model: TEXT_MODEL,
-      instructions: 'Rewrite ONLY the first line (the hook) of this LinkedIn post so it opens differently but makes the same point, in the first person where natural. Keep every other line exactly as it is. Return the complete post text only.',
+      instructions: 'Rewrite ONLY the first line (the hook) of this LinkedIn post so it opens differently but makes the same point, without using first-person singular ("I", "my", "me"). Keep every other line exactly as it is. Return the complete post text only.',
       input: text,
     }), sleep, 2)
     const out: string = j.output_text || (j.output || []).flatMap((o: any) => o.content || []).map((c: any) => c.text || '').join('')
@@ -132,9 +132,10 @@ async function generate(ctx: Parameters<Deps['generate']>[0], sleep: Deps['sleep
     return { draftId: draft.id, text: toPlain(draft.text), verdict: ok ? 'pass' : 'revise', notes: ok ? [] : ['The poll needs a clear question and 2-4 distinct options with an intro.'], variant }
   }
 
-  const mode = slot.kind === 'motion' ? 'motion' : 'post'
+  // GIF/motion posts are switched off: every slot produces a normal image post.
+  const mode = 'post'
   const { result, trace } = await runTeam(topic.title, brief, sourcesText(topic), mode)
-  const draft = await createAgentDraft(topic.title, result, trace, [])
+  const draft = await createAgentDraft(topic.title, result, trace, [], topic.sources.map(x => x.url))
   for (const t of trace) if (t.usd) await recordSpend(draft.id, `Autopilot ${t.label}`, t.usd)
   if (mode === 'post' && draft.imagePrompt) {
     try { await retry(() => generateImage(draft.id), sleep, 3) } catch { /* a text-only post is better than none */ }

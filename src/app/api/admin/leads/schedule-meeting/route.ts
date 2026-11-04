@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireCrmUser, canWorkLead, CrmSessionUser } from '@/lib/crm/access'
 import { mutateLeads, getLead, getLeads, touch } from '@/lib/crm/store'
+import { sendLeadConversion } from '@/lib/linkedin-ads'
 import { graphConfigured, createTeamsMeeting, listUpcomingMeetings, getMeeting, updateMeeting, cancelMeeting } from '@/lib/crm/graph'
 import { formatIstCstFull } from '@/lib/format-time'
 
@@ -75,6 +76,7 @@ export async function POST(req: NextRequest) {
       })
     })
 
+    await sendLeadConversion(lead, 'call_booked')
     return NextResponse.json({ success: true, meeting })
   } catch (error: any) {
     console.error('Schedule meeting error:', error)
