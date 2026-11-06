@@ -23,6 +23,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     page('', 1.0, 'weekly'),
     page('/claude', 0.9),
+    page('/claude/certifications', 0.9, 'weekly'),
+    page('/claude/certifications/associate-foundations', 0.8),
+    page('/claude/certifications/developer-foundations', 0.8),
+    page('/claude/certifications/architect-foundations', 0.8),
+    page('/claude/certifications/architect-professional', 0.8),
     page('/training', 0.9),
     page('/automation', 0.9),
     page('/studio', 0.9, 'weekly'),
