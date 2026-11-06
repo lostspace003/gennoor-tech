@@ -5,6 +5,7 @@ import CourseCarousel from '@/components/home/CourseCarousel'
 import { allCards } from '@/lib/catalogue'
 import WalkthroughVideo from '@/components/WalkthroughVideo'
 import HeroCarousel, { type HeroSlide } from '@/components/home/HeroCarousel'
+import CertPromoButton from '@/components/home/CertPromoButton'
 import { listLmsCourses, toCard } from '@/lib/lms'
 import { CloudAiIllustration, ExamplesIllustration, PlatformIllustration, TrainingIllustration } from '@/components/illustrations/Illustrations'
 
@@ -55,6 +56,7 @@ export default async function HomePage() {
   return (
     <>
       <PersonJsonLd />
+      <CertPromoButton />
 
       {/* ===== Hero: the Claude Partner Network first ===== */}
       <section className="hero-backdrop bg-white px-6 pt-14 lg:pt-[90px] pb-16 lg:pb-[90px]">

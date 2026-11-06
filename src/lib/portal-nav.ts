@@ -82,7 +82,15 @@ export const portalNav: PortalNavSection[] = [
     ],
   },
   { name: 'Exam Prep', href: '/services/certifications', icon: BadgeCheck },
-  { name: 'Claude', href: '/claude', icon: Sparkles, startsGroup: true },
+  {
+    name: 'Claude',
+    icon: Sparkles,
+    startsGroup: true,
+    children: [
+      { name: 'Overview', href: '/claude' },
+      { name: 'Certification Prep', href: '/claude/certifications', badge: 'New' },
+    ],
+  },
   { name: 'Training', href: '/training', icon: GraduationCap },
   { name: 'Automation', href: '/automation', icon: Wrench },
   { name: 'Webinar & Expert Talks', href: '/webinars', icon: Video, startsGroup: true },
@@ -98,6 +106,7 @@ export const portalNav: PortalNavSection[] = [
 const BREADCRUMB_LABELS: Record<string, string> = {
   '/': 'Home',
   '/claude': 'Claude',
+  '/claude/certifications': 'Certification Prep',
   '/training': 'Training',
   '/automation': 'Automation',
   '/services/training': 'Training programs',

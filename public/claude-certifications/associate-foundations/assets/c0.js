@@ -1,0 +1,21 @@
+chapter('ch1', '1. Welcome to the Associate Foundations Certification', null,
+  '<div class="cover"><span style="opacity:.8">Interactive study guide</span><h1>Claude Certified Associate – Foundations</h1><p>Master AI fluency for knowledge workers. This guide follows <b>Maya</b>, a business operations analyst at Brightline Services, as she learns to work productively with Claude in 30 days. Includes concept cards, animations, knowledge checks, and a 60-question mock exam. Works offline in Chrome and Edge.</p></div>' +
+  '<h3>About this certification</h3>' +
+  note('Anthropic\'s <b>Claude Certified Associate – Foundations</b> validates that knowledge workers and business users can work productively with Claude. It covers the 4Ds AI Fluency Framework (Description, Delegation, Diligence, Discernment), Claude workspace features (Artifacts, Code Execution, Projects, Skills, Memory, Connectors), prompting, iterative refinement, model selection, evaluation, and responsible AI practices.') +
+  '<h3>Exam format</h3>' +
+  '<p>The exam contains <b>60 questions</b> mixing three formats:</p><ul><li><b>Single choice:</b> select the best answer from four options.</li><li><b>Select two:</b> choose exactly two correct answers from five options.</li><li><b>Sequence ordering:</b> arrange steps in the correct order.</li></ul>' +
+  '<p>All questions and options are verbatim from the real exam bank. Each question tests a practical scenario you will face when using Claude at work.</p>' +
+  '<h3>Who is Maya?</h3>' +
+  '<p><b>Maya Chen</b> is a business operations analyst at <b>Brightline Services</b>, a mid-sized professional services firm. Her team handles client onboarding, quarterly reporting, policy documentation, and process optimization. Maya has never used AI tools professionally before, but her manager asked her to explore how Claude could speed up recurring documentation tasks.</p><p>Over the next 30 days, Maya goes from her first Claude chat to becoming her team\'s AI-fluent lead. Each chapter of this guide follows her journey: the problems she faced, the concepts she learned, how she applied them at work, and what the exam tests about those topics.</p>' +
+  '<h3>How the guide maps to exam topics</h3>' +
+  tbl(['Chapter range', 'Topics covered'], [
+    ['2-5', 'AI Fluency Framework (4Ds), Artifacts, prompting fundamentals, iterative refinement'],
+    ['6-8', 'Projects (custom instructions, Skills, knowledge), Code Execution, Memory & Connectors'],
+    ['9-10', 'Model selection, context windows, task decomposition, workflows'],
+    ['11-12', 'Responsible AI (PII, bias, use case evaluation), fact-checking & hallucination handling'],
+    ['13', 'Exam-day playbook: high-yield decision rules distilled from the question bank'],
+    ['14', 'Mock exam (full 60 questions)'],
+    ['15', 'Next steps: advanced certifications, courses, custom training']]) +
+  '<h3>How to use this guide</h3><ol><li>Read each chapter and press <b>Play</b> on animations (nothing autoplays).</li><li>Answer knowledge-check questions before opening the answers.</li><li>Take the mock exam in chapter 14 in one sitting.</li><li>Use chapter 13 (exam playbook) for final review before your real exam.</li></ol>' +
+  '<h3>Storyline map: Maya\'s 30-day journey</h3><ul><li><b>Week 1 (ch. 2-5):</b> Maya learns the 4Ds, writes her first prompts, creates her first Artifact, and masters iteration.</li><li><b>Week 2 (ch. 6-8):</b> Maya sets up a Project for her team\'s quarterly reports, discovers Code Execution for exact calculations, and connects Google Drive.</li><li><b>Week 3 (ch. 9-10):</b> Maya learns which model to use when, decomposes a complex workflow, and designs human review gates.</li><li><b>Week 4 (ch. 11-12):</b> Maya audits her workflows for PII risks, builds evaluation checklists, and learns to catch hallucinations.</li><li><b>Exam prep:</b> Maya reviews the playbook (ch. 13) and takes the mock exam (ch. 14).</li></ul>' +
+  note('<b>Accuracy:</b> All exam questions are real. Concepts align with official Claude documentation (claude.ai, November 2026). The 4Ds AI Fluency Framework is widely recognized for business AI adoption. Maya\'s scenarios are illustrative composites of common workplace situations.', 'exam'), { nocheck: true });

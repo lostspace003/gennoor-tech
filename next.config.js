@@ -16,6 +16,19 @@ const nextConfig = {
       },
     ]
   },
+  async rewrites() {
+    // The certification study guides are standalone HTML apps under public/.
+    // Next.js serves public/ files only at exact paths, so clean directory-style
+    // URLs rewrite to each app's index.html (afterFiles: real files still win).
+    return {
+      afterFiles: [
+        { source: '/claude-certifications', destination: '/claude-certifications/prep-hub/index.html' },
+        { source: '/claude-certifications/:slug', destination: '/claude-certifications/:slug/index.html' },
+      ],
+      beforeFiles: [],
+      fallback: [],
+    }
+  },
   async redirects() {
     return [
       { source: '/claude-cowork', destination: '/workshops/claude-cowork', permanent: true },

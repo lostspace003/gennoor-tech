@@ -80,7 +80,27 @@ export default function ClaudePage() {
         </div>
       </section>
 
-      <section className="bg-white px-6 py-16 lg:py-[90px]">
+      {/* Certification prep: the four official Claude certifications */}
+      <section className="bg-white px-6 py-16 lg:py-[80px]">
+        <div className="max-w-[900px] mx-auto text-center">
+          <p className="kicker">New</p>
+          <h2 className="display-section mt-3">Get Claude certified.</h2>
+          <p className="lede mt-3.5 max-w-[620px] mx-auto">
+            Story-driven prep for all four official Anthropic certifications — interactive courses,
+            animations, and full-length practice exams. Free to read.
+          </p>
+          <ul className="flex flex-wrap justify-center gap-2.5 mt-7">
+            {['CCAS-F · Associate', 'CCDV-F · Developer', 'CCAR-F · Architect', 'CCAR-P · Architect Pro'].map(c => (
+              <li key={c} className="px-4 py-2 rounded-full bg-[#faf9f5] border border-[#e2e5ec] text-[13.5px] font-semibold text-[#3a3a3f]">{c}</li>
+            ))}
+          </ul>
+          <div className="mt-9">
+            <Link href="/claude/certifications" className="pill-primary">Explore certification prep</Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#f5f5f7] px-6 py-16 lg:py-[90px]">
         <div className="max-w-[1080px] mx-auto">
           <h2 className="display-section text-center mb-12">What we do with Claude.</h2>
           <div className="grid md:grid-cols-3 gap-6">
