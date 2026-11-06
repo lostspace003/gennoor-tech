@@ -1,0 +1,12 @@
+{
+  "short": "Options & execution",
+  "icon": "Wrench",
+  "teaser": "You wire up ClaudeAgentOptions, pick a prompt and model, then choose query() or ClaudeSDKClient and watch the stream come back.",
+  "scene": null,
+  "takeaways": [
+    "allowed_tools pre-approves tools; disallowed_tools hard-blocks them, and a deny rule always beats an allow.",
+    "A string system_prompt replaces the default; the claude_code preset with append keeps Claude Code guidance and adds your rules.",
+    "query() is a one-shot async iterator; ClaudeSDKClient keeps one session across turns and supports interrupt().",
+    "Every run ends with a ResultMessage; state is the session's conversation history, not Python variables."
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "short": "Evaluate & fact-check",
+  "icon": "Search",
+  "teaser": "A 300% growth stat with three sources turns out to be invented, and Maya learns to pinpoint, verify and escalate before it reaches the board.",
+  "scene": {
+    "kicker": "Maya's story · Week 4",
+    "title": "This growth stat looks too good to be true",
+    "sceneHtml": "<h3>Maya's story: Week 4 – \"This growth stat looks too good to be true\"</h3><p>Maya asked Claude to research competitor growth rates. Claude replied: <i>\"Competitor A grew 300% last year (source: TechPulse, IndustryToday, MarketWatch).\"</i> Maya was drafting this into a board slide when she thought: <i>\"300% sounds high. Let me check the sources.\"</i> She searched for the TechPulse article — it did not exist. IndustryToday mentioned Competitor A but said 30%, not 300%. MarketWatch never covered them.</p><p>Maya had caught a <b>hallucination</b>: Claude invented a plausible-sounding stat and fabricated sources to support it. She learned the <b>fact-checking discipline</b>: when a claim is striking or consequential, verify it against a primary source before relying on it.</p>"
+  },
+  "takeaways": [
+    "Define evaluation criteria and the acceptance threshold before scoring outputs; valid criteria are format adherence and factual accuracy.",
+    "Suspected hallucination: pinpoint the unsupported claim, verify it, and only if false regenerate with a stricter use-only-the-file prompt.",
+    "Secondary repetition is not verification; when sources conflict, locate the primary or authoritative source and use what it confirms.",
+    "Escalate high-impact outputs: external, unchanged, binding commitments to customers, board or regulators; internal drafts need none."
+  ]
+}

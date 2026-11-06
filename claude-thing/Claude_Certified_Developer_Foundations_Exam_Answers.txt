@@ -1,0 +1,427 @@
+
+
+Claude Certified Developer — Foundations
+Question 1
+You are writing a system prompt for a Claude application that must return JSON matching a specific shape. The downstream system will reject any output that does not match the schema. What would your prompt need to do?
+A. Omit any reference to the format and rely on a post-processing step in the application to reshape Claude's output.
+B. Instruct Claude to return JSON sometimes and free text other times so the application's output captures both formats.
+C. Include explicit constraints describing the required JSON schema and an instruction to produce only output matching that schema.
+D. Instruct Claude to use whichever output format it considers most appropriate for each request the application handles.
+Answer: C. Include explicit constraints describing the required JSON schema and an instruction to produce only output matching that schema.
+Explanation: When a downstream system strictly requires a specific JSON shape, the system prompt must explicitly define the required JSON schema and instruct Claude to return only valid JSON matching that schema without extra conversational text.
+Question 2
+You are setting up a Claude application that calls external services requiring API keys. What is the best way to store the keys?
+A. Store the keys in a secrets manager or environment-specific configuration that is not checked into source code, and load them at runtime.
+B. Put the keys in the application's configuration file and check the configuration file into the team's repository alongside the rest of the source code.
+C. Use a single shared key across all external services, so any developer working on the application can find the keys easily during development.
+D. Email the keys to each developer as needed and have each developer paste the keys into their local environment when they begin working on the application's code.
+Answer: A. Store the keys in a secrets manager or environment-specific configuration that is not checked into source code, and load them at runtime.
+Explanation: API keys and secrets must never be committed to source control or distributed via email. Storing them in a dedicated secrets manager or untracked environment configuration and loading them at runtime prevents credential leakage.
+Question 3
+Your Claude application processes 50-page legal contracts and produces a summary with citations back to the source. The team is debating whether to send each contract whole or split into smaller pieces. The contracts fit within Claude's context window. Initial testing shows that whole-document processing produces summaries with stronger cross-section reasoning but occasionally drifts on citation accuracy in later sections. Chunked processing produces stronger citation accuracy per chunk but loses cross-section reasoning. The team has not decided which property matters more. How would you guide the team's decision?
+A. Assess the cost and latency implications of both approaches against the application's performance requirements before recommending which processing strategy to adopt.
+B. Identify which property matters more for the application's actual use case and let that decision drive the chunking approach, then validate the choice against representative contracts.
+C. Examine the use cases where cross-section reasoning failures occur and assess whether whole-document processing meets the application's accuracy requirements across a representative sample of contracts.
+D. Review the citation accuracy results from chunked processing and determine whether the loss of cross-section reasoning produces summaries that still meet the application's quality bar.
+Answer: B. Identify which property matters more for the application's actual use case and let that decision drive the chunking approach, then validate the choice against representative contracts.
+Explanation: Choosing between whole-document context (stronger cross-section synthesis) and chunking (higher per-chunk citation precision) depends on the domain priority of the product. The team must first determine which property matters more for the actual use case and then validate that choice on representative contracts.
+Question 4
+Your Claude application returns confident, well-structured outputs, and occasionally includes subtle factual errors that downstream systems treat as ground truth. The team is concerned about the application's confidence-versus-accuracy gap. How would you address the gap?
+A. Lower the model's temperature so the model's responses sound less confident and downstream systems are less likely to treat the responses as ground truth in normal operation.
+B. Add a disclaimer to every output telling users to verify the accuracy of the output and treat the disclaimer as the primary mechanism for managing the confidence-versus-accuracy gap.
+C. Apply skepticism toward confident output by adding validation steps, sourcing requirements, or confidence calibration before treating outputs as ground truth.
+D. Reject every response the application produces until a manual accuracy review is conducted on each response by a human reviewer before any downstream system uses it.
+Answer: C. Apply skepticism toward confident output by adding validation steps, sourcing requirements, or confidence calibration before treating outputs as ground truth.
+Explanation: LLMs generate fluent, authoritative prose even when hallucinating. Managing the confidence-versus-accuracy gap in automated pipelines requires programmatic validation steps, source-grounding checks, or confidence calibration before downstream systems consume the output as ground truth.
+Question 5
+You are choosing a Claude model for a high-volume ticket classification step. The classification categories are well-defined, latency requirements are tight, and per-request cost matters at scale. Which model would you choose?
+A. A mid-tier Claude model selected by default, because mid-tier models balance quality and cost in a way the team can apply across most tasks.
+B. A smaller, faster Claude model, because the task is straightforward and the workload prioritizes latency and per-request cost at scale.
+C. Multiple Claude models in series, where each request runs through more than one model and the application combines the outputs into a final classification.
+D. The largest, highest-capability Claude model, to maximize quality on every classification the application produces during normal operation across all requests.
+Answer: B. A smaller, faster Claude model, because the task is straightforward and the workload prioritizes latency and per-request cost at scale.
+Explanation: Straightforward, high-volume classification with well-defined categories and strict latency/cost budgets is best served by a smaller, faster Claude model tier (such as Claude Haiku).
+Question 6
+You are building an MCP server that exposes internal data sources and tools so that Claude Code and multiple Claude applications can integrate with it. How would you approach the build and deployment?
+A. Author the server with clearly defined resources, tools, and prompts, choose a communication transport, and deploy to an accessible hosting environment.
+B. Build the MCP server with resource and tool definitions scoped to the first Claude application that needs it, and extend the definitions to additional applications as each integration is requested.
+C. Bypass the MCP server and embed each data source directly in every Claude application that needs the data, with each application maintaining its own integration.
+D. Deploy the MCP server only on individual developer machines, with the Claude applications unable to reach the server outside each developer's machine.
+Answer: A. Author the server with clearly defined resources, tools, and prompts, choose a communication transport, and deploy to an accessible hosting environment.
+Explanation: A shared MCP server should define clean resources, tools, and prompts, use an appropriate transport protocol, and be deployed to a hosting environment accessible to all consuming Claude applications and developer sessions.
+Question 7
+You are designing a Claude application that assists clinicians with complex diagnostic reasoning across rare medical cases. The application must work through differential diagnoses by considering symptom patterns, weighing evidence across competing hypotheses, and showing intermediate reasoning steps before producing a final recommendation. The team is choosing among Claude's available model options. Which model option is best suited to this use case?
+A. Extended thinking, which lets the model reason through the differential diagnosis steps before producing the final recommendation.
+B. Zero-shot prompting alone with no model option adjustments, which keeps the application's configuration as simple as possible.
+C. A smaller model with a tighter context window, which encourages the model to focus its limited capacity on the task.
+D. Fast mode, which prioritizes lowest possible latency at the expense of reasoning depth on complex tasks.
+Answer: A. Extended thinking, which lets the model reason through the differential diagnosis steps before producing the final recommendation.
+Explanation: Extended thinking gives Claude dedicated internal reasoning budget to evaluate competing hypotheses, weigh clinical evidence, and surface intermediate reasoning steps before emitting its final diagnostic recommendation.
+Question 8
+You are extending a Claude agent with a capability that needs to be shared across several teams in the organization, with each team able to invoke and use it independently. How would you build the capability?
+A. As a shared library that each team imports into their own Claude application code, with each team responsible for keeping the library up to date in their integration.
+B. As a wrapper around an existing built-in tool that adds the missing functionality, on the grounds that built-in tools cover the reuse pattern when extended carefully.
+C. As a custom tool embedded in this team's agent only, with other teams able to copy the implementation into their own agents when they need the capability.
+D. As a Skill or MCP server because both are purpose-built for cross-team reuse independently by each consuming team.
+Answer: D. As a Skill or MCP server because both are purpose-built for cross-team reuse independently by each consuming team.
+Explanation: Skills and MCP servers are the standardized, modular extension mechanisms in the Claude ecosystem designed specifically for packaging reusable capabilities across multiple teams and agents.
+Question 9
+Your Claude application's error handling currently treats all errors the same way. The team wants to differentiate between errors that should page an on-call engineer and errors that should be logged for later review. How would you structure the error handling?
+A. Log every error with the same severity, on the grounds that differentiating severity adds complexity that does not pay off in most application setups over time.
+B. Page on every error, on the grounds that paging guarantees that no error is missed by the team during normal operation across the application's lifecycle.
+C. Disable logging for any error that does not page, treating non-paging errors as not worth recording for later review either.
+D. Categorize errors by severity based on impact and recoverability, then route each category to the appropriate channel for paging or logging.
+Answer: D. Categorize errors by severity based on impact and recoverability, then route each category to the appropriate channel for paging or logging.
+Explanation: Resilient error handling classifies errors by business impact and recoverability (for example, transient retryable rate limits vs. systemic authentication/service failures) and routes critical unrecoverable errors to paging while logging lower-severity events for analysis.
+Question 10
+You have just shipped a new Claude-powered application to production. Initial validation checks have passed, and the system is now in active use by internal teams. What is the next phase of work for this system?
+A. Retiring the system, since shipping is the final lifecycle stage for any application that reaches production.
+B. Running a formal post-deployment review that assesses the development phase before the team does any further work on the system.
+C. Handing the system over to a separate operations team that will manage it independently of the development team going forward.
+D. Operating and maintaining the system, including monitoring, responding to issues, and planning evolution.
+Answer: D. Operating and maintaining the system, including monitoring, responding to issues, and planning evolution.
+Explanation: Reaching production marks the start of ongoing operations and maintenance—continuously monitoring quality, latency, and cost, responding to incidents, and evolving prompts, evaluations, and models over time.
+Question 11
+You are deciding between deploying a Claude agent on Anthropic-hosted infrastructure or self-hosting under a 'bring your own cloud' model in your own AWS account. The agent processes customer data subject to your enterprise's data residency policies, and the team wants to ship quickly and avoid managing infrastructure. Which deployment model would you recommend?
+A. Deploying on Anthropic-hosted infrastructure while the team drafts a request to update the enterprise data residency policy to accommodate hosted AI deployments.
+B. Deploying on Anthropic-hosted infrastructure to meet the team's shipping timeline, and flagging the data residency requirement for a follow-up compliance review after launch.
+C. Self-hosting under BYOC for an initial pilot, then evaluating whether to migrate to Anthropic-hosted infrastructure once the agent's data handling patterns are better understood.
+D. Self-hosting under BYOC to satisfy the data residency requirement, while working with the infrastructure team to reduce the operational overhead of managing the deployment.
+Answer: D. Self-hosting under BYOC to satisfy the data residency requirement, while working with the infrastructure team to reduce the operational overhead of managing the deployment.
+Explanation: Enterprise data residency policies are hard compliance constraints that cannot be bypassed or deferred post-launch. Self-hosting under BYOC in the enterprise's AWS account satisfies data residency while partnering with the internal infrastructure team minimizes operational burden.
+Question 12
+You are designing a Claude application that processes user-submitted text which may contain sensitive information such as account numbers or passwords that the application should not send to Claude. How would you design the application?
+A. Apply filtering at the boundary for the most commonly observed sensitive data patterns and expand coverage to additional patterns based on findings from production monitoring.
+B. Add a prompt instruction in the system prompt specifying the categories of sensitive information Claude should disregard when processing user-submitted text.
+C. Log all user-submitted text before it is sent to Claude and review the logs periodically to identify whether sensitive information is reaching the model.
+D. Define the application boundary explicitly, identify what content can leave the boundary for Claude, and add filtering or redaction at the boundary.
+Answer: D. Define the application boundary explicitly, identify what content can leave the boundary for Claude, and add filtering or redaction at the boundary.
+Explanation: Sensitive credentials and account numbers must never cross the trust boundary to the external model API. Explicitly defining the application boundary and deterministically filtering or redacting sensitive fields before sending the request ensures compliance.
+Question 13
+You are establishing the guardrail strategy for a customer-facing Claude application so that a single guardrail failure does not expose the application to unsafe behavior. What would the guardrail strategy do?
+A. Apply guardrails at the model level only and rely on the model's built-in safety behaviors to handle any cases the guardrail does not explicitly cover.
+B. Layer multiple guardrails so a single guardrail failure does not expose the application to unsafe behavior.
+C. Implement a single comprehensive system prompt guardrail and validate its coverage against the application's full range of expected inputs.
+D. Apply guardrails at the application output level only and route flagged responses to a human reviewer before they are delivered to the user.
+Answer: B. Layer multiple guardrails so a single guardrail failure does not expose the application to unsafe behavior.
+Explanation: Defense-in-depth layers multiple independent guardrails (input screening, system prompt constraints, tool permission boundaries, and output validation/classification) so that no single guardrail failure compromises application safety.
+Question 14
+Your Claude agent has too many tools, and many of them have overlapping functionality. The agent often picks an inappropriate tool when several could plausibly handle a request. How would you address the tool selection problem?
+A. Add more tools to cover every variation of the requests the agent handles, on the grounds that more tools give the agent more accurate options to choose from.
+B. Restructure the tool set by consolidating overlapping tools, removing unused tools, and clarifying tool descriptions so each tool has a distinct purpose.
+C. Add detailed examples to each tool's description so the agent can match incoming requests to the right tool by example, treating the examples as the team's selection mechanism.
+D. Remove all tools and rely on the agent's general capability instead, with the application losing the workflows that previously relied on tools.
+Answer: B. Restructure the tool set by consolidating overlapping tools, removing unused tools, and clarifying tool descriptions so each tool has a distinct purpose.
+Explanation: When overlapping and excessive tools degrade tool-selection accuracy, consolidating redundant tools, pruning unused ones, and rewriting tool descriptions so each tool has a clear, mutually exclusive responsibility directly resolves the ambiguity.
+Question 15
+Your Claude application runs long agentic workflows where the agent makes many tool calls, and the conversation history grows quickly. After about 20 tool calls, you notice the agent's responses become less focused and sometimes ignore earlier task constraints. How would you address this?
+A. Apply context engineering techniques such as tool output pruning or compaction to keep the active task state visible while reducing the volume of older content.
+B. Restart the agent every five tool calls to prevent any drift, with the agent losing all task state at each restart point during the workflow.
+C. Increase the model's context window so the agent can hold every tool output at full detail across the entire workflow no matter how many tool calls it accumulates.
+D. Remove tool calling from the workflow entirely so the agent operates as a single text-generation step with no tool outputs accumulating in the context window.
+Answer: A. Apply context engineering techniques such as tool output pruning or compaction to keep the active task state visible while reducing the volume of older content.
+Explanation: Accumulating 20+ raw tool outputs dilutes model attention ('context rot'), causing earlier constraints to get lost even when the total tokens fit in the window. Pruning stale tool outputs and compacting history keeps active task constraints prominent.
+Question 16
+The product team has described a new Claude feature as a high-level business goal: 'help our analysts produce client memos faster.' You need to convert this into actionable technical requirements for the engineering team. What would your first step be?
+A. Examine what model capabilities and tier options are available and determine which best supports the memo drafting workflow described by the product team.
+B. Interpret the functional and infrastructure requirements implied by the business goal.
+C. Assess what similar agent-based features have been built internally or in the industry and use those precedents to scope the technical approach.
+D. Ask the analysts about the current memo production process to see where they think Claude could be introduced as a prompt-driven drafting step.
+Answer: B. Interpret the functional and infrastructure requirements implied by the business goal.
+Explanation: Translating a high-level business goal into an engineering specification starts with interpreting the functional requirements (inputs, outputs, quality criteria) and non-functional/infrastructure requirements (latency, security, data integrations) implied by that goal.
+Question 17
+You maintain a Claude application that uses Claude Sonnet 4.5 across several production workflows. Anthropic released Claude Sonnet 4.7, which your evaluation suite shows performing 8% better on your highest-volume task. However, this version produces different output formatting on two of your structured-extraction prompts that downstream consumers parse with regex-based code. How would you roll out the upgrade?
+A. Rewrite the downstream parsing code to accept a wider range of output formats to ensure the application is resilient to future model upgrades without requiring prompt changes.
+B. Adjust the prompts to constrain output format, re-run evals against the expected parsing layer schema, then roll out the model with a feature flag and the option to revert per workflow.
+C. Switch the model identifier in the application's configuration to the new model, then monitor production for parsing failures to be fixed as failures surface.
+D. Keep the older model in production to preserve the fragile parsing layer that may risk breaking with any model change.
+Answer: B. Adjust the prompts to constrain output format, re-run evals against the expected parsing layer schema, then roll out the model with a feature flag and the option to revert per workflow.
+Explanation: Disciplined model migration updates the affected prompts to enforce the required output format, verifies compliance against the parser schema in automated evaluations, and rolls out the new model behind a per-workflow feature flag for safe instant rollback.
+Question 18
+You are designing a Claude application that will return structured JSON output for downstream processing. The output schema is well-defined, and downstream systems will reject malformed JSON. What would your application design do?
+A. Avoid structured output and use free-form text everywhere instead, on the grounds that free-form text is more flexible and handles edge cases better than structured schemas.
+B. Define a clear schema and structure the prompt to request output in that schema, with downstream systems handling any validation needed.
+C. Structure the prompt to request output in a schema that is described in plain English, with downstream systems parsing whatever shape Claude produces.
+D. Define a clear schema, structure the prompt to request output in that schema, and validate Claude's output against the schema before passing it downstream.
+Answer: D. Define a clear schema, structure the prompt to request output in that schema, and validate Claude's output against the schema before passing it downstream.
+Explanation: Production-grade structured output requires defining an explicit schema, instructing/constraining Claude to emit that schema, and validating the returned JSON against the schema at the application boundary before passing it downstream.
+Question 19
+Your team uses several plugins across multiple repositories, and a recent plugin update introduced a regression. The team had not been tracking plugin versions, so the team cannot easily identify which version was previously working. How would you address this?
+A. Stop using all plugins until the team can rebuild equivalent functionality directly into the application code, treating plugin avoidance as a way to remove version-related risk.
+B. Upgrade every plugin to the latest version on a regular cadence to keep version drift small, on the grounds that drift contributes to regression risk.
+C. Add explicit plugin version tracking to the project's configuration so the team can identify, pin, and upgrade plugin versions deliberately.
+D. Treat plugins as untrackable third-party code and rely on plugin authors to communicate breaking changes when they happen, with no internal version tracking.
+Answer: C. Add explicit plugin version tracking to the project's configuration so the team can identify, pin, and upgrade plugin versions deliberately.
+Explanation: Pinning and tracking plugin versions in version-controlled project configuration ensures deterministic builds, auditability, and immediate rollback when a plugin update introduces a regression.
+Question 20
+Your team is integrating Claude into an existing async Python REST service that handles many concurrent requests, and you are deciding how to structure the Claude API calls within the existing async codebase. How would you structure the Claude calls?
+A. Make synchronous Claude API calls and block the async event loop until each call completes before processing the next request.
+B. Replace the existing async REST service with a synchronous service to match the call style of synchronous Claude SDK clients.
+C. Use the Claude SDK's async client and structure Claude calls as awaitable operations alongside the rest of the service's async code.
+D. Run Claude API calls in a separate thread pool isolated from the rest of the service so the main event loop is not affected.
+Answer: C. Use the Claude SDK's async client and structure Claude calls as awaitable operations alongside the rest of the service's async code.
+Explanation: The official Anthropic Python SDK provides `AsyncAnthropic`, allowing API calls to be awaited natively on the async event loop without blocking concurrent HTTP requests.
+Question 21
+You are setting up a CI/CD pipeline for a new Claude application and want automated quality checks to run on every pull request before code can be merged. Which CI/CD checks would you include?
+A. A full end-to-end production deployment on every pull request to catch all possible issues before any code is merged into the main branch.
+B. Automated tests of the Claude integration, linting, and any other standard quality gates the team applies to its other services.
+C. Automated tests of the Claude integration only, with linting handled separately during local development on each developer's machine.
+D. Automated linting and security scanning, with Claude integration testing handled manually during pre-release verification by a designated reviewer.
+Answer: B. Automated tests of the Claude integration, linting, and any other standard quality gates the team applies to its other services.
+Explanation: A complete CI/CD pipeline for an AI service runs both automated Claude integration/evaluation tests and standard software quality gates (linting, unit tests, type checks, security scans) on every pull request.
+Question 22
+Your Claude application has been running for several turns in a long conversation, and the model now occasionally references information that was discussed many turns ago but is no longer relevant. You suspect context drift is causing the model to weight stale content too heavily. How would you address the drift?
+A. Increase the context window size so all turns of the conversation remain visible to the model in full detail.
+B. Apply compaction to summarize older portions of the conversation so the gist remains while the specifics carry less weight.
+C. Truncate the conversation so the model sees only the most recent turn during each subsequent response.
+D. Reset the conversation after every turn so the model loses all prior turns when generating a response.
+Answer: B. Apply compaction to summarize older portions of the conversation so the gist remains while the specifics carry less weight.
+Explanation: Context compaction summarizes older conversation turns so essential high-level context is preserved while outdated specifics no longer distract the model's attention on recent turns.
+Question 23
+Your team is debating how to manage the prompts used in your Claude application. Some prompts are checked into the code repository, some live in a separate configuration file, and some are constructed inline at runtime. The result is inconsistent, and a recent prompt change went out without code review. What steps would you take?
+A. Establish a single source of truth for prompts but keep change review optional, allowing developers to update prompts directly when changes are urgent.
+B. Move all prompts to inline runtime construction so the team can update them quickly through a streamlined process outside the standard code review workflow.
+C. Establish a single source of truth for prompts, version-control them alongside code, and require code review for prompt changes.
+D. Move all prompts out of version control to a separate spreadsheet that team members can edit freely as the application evolves over time.
+Answer: C. Establish a single source of truth for prompts, version-control them alongside code, and require code review for prompt changes.
+Explanation: Prompts are core application logic and should be centralized in a single source of truth, committed to version control alongside code, and subjected to mandatory code review and evaluation before deployment.
+Question 24
+Your team uses Claude Code across multiple repositories. You want company-wide engineering standards to apply to all repositories, and other rules to apply only to specific repositories. The team is currently duplicating instructions across every repository's CLAUDE.md file. How would you address this?
+A. Use a single repository's CLAUDE.md as the central source of truth and link to it from every other repository's CLAUDE.md file.
+B. Move all instructions to a separate documentation site that developers consult during Claude Code sessions across all repositories.
+C. Use a CLAUDE.md hierarchy that scopes general standards broadly and project-specific context within each repository's local CLAUDE.md.
+D. Stop using CLAUDE.md altogether and ask each developer to configure Claude Code manually for each project they work on.
+Answer: C. Use a CLAUDE.md hierarchy that scopes general standards broadly and project-specific context within each repository's local CLAUDE.md.
+Explanation: Claude Code supports a hierarchical `CLAUDE.md` configuration (global/enterprise/parent-directory `CLAUDE.md` files for shared organization-wide rules and repo-local `CLAUDE.md` files for repository-specific context), eliminating duplication.
+Question 25
+A Claude application that worked well in testing is now occasionally returning responses in production that include information not present in the input. The development team initially assumed the model was hallucinating so they asked you to troubleshoot. What would you do first?
+A. Replace the current model with a larger one to reduce the chance of hallucination, on the grounds that larger models tend to hallucinate less in typical applications.
+B. Examine production traces to identify whether the issue is hallucination by the model, context loss, prompt injection, or another failure mode before recommending a fix.
+C. Apply a retrieval-augmented generation pattern to ground the responses in source content before any further investigation of the production traces.
+D. Add a system prompt instruction telling the model not to invent information, on the grounds that prompt-level instructions are the fastest fix for hallucination concerns.
+Answer: B. Examine production traces to identify whether the issue is hallucination by the model, context loss, prompt injection, or another failure mode before recommending a fix.
+Explanation: Effective troubleshooting starts with inspecting production traces to diagnose the actual failure mode (whether true model hallucination, noisy/corrupted retrieval context, context truncation, or prompt injection) before applying a fix.
+Question 26
+The product team has asked you to choose a Claude model for a new feature. The team has described functional requirements but has not specified performance, cost, or quality targets. The team's product manager says, 'Use whatever model gives us the best results.' How would you respond?
+A. Choose the largest, highest-capability Claude model, on the grounds that 'best results' is most likely to mean highest quality.
+B. Run every Claude model on a representative sample and pick whichever scores best on a generic benchmark.
+C. Ask the product team to specify quality, latency, and cost targets, then select the model whose tradeoffs best fit those targets.
+D. Choose a mid-tier model and ship the feature, because mid-tier models work for most use cases without specified targets.
+Answer: C. Ask the product team to specify quality, latency, and cost targets, then select the model whose tradeoffs best fit those targets.
+Explanation: Model selection is always a trade-off across quality, latency, and cost. Clarifying those non-functional targets with the product team first ensures the chosen model tier aligns with business and operational constraints.
+Question 27
+Your Claude application runs a complex research workflow where certain steps require detailed reasoning over all previous findings, while others only need the current question. The current implementation passes the full conversation history to every step. How would you adjust the implementation?
+A. Summarize the conversation history into a compact representation and pass the summary to each research step regardless of its context requirements.
+B. Continue passing the full conversation history to steps that require prior findings, and reduce the history passed to steps that only need the current question.
+C. Use subagents or multi-step workflows so each research step receives only the context it needs for its reasoning.
+D. Pass recent conversation history to every step and prune older turns beyond a fixed lookback window to limit token consumption across the workflow.
+Answer: C. Use subagents or multi-step workflows so each research step receives only the context it needs for its reasoning.
+Explanation: Structuring the workflow with subagents or modular multi-step calls allows each step to receive a clean, scoped context containing only the information needed for that step's reasoning.
+Question 28
+Your Claude application is hitting context window limits when processing long customer service transcripts. A junior developer suggests increasing the temperature parameter to fix the issue. How would you respond?
+A. Adjust the temperature parameter together with the max_tokens parameter, treating the combined adjustment as the team's mechanism for managing context window pressure during long-transcript processing.
+B. Increase the temperature parameter as the junior developer suggested and observe whether the context window issue resolves over the next several runs of the application in production.
+C. Remove the system prompt entirely to make room for longer transcripts in each request, freeing up context window space the system prompt would otherwise consume.
+D. Explain that temperature controls sampling randomness and is unrelated to context capacity, then address the context issue through summarization or chunking.
+Answer: D. Explain that temperature controls sampling randomness and is unrelated to context capacity, then address the context issue through summarization or chunking.
+Explanation: The `temperature` parameter controls output token sampling randomness, not context window length. Context window overflow must be solved through context management techniques such as chunking or summarization.
+Question 29
+Your Claude application is deployed to development, staging, and production environments. Each environment uses a different model version, different prompt versions, and different plugin dependencies, but the configuration is currently scattered across environment variables, hardcoded values, and undocumented setup scripts. How would you manage the configuration?
+A. Move all configuration into hardcoded application code to reduce reliance on external configuration sources that are difficult to track over time.
+B. Consolidate the configuration into a version-controlled system documenting model version pinning, prompt versioning, and plugin dependencies for each environment.
+C. Use the latest available model version everywhere and stop pinning model versions, on the grounds that pinning adds maintenance overhead the team should aim to reduce.
+D. Standardize all environments to use the same configuration values to eliminate the differences between development, staging, and production.
+Answer: B. Consolidate the configuration into a version-controlled system documenting model version pinning, prompt versioning, and plugin dependencies for each environment.
+Explanation: Consolidating per-environment model version pins, prompt versions, and plugin dependencies into a structured, version-controlled configuration system ensures reproducibility and prevents configuration drift across dev, staging, and prod.
+Question 30
+Your application uses the Messages API to handle multi-turn conversations. Each turn sends the entire conversation history, and your token costs are growing as conversations get longer. You suspect there is a more efficient approach. How would you address this?
+A. Switch to the batch API for every turn so the per-call cost is reduced, treating the batch as the team's primary cost-control mechanism for multi-turn work.
+B. Truncate every conversation to the last two messages so that token usage stays low and costs remain predictable across the application's normal operation.
+C. Summarize each conversation after every turn and replace the full history with the summary on the next request, reducing token count at the cost of fidelity.
+D. Use prompt caching to reuse the static portions of the conversation context across turns instead of paying for them on every request the application sends.
+Answer: D. Use prompt caching to reuse the static portions of the conversation context across turns instead of paying for them on every request the application sends.
+Explanation: In multi-turn Messages API conversations, the system prompt and prior turns form a growing static prefix. Enabling prompt caching reuses those cached prefix tokens across subsequent turns, dramatically reducing input token costs and latency without losing conversation fidelity.
+Question 31
+Your Claude application's token costs have grown significantly over the last quarter, and leadership has asked you to reduce spend. You do not yet know which features are driving cost. The team is debating how to respond. How would you respond?
+A. Reduce token usage uniformly across all features by half, applying the cut evenly across the application during normal operation.
+B. Switch every feature to the smallest model to cut cost broadly across the application during normal operation.
+C. Tell the team that cost growth is unavoidable as the application scales and that no investigation will change the trajectory of the application's cost over the next several quarters.
+D. Add token usage tracking by feature to the application's logging so the team can identify which features drive cost before recommending changes.
+Answer: D. Add token usage tracking by feature to the application's logging so the team can identify which features drive cost before recommending changes.
+Explanation: Before making blind model downgrades or arbitrary token cuts that hurt quality, instrumenting token usage telemetry by feature reveals the actual cost drivers so optimizations can target the highest-spend workflows.
+Question 32
+A teammate has asked how to extend Claude Code with a reusable Skill for the team's database migration workflow. The Skill consists of a set of instructions and a few support scripts the team wants Claude to be able to call when the Skill is invoked. Where is the right place to define the Skill?
+A. Define the Skill in a Skills directory recognized by Claude Code, where Claude can discover and load it during sessions for the team's repositories.
+B. Define the Skill inside the application's source code as a regular library module and call it from the application code instead of from Claude Code.
+C. Define the Skill as a long inline instruction at the top of every CLAUDE.md file in the team's repositories so Claude has access to it on every session.
+D. Define the Skill in a personal scratch directory on each developer's machine and load it manually before each Claude Code session that needs it.
+Answer: A. Define the Skill in a Skills directory recognized by Claude Code, where Claude can discover and load it during sessions for the team's repositories.
+Explanation: Placing the `SKILL.md` and companion scripts inside a recognized Skills directory (such as `.claude/skills/`) allows Claude Code to automatically discover and load the Skill on demand when needed without bloating `CLAUDE.md` on unrelated sessions.
+Question 33
+You are building an agent that needs to call several tools and maintain conversation history in a standard, predictable way. Your team has decided to use the Claude Agent SDK rather than build a custom loop. You are setting up the agent's tool definitions and execution loop. How would you set up the tools and execution loop?
+A. Call the Messages API directly and let the model format its tool calls in plain text.
+B. Use the SDK's tool interface and loop, with conversation history stored in a separate team database.
+C. Use the SDK's tool interface and write the loop and history layer in the team's own code.
+D. Use the SDK's tool interface and let the SDK handle the loop, dispatch, and history.
+Answer: D. Use the SDK's tool interface and let the SDK handle the loop, dispatch, and history.
+Explanation: The Claude Agent SDK provides built-in abstractions for defining tools and automatically managing the execution loop, tool dispatch, and conversation history.
+Question 34
+Your agent is processing tasks that take 20 or more steps to complete. Occasionally a worker process crashes mid-task across steps, and the team wants the agent to be able to resume from the most recent checkpoint if a process is interrupted. How would you implement this resumability?
+A. Increase the agent's timeout to several hours so that interruptions become rare enough to ignore in practice.
+B. Apply a checkpointing pattern that persists the agent's intermediate state and reloads that state when resuming an interrupted task.
+C. Run two copies of the agent in parallel for every task and use whichever one finishes first as the source of truth.
+D. Restart the task from the beginning whenever a process is interrupted.
+Answer: B. Apply a checkpointing pattern that persists the agent's intermediate state and reloads that state when resuming an interrupted task.
+Explanation: Persisting intermediate agent state at step boundaries (checkpointing) enables fault-tolerant recovery, allowing an interrupted worker to reload the latest checkpoint and continue from the last completed step.
+Question 35
+Your agent makes 10 to 15 tool calls per task, and several tools return large JSON payloads that are no longer needed by the time it reaches later steps. The agent's context window is large enough to hold all the messages, but the relevant information appears to get buried as the conversation grows. How would you address this?
+A. Switch to a different agentic framework that advertises automatic context-window management as a built-in feature.
+B. Reduce the number of tool calls per task by combining several existing tools into larger, multi-purpose tools.
+C. Increase the context window further so all tool outputs from every prior step remain in full detail throughout the task.
+D. Apply a context-management pattern that summarizes or prunes older tool outputs while preserving the active task state.
+Answer: D. Apply a context-management pattern that summarizes or prunes older tool outputs while preserving the active task state.
+Explanation: Summarizing or pruning verbose, stale JSON tool outputs from earlier steps prevents context pollution and keeps the active task state salient for later reasoning steps.
+Question 36
+You are implementing a custom tool for your Claude agent that queries an internal pricing service that returns product data. Which of the following best practices would you apply as you develop this tool?
+A. Implement the tool with no error handling and let the agent loop catch failures whenever the pricing service returns an error during operation.
+B. Define the tool with a loose schema and let the model interpret the inputs flexibly on each call the agent makes.
+C. Omit the tool description and let the model infer when to use the tool based on the tool's name and the rest of the prompt context.
+D. Define the tool with a clear schema, write a precise description for when to call it, and handle pricing service errors explicitly.
+Answer: D. Define the tool with a clear schema, write a precise description for when to call it, and handle pricing service errors explicitly.
+Explanation: Well-constructed agent tools require a strict input schema, a clear description of purpose and invocation conditions, and explicit error handling that returns structured, actionable error messages when the backend service fails.
+Question 37
+You are building a Claude application that processes thousands of customer emails overnight to extract structured data. The work is non-interactive, runs once daily, and has a flexible completion window of several hours. Which Claude API would you use?
+A. The streaming responses API to process each email and return partial results to a database as the model generates them.
+B. The realtime Messages API processing the emails one at a time sequentially to ensure consistent ordering of results.
+C. The batch API, which is designed for non-interactive workloads with flexible completion windows.
+D. The realtime Messages API with concurrent requests to process the emails as fast as possible during the overnight window.
+Answer: C. The batch API, which is designed for non-interactive workloads with flexible completion windows.
+Explanation: The Message Batches API (`batch API`) is purpose-built for large-scale, asynchronous, non-interactive workloads with flexible completion windows, offering 50% lower token costs and dedicated batch throughput.
+Question 38
+A Claude application is producing outputs that drift from the expected JSON structure across multi-turn conversation turns. The first few turns produce correctly formatted output, but later turns gradually lose structure. How would you address the drift?
+A. Restart the application after every turn and monitor whether the format remains consistent across subsequent interactions.
+B. Identify the failure mode as format drift, examine how the conversation context evolves over turns, and address the drift through context management or output validation.
+C. Switch to a smaller Claude model and re-test the application to determine whether the drift persists across conversation turns.
+D. Truncate every response to the first few characters, validate that the truncated output matches the expected JSON structure, and log any mismatches for review.
+Answer: B. Identify the failure mode as format drift, examine how the conversation context evolves over turns, and address the drift through context management or output validation.
+Explanation: Recognizing gradual loss of JSON compliance over multi-turn interactions as format drift allows the team to inspect how context accumulates across turns and fix it via context management and schema validation.
+Question 39
+Your Claude application requests structured JSON output from the model. Most responses are well-formed, but occasionally Claude returns malformed JSON that breaks downstream processing. How would you handle the malformed output?
+A. Add output validation that parses Claude's response against the expected schema and treats malformed output as a recognized error path with retry or fallback handling.
+B. Manually inspect every response before downstream processing so a human reviewer catches any malformed JSON before the application passes the response to downstream systems.
+C. Retry the same request repeatedly until valid JSON appears in the model's response, with the retry loop adding delay to the application's response time on affected requests.
+D. Switch to free-form text output so the application no longer depends on JSON parsing for any of the responses it sends to downstream systems during normal operation.
+Answer: A. Add output validation that parses Claude's response against the expected schema and treats malformed output as a recognized error path with retry or fallback handling.
+Explanation: Validating model responses against the expected JSON schema and handling malformed output as a defined error path with bounded retry or graceful fallback prevents downstream parser crashes.
+Question 40
+A teammate has asked how the Claude SDK handles transient network errors and HTTP 429 rate-limit responses. They want to know whether the application code needs to handle every transient error or whether the SDK provides any default behavior. How would you describe the SDK's default behavior?
+A. The SDK provides default retry behavior for many transient errors, and the application code can configure or extend that behavior as needed.
+B. The SDK logs transient errors to a default error stream and continues execution without retrying, leaving the application code responsible for detecting and responding to failed calls.
+C. The SDK provides default retry behavior for network errors but surfaces rate-limit responses directly to the application code, which must implement its own retry logic for those cases.
+D. The SDK provides default retry behavior for transient errors up to a fixed number of attempts and this behavior is not configurable.
+Answer: A. The SDK provides default retry behavior for many transient errors, and the application code can configure or extend that behavior as needed.
+Explanation: The official Claude SDKs automatically retry transient network errors, HTTP 429 rate-limit responses, and 5xx server errors with exponential backoff by default, and allow developers to configure `max_retries` or add custom fallback logic.
+Question 41
+Your team is choosing how to add a capability to a Claude agent and is deciding among the available options, whether built-in tool, custom tool, Skill, or MCP server, based on the use case. Which option would you choose?
+A. The option that is the easiest to build given the team's current development tools and workflows.
+B. The option that is the most familiar to the team based on prior experience with similar capabilities.
+C. The option that matches the use case's scope, reuse needs, and integration context.
+D. The option that is the newest available option among built-in tools, custom tools, Skills, and MCP servers.
+Answer: C. The option that matches the use case's scope, reuse needs, and integration context.
+Explanation: Selecting among built-in tools, custom tools, Skills, and MCP servers should be driven by the capability's functional scope, cross-team reuse requirements, and external integration context.
+Question 42
+A teammate is debugging a Claude application whose system prompt has grown over several months of edits and now contains overlapping, contradictory, and obsolete instructions. How would you advise the teammate?
+A. Tighten only the contradictory rules first, treating the overlap and obsolete content as lower-priority work the team can address later.
+B. Add more explicit instructions so the most recent rules dominate the model's interpretation of the prompt during each request.
+C. Audit the prompt for overlap, contradiction, and obsolete content, then refactor so each instruction is clear, current, and non-redundant.
+D. Split the prompt across multiple system prompts so the model sees a smaller portion at any given time.
+Answer: C. Audit the prompt for overlap, contradiction, and obsolete content, then refactor so each instruction is clear, current, and non-redundant.
+Explanation: Refactoring a bloated system prompt by auditing and removing obsolete rules, resolving contradictions, and eliminating redundancy restores clear, predictable instruction following.
+Question 43
+Your Claude application's outputs are inconsistent across runs. When you inspect the prompt, you find instructions scattered across the system prompt and user messages, with some instructions stated only once and others repeated. How would you fix the inconsistency?
+A. Move all instructions into the user message so the application's behavior is controlled at the input point.
+B. Place each instruction wherever the developer who first wrote it found most natural, retaining the original structure.
+C. Repeat all instructions in both the system prompt and the user message so the model sees each instruction more than once.
+D. Consolidate behavioral and format instructions in the system prompt and keep user messages focused on the user's input.
+Answer: D. Consolidate behavioral and format instructions in the system prompt and keep user messages focused on the user's input.
+Explanation: Consolidating persistent behavioral rules, role definitions, and output formatting constraints in the system prompt while keeping user messages focused on per-request task inputs establishes a clean separation of concerns and eliminates prompt inconsistency.
+Question 44
+You are setting up Claude Code for a new project repository. Your team has shared coding conventions, preferred libraries, and project-specific commands that every developer working on the repository should have available when they use Claude Code. How would you set this up?
+A. Configure Claude Code through environment variables that each developer sets on their own machine when they begin working in the repository.
+B. Document the standards in a separate wiki page maintained outside the repository so the documentation stays decoupled from the source code.
+C. Initialize Claude Code in the repository and document the standards and project-specific context in a CLAUDE.md at root.
+D. Add the coding standards and project context to the repository's existing README file and direct developers to paste it into Claude Code sessions.
+Answer: C. Initialize Claude Code in the repository and document the standards and project-specific context in a CLAUDE.md at root.
+Explanation: Initializing Claude Code and committing a `CLAUDE.md` file at the root of the repository ensures that project coding conventions, preferred libraries, and build/test commands are automatically loaded into every developer's Claude Code session.
+Question 45
+Your Claude agent performs database operations on behalf of users. During a recent incident, the agent executed a destructive query that affected production data. The team wants to add deterministic controls to prevent similar incidents. How would you prevent similar incidents?
+A. Run the agent only during business hours when humans are available to monitor its activity, treating the schedule as the primary control mechanism for destructive operations.
+B. Add Claude hooks that intercept database operations and apply deterministic checks, such as blocking destructive queries or requiring approval, before the queries execute.
+C. Switch to a higher-capability Claude model on the grounds that a more capable model is less likely to run destructive queries during normal operation across all requests.
+D. Add a system prompt instruction telling the agent to be careful with database operations on every request during normal operation across all incoming traffic.
+Answer: B. Add Claude hooks that intercept database operations and apply deterministic checks, such as blocking destructive queries or requiring approval, before the queries execute.
+Explanation: Preventing destructive operations requires deterministic runtime enforcement—such as pre-execution hooks (`PreToolUse`) that inspect database tool calls and deterministically block destructive SQL statements or require human approval before execution.
+Question 46
+A new agent your team built handles customer support tickets, and sometimes a single ticket spans billing, shipping, and product troubleshooting issues. The agent often loses track of which sub-issue it has already addressed and revisits the same one. The team is considering architectural changes. What architectural change would you recommend?
+A. Increase the size of the agent's context window so it can hold the full ticket history at once.
+B. Switch to a deterministic workflow that handles billing, shipping, and product issues in a fixed sequence.
+C. Introduce an orchestrator agent that delegates billing, shipping, and product sub-issues to dedicated subagents.
+D. Add detailed prompting that instructs the agent to track which sub-issues have been resolved and which remain.
+Answer: C. Introduce an orchestrator agent that delegates billing, shipping, and product sub-issues to dedicated subagents.
+Explanation: Introducing an orchestrator/coordinator agent that decomposes multi-domain support tickets and delegates billing, shipping, and product sub-issues to focused specialist subagents keeps state tracking explicit and prevents the agent from losing track or looping on resolved issues.
+Question 47
+Your Claude application uses tool calling to interact with an external service. In production, a tool call occasionally fails because the model emits a tool_use block that references arguments not present in the schema, and your application code does not handle this case gracefully. How would you address this?
+A. Stop using tool calling entirely and replace tools with prompted text generation that asks the model to describe what it would do.
+B. Log invalid tool_use blocks when they occur and allow the tool dispatch to proceed, relying on the tool's own error handling to surface failures back to the application.
+C. Validate the tool_use block's arguments against the tool schema before dispatching the tool and handle validation failures as a recognized error path.
+D. Retry the same request repeatedly until the model returns a valid tool_use block that matches the schema.
+Answer: C. Validate the tool_use block's arguments against the tool schema before dispatching the tool and handle validation failures as a recognized error path.
+Explanation: Validating `tool_use` input arguments against the tool's JSON schema prior to dispatching the function call—and handling schema mismatches as a structured error path (e.g., returning a descriptive `tool_result` error to the model)—prevents unhandled runtime crashes.
+Question 48
+A teammate has asked why your Claude application sometimes produces a response with the system prompt text repeated back, and other times produces a response with the prompt text rephrased. They suspect a bug in the application's request construction. How would you respond?
+A. Tell the teammate that the variation is caused by the application sending two different prompts on different runs and propose a code change that pins the system prompt to a single version.
+B. Confirm that the variation is a bug in the application's request construction and start investigating which part of the code is producing the inconsistent prompt text.
+C. Tell the teammate that the variation depends on which Claude model serves the request, and recommend pinning the application to a single model version to make the output behavior consistent.
+D. Explain that LLMs generate output token by token, and variation in how prompt content appears in output is a property of generation rather than a bug in request construction.
+Answer: D. Explain that LLMs generate output token by token, and variation in how prompt content appears in output is a property of generation rather than a bug in request construction.
+Explanation: LLMs generate tokens probabilistically one token at a time, so surface wording naturally varies across runs—even when the exact same request payload is sent—meaning variation between verbatim and rephrased output is an inherent property of generative token sampling rather than a request-construction bug.
+Question 49
+You are integrating Claude into an application written in Python and want to use the official Anthropic SDK, which wraps the underlying REST API. How would you integrate the SDK?
+A. Skip the SDK and embed Claude calls in shell commands invoked from Python, so that the application runs the calls outside the main Python process.
+B. Call the REST API directly with raw HTTP requests so the application avoids the SDK's abstraction layer over the underlying API.
+C. Use the Claude Python SDK and let it handle authentication, retries, and response parsing through its standard documented interface for Python integrations.
+D. Use a different LLM provider's SDK and translate the responses into Claude's API shape so the application can switch providers in the future.
+Answer: C. Use the Claude Python SDK and let it handle authentication, retries, and response parsing through its standard documented interface for Python integrations.
+Explanation: Using the official Claude Python SDK (`anthropic`) provides built-in authentication header management, automatic retries with backoff on transient errors, and typed response parsing through its standard documented interface.
+Question 50
+You are designing a Claude application that handles customer support tickets. The workflow has a fast triage stage that classifies tickets and a response stage that drafts replies. The team is debating whether to use a single Claude call that handles both stages or separate Claude calls for each stage. How would you structure the application?
+A. Use multiple Claude calls in parallel that each draft a complete ticket reply, then have a fourth Claude call select the best one to send to the customer.
+B. Use separate Claude calls for triage and response, because each stage has distinct inputs, outputs, and requirements that benefit from focused prompts.
+C. Use a single Claude call for triage and then use a non-Claude rule-based system for response generation, since rule-based systems are more reliable for drafting replies.
+D. Use a single Claude call for both stages, on the grounds that a single call is cheaper than multiple calls in every application setup.
+Answer: B. Use separate Claude calls for triage and response, because each stage has distinct inputs, outputs, and requirements that benefit from focused prompts.
+Explanation: Separating ticket triage and response drafting into distinct Claude calls (prompt chaining) allows each stage to use a focused prompt, tailored context, and the right model tier for its specific input/output requirements.
+Question 51
+Your team is preparing a new Claude application for launch, and finance has requested a cost projection. The team needs to estimate the cost based on expected request volume, average input length, and average output length. How would you build the projection?
+A. Build a cost model based on expected request volume and the chosen model's pricing, treating average input and output token counts as variables to be estimated post-launch.
+B. Build a cost model that combines expected request volume, average input tokens, average output tokens, the chosen model's pricing, and any caching benefits.
+C. Build a cost model that combines expected request volume and average input tokens, treating output token cost as small enough to leave out of the projection.
+D. Build a cost model that uses the average per-request cost from a similar Claude application the team built previously, scaling that figure by expected request volume.
+Answer: B. Build a cost model that combines expected request volume, average input tokens, average output tokens, the chosen model's pricing, and any caching benefits.
+Explanation: An accurate LLM cost projection combines expected request volume, average input tokens per request, average output tokens per request, the target model's input and output token pricing rates, and applicable discounts from prompt caching or batch processing.
+Question 52
+You are designing an agent that processes vendor invoices. Most invoices follow a standard sequence of extraction and validation steps, but occasionally an invoice arrives in an unexpected format that requires the system to decide between re-routing, requesting clarification, or flagging for human review. Which architecture is most appropriate for this system?
+A. A manager agent that delegates each step of standard invoice processing to a separate specialist agent and invokes a fourth agent for each unexpected format.
+B. A single large prompt that processes every incoming invoice, both standard and unexpected, in one model call.
+C. A workflow for the standard path with an agent invoked at the decision point for unexpected formats.
+D. A fully autonomous agent that handles every invoice from start to finish across all formats.
+Answer: C. A workflow for the standard path with an agent invoked at the decision point for unexpected formats.
+Explanation: A hybrid architecture—using a deterministic workflow for the predictable standard extraction/validation path and invoking an agent only at the decision point when an unexpected invoice format occurs—delivers low cost and high reliability on routine traffic while providing flexible reasoning on exceptions.
+Question 53
+Your Claude application receives untrusted input from external users. The team is establishing how the application should treat this untrusted input. How would untrusted input be treated?
+A. Treated identically to trusted input from internal sources, on the grounds that all input the application receives can be handled the same way.
+B. Blocked entirely so the application accepts only trusted input, with no path for legitimate external input the application might process.
+C. Routed through a separate Claude application with more lax security controls so the original application does not handle the untrusted input directly.
+D. Validated and sanitized before being incorporated into prompts, and treated as data the model should not interpret as instructions.
+Answer: D. Validated and sanitized before being incorporated into prompts, and treated as data the model should not interpret as instructions.
+Explanation: Untrusted external user input is the primary vector for prompt injection and must be validated and sanitized at the boundary, clearly delimited, and treated strictly as passive data rather than executable instructions.

@@ -1,0 +1,16 @@
+{
+  "short": "Task decomposition",
+  "icon": "Workflow",
+  "teaser": "One vague prompt can't redesign onboarding, so Maya splits it into three focused deliverables and learns how far to chop and how to hand off.",
+  "scene": {
+    "kicker": "Maya's story · Week 3",
+    "title": "This request is too big for one prompt",
+    "sceneHtml": "<h3>Maya's story: Week 3 – \"This request is too big for one prompt\"</h3><p>Maya's manager asked her to <i>\"Redesign the new-hire onboarding process.\"</i> Maya typed that into Claude. Claude gave a vague 3-paragraph overview. She tried again with more detail — the output was slightly better but still shallow.</p><p>Her colleague said, <i>\"That request has three distinct deliverables: a process map, supporting training materials, and a measurement plan. Break it into three focused prompts; each one will be stronger than trying to do all three at once.\"</i> Maya decomposed the task. Each prompt produced a specific, well-structured deliverable. She combined them into a final proposal.</p>"
+  },
+  "takeaways": [
+    "Decompose when a request needs multiple distinct deliverables (map + materials + plan); one complex deliverable still gets a single prompt.",
+    "Over-decomposition reads fragmented and choppy; the fix is to consolidate related steps into fewer cohesive sections, not add headings.",
+    "A reliable human-in-the-loop hand-off documents both what Claude must produce and the exact criteria the reviewer checks before approval.",
+    "Improve recurring workflows structurally: move repeated reference material into a Project and add a quality gate before downstream use."
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "short": "Async in production",
+  "icon": "Server",
+  "teaser": "Traffic spikes and your sync Flask service chokes; you move TicketFlow to AsyncAnthropic, lock down secrets and let the SDK retry for you.",
+  "scene": {
+    "kicker": "TicketFlow · Week 2",
+    "title": "Traffic is spiking and the sync service is timing out",
+    "sceneHtml": "<h2>TicketFlow: Week 2</h2><p>Traffic is spiking. Your synchronous Flask service is blocking the event loop on every Claude call, and requests are timing out. The team needs concurrent ticket processing. You migrate to <code>AsyncAnthropic</code> and integrate it into the async Python stack.</p>"
+  },
+  "takeaways": [
+    "In async services (FastAPI, async workers) use AsyncAnthropic: await messages.create() and asyncio.gather() to run calls concurrently.",
+    "Never commit API keys to source or Git; load them at runtime from environment variables or a secrets manager (AWS, GCP, Vault).",
+    "The SDK retries 429/500/503 and timeouts automatically with exponential backoff up to max_retries; do not write manual retry loops.",
+    "Route errors by impact: 429/500/timeouts are warn and retry; AuthenticationError (401) is critical and pages on-call; 400 means fix code."
+  ]
+}

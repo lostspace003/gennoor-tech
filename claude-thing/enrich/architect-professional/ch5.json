@@ -1,0 +1,16 @@
+{
+  "short": "HIPAA & guardrails",
+  "icon": "ShieldCheck",
+  "teaser": "Week 19: the CCO demands proof before PHI flows: a HIPAA-eligible config, secrets out of prompts, RBAC at retrieval and layered guardrails.",
+  "scene": {
+    "kicker": "Meridian rollout · Week 19",
+    "title": "The Chief Compliance Officer calls a mandatory security review before PHI can flow",
+    "sceneHtml": "<p><b>Cost optimizations approved, Week 19.</b> The Chief Compliance Officer schedules a mandatory security review before the clinical documentation pilot can process Protected Health Information (PHI). The agenda: (1) Demonstrate HIPAA-eligible configuration (Claude Enterprise + BAA + ZDR). (2) Show that credentials never enter prompt context. (3) Prove RBAC is enforced deterministically before retrieval. (4) Present the layered guardrail architecture preventing the assistant from providing regulated investment advice (the customer-operations use case falls under FINRA oversight).</p><p>Your mandate: design a compliance-first architecture that passes audit.</p>"
+  },
+  "takeaways": [
+    "HIPAA-eligible config = Claude Enterprise + signed BAA + Zero Data Retention + client-side audit logging; Pro and Team offer no BAA.",
+    "Credentials never enter prompt context: tool handlers fetch secrets server-side from a vault at execution time and discard them.",
+    "Replace shared static API keys with per-user scoped OAuth tokens; enforce RBAC at the retrieval layer, never after generation.",
+    "Guardrails are layered: system-prompt scope rules, an output classifier, tool gates and deny rules, plus observability, never one control."
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "short": "Enterprise patterns",
+  "icon": "Building2",
+  "teaser": "Every piece you built now clicks together into six enterprise patterns: sandboxed workers, policy gateways, approval queues, specialists and more.",
+  "scene": null,
+  "takeaways": [
+    "Enterprise patterns are design patterns built on SDK features, not SDK features themselves.",
+    "Pick the single fitting control: hooks for always-on policy, permission callback for human approval, sandbox for blast-radius limits.",
+    "Sandboxed worker per task uses cwd, permission modes and disallowed_tools; never use bypassPermissions outside isolation.",
+    "Subagents isolate context but lose it in hand-offs and multiply cost; resumable jobs persist session ids and must not double-count cost."
+  ]
+}

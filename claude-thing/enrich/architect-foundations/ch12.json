@@ -1,0 +1,12 @@
+{
+  "short": "Six live scenarios",
+  "icon": "Rocket",
+  "teaser": "Six runnable builds, from a doc-research bot to a refund agent with a human gate, each run live against the mock SDK so you see the mechanics.",
+  "scene": null,
+  "takeaways": [
+    "Pick MCP when the systems are shared and owned by other teams; keep an in-process SDK tool when the client is app-private.",
+    "Bash is the riskiest tool: run it in a container, block destructive commands with a PreToolUse hook, keep credentials out of the env.",
+    "Planner-subagent pattern: the planner holds only the Agent tool; each subagent gets least-privilege tools and its own model.",
+    "Per-call policy such as refund thresholds goes in a can_use_tool callback, not a permission mode; enforce it in the backend too and audit."
+  ]
+}

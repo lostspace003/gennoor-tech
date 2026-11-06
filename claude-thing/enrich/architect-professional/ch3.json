@@ -1,0 +1,16 @@
+{
+  "short": "Caching & routing",
+  "icon": "Coins",
+  "teaser": "Week 11: Meridian's run rate is $840k over budget, and the CTO gives you four weeks to find 40% savings without touching quality or SLAs.",
+  "scene": {
+    "kicker": "Meridian rollout · Week 11",
+    "title": "The CTO wants 40% cost savings in four weeks, without touching quality or SLAs",
+    "sceneHtml": "<p><b>Architecture approved, Week 11.</b> The finance team presents usage projections: 2 million sessions annually across the three business units. At current per-session costs, the 12-month run rate exceeds budget by $840,000. The CTO says: \"Find 40% cost savings without degrading quality or violating SLAs. You have four weeks to model and validate the optimizations.\"</p><p>Your mandate: engineer a cost-optimized deployment through prompt caching, model-tier routing, and input/output token management.</p>"
+  },
+  "takeaways": [
+    "Prompt caching: static content first, marked cache_control ephemeral; cache reads cost ~10% of input price and cut TTFT within a ~5-min TTL.",
+    "Token lifecycle: trim/compact = Input Preparation; cacheable prefix + ordering = Prompt Construction; validate/persist = Output Handling.",
+    "Tier routing: a lightweight classifier sends routine traffic to Haiku, complex to Sonnet, with fallback to Sonnet if Haiku fails validation.",
+    "Latency = TTFT + output generation + retrieval; cut TTFT via caching and input trimming, output via max_tokens, retrieval by lowering top-k."
+  ]
+}

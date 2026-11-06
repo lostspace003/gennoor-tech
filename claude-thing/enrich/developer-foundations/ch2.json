@@ -1,0 +1,16 @@
+{
+  "short": "Messages API",
+  "icon": "MessageSquare",
+  "teaser": "Day 1 at Loomline: you lift the ticket classifier out of its notebook, make your first Messages API call and start counting every token.",
+  "scene": {
+    "kicker": "TicketFlow · Day 1",
+    "title": "From a Jupyter prototype to a production ticket classifier",
+    "sceneHtml": "<h2>TicketFlow: Day 1</h2><p>Your first task at Loomline: take the prototype ticket classifier from a Jupyter notebook to a production Python service. The prototype uses the Messages API to categorize support tickets as <code>billing</code>, <code>technical</code>, or <code>feature_request</code>. Your job: make it reliable, cost-tracked, and ready for real traffic.</p>"
+  },
+  "takeaways": [
+    "Request shape: model, max_tokens, system, messages. Response shape: content blocks, stop_reason and usage (input/output tokens).",
+    "System prompt holds behavior, tone and output schema; the user message carries this turn's task. Don't scatter rules across both.",
+    "Log message.usage.input_tokens and output_tokens for cost tracking: you pay for both, and token tracking is essential for cost management.",
+    "Model choice: Haiku for simple, latency/cost-tight tasks; Sonnet for most workloads; Opus for complex reasoning and rare edge cases."
+  ]
+}

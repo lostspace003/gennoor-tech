@@ -42,7 +42,7 @@ export default function AcademyOverview() {
   ]
 
   return (
-    <section className="bg-[#1d1d1f] px-8 py-20 lg:py-[100px]">
+    <section className="bg-[#1d1d1f] px-8 py-12 lg:py-16">
       <div className="max-w-[1080px] mx-auto">
         {/* Heading */}
         <div className="text-center mb-14">

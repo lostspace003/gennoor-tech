@@ -1,0 +1,12 @@
+{
+  "short": "Subagents",
+  "icon": "Network",
+  "teaser": "You hand work to specialist subagents through the Agent tool and learn why only their final memo, never their notebook, comes back to you.",
+  "scene": null,
+  "takeaways": [
+    "Define subagents in agents={name: AgentDefinition(description, prompt, tools, model)} and include \"Agent\" in allowed_tools to delegate.",
+    "A subagent runs in an isolated context and cannot see the parent history, so the delegation prompt must carry all needed context.",
+    "Only the subagent's final message returns to the parent as the tool result; the parent merges summaries, not the subagent's full run.",
+    "Go multi-agent when tasks are separable, context would overflow, or specialization/parallelism pays; keep one agent for simple coupled work."
+  ]
+}

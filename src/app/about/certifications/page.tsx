@@ -31,7 +31,7 @@ export default function CredentialsPage() {
 
   return (
     <main className="bg-white">
-      <section className="hero-backdrop px-6 pt-16 lg:pt-[100px] pb-12 text-center">
+      <section className="hero-backdrop px-6 pt-8 lg:pt-10 pb-8 text-center">
         <h1 className="display-hero max-w-[820px] mx-auto">The credentials behind the courses.</h1>
         <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.5] text-[#6e6e73] max-w-[640px] mx-auto mt-6">
           Every course is built and taught by a practitioner who sits the same exams, and holds the certification a course prepares you for.
@@ -63,7 +63,7 @@ export default function CredentialsPage() {
         </div>
       </section>
 
-      <section className="bg-[#f5f5f7] px-6 py-16 lg:py-[90px]">
+      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-14">
         <div className="max-w-[900px] mx-auto">
           <h2 className="display-section text-center mb-10">Instructor background.</h2>
           <ol className="space-y-5">
@@ -81,7 +81,7 @@ export default function CredentialsPage() {
       </section>
 
       {other.length > 0 && (
-        <section className="px-6 py-16 lg:py-[90px]">
+        <section className="px-6 py-10 lg:py-14">
           <div className="max-w-[900px] mx-auto">
             <h2 className="display-section text-center mb-3">Other credentials.</h2>
             <p className="text-center text-[15px] text-[#6e6e73] mb-10">Not on the Microsoft transcript. Each has its own certificate.</p>

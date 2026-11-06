@@ -1,0 +1,16 @@
+{
+  "short": "Code Execution",
+  "icon": "Calculator",
+  "teaser": "Maya's expense total comes back \"approximately\" wrong twice, until Code Execution runs real Python and returns the exact $44,287.",
+  "scene": {
+    "kicker": "Maya's story · Week 2",
+    "title": "Why is this total wrong by $3,000?",
+    "sceneHtml": "<h3>Maya's story: Week 2 – \"Why is this total wrong by $3,000?\"</h3><p>Maya uploaded a 50-row expense spreadsheet and asked Claude to sum column D. Claude replied: <i>\"The total is approximately $47,300.\"</i> Maya checked manually: the real total was $44,287. She asked again — Claude said $46,950. <i>\"Approximately\"</i> was not acceptable for a finance report.</p><p>Her manager explained: <i>\"Claude is a <b>language model</b>. It predicts plausible text, including plausible-looking numbers. For exact arithmetic, use <b>Code Execution</b> — Claude writes Python code, runs it in a sandbox, and gives you the verified result.\"</i> Maya enabled Code Execution, uploaded the file again, and got the exact total: $44,287.</p>"
+  },
+  "takeaways": [
+    "Language models predict plausible text, they do not compute; for exact arithmetic, statistics or data transforms, use Code Execution.",
+    "Code Execution writes Python, runs it in a sandbox and returns code plus output; signal words: exact, compute, calculate, plot, visualize.",
+    "Always verify: read the code (right file, right column, right filter) and spot-check the result against the source data before sharing.",
+    "The exam contrasts Code Execution with plain chat (unreliable for math), Artifacts (not for calculation) and Research (not for computation)."
+  ]
+}

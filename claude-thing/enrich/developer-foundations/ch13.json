@@ -1,0 +1,16 @@
+{
+  "short": "Deployment & ops",
+  "icon": "Activity",
+  "teaser": "TicketFlow goes live on BYOC for data residency; you wire error routing, CI/CD evals and token tracking, and catch a retry-loop bug before it pages.",
+  "scene": {
+    "kicker": "TicketFlow · Week 13",
+    "title": "TicketFlow ships to production, and monitoring catches a retry loop before it pages",
+    "sceneHtml": "<h2>TicketFlow: Week 13</h2><p>TicketFlow ships to production. You deploy on BYOC (your AWS account) to meet data residency requirements. You set up token tracking by feature, error categorization (429 → warn, auth failure → page on-call), and CI/CD with automated evals. Monitoring catches a spike in 429s; you discover a retry loop bug and fix it before it pages.</p>"
+  },
+  "takeaways": [
+    "Data residency requirement → BYOC (your AWS/GCP account); ship fast with low ops overhead → Anthropic-hosted. Compliance cannot be bypassed.",
+    "Route errors by impact: 429, timeouts and 500/503 are warnings to retry with backoff; AuthenticationError (401) is critical, page on-call.",
+    "CI/CD for Claude apps: linting, unit tests, integration tests with mock responses, evals on representative inputs, and security scans.",
+    "Model migration: run evals on the new model, adjust prompts for format drift, roll out behind a feature flag, keep instant rollback."
+  ]
+}

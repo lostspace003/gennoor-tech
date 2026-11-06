@@ -1,0 +1,16 @@
+{
+  "short": "CLAUDE.md & hooks",
+  "icon": "Terminal",
+  "teaser": "Week 11: you lock Claude Code down with a PreToolUse hook that blocks rm -rf and DROP TABLE, and commit TicketFlow’s standards to CLAUDE.md.",
+  "scene": {
+    "kicker": "TicketFlow · Week 11",
+    "title": "Developers keep asking Claude Code to run destructive commands during debugging",
+    "sceneHtml": "<h2>TicketFlow: Week 11</h2><p>Developers keep asking Claude Code to run destructive commands during debugging. You add a PreToolUse hook in <code>.claude/settings.json</code> that blocks <code>rm -rf</code> and <code>DROP TABLE</code> before they execute. You also document TicketFlow coding standards in <code>CLAUDE.md</code> so every dev session has them loaded automatically.</p>"
+  },
+  "takeaways": [
+    "CLAUDE.md at the repo root auto-loads into every Claude Code session; hierarchy: global ~/.claude/CLAUDE.md, then parent dirs, then project.",
+    "Skills live in .claude/skills/<name>/SKILL.md for reusable multi-step workflows; one-liner commands belong in CLAUDE.md instead.",
+    "A PreToolUse hook in .claude/settings.json can deny a tool call before it runs; PostToolUse logs results. Hooks are code, not prompts.",
+    "Pin plugin versions in project config and track them in version control so a broken update can be rolled back to a known-good version."
+  ]
+}

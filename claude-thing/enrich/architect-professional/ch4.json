@@ -1,0 +1,16 @@
+{
+  "short": "Agent governance",
+  "icon": "Bot",
+  "teaser": "Week 15: the 34-tool claims agent is losing accuracy, so you decompose it, defer tools on demand, audit privileges and gate risky actions.",
+  "scene": {
+    "kicker": "Meridian rollout · Week 15",
+    "title": "The 34-tool claims agent is drifting, and compliance wants to know who can issue refunds",
+    "sceneHtml": "<p><b>Pilot deployed, Week 15.</b> The claims-processing agent has grown to 34 tools serving four distinct workflow domains. Tool-selection accuracy has fallen from 91% to 75%, and the engineering team reports that loading all 34 tool definitions consumes 22% of the context window on startup. Separately, the compliance officer asks: \"Which tools can issue refunds or delete records? How do we ensure a procurement agent cannot approve its own purchase requests?\"</p><p>Your task: decompose the bloated agent, apply progressive tool discovery to reduce context pressure, audit tool inventories for least privilege, and place human-in-the-loop (HITL) gates on high-consequence actions.</p>"
+  },
+  "takeaways": [
+    "Tool definitions from a big catalog or many MCP servers eating context: enable Tool Search (progressive discovery) so tools load on demand.",
+    "34 tools across four domains with overlapping descriptions: decompose into per-domain subagents and clean up tools before adding a router.",
+    "Least-privilege audit: remove tools outside the agent scope, tools granting excess permissions, and tools that bypass human approval gates.",
+    "Place HITL review between model output and high-impact irreversible actions (payments, deletions, external comms), not on every action."
+  ]
+}

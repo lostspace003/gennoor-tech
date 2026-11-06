@@ -1,0 +1,12 @@
+{
+  "short": "Tools & @tool",
+  "icon": "Wrench",
+  "teaser": "You give Claude hands: built-in Read, Edit and Bash tools, then your first @tool that checks stock and reports errors back to Claude.",
+  "scene": null,
+  "takeaways": [
+    "Claude emits a ToolUseBlock; the SDK runs hooks and permission checks, executes the tool and returns a ToolResultBlock.",
+    "Tool failures reach Claude as is_error results, not exceptions in your app; Claude decides whether to retry or change approach.",
+    "Custom tools use @tool(name, description, input_schema) + create_sdk_mcp_server, run in-process, and are named mcp__<server>__<tool>.",
+    "Bash is the highest-risk built-in; readOnlyHint tools can run in parallel; mcp__github__* wildcards are valid but a global * is ignored."
+  ]
+}

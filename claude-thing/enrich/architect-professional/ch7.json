@@ -1,0 +1,16 @@
+{
+  "short": "Canary & handoff",
+  "icon": "Rocket",
+  "teaser": "Week 27: you take the 4-week canary live at 5% of clinicians, arm the rollback gates, and hand Meridian's system to the on-call team.",
+  "scene": {
+    "kicker": "Meridian rollout · Week 27",
+    "title": "The canary goes live: rollback gates, runbooks and the handoff",
+    "sceneHtml": "<p><b>Evaluation suite passing, Week 27.</b> The deployment plan is approved: a 4-week canary rollout starting with 5% of clinical documentation users, expanding to 25%, 50%, then 100% if quality gates pass at each stage. The Head of Engineering asks: \"What triggers an automatic rollback? How do we communicate progress to the clinical staff and the board?\" The compliance team adds: \"We need runbooks for the three most likely incident scenarios.\"</p><p>Your final deliverables: a canary deployment plan with rollback gates, stakeholder communication templates, operational runbooks, and a handoff package for the operations team.</p>"
+  },
+  "takeaways": [
+    "Canary rollout 5% → 25% → 50% → 100%; automated rollback gates revert the release if any metric breaches its threshold at any stage.",
+    "Define SLOs and the metrics/slices to monitor before building dashboards and alerts; write runbooks for the top 3 incident scenarios.",
+    "Technical handoff package = architecture overview, ADRs, component diagrams, runbooks and known limitations, not meeting notes.",
+    "Fixed, predictable steps → workflow (lower latency, predictable cost); open-ended → agent. Sub-50ms scoring or exact math → not Claude."
+  ]
+}

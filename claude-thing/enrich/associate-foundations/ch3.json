@@ -1,0 +1,16 @@
+{
+  "short": "Artifacts",
+  "icon": "FileText",
+  "teaser": "Maya's onboarding procedure vanishes into chat scrollback, until she learns to give reusable work a permanent home as an Artifact.",
+  "scene": {
+    "kicker": "Maya's story · Day 3",
+    "title": "Why is my procedure buried in chat scrollback?",
+    "sceneHtml": "<h3>Maya's story: Day 3 – \"Why is my procedure buried in chat scrollback?\"</h3><p>Maya drafted a 10-step client onboarding procedure with Claude. She copied it into an email, but halfway through writing the email she realized a step was wrong. She scrolled back through 30 chat turns to find the procedure again. Her manager asked for an updated version two days later — Maya had no idea which chat it was in.</p><p>Her colleague showed her <b>Artifacts</b>: Claude can render the procedure as a <b>standalone document in a dedicated panel</b>, separate from the chat. The team can open it, edit it, save it, and come back to it later. No more hunting through scrollback.</p>"
+  },
+  "takeaways": [
+    "An Artifact is standalone work (document, code, chart, diagram) rendered in a dedicated side panel, separate from the chat transcript.",
+    "Artifacts persist across sessions, can be edited in place, versioned, and shared via a stable link with view, comment or edit permissions.",
+    "Decision rule: if the team will come back to edit, reference or share it, make an Artifact; a one-off answer or quick lookup stays in chat.",
+    "Artifacts and Projects both solve 'don't repeat yourself': Artifacts hold reusable deliverables, Projects centralize reference material."
+  ]
+}

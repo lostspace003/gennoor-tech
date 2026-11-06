@@ -1,0 +1,16 @@
+{
+  "short": "Model selection",
+  "icon": "Scale",
+  "teaser": "Maya's manager flags her Opus-for-everything habit, and she learns to match Haiku, Sonnet or Opus to the task instead of defaulting to the heaviest.",
+  "scene": {
+    "kicker": "Maya's story · Week 3",
+    "title": "Why is this costing so much?",
+    "sceneHtml": "<h3>Maya's story: Week 3 – \"Why is this costing so much?\"</h3><p>Maya used Claude Opus (the most capable model) for everything: drafting emails, summarizing one-page memos, answering quick policy questions. Her manager saw the usage report: <i>\"You are burning through our rate limit on tasks a lighter model could handle. Use Opus for complex analysis; use Sonnet or Haiku for routine summaries.\"</i></p><p>Maya learned the <b>model trade-off</b>: more capable models are slower, consume more of the rate limit, and cost more. Lighter models are faster and cheaper but less capable on complex reasoning. The right model depends on the task.</p>"
+  },
+  "takeaways": [
+    "Haiku: lightweight, fast, cheapest. Sonnet: balanced mid-tier. Opus: most capable but slower, with the highest rate-limit use and cost.",
+    "Decision rule: Haiku for simple, well-defined tasks; Sonnet for most production workflows; Opus for one-off problems needing deep reasoning.",
+    "The trade-off the exam tests: more capable models generally run slower and consume more rate limit, so match the model to task complexity.",
+    "Recurring workflows: set the quality/latency/volume bar, test a candidate on samples, keep the lightest that passes, retest on new models."
+  ]
+}

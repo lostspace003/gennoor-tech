@@ -1,0 +1,16 @@
+{
+  "short": "Responsible AI",
+  "icon": "ShieldCheck",
+  "teaser": "Halfway through summarizing performance reviews, Maya spots salaries and accommodation notes and learns to classify and redact before she prompts.",
+  "scene": {
+    "kicker": "Maya's story · Week 4",
+    "title": "“Can I use this data with Claude?”",
+    "sceneHtml": "<h3>Maya's story: Week 4 – \"Can I use this data with Claude?\"</h3><p>Maya was drafting a summary from a spreadsheet of employee performance reviews. Halfway through, she realized: <i>\"Wait — this has salary figures, manager feedback, and accommodation notes. Is this safe to put into Claude?\"</i> She stopped, consulted the HR policy, and found the answer: <b>No.</b> Employee PII, compensation data, and medical notes must never enter AI tools without redaction.</p><p>Maya learned to <b>classify data before prompting</b>: identify sensitive fields, redact or anonymize them, then submit only the safe remainder. She also learned which use cases are appropriate (drafting training docs) vs. inappropriate (making promotion decisions).</p>"
+  },
+  "takeaways": [
+    "Data-handling sequence: classify sensitive fields, redact with placeholders, peer-review the redaction, then submit the safe remainder.",
+    "Keep final employment, legally binding and clinical decisions human-owned; drafting from approved docs and aggregated feedback is safe.",
+    "When policy prohibits entering data, escalate and refrain. Incognito is not an exemption and paraphrasing is not compliance.",
+    "Revise demographic generalizations into observed behaviors validated against real data; a disclaimer alone is not a fix."
+  ]
+}

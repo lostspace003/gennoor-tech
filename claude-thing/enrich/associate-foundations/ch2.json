@@ -1,0 +1,16 @@
+{
+  "short": "The 4Ds",
+  "icon": "Compass",
+  "teaser": "Maya's vague \"help me with reports\" prompt flops, so she learns the 4Ds: Description, Delegation, Diligence and Discernment.",
+  "scene": {
+    "kicker": "Maya's story · Day 1",
+    "title": "What does Claude actually do?",
+    "sceneHtml": "<h3>Maya's story: Day 1 – \"What does Claude actually do?\"</h3><p>Maya's manager handed her a stack of quarterly client reports and said, \"See if Claude can help.\" Maya had no idea where to start. She opened Claude and typed, <i>\"Help me with reports.\"</i> Claude replied with generic advice about report structure. Maya realized she needed a framework for <b>how</b> to work with AI, not just what to type.</p><p>She found Anthropic's <b>AI Fluency Framework</b>, built around four competencies knowledge workers need: <b>Description, Delegation, Diligence, and Discernment</b>. Each one answered a question she had faced that morning.</p>"
+  },
+  "takeaways": [
+    "Description: state what Claude reliably produces, its limitations, and which human review stays in place; it underpins the other three Ds.",
+    "Delegation hinges on two criteria: does the task need uniquely human judgment or empathy, and is it reversible / how costly is an error?",
+    "Diligence is a sustained habit: apply AI policy and quality checks to every output, every day, not just at onboarding or under audit.",
+    "Discernment: verify claims against primary sources, not secondary AI summaries, and pinpoint suspected hallucinations before escalating."
+  ]
+}

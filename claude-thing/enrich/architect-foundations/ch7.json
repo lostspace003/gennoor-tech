@@ -1,0 +1,12 @@
+{
+  "short": "Lifecycle hooks",
+  "icon": "Workflow",
+  "teaser": "You wire checkpoints into the platform: hooks that deny rm -rf, audit every tool result and run whether Claude wants them or not.",
+  "scene": null,
+  "takeaways": [
+    "Hooks are deterministic enforcement registered in ClaudeAgentOptions(hooks={...}) via HookMatcher; prompts are only suggestions.",
+    "Return {} to proceed or hookSpecificOutput with a permissionDecision; if PreToolUse hooks disagree, deny beats defer beats ask beats allow.",
+    "PreToolUse runs before permissions; PostToolUse runs after execution and only for calls that actually ran. No matcher means every tool.",
+    "Python events include PreToolUse, PostToolUse, UserPromptSubmit, Stop, SubagentStop, PreCompact; SessionStart/End are shell-only in Python."
+  ]
+}

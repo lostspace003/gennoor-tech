@@ -91,3 +91,6 @@ showcase/*/assets/*.mp4
 
 # Promo video source — uploaded to Azure Blob via scripts/upload-promo-video.mjs
 Gennoor Promo Video - VO.mp4
+
+# Rendered GIF exports of the CCAR-F diagrams (~50MB); regenerate with claude-thing/ccarf-guide/ccarf-guide/make_gifs.py
+claude-thing/ccarf-guide/ccarf-guide/gifs/

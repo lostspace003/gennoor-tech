@@ -58,7 +58,7 @@ const DOMAINS = [
 export default function ClaudePage() {
   return (
     <main className="bg-white">
-      <section className="hero-backdrop px-6 pt-16 lg:pt-[100px] pb-14 text-center">
+      <section className="hero-backdrop px-6 pt-8 lg:pt-10 pb-10 text-center">
         <h1 className="display-hero max-w-[820px] mx-auto">Claude at Gennoor.</h1>
         <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.5] text-[#6e6e73] max-w-[640px] mx-auto mt-6">
           Training for teams, courses built around their work, and automation built with Claude.
@@ -66,7 +66,7 @@ export default function ClaudePage() {
       </section>
 
       {/* Partner Network: approved wording only */}
-      <section className="bg-[#faf9f5] px-6 py-16 lg:py-[80px]">
+      <section className="bg-[#faf9f5] px-6 py-10 lg:py-14">
         <div className="max-w-[860px] mx-auto grid sm:grid-cols-[190px_1fr] gap-10 items-center">
           <div className="mx-auto">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -81,7 +81,7 @@ export default function ClaudePage() {
       </section>
 
       {/* Certification prep: the four official Claude certifications */}
-      <section className="bg-white px-6 py-16 lg:py-[80px]">
+      <section className="bg-white px-6 py-10 lg:py-14">
         <div className="max-w-[900px] mx-auto text-center">
           <p className="kicker">New</p>
           <h2 className="display-section mt-3">Get Claude certified.</h2>
@@ -100,7 +100,7 @@ export default function ClaudePage() {
         </div>
       </section>
 
-      <section className="bg-[#f5f5f7] px-6 py-16 lg:py-[90px]">
+      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-14">
         <div className="max-w-[1080px] mx-auto">
           <h2 className="display-section text-center mb-12">What we do with Claude.</h2>
           <div className="grid md:grid-cols-3 gap-6">
@@ -119,7 +119,7 @@ export default function ClaudePage() {
       {/* Course catalogue: always open, no tab or click needed to see the courses */}
       <ClaudeCourseCarousels />
 
-      <section className="bg-[#f5f5f7] px-6 py-16 lg:py-[90px]">
+      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-14">
         <div className="max-w-[900px] mx-auto text-center">
           <h2 className="display-section">Claude courses by domain.</h2>
           <p className="lede mt-3.5 max-w-[600px] mx-auto">
@@ -136,7 +136,7 @@ export default function ClaudePage() {
         </div>
       </section>
 
-      <section className="bg-white px-6 py-16 lg:py-[90px] text-center">
+      <section className="bg-white px-6 py-10 lg:py-14 text-center">
         <h2 className="display-section max-w-[680px] mx-auto">Want Claude to work for your team?</h2>
         <div className="mt-8"><Link href="/contact" className="pill-primary">Talk to us</Link></div>
       </section>

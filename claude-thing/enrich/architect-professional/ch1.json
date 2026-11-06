@@ -1,0 +1,16 @@
+{
+  "short": "Discovery & value",
+  "icon": "Compass",
+  "teaser": "The CFO hands you $2.4M and eight weeks: run discovery, sort hard SLAs from nice-to-haves, and get an architecture past the governance board.",
+  "scene": {
+    "kicker": "Meridian rollout · Week 1",
+    "title": "The CFO puts $2.4M on the table and gives you eight weeks to pass the governance board",
+    "sceneHtml": "<p><b>Board meeting, Week 1.</b> The CFO presents a slide: \"AI initiative budget: $2.4M over 12 months. Expected: measurable ROI across clinical operations, claims processing, and customer service. Your first task: run discovery workshops with each business unit and produce an architecture proposal that passes the governance review board.\"</p><p>You have eight weeks to surface requirements, evaluate architectures, and justify the investment. Here is what you must master.</p>"
+  },
+  "takeaways": [
+    "Functional = what the system does; non-functional = how well (p95 latency, accuracy, cost, compliance). A latency SLA is non-functional.",
+    "Five value pillars: Efficiency (throughput), Productivity (quality), Transformation (redeployment), Solution Cost, Performance SLA.",
+    "A stated SLA is a gate, not a trade-off: eliminate any option that violates it first, then compare survivors on cost and quality.",
+    "An ADR missing its alternatives and accepted trade-offs is incomplete; ask the author to add them before publishing, not later."
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "short": "Sessions & context",
+  "icon": "History",
+  "teaser": "You give your agent a memory: sessions it can pause, resume and fork, plus a context window you keep lean before compaction kicks in.",
+  "scene": null,
+  "takeaways": [
+    "A session is the persisted conversation with a session_id (storage); context is what sits in the model window right now (working memory).",
+    "resume=session_id continues; fork_session=True branches to a new id, original untouched; continue_conversation=True resumes latest in cwd.",
+    "Forking branches the conversation, not files (file checkpointing rolls files back); never sum total_cost_usd across resumed results.",
+    "Near the limit the runtime compacts earlier history (PreCompact hook fires); persistent rules go in system prompt/CLAUDE.md, re-injected."
+  ]
+}

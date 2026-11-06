@@ -3,9 +3,9 @@
  * /claude/certifications pages need to present them: the story each course
  * follows, exam facts, and where the interactive guide + practice exams live.
  *
- * The interactive guides are standalone HTML apps served from
- * /public/claude-certifications/<slug>/ and the prep hub from
- * /public/claude-certifications/prep-hub/.
+ * Each course is rendered by the in-site course reader at /claude/certifications/<slug>;
+ * its chapter bodies, diagrams, knowledge checks and practice questions come from
+ * /public/cert-data/<slug>.json (built by claude-thing/build_course_json.js).
  */
 
 export interface ClaudeCert {
@@ -26,14 +26,15 @@ export interface ClaudeCert {
   examFacts: { questions: number; formats: string; passingStyle: string; time: string }
   /** Topic domains with rough weight, for the at-a-glance blueprint */
   domains: { title: string; weight: string }[]
-  /** localStorage key prefix the guide uses ('<key>.done' / '<key>.seen') */
+  /** localStorage key prefix the course reader uses ('<key>.done' / '<key>.seen' / '<key>.exam') */
   guideKey: string
   guideUrl: string
   prepHubUrl: string
   accent: string
 }
 
-export const PREP_HUB_URL = '/claude-certifications/prep-hub'
+/** The practice exams live inside each course (the #exam chapter); this points at the overview. */
+export const PREP_HUB_URL = '/claude/certifications'
 
 export const CLAUDE_CERTS: ClaudeCert[] = [
   {
@@ -71,8 +72,8 @@ export const CLAUDE_CERTS: ClaudeCert[] = [
       { title: 'Prompting, decomposition & iteration', weight: '35%' },
     ],
     guideKey: 'ccasf',
-    guideUrl: '/claude-certifications/associate-foundations',
-    prepHubUrl: PREP_HUB_URL,
+    guideUrl: '/claude/certifications/associate-foundations',
+    prepHubUrl: '/claude/certifications/associate-foundations#exam',
     accent: '#c4713c',
   },
   {
@@ -112,8 +113,8 @@ export const CLAUDE_CERTS: ClaudeCert[] = [
       { title: 'Claude Code, hooks & application security', weight: '22%' },
     ],
     guideKey: 'ccdvf',
-    guideUrl: '/claude-certifications/developer-foundations',
-    prepHubUrl: PREP_HUB_URL,
+    guideUrl: '/claude/certifications/developer-foundations',
+    prepHubUrl: '/claude/certifications/developer-foundations#exam',
     accent: '#3f6fb8',
   },
   {
@@ -152,8 +153,8 @@ export const CLAUDE_CERTS: ClaudeCert[] = [
       { title: 'Enterprise patterns & scenarios', weight: '15%' },
     ],
     guideKey: 'ccarf',
-    guideUrl: '/claude-certifications/architect-foundations',
-    prepHubUrl: PREP_HUB_URL,
+    guideUrl: '/claude/certifications/architect-foundations',
+    prepHubUrl: '/claude/certifications/architect-foundations#exam',
     accent: '#3f9c8f',
   },
   {
@@ -193,8 +194,8 @@ export const CLAUDE_CERTS: ClaudeCert[] = [
       { title: 'Security, compliance & observability', weight: '24%' },
     ],
     guideKey: 'ccarp',
-    guideUrl: '/claude-certifications/architect-professional',
-    prepHubUrl: PREP_HUB_URL,
+    guideUrl: '/claude/certifications/architect-professional',
+    prepHubUrl: '/claude/certifications/architect-professional#exam',
     accent: '#8068c9',
   },
 ]

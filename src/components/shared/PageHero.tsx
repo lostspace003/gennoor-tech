@@ -68,7 +68,7 @@ export default function PageHero({
       <div
         className={cn(
           'relative container mx-auto px-4 sm:px-6 lg:px-8',
-          size === 'compact' ? 'py-10 lg:py-14' : 'py-10 lg:py-16'
+          size === 'compact' ? 'py-5 lg:py-7' : 'py-6 lg:py-8'
         )}
       >
         <div className={cn('max-w-4xl', centered && 'mx-auto text-center')}>
@@ -96,12 +96,12 @@ export default function PageHero({
             </div>
           )}
 
-          <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-5 leading-tight tracking-tight">
+          <h1 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-3 leading-tight tracking-tight">
             {title}
           </h1>
 
           {description && (
-            <p className="text-base sm:text-lg text-gray-600 mb-7 leading-relaxed max-w-3xl">
+            <p className="text-base sm:text-lg text-gray-600 mb-5 leading-relaxed max-w-3xl">
               {description}
             </p>
           )}

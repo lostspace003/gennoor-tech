@@ -1,0 +1,16 @@
+{
+  "short": "Hybrid RAG & RBAC",
+  "icon": "Database",
+  "teaser": "Week 9: a 480,000-document pilot forces you to design hybrid retrieval that filters by role before anything reaches the model.",
+  "scene": {
+    "kicker": "Meridian rollout · Week 9",
+    "title": "Compliance asks: how do you stop an agent retrieving what the user cannot see?",
+    "sceneHtml": "<p><b>Discovery complete, Week 9.</b> The claims unit has approved a pilot for document-grounded Q&A over 480,000 policy documents. The compliance officer asks: \"How do you ensure an agent cannot retrieve documents the requesting user is not authorized to see?\" The security architect adds: \"And how do you recover exact policy identifiers when users type paraphrased questions?\"</p><p>Your task: design a retrieval-augmented generation (RAG) pipeline that enforces role-based access control (RBAC) <i>before</i> content enters the model context, and supports hybrid retrieval (semantic + lexical + structured queries).</p>"
+  },
+  "takeaways": [
+    "Hybrid retrieval fuses dense (paraphrases), sparse/BM25 (exact IDs) and structured (filter-aggregate) results; it is not dense-only.",
+    "Enforce RBAC at the retrieval layer, before prompt construction, using the user identity, never a shared service token.",
+    "Reduce ungrounded claims by constraining answers to source passages and requiring a citation per claim, then post-check citations.",
+    "Retrieved documents are untrusted data: label them as data not instructions, keep tools least-privilege, require approval for side effects."
+  ]
+}
