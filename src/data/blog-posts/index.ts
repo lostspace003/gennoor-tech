@@ -44,6 +44,20 @@ export interface BlogPost extends BlogPostMeta {
 
 export const blogPostsMeta: BlogPostMeta[] = [
   {
+    slug: 'gpt-6-1-terra-enterprise-agent-cost-control-roi',
+    title: 'GPT-6.1 Terra and the Enterprise Agent Debate: Cost, Control, and Real ROI',
+    excerpt: 'GPT-6.1 Terra is being framed around computer use, speed, and lower cost. For enterprise leaders, the bigger story is whether agent ROI now depends less on buying the largest model and more on runtime controls, task design, and workflow-level evaluation.',
+    tldr: 'AWS’s latest roundup puts GPT-6.1 Terra on Bedrock alongside Step Functions as agent tools, signaling that the enterprise conversation is shifting from model novelty to workflow execution economics. The key question is no longer just model capability. It is whether lower-cost agent-oriented models, paired with strong runtime governance, task design, and workflow-level evaluation, can deliver better business outcomes than frontier defaults.',
+    author: 'Gennoor Tech',
+    date: '2026-11-06',
+    readTime: '14 min read',
+    category: 'AI Models',
+    tags: ['AI Agents', 'Enterprise AI', 'Cost Optimization', 'Evaluation', 'Model Selection', 'AI Orchestration', 'Agentic AI', 'Production AI'],
+    hashtags: ['#AIAgents', '#EnterpriseAI', '#ModelSelection', '#CostOptimization', '#AIEvaluation', '#AIOrchestration'],
+    coverColor: '#2E2A1F',
+    icon: '🧭',
+  },
+  {
     slug: 'ai-in-infrastructure-enterprise-capacity-power-governance',
     title: 'AI in Infrastructure: Why Capacity, Power, and Governance Now Shape Enterprise AI',
     excerpt: 'Enterprise AI is no longer limited by ideas alone. As compute scarcity, data architecture, power demand, and governance pressures grow, infrastructure has become the practical constraint on scaling AI reliably, compliantly, and cost-effectively across the business.',
@@ -1028,6 +1042,7 @@ export function getRelatedPostsMeta(currentSlug: string, category: string, limit
 
 // Load full blog post content on demand (only for individual post pages)
 const contentImports: Record<string, () => Promise<{ post: BlogPost }>> = {
+  'gpt-6-1-terra-enterprise-agent-cost-control-roi': () => import('./content/gpt-6-1-terra-enterprise-agent-cost-control-roi'),
   'ai-in-infrastructure-enterprise-capacity-power-governance': () => import('./content/ai-in-infrastructure-enterprise-capacity-power-governance'),
   'microsoft-agent-infrastructure-platform-race': () => import('./content/microsoft-agent-infrastructure-platform-race'),
   'ai-for-beginners-2027-building-agents-guide': () => import('./content/ai-for-beginners-2027-building-agents-guide'),
