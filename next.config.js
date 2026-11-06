@@ -21,16 +21,17 @@ const nextConfig = {
     // Next.js serves public/ files only at exact paths, so clean directory-style
     // URLs rewrite to each app's index.html (afterFiles: real files still win).
     return {
-      afterFiles: [
-        { source: '/claude-certifications', destination: '/claude-certifications/prep-hub/index.html' },
-        { source: '/claude-certifications/:slug', destination: '/claude-certifications/:slug/index.html' },
-      ],
+      afterFiles: [],
       beforeFiles: [],
       fallback: [],
     }
   },
   async redirects() {
     return [
+      // The Claude certification courses moved from standalone HTML apps into the site itself.
+      { source: '/claude-certifications', destination: '/claude/certifications', permanent: true },
+      { source: '/claude-certifications/prep-hub', destination: '/claude/certifications', permanent: true },
+      { source: '/claude-certifications/:slug', destination: '/claude/certifications/:slug', permanent: true },
       { source: '/claude-cowork', destination: '/workshops/claude-cowork', permanent: true },
       { source: '/portfolio/:path*', destination: '/about', permanent: true },
       { source: '/portfolio', destination: '/about', permanent: true },

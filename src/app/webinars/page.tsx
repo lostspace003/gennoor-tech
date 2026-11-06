@@ -34,7 +34,7 @@ export default function WebinarsPage() {
   return (
     <main className="min-h-screen bg-white">
       {/* ===== Hero ===== */}
-      <section className="px-8 pt-20 lg:pt-[100px] pb-12 text-center">
+      <section className="px-8 pt-8 lg:pt-10 pb-12 text-center">
         <WebinarIllustration className="w-[112px] h-[112px] mx-auto mb-6" />
         <h1 className="text-[clamp(40px,4.8vw,64px)] leading-[1.06] tracking-[-0.03em] font-bold text-gray-900">
           Learn live.

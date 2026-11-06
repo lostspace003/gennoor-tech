@@ -39,7 +39,7 @@ const PRINCIPLES = [
 export default function AutomationPage() {
   return (
     <main className="bg-white">
-      <section className="hero-backdrop px-6 pt-16 lg:pt-[100px] pb-16 text-center">
+      <section className="hero-backdrop px-6 pt-8 lg:pt-10 pb-10 text-center">
         <h1 className="display-hero max-w-[820px] mx-auto">Automation, one process at a time.</h1>
         <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.5] text-[#6e6e73] max-w-[560px] mx-auto mt-6">
           We automate the part that costs your team the most time, with Claude and other AI tools.
@@ -50,7 +50,7 @@ export default function AutomationPage() {
         </div>
       </section>
 
-      <section className="bg-[#f5f5f7] px-6 py-16 lg:py-[90px]">
+      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-14">
         <div className="max-w-[1000px] mx-auto">
           <h2 className="display-section text-center mb-12">For any size of team.</h2>
           <div className="grid md:grid-cols-2 gap-6">
@@ -65,7 +65,7 @@ export default function AutomationPage() {
         </div>
       </section>
 
-      <section className="bg-white px-6 py-16 lg:py-[90px]">
+      <section className="bg-white px-6 py-10 lg:py-14">
         <div className="max-w-[640px] mx-auto">
           <h2 className="display-section text-center mb-10">What we automate.</h2>
           <ul className="space-y-4">
@@ -79,7 +79,7 @@ export default function AutomationPage() {
         </div>
       </section>
 
-      <section className="bg-[#f5f5f7] px-6 py-16 lg:py-[90px]">
+      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-14">
         <div className="max-w-[1080px] mx-auto">
           <h2 className="display-section text-center mb-12">How we keep it honest.</h2>
           <div className="grid sm:grid-cols-2 gap-6">
@@ -94,7 +94,7 @@ export default function AutomationPage() {
         </div>
       </section>
 
-      <section className="bg-white px-6 py-16 lg:py-[90px] text-center">
+      <section className="bg-white px-6 py-10 lg:py-14 text-center">
         <h2 className="display-section max-w-[680px] mx-auto">Tell us about the process.</h2>
         <p className="lede mt-3.5 max-w-[480px] mx-auto">A few lines are enough. We reply with questions, or tell you honestly if it is not a fit.</p>
         <div className="mt-8"><Link href="/contact" className="pill-primary">Contact us</Link></div>

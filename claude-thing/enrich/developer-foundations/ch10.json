@@ -1,0 +1,16 @@
+{
+  "short": "MCP servers",
+  "icon": "Plug",
+  "teaser": "Three teams want the same Jira and CRM tools, so you ship one MCP server and every app plugs in: write once, reuse everywhere.",
+  "scene": {
+    "kicker": "TicketFlow · Week 10",
+    "title": "Three teams need the same Jira and CRM tools, so you build one MCP server they all share",
+    "sceneHtml": "<h2>TicketFlow: Week 10</h2><p>Three teams need the same Jira and CRM integrations. Copying custom tool code into each app creates drift and duplicate maintenance. You build an MCP server: Jira/CRM tools exposed via the Model Context Protocol. All teams consume it as a shared service. Write once, reuse everywhere.</p>"
+  },
+  "takeaways": [
+    "MCP exposes tools, resources and prompts over JSON-RPC (stdio/http/sse); clients call tools/list to discover and tools/call to execute.",
+    "Choose by scope: shared integration across teams/apps → MCP server; app-private logic → custom @tool; dev-workflow instructions → Skill.",
+    "MCP tools appear to Claude as mcp__<server>__<tool> (e.g. mcp__jira__create_issue); add them to allowed_tools to pre-approve.",
+    "Secure MCP: tokens via env/headers from a secrets manager, per-user OAuth scopes, narrow tools, and treat tool results as untrusted data."
+  ]
+}

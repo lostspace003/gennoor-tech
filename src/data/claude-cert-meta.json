@@ -1,0 +1,636 @@
+{
+ "associate-foundations": {
+  "key": "ccasf",
+  "questions": 60,
+  "chapters": [
+   {
+    "id": "ch1",
+    "n": 1,
+    "title": "Welcome to the Associate Foundations Certification",
+    "short": "Start here",
+    "kind": "intro",
+    "icon": "Compass",
+    "teaser": "Meet Maya, learn how the 60-question exam works, and get the map of her 30-day journey from first chat to AI-fluent lead.",
+    "nocheck": true
+   },
+   {
+    "id": "ch2",
+    "n": 2,
+    "title": "The AI Fluency Framework: The 4Ds",
+    "short": "The 4Ds",
+    "kind": "story",
+    "icon": "Compass",
+    "teaser": "Maya's vague \"help me with reports\" prompt flops, so she learns the 4Ds: Description, Delegation, Diligence and Discernment.",
+    "nocheck": false
+   },
+   {
+    "id": "ch3",
+    "n": 3,
+    "title": "Artifacts: Standalone documents you can save and share",
+    "short": "Artifacts",
+    "kind": "story",
+    "icon": "FileText",
+    "teaser": "Maya's onboarding procedure vanishes into chat scrollback, until she learns to give reusable work a permanent home as an Artifact.",
+    "nocheck": false
+   },
+   {
+    "id": "ch4",
+    "n": 4,
+    "title": "Prompting fundamentals: Task, context, format, role",
+    "short": "Prompt anatomy",
+    "kind": "story",
+    "icon": "ClipboardList",
+    "teaser": "Same prompt, three different answers: Maya learns the role-context-task-format recipe that makes Claude's output consistent.",
+    "nocheck": false
+   },
+   {
+    "id": "ch5",
+    "n": 5,
+    "title": "Iterative refinement: The diagnose-revise-verify loop",
+    "short": "Diagnose-revise-verify",
+    "kind": "story",
+    "icon": "Repeat",
+    "teaser": "Eight reworded prompts later, Maya's summary still buries the headline, until she learns to diagnose the flaw, fix it, and verify.",
+    "nocheck": false
+   },
+   {
+    "id": "ch6",
+    "n": 6,
+    "title": "Projects: Centralize instructions and knowledge for recurring workflows",
+    "short": "Claude Projects",
+    "kind": "story",
+    "icon": "FolderKanban",
+    "teaser": "Maya stops pasting the same 300-word brief into every chat: one Project holds the rules and glossary, and her prompts shrink from 400 words to 50.",
+    "nocheck": false
+   },
+   {
+    "id": "ch7",
+    "n": 7,
+    "title": "Code Execution: When you need exact calculations, not predictions",
+    "short": "Code Execution",
+    "kind": "story",
+    "icon": "Calculator",
+    "teaser": "Maya's expense total comes back \"approximately\" wrong twice, until Code Execution runs real Python and returns the exact $44,287.",
+    "nocheck": false
+   },
+   {
+    "id": "ch8",
+    "n": 8,
+    "title": "Memory and Connectors: Persistent context and workspace integration",
+    "short": "Memory & Connectors",
+    "kind": "story",
+    "icon": "Plug",
+    "teaser": "Maya switches on Memory so Claude keeps Brightline's tiers between chats, connects Google Drive, and learns why long chats lose the thread.",
+    "nocheck": false
+   },
+   {
+    "id": "ch9",
+    "n": 9,
+    "title": "Model selection: Haiku, Sonnet, Opus trade-offs",
+    "short": "Model selection",
+    "kind": "story",
+    "icon": "Scale",
+    "teaser": "Maya's manager flags her Opus-for-everything habit, and she learns to match Haiku, Sonnet or Opus to the task instead of defaulting to the heaviest.",
+    "nocheck": false
+   },
+   {
+    "id": "ch10",
+    "n": 10,
+    "title": "Task decomposition and workflow design",
+    "short": "Task decomposition",
+    "kind": "story",
+    "icon": "Workflow",
+    "teaser": "One vague prompt can't redesign onboarding, so Maya splits it into three focused deliverables and learns how far to chop and how to hand off.",
+    "nocheck": false
+   },
+   {
+    "id": "ch11",
+    "n": 11,
+    "title": "Responsible AI: Data sensitivity, bias, and use-case appropriateness",
+    "short": "Responsible AI",
+    "kind": "story",
+    "icon": "ShieldCheck",
+    "teaser": "Halfway through summarizing performance reviews, Maya spots salaries and accommodation notes and learns to classify and redact before she prompts.",
+    "nocheck": false
+   },
+   {
+    "id": "ch12",
+    "n": 12,
+    "title": "Evaluation and hallucination handling",
+    "short": "Evaluate & fact-check",
+    "kind": "story",
+    "icon": "Search",
+    "teaser": "A 300% growth stat with three sources turns out to be invented, and Maya learns to pinpoint, verify and escalate before it reaches the board.",
+    "nocheck": false
+   },
+   {
+    "id": "ch13",
+    "n": 13,
+    "title": "Exam-day playbook: High-yield decision rules",
+    "short": "Exam-day playbook",
+    "kind": "playbook",
+    "icon": "Target",
+    "teaser": "Maya boils 30 days of lessons into if-you-see-X-answer-Y decision rules, the traps the exam sets, and a final 24-hour checklist.",
+    "nocheck": true
+   },
+   {
+    "id": "cheatsheet",
+    "n": 0,
+    "title": "Exam cheat sheet",
+    "short": "Cheat sheet",
+    "kind": "cheatsheet",
+    "icon": "ClipboardList",
+    "teaser": "The blueprint, the \"if you see X, choose Y\" decision matrix, and the reference code patterns — the one page to re-read before exam day.",
+    "nocheck": true
+   },
+   {
+    "id": "ch14",
+    "n": 14,
+    "title": "Mock exam: 60 questions",
+    "short": "Mock exam",
+    "kind": "exam",
+    "icon": "ClipboardList",
+    "teaser": "Maya's 30 days come down to this: all 60 real exam-bank questions in one sitting, no notes, then every wrong answer traced back to its chapter.",
+    "nocheck": true
+   },
+   {
+    "id": "ch15",
+    "n": 15,
+    "title": "Next steps with Gennoor",
+    "short": "Next steps",
+    "kind": "next",
+    "icon": "Rocket",
+    "teaser": "Maya passes on her first attempt and becomes Brightline's AI lead; now see where your own Claude journey goes next with Gennoor.",
+    "nocheck": true
+   }
+  ]
+ },
+ "developer-foundations": {
+  "key": "ccdvf",
+  "questions": 53,
+  "chapters": [
+   {
+    "id": "ch1",
+    "n": 1,
+    "title": "Claude Certified Developer – Foundations",
+    "short": "Start here",
+    "kind": "intro",
+    "icon": "Compass",
+    "teaser": "Meet Loomline and TicketFlow, see how the 53-question CCDV-F exam works, and get the 15-chapter roadmap from first API call to production.",
+    "nocheck": true
+   },
+   {
+    "id": "ch2",
+    "n": 2,
+    "title": "Messages API foundations",
+    "short": "Messages API",
+    "kind": "story",
+    "icon": "MessageSquare",
+    "teaser": "Day 1 at Loomline: you lift the ticket classifier out of its notebook, make your first Messages API call and start counting every token.",
+    "nocheck": false
+   },
+   {
+    "id": "ch3",
+    "n": 3,
+    "title": "AsyncAnthropic & production integration",
+    "short": "Async in production",
+    "kind": "story",
+    "icon": "Server",
+    "teaser": "Traffic spikes and your sync Flask service chokes; you move TicketFlow to AsyncAnthropic, lock down secrets and let the SDK retry for you.",
+    "nocheck": false
+   },
+   {
+    "id": "ch4",
+    "n": 4,
+    "title": "Batch API & cost management",
+    "short": "Batch API & cost",
+    "kind": "story",
+    "icon": "Coins",
+    "teaser": "Finance wants the overnight 10K-ticket job cheaper: you discover the Batch API's 50% discount and build TicketFlow's cost model.",
+    "nocheck": false
+   },
+   {
+    "id": "ch5",
+    "n": 5,
+    "title": "Prompt caching & multi-turn optimization",
+    "short": "Prompt caching",
+    "kind": "story",
+    "icon": "Database",
+    "teaser": "Every turn re-sends the 20K-token KB and costs spike; you mark it ephemeral, turn 2 reads from cache at 90% off, and the bill drops 85%.",
+    "nocheck": false
+   },
+   {
+    "id": "ch6",
+    "n": 6,
+    "title": "Tool use & argument validation",
+    "short": "Tools & validation",
+    "kind": "story",
+    "icon": "Wrench",
+    "teaser": "Week 5: you hand Claude a lookup_customer tool, watch it call the database on its own, then catch the malformed emails before they hit the query.",
+    "nocheck": false
+   },
+   {
+    "id": "ch7",
+    "n": 7,
+    "title": "Format drift & context management",
+    "short": "Format drift",
+    "kind": "story",
+    "icon": "Scissors",
+    "teaser": "Week 7: TicketFlow's JSON falls apart after 15 turns, and you name it format drift and fix it with validation and context pruning, not temperature.",
+    "nocheck": false
+   },
+   {
+    "id": "ch8",
+    "n": 8,
+    "title": "Agent SDK: execution loop & checkpointing",
+    "short": "SDK & checkpointing",
+    "kind": "story",
+    "icon": "History",
+    "teaser": "Your 20-step resolution agent crashes at step 15 and restarts from step 1, until you add checkpoints and meet the Agent SDK's ready-made loop.",
+    "nocheck": false
+   },
+   {
+    "id": "ch9",
+    "n": 9,
+    "title": "Multi-agent orchestration & workflows",
+    "short": "Multi-agent",
+    "kind": "story",
+    "icon": "Network",
+    "teaser": "Week 9: one agent drops the thread on mixed tickets, so you split TicketFlow into an orchestrator that delegates to focused specialists.",
+    "nocheck": false
+   },
+   {
+    "id": "ch10",
+    "n": 10,
+    "title": "MCP servers & cross-team reuse",
+    "short": "MCP servers",
+    "kind": "story",
+    "icon": "Plug",
+    "teaser": "Three teams want the same Jira and CRM tools, so you ship one MCP server and every app plugs in: write once, reuse everywhere.",
+    "nocheck": false
+   },
+   {
+    "id": "ch11",
+    "n": 11,
+    "title": "Claude Code: CLAUDE.md, Skills, hooks",
+    "short": "CLAUDE.md & hooks",
+    "kind": "story",
+    "icon": "Terminal",
+    "teaser": "Week 11: you lock Claude Code down with a PreToolUse hook that blocks rm -rf and DROP TABLE, and commit TicketFlow’s standards to CLAUDE.md.",
+    "nocheck": false
+   },
+   {
+    "id": "ch12",
+    "n": 12,
+    "title": "Prompt security & injection defense",
+    "short": "Injection defense",
+    "kind": "story",
+    "icon": "ShieldCheck",
+    "teaser": "An attacker's ticket tells your agent to email every TicketFlow record to evil.com; you answer with four layers of defense instead of one.",
+    "nocheck": false
+   },
+   {
+    "id": "ch13",
+    "n": 13,
+    "title": "Deployment, monitoring & operations",
+    "short": "Deployment & ops",
+    "kind": "story",
+    "icon": "Activity",
+    "teaser": "TicketFlow goes live on BYOC for data residency; you wire error routing, CI/CD evals and token tracking, and catch a retry-loop bug before it pages.",
+    "nocheck": false
+   },
+   {
+    "id": "ch14",
+    "n": 14,
+    "title": "Exam-day playbook",
+    "short": "Exam-day playbook",
+    "kind": "playbook",
+    "icon": "Map",
+    "teaser": "Before exam day, you turn every TicketFlow lesson into decision trees: read the scenario clue, name the pattern, and sidestep the classic traps.",
+    "nocheck": false
+   },
+   {
+    "id": "cheatsheet",
+    "n": 0,
+    "title": "Exam cheat sheet",
+    "short": "Cheat sheet",
+    "kind": "cheatsheet",
+    "icon": "ClipboardList",
+    "teaser": "The blueprint, the \"if you see X, choose Y\" decision matrix, and the reference code patterns — the one page to re-read before exam day.",
+    "nocheck": true
+   },
+   {
+    "id": "ch15",
+    "n": 15,
+    "title": "Mock exam",
+    "short": "Mock exam",
+    "kind": "exam",
+    "icon": "ClipboardList",
+    "teaser": "TicketFlow is live at Loomline; now prove you can run it: 53 CCDV-F scenario questions in 90 minutes, 37 to pass, every answer explained at the end.",
+    "nocheck": true
+   },
+   {
+    "id": "ch16",
+    "n": 16,
+    "title": "Next steps with Gennoor",
+    "short": "Next steps",
+    "kind": "next",
+    "icon": "Rocket",
+    "teaser": "TicketFlow is production-ready and you're exam-ready; here's where to take your Claude skills next with Gennoor's guides, labs and team training.",
+    "nocheck": true
+   }
+  ]
+ },
+ "architect-foundations": {
+  "key": "ccarf",
+  "questions": 100,
+  "chapters": [
+   {
+    "id": "ch1",
+    "n": 1,
+    "title": "Introduction and exam overview",
+    "short": "Exam overview",
+    "kind": "intro",
+    "icon": "Compass",
+    "teaser": "Before you lay the first brick of the platform, see what the exam verifies, how the chapters map to its four areas, and how to use the guide.",
+    "nocheck": true
+   },
+   {
+    "id": "ch2",
+    "n": 2,
+    "title": "Claude Agent SDK fundamentals",
+    "short": "The agent loop",
+    "kind": "story",
+    "icon": "Repeat",
+    "teaser": "You wire your first query() call and watch the SDK run the whole agent loop for you: reason, tool, result, repeat, then a ResultMessage.",
+    "nocheck": false
+   },
+   {
+    "id": "ch3",
+    "n": 3,
+    "title": "Agent configuration and execution",
+    "short": "Options & execution",
+    "kind": "story",
+    "icon": "Wrench",
+    "teaser": "You wire up ClaudeAgentOptions, pick a prompt and model, then choose query() or ClaudeSDKClient and watch the stream come back.",
+    "nocheck": false
+   },
+   {
+    "id": "ch4",
+    "n": 4,
+    "title": "Built-in and custom tools",
+    "short": "Tools & @tool",
+    "kind": "story",
+    "icon": "Wrench",
+    "teaser": "You give Claude hands: built-in Read, Edit and Bash tools, then your first @tool that checks stock and reports errors back to Claude.",
+    "nocheck": false
+   },
+   {
+    "id": "ch5",
+    "n": 5,
+    "title": "MCP architecture and integration",
+    "short": "MCP integration",
+    "kind": "story",
+    "icon": "Plug",
+    "teaser": "You plug the platform into the outside world: an MCP client inside, servers outside, three primitives, three transports, mcp__server__tool names.",
+    "nocheck": false
+   },
+   {
+    "id": "ch6",
+    "n": 6,
+    "title": "Subagents and multi-agent systems",
+    "short": "Subagents",
+    "kind": "story",
+    "icon": "Network",
+    "teaser": "You hand work to specialist subagents through the Agent tool and learn why only their final memo, never their notebook, comes back to you.",
+    "nocheck": false
+   },
+   {
+    "id": "ch7",
+    "n": 7,
+    "title": "Hooks and lifecycle management",
+    "short": "Lifecycle hooks",
+    "kind": "story",
+    "icon": "Workflow",
+    "teaser": "You wire checkpoints into the platform: hooks that deny rm -rf, audit every tool result and run whether Claude wants them or not.",
+    "nocheck": false
+   },
+   {
+    "id": "ch8",
+    "n": 8,
+    "title": "Sessions and context management",
+    "short": "Sessions & context",
+    "kind": "story",
+    "icon": "History",
+    "teaser": "You give your agent a memory: sessions it can pause, resume and fork, plus a context window you keep lean before compaction kicks in.",
+    "nocheck": false
+   },
+   {
+    "id": "ch9",
+    "n": 9,
+    "title": "Security, permissions and governance",
+    "short": "Permissions & sandbox",
+    "kind": "story",
+    "icon": "ShieldCheck",
+    "teaser": "You lock the platform down: permission modes, a human-approval callback, injection defences and a sandbox so one bad prompt cannot wreck prod.",
+    "nocheck": false
+   },
+   {
+    "id": "ch10",
+    "n": 10,
+    "title": "Advanced Agent SDK concepts",
+    "short": "Outputs, errors, cost",
+    "kind": "story",
+    "icon": "Gauge",
+    "teaser": "You make the platform return typed JSON, cap every run with turn and budget limits, then wire in retries, cost tracking and monitoring.",
+    "nocheck": false
+   },
+   {
+    "id": "ch11",
+    "n": 11,
+    "title": "Enterprise architecture patterns",
+    "short": "Enterprise patterns",
+    "kind": "story",
+    "icon": "Building2",
+    "teaser": "Every piece you built now clicks together into six enterprise patterns: sandboxed workers, policy gateways, approval queues, specialists and more.",
+    "nocheck": false
+   },
+   {
+    "id": "ch12",
+    "n": 12,
+    "title": "Practical implementation scenarios",
+    "short": "Six live scenarios",
+    "kind": "story",
+    "icon": "Rocket",
+    "teaser": "Six runnable builds, from a doc-research bot to a refund agent with a human gate, each run live against the mock SDK so you see the mechanics.",
+    "nocheck": false
+   },
+   {
+    "id": "ch13",
+    "n": 13,
+    "title": "Comparison tables",
+    "short": "Comparison tables",
+    "kind": "story",
+    "icon": "Scale",
+    "teaser": "Before the final review you lay every design choice side by side: SDK vs API, allowed vs disallowed, resume vs fork, stdio vs http vs sdk.",
+    "nocheck": false
+   },
+   {
+    "id": "cheatsheet",
+    "n": 0,
+    "title": "Exam cheat sheet",
+    "short": "Cheat sheet",
+    "kind": "cheatsheet",
+    "icon": "ClipboardList",
+    "teaser": "The blueprint, the \"if you see X, choose Y\" decision matrix, and the reference code patterns — the one page to re-read before exam day.",
+    "nocheck": true
+   },
+   {
+    "id": "ch15",
+    "n": 15,
+    "title": "Comprehensive mock examination",
+    "short": "Mock exam",
+    "kind": "exam",
+    "icon": "Trophy",
+    "teaser": "Your platform is built; now sit the timed mock exam: 100 original questions, shuffled and scored, with a per-topic breakdown of what still needs work.",
+    "nocheck": true
+   },
+   {
+    "id": "ch16",
+    "n": 16,
+    "title": "Official documentation and references",
+    "short": "Docs & references",
+    "kind": "refs",
+    "icon": "BookOpen",
+    "teaser": "Your platform is built; here are the official Agent SDK references, the MCP spec and the exam page to return to when you need the source of truth.",
+    "nocheck": true
+   }
+  ]
+ },
+ "architect-professional": {
+  "key": "ccarp",
+  "questions": 62,
+  "chapters": [
+   {
+    "id": "ch0",
+    "n": 1,
+    "title": "Claude Certified Architect – Professional",
+    "short": "Welcome & roadmap",
+    "kind": "intro",
+    "icon": "Compass",
+    "teaser": "You join Meridian as Principal AI Architect: learn the exam format, meet the 12-month roadmap, and get summoned to the first discovery workshop.",
+    "nocheck": true
+   },
+   {
+    "id": "ch1",
+    "n": 2,
+    "title": "Discovery & Business Value",
+    "short": "Discovery & value",
+    "kind": "story",
+    "icon": "Compass",
+    "teaser": "The CFO hands you $2.4M and eight weeks: run discovery, sort hard SLAs from nice-to-haves, and get an architecture past the governance board.",
+    "nocheck": false
+   },
+   {
+    "id": "ch2",
+    "n": 3,
+    "title": "RAG Architecture & RBAC",
+    "short": "Hybrid RAG & RBAC",
+    "kind": "story",
+    "icon": "Database",
+    "teaser": "Week 9: a 480,000-document pilot forces you to design hybrid retrieval that filters by role before anything reaches the model.",
+    "nocheck": false
+   },
+   {
+    "id": "ch3",
+    "n": 4,
+    "title": "Cost & Performance Engineering",
+    "short": "Caching & routing",
+    "kind": "story",
+    "icon": "Coins",
+    "teaser": "Week 11: Meridian's run rate is $840k over budget, and the CTO gives you four weeks to find 40% savings without touching quality or SLAs.",
+    "nocheck": false
+   },
+   {
+    "id": "ch4",
+    "n": 5,
+    "title": "Agent Governance & Tooling",
+    "short": "Agent governance",
+    "kind": "story",
+    "icon": "Bot",
+    "teaser": "Week 15: the 34-tool claims agent is losing accuracy, so you decompose it, defer tools on demand, audit privileges and gate risky actions.",
+    "nocheck": false
+   },
+   {
+    "id": "ch5",
+    "n": 6,
+    "title": "Compliance & Security",
+    "short": "HIPAA & guardrails",
+    "kind": "story",
+    "icon": "ShieldCheck",
+    "teaser": "Week 19: the CCO demands proof before PHI flows: a HIPAA-eligible config, secrets out of prompts, RBAC at retrieval and layered guardrails.",
+    "nocheck": false
+   },
+   {
+    "id": "ch6",
+    "n": 7,
+    "title": "Observability & Evaluation",
+    "short": "Observability & evals",
+    "kind": "story",
+    "icon": "Activity",
+    "teaser": "Week 23: three incidents expose missing trace IDs, unlogged model versions and a p-hacked A/B test; you rebuild observability and fairness checks.",
+    "nocheck": false
+   },
+   {
+    "id": "ch7",
+    "n": 8,
+    "title": "Deployment & Operations",
+    "short": "Canary & handoff",
+    "kind": "story",
+    "icon": "Rocket",
+    "teaser": "Week 27: you take the 4-week canary live at 5% of clinicians, arm the rollback gates, and hand Meridian's system to the on-call team.",
+    "nocheck": false
+   },
+   {
+    "id": "ch8",
+    "n": 9,
+    "title": "Exam-Day Playbook",
+    "short": "Exam-day patterns",
+    "kind": "playbook",
+    "icon": "Compass",
+    "teaser": "Twelve months at Meridian distilled into twelve decision patterns: spot the trap, eliminate the SLA breaker, choose the sound answer.",
+    "nocheck": true
+   },
+   {
+    "id": "cheatsheet",
+    "n": 0,
+    "title": "Exam cheat sheet",
+    "short": "Cheat sheet",
+    "kind": "cheatsheet",
+    "icon": "ClipboardList",
+    "teaser": "The blueprint, the \"if you see X, choose Y\" decision matrix, and the reference code patterns — the one page to re-read before exam day.",
+    "nocheck": true
+   },
+   {
+    "id": "ch9",
+    "n": 10,
+    "title": "Mock Exam",
+    "short": "Mock exam",
+    "kind": "exam",
+    "icon": "ListChecks",
+    "teaser": "With Meridian's rollout behind you, sit all 62 practice questions in random order, scored by topic with explanations, and prove you're exam-ready.",
+    "nocheck": true
+   },
+   {
+    "id": "ch10",
+    "n": 11,
+    "title": "Next Steps with Gennoor",
+    "short": "Continue with Gennoor",
+    "kind": "next",
+    "icon": "Rocket",
+    "teaser": "Meridian's canary rollout is approved and you're exam-ready; keep going with Gennoor's cert guides, Learning Studio courses or a Claude POC with us.",
+    "nocheck": true
+   }
+  ]
+ }
+}

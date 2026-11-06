@@ -1,0 +1,16 @@
+{
+  "short": "Claude Projects",
+  "icon": "FolderKanban",
+  "teaser": "Maya stops pasting the same 300-word brief into every chat: one Project holds the rules and glossary, and her prompts shrink from 400 words to 50.",
+  "scene": {
+    "kicker": "Maya's story · Week 2",
+    "title": "Why am I pasting the same instructions into every chat?",
+    "sceneHtml": "<h3>Maya's story: Week 2 – \"Why am I pasting the same instructions into every chat?\"</h3><p>Maya was drafting quarterly client summaries for eight clients. Every chat started with the same 300-word block: <i>\"You are a client-success analyst. Our tone is professional with no contractions. Always include these five sections: Executive Summary, Metrics, Key Wins, Risks, Next Steps. Here is our terminology guide…\"</i></p><p>Her manager said, <i>\"Set up a <b>Project</b>. Put those instructions in once, upload the terminology guide, and every chat in the Project gets them automatically. No more copy-paste.\"</i> Maya created the \"Quarterly Client Summaries\" Project. Her prompts shrank from 400 words to 50, and every output followed the rules without her repeating them.</p>"
+  },
+  "takeaways": [
+    "A Project bundles custom instructions, uploaded knowledge and Skills; every chat in it inherits them. Use for recurring work, not one-offs.",
+    "When authoring custom instructions, define the Project's purpose and boundaries first, then draft, validate and refine them.",
+    "Fix weak Project output by being explicit: name the role, tone (no contractions), minimum length, required sections and attached policy.",
+    "Use a Skill by adding it, uploading knowledge and writing instructions that reference both. Review configs periodically as policies change."
+  ]
+}

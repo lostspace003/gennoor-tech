@@ -1,0 +1,12 @@
+{
+  "short": "Comparison tables",
+  "icon": "Scale",
+  "teaser": "Before the final review you lay every design choice side by side: SDK vs API, allowed vs disallowed, resume vs fork, stdio vs http vs sdk.",
+  "scene": null,
+  "takeaways": [
+    "allowed_tools pre-approves tools (it is not a whitelist); disallowed_tools is a hard block and wins when both name the same tool.",
+    "query() is a single exchange; ClaudeSDKClient is a persistent multi-turn session with interrupt. resume continues, fork_session branches.",
+    "Hooks are lifecycle events for all policy and telemetry; can_use_tool only decides unresolved permission requests.",
+    "MCP transports: stdio = local subprocess, http = remote streamable HTTP, sse = legacy remote streaming, sdk = in-process custom tools."
+  ]
+}

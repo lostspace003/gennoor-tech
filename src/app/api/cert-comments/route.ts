@@ -3,15 +3,17 @@ import { getCommentsBySlug, saveComment } from '@/lib/azure-storage'
 import { verifyLearnerSession } from '@/lib/learner-auth'
 
 /**
- * Discussion threads for the Claude certification guides and prep hub.
- * Reading is open; posting requires a signed-in learner (the same
- * learner-session account used everywhere else on the site).
- * Comments are stored in the BlogComments table under a 'cert/' partition
- * prefix so they never mix with blog post slugs.
+ * Discussion threads under the practice-exam questions of the Claude certification courses.
+ * Reading is open; posting requires a signed-in learner (the same learner-session account used
+ * everywhere else on the site).
+ *
+ * Comments live in the BlogComments table. The partition key is "cert-<topic>" (for example
+ * "cert-ccasf-q12"); it must never contain "/" — Azure Table keys reject it, which is what
+ * silently broke the first version of this discussion.
  */
 
-// topic examples: ccarf/ch3, ccasf/ch12, prep-hub/ccdv-f, prep-hub/general
-const TOPIC_RE = /^(ccasf|ccdvf|ccarf|ccarp|prep-hub)\/[a-z0-9-]{1,40}$/
+// topic = <course key>-q<question number>, e.g. ccarf-q37
+const TOPIC_RE = /^(ccasf|ccdvf|ccarf|ccarp)-q\d{1,3}$/
 
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
 function isRateLimited(email: string): boolean {
@@ -21,7 +23,7 @@ function isRateLimited(email: string): boolean {
     rateLimitMap.set(email, { count: 1, resetAt: now + 3600000 })
     return false
   }
-  if (entry.count >= 10) return true
+  if (entry.count >= 20) return true
   entry.count++
   return false
 }
@@ -32,9 +34,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid topic' }, { status: 400 })
   }
   try {
-    const comments = await getCommentsBySlug(`cert/${topic}`)
+    const comments = await getCommentsBySlug(`cert-${topic}`)
     const safe = comments
-      .map(({ authorEmail, ...c }) => c)
+      .map(({ authorEmail: _omit, ...c }) => c)
       .sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)))
     return NextResponse.json(safe)
   } catch (error) {
@@ -64,13 +66,13 @@ export async function POST(req: NextRequest) {
 
     const cleanContent = text.replace(/<[^>]*>/g, '')
     const comment = await saveComment({
-      slug: `cert/${topic}`,
+      slug: `cert-${topic}`,
       parentId: parentId ? String(parentId).slice(0, 64) : undefined,
       authorName: (learner.name || learner.email.split('@')[0]).slice(0, 100),
       authorEmail: learner.email,
       content: cleanContent,
     })
-    const { authorEmail: _omit, ...safe } = comment as Record<string, any>
+    const { authorEmail: _omit, ...safe } = comment as Record<string, unknown>
     return NextResponse.json(safe, { status: 201 })
   } catch (error) {
     console.error('Failed to save cert comment:', error)

@@ -1,0 +1,12 @@
+{
+  "short": "The agent loop",
+  "icon": "Repeat",
+  "teaser": "You wire your first query() call and watch the SDK run the whole agent loop for you: reason, tool, result, repeat, then a ResultMessage.",
+  "scene": null,
+  "takeaways": [
+    "The Agent SDK owns the agent loop and ships built-in tools; with the plain Messages API you write the loop yourself.",
+    "Entry points are query() or ClaudeSDKClient; the SDK streams SystemMessage, AssistantMessage, UserMessage (tool results) and ResultMessage.",
+    "Each tool call passes a gate in order: hooks, then deny rules, then permission mode / allow rules, then can_use_tool.",
+    "The loop ends when Claude replies without tool calls, max_turns is hit, or an error occurs; ResultMessage carries cost and session id."
+  ]
+}

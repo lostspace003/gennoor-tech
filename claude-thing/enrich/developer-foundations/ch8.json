@@ -1,0 +1,16 @@
+{
+  "short": "SDK & checkpointing",
+  "icon": "History",
+  "teaser": "Your 20-step resolution agent crashes at step 15 and restarts from step 1, until you add checkpoints and meet the Agent SDK's ready-made loop.",
+  "scene": {
+    "kicker": "TicketFlow · Week 8",
+    "title": "A 20-step resolution workflow that restarts from step 1 every time a worker crashes",
+    "sceneHtml": "<h2>TicketFlow: Week 8</h2><p>You're building a long-running resolution workflow: classify → research KB → attempt fix → verify. Takes 20 steps. Workers sometimes crash mid-task. Without checkpointing, it restarts from step 1 every time. You implement state persistence: after each step, save progress to disk. On crash, resume from last checkpoint.</p>"
+  },
+  "takeaways": [
+    "The Agent SDK runs the reason, call tool, read result loop for you, with built-in tools, permissions, hooks, MCP and sessions.",
+    "Choose Agent SDK for multi-step work needing file, shell or web tools; choose Messages API for single-shot or custom tool-only flows.",
+    "Checkpointing saves step, message history and metadata to persistent storage after each step; on crash, reload and resume from there.",
+    "Resumability needs stateless workers on shared storage, idempotent steps safe to re-run, and granular saves rather than one at the end."
+  ]
+}

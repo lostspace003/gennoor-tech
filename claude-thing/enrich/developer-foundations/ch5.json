@@ -1,0 +1,16 @@
+{
+  "short": "Prompt caching",
+  "icon": "Database",
+  "teaser": "Every turn re-sends the 20K-token KB and costs spike; you mark it ephemeral, turn 2 reads from cache at 90% off, and the bill drops 85%.",
+  "scene": {
+    "kicker": "TicketFlow · Week 4",
+    "title": "Every turn re-sends the 20K-token knowledge base, and the bill is spiking",
+    "sceneHtml": "<h2>TicketFlow: Week 4</h2><p>Agents are having multi-turn conversations with customers, and each turn re-sends the 20K-token TicketFlow knowledge base. Costs are spiking. You enable prompt caching: turn 1 pays full price, turn 2+ pay 90% less on the cached KB. Monthly costs drop by 85%.</p>"
+  },
+  "takeaways": [
+    "Add cache_control: {\"type\": \"ephemeral\"} to static system blocks (KB, examples, tool definitions); first request writes, later ones read.",
+    "Cached input tokens are billed at 1/10th price (90% off); the first request pays full cost plus a small cache write fee.",
+    "Cache TTL is 5 minutes of inactivity and each hit extends it by 5 minutes. Exam trap: assuming the cache lasts forever.",
+    "Cache is per model and per exact prefix, so send identical cached blocks every turn; monitor cache_creation vs cache_read tokens."
+  ]
+}

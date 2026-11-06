@@ -30,7 +30,7 @@ export default function ContactPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
 
       <main className="min-h-screen bg-white">
-        <section className="hero-backdrop px-8 pt-20 lg:pt-[100px] pb-10 text-center">
+        <section className="hero-backdrop px-8 pt-8 lg:pt-10 pb-10 text-center">
           <h1 className="display-hero max-w-[820px] mx-auto">Let&rsquo;s talk.</h1>
           <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.45] text-[#6e6e73] max-w-[560px] mx-auto mt-6">
             Tell us what you want your team to be able to do, or which process costs you time.

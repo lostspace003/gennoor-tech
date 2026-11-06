@@ -36,7 +36,7 @@ const STAND_FOR = [
 export default function AboutPage() {
   return (
     <main className="bg-white">
-      <section className="hero-backdrop px-6 pt-16 lg:pt-[100px] pb-12 text-center">
+      <section className="hero-backdrop px-6 pt-8 lg:pt-10 pb-8 text-center">
         <h1 className="display-hero max-w-[820px] mx-auto">Gennoor Tech.</h1>
         <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.5] text-[#6e6e73] max-w-[640px] mx-auto mt-6">
           Practical AI and cloud knowledge, for everyone who wants to build with it.
@@ -68,7 +68,7 @@ export default function AboutPage() {
       </section>
 
       {/* ===== What we stand for ===== */}
-      <section className="bg-[#f5f5f7] px-6 py-16 lg:py-[90px]">
+      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-14">
         <div className="max-w-[1080px] mx-auto">
           <h2 className="display-section text-center mb-10">What we stand for.</h2>
           <div className="grid md:grid-cols-3 gap-5">
@@ -85,7 +85,7 @@ export default function AboutPage() {
       <ClaudePartnerSection />
 
       {/* ===== Training, separate from the Learning Studio ===== */}
-      <section className="px-6 py-16 lg:py-[90px]">
+      <section className="px-6 py-10 lg:py-14">
         <div className="max-w-[720px] mx-auto text-center">
           <h2 className="display-section">We also deliver live training.</h2>
           <p className="lede mt-4">Instructor-led sessions and workshops, taught live from Mumbai.</p>
@@ -99,7 +99,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="bg-[#f5f5f7] px-6 py-16 lg:py-[90px]">
+      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-14">
         <div className="max-w-[1080px] mx-auto">
           <h2 className="display-section text-center mb-10">Find out more.</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">

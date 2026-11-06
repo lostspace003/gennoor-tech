@@ -1,0 +1,12 @@
+{
+  "short": "Permissions & sandbox",
+  "icon": "ShieldCheck",
+  "teaser": "You lock the platform down: permission modes, a human-approval callback, injection defences and a sandbox so one bad prompt cannot wreck prod.",
+  "scene": null,
+  "takeaways": [
+    "Permission layers run in order: hooks → deny rules → ask rules → permission mode → allow rules → can_use_tool callback. Deny always wins.",
+    "Modes: default, acceptEdits, plan, dontAsk, bypassPermissions (sandboxes only), auto. allowed_tools does not restrict bypassPermissions.",
+    "can_use_tool returns PermissionResultAllow or PermissionResultDeny(message=...); modes are coarse static policy, callbacks per-call logic.",
+    "Treat tool output as data: limit tools after untrusted content, require approval for side effects, cap spend with max_budget_usd."
+  ]
+}

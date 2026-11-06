@@ -1,0 +1,16 @@
+{
+  "short": "Prompt anatomy",
+  "icon": "ClipboardList",
+  "teaser": "Same prompt, three different answers: Maya learns the role-context-task-format recipe that makes Claude's output consistent.",
+  "scene": {
+    "kicker": "Maya's story · Week 1",
+    "title": "Why does the same prompt give me different results?",
+    "sceneHtml": "<h3>Maya's story: Week 1 – \"Why does the same prompt give me different results?\"</h3><p>Maya typed <i>\"Summarize this\"</i> and uploaded a 20-page client contract. Claude gave a 3-sentence overview. She tried again with the same prompt — this time Claude gave a 2-page bullet list. A third run produced a table. Same input, same prompt, wildly different outputs.</p><p>Her manager explained: <i>\"You told Claude what to summarize, but not <b>who</b> it is for, <b>why</b>, or <b>what format</b> you need. So Claude guessed differently each time.\"</i> Maya learned that a well-structured prompt has four elements: <b>role, context, task, and format</b>.</p>"
+  },
+  "takeaways": [
+    "A well-structured prompt has four elements: role, context (audience, goal, constraints), task (the deliverable) and format.",
+    "Non-determinism is expected, not a bug: cut variance with explicit prompts, output examples, and Projects/custom instructions.",
+    "Match format to the use case: table for comparisons, bullets for scannable summaries, numbered steps for procedures, prose for narrative.",
+    "If outputs are inconsistent or incomplete, suspect under-specification first; time-pressed executives need bottom-line-up-front."
+  ]
+}

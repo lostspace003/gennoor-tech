@@ -1,0 +1,16 @@
+{
+  "short": "Observability & evals",
+  "icon": "Activity",
+  "teaser": "Week 23: three incidents expose missing trace IDs, unlogged model versions and a p-hacked A/B test; you rebuild observability and fairness checks.",
+  "scene": {
+    "kicker": "Meridian rollout · Week 23",
+    "title": "Three incidents in one week: no trace, no model version, and an A/B test stopped early",
+    "sceneHtml": "<p><b>Compliance sign-off granted, Week 23.</b> The platform team reports three production incidents in the past week: (1) A claims agent regression was traced to a model update, but logs did not capture which model version served which request. (2) A cross-service trace could not be reconstructed because request correlation IDs were missing. (3) An A/B test comparing two system prompts was stopped early when Prompt A appeared ahead on day 2, only to regress by day 5—the test lacked statistical rigor.</p><p>Your mandate: instrument end-to-end observability with correlation IDs and model version capture, design statistically sound A/B experiments, and implement fairness parity checks before rollout.</p>"
+  },
+  "takeaways": [
+    "No correlation IDs across tool/subagent calls: no end-to-end trace. No model version logged per turn: regressions cannot be isolated.",
+    "Before an A/B test: define the hypothesis and primary metric, the MDE and the sample size. Never peek and stop early when one variant leads.",
+    "Approval-rate parity alone is not fairness: check error-rate parity (FPR/FNR per protected group). Matching humans does not rule out bias.",
+    "Before an eval suite: define metrics and slices, then curate a labeled test set. Gate every prompt or model change with regression tests."
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "short": "Batch API & cost",
+  "icon": "Coins",
+  "teaser": "Finance wants the overnight 10K-ticket job cheaper: you discover the Batch API's 50% discount and build TicketFlow's cost model.",
+  "scene": {
+    "kicker": "TicketFlow · Week 3",
+    "title": "Finance asks: can we cut the cost of classifying 10,000 overnight tickets?",
+    "sceneHtml": "<h2>TicketFlow: Week 3</h2><p>Product wants overnight batch processing: classify 10,000 tickets that came in after hours. Real-time API would cost $X. Finance asks: can we cut that cost? You discover the Batch API: 50% savings for async workloads with flexible completion windows.</p>"
+  },
+  "takeaways": [
+    "Message Batches API: up to 10K requests per batch, async, 50% lower token cost; poll batches.retrieve() until processing_status is \"ended\".",
+    "Use Batch for overnight jobs, backfills and bulk work with a flexible window of hours; never for user-facing realtime responses.",
+    "Cost = volume x avg input tokens x input price + volume x avg output tokens x output price; then 50% off for batch, 90% off cached tokens.",
+    "Exam trap: output tokens count too. When spend grows unexplained, add per-feature token tracking from message.usage before optimizing."
+  ]
+}

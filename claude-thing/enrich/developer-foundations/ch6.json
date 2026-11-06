@@ -1,0 +1,16 @@
+{
+  "short": "Tools & validation",
+  "icon": "Wrench",
+  "teaser": "Week 5: you hand Claude a lookup_customer tool, watch it call the database on its own, then catch the malformed emails before they hit the query.",
+  "scene": {
+    "kicker": "TicketFlow · Week 5",
+    "title": "Claude gets hands: a lookup_customer tool, and the bad emails it sometimes sends",
+    "sceneHtml": "<h2>TicketFlow: Week 5</h2><p>Agents need to look up customer data mid-conversation. You define a <code>lookup_customer</code> tool with name, description, and JSON schema. Claude starts calling it automatically. But occasionally it sends malformed emails. You add argument validation to catch this before the DB query.</p>"
+  },
+  "takeaways": [
+    "The loop: Claude emits tool_use, your app executes it, you append tool_result as a user message, repeat until stop_reason is end_turn.",
+    "Model picks the wrong tool or calls it at the wrong time? Fix the description and schema, not max_tokens; schema alone never decides when.",
+    "JSON Schema validates shape only; add business-rule checks (email format, ID exists, amount > 0) in your dispatcher before executing.",
+    "When validation fails, return a tool_result carrying the error message instead of raising; Claude reads it and adapts (retry, ask, re-plan)."
+  ]
+}

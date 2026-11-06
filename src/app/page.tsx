@@ -59,7 +59,7 @@ export default async function HomePage() {
       <CertPromoButton />
 
       {/* ===== Hero: the Claude Partner Network first ===== */}
-      <section className="hero-backdrop bg-white px-6 pt-14 lg:pt-[90px] pb-16 lg:pb-[90px]">
+      <section className="hero-backdrop bg-white px-6 pt-8 lg:pt-10 pb-10 lg:pb-12">
         <div className="max-w-[1180px] mx-auto grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] gap-12 lg:gap-14 items-center">
           <div className="text-center lg:text-left">
             <div className="lg:[&>div]:items-start"><ClaudePartnerHero /></div>
@@ -79,7 +79,7 @@ export default async function HomePage() {
       </section>
 
       {/* ===== How the Learning Studio works ===== */}
-      <section className="bg-[#f5f5f7] px-6 py-16 lg:py-[90px]">
+      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-14">
         <div className="max-w-[980px] mx-auto text-center">
           <h2 className="display-section">See how the Learning Studio works.</h2>
           <p className="lede mt-3.5 max-w-[600px] mx-auto">From the first click to your first lesson, in about nine minutes. Find a course, ask questions, and start learning.</p>
@@ -92,7 +92,7 @@ export default async function HomePage() {
 
       {/* ===== Courses: every Studio course plus the Claude courses, added automatically ===== */}
       {catalogue.length > 0 && (
-        <section className="bg-[#f5f5f7] px-6 py-16 lg:py-[90px]">
+        <section className="bg-[#f5f5f7] px-6 py-10 lg:py-14">
           <div className="max-w-[1080px] mx-auto">
             <div className="text-center mb-12">
               <h2 className="display-section">Courses at Gennoor.</h2>
@@ -107,7 +107,7 @@ export default async function HomePage() {
       )}
 
       {/* ===== Vision ===== */}
-      <section className="bg-white px-6 py-16 lg:py-[90px]">
+      <section className="bg-white px-6 py-10 lg:py-14">
         <div className="max-w-[1080px] mx-auto">
           <div className="max-w-[820px] mx-auto text-center">
             <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-primary-600">Our vision</p>
@@ -131,7 +131,7 @@ export default async function HomePage() {
       </section>
 
       {/* ===== Live training, separate from the Learning Studio ===== */}
-      <section className="bg-[#f5f5f7] px-6 py-16 lg:py-[90px]">
+      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-14">
         <div className="max-w-[1080px] mx-auto grid md:grid-cols-[auto_1fr] gap-8 items-center rounded-[22px] bg-white p-8 lg:p-10">
           <TrainingIllustration className="w-[96px] h-[96px] mx-auto md:mx-0" />
           <div className="text-center md:text-left">
@@ -146,7 +146,7 @@ export default async function HomePage() {
       </section>
 
       {/* ===== Contact ===== */}
-      <section className="bg-white px-6 py-16 lg:py-[100px] text-center">
+      <section className="bg-white px-6 py-10 lg:py-14 text-center">
         <h2 className="display-section max-w-[720px] mx-auto">Questions? Talk to us.</h2>
         <div className="flex flex-col sm:flex-row gap-5 sm:gap-[22px] justify-center items-center mt-8">
           <Link href="/contact" className="pill-primary">Contact us</Link>

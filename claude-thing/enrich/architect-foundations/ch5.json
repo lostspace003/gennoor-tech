@@ -1,0 +1,12 @@
+{
+  "short": "MCP integration",
+  "icon": "Plug",
+  "teaser": "You plug the platform into the outside world: an MCP client inside, servers outside, three primitives, three transports, mcp__server__tool names.",
+  "scene": null,
+  "takeaways": [
+    "The AI app hosts the MCP client; each integration is an MCP server exposing tools (actions), resources (data) and prompts (templates).",
+    "Client and server speak JSON-RPC over stdio (local subprocess), http (remote streamable) or sse (legacy): tools/list, then tools/call.",
+    "MCP tool names follow mcp__<server>__<tool>; allow them per tool or with a per-server wildcard like mcp__fs__* in allowed_tools.",
+    "create_sdk_mcp_server builds an in-process server from @tool functions: no network or subprocess, same security boundary as your app."
+  ]
+}

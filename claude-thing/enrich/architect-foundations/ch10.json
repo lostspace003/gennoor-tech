@@ -1,0 +1,12 @@
+{
+  "short": "Outputs, errors, cost",
+  "icon": "Gauge",
+  "teaser": "You make the platform return typed JSON, cap every run with turn and budget limits, then wire in retries, cost tracking and monitoring.",
+  "scene": null,
+  "takeaways": [
+    "Structured outputs: set output_format to a json_schema; the validated object arrives in ResultMessage.structured_output.",
+    "Schema validation that keeps failing yields subtype error_max_structured_output_retries; with Pydantic, use Model.model_json_schema().",
+    "max_turns ends a run with subtype error_max_turns, max_budget_usd with error_max_budget_usd; single-shot query() then raises ClaudeSDKError.",
+    "total_cost_usd is a client-side estimate; usage covers the main loop, model_usage adds subagents. Never bypassPermissions outside a sandbox."
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "short": "Memory & Connectors",
+  "icon": "Plug",
+  "teaser": "Maya switches on Memory so Claude keeps Brightline's tiers between chats, connects Google Drive, and learns why long chats lose the thread.",
+  "scene": {
+    "kicker": "Maya's story · Week 3",
+    "title": "Why doesn't Claude remember what I told it yesterday?",
+    "sceneHtml": "<h3>Maya's story: Week 3 – \"Why doesn't Claude remember what I told it yesterday?\"</h3><p>Maya spent Monday explaining Brightline's client tiers to Claude in detail. Tuesday she started a new chat and asked about tier-2 renewal policies — Claude had no idea what tier 2 meant. Every chat started from scratch.</p><p>Her colleague said, <i>\"Enable <b>Memory</b>. Claude will remember preferences and context across chats.\"</i> Maya enabled it, told Claude once about the tier structure, and from then on every chat knew the tiers without her re-explaining them. She also connected <b>Google Drive</b> so Claude could pull client files directly instead of her uploading them manually every time.</p>"
+  },
+  "takeaways": [
+    "Memory keeps recurring facts (your role, org structure, terminology) across chats; keep task-specific details like quarterly numbers out.",
+    "Memory imports from other platforms are experimental and may not bring everything over; add missing details manually in Settings.",
+    "Connector indexes refresh periodically, so a document revised hours ago may not show yet; the cause is index lag, not permissions.",
+    "When a long chat loses coherence, summarize the current state and continue with a focused follow-up; do not discard it all or swap models."
+  ]
+}

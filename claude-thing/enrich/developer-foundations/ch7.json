@@ -1,0 +1,16 @@
+{
+  "short": "Format drift",
+  "icon": "Scissors",
+  "teaser": "Week 7: TicketFlow's JSON falls apart after 15 turns, and you name it format drift and fix it with validation and context pruning, not temperature.",
+  "scene": {
+    "kicker": "TicketFlow · Week 7",
+    "title": "After 15 turns, the agents' JSON quietly falls apart",
+    "sceneHtml": "<h2>TicketFlow: Week 7</h2><p>After 15 conversation turns, agents start returning malformed JSON. First few turns: perfect schema compliance. Turn 15: missing fields, wrong types. You identify the failure mode as <b>format drift</b>—context pollution diluting schema attention. Fix: output validation + context pruning.</p>"
+  },
+  "takeaways": [
+    "Format drift: output structure decays over many turns as noisy context buries the schema. Fix: validate every output + manage context.",
+    "Context rot vs overflow: quality drops even when the window fits. Fix with pruning or summarization, not a bigger window or model.",
+    "Temperature controls output randomness, not context capacity or attention; it never fixes format drift or context overflow.",
+    "Whole-document keeps cross-section reasoning but citations drift; chunking gives precise citations but loses cross-chunk synthesis."
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "short": "Diagnose-revise-verify",
+  "icon": "Repeat",
+  "teaser": "Eight reworded prompts later, Maya's summary still buries the headline, until she learns to diagnose the flaw, fix it, and verify.",
+  "scene": {
+    "kicker": "Maya's story · Week 2",
+    "title": "This output is close but not quite right",
+    "sceneHtml": "<h3>Maya's story: Week 2 – \"This output is close but not quite right\"</h3><p>Maya asked Claude to draft a quarterly client summary. The first version was too long, used the wrong tone, and missed a key metric. She tried rewording the prompt eight times. Versions 6, 7, and 8 all had the same flaw: the executive summary buried the bottom line three paragraphs down.</p><p>Her colleague asked, <i>\"Did you tell Claude what was wrong and what you needed instead?\"</i> Maya had been guessing at prompt changes without diagnosing the specific problem. She learned the <b>diagnose-revise-verify loop</b>: pinpoint the flaw, fix it with a targeted follow-up, then check whether it worked.</p>"
+  },
+  "takeaways": [
+    "Refinement runs in order: diagnose the specific weakness, revise with a targeted fix, verify it worked, then decide what's next.",
+    "Three consecutive near-identical outputs with the same flaw means diminishing returns: stop prompting, edit by hand or change approach.",
+    "Productive feedback responses: map each reviewer comment to a specific change, and ask clarifying questions when feedback is ambiguous.",
+    "Disciplined iteration fixes only what reviewers flagged: leave accepted parts alone, don't rewrite from scratch or add unrequested changes."
+  ]
+}

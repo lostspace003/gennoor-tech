@@ -1,0 +1,16 @@
+{
+  "short": "Multi-agent",
+  "icon": "Network",
+  "teaser": "Week 9: one agent drops the thread on mixed tickets, so you split TicketFlow into an orchestrator that delegates to focused specialists.",
+  "scene": {
+    "kicker": "TicketFlow · Week 9",
+    "title": "One agent can't juggle billing, tech and product in a single ticket",
+    "sceneHtml": "<h2>TicketFlow: Week 9</h2><p>Complex tickets span billing, technical, and product issues. A single agent loses track of which sub-issue it resolved. You refactor to an orchestrator pattern: one main agent delegates billing → billing agent, technical → tech agent, escalations → human-in-loop agent. Each specialist has focused tools and prompts. Orchestrator merges results.</p>"
+  },
+  "takeaways": [
+    "An orchestrator decomposes the task and delegates to subagents with their own prompt, tools and model; only final results return to it.",
+    "Go multi-agent when sub-tasks are separable, context would overflow, or parallelism pays off; small tightly coupled tasks stay single-agent.",
+    "Multi-agent costs more (extra calls plus coordination) and adds failure modes like lost context in hand-offs, so it is not the default.",
+    "Hybrid: a deterministic workflow handles the standard 90% and an agent is invoked only at decision points such as an unexpected format."
+  ]
+}

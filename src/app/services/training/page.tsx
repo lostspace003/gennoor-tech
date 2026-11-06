@@ -59,7 +59,7 @@ export default function TrainingPage() {
   return (
     <main className="min-h-screen">
       {/* ===== Hero ===== */}
-      <section className="bg-white px-8 pt-20 lg:pt-[110px] pb-[72px] text-center">
+      <section className="bg-white px-8 pt-8 lg:pt-10 pb-[72px] text-center">
         <h1 className="text-[clamp(40px,4.8vw,64px)] leading-[1.06] tracking-[-0.03em] font-bold text-gray-900 max-w-[760px] mx-auto">
           Programs we teach.
         </h1>
