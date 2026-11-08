@@ -1,7 +1,13 @@
 {
   "topic": "AsyncAnthropic Concurrency",
-  "hook": "Three tickets arrived at once. Two of them timed out waiting for the first.",
-  "body": "Traffic spikes and the sync Flask service sends ticket 1, then blocks while it waits. Tickets 2 and 3 sit idle until their requests time out.\n\nSwitching to AsyncAnthropic makes every call awaitable, and asyncio.gather() keeps all three in flight at once.\n\nThe takeaway: under concurrent load, a blocking client is the bottleneck, not the model. Async architecture is part of the CCDV-F SDK domain.\n\n🔊 Turn the sound on for the walkthrough.\n\nThe CCDV-F prep course covers async and cost engineering step by step, with a practice exam:",
+  "hook": "One slow Claude call blocks every other request in your service.",
+  "bullets": [
+    "Sync calls block the event loop",
+    "Switch to AsyncAnthropic",
+    "asyncio.gather sends calls concurrently",
+    "SDK auto-retries 429s with backoff"
+  ],
+  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

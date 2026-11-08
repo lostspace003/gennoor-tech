@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     const errors: string[] = []
     for (const t of targets) {
       if (runs[t]?.status === 'done') continue
-      try { runs[t] = { status: 'done', at: new Date().toISOString(), attempts: (runs[t]?.attempts || 0) + 1, urn: await publishItem(s, it, t) } }
+      try { runs[t] = { status: 'done', at: new Date().toISOString(), attempts: (runs[t]?.attempts || 0) + 1, ...(await publishItem(s, it, t)) } }
       catch (e: any) { const m = String(e?.message || e).slice(0, 300); runs[t] = { status: 'failed', at: new Date().toISOString(), attempts: (runs[t]?.attempts || 0) + 1, error: m }; errors.push(`${t}: ${m}`) }
     }
     s.log.push({ at: new Date().toISOString(), msg: `${it.id}: posted now by admin${errors.length ? ` (errors: ${errors.join('; ')})` : ''}` })

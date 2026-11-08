@@ -4,7 +4,7 @@ import { addFirstComment, repostLine } from '@/lib/linkedin-engage'
 import { loadState as loadAutopilot } from '@/lib/autopilot/live'
 import { githubConfigured, getPullRequest, mergePullRequest, openPullRequest, readFile } from '@/lib/github-pr'
 import { siteUrl } from '@/lib/tech-call-mail'
-import { formatForLinkedIn, LINKEDIN_STYLE_GUIDE } from '@/lib/linkedin-format'
+import { formatForLinkedIn, HOOK_BULLETS_RULES, LINKEDIN_STYLE_GUIDE } from '@/lib/linkedin-format'
 import { blogPostsMeta } from '@/data/blog-posts'
 import { contentFile, getBlogDraft, listBlogDrafts, mutateBlogDraft, patchIndex, type BlogDraft } from '@/lib/blog-studio'
 import { foundry, readBlob, recordSpend, textUsd, tokensOf, writeBlob } from '@/lib/social/studio'
@@ -77,9 +77,11 @@ export async function shareTexts(d: BlogDraft): Promise<{ page: string; profile:
   try {
     const j = await foundry('/openai/v1/responses', {
       model: TEXT_MODEL,
-      instructions: `You write short LinkedIn posts that announce a new article. Write TWO versions as JSON only: {"page": string, "profile": string}.
-- "page": for the Gennoor Tech company page, 70-110 words, plain and credible: a strong first line, 2-3 short takeaways from the article, then "Read the full article: ${url}", then 3-4 hashtags.
-- "profile": the founder's personal version, first person ("I just published..."), same facts, a different opening line, a short reason it matters to IT leaders, the same link line and hashtags.
+      instructions: `You write short LinkedIn posts that bring readers to a new article. Do not "announce" it: lead with the problem the article solves. Write TWO versions as JSON only: {"page": string, "profile": string}.
+${HOOK_BULLETS_RULES}
+- Exception to the link rule: end both versions with the line "Read the full article: ${url}" just before the hashtags (the link also goes in the first comment).
+- "page": for the Gennoor Tech company page, 3-4 bullets taken from the article's key takeaways.
+- "profile": the founder's personal version, first person, a different hook on the same problem, same bullets reworded, same link line and hashtags.
 Never invent facts beyond the article summary. No hype words. Keep each under 1,300 characters.
 ${LINKEDIN_STYLE_GUIDE}`,
       input: `Title: ${d.meta.title}\nSummary: ${d.meta.tldr}\nKey takeaways:\n- ${d.meta.keyTakeaways.slice(0, 5).join('\n- ')}\nHashtags: ${tags}`,
@@ -149,7 +151,7 @@ export function liveBlogPipelineDeps(): PipelineDeps {
       // Every share gets a meaningful first comment from its author. A failed comment never fails the share.
       const c = await addFirstComment({ token, actor: author, postUrn: urn, post: `${d.meta.title}
 ${d.meta.tldr}
-Key points: ${d.meta.keyTakeaways.slice(0, 4).join('; ')}`, spendId: `blog-${d.id}`, extra: `This is for a blog article on ${url}. Add a detail or question that is NOT already in the post; do not just repeat the link.` })
+Key points: ${d.meta.keyTakeaways.slice(0, 4).join('; ')}`, spendId: `blog-${d.id}`, link: { label: 'Full article', url }, extra: `This is for a blog article on ${url}. Add a detail or question that is NOT already in the post; do not mention the link (it is appended).` })
       if (c.error) console.error('blog first comment failed', c.error)
       // Recorded where the LinkedIn page already looks, so it shows up there too.
       const st = await getLinkedInState()

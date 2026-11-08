@@ -1,5 +1,5 @@
 import { webGroundedCompletion } from '@/lib/crm/foundry'
-import { toPlain } from '@/lib/linkedin-format'
+import { HOOK_BULLETS_RULES, toPlain } from '@/lib/linkedin-format'
 import { sendEmail } from '@/lib/email-service'
 import { getLinkedInState } from '@/lib/linkedin'
 import { agentFetch } from '@/lib/social/agent-service'
@@ -27,12 +27,9 @@ export async function loadState(): Promise<State> {
 }
 export async function saveState(s: State) { await writeBlob(FILE, JSON.stringify(s), 'application/json') }
 
-const REACH_RULES = `Write for REACH on LinkedIn, for senior IT, engineering and AI leaders in India, the Gulf, Europe and the US:
-- The first line is the hook and must stop the scroll: a specific claim, a surprising fact from the sources, a sharp contrast, or a question the reader has an opinion on. Never "Excited to share", never a vague opener.
-- One idea per post. Say what changed, why it matters to someone running IT or building agents, and the one thing to do about it.
-- Be concrete and opinionated where the sources support it. A clear point of view invites replies; fence-sitting does not.
-- Short lines and short paragraphs. No jargon without a plain-English gloss. No hype words (revolutionary, game-changing).
-- End with a specific question that invites comments from practitioners, then 3-4 relevant hashtags.
+const REACH_RULES = `Write for REACH on LinkedIn, for senior IT, engineering and AI leaders in India, the Gulf, Europe and the US.
+${HOOK_BULLETS_RULES}
+- One idea per post. Be concrete and opinionated where the sources support it.
 - Mention every vendor fairly. Never invent facts, numbers, quotes or links; use only the supplied sources.`
 
 const retry = <T,>(fn: () => Promise<T>, sleep: (ms: number) => Promise<void>, tries = 3) => withRetry(fn, { tries, baseMs: 3000, sleep, retryable: isTransient })

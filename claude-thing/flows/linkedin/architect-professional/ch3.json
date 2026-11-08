@@ -1,7 +1,13 @@
 {
   "topic": "Prompt Caching an 80-Page Filing",
-  "hook": "Legal sent the same 80-page filing 14 times, and paid for it 14 times.",
-  "body": "Meridian is $840k over budget. Each query bills 40k fresh input tokens: 560k tokens per case.\n\nYou reorder the prompt so the filing comes first, marked cache_control: ephemeral. Query 1 writes the prefix to the cache; queries 2 to 14 read it at a fraction of the price.\n\nThe takeaway: put the stable content first and cache it. Token-lifecycle cost questions like this are core to the Claude Certified Architect – Professional (CCAR-P).\n\nSee the full cost-engineering chapter in the CCAR-P prep course, with a practice exam:",
+  "hook": "You pay full price for the same long document on every single query.",
+  "bullets": [
+    "Static document first, marked cache_control",
+    "First query writes the cache",
+    "Later queries read it at a fraction of the cost",
+    "Cost per case drops sharply"
+  ],
+  "cta": "Full CCAR-P prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

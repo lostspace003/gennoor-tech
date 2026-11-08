@@ -1,7 +1,13 @@
 {
   "topic": "Claude Code PreToolUse Hook",
-  "hook": "\"Be careful\" in a prompt is not a safety control. A hook is.",
-  "body": "A developer asks Claude Code to wipe a stale build folder and Claude picks rm -rf ./build.\n\nYour .claude/settings.json routes every Bash tool_use to a hook first. check_bash.js reads the command, finds rm -rf and returns deny, so the command never runs.\n\nThe takeaway: enforce safety in deterministic code, not in instructions the model may weigh differently. Hooks are core to the CCDV-F Claude Code domain.\n\n🔊 Turn the sound on for the walkthrough.\n\nThe CCDV-F prep course covers Claude Code and hooks, with a practice exam:",
+  "hook": "Claude Code picks rm -rf, and \"be careful\" in the prompt won't stop it.",
+  "bullets": [
+    "PreToolUse hook on every Bash call",
+    "Script inspects the command first",
+    "Destructive patterns denied",
+    "Safe commands pass through"
+  ],
+  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

@@ -1,7 +1,13 @@
 {
   "topic": "Correlation IDs for AI Tracing",
-  "hook": "\"Policy not found.\" Was it the agent, the retrieval, or the data?",
-  "body": "A claims request hits the gateway, which mints a correlation ID. The header carries it to the claims agent, which logs it with the model ID.\n\nUnder the same ID, retrieval queries the vector DB and gets zero results; the agent logs it and answers \"Policy not found\". Every hop exports its spans, so one ID tells the whole story.\n\nThe takeaway: one ID across every hop turns guesswork into a trace. Observability sits in the CCAR-P security and compliance domain.\n\n🔊 Turn the sound on for the walkthrough.\n\nFollow the Meridian story in the CCAR-P prep course, with a practice exam:",
+  "hook": "A request failed, and you can't trace it across gateway, agent and retrieval.",
+  "bullets": [
+    "Gateway mints a correlation ID",
+    "Every span logs the same ID",
+    "Model ID and tool results logged too",
+    "One query shows the whole failed request"
+  ],
+  "cta": "Full CCAR-P prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

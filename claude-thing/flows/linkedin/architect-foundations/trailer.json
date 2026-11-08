@@ -1,7 +1,13 @@
 {
   "topic": "CCAR-F Course Trailer",
-  "hook": "One query() call. Layer by layer, it becomes a governed agent platform.",
-  "body": "This trailer tours the Claude Agent SDK: the loop query() runs for you, ClaudeAgentOptions where deny beats allow, tools and MCP servers, subagents, hooks, sessions, permission layers and structured outputs.\n\nEach concept is a short animated flow that shows where the control actually sits.\n\nBuilt for architects and engineers preparing for the Claude Certified Architect – Foundations (CCAR-F) exam.\n\n🔊 Turn the sound on for the walkthrough.\n\nThe full CCAR-F prep course walks through this chapter by chapter, with a practice exam:",
+  "hook": "Your agent demo works, but nobody trusts it near production systems.",
+  "bullets": [
+    "One query() call runs the full agent loop",
+    "Options, deny rules and custom tools",
+    "MCP servers, subagents, hooks and sessions",
+    "Permissions, approvals and enterprise controls"
+  ],
+  "cta": "Full CCAR-F prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

@@ -14,6 +14,7 @@ const argv = process.argv.slice(2);
 const arg = (k, d) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : d; };
 const START = arg('--start', '2026-11-09');
 const SEED = Number(arg('--seed', 20261109));
+const PACK_CLEAN = !argv.includes('--no-pack');
 const TIME = '10:00';
 const PACK = path.join(os.homedir(), 'Desktop', 'Claude Certification Videos');
 const COURSES = {
@@ -37,8 +38,10 @@ for (const [slug, c] of Object.entries(COURSES)) {
     const spec = JSON.parse(fs.readFileSync(path.join(ROOT, 'specs', slug, id + '.json'), 'utf8'));
     const url = `https://gennoor.com/claude/certifications/${slug}`;
     const tags = (p.hashtags || []).join(' ');
-    const text = `${p.hook.trim()}\n\n${p.body.trim()}\n👉 ${url}\n\n${tags}`;
-    return { id: `${c.key}-${id}`, chapter: id, slug, code: c.code, course: c.name, topic: p.topic, title: spec.title, hook: p.hook, body: p.body, hashtags: p.hashtags, text, url };
+    const bullets = (p.bullets || []).map(b => '▪ ' + b.trim()).join('\n');
+    const text = `${p.hook.trim()}\n\n${bullets}\n\n${p.cta.trim()}\n👉 ${url}\n\n${tags}`;
+    const comment = `📘 Full ${c.code} prep course, chapter by chapter + practice exam: ${url}`;
+    return { id: `${c.key}-${id}`, chapter: id, slug, code: c.code, course: c.name, topic: p.topic, title: spec.title, hook: p.hook, hashtags: p.hashtags, text, comment, url };
   });
 }
 
@@ -60,18 +63,19 @@ while (Object.values(queues).some(q => q.length)) {
 }
 for (let i = 1; i < items.length; i++) if (items[i].slug === items[i - 1].slug) throw new Error('repeat on ' + items[i].date);
 
-const site = items.map(({ id, date, time, slug, code, course, topic, title, text, url }) => ({ id, date, time, slug, code, course, topic, title, text, url }));
+const site = items.map(({ id, date, time, slug, code, course, topic, title, text, comment, url }) => ({ id, date, time, slug, code, course, topic, title, text, comment, url }));
 fs.writeFileSync(path.join(REPO, 'src', 'data', 'cert-video-series.json'), JSON.stringify({ tz: 'Asia/Kolkata', start: START, seed: SEED, items: site }, null, 1));
 console.log(`schedule: ${items.length} posts, ${items[0].date} → ${items[items.length - 1].date} at ${TIME} IST`);
 
-if (!argv.includes('--no-pack')) {
+if (PACK_CLEAN) {
+  fs.rmSync(PACK, { recursive: true, force: true });
   for (const it of items) {
     const c = COURSES[it.slug];
     const n = it.chapter === 'trailer' ? '00' : String(order(it.chapter)).padStart(2, '0');
     const dir = path.join(PACK, `${c.code} - ${c.name}`, `${n} - ${safe(it.topic)}`);
     fs.mkdirSync(dir, { recursive: true });
     fs.copyFileSync(path.join(ROOT, 'out', it.id + '.mp4'), path.join(dir, `${safe(it.topic)}.mp4`));
-    const md = `# ${it.topic}\n\n**${c.code} · ${c.name}**  \nVideo: \`${safe(it.topic)}.mp4\` (${it.title})  \nScheduled: ${it.date} at ${TIME} IST (company page + profile)\n\n## Hook\n\n${it.hook}\n\n## LinkedIn post (copy as is)\n\n${it.text}\n\n## Course link\n\n${it.url}\n\n## Hashtags\n\n${it.hashtags.join(' ')}\n`;
+    const md = `# ${it.topic}\n\n**${c.code} · ${c.name}**  \nVideo: \`${safe(it.topic)}.mp4\` (${it.title})  \nScheduled: ${it.date} at ${TIME} IST (company page + profile)\n\n## Hook\n\n${it.hook}\n\n## LinkedIn post (copy as is)\n\n${it.text}\n\n## First comment (posted right after the video)\n\n${it.comment}\n\n## Course link\n\n${it.url}\n\n## Hashtags\n\n${it.hashtags.join(' ')}\n`;
     fs.writeFileSync(path.join(dir, 'linkedin.md'), md);
   }
   const lines = items.map(i => `| ${i.date} | ${i.code} | ${i.topic} |`).join('\n');

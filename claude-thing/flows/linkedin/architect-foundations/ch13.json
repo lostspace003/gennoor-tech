@@ -1,7 +1,13 @@
 {
   "topic": "Built-in, SDK and External MCP Tools",
-  "hook": "Built-in, in-process or external MCP: same gate, different process boundary.",
-  "body": "Claude reads a file with a built-in tool. Then it calls your @tool for a business system, which runs in-process via an SDK MCP server so the logic stays private. A shared third-party capability comes from an external MCP server instead.\n\nAll three pass the same permission gate and use the same tool-use protocol. What changes is where the code runs.\n\nThe takeaway: pick a tool type by where the logic should live. A common CCAR-F comparison question.\n\n🔊 Turn the sound on for the walkthrough.\n\nThe CCAR-F prep course compares every option, with a practice exam:",
+  "hook": "Built-in, custom and external tools look alike, but behave differently.",
+  "bullets": [
+    "Built-in tools ship with the runtime",
+    "Your @tool runs in-process via an SDK MCP server",
+    "External MCP tools cross a process boundary",
+    "One hook and permission gate for all of them"
+  ],
+  "cta": "Full CCAR-F prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

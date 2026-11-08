@@ -1,7 +1,13 @@
 {
   "topic": "First Messages API Call",
-  "hook": "Most first Claude API calls put the instructions in the wrong place.",
-  "body": "Day 1: the ticket classifier leaves its notebook and becomes a service. You pick Sonnet for real-time triage, set max_tokens, and call messages.create().\n\nThe exam trap the video dodges: behaviour belongs in the system prompt; the user turn carries only the ticket. Then every token in and out is counted.\n\nThe takeaway: model, max_tokens, system and messages each have a job. Getting this anatomy right is foundational for the Claude Certified Developer – Foundations (CCDV-F).\n\nStart building with the CCDV-F prep course, with a practice exam:",
+  "hook": "Your first Claude API call works, but the prompt and costs are a mess.",
+  "bullets": [
+    "Create a client, pick the right model tier",
+    "Instructions go in the system prompt",
+    "The user turn is just the input",
+    "Log input and output tokens for cost"
+  ],
+  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

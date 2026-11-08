@@ -1,7 +1,13 @@
 {
   "topic": "Agent SDK Hooks",
-  "hook": "Claude reached for rm -rf. A hook said no before permissions even ran.",
-  "body": "Two hooks are registered: PreToolUse on Bash and PostToolUse with no matcher. Asked to clean the build folder, Claude emits rm -rf.\n\nPreToolUse fires before permissions; block_dangerous spots it and denies. The error tells Claude why, so it picks a safe alternative, and PostToolUse audits what actually ran.\n\nThe takeaway: hooks are where deterministic policy and auditing live. A heavily weighted CCAR-F topic.\n\n🔊 Turn the sound on for the walkthrough.\n\nThe CCAR-F prep course covers hooks, sessions and security, with a practice exam:",
+  "hook": "Your agent reaches for rm -rf and nothing stops it in time.",
+  "bullets": [
+    "PreToolUse hook matched to Bash",
+    "Dangerous command denied before it runs",
+    "Claude picks a safe alternative",
+    "PostToolUse hook writes the audit log"
+  ],
+  "cta": "Full CCAR-F prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

@@ -1,7 +1,13 @@
 {
   "topic": "Custom @tool Lifecycle",
-  "hook": "Claude never touches your inventory system. It asks, and your function answers.",
-  "body": "Your code registers check_stock as an in-process @tool and asks about SKU A-100. Claude reads the tool description and emits a ToolUseBlock.\n\nHooks run, the permission check passes, and the SDK calls your function in-process. The result returns as a ToolResultBlock, and Claude answers with the real figure.\n\nThe takeaway: the tool description drives the request, your code owns the execution. Core material for the Claude Certified Architect – Foundations (CCAR-F).\n\nThe CCAR-F prep course covers tools and MCP in depth, with a practice exam:",
+  "hook": "Your custom tool fails and the agent has no idea what went wrong.",
+  "bullets": [
+    "Register an in-process @tool, pre-allowed",
+    "Hooks and permissions run before your function",
+    "Results return as a ToolResultBlock",
+    "Failures come back as is_error results"
+  ],
+  "cta": "Full CCAR-F prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

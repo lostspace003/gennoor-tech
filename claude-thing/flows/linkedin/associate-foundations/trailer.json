@@ -1,7 +1,13 @@
 {
   "topic": "CCAS-F Course Trailer",
-  "hook": "Thirty days ago, Maya typed \"Help me with reports.\" Here is what changed.",
-  "body": "This trailer follows Maya through her first month using Claude at work: the 4Ds of AI fluency, Artifacts that stop procedures vanishing into scrollback, prompts with role, context, task and format, and Projects that shrink a 300-word brief to a 50-word prompt.\n\nIt also covers memory, model choice, task decomposition, data sensitivity and catching hallucinations before they reach a board slide.\n\nBuilt for anyone preparing for the Claude Certified Associate – Foundations (CCAS-F) exam, or just wanting to use Claude well at work.\n\n🔊 Turn the sound on for the walkthrough.\n\nThe full CCAS-F prep course follows Maya chapter by chapter, with a practice exam:",
+  "hook": "You use Claude every day, but the results are still generic and inconsistent.",
+  "bullets": [
+    "The 4Ds of AI fluency",
+    "Artifacts, Projects and Memory",
+    "Prompt structure, refinement and decomposition",
+    "Exact numbers, safe data and hallucination checks"
+  ],
+  "cta": "Full CCAS-F prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

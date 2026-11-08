@@ -1,7 +1,13 @@
 {
   "topic": "CCDV-F Course Trailer",
-  "hook": "One notebook classifier. Thirteen weeks later, an agent fleet in production.",
-  "body": "This trailer follows TicketFlow, a support-ticket service, from its first Messages API call to a governed fleet of agents.\n\nAlong the way: AsyncAnthropic when traffic spikes, the Batch API and prompt caching when finance asks about cost, tool use, format drift, checkpointing, orchestrators, MCP servers, hooks, prompt-injection defence and error routing.\n\nBuilt for developers preparing for the Claude Certified Developer – Foundations (CCDV-F) exam, or shipping Claude into real services.\n\n🔊 Turn the sound on for the walkthrough.\n\nThe full CCDV-F prep course builds TicketFlow chapter by chapter, with a practice exam:",
+  "hook": "Your Claude prototype works in a notebook, but not as a real service.",
+  "bullets": [
+    "First Messages API call and token costs",
+    "Async, batches and prompt caching",
+    "Tool use, agents and MCP servers",
+    "Hooks, injection defence and error routing"
+  ],
+  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

@@ -1,7 +1,13 @@
 {
   "topic": "Choosing the Right Claude Model",
-  "hook": "Using the most powerful model for everything is how you burn your rate limit by Wednesday.",
-  "body": "Maya sends everything to Opus, including quick policy questions. Her manager sees the usage report: simple tasks are eating the rate limit.\n\nShe rematches the work: quick, well-defined lookups move to Haiku, routine weekly summaries to a mid-tier model, and Opus is kept for the tasks that need it.\n\nThe takeaway: match the model to the task, not to your habits. Model selection is a recurring CCAS-F exam theme.\n\n🔊 Turn the sound on for the walkthrough.\n\nWork through model choice and more in the CCAS-F prep course, with a practice exam:",
+  "hook": "You use the biggest model for everything and burn your limits.",
+  "bullets": [
+    "Match the model to the task",
+    "Haiku for quick, simple lookups",
+    "Sonnet for everyday drafting",
+    "Opus kept for complex analysis"
+  ],
+  "cta": "Full CCAS-F prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

@@ -1,7 +1,13 @@
 {
   "topic": "Prompt Caching for Agents",
-  "hook": "Every agent turn re-sent the same 10K-token knowledge base at full price.",
-  "body": "Costs spike because each turn ships the static KB again. You mark that system block with cache_control: ephemeral.\n\nTurn 1 is a cache miss: Claude writes the KB to the cache with a small write fee. Turn 2 sends the identical block, same model, exact prefix, and the cache hits; only the new input is billed in full.\n\nThe takeaway: cache what does not change and keep the prefix identical. Cache hit and miss rules are fair game on the CCDV-F exam.\n\n🔊 Turn the sound on for the walkthrough.\n\nThe CCDV-F prep course breaks caching down with a practice exam:",
+  "hook": "Your agent re-sends the same knowledge base at full price every turn.",
+  "bullets": [
+    "Mark the static block with cache_control",
+    "Turn one writes the cache",
+    "Same prefix, later turns hit the cache",
+    "Check usage for cache reads"
+  ],
+  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

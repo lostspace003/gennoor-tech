@@ -1,7 +1,13 @@
 {
   "topic": "Resume vs Fork Sessions",
-  "hook": "Your agent read the report yesterday. Today it remembers nothing, unless you resume.",
-  "body": "Turn 1: the agent reads report.md and notes the key numbers. The runtime saves the transcript and your code keeps session_id sess-0001.\n\nNext morning, resume=sess-0001 reloads that history. Skip resume and it is a brand-new session with no memory. fork_session=True branches a copy so you can explore without touching the original.\n\nThe takeaway: resume continues, fork branches, nothing persists unless you ask. Classic Claude Certified Architect – Foundations (CCAR-F) material.\n\nLearn session management in the CCAR-F prep course, with a practice exam:",
+  "hook": "Your agent forgets yesterday's work, or overwrites it when you try a what-if.",
+  "bullets": [
+    "Transcripts saved to a session store",
+    "Capture session_id to resume later",
+    "Resume reloads the history",
+    "Fork tries a variant under a new id"
+  ],
+  "cta": "Full CCAR-F prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
