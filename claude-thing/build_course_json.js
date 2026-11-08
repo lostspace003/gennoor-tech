@@ -10,6 +10,7 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 
+const { listifyHtml, listifyText } = require('./listify');
 const ROOT = path.join(__dirname, '..');
 const GUIDES = {
   'associate-foundations': { key: 'ccasf', hub: 'ccas-f' },
@@ -219,6 +220,15 @@ for (const slug of Object.keys(GUIDES)) {
     slug, key, trailer, chapters, anims: ANIMS, kc: KC, ex: EX, ann: ANN, outnotes: OUTNOTES, questions, cheat,
   }, fix);
 
+  // inline enumerations "(1) … (2) … (3) …" become a lead-in + a real numbered list
+  let lists = 0;
+  const lh = s => { const r = listifyHtml(s); lists += r.count; return r.html; };
+  const lt = s => { const r = listifyText(s); lists += r.count; return r.html; };
+  course.chapters.forEach(c => { c.html = lh(c.html); if (c.scene && c.scene.html) c.scene.html = lh(c.scene.html); });
+  Object.keys(course.kc).forEach(k => course.kc[k].forEach(it => { it.e = lt(it.e); }));
+  course.questions.forEach(q => { q.w = lt(q.w); q.x = lt(q.x); });
+  if (course.cheat) course.cheat.domains.forEach(d => { d.points = d.points.map(lt); });
+
   // ---- checks ----
   const allHtml = course.chapters.map(c => c.html + (c.scene ? c.scene.html : '')).join('\n');
   const miss = [];
@@ -235,7 +245,7 @@ for (const slug of Object.keys(GUIDES)) {
   if (!course.chapters.some(c => c.kind === 'exam')) { console.log(slug, 'NO exam chapter'); failures++; }
   const enriched = course.chapters.filter(c => c.icon).length;
   const flows = course.chapters.filter(c => c.flow).length + (trailer ? 1 : 0);
-  console.log(`${slug}: chapters=${course.chapters.length} (enriched ${enriched}, scenes ${course.chapters.filter(c => c.scene && c.scene.cut).length}, flows ${flows}) questions=${course.questions.length} anims=${Object.keys(ANIMS).length} kc=${Object.keys(KC).length} examples=${Object.keys(EX).length} cheat=${!!cheat} leftoverQrefs=${leftover.length}${leftover.length ? ' e.g. ' + leftover.slice(0, 5).join(',') : ''}`);
+  console.log(`${slug}: lists=${lists} chapters=${course.chapters.length} (enriched ${enriched}, scenes ${course.chapters.filter(c => c.scene && c.scene.cut).length}, flows ${flows}) questions=${course.questions.length} anims=${Object.keys(ANIMS).length} kc=${Object.keys(KC).length} examples=${Object.keys(EX).length} cheat=${!!cheat} leftoverQrefs=${leftover.length}${leftover.length ? ' e.g. ' + leftover.slice(0, 5).join(',') : ''}`);
 
   const body = JSON.stringify(course);
   fs.writeFileSync(path.join(OUT_DIR, slug + '.json'), body);

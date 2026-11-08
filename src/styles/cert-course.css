@@ -473,3 +473,13 @@
 @keyframes cc-sk { to { background-position: -200% 0; } }
 
 @media (prefers-reduced-motion: reduce) { .cc .cp-caret { animation: none; } .cc-skel i { animation: none; } }
+
+/* inline enumerations rendered as real numbered lists (claude-thing/listify.js) */
+.cc ol.cc-steps { list-style: none; counter-reset: ccs; margin: 6px 0 12px; padding: 0; display: grid; gap: 6px; }
+.cc ol.cc-steps > li { counter-increment: ccs; position: relative; padding: 6px 10px 6px 38px; margin: 0; border-radius: 10px; background: var(--cc-panel); line-height: 1.5; }
+.cc ol.cc-steps > li::before { content: counter(ccs); position: absolute; left: 9px; top: 6px; width: 21px; height: 21px; border-radius: 999px; background: var(--cc-accent); color: #fff; font-size: 11.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.cc ol.cc-steps > li::marker { content: none; }
+.cc td ol.cc-steps > li, .cc .cc-dom ol.cc-steps > li, .cc .cc-exam-fb ol.cc-steps > li { background: transparent; padding: 2px 4px 2px 32px; }
+.cc td ol.cc-steps > li::before, .cc .cc-dom ol.cc-steps > li::before, .cc .cc-exam-fb ol.cc-steps > li::before { top: 3px; left: 4px; width: 19px; height: 19px; font-size: 10.5px; }
+.cc .cc-steps-lead, .cc .cc-steps-tail { display: block; }
+.cc .cc-fb-text { color: var(--cc-soft); }
