@@ -1,0 +1,11 @@
+{
+  "steps": [
+    "Here Claude can issue refunds, and a plain permission mode is too coarse for that. So your code sets a can use tool callback with one rule: deny any refund over one hundred dollars.",
+    "Claude is asked to refund two orders, O one for forty dollars and O two for two hundred and fifty dollars. First, it requests the forty dollar refund.",
+    "Forty dollars is under the limit, so the callback returns permission allow, issue refund executes, and order O one is refunded forty dollars.",
+    "Next, Claude requests the two hundred and fifty dollar refund for O two. That is over the limit and needs a manager, so the callback denies it, and the refund never runs.",
+    "Claude gets the permission denied error and reports honestly: O one is refunded, and O two is queued for a manager to review.",
+    "Now both decisions land in the audit log, the auto-approval for O one and the denial for O two, so there is a clear record of what happened and why.",
+    "Finally, defense in depth. The payments backend enforces the same one hundred dollar limit as well, so even if the callback were bypassed, the rule still holds."
+  ]
+}

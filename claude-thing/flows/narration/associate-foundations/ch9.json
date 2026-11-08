@@ -1,0 +1,11 @@
+{
+  "steps": [
+    "Here Maya sends a one page memo to Opus to summarize. She uses Opus for everything, assuming the best model is right for every task.",
+    "A quick policy question goes to Opus too, and the answer comes back slowly. That is slow and costly for a simple task.",
+    "Then her manager shares the usage report. Opus is burning the rate limit on simple tasks, so it should be kept for complex analysis only.",
+    "So Maya moves quick policy lookups to Haiku. It is a simple, well-defined task, and Haiku answers fast.",
+    "Next, weekly client summaries move to Sonnet, the balanced tier, which suits routine multi-step work.",
+    "Now only the complex contract dispute still goes to Opus. It is a one-off that needs deep reasoning, and that is where Opus shines.",
+    "Finally, Maya matches each model to its task, choosing the lightest model that meets the bar, and balancing quality, speed and cost."
+  ]
+}

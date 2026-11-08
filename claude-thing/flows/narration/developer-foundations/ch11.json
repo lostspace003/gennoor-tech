@@ -1,0 +1,11 @@
+{
+  "steps": [
+    "Here the CLAUDE dot md file auto-loads into Claude Code, and a developer asks it to wipe the stale build folder.",
+    "Claude picks r m dash r f on the build folder. That is risky, and a prompt that just says be careful could still let it through.",
+    "So your Claude settings file sends every Bash tool use to a pre tool use hook, matched on Bash, before anything runs. The hook watches for patterns like r m dash r f and drop table.",
+    "The check bash script inspects the command in the tool input, finds r m dash r f, and returns deny. The call is blocked.",
+    "Bash never executes. Claude Code is told why, and passes the reason on to the developer: destructive command blocked.",
+    "Next, Claude narrows the command to remove only the log files in the build folder. The hook sees nothing destructive and returns an empty object, meaning allowed.",
+    "Finally, only the allowed call reaches the shell, and the log files are removed. Code holds the line, not a prompt."
+  ]
+}

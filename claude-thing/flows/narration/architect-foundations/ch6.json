@@ -1,0 +1,11 @@
+{
+  "steps": [
+    "Here the main agent will assess risk in a contracts folder using two subagents, a researcher and an analyst. That works because its allowed tools include the Agent tool.",
+    "First, the main agent delegates the opening task, finding renewal dates, to the researcher through the Agent tool.",
+    "The researcher works in a fresh, isolated context, with no parent history. It greps the folder for renewal date with its own read tools and finds three files with three dates.",
+    "Now only its final message returns as the tool result, three dates. The grep calls stay behind. The memo comes back, not the notebook, so the main context stays clean.",
+    "Next comes the analyst. It also starts with a fresh context and cannot see the parent's history, so the brief it receives must carry all the context it needs.",
+    "So the parent pastes the three findings into the brief, and the analyst rates them: two high risk and one low. The brief is all it sees.",
+    "Finally, the parent merges the two memos into one complete assessment, in two turns, for about six tenths of a cent."
+  ]
+}

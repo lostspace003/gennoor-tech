@@ -1,0 +1,11 @@
+{
+  "steps": [
+    "Here Maya asks Claude for a quarterly client summary, and draft one comes back too long, in the wrong tone, and missing a key metric.",
+    "She rewords the request eight times, but versions six, seven and eight still bury the bottom line. The same flaw repeats, with diminishing returns.",
+    "Then a colleague asks: did you tell Claude what was wrong, and what you needed? Maya admits she never said. She just guessed.",
+    "First, diagnose. She checks version eight against her own criteria and names exactly three flaws: three pages long, contractions, and no churn figure.",
+    "Next, revise. One targeted follow-up names each fix, one page, no contractions, add churn, and Claude returns version nine.",
+    "Now verify. She checks version nine against the same three flaws. All three are fixed, and nothing else broke.",
+    "Finally, decide. Maya accepts version nine. Had it failed, she would iterate again or change approach. One targeted pass beat eight guesses."
+  ]
+}

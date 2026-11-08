@@ -1,0 +1,10 @@
+{
+  "steps": [
+    "Here we have your code, an agent, a folder of invoices and a database. Without a schema, the agent answers in prose, and your code is left trying to regex the amount out of free text. That is fragile text parsing.",
+    "So instead, your code calls query with an output format: a J S O N schema of exactly three fields, vendor, amount and due date. The agent now knows the shape its answer must take.",
+    "Next, the prompt says extract the fields from the invoice text file, so the agent uses the Read tool, the only tool it is allowed, and the invoice text comes back.",
+    "Now the agent produces its J S O N object, with vendor Acme and amount twelve hundred and fifty, and it validates against the schema. If it kept failing, you would get a max structured output retries error instead.",
+    "The validated object arrives in the result message as structured output. Notice it is already a dictionary, not a string, and the run finishes with a success subtype.",
+    "Finally, typed data just works. Your code adds ten percent tax, giving thirteen hundred and seventy-five, and writes one clean row to the database. Schemas replace scraping."
+  ]
+}

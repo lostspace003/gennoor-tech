@@ -1,0 +1,11 @@
+{
+  "steps": [
+    "Here Maya uploads a twenty page client contract, and types just two words: summarize this.",
+    "In run one, Claude has to fill the blanks itself. For whom, and why? It guesses, and returns a three sentence overview.",
+    "Now the same file and the same prompt give a two page bullet list in run two, and a table in run three. The output drifts because nothing was specified.",
+    "Her manager spots the gap. Maya said what she wanted, but not who it is for, why, or what format. A good prompt has role, context, task and format.",
+    "So Maya rewrites it: a contract analyst role, the C F O as the audience, one page, in three bullet sections.",
+    "Claude returns one page with three sections: payment, renewal and liability. With nothing left to guess, reruns converge on the same consistent answer.",
+    "Finally, Maya sends the one page summary to the C F O, who reads it before the board meeting. Four elements, one consistent answer."
+  ]
+}

@@ -116,7 +116,7 @@ function flowRef(key, slug, id) {
   const spec = path.join(__dirname, 'flows', 'specs', slug, id + '.json');
   const m = FLOW_MANIFEST[key + '-' + id];
   if (!fs.existsSync(spec) || !m) return null;
-  return { id: key + '-' + id, title: m.title, duration: m.duration, steps: m.steps };
+  return { id: key + '-' + id, title: m.title, duration: m.duration, steps: m.steps, sections: m.sections || null, narrated: !!m.narrated, v: m.specHash || null };
 }
 function readEnrich(slug, id) {
   const p = path.join(__dirname, 'enrich', slug, id + '.json');

@@ -1,0 +1,12 @@
+{
+  "steps": [
+    "This flow traces a failed claim. A claims request for policy A two nine four seven one hits the A P I gateway, which mints a correlation I D, request a seven b two c nine d four, and opens the first span.",
+    "The header carries that I D to the claims agent, which logs it together with the model I D, a Claude Sonnet four model.",
+    "Next, under the same I D, retrieval queries the vector database for policy A two nine four seven one, and gets zero results.",
+    "The agent logs the tool result, no matches, and responds to the gateway: policy not found.",
+    "Now every hop exports its span to the trace backend, and all three spans carry the same correlation I D.",
+    "Without that I D, these three logs would sit in three separate systems, and nothing would link them together.",
+    "So you query the backend by that request I D, and the three spans return as one trace, the request reconstructed end to end.",
+    "Finally, the trace points straight at the zero results, and you find policy A two nine four seven one indexed with a typo. That is the root cause, found in minutes."
+  ]
+}

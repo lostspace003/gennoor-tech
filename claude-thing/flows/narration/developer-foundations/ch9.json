@@ -1,0 +1,11 @@
+{
+  "steps": [
+    "Here a mixed ticket lands: the customer was charged twice, and the app crashes. Billing and technical, in one ticket.",
+    "A single agent handles both, and loses track. The crash is fixed, but was there a refund? It lost the thread.",
+    "So you refactor. An orchestrator decomposes the ticket into separable sub-tasks: the refund goes to billing, the crash goes to tech.",
+    "It delegates in parallel. Each specialist gets its own prompt, tools and model, in its own isolated context.",
+    "Each runs separately, and only final results return to the orchestrator: refund issued from billing, and root cause found from tech.",
+    "Now the orchestrator merges both results into one reply to the customer. Nothing is dropped this time, and the ticket is resolved.",
+    "Finally, a caution. Multi-agent adds calls and hand-offs, so a one-file fix stays single-agent. Split only when the work is separable, overflows context, or can run in parallel."
+  ]
+}

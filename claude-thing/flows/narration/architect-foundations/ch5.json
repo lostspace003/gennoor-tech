@@ -1,0 +1,11 @@
+{
+  "steps": [
+    "This flow shows M C P. Your code lists two servers: fs over standard input and output, and crm over H T T P. The Agent S D K acts as the client, one protocol with no per-tool glue.",
+    "First, the client spawns fs as a local subprocess and asks for its tool list over J S O N R P C. It discovers read file, and fs can also offer resources and prompts.",
+    "Next, it connects to the remote crm server over H T T P and discovers its lookup customer tool. Both servers are now connected.",
+    "Now tool names become M C P, server, tool. The client sends Claude the prompt and the two tools, and allowed tools decides which ones Claude may use.",
+    "Claude reads look up customer C seventy-seven, and returns a tool use with the full name, the crm server's lookup customer tool, and the id C seventy-seven.",
+    "The client routes it to crm as a tools call over H T T P, and crm returns the record: Globex, on the gold tier.",
+    "Finally, the record returns as a tool result, and Claude answers in one turn that C seventy-seven is Globex. The answer is grounded in real data."
+  ]
+}

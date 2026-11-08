@@ -1,0 +1,11 @@
+{
+  "steps": [
+    "Here Maya asks Claude, in an ordinary chat, for a ten step client onboarding procedure.",
+    "Claude answers right there in the chat. But thirty turns later, the procedure is buried in scrollback, and Maya cannot even remember which chat it was in.",
+    "Then a colleague shows her Artifacts. Since the team will reuse this procedure, Maya asks again, this time as an Artifact.",
+    "Claude judges the content substantial and reusable, so it renders it in the side panel, apart from the chat, as version one, saved.",
+    "Two days later, Maya opens the same Artifact and asks Claude to add a step. It is edited in place, becoming version two.",
+    "Next, instead of pasting it into an email, she shares the stable link with her manager, who can view, comment or edit.",
+    "Finally, the manager opens the link and sees the latest version, version two, with no scrollback hunt. Reusable work deserves a permanent home."
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "steps": [
+    "This flow compares kinds of tools. First, Claude asks to read a file. That is a built-in tool shipping with the runtime, alongside shell and web, and it goes through hooks and then permissions.",
+    "Next, Claude calls your own custom tool for a business system. Notice it passes through exactly the same hook and permission gate. There is one gate for every tool.",
+    "Your custom tool runs in-process through an S D K M C P server, so the result comes straight back with no new process, and your business logic stays private.",
+    "Now a shared, third-party capability comes from an external M C P server instead, so the call crosses a process boundary to reach it.",
+    "The external result comes back the same way. It is the same tool use protocol both ways. Only the process boundary and how widely it can be reused differ.",
+    "Next, when Claude needs two independent read-only calls, it can run them in parallel, and that cuts latency.",
+    "Finally, when step B needs the result of step A, Claude waits for A, then runs B. Dependent calls run sequentially, independent ones in parallel."
+  ]
+}

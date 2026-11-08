@@ -1,0 +1,10 @@
+{
+  "steps": [
+    "This flow is about sessions. Your code sends turn one, and the agent reads the report file and notes the key numbers: revenue of four point two million dollars and twelve percent growth.",
+    "The runtime saves the transcript to the session store, and your code captures the session id, session one. Capturing that id is what makes resuming possible.",
+    "Next morning, your code resumes session one. The history is reloaded into a new context, and the agent recalls that revenue was four point two million dollars.",
+    "Now contrast that. With no resume, it is a brand-new session, with an empty context, and the agent has no memory of the report at all.",
+    "Next, fork session set to true branches into a new session, session three, to explore revenue ten percent lower, three point seven eight million. The original session stays untouched.",
+    "Finally, two points to remember. Forking branches the conversation, not your files, and never sum total cost across resumes. The store now holds both sessions, one and three."
+  ]
+}

@@ -97,3 +97,8 @@ claude-thing/ccarf-guide/ccarf-guide/gifs/
 
 # Rendered flow animations (uploaded to the media blob container by scripts/upload-cert-flows.mjs)
 claude-thing/flows/out/
+
+# Flow narration audio (voiced on Kaggle by claude-thing/flows/voice_kaggle.py; muxed into out/*.mp4)
+claude-thing/flows/voice/
+claude-thing/flows/voice_run.log
+claude-thing/flows/__pycache__/
