@@ -1,0 +1,13 @@
+{
+  "topic": "Subagent Context Isolation",
+  "hook": "A subagent hands back the memo, not the notebook.",
+  "body": "Your code asks for a researcher, then an analyst, to assess risk in a contracts folder. The main agent delegates via the Agent tool.\n\nIn a fresh context the researcher greps the folder with its own tools. Only its final message returns as the tool result; the Grep calls stay behind, so the main context stays clean.\n\nThe takeaway: subagents buy isolation and a focused context. A key idea in the tools domain of the Claude Certified Architect – Foundations (CCAR-F).\n\nDig into subagents with the CCAR-F prep course and its practice exam:",
+  "hashtags": [
+    "#ClaudeAI",
+    "#Anthropic",
+    "#AICertification",
+    "#ClaudeAgentSDK",
+    "#MultiAgent",
+    "#AIAgents"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "topic": "Agent SDK query() Loop",
+  "hook": "On the plain Messages API, you write the agent loop. With the Agent SDK, you do not.",
+  "body": "Your app calls query() once with a prompt and options: Glob, Grep, Read, max_turns=8. Claude returns a tool_use block.\n\nNormally your code would detect it, run it and loop. Here the SDK does it: hooks, then deny rules, then allow rules, then can_use_tool, and only then the tool runs.\n\nThe takeaway: knowing that evaluation order is half of the CCAR-F (Claude Certified Architect – Foundations) SDK domain.\n\nStart the CCAR-F prep course, with a practice exam:",
+  "hashtags": [
+    "#ClaudeAI",
+    "#Anthropic",
+    "#AICertification",
+    "#ClaudeAgentSDK",
+    "#AIAgents",
+    "#AIArchitecture"
+  ]
+}

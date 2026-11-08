@@ -1,0 +1,13 @@
+{
+  "topic": "SLA Gate Before Cost",
+  "hook": "The higher-quality architecture lost. It missed the latency SLA.",
+  "body": "Week 1: the CFO budgets $2.4M and gives you eight weeks. Discovery comes first, not a prototype, and the clinical team names two hard constraints.\n\nArchitecture X scores higher on quality but averages 4.2s, so the SLA gate drops it. Architecture Y clears the gate at 2.1s, and only survivors are compared on cost. ADR-07 records the decision.\n\nThe takeaway: hard constraints filter before anything is scored. Business value, SLAs and discovery make up a full CCAR-P domain.\n\nStart the CCAR-P (Claude Certified Architect – Professional) prep course, with a practice exam:",
+  "hashtags": [
+    "#ClaudeAI",
+    "#Anthropic",
+    "#AICertification",
+    "#AIArchitecture",
+    "#EnterpriseAI",
+    "#SolutionArchitecture"
+  ]
+}

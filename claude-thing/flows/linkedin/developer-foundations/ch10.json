@@ -1,0 +1,13 @@
+{
+  "topic": "Build One MCP Server",
+  "hook": "Three teams, the same Jira and CRM tools, three copies drifting apart.",
+  "body": "Instead of glue code per app, you build one MCP server exposing jira_create_issue and crm_lookup_customer over JSON-RPC.\n\nTicketFlow calls tools/list and sees each one as mcp__<server>__<tool>. The Escalation Dashboard and Analytics app plug into the same server with no new integration work.\n\nThe takeaway: write a tool once and let every client discover it. MCP is a key tool-calling topic for the Claude Certified Developer – Foundations (CCDV-F).\n\nBuild it yourself with the CCDV-F prep course and its practice exam:",
+  "hashtags": [
+    "#ClaudeAI",
+    "#Anthropic",
+    "#AICertification",
+    "#MCP",
+    "#ModelContextProtocol",
+    "#AIAgents"
+  ]
+}

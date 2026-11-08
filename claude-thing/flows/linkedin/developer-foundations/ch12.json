@@ -1,0 +1,13 @@
+{
+  "topic": "Layered Prompt Injection Defence",
+  "hook": "An attacker filed a support ticket that said \"Ignore previous instructions.\"",
+  "body": "Pasted raw into the prompt, the poisoned ticket almost works. The video then adds defences layer by layer.\n\nTag the ticket as <user_ticket>, warn in the system prompt that it is untrusted user data, and block the email tool while external input is processed. Claude skips the injected instruction.\n\nThe takeaway: no single prompt line stops injection; layers do, and removing the dangerous tool matters most. Expect this on the Claude Certified Developer – Foundations (CCDV-F).\n\nLearn application security in the CCDV-F prep course, with a practice exam:",
+  "hashtags": [
+    "#ClaudeAI",
+    "#Anthropic",
+    "#AICertification",
+    "#PromptInjection",
+    "#AISecurity",
+    "#ClaudeAPI"
+  ]
+}

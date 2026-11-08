@@ -1,0 +1,13 @@
+{
+  "topic": "Catching AI Hallucinations",
+  "hook": "The stat looked perfect for the board slide. The source did not exist.",
+  "body": "Maya asks Claude for competitor growth rates and gets a striking figure with three named sources.\n\nShe pinpoints the one claim that looks too good, verifies it (one article does not exist, another says 30%, not 300%), then regenerates with a tighter prompt.\n\nThe takeaway: pinpoint, verify, regenerate. Confident citations are not checked citations. Discernment like this is central to the Claude Certified Associate – Foundations (CCAS-F).\n\nBuild the habit with the CCAS-F prep course and its practice exam:",
+  "hashtags": [
+    "#ClaudeAI",
+    "#Anthropic",
+    "#AICertification",
+    "#ResponsibleAI",
+    "#GenerativeAI",
+    "#AIFluency"
+  ]
+}

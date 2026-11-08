@@ -1,0 +1,13 @@
+{
+  "topic": "CCAR-P Course Trailer",
+  "hook": "A $2.4M budget, eight weeks to propose, and a board that wants every decision defended.",
+  "body": "This trailer follows the Meridian rollout across a year: an ADR that clears an SLA gate, RBAC at retrieval over 480,000 documents, caching and Haiku routing when the project runs $840k over budget, and gated payouts for a drifting claims agent.\n\nThen secrets, correlation IDs and a canary rollout that knows when to revert.\n\nBuilt for senior architects preparing for the Claude Certified Architect – Professional (CCAR-P) exam.\n\n🔊 Turn the sound on for the walkthrough.\n\nThe full CCAR-P prep course tells the Meridian story chapter by chapter, with a practice exam:",
+  "hashtags": [
+    "#ClaudeAI",
+    "#Anthropic",
+    "#AICertification",
+    "#AIArchitecture",
+    "#EnterpriseAI",
+    "#AIGovernance"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "topic": "Prompt Task Decomposition",
+  "hook": "\"Redesign onboarding\" is three jobs hiding in one prompt.",
+  "body": "Maya pastes her manager's whole request as one prompt and gets a vague overview. A colleague points out it hides three separate deliverables.\n\nShe splits it: prompt 1 asks only for the process map, prompt 2 only for the training plan, and so on, so Claude's full reasoning goes to each piece.\n\nThe takeaway: one focused prompt per deliverable beats one prompt for everything. Decomposition sits in the prompting domain of the CCAS-F (Claude Certified Associate – Foundations) exam.\n\nThe full CCAS-F prep course takes this chapter by chapter, with a practice exam:",
+  "hashtags": [
+    "#ClaudeAI",
+    "#Anthropic",
+    "#AICertification",
+    "#PromptEngineering",
+    "#GenerativeAI",
+    "#Productivity"
+  ]
+}

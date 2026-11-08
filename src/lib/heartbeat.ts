@@ -8,6 +8,7 @@ import { warmTick } from '@/lib/linkedin-warm'
 import { syncLeadGenLeads, adsAppConfigured } from '@/lib/linkedin-ads'
 import { jobsTick } from '@/lib/linkedin-queue'
 import { blogScheduleTick, socialScheduleTick } from '@/lib/scheduled-publish'
+import { videoSeriesTick } from '@/lib/video-series'
 
 let running = false
 
@@ -25,6 +26,7 @@ export async function runHeartbeat(): Promise<void> {
     await run('autopilot', () => tick(liveDeps()))
     await run('blog-pipeline', () => pipelineTick(liveBlogPipelineDeps()))
     await run('social-scheduled', () => socialScheduleTick())
+    await run('video-series', () => videoSeriesTick())
     await run('blog-scheduled', () => blogScheduleTick())
     await run('linkedin-warm', () => warmTick())
     await run('linkedin-jobs', () => jobsTick())

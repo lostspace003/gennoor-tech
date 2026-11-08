@@ -1,0 +1,13 @@
+{
+  "topic": "Permission Layers in Practice",
+  "hook": "No rule blocked the restart. So the decision went to a human.",
+  "body": "Told to restart a web service and check its logs, Claude proposes Bash. No hook or deny rule stops it, and no allow rule covers it, so default mode hands it to can_use_tool.\n\nIn run 1 the operator declines, and the denial reaches Claude as an error it can work around. The video traces each layer in turn.\n\nThe takeaway: when no layer decides, a human does. Tracing which layer fires is a staple of CCAR-F questions.\n\n🔊 Turn the sound on for the walkthrough.\n\nThe CCAR-F prep course walks through every permission layer, with a practice exam:",
+  "hashtags": [
+    "#ClaudeAI",
+    "#Anthropic",
+    "#AICertification",
+    "#ClaudeAgentSDK",
+    "#HumanInTheLoop",
+    "#AISecurity"
+  ]
+}

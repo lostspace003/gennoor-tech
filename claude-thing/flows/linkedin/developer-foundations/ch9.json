@@ -1,0 +1,13 @@
+{
+  "topic": "Orchestrator and Specialist Agents",
+  "hook": "\"Charged twice and the app crashes.\" One agent, two problems, and it lost track.",
+  "body": "A mixed billing-and-tech ticket lands, and a single agent forgets which sub-issue it already solved.\n\nYou refactor into an orchestrator that splits the ticket into separable sub-tasks and delegates them in parallel. Each specialist gets its own prompt, tools and model, and the orchestrator merges the results.\n\nThe takeaway: decompose when the sub-tasks really are separate. A core multi-agent pattern on the CCDV-F exam.\n\n🔊 Turn the sound on for the walkthrough.\n\nExplore multi-agent design in the CCDV-F prep course, with a practice exam:",
+  "hashtags": [
+    "#ClaudeAI",
+    "#Anthropic",
+    "#AICertification",
+    "#AIAgents",
+    "#MultiAgent",
+    "#AIEngineering"
+  ]
+}

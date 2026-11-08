@@ -1,0 +1,13 @@
+{
+  "topic": "Agent SDK Structured Outputs",
+  "hook": "Still regex-scraping amounts out of an agent's prose? Give it a schema.",
+  "body": "Without a schema the agent answers in prose and your code has to parse it. With output_format set to a JSON schema of vendor, amount and due date, the agent knows the shape it must return.\n\nIt reads the invoice, the JSON is validated, and the typed object arrives in ResultMessage.structured_output. Repeated failures surface as error_max_structured_output_retries.\n\nThe takeaway: typed data in, no text parsing. A practical CCAR-F (Claude Certified Architect – Foundations) topic.\n\nSee it in the full CCAR-F prep course, with a practice exam:",
+  "hashtags": [
+    "#ClaudeAI",
+    "#Anthropic",
+    "#AICertification",
+    "#ClaudeAgentSDK",
+    "#StructuredOutputs",
+    "#AIAgents"
+  ]
+}

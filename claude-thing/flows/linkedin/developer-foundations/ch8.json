@@ -1,0 +1,13 @@
+{
+  "topic": "Agent Checkpointing",
+  "hook": "A worker crashed at step 15 of 20. Without checkpoints, it starts again at step 1.",
+  "body": "Worker A takes a 20-step ticket: classify, research, fix, verify. Workers die mid-task, and with no saves all progress is lost.\n\nSo after every step you save the step number, messages and metadata to shared storage. When the worker dies at step 15, the job resumes at step 15.\n\nThe takeaway: long agent runs need durable state, not hope. State management is the largest domain on the Claude Certified Developer – Foundations (CCDV-F) exam.\n\nThe CCDV-F prep course covers agentic workflows chapter by chapter, with a practice exam:",
+  "hashtags": [
+    "#ClaudeAI",
+    "#Anthropic",
+    "#AICertification",
+    "#AIAgents",
+    "#ClaudeAPI",
+    "#AIEngineering"
+  ]
+}

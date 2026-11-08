@@ -1,0 +1,13 @@
+{
+  "topic": "Message Batches API",
+  "hook": "If nobody is waiting for the answer, why pay real-time prices?",
+  "body": "Finance asks whether the overnight 10K-ticket classification job can cost less. Real-time calls would answer instantly at full price, with nobody waiting.\n\nInstead, at 8pm all 10K tickets go into one batch, each tagged with a custom_id. TicketFlow polls batches.retrieve() and by 6am the results are back, at half price.\n\nThe takeaway: match latency to need. The Batch API is a classic cost question on the Claude Certified Developer – Foundations (CCDV-F) exam.\n\nSee the cost chapters in the CCDV-F prep course, with a practice exam:",
+  "hashtags": [
+    "#ClaudeAI",
+    "#Anthropic",
+    "#AICertification",
+    "#ClaudeAPI",
+    "#CostOptimization",
+    "#AIEngineering"
+  ]
+}
