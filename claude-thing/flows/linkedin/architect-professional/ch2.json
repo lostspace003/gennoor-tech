@@ -1,0 +1,13 @@
+{
+  "topic": "RBAC at Retrieval Time",
+  "hook": "If a billing clerk's query pulls diagnoses into the prompt, the model is not your problem.",
+  "body": "A billing clerk asks which procedure codes were billed for a patient. The wrong design uses a shared token and pulls every match, diagnoses included, into the prompt.\n\nThe right design passes the clerk's own identity, and retrieval applies the ACL filter inside the vector DB query, so only billing and demographic data ever reaches Claude.\n\nThe takeaway: enforce access before the prompt, never after the answer. RAG and RBAC is the heaviest-weighted CCAR-P domain.\n\n🔊 Turn the sound on for the walkthrough.\n\nWork through the Meridian RAG design in the CCAR-P prep course, with a practice exam:",
+  "hashtags": [
+    "#ClaudeAI",
+    "#Anthropic",
+    "#AICertification",
+    "#RAG",
+    "#AIArchitecture",
+    "#AISecurity"
+  ]
+}

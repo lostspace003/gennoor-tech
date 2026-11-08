@@ -1,0 +1,13 @@
+{
+  "topic": "Code Execution for Exact Numbers",
+  "hook": "Claude said \"about $47,300\". The real total was $44,287.",
+  "body": "Maya uploads a 50-row expense sheet and asks for the sum of column D. The estimate is off, and she only finds out by checking by hand.\n\nHer manager explains: a language model predicts text, it does not compute. With Code Execution enabled, Claude writes Python to sum the column and returns the exact figure.\n\nThe takeaway: when the answer is a number, have Claude run code rather than guess. A key distinction for the CCAS-F exam, and for anything that reaches finance.\n\n🔊 Turn the sound on for the walkthrough.\n\nLearn when to switch tools in the CCAS-F prep course, with a practice exam:",
+  "hashtags": [
+    "#ClaudeAI",
+    "#Anthropic",
+    "#AICertification",
+    "#GenerativeAI",
+    "#DataAnalysis",
+    "#Productivity"
+  ]
+}

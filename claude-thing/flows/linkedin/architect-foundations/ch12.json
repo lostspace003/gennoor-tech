@@ -1,0 +1,13 @@
+{
+  "topic": "can_use_tool Spending Limits",
+  "hook": "$40 refund: approved automatically. $250 refund: denied. Same agent, one callback.",
+  "body": "A permission mode is too coarse, so your code sets a can_use_tool callback. Claude is asked to refund two orders.\n\nThe $40 refund is under the limit, so the callback returns PermissionResultAllow and issue_refund runs. The $250 one is over the limit and is denied; Claude gets the error and reports back.\n\nThe takeaway: can_use_tool lets you decide per call, using the actual input. Expect this pattern on the Claude Certified Architect – Foundations (CCAR-F).\n\nLearn human gates in the CCAR-F prep course, with a practice exam:",
+  "hashtags": [
+    "#ClaudeAI",
+    "#Anthropic",
+    "#AICertification",
+    "#ClaudeAgentSDK",
+    "#HumanInTheLoop",
+    "#AIGovernance"
+  ]
+}

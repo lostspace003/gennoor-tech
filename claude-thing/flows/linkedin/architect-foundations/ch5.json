@@ -1,0 +1,13 @@
+{
+  "topic": "MCP Over Two Transports",
+  "hook": "One MCP server runs as a local subprocess, the other over HTTP. Claude cannot tell.",
+  "body": "Your code lists two mcp_servers: fs over stdio and crm as a remote server. The SDK is the MCP client: it spawns fs locally and connects to crm remotely, asking each for tools/list.\n\nTools are named mcp__<server>__<tool>, and allowed_tools decides which Claude may use. Then Claude calls them by name.\n\nThe takeaway: transport is a deployment detail, discovery and naming are the contract. Expect both on the CCAR-F exam.\n\n🔊 Turn the sound on for the walkthrough.\n\nLearn MCP architecture in the CCAR-F prep course, with a practice exam:",
+  "hashtags": [
+    "#ClaudeAI",
+    "#Anthropic",
+    "#AICertification",
+    "#MCP",
+    "#ClaudeAgentSDK",
+    "#AIArchitecture"
+  ]
+}

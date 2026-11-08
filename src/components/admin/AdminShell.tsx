@@ -8,6 +8,7 @@ import RouteProgress from '@/components/portal/RouteProgress'
 import {
   LayoutDashboard, Linkedin, Sparkles, GraduationCap, MessageSquare, Users, PhoneCall, Mail, Menu, X, ExternalLink, Wallet, PenLine, Bot, Network, History,
   ChevronLeft, ChevronRight, PanelLeftOpen, BarChart3, TrendingUp, Activity, BookOpen, Send, Calendar, Settings, HardDrive, Search, Globe, Lock, LogOut, Briefcase, MessageCircle,
+  Film,
 } from 'lucide-react'
 
 // The dashboard's own sections now live here, nested under "Dashboard" (a menu inside the menu). The page and this menu
@@ -41,6 +42,7 @@ const GROUPS = [
     { href: '/admin/social', label: 'Social studio', icon: Sparkles },
     { href: '/admin/blog', label: 'Blog studio', icon: PenLine },
     { href: '/admin/autopilot', label: 'LinkedIn autopilot', icon: Bot },
+    { href: '/admin/video-series', label: 'Cert video series', icon: Film },
     { href: '/admin/linkedin-hub', label: 'LinkedIn hub', icon: Network },
     { href: '/admin/linkedin', label: 'LinkedIn connection', icon: Linkedin },
     { href: '/admin/events', label: 'Events', icon: Calendar },

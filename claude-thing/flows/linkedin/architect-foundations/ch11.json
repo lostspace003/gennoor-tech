@@ -1,0 +1,13 @@
+{
+  "topic": "Enterprise Agent Controls",
+  "hook": "bypassPermissions with no isolation is a shortcut you only take once.",
+  "body": "The video starts with the shortcut, then puts each control in its place: a sandboxed worker per task with scoped cwd and credentials, a PreToolUse hook that sees sensitive calls first, and can_use_tool parking them in an approval queue.\n\nOnce approved, the call goes through a shared MCP server fronting the system, with auditing after the fact.\n\nThe takeaway: isolation, hooks, human approval and a governed gateway each do one job. This is the enterprise-scenarios domain of the CCAR-F exam.\n\n🔊 Turn the sound on for the walkthrough.\n\nWork through enterprise patterns in the CCAR-F prep course, with a practice exam:",
+  "hashtags": [
+    "#ClaudeAI",
+    "#Anthropic",
+    "#AICertification",
+    "#AIArchitecture",
+    "#AIGovernance",
+    "#ClaudeAgentSDK"
+  ]
+}

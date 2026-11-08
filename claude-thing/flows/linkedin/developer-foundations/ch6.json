@@ -1,0 +1,13 @@
+{
+  "topic": "Claude Tool Use Basics",
+  "hook": "Claude does not run your tools. It asks, and your code decides.",
+  "body": "An agent asks TicketFlow for the status of alice@example.com. You send the message with a lookup_customer tool and its JSON schema.\n\nClaude does not answer yet: it emits a tool_use block. Your dispatcher validates the email first, returns an error for a malformed one, and only then runs the lookup and sends back the result.\n\nThe takeaway: the model requests, your code validates and executes. Tool calling is a full domain of the Claude Certified Developer – Foundations (CCDV-F).\n\nWork through tool use in the CCDV-F prep course, with a practice exam:",
+  "hashtags": [
+    "#ClaudeAI",
+    "#Anthropic",
+    "#AICertification",
+    "#ClaudeAPI",
+    "#AIAgents",
+    "#ToolUse"
+  ]
+}

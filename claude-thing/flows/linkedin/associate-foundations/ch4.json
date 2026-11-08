@@ -1,0 +1,13 @@
+{
+  "topic": "Four-Element Prompt Structure",
+  "hook": "Same file. Same prompt. Three completely different answers. Why?",
+  "body": "Maya uploads a 20-page contract and types \"Summarize this.\" Run 1 gives a 3-sentence overview, run 2 a 2-page bullet list, run 3 a table.\n\nHer manager spots the gap: she said what, but not who it is for, why, or in what format. Maya rewrites with a role, context, task and format, and the answers become consistent.\n\nThe takeaway: when you leave blanks, Claude fills them, differently each time. This four-element structure shows up across the CCAS-F exam.\n\nThe CCAS-F prep course covers prompting in depth, with a practice exam at the end:",
+  "hashtags": [
+    "#ClaudeAI",
+    "#Anthropic",
+    "#AICertification",
+    "#PromptEngineering",
+    "#GenerativeAI",
+    "#Productivity"
+  ]
+}

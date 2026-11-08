@@ -359,3 +359,37 @@ export async function deleteLinkedInPost(token: string, postUrn: string): Promis
     throw new Error(body.message || `LinkedIn would not delete the post (${res.status})`)
   }
 }
+
+/**
+ * Uploads an MP4 through the Videos API (multipart: one PUT per upload instruction, then finalize), waits until
+ * LinkedIn has processed it, then posts it. Returns the post URN.
+ */
+export async function publishVideo(opts: { token: string; author: string; commentary: string; video: Buffer; title?: string }): Promise<string> {
+  const init = await fetch('https://api.linkedin.com/rest/videos?action=initializeUpload', {
+    method: 'POST', headers: restHeaders(opts.token),
+    body: JSON.stringify({ initializeUploadRequest: { owner: opts.author, fileSizeBytes: opts.video.length, uploadCaptions: false, uploadThumbnail: false } }),
+  })
+  const j = await init.json().catch(() => ({}))
+  const v = j.value
+  if (!init.ok || !v?.video || !Array.isArray(v.uploadInstructions)) throw new Error(j.message || `LinkedIn video upload init failed (${init.status})`)
+  const etags: string[] = []
+  for (const ins of v.uploadInstructions as { uploadUrl: string; firstByte: number; lastByte: number }[]) {
+    const put = await fetch(ins.uploadUrl, { method: 'PUT', headers: { 'Content-Type': 'application/octet-stream' }, body: new Uint8Array(opts.video.subarray(ins.firstByte, ins.lastByte + 1)) })
+    if (!put.ok) throw new Error(`LinkedIn video part upload failed (${put.status})`)
+    etags.push((put.headers.get('etag') || '').replace(/"/g, ''))
+  }
+  const fin = await fetch('https://api.linkedin.com/rest/videos?action=finalizeUpload', {
+    method: 'POST', headers: restHeaders(opts.token),
+    body: JSON.stringify({ finalizeUploadRequest: { video: v.video, uploadToken: v.uploadToken || '', uploadedPartIds: etags } }),
+  })
+  if (!fin.ok) { const b = await fin.json().catch(() => ({})); throw new Error(b.message || `LinkedIn video finalize failed (${fin.status})`) }
+  // Posting before processing finishes can fail; wait up to ~3 minutes.
+  for (let i = 0; i < 36; i++) {
+    const st = await fetch(`https://api.linkedin.com/rest/videos/${encodeURIComponent(v.video)}`, { headers: restHeaders(opts.token) })
+    const s = await st.json().catch(() => ({}))
+    if (s.status === 'AVAILABLE') break
+    if (s.status === 'PROCESSING_FAILED') throw new Error('LinkedIn could not process the video.')
+    await new Promise(r => setTimeout(r, 5000))
+  }
+  return createPost(opts.token, opts.author, opts.commentary, { media: { id: v.video, title: opts.title } })
+}
