@@ -1,0 +1,10 @@
+{
+  "steps": [
+    "Here Finance asks a simple question: can the overnight job that classifies ten thousand tickets cost less?",
+    "Realtime calls would answer all ten thousand instantly, at full price, even though nobody is waiting. Instant answers only matter when a user is waiting.",
+    "So instead, at eight in the evening, you submit all ten thousand tickets in one batch, each tagged with a custom I D, and get back a batch I D. The batch is in progress.",
+    "Next, TicketFlow polls batches retrieve every sixty seconds, while the batch runs asynchronously for hours within its completion window.",
+    "By six in the morning, the processing status is ended. The results come back matched by custom I D, for example ticket zero, billing.",
+    "Finally, you hand Finance the cost model: the same ten thousand tickets, with every input and output token fifty percent cheaper. Half price, for work that can wait."
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "steps": [
+    "Meridian is eight hundred and forty thousand dollars over budget. Here, the legal workflow resends the same eighty page filing, about forty thousand tokens, on fourteen separate queries.",
+    "Each query bills those tokens as fresh input. Fourteen times forty thousand is five hundred and sixty thousand tokens at three dollars per million, or one dollar sixty-eight per case.",
+    "So you reorder the prompt. The static filing goes first, marked with cache control set to ephemeral, and the dynamic question comes after it.",
+    "Now query one writes the forty thousand token prefix to the cache at input price, about twelve cents. The cache holds it with a five minute time to live.",
+    "Queries two through fourteen reuse that prefix. Cache reads cost thirty cents per million, about ten percent of the input price, and because prefill is skipped, time to first token drops too.",
+    "Those thirteen reads cost about sixteen cents. So per case, the cost falls from one dollar sixty-eight to about twenty-eight cents, an eighty-four percent saving on the filing tokens.",
+    "Finally, your rollout rule: cache any static prefix of at least one thousand and twenty-four tokens that is reused within five minutes."
+  ]
+}

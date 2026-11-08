@@ -1,0 +1,11 @@
+{
+  "steps": [
+    "On Monday, Maya explains Brightline's three client tiers to Claude in detail, carefully setting out what each tier means.",
+    "On Tuesday, in a new chat, she asks about tier two renewals, and Claude has no idea what tier two means. It starts from scratch.",
+    "So Maya switches Memory on in Settings, and tells Claude the tiers once, for example that tier two is mid-market, ten to fifty thousand dollars.",
+    "Memory stores recurring facts like the tiers, her role and her cadence, not this quarter's numbers, and Maya can view, edit or delete them in Settings.",
+    "Next chat, same question. This time Claude checks Memory and already knows tier two is mid-market, ten to fifty thousand dollars.",
+    "Claude answers the tier two question directly, and Maya never has to re-explain the tiers.",
+    "Finally, she also connects Google Drive, so Claude can find and read the Acme Corp summary with no manual upload. It sees only what Maya herself can see."
+  ]
+}

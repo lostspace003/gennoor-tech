@@ -47,8 +47,11 @@
   var svg, spec, actors = {}, steps = [], layers = {}, travels = [], callouts = [], badges = [], states = [], edges = {}, caption, capLines, stepCircle, segs = [];
   var duration = 0;
 
-  function build(sp) {
+  // timing (optional, narrated cut): { lead: ms of quiet before each section's voice, speech: [ms per step] }.
+  // A narrated section = lead, then motion and voice start together; the section holds until the voice ends.
+  function build(sp, timing) {
     spec = sp;
+    var lead = timing && timing.lead || 0, speech = timing && timing.speech || [];
     svg = document.getElementById('stage');
     while (svg.firstChild) svg.removeChild(svg.firstChild);
     actors = {}; steps = []; layers = {}; travels = []; callouts = []; badges = []; states = []; edges = {}; segs = [];
@@ -92,9 +95,10 @@
       var travelsN = (st.send ? 1 : 0) + (st.reply ? 1 : 0);
       var words = String(st.caption || '').split(/\s+/).length;
       var dur = clamp(1150 + TRAVEL * travelsN + 80 * words + (st.callout ? 450 : 0), 2200, 4800);
+      if (speech[i]) dur = Math.max(dur + lead, lead + speech[i] + 900);
       var S = { i: i, start: t, end: t + dur, st: st, color: COLORS[i % 6], tint: TINTS[i % 6] };
       steps.push(S);
-      var at = t + 300;
+      var at = t + (speech[i] ? lead + 150 : 300);
       if (st.send && actors[st.send.from] && actors[st.send.to]) { travels.push(mkTravel(st.send, at, S)); at += TRAVEL; }
       if (st.reply && actors[st.reply.from] && actors[st.reply.to]) { travels.push(mkTravel(st.reply, at, S)); at += TRAVEL; }
       if (st.callout && actors[st.callout.at]) callouts.push(mkCallout(st.callout, Math.min(at, S.end - 900), S));
@@ -104,6 +108,7 @@
     });
     duration = t + HOLD_END;
     window.Flow.duration = duration;
+    window.Flow.sections = steps.map(function (S) { return Math.round(S.start); });
 
     // caption bar
     var bar = s('g', {}, layers.ui);
@@ -247,5 +252,5 @@
     segs.forEach(function (sg, i) { sg.setAttribute('fill', i < cur.i ? cur.color : i === cur.i ? cur.color : '#e0e0e5'); sg.setAttribute('opacity', i < cur.i ? 0.55 : i === cur.i ? 1 : 1); });
   }
 
-  window.Flow = { load: build, seek: seek, duration: 0 };
+  window.Flow = { load: build, seek: seek, duration: 0, sections: [] };
 })();

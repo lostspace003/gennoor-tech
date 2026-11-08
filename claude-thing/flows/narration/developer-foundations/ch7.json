@@ -1,0 +1,11 @@
+{
+  "steps": [
+    "In turns one to five, TicketFlow sends each ticket along with the J S O N schema, Claude complies with valid J S O N, and the context is clean.",
+    "But tool outputs pile up. By turn fifteen, more than twenty of them sit in the context window, burying the schema.",
+    "At turn fifteen, Claude's J S O N comes back missing the priority field. The schema is buried, and this is format drift.",
+    "A junior developer suggests lowering the temperature, but you say no. Temperature tunes output randomness, not attention to the schema. It is not the fix.",
+    "Instead, you add a validator that checks every output against the schema, every turn. It rejects the turn fifteen output for missing priority.",
+    "Next, you prune the stale outputs from turn five, summarize the rest, for example three A P I calls succeeded, and repeat the schema.",
+    "Finally, on the next turn the schema is back in focus. Claude returns valid J S O N, and the check passes again."
+  ]
+}

@@ -1,6 +1,9 @@
-/* Renders every flow spec to MP4 (page), GIF (sharing) and a poster JPG, frame by frame through headless Chrome.
+/* Renders every flow spec to MP4 (page) and a poster JPG, frame by frame through headless Chrome.
+   When the flow has voiced narration (voice/_work/<key>-<id>/voice/s<n>.wav, from voice_kaggle.py) the cut is narrated:
+   each section opens with LEAD ms of quiet, then motion and voice start together, and the section holds until the
+   voice ends; the voice track is muxed into the MP4 (the player starts it muted).
    Run: node claude-thing/flows/render.js [slug/id ...] [--force]
-   Output: claude-thing/flows/out/<key>-<id>.{mp4,gif,jpg} and claude-thing/flows/manifest.json */
+   Output: claude-thing/flows/out/<key>-<id>.{mp4,jpg} and claude-thing/flows/manifest.json */
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
@@ -13,7 +16,8 @@ const OUT = path.join(ROOT, 'out');
 const MANIFEST = path.join(ROOT, 'manifest.json');
 const CHROME = process.env.CHROME_PATH || 'C:/Program Files/Google/Chrome/Application/chrome.exe';
 const FFMPEG = process.env.FFMPEG_PATH || 'ffmpeg';
-const FPS = 30, W = 1280, H = 720, PORT = 3098, PARALLEL = 3;
+const FPS = 30, W = 1280, H = 720, PORT = 3098, PARALLEL = Number(process.env.FLOW_PARALLEL || 3), LEAD = 1500;
+const VOICE = path.join(ROOT, 'voice', '_work');
 const COURSES = {
   'associate-foundations': { key: 'ccasf', code: 'CCAS-F', accent: '#c4713c' },
   'developer-foundations': { key: 'ccdvf', code: 'CCDV-F', accent: '#3f6fb8' },
@@ -33,6 +37,20 @@ function serve() {
   });
 }
 
+// the voiced steps of a flow, or null when any step is missing (then the flow renders silent)
+function voiceFor(out, n) {
+  const mf = path.join(VOICE, out, 'voice', 'manifest.json');
+  if (!fs.existsSync(mf)) return null;
+  const man = JSON.parse(fs.readFileSync(mf, 'utf8'));
+  const steps = [];
+  for (let i = 1; i <= n; i++) {
+    const m = man['s' + i], wav = path.join(VOICE, out, 'voice', 's' + i + '.wav');
+    if (!m || !fs.existsSync(wav)) return null;
+    steps.push({ wav, ms: Math.round(m.seconds * 1000), say: m.say || m.text });
+  }
+  return steps;
+}
+
 function listJobs(filter) {
   const jobs = [];
   for (const slug of Object.keys(COURSES)) {
@@ -42,7 +60,9 @@ function listJobs(filter) {
       const id = f.replace('.json', '');
       const name = slug + '/' + id;
       if (filter.length && !filter.includes(name)) continue;
-      jobs.push({ slug, id, name, out: COURSES[slug].key + '-' + id, spec: JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')) });
+      const out = COURSES[slug].key + '-' + id;
+      const spec = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
+      jobs.push({ slug, id, name, out, spec, voice: voiceFor(out, spec.steps.length) });
     }
   }
   return jobs;
@@ -57,7 +77,8 @@ async function renderOne(browser, job, manifest) {
   await page.setViewport({ width: W, height: H, deviceScaleFactor: 1 });
   await page.goto(`http://localhost:${PORT}/engine/flow.html`, { waitUntil: 'load' });
   const full = Object.assign({}, spec, { accent: COURSES[slug].accent, code: COURSES[slug].code });
-  const duration = await page.evaluate(sp => { document.body.classList.add('render'); window.Flow.load(sp); return window.Flow.duration; }, full);
+  const timing = job.voice ? { lead: LEAD, speech: job.voice.map(v => v.ms) } : null;
+  const { duration, sections } = await page.evaluate((sp, tm) => { document.body.classList.add('render'); window.Flow.load(sp, tm); return { duration: window.Flow.duration, sections: window.Flow.sections }; }, full, timing);
   // let the logo image load before the first frame
   await page.evaluate(() => new Promise(r => setTimeout(r, 300)));
   const n = Math.ceil(duration / 1000 * FPS);
@@ -72,12 +93,20 @@ async function renderOne(browser, job, manifest) {
   await page.close();
   const capMs = Date.now() - t0;
   const pattern = path.join(framesDir, '%05d.jpg');
-  execFileSync(FFMPEG, ['-y', '-loglevel', 'error', '-framerate', String(FPS), '-i', pattern, '-c:v', 'libx264', '-preset', 'medium', '-crf', '22', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', base + '.mp4']);
-  execFileSync(FFMPEG, ['-y', '-loglevel', 'error', '-framerate', String(FPS), '-i', pattern, '-vf', 'fps=12,scale=960:-1:flags=lanczos,split[s0][s1];[s0]palettegen=max_colors=192:stats_mode=diff[p];[s1][p]paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle', '-loop', '0', base + '.gif']);
+  const video = ['-c:v', 'libx264', '-preset', 'medium', '-crf', '22', '-pix_fmt', 'yuv420p', '-g', String(FPS), '-movflags', '+faststart'];
+  if (job.voice) {
+    // each step's voice starts LEAD ms into its section; the track is padded to the full video length
+    const ins = [], parts = [];
+    job.voice.forEach((v, i) => { ins.push('-i', v.wav); const d = sections[i] + LEAD; parts.push(`[${i + 1}:a]aresample=48000,adelay=${d}:all=1[a${i}]`); });
+    const mix = parts.join(';') + ';' + job.voice.map((_, i) => `[a${i}]`).join('') + `amix=inputs=${job.voice.length}:normalize=0,apad,atrim=0:${(duration / 1000).toFixed(3)}[aout]`;
+    execFileSync(FFMPEG, ['-y', '-loglevel', 'error', '-framerate', String(FPS), '-i', pattern, ...ins, '-filter_complex', mix, '-map', '0:v', '-map', '[aout]', ...video, '-c:a', 'aac', '-b:a', '128k', '-ac', '1', base + '.mp4']);
+  } else {
+    execFileSync(FFMPEG, ['-y', '-loglevel', 'error', '-framerate', String(FPS), '-i', pattern, ...video, base + '.mp4']);
+  }
   fs.rmSync(framesDir, { recursive: true, force: true });
   const size = f => fs.statSync(f).size;
-  manifest[out] = { slug, id: job.id, title: spec.title, kicker: spec.kicker, duration: Math.round(duration), steps: spec.steps.length, mp4: size(base + '.mp4'), gif: size(base + '.gif'), poster: size(base + '.jpg'), renderedAt: new Date().toISOString() };
-  console.log(`${out}: ${(duration / 1000).toFixed(1)}s, ${n} frames in ${(capMs / 1000).toFixed(0)}s, mp4 ${(manifest[out].mp4 / 1024).toFixed(0)}KB, gif ${(manifest[out].gif / 1024 / 1024).toFixed(1)}MB`);
+  manifest[out] = { slug, id: job.id, title: spec.title, kicker: spec.kicker, duration: Math.round(duration), steps: spec.steps.length, sections, narrated: !!job.voice, mp4: size(base + '.mp4'), poster: size(base + '.jpg'), renderedAt: new Date().toISOString() };
+  console.log(`${out}: ${(duration / 1000).toFixed(1)}s${job.voice ? ' narrated' : ''}, ${n} frames in ${(capMs / 1000).toFixed(0)}s, mp4 ${(manifest[out].mp4 / 1024).toFixed(0)}KB`);
 }
 
 (async () => {
@@ -87,8 +116,8 @@ async function renderOne(browser, job, manifest) {
   fs.mkdirSync(OUT, { recursive: true });
   const manifest = fs.existsSync(MANIFEST) ? JSON.parse(fs.readFileSync(MANIFEST, 'utf8')) : {};
   let jobs = listJobs(filter);
-  if (!force) jobs = jobs.filter(j => !(manifest[j.out] && fs.existsSync(path.join(OUT, j.out + '.mp4')) && manifest[j.out].specHash === hash(j.spec)));
-  jobs.forEach(j => { j.hash = hash(j.spec); });
+  if (!force) jobs = jobs.filter(j => !(manifest[j.out] && fs.existsSync(path.join(OUT, j.out + '.mp4')) && manifest[j.out].specHash === jobHash(j)));
+  jobs.forEach(j => { j.hash = jobHash(j); });
   console.log(jobs.length + ' flows to render');
   if (!jobs.length) return;
   const srv = await serve();
@@ -119,4 +148,5 @@ async function renderOne(browser, job, manifest) {
   process.exit(failures ? 1 : 0);
 })();
 
+function jobHash(j) { return hash({ spec: j.spec, voice: j.voice && j.voice.map(v => [v.ms, v.say]), lead: j.voice ? LEAD : 0 }); }
 function hash(obj) { const s = JSON.stringify(obj); let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return (h >>> 0).toString(16); }

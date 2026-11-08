@@ -1,0 +1,10 @@
+{
+  "steps": [
+    "It is week fifteen, and the refund agent proposes a fifty thousand dollar refund. Without a gate, it would just pay out, and nobody would check.",
+    "So you place the can use tool callback between the model's output and any irreversible action. Its rule is simple: anything over one hundred dollars pauses.",
+    "This refund is over one hundred dollars, so the runtime pauses the agent, and the callback posts the exact input to the manager in Slack, not a vague description.",
+    "Next, the manager clicks approve. The callback returns permission allow, and the agent resumes.",
+    "Only now does the fifty thousand dollar refund execute in payments, and the audit log records who approved what, and when.",
+    "Finally, a small refund of one hundred dollars or less gets an instant allow and executes at once. The lesson: gate the big moves, not every call."
+  ]
+}

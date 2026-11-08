@@ -17,6 +17,12 @@ export interface FlowRef {
   title: string
   duration: number
   steps: number
+  /** start of each section (ms) in the rendered video */
+  sections?: number[] | null
+  /** the MP4 carries a voice-over track */
+  narrated?: boolean
+  /** render version, busts the immutable media cache when a flow is re-rendered */
+  v?: string | null
 }
 
 export interface Chapter {

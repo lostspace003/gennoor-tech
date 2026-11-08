@@ -1,0 +1,11 @@
+{
+  "steps": [
+    "Here worker A takes ticket T one thousand and one, a twenty step task: classify, research the knowledge base, fix, and verify. Step one comes back as technical, authentication.",
+    "Workers crash mid-task. With state held only in memory, dying at step fifteen means starting again from step one, losing fourteen steps.",
+    "So now, after every step, you save the step number, the messages and metadata to shared storage as a checkpoint.",
+    "Steps two to fourteen repeat the same beat: ask Claude, read the result, and save the checkpoint.",
+    "Then worker A crashes at step fifteen. This time the loss is just one step, not fourteen.",
+    "Next, a fresh, stateless worker B boots and loads the checkpoint from shared storage, the state after step fourteen, so it resumes at step fifteen.",
+    "Finally, worker B re-runs step fifteen, which is safe because each step is idempotent, and ticket T one thousand and one carries on."
+  ]
+}

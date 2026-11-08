@@ -1,0 +1,11 @@
+{
+  "steps": [
+    "TicketFlow is going live, deployed bring your own cloud in your A W S account, so data stays in-region.",
+    "First, a TicketFlow call to messages create hits the rate limit, and Claude returns a rate limit error, a four twenty-nine.",
+    "Next, a retry loop bug resends the failed call again and again. Retry, four twenty-nine, retry, four twenty-nine, and the errors start to spike.",
+    "Now monitoring groups the errors by cause, and rates the four twenty-nines as a warning: log them, and back off.",
+    "The warning reaches you, not the pager, and you trace the spike to the retry loop.",
+    "Your backoff fix goes through the C I C D pipeline, with tests, evals and security scans. They pass, and it ships. TicketFlow now backs off on four twenty-nines.",
+    "Finally, the routing rule. Only a four oh one authentication error is critical and would page on-call. The four twenty-nines never woke anyone."
+  ]
+}

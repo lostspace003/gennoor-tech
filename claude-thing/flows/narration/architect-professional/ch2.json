@@ -1,0 +1,11 @@
+{
+  "steps": [
+    "This flow is about access control at retrieval. A billing clerk asks the assistant which procedure codes were billed for patient P one two three four five.",
+    "First, the wrong way. A shared service token pulls every match, diagnoses included, straight into the prompt, and the system prompt is told to hide the clinical parts. By then it is already too late.",
+    "Now the right way. Your design passes the clerk's own identity, billing clerk forty-seven, never a shared token, and that identity carries only billing and demographics roles.",
+    "Retrieval applies the access control filter inside the vector database query, matching allowed roles to the user's roles. Only billing passages come back, and diagnosis data never leaves the index.",
+    "Next, only the authorized passages reach prompt construction, which can simply trust retrieval, because the access rule is already enforced there.",
+    "Claude answers the clerk from those passages only, citing a source I D for each claim, so the answer is grounded and checkable.",
+    "Finally, your answer to compliance: restricted documents never leave the retrieval layer. It is deterministic, not a prompt promise, and the audit shows exactly which documents clerk forty-seven received."
+  ]
+}
