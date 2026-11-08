@@ -102,3 +102,4 @@ claude-thing/flows/out/
 claude-thing/flows/voice/
 claude-thing/flows/voice_run.log
 claude-thing/flows/__pycache__/
+claude-thing/flows/render_run.log

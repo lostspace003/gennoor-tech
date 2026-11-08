@@ -16,7 +16,7 @@ const OUT = path.join(ROOT, 'out');
 const MANIFEST = path.join(ROOT, 'manifest.json');
 const CHROME = process.env.CHROME_PATH || 'C:/Program Files/Google/Chrome/Application/chrome.exe';
 const FFMPEG = process.env.FFMPEG_PATH || 'ffmpeg';
-const FPS = 30, W = 1280, H = 720, PORT = 3098, PARALLEL = 3, LEAD = 1500;
+const FPS = 30, W = 1280, H = 720, PORT = 3098, PARALLEL = Number(process.env.FLOW_PARALLEL || 3), LEAD = 1500;
 const VOICE = path.join(ROOT, 'voice', '_work');
 const COURSES = {
   'associate-foundations': { key: 'ccasf', code: 'CCAS-F', accent: '#c4713c' },
