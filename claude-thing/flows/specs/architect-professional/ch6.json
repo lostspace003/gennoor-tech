@@ -1,0 +1,21 @@
+{
+  "title": "Correlation IDs: tracing a failed claim end-to-end",
+  "kicker": "Meridian rollout · Week 23",
+  "actors": [
+    { "id": "you", "icon": "user", "label": "You", "sub": "principal architect", "slot": "L" },
+    { "id": "gateway", "icon": "network", "label": "API gateway", "sub": "mints correlation ID", "slot": "TC" },
+    { "id": "agent", "icon": "sparkles", "label": "Claims agent", "sub": "Claude", "slot": "R" },
+    { "id": "traces", "icon": "radar", "label": "Trace backend", "sub": "spans by request ID", "slot": "BL" },
+    { "id": "retrieval", "icon": "database", "label": "Retrieval", "sub": "vector DB · policies", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "A claims request for policy A-29471 hits the gateway, which mints req-a7b2c9d4.", "focus": ["gateway"], "callout": { "at": "gateway", "text": "X-Correlation-ID: req-a7b2c9d4" }, "state": { "at": "gateway", "text": "span 1 · req-a7b2c9d4" } },
+    { "caption": "The header carries the ID to the claims agent, which logs it with the model ID.", "send": { "from": "gateway", "to": "agent", "icon": "hash", "label": "req-a7b2c9d4 A-29471" }, "callout": { "at": "agent", "text": "model: claude-sonnet-4-20250514" }, "state": { "at": "agent", "text": "ID + model logged" } },
+    { "caption": "Under the same ID, retrieval queries the vector DB for A-29471: 0 results.", "send": { "from": "agent", "to": "retrieval", "icon": "search", "label": "policy A-29471?" }, "reply": { "from": "retrieval", "to": "agent", "icon": "circle-x", "label": "0 results" }, "state": { "at": "retrieval", "text": "span 2 · 0 results" } },
+    { "caption": "The agent logs tool_result: no matches and responds \"Policy not found\".", "send": { "from": "agent", "to": "gateway", "icon": "message-square", "label": "Policy not found" }, "callout": { "at": "agent", "text": "tool_result: no matches" }, "state": { "at": "agent", "text": "span 3 · not found" } },
+    { "caption": "Every hop exports its span to the trace backend; all three carry req-a7b2c9d4.", "send": { "from": "agent", "to": "traces", "icon": "activity", "label": "span · req-a7b2c9d4" }, "state": { "at": "traces", "text": "3 spans · one ID" } },
+    { "caption": "Without that ID, these three logs sit in three systems and nothing links them.", "focus": ["traces"], "callout": { "at": "traces", "text": "3 logs, 3 systems, no link" } },
+    { "caption": "You query the backend by req-a7b2c9d4 and the three spans return as one trace.", "send": { "from": "you", "to": "traces", "icon": "search", "label": "req-a7b2c9d4?" }, "reply": { "from": "traces", "to": "you", "icon": "route", "label": "3 spans, 1 request" }, "badge": { "at": "traces", "kind": "check", "text": "end-to-end" }, "state": { "at": "traces", "text": "trace reconstructed" } },
+    { "caption": "The trace points at the 0 results; you find A-29471 indexed with a typo.", "focus": ["you", "retrieval"], "callout": { "at": "you", "text": "typo in the policy index" }, "badge": { "at": "you", "kind": "check", "text": "root cause" }, "state": { "at": "retrieval", "text": "A-29471: typo" } }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "title": "AsyncAnthropic: three tickets in flight at once",
+  "kicker": "TicketFlow · Week 2",
+  "actors": [
+    { "id": "queue", "icon": "inbox", "label": "Ticket queue", "sub": "support inbox, peak", "slot": "L" },
+    { "id": "ticketflow", "icon": "server", "label": "TicketFlow", "sub": "your Python service", "slot": "C" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "messages.create()", "slot": "R" }
+  ],
+  "steps": [
+    { "caption": "Traffic spikes: three tickets hit TicketFlow at once.", "focus": ["queue"], "send": { "from": "queue", "to": "ticketflow", "icon": "ticket", "label": "3 tickets" }, "callout": { "at": "queue", "text": "charged twice · crash · dark mode?" }, "state": { "at": "queue", "text": "peak traffic" } },
+    { "caption": "The sync Flask service sends ticket 1 and blocks the event loop while it waits.", "focus": ["ticketflow"], "send": { "from": "ticketflow", "to": "claude", "icon": "message-square", "label": "ticket 1 · sync" }, "callout": { "at": "ticketflow", "text": "event loop blocked" }, "state": { "at": "ticketflow", "text": "Flask · sync client" } },
+    { "caption": "Reply 1 returns; tickets 2 and 3 sat waiting all along and requests time out.", "send": { "from": "claude", "to": "ticketflow", "icon": "clock", "label": "reply 1 of 3" }, "callout": { "at": "queue", "text": "tickets 2, 3 still waiting" }, "badge": { "at": "ticketflow", "kind": "warn", "text": "timeouts" } },
+    { "caption": "You switch the client to AsyncAnthropic: every call is now awaitable.", "focus": ["ticketflow"], "callout": { "at": "ticketflow", "text": "await client.messages.create()" }, "state": { "at": "ticketflow", "text": "AsyncAnthropic" } },
+    { "caption": "asyncio.gather() fires all three calls at once; the event loop never blocks.", "send": { "from": "ticketflow", "to": "claude", "icon": "zap", "label": "gather() · 3 calls" }, "callout": { "at": "ticketflow", "text": "asyncio.gather(*tasks)" }, "state": { "at": "claude", "text": "3 requests in flight" } },
+    { "caption": "Peak traffic throws a 429; the SDK retries with backoff, no manual loop needed.", "send": { "from": "claude", "to": "ticketflow", "icon": "triangle-alert", "label": "429 rate limit" }, "reply": { "from": "ticketflow", "to": "claude", "icon": "refresh-cw", "label": "auto-retry · backoff" }, "callout": { "at": "ticketflow", "text": "max_retries=3 · timeout=30s" } },
+    { "caption": "All three results land together: billing, technical, feature_request.", "send": { "from": "claude", "to": "ticketflow", "icon": "list-checks", "label": "3 classifications" }, "reply": { "from": "ticketflow", "to": "queue", "icon": "ticket", "label": "3 tickets classified" }, "callout": { "at": "queue", "text": "billing · technical · feature_request" }, "badge": { "at": "ticketflow", "kind": "check", "text": "no timeouts" }, "state": { "at": "ticketflow", "text": "latency: 1 call, not 3" } }
+  ]
+}

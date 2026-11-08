@@ -1,0 +1,19 @@
+{
+  "title": "Tool lifecycle: Claude asks, your @tool answers",
+  "kicker": "Agent SDK · Custom tools",
+  "actors": [
+    { "id": "code", "icon": "code", "label": "Your code", "sub": "query() + @tool", "slot": "L" },
+    { "id": "sdk", "icon": "shield-check", "label": "Agent SDK", "sub": "hooks → permissions", "slot": "C" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "emits ToolUseBlock", "slot": "TR" },
+    { "id": "tool", "icon": "package", "label": "check_stock", "sub": "in-process @tool", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "Your code registers check_stock as an in-process @tool and asks about SKU A-100.", "focus": ["code"], "send": { "from": "code", "to": "sdk", "icon": "message-square", "label": "Do we have A-100?" }, "state": { "at": "sdk", "text": "check_stock allowed" } },
+    { "caption": "Claude reads the prompt and the tool description, then emits a ToolUseBlock.", "send": { "from": "sdk", "to": "claude", "icon": "file-code", "label": "tools: check_stock" }, "reply": { "from": "claude", "to": "sdk", "icon": "wrench", "label": "ToolUseBlock {sku}" }, "callout": { "at": "claude", "text": "mcp__inventory__check_stock" } },
+    { "caption": "Hooks run, the permission check passes, the SDK calls your function in-process.", "send": { "from": "sdk", "to": "tool", "icon": "search", "label": "sku: A-100" }, "reply": { "from": "tool", "to": "sdk", "icon": "hash", "label": "A-100: 42 in stock" }, "badge": { "at": "sdk", "kind": "check", "text": "pre-approved" } },
+    { "caption": "The result comes back as a ToolResultBlock; Claude answers with the real figure.", "send": { "from": "sdk", "to": "claude", "icon": "file-check", "label": "ToolResultBlock" }, "reply": { "from": "claude", "to": "code", "icon": "message-square", "label": "42 in stock" } },
+    { "caption": "Your code asks about SKU Z-999; Claude emits a second ToolUseBlock.", "focus": ["code"], "send": { "from": "code", "to": "sdk", "icon": "message-square", "label": "Do we have Z-999?" }, "reply": { "from": "claude", "to": "sdk", "icon": "wrench", "label": "ToolUseBlock {Z-999}" } },
+    { "caption": "No match for Z-999. Your function returns is_error instead of raising: no crash.", "send": { "from": "sdk", "to": "tool", "icon": "search", "label": "sku: Z-999" }, "reply": { "from": "tool", "to": "sdk", "icon": "circle-x", "label": "Unknown SKU" }, "callout": { "at": "tool", "text": "is_error: True, not raise" }, "badge": { "at": "code", "kind": "check", "text": "no exception" } },
+    { "caption": "Claude reads the error and explains it instead of inventing a stock figure.", "send": { "from": "sdk", "to": "claude", "icon": "triangle-alert", "label": "is_error result" }, "reply": { "from": "claude", "to": "code", "icon": "message-square", "label": "not in catalogue" }, "callout": { "at": "claude", "text": "Z-999 is not in the catalogue" }, "badge": { "at": "claude", "kind": "check", "text": "no guess" } }
+  ]
+}

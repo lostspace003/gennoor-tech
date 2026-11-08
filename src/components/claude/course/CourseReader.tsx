@@ -16,7 +16,7 @@ import ChapterLane from './ChapterLane'
 import ChapterView from './ChapterView'
 import ExamPlayer, { loadExam } from './ExamPlayer'
 import { store, useLearner } from './useLearner'
-import type { ChapterMeta, CourseData } from './types'
+import type { ChapterMeta, CourseData, FlowRef } from './types'
 
 const FREE_CHAPTERS = 2
 
@@ -24,6 +24,9 @@ interface Props {
   cert: ClaudeCert
   chapters: ChapterMeta[]
   questionCount: number
+  trailer?: FlowRef | null
+  /** content hash of the course JSON, so a changed course is never served from the browser cache */
+  version?: string
 }
 
 function hashId(): string {
@@ -31,7 +34,7 @@ function hashId(): string {
   return decodeURIComponent((window.location.hash || '').slice(1))
 }
 
-export default function CourseReader({ cert, chapters, questionCount }: Props) {
+export default function CourseReader({ cert, chapters, questionCount, trailer, version }: Props) {
   const key = cert.guideKey
   const courseId = 'claude-cert-' + key
   const { auth, refresh } = useLearner()
@@ -57,12 +60,12 @@ export default function CourseReader({ cert, chapters, questionCount }: Props) {
   // ---- load the course body ----
   useEffect(() => {
     let alive = true
-    fetch(`/cert-data/${cert.slug}.json`, { cache: 'force-cache' })
+    fetch(`/cert-data/${cert.slug}.json${version ? `?v=${version}` : ''}`, { cache: 'force-cache' })
       .then(r => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
       .then(j => { if (alive) setData(j) })
       .catch(() => { if (alive) setLoadError(true) })
     return () => { alive = false }
-  }, [cert.slug])
+  }, [cert.slug, version])
 
   // ---- local state ----
   useEffect(() => {
@@ -213,6 +216,7 @@ export default function CourseReader({ cert, chapters, questionCount }: Props) {
           done={done}
           lastSeen={lastSeen}
           examAnswered={examAnswered}
+          trailer={trailer}
           onToggleDone={toggleDone}
           onNavigate={navigate}
           onStartExam={() => { examDismissed.current = null; setExamOpen(true) }}

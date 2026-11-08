@@ -1,0 +1,18 @@
+{
+  "title": "ClaudeAgentOptions: deny always beats allow",
+  "kicker": "Agent SDK · Options",
+  "actors": [
+    { "id": "code", "icon": "code", "label": "Your code", "sub": "builds the options", "slot": "L" },
+    { "id": "sdk", "icon": "shield-check", "label": "SDK runtime", "sub": "enforces the lists", "slot": "C" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "runs the loop", "slot": "TR" },
+    { "id": "bash", "icon": "terminal", "label": "Bash tool", "sub": "disallowed_tools", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "Your code builds ClaudeAgentOptions once: allow Read, Grep; deny Bash; 10 turns.", "focus": ["code"], "send": { "from": "code", "to": "sdk", "icon": "settings", "label": "ClaudeAgentOptions" }, "callout": { "at": "code", "text": "allowed: Read, Grep · denied: Bash" }, "state": { "at": "sdk", "text": "deny Bash · 10 turns" } },
+    { "caption": "query() starts a one-shot run: the SDK sends Claude the prompt and tool list.", "send": { "from": "sdk", "to": "claude", "icon": "message-square", "label": "run cleanup script" }, "callout": { "at": "code", "text": "async for msg in query(...)" } },
+    { "caption": "Claude still asks for Bash: allowed_tools approves tools; it does not hide them.", "focus": ["claude"], "send": { "from": "claude", "to": "sdk", "icon": "wrench", "label": "tool_use Bash" }, "callout": { "at": "claude", "text": "Bash {'./cleanup.sh'}" }, "badge": { "at": "claude", "kind": "warn", "text": "not hidden" } },
+    { "caption": "The SDK refuses before anything runs: a deny rule always beats an allow.", "focus": ["sdk", "bash"], "send": { "from": "sdk", "to": "claude", "icon": "ban", "label": "tool_result ERROR" }, "callout": { "at": "sdk", "text": "Tool 'Bash' is in disallowed_tools" }, "badge": { "at": "sdk", "kind": "cross", "text": "blocked" }, "state": { "at": "bash", "text": "never called" } },
+    { "caption": "Claude turns the refusal into a helpful answer; the cleanup script never runs.", "focus": ["claude"], "send": { "from": "claude", "to": "sdk", "icon": "message-square", "label": "\"Bash not permitted\"" }, "callout": { "at": "claude", "text": "I did not run the cleanup script." } },
+    { "caption": "Every run ends with a ResultMessage: turns=1, cost $0.0042, session sess-0001.", "focus": ["code"], "send": { "from": "sdk", "to": "code", "icon": "file-check", "label": "ResultMessage" }, "callout": { "at": "code", "text": "success · turns=1 · $0.0042" }, "badge": { "at": "code", "kind": "check", "text": "success" }, "state": { "at": "code", "text": "sess-0001 resumable" } }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "title": "MCP: discover over two transports, call by name",
+  "kicker": "Agent SDK · MCP servers",
+  "actors": [
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "picks the tool", "slot": "L" },
+    { "id": "agent", "icon": "bot", "label": "Agent SDK", "sub": "hosts MCP client", "slot": "C" },
+    { "id": "fs", "icon": "folder", "label": "fs server", "sub": "stdio · subprocess", "slot": "TR" },
+    { "id": "crm", "icon": "cloud", "label": "crm server", "sub": "http · remote", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "Your code lists mcp_servers fs (stdio) and crm (http); the SDK is the client.", "focus": ["agent"], "callout": { "at": "agent", "text": "one protocol, no per-tool glue" }, "state": { "at": "agent", "text": "fs: stdio · crm: http" } },
+    { "caption": "The client spawns fs as a local subprocess and asks tools/list over JSON-RPC.", "send": { "from": "agent", "to": "fs", "icon": "terminal", "label": "tools/list · stdio" }, "reply": { "from": "fs", "to": "agent", "icon": "wrench", "label": "read_file" }, "callout": { "at": "fs", "text": "tools · resources · prompts" }, "state": { "at": "fs", "text": "connected" } },
+    { "caption": "It also connects to the remote crm server over HTTP and discovers its tools.", "send": { "from": "agent", "to": "crm", "icon": "globe", "label": "tools/list · http" }, "reply": { "from": "crm", "to": "agent", "icon": "wrench", "label": "lookup_customer" }, "state": { "at": "crm", "text": "connected" } },
+    { "caption": "Names become mcp__<server>__<tool>; allowed_tools says which Claude may use.", "send": { "from": "agent", "to": "claude", "icon": "list-checks", "label": "prompt + 2 mcp tools" }, "callout": { "at": "agent", "text": "mcp__fs__* · mcp__crm__lookup_customer" }, "badge": { "at": "agent", "kind": "check", "text": "allowed" } },
+    { "caption": "Claude reads \"Look up customer C-77\" and returns a tool_use with the full name.", "focus": ["claude"], "send": { "from": "claude", "to": "agent", "icon": "wrench", "label": "tool_use {id: C-77}" }, "callout": { "at": "claude", "text": "mcp__crm__lookup_customer {id: C-77}" } },
+    { "caption": "The client routes it to crm as tools/call over HTTP; crm returns the record.", "send": { "from": "agent", "to": "crm", "icon": "send", "label": "tools/call C-77" }, "reply": { "from": "crm", "to": "agent", "icon": "file-text", "label": "Globex · tier: gold" } },
+    { "caption": "The record returns as a tool_result and Claude answers in one turn.", "send": { "from": "agent", "to": "claude", "icon": "file-check", "label": "tool_result" }, "reply": { "from": "claude", "to": "agent", "icon": "message-square", "label": "\"C-77 is Globex…\"" }, "badge": { "at": "claude", "kind": "check", "text": "grounded" }, "state": { "at": "agent", "text": "turns=1 · $0.0042" } }
+  ]
+}

@@ -11,6 +11,14 @@ export interface Scene {
   cut: boolean
 }
 
+/** A rendered flow animation (claude-thing/flows): served from <BLOB_URL>/cert-flows/<id>.{mp4,gif,jpg} */
+export interface FlowRef {
+  id: string
+  title: string
+  duration: number
+  steps: number
+}
+
 export interface Chapter {
   id: string
   /** Chapter number as printed in the course (0 for the unnumbered cheat sheet). */
@@ -25,9 +33,10 @@ export interface Chapter {
   teaser: string
   scene: Scene | null
   takeaways: string[]
+  flow: FlowRef | null
 }
 
-export type ChapterMeta = Pick<Chapter, 'id' | 'n' | 'title' | 'short' | 'kind' | 'icon' | 'teaser' | 'nocheck'>
+export type ChapterMeta = Pick<Chapter, 'id' | 'n' | 'title' | 'short' | 'kind' | 'icon' | 'teaser' | 'nocheck' | 'flow'>
 
 export interface AnimNode { id: string; label: string; sub?: string; x: number; y: number }
 export interface AnimStep { on: string[] | null; edge: string[] | string[][] | null; text: string }

@@ -3,12 +3,12 @@ import { notFound } from 'next/navigation'
 import { CLAUDE_CERTS, getCert } from '@/data/claude-certifications'
 import certMeta from '@/data/claude-cert-meta.json'
 import CourseReader from '@/components/claude/course/CourseReader'
-import type { ChapterMeta } from '@/components/claude/course/types'
+import type { ChapterMeta, FlowRef } from '@/components/claude/course/types'
 
 /* One certification = one clean view: the course itself, read chapter by chapter from a
    horizontal lane at the top. The chapter bodies load from /cert-data/<slug>.json. */
 
-type Meta = Record<string, { key: string; questions: number; chapters: ChapterMeta[] }>
+type Meta = Record<string, { key: string; version: string; questions: number; trailer?: FlowRef | null; chapters: ChapterMeta[] }>
 const META = certMeta as unknown as Meta
 
 export function generateStaticParams() {
@@ -34,7 +34,7 @@ export default async function CertPage({ params }: { params: Promise<{ cert: str
 
   return (
     <main className="bg-white px-4 sm:px-6 lg:px-8 pb-16">
-      <CourseReader cert={cert} chapters={meta.chapters} questionCount={meta.questions} />
+      <CourseReader cert={cert} chapters={meta.chapters} questionCount={meta.questions} trailer={meta.trailer ?? null} version={meta.version} />
     </main>
   )
 }

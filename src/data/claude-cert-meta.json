@@ -1,7 +1,14 @@
 {
  "associate-foundations": {
   "key": "ccasf",
+  "version": "134arsw",
   "questions": 60,
+  "trailer": {
+   "id": "ccasf-trailer",
+   "title": "Claude at work: Maya's 30 days to AI-fluent lead",
+   "duration": 32280,
+   "steps": 8
+  },
   "chapters": [
    {
     "id": "ch1",
@@ -11,7 +18,8 @@
     "kind": "intro",
     "icon": "Compass",
     "teaser": "Meet Maya, learn how the 60-question exam works, and get the map of her 30-day journey from first chat to AI-fluent lead.",
-    "nocheck": true
+    "nocheck": true,
+    "flow": null
    },
    {
     "id": "ch2",
@@ -21,7 +29,13 @@
     "kind": "story",
     "icon": "Compass",
     "teaser": "Maya's vague \"help me with reports\" prompt flops, so she learns the 4Ds: Description, Delegation, Diligence and Discernment.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccasf-ch2",
+     "title": "The 4Ds: vague prompt to verified report",
+     "duration": 27390,
+     "steps": 7
+    }
    },
    {
     "id": "ch3",
@@ -31,7 +45,13 @@
     "kind": "story",
     "icon": "FileText",
     "teaser": "Maya's onboarding procedure vanishes into chat scrollback, until she learns to give reusable work a permanent home as an Artifact.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccasf-ch3",
+     "title": "Artifacts: the procedure gets a permanent home",
+     "duration": 26970,
+     "steps": 7
+    }
    },
    {
     "id": "ch4",
@@ -41,7 +61,13 @@
     "kind": "story",
     "icon": "ClipboardList",
     "teaser": "Same prompt, three different answers: Maya learns the role-context-task-format recipe that makes Claude's output consistent.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccasf-ch4",
+     "title": "Prompt structure: four elements, one consistent answer",
+     "duration": 26520,
+     "steps": 7
+    }
    },
    {
     "id": "ch5",
@@ -51,7 +77,13 @@
     "kind": "story",
     "icon": "Repeat",
     "teaser": "Eight reworded prompts later, Maya's summary still buries the headline, until she learns to diagnose the flaw, fix it, and verify.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccasf-ch5",
+     "title": "Iterative refinement: diagnose, revise, verify, decide",
+     "duration": 28820,
+     "steps": 7
+    }
    },
    {
     "id": "ch6",
@@ -61,7 +93,13 @@
     "kind": "story",
     "icon": "FolderKanban",
     "teaser": "Maya stops pasting the same 300-word brief into every chat: one Project holds the rules and glossary, and her prompts shrink from 400 words to 50.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccasf-ch6",
+     "title": "Projects: one brief, every chat inherits it",
+     "duration": 25380,
+     "steps": 7
+    }
    },
    {
     "id": "ch7",
@@ -71,7 +109,13 @@
     "kind": "story",
     "icon": "Calculator",
     "teaser": "Maya's expense total comes back \"approximately\" wrong twice, until Code Execution runs real Python and returns the exact $44,287.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccasf-ch7",
+     "title": "Code Execution: exact numbers, not predictions",
+     "duration": 22160,
+     "steps": 7
+    }
    },
    {
     "id": "ch8",
@@ -81,7 +125,13 @@
     "kind": "story",
     "icon": "Plug",
     "teaser": "Maya switches on Memory so Claude keeps Brightline's tiers between chats, connects Google Drive, and learns why long chats lose the thread.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccasf-ch8",
+     "title": "Memory: Claude remembers the tiers across chats",
+     "duration": 26250,
+     "steps": 7
+    }
    },
    {
     "id": "ch9",
@@ -91,7 +141,13 @@
     "kind": "story",
     "icon": "Scale",
     "teaser": "Maya's manager flags her Opus-for-everything habit, and she learns to match Haiku, Sonnet or Opus to the task instead of defaulting to the heaviest.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccasf-ch9",
+     "title": "Model selection: match the model to the task",
+     "duration": 26940,
+     "steps": 7
+    }
    },
    {
     "id": "ch10",
@@ -101,7 +157,13 @@
     "kind": "story",
     "icon": "Workflow",
     "teaser": "One vague prompt can't redesign onboarding, so Maya splits it into three focused deliverables and learns how far to chop and how to hand off.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccasf-ch10",
+     "title": "Task decomposition: three focused prompts beat one",
+     "duration": 25930,
+     "steps": 7
+    }
    },
    {
     "id": "ch11",
@@ -111,7 +173,13 @@
     "kind": "story",
     "icon": "ShieldCheck",
     "teaser": "Halfway through summarizing performance reviews, Maya spots salaries and accommodation notes and learns to classify and redact before she prompts.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccasf-ch11",
+     "title": "Data sensitivity: classify, redact, review, then submit",
+     "duration": 22550,
+     "steps": 7
+    }
    },
    {
     "id": "ch12",
@@ -121,7 +189,13 @@
     "kind": "story",
     "icon": "Search",
     "teaser": "A 300% growth stat with three sources turns out to be invented, and Maya learns to pinpoint, verify and escalate before it reaches the board.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccasf-ch12",
+     "title": "Hallucination: pinpoint, verify, then regenerate",
+     "duration": 26170,
+     "steps": 7
+    }
    },
    {
     "id": "ch13",
@@ -131,7 +205,8 @@
     "kind": "playbook",
     "icon": "Target",
     "teaser": "Maya boils 30 days of lessons into if-you-see-X-answer-Y decision rules, the traps the exam sets, and a final 24-hour checklist.",
-    "nocheck": true
+    "nocheck": true,
+    "flow": null
    },
    {
     "id": "cheatsheet",
@@ -141,7 +216,8 @@
     "kind": "cheatsheet",
     "icon": "ClipboardList",
     "teaser": "The blueprint, the \"if you see X, choose Y\" decision matrix, and the reference code patterns — the one page to re-read before exam day.",
-    "nocheck": true
+    "nocheck": true,
+    "flow": null
    },
    {
     "id": "ch14",
@@ -151,7 +227,8 @@
     "kind": "exam",
     "icon": "ClipboardList",
     "teaser": "Maya's 30 days come down to this: all 60 real exam-bank questions in one sitting, no notes, then every wrong answer traced back to its chapter.",
-    "nocheck": true
+    "nocheck": true,
+    "flow": null
    },
    {
     "id": "ch15",
@@ -161,13 +238,21 @@
     "kind": "next",
     "icon": "Rocket",
     "teaser": "Maya passes on her first attempt and becomes Brightline's AI lead; now see where your own Claude journey goes next with Gennoor.",
-    "nocheck": true
+    "nocheck": true,
+    "flow": null
    }
   ]
  },
  "developer-foundations": {
   "key": "ccdvf",
+  "version": "19oncq0",
   "questions": 53,
+  "trailer": {
+   "id": "ccdvf-trailer",
+   "title": "TicketFlow: first API call to agent fleet",
+   "duration": 33130,
+   "steps": 8
+  },
   "chapters": [
    {
     "id": "ch1",
@@ -177,7 +262,8 @@
     "kind": "intro",
     "icon": "Compass",
     "teaser": "Meet Loomline and TicketFlow, see how the 53-question CCDV-F exam works, and get the 15-chapter roadmap from first API call to production.",
-    "nocheck": true
+    "nocheck": true,
+    "flow": null
    },
    {
     "id": "ch2",
@@ -187,7 +273,13 @@
     "kind": "story",
     "icon": "MessageSquare",
     "teaser": "Day 1 at Loomline: you lift the ticket classifier out of its notebook, make your first Messages API call and start counting every token.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccdvf-ch2",
+     "title": "Messages API: your first call, every token counted",
+     "duration": 21830,
+     "steps": 7
+    }
    },
    {
     "id": "ch3",
@@ -197,7 +289,13 @@
     "kind": "story",
     "icon": "Server",
     "teaser": "Traffic spikes and your sync Flask service chokes; you move TicketFlow to AsyncAnthropic, lock down secrets and let the SDK retry for you.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccdvf-ch3",
+     "title": "AsyncAnthropic: three tickets in flight at once",
+     "duration": 26540,
+     "steps": 7
+    }
    },
    {
     "id": "ch4",
@@ -207,7 +305,13 @@
     "kind": "story",
     "icon": "Coins",
     "teaser": "Finance wants the overnight 10K-ticket job cheaper: you discover the Batch API's 50% discount and build TicketFlow's cost model.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccdvf-ch4",
+     "title": "Batch API: 10K tickets overnight, half price",
+     "duration": 23530,
+     "steps": 6
+    }
    },
    {
     "id": "ch5",
@@ -217,7 +321,13 @@
     "kind": "story",
     "icon": "Database",
     "teaser": "Every turn re-sends the 20K-token KB and costs spike; you mark it ephemeral, turn 2 reads from cache at 90% off, and the bill drops 85%.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccdvf-ch5",
+     "title": "Prompt caching: write once, read at 90% off",
+     "duration": 26230,
+     "steps": 7
+    }
    },
    {
     "id": "ch6",
@@ -227,7 +337,13 @@
     "kind": "story",
     "icon": "Wrench",
     "teaser": "Week 5: you hand Claude a lookup_customer tool, watch it call the database on its own, then catch the malformed emails before they hit the query.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccdvf-ch6",
+     "title": "Tool use: Claude requests, you validate and run",
+     "duration": 25670,
+     "steps": 7
+    }
    },
    {
     "id": "ch7",
@@ -237,7 +353,13 @@
     "kind": "story",
     "icon": "Scissors",
     "teaser": "Week 7: TicketFlow's JSON falls apart after 15 turns, and you name it format drift and fix it with validation and context pruning, not temperature.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccdvf-ch7",
+     "title": "Format drift: JSON decays until you prune context",
+     "duration": 26280,
+     "steps": 7
+    }
    },
    {
     "id": "ch8",
@@ -247,7 +369,13 @@
     "kind": "story",
     "icon": "History",
     "teaser": "Your 20-step resolution agent crashes at step 15 and restarts from step 1, until you add checkpoints and meet the Agent SDK's ready-made loop.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccdvf-ch8",
+     "title": "Checkpointing: crash at 15, resume at 15",
+     "duration": 26760,
+     "steps": 7
+    }
    },
    {
     "id": "ch9",
@@ -257,7 +385,13 @@
     "kind": "story",
     "icon": "Network",
     "teaser": "Week 9: one agent drops the thread on mixed tickets, so you split TicketFlow into an orchestrator that delegates to focused specialists.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccdvf-ch9",
+     "title": "Orchestrator: split the ticket, merge the results",
+     "duration": 23100,
+     "steps": 7
+    }
    },
    {
     "id": "ch10",
@@ -267,7 +401,13 @@
     "kind": "story",
     "icon": "Plug",
     "teaser": "Three teams want the same Jira and CRM tools, so you ship one MCP server and every app plugs in: write once, reuse everywhere.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccdvf-ch10",
+     "title": "MCP server: write once, three apps plug in",
+     "duration": 27970,
+     "steps": 7
+    }
    },
    {
     "id": "ch11",
@@ -277,7 +417,13 @@
     "kind": "story",
     "icon": "Terminal",
     "teaser": "Week 11: you lock Claude Code down with a PreToolUse hook that blocks rm -rf and DROP TABLE, and commit TicketFlow’s standards to CLAUDE.md.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccdvf-ch11",
+     "title": "PreToolUse hook: rm -rf denied before it runs",
+     "duration": 24770,
+     "steps": 7
+    }
    },
    {
     "id": "ch12",
@@ -287,7 +433,13 @@
     "kind": "story",
     "icon": "ShieldCheck",
     "teaser": "An attacker's ticket tells your agent to email every TicketFlow record to evil.com; you answer with four layers of defense instead of one.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccdvf-ch12",
+     "title": "Prompt injection: four layers stop the poisoned ticket",
+     "duration": 22450,
+     "steps": 7
+    }
    },
    {
     "id": "ch13",
@@ -297,7 +449,13 @@
     "kind": "story",
     "icon": "Activity",
     "teaser": "TicketFlow goes live on BYOC for data residency; you wire error routing, CI/CD evals and token tracking, and catch a retry-loop bug before it pages.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccdvf-ch13",
+     "title": "Error routing: 429 warns, 401 pages on-call",
+     "duration": 25670,
+     "steps": 7
+    }
    },
    {
     "id": "ch14",
@@ -307,7 +465,8 @@
     "kind": "playbook",
     "icon": "Map",
     "teaser": "Before exam day, you turn every TicketFlow lesson into decision trees: read the scenario clue, name the pattern, and sidestep the classic traps.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": null
    },
    {
     "id": "cheatsheet",
@@ -317,7 +476,8 @@
     "kind": "cheatsheet",
     "icon": "ClipboardList",
     "teaser": "The blueprint, the \"if you see X, choose Y\" decision matrix, and the reference code patterns — the one page to re-read before exam day.",
-    "nocheck": true
+    "nocheck": true,
+    "flow": null
    },
    {
     "id": "ch15",
@@ -327,7 +487,8 @@
     "kind": "exam",
     "icon": "ClipboardList",
     "teaser": "TicketFlow is live at Loomline; now prove you can run it: 53 CCDV-F scenario questions in 90 minutes, 37 to pass, every answer explained at the end.",
-    "nocheck": true
+    "nocheck": true,
+    "flow": null
    },
    {
     "id": "ch16",
@@ -337,13 +498,21 @@
     "kind": "next",
     "icon": "Rocket",
     "teaser": "TicketFlow is production-ready and you're exam-ready; here's where to take your Claude skills next with Gennoor's guides, labs and team training.",
-    "nocheck": true
+    "nocheck": true,
+    "flow": null
    }
   ]
  },
  "architect-foundations": {
   "key": "ccarf",
+  "version": "dgs67m",
   "questions": 100,
+  "trailer": {
+   "id": "ccarf-trailer",
+   "title": "Agent SDK: one query() becomes a governed platform",
+   "duration": 37020,
+   "steps": 8
+  },
   "chapters": [
    {
     "id": "ch1",
@@ -353,7 +522,8 @@
     "kind": "intro",
     "icon": "Compass",
     "teaser": "Before you lay the first brick of the platform, see what the exam verifies, how the chapters map to its four areas, and how to use the guide.",
-    "nocheck": true
+    "nocheck": true,
+    "flow": null
    },
    {
     "id": "ch2",
@@ -363,7 +533,13 @@
     "kind": "story",
     "icon": "Repeat",
     "teaser": "You wire your first query() call and watch the SDK run the whole agent loop for you: reason, tool, result, repeat, then a ResultMessage.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccarf-ch2",
+     "title": "Agent SDK: query() runs the loop for you",
+     "duration": 27340,
+     "steps": 7
+    }
    },
    {
     "id": "ch3",
@@ -373,7 +549,13 @@
     "kind": "story",
     "icon": "Wrench",
     "teaser": "You wire up ClaudeAgentOptions, pick a prompt and model, then choose query() or ClaudeSDKClient and watch the stream come back.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccarf-ch3",
+     "title": "ClaudeAgentOptions: deny always beats allow",
+     "duration": 22580,
+     "steps": 6
+    }
    },
    {
     "id": "ch4",
@@ -383,7 +565,13 @@
     "kind": "story",
     "icon": "Wrench",
     "teaser": "You give Claude hands: built-in Read, Edit and Bash tools, then your first @tool that checks stock and reports errors back to Claude.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccarf-ch4",
+     "title": "Tool lifecycle: Claude asks, your @tool answers",
+     "duration": 29560,
+     "steps": 7
+    }
    },
    {
     "id": "ch5",
@@ -393,7 +581,13 @@
     "kind": "story",
     "icon": "Plug",
     "teaser": "You plug the platform into the outside world: an MCP client inside, servers outside, three primitives, three transports, mcp__server__tool names.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccarf-ch5",
+     "title": "MCP: discover over two transports, call by name",
+     "duration": 27550,
+     "steps": 7
+    }
    },
    {
     "id": "ch6",
@@ -403,7 +597,13 @@
     "kind": "story",
     "icon": "Network",
     "teaser": "You hand work to specialist subagents through the Agent tool and learn why only their final memo, never their notebook, comes back to you.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccarf-ch6",
+     "title": "Subagents: the memo returns, not the notebook",
+     "duration": 25090,
+     "steps": 7
+    }
    },
    {
     "id": "ch7",
@@ -413,7 +613,13 @@
     "kind": "story",
     "icon": "Workflow",
     "teaser": "You wire checkpoints into the platform: hooks that deny rm -rf, audit every tool result and run whether Claude wants them or not.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccarf-ch7",
+     "title": "Hooks: deny rm -rf, audit what ran",
+     "duration": 25990,
+     "steps": 7
+    }
    },
    {
     "id": "ch8",
@@ -423,7 +629,13 @@
     "kind": "story",
     "icon": "History",
     "teaser": "You give your agent a memory: sessions it can pause, resume and fork, plus a context window you keep lean before compaction kicks in.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccarf-ch8",
+     "title": "Sessions: resume remembers, fork branches",
+     "duration": 23290,
+     "steps": 6
+    }
    },
    {
     "id": "ch9",
@@ -433,7 +645,13 @@
     "kind": "story",
     "icon": "ShieldCheck",
     "teaser": "You lock the platform down: permission modes, a human-approval callback, injection defences and a sandbox so one bad prompt cannot wreck prod.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccarf-ch9",
+     "title": "Permission layers: the restart waits for a human",
+     "duration": 27680,
+     "steps": 7
+    }
    },
    {
     "id": "ch10",
@@ -443,7 +661,13 @@
     "kind": "story",
     "icon": "Gauge",
     "teaser": "You make the platform return typed JSON, cap every run with turn and budget limits, then wire in retries, cost tracking and monitoring.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccarf-ch10",
+     "title": "Structured outputs: typed JSON, not text parsing",
+     "duration": 21530,
+     "steps": 6
+    }
    },
    {
     "id": "ch11",
@@ -453,7 +677,13 @@
     "kind": "story",
     "icon": "Building2",
     "teaser": "Every piece you built now clicks together into six enterprise patterns: sandboxed workers, policy gateways, approval queues, specialists and more.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccarf-ch11",
+     "title": "Enterprise patterns: each control in its place",
+     "duration": 25510,
+     "steps": 7
+    }
    },
    {
     "id": "ch12",
@@ -463,7 +693,13 @@
     "kind": "story",
     "icon": "Rocket",
     "teaser": "Six runnable builds, from a doc-research bot to a refund agent with a human gate, each run live against the mock SDK so you see the mechanics.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccarf-ch12",
+     "title": "can_use_tool: $40 auto-approved, $250 queued",
+     "duration": 24530,
+     "steps": 7
+    }
    },
    {
     "id": "ch13",
@@ -473,7 +709,13 @@
     "kind": "story",
     "icon": "Scale",
     "teaser": "Before the final review you lay every design choice side by side: SDK vs API, allowed vs disallowed, resume vs fork, stdio vs http vs sdk.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccarf-ch13",
+     "title": "Tools compared: same gate, different process boundary",
+     "duration": 28420,
+     "steps": 7
+    }
    },
    {
     "id": "cheatsheet",
@@ -483,7 +725,8 @@
     "kind": "cheatsheet",
     "icon": "ClipboardList",
     "teaser": "The blueprint, the \"if you see X, choose Y\" decision matrix, and the reference code patterns — the one page to re-read before exam day.",
-    "nocheck": true
+    "nocheck": true,
+    "flow": null
    },
    {
     "id": "ch15",
@@ -493,7 +736,8 @@
     "kind": "exam",
     "icon": "Trophy",
     "teaser": "Your platform is built; now sit the timed mock exam: 100 original questions, shuffled and scored, with a per-topic breakdown of what still needs work.",
-    "nocheck": true
+    "nocheck": true,
+    "flow": null
    },
    {
     "id": "ch16",
@@ -503,13 +747,21 @@
     "kind": "refs",
     "icon": "BookOpen",
     "teaser": "Your platform is built; here are the official Agent SDK references, the MCP spec and the exam page to return to when you need the source of truth.",
-    "nocheck": true
+    "nocheck": true,
+    "flow": null
    }
   ]
  },
  "architect-professional": {
   "key": "ccarp",
+  "version": "jw31ck",
   "questions": 62,
+  "trailer": {
+   "id": "ccarp-trailer",
+   "title": "Meridian rollout: a year of defensible decisions",
+   "duration": 33900,
+   "steps": 8
+  },
   "chapters": [
    {
     "id": "ch0",
@@ -519,7 +771,8 @@
     "kind": "intro",
     "icon": "Compass",
     "teaser": "You join Meridian as Principal AI Architect: learn the exam format, meet the 12-month roadmap, and get summoned to the first discovery workshop.",
-    "nocheck": true
+    "nocheck": true,
+    "flow": null
    },
    {
     "id": "ch1",
@@ -529,7 +782,13 @@
     "kind": "story",
     "icon": "Compass",
     "teaser": "The CFO hands you $2.4M and eight weeks: run discovery, sort hard SLAs from nice-to-haves, and get an architecture past the governance board.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccarp-ch1",
+     "title": "Discovery to ADR: the SLA gate decides first",
+     "duration": 28740,
+     "steps": 7
+    }
    },
    {
     "id": "ch2",
@@ -539,7 +798,13 @@
     "kind": "story",
     "icon": "Database",
     "teaser": "Week 9: a 480,000-document pilot forces you to design hybrid retrieval that filters by role before anything reaches the model.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccarp-ch2",
+     "title": "RBAC at retrieval: filter by role before the prompt",
+     "duration": 25190,
+     "steps": 7
+    }
    },
    {
     "id": "ch3",
@@ -549,7 +814,13 @@
     "kind": "story",
     "icon": "Coins",
     "teaser": "Week 11: Meridian's run rate is $840k over budget, and the CTO gives you four weeks to find 40% savings without touching quality or SLAs.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccarp-ch3",
+     "title": "Prompt caching: pay for the filing once",
+     "duration": 25170,
+     "steps": 7
+    }
    },
    {
     "id": "ch4",
@@ -559,7 +830,13 @@
     "kind": "story",
     "icon": "Bot",
     "teaser": "Week 15: the 34-tool claims agent is losing accuracy, so you decompose it, defer tools on demand, audit privileges and gate risky actions.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccarp-ch4",
+     "title": "HITL gate: human approval before money moves",
+     "duration": 21150,
+     "steps": 6
+    }
    },
    {
     "id": "ch5",
@@ -569,7 +846,13 @@
     "kind": "story",
     "icon": "ShieldCheck",
     "teaser": "Week 19: the CCO demands proof before PHI flows: a HIPAA-eligible config, secrets out of prompts, RBAC at retrieval and layered guardrails.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccarp-ch5",
+     "title": "Secrets & RBAC: the key never reaches Claude",
+     "duration": 28000,
+     "steps": 7
+    }
    },
    {
     "id": "ch6",
@@ -579,7 +862,13 @@
     "kind": "story",
     "icon": "Activity",
     "teaser": "Week 23: three incidents expose missing trace IDs, unlogged model versions and a p-hacked A/B test; you rebuild observability and fairness checks.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccarp-ch6",
+     "title": "Correlation IDs: tracing a failed claim end-to-end",
+     "duration": 27810,
+     "steps": 8
+    }
    },
    {
     "id": "ch7",
@@ -589,7 +878,13 @@
     "kind": "story",
     "icon": "Rocket",
     "teaser": "Week 27: you take the 4-week canary live at 5% of clinicians, arm the rollback gates, and hand Meridian's system to the on-call team.",
-    "nocheck": false
+    "nocheck": false,
+    "flow": {
+     "id": "ccarp-ch7",
+     "title": "Canary rollout: the gate reverts at 50%",
+     "duration": 27630,
+     "steps": 7
+    }
    },
    {
     "id": "ch8",
@@ -599,7 +894,8 @@
     "kind": "playbook",
     "icon": "Compass",
     "teaser": "Twelve months at Meridian distilled into twelve decision patterns: spot the trap, eliminate the SLA breaker, choose the sound answer.",
-    "nocheck": true
+    "nocheck": true,
+    "flow": null
    },
    {
     "id": "cheatsheet",
@@ -609,7 +905,8 @@
     "kind": "cheatsheet",
     "icon": "ClipboardList",
     "teaser": "The blueprint, the \"if you see X, choose Y\" decision matrix, and the reference code patterns — the one page to re-read before exam day.",
-    "nocheck": true
+    "nocheck": true,
+    "flow": null
    },
    {
     "id": "ch9",
@@ -619,7 +916,8 @@
     "kind": "exam",
     "icon": "ListChecks",
     "teaser": "With Meridian's rollout behind you, sit all 62 practice questions in random order, scored by topic with explanations, and prove you're exam-ready.",
-    "nocheck": true
+    "nocheck": true,
+    "flow": null
    },
    {
     "id": "ch10",
@@ -629,7 +927,8 @@
     "kind": "next",
     "icon": "Rocket",
     "teaser": "Meridian's canary rollout is approved and you're exam-ready; keep going with Gennoor's cert guides, Learning Studio courses or a Claude POC with us.",
-    "nocheck": true
+    "nocheck": true,
+    "flow": null
    }
   ]
  }

@@ -1,0 +1,19 @@
+{
+  "title": "Prompt caching: write once, read at 90% off",
+  "kicker": "TicketFlow · Week 4",
+  "actors": [
+    { "id": "you", "icon": "user", "label": "You", "sub": "Loomline engineer", "slot": "L" },
+    { "id": "app", "icon": "code", "label": "TicketFlow", "sub": "your service", "slot": "C" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "checks the prefix", "slot": "TR" },
+    { "id": "cache", "icon": "database", "label": "Prompt cache", "sub": "5-min TTL", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "Week 4: every agent turn re-sends the 10K-token KB at full price. Costs spike.", "focus": ["app"], "send": { "from": "app", "to": "claude", "icon": "file-text", "label": "10K KB, every turn" }, "badge": { "at": "app", "kind": "warn", "text": "cost spike" } },
+    { "caption": "You mark the static KB system block with cache_control: ephemeral.", "focus": ["you"], "send": { "from": "you", "to": "app", "icon": "code", "label": "cache_control" }, "callout": { "at": "you", "text": "{\"type\": \"ephemeral\"}" } },
+    { "caption": "Turn 1: cache miss. Claude writes the KB to the cache, plus a small write fee.", "send": { "from": "app", "to": "claude", "icon": "message-square", "label": "KB + reset password?" }, "reply": { "from": "claude", "to": "cache", "icon": "pen-line", "label": "write 10,000 tokens" }, "callout": { "at": "claude", "text": "cache_creation: 10000" }, "state": { "at": "cache", "text": "KB stored · TTL 5 min" } },
+    { "caption": "Turn 2 sends the identical KB block: same model, exact prefix. The cache hits.", "send": { "from": "app", "to": "claude", "icon": "message-square", "label": "same KB + SLA tiers?" }, "reply": { "from": "cache", "to": "claude", "icon": "zap", "label": "cache hit · 10,000" }, "callout": { "at": "claude", "text": "cache_read: 10000" } },
+    { "caption": "Only 245 new input tokens bill in full; the 10,000 cached ones cost 1/10th.", "send": { "from": "claude", "to": "app", "icon": "message-square", "label": "answer · 245 new" }, "badge": { "at": "claude", "kind": "check", "text": "90% off" }, "state": { "at": "cache", "text": "TTL extended +5 min" } },
+    { "caption": "Each hit extends the TTL by 5 minutes. Five idle minutes and the cache is gone.", "focus": ["cache"], "callout": { "at": "cache", "text": "Exam trap: not forever" }, "state": { "at": "cache", "text": "idle 5 min → expires" } },
+    { "caption": "You watch cache_creation vs cache_read in usage; the monthly bill drops 85%.", "focus": ["you"], "send": { "from": "app", "to": "you", "icon": "chart-line", "label": "usage: read 10,000" }, "badge": { "at": "you", "kind": "check", "text": "bill −85%" } }
+  ]
+}

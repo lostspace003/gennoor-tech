@@ -109,6 +109,14 @@ function shortLabel(title) {
   if (s.length > 24) s = s.slice(0, 22).replace(/\s+\S*$/, '') + '…';
   return s;
 }
+const FLOW_MANIFEST = (() => { const p = path.join(__dirname, 'flows', 'manifest.json'); return fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, 'utf8')) : {}; })();
+function flowRef(key, slug, id) {
+  // a flow reaches the page only once its spec is authored AND it has been rendered (manifest entry)
+  const spec = path.join(__dirname, 'flows', 'specs', slug, id + '.json');
+  const m = FLOW_MANIFEST[key + '-' + id];
+  if (!fs.existsSync(spec) || !m) return null;
+  return { id: key + '-' + id, title: m.title, duration: m.duration, steps: m.steps };
+}
 function readEnrich(slug, id) {
   const p = path.join(__dirname, 'enrich', slug, id + '.json');
   if (!fs.existsSync(p)) return null;
@@ -154,7 +162,7 @@ for (const slug of Object.keys(GUIDES)) {
   // enrichment
   chapters = chapters.map(ch => {
     const e = readEnrich(slug, ch.id);
-    const out = Object.assign({ icon: null, teaser: '', scene: null, takeaways: [] }, ch);
+    const out = Object.assign({ icon: null, teaser: '', scene: null, takeaways: [], flow: flowRef(key, slug, ch.id) }, ch);
     if (!e) return out;
     if (e.short && e.short.length <= 26) out.short = e.short;
     if (e.icon) out.icon = e.icon;
@@ -198,7 +206,7 @@ for (const slug of Object.keys(GUIDES)) {
   } : null;
   if (cheat) {
     const examIdx = chapters.findIndex(c => c.kind === 'exam');
-    const cs = { id: 'cheatsheet', n: 0, title: 'Exam cheat sheet', short: 'Cheat sheet', kind: 'cheatsheet', tag: null, nocheck: true, html: '', icon: 'ClipboardList', teaser: 'The blueprint, the "if you see X, choose Y" decision matrix, and the reference code patterns — the one page to re-read before exam day.', scene: null, takeaways: [] };
+    const cs = { id: 'cheatsheet', n: 0, title: 'Exam cheat sheet', short: 'Cheat sheet', kind: 'cheatsheet', tag: null, nocheck: true, html: '', icon: 'ClipboardList', teaser: 'The blueprint, the "if you see X, choose Y" decision matrix, and the reference code patterns — the one page to re-read before exam day.', scene: null, takeaways: [], flow: null };
     chapters.splice(examIdx < 0 ? chapters.length : examIdx, 0, cs);
   }
 
@@ -206,8 +214,9 @@ for (const slug of Object.keys(GUIDES)) {
   const questions = QS.map((q, i) => ({ id: key + '-q' + (i + 1), n: i + 1, t: q.t, d: q.d, c: q.c, q: q.q, o: q.o, a: q.a, w: q.w, x: q.x, k: q.k, ch: chapterForQuestion(q, chapters) }));
 
   // apply concept replacement everywhere text lives
+  const trailer = flowRef(key, slug, 'trailer');
   const course = replaceDeep({
-    slug, key, chapters, anims: ANIMS, kc: KC, ex: EX, ann: ANN, outnotes: OUTNOTES, questions, cheat,
+    slug, key, trailer, chapters, anims: ANIMS, kc: KC, ex: EX, ann: ANN, outnotes: OUTNOTES, questions, cheat,
   }, fix);
 
   // ---- checks ----
@@ -225,12 +234,16 @@ for (const slug of Object.keys(GUIDES)) {
   if (badQ.length) { console.log(slug, 'BAD QUESTIONS', badQ.length); failures++; }
   if (!course.chapters.some(c => c.kind === 'exam')) { console.log(slug, 'NO exam chapter'); failures++; }
   const enriched = course.chapters.filter(c => c.icon).length;
-  console.log(`${slug}: chapters=${course.chapters.length} (enriched ${enriched}, scenes ${course.chapters.filter(c => c.scene && c.scene.cut).length}) questions=${course.questions.length} anims=${Object.keys(ANIMS).length} kc=${Object.keys(KC).length} examples=${Object.keys(EX).length} cheat=${!!cheat} leftoverQrefs=${leftover.length}${leftover.length ? ' e.g. ' + leftover.slice(0, 5).join(',') : ''}`);
+  const flows = course.chapters.filter(c => c.flow).length + (trailer ? 1 : 0);
+  console.log(`${slug}: chapters=${course.chapters.length} (enriched ${enriched}, scenes ${course.chapters.filter(c => c.scene && c.scene.cut).length}, flows ${flows}) questions=${course.questions.length} anims=${Object.keys(ANIMS).length} kc=${Object.keys(KC).length} examples=${Object.keys(EX).length} cheat=${!!cheat} leftoverQrefs=${leftover.length}${leftover.length ? ' e.g. ' + leftover.slice(0, 5).join(',') : ''}`);
 
-  fs.writeFileSync(path.join(OUT_DIR, slug + '.json'), JSON.stringify(course));
+  const body = JSON.stringify(course);
+  fs.writeFileSync(path.join(OUT_DIR, slug + '.json'), body);
+  // content hash: the reader fetches /cert-data/<slug>.json?v=<version> so browsers never keep a stale course
+  let hv = 0; for (let i = 0; i < body.length; i++) hv = (hv * 31 + body.charCodeAt(i)) | 0;
   meta[slug] = {
-    key, questions: course.questions.length,
-    chapters: course.chapters.map(c => ({ id: c.id, n: c.n, title: c.title, short: c.short, kind: c.kind, icon: c.icon, teaser: c.teaser, nocheck: c.nocheck })),
+    key, version: (hv >>> 0).toString(36), questions: course.questions.length, trailer,
+    chapters: course.chapters.map(c => ({ id: c.id, n: c.n, title: c.title, short: c.short, kind: c.kind, icon: c.icon, teaser: c.teaser, nocheck: c.nocheck, flow: c.flow })),
   };
 }
 

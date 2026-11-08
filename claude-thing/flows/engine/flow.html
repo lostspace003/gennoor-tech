@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Flow</title>
+<style>
+  html, body { margin: 0; background: #fff; }
+  body { width: 1280px; height: 720px; overflow: hidden; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  #stage { width: 1280px; height: 720px; display: block; }
+  #ctl { position: fixed; left: 12px; bottom: 12px; display: flex; gap: 6px; font: 12px system-ui; z-index: 5 }
+  #ctl button { border: 1px solid #d2d2d7; background: #fff; border-radius: 999px; padding: 4px 10px; cursor: pointer; font: inherit }
+  #ctl input { width: 420px }
+  body.render #ctl { display: none }
+</style>
+</head>
+<body>
+<svg id="stage" viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg"></svg>
+<div id="ctl"><button id="play">Play</button><button id="pause">Pause</button><input id="scrub" type="range" min="0" max="1000" value="0"><span id="time"></span></div>
+<script src="icons.js"></script>
+<script src="flow.js"></script>
+<script>
+  // Preview harness: ?spec=../specs/<slug>/<id>.json  (served by serve.js). The renderer calls window.Flow directly.
+  (async function () {
+    var q = new URLSearchParams(location.search), spec = q.get('spec');
+    if (!spec) return;
+    var r = await fetch(spec); var json = await r.json();
+    Flow.load(json);
+    var playing = false, t0 = 0, T = 0, raf = 0;
+    function tick(now) { if (!playing) return; T = (now - t0) % Flow.duration; Flow.seek(T); scrub.value = Math.round(1000 * T / Flow.duration); time.textContent = (T / 1000).toFixed(1) + 's / ' + (Flow.duration / 1000).toFixed(1) + 's'; raf = requestAnimationFrame(tick); }
+    play.onclick = function () { playing = true; t0 = performance.now() - T; raf = requestAnimationFrame(tick); };
+    pause.onclick = function () { playing = false; cancelAnimationFrame(raf); };
+    scrub.oninput = function () { playing = false; T = Flow.duration * scrub.value / 1000; Flow.seek(T); time.textContent = (T / 1000).toFixed(1) + 's'; };
+    Flow.seek(0); time.textContent = '0.0s / ' + (Flow.duration / 1000).toFixed(1) + 's';
+    if (q.get('autoplay')) play.onclick();
+  })();
+</script>
+</body>
+</html>

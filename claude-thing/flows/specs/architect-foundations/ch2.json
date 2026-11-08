@@ -1,0 +1,19 @@
+{
+  "title": "Agent SDK: query() runs the loop for you",
+  "kicker": "Agent SDK · The loop",
+  "actors": [
+    { "id": "app", "icon": "code", "label": "Your app", "sub": "calls query()", "slot": "L" },
+    { "id": "sdk", "icon": "repeat", "label": "Agent SDK", "sub": "owns the loop", "slot": "C" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "picks the next tool", "slot": "TR" },
+    { "id": "tools", "icon": "wrench", "label": "Built-in tools", "sub": "run in ./contracts", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "Your app calls query() once: prompt + options (Glob, Grep, Read, max_turns=8).", "focus": ["app"], "send": { "from": "app", "to": "sdk", "icon": "play", "label": "query(prompt, opts)" }, "state": { "at": "app", "text": "Glob · Grep · Read" } },
+    { "caption": "The SDK sends messages and tool definitions; Claude returns a tool_use block.", "send": { "from": "sdk", "to": "claude", "icon": "file-code", "label": "messages + tools" }, "reply": { "from": "claude", "to": "sdk", "icon": "wrench", "label": "tool_use: Glob" }, "callout": { "at": "claude", "text": "Glob contracts/*.txt first" } },
+    { "caption": "On the plain Messages API your code would now detect tool_use, run it, and loop.", "focus": ["app"], "callout": { "at": "app", "text": "detect → run → return → repeat… me?" } },
+    { "caption": "Instead the SDK runs it: hooks → deny rules → allow rules → can_use_tool → Glob.", "focus": ["sdk"], "send": { "from": "sdk", "to": "tools", "icon": "search", "label": "Glob contracts/*.txt" }, "reply": { "from": "tools", "to": "sdk", "icon": "folder", "label": "matching files" }, "badge": { "at": "app", "kind": "check", "text": "no loop code" }, "state": { "at": "tools", "text": "gate: allowed" } },
+    { "caption": "tool_result is appended, the loop repeats; Claude asks for Grep: 2026 renewals.", "send": { "from": "sdk", "to": "claude", "icon": "file-check", "label": "tool_result" }, "reply": { "from": "claude", "to": "sdk", "icon": "wrench", "label": "tool_use: Grep 2026" }, "state": { "at": "sdk", "text": "turn 2 of max 8" } },
+    { "caption": "Grep runs; its result goes back and Claude answers in text, with no tool call.", "send": { "from": "sdk", "to": "claude", "icon": "file-check", "label": "tool_result (Grep)" }, "reply": { "from": "claude", "to": "sdk", "icon": "message-square", "label": "text, no tool_use" }, "callout": { "at": "claude", "text": "Found 2 contracts renewing in 2026" }, "state": { "at": "sdk", "text": "no tool_use → stop" } },
+    { "caption": "The loop ends; a ResultMessage reaches your app: turns=2, $0.0063, sess-0001.", "focus": ["app"], "send": { "from": "sdk", "to": "app", "icon": "flag", "label": "ResultMessage" }, "state": { "at": "app", "text": "sess-0001 · $0.0063" }, "badge": { "at": "sdk", "kind": "check", "text": "success" } }
+  ]
+}

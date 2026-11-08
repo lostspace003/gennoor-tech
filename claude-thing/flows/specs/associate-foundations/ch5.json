@@ -1,0 +1,19 @@
+{
+  "title": "Iterative refinement: diagnose, revise, verify, decide",
+  "kicker": "Maya's story · Week 2",
+  "actors": [
+    { "id": "maya", "icon": "user", "label": "Maya", "sub": "ops analyst", "slot": "L" },
+    { "id": "colleague", "icon": "users", "label": "Colleague", "sub": "asks the question", "slot": "TC" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "drafts the summary", "slot": "R" },
+    { "id": "criteria", "icon": "clipboard-list", "label": "Her criteria", "sub": "what good looks like", "slot": "BC" }
+  ],
+  "steps": [
+    { "caption": "Maya asks Claude for a quarterly client summary. Draft 1 comes back.", "focus": ["maya"], "send": { "from": "maya", "to": "claude", "icon": "message-square", "label": "quarterly summary" }, "reply": { "from": "claude", "to": "maya", "icon": "file-text", "label": "draft v1" }, "callout": { "at": "maya", "text": "Too long, wrong tone, metric missing" } },
+    { "caption": "Eight rewordings later, v6, v7 and v8 still bury the bottom line.", "send": { "from": "maya", "to": "claude", "icon": "refresh-cw", "label": "reworded ×8" }, "reply": { "from": "claude", "to": "maya", "icon": "file-text", "label": "draft v8" }, "badge": { "at": "claude", "kind": "warn", "text": "same flaw ×3" }, "state": { "at": "claude", "text": "diminishing returns" } },
+    { "caption": "Her colleague asks: did you tell Claude what was wrong and what you needed?", "focus": ["colleague"], "send": { "from": "colleague", "to": "maya", "icon": "message-square", "label": "what was wrong?" }, "callout": { "at": "maya", "text": "I never said. I just guessed." } },
+    { "caption": "Diagnose: she checks v8 against her criteria and names exactly what is wrong.", "send": { "from": "maya", "to": "criteria", "icon": "file-text", "label": "draft v8" }, "reply": { "from": "criteria", "to": "maya", "icon": "list-checks", "label": "3 flaws named" }, "callout": { "at": "maya", "text": "3 pages · contractions · no churn" } },
+    { "caption": "Revise: one targeted follow-up names each fix instead of rewording the ask.", "send": { "from": "maya", "to": "claude", "icon": "pen-line", "label": "3 targeted fixes" }, "reply": { "from": "claude", "to": "maya", "icon": "file-text", "label": "draft v9" }, "callout": { "at": "maya", "text": "1 page. No contractions. Add churn." }, "state": { "at": "claude", "text": "1 page, formal, churn" } },
+    { "caption": "Verify: she checks v9 against the same three flaws, and nothing else broke.", "send": { "from": "maya", "to": "criteria", "icon": "file-text", "label": "draft v9" }, "reply": { "from": "criteria", "to": "maya", "icon": "circle-check", "label": "3 of 3 fixed" }, "badge": { "at": "maya", "kind": "check", "text": "verified" } },
+    { "caption": "Decide: she accepts v9. Had it failed, she'd iterate again or change approach.", "focus": ["maya"], "callout": { "at": "maya", "text": "One targeted pass beat eight guesses." }, "state": { "at": "claude", "text": "v9 accepted" } }
+  ]
+}

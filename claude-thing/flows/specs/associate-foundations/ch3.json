@@ -1,0 +1,19 @@
+{
+  "title": "Artifacts: the procedure gets a permanent home",
+  "kicker": "Maya's story · Day 3",
+  "actors": [
+    { "id": "maya", "icon": "user", "label": "Maya", "sub": "ops analyst", "slot": "L" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "renders the work", "slot": "TC" },
+    { "id": "artifact", "icon": "file-text", "label": "Artifact panel", "sub": "standalone · saved", "slot": "R" },
+    { "id": "manager", "icon": "briefcase", "label": "Manager", "sub": "wants the update", "slot": "BC" }
+  ],
+  "steps": [
+    { "caption": "Maya asks Claude in chat for a 10-step client onboarding procedure.", "focus": ["maya"], "send": { "from": "maya", "to": "claude", "icon": "message-square", "label": "onboarding steps?" } },
+    { "caption": "Claude answers in chat. 30 turns later the procedure is buried in scrollback.", "send": { "from": "claude", "to": "maya", "icon": "message-square", "label": "10 steps, in chat" }, "callout": { "at": "maya", "text": "Which chat was it in?" }, "state": { "at": "maya", "text": "lost in 30 turns" }, "badge": { "at": "maya", "kind": "warn", "text": "lost" } },
+    { "caption": "Her colleague shows her Artifacts. Maya asks again, this time as an Artifact.", "focus": ["maya"], "send": { "from": "maya", "to": "claude", "icon": "message-square", "label": "as an Artifact" }, "callout": { "at": "maya", "text": "Team will reuse it → Artifact" }, "state": { "at": "maya", "text": "asks as Artifact" } },
+    { "caption": "Claude judges it reusable and renders it in the side panel, apart from the chat.", "focus": ["artifact"], "send": { "from": "claude", "to": "artifact", "icon": "file-text", "label": "onboarding v1" }, "callout": { "at": "claude", "text": "Substantial, reusable: fits" }, "state": { "at": "artifact", "text": "v1 · saved" } },
+    { "caption": "Two days later Maya opens the same Artifact and asks Claude to add a step.", "send": { "from": "maya", "to": "claude", "icon": "pen-line", "label": "add a step" }, "reply": { "from": "claude", "to": "artifact", "icon": "pen-line", "label": "edited in place" }, "state": { "at": "artifact", "text": "v2 · edited in place" } },
+    { "caption": "She shares the stable link with her manager instead of pasting into an email.", "focus": ["manager"], "send": { "from": "maya", "to": "manager", "icon": "link-2", "label": "artifact link" }, "callout": { "at": "maya", "text": "view · comment · edit" } },
+    { "caption": "The manager opens the link and sees the latest version: no scrollback hunt.", "focus": ["manager"], "send": { "from": "manager", "to": "artifact", "icon": "eye", "label": "opens link" }, "reply": { "from": "artifact", "to": "manager", "icon": "file-check", "label": "v2 · latest" }, "badge": { "at": "manager", "kind": "check", "text": "up to date" } }
+  ]
+}

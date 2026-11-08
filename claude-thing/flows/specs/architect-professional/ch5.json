@@ -1,0 +1,20 @@
+{
+  "title": "Secrets & RBAC: the key never reaches Claude",
+  "kicker": "Meridian rollout · Week 19",
+  "actors": [
+    { "id": "clerk", "icon": "user", "label": "Billing clerk", "sub": "billing_clerk_47", "slot": "L" },
+    { "id": "server", "icon": "server", "label": "Agent server", "sub": "gateway + handlers", "slot": "TC" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "never sees the key", "slot": "R" },
+    { "id": "vault", "icon": "key-round", "label": "Key Vault", "sub": "holds CRM_API_KEY", "slot": "BL" },
+    { "id": "crm", "icon": "database", "label": "CRM", "sub": "enforces RBAC", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "billing_clerk_47 signs in via SSO and asks the assistant about customer C-77.", "focus": ["clerk"], "send": { "from": "clerk", "to": "server", "icon": "message-square", "label": "customer C-77?" }, "state": { "at": "clerk", "text": "SSO, billing scope" } },
+    { "caption": "Wrong way: the CRM key sits in the system prompt; Claude and every trace see it.", "focus": ["claude"], "send": { "from": "server", "to": "claude", "icon": "key-round", "label": "sk-prod-abc123" }, "callout": { "at": "claude", "text": "leaks via logs or injection" }, "state": { "at": "claude", "text": "key in context" } },
+    { "caption": "Your design sends the question and tools only; Claude asks for lookup_customer.", "send": { "from": "server", "to": "claude", "icon": "file-code", "label": "prompt + tools" }, "reply": { "from": "claude", "to": "server", "icon": "wrench", "label": "lookup_customer C-77" }, "state": { "at": "claude", "text": "no secret in context" } },
+    { "caption": "At execution time the handler pulls CRM_API_KEY from Key Vault, server-side.", "focus": ["server"], "send": { "from": "server", "to": "vault", "icon": "key-round", "label": "get CRM_API_KEY" }, "reply": { "from": "vault", "to": "server", "icon": "lock", "label": "CRM_API_KEY" }, "callout": { "at": "server", "text": "used in the header, then discarded" } },
+    { "caption": "The call also carries the clerk's scoped token; RBAC runs before data returns.", "send": { "from": "server", "to": "crm", "icon": "badge-check", "label": "billing-scoped token" }, "reply": { "from": "crm", "to": "server", "icon": "file-text", "label": "billing docs only" }, "callout": { "at": "crm", "text": "VIP notes need vip_support" }, "badge": { "at": "crm", "kind": "check", "text": "at retrieval" } },
+    { "caption": "Claude gets the tool_result and writes the answer; it never held the key.", "send": { "from": "server", "to": "claude", "icon": "file-check", "label": "tool_result" }, "reply": { "from": "claude", "to": "server", "icon": "message-square", "label": "C-77 billing answer" }, "badge": { "at": "claude", "kind": "check", "text": "no key seen" } },
+    { "caption": "The clerk sees only billing-scoped data; the audit log records who saw what.", "focus": ["clerk"], "send": { "from": "server", "to": "clerk", "icon": "message-square", "label": "billing-only answer" }, "state": { "at": "server", "text": "log: clerk_47 → C-77" }, "badge": { "at": "clerk", "kind": "check", "text": "in scope" } }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "title": "HITL gate: human approval before money moves",
+  "kicker": "Meridian rollout · Week 15",
+  "actors": [
+    { "id": "agent", "icon": "sparkles", "label": "Refund agent", "sub": "Claude drafts action", "slot": "L" },
+    { "id": "gate", "icon": "shield-check", "label": "can_use_tool", "sub": "permission callback", "slot": "C" },
+    { "id": "manager", "icon": "user", "label": "Manager", "sub": "Slack approval", "slot": "TR" },
+    { "id": "payments", "icon": "coins", "label": "Payments", "sub": "runs issue_refund", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "Week 15: the refund agent proposes a $50,000 refund. Ungated, it just pays out.", "focus": ["agent"], "callout": { "at": "agent", "text": "issue_refund $50,000 — nobody checks" } },
+    { "caption": "You place can_use_tool between the model's output and any irreversible action.", "focus": ["gate"], "send": { "from": "agent", "to": "gate", "icon": "coins", "label": "issue_refund $50,000" }, "state": { "at": "gate", "text": "> $100 → pause" } },
+    { "caption": "Over $100, the runtime pauses; the callback posts the exact input to Slack.", "send": { "from": "gate", "to": "manager", "icon": "bell", "label": "approve $50,000?" }, "callout": { "at": "manager", "text": "Exact input, not a description" }, "state": { "at": "agent", "text": "paused" } },
+    { "caption": "The manager clicks Approve; the callback returns PermissionResultAllow.", "focus": ["manager"], "send": { "from": "manager", "to": "gate", "icon": "check", "label": "Approve" }, "callout": { "at": "gate", "text": "PermissionResultAllow" }, "badge": { "at": "manager", "kind": "check", "text": "approved" }, "state": { "at": "agent", "text": "resumed" } },
+    { "caption": "Only now does the refund execute, and the audit log records who approved what.", "send": { "from": "gate", "to": "payments", "icon": "coins", "label": "$50,000 refund" }, "state": { "at": "gate", "text": "logged: approver, time" }, "badge": { "at": "payments", "kind": "check", "text": "executed" } },
+    { "caption": "Then a small refund: ≤ $100 gets instant Allow. Gate big moves, not every call.", "send": { "from": "agent", "to": "gate", "icon": "coins", "label": "small issue_refund" }, "reply": { "from": "gate", "to": "payments", "icon": "coins", "label": "executes at once" }, "state": { "at": "gate", "text": "≤ $100 → Allow" } }
+  ]
+}

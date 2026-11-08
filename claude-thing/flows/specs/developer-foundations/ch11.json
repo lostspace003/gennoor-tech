@@ -1,0 +1,19 @@
+{
+  "title": "PreToolUse hook: rm -rf denied before it runs",
+  "kicker": "TicketFlow · Week 11",
+  "actors": [
+    { "id": "dev", "icon": "user", "label": "Developer", "sub": "debugging TicketFlow", "slot": "L" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude Code", "sub": "emits tool_use", "slot": "C" },
+    { "id": "hook", "icon": "shield-check", "label": "PreToolUse", "sub": "hooks/check_bash.js", "slot": "TR" },
+    { "id": "bash", "icon": "terminal", "label": "Bash", "sub": "runs only if allowed", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "CLAUDE.md auto-loads; a dev asks Claude Code to wipe the stale build folder.", "focus": ["dev"], "send": { "from": "dev", "to": "claude", "icon": "message-square", "label": "wipe stale build" }, "state": { "at": "claude", "text": "CLAUDE.md loaded" } },
+    { "caption": "Claude picks rm -rf ./build. A 'be careful' prompt alone could let it through.", "focus": ["claude"], "callout": { "at": "claude", "text": "Bash: rm -rf ./build" }, "badge": { "at": "claude", "kind": "warn", "text": "risky" } },
+    { "caption": "Your .claude/settings.json sends each Bash tool_use to the hook before it runs.", "focus": ["hook"], "send": { "from": "claude", "to": "hook", "icon": "wrench", "label": "Bash: rm -rf ./build" }, "callout": { "at": "hook", "text": "matcher: \"Bash\"" }, "state": { "at": "hook", "text": "rm -rf · DROP TABLE" } },
+    { "caption": "check_bash.js inspects tool_input.command, finds rm -rf, and returns deny.", "focus": ["hook"], "send": { "from": "hook", "to": "claude", "icon": "ban", "label": "deny: destructive" }, "callout": { "at": "hook", "text": "cmd.includes('rm -rf')" }, "badge": { "at": "hook", "kind": "cross", "text": "blocked" } },
+    { "caption": "Bash never executes. Claude Code is told why and passes the reason to the dev.", "focus": ["bash"], "send": { "from": "claude", "to": "dev", "icon": "message-square", "label": "blocked: rm -rf" }, "callout": { "at": "claude", "text": "Destructive command blocked" }, "state": { "at": "bash", "text": "never executed" } },
+    { "caption": "Claude narrows the command; the hook sees nothing destructive and returns {}.", "send": { "from": "claude", "to": "hook", "icon": "wrench", "label": "Bash: rm build/*.log" }, "reply": { "from": "hook", "to": "claude", "icon": "circle-check", "label": "{} → allowed" } },
+    { "caption": "Only the allowed call reaches the shell. Code holds the line, not a prompt.", "focus": ["bash"], "send": { "from": "claude", "to": "bash", "icon": "terminal", "label": "rm build/*.log" }, "badge": { "at": "bash", "kind": "check", "text": "executed" }, "state": { "at": "bash", "text": "rm build/*.log ran" } }
+  ]
+}

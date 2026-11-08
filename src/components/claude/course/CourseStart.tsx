@@ -6,7 +6,8 @@ import { ArrowRight, Check, Map as MapIcon, GraduationCap } from 'lucide-react'
 import type { ClaudeCert } from '@/data/claude-certifications'
 import { chapterIcon } from './icons'
 import RichHtml from './RichHtml'
-import type { ChapterMeta } from './types'
+import FlowVideo from './FlowVideo'
+import type { ChapterMeta, FlowRef } from './types'
 
 interface Props {
   cert: ClaudeCert
@@ -15,10 +16,11 @@ interface Props {
   lastSeen: string | null
   introHtml: string
   questionCount: number
+  trailer?: FlowRef | null
   onGo: (id: string) => void
 }
 
-export default function CourseStart({ cert, chapters, done, lastSeen, introHtml, questionCount, onGo }: Props) {
+export default function CourseStart({ cert, chapters, done, lastSeen, introHtml, questionCount, trailer, onGo }: Props) {
   const stories = chapters.filter(c => c.kind === 'story')
   const prep = chapters.filter(c => c.kind === 'playbook' || c.kind === 'cheatsheet' || c.kind === 'exam')
   const exam = chapters.find(c => c.kind === 'exam')
@@ -44,10 +46,13 @@ export default function CourseStart({ cert, chapters, done, lastSeen, introHtml,
           </div>
           <p className="free">The first chapters are free to read. One free sign-in (email code, no password) opens the rest, saves your progress and scores, and lets you join the discussion under every exam question.</p>
         </div>
-        <div className="cc-storycard">
+        <div>
+          {trailer && <FlowVideo flow={trailer} eager className="cc-flow-hero" />}
+          <div className="cc-storycard">
           <span className="kick">The storyline</span>
           <b>{cert.storyline.protagonist}</b>
           <p>{cert.storyline.arc}</p>
+          </div>
         </div>
       </div>
 

@@ -1,0 +1,18 @@
+{
+  "title": "Batch API: 10K tickets overnight, half price",
+  "kicker": "TicketFlow · Week 3",
+  "actors": [
+    { "id": "finance", "icon": "coins", "label": "Finance", "sub": "wants it cheaper", "slot": "L" },
+    { "id": "app", "icon": "code", "label": "TicketFlow", "sub": "your code", "slot": "C" },
+    { "id": "realtime", "icon": "zap", "label": "Messages API", "sub": "realtime, full price", "slot": "TR" },
+    { "id": "batch", "icon": "boxes", "label": "Batch API", "sub": "async, 50% off", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "Finance asks: can the overnight 10K-ticket classification job cost less?", "focus": ["finance"], "send": { "from": "finance", "to": "app", "icon": "message-square", "label": "10K tickets cheaper?" } },
+    { "caption": "Realtime would answer 10K tickets instantly at full price, with nobody waiting.", "focus": ["realtime"], "send": { "from": "app", "to": "realtime", "icon": "zap", "label": "10K realtime calls" }, "callout": { "at": "realtime", "text": "instant: only when a user waits" }, "badge": { "at": "realtime", "kind": "warn", "text": "full price" } },
+    { "caption": "Instead, at 8pm you submit all 10K tickets in one batch, each tagged custom_id.", "focus": ["app"], "send": { "from": "app", "to": "batch", "icon": "boxes", "label": "batches.create(10K)" }, "reply": { "from": "batch", "to": "app", "icon": "hash", "label": "msg_batch_0123" }, "state": { "at": "batch", "text": "in_progress" } },
+    { "caption": "TicketFlow polls batches.retrieve() every 60s; the batch runs async for hours.", "send": { "from": "app", "to": "batch", "icon": "refresh-cw", "label": "batches.retrieve()" }, "reply": { "from": "batch", "to": "app", "icon": "hourglass", "label": "in_progress" }, "callout": { "at": "batch", "text": "completion window: hours" } },
+    { "caption": "By 6am processing_status is \"ended\"; results come back matched by custom_id.", "send": { "from": "app", "to": "batch", "icon": "list-checks", "label": "batches.results()" }, "reply": { "from": "batch", "to": "app", "icon": "file-check", "label": "ticket-0: billing" }, "state": { "at": "batch", "text": "ended · 6am" }, "badge": { "at": "app", "kind": "check", "text": "succeeded" } },
+    { "caption": "You hand Finance the cost model: same 10K tickets, every token 50% cheaper.", "focus": ["finance"], "send": { "from": "app", "to": "finance", "icon": "receipt", "label": "50% lower token cost" }, "callout": { "at": "app", "text": "in + out tokens × price, then ÷2" }, "badge": { "at": "finance", "kind": "check", "text": "$X → $X/2" } }
+  ]
+}

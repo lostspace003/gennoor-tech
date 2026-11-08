@@ -1,0 +1,18 @@
+{
+  "title": "Projects: one brief, every chat inherits it",
+  "kicker": "Maya's story · Week 2",
+  "actors": [
+    { "id": "maya", "icon": "user", "label": "Maya", "sub": "ops analyst", "slot": "L" },
+    { "id": "project", "icon": "folder-kanban", "label": "Project", "sub": "Quarterly Summaries", "slot": "TC" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "chat", "slot": "R" }
+  ],
+  "steps": [
+    { "caption": "Maya pastes the same 300-word brief into every chat, eight clients in a row.", "focus": ["maya"], "send": { "from": "maya", "to": "claude", "icon": "file-text", "label": "300-word brief" }, "callout": { "at": "maya", "text": "Why am I pasting this every chat?" }, "badge": { "at": "maya", "kind": "warn", "text": "copy-paste" }, "state": { "at": "claude", "text": "preamble every time" } },
+    { "caption": "Maya creates a \"Quarterly Client Summaries\" Project and writes the rules once.", "send": { "from": "maya", "to": "project", "icon": "pen-line", "label": "custom instructions" }, "callout": { "at": "project", "text": "role · tone · 5 sections" }, "state": { "at": "project", "text": "instructions saved" } },
+    { "caption": "She uploads the terminology guide too, so the Project holds rules and knowledge.", "send": { "from": "maya", "to": "project", "icon": "book-open", "label": "terminology guide" }, "callout": { "at": "project", "text": "a shared folder with a README" }, "state": { "at": "project", "text": "rules + glossary" } },
+    { "caption": "She opens a new chat inside the Project. It inherits the rules and glossary.", "focus": ["claude"], "send": { "from": "project", "to": "claude", "icon": "layers", "label": "inherited context" }, "callout": { "at": "claude", "text": "No preamble needed." }, "state": { "at": "claude", "text": "inherits Project" } },
+    { "caption": "Her prompt shrinks from 400 words to 50; the 300-word brief is already there.", "send": { "from": "maya", "to": "claude", "icon": "message-square", "label": "50-word prompt" }, "reply": { "from": "claude", "to": "maya", "icon": "file-text", "label": "quarterly summary" }, "state": { "at": "maya", "text": "400 → 50 words" } },
+    { "caption": "The output follows every rule she never repeated: 5 sections, no contractions.", "focus": ["claude"], "callout": { "at": "claude", "text": "Summary · Metrics · Wins · Risks · Next" }, "badge": { "at": "claude", "kind": "check", "text": "consistent" } },
+    { "caption": "When a policy changes, Maya updates the Project once; every chat follows.", "focus": ["project"], "send": { "from": "maya", "to": "project", "icon": "refresh-cw", "label": "policy update" }, "badge": { "at": "project", "kind": "check", "text": "reviewed" }, "state": { "at": "project", "text": "reviewed quarterly" } }
+  ]
+}

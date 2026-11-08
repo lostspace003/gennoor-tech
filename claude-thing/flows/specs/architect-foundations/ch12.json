@@ -1,0 +1,19 @@
+{
+  "title": "can_use_tool: $40 auto-approved, $250 queued",
+  "kicker": "Agent SDK · Human gate",
+  "actors": [
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "agent loop", "slot": "L" },
+    { "id": "gate", "icon": "shield-check", "label": "can_use_tool", "sub": "your policy callback", "slot": "C" },
+    { "id": "payments", "icon": "coins", "label": "issue_refund", "sub": "payments backend", "slot": "TR" },
+    { "id": "audit", "icon": "clipboard-list", "label": "Audit log", "sub": "who · what · outcome", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "A permission mode is too coarse, so your code sets a can_use_tool callback.", "focus": ["gate"], "callout": { "at": "gate", "text": "if amount > 100: deny" }, "state": { "at": "gate", "text": "threshold: $100" } },
+    { "caption": "Asked to refund O-1 ($40) and O-2 ($250), Claude requests the first refund.", "focus": ["claude"], "send": { "from": "claude", "to": "gate", "icon": "wrench", "label": "issue_refund $40" }, "callout": { "at": "claude", "text": "\"Refund O-1 ($40), O-2 ($250)\"" } },
+    { "caption": "$40 is under the limit: PermissionResultAllow, and issue_refund executes.", "send": { "from": "gate", "to": "payments", "icon": "coins", "label": "O-1: $40" }, "reply": { "from": "payments", "to": "claude", "icon": "receipt", "label": "refunded $40.00" }, "callout": { "at": "gate", "text": "PermissionResultAllow()" }, "state": { "at": "payments", "text": "O-1: refunded $40.00" } },
+    { "caption": "Claude requests O-2 for $250: over the limit, so the callback denies it.", "send": { "from": "claude", "to": "gate", "icon": "wrench", "label": "issue_refund $250" }, "callout": { "at": "gate", "text": "$250 > $100 → needs a manager" }, "badge": { "at": "gate", "kind": "cross", "text": "denied" }, "state": { "at": "payments", "text": "O-2: never ran" } },
+    { "caption": "Claude gets the error and reports: O-1 refunded, O-2 queued for a manager.", "send": { "from": "gate", "to": "claude", "icon": "circle-x", "label": "Permission denied" }, "focus": ["claude"], "callout": { "at": "claude", "text": "O-1 refunded · O-2 queued" } },
+    { "caption": "Both decisions land in the audit log: O-1 auto-approved, O-2 denied.", "focus": ["audit"], "send": { "from": "gate", "to": "audit", "icon": "pen-line", "label": "2 decisions" }, "badge": { "at": "audit", "kind": "check", "text": "audited" } },
+    { "caption": "Defense in depth: the backend enforces the $100 limit as well as the callback.", "focus": ["payments"], "callout": { "at": "payments", "text": "same $100 check here" }, "badge": { "at": "payments", "kind": "check", "text": "enforced" } }
+  ]
+}

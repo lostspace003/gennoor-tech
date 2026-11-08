@@ -1,0 +1,19 @@
+{
+  "title": "Subagents: the memo returns, not the notebook",
+  "kicker": "Agent SDK · Subagents",
+  "actors": [
+    { "id": "main", "icon": "sparkles", "label": "Main agent", "sub": "orchestrator", "slot": "L" },
+    { "id": "contracts", "icon": "folder", "label": "./contracts", "sub": "acme globex initech", "slot": "C" },
+    { "id": "researcher", "icon": "search", "label": "researcher", "sub": "haiku · read tools", "slot": "TR" },
+    { "id": "analyst", "icon": "scale", "label": "analyst", "sub": "sonnet · Read only", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "Your code asks: use researcher then analyst to assess risk in ./contracts.", "focus": ["main"], "callout": { "at": "main", "text": "allowed_tools includes \"Agent\"" } },
+    { "caption": "The main agent delegates the first task to the researcher via the Agent tool.", "send": { "from": "main", "to": "researcher", "icon": "send", "label": "find renewal dates" }, "callout": { "at": "main", "text": "subagent_type: researcher" } },
+    { "caption": "In a fresh context, the researcher greps the folder with its own read tools.", "send": { "from": "researcher", "to": "contracts", "icon": "search", "label": "Grep 'Renewal date'" }, "reply": { "from": "contracts", "to": "researcher", "icon": "file-text", "label": "3 files, 3 dates" }, "callout": { "at": "researcher", "text": "No parent history here" }, "state": { "at": "researcher", "text": "isolated context" } },
+    { "caption": "Only its final message returns as the tool result; the Grep calls stay behind.", "send": { "from": "researcher", "to": "main", "icon": "file-check", "label": "tool_result: 3 dates" }, "callout": { "at": "main", "text": "The memo, not the notebook" }, "badge": { "at": "researcher", "kind": "check", "text": "memo back" }, "state": { "at": "main", "text": "context stays clean" } },
+    { "caption": "The analyst starts with a fresh context: it cannot see the parent's history.", "focus": ["analyst"], "callout": { "at": "main", "text": "The brief must carry context" }, "state": { "at": "analyst", "text": "fresh context" } },
+    { "caption": "So the parent pastes the 3 findings into the brief; the analyst rates them.", "send": { "from": "main", "to": "analyst", "icon": "send", "label": "brief + 3 findings" }, "reply": { "from": "analyst", "to": "main", "icon": "table", "label": "risk: 2 HIGH, 1 LOW" }, "state": { "at": "analyst", "text": "brief is all it sees" } },
+    { "caption": "The parent merges the two memos into one assessment: turns=2, cost $0.0063.", "focus": ["main"], "callout": { "at": "main", "text": "Assessment complete." }, "badge": { "at": "main", "kind": "check", "text": "complete" }, "state": { "at": "main", "text": "turns=2 · $0.0063" } }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "title": "Tools compared: same gate, different process boundary",
+  "kicker": "Agent SDK · Comparison tables",
+  "actors": [
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "the agent loop", "slot": "L" },
+    { "id": "runtime", "icon": "shield-check", "label": "SDK runtime", "sub": "gate, built-in tools", "slot": "C" },
+    { "id": "custom", "icon": "code", "label": "Your @tool", "sub": "in-process SDK MCP", "slot": "TR" },
+    { "id": "mcp", "icon": "plug", "label": "MCP server", "sub": "external process", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "Claude asks to read a file: a built-in tool that ships with the runtime.", "focus": ["claude"], "send": { "from": "claude", "to": "runtime", "icon": "folder", "label": "file read (built-in)" }, "callout": { "at": "runtime", "text": "Built-in: files, shell, web" }, "state": { "at": "runtime", "text": "hooks → permissions" } },
+    { "caption": "Claude calls your @tool for a business system; it passes the same gate.", "send": { "from": "claude", "to": "runtime", "icon": "wrench", "label": "mcp__server__tool" }, "reply": { "from": "runtime", "to": "custom", "icon": "code", "label": "passes the gate" }, "callout": { "at": "runtime", "text": "Same hook/permission gate" }, "badge": { "at": "runtime", "kind": "check", "text": "one gate" } },
+    { "caption": "Your @tool runs in-process via an SDK MCP server; the logic stays private.", "focus": ["custom"], "send": { "from": "custom", "to": "claude", "icon": "file-check", "label": "result, in-process" }, "callout": { "at": "custom", "text": "Private logic, no new process" }, "state": { "at": "custom", "text": "in-process · private" } },
+    { "caption": "A shared, third-party capability comes from an external MCP server instead.", "send": { "from": "claude", "to": "runtime", "icon": "wrench", "label": "MCP tool call" }, "reply": { "from": "runtime", "to": "mcp", "icon": "plug", "label": "across the boundary" }, "callout": { "at": "mcp", "text": "Shared / third-party server" }, "state": { "at": "mcp", "text": "external · shared" } },
+    { "caption": "Same tool-use protocol both ways; only process boundary and reuse differ.", "focus": ["claude"], "send": { "from": "mcp", "to": "claude", "icon": "file-check", "label": "result, external" }, "callout": { "at": "claude", "text": "Same protocol, different boundary" } },
+    { "caption": "Independent read-only tool calls run in parallel, which cuts latency.", "send": { "from": "claude", "to": "runtime", "icon": "split", "label": "2 read-only calls" }, "callout": { "at": "claude", "text": "Independent → parallel" }, "state": { "at": "runtime", "text": "2 reads in parallel" } },
+    { "caption": "Step B needs A's result, so Claude runs them one after another.", "send": { "from": "runtime", "to": "claude", "icon": "file-check", "label": "A's result" }, "reply": { "from": "claude", "to": "runtime", "icon": "arrow-right", "label": "B (needs A)" }, "callout": { "at": "claude", "text": "B needs A → sequential" }, "badge": { "at": "claude", "kind": "check", "text": "sequential" } }
+  ]
+}

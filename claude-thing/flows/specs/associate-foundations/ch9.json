@@ -1,0 +1,20 @@
+{
+  "title": "Model selection: match the model to the task",
+  "kicker": "Maya's story · Week 3",
+  "actors": [
+    { "id": "maya", "icon": "user", "label": "Maya", "sub": "ops analyst", "slot": "L3" },
+    { "id": "manager", "icon": "briefcase", "label": "Manager", "sub": "sees usage report", "slot": "L2" },
+    { "id": "haiku", "icon": "zap", "label": "Haiku", "sub": "fast, cheapest", "slot": "TR" },
+    { "id": "sonnet", "icon": "scale", "label": "Sonnet", "sub": "balanced, mid-tier", "slot": "R" },
+    { "id": "opus", "icon": "brain", "label": "Opus", "sub": "most capable, slower", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "Maya sends a one-page memo to Opus. She uses Opus for everything.", "focus": ["maya"], "send": { "from": "maya", "to": "opus", "icon": "file-text", "label": "memo: summarize" }, "callout": { "at": "maya", "text": "The best model for everything, right?" } },
+    { "caption": "A quick policy question goes to Opus too: slow and costly for a simple task.", "send": { "from": "maya", "to": "opus", "icon": "message-square", "label": "policy question?" }, "reply": { "from": "opus", "to": "maya", "icon": "clock", "label": "answer, slowly" }, "state": { "at": "maya", "text": "everything on Opus" } },
+    { "caption": "Her manager sees the usage report: Opus burns the rate limit on simple tasks.", "focus": ["manager"], "send": { "from": "manager", "to": "maya", "icon": "chart-bar", "label": "usage report" }, "callout": { "at": "manager", "text": "Use Opus for complex analysis only" }, "badge": { "at": "opus", "kind": "warn", "text": "slow, costly" } },
+    { "caption": "Maya moves quick policy lookups to Haiku: a simple, well-defined task.", "send": { "from": "maya", "to": "haiku", "icon": "message-square", "label": "policy lookup" }, "reply": { "from": "haiku", "to": "maya", "icon": "zap", "label": "fast answer" }, "state": { "at": "haiku", "text": "quick lookups" } },
+    { "caption": "Weekly client summaries move to Sonnet: routine multi-step work, balanced tier.", "send": { "from": "maya", "to": "sonnet", "icon": "clipboard-list", "label": "weekly summaries" }, "reply": { "from": "sonnet", "to": "maya", "icon": "file-check", "label": "summary drafted" }, "state": { "at": "sonnet", "text": "weekly summaries" } },
+    { "caption": "Only the complex contract dispute still goes to Opus: one-off, deep reasoning.", "send": { "from": "maya", "to": "opus", "icon": "file-text", "label": "contract dispute" }, "reply": { "from": "opus", "to": "maya", "icon": "brain", "label": "deep analysis" } },
+    { "caption": "Maya now matches each model to its task, optimizing quality, speed and cost.", "focus": ["maya"], "badge": { "at": "maya", "kind": "check", "text": "matched" }, "callout": { "at": "maya", "text": "Lightest model that meets the bar" }, "state": { "at": "maya", "text": "right model per task" } }
+  ]
+}

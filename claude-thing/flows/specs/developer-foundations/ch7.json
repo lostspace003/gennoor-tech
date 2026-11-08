@@ -1,0 +1,19 @@
+{
+  "title": "Format drift: JSON decays until you prune context",
+  "kicker": "TicketFlow · Week 7",
+  "actors": [
+    { "id": "app", "icon": "code", "label": "TicketFlow", "sub": "your service", "slot": "L" },
+    { "id": "context", "icon": "layers", "label": "Context window", "sub": "what Claude sees", "slot": "TC" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "returns JSON", "slot": "R" },
+    { "id": "validator", "icon": "shield-check", "label": "Schema check", "sub": "your new gate", "slot": "BC" }
+  ],
+  "steps": [
+    { "caption": "Turns 1–5: TicketFlow sends each ticket with the JSON schema; Claude complies.", "send": { "from": "app", "to": "claude", "icon": "file-code", "label": "ticket + schema" }, "reply": { "from": "claude", "to": "app", "icon": "file-check", "label": "valid JSON" }, "state": { "at": "context", "text": "5 turns · clean" } },
+    { "caption": "Tool outputs pile up. By turn 15, 20+ of them bury the schema in the context.", "focus": ["context"], "send": { "from": "app", "to": "context", "icon": "layers", "label": "20+ tool outputs" }, "state": { "at": "context", "text": "turn 15 · 20+ outputs" } },
+    { "caption": "Turn 15: Claude's JSON comes back missing the \"priority\" field. Format drift.", "focus": ["claude"], "send": { "from": "claude", "to": "app", "icon": "triangle-alert", "label": "JSON, no priority" }, "callout": { "at": "claude", "text": "schema buried under 20+ outputs" }, "badge": { "at": "claude", "kind": "warn", "text": "drifted" } },
+    { "caption": "You say no: temperature tunes output randomness, not attention to the schema.", "focus": ["app"], "callout": { "at": "app", "text": "junior dev: lower temperature?" }, "badge": { "at": "app", "kind": "cross", "text": "not the fix" } },
+    { "caption": "You add a validator: every output is checked against the schema, every turn.", "focus": ["validator"], "send": { "from": "app", "to": "validator", "icon": "file-code", "label": "turn-15 JSON" }, "reply": { "from": "validator", "to": "app", "icon": "circle-x", "label": "missing priority" }, "state": { "at": "validator", "text": "turn 15 rejected" } },
+    { "caption": "You prune stale turn-5 outputs, summarize the rest and repeat the schema.", "focus": ["context"], "send": { "from": "app", "to": "context", "icon": "scissors", "label": "prune + summarize" }, "callout": { "at": "context", "text": "\"3 API calls succeeded\"" }, "state": { "at": "context", "text": "pruned · summarized" } },
+    { "caption": "Next turn: schema back in focus. Claude returns valid JSON and the check passes.", "send": { "from": "app", "to": "claude", "icon": "file-code", "label": "next turn + schema" }, "reply": { "from": "claude", "to": "app", "icon": "file-check", "label": "valid JSON" }, "badge": { "at": "validator", "kind": "check", "text": "valid again" }, "state": { "at": "validator", "text": "next turn passed" } }
+  ]
+}

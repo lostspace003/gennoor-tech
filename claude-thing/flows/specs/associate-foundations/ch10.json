@@ -1,0 +1,18 @@
+{
+  "title": "Task decomposition: three focused prompts beat one",
+  "kicker": "Maya's story · Week 3",
+  "actors": [
+    { "id": "manager", "icon": "briefcase", "label": "Manager", "sub": "wants a redesign", "slot": "L" },
+    { "id": "maya", "icon": "user", "label": "Maya", "sub": "ops analyst", "slot": "C" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "one deliverable each", "slot": "R" }
+  ],
+  "steps": [
+    { "caption": "Maya's manager asks: \"Redesign the new-hire onboarding process.\"", "focus": ["maya"], "send": { "from": "manager", "to": "maya", "icon": "message-square", "label": "redesign onboarding" } },
+    { "caption": "Maya pastes the whole request as one prompt and gets a vague overview.", "send": { "from": "maya", "to": "claude", "icon": "message-square", "label": "one broad prompt" }, "reply": { "from": "claude", "to": "maya", "icon": "file-text", "label": "3-paragraph overview" }, "callout": { "at": "maya", "text": "Retried with detail: still shallow" }, "badge": { "at": "claude", "kind": "warn", "text": "shallow" } },
+    { "caption": "A colleague spots it: that one request hides three distinct deliverables.", "focus": ["maya"], "callout": { "at": "maya", "text": "Map + materials + plan = 3 prompts" } },
+    { "caption": "Prompt 1 asks only for the process map, so Claude's full reasoning goes there.", "send": { "from": "maya", "to": "claude", "icon": "message-square", "label": "1: process map" }, "reply": { "from": "claude", "to": "maya", "icon": "map", "label": "process map" }, "state": { "at": "claude", "text": "1/3 process map" } },
+    { "caption": "Prompt 2 asks only for the training materials that support the new process.", "send": { "from": "maya", "to": "claude", "icon": "message-square", "label": "2: materials" }, "reply": { "from": "claude", "to": "maya", "icon": "book-open", "label": "training materials" }, "state": { "at": "claude", "text": "2/3 materials" } },
+    { "caption": "Prompt 3 asks only for the measurement plan, the third distinct deliverable.", "send": { "from": "maya", "to": "claude", "icon": "message-square", "label": "3: measurement plan" }, "reply": { "from": "claude", "to": "maya", "icon": "chart-line", "label": "measurement plan" }, "state": { "at": "claude", "text": "3/3 measurement plan" } },
+    { "caption": "Maya combines three specific, well-structured outputs into one final proposal.", "focus": ["manager"], "send": { "from": "maya", "to": "manager", "icon": "file-check", "label": "final proposal" }, "state": { "at": "maya", "text": "3 parts combined" }, "badge": { "at": "maya", "kind": "check", "text": "delivered" } }
+  ]
+}

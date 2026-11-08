@@ -1,0 +1,19 @@
+{
+  "title": "Data sensitivity: classify, redact, review, then submit",
+  "kicker": "Maya's story · Week 4",
+  "actors": [
+    { "id": "maya", "icon": "user", "label": "Maya", "sub": "ops analyst", "slot": "L" },
+    { "id": "hr", "icon": "shield-check", "label": "HR policy", "sub": "policy owner", "slot": "TC" },
+    { "id": "peer", "icon": "users", "label": "Peer reviewer", "sub": "checks redaction", "slot": "BC" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "safe remainder only", "slot": "R" }
+  ],
+  "steps": [
+    { "caption": "Maya drafts a summary from a spreadsheet of employee performance reviews.", "focus": ["maya"], "state": { "at": "maya", "text": "raw sheet open" } },
+    { "caption": "Halfway through she spots salaries, manager feedback and accommodation notes.", "focus": ["maya"], "callout": { "at": "maya", "text": "Is this safe to put into Claude?" }, "badge": { "at": "maya", "kind": "warn", "text": "sensitive" } },
+    { "caption": "She stops and consults the HR policy; the answer is a clear No.", "send": { "from": "maya", "to": "hr", "icon": "message-square", "label": "Can I use this data?" }, "reply": { "from": "hr", "to": "maya", "icon": "ban", "label": "No. Redact first" }, "state": { "at": "hr", "text": "PII must be redacted" } },
+    { "caption": "Maya classifies each field and swaps the sensitive ones for placeholders.", "focus": ["maya"], "callout": { "at": "maya", "text": "salary → [SALARY], ID → [EMPLOYEE_ID]" }, "state": { "at": "maya", "text": "classified + redacted" } },
+    { "caption": "A peer reviews the redacted sheet and confirms the redaction is complete.", "send": { "from": "maya", "to": "peer", "icon": "file-text", "label": "redacted sheet" }, "reply": { "from": "peer", "to": "maya", "icon": "file-check", "label": "redaction complete" }, "badge": { "at": "peer", "kind": "check", "text": "confirmed" } },
+    { "caption": "Only now does Maya submit the safe remainder to Claude.", "send": { "from": "maya", "to": "claude", "icon": "file-check", "label": "safe remainder" }, "focus": ["claude"], "badge": { "at": "claude", "kind": "check", "text": "no PII" }, "state": { "at": "claude", "text": "drafting" } },
+    { "caption": "Claude returns the draft; any promotion decision stays human-owned.", "send": { "from": "claude", "to": "maya", "icon": "file-text", "label": "draft summary" }, "focus": ["maya"], "callout": { "at": "maya", "text": "Drafts: yes. Promotions: humans." } }
+  ]
+}
