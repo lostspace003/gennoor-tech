@@ -2,17 +2,17 @@
 
 /**
  * The chapter's animated flow: a short looping MP4 rendered from the flow spec (see claude-thing/flows).
- * Plays while on screen, pauses off screen, honours reduced-motion (poster + play button), and offers
- * the GIF export for sharing.
+ * Plays while on screen, pauses off screen, honours reduced-motion (poster + play button).
+ * View only: no download link, no native download / picture-in-picture, no right-click save.
  */
 import { useEffect, useRef, useState } from 'react'
-import { Pause, Play, RotateCcw, Download } from 'lucide-react'
+import { Pause, Play, RotateCcw } from 'lucide-react'
 import { BLOB_URL } from '@/lib/site-config'
 import type { FlowRef } from './types'
 
 export function flowUrls(id: string) {
   const base = `${BLOB_URL}/cert-flows/${id}`
-  return { mp4: base + '.mp4', gif: base + '.gif', poster: base + '.jpg' }
+  return { mp4: base + '.mp4', poster: base + '.jpg' }
 }
 
 export default function FlowVideo({ flow, className, eager }: { flow: FlowRef; className?: string; eager?: boolean }) {
@@ -43,13 +43,17 @@ export default function FlowVideo({ flow, className, eager }: { flow: FlowRef; c
   const replay = () => { const v = ref.current; if (!v) return; v.currentTime = 0; v.play().catch(() => {}) }
 
   return (
-    <figure className={'cc-flow' + (className ? ' ' + className : '')}>
+    <figure className={'cc-flow' + (className ? ' ' + className : '')} onContextMenu={e => e.preventDefault()}>
       <div className="cc-flow-frame">
         <video
           ref={ref}
           muted
           loop
           playsInline
+          controlsList="nodownload noplaybackrate noremoteplayback"
+          disablePictureInPicture
+          disableRemotePlayback
+          draggable={false}
           preload={eager ? 'auto' : 'metadata'}
           poster={urls.poster}
           aria-label={flow.title}
@@ -68,7 +72,6 @@ export default function FlowVideo({ flow, className, eager }: { flow: FlowRef; c
       </div>
       <figcaption>
         <span>Flow · {Math.round(flow.duration / 1000)}s · {flow.steps} steps</span>
-        <a href={urls.gif} download={flow.id + '.gif'} title="Download this flow as a GIF to share"><Download /> GIF</a>
       </figcaption>
     </figure>
   )
