@@ -2,6 +2,8 @@ import { getLinkedInState, publishPost, resharePost } from '@/lib/linkedin'
 import { addFirstComment, repostLine } from '@/lib/linkedin-engage'
 import { getDraft, getImage, getMotion, mutateDraft, prepareForPublish } from '@/lib/social/studio'
 
+const sourceLink = (d: { sourceUrls?: string[] }) => (d.sourceUrls?.[0] ? { label: 'Source', url: d.sourceUrls[0] } : undefined)
+
 /**
  * Publishes a draft as a NEW post to one target, the same way the Social studio does, and records it on the draft.
  * Used by the autopilot. `commentary` overrides the text for this target only (the profile gets a different opening).
@@ -24,7 +26,7 @@ export async function publishNew(id: string, target: 'member' | 'organization', 
   if (opts.reshareOf && target === 'member') {
     const note = (await prepareForPublish(await repostLine(d.text, id), id)).trim()
     const urn = await resharePost({ token, author, parentUrn: opts.reshareOf, commentary: note })
-    const c = await addFirstComment({ token, actor: author, postUrn: urn, post: d.text, spendId: id, extra: 'This is a repost of the company page post, so the comment should continue the conversation rather than repeat the page comment.' })
+    const c = await addFirstComment({ token, actor: author, postUrn: urn, post: d.text, spendId: id, link: sourceLink(d), extra: 'This is a repost of the company page post, so the comment should continue the conversation rather than repeat the page comment.' })
     await mutateDraft(id, x => { x.published.push({ as: target, urn, at: new Date().toISOString(), reshare: true, comment: c.text, commentError: c.error }); x.status = 'published'; x.publishedText = x.text })
     return { urn }
   }
@@ -35,7 +37,7 @@ export async function publishNew(id: string, target: 'member' | 'organization', 
 
   const urn = await publishPost({ token, author, commentary: text, image, altText: d.topic, poll: d.kind === 'poll' ? d.poll : undefined })
   // Every post gets a meaningful first comment from its own author. A failed comment never fails the post.
-  const c = await addFirstComment({ token, actor: author, postUrn: urn, post: text, spendId: id })
+  const c = await addFirstComment({ token, actor: author, postUrn: urn, post: text, spendId: id, link: sourceLink(d) })
   await mutateDraft(id, x => { x.published.push({ as: target, urn, at: new Date().toISOString(), comment: c.text, commentError: c.error }); x.status = 'published'; x.publishedText = x.text })
   return { urn }
 }

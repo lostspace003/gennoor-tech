@@ -1,6 +1,6 @@
 import { BlobServiceClient } from '@azure/storage-blob'
 import SERIES from '@/data/cert-video-series.json'
-import { getLinkedInState, publishVideo } from '@/lib/linkedin'
+import { commentOnPost, getLinkedInState, publishVideo } from '@/lib/linkedin'
 import { formatForLinkedIn } from '@/lib/linkedin-format'
 import { readBlob, writeBlob } from '@/lib/social/studio'
 import { sendAdminAlert } from '@/lib/blog-publish'
@@ -12,8 +12,8 @@ import { localParts, zonedToUtc } from '@/lib/autopilot/time'
  * src/data/cert-video-series.json (built by claude-thing/flows/build_linkedin_pack.js); this only publishes it.
  */
 export type Target = 'organization' | 'member'
-export interface SeriesItem { id: string; date: string; time: string; slug: string; code: string; course: string; topic: string; title: string; text: string; url: string }
-export interface TargetRun { status: 'done' | 'failed' | 'missed'; at: string; attempts: number; urn?: string; error?: string }
+export interface SeriesItem { id: string; date: string; time: string; slug: string; code: string; course: string; topic: string; title: string; text: string; url: string; comment: string }
+export interface TargetRun { status: 'done' | 'failed' | 'missed'; at: string; attempts: number; urn?: string; error?: string; comment?: string; commentError?: string }
 export interface SeriesState {
   enabled: boolean
   runs: Record<string, Partial<Record<Target, TargetRun>>>
@@ -52,14 +52,20 @@ async function videoOf(id: string): Promise<Buffer> {
   return blob.downloadToBuffer()
 }
 
-export async function publishItem(_s: SeriesState, it: SeriesItem, target: Target, now = new Date()): Promise<string> {
+/** Posts the video, then the course link as the first comment from the same account. A failed comment never fails the post. */
+export async function publishItem(_s: SeriesState, it: SeriesItem, target: Target, now = new Date()): Promise<{ urn: string; comment?: string; commentError?: string }> {
   const li = await getLinkedInState()
   const author = target === 'member' ? li.memberUrn : li.orgUrn
   const ok = (exp?: string) => !!exp && new Date(exp) > now
   const token = target === 'member' ? (ok(li.expiresAt) ? li.accessToken : '') : (ok(li.orgExpiresAt) ? li.orgAccessToken : '')
   if (!author || !token) throw new Error(`LinkedIn ${target === 'member' ? 'profile' : 'company page'} is not connected or its token expired.`)
-  const urn = await publishVideo({ token, author, commentary: formatForLinkedIn(it.text), video: await videoOf(it.id), title: it.title })
-  return urn
+  const urn = await publishVideo({ token, author, commentary: formatForLinkedIn(it.text), video: await videoOf(it.id), title: it.topic })
+  const text = it.comment || `Full ${it.code} prep course: ${it.url}`
+  for (let i = 0; i < 3; i++) {
+    try { return { urn, comment: await commentOnPost({ token, actor: author, postUrn: urn, text }) } }
+    catch (e: any) { if (i === 2) return { urn, commentError: String(e?.message || e).slice(0, 300) }; await new Promise(r => setTimeout(r, 4000 * (i + 1))) }
+  }
+  return { urn }
 }
 
 function log(s: SeriesState, msg: string) { s.log.push({ at: new Date().toISOString(), msg }) }
@@ -86,9 +92,9 @@ export async function videoSeriesTick(now = new Date()): Promise<string[]> {
         continue
       }
       try {
-        const urn = await publishItem(s, it, t, now)
-        runs[t] = { status: 'done', at: new Date().toISOString(), attempts: (r?.attempts || 0) + 1, urn }
-        log(s, `${it.id} → ${t}: posted`)
+        const p = await publishItem(s, it, t, now)
+        runs[t] = { status: 'done', at: new Date().toISOString(), attempts: (r?.attempts || 0) + 1, ...p }
+        log(s, `${it.id} → ${t}: posted${p.commentError ? ` (link comment failed: ${p.commentError})` : ' + link comment'}`)
         out.push(`${it.id} ${t} posted`)
       } catch (e: any) {
         runs[t] = { status: 'failed', at: new Date().toISOString(), attempts: (r?.attempts || 0) + 1, error: String(e?.message || e).slice(0, 300) }

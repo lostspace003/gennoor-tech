@@ -1,7 +1,13 @@
 {
   "topic": "Keeping API Keys From the Model",
-  "hook": "If your CRM key is in the system prompt, every trace has a copy.",
-  "body": "A billing clerk signs in via SSO and asks about customer C-77. In the wrong design, the CRM key sits in the system prompt, visible to Claude and every log.\n\nThe right design sends only the question and tools. When Claude asks for lookup_customer, the handler pulls CRM_API_KEY from Key Vault server-side at execution time.\n\nThe takeaway: credentials live with the executor, never in context. A security essential for the Claude Certified Architect – Professional (CCAR-P).\n\nSee secrets and RBAC in the CCAR-P prep course, with a practice exam:",
+  "hook": "Your API key sits in the system prompt, one injection away from leaking.",
+  "bullets": [
+    "Never put secrets in model context",
+    "Claude only requests the tool",
+    "Handler fetches the key from a vault at run time",
+    "User-scoped token, nothing in traces"
+  ],
+  "cta": "Full CCAR-P prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

@@ -25,7 +25,8 @@ async function writeDraft(topic: TopicIdea): Promise<{ draftId: string; review: 
   const t = taxonomy()
   const today = new Date().toISOString().slice(0, 10)
   const res = await agentFetch('/blog', {
-    topic: topic.title, brief: `Audience: enterprise IT and AI leaders. Take: ${topic.angle}`, references: sourcesText(topic).slice(0, 30_000),
+    topic: topic.title, brief: `Audience: enterprise IT and AI leaders. Take: ${topic.angle}
+Opening: start with a hook about the reader's problem or a sharp tension (what goes wrong, what it costs, what they get wrong), never with "X launched / announced Y". The news is evidence inside the argument, not the headline. Keep paragraphs short, use bullet lists for steps and takeaways, and vary the rhythm so the piece does not read as a press summary.`, references: sourcesText(topic).slice(0, 30_000),
     context: { date: today, dateLabel: dateLabel(today), categories: t.categories.map(c => c.name), tags: t.tags.slice(0, 150).map(x => x.name), posts: t.posts.slice(0, 60) },
   })
   if (!res.ok || !res.body) throw new Error(`Agent service returned ${res.status}`)
@@ -61,7 +62,7 @@ async function reviewDraft(id: string): Promise<{ verdict: string; notes: string
   if (!d) throw new Error('Draft not found.')
   const j = await foundry('/openai/v1/responses', {
     model: TEXT_MODEL,
-    instructions: `You are the editorial review agent for the Gennoor Tech blog (enterprise AI training company, India). Check the article and metadata: facts and numbers are plausible and not invented, no invented quotes or URLs, every external link looks like a real source, roughly 1,600-2,400 words, practitioner voice with no hype, strong opening, h2 sections, internal links present (relative /resources/blog/<slug> and /services/training are correct), a practical next step, excerpt and TL;DR consistent with the body, FAQs answerable from the body. Pass an article that is good enough to publish; ask for revision only for real problems. Reply as JSON only: {"verdict": "pass" | "revise", "notes": [string]} with specific, actionable notes.`,
+    instructions: `You are the editorial review agent for the Gennoor Tech blog (enterprise AI training company, India). Check the article and metadata: facts and numbers are plausible and not invented, no invented quotes or URLs, every external link looks like a real source, roughly 1,600-2,400 words, practitioner voice with no hype, a hook opening about the reader's problem (revise if it opens by announcing a launch), short paragraphs with bullets where useful, h2 sections, internal links present (relative /resources/blog/<slug> and /services/training are correct), a practical next step, excerpt and TL;DR consistent with the body, FAQs answerable from the body. Pass an article that is good enough to publish; ask for revision only for real problems. Reply as JSON only: {"verdict": "pass" | "revise", "notes": [string]} with specific, actionable notes.`,
     input: `METADATA:\n${JSON.stringify({ ...d.meta, date: undefined })}\n\nARTICLE BODY (HTML):\n${d.body}`,
   })
   await recordSpend(`blog-${id}`, 'Auto: re-review', textUsd(j), tokensOf(j))

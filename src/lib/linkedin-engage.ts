@@ -30,7 +30,11 @@ export async function firstComment(post: string, spendId: string, extra = ''): P
 }
 
 /** Posts the first comment. Never throws: a failed comment must not cause the post to be retried (and published twice). */
-export async function addFirstComment(o: { token: string; actor: string; postUrn: string; post: string; spendId: string; extra?: string }): Promise<{ text: string; error?: string }> {
-  const text = await firstComment(o.post, o.spendId, o.extra)
+export async function addFirstComment(o: { token: string; actor: string; postUrn: string; post: string; spendId: string; extra?: string; link?: { label: string; url: string } }): Promise<{ text: string; error?: string }> {
+  const said = await firstComment(o.post, o.spendId, o.extra)
+  // The reference link lives in the first comment (the post body stays clean).
+  const text = o.link?.url ? `${said}
+
+🔗 ${o.link.label}: ${o.link.url}` : said
   try { await commentOnPost({ token: o.token, actor: o.actor, postUrn: o.postUrn, text }); return { text } } catch (e: any) { return { text, error: String(e?.message || e).slice(0, 200) } }
 }

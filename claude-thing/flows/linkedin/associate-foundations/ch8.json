@@ -1,7 +1,13 @@
 {
   "topic": "Claude Memory Across Chats",
-  "hook": "Monday she explained the client tiers. Tuesday, Claude had never heard of them.",
-  "body": "Maya walks Claude through Brightline's three client tiers. Next day, in a new chat, Claude has no idea what tier 2 means.\n\nShe switches Memory on in Settings and explains the tiers once. Memory keeps those recurring facts, which she can view, edit or delete, and the next chat answers correctly.\n\nThe takeaway: chats do not share context by default. Memory is for recurring facts; you stay in control of what is kept. A workspace topic on the Claude Certified Associate – Foundations (CCAS-F).\n\nThe CCAS-F prep course explains each workspace feature with a practice exam:",
+  "hook": "Every new chat, Claude forgets the context you explained yesterday.",
+  "bullets": [
+    "Turn Memory on in Settings",
+    "Store recurring facts once",
+    "Not this quarter's numbers",
+    "New chats answer with your context"
+  ],
+  "cta": "Full CCAS-F prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

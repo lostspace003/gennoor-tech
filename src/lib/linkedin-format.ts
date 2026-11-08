@@ -99,6 +99,15 @@ export function formatForLinkedIn(raw: string, opts: FormatOptions = {}): string
 }
 
 /** The instructions given to every model that writes a LinkedIn post, so drafts arrive in the same shape. */
+/** Owner's house shape for every LinkedIn post (2026-11-08): problem hook, short bullets, compact, link in the first comment. */
+export const HOOK_BULLETS_RULES = `Shape of every post:
+- Line 1, the hook: the reader's PROBLEM or a sharp tension this post resolves ("Your agent passes every demo and fails in production."). Never open with "X launched / announced / released Y", never "Excited to share", never a company name as the first words.
+- Optional line 2: one short sentence of context.
+- Then 3 to 5 short bullets (lines starting with "- "), each under 14 words, each one concrete point: what changed, what it means, what to do.
+- Then one short line: the takeaway or a specific question for practitioners.
+- Then the hashtags. 50 to 110 words in total. No long paragraphs, no filler, no hype words.
+- Do not paste source links in the post body: the reference link goes in the first comment, which is posted automatically.`
+
 export const LINKEDIN_STYLE_GUIDE = `Format for LinkedIn, which has no rich text:
 - First line is the hook, wrapped in **double asterisks** so it becomes bold.
 - Short paragraphs of one or two sentences with a blank line between them.

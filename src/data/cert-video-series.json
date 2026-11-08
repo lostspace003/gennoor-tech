@@ -12,7 +12,8 @@
    "course": "Claude Certified Developer - Foundations",
    "topic": "CCDV-F Course Trailer",
    "title": "TicketFlow: first API call to agent fleet",
-   "text": "One notebook classifier. Thirteen weeks later, an agent fleet in production.\n\nThis trailer follows TicketFlow, a support-ticket service, from its first Messages API call to a governed fleet of agents.\n\nAlong the way: AsyncAnthropic when traffic spikes, the Batch API and prompt caching when finance asks about cost, tool use, format drift, checkpointing, orchestrators, MCP servers, hooks, prompt-injection defence and error routing.\n\nBuilt for developers preparing for the Claude Certified Developer – Foundations (CCDV-F) exam, or shipping Claude into real services.\n\n🔊 Turn the sound on for the walkthrough.\n\nThe full CCDV-F prep course builds TicketFlow chapter by chapter, with a practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAPI #AIEngineering #AIAgents",
+   "text": "Your Claude prototype works in a notebook, but not as a real service.\n\n▪ First Messages API call and token costs\n▪ Async, batches and prompt caching\n▪ Tool use, agents and MCP servers\n▪ Hooks, injection defence and error routing\n\nFull CCDV-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAPI #AIEngineering #AIAgents",
+   "comment": "📘 Full CCDV-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/developer-foundations",
    "url": "https://gennoor.com/claude/certifications/developer-foundations"
   },
   {
@@ -24,7 +25,8 @@
    "course": "Claude Certified Associate - Foundations",
    "topic": "CCAS-F Course Trailer",
    "title": "Claude at work: Maya's 30 days to AI-fluent lead",
-   "text": "Thirty days ago, Maya typed \"Help me with reports.\" Here is what changed.\n\nThis trailer follows Maya through her first month using Claude at work: the 4Ds of AI fluency, Artifacts that stop procedures vanishing into scrollback, prompts with role, context, task and format, and Projects that shrink a 300-word brief to a 50-word prompt.\n\nIt also covers memory, model choice, task decomposition, data sensitivity and catching hallucinations before they reach a board slide.\n\nBuilt for anyone preparing for the Claude Certified Associate – Foundations (CCAS-F) exam, or just wanting to use Claude well at work.\n\n🔊 Turn the sound on for the walkthrough.\n\nThe full CCAS-F prep course follows Maya chapter by chapter, with a practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #GenerativeAI #AIFluency #FutureOfWork",
+   "text": "You use Claude every day, but the results are still generic and inconsistent.\n\n▪ The 4Ds of AI fluency\n▪ Artifacts, Projects and Memory\n▪ Prompt structure, refinement and decomposition\n▪ Exact numbers, safe data and hallucination checks\n\nFull CCAS-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #GenerativeAI #AIFluency #FutureOfWork",
+   "comment": "📘 Full CCAS-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/associate-foundations",
    "url": "https://gennoor.com/claude/certifications/associate-foundations"
   },
   {
@@ -36,7 +38,8 @@
    "course": "Claude Certified Architect - Professional",
    "topic": "CCAR-P Course Trailer",
    "title": "Meridian rollout: a year of defensible decisions",
-   "text": "A $2.4M budget, eight weeks to propose, and a board that wants every decision defended.\n\nThis trailer follows the Meridian rollout across a year: an ADR that clears an SLA gate, RBAC at retrieval over 480,000 documents, caching and Haiku routing when the project runs $840k over budget, and gated payouts for a drifting claims agent.\n\nThen secrets, correlation IDs and a canary rollout that knows when to revert.\n\nBuilt for senior architects preparing for the Claude Certified Architect – Professional (CCAR-P) exam.\n\n🔊 Turn the sound on for the walkthrough.\n\nThe full CCAR-P prep course tells the Meridian story chapter by chapter, with a practice exam:\n👉 https://gennoor.com/claude/certifications/architect-professional\n\n#ClaudeAI #Anthropic #AICertification #AIArchitecture #EnterpriseAI #AIGovernance",
+   "text": "Your AI architecture must survive budget reviews, audits and real outages.\n\n▪ Decision records with SLA gates\n▪ Role-based access at retrieval\n▪ Caching and routing to cut cost\n▪ Approvals, secrets, tracing and canary rollouts\n\nFull CCAR-P prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/architect-professional\n\n#ClaudeAI #Anthropic #AICertification #AIArchitecture #EnterpriseAI #AIGovernance",
+   "comment": "📘 Full CCAR-P prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/architect-professional",
    "url": "https://gennoor.com/claude/certifications/architect-professional"
   },
   {
@@ -48,7 +51,8 @@
    "course": "Claude Certified Associate - Foundations",
    "topic": "The 4Ds of AI Fluency",
    "title": "The 4Ds: vague prompt to verified report",
-   "text": "\"Help me with reports\" is not a prompt. It is a wish.\n\nDay 1: Maya asks Claude for help with reports and gets generic structure tips. The video walks her through the 4Ds: Description, Delegation, Discernment and Diligence.\n\nShe tells her manager what Claude does and where it stops, hands the metrics draft to Claude but keeps the renewal-risk call herself, and runs her checklist on every output, even the low-stakes ones.\n\nThe takeaway: fluency is a habit around the tool, not a clever prompt. The 4Ds are the largest domain on the CCAS-F (Claude Certified Associate – Foundations) exam.\n\nWatch the full CCAS-F prep course, chapter by chapter, with a practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #AIFluency #GenerativeAI #FutureOfWork",
+   "text": "You ask Claude for help and get generic advice you can't use.\n\n▪ Description: what Claude can and can't do\n▪ Delegation: keep judgment calls yourself\n▪ Discernment: check output against the source\n▪ Diligence: own the final result\n\nFull CCAS-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #AIFluency #GenerativeAI #FutureOfWork",
+   "comment": "📘 Full CCAS-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/associate-foundations",
    "url": "https://gennoor.com/claude/certifications/associate-foundations"
   },
   {
@@ -60,7 +64,8 @@
    "course": "Claude Certified Architect - Professional",
    "topic": "SLA Gate Before Cost",
    "title": "Discovery to ADR: the SLA gate decides first",
-   "text": "The higher-quality architecture lost. It missed the latency SLA.\n\nWeek 1: the CFO budgets $2.4M and gives you eight weeks. Discovery comes first, not a prototype, and the clinical team names two hard constraints.\n\nArchitecture X scores higher on quality but averages 4.2s, so the SLA gate drops it. Architecture Y clears the gate at 2.1s, and only survivors are compared on cost. ADR-07 records the decision.\n\nThe takeaway: hard constraints filter before anything is scored. Business value, SLAs and discovery make up a full CCAR-P domain.\n\nStart the CCAR-P (Claude Certified Architect – Professional) prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/architect-professional\n\n#ClaudeAI #Anthropic #AICertification #AIArchitecture #EnterpriseAI #SolutionArchitecture",
+   "text": "The cheapest architecture wins the review, then misses the latency SLA.\n\n▪ Discovery first, not a prototype\n▪ Hard constraints become pass/fail gates\n▪ Only gate-passing options compete on cost\n▪ A defensible decision for the board\n\nFull CCAR-P prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/architect-professional\n\n#ClaudeAI #Anthropic #AICertification #AIArchitecture #EnterpriseAI #SolutionArchitecture",
+   "comment": "📘 Full CCAR-P prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/architect-professional",
    "url": "https://gennoor.com/claude/certifications/architect-professional"
   },
   {
@@ -72,7 +77,8 @@
    "course": "Claude Certified Associate - Foundations",
    "topic": "Claude Artifacts",
    "title": "Artifacts: the procedure gets a permanent home",
-   "text": "Your best procedure is buried 30 turns up in a chat. That is where it goes to die.\n\nMaya asks Claude for a 10-step client onboarding procedure. It lands in chat, and 30 turns later it is lost in scrollback.\n\nA colleague shows her Artifacts. She asks again, Claude judges the content reusable and renders it in the side panel, apart from the conversation. Two days later it is still there to reuse.\n\nThe takeaway: chat is for conversation, Artifacts are for things you will keep. Knowing when Claude creates one is classic CCAS-F material.\n\n🔊 Turn the sound on for the walkthrough.\n\nThis chapter and the rest of the CCAS-F prep course are here, with a practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #GenerativeAI #Productivity #FutureOfWork",
+   "text": "Useful Claude output gets buried in chat scrollback and lost.\n\n▪ Ask for reusable content as an Artifact\n▪ It opens in a side panel, apart from chat\n▪ Edit in place, versions kept\n▪ Share one stable link with the team\n\nFull CCAS-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #GenerativeAI #Productivity #FutureOfWork",
+   "comment": "📘 Full CCAS-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/associate-foundations",
    "url": "https://gennoor.com/claude/certifications/associate-foundations"
   },
   {
@@ -84,7 +90,8 @@
    "course": "Claude Certified Architect - Foundations",
    "topic": "CCAR-F Course Trailer",
    "title": "Agent SDK: one query() becomes a governed platform",
-   "text": "One query() call. Layer by layer, it becomes a governed agent platform.\n\nThis trailer tours the Claude Agent SDK: the loop query() runs for you, ClaudeAgentOptions where deny beats allow, tools and MCP servers, subagents, hooks, sessions, permission layers and structured outputs.\n\nEach concept is a short animated flow that shows where the control actually sits.\n\nBuilt for architects and engineers preparing for the Claude Certified Architect – Foundations (CCAR-F) exam.\n\n🔊 Turn the sound on for the walkthrough.\n\nThe full CCAR-F prep course walks through this chapter by chapter, with a practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAgentSDK #AIArchitecture #AIAgents",
+   "text": "Your agent demo works, but nobody trusts it near production systems.\n\n▪ One query() call runs the full agent loop\n▪ Options, deny rules and custom tools\n▪ MCP servers, subagents, hooks and sessions\n▪ Permissions, approvals and enterprise controls\n\nFull CCAR-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAgentSDK #AIArchitecture #AIAgents",
+   "comment": "📘 Full CCAR-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/architect-foundations",
    "url": "https://gennoor.com/claude/certifications/architect-foundations"
   },
   {
@@ -96,7 +103,8 @@
    "course": "Claude Certified Developer - Foundations",
    "topic": "First Messages API Call",
    "title": "Messages API: your first call, every token counted",
-   "text": "Most first Claude API calls put the instructions in the wrong place.\n\nDay 1: the ticket classifier leaves its notebook and becomes a service. You pick Sonnet for real-time triage, set max_tokens, and call messages.create().\n\nThe exam trap the video dodges: behaviour belongs in the system prompt; the user turn carries only the ticket. Then every token in and out is counted.\n\nThe takeaway: model, max_tokens, system and messages each have a job. Getting this anatomy right is foundational for the Claude Certified Developer – Foundations (CCDV-F).\n\nStart building with the CCDV-F prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAPI #AIEngineering #Python",
+   "text": "Your first Claude API call works, but the prompt and costs are a mess.\n\n▪ Create a client, pick the right model tier\n▪ Instructions go in the system prompt\n▪ The user turn is just the input\n▪ Log input and output tokens for cost\n\nFull CCDV-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAPI #AIEngineering #Python",
+   "comment": "📘 Full CCDV-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/developer-foundations",
    "url": "https://gennoor.com/claude/certifications/developer-foundations"
   },
   {
@@ -108,7 +116,8 @@
    "course": "Claude Certified Associate - Foundations",
    "topic": "Four-Element Prompt Structure",
    "title": "Prompt structure: four elements, one consistent answer",
-   "text": "Same file. Same prompt. Three completely different answers. Why?\n\nMaya uploads a 20-page contract and types \"Summarize this.\" Run 1 gives a 3-sentence overview, run 2 a 2-page bullet list, run 3 a table.\n\nHer manager spots the gap: she said what, but not who it is for, why, or in what format. Maya rewrites with a role, context, task and format, and the answers become consistent.\n\nThe takeaway: when you leave blanks, Claude fills them, differently each time. This four-element structure shows up across the CCAS-F exam.\n\nThe CCAS-F prep course covers prompting in depth, with a practice exam at the end:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #PromptEngineering #GenerativeAI #Productivity",
+   "text": "The same prompt gives you a different answer every time.\n\n▪ Vague prompts make Claude guess\n▪ Add role, context, task and format\n▪ Same file, consistent output\n▪ A one-page summary, the right length\n\nFull CCAS-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #PromptEngineering #GenerativeAI #Productivity",
+   "comment": "📘 Full CCAS-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/associate-foundations",
    "url": "https://gennoor.com/claude/certifications/associate-foundations"
   },
   {
@@ -120,7 +129,8 @@
    "course": "Claude Certified Architect - Foundations",
    "topic": "Agent SDK query() Loop",
    "title": "Agent SDK: query() runs the loop for you",
-   "text": "On the plain Messages API, you write the agent loop. With the Agent SDK, you do not.\n\nYour app calls query() once with a prompt and options: Glob, Grep, Read, max_turns=8. Claude returns a tool_use block.\n\nNormally your code would detect it, run it and loop. Here the SDK does it: hooks, then deny rules, then allow rules, then can_use_tool, and only then the tool runs.\n\nThe takeaway: knowing that evaluation order is half of the CCAR-F (Claude Certified Architect – Foundations) SDK domain.\n\nStart the CCAR-F prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAgentSDK #AIAgents #AIArchitecture",
+   "text": "You are hand-writing the tool loop that the Agent SDK already runs for you.\n\n▪ One query() call, prompt plus options\n▪ SDK runs Glob, Grep and Read turn after turn\n▪ No manual detect, run, return, repeat\n▪ Max turns caps the loop\n\nFull CCAR-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAgentSDK #AIAgents #AIArchitecture",
+   "comment": "📘 Full CCAR-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/architect-foundations",
    "url": "https://gennoor.com/claude/certifications/architect-foundations"
   },
   {
@@ -132,7 +142,8 @@
    "course": "Claude Certified Developer - Foundations",
    "topic": "AsyncAnthropic Concurrency",
    "title": "AsyncAnthropic: three tickets in flight at once",
-   "text": "Three tickets arrived at once. Two of them timed out waiting for the first.\n\nTraffic spikes and the sync Flask service sends ticket 1, then blocks while it waits. Tickets 2 and 3 sit idle until their requests time out.\n\nSwitching to AsyncAnthropic makes every call awaitable, and asyncio.gather() keeps all three in flight at once.\n\nThe takeaway: under concurrent load, a blocking client is the bottleneck, not the model. Async architecture is part of the CCDV-F SDK domain.\n\n🔊 Turn the sound on for the walkthrough.\n\nThe CCDV-F prep course covers async and cost engineering step by step, with a practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAPI #Python #AIEngineering",
+   "text": "One slow Claude call blocks every other request in your service.\n\n▪ Sync calls block the event loop\n▪ Switch to AsyncAnthropic\n▪ asyncio.gather sends calls concurrently\n▪ SDK auto-retries 429s with backoff\n\nFull CCDV-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAPI #Python #AIEngineering",
+   "comment": "📘 Full CCDV-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/developer-foundations",
    "url": "https://gennoor.com/claude/certifications/developer-foundations"
   },
   {
@@ -144,7 +155,8 @@
    "course": "Claude Certified Architect - Foundations",
    "topic": "Deny Beats Allow",
    "title": "ClaudeAgentOptions: deny always beats allow",
-   "text": "You allowed Read and Grep. Claude still asked for Bash. That is expected.\n\nClaudeAgentOptions allows Read and Grep, denies Bash, and caps the run at 10 turns. Claude asks for Bash anyway.\n\nWhy? allowed_tools approves tools; it does not hide the others. The SDK refuses the call before anything runs, because a deny rule always beats an allow, and Claude turns to an allowed tool.\n\nThe takeaway: allow lists grant, deny lists enforce. A favourite CCAR-F exam distinction.\n\n🔊 Turn the sound on for the walkthrough.\n\nSee every options chapter in the CCAR-F prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAgentSDK #AISecurity #AIAgents",
+   "text": "You allowed only Read and Grep, yet the agent still asks to run Bash.\n\n▪ allowed_tools approves tools, it does not hide others\n▪ Disallowed Bash is refused before anything runs\n▪ Claude gets an error, not a silent skip\n▪ Deny always beats allow\n\nFull CCAR-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAgentSDK #AISecurity #AIAgents",
+   "comment": "📘 Full CCAR-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/architect-foundations",
    "url": "https://gennoor.com/claude/certifications/architect-foundations"
   },
   {
@@ -156,7 +168,8 @@
    "course": "Claude Certified Developer - Foundations",
    "topic": "Message Batches API",
    "title": "Batch API: 10K tickets overnight, half price",
-   "text": "If nobody is waiting for the answer, why pay real-time prices?\n\nFinance asks whether the overnight 10K-ticket classification job can cost less. Real-time calls would answer instantly at full price, with nobody waiting.\n\nInstead, at 8pm all 10K tickets go into one batch, each tagged with a custom_id. TicketFlow polls batches.retrieve() and by 6am the results are back, at half price.\n\nThe takeaway: match latency to need. The Batch API is a classic cost question on the Claude Certified Developer – Foundations (CCDV-F) exam.\n\nSee the cost chapters in the CCDV-F prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAPI #CostOptimization #AIEngineering",
+   "text": "Your overnight job pays real-time prices when nobody is waiting.\n\n▪ Submit all requests in one batch\n▪ Tag each with a custom ID\n▪ Poll batches.retrieve until done\n▪ Read results, at a lower cost\n\nFull CCDV-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAPI #CostOptimization #AIEngineering",
+   "comment": "📘 Full CCDV-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/developer-foundations",
    "url": "https://gennoor.com/claude/certifications/developer-foundations"
   },
   {
@@ -168,7 +181,8 @@
    "course": "Claude Certified Architect - Foundations",
    "topic": "Custom @tool Lifecycle",
    "title": "Tool lifecycle: Claude asks, your @tool answers",
-   "text": "Claude never touches your inventory system. It asks, and your function answers.\n\nYour code registers check_stock as an in-process @tool and asks about SKU A-100. Claude reads the tool description and emits a ToolUseBlock.\n\nHooks run, the permission check passes, and the SDK calls your function in-process. The result returns as a ToolResultBlock, and Claude answers with the real figure.\n\nThe takeaway: the tool description drives the request, your code owns the execution. Core material for the Claude Certified Architect – Foundations (CCAR-F).\n\nThe CCAR-F prep course covers tools and MCP in depth, with a practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAgentSDK #ToolUse #AIAgents",
+   "text": "Your custom tool fails and the agent has no idea what went wrong.\n\n▪ Register an in-process @tool, pre-allowed\n▪ Hooks and permissions run before your function\n▪ Results return as a ToolResultBlock\n▪ Failures come back as is_error results\n\nFull CCAR-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAgentSDK #ToolUse #AIAgents",
+   "comment": "📘 Full CCAR-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/architect-foundations",
    "url": "https://gennoor.com/claude/certifications/architect-foundations"
   },
   {
@@ -180,7 +194,8 @@
    "course": "Claude Certified Architect - Professional",
    "topic": "RBAC at Retrieval Time",
    "title": "RBAC at retrieval: filter by role before the prompt",
-   "text": "If a billing clerk's query pulls diagnoses into the prompt, the model is not your problem.\n\nA billing clerk asks which procedure codes were billed for a patient. The wrong design uses a shared token and pulls every match, diagnoses included, into the prompt.\n\nThe right design passes the clerk's own identity, and retrieval applies the ACL filter inside the vector DB query, so only billing and demographic data ever reaches Claude.\n\nThe takeaway: enforce access before the prompt, never after the answer. RAG and RBAC is the heaviest-weighted CCAR-P domain.\n\n🔊 Turn the sound on for the walkthrough.\n\nWork through the Meridian RAG design in the CCAR-P prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/architect-professional\n\n#ClaudeAI #Anthropic #AICertification #RAG #AIArchitecture #AISecurity",
+   "text": "Your RAG assistant pulls data the user was never allowed to see.\n\n▪ Shared service token: everything lands in the prompt\n▪ Pass the user's own identity instead\n▪ ACL filter applied at retrieval time\n▪ Only authorized passages reach Claude\n\nFull CCAR-P prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/architect-professional\n\n#ClaudeAI #Anthropic #AICertification #RAG #AIArchitecture #AISecurity",
+   "comment": "📘 Full CCAR-P prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/architect-professional",
    "url": "https://gennoor.com/claude/certifications/architect-professional"
   },
   {
@@ -192,7 +207,8 @@
    "course": "Claude Certified Architect - Foundations",
    "topic": "MCP Over Two Transports",
    "title": "MCP: discover over two transports, call by name",
-   "text": "One MCP server runs as a local subprocess, the other over HTTP. Claude cannot tell.\n\nYour code lists two mcp_servers: fs over stdio and crm as a remote server. The SDK is the MCP client: it spawns fs locally and connects to crm remotely, asking each for tools/list.\n\nTools are named mcp__<server>__<tool>, and allowed_tools decides which Claude may use. Then Claude calls them by name.\n\nThe takeaway: transport is a deployment detail, discovery and naming are the contract. Expect both on the CCAR-F exam.\n\n🔊 Turn the sound on for the walkthrough.\n\nLearn MCP architecture in the CCAR-F prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #MCP #ClaudeAgentSDK #AIArchitecture",
+   "text": "Every new data source means another round of per-tool glue code.\n\n▪ One protocol: MCP, with the SDK as client\n▪ Local server over stdio, remote over the network\n▪ Tools discovered via tools/list\n▪ Names follow mcp__server__tool\n\nFull CCAR-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #MCP #ClaudeAgentSDK #AIArchitecture",
+   "comment": "📘 Full CCAR-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/architect-foundations",
    "url": "https://gennoor.com/claude/certifications/architect-foundations"
   },
   {
@@ -204,7 +220,8 @@
    "course": "Claude Certified Architect - Professional",
    "topic": "Prompt Caching an 80-Page Filing",
    "title": "Prompt caching: pay for the filing once",
-   "text": "Legal sent the same 80-page filing 14 times, and paid for it 14 times.\n\nMeridian is $840k over budget. Each query bills 40k fresh input tokens: 560k tokens per case.\n\nYou reorder the prompt so the filing comes first, marked cache_control: ephemeral. Query 1 writes the prefix to the cache; queries 2 to 14 read it at a fraction of the price.\n\nThe takeaway: put the stable content first and cache it. Token-lifecycle cost questions like this are core to the Claude Certified Architect – Professional (CCAR-P).\n\nSee the full cost-engineering chapter in the CCAR-P prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/architect-professional\n\n#ClaudeAI #Anthropic #AICertification #PromptCaching #CostOptimization #AIArchitecture",
+   "text": "You pay full price for the same long document on every single query.\n\n▪ Static document first, marked cache_control\n▪ First query writes the cache\n▪ Later queries read it at a fraction of the cost\n▪ Cost per case drops sharply\n\nFull CCAR-P prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/architect-professional\n\n#ClaudeAI #Anthropic #AICertification #PromptCaching #CostOptimization #AIArchitecture",
+   "comment": "📘 Full CCAR-P prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/architect-professional",
    "url": "https://gennoor.com/claude/certifications/architect-professional"
   },
   {
@@ -216,7 +233,8 @@
    "course": "Claude Certified Developer - Foundations",
    "topic": "Prompt Caching for Agents",
    "title": "Prompt caching: write once, read at 90% off",
-   "text": "Every agent turn re-sent the same 10K-token knowledge base at full price.\n\nCosts spike because each turn ships the static KB again. You mark that system block with cache_control: ephemeral.\n\nTurn 1 is a cache miss: Claude writes the KB to the cache with a small write fee. Turn 2 sends the identical block, same model, exact prefix, and the cache hits; only the new input is billed in full.\n\nThe takeaway: cache what does not change and keep the prefix identical. Cache hit and miss rules are fair game on the CCDV-F exam.\n\n🔊 Turn the sound on for the walkthrough.\n\nThe CCDV-F prep course breaks caching down with a practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAPI #PromptCaching #CostOptimization",
+   "text": "Your agent re-sends the same knowledge base at full price every turn.\n\n▪ Mark the static block with cache_control\n▪ Turn one writes the cache\n▪ Same prefix, later turns hit the cache\n▪ Check usage for cache reads\n\nFull CCDV-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAPI #PromptCaching #CostOptimization",
+   "comment": "📘 Full CCDV-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/developer-foundations",
    "url": "https://gennoor.com/claude/certifications/developer-foundations"
   },
   {
@@ -228,7 +246,8 @@
    "course": "Claude Certified Architect - Foundations",
    "topic": "Subagent Context Isolation",
    "title": "Subagents: the memo returns, not the notebook",
-   "text": "A subagent hands back the memo, not the notebook.\n\nYour code asks for a researcher, then an analyst, to assess risk in a contracts folder. The main agent delegates via the Agent tool.\n\nIn a fresh context the researcher greps the folder with its own tools. Only its final message returns as the tool result; the Grep calls stay behind, so the main context stays clean.\n\nThe takeaway: subagents buy isolation and a focused context. A key idea in the tools domain of the Claude Certified Architect – Foundations (CCAR-F).\n\nDig into subagents with the CCAR-F prep course and its practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAgentSDK #MultiAgent #AIAgents",
+   "text": "One agent doing research and analysis drowns in its own context.\n\n▪ Main agent delegates via the Agent tool\n▪ Each subagent starts in a fresh, isolated context\n▪ Only the final message returns to the parent\n▪ Clean context, focused findings\n\nFull CCAR-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAgentSDK #MultiAgent #AIAgents",
+   "comment": "📘 Full CCAR-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/architect-foundations",
    "url": "https://gennoor.com/claude/certifications/architect-foundations"
   },
   {
@@ -240,7 +259,8 @@
    "course": "Claude Certified Developer - Foundations",
    "topic": "Claude Tool Use Basics",
    "title": "Tool use: Claude requests, you validate and run",
-   "text": "Claude does not run your tools. It asks, and your code decides.\n\nAn agent asks TicketFlow for the status of alice@example.com. You send the message with a lookup_customer tool and its JSON schema.\n\nClaude does not answer yet: it emits a tool_use block. Your dispatcher validates the email first, returns an error for a malformed one, and only then runs the lookup and sends back the result.\n\nThe takeaway: the model requests, your code validates and executes. Tool calling is a full domain of the Claude Certified Developer – Foundations (CCDV-F).\n\nWork through tool use in the CCDV-F prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAPI #AIAgents #ToolUse",
+   "text": "You've added a tool, but Claude's tool calls crash your code.\n\n▪ Define a tool with a JSON schema\n▪ Claude returns a tool_use block, not an answer\n▪ Validate input, return errors as results\n▪ Send tool_result back for the final reply\n\nFull CCDV-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAPI #AIAgents #ToolUse",
+   "comment": "📘 Full CCDV-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/developer-foundations",
    "url": "https://gennoor.com/claude/certifications/developer-foundations"
   },
   {
@@ -252,7 +272,8 @@
    "course": "Claude Certified Associate - Foundations",
    "topic": "Iterative Prompt Refinement",
    "title": "Iterative refinement: diagnose, revise, verify, decide",
-   "text": "Eight rewordings later, the bottom line was still buried. Rewording was the problem.\n\nMaya asks Claude for a quarterly client summary, then rewords the request again and again. Versions 6, 7 and 8 all still bury the point.\n\nA colleague asks: did you tell Claude what was wrong? So she switches to a loop: diagnose the draft against her criteria, revise with one targeted follow-up, verify, then decide.\n\nThe takeaway: name the problem, do not just rephrase the request. This refinement loop is core to the prompting domain of the Claude Certified Associate – Foundations (CCAS-F).\n\n🔊 Turn the sound on for the walkthrough.\n\nGo deeper in the full CCAS-F prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #PromptEngineering #GenerativeAI #Productivity",
+   "text": "You've reworded the prompt eight times and the draft still isn't right.\n\n▪ Rewording blindly gives diminishing returns\n▪ Diagnose: check the draft against your criteria\n▪ Name the exact flaws\n▪ Targeted fixes land in one pass\n\nFull CCAS-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #PromptEngineering #GenerativeAI #Productivity",
+   "comment": "📘 Full CCAS-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/associate-foundations",
    "url": "https://gennoor.com/claude/certifications/associate-foundations"
   },
   {
@@ -264,7 +285,8 @@
    "course": "Claude Certified Architect - Professional",
    "topic": "Human Approval Before Payouts",
    "title": "HITL gate: human approval before money moves",
-   "text": "The refund agent proposed $50,000. Ungated, it would simply have paid it.\n\nWeek 15: you place can_use_tool between the model's output and any irreversible action.\n\nOver $100, the runtime pauses and the callback posts the exact input to Slack. The manager clicks Approve, the callback returns PermissionResultAllow, and only then does the refund execute.\n\nThe takeaway: the gate sits on the action, not on the conversation. Least-privilege agent tooling is a full CCAR-P exam domain.\n\n🔊 Turn the sound on for the walkthrough.\n\nLearn HITL design in the CCAR-P prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/architect-professional\n\n#ClaudeAI #Anthropic #AICertification #HumanInTheLoop #AIGovernance #AIAgents",
+   "text": "Your agent can issue a large refund and nobody checks it first.\n\n▪ can_use_tool between model output and action\n▪ Large amounts pause the agent\n▪ Exact input sent to a manager to approve\n▪ Small refunds still execute at once\n\nFull CCAR-P prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/architect-professional\n\n#ClaudeAI #Anthropic #AICertification #HumanInTheLoop #AIGovernance #AIAgents",
+   "comment": "📘 Full CCAR-P prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/architect-professional",
    "url": "https://gennoor.com/claude/certifications/architect-professional"
   },
   {
@@ -276,7 +298,8 @@
    "course": "Claude Certified Associate - Foundations",
    "topic": "Claude Projects",
    "title": "Projects: one brief, every chat inherits it",
-   "text": "Pasting the same 300-word brief into every chat? Write it once instead.\n\nMaya pastes an identical brief into eight client chats in a row. Then she creates a \"Quarterly Client Summaries\" Project, writes the rules once and uploads the terminology guide.\n\nEvery new chat inside the Project inherits the rules and the glossary, so her prompts shrink to what is actually new.\n\nThe takeaway: Projects hold shared instructions and knowledge so individual chats do not have to. Expect workspace questions like this on the CCAS-F exam.\n\nSee every chapter of the CCAS-F (Claude Certified Associate – Foundations) prep course, plus a practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #GenerativeAI #Productivity #FutureOfWork",
+   "text": "You paste the same long brief into every new chat.\n\n▪ Create a Project once\n▪ Custom instructions hold the rules\n▪ Uploaded files hold the knowledge\n▪ New chats inherit it, prompts stay short\n\nFull CCAS-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #GenerativeAI #Productivity #FutureOfWork",
+   "comment": "📘 Full CCAS-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/associate-foundations",
    "url": "https://gennoor.com/claude/certifications/associate-foundations"
   },
   {
@@ -288,7 +311,8 @@
    "course": "Claude Certified Architect - Foundations",
    "topic": "Agent SDK Hooks",
    "title": "Hooks: deny rm -rf, audit what ran",
-   "text": "Claude reached for rm -rf. A hook said no before permissions even ran.\n\nTwo hooks are registered: PreToolUse on Bash and PostToolUse with no matcher. Asked to clean the build folder, Claude emits rm -rf.\n\nPreToolUse fires before permissions; block_dangerous spots it and denies. The error tells Claude why, so it picks a safe alternative, and PostToolUse audits what actually ran.\n\nThe takeaway: hooks are where deterministic policy and auditing live. A heavily weighted CCAR-F topic.\n\n🔊 Turn the sound on for the walkthrough.\n\nThe CCAR-F prep course covers hooks, sessions and security, with a practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAgentSDK #AISecurity #AIGovernance",
+   "text": "Your agent reaches for rm -rf and nothing stops it in time.\n\n▪ PreToolUse hook matched to Bash\n▪ Dangerous command denied before it runs\n▪ Claude picks a safe alternative\n▪ PostToolUse hook writes the audit log\n\nFull CCAR-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAgentSDK #AISecurity #AIGovernance",
+   "comment": "📘 Full CCAR-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/architect-foundations",
    "url": "https://gennoor.com/claude/certifications/architect-foundations"
   },
   {
@@ -300,7 +324,8 @@
    "course": "Claude Certified Associate - Foundations",
    "topic": "Code Execution for Exact Numbers",
    "title": "Code Execution: exact numbers, not predictions",
-   "text": "Claude said \"about $47,300\". The real total was $44,287.\n\nMaya uploads a 50-row expense sheet and asks for the sum of column D. The estimate is off, and she only finds out by checking by hand.\n\nHer manager explains: a language model predicts text, it does not compute. With Code Execution enabled, Claude writes Python to sum the column and returns the exact figure.\n\nThe takeaway: when the answer is a number, have Claude run code rather than guess. A key distinction for the CCAS-F exam, and for anything that reaches finance.\n\n🔊 Turn the sound on for the walkthrough.\n\nLearn when to switch tools in the CCAS-F prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #GenerativeAI #DataAnalysis #Productivity",
+   "text": "Claude gives you a different total every time you ask it to add numbers.\n\n▪ Language models predict text, not math\n▪ Turn on Code Execution\n▪ Claude runs Python in a sandbox\n▪ Exact total, with the code to check\n\nFull CCAS-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #GenerativeAI #DataAnalysis #Productivity",
+   "comment": "📘 Full CCAS-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/associate-foundations",
    "url": "https://gennoor.com/claude/certifications/associate-foundations"
   },
   {
@@ -312,7 +337,8 @@
    "course": "Claude Certified Architect - Professional",
    "topic": "Keeping API Keys From the Model",
    "title": "Secrets & RBAC: the key never reaches Claude",
-   "text": "If your CRM key is in the system prompt, every trace has a copy.\n\nA billing clerk signs in via SSO and asks about customer C-77. In the wrong design, the CRM key sits in the system prompt, visible to Claude and every log.\n\nThe right design sends only the question and tools. When Claude asks for lookup_customer, the handler pulls CRM_API_KEY from Key Vault server-side at execution time.\n\nThe takeaway: credentials live with the executor, never in context. A security essential for the Claude Certified Architect – Professional (CCAR-P).\n\nSee secrets and RBAC in the CCAR-P prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/architect-professional\n\n#ClaudeAI #Anthropic #AICertification #AISecurity #SecretsManagement #AIArchitecture",
+   "text": "Your API key sits in the system prompt, one injection away from leaking.\n\n▪ Never put secrets in model context\n▪ Claude only requests the tool\n▪ Handler fetches the key from a vault at run time\n▪ User-scoped token, nothing in traces\n\nFull CCAR-P prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/architect-professional\n\n#ClaudeAI #Anthropic #AICertification #AISecurity #SecretsManagement #AIArchitecture",
+   "comment": "📘 Full CCAR-P prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/architect-professional",
    "url": "https://gennoor.com/claude/certifications/architect-professional"
   },
   {
@@ -324,7 +350,8 @@
    "course": "Claude Certified Developer - Foundations",
    "topic": "Format Drift in Long Contexts",
    "title": "Format drift: JSON decays until you prune context",
-   "text": "By turn 15 the JSON quietly lost a field. Lowering temperature will not fix it.\n\nFor five turns Claude returns perfect JSON. Then 20+ tool outputs pile up and bury the schema, and the \"priority\" field goes missing.\n\nThe video rules out the tempting fix: temperature tunes randomness, not attention to the schema. The real remedies work on the context itself, including pruning it.\n\nThe takeaway: format drift is a context problem. Spotting the wrong fix is exactly what CCDV-F questions test.\n\n🔊 Turn the sound on for the walkthrough.\n\nLearn the structured-output chapters in the CCDV-F prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAPI #StructuredOutputs #AIAgents",
+   "text": "Deep into a long run, your JSON output starts dropping fields.\n\n▪ Tool outputs pile up and bury the schema\n▪ Format drift, not randomness\n▪ Lowering temperature won't fix it\n▪ Prune, summarize and resend the schema\n\nFull CCDV-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAPI #StructuredOutputs #AIAgents",
+   "comment": "📘 Full CCDV-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/developer-foundations",
    "url": "https://gennoor.com/claude/certifications/developer-foundations"
   },
   {
@@ -336,7 +363,8 @@
    "course": "Claude Certified Architect - Foundations",
    "topic": "Resume vs Fork Sessions",
    "title": "Sessions: resume remembers, fork branches",
-   "text": "Your agent read the report yesterday. Today it remembers nothing, unless you resume.\n\nTurn 1: the agent reads report.md and notes the key numbers. The runtime saves the transcript and your code keeps session_id sess-0001.\n\nNext morning, resume=sess-0001 reloads that history. Skip resume and it is a brand-new session with no memory. fork_session=True branches a copy so you can explore without touching the original.\n\nThe takeaway: resume continues, fork branches, nothing persists unless you ask. Classic Claude Certified Architect – Foundations (CCAR-F) material.\n\nLearn session management in the CCAR-F prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAgentSDK #AIAgents #AIArchitecture",
+   "text": "Your agent forgets yesterday's work, or overwrites it when you try a what-if.\n\n▪ Transcripts saved to a session store\n▪ Capture session_id to resume later\n▪ Resume reloads the history\n▪ Fork tries a variant under a new id\n\nFull CCAR-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAgentSDK #AIAgents #AIArchitecture",
+   "comment": "📘 Full CCAR-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/architect-foundations",
    "url": "https://gennoor.com/claude/certifications/architect-foundations"
   },
   {
@@ -348,7 +376,8 @@
    "course": "Claude Certified Architect - Professional",
    "topic": "Correlation IDs for AI Tracing",
    "title": "Correlation IDs: tracing a failed claim end-to-end",
-   "text": "\"Policy not found.\" Was it the agent, the retrieval, or the data?\n\nA claims request hits the gateway, which mints a correlation ID. The header carries it to the claims agent, which logs it with the model ID.\n\nUnder the same ID, retrieval queries the vector DB and gets zero results; the agent logs it and answers \"Policy not found\". Every hop exports its spans, so one ID tells the whole story.\n\nThe takeaway: one ID across every hop turns guesswork into a trace. Observability sits in the CCAR-P security and compliance domain.\n\n🔊 Turn the sound on for the walkthrough.\n\nFollow the Meridian story in the CCAR-P prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/architect-professional\n\n#ClaudeAI #Anthropic #AICertification #Observability #AIArchitecture #AIOps",
+   "text": "A request failed, and you can't trace it across gateway, agent and retrieval.\n\n▪ Gateway mints a correlation ID\n▪ Every span logs the same ID\n▪ Model ID and tool results logged too\n▪ One query shows the whole failed request\n\nFull CCAR-P prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/architect-professional\n\n#ClaudeAI #Anthropic #AICertification #Observability #AIArchitecture #AIOps",
+   "comment": "📘 Full CCAR-P prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/architect-professional",
    "url": "https://gennoor.com/claude/certifications/architect-professional"
   },
   {
@@ -360,7 +389,8 @@
    "course": "Claude Certified Architect - Foundations",
    "topic": "Permission Layers in Practice",
    "title": "Permission layers: the restart waits for a human",
-   "text": "No rule blocked the restart. So the decision went to a human.\n\nTold to restart a web service and check its logs, Claude proposes Bash. No hook or deny rule stops it, and no allow rule covers it, so default mode hands it to can_use_tool.\n\nIn run 1 the operator declines, and the denial reaches Claude as an error it can work around. The video traces each layer in turn.\n\nThe takeaway: when no layer decides, a human does. Tracing which layer fires is a staple of CCAR-F questions.\n\n🔊 Turn the sound on for the walkthrough.\n\nThe CCAR-F prep course walks through every permission layer, with a practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAgentSDK #HumanInTheLoop #AISecurity",
+   "text": "You can't tell which permission layer approved or blocked a tool call.\n\n▪ Hooks and deny rules checked first\n▪ Deny wins, even in bypass mode\n▪ No allow rule: can_use_tool asks the operator\n▪ Read calls auto-approved by allow rules\n\nFull CCAR-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAgentSDK #HumanInTheLoop #AISecurity",
+   "comment": "📘 Full CCAR-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/architect-foundations",
    "url": "https://gennoor.com/claude/certifications/architect-foundations"
   },
   {
@@ -372,7 +402,8 @@
    "course": "Claude Certified Associate - Foundations",
    "topic": "Claude Memory Across Chats",
    "title": "Memory: Claude remembers the tiers across chats",
-   "text": "Monday she explained the client tiers. Tuesday, Claude had never heard of them.\n\nMaya walks Claude through Brightline's three client tiers. Next day, in a new chat, Claude has no idea what tier 2 means.\n\nShe switches Memory on in Settings and explains the tiers once. Memory keeps those recurring facts, which she can view, edit or delete, and the next chat answers correctly.\n\nThe takeaway: chats do not share context by default. Memory is for recurring facts; you stay in control of what is kept. A workspace topic on the Claude Certified Associate – Foundations (CCAS-F).\n\nThe CCAS-F prep course explains each workspace feature with a practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #GenerativeAI #Productivity #FutureOfWork",
+   "text": "Every new chat, Claude forgets the context you explained yesterday.\n\n▪ Turn Memory on in Settings\n▪ Store recurring facts once\n▪ Not this quarter's numbers\n▪ New chats answer with your context\n\nFull CCAS-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #GenerativeAI #Productivity #FutureOfWork",
+   "comment": "📘 Full CCAS-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/associate-foundations",
    "url": "https://gennoor.com/claude/certifications/associate-foundations"
   },
   {
@@ -384,7 +415,8 @@
    "course": "Claude Certified Developer - Foundations",
    "topic": "Agent Checkpointing",
    "title": "Checkpointing: crash at 15, resume at 15",
-   "text": "A worker crashed at step 15 of 20. Without checkpoints, it starts again at step 1.\n\nWorker A takes a 20-step ticket: classify, research, fix, verify. Workers die mid-task, and with no saves all progress is lost.\n\nSo after every step you save the step number, messages and metadata to shared storage. When the worker dies at step 15, the job resumes at step 15.\n\nThe takeaway: long agent runs need durable state, not hope. State management is the largest domain on the Claude Certified Developer – Foundations (CCDV-F) exam.\n\nThe CCDV-F prep course covers agentic workflows chapter by chapter, with a practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #AIAgents #ClaudeAPI #AIEngineering",
+   "text": "A worker crashes at step 15 and the whole task restarts from step 1.\n\n▪ State held only in memory is lost\n▪ Save a checkpoint after every step\n▪ Another worker loads the latest checkpoint\n▪ Resume where it stopped\n\nFull CCDV-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #AIAgents #ClaudeAPI #AIEngineering",
+   "comment": "📘 Full CCDV-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/developer-foundations",
    "url": "https://gennoor.com/claude/certifications/developer-foundations"
   },
   {
@@ -396,7 +428,8 @@
    "course": "Claude Certified Associate - Foundations",
    "topic": "Choosing the Right Claude Model",
    "title": "Model selection: match the model to the task",
-   "text": "Using the most powerful model for everything is how you burn your rate limit by Wednesday.\n\nMaya sends everything to Opus, including quick policy questions. Her manager sees the usage report: simple tasks are eating the rate limit.\n\nShe rematches the work: quick, well-defined lookups move to Haiku, routine weekly summaries to a mid-tier model, and Opus is kept for the tasks that need it.\n\nThe takeaway: match the model to the task, not to your habits. Model selection is a recurring CCAS-F exam theme.\n\n🔊 Turn the sound on for the walkthrough.\n\nWork through model choice and more in the CCAS-F prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #GenerativeAI #LLM #Productivity",
+   "text": "You use the biggest model for everything and burn your limits.\n\n▪ Match the model to the task\n▪ Haiku for quick, simple lookups\n▪ Sonnet for everyday drafting\n▪ Opus kept for complex analysis\n\nFull CCAS-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #GenerativeAI #LLM #Productivity",
+   "comment": "📘 Full CCAS-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/associate-foundations",
    "url": "https://gennoor.com/claude/certifications/associate-foundations"
   },
   {
@@ -408,7 +441,8 @@
    "course": "Claude Certified Architect - Professional",
    "topic": "Canary Rollout With Auto-Revert",
    "title": "Canary rollout: the gate reverts at 50%",
-   "text": "The release passed at 5%. It passed at 50%, until it did not.\n\nWeek 27: no big-bang release. You arm the rollback gate before any traffic moves, then route the new hybrid retrieval to 5% of clinicians.\n\nAfter 48 hours the gate checks accuracy and hallucination rate; stage 2 passes too, so the canary widens to 50%. At stage 3 the metrics slip, and the gate reverts automatically.\n\nThe takeaway: arm the rollback before the rollout. A defensible-release pattern the Claude Certified Architect – Professional (CCAR-P) expects.\n\nThe CCAR-P prep course ends the Meridian rollout here, with a practice exam:\n👉 https://gennoor.com/claude/certifications/architect-professional\n\n#ClaudeAI #Anthropic #AICertification #MLOps #AIArchitecture #EnterpriseAI",
+   "text": "A model change ships to everyone, and quality drops before anyone notices.\n\n▪ Arm the rollback gate before traffic moves\n▪ Canary at 5%, then 25%, then 50%\n▪ Accuracy breach triggers auto-revert\n▪ On-call SRE alerted, no big-bang release\n\nFull CCAR-P prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/architect-professional\n\n#ClaudeAI #Anthropic #AICertification #MLOps #AIArchitecture #EnterpriseAI",
+   "comment": "📘 Full CCAR-P prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/architect-professional",
    "url": "https://gennoor.com/claude/certifications/architect-professional"
   },
   {
@@ -420,7 +454,8 @@
    "course": "Claude Certified Developer - Foundations",
    "topic": "Orchestrator and Specialist Agents",
    "title": "Orchestrator: split the ticket, merge the results",
-   "text": "\"Charged twice and the app crashes.\" One agent, two problems, and it lost track.\n\nA mixed billing-and-tech ticket lands, and a single agent forgets which sub-issue it already solved.\n\nYou refactor into an orchestrator that splits the ticket into separable sub-tasks and delegates them in parallel. Each specialist gets its own prompt, tools and model, and the orchestrator merges the results.\n\nThe takeaway: decompose when the sub-tasks really are separate. A core multi-agent pattern on the CCDV-F exam.\n\n🔊 Turn the sound on for the walkthrough.\n\nExplore multi-agent design in the CCDV-F prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #AIAgents #MultiAgent #AIEngineering",
+   "text": "A single agent loses track when one request mixes two problems.\n\n▪ Orchestrator splits the request into sub-tasks\n▪ Specialists run in parallel, isolated contexts\n▪ Each gets its own prompt and tools\n▪ One merged reply to the customer\n\nFull CCDV-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #AIAgents #MultiAgent #AIEngineering",
+   "comment": "📘 Full CCDV-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/developer-foundations",
    "url": "https://gennoor.com/claude/certifications/developer-foundations"
   },
   {
@@ -432,7 +467,8 @@
    "course": "Claude Certified Architect - Foundations",
    "topic": "Agent SDK Structured Outputs",
    "title": "Structured outputs: typed JSON, not text parsing",
-   "text": "Still regex-scraping amounts out of an agent's prose? Give it a schema.\n\nWithout a schema the agent answers in prose and your code has to parse it. With output_format set to a JSON schema of vendor, amount and due date, the agent knows the shape it must return.\n\nIt reads the invoice, the JSON is validated, and the typed object arrives in ResultMessage.structured_output. Repeated failures surface as error_max_structured_output_retries.\n\nThe takeaway: typed data in, no text parsing. A practical CCAR-F (Claude Certified Architect – Foundations) topic.\n\nSee it in the full CCAR-F prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAgentSDK #StructuredOutputs #AIAgents",
+   "text": "You are regex-parsing amounts out of your agent's prose answers.\n\n▪ Pass an output_format JSON schema\n▪ Agent reads the file, returns the exact fields\n▪ Typed structured_output, ready to store\n▪ No fragile text parsing\n\nFull CCAR-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAgentSDK #StructuredOutputs #AIAgents",
+   "comment": "📘 Full CCAR-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/architect-foundations",
    "url": "https://gennoor.com/claude/certifications/architect-foundations"
   },
   {
@@ -444,7 +480,8 @@
    "course": "Claude Certified Developer - Foundations",
    "topic": "Build One MCP Server",
    "title": "MCP server: write once, three apps plug in",
-   "text": "Three teams, the same Jira and CRM tools, three copies drifting apart.\n\nInstead of glue code per app, you build one MCP server exposing jira_create_issue and crm_lookup_customer over JSON-RPC.\n\nTicketFlow calls tools/list and sees each one as mcp__<server>__<tool>. The Escalation Dashboard and Analytics app plug into the same server with no new integration work.\n\nThe takeaway: write a tool once and let every client discover it. MCP is a key tool-calling topic for the Claude Certified Developer – Foundations (CCDV-F).\n\nBuild it yourself with the CCDV-F prep course and its practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #MCP #ModelContextProtocol #AIAgents",
+   "text": "Three apps need the same tools, and the copied code keeps drifting.\n\n▪ Build one MCP server with narrow tools\n▪ Every app discovers them via tools/list\n▪ Tokens stay in the server's environment\n▪ Fix once, every app gets it\n\nFull CCDV-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #MCP #ModelContextProtocol #AIAgents",
+   "comment": "📘 Full CCDV-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/developer-foundations",
    "url": "https://gennoor.com/claude/certifications/developer-foundations"
   },
   {
@@ -456,7 +493,8 @@
    "course": "Claude Certified Associate - Foundations",
    "topic": "Prompt Task Decomposition",
    "title": "Task decomposition: three focused prompts beat one",
-   "text": "\"Redesign onboarding\" is three jobs hiding in one prompt.\n\nMaya pastes her manager's whole request as one prompt and gets a vague overview. A colleague points out it hides three separate deliverables.\n\nShe splits it: prompt 1 asks only for the process map, prompt 2 only for the training plan, and so on, so Claude's full reasoning goes to each piece.\n\nThe takeaway: one focused prompt per deliverable beats one prompt for everything. Decomposition sits in the prompting domain of the CCAS-F (Claude Certified Associate – Foundations) exam.\n\nThe full CCAS-F prep course takes this chapter by chapter, with a practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #PromptEngineering #GenerativeAI #Productivity",
+   "text": "One big prompt for a big task keeps giving you shallow answers.\n\n▪ One broad request hides several deliverables\n▪ Split it into separate prompts\n▪ Each prompt gets a focused, full answer\n▪ Combine the parts at the end\n\nFull CCAS-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #PromptEngineering #GenerativeAI #Productivity",
+   "comment": "📘 Full CCAS-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/associate-foundations",
    "url": "https://gennoor.com/claude/certifications/associate-foundations"
   },
   {
@@ -468,7 +506,8 @@
    "course": "Claude Certified Developer - Foundations",
    "topic": "Claude Code PreToolUse Hook",
    "title": "PreToolUse hook: rm -rf denied before it runs",
-   "text": "\"Be careful\" in a prompt is not a safety control. A hook is.\n\nA developer asks Claude Code to wipe a stale build folder and Claude picks rm -rf ./build.\n\nYour .claude/settings.json routes every Bash tool_use to a hook first. check_bash.js reads the command, finds rm -rf and returns deny, so the command never runs.\n\nThe takeaway: enforce safety in deterministic code, not in instructions the model may weigh differently. Hooks are core to the CCDV-F Claude Code domain.\n\n🔊 Turn the sound on for the walkthrough.\n\nThe CCDV-F prep course covers Claude Code and hooks, with a practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeCode #AISecurity #DevSecOps",
+   "text": "Claude Code picks rm -rf, and \"be careful\" in the prompt won't stop it.\n\n▪ PreToolUse hook on every Bash call\n▪ Script inspects the command first\n▪ Destructive patterns denied\n▪ Safe commands pass through\n\nFull CCDV-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeCode #AISecurity #DevSecOps",
+   "comment": "📘 Full CCDV-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/developer-foundations",
    "url": "https://gennoor.com/claude/certifications/developer-foundations"
   },
   {
@@ -480,7 +519,8 @@
    "course": "Claude Certified Architect - Foundations",
    "topic": "Enterprise Agent Controls",
    "title": "Enterprise patterns: each control in its place",
-   "text": "bypassPermissions with no isolation is a shortcut you only take once.\n\nThe video starts with the shortcut, then puts each control in its place: a sandboxed worker per task with scoped cwd and credentials, a PreToolUse hook that sees sensitive calls first, and can_use_tool parking them in an approval queue.\n\nOnce approved, the call goes through a shared MCP server fronting the system, with auditing after the fact.\n\nThe takeaway: isolation, hooks, human approval and a governed gateway each do one job. This is the enterprise-scenarios domain of the CCAR-F exam.\n\n🔊 Turn the sound on for the walkthrough.\n\nWork through enterprise patterns in the CCAR-F prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #AIArchitecture #AIGovernance #ClaudeAgentSDK",
+   "text": "One over-permissioned agent task could touch everything in production.\n\n▪ Sandboxed worker per task, scoped cwd and creds\n▪ PreToolUse hook as a fast, fail-safe gate\n▪ Sensitive calls routed to a human approver\n▪ MCP calls authenticated with OAuth\n\nFull CCAR-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #AIArchitecture #AIGovernance #ClaudeAgentSDK",
+   "comment": "📘 Full CCAR-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/architect-foundations",
    "url": "https://gennoor.com/claude/certifications/architect-foundations"
   },
   {
@@ -492,7 +532,8 @@
    "course": "Claude Certified Developer - Foundations",
    "topic": "Layered Prompt Injection Defence",
    "title": "Prompt injection: four layers stop the poisoned ticket",
-   "text": "An attacker filed a support ticket that said \"Ignore previous instructions.\"\n\nPasted raw into the prompt, the poisoned ticket almost works. The video then adds defences layer by layer.\n\nTag the ticket as <user_ticket>, warn in the system prompt that it is untrusted user data, and block the email tool while external input is processed. Claude skips the injected instruction.\n\nThe takeaway: no single prompt line stops injection; layers do, and removing the dangerous tool matters most. Expect this on the Claude Certified Developer – Foundations (CCDV-F).\n\nLearn application security in the CCDV-F prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #PromptInjection #AISecurity #ClaudeAPI",
+   "text": "A user's message tells your agent to ignore instructions and email the data.\n\n▪ Raw input in the prompt nearly gets obeyed\n▪ Wrap input in tags, mark it untrusted\n▪ Block risky tools for that task\n▪ Layered defence, not one fix\n\nFull CCDV-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #PromptInjection #AISecurity #ClaudeAPI",
+   "comment": "📘 Full CCDV-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/developer-foundations",
    "url": "https://gennoor.com/claude/certifications/developer-foundations"
   },
   {
@@ -504,7 +545,8 @@
    "course": "Claude Certified Associate - Foundations",
    "topic": "Data Sensitivity and Redaction",
    "title": "Data sensitivity: classify, redact, review, then submit",
-   "text": "Halfway through the summary, she noticed the salaries. Then she stopped.\n\nMaya is drafting a summary from a spreadsheet of employee performance reviews when she spots salaries, manager feedback and accommodation notes.\n\nShe checks the HR policy (the answer is a clear no), classifies each field, swaps sensitive values for placeholders, has a peer review the redacted sheet, and only then submits it.\n\nThe takeaway: classify, redact, review, submit. Speed never outranks data policy. A must-know sequence for the CCAS-F exam.\n\n🔊 Turn the sound on for the walkthrough.\n\nLearn the responsible-use habits in the CCAS-F prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #AIGovernance #DataPrivacy #ResponsibleAI",
+   "text": "You're not sure that spreadsheet is safe to paste into Claude.\n\n▪ Stop and spot the sensitive fields\n▪ Check the policy first\n▪ Redact with placeholders\n▪ Work only with the safe remainder\n\nFull CCAS-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #AIGovernance #DataPrivacy #ResponsibleAI",
+   "comment": "📘 Full CCAS-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/associate-foundations",
    "url": "https://gennoor.com/claude/certifications/associate-foundations"
   },
   {
@@ -516,7 +558,8 @@
    "course": "Claude Certified Developer - Foundations",
    "topic": "Routing API Errors by Severity",
    "title": "Error routing: 429 warns, 401 pages on-call",
-   "text": "A 429 and a 401 are both errors. Only one should wake someone up.\n\nTicketFlow runs on BYOC in your AWS account. A retry-loop bug resends a rate-limited call, and 429s start to pile up.\n\nMonitoring groups errors by cause: 429s are rated warn, so the system logs and backs off. An authentication failure is different, and pages on-call.\n\nThe takeaway: route errors by what they mean, not by the fact that they failed. Operational judgement like this shows up across the CCDV-F exam.\n\n🔊 Turn the sound on for the walkthrough.\n\nFinish the TicketFlow story in the CCDV-F prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAPI #Observability #SRE",
+   "text": "Rate-limit errors spike, and your retry loop makes it worse.\n\n▪ A buggy retry loop resends again and again\n▪ Monitoring groups errors by cause\n▪ Severity decides: log, back off or page\n▪ Fix the retry with backoff\n\nFull CCDV-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/developer-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAPI #Observability #SRE",
+   "comment": "📘 Full CCDV-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/developer-foundations",
    "url": "https://gennoor.com/claude/certifications/developer-foundations"
   },
   {
@@ -528,7 +571,8 @@
    "course": "Claude Certified Architect - Foundations",
    "topic": "can_use_tool Spending Limits",
    "title": "can_use_tool: $40 auto-approved, $250 queued",
-   "text": "$40 refund: approved automatically. $250 refund: denied. Same agent, one callback.\n\nA permission mode is too coarse, so your code sets a can_use_tool callback. Claude is asked to refund two orders.\n\nThe $40 refund is under the limit, so the callback returns PermissionResultAllow and issue_refund runs. The $250 one is over the limit and is denied; Claude gets the error and reports back.\n\nThe takeaway: can_use_tool lets you decide per call, using the actual input. Expect this pattern on the Claude Certified Architect – Foundations (CCAR-F).\n\nLearn human gates in the CCAR-F prep course, with a practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAgentSDK #HumanInTheLoop #AIGovernance",
+   "text": "Permission modes are too coarse when your agent can move money.\n\n▪ can_use_tool callback with one rule\n▪ Refunds under the limit execute\n▪ Refunds over the limit are denied\n▪ Every decision lands in the audit log\n\nFull CCAR-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #ClaudeAgentSDK #HumanInTheLoop #AIGovernance",
+   "comment": "📘 Full CCAR-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/architect-foundations",
    "url": "https://gennoor.com/claude/certifications/architect-foundations"
   },
   {
@@ -540,7 +584,8 @@
    "course": "Claude Certified Associate - Foundations",
    "topic": "Catching AI Hallucinations",
    "title": "Hallucination: pinpoint, verify, then regenerate",
-   "text": "The stat looked perfect for the board slide. The source did not exist.\n\nMaya asks Claude for competitor growth rates and gets a striking figure with three named sources.\n\nShe pinpoints the one claim that looks too good, verifies it (one article does not exist, another says 30%, not 300%), then regenerates with a tighter prompt.\n\nThe takeaway: pinpoint, verify, regenerate. Confident citations are not checked citations. Discernment like this is central to the Claude Certified Associate – Foundations (CCAS-F).\n\nBuild the habit with the CCAS-F prep course and its practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #ResponsibleAI #GenerativeAI #AIFluency",
+   "text": "Claude cites a convincing stat, and the source doesn't exist.\n\n▪ Pinpoint the claim that looks too good\n▪ Verify each cited source\n▪ Restrict Claude to your own file\n▪ Confirm with a primary source and review\n\nFull CCAS-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/associate-foundations\n\n#ClaudeAI #Anthropic #AICertification #ResponsibleAI #GenerativeAI #AIFluency",
+   "comment": "📘 Full CCAS-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/associate-foundations",
    "url": "https://gennoor.com/claude/certifications/associate-foundations"
   },
   {
@@ -552,7 +597,8 @@
    "course": "Claude Certified Architect - Foundations",
    "topic": "Built-in, SDK and External MCP Tools",
    "title": "Tools compared: same gate, different process boundary",
-   "text": "Built-in, in-process or external MCP: same gate, different process boundary.\n\nClaude reads a file with a built-in tool. Then it calls your @tool for a business system, which runs in-process via an SDK MCP server so the logic stays private. A shared third-party capability comes from an external MCP server instead.\n\nAll three pass the same permission gate and use the same tool-use protocol. What changes is where the code runs.\n\nThe takeaway: pick a tool type by where the logic should live. A common CCAR-F comparison question.\n\n🔊 Turn the sound on for the walkthrough.\n\nThe CCAR-F prep course compares every option, with a practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #MCP #ClaudeAgentSDK #AIArchitecture",
+   "text": "Built-in, custom and external tools look alike, but behave differently.\n\n▪ Built-in tools ship with the runtime\n▪ Your @tool runs in-process via an SDK MCP server\n▪ External MCP tools cross a process boundary\n▪ One hook and permission gate for all of them\n\nFull CCAR-F prep course, chapter by chapter + practice exam:\n👉 https://gennoor.com/claude/certifications/architect-foundations\n\n#ClaudeAI #Anthropic #AICertification #MCP #ClaudeAgentSDK #AIArchitecture",
+   "comment": "📘 Full CCAR-F prep course, chapter by chapter + practice exam: https://gennoor.com/claude/certifications/architect-foundations",
    "url": "https://gennoor.com/claude/certifications/architect-foundations"
   }
  ]

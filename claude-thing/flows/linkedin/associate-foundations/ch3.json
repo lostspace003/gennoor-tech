@@ -1,7 +1,13 @@
 {
   "topic": "Claude Artifacts",
-  "hook": "Your best procedure is buried 30 turns up in a chat. That is where it goes to die.",
-  "body": "Maya asks Claude for a 10-step client onboarding procedure. It lands in chat, and 30 turns later it is lost in scrollback.\n\nA colleague shows her Artifacts. She asks again, Claude judges the content reusable and renders it in the side panel, apart from the conversation. Two days later it is still there to reuse.\n\nThe takeaway: chat is for conversation, Artifacts are for things you will keep. Knowing when Claude creates one is classic CCAS-F material.\n\n🔊 Turn the sound on for the walkthrough.\n\nThis chapter and the rest of the CCAS-F prep course are here, with a practice exam:",
+  "hook": "Useful Claude output gets buried in chat scrollback and lost.",
+  "bullets": [
+    "Ask for reusable content as an Artifact",
+    "It opens in a side panel, apart from chat",
+    "Edit in place, versions kept",
+    "Share one stable link with the team"
+  ],
+  "cta": "Full CCAS-F prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

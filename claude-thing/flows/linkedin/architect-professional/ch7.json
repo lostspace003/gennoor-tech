@@ -1,7 +1,13 @@
 {
   "topic": "Canary Rollout With Auto-Revert",
-  "hook": "The release passed at 5%. It passed at 50%, until it did not.",
-  "body": "Week 27: no big-bang release. You arm the rollback gate before any traffic moves, then route the new hybrid retrieval to 5% of clinicians.\n\nAfter 48 hours the gate checks accuracy and hallucination rate; stage 2 passes too, so the canary widens to 50%. At stage 3 the metrics slip, and the gate reverts automatically.\n\nThe takeaway: arm the rollback before the rollout. A defensible-release pattern the Claude Certified Architect – Professional (CCAR-P) expects.\n\nThe CCAR-P prep course ends the Meridian rollout here, with a practice exam:",
+  "hook": "A model change ships to everyone, and quality drops before anyone notices.",
+  "bullets": [
+    "Arm the rollback gate before traffic moves",
+    "Canary at 5%, then 25%, then 50%",
+    "Accuracy breach triggers auto-revert",
+    "On-call SRE alerted, no big-bang release"
+  ],
+  "cta": "Full CCAR-P prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

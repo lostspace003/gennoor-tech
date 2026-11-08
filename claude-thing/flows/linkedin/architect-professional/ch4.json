@@ -1,7 +1,13 @@
 {
   "topic": "Human Approval Before Payouts",
-  "hook": "The refund agent proposed $50,000. Ungated, it would simply have paid it.",
-  "body": "Week 15: you place can_use_tool between the model's output and any irreversible action.\n\nOver $100, the runtime pauses and the callback posts the exact input to Slack. The manager clicks Approve, the callback returns PermissionResultAllow, and only then does the refund execute.\n\nThe takeaway: the gate sits on the action, not on the conversation. Least-privilege agent tooling is a full CCAR-P exam domain.\n\n🔊 Turn the sound on for the walkthrough.\n\nLearn HITL design in the CCAR-P prep course, with a practice exam:",
+  "hook": "Your agent can issue a large refund and nobody checks it first.",
+  "bullets": [
+    "can_use_tool between model output and action",
+    "Large amounts pause the agent",
+    "Exact input sent to a manager to approve",
+    "Small refunds still execute at once"
+  ],
+  "cta": "Full CCAR-P prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

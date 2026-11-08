@@ -1,7 +1,13 @@
 {
   "topic": "Routing API Errors by Severity",
-  "hook": "A 429 and a 401 are both errors. Only one should wake someone up.",
-  "body": "TicketFlow runs on BYOC in your AWS account. A retry-loop bug resends a rate-limited call, and 429s start to pile up.\n\nMonitoring groups errors by cause: 429s are rated warn, so the system logs and backs off. An authentication failure is different, and pages on-call.\n\nThe takeaway: route errors by what they mean, not by the fact that they failed. Operational judgement like this shows up across the CCDV-F exam.\n\n🔊 Turn the sound on for the walkthrough.\n\nFinish the TicketFlow story in the CCDV-F prep course, with a practice exam:",
+  "hook": "Rate-limit errors spike, and your retry loop makes it worse.",
+  "bullets": [
+    "A buggy retry loop resends again and again",
+    "Monitoring groups errors by cause",
+    "Severity decides: log, back off or page",
+    "Fix the retry with backoff"
+  ],
+  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

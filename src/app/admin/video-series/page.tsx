@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Loader2, Power, Send, SkipForward, RotateCcw, Pencil, Check, ExternalLink, Film } from 'lucide-react'
 
-interface Item { id: string; date: string; time: string; code: string; course: string; topic: string; title: string; text: string; url: string; skip: boolean; edited: boolean }
+interface Item { id: string; date: string; time: string; code: string; course: string; topic: string; title: string; text: string; comment?: string; url: string; skip: boolean; edited: boolean }
 interface Run { status: 'done' | 'failed' | 'missed'; at: string; attempts: number; urn?: string; error?: string }
 interface Data {
   enabled: boolean; items: Item[]; runs: Record<string, Partial<Record<'organization' | 'member', Run>>>; log: { at: string; msg: string }[]; lastTick?: string
@@ -107,7 +107,7 @@ export default function VideoSeriesPage() {
                         <button onClick={() => setEdit(null)} className="px-3 py-1.5 rounded-lg border border-gray-300 text-sm">Cancel</button>
                       </div>
                     </div>
-                  ) : <pre className="whitespace-pre-wrap break-words text-sm text-gray-800 font-sans max-h-80 overflow-auto">{i.text}</pre>}
+                  ) : <div><pre className="whitespace-pre-wrap break-words text-sm text-gray-800 font-sans max-h-80 overflow-auto">{i.text}</pre>{i.comment && <div className="mt-2 text-xs text-gray-600 break-words"><span className="font-semibold">First comment:</span> {i.comment}</div>}</div>}
                 </div>
               )}
             </div>

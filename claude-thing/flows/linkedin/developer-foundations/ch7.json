@@ -1,7 +1,13 @@
 {
   "topic": "Format Drift in Long Contexts",
-  "hook": "By turn 15 the JSON quietly lost a field. Lowering temperature will not fix it.",
-  "body": "For five turns Claude returns perfect JSON. Then 20+ tool outputs pile up and bury the schema, and the \"priority\" field goes missing.\n\nThe video rules out the tempting fix: temperature tunes randomness, not attention to the schema. The real remedies work on the context itself, including pruning it.\n\nThe takeaway: format drift is a context problem. Spotting the wrong fix is exactly what CCDV-F questions test.\n\n🔊 Turn the sound on for the walkthrough.\n\nLearn the structured-output chapters in the CCDV-F prep course, with a practice exam:",
+  "hook": "Deep into a long run, your JSON output starts dropping fields.",
+  "bullets": [
+    "Tool outputs pile up and bury the schema",
+    "Format drift, not randomness",
+    "Lowering temperature won't fix it",
+    "Prune, summarize and resend the schema"
+  ],
+  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

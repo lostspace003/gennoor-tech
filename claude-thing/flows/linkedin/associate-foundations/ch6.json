@@ -1,7 +1,13 @@
 {
   "topic": "Claude Projects",
-  "hook": "Pasting the same 300-word brief into every chat? Write it once instead.",
-  "body": "Maya pastes an identical brief into eight client chats in a row. Then she creates a \"Quarterly Client Summaries\" Project, writes the rules once and uploads the terminology guide.\n\nEvery new chat inside the Project inherits the rules and the glossary, so her prompts shrink to what is actually new.\n\nThe takeaway: Projects hold shared instructions and knowledge so individual chats do not have to. Expect workspace questions like this on the CCAS-F exam.\n\nSee every chapter of the CCAS-F (Claude Certified Associate – Foundations) prep course, plus a practice exam:",
+  "hook": "You paste the same long brief into every new chat.",
+  "bullets": [
+    "Create a Project once",
+    "Custom instructions hold the rules",
+    "Uploaded files hold the knowledge",
+    "New chats inherit it, prompts stay short"
+  ],
+  "cta": "Full CCAS-F prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

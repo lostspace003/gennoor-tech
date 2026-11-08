@@ -1,7 +1,13 @@
 {
   "topic": "Deny Beats Allow",
-  "hook": "You allowed Read and Grep. Claude still asked for Bash. That is expected.",
-  "body": "ClaudeAgentOptions allows Read and Grep, denies Bash, and caps the run at 10 turns. Claude asks for Bash anyway.\n\nWhy? allowed_tools approves tools; it does not hide the others. The SDK refuses the call before anything runs, because a deny rule always beats an allow, and Claude turns to an allowed tool.\n\nThe takeaway: allow lists grant, deny lists enforce. A favourite CCAR-F exam distinction.\n\n🔊 Turn the sound on for the walkthrough.\n\nSee every options chapter in the CCAR-F prep course, with a practice exam:",
+  "hook": "You allowed only Read and Grep, yet the agent still asks to run Bash.",
+  "bullets": [
+    "allowed_tools approves tools, it does not hide others",
+    "Disallowed Bash is refused before anything runs",
+    "Claude gets an error, not a silent skip",
+    "Deny always beats allow"
+  ],
+  "cta": "Full CCAR-F prep course, chapter by chapter + practice exam:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
