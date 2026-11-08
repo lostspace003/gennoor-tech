@@ -206,8 +206,8 @@ export default function ExamPlayer({ open, courseKey, questions, chapters, auth,
                     {correct ? <><CircleCheck /> Correct</> : <><CircleX /> Not quite — the correct answer is {(Array.isArray(q.a) ? q.a : [q.a]).map(i => String.fromCharCode(65 + i)).join(' and ')}</>}
                   </div>
                   <div className="body">
-                    <div><b>Why</b><p dangerouslySetInnerHTML={{ __html: q.w }} /></div>
-                    {q.x && <div><b>Why not the others</b><p dangerouslySetInnerHTML={{ __html: q.x }} /></div>}
+                    <div><b>Why</b><div className="cc-fb-text" dangerouslySetInnerHTML={{ __html: q.w }} /></div>
+                    {q.x && <div><b>Why not the others</b><div className="cc-fb-text" dangerouslySetInnerHTML={{ __html: q.x }} /></div>}
                     <div>
                       <b>Concept tested</b>
                       <p style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
