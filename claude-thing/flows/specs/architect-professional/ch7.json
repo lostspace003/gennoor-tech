@@ -1,0 +1,19 @@
+{
+  "title": "Canary rollout: the gate reverts at 50%",
+  "kicker": "Meridian rollout · Week 27",
+  "actors": [
+    { "id": "you", "icon": "user", "label": "You", "sub": "Principal Architect", "slot": "L" },
+    { "id": "splitter", "icon": "split", "label": "Traffic split", "sub": "canary vs baseline", "slot": "C" },
+    { "id": "gate", "icon": "gauge", "label": "Rollback gate", "sub": "checks thresholds", "slot": "TR" },
+    { "id": "oncall", "icon": "siren", "label": "On-call SRE", "sub": "gets paged", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "Week 27. No big-bang release: you arm the rollback gate before traffic moves.", "focus": ["you"], "send": { "from": "you", "to": "gate", "icon": "sliders-horizontal", "label": "thresholds" }, "callout": { "at": "gate", "text": "Revert if acc drops >2 pts or halluc +1" }, "state": { "at": "gate", "text": "baseline acc 95.8%" } },
+    { "caption": "Stage 1: the splitter routes the hybrid retrieval release to 5% of clinicians.", "focus": ["splitter"], "send": { "from": "you", "to": "splitter", "icon": "rocket", "label": "hybrid retrieval" }, "state": { "at": "splitter", "text": "5% canary · 48 h" } },
+    { "caption": "After 48 h the gate checks the canary: 96.2% accuracy, 1.8% hallucination.", "send": { "from": "splitter", "to": "gate", "icon": "chart-line", "label": "acc 96.2% · hal 1.8%" }, "reply": { "from": "gate", "to": "splitter", "icon": "arrow-right", "label": "pass → 25%" }, "state": { "at": "splitter", "text": "25% canary · 48 h" } },
+    { "caption": "Stage 2 passes too (96.1%, 1.9%), so the gate widens the canary to 50%.", "send": { "from": "splitter", "to": "gate", "icon": "chart-line", "label": "acc 96.1% · hal 1.9%" }, "reply": { "from": "gate", "to": "splitter", "icon": "arrow-right", "label": "pass → 50%" }, "state": { "at": "splitter", "text": "50% canary · 24 h" } },
+    { "caption": "Stage 3 at 50%: accuracy falls to 93.2%, a 2.6-point drop. Threshold breached.", "focus": ["gate"], "send": { "from": "splitter", "to": "gate", "icon": "chart-line", "label": "acc 93.2% · −2.6 pts" }, "callout": { "at": "gate", "text": "−2.6 pts: over the 2-pt limit" }, "badge": { "at": "gate", "kind": "cross", "text": "breached" } },
+    { "caption": "Automatic rollback: the gate reverts all traffic to baseline and pages on-call.", "send": { "from": "gate", "to": "splitter", "icon": "refresh-cw", "label": "revert to baseline" }, "reply": { "from": "gate", "to": "oncall", "icon": "siren", "label": "page: regression" }, "callout": { "at": "oncall", "text": "Canary rollback: accuracy regression" }, "state": { "at": "splitter", "text": "100% baseline" } },
+    { "caption": "Half the clinicians never saw it. You trace the drop to rare claim types.", "focus": ["you"], "send": { "from": "oncall", "to": "you", "icon": "clipboard-list", "label": "runbook → escalate" }, "callout": { "at": "you", "text": "Refine the re-ranker, then re-test" }, "badge": { "at": "splitter", "kind": "check", "text": "contained" } }
+  ]
+}

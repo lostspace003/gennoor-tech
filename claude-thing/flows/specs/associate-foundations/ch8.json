@@ -1,0 +1,19 @@
+{
+  "title": "Memory: Claude remembers the tiers across chats",
+  "kicker": "Maya's story · Week 3",
+  "actors": [
+    { "id": "maya", "icon": "user", "label": "Maya", "sub": "ops analyst", "slot": "L" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "references Memory", "slot": "C" },
+    { "id": "memory", "icon": "brain", "label": "Memory", "sub": "managed in Settings", "slot": "TR" },
+    { "id": "drive", "icon": "cloud", "label": "Google Drive", "sub": "live client files", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "Monday: Maya explains Brightline's three client tiers to Claude in detail.", "focus": ["maya"], "send": { "from": "maya", "to": "claude", "icon": "message-square", "label": "3 client tiers" } },
+    { "caption": "Tuesday, a new chat: she asks about tier-2 renewals and Claude has no idea.", "focus": ["claude"], "send": { "from": "maya", "to": "claude", "icon": "message-square", "label": "tier-2 renewals?" }, "callout": { "at": "claude", "text": "Tier 2? No idea what that means." }, "badge": { "at": "claude", "kind": "warn", "text": "from scratch" } },
+    { "caption": "Maya switches Memory on in Settings and tells Claude the tiers once.", "focus": ["maya"], "send": { "from": "maya", "to": "claude", "icon": "notebook-pen", "label": "Remember: 3 tiers" }, "callout": { "at": "maya", "text": "Tier 2 = mid-market, $10k-50k" } },
+    { "caption": "Memory holds recurring facts; Maya can view, edit or delete them in Settings.", "focus": ["memory"], "send": { "from": "claude", "to": "memory", "icon": "brain", "label": "tiers, role, cadence" }, "callout": { "at": "maya", "text": "Not this quarter's numbers" }, "state": { "at": "memory", "text": "tiers · role · cadence" } },
+    { "caption": "Next chat, same question: Claude references Memory and already knows tier 2.", "focus": ["claude"], "send": { "from": "claude", "to": "memory", "icon": "search", "label": "tier 2?" }, "reply": { "from": "memory", "to": "claude", "icon": "file-text", "label": "mid-market $10k-50k" } },
+    { "caption": "Claude answers the tier-2 question; Maya never re-explains the tiers.", "focus": ["maya"], "send": { "from": "claude", "to": "maya", "icon": "message-square", "label": "tier-2 answer" }, "badge": { "at": "maya", "kind": "check", "text": "remembered" } },
+    { "caption": "She also connects Google Drive: Claude finds and reads the Acme Corp summary.", "focus": ["drive"], "send": { "from": "claude", "to": "drive", "icon": "search", "label": "Acme Corp summary" }, "reply": { "from": "drive", "to": "claude", "icon": "file-text", "label": "Acme Corp file" }, "callout": { "at": "claude", "text": "I see only what Maya can see" }, "state": { "at": "drive", "text": "no manual upload" } }
+  ]
+}

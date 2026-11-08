@@ -94,3 +94,6 @@ Gennoor Promo Video - VO.mp4
 
 # Rendered GIF exports of the CCAR-F diagrams (~50MB); regenerate with claude-thing/ccarf-guide/ccarf-guide/make_gifs.py
 claude-thing/ccarf-guide/ccarf-guide/gifs/
+
+# Rendered flow animations (uploaded to the media blob container by scripts/upload-cert-flows.mjs)
+claude-thing/flows/out/

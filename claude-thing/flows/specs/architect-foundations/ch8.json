@@ -1,0 +1,17 @@
+{
+  "title": "Sessions: resume remembers, fork branches",
+  "kicker": "Agent SDK · Sessions",
+  "actors": [
+    { "id": "code", "icon": "code", "label": "Your code", "sub": "calls query()", "slot": "L" },
+    { "id": "agent", "icon": "sparkles", "label": "Claude", "sub": "the agent loop", "slot": "C" },
+    { "id": "store", "icon": "history", "label": "Session store", "sub": "~/.claude/projects", "slot": "R" }
+  ],
+  "steps": [
+    { "caption": "Your code sends turn 1; the agent reads report.md and notes the key numbers.", "focus": ["code"], "send": { "from": "code", "to": "agent", "icon": "message-square", "label": "read report.md" }, "callout": { "at": "agent", "text": "revenue $4.2M, growth 12%" } },
+    { "caption": "The runtime saves the transcript; your code captures session_id sess-0001.", "send": { "from": "agent", "to": "store", "icon": "file-text", "label": "transcript JSONL" }, "reply": { "from": "agent", "to": "code", "icon": "key-round", "label": "session_id sess-0001" }, "badge": { "at": "code", "kind": "check", "text": "id captured" }, "state": { "at": "store", "text": "sess-0001 saved" } },
+    { "caption": "Next morning, resume=sess-0001 reloads the history into a new context.", "send": { "from": "code", "to": "agent", "icon": "refresh-cw", "label": "resume=sess-0001" }, "reply": { "from": "store", "to": "agent", "icon": "history", "label": "history reloaded" }, "callout": { "at": "agent", "text": "Revenue was $4.2M (recalled)" }, "state": { "at": "agent", "text": "context: sess-0001" } },
+    { "caption": "No resume means a brand-new session: the agent has no memory of the report.", "focus": ["agent"], "send": { "from": "code", "to": "agent", "icon": "message-square", "label": "revenue? (no resume)" }, "callout": { "at": "agent", "text": "I have no earlier context…" }, "state": { "at": "agent", "text": "context: empty" } },
+    { "caption": "fork_session=True branches into sess-0003; the original session stays untouched.", "send": { "from": "code", "to": "agent", "icon": "git-branch", "label": "fork: revenue -10%" }, "reply": { "from": "agent", "to": "store", "icon": "git-branch", "label": "new id sess-0003" }, "callout": { "at": "agent", "text": "Branch: revenue $3.78M (-10%)" }, "state": { "at": "agent", "text": "context: sess-0003" } },
+    { "caption": "Forking branches the chat, not files; never sum total_cost_usd across resumes.", "focus": ["store"], "badge": { "at": "store", "kind": "check", "text": "untouched" }, "callout": { "at": "code", "text": "total_cost_usd: don't sum resumes" }, "state": { "at": "store", "text": "sess-0001 + sess-0003" } }
+  ]
+}

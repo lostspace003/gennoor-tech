@@ -1,0 +1,18 @@
+{
+  "title": "Code Execution: exact numbers, not predictions",
+  "kicker": "Maya's story · Week 2",
+  "actors": [
+    { "id": "maya", "icon": "user", "label": "Maya", "sub": "ops analyst", "slot": "L" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "language model", "slot": "C" },
+    { "id": "sandbox", "icon": "server", "label": "Sandbox", "sub": "runs the Python", "slot": "R" }
+  ],
+  "steps": [
+    { "caption": "Maya uploads a 50-row expense sheet and asks Claude to sum column D.", "focus": ["maya"], "send": { "from": "maya", "to": "claude", "icon": "file-spreadsheet", "label": "expense sheet" } },
+    { "caption": "Claude says 'about $47,300'. Maya checks by hand: the real total is $44,287.", "focus": ["claude"], "callout": { "at": "claude", "text": "≈ $47,300… then $46,950" }, "state": { "at": "claude", "text": "guessing a number" } },
+    { "caption": "Her manager explains: a language model predicts text, it does not compute.", "focus": ["claude"], "state": { "at": "claude", "text": "predicts, not computes" } },
+    { "caption": "Maya enables Code Execution and uploads the same file again.", "focus": ["maya"], "send": { "from": "maya", "to": "claude", "icon": "file-spreadsheet", "label": "same sheet again" }, "state": { "at": "claude", "text": "Code Execution on" } },
+    { "caption": "This time Claude writes Python to sum column D and runs it in a sandbox.", "send": { "from": "claude", "to": "sandbox", "icon": "code", "label": "Python: sum col D" }, "state": { "at": "sandbox", "text": "running the code" } },
+    { "caption": "The sandbox returns $44,287. Claude shows Maya the code and its output.", "send": { "from": "sandbox", "to": "claude", "icon": "hash", "label": "$44,287" }, "reply": { "from": "claude", "to": "maya", "icon": "file-code", "label": "code + $44,287" }, "badge": { "at": "sandbox", "kind": "check", "text": "exact" }, "state": { "at": "sandbox", "text": "50 rows summed" } },
+    { "caption": "Maya reads the code and spot-checks a few rows before she relies on it.", "focus": ["maya"], "callout": { "at": "maya", "text": "Right file, column D, rows match" }, "badge": { "at": "maya", "kind": "check", "text": "verified" } }
+  ]
+}

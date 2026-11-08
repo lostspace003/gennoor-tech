@@ -1,0 +1,19 @@
+{
+  "title": "Error routing: 429 warns, 401 pages on-call",
+  "kicker": "TicketFlow · Week 13",
+  "actors": [
+    { "id": "you", "icon": "user", "label": "You", "sub": "Loomline engineer", "slot": "L" },
+    { "id": "app", "icon": "server", "label": "TicketFlow", "sub": "live on BYOC · AWS", "slot": "C" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude API", "sub": "the model endpoint", "slot": "TR" },
+    { "id": "monitor", "icon": "gauge", "label": "Monitoring", "sub": "routes by impact", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "TicketFlow goes live on BYOC in your AWS account: data stays in-region.", "focus": ["you", "app"], "send": { "from": "you", "to": "app", "icon": "rocket", "label": "deploy · BYOC" }, "state": { "at": "app", "text": "data stays in-region" } },
+    { "caption": "A TicketFlow call hits the rate limit: Claude returns RateLimitError (429).", "send": { "from": "app", "to": "claude", "icon": "send", "label": "messages.create" }, "reply": { "from": "claude", "to": "app", "icon": "triangle-alert", "label": "429 RateLimitError" } },
+    { "caption": "A retry-loop bug resends the failed call, and the 429s start to pile up.", "focus": ["app"], "send": { "from": "app", "to": "claude", "icon": "repeat", "label": "retry loop" }, "reply": { "from": "claude", "to": "app", "icon": "triangle-alert", "label": "429 again" }, "callout": { "at": "app", "text": "retry → 429 → retry → 429…" }, "badge": { "at": "claude", "kind": "warn", "text": "429 spike" }, "state": { "at": "app", "text": "429s spiking" } },
+    { "caption": "Monitoring groups errors by cause and rates the 429s as warn: log, back off.", "focus": ["monitor"], "send": { "from": "app", "to": "monitor", "icon": "chart-bar", "label": "429s by cause" }, "callout": { "at": "monitor", "text": "429 → warn · back off" } },
+    { "caption": "The warning reaches you, not the pager; you trace it to the retry loop.", "focus": ["you"], "send": { "from": "monitor", "to": "you", "icon": "bell", "label": "warn: 429 spike" }, "callout": { "at": "you", "text": "A retry loop. Found it." } },
+    { "caption": "Your backoff fix passes CI/CD: tests, evals, security scans. Then it ships.", "send": { "from": "you", "to": "app", "icon": "git-branch", "label": "fix: backoff" }, "badge": { "at": "app", "kind": "check", "text": "evals pass" }, "state": { "at": "app", "text": "backs off on 429" } },
+    { "caption": "Only a 401 AuthenticationError would page on-call. The 429s never woke anyone.", "focus": ["monitor"], "callout": { "at": "monitor", "text": "401 → critical · page on-call" }, "badge": { "at": "monitor", "kind": "check", "text": "never paged" } }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "title": "Messages API: your first call, every token counted",
+  "kicker": "TicketFlow · Day 1",
+  "actors": [
+    { "id": "you", "icon": "user", "label": "You", "sub": "Day 1 AI engineer", "slot": "L" },
+    { "id": "app", "icon": "code", "label": "TicketFlow", "sub": "Python service", "slot": "C" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "claude-sonnet-4-5", "slot": "TR" },
+    { "id": "ledger", "icon": "receipt", "label": "Cost log", "sub": "usage per call", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "Day 1 at Loomline: you lift the classifier out of its notebook into a service.", "focus": ["you"], "send": { "from": "you", "to": "app", "icon": "file-code", "label": "e01_basic.py" }, "state": { "at": "app", "text": "anthropic.Anthropic()" } },
+    { "caption": "You pick Sonnet, the balanced tier for real-time triage, and set max_tokens.", "focus": ["claude"], "callout": { "at": "claude", "text": "Sonnet: most production workloads" }, "state": { "at": "app", "text": "max_tokens=1024" } },
+    { "caption": "You dodge the exam trap: behavior lives in system; the user turn is the ticket.", "focus": ["app"], "callout": { "at": "app", "text": "system: behavior · user: the ticket" }, "badge": { "at": "app", "kind": "check", "text": "consolidated" }, "state": { "at": "app", "text": "system + messages set" } },
+    { "caption": "TicketFlow calls messages.create() with model, max_tokens, system and messages.", "send": { "from": "app", "to": "claude", "icon": "send", "label": "\"User can't log in\"" }, "state": { "at": "app", "text": "POST /v1/messages" } },
+    { "caption": "Claude returns content, stop_reason and usage; TicketFlow reads content[0].text.", "focus": ["claude"], "send": { "from": "claude", "to": "app", "icon": "message-square", "label": "Authentication, High" }, "state": { "at": "app", "text": "content[0].text" } },
+    { "caption": "TicketFlow logs message.usage: 42 input + 18 output tokens. You pay for both.", "send": { "from": "app", "to": "ledger", "icon": "coins", "label": "42 in · 18 out" }, "state": { "at": "ledger", "text": "42 in / 18 out tokens" }, "badge": { "at": "ledger", "kind": "check", "text": "cost-tracked" } },
+    { "caption": "The answer comes back to you, every token counted: ready for real traffic.", "focus": ["you"], "send": { "from": "app", "to": "you", "icon": "ticket", "label": "Authentication, High" }, "badge": { "at": "you", "kind": "check", "text": "ready" } }
+  ]
+}

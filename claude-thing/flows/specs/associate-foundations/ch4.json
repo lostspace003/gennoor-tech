@@ -1,0 +1,19 @@
+{
+  "title": "Prompt structure: four elements, one consistent answer",
+  "kicker": "Maya's story · Week 1",
+  "actors": [
+    { "id": "maya", "icon": "user", "label": "Maya", "sub": "ops analyst", "slot": "L" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "fills the blanks", "slot": "C" },
+    { "id": "manager", "icon": "users", "label": "Manager", "sub": "spots the gap", "slot": "TR" },
+    { "id": "cfo", "icon": "briefcase", "label": "CFO", "sub": "the audience", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "Maya uploads a 20-page client contract and types just \"Summarize this\".", "focus": ["maya"], "send": { "from": "maya", "to": "claude", "icon": "file-text", "label": "20-page contract" }, "callout": { "at": "maya", "text": "Summarize this" } },
+    { "caption": "Run 1: Claude fills the blanks itself and returns a 3-sentence overview.", "focus": ["claude"], "send": { "from": "claude", "to": "maya", "icon": "message-square", "label": "3-sentence overview" }, "callout": { "at": "claude", "text": "For whom? Why? I'll guess." } },
+    { "caption": "Same file, same prompt: run 2 gives a 2-page bullet list, run 3 a table.", "send": { "from": "maya", "to": "claude", "icon": "repeat", "label": "same prompt" }, "reply": { "from": "claude", "to": "maya", "icon": "list-checks", "label": "2-page bullets" }, "state": { "at": "claude", "text": "run 3: a table" }, "badge": { "at": "claude", "kind": "warn", "text": "drift" } },
+    { "caption": "Her manager spots the gap: she said what, not who it's for, why or what format.", "focus": ["manager", "maya"], "send": { "from": "manager", "to": "maya", "icon": "lightbulb", "label": "who? why? format?" }, "callout": { "at": "manager", "text": "Role, context, task, format." } },
+    { "caption": "Maya rewrites: a role, the CFO as audience, one page, three bullet sections.", "focus": ["maya"], "send": { "from": "maya", "to": "claude", "icon": "pen-line", "label": "structured prompt" }, "callout": { "at": "maya", "text": "You are a contract analyst…" } },
+    { "caption": "Claude returns one page, three bullet sections. Nothing to guess: runs converge.", "send": { "from": "claude", "to": "maya", "icon": "file-check", "label": "1-page summary" }, "callout": { "at": "claude", "text": "Payment · Renewal · Liability" }, "state": { "at": "claude", "text": "reruns converge" }, "badge": { "at": "maya", "kind": "check", "text": "consistent" } },
+    { "caption": "Maya sends the one page to the CFO, who reads it before the board meeting.", "focus": ["cfo"], "send": { "from": "maya", "to": "cfo", "icon": "file-check", "label": "1-page summary" }, "state": { "at": "cfo", "text": "read before the board" } }
+  ]
+}

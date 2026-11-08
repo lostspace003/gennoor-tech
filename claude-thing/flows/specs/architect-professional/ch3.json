@@ -1,0 +1,19 @@
+{
+  "title": "Prompt caching: pay for the filing once",
+  "kicker": "Meridian rollout · Week 11",
+  "actors": [
+    { "id": "you", "icon": "user", "label": "You", "sub": "Principal Architect", "slot": "L" },
+    { "id": "legal", "icon": "scale", "label": "Legal workflow", "sub": "14 queries / filing", "slot": "C" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "$3/M input", "slot": "TR" },
+    { "id": "cache", "icon": "database", "label": "Prompt cache", "sub": "server-side · 5-min", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "Meridian is $840k over budget. Legal resends the 80-page filing on 14 queries.", "focus": ["legal"], "send": { "from": "legal", "to": "claude", "icon": "file-text", "label": "filing · 40k tokens" } },
+    { "caption": "Each query bills fresh input: 14 × 40k = 560k tokens at $3/M, $1.68 per case.", "focus": ["claude"], "callout": { "at": "claude", "text": "40k fresh tokens, 14 times" }, "badge": { "at": "legal", "kind": "warn", "text": "$1.68/case" } },
+    { "caption": "You reorder the prompt: the filing goes first, marked cache_control: ephemeral.", "focus": ["you"], "send": { "from": "you", "to": "legal", "icon": "file-code", "label": "cache_control prefix" }, "callout": { "at": "you", "text": "static first, dynamic after" } },
+    { "caption": "Query 1 writes the 40k-token prefix to the cache at input price: $0.12.", "send": { "from": "legal", "to": "claude", "icon": "file-text", "label": "query 1 · filing" }, "reply": { "from": "claude", "to": "cache", "icon": "database", "label": "cache write · $0.12" }, "state": { "at": "cache", "text": "40k cached · 5-min TTL" } },
+    { "caption": "Queries 2–14 reuse the prefix: cache reads at $0.30/M, and TTFT drops too.", "send": { "from": "legal", "to": "claude", "icon": "message-square", "label": "queries 2–14" }, "reply": { "from": "cache", "to": "claude", "icon": "zap", "label": "cache read · 40k" }, "callout": { "at": "cache", "text": "$0.30/M · ~10% of input price" }, "state": { "at": "claude", "text": "prefill skipped" } },
+    { "caption": "13 reads cost $0.156. Per case: $1.68 → $0.276, an 84% saving on filing tokens.", "send": { "from": "claude", "to": "legal", "icon": "receipt", "label": "$0.276 / case" }, "focus": ["legal"], "state": { "at": "legal", "text": "$0.276 per case" } },
+    { "caption": "Your rollout rule: cache any static prefix ≥1024 tokens reused within 5 minutes.", "focus": ["you"], "callout": { "at": "you", "text": "≥1024 tokens · recurs in 5 min" }, "badge": { "at": "you", "kind": "check", "text": "84% saved" } }
+  ]
+}

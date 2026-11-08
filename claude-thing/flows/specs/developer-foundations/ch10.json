@@ -1,0 +1,20 @@
+{
+  "title": "MCP server: write once, three apps plug in",
+  "kicker": "TicketFlow · Week 10",
+  "actors": [
+    { "id": "you", "icon": "user", "label": "You", "sub": "Loomline AI engineer", "slot": "L" },
+    { "id": "mcp", "icon": "plug", "label": "MCP server", "sub": "jira + crm tools", "slot": "C" },
+    { "id": "jira", "icon": "clipboard-list", "label": "Jira", "sub": "external system", "slot": "R" },
+    { "id": "ticketflow", "icon": "ticket", "label": "TicketFlow", "sub": "MCP client · app 1", "slot": "TL" },
+    { "id": "dashboard", "icon": "monitor", "label": "Dashboard", "sub": "Escalation · app 2", "slot": "BL" }
+  ],
+  "steps": [
+    { "caption": "Three teams need the same Jira and CRM tools; a copy per app will drift.", "focus": ["you"], "callout": { "at": "you", "text": "Paste the tool code into 3 apps?" }, "badge": { "at": "you", "kind": "warn", "text": "drift" } },
+    { "caption": "You build one MCP server: jira_create_issue + crm_lookup_customer over JSON-RPC.", "send": { "from": "you", "to": "mcp", "icon": "file-code", "label": "jira + crm tools" }, "callout": { "at": "mcp", "text": "Narrow tools, not raw SQL access" }, "state": { "at": "mcp", "text": "stdio · http · sse" } },
+    { "caption": "TicketFlow calls tools/list; each tool appears as mcp__<server>__<tool>.", "send": { "from": "ticketflow", "to": "mcp", "icon": "search", "label": "tools/list" }, "reply": { "from": "mcp", "to": "ticketflow", "icon": "list-checks", "label": "2 tools" }, "callout": { "at": "ticketflow", "text": "e.g. mcp__jira__create_issue" }, "state": { "at": "ticketflow", "text": "in allowed_tools" } },
+    { "caption": "Escalation Dashboard and Analytics plug into the same server: no new glue.", "send": { "from": "dashboard", "to": "mcp", "icon": "plug", "label": "tools/list" }, "reply": { "from": "mcp", "to": "dashboard", "icon": "list-checks", "label": "same 2 tools" }, "state": { "at": "dashboard", "text": "plugged in, no glue" } },
+    { "caption": "TicketFlow sends tools/call; the server reaches Jira with a token from env.", "send": { "from": "ticketflow", "to": "mcp", "icon": "wrench", "label": "tools/call" }, "reply": { "from": "mcp", "to": "jira", "icon": "key-round", "label": "Jira API · env token" }, "callout": { "at": "mcp", "text": "token via env · per-user OAuth" } },
+    { "caption": "Jira answers; the tool result returns and is treated as untrusted data.", "send": { "from": "jira", "to": "mcp", "icon": "file-check", "label": "issue created" }, "reply": { "from": "mcp", "to": "ticketflow", "icon": "file-check", "label": "tool result" }, "callout": { "at": "ticketflow", "text": "tool result = untrusted data" }, "state": { "at": "ticketflow", "text": "approve side effects" } },
+    { "caption": "One fix to the Jira tool lands in all three apps: write once, reuse everywhere.", "focus": ["mcp"], "send": { "from": "you", "to": "mcp", "icon": "git-branch", "label": "fix: jira tool" }, "callout": { "at": "you", "text": "Shared → MCP · private → custom tool" }, "badge": { "at": "mcp", "kind": "check", "text": "write once" }, "state": { "at": "mcp", "text": "serves 3 apps" } }
+  ]
+}

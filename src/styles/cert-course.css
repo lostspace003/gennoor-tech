@@ -95,6 +95,26 @@
 .cc-scene .prev b { color: var(--cc-quiet); font-weight: 600; text-transform: uppercase; letter-spacing: .1em; font-size: 10.5px; white-space: nowrap; padding-top: 2px; }
 @media (max-width: 640px) { .cc-scene { grid-template-columns: 1fr; padding: 16px; } .cc-scene .tile { width: 42px; height: 42px; } .cc-scene h1 { font-size: 21px; } }
 
+/* ── flow animations ─────────────────────────────────────────────────────── */
+.cc-flow { margin: 0; min-width: 0; }
+.cc-flow-frame { position: relative; border-radius: 14px; overflow: hidden; border: 1px solid var(--cc-line); background: #fff; aspect-ratio: 16 / 9; }
+.cc-flow-frame video { display: block; width: 100%; height: 100%; object-fit: cover; background: #fff; }
+.cc-flow-ctl { position: absolute; right: 8px; bottom: 8px; display: flex; gap: 4px; opacity: 0; transition: opacity .15s; }
+.cc-flow-frame:hover .cc-flow-ctl, .cc-flow-frame:focus-within .cc-flow-ctl { opacity: 1; }
+.cc-flow-ctl button { width: 28px; height: 28px; border-radius: 999px; border: 1px solid var(--cc-line2); background: rgba(255, 255, 255, .92); color: var(--cc-ink); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.cc-flow-ctl button svg { width: 13px; height: 13px; }
+.cc-flow-ctl button:hover { border-color: var(--cc-blue); color: var(--cc-blue); }
+.cc-flow-big { position: absolute; inset: 0; margin: auto; width: 54px; height: 54px; border-radius: 999px; border: 0; background: var(--cc-ink); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.cc-flow-big svg { width: 22px; height: 22px; }
+.cc-flow figcaption { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 5px; font-size: 11.5px; color: var(--cc-quiet); }
+.cc-flow figcaption a { display: inline-flex; align-items: center; gap: 4px; color: var(--cc-blue); text-decoration: none; font-weight: 600; }
+.cc-flow figcaption a svg { width: 12px; height: 12px; }
+.cc-flow figcaption a:hover { text-decoration: underline; }
+.cc-flow-hero { margin-bottom: 10px; }
+.cc-scene.has-flow .cc-scene-media { grid-column: 2; width: 100%; max-width: 880px; margin-top: 4px; }
+.cc-scene.has-flow .prev { grid-column: 1 / -1; }
+@media (max-width: 640px) { .cc-scene.has-flow .cc-scene-media { grid-column: 1 / -1; } }
+
 /* ── prose ────────────────────────────────────────────────────────────────── */
 .cc-prose { max-width: 100%; min-width: 0; overflow-wrap: break-word; }
 .cc-prose > :first-child { margin-top: 0; }

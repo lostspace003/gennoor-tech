@@ -1,0 +1,19 @@
+{
+  "title": "Checkpointing: crash at 15, resume at 15",
+  "kicker": "TicketFlow · Week 8",
+  "actors": [
+    { "id": "worker-a", "icon": "cpu", "label": "Worker A", "sub": "stateless, crashes", "slot": "L2" },
+    { "id": "worker-b", "icon": "cpu", "label": "Worker B", "sub": "fresh replacement", "slot": "L3" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "reasons each step", "slot": "C" },
+    { "id": "store", "icon": "database", "label": "Checkpoints", "sub": "shared storage", "slot": "R" }
+  ],
+  "steps": [
+    { "caption": "Worker A takes ticket T-1001: 20 steps, classify → research KB → fix → verify.", "focus": ["worker-a"], "send": { "from": "worker-a", "to": "claude", "icon": "message-square", "label": "step 1: classify" }, "reply": { "from": "claude", "to": "worker-a", "icon": "file-text", "label": "technical, auth" }, "state": { "at": "worker-a", "text": "step 1 of 20" } },
+    { "caption": "Workers crash mid-task. With no saves, dying at step 15 means step 1 again.", "focus": ["worker-a"], "callout": { "at": "worker-a", "text": "no checkpoint → 14 steps lost" }, "state": { "at": "worker-a", "text": "state in memory only" } },
+    { "caption": "After every step you now save step, messages and metadata to shared storage.", "send": { "from": "worker-a", "to": "store", "icon": "file-check", "label": "checkpoint_T-1001" }, "callout": { "at": "store", "text": "{step, messages, meta}" }, "state": { "at": "worker-a", "text": "saving each step" } },
+    { "caption": "Steps 2–14 repeat the beat: ask Claude, read the result, save the checkpoint.", "send": { "from": "worker-a", "to": "claude", "icon": "message-square", "label": "step 14" }, "reply": { "from": "claude", "to": "worker-a", "icon": "file-text", "label": "result" }, "state": { "at": "store", "text": "saved after step 14" } },
+    { "caption": "Worker A dies at step 15. This time the loss is one step, not fourteen.", "focus": ["worker-a"], "badge": { "at": "worker-a", "kind": "cross", "text": "crashed @15" }, "state": { "at": "worker-a", "text": "down at step 15" } },
+    { "caption": "A fresh, stateless Worker B boots and loads the checkpoint from shared storage.", "focus": ["worker-b"], "send": { "from": "worker-b", "to": "store", "icon": "search", "label": "checkpoint_T-1001?" }, "reply": { "from": "store", "to": "worker-b", "icon": "history", "label": "state after step 14" }, "state": { "at": "worker-b", "text": "resumes at step 15" } },
+    { "caption": "Worker B re-runs step 15, safe because each step is idempotent. T-1001 goes on.", "send": { "from": "worker-b", "to": "claude", "icon": "message-square", "label": "step 15" }, "reply": { "from": "claude", "to": "worker-b", "icon": "file-text", "label": "result" }, "badge": { "at": "worker-b", "kind": "check", "text": "resumed @15" }, "callout": { "at": "worker-b", "text": "idempotent: safe to re-run" } }
+  ]
+}

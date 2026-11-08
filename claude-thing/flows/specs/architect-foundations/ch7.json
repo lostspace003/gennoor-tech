@@ -1,0 +1,19 @@
+{
+  "title": "Hooks: deny rm -rf, audit what ran",
+  "kicker": "Agent SDK · Hooks",
+  "actors": [
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "agent loop", "slot": "L" },
+    { "id": "gate", "icon": "shield-check", "label": "Tool gate", "sub": "runs your hooks", "slot": "C" },
+    { "id": "bash", "icon": "terminal", "label": "Bash tool", "sub": "allowed_tools", "slot": "TR" },
+    { "id": "audit", "icon": "file-text", "label": "Audit log", "sub": "PostToolUse", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "Your code registers two hooks: PreToolUse on Bash, PostToolUse with no matcher.", "focus": ["gate"], "callout": { "at": "gate", "text": "HookMatcher(matcher=\"Bash\")" }, "state": { "at": "gate", "text": "2 hooks registered" } },
+    { "caption": "Asked to clean the build folder, Claude reaches for rm -rf and emits a tool_use.", "focus": ["claude"], "send": { "from": "claude", "to": "gate", "icon": "wrench", "label": "Bash: rm -rf build/" }, "callout": { "at": "claude", "text": "\"Clean the build folder\"" } },
+    { "caption": "PreToolUse fires before permissions: block_dangerous sees rm -rf, returns deny.", "focus": ["gate"], "callout": { "at": "gate", "text": "permissionDecision: \"deny\"" }, "badge": { "at": "gate", "kind": "cross", "text": "denied" }, "state": { "at": "bash", "text": "never ran" } },
+    { "caption": "The error tells Claude why it was blocked, so it picks a safe alternative.", "send": { "from": "gate", "to": "claude", "icon": "circle-x", "label": "Blocked by hook" }, "reply": { "from": "claude", "to": "gate", "icon": "wrench", "label": "Bash: ls build/" }, "callout": { "at": "claude", "text": "Blocked by policy. ls build/ instead." } },
+    { "caption": "No rm -rf this time, so the hook returns {} and the gate lets the command run.", "send": { "from": "gate", "to": "bash", "icon": "terminal", "label": "ls build/" }, "reply": { "from": "bash", "to": "gate", "icon": "file-text", "label": "app.bin  main.o" }, "callout": { "at": "gate", "text": "{} = no objection" }, "state": { "at": "bash", "text": "ran: ls build/" } },
+    { "caption": "PostToolUse fires only for the call that ran: one audit line, none for rm -rf.", "focus": ["audit"], "send": { "from": "gate", "to": "audit", "icon": "pen-line", "label": "AUDIT: Bash result" }, "badge": { "at": "audit", "kind": "check", "text": "logged" } },
+    { "caption": "The result reaches Claude, which answers: build folder inspected safely.", "focus": ["claude"], "send": { "from": "gate", "to": "claude", "icon": "file-check", "label": "tool_result" }, "callout": { "at": "claude", "text": "Build folder inspected safely" }, "badge": { "at": "claude", "kind": "check", "text": "safe" } }
+  ]
+}

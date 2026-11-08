@@ -1,0 +1,18 @@
+{
+  "title": "Structured outputs: typed JSON, not text parsing",
+  "kicker": "Agent SDK · Structured outputs",
+  "actors": [
+    { "id": "code", "icon": "code", "label": "Your code", "sub": "calls query()", "slot": "L" },
+    { "id": "agent", "icon": "sparkles", "label": "The agent", "sub": "Agent SDK loop", "slot": "C" },
+    { "id": "invoices", "icon": "folder", "label": "Invoices", "sub": "invoice.txt", "slot": "TR" },
+    { "id": "db", "icon": "database", "label": "Database", "sub": "typed rows", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "Without a schema, the agent answers in prose and your code scrapes the number.", "focus": ["code"], "send": { "from": "agent", "to": "code", "icon": "message-square", "label": "prose answer" }, "callout": { "at": "code", "text": "regex 1250 out of free text?" }, "badge": { "at": "code", "kind": "warn", "text": "text parsing" } },
+    { "caption": "Your code calls query() with output_format: a json_schema of the three fields.", "focus": ["code"], "send": { "from": "code", "to": "agent", "icon": "file-code", "label": "output_format schema" }, "callout": { "at": "code", "text": "{vendor, amount, due_date}" }, "state": { "at": "agent", "text": "output_format set" } },
+    { "caption": "The prompt says \"Extract fields from invoice.txt\", so the agent calls Read.", "focus": ["agent"], "send": { "from": "agent", "to": "invoices", "icon": "search", "label": "Read invoice.txt" }, "reply": { "from": "invoices", "to": "agent", "icon": "file-text", "label": "invoice text" }, "state": { "at": "agent", "text": "allowed_tools=[Read]" } },
+    { "caption": "The JSON validates; repeated failure yields error_max_structured_output_retries.", "focus": ["agent"], "callout": { "at": "agent", "text": "{\"vendor\":\"Acme\",\"amount\":1250.0,…}" }, "badge": { "at": "agent", "kind": "check", "text": "schema valid" } },
+    { "caption": "The validated object arrives in ResultMessage.structured_output, already typed.", "focus": ["code"], "send": { "from": "agent", "to": "code", "icon": "file-check", "label": "structured_output" }, "callout": { "at": "code", "text": "a dict, not a string" }, "state": { "at": "agent", "text": "subtype: success" } },
+    { "caption": "Typed data just works: code adds 10% tax, then writes one row to the database.", "focus": ["code"], "send": { "from": "code", "to": "db", "icon": "table", "label": "Acme · 1250.0" }, "callout": { "at": "code", "text": "round(amount * 1.10, 2) = 1375.0" }, "badge": { "at": "db", "kind": "check", "text": "typed row" } }
+  ]
+}

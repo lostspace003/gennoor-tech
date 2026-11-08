@@ -1,0 +1,19 @@
+{
+  "title": "Tool use: Claude requests, you validate and run",
+  "kicker": "TicketFlow · Week 5",
+  "actors": [
+    { "id": "agent", "icon": "headset", "label": "Support agent", "sub": "mid-conversation", "slot": "L" },
+    { "id": "app", "icon": "code", "label": "TicketFlow", "sub": "your dispatcher", "slot": "C" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "picks the tool", "slot": "TR" },
+    { "id": "db", "icon": "database", "label": "Customer DB", "sub": "mock lookup", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "Week 5: an agent asks TicketFlow to check status for alice@example.com.", "focus": ["agent"], "send": { "from": "agent", "to": "app", "icon": "message-square", "label": "check status: alice" } },
+    { "caption": "You send the message plus a tools array: lookup_customer with a JSON schema.", "send": { "from": "app", "to": "claude", "icon": "file-code", "label": "lookup_customer tool" }, "callout": { "at": "app", "text": "input_schema: email, required" } },
+    { "caption": "Claude does not answer yet: it emits a tool_use block with the email argument.", "focus": ["claude"], "send": { "from": "claude", "to": "app", "icon": "wrench", "label": "tool_use {email}" }, "callout": { "at": "claude", "text": "stop_reason is not end_turn" } },
+    { "caption": "Your dispatcher validates the email first: a malformed one gets an error back.", "focus": ["app"], "callout": { "at": "app", "text": "no \"@\"? error tool_result, no crash" }, "badge": { "at": "app", "kind": "check", "text": "email valid" } },
+    { "caption": "The email passes, so the DB query runs: premium tier, two open tickets.", "send": { "from": "app", "to": "db", "icon": "search", "label": "alice@example.com" }, "reply": { "from": "db", "to": "app", "icon": "file-text", "label": "premium · 2 open" }, "state": { "at": "db", "text": "tier premium · 2 open" } },
+    { "caption": "You append the tool_result as a user message; Claude replies with end_turn.", "send": { "from": "app", "to": "claude", "icon": "file-check", "label": "tool_result" }, "reply": { "from": "claude", "to": "app", "icon": "message-square", "label": "\"Alice is premium…\"" }, "callout": { "at": "claude", "text": "stop_reason: end_turn" } },
+    { "caption": "The agent gets a grounded answer: Alice is premium with 2 open tickets.", "focus": ["agent"], "send": { "from": "app", "to": "agent", "icon": "message-square", "label": "premium · 2 tickets" }, "badge": { "at": "agent", "kind": "check", "text": "live data" } }
+  ]
+}

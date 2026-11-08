@@ -1,0 +1,19 @@
+{
+  "title": "The 4Ds: vague prompt to verified report",
+  "kicker": "Maya's story · Day 1",
+  "actors": [
+    { "id": "maya", "icon": "user", "label": "Maya", "sub": "Brightline analyst", "slot": "L" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "drafts the summary", "slot": "C" },
+    { "id": "manager", "icon": "briefcase", "label": "Manager", "sub": "her sponsor", "slot": "TR" },
+    { "id": "source", "icon": "file-spreadsheet", "label": "Source sheet", "sub": "primary source", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "Day 1: Maya types \"Help me with reports.\" Claude returns generic structure tips.", "focus": ["maya"], "send": { "from": "maya", "to": "claude", "icon": "message-square", "label": "Help me with reports" }, "reply": { "from": "claude", "to": "maya", "icon": "file-text", "label": "generic advice" }, "state": { "at": "claude", "text": "generic advice" } },
+    { "caption": "Description: she tells her manager what Claude does, its limits, and her review.", "focus": ["maya", "manager"], "send": { "from": "maya", "to": "manager", "icon": "message-square", "label": "can · can't · review" }, "callout": { "at": "maya", "text": "A faster first draft, not my review" }, "state": { "at": "manager", "text": "expectations set" } },
+    { "caption": "Delegation: the metrics draft goes to Claude; the renewal-risk call stays hers.", "focus": ["claude"], "send": { "from": "maya", "to": "claude", "icon": "clipboard-list", "label": "metrics summary" }, "reply": { "from": "claude", "to": "maya", "icon": "file-text", "label": "draft summary" }, "callout": { "at": "maya", "text": "Judgment call? Reversible?" }, "state": { "at": "maya", "text": "keeps renewal call" } },
+    { "caption": "Diligence: her checklist runs on every output, even low-stakes ones, every day.", "focus": ["maya"], "callout": { "at": "maya", "text": "No PII · facts match · Brightline tone" }, "state": { "at": "maya", "text": "checklist, every time" } },
+    { "caption": "Discernment: Claude cites \"three major competitors.\" Maya checks the source.", "focus": ["source"], "send": { "from": "maya", "to": "source", "icon": "search", "label": "3 competitors?" }, "reply": { "from": "source", "to": "maya", "icon": "file-check", "label": "only 1 listed" }, "badge": { "at": "source", "kind": "cross", "text": "2 not listed" } },
+    { "caption": "Maya re-prompts: \"use only the competitor sheet; if one is not listed, say so.\"", "focus": ["claude"], "send": { "from": "maya", "to": "claude", "icon": "message-square", "label": "use only the sheet" }, "reply": { "from": "claude", "to": "maya", "icon": "file-check", "label": "regenerated summary" }, "state": { "at": "claude", "text": "limited to the sheet" } },
+    { "caption": "Maya hands over a verified summary, plus her own call on the renewal risk.", "focus": ["manager"], "send": { "from": "maya", "to": "manager", "icon": "file-check", "label": "verified summary" }, "callout": { "at": "maya", "text": "Renewal risk: my call, not Claude's" }, "badge": { "at": "maya", "kind": "check", "text": "verified" } }
+  ]
+}

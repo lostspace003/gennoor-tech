@@ -1,0 +1,19 @@
+{
+  "title": "Hallucination: pinpoint, verify, then regenerate",
+  "kicker": "Maya's story · Week 4",
+  "actors": [
+    { "id": "maya", "icon": "user", "label": "Maya", "sub": "ops analyst", "slot": "L" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "researches for Maya", "slot": "C" },
+    { "id": "sources", "icon": "globe", "label": "Sources", "sub": "primary, not echoes", "slot": "TR" },
+    { "id": "review", "icon": "shield-check", "label": "Senior review", "sub": "before the board", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "Maya asks Claude to research competitor growth rates for a board slide.", "focus": ["maya"], "send": { "from": "maya", "to": "claude", "icon": "message-square", "label": "competitor growth?" } },
+    { "caption": "Claude answers with a striking stat and three named sources.", "send": { "from": "claude", "to": "maya", "icon": "file-text", "label": "300% · 3 sources" }, "callout": { "at": "claude", "text": "Competitor A grew 300% (3 sources)" } },
+    { "caption": "Pinpoint: drafting the slide, Maya flags the one claim that looks too good.", "focus": ["maya"], "callout": { "at": "maya", "text": "300% sounds high. Check the sources." }, "state": { "at": "maya", "text": "claim pinpointed" } },
+    { "caption": "Verify: the TechPulse article does not exist; IndustryToday says 30%, not 300%.", "focus": ["sources"], "send": { "from": "maya", "to": "sources", "icon": "search", "label": "TechPulse?" }, "reply": { "from": "sources", "to": "maya", "icon": "triangle-alert", "label": "not found · 30%" }, "badge": { "at": "claude", "kind": "warn", "text": "hallucinated" } },
+    { "caption": "Regenerate: Maya re-prompts with a stricter rule: use only the uploaded file.", "send": { "from": "maya", "to": "claude", "icon": "file-text", "label": "use only the file" }, "reply": { "from": "claude", "to": "maya", "icon": "file-check", "label": "file facts only" }, "callout": { "at": "claude", "text": "Not in the file? I say so." } },
+    { "caption": "Primary source: Maya checks the 30% in the original study; echoes are not proof.", "focus": ["maya"], "send": { "from": "maya", "to": "sources", "icon": "search", "label": "primary source?" }, "reply": { "from": "sources", "to": "maya", "icon": "circle-check", "label": "30% confirmed" }, "badge": { "at": "maya", "kind": "check", "text": "verified" } },
+    { "caption": "Escalate: board slides are high-impact, so senior review signs off first.", "send": { "from": "maya", "to": "review", "icon": "file-check", "label": "board slide · 30%" }, "callout": { "at": "review", "text": "Going to the board? Review first." }, "badge": { "at": "review", "kind": "check", "text": "signed off" } }
+  ]
+}

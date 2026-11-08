@@ -1,0 +1,19 @@
+{
+  "title": "RBAC at retrieval: filter by role before the prompt",
+  "kicker": "Meridian rollout · Week 9",
+  "actors": [
+    { "id": "clerk", "icon": "user", "label": "Billing clerk", "sub": "billing_clerk_47", "slot": "L" },
+    { "id": "retrieval", "icon": "shield-check", "label": "Retrieval svc", "sub": "ACL filter", "slot": "C" },
+    { "id": "index", "icon": "database", "label": "Vector DB", "sub": "clinical docs", "slot": "TR" },
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "answers from context", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "A billing clerk asks which procedure codes were billed for patient P-12345.", "focus": ["clerk"], "send": { "from": "clerk", "to": "retrieval", "icon": "message-square", "label": "codes for P-12345?" } },
+    { "caption": "Wrong way: a shared token pulls every match, diagnoses too, into the prompt.", "focus": ["claude"], "send": { "from": "retrieval", "to": "index", "icon": "key-round", "label": "shared svc token" }, "reply": { "from": "index", "to": "claude", "icon": "file-text", "label": "billing + diagnosis" }, "callout": { "at": "claude", "text": "system prompt: hide the clinical bits" }, "badge": { "at": "claude", "kind": "warn", "text": "too late" } },
+    { "caption": "Right way: your design passes the clerk's own identity, never a shared token.", "focus": ["retrieval"], "send": { "from": "clerk", "to": "retrieval", "icon": "key-round", "label": "billing_clerk_47" }, "state": { "at": "retrieval", "text": "billing, demographics" } },
+    { "caption": "Retrieval applies the ACL filter in the vector DB query: billing, demographics.", "send": { "from": "retrieval", "to": "index", "icon": "search", "label": "ACL-filtered query" }, "reply": { "from": "index", "to": "retrieval", "icon": "file-text", "label": "billing passages" }, "callout": { "at": "retrieval", "text": "WHERE acl.allowed_roles ∩ user.roles" }, "state": { "at": "index", "text": "diagnosis never leaves" } },
+    { "caption": "Only authorized passages reach prompt construction, which trusts retrieval.", "send": { "from": "retrieval", "to": "claude", "icon": "file-check", "label": "authorized passages" }, "badge": { "at": "retrieval", "kind": "check", "text": "enforced" } },
+    { "caption": "Claude answers from those passages only, citing a source ID for each claim.", "focus": ["clerk"], "send": { "from": "claude", "to": "clerk", "icon": "message-square", "label": "answer + [source ID]" }, "callout": { "at": "claude", "text": "answer only from sources, cite each" }, "badge": { "at": "clerk", "kind": "check", "text": "grounded" } },
+    { "caption": "Your answer to compliance: restricted documents never leave the retrieval layer.", "focus": ["retrieval"], "callout": { "at": "retrieval", "text": "deterministic, not a prompt promise" }, "state": { "at": "retrieval", "text": "audit: clerk_47 → docs" } }
+  ]
+}

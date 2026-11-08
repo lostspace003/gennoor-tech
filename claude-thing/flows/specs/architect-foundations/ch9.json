@@ -1,0 +1,19 @@
+{
+  "title": "Permission layers: the restart waits for a human",
+  "kicker": "Agent SDK · Security",
+  "actors": [
+    { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "proposes tool calls", "slot": "L" },
+    { "id": "perms", "icon": "shield-check", "label": "Permissions", "sub": "hooks→rules→callback", "slot": "C" },
+    { "id": "operator", "icon": "user", "label": "Operator", "sub": "approves or declines", "slot": "TR" },
+    { "id": "web", "icon": "server", "label": "Web server", "sub": "web.service", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "Told to restart the web service and check its logs, Claude proposes Bash first.", "focus": ["claude"], "callout": { "at": "claude", "text": "systemctl restart web" }, "send": { "from": "claude", "to": "perms", "icon": "terminal", "label": "Bash: restart web" } },
+    { "caption": "No hook or deny rule blocks it: only WebFetch is hard-denied, so Bash passes.", "focus": ["perms"], "callout": { "at": "perms", "text": "Deny always wins, even in bypass" }, "state": { "at": "perms", "text": "no deny match" } },
+    { "caption": "No allow rule covers Bash, so default mode hands the call to can_use_tool.", "focus": ["perms"], "callout": { "at": "perms", "text": "allowed_tools: Read, Grep" }, "state": { "at": "perms", "text": "no rule → callback" }, "send": { "from": "perms", "to": "operator", "icon": "bell", "label": "approve restart?" } },
+    { "caption": "Run 1: the operator declines; PermissionResultDeny reaches Claude as an error.", "focus": ["operator"], "callout": { "at": "operator", "text": "Operator declined the restart" }, "send": { "from": "operator", "to": "perms", "icon": "x", "label": "declined" }, "reply": { "from": "perms", "to": "claude", "icon": "ban", "label": "Permission denied" }, "badge": { "at": "claude", "kind": "cross", "text": "run 1 denied" }, "state": { "at": "web", "text": "untouched" } },
+    { "caption": "Claude moves on: Read logs/web.log matches allowed_tools and skips the callback.", "focus": ["claude"], "send": { "from": "claude", "to": "perms", "icon": "file-text", "label": "Read logs/web.log" }, "reply": { "from": "perms", "to": "claude", "icon": "check", "label": "auto-approved" }, "callout": { "at": "claude", "text": "10:01 ERROR upstream timeout" }, "state": { "at": "perms", "text": "allow rule matched" } },
+    { "caption": "Run 2, same agent: Claude proposes the same restart; the callback asks again.", "focus": ["claude"], "send": { "from": "claude", "to": "perms", "icon": "terminal", "label": "Bash: restart web" }, "reply": { "from": "perms", "to": "operator", "icon": "bell", "label": "approve restart?" }, "state": { "at": "perms", "text": "no rule → callback" } },
+    { "caption": "The operator approves, and only now does web.service actually restart.", "focus": ["operator", "web"], "send": { "from": "operator", "to": "perms", "icon": "check", "label": "approved" }, "reply": { "from": "perms", "to": "web", "icon": "terminal", "label": "restart web" }, "badge": { "at": "web", "kind": "check", "text": "restarted" }, "state": { "at": "web", "text": "web.service restarted" } }
+  ]
+}

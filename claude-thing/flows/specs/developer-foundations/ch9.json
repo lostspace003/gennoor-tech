@@ -1,0 +1,19 @@
+{
+  "title": "Orchestrator: split the ticket, merge the results",
+  "kicker": "TicketFlow · Week 9",
+  "actors": [
+    { "id": "customer", "icon": "user", "label": "Customer", "sub": "one mixed ticket", "slot": "L" },
+    { "id": "orch", "icon": "workflow", "label": "TicketFlow", "sub": "main agent", "slot": "C" },
+    { "id": "billing", "icon": "receipt", "label": "Billing agent", "sub": "refund tool", "slot": "TR" },
+    { "id": "tech", "icon": "bug", "label": "Tech agent", "sub": "logs tool", "slot": "BR" }
+  ],
+  "steps": [
+    { "caption": "A mixed ticket lands: \"Charged twice + app crashes.\" Billing and tech in one.", "focus": ["customer"], "send": { "from": "customer", "to": "orch", "icon": "ticket", "label": "charged 2× + crash" } },
+    { "caption": "One agent handles both and loses track of which sub-issue it resolved.", "focus": ["orch"], "state": { "at": "orch", "text": "single agent" }, "callout": { "at": "orch", "text": "Crash fixed. Was there a refund?" }, "badge": { "at": "orch", "kind": "warn", "text": "lost thread" } },
+    { "caption": "You refactor: an orchestrator decomposes the ticket into separable sub-tasks.", "focus": ["orch"], "state": { "at": "orch", "text": "orchestrator" }, "callout": { "at": "orch", "text": "refund → billing · crash → tech" } },
+    { "caption": "It delegates in parallel: each specialist gets its own prompt, tools and model.", "send": { "from": "orch", "to": "billing", "icon": "receipt", "label": "sub-task: refund" }, "reply": { "from": "orch", "to": "tech", "icon": "bug", "label": "sub-task: crash" }, "state": { "at": "billing", "text": "isolated context" } },
+    { "caption": "Each runs in an isolated context. Only final results return to the orchestrator.", "send": { "from": "billing", "to": "orch", "icon": "circle-check", "label": "refund issued" }, "reply": { "from": "tech", "to": "orch", "icon": "file-text", "label": "root cause found" }, "state": { "at": "tech", "text": "isolated context" } },
+    { "caption": "The orchestrator merges both results into one reply. Nothing dropped this time.", "focus": ["customer"], "send": { "from": "orch", "to": "customer", "icon": "message-square", "label": "one merged reply" }, "state": { "at": "orch", "text": "results merged" }, "badge": { "at": "customer", "kind": "check", "text": "resolved" } },
+    { "caption": "Multi-agent adds calls and hand-offs, so a one-file fix stays single-agent.", "focus": ["orch"], "callout": { "at": "orch", "text": "Separable, overflow or parallel? Split." } }
+  ]
+}

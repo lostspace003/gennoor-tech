@@ -15,7 +15,8 @@ import CodePlayer from './widgets/CodePlayer'
 import KnowledgeCheck from './widgets/KnowledgeCheck'
 import CheatSheet from './CheatSheet'
 import CourseStart from './CourseStart'
-import type { Chapter, ChapterMeta, CourseData } from './types'
+import FlowVideo from './FlowVideo'
+import type { Chapter, ChapterMeta, CourseData, FlowRef } from './types'
 
 interface Slot { el: HTMLElement; type: 'anim' | 'player' | 'kc'; id: string }
 
@@ -28,6 +29,7 @@ interface Props {
   done: Record<string, boolean>
   lastSeen: string | null
   examAnswered: number
+  trailer?: FlowRef | null
   onToggleDone: (id: string, v: boolean) => void
   onNavigate: (id: string) => void
   onStartExam: () => void
@@ -37,7 +39,7 @@ function kindLabel(k: string) {
   return k === 'story' ? 'Story' : k === 'playbook' ? 'Exam prep' : k === 'exam' ? 'Practice exam' : k === 'next' ? 'What next' : k === 'refs' ? 'References' : k === 'cheatsheet' ? 'Exam prep' : 'Start here'
 }
 
-export default function ChapterView({ cert, data, chapter, prev, next, done, lastSeen, examAnswered, onToggleDone, onNavigate, onStartExam }: Props) {
+export default function ChapterView({ cert, data, chapter, prev, next, done, lastSeen, examAnswered, trailer, onToggleDone, onNavigate, onStartExam }: Props) {
   const bodyRef = useRef<HTMLDivElement>(null)
   const [slots, setSlots] = useState<Slot[]>([])
   const Icon = chapterIcon(chapter.icon, chapter.kind)
@@ -61,11 +63,11 @@ export default function ChapterView({ cert, data, chapter, prev, next, done, las
   return (
     <article className="cc-body" key={chapter.id}>
       {chapter.kind === 'intro' ? (
-        <CourseStart cert={cert} chapters={data.chapters} done={done} lastSeen={lastSeen} introHtml={chapter.html} questionCount={data.questions.length} onGo={onNavigate} />
+        <CourseStart cert={cert} chapters={data.chapters} done={done} lastSeen={lastSeen} introHtml={chapter.html} questionCount={data.questions.length} trailer={trailer} onGo={onNavigate} />
       ) : (
-        <header className="cc-scene">
+        <header className={'cc-scene' + (chapter.flow ? ' has-flow' : '')}>
           <span className="tile" aria-hidden><Icon /></span>
-          <div>
+          <div className="cc-scene-text">
             <span className="kick">{chapter.scene?.kicker || (chapter.n ? `Chapter ${chapter.n} · ${kindLabel(chapter.kind)}` : kindLabel(chapter.kind))}</span>
             <h1>{chapter.scene?.cut ? chapter.scene.title : chapter.title}</h1>
             {chapter.scene?.cut && chapter.scene.html && (
@@ -75,6 +77,7 @@ export default function ChapterView({ cert, data, chapter, prev, next, done, las
               <div style={{ marginTop: 8, fontSize: 12.5, color: 'var(--cc-quiet)' }}>Chapter {chapter.n} · {chapter.title}</div>
             )}
           </div>
+          {chapter.flow && <FlowVideo flow={chapter.flow} className="cc-scene-media" />}
           {prev && prev.teaser && (prev.kind === 'story' || prev.kind === 'intro') && chapter.kind === 'story' && (
             <div className="prev"><b>Previously</b><span>{prev.teaser}</span></div>
           )}
