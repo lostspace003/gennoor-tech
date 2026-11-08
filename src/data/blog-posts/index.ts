@@ -44,6 +44,20 @@ export interface BlogPost extends BlogPostMeta {
 
 export const blogPostsMeta: BlogPostMeta[] = [
   {
+    slug: 'microsoft-copilot-harness-runtime-control-platform-strategy',
+    title: 'Microsoft Copilot Harness: Why Runtime Control Now Matters More Than the Model',
+    excerpt: 'Microsoft’s recent Copilot and platform messaging suggests a shift in enterprise AI discussion away from the next model launch and toward the managed runtime layer that could govern agentic work in production. For IT leaders, the key takeaway is not a fixed list of product features, but a platform evaluation lens: how agent execution, reviewability, governance, and operational control will be handled at scale.',
+    tldr: 'Microsoft’s recent Copilot and platform messaging suggests a shift in enterprise AI discussion from model choice alone toward the runtime layer around agentic systems. Based on verifiable Microsoft materials, the enterprise implication is that teams should evaluate managed runtimes as platform infrastructure, with attention to execution control, governance, observability, portability, and fit with existing DevOps and MLOps processes rather than assuming a fixed set of capabilities from limited public details.',
+    author: 'Gennoor Tech',
+    date: '2026-11-08',
+    readTime: '14 min read',
+    category: 'Microsoft AI',
+    tags: ['Microsoft', 'Enterprise AI', 'AI Agents', 'Agentic AI', 'AI Governance', 'AI Runtime', 'Azure AI Foundry', 'Platform Engineering'],
+    hashtags: ['#MicrosoftAI', '#AIAgents', '#EnterpriseAI', '#AIGovernance', '#AIOrchestration', '#AzureAIFoundry'],
+    coverColor: '#2F1E2E',
+    icon: '🧭',
+  },
+  {
     slug: 'gpt-6-1-terra-enterprise-agent-cost-control-roi',
     title: 'GPT-6.1 Terra and the Enterprise Agent Debate: Cost, Control, and Real ROI',
     excerpt: 'GPT-6.1 Terra is being framed around computer use, speed, and lower cost. For enterprise leaders, the bigger story is whether agent ROI now depends less on buying the largest model and more on runtime controls, task design, and workflow-level evaluation.',
@@ -1042,6 +1056,7 @@ export function getRelatedPostsMeta(currentSlug: string, category: string, limit
 
 // Load full blog post content on demand (only for individual post pages)
 const contentImports: Record<string, () => Promise<{ post: BlogPost }>> = {
+  'microsoft-copilot-harness-runtime-control-platform-strategy': () => import('./content/microsoft-copilot-harness-runtime-control-platform-strategy'),
   'gpt-6-1-terra-enterprise-agent-cost-control-roi': () => import('./content/gpt-6-1-terra-enterprise-agent-cost-control-roi'),
   'ai-in-infrastructure-enterprise-capacity-power-governance': () => import('./content/ai-in-infrastructure-enterprise-capacity-power-governance'),
   'microsoft-agent-infrastructure-platform-race': () => import('./content/microsoft-agent-infrastructure-platform-race'),
