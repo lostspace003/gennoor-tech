@@ -1,6 +1,6 @@
 {
   "title": "Discovery to ADR: the SLA gate decides first",
-  "kicker": "Meridian rollout · Weeks 1–8",
+  "kicker": "Meridian rollout",
   "actors": [
     { "id": "you", "icon": "user", "label": "You", "sub": "principal architect", "slot": "L" },
     { "id": "gate", "icon": "gauge", "label": "SLA gate", "sub": "sub-3s · signed BAA", "slot": "C" },
@@ -8,12 +8,12 @@
     { "id": "board", "icon": "landmark", "label": "Gov. board", "sub": "CFO · $2.4M budget", "slot": "BR" }
   ],
   "steps": [
-    { "caption": "Week 1: the CFO budgets $2.4M over 12 months; you get eight weeks to propose.", "focus": ["board"], "send": { "from": "board", "to": "you", "icon": "coins", "label": "$2.4M · 8 weeks" }, "callout": { "at": "board", "text": "ROI across clinical, claims, service" } },
+    { "caption": "The CFO budgets $2.4M and expects ROI; you propose the architecture.", "focus": ["board"], "send": { "from": "board", "to": "you", "icon": "coins", "label": "$2.4M budget" }, "callout": { "at": "board", "text": "ROI across clinical, claims, service" } },
     { "caption": "Discovery first, not a prototype: the clinical team names two hard constraints.", "focus": ["clinical"], "send": { "from": "you", "to": "clinical", "icon": "clipboard-list", "label": "discovery workshop" }, "reply": { "from": "clinical", "to": "you", "icon": "file-text", "label": "sub-3s · signed BAA" }, "callout": { "at": "clinical", "text": "sub-3s in consults; no PHI without BAA" }, "state": { "at": "you", "text": "non-functional gates" } },
     { "caption": "Architecture X scores higher on quality but averages 4.2s; the gate drops it.", "focus": ["gate"], "send": { "from": "you", "to": "gate", "icon": "layers", "label": "Arch X · 4.2s" }, "callout": { "at": "gate", "text": "4.2s > 3s: out, quality irrelevant" }, "badge": { "at": "gate", "kind": "cross", "text": "X eliminated" } },
     { "caption": "Architecture Y clears the gate at 2.1s; only survivors get compared on cost.", "send": { "from": "you", "to": "gate", "icon": "layers", "label": "Arch Y · 2.1s" }, "reply": { "from": "gate", "to": "you", "icon": "check", "label": "passes · cost next" }, "callout": { "at": "you", "text": "now: efficiency and solution cost" }, "state": { "at": "gate", "text": "X out · Y survives" } },
     { "caption": "ADR-07 for claims lands without its alternatives; the board sends it back.", "send": { "from": "you", "to": "board", "icon": "file-text", "label": "Enterprise+BAA+ZDR" }, "reply": { "from": "board", "to": "you", "icon": "pen-line", "label": "add alternatives" }, "callout": { "at": "board", "text": "missing alternatives: incomplete" }, "state": { "at": "board", "text": "ADR-07: incomplete" } },
     { "caption": "You add both rejected options and the cost trade-off accepted for compliance.", "focus": ["you"], "send": { "from": "you", "to": "board", "icon": "file-check", "label": "ADR-07 · complete" }, "callout": { "at": "you", "text": "Pro: no BAA · OSS: 12 pts less accurate" }, "state": { "at": "you", "text": "cost $0.12 vs $0.08" } },
-    { "caption": "Week 8: the board approves ADR-07, requirements, success criteria and register.", "focus": ["board"], "send": { "from": "board", "to": "you", "icon": "badge-check", "label": "approved · Week 8" }, "callout": { "at": "board", "text": "alternatives + trade-offs on record" }, "badge": { "at": "board", "kind": "check", "text": "approved" }, "state": { "at": "board", "text": "ADR-07: approved" } }
+    { "caption": "The board approves ADR-07, requirements, success criteria and register.", "focus": ["board"], "send": { "from": "board", "to": "you", "icon": "badge-check", "label": "approved" }, "callout": { "at": "board", "text": "alternatives + trade-offs on record" }, "badge": { "at": "board", "kind": "check", "text": "approved" }, "state": { "at": "board", "text": "ADR-07: approved" } }
   ]
 }

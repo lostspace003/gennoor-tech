@@ -1,11 +1,11 @@
 {
   "steps": [
-    "Meet our architect at Meridian. In week one, the C F O budgets two point four million dollars over twelve months, and gives you eight weeks to propose, with return on investment expected across clinical, claims and service.",
+    "Meet our architect at Meridian. The C F O budgets two point four million dollars, and expects return on investment across clinical, claims and service. You propose the architecture.",
     "You start with discovery, not a prototype. In the workshop, the clinical team names two hard constraints: responses under three seconds during consults, and no patient health information without a signed B A A.",
     "Now architecture X scores higher on quality, but averages four point two seconds. That breaks the three second gate, so it is eliminated, and its quality simply does not matter.",
     "Architecture Y clears the gate at two point one seconds. Only survivors like Y move on to be compared on efficiency and solution cost.",
     "Next, the architecture decision record for claims, A D R seven, proposing Enterprise with a B A A and zero data retention, reaches the board without its alternatives, so the board sends it back as incomplete.",
     "So you add both rejected options. Pro has no B A A, and the open source model is twelve points less accurate. You also record the cost trade-off accepted for compliance, twelve cents versus eight cents.",
-    "Finally, in week eight, the board approves A D R seven, along with requirements, success criteria and the risk register. With alternatives and trade-offs on record, the decision is defensible."
+    "Finally, the board approves A D R seven, along with requirements, success criteria and the risk register. With alternatives and trade-offs on record, the decision is defensible."
   ]
 }

@@ -1,6 +1,6 @@
 {
   "steps": [
-    "It is week five, and a support agent asks TicketFlow to check the status for alice at example dot com.",
+    "A support agent asks TicketFlow to check the status for alice at example dot com.",
     "First, you send the message to Claude plus a tools array, with a lookup customer tool whose J S O N schema requires an email.",
     "Claude does not answer yet. It emits a tool use block with the email argument, and the stop reason is not end turn.",
     "Next, your dispatcher validates the email first. A malformed one, with no at sign, would get an error tool result back, with no crash. This one is valid.",

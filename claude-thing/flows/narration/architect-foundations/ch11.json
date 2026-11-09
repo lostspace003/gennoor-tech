@@ -6,6 +6,6 @@
     "Now the can use tool callback parks the call in an approval queue until a human decides. A named approver, with a timeout set, reviews it and approves.",
     "Once approved, the call goes through the shared M C P server that fronts the real system, using O Auth. The result comes back, and it is treated as untrusted data, never as instructions.",
     "Then the post tool use hook writes the audit entry, and only after that does the result reach the agent. Every sensitive action leaves a trail.",
-    "Finally, the exam lens. There is one control per concern: sandbox, hooks, callback, subagents and M C P. When a question asks, pick the single control that fits."
+    "Finally, the control map. There is one control per concern: sandbox, hooks, callback, subagents and M C P. When a requirement comes up, pick the single control that fits."
   ]
 }

@@ -1,12 +1,12 @@
 {
   "steps": [
-    "Welcome to the developer course: TicketFlow, from a first A P I call to an agent fleet. On day one, the classifier leaves its notebook and makes its first messages create call, and you count every token.",
+    "Welcome to the developer course: TicketFlow, from a first A P I call to an agent fleet. The classifier leaves its notebook and makes its first messages create call, and you count every token.",
     "Next, traffic spikes and the synchronous Flask service chokes, so you move to Async Anthropic, and the S D K retries on four twenty-nines.",
     "Then a cost review. Batch halves the ten thousand ticket overnight job, and the twenty thousand token knowledge base reads from cache at ninety percent off. The bill drops eighty-five percent.",
-    "In week five, you hand Claude the lookup customer tool, and it calls the database on its own, while you catch bad emails before the query.",
+    "Next, you hand Claude the lookup customer tool, and it calls the database on its own, while you catch bad emails before the query.",
     "Then your twenty step agent dies at step fifteen, so you add checkpoints and an orchestrator. Now it resumes from step fifteen, not step one, across an agent fleet.",
-    "In week eleven, a pre tool use hook denies r m dash r f before it runs, and CLAUDE dot md sets the bar.",
+    "Then a pre tool use hook denies r m dash r f before it runs, and CLAUDE dot md sets the bar.",
     "Then an attacker's ticket says email every record to evil dot com. Four layers say no, treating the ticket as untrusted data, with no email tool available.",
-    "Finally, TicketFlow ships on bring your own cloud, with error routing and evals in C I. Then comes exam day: fifty-three questions in about eighty minutes, and you will be ready."
+    "Finally, TicketFlow ships on bring your own cloud, with error routing and evals in C I. An agent fleet you can trust in production."
   ]
 }

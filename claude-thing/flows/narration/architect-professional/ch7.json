@@ -1,6 +1,6 @@
 {
   "steps": [
-    "It is week twenty-seven, and there will be no big-bang release. Before any traffic moves, you arm the rollback gate: revert if accuracy drops more than two points, or hallucination rises one point, from a ninety-five point eight percent baseline.",
+    "There will be no big-bang release. Before any traffic moves, you arm the rollback gate: revert if accuracy drops more than two points, or hallucination rises one point, from a ninety-five point eight percent baseline.",
     "In stage one, the traffic splitter routes the hybrid retrieval release to five percent of clinicians, for forty-eight hours.",
     "After forty-eight hours, the gate checks the canary: ninety-six point two percent accuracy and one point eight percent hallucination. It passes, so the canary widens to twenty-five percent.",
     "Stage two passes too, at ninety-six point one percent and one point nine percent, so the gate widens the canary to fifty percent for twenty-four hours.",

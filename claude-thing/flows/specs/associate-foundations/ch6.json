@@ -1,6 +1,6 @@
 {
   "title": "Projects: one brief, every chat inherits it",
-  "kicker": "Maya's story · Week 2",
+  "kicker": "Maya's story",
   "actors": [
     { "id": "maya", "icon": "user", "label": "Maya", "sub": "ops analyst", "slot": "L" },
     { "id": "project", "icon": "folder-kanban", "label": "Project", "sub": "Quarterly Summaries", "slot": "TC" },

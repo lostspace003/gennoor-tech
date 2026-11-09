@@ -1,8 +1,8 @@
 {
   "steps": [
-    "It is day one at Loomline. You lift the ticket classifier out of its notebook and into a real service, TicketFlow, creating an Anthropic client.",
+    "At Loomline, you lift the ticket classifier out of its notebook and into a real service, TicketFlow, creating an Anthropic client.",
     "You pick Sonnet, the balanced tier that suits most production workloads, including real-time triage, and you set max tokens to one thousand and twenty-four.",
-    "Next, you dodge a classic exam trap. Behavior instructions live in the system prompt, and the user turn is just the ticket itself.",
+    "Next, a common mistake to avoid. Behavior instructions live in the system prompt, and the user turn is just the ticket itself.",
     "Now TicketFlow calls messages create with the model, max tokens, system and messages, sending the ticket: user can't log in.",
     "Claude returns content, a stop reason and usage. TicketFlow reads the text of the first content block: authentication, high priority.",
     "Then TicketFlow logs the usage: forty-two input tokens and eighteen output tokens. You pay for both, so every call is cost-tracked.",

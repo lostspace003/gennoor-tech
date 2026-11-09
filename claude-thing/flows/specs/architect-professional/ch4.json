@@ -1,6 +1,6 @@
 {
   "title": "HITL gate: human approval before money moves",
-  "kicker": "Meridian rollout · Week 15",
+  "kicker": "Meridian rollout",
   "actors": [
     { "id": "agent", "icon": "sparkles", "label": "Refund agent", "sub": "Claude drafts action", "slot": "L" },
     { "id": "gate", "icon": "shield-check", "label": "can_use_tool", "sub": "permission callback", "slot": "C" },
@@ -8,7 +8,7 @@
     { "id": "payments", "icon": "coins", "label": "Payments", "sub": "runs issue_refund", "slot": "BR" }
   ],
   "steps": [
-    { "caption": "Week 15: the refund agent proposes a $50,000 refund. Ungated, it just pays out.", "focus": ["agent"], "callout": { "at": "agent", "text": "issue_refund $50,000 — nobody checks" } },
+    { "caption": "The refund agent proposes a $50,000 refund. Ungated, it just pays out.", "focus": ["agent"], "callout": { "at": "agent", "text": "issue_refund $50,000 — nobody checks" } },
     { "caption": "You place can_use_tool between the model's output and any irreversible action.", "focus": ["gate"], "send": { "from": "agent", "to": "gate", "icon": "coins", "label": "issue_refund $50,000" }, "state": { "at": "gate", "text": "> $100 → pause" } },
     { "caption": "Over $100, the runtime pauses; the callback posts the exact input to Slack.", "send": { "from": "gate", "to": "manager", "icon": "bell", "label": "approve $50,000?" }, "callout": { "at": "manager", "text": "Exact input, not a description" }, "state": { "at": "agent", "text": "paused" } },
     { "caption": "The manager clicks Approve; the callback returns PermissionResultAllow.", "focus": ["manager"], "send": { "from": "manager", "to": "gate", "icon": "check", "label": "Approve" }, "callout": { "at": "gate", "text": "PermissionResultAllow" }, "badge": { "at": "manager", "kind": "check", "text": "approved" }, "state": { "at": "agent", "text": "resumed" } },

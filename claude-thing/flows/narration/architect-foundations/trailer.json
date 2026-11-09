@@ -7,6 +7,6 @@
     "Now subagents. The Agent tool hands work to a researcher in a fresh context, and only its memo of three dates comes back, not its whole notebook.",
     "Then hooks. Claude reaches for r m dash r f, and a pre tool use hook denies it before it ever runs. Hooks enforce, while prompts only suggest.",
     "Next, you give the agent a memory. Resuming with a session id continues a conversation, and fork session branches it. The session is storage, the context is memory.",
-    "Finally, a human gates risky restarts through can use tool, and six enterprise patterns take shape. On exam day that is sixty questions in about ninety minutes, and you will be ready."
+    "Finally, a human gates risky restarts through can use tool, and six enterprise patterns take shape. The agent is now governed and ready for production."
   ]
 }

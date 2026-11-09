@@ -1,6 +1,6 @@
 {
   "title": "Batch API: 10K tickets overnight, half price",
-  "kicker": "TicketFlow · Week 3",
+  "kicker": "TicketFlow",
   "actors": [
     { "id": "finance", "icon": "coins", "label": "Finance", "sub": "wants it cheaper", "slot": "L" },
     { "id": "app", "icon": "code", "label": "TicketFlow", "sub": "your code", "slot": "C" },

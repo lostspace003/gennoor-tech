@@ -1,6 +1,6 @@
 {
   "title": "Checkpointing: crash at 15, resume at 15",
-  "kicker": "TicketFlow · Week 8",
+  "kicker": "TicketFlow",
   "actors": [
     { "id": "worker-a", "icon": "cpu", "label": "Worker A", "sub": "stateless, crashes", "slot": "L2" },
     { "id": "worker-b", "icon": "cpu", "label": "Worker B", "sub": "fresh replacement", "slot": "L3" },

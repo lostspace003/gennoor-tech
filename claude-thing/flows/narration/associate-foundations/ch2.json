@@ -1,6 +1,6 @@
 {
   "steps": [
-    "Meet Maya at Brightline. On day one, she types help me with reports, and Claude returns generic structure tips. A vague prompt gets generic advice.",
+    "Meet Maya at Brightline. She types help me with reports, and Claude returns generic structure tips. A vague prompt gets generic advice.",
     "First, description. Maya tells her manager what Claude can do, what it cannot, and how she will review its work. It is a faster first draft, not a replacement for her review.",
     "Next, delegation. The metrics summary goes to Claude, but the renewal risk call stays with Maya, because it is a judgment call, and she asks whether each task is reversible.",
     "Then diligence. Her checklist runs on every output, even low-stakes ones, every day: no personal data, facts that match, and the Brightline tone.",
