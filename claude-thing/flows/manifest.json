@@ -3,7 +3,7 @@
   "slug": "developer-foundations",
   "id": "ch6",
   "title": "Tool use: Claude requests, you validate and run",
-  "kicker": "TicketFlow · Week 5",
+  "kicker": "TicketFlow",
   "duration": 99230,
   "steps": 7,
   "sections": [
@@ -16,16 +16,16 @@
    80333
   ],
   "narrated": true,
-  "mp4": 6577012,
-  "poster": 59335,
-  "renderedAt": "2026-11-09T10:12:05.168Z",
-  "specHash": "c156c37a"
+  "mp4": 6458471,
+  "poster": 58535,
+  "renderedAt": "2026-11-09T11:28:40.712Z",
+  "specHash": "a240a7b5"
  },
  "ccasf-ch7": {
   "slug": "associate-foundations",
   "id": "ch7",
   "title": "Code Execution: exact numbers, not predictions",
-  "kicker": "Maya's story · Week 2",
+  "kicker": "Maya's story",
   "duration": 92445,
   "steps": 7,
   "sections": [
@@ -38,16 +38,16 @@
    73227
   ],
   "narrated": true,
-  "mp4": 5840675,
-  "poster": 56295,
-  "renderedAt": "2026-11-09T09:55:04.336Z",
-  "specHash": "7a4137ce"
+  "mp4": 5689714,
+  "poster": 55555,
+  "renderedAt": "2026-11-09T11:09:37.714Z",
+  "specHash": "621cd327"
  },
  "ccasf-ch11": {
   "slug": "associate-foundations",
   "id": "ch11",
   "title": "Data sensitivity: classify, redact, review, then submit",
-  "kicker": "Maya's story · Week 4",
+  "kicker": "Maya's story",
   "duration": 98732,
   "steps": 7,
   "sections": [
@@ -60,16 +60,16 @@
    79224
   ],
   "narrated": true,
-  "mp4": 6893187,
-  "poster": 64312,
-  "renderedAt": "2026-11-09T09:43:59.520Z",
-  "specHash": "5c197517"
+  "mp4": 6809816,
+  "poster": 63556,
+  "renderedAt": "2026-11-09T10:56:46.087Z",
+  "specHash": "971504d0"
  },
  "ccasf-ch10": {
   "slug": "associate-foundations",
   "id": "ch10",
   "title": "Task decomposition: three focused prompts beat one",
-  "kicker": "Maya's story · Week 3",
+  "kicker": "Maya's story",
   "duration": 91276,
   "steps": 7,
   "sections": [
@@ -82,16 +82,16 @@
    70757
   ],
   "narrated": true,
-  "mp4": 5941459,
-  "poster": 59584,
-  "renderedAt": "2026-11-09T09:43:25.409Z",
-  "specHash": "b43cff8f"
+  "mp4": 5861037,
+  "poster": 58831,
+  "renderedAt": "2026-11-09T10:56:11.151Z",
+  "specHash": "4c36d349"
  },
  "ccasf-ch12": {
   "slug": "associate-foundations",
   "id": "ch12",
   "title": "Hallucination: pinpoint, verify, then regenerate",
-  "kicker": "Maya's story · Week 4",
+  "kicker": "Maya's story",
   "duration": 102960,
   "steps": 7,
   "sections": [
@@ -104,16 +104,16 @@
    83431
   ],
   "narrated": true,
-  "mp4": 7001234,
-  "poster": 63080,
-  "renderedAt": "2026-11-09T09:46:24.876Z",
-  "specHash": "a1f6fb21"
+  "mp4": 6915804,
+  "poster": 62408,
+  "renderedAt": "2026-11-09T10:59:27.315Z",
+  "specHash": "e55c6ed4"
  },
  "ccasf-ch2": {
   "slug": "associate-foundations",
   "id": "ch2",
   "title": "The 4Ds: vague prompt to verified report",
-  "kicker": "Maya's story · Day 1",
+  "kicker": "Maya's story",
   "duration": 117559,
   "steps": 7,
   "sections": [
@@ -126,16 +126,16 @@
    96941
   ],
   "narrated": true,
-  "mp4": 7995668,
-  "poster": 62014,
-  "renderedAt": "2026-11-09T09:47:21.487Z",
-  "specHash": "4883b9e9"
+  "mp4": 7919299,
+  "poster": 61478,
+  "renderedAt": "2026-11-09T11:00:38.197Z",
+  "specHash": "6849b5d4"
  },
  "ccasf-ch4": {
   "slug": "associate-foundations",
   "id": "ch4",
   "title": "Prompt structure: four elements, one consistent answer",
-  "kicker": "Maya's story · Week 1",
+  "kicker": "Maya's story",
   "duration": 101463,
   "steps": 7,
   "sections": [
@@ -148,16 +148,16 @@
    81524
   ],
   "narrated": true,
-  "mp4": 6779797,
-  "poster": 61876,
-  "renderedAt": "2026-11-09T09:50:17.244Z",
-  "specHash": "68967bbe"
+  "mp4": 6695100,
+  "poster": 61133,
+  "renderedAt": "2026-11-09T11:04:08.695Z",
+  "specHash": "c060ec42"
  },
  "ccasf-ch3": {
   "slug": "associate-foundations",
   "id": "ch3",
   "title": "Artifacts: the procedure gets a permanent home",
-  "kicker": "Maya's story · Day 3",
+  "kicker": "Maya's story",
   "duration": 102888,
   "steps": 7,
   "sections": [
@@ -170,16 +170,16 @@
    82951
   ],
   "narrated": true,
-  "mp4": 6875638,
-  "poster": 61171,
-  "renderedAt": "2026-11-09T09:49:27.748Z",
-  "specHash": "b0392ed4"
+  "mp4": 6809923,
+  "poster": 60610,
+  "renderedAt": "2026-11-09T11:03:06.955Z",
+  "specHash": "e2fc60e"
  },
  "ccasf-ch6": {
   "slug": "associate-foundations",
   "id": "ch6",
   "title": "Projects: one brief, every chat inherits it",
-  "kicker": "Maya's story · Week 2",
+  "kicker": "Maya's story",
   "duration": 99004,
   "steps": 7,
   "sections": [
@@ -192,16 +192,16 @@
    78625
   ],
   "narrated": true,
-  "mp4": 6641897,
-  "poster": 60128,
-  "renderedAt": "2026-11-09T09:53:08.815Z",
-  "specHash": "79d1f915"
+  "mp4": 6528606,
+  "poster": 59379,
+  "renderedAt": "2026-11-09T11:07:31.495Z",
+  "specHash": "7166eac0"
  },
  "ccasf-ch5": {
   "slug": "associate-foundations",
   "id": "ch5",
   "title": "Iterative refinement: diagnose, revise, verify, decide",
-  "kicker": "Maya's story · Week 2",
+  "kicker": "Maya's story",
   "duration": 100694,
   "steps": 7,
   "sections": [
@@ -214,16 +214,16 @@
    81148
   ],
   "narrated": true,
-  "mp4": 7127148,
-  "poster": 62696,
-  "renderedAt": "2026-11-09T09:52:21.381Z",
-  "specHash": "f80543e3"
+  "mp4": 7037838,
+  "poster": 61969,
+  "renderedAt": "2026-11-09T11:06:30.571Z",
+  "specHash": "22d43286"
  },
  "ccasf-ch8": {
   "slug": "associate-foundations",
   "id": "ch8",
   "title": "Memory: Claude remembers the tiers across chats",
-  "kicker": "Maya's story · Week 3",
+  "kicker": "Maya's story",
   "duration": 90702,
   "steps": 7,
   "sections": [
@@ -236,16 +236,16 @@
    69493
   ],
   "narrated": true,
-  "mp4": 6109509,
-  "poster": 61984,
-  "renderedAt": "2026-11-09T09:55:48.010Z",
-  "specHash": "e4e75b54"
+  "mp4": 6032957,
+  "poster": 61290,
+  "renderedAt": "2026-11-09T11:10:30.394Z",
+  "specHash": "44a70b0"
  },
  "ccasf-ch9": {
   "slug": "associate-foundations",
   "id": "ch9",
   "title": "Model selection: match the model to the task",
-  "kicker": "Maya's story · Week 3",
+  "kicker": "Maya's story",
   "duration": 94601,
   "steps": 7,
   "sections": [
@@ -258,16 +258,16 @@
    77283
   ],
   "narrated": true,
-  "mp4": 6787095,
-  "poster": 66731,
-  "renderedAt": "2026-11-09T09:57:47.446Z",
-  "specHash": "2e8bf13c"
+  "mp4": 6711632,
+  "poster": 65969,
+  "renderedAt": "2026-11-09T11:12:38.388Z",
+  "specHash": "7e67dc04"
  },
  "ccasf-trailer": {
   "slug": "associate-foundations",
   "id": "trailer",
-  "title": "Claude at work: Maya's 30 days to AI-fluent lead",
-  "kicker": "Maya's story · Day 1 to Day 30",
+  "title": "Claude at work: Maya becomes an AI-fluent lead",
+  "kicker": "Maya's story",
   "duration": 110237,
   "steps": 8,
   "sections": [
@@ -281,16 +281,16 @@
    91248
   ],
   "narrated": true,
-  "mp4": 7789313,
-  "poster": 60565,
-  "renderedAt": "2026-11-09T09:58:55.045Z",
-  "specHash": "5151f3a2"
+  "mp4": 7539469,
+  "poster": 58477,
+  "renderedAt": "2026-11-09T11:13:58.440Z",
+  "specHash": "7771f003"
  },
  "ccdvf-ch10": {
   "slug": "developer-foundations",
   "id": "ch10",
   "title": "MCP server: write once, three apps plug in",
-  "kicker": "TicketFlow · Week 10",
+  "kicker": "TicketFlow",
   "duration": 107272,
   "steps": 7,
   "sections": [
@@ -303,16 +303,16 @@
    89054
   ],
   "narrated": true,
-  "mp4": 7414237,
-  "poster": 62208,
-  "renderedAt": "2026-11-09T10:00:55.236Z",
-  "specHash": "44fcba7e"
+  "mp4": 7313357,
+  "poster": 61334,
+  "renderedAt": "2026-11-09T11:16:06.713Z",
+  "specHash": "46289660"
  },
  "ccdvf-ch11": {
   "slug": "developer-foundations",
   "id": "ch11",
   "title": "PreToolUse hook: rm -rf denied before it runs",
-  "kicker": "TicketFlow · Week 11",
+  "kicker": "TicketFlow",
   "duration": 98330,
   "steps": 7,
   "sections": [
@@ -325,16 +325,16 @@
    80841
   ],
   "narrated": true,
-  "mp4": 6627639,
-  "poster": 61959,
-  "renderedAt": "2026-11-09T10:01:48.458Z",
-  "specHash": "91d65030"
+  "mp4": 6543672,
+  "poster": 61078,
+  "renderedAt": "2026-11-09T11:17:12.874Z",
+  "specHash": "9a9a7d33"
  },
  "ccdvf-ch12": {
   "slug": "developer-foundations",
   "id": "ch12",
   "title": "Prompt injection: four layers stop the poisoned ticket",
-  "kicker": "TicketFlow · Week 12",
+  "kicker": "TicketFlow",
   "duration": 95623,
   "steps": 7,
   "sections": [
@@ -347,16 +347,16 @@
    77835
   ],
   "narrated": true,
-  "mp4": 6382347,
-  "poster": 62218,
-  "renderedAt": "2026-11-09T10:03:41.602Z",
-  "specHash": "a57822a4"
+  "mp4": 6291389,
+  "poster": 61328,
+  "renderedAt": "2026-11-09T11:19:15.524Z",
+  "specHash": "87d703c0"
  },
  "ccdvf-ch2": {
   "slug": "developer-foundations",
   "id": "ch2",
   "title": "Messages API: your first call, every token counted",
-  "kicker": "TicketFlow · Day 1",
+  "kicker": "TicketFlow",
   "duration": 102149,
   "steps": 7,
   "sections": [
@@ -369,16 +369,16 @@
    83632
   ],
   "narrated": true,
-  "mp4": 6744038,
-  "poster": 60554,
-  "renderedAt": "2026-11-09T10:06:35.742Z",
-  "specHash": "401eec90"
+  "mp4": 6750097,
+  "poster": 59838,
+  "renderedAt": "2026-11-09T11:22:31.075Z",
+  "specHash": "37bffded"
  },
  "ccdvf-ch13": {
   "slug": "developer-foundations",
   "id": "ch13",
   "title": "Error routing: 429 warns, 401 pages on-call",
-  "kicker": "TicketFlow · Week 13",
+  "kicker": "TicketFlow",
   "duration": 91557,
   "steps": 7,
   "sections": [
@@ -391,16 +391,16 @@
    72220
   ],
   "narrated": true,
-  "mp4": 6140864,
-  "poster": 63289,
-  "renderedAt": "2026-11-09T10:04:27.965Z",
-  "specHash": "622e4dee"
+  "mp4": 6040236,
+  "poster": 62340,
+  "renderedAt": "2026-11-09T11:20:13.896Z",
+  "specHash": "4f4bdd33"
  },
  "ccdvf-ch3": {
   "slug": "developer-foundations",
   "id": "ch3",
   "title": "AsyncAnthropic: three tickets in flight at once",
-  "kicker": "TicketFlow · Week 2",
+  "kicker": "TicketFlow",
   "duration": 98881,
   "steps": 7,
   "sections": [
@@ -413,16 +413,16 @@
    79823
   ],
   "narrated": true,
-  "mp4": 6495672,
-  "poster": 57174,
-  "renderedAt": "2026-11-09T10:07:20.603Z",
-  "specHash": "e4d623a8"
+  "mp4": 6435098,
+  "poster": 56363,
+  "renderedAt": "2026-11-09T11:23:27.141Z",
+  "specHash": "16b4ee35"
  },
  "ccdvf-ch4": {
   "slug": "developer-foundations",
   "id": "ch4",
   "title": "Batch API: 10K tickets overnight, half price",
-  "kicker": "TicketFlow · Week 3",
+  "kicker": "TicketFlow",
   "duration": 88714,
   "steps": 6,
   "sections": [
@@ -434,16 +434,16 @@
    69067
   ],
   "narrated": true,
-  "mp4": 5983823,
-  "poster": 60886,
-  "renderedAt": "2026-11-09T10:09:13.118Z",
-  "specHash": "3caac311"
+  "mp4": 5908680,
+  "poster": 60142,
+  "renderedAt": "2026-11-09T11:25:30.195Z",
+  "specHash": "b55e2fd3"
  },
  "ccdvf-ch5": {
   "slug": "developer-foundations",
   "id": "ch5",
   "title": "Prompt caching: write once, read at 90% off",
-  "kicker": "TicketFlow · Week 4",
+  "kicker": "TicketFlow",
   "duration": 98262,
   "steps": 7,
   "sections": [
@@ -456,16 +456,16 @@
    79202
   ],
   "narrated": true,
-  "mp4": 6466814,
-  "poster": 60404,
-  "renderedAt": "2026-11-09T10:10:09.882Z",
-  "specHash": "687cba42"
+  "mp4": 6368643,
+  "poster": 59602,
+  "renderedAt": "2026-11-09T11:26:39.750Z",
+  "specHash": "75c04cff"
  },
  "ccdvf-ch7": {
   "slug": "developer-foundations",
   "id": "ch7",
   "title": "Format drift: JSON decays until you prune context",
-  "kicker": "TicketFlow · Week 7",
+  "kicker": "TicketFlow",
   "duration": 102792,
   "steps": 7,
   "sections": [
@@ -478,16 +478,16 @@
    83694
   ],
   "narrated": true,
-  "mp4": 7286831,
-  "poster": 65184,
-  "renderedAt": "2026-11-09T10:13:06.245Z",
-  "specHash": "88820431"
+  "mp4": 7227501,
+  "poster": 64442,
+  "renderedAt": "2026-11-09T11:29:58.360Z",
+  "specHash": "afb234b"
  },
  "ccdvf-ch8": {
   "slug": "developer-foundations",
   "id": "ch8",
   "title": "Checkpointing: crash at 15, resume at 15",
-  "kicker": "TicketFlow · Week 8",
+  "kicker": "TicketFlow",
   "duration": 97871,
   "steps": 7,
   "sections": [
@@ -500,16 +500,16 @@
    78552
   ],
   "narrated": true,
-  "mp4": 6652613,
-  "poster": 65524,
-  "renderedAt": "2026-11-09T10:14:55.487Z",
-  "specHash": "ca732427"
+  "mp4": 6567189,
+  "poster": 64725,
+  "renderedAt": "2026-11-09T11:31:54.504Z",
+  "specHash": "e4560370"
  },
  "ccdvf-ch9": {
   "slug": "developer-foundations",
   "id": "ch9",
   "title": "Orchestrator: split the ticket, merge the results",
-  "kicker": "TicketFlow · Week 9",
+  "kicker": "TicketFlow",
   "duration": 95353,
   "steps": 7,
   "sections": [
@@ -522,10 +522,10 @@
    75296
   ],
   "narrated": true,
-  "mp4": 6441450,
-  "poster": 60813,
-  "renderedAt": "2026-11-09T10:15:53.410Z",
-  "specHash": "5829f7e5"
+  "mp4": 6362297,
+  "poster": 59981,
+  "renderedAt": "2026-11-09T11:33:10.428Z",
+  "specHash": "539d687b"
  },
  "ccarf-ch10": {
   "slug": "architect-foundations",
@@ -566,10 +566,10 @@
    104096
   ],
   "narrated": true,
-  "mp4": 8204089,
-  "poster": 60187,
-  "renderedAt": "2026-11-09T10:18:48.765Z",
-  "specHash": "11f55115"
+  "mp4": 8112515,
+  "poster": 57615,
+  "renderedAt": "2026-11-09T11:35:52.908Z",
+  "specHash": "8a34c750"
  },
  "ccarf-ch11": {
   "slug": "architect-foundations",
@@ -588,10 +588,10 @@
    80986
   ],
   "narrated": true,
-  "mp4": 7153478,
-  "poster": 63386,
-  "renderedAt": "2026-11-09T10:21:36.085Z",
-  "specHash": "e6c05f2f"
+  "mp4": 7166282,
+  "poster": 63988,
+  "renderedAt": "2026-11-09T11:36:37.888Z",
+  "specHash": "7c5eb7b5"
  },
  "ccarf-ch12": {
   "slug": "architect-foundations",
@@ -815,7 +815,7 @@
   "slug": "architect-professional",
   "id": "ch1",
   "title": "Discovery to ADR: the SLA gate decides first",
-  "kicker": "Meridian rollout · Weeks 1–8",
+  "kicker": "Meridian rollout",
   "duration": 134074,
   "steps": 7,
   "sections": [
@@ -828,16 +828,16 @@
    107965
   ],
   "narrated": true,
-  "mp4": 9645448,
-  "poster": 64404,
-  "renderedAt": "2026-11-09T10:38:49.294Z",
-  "specHash": "7107c7e0"
+  "mp4": 9436018,
+  "poster": 62216,
+  "renderedAt": "2026-11-09T11:40:39.044Z",
+  "specHash": "42c08525"
  },
  "ccarp-ch2": {
   "slug": "architect-professional",
   "id": "ch2",
   "title": "RBAC at retrieval: filter by role before the prompt",
-  "kicker": "Meridian rollout · Week 9",
+  "kicker": "Meridian rollout",
   "duration": 119696,
   "steps": 7,
   "sections": [
@@ -850,10 +850,10 @@
    94236
   ],
   "narrated": true,
-  "mp4": 8407161,
-  "poster": 64633,
-  "renderedAt": "2026-11-09T10:39:44.020Z",
-  "specHash": "966e6d6d"
+  "mp4": 8328670,
+  "poster": 63839,
+  "renderedAt": "2026-11-09T11:43:04.234Z",
+  "specHash": "7f0ac2df"
  },
  "ccarf-trailer": {
   "slug": "architect-foundations",
@@ -873,16 +873,16 @@
    98126
   ],
   "narrated": true,
-  "mp4": 8207577,
-  "poster": 60791,
-  "renderedAt": "2026-11-09T10:36:00.818Z",
-  "specHash": "48fe0f3a"
+  "mp4": 8172695,
+  "poster": 60277,
+  "renderedAt": "2026-11-09T11:39:24.098Z",
+  "specHash": "7cf1d529"
  },
  "ccarp-ch4": {
   "slug": "architect-professional",
   "id": "ch4",
   "title": "HITL gate: human approval before money moves",
-  "kicker": "Meridian rollout · Week 15",
+  "kicker": "Meridian rollout",
   "duration": 93483,
   "steps": 6,
   "sections": [
@@ -894,16 +894,16 @@
    72615
   ],
   "narrated": true,
-  "mp4": 6363347,
-  "poster": 61956,
-  "renderedAt": "2026-11-09T10:42:38.060Z",
-  "specHash": "9d538070"
+  "mp4": 6335785,
+  "poster": 61181,
+  "renderedAt": "2026-11-09T11:45:56.879Z",
+  "specHash": "3dd40d1d"
  },
  "ccarp-ch3": {
   "slug": "architect-professional",
   "id": "ch3",
   "title": "Prompt caching: pay for the filing once",
-  "kicker": "Meridian rollout · Week 11",
+  "kicker": "Meridian rollout",
   "duration": 110052,
   "steps": 7,
   "sections": [
@@ -916,16 +916,16 @@
    89742
   ],
   "narrated": true,
-  "mp4": 7237582,
-  "poster": 60793,
-  "renderedAt": "2026-11-09T10:42:11.613Z",
-  "specHash": "8b5beb3b"
+  "mp4": 7217912,
+  "poster": 60022,
+  "renderedAt": "2026-11-09T11:44:05.865Z",
+  "specHash": "36762b18"
  },
  "ccarp-ch5": {
   "slug": "architect-professional",
   "id": "ch5",
   "title": "Secrets & RBAC: the key never reaches Claude",
-  "kicker": "Meridian rollout · Week 19",
+  "kicker": "Meridian rollout",
   "duration": 111509,
   "steps": 7,
   "sections": [
@@ -938,16 +938,16 @@
    90541
   ],
   "narrated": true,
-  "mp4": 8078970,
-  "poster": 67914,
-  "renderedAt": "2026-11-09T10:45:28.642Z",
-  "specHash": "dcd24b5"
+  "mp4": 7998791,
+  "poster": 67091,
+  "renderedAt": "2026-11-09T11:47:13.044Z",
+  "specHash": "7a9d600"
  },
  "ccarp-ch6": {
   "slug": "architect-professional",
   "id": "ch6",
   "title": "Correlation IDs: tracing a failed claim end-to-end",
-  "kicker": "Meridian rollout · Week 23",
+  "kicker": "Meridian rollout",
   "duration": 123553,
   "steps": 8,
   "sections": [
@@ -961,16 +961,16 @@
    99575
   ],
   "narrated": true,
-  "mp4": 8927198,
-  "poster": 67291,
-  "renderedAt": "2026-11-09T10:46:20.142Z",
-  "specHash": "86219a85"
+  "mp4": 8815280,
+  "poster": 66337,
+  "renderedAt": "2026-11-09T11:49:24.495Z",
+  "specHash": "9883e809"
  },
  "ccarp-ch7": {
   "slug": "architect-professional",
   "id": "ch7",
   "title": "Canary rollout: the gate reverts at 50%",
-  "kicker": "Meridian rollout · Week 27",
+  "kicker": "Meridian rollout",
   "duration": 120265,
   "steps": 7,
   "sections": [
@@ -983,15 +983,15 @@
    94867
   ],
   "narrated": true,
-  "mp4": 8265359,
-  "poster": 61431,
-  "renderedAt": "2026-11-09T10:48:59.154Z",
-  "specHash": "aa6e9739"
+  "mp4": 8114746,
+  "poster": 60615,
+  "renderedAt": "2026-11-09T11:50:41.546Z",
+  "specHash": "6f920798"
  },
  "ccarp-trailer": {
   "slug": "architect-professional",
   "id": "trailer",
-  "title": "Meridian rollout: a year of defensible decisions",
+  "title": "Meridian rollout: defensible decisions",
   "kicker": "CCAR-P · the story",
   "duration": 131399,
   "steps": 8,
@@ -1006,9 +1006,9 @@
    109700
   ],
   "narrated": true,
-  "mp4": 9313396,
-  "poster": 65224,
-  "renderedAt": "2026-11-09T10:50:03.443Z",
-  "specHash": "65d15d24"
+  "mp4": 8987606,
+  "poster": 61905,
+  "renderedAt": "2026-11-09T11:53:16.334Z",
+  "specHash": "54ad0c8f"
  }
 }
