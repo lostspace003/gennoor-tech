@@ -15,5 +15,6 @@
     "#MCP",
     "#ModelContextProtocol",
     "#AIAgents"
-  ]
+  ],
+  "shows": "This short animation shows one MCP server written once and used by three apps."
 }

@@ -15,5 +15,6 @@
     "#ClaudeAgentSDK",
     "#AIAgents",
     "#AIArchitecture"
-  ]
+  ],
+  "shows": "This short animation shows the Agent SDK's query() running the tool loop for you."
 }

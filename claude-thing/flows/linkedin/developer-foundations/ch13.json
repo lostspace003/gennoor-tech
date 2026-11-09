@@ -15,5 +15,6 @@
     "#ClaudeAPI",
     "#Observability",
     "#SRE"
-  ]
+  ],
+  "shows": "This short animation shows API errors routed by severity: a 429 warns, a 401 pages on-call."
 }

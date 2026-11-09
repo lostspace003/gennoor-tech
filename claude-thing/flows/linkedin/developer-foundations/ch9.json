@@ -15,5 +15,6 @@
     "#AIAgents",
     "#MultiAgent",
     "#AIEngineering"
-  ]
+  ],
+  "shows": "This short animation shows an orchestrator splitting one ticket across specialist agents and merging their answers."
 }

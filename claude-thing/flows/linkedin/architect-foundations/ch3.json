@@ -15,5 +15,6 @@
     "#ClaudeAgentSDK",
     "#AISecurity",
     "#AIAgents"
-  ]
+  ],
+  "shows": "This short animation shows why a deny rule always wins over an allow rule in ClaudeAgentOptions."
 }

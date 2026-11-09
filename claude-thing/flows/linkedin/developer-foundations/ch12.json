@@ -15,5 +15,6 @@
     "#PromptInjection",
     "#AISecurity",
     "#ClaudeAPI"
-  ]
+  ],
+  "shows": "This short animation shows four layers of defence stopping a prompt injection hidden in a ticket."
 }

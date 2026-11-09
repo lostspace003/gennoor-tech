@@ -15,5 +15,6 @@
     "#ClaudeAPI",
     "#AIEngineering",
     "#AIAgents"
-  ]
+  ],
+  "shows": "This short animation follows TicketFlow, a support-ticket app, from its first Claude API call to a team of agents running in production."
 }

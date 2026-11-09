@@ -15,5 +15,6 @@
     "#ClaudeAPI",
     "#PromptCaching",
     "#CostOptimization"
-  ]
+  ],
+  "shows": "This short animation shows prompt caching for an agent: write the knowledge base once, then read it at about 90% off."
 }
