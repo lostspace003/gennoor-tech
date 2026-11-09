@@ -1,11 +1,11 @@
 {
   "steps": [
-    "This flow shows M C P. Your code lists two servers: fs over standard input and output, and crm over H T T P. The Agent S D K acts as the client, one protocol with no per-tool glue.",
-    "First, the client spawns fs as a local subprocess and asks for its tool list over J S O N R P C. It discovers read file, and fs can also offer resources and prompts.",
-    "Next, it connects to the remote crm server over H T T P and discovers its lookup customer tool. Both servers are now connected.",
-    "Now tool names become M C P, server, tool. The client sends Claude the prompt and the two tools, and allowed tools decides which ones Claude may use.",
-    "Claude reads look up customer C seventy-seven, and returns a tool use with the full name, the crm server's lookup customer tool, and the id C seventy-seven.",
-    "The client routes it to crm as a tools call over H T T P, and crm returns the record: Globex, on the gold tier.",
-    "Finally, the record returns as a tool result, and Claude answers in one turn that C seventy-seven is Globex. The answer is grounded in real data."
+    "This video shows how M C P lets one agent discover tools from different servers. Your code lists two servers, fs over standard input and output and crm over H T T P, and the S D K acts as the client.",
+    "The client spawns fs as a local subprocess and asks for tools list over J S O N R P C. It gets back read file, and fs is connected. Servers can offer tools, resources and prompts.",
+    "It also connects to the remote crm server over H T T P, runs the same discovery, and finds lookup customer. Same protocol, different transport.",
+    "Discovered tools are named m c p, server, tool, like m c p crm lookup customer. Allowed tools decides which ones Claude may use, and both are passed to Claude with the prompt.",
+    "Claude reads look up customer C seventy seven, and returns a tool use with the full namespaced tool name and the customer id.",
+    "The client routes that call to crm as tools call over H T T P, and crm returns the record: Globex, gold tier.",
+    "The record goes back as a tool result, and Claude answers in one turn, grounded in real data. One protocol, no per tool glue code. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

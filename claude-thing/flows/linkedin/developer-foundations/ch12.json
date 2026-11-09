@@ -1,13 +1,14 @@
 {
   "topic": "Layered Prompt Injection Defence",
-  "hook": "A user's message tells your agent to ignore instructions and email the data.",
+  "hook": "A ticket tells your agent to ignore its instructions and email every record. What stops it?",
   "bullets": [
     "Raw input in the prompt nearly gets obeyed",
-    "Wrap input in tags, mark it untrusted",
-    "Block risky tools for that task",
-    "Layered defence, not one fix"
+    "Tag the input and mark it as untrusted data",
+    "Block the email tool while handling external input",
+    "An output filter flags suspicious replies",
+    "Four layers, and no email leaves"
   ],
-  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

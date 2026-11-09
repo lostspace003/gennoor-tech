@@ -1,13 +1,14 @@
 {
   "topic": "Format Drift in Long Contexts",
-  "hook": "Deep into a long run, your JSON output starts dropping fields.",
+  "hook": "Why does your agent's JSON start dropping fields deep into a long run?",
   "bullets": [
-    "Tool outputs pile up and bury the schema",
-    "Format drift, not randomness",
-    "Lowering temperature won't fix it",
-    "Prune, summarize and resend the schema"
+    "Turns 1 to 5: clean context, valid JSON",
+    "20+ tool outputs bury the schema by turn 15",
+    "A missing field is format drift, not randomness",
+    "A validator catches it every turn",
+    "Prune, summarize and repeat the schema to recover"
   ],
-  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

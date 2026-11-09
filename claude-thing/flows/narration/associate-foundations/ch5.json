@@ -1,11 +1,11 @@
 {
   "steps": [
-    "Here Maya asks Claude for a quarterly client summary, and draft one comes back too long, in the wrong tone, and missing a key metric.",
-    "She rewords the request eight times, but versions six, seven and eight still bury the bottom line. The same flaw repeats, with diminishing returns.",
-    "Then a colleague asks: did you tell Claude what was wrong, and what you needed? Maya admits she never said. She just guessed.",
-    "First, diagnose. She checks version eight against her own criteria and names exactly three flaws: three pages long, contractions, and no churn figure.",
-    "Next, revise. One targeted follow-up names each fix, one page, no contractions, add churn, and Claude returns version nine.",
-    "Now verify. She checks version nine against the same three flaws. All three are fixed, and nothing else broke.",
-    "Finally, decide. Maya accepts version nine. Had it failed, she would iterate again or change approach. One targeted pass beat eight guesses."
+    "This video shows iterative refinement: diagnose, revise, verify, decide. Maya asks Claude for a quarterly client summary, and draft one comes back too long, in the wrong tone, and missing a key metric.",
+    "She rewords the request eight times, but versions six, seven and eight all bury the bottom line. The same flaw keeps repeating, and each reword gives diminishing returns.",
+    "A colleague asks: did you tell Claude what was wrong, and what you needed? Maya realises she never said. She was just guessing at new wording.",
+    "First, diagnose. Maya checks version eight against her own criteria and names exactly three flaws: it runs three pages, uses contractions, and has no churn figure.",
+    "Next, revise. One targeted follow-up names each fix: one page, no contractions, add churn. Claude returns version nine, formal, one page, with churn included.",
+    "Now verify. Maya checks version nine against the same three flaws. All three are fixed, and nothing else broke along the way.",
+    "Finally, decide. Maya accepts version nine. Had it failed, she would iterate again or change approach. Naming the exact flaws beats rewording blindly. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

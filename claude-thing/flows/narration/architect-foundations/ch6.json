@@ -1,11 +1,11 @@
 {
   "steps": [
-    "Here the main agent will assess risk in a contracts folder using two subagents, a researcher and an analyst. That works because its allowed tools include the Agent tool.",
-    "First, the main agent delegates the opening task, finding renewal dates, to the researcher through the Agent tool.",
-    "The researcher works in a fresh, isolated context, with no parent history. It greps the folder for renewal date with its own read tools and finds three files with three dates.",
-    "Now only its final message returns as the tool result, three dates. The grep calls stay behind. The memo comes back, not the notebook, so the main context stays clean.",
-    "Next comes the analyst. It also starts with a fresh context and cannot see the parent's history, so the brief it receives must carry all the context it needs.",
-    "So the parent pastes the three findings into the brief, and the analyst rates them: two high risk and one low. The brief is all it sees.",
-    "Finally, the parent merges the two memos into one complete assessment, in two turns, for about six tenths of a cent."
+    "This video shows how subagents keep the main agent's context clean. Your code asks the main agent to use a researcher, then an analyst, to assess risk in the contracts folder. Its allowed tools include Agent.",
+    "The main agent delegates the first task through the Agent tool, with subagent type researcher: find the renewal dates.",
+    "The researcher works in a fresh, isolated context with no parent history. It greps the contracts folder with its own read tools and finds three files with three dates.",
+    "Only the researcher's final message returns, as the tool result: three dates. All its Grep calls stay behind, so the main context stays clean. The memo comes back, not the notebook.",
+    "Next, the analyst also starts with a fresh context. It cannot see anything the parent has seen, so whatever it needs must be carried in the brief.",
+    "So the parent pastes the three findings into the analyst's brief. The brief is all the analyst sees, and it rates the risk: two high and one low.",
+    "The parent merges the two memos into one assessment, in two turns. Subagents isolate the work, so pass context in explicitly and get a summary back. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

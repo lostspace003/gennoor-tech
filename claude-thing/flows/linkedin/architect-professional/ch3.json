@@ -1,13 +1,13 @@
 {
   "topic": "Prompt Caching an 80-Page Filing",
-  "hook": "You pay full price for the same long document on every single query.",
+  "hook": "Why pay full price for the same 80-page document on every query?",
   "bullets": [
-    "Static document first, marked cache_control",
-    "First query writes the cache",
-    "Later queries read it at a fraction of the cost",
-    "Cost per case drops sharply"
+    "14 queries resend a 40k-token filing as fresh input",
+    "The static filing moves first, marked cache_control",
+    "Query 1 writes the cache, queries 2 to 14 read it at about 10% of input price",
+    "Cost per case drops from $1.68 to $0.276, an 84% saving"
   ],
-  "cta": "Full CCAR-P prep course, chapter by chapter + practice exam:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

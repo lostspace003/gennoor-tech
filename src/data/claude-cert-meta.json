@@ -1,25 +1,25 @@
 {
  "associate-foundations": {
   "key": "ccasf",
-  "version": "1ocfecb",
+  "version": "459zvj",
   "questions": 60,
   "trailer": {
    "id": "ccasf-trailer",
    "title": "Claude at work: Maya's 30 days to AI-fluent lead",
-   "duration": 104095,
+   "duration": 110237,
    "steps": 8,
    "sections": [
     0,
-    15049,
-    26098,
-    37718,
-    51318,
-    64218,
-    75296,
-    87225
+    16029,
+    28658,
+    43168,
+    54778,
+    67587,
+    78260,
+    91248
    ],
    "narrated": true,
-   "v": "ceb68567"
+   "v": "5151f3a2"
   },
   "chapters": [
    {
@@ -45,19 +45,19 @@
     "flow": {
      "id": "ccasf-ch2",
      "title": "The 4Ds: vague prompt to verified report",
-     "duration": 91581,
+     "duration": 117559,
      "steps": 7,
      "sections": [
       0,
-      12877,
-      27656,
-      41904,
-      54652,
-      67251,
-      78868
+      18039,
+      34838,
+      49737,
+      66045,
+      81794,
+      96941
      ],
      "narrated": true,
-     "v": "a7cf1f4e"
+     "v": "4883b9e9"
     }
    },
    {
@@ -72,19 +72,19 @@
     "flow": {
      "id": "ccasf-ch3",
      "title": "Artifacts: the procedure gets a permanent home",
-     "duration": 78719,
+     "duration": 102888,
      "steps": 7,
      "sections": [
       0,
-      8833,
-      20722,
-      31984,
-      43533,
-      53781,
-      63780
+      14090,
+      29060,
+      42122,
+      56341,
+      71381,
+      82951
      ],
      "narrated": true,
-     "v": "92232dcf"
+     "v": "b0392ed4"
     }
    },
    {
@@ -99,19 +99,19 @@
     "flow": {
      "id": "ccasf-ch4",
      "title": "Prompt structure: four elements, one consistent answer",
-     "duration": 84129,
+     "duration": 101463,
      "steps": 7,
      "sections": [
       0,
-      9550,
-      21179,
-      33457,
-      47085,
-      57134,
-      70862
+      15939,
+      27799,
+      42577,
+      57017,
+      68776,
+      81524
      ],
      "narrated": true,
-     "v": "9532444d"
+     "v": "68967bbe"
     }
    },
    {
@@ -126,19 +126,19 @@
     "flow": {
      "id": "ccasf-ch5",
      "title": "Iterative refinement: diagnose, revise, verify, decide",
-     "duration": 83214,
+     "duration": 100694,
      "steps": 7,
      "sections": [
       0,
-      10538,
-      22545,
-      33633,
-      46842,
-      58531,
-      68599
+      16698,
+      30346,
+      41844,
+      55302,
+      70229,
+      81148
      ],
      "narrated": true,
-     "v": "7c612bba"
+     "v": "f80543e3"
     }
    },
    {
@@ -153,19 +153,19 @@
     "flow": {
      "id": "ccasf-ch6",
      "title": "Projects: one brief, every chat inherits it",
-     "duration": 83405,
+     "duration": 99004,
      "steps": 7,
      "sections": [
       0,
-      10790,
-      22467,
-      33127,
-      44726,
-      56196,
-      69086
+      14329,
+      27087,
+      38107,
+      52425,
+      63895,
+      78625
      ],
      "narrated": true,
-     "v": "bf0d03d0"
+     "v": "79d1f915"
     }
    },
    {
@@ -180,19 +180,19 @@
     "flow": {
      "id": "ccasf-ch7",
      "title": "Code Execution: exact numbers, not predictions",
-     "duration": 81846,
+     "duration": 92445,
      "steps": 7,
      "sections": [
       0,
-      8850,
-      27000,
-      36360,
-      45889,
-      53617,
-      67047
+      12560,
+      28489,
+      41648,
+      51397,
+      60967,
+      73227
      ],
      "narrated": true,
-     "v": "66421b4d"
+     "v": "7a4137ce"
     }
    },
    {
@@ -207,19 +207,19 @@
     "flow": {
      "id": "ccasf-ch8",
      "title": "Memory: Claude remembers the tiers across chats",
-     "duration": 81203,
+     "duration": 90702,
      "steps": 7,
      "sections": [
       0,
-      10019,
-      22917,
-      34377,
-      47057,
-      58156,
-      66675
+      12239,
+      24938,
+      36057,
+      49104,
+      60833,
+      69493
      ],
      "narrated": true,
-     "v": "98c113b5"
+     "v": "e4e75b54"
     }
    },
    {
@@ -234,19 +234,19 @@
     "flow": {
      "id": "ccasf-ch9",
      "title": "Model selection: match the model to the task",
-     "duration": 77746,
+     "duration": 94601,
      "steps": 7,
      "sections": [
       0,
-      11639,
-      22328,
-      33466,
-      44686,
-      53656,
-      64696
+      14798,
+      28217,
+      42016,
+      53735,
+      64905,
+      77283
      ],
      "narrated": true,
-     "v": "a75edc88"
+     "v": "2e8bf13c"
     }
    },
    {
@@ -261,19 +261,19 @@
     "flow": {
      "id": "ccasf-ch10",
      "title": "Task decomposition: three focused prompts beat one",
-     "duration": 79115,
+     "duration": 91276,
      "steps": 7,
      "sections": [
       0,
-      9739,
-      23498,
-      36917,
-      45537,
-      54517,
-      63576
+      13369,
+      26058,
+      39914,
+      50674,
+      60208,
+      70757
      ],
      "narrated": true,
-     "v": "be99a73f"
+     "v": "b43cff8f"
     }
    },
    {
@@ -288,19 +288,19 @@
     "flow": {
      "id": "ccasf-ch11",
      "title": "Data sensitivity: classify, redact, review, then submit",
-     "duration": 78774,
+     "duration": 98732,
      "steps": 7,
      "sections": [
       0,
-      9220,
-      22059,
-      33438,
-      45477,
-      57566,
-      67015
+      15979,
+      28818,
+      42066,
+      56596,
+      69005,
+      79224
      ],
      "narrated": true,
-     "v": "80dad4bd"
+     "v": "5c197517"
     }
    },
    {
@@ -315,19 +315,19 @@
     "flow": {
      "id": "ccasf-ch12",
      "title": "Hallucination: pinpoint, verify, then regenerate",
-     "duration": 87614,
+     "duration": 102960,
      "steps": 7,
      "sections": [
       0,
-      8579,
-      22159,
-      35316,
-      48410,
-      61630,
-      72729
+      16639,
+      28887,
+      42044,
+      56802,
+      70022,
+      83431
      ],
      "narrated": true,
-     "v": "1df97ccf"
+     "v": "a1f6fb21"
     }
    },
    {
@@ -378,25 +378,25 @@
  },
  "developer-foundations": {
   "key": "ccdvf",
-  "version": "10f5lor",
+  "version": "6txvft",
   "questions": 53,
   "trailer": {
    "id": "ccdvf-trailer",
    "title": "TicketFlow: first API call to agent fleet",
-   "duration": 109033,
+   "duration": 124715,
    "steps": 8,
    "sections": [
     0,
-    14780,
-    27580,
-    41918,
-    53777,
-    67387,
-    80177,
-    92496
+    17160,
+    33439,
+    48208,
+    61667,
+    78076,
+    91376,
+    104096
    ],
    "narrated": true,
-   "v": "c731dd8"
+   "v": "11f55115"
   },
   "chapters": [
    {
@@ -422,19 +422,19 @@
     "flow": {
      "id": "ccdvf-ch2",
      "title": "Messages API: your first call, every token counted",
-     "duration": 84449,
+     "duration": 102149,
      "steps": 7,
      "sections": [
       0,
-      12869,
-      25879,
-      37558,
-      49186,
-      60814,
-      71825
+      15720,
+      29699,
+      44507,
+      58826,
+      71053,
+      83632
      ],
      "narrated": true,
-     "v": "d681af13"
+     "v": "401eec90"
     }
    },
    {
@@ -449,19 +449,19 @@
     "flow": {
      "id": "ccdvf-ch3",
      "title": "AsyncAnthropic: three tickets in flight at once",
-     "duration": 80448,
+     "duration": 98881,
      "steps": 7,
      "sections": [
       0,
-      9889,
-      18519,
-      28619,
-      38797,
-      51161,
-      66191
+      18120,
+      29978,
+      41298,
+      54246,
+      65594,
+      79823
      ],
      "narrated": true,
-     "v": "351219f1"
+     "v": "e4d623a8"
     }
    },
    {
@@ -476,18 +476,18 @@
     "flow": {
      "id": "ccdvf-ch4",
      "title": "Batch API: 10K tickets overnight, half price",
-     "duration": 76408,
+     "duration": 88714,
      "steps": 6,
      "sections": [
       0,
-      8859,
-      21608,
-      35917,
-      47961,
-      61450
+      13819,
+      28849,
+      43589,
+      55738,
+      69067
      ],
      "narrated": true,
-     "v": "6bbb7179"
+     "v": "3caac311"
     }
    },
    {
@@ -502,19 +502,19 @@
     "flow": {
      "id": "ccdvf-ch5",
      "title": "Prompt caching: write once, read at 90% off",
-     "duration": 80754,
+     "duration": 98262,
      "steps": 7,
      "sections": [
       0,
-      9608,
-      17978,
-      29996,
-      42806,
-      56955,
-      68754
+      14810,
+      27090,
+      39379,
+      52733,
+      66232,
+      79202
      ],
      "narrated": true,
-     "v": "8fd5e11d"
+     "v": "687cba42"
     }
    },
    {
@@ -529,19 +529,19 @@
     "flow": {
      "id": "ccdvf-ch6",
      "title": "Tool use: Claude requests, you validate and run",
-     "duration": 79186,
+     "duration": 99230,
      "steps": 7,
      "sections": [
       0,
-      8609,
-      19579,
-      30617,
-      44896,
-      55586,
-      66546
+      14939,
+      27658,
+      41477,
+      56695,
+      67364,
+      80333
      ],
      "narrated": true,
-     "v": "31578a75"
+     "v": "c156c37a"
     }
    },
    {
@@ -556,19 +556,19 @@
     "flow": {
      "id": "ccdvf-ch7",
      "title": "Format drift: JSON decays until you prune context",
-     "duration": 85670,
+     "duration": 102792,
      "steps": 7,
      "sections": [
       0,
-      13040,
-      22920,
-      33997,
-      48166,
-      61204,
-      72832
+      17240,
+      28849,
+      43308,
+      57555,
+      70695,
+      83694
      ],
      "narrated": true,
-     "v": "ef1de76a"
+     "v": "88820431"
     }
    },
    {
@@ -583,19 +583,19 @@
     "flow": {
      "id": "ccdvf-ch8",
      "title": "Checkpointing: crash at 15, resume at 15",
-     "duration": 83762,
+     "duration": 97871,
      "steps": 7,
      "sections": [
       0,
-      15308,
-      27157,
-      37857,
-      47375,
-      57062,
-      69932
+      15968,
+      31287,
+      43077,
+      54914,
+      65433,
+      78552
      ],
      "narrated": true,
-     "v": "fe541d4e"
+     "v": "ca732427"
     }
    },
    {
@@ -610,19 +610,19 @@
     "flow": {
      "id": "ccdvf-ch9",
      "title": "Orchestrator: split the ticket, merge the results",
-     "duration": 84175,
+     "duration": 95353,
      "steps": 7,
      "sections": [
       0,
-      11167,
-      21705,
-      34394,
-      45353,
-      55936,
-      66498
+      15508,
+      27076,
+      40115,
+      51464,
+      63972,
+      75296
      ],
      "narrated": true,
-     "v": "724eb83f"
+     "v": "5829f7e5"
     }
    },
    {
@@ -637,19 +637,19 @@
     "flow": {
      "id": "ccdvf-ch10",
      "title": "MCP server: write once, three apps plug in",
-     "duration": 95598,
+     "duration": 107272,
      "steps": 7,
      "sections": [
       0,
-      11849,
-      27368,
-      42057,
-      52576,
-      66315,
-      79538
+      17079,
+      33957,
+      49205,
+      61353,
+      74355,
+      89054
      ],
      "narrated": true,
-     "v": "93ab8396"
+     "v": "44fcba7e"
     }
    },
    {
@@ -664,19 +664,19 @@
     "flow": {
      "id": "ccdvf-ch11",
      "title": "PreToolUse hook: rm -rf denied before it runs",
-     "duration": 83609,
+     "duration": 98330,
      "steps": 7,
      "sections": [
       0,
-      10500,
-      22239,
-      36557,
-      47799,
-      59462,
-      71880
+      15589,
+      27218,
+      43488,
+      56471,
+      68013,
+      80841
      ],
      "narrated": true,
-     "v": "bb4ba8e2"
+     "v": "91d65030"
     }
    },
    {
@@ -691,19 +691,19 @@
     "flow": {
      "id": "ccdvf-ch12",
      "title": "Prompt injection: four layers stop the poisoned ticket",
-     "duration": 88625,
+     "duration": 95623,
      "steps": 7,
      "sections": [
       0,
-      11180,
-      23688,
-      36977,
-      49596,
-      59876,
-      73305
+      13309,
+      27187,
+      41567,
+      54066,
+      65225,
+      77835
      ],
      "narrated": true,
-     "v": "96024f61"
+     "v": "a57822a4"
     }
    },
    {
@@ -718,19 +718,19 @@
     "flow": {
      "id": "ccdvf-ch13",
      "title": "Error routing: 429 warns, 401 pages on-call",
-     "duration": 81836,
+     "duration": 91557,
      "steps": 7,
      "sections": [
       0,
-      10050,
-      21070,
-      35448,
-      45338,
-      53068,
-      67668
+      15059,
+      25239,
+      37916,
+      50679,
+      58951,
+      72220
      ],
      "narrated": true,
-     "v": "5d836d38"
+     "v": "622e4dee"
     }
    },
    {
@@ -781,25 +781,25 @@
  },
  "architect-foundations": {
   "key": "ccarf",
-  "version": "1ug9z93",
+  "version": "1yann6b",
   "questions": 100,
   "trailer": {
    "id": "ccarf-trailer",
    "title": "Agent SDK: one query() becomes a governed platform",
-   "duration": 117298,
+   "duration": 117464,
    "steps": 8,
    "sections": [
     0,
-    17878,
-    31894,
-    45442,
-    60022,
-    71830,
-    86298,
-    101217
+    16869,
+    30885,
+    44433,
+    58762,
+    70570,
+    85038,
+    98126
    ],
    "narrated": true,
-   "v": "4bbdf003"
+   "v": "48fe0f3a"
   },
   "chapters": [
    {
@@ -825,19 +825,19 @@
     "flow": {
      "id": "ccarf-ch2",
      "title": "Agent SDK: query() runs the loop for you",
-     "duration": 95318,
+     "duration": 108372,
      "steps": 7,
      "sections": [
       0,
-      14599,
-      26959,
-      39420,
-      54382,
-      65982,
-      80161
+      13338,
+      28537,
+      42625,
+      59243,
+      73763,
+      89223
      ],
      "narrated": true,
-     "v": "e6dcbfdf"
+     "v": "25fd919"
     }
    },
    {
@@ -852,18 +852,18 @@
     "flow": {
      "id": "ccarf-ch3",
      "title": "ClaudeAgentOptions: deny always beats allow",
-     "duration": 76022,
+     "duration": 88583,
      "steps": 6,
      "sections": [
       0,
-      12319,
-      26298,
-      39337,
-      51666,
-      61770
+      14639,
+      28057,
+      41256,
+      54994,
+      66944
      ],
      "narrated": true,
-     "v": "e6fbfb16"
+     "v": "fd8782e2"
     }
    },
    {
@@ -878,19 +878,19 @@
     "flow": {
      "id": "ccarf-ch4",
      "title": "Tool lifecycle: Claude asks, your @tool answers",
-     "duration": 88403,
+     "duration": 90002,
      "steps": 7,
      "sections": [
       0,
-      14849,
-      26318,
-      39036,
-      49574,
-      59344,
-      71633
+      13278,
+      24638,
+      37027,
+      47266,
+      57006,
+      69924
      ],
      "narrated": true,
-     "v": "b87f2fcb"
+     "v": "15015536"
     }
    },
    {
@@ -905,19 +905,19 @@
     "flow": {
      "id": "ccarf-ch5",
      "title": "MCP: discover over two transports, call by name",
-     "duration": 96191,
+     "duration": 100005,
      "steps": 7,
      "sections": [
       0,
-      16958,
-      33018,
-      45527,
-      59366,
-      71374,
-      82302
+      16909,
+      32969,
+      46438,
+      60297,
+      71097,
+      82897
      ],
      "narrated": true,
-     "v": "7f5dbfdd"
+     "v": "3d844455"
     }
    },
    {
@@ -932,19 +932,19 @@
     "flow": {
      "id": "ccarf-ch6",
      "title": "Subagents: the memo returns, not the notebook",
-     "duration": 90975,
+     "duration": 97565,
      "steps": 7,
      "sections": [
       0,
-      14880,
-      24669,
-      39268,
-      53807,
-      66136,
-      78865
+      16189,
+      26248,
+      40147,
+      54992,
+      67280,
+      79147
      ],
      "narrated": true,
-     "v": "f7923a46"
+     "v": "5e2b9e3"
     }
    },
    {
@@ -959,19 +959,19 @@
     "flow": {
      "id": "ccarf-ch7",
      "title": "Hooks: deny rm -rf, audit what ran",
-     "duration": 83338,
+     "duration": 91693,
      "steps": 7,
      "sections": [
       0,
-      12940,
-      21570,
-      34219,
-      43489,
-      58269,
-      69438
+      16128,
+      26718,
+      39236,
+      49786,
+      62955,
+      74384
      ],
      "narrated": true,
-     "v": "afb340a2"
+     "v": "7e7039ab"
     }
    },
    {
@@ -986,18 +986,18 @@
     "flow": {
      "id": "ccarf-ch8",
      "title": "Sessions: resume remembers, fork branches",
-     "duration": 82706,
+     "duration": 89234,
      "steps": 6,
      "sections": [
       0,
-      14239,
-      27201,
-      39639,
-      51299,
-      65978
+      17688,
+      29518,
+      43017,
+      53445,
+      69464
      ],
      "narrated": true,
-     "v": "a49cace5"
+     "v": "8127c1bb"
     }
    },
    {
@@ -1012,19 +1012,19 @@
     "flow": {
      "id": "ccarf-ch9",
      "title": "Permission layers: the restart waits for a human",
-     "duration": 87453,
+     "duration": 94284,
      "steps": 7,
      "sections": [
       0,
-      10958,
-      24778,
-      38517,
-      48464,
-      61343,
-      73311
+      14440,
+      28600,
+      43220,
+      52948,
+      65906,
+      76975
      ],
      "narrated": true,
-     "v": "19399e11"
+     "v": "4bb77d66"
     }
    },
    {
@@ -1039,18 +1039,18 @@
     "flow": {
      "id": "ccarf-ch10",
      "title": "Structured outputs: typed JSON, not text parsing",
-     "duration": 95768,
+     "duration": 92315,
      "steps": 6,
      "sections": [
       0,
-      16667,
-      33366,
-      47026,
-      66376,
-      80470
+      13289,
+      29988,
+      43758,
+      60197,
+      72947
      ],
      "narrated": true,
-     "v": "2251f2d1"
+     "v": "90f4dac2"
     }
    },
    {
@@ -1065,19 +1065,19 @@
     "flow": {
      "id": "ccarf-ch11",
      "title": "Enterprise patterns: each control in its place",
-     "duration": 103505,
+     "duration": 101195,
      "steps": 7,
      "sections": [
       0,
-      17297,
-      32016,
-      46936,
-      61266,
-      75515,
-      88198
+      16478,
+      27478,
+      41436,
+      53446,
+      67166,
+      80986
      ],
      "narrated": true,
-     "v": "d54d4e67"
+     "v": "e6c05f2f"
     }
    },
    {
@@ -1092,19 +1092,19 @@
     "flow": {
      "id": "ccarf-ch12",
      "title": "can_use_tool: $40 auto-approved, $250 queued",
-     "duration": 90135,
+     "duration": 90737,
      "steps": 7,
      "sections": [
       0,
-      13699,
-      26389,
-      38729,
-      52067,
-      61936,
-      75836
+      14359,
+      26258,
+      38878,
+      51527,
+      61127,
+      69297
      ],
      "narrated": true,
-     "v": "38067255"
+     "v": "4d4bc90e"
     }
    },
    {
@@ -1119,19 +1119,19 @@
     "flow": {
      "id": "ccarf-ch13",
      "title": "Tools compared: same gate, different process boundary",
-     "duration": 91334,
+     "duration": 98460,
      "steps": 7,
      "sections": [
       0,
-      14528,
-      27606,
-      39976,
-      51160,
-      66587,
-      76385
+      17507,
+      32196,
+      44693,
+      56542,
+      69000,
+      78590
      ],
      "narrated": true,
-     "v": "ea2d5927"
+     "v": "65199f0"
     }
    },
    {
@@ -1171,25 +1171,25 @@
  },
  "architect-professional": {
   "key": "ccarp",
-  "version": "2krvpv",
+  "version": "as0pao",
   "questions": 62,
   "trailer": {
    "id": "ccarp-trailer",
    "title": "Meridian rollout: a year of defensible decisions",
-   "duration": 123937,
+   "duration": 131399,
    "steps": 8,
    "sections": [
     0,
-    17218,
-    31946,
-    46079,
-    58679,
-    75929,
-    92248,
-    106798
+    18543,
+    34792,
+    49642,
+    64601,
+    81751,
+    97580,
+    109700
    ],
    "narrated": true,
-   "v": "161af7e8"
+   "v": "65d15d24"
   },
   "chapters": [
    {
@@ -1215,19 +1215,19 @@
     "flow": {
      "id": "ccarp-ch1",
      "title": "Discovery to ADR: the SLA gate decides first",
-     "duration": 107903,
+     "duration": 134074,
      "steps": 7,
      "sections": [
       0,
-      16869,
-      33058,
-      47315,
-      58955,
-      74725,
-      90984
+      21140,
+      40389,
+      59088,
+      73587,
+      90745,
+      107965
      ],
      "narrated": true,
-     "v": "ca2c8a5c"
+     "v": "7107c7e0"
     }
    },
    {
@@ -1242,19 +1242,19 @@
     "flow": {
      "id": "ccarp-ch2",
      "title": "RBAC at retrieval: filter by role before the prompt",
-     "duration": 98562,
+     "duration": 119696,
      "steps": 7,
      "sections": [
       0,
-      12069,
-      27807,
-      42005,
-      58964,
-      71194,
-      81884
+      15089,
+      35028,
+      50588,
+      66567,
+      80237,
+      94236
      ],
      "narrated": true,
-     "v": "585b4997"
+     "v": "966e6d6d"
     }
    },
    {
@@ -1269,19 +1269,19 @@
     "flow": {
      "id": "ccarp-ch3",
      "title": "Prompt caching: pay for the filing once",
-     "duration": 93143,
+     "duration": 110052,
      "steps": 7,
      "sections": [
       0,
-      15009,
-      27799,
-      39798,
-      51527,
-      66536,
-      80344
+      15560,
+      29810,
+      43529,
+      58238,
+      73828,
+      89742
      ],
      "narrated": true,
-     "v": "41e96574"
+     "v": "8b5beb3b"
     }
    },
    {
@@ -1296,18 +1296,18 @@
     "flow": {
      "id": "ccarp-ch4",
      "title": "HITL gate: human approval before money moves",
-     "duration": 72321,
+     "duration": 93483,
      "steps": 6,
      "sections": [
       0,
-      10297,
-      24206,
-      36756,
-      46794,
-      56953
+      17698,
+      35408,
+      49447,
+      60476,
+      72615
      ],
      "narrated": true,
-     "v": "750d1dd6"
+     "v": "9d538070"
     }
    },
    {
@@ -1322,19 +1322,19 @@
     "flow": {
      "id": "ccarp-ch5",
      "title": "Secrets & RBAC: the key never reaches Claude",
-     "duration": 90321,
+     "duration": 111509,
      "steps": 7,
      "sections": [
       0,
-      10798,
-      23298,
-      35179,
-      48467,
-      63786,
-      73534
+      19110,
+      34879,
+      49236,
+      62615,
+      79534,
+      90541
      ],
      "narrated": true,
-     "v": "4d6534b2"
+     "v": "dcd24b5"
     }
    },
    {
@@ -1349,20 +1349,20 @@
     "flow": {
      "id": "ccarp-ch6",
      "title": "Correlation IDs: tracing a failed claim end-to-end",
-     "duration": 97280,
+     "duration": 123553,
      "steps": 8,
      "sections": [
       0,
-      18199,
-      28669,
-      41429,
-      50867,
-      61377,
-      71091,
-      81771
+      22150,
+      39350,
+      53579,
+      64677,
+      76666,
+      87506,
+      99575
      ],
      "narrated": true,
-     "v": "5fa0522a"
+     "v": "86219a85"
     }
    },
    {
@@ -1377,19 +1377,19 @@
     "flow": {
      "id": "ccarp-ch7",
      "title": "Canary rollout: the gate reverts at 50%",
-     "duration": 96074,
+     "duration": 120265,
      "steps": 7,
      "sections": [
       0,
-      17668,
-      27637,
-      42017,
-      53216,
-      66455,
-      77745
+      21680,
+      32179,
+      50028,
+      64518,
+      77627,
+      94867
      ],
      "narrated": true,
-     "v": "a3843a1e"
+     "v": "aa6e9739"
     }
    },
    {

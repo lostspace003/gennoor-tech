@@ -1,12 +1,12 @@
 {
   "steps": [
-    "Welcome to the Agent S D K architect course, where one query call grows into a governed platform. Your code calls query once, and the S D K runs the whole agent loop, reason, tool, result, repeat, and returns a result message.",
+    "This video shows how one query call grows into a governed agent platform. Your code calls query once, and the Agent S D K runs the whole loop, reason, tool, result, repeat, then returns a result message.",
     "First, options. Claude agent options allow Read and Grep but deny Bash. When Claude tries Bash anyway, it gets a disallowed error. Deny always wins.",
     "Next, you give Claude hands: Read, Edit, Bash and your own custom tools. When check stock fails, the failure comes back as data, so Claude can retry or change approach.",
-    "Then M C P servers plug in, fs over standard input and output and crm over H T T P. The S D K is the M C P client: one protocol, with no per-tool glue.",
+    "Then M C P servers plug in, fs over standard input and output and crm over H T T P. The S D K is the M C P client: one protocol, with no per tool glue.",
     "Now subagents. The Agent tool hands work to a researcher in a fresh context, and only its memo of three dates comes back, not its whole notebook.",
     "Then hooks. Claude reaches for r m dash r f, and a pre tool use hook denies it before it ever runs. Hooks enforce, while prompts only suggest.",
-    "Next, you give the agent a memory. Resuming with a session id continues a conversation, and fork session branches it. The session is storage, the context is memory.",
-    "Finally, a human gates risky restarts through can use tool, and six enterprise patterns take shape. On exam day that is sixty questions in about ninety minutes, and you will be ready."
+    "Next, memory. Resuming with a session id continues a conversation, and fork session branches it. The session is storage, the context is memory.",
+    "Finally, a human approves risky restarts through can use tool, and the agent becomes a governed platform. Layer by layer, a simple loop becomes something you can trust. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

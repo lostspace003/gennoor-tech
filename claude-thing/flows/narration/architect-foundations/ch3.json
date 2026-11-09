@@ -1,10 +1,10 @@
 {
   "steps": [
-    "In this flow, your code builds Claude agent options once: allow Read and Grep, deny Bash, and cap the run at ten turns.",
-    "Next, query starts a one-shot run. The S D K sends Claude the prompt, run the cleanup script, along with the tool list, and your code loops over the messages as they stream.",
-    "Now Claude still asks for Bash, to run the cleanup script. That is the key point: allowed tools approves tools, it does not hide the others from Claude.",
-    "The S D K refuses before anything runs, with an error saying Bash is in disallowed tools. A deny rule always beats an allow, and the Bash tool is never called.",
-    "Claude turns the refusal into a helpful answer, explaining that Bash is not permitted and that it did not run the cleanup script.",
-    "Finally, every run ends with a result message. Here it is a success, one turn, less than half a cent, and session one, which you can resume later."
+    "This video shows why a deny rule always beats an allow rule. Your code builds Claude agent options once: allow Read and Grep, deny Bash, and cap the run at ten turns.",
+    "Query starts a one shot run. The S D K sends Claude the prompt, run the cleanup script, along with the tool list, while your code iterates over the streamed messages.",
+    "Claude still asks for Bash to run the cleanup script. That is the key point: allowed tools approves tools automatically, it does not hide the others from Claude.",
+    "The S D K refuses before anything runs. Bash is in disallowed tools, so Claude gets an error tool result, and the Bash tool is never called. Deny always wins over allow.",
+    "Claude turns the refusal into a helpful answer, explaining that Bash is not permitted and that it did not run the cleanup script. Nothing destructive happened.",
+    "Every run ends with a result message: one turn, a cost of under half a cent, and a resumable session id. The takeaway: allow lists approve, deny lists block, and deny wins. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

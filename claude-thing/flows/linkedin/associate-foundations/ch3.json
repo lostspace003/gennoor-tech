@@ -1,13 +1,13 @@
 {
   "topic": "Claude Artifacts",
-  "hook": "Useful Claude output gets buried in chat scrollback and lost.",
+  "hook": "Why does your best Claude output keep getting lost in chat scrollback?",
   "bullets": [
-    "Ask for reusable content as an Artifact",
-    "It opens in a side panel, apart from chat",
-    "Edit in place, versions kept",
-    "Share one stable link with the team"
+    "A procedure answered in chat gets buried thirty turns later",
+    "Asked as an Artifact, it renders in its own side panel",
+    "Edits happen in place, from version one to version two",
+    "One stable link means the manager always sees the latest"
   ],
-  "cta": "Full CCAS-F prep course, chapter by chapter + practice exam:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

@@ -1,13 +1,13 @@
 {
   "topic": "The 4Ds of AI Fluency",
-  "hook": "You ask Claude for help and get generic advice you can't use.",
+  "hook": "Why does Claude give you generic advice you can't use, and how do you get a report you can trust?",
   "bullets": [
-    "Description: what Claude can and can't do",
-    "Delegation: keep judgment calls yourself",
-    "Discernment: check output against the source",
-    "Diligence: own the final result"
+    "A vague prompt gets back generic structure tips",
+    "Delegate the metrics draft, keep the judgment call",
+    "Check Claude's competitor claim against the source sheet",
+    "Re-prompt to use only the sheet, then hand over a verified summary"
   ],
-  "cta": "Full CCAS-F prep course, chapter by chapter + practice exam:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

@@ -1,13 +1,13 @@
 {
   "topic": "Four-Element Prompt Structure",
-  "hook": "The same prompt gives you a different answer every time.",
+  "hook": "Why does the same prompt give you a different answer every time?",
   "bullets": [
-    "Vague prompts make Claude guess",
+    "Summarize this on a twenty-page contract gives three different outputs",
+    "Claude guesses audience, purpose and format",
     "Add role, context, task and format",
-    "Same file, consistent output",
-    "A one-page summary, the right length"
+    "Reruns converge on one consistent one-page summary for the CFO"
   ],
-  "cta": "Full CCAS-F prep course, chapter by chapter + practice exam:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

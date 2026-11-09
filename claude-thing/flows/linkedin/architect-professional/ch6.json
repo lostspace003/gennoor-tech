@@ -1,13 +1,13 @@
 {
   "topic": "Correlation IDs for AI Tracing",
-  "hook": "A request failed, and you can't trace it across gateway, agent and retrieval.",
+  "hook": "A request failed. Can you trace it across gateway, agent and retrieval?",
   "bullets": [
-    "Gateway mints a correlation ID",
-    "Every span logs the same ID",
-    "Model ID and tool results logged too",
-    "One query shows the whole failed request"
+    "The gateway mints a correlation ID and passes it in a header",
+    "The agent logs the ID with the exact model ID",
+    "Retrieval, agent and gateway spans all carry the same ID",
+    "One query by ID rebuilds the trace and exposes a typo in the index"
   ],
-  "cta": "Full CCAR-P prep course, chapter by chapter + practice exam:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

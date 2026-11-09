@@ -1,12 +1,12 @@
 {
   "steps": [
-    "Welcome to the architect professional course: a year of defensible decisions at Meridian. In week one, the C F O hands you two point four million dollars and eight weeks, and your decision record with service level gates must clear the board.",
-    "In week nine, the pilot holds four hundred and eighty thousand documents. Access control filters by role at retrieval, before anything reaches Claude, using hybrid dense, keyword and structured search.",
-    "By week eleven, you are eight hundred and forty thousand dollars over budget. Prompt caching and routing between Haiku and Sonnet must cut forty percent, with service levels intact.",
-    "In week fifteen, the thirty-four tool claims agent drifts, so you decompose it into four subagents, turn on tool search, and put a human approval gate on payouts.",
-    "In week nineteen, the chief compliance officer demands proof before patient health data flows: Enterprise, a B A A and zero data retention, since Pro and Team offer no B A A. The board approves.",
-    "In week twenty-three, three incidents hit with no trace I Ds, and an A B test turns out p-hacked. So you rebuild observability and evaluations, remembering that parity is not fairness.",
-    "In week twenty-seven, the canary goes live at five percent of clinicians, on-call gets the runbooks, and any breach triggers an automatic rollback as it widens toward one hundred percent.",
-    "Finally, exam day: sixty-two questions in about ninety-five minutes, with single choice, select two, and scenario questions. A year at Meridian backs every answer."
+    "This video follows one architect taking Claude into production at Meridian, one defensible decision at a time. The board hands you two point four million dollars and a deadline, and you return a decision record built on service level gates, so the architecture is approved.",
+    "Next, you put access control at retrieval. Meridian's production pilot holds four hundred and eighty thousand documents, and passages reach Claude only by the user's role, using hybrid dense, keyword and structured search.",
+    "Then the board flags eight hundred and forty thousand dollars over budget. You answer with prompt caching, where cache reads cost about ten percent of input, and routing between Haiku and Sonnet.",
+    "Next, a claims agent with thirty-four tools starts to drift. You split it into four subagents, turn on tool search, and add a human approval step before Claude can execute a payout.",
+    "Before patient data can flow, you prove compliance to the board: Enterprise with a B A A, zero data retention and audit, since Pro and Team have no B A A, and no secrets in prompts. The board approves.",
+    "Then production reports three incidents, and a p-hacked A B test. You respond with trace I Ds and real evaluations, checking false positive and false negative rates, because parity alone is not fairness.",
+    "Finally, you ship a canary to five percent of clinicians, widening toward one hundred percent, with any breach triggering an automatic rollback.",
+    "By the end, every one of those decisions is on record with the reasoning behind it, ready to defend. Takeaway: production Claude architecture is a chain of gates, controls and evidence. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

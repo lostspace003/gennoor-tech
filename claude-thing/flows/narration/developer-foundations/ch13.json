@@ -1,11 +1,11 @@
 {
   "steps": [
-    "TicketFlow is going live, deployed bring your own cloud in your A W S account, so data stays in-region.",
-    "First, a TicketFlow call to messages create hits the rate limit, and Claude returns a rate limit error, a four twenty-nine.",
-    "Next, a retry loop bug resends the failed call again and again. Retry, four twenty-nine, retry, four twenty-nine, and the errors start to spike.",
-    "Now monitoring groups the errors by cause, and rates the four twenty-nines as a warning: log them, and back off.",
-    "The warning reaches you, not the pager, and you trace the spike to the retry loop.",
-    "Your backoff fix goes through the C I C D pipeline, with tests, evals and security scans. They pass, and it ships. TicketFlow now backs off on four twenty-nines.",
-    "Finally, the routing rule. Only a four oh one authentication error is critical and would page on-call. The four twenty-nines never woke anyone."
+    "This video shows how to route A P I errors by severity, so the right ones wake people up. First, TicketFlow goes live on bring your own cloud in your A W S account, so data stays in-region.",
+    "A TicketFlow call to messages create hits the rate limit, and Claude returns a rate limit error, status four twenty nine.",
+    "A retry loop bug resends the failed call immediately, again and again. Each retry gets another four twenty nine, and the errors start to spike.",
+    "Monitoring groups the errors by cause and rates the four twenty nines as a warning. The right response to a rate limit is to log it and back off, not to page anyone.",
+    "The warning reaches you, not the pager. You trace the spike back to the retry loop.",
+    "Your backoff fix runs through the C I C D pipeline, with tests, evals and security scans, then ships. TicketFlow now backs off on four twenty nine.",
+    "Only a four oh one authentication error would page on-call, because that needs a human. The four twenty nines never woke anyone. The takeaway: severity decides who hears about an error. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

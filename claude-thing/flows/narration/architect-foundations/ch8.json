@@ -1,10 +1,10 @@
 {
   "steps": [
-    "This flow is about sessions. Your code sends turn one, and the agent reads the report file and notes the key numbers: revenue of four point two million dollars and twelve percent growth.",
-    "The runtime saves the transcript to the session store, and your code captures the session id, session one. Capturing that id is what makes resuming possible.",
-    "Next morning, your code resumes session one. The history is reloaded into a new context, and the agent recalls that revenue was four point two million dollars.",
-    "Now contrast that. With no resume, it is a brand-new session, with an empty context, and the agent has no memory of the report at all.",
-    "Next, fork session set to true branches into a new session, session three, to explore revenue ten percent lower, three point seven eight million. The original session stays untouched.",
-    "Finally, two points to remember. Forking branches the conversation, not your files, and never sum total cost across resumes. The store now holds both sessions, one and three."
+    "This video shows how sessions give an agent memory, and how forking creates a branch. Your code sends the first turn, and the agent reads report dot md, noting revenue of four point two million and twelve percent growth.",
+    "The runtime saves the transcript to the session store as J S O N lines, and your code captures the session id, sess zero zero zero one.",
+    "Later, your code passes resume with that session id. The history reloads into a new context, and the agent recalls that revenue was four point two million.",
+    "Without resume, it is a brand new session. The context is empty, and the agent has no memory of the report at all.",
+    "With fork session set to true, your code branches into a new session, sess zero zero zero three, and asks what if revenue drops ten percent. The original session stays untouched.",
+    "The store now holds both sessions. Forking branches the conversation, not your files, and total cost should not be summed across resumes. Session ids are how agents remember. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

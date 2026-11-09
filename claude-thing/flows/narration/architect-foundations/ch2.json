@@ -1,11 +1,11 @@
 {
   "steps": [
-    "Here is the Agent S D K in action. Your app calls query just once, passing a prompt and options: the Glob, Grep and Read tools, and a maximum of eight turns.",
-    "The S D K sends the messages and tool definitions to Claude, and Claude replies with a tool use block, asking to glob the contract text files first.",
-    "Now pause. On the plain Messages A P I, your own code would have to detect that tool use, run it, return the result, and loop, over and over.",
-    "Instead, the S D K runs it for you. It checks hooks, deny rules, allow rules and the can use tool callback, then runs Glob and gets the matching files. Your app writes no loop code.",
-    "The tool result is appended and the loop repeats. On turn two of a maximum eight, Claude asks for Grep, searching for twenty twenty-six renewals.",
-    "Grep runs, its result goes back, and this time Claude answers in plain text with no tool call: it found two contracts renewing in twenty twenty-six. No tool use means the loop stops.",
-    "Finally, the loop ends and a result message reaches your app, showing two turns, a cost of about six tenths of a cent, and session one. One call, the whole loop handled."
+    "This video shows how the Agent S D K runs the whole agent loop for you. Your app calls query once, with a prompt and options that allow Glob, Grep and Read, capped at eight turns.",
+    "The S D K sends Claude the messages and the tool definitions. Claude does not answer yet. It returns a tool use block asking to run Glob over the contracts folder first.",
+    "Pause here. On the plain Messages A P I, your own code would now have to detect that tool use, run the tool, send the result back, and repeat. That loop would be yours to write.",
+    "Instead, the S D K runs it. The call passes hooks, deny rules, allow rules and the can use tool callback, then Glob executes and returns the matching files. Your app wrote no loop code.",
+    "The tool result is appended to the conversation and the loop repeats. This is turn two of a maximum of eight, and Claude now asks for Grep, searching for twenty twenty six renewals.",
+    "Grep runs and its result goes back. This time Claude replies in plain text with no tool call: two contracts renew in twenty twenty six. No tool use is the signal for the loop to stop.",
+    "The loop ends and a result message reaches your app, with two turns, the cost, and session id sess zero zero zero one. One query call, a full agent loop. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

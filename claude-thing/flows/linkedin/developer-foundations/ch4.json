@@ -1,13 +1,14 @@
 {
   "topic": "Message Batches API",
-  "hook": "Your overnight job pays real-time prices when nobody is waiting.",
+  "hook": "Why pay real-time prices for an overnight job nobody is waiting on?",
   "bullets": [
-    "Submit all requests in one batch",
-    "Tag each with a custom ID",
-    "Poll batches.retrieve until done",
-    "Read results, at a lower cost"
+    "Realtime calls are instant, but full price",
+    "Submit 10K tickets in one batch, each with a custom_id",
+    "Poll batches.retrieve() while it runs for hours",
+    "Match results back by custom_id",
+    "Same work, every token 50% cheaper"
   ],
-  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

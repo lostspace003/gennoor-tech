@@ -1,11 +1,11 @@
 {
   "steps": [
-    "Here Maya asks Claude, in an ordinary chat, for a ten step client onboarding procedure.",
-    "Claude answers right there in the chat. But thirty turns later, the procedure is buried in scrollback, and Maya cannot even remember which chat it was in.",
-    "Then a colleague shows her Artifacts. Since the team will reuse this procedure, Maya asks again, this time as an Artifact.",
-    "Claude judges the content substantial and reusable, so it renders it in the side panel, apart from the chat, as version one, saved.",
-    "Two days later, Maya opens the same Artifact and asks Claude to add a step. It is edited in place, becoming version two.",
-    "Next, instead of pasting it into an email, she shares the stable link with her manager, who can view, comment or edit.",
-    "Finally, the manager opens the link and sees the latest version, version two, with no scrollback hunt. Reusable work deserves a permanent home."
+    "This video shows how Artifacts give reusable work a permanent home outside the chat. Maya asks Claude, in an ordinary chat, for a ten step client onboarding procedure.",
+    "Claude answers right there in the chat. Thirty turns later, the procedure is buried in scrollback, and Maya cannot even remember which chat it was in. The work is effectively lost.",
+    "A colleague shows her Artifacts. Because the team will reuse this procedure, Maya asks Claude again, this time asking for it as an Artifact.",
+    "Claude judges the content substantial and reusable, so it renders it in the Artifact panel, apart from the chat. It now stands on its own as version one, saved.",
+    "Later, Maya opens the same Artifact and asks Claude to add a step. Claude edits it in place, so the panel now holds version two, rather than a new copy somewhere in chat.",
+    "Instead of pasting the steps into an email, Maya shares the Artifact's stable link with her manager, who can view it, comment on it or edit it.",
+    "Finally, the manager opens the link and the Artifact returns version two, the latest, with no scrollback hunt. Work you will reuse belongs in an Artifact, not a chat thread. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

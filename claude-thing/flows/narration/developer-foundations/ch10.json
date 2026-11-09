@@ -1,11 +1,11 @@
 {
   "steps": [
-    "Here three teams need the same Jira and C R M tools. Pasting a copy of the tool code into each of three apps means those copies will drift apart.",
-    "So you build one M C P server, with a Jira create issue tool and a C R M lookup customer tool, over J S O N R P C. Keep the tools narrow, not raw sequel access.",
-    "First, TicketFlow calls tools list and gets two tools. Each one appears as M C P, server, tool, for example the Jira create issue tool, and it is listed in allowed tools.",
-    "Next, the Escalation Dashboard and Analytics plug into the same server and get the same two tools, with no new glue code.",
-    "Now TicketFlow sends a tools call, and the server reaches the Jira A P I with a token from the environment. For user actions, it can use per-user O Auth.",
-    "Jira answers that the issue was created, and the tool result returns to TicketFlow. That result is treated as untrusted data, and side effects still need approval.",
-    "Finally, one fix to the Jira tool lands in all three apps at once. Write once, reuse everywhere. Shared capabilities belong in M C P, private ones in a custom tool."
+    "This video shows how one M C P server replaces copied tool code across apps. Three teams need the same Jira and C R M tools, and pasting a copy into each app means those copies drift apart.",
+    "Instead you build one M C P server with two narrow tools, jira create issue and crm lookup customer, spoken over J S O N R P C. It can run over standard I O, H T T P or S S E.",
+    "TicketFlow connects as an M C P client and calls tools list. The server returns two tools, each named mcp, server name, tool name, and TicketFlow adds them to its allowed tools.",
+    "The Escalation Dashboard and Analytics plug into the same server and call tools list too. They get the same two tools, with no new glue code.",
+    "When TicketFlow sends tools call, the server reaches the Jira A P I using a token from its environment. Credentials stay in the server, not in each app.",
+    "Jira answers that the issue is created, and the tool result returns to TicketFlow. TicketFlow treats that result as untrusted data and asks for approval before side effects.",
+    "Later you fix the Jira tool once, and the fix lands in all three apps. The takeaway: shared tools belong in M C P, private ones stay custom. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

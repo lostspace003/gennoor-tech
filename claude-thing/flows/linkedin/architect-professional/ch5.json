@@ -1,13 +1,14 @@
 {
   "topic": "Keeping API Keys From the Model",
-  "hook": "Your API key sits in the system prompt, one injection away from leaking.",
+  "hook": "Is your API key sitting in the system prompt, one injection away from leaking?",
   "bullets": [
-    "Never put secrets in model context",
-    "Claude only requests the tool",
-    "Handler fetches the key from a vault at run time",
-    "User-scoped token, nothing in traces"
+    "A key in the system prompt shows up in every trace",
+    "Claude gets only the question and tool definitions",
+    "The tool handler pulls the key from Key Vault at run time",
+    "The clerk's scoped token makes the CRM return billing data only",
+    "Claude writes the answer without ever seeing the key"
   ],
-  "cta": "Full CCAR-P prep course, chapter by chapter + practice exam:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

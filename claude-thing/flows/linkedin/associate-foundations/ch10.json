@@ -1,13 +1,13 @@
 {
   "topic": "Prompt Task Decomposition",
-  "hook": "One big prompt for a big task keeps giving you shallow answers.",
+  "hook": "Why does one big prompt for a big task keep giving you a shallow answer?",
   "bullets": [
-    "One broad request hides several deliverables",
-    "Split it into separate prompts",
-    "Each prompt gets a focused, full answer",
-    "Combine the parts at the end"
+    "One broad prompt returns a vague three-paragraph overview",
+    "The request hides three deliverables: map, materials, plan",
+    "Each focused prompt gets Claude's full reasoning",
+    "Three outputs combine into one final proposal"
   ],
-  "cta": "Full CCAS-F prep course, chapter by chapter + practice exam:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

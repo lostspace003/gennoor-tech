@@ -1,11 +1,11 @@
 {
   "steps": [
-    "Here the CLAUDE dot md file auto-loads into Claude Code, and a developer asks it to wipe the stale build folder.",
-    "Claude picks r m dash r f on the build folder. That is risky, and a prompt that just says be careful could still let it through.",
-    "So your Claude settings file sends every Bash tool use to a pre tool use hook, matched on Bash, before anything runs. The hook watches for patterns like r m dash r f and drop table.",
-    "The check bash script inspects the command in the tool input, finds r m dash r f, and returns deny. The call is blocked.",
-    "Bash never executes. Claude Code is told why, and passes the reason on to the developer: destructive command blocked.",
-    "Next, Claude narrows the command to remove only the log files in the build folder. The hook sees nothing destructive and returns an empty object, meaning allowed.",
-    "Finally, only the allowed call reaches the shell, and the log files are removed. Code holds the line, not a prompt."
+    "This video shows how a Claude Code hook blocks a dangerous command before it runs. The CLAUDE dot md file auto-loads, and a developer asks Claude Code to wipe the stale build folder.",
+    "Claude picks rm dash r f dot slash build. That is risky, and a prompt that only says be careful could still let it through.",
+    "Your settings dot json in the dot claude folder routes every Bash tool call to a PreToolUse hook first, using the matcher Bash. The hook watches for patterns like rm dash r f and drop table.",
+    "The hook script, check bash dot j s, inspects the command in the tool input, finds rm dash r f, and returns deny. The call is blocked.",
+    "Bash never executes. Claude Code is told why it was denied, and passes the reason back to the developer: destructive command blocked.",
+    "Claude narrows the command to remove only the log files in build. The hook sees nothing destructive and returns an empty object, which means allowed.",
+    "Only the allowed call reaches the shell, and it runs. The takeaway: code in a hook enforces the rule every time, where a prompt can only ask. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

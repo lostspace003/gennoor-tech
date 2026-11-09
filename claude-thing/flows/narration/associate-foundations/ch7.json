@@ -1,11 +1,11 @@
 {
   "steps": [
-    "Here Maya uploads a fifty row expense spreadsheet, and asks Claude to sum column D.",
-    "Claude says about forty-seven thousand three hundred dollars, then forty-six thousand nine hundred and fifty. Maya checks by hand: the real total is forty-four thousand two hundred and eighty-seven dollars. Claude was guessing.",
-    "Her manager explains why. A language model predicts text, it does not compute numbers.",
-    "So Maya switches on Code Execution, which lets Claude actually run code, and uploads the same expense spreadsheet again.",
-    "This time, Claude writes Python code to sum column D, and runs it in a sandbox.",
-    "The sandbox returns exactly forty-four thousand two hundred and eighty-seven dollars, across all fifty rows, and Claude shows Maya both the code and its output.",
-    "Finally, Maya reads the code and spot-checks a few rows, right file, column D, matching rows, before she relies on it. Exact numbers come from running code."
+    "This video shows why Claude needs Code Execution for exact numbers. Maya uploads a fifty row expense spreadsheet, and asks Claude to sum column D.",
+    "Claude says about forty-seven thousand three hundred dollars, then forty-six thousand nine hundred and fifty. Maya checks by hand: the real total is forty-four thousand two hundred and eighty-seven. Claude was guessing.",
+    "Here is why. A language model predicts the next likely text, it does not compute. A total that sounds plausible is not the same as a total that was calculated.",
+    "So Maya switches on Code Execution, which lets Claude actually run code, and sends the same expense spreadsheet again.",
+    "This time Claude writes Python code to sum column D, and sends it to a sandbox, which runs the code.",
+    "The sandbox returns exactly forty-four thousand two hundred and eighty-seven dollars across all fifty rows, and Claude shows Maya both the code and its output.",
+    "Finally, Maya reads the code and spot-checks a few rows: right file, column D, matching rows. Exact numbers come from running code, not from prediction. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

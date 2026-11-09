@@ -1,13 +1,14 @@
 {
   "topic": "Enterprise Agent Controls",
-  "hook": "One over-permissioned agent task could touch everything in production.",
+  "hook": "Is bypassPermissions plus a good prompt enough to run an agent in production?",
   "bullets": [
-    "Sandboxed worker per task, scoped cwd and creds",
-    "PreToolUse hook as a fast, fail-safe gate",
-    "Sensitive calls routed to a human approver",
-    "MCP calls authenticated with OAuth"
+    "The shortcut: bypassPermissions with no isolation",
+    "Sandboxed worker per task with scoped cwd and creds",
+    "PreToolUse hook as a fast policy gateway",
+    "can_use_tool queues the call for a named approver",
+    "Vetted MCP server, results as data, PostToolUse audit"
   ],
-  "cta": "Full CCAR-F prep course, chapter by chapter + practice exam:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

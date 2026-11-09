@@ -1,13 +1,14 @@
 {
   "topic": "Custom @tool Lifecycle",
-  "hook": "Your custom tool fails and the agent has no idea what went wrong.",
+  "hook": "What should your custom tool do when the lookup fails: raise, or return?",
   "bullets": [
-    "Register an in-process @tool, pre-allowed",
-    "Hooks and permissions run before your function",
-    "Results return as a ToolResultBlock",
-    "Failures come back as is_error results"
+    "Register check_stock as an in-process @tool",
+    "Claude emits a ToolUseBlock, the SDK runs your function",
+    "Real result returns as a ToolResultBlock: 42 in stock",
+    "Unknown SKU returns is_error instead of raising",
+    "Claude explains the error instead of guessing a number"
   ],
-  "cta": "Full CCAR-F prep course, chapter by chapter + practice exam:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

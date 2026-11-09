@@ -1,13 +1,14 @@
 {
   "topic": "Agent SDK Hooks",
-  "hook": "Your agent reaches for rm -rf and nothing stops it in time.",
+  "hook": "Your agent decides to run rm -rf. What actually stops it?",
   "bullets": [
-    "PreToolUse hook matched to Bash",
-    "Dangerous command denied before it runs",
-    "Claude picks a safe alternative",
-    "PostToolUse hook writes the audit log"
+    "PreToolUse hook on Bash, PostToolUse on everything",
+    "PreToolUse denies rm -rf before permissions run",
+    "The error steers Claude to a safe ls instead",
+    "{} means no objection, the command runs",
+    "PostToolUse audits only the call that ran"
   ],
-  "cta": "Full CCAR-F prep course, chapter by chapter + practice exam:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

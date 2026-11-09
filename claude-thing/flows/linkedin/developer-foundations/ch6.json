@@ -1,13 +1,13 @@
 {
   "topic": "Claude Tool Use Basics",
-  "hook": "You've added a tool, but Claude's tool calls crash your code.",
+  "hook": "When Claude calls a tool, who actually runs it, and what stops a bad input?",
   "bullets": [
-    "Define a tool with a JSON schema",
+    "Define lookup_customer with a JSON input schema",
     "Claude returns a tool_use block, not an answer",
-    "Validate input, return errors as results",
-    "Send tool_result back for the final reply"
+    "Validate the input first: errors go back as a tool_result",
+    "Send the tool_result back and Claude finishes with end_turn"
   ],
-  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

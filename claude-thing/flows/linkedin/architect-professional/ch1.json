@@ -1,13 +1,13 @@
 {
   "topic": "SLA Gate Before Cost",
-  "hook": "The cheapest architecture wins the review, then misses the latency SLA.",
+  "hook": "How do you pick an AI architecture the board will actually approve?",
   "bullets": [
-    "Discovery first, not a prototype",
-    "Hard constraints become pass/fail gates",
-    "Only gate-passing options compete on cost",
-    "A defensible decision for the board"
+    "Discovery turns clinical needs into hard pass or fail gates",
+    "A higher quality option is dropped for missing the 3 second SLA",
+    "Only gate survivors are compared on cost",
+    "An ADR is sent back until it records rejected alternatives and trade-offs"
   ],
-  "cta": "Full CCAR-P prep course, chapter by chapter + practice exam:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

@@ -1,13 +1,14 @@
 {
   "topic": "Build One MCP Server",
-  "hook": "Three apps need the same tools, and the copied code keeps drifting.",
+  "hook": "Three apps need the same tools. Why maintain three drifting copies?",
   "bullets": [
-    "Build one MCP server with narrow tools",
-    "Every app discovers them via tools/list",
-    "Tokens stay in the server's environment",
-    "Fix once, every app gets it"
+    "One MCP server exposes narrow Jira and CRM tools",
+    "Each app discovers them with tools/list",
+    "tools/call reaches Jira with a token from the server's env",
+    "Tool results are treated as untrusted data",
+    "Fix the tool once and all three apps get it"
   ],
-  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

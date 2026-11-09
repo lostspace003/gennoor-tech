@@ -1,13 +1,14 @@
 {
   "topic": "First Messages API Call",
-  "hook": "Your first Claude API call works, but the prompt and costs are a mess.",
+  "hook": "Your first Claude API call works. But is it ready for real traffic?",
   "bullets": [
-    "Create a client, pick the right model tier",
-    "Instructions go in the system prompt",
-    "The user turn is just the input",
-    "Log input and output tokens for cost"
+    "Create an Anthropic client in a real service",
+    "Pick Sonnet and set max_tokens",
+    "Behavior in the system prompt, the ticket in the user turn",
+    "Read content, stop_reason and usage from the reply",
+    "Log input and output tokens to track cost"
   ],
-  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

@@ -1,11 +1,11 @@
 {
   "steps": [
-    "Here Maya is building a board slide, and asks Claude to research competitor growth rates.",
-    "Claude answers with a striking statistic, competitor A grew three hundred percent, and backs it with three named sources. It looks convincing.",
+    "This video shows how to catch an A I hallucination: pinpoint, verify, then regenerate. Maya is building a board slide, and asks Claude to research competitor growth rates.",
+    "Claude answers with a striking statistic: competitor A grew three hundred percent, backed by three named sources. It looks convincing.",
     "First, pinpoint. While drafting the slide, Maya flags the one claim that looks too good. Three hundred percent sounds high, so she decides to check the sources.",
-    "Next, verify. The TechPulse article does not exist at all, and IndustryToday says thirty percent, not three hundred. Claude hallucinated the figure.",
+    "Next, verify. Maya searches the sources: the TechPulse article does not exist, and IndustryToday says thirty percent, not three hundred. Claude hallucinated the figure.",
     "Now regenerate. Maya re-prompts with a stricter rule: use only the uploaded file, and if something is not in the file, say so. The new answer sticks to file facts only.",
-    "Then Maya checks the thirty percent figure in the original study itself, because echoes of a number are not proof. The primary source confirms thirty percent.",
-    "Finally, escalate. Board slides are high-impact, so senior review signs off before anything goes to the board. Pinpoint, verify, regenerate, and review."
+    "Then Maya checks the thirty percent figure in the original study, because a number repeated elsewhere is not proof. The primary source confirms thirty percent.",
+    "Finally, escalate. Board slides are high impact, so senior review signs off before the slide goes to the board. Pinpoint, verify, regenerate and review any claim that matters. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }
