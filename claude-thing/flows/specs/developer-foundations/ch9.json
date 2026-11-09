@@ -1,6 +1,6 @@
 {
   "title": "Orchestrator: split the ticket, merge the results",
-  "kicker": "TicketFlow · Week 9",
+  "kicker": "TicketFlow",
   "actors": [
     { "id": "customer", "icon": "user", "label": "Customer", "sub": "one mixed ticket", "slot": "L" },
     { "id": "orch", "icon": "workflow", "label": "TicketFlow", "sub": "main agent", "slot": "C" },

@@ -16,5 +16,6 @@
     "#ClaudeAgentSDK",
     "#HumanInTheLoop",
     "#AIGovernance"
-  ]
+  ],
+  "shows": "This short animation shows can_use_tool auto-approving a $40 action and queuing a $250 one for a human."
 }

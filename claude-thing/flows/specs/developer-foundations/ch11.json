@@ -1,6 +1,6 @@
 {
   "title": "PreToolUse hook: rm -rf denied before it runs",
-  "kicker": "TicketFlow · Week 11",
+  "kicker": "TicketFlow",
   "actors": [
     { "id": "dev", "icon": "user", "label": "Developer", "sub": "debugging TicketFlow", "slot": "L" },
     { "id": "claude", "icon": "sparkles", "label": "Claude Code", "sub": "emits tool_use", "slot": "C" },

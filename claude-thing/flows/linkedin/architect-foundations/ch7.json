@@ -16,5 +16,6 @@
     "#ClaudeAgentSDK",
     "#AISecurity",
     "#AIGovernance"
-  ]
+  ],
+  "shows": "This short animation shows a hook blocking a dangerous rm -rf command and logging what ran."
 }

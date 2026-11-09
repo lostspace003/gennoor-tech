@@ -1,6 +1,6 @@
 {
   "title": "AsyncAnthropic: three tickets in flight at once",
-  "kicker": "TicketFlow · Week 2",
+  "kicker": "TicketFlow",
   "actors": [
     { "id": "queue", "icon": "inbox", "label": "Ticket queue", "sub": "support inbox, peak", "slot": "L" },
     { "id": "ticketflow", "icon": "server", "label": "TicketFlow", "sub": "your Python service", "slot": "C" },

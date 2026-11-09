@@ -15,5 +15,6 @@
     "#ClaudeCode",
     "#AISecurity",
     "#DevSecOps"
-  ]
+  ],
+  "shows": "This short animation shows a PreToolUse hook denying rm -rf before it runs."
 }

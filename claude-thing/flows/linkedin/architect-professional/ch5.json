@@ -16,5 +16,6 @@
     "#AISecurity",
     "#SecretsManagement",
     "#AIArchitecture"
-  ]
+  ],
+  "shows": "This short animation shows API keys kept out of the prompt so the model never sees them."
 }

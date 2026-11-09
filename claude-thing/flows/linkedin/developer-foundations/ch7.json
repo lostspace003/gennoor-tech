@@ -16,5 +16,6 @@
     "#ClaudeAPI",
     "#StructuredOutputs",
     "#AIAgents"
-  ]
+  ],
+  "shows": "This short animation shows JSON output drifting in a long run, and how pruning the context fixes it."
 }

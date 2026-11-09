@@ -16,5 +16,6 @@
     "#ClaudeAgentSDK",
     "#AIArchitecture",
     "#AIAgents"
-  ]
+  ],
+  "shows": "This short animation shows a single query() call growing into an agent with tools, permissions and guardrails."
 }

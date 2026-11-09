@@ -15,5 +15,6 @@
     "#PromptCaching",
     "#CostOptimization",
     "#AIArchitecture"
-  ]
+  ],
+  "shows": "This short animation shows prompt caching: a long filing is paid for once, not on every query."
 }

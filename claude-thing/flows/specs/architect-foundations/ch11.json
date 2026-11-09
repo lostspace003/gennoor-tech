@@ -14,6 +14,6 @@
     { "caption": "can_use_tool parks the call in the approval queue until a human decides.", "send": { "from": "code", "to": "approver", "icon": "inbox", "label": "can_use_tool?" }, "reply": { "from": "approver", "to": "code", "icon": "check", "label": "approved" }, "callout": { "at": "approver", "text": "named approver · timeout set" }, "badge": { "at": "approver", "kind": "check", "text": "approved" } },
     { "caption": "Approved. The call goes through the shared MCP server that fronts the system.", "send": { "from": "code", "to": "mcp", "icon": "plug", "label": "tool call · OAuth" }, "reply": { "from": "mcp", "to": "code", "icon": "file-check", "label": "tool_result" }, "callout": { "at": "mcp", "text": "vetted server · result is data" }, "state": { "at": "mcp", "text": "result: untrusted data" } },
     { "caption": "The PostToolUse hook writes the audit entry, then the result reaches the agent.", "send": { "from": "code", "to": "agent", "icon": "file-check", "label": "tool_result" }, "state": { "at": "code", "text": "audit entry written" }, "badge": { "at": "code", "kind": "check", "text": "audited" } },
-    { "caption": "Exam lens: one control per concern — sandbox, hooks, callback, subagents, MCP.", "focus": ["code"], "callout": { "at": "code", "text": "pick the single fitting control" } }
+    { "caption": "Control map: one control per concern — sandbox, hooks, callback, subagents, MCP.", "focus": ["code"], "callout": { "at": "code", "text": "pick the single fitting control" } }
   ]
 }

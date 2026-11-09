@@ -1,6 +1,6 @@
 {
   "title": "RBAC at retrieval: filter by role before the prompt",
-  "kicker": "Meridian rollout · Week 9",
+  "kicker": "Meridian rollout",
   "actors": [
     { "id": "clerk", "icon": "user", "label": "Billing clerk", "sub": "billing_clerk_47", "slot": "L" },
     { "id": "retrieval", "icon": "shield-check", "label": "Retrieval svc", "sub": "ACL filter", "slot": "C" },

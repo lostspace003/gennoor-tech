@@ -16,5 +16,6 @@
     "#ClaudeAgentSDK",
     "#MultiAgent",
     "#AIAgents"
-  ]
+  ],
+  "shows": "This short animation shows a subagent doing the research in its own context and returning only a short memo."
 }

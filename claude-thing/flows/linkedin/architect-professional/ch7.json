@@ -15,5 +15,6 @@
     "#MLOps",
     "#AIArchitecture",
     "#EnterpriseAI"
-  ]
+  ],
+  "shows": "This short animation shows a canary rollout that automatically reverts when quality drops."
 }

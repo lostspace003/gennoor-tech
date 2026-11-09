@@ -16,5 +16,6 @@
     "#MCP",
     "#ClaudeAgentSDK",
     "#AIArchitecture"
-  ]
+  ],
+  "shows": "This short animation shows an agent discovering MCP tools over two transports and calling them by name."
 }

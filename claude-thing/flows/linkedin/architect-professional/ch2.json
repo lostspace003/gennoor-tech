@@ -16,5 +16,6 @@
     "#RAG",
     "#AIArchitecture",
     "#AISecurity"
-  ]
+  ],
+  "shows": "This short animation shows documents being filtered by the user's role before they reach the prompt."
 }

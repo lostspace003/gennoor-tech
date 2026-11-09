@@ -16,5 +16,6 @@
     "#ClaudeAgentSDK",
     "#ToolUse",
     "#AIAgents"
-  ]
+  ],
+  "shows": "This short animation shows how Claude asks for a custom tool and your code answers."
 }

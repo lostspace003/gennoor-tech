@@ -15,5 +15,6 @@
     "#Observability",
     "#AIArchitecture",
     "#AIOps"
-  ]
+  ],
+  "shows": "This short animation shows a correlation ID tracing a failed claim across the gateway, the agent and retrieval."
 }

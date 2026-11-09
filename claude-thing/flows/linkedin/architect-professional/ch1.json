@@ -15,5 +15,6 @@
     "#AIArchitecture",
     "#EnterpriseAI",
     "#SolutionArchitecture"
-  ]
+  ],
+  "shows": "This short animation shows why the latency SLA is checked before cost when choosing an architecture."
 }

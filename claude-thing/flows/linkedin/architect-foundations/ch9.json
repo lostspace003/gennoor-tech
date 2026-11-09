@@ -16,5 +16,6 @@
     "#ClaudeAgentSDK",
     "#HumanInTheLoop",
     "#AISecurity"
-  ]
+  ],
+  "shows": "This short animation shows which permission layer allowed or blocked each tool call, with a human approving the restart."
 }

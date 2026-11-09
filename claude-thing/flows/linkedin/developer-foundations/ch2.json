@@ -16,5 +16,6 @@
     "#ClaudeAPI",
     "#AIEngineering",
     "#Python"
-  ]
+  ],
+  "shows": "This short animation shows a first messages.create() call and how its tokens are counted."
 }

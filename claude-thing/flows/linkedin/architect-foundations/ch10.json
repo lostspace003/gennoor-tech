@@ -16,5 +16,6 @@
     "#ClaudeAgentSDK",
     "#StructuredOutputs",
     "#AIAgents"
-  ]
+  ],
+  "shows": "This short animation shows an agent returning typed JSON instead of text you have to parse."
 }

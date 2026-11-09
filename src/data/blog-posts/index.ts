@@ -44,6 +44,20 @@ export interface BlogPost extends BlogPostMeta {
 
 export const blogPostsMeta: BlogPostMeta[] = [
   {
+    slug: 'openai-dots-enterprise-ga-always-on-agent-ops-challenge',
+    title: 'OpenAI Dots Enterprise GA Exposes the Real Challenge of Always-On Agents',
+    excerpt: 'Always-on agents look manageable in a demo, but enterprise reality starts when persistent agent capabilities enter business workspaces. OpenAI’s latest ChatGPT announcement is less a model story than an operations signal: enterprises need verified admin controls, app connection policy, monitoring, privacy review, and clear ownership before broader enablement.',
+    tldr: 'OpenAI’s recent announcement about persistent agent capabilities for business-focused ChatGPT workspaces shifts the enterprise discussion from model quality to operating discipline. The key issue is not just whether these agents are useful. It is whether admins can verify controls, govern app connections, review privacy and residency implications, monitor usage, and assign clear operational ownership before adoption expands.',
+    author: 'Gennoor Tech',
+    date: '2026-11-09',
+    readTime: '17 min read',
+    category: 'AI Agents',
+    tags: ['AI Agents', 'Enterprise AI', 'AI Governance', 'AI Strategy', 'AI Security', 'AI Privacy', 'AI Operating Model', 'Admin Controls', 'ChatGPT Enterprise'],
+    hashtags: ['#AIAgents', '#EnterpriseAI', '#AIGovernance', '#AIStrategy', '#AISecurity', '#ChatGPTEnterprise'],
+    coverColor: '#2B1F24',
+    icon: '🧭',
+  },
+  {
     slug: 'microsoft-copilot-harness-runtime-control-platform-strategy',
     title: 'Microsoft Copilot Harness: Why Runtime Control Now Matters More Than the Model',
     excerpt: 'Microsoft’s recent Copilot and platform messaging suggests a shift in enterprise AI discussion away from the next model launch and toward the managed runtime layer that could govern agentic work in production. For IT leaders, the key takeaway is not a fixed list of product features, but a platform evaluation lens: how agent execution, reviewability, governance, and operational control will be handled at scale.',
@@ -1056,6 +1070,7 @@ export function getRelatedPostsMeta(currentSlug: string, category: string, limit
 
 // Load full blog post content on demand (only for individual post pages)
 const contentImports: Record<string, () => Promise<{ post: BlogPost }>> = {
+  'openai-dots-enterprise-ga-always-on-agent-ops-challenge': () => import('./content/openai-dots-enterprise-ga-always-on-agent-ops-challenge'),
   'microsoft-copilot-harness-runtime-control-platform-strategy': () => import('./content/microsoft-copilot-harness-runtime-control-platform-strategy'),
   'gpt-6-1-terra-enterprise-agent-cost-control-roi': () => import('./content/gpt-6-1-terra-enterprise-agent-cost-control-roi'),
   'ai-in-infrastructure-enterprise-capacity-power-governance': () => import('./content/ai-in-infrastructure-enterprise-capacity-power-governance'),

@@ -39,8 +39,9 @@ for (const [slug, c] of Object.entries(COURSES)) {
     const url = `https://gennoor.com/claude/certifications/${slug}`;
     const tags = (p.hashtags || []).join(' ');
     const bullets = (p.bullets || []).map(b => '▪ ' + b.trim()).join('\n');
-    const text = `${p.hook.trim()}\n\n${bullets}\n\n${p.cta.trim()}\n👉 ${url}\n\n${tags}`;
-    const comment = `📘 Full ${c.code} prep course, chapter by chapter + practice exam: ${url}`;
+    const cta = `Full ${c.code} course, chapter by chapter:`;
+    const text = `${p.hook.trim()}\n\n${p.shows.trim()}\n\n${bullets}\n\n${cta}\n👉 ${url}\n\n${tags}`;
+    const comment = `📘 Full ${c.code} course, chapter by chapter: ${url}`;
     return { id: `${c.key}-${id}`, chapter: id, slug, code: c.code, course: c.name, topic: p.topic, title: spec.title, hook: p.hook, hashtags: p.hashtags, text, comment, url };
   });
 }

@@ -1,6 +1,6 @@
 {
-  "title": "Claude at work: Maya's 30 days to AI-fluent lead",
-  "kicker": "Maya's story · Day 1 to Day 30",
+  "title": "Claude at work: Maya becomes an AI-fluent lead",
+  "kicker": "Maya's story",
   "actors": [
     { "id": "maya", "icon": "user", "label": "Maya", "sub": "Brightline analyst", "slot": "L" },
     { "id": "claude", "icon": "sparkles", "label": "Claude", "sub": "her AI teammate", "slot": "C" },
@@ -8,13 +8,13 @@
     { "id": "sandbox", "icon": "server", "label": "Sandbox", "sub": "Code Execution", "slot": "BR" }
   ],
   "steps": [
-    { "caption": "Day 1: \"help me with reports\" flops, and Maya learns the 4Ds of AI fluency.", "focus": ["maya"], "send": { "from": "maya", "to": "claude", "icon": "message-square", "label": "help me with reports" }, "reply": { "from": "claude", "to": "maya", "icon": "file-text", "label": "generic advice" }, "badge": { "at": "maya", "kind": "warn", "text": "too vague" }, "state": { "at": "maya", "text": "Week 1 · first chats" } },
+    { "caption": "\"Help me with reports\" flops, and Maya learns the 4Ds of AI fluency.", "focus": ["maya"], "send": { "from": "maya", "to": "claude", "icon": "message-square", "label": "help me with reports" }, "reply": { "from": "claude", "to": "maya", "icon": "file-text", "label": "generic advice" }, "badge": { "at": "maya", "kind": "warn", "text": "too vague" }, "state": { "at": "maya", "text": "first chats" } },
     { "caption": "Her onboarding procedure stops vanishing into scrollback: now it's an Artifact.", "send": { "from": "maya", "to": "claude", "icon": "clipboard-list", "label": "onboarding steps" }, "reply": { "from": "claude", "to": "maya", "icon": "file-text", "label": "shareable Artifact" }, "callout": { "at": "maya", "text": "One stable link for the team" } },
     { "caption": "Same prompt, three different answers. Maya adds role, context, task and format.", "send": { "from": "maya", "to": "claude", "icon": "list-checks", "label": "4-part prompt" }, "reply": { "from": "claude", "to": "maya", "icon": "file-check", "label": "consistent output" }, "callout": { "at": "maya", "text": "Exec audience → bottom line first" } },
-    { "caption": "Maya parks the 300-word brief in a team Project; prompts shrink to 50 words.", "focus": ["project"], "send": { "from": "maya", "to": "project", "icon": "book-open", "label": "brief + glossary" }, "callout": { "at": "project", "text": "Every chat inherits the rules" }, "state": { "at": "maya", "text": "Week 2 · Projects" } },
-    { "caption": "After two \"approximately\" totals, Code Execution runs Python: exactly $44,287.", "focus": ["sandbox"], "send": { "from": "claude", "to": "sandbox", "icon": "code", "label": "run Python" }, "reply": { "from": "sandbox", "to": "claude", "icon": "hash", "label": "code + $44,287" }, "badge": { "at": "maya", "kind": "check", "text": "verified" }, "state": { "at": "maya", "text": "Week 2 · spreadsheets" } },
-    { "caption": "Maya spots salaries in the performance reviews and redacts before she prompts.", "focus": ["maya"], "send": { "from": "maya", "to": "claude", "icon": "file-text", "label": "reviews, redacted" }, "callout": { "at": "maya", "text": "Classify → redact → review" }, "state": { "at": "maya", "text": "Week 4 · PII redacted" } },
+    { "caption": "Maya parks the 300-word brief in a team Project; prompts shrink to 50 words.", "focus": ["project"], "send": { "from": "maya", "to": "project", "icon": "book-open", "label": "brief + glossary" }, "callout": { "at": "project", "text": "Every chat inherits the rules" }, "state": { "at": "maya", "text": "Projects" } },
+    { "caption": "After two \"approximately\" totals, Code Execution runs Python: exactly $44,287.", "focus": ["sandbox"], "send": { "from": "claude", "to": "sandbox", "icon": "code", "label": "run Python" }, "reply": { "from": "sandbox", "to": "claude", "icon": "hash", "label": "code + $44,287" }, "badge": { "at": "maya", "kind": "check", "text": "verified" }, "state": { "at": "maya", "text": "spreadsheets" } },
+    { "caption": "Maya spots salaries in the performance reviews and redacts before she prompts.", "focus": ["maya"], "send": { "from": "maya", "to": "claude", "icon": "file-text", "label": "reviews, redacted" }, "callout": { "at": "maya", "text": "Classify → redact → review" }, "state": { "at": "maya", "text": "PII redacted" } },
     { "caption": "A 300% growth stat is invented. Maya pinpoints it before it reaches the board.", "send": { "from": "claude", "to": "maya", "icon": "chart-line", "label": "300% growth stat" }, "reply": { "from": "maya", "to": "claude", "icon": "search", "label": "stricter prompt" }, "callout": { "at": "maya", "text": "No primary source. Not board-ready." } },
-    { "caption": "Day 30: 60 scenario questions, ~90 minutes. Maya is her team's AI-fluent lead.", "focus": ["maya"], "badge": { "at": "maya", "kind": "check", "text": "exam ready" }, "callout": { "at": "maya", "text": "Single choice, select-two, ordering" }, "state": { "at": "maya", "text": "team's AI-fluent lead" } }
+    { "caption": "Maya is her team's AI-fluent lead: clear prompts, exact numbers, safe data.", "focus": ["maya"], "badge": { "at": "maya", "kind": "check", "text": "ready" }, "callout": { "at": "maya", "text": "Single choice, select-two, ordering" }, "state": { "at": "maya", "text": "team's AI-fluent lead" } }
   ]
 }

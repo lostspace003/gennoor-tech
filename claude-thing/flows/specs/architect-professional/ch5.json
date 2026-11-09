@@ -1,6 +1,6 @@
 {
   "title": "Secrets & RBAC: the key never reaches Claude",
-  "kicker": "Meridian rollout · Week 19",
+  "kicker": "Meridian rollout",
   "actors": [
     { "id": "clerk", "icon": "user", "label": "Billing clerk", "sub": "billing_clerk_47", "slot": "L" },
     { "id": "server", "icon": "server", "label": "Agent server", "sub": "gateway + handlers", "slot": "TC" },

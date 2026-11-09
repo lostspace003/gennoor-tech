@@ -1,6 +1,6 @@
 {
   "title": "Prompt caching: pay for the filing once",
-  "kicker": "Meridian rollout · Week 11",
+  "kicker": "Meridian rollout",
   "actors": [
     { "id": "you", "icon": "user", "label": "You", "sub": "Principal Architect", "slot": "L" },
     { "id": "legal", "icon": "scale", "label": "Legal workflow", "sub": "14 queries / filing", "slot": "C" },

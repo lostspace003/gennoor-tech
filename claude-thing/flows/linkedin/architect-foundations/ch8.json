@@ -16,5 +16,6 @@
     "#ClaudeAgentSDK",
     "#AIAgents",
     "#AIArchitecture"
-  ]
+  ],
+  "shows": "This short animation shows the difference between resuming a session and forking one."
 }

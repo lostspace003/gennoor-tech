@@ -15,5 +15,6 @@
     "#ClaudeAPI",
     "#AIAgents",
     "#ToolUse"
-  ]
+  ],
+  "shows": "This short animation shows Claude requesting a tool, and your code validating and running it."
 }

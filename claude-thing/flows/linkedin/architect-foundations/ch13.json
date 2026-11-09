@@ -16,5 +16,6 @@
     "#MCP",
     "#ClaudeAgentSDK",
     "#AIArchitecture"
-  ]
+  ],
+  "shows": "This short animation shows built-in, SDK and external MCP tools passing through the same permission gate."
 }

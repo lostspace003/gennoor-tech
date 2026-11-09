@@ -1,6 +1,6 @@
 {
   "title": "MCP server: write once, three apps plug in",
-  "kicker": "TicketFlow · Week 10",
+  "kicker": "TicketFlow",
   "actors": [
     { "id": "you", "icon": "user", "label": "You", "sub": "Loomline AI engineer", "slot": "L" },
     { "id": "mcp", "icon": "plug", "label": "MCP server", "sub": "jira + crm tools", "slot": "C" },
