@@ -1,12 +1,12 @@
 {
   "steps": [
-    "This flow traces a failed claim. A claims request for policy A two nine four seven one hits the A P I gateway, which mints a correlation I D, request a seven b two c nine d four, and opens the first span.",
-    "The header carries that I D to the claims agent, which logs it together with the model I D, a Claude Sonnet four model.",
-    "Next, under the same I D, retrieval queries the vector database for policy A two nine four seven one, and gets zero results.",
-    "The agent logs the tool result, no matches, and responds to the gateway: policy not found.",
-    "Now every hop exports its span to the trace backend, and all three spans carry the same correlation I D.",
-    "Without that I D, these three logs would sit in three separate systems, and nothing would link them together.",
-    "So you query the backend by that request I D, and the three spans return as one trace, the request reconstructed end to end.",
-    "Finally, the trace points straight at the zero results, and you find policy A two nine four seven one indexed with a typo. That is the root cause, found in minutes."
+    "This video shows how one correlation I D lets you trace a failed request across separate systems. A claims request for policy A two nine four seven one reaches the A P I gateway, which mints the I D request a seven b two c nine d four and opens span one.",
+    "The gateway passes that I D in a header to the claims agent, along with the policy number. The agent logs the I D together with the exact model I D it is running, a Claude Sonnet four model.",
+    "Under the same I D, the agent asks retrieval to look up policy A two nine four seven one in the vector database. Retrieval records span two and returns zero results.",
+    "The agent logs the tool result, no matches, records span three, and responds to the gateway: policy not found.",
+    "Each hop exports its span to the trace backend. All three spans carry the same correlation I D, so the backend can group them.",
+    "Without that shared I D, these would be three separate logs in three separate systems, with nothing linking them to one request.",
+    "You query the trace backend by the request I D, and the three spans come back as one trace. The whole request is reconstructed end to end.",
+    "The trace points straight at the zero results from retrieval, and you find policy A two nine four seven one indexed with a typo. That is the root cause. Takeaway: mint one I D at the edge and log it on every hop. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

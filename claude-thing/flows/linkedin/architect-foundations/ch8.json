@@ -1,13 +1,14 @@
 {
   "topic": "Resume vs Fork Sessions",
-  "hook": "Your agent forgets yesterday's work, or overwrites it when you try a what-if.",
+  "hook": "Why does your agent forget yesterday's report, and how do you explore a what-if without losing the original?",
   "bullets": [
-    "Transcripts saved to a session store",
-    "Capture session_id to resume later",
-    "Resume reloads the history",
-    "Fork tries a variant under a new id"
+    "Turn one reads report.md, the runtime saves the transcript",
+    "Capture session_id, then resume reloads the history",
+    "No resume means an empty context",
+    "fork_session=True branches into a new session id",
+    "The original session stays untouched"
   ],
-  "cta": "Full CCAR-F course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

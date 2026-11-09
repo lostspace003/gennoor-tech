@@ -1,10 +1,10 @@
 {
   "steps": [
-    "The refund agent proposes a fifty thousand dollar refund. Without a gate, it would just pay out, and nobody would check.",
-    "So you place the can use tool callback between the model's output and any irreversible action. Its rule is simple: anything over one hundred dollars pauses.",
-    "This refund is over one hundred dollars, so the runtime pauses the agent, and the callback posts the exact input to the manager in Slack, not a vague description.",
-    "Next, the manager clicks approve. The callback returns permission allow, and the agent resumes.",
-    "Only now does the fifty thousand dollar refund execute in payments, and the audit log records who approved what, and when.",
-    "Finally, a small refund of one hundred dollars or less gets an instant allow and executes at once. The lesson: gate the big moves, not every call."
+    "This video shows how a human approval gate stops an AI agent from moving money unchecked. The refund agent proposes a fifty thousand dollar refund. With no gate, it would simply pay out and nobody would check.",
+    "You place the can use tool callback between the model's output and any irreversible action. The agent's issue refund request for fifty thousand dollars now reaches the gate first, and its rule says anything over one hundred dollars pauses.",
+    "This amount is over the limit, so the runtime pauses the agent and the callback posts an approval request to the manager in Slack. It shows the exact tool input, not a summary of it.",
+    "The manager clicks approve. The callback returns permission result allow, and the paused agent resumes from where it stopped.",
+    "Only now does the gate let the fifty thousand dollar refund through to payments, where it executes. The audit log records who approved it and when.",
+    "Then the agent sends a small refund. At one hundred dollars or less, the gate allows it instantly and payments executes it at once. Takeaway: gate the irreversible, high value moves, not every call. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

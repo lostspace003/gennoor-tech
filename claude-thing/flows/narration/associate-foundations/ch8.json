@@ -1,11 +1,11 @@
 {
   "steps": [
-    "On Monday, Maya explains Brightline's three client tiers to Claude in detail, carefully setting out what each tier means.",
-    "On Tuesday, in a new chat, she asks about tier two renewals, and Claude has no idea what tier two means. It starts from scratch.",
+    "This video shows how Memory lets Claude remember your context across chats. Maya explains Brightline's three client tiers to Claude in detail.",
+    "Later, in a new chat, she asks about tier two renewals, and Claude has no idea what tier two means. Without Memory, every chat starts from scratch.",
     "So Maya switches Memory on in Settings, and tells Claude the tiers once, for example that tier two is mid-market, ten to fifty thousand dollars.",
-    "Memory stores recurring facts like the tiers, her role and her cadence, not this quarter's numbers, and Maya can view, edit or delete them in Settings.",
-    "Next chat, same question. This time Claude checks Memory and already knows tier two is mid-market, ten to fifty thousand dollars.",
-    "Claude answers the tier two question directly, and Maya never has to re-explain the tiers.",
-    "Finally, she also connects Google Drive, so Claude can find and read the Acme Corp summary with no manual upload. It sees only what Maya herself can see."
+    "Claude saves recurring facts to Memory, like the tiers, her role and her cadence, not this quarter's numbers. Maya can view, edit or delete them in Settings.",
+    "In the next chat, Maya asks the same thing. This time Claude looks up tier two in Memory, and gets back mid-market, ten to fifty thousand dollars.",
+    "Claude answers the tier two renewals ask directly, and Maya never has to re-explain the tiers.",
+    "Finally, she connects Google Drive, so Claude can find and read the Acme Corp summary with no manual upload. It sees only what Maya can see. Memory keeps stable facts, connectors bring live files. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

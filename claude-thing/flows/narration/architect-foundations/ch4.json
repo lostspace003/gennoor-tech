@@ -1,11 +1,11 @@
 {
   "steps": [
-    "This flow follows a tool's lifecycle. Your code registers check stock as an in-process tool, pre-allowed, and asks whether we have stock keeping unit A one hundred.",
-    "Claude reads the prompt and the tool description, then emits a tool use block calling the inventory server's check stock tool with that S K U.",
-    "Next, hooks run, the permission check passes because the tool is pre-approved, and the S D K calls your function in-process. It answers: forty-two in stock.",
-    "The result returns to Claude as a tool result block, and Claude answers your code with the real figure, forty-two in stock, not a guess.",
-    "Now your code asks about S K U Z nine nine nine, and Claude emits a second tool use block for it.",
-    "There is no match for Z nine nine nine. Your function returns a result marked is error, instead of raising an exception, so nothing crashes.",
-    "Finally, Claude reads that error and explains that Z nine nine nine is not in the catalogue, instead of inventing a stock figure. Errors as data keep the agent honest."
+    "This video follows one custom tool through its whole lifecycle. Your code registers check stock as an in process tool, and asks whether SKU A one hundred is in stock.",
+    "Claude reads the prompt and the tool description, then emits a tool use block calling the inventory server's check stock tool with the SKU as input.",
+    "Hooks run, the permission check passes because the tool is pre approved, and the S D K calls your function in process. It returns forty two in stock.",
+    "That result goes back to Claude as a tool result block, and Claude answers your code with the real figure, forty two in stock, not a guess.",
+    "Now your code asks about SKU Z nine nine nine, and Claude emits a second tool use block for that SKU.",
+    "There is no match. Instead of raising an exception, your function returns a result marked is error, saying unknown SKU. Nothing crashes, and the failure becomes data.",
+    "Claude reads the error and explains that Z nine nine nine is not in the catalogue, instead of inventing a stock figure. Return errors as data, and the model handles them honestly. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

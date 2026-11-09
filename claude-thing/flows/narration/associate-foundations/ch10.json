@@ -1,11 +1,11 @@
 {
   "steps": [
-    "Meet Maya. Her manager sends her a big request: redesign the new hire onboarding process.",
-    "First, Maya pastes the whole request into Claude as one broad prompt, and gets back a vague three paragraph overview. Even retrying with more detail, it stays shallow.",
-    "Then a colleague spots the problem. That one request hides three distinct deliverables: a process map, training materials and a measurement plan. That means three prompts.",
-    "So prompt one asks only for the process map, and Claude's full reasoning goes into that single piece of work.",
-    "Next, prompt two asks only for the training materials that support the new process, and Claude delivers them.",
-    "Now prompt three asks only for the measurement plan, the third distinct deliverable, completing the set.",
-    "Finally, Maya combines three specific, well-structured outputs into one final proposal for her manager. Decomposing the task beat one giant prompt."
+    "This video shows task decomposition: why three focused prompts beat one big one. Maya's manager sends her a big request: redesign the new hire onboarding process.",
+    "Maya pastes the whole request into Claude as one broad prompt, and gets back a vague three paragraph overview. Even retrying with more detail, it stays shallow.",
+    "A colleague spots the problem. That one request hides three distinct deliverables: a process map, training materials and a measurement plan. That means three prompts.",
+    "Prompt one asks only for the process map, so Claude's full reasoning goes into that single piece of work, and it returns a process map.",
+    "Prompt two asks only for the training materials that support the new process, and Claude returns them as the second deliverable.",
+    "Prompt three asks only for the measurement plan, the third distinct deliverable, and Claude returns it, completing the set.",
+    "Finally, Maya combines the three specific, well-structured outputs into one final proposal for her manager. When a request hides several deliverables, give each one its own prompt. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

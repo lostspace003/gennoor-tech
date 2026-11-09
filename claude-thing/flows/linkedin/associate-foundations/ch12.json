@@ -1,13 +1,13 @@
 {
   "topic": "Catching AI Hallucinations",
-  "hook": "Claude cites a convincing stat, and the source doesn't exist.",
+  "hook": "What do you do when Claude cites a convincing stat and the source doesn't exist?",
   "bullets": [
-    "Pinpoint the claim that looks too good",
-    "Verify each cited source",
-    "Restrict Claude to your own file",
-    "Confirm with a primary source and review"
+    "A three-hundred-percent growth claim with three named sources",
+    "One source doesn't exist, another says thirty percent",
+    "Re-prompt: use only the uploaded file",
+    "Confirm with the primary source, then senior review"
   ],
-  "cta": "Full CCAS-F course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

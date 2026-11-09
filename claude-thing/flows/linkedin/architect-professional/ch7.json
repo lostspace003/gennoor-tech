@@ -1,13 +1,13 @@
 {
   "topic": "Canary Rollout With Auto-Revert",
-  "hook": "A model change ships to everyone, and quality drops before anyone notices.",
+  "hook": "What stops a model change from degrading quality for every user at once?",
   "bullets": [
-    "Arm the rollback gate before traffic moves",
-    "Canary at 5%, then 25%, then 50%",
-    "Accuracy breach triggers auto-revert",
-    "On-call SRE alerted, no big-bang release"
+    "Rollback thresholds are set before any traffic moves",
+    "The release widens from 5% to 25% to 50% as metrics pass",
+    "A 2.6-point accuracy drop at 50% breaches the limit",
+    "The gate reverts all traffic automatically and pages on-call"
   ],
-  "cta": "Full CCAR-P course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

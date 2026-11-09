@@ -1,11 +1,11 @@
 {
   "steps": [
-    "Here Maya is drafting a summary from a spreadsheet of employee performance reviews, with the raw sheet open.",
+    "This video shows how to handle sensitive data with Claude: classify, redact, review, then submit. Maya is drafting a summary from a spreadsheet of employee performance reviews, with the raw sheet open.",
     "Halfway through, she spots salaries, manager feedback and accommodation notes, and asks herself whether this is safe to put into Claude. It is sensitive data.",
-    "So she stops and consults the H R policy, and the answer is a clear no. Personal data must be redacted first.",
-    "Next, Maya classifies each field and swaps the sensitive ones for placeholders, like a salary tag and an employee I D tag.",
-    "A peer reviewer then checks the redacted sheet and confirms the redaction is complete. A second pair of eyes catches what one person misses.",
-    "Only now does Maya submit the safe remainder to Claude, with no personal data in it, and Claude starts drafting.",
-    "Finally, Claude returns the draft summary. Drafting is fine, but any promotion decision stays owned by humans."
+    "So she stops and asks the H R policy whether she can use this data. The answer is a clear no: personal data must be redacted first.",
+    "Maya classifies each field and swaps the sensitive ones for placeholders, like a salary tag and an employee I D tag. The sheet is now classified and redacted.",
+    "She sends the redacted sheet to a peer reviewer, who checks it and confirms the redaction is complete. A second pair of eyes catches what one person misses.",
+    "Only now does Maya submit the safe remainder to Claude. It contains no personal data, and Claude starts drafting.",
+    "Finally, Claude returns the draft summary. Drafting is Claude's job, but any promotion decision stays with humans. Redact and review before anything sensitive reaches Claude. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

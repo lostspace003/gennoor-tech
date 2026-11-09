@@ -1,13 +1,13 @@
 {
   "topic": "Data Sensitivity and Redaction",
-  "hook": "You're not sure that spreadsheet is safe to paste into Claude.",
+  "hook": "Is that spreadsheet actually safe to paste into Claude?",
   "bullets": [
-    "Stop and spot the sensitive fields",
-    "Check the policy first",
-    "Redact with placeholders",
-    "Work only with the safe remainder"
+    "Salaries and accommodation notes spotted mid-draft",
+    "HR policy says no: redact first",
+    "Sensitive fields swapped for placeholders, then peer-reviewed",
+    "Only the safe remainder goes to Claude; promotions stay human"
   ],
-  "cta": "Full CCAS-F course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

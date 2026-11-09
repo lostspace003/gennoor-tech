@@ -1,13 +1,14 @@
 {
   "topic": "Subagent Context Isolation",
-  "hook": "One agent doing research and analysis drowns in its own context.",
+  "hook": "Your main agent's context is filling up with every Grep its helpers ran. Why?",
   "bullets": [
-    "Main agent delegates via the Agent tool",
-    "Each subagent starts in a fresh, isolated context",
-    "Only the final message returns to the parent",
-    "Clean context, focused findings"
+    "Main agent delegates through the Agent tool",
+    "Researcher greps contracts in an isolated context",
+    "Only its final memo returns, not the tool calls",
+    "Analyst sees only the brief, so findings go in it",
+    "Parent merges two memos into one risk assessment"
   ],
-  "cta": "Full CCAR-F course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

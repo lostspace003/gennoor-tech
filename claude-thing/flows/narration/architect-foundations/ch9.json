@@ -1,11 +1,11 @@
 {
   "steps": [
-    "Here Claude is told to restart the web service and check its logs. First, it proposes a Bash command to restart the web service.",
-    "No hook or deny rule blocks it. Only WebFetch is hard denied, and deny always wins even in bypass mode, but Bash does not match, so it passes this layer.",
-    "Next, no allow rule covers Bash, since allowed tools are only Read and Grep. So in default mode the call is handed to the can use tool callback, which asks the operator.",
-    "In run one, the operator declines. A permission deny reaches Claude as an error, and the web server is left untouched.",
-    "Claude moves on. Reading the web log matches allowed tools, so it is auto-approved without the callback, and it shows an upstream timeout error at ten oh one.",
-    "Now in run two, with the same agent, Claude proposes the same restart, and since there is still no rule, the callback asks the operator again.",
-    "Finally, the operator approves, and only now does the web service actually restart. Layered permissions kept a human in charge of the risky step."
+    "This video shows how permission layers decide whether a risky command needs a human. Claude is told to restart the web service and check its logs, and first proposes a Bash restart.",
+    "No hook or deny rule blocks it. Only WebFetch is hard denied, and deny always wins, even in bypass mode. Bash does not match, so it passes this layer.",
+    "No allow rule covers Bash either, since allowed tools only lists Read and Grep. With no rule, default mode hands the decision to the can use tool callback, which asks the operator.",
+    "In run one, the operator declines. A permission denied error reaches Claude, and the web server is untouched.",
+    "Claude moves on and reads the web log. Read matches allowed tools, so it is auto approved without the callback, and the log shows an upstream timeout error.",
+    "In run two, with the same agent, Claude proposes the same restart. Still no rule matches, so the callback asks the operator again.",
+    "This time the operator approves, and only now does the web service actually restart. Deny rules, allow rules and the callback each have their place. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

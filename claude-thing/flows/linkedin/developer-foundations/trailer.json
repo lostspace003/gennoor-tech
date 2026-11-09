@@ -1,13 +1,13 @@
 {
   "topic": "CCDV-F Course Trailer",
-  "hook": "Your Claude prototype works in a notebook, but not as a real service.",
+  "hook": "Your Claude prototype works in a notebook. What does it take to run it as a real service?",
   "bullets": [
-    "First Messages API call and token costs",
-    "Async, batches and prompt caching",
-    "Tool use, agents and MCP servers",
-    "Hooks, injection defence and error routing"
+    "One API call, with every token counted",
+    "Async calls, batches and prompt caching to cut cost",
+    "Tool use, checkpoints and an orchestrator for agents",
+    "A hook that blocks rm -rf, and layered injection defence"
   ],
-  "cta": "Full CCDV-F course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

@@ -1,13 +1,13 @@
 {
   "topic": "Claude Memory Across Chats",
-  "hook": "Every new chat, Claude forgets the context you explained yesterday.",
+  "hook": "Why does Claude forget the context you explained in your last chat?",
   "bullets": [
-    "Turn Memory on in Settings",
-    "Store recurring facts once",
-    "Not this quarter's numbers",
-    "New chats answer with your context"
+    "A new chat starts from scratch without Memory",
+    "Turn Memory on and state recurring facts once",
+    "Store stable facts, not this quarter's numbers",
+    "Connect Google Drive so Claude reads live files you can see"
   ],
-  "cta": "Full CCAS-F course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

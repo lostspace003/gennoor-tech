@@ -1,11 +1,11 @@
 {
   "steps": [
-    "This flow is about access control at retrieval. A billing clerk asks the assistant which procedure codes were billed for patient P one two three four five.",
-    "First, the wrong way. A shared service token pulls every match, diagnoses included, straight into the prompt, and the system prompt is told to hide the clinical parts. By then it is already too late.",
-    "Now the right way. Your design passes the clerk's own identity, billing clerk forty-seven, never a shared token, and that identity carries only billing and demographics roles.",
-    "Retrieval applies the access control filter inside the vector database query, matching allowed roles to the user's roles. Only billing passages come back, and diagnosis data never leaves the index.",
-    "Next, only the authorized passages reach prompt construction, which can simply trust retrieval, because the access rule is already enforced there.",
-    "Claude answers the clerk from those passages only, citing a source I D for each claim, so the answer is grounded and checkable.",
-    "Finally, your answer to compliance: restricted documents never leave the retrieval layer. It is deterministic, not a prompt promise, and the audit shows exactly which documents clerk forty-seven received."
+    "This video shows why access control belongs in retrieval, not in the prompt. A billing clerk sends the retrieval service a question: which procedure codes were billed for patient P one two three four five.",
+    "First, the wrong way. Retrieval queries the vector database with a shared service token, so every match, billing and diagnosis, flows into Claude's prompt. A system prompt asking Claude to hide clinical details comes too late, the data is already there.",
+    "Now the right way. The clerk's own identity, billing clerk forty-seven, travels with the request instead of a shared token. Retrieval now knows this user holds only billing and demographics roles.",
+    "Retrieval sends an access controlled query to the vector database, matching each document's allowed roles against the user's roles. Only billing passages come back, and diagnosis records never leave the index.",
+    "Retrieval passes just those authorized passages on to Claude. The rule is enforced at retrieval, so prompt construction does not need to filter anything, it can trust what it receives.",
+    "Claude answers the clerk using only those passages and cites a source I D for each claim. The answer is grounded, and every statement can be checked against its source.",
+    "For compliance, restricted documents never leave the retrieval layer. The protection is deterministic, not a promise in a prompt, and the audit records exactly which documents clerk forty-seven received. Takeaway: filter by role before the prompt is built. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

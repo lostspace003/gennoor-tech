@@ -1,13 +1,14 @@
 {
   "topic": "Human Approval Before Payouts",
-  "hook": "Your agent can issue a large refund and nobody checks it first.",
+  "hook": "Can your AI agent issue a $50,000 refund with nobody checking first?",
   "bullets": [
-    "can_use_tool between model output and action",
-    "Large amounts pause the agent",
-    "Exact input sent to a manager to approve",
-    "Small refunds still execute at once"
+    "can_use_tool sits between model output and the payment",
+    "Refunds over $100 pause the agent",
+    "The manager sees the exact input in Slack and approves",
+    "Payment executes only after approval, with an audit log",
+    "Small refunds still go through instantly"
   ],
-  "cta": "Full CCAR-P course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

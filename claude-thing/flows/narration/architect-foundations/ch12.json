@@ -1,11 +1,11 @@
 {
   "steps": [
-    "Here Claude can issue refunds, and a plain permission mode is too coarse for that. So your code sets a can use tool callback with one rule: deny any refund over one hundred dollars.",
-    "Claude is asked to refund two orders, O one for forty dollars and O two for two hundred and fifty dollars. First, it requests the forty dollar refund.",
-    "Forty dollars is under the limit, so the callback returns permission allow, issue refund executes, and order O one is refunded forty dollars.",
-    "Next, Claude requests the two hundred and fifty dollar refund for O two. That is over the limit and needs a manager, so the callback denies it, and the refund never runs.",
-    "Claude gets the permission denied error and reports honestly: O one is refunded, and O two is queued for a manager to review.",
-    "Now both decisions land in the audit log, the auto-approval for O one and the denial for O two, so there is a clear record of what happened and why.",
-    "Finally, defense in depth. The payments backend enforces the same one hundred dollar limit as well, so even if the callback were bypassed, the rule still holds."
+    "This video shows how a can use tool callback makes per call decisions that a permission mode cannot. Your code sets a callback with a threshold of one hundred dollars: deny anything above it.",
+    "Claude is asked to refund order O one for forty dollars and order O two for two hundred and fifty. It requests the first refund through the callback.",
+    "Forty dollars is under the limit, so the callback returns permission result allow. Issue refund executes, and O one is refunded forty dollars.",
+    "Then Claude requests O two for two hundred and fifty. That is over the limit and needs a manager, so the callback denies it, and the refund never runs.",
+    "Claude gets the permission denied error and reports back: O one refunded, O two queued for a manager.",
+    "Both decisions land in the audit log, O one auto approved and O two denied.",
+    "Finally, defense in depth: the payments backend enforces the same one hundred dollar check, so the limit holds even if the callback is bypassed. The callback decides per call, the backend still guards. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

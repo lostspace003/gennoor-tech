@@ -1,11 +1,11 @@
 {
   "steps": [
-    "Here Maya is pasting the same three hundred word brief into every chat, eight clients in a row, and she wonders why she keeps doing it.",
-    "So she creates a Project called Quarterly Client Summaries, and writes the rules once as custom instructions: the role, the tone, and five sections.",
-    "She uploads the terminology guide too, so the Project holds both rules and knowledge, like a shared folder with a readme.",
-    "Next, she opens a new chat inside the Project, and it inherits the rules and the glossary automatically. No preamble needed.",
+    "This video shows how a Claude Project lets you write a brief once, so every chat inherits it. Right now Maya pastes the same three hundred word brief into every chat, eight clients in a row.",
+    "So she creates a Project called Quarterly Client Summaries, and writes the rules once as custom instructions: the role, the tone, and five sections. The Project now stores them.",
+    "She uploads her terminology guide too, so the Project holds both rules and knowledge, a bit like a shared folder with a readme.",
+    "Next, she opens a new chat inside the Project. The Project passes its context to Claude automatically, so the chat inherits the rules and the glossary. No preamble needed.",
     "Now her prompt shrinks from four hundred words to just fifty, because the brief is already there, and Claude returns the quarterly summary.",
-    "The output follows every rule she never repeated: five sections, summary, metrics, wins, risks and next steps, and no contractions.",
-    "Finally, when a policy changes, Maya updates the Project once, and every chat follows. She reviews it quarterly to keep it current."
+    "The output follows every rule she never repeated: five sections, summary, metrics, wins, risks and next steps, and no contractions. The result is consistent.",
+    "Finally, when a policy changes, Maya updates the Project once and every chat follows. She reviews it regularly to keep it current. Write your context once, in a Project. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

@@ -1,11 +1,11 @@
 {
   "steps": [
-    "A support agent asks TicketFlow to check the status for alice at example dot com.",
-    "First, you send the message to Claude plus a tools array, with a lookup customer tool whose J S O N schema requires an email.",
-    "Claude does not answer yet. It emits a tool use block with the email argument, and the stop reason is not end turn.",
-    "Next, your dispatcher validates the email first. A malformed one, with no at sign, would get an error tool result back, with no crash. This one is valid.",
-    "The email passes, so the database query runs, and returns premium tier with two open tickets.",
-    "Now you append the tool result as a user message, and Claude replies with an end turn stop reason: Alice is premium.",
-    "Finally, the support agent gets a grounded answer, built on live data: Alice is premium, with two open tickets."
+    "This video shows how Claude tool use really works: Claude asks, your code checks and runs. A support agent asks TicketFlow to check the status for alice at example dot com.",
+    "TicketFlow sends the message to Claude along with a tools array. It defines one tool, lookup customer, with a J S O N input schema where email is required.",
+    "Claude does not answer yet. It returns a tool use block containing the email argument, and the stop reason is tool use, not end turn. Claude has asked, but nothing has run.",
+    "Before anything touches the database, your dispatcher validates the email. A malformed one, with no at sign, goes back as an error tool result instead of crashing. This one is valid.",
+    "The email passes, so TicketFlow runs the query against the customer database. It returns premium tier, with two open tickets.",
+    "You append that data as a tool result in a user message and send it back. Now Claude writes the final reply, and the stop reason is end turn.",
+    "The support agent gets an answer grounded in live data: Alice is premium with two open tickets. The takeaway: Claude requests tools, and your code validates and executes them. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

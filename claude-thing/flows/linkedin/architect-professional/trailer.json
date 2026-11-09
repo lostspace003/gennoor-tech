@@ -1,13 +1,14 @@
 {
   "topic": "CCAR-P Course Trailer",
-  "hook": "Your AI architecture must survive budget reviews, audits and real outages.",
+  "hook": "Will your AI architecture survive budget reviews, audits and real outages?",
   "bullets": [
-    "Decision records with SLA gates",
-    "Role-based access at retrieval",
-    "Caching and routing to cut cost",
-    "Approvals, secrets, tracing and canary rollouts"
+    "SLA gates and decision records the board approves",
+    "Role-based access applied at retrieval",
+    "Prompt caching and Haiku and Sonnet routing to cut cost",
+    "Human approval on payouts, BAA and zero data retention",
+    "Trace IDs, evals and canary rollouts with auto-rollback"
   ],
-  "cta": "Full CCAR-P course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

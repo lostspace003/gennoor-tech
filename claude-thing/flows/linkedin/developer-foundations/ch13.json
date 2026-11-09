@@ -1,13 +1,14 @@
 {
   "topic": "Routing API Errors by Severity",
-  "hook": "Rate-limit errors spike, and your retry loop makes it worse.",
+  "hook": "Rate-limit errors are spiking. Should that wake someone up at 3am?",
   "bullets": [
-    "A buggy retry loop resends again and again",
+    "A retry loop turns one 429 into a spike",
     "Monitoring groups errors by cause",
-    "Severity decides: log, back off or page",
-    "Fix the retry with backoff"
+    "429 is a warning: log it and back off",
+    "A backoff fix ships through tests, evals and scans",
+    "Only a 401 pages on-call"
   ],
-  "cta": "Full CCDV-F course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

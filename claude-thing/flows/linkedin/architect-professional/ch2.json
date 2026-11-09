@@ -1,13 +1,14 @@
 {
   "topic": "RBAC at Retrieval Time",
-  "hook": "Your RAG assistant pulls data the user was never allowed to see.",
+  "hook": "Is your RAG assistant pulling data the user was never allowed to see?",
   "bullets": [
-    "Shared service token: everything lands in the prompt",
-    "Pass the user's own identity instead",
-    "ACL filter applied at retrieval time",
-    "Only authorized passages reach Claude"
+    "A shared service token pulls diagnoses into the prompt",
+    "The clerk's own identity travels with the request instead",
+    "The vector DB query filters by allowed roles",
+    "Claude answers only from authorized passages, citing each source",
+    "Audit shows exactly which documents the user received"
   ],
-  "cta": "Full CCAR-P course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

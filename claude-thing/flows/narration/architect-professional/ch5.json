@@ -1,11 +1,11 @@
 {
   "steps": [
-    "Here billing clerk forty-seven signs in through single sign-on, with billing scope, and asks the assistant about customer C seventy-seven.",
-    "First, the wrong way. The C R M key sits in the system prompt, so Claude and every trace can see it, and it can leak through logs or prompt injection.",
-    "Now your design. The server sends only the question and the tools, with no secret in context, and Claude asks for lookup customer, C seventy-seven.",
-    "At execution time, the handler pulls the C R M A P I key from Key Vault, on the server side. It is used in the request header, then discarded.",
-    "The call also carries the clerk's billing-scoped token, so role-based access control runs before data returns. Only billing documents come back, since V I P notes need V I P support access.",
-    "Next, Claude gets the tool result and writes the answer about C seventy-seven. It never held the key at all.",
-    "Finally, the clerk sees only billing-scoped data, and the audit log records that clerk forty-seven viewed customer C seventy-seven. Secrets stay server-side, and access stays in scope."
+    "This video shows how an agent can use a secret A P I key without the model ever seeing it. Billing clerk forty-seven signs in through single sign-on with billing scope and asks the agent server about customer C seventy-seven.",
+    "First, the wrong way. The server puts the C R M key straight into the system prompt sent to Claude. Now the key sits in context, visible in every trace, and can leak through logs or prompt injection.",
+    "Now the better design. The server sends Claude only the question and the tool definitions, with no secret in context. Claude replies with a tool request: lookup customer, C seventy-seven.",
+    "When the tool runs, the server's handler fetches the C R M A P I key from Key Vault. It is used in the request header and then discarded, all on the server side.",
+    "The C R M call also carries the clerk's billing-scoped token, so role-based access control runs before any data returns. Only billing documents come back, because V I P notes need V I P support access.",
+    "The server sends Claude the tool result, and Claude writes the billing answer for C seventy-seven. Claude never held the key at any point.",
+    "The clerk receives a billing-only answer, and the server's audit log records that clerk forty-seven viewed customer C seventy-seven. Takeaway: secrets stay in the vault and the handler, never in model context. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

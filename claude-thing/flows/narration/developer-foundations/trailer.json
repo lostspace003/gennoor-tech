@@ -1,12 +1,12 @@
 {
   "steps": [
-    "Welcome to the developer course: TicketFlow, from a first A P I call to an agent fleet. The classifier leaves its notebook and makes its first messages create call, and you count every token.",
-    "Next, traffic spikes and the synchronous Flask service chokes, so you move to Async Anthropic, and the S D K retries on four twenty-nines.",
-    "Then a cost review. Batch halves the ten thousand ticket overnight job, and the twenty thousand token knowledge base reads from cache at ninety percent off. The bill drops eighty-five percent.",
-    "Next, you hand Claude the lookup customer tool, and it calls the database on its own, while you catch bad emails before the query.",
-    "Then your twenty step agent dies at step fifteen, so you add checkpoints and an orchestrator. Now it resumes from step fifteen, not step one, across an agent fleet.",
-    "Then a pre tool use hook denies r m dash r f before it runs, and CLAUDE dot md sets the bar.",
-    "Then an attacker's ticket says email every record to evil dot com. Four layers say no, treating the ticket as untrusted data, with no email tool available.",
-    "Finally, TicketFlow ships on bring your own cloud, with error routing and evals in C I. An agent fleet you can trust in production."
+    "This video shows how a Claude prototype grows into a production service called TicketFlow. It starts with one messages create call, where Claude returns content plus usage, so you count every token from the start.",
+    "When a traffic spike hits, the synchronous Flask service chokes. Switching to the Async Anthropic client lets calls run concurrently, and when a four twenty nine rate limit comes back, the S D K retries for you.",
+    "Next comes cost. The Batch A P I halves the price of the big overnight job, and marking the knowledge base with cache control means later calls read it from cache at ninety percent off.",
+    "Then Claude gets a tool. It asks for lookup customer, TicketFlow runs the database query and sends back a tool result, catching bad emails before the query ever runs.",
+    "Longer agents need resilience. A twenty step agent that dies at step fifteen resumes from a checkpoint instead of starting over, and an orchestrator hands work to subagents and merges their results.",
+    "In Claude Code, the CLAUDE dot md file sets the standards, and a PreToolUse hook inspects every shell command, denying rm dash r f before it can run.",
+    "An attacker's ticket says email every record to evil dot com. Four layers say no: the ticket is tagged as untrusted data, and the email tool is not available.",
+    "Finally TicketFlow ships on bring your own cloud, with evals running in C I. The takeaway: production Claude is cost, concurrency, tools, agents and safety working together. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

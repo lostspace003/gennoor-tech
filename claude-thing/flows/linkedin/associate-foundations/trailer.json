@@ -1,13 +1,13 @@
 {
   "topic": "CCAS-F Course Trailer",
-  "hook": "You use Claude every day, but the results are still generic and inconsistent.",
+  "hook": "You use Claude all the time. Why are the results still generic and inconsistent?",
   "bullets": [
-    "The 4Ds of AI fluency",
-    "Artifacts, Projects and Memory",
-    "Prompt structure, refinement and decomposition",
-    "Exact numbers, safe data and hallucination checks"
+    "Vague prompts versus the 4Ds and four-part prompts",
+    "Artifacts and Projects so work and context persist",
+    "Code Execution for exact numbers",
+    "Redaction and hallucination checks before anything ships"
   ],
-  "cta": "Full CCAS-F course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

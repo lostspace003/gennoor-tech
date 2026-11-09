@@ -1,11 +1,11 @@
 {
   "steps": [
-    "Here a mixed ticket lands: the customer was charged twice, and the app crashes. Billing and technical, in one ticket.",
-    "A single agent handles both, and loses track. The crash is fixed, but was there a refund? It lost the thread.",
-    "So you refactor. An orchestrator decomposes the ticket into separable sub-tasks: the refund goes to billing, the crash goes to tech.",
-    "It delegates in parallel. Each specialist gets its own prompt, tools and model, in its own isolated context.",
-    "Each runs separately, and only final results return to the orchestrator: refund issued from billing, and root cause found from tech.",
-    "Now the orchestrator merges both results into one reply to the customer. Nothing is dropped this time, and the ticket is resolved.",
-    "Finally, a caution. Multi-agent adds calls and hand-offs, so a one-file fix stays single-agent. Split only when the work is separable, overflows context, or can run in parallel."
+    "This video shows when to split one request across specialist agents. A mixed ticket lands in TicketFlow: the customer was charged twice and the app crashes. Billing and technical, in one ticket.",
+    "First, a single agent handles both. It fixes the crash but loses track of the other sub-issue, and has to ask whether a refund was ever issued.",
+    "So you refactor. An orchestrator now decomposes the ticket into separable sub-tasks: the refund goes to billing, and the crash goes to tech.",
+    "It delegates both in parallel. The billing agent and the tech agent each get their own prompt, tools and model, working in an isolated context.",
+    "Each specialist works only on its own sub-task. Only the final results flow back to the orchestrator: refund issued, and root cause found.",
+    "The orchestrator merges both results into one reply to the customer. Nothing is dropped this time, and the ticket is resolved.",
+    "Multi-agent adds calls and hand-offs, so a small fix stays single-agent. The takeaway: split only when work is separable, overflows one context, or can run in parallel. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

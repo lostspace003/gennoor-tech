@@ -1,13 +1,14 @@
 {
   "topic": "Agent SDK query() Loop",
-  "hook": "You are hand-writing the tool loop that the Agent SDK already runs for you.",
+  "hook": "Still hand-writing the detect, run, return, repeat loop around every tool call?",
   "bullets": [
-    "One query() call, prompt plus options",
-    "SDK runs Glob, Grep and Read turn after turn",
-    "No manual detect, run, return, repeat",
-    "Max turns caps the loop"
+    "One query() call with a prompt and allowed tools",
+    "The SDK sends tools, runs Glob and Grep, appends results",
+    "Every call passes hooks, deny, allow and can_use_tool",
+    "Loop stops when Claude answers without a tool_use",
+    "A ResultMessage returns turns, cost and session id"
   ],
-  "cta": "Full CCAR-F course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

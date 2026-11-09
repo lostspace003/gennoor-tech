@@ -1,13 +1,14 @@
 {
   "topic": "Permission Layers in Practice",
-  "hook": "You can't tell which permission layer approved or blocked a tool call.",
+  "hook": "Your agent wants to restart production. Which permission layer decides, and when does a human step in?",
   "bullets": [
-    "Hooks and deny rules checked first",
-    "Deny wins, even in bypass mode",
-    "No allow rule: can_use_tool asks the operator",
-    "Read calls auto-approved by allow rules"
+    "Deny rules first: only WebFetch is hard-denied",
+    "Read matches allowed_tools and is auto-approved",
+    "Bash has no rule, so can_use_tool asks the operator",
+    "Declined restart reaches Claude as an error",
+    "Approved on the second run, only then it restarts"
   ],
-  "cta": "Full CCAR-F course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

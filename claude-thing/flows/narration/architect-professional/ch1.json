@@ -1,11 +1,11 @@
 {
   "steps": [
-    "Meet our architect at Meridian. The C F O budgets two point four million dollars, and expects return on investment across clinical, claims and service. You propose the architecture.",
-    "You start with discovery, not a prototype. In the workshop, the clinical team names two hard constraints: responses under three seconds during consults, and no patient health information without a signed B A A.",
-    "Now architecture X scores higher on quality, but averages four point two seconds. That breaks the three second gate, so it is eliminated, and its quality simply does not matter.",
-    "Architecture Y clears the gate at two point one seconds. Only survivors like Y move on to be compared on efficiency and solution cost.",
-    "Next, the architecture decision record for claims, A D R seven, proposing Enterprise with a B A A and zero data retention, reaches the board without its alternatives, so the board sends it back as incomplete.",
-    "So you add both rejected options. Pro has no B A A, and the open source model is twelve points less accurate. You also record the cost trade-off accepted for compliance, twelve cents versus eight cents.",
-    "Finally, the board approves A D R seven, along with requirements, success criteria and the risk register. With alternatives and trade-offs on record, the decision is defensible."
+    "This video shows how a hard service level target decides an architecture before cost or quality ever do. The governance board hands you a budget of two point four million dollars over twelve months and a deadline to propose, expecting return on investment across clinical, claims and service.",
+    "Instead of building a prototype, you run a discovery workshop with the clinical team. They reply with two hard constraints: answers under three seconds during consults, and no patient health information without a signed B A A. These become non-functional gates.",
+    "You send architecture X to the S L A gate. It scores higher on quality, but averages four point two seconds. That breaks the three second limit, so the gate eliminates it. A failed gate means quality is irrelevant.",
+    "Architecture Y goes through the gate at two point one seconds and passes. Only options that survive the gates move on, and now they are compared on efficiency and solution cost.",
+    "For claims, you send the board an architecture decision record, A D R seven, proposing Enterprise with a B A A and zero data retention. It lists no alternatives, so the board sends it back marked incomplete.",
+    "You add both rejected options and say why: Pro offers no B A A, and the open source model is twelve points less accurate. You also record the cost accepted for compliance, twelve cents versus eight cents.",
+    "The board now approves A D R seven, together with requirements, success criteria and the risk register, because alternatives and trade-offs are on record. Takeaway: hard constraints act as pass or fail gates first, and only survivors compete on cost. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

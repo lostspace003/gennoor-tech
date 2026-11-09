@@ -1,13 +1,13 @@
 {
   "topic": "Claude Projects",
-  "hook": "You paste the same long brief into every new chat.",
+  "hook": "Why are you still pasting the same long brief into every new Claude chat?",
   "bullets": [
-    "Create a Project once",
-    "Custom instructions hold the rules",
-    "Uploaded files hold the knowledge",
-    "New chats inherit it, prompts stay short"
+    "A three-hundred-word brief, pasted eight times",
+    "Custom instructions hold the rules, uploaded files hold the knowledge",
+    "New chats inside the Project inherit both",
+    "Prompts shrink from four hundred words to fifty"
   ],
-  "cta": "Full CCAS-F course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

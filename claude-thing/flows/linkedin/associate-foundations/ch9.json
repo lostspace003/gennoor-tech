@@ -1,13 +1,13 @@
 {
   "topic": "Choosing the Right Claude Model",
-  "hook": "You use the biggest model for everything and burn your limits.",
+  "hook": "Are you using the biggest Claude model for everything and burning your limits?",
   "bullets": [
-    "Match the model to the task",
-    "Haiku for quick, simple lookups",
-    "Sonnet for everyday drafting",
-    "Opus kept for complex analysis"
+    "Opus on every task: slow answers, rate limit burned",
+    "Haiku for quick, well-defined policy lookups",
+    "Sonnet for routine multi-step summaries",
+    "Opus kept for the deep-reasoning contract dispute"
   ],
-  "cta": "Full CCAS-F course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

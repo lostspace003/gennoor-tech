@@ -1,10 +1,10 @@
 {
   "steps": [
-    "Here Finance asks a simple question: can the overnight job that classifies ten thousand tickets cost less?",
-    "Realtime calls would answer all ten thousand instantly, at full price, even though nobody is waiting. Instant answers only matter when a user is waiting.",
-    "So instead, at eight in the evening, you submit all ten thousand tickets in one batch, each tagged with a custom I D, and get back a batch I D. The batch is in progress.",
-    "Next, TicketFlow polls batches retrieve every sixty seconds, while the batch runs asynchronously for hours within its completion window.",
-    "By six in the morning, the processing status is ended. The results come back matched by custom I D, for example ticket zero, billing.",
-    "Finally, you hand Finance the cost model: the same ten thousand tickets, with every input and output token fifty percent cheaper. Half price, for work that can wait."
+    "This video shows how to cut the cost of a big job that nobody is waiting on. Finance asks TicketFlow a simple question: can the overnight ten thousand ticket classification job cost less?",
+    "The realtime Messages A P I would answer all ten thousand tickets instantly, but at full price. Instant answers only matter when a user is waiting, and overnight nobody is.",
+    "So instead you submit all ten thousand tickets to the Batch A P I in one request, each tagged with a custom I D. The batch gets an I D back and its status is in progress.",
+    "TicketFlow polls batches retrieve every sixty seconds. The batch runs asynchronously, and the completion window is measured in hours, not seconds.",
+    "By six in the morning the processing status is ended. TicketFlow pulls the results, and each one is matched back to its ticket by its custom I D.",
+    "Finally you hand Finance the cost model: the same ten thousand tickets, with every input and output token at half price. The takeaway: when no one is waiting, batch it. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

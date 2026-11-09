@@ -1,13 +1,13 @@
 {
   "topic": "Code Execution for Exact Numbers",
-  "hook": "Claude gives you a different total every time you ask it to add numbers.",
+  "hook": "Why does Claude give you a different total every time you ask it to add up a column?",
   "bullets": [
-    "Language models predict text, not math",
-    "Turn on Code Execution",
-    "Claude runs Python in a sandbox",
-    "Exact total, with the code to check"
+    "Fifty rows summed by prediction: two wrong totals",
+    "A language model predicts text, it doesn't compute",
+    "With Code Execution, Claude writes Python and runs it in a sandbox",
+    "Exact total, with the code shown so you can check it"
   ],
-  "cta": "Full CCAS-F course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

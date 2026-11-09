@@ -1,13 +1,14 @@
 {
   "topic": "MCP Over Two Transports",
-  "hook": "Every new data source means another round of per-tool glue code.",
+  "hook": "How does one agent use a local tool and a remote CRM without custom glue for each?",
   "bullets": [
-    "One protocol: MCP, with the SDK as client",
-    "Local server over stdio, remote over the network",
-    "Tools discovered via tools/list",
-    "Names follow mcp__server__tool"
+    "Two MCP servers: fs over stdio, crm over http",
+    "The SDK client discovers tools with tools/list",
+    "Tools are named mcp__server__tool, gated by allowed_tools",
+    "Claude calls lookup_customer, the client routes tools/call",
+    "Grounded answer in a single turn"
   ],
-  "cta": "Full CCAR-F course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

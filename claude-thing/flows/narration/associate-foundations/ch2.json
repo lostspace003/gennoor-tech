@@ -1,11 +1,11 @@
 {
   "steps": [
-    "Meet Maya at Brightline. She types help me with reports, and Claude returns generic structure tips. A vague prompt gets generic advice.",
-    "First, description. Maya tells her manager what Claude can do, what it cannot, and how she will review its work. It is a faster first draft, not a replacement for her review.",
-    "Next, delegation. The metrics summary goes to Claude, but the renewal risk call stays with Maya, because it is a judgment call, and she asks whether each task is reversible.",
-    "Then diligence. Her checklist runs on every output, even low-stakes ones, every day: no personal data, facts that match, and the Brightline tone.",
-    "Now discernment. Claude cites three major competitors, so Maya checks the source sheet. Only one is listed. The other two are not there.",
-    "So Maya re-prompts: use only the competitor sheet, and if one is not listed, say so. Claude regenerates the summary, limited to the sheet.",
-    "Finally, Maya hands her manager a verified summary, plus her own call on the renewal risk. That is the four Ds working together."
+    "This video shows the four Ds of A I fluency, turning a vague prompt into a verified report. Maya, an analyst at Brightline, types help me with reports, and Claude sends back generic structure tips.",
+    "First, description. Maya tells her manager what Claude can do, what it cannot, and how she will review its work. Claude gives her a faster first draft, not a replacement for her review, so expectations are set.",
+    "Next, delegation. Maya sends the metrics summary to Claude and gets a draft back. The renewal risk call stays with her, because it is a judgment call and hard to reverse if it goes wrong.",
+    "Then diligence. Maya runs the same checklist on every output, even low stakes ones: no personal data, facts that match the source, and the Brightline tone. Checking is a habit, not an occasional extra.",
+    "Now discernment. Claude's draft mentions three major competitors, so Maya checks the source sheet. Only one is listed there. The other two came from Claude, not from her data.",
+    "So Maya re-prompts: use only the competitor sheet, and if a competitor is not listed, say so. Claude regenerates the summary, now limited to the sheet, so it can no longer fill gaps with guesses.",
+    "Finally, Maya hands her manager a verified summary, plus her own call on the renewal risk. Describe, delegate, discern and stay diligent, and Claude's speed comes with your judgment intact. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

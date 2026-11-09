@@ -1,13 +1,14 @@
 {
   "topic": "can_use_tool Spending Limits",
-  "hook": "Permission modes are too coarse when your agent can move money.",
+  "hook": "A permission mode is all or nothing. How do you auto-approve a $40 refund but stop a $250 one?",
   "bullets": [
-    "can_use_tool callback with one rule",
-    "Refunds under the limit execute",
-    "Refunds over the limit are denied",
-    "Every decision lands in the audit log"
+    "can_use_tool callback with a $100 threshold",
+    "$40 refund: PermissionResultAllow, it executes",
+    "$250 refund: denied before it ever runs",
+    "Claude reports one refunded, one queued for a manager",
+    "Both decisions audited, backend enforces the limit too"
   ],
-  "cta": "Full CCAR-F course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

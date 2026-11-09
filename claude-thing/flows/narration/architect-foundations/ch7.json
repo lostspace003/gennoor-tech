@@ -1,11 +1,11 @@
 {
   "steps": [
-    "This flow is about hooks. Your code registers two of them: a pre tool use hook matched to Bash, and a post tool use hook with no matcher at all.",
-    "Asked to clean the build folder, Claude reaches for r m dash r f and emits a Bash tool use.",
-    "The pre tool use hook fires before permissions. Its block dangerous check sees r m dash r f and returns deny, so the command never runs.",
-    "The error tells Claude why it was blocked, so it picks a safe alternative and asks to list the build folder instead.",
-    "There is no r m dash r f this time, so the hook returns an empty object, meaning no objection. The gate runs the listing, and Bash shows the app binary and main object file.",
-    "Now the post tool use hook fires, but only for the call that actually ran. One audit line is written, and none for the blocked command.",
-    "Finally, the result reaches Claude, which answers that the build folder was inspected safely. Hooks blocked the danger and audited the rest."
+    "This video shows how hooks enforce policy on tool calls. Your code registers two hooks on the tool gate: pre tool use matching Bash, and post tool use with no matcher, so it sees every call.",
+    "Asked to clean the build folder, Claude reaches for r m dash r f build, and emits a Bash tool use toward the gate.",
+    "Pre tool use fires before permissions are checked. The block dangerous hook sees r m dash r f and returns a deny decision. The Bash tool never runs.",
+    "The error tells Claude why it was blocked, so it picks a safe alternative and asks to run l s build instead.",
+    "No r m dash r f this time, so the hook returns an empty object, meaning no objection. The gate lets the command run, and Bash lists the build files.",
+    "Post tool use fires only for the call that actually ran. One audit line is written for the l s, and none for the blocked delete.",
+    "The result reaches Claude, which reports the build folder was inspected safely. Hooks enforce rules in code, where a prompt could only ask nicely. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

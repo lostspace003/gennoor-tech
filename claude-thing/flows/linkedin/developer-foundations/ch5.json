@@ -1,13 +1,14 @@
 {
   "topic": "Prompt Caching for Agents",
-  "hook": "Your agent re-sends the same knowledge base at full price every turn.",
+  "hook": "Why is your agent paying full price for the same knowledge base on every turn?",
   "bullets": [
-    "Mark the static block with cache_control",
-    "Turn one writes the cache",
-    "Same prefix, later turns hit the cache",
-    "Check usage for cache reads"
+    "Mark the static block with cache_control: ephemeral",
+    "Turn one is a miss and writes 10K tokens to the cache",
+    "Same model, same prefix: later turns hit at 90% off",
+    "A 5-minute TTL that resets on every hit",
+    "usage shows cache_creation vs cache_read"
   ],
-  "cta": "Full CCDV-F course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

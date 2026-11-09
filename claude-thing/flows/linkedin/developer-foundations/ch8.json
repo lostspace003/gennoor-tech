@@ -1,13 +1,13 @@
 {
   "topic": "Agent Checkpointing",
-  "hook": "A worker crashes at step 15 and the whole task restarts from step 1.",
+  "hook": "Your agent crashes at step 15 of 20. Does it really have to start over at step 1?",
   "bullets": [
-    "State held only in memory is lost",
-    "Save a checkpoint after every step",
-    "Another worker loads the latest checkpoint",
-    "Resume where it stopped"
+    "State held only in memory dies with the worker",
+    "Save step, messages and metadata after every step",
+    "A fresh worker loads the latest checkpoint",
+    "Idempotent steps make re-running safe"
   ],
-  "cta": "Full CCDV-F course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

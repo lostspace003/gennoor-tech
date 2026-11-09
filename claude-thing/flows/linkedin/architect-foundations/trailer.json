@@ -1,13 +1,14 @@
 {
   "topic": "CCAR-F Course Trailer",
-  "hook": "Your agent demo works, but nobody trusts it near production systems.",
+  "hook": "How does a single query() call become an agent you can trust in production?",
   "bullets": [
-    "One query() call runs the full agent loop",
-    "Options, deny rules and custom tools",
-    "MCP servers, subagents, hooks and sessions",
-    "Permissions, approvals and enterprise controls"
+    "The SDK runs the agent loop for you",
+    "Options and deny rules, custom tools, MCP servers",
+    "Subagents return a memo, hooks block rm -rf",
+    "Sessions resume and fork",
+    "A human gates risky actions through can_use_tool"
   ],
-  "cta": "Full CCAR-F course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

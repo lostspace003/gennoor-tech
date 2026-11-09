@@ -1,13 +1,14 @@
 {
   "topic": "Built-in, SDK and External MCP Tools",
-  "hook": "Built-in, custom and external tools look alike, but behave differently.",
+  "hook": "Built-in tool, your own @tool, or an external MCP server: what actually changes?",
   "bullets": [
-    "Built-in tools ship with the runtime",
-    "Your @tool runs in-process via an SDK MCP server",
-    "External MCP tools cross a process boundary",
-    "One hook and permission gate for all of them"
+    "Built-in tools ship with the SDK runtime",
+    "Your @tool passes the same hook and permission gate",
+    "In-process SDK MCP server keeps logic private",
+    "External MCP servers cross a process boundary for shared tools",
+    "Independent reads run in parallel, dependent steps in order"
   ],
-  "cta": "Full CCAR-F course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

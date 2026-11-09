@@ -1,11 +1,11 @@
 {
   "steps": [
-    "This flow is about enterprise patterns. First, the shortcut: the agent runs with bypass permissions and no isolation, so everything not explicitly denied just runs. That is a huge blast radius.",
-    "Instead, your code starts a sandboxed worker for each task, with a scoped working directory, scoped credentials, and disallowed tools set. The damage any one task can do is now contained.",
-    "Next, a sensitive tool call leaves the agent. The pre tool use hook sees it first, acting as a fast, fail-safe policy gateway, and here the policy check passes.",
-    "Now the can use tool callback parks the call in an approval queue until a human decides. A named approver, with a timeout set, reviews it and approves.",
-    "Once approved, the call goes through the shared M C P server that fronts the real system, using O Auth. The result comes back, and it is treated as untrusted data, never as instructions.",
-    "Then the post tool use hook writes the audit entry, and only after that does the result reach the agent. Every sensitive action leaves a trail.",
-    "Finally, the control map. There is one control per concern: sandbox, hooks, callback, subagents and M C P. When a requirement comes up, pick the single control that fits."
+    "This video shows how to put each enterprise control in its proper place. It starts with a shortcut: the agent runs with bypass permissions and no isolation, so everything not denied runs. That is a big blast radius.",
+    "Instead, your code starts a sandboxed worker per task, with a scoped working directory, scoped credentials, and disallowed tools set.",
+    "A sensitive tool call leaves the agent, and the pre tool use hook sees it first. It acts as a fast, fail safe policy gateway, and this call passes policy.",
+    "Next, can use tool parks the call in an approval queue until a named human approver decides, with a timeout set. The approver approves.",
+    "The call now goes through a shared, vetted M C P server that fronts the system, authenticated with O Auth. The result comes back, and it is treated as untrusted data.",
+    "The post tool use hook writes the audit entry, and only then does the result reach the agent. Sandbox, hooks, callback and M C P server each handle one concern.",
+    "The takeaway: match each concern to the single control that fits it, sandbox for isolation, hooks for policy and audit, the callback for human approval, subagents and M C P for scope. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

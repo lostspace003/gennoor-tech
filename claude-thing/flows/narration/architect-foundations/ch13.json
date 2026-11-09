@@ -1,11 +1,11 @@
 {
   "steps": [
-    "This flow compares kinds of tools. First, Claude asks to read a file. That is a built-in tool shipping with the runtime, alongside shell and web, and it goes through hooks and then permissions.",
-    "Next, Claude calls your own custom tool for a business system. Notice it passes through exactly the same hook and permission gate. There is one gate for every tool.",
-    "Your custom tool runs in-process through an S D K M C P server, so the result comes straight back with no new process, and your business logic stays private.",
-    "Now a shared, third-party capability comes from an external M C P server instead, so the call crosses a process boundary to reach it.",
-    "The external result comes back the same way. It is the same tool use protocol both ways. Only the process boundary and how widely it can be reused differ.",
-    "Next, when Claude needs two independent read-only calls, it can run them in parallel, and that cuts latency.",
-    "Finally, when step B needs the result of step A, Claude waits for A, then runs B. Dependent calls run sequentially, independent ones in parallel."
+    "This video compares the kinds of tools an agent can use. First, Claude asks to read a file, a built in tool that ships with the S D K runtime, along with shell and web. It passes hooks, then permissions.",
+    "Next, Claude calls your own custom tool for a business system, by its m c p server tool name. It passes through exactly the same hook and permission gate. One gate for all tools.",
+    "Your custom tool runs in process, through an S D K M C P server. The result returns directly, the logic stays private, and no new process starts.",
+    "A shared or third party capability comes from an external M C P server instead. The call goes across the process boundary to that server.",
+    "The result comes back the same way. The tool use protocol is identical both ways. Only the process boundary and reuse differ.",
+    "When Claude makes two independent read only calls, the runtime runs them in parallel, which cuts latency.",
+    "But when step B needs the result of step A, Claude runs them one after another. Choose the tool type by boundary and reuse, and order calls by their dependencies. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

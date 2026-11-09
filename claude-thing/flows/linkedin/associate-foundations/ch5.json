@@ -1,13 +1,13 @@
 {
   "topic": "Iterative Prompt Refinement",
-  "hook": "You've reworded the prompt eight times and the draft still isn't right.",
+  "hook": "You've reworded the prompt eight times. Why is the draft still wrong?",
   "bullets": [
-    "Rewording blindly gives diminishing returns",
-    "Diagnose: check the draft against your criteria",
-    "Name the exact flaws",
-    "Targeted fixes land in one pass"
+    "Eight blind rewordings repeat the same flaw",
+    "Diagnose: check the draft against your own criteria",
+    "Revise: one follow-up naming three exact fixes",
+    "Verify all three are fixed, then decide"
   ],
-  "cta": "Full CCAS-F course, chapter by chapter:",
+  "cta": "Watch the flow, then go deeper in the full course:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",

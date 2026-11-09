@@ -1,11 +1,11 @@
 {
   "steps": [
-    "At Loomline, you lift the ticket classifier out of its notebook and into a real service, TicketFlow, creating an Anthropic client.",
-    "You pick Sonnet, the balanced tier that suits most production workloads, including real-time triage, and you set max tokens to one thousand and twenty-four.",
-    "Next, a common mistake to avoid. Behavior instructions live in the system prompt, and the user turn is just the ticket itself.",
-    "Now TicketFlow calls messages create with the model, max tokens, system and messages, sending the ticket: user can't log in.",
-    "Claude returns content, a stop reason and usage. TicketFlow reads the text of the first content block: authentication, high priority.",
-    "Then TicketFlow logs the usage: forty-two input tokens and eighteen output tokens. You pay for both, so every call is cost-tracked.",
-    "Finally, the answer comes back to you, authentication, high, with every token counted. TicketFlow is ready for real traffic."
+    "This video shows your first Claude Messages A P I call, done properly. First, you lift the ticket classifier out of a notebook into a service, TicketFlow, by creating an Anthropic client.",
+    "Next you choose the model. Sonnet is the balanced tier, fast enough for real-time triage and right for most production workloads, and you set max tokens to cap the length of each reply.",
+    "Then you split the prompt. The system prompt holds the behavior, how to classify, while the user turn carries only the ticket itself. Keeping instructions in one place makes them consistent.",
+    "Now TicketFlow calls messages create, sending model, max tokens, system and messages in one POST to the messages endpoint. The ticket here says: user can't log in.",
+    "Claude replies with three things: content, a stop reason, and usage. TicketFlow reads the text of the first content block, which says Authentication, High.",
+    "TicketFlow then logs the usage: forty-two input tokens and eighteen output tokens. You pay for both directions, so this log is how you track cost per call.",
+    "The classified answer comes back to you, and every token is counted. The takeaway: a clean system prompt plus logged usage turns a demo call into a service. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

@@ -1,11 +1,11 @@
 {
   "steps": [
-    "Traffic spikes, and three tickets hit TicketFlow at once: a double charge, a crash, and a dark mode request.",
-    "The synchronous Flask service sends ticket one, and blocks the event loop while it waits for the reply.",
-    "Reply one finally returns, but tickets two and three sat waiting the whole time, and their requests time out.",
-    "So you switch the client to Async Anthropic. Now every call is awaitable, and waiting on one reply no longer blocks the others.",
-    "Next, asyncio gather fires all three calls at once. The event loop never blocks, and three requests are in flight together.",
-    "At peak traffic, Claude throws a four twenty-nine rate limit. The S D K retries automatically with backoff, here with three max retries and a thirty second timeout, so no manual loop is needed.",
-    "Finally, all three results land together: billing, technical, and feature request. No timeouts, and the latency is roughly one call, not three."
+    "This video shows why one slow call can stall a whole service, and how async fixes it. Traffic spikes, and three tickets hit TicketFlow at once: a double charge, a crash, and a dark mode request.",
+    "TicketFlow runs Flask with a synchronous client. It sends ticket one to Claude and then blocks the event loop while it waits, so nothing else can move.",
+    "Reply one finally returns, but tickets two and three have been waiting the whole time, and those requests start to time out.",
+    "So you switch the client to Async Anthropic. Now every call to messages create is awaitable, which means the service can wait on many calls without blocking.",
+    "With asyncio gather, TicketFlow fires all three calls at once. Claude has three requests in flight together, and the event loop never blocks.",
+    "Peak traffic triggers a four twenty nine rate limit. The S D K retries automatically with backoff, here up to three retries with a thirty second timeout, so you write no manual retry loop.",
+    "All three results land together: billing, technical and feature request, with the latency of one call, not three. The takeaway: concurrent async calls keep a service responsive. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }

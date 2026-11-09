@@ -1,11 +1,11 @@
 {
   "steps": [
-    "Every agent turn re-sends the ten thousand token knowledge base at full price. Costs spike.",
-    "So you mark the static knowledge base system block with cache control, type ephemeral.",
-    "On turn one, there is a cache miss. Claude writes the ten thousand tokens to the cache, plus a small write fee, and stores it with a five minute time to live.",
-    "Turn two sends the identical knowledge base block, same model, exact same prefix, so the cache hits, reading all ten thousand tokens.",
+    "This video shows how prompt caching stops you paying for the same text again and again. Here every agent turn re-sends a ten thousand token knowledge base at full price, and costs spike.",
+    "So you mark the static knowledge base system block with cache control, type ephemeral. That tells Claude this prefix is safe to store and reuse.",
+    "On turn one there is a cache miss. Claude writes the ten thousand tokens to the cache, paying a small write fee, and stores them with a five minute time to live.",
+    "Turn two sends the identical knowledge base block, with the same model and the exact same prefix, so the cache hits and Claude reads all ten thousand tokens from it.",
     "Now only the two hundred and forty-five new input tokens bill in full. The ten thousand cached ones cost one tenth, ninety percent off, and the time to live extends by five minutes.",
-    "One thing to remember: the cache is not forever. Each hit extends it by five minutes, but five idle minutes and it expires.",
-    "Finally, you watch cache creation versus cache read in the usage data, and the monthly bill drops by eighty-five percent."
+    "The cache is not forever. Each hit extends it by another five minutes, but if five minutes pass with no requests, the cached block expires and the next call writes it again.",
+    "Finally you watch cache creation versus cache read in the usage data, and the monthly bill drops by eighty-five percent. The takeaway: cache the static prefix and verify the reads. The full walkthrough is in the Gennoor Claude certification course."
   ]
 }
