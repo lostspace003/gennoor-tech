@@ -7,7 +7,7 @@
     "No allow rule: can_use_tool asks the operator",
     "Read calls auto-approved by allow rules"
   ],
-  "cta": "Full CCAR-F prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCAR-F course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#ClaudeAgentSDK",
     "#HumanInTheLoop",
     "#AISecurity"
-  ]
+  ],
+  "shows": "This short animation shows which permission layer allowed or blocked each tool call, with a human approving the restart."
 }

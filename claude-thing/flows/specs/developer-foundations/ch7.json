@@ -1,6 +1,6 @@
 {
   "title": "Format drift: JSON decays until you prune context",
-  "kicker": "TicketFlow · Week 7",
+  "kicker": "TicketFlow",
   "actors": [
     { "id": "app", "icon": "code", "label": "TicketFlow", "sub": "your service", "slot": "L" },
     { "id": "context", "icon": "layers", "label": "Context window", "sub": "what Claude sees", "slot": "TC" },

@@ -7,7 +7,7 @@
     "Later queries read it at a fraction of the cost",
     "Cost per case drops sharply"
   ],
-  "cta": "Full CCAR-P prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCAR-P course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#PromptCaching",
     "#CostOptimization",
     "#AIArchitecture"
-  ]
+  ],
+  "shows": "This short animation shows prompt caching: a long filing is paid for once, not on every query."
 }

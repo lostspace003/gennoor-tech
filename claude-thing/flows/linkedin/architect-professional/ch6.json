@@ -7,7 +7,7 @@
     "Model ID and tool results logged too",
     "One query shows the whole failed request"
   ],
-  "cta": "Full CCAR-P prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCAR-P course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#Observability",
     "#AIArchitecture",
     "#AIOps"
-  ]
+  ],
+  "shows": "This short animation shows a correlation ID tracing a failed claim across the gateway, the agent and retrieval."
 }

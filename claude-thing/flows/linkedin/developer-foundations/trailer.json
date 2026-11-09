@@ -7,7 +7,7 @@
     "Tool use, agents and MCP servers",
     "Hooks, injection defence and error routing"
   ],
-  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCDV-F course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#ClaudeAPI",
     "#AIEngineering",
     "#AIAgents"
-  ]
+  ],
+  "shows": "This short animation follows TicketFlow, a support-ticket app, from its first Claude API call to a team of agents running in production."
 }

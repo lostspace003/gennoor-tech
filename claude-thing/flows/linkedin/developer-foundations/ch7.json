@@ -7,7 +7,7 @@
     "Lowering temperature won't fix it",
     "Prune, summarize and resend the schema"
   ],
-  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCDV-F course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#ClaudeAPI",
     "#StructuredOutputs",
     "#AIAgents"
-  ]
+  ],
+  "shows": "This short animation shows JSON output drifting in a long run, and how pruning the context fixes it."
 }

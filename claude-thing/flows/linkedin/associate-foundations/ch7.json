@@ -7,7 +7,7 @@
     "Claude runs Python in a sandbox",
     "Exact total, with the code to check"
   ],
-  "cta": "Full CCAS-F prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCAS-F course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#GenerativeAI",
     "#DataAnalysis",
     "#Productivity"
-  ]
+  ],
+  "shows": "This short animation shows Claude running code to get exact totals instead of estimating them."
 }

@@ -7,7 +7,7 @@
     "Same file, consistent output",
     "A one-page summary, the right length"
   ],
-  "cta": "Full CCAS-F prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCAS-F course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#PromptEngineering",
     "#GenerativeAI",
     "#Productivity"
-  ]
+  ],
+  "shows": "This short animation shows how a four-part prompt gives the same answer every time."
 }

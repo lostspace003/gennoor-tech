@@ -7,7 +7,7 @@
     "Uploaded files hold the knowledge",
     "New chats inherit it, prompts stay short"
   ],
-  "cta": "Full CCAS-F prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCAS-F course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#GenerativeAI",
     "#Productivity",
     "#FutureOfWork"
-  ]
+  ],
+  "shows": "This short animation shows a Project holding one brief that every new chat inherits."
 }

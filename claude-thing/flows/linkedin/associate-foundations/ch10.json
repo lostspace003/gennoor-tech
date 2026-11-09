@@ -7,7 +7,7 @@
     "Each prompt gets a focused, full answer",
     "Combine the parts at the end"
   ],
-  "cta": "Full CCAS-F prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCAS-F course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#PromptEngineering",
     "#GenerativeAI",
     "#Productivity"
-  ]
+  ],
+  "shows": "This short animation shows one big task split into three focused prompts."
 }

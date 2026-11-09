@@ -7,7 +7,7 @@
     "Another worker loads the latest checkpoint",
     "Resume where it stopped"
   ],
-  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCDV-F course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#AIAgents",
     "#ClaudeAPI",
     "#AIEngineering"
-  ]
+  ],
+  "shows": "This short animation shows checkpointing: a worker crashes at step 15 and resumes at step 15."
 }

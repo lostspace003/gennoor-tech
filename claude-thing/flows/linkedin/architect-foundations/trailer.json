@@ -7,7 +7,7 @@
     "MCP servers, subagents, hooks and sessions",
     "Permissions, approvals and enterprise controls"
   ],
-  "cta": "Full CCAR-F prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCAR-F course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#ClaudeAgentSDK",
     "#AIArchitecture",
     "#AIAgents"
-  ]
+  ],
+  "shows": "This short animation shows a single query() call growing into an agent with tools, permissions and guardrails."
 }

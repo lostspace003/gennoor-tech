@@ -7,7 +7,7 @@
     "Block risky tools for that task",
     "Layered defence, not one fix"
   ],
-  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCDV-F course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#PromptInjection",
     "#AISecurity",
     "#ClaudeAPI"
-  ]
+  ],
+  "shows": "This short animation shows four layers of defence stopping a prompt injection hidden in a ticket."
 }

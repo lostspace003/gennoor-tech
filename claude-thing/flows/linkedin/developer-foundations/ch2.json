@@ -7,7 +7,7 @@
     "The user turn is just the input",
     "Log input and output tokens for cost"
   ],
-  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCDV-F course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#ClaudeAPI",
     "#AIEngineering",
     "#Python"
-  ]
+  ],
+  "shows": "This short animation shows a first messages.create() call and how its tokens are counted."
 }

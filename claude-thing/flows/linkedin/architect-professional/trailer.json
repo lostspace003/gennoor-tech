@@ -7,7 +7,7 @@
     "Caching and routing to cut cost",
     "Approvals, secrets, tracing and canary rollouts"
   ],
-  "cta": "Full CCAR-P prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCAR-P course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#AIArchitecture",
     "#EnterpriseAI",
     "#AIGovernance"
-  ]
+  ],
+  "shows": "This short animation follows an AI rollout at a healthcare insurer, from the first architecture decision to a safe, gradual launch."
 }

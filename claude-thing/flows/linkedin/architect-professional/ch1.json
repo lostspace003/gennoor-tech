@@ -7,7 +7,7 @@
     "Only gate-passing options compete on cost",
     "A defensible decision for the board"
   ],
-  "cta": "Full CCAR-P prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCAR-P course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#AIArchitecture",
     "#EnterpriseAI",
     "#SolutionArchitecture"
-  ]
+  ],
+  "shows": "This short animation shows why the latency SLA is checked before cost when choosing an architecture."
 }

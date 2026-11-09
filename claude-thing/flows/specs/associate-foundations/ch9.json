@@ -1,6 +1,6 @@
 {
   "title": "Model selection: match the model to the task",
-  "kicker": "Maya's story · Week 3",
+  "kicker": "Maya's story",
   "actors": [
     { "id": "maya", "icon": "user", "label": "Maya", "sub": "ops analyst", "slot": "L3" },
     { "id": "manager", "icon": "briefcase", "label": "Manager", "sub": "sees usage report", "slot": "L2" },

@@ -7,7 +7,7 @@
     "Exact input sent to a manager to approve",
     "Small refunds still execute at once"
   ],
-  "cta": "Full CCAR-P prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCAR-P course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#HumanInTheLoop",
     "#AIGovernance",
     "#AIAgents"
-  ]
+  ],
+  "shows": "This short animation shows a human approval step before an agent can issue a large refund."
 }

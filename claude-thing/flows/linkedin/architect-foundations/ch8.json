@@ -7,7 +7,7 @@
     "Resume reloads the history",
     "Fork tries a variant under a new id"
   ],
-  "cta": "Full CCAR-F prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCAR-F course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#ClaudeAgentSDK",
     "#AIAgents",
     "#AIArchitecture"
-  ]
+  ],
+  "shows": "This short animation shows the difference between resuming a session and forking one."
 }

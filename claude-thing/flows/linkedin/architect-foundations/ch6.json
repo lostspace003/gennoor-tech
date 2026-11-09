@@ -7,7 +7,7 @@
     "Only the final message returns to the parent",
     "Clean context, focused findings"
   ],
-  "cta": "Full CCAR-F prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCAR-F course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#ClaudeAgentSDK",
     "#MultiAgent",
     "#AIAgents"
-  ]
+  ],
+  "shows": "This short animation shows a subagent doing the research in its own context and returning only a short memo."
 }

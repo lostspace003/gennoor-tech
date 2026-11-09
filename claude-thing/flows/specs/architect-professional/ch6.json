@@ -1,6 +1,6 @@
 {
   "title": "Correlation IDs: tracing a failed claim end-to-end",
-  "kicker": "Meridian rollout · Week 23",
+  "kicker": "Meridian rollout",
   "actors": [
     { "id": "you", "icon": "user", "label": "You", "sub": "principal architect", "slot": "L" },
     { "id": "gateway", "icon": "network", "label": "API gateway", "sub": "mints correlation ID", "slot": "TC" },

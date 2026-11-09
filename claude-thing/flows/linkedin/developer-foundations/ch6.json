@@ -7,7 +7,7 @@
     "Validate input, return errors as results",
     "Send tool_result back for the final reply"
   ],
-  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCDV-F course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#ClaudeAPI",
     "#AIAgents",
     "#ToolUse"
-  ]
+  ],
+  "shows": "This short animation shows Claude requesting a tool, and your code validating and running it."
 }

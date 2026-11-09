@@ -7,7 +7,7 @@
     "Severity decides: log, back off or page",
     "Fix the retry with backoff"
   ],
-  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCDV-F course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#ClaudeAPI",
     "#Observability",
     "#SRE"
-  ]
+  ],
+  "shows": "This short animation shows API errors routed by severity: a 429 warns, a 401 pages on-call."
 }

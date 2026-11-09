@@ -7,7 +7,7 @@
     "Name the exact flaws",
     "Targeted fixes land in one pass"
   ],
-  "cta": "Full CCAS-F prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCAS-F course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#PromptEngineering",
     "#GenerativeAI",
     "#Productivity"
-  ]
+  ],
+  "shows": "This short animation shows a draft improved step by step: diagnose, revise, verify, decide."
 }

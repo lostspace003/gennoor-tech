@@ -7,7 +7,7 @@
     "Destructive patterns denied",
     "Safe commands pass through"
   ],
-  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCDV-F course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#ClaudeCode",
     "#AISecurity",
     "#DevSecOps"
-  ]
+  ],
+  "shows": "This short animation shows a PreToolUse hook denying rm -rf before it runs."
 }

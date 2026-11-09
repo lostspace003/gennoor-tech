@@ -7,7 +7,7 @@
     "Accuracy breach triggers auto-revert",
     "On-call SRE alerted, no big-bang release"
   ],
-  "cta": "Full CCAR-P prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCAR-P course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#MLOps",
     "#AIArchitecture",
     "#EnterpriseAI"
-  ]
+  ],
+  "shows": "This short animation shows a canary rollout that automatically reverts when quality drops."
 }

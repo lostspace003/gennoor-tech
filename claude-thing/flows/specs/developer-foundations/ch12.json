@@ -1,6 +1,6 @@
 {
   "title": "Prompt injection: four layers stop the poisoned ticket",
-  "kicker": "TicketFlow · Week 12",
+  "kicker": "TicketFlow",
   "actors": [
     { "id": "attacker", "icon": "user", "label": "Attacker", "sub": "files a ticket", "slot": "L" },
     { "id": "app", "icon": "code", "label": "TicketFlow", "sub": "your service", "slot": "C" },

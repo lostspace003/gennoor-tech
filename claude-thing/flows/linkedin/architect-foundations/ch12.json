@@ -7,7 +7,7 @@
     "Refunds over the limit are denied",
     "Every decision lands in the audit log"
   ],
-  "cta": "Full CCAR-F prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCAR-F course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#ClaudeAgentSDK",
     "#HumanInTheLoop",
     "#AIGovernance"
-  ]
+  ],
+  "shows": "This short animation shows can_use_tool auto-approving a $40 action and queuing a $250 one for a human."
 }

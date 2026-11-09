@@ -1,6 +1,6 @@
 {
   "title": "Tool use: Claude requests, you validate and run",
-  "kicker": "TicketFlow · Week 5",
+  "kicker": "TicketFlow",
   "actors": [
     { "id": "agent", "icon": "headset", "label": "Support agent", "sub": "mid-conversation", "slot": "L" },
     { "id": "app", "icon": "code", "label": "TicketFlow", "sub": "your dispatcher", "slot": "C" },
@@ -8,7 +8,7 @@
     { "id": "db", "icon": "database", "label": "Customer DB", "sub": "mock lookup", "slot": "BR" }
   ],
   "steps": [
-    { "caption": "Week 5: an agent asks TicketFlow to check status for alice@example.com.", "focus": ["agent"], "send": { "from": "agent", "to": "app", "icon": "message-square", "label": "check status: alice" } },
+    { "caption": "An agent asks TicketFlow to check status for alice@example.com.", "focus": ["agent"], "send": { "from": "agent", "to": "app", "icon": "message-square", "label": "check status: alice" } },
     { "caption": "You send the message plus a tools array: lookup_customer with a JSON schema.", "send": { "from": "app", "to": "claude", "icon": "file-code", "label": "lookup_customer tool" }, "callout": { "at": "app", "text": "input_schema: email, required" } },
     { "caption": "Claude does not answer yet: it emits a tool_use block with the email argument.", "focus": ["claude"], "send": { "from": "claude", "to": "app", "icon": "wrench", "label": "tool_use {email}" }, "callout": { "at": "claude", "text": "stop_reason is not end_turn" } },
     { "caption": "Your dispatcher validates the email first: a malformed one gets an error back.", "focus": ["app"], "callout": { "at": "app", "text": "no \"@\"? error tool_result, no crash" }, "badge": { "at": "app", "kind": "check", "text": "email valid" } },

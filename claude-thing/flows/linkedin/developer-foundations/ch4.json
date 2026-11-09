@@ -7,7 +7,7 @@
     "Poll batches.retrieve until done",
     "Read results, at a lower cost"
   ],
-  "cta": "Full CCDV-F prep course, chapter by chapter + practice exam:",
+  "cta": "Full CCDV-F course, chapter by chapter:",
   "hashtags": [
     "#ClaudeAI",
     "#Anthropic",
@@ -15,5 +15,6 @@
     "#ClaudeAPI",
     "#CostOptimization",
     "#AIEngineering"
-  ]
+  ],
+  "shows": "This short animation shows the Batch API processing 10,000 tickets overnight at half the price."
 }

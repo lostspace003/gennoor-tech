@@ -1,6 +1,6 @@
 {
   "title": "Error routing: 429 warns, 401 pages on-call",
-  "kicker": "TicketFlow · Week 13",
+  "kicker": "TicketFlow",
   "actors": [
     { "id": "you", "icon": "user", "label": "You", "sub": "Loomline engineer", "slot": "L" },
     { "id": "app", "icon": "server", "label": "TicketFlow", "sub": "live on BYOC · AWS", "slot": "C" },
