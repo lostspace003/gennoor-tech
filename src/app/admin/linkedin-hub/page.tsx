@@ -9,7 +9,7 @@ import SplitPane from '@/components/admin/SplitPane'
 import WarmSwitch from '@/components/admin/WarmSwitch'
 import { DateRangeFilter, rangeBounds, rangeLabel, type DateRange } from '@/components/crm/shared'
 import { GROUPS, TOOLS, FIELD_TIPS, STARTERS, type Field, type GroupKey, type ToolDef } from '@/lib/linkedin-catalog'
-import { markdownToHtml, normalizeArg, parsePeople, resultToMarkdown } from '@/lib/linkedin-hub-format'
+import { markdownToHtml, normalizeArg, resultCards, resultToMarkdown, type Card } from '@/lib/linkedin-hub-format'
 
 type Tab = 'overview' | GroupKey | 'prospecting' | 'activity'
 interface Status {
@@ -66,17 +66,74 @@ function Fmt({ md }: { md: string }) {
   return <div className="text-[13px] leading-6 text-gray-800">{out}</div>
 }
 
+/** Search results as clean cards (or the people table), with a search box and a dropdown per facet on top. */
+function CardsView({ cards }: { cards: Card[] }) {
+  const [q, setQ] = useState('')
+  const [pick, setPick] = useState<Record<string, string>>({})
+  const [open, setOpen] = useState<Record<number, boolean>>({})
+  useEffect(() => { setQ(''); setPick({}); setOpen({}) }, [cards])
+  const facets = useMemo(() => {
+    const keys = Array.from(new Set(cards.flatMap(c => Object.keys(c.facets))))
+    return keys.map(k => {
+      const n = new Map<string, number>()
+      cards.forEach(c => { const v = c.facets[k]; if (v) n.set(v, (n.get(v) || 0) + 1) })
+      return { k, opts: Array.from(n).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])) }
+    }).filter(f => f.opts.length > 1 && f.opts.length < cards.length)
+  }, [cards])
+  const shown = useMemo(() => {
+    const words = q.toLowerCase().split(/\s+/).filter(Boolean)
+    return cards.filter(c => {
+      if (Object.entries(pick).some(([k, v]) => v && c.facets[k] !== v)) return false
+      const hay = [c.title, c.sub, c.body, ...c.meta, ...(c.tags || [])].join(' ').toLowerCase()
+      return words.every(w => hay.includes(w))
+    })
+  }, [cards, q, pick])
+  const people = cards.some(c => c.person)
+  return (
+    <div className="space-y-2">
+      <div className="flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 p-2">
+        <div className="relative flex-1 min-w-[180px]"><Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-gray-400" /><input value={q} onChange={e => setQ(e.target.value)} placeholder="Search within these results" className={`${field} pl-8`} /></div>
+        {facets.map(f => (
+          <select key={f.k} value={pick[f.k] || ''} onChange={e => setPick(p => ({ ...p, [f.k]: e.target.value }))} className={`${field} w-auto max-w-[200px]`}>
+            <option value="">{f.k}: all</option>
+            {f.opts.map(([v, n]) => <option key={v} value={v}>{v.length > 40 ? v.slice(0, 40) + '…' : v} ({n})</option>)}
+          </select>
+        ))}
+        <span className="text-xs text-gray-500 ml-auto">{shown.length} of {cards.length}</span>
+        {(q || Object.values(pick).some(Boolean)) && <button onClick={() => { setQ(''); setPick({}) }} className="text-xs text-gray-500 hover:text-gray-800">Clear</button>}
+      </div>
+      {people ? <ProspectTable rows={shown.map(c => ({ ...c.person!, linkedin: c.url }))} fileName="linkedin-people" /> : (
+        <ul className="space-y-2 max-h-[70vh] overflow-y-auto pr-1">
+          {shown.map((c, i) => {
+            const long = (c.body || '').length > 280
+            return (
+              <li key={i} className="rounded-lg border border-gray-200 bg-white p-3">
+                <div className="flex items-start gap-2">
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[14px] font-semibold text-gray-900 break-words">{c.url ? <a href={c.url} target="_blank" rel="noreferrer" className="hover:underline">{c.title}</a> : c.title}{c.badge && <span className="ml-1.5 text-xs font-normal text-gray-500">· {c.badge}</span>}</div>
+                    {c.sub && <div className="text-xs text-gray-600 break-words line-clamp-2">{c.sub}</div>}
+                    {c.meta.length > 0 && <div className="text-xs text-gray-500 mt-0.5">{c.meta.join(' · ')}</div>}
+                  </div>
+                  {c.url && <a href={c.url} target="_blank" rel="noreferrer" title="Open on LinkedIn" className="text-gray-400 hover:text-gray-600 shrink-0"><ExternalLink className="w-3.5 h-3.5" /></a>}
+                </div>
+                {c.body && <div className={`mt-2 text-[13px] leading-6 text-gray-800 whitespace-pre-line break-words ${long && !open[i] ? 'line-clamp-4' : ''}`}>{c.body}</div>}
+                {long && <button onClick={() => setOpen(o => ({ ...o, [i]: !o[i] }))} className="text-xs text-blue-700 hover:underline mt-1">{open[i] ? 'Show less' : 'Show more'}</button>}
+                {c.tags && c.tags.length > 0 && <div className="mt-2 flex flex-wrap gap-1">{c.tags.slice(0, 8).map(t => <button key={t} onClick={() => setQ(t)} className="text-[11px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 hover:bg-gray-200">{t}</button>)}</div>}
+              </li>
+            )
+          })}
+          {shown.length === 0 && <li className="p-6 text-sm text-gray-500 text-center">Nothing matches. Clear the filters to see all {cards.length}.</li>}
+        </ul>
+      )}
+    </div>
+  )
+}
+
 function ResultView({ r, label, onRun, busy }: { r: Result; label: string; onRun: (tool: string, args: Record<string, any>) => void; busy: boolean }) {
   const d = r.data
   const refs = useMemo(() => collectRefs(d?.references ?? (Array.isArray(d) ? d : undefined)), [d])
   const md = useMemo(() => resultToMarkdown(label, r.args, d), [label, r, d])
-  const people = useMemo(() => {
-    const rows = typeof d?.text === 'string' ? parsePeople(d.text) : null
-    if (!rows) return null
-    const norm = (x: string) => x.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
-    const prof = refs.filter(x => /\/in\//.test(x.url))
-    return rows.map(p => { const hit = prof.find(x => x.text && norm(x.text).startsWith(norm(p.name))); return { ...p, linkedin: hit ? absolute(hit.url).split('?')[0] : undefined } })
-  }, [d, refs])
+  const cards = useMemo(() => resultCards(d), [d])
   const [copied, setCopied] = useState(false)
   const [mailOpen, setMailOpen] = useState(false)
   const [to, setTo] = useState('')
@@ -119,7 +176,7 @@ function ResultView({ r, label, onRun, busy }: { r: Result; label: string; onRun
           {mail.msg && <span className={`text-xs ${mail.state === 'error' ? 'text-red-700' : 'text-emerald-700'}`}>{mail.msg}</span>}
         </form>
       )}
-      {people ? <ProspectTable rows={people} fileName="linkedin-people" /> : <div className="rounded-lg border border-gray-200 bg-white p-4 max-h-[70vh] overflow-y-auto"><Fmt md={md} /></div>}
+      {cards ? <CardsView cards={cards} /> : <div className="rounded-lg border border-gray-200 bg-white p-4 max-h-[70vh] overflow-y-auto"><Fmt md={md} /></div>}
       {refs.length > 0 && (
         <section className="rounded-lg border border-gray-200 bg-white">
           <div className="px-3 py-1.5 text-xs font-semibold border-b border-gray-100 bg-gray-50 rounded-t-lg">Do more with these ({Math.min(refs.length, 120)})<InfoTip text="Shortcuts for each link found: read a profile, open a conversation, see job details and so on. Each press runs one more lookup." /></div>
