@@ -44,6 +44,20 @@ export interface BlogPost extends BlogPostMeta {
 
 export const blogPostsMeta: BlogPostMeta[] = [
   {
+    slug: 'claude-5-2-enterprise-upgrade-bar-faster-cheaper-stricter',
+    title: 'How Enterprise Teams Should Read AI Model Launches When the Details Are Still Unclear',
+    excerpt: 'When a model announcement looks promising but the factual basis is not fully verifiable, enterprise teams should slow down and evaluate the release as a procurement, architecture, and governance decision rather than a simple capability upgrade.',
+    tldr: 'If a model launch cannot be fully substantiated from official sources, do not build strategy on the headline. Verify the source, test real workloads, review documentation, and assess architecture and governance impact before considering migration.',
+    author: 'Gennoor Tech',
+    date: '2026-11-10',
+    readTime: '7 min read',
+    category: 'AI Models',
+    tags: ['Enterprise AI', 'AI Governance', 'Model Selection', 'Enterprise Architecture', 'Production AI', 'AI Procurement', 'LLM Ops'],
+    hashtags: ['#EnterpriseAI', '#AIGovernance', '#ModelSelection', '#EnterpriseArchitecture', '#LLMOps'],
+    coverColor: '#2C1F1A',
+    icon: '🧠',
+  },
+  {
     slug: 'openai-dots-enterprise-ga-always-on-agent-ops-challenge',
     title: 'OpenAI Dots Enterprise GA Exposes the Real Challenge of Always-On Agents',
     excerpt: 'Always-on agents look manageable in a demo, but enterprise reality starts when persistent agent capabilities enter business workspaces. OpenAI’s latest ChatGPT announcement is less a model story than an operations signal: enterprises need verified admin controls, app connection policy, monitoring, privacy review, and clear ownership before broader enablement.',
@@ -1070,6 +1084,7 @@ export function getRelatedPostsMeta(currentSlug: string, category: string, limit
 
 // Load full blog post content on demand (only for individual post pages)
 const contentImports: Record<string, () => Promise<{ post: BlogPost }>> = {
+  'claude-5-2-enterprise-upgrade-bar-faster-cheaper-stricter': () => import('./content/claude-5-2-enterprise-upgrade-bar-faster-cheaper-stricter'),
   'openai-dots-enterprise-ga-always-on-agent-ops-challenge': () => import('./content/openai-dots-enterprise-ga-always-on-agent-ops-challenge'),
   'microsoft-copilot-harness-runtime-control-platform-strategy': () => import('./content/microsoft-copilot-harness-runtime-control-platform-strategy'),
   'gpt-6-1-terra-enterprise-agent-cost-control-roi': () => import('./content/gpt-6-1-terra-enterprise-agent-cost-control-roi'),
