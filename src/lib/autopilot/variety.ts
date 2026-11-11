@@ -101,6 +101,7 @@ const VENDOR_ALIASES: [RegExp, string][] = [
   [/meta|llama/, 'meta'],
   [/mistral/, 'mistral'],
   [/nvidia/, 'nvidia'],
+  [/spotify/, 'spotify'],
 ]
 /** One canonical vendor key, so "Azure AI Foundry" and "Microsoft" count as the same vendor. */
 export function vendorKey(v?: string): string {
@@ -109,13 +110,37 @@ export function vendorKey(v?: string): string {
   return VENDOR_ALIASES.find(([re]) => re.test(s))?.[1] ?? s
 }
 
+const NO_VENDOR = ['', 'none', 'n/a', 'industry', 'open source', 'various', 'multiple', 'community']
+// Hosts that publish about everyone, so they say nothing about whose story it is.
+const GENERIC_HOSTS = new Set(['github', 'arxiv', 'reddit', 'ycombinator', 'medium', 'substack', 'x', 'twitter', 'youtube', 'linkedin', 'techcrunch', 'theverge', 'venturebeat', 'wired', 'reuters', 'bloomberg', 'zdnet', 'infoq', 'huggingface', 'paperswithcode', 'thenewstack', 'forbes', 'cnbc', 'businessinsider', 'economictimes', 'livemint', 'gartner', 'mckinsey', 'stanford', 'newscura'])
+/**
+ * Whose story an idea is. Uses the vendor tag, and when that is empty or "none", the first source's site
+ * (shopify.engineering -> shopify), so two posts about one company on the same day are still caught.
+ */
+export function ideaVendor(i: { vendor?: string; sources?: { url: string }[] }): string {
+  const v = vendorKey(i.vendor)
+  if (v && !NO_VENDOR.includes(v)) return v
+  for (const src of i.sources || []) {
+    try {
+      const parts = new URL(src.url).hostname.replace(/^www\./, '').split('.')
+      // shopify.engineering -> shopify, engineering.atspotify.com -> atspotify (alias -> spotify), example.co.in -> example
+      let k = parts.length > 1 ? parts.length - 2 : 0
+      if (k > 0 && ['co', 'com', 'org', 'ac', 'gov', 'net'].includes(parts[k])) k--
+      const host = parts[k]
+      // Check the site before aliasing: a repo on github.com is not a Microsoft story.
+      if (host && !GENERIC_HOSTS.has(host)) return vendorKey(host)
+    } catch { /* not a URL */ }
+  }
+  return ''
+}
+
 /** How many times each vendor was posted about in the window. */
 export function vendorCounts(history: { at: string; vendor?: string }[], now: Date, days = 7): Record<string, number> {
   const out: Record<string, number> = {}
   for (const h of history) {
     if (Date.parse(h.at) < now.getTime() - days * 86_400_000) continue
     const k = vendorKey(h.vendor)
-    if (k && !['', 'none', 'industry', 'open source', 'various', 'multiple'].includes(k)) out[k] = (out[k] || 0) + 1
+    if (k && !NO_VENDOR.includes(k)) out[k] = (out[k] || 0) + 1
   }
   return out
 }
@@ -136,7 +161,7 @@ export function planSlots(ideas: TopicIdea[], slots: { kind: string }[], o: { la
     for (const slot of slots) {
       const ok = (i: TopicIdea, level: number) => {
         if (used.has(i)) return false
-        const v = vendorKey(i.vendor)
+        const v = ideaVendor(i)
         if (v && vendorsToday.has(v)) return false
         if (strict && v && (o.vendorWeek[v] || 0) >= o.vendorCap) return false
         if (slot.kind === 'poll') return true
@@ -149,7 +174,7 @@ export function planSlots(ideas: TopicIdea[], slots: { kind: string }[], o: { la
       const choice = pool.find(i => ok(i, 2)) || pool.find(i => ok(i, 1)) || pool.find(i => ok(i, 0))
       if (!choice) return null
       used.add(choice); out.push(choice)
-      const v = vendorKey(choice.vendor); if (v) vendorsToday.add(v)
+      const v = ideaVendor(choice); if (v) vendorsToday.add(v)
       if (slot.kind !== 'poll' && choice.format) { formatsToday.push(choice.format); prev = choice.format }
     }
     return out

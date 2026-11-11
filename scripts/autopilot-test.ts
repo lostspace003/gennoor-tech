@@ -1,7 +1,7 @@
 import { tick, applyAction, similar, mentionsAvoided, slotsFor, withRetry, isTransient, type Deps } from '../src/lib/autopilot/engine'
 import { zonedToUtc } from '../src/lib/autopilot/time'
 import { DEFAULT_CONFIG, emptyState, type State, type TargetKey } from '../src/lib/autopilot/types'
-import { echoedHook, freshIdeas, planSlots, vendorCounts, vendorKey } from '../src/lib/autopilot/variety'
+import { echoedHook, freshIdeas, ideaVendor, planSlots, vendorCounts, vendorKey } from '../src/lib/autopilot/variety'
 import { actionUrl, linksHtml, verifyAction } from '../src/lib/autopilot/email-actions'
 
 let pass = 0, fail = 0
@@ -216,6 +216,33 @@ async function main() {
   ok(h.w.published.some(p => p.t === 'organization'), 'approving from the email posts it')
   let threw = false; try { applyAction(h.store.s, '2026-11-02-3', 'approve', h.w.now) } catch { threw = true }
   ok(threw, 'a slot without a finished draft cannot be approved')
+
+  console.log('vendor from sources')
+  ok(ideaVendor({ vendor: 'none', sources: [{ url: 'https://shopify.engineering/reflex' }] }) === 'shopify', 'an untagged idea gets its company from the source site')
+  ok(ideaVendor({ vendor: '', sources: [{ url: 'https://engineering.atspotify.com/2026/9/x' }] }) === 'spotify', 'engineering.atspotify.com counts as Spotify')
+  ok(ideaVendor({ vendor: 'none', sources: [{ url: 'https://github.com/x/y' }] }) === '', 'GitHub, arXiv and news sites do not count as a company')
+  ok(ideaVendor({ vendor: 'none', sources: [{ url: 'https://www.atlassian.com/blog/x' }] }) === 'atlassian', 'names starting with "at" are kept intact')
+  ok(planSlots([idea('Remote Dev', 'Shopify', 'use-case', 9), { ...idea('Reflex', 'none', 'builder-buzz', 8), sources: [{ title: 'r', url: 'https://shopify.engineering/reflex' }] }, idea('Other', 'Stripe', 'workflow', 1)], [{ kind: 'post' }, { kind: 'post' }], { vendorWeek: {}, vendorCap: 2 })!.map(i => i.title).join() === 'Remote Dev,Other', 'two Shopify stories are never planned for the same day')
+
+  console.log('late approval (review mode)')
+  h = harness({ mode: 'review' }); h.w.now = at('2026-11-02', '05:10'); await tick(h.d); h.w.now = at('2026-11-02', '07:00'); await tick(h.d)
+  h.w.now = at('2026-11-02', '13:00'); await tick(h.d)
+  ok(h.w.published.length === 0, 'unapproved draft is not posted, even long after its time')
+  applyAction(h.store.s, '2026-11-02-1', 'approve', h.w.now); await tick(h.d)
+  ok(h.w.published.some(p => p.id === day(h).slots[0].draftId && p.t === 'organization'), 'approved 4.5h late: company page posts immediately')
+  h.w.now = at('2026-11-02', '13:50'); await tick(h.d)
+  ok(h.w.published.some(p => p.t === 'member'), 'profile repost follows after the usual gap')
+  h = harness({ mode: 'review' }); h.w.now = at('2026-11-02', '05:10'); await tick(h.d); h.w.now = at('2026-11-02', '07:00'); await tick(h.d)
+  h.w.now = at('2026-11-03', '10:00')
+  applyAction(h.store.s, '2026-11-02-1', 'approve', h.w.now); await tick(h.d)
+  ok(h.w.published.some(p => p.t === 'organization' && p.id === h.store.s.days['2026-11-02'].slots[0].draftId), "yesterday's draft approved today is posted straight away")
+  const before2 = h.w.published.length; h.w.now = at('2026-11-03', '11:30'); await tick(h.d); h.w.now = at('2026-11-03', '12:00'); await tick(h.d)
+  ok(h.w.published.length === before2 + 1 && h.store.s.days['2026-11-02'].slots[0].status === 'done', 'it settles once both targets are posted, and is never posted twice')
+  h = harness({ mode: 'review' }); h.w.now = at('2026-11-02', '05:10'); await tick(h.d); h.w.now = at('2026-11-02', '07:00'); await tick(h.d)
+  applyAction(h.store.s, '2026-11-02-1', 'approve', h.w.now); await tick(h.d)
+  ok(h.w.published.length === 0, 'approved early: waits for its scheduled time')
+  h.w.now = at('2026-11-02', '08:31'); await tick(h.d)
+  ok(h.w.published.length === 1, '...and posts at that time')
 
   console.log(`\n${pass} passed, ${fail} failed`)
   process.exit(fail ? 1 : 0)

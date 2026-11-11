@@ -64,6 +64,7 @@ Rules:
 - Never touch: ${cfg.avoid.join('; ')}.
 ${ctx.avoidVendors?.length ? `- These vendors have had enough coverage this week; avoid them unless the story is unmissable: ${ctx.avoidVendors.join(', ')}.\n` : ''}${ctx.recentFormats?.length ? `- Recently used formats (favour the others): ${ctx.recentFormats.join(', ')}.\n` : ''}- Do not repeat or re-angle these recent topics, even in different words: ${recent.slice(-60).join(' | ') || 'none'}.
 - Only include sources you actually found.
+- Do not put the format name in the title (no "Builder buzz:", "Myth vs fact:" prefixes).
 Formats (use the key):
 ${formats.map(f => `- ${f.key}: ${f.guide}`).join('\n')}
 Reply with JSON only: {"ideas":[{"title": string (<=110 chars), "format": string (one key above), "angle": string (the specific take, 1-2 sentences), "hook": string (a draft opening line), "vendor": string (the main company or product, or "none"), "heat": number 1-10 (how much people are talking about it and would share it), "why": string, "sources":[{"title": string, "url": string}]}]}`

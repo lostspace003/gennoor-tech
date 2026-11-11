@@ -1,7 +1,7 @@
 import { randomBytes } from 'crypto'
 import { hhmmToMinutes, isWeekend, localParts, zonedToUtc } from './time'
 import type { Config, DayPlan, Slot, State, TargetKey, TargetState, TopicIdea } from './types'
-import { echoedHook, firstLine, freshIdeas, planSlots, vendorCounts, type Embed } from './variety'
+import { echoedHook, firstLine, freshIdeas, ideaVendor, planSlots, vendorCounts, type Embed } from './variety'
 
 // The autopilot engine. Pure orchestration over injected dependencies, so every safeguard can be tested without
 // touching LinkedIn or a model. `tick` is called every ~15 minutes by a scheduled job and is safe to call twice.
@@ -142,7 +142,7 @@ export async function tick(d: Deps, opts: { force?: boolean } = {}): Promise<str
         }))
         day.researchedAt = iso(now)
         day.researchError = undefined
-        s.history.push(...day.slots.map(sl => ({ at: iso(now), title: sl.topic!.title, angle: sl.topic!.angle, vendor: sl.topic!.vendor, format: sl.kind === 'poll' ? 'poll' : sl.topic!.format, slotId: sl.id })))
+        s.history.push(...day.slots.map(sl => ({ at: iso(now), title: sl.topic!.title, angle: sl.topic!.angle, vendor: ideaVendor(sl.topic!) || sl.topic!.vendor, format: sl.kind === 'poll' ? 'poll' : sl.topic!.format, slotId: sl.id })))
         s.history = s.history.slice(-200)
         note(s, now, `Planned ${day.slots.length} slots for ${today}`)
         out.push(`planned ${day.slots.length} slots`)
@@ -156,7 +156,11 @@ export async function tick(d: Deps, opts: { force?: boolean } = {}): Promise<str
 
     // 2. Each slot: manual takeover, drafting, quality gate, publishing.
     const tok = await d.tokens().catch(() => null)
-    for (const slot of day.slots) {
+    // Drafts you approved after their day (review mode) are still posted: they join today's loop until settled.
+    const weekAgo = localParts(new Date(now.getTime() - 7 * 86_400_000), cfg.tz).date
+    const approvedEarlier = Object.values(s.days).filter(x => x.date < today && x.date >= weekAgo)
+      .flatMap(x => x.slots.filter(sl => sl.approved && sl.status === 'ready' && !sl.manual))
+    for (const slot of [...day.slots, ...approvedEarlier]) {
       if (slot.status === 'done' || slot.status === 'skipped') continue
       const slotAt = Date.parse(slot.at)
 
@@ -289,6 +293,19 @@ export async function tick(d: Deps, opts: { force?: boolean } = {}): Promise<str
 }
 
 // ---- Editor actions from the admin page -------------------------------------------------------------------------
+/** An approved post whose time has passed goes out now (profile after the usual stagger), never skipped as "late". */
+function catchUp(slot: Slot, s: State, now: Date) {
+  const late = Date.parse(slot.at) < now.getTime()
+  for (const key of TARGETS) {
+    const t = slot.targets[key]
+    if (!t || !['pending', 'skipped', 'held'].includes(t.status)) continue
+    if (t.status === 'skipped' && !/missed its window/.test(t.reason || '')) continue
+    if (!late && t.status === 'pending') continue
+    t.status = 'pending'; t.attempts = 0; t.reason = undefined
+    t.at = iso(new Date(now.getTime() + (key === 'member' ? (s.config.staggerMinutes ?? 0) * 60_000 : 0)))
+  }
+  if (slot.status === 'skipped' && slot.draftId) slot.status = 'ready'
+}
 export type Action = 'skip' | 'manual' | 'resume' | 'release' | 'retry' | 'post-now' | 'link' | 'remove' | 'approve'
 export function applyAction(s: State, slotId: string, action: Action, now: Date, draftId?: string): string {
   const slot = Object.values(s.days).flatMap(d => d.slots).find(x => x.id === slotId)
@@ -324,14 +341,16 @@ export function applyAction(s: State, slotId: string, action: Action, now: Date,
     }
   }
   if (action === 'approve') {
-    // Review mode: you approved the draft, so it posts at its own time (the missed-window rule still applies).
+    // Review mode: you approved the draft. Before its time it posts at its time; if its time has passed (even days
+    // ago) it posts straight away, because you chose to post it.
     if (!slot.draftId || slot.status !== 'ready') throw new Error(slot.status === 'held' ? 'This post was held by the quality check: release it instead.' : 'This slot has no finished draft to approve.')
     slot.approved = true
+    catchUp(slot, s, now)
   }
   if (action === 'release' || action === 'retry') {
     if (action === 'release') slot.approved = true
     if (!slot.draftId) { slot.status = 'planned'; slot.genAttempts = 0; slot.reason = undefined }
-    else { slot.status = 'ready'; slot.reason = undefined; for (const t of targets) if (t.status === 'held' || t.status === 'failed') { t.status = 'pending'; t.attempts = 0; t.reason = undefined; t.at = iso(now) } }
+    else { slot.status = 'ready'; slot.reason = undefined; for (const t of targets) if (t.status === 'held' || t.status === 'failed') { t.status = 'pending'; t.attempts = 0; t.reason = undefined; t.at = iso(now) }; if (action === 'release') catchUp(slot, s, now) }
   }
   if (action === 'post-now') {
     if (!slot.draftId) throw new Error('This slot has no draft yet.')

@@ -87,6 +87,8 @@ export async function POST(req: NextRequest) {
     const s = await loadState()
     const status = applyAction(s, String(b.slotId || ''), b.action, new Date(), draftId)
     await saveState(s)
+    // An approval whose time has passed posts straight away rather than on the next scheduled run.
+    if (['approve', 'release', 'post-now'].includes(b.action)) void tick(liveDeps()).catch(e => console.error('autopilot tick after approval failed', e))
     return NextResponse.json({ status })
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || 'Failed.' }, { status: 400 })
