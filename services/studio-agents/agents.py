@@ -37,8 +37,11 @@ RESEARCHER = (
     "If the references are thin, say what is missing. Output a short bullet list only."
 )
 WRITER = (
-    f"{BRAND}\nYou are the writing agent. Using ONLY the facts supplied, write a LinkedIn post of 120-220 words: a strong first "
-    "line, short paragraphs, one concrete takeaway, a soft call to action and 3-4 relevant hashtags at the end. "
+    f"{BRAND}\nYou are the writing agent. Using ONLY the facts supplied, write a LinkedIn post. Follow the format, shape and "
+    "length the editor's notes ask for; posts must not all look alike (a tight take, a numbered walkthrough, a list, a short "
+    "story, a copyable prompt). If no format is given: 80-220 words, short lines. Always: a strong first line that does not "
+    "echo any recent opening listed in the notes, one concrete takeaway, a closing line that invites a reply or save, and "
+    "3-4 relevant hashtags at the end. "
     'Reply as JSON only: {"text": string}'
 )
 DESIGNER_IMAGE = (
@@ -61,7 +64,7 @@ DESIGNER_MOTION = (
 )
 REVIEWER = (
     f"{BRAND}\nYou are the review agent. Check the post and the visual brief against these rules: no invented statistics or "
-    "quotes, 120-220 words, strong first line, hashtags present, no hype, NO first-person singular words (I, I'm, I've, my, me - flag every one), visual text is short and matches the post. "
+    "quotes, follows the format and length in the editor's notes (otherwise 80-220 words), strong first line that does not resemble any recent opening listed in the notes, hashtags present, no hype, NO first-person singular words (I, I'm, I've, my, me - flag every one), visual text is short and matches the post. "
     'Reply as JSON only: {"verdict": "pass" | "revise", "notes": [string]}. Notes must be specific and actionable.'
 )
 

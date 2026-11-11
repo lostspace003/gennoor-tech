@@ -32,6 +32,8 @@ export interface Config {
   dailyMax: number
   minGapMinutes: number
   maxRegens: number
+  /** Most posts about one vendor in any 7 days (relaxed only when the day cannot otherwise be filled). */
+  vendorWeeklyMax: number
 }
 
 export const DEFAULT_CONFIG: Config = {
@@ -68,9 +70,10 @@ export const DEFAULT_CONFIG: Config = {
   dailyMax: 4,
   minGapMinutes: 60,
   maxRegens: 2,
+  vendorWeeklyMax: 2,
 }
 
-export interface TopicIdea { title: string; angle: string; hook?: string; vendor?: string; heat?: number; why?: string; sources: { title: string; url: string }[] }
+export interface TopicIdea { title: string; angle: string; hook?: string; vendor?: string; heat?: number; why?: string; format?: string; sources: { title: string; url: string }[] }
 
 export interface TargetState {
   status: 'pending' | 'publishing' | 'done' | 'manual' | 'skipped' | 'failed' | 'held'
@@ -99,17 +102,21 @@ export interface Slot {
   manual?: boolean
   /** The admin wrote this slot's post in Social Studio (draftId points to it); handing back is then refused. */
   ownDraft?: boolean
+  /** You approved this draft (button in the email or on the page), so it posts even in review mode. */
+  approved?: boolean
   targets: Partial<Record<TargetKey, TargetState>>
   updatedAt: string
 }
 
 export interface DayPlan { date: string; researchedAt?: string; researchAttempts: number; researchError?: string; slots: Slot[]; digestSent?: boolean }
 
+export interface HistoryEntry { at: string; title: string; angle?: string; vendor?: string; format?: string; hook?: string; slotId?: string }
+
 export interface State {
   config: Config
   days: Record<string, DayPlan>
-  /** Titles of recent topics, to avoid repeating ourselves. */
-  history: { at: string; title: string }[]
+  /** Recent topics, to avoid repeating ourselves: what, which vendor, which format and how the post opened. */
+  history: HistoryEntry[]
   lock?: { until: string; by: string }
   lastTick?: string
   lastTickNote?: string
