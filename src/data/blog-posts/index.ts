@@ -44,6 +44,20 @@ export interface BlogPost extends BlogPostMeta {
 
 export const blogPostsMeta: BlogPostMeta[] = [
   {
+    slug: 'openai-aws-marketplace-enterprise-ai-procurement',
+    title: 'AWS Highlighted OpenAI-Powered Bedrock Agents: Why Procurement Architecture Still Matters for Enterprise AI',
+    excerpt: 'AWS publicly highlighted Amazon Bedrock Managed Agents powered by OpenAI in an official roundup on October 5, 2026. That does not independently confirm an AWS Marketplace event, but it does signal how enterprise AI is increasingly evaluated through platform fit, procurement architecture, and governance readiness rather than model quality alone.',
+    tldr: 'The supplied source confirms that AWS highlighted Amazon Bedrock Managed Agents powered by OpenAI in an official roundup on October 5, 2026. For enterprise leaders, that can be read as a platform signal: AI adoption is increasingly shaped by procurement architecture, operating models, and governance readiness. Marketplace and purchasing implications are best treated as analysis, not as confirmed facts from this source.',
+    author: 'Gennoor Tech',
+    date: '2026-11-11',
+    readTime: '13 min read',
+    category: 'AI Strategy',
+    tags: ['Enterprise AI', 'AI Strategy', 'AI Governance', 'AI Procurement', 'Cloud Platforms', 'Enterprise Architecture', 'FinOps', 'C-Suite'],
+    hashtags: ['#EnterpriseAI', '#AIStrategy', '#AIProcurement', '#AIGovernance', '#CloudPlatforms', '#FinOps'],
+    coverColor: '#2F241F',
+    icon: '🧾',
+  },
+  {
     slug: 'claude-5-2-enterprise-upgrade-bar-faster-cheaper-stricter',
     title: 'How Enterprise Teams Should Read AI Model Launches When the Details Are Still Unclear',
     excerpt: 'When a model announcement looks promising but the factual basis is not fully verifiable, enterprise teams should slow down and evaluate the release as a procurement, architecture, and governance decision rather than a simple capability upgrade.',
@@ -1084,6 +1098,7 @@ export function getRelatedPostsMeta(currentSlug: string, category: string, limit
 
 // Load full blog post content on demand (only for individual post pages)
 const contentImports: Record<string, () => Promise<{ post: BlogPost }>> = {
+  'openai-aws-marketplace-enterprise-ai-procurement': () => import('./content/openai-aws-marketplace-enterprise-ai-procurement'),
   'claude-5-2-enterprise-upgrade-bar-faster-cheaper-stricter': () => import('./content/claude-5-2-enterprise-upgrade-bar-faster-cheaper-stricter'),
   'openai-dots-enterprise-ga-always-on-agent-ops-challenge': () => import('./content/openai-dots-enterprise-ga-always-on-agent-ops-challenge'),
   'microsoft-copilot-harness-runtime-control-platform-strategy': () => import('./content/microsoft-copilot-harness-runtime-control-platform-strategy'),
