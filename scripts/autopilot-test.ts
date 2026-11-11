@@ -255,6 +255,16 @@ async function main() {
   const thin = planSlots([pi('Only MS', 'Microsoft', 'walkthrough', 5, 'microsoft'), pi('Debate', 'none', 'contrarian', 5, 'debate'), pi('Use', 'Acme', 'use-case', 5, 'use-case'), pi('Extra', 'Globex', 'number', 5, 'use-case')], day4, { vendorWeek: {}, vendorCap: 1, pillars: ['microsoft', 'debate', 'use-case', 'hands-on'], core: ['microsoft'] })
   ok(!!thin && thin[3].title === 'Extra', 'a pillar with no ideas is filled from another pillar rather than leaving the slot empty')
 
+  console.log('themes and companies')
+  // Vectors at ~0.66 cosine to the benchmark theme: same theme, different story.
+  const theme = async (texts: string[]) => texts.map(x => (/benchmark/i.test(x) ? [1, 0.75, 0] : /harness/i.test(x) ? [1, 0, 0.75] : [0, 0, 1]))
+  const nowT = new Date('2026-11-18T00:00:00Z'), dAgo = (n: number) => new Date(nowT.getTime() - n * 86_400_000).toISOString()
+  const th = await freshIdeas([{ title: 'Is your harness the real model?', angle: 'harness' }], [{ title: 'SWE-bench benchmark is broken', at: dAgo(2) }, { title: 'Benchmark wins are fake', at: dAgo(4) }], theme, nowT)
+  ok(th.length === 0, 'a theme already covered twice this week is rested')
+  const th2 = await freshIdeas([{ title: 'Is your harness the real model?', angle: 'harness' }], [{ title: 'SWE-bench benchmark is broken', at: dAgo(2) }, { title: 'Benchmark wins are fake', at: dAgo(20) }], theme, nowT)
+  ok(th2.length === 1, 'once in the last week is fine')
+  ok(ideaVendor({ company: 'Wayfair', vendor: 'Google Gemini', sources: [] }) === 'wayfair', 'a use case counts against the company, not the AI vendor it used')
+
   console.log(`\n${pass} passed, ${fail} failed`)
   process.exit(fail ? 1 : 0)
 }

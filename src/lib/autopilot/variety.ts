@@ -73,8 +73,14 @@ export function cosine(a: number[], b: number[]) {
   return dot / (Math.sqrt(na) * Math.sqrt(nb) || 1)
 }
 
-/** Embedding cosine at or above this means "the same story told again" (text-embedding-3-small on title + angle). */
-export const SEMANTIC_REPEAT = 0.82
+// Calibrated on a simulated week (text-embedding-3-small on title + angle): the same story retold scored 0.75-0.81,
+// a recurring theme 0.60-0.79, unrelated posts 0.40 on average (90th percentile 0.52).
+/** At or above this, an idea is the same story told again (checked against 30 days). */
+export const SEMANTIC_REPEAT = 0.72
+/** At or above this, an idea is on the same theme as an earlier post... */
+export const THEME_NEAR = 0.6
+/** ...and a theme already covered this many times in 7 days is rested. */
+export const THEME_MAX_PER_WEEK = 2
 /** Word overlap at or above this means a repeat, when embeddings are not available. */
 export const WORD_REPEAT = 0.5
 
@@ -87,7 +93,7 @@ const ideaText = (i: { title: string; angle?: string }) => `${i.title}. ${i.angl
  * (title + angle) so a reworded story is still caught; it always also applies the word-overlap check, and falls
  * back to it alone when embedding fails.
  */
-export async function freshIdeas<T extends { title: string; angle?: string }>(ideas: T[], past: { title: string; angle?: string }[], embed?: Embed): Promise<T[]> {
+export async function freshIdeas<T extends { title: string; angle?: string }>(ideas: T[], past: { title: string; angle?: string; at?: string }[], embed?: Embed, now?: Date): Promise<T[]> {
   ideas = ideas.filter(i => i.title)
   let vecs: number[][] | null = null
   if (embed && ideas.length) {
@@ -101,6 +107,10 @@ export async function freshIdeas<T extends { title: string; angle?: string }>(id
   ideas.forEach((idea, k) => {
     const v = vecs?.[k]
     const repeatsPast = past.some((p, j) => wordSimilarity(p.title, idea.title) >= WORD_REPEAT || (v && cosine(v, pastVecs[j]) >= SEMANTIC_REPEAT))
+    // Theme fatigue: the same subject (say, coding benchmarks) at most twice a week, even told differently.
+    const weekAgo = now ? now.getTime() - 7 * 86_400_000 : null
+    const themeHits = v && weekAgo !== null ? past.filter((p, j) => p.at && Date.parse(p.at) > weekAgo && cosine(v, pastVecs[j]) >= THEME_NEAR).length : 0
+    if (themeHits >= THEME_MAX_PER_WEEK) return
     const repeatsKept = kept.some(x => wordSimilarity(x.i.title, idea.title) >= WORD_REPEAT || (v && x.v && cosine(v, x.v) >= SEMANTIC_REPEAT))
     if (!repeatsPast && !repeatsKept) kept.push({ i: idea, v })
   })
@@ -134,7 +144,10 @@ const GENERIC_HOSTS = new Set(['github', 'arxiv', 'reddit', 'ycombinator', 'medi
  * Whose story an idea is. Uses the vendor tag, and when that is empty or "none", the first source's site
  * (shopify.engineering -> shopify), so two posts about one company on the same day are still caught.
  */
-export function ideaVendor(i: { vendor?: string; sources?: { url: string }[] }): string {
+export function ideaVendor(i: { vendor?: string; company?: string; sources?: { url: string }[] }): string {
+  // The organisation the story is about comes first: Wayfair's use of Gemini is a Wayfair story, not a Google one.
+  const c = vendorKey(i.company)
+  if (c && !NO_VENDOR.includes(c)) return c
   const v = vendorKey(i.vendor)
   if (v && !NO_VENDOR.includes(v)) return v
   for (const src of i.sources || []) {
@@ -169,7 +182,7 @@ export function vendorCounts(history: { at: string; vendor?: string }[], now: Da
  * hit its weekly cap (relaxed only if there is otherwise not enough to fill the day), never the same format twice in
  * a row or twice in a day where an alternative exists, and at most one plain news post a day.
  */
-export function planSlots(ideas: TopicIdea[], slots: { kind: string }[], o: { lastFormat?: string; vendorWeek: Record<string, number>; vendorCap: number; pillars?: string[]; core?: string[] }): TopicIdea[] | null {
+export function planSlots(ideas: TopicIdea[], slots: { kind: string }[], o: { lastFormat?: string; vendorWeek: Record<string, number>; vendorCap: number; pillars?: string[]; core?: string[]; pillarFormats?: Record<string, string[]> }): TopicIdea[] | null {
   const pool = [...ideas].sort((a, b) => (b.heat || 0) - (a.heat || 0))
   const core = o.core || []
   const pick = (strict: boolean): TopicIdea[] | null => {
@@ -189,6 +202,8 @@ export function planSlots(ideas: TopicIdea[], slots: { kind: string }[], o: { la
         const f = i.format || ''
         if (level >= 1 && f && f === prev) return false
         if (level >= 2 && f && formatsToday.includes(f)) return false
+        // Each pillar rotates its formats across days too (the Microsoft slot should not be "a number" every day).
+        if (level >= 2 && f && want && o.pillarFormats?.[want]?.includes(f)) return false
         if (level >= 1 && f === 'news-take' && formatsToday.includes('news-take')) return false
         return true
       }

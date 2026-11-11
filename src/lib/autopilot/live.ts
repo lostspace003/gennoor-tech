@@ -68,7 +68,7 @@ ${ctx.avoidVendors?.length ? `- These vendors have had enough coverage this week
 - Do not put the format name in the title (no "Builder buzz:", "Myth vs fact:" prefixes).
 Formats (use the key):
 ${formats.map(f => `- ${f.key}: ${f.guide}`).join('\n')}
-Reply with JSON only: {"ideas":[{"title": string (<=110 chars), "format": string (one key above), "angle": string (the specific take, 1-2 sentences), "hook": string (a draft opening line), "vendor": string (the main company or product, or "none"), "heat": number 1-10 (how much people are talking about it and would share it), "why": string, "sources":[{"title": string, "url": string}]}]}`
+Reply with JSON only: {"ideas":[{"title": string (<=110 chars), "format": string (one key above), "angle": string (the specific take, 1-2 sentences), "hook": string (a draft opening line), "company": string (the organisation the story is about: for a use case the company that built it, e.g. "Wayfair", not the AI vendor it used; for a launch the vendor; "none" for a general debate), "vendor": string (the main AI vendor or product involved, or "none"), "heat": number 1-10 (how much people are talking about it and would share it), "why": string, "sources":[{"title": string, "url": string}]}]}`
   // Several ideas with sources need far more room than a short answer; a cut-off JSON reply would read as "no topics".
   const res = await retry(() => webGroundedCompletion(instructions, `Today is ${date}. Find the topics.`, 6000), sleep)
   const parsed = parseJson<{ ideas?: TopicIdea[] }>(res.text)

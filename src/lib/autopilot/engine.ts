@@ -103,15 +103,18 @@ export async function planDay(d: Deps, s: State, today: string, weekend: boolean
   const pillars = planned.map((_, k) => cfg.slotPillars?.length ? cfg.slotPillars[k % cfg.slotPillars.length] : '').filter(Boolean)
   const recentFormats = s.history.filter(h => h.format).slice(-8).map(h => h.format!)
   let ideas = await d.research({ date: today, weekend, cfg, recent: past.map(h => h.title), avoidVendors: Object.keys(vendorWeek).filter(v => vendorWeek[v] >= cap && !core.includes(v)), recentFormats, pillars })
-  ideas = await freshIdeas(ideas, past, d.embed)
-  const chosen = ideas.length >= planned.length ? planSlots(ideas, planned, { lastFormat: recentFormats[recentFormats.length - 1], vendorWeek, vendorCap: cap, pillars: pillars.length === planned.length ? pillars : undefined, core }) : null
+  ideas = await freshIdeas(ideas, past, d.embed, now)
+  // The formats each pillar used on its last two days, so the pillar rotates formats.
+  const pillarFormats: Record<string, string[]> = {}
+  for (const h of s.history.filter(x => x.pillar && x.format && Date.parse(x.at) > now.getTime() - 2.5 * 86_400_000)) (pillarFormats[h.pillar!] ||= []).push(h.format!)
+  const chosen = ideas.length >= planned.length ? planSlots(ideas, planned, { lastFormat: recentFormats[recentFormats.length - 1], vendorWeek, vendorCap: cap, pillars: pillars.length === planned.length ? pillars : undefined, core, pillarFormats }) : null
   if (!chosen) throw new Error(`Only ${ideas.length} fresh topics found for ${planned.length} slots`)
   const slots = planned.map((p, k): Slot => ({
     id: `${today}-${k + 1}`, date: today, at: iso(p.at), kind: p.kind, weekend: p.weekend, topic: chosen[k],
     status: 'planned', genAttempts: 0, regens: 0, updatedAt: iso(now),
     targets: Object.fromEntries(TARGETS.filter(t => cfg.targets[t]).map(t => [t, { status: 'pending', at: iso(new Date(p.at.getTime() + (t === 'member' ? cfg.staggerMinutes * 60_000 : 0))), attempts: 0 } as TargetState])),
   }))
-  s.history.push(...slots.map(sl => ({ at: iso(now), title: sl.topic!.title, angle: sl.topic!.angle, vendor: ideaVendor(sl.topic!) || sl.topic!.vendor, format: sl.kind === 'poll' ? 'poll' : sl.topic!.format, slotId: sl.id })))
+  s.history.push(...slots.map(sl => ({ at: iso(now), title: sl.topic!.title, angle: sl.topic!.angle, vendor: ideaVendor(sl.topic!) || sl.topic!.vendor, format: sl.kind === 'poll' ? 'poll' : sl.topic!.format, pillar: pillars[slots.indexOf(sl)], slotId: sl.id })))
   s.history = s.history.slice(-200)
   return slots
 }

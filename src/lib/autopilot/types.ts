@@ -81,7 +81,7 @@ export const DEFAULT_CONFIG: Config = {
   slotPillars: ['microsoft', 'debate', 'use-case', 'hands-on'],
 }
 
-export interface TopicIdea { title: string; angle: string; hook?: string; vendor?: string; heat?: number; why?: string; format?: string; pillar?: string; sources: { title: string; url: string }[] }
+export interface TopicIdea { title: string; angle: string; hook?: string; vendor?: string; heat?: number; why?: string; format?: string; pillar?: string; company?: string; sources: { title: string; url: string }[] }
 
 export interface TargetState {
   status: 'pending' | 'publishing' | 'done' | 'manual' | 'skipped' | 'failed' | 'held'
@@ -118,7 +118,7 @@ export interface Slot {
 
 export interface DayPlan { date: string; researchedAt?: string; researchAttempts: number; researchError?: string; slots: Slot[]; digestSent?: boolean }
 
-export interface HistoryEntry { at: string; title: string; angle?: string; vendor?: string; format?: string; hook?: string; slotId?: string }
+export interface HistoryEntry { at: string; title: string; angle?: string; vendor?: string; format?: string; pillar?: string; hook?: string; slotId?: string }
 
 export interface State {
   config: Config
