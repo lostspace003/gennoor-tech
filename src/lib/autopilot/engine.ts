@@ -1,7 +1,7 @@
 import { randomBytes } from 'crypto'
 import { hhmmToMinutes, isWeekend, localParts, zonedToUtc } from './time'
 import type { Config, DayPlan, Slot, State, TargetKey, TargetState, TopicIdea } from './types'
-import { echoedHook, firstLine, freshIdeas, planSlots, vendorCounts, type Embed } from './variety'
+import { echoedHook, firstLine, freshIdeas, ideaVendor, planSlots, vendorCounts, type Embed } from './variety'
 
 // The autopilot engine. Pure orchestration over injected dependencies, so every safeguard can be tested without
 // touching LinkedIn or a model. `tick` is called every ~15 minutes by a scheduled job and is safe to call twice.
@@ -9,7 +9,7 @@ export interface Deps {
   now(): Date
   load(): Promise<State>
   save(s: State): Promise<void>
-  research(ctx: { date: string; weekend: boolean; cfg: Config; recent: string[]; avoidVendors?: string[]; recentFormats?: string[] }): Promise<TopicIdea[]>
+  research(ctx: { date: string; weekend: boolean; cfg: Config; recent: string[]; avoidVendors?: string[]; recentFormats?: string[]; pillars?: string[] }): Promise<TopicIdea[]>
   generate(ctx: { slot: Slot; cfg: Config; notes: string[]; recentHooks?: string[] }): Promise<{ draftId: string; text: string; verdict: 'pass' | 'revise'; notes: string[]; variant?: string }>
   /** null when the draft was deleted. publishedAs lists targets it was already posted to (by hand or by us). */
   draft(id: string): Promise<{ text: string; publishedAs: TargetKey[] } | null>
@@ -86,6 +86,39 @@ function note(s: State, now: Date, msg: string) {
 
 const html = (s: string) => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]!)
 
+/**
+ * Researches and plans one day's slots, and records them in the history (so later days avoid them). Used by `tick`
+ * and by dry runs. Throws when there are not enough fresh ideas to fill the day.
+ */
+export async function planDay(d: Deps, s: State, today: string, weekend: boolean, now: Date): Promise<Slot[]> {
+  const cfg = s.config
+  const past = [
+    ...s.history.filter(h => Date.parse(h.at) > now.getTime() - 30 * 86_400_000),
+    ...(d.pastPosts ? await d.pastPosts().catch(() => []) : []),
+  ]
+  const planned = slotsFor(today, cfg)
+  const vendorWeek = vendorCounts(s.history, now, 7)
+  const cap = cfg.companyWeeklyMax ?? 1
+  const core = cfg.coreVendors ?? []
+  const pillars = planned.map((_, k) => cfg.slotPillars?.length ? cfg.slotPillars[k % cfg.slotPillars.length] : '').filter(Boolean)
+  const recentFormats = s.history.filter(h => h.format).slice(-8).map(h => h.format!)
+  let ideas = await d.research({ date: today, weekend, cfg, recent: past.map(h => h.title), avoidVendors: Object.keys(vendorWeek).filter(v => vendorWeek[v] >= cap && !core.includes(v)), recentFormats, pillars })
+  ideas = await freshIdeas(ideas, past, d.embed, now)
+  // The formats each pillar used on its last two days, so the pillar rotates formats.
+  const pillarFormats: Record<string, string[]> = {}
+  for (const h of s.history.filter(x => x.pillar && x.format && Date.parse(x.at) > now.getTime() - 2.5 * 86_400_000)) (pillarFormats[h.pillar!] ||= []).push(h.format!)
+  const chosen = ideas.length >= planned.length ? planSlots(ideas, planned, { lastFormat: recentFormats[recentFormats.length - 1], vendorWeek, vendorCap: cap, pillars: pillars.length === planned.length ? pillars : undefined, core, pillarFormats }) : null
+  if (!chosen) throw new Error(`Only ${ideas.length} fresh topics found for ${planned.length} slots`)
+  const slots = planned.map((p, k): Slot => ({
+    id: `${today}-${k + 1}`, date: today, at: iso(p.at), kind: p.kind, weekend: p.weekend, topic: chosen[k],
+    status: 'planned', genAttempts: 0, regens: 0, updatedAt: iso(now),
+    targets: Object.fromEntries(TARGETS.filter(t => cfg.targets[t]).map(t => [t, { status: 'pending', at: iso(new Date(p.at.getTime() + (t === 'member' ? cfg.staggerMinutes * 60_000 : 0))), attempts: 0 } as TargetState])),
+  }))
+  s.history.push(...slots.map(sl => ({ at: iso(now), title: sl.topic!.title, angle: sl.topic!.angle, vendor: ideaVendor(sl.topic!) || sl.topic!.vendor, format: sl.kind === 'poll' ? 'poll' : sl.topic!.format, pillar: pillars[slots.indexOf(sl)], slotId: sl.id })))
+  s.history = s.history.slice(-200)
+  return slots
+}
+
 export async function tick(d: Deps, opts: { force?: boolean } = {}): Promise<string[]> {
   const out: string[] = []
   const now = d.now()
@@ -123,27 +156,7 @@ export async function tick(d: Deps, opts: { force?: boolean } = {}): Promise<str
       day.researchAttempts++
       const weekend = isWeekend(dow)
       try {
-        const past = [
-          ...s.history.filter(h => Date.parse(h.at) > now.getTime() - 30 * 86_400_000),
-          ...(d.pastPosts ? await d.pastPosts().catch(() => []) : []),
-        ]
-        const planned = slotsFor(today, cfg)
-        const vendorWeek = vendorCounts(s.history, now, 7)
-        const cap = cfg.vendorWeeklyMax ?? 2
-        const recentFormats = s.history.filter(h => h.format).slice(-8).map(h => h.format!)
-        let ideas = await d.research({ date: today, weekend, cfg, recent: past.map(h => h.title), avoidVendors: Object.keys(vendorWeek).filter(v => vendorWeek[v] >= cap), recentFormats })
-        ideas = await freshIdeas(ideas, past, d.embed)
-        const chosen = ideas.length >= planned.length ? planSlots(ideas, planned, { lastFormat: recentFormats[recentFormats.length - 1], vendorWeek, vendorCap: cap }) : null
-        if (!chosen) throw new Error(`Only ${ideas.length} fresh topics found for ${planned.length} slots`)
-        day.slots = planned.map((p, k): Slot => ({
-          id: `${today}-${k + 1}`, date: today, at: iso(p.at), kind: p.kind, weekend: p.weekend, topic: chosen[k],
-          status: 'planned', genAttempts: 0, regens: 0, updatedAt: iso(now),
-          targets: Object.fromEntries(TARGETS.filter(t => cfg.targets[t]).map(t => [t, { status: 'pending', at: iso(new Date(p.at.getTime() + (t === 'member' ? cfg.staggerMinutes * 60_000 : 0))), attempts: 0 } as TargetState])),
-        }))
-        day.researchedAt = iso(now)
-        day.researchError = undefined
-        s.history.push(...day.slots.map(sl => ({ at: iso(now), title: sl.topic!.title, angle: sl.topic!.angle, vendor: sl.topic!.vendor, format: sl.kind === 'poll' ? 'poll' : sl.topic!.format, slotId: sl.id })))
-        s.history = s.history.slice(-200)
+        day.slots = await planDay(d, s, today, weekend, now)
         note(s, now, `Planned ${day.slots.length} slots for ${today}`)
         out.push(`planned ${day.slots.length} slots`)
       } catch (e: any) {
@@ -156,7 +169,11 @@ export async function tick(d: Deps, opts: { force?: boolean } = {}): Promise<str
 
     // 2. Each slot: manual takeover, drafting, quality gate, publishing.
     const tok = await d.tokens().catch(() => null)
-    for (const slot of day.slots) {
+    // Drafts you approved after their day (review mode) are still posted: they join today's loop until settled.
+    const weekAgo = localParts(new Date(now.getTime() - 7 * 86_400_000), cfg.tz).date
+    const approvedEarlier = Object.values(s.days).filter(x => x.date < today && x.date >= weekAgo)
+      .flatMap(x => x.slots.filter(sl => sl.approved && sl.status === 'ready' && !sl.manual))
+    for (const slot of [...day.slots, ...approvedEarlier]) {
       if (slot.status === 'done' || slot.status === 'skipped') continue
       const slotAt = Date.parse(slot.at)
 
@@ -289,6 +306,19 @@ export async function tick(d: Deps, opts: { force?: boolean } = {}): Promise<str
 }
 
 // ---- Editor actions from the admin page -------------------------------------------------------------------------
+/** An approved post whose time has passed goes out now (profile after the usual stagger), never skipped as "late". */
+function catchUp(slot: Slot, s: State, now: Date) {
+  const late = Date.parse(slot.at) < now.getTime()
+  for (const key of TARGETS) {
+    const t = slot.targets[key]
+    if (!t || !['pending', 'skipped', 'held'].includes(t.status)) continue
+    if (t.status === 'skipped' && !/missed its window/.test(t.reason || '')) continue
+    if (!late && t.status === 'pending') continue
+    t.status = 'pending'; t.attempts = 0; t.reason = undefined
+    t.at = iso(new Date(now.getTime() + (key === 'member' ? (s.config.staggerMinutes ?? 0) * 60_000 : 0)))
+  }
+  if (slot.status === 'skipped' && slot.draftId) slot.status = 'ready'
+}
 export type Action = 'skip' | 'manual' | 'resume' | 'release' | 'retry' | 'post-now' | 'link' | 'remove' | 'approve'
 export function applyAction(s: State, slotId: string, action: Action, now: Date, draftId?: string): string {
   const slot = Object.values(s.days).flatMap(d => d.slots).find(x => x.id === slotId)
@@ -324,14 +354,16 @@ export function applyAction(s: State, slotId: string, action: Action, now: Date,
     }
   }
   if (action === 'approve') {
-    // Review mode: you approved the draft, so it posts at its own time (the missed-window rule still applies).
+    // Review mode: you approved the draft. Before its time it posts at its time; if its time has passed (even days
+    // ago) it posts straight away, because you chose to post it.
     if (!slot.draftId || slot.status !== 'ready') throw new Error(slot.status === 'held' ? 'This post was held by the quality check: release it instead.' : 'This slot has no finished draft to approve.')
     slot.approved = true
+    catchUp(slot, s, now)
   }
   if (action === 'release' || action === 'retry') {
     if (action === 'release') slot.approved = true
     if (!slot.draftId) { slot.status = 'planned'; slot.genAttempts = 0; slot.reason = undefined }
-    else { slot.status = 'ready'; slot.reason = undefined; for (const t of targets) if (t.status === 'held' || t.status === 'failed') { t.status = 'pending'; t.attempts = 0; t.reason = undefined; t.at = iso(now) } }
+    else { slot.status = 'ready'; slot.reason = undefined; for (const t of targets) if (t.status === 'held' || t.status === 'failed') { t.status = 'pending'; t.attempts = 0; t.reason = undefined; t.at = iso(now) }; if (action === 'release') catchUp(slot, s, now) }
   }
   if (action === 'post-now') {
     if (!slot.draftId) throw new Error('This slot has no draft yet.')

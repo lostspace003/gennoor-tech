@@ -30,6 +30,23 @@ export const BLOG_FORMATS: Format[] = [
 
 export const formatOf = (list: Format[], key?: string) => list.find(f => f.key === key)
 
+/**
+ * Content pillars: each slot of the day has one, and each pillar gets its own research search, so the day always has
+ * the core business (Microsoft), a real use case, something hands-on and a debate, from different places on the web.
+ */
+export interface Pillar { key: string; label: string; brief: string; formats: string[] }
+export const PILLARS: Pillar[] = [
+  { key: 'microsoft', label: 'Microsoft and Azure', formats: ['walkthrough', 'workflow', 'news-take', 'myth-fact', 'number', 'use-case'],
+    brief: 'Microsoft enterprise AI, the core of the business: Azure AI Foundry, Azure OpenAI, Copilot Studio, Microsoft 365 Copilot, Agent Framework, Fabric, GitHub Copilot, Power Platform AI, and Microsoft AI certifications (AI-102, AI-900 and new ones). Look at the Azure and Microsoft 365 blogs, Microsoft Learn and Tech Community, GitHub changelogs, Ignite/Build sessions, MVP and practitioner posts, and real customer stories. Favour what a team can use or decide this week over announcements.' },
+  { key: 'use-case', label: 'Real use case', formats: ['use-case', 'number'],
+    brief: 'How real organisations use AI in production, from any industry and any company EXCEPT Microsoft: engineering blogs, customer case studies, conference talks, earnings-call remarks, and survey or benchmark numbers. Spread across regions (India, the Gulf, Europe, the US) and industries (banking, retail, health, manufacturing, telecom, public sector, software). One company per idea, and never two ideas about the same company.' },
+  { key: 'hands-on', label: 'Hands-on', formats: ['walkthrough', 'workflow', 'builder-buzz'],
+    brief: 'Tools, open-source projects, techniques and workflows practitioners are trying right now: Hacker News, GitHub trending, Reddit (r/LocalLLaMA, r/MachineLearning, r/ClaudeAI, r/OpenAI, r/sysadmin), developer posts on X and LinkedIn, YouTube demos, new arXiv techniques with code. Any vendor or open source, but not Microsoft. Each idea must be something a reader can try or copy.' },
+  { key: 'debate', label: 'Debate', formats: ['contrarian', 'myth-fact', 'news-take', 'number'],
+    brief: 'What AI practitioners are arguing about: benchmark disputes, cost versus value, build versus buy, open versus closed models, agent reliability, AI security incidents, regulation (EU AI Act, India), skills and jobs. Each idea must have two credible sides a practitioner could vote on in a poll. Any vendor or none, but not Microsoft.' },
+]
+export const pillarOf = (key?: string) => PILLARS.find(p => p.key === key)
+
 /** Where the research editor should look, beyond vendor newsrooms. */
 export const RESEARCH_SOURCES = `Look well beyond vendor press releases. Search across:
 - What builders are sharing and trying: Hacker News front page, GitHub trending (AI repos), Reddit (r/LocalLLaMA, r/MachineLearning, r/ClaudeAI, r/OpenAI, r/AZURE, r/sysadmin), developer posts on X and LinkedIn, YouTube demos.
@@ -56,8 +73,14 @@ export function cosine(a: number[], b: number[]) {
   return dot / (Math.sqrt(na) * Math.sqrt(nb) || 1)
 }
 
-/** Embedding cosine at or above this means "the same story told again" (text-embedding-3-small on title + angle). */
-export const SEMANTIC_REPEAT = 0.82
+// Calibrated on a simulated week (text-embedding-3-small on title + angle): the same story retold scored 0.75-0.81,
+// a recurring theme 0.60-0.79, unrelated posts 0.40 on average (90th percentile 0.52).
+/** At or above this, an idea is the same story told again (checked against 30 days). */
+export const SEMANTIC_REPEAT = 0.72
+/** At or above this, an idea is on the same theme as an earlier post... */
+export const THEME_NEAR = 0.6
+/** ...and a theme already covered this many times in 7 days is rested. */
+export const THEME_MAX_PER_WEEK = 2
 /** Word overlap at or above this means a repeat, when embeddings are not available. */
 export const WORD_REPEAT = 0.5
 
@@ -70,7 +93,7 @@ const ideaText = (i: { title: string; angle?: string }) => `${i.title}. ${i.angl
  * (title + angle) so a reworded story is still caught; it always also applies the word-overlap check, and falls
  * back to it alone when embedding fails.
  */
-export async function freshIdeas<T extends { title: string; angle?: string }>(ideas: T[], past: { title: string; angle?: string }[], embed?: Embed): Promise<T[]> {
+export async function freshIdeas<T extends { title: string; angle?: string }>(ideas: T[], past: { title: string; angle?: string; at?: string }[], embed?: Embed, now?: Date): Promise<T[]> {
   ideas = ideas.filter(i => i.title)
   let vecs: number[][] | null = null
   if (embed && ideas.length) {
@@ -84,6 +107,10 @@ export async function freshIdeas<T extends { title: string; angle?: string }>(id
   ideas.forEach((idea, k) => {
     const v = vecs?.[k]
     const repeatsPast = past.some((p, j) => wordSimilarity(p.title, idea.title) >= WORD_REPEAT || (v && cosine(v, pastVecs[j]) >= SEMANTIC_REPEAT))
+    // Theme fatigue: the same subject (say, coding benchmarks) at most twice a week, even told differently.
+    const weekAgo = now ? now.getTime() - 7 * 86_400_000 : null
+    const themeHits = v && weekAgo !== null ? past.filter((p, j) => p.at && Date.parse(p.at) > weekAgo && cosine(v, pastVecs[j]) >= THEME_NEAR).length : 0
+    if (themeHits >= THEME_MAX_PER_WEEK) return
     const repeatsKept = kept.some(x => wordSimilarity(x.i.title, idea.title) >= WORD_REPEAT || (v && x.v && cosine(v, x.v) >= SEMANTIC_REPEAT))
     if (!repeatsPast && !repeatsKept) kept.push({ i: idea, v })
   })
@@ -101,6 +128,7 @@ const VENDOR_ALIASES: [RegExp, string][] = [
   [/meta|llama/, 'meta'],
   [/mistral/, 'mistral'],
   [/nvidia/, 'nvidia'],
+  [/spotify/, 'spotify'],
 ]
 /** One canonical vendor key, so "Azure AI Foundry" and "Microsoft" count as the same vendor. */
 export function vendorKey(v?: string): string {
@@ -109,13 +137,40 @@ export function vendorKey(v?: string): string {
   return VENDOR_ALIASES.find(([re]) => re.test(s))?.[1] ?? s
 }
 
+const NO_VENDOR = ['', 'none', 'n/a', 'industry', 'open source', 'various', 'multiple', 'community']
+// Hosts that publish about everyone, so they say nothing about whose story it is.
+const GENERIC_HOSTS = new Set(['github', 'arxiv', 'reddit', 'ycombinator', 'medium', 'substack', 'x', 'twitter', 'youtube', 'linkedin', 'techcrunch', 'theverge', 'venturebeat', 'wired', 'reuters', 'bloomberg', 'zdnet', 'infoq', 'huggingface', 'paperswithcode', 'thenewstack', 'forbes', 'cnbc', 'businessinsider', 'economictimes', 'livemint', 'gartner', 'mckinsey', 'stanford', 'newscura'])
+/**
+ * Whose story an idea is. Uses the vendor tag, and when that is empty or "none", the first source's site
+ * (shopify.engineering -> shopify), so two posts about one company on the same day are still caught.
+ */
+export function ideaVendor(i: { vendor?: string; company?: string; sources?: { url: string }[] }): string {
+  // The organisation the story is about comes first: Wayfair's use of Gemini is a Wayfair story, not a Google one.
+  const c = vendorKey(i.company)
+  if (c && !NO_VENDOR.includes(c)) return c
+  const v = vendorKey(i.vendor)
+  if (v && !NO_VENDOR.includes(v)) return v
+  for (const src of i.sources || []) {
+    try {
+      const parts = new URL(src.url).hostname.replace(/^www\./, '').split('.')
+      // shopify.engineering -> shopify, engineering.atspotify.com -> atspotify (alias -> spotify), example.co.in -> example
+      let k = parts.length > 1 ? parts.length - 2 : 0
+      if (k > 0 && ['co', 'com', 'org', 'ac', 'gov', 'net'].includes(parts[k])) k--
+      const host = parts[k]
+      // Check the site before aliasing: a repo on github.com is not a Microsoft story.
+      if (host && !GENERIC_HOSTS.has(host)) return vendorKey(host)
+    } catch { /* not a URL */ }
+  }
+  return ''
+}
+
 /** How many times each vendor was posted about in the window. */
 export function vendorCounts(history: { at: string; vendor?: string }[], now: Date, days = 7): Record<string, number> {
   const out: Record<string, number> = {}
   for (const h of history) {
     if (Date.parse(h.at) < now.getTime() - days * 86_400_000) continue
     const k = vendorKey(h.vendor)
-    if (k && !['', 'none', 'industry', 'open source', 'various', 'multiple'].includes(k)) out[k] = (out[k] || 0) + 1
+    if (k && !NO_VENDOR.includes(k)) out[k] = (out[k] || 0) + 1
   }
   return out
 }
@@ -127,29 +182,36 @@ export function vendorCounts(history: { at: string; vendor?: string }[], now: Da
  * hit its weekly cap (relaxed only if there is otherwise not enough to fill the day), never the same format twice in
  * a row or twice in a day where an alternative exists, and at most one plain news post a day.
  */
-export function planSlots(ideas: TopicIdea[], slots: { kind: string }[], o: { lastFormat?: string; vendorWeek: Record<string, number>; vendorCap: number }): TopicIdea[] | null {
+export function planSlots(ideas: TopicIdea[], slots: { kind: string }[], o: { lastFormat?: string; vendorWeek: Record<string, number>; vendorCap: number; pillars?: string[]; core?: string[]; pillarFormats?: Record<string, string[]> }): TopicIdea[] | null {
   const pool = [...ideas].sort((a, b) => (b.heat || 0) - (a.heat || 0))
+  const core = o.core || []
   const pick = (strict: boolean): TopicIdea[] | null => {
     const used = new Set<TopicIdea>(), vendorsToday = new Set<string>(), formatsToday: string[] = []
     let prev = o.lastFormat
     const out: TopicIdea[] = []
-    for (const slot of slots) {
+    for (const [idx, slot] of slots.entries()) {
+      // The slot's pillar comes first; another pillar's idea is used only when the pillar has nothing usable.
+      const want = o.pillars?.length ? o.pillars[idx % o.pillars.length] : undefined
+      const own = want ? pool.filter(i => i.pillar === want) : pool
       const ok = (i: TopicIdea, level: number) => {
         if (used.has(i)) return false
-        const v = vendorKey(i.vendor)
+        const v = ideaVendor(i)
         if (v && vendorsToday.has(v)) return false
-        if (strict && v && (o.vendorWeek[v] || 0) >= o.vendorCap) return false
+        if (strict && v && !core.includes(v) && (o.vendorWeek[v] || 0) >= o.vendorCap) return false
         if (slot.kind === 'poll') return true
         const f = i.format || ''
         if (level >= 1 && f && f === prev) return false
         if (level >= 2 && f && formatsToday.includes(f)) return false
+        // Each pillar rotates its formats across days too (the Microsoft slot should not be "a number" every day).
+        if (level >= 2 && f && want && o.pillarFormats?.[want]?.includes(f)) return false
         if (level >= 1 && f === 'news-take' && formatsToday.includes('news-take')) return false
         return true
       }
-      const choice = pool.find(i => ok(i, 2)) || pool.find(i => ok(i, 1)) || pool.find(i => ok(i, 0))
+      const choice = own.find(i => ok(i, 2)) || own.find(i => ok(i, 1)) || own.find(i => ok(i, 0))
+        || pool.find(i => ok(i, 2)) || pool.find(i => ok(i, 1)) || pool.find(i => ok(i, 0))
       if (!choice) return null
       used.add(choice); out.push(choice)
-      const v = vendorKey(choice.vendor); if (v) vendorsToday.add(v)
+      const v = ideaVendor(choice); if (v) vendorsToday.add(v)
       if (slot.kind !== 'poll' && choice.format) { formatsToday.push(choice.format); prev = choice.format }
     }
     return out

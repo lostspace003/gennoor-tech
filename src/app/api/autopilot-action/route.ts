@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { applyAction } from '@/lib/autopilot/engine'
+import { applyAction, tick } from '@/lib/autopilot/engine'
 import { actionLabel, verifyAction } from '@/lib/autopilot/email-actions'
-import { loadState, saveState } from '@/lib/autopilot/live'
+import { liveDeps, loadState, saveState } from '@/lib/autopilot/live'
 import { getDraft } from '@/lib/social/studio'
 
 // The buttons in autopilot emails land here. GET only shows the post and a confirm button (so mail scanners that
@@ -28,7 +28,8 @@ export async function GET(req: NextRequest) {
   const draft = slot.draftId ? await getDraft(slot.draftId) : null
   const when = new Date(slot.at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' })
   const verb = v.action === 'skip' ? 'Skip this post' : v.action === 'approve' ? 'Approve this post' : 'Approve and post'
-  const effect = v.action === 'skip' ? 'It will not be posted.' : v.action === 'release' ? 'It will be posted within about 15 minutes (or skipped if its posting window has already closed).' : `It will go out at its scheduled time (${esc(when)} IST), or right away if that time has just passed.`
+  const late = Date.parse(slot.at) <= Date.now()
+  const effect = v.action === 'skip' ? 'It will not be posted.' : late || v.action === 'release' ? 'Its time has passed, so it will be posted straight away when you press the button.' : `It will go out at its scheduled time (${esc(when)} IST).`
   const color = v.action === 'skip' ? '#8a1c1c' : '#0f7b3f'
   return page(verb, `<h1>${verb}?</h1><p><b>${esc(slot.topic?.title || slot.id)}</b> · ${esc(when)} IST · now ${esc(slot.status)}</p>
 ${draft?.text ? `<pre>${esc(draft.text)}</pre>` : '<p><i>No draft has been written yet.</i></p>'}
@@ -46,7 +47,12 @@ export async function POST(req: NextRequest) {
     const s = await loadState()
     const status = applyAction(s, q.s, v.action, new Date())
     await saveState(s)
-    const done = v.action === 'skip' ? 'Skipped. It will not be posted.' : v.action === 'release' ? 'Approved. It will be posted within about 15 minutes.' : 'Approved. It will be posted at its scheduled time.'
+    const slot = Object.values(s.days).flatMap(d => d.slots).find(x => x.id === q.s)
+    const dueNow = v.action !== 'skip' && !!slot && Object.values(slot.targets).some(t => t?.status === 'pending' && Date.parse(t.at) <= Date.now())
+    // Post straight away instead of waiting for the next scheduled run. Not awaited: the page answers at once and
+    // the run carries on in the server process (its lock stops it clashing with the scheduled run).
+    if (dueNow) void tick(liveDeps()).catch(e => console.error('autopilot tick after email approval failed', e))
+    const done = v.action === 'skip' ? 'Skipped. It will not be posted.' : dueNow ? 'Approved. It is being posted now (the profile repost follows after the usual gap).' : 'Approved. It will be posted at its scheduled time.'
     return page('Done', `<h1>${done}</h1><p>Status now: ${esc(status)}.</p><p><a href="/admin/autopilot">Open the Autopilot page</a></p>`)
   } catch (e: any) {
     return page('Could not apply', `<h1>Could not do that</h1><p>${esc(e?.message || 'Failed.')}</p><p><a href="/admin/autopilot">Open the Autopilot page</a></p>`, 400)

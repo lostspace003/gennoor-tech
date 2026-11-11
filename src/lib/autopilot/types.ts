@@ -32,8 +32,12 @@ export interface Config {
   dailyMax: number
   minGapMinutes: number
   maxRegens: number
-  /** Most posts about one vendor in any 7 days (relaxed only when the day cannot otherwise be filled). */
-  vendorWeeklyMax: number
+  /** Most posts about any one company in 7 days (relaxed only when a day cannot otherwise be filled). */
+  companyWeeklyMax: number
+  /** Companies exempt from that cap because they are the business's core (Microsoft has its own daily slot). */
+  coreVendors: string[]
+  /** The content pillar of each slot, in slot order (see PILLARS in variety.ts); repeats if there are more slots. */
+  slotPillars: string[]
 }
 
 export const DEFAULT_CONFIG: Config = {
@@ -70,10 +74,14 @@ export const DEFAULT_CONFIG: Config = {
   dailyMax: 4,
   minGapMinutes: 60,
   maxRegens: 2,
-  vendorWeeklyMax: 2,
+  companyWeeklyMax: 1,
+  coreVendors: ['microsoft'],
+  // Weekday and weekend slots run post, poll, post, post: Microsoft first, a debate for the poll, then a real use
+  // case and something hands-on.
+  slotPillars: ['microsoft', 'debate', 'use-case', 'hands-on'],
 }
 
-export interface TopicIdea { title: string; angle: string; hook?: string; vendor?: string; heat?: number; why?: string; format?: string; sources: { title: string; url: string }[] }
+export interface TopicIdea { title: string; angle: string; hook?: string; vendor?: string; heat?: number; why?: string; format?: string; pillar?: string; company?: string; sources: { title: string; url: string }[] }
 
 export interface TargetState {
   status: 'pending' | 'publishing' | 'done' | 'manual' | 'skipped' | 'failed' | 'held'
@@ -110,7 +118,7 @@ export interface Slot {
 
 export interface DayPlan { date: string; researchedAt?: string; researchAttempts: number; researchError?: string; slots: Slot[]; digestSent?: boolean }
 
-export interface HistoryEntry { at: string; title: string; angle?: string; vendor?: string; format?: string; hook?: string; slotId?: string }
+export interface HistoryEntry { at: string; title: string; angle?: string; vendor?: string; format?: string; pillar?: string; hook?: string; slotId?: string }
 
 export interface State {
   config: Config
