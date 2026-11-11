@@ -30,6 +30,23 @@ export const BLOG_FORMATS: Format[] = [
 
 export const formatOf = (list: Format[], key?: string) => list.find(f => f.key === key)
 
+/**
+ * Content pillars: each slot of the day has one, and each pillar gets its own research search, so the day always has
+ * the core business (Microsoft), a real use case, something hands-on and a debate, from different places on the web.
+ */
+export interface Pillar { key: string; label: string; brief: string; formats: string[] }
+export const PILLARS: Pillar[] = [
+  { key: 'microsoft', label: 'Microsoft and Azure', formats: ['walkthrough', 'workflow', 'news-take', 'myth-fact', 'number', 'use-case'],
+    brief: 'Microsoft enterprise AI, the core of the business: Azure AI Foundry, Azure OpenAI, Copilot Studio, Microsoft 365 Copilot, Agent Framework, Fabric, GitHub Copilot, Power Platform AI, and Microsoft AI certifications (AI-102, AI-900 and new ones). Look at the Azure and Microsoft 365 blogs, Microsoft Learn and Tech Community, GitHub changelogs, Ignite/Build sessions, MVP and practitioner posts, and real customer stories. Favour what a team can use or decide this week over announcements.' },
+  { key: 'use-case', label: 'Real use case', formats: ['use-case', 'number'],
+    brief: 'How real organisations use AI in production, from any industry and any company EXCEPT Microsoft: engineering blogs, customer case studies, conference talks, earnings-call remarks, and survey or benchmark numbers. Spread across regions (India, the Gulf, Europe, the US) and industries (banking, retail, health, manufacturing, telecom, public sector, software). One company per idea, and never two ideas about the same company.' },
+  { key: 'hands-on', label: 'Hands-on', formats: ['walkthrough', 'workflow', 'builder-buzz'],
+    brief: 'Tools, open-source projects, techniques and workflows practitioners are trying right now: Hacker News, GitHub trending, Reddit (r/LocalLLaMA, r/MachineLearning, r/ClaudeAI, r/OpenAI, r/sysadmin), developer posts on X and LinkedIn, YouTube demos, new arXiv techniques with code. Any vendor or open source, but not Microsoft. Each idea must be something a reader can try or copy.' },
+  { key: 'debate', label: 'Debate', formats: ['contrarian', 'myth-fact', 'news-take', 'number'],
+    brief: 'What AI practitioners are arguing about: benchmark disputes, cost versus value, build versus buy, open versus closed models, agent reliability, AI security incidents, regulation (EU AI Act, India), skills and jobs. Each idea must have two credible sides a practitioner could vote on in a poll. Any vendor or none, but not Microsoft.' },
+]
+export const pillarOf = (key?: string) => PILLARS.find(p => p.key === key)
+
 /** Where the research editor should look, beyond vendor newsrooms. */
 export const RESEARCH_SOURCES = `Look well beyond vendor press releases. Search across:
 - What builders are sharing and trying: Hacker News front page, GitHub trending (AI repos), Reddit (r/LocalLLaMA, r/MachineLearning, r/ClaudeAI, r/OpenAI, r/AZURE, r/sysadmin), developer posts on X and LinkedIn, YouTube demos.
@@ -152,18 +169,22 @@ export function vendorCounts(history: { at: string; vendor?: string }[], now: Da
  * hit its weekly cap (relaxed only if there is otherwise not enough to fill the day), never the same format twice in
  * a row or twice in a day where an alternative exists, and at most one plain news post a day.
  */
-export function planSlots(ideas: TopicIdea[], slots: { kind: string }[], o: { lastFormat?: string; vendorWeek: Record<string, number>; vendorCap: number }): TopicIdea[] | null {
+export function planSlots(ideas: TopicIdea[], slots: { kind: string }[], o: { lastFormat?: string; vendorWeek: Record<string, number>; vendorCap: number; pillars?: string[]; core?: string[] }): TopicIdea[] | null {
   const pool = [...ideas].sort((a, b) => (b.heat || 0) - (a.heat || 0))
+  const core = o.core || []
   const pick = (strict: boolean): TopicIdea[] | null => {
     const used = new Set<TopicIdea>(), vendorsToday = new Set<string>(), formatsToday: string[] = []
     let prev = o.lastFormat
     const out: TopicIdea[] = []
-    for (const slot of slots) {
+    for (const [idx, slot] of slots.entries()) {
+      // The slot's pillar comes first; another pillar's idea is used only when the pillar has nothing usable.
+      const want = o.pillars?.length ? o.pillars[idx % o.pillars.length] : undefined
+      const own = want ? pool.filter(i => i.pillar === want) : pool
       const ok = (i: TopicIdea, level: number) => {
         if (used.has(i)) return false
         const v = ideaVendor(i)
         if (v && vendorsToday.has(v)) return false
-        if (strict && v && (o.vendorWeek[v] || 0) >= o.vendorCap) return false
+        if (strict && v && !core.includes(v) && (o.vendorWeek[v] || 0) >= o.vendorCap) return false
         if (slot.kind === 'poll') return true
         const f = i.format || ''
         if (level >= 1 && f && f === prev) return false
@@ -171,7 +192,8 @@ export function planSlots(ideas: TopicIdea[], slots: { kind: string }[], o: { la
         if (level >= 1 && f === 'news-take' && formatsToday.includes('news-take')) return false
         return true
       }
-      const choice = pool.find(i => ok(i, 2)) || pool.find(i => ok(i, 1)) || pool.find(i => ok(i, 0))
+      const choice = own.find(i => ok(i, 2)) || own.find(i => ok(i, 1)) || own.find(i => ok(i, 0))
+        || pool.find(i => ok(i, 2)) || pool.find(i => ok(i, 1)) || pool.find(i => ok(i, 0))
       if (!choice) return null
       used.add(choice); out.push(choice)
       const v = ideaVendor(choice); if (v) vendorsToday.add(v)

@@ -54,7 +54,7 @@ export async function PATCH(req: NextRequest) {
   if (b.profileMode === 'reshare' || b.profileMode === 'own') c.profileMode = b.profileMode
   if (b.targets) c.targets = { organization: !!b.targets.organization, member: !!b.targets.member }
   const num = (k: keyof Config, lo: number, hi: number) => { if (b[k] !== undefined && Number.isFinite(Number(b[k]))) (c as any)[k] = Math.min(hi, Math.max(lo, Math.round(Number(b[k])))) }
-  num('staggerMinutes', 0, 480); num('draftLeadMinutes', 60, 720); num('missedGraceMinutes', 30, 480); num('dailyMax', 1, 6); num('minGapMinutes', 30, 360); num('maxRegens', 0, 3); num('vendorWeeklyMax', 1, 14)
+  num('staggerMinutes', 0, 480); num('draftLeadMinutes', 60, 720); num('missedGraceMinutes', 30, 480); num('dailyMax', 1, 6); num('minGapMinutes', 30, 360); num('maxRegens', 0, 3); num('companyWeeklyMax', 1, 7)
   if (typeof b.researchTime === 'string' && HHMM.test(b.researchTime)) c.researchTime = b.researchTime
   if (typeof b.digestTime === 'string' && HHMM.test(b.digestTime)) c.digestTime = b.digestTime
   if (Array.isArray(b.topics)) c.topics = strs(b.topics, 20, 200)

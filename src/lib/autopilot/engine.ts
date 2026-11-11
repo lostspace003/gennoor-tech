@@ -9,7 +9,7 @@ export interface Deps {
   now(): Date
   load(): Promise<State>
   save(s: State): Promise<void>
-  research(ctx: { date: string; weekend: boolean; cfg: Config; recent: string[]; avoidVendors?: string[]; recentFormats?: string[] }): Promise<TopicIdea[]>
+  research(ctx: { date: string; weekend: boolean; cfg: Config; recent: string[]; avoidVendors?: string[]; recentFormats?: string[]; pillars?: string[] }): Promise<TopicIdea[]>
   generate(ctx: { slot: Slot; cfg: Config; notes: string[]; recentHooks?: string[] }): Promise<{ draftId: string; text: string; verdict: 'pass' | 'revise'; notes: string[]; variant?: string }>
   /** null when the draft was deleted. publishedAs lists targets it was already posted to (by hand or by us). */
   draft(id: string): Promise<{ text: string; publishedAs: TargetKey[] } | null>
@@ -86,6 +86,36 @@ function note(s: State, now: Date, msg: string) {
 
 const html = (s: string) => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]!)
 
+/**
+ * Researches and plans one day's slots, and records them in the history (so later days avoid them). Used by `tick`
+ * and by dry runs. Throws when there are not enough fresh ideas to fill the day.
+ */
+export async function planDay(d: Deps, s: State, today: string, weekend: boolean, now: Date): Promise<Slot[]> {
+  const cfg = s.config
+  const past = [
+    ...s.history.filter(h => Date.parse(h.at) > now.getTime() - 30 * 86_400_000),
+    ...(d.pastPosts ? await d.pastPosts().catch(() => []) : []),
+  ]
+  const planned = slotsFor(today, cfg)
+  const vendorWeek = vendorCounts(s.history, now, 7)
+  const cap = cfg.companyWeeklyMax ?? 1
+  const core = cfg.coreVendors ?? []
+  const pillars = planned.map((_, k) => cfg.slotPillars?.length ? cfg.slotPillars[k % cfg.slotPillars.length] : '').filter(Boolean)
+  const recentFormats = s.history.filter(h => h.format).slice(-8).map(h => h.format!)
+  let ideas = await d.research({ date: today, weekend, cfg, recent: past.map(h => h.title), avoidVendors: Object.keys(vendorWeek).filter(v => vendorWeek[v] >= cap && !core.includes(v)), recentFormats, pillars })
+  ideas = await freshIdeas(ideas, past, d.embed)
+  const chosen = ideas.length >= planned.length ? planSlots(ideas, planned, { lastFormat: recentFormats[recentFormats.length - 1], vendorWeek, vendorCap: cap, pillars: pillars.length === planned.length ? pillars : undefined, core }) : null
+  if (!chosen) throw new Error(`Only ${ideas.length} fresh topics found for ${planned.length} slots`)
+  const slots = planned.map((p, k): Slot => ({
+    id: `${today}-${k + 1}`, date: today, at: iso(p.at), kind: p.kind, weekend: p.weekend, topic: chosen[k],
+    status: 'planned', genAttempts: 0, regens: 0, updatedAt: iso(now),
+    targets: Object.fromEntries(TARGETS.filter(t => cfg.targets[t]).map(t => [t, { status: 'pending', at: iso(new Date(p.at.getTime() + (t === 'member' ? cfg.staggerMinutes * 60_000 : 0))), attempts: 0 } as TargetState])),
+  }))
+  s.history.push(...slots.map(sl => ({ at: iso(now), title: sl.topic!.title, angle: sl.topic!.angle, vendor: ideaVendor(sl.topic!) || sl.topic!.vendor, format: sl.kind === 'poll' ? 'poll' : sl.topic!.format, slotId: sl.id })))
+  s.history = s.history.slice(-200)
+  return slots
+}
+
 export async function tick(d: Deps, opts: { force?: boolean } = {}): Promise<string[]> {
   const out: string[] = []
   const now = d.now()
@@ -123,27 +153,7 @@ export async function tick(d: Deps, opts: { force?: boolean } = {}): Promise<str
       day.researchAttempts++
       const weekend = isWeekend(dow)
       try {
-        const past = [
-          ...s.history.filter(h => Date.parse(h.at) > now.getTime() - 30 * 86_400_000),
-          ...(d.pastPosts ? await d.pastPosts().catch(() => []) : []),
-        ]
-        const planned = slotsFor(today, cfg)
-        const vendorWeek = vendorCounts(s.history, now, 7)
-        const cap = cfg.vendorWeeklyMax ?? 2
-        const recentFormats = s.history.filter(h => h.format).slice(-8).map(h => h.format!)
-        let ideas = await d.research({ date: today, weekend, cfg, recent: past.map(h => h.title), avoidVendors: Object.keys(vendorWeek).filter(v => vendorWeek[v] >= cap), recentFormats })
-        ideas = await freshIdeas(ideas, past, d.embed)
-        const chosen = ideas.length >= planned.length ? planSlots(ideas, planned, { lastFormat: recentFormats[recentFormats.length - 1], vendorWeek, vendorCap: cap }) : null
-        if (!chosen) throw new Error(`Only ${ideas.length} fresh topics found for ${planned.length} slots`)
-        day.slots = planned.map((p, k): Slot => ({
-          id: `${today}-${k + 1}`, date: today, at: iso(p.at), kind: p.kind, weekend: p.weekend, topic: chosen[k],
-          status: 'planned', genAttempts: 0, regens: 0, updatedAt: iso(now),
-          targets: Object.fromEntries(TARGETS.filter(t => cfg.targets[t]).map(t => [t, { status: 'pending', at: iso(new Date(p.at.getTime() + (t === 'member' ? cfg.staggerMinutes * 60_000 : 0))), attempts: 0 } as TargetState])),
-        }))
-        day.researchedAt = iso(now)
-        day.researchError = undefined
-        s.history.push(...day.slots.map(sl => ({ at: iso(now), title: sl.topic!.title, angle: sl.topic!.angle, vendor: ideaVendor(sl.topic!) || sl.topic!.vendor, format: sl.kind === 'poll' ? 'poll' : sl.topic!.format, slotId: sl.id })))
-        s.history = s.history.slice(-200)
+        day.slots = await planDay(d, s, today, weekend, now)
         note(s, now, `Planned ${day.slots.length} slots for ${today}`)
         out.push(`planned ${day.slots.length} slots`)
       } catch (e: any) {

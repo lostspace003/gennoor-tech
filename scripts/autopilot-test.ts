@@ -244,6 +244,17 @@ async function main() {
   h.w.now = at('2026-11-02', '08:31'); await tick(h.d)
   ok(h.w.published.length === 1, '...and posts at that time')
 
+  console.log('pillars and the weekly company cap')
+  const pi = (title: string, vendor: string, format: string, heat: number, pillar: string) => ({ ...idea(title, vendor, format, heat), pillar })
+  const day4 = [{ kind: 'post' }, { kind: 'poll' }, { kind: 'post' }, { kind: 'post' }]
+  const mix = [pi('Shopify A', 'Shopify', 'use-case', 10, 'use-case'), pi('Shopify B', 'Shopify', 'builder-buzz', 9, 'hands-on'), pi('Foundry agents', 'Microsoft', 'walkthrough', 5, 'microsoft'), pi('Benchmarks lie', 'none', 'contrarian', 6, 'debate'), pi('LangGraph repo', 'LangChain', 'walkthrough', 7, 'hands-on'), pi('Best Buy', 'Best Buy', 'use-case', 8, 'use-case')]
+  const pl = planSlots(mix, day4, { vendorWeek: {}, vendorCap: 1, pillars: ['microsoft', 'debate', 'use-case', 'hands-on'], core: ['microsoft'] })!
+  ok(pl.map(i => i.title).join('|') === 'Foundry agents|Benchmarks lie|Shopify A|LangGraph repo', 'each slot gets its pillar, even when another idea scores hotter')
+  const pl2 = planSlots(mix, day4, { vendorWeek: { shopify: 1, microsoft: 6 }, vendorCap: 1, pillars: ['microsoft', 'debate', 'use-case', 'hands-on'], core: ['microsoft'] })!
+  ok(pl2[2].title === 'Best Buy' && pl2[0].title === 'Foundry agents', 'a company already covered this week is skipped; Microsoft (core) is never capped')
+  const thin = planSlots([pi('Only MS', 'Microsoft', 'walkthrough', 5, 'microsoft'), pi('Debate', 'none', 'contrarian', 5, 'debate'), pi('Use', 'Acme', 'use-case', 5, 'use-case'), pi('Extra', 'Globex', 'number', 5, 'use-case')], day4, { vendorWeek: {}, vendorCap: 1, pillars: ['microsoft', 'debate', 'use-case', 'hands-on'], core: ['microsoft'] })
+  ok(!!thin && thin[3].title === 'Extra', 'a pillar with no ideas is filled from another pillar rather than leaving the slot empty')
+
   console.log(`\n${pass} passed, ${fail} failed`)
   process.exit(fail ? 1 : 0)
 }

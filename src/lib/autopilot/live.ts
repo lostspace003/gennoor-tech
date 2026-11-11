@@ -8,7 +8,7 @@ import { publishNew } from '@/lib/social/publisher'
 import { createAgentDraft, createDraft, foundry, getDraft, listDrafts, mutateDraft, readBlob, recordSpend, textUsd, tokensOf, writeBlob, type TraceStep } from '@/lib/social/studio'
 import { isTransient, withRetry, type Deps } from './engine'
 import { emptyState, DEFAULT_CONFIG, type Slot, type State, type TargetKey, type TopicIdea } from './types'
-import { BLOG_FORMATS, HOOK_RULES, POST_FORMATS, RESEARCH_SOURCES, firstLine, formatOf } from './variety'
+import { BLOG_FORMATS, HOOK_RULES, POST_FORMATS, RESEARCH_SOURCES, firstLine, formatOf, pillarOf } from './variety'
 import { linksHtml } from './email-actions'
 
 const FILE = 'autopilot/state.json'
@@ -48,16 +48,17 @@ function parseJson<T>(text: string): T | null {
 }
 
 /** Web-grounded topic research. Also used by the daily blog autopilot (`blog: true`, fewer ideas, more substance). */
-export async function researchIdeas(ctx: Parameters<Deps['research']>[0] & { count?: number; blog?: boolean }, sleep: Deps['sleep']): Promise<TopicIdea[]> {
+export async function researchIdeas(ctx: Parameters<Deps['research']>[0] & { count?: number; blog?: boolean; pillar?: string }, sleep: Deps['sleep']): Promise<TopicIdea[]> {
   const { cfg, weekend, recent, date } = ctx
-  const formats = ctx.blog ? BLOG_FORMATS : POST_FORMATS
+  const pillar = pillarOf(ctx.pillar)
+  const formats = ctx.blog ? BLOG_FORMATS : pillar ? POST_FORMATS.filter(f => pillar.formats.includes(f.key)) : POST_FORMATS
   const n = ctx.count ?? ((weekend ? cfg.weekendSlots : cfg.weekdaySlots).length + 5)
   const instructions = `You are the research editor for Gennoor Tech, an enterprise AI training company, whose audience is IT leaders, architects, developers and AI practitioners. Use web search to find what people in AI are genuinely talking about, trying and sharing RIGHT NOW (mostly the last 24-72 hours; a strong use case or tool from the last few weeks is fine).
-${RESEARCH_SOURCES}
+${pillar ? `This search covers ONE stream of the day's plan: ${pillar.label}.\n${pillar.brief}` : RESEARCH_SOURCES}
 ${ctx.blog ? 'These are for a long-form blog article of about 1,800 words, so choose topics with enough substance, a clear enterprise angle and several credible sources, not a single press release.\n' : ''}Pick ${n} ideas that people will save, share or comment on: useful, specific, surprising or hands-on. Each needs a real release, tool, repo, paper, case study, benchmark, number or debate behind it.
 Rules:
-- Variety is the priority. Spread the set across at least ${Math.min(n, 4)} different formats from the list below, and across different vendors and communities. Never two ideas about the same vendor or product.
-- ${ctx.blog ? 'At most one idea may be plain vendor news.' : 'At most two ideas may use the "news-take" format; the rest come from what builders are trying, real use cases, workflows, numbers and debates.'}
+- Variety is the priority. Spread the set across ${pillar ? `at least ${Math.min(n, pillar.formats.length, 3)}` : `at least ${Math.min(n, 4)}`} different formats from the list below${pillar?.key === 'microsoft' ? ' and different Microsoft products' : ', and across different companies, vendors and communities. Never two ideas about the same company or product'}.
+- ${ctx.blog ? 'At most one idea may be plain vendor news.' : 'At most one idea may use the "news-take" format.'}
 - Prefer ideas the reader can act on (try it, copy it, decide with it) over announcements.
 - ${weekend ? `It is the weekend. ${cfg.weekendTheme}` : 'It is a weekday.'}
 - Stay inside these areas, broadly read: ${cfg.topics.join('; ')}.
@@ -170,7 +171,16 @@ export function liveDeps(): Deps {
     load: loadState,
     save: saveState,
     sleep,
-    research: ctx => researchIdeas(ctx, sleep),
+    // One web search per pillar of the day, in parallel, so no single source fills the day. A failed stream is
+    // tolerated (the planner fills its slot from another pillar); all failing counts as a research failure.
+    research: async ctx => {
+      const streams = [...new Set(ctx.pillars || [])]
+      if (!streams.length) return researchIdeas(ctx, sleep)
+      const res = await Promise.allSettled(streams.map(p => researchIdeas({ ...ctx, pillar: p, count: 4 }, sleep).then(list => list.map(i => ({ ...i, pillar: p })))))
+      const ok = res.flatMap(r => (r.status === 'fulfilled' ? r.value : []))
+      if (!ok.length) throw (res.find(r => r.status === 'rejected') as PromiseRejectedResult | undefined)?.reason || new Error('Research found nothing')
+      return ok
+    },
     embed: embedTexts,
     // Posts published from Social Studio by hand (and blog shares) count as "already said" too.
     pastPosts: async () => (await listDrafts())
