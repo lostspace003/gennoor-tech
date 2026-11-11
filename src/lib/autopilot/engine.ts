@@ -1,6 +1,7 @@
 import { randomBytes } from 'crypto'
 import { hhmmToMinutes, isWeekend, localParts, zonedToUtc } from './time'
 import type { Config, DayPlan, Slot, State, TargetKey, TargetState, TopicIdea } from './types'
+import { echoedHook, firstLine, freshIdeas, planSlots, vendorCounts, type Embed } from './variety'
 
 // The autopilot engine. Pure orchestration over injected dependencies, so every safeguard can be tested without
 // touching LinkedIn or a model. `tick` is called every ~15 minutes by a scheduled job and is safe to call twice.
@@ -8,8 +9,8 @@ export interface Deps {
   now(): Date
   load(): Promise<State>
   save(s: State): Promise<void>
-  research(ctx: { date: string; weekend: boolean; cfg: Config; recent: string[] }): Promise<TopicIdea[]>
-  generate(ctx: { slot: Slot; cfg: Config; notes: string[] }): Promise<{ draftId: string; text: string; verdict: 'pass' | 'revise'; notes: string[]; variant?: string }>
+  research(ctx: { date: string; weekend: boolean; cfg: Config; recent: string[]; avoidVendors?: string[]; recentFormats?: string[] }): Promise<TopicIdea[]>
+  generate(ctx: { slot: Slot; cfg: Config; notes: string[]; recentHooks?: string[] }): Promise<{ draftId: string; text: string; verdict: 'pass' | 'revise'; notes: string[]; variant?: string }>
   /** null when the draft was deleted. publishedAs lists targets it was already posted to (by hand or by us). */
   draft(id: string): Promise<{ text: string; publishedAs: TargetKey[] } | null>
   approve(id: string): Promise<void>
@@ -17,8 +18,15 @@ export interface Deps {
   tokens(): Promise<Record<TargetKey, { ok: boolean; days: number }>>
   alert(subject: string, html: string, dedupeKey: string): Promise<void>
   sleep(ms: number): Promise<void>
+  /** Embeddings for the meaning-based repeat check. Optional: without it, the word-overlap check is used alone. */
+  embed?: Embed
+  /** Posts made outside the autopilot (Social Studio, blog shares) in the last 30 days, so they are not repeated either. */
+  pastPosts?(): Promise<{ at: string; title: string; hook?: string }[]>
+  /** HTML buttons for an alert email that act on a slot without signing in (signed, expiring links). */
+  links?(slotId: string, actions: EmailAction[]): string
 }
 
+export type EmailAction = 'approve' | 'release' | 'skip'
 const TARGETS: TargetKey[] = ['organization', 'member']
 const STUCK_MS = 10 * 60_000
 const iso = (d: Date) => d.toISOString()
@@ -115,20 +123,26 @@ export async function tick(d: Deps, opts: { force?: boolean } = {}): Promise<str
       day.researchAttempts++
       const weekend = isWeekend(dow)
       try {
-        const recent = s.history.filter(h => Date.parse(h.at) > now.getTime() - 30 * 86_400_000).map(h => h.title)
+        const past = [
+          ...s.history.filter(h => Date.parse(h.at) > now.getTime() - 30 * 86_400_000),
+          ...(d.pastPosts ? await d.pastPosts().catch(() => []) : []),
+        ]
         const planned = slotsFor(today, cfg)
-        let ideas = await d.research({ date: today, weekend, cfg, recent })
-        ideas = ideas.filter(i => i.title && !recent.some(r => similar(r, i.title) > 0.55))
-        ideas = ideas.filter((i, k) => ideas.findIndex(j => similar(j.title, i.title) > 0.55) === k)
-        if (ideas.length < planned.length) throw new Error(`Only ${ideas.length} fresh topics found for ${planned.length} slots`)
+        const vendorWeek = vendorCounts(s.history, now, 7)
+        const cap = cfg.vendorWeeklyMax ?? 2
+        const recentFormats = s.history.filter(h => h.format).slice(-8).map(h => h.format!)
+        let ideas = await d.research({ date: today, weekend, cfg, recent: past.map(h => h.title), avoidVendors: Object.keys(vendorWeek).filter(v => vendorWeek[v] >= cap), recentFormats })
+        ideas = await freshIdeas(ideas, past, d.embed)
+        const chosen = ideas.length >= planned.length ? planSlots(ideas, planned, { lastFormat: recentFormats[recentFormats.length - 1], vendorWeek, vendorCap: cap }) : null
+        if (!chosen) throw new Error(`Only ${ideas.length} fresh topics found for ${planned.length} slots`)
         day.slots = planned.map((p, k): Slot => ({
-          id: `${today}-${k + 1}`, date: today, at: iso(p.at), kind: p.kind, weekend: p.weekend, topic: ideas[k],
+          id: `${today}-${k + 1}`, date: today, at: iso(p.at), kind: p.kind, weekend: p.weekend, topic: chosen[k],
           status: 'planned', genAttempts: 0, regens: 0, updatedAt: iso(now),
           targets: Object.fromEntries(TARGETS.filter(t => cfg.targets[t]).map(t => [t, { status: 'pending', at: iso(new Date(p.at.getTime() + (t === 'member' ? cfg.staggerMinutes * 60_000 : 0))), attempts: 0 } as TargetState])),
         }))
         day.researchedAt = iso(now)
         day.researchError = undefined
-        s.history.push(...day.slots.map(sl => ({ at: iso(now), title: sl.topic!.title })))
+        s.history.push(...day.slots.map(sl => ({ at: iso(now), title: sl.topic!.title, angle: sl.topic!.angle, vendor: sl.topic!.vendor, format: sl.kind === 'poll' ? 'poll' : sl.topic!.format, slotId: sl.id })))
         s.history = s.history.slice(-200)
         note(s, now, `Planned ${day.slots.length} slots for ${today}`)
         out.push(`planned ${day.slots.length} slots`)
@@ -161,12 +175,15 @@ export async function tick(d: Deps, opts: { force?: boolean } = {}): Promise<str
         if (now.getTime() > slotAt + cfg.missedGraceMinutes * 60_000) { slot.status = 'skipped'; slot.reason = 'missed its window before it was ready'; continue }
         slot.status = 'drafting'
         const notes: string[] = []
+        const recentHooks = [...s.history.map(h => h.hook || ''), ...(d.pastPosts ? (await d.pastPosts().catch(() => [])).map(p => p.hook || '') : [])].filter(Boolean).slice(-30)
         let result: Awaited<ReturnType<Deps['generate']>> | null = null
         try {
           for (let r = 0; r <= cfg.maxRegens; r++) {
-            result = await withRetry(() => d.generate({ slot, cfg, notes }), { tries: 3, baseMs: 4000, sleep: d.sleep, retryable: isTransient })
+            result = await withRetry(() => d.generate({ slot, cfg, notes, recentHooks }), { tries: 3, baseMs: 4000, sleep: d.sleep, retryable: isTransient })
             const hit = mentionsAvoided(result.text, cfg.avoidKeywords)
             if (hit) { notes.push(`The post touches a topic we never post about (${hit}). Remove it.`); slot.regens = r + 1; result = { ...result, verdict: 'revise', notes: [...result.notes, `avoided topic: ${hit}`] }; continue }
+            const echo = slot.kind === 'poll' ? null : echoedHook(result.text, recentHooks)
+            if (echo) { notes.push(`The opening line repeats a recent post ("${echo}"). Open with a completely different hook.`); slot.regens = r + 1; result = { ...result, verdict: 'revise', notes: [...result.notes, 'opening repeats a recent post'] }; continue }
             if (result.verdict === 'pass') break
             notes.push(...result.notes.slice(0, 4))
             slot.regens = r + 1
@@ -188,17 +205,20 @@ export async function tick(d: Deps, opts: { force?: boolean } = {}): Promise<str
         if (result.verdict === 'pass' && !mentionsAvoided(result.text, cfg.avoidKeywords)) {
           await d.approve(result.draftId)
           slot.status = 'ready'; slot.reason = undefined
+          const h = s.history.find(x => x.slotId === slot.id); if (h) h.hook = firstLine(result.text)
           out.push(`${slot.id}: draft ready`)
+          // In review mode nothing posts until you say so: email the draft with one-click buttons.
+          if (cfg.mode === 'review' && d.links) await alertOnce(`Approve today's ${new Date(slot.at).toLocaleTimeString('en-IN', { timeZone: cfg.tz, hour: '2-digit', minute: '2-digit' })} post?`, `<p><b>${html(slot.topic?.title || '')}</b></p><pre style="white-space:pre-wrap;font-family:inherit;background:#f6f6f6;padding:12px;border-radius:8px">${html(result.text)}</pre>${d.links(slot.id, ['approve', 'skip'])}`, `approve-${slot.id}`)
         } else {
           slot.status = 'held'; slot.reason = `did not pass the quality check after ${slot.regens} rewrites: ${result.notes.slice(0, 2).join(' | ').slice(0, 300)}`
           for (const t of TARGETS) { const ts = slot.targets[t]; if (ts && ts.status === 'pending') ts.status = 'held' }
-          await alertOnce('Autopilot held a post for your review', `<p>"${html(slot.topic?.title || '')}" did not pass the quality check and was <b>not</b> posted.</p><p>${html(slot.reason)}</p><p>Open the Autopilot page to release, edit or discard it.</p>`, `held-${slot.id}`)
+          await alertOnce('Autopilot held a post for your review', `<p>"${html(slot.topic?.title || '')}" did not pass the quality check and was <b>not</b> posted.</p><p>${html(slot.reason)}</p><pre style="white-space:pre-wrap;font-family:inherit;background:#f6f6f6;padding:12px;border-radius:8px">${html(result.text)}</pre>${d.links ? d.links(slot.id, ['release', 'skip']) : ''}<p>Or open the Autopilot page to edit it first.</p>`, `held-${slot.id}`)
           out.push(`${slot.id}: held by quality gate`)
         }
       }
 
       // 2c. Publish each target when its time comes.
-      if (slot.status === 'ready' && !slot.manual && cfg.mode === 'auto' && slot.draftId) {
+      if (slot.status === 'ready' && !slot.manual && (cfg.mode === 'auto' || slot.approved) && slot.draftId) {
         for (const t of TARGETS) {
           const ts = slot.targets[t]
           if (!ts || ts.status !== 'pending' && ts.status !== 'publishing') continue
@@ -257,7 +277,7 @@ export async function tick(d: Deps, opts: { force?: boolean } = {}): Promise<str
     // 4. Morning digest.
     if (!day.digestSent && day.slots.length && nowMin >= hhmmToMinutes(cfg.digestTime)) {
       day.digestSent = true
-      const rows = day.slots.map(sl => `<li>${new Date(sl.at).toLocaleTimeString('en-IN', { timeZone: cfg.tz, hour: '2-digit', minute: '2-digit' })} · ${sl.kind} · ${html(sl.topic?.title || '')} <i>(${sl.status}${sl.reason ? `: ${html(sl.reason)}` : ''})</i></li>`).join('')
+      const rows = day.slots.map(sl => `<li style="margin-bottom:10px">${new Date(sl.at).toLocaleTimeString('en-IN', { timeZone: cfg.tz, hour: '2-digit', minute: '2-digit' })} · ${sl.kind}${sl.topic?.format && sl.kind !== 'poll' ? ` · ${html(sl.topic.format)}` : ''} · ${html(sl.topic?.title || '')} <i>(${sl.status}${sl.reason ? `: ${html(sl.reason)}` : ''})</i>${d.links && ['planned', 'drafting', 'ready', 'held'].includes(sl.status) ? d.links(sl.id, ['skip']) : ''}</li>`).join('')
       await alertOnce(`Today's LinkedIn plan (${cfg.mode === 'auto' ? 'auto-publish on' : 'review only'})`, `<p>These are queued for ${today}. Open the Autopilot page to edit, post early or skip any of them. Anything you post yourself is skipped automatically.</p><ul>${rows}</ul>`, `digest-${today}`)
     }
     return out.length ? out : ['nothing to do']
@@ -269,7 +289,7 @@ export async function tick(d: Deps, opts: { force?: boolean } = {}): Promise<str
 }
 
 // ---- Editor actions from the admin page -------------------------------------------------------------------------
-export type Action = 'skip' | 'manual' | 'resume' | 'release' | 'retry' | 'post-now' | 'link' | 'remove'
+export type Action = 'skip' | 'manual' | 'resume' | 'release' | 'retry' | 'post-now' | 'link' | 'remove' | 'approve'
 export function applyAction(s: State, slotId: string, action: Action, now: Date, draftId?: string): string {
   const slot = Object.values(s.days).flatMap(d => d.slots).find(x => x.id === slotId)
   if (!slot) throw new Error('Slot not found.')
@@ -303,13 +323,19 @@ export function applyAction(s: State, slotId: string, action: Action, now: Date,
       for (const t of targets) { t.status = 'pending'; t.attempts = 0; t.reason = undefined; t.at = iso(now) }
     }
   }
+  if (action === 'approve') {
+    // Review mode: you approved the draft, so it posts at its own time (the missed-window rule still applies).
+    if (!slot.draftId || slot.status !== 'ready') throw new Error(slot.status === 'held' ? 'This post was held by the quality check: release it instead.' : 'This slot has no finished draft to approve.')
+    slot.approved = true
+  }
   if (action === 'release' || action === 'retry') {
+    if (action === 'release') slot.approved = true
     if (!slot.draftId) { slot.status = 'planned'; slot.genAttempts = 0; slot.reason = undefined }
     else { slot.status = 'ready'; slot.reason = undefined; for (const t of targets) if (t.status === 'held' || t.status === 'failed') { t.status = 'pending'; t.attempts = 0; t.reason = undefined; t.at = iso(now) } }
   }
   if (action === 'post-now') {
     if (!slot.draftId) throw new Error('This slot has no draft yet.')
-    slot.manual = false; slot.status = 'ready'
+    slot.manual = false; slot.status = 'ready'; slot.approved = true
     let k = 0
     for (const key of TARGETS) { const t = slot.targets[key]; if (t && ['pending', 'held', 'failed'].includes(t.status)) { t.status = 'pending'; t.attempts = 0; t.reason = undefined; t.at = iso(new Date(now.getTime() + k++ * 5 * 60_000)) } }
   }

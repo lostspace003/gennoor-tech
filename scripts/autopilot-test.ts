@@ -1,6 +1,8 @@
 import { tick, applyAction, similar, mentionsAvoided, slotsFor, withRetry, isTransient, type Deps } from '../src/lib/autopilot/engine'
 import { zonedToUtc } from '../src/lib/autopilot/time'
 import { DEFAULT_CONFIG, emptyState, type State, type TargetKey } from '../src/lib/autopilot/types'
+import { echoedHook, freshIdeas, planSlots, vendorCounts, vendorKey } from '../src/lib/autopilot/variety'
+import { actionUrl, linksHtml, verifyAction } from '../src/lib/autopilot/email-actions'
 
 let pass = 0, fail = 0
 const ok = (cond: boolean | undefined, name: string) => { cond ? pass++ : (fail++, console.log('  FAIL:', name)); if (cond) console.log('  ok  :', name) }
@@ -152,6 +154,68 @@ async function main() {
   ok(h.w.alerts.some(a => /Today's LinkedIn plan/.test(a)), 'morning digest email is sent once the plan exists')
   const before = h.w.alerts.length; await tick(h.d)
   ok(h.w.alerts.length === before, 'digest is not sent twice')
+
+
+  console.log('variety: repeats, vendors, formats, hooks')
+  // A fake embedding: texts that share a "story" tag point the same way, so a reworded repeat is caught.
+  const story = (t: string) => (/claude|anthropic/i.test(t) ? [1, 0, 0] : /fabric|microsoft/i.test(t) ? [0, 1, 0] : [0, 0, 1])
+  const fakeEmbed = async (texts: string[]) => texts.map(story)
+  const fresh = await freshIdeas([{ title: 'Why the new Claude model changes enterprise agents', angle: 'a' }, { title: 'GitHub trending: a local RAG starter kit', angle: 'b' }], [{ title: 'Anthropic ships its next model for businesses' }], fakeEmbed)
+  ok(fresh.length === 1 && /RAG/.test(fresh[0].title), 'a reworded repeat (no shared title words) is caught by meaning')
+  const noEmbed = await freshIdeas([{ title: 'Microsoft ships agent governance toolkit today' }], [{ title: 'Microsoft ships agent governance toolkit' }])
+  ok(noEmbed.length === 0, 'word-overlap repeat is still caught without embeddings')
+  const broken = await freshIdeas([{ title: 'A new idea' }], [{ title: 'Old idea about something else' }], async () => { throw new Error('429') })
+  ok(broken.length === 1, 'an embedding failure falls back instead of blocking the day')
+  ok(vendorKey('Azure AI Foundry') === 'microsoft' && vendorKey('Claude Code') === 'anthropic', 'products map to their vendor')
+  const wk = vendorCounts([{ at: '2026-11-01T00:00:00Z', vendor: 'Microsoft' }, { at: '2026-10-31T00:00:00Z', vendor: 'Azure' }, { at: '2026-10-01T00:00:00Z', vendor: 'Google' }], new Date('2026-11-02T00:00:00Z'))
+  ok(wk.microsoft === 2 && !wk.google, 'weekly vendor count groups products and ignores old posts')
+  const idea = (title: string, vendor: string, format: string, heat: number) => ({ title, vendor, format, heat, angle: '', sources: [] })
+  const pool = [idea('MS news', 'Microsoft', 'news-take', 10), idea('Google news', 'Google', 'news-take', 9), idea('AWS walkthrough', 'AWS', 'walkthrough', 8), idea('Repo buzz', 'none', 'builder-buzz', 7), idea('Use case', 'Infosys', 'use-case', 6), idea('Poll topic', 'Meta', 'contrarian', 5)]
+  const plan = planSlots(pool, [{ kind: 'post' }, { kind: 'poll' }, { kind: 'post' }, { kind: 'post' }], { vendorWeek: { microsoft: 2 }, vendorCap: 2 })!
+  ok(!!plan && !plan.some(i => i.vendor === 'Microsoft'), 'a vendor at its weekly cap is left out when there is enough else')
+  ok(plan.filter(i => i.format === 'news-take').length <= 1, 'at most one plain news post a day')
+  const postFormats = plan.filter((_, k) => k !== 1).map(i => i.format)
+  ok(new Set(postFormats).size === postFormats.length, 'no format is used twice in a day when alternatives exist')
+  const tight = planSlots([idea('A', 'Microsoft', 'walkthrough', 9), idea('B', 'Google', 'walkthrough', 8)], [{ kind: 'post' }, { kind: 'post' }], { vendorWeek: { microsoft: 5 }, vendorCap: 2 })
+  ok(!!tight && tight.length === 2, 'caps relax rather than leave the day empty')
+  ok(planSlots([idea('A', 'Microsoft', 'walkthrough', 9), idea('B', 'Azure', 'use-case', 8)], [{ kind: 'post' }, { kind: 'post' }], { vendorWeek: {}, vendorCap: 2 }) === null, 'never the same vendor twice in one day')
+  ok(!!echoedHook('**Your agent passes every demo and fails in production.**\n- one', ['Your agent passes every demo and then fails in prod']), 'an opening that echoes a recent one is caught')
+  ok(echoedHook('Three prompts that cut review time in half.', ['Your agent passes every demo and fails in production.']) === null, 'a different opening passes')
+
+  h = harness(); h.w.now = at('2026-11-02', '05:10')
+  h.store.s.history.push({ at: at('2026-11-01', '08:00').toISOString(), title: 'old', hook: 'A solid post about agents. A solid post about agents.' })
+  await tick(h.d)
+  ok(h.w.genCalls === 3 && day(h).slots[0].status === 'held', 'a draft whose opening repeats a recent post is rewritten, then held')
+
+  console.log('email buttons')
+  const old = process.env.AUTOPILOT_ACTION_SECRET
+  process.env.AUTOPILOT_ACTION_SECRET = 'test-secret'
+  const u = new URL(actionUrl('2026-11-02-1', 'approve')!)
+  const q = (k: string) => u.searchParams.get(k)!
+  ok(verifyAction(q('s'), q('a'), q('e'), q('t')).ok, 'a signed link verifies')
+  ok(!verifyAction('2026-11-02-2', q('a'), q('e'), q('t')).ok, 'the link cannot be moved to another post')
+  ok(!verifyAction(q('s'), 'skip', q('e'), q('t')).ok, 'the link cannot be changed to another action')
+  ok(!verifyAction(q('s'), q('a'), String(Number(q('e')) + 1000), q('t')).ok, 'the expiry cannot be extended')
+  const expired = new URL(actionUrl('x', 'skip', Date.now() - 40 * 3_600_000)!)
+  ok(!verifyAction('x', 'skip', expired.searchParams.get('e')!, expired.searchParams.get('t')!).ok, 'an expired link is refused')
+  delete process.env.AUTOPILOT_ACTION_SECRET
+  const savedNa = process.env.NEXTAUTH_SECRET, savedA = process.env.AUTH_SECRET
+  delete process.env.NEXTAUTH_SECRET; delete process.env.AUTH_SECRET
+  ok(linksHtml('x', ['approve']) === '' && !verifyAction(q('s'), q('a'), q('e'), q('t')).ok, 'no secret configured: no buttons, and old links stop working')
+  if (old) process.env.AUTOPILOT_ACTION_SECRET = old
+  if (savedNa) process.env.NEXTAUTH_SECRET = savedNa
+  if (savedA) process.env.AUTH_SECRET = savedA
+
+  h = harness({ mode: 'review' }); const linkCalls: string[] = []
+  h.d.links = (id, actions) => { linkCalls.push(`${id}:${actions.join(',')}`); return '' }
+  h.w.now = at('2026-11-02', '05:10'); await tick(h.d); h.w.now = at('2026-11-02', '07:00'); await tick(h.d)
+  ok(linkCalls.includes('2026-11-02-1:approve,skip') && h.w.alerts.some(a => /Approve today's/.test(a)), 'review mode emails the draft with Approve / Skip buttons')
+  h.w.now = at('2026-11-02', '08:31'); await tick(h.d)
+  ok(h.w.published.length === 0, 'review mode: nothing posts before approval')
+  applyAction(h.store.s, '2026-11-02-1', 'approve', h.w.now); h.w.now = at('2026-11-02', '08:40'); await tick(h.d)
+  ok(h.w.published.some(p => p.t === 'organization'), 'approving from the email posts it')
+  let threw = false; try { applyAction(h.store.s, '2026-11-02-3', 'approve', h.w.now) } catch { threw = true }
+  ok(threw, 'a slot without a finished draft cannot be approved')
 
   console.log(`\n${pass} passed, ${fail} failed`)
   process.exit(fail ? 1 : 0)

@@ -1,6 +1,7 @@
 import { randomBytes } from 'crypto'
 import { hhmmToMinutes, localParts } from '@/lib/autopilot/time'
-import { isTransient, mentionsAvoided, similar, withRetry } from '@/lib/autopilot/engine'
+import { isTransient, mentionsAvoided, withRetry } from '@/lib/autopilot/engine'
+import { freshIdeas, type Embed } from '@/lib/autopilot/variety'
 import type { TopicIdea } from '@/lib/autopilot/types'
 
 // Daily blog autopilot: research a topic, write the post, review it (revising up to twice when the reviewer asks),
@@ -33,7 +34,7 @@ export interface Run {
 export interface AutoState {
   config: BlogAutoConfig
   days: Record<string, { date: string; runs: Run[] }>
-  history: { at: string; title: string }[]
+  history: { at: string; title: string; format?: string }[]
   lock?: { until: string; by: string }
   lastTick?: string
   log: { at: string; msg: string }[]
@@ -45,7 +46,9 @@ export interface AutoDeps {
   load(): Promise<AutoState>
   save(s: AutoState): Promise<void>
   sleep(ms: number): Promise<void>
-  research(ctx: { date: string; recent: string[] }): Promise<TopicIdea[]>
+  research(ctx: { date: string; recent: string[]; recentFormats?: string[] }): Promise<TopicIdea[]>
+  /** Embeddings for the meaning-based repeat check (optional; word overlap is used without it). */
+  embed?: Embed
   /** Titles of articles already on the site or in progress, so topics are not repeated. */
   published(): Promise<string[]>
   avoidKeywords(): Promise<string[]>
@@ -108,8 +111,12 @@ export async function blogAutoTick(d: AutoDeps, opts: { force?: boolean } = {}):
         const published = await d.published()
         const recent = [...published, ...s.history.filter(h => Date.parse(h.at) > now.getTime() - 60 * 86_400_000).map(h => h.title)]
         const keywords = await d.avoidKeywords()
-        const ideas = await withRetry(() => d.research({ date: today, recent }), { tries: 3, baseMs: 4000, sleep: d.sleep, retryable: isTransient })
-        const pick = ideas.find(i => i.title && !recent.some(r => similar(r, i.title) > 0.5) && !mentionsAvoided(`${i.title} ${i.angle}`, keywords))
+        const recentFormats = s.history.filter(h => h.format).slice(-3).map(h => h.format!)
+        const ideas = await withRetry(() => d.research({ date: today, recent, recentFormats }), { tries: 3, baseMs: 4000, sleep: d.sleep, retryable: isTransient })
+        // Compares meaning against every article on the site, so a reworded repeat is caught too.
+        const fresh = await freshIdeas(ideas.filter(i => !mentionsAvoided(`${i.title} ${i.angle}`, keywords)), recent.map(title => ({ title })), d.embed)
+        // Rotate formats: prefer one not used in the last three articles.
+        const pick = fresh.find(i => !i.format || !recentFormats.includes(i.format)) || fresh[0]
         if (!pick) { await fail('No fresh topic found today'); return out }
         run.topic = pick; run.step = 'draft'
         await d.save(s)
@@ -150,7 +157,7 @@ export async function blogAutoTick(d: AutoDeps, opts: { force?: boolean } = {}):
         if (hit) { await hold(`it mentions "${hit}", which is on the never-post list`); return out }
         await d.submit(run.draftId, { autoMerge: cfg.autoMerge, shareToLinkedIn: cfg.shareToLinkedIn })
         run.status = 'submitted'; run.reason = undefined; run.at = iso(d.now())
-        s.history.push({ at: iso(now), title: run.topic?.title || '' }); s.history = s.history.slice(-200)
+        s.history.push({ at: iso(now), title: run.topic?.title || '', format: run.topic?.format }); s.history = s.history.slice(-200)
         s.log.push({ at: iso(now), msg: `Published "${run.topic?.title}" through the pipeline` }); s.log = s.log.slice(-100)
         await d.save(s)
         out.push(`run ${run.n}: approved and sent to the website`)

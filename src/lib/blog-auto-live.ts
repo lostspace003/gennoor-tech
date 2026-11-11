@@ -1,6 +1,8 @@
 import { blogPostsMeta } from '@/data/blog-posts'
 import { researchIdeas, loadState as loadLinkedInAutopilot } from '@/lib/autopilot/live'
 import { DEFAULT_CONFIG, type TopicIdea } from '@/lib/autopilot/types'
+import { BLOG_FORMATS, formatOf } from '@/lib/autopilot/variety'
+import { embedTexts } from '@/lib/crm/embeddings'
 import { createBlogDraft, dateLabel, getBlogDraft, listBlogDrafts, mutateBlogDraft, reviseBlogDraft, taxonomy, type BlogDraft } from '@/lib/blog-studio'
 import { emptyAutoState, DEFAULT_BLOG_AUTO, type AutoDeps, type AutoState } from '@/lib/blog-auto'
 import { sendAdminAlert, submitBlogPost } from '@/lib/blog-publish'
@@ -26,7 +28,8 @@ async function writeDraft(topic: TopicIdea): Promise<{ draftId: string; review: 
   const today = new Date().toISOString().slice(0, 10)
   const res = await agentFetch('/blog', {
     topic: topic.title, brief: `Audience: enterprise IT and AI leaders. Take: ${topic.angle}
-Opening: start with a hook about the reader's problem or a sharp tension (what goes wrong, what it costs, what they get wrong), never with "X launched / announced Y". The news is evidence inside the argument, not the headline. Keep paragraphs short, use bullet lists for steps and takeaways, and vary the rhythm so the piece does not read as a press summary.`, references: sourcesText(topic).slice(0, 30_000),
+${formatOf(BLOG_FORMATS, topic.format) ? `Article format: ${formatOf(BLOG_FORMATS, topic.format)!.label}. ${formatOf(BLOG_FORMATS, topic.format)!.guide} Let this format shape the sections instead of the default section list.
+` : ''}Opening: start with a hook about the reader's problem or a sharp tension (what goes wrong, what it costs, what they get wrong), never with "X launched / announced Y". The news is evidence inside the argument, not the headline. Keep paragraphs short, use bullet lists for steps and takeaways, and vary the rhythm so the piece does not read as a press summary.`, references: sourcesText(topic).slice(0, 30_000),
     context: { date: today, dateLabel: dateLabel(today), categories: t.categories.map(c => c.name), tags: t.tags.slice(0, 150).map(x => x.name), posts: t.posts.slice(0, 60) },
   })
   if (!res.ok || !res.body) throw new Error(`Agent service returned ${res.status}`)
@@ -77,9 +80,10 @@ export function liveAutoDeps(): AutoDeps {
   const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms))
   return {
     now: () => new Date(), sleep, load: loadAutoState, save: saveAutoState,
-    research: async ({ date, recent }) => {
+    embed: embedTexts,
+    research: async ({ date, recent, recentFormats }) => {
       const li = await loadLinkedInAutopilot()
-      return researchIdeas({ date, weekend: false, cfg: { ...DEFAULT_CONFIG, ...li.config }, recent, count: 4, blog: true }, sleep)
+      return researchIdeas({ date, weekend: false, cfg: { ...DEFAULT_CONFIG, ...li.config }, recent, recentFormats, count: 5, blog: true }, sleep)
     },
     published: async () => [...blogPostsMeta.map(p => p.title), ...(await listBlogDrafts()).map(d => d.meta.title)],
     avoidKeywords: async () => (await loadLinkedInAutopilot()).config.avoidKeywords,

@@ -13,7 +13,7 @@ export const maxDuration = 300
 
 const HHMM = /^([01]\d|2[0-3]):[0-5]\d$/
 const KINDS: Kind[] = ['post', 'poll']
-const ACTIONS: Action[] = ['skip', 'manual', 'resume', 'release', 'retry', 'post-now', 'link', 'remove']
+const ACTIONS: Action[] = ['skip', 'manual', 'resume', 'release', 'retry', 'post-now', 'link', 'remove', 'approve']
 
 const strs = (v: unknown, n: number, max: number) => (Array.isArray(v) ? v : []).map(x => String(x).trim().slice(0, max)).filter(Boolean).slice(0, n)
 const slots = (v: unknown) => (Array.isArray(v) ? v : []).map((s: any) => ({ time: String(s?.time || ''), kind: (s?.kind === 'motion' ? 'post' : s?.kind) as Kind })).filter(s => HHMM.test(s.time) && KINDS.includes(s.kind)).slice(0, 8)
@@ -54,7 +54,7 @@ export async function PATCH(req: NextRequest) {
   if (b.profileMode === 'reshare' || b.profileMode === 'own') c.profileMode = b.profileMode
   if (b.targets) c.targets = { organization: !!b.targets.organization, member: !!b.targets.member }
   const num = (k: keyof Config, lo: number, hi: number) => { if (b[k] !== undefined && Number.isFinite(Number(b[k]))) (c as any)[k] = Math.min(hi, Math.max(lo, Math.round(Number(b[k])))) }
-  num('staggerMinutes', 0, 480); num('draftLeadMinutes', 60, 720); num('missedGraceMinutes', 30, 480); num('dailyMax', 1, 6); num('minGapMinutes', 30, 360); num('maxRegens', 0, 3)
+  num('staggerMinutes', 0, 480); num('draftLeadMinutes', 60, 720); num('missedGraceMinutes', 30, 480); num('dailyMax', 1, 6); num('minGapMinutes', 30, 360); num('maxRegens', 0, 3); num('vendorWeeklyMax', 1, 14)
   if (typeof b.researchTime === 'string' && HHMM.test(b.researchTime)) c.researchTime = b.researchTime
   if (typeof b.digestTime === 'string' && HHMM.test(b.digestTime)) c.digestTime = b.digestTime
   if (Array.isArray(b.topics)) c.topics = strs(b.topics, 20, 200)
