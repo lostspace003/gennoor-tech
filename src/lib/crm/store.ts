@@ -1,6 +1,6 @@
 import { BlobServiceClient, BlockBlobClient } from '@azure/storage-blob'
-import { Lead, LeadActivity } from './types'
-import { scheduleSearchSync } from './search'
+import { Lead, LeadActivity, normalizeLead } from './types'
+import { CRM_USERS } from './users'
 
 // Leads live as one JSON blob in the existing storage account — the same
 // pattern every other persisted feature on the site uses. At CRM scale
@@ -31,7 +31,8 @@ async function readAll(): Promise<{ leads: Lead[]; etag?: string }> {
     for await (const chunk of download.readableStreamBody as AsyncIterable<Buffer>) {
       chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk))
     }
-    const leads = JSON.parse(Buffer.concat(chunks).toString('utf-8')) as Lead[]
+    // Older stored leads are brought into the current shape as they are read
+    const leads = (JSON.parse(Buffer.concat(chunks).toString('utf-8')) as Lead[]).map((l) => normalizeLead(l, CRM_USERS))
     return { leads, etag: download.etag }
   } catch (error: any) {
     if (error?.statusCode === 404) return { leads: [] }
@@ -68,8 +69,6 @@ export async function mutateLeads<T>(mutate: (leads: Lead[]) => T): Promise<T> {
     const result = mutate(leads)
     try {
       await writeAll(leads, etag)
-      // keep the lead search current: rebuilt shortly after the last change
-      scheduleSearchSync(getLeads)
       return result
     } catch (error: any) {
       // 412 = blob changed under us; re-read and retry
@@ -109,7 +108,7 @@ export async function upsertLeads(incoming: Lead[], by: string): Promise<{ added
       if (existingIdx !== undefined) {
         const existing = leads[existingIdx]
         // Fill blanks on the existing record; imports never overwrite worked data
-        for (const field of ['phone', 'designation', 'linkedin', 'website', 'priority', 'leadType', 'sector', 'region', 'country', 'city', 'notes'] as const) {
+        for (const field of ['phone', 'designation', 'linkedin', 'website', 'country', 'city', 'notes'] as const) {
           if (!existing[field] && lead[field]) (existing as any)[field] = lead[field]
         }
         touch(existing, { at: new Date().toISOString(), by, type: 'imported', description: 'Refreshed from Excel import' })

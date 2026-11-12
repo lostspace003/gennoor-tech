@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { Lead } from '@/lib/crm/types'
+import { CRM_USERS, CRM_ADMIN, isCrmManager } from '@/lib/crm/users'
 
 interface CrmContextValue {
   leads: Lead[]
@@ -25,20 +26,8 @@ interface CrmContextValue {
   setViewAs: (email: string) => void
 }
 
-/** Whose desk a manager can look at. Mirrors CRM_USERS in ./access.ts. */
-export const CRM_TEAM_EMAILS = [
-  'admin@gennoor.com',
-  'jalalkhan@gennoor.com',
-  'yusufchaudhary@gennoor.com',
-  'aditya@gennoor.com',
-  'deepanshu@gennoor.com',
-  'zaid@gennoor.com',
-  'sales@gennoor.com',
-]
-
-// Mirrors CRM_MANAGERS in src/lib/crm/access.ts (API is the enforcer;
-// this only controls what the UI offers).
-const MANAGERS = ['admin@gennoor.com', 'yusufchaudhary@gennoor.com']
+/** Everyone with CRM access (the list lives in lib/crm/users.ts). */
+export const CRM_TEAM_EMAILS = CRM_USERS
 
 const CrmContext = createContext<CrmContextValue | null>(null)
 
@@ -57,8 +46,8 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
   const [viewAs, setViewAs] = useState('')
 
   const realEmail = session?.user?.email || ''
-  const isAdmin = realEmail === 'admin@gennoor.com'
-  const isManager = MANAGERS.includes(realEmail.toLowerCase())
+  const isAdmin = realEmail.toLowerCase() === CRM_ADMIN
+  const isManager = isCrmManager(realEmail)
 
   const notify = useCallback((msg: string, isError = false) => {
     setToast({ msg, isError })

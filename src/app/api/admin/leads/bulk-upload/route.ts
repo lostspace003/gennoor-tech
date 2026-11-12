@@ -5,9 +5,7 @@ import { newLead } from '@/lib/crm/types'
 
 export async function POST(request: Request) {
   const user = await requireCrmUser()
-  if (!user?.isManager) {
-    return NextResponse.json({ error: 'Only managers can upload leads' }, { status: 403 })
-  }
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
     const { leads } = await request.json()
@@ -20,7 +18,7 @@ export async function POST(request: Request) {
 
     const prepared = leads
       .filter((l: any) => l && typeof l.name === 'string' && l.name.trim())
-      .map((l: any) => newLead({ ...l, source: l.source || 'Excel Import' }, user.email))
+      .map((l: any) => newLead({ ...l, source: l.source || 'Excel import' }, user.email))
 
     const { added, updated } = await upsertLeads(prepared, user.email)
 

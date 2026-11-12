@@ -4,13 +4,14 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { Zap } from 'lucide-react'
+import { isCrmManager } from '@/lib/crm/users'
+import { isOpen, sequenceProgress } from '@/lib/crm/sequence'
 
-// Compact CRM pulse for the admin header (admin/yusuf see it; the
-// API 401s for anyone else and the tile stays hidden).
+// Compact CRM pulse for the admin header, shown to managers.
 export default function CrmStatsTile() {
   const router = useRouter()
   const { data: session } = useSession()
-  const isManager = ['admin@gennoor.com', 'yusufchaudhary@gennoor.com'].includes(session?.user?.email?.toLowerCase() || '')
+  const isManager = isCrmManager(session?.user?.email)
   const [stats, setStats] = useState<{ pool: number; action: number } | null>(null)
 
   useEffect(() => {
@@ -18,13 +19,10 @@ export default function CrmStatsTile() {
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
         if (!d?.leads) return
-        const active = d.leads.filter((l: any) => !l.dumped && l.processStatus === 'active' && !['won', 'lost'].includes(l.status))
-        const pool = active.filter((l: any) => !l.owner).length
-        const lastSent = (l: any) => l.emailHistory?.find((e: any) => e.status === 'sent')?.at
-        const action = active.filter((l: any) => l.owner && (
-          !l.aiResearch || (l.aiResearch && !l.finalizedPitch) || (l.finalizedPitch && !lastSent(l)) ||
-          (lastSent(l) && Date.now() - new Date(lastSent(l)).getTime() > 5 * 86_400_000)
-        )).length
+        const open = d.leads.filter(isOpen)
+        const pool = open.filter((l: any) => !l.owner).length
+        // An email of the series is ready to go: the first one, or the next one now due
+        const action = open.filter((l: any) => l.owner && l.email && ['new', 'contacted'].includes(l.status) && sequenceProgress(l).due).length
         setStats({ pool, action })
       })
       .catch(() => {})
@@ -36,10 +34,10 @@ export default function CrmStatsTile() {
     <button
       onClick={() => router.push('/crm/queue')}
       className="px-3.5 py-2 text-[13px] font-medium bg-primary-50 text-primary-700 border border-primary-200 rounded-md hover:bg-primary-100 transition-colors flex items-center gap-1.5"
-      title="CRM work queue — click to open"
+      title="Open the CRM"
     >
       <Zap className="w-3.5 h-3.5" />
-      CRM: {stats.pool} in pool · {stats.action} need action
+      CRM: {stats.pool} unassigned · {stats.action} emails due
     </button>
   )
 }

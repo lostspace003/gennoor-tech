@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
           ${phone ? `<tr><td style="padding:6px 10px;border:1px solid #e2e8f0;color:#64748b">Phone</td><td style="padding:6px 10px;border:1px solid #e2e8f0">${escapeHtml(phone)}</td></tr>` : ''}
           ${interest ? `<tr><td style="padding:6px 10px;border:1px solid #e2e8f0;color:#64748b">They asked</td><td style="padding:6px 10px;border:1px solid #e2e8f0">${escapeHtml(interest)}</td></tr>` : ''}
         </table>
-        <p style="margin:16px 0 0"><a href="https://www.gennoor.com/crm/queue" style="display:inline-block;background:#2563EB;color:#fff;text-decoration:none;padding:9px 20px;border-radius:8px;font-size:14px">Open the Work Queue →</a></p>`,
+        <p style="margin:16px 0 0"><a href="https://www.gennoor.com/crm/queue" style="display:inline-block;background:#2563EB;color:#fff;text-decoration:none;padding:9px 20px;border-radius:8px;font-size:14px">Open the CRM →</a></p>`,
         { preheader: `Website lead: ${name}` }),
     }).catch((e) => console.error('Lead notify email failed:', e))
 

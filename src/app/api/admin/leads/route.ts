@@ -2,7 +2,7 @@ import { sendLeadConversion } from '@/lib/linkedin-ads'
 import { NextRequest, NextResponse } from 'next/server'
 import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
 import { getLeads, mutateLeads, touch } from '@/lib/crm/store'
-import { newLead, Lead } from '@/lib/crm/types'
+import { newLead, Lead, LEAD_STEPS, STEP_LABELS } from '@/lib/crm/types'
 
 export async function GET() {
   const user = await requireCrmUser()
@@ -38,10 +38,7 @@ export async function POST(req: NextRequest) {
 // Editable fields; system fields (activities, emailHistory, ...) are managed server-side.
 const EDITABLE: Array<keyof Lead> = [
   'name', 'email', 'phone', 'company', 'designation', 'linkedin', 'website',
-  'status', 'processStatus', 'stage', 'priority', 'leadType', 'sector',
-  'companySize', 'businessFunction', 'interest', 'decisionRole',
-  'region', 'country', 'city', 'value', 'score', 'owner', 'source', 'tags',
-  'notes', 'techProfile', 'finalizedPitch', 'altEmails',
+  'status', 'country', 'city', 'owner', 'source', 'notes', 'altEmails',
 ]
 
 export async function PUT(req: NextRequest) {
@@ -61,11 +58,18 @@ export async function PUT(req: NextRequest) {
       for (const field of EDITABLE) {
         if (field in data) (lead as any)[field] = data[field]
       }
-      touch(lead, { at: new Date().toISOString(), by: user.email, type: 'updated', description: 'Lead details updated' })
+      if (!LEAD_STEPS.includes(lead.status)) lead.status = previousStatus as Lead['status']
+      const moved = lead.status !== previousStatus
+      touch(lead, {
+        at: new Date().toISOString(),
+        by: user.email,
+        type: moved ? 'status' : 'updated',
+        description: moved ? `Moved to ${STEP_LABELS[lead.status]}` : 'Details updated',
+      })
       return lead
     })
 
-    if (updated === 'forbidden') return NextResponse.json({ error: 'Lead is owned by someone else — claim it first.' }, { status: 403 })
+    if (updated === 'forbidden') return NextResponse.json({ error: 'This lead is held by someone else.' }, { status: 403 })
     if (!updated) return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
     // Tell LinkedIn about outcomes it can learn from (deduped on its side by lead id + kind)
     if (updated.status !== previousStatus && (updated.status === 'qualified' || updated.status === 'won')) {

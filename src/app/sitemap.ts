@@ -41,6 +41,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     page('/services/training', 0.8, 'weekly'),
     page('/services/certifications', 0.7),
     page('/workshops', 0.6, 'weekly'),
+    page('/ai-weekend', 0.8, 'weekly'),
     page('/workshops/claude-cowork', 0.6, 'monthly', new Date('2026-05-10')),
     page('/webinars', 0.5, 'weekly'),
     page('/resources/blog', 0.6, 'daily'),

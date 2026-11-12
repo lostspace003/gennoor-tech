@@ -5,23 +5,18 @@ import { aiConfigured, draftEmail } from '@/lib/crm/ai'
 import { teamMember, signOffText } from '@/lib/crm/team'
 import { Lead } from '@/lib/crm/types'
 
-// Honest fallback used when AI is unavailable — no invented statistics.
-// Signed by the team member drafting it, same as the AI path.
+// Used when the writing assistant is unavailable: a plain, honest starting point.
 function fallbackDraft(lead: Lead, senderEmail: string): { subject: string; body: string } {
   const first = (lead.name || 'there').split(/\s+/)[0]
   return {
-    subject: `AI training for ${lead.company || 'your team'}: free webinar from Gennoor Tech`,
+    subject: `Gennoor Tech and ${lead.company || 'your team'}`,
     body: `Dear ${first},
 
-I'm reaching out from Gennoor Tech. We train teams to work with AI and Claude, built around the work they do, and we automate processes one at a time.
+Thank you for your message.
 
-To start, we'd love to offer ${lead.company || 'your organization'} two things, completely free:
-- A 2-hour webinar tailored to your team's needs
-- A 1-day online AI training for your people
+[Write your reply here.]
 
-These are relationship-building sessions — no strings attached. You can also see our work on AI agent development on our YouTube channel: https://www.youtube.com/@GennoorTech
-
-Would a short call this week work to pick a topic your team would benefit from most?
+If a short call would help, you can pick a time at https://www.gennoor.com/resources/calendar
 
 ${signOffText(teamMember(senderEmail))}`,
   }
@@ -32,7 +27,7 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
-    const { leadId, instructions } = await request.json()
+    const { leadId, instructions, reply } = await request.json()
     if (!leadId) return NextResponse.json({ error: 'leadId required' }, { status: 400 })
 
     const lead = await getLead(leadId)
@@ -43,7 +38,7 @@ export async function POST(request: Request) {
     }
 
     try {
-      const draft = await draftEmail(lead, instructions, user.email)
+      const draft = await draftEmail(lead, instructions, user.email, !!reply)
       return NextResponse.json({ ...draft, source: 'ai' })
     } catch (error) {
       console.error('AI draft failed, using template:', error)

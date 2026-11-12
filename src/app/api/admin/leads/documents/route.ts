@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     const blobName = `${folder}/${safeName}`
     const buffer = Buffer.from(await file.arrayBuffer())
     // Every upload records who put it there and when, so the library can show
-    // "added by Deepanshu" rather than an anonymous file, and separate team
+    // "added by Yusuf" rather than an anonymous file, and separate team
     // uploads from company collateral an admin published.
     const leadId = String(form.get('leadId') || '')
     const metadata: Record<string, string> = {

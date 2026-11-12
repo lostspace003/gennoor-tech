@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Copy, Check, Mail, Loader2, RefreshCw, Newspaper, Users, MessageSquare, Building2, Briefcase, UserCircle, Activity, LayoutGrid, ExternalLink, ShieldCheck, ChevronLeft, ChevronDown, Search } from 'lucide-react'
+import { Copy, Check, Mail, Loader2, RefreshCw, Newspaper, Users, MessageSquare, Building2, Briefcase, UserCircle, History, Home, ExternalLink, ShieldCheck, ChevronLeft, ChevronDown, Search } from 'lucide-react'
 import InfoTip from '@/components/admin/InfoTip'
 import ProspectTable from '@/components/admin/ProspectTable'
 import ProspectingPanel from '@/components/admin/ProspectingPanel'
@@ -19,7 +19,7 @@ interface Status {
 }
 interface Result { tool: string; args: Record<string, any>; data: any; ok: boolean; cached?: boolean; at: number; ms?: number }
 
-const ICONS: Record<Tab, any> = { overview: LayoutGrid, feed: Newspaper, people: Users, inbox: MessageSquare, companies: Building2, jobs: Briefcase, me: UserCircle, prospecting: Mail, activity: Activity }
+const ICONS: Record<Tab, any> = { overview: Home, feed: Newspaper, people: Users, inbox: MessageSquare, companies: Building2, jobs: Briefcase, me: UserCircle, prospecting: Mail, activity: History }
 const field = 'w-full text-sm border border-gray-200 rounded-md px-2.5 py-1.5 focus:outline-none focus:border-blue-500 bg-white'
 const btn = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium rounded-md border border-gray-200 bg-white hover:border-gray-400 disabled:opacity-40'
 const primary = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium bg-gray-800 text-white rounded-md hover:bg-gray-900 disabled:opacity-40'
@@ -166,8 +166,7 @@ function ResultView({ r, label, onRun, busy }: { r: Result; label: string; onRun
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
         <button onClick={copy} className={btn}>{copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}{copied ? 'Copied' : 'Copy'}</button>
-        <button onClick={() => setMailOpen(o => !o)} className={btn}><Mail className="w-3.5 h-3.5" />Email this</button>
-        <InfoTip text="Copy puts the neat version on your clipboard (headings and bullets stay when you paste into an email or document). Email this sends the same neat version to any address you type." />
+        <button onClick={() => setMailOpen(o => !o)} className={btn}><Mail className="w-3.5 h-3.5" />Email this to someone</button>
       </div>
       {mailOpen && (
         <form onSubmit={send} className="flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 p-2.5">
@@ -178,9 +177,9 @@ function ResultView({ r, label, onRun, busy }: { r: Result; label: string; onRun
       )}
       {cards ? <CardsView cards={cards} /> : <div className="rounded-lg border border-gray-200 bg-white p-4 max-h-[70vh] overflow-y-auto"><Fmt md={md} /></div>}
       {refs.length > 0 && (
-        <section className="rounded-lg border border-gray-200 bg-white">
-          <div className="px-3 py-1.5 text-xs font-semibold border-b border-gray-100 bg-gray-50 rounded-t-lg">Do more with these ({Math.min(refs.length, 120)})<InfoTip text="Shortcuts for each link found: read a profile, open a conversation, see job details and so on. Each press runs one more lookup." /></div>
-          <ul className="divide-y divide-gray-100 max-h-[28rem] overflow-y-auto">
+        <details className="rounded-lg border border-gray-200 bg-white" open={!cards}>
+          <summary className="px-3 py-2 text-xs font-semibold cursor-pointer select-none">Open a profile, conversation or job from this result ({Math.min(refs.length, 120)})<span className="font-normal text-gray-500"> · each one uses a lookup</span></summary>
+          <ul className="divide-y divide-gray-100 max-h-[28rem] overflow-y-auto border-t border-gray-100">
             {refs.slice(0, 120).map((x, i) => {
               const acts = linkActions(x.url)
               return (
@@ -192,12 +191,24 @@ function ResultView({ r, label, onRun, busy }: { r: Result; label: string; onRun
               )
             })}
           </ul>
-        </section>
+        </details>
       )}
-      <details className="text-xs text-gray-400"><summary className="cursor-pointer">Raw response</summary><pre className="mt-1 whitespace-pre-wrap break-words bg-gray-50 rounded p-2 max-h-64 overflow-y-auto">{JSON.stringify(d, null, 2)}</pre></details>
+      <details className="text-xs text-gray-400"><summary className="cursor-pointer">Technical details</summary><pre className="mt-1 whitespace-pre-wrap break-words bg-gray-50 rounded p-2 max-h-64 overflow-y-auto">{JSON.stringify(d, null, 2)}</pre></details>
     </div>
   )
 }
+
+// What you can search for straight from Home, and which lookup runs it.
+const QUICK: { key: GroupKey; label: string; tool: string; placeholder: string }[] = [
+  { key: 'people', label: 'People', tool: 'search_people', placeholder: 'A role or name, e.g. Head of Learning banking' },
+  { key: 'companies', label: 'Companies', tool: 'search_companies', placeholder: 'A kind of company, e.g. IT services Pune' },
+  { key: 'feed', label: 'Posts', tool: 'search_posts', placeholder: 'A topic, e.g. agentic AI' },
+  { key: 'jobs', label: 'Jobs', tool: 'search_jobs', placeholder: 'A job title, e.g. AI architect' },
+  { key: 'inbox', label: 'My messages', tool: 'search_conversations', placeholder: 'A word from the conversation, e.g. training' },
+]
+// Tab names say what you are looking at, in the order people use them.
+const TAB_LABEL: Record<Tab, string> = { overview: 'Home', people: 'People', companies: 'Companies', feed: 'Posts', inbox: 'Messages', jobs: 'Jobs', me: 'My profile', prospecting: 'Find emails', activity: 'History' }
+const TAB_ORDER: Tab[] = ['overview', 'people', 'companies', 'feed', 'inbox', 'jobs', 'prospecting', 'activity']
 
 export default function LinkedInHubPage() {
   const [st, setSt] = useState<Status | null>(null)
@@ -214,6 +225,8 @@ export default function LinkedInHubPage() {
   const [aQ, setAQ] = useState('')
   const [aRes, setARes] = useState<'all' | 'ok' | 'fail'>('all')
   const [aPage, setAPage] = useState(0)
+  const [quick, setQuick] = useState<GroupKey>('people')
+  const [quickText, setQuickText] = useState('')
 
   const load = useCallback(async () => {
     // Open at once from the site's own records, then check the connector (it can take a while to wake up).
@@ -242,6 +255,7 @@ export default function LinkedInHubPage() {
   // Only offer what this connector build actually provides.
   const offered = (t: ToolDef) => !st?.available || st.available.includes(t.name)
   const tools = TOOLS.filter(t => t.group === tab && offered(t))
+  const lookups = tools.filter(t => t.kind === 'read'), actions = tools.filter(t => t.kind === 'action')
   const tool = TOOLS.find(t => t.name === toolName)
   const latest = stack[stack.length - 1]
 
@@ -249,13 +263,12 @@ export default function LinkedInHubPage() {
     setToolName(t.name)
     setVals(Object.fromEntries(t.fields.map(f => [f.name, args[f.name] ?? f.def ?? (f.type === 'bool' ? false : '')])))
   }
-  const go = (t: Tab) => { setTab(t); setStack([]); setError(''); const first = TOOLS.find(x => x.group === t && offered(x)); if (first) pickTool(first); else setToolName('') }
+  const go = (t: Tab) => { setTab(t); setStack([]); setError(''); const first = TOOLS.find(x => x.group === t && offered(x) && x.kind === 'read') || TOOLS.find(x => x.group === t && offered(x)); if (first) pickTool(first); else setToolName('') }
 
   async function run(name: string, args: Record<string, any>, o: { fresh?: boolean; confirmed?: boolean } = {}) {
     const def = TOOLS.find(t => t.name === name)!
     args = Object.fromEntries(Object.entries(args).map(([k, v]) => [k, normalizeArg(k, v)]))
-    if (def.group !== tab && tab !== 'overview') setTab(def.group)
-    if (tab === 'overview') setTab(def.group)
+    if (def.group !== tab) setTab(def.group)
     pickTool(def, args)
     if (def.kind === 'action' && !o.confirmed) { setConfirm({ tool: def, args }); return }
     setBusy(true); setError('')
@@ -272,6 +285,7 @@ export default function LinkedInHubPage() {
   const sessionOk = verified || (!!st?.session && (st.session.session?.stored === true || st.session.session?.profile || st.session.authenticated === true))
   const unknown = !sessionOk && !!st?.sessionUnknown
   const svc = st?.service
+  const ready = svc === 'up'
   const AP = 25
   const aRows = (st?.activity || []).filter(a => {
     if (aRes !== 'all' && a.ok !== (aRes === 'ok')) return false
@@ -280,102 +294,144 @@ export default function LinkedInHubPage() {
     return !n || `${a.label} ${a.summary} ${a.area} ${a.error || ''}`.toLowerCase().includes(n)
   })
   const aPages = Math.max(1, Math.ceil(aRows.length / AP)), aAt = Math.min(aPage, aPages - 1)
-  const tabs: Tab[] = ['overview', ...GROUPS.map(g => g.key), 'prospecting', 'activity']
+  const quickDef = QUICK.find(x => x.key === quick)!
+  const statusText = svc === 'checking' ? 'Waking the connector…' : svc === 'not-configured' ? 'Not set up' : svc === 'down' ? 'Not responding' : sessionOk ? 'Signed in to LinkedIn' : unknown ? 'Connector running' : 'Sign-in needed'
+  const good = ready && sessionOk
+  // The three limits that matter, kept in view on every tab.
+  const limits = st ? [{ label: 'Lookups', used: st.usage.reads, cap: st.usage.readCap }, ...st.caps.filter(c => ['connect_with_person', 'send_message'].includes(c.tool)).map(c => ({ label: c.tool === 'send_message' ? 'Messages' : 'Connection requests', used: c.used, cap: c.cap }))] : []
 
   return (
     <div className="w-full p-4 lg:p-5">
-      <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-        <h1 className="text-xl font-semibold tracking-tight">LinkedIn hub<InfoTip text="Look things up and act on your LinkedIn account from the admin centre: feed, people, messages, companies and jobs. It works through your saved LinkedIn login, one careful request at a time. Publishing posts stays in the Social studio." /></h1>
-        <div className="flex items-center gap-2 text-xs">
-          {st && <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border ${svc === 'up' && sessionOk ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-800'}`}><i className={`w-1.5 h-1.5 rounded-full ${svc === 'up' && sessionOk ? 'bg-emerald-500' : 'bg-amber-500'}`} />{svc === 'checking' ? 'Checking connector…' : svc === 'not-configured' ? 'Not set up' : svc === 'down' ? 'Service unreachable' : sessionOk ? 'Signed in to LinkedIn' : unknown ? 'Connector running' : 'Sign-in needed'}</span>}
+      {/* One line: what this is, whether it is working, how much of today is used */}
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 mb-3">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <h1 className="text-xl font-semibold tracking-tight">LinkedIn hub</h1>
+          {st && <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs ${good ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-800'}`}><i className={`w-1.5 h-1.5 rounded-full ${good ? 'bg-emerald-500' : 'bg-amber-500'}`} />{statusText}</span>}
+        </div>
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          {limits.map(l => { const pct = l.cap ? l.used / l.cap : 0; return (
+            <span key={l.label} title={`${l.label} used today. Limits keep the account inside normal use and reset at midnight UTC.`} className={`px-2.5 py-1 rounded-full border ${pct > 0.85 ? 'border-red-200 bg-red-50 text-red-700' : pct > 0.6 ? 'border-amber-200 bg-amber-50 text-amber-800' : 'border-gray-200 bg-white text-gray-600'}`}>{l.label} <b className="font-semibold text-gray-900">{l.used}</b>/{l.cap}</span>
+          ) })}
           <WarmSwitch onChange={load} />
-          <button onClick={load} className={btn}><RefreshCw className="w-3.5 h-3.5" />Refresh</button>
+          <button onClick={load} className={btn} title="Check the connector again"><RefreshCw className="w-3.5 h-3.5" />Refresh</button>
         </div>
       </div>
+
       {error && <div className="mb-3 rounded-md bg-red-50 border border-red-200 text-red-800 text-sm px-3 py-2">{error}</div>}
 
+      {/* Something is wrong: say so once, on every tab, with what to do */}
+      {st && svc !== 'checking' && (!ready || (!sessionOk && !unknown)) && (
+        <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 p-3.5 text-sm text-amber-900">
+          <div className="font-semibold">{svc === 'not-configured' ? 'The LinkedIn connector is not set up yet' : svc === 'down' ? 'The LinkedIn connector is not responding' : 'Sign in to LinkedIn once'}</div>
+          <p className="text-[13px] mt-1">{svc === 'not-configured' ? 'The connector service needs to be deployed and its address added to the site settings.' : svc === 'down' ? `It did not answer${st.detail ? ` (${st.detail})` : ''}. It may be starting up. Press Refresh in a minute.` : 'The connector keeps a saved LinkedIn sign-in and has none yet. Ask your developer to run scripts/linkedin-mcp-login.ps1, which prints a private sign-in link where you type your own password.'}</p>
+        </div>
+      )}
+      {st && unknown && ready && (
+        <div className="mb-3 rounded-xl border border-gray-200 bg-white p-3 text-sm flex flex-wrap items-center gap-3"><span className="text-gray-700">The connector is running. Check that your LinkedIn sign-in is still saved.</span><button onClick={() => run('get_my_profile', { sections: '' })} disabled={busy} className={primary}>Check sign-in</button></div>
+      )}
+
       <div className="flex gap-1 overflow-x-auto border-b border-gray-200 mb-4 text-sm">
-        {tabs.map(t => { const I = ICONS[t]; return (
-          <button key={t} onClick={() => go(t)} className={`inline-flex items-center gap-1.5 px-3 py-2 -mb-px border-b-2 whitespace-nowrap ${tab === t ? 'border-gray-800 font-medium' : 'border-transparent text-gray-500 hover:text-gray-800'}`}><I className="w-4 h-4" />{t === 'overview' ? 'Overview' : t === 'activity' ? 'Activity' : t === 'prospecting' ? 'Prospecting' : GROUPS.find(g => g.key === t)!.label}</button>
+        {TAB_ORDER.map(t => { const I = ICONS[t]; return (
+          <button key={t} onClick={() => go(t)} className={`inline-flex items-center gap-1.5 px-3 py-2 -mb-px border-b-2 whitespace-nowrap ${tab === t ? 'border-gray-800 font-medium' : 'border-transparent text-gray-500 hover:text-gray-800'}`}><I className="w-4 h-4" />{TAB_LABEL[t]}</button>
         ) })}
       </div>
 
       {!st ? <Loader2 className="w-5 h-5 animate-spin text-gray-400" /> : tab === 'overview' ? (
-        <SplitPane id="hub-overview" initial={640} min={300}
-          left={<div className="space-y-4">
-            {unknown && svc === 'up' && <div className="rounded-xl border border-gray-200 bg-white p-4 text-sm flex flex-wrap items-center gap-3"><span className="text-gray-700">The connector is running. Check that your LinkedIn sign-in is saved.</span><button onClick={() => run('get_my_profile', { sections: '' })} disabled={busy} className={primary}>Check sign-in</button></div>}
-            {svc !== 'checking' && (svc !== 'up' || (!sessionOk && !unknown)) && (
-              <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 space-y-2">
-                <div className="font-semibold">{svc === 'not-configured' ? 'The LinkedIn connector is not set up yet' : svc === 'down' ? 'The LinkedIn connector is not responding' : 'Sign in to LinkedIn once'}</div>
-                <p className="text-[13px]">{svc === 'not-configured' ? 'The connector service needs to be deployed and its address added to the site settings.' : svc === 'down' ? `The service did not answer${st.detail ? ` (${st.detail})` : ''}. It may be starting up; refresh in a minute.` : 'The connector keeps a saved LinkedIn login so it stays signed in between uses. It has none yet. A one-time sign-in opens a secure browser view where you type your own password. Nothing is typed or stored by this site.'}</p>
-                {svc === 'up' && <p className="text-[13px]">Ask your developer to run <code className="px-1 rounded bg-amber-100">scripts/linkedin-mcp-login.ps1</code>, which prints a private sign-in link.</p>}
-              </div>
-            )}
-            <div className="grid sm:grid-cols-2 gap-3">
-              {GROUPS.map(g => { const I = ICONS[g.key]; return (
-                <button key={g.key} onClick={() => go(g.key)} className="text-left rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:border-gray-400 hover:shadow transition">
-                  <I className="w-5 h-5 text-gray-500 mb-2" /><div className="text-sm font-semibold">{g.label}</div><div className="text-[13px] text-gray-500 mt-0.5">{g.blurb}</div>
+        <div className="max-w-5xl space-y-5">
+          {/* The one thing most visits are for */}
+          <form onSubmit={e => { e.preventDefault(); if (quickText.trim()) run(quickDef.tool, { keywords: quickText.trim() }) }} className="rounded-xl border border-gray-200 bg-white shadow-sm p-4">
+            <div className="text-sm font-semibold mb-2.5">Search LinkedIn</div>
+            <div className="flex flex-wrap gap-1.5 mb-2.5">
+              {QUICK.map(x => <button type="button" key={x.key} onClick={() => setQuick(x.key)} className={`px-3 py-1.5 text-[13px] rounded-full border ${quick === x.key ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 bg-white hover:border-gray-400'}`}>{x.label}</button>)}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <div className="relative flex-1 min-w-[220px]"><Search className="w-4 h-4 absolute left-3 top-2.5 text-gray-400" /><input value={quickText} onChange={e => setQuickText(e.target.value)} placeholder={quickDef.placeholder} className={`${field} pl-9 py-2`} /></div>
+              <button disabled={busy || !ready || !quickText.trim()} className={primary}>{busy ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Searching…</> : 'Search'}</button>
+            </div>
+            <div className="text-xs text-gray-400 mt-2">Plain words are enough. For country, company and date filters, open the tab for what you are looking for.</div>
+          </form>
+
+          <div>
+            <div className="text-xs font-semibold text-gray-500 mb-2">Or go straight to</div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+              {([
+                ['people', 'Find people', 'Search by role, place and company. Add them to the CRM or find their email.'],
+                ['companies', 'Research a company', 'Its profile, recent posts and the people who work there.'],
+                ['inbox', 'Read and answer messages', 'Your LinkedIn conversations, with search.'],
+                ['feed', 'See what is being posted', 'Your feed, or posts on a topic.'],
+                ['prospecting', 'Find work emails', 'Paste names and companies; get email addresses.'],
+                ['jobs', 'Look at jobs', 'Postings by title and place. Shows who is hiring for what.'],
+              ] as [Tab, string, string][]).map(([key, title, text]) => { const I = ICONS[key]; return (
+                <button key={key} onClick={() => go(key)} className="text-left rounded-xl border border-gray-200 bg-white p-3.5 hover:border-gray-400 transition flex gap-3">
+                  <I className="w-5 h-5 text-gray-500 shrink-0 mt-0.5" />
+                  <span><span className="block text-sm font-semibold">{title}</span><span className="block text-[13px] text-gray-500 mt-0.5">{text}</span></span>
                 </button>
               ) })}
             </div>
-          </div>}
-          right={<div className="space-y-3">
-            <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3">
-              <div className="text-xs font-semibold mb-2 flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />Today's safety limits<InfoTip text="LinkedIn restricts accounts that look automated. These daily limits keep the hub within normal human use. They reset at midnight UTC." /></div>
-              <Meter label="Lookups" used={st.usage.reads} cap={st.usage.readCap} />
-              {st.caps.map(c => <Meter key={c.tool} label={c.label} used={c.used} cap={c.cap} />)}
-              <div className="text-xs text-gray-400 mt-2">Requests run one at a time, a few seconds apart, and repeat lookups are served from a 10-minute cache.</div>
+          </div>
+
+          <div className="rounded-xl border border-gray-200 bg-white p-3.5">
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-xs font-semibold flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />Done today</div>
+              <div className="flex gap-3 text-xs"><button onClick={() => go('me')} className="text-blue-700 hover:underline">My profile</button><button onClick={() => go('activity')} className="text-blue-700 hover:underline">Full history</button></div>
             </div>
-            <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3">
-              <div className="text-xs font-semibold mb-2">Recent</div>
-              <ul className="space-y-1.5 max-h-64 overflow-y-auto">
-                {st.activity.slice(0, 8).map(a => <li key={a.id} className="text-[13px] flex gap-2"><i className={`mt-1.5 w-1.5 h-1.5 rounded-full shrink-0 ${a.ok ? 'bg-emerald-500' : 'bg-red-500'}`} /><span className="break-words">{a.label}{a.summary ? ` · ${a.summary}` : ''}<span className="text-gray-400"> · {new Date(a.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span></span></li>)}
-                {st.activity.length === 0 && <li className="text-[13px] text-gray-400">Nothing yet.</li>}
-              </ul>
-            </div>
-          </div>} />
+            <ul className="space-y-1.5">
+              {st.activity.slice(0, 5).map(a => <li key={a.id} className="text-[13px] flex gap-2"><i className={`mt-1.5 w-1.5 h-1.5 rounded-full shrink-0 ${a.ok ? 'bg-emerald-500' : 'bg-red-500'}`} /><span className="break-words">{a.label}{a.summary ? ` · ${a.summary}` : ''}<span className="text-gray-400"> · {new Date(a.at).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span></span></li>)}
+              {st.activity.length === 0 && <li className="text-[13px] text-gray-400">Nothing yet. Your searches and actions are listed here.</li>}
+            </ul>
+            <div className="text-xs text-gray-400 mt-2.5">LinkedIn restricts accounts that look automated, so requests run one at a time, a few seconds apart, inside the daily limits shown at the top.</div>
+          </div>
+        </div>
       ) : tab === 'prospecting' ? (
         <ProspectingPanel />
       ) : tab === 'activity' ? (
         <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
           <div className="p-2.5 border-b border-gray-100 flex flex-wrap items-center gap-x-3 gap-y-2">
-            <input value={aQ} onChange={e => { setAQ(e.target.value); setAPage(0) }} placeholder="Search activity" className="text-[13px] border border-gray-200 rounded-md px-2.5 py-1.5 w-48 focus:outline-none focus:border-blue-500" />
+            <input value={aQ} onChange={e => { setAQ(e.target.value); setAPage(0) }} placeholder="Search history" className="text-[13px] border border-gray-200 rounded-md px-2.5 py-1.5 w-48 focus:outline-none focus:border-blue-500" />
             <span className="inline-flex flex-wrap items-center gap-1">
               <button type="button" onClick={() => { setARange(null); setAPage(0) }} className={`px-2.5 py-1 text-xs rounded-full border ${!aRange ? 'bg-primary-600 text-white border-primary-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>All time</button>
               <DateRangeFilter value={aRange || { days: -1, from: '', to: '' }} onChange={r => { setARange(r); setAPage(0) }} />
             </span>
-            <span className="flex gap-1 ml-auto">{(['all', 'ok', 'fail'] as const).map(k => <button key={k} onClick={() => { setARes(k); setAPage(0) }} className={`text-xs px-2 py-1 rounded-md border ${aRes === k ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 text-gray-600 hover:border-gray-400'}`}>{k === 'all' ? 'All' : k === 'ok' ? 'Succeeded' : 'Failed'}</button>)}</span>
+            <span className="flex gap-1 ml-auto">{(['all', 'ok', 'fail'] as const).map(k => <button key={k} onClick={() => { setARes(k); setAPage(0) }} className={`text-xs px-2 py-1 rounded-md border ${aRes === k ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 text-gray-600 hover:border-gray-400'}`}>{k === 'all' ? 'All' : k === 'ok' ? 'Worked' : 'Failed'}</button>)}</span>
           </div>
           <div className="max-h-[60vh] overflow-auto"><table className="w-full text-[13px]">
-            <thead className="sticky top-0 bg-gray-50 text-xs text-gray-500"><tr><th className="text-left px-3 py-1.5 font-medium">When</th><th className="text-left px-3 py-1.5 font-medium">What</th><th className="text-left px-3 py-1.5 font-medium">Type</th><th className="text-right px-3 py-1.5 font-medium">Result</th></tr></thead>
-            <tbody>{aRows.slice(aAt * AP, aAt * AP + AP).map(a => <tr key={a.id} className="border-t border-gray-100 hover:bg-gray-50"><td className="px-3 py-1.5 whitespace-nowrap text-gray-500">{new Date(a.at).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</td><td className="px-3 py-1.5 break-words">{a.label}{a.summary ? ` · ${a.summary}` : ''}</td><td className="px-3 py-1.5"><span className={`text-xs px-1.5 py-0.5 rounded ${a.kind === 'action' ? 'bg-gray-100 text-gray-700' : 'bg-gray-100 text-gray-600'}`}>{a.kind === 'action' ? 'action' : 'lookup'}</span></td><td className={`px-3 py-1.5 text-right ${a.ok ? 'text-gray-500' : 'text-red-600'}`}>{a.ok ? (a.cached ? 'cached' : `${(a.ms / 1000).toFixed(1)}s`) : (a.error || 'failed')}</td></tr>)}</tbody>
+            <thead className="sticky top-0 bg-gray-50 text-xs text-gray-500"><tr><th className="text-left px-3 py-1.5 font-medium">When</th><th className="text-left px-3 py-1.5 font-medium">What</th><th className="text-left px-3 py-1.5 font-medium">From</th><th className="text-right px-3 py-1.5 font-medium">Result</th></tr></thead>
+            <tbody>{aRows.slice(aAt * AP, aAt * AP + AP).map(a => <tr key={a.id} className="border-t border-gray-100 hover:bg-gray-50"><td className="px-3 py-1.5 whitespace-nowrap text-gray-500">{new Date(a.at).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</td><td className="px-3 py-1.5 break-words">{a.label}{a.summary ? ` · ${a.summary}` : ''}{a.kind === 'action' && <span className="ml-1.5 text-[11px] px-1.5 py-0.5 rounded bg-amber-50 text-amber-800">changed the account</span>}</td><td className="px-3 py-1.5 text-gray-500">{a.area === 'crm' ? 'CRM' : 'Hub'}</td><td className={`px-3 py-1.5 text-right ${a.ok ? 'text-gray-500' : 'text-red-600'}`}>{a.ok ? (a.cached ? 'saved copy' : `${(a.ms / 1000).toFixed(1)}s`) : (a.error || 'failed')}</td></tr>)}</tbody>
           </table>{aRows.length === 0 && <div className="p-6 text-sm text-gray-500 text-center">Nothing{aRange ? ` in ${rangeLabel(aRange)}` : ''} matches.</div>}</div>
           {aRows.length > AP && <div className="flex items-center justify-between px-3 py-2 border-t border-gray-100 text-xs text-gray-500"><span>{aAt * AP + 1}–{Math.min(aRows.length, aAt * AP + AP)} of {aRows.length}</span><div className="flex items-center gap-1"><button disabled={aAt === 0} onClick={() => setAPage(aAt - 1)} className={btn}>Newer</button><span className="px-1">{aAt + 1}/{aPages}</span><button disabled={aAt >= aPages - 1} onClick={() => setAPage(aAt + 1)} className={btn}>Older</button></div></div>}
         </div>
       ) : (
         <SplitPane id="hub-tools" initial={340}
-          left={<div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3">
-            <div className="text-xs text-gray-500 mb-2">{group?.blurb}</div>
-            <div className="flex flex-wrap gap-1.5 mb-3">{tools.map(t => <button key={t.name} onClick={() => { pickTool(t); setStack([]) }} className={`px-3 py-1.5 text-[13px] rounded-full border ${toolName === t.name ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 bg-white hover:border-gray-400'}`}>{t.label}{t.kind === 'action' && <span className="ml-1 opacity-60">●</span>}</button>)}</div>
+          left={<div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+            {/* 1. choose what to do */}
+            <div className="p-2 border-b border-gray-100">
+              <div className="px-1.5 pt-1 pb-1.5 text-[11px] font-semibold uppercase tracking-wide text-gray-400">Look up</div>
+              {lookups.map(t => <ToolRow key={t.name} t={t} on={toolName === t.name} pick={() => { pickTool(t); setStack([]) }} />)}
+              {actions.length > 0 && <>
+                <div className="px-1.5 pt-2.5 pb-1.5 text-[11px] font-semibold uppercase tracking-wide text-gray-400">Do <span className="normal-case font-normal tracking-normal">(changes your account, asks first)</span></div>
+                {actions.map(t => <ToolRow key={t.name} t={t} on={toolName === t.name} pick={() => { pickTool(t); setStack([]) }} />)}
+              </>}
+              {tools.length === 0 && <div className="p-3 text-[13px] text-gray-500">{group?.blurb} Nothing is available from the connector right now.</div>}
+            </div>
+            {/* 2. fill it in */}
             {tool && (
-              <form onSubmit={e => { e.preventDefault(); run(tool.name, vals) }} className="space-y-2">
-                <div className="text-xs text-gray-500">{tool.help} Plain words are fine, no special format.{tool.kind === 'action' && <span className="text-gray-700"> This changes your account.</span>}</div>
-                {STARTERS[tool.name] && <div><div className="text-xs text-gray-500 mb-1">Quick starts: click one, then Run<InfoTip text="Ready-made examples. Clicking one fills the form so you can see how it works, and you can change the words before running." /></div><div className="flex flex-wrap gap-1.5">{STARTERS[tool.name].map(x => <button type="button" key={x.label} onClick={() => pickTool(tool, x.args)} className="px-2.5 py-1 text-xs rounded-full border border-blue-200 bg-blue-50 text-blue-800 hover:bg-blue-100">{x.label}</button>)}</div></div>}
+              <form onSubmit={e => { e.preventDefault(); run(tool.name, vals) }} className="p-3 space-y-2.5">
                 {tool.fields.map(f => <FieldInput key={f.name} f={f} v={vals[f.name]} set={v => setVals(s => ({ ...s, [f.name]: v }))} />)}
-                <button disabled={busy || st.service !== 'up'} className={`${primary} w-full justify-center`}>{busy ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Working…</> : tool.kind === 'action' ? 'Review & confirm…' : <><Search className="w-3.5 h-3.5" />Run</>}</button>
-                {busy && <div className="text-xs text-gray-400">LinkedIn pages load slowly on purpose. This can take up to a minute.</div>}
+                {STARTERS[tool.name] && <div className="flex flex-wrap items-center gap-1.5"><span className="text-xs text-gray-400">Try:</span>{STARTERS[tool.name].map(x => <button type="button" key={x.label} onClick={() => pickTool(tool, x.args)} className="px-2.5 py-1 text-xs rounded-full border border-gray-200 text-gray-600 hover:border-gray-400">{x.label}</button>)}</div>}
+                <button disabled={busy || !ready} className={`${primary} w-full justify-center`}>{busy ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Working…</> : tool.kind === 'action' ? 'Review before sending' : <><Search className="w-3.5 h-3.5" />{tool.fields.some(f => f.name === 'keywords') ? 'Search' : 'Show'}</>}</button>
+                {busy && <div className="text-xs text-gray-400">LinkedIn pages are read slowly on purpose. This can take up to a minute.</div>}
               </form>
             )}
           </div>}
           right={<div className="min-w-0">
-            {stack.length > 1 && <button onClick={() => setStack(s => s.slice(0, -1))} className={`${btn} mb-2`}><ChevronLeft className="w-3.5 h-3.5" />Back</button>}
-            {!latest ? <div className="rounded-xl border border-dashed border-gray-300 bg-white/50 text-sm text-gray-500 p-10 text-center">{busy ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : 'Fill in the form and run it. Results appear here.'}</div> : (
+            {stack.length > 1 && <button onClick={() => setStack(s => s.slice(0, -1))} className={`${btn} mb-2`}><ChevronLeft className="w-3.5 h-3.5" />Back to the previous result</button>}
+            {!latest ? <div className="rounded-xl border border-dashed border-gray-300 bg-white/50 text-sm text-gray-500 p-10 text-center">{busy ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : <>Choose what to look up on the left.<br />Results appear here.</>}</div> : (
               <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3">
                 <div className="flex flex-wrap items-center gap-2 mb-3 text-xs">
-                  <span className="font-semibold">{TOOLS.find(t => t.name === latest.tool)?.label}</span>
-                  {latest.cached && <span className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 text-xs">from cache</span>}
+                  <span className="text-sm font-semibold">{TOOLS.find(t => t.name === latest.tool)?.label}</span>
+                  {latest.cached && <span className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 text-xs" title="Shown from a copy saved in the last 10 minutes, so it did not use a lookup">saved copy</span>}
                   {!latest.ok && <span className="px-1.5 py-0.5 rounded bg-red-100 text-red-700 text-xs">LinkedIn reported a problem</span>}
-                  <button disabled={busy} onClick={() => run(latest.tool, latest.args, { fresh: true })} className={`${btn} ml-auto`}><RefreshCw className="w-3 h-3" />Fetch fresh</button>
+                  <button disabled={busy} onClick={() => run(latest.tool, latest.args, { fresh: true })} className={`${btn} ml-auto`} title="Read it from LinkedIn again (uses one lookup)"><RefreshCw className="w-3 h-3" />Get it again</button>
                 </div>
                 <ResultView r={latest} label={TOOLS.find(t => t.name === latest.tool)?.label || latest.tool} busy={busy} onRun={(t, a) => run(t, a)} />
               </div>
@@ -403,11 +459,13 @@ export default function LinkedInHubPage() {
   )
 }
 
-function Meter({ label, used, cap }: { label: string; used: number; cap: number }) {
-  const pct = Math.min(100, (used / cap) * 100)
+/** One choice in the left list: its name, and one line saying what it gives you. */
+function ToolRow({ t, on, pick }: { t: ToolDef; on: boolean; pick: () => void }) {
   return (
-    <div className="mb-2"><div className="flex justify-between text-xs text-gray-600"><span>{label}</span><span>{used}/{cap}</span></div>
-      <div className="h-1.5 rounded bg-gray-100"><div className={`h-1.5 rounded ${pct > 85 ? 'bg-red-500' : pct > 60 ? 'bg-amber-500' : 'bg-emerald-500'}`} style={{ width: `${pct}%` }} /></div></div>
+    <button type="button" onClick={pick} aria-pressed={on} className={`w-full text-left px-2.5 py-1.5 rounded-lg ${on ? 'bg-gray-100' : 'hover:bg-gray-50'}`}>
+      <span className={`block text-[13px] ${on ? 'font-semibold text-gray-900' : 'text-gray-800'}`}>{t.label}</span>
+      <span className="block text-xs text-gray-500">{t.help}</span>
+    </button>
   )
 }
 
