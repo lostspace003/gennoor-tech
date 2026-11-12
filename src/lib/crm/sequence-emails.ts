@@ -1,5 +1,5 @@
 import { escapeHtml } from '@/lib/escape-html'
-import { briefShell, briefHead, briefPicture, briefTiles, briefLinks, briefButton, briefLine, briefLink, briefStrip, briefChoices, briefNote, BRIEF } from './brief-theme'
+import { briefShell, briefHead, briefPicture, briefTiles, briefLinks, briefBadges, briefButton, briefLine, briefLink, briefStrip, briefChoices, briefNote, BRIEF } from './brief-theme'
 import { stepById, fillTokens } from './sequence'
 import type { Lead } from './types'
 import type { TeamMember } from './team'
@@ -43,7 +43,7 @@ function content(stepId: string, first: string, company: string): Content {
           briefTiles([
             { icon: 'play', title: 'Video lessons', line: 'Short, with captions' },
             { icon: 'labs', title: 'Hands-on labs', line: 'Files to download' },
-            { icon: 'certificate', title: 'Certificate', line: 'Quizzes in every module' },
+            { icon: 'certificate', art: 'certification', title: 'Certificate', line: 'Quizzes in every module' },
           ]) +
           briefButton('Watch the preview lessons', STUDIO) +
           briefLine(`Prefer to talk? ${briefLink('Pick a time', CALL)}.`),
@@ -57,9 +57,9 @@ function content(stepId: string, first: string, company: string): Content {
           briefHead('Sample courses', 'Three courses. Open any one.', `${first}, the preview lessons play without signing in.`) +
           briefPicture('courses', 'Three courses: AI-103, AI-500 and the Claude certification guides.', STUDIO) +
           briefLinks([
-            { icon: 'project', title: 'AI-103: Build and Ship AI Agents', line: 'One project, first lesson to last', href: `${STUDIO}/ai-103` },
-            { icon: 'team', title: 'AI-500: Multi-Agent AI Solutions', line: 'For engineers and architects', href: `${STUDIO}/ai-500` },
-            { icon: 'certificate', title: 'Claude certification guides', line: 'Four guides, each with a practice exam', href: `${SITE}/claude/certifications` },
+            { icon: 'project', art: 'ai-103', title: 'AI-103: Build and Ship AI Agents', line: 'Microsoft certification course, one project throughout', href: `${STUDIO}/ai-103` },
+            { icon: 'team', art: 'ai-500', title: 'AI-500: Multi-Agent AI Solutions', line: 'For engineers and architects', href: `${STUDIO}/ai-500` },
+            { icon: 'certificate', art: 'claude', title: 'Claude certification guides', line: 'Four guides, each with a practice exam', href: `${SITE}/claude/certifications` },
           ]) +
           briefStrip('catalogue', `<strong style="color:${BRIEF.text}">Attached: the full catalogue.</strong> Every programme we run, in one Excel file.`) +
           briefButton('Book a 20-minute call', CALL) +
@@ -105,8 +105,14 @@ function content(stepId: string, first: string, company: string): Content {
         body:
           briefHead('Claude', `Claude for the team at ${co}.`, 'Use it well, get certified, automate one process at a time.') +
           briefPicture('claude', 'Three things we do with Claude: certification preparation, training for teams, and automation.', `${SITE}/claude`) +
+          briefBadges('The four Claude certifications', [
+            { art: 'ccas-f', name: 'Associate', href: `${SITE}/claude/certifications/associate-foundations` },
+            { art: 'ccdv-f', name: 'Developer', href: `${SITE}/claude/certifications/developer-foundations` },
+            { art: 'ccar-f', name: 'Architect', href: `${SITE}/claude/certifications/architect-foundations` },
+            { art: 'ccar-p', name: 'Architect Pro', href: `${SITE}/claude/certifications/architect-professional` },
+          ]) +
           briefLinks([
-            { icon: 'certificate', title: 'Certification preparation', line: 'Four guides, each with a practice exam', href: `${SITE}/claude/certifications` },
+            { icon: 'certificate', art: 'claude', title: 'Certification preparation', line: 'A guide and practice exam for each', href: `${SITE}/claude/certifications` },
             { icon: 'team', title: 'Training for teams', line: 'Everyday work, Cowork and Claude Code', href: `${SITE}/claude` },
             { icon: 'automation', title: 'Automation', line: 'Scoped in writing, tested on your examples', href: `${SITE}/automation` },
           ]) +
@@ -125,9 +131,9 @@ function content(stepId: string, first: string, company: string): Content {
           briefHead('Learn by building', 'People remember what they build.', `${first}, each course has one real project. Every module adds a working part.`) +
           briefPicture('build', 'Six modules, each adding a part, and a working project at the end.', `${STUDIO}/ai-103`) +
           briefTiles([
-            { icon: 'project', title: 'One project', line: 'Start to finish' },
+            { icon: 'project', art: 'project', title: 'One project', line: 'Start to finish' },
             { icon: 'module', title: 'A lab each module', line: 'Starter files included' },
-            { icon: 'result', title: 'A result to show', line: 'Project and certificate' },
+            { icon: 'result', art: 'certification', title: 'A result to show', line: 'Project and certificate' },
           ]) +
           briefButton('See a project course', `${STUDIO}/ai-103`) +
           briefLine(`We can build one around a project from ${co}.`),

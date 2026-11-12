@@ -10,7 +10,7 @@
 import { execFileSync } from 'child_process'
 import { mkdirSync, writeFileSync } from 'fs'
 import path from 'path'
-import { listLmsCourses, promoUrl, toCard } from '@/lib/lms'
+import { imageUrl, listLmsCourses, promoUrl, toCard } from '@/lib/lms'
 
 const WORK = path.join(process.cwd(), 'scripts', 'email-art', '.work')
 // Where in the promo the preview clip starts, and how long it runs
@@ -29,6 +29,13 @@ async function main() {
       const res = await fetch(card.thumbnailUrl)
       const file = path.join(WORK, `thumb-${slug}.jpg`)
       writeFileSync(file, Buffer.from(await res.arrayBuffer()))
+      console.log('saved', file)
+    }
+    // The certification badge shown on the course page, where the course has one
+    const badge = imageUrl(course, course.badge)
+    if (badge) {
+      const file = path.join(WORK, `badge-${slug}.jpg`)
+      writeFileSync(file, Buffer.from(await (await fetch(badge)).arrayBuffer()))
       console.log('saved', file)
     }
     if (slug === 'ai-103') {

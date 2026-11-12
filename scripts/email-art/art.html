@@ -28,6 +28,11 @@
   /* ---------- icon tile (one PNG per icon) ---------- */
   #tile { width:88px; height:88px; border-radius:24px; display:flex; align-items:center; justify-content:center;
     background:linear-gradient(145deg,#1f3563,#14213d); border:1.5px solid #34508a; color:#8cc4ff; font-size:42px; }
+  /* ---------- art tile: the badge or mark of one certification or course ---------- */
+  #tile.art { border:0; color:#fff; background-repeat:no-repeat; flex-direction:column; gap:3px; font-size:40px; }
+  #tile.art b { font-size:15px; font-weight:800; letter-spacing:.02em; line-height:1; }
+  #tile.art.small { font-size:30px; }
+  svg.spark { width:1em; height:1em; fill:#fff; display:block; }
   #tile.gold { color:var(--gold); border-color:#6b5320; background:linear-gradient(145deg,#3a2f14,#1c1a12); }
 
   /* ---------- video: a few seconds of the promo, with a play button ---------- */
@@ -49,7 +54,7 @@
   @keyframes slide { 0%,28% { transform:translateX(0); } 33.3%,61% { transform:translateX(-362px); } 66.6%,94% { transform:translateX(-724px); } 100% { transform:translateX(-1086px); } }
   .ccard { width:340px; height:224px; flex:none; border-radius:16px; background:var(--panel); border:1px solid var(--line); overflow:hidden; }
   .ccard img { display:block; width:100%; height:150px; object-fit:cover; }
-  .ccard .art { height:150px; display:flex; align-items:center; justify-content:center; font-size:64px; color:#fff; }
+  .ccard .art { height:150px; display:flex; align-items:center; justify-content:center; font-size:72px; color:#fff; }
   .ccard .cap { padding:12px 16px; }
   .ccard b { display:block; font-size:17px; line-height:1.25; }
   .ccard span { display:block; margin-top:3px; font-size:13.5px; color:var(--muted); }
@@ -127,15 +132,24 @@ const ART = window.ART || { icons: {}, files: {} }
 const q = new URLSearchParams(location.search)
 const scene = q.get('scene') || 'time'
 const ic = (name) => `<svg class="i" viewBox="0 0 24 24">${ART.icons[name] || ''}</svg>`
+// The eight-ray spark the site already uses for its Claude pages
+const spark = '<svg class="spark" viewBox="0 0 24 24"><path d="M12 2l1.6 6.1L19 4.9l-3.4 5.2 6.1 1.9-6.1 1.9L19 19.1l-5.4-3.2L12 22l-1.6-6.1L5 19.1l3.4-5.2L2.3 12l6.1-1.9L5 4.9l5.4 3.2L12 2z"/></svg>'
+const CLAUDE_BG = 'linear-gradient(145deg,#e08a63,#b4532f)'
 const stage = (cls, ms, html) => { document.body.innerHTML = `<div id="stage" class="${cls}" data-ms="${ms}">${html}</div>` }
 
 const carousel = (cards) => stage('carousel', 7200,
-  `<div class="rail">${[cards[2], ...cards, ...cards].map((c) => `<div class="ccard">${c.img ? `<img src="${c.img}">` : `<div class="art" style="background:${c.bg}">${ic(c.icon)}</div>`}<div class="cap"><b>${c.title}</b><span>${c.line}</span></div></div>`).join('')}</div>
+  `<div class="rail">${[cards[2], ...cards, ...cards].map((c) => `<div class="ccard">${c.img ? `<img src="${c.img}">` : `<div class="art" style="background:${c.bg}">${c.spark ? spark : ic(c.icon)}</div>`}<div class="cap"><b>${c.title}</b><span>${c.line}</span></div></div>`).join('')}</div>
    <div class="dots"><i></i><i></i><i></i></div>`)
 
 const SCENES = {
   icon() {
     document.body.innerHTML = `<div id="tile" class="${q.get('tone') || ''}">${ic(q.get('name'))}</div>`
+  },
+  art() {
+    const a = JSON.parse(q.get('a'))
+    const style = a.img ? `background-image:url(${ART.files[a.img]});background-size:${a.size};background-position:${a.pos}` : `background:${a.claude ? CLAUDE_BG : a.bg}`
+    const inside = a.img ? '' : a.code ? `${spark}<b>${a.code}</b>` : a.claude ? spark : ic(a.icon)
+    document.body.innerHTML = `<div id="tile" class="art ${a.code ? 'small' : ''}" style="${style}">${inside}</div>`
   },
   video() {
     stage('video', 2500, `<img class="frame" id="f" src="${ART.files.clip[0]}"><div class="shade"></div>
@@ -149,12 +163,12 @@ const SCENES = {
     carousel([
       { img: ART.files['thumb-ai-103'], title: 'AI-103: Build and Ship AI Agents', line: 'Microsoft Azure · one project, start to finish' },
       { img: ART.files['thumb-ai-500'], title: 'AI-500: Multi-Agent AI Solutions', line: 'For engineers and architects' },
-      { icon: 'graduation-cap', bg: 'linear-gradient(135deg,#c2603c,#7a3018)', title: 'Claude certification guides', line: 'Four guides, each with a practice exam' },
+      { spark: true, bg: CLAUDE_BG, title: 'Claude certification guides', line: 'Four guides, each with a practice exam' },
     ])
   },
   claude() {
     carousel([
-      { icon: 'graduation-cap', bg: 'linear-gradient(135deg,#c2603c,#7a3018)', title: 'Certification preparation', line: 'Four guides, each with a practice exam' },
+      { spark: true, bg: CLAUDE_BG, title: 'Certification preparation', line: 'Four guides, each with a practice exam' },
       { icon: 'users', bg: 'linear-gradient(135deg,#1e6fe0,#123a80)', title: 'Claude training for teams', line: 'Everyday work, Cowork and Claude Code' },
       { icon: 'workflow', bg: 'linear-gradient(135deg,#1f9d6b,#0e5038)', title: 'Automation', line: 'One process at a time, tested on your examples' },
     ])
