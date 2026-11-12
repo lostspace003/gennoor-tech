@@ -1,1233 +1,1727 @@
 {
- "Overview": [
-  [
-   "GENNOOR TECH",
-   null,
-   null,
-   null,
-   null,
-   null
-  ],
-  [
-   "Enterprise AI Training, Certification & Solutions",
-   null,
-   null,
-   null,
-   null,
-   null
-  ],
-  [
-   "Master Catalog",
-   "Offerings · Training · AI Academy · PoC Blueprints · Free Resources",
-   null,
-   null,
-   null,
-   null
-  ],
-  [
-   "Offerings",
-   "5 service lines",
-   null,
-   null,
-   null,
-   null
-  ],
-  [
-   "Bootcamps",
-   "14 instructor-led programs",
-   null,
-   null,
-   null,
-   null
-  ],
-  [
-   "Courses",
-   "26 instructor-led courses",
-   null,
-   null,
-   null,
-   null
-  ],
-  [
-   "AI Academy (free)",
-   "48 self-paced courses across 6 tracks",
-   null,
-   null,
-   null,
-   null
-  ],
-  [
-   "PoC Blueprints",
-   "18 fixed-scope, production-ready prototypes (4–8 weeks)",
-   null,
-   null,
-   null,
-   null
-  ],
-  [
-   "Free resources",
-   "12 guides, tools & libraries",
-   null,
-   null,
-   null,
-   null
-  ],
-  [
-   "Case studies",
-   "6 real enterprise engagements",
-   null,
-   null,
-   null,
-   null
-  ],
-  [
-   "Delivery",
-   "On-site in India & Saudi Arabia (Vision 2030 aligned) or live-remote worldwide.",
-   null,
-   null,
-   null,
-   null
-  ],
-  [
-   "Delivered by",
-   "Delivered by Jalal Ahmed Khan — Microsoft Certified Trainer, Founder & Principal AI Consultant",
-   null,
-   null,
-   null,
-   null
-  ],
-  [
-   "Pricing",
-   "Pricing is scoped to each engagement (team size, functions, on-site vs remote, timeline). Reach out for a tailored quote — we never quote blind.",
-   null,
-   null,
-   null,
-   null
-  ],
-  [
-   "Contact",
-   "admin@gennoor.com  ·  +91 9326352241  ·  www.gennoor.com",
-   null,
-   null,
-   null,
-   null
+ "meta": {
+  "generatedOn": "2026-11-12",
+  "walkthrough": "https://www.gennoor.com/studio",
+  "counts": {
+   "studio": 7,
+   "essentials": 48,
+   "claudeCerts": 4,
+   "claudeCourses": 16,
+   "programs": 40,
+   "exams": 29,
+   "pocs": 18
+  },
+  "studioHours": 40,
+  "studioLessons": 704,
+  "weekend": {
+   "name": "Gennoor AI Weekend",
+   "tagline": "Build with Claude in one weekend",
+   "dates": "28 and 29 November 2026",
+   "time": "10:00 AM to 2:00 PM IST",
+   "included": [
+    "8 hours live with the trainer, across two days",
+    "Six working demos, built step by step in front of you",
+    "The complete kit after the weekend, so you can repeat every demo",
+    "Your questions answered live",
+    "A certificate when you attend both days"
+   ]
+  },
+  "featured": [
+   {
+    "code": "AI-103",
+    "title": "AI-103: Build and Ship AI Agents on Microsoft Azure",
+    "kind": "Certification",
+    "lessons": 164,
+    "hours": 8.9,
+    "slug": "ai-103"
+   },
+   {
+    "code": "AI-500",
+    "title": "AI-500: Designing and Implementing Multi-Agent AI Solutions",
+    "kind": "Certification",
+    "lessons": 441,
+    "hours": 19.9,
+    "slug": "ai-500"
+   },
+   {
+    "code": "AGENT-OPS",
+    "title": "AI Agents That Run a Business: Microsoft Foundry + Claude",
+    "kind": "Project",
+    "lessons": 45,
+    "hours": 5.6,
+    "slug": "agent-ops"
+   },
+   {
+    "code": "FABRIC",
+    "title": "Build Real-Time AI on Microsoft Fabric",
+    "kind": "Project",
+    "lessons": 27,
+    "hours": 3.1,
+    "slug": "build-real-time-ai-on-microsoft-fabric"
+   }
   ]
- ],
- "Offerings": {
-  "subtitle": "Offerings   ·   5 service lines",
+ },
+ "What we offer": {
   "header": [
    "#",
    "Offering",
    "What it includes",
-   "Best for"
+   "Best for",
+   "Link"
   ],
   "rows": [
    [
     1,
-    "AI Strategy & Consulting",
-    "Enterprise AI roadmaps, readiness assessments, ROI modeling, and governance frameworks tailored to your business objectives.",
-    "Boards, CxOs & audit committees allocating AI capital"
+    "Learning Studio",
+    "7 video courses with labs, quizzes and a certificate: certification preparation and real projects. Preview lessons of every course play without signing in.",
+    "People and teams who want to learn at their own pace",
+    "https://www.gennoor.com/studio"
    ],
    [
     2,
-    "Corporate AI Training",
-    "Executive bootcamps and technical workshops on Azure AI, Copilot Studio, Power Platform, and more. Live, hands-on, customized to your team.",
-    "Teams that need AI literacy from boardroom to engineering"
+    "AI Essentials",
+    "48 short interactive courses with animated slides, narration and a quiz, each about an hour.",
+    "Every role, including people who do not code",
+    "https://www.gennoor.com/ai-academy"
    ],
    [
     3,
-    "PoC Development",
-    "Production-ready AI prototypes in 2–6 weeks — document intelligence, chatbots, process automation, and predictive analytics.",
-    "Teams ready to ship something real, fixed scope"
+    "Claude certification preparation",
+    "A guide for each of the 4 Claude certifications, with a storyline, short videos and a practice exam.",
+    "Anyone preparing for a Claude certification",
+    "https://www.gennoor.com/claude/certifications"
    ],
    [
     4,
-    "Agentic AI Solutions",
-    "Multi-agent systems using LangChain, CrewAI, Copilot Studio, and AutoGen — autonomous AI that thinks, acts, and collaborates.",
-    "Complex workflows spanning functions & systems"
+    "Claude training for teams",
+    "Live sessions on Claude for everyday work, Claude Cowork and Claude Code, built around what your team does.",
+    "Teams starting with Claude or wanting to use it well",
+    "https://www.gennoor.com/claude"
    ],
    [
     5,
-    "Certification Preparation",
-    "Structured prep for Microsoft Azure AI, Power BI, Copilot, and GitHub certifications with hands-on labs and practice exams.",
-    "Individuals & teams pursuing Microsoft credentials"
-   ]
-  ],
-  "widths": {
-   "A": 5.0,
-   "B": 26.0,
-   "C": 60.0,
-   "D": 34.0
-  }
- },
- "The Gennoor Way": {
-  "subtitle": "The Gennoor Way   ·   5-phase transformation framework",
-  "header": [
-   "Phase",
-   "Name",
-   "Promise",
-   "Typical duration",
-   "Key outputs"
-  ],
-  "rows": [
-   [
-    "01",
-    "Diagnose",
-    "Establish the truth about where your organization stands.",
-    "1–4 weeks",
-    "AI Readiness Score — five-dimension index (Strategy, Data, People, Tech, Governance), Use Case Backlog — 10–30 candidates scored by impact × feasibility, 12-month AI Roadmap, Governance & Risk Charter, Executive briefing deck and board-ready summary"
-   ],
-   [
-    "02",
-    "Train",
-    "Raise your organization’s AI literacy ceiling and floor — at the same time.",
-    "2–8 weeks",
-    "C-Suite AI bootcamps — strategy, governance, ROI lens, Functional cohorts — HR, Finance, Sales, Operations, Legal, Technical guild track — prompt engineering, Copilot Studio, agent building, RAG, Custom labs using your own data scenarios, Post-training adoption playbook (this is the bridge to Phase 3)"
-   ],
-   [
-    "03",
-    "Innovate",
-    "Turn the highest-value use case into a working PoC the team can touch.",
-    "4–8 weeks",
-    "Working PoC running in your Azure / AWS / GCP / on-prem environment, Architecture documentation and decision log, Evaluation report — accuracy, latency, cost, user feedback, Go / no-go business case for Phase 4, Code transferred to your repository on day one"
-   ],
-   [
-    "04",
-    "Build",
-    "Scale the PoC into a production system your team owns and operates.",
-    "8–20 weeks",
-    "Production deployment on your subscription, CI/CD, monitoring, and evaluation harness, Operations runbook and on-call playbook, Adoption metrics dashboard, Full knowledge transfer to client team — knowledge transfer is contractual, not optional"
-   ],
-   [
-    "05",
-    "Sustain",
-    "Keep the system — and the team — performant long after launch.",
-    "Quarterly retainer · ongoing",
-    "Quarterly health check — model drift, evaluation, governance refresh, Cost & token spend audit with optimization recommendations, Continuous L&D refresh for the operating team, Annual strategy day — where the AI portfolio goes next year, New use-case incubation pipeline (loops back to Phase 1 / 3)"
-   ]
-  ],
-  "widths": {
-   "A": 7.0,
-   "B": 14.0,
-   "C": 42.0,
-   "D": 20.0,
-   "E": 60.0
-  }
- },
- "Bootcamps": {
-  "subtitle": "Bootcamps   ·   14 instructor-led programs",
-  "header": [
-   "#",
-   "Title",
-   "Level",
-   "Duration",
-   "Audience",
-   "Technology",
-   "Certification",
-   "Description"
-  ],
-  "rows": [
-   [
-    1,
-    "AI Transformation for Business Leaders",
-    "Executive",
-    "5 days",
-    "C-Suite, Senior Management",
-    "Cross-Platform",
-    "No",
-    "Master AI strategy and transformation to lead your organization into the future."
-   ],
-   [
-    2,
-    "GenAI Copilot Mastery",
-    "Intermediate",
-    "5 days",
-    "Business Users, Analysts",
-    "Microsoft",
-    "Yes",
-    "Master Microsoft Copilot and generative AI tools for maximum productivity."
-   ],
-   [
-    3,
-    "Agentic AI Engineering",
-    "Advanced",
-    "10 days",
-    "AI Engineers, Developers",
-    "Open Source",
-    "Yes",
-    "Build autonomous AI agents and multi-agent systems for enterprise applications."
-   ],
-   [
-    4,
-    "Data Science & Machine Learning",
-    "Intermediate",
-    "8 days",
-    "Data Scientists, Analysts",
-    "Cross-Platform",
-    "No",
-    "Comprehensive data science and ML fundamentals with hands-on projects."
-   ],
-   [
-    5,
-    "Deep Learning & Computer Vision",
-    "Advanced",
-    "10 days",
-    "ML Engineers, Researchers",
-    "Open Source",
-    "No",
-    "Master deep learning and computer vision for cutting-edge AI applications."
+    "Training for your team",
+    "Live training, online or at your office: Claude, Microsoft AI and automation courses, plus preparation for certification exams.",
+    "Smaller teams and larger organizations",
+    "https://www.gennoor.com/training"
    ],
    [
     6,
-    "Production AI & MLOps",
-    "Advanced",
-    "7 days",
-    "ML Engineers, DevOps",
-    "Multi-Cloud",
-    "No",
-    "Deploy and manage AI systems at scale with MLOps best practices."
+    "Custom training courses",
+    "A course written around your own tools, processes and examples, with video lessons, labs, quizzes and a certificate.",
+    "Teams whose work a standard course does not cover",
+    "https://www.gennoor.com/training"
    ],
    [
     7,
-    "AI Development Framework",
-    "Intermediate",
-    "5 days",
-    "Developers, Architects",
-    "Open Source",
-    "No",
-    "Build robust AI applications with modern frameworks and best practices."
+    "A learning platform for your company",
+    "We build and set up a learning platform (LMS) for your organization: your courses, your people, your name on it. On our platform or built for you, in the cloud or on your premises.",
+    "Organizations with a regular training need",
+    "https://www.gennoor.com/contact"
    ],
    [
     8,
-    "Microsoft AI for Developers",
-    "Intermediate",
-    "5 days",
-    "Developers, Engineers",
-    "Microsoft",
-    "Yes",
-    "Master Microsoft AI services with Azure AI Foundry and Azure OpenAI for enterprise solutions."
+    "Proof-of-concept builds",
+    "A working prototype of one AI use case, with a fixed scope. 18 ready blueprints to start from.",
+    "Teams that want to see it work before they commit",
+    "https://www.gennoor.com/contact"
    ],
    [
     9,
-    "AI on Google Cloud",
-    "Intermediate",
-    "5 days",
-    "Cloud Engineers, Developers",
-    "Google Cloud",
-    "Yes",
-    "Build and deploy AI solutions on Google Cloud Platform."
+    "Automation",
+    "One process at a time: scoped in writing first, built with Claude, and tested on your own examples.",
+    "A process that eats hours every week",
+    "https://www.gennoor.com/automation"
    ],
    [
     10,
-    "AI on AWS",
-    "Intermediate",
-    "5 days",
-    "Cloud Engineers, Developers",
-    "AWS",
-    "Yes",
-    "Leverage AWS AI services for scalable machine learning solutions."
-   ],
-   [
-    11,
-    "AB100 Certification Prep",
-    "Intermediate",
-    "3 days",
-    "AI Professionals",
-    "Cross-Platform",
-    "Yes",
-    "Prepare for the Agentic AI AB100 certification exam."
-   ],
-   [
-    12,
-    "Development using Claude AI",
-    "Intermediate",
-    "3 days",
-    "Developers",
-    "Claude/Anthropic",
-    "No",
-    "Build applications with Claude AI and Anthropic APIs."
-   ],
-   [
-    13,
-    "Azure AI Foundry & Semantic Kernel",
-    "Advanced",
-    "5 days",
-    "AI Engineers, Solution Architects",
-    "Microsoft Azure",
-    "AI-103 Aligned",
-    "Master the new Azure AI Foundry platform with deep-dive into Semantic Kernel orchestration."
-   ],
-   [
-    14,
-    "Microsoft Applied Skills Bootcamp",
-    "Intermediate",
-    "5 days",
-    "Job Seekers, Developers, Cloud Engineers",
-    "Microsoft Azure",
-    "Yes",
-    "Earn 6 Microsoft Applied Skills in 5 days - practical, hands-on validation employers demand."
+    "Gennoor AI Weekend",
+    "Build with Claude in one weekend. Two live sessions every month, six working demos, and the complete kit afterwards.",
+    "People who want to see it built live",
+    "https://www.gennoor.com/ai-weekend"
    ]
   ],
   "widths": {
-   "A": 5.0,
-   "B": 34.0,
-   "C": 14.0,
-   "D": 14.0,
-   "E": 26.0,
-   "F": 26.0,
-   "G": 20.0,
-   "H": 50.0
+   "C": 70,
+   "D": 44,
+   "E": 34
   }
  },
- "Courses": {
-  "subtitle": "Courses   ·   26 instructor-led courses",
+ "Built for you": {
+  "header": [
+   "What we build",
+   "What it includes",
+   "How it is delivered"
+  ],
+  "rows": [
+   [
+    "A custom training course",
+    "Lessons written around your own tools, processes and examples. Hands-on labs, a quiz in every module and a certificate. Narration in a voice you choose, with a digital presenter on screen if you want one.",
+    "On the Learning Studio, or on your own platform"
+   ],
+   [
+    "A learning platform (LMS) for your company",
+    "Your courses and your people only, under your name. Video lessons with captions and saved progress, quizzes, labs, certificates, an assistant that answers questions inside the lesson, and a question board answered by a trainer. Other features on request.",
+    "On our platform or built for you, in the cloud or on your premises"
+   ],
+   [
+    "Live training built on your work",
+    "We learn what your people do, build the examples and exercises from it, and teach it hands-on.",
+    "Online or at your office"
+   ],
+   [
+    "Less time in the classroom",
+    "People learn the concepts with short video lessons and practise with labs first. Trainer time is kept for questions and the hard parts. Our aim is about 60% less classroom time than a usual 3 to 5 day course; how much depends on the course and the team.",
+    "Self-paced first, then live with a trainer"
+   ],
+   [
+    "Support after the training",
+    "A doubt desk for your organization: learners post a question, a trainer answers, and the answer stays for the next person. The course stays open to go back to.",
+    "On the platform, online or on your premises"
+   ],
+   [
+    "A proof of concept",
+    "One AI use case built as a working prototype, with the scope agreed before work starts. See the blueprints sheet.",
+    "Built in your environment, tested on your examples"
+   ],
+   [
+    "Automation of one process",
+    "Scoped in writing first, built with Claude, tested on real cases from your work, with people kept in charge of checking.",
+    "One process at a time"
+   ]
+  ],
+  "widths": {
+   "A": 36,
+   "B": 96,
+   "C": 44
+  }
+ },
+ "Learning Studio": {
   "header": [
    "#",
+   "Code",
    "Title",
+   "Type",
+   "Company",
    "Level",
-   "Duration",
-   "Audience",
-   "Technology",
-   "Certification",
-   "Description"
+   "Lessons",
+   "Hours",
+   "Quizzes",
+   "Preview lessons",
+   "Link"
   ],
   "rows": [
    [
     1,
-    "AI Transformation for Business Leaders",
-    "Executive",
-    "2 days",
-    "C-Suite, Senior Management",
-    "Cross-Platform",
-    "No",
-    "Strategic AI adoption and transformation for business leaders."
+    "AI-103",
+    "AI-103: Build and Ship AI Agents on Microsoft Azure",
+    "Certification",
+    "Microsoft",
+    "Intermediate",
+    164,
+    8.9,
+    10,
+    6,
+    "https://www.gennoor.com/studio/ai-103"
    ],
    [
     2,
-    "Generative AI & Copilot Mastery",
-    "Intermediate",
-    "3 days",
-    "Business Users",
+    "AI-500",
+    "AI-500: Designing and Implementing Multi-Agent AI Solutions",
+    "Certification",
     "Microsoft",
-    "No",
-    "Master generative AI tools and Microsoft Copilot ecosystem."
+    "Expert",
+    441,
+    19.9,
+    34,
+    6,
+    "https://www.gennoor.com/studio/ai-500"
    ],
    [
     3,
-    "Agentic AI Engineering",
-    "Advanced",
-    "5 days",
-    "AI Engineers",
-    "Open Source",
-    "Yes",
-    "Build autonomous AI agents and multi-agent systems."
+    "AGENT-OPS",
+    "AI Agents That Run a Business: Microsoft Foundry + Claude",
+    "Project",
+    "Microsoft",
+    "Intermediate",
+    45,
+    5.6,
+    10,
+    6,
+    "https://www.gennoor.com/studio/agent-ops"
    ],
    [
     4,
-    "Data Science & Machine Learning",
+    "FABRIC",
+    "Build Real-Time AI on Microsoft Fabric",
+    "Project",
+    "Microsoft",
     "Intermediate",
-    "4 days",
-    "Data Scientists",
-    "Cross-Platform",
-    "No",
-    "Comprehensive data science and ML fundamentals."
+    27,
+    3.1,
+    6,
+    6,
+    "https://www.gennoor.com/studio/build-real-time-ai-on-microsoft-fabric"
    ],
    [
     5,
-    "Deep Learning & Computer Vision",
-    "Advanced",
-    "5 days",
-    "ML Engineers",
-    "Open Source",
-    "No",
-    "Advanced deep learning and computer vision techniques."
-   ],
-   [
-    6,
-    "Production AI & MLOps",
-    "Advanced",
-    "3 days",
-    "ML Engineers, DevOps",
-    "Multi-Cloud",
-    "No",
-    "Deploy and manage AI systems at scale."
-   ],
-   [
-    7,
-    "AI Development Framework",
-    "Intermediate",
-    "3 days",
-    "Developers",
-    "Open Source",
-    "No",
-    "Build AI applications with modern frameworks."
-   ],
-   [
-    8,
-    "Microsoft AI for Developers",
-    "Intermediate",
-    "3 days",
-    "Developers",
-    "Microsoft",
-    "Yes",
-    "Master Microsoft AI services with Azure AI Foundry and Azure OpenAI."
-   ],
-   [
-    9,
-    "AI on Google Cloud",
-    "Intermediate",
-    "3 days",
-    "Cloud Engineers",
-    "Google Cloud",
-    "Yes",
-    "Build AI solutions on Google Cloud Platform."
-   ],
-   [
-    10,
-    "AI on AWS",
-    "Intermediate",
-    "3 days",
-    "Cloud Engineers",
-    "AWS",
-    "Yes",
-    "Leverage AWS AI services for ML solutions."
-   ],
-   [
-    11,
-    "AB100 Certification Prep",
-    "Intermediate",
-    "2 days",
-    "AI Professionals",
-    "Cross-Platform",
-    "Yes",
-    "Prepare for Agentic AI AB100 certification."
-   ],
-   [
-    12,
-    "Development using Claude AI",
-    "Intermediate",
-    "2 days",
-    "Developers",
-    "Claude/Anthropic",
-    "No",
-    "Build with Claude AI and Anthropic APIs."
-   ],
-   [
-    13,
-    "Executive AI Leadership",
-    "Executive",
-    "1 day",
-    "C-Suite",
-    "Cross-Platform",
-    "No",
-    "AI leadership and strategy for executives."
-   ],
-   [
-    14,
-    "Azure AI Fundamentals",
+    "C01",
+    "AI Foundations",
+    "Use case",
+    "Vendor-neutral",
     "Beginner",
-    "3 days",
-    "IT Professionals",
-    "Microsoft",
-    "AI-901",
-    "Foundation course for Azure AI services with updated 2025-2026 certification."
+    9,
+    0.8,
+    8,
+    6,
+    "https://www.gennoor.com/studio/ai-foundations"
    ],
    [
-    15,
-    "Microsoft Copilot Mastery",
+    6,
+    "C03",
+    "AI Governance, Risk and Boards",
+    "Use case",
+    "Vendor-neutral",
     "Intermediate",
-    "2 days",
-    "Business Users",
-    "Microsoft",
-    "No",
-    "Master all Microsoft Copilot products."
+    9,
+    0.6,
+    8,
+    6,
+    "https://www.gennoor.com/studio/ai-governance-risk-and-boards"
    ],
    [
-    16,
-    "Power Platform + AI",
+    7,
+    "C02",
+    "AI Strategy for the C-Suite",
+    "Use case",
+    "Vendor-neutral",
     "Intermediate",
-    "3 days",
-    "Citizen Developers",
-    "Microsoft",
-    "Yes",
-    "Build AI-powered apps with Power Platform."
-   ],
-   [
-    17,
-    "Prompt Engineering Masterclass",
-    "Intermediate",
-    "2 days",
-    "All Roles",
-    "Cross-Platform",
-    "No",
-    "Master the art of prompt engineering."
-   ],
-   [
-    18,
-    "GitHub Copilot for Developers",
-    "Intermediate",
-    "2 days",
-    "Developers",
-    "Microsoft",
-    "No",
-    "Accelerate development with GitHub Copilot."
-   ],
-   [
-    19,
-    "RAG Engineering",
-    "Advanced",
-    "3 days",
-    "AI Engineers",
-    "Open Source",
-    "No",
-    "Build production RAG systems."
-   ],
-   [
-    20,
-    "AI Security & Responsible AI",
-    "Intermediate",
-    "2 days",
-    "All Technical Roles",
-    "Cross-Platform",
-    "No",
-    "Security and ethics in AI systems."
-   ],
-   [
-    21,
-    "AI for BFSI",
-    "Intermediate",
-    "3 days",
-    "BFSI Professionals",
-    "Cross-Platform",
-    "No",
-    "AI applications in Banking, Financial Services, and Insurance."
-   ],
-   [
-    22,
-    "AI for Government",
-    "Intermediate",
-    "2 days",
-    "Government Officials",
-    "Cross-Platform",
-    "No",
-    "AI solutions for public sector and governance."
-   ],
-   [
-    23,
-    "Fine-Tuning Custom LLMs",
-    "Advanced",
-    "4 days",
-    "ML Engineers",
-    "Open Source",
-    "No",
-    "Fine-tune and deploy custom language models."
-   ],
-   [
-    24,
-    "N8N AI Workflow Automation",
-    "Intermediate",
-    "2 days",
-    "Automation Engineers",
-    "Open Source",
-    "No",
-    "Build AI-powered automation workflows with N8N."
-   ],
-   [
-    25,
-    "Conversational AI & Chatbots",
-    "Intermediate",
-    "3 days",
-    "Developers",
-    "Cross-Platform",
-    "No",
-    "Build intelligent conversational AI systems."
-   ],
-   [
-    26,
-    "AI Testing & Quality Assurance",
-    "Intermediate",
-    "2 days",
-    "QA Engineers",
-    "Cross-Platform",
-    "No",
-    "Test and validate AI systems effectively."
+    9,
+    0.6,
+    8,
+    6,
+    "https://www.gennoor.com/studio/ai-strategy-for-the-c-suite"
    ]
   ],
   "widths": {
-   "A": 5.0,
-   "B": 34.0,
-   "C": 14.0,
-   "D": 14.0,
-   "E": 26.0,
-   "F": 26.0,
-   "G": 20.0,
-   "H": 50.0
+   "B": 12,
+   "C": 54,
+   "D": 16,
+   "E": 14,
+   "F": 16,
+   "K": 36
   }
  },
- "AI Academy (Free)": {
-  "subtitle": "AI Academy — Free   ·   48 self-paced courses",
+ "AI Essentials": {
   "header": [
    "#",
    "Title",
-   "Track",
    "Level",
    "Duration",
    "Chapters",
-   "Format",
-   "Audience",
-   "Access"
+   "Description",
+   "Link"
   ],
   "rows": [
    [
     1,
-    "AI Foundations for Everyone",
-    "foundations",
-    "foundational",
-    "55 min",
-    8,
-    "interactive, video, reading",
-    "all-staff, individual-contributor, manager",
-    "Free · self-paced"
+    "AB-100: Architecting Agentic AI Business Solutions",
+    "Advanced",
+    "~20 hours",
+    13,
+    "Self-paced course for the Microsoft AB-100 certification. Master agentic AI architecture with Copilot Studio, Azure AI Foundry, and Dynamics 365.",
+    "https://www.gennoor.com/ai-academy/ab-100"
    ],
    [
     2,
-    "AI for HR & People Teams",
-    "function",
-    "foundational",
-    "60 min",
+    "AI Foundations",
+    "Foundational",
+    "~40 min",
     8,
-    "interactive, video, reading",
-    "individual-contributor, manager, director",
-    "Free · self-paced"
+    "A ~40-minute foundations course for non-technical professionals — calibrated literacy, not hype or fear. What AI is, how LLMs work in plain English, where AI fits, the risks to watch, how to evaluate claims, 5 prompt…",
+    "https://www.gennoor.com/ai-academy/ai-foundations"
    ],
    [
     3,
-    "AI for Finance & Accounting",
-    "function",
-    "foundational",
-    "65 min",
+    "AI Strategy for the C-Suite",
+    "Intermediate",
+    "~40 min",
     8,
-    "interactive, video, reading",
-    "individual-contributor, manager, director, executive",
-    "Free · self-paced"
+    "A ~40-minute strategic brief for CEOs, CIOs, CDOs and board directors. Capital discipline, talent design, governance posture, momentum past year 1. Grounded in Stanford AI Index, McKinsey, BCG/MIT, EU AI Act, NIST AI…",
+    "https://www.gennoor.com/ai-academy/ai-strategy-c-suite"
    ],
    [
     4,
-    "AI Strategy for the C-Suite",
-    "leadership",
-    "intermediate",
-    "60 min",
+    "AI Governance, Risk & Boards",
+    "Intermediate",
+    "~40 min",
     8,
-    "interactive, video, reading",
-    "executive, board, director",
-    "Free · self-paced"
+    "A ~40-minute brief for board directors, audit committee members, risk officers, CISOs, GCs. Risk classification, register, NIST 4 functions controls, vendor posture, board questions, incident response, governance…",
+    "https://www.gennoor.com/ai-academy/ai-governance-risk-boards"
    ],
    [
     5,
-    "AI in Financial Services",
-    "industry",
-    "intermediate",
-    "65 min",
+    "AI for Finance & Accounting",
+    "Intermediate",
+    "~40 min",
     8,
-    "interactive, video, reading",
-    "executive, director, manager, technical",
-    "Free · self-paced"
+    "A ~40-minute course for CFOs, controllers, FP&A heads, audit partners. Forecasting, narratives, close cycle, audit + SOX, AP/AR/treasury/tax, standards landscape. Grounded in Gartner, KPMG, Big-4, IFRS 18, PCAOB, NIST.",
+    "https://www.gennoor.com/ai-academy/ai-for-finance-accounting"
    ],
    [
     6,
-    "Generative AI for Business",
-    "foundations",
-    "foundational",
-    "60 min",
+    "AI in Financial Services",
+    "Intermediate",
+    "~40 min",
     8,
-    "interactive, video, reading",
-    "manager, director",
-    "Free · self-paced"
+    "A ~40-minute brief for BFSI execs, risk officers, GCs. Credit, fraud/AML/KYC, insurance, capital markets, customer-facing, regulatory posture. Grounded in EU AI Act, SR 11-7, CFPB/DOJ, FCA Consumer Duty, RBI master…",
+    "https://www.gennoor.com/ai-academy/ai-in-financial-services"
    ],
    [
     7,
-    "AI for Sales & Marketing",
-    "function",
-    "intermediate",
-    "65 min",
+    "Generative AI for Business",
+    "Foundational",
+    "~40 min",
     8,
-    "interactive, video, reading",
-    "director, manager, individual-contributor",
-    "Free · self-paced"
+    "A ~40-minute course for mid + senior managers. The 4 skills that separate AI-leveraged leaders: framing use cases, evaluating vendors, running pilots that scale, measuring outcomes. Grounded in Stanford, McKinsey,…",
+    "https://www.gennoor.com/ai-academy/generative-ai-for-business"
    ],
    [
     8,
-    "AI for Customer Service & Support",
-    "function",
-    "intermediate",
-    "65 min",
+    "AI for HR & People Teams",
+    "Intermediate",
+    "~40 min",
     8,
-    "interactive, video, reading",
-    "director, manager, individual-contributor",
-    "Free · self-paced"
+    "A ~40-minute course for CHROs, HR ops, talent leaders. Recruiting, screening (with 4 bias mitigations), structured interviews, candidate experience, onboarding/L&D, compliance posture. <strong>The 3 lines we don't…",
+    "https://www.gennoor.com/ai-academy/ai-for-hr-people-teams"
    ],
    [
     9,
-    "AI for Operations & Supply Chain",
-    "function",
-    "intermediate",
-    "70 min",
+    "AI in Healthcare",
+    "Intermediate",
+    "~40 min",
     8,
-    "interactive, video, reading",
-    "executive, director, manager",
-    "Free · self-paced"
+    "A ~40-minute brief for hospital execs, clinical leaders, CMIOs, healthcare CIOs, payer leaders. Ambient scribing, clinical decision support, radiology, patient-facing AI, payer AI, 4-quadrant regulatory posture.…",
+    "https://www.gennoor.com/ai-academy/ai-in-healthcare"
    ],
    [
     10,
-    "AI in Healthcare",
-    "industry",
-    "intermediate",
-    "65 min",
+    "Microsoft 365 Copilot Adoption",
+    "Intermediate",
+    "~36 min",
     8,
-    "interactive, video, reading",
-    "executive, director, manager, technical",
-    "Free · self-paced"
+    "A ~36-minute playbook for CIOs, IT leaders, and change managers — adoption is the challenge, not licensing. Active-user fraction is the metric. The 3-phase pilot/scale/embed pattern with 4 trust trip-wires.",
+    "https://www.gennoor.com/ai-academy/m365-copilot-adoption"
    ],
    [
     11,
-    "AI in Manufacturing",
-    "industry",
-    "intermediate",
-    "70 min",
+    "AI for Sales & Marketing",
+    "Intermediate",
+    "~36 min",
     8,
-    "interactive, video, reading",
-    "executive, director, manager, technical",
-    "Free · self-paced"
+    "A ~36-minute revenue playbook — augment human judgement, don't replace it. 6 plays that ship, 3 that disappoint. The disciplined prospecting workflow, two-layer lead scoring, claim register, brand voice anchor, the…",
+    "https://www.gennoor.com/ai-academy/ai-for-sales-marketing"
    ],
    [
     12,
-    "AI Governance & Risk for Boards",
-    "leadership",
-    "intermediate",
-    "55 min",
+    "AI for Customer Service & Support",
+    "Intermediate",
+    "~36 min",
     8,
-    "interactive, video, reading",
-    "board, executive",
-    "Free · self-paced"
+    "A ~36-minute playbook for CX leaders, support directors, contact centre ops heads. 6 plays, 3 anti-plays, the disciplined assist + scoped-bot stack, 12-week rollout. Grounded in Air Canada Moffatt + NYC MyCity + EU AI…",
+    "https://www.gennoor.com/ai-academy/ai-for-customer-service-support"
    ],
    [
     13,
-    "Microsoft 365 Copilot Adoption Playbook",
-    "function",
-    "intermediate",
-    "70 min",
+    "AI for Operations & Supply Chain",
+    "Intermediate",
+    "~36 min",
     8,
-    "interactive, video, reading",
-    "director, manager, technical",
-    "Free · self-paced"
+    "A ~36-minute playbook for COOs and supply chain leaders. 6 plays, 3 anti-plays, the AI+OR principle, the data-stable filter, and 4 trust trip-wires. Voice: Andrew.",
+    "https://www.gennoor.com/ai-academy/ai-for-operations-supply-chain"
    ],
    [
     14,
-    "Building AI Agents with Copilot Studio",
-    "builder",
-    "intermediate",
-    "75 min",
+    "AI in Manufacturing",
+    "Intermediate",
+    "~36 min",
     8,
-    "interactive, video, hands-on",
-    "technical",
-    "Free · self-paced"
+    "A ~36-minute playbook for plant managers and VPs of manufacturing. 6 plays, 3 anti-plays, the OT/IT bridge filter, and 4 trust trip-wires. Voice: Emma.",
+    "https://www.gennoor.com/ai-academy/ai-in-manufacturing"
    ],
    [
     15,
-    "AI Literacy for Non-Technical Teams",
-    "foundations",
-    "foundational",
-    "40 min",
-    6,
-    "video, reading",
-    "individual-contributor, manager",
-    "Free · self-paced"
+    "Building AI Agents with Copilot Studio",
+    "Intermediate",
+    "~30 min",
+    8,
+    "A ~30-minute production-readiness course for Power Platform builders. 6 components, 4-question topic framework, 12-item production gate. Voice: Andrew.",
+    "https://www.gennoor.com/ai-academy/building-ai-agents-copilot-studio"
    ],
    [
     16,
-    "Prompting Mastery",
-    "foundations",
-    "intermediate",
-    "55 min",
+    "AI ROI & Business Case Building",
+    "Intermediate",
+    "~30 min",
     8,
-    "video, reading",
-    "individual-contributor, manager, technical",
-    "Free · self-paced"
+    "A ~30-minute playbook for AI champions building cases finance will fund. 6-component framework, 7 cost buckets, 5 named risks, 4 CFO questions. Voice: Emma.",
+    "https://www.gennoor.com/ai-academy/ai-roi-business-case-building"
    ],
    [
     17,
-    "Working with Copilots",
-    "foundations",
-    "intermediate",
-    "50 min",
-    7,
-    "video, reading",
-    "individual-contributor, manager",
-    "Free · self-paced"
+    "Building an HR Copilot — A Case Study",
+    "Intermediate",
+    "~36 min",
+    8,
+    "A ~36-minute end-to-end walkthrough — use case selection, Azure OpenAI + Copilot Studio + Dataverse, evaluation, pilot rollout, lessons learned. Voice: Emma.",
+    "https://www.gennoor.com/ai-academy/building-an-hr-copilot-case-study"
    ],
    [
     18,
-    "Evaluating AI Output",
-    "foundations",
-    "intermediate",
-    "45 min",
-    7,
-    "video, reading",
-    "individual-contributor, manager",
-    "Free · self-paced"
+    "Case Study: Banking Multimodal RAG",
+    "Advanced",
+    "~36 min",
+    8,
+    "A ~36-minute walk through a real bank multimodal RAG build — Azure AI Search + Vision + GPT-4o, document cracking, MRM submission. Voice: Andrew.",
+    "https://www.gennoor.com/ai-academy/banking-multimodal-rag-case-study"
    ],
    [
     19,
-    "AI Decision Making",
-    "foundations",
-    "advanced",
-    "50 min",
-    7,
-    "video, reading",
-    "manager, director",
-    "Free · self-paced"
+    "AI Risk for Audit Committees",
+    "Intermediate",
+    "~36 min",
+    8,
+    "A ~36-minute working session for audit committee chairs and internal audit leaders — the questions that surface real AI risk. Voice: Emma.",
+    "https://www.gennoor.com/ai-academy/ai-risk-for-audit-committees"
    ],
    [
     20,
-    "Building an HR Copilot — A Case Study",
-    "applied",
-    "intermediate",
-    "60 min",
+    "AI Strategy for the CIO",
+    "Advanced",
+    "~36 min",
     8,
-    "video, reading, interactive",
-    "technical, manager, director",
-    "Free · self-paced"
+    "A ~36-minute brief for CIOs balancing AI inside a real technology portfolio — infra, build vs buy, talent, risk, board reporting. Voice: Andrew.",
+    "https://www.gennoor.com/ai-academy/ai-strategy-for-cio"
    ],
    [
     21,
-    "AI for Legal & Compliance",
-    "function",
-    "foundational",
-    "55 min",
+    "AI Strategy for the CDO",
+    "Advanced",
+    "~36 min",
     8,
-    "video, reading, interactive",
-    "individual-contributor, manager, director",
-    "Free · self-paced"
+    "A ~36-minute strategic brief for Chief Data Officers — running AI and data strategy as one portfolio without losing either. Voice: Emma.",
+    "https://www.gennoor.com/ai-academy/ai-strategy-for-cdo"
    ],
    [
     22,
-    "Recruiting AI in Practice",
-    "function",
-    "intermediate",
-    "55 min",
+    "AI Vendor Management",
+    "Intermediate",
+    "~36 min",
     8,
-    "video, reading, interactive",
-    "individual-contributor, manager, director",
-    "Free · self-paced"
+    "A ~36-minute discipline brief for procurement, VMOs, and IT sourcing — running AI vendors with the same discipline as any other critical supplier. Voice: Andrew.",
+    "https://www.gennoor.com/ai-academy/ai-vendor-management"
    ],
    [
     23,
-    "AI-Augmented Month-End Close",
-    "function",
-    "intermediate",
-    "55 min",
+    "AI Decision Making",
+    "Advanced",
+    "~36 min",
     8,
-    "video, reading, interactive",
-    "individual-contributor, manager, director",
-    "Free · self-paced"
+    "A ~36-minute discipline brief for managers and senior ICs — using AI as a decision input without quietly handing over the decision. Voice: Emma.",
+    "https://www.gennoor.com/ai-academy/ai-decision-making"
    ],
    [
     24,
-    "RevOps Automation with AI",
-    "function",
-    "intermediate",
-    "60 min",
+    "Open-Source LLMs for Enterprise",
+    "Intermediate",
+    "~36 min",
     8,
-    "video, reading, interactive",
-    "individual-contributor, manager, director",
-    "Free · self-paced"
+    "A ~36-minute decision guide for senior engineers and tech directors evaluating or operating open-source LLMs at enterprise scale. Voice: Andrew.",
+    "https://www.gennoor.com/ai-academy/open-source-llms-for-enterprise"
    ],
    [
     25,
-    "Building Trusted Support Bots",
-    "function",
-    "intermediate",
-    "60 min",
-    9,
-    "video, reading, interactive",
-    "manager, director, technical",
-    "Free · self-paced"
+    "Azure AI Foundry Essentials",
+    "Intermediate",
+    "~36 min",
+    8,
+    "A ~36-minute builder's tour of Azure AI Foundry. Hub-project-connections, model catalog, identity, evaluation harness, deployment types, cost monitoring, 20-item production-readiness checklist. Voice: Emma.",
+    "https://www.gennoor.com/ai-academy/azure-ai-foundry-essentials"
    ],
    [
     26,
-    "Demand Forecasting in Practice",
-    "function",
-    "intermediate",
-    "65 min",
+    "MLOps for LLMs",
+    "Advanced",
+    "~36 min",
     8,
-    "video, reading, interactive",
-    "individual-contributor, manager, director, technical",
-    "Free · self-paced"
+    "A ~36-minute advanced course for ML and platform engineers. 5 LLM-vs-classical-ML differences, 3 drift types, 4 cost patterns, 60-sec rollback discipline, 4 incident types, the eval-case-it post-mortem. Voice: Andrew.",
+    "https://www.gennoor.com/ai-academy/mlops-for-llms"
    ],
    [
     27,
-    "AI Strategy for the CDO",
-    "leadership",
-    "advanced",
-    "55 min",
-    7,
-    "reading, video",
-    "executive, director",
-    "Free · self-paced"
+    "RAG Architectures — Foundations",
+    "Intermediate",
+    "~36 min",
+    8,
+    "A ~36-minute engineer's tour of retrieval-augmented generation. Embeddings, vector stores, hybrid search, re-ranking, evaluation, 6 failure modes, 5-component production architecture. Voice: Emma.",
+    "https://www.gennoor.com/ai-academy/rag-architectures-foundations"
    ],
    [
     28,
-    "AI Strategy for the CIO",
-    "leadership",
-    "advanced",
-    "55 min",
-    7,
-    "reading, video",
-    "executive, director",
-    "Free · self-paced"
+    "AI in Education",
+    "Intermediate",
+    "~30 min",
+    8,
+    "A ~30-minute playbook for school + higher-ed leaders. 6 plays, 3 anti-plays, the pedagogy-first filter, FERPA/COPPA/GDPR posture. Voice: Andrew.",
+    "https://www.gennoor.com/ai-academy/ai-in-education"
    ],
    [
     29,
-    "AI ROI & Business Case Building",
-    "leadership",
-    "intermediate",
-    "45 min",
-    7,
-    "reading, video",
-    "manager, director, executive",
-    "Free · self-paced"
+    "AI Literacy for Non-Technical Teams",
+    "Foundational",
+    "~40 min",
+    6,
+    "A 40-minute foundations course for HR, Marketing, Sales, and Ops — no code, no jargon, just where AI actually helps your day-to-day.",
+    "https://www.gennoor.com/ai-academy/ai-literacy-non-technical-teams"
    ],
    [
     30,
-    "AI Risk for Audit Committees",
-    "leadership",
-    "intermediate",
-    "45 min",
-    7,
-    "reading, video",
-    "board, executive, director",
-    "Free · self-paced"
+    "Prompting Mastery",
+    "Intermediate",
+    "~55 min",
+    8,
+    "A 55-minute deep dive for power users and developers — structured outputs, chain-of-thought, few-shot, evaluation, and the prompt-library habits that compound.",
+    "https://www.gennoor.com/ai-academy/prompting-mastery"
    ],
    [
     31,
-    "AI Vendor Management",
-    "leadership",
-    "intermediate",
-    "50 min",
+    "Working with Copilots",
+    "Intermediate",
+    "~50 min",
     7,
-    "reading, video",
-    "manager, director, executive",
-    "Free · self-paced"
+    "A 50-minute practical guide for professionals already using M365 Copilot, GitHub Copilot, or ChatGPT Enterprise — when to lean in, when to skip it.",
+    "https://www.gennoor.com/ai-academy/working-with-copilots"
    ],
    [
     32,
-    "AI in Government & Public Sector",
-    "industry",
-    "intermediate",
-    "65 min",
-    8,
-    "video, reading",
-    "executive, director, manager",
-    "Free · self-paced"
+    "Evaluating AI Output",
+    "Intermediate",
+    "~45 min",
+    7,
+    "A 45-minute discipline for professionals reviewing AI-generated work — spotting hallucinations, checking sources, building a verification habit.",
+    "https://www.gennoor.com/ai-academy/evaluating-ai-output"
    ],
    [
     33,
-    "AI in Energy & Utilities",
-    "industry",
-    "intermediate",
-    "60 min",
+    "Recruiting AI in Practice",
+    "Intermediate",
+    "~55 min",
     8,
-    "video, reading",
-    "executive, director, manager, technical",
-    "Free · self-paced"
+    "A 55-minute intermediate course for recruiters and TA leaders — sourcing, screening, interviewing, offer — with EEOC and EU AI Act guardrails baked in.",
+    "https://www.gennoor.com/ai-academy/recruiting-ai-in-practice"
    ],
    [
     34,
-    "AI in Retail & E-commerce",
-    "industry",
-    "intermediate",
-    "55 min",
+    "RevOps Automation with AI",
+    "Intermediate",
+    "~40 min",
     8,
-    "video, reading",
-    "executive, director, manager",
-    "Free · self-paced"
+    "A ~40-minute course for RevOps leaders — forecasting, pipeline hygiene, territory scoring, narratives, data, comp, tooling, two-quarter rollout — grounded in 2025–26 vendor evidence.",
+    "https://www.gennoor.com/ai-academy/revops-automation-with-ai"
    ],
    [
     35,
-    "AI in Education",
-    "industry",
-    "intermediate",
-    "55 min",
+    "Building Trusted Support Bots",
+    "Intermediate",
+    "~40 min",
     8,
-    "video, reading",
-    "executive, director, manager",
-    "Free · self-paced"
+    "A ~40-minute course for CS leaders, Support Ops, and CX Ops — containment math, knowledge grounding, escalation triggers, conversational design, voice, quality monitoring, 2-quarter rollout. Grounded in 2024–26 cases.",
+    "https://www.gennoor.com/ai-academy/building-trusted-support-bots"
    ],
    [
     36,
-    "Case Study: Banking Multimodal RAG",
-    "applied",
-    "advanced",
-    "65 min",
-    9,
-    "video, reading, hands-on",
-    "technical, director, manager",
-    "Free · self-paced"
+    "AI for Legal & Compliance",
+    "Intermediate",
+    "~37 min",
+    8,
+    "A ~37-minute course for GCs, legal ops, compliance officers, DPOs — landscape, hallucination tax, contract review, DPIA/FRIA, 4-jurisdiction posture, privilege, quality framework, 2-quarter rollout.",
+    "https://www.gennoor.com/ai-academy/ai-for-legal-compliance"
    ],
    [
     37,
-    "RAG Architectures — Foundations",
-    "builder",
-    "intermediate",
-    "60 min",
+    "AI-Augmented Month-End Close",
+    "Intermediate",
+    "~35 min",
     8,
-    "video, hands-on, interactive",
-    "technical",
-    "Free · self-paced"
+    "A ~35-minute course for controllers, FP&A heads, CFOs — variance narratives, accrual proposals, reconciliation copilots, JE AI, SOX audit trail, quality framework, 2-quarter rollout.",
+    "https://www.gennoor.com/ai-academy/ai-augmented-month-end-close"
    ],
    [
     38,
-    "Azure AI Foundry Essentials",
-    "builder",
-    "intermediate",
-    "55 min",
+    "Demand Forecasting in Practice",
+    "Intermediate",
+    "~35 min",
     8,
-    "video, hands-on, interactive",
-    "technical",
-    "Free · self-paced"
+    "A ~35-minute course for CSCOs, S&OP heads, demand planners — landscape, accuracy and the MAPE trap, model choice, demand sensing, promo uplifts, NPI, S&OP integration, 2-quarter rollout.",
+    "https://www.gennoor.com/ai-academy/demand-forecasting-in-practice"
    ],
    [
     39,
-    "Open-Source LLMs for Enterprise",
-    "builder",
-    "intermediate",
-    "65 min",
+    "AI Readiness Assessment Deep-Dive",
+    "Advanced",
+    "~36 min",
     8,
-    "video, hands-on, interactive",
-    "technical, director",
-    "Free · self-paced"
+    "A ~36-minute strategic diagnostic for CIOs, transformation heads, CDOs, and executive sponsors. 5 readiness dimensions, 12-question diagnostic, 3 maturity bands. Calibration over confidence.",
+    "https://www.gennoor.com/ai-academy/ai-readiness-assessment-deep-dive"
    ],
    [
     40,
-    "MLOps for LLMs",
-    "builder",
-    "advanced",
-    "65 min",
-    9,
-    "video, hands-on, interactive",
-    "technical",
-    "Free · self-paced"
+    "Enterprise Data Foundations for AI",
+    "Advanced",
+    "~36 min",
+    8,
+    "A ~36-minute foundations course for CDOs, data platform leaders, architects — most AI projects fail at the data step. 5 pillars, data product pattern, data contracts, vendor reality, 18-month roadmap.",
+    "https://www.gennoor.com/ai-academy/enterprise-data-foundations-for-ai"
    ],
    [
     41,
-    "AI Readiness Assessment Deep-Dive",
-    "leadership",
-    "intermediate",
+    "AI Program Management & PMO",
+    "Advanced",
     "~36 min",
     8,
-    "interactive, reading",
-    "executive, director, manager",
-    "Free · self-paced"
+    "A ~36-minute delivery playbook for AI program leaders, transformation directors, PMO heads. Portfolio shape, stage-gating, vendor mgmt, model lifecycle, ops handoff, team design, 90-day bootstrap.",
+    "https://www.gennoor.com/ai-academy/ai-program-management-pmo"
    ],
    [
     42,
-    "Enterprise Data Foundations for AI",
-    "builder",
-    "intermediate",
+    "AI Talent Strategy",
+    "Advanced",
     "~36 min",
     8,
-    "interactive, reading",
-    "director, technical",
-    "Free · self-paced"
+    "A ~36-minute talent playbook for CHROs, talent heads, CIOs co-owning AI capability. 3 segments, build/buy/borrow, 5 core roles, hiring/retention patterns, fluency build, org design, 12-month roadmap.",
+    "https://www.gennoor.com/ai-academy/ai-talent-strategy"
    ],
    [
     43,
-    "AI Program Management & PMO",
-    "leadership",
-    "intermediate",
+    "AI for Energy & Utilities",
+    "Advanced",
     "~36 min",
     8,
-    "interactive, reading",
-    "director, manager",
-    "Free · self-paced"
+    "A ~36-minute regulator-aware playbook for utility execs, grid operators, generation planners, digital transformation heads. 5 plays, operator-in-the-loop, OT+IT+AI cyber, 18-month roadmap.",
+    "https://www.gennoor.com/ai-academy/ai-for-energy-utilities"
    ],
    [
     44,
-    "AI Talent Strategy",
-    "leadership",
-    "intermediate",
+    "AI for Retail & eCommerce",
+    "Intermediate",
     "~36 min",
     8,
-    "interactive, reading",
-    "executive, director",
-    "Free · self-paced"
+    "A ~36-minute playbook for retail CEOs, CDOs, eCom GMs, merchandising + pricing + CX heads. 5 plays, 3 anti-plays, the creepy line, guardrail discipline, 12-month roadmap.",
+    "https://www.gennoor.com/ai-academy/ai-for-retail-ecommerce"
    ],
    [
     45,
     "AI for Cybersecurity SOC",
-    "function",
-    "advanced",
+    "Advanced",
     "~36 min",
     8,
-    "interactive, reading",
-    "director, technical",
-    "Free · self-paced"
+    "A ~36-minute SOC playbook for CISOs, SOC directors, detection engineering leads. 5 plays, 3 anti-plays, human-in-the-loop principle, AI's own attack surface, 12-month roadmap.",
+    "https://www.gennoor.com/ai-academy/ai-for-cybersecurity-soc"
    ],
    [
     46,
-    "AI in Pharma & Life Sciences",
-    "industry",
-    "advanced",
+    "AI for Public Sector & Government",
+    "Advanced",
     "~36 min",
     8,
-    "interactive, reading",
-    "executive, director",
-    "Free · self-paced"
+    "A ~36-minute playbook for agency heads, government CIOs, Chief AI Officers. Citizens are not customers. 5 plays, 3 fail patterns, OMB M-24-10 + EU AI Act + UK ATRS + India DPDPA frame.",
+    "https://www.gennoor.com/ai-academy/ai-for-public-sector"
    ],
    [
     47,
-    "AI Product Management",
-    "builder",
-    "intermediate",
+    "AI in Pharma & Life Sciences",
+    "Advanced",
     "~36 min",
     8,
-    "interactive, reading",
-    "manager, technical",
-    "Free · self-paced"
+    "A ~36-minute playbook for biopharma execs, R&D heads, clinical ops + regulatory affairs leaders. 5 plays within GxP guardrails. Grounded in FDA GMLP + EMA AI reflection + ICH + 21 CFR Part 11.",
+    "https://www.gennoor.com/ai-academy/ai-in-pharma-life-sciences"
    ],
    [
     48,
-    "AB-100: Architecting Agentic AI Business Solutions",
-    "builder",
-    "advanced",
-    "~20 hours",
-    13,
-    "interactive, reading, video",
-    "technical, director",
-    "Free · self-paced"
+    "AI Product Management",
+    "Intermediate",
+    "~36 min",
+    8,
+    "A ~36-minute playbook for AI PMs, heads of product, engineering leaders. 5 capabilities (JTBD · eval harnesses · telemetry · guardrails · honest communication). 3 anti-patterns. 12-month roadmap.",
+    "https://www.gennoor.com/ai-academy/ai-product-management"
    ]
   ],
   "widths": {
-   "A": 5.0,
-   "B": 40.0,
-   "C": 14.0,
-   "D": 14.0,
-   "E": 12.0,
-   "F": 10.0,
-   "G": 22.0,
-   "H": 26.0,
-   "I": 16.0
+   "B": 46,
+   "C": 16,
+   "F": 70,
+   "G": 40
   }
  },
- "PoC Blueprints": {
-  "subtitle": "PoC Blueprints   ·   18 fixed-scope prototypes (4–8 wks)",
+ "Claude certifications": {
+  "header": [
+   "#",
+   "Code",
+   "Title",
+   "Level",
+   "Audience",
+   "Description",
+   "Link"
+  ],
+  "rows": [
+   [
+    1,
+    "CCAS-F",
+    "Claude Certified Associate - Foundations",
+    "Foundations",
+    "Knowledge workers, analysts and team leads",
+    "Use Claude well at work, no coding needed.",
+    "https://www.gennoor.com/claude/certifications/associate-foundations"
+   ],
+   [
+    2,
+    "CCDV-F",
+    "Claude Certified Developer - Foundations",
+    "Foundations",
+    "Software engineers and backend developers",
+    "Build production Claude applications that hold up.",
+    "https://www.gennoor.com/claude/certifications/developer-foundations"
+   ],
+   [
+    3,
+    "CCAR-F",
+    "Claude Certified Architect - Foundations",
+    "Foundations",
+    "Solution architects and senior engineers",
+    "Master the Claude Agent SDK and agent architecture.",
+    "https://www.gennoor.com/claude/certifications/architect-foundations"
+   ],
+   [
+    4,
+    "CCAR-P",
+    "Claude Certified Architect - Professional",
+    "Professional",
+    "Principal architects and technical leads",
+    "Design and govern Claude at enterprise scale.",
+    "https://www.gennoor.com/claude/certifications/architect-professional"
+   ]
+  ],
+  "widths": {
+   "B": 12,
+   "C": 44,
+   "E": 44,
+   "F": 60,
+   "G": 48
+  }
+ },
+ "Claude courses": {
+  "header": [
+   "#",
+   "Title",
+   "Domain",
+   "Level",
+   "Duration",
+   "Audience",
+   "Description",
+   "Link"
+  ],
+  "rows": [
+   [
+    1,
+    "Credential and Access Management Automation with Claude",
+    "Automation with Claude",
+    "Intermediate",
+    "3 days, 24 hours",
+    "Enterprise IT and network operations teams, identity and access administrators, ServiceNow process owners, load…",
+    "From a new-joiner record to the right accounts, the right tickets and a full audit trail",
+    "https://www.gennoor.com/claude/courses/credential-and-access-management-automation-with-claude"
+   ],
+   [
+    2,
+    "Cisco ACI Upgrade Automation with Claude",
+    "Automation with Claude",
+    "Intermediate to advanced",
+    "3 days, 24 hours",
+    "Enterprise network operations, data centre, NOC and network automation engineers who run Cisco ACI fabrics, in India…",
+    "Plan, validate and execute ACI fabric upgrades the Cisco way, with Claude drafting and code executing",
+    "https://www.gennoor.com/claude/courses/cisco-aci-upgrade-automation-with-claude"
+   ],
+   [
+    3,
+    "Bill Creation Automation with Claude",
+    "Automation with Claude",
+    "Intermediate",
+    "3 days, 24 hours",
+    "Enterprise IT and network operations teams, finance operations and shared-services engineers, automation and platform…",
+    "From a placed candidate's confirmation mail to an approved GST or non-GST vendor bill",
+    "https://www.gennoor.com/claude/courses/bill-creation-automation-with-claude"
+   ],
+   [
+    4,
+    "Certificate Renewal Automation with Claude",
+    "Automation with Claude",
+    "Intermediate",
+    "3 days, 24 hours",
+    "Enterprise IT and network operations teams, load balancer and ADC engineers, PKI and certificate owners, network…",
+    "From expiring certificate to renewed, validated and audited binding on every load balancer",
+    "https://www.gennoor.com/claude/courses/certificate-renewal-automation-with-claude"
+   ],
+   [
+    5,
+    "Configuration Comparison Automation with Claude",
+    "Automation with Claude",
+    "Intermediate",
+    "3 days, 24 hours",
+    "Enterprise IT and network operations teams, load balancer and ADC engineers, cloud migration and platform engineers,…",
+    "Two platforms, one verified difference report, before the change window opens",
+    "https://www.gennoor.com/claude/courses/configuration-comparison-automation-with-claude"
+   ],
+   [
+    6,
+    "Traffic and Flow Diagram Automation with Claude",
+    "Automation with Claude",
+    "Intermediate",
+    "3 days, 24 hours",
+    "Network operations, NOC, load balancer, data centre and cloud network teams, and automation leads in enterprise IT in…",
+    "From ping and traceroute evidence to an approved, versioned flow diagram",
+    "https://www.gennoor.com/claude/courses/traffic-and-flow-diagram-automation-with-claude"
+   ],
+   [
+    7,
+    "Device Health Monitoring Automation with Claude",
+    "Automation with Claude",
+    "Intermediate",
+    "3 days, 24 hours",
+    "Network operations, load balancer and data centre engineers, NOC leads, ITSM and automation teams running F5,…",
+    "From VIP, HA and version checks to the right ServiceNow ticket, automatically",
+    "https://www.gennoor.com/claude/courses/device-health-monitoring-automation-with-claude"
+   ],
+   [
+    8,
+    "HR Hiring Flow Automation with Claude",
+    "Automation with Claude",
+    "Intermediate",
+    "3 days, 24 hours",
+    "HR operations and talent acquisition teams, HR technology and enterprise IT automation engineers, and the network and…",
+    "From portal filter to approved pitch, with a recruiter in control of every decision",
+    "https://www.gennoor.com/claude/courses/hr-hiring-flow-automation-with-claude"
+   ],
+   [
+    9,
+    "Terraform and GitHub Automation with Claude",
+    "Automation with Claude",
+    "Beginner to intermediate",
+    "3 days, 24 hours",
+    "Enterprise IT and network operations teams, load balancer and data center engineers, platform and DevOps teams adopting…",
+    "Terraform step by step, the mistakes that burn teams, and a GitHub workflow where Claude reviews and a human approves",
+    "https://www.gennoor.com/claude/courses/terraform-and-github-automation-with-claude"
+   ],
+   [
+    10,
+    "Troubleshooting Automation with Claude",
+    "Automation with Claude",
+    "Intermediate",
+    "3 days, 24 hours",
+    "Network operations, load balancer and data centre engineers, NOC and service desk teams, IT automation leads in India…",
+    "From ServiceNow acknowledgement to reason, action and next action",
+    "https://www.gennoor.com/claude/courses/troubleshooting-automation-with-claude"
+   ],
+   [
+    11,
+    "Device Upgrade Automation with Claude",
+    "Automation with Claude",
+    "Intermediate",
+    "3 days, 24 hours",
+    "Enterprise IT and network operations teams, load balancer and data centre engineers, NOC automation leads, change and…",
+    "Space clear, firmware upload, pre and post checks and a scheduler, with a human on every reboot",
+    "https://www.gennoor.com/claude/courses/device-upgrade-automation-with-claude"
+   ],
+   [
+    12,
+    "Agentic Virtual Patching Platform",
+    "Agentic Cybersecurity",
+    "Intermediate to advanced",
+    "3 days, 24 hours",
+    "Application security, product security, DevSecOps, WAF and platform engineers, vulnerability management teams",
+    "From vulnerability finding to tested interim mitigation",
+    "https://www.gennoor.com/claude/courses/agentic-virtual-patching-platform"
+   ],
+   [
+    13,
+    "Agentic AI Vulnerability Management",
+    "Agentic Cybersecurity",
+    "Intermediate",
+    "3 days, 24 hours",
+    "Vulnerability management, AppSec, IT operations, security engineering and remediation owners",
+    "From scanner noise to prioritized, verified remediation",
+    "https://www.gennoor.com/claude/courses/agentic-ai-vulnerability-management"
+   ],
+   [
+    14,
+    "Agentic Attack Surface Management",
+    "Agentic Cybersecurity",
+    "Intermediate",
+    "3 days, 24 hours",
+    "External attack surface teams, security operations, cloud security, IT asset management, MSSPs",
+    "Discover, reconcile, contextualize and assign exposed assets",
+    "https://www.gennoor.com/claude/courses/agentic-attack-surface-management"
+   ],
+   [
+    15,
+    "Agentic Configuration Reviewer",
+    "Agentic Cybersecurity",
+    "Intermediate",
+    "2 days, 16 hours",
+    "DevSecOps, platform and cloud engineers, infrastructure-as-code authors, security champions in engineering teams",
+    "Review infrastructure and application configuration before deployment",
+    "https://www.gennoor.com/claude/courses/agentic-configuration-reviewer"
+   ],
+   [
+    16,
+    "Agentic Architecture Reviewer",
+    "Agentic Cybersecurity",
+    "Advanced",
+    "3 days, 24 hours",
+    "Security architects, solution architects, application security, platform architects, engineering leads",
+    "Turn system designs into traceable threat models and security recommendations",
+    "https://www.gennoor.com/claude/courses/agentic-architecture-reviewer"
+   ]
+  ],
+  "widths": {
+   "B": 46,
+   "C": 26,
+   "E": 20,
+   "F": 40,
+   "G": 70,
+   "H": 44
+  }
+ },
+ "Team training": {
+  "header": [
+   "#",
+   "Title",
+   "Type",
+   "Level",
+   "Duration",
+   "Audience",
+   "Technology",
+   "Description",
+   "Link"
+  ],
+  "rows": [
+   [
+    1,
+    "AI Transformation for Business Leaders",
+    "Bootcamp",
+    "Executive",
+    "5 days",
+    "C-Suite, Senior Management",
+    "Cross-Platform",
+    "Master AI strategy and transformation to lead your organization into the future.",
+    "https://www.gennoor.com/services/training/ai-transformation-for-business-leaders"
+   ],
+   [
+    2,
+    "GenAI Copilot Mastery",
+    "Bootcamp",
+    "Intermediate",
+    "5 days",
+    "Business Users, Analysts",
+    "Microsoft",
+    "Master Microsoft Copilot and generative AI tools for maximum productivity.",
+    "https://www.gennoor.com/services/training/genai-copilot-mastery"
+   ],
+   [
+    3,
+    "Agentic AI Engineering",
+    "Bootcamp",
+    "Advanced",
+    "10 days",
+    "AI Engineers, Developers",
+    "Open Source",
+    "Build autonomous AI agents and multi-agent systems for enterprise applications.",
+    "https://www.gennoor.com/services/training/agentic-ai-engineering"
+   ],
+   [
+    4,
+    "Data Science & Machine Learning",
+    "Bootcamp",
+    "Intermediate",
+    "8 days",
+    "Data Scientists, Analysts",
+    "Cross-Platform",
+    "Comprehensive data science and ML fundamentals with hands-on projects.",
+    "https://www.gennoor.com/services/training/data-science-machine-learning"
+   ],
+   [
+    5,
+    "Deep Learning & Computer Vision",
+    "Bootcamp",
+    "Advanced",
+    "10 days",
+    "ML Engineers, Researchers",
+    "Open Source",
+    "Master deep learning and computer vision for cutting-edge AI applications.",
+    "https://www.gennoor.com/services/training/deep-learning-computer-vision"
+   ],
+   [
+    6,
+    "Production AI & MLOps",
+    "Bootcamp",
+    "Advanced",
+    "7 days",
+    "ML Engineers, DevOps",
+    "Multi-Cloud",
+    "Deploy and manage AI systems at scale with MLOps best practices.",
+    "https://www.gennoor.com/services/training/production-ai-mlops"
+   ],
+   [
+    7,
+    "AI Development Framework",
+    "Bootcamp",
+    "Intermediate",
+    "5 days",
+    "Developers, Architects",
+    "Open Source",
+    "Build robust AI applications with modern frameworks and best practices.",
+    "https://www.gennoor.com/services/training/ai-development-framework"
+   ],
+   [
+    8,
+    "Microsoft AI for Developers",
+    "Bootcamp",
+    "Intermediate",
+    "5 days",
+    "Developers, Engineers",
+    "Microsoft",
+    "Master Microsoft AI services with Azure AI Foundry and Azure OpenAI for enterprise solutions.",
+    "https://www.gennoor.com/services/training/microsoft-ai-for-developers"
+   ],
+   [
+    9,
+    "AI on Google Cloud",
+    "Bootcamp",
+    "Intermediate",
+    "5 days",
+    "Cloud Engineers, Developers",
+    "Google Cloud",
+    "Build and deploy AI solutions on Google Cloud Platform.",
+    "https://www.gennoor.com/services/training/ai-on-google-cloud"
+   ],
+   [
+    10,
+    "AI on AWS",
+    "Bootcamp",
+    "Intermediate",
+    "5 days",
+    "Cloud Engineers, Developers",
+    "AWS",
+    "Leverage AWS AI services for scalable machine learning solutions.",
+    "https://www.gennoor.com/services/training/ai-on-aws"
+   ],
+   [
+    11,
+    "AB100 Certification Prep",
+    "Bootcamp",
+    "Intermediate",
+    "3 days",
+    "AI Professionals",
+    "Cross-Platform",
+    "Prepare for the Agentic AI AB100 certification exam.",
+    "https://www.gennoor.com/services/training/ab100-certification-prep"
+   ],
+   [
+    12,
+    "Development using Claude AI",
+    "Bootcamp",
+    "Intermediate",
+    "3 days",
+    "Developers",
+    "Claude/Anthropic",
+    "Build applications with Claude AI and Anthropic APIs.",
+    "https://www.gennoor.com/services/training/development-using-claude-ai"
+   ],
+   [
+    13,
+    "Azure AI Foundry & Semantic Kernel",
+    "Bootcamp",
+    "Advanced",
+    "5 days",
+    "AI Engineers, Solution Architects",
+    "Microsoft Azure",
+    "Master the new Azure AI Foundry platform with deep-dive into Semantic Kernel orchestration.",
+    "https://www.gennoor.com/services/training/azure-ai-foundry-semantic-kernel"
+   ],
+   [
+    14,
+    "Microsoft Applied Skills Bootcamp",
+    "Bootcamp",
+    "Intermediate",
+    "5 days",
+    "Job Seekers, Developers, Cloud Engineers",
+    "Microsoft Azure",
+    "Earn 6 Microsoft Applied Skills in 5 days - practical, hands-on validation employers demand.",
+    "https://www.gennoor.com/services/training/microsoft-applied-skills-bootcamp"
+   ],
+   [
+    15,
+    "AI Transformation for Business Leaders",
+    "Course",
+    "Executive",
+    "2 days",
+    "C-Suite, Senior Management",
+    "Cross-Platform",
+    "Strategic AI adoption and transformation for business leaders.",
+    "https://www.gennoor.com/services/training/ai-transformation-for-business-leaders-course"
+   ],
+   [
+    16,
+    "Generative AI & Copilot Mastery",
+    "Course",
+    "Intermediate",
+    "3 days",
+    "Business Users",
+    "Microsoft",
+    "Master generative AI tools and Microsoft Copilot ecosystem.",
+    "https://www.gennoor.com/services/training/generative-ai-copilot-mastery"
+   ],
+   [
+    17,
+    "Agentic AI Engineering",
+    "Course",
+    "Advanced",
+    "5 days",
+    "AI Engineers",
+    "Open Source",
+    "Build autonomous AI agents and multi-agent systems.",
+    "https://www.gennoor.com/services/training/agentic-ai-engineering-course"
+   ],
+   [
+    18,
+    "Data Science & Machine Learning",
+    "Course",
+    "Intermediate",
+    "4 days",
+    "Data Scientists",
+    "Cross-Platform",
+    "Comprehensive data science and ML fundamentals.",
+    "https://www.gennoor.com/services/training/data-science-machine-learning-course"
+   ],
+   [
+    19,
+    "Deep Learning & Computer Vision",
+    "Course",
+    "Advanced",
+    "5 days",
+    "ML Engineers",
+    "Open Source",
+    "Advanced deep learning and computer vision techniques.",
+    "https://www.gennoor.com/services/training/deep-learning-computer-vision-course"
+   ],
+   [
+    20,
+    "Production AI & MLOps",
+    "Course",
+    "Advanced",
+    "3 days",
+    "ML Engineers, DevOps",
+    "Multi-Cloud",
+    "Deploy and manage AI systems at scale.",
+    "https://www.gennoor.com/services/training/production-ai-mlops-course"
+   ],
+   [
+    21,
+    "AI Development Framework",
+    "Course",
+    "Intermediate",
+    "3 days",
+    "Developers",
+    "Open Source",
+    "Build AI applications with modern frameworks.",
+    "https://www.gennoor.com/services/training/ai-development-framework-course"
+   ],
+   [
+    22,
+    "Microsoft AI for Developers",
+    "Course",
+    "Intermediate",
+    "3 days",
+    "Developers",
+    "Microsoft",
+    "Master Microsoft AI services with Azure AI Foundry and Azure OpenAI.",
+    "https://www.gennoor.com/services/training/microsoft-ai-for-developers-course"
+   ],
+   [
+    23,
+    "AI on Google Cloud",
+    "Course",
+    "Intermediate",
+    "3 days",
+    "Cloud Engineers",
+    "Google Cloud",
+    "Build AI solutions on Google Cloud Platform.",
+    "https://www.gennoor.com/services/training/ai-on-google-cloud-course"
+   ],
+   [
+    24,
+    "AI on AWS",
+    "Course",
+    "Intermediate",
+    "3 days",
+    "Cloud Engineers",
+    "AWS",
+    "Leverage AWS AI services for ML solutions.",
+    "https://www.gennoor.com/services/training/ai-on-aws-course"
+   ],
+   [
+    25,
+    "AB100 Certification Prep",
+    "Course",
+    "Intermediate",
+    "2 days",
+    "AI Professionals",
+    "Cross-Platform",
+    "Prepare for Agentic AI AB100 certification.",
+    "https://www.gennoor.com/services/training/ab100-certification-prep-course"
+   ],
+   [
+    26,
+    "Development using Claude AI",
+    "Course",
+    "Intermediate",
+    "2 days",
+    "Developers",
+    "Claude/Anthropic",
+    "Build with Claude AI and Anthropic APIs.",
+    "https://www.gennoor.com/services/training/development-using-claude-ai-course"
+   ],
+   [
+    27,
+    "Executive AI Leadership",
+    "Course",
+    "Executive",
+    "1 day",
+    "C-Suite",
+    "Cross-Platform",
+    "AI leadership and strategy for executives.",
+    "https://www.gennoor.com/services/training/executive-ai-leadership"
+   ],
+   [
+    28,
+    "Azure AI Fundamentals",
+    "Course",
+    "Beginner",
+    "3 days",
+    "IT Professionals",
+    "Microsoft",
+    "Foundation course for Azure AI services with updated 2025-2026 certification.",
+    "https://www.gennoor.com/services/training/azure-ai-fundamentals"
+   ],
+   [
+    29,
+    "Microsoft Copilot Mastery",
+    "Course",
+    "Intermediate",
+    "2 days",
+    "Business Users",
+    "Microsoft",
+    "Master all Microsoft Copilot products.",
+    "https://www.gennoor.com/services/training/microsoft-copilot-mastery"
+   ],
+   [
+    30,
+    "Power Platform + AI",
+    "Course",
+    "Intermediate",
+    "3 days",
+    "Citizen Developers",
+    "Microsoft",
+    "Build AI-powered apps with Power Platform.",
+    "https://www.gennoor.com/services/training/power-platform-ai"
+   ],
+   [
+    31,
+    "Prompt Engineering Masterclass",
+    "Course",
+    "Intermediate",
+    "2 days",
+    "All Roles",
+    "Cross-Platform",
+    "Master the art of prompt engineering.",
+    "https://www.gennoor.com/services/training/prompt-engineering-masterclass"
+   ],
+   [
+    32,
+    "GitHub Copilot for Developers",
+    "Course",
+    "Intermediate",
+    "2 days",
+    "Developers",
+    "Microsoft",
+    "Accelerate development with GitHub Copilot.",
+    "https://www.gennoor.com/services/training/github-copilot-for-developers"
+   ],
+   [
+    33,
+    "RAG Engineering",
+    "Course",
+    "Advanced",
+    "3 days",
+    "AI Engineers",
+    "Open Source",
+    "Build production RAG systems.",
+    "https://www.gennoor.com/services/training/rag-engineering"
+   ],
+   [
+    34,
+    "AI Security & Responsible AI",
+    "Course",
+    "Intermediate",
+    "2 days",
+    "All Technical Roles",
+    "Cross-Platform",
+    "Security and ethics in AI systems.",
+    "https://www.gennoor.com/services/training/ai-security-responsible-ai"
+   ],
+   [
+    35,
+    "AI for BFSI",
+    "Course",
+    "Intermediate",
+    "3 days",
+    "BFSI Professionals",
+    "Cross-Platform",
+    "AI applications in Banking, Financial Services, and Insurance.",
+    "https://www.gennoor.com/services/training/ai-for-bfsi"
+   ],
+   [
+    36,
+    "AI for Government",
+    "Course",
+    "Intermediate",
+    "2 days",
+    "Government Officials",
+    "Cross-Platform",
+    "AI solutions for public sector and governance.",
+    "https://www.gennoor.com/services/training/ai-for-government"
+   ],
+   [
+    37,
+    "Fine-Tuning Custom LLMs",
+    "Course",
+    "Advanced",
+    "4 days",
+    "ML Engineers",
+    "Open Source",
+    "Fine-tune and deploy custom language models.",
+    "https://www.gennoor.com/services/training/fine-tuning-custom-llms"
+   ],
+   [
+    38,
+    "N8N AI Workflow Automation",
+    "Course",
+    "Intermediate",
+    "2 days",
+    "Automation Engineers",
+    "Open Source",
+    "Build AI-powered automation workflows with N8N.",
+    "https://www.gennoor.com/services/training/n8n-ai-workflow-automation"
+   ],
+   [
+    39,
+    "Conversational AI & Chatbots",
+    "Course",
+    "Intermediate",
+    "3 days",
+    "Developers",
+    "Cross-Platform",
+    "Build intelligent conversational AI systems.",
+    "https://www.gennoor.com/services/training/conversational-ai-chatbots"
+   ],
+   [
+    40,
+    "AI Testing & Quality Assurance",
+    "Course",
+    "Intermediate",
+    "2 days",
+    "QA Engineers",
+    "Cross-Platform",
+    "Test and validate AI systems effectively.",
+    "https://www.gennoor.com/services/training/ai-testing-quality-assurance"
+   ]
+  ],
+  "widths": {
+   "B": 46,
+   "F": 34,
+   "G": 18,
+   "H": 70,
+   "I": 44
+  }
+ },
+ "Exam preparation": {
+  "header": [
+   "#",
+   "Code",
+   "Title",
+   "Provider",
+   "Level",
+   "Link"
+  ],
+  "rows": [
+   [
+    1,
+    "AI-901",
+    "Azure AI Fundamentals",
+    "Microsoft",
+    "Fundamentals",
+    "https://www.gennoor.com/services/certifications/ai-901-azure-ai-fundamentals"
+   ],
+   [
+    2,
+    "AI-103",
+    "Azure AI App and Agent Developer Associate",
+    "Microsoft",
+    "Associate",
+    "https://www.gennoor.com/services/certifications/ai-103-azure-ai-app-and-agent-developer-associate"
+   ],
+   [
+    3,
+    "AB-100",
+    "Agentic AI Business Solutions Architect",
+    "Microsoft",
+    "Specialty",
+    "https://www.gennoor.com/services/certifications/ab-100-agentic-ai-business-solutions-architect"
+   ],
+   [
+    4,
+    "AB-730",
+    "AI Business Professional",
+    "Microsoft",
+    "Associate",
+    "https://www.gennoor.com/services/certifications/ab-730-ai-business-professional"
+   ],
+   [
+    5,
+    "AB-731",
+    "AI Transformation Leader",
+    "Microsoft",
+    "Expert",
+    "https://www.gennoor.com/services/certifications/ab-731-ai-transformation-leader"
+   ],
+   [
+    6,
+    "AB-900",
+    "Microsoft 365 Copilot and Agent Administration Fundamentals",
+    "Microsoft",
+    "Fundamentals",
+    "https://www.gennoor.com/services/certifications/ab-900-microsoft-365-copilot-and-agent-administration-fundamentals"
+   ],
+   [
+    7,
+    "AI-300",
+    "Machine Learning Operations (MLOps) Engineer Associate",
+    "Microsoft",
+    "Associate",
+    "https://www.gennoor.com/services/certifications/ai-300-machine-learning-operations-mlops-engineer-associate"
+   ],
+   [
+    8,
+    "AZ-204",
+    "Azure Developer Associate",
+    "Microsoft",
+    "Associate",
+    "https://www.gennoor.com/services/certifications/az-204-azure-developer-associate"
+   ],
+   [
+    9,
+    "AZ-305",
+    "Azure Solutions Architect Expert",
+    "Microsoft",
+    "Expert",
+    "https://www.gennoor.com/services/certifications/az-305-azure-solutions-architect-expert"
+   ],
+   [
+    10,
+    "AZ-400",
+    "DevOps Engineer Expert",
+    "Microsoft",
+    "Expert",
+    "https://www.gennoor.com/services/certifications/az-400-devops-engineer-expert"
+   ],
+   [
+    11,
+    "PL-900",
+    "Power Platform Fundamentals",
+    "Microsoft",
+    "Fundamentals",
+    "https://www.gennoor.com/services/certifications/pl-900-power-platform-fundamentals"
+   ],
+   [
+    12,
+    "PL-200",
+    "Power Platform Functional Consultant Associate",
+    "Microsoft",
+    "Associate",
+    "https://www.gennoor.com/services/certifications/pl-200-power-platform-functional-consultant-associate"
+   ],
+   [
+    13,
+    "PL-300",
+    "Power BI Data Analyst Associate",
+    "Microsoft",
+    "Associate",
+    "https://www.gennoor.com/services/certifications/pl-300-power-bi-data-analyst-associate"
+   ],
+   [
+    14,
+    "PL-400",
+    "Power Platform Developer Associate",
+    "Microsoft",
+    "Associate",
+    "https://www.gennoor.com/services/certifications/pl-400-power-platform-developer-associate"
+   ],
+   [
+    15,
+    "MS-900",
+    "Microsoft 365 Fundamentals",
+    "Microsoft",
+    "Fundamentals",
+    "https://www.gennoor.com/services/certifications/ms-900-microsoft-365-fundamentals"
+   ],
+   [
+    16,
+    "SC-900",
+    "Security, Compliance, and Identity Fundamentals",
+    "Microsoft",
+    "Fundamentals",
+    "https://www.gennoor.com/services/certifications/sc-900-security-compliance-and-identity-fundamentals"
+   ],
+   [
+    17,
+    "CDL",
+    "Cloud Digital Leader",
+    "Google",
+    "Fundamentals",
+    "https://www.gennoor.com/services/certifications/cdl-cloud-digital-leader"
+   ],
+   [
+    18,
+    "MLE",
+    "Professional Machine Learning Engineer",
+    "Google",
+    "Expert",
+    "https://www.gennoor.com/services/certifications/mle-professional-machine-learning-engineer"
+   ],
+   [
+    19,
+    "DE",
+    "Professional Data Engineer",
+    "Google",
+    "Expert",
+    "https://www.gennoor.com/services/certifications/de-professional-data-engineer"
+   ],
+   [
+    20,
+    "CLF-C02",
+    "AWS Certified Cloud Practitioner",
+    "AWS",
+    "Fundamentals",
+    "https://www.gennoor.com/services/certifications/clf-c02-aws-certified-cloud-practitioner"
+   ],
+   [
+    21,
+    "AIF-C01",
+    "AWS Certified AI Practitioner",
+    "AWS",
+    "Fundamentals",
+    "https://www.gennoor.com/services/certifications/aif-c01-aws-certified-ai-practitioner"
+   ],
+   [
+    22,
+    "MLE-C01",
+    "AWS Certified Machine Learning Engineer - Associate",
+    "AWS",
+    "Associate",
+    "https://www.gennoor.com/services/certifications/mle-c01-aws-certified-machine-learning-engineer-associate"
+   ],
+   [
+    23,
+    "MLS-C01",
+    "AWS Certified Machine Learning - Specialty",
+    "AWS",
+    "Specialty",
+    "https://www.gennoor.com/services/certifications/mls-c01-aws-certified-machine-learning-specialty"
+   ],
+   [
+    24,
+    "GH-900",
+    "GitHub Foundations",
+    "GitHub",
+    "Fundamentals",
+    "https://www.gennoor.com/services/certifications/gh-900-github-foundations"
+   ],
+   [
+    25,
+    "GH-300",
+    "GitHub Actions",
+    "GitHub",
+    "Associate",
+    "https://www.gennoor.com/services/certifications/gh-300-github-actions"
+   ],
+   [
+    26,
+    "GH-200",
+    "GitHub Copilot",
+    "GitHub",
+    "Associate",
+    "https://www.gennoor.com/services/certifications/gh-200-github-copilot"
+   ],
+   [
+    27,
+    "AI+ Executive",
+    "AI+ Executive",
+    "AI CERTs",
+    "Expert",
+    "https://www.gennoor.com/services/certifications/ai-executive-ai-executive"
+   ],
+   [
+    28,
+    "AI+ Security L1",
+    "AI+ Security Level 1",
+    "AI CERTs",
+    "Associate",
+    "https://www.gennoor.com/services/certifications/ai-security-l1-ai-security-level-1"
+   ],
+   [
+    29,
+    "AI+ Security L2",
+    "AI+ Security Level 2",
+    "AI CERTs",
+    "Expert",
+    "https://www.gennoor.com/services/certifications/ai-security-l2-ai-security-level-2"
+   ]
+  ],
+  "widths": {
+   "B": 14,
+   "C": 60,
+   "D": 16,
+   "E": 18,
+   "F": 50
+  }
+ },
+ "PoC blueprints": {
   "header": [
    "#",
    "Title",
    "Category",
    "Problem it solves",
+   "What we build",
    "Timeline",
-   "Technologies",
    "Industries"
   ],
   "rows": [
@@ -1235,9 +1729,9 @@
     1,
     "Invoice & Receipt AI Extraction",
     "Documents & Knowledge",
-    "AP teams hand-key thousands of invoices a month with errors and lag — month-end close drags by days.",
+    "AP teams hand-key thousands of invoices a month with errors and lag, month-end close drags by days.",
+    "Document AI ingestion with table, signature, and multi-language extraction. LLM verification layer to flag mismatches and request human review on low-confidence fields. ERP write-back integration (SAP, D365, Oracle) with audit trail",
     "4 weeks",
-    "Azure AI Document Intelligence, GPT-4o, Logic Apps, Azure Functions",
     "BFSI, Manufacturing, Retail"
    ],
    [
@@ -1245,8 +1739,8 @@
     "Contract & Legal Document Review",
     "Documents & Knowledge",
     "Legal teams spend hours redlining standard contracts against playbooks that exist only in senior counsel’s head.",
+    "Clause extraction and classification across NDA, MSA, SOW, vendor templates. Risk flagging against a configurable playbook with severity scoring. Side-by-side comparison view with suggested fallback language",
     "6 weeks",
-    "Azure AI Language, GPT-4o, Cosmos DB, M365 add-in",
     "Legal Services, BFSI, Real Estate"
    ],
    [
@@ -1254,17 +1748,17 @@
     "Enterprise RAG / Knowledge Search",
     "Documents & Knowledge",
     "Employees can’t find policies, SOPs, or technical docs scattered across SharePoint, Confluence, and shared drives.",
+    "Hybrid search (keyword + vector + semantic ranking) over the enterprise corpus. Citation-backed answers with click-through to source documents. Document-level access control honoring existing AD/Entra group permissions",
     "6 weeks",
-    "Azure AI Search, GPT-4o, text-embedding-3-large, Cosmos DB, Entra ID",
     "All"
    ],
    [
     4,
     "Multimodal RAG for Financial Documents",
     "Documents & Knowledge",
-    "Financial PDFs contain tables, charts, and precise numbers that pure text-RAG misses — answers come back confidently wrong.",
+    "Financial PDFs contain tables, charts, and precise numbers that pure text-RAG misses, answers come back confidently wrong.",
+    "Two-stage pipeline: text extraction + image extraction with semantic chunking that preserves table context. Hybrid search combining keyword precision (SWIFT, IBAN, dates) with semantic similarity. GPT-4o multimodal answers with page-number citations and…",
     "6–8 weeks",
-    "Azure AI Search, Azure AI Vision, GPT-4o, Hybrid Search, Python",
     "BFSI, Audit, Consulting"
    ],
    [
@@ -1272,8 +1766,8 @@
     "HR Onboarding Copilot",
     "Agents",
     "New joiners flood HR with policy questions; HR becomes the bottleneck for the first 30 days.",
+    "Copilot Studio agent grounded on policy docs, benefits, and onboarding tasks. Per-role task checklist with calendar reminders and manager nudges. Escalation to HR Business Partner on out-of-scope or sensitive queries",
     "4 weeks",
-    "Copilot Studio, M365 Copilot, SharePoint, Teams",
     "All"
    ],
    [
@@ -1281,8 +1775,8 @@
     "Sales Proposal Generator",
     "Agents",
     "Sales reps spend half a day assembling proposals from scattered templates, pricing sheets, and stale case studies.",
+    "Prompt-driven proposal builder with brand templates and approved asset library. CRM context injection (account, deal stage, prior touchpoints) from Dynamics or Salesforce. Versioning and approval workflow with redline tracking",
     "4–6 weeks",
-    "GPT-4o, Dynamics 365, M365 Copilot, Power Automate",
     "B2B (all sectors)"
    ],
    [
@@ -1290,44 +1784,44 @@
     "Multilingual Customer Support Agent",
     "Agents",
     "Support volume is scaling faster than headcount; non-English markets are under-served and CSAT is sliding.",
+    "Voice + text support agent with intent routing and warm handoff to human agents. RAG over the knowledge base with fluency in English, Arabic, Hindi, and Swahili. Real-time sentiment + escalation triggers visible to the team lead dashboard",
     "6–8 weeks",
-    "Azure AI Speech, GPT-4o, Copilot Studio, Azure AI Search",
     "Telecom, Retail, BFSI"
    ],
    [
     8,
     "Finance Reconciliation Agent",
     "Agents",
-    "Month-end close is clogged by manual reconciliation across bank statements, GL, AP/AR — finance owns the weekend.",
+    "Month-end close is clogged by manual reconciliation across bank statements, GL, AP/AR, finance owns the weekend.",
+    "Ingest bank statements, general ledger, and AP/AR sub-ledgers into a unified canonical view. Mismatch detection with proposed journal entries for review. Human-in-the-loop approval with full audit trail back to source documents",
     "6 weeks",
-    "Azure OpenAI, Azure Functions, Cosmos DB, Power BI",
     "All"
    ],
    [
     9,
     "Procurement & Vendor Intelligence Agent",
     "Agents",
-    "Procurement can’t compare vendors, contracts, and pricing across siloed systems — consolidation opportunities go unseen.",
+    "Procurement can’t compare vendors, contracts, and pricing across siloed systems, consolidation opportunities go unseen.",
+    "Ingest vendor docs, contracts, and spend data; build a normalized vendor profile. Consolidation recommendations with realized-savings projections. Renewal risk flags (auto-escalation clauses, terminating SLAs, single-source exposure)",
     "6 weeks",
-    "Azure OpenAI, Azure AI Document Intelligence, Fabric, Power BI",
     "Manufacturing, Energy, Healthcare"
    ],
    [
     10,
     "Loan Origination Agent (BFSI)",
     "Industry-Specific",
-    "Retail loan applications take days to underwrite manually — drop-off is highest in the first 24 hours.",
+    "Retail loan applications take days to underwrite manually, drop-off is highest in the first 24 hours.",
+    "Multi-agent system: KYC verification, income parsing, risk scoring, decisioning aid. Document generation for sanction letters, schedules, and customer comms. Underwriter-in-the-loop dashboard with override audit and rationale capture",
     "8 weeks",
-    "Azure OpenAI, Copilot Studio, LangGraph, Azure SQL, Azure ML",
     "Retail Banks, NBFCs"
    ],
    [
     11,
     "Clinical Documentation Assistant (Healthcare)",
     "Industry-Specific",
-    "Physicians spend ~2 hours a day on EHR documentation — burnout and quality both suffer.",
+    "Physicians spend ~2 hours a day on EHR documentation, burnout and quality both suffer.",
+    "Ambient voice capture during patient encounters with consent flow. Structured note generation (SOAP, problem-oriented) with EHR write-back. PHI-safe deployment with audit logging and on-prem inference option",
     "8 weeks",
-    "Azure AI Speech, GPT-4o, FHIR APIs, Azure Confidential Computing",
     "Hospitals, Clinics"
    ],
    [
@@ -1335,8 +1829,8 @@
     "Predictive Maintenance Agent (Manufacturing)",
     "Industry-Specific",
     "Unplanned downtime on the line costs more in a quarter than the maintenance team’s entire annual budget.",
+    "Time-series ingestion from SCADA / OPC UA / IoT Hub with anomaly detection. LLM-narrated maintenance recommendations routed to plant engineers. Closed-loop feedback to refine thresholds and reduce false positives",
     "8–10 weeks",
-    "Azure IoT Hub, Azure ML, Anomaly Detector, Power BI, GPT-4o",
     "Manufacturing, Energy"
    ],
    [
@@ -1344,35 +1838,35 @@
     "Citizen Services Multilingual Agent (Government)",
     "Industry-Specific",
     "Citizen calls to government services overwhelm contact centers; multilingual demand outpaces staffing.",
+    "Voice + chat agent grounded on official policy and service documentation. Case-handoff to human agents with full transcript and structured case fields. Sovereign deployment option (Azure Government / on-premise) with full audit trail",
     "10 weeks",
-    "Azure AI Speech, GPT-4o, Copilot Studio, Azure AI Content Safety",
     "Government, Municipalities"
    ],
    [
     14,
     "Personalized Learning Path Agent (Education)",
     "Industry-Specific",
-    "EdTech platforms struggle to personalize beyond surface-level recommendations — engagement drops after week 3.",
+    "EdTech platforms struggle to personalize beyond surface-level recommendations, engagement drops after week 3.",
+    "Behavioral observation across content, quiz, and time-on-task signals. Gap analysis and dynamically generated practice problems with explanations. Teacher dashboard for cohort-level insights and intervention prompts",
     "6–8 weeks",
-    "Azure OpenAI, Azure ML, Cosmos DB, Power BI",
     "EdTech, Universities, Ministries of Education"
    ],
    [
     15,
     "Demand Forecasting Engine",
     "Analytics & Forecasting",
-    "Sales and operations planning runs on Excel — forecasts are stale within a week and never trusted.",
+    "Sales and operations planning runs on Excel, forecasts are stale within a week and never trusted.",
+    "Time-series + ML forecasting pipeline on Azure ML with weekly retrain. Power BI surfacing with confidence intervals and segment drill-down. Natural-language what-if interface for scenario planning",
     "8 weeks",
-    "Azure ML, Prophet / DeepAR, Power BI, GPT-4o",
     "Retail, Manufacturing, Supply Chain"
    ],
    [
     16,
     "Anomaly Detection / Fraud Engine",
     "Analytics & Forecasting",
-    "Fraud and suspicious transactions hide inside normal volume — by the time they surface, the loss is booked.",
+    "Fraud and suspicious transactions hide inside normal volume, by the time they surface, the loss is booked.",
+    "Real-time anomaly detection combining classical ML with LLM reasoning for context. Case management dashboard with investigator workflow and feedback loop. Existing reference architecture from prior CV/fraud work — code transferable",
     "8 weeks",
-    "Azure ML, Anomaly Detector, GPT-4o, OpenCV, Python",
     "BFSI, E-commerce, Insurance"
    ],
    [
@@ -1380,222 +1874,71 @@
     "Microsoft 365 Copilot Rollout (Adoption Pilot)",
     "Productivity & Adoption",
     "The licenses are paid for, but adoption is stuck at 10% and finance is asking why.",
+    "Licensing and persona strategy: who gets Copilot, why, and what success looks like. Persona-based prompt libraries delivered as M365 add-ins. Adoption metrics dashboard with weekly executive read-out",
     "4 weeks",
-    "M365 Copilot, Power BI, Viva Insights, SharePoint",
     "All"
    ],
    [
     18,
     "Meeting Intelligence & Action Tracker",
     "Productivity & Adoption",
-    "Decisions made in meetings get lost; action items never get followed up — execution drifts.",
+    "Decisions made in meetings get lost; action items never get followed up, execution drifts.",
+    "Transcript ingestion from Teams / Zoom with speaker attribution. Decision and action extraction with owner and due-date inference. CRM and project-tool sync (Dynamics, Asana, Planner) plus a weekly digest agent",
     "4–6 weeks",
-    "Azure AI Speech, GPT-4o, Power Automate, Microsoft Graph",
     "All"
    ]
   ],
   "widths": {
-   "A": 5.0,
-   "B": 32.0,
-   "C": 22.0,
-   "D": 50.0,
-   "E": 14.0,
-   "F": 34.0,
-   "G": 28.0
+   "B": 38,
+   "C": 24,
+   "D": 56,
+   "E": 70,
+   "F": 12,
+   "G": 34
   }
  },
- "Free Resources": {
-  "subtitle": "Free Resources & Tools   ·   12 freebies",
+ "AI Weekend": {
   "header": [
-   "Resource",
-   "Type",
-   "What you get",
-   "Link"
+   "Day",
+   "What you build",
+   "What you leave with"
   ],
   "rows": [
    [
-    "AI Academy — 48 self-paced courses",
-    "Course library",
-    "Interactive + video + reading across 6 tracks (foundations, function, leadership, industry, builder, applied). Free.",
-    "gennoor.com/academy"
+    "Day 1 - Saturday",
+    "Your context file",
+    "Claude stops giving generic answers because it knows your role, your company and how you write"
    ],
    [
-    "Enterprise Guide: Agentic AI",
-    "Guide",
-    "Complete enterprise guide to building and governing AI agents.",
-    "gennoor.com/resources/guides/agentic-ai"
+    "Day 1 - Saturday",
+    "A weekly report in minutes",
+    "A messy spreadsheet goes in, a summary you can send upward comes out"
    ],
    [
-    "Enterprise Guide: AI Readiness Checklist",
-    "Guide",
-    "Is your enterprise ready for AI? Five-dimension self-check.",
-    "gennoor.com/resources/guides/ai-readiness-checklist"
+    "Day 1 - Saturday",
+    "A connected workspace",
+    "Claude reads your files and drafts directly, without copy and paste"
    ],
    [
-    "Enterprise Guide: Enterprise AI Training",
-    "Guide",
-    "Complete guide to corporate AI upskilling.",
-    "gennoor.com/resources/guides/enterprise-ai-training"
+    "Day 2 - Sunday",
+    "One task automated",
+    "A job you do by hand every week now runs when you ask"
    ],
    [
-    "Enterprise Guide: Microsoft Copilot Studio",
-    "Guide",
-    "Complete enterprise guide to Copilot Studio.",
-    "gennoor.com/resources/guides/microsoft-copilot-studio"
+    "Day 2 - Sunday",
+    "A small working app",
+    "Built by describing it, with no coding background needed"
    ],
    [
-    "AI ROI Calculator",
-    "Interactive tool",
-    "Model the return on an AI initiative.",
-    "gennoor.com/resources/calculators/ai-roi"
-   ],
-   [
-    "Copilot Licensing Calculator",
-    "Interactive tool",
-    "Estimate Microsoft Copilot licensing across your org.",
-    "gennoor.com/resources/calculators/copilot-licensing"
-   ],
-   [
-    "AI Readiness Assessment",
-    "Self-assessment",
-    "Score your organization's AI readiness across five dimensions.",
-    "gennoor.com/ai-readiness"
-   ],
-   [
-    "Insights & Blog library",
-    "Articles",
-    "Enterprise AI strategy, governance, and hands-on technical deep-dives.",
-    "gennoor.com/resources/blog"
-   ],
-   [
-    "Video library",
-    "Videos",
-    "Recorded walkthroughs, demos, and explainers.",
-    "gennoor.com/resources/videos"
-   ],
-   [
-    "Claude Cowork Workshop",
-    "Workshop",
-    "Hands-on session on working alongside AI agents.",
-    "gennoor.com/workshops/claude-cowork"
-   ],
-   [
-    "18 PoC Blueprints",
-    "Productized PoCs",
-    "Fixed-scope, fixed-timeline AI prototypes delivered in your environment in 4–8 weeks.",
-    "gennoor.com/resources/pocs"
+    "Day 2 - Sunday",
+    "Your first agent",
+    "Give it a goal, and it researches, drafts and checks its own work"
    ]
   ],
   "widths": {
-   "A": 40.0,
-   "B": 18.0,
-   "C": 56.0,
-   "D": 40.0
+   "A": 22,
+   "B": 34,
+   "C": 90
   }
- },
- "Case Studies": {
-  "subtitle": "Case Studies   ·   6 real engagements",
-  "header": [
-   "Client",
-   "Engagement",
-   "Industry",
-   "Duration",
-   "Headline outcome"
-  ],
-  "rows": [
-   [
-    "MCIT Saudi Arabia",
-    "AI Leadership Mastery for Senior Executives",
-    "Government",
-    "10 Days",
-    "Executives developed actionable AI roadmaps for their organizations"
-   ],
-   [
-    "Bank of Tanzania",
-    "AI Agents Implementation for Banking Transformation",
-    "Banking & Financial Services",
-    "10 Days",
-    "Delivered working chatbot prototype for customer support"
-   ],
-   [
-    "EY (Ernst & Young)",
-    "Enterprise Copilot Studio & Agent Flows Training",
-    "Professional Services",
-    "Multi-Module Program",
-    "Team gained expertise in building enterprise agents"
-   ],
-   [
-    "Tech Mahindra & Enterprise Clients",
-    "Custom MCP Servers for Copilot Studio Database Integration",
-    "Technology",
-    "Development & Deployment",
-    "Business users query databases in natural language"
-   ],
-   [
-    "Koenig Solutions Global Delivery",
-    "Foundational Python & AI Training Programs",
-    "Education & Training",
-    "10 Days per Program",
-    "Trained 100+ professionals in Python for AI"
-   ],
-   [
-    "Open Source Community",
-    "Local Prompt Engineering Training with Ollama",
-    "Education & Training",
-    "Self-paced",
-    "Enabled developers to learn prompt engineering at zero cost"
-   ]
-  ],
-  "widths": {
-   "A": 28.0,
-   "B": 40.0,
-   "C": 26.0,
-   "D": 20.0,
-   "E": 50.0
-  }
- },
- "Contact": [
-  [
-   "Let's talk",
-   null,
-   null,
-   null
-  ],
-  [
-   "Email",
-   "admin@gennoor.com",
-   null,
-   null
-  ],
-  [
-   "Phone / WhatsApp",
-   "+91 9326352241",
-   null,
-   null
-  ],
-  [
-   "Website",
-   "www.gennoor.com",
-   null,
-   null
-  ],
-  [
-   "Pricing",
-   "Pricing is scoped to each engagement (team size, functions, on-site vs remote, timeline). Reach out for a tailored quote — we never quote blind.",
-   null,
-   null
-  ],
-  [
-   "Delivery",
-   "On-site in India & Saudi Arabia (Vision 2030 aligned) or live-remote worldwide.",
-   null,
-   null
-  ],
-  [
-   "Delivered by",
-   "Delivered by Jalal Ahmed Khan — Microsoft Certified Trainer, Founder & Principal AI Consultant",
-   null,
-   null
-  ]
- ]
+ }
 }
