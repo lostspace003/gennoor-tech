@@ -112,3 +112,6 @@ rzp-webhook-secret.txt
 # Working files for the email pictures (scripts/email-art)
 scripts/email-art/.work/
 scripts/catalog/.work/
+
+# Working files for the deck and the films (scripts/show)
+scripts/show/.work/

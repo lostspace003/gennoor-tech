@@ -1,0 +1,18 @@
+<!doctype html>
+<!--
+  The stage for the Gennoor show. build.mjs opens this page in Chrome and either
+  cuts every piece out for the presentation (?mode=deck) or photographs it frame by
+  frame for a film (?mode=film). Open it by hand to look at a scene:
+    stage.html?show=overview&mode=deck&scene=course
+  The scenes are in js/scenes-*.js, the look in css/stage.css, the motion in js/engine.js.
+-->
+<meta charset="utf-8">
+<title>Gennoor show</title>
+<link rel="stylesheet" href="css/stage.css">
+<body>
+<div id="stage"></div>
+<script src="js/kit.js"></script>
+<script src="js/scenes-overview.js"></script>
+<script src="js/scenes-weekend.js"></script>
+<script src="js/engine.js"></script>
+</body>

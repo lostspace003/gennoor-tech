@@ -1,5 +1,5 @@
 /**
- * Step 1 of the catalogue and the overview deck: read what the website sells today.
+ * Step 1 of the catalogue and the presentation: read what the website sells today.
  *
  *   npx tsx --env-file=.env.local scripts/catalog/extract-site-data.ts
  *
@@ -13,8 +13,8 @@
  * No prices anywhere, by the owner's decision (November 2026): cost depends on
  * scope and is discussed on a call.
  *
- * Then run:  python scripts/catalog/build-catalog-xlsx.py
- *            python scripts/catalog/build-overview-pptx.py
+ * Then run:  python scripts/catalog/build-catalog-xlsx.py      (the catalogue workbook)
+ *            node scripts/show/build.mjs deck overview && python scripts/show/deck.py overview      (the presentation)
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import path from 'path'
@@ -128,7 +128,7 @@ async function main() {
       { A: 22, B: 34, C: 90 }),
   }
 
-  // Course pictures for the overview deck (a working folder, not committed)
+  // Course pictures for the presentation and the films (a working folder, not committed)
   const work = path.join(process.cwd(), 'scripts', 'catalog', '.work')
   mkdirSync(work, { recursive: true })
   for (const r of studioRows.slice(0, 4)) {
