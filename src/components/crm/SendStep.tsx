@@ -5,6 +5,7 @@ import { X, Send, Paperclip } from 'lucide-react'
 import { Lead } from '@/lib/crm/types'
 import { SEQUENCE, sequenceProgress, stepById, stepNumber } from '@/lib/crm/sequence'
 import { api, Spinner } from './shared'
+import { useCrm } from './CrmContext'
 
 interface Preview { subject: string; html: string; attachCatalogue: boolean }
 
@@ -41,6 +42,9 @@ export default function SendStepModal({ leads, onClose, onSent, notify }: {
   const [sending, setSending] = useState(false)
 
   const total = [...groups.values()].reduce((n, g) => n + g.length, 0)
+  // Who gets a copy: the admin mailbox always, and the person sending
+  const { realEmail } = useCrm()
+  const copied = realEmail && realEmail.toLowerCase() !== 'admin@gennoor.com' ? `admin@gennoor.com and ${realEmail.toLowerCase()}` : 'admin@gennoor.com'
   const sample = groups.get(active)?.[0]
 
   // The preview is the real email for the first lead in the group, note included
@@ -84,7 +88,7 @@ export default function SendStepModal({ leads, onClose, onSent, notify }: {
           <div className="min-w-0">
             <h3 className="text-base font-semibold text-gray-900">Review and send</h3>
             <p className="text-xs text-gray-500 truncate">
-              {total} lead{total === 1 ? '' : 's'} · from sales@gennoor.com · admin@ and you are copied
+              {total} lead{total === 1 ? '' : 's'} · from sales@gennoor.com · copy (CC) to {copied}
             </p>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded" aria-label="Close"><X className="w-5 h-5 text-gray-500" /></button>
@@ -116,7 +120,7 @@ export default function SendStepModal({ leads, onClose, onSent, notify }: {
                 )}
               </div>
               <div className="flex-1 min-h-0 bg-gray-100 relative">
-                {preview && <iframe title="Email preview" srcDoc={preview.html} sandbox="" className="w-full h-full border-0" />}
+                {preview && <iframe title="Email preview" srcDoc={`<base target="_blank">${preview.html}`} sandbox="allow-popups allow-popups-to-escape-sandbox" className="w-full h-full border-0" />}
                 {loading && <div className="absolute top-2 right-3 bg-white/90 rounded-full px-2.5 py-1"><Spinner label="Updating" /></div>}
               </div>
             </div>
