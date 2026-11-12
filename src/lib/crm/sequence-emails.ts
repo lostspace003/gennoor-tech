@@ -46,8 +46,8 @@ function content(stepId: string, first: string, company: string): Content {
             { icon: 'certificate', art: 'certification', title: 'Certificate', line: 'Quizzes in every module' },
           ]) +
           briefButton('Watch the preview lessons', STUDIO) +
-          briefLine(`Prefer to talk? ${briefLink('Pick a time', CALL)}.`),
-        plain: `Hello ${first},\n\nSee the training before you talk to us. The team at ${company} can watch real lessons from our AI and cloud courses today, with no sign-up.\n\n- Video lessons: short, with captions\n- Hands-on labs: files to download\n- Certificate: quizzes in every module\n\nWatch the preview lessons: ${STUDIO}\nPrefer to talk? Pick a time: ${CALL}`,
+          briefLine(`New to us? ${briefLink('Watch what we do in ninety seconds', SITE)}. Prefer to talk? ${briefLink('Pick a time', CALL)}.`),
+        plain: `Hello ${first},\n\nSee the training before you talk to us. The team at ${company} can watch real lessons from our AI and cloud courses today, with no sign-up.\n\n- Video lessons: short, with captions\n- Hands-on labs: files to download\n- Certificate: quizzes in every module\n\nWatch the preview lessons: ${STUDIO}\nWhat we do, in ninety seconds: ${SITE}\nPrefer to talk? Pick a time: ${CALL}`,
       }
 
     case 'samples':
