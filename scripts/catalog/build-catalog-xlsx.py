@@ -1,6 +1,12 @@
 """Regenerates public/Gennoor-Tech-Catalog/Gennoor-Tech-Catalog.xlsx from catalog-data.json.
-python scripts/catalog/build-catalog-xlsx.py
-Content lives in catalog-data.json; this file only does the design."""
+
+    npx tsx --env-file=.env.local scripts/catalog/extract-site-data.ts   (reads the site, writes catalog-data.json)
+    python scripts/catalog/build-catalog-xlsx.py                         (this file)
+
+The content comes from the website's own data, so the catalogue says what the
+site says. This file only does the design. Run both whenever courses, prices or
+programmes change: the workbook is attached to enquiry replies and to email 2
+of the CRM series."""
 import json
 from pathlib import Path
 
@@ -28,22 +34,27 @@ LINK = f(10, True, BLUE, underline="single")
 
 # sheet -> (display title, tab colour, short note shown under the title, link column header or None)
 SHEETS = {
-    "Offerings": ("Offerings", BLUE, "Five service lines, from strategy to certification."),
-    "The Gennoor Way": ("The Gennoor Way", BLUE, "Our five-phase transformation method."),
-    "Bootcamps": ("Bootcamps", BLUE, "Instructor-led programs, five days or less."),
-    "Courses": ("Courses", BLUE, "Instructor-led courses, one to three days."),
-    "AI Academy (Free)": ("AI Academy (free)", "16A34A", "Self-paced courses. Free with one sign-in."),
-    "PoC Blueprints": ("PoC Blueprints", BLUE, "Fixed-scope, production-ready prototypes."),
-    "Free Resources": ("Free resources", "16A34A", "Guides, tools and libraries. Click a link to open it."),
-    "Case Studies": ("Case studies", BLUE, "Real enterprise engagements."),
+    "What we offer": ("What we offer", BLUE, "Ten ways to work with us."),
+    "Built for you": ("Built for your organization", ORANGE, "Courses, a learning platform and working prototypes, made for one company."),
+    "Learning Studio": ("Learning Studio courses", BLUE, "Video courses with labs, quizzes and a certificate. Preview lessons play without signing in."),
+    "AI Essentials": ("AI Essentials", BLUE, "Short interactive courses with narration and a quiz."),
+    "Claude certifications": ("Claude certification preparation", "D97757", "A guide and a practice exam for each Claude certification."),
+    "Claude courses": ("Claude courses for teams", "D97757", "Instructor-led courses, by domain."),
+    "Team training": ("Team training programmes", BLUE, "Instructor-led, online or at your office."),
+    "Exam preparation": ("Exam preparation", BLUE, "Certification exams we prepare people for."),
+    "PoC blueprints": ("Proof-of-concept blueprints", BLUE, "Fixed-scope prototypes we can build. A starting point, shaped to your case."),
+    "AI Weekend": ("Gennoor AI Weekend", ORANGE, "What is built live across the two days."),
 }
-WIDE = {"What it includes", "Description", "Problem it solves", "Promise", "Key outputs", "Headline outcome", "What you get", "Technologies", "Industries", "Audience", "Best for", "Engagement"}
-CENTER = {"#", "Phase", "Level", "Duration", "Certification", "Chapters", "Timeline", "Typical duration"}
+WIDE = {"What it includes", "Description", "What you leave with", "Problem it solves", "What we build"}
+CENTER = {"#", "Chapters", "Lessons", "Hours", "Quizzes", "Preview lessons", "Timeline"}
+BOLD = {"Title", "Offering", "What you build", "Code"}
+FIRST_BOLD = {"Built for you"}  # sheets whose first column is the name of the thing
+META = DATA["meta"]
 
 wb = Workbook()
 wb.properties.title = "Gennoor Tech Catalog"
 wb.properties.creator = "Gennoor Tech"
-wb.properties.subject = "Training, certification, AI Academy, PoC blueprints and free resources"
+wb.properties.subject = "Learning Studio courses, Claude programmes, team training and the AI Weekend"
 
 
 def band(ws, row, last_col, color, height):
@@ -100,11 +111,11 @@ cover.row_dimensions[4].height = 30
 band(cover, 6, 5, BLUE, 4)
 
 cover.merge_cells("B8:D8")
-cover["B8"] = "Master catalog"
+cover["B8"] = "Catalogue"
 cover["B8"].font = f(28, True, INK)
 cover.row_dimensions[8].height = 42
 cover.merge_cells("B9:D9")
-cover["B9"] = "Enterprise AI training, certification and solutions"
+cover["B9"] = f"Practical AI and cloud learning, for people and for teams.   As of {META['generatedOn']}."
 cover["B9"].font = f(13, False, GREY)
 cover.row_dimensions[9].height = 22
 
@@ -112,17 +123,7 @@ r = 11
 cover.cell(row=r, column=2, value="WHAT IS INSIDE").font = f(9, True, GREY)
 cover.row_dimensions[r].height = 22
 r += 1
-overview = {row[0]: row[1] for row in DATA["Overview"] if row[0]}
-counts = {
-    "Offerings": overview.get("Offerings", ""),
-    "The Gennoor Way": "The five-phase method: diagnose, train, build, adopt, sustain",
-    "Bootcamps": overview.get("Bootcamps", ""),
-    "Courses": overview.get("Courses", ""),
-    "AI Academy (Free)": overview.get("AI Academy (free)", ""),
-    "PoC Blueprints": overview.get("PoC Blueprints", ""),
-    "Free Resources": overview.get("Free resources", ""),
-    "Case Studies": overview.get("Case studies", ""),
-}
+counts = {}
 for i, (key, (title, _, note)) in enumerate(SHEETS.items(), 1):
     rows = len(DATA[key]["rows"])
     c = cover.cell(row=r, column=2, value=f"{i:02d}   {title}")
@@ -144,19 +145,46 @@ for i, (key, (title, _, note)) in enumerate(SHEETS.items(), 1):
     r += 1
 
 r += 1
-cover.cell(row=r, column=2, value="HOW WE WORK").font = f(9, True, GREY)
+cover.cell(row=r, column=2, value="HOW THE LEARNING STUDIO WORKS").font = f(9, True, GREY)
 cover.row_dimensions[r].height = 22
 r += 1
-for label in ("Delivery", "Delivered by", "Pricing"):
+steps = [
+    ("1  Browse", "Open gennoor.com/studio and filter by type, company, level or topic."),
+    ("2  Watch the previews", "Up to six lessons of every course play at once. Nothing to sign up for."),
+    ("3  Take the full course", "Every lesson, lab and quiz opens, and progress is saved on any device."),
+    ("4  Finish with a certificate", "Quizzes check each module. An assistant in the player answers questions, and each course has a discussion page."),
+    ("For a team", "We add the courses you need, or build one on your own work. Talk to us for team access."),
+]
+for label, text in steps:
     cover.cell(row=r, column=2, value=label).font = f(10, True, INK)
     cover.merge_cells(start_row=r, start_column=3, end_row=r, end_column=4)
-    text = overview.get(label, "")
     cell = cover.cell(row=r, column=3, value=text)
     cell.font = f(10, False, INK)
     cell.alignment = Alignment(wrap_text=True, vertical="top")
     cover.cell(row=r, column=2).alignment = Alignment(vertical="top")
     cover.row_dimensions[r].height = est_height([(text, 92)])
     r += 1
+cover.cell(row=r, column=2, value="See it in 9 minutes").font = f(10, True, INK)
+c = cover.cell(row=r, column=3, value="Watch the Learning Studio walkthrough video")
+c.hyperlink = META["walkthrough"]
+c.font = LINK
+cover.row_dimensions[r].height = 20
+r += 1
+
+wk = META["weekend"]
+r += 1
+cover.cell(row=r, column=2, value="NEXT LIVE EVENT").font = f(9, True, GREY)
+cover.row_dimensions[r].height = 22
+r += 1
+cover.cell(row=r, column=2, value=wk["name"]).font = f(10, True, INK)
+cover.merge_cells(start_row=r, start_column=3, end_row=r, end_column=4)
+text = f"{wk['tagline']}. {wk['dates']}, {wk['time']}, online."
+c = cover.cell(row=r, column=3, value=text)
+c.hyperlink = f"{SITE}/ai-weekend"
+c.font = LINK
+c.alignment = Alignment(wrap_text=True, vertical="top")
+cover.row_dimensions[r].height = est_height([(text, 92)])
+r += 1
 
 r += 1
 cover.cell(row=r, column=2, value="TALK TO US").font = f(9, True, GREY)
@@ -167,6 +195,7 @@ for label, text, link in (
     ("Phone / WhatsApp", "+91 93263 52241", "https://wa.me/919326352241"),
     ("Website", "www.gennoor.com", SITE),
     ("Learning Studio", "gennoor.com/studio", f"{SITE}/studio"),
+    ("Book a call", "gennoor.com/resources/calendar", f"{SITE}/resources/calendar"),
 ):
     cover.cell(row=r, column=2, value=label).font = f(10, True, INK)
     c = cover.cell(row=r, column=3, value=text)
@@ -190,12 +219,12 @@ for key, (title, tab, note) in SHEETS.items():
     for i, h in enumerate(header, 1):
         old = d["widths"].get(get_column_letter(i))
         w = old or 18
-        if h in CENTER:
-            w = max(10, min(w, 16))
+        if h == "#":
+            w = 6
+        elif h in CENTER:
+            w = 13
         elif h in WIDE:
             w = max(w, 46)
-        elif h == "#":
-            w = 6
         widths[i] = w
         ws.column_dimensions[get_column_letter(i)].width = w
 
@@ -225,7 +254,7 @@ for key, (title, tab, note) in SHEETS.items():
         tallest = []
         for ci, (h, v) in enumerate(zip(header, vals), 1):
             c = ws.cell(row=row, column=ci, value=v)
-            c.font = f(10, h in ("Title", "Offering", "Name", "Resource", "Client"), INK)
+            c.font = f(10, h in BOLD or (key in FIRST_BOLD and ci == 1), INK)
             c.alignment = Alignment(
                 horizontal="center" if h in CENTER else "left",
                 vertical="top",
@@ -235,8 +264,6 @@ for key, (title, tab, note) in SHEETS.items():
             c.border = Border(bottom=hair)
             if ri % 2 == 1:
                 c.fill = fill(ZEBRA)
-            if h == "Certification" and isinstance(v, str):
-                c.font = f(10, True, "15803D" if v.strip().lower() == "yes" else GREY)
             if h == "Link" and isinstance(v, str) and v:
                 url = v if v.startswith("http") else f"https://{v}"
                 c.hyperlink = url

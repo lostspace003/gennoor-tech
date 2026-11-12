@@ -111,3 +111,4 @@ rzp-webhook-secret.txt
 
 # Working files for the email pictures (scripts/email-art)
 scripts/email-art/.work/
+scripts/catalog/.work/
