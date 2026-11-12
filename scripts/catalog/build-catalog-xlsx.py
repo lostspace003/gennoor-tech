@@ -174,12 +174,13 @@ r += 1
 
 wk = META["weekend"]
 r += 1
-cover.cell(row=r, column=2, value="NEXT LIVE EVENT").font = f(9, True, GREY)
+cover.cell(row=r, column=2, value="LIVE EVERY MONTH").font = f(9, True, GREY)
 cover.row_dimensions[r].height = 22
 r += 1
 cover.cell(row=r, column=2, value=wk["name"]).font = f(10, True, INK)
 cover.merge_cells(start_row=r, start_column=3, end_row=r, end_column=4)
-text = f"{wk['tagline']}. {wk['dates']}, {wk['time']}, online."
+# Said in words that stay true after this month: the page carries the exact dates
+text = f"{wk['tagline']}. The last weekend of every month, Saturday and Sunday, {wk['time']}, online."
 c = cover.cell(row=r, column=3, value=text)
 c.hyperlink = f"{SITE}/ai-weekend"
 c.font = LINK

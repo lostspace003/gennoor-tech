@@ -17,6 +17,7 @@ same XML PowerPoint writes for Fade, Ascend, Zoom, Fly In and Spin.
 """
 import json
 import sys
+import shutil
 from itertools import count
 from pathlib import Path
 
@@ -141,6 +142,16 @@ for scene in manifest["scenes"]:
 
 prs.core_properties.title = "Gennoor Tech: what we do"
 prs.core_properties.author = "Gennoor Tech"
-OUT.parent.mkdir(parents=True, exist_ok=True)
-prs.save(OUT)
-print(f"wrote {OUT}  {OUT.stat().st_size / 1e6:.1f} MB, {len(manifest['scenes'])} slides, {clicks_total} clicks")
+# Saved in .work first, then copied into place: if the presentation is open in PowerPoint the copy
+# is refused, and the new file is still there to copy across once PowerPoint is closed.
+STAGED = HERE / ".work" / f"{show}.pptx"
+prs.save(STAGED)
+print(f"built {STAGED}  {STAGED.stat().st_size / 1e6:.1f} MB, {len(manifest['scenes'])} slides, {clicks_total} clicks")
+if OUT != STAGED:
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        shutil.copyfile(STAGED, OUT)
+        print(f"wrote {OUT}")
+    except PermissionError:
+        print(f"NOT REPLACED: {OUT.name} is open in PowerPoint. Close it and run this again; the new one is {STAGED}")
+        sys.exit(3)

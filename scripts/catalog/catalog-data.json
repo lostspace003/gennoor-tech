@@ -123,29 +123,36 @@
    ],
    [
     8,
+    "Custom automation training",
+    "A course built on one process your team runs every week, with their own examples and files. Taught live and hands-on, so they automate that process themselves, with Claude and other AI tools.",
+    "Teams with a task they repeat every week",
+    "https://www.gennoor.com/training"
+   ],
+   [
+    9,
     "A learning platform for your company",
     "We build and set up a learning platform (LMS) for your organization: your courses, your people, your name on it. On our platform or built for you, in the cloud or on your premises.",
     "Organizations with a regular training need",
     "https://www.gennoor.com/contact"
    ],
    [
-    9,
+    10,
     "Proof-of-concept builds",
     "A working prototype of one AI use case, with a fixed scope. 18 ready blueprints to start from.",
     "Teams that want to see it work before they commit",
     "https://www.gennoor.com/contact"
    ],
    [
-    10,
+    11,
     "Automation",
     "One process at a time: scoped in writing first, built with Claude, and tested on your own examples.",
     "A process that eats hours every week",
     "https://www.gennoor.com/automation"
    ],
    [
-    11,
+    12,
     "Gennoor AI Weekend",
-    "Build with Claude in one weekend. Two live sessions every month, six working demos, and the complete kit afterwards.",
+    "Build with Claude in one weekend. Two live sessions on the last weekend of every month, Saturday and Sunday: six working demos, and the complete kit afterwards.",
     "People who want to see it built live",
     "https://www.gennoor.com/ai-weekend"
    ]
@@ -172,6 +179,11 @@
     "A learning platform (LMS) for your company",
     "Your courses and your people only, under your name. Video lessons with captions and saved progress, quizzes, labs, certificates, an assistant that answers questions inside the lesson, and a question board answered by a trainer. Other features on request.",
     "On our platform or built for you, in the cloud or on your premises"
+   ],
+   [
+    "Automation training built on your process",
+    "We take one process your team runs every week and build the course on it, with their own examples and files. In the sessions they automate it themselves, with Claude and other AI tools, and a person still checks the result.",
+    "Live and hands-on, online or at your office"
    ],
    [
     "Live training built on your work",
