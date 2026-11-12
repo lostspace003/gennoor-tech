@@ -125,10 +125,10 @@ export default function LabsCatalog({ courses, custom = EMPTY_CUSTOM }: { course
             </button>
           </div>
         ) : (
-          <div className="max-w-6xl mx-auto space-y-12">
+          <div className="max-w-6xl mx-auto space-y-20">
             {grouped.map(group => (
               <div key={group.id}>
-                <div className="flex items-center gap-3 mb-5">
+                <div className="flex items-center gap-3 mb-7">
                   <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center">
                     <Layers className="w-4 h-4 text-white" />
                   </div>
@@ -137,7 +137,7 @@ export default function LabsCatalog({ courses, custom = EMPTY_CUSTOM }: { course
                     <p className="text-xs text-gray-500">{KIND_LINE[group.id]} · {group.items.length} course{group.items.length > 1 ? 's' : ''}</p>
                   </div>
                 </div>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
                   {group.items.map(c => (
                     <div
                       key={c.slug}
@@ -170,12 +170,12 @@ export default function LabsCatalog({ courses, custom = EMPTY_CUSTOM }: { course
                           {preview === c.slug ? <><X className="w-4 h-4" /> Close preview</> : <><Play className="w-4 h-4 fill-current" /> Watch preview</>}
                         </button>
                       )}
-                      <div className="p-5 flex flex-col flex-1">
+                      <div className="p-6 sm:p-7 flex flex-col flex-1">
                         <p className="text-[12.5px] text-[#6e6e73]">{KIND_LABEL[c.kind] || c.kind}, {c.level.toLowerCase()}</p>
-                        <h4 className="font-heading font-bold text-[18px] leading-snug tracking-[-0.01em] text-gray-900 mt-1.5">
+                        <h4 className="font-heading font-bold text-[19px] leading-[1.3] tracking-[-0.01em] text-gray-900 mt-2.5">
                           <Link href={`/studio/${c.slug}`} className="after:absolute after:inset-0 focus:outline-none">{c.title}</Link>
                         </h4>
-                        <p className="text-[14px] leading-[1.5] text-[#6e6e73] mt-2 line-clamp-2">{c.subtitle}</p>
+                        <p className="text-[14.5px] leading-[1.6] text-[#6e6e73] mt-3 line-clamp-3">{c.subtitle}</p>
                         {c.rating && (
                           <p className="mt-3 flex items-center gap-1.5 text-[13px] text-[#6e6e73]">
                             <span className="font-semibold text-gray-900 tabular-nums">{c.rating.average.toFixed(1)}</span>
@@ -183,9 +183,22 @@ export default function LabsCatalog({ courses, custom = EMPTY_CUSTOM }: { course
                             <span>({c.rating.count})</span>
                           </p>
                         )}
-                        <p className="text-[13px] text-[#86868b] mt-auto pt-4 tabular-nums">
-                          {c.lectures} lessons{c.hours ? `, ${c.hours} hours` : ''}{c.priceUsd ? ` · $${c.priceUsd.toFixed(2)}, free previews` : ''}
+                        <p className="text-[13.5px] text-[#86868b] mt-auto pt-6 tabular-nums">
+                          {c.lectures} lessons{c.hours ? `, ${c.hours} hours` : ''}
                         </p>
+                        {/* What it costs, and what can be watched before paying */}
+                        <div className="mt-4 pt-4 border-t border-[#eef0f4] flex items-center justify-between gap-3">
+                          {c.priceUsd ? (
+                            <span className="text-[20px] font-bold tracking-tight text-gray-900 tabular-nums">${c.priceUsd.toFixed(2)}</span>
+                          ) : (
+                            <span className="text-[15px] font-semibold text-emerald-700">Free</span>
+                          )}
+                          {c.priceUsd && c.previews ? (
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 text-primary-700 text-[12.5px] font-semibold px-2.5 py-1 whitespace-nowrap">
+                              <Play className="w-3 h-3 fill-current" /> {c.previews} free previews
+                            </span>
+                          ) : null}
+                        </div>
                       </div>
                     </div>
                   ))}

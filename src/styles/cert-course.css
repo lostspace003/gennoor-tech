@@ -489,3 +489,65 @@
 .cc td ol.cc-steps > li::before, .cc .cc-dom ol.cc-steps > li::before, .cc .cc-exam-fb ol.cc-steps > li::before { top: 3px; left: 4px; width: 19px; height: 19px; font-size: 10.5px; }
 .cc .cc-steps-lead, .cc .cc-steps-tail { display: block; }
 .cc .cc-fb-text { color: var(--cc-soft); }
+
+/* ── a more relaxed reading rhythm ────────────────────────────────────────────
+   Nothing is removed or shortened. Text is a little larger, lines have more air,
+   and blocks stand further apart, so a long chapter is easier on the eye.
+   Kept as one block at the end so it is easy to tune or take out. */
+.cc { font-size: 16px; line-height: 1.75; }
+.cc-body { padding-top: 28px; }
+
+/* chapter header */
+.cc-scene { padding: 26px 28px; gap: 18px 20px; border-radius: 20px; }
+.cc-scene h1 { font-size: 28px; line-height: 1.22; margin-top: 6px; }
+.cc-scene .story { margin-top: 14px; font-size: 16px; line-height: 1.75; }
+.cc-scene .story p { margin-bottom: 12px; }
+.cc-scene .prev { padding-top: 16px; font-size: 14px; }
+@media (max-width: 640px) { .cc-scene { padding: 20px 18px; } .cc-scene h1 { font-size: 23px; } }
+
+/* the chapter text: a comfortable line length, with room between ideas */
+.cc-prose { max-width: 78ch; }
+.cc-prose h2 { font-size: 23px; margin: 44px 0 14px; }
+.cc-prose h3 { font-size: 19px; margin: 38px 0 12px; padding-left: 14px; }
+.cc-prose h4 { font-size: 12px; margin: 26px 0 8px; }
+.cc-prose p { margin: 0 0 18px; }
+.cc-prose ul, .cc-prose ol { margin: 0 0 18px; padding-left: 24px; }
+.cc-prose li { margin: 8px 0; }
+.cc-prose pre { margin: 18px 0; padding: 16px 18px; font-size: 13.5px; line-height: 1.7; }
+.cc-prose code { font-size: 13.5px; }
+.cc-prose .tw { margin: 20px 0; }
+.cc-prose table { font-size: 14.5px; }
+.cc-prose th, .cc-prose td { padding: 12px 16px; }
+.cc-prose th { font-size: 13px; }
+.cc-prose details { margin: 16px 0; }
+/* tables, code and diagrams may use the full width; only running text is narrowed */
+.cc-prose > .tw, .cc-prose > pre, .cc-prose > figure, .cc-prose > .cc-flow, .cc-prose > .anim, .cc-prose > .cc-code-card { max-width: none; }
+
+/* numbered steps */
+.cc ol.cc-steps { gap: 10px; margin: 12px 0 20px; }
+.cc ol.cc-steps > li { padding: 11px 14px 11px 44px; line-height: 1.65; border-radius: 12px; }
+.cc ol.cc-steps > li::before { left: 12px; top: 12px; }
+
+/* exam prep: the fact tiles, the tabs and the domain cards */
+.cc-tabs { margin: 8px 0 22px; padding: 4px; }
+.cc-tabs button { height: 36px; padding: 0 18px; font-size: 14px; }
+.cc-facts { gap: 12px; margin-top: 24px; }
+.cc-fact { padding: 14px 16px; border-radius: 14px; }
+.cc-fact b { font-size: 15px; margin-top: 5px; }
+.cc-dom { padding: 20px 24px; margin: 16px 0; border-radius: 16px; }
+.cc-dom .h b { font-size: 16.5px; }
+.cc-dom ul { margin-top: 14px; padding-left: 20px; font-size: 15px; line-height: 1.75; }
+.cc-dom li { margin: 10px 0; }
+.cc-domains { gap: 12px; margin-top: 16px; }
+.cc-domains .row { font-size: 15px; }
+.cc-code-card { margin: 18px 0; border-radius: 16px; }
+
+/* what comes next */
+.cc-next { padding: 18px 20px; gap: 16px; border-radius: 16px; }
+.cc-next b { font-size: 16px; }
+.cc-next .t > span { font-size: 14px; margin-top: 4px; line-height: 1.55; }
+
+/* the chapter lane: slightly larger targets */
+.cc-lane-list { padding: 10px 2px; gap: 4px; }
+.cc-chip { height: 38px; padding: 0 14px 0 6px; font-size: 13.5px; gap: 9px; }
+.cc-chip .n { width: 26px; height: 26px; font-size: 12px; }

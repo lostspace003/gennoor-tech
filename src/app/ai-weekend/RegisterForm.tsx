@@ -56,9 +56,10 @@ export default function RegisterForm({ cohortLabel, fee, full, online }: { cohor
       amount: c.amount,
       currency: 'INR',
       name: 'Gennoor Tech',
+      image: 'https://www.gennoor.com/logos/gennoor-tech-linkedin-profile-400x400.png',
       description: c.description,
       prefill: { name: c.name, email: c.email, contact: c.phone },
-      theme: { color: '#0C1426' },
+      theme: { color: '#ec4899' },
       modal: { ondismiss: () => setStage((s) => (s === 'paying' ? 'reserved' : s)) },
       handler: async (res: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => {
         setStage('confirming')

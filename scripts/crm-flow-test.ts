@@ -143,7 +143,13 @@ const quiz = (id: string) => ({ id, type: 'quiz' as const, title: id, descriptio
 const courseOf = (items: any[]) => ({ sections: [{ title: 'One', items }] }) as any
 ok(previewIds(courseOf([lesson('a', true), lesson('b', false), lesson('c', true)])).join() === 'a,c', 'the lessons marked as previews are the previews')
 ok(previewIds(courseOf(Array.from({ length: 10 }, (_, i) => lesson(`l${i}`, true)))).length === PREVIEW_MAX && PREVIEW_MAX === 6, 'a course that marks too many still gets only six previews')
-ok(previewIds(courseOf([quiz('q'), lesson('a', false), lesson('b', false), lesson('c', false), lesson('d', false), lesson('e', false)])).join() === 'a,b,c,d', 'a course that marks none gets its first four lessons, and a quiz is never a preview')
+const unmarked = { slug: 'demo-course', sections: [{ title: 'One', items: [quiz('q'), ...Array.from({ length: 40 }, (_, i) => lesson(`l${i}`, false))] }] } as any
+const drawn = previewIds(unmarked)
+ok(drawn.length === 6 && drawn[0] === 'l0' && !drawn.includes('q'), 'a course that marks none gets six previews: its first lesson and five drawn from the rest, never a quiz')
+ok(previewIds(unmarked).join() === drawn.join(), 'the six are the same every time, so reloading cannot reveal other lessons')
+ok(previewIds({ ...unmarked, slug: 'another-course' }).join() !== drawn.join(), 'a different course draws a different six')
+ok(drawn.some((id) => Number(id.slice(1)) > 10), 'the draw reaches beyond the first few lessons')
+ok(previewIds(courseOf([lesson('a', false), lesson('b', false)])).join() === 'a,b', 'a course with six lessons or fewer shows them all as previews')
 ok(isPreview(courseOf([lesson('a', true), lesson('b', false)]), 'a') && !isPreview(courseOf([lesson('a', true), lesson('b', false)]), 'b'), 'a lesson outside the previews is not open')
 ok(DEFAULT_PRICE.usd === 9.99 && DEFAULT_PRICE.inr > 0, 'the standard course price is 9.99 dollars, with a rupee price beside it')
 ok(formatUsd(9.99) === '$9.99' && formatInr(849) === '₹849', 'prices are written the usual way')
