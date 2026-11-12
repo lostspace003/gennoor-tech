@@ -103,3 +103,8 @@ claude-thing/flows/voice/
 claude-thing/flows/voice_run.log
 claude-thing/flows/__pycache__/
 claude-thing/flows/render_run.log
+
+# Razorpay key downloads and the generated webhook secret: never commit
+rzp-*.csv
+rzp-key*
+rzp-webhook-secret.txt
