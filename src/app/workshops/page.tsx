@@ -55,7 +55,7 @@ export default function WorkshopsPage() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gray-900" />
         <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:60px_60px]" />
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-10">
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold text-white/70 mb-6 border border-white/10 bg-white/5">
               <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-pulse" />
@@ -72,7 +72,7 @@ export default function WorkshopsPage() {
       </section>
 
       {/* Workshop Cards */}
-      <section className="py-20 lg:py-24">
+      <section className="py-12 lg:py-14">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">

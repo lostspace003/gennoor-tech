@@ -37,7 +37,7 @@ export default function ContactPage() {
           </p>
         </section>
 
-        <section id="proposal" className="scroll-mt-16 bg-[#f5f5f7] px-8 pt-16 pb-24">
+        <section id="proposal" className="scroll-mt-16 bg-[#f5f5f7] px-8 pt-10 pb-14">
           <div className="max-w-[1000px] mx-auto grid lg:grid-cols-[minmax(0,1fr)_300px] gap-10 lg:gap-14 items-start">
             <div className="bg-white rounded-3xl p-7 sm:p-10">
               <ContactForm />
@@ -63,7 +63,7 @@ export default function ContactPage() {
           </div>
         </section>
 
-        <section id="book" className="scroll-mt-16 px-8 py-16 lg:py-24">
+        <section id="book" className="scroll-mt-16 px-8 py-10 lg:py-14">
           <div className="max-w-[760px] mx-auto text-center mb-10">
             <h2 className="display-card">Prefer to talk first?</h2>
             <p className="text-[17px] text-[#6e6e73] mt-3">Pick a time for a call. Times are shown in your own time zone.</p>

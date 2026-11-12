@@ -6,11 +6,11 @@ export default function LatestBlog() {
   const posts = getRecentPosts(3)
 
   return (
-    <section className="py-14 lg:py-20 relative">
+    <section className="py-10 lg:py-12 relative">
       <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-end mb-14">
+        <div className="flex justify-between items-end mb-8">
           <div>
             <div className="inline-flex items-center rounded-full px-3 py-1 mb-4 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
               Blog

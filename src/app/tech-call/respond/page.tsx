@@ -72,7 +72,7 @@ function Respond() {
     </>)
   }
 
-  return <main className="max-w-xl mx-auto px-4 sm:px-6 py-16"><div className={card}>{body}</div></main>
+  return <main className="max-w-xl mx-auto px-4 sm:px-6 py-10"><div className={card}>{body}</div></main>
 }
 
 export default function TechCallRespondPage() {

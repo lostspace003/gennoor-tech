@@ -104,9 +104,9 @@ export default async function CertificationGuidePage({ params }: Props) {
       ]} />
       <FAQJsonLd faqs={faqs} />
 
-      <main className="min-h-screen pt-20">
+      <main className="min-h-screen pt-12">
         {/* Hero */}
-        <section className={`bg-gradient-to-br ${providerColor[cert.provider] || 'from-primary-600 to-primary-800'} py-10 lg:py-16 relative overflow-hidden`}>
+        <section className={`bg-gradient-to-br ${providerColor[cert.provider] || 'from-primary-600 to-primary-800'} py-10 lg:py-10 relative overflow-hidden`}>
           <div className="absolute inset-0 bg-grid-white/10"></div>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <Link href="/services/certifications" className="inline-flex items-center text-white/90 hover:text-white mb-8">
@@ -164,7 +164,7 @@ export default async function CertificationGuidePage({ params }: Props) {
         </section>
 
         {/* Exam Topics */}
-        <section className="py-10 lg:py-16">
+        <section className="py-10 lg:py-10">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-8">Exam Topics</h2>
@@ -185,7 +185,7 @@ export default async function CertificationGuidePage({ params }: Props) {
         </section>
 
         {/* Prerequisites */}
-        <section className="py-10 lg:py-16 bg-gray-50">
+        <section className="py-10 lg:py-10 bg-gray-50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-8">Prerequisites</h2>
@@ -208,7 +208,7 @@ export default async function CertificationGuidePage({ params }: Props) {
         </section>
 
         {/* Preparation Approach */}
-        <section className="py-10 lg:py-16">
+        <section className="py-10 lg:py-10">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-8">Our Preparation Approach</h2>
@@ -255,9 +255,9 @@ export default async function CertificationGuidePage({ params }: Props) {
         </section>
 
         {/* FAQ */}
-        <section className="py-10 lg:py-16 bg-gray-50">
+        <section className="py-10 lg:py-10 bg-gray-50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Frequently Asked Questions</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Frequently Asked Questions</h2>
             <div className="max-w-3xl mx-auto space-y-6">
               {faqs.map((faq) => (
                 <div key={faq.question} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200/70">
@@ -271,7 +271,7 @@ export default async function CertificationGuidePage({ params }: Props) {
 
         {/* Related Certifications */}
         {relatedCerts.length > 0 && (
-          <section className="py-10 lg:py-16">
+          <section className="py-10 lg:py-10">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
               <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Other {cert.provider} Certifications</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -299,7 +299,7 @@ export default async function CertificationGuidePage({ params }: Props) {
         )}
 
         {/* CTA */}
-        <section className="py-10 lg:py-16 bg-primary-50">
+        <section className="py-10 lg:py-10 bg-primary-50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl font-bold text-gray-900 mb-6">
               Ready to Pass the {cert.code} Exam?

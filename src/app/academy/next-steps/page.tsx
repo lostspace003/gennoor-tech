@@ -79,7 +79,7 @@ export default function NextStepsPage() {
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Hero */}
-      <section className="pt-20 pb-12 px-4 sm:px-6 lg:px-8">
+      <section className="pt-12 pb-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100 text-amber-800 text-xs font-bold tracking-widest uppercase mb-6">
             <Sparkles className="w-3.5 h-3.5" />
@@ -97,7 +97,7 @@ export default function NextStepsPage() {
       </section>
 
       {/* Options grid */}
-      <section className="pb-20 px-4 sm:px-6 lg:px-8">
+      <section className="pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-3 gap-6">
             {options.map(opt => {
@@ -149,7 +149,7 @@ export default function NextStepsPage() {
           </div>
 
           {/* Footer note */}
-          <div className="text-center mt-16">
+          <div className="text-center mt-10">
             <p className="text-sm text-gray-500 max-w-xl mx-auto leading-relaxed">
               Not ready for any of these yet? That's fine. The course you just finished stays in your
               account — come back to refresh it anytime, or

@@ -14,7 +14,7 @@ const FLOW = [
 ]
 
 function Sub({ children }: { children: React.ReactNode }) {
-  return <h3 className="font-heading text-[22px] font-bold tracking-[-0.015em] text-gray-900 mt-14 mb-5 first:mt-0">{children}</h3>
+  return <h3 className="font-heading text-[22px] font-bold tracking-[-0.015em] text-gray-900 mt-8 mb-5 first:mt-0">{children}</h3>
 }
 
 function Flow() {

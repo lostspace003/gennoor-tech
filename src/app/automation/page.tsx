@@ -50,9 +50,9 @@ export default function AutomationPage() {
         </div>
       </section>
 
-      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-14">
+      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-10">
         <div className="max-w-[1000px] mx-auto">
-          <h2 className="display-section text-center mb-12">For any size of team.</h2>
+          <h2 className="display-section text-center mb-8">For any size of team.</h2>
           <div className="grid md:grid-cols-2 gap-6">
             {AUDIENCES.map(a => (
               <div key={a.title} className="bg-white rounded-[18px] p-8 text-center">
@@ -65,7 +65,7 @@ export default function AutomationPage() {
         </div>
       </section>
 
-      <section className="bg-white px-6 py-10 lg:py-14">
+      <section className="bg-white px-6 py-10 lg:py-10">
         <div className="max-w-[640px] mx-auto">
           <h2 className="display-section text-center mb-10">What we automate.</h2>
           <ul className="space-y-4">
@@ -79,9 +79,9 @@ export default function AutomationPage() {
         </div>
       </section>
 
-      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-14">
+      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-10">
         <div className="max-w-[1080px] mx-auto">
-          <h2 className="display-section text-center mb-12">How we keep it honest.</h2>
+          <h2 className="display-section text-center mb-8">How we keep it honest.</h2>
           <div className="grid sm:grid-cols-2 gap-6">
             {PRINCIPLES.map(p => (
               <div key={p.title} className="bg-white rounded-[18px] p-7 text-center">
@@ -94,7 +94,7 @@ export default function AutomationPage() {
         </div>
       </section>
 
-      <section className="bg-white px-6 py-10 lg:py-14 text-center">
+      <section className="bg-white px-6 py-10 lg:py-10 text-center">
         <h2 className="display-section max-w-[680px] mx-auto">Tell us about the process.</h2>
         <p className="lede mt-3.5 max-w-[480px] mx-auto">A few lines are enough. We reply with questions, or tell you honestly if it is not a fit.</p>
         <div className="mt-8"><Link href="/contact" className="pill-primary">Contact us</Link></div>

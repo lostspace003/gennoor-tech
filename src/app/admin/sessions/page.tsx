@@ -45,7 +45,7 @@ export default function SessionsPage() {
   const time = (t: number) => new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 
   return (
-    <div className="max-w-4xl p-4">
+    <div className="w-full p-4">
       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
         <h1 className="text-xl font-semibold tracking-tight">Sessions<InfoTip text="Everything you did in the Social studio, Blog studio and LinkedIn hub, grouped into work sessions (activity with no gap longer than 45 minutes). Click an item to pick up where you left off." /></h1>
         <div className="flex gap-1.5 text-xs">

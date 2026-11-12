@@ -112,7 +112,7 @@ export default function LabsCatalog({ courses, custom = EMPTY_CUSTOM }: { course
         </div>
 
         {filtered.length === 0 ? (
-          <div className="max-w-md mx-auto text-center py-16">
+          <div className="max-w-md mx-auto text-center py-10">
             <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
               <Filter className="w-6 h-6 text-gray-400" />
             </div>
@@ -126,7 +126,7 @@ export default function LabsCatalog({ courses, custom = EMPTY_CUSTOM }: { course
             </button>
           </div>
         ) : (
-          <div className="max-w-6xl mx-auto space-y-20">
+          <div className="max-w-6xl mx-auto space-y-12">
             {grouped.map(group => (
               <div key={group.id}>
                 <div className="flex items-center gap-3 mb-7">

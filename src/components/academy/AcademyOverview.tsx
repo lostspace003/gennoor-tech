@@ -42,10 +42,10 @@ export default function AcademyOverview() {
   ]
 
   return (
-    <section className="bg-[#1d1d1f] px-8 py-12 lg:py-16">
+    <section className="bg-[#1d1d1f] px-8 py-8 lg:py-10">
       <div className="max-w-[1080px] mx-auto">
         {/* Heading */}
-        <div className="text-center mb-14">
+        <div className="text-center mb-8">
           <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#86868b] mb-4">
             The Academy at a glance
           </p>
@@ -60,7 +60,7 @@ export default function AcademyOverview() {
         </div>
 
         {/* Live numbers */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-white/10 border border-white/10 rounded-[18px] overflow-hidden mb-14">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-white/10 border border-white/10 rounded-[18px] overflow-hidden mb-8">
           {stats.map(s => (
             <div key={s.label} className="bg-[#1d1d1f] px-6 py-7 text-center">
               <p className="text-[34px] font-bold tracking-[-0.02em] text-white leading-none">{s.value}</p>
@@ -70,7 +70,7 @@ export default function AcademyOverview() {
         </div>
 
         {/* Journey */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-14">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {JOURNEY.map((step, i) => (
             <div key={step.title} className="rounded-[18px] border border-white/10 bg-white/[0.04] px-6 py-7">
               <div className="flex items-center justify-between mb-4">
@@ -88,7 +88,7 @@ export default function AcademyOverview() {
         </div>
 
         {/* Track directory */}
-        <div className="rounded-[18px] border border-white/10 overflow-hidden mb-12">
+        <div className="rounded-[18px] border border-white/10 overflow-hidden mb-8">
           <div className="px-7 py-5 border-b border-white/10 flex items-baseline justify-between gap-4 flex-wrap">
             <h3 className="text-[17px] font-bold text-white">The six tracks</h3>
             <Link href="#catalog" className="text-[13.5px] font-medium text-[#2997ff] hover:text-[#52a8ff]">

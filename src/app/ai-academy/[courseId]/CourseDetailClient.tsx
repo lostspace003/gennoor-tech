@@ -89,7 +89,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
       {/* Hero */}
       <section className="relative bg-gray-900 overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA2MCAwIEwgMCAwIDAgNjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-40" />
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-12">
           <div className="flex items-center justify-between gap-4 mb-6">
             <Link
               href="/ai-academy"
@@ -176,7 +176,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
 
       {/* Two-column: structured callouts + course brief */}
       <section className="bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-14 max-w-6xl">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10 max-w-6xl">
           <div className="grid gap-8 lg:grid-cols-3">
             {/* Left rail (1/3) — Audience + how it works */}
             <div className="space-y-6 lg:sticky lg:top-24 lg:self-start">
@@ -285,7 +285,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
 
       {/* Closing CTA */}
       <section className="bg-white border-t border-gray-200">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-5xl">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-5xl">
           <div
             className="rounded-2xl p-8 lg:p-10 text-white relative overflow-hidden"
             style={{ background: `linear-gradient(135deg, ${themePrimaryDeep} 0%, ${themePrimary} 100%)` }}

@@ -34,7 +34,7 @@ export default function WebinarsPage() {
   return (
     <main className="min-h-screen bg-white">
       {/* ===== Hero ===== */}
-      <section className="px-8 pt-8 lg:pt-10 pb-12 text-center">
+      <section className="px-8 pt-8 lg:pt-10 pb-8 text-center">
         <WebinarIllustration className="w-[112px] h-[112px] mx-auto mb-6" />
         <h1 className="text-[clamp(40px,4.8vw,64px)] leading-[1.06] tracking-[-0.03em] font-bold text-gray-900">
           Learn live.
@@ -45,11 +45,11 @@ export default function WebinarsPage() {
       </section>
 
       {/* ===== Expert sessions ===== */}
-      <section className="px-6 pb-16 lg:pb-20">
+      <section className="px-6 pb-10 lg:pb-12">
         <div className="max-w-[1080px] mx-auto">
           <h2 className="text-[clamp(28px,3vw,40px)] font-bold tracking-[-0.02em] text-gray-900 text-center">Expert sessions.</h2>
           <p className="text-[17px] text-[#6e6e73] text-center mt-3 max-w-[520px] mx-auto">Talks and workshops we have delivered.</p>
-          <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] gap-10 lg:gap-14 items-center mt-12">
+          <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] gap-10 lg:gap-14 items-center mt-8">
             <div>
               <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-primary-600">Workshop · 6 October 2026 · Mumbai</p>
               <h3 className="font-heading text-[26px] font-bold tracking-[-0.02em] text-gray-900 mt-3 leading-tight">From Campus to Career: AI skills for engineers</h3>
@@ -67,7 +67,7 @@ export default function WebinarsPage() {
       </section>
 
       {/* ===== Schedule ===== */}
-      <section className="bg-[#f5f5f7] px-8 py-16 pb-24">
+      <section className="bg-[#f5f5f7] px-8 py-10 pb-14">
         <div className="max-w-[920px] mx-auto">
           <h2 className="text-[22px] font-bold tracking-[-0.01em] text-gray-900 mb-5">Upcoming</h2>
 
@@ -105,7 +105,7 @@ export default function WebinarsPage() {
               ))}
             </div>
           ) : (
-            <div className="bg-white border border-[#e8e8ed] rounded-2xl px-8 py-12 text-center">
+            <div className="bg-white border border-[#e8e8ed] rounded-2xl px-8 py-8 text-center">
               <p className="text-[15.5px] font-bold text-gray-900 mb-1.5">
                 First public dates announcing soon.
               </p>
@@ -133,7 +133,7 @@ export default function WebinarsPage() {
           {/* Past sessions — appears once recordings are published */}
           {pastWebinars.length > 0 && (
             <>
-              <h2 className="text-[22px] font-bold tracking-[-0.01em] text-gray-900 mt-14 mb-5">
+              <h2 className="text-[22px] font-bold tracking-[-0.01em] text-gray-900 mt-8 mb-5">
                 Past sessions
               </h2>
               <div className="bg-white border border-[#e8e8ed] rounded-2xl overflow-hidden">
@@ -164,7 +164,7 @@ export default function WebinarsPage() {
             </>
           )}
 
-          <h2 className="text-[22px] font-bold tracking-[-0.01em] text-gray-900 mt-14 mb-5">
+          <h2 className="text-[22px] font-bold tracking-[-0.01em] text-gray-900 mt-8 mb-5">
             In the meantime
           </h2>
           <div className="bg-white border border-[#e8e8ed] rounded-2xl overflow-hidden">

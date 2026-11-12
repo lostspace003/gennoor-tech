@@ -122,7 +122,7 @@ export default async function AiWeekendPage() {
       </section>
 
       {/* Is this for you */}
-      <section className={`${wrap} mt-14`}>
+      <section className={`${wrap} mt-8`}>
         <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">This is for people who</h2>
         <div className="mt-6 rounded-3xl bg-[#0C1426] text-white p-6 sm:p-8 grid sm:grid-cols-2 lg:grid-cols-5 gap-6 lg:divide-x lg:divide-white/10">
           {FOR_YOU.map((f, i) => (
@@ -135,7 +135,7 @@ export default async function AiWeekendPage() {
       </section>
 
       {/* The two days */}
-      <section className={`${wrap} mt-16`}>
+      <section className={`${wrap} mt-10`}>
         <div className="text-center">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Your two days</h2>
           <p className="mt-2 text-gray-500">Six demos. Two live sessions. One kit to repeat them all.</p>
@@ -174,7 +174,7 @@ export default async function AiWeekendPage() {
       </section>
 
       {/* What you will use */}
-      <section className={`${wrap} mt-16`}>
+      <section className={`${wrap} mt-10`}>
         <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">What you will work with</h2>
         <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
           {TOOLS.map((t) => (
@@ -184,7 +184,7 @@ export default async function AiWeekendPage() {
       </section>
 
       {/* Who teaches it */}
-      <section className={`${wrap} mt-16`}>
+      <section className={`${wrap} mt-10`}>
         <div className="rounded-3xl border border-gray-200 bg-white p-6 sm:p-8 grid md:grid-cols-[auto_1fr] gap-6 items-center">
           <div className="w-24 h-24 rounded-2xl bg-[#0C1426] text-amber-300 flex items-center justify-center text-3xl font-bold" aria-hidden="true">
             {WEEKEND.trainer.name.split(' ').map((w) => w[0]).slice(0, 2).join('')}
@@ -204,7 +204,7 @@ export default async function AiWeekendPage() {
       </section>
 
       {/* How the weekend teaches */}
-      <section className={`${wrap} mt-16`}>
+      <section className={`${wrap} mt-10`}>
         <div className="text-center">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">How you learn</h2>
           <p className="mt-2 text-gray-500">First you see it done. Then you get everything you need to do it yourself.</p>
@@ -233,7 +233,7 @@ export default async function AiWeekendPage() {
       </section>
 
       {/* Price and the form */}
-      <section id="register" className={`${wrap} mt-16 scroll-mt-6`}>
+      <section id="register" className={`${wrap} mt-10 scroll-mt-6`}>
         <div className="rounded-3xl bg-[#f3efe6] p-5 sm:p-8 grid lg:grid-cols-2 gap-6">
           <div>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Reserve your seat</h2>
@@ -294,7 +294,7 @@ export default async function AiWeekendPage() {
       </section>
 
       {/* Questions */}
-      <section className={`${wrap} mt-16 grid lg:grid-cols-[1fr_2fr] gap-6`}>
+      <section className={`${wrap} mt-10 grid lg:grid-cols-[1fr_2fr] gap-6`}>
         <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Questions people ask</h2>
         <div className="divide-y divide-gray-200 border-y border-gray-200">
           {FAQS.map((f) => (f.q === 'How do I pay?' && online ? { ...f, a: 'Fill in the form and the payment window opens: UPI, card or net banking, handled by Razorpay. Your seat is confirmed the moment the payment goes through. If you close the window, the email we send has a Pay now button.' } : f)).map((f) => (

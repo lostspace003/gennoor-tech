@@ -113,7 +113,7 @@ export default function SitemapIndexPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <section className="relative py-10 lg:py-16 overflow-hidden">
+      <section className="relative py-10 lg:py-10 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
@@ -134,7 +134,7 @@ export default function SitemapIndexPage() {
         </div>
       </section>
 
-      <div className="max-w-5xl mx-auto px-4 pb-16 sm:pb-24">
+      <div className="max-w-5xl mx-auto px-4 pb-10 sm:pb-14">
         <div className="grid sm:grid-cols-2 gap-6">
           {sections.map((section) => (
             <div

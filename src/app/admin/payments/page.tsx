@@ -62,7 +62,7 @@ export default function PaymentsPage() {
   }
 
   return (
-    <div className="w-full p-4 lg:p-5 max-w-6xl">
+    <div className="w-full p-4 lg:p-5">
       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
         <h1 className="text-xl font-semibold tracking-tight">Payments</h1>
         <button onClick={load} className={btn}><RefreshCw className="w-3.5 h-3.5" />Refresh</button>

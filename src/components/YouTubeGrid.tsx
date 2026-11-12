@@ -401,7 +401,7 @@ export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
             )}
           </>
         ) : (
-          <div className="text-center py-16">
+          <div className="text-center py-10">
             <p className="text-gray-500 text-lg">No videos found</p>
             <p className="text-gray-400 text-sm mt-1">Try adjusting your filters</p>
           </div>

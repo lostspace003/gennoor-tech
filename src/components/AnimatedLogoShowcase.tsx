@@ -33,7 +33,7 @@ export default function AnimatedLogoShowcase() {
   }
 
   return (
-    <div className="py-12 space-y-16">
+    <div className="py-8 space-y-10">
       {/* Hero - Video-Aligned Logo */}
       <div className="text-center space-y-4">
         <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">

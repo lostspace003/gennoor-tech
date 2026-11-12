@@ -85,7 +85,7 @@ export default function CertificationPreparationPage() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-10 lg:py-16 overflow-hidden">
+      <section className="relative py-10 lg:py-10 overflow-hidden">
         <div className="absolute inset-0 bg-white"></div>
         <div className="absolute inset-0"></div>
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
@@ -167,14 +167,14 @@ export default function CertificationPreparationPage() {
       </section>
 
       {/* Certifications Grid */}
-      <section className="relative py-10 lg:py-16">
+      <section className="relative py-10 lg:py-10">
         <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {Object.entries(groupedCertifications).map(([provider, certs]) => {
             if (certs.length === 0) return null
 
             return (
-              <div key={provider} className="mb-12">
+              <div key={provider} className="mb-8">
                 <div className="flex items-center mb-6">
                   <div className={`w-2 h-8 ${getProviderColor(provider)} mr-4 rounded`}></div>
                   <h2 className="text-2xl font-bold text-gray-900">{provider} Certifications</h2>
@@ -270,7 +270,7 @@ export default function CertificationPreparationPage() {
       </section>
 
       {/* Quick Enquiry Form */}
-      <section className="relative py-10 lg:py-16 bg-gray-50">
+      <section className="relative py-10 lg:py-10 bg-gray-50">
         <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
@@ -292,10 +292,10 @@ export default function CertificationPreparationPage() {
       </section>
 
       {/* Why Choose Us */}
-      <section className="relative py-10 lg:py-16">
+      <section className="relative py-10 lg:py-10">
         <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
             Why Choose Our Certification Preparation?
           </h2>
 

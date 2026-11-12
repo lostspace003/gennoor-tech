@@ -55,7 +55,7 @@ export default function ClaudeCertificationsPage() {
       </section>
 
       {/* ===== The four courses ===== */}
-      <section className="bg-[#f5f5f7] px-4 sm:px-6 lg:px-8 py-10 lg:py-12">
+      <section className="bg-[#f5f5f7] px-4 sm:px-6 lg:px-8 py-10 lg:py-8">
         <div className="max-w-[1080px]">
           <h2 className="font-heading text-[22px] font-bold tracking-[-0.02em] text-gray-900">One course, one story.</h2>
           <p className="text-[14.5px] text-[#6e6e73] max-w-[680px] mt-1.5">
@@ -95,7 +95,7 @@ export default function ClaudeCertificationsPage() {
       </section>
 
       {/* ===== Beyond the exam ===== */}
-      <section className="bg-white px-4 sm:px-6 lg:px-8 py-10 lg:py-12">
+      <section className="bg-white px-4 sm:px-6 lg:px-8 py-10 lg:py-8">
         <div className="max-w-[1080px]">
           <h2 className="font-heading text-[22px] font-bold tracking-[-0.02em] text-gray-900 mb-5">After the badge, the real work.</h2>
           <div className="grid md:grid-cols-3 gap-4">

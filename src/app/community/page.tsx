@@ -26,7 +26,7 @@ export default async function CommunityPage() {
   return (
     <main className="bg-white min-h-screen">
       <AcademyBar section="Community" />
-      <div className="max-w-[820px] mx-auto px-6 py-12 lg:py-16">
+      <div className="max-w-[820px] mx-auto px-6 py-8 lg:py-10">
         <h1 className="font-heading text-[clamp(28px,3.4vw,40px)] font-bold tracking-[-0.03em] text-gray-900">Community</h1>
         <p className="text-[#6e6e73] mt-2">Talk with other learners and the Gennoor team about AI, your courses and your projects.</p>
 

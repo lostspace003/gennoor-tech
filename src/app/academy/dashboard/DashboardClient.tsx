@@ -583,7 +583,7 @@ export default function DashboardClient() {
         />
 
         {visibleCourses.length === 0 ? (
-          <div className="bg-white border border-[#e8e8ed] rounded-2xl px-6 py-12 text-center">
+          <div className="bg-white border border-[#e8e8ed] rounded-2xl px-6 py-8 text-center">
             <p className="text-[15px] font-semibold text-gray-900">No courses match that.</p>
             <p className="text-[13.5px] text-[#6e6e73] mt-1">
               Try a different word, or clear the filters.
@@ -695,7 +695,7 @@ export default function DashboardClient() {
 
       {/* Profile & security */}
       {isLoggedIn && (
-        <section className="mx-auto px-6 lg:px-10 pb-16 max-w-[1040px]">
+        <section className="mx-auto px-6 lg:px-10 pb-10 max-w-[1040px]">
           <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gray-900 mb-1">Profile &amp; security</h2>
           <p className="text-sm text-[#6e6e73] mb-5">
             Your details, your password, your account — all in one place.

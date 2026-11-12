@@ -113,7 +113,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
 
       {/* Hero: the promo plays first, then the shape of the whole course */}
       <section className="bg-[#0f1824] text-white">
-        <div className="max-w-6xl mx-auto px-6 pt-10 pb-12 lg:pt-14">
+        <div className="max-w-6xl mx-auto px-6 pt-10 pb-8 lg:pt-10">
           <Link href="/studio" className="text-sm text-[#8d9bb0] hover:text-white transition-colors">
             ‹ All Learning Studio courses
           </Link>
@@ -179,7 +179,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
             </div>
           </div>
 
-          <div className="mt-12">
+          <div className="mt-8">
             <CourseStrip sections={course.sections} height={26} animate />
             <div className="mt-4">
               <StripLegend sections={course.sections} dark />
@@ -189,8 +189,8 @@ export default async function LabsCoursePage({ params }: PageProps) {
         </div>
       </section>
 
-      <div className="max-w-6xl mx-auto px-6 py-16 lg:py-24 grid lg:grid-cols-[minmax(0,1fr)_340px] gap-16">
-        <div className="min-w-0 space-y-20">
+      <div className="max-w-6xl mx-auto px-6 py-10 lg:py-14 grid lg:grid-cols-[minmax(0,1fr)_340px] gap-16">
+        <div className="min-w-0 space-y-12">
           <section>
             <h2 className="font-heading text-[28px] font-bold tracking-[-0.02em] text-gray-900 mb-6">What you will be able to do</h2>
             <ul className="grid sm:grid-cols-2 gap-x-10 gap-y-4">

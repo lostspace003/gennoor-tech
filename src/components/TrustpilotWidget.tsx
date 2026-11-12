@@ -44,7 +44,7 @@ export default function TrustpilotWidget() {
   }, [])
 
   return (
-    <section className="py-10 lg:py-14">
+    <section className="py-10 lg:py-10">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
           {/* Green header bar */}

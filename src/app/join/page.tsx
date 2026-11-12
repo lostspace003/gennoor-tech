@@ -16,7 +16,7 @@ export default function JoinPage() {
           We work with trainers and engineers, freelance or full-time. Tell us a little about you and send your resume.
         </p>
       </section>
-      <section className="bg-[#f5f5f7] px-6 py-16">
+      <section className="bg-[#f5f5f7] px-6 py-10">
         <div className="max-w-[720px] mx-auto bg-white rounded-3xl p-7 sm:p-10">
           <JoinForm />
         </div>

@@ -130,7 +130,7 @@ export default function ClaudeCoworkRecapPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative py-10 lg:py-16 overflow-hidden">
+      <section className="relative py-10 lg:py-10 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
@@ -375,7 +375,7 @@ export default function ClaudeCoworkRecapPage() {
       <div className="section-divider" />
 
       {/* CTA */}
-      <section className="py-12 bg-white">
+      <section className="py-8 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-3">Want to Attend the Next One?</h2>
           <p className="text-gray-600 mb-6 max-w-xl mx-auto">

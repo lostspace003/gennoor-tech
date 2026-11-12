@@ -33,7 +33,7 @@ export default async function CertPage({ params }: { params: Promise<{ cert: str
   if (!cert || !meta) notFound()
 
   return (
-    <main className="bg-white px-4 sm:px-6 lg:px-8 pb-16">
+    <main className="bg-white px-4 sm:px-6 lg:px-8 pb-10">
       <CourseReader cert={cert} chapters={meta.chapters} questionCount={meta.questions} trailer={meta.trailer ?? null} version={meta.version} />
     </main>
   )

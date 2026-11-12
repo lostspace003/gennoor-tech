@@ -78,7 +78,7 @@ export default function TrainingPage() {
       </section>
 
       {/* ===== Catalog ===== */}
-      <section id="catalog" className="bg-[#f5f5f7] px-8 pt-14 pb-24 scroll-mt-24">
+      <section id="catalog" className="bg-[#f5f5f7] px-8 pt-10 pb-14 scroll-mt-24">
         <div className="max-w-[1080px] mx-auto">
           {/* Toolbar — segmented control + count */}
           <div className="flex justify-between items-center flex-wrap gap-4 mb-4">
@@ -168,7 +168,7 @@ export default function TrainingPage() {
               {showCourses && filteredCourses.map(c => <CoursePdfCard key={c.slug} course={c} />)}
             </div>
           ) : (
-            <div className="text-center py-16 text-[#6e6e73] text-sm">
+            <div className="text-center py-10 text-[#6e6e73] text-sm">
               No programs match your filters.
             </div>
           )}
@@ -176,9 +176,9 @@ export default function TrainingPage() {
       </section>
 
       {/* ===== Delivery ===== */}
-      <section className="bg-white px-8 py-16 lg:py-24">
+      <section className="bg-white px-8 py-10 lg:py-14">
         <div className="max-w-[1080px] mx-auto">
-          <h2 className="display-card text-center mb-12">Delivered your way.</h2>
+          <h2 className="display-card text-center mb-8">Delivered your way.</h2>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-[#e8e8ed] border border-[#e8e8ed] rounded-[18px] overflow-hidden">
             {[
               {
@@ -210,9 +210,9 @@ export default function TrainingPage() {
       </section>
 
       {/* ===== Certification prep ===== */}
-      <section className="bg-[#f5f5f7] px-8 py-16 lg:py-24">
+      <section className="bg-[#f5f5f7] px-8 py-10 lg:py-14">
         <div className="max-w-[1080px] mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h2 className="display-card mb-3">Certification exam preparation.</h2>
             <p className="text-[17px] text-[#6e6e73] max-w-[560px] mx-auto">
               Preparation for Microsoft, Google Cloud, AWS and GitHub exams.
@@ -244,9 +244,9 @@ export default function TrainingPage() {
       </section>
 
       {/* ===== FAQ ===== */}
-      <section className="bg-white px-8 py-16 lg:py-24">
+      <section className="bg-white px-8 py-10 lg:py-14">
         <div className="max-w-[720px] mx-auto">
-          <h2 className="display-card text-center mb-12">Questions, answered.</h2>
+          <h2 className="display-card text-center mb-8">Questions, answered.</h2>
           <div className="border-t border-[#e8e8ed]">
             {[
               { question: 'How does the 2-day curriculum work?', answer: 'Each curriculum is an instructor-led 2-day (16-hour) course delivered on-site or virtual to your team. The PDF is the full curriculum document — outcomes, modules, topic breakdown — that you can review before booking. Customised to your industry, your data, your tools.' },

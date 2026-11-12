@@ -217,8 +217,8 @@
 
   /* ── Rhythm ────────────────────────────────────────────────────── */
 
-  .section-padding { @apply py-16 lg:py-24; }
-  .section-padding-sm { @apply py-10 lg:py-14; }
+  .section-padding { @apply py-10 lg:py-14; }
+  .section-padding-sm { @apply py-8 lg:py-10; }
 
   /* ── Apple-style display type ──────────────────────────────────── */
 
