@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, Lock, PlayCircle, X } from 'lucide-react'
+import { Loader2, Lock, Maximize, Pause, Play, PlayCircle, Volume2, VolumeX, X } from 'lucide-react'
 import { useLearnerAuth } from '@/hooks/useLearnerAuth'
 import LearnerAuthModal from './LearnerAuthModal'
 
@@ -63,9 +63,9 @@ export function CourseBuyProvider({ slug, price, children }: { slug: string; pri
       const c = j.checkout
       const rzp = new (window as any).Razorpay({
         key: c.keyId, order_id: c.orderId, amount: c.amount, currency: c.currency,
-        name: 'Gennoor Tech', description: c.description,
+        name: 'Gennoor Tech', image: 'https://www.gennoor.com/logos/gennoor-tech-linkedin-profile-400x400.png', description: c.description,
         prefill: { name: c.name, email: c.email },
-        theme: { color: '#0f1824' },
+        theme: { color: '#ec4899' },
         modal: { ondismiss: () => setBusy(false) },
         handler: async (r: Record<string, string>) => {
           try {
@@ -143,22 +143,54 @@ export function BuyButton({ className = '', label }: { className?: string; label
 
 // ---------------------------------------------------------------- previews
 
-const PreviewContext = createContext<((id: string, title: string) => void) | null>(null)
+export interface PreviewItem { id: string; title: string; module: string; minutes?: number }
+const PreviewContext = createContext<{ open: (id: string, title: string) => void; all: PreviewItem[] } | null>(null)
 
-/** Wraps the outline. A preview lesson opens in a player on the page; nobody is asked to sign in. */
-export function PreviewProvider({ slug, children }: { slug: string; children: React.ReactNode }) {
+/** Wraps the course's lessons. A preview lesson opens in a player on the page; nobody is asked to sign in. */
+export function PreviewProvider({ slug, previews, children }: { slug: string; previews: PreviewItem[]; children: React.ReactNode }) {
   const [open, setOpen] = useState<{ id: string; title: string } | null>(null)
   return (
-    <PreviewContext.Provider value={(id, title) => setOpen({ id, title })}>
+    <PreviewContext.Provider value={{ open: (id, title) => setOpen({ id, title }), all: previews }}>
       {children}
-      {open && <PreviewPlayer slug={slug} id={open.id} title={open.title} onClose={() => setOpen(null)} />}
+      {open && <PreviewPlayer key={open.id} slug={slug} id={open.id} title={open.title} all={previews} onPick={(p) => setOpen({ id: p.id, title: p.title })} onClose={() => setOpen(null)} />}
     </PreviewContext.Provider>
+  )
+}
+
+/** Every free preview of the course in one list, at the top of the curriculum. */
+export function PreviewList() {
+  const ctx = useContext(PreviewContext)
+  if (!ctx || ctx.all.length === 0) return null
+  return (
+    <div id="previews" className="scroll-mt-24 mb-8 rounded-2xl border border-primary-200 bg-primary-50/50 p-5">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h3 className="font-heading text-[18px] font-semibold text-gray-900">Watch free: {ctx.all.length} preview lessons</h3>
+        <span className="text-[13px] text-[#6e6e73]">No sign-in needed</span>
+      </div>
+      <ol className="mt-3 grid grid-cols-1 xl:grid-cols-2 gap-2">
+        {ctx.all.map((p, i) => (
+          <li key={p.id} className="min-w-0">
+            <button
+              type="button"
+              onClick={() => ctx.open(p.id, p.title)}
+              className="w-full h-full flex items-start gap-3 rounded-xl bg-white border border-[#e2e5ec] px-3.5 py-3 text-left hover:border-primary-400 transition-colors"
+            >
+              <PlayCircle className="w-5 h-5 mt-0.5 shrink-0 text-primary-600" />
+              <span className="min-w-0">
+                <span className="block text-[14.5px] font-medium leading-snug text-gray-900">{p.title}</span>
+                <span className="block text-[12.5px] text-[#6e6e73] mt-0.5 truncate">Preview {i + 1}{p.minutes ? ` · ${p.minutes} min` : ''} · {p.module}</span>
+              </span>
+            </button>
+          </li>
+        ))}
+      </ol>
+    </div>
   )
 }
 
 /** A lesson row for someone who does not own the course: a preview plays, anything else offers to buy. */
 export function LessonRow({ id, title, color, preview }: { id: string; title: string; color: string; preview: boolean }) {
-  const openPreview = useContext(PreviewContext)
+  const openPreview = useContext(PreviewContext)?.open
   const b = useBuy()
   return (
     <button
@@ -178,13 +210,22 @@ export function LessonRow({ id, title, color, preview }: { id: string; title: st
   )
 }
 
-function PreviewPlayer({ slug, id, title, onClose }: { slug: string; id: string; title: string; onClose: () => void }) {
+function PreviewPlayer({ slug, id, title, all, onPick, onClose }: { slug: string; id: string; title: string; all: PreviewItem[]; onPick: (p: PreviewItem) => void; onClose: () => void }) {
   const video = useRef<HTMLVideoElement>(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
   const [caption, setCaption] = useState<string | null>(null)
   const [ended, setEnded] = useState(false)
+  const [playing, setPlaying] = useState(false)
+  const [muted, setMuted] = useState(false)
+  const [time, setTime] = useState(0)
+  const [length, setLength] = useState(0)
+  // While the slider is being dragged it shows where the finger is, not where the video is
+  const [dragTo, setDragTo] = useState<number | null>(null)
   const b = useBuy()
+  const clock = (sec: number) => `${Math.floor(sec / 60)}:${String(Math.floor(sec % 60)).padStart(2, '0')}`
+  const toggle = () => { const v = video.current; if (!v) return; if (v.paused) v.play().catch(() => {}); else v.pause() }
+  const seek = (to: number) => { const v = video.current; if (v && Number.isFinite(to)) { v.currentTime = to; setTime(to); setEnded(false) } }
 
   useEffect(() => {
     let hls: { destroy: () => void } | null = null
@@ -229,7 +270,7 @@ function PreviewPlayer({ slug, id, title, onClose }: { slug: string; id: string;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-3 sm:p-6" role="dialog" aria-modal="true" aria-label={`Preview: ${title}`} onClick={onClose}>
-      <div className="w-full max-w-4xl rounded-2xl overflow-hidden bg-[#0f1824] text-white shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <div className="w-full max-w-4xl max-h-full overflow-y-auto rounded-2xl bg-[#0f1824] text-white shadow-2xl" style={{ scrollbarColor: "#ec4899 transparent", scrollbarWidth: "thin" }} onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between gap-3 px-4 py-3">
           <div className="min-w-0">
             <div className="text-[11.5px] font-semibold uppercase tracking-wider text-[#8d9bb0]">Preview</div>
@@ -238,7 +279,17 @@ function PreviewPlayer({ slug, id, title, onClose }: { slug: string; id: string;
           <button onClick={onClose} aria-label="Close the preview" className="p-2 rounded-lg hover:bg-white/10"><X className="w-5 h-5" /></button>
         </div>
         <div className="relative bg-black aspect-video">
-          <video ref={video} controls autoPlay playsInline controlsList="nodownload" onContextMenu={(e) => e.preventDefault()} onEnded={() => setEnded(true)} className="w-full h-full">
+          <video
+            ref={video} autoPlay playsInline controlsList="nodownload" muted={muted}
+            onClick={toggle}
+            onContextMenu={(e) => e.preventDefault()}
+            onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}
+            onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
+            onLoadedMetadata={(e) => setLength(e.currentTarget.duration || 0)}
+            onDurationChange={(e) => setLength(e.currentTarget.duration || 0)}
+            onEnded={() => setEnded(true)}
+            className="w-full h-full cursor-pointer"
+          >
             {caption && <track kind="captions" src={caption} srcLang="en" label="English" />}
           </video>
           {loading && !error && <div className="absolute inset-0 flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-white/70" /></div>}
@@ -251,10 +302,66 @@ function PreviewPlayer({ slug, id, title, onClose }: { slug: string; id: string;
             </div>
           )}
         </div>
+        {/* Controls: always on screen, with a pink slider to move through the lesson */}
+        <div className="flex items-center gap-3 px-4 pt-3">
+          <button type="button" onClick={toggle} aria-label={playing ? 'Pause' : 'Play'} className="p-2 rounded-full bg-white/10 hover:bg-white/20 shrink-0">
+            {playing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+          </button>
+          <span className="text-[12.5px] tabular-nums text-[#aab6c8] shrink-0 w-10 text-right">{clock(dragTo ?? time)}</span>
+          <input
+            type="range" min={0} max={length || 0} step={0.1} value={dragTo ?? time} disabled={!length}
+            aria-label="Move through the lesson"
+            onChange={(e) => setDragTo(Number(e.target.value))}
+            onPointerUp={() => { if (dragTo !== null) { seek(dragTo); setDragTo(null) } }}
+            onKeyUp={() => { if (dragTo !== null) { seek(dragTo); setDragTo(null) } }}
+            onBlur={() => { if (dragTo !== null) { seek(dragTo); setDragTo(null) } }}
+            className="preview-seek flex-1 min-w-0"
+            style={{ ['--done' as string]: `${length ? ((dragTo ?? time) / length) * 100 : 0}%` }}
+          />
+          <span className="text-[12.5px] tabular-nums text-[#aab6c8] shrink-0 w-10">{clock(length)}</span>
+          <button type="button" onClick={() => setMuted((m) => !m)} aria-label={muted ? 'Turn sound on' : 'Turn sound off'} className="p-2 rounded-full hover:bg-white/10 shrink-0">
+            {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+          </button>
+          <button type="button" onClick={() => video.current?.requestFullscreen?.().catch(() => {})} aria-label="Full screen" className="p-2 rounded-full hover:bg-white/10 shrink-0">
+            <Maximize className="w-4 h-4" />
+          </button>
+        </div>
+        <style>{`
+          input[type="range"].preview-seek { -webkit-appearance: none; appearance: none; height: 22px; background: transparent; cursor: pointer; }
+          input[type="range"].preview-seek::-webkit-slider-runnable-track { height: 6px; border-radius: 999px; background: linear-gradient(to right, #ec4899 var(--done), rgba(255,255,255,.28) var(--done)); }
+          input[type="range"].preview-seek::-moz-range-track { height: 6px; border-radius: 999px; background: rgba(255,255,255,.28); }
+          input[type="range"].preview-seek::-moz-range-progress { height: 6px; border-radius: 999px; background: #ec4899; }
+          input[type="range"].preview-seek::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; margin-top: -6px; border-radius: 50%; background: #ec4899; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.5); }
+          input[type="range"].preview-seek::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #ec4899; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.5); }
+          input[type="range"].preview-seek:focus-visible { outline: 2px solid #f9a8d4; outline-offset: 4px; border-radius: 999px; }
+          input[type="range"].preview-seek:disabled { opacity: .5; cursor: default; }
+        `}</style>
         {b && (
           <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
             <p className="text-[13.5px] text-[#aab6c8]">You are watching a free preview. No sign-in needed.</p>
             <BuyButton className="!px-5 !py-2" />
+          </div>
+        )}
+        {/* The other previews, so they can all be watched from here */}
+        {all.length > 1 && (
+          <div className="px-4 pb-4">
+            <div className="text-[11.5px] font-semibold uppercase tracking-wider text-[#8d9bb0] mb-2">All free previews</div>
+            <ol className="grid sm:grid-cols-2 gap-1.5">
+              {all.map((p, i) => (
+                <li key={p.id} className="min-w-0">
+                  <button
+                    type="button"
+                    onClick={() => p.id !== id && onPick(p)}
+                    aria-current={p.id === id ? 'true' : undefined}
+                    className={`w-full flex items-start gap-2.5 rounded-lg px-3 py-2 text-left text-[13.5px] leading-snug transition-colors ${p.id === id ? 'bg-white/15 text-white' : 'text-[#c9d2e0] hover:bg-white/10'}`}
+                  >
+                    <span className={`shrink-0 tabular-nums ${p.id === id ? 'text-[#f9a8d4]' : 'text-[#8d9bb0]'}`}>{i + 1}</span>
+                    <span className="min-w-0 flex-1">{p.title}</span>
+                    {p.id === id && <span className="shrink-0 text-[11px] font-semibold text-[#f9a8d4]">Playing</span>}
+                  </button>
+                </li>
+              ))}
+            </ol>
           </div>
         )}
       </div>

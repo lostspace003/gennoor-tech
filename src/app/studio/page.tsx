@@ -1,4 +1,4 @@
-import { priceOf } from '@/lib/lms-access'
+import { previewIds, priceOf } from '@/lib/lms-access'
 import type { Metadata } from 'next'
 import { listLmsCourses, toCard } from '@/lib/lms'
 import { ratingSummaries } from '@/lib/lms-community'
@@ -18,10 +18,12 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic'
 
 export default async function LabsPage() {
-  const cards = (await listLmsCourses()).map(toCard)
+  const all = await listLmsCourses()
+  const previewCount = Object.fromEntries(all.map(c => [c.slug, previewIds(c).length]))
+  const cards = all.map(toCard)
   const ratings = await ratingSummaries(cards.map(c => c.slug))
   const prices = Object.fromEntries(await Promise.all(cards.map(async c => [c.slug, await priceOf(c.slug)] as const)))
-  const courses = cards.map(c => ({ ...c, rating: ratings[c.slug]?.count ? ratings[c.slug] : undefined, priceUsd: prices[c.slug]?.usd }))
+  const courses = cards.map(c => ({ ...c, rating: ratings[c.slug]?.count ? ratings[c.slug] : undefined, priceUsd: prices[c.slug]?.usd, previews: previewCount[c.slug] }))
   return (
     <main className="bg-[#f5f6f8] min-h-screen">
       <AcademyBar section="Certifications & Projects" />

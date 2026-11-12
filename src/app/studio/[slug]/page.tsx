@@ -5,7 +5,7 @@ import { Check } from 'lucide-react'
 import { verifyLearnerSession } from '@/lib/learner-auth'
 import { getLmsCourse, getLmsProgress, imageUrl, promoUrl, toCard, type LmsProgressEntry } from '@/lib/lms'
 import { hasFullAccess, previewIds, priceOf } from '@/lib/lms-access'
-import { BuyButton, CourseBuyProvider, CurrencyNote, LessonRow, PreviewProvider } from '@/components/academy/CourseAccess'
+import { BuyButton, CourseBuyProvider, CurrencyNote, LessonRow, PreviewList, PreviewProvider, type PreviewItem } from '@/components/academy/CourseAccess'
 import { resumePoint } from '@/lib/lms-resume'
 import ResumePanel from '@/components/academy/ResumePanel'
 import { kindOf, KIND_COLOR } from '@/lib/lms-kind'
@@ -61,6 +61,11 @@ export default async function LabsCoursePage({ params }: PageProps) {
   const price = await priceOf(slug)
   const enrolled = learner ? await hasFullAccess(learner.email, slug).catch(() => false) : false
   const previews = new Set(previewIds(course))
+  // The previews in course order, each with the module it comes from, for the one list they are shown in
+  const previewList: PreviewItem[] = course.sections.flatMap((sec) => sec.items.filter((it) => previews.has(it.id)).map((it) => ({
+    id: it.id, title: it.title, module: sec.title,
+    minutes: it.type === 'lecture' && it.durationSec ? Math.max(1, Math.round(it.durationSec / 60)) : undefined,
+  })))
   const progress: Record<string, LmsProgressEntry> = learner && enrolled ? await getLmsProgress(learner.email, slug).catch(() => ({})) : {}
   const point = enrolled ? resumePoint(course, progress) : null
   const totalItems = course.sections.reduce((n, s) => n + s.items.length, 0)
@@ -131,7 +136,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
               <div className="mt-8">
                 <div className="flex flex-wrap items-center gap-4">
                   <BuyButton />
-                  <a href="#curriculum" className="text-[14px] font-semibold text-white underline underline-offset-4 hover:text-[#aab6c8]">Watch {previews.size} free preview lessons</a>
+                  <a href="#previews" className="text-[14px] font-semibold text-white underline underline-offset-4 hover:text-[#aab6c8]">Watch {previews.size} free preview lessons</a>
                 </div>
                 <div className="mt-3 text-[#8d9bb0]"><CurrencyNote className="hover:text-white" /></div>
                 <p className="mt-2 text-[13px] text-[#8d9bb0]">One payment. Every lesson, lab and quiz, and a certificate. Previews need no sign-in.</p>
@@ -194,8 +199,9 @@ export default async function LabsCoursePage({ params }: PageProps) {
 
           <section id="curriculum" className="scroll-mt-24">
             <h2 className="font-heading text-[28px] font-bold tracking-[-0.02em] text-gray-900 mb-2">Curriculum</h2>
-            <p className="text-[#6e6e73] mb-6">{totalItems} items (lessons and quizzes) across {course.sections.length} modules. {enrolled ? 'Pick any lesson to open it.' : price ? `${previews.size} lessons are free previews: press one to watch it now, no sign-in needed. The rest open when you buy the course.` : 'Pick any lesson to open it. You will sign in first if you have not already.'}</p>
-            <PreviewProvider slug={slug}>
+            <p className="text-[#6e6e73] mb-6">{totalItems} items (lessons and quizzes) across {course.sections.length} modules. {enrolled ? 'Pick any lesson to open it.' : price ? `The ${previews.size} free previews are listed first. The rest open when you buy the course.` : 'Pick any lesson to open it. You will sign in first if you have not already.'}</p>
+            <PreviewProvider slug={slug} previews={price && !enrolled ? previewList : []}>
+            <PreviewList />
             <OutlineGate slug={slug}>
             <div className="border-t border-[#e8e8ed]">
               {course.sections.map((s, i) => (

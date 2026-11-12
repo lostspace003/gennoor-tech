@@ -184,8 +184,21 @@ export default function LabsCatalog({ courses, custom = EMPTY_CUSTOM }: { course
                           </p>
                         )}
                         <p className="text-[13px] text-[#86868b] mt-auto pt-4 tabular-nums">
-                          {c.lectures} lessons{c.hours ? `, ${c.hours} hours` : ''}{c.priceUsd ? ` · $${c.priceUsd.toFixed(2)}, free previews` : ''}
+                          {c.lectures} lessons{c.hours ? `, ${c.hours} hours` : ''}
                         </p>
+                        {/* What it costs, and what can be watched before paying */}
+                        <div className="mt-3 pt-3 border-t border-[#eef0f4] flex items-center justify-between gap-3">
+                          {c.priceUsd ? (
+                            <span className="text-[20px] font-bold tracking-tight text-gray-900 tabular-nums">${c.priceUsd.toFixed(2)}</span>
+                          ) : (
+                            <span className="text-[15px] font-semibold text-emerald-700">Free</span>
+                          )}
+                          {c.priceUsd && c.previews ? (
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 text-primary-700 text-[12.5px] font-semibold px-2.5 py-1 whitespace-nowrap">
+                              <Play className="w-3 h-3 fill-current" /> {c.previews} free previews
+                            </span>
+                          ) : null}
+                        </div>
                       </div>
                     </div>
                   ))}

@@ -347,6 +347,8 @@ export interface LmsCourseCard {
   rating?: { average: number; count: number }
   /** price in US dollars, when the course is paid; absent for a free course */
   priceUsd?: number
+  /** how many lessons can be watched without buying */
+  previews?: number
 }
 
 /** Catalog-card view of a course, with a signed link for its thumbnail. */
