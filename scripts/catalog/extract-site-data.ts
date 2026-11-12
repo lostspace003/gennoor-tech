@@ -16,7 +16,7 @@
  * Then run:  python scripts/catalog/build-catalog-xlsx.py
  *            python scripts/catalog/build-overview-pptx.py
  */
-import { mkdirSync, writeFileSync } from 'fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import path from 'path'
 import { listLmsCourses, toCard } from '@/lib/lms'
 import { previewIds } from '@/lib/lms-access'
@@ -46,6 +46,9 @@ async function main() {
   studioRows.sort((a, b) => order.indexOf(a.card.kind) - order.indexOf(b.card.kind) || a.c.title.localeCompare(b.c.title))
 
   const cohort = nextCohort()
+  // Microsoft's official courses, from the title plan Microsoft sends to trainers (see import-title-plan.py)
+  const msFile = path.join(process.cwd(), 'scripts', 'catalog', 'microsoft-courses.json')
+  const microsoft: Array<Record<string, any>> = existsSync(msFile) ? JSON.parse(readFileSync(msFile, 'utf-8')).courses : []
   const programs = getAllPrograms()
   const exams = getAllCertifications()
 
@@ -55,7 +58,7 @@ async function main() {
       walkthrough: `${SITE}/studio`,
       counts: {
         studio: studioRows.length, essentials: essentials.length, claudeCerts: CLAUDE_CERTS.length,
-        claudeCourses: tocCourses.length, programs: programs.length, exams: exams.length, pocs: pocs.length,
+        claudeCourses: tocCourses.length, programs: programs.length, exams: exams.length, pocs: pocs.length, microsoft: microsoft.length, microsoftNew: microsoft.filter((c) => c.isNew).length,
       },
       studioHours: Math.round(studioRows.reduce((n, r) => n + r.card.hours, 0)),
       studioLessons: studioRows.reduce((n, r) => n + r.card.lectures, 0),
@@ -69,11 +72,12 @@ async function main() {
       [3, 'Claude certification preparation', `A guide for each of the ${CLAUDE_CERTS.length} Claude certifications, with a storyline, short videos and a practice exam.`, 'Anyone preparing for a Claude certification', `${SITE}/claude/certifications`],
       [4, 'Claude training for teams', 'Live sessions on Claude for everyday work, Claude Cowork and Claude Code, built around what your team does.', 'Teams starting with Claude or wanting to use it well', `${SITE}/claude`],
       [5, 'Training for your team', 'Live training, online or at your office: Claude, Microsoft AI and automation courses, plus preparation for certification exams.', 'Smaller teams and larger organizations', `${SITE}/training`],
-      [6, 'Custom training courses', 'A course written around your own tools, processes and examples, with video lessons, labs, quizzes and a certificate.', 'Teams whose work a standard course does not cover', `${SITE}/training`],
-      [7, 'A learning platform for your company', 'We build and set up a learning platform (LMS) for your organization: your courses, your people, your name on it. On our platform or built for you, in the cloud or on your premises.', 'Organizations with a regular training need', `${SITE}/contact`],
-      [8, 'Proof-of-concept builds', `A working prototype of one AI use case, with a fixed scope. ${pocs.length} ready blueprints to start from.`, 'Teams that want to see it work before they commit', `${SITE}/contact`],
-      [9, 'Automation', 'One process at a time: scoped in writing first, built with Claude, and tested on your own examples.', 'A process that eats hours every week', `${SITE}/automation`],
-      [10, WEEKEND.name, `${WEEKEND.tagline}. Two live sessions every month, six working demos, and the complete kit afterwards.`, 'People who want to see it built live', `${SITE}/ai-weekend`],
+      [6, 'Microsoft official courses', `Microsoft's own instructor-led courses with hands-on labs, taught by a Microsoft Certified Trainer. ${microsoft.length} titles across AI, data, security, infrastructure, business applications and Microsoft 365.`, 'Teams preparing for a Microsoft certification or rolling out a Microsoft product', `${SITE}/training`],
+      [7, 'Custom training courses', 'A course written around your own tools, processes and examples, with video lessons, labs, quizzes and a certificate.', 'Teams whose work a standard course does not cover', `${SITE}/training`],
+      [8, 'A learning platform for your company', 'We build and set up a learning platform (LMS) for your organization: your courses, your people, your name on it. On our platform or built for you, in the cloud or on your premises.', 'Organizations with a regular training need', `${SITE}/contact`],
+      [9, 'Proof-of-concept builds', `A working prototype of one AI use case, with a fixed scope. ${pocs.length} ready blueprints to start from.`, 'Teams that want to see it work before they commit', `${SITE}/contact`],
+      [10, 'Automation', 'One process at a time: scoped in writing first, built with Claude, and tested on your own examples.', 'A process that eats hours every week', `${SITE}/automation`],
+      [11, WEEKEND.name, `${WEEKEND.tagline}. Two live sessions every month, six working demos, and the complete kit afterwards.`, 'People who want to see it built live', `${SITE}/ai-weekend`],
     ], { C: 70, D: 44, E: 34 }),
 
     'Built for you': sheet(['What we build', 'What it includes', 'How it is delivered'], [
@@ -106,6 +110,10 @@ async function main() {
     'Team training': sheet(['#', 'Title', 'Type', 'Level', 'Duration', 'Audience', 'Technology', 'Description', 'Link'],
       programs.map((p, i) => [i + 1, p.title, p.category === 'bootcamp' ? 'Bootcamp' : 'Course', p.level, p.duration, p.audience, p.technology, sentence(p.description), `${SITE}/services/training/${p.slug}`]),
       { B: 46, F: 34, G: 18, H: 70, I: 44 }),
+
+    'Microsoft courses': sheet(['#', 'Code', 'Title', 'Area', 'Duration', 'Leads to', 'Hands-on', 'Status', 'Link'],
+      microsoft.map((c, i) => [i + 1, c.code, c.title, c.area, c.duration, c.leadsTo, c.handsOn, c.isNew ? 'New' : c.updated ? `Updated ${c.updated}` : '', c.url]),
+      { B: 13, C: 62, D: 26, E: 11, F: 24, G: 12, H: 17, I: 52 }),
 
     'Exam preparation': sheet(['#', 'Code', 'Title', 'Provider', 'Level', 'Link'],
       exams.map((e, i) => [i + 1, e.code, e.title, e.provider, e.level, `${SITE}/services/certifications/${e.slug}`]),
