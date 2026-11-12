@@ -3,6 +3,7 @@ import { CalendarDays, Clock, Video, Check, Hammer, Award, ShieldCheck, Package 
 import { WEEKEND, DAYS, FOR_YOU, INCLUDED, HOW_YOU_LEARN, KIT, TOOLS, FAQS, nextCohort, timeLabel } from '@/data/ai-weekend'
 import RegisterForm, { StickyRegister } from './RegisterForm'
 import { getRegistrations } from '@/lib/weekend'
+import { razorpayConfigured } from '@/lib/razorpay'
 
 // The dates roll forward and the seat count moves, so the page is rebuilt every few minutes.
 export const revalidate = 300
@@ -30,6 +31,8 @@ export default async function AiWeekendPage() {
   const taken = await getRegistrations().then((rows) => rows.filter((r) => r.cohort === cohort.id && r.payment !== 'refunded').length).catch(() => null)
   const left = taken === null ? null : Math.max(0, WEEKEND.seats - taken)
   const full = left === 0
+  // Online payment is on once the Razorpay keys are set; until then people reserve and pay later
+  const online = razorpayConfigured()
   const ribbon = `Limited cohort of ${WEEKEND.seats} · ${cohort.label} · ${rupees(WEEKEND.fee)} instead of ${rupees(WEEKEND.regularFee)}`
 
   return (
@@ -261,11 +264,11 @@ export default async function AiWeekendPage() {
             </div>
             <div className="mt-3 flex gap-3 rounded-2xl border border-gray-200 bg-white p-4 text-sm text-gray-600">
               <ShieldCheck className="w-5 h-5 shrink-0 text-green-600" />
-              <span>Reserve now, pay after. We email you the payment details and confirm your seat once the fee is received.</span>
+              <span>{online ? 'Pay securely by UPI, card or net banking. Your seat is confirmed the moment the payment goes through, and a receipt is emailed to you.' : 'Reserve now, pay after. We email you the payment details and confirm your seat once the fee is received.'}</span>
             </div>
           </div>
           <div className="rounded-2xl bg-white border border-gray-200 p-5 sm:p-6">
-            <RegisterForm cohortLabel={cohort.label} fee={WEEKEND.fee} full={full} />
+            <RegisterForm cohortLabel={cohort.label} fee={WEEKEND.fee} full={full} online={online} />
           </div>
         </div>
       </section>
@@ -285,7 +288,7 @@ export default async function AiWeekendPage() {
       <section className={`${wrap} mt-16 grid lg:grid-cols-[1fr_2fr] gap-6`}>
         <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Questions people ask</h2>
         <div className="divide-y divide-gray-200 border-y border-gray-200">
-          {FAQS.map((f) => (
+          {FAQS.map((f) => (f.q === 'How do I pay?' && online ? { ...f, a: 'Fill in the form and the payment window opens: UPI, card or net banking, handled by Razorpay. Your seat is confirmed the moment the payment goes through. If you close the window, the email we send has a Pay now button.' } : f)).map((f) => (
             <details key={f.q} className="group py-4">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[17px] font-semibold [&::-webkit-details-marker]:hidden">
                 {f.q}

@@ -26,6 +26,10 @@ export interface WeekendRegistration {
   /** Where they came from: campaign tag or referring site. */
   source: string
   note?: string
+  /** Online payment (Razorpay): the order opened for them, and the payment once it succeeds. */
+  orderId?: string
+  paymentId?: string
+  paidAt?: string
   /** When each of the weekend's emails was last sent to them, by kind (see weekend-emails.ts). */
   emails?: Record<string, string>
 }

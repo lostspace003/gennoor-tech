@@ -4,6 +4,8 @@ import { getRegistrations, mutateRegistrations, getSettings, saveSettings, type 
 import { WEEKEND, nextCohort, cohortById } from '@/data/ai-weekend'
 import { WEEKEND_EMAILS, buildWeekendEmail, type WeekendEmailKind } from '@/lib/weekend-emails'
 import { sendEmail } from '@/lib/email-service'
+import { razorpayConfigured, razorpayTestMode } from '@/lib/razorpay'
+import { payUrl } from '@/lib/weekend-pay'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 300
@@ -29,7 +31,8 @@ export async function GET(req: NextRequest) {
     if (preview) {
       const cohort = cohortById(req.nextUrl.searchParams.get('cohort') || '')
       if (!cohort || !WEEKEND_EMAILS.some((e) => e.kind === preview)) return NextResponse.json({ error: 'Unknown email' }, { status: 400 })
-      return NextResponse.json(buildWeekendEmail(preview, { name: 'Priya Sharma' }, cohort, settings[cohort.id], FROM))
+      const samplePay = preview === 'payment' && razorpayConfigured() ? 'https://www.gennoor.com/ai-weekend' : ''
+      return NextResponse.json(buildWeekendEmail(preview, { name: 'Priya Sharma' }, cohort, settings[cohort.id], FROM, samplePay))
     }
 
     const rows = (await getRegistrations()).sort((a, b) => b.at.localeCompare(a.at))
@@ -43,6 +46,8 @@ export async function GET(req: NextRequest) {
       settings: Object.fromEntries(ids.map((id) => [id, publicSettings(settings[id])])),
       emails: WEEKEND_EMAILS,
       inviteLimit: INVITE_LIMIT,
+      online: razorpayConfigured(),
+      testMode: razorpayConfigured() && razorpayTestMode(),
       registrations: rows,
     })
   } catch (e) {
@@ -92,7 +97,8 @@ export async function POST(req: NextRequest) {
     if (!info) return NextResponse.json({ error: 'Unknown email' }, { status: 400 })
     const onlyNew = b.onlyNew !== false
     const settings = (await getSettings())[cohort.id] || {}
-    if (info.needs && !settings[info.needs]) return NextResponse.json({ error: `Add ${info.needsLabel} first, then save.` }, { status: 400 })
+    const online = razorpayConfigured()
+    if (info.needs && !settings[info.needs] && !(info.kind === 'payment' && online)) return NextResponse.json({ error: `Add ${info.needsLabel} first, then save.` }, { status: 400 })
 
     const registered = (await getRegistrations()).filter((r) => r.cohort === cohort.id && r.payment !== 'refunded')
 
@@ -127,7 +133,7 @@ export async function POST(req: NextRequest) {
     const sent: typeof people = []
     const failed: string[] = []
     for (const person of people) {
-      const mail = buildWeekendEmail(info.kind, person, cohort, settings, FROM)
+      const mail = buildWeekendEmail(info.kind, person, cohort, settings, FROM, info.kind === 'payment' && online && person.id ? payUrl(person.id) : '')
       const r = await sendEmail({ to: person.email, from: FROM, fromName: 'Gennoor Tech', subject: mail.subject, html: mail.html }).catch((e) => ({ success: false, error: String(e) }))
       if (r.success) sent.push(person)
       else failed.push(person.email)

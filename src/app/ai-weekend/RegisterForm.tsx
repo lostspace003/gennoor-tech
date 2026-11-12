@@ -1,9 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { CheckCircle2, Loader2 } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
+import { CheckCircle2, Loader2, ShieldCheck } from 'lucide-react'
 
 const input = 'w-full rounded-xl border border-gray-300 bg-white px-3.5 py-3 text-[15px] text-gray-900 placeholder:text-gray-400 focus:border-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-600/20'
+const bigButton = 'w-full rounded-xl bg-[#0C1426] px-5 py-3.5 text-base font-bold text-white hover:bg-black disabled:opacity-60 inline-flex items-center justify-center gap-2'
+
+/** What the server sends so Razorpay's payment window can open. Nothing in it is secret. */
+interface Checkout { registrationId: string; token: string; keyId: string; orderId: string; amount: number; name: string; email: string; phone: string; description: string }
+type Stage = 'form' | 'sending' | 'paying' | 'confirming' | 'reserved' | 'paid'
 
 /** Where the visitor came from: the campaign tag if the link carried one, else the site that sent them. */
 function sourceOf(): string {
@@ -16,34 +21,128 @@ function sourceOf(): string {
   } catch { return 'direct' }
 }
 
-export default function RegisterForm({ cohortLabel, fee, full }: { cohortLabel: string; fee: number; full?: boolean }) {
+/** Razorpay's payment window is their script; it is loaded only when someone is about to pay. */
+function loadRazorpay(): Promise<boolean> {
+  return new Promise((resolve) => {
+    if ((window as any).Razorpay) return resolve(true)
+    const s = document.createElement('script')
+    s.src = 'https://checkout.razorpay.com/v1/checkout.js'
+    s.onload = () => resolve(true)
+    s.onerror = () => resolve(false)
+    document.body.appendChild(s)
+  })
+}
+
+export default function RegisterForm({ cohortLabel, fee, full, online }: { cohortLabel: string; fee: number; full?: boolean; online?: boolean }) {
   const [f, setF] = useState({ name: '', email: '', phone: '', company: '', role: '', website_hp: '' })
-  const [state, setState] = useState<'idle' | 'sending' | 'done'>('idle')
+  const [stage, setStage] = useState<Stage>('form')
   const [error, setError] = useState('')
+  const [checkout, setCheckout] = useState<Checkout | null>(null)
+  const [who, setWho] = useState('')
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement>) => setF((x) => ({ ...x, [k]: e.target.value }))
+
+  /** Open the payment window. Closing it without paying keeps the seat reserved. */
+  const pay = useCallback(async (c: Checkout) => {
+    setError('')
+    setStage('paying')
+    if (!(await loadRazorpay())) {
+      setError('The payment window could not load. Check your connection, or use the Pay now button in the email we sent you.')
+      setStage('reserved')
+      return
+    }
+    const rzp = new (window as any).Razorpay({
+      key: c.keyId,
+      order_id: c.orderId,
+      amount: c.amount,
+      currency: 'INR',
+      name: 'Gennoor Tech',
+      description: c.description,
+      prefill: { name: c.name, email: c.email, contact: c.phone },
+      theme: { color: '#0C1426' },
+      modal: { ondismiss: () => setStage((s) => (s === 'paying' ? 'reserved' : s)) },
+      handler: async (res: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => {
+        setStage('confirming')
+        try {
+          const r = await fetch('/api/weekend/pay/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: c.registrationId, t: c.token, ...res }) })
+          const j = await r.json().catch(() => ({}))
+          if (!r.ok) { setError(j.error || 'We could not confirm the payment yet.'); setStage('reserved'); return }
+          setStage('paid')
+        } catch {
+          setError('Your payment went through, but we could not confirm it on this page. It will be matched automatically within a few minutes, and you will get an email.')
+          setStage('reserved')
+        }
+      },
+    })
+    rzp.on('payment.failed', (r: any) => setError(r?.error?.description || 'The payment did not go through. You can try again.'))
+    rzp.open()
+  }, [])
+
+  // Arriving from the "Pay now" button in an email: /ai-weekend?pay=<id>&t=<signature>
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search)
+    const id = p.get('pay'), t = p.get('t')
+    if (!id || !t) return
+    setStage('sending')
+    fetch('/api/weekend/pay', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, t }) })
+      .then(async (r) => ({ ok: r.ok, j: await r.json().catch(() => ({})) }))
+      .then(({ ok, j }) => {
+        if (j.paid) { setWho(j.name || ''); setStage('paid'); return }
+        if (!ok || !j.checkout) { setError(j.error || 'We could not open the payment.'); setStage('form'); return }
+        setCheckout(j.checkout)
+        setWho(j.checkout.name || '')
+        pay(j.checkout)
+      })
+      .catch(() => { setError('We could not reach the server. Check your connection and try again.'); setStage('form') })
+  }, [pay])
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
-    setState('sending')
+    setStage('sending')
     try {
       const r = await fetch('/api/weekend/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...f, source: sourceOf() }) })
       const j = await r.json().catch(() => ({}))
-      if (!r.ok) { setError(j.error || 'Something went wrong. Please try again.'); setState('idle'); return }
-      setState('done')
+      if (!r.ok) { setError(j.error || 'Something went wrong. Please try again.'); setStage('form'); return }
+      setWho(f.name)
+      if (j.paid) { setStage('paid'); return }
+      if (j.checkout) { setCheckout(j.checkout); pay(j.checkout); return }
+      setStage('reserved')
     } catch {
       setError('We could not reach the server. Check your connection and try again.')
-      setState('idle')
+      setStage('form')
     }
   }
 
-  if (state === 'done') {
+  if (stage === 'paid') {
     return (
       <div className="py-8 text-center" role="status">
         <CheckCircle2 className="mx-auto h-12 w-12 text-green-600" />
-        <h3 className="mt-3 text-2xl font-bold">Your seat is reserved</h3>
-        <p className="mt-2 text-[15px] text-gray-600">We have emailed {f.email} with the details for {cohortLabel}. The payment details for ₹{fee} follow in a separate email. After the weekend you receive the full kit.</p>
-        <p className="mt-3 text-sm text-gray-500">Nothing in your inbox? Check the spam folder, or write to admin@gennoor.com.</p>
+        <h3 className="mt-3 text-2xl font-bold">Payment received{who ? `, ${who.split(/\s+/)[0]}` : ''}</h3>
+        <p className="mt-2 text-[15px] text-gray-600">Your seat for {cohortLabel} is confirmed. A receipt is on its way to your email, and the joining link follows before the weekend.</p>
+        <p className="mt-3 text-sm text-gray-500">After the weekend you receive the full kit.</p>
+      </div>
+    )
+  }
+
+  if (stage === 'reserved' || stage === 'paying' || stage === 'confirming') {
+    return (
+      <div className="py-6 text-center" role="status">
+        {stage === 'reserved' ? <CheckCircle2 className="mx-auto h-12 w-12 text-green-600" /> : <Loader2 className="mx-auto h-10 w-10 animate-spin text-gray-400" />}
+        <h3 className="mt-3 text-2xl font-bold">{stage === 'confirming' ? 'Confirming your payment…' : stage === 'paying' ? 'Complete your payment' : 'Your seat is reserved'}</h3>
+        {stage === 'paying' && <p className="mt-2 text-[15px] text-gray-600">The payment window is open. Pay ₹{fee} by UPI, card or net banking.</p>}
+        {stage === 'reserved' && (checkout ? (
+          <>
+            <p className="mt-2 text-[15px] text-gray-600">One step is left: the fee of ₹{fee}. Your seat is confirmed the moment it is paid.</p>
+            <button onClick={() => pay(checkout)} className={`${bigButton} mt-4`}>Pay ₹{fee} now</button>
+            <p className="mt-3 text-sm text-gray-500">Prefer to pay later? We have emailed {checkout.email} a Pay now button.</p>
+          </>
+        ) : (
+          <>
+            <p className="mt-2 text-[15px] text-gray-600">We have emailed {f.email} with the details for {cohortLabel}. The payment details for ₹{fee} follow in a separate email. After the weekend you receive the full kit.</p>
+            <p className="mt-3 text-sm text-gray-500">Nothing in your inbox? Check the spam folder, or write to admin@gennoor.com.</p>
+          </>
+        ))}
+        {error && <p className="mt-4 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700 text-left" role="alert">{error}</p>}
       </div>
     )
   }
@@ -58,6 +157,7 @@ export default function RegisterForm({ cohortLabel, fee, full }: { cohortLabel: 
     )
   }
 
+  const sending = stage === 'sending'
   return (
     <form onSubmit={submit} className="space-y-3" noValidate={false}>
       <h3 className="text-xl font-bold">Your details</h3>
@@ -72,9 +172,10 @@ export default function RegisterForm({ cohortLabel, fee, full }: { cohortLabel: 
       {/* Hidden from people; bots fill it in and are ignored */}
       <input tabIndex={-1} autoComplete="off" value={f.website_hp} onChange={set('website_hp')} className="hidden" aria-hidden="true" name="website" />
       {error && <p className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700" role="alert">{error}</p>}
-      <button disabled={state === 'sending'} className="w-full rounded-xl bg-[#0C1426] px-5 py-3.5 text-base font-bold text-white hover:bg-black disabled:opacity-60 inline-flex items-center justify-center gap-2">
-        {state === 'sending' ? <><Loader2 className="h-4 w-4 animate-spin" /> Reserving…</> : `Reserve my seat · ₹${fee}`}
+      <button disabled={sending} className={bigButton}>
+        {sending ? <><Loader2 className="h-4 w-4 animate-spin" /> One moment…</> : online ? `Continue to payment · ₹${fee}` : `Reserve my seat · ₹${fee}`}
       </button>
+      {online && <p className="flex items-center justify-center gap-1.5 text-xs text-gray-500"><ShieldCheck className="h-3.5 w-3.5 text-green-600" /> Secure payment by Razorpay: UPI, cards and net banking</p>}
       <p className="text-xs text-gray-500">We use these details only to run the workshop and to tell you about the next one. See our <a href="/privacy" className="underline">privacy policy</a>.</p>
     </form>
   )

@@ -42,7 +42,11 @@ A live two-day workshop on the last Saturday and Sunday of every month. The publ
   4. *Joining link* to those who have paid.
   5. *The kit* to those who have paid, after the weekend.
   The text is in `src/lib/weekend-emails.ts`. These are separate from the CRM email series, and weekend registrations are not added to CRM leads.
-- **Not built yet:** online payment. There is no payment provider in this repository.
+- **Online payment (Razorpay).** With the keys set, the payment window opens straight after the form (UPI, cards, net banking). The seat is marked Paid automatically, a receipt is emailed, and `admin@` is told. Someone who closes the window gets a Pay now button by email. Without the keys, payment is off and people reserve and pay later.
+  - Settings: `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`. Start with the `rzp_test_` keys; the staff desk shows a "test mode" notice.
+  - Webhook (Razorpay dashboard, Settings, Webhooks): URL `https://www.gennoor.com/api/weekend/pay/webhook`, events `payment.captured` and `order.paid`, secret equal to `RAZORPAY_WEBHOOK_SECRET`. It catches people who pay and close the window.
+  - A payment is believed only if Razorpay's signature checks out (`src/lib/razorpay.ts`); the amount is set on the server from `src/data/ai-weekend.ts`.
+  - Refunds are made in the Razorpay dashboard, then the person is set to Refunded on the staff desk.
 
 ## CRM (`/crm`, staff only)
 
@@ -162,6 +166,7 @@ Names only; set them in `.env.local` locally and in App Service settings in prod
 - **Auth:** `AUTH_SECRET`, `NEXTAUTH_URL`, `AZURE_AD_*`, `GOOGLE_CLIENT_ID`, `LEARNER_*`
 - **Storage:** `AZURE_STORAGE_CONNECTION_STRING`, `LMS_STORAGE_CONNECTION_STRING`, `NEXT_PUBLIC_BLOB_URL`
 - **Email and Microsoft 365:** `AZURE_COMMUNICATION_CONNECTION_STRING`, `EMAIL_FROM_*`, `MS_GRAPH_*`, `MS_BOOKINGS_BUSINESS_ID`
+- **Payments:** `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`
 - **AI:** `FOUNDRY_API_KEY`, `FOUNDRY_OPENAI_BASE`, `FOUNDRY_*_MODEL`, `FOUNDRY_IMAGE_DEPLOYMENT`, `AZURE_OPENAI_*`; cost estimates via `FOUNDRY_TEXT_USD_IN`, `FOUNDRY_TEXT_USD_OUT`, `FOUNDRY_IMAGE_USD`
 - **Search and retrieval:** `QDRANT_*`, `VECTOR_SERVICE_URL`, `VECTOR_API_KEY`
 - **Prospecting:** `PROSPECTING_API_KEY` (optional "Server default" key; more keys are added in the hub's Prospecting tab)
