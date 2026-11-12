@@ -2,20 +2,23 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import * as XLSX from 'xlsx'
-import { Download, Loader2, RefreshCw, Receipt, Tag } from 'lucide-react'
+import { Download, Loader2, RefreshCw, Receipt, Tag, Ticket } from 'lucide-react'
+import Coupons from './Coupons'
 
-interface Payment { at: string; kind: 'course' | 'weekend'; what: string; name: string; email: string; amount: number; currency: 'USD' | 'INR'; paymentId: string }
-interface PriceRow { slug: string; code: string; title: string; price: { usd: number; inr: number } | null; custom: boolean; previews: number }
+interface Payment { at: string; kind: 'course' | 'weekend'; what: string; name: string; email: string; amount: number; currency: 'USD' | 'INR'; paymentId: string; coupon?: string }
+interface PriceRow { slug: string; code: string; title: string; kind: string; price: { usd: number; inr: number } | null; custom: boolean; previews: number; offer: { on: boolean; percent: number }; regular: { usd: number; inr: number } | null }
 interface Data { payments: Payment[]; prices: PriceRow[]; defaultPrice: { usd: number; inr: number }; previewMax: number; online: boolean; testMode: boolean }
 
 const btn = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium rounded-md border border-gray-200 bg-white hover:border-gray-400 disabled:opacity-40'
 const primary = 'inline-flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium bg-gray-800 text-white rounded-md hover:bg-gray-900 disabled:opacity-40'
 const money = (amount: number, currency: string) => (currency === 'INR' ? `₹${Math.round(amount).toLocaleString('en-IN')}` : `$${amount.toFixed(2)}`)
 
-/** Money received, and what each course costs. */
+const OFFER_PERCENTS = [10, 20, 30, 40, 50, 60, 70]
+
+/** Money received, what each course costs, and coupon codes. */
 export default function PaymentsPage() {
   const [data, setData] = useState<Data | null>(null)
-  const [tab, setTab] = useState<'payments' | 'prices'>('payments')
+  const [tab, setTab] = useState<'payments' | 'prices' | 'coupons'>('payments')
   const [kind, setKind] = useState<'all' | 'course' | 'weekend'>('all')
   const [q, setQ] = useState('')
   const [error, setError] = useState('')
@@ -45,13 +48,13 @@ export default function PaymentsPage() {
     if (!r?.ok) { setError(j.error || 'Could not save the price'); return }
     setData((d) => (d ? { ...d, prices: j.prices } : d))
     setEdit((e) => { const n = { ...e }; delete n[slug]; return n })
-    setNotice('Price saved. The course page shows it within a minute.')
+    setNotice('Saved. The course page shows it within a minute.')
   }
 
   function excel() {
     const sheet = XLSX.utils.json_to_sheet(rows.map((p) => ({
       Date: p.at.slice(0, 10), For: p.what, Type: p.kind === 'course' ? 'Course' : 'AI Weekend', Name: p.name, Email: p.email,
-      Amount: p.amount, Currency: p.currency, 'Payment reference': p.paymentId || 'marked by hand',
+      Amount: p.amount, Currency: p.currency, 'Coupon code': p.coupon || '', 'Payment reference': p.paymentId || (p.coupon ? 'free with coupon' : 'marked by hand'),
     })))
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, sheet, 'Payments')
@@ -74,7 +77,7 @@ export default function PaymentsPage() {
       {!data ? <Loader2 className="w-5 h-5 animate-spin text-gray-400" /> : (
         <>
           <div className="flex gap-1 border-b border-gray-200 mb-4 text-sm">
-            {([['payments', 'Money received', Receipt], ['prices', 'Course prices', Tag]] as const).map(([id, label, Icon]) => (
+            {([['payments', 'Money received', Receipt], ['prices', 'Course prices and offers', Tag], ['coupons', 'Coupon codes', Ticket]] as const).map(([id, label, Icon]) => (
               <button key={id} onClick={() => { setTab(id); setNotice('') }} className={`inline-flex items-center gap-1.5 px-3 py-2 -mb-px border-b-2 ${tab === id ? 'border-gray-800 font-medium' : 'border-transparent text-gray-500 hover:text-gray-800'}`}><Icon className="w-4 h-4" />{label}</button>
             ))}
           </div>
@@ -113,7 +116,10 @@ export default function PaymentsPage() {
                         <td className="px-3 py-2"><div className="text-gray-900">{p.what}</div><div className="text-xs text-gray-400">{p.kind === 'course' ? 'Course' : 'AI Weekend'}</div></td>
                         <td className="px-3 py-2"><div className="font-medium text-gray-900">{p.name || 'No name given'}</div><a href={`mailto:${p.email}`} className="text-blue-700 hover:underline break-all">{p.email}</a></td>
                         <td className="px-3 py-2 whitespace-nowrap font-semibold tabular-nums">{money(p.amount, p.currency)}</td>
-                        <td className="px-3 py-2 text-gray-600 font-mono text-xs">{p.paymentId || <span className="font-sans text-gray-400">marked Paid by hand</span>}</td>
+                        <td className="px-3 py-2 text-gray-600 font-mono text-xs">
+                          {p.paymentId || <span className="font-sans text-gray-400">{p.coupon ? 'Free with a coupon code' : 'marked Paid by hand'}</span>}
+                          {p.coupon && <div className="font-sans text-gray-500 mt-0.5">Coupon {p.coupon}</div>}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -122,16 +128,19 @@ export default function PaymentsPage() {
               </div>
               <p className="text-xs text-gray-400 mt-3">Refunds are made in the Razorpay dashboard. Settlement dates and fees are shown there too.</p>
             </>
+          ) : tab === 'coupons' ? (
+            <Coupons courses={data.prices.filter((c) => c.price).map((c) => ({ slug: c.slug, title: c.title }))} />
           ) : (
             <>
               <p className="text-[13px] text-gray-600 mb-3">
                 Every course costs <b>{money(data.defaultPrice.usd, 'USD')}</b> (<b>{money(data.defaultPrice.inr, 'INR')}</b> for buyers in India) unless you give it its own price here.
                 Up to {data.previewMax} lessons of each course are free previews; which ones is set when the course is published.
+                A course with its <b>offer</b> switched on shows a gold ribbon and a higher regular price struck through; buyers still pay the price in this table.
               </p>
               <div className="rounded-xl border border-gray-200 bg-white overflow-auto">
-                <table className="w-full text-[13px] min-w-[720px]">
+                <table className="w-full text-[13px] min-w-[940px]">
                   <thead className="bg-gray-50 text-xs text-gray-500">
-                    <tr>{['Course', 'Free previews', 'Price', 'Change it'].map((h) => <th key={h} className="text-left px-3 py-2 font-medium">{h}</th>)}</tr>
+                    <tr>{['Course', 'Free previews', 'Price', 'Offer shown', 'Change the price'].map((h) => <th key={h} className="text-left px-3 py-2 font-medium">{h}</th>)}</tr>
                   </thead>
                   <tbody>
                     {data.prices.map((c) => {
@@ -143,6 +152,27 @@ export default function PaymentsPage() {
                           <td className="px-3 py-2.5 whitespace-nowrap">
                             {c.price ? <><span className="font-semibold">{money(c.price.usd, 'USD')}</span> <span className="text-gray-500">· {money(c.price.inr, 'INR')}</span></> : <span className="font-semibold text-emerald-700">Free</span>}
                             {!c.custom && <span className="ml-2 text-[11px] text-gray-400">standard</span>}
+                          </td>
+                          <td className="px-3 py-2.5">
+                            {c.price ? (
+                              <div className="flex items-center gap-2 whitespace-nowrap">
+                                <button
+                                  type="button" role="switch" aria-checked={c.offer.on} aria-label={`Offer on ${c.title}`} disabled={busy === c.slug}
+                                  onClick={() => savePrice(c.slug, { offer: { on: !c.offer.on, percent: c.offer.percent } })}
+                                  className={`relative w-9 h-5 rounded-full transition-colors disabled:opacity-50 ${c.offer.on ? 'bg-blue-600' : 'bg-gray-300'}`}
+                                >
+                                  <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${c.offer.on ? 'translate-x-4' : ''}`} />
+                                </button>
+                                <select
+                                  value={c.offer.percent} disabled={busy === c.slug} aria-label={`Percent off shown on ${c.title}`}
+                                  onChange={(ev) => savePrice(c.slug, { offer: { on: c.offer.on, percent: Number(ev.target.value) } })}
+                                  className="text-[13px] border border-gray-200 rounded py-1 pl-2 pr-7"
+                                >
+                                  {Array.from(new Set([...OFFER_PERCENTS, c.offer.percent])).sort((x, y) => x - y).map((p) => <option key={p} value={p}>{p}% off</option>)}
+                                </select>
+                                {c.regular ? <span className="text-xs text-gray-500">was <s>{money(c.regular.usd, 'USD')}</s> · <s>{money(c.regular.inr, 'INR')}</s></span> : <span className="text-xs text-gray-400">off</span>}
+                              </div>
+                            ) : <span className="text-xs text-gray-400">Free course</span>}
                           </td>
                           <td className="px-3 py-2.5">
                             {e ? (
@@ -166,7 +196,7 @@ export default function PaymentsPage() {
                   </tbody>
                 </table>
               </div>
-              <p className="text-xs text-gray-400 mt-3">Buyers in India are charged the rupee price so UPI and net banking work. Everyone else is charged the dollar price by card. Only managers can change prices.</p>
+              <p className="text-xs text-gray-400 mt-3">Buyers in India are charged the rupee price so UPI and net banking work. Everyone else is charged the dollar price by card. Only managers can change prices and offers.</p>
             </>
           )}
         </>

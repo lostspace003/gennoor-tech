@@ -349,6 +349,8 @@ export interface LmsCourseCard {
   priceUsd?: number
   /** how many lessons can be watched without buying */
   previews?: number
+  /** when the course is shown as discounted: the percent off and the regular dollar price */
+  offer?: { percent: number; regularUsd: number }
 }
 
 /** Catalog-card view of a course, with a signed link for its thumbnail. */

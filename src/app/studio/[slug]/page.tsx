@@ -4,8 +4,9 @@ import Link from 'next/link'
 import { Check } from 'lucide-react'
 import { verifyLearnerSession } from '@/lib/learner-auth'
 import { getLmsCourse, getLmsProgress, imageUrl, promoUrl, toCard, type LmsProgressEntry } from '@/lib/lms'
-import { hasFullAccess, previewIds, priceOf } from '@/lib/lms-access'
-import { BuyButton, CourseBuyProvider, CurrencyNote, LessonRow, PreviewList, PreviewProvider, type PreviewItem } from '@/components/academy/CourseAccess'
+import { hasFullAccess, offerOf, previewIds, priceOf } from '@/lib/lms-access'
+import { BuyButton, CouponBox, CourseBuyProvider, CurrencyNote, LessonRow, PreviewList, PreviewProvider, PriceLine, type PreviewItem } from '@/components/academy/CourseAccess'
+import { OfferRibbon } from '@/components/academy/Offer'
 import { resumePoint } from '@/lib/lms-resume'
 import ResumePanel from '@/components/academy/ResumePanel'
 import { kindOf, KIND_COLOR } from '@/lib/lms-kind'
@@ -60,6 +61,8 @@ export default async function LabsCoursePage({ params }: PageProps) {
   // `enrolled` means the whole course is open to this person: they bought it, or it is a free course they enrolled in
   const price = await priceOf(slug)
   const enrolled = learner ? await hasFullAccess(learner.email, slug).catch(() => false) : false
+  // Shown only to people who have not bought the course yet
+  const offer = enrolled ? null : await offerOf(course, price)
   const previews = new Set(previewIds(course))
   // The previews in course order, each with the module it comes from, for the one list they are shown in
   const previewList: PreviewItem[] = course.sections.flatMap((sec) => sec.items.filter((it) => previews.has(it.id)).map((it) => ({
@@ -76,7 +79,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
   const badge = imageUrl(course, course.badge)
   const { summary } = await getReviews(slug).catch(() => ({ summary: { average: 0, count: 0, counts: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } } }))
 
-  const Shell = ({ children }: { children: React.ReactNode }) => (price ? <CourseBuyProvider slug={slug} price={price}>{children}</CourseBuyProvider> : <>{children}</>)
+  const Shell = ({ children }: { children: React.ReactNode }) => (price ? <CourseBuyProvider slug={slug} price={price} offer={offer}>{children}</CourseBuyProvider> : <>{children}</>)
 
   return (
     <Shell>
@@ -134,12 +137,14 @@ export default async function LabsCoursePage({ params }: PageProps) {
               ) : (
               price && !enrolled ? (
               <div className="mt-8">
+                <PriceLine className="mb-4" />
                 <div className="flex flex-wrap items-center gap-4">
                   <BuyButton />
                   <a href="#previews" className="text-[14px] font-semibold text-white underline underline-offset-4 hover:text-[#aab6c8]">Watch {previews.size} free preview lessons</a>
                 </div>
                 <div className="mt-3 text-[#8d9bb0]"><CurrencyNote className="hover:text-white" /></div>
-                <p className="mt-2 text-[13px] text-[#8d9bb0]">One payment. Every lesson, lab and quiz, and a certificate. Previews need no sign-in.</p>
+                <CouponBox className="mt-2.5" />
+                <p className="mt-2.5 text-[13px] text-[#8d9bb0]">One payment. Every lesson, lab and quiz, and a certificate. Previews need no sign-in.</p>
               </div>
               ) : (
               <div className="mt-8 flex flex-wrap items-center gap-4">
@@ -163,7 +168,8 @@ export default async function LabsCoursePage({ params }: PageProps) {
               </dl>
             </div>
 
-            <div>
+            <div className="relative">
+              {offer && <OfferRibbon percent={offer.percent} className="rounded-tr-2xl" />}
               {promo ? (
                 <PromoPlayer src={promo} poster={card.thumbnailUrl} resumeKey={`studio-${slug}`} />
               ) : card.thumbnailUrl ? (
@@ -242,6 +248,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
                   <div className="font-heading text-[19px] font-semibold !text-white">Get the full course</div>
                   <div className="text-[14px] text-[#aab6c8] mt-1">{course.stats.lectures} video lessons, the labs, {course.stats.quizzes} quizzes and a certificate.</div>
                   <div className="mt-2 text-[#8d9bb0]"><CurrencyNote className="hover:text-white" /></div>
+                  <CouponBox className="mt-2" />
                 </div>
                 <BuyButton />
               </div>
