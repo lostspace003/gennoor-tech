@@ -11,7 +11,12 @@ const MAILBOX = process.env.OUTLOOK_SENDER_MAILBOX || 'admin@gennoor.com'
 // every CRM mailbox and merges the results, tagging each message with where
 // it landed. Mail.Read is an application-wide grant — no per-user setup.
 const SALES_MAILBOX = process.env.EMAIL_FROM_SALES || 'sales@gennoor.com'
-const INBOX_MAILBOXES = [...new Set([MAILBOX, SALES_MAILBOX, ...CRM_USERS].map((m) => m.toLowerCase()))]
+// sales@ is not a mailbox of its own: it is a second address of the shared
+// "Gennoor Support" mailbox, and Graph only opens a mailbox by its main address.
+// A lead who presses Reply (not Reply all) writes to sales@ only, so that mailbox
+// is swept too. Only mail from known lead addresses is ever shown in the CRM.
+const SALES_HOME_MAILBOX = process.env.SALES_HOME_MAILBOX || 'support@gennoor.com'
+const INBOX_MAILBOXES = [...new Set([MAILBOX, SALES_MAILBOX, SALES_HOME_MAILBOX, ...CRM_USERS].map((m) => m.toLowerCase()))]
 
 export function graphConfigured(): boolean {
   return Boolean(

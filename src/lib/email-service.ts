@@ -158,6 +158,33 @@ async function saveToOutlookSentItems(config: EmailConfig) {
   }
 }
 
+/**
+ * How often we ask Azure "has it gone yet?" after it accepts an email, and how long
+ * we wait between asks.
+ *
+ * Azure allows the whole account only about 200 of these checks an hour (and about
+ * 100 sends). An email with an attachment can stay "in progress" for many minutes;
+ * checking until it finished once used up the hour's allowance in five minutes,
+ * after which Azure refused every email from the site for an hour. So: a couple of
+ * checks, then the email is taken as sent. Azure has accepted it by then and
+ * delivers it by itself.
+ */
+const STATUS_CHECKS = 2
+const STATUS_CHECK_GAP_MS = 2000
+
+/** Azure's own words for a refused send, turned into something a person can act on. */
+function sendProblem(error: unknown): string {
+  const e = error as { statusCode?: number; name?: string; message?: string }
+  const text = e?.message || 'Unknown error occurred'
+  if (e?.statusCode === 429) {
+    const seconds = Number(/after (\d+) seconds/.exec(text)?.[1] || 0)
+    const wait = seconds ? `in about ${Math.max(1, Math.ceil(seconds / 60))} minutes` : 'later'
+    return `Azure's hourly email limit is used up. Nothing was sent. Try again ${wait}.`
+  }
+  if (e?.name === 'AbortError' || e?.name === 'TimeoutError') return 'The email service did not answer in time. Nothing was sent. Please try again.'
+  return text
+}
+
 export async function sendEmail(config: EmailConfig) {
   const connectionString = process.env.AZURE_COMMUNICATION_CONNECTION_STRING
 
@@ -166,7 +193,9 @@ export async function sendEmail(config: EmailConfig) {
   }
 
   try {
-    const client = new EmailClient(connectionString)
+    // No automatic retries: when Azure says "wait an hour", the library would wait
+    // the hour with the request hanging. We would rather hear the refusal at once.
+    const client = new EmailClient(connectionString, { retryOptions: { maxRetries: 0 } })
 
     const message: any = {
       senderAddress: config.from,
@@ -210,8 +239,21 @@ export async function sendEmail(config: EmailConfig) {
         }))
     }
 
-    const poller = await client.beginSend(message)
-    const result = await poller.pollUntilDone()
+    // Returns once Azure has accepted the email (or throws when it refuses it)
+    const poller = await client.beginSend(message, { abortSignal: AbortSignal.timeout(30_000) })
+    for (let i = 0; i < STATUS_CHECKS && !poller.isDone(); i++) {
+      await new Promise((r) => setTimeout(r, STATUS_CHECK_GAP_MS))
+      try {
+        await poller.poll({ abortSignal: AbortSignal.timeout(10_000) })
+      } catch (e) {
+        // Azure reported the send as failed: that is a real failure
+        if (poller.getOperationState().status === 'failed') throw e
+        // The check itself did not go through. The email is already accepted.
+        break
+      }
+    }
+    const state = poller.getOperationState()
+    const result = { status: state.status === 'failed' ? 'Failed' : KnownEmailSendStatus.Succeeded, id: state.result?.id || '' }
 
     const recipients = Array.isArray(config.to) ? config.to : [config.to]
 
@@ -235,7 +277,7 @@ export async function sendEmail(config: EmailConfig) {
     }
   } catch (error) {
     console.error('Email sending failed:', error)
-    const errorMsg = error instanceof Error ? error.message : 'Unknown error occurred'
+    const errorMsg = sendProblem(error)
     const recipients = Array.isArray(config.to) ? config.to : [config.to]
     for (const recipient of recipients) {
       saveEmailLog({ to: recipient, from: config.from, subject: config.subject, status: 'failed', error: errorMsg }).catch((err) => console.error('Email log save failed:', err))
