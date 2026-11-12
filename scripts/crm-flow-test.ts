@@ -11,7 +11,8 @@ import { buildStepEmail } from '../src/lib/crm/sequence-emails'
 import { mapHeaders, rowToLead, LEAD_COLUMNS } from '../src/lib/crm/import'
 import { CRM_USERS, CRM_MANAGERS } from '../src/lib/crm/users'
 import { teamMember } from '../src/lib/crm/team'
-import { WEEKEND_EMAILS, buildWeekendEmail } from '../src/lib/weekend-emails'
+import { WEEKEND_EMAILS, buildWeekendEmail, buildPaidEmail } from '../src/lib/weekend-emails'
+import { hmacHex, validPaymentSignature, validWebhookSignature } from '../src/lib/razorpay'
 import { WEEKEND, nextCohort, cohortById } from '../src/data/ai-weekend'
 
 let pass = 0, fail = 0
@@ -118,6 +119,22 @@ for (const [i, info] of WEEKEND_EMAILS.entries()) {
 }
 ok(buildWeekendEmail('join', {}, nov, { joinUrl: 'https://teams.example/join' }).html.includes('href="https://teams.example/join"'), 'the joining email links to the saved Teams link')
 ok(buildWeekendEmail('invite', {}, nov).html.includes('₹1,999') && buildWeekendEmail('invite', {}, nov).html.includes('₹499'), 'the invitation shows 499 against 1,999')
+
+// ---- Online payment: only a correctly signed payment or webhook is believed
+const secret = 'test_secret_123'
+const goodSig = hmacHex(secret, 'order_ABC|pay_XYZ')
+ok(validPaymentSignature('order_ABC', 'pay_XYZ', goodSig, secret), 'a payment with the right signature is accepted')
+ok(!validPaymentSignature('order_ABC', 'pay_OTHER', goodSig, secret), 'the same signature on a different payment is refused')
+ok(!validPaymentSignature('order_OTHER', 'pay_XYZ', goodSig, secret), 'the same signature on a different order is refused')
+ok(!validPaymentSignature('order_ABC', 'pay_XYZ', goodSig, 'wrong_secret'), 'a signature made with another secret is refused')
+ok(!validPaymentSignature('order_ABC', 'pay_XYZ', '', secret) && !validPaymentSignature('order_ABC', 'pay_XYZ', goodSig, ''), 'a missing signature or a missing secret is refused')
+const hook = JSON.stringify({ event: 'payment.captured', payload: { payment: { entity: { id: 'pay_XYZ', order_id: 'order_ABC' } } } })
+ok(validWebhookSignature(hook, hmacHex('whsec', hook), 'whsec'), 'a webhook signed by Razorpay is accepted')
+ok(!validWebhookSignature(hook + ' ', hmacHex('whsec', hook), 'whsec'), 'a webhook whose body was altered is refused')
+ok(!validWebhookSignature(hook, hmacHex('whsec', hook), ''), 'webhooks are refused when no webhook secret is set')
+const withLink = buildWeekendEmail('payment', { name: 'Priya' }, nov, {}, 'webinar@gennoor.com', 'https://www.gennoor.com/ai-weekend?pay=WK-1&t=abc')
+ok(withLink.html.includes('Pay ₹499 now') && withLink.html.includes('pay=WK-1'), 'the payment email carries the person\'s own Pay now link when online payment is on')
+ok(buildPaidEmail({ name: 'Priya', fee: 499 }, nov, 'pay_XYZ').html.includes('pay_XYZ'), 'the receipt shows the payment reference')
 
 console.log(`\n${pass} passed, ${fail} failed`)
 if (outDir) console.log(`Emails written to ${outDir}`)

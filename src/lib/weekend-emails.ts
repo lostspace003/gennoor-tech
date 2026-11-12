@@ -65,7 +65,9 @@ export function buildWeekendEmail(
   person: { name?: string },
   cohort: Cohort,
   settings: CohortSettings = {},
-  from = 'webinar@gennoor.com'
+  from = 'webinar@gennoor.com',
+  /** The person's own link to pay online, when online payment is switched on. */
+  payLink = ''
 ): { subject: string; html: string } {
   const first = escapeHtml((person.name || '').trim().split(/\s+/)[0] || '')
   const hello = first ? `Hello ${first},` : 'Hello,'
@@ -100,10 +102,14 @@ export function buildWeekendEmail(
         subject: `Complete your registration: ${WEEKEND.name}, ${cohort.label}`,
         html: shell(
           emailTitle(hello, `Your seat on the ${WEEKEND.name} is held. One step is left: the fee of ${rupees(WEEKEND.fee)}.`) +
-            emailCallout('check', `Pay ${rupees(WEEKEND.fee)}`, 'Use the details below. Your seat is confirmed as soon as the payment is received.') +
-            `<div style="margin:0 0 18px;padding:16px 18px;border:1px solid #e2e8f0;border-radius:12px;font-size:15px;line-height:1.7;color:#0f172a">${textToHtml(settings.payment || '[Payment details go here]')}</div>` +
+            (payLink
+              ? emailCallout('check', `Pay ${rupees(WEEKEND.fee)} online`, 'UPI, card or net banking. It takes about a minute, and your seat is confirmed the moment the payment goes through.') +
+                emailButton(`Pay ${rupees(WEEKEND.fee)} now`, payLink) +
+                (settings.payment ? `<p style="margin:18px 0 8px;font-size:14px;color:#64748b">Or pay another way:</p><div style="margin:0 0 18px;padding:14px 16px;border:1px solid #e2e8f0;border-radius:12px;font-size:14px;line-height:1.7;color:#0f172a">${textToHtml(settings.payment)}</div>` : '')
+              : emailCallout('check', `Pay ${rupees(WEEKEND.fee)}`, 'Use the details below. Your seat is confirmed as soon as the payment is received.') +
+                `<div style="margin:0 0 18px;padding:16px 18px;border:1px solid #e2e8f0;border-radius:12px;font-size:15px;line-height:1.7;color:#0f172a">${textToHtml(settings.payment || '[Payment details go here]')}</div>`) +
             details(cohort) +
-            p('After you pay, reply to this email with the payment reference so we can match it to you quickly.') +
+            (payLink ? '' : p('After you pay, reply to this email with the payment reference so we can match it to you quickly.')) +
             emailContact({ email: 'admin@gennoor.com' }),
           `One step left: ${rupees(WEEKEND.fee)} to confirm your seat for ${cohort.label}.`
         ),
@@ -171,5 +177,40 @@ export function buildWeekendEmail(
           'Notes, prompts, files and guides to repeat every demo yourself.'
         ),
       }
+  }
+}
+
+/** The receipt, sent the moment an online payment succeeds. */
+export function buildPaidEmail(
+  person: { name?: string; fee: number },
+  cohort: Cohort,
+  paymentId: string,
+  settings: CohortSettings = {},
+  from = 'webinar@gennoor.com'
+): { subject: string; html: string } {
+  const first = escapeHtml((person.name || '').trim().split(/\s+/)[0] || '')
+  return {
+    subject: `Payment received: your seat is confirmed, ${WEEKEND.name}`,
+    html: emailShell(
+      emailTitle(first ? `You are confirmed, ${first}.` : 'You are confirmed.', `We have received your payment. Your seat on the ${WEEKEND.name} is confirmed.`) +
+        emailDetails('Your receipt', [
+          ['Paid', rupees(person.fee)],
+          ['For', `${WEEKEND.name}, ${cohort.label}`],
+          ['Payment reference', paymentId],
+          ['Paid on', new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' })],
+        ]) +
+        details(cohort) +
+        (settings.joinUrl ? emailButton('Join the session', settings.joinUrl) : '') +
+        emailSteps(
+          [
+            { title: settings.joinUrl ? 'Keep this email' : 'Watch for the joining link', body: settings.joinUrl ? 'The button above is your joining link. The same link works on both days.' : 'It arrives by email the day before the weekend.' },
+            { title: 'Watch each demo built live', body: 'Ask questions as they come up.' },
+            { title: 'Receive the full kit', body: 'After the weekend we send everything you need to repeat every demo yourself.' },
+          ],
+          'What happens next'
+        ) +
+        emailContact({ email: 'admin@gennoor.com' }),
+      { preheader: `${rupees(person.fee)} received. Your seat for ${cohort.label} is confirmed.`, senderEmail: from }
+    ),
   }
 }

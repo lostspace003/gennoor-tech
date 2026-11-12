@@ -5,10 +5,10 @@ import * as XLSX from 'xlsx'
 import { Check, Download, ExternalLink, Loader2, Mail, RefreshCw, Send, Trash2, Users } from 'lucide-react'
 
 type Kind = 'invite' | 'payment' | 'reminder' | 'join' | 'kit'
-interface Reg { id: string; cohort: string; name: string; email: string; phone: string; company: string; role: string; at: string; payment: 'pending' | 'paid' | 'refunded'; fee: number; source: string; note?: string; emails?: Record<string, string> }
+interface Reg { id: string; cohort: string; name: string; email: string; phone: string; company: string; role: string; at: string; payment: 'pending' | 'paid' | 'refunded'; fee: number; source: string; note?: string; emails?: Record<string, string>; paymentId?: string; paidAt?: string }
 interface Settings { joinUrl: string; payment: string; kitUrl: string; invitedCount: number }
 interface EmailInfo { kind: Kind; title: string; when: string; to: string; needs?: 'joinUrl' | 'payment' | 'kitUrl'; needsLabel?: string }
-interface Data { current: string; seats: number; fee: number; cohorts: { id: string; label: string }[]; settings: Record<string, Settings>; emails: EmailInfo[]; inviteLimit: number; registrations: Reg[] }
+interface Data { current: string; seats: number; fee: number; cohorts: { id: string; label: string }[]; settings: Record<string, Settings>; emails: EmailInfo[]; inviteLimit: number; online: boolean; testMode: boolean; registrations: Reg[] }
 
 const btn = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium rounded-md border border-gray-200 bg-white hover:border-gray-400 disabled:opacity-40'
 const primary = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium bg-gray-800 text-white rounded-md hover:bg-gray-900 disabled:opacity-40'
@@ -73,7 +73,8 @@ export default function WeekendAdminPage() {
   const notYet = audience.filter((r) => !r.emails?.[kind])
   const pasted = recipients.split(/[\n;]+/).filter((l) => /@/.test(l)).length
   const count = kind === 'invite' ? pasted : again ? audience.length : notYet.length
-  const missing = info?.needs && !saved?.[info.needs]
+  // With online payment on, the payment email carries a Pay now button and needs nothing typed
+  const missing = info?.needs && !saved?.[info.needs] && !(kind === 'payment' && data?.online)
   const dirty = !!saved && (draft.joinUrl !== saved.joinUrl || draft.payment !== saved.payment || draft.kitUrl !== saved.kitUrl)
 
   async function call(method: string, body: unknown, key: string) {
@@ -118,7 +119,7 @@ export default function WeekendAdminPage() {
     const sheet = XLSX.utils.json_to_sheet(rows.map((r) => ({
       Name: r.name, Email: r.email, Phone: r.phone, Company: r.company, Role: r.role,
       Payment: PAY[r.payment], 'Fee (INR)': r.fee, 'Came from': r.source, 'Registered on': r.at.slice(0, 10),
-      'Emails sent': Object.keys(r.emails || {}).join(', '),
+      'Emails sent': Object.keys(r.emails || {}).join(', '), 'Payment reference': r.paymentId || '',
     })))
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, sheet, 'Registrations')
@@ -142,6 +143,9 @@ export default function WeekendAdminPage() {
         </div>
       </div>
 
+      {data && (data.online
+        ? data.testMode && <div className="mb-3 rounded-md bg-amber-50 border border-amber-200 text-amber-900 text-sm px-3 py-2">Online payment is in <b>test mode</b>. No real money moves. Switch to the live Razorpay keys when you are ready to take payments.</div>
+        : <div className="mb-3 rounded-md bg-gray-50 border border-gray-200 text-gray-700 text-sm px-3 py-2">Online payment is off because the Razorpay keys are not set. People reserve a seat and you mark them Paid by hand.</div>)}
       {error && <div className="mb-3 rounded-md bg-red-50 border border-red-200 text-red-800 text-sm px-3 py-2">{error}</div>}
       {notice && <div className="mb-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm px-3 py-2">{notice}</div>}
 
@@ -172,7 +176,7 @@ export default function WeekendAdminPage() {
             <>
               <div className="flex flex-wrap items-center gap-2 mb-3">
                 <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name, email, company" className="text-sm border border-gray-200 rounded-md px-2.5 py-2 w-64" />
-                <span className="text-xs text-gray-500">Change Payment to Paid when the fee arrives.</span>
+                <span className="text-xs text-gray-500">{data.online ? 'Online payments are marked Paid by themselves. Change it by hand only for money received another way.' : 'Change Payment to Paid when the fee arrives.'}</span>
                 <button onClick={excel} disabled={!rows.length} className={`${btn} ml-auto`}><Download className="w-3.5 h-3.5" />Download Excel</button>
               </div>
               <div className="rounded-xl border border-gray-200 bg-white overflow-auto">
@@ -193,6 +197,7 @@ export default function WeekendAdminPage() {
                             className={`text-xs rounded-md border px-2 py-1.5 ${r.payment === 'paid' ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : r.payment === 'refunded' ? 'border-gray-200 bg-gray-50 text-gray-600' : 'border-amber-200 bg-amber-50 text-amber-800'}`}>
                             {(Object.keys(PAY) as Reg['payment'][]).map((k) => <option key={k} value={k}>{PAY[k]}</option>)}
                           </select>
+                          {r.paymentId && <div className="mt-1 text-[11px] text-gray-400" title={r.paidAt ? `Paid online ${new Date(r.paidAt).toLocaleString('en-IN')}` : undefined}>online · {r.paymentId}</div>}
                         </td>
                         <td className="px-3 py-2">
                           <div className="flex flex-wrap gap-1">
@@ -237,7 +242,7 @@ export default function WeekendAdminPage() {
 
                     {info.needs && (
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">{NEED_LABEL[info.needs]}</label>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">{NEED_LABEL[info.needs]}{kind === 'payment' && data.online ? ' (optional: another way to pay, shown under the Pay now button)' : ''}</label>
                         {info.needs === 'payment'
                           ? <textarea rows={4} value={draft.payment} onChange={(e) => setDraft({ ...draft, payment: e.target.value })} placeholder={`For example:\nPay ₹${data.fee} by UPI to gennoor@upi\nor use this link: https://…`} className={field} />
                           : <input value={draft[info.needs]} onChange={(e) => setDraft({ ...draft, [info.needs!]: e.target.value })} placeholder="https://…" className={field} />}

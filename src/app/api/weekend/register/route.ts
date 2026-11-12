@@ -2,10 +2,12 @@ import { NextResponse } from 'next/server'
 import { rateLimit, clientIp } from '@/lib/rate-limit'
 import { sendEmail } from '@/lib/email-service'
 import { escapeHtml } from '@/lib/escape-html'
-import { emailShell, emailTitle, emailDetails, emailSteps, emailContact } from '@/lib/crm/email-theme'
+import { emailShell, emailTitle, emailDetails, emailSteps, emailButton, emailContact } from '@/lib/crm/email-theme'
 import { WEEKEND, nextCohort, timeLabel } from '@/data/ai-weekend'
-import { mutateRegistrations, newRegistrationId, getSettings, type WeekendRegistration } from '@/lib/weekend'
+import { mutateRegistrations, newRegistrationId, getSettings, getRegistrations, type WeekendRegistration } from '@/lib/weekend'
 import { buildWeekendEmail } from '@/lib/weekend-emails'
+import { razorpayConfigured } from '@/lib/razorpay'
+import { startPayment, payUrl } from '@/lib/weekend-pay'
 
 export const dynamic = 'force-dynamic'
 
@@ -59,6 +61,18 @@ export async function POST(req: Request) {
     }
     const fresh = outcome === 'new'
 
+    // Someone registering again with the same email: carry on with the seat they already hold
+    const seat = fresh ? reg : (await getRegistrations()).find((r) => r.cohort === cohort.id && r.email === email && r.payment !== 'refunded') || reg
+    if (seat.payment === 'paid') return NextResponse.json({ success: true, cohort: cohort.label, paid: true })
+
+    // With online payment switched on, the payment window opens straight after the form
+    const online = razorpayConfigured()
+    const checkout = online ? await startPayment(seat).catch((e) => { console.error('weekend order failed', e); return null }) : null
+    const payLink = online ? payUrl(seat.id) : ''
+    // The payment window is pre-filled with what was just typed, never with details stored earlier:
+    // typing someone else's email must not reveal their name or phone number.
+    if (checkout) { checkout.name = name; checkout.phone = phone }
+
     // The person always gets the confirmation (a repeat usually means they lost the first one)
     await sendEmail({
       to: email,
@@ -73,9 +87,12 @@ export async function POST(req: Request) {
             ['Where', WEEKEND.mode],
             ['Fee', `₹${WEEKEND.fee} (regular price ₹${WEEKEND.regularFee.toLocaleString('en-IN')})`],
           ]) +
+          (payLink ? emailButton(`Pay ₹${WEEKEND.fee} now`, payLink) : '') +
           emailSteps(
             [
-              { title: 'Pay the fee', body: `We will email you the payment details for ₹${WEEKEND.fee}. Your seat is confirmed once it is received.` },
+              payLink
+                ? { title: 'Pay the fee', body: `If you have not paid yet, use the button above (UPI, card or net banking). Your seat is confirmed the moment the payment goes through.` }
+                : { title: 'Pay the fee', body: `We will email you the payment details for ₹${WEEKEND.fee}. Your seat is confirmed once it is received.` },
               { title: 'Get set up', body: 'A few days before, we send the joining link and short setup steps.' },
               { title: 'Watch it built live', body: 'Each demo is built step by step on Saturday and Sunday. Ask questions as it happens.' },
               { title: 'Receive the full kit', body: 'After the weekend we send the notes, prompts, files and guides, so you can repeat every demo yourself.' },
@@ -83,7 +100,7 @@ export async function POST(req: Request) {
             'What happens next'
           ) +
           emailContact({ email: 'admin@gennoor.com' }),
-        { preheader: `${cohort.label}, ${timeLabel()}. Payment details follow by email.`, senderEmail: FROM }
+        { preheader: payLink ? `${cohort.label}, ${timeLabel()}. Pay ₹${WEEKEND.fee} to confirm your seat.` : `${cohort.label}, ${timeLabel()}. Payment details follow by email.`, senderEmail: FROM }
       ),
     }).catch((e) => console.error('weekend confirmation email failed', e))
 
@@ -104,9 +121,9 @@ export async function POST(req: Request) {
       }).catch((e) => console.error('weekend admin email failed', e))
     }
 
-    // If staff have already saved how to pay for this weekend, the payment email follows at once,
-    // so nobody waits for a person to press Send.
-    if (fresh) {
+    // Without online payment: if staff have already saved how to pay for this weekend, the payment
+    // email follows at once, so nobody waits for a person to press Send.
+    if (fresh && !online) {
       const settings = (await getSettings().catch(() => ({} as Awaited<ReturnType<typeof getSettings>>)))[cohort.id]
       if (settings?.payment) {
         const mail = buildWeekendEmail('payment', reg, cohort, settings, FROM)
@@ -118,7 +135,7 @@ export async function POST(req: Request) {
       }
     }
 
-    return NextResponse.json({ success: true, cohort: cohort.label })
+    return NextResponse.json({ success: true, cohort: cohort.label, checkout })
   } catch (e) {
     console.error('weekend register failed', e)
     return NextResponse.json({ error: 'We could not save your registration. Please try again.' }, { status: 500 })
