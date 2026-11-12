@@ -6,184 +6,181 @@
   (or one PNG for an icon tile). Email apps cannot show SVG or CSS animation,
   which is why the pictures are drawn here and shipped as images.
 
+  The look is the one the presentation and the films use: the colours, the glass
+  icon tiles and the windows come from ../show/css/stage.css and ../show/js/kit.js.
+  What is different here is the size: a picture in an email is about 540 px wide,
+  so every scene is composed for 600 x 320 with larger type and fewer things in it.
+
   Each scene sets data-ms on #stage: how long its animation runs.
-  Staged entrances use class "in" with style="--at:<ms>".
+  Staged entrances use class "in" (rise) or "pop", with style="--at:<ms>".
 -->
 <meta charset="utf-8">
+<link rel="stylesheet" href="../show/css/stage.css">
 <style>
-  :root { --card:#0c1426; --panel:#16233f; --panel2:#1b2c50; --line:#2a3f6b; --text:#f2f6fc; --muted:#9db0cc; --blue:#3b9cff; --deep:#0071e3; --gold:#f5b83d; --green:#3ecf8e; }
-  * { box-sizing:border-box; margin:0; padding:0; }
-  html, body { background:transparent; }
-  body { font-family:'Segoe UI', system-ui, Arial, sans-serif; color:var(--text); -webkit-font-smoothing:antialiased; }
-  #stage { position:relative; width:600px; height:320px; overflow:hidden;
-    background:#0c1426; }
-  /* Flat colour on purpose: a gradient behind an animation makes the GIF several times heavier */
-  svg.i { width:1em; height:1em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; display:block; }
-  .in { animation:in 420ms cubic-bezier(.2,.8,.2,1) both; animation-delay:calc(var(--at,0) * 1ms); }
-  @keyframes in { from { opacity:0; transform:translateY(14px) scale(.97); } to { opacity:1; transform:none; } }
-  .kicker { font-size:12px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); }
-  .chip { display:inline-flex; align-items:center; gap:8px; padding:8px 14px; border-radius:999px; background:var(--panel2); border:1px solid var(--line); font-size:15px; font-weight:600; }
-  .chip svg { font-size:17px; color:var(--blue); }
+  html, body { background: transparent; }
+  body { font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif; }
+  /* The email card is #0c1426. The picture keeps that colour at its edges and is lit from two corners. */
+  #stage { position: relative; width: 600px; height: 320px; overflow: hidden;
+    background: radial-gradient(70% 95% at 96% -12%, rgba(34, 110, 255, .40), transparent 62%), radial-gradient(60% 85% at -4% 112%, rgba(120, 96, 255, .26), transparent 62%), #0c1426; }
+  svg.i { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; display: block; }
+  .in { animation: in 460ms cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--at, 0) * 1ms); }
+  @keyframes in { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
+  .pop { animation: pop 440ms cubic-bezier(.2, 1.5, .4, 1) both; animation-delay: calc(var(--at, 0) * 1ms); }
+  @keyframes pop { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: none; } }
+  .label { font: 650 12px/1 var(--body); letter-spacing: .2em; text-transform: uppercase; color: var(--gold); }
+  .glass { border-radius: 16px; background: linear-gradient(180deg, #1a2850, #101a38); border: 1px solid rgba(255, 255, 255, .15); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .16), 0 18px 40px -18px rgba(0, 0, 0, .85); }
 
-  /* ---------- icon tile (one PNG per icon) ---------- */
-  #tile { width:88px; height:88px; border-radius:24px; display:flex; align-items:center; justify-content:center;
-    background:linear-gradient(145deg,#1f3563,#14213d); border:1.5px solid #34508a; color:#8cc4ff; font-size:42px; }
-  /* ---------- art tile: the badge or mark of one certification or course ---------- */
-  #tile.art { border:0; color:#fff; background-repeat:no-repeat; flex-direction:column; gap:3px; font-size:40px; }
-  #tile.art b { font-size:15px; font-weight:800; letter-spacing:.02em; line-height:1; }
-  #tile.art.small { font-size:30px; }
-  svg.spark { width:1em; height:1em; fill:#fff; display:block; }
-  #tile.gold { color:var(--gold); border-color:#6b5320; background:linear-gradient(145deg,#3a2f14,#1c1a12); }
+  /* ---------- icon tiles for the emails: one PNG each, no glow outside the tile (it would be cut off) ---------- */
+  #tile { width: 88px; height: 88px; }
+  #tile .ico { box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, .55), inset 0 -10px 18px rgba(0, 0, 20, .28), 0 0 0 1px rgba(255, 255, 255, .1); }
+  #tile .ico.photo { background-repeat: no-repeat; }
+  #tile .ico.photo::before { opacity: .45; }
 
   /* ---------- video: a few seconds of the promo, with a play button ---------- */
-  .video img.frame { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
-  .video .shade { position:absolute; inset:0; background:linear-gradient(180deg, rgba(5,10,22,.25) 0%, rgba(5,10,22,0) 35%, rgba(5,10,22,.85) 100%); }
-  .video .play { position:absolute; left:50%; top:46%; width:84px; height:84px; margin:-42px 0 0 -42px; border-radius:50%; background:var(--deep); display:flex; align-items:center; justify-content:center; font-size:36px; color:#fff; box-shadow:0 10px 30px rgba(0,0,0,.5); }
-  .video .play svg { fill:#fff; stroke:none; margin-left:5px; }
-  .video .ring { position:absolute; left:50%; top:46%; width:84px; height:84px; margin:-42px 0 0 -42px; border-radius:50%; border:3px solid #fff; animation:ring 2000ms ease-out infinite; }
-  @keyframes ring { from { transform:scale(1); opacity:.8; } to { transform:scale(1.9); opacity:0; } }
-  .video .bar { position:absolute; left:22px; right:22px; bottom:18px; display:flex; align-items:center; gap:14px; font-size:15px; font-weight:600; }
-  .video .track { flex:1; height:6px; border-radius:99px; background:rgba(255,255,255,.28); overflow:hidden; }
-  .video .track i { display:block; height:100%; background:var(--blue); border-radius:99px; animation:fill 2500ms linear both; }
-  @keyframes fill { from { width:8%; } to { width:34%; } }
-  .video .tag { position:absolute; left:20px; top:18px; padding:7px 13px; border-radius:999px; background:rgba(5,10,22,.72); font-size:13.5px; font-weight:700; display:flex; gap:8px; align-items:center; }
-  .video .tag svg { font-size:16px; color:var(--gold); }
+  .video img.frame { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .video .shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5, 10, 22, .25) 0%, rgba(5, 10, 22, 0) 35%, rgba(5, 10, 22, .88) 100%); }
+  .video .play { position: absolute; left: 50%; top: 46%; width: 86px; height: 86px; margin: -43px 0 0 -43px; border-radius: 50%; background: linear-gradient(180deg, #2f8cff, #0a62f0); display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 34px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .45); }
+  .video .play svg { width: 34px; height: 34px; margin-left: 5px; }
+  .video .halo { position: absolute; left: 50%; top: 46%; width: 86px; height: 86px; margin: -43px 0 0 -43px; border-radius: 50%; border: 3px solid #fff; animation: halo 2000ms ease-out infinite; }
+  @keyframes halo { from { transform: scale(1); opacity: .85; } to { transform: scale(1.9); opacity: 0; } }
+  .video .foot { position: absolute; left: 22px; right: 22px; bottom: 18px; display: flex; align-items: center; gap: 14px; font: 600 15px/1 var(--body); }
+  .video .foot .track { flex: 1; }
+  .video .foot .track i { animation: played 2500ms linear both; }
+  @keyframes played { from { width: 8%; } to { width: 34%; } }
+  .video .tag { position: absolute; left: 20px; top: 18px; padding: 8px 14px; border-radius: 999px; background: rgba(5, 10, 22, .74); border: 1px solid rgba(255, 255, 255, .16); font: 650 13.5px/1 var(--body); display: flex; gap: 8px; align-items: center; }
+  .video .tag svg { font-size: 16px; color: var(--gold); }
 
   /* ---------- carousel: three cards, one in front at a time ---------- */
-  .carousel .rail { position:absolute; left:0; top:34px; display:flex; gap:22px; padding-left:130px; margin-left:-362px; animation:slide 7200ms cubic-bezier(.65,0,.35,1) both; }
-  @keyframes slide { 0%,28% { transform:translateX(0); } 33.3%,61% { transform:translateX(-362px); } 66.6%,94% { transform:translateX(-724px); } 100% { transform:translateX(-1086px); } }
-  .ccard { width:340px; height:224px; flex:none; border-radius:16px; background:var(--panel); border:1px solid var(--line); overflow:hidden; }
-  .ccard img { display:block; width:100%; height:150px; object-fit:cover; }
-  .ccard .art { height:150px; display:flex; align-items:center; justify-content:center; font-size:72px; color:#fff; }
-  .ccard .cap { padding:12px 16px; }
-  .ccard b { display:block; font-size:17px; line-height:1.25; }
-  .ccard span { display:block; margin-top:3px; font-size:13.5px; color:var(--muted); }
-  .dots { position:absolute; left:0; right:0; bottom:20px; display:flex; justify-content:center; gap:9px; }
-  .dots i { width:9px; height:9px; border-radius:50%; background:#3a4f7a; }
-  .dots i:nth-child(1) { animation:d1 7200ms linear both; } .dots i:nth-child(2) { animation:d2 7200ms linear both; } .dots i:nth-child(3) { animation:d3 7200ms linear both; }
-  @keyframes d1 { 0%,27% { background:var(--blue); width:26px; border-radius:9px; } 28%,94% { background:#3a4f7a; width:9px; } 95%,100% { background:var(--blue); width:26px; border-radius:9px; } }
-  @keyframes d2 { 0%,27% { background:#3a4f7a; width:9px; } 28%,60% { background:var(--blue); width:26px; border-radius:9px; } 61%,100% { background:#3a4f7a; width:9px; } }
-  @keyframes d3 { 0%,60% { background:#3a4f7a; width:9px; } 61%,94% { background:var(--blue); width:26px; border-radius:9px; } 95%,100% { background:#3a4f7a; width:9px; } }
+  .carousel .rail { position: absolute; left: 0; top: 30px; display: flex; gap: 22px; padding-left: 130px; margin-left: -362px; animation: slide 7200ms cubic-bezier(.65, 0, .35, 1) both; }
+  @keyframes slide { 0%, 28% { transform: translateX(0); } 33.3%, 61% { transform: translateX(-362px); } 66.6%, 94% { transform: translateX(-724px); } 100% { transform: translateX(-1086px); } }
+  .ccard { width: 340px; height: 232px; flex: none; overflow: hidden; }
+  .ccard img { display: block; width: 100%; height: 154px; object-fit: cover; }
+  .ccard .art { position: relative; height: 154px; display: flex; align-items: center; justify-content: center; }
+  .ccard .art::before { content: ''; position: absolute; width: 190px; height: 190px; border-radius: 50%; background: radial-gradient(closest-side, var(--halo), transparent 70%); }
+  .ccard .cap { padding: 13px 17px; border-top: 1px solid rgba(255, 255, 255, .09); }
+  .ccard b { display: block; font: 650 17px/1.25 var(--display); letter-spacing: -.01em; white-space: nowrap; }
+  .ccard span.line { display: block; margin-top: 4px; font: 400 13.5px/1.2 var(--body); color: var(--soft); white-space: nowrap; }
+  .pager { position: absolute; left: 0; right: 0; bottom: 18px; display: flex; justify-content: center; gap: 9px; }
+  .pager i { width: 9px; height: 9px; border-radius: 50%; background: #3a4f7a; }
+  .pager i:nth-child(1) { animation: d1 7200ms linear both; } .pager i:nth-child(2) { animation: d2 7200ms linear both; } .pager i:nth-child(3) { animation: d3 7200ms linear both; }
+  @keyframes d1 { 0%, 27% { background: var(--blue2); width: 26px; border-radius: 9px; } 28%, 94% { background: #3a4f7a; width: 9px; } 95%, 100% { background: var(--blue2); width: 26px; border-radius: 9px; } }
+  @keyframes d2 { 0%, 27% { background: #3a4f7a; width: 9px; } 28%, 60% { background: var(--blue2); width: 26px; border-radius: 9px; } 61%, 100% { background: #3a4f7a; width: 9px; } }
+  @keyframes d3 { 0%, 60% { background: #3a4f7a; width: 9px; } 61%, 94% { background: var(--blue2); width: 26px; border-radius: 9px; } 95%, 100% { background: #3a4f7a; width: 9px; } }
 
   /* ---------- flow: your work goes in, a course comes out ---------- */
-  .flow .left { position:absolute; left:26px; top:50px; display:flex; flex-direction:column; gap:16px; }
-  .flow .arrow { position:absolute; left:236px; top:138px; width:74px; height:6px; border-radius:9px; background:#24365c; overflow:hidden; }
-  .flow .arrow i { display:block; height:100%; width:100%; background:linear-gradient(90deg,var(--blue),var(--gold)); transform-origin:left; animation:grow 900ms ease-out both; animation-delay:1500ms; }
-  @keyframes grow { from { transform:scaleX(0); } to { transform:scaleX(1); } }
-  .flow .course { position:absolute; right:26px; top:36px; width:258px; padding:18px; border-radius:16px; background:var(--panel); border:1px solid var(--line); }
-  .flow .course h4 { font-size:18px; margin:6px 0 12px; }
-  .flow .row { display:flex; align-items:center; gap:10px; padding:9px 0; border-top:1px solid #22345a; font-size:14.5px; color:#dbe6f6; }
-  .flow .row svg { font-size:17px; color:var(--green); }
+  .flow .left { position: absolute; left: 24px; top: 42px; display: flex; flex-direction: column; gap: 14px; }
+  .flow .src { display: flex; align-items: center; gap: 12px; width: 206px; padding: 9px 14px 9px 10px; border-radius: 18px; font: 650 16px/1 var(--display); }
+  .flow .arrow { position: absolute; left: 240px; top: 140px; width: 70px; height: 6px; border-radius: 9px; background: rgba(255, 255, 255, .12); overflow: hidden; }
+  .flow .arrow i { display: block; height: 100%; width: 100%; background: linear-gradient(90deg, var(--blue), var(--gold)); transform-origin: left; animation: grow 900ms ease-out both; animation-delay: 1500ms; }
+  @keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  .flow .course { position: absolute; right: 24px; top: 30px; width: 262px; padding: 18px 18px 8px; }
+  .flow .course h4 { font: 650 19px/1.2 var(--display); letter-spacing: -.01em; margin: 7px 0 12px; }
+  .flow .line { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid rgba(255, 255, 255, .09); font: 500 14.5px/1.25 var(--body); color: #e3ebfa; }
 
   /* ---------- time: two bars, the second one shrinks ---------- */
-  .time { padding:34px 34px 0; }
-  .time h3 { font-size:17px; display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; }
-  .time h3 small { font-size:14.5px; font-weight:500; color:var(--muted); }
-  .time .bar { height:34px; border-radius:10px; background:#1b2b4d; overflow:hidden; margin-bottom:34px; }
-  .time .bar i { display:block; height:100%; border-radius:10px; }
-  .time .b1 i { width:100%; background:linear-gradient(90deg,#1e6fe0,var(--blue)); }
-  .time .b2 i { background:linear-gradient(90deg,#e09a1a,var(--gold)); animation:shrink 2200ms cubic-bezier(.2,.8,.2,1) both; animation-delay:700ms; }
-  @keyframes shrink { from { width:100%; } to { width:40%; } }
-  .time .result { position:absolute; left:34px; bottom:34px; display:flex; align-items:baseline; gap:12px; }
-  .time .result b { font-size:46px; line-height:1; color:var(--gold); letter-spacing:-.02em; }
-  .time .result span { font-size:17px; font-weight:600; }
+  .time { padding: 32px 34px 0; }
+  .time h3 { font: 650 17px/1.2 var(--display); display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+  .time h3 small { font: 400 14.5px/1 var(--body); color: var(--soft); }
+  .time .bar { height: 34px; border-radius: 11px; background: rgba(255, 255, 255, .1); overflow: hidden; margin-bottom: 30px; }
+  .time .bar i { display: block; height: 100%; border-radius: 11px; }
+  .time .b1 i { width: 100%; background: linear-gradient(90deg, #1e6fe0, #5aa9f3); }
+  .time .b2 i { background: linear-gradient(90deg, #f5a623, #ffd06b); box-shadow: 0 0 22px rgba(255, 180, 60, .7); animation: shrink 2200ms cubic-bezier(.2, .8, .2, 1) both; animation-delay: 700ms; }
+  @keyframes shrink { from { width: 100%; } to { width: 40%; } }
+  .time .result { position: absolute; left: 34px; bottom: 30px; display: flex; align-items: baseline; gap: 12px; }
+  .time .result b { font: 700 48px/1 var(--display); color: var(--gold); letter-spacing: -.035em; }
+  .time .result span { font: 650 17px/1.2 var(--display); }
 
   /* ---------- build: six modules, one working project ---------- */
-  .build { padding:30px 30px 0; }
-  .build .mods { display:grid; grid-template-columns:repeat(6,1fr); gap:10px; margin-top:20px; }
-  .build .mod { height:92px; border-radius:14px; background:var(--panel); border:1px solid var(--line); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; font-size:13px; font-weight:600; color:var(--muted); }
-  .build .mod svg { font-size:26px; color:var(--green); }
-  .build .prog { margin-top:24px; height:10px; border-radius:99px; background:#1b2b4d; overflow:hidden; }
-  .build .prog i { display:block; height:100%; border-radius:99px; background:linear-gradient(90deg,var(--blue),var(--green)); animation:prog 2700ms linear both; animation-delay:300ms; }
-  @keyframes prog { from { width:0; } to { width:100%; } }
-  .build .done { position:absolute; left:30px; right:30px; bottom:26px; display:flex; align-items:center; gap:12px; font-size:19px; font-weight:700; }
-  .build .done svg { font-size:30px; color:var(--gold); }
+  .build { padding: 28px 28px 0; }
+  .build .mods { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-top: 18px; }
+  .build .mod { height: 92px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; font: 600 13px/1 var(--body); color: var(--soft); }
+  .build .mod .tick { width: 24px; height: 24px; }
+  .build .mod .tick::after { width: 11px; height: 6px; border-width: 2.5px; }
+  .build .prog { margin-top: 22px; height: 10px; border-radius: 99px; background: rgba(255, 255, 255, .1); overflow: hidden; }
+  .build .prog i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--blue), var(--green)); animation: prog 2700ms linear both; animation-delay: 300ms; }
+  @keyframes prog { from { width: 0; } to { width: 100%; } }
+  .build .done { position: absolute; left: 28px; right: 28px; bottom: 24px; display: flex; align-items: center; gap: 14px; font: 650 20px/1.2 var(--display); letter-spacing: -.01em; }
 
   /* ---------- chat: a question, a trainer's answer, kept for the next person ---------- */
-  .chat { padding:30px 34px; }
-  .chat .b { max-width:400px; padding:13px 17px; border-radius:18px; font-size:16.5px; line-height:1.4; margin-bottom:14px; }
-  .chat .who { font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:5px; }
-  .chat .q { background:var(--panel2); border:1px solid var(--line); border-bottom-left-radius:6px; }
-  .chat .a { margin-left:auto; background:var(--deep); border-bottom-right-radius:6px; }
-  .chat .a .who { color:#cfe3fd; }
-  .chat .saved { position:absolute; left:34px; bottom:26px; }
+  .chat { padding: 28px 32px; }
+  .chat .bubble { max-width: 410px; font-size: 16.5px; margin-bottom: 13px; }
+  .chat .bubble.a { margin-left: auto; }
+  .chat .saved { position: absolute; left: 32px; bottom: 24px; }
 
-  /* ---------- dashboard: a learning platform with your name on it ---------- */
-  .dash .win { position:absolute; inset:26px 30px 0; border-radius:16px 16px 0 0; background:var(--panel); border:1px solid var(--line); border-bottom:0; overflow:hidden; }
-  .dash .top { display:flex; align-items:center; gap:12px; padding:13px 18px; border-bottom:1px solid #22345a; font-size:15px; font-weight:700; }
-  .dash .logo { width:30px; height:30px; border-radius:9px; background:linear-gradient(135deg,var(--gold),#e07a1a); display:flex; align-items:center; justify-content:center; color:#2b1c00; font-size:17px; }
-  .dash .top em { margin-left:auto; font-style:normal; font-size:13px; font-weight:600; color:var(--muted); }
-  .dash .grid { display:grid; grid-template-columns:1fr 1fr 150px; gap:14px; padding:18px; }
-  .dash .c { border-radius:12px; background:#101c36; border:1px solid #22345a; padding:14px; }
-  .dash .c svg { font-size:24px; color:var(--blue); }
-  .dash .c b { display:block; font-size:14.5px; margin:9px 0 12px; }
-  .dash .c .p { height:7px; border-radius:99px; background:#1b2b4d; overflow:hidden; }
-  .dash .c .p i { display:block; height:100%; border-radius:99px; background:var(--green); animation:pw 1800ms ease-out both; animation-delay:calc(var(--at) * 1ms); width:var(--w); }
-  @keyframes pw { from { width:0; } to { width:var(--w); } }
-  .dash .ring { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; text-align:center; font-size:12.5px; color:var(--muted); font-weight:600; }
-  .dash .ring svg.r { width:82px; height:82px; transform:rotate(-90deg); }
-  .dash .ring circle { fill:none; stroke-width:9; }
-  .dash .ring .fg { stroke:var(--gold); stroke-linecap:round; stroke-dasharray:214; animation:ring2 2000ms ease-out both; animation-delay:500ms; }
-  @keyframes ring2 { from { stroke-dashoffset:214; } to { stroke-dashoffset:47; } }
+  /* ---------- platform: a learning platform with your name on it ---------- */
+  .plat .win { position: absolute; inset: 24px 28px 0; border-radius: 16px 16px 0 0; border-bottom: 0; }
+  .plat .win .bar { height: 50px; gap: 12px; font-size: 15px; color: #fff; font-weight: 650; }
+  .plat .logo { display: inline-flex; align-items: center; height: 30px; padding: 0 11px; border-radius: 9px; border: 1.5px dashed rgba(255, 194, 75, .8); color: var(--gold); font: 700 11px/1 var(--body); letter-spacing: .14em; }
+  .plat .win .bar em { margin-left: auto; font: 500 13px/1 var(--body); color: var(--soft); }
+  .plat .grid { display: grid; grid-template-columns: 1fr 1fr 150px; gap: 14px; padding: 16px; }
+  .plat .c { padding: 14px; border-radius: 14px; background: rgba(255, 255, 255, .055); border: 1px solid rgba(255, 255, 255, .1); }
+  .plat .c b { display: block; font: 650 15px/1.2 var(--display); margin: 11px 0 12px; }
+  .plat .c .track i { animation: pw 1800ms ease-out both; animation-delay: calc(var(--at) * 1ms); width: var(--w); }
+  @keyframes pw { from { width: 0; } to { width: var(--w); } }
+  .plat .gauge { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; font: 600 12.5px/1 var(--body); color: var(--soft); }
+  .plat .gauge svg { width: 84px; height: 84px; transform: rotate(-90deg); }
+  .plat .gauge circle { fill: none; stroke-width: 9; }
+  .plat .gauge .fg { stroke: var(--gold); stroke-linecap: round; stroke-dasharray: 214; animation: gauge 2000ms ease-out both; animation-delay: 500ms; }
+  @keyframes gauge { from { stroke-dashoffset: 214; } to { stroke-dashoffset: 47; } }
 </style>
 <body>
+<script src="../show/js/kit.js"></script>
 <script>
-const ART = window.ART || { icons: {}, files: {} }
 const q = new URLSearchParams(location.search)
 const scene = q.get('scene') || 'time'
 const ic = (name) => `<svg class="i" viewBox="0 0 24 24">${ART.icons[name] || ''}</svg>`
-// The eight-ray spark the site already uses for its Claude pages
-const spark = '<svg class="spark" viewBox="0 0 24 24"><path d="M12 2l1.6 6.1L19 4.9l-3.4 5.2 6.1 1.9-6.1 1.9L19 19.1l-5.4-3.2L12 22l-1.6-6.1L5 19.1l3.4-5.2L2.3 12l6.1-1.9L5 4.9l5.4 3.2L12 2z"/></svg>'
-const CLAUDE_BG = 'linear-gradient(145deg,#e08a63,#b4532f)'
-const stage = (cls, ms, html) => { document.body.innerHTML = `<div id="stage" class="${cls}" data-ms="${ms}">${html}</div>` }
+const stage = (cls, ms, html) => { document.body.insertAdjacentHTML('afterbegin', `<div id="stage" class="${cls}" data-ms="${ms}">${html}</div>`) }
 
 const carousel = (cards) => stage('carousel', 7200,
-  `<div class="rail">${[cards[2], ...cards, ...cards].map((c) => `<div class="ccard">${c.img ? `<img src="${c.img}">` : `<div class="art" style="background:${c.bg}">${c.spark ? spark : ic(c.icon)}</div>`}<div class="cap"><b>${c.title}</b><span>${c.line}</span></div></div>`).join('')}</div>
-   <div class="dots"><i></i><i></i><i></i></div>`)
+  `<div class="rail">${[cards[2], ...cards, ...cards].map((c) => `<div class="ccard glass">${c.img ? `<img src="${c.img}">` : `<div class="art" style="--halo:${c.halo}">${c.icon}</div>`}<div class="cap"><b>${c.title}</b><span class="line">${c.line}</span></div></div>`).join('')}</div>
+   <div class="pager"><i></i><i></i><i></i></div>`)
 
 const SCENES = {
+  /** An icon tile for the emails: ?name=<lucide icon>&tone=<blue|gold|green|violet|rose|claude|ink> */
   icon() {
-    document.body.innerHTML = `<div id="tile" class="${q.get('tone') || ''}">${ic(q.get('name'))}</div>`
+    document.body.insertAdjacentHTML('afterbegin', `<div id="tile">${ico(q.get('name'), 88, q.get('tone') || 'blue')}</div>`)
   },
+  /** The mark of one certification or course: a photograph, or a Claude-coloured tile with the certification's code. */
   art() {
     const a = JSON.parse(q.get('a'))
-    const style = a.img ? `background-image:url(${ART.files[a.img]});background-size:${a.size};background-position:${a.pos}` : `background:${a.claude ? CLAUDE_BG : a.bg}`
-    const inside = a.img ? '' : a.code ? `${spark}<b>${a.code}</b>` : a.claude ? spark : ic(a.icon)
-    document.body.innerHTML = `<div id="tile" class="art ${a.code ? 'small' : ''}" style="${style}">${inside}</div>`
+    const html = a.img
+      ? `<span class="ico photo" style="--s:88px;background-image:url(${ART.files[a.img]});background-size:${a.size};background-position:${a.pos}"></span>`
+      : a.claude ? sparkIco(88, a.code || '') : ico(a.icon, 88, a.tone)
+    document.body.insertAdjacentHTML('afterbegin', `<div id="tile">${html}</div>`)
   },
   video() {
     stage('video', 2500, `<img class="frame" id="f" src="${ART.files.clip[0]}"><div class="shade"></div>
       <div class="tag">${ic('sparkles')} AI-103 course preview</div>
-      <div class="ring"></div><div class="play">${ic('play')}</div>
-      <div class="bar">${ic('volume-2')}<span>Play with sound</span><div class="track"><i></i></div><span>1:48</span></div>`)
+      <div class="halo"></div><div class="play"><svg viewBox="0 0 24 24"><path d="M7 4.5v15l12.5-7.5z" fill="#fff"/></svg></div>
+      <div class="foot">${ic('volume-2')}<span>Play with sound</span><div class="track"><i></i></div><span>1:48</span></div>`)
     const f = document.getElementById('f')
     window.tick = (ms) => { f.src = ART.files.clip[Math.min(ART.files.clip.length - 1, Math.floor(ms / 125))] }
   },
   courses() {
     carousel([
-      { img: ART.files['thumb-ai-103'], title: 'AI-103: Build and Ship AI Agents', line: 'Microsoft Azure · one project, start to finish' },
+      { img: ART.files['thumb-ai-103'], title: 'AI-103: Build and Ship AI Agents', line: 'Microsoft Azure &middot; one project, start to finish' },
       { img: ART.files['thumb-ai-500'], title: 'AI-500: Multi-Agent AI Solutions', line: 'For engineers and architects' },
-      { spark: true, bg: CLAUDE_BG, title: 'Claude certification guides', line: 'Four guides, each with a practice exam' },
+      { icon: sparkIco(96), halo: 'rgba(229,138,98,.55)', title: 'Claude certification guides', line: 'Four guides, each with a practice exam' },
     ])
   },
   claude() {
     carousel([
-      { spark: true, bg: CLAUDE_BG, title: 'Certification preparation', line: 'Four guides, each with a practice exam' },
-      { icon: 'users', bg: 'linear-gradient(135deg,#1e6fe0,#123a80)', title: 'Claude training for teams', line: 'Everyday work, Cowork and Claude Code' },
-      { icon: 'workflow', bg: 'linear-gradient(135deg,#1f9d6b,#0e5038)', title: 'Automation', line: 'One process at a time, tested on your examples' },
+      { icon: sparkIco(96), halo: 'rgba(229,138,98,.55)', title: 'Certification preparation', line: 'Four guides, each with a practice exam' },
+      { icon: ico('users', 96, 'blue'), halo: 'rgba(61,148,255,.5)', title: 'Claude training for teams', line: 'Everyday work, Cowork and Claude Code' },
+      { icon: ico('workflow', 96, 'green'), halo: 'rgba(62,213,152,.42)', title: 'Automation', line: 'One process at a time, on your examples' },
     ])
   },
   custom() {
     stage('flow', 4200, `<div class="left">
-        <div class="chip in" style="--at:200">${ic('wrench')} Your tools</div>
-        <div class="chip in" style="--at:600">${ic('workflow')} Your processes</div>
-        <div class="chip in" style="--at:1000">${ic('file-text')} Your examples</div>
+        <div class="src glass in" style="--at:200">${ico('wrench', 40, 'blue')} Your tools</div>
+        <div class="src glass in" style="--at:600">${ico('workflow', 40, 'violet')} Your processes</div>
+        <div class="src glass in" style="--at:1000">${ico('file-text', 40, 'green')} Your examples</div>
       </div>
       <div class="arrow"><i></i></div>
-      <div class="course in" style="--at:2300"><div class="kicker">Your course</div><h4>Built for your team</h4>
-        <div class="row in" style="--at:2800">${ic('circle-check')} Lessons on your own work</div>
-        <div class="row in" style="--at:3200">${ic('circle-check')} A voice and presenter you choose</div>
-        <div class="row in" style="--at:3600">${ic('circle-check')} An assistant that knows it</div>
+      <div class="course glass in" style="--at:2300"><div class="label">Your course</div><h4>Built for your team</h4>
+        <div class="line in" style="--at:2800"><span class="tick"></span>Lessons on your own work</div>
+        <div class="line in" style="--at:3200"><span class="tick"></span>A voice and presenter you choose</div>
+        <div class="line in" style="--at:3600"><span class="tick"></span>An assistant that knows it</div>
       </div>`)
   },
   time() {
@@ -192,22 +189,22 @@ const SCENES = {
       <div class="result in" style="--at:2700"><b>about 60%</b><span>less classroom time is our aim</span></div>`)
   },
   build() {
-    stage('build', 3800, `<div class="kicker">One project, built module by module</div>
-      <div class="mods">${[1, 2, 3, 4, 5, 6].map((n) => `<div class="mod in" style="--at:${300 + (n - 1) * 450}">${ic('circle-check')}Module ${n}</div>`).join('')}</div>
+    stage('build', 3800, `<div class="label">One project, built module by module</div>
+      <div class="mods">${[1, 2, 3, 4, 5, 6].map((n) => `<div class="mod glass in" style="--at:${300 + (n - 1) * 450}"><span class="tick pop" style="--at:${520 + (n - 1) * 450}"></span>Module ${n}</div>`).join('')}</div>
       <div class="prog"><i></i></div>
-      <div class="done in" style="--at:3200">${ic('rocket')} A working project at the end</div>`)
+      <div class="done in" style="--at:3200">${ico('rocket', 46, 'gold')} A working project at the end</div>`)
   },
   chat() {
-    stage('chat', 4200, `<div class="b q in" style="--at:300"><div class="who">Learner · a week later</div>How do I do this on our own data?</div>
-      <div class="b a in" style="--at:1700"><div class="who">Trainer</div>Here is the step you need. Shall we look at it together on a call?</div>
-      <div class="chip saved in" style="--at:3200">${ic('bookmark-check')} Kept on the platform for the next person</div>`)
+    stage('chat', 4200, `<div class="bubble q in" style="--at:300"><span class="who">Learner &middot; a week later</span>How do I do this on our own data?</div>
+      <div class="bubble a in" style="--at:1700"><span class="who">Trainer</span>Here is the step you need. Shall we look at it together on a call?</div>
+      <div class="chip saved in" style="--at:3200;--dot:var(--green)"><i></i>Kept on the platform for the next person</div>`)
   },
   platform() {
-    stage('dash', 3600, `<div class="win"><div class="top"><div class="logo">${ic('building-2')}</div>Your company academy<em>Your courses · your people</em></div>
+    stage('plat', 3600, `<div class="win"><div class="bar"><span class="logo">YOUR LOGO</span>Academy<em>Your courses &middot; your people</em></div>
       <div class="grid">
-        <div class="c in" style="--at:300">${ic('monitor-play')}<b>Onboarding course</b><div class="p"><i style="--w:82%;--at:800"></i></div></div>
-        <div class="c in" style="--at:650">${ic('flask-conical')}<b>Product labs</b><div class="p"><i style="--w:56%;--at:1150"></i></div></div>
-        <div class="c ring in" style="--at:1000"><svg class="r" viewBox="0 0 82 82"><circle cx="41" cy="41" r="34" stroke="#1b2b4d"/><circle class="fg" cx="41" cy="41" r="34"/></svg>Team progress</div>
+        <div class="c in" style="--at:300">${ico('monitor-play', 40, 'blue')}<b>Onboarding course</b><div class="track"><i style="--w:82%;--at:800"></i></div></div>
+        <div class="c in" style="--at:650">${ico('flask-conical', 40, 'violet')}<b>Product labs</b><div class="track"><i style="--w:56%;--at:1150"></i></div></div>
+        <div class="c gauge in" style="--at:1000"><svg viewBox="0 0 84 84"><circle cx="42" cy="42" r="34" stroke="rgba(255,255,255,.14)"/><circle class="fg" cx="42" cy="42" r="34"/></svg>Team progress</div>
       </div></div>`)
   },
 }

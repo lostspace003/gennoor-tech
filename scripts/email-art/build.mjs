@@ -27,14 +27,15 @@ const CHROME = process.env.CHROME || 'C:/Program Files/Google/Chrome/Application
 const FFMPEG = process.env.FFMPEG || (existsSync('C:/Users/losts/ffmpeg/bin/ffmpeg.exe') ? 'C:/Users/losts/ffmpeg/bin/ffmpeg.exe' : 'ffmpeg')
 
 const SCENES = ['video', 'courses', 'custom', 'time', 'claude', 'build', 'chat', 'platform']
-// Icon tiles used in the emails: file name -> lucide icon (gold ones are the "don't miss this" tiles)
+// Icon tiles used in the emails: file name -> [lucide icon, colour of the tile].
+// The colour says what kind of thing it is: blue to watch or read, violet to do, green for help and results,
+// gold for what is earned or should not be missed, rose for checks, grey for "no".
 const TILES = {
-  play: 'play', labs: 'flask-conical', certificate: 'award', assistant: 'bot', catalogue: 'file-spreadsheet',
-  work: 'workflow', voice: 'mic', doubts: 'messages-square', learn: 'book-open', trainer: 'user-round-check',
-  project: 'rocket', module: 'layers', result: 'badge-check', open: 'rotate-ccw', quiz: 'list-checks',
-  team: 'users', automation: 'zap', calendar: 'calendar-clock', person: 'user-round-plus', stop: 'circle-x',
+  play: ['play', 'blue'], labs: ['flask-conical', 'violet'], certificate: ['award', 'gold'], assistant: ['bot-message-square', 'green'], catalogue: ['file-spreadsheet', 'gold'],
+  work: ['workflow', 'blue'], voice: ['mic', 'violet'], doubts: ['messages-square', 'rose'], learn: ['book-open', 'blue'], trainer: ['user-round-check', 'green'],
+  project: ['rocket', 'green'], module: ['layers', 'violet'], result: ['badge-check', 'gold'], open: ['rotate-ccw', 'blue'], quiz: ['list-checks', 'rose'],
+  team: ['users', 'blue'], automation: ['zap', 'gold'], calendar: ['calendar-clock', 'blue'], person: ['user-round-plus', 'violet'], stop: ['circle-x', 'ink'],
 }
-const GOLD = new Set(['catalogue'])
 // Art tiles: the badge or mark of one certification or course, used where an email names it.
 // The AI-103 one is the certification badge from its course page; the Claude ones are our own
 // tiles in Claude's colour with each certification's code (they are not official badges).
@@ -44,11 +45,11 @@ const ARTS = {
   claude: { claude: true },
   'ccas-f': { claude: true, code: 'CCAS-F' }, 'ccdv-f': { claude: true, code: 'CCDV-F' },
   'ccar-f': { claude: true, code: 'CCAR-F' }, 'ccar-p': { claude: true, code: 'CCAR-P' },
-  project: { icon: 'rocket', bg: 'linear-gradient(145deg,#2fbf85,#12724c)' },
-  certification: { icon: 'award', bg: 'linear-gradient(145deg,#3b9cff,#0b5fc4)' },
+  project: { icon: 'rocket', tone: 'green' },
+  certification: { icon: 'award', tone: 'blue' },
 }
 // Icons drawn inside the scenes themselves
-const SCENE_ICONS = ['award', 'play', 'sparkles', 'volume-2', 'graduation-cap', 'users', 'workflow', 'wrench', 'file-text', 'circle-check', 'rocket', 'bookmark-check', 'building-2', 'monitor-play', 'flask-conical']
+const SCENE_ICONS = ['award', 'play', 'sparkles', 'volume-2', 'users', 'workflow', 'wrench', 'file-text', 'rocket', 'monitor-play', 'flask-conical']
 
 /** The inside of a lucide icon as SVG markup. */
 function lucide(name) {
@@ -64,7 +65,7 @@ const want = process.argv.slice(2)
 const doing = (name) => want.length === 0 || want.includes(name)
 
 const art = {
-  icons: Object.fromEntries([...new Set([...Object.values(TILES), ...SCENE_ICONS])].map((n) => [n, lucide(n)])),
+  icons: Object.fromEntries([...new Set([...Object.values(TILES).map(([icon]) => icon), ...SCENE_ICONS])].map((n) => [n, lucide(n)])),
   files: {
     clip: existsSync(path.join(WORK, 'clip')) ? readdirSync(path.join(WORK, 'clip')).sort().map((f) => fileUrl(path.join(WORK, 'clip', f))) : [],
     'thumb-ai-103': fileUrl(path.join(WORK, 'thumb-ai-103.jpg')),
@@ -84,8 +85,8 @@ const open = async (query) => {
 
 if (doing('icons')) {
   await page.setViewport({ width: 88, height: 88, deviceScaleFactor: 2 })
-  for (const [file, icon] of Object.entries(TILES)) {
-    await open(`scene=icon&name=${icon}${GOLD.has(file) ? '&tone=gold' : ''}`)
+  for (const [file, [icon, tone]] of Object.entries(TILES)) {
+    await open(`scene=icon&name=${icon}&tone=${tone}`)
     await (await page.$('#tile')).screenshot({ path: path.join(OUT, `icon-${file}.png`), omitBackground: true })
   }
   for (const [file, a] of Object.entries(ARTS)) {
@@ -120,11 +121,12 @@ for (const scene of SCENES.filter(doing)) {
   const list = path.join(dir, 'list.txt')
   writeFileSync(list, shots.map((s) => `file '${s.file.replace(/\\/g, '/')}'\nduration ${s.hold.toFixed(3)}`).join('\n') + `\nfile '${shots.at(-1).file.replace(/\\/g, '/')}'\n`)
   const out = path.join(OUT, `${scene}.gif`)
-  // Photographs (the video, the course pictures) need more colours than flat drawings do
+  // Photographs (the video, the course pictures) are kept a little smaller: they weigh the most.
+  // Every scene has lit, graded surfaces, so all of them get a full palette and a light dither.
   const photo = scene === 'video' || scene === 'courses'
   const width = photo ? 480 : 600
   execFileSync(FFMPEG, ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', list, '-fps_mode', 'vfr',
-    '-vf', `scale=${width}:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=${photo ? 64 : 40}:stats_mode=diff[p];[b][p]paletteuse=dither=${photo ? 'bayer:bayer_scale=5' : 'none'}:diff_mode=rectangle`,
+    '-vf', `scale=${width}:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=${photo ? 96 : 128}:stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle`,
     '-loop', '0', out])
   console.log(`${scene}.gif  ${shots.length} frames  ${(statSync(out).size / 1024).toFixed(0)} KB`)
 }
