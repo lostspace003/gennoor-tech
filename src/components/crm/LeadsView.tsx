@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as XLSX from 'xlsx'
 import { Search, Upload, Download, Trash2, X, Hand, Undo2, Archive, UserPlus, Send, Linkedin, Mail } from 'lucide-react'
-import { Lead, LEAD_STEPS, STEP_LABELS } from '@/lib/crm/types'
+import { Lead, LEAD_STEPS, STEP_LABELS, isAutoSource } from '@/lib/crm/types'
 import { LEAD_COLUMNS, mapHeaders, rowToLead, looksLikeEmail, leadToRow } from '@/lib/crm/import'
 import { sequenceProgress, stepNumber } from '@/lib/crm/sequence'
 import { CRM_USERS, shortName } from '@/lib/crm/users'
@@ -13,7 +13,7 @@ import SendStepModal from './SendStep'
 import FindOnLinkedIn from './FindOnLinkedIn'
 
 const PER_PAGE = 25
-type Scope = 'all' | 'pool' | 'mine' | 'archived'
+type Scope = 'all' | 'pool' | 'mine' | 'site' | 'archived'
 
 interface Props {
   leads: Lead[]
@@ -45,6 +45,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
   const [orgFilter, setOrgFilter] = useState<string[]>([])
   const [stepFilter, setStepFilter] = useState<string[]>([])
   const [ownerFilter, setOwnerFilter] = useState<string[]>([])
+  const [sourceFilter, setSourceFilter] = useState<string[]>([])
   const [page, setPage] = useState(1)
   const [selected, setSelected] = useState<string[]>([])
   const [busy, setBusy] = useState('')
@@ -62,7 +63,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
     let touched = false
     if (params.get('new') === '1') { setAdding(true); params.delete('new'); touched = true }
     const s = params.get('scope')
-    if (s === 'pool' || s === 'mine' || s === 'archived') { setScope(s); params.delete('scope'); touched = true }
+    if (s === 'pool' || s === 'mine' || s === 'site' || s === 'archived') { setScope(s); params.delete('scope'); touched = true }
     if (touched) {
       const qs = params.toString()
       window.history.replaceState(null, '', window.location.pathname + (qs ? `?${qs}` : ''))
@@ -74,6 +75,8 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
     all: live.length,
     pool: live.filter((l) => !l.owner).length,
     mine: live.filter((l) => l.owner?.toLowerCase() === me).length,
+    // Added by the site itself: people who sent a form, or bought, finished or reviewed a course
+    site: live.filter((l) => isAutoSource(l.source)).length,
     archived: leads.length - live.length,
   }
 
@@ -87,23 +90,32 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
     return [...tally.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
   }, [live])
 
+  // Where leads came from, most common first, for the filter
+  const sources = useMemo(() => {
+    const tally = new Map<string, number>()
+    for (const l of live) { const s = l.source?.trim() || 'Not recorded'; tally.set(s, (tally.get(s) || 0) + 1) }
+    return [...tally.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+  }, [live])
+
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase()
     let out = scope === 'archived' ? leads.filter((l) => l.dumped) : live
     if (scope === 'pool') out = out.filter((l) => !l.owner)
     if (scope === 'mine') out = out.filter((l) => l.owner?.toLowerCase() === me)
+    if (scope === 'site') out = out.filter((l) => isAutoSource(l.source))
+    if (sourceFilter.length) out = out.filter((l) => sourceFilter.includes(l.source?.trim() || 'Not recorded'))
     if (term) out = out.filter((l) => [l.name, l.company, l.email, l.designation, l.country].some((v) => (v || '').toLowerCase().includes(term)))
     if (orgFilter.length) out = out.filter((l) => orgFilter.includes(l.company?.trim() || ''))
     if (stepFilter.length) out = out.filter((l) => stepFilter.includes(l.status))
     if (ownerFilter.length) out = out.filter((l) => ownerFilter.includes(l.owner ? l.owner.toLowerCase() : 'pool'))
     return out
-  }, [leads, live, scope, search, orgFilter, stepFilter, ownerFilter, me])
+  }, [leads, live, scope, search, orgFilter, stepFilter, ownerFilter, sourceFilter, me])
 
   const pages = Math.max(1, Math.ceil(filtered.length / PER_PAGE))
   const safePage = Math.min(page, pages)
   const pageLeads = filtered.slice((safePage - 1) * PER_PAGE, safePage * PER_PAGE)
   const chosen = leads.filter((l) => selected.includes(l.id))
-  const filtersOn = !!(search || orgFilter.length || stepFilter.length || ownerFilter.length)
+  const filtersOn = !!(search || orgFilter.length || stepFilter.length || ownerFilter.length || sourceFilter.length)
   const reset = () => { setPage(1); setSelected([]) }
 
   const hold = async (action: 'claim' | 'release' | 'dump' | 'restore' | 'assign', assignee?: string) => {
@@ -224,8 +236,9 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
           <MultiSelect label="Organization" options={orgs.slice(0, 200).map(([name, n]) => ({ value: name, label: `${name} (${n})` }))} values={orgFilter} onChange={(v) => { setOrgFilter(v); reset() }} />
           <MultiSelect label="Step" options={LEAD_STEPS.map((s) => ({ value: s, label: STEP_LABELS[s] }))} values={stepFilter} onChange={(v) => { setStepFilter(v); reset() }} />
           <MultiSelect label="Owner" options={[{ value: 'pool', label: 'Unassigned' }, ...CRM_USERS.map((u) => ({ value: u, label: shortName(u) }))]} values={ownerFilter} onChange={(v) => { setOwnerFilter(v); reset() }} />
+          <MultiSelect label="Came from" options={sources.map(([name, n]) => ({ value: name, label: `${name} (${n})` }))} values={sourceFilter} onChange={(v) => { setSourceFilter(v); reset() }} />
           {filtersOn && (
-            <button onClick={() => { setSearch(''); setOrgFilter([]); setStepFilter([]); setOwnerFilter([]); reset() }} className="text-xs text-primary-600 hover:underline">Clear filters</button>
+            <button onClick={() => { setSearch(''); setOrgFilter([]); setStepFilter([]); setOwnerFilter([]); setSourceFilter([]); reset() }} className="text-xs text-primary-600 hover:underline">Clear filters</button>
           )}
           <div className="ml-auto flex flex-wrap items-center gap-2">
             <button onClick={() => setAdding(true)} className="px-3 py-2 bg-primary-600 text-white text-sm rounded-lg hover:bg-primary-700 flex items-center gap-1.5">
@@ -252,6 +265,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
               ['all', `All (${counts.all})`],
               ['pool', `Unassigned (${counts.pool})`],
               ['mine', `Mine (${counts.mine})`],
+              ['site', `From the website (${counts.site})`],
               ['archived', `Archived (${counts.archived})`],
             ] as Array<[Scope, string]>).map(([key, label]) => (
               <button
@@ -359,7 +373,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                   </td>
                   <td className="px-4 py-2.5 max-w-[240px]">
                     <div className="text-sm text-gray-900 truncate">{lead.company || <span className="text-gray-300">not set</span>}</div>
-                    <div className="text-xs text-gray-500 truncate">{[lead.designation, lead.country].filter(Boolean).join(' · ')}</div>
+                    <div className="text-xs text-gray-500 truncate">{[lead.designation, lead.country, isAutoSource(lead.source) ? lead.source : ''].filter(Boolean).join(' · ')}</div>
                   </td>
                   <td className="px-4 py-2.5">
                     {lead.dumped ? <span className="text-[11px] bg-gray-200 text-gray-600 rounded-full px-2 py-0.5" title={lead.dumped.reason}>Archived</span> : <StatusBadge status={lead.status} />}

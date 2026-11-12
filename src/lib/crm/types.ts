@@ -142,6 +142,14 @@ export interface Lead {
   followUps: FollowUp[]
 }
 
+/**
+ * Sources written by the site itself (see auto-leads.ts): someone sent a form, or
+ * bought, finished or reviewed a course. The Leads page offers them as a filter.
+ */
+export const AUTO_SOURCES = ['Website enquiry', 'Bought a course', 'Completed a course', 'Reviewed a course'] as const
+export type AutoSource = (typeof AUTO_SOURCES)[number]
+export const isAutoSource = (source: string) => (AUTO_SOURCES as readonly string[]).includes(source)
+
 // Every field except name may be blank. Callers fill what they have.
 export function newLead(partial: Partial<Lead> & { name: string }, by: string): Lead {
   const now = new Date().toISOString()

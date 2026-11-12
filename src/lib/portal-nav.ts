@@ -45,6 +45,7 @@ import {
   // Misc
   Phone,
   Rocket,
+  Zap,
 } from 'lucide-react'
 
 import type { LucideIcon } from 'lucide-react'
@@ -62,6 +63,8 @@ export interface PortalNavSection {
   href?: string
   icon: LucideIcon
   children?: PortalNavChild[]
+  /** A small blue tag beside the name, for the one thing we want noticed. */
+  badge?: string
   /** Draws a hairline above this row: the first row of a new group. */
   startsGroup?: boolean
 }
@@ -73,6 +76,7 @@ export interface PortalNavSection {
  */
 export const portalNav: PortalNavSection[] = [
   { name: 'Home', href: '/', icon: Home },
+  { name: 'AI Weekend', href: '/ai-weekend', icon: Zap, badge: 'Live' },
   {
     name: 'Learning Studio',
     icon: BookOpen,
@@ -112,6 +116,7 @@ const BREADCRUMB_LABELS: Record<string, string> = {
   '/claude/certifications/architect-foundations': 'Architect – Foundations',
   '/claude/certifications/architect-professional': 'Architect – Professional',
   '/training': 'Training',
+  '/ai-weekend': 'AI Weekend',
   '/automation': 'Automation',
   '/services/training': 'Training programs',
   '/services/training/curriculum': 'Curriculum',

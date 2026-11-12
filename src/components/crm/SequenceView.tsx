@@ -75,7 +75,7 @@ export default function SequenceView() {
           <div className="text-sm font-medium text-gray-900">{preview?.subject || '…'}</div>
         </div>
         <div className="flex-1 relative">
-          {preview && <iframe title="Email preview" srcDoc={`<base target="_blank">${preview.html}`} sandbox="allow-popups allow-popups-to-escape-sandbox" className="absolute inset-0 w-full h-full border-0" />}
+          {preview && <iframe title="Email preview" srcDoc={preview.html.replace('<head>', '<head><base target="_blank">')} sandbox="allow-popups allow-popups-to-escape-sandbox" className="absolute inset-0 w-full h-full border-0" />}
           {loading && <div className="absolute top-3 right-4 bg-white/90 rounded-full px-2.5 py-1"><Spinner label="Loading" /></div>}
         </div>
       </div>

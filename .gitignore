@@ -108,3 +108,6 @@ claude-thing/flows/render_run.log
 rzp-*.csv
 rzp-key*
 rzp-webhook-secret.txt
+
+# Working files for the email pictures (scripts/email-art)
+scripts/email-art/.work/
