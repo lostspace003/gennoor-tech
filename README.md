@@ -29,6 +29,17 @@ Live at [gennoor.com](https://www.gennoor.com).
 
 Every public form records where the visitor came from (campaign tag, referrer, landing page) and saves it to the CRM.
 
+## Paid courses in the Learning Studio
+
+Every Learning Studio course works the same way:
+
+- **Previews are open to everyone.** Up to six lessons of each course play on the course page with no sign-in. Which lessons are previews is set when the course is published (`free_preview` in the Course Factory package). A course that marks none gets its first four lessons.
+- **The full course is bought once.** The buyer signs in, pays through Razorpay, and every lesson, lab and quiz opens, with a certificate at the end. A receipt is emailed.
+- **Prices.** Every course costs $9.99 unless it has its own price. Buyers in India are charged the rupee price beside it (₹849 by default), because UPI and net banking only work in rupees; everyone else pays in dollars by card. Set prices, or make a course free, on `/admin/payments`.
+- **Payments page** `/admin/payments`: every payment received (courses and AI Weekend seats) with totals and an Excel download, and the price of each course.
+- **People enrolled before this change** keep their progress but now see previews only until they buy.
+- The rules are in `src/lib/lms-access.ts`; the checks that guard video, captions, labs, quizzes and chat are in `src/lib/lms-guard.ts`. Razorpay setup is in [`docs/razorpay.md`](docs/razorpay.md); the same webhook serves courses and the AI Weekend.
+
 ## AI Weekend (`/ai-weekend`)
 
 A live two-day workshop on the last Saturday and Sunday of every month. The public page shows the next dates by itself and moves on to the following month once a weekend has started.
@@ -80,7 +91,7 @@ A morning digest email is sent Monday to Saturday at 06:30 IST. Checks: `npx tsx
 
 ## Admin centre (`/admin`, staff only)
 
-The menu is grouped by the job being done: Home (Dashboard, Work history, Costs) · Sales (CRM, AI Weekend, Events, Tech calls) · LinkedIn (hub, Autopilot, Connection) · Content (Social studio, Blog studio, Cert videos) · Learners (Learning Studio, Community, Blog comments, GennoorCare chats) · Settings (Mailboxes). The Dashboard's own sections stay folded away unless you are on the Dashboard.
+The menu is grouped by the job being done: Home (Dashboard, Work history, Costs) · Sales (CRM, Payments, AI Weekend, Events, Tech calls) · LinkedIn (hub, Autopilot, Connection) · Content (Social studio, Blog studio, Cert videos) · Learners (Learning Studio, Community, Blog comments, GennoorCare chats) · Settings (Mailboxes). The Dashboard's own sections stay folded away unless you are on the Dashboard.
 
 Every "i" button explains its control in plain words. Side-by-side panels in the Social studio, Blog studio and LinkedIn hub have a draggable divider (arrow keys work too) and remember their width.
 

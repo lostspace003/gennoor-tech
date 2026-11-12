@@ -65,7 +65,7 @@ export const CALL_STEPS: CallStep[] = [
 
 /** Pick one, by what they told you. */
 export const BRIDGES: { when: string; say: string }[] = [
-  { when: 'They want to try before buying', say: 'Our Learning Studio is open to your team today. They can take a full course with labs and see how we teach, before we talk about anything paid.' },
+  { when: 'They want to try before buying', say: 'On our Learning Studio your team can watch the preview lessons of any course today, without signing up, and see how we teach before we talk about anything paid.' },
   { when: 'Training takes people away for too long', say: 'A usual course is three to five days in a classroom. We put the concepts and labs into short lessons people take on their own, and keep trainer time for questions. We aim to cut classroom time by about 60%.' },
   { when: 'Generic courses do not fit them', say: 'We build the course around your own processes and tools, so the examples are your work, not someone else’s.' },
   { when: 'They want their own platform', say: 'We can set up a learning platform for your organization, with your courses and your people only, and an assistant and a question board built in.' },
@@ -77,11 +77,11 @@ export const BRIDGES: { when: string; say: string }[] = [
 export const OBJECTIONS: { they: string; you: string }[] = [
   { they: 'Just send me an email.', you: 'Happy to. So it is useful and not a brochure: is it training for a team, or something for yourself? And roughly how many people?' },
   { they: 'What does it cost?', you: 'It depends on how many people, which topics and whether it is online or on site. With those three I can give you a real range now. How many people are we talking about?' },
-  { they: 'We have no budget.', you: 'Understood. Is it that there is no budget this year, or that training is not a priority yet? If it helps, the Learning Studio costs nothing to try today.' },
+  { they: 'We have no budget.', you: 'Understood. Is it that there is no budget this year, or that training is not a priority yet? If it helps, the preview lessons on the Learning Studio cost nothing to watch.' },
   { they: 'We have an internal training team.', you: 'Good. We usually work alongside them. Where are they stretched: content on new topics like Claude and agents, or time to deliver?' },
   { they: 'We already use another provider.', you: 'That makes sense. What would you change about it if you could? Many teams keep their provider and use us for the topics it does not cover.' },
   { they: 'Now is not a good time.', you: 'No problem. When is planning for next quarter? I will call then, and send one short note in the meantime so you have our details.' },
-  { they: 'Is the free platform really free?', you: 'Your team can sign in and take the courses that are open today at no charge. Custom courses and a platform of your own are paid.' },
+  { they: 'Is the platform free?', you: 'The preview lessons of every course are free to watch, with no sign-up. A full course is a one-time purchase per learner. For a whole team, let us talk about what you need.' },
 ]
 
 export const AFTER_THE_CALL = [
@@ -106,7 +106,7 @@ export const SLIDES: Slide[] = [
   { title: 'What it costs to leave it', show: 'The days people spend away from work, and what stays unlearned.', say: 'A three to five day course takes 24 to 40 working hours per person. For your team that adds up quickly.' },
   { title: 'The outcome', show: 'One sentence: what their people will be able to do, and by when.', say: 'This is the result we would be accountable for.', ask: 'Is this the right outcome, or would you word it differently?' },
   { title: 'How people learn with us', show: 'Three steps: lessons alone, labs, trainer time for questions.', say: 'People learn the concepts from short lessons, practise with labs, and bring their questions to a trainer. We aim to cut classroom time by about 60%.' },
-  { title: 'See it', show: 'Open the Learning Studio live. Play one lesson, open one lab.', say: 'This is what your team would use. It is open today, so they can try it before you decide.', ask: 'Who on your team should try it first?' },
+  { title: 'See it', show: 'Open the Learning Studio live. Play one lesson, open one lab.', say: 'This is what your team would use. The preview lessons are open today, so they can look before you decide.', ask: 'Who on your team should try it first?' },
   { title: 'Built for you', show: 'Their processes and tools as the course examples. Their name on the platform, if they want one.', say: 'We build the course around your own work. It can run on our platform or on one set up for you, with a custom voice and presenter if you want.', ask: 'Would you prefer to use our platform, or have your own?' },
   { title: 'The plan', show: 'Week by week: build, pilot with a small group, roll out.', say: 'We start with a small group, adjust, then roll out to everyone.' },
   { title: 'After the training', show: 'The doubt desk: questions on the platform, answered by a trainer.', say: 'Questions come the week after, when people use it on real work. They post them here and a trainer answers.' },

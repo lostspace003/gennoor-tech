@@ -124,7 +124,7 @@ export function leadContext(lead: Lead): string {
 
 export const GENNOOR_CONTEXT = `Gennoor Tech (www.gennoor.com) is a corporate training company in Mumbai, India. Gennoor is Certified in the Claude Partner Network (use exactly that wording, nothing more).
 What Gennoor offers:
-1. Learning Studio (www.gennoor.com/studio): self-paced video courses with labs to download, quizzes, captions, an assistant inside the player, a discussion page and a certificate. Open to a company's team today at no charge. Live courses include AI-103 and AI-500 on Microsoft Azure, both built around one project.
+1. Learning Studio (www.gennoor.com/studio): self-paced video courses with labs to download, quizzes, captions, an assistant inside the player, a discussion page and a certificate. A few lessons of every course are free previews that anyone can watch without signing in; the full course is bought once, per learner. Live courses include AI-103 and AI-500 on Microsoft Azure, both built around one project.
 2. Claude: certification preparation guides for the four Claude certifications (www.gennoor.com/claude/certifications), Claude training for teams, and automation of one process at a time.
 3. Instructor-led bootcamps and courses on AI and cloud (Microsoft, Google Cloud, AWS, Claude, open source); the catalogue is an Excel workbook.
 4. Custom training built around an organization's own processes, delivered on Gennoor's platform or on a learning platform set up for that organization. Lessons can use a custom voice and a digital presenter. Other features are added on request.

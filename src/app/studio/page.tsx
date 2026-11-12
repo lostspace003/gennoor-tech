@@ -1,3 +1,4 @@
+import { priceOf } from '@/lib/lms-access'
 import type { Metadata } from 'next'
 import { listLmsCourses, toCard } from '@/lib/lms'
 import { ratingSummaries } from '@/lib/lms-community'
@@ -19,7 +20,8 @@ export const dynamic = 'force-dynamic'
 export default async function LabsPage() {
   const cards = (await listLmsCourses()).map(toCard)
   const ratings = await ratingSummaries(cards.map(c => c.slug))
-  const courses = cards.map(c => ({ ...c, rating: ratings[c.slug]?.count ? ratings[c.slug] : undefined }))
+  const prices = Object.fromEntries(await Promise.all(cards.map(async c => [c.slug, await priceOf(c.slug)] as const)))
+  const courses = cards.map(c => ({ ...c, rating: ratings[c.slug]?.count ? ratings[c.slug] : undefined, priceUsd: prices[c.slug]?.usd }))
   return (
     <main className="bg-[#f5f6f8] min-h-screen">
       <AcademyBar section="Certifications & Projects" />
@@ -29,7 +31,7 @@ export default async function LabsPage() {
           Learn it by building it.
         </h1>
         <p className="text-[19px] leading-[1.5] text-[#6e6e73] max-w-2xl mx-auto mt-5">
-          Certification courses and real projects on video, with captions and labs. Pick up where you stopped, on any device.
+          Certification courses and real projects on video, with captions and labs. Watch the preview lessons of any course without signing in.
         </p>
       </section>
       <section className="max-w-4xl mx-auto px-6 pb-14">

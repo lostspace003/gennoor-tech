@@ -21,7 +21,7 @@ export const razorpayTestMode = () => keyId().startsWith('rzp_test_')
 export interface RazorpayOrder { id: string; amount: number; currency: string; status: string }
 
 /** Create an order for an exact amount. The amount is decided here, on the server, never by the browser. */
-export async function createOrder(amountRupees: number, receipt: string, notes: Record<string, string> = {}): Promise<RazorpayOrder> {
+export async function createOrder(amount: number, receipt: string, notes: Record<string, string> = {}, currency: 'INR' | 'USD' = 'INR'): Promise<RazorpayOrder> {
   if (!razorpayConfigured()) throw new Error('Razorpay is not configured')
   const res = await fetch('https://api.razorpay.com/v1/orders', {
     method: 'POST',
@@ -29,8 +29,8 @@ export async function createOrder(amountRupees: number, receipt: string, notes: 
       'Content-Type': 'application/json',
       Authorization: `Basic ${Buffer.from(`${keyId()}:${keySecret()}`).toString('base64')}`,
     },
-    // Razorpay counts in paise
-    body: JSON.stringify({ amount: Math.round(amountRupees * 100), currency: 'INR', receipt: receipt.slice(0, 40), notes }),
+    // Razorpay counts in the smallest unit: paise for rupees, cents for dollars
+    body: JSON.stringify({ amount: Math.round(amount * 100), currency, receipt: receipt.slice(0, 40), notes }),
   })
   const data = await res.json().catch(() => ({}))
   if (!res.ok) throw new Error(`Razorpay order failed (${res.status}): ${data?.error?.description || 'unknown error'}`)

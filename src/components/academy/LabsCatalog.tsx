@@ -184,7 +184,7 @@ export default function LabsCatalog({ courses, custom = EMPTY_CUSTOM }: { course
                           </p>
                         )}
                         <p className="text-[13px] text-[#86868b] mt-auto pt-4 tabular-nums">
-                          {c.lectures} lessons{c.hours ? `, ${c.hours} hours` : ''}
+                          {c.lectures} lessons{c.hours ? `, ${c.hours} hours` : ''}{c.priceUsd ? ` · $${c.priceUsd.toFixed(2)}, free previews` : ''}
                         </p>
                       </div>
                     </div>

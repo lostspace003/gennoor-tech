@@ -34,10 +34,11 @@ const GROUPS = [
   { title: 'Home', items: [
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, dash: true },
     { href: '/admin/sessions', label: 'Work history', icon: History },
-    { href: '/admin/costs', label: 'Costs', icon: Wallet },
+    { href: '/admin/costs', label: 'Costs', icon: BarChart3 },
   ] },
   { title: 'Sales', items: [
     { href: '/crm', label: 'CRM', icon: Briefcase },
+    { href: '/admin/payments', label: 'Payments', icon: Wallet },
     { href: '/admin/weekend', label: 'AI Weekend', icon: CalendarDays },
     { href: '/admin/events', label: 'Events', icon: Calendar },
     { href: '/admin/tech-calls', label: 'Tech calls', icon: PhoneCall },

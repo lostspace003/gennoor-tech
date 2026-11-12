@@ -1,4 +1,4 @@
-# Razorpay: online payment for the AI Weekend
+# Razorpay: online payment for the AI Weekend and Learning Studio courses
 
 The AI Weekend page (`/ai-weekend`) takes the ₹499 fee through Razorpay. Until the keys below are set, payment is off: people reserve a seat and you mark them Paid by hand on `/admin/weekend`.
 
@@ -44,6 +44,10 @@ While test keys are in use, `/admin/weekend` shows a "test mode" notice.
 2. On success the seat is marked **Paid**, a receipt is emailed to them, and `admin@gennoor.com` is told.
 3. If they close the window, the seat stays reserved. The confirmation email has a **Pay ₹499 now** button, and the "How to pay" email on the staff desk sends the same button again.
 4. If they pay and close the browser before the page can confirm, the webhook marks them Paid within a few minutes.
+
+## Learning Studio courses
+
+The same keys and the same webhook also take payment for courses. A buyer signs in on the course page, pays the dollar price by card (or the rupee price by UPI, card or net banking if they are in India), and the course opens at once. Payments and prices are on `/admin/payments`. Dollar payments need **International Payments** switched on in Razorpay.
 
 ## Refunds
 
