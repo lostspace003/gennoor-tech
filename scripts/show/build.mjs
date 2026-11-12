@@ -28,7 +28,7 @@ const url = (p) => pathToFileURL(p).href
 // ---------------------------------------------------------------- what the page is given
 const ICONS = ['play', 'flask-conical', 'blocks', 'award', 'bot-message-square', 'list-checks', 'messages-square', 'captions', 'file-text', 'rocket', 'sparkles', 'users', 'workflow',
   'ear', 'pencil-ruler', 'presentation', 'monitor-play', 'book-open', 'badge-check', 'life-buoy', 'zap', 'bot', 'video', 'calendar-days', 'eye', 'package-open', 'repeat', 'table-2',
-  'folder-open', 'timer', 'app-window', 'target', 'check', 'mic', 'globe', 'graduation-cap']
+  'folder-open', 'timer', 'app-window', 'target', 'check', 'mic', 'globe', 'graduation-cap', 'inbox', 'list-filter', 'file-pen-line']
 function lucide(name) {
   const file = path.join(ROOT, 'node_modules', 'lucide-react', 'dist', 'esm', 'icons', `${name}.js`)
   if (!existsSync(file)) throw new Error(`No lucide icon called ${name}`)

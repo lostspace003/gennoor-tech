@@ -1,16 +1,15 @@
 import Link from 'next/link'
 import { Zap } from 'lucide-react'
-import { WEEKEND, nextCohort, timeLabel } from '@/data/ai-weekend'
+import { WEEKEND } from '@/data/ai-weekend'
 
 /**
- * The AI Weekend, announced at the very top of the home page: what it is, the
- * next dates, the price, and one button. In the site's blue, with a bolt that
- * flashes slowly so the eye finds it (it stays still for people who ask their
- * device for less motion). The dates move on by themselves every month.
+ * The AI Weekend, announced at the very top of the home page: what it is, when
+ * it runs (the last weekend of every month), the price, and one button. In the
+ * site's blue, with a bolt that flashes slowly so the eye finds it (it stays
+ * still for people who ask their device for less motion). The exact dates are
+ * on the AI Weekend page, where people register.
  */
 export default function WeekendStrip() {
-  const cohort = nextCohort()
-  const [sat, sun] = [cohort.saturday, cohort.sunday].map((d) => Number(d.slice(8)))
   return (
     <section className="px-4 sm:px-6 pt-12 lg:pt-4" aria-label={WEEKEND.name}>
       <style>{`
@@ -36,7 +35,7 @@ export default function WeekendStrip() {
           <span className="min-w-0 flex-1 basis-[280px]">
             <span className="block text-[17px] sm:text-[18px] font-semibold leading-snug">{WEEKEND.name}: {WEEKEND.tagline.charAt(0).toLowerCase() + WEEKEND.tagline.slice(1)}</span>
             <span className="block text-[13.5px] text-white/85 mt-0.5">
-              Next: {sat} and {sun} {cohort.monthName} · {timeLabel()} · online ·{' '}
+              Last weekend of every month · Saturday &amp; Sunday · live online ·{' '}
               <span className="font-semibold text-white">₹{WEEKEND.fee}</span> <s className="text-white/60">₹{WEEKEND.regularFee.toLocaleString('en-IN')}</s>
             </span>
           </span>

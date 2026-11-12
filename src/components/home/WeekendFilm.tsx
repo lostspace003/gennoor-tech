@@ -1,20 +1,20 @@
 import Link from 'next/link'
 import { CalendarDays, Clock, Video, Zap } from 'lucide-react'
-import { WEEKEND, nextCohort, timeLabel } from '@/data/ai-weekend'
+import { WEEKEND, timeLabel } from '@/data/ai-weekend'
 import films from '@/data/films.json'
 import FilmPlayer from './FilmPlayer'
 
 /**
- * The AI Weekend on the home page: its one-minute film, the next dates and one button.
+ * The AI Weekend on the home page: its one-minute film, when it runs and one button.
  * A dark panel with a warm light, so it reads as an event and not as one more section.
- * The dates and the price come from the same place the AI Weekend page reads them.
+ * It says "the last weekend of every month", which stays true; the exact dates are on
+ * the AI Weekend page. The price comes from the same place that page reads it.
  */
 export default function WeekendFilm() {
-  const cohort = nextCohort()
   const film = films.weekend
   const facts = [
-    [CalendarDays, 'Next', cohort.label],
-    [Clock, 'Each day', timeLabel()],
+    [CalendarDays, 'When', 'Last weekend of every month'],
+    [Clock, 'Days', `Saturday & Sunday · ${timeLabel()}`],
     [Video, 'Where', WEEKEND.mode],
   ] as const
   return (

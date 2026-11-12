@@ -194,7 +194,40 @@ overview.push({
     ${go('See team training', '/training', { b: 5 })}`,
 })
 
-// ------------------------------------------------------------------ 9. your own platform
+// ------------------------------------------------------------------ 9. automation training
+// One process, drawn twice in the same place: first done by hand (grey), then running by itself (in colour).
+const STEPS = [['inbox', 'blue', 'Requests<br>arrive'], ['list-filter', 'violet', 'Sort and<br>label them'], ['file-pen-line', 'green', 'Draft<br>the reply'], ['table-2', 'gold', 'Update<br>the sheet']]
+overview.push({
+  id: 'automation', title: 'Automation training',
+  notes: 'We also teach automation, and it is a custom course every time. We take one process your team runs every week, build the course on it with their own examples and files, and teach it live and hands-on. By the end they have automated that process themselves, with Claude and other AI tools, and a person still checks the result. Teams usually start with sorting documents and emails, routine questions, reports from several sources, or moving data between tools.',
+  cues: [['o08b', { 1: 'One', 2: 'course', 3: 'automate' }]],
+  bg: ground(GLOW.green, { mx: 34, my: 56 }),
+  fg: `${head('Custom automation training', 'Your team learns to automate its own work.', { w: 1110 })}
+    <div class="abs win" data-b="1" data-fx="left" style="left:84px;top:196px;width:640px;height:312px">
+      <div class="bar"><b></b><b></b><b></b><span>One process your team runs &middot; every week</span></div>
+      <div style="position:relative;padding:28px 22px 0">
+        <div data-b="3" data-fx="wipe" data-dur="1.1" data-pad="18" style="position:absolute;left:80px;top:68px;width:480px;height:4px;border-radius:9px;background:linear-gradient(90deg,#3d94ff,#8f7dff 34%,#3ed598 68%,#ffc24b);box-shadow:0 0 14px rgba(120,200,255,.9)"></div>
+        <div class="row" style="position:relative;gap:0;justify-content:space-between;align-items:flex-start">
+          ${STEPS.map(([i, t, label], k) => `<div style="width:116px;text-align:center">
+            <div style="position:relative;width:84px;height:84px;margin:0 auto">${ico(i, 84, 'ink')}
+              <span data-b="3" data-o="${k + 1}" data-fx="pop" data-pad="34" style="position:absolute;inset:0">${ico(i, 84, t)}</span>
+              <span data-b="3" data-o="${k + 3}" data-fx="pop" data-pad="20" style="position:absolute;right:-10px;top:-10px">${ico('zap', 32, 'gold', 'round')}</span></div>
+            <div style="margin-top:13px;font:600 15px/1.25 var(--body);color:var(--soft)">${label}</div></div>`).join('')}
+        </div>
+        <div style="position:relative;margin-top:22px;height:58px">
+          <div class="row" style="height:58px;padding:0 16px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid var(--hair);gap:14px">${ico('timer', 36, 'ink')}<span style="font:600 17px/1 var(--body);color:var(--soft)">Done by hand, every week</span></div>
+          <div class="row" data-b="3" data-o="8" data-fx="pop" data-pad="34" style="position:absolute;inset:0;padding:0 14px 0 16px;border-radius:16px;background:linear-gradient(180deg,#164237,#0d2b27);border:1px solid rgba(62,213,152,.6);box-shadow:0 0 34px -6px rgba(62,213,152,.65);gap:14px">${ico('zap', 36, 'gold', 'round')}<span style="font:650 17px/1 var(--body);color:#fff">Now it runs when they ask</span><span class="chip" style="margin-left:auto;height:32px;padding:0 13px;font-size:13.5px;--dot:var(--green)"><i></i>A person checks</span></div>
+        </div>
+      </div>
+    </div>
+    ${[['target', 'blue', 'One process your team runs', 'Chosen with you, before we start'], ['pencil-ruler', 'violet', 'A course built on it', 'With your own examples and files'], ['graduation-cap', 'gold', 'They automate it themselves', 'Hands-on, with Claude and other AI tools']]
+      .map(([i, t, a, b], k) => piece(2, `left:772px;top:${200 + k * 112}px;width:424px`, feat(i, t, a, b), `data-o="${k}" data-fx="right" data-pad="30"`)).join('')}
+    <div class="abs seq row" data-b="4" data-fx="none" data-delay=".05" data-gap=".12" style="left:84px;top:556px;gap:11px;width:1112px">
+      ${[['Sorting documents and emails', '#7cc0ff'], ['Routine questions', '#b3a4ff'], ['Reports from several sources', '#3ed598'], ['Moving data between tools', '#ffc24b']].map(([t, c]) => `<span class="chip" style="--dot:${c}"><i></i>${t}</span>`).join('')}</div>
+    ${go('See automation training', '/training', { b: 5 })}`,
+})
+
+// ------------------------------------------------------------------ 10. your own platform
 overview.push({
   id: 'platform', title: 'Your own platform',
   notes: 'If training is a regular need, it is worth having a home for it. We set up a learning platform for your company and build the courses that go on it: your courses, your people, your name. It can run in the cloud or on your premises, with the same assistant, question board, quizzes and certificates.',
@@ -218,7 +251,7 @@ overview.push({
     ${go('Tell us what you need', '/contact', { b: 5 })}`,
 })
 
-// ------------------------------------------------------------------ 10. after the training (presentation only)
+// ------------------------------------------------------------------ 11. after the training (presentation only)
 overview.push({
   id: 'after', title: 'After the training', film: false,
   notes: 'Two things clients ask about. Time: people learn the concepts with short lessons and practise with labs first, so trainer time is kept for the hard parts. Our aim is about sixty percent less classroom time than a usual three to five day course; how much depends on the course and the team. And support: questions start a week later, so there is a doubt desk where a trainer answers and the answer stays for the next person.',
@@ -241,7 +274,7 @@ overview.push({
     ${go('Talk to us', '/contact', { b: 3 })}`,
 })
 
-// ------------------------------------------------------------------ 11. see it work first
+// ------------------------------------------------------------------ 12. see it work first
 const wire = (x, y, w, h) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="none" stroke="rgba(125,190,255,.75)" stroke-width="1.6" stroke-dasharray="6 6"/>`
 overview.push({
   id: 'prototype', title: 'See it work first',
@@ -267,7 +300,7 @@ overview.push({
     ${go('How automation works', '/automation', { b: 4 })}`,
 })
 
-// ------------------------------------------------------------------ 12. the AI Weekend
+// ------------------------------------------------------------------ 13. the AI Weekend
 const WK = [
   ['Day 1 &middot; Saturday', 'From asking to getting work done', ['Your context file', 'A weekly report in minutes', 'A connected workspace'], 'blue'],
   ['Day 2 &middot; Sunday', 'Automate a task, build an agent', ['One task automated', 'A small working app', 'Your first agent'], 'gold'],
@@ -278,7 +311,7 @@ const dayCard = ([day, title, builds, tone], k, b) => `<div class="abs card" dat
 const bolt = (size) => `<div style="position:relative;width:${size}px;height:${size}px"><div data-loop="pulse" data-per="2.2" style="position:absolute;inset:-34%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,190,70,.6),transparent 70%)"></div>${ico('zap', size, 'gold', 'round')}</div>`
 overview.push({
   id: 'weekend', title: 'The AI Weekend',
-  notes: `Every month there is the ${D.weekend.name}: two live sessions and six working demos, built step by step in front of you, with the complete kit afterwards. The next one is ${D.weekend.dates}, ${D.weekend.time}, online.`,
+  notes: `On the last weekend of every month there is the ${D.weekend.name}: two live sessions, Saturday and Sunday, and six working demos, built step by step in front of you, with the complete kit afterwards. Each day runs ${D.weekend.time}, online. The page shows the next dates.`,
   cues: [['o11', { 1: 'Two', 2: 'Six' }]],
   bg: ground(GLOW.gold, { mx: 40, my: 50 }),
   fg: `
@@ -287,12 +320,12 @@ overview.push({
     <div class="abs h1 nowrap" data-b="0" data-o="2" style="left:226px;top:130px;font-size:66px">The AI Weekend</div>
     <div class="abs p" data-b="0" data-o="3" style="left:228px;top:218px;font-size:23px">Build with Claude in one weekend.</div>
     ${WK.map((d, k) => dayCard(d, k, k + 1)).join('')}
-    <div class="abs card lit" data-b="3" data-fx="right" data-film="0" data-href="${SITE}/ai-weekend" style="left:840px;top:104px;width:356px;padding:20px 24px">
-      <div class="tiny" style="color:var(--gold)">Next weekend</div><div class="h3" style="margin-top:9px;font-size:25px">${D.weekend.dates}</div><div class="small" style="margin-top:6px">${D.weekend.time}, online</div></div>
+    <div class="abs card lit" data-b="0" data-o="5" data-fx="right" data-href="${SITE}/ai-weekend" data-alt="The AI Weekend: the last weekend of every month, Saturday and Sunday, live online" style="left:856px;top:104px;width:340px;padding:20px 24px">
+      <div class="tiny" style="color:var(--gold)">Every month</div><div class="h3" style="margin-top:9px;font-size:26px">The last weekend</div><div class="small" style="margin-top:6px;font-size:15.5px">Saturday &amp; Sunday &middot; live online</div></div>
     ${go('Reserve a seat', '/ai-weekend', { b: 3, cls: 'gold' })}`,
 })
 
-// ------------------------------------------------------------------ 13. beyond this deck (presentation only)
+// ------------------------------------------------------------------ 14. beyond this deck (presentation only)
 const PLACES = [['play', 'blue', 'Learning Studio', '/studio'], ['sparkles', 'violet', 'AI Essentials', '/ai-academy'], ['award', 'claude', 'Claude', '/claude'], ['users', 'blue', 'Training', '/training'], ['workflow', 'green', 'Automation', '/automation'], ['zap', 'gold', 'AI Weekend', '/ai-weekend'], ['video', 'rose', 'Webinars', '/webinars'], ['book-open', 'violet', 'Blog', '/resources/blog']]
 overview.push({
   id: 'site', title: 'Beyond this deck', film: false,
@@ -307,7 +340,7 @@ overview.push({
     }).join('')}`,
 })
 
-// ------------------------------------------------------------------ 14. the close
+// ------------------------------------------------------------------ 15. the close
 overview.push({
   id: 'close', title: 'Train. Innovate. Build.',
   notes: 'Train. Innovate. Build. The simplest way to start is to watch a preview lesson: there is nothing to sign up for. Or tell us about your team: how many people, which teams and by when, and we will suggest something sensible in twenty minutes.',
