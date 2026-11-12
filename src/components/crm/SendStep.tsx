@@ -120,7 +120,7 @@ export default function SendStepModal({ leads, onClose, onSent, notify }: {
                 )}
               </div>
               <div className="flex-1 min-h-0 bg-gray-100 relative">
-                {preview && <iframe title="Email preview" srcDoc={`<base target="_blank">${preview.html}`} sandbox="allow-popups allow-popups-to-escape-sandbox" className="w-full h-full border-0" />}
+                {preview && <iframe title="Email preview" srcDoc={preview.html.replace('<head>', '<head><base target="_blank">')} sandbox="allow-popups allow-popups-to-escape-sandbox" className="w-full h-full border-0" />}
                 {loading && <div className="absolute top-2 right-3 bg-white/90 rounded-full px-2.5 py-1"><Spinner label="Updating" /></div>}
               </div>
             </div>

@@ -3,12 +3,15 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
 import { getLeads, mutateLeads, touch } from '@/lib/crm/store'
 import { newLead, Lead, LEAD_STEPS, STEP_LABELS } from '@/lib/crm/types'
+import { syncAutoLeadsIfDue } from '@/lib/crm/auto-leads'
 
 export async function GET() {
   const user = await requireCrmUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
+    // People who bought or finished a course, or sent a form, are added as leads first
+    await syncAutoLeadsIfDue()
     const leads = await getLeads()
     return NextResponse.json({ leads, total: leads.length })
   } catch (error) {

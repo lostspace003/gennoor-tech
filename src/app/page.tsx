@@ -6,6 +6,7 @@ import { allCards } from '@/lib/catalogue'
 import WalkthroughVideo from '@/components/WalkthroughVideo'
 import HeroCarousel, { type HeroSlide } from '@/components/home/HeroCarousel'
 import CertPromoButton from '@/components/home/CertPromoButton'
+import WeekendStrip from '@/components/home/WeekendStrip'
 import { listLmsCourses, toCard } from '@/lib/lms'
 import { CloudAiIllustration, ExamplesIllustration, PlatformIllustration, TrainingIllustration } from '@/components/illustrations/Illustrations'
 
@@ -57,6 +58,9 @@ export default async function HomePage() {
     <>
       <PersonJsonLd />
       <CertPromoButton />
+
+      {/* ===== The AI Weekend, first thing on the page ===== */}
+      <WeekendStrip />
 
       {/* ===== Hero: the Claude Partner Network first ===== */}
       <section className="hero-backdrop bg-white px-6 pt-8 lg:pt-10 pb-10 lg:pb-12">

@@ -454,6 +454,9 @@ function SectionRow({
             strokeWidth={1.7}
           />
           <span className="truncate">{section.name}</span>
+          {section.badge && (
+            <span className="ml-auto rounded-full bg-primary-600 px-2 py-[1px] text-[10px] font-bold uppercase tracking-wide text-white">{section.badge}</span>
+          )}
         </Link>
       </li>
     )
