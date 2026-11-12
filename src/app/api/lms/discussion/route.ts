@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyLearnerSession, isStudioAdmin } from '@/lib/learner-auth'
-import { getLmsCourse, isEnrolled } from '@/lib/lms'
+import { getLmsCourse } from '@/lib/lms'
+import { hasFullAccess } from '@/lib/lms-access'
 import { COMMUNITY_SCOPE, addPost, adminResults, castVote, deletePost, getPostRaw, getThread, listThreads, setPostClosed, setPostHidden, toggleLike, type PostKind } from '@/lib/lms-community'
 import { htmlToText, sanitizeHtml } from '@/lib/rich-text'
 import { rateLimit } from '@/lib/rate-limit'
@@ -23,7 +24,7 @@ async function gate(scope: string | null, write: boolean) {
   if (isStudioAdmin(learner)) return { learner }
   const course = await getLmsCourse(scope)
   if (!course) return { error: NextResponse.json({ error: 'Unknown course' }, { status: 404 }) }
-  if (!(await isEnrolled(learner.email, scope))) return { error: NextResponse.json({ error: 'Enroll in this course to join its discussion.' }, { status: 403 }) }
+  if (!(await hasFullAccess(learner.email, scope))) return { error: NextResponse.json({ error: 'Get the full course to join its discussion.' }, { status: 403 }) }
   return { learner }
 }
 

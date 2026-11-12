@@ -345,6 +345,8 @@ export interface LmsCourseCard {
   updatedAt?: string
   /** average review rating and how many people rated, when any */
   rating?: { average: number; count: number }
+  /** price in US dollars, when the course is paid; absent for a free course */
+  priceUsd?: number
 }
 
 /** Catalog-card view of a course, with a signed link for its thumbnail. */

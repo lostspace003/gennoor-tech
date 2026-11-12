@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { markPaid } from '@/lib/weekend-pay'
 import { validWebhookSignature } from '@/lib/razorpay'
+import { completeCoursePurchase } from '@/lib/lms-pay'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,9 +25,13 @@ export async function POST(req: Request) {
       const payment = event.payload?.payment?.entity
       const orderId = payment?.order_id || event.payload?.order?.entity?.id
       if (orderId && payment?.id) {
-        // Orders for other things on this account are simply not found here, which is fine
+        // One webhook serves both things we sell. An AI Weekend seat is tried first; an order
+        // it does not know is then tried as a Learning Studio course. Orders for anything
+        // else on this account match neither, which is fine.
         const outcome = await markPaid({ orderId }, String(payment.id))
-        return NextResponse.json({ received: true, outcome })
+        if (outcome !== 'unknown') return NextResponse.json({ received: true, outcome })
+        const purchase = await completeCoursePurchase(String(orderId), String(payment.id))
+        return NextResponse.json({ received: true, outcome: purchase ? 'course-paid' : 'not-ours-or-already-done' })
       }
     }
     return NextResponse.json({ received: true })

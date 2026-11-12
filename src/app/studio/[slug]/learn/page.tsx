@@ -1,7 +1,8 @@
 import { notFound, redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 import { verifyLearnerSession } from '@/lib/learner-auth'
-import { flattenItems, getLmsCourse, getLmsProgress, isEnrolled, videoUrl } from '@/lib/lms'
+import { flattenItems, getLmsCourse, getLmsProgress, videoUrl } from '@/lib/lms'
+import { hasFullAccess } from '@/lib/lms-access'
 import SignInGate from '@/components/academy/SignInGate'
 import LmsPlayer from '@/components/academy/LmsPlayer'
 import ResumeGate from '@/components/academy/ResumeGate'
@@ -30,7 +31,9 @@ export default async function LearnPage({ params, searchParams }: PageProps) {
   if (!learner) {
     return <SignInGate heading={`Sign in to learn ${course.code}`} body="The video lessons, labs and quizzes open after you sign in." />
   }
-  if (!(await isEnrolled(learner.email, slug))) redirect(`/studio/${slug}`)
+  // The full player is for people who own the course. Everyone else goes to the course page,
+  // where the preview lessons play and the course can be bought.
+  if (!(await hasFullAccess(learner.email, slug))) redirect(`/studio/${slug}`)
 
   const progress = await getLmsProgress(learner.email, slug)
   const items = flattenItems(course)

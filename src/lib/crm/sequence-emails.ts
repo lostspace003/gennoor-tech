@@ -53,27 +53,27 @@ function content(stepId: string, first: string, company: string): Content {
   switch (stepId) {
     case 'intro':
       return {
-        preheader: 'Full video courses with labs and quizzes, open for your team to start today.',
+        preheader: 'Watch real lessons from our courses today. Nothing to sign up for.',
         title: `Hello ${first},`,
-        lead: `I work on corporate training at Gennoor Tech. We teach teams AI and cloud skills, and we have built it so that ${co} can try the real thing before any conversation about buying.`,
+        lead: `I work on corporate training at Gennoor Tech. We teach teams AI and cloud skills, and we have built it so that ${co} can see the real lessons before any conversation about buying.`,
         body:
-          p(`Our <strong style="color:#0f172a">Learning Studio</strong> is open to your team today at no charge. Each person signs in, picks a course and starts. They get the complete course, not a preview.`) +
+          p(`On our <strong style="color:#0f172a">Learning Studio</strong>, anyone on your team can watch the preview lessons of every course today. There is nothing to sign up for. This is what a full course includes:`) +
           rows([
-            { icon: 'play', title: 'Full video lessons', body: 'Short lessons with captions. Progress is saved, so people continue where they stopped.' },
+            { icon: 'play', title: 'Video lessons', body: 'Short lessons with captions. Several in every course are free to watch. Progress is saved for learners who take the full course.' },
             { icon: 'file', title: 'Labs they can download', body: 'The lab files and guides come with the course, so the practice happens on their own machine.' },
             { icon: 'check', title: 'Quizzes and a certificate', body: 'Each module checks understanding, and finishing the course earns a certificate.' },
             { icon: 'chat', title: 'Help while they learn', body: 'An assistant inside the player answers questions, and there is a discussion page for each course.' },
           ]) +
           emailButton('Open the Learning Studio', STUDIO) +
           p(`Over the next few weeks I will send you sample courses, our catalogue, and how we build training around one organization. If you would rather talk now, ${link('pick a time here', CALL)}.`),
-        plain: `Hello ${first},\n\nI work on corporate training at Gennoor Tech. Our Learning Studio is open to your team today at no charge: full video lessons, labs to download, quizzes, a certificate, and an assistant inside the player.\n\nOpen it here: ${STUDIO}\n\nIf you would rather talk now, pick a time: ${CALL}`,
+        plain: `Hello ${first},\n\nI work on corporate training at Gennoor Tech. On our Learning Studio, anyone on your team can watch the preview lessons of every course today, with nothing to sign up for. A full course has video lessons, labs to download, quizzes, a certificate, and an assistant inside the player.\n\nOpen it here: ${STUDIO}\n\nIf you would rather talk now, pick a time: ${CALL}`,
       }
 
     case 'samples':
       return {
         preheader: 'Three courses to open now, and the full catalogue attached as Excel.',
         title: `${first}, here is what the courses look like`,
-        lead: `The quickest way to judge training is to open it. These three are live now, and your team can take any of them from start to finish.`,
+        lead: `The quickest way to judge training is to open it. These are live now, and the preview lessons of each play without signing in.`,
         body:
           cards([
             { title: 'AI-103: Build and Ship AI Agents on Microsoft Azure', body: 'One project from the first lesson to the last. Learners build a working agent step by step, with labs in every module.', href: `${STUDIO}/ai-103`, cta: 'Open the course' },
@@ -217,8 +217,8 @@ function content(stepId: string, first: string, company: string): Content {
             <li><strong style="color:#0f172a">Interested, different person.</strong> Tell me who plans training at ${co}.</li>
             <li><strong style="color:#0f172a">Not for us.</strong> Reply with the word stop and I will close this.</li>
           </ul>` +
-          p(`Either way, the ${link('Learning Studio', STUDIO)} stays open for your team to use.`),
-        plain: `${first}, a quick check.\n\nWhich of these is closest?\n- Interested, later: tell me the month.\n- Interested, different person: tell me who plans training at ${company}.\n- Not for us: reply with the word stop.\n\nThe Learning Studio stays open for your team: ${STUDIO}`,
+          p(`Either way, the preview lessons on the ${link('Learning Studio', STUDIO)} stay open for your team to watch.`),
+        plain: `${first}, a quick check.\n\nWhich of these is closest?\n- Interested, later: tell me the month.\n- Interested, different person: tell me who plans training at ${company}.\n- Not for us: reply with the word stop.\n\nThe preview lessons on the Learning Studio stay open for your team: ${STUDIO}`,
       }
   }
 }

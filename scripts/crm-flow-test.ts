@@ -13,6 +13,7 @@ import { CRM_USERS, CRM_MANAGERS } from '../src/lib/crm/users'
 import { teamMember } from '../src/lib/crm/team'
 import { WEEKEND_EMAILS, buildWeekendEmail, buildPaidEmail } from '../src/lib/weekend-emails'
 import { hmacHex, validPaymentSignature, validWebhookSignature } from '../src/lib/razorpay'
+import { previewIds, isPreview, PREVIEW_MAX, DEFAULT_PRICE, formatUsd, formatInr } from '../src/lib/lms-access'
 import { WEEKEND, nextCohort, cohortById } from '../src/data/ai-weekend'
 
 let pass = 0, fail = 0
@@ -135,6 +136,17 @@ ok(!validWebhookSignature(hook, hmacHex('whsec', hook), ''), 'webhooks are refus
 const withLink = buildWeekendEmail('payment', { name: 'Priya' }, nov, {}, 'webinar@gennoor.com', 'https://www.gennoor.com/ai-weekend?pay=WK-1&t=abc')
 ok(withLink.html.includes('Pay ₹499 now') && withLink.html.includes('pay=WK-1'), 'the payment email carries the person\'s own Pay now link when online payment is on')
 ok(buildPaidEmail({ name: 'Priya', fee: 499 }, nov, 'pay_XYZ').html.includes('pay_XYZ'), 'the receipt shows the payment reference')
+
+// ---- Course previews: a few lessons open to everyone, never more than six
+const lesson = (id: string, preview: boolean) => ({ id, type: 'lecture' as const, kind: 'lecture', title: id, description: '', preview, video: '', caption: null, resources: [] })
+const quiz = (id: string) => ({ id, type: 'quiz' as const, title: id, description: '', questionCount: 5, passPercent: 70 })
+const courseOf = (items: any[]) => ({ sections: [{ title: 'One', items }] }) as any
+ok(previewIds(courseOf([lesson('a', true), lesson('b', false), lesson('c', true)])).join() === 'a,c', 'the lessons marked as previews are the previews')
+ok(previewIds(courseOf(Array.from({ length: 10 }, (_, i) => lesson(`l${i}`, true)))).length === PREVIEW_MAX && PREVIEW_MAX === 6, 'a course that marks too many still gets only six previews')
+ok(previewIds(courseOf([quiz('q'), lesson('a', false), lesson('b', false), lesson('c', false), lesson('d', false), lesson('e', false)])).join() === 'a,b,c,d', 'a course that marks none gets its first four lessons, and a quiz is never a preview')
+ok(isPreview(courseOf([lesson('a', true), lesson('b', false)]), 'a') && !isPreview(courseOf([lesson('a', true), lesson('b', false)]), 'b'), 'a lesson outside the previews is not open')
+ok(DEFAULT_PRICE.usd === 9.99 && DEFAULT_PRICE.inr > 0, 'the standard course price is 9.99 dollars, with a rupee price beside it')
+ok(formatUsd(9.99) === '$9.99' && formatInr(849) === '₹849', 'prices are written the usual way')
 
 console.log(`\n${pass} passed, ${fail} failed`)
 if (outDir) console.log(`Emails written to ${outDir}`)

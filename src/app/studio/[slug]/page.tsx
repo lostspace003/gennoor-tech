@@ -3,7 +3,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Check } from 'lucide-react'
 import { verifyLearnerSession } from '@/lib/learner-auth'
-import { getLmsCourse, getLmsProgress, imageUrl, isEnrolled, promoUrl, toCard, type LmsProgressEntry } from '@/lib/lms'
+import { getLmsCourse, getLmsProgress, imageUrl, promoUrl, toCard, type LmsProgressEntry } from '@/lib/lms'
+import { hasFullAccess, previewIds, priceOf } from '@/lib/lms-access'
+import { BuyButton, CourseBuyProvider, CurrencyNote, LessonRow, PreviewProvider } from '@/components/academy/CourseAccess'
 import { resumePoint } from '@/lib/lms-resume'
 import ResumePanel from '@/components/academy/ResumePanel'
 import { kindOf, KIND_COLOR } from '@/lib/lms-kind'
@@ -55,7 +57,10 @@ export default async function LabsCoursePage({ params }: PageProps) {
   if (!course) notFound()
 
   const learner = await verifyLearnerSession()
-  const enrolled = learner ? await isEnrolled(learner.email, slug).catch(() => false) : false
+  // `enrolled` means the whole course is open to this person: they bought it, or it is a free course they enrolled in
+  const price = await priceOf(slug)
+  const enrolled = learner ? await hasFullAccess(learner.email, slug).catch(() => false) : false
+  const previews = new Set(previewIds(course))
   const progress: Record<string, LmsProgressEntry> = learner && enrolled ? await getLmsProgress(learner.email, slug).catch(() => ({})) : {}
   const point = enrolled ? resumePoint(course, progress) : null
   const totalItems = course.sections.reduce((n, s) => n + s.items.length, 0)
@@ -66,7 +71,10 @@ export default async function LabsCoursePage({ params }: PageProps) {
   const badge = imageUrl(course, course.badge)
   const { summary } = await getReviews(slug).catch(() => ({ summary: { average: 0, count: 0, counts: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } } }))
 
+  const Shell = ({ children }: { children: React.ReactNode }) => (price ? <CourseBuyProvider slug={slug} price={price}>{children}</CourseBuyProvider> : <>{children}</>)
+
   return (
+    <Shell>
     <main className="bg-white">
       <BreadcrumbJsonLd
         items={[
@@ -119,10 +127,21 @@ export default async function LabsCoursePage({ params }: PageProps) {
               {point && point.kind !== 'start' ? (
                 <div className="mt-8"><ResumePanel slug={slug} point={point} dark /></div>
               ) : (
+              price && !enrolled ? (
+              <div className="mt-8">
+                <div className="flex flex-wrap items-center gap-4">
+                  <BuyButton />
+                  <a href="#curriculum" className="text-[14px] font-semibold text-white underline underline-offset-4 hover:text-[#aab6c8]">Watch {previews.size} free preview lessons</a>
+                </div>
+                <div className="mt-3 text-[#8d9bb0]"><CurrencyNote className="hover:text-white" /></div>
+                <p className="mt-2 text-[13px] text-[#8d9bb0]">One payment. Every lesson, lab and quiz, and a certificate. Previews need no sign-in.</p>
+              </div>
+              ) : (
               <div className="mt-8 flex flex-wrap items-center gap-4">
                 <EnrollButton slug={slug} enrolled={enrolled} />
                 {!learner && <p className="text-[13px] text-[#8d9bb0]">You sign in once to start.</p>}
               </div>
+              )
               )}
               <dl className="flex flex-wrap gap-x-8 gap-y-2 mt-8 text-[15px]">
                 {[
@@ -173,9 +192,10 @@ export default async function LabsCoursePage({ params }: PageProps) {
             </ul>
           </section>
 
-          <section>
+          <section id="curriculum" className="scroll-mt-24">
             <h2 className="font-heading text-[28px] font-bold tracking-[-0.02em] text-gray-900 mb-2">Curriculum</h2>
-            <p className="text-[#6e6e73] mb-6">{totalItems} items (lessons and quizzes) across {course.sections.length} modules. {enrolled ? 'Pick any lesson to open it.' : 'Pick any lesson to open it. You will sign in first if you have not already.'}</p>
+            <p className="text-[#6e6e73] mb-6">{totalItems} items (lessons and quizzes) across {course.sections.length} modules. {enrolled ? 'Pick any lesson to open it.' : price ? `${previews.size} lessons are free previews: press one to watch it now, no sign-in needed. The rest open when you buy the course.` : 'Pick any lesson to open it. You will sign in first if you have not already.'}</p>
+            <PreviewProvider slug={slug}>
             <OutlineGate slug={slug}>
             <div className="border-t border-[#e8e8ed]">
               {course.sections.map((s, i) => (
@@ -197,6 +217,8 @@ export default async function LabsCoursePage({ params }: PageProps) {
                             <span className="flex-1">{it.title}</span>
                             {progress[it.id]?.done && <Check className="w-4 h-4 mt-0.5 shrink-0 text-emerald-600" strokeWidth={2.5} />}
                           </Link>
+                        ) : price ? (
+                          <LessonRow id={it.id} title={it.title} color={KIND_COLOR[kindOf(it)]} preview={previews.has(it.id)} />
                         ) : (
                           <OutlineLesson id={it.id} title={it.title} color={KIND_COLOR[kindOf(it)]} />
                         )}
@@ -207,6 +229,17 @@ export default async function LabsCoursePage({ params }: PageProps) {
               ))}
             </div>
             </OutlineGate>
+            </PreviewProvider>
+            {price && !enrolled && (
+              <div className="mt-8 rounded-2xl bg-[#0f1824] text-white p-6 flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <div className="font-heading text-[19px] font-semibold !text-white">Get the full course</div>
+                  <div className="text-[14px] text-[#aab6c8] mt-1">{course.stats.lectures} video lessons, the labs, {course.stats.quizzes} quizzes and a certificate.</div>
+                  <div className="mt-2 text-[#8d9bb0]"><CurrencyNote className="hover:text-white" /></div>
+                </div>
+                <BuyButton />
+              </div>
+            )}
           </section>
 
           <section>
@@ -253,5 +286,6 @@ export default async function LabsCoursePage({ params }: PageProps) {
         </aside>
       </div>
     </main>
+    </Shell>
   )
 }

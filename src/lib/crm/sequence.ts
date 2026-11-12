@@ -26,8 +26,8 @@ export const SEQUENCE: SequenceStep[] = [
     gapDays: 0,
     phase: 'Introduce',
     title: 'Introduction',
-    purpose: 'Who we are and the open Learning Studio their team can use today',
-    subject: 'Training your team can start today, {company}',
+    purpose: 'Who we are, and the preview lessons their team can watch today',
+    subject: 'Lessons your team can watch today, {company}',
   },
   {
     id: 'samples',
@@ -151,4 +151,4 @@ export const LINKEDIN_CONNECT_NOTE =
 
 /** First message once they accept. */
 export const LINKEDIN_FIRST_MESSAGE =
-  'Thank you for connecting, {firstName}. Our Learning Studio is open for your team to try: full video courses with labs and quizzes at https://www.gennoor.com/studio. If {company} is planning any AI or cloud training this year, I would be glad to show you how we shorten it. Would a 20-minute call suit you?'
+  'Thank you for connecting, {firstName}. Your team can watch preview lessons from our video courses, with no sign-up, at https://www.gennoor.com/studio. If {company} is planning any AI or cloud training this year, I would be glad to show you how we shorten it. Would a 20-minute call suit you?'

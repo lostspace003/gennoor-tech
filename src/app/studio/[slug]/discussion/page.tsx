@@ -2,7 +2,8 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { verifyLearnerSession } from '@/lib/learner-auth'
-import { getLmsCourse, isEnrolled } from '@/lib/lms'
+import { getLmsCourse } from '@/lib/lms'
+import { hasFullAccess } from '@/lib/lms-access'
 import AcademyBar from '@/components/academy/AcademyBar'
 import SignInGate from '@/components/academy/SignInGate'
 import Discussion from '@/components/academy/Discussion'
@@ -24,7 +25,7 @@ export default async function CourseDiscussionPage({ params }: PageProps) {
 
   const learner = await verifyLearnerSession()
   if (!learner) return <SignInGate heading={`Sign in to join the ${course.code} discussion`} body="Ask questions and talk with other learners and the Gennoor team." />
-  const enrolled = await isEnrolled(learner.email, slug).catch(() => false)
+  const enrolled = await hasFullAccess(learner.email, slug).catch(() => false)
 
   return (
     <main className="bg-white min-h-screen">
@@ -37,7 +38,7 @@ export default async function CourseDiscussionPage({ params }: PageProps) {
           <Discussion scope={slug} emptyText="No topics yet. Start the first one." />
         ) : (
           <div className="rounded-2xl bg-[#f5f6f8] p-6">
-            <p className="text-[15px] text-gray-900">Enroll in this course to join its discussion.</p>
+            <p className="text-[15px] text-gray-900">Get the full course to join its discussion.</p>
             <Link href={`/studio/${slug}`} className="pill-primary inline-block mt-4">Go to the course</Link>
           </div>
         )}
