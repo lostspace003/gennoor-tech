@@ -44,6 +44,20 @@ export interface BlogPost extends BlogPostMeta {
 
 export const blogPostsMeta: BlogPostMeta[] = [
   {
+    slug: 'mcp-agents-tool-layer-hallucinations-failure-wall',
+    title: 'MCP Agents Face a New Failure Wall: Hallucinations Inside the Tool Layer',
+    excerpt: 'Enterprise teams should stop treating MCP agent quality as one aggregate score. In production, many failures emerge inside the tool layer through reasoning over metadata, malformed execution, stale memory, and unsafe trust in tool descriptions. That creates a more practical testing agenda built around telemetry, governance, and regression testing rather than broad benchmark claims.',
+    tldr: 'For enterprise MCP deployments, the useful shift is from adoption debate to failure analysis. Teams should test reasoning, execution, memory, and metadata risks separately, add step-level telemetry, govern tool catalogs, and be careful not to overstate unverified benchmark or preprint claims.',
+    author: 'Gennoor Tech',
+    date: '2026-11-12',
+    readTime: '12 min read',
+    category: 'AI Agents',
+    tags: ['Enterprise AI', 'AI Agents', 'MCP', 'AI Security', 'Evaluation', 'Production AI', 'AI Orchestration', 'LLM Ops', 'AI Governance'],
+    hashtags: ['#MCP', '#AIAgents', '#AISecurity', '#EnterpriseAI', '#LLMOps', '#AIGovernance'],
+    coverColor: '#2F1E1E',
+    icon: '🧩',
+  },
+  {
     slug: 'openai-aws-marketplace-enterprise-ai-procurement',
     title: 'AWS Highlighted OpenAI-Powered Bedrock Agents: Why Procurement Architecture Still Matters for Enterprise AI',
     excerpt: 'AWS publicly highlighted Amazon Bedrock Managed Agents powered by OpenAI in an official roundup on October 5, 2026. That does not independently confirm an AWS Marketplace event, but it does signal how enterprise AI is increasingly evaluated through platform fit, procurement architecture, and governance readiness rather than model quality alone.',
@@ -1098,6 +1112,7 @@ export function getRelatedPostsMeta(currentSlug: string, category: string, limit
 
 // Load full blog post content on demand (only for individual post pages)
 const contentImports: Record<string, () => Promise<{ post: BlogPost }>> = {
+  'mcp-agents-tool-layer-hallucinations-failure-wall': () => import('./content/mcp-agents-tool-layer-hallucinations-failure-wall'),
   'openai-aws-marketplace-enterprise-ai-procurement': () => import('./content/openai-aws-marketplace-enterprise-ai-procurement'),
   'claude-5-2-enterprise-upgrade-bar-faster-cheaper-stricter': () => import('./content/claude-5-2-enterprise-upgrade-bar-faster-cheaper-stricter'),
   'openai-dots-enterprise-ga-always-on-agent-ops-challenge': () => import('./content/openai-dots-enterprise-ga-always-on-agent-ops-challenge'),
