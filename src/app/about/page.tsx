@@ -44,13 +44,13 @@ export default function AboutPage() {
       </section>
 
       {/* ===== Vision ===== */}
-      <section className="px-6 pb-16 lg:pb-[90px]">
+      <section className="px-6 pb-10 lg:pb-[90px]">
         <div className="max-w-[860px] mx-auto text-center">
           <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-primary-600">Our vision</p>
           <h2 className="display-section mt-4">A world where anyone can learn the skills that work asks for, and prove them.</h2>
           <p className="lede mt-5 max-w-[620px] mx-auto">We build towards it with three kinds of learning, in one place: the Learning Studio.</p>
         </div>
-        <div className="max-w-[1080px] mx-auto grid md:grid-cols-3 gap-6 mt-12">
+        <div className="max-w-[1080px] mx-auto grid md:grid-cols-3 gap-6 mt-8">
           {PILLARS.map(p => (
             <div key={p.title} className="rounded-[18px] border border-[#e8e8ed] p-7 flex flex-col items-center text-center">
               <p.art className="w-[104px] h-[104px] mb-5" />
@@ -68,7 +68,7 @@ export default function AboutPage() {
       </section>
 
       {/* ===== What we stand for ===== */}
-      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-14">
+      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-10">
         <div className="max-w-[1080px] mx-auto">
           <h2 className="display-section text-center mb-10">What we stand for.</h2>
           <div className="grid md:grid-cols-3 gap-5">
@@ -85,7 +85,7 @@ export default function AboutPage() {
       <ClaudePartnerSection />
 
       {/* ===== Training, separate from the Learning Studio ===== */}
-      <section className="px-6 py-10 lg:py-14">
+      <section className="px-6 py-10 lg:py-10">
         <div className="max-w-[720px] mx-auto text-center">
           <h2 className="display-section">We also deliver live training.</h2>
           <p className="lede mt-4">Instructor-led sessions and workshops, taught live from Mumbai.</p>
@@ -99,7 +99,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-14">
+      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-10">
         <div className="max-w-[1080px] mx-auto">
           <h2 className="display-section text-center mb-10">Find out more.</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">

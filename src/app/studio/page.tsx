@@ -31,16 +31,16 @@ export default async function LabsPage() {
   return (
     <main className="bg-[#f5f6f8] min-h-screen">
       <AcademyBar section="Certifications & Projects" />
-      <section className="max-w-6xl mx-auto px-6 pt-12 lg:pt-16 pb-10 text-center">
+      <section className="max-w-6xl mx-auto px-6 pt-5 lg:pt-6 pb-6 text-center">
         <AcademySwitch active="studio" />
-        <h1 className="font-heading font-bold tracking-[-0.035em] leading-[1.04] text-[clamp(38px,5.4vw,68px)] text-gray-900 max-w-3xl mx-auto mt-12">
+        <h1 className="font-heading font-bold tracking-[-0.035em] leading-[1.04] text-[clamp(38px,5.4vw,68px)] text-gray-900 max-w-3xl mx-auto mt-6">
           Learn it by building it.
         </h1>
         <p className="text-[19px] leading-[1.5] text-[#6e6e73] max-w-2xl mx-auto mt-5">
           Certification courses and real projects on video, with captions and labs. Watch the preview lessons of any course without signing in.
         </p>
       </section>
-      <section className="max-w-4xl mx-auto px-6 pb-14">
+      <section className="max-w-4xl mx-auto px-6 pb-10">
         <p className="text-center text-[13px] font-semibold uppercase tracking-[0.14em] text-[#6e6e73] mb-4">How the Learning Studio works</p>
         <WalkthroughVideo />
       </section>

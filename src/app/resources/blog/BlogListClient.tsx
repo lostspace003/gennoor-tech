@@ -86,7 +86,7 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
     <>
       {/* ===== Featured post — dark card on white ===== */}
       {hero && (
-        <section className="px-8 pt-6 pb-14">
+        <section className="px-8 pt-6 pb-10">
           <Link href={`/resources/blog/${hero.slug}`} className="group block max-w-[1080px] mx-auto">
             <article className="grid grid-cols-1 lg:grid-cols-2 bg-[#1d1d1f] rounded-3xl overflow-hidden">
               <div className="p-9 lg:px-12 lg:py-[52px]">
@@ -137,7 +137,7 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
       )}
 
       {/* ===== Post list — grey band ===== */}
-      <section className="bg-[#f5f5f7] px-8 pt-16 pb-24">
+      <section className="bg-[#f5f5f7] px-8 pt-10 pb-14">
         <div className="max-w-[1080px] mx-auto">
           <div id="catalog-top" />
           <FilterBar
@@ -158,7 +158,7 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
 
           {/* Empty state */}
           {filtered.length === 0 && (
-            <div className="text-center py-20">
+            <div className="text-center py-12">
               <p className="text-lg font-semibold text-gray-900 mb-2">No articles found</p>
               <p className="text-sm text-[#6e6e73] mb-6">
                 Try adjusting your filters or selecting a different time range.
@@ -242,7 +242,7 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
       </section>
 
       {/* ===== Bottom CTA ===== */}
-      <section className="bg-white px-8 py-16 lg:py-20 text-center">
+      <section className="bg-white px-8 py-10 lg:py-12 text-center">
         <h2 className="display-card mb-3">Want insights tailored to your organization?</h2>
         <p className="text-[17px] text-[#6e6e73] max-w-[520px] mx-auto mb-7">
           From strategy workshops to hands-on implementation, we help

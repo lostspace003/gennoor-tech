@@ -16,7 +16,7 @@ interface EnablementMomentProps {
  */
 export default function EnablementMoment({ course, relatedCourses }: EnablementMomentProps) {
   return (
-    <section className="py-16 lg:py-20 relative overflow-hidden">
+    <section className="py-10 lg:py-12 relative overflow-hidden">
       <div className="absolute inset-0 opacity-40" />
 
       <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">

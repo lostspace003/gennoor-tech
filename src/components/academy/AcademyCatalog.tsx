@@ -50,7 +50,7 @@ export default function AcademyCatalog({ allCourses }: AcademyCatalogProps) {
       </section>
 
       {/* Course grid */}
-      <section className="py-8 lg:py-12 relative">
+      <section className="py-8 lg:py-8 relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             {filtered.length === 0 ? (

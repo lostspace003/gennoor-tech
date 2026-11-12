@@ -19,7 +19,7 @@ export default function LabsSpotlight({ className = '' }: { className?: string }
 
   return (
     <section className={`bg-[#0f1824] ${className}`}>
-      <div className="max-w-6xl mx-auto px-6 py-14 lg:py-16">
+      <div className="max-w-6xl mx-auto px-6 py-10 lg:py-10">
         <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
           <div>
             <h2 className="font-heading text-[28px] lg:text-[34px] font-bold tracking-[-0.02em] !text-white">Want to go deeper? Try certifications and projects.</h2>

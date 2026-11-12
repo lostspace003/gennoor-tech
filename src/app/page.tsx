@@ -68,7 +68,7 @@ export default async function HomePage() {
       <WeekendFilm />
 
       {/* ===== How the Learning Studio works ===== */}
-      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-14">
+      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-10">
         <div className="max-w-[980px] mx-auto text-center">
           <h2 className="display-section">See how the Learning Studio works.</h2>
           <p className="lede mt-3.5 max-w-[600px] mx-auto">From the first click to your first lesson, in about nine minutes. Find a course, ask questions, and start learning.</p>
@@ -81,14 +81,14 @@ export default async function HomePage() {
 
       {/* ===== Courses: every Studio course plus the Claude courses, added automatically ===== */}
       {catalogue.length > 0 && (
-        <section className="bg-[#f5f5f7] px-6 py-10 lg:py-14">
+        <section className="bg-[#f5f5f7] px-6 py-10 lg:py-10">
           <div className="max-w-[1080px] mx-auto">
-            <div className="text-center mb-12">
+            <div className="text-center mb-8">
               <h2 className="display-section">Courses at Gennoor.</h2>
               <p className="lede mt-3.5 max-w-[560px] mx-auto">Learning Studio courses you can start today, and Claude courses with instructor-led training. Pick one to open it.</p>
             </div>
             <CourseCarousel cards={catalogue} label="All courses" />
-            <div className="text-center mt-12">
+            <div className="text-center mt-8">
               <Link href="/studio" className="pill-primary">Go to the Learning Studio</Link>
             </div>
           </div>
@@ -96,13 +96,13 @@ export default async function HomePage() {
       )}
 
       {/* ===== Vision ===== */}
-      <section className="bg-white px-6 py-10 lg:py-14">
+      <section className="bg-white px-6 py-10 lg:py-10">
         <div className="max-w-[1080px] mx-auto">
           <div className="max-w-[820px] mx-auto text-center">
             <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-primary-600">Our vision</p>
             <h2 className="display-section mt-4">A world where anyone can learn the skills that work asks for, and prove them.</h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-6 mt-12">
+          <div className="grid md:grid-cols-3 gap-6 mt-8">
             {PILLARS.map(p => (
               <div key={p.title} className="rounded-[18px] border border-[#e8e8ed] p-7 flex flex-col items-center text-center">
                 <p.art className="w-[104px] h-[104px] mb-5" />
@@ -120,7 +120,7 @@ export default async function HomePage() {
       </section>
 
       {/* ===== Live training, separate from the Learning Studio ===== */}
-      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-14">
+      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-10">
         <div className="max-w-[1080px] mx-auto grid md:grid-cols-[auto_1fr] gap-8 items-center rounded-[22px] bg-white p-8 lg:p-10">
           <TrainingIllustration className="w-[96px] h-[96px] mx-auto md:mx-0" />
           <div className="text-center md:text-left">
@@ -135,7 +135,7 @@ export default async function HomePage() {
       </section>
 
       {/* ===== Contact ===== */}
-      <section className="bg-white px-6 py-10 lg:py-14 text-center">
+      <section className="bg-white px-6 py-10 lg:py-10 text-center">
         <h2 className="display-section max-w-[720px] mx-auto">Questions? Talk to us.</h2>
         <div className="flex flex-col sm:flex-row gap-5 sm:gap-[22px] justify-center items-center mt-8">
           <Link href="/contact" className="pill-primary">Contact us</Link>

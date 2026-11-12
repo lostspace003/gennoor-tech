@@ -110,7 +110,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
       />
 
       {/* HERO */}
-      <section className="relative py-10 lg:py-16 overflow-hidden">
+      <section className="relative py-10 lg:py-10 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
@@ -190,7 +190,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
       </section>
 
       {/* WHAT YOU'LL LEARN + WHO IT'S FOR */}
-      <section className="py-10 lg:py-16 relative">
+      <section className="py-10 lg:py-10 relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto">
@@ -242,7 +242,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
       </section>
 
       {/* CHAPTER LIST */}
-      <section className="py-10 lg:py-16 relative">
+      <section className="py-10 lg:py-10 relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto">
@@ -330,7 +330,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
       </section>
 
       {/* ACCESS / STATUS */}
-      <section id="interactive-course" className="py-12 lg:py-14 relative scroll-mt-24">
+      <section id="interactive-course" className="py-8 lg:py-10 relative scroll-mt-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto">
             <div
@@ -425,7 +425,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
       </section>
 
       {/* REFERENCES */}
-      <section className="py-10 lg:py-16 relative">
+      <section className="py-10 lg:py-10 relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto">
@@ -475,7 +475,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
       </section>
 
       {/* COURSE METADATA STRIP */}
-      <section className="py-12 relative">
+      <section className="py-8 relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto">
             <div className="rounded-2xl p-6 glass-card">
@@ -523,7 +523,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
       <EnablementMoment course={course} relatedCourses={relatedCourses} />
 
       {/* BACK TO CATALOG */}
-      <section className="py-12 relative">
+      <section className="py-8 relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Link
             href="/studio"

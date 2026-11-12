@@ -71,10 +71,10 @@ export default function TrainingPage() {
         </div>
       </section>
 
-      <section id="programs" className="bg-white px-6 py-10 lg:py-14">
+      <section id="programs" className="bg-white px-6 py-10 lg:py-10">
         <div className="max-w-[1080px] mx-auto">
           <h2 className="display-section text-center">Training programs.</h2>
-          <p className="lede mt-3.5 max-w-[600px] mx-auto text-center mb-12">Bootcamps and courses for teams. Pick one to see the outline and what it covers.</p>
+          <p className="lede mt-3.5 max-w-[600px] mx-auto text-center mb-8">Bootcamps and courses for teams. Pick one to see the outline and what it covers.</p>
           <ProgramCarousel programs={programs} />
           <div className="text-center mt-10"><Link href="/services/training" className="link-arrow">See all programs ›</Link></div>
         </div>
@@ -82,9 +82,9 @@ export default function TrainingPage() {
 
       <ClaudeCourseCarousels className="bg-[#f5f5f7]" />
 
-      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-14">
+      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-10">
         <div className="max-w-[1000px] mx-auto">
-          <h2 className="display-section text-center mb-12">For any size of team.</h2>
+          <h2 className="display-section text-center mb-8">For any size of team.</h2>
           <div className="grid md:grid-cols-2 gap-6">
             {AUDIENCES.map(a => (
               <div key={a.title} className="bg-white rounded-[18px] p-8 text-center">
@@ -97,9 +97,9 @@ export default function TrainingPage() {
         </div>
       </section>
 
-      <section className="bg-white px-6 py-10 lg:py-14">
+      <section className="bg-white px-6 py-10 lg:py-10">
         <div className="max-w-[1080px] mx-auto">
-          <h2 className="display-section text-center mb-12">What we teach.</h2>
+          <h2 className="display-section text-center mb-8">What we teach.</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {TOPICS.map(t => (
               <div key={t.title} className="rounded-[18px] border border-[#e8e8ed] p-7 flex flex-col items-center text-center">
@@ -113,9 +113,9 @@ export default function TrainingPage() {
         </div>
       </section>
 
-      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-14">
+      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-10">
         <div className="max-w-[1080px] mx-auto">
-          <h2 className="display-section text-center mb-12">How a course is built.</h2>
+          <h2 className="display-section text-center mb-8">How a course is built.</h2>
           <ol className="grid md:grid-cols-3 gap-6">
             {BUILD.map(b => (
               <li key={b.title} className="bg-white rounded-[18px] p-7 text-center">
@@ -128,7 +128,7 @@ export default function TrainingPage() {
         </div>
       </section>
 
-      <section className="bg-white px-6 py-10 lg:py-14 text-center">
+      <section className="bg-white px-6 py-10 lg:py-10 text-center">
         <h2 className="display-section max-w-[680px] mx-auto">Prefer to learn on your own?</h2>
         <p className="lede mt-3.5 max-w-[480px] mx-auto">Video courses with labs and quizzes in the Learning Studio.</p>
         <div className="mt-8"><Link href="/studio" className="pill-primary">Open the Learning Studio</Link></div>

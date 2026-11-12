@@ -337,7 +337,7 @@ export default function LinkedInHubPage() {
       </div>
 
       {!st ? <Loader2 className="w-5 h-5 animate-spin text-gray-400" /> : tab === 'overview' ? (
-        <div className="max-w-5xl space-y-5">
+        <div className="w-full space-y-5">
           {/* The one thing most visits are for */}
           <form onSubmit={e => { e.preventDefault(); if (quickText.trim()) run(quickDef.tool, { keywords: quickText.trim() }) }} className="rounded-xl border border-gray-200 bg-white shadow-sm p-4">
             <div className="text-sm font-semibold mb-2.5">Search LinkedIn</div>

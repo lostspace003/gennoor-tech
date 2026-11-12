@@ -127,7 +127,7 @@ export default function WeekendAdminPage() {
   }
 
   return (
-    <div className="w-full p-4 lg:p-5 max-w-6xl">
+    <div className="w-full p-4 lg:p-5">
       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
         <div className="flex flex-wrap items-center gap-2.5">
           <h1 className="text-xl font-semibold tracking-tight">AI Weekend</h1>

@@ -18,7 +18,7 @@ export default function PrivacyPage() {
         size="compact"
       />
 
-      <div className="max-w-3xl mx-auto px-4 pt-8 pb-16 sm:pb-24">
+      <div className="max-w-3xl mx-auto px-4 pt-8 pb-10 sm:pb-14">
         <div className="bg-white rounded-2xl border border-gray-200/70 shadow-[0_2px_4px_rgba(15,23,42,0.05),0_16px_36px_-14px_rgba(15,23,42,0.08)] p-8 sm:p-10">
         <div className="space-y-8 text-gray-700 text-[15px] leading-relaxed">
           <section>
@@ -149,7 +149,7 @@ export default function PrivacyPage() {
           </section>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-200">
+        <div className="mt-8 pt-8 border-t border-gray-200">
           <Link href="/" className="text-primary-600 hover:underline text-sm">
             &larr; Back to Home
           </Link>

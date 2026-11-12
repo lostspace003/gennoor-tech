@@ -31,17 +31,17 @@ export default function AcademyPage() {
 
       {/* Hero — leads with the Academy's positioning, same promise as
           /academy, before narrowing to the interactive format below. */}
-      <section className="relative py-16 lg:py-24 overflow-hidden">
+      <section className="relative py-6 lg:py-8 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
-            <div className="mb-10 flex justify-center"><AcademySwitch active="essentials" /></div>
-            <h1 className="font-heading text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 leading-[1.05] mb-6">
+            <div className="mb-6 flex justify-center"><AcademySwitch active="essentials" /></div>
+            <h1 className="font-heading text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 leading-[1.05] mb-4">
               Learn something useful in an hour.
             </h1>
-            <p className="text-lg sm:text-xl text-gray-600 leading-relaxed mb-10 max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-600 leading-relaxed mb-6 max-w-2xl mx-auto">
               {totalCourses} interactive courses with animated slides, narration and a short quiz. A certificate when you finish.
             </p>
 
@@ -58,7 +58,7 @@ export default function AcademyPage() {
         </div>
       </section>
 
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 pb-14">
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 pb-10">
         <p className="text-center text-[13px] font-semibold uppercase tracking-[0.14em] text-gray-500 mb-4">How the Learning Studio works</p>
         <WalkthroughVideo />
       </section>
@@ -72,7 +72,7 @@ export default function AcademyPage() {
       <section className="section-padding relative">
         <div className="section-divider absolute top-0 left-[10%] right-[10%]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h2 className="font-heading text-3xl font-bold text-gray-900 mb-3">How It Works</h2>
             <p className="text-gray-500 max-w-xl mx-auto">
               Three steps from opening the first chapter to applying what you learned.

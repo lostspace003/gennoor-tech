@@ -630,7 +630,7 @@ export default function AdminDashboard() {
       <MenuBridge activeTab={activeTab} badges={badges} onSelect={selectFromMenu} />
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-y-2 gap-x-3">
+        <div className="w-full px-4 sm:px-5 py-2.5 flex flex-wrap items-center justify-between gap-y-2 gap-x-3">
           <div className="flex items-center gap-3 min-w-0">
             <div>
               <h1 className="text-base font-semibold text-gray-800">Gennoor Admin</h1>
@@ -663,7 +663,7 @@ export default function AdminDashboard() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 overflow-x-hidden">
+      <div className="w-full px-4 sm:px-5 py-3 overflow-x-hidden">
         <div className="flex flex-col md:flex-row gap-4 md:gap-5">
           {/* Content Area */}
           <div className="flex-1 min-w-0">

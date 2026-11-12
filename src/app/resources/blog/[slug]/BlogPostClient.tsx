@@ -275,7 +275,7 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
         <article className="rounded-2xl shadow-xl overflow-hidden" style={{ backgroundColor: '#ffffff', border: '1px solid rgba(229,231,235,0.6)' }}>
 
           {/* Header */}
-          <header className="relative overflow-hidden px-6 sm:px-10 py-12 lg:py-16" style={{ backgroundColor: post.coverColor }}>
+          <header className="relative overflow-hidden px-6 sm:px-10 py-8 lg:py-10" style={{ backgroundColor: post.coverColor }}>
             <div className="relative max-w-2xl" style={{ zIndex: 1 }}>
               <Link href="/resources/blog" className="inline-flex items-center gap-1.5 text-sm mb-5 transition-colors"
                 style={{ color: 'rgba(255,255,255,0.7)' }}>
@@ -321,7 +321,7 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
           <KeyTakeaways takeaways={post.keyTakeaways} tldr={post.tldr} />
 
           {/* Body */}
-          <div className="px-6 sm:px-10 py-10 lg:py-12">
+          <div className="px-6 sm:px-10 py-10 lg:py-8">
             <div
               className="prose prose-lg prose-gray max-w-none
                 prose-headings:text-gray-900 prose-headings:font-bold prose-headings:tracking-tight

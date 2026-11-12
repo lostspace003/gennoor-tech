@@ -87,7 +87,7 @@ export default function AI103StudyGuidePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
 
       {/* Hero */}
-      <section className="relative py-10 lg:py-16 overflow-hidden">
+      <section className="relative py-10 lg:py-10 overflow-hidden">
         <div className="absolute inset-0 bg-gray-50" aria-hidden="true" />
         <div className="absolute inset-0" aria-hidden="true" />
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -138,7 +138,7 @@ export default function AI103StudyGuidePage() {
       </section>
 
       {/* Exam Overview */}
-      <section className="py-14 lg:py-16 bg-white">
+      <section className="py-10 lg:py-10 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-5">Exam Overview</h2>
           <p className="text-base text-gray-600 mb-5 leading-relaxed">
@@ -180,7 +180,7 @@ export default function AI103StudyGuidePage() {
       </section>
 
       {/* Skills Measured */}
-      <section className="py-14 lg:py-16 bg-gray-50">
+      <section className="py-10 lg:py-10 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-3">Skills Measured</h2>
           <p className="text-base text-gray-600 mb-8 leading-relaxed">
@@ -251,7 +251,7 @@ export default function AI103StudyGuidePage() {
       </section>
 
       {/* Study plan */}
-      <section className="py-14 lg:py-16 bg-white">
+      <section className="py-10 lg:py-10 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-3">
             <Target className="w-7 h-7 text-primary-600" />
@@ -293,7 +293,7 @@ export default function AI103StudyGuidePage() {
       </section>
 
       {/* Tips */}
-      <section className="py-14 lg:py-16 bg-gray-50">
+      <section className="py-10 lg:py-10 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-3">
             <Lightbulb className="w-7 h-7 text-primary-600" />
@@ -318,7 +318,7 @@ export default function AI103StudyGuidePage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-14 lg:py-16 bg-white">
+      <section className="py-10 lg:py-10 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
             <HelpCircle className="w-7 h-7 text-primary-600" />
@@ -336,7 +336,7 @@ export default function AI103StudyGuidePage() {
       </section>
 
       {/* CTA */}
-      <section className="py-10 lg:py-16 relative overflow-hidden">
+      <section className="py-10 lg:py-10 relative overflow-hidden">
         <div className="absolute inset-0 bg-gray-50" aria-hidden="true" />
         <div className="absolute inset-0" aria-hidden="true" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">

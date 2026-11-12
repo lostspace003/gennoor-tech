@@ -45,7 +45,7 @@ export default function Footer() {
 
   return (
     <footer className="bg-[#f5f5f7] border-t border-[#e8e8ed]">
-      <div className="max-w-[1080px] mx-auto px-6 sm:px-8 pt-12 pb-8">
+      <div className="max-w-[1080px] mx-auto px-6 sm:px-8 pt-8 pb-8">
         {/* Link columns */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {siteConfig.navigation.footer.map(section => (

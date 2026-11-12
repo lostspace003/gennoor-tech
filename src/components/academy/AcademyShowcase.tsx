@@ -200,7 +200,7 @@ export default function AcademyShowcase() {
             const Mock = slide.Mock
             return (
               <div key={slide.key} className={`w-full flex-shrink-0 ${slide.panel} rounded-3xl`}>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center px-8 py-10 sm:px-12 sm:py-12 lg:px-14 min-h-[380px]">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center px-8 py-10 sm:px-12 sm:py-8 lg:px-14 min-h-[380px]">
                   <div>
                     <div className={`kicker !tracking-[0.14em] mb-3 ${slide.dark ? '' : ''}`}>
                       {slide.kicker}

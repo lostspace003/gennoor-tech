@@ -29,7 +29,7 @@ export default async function TocCoursePage({ params }: PageProps) {
   const links = tocLinks(c)
   return (
     <main className="bg-white">
-      <section className="bg-[#0b1220] text-white px-6 py-14 lg:py-20">
+      <section className="bg-[#0b1220] text-white px-6 py-10 lg:py-12">
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
           <div>
             <p className="text-sm font-semibold text-[#8fb8ff] mb-3">{c.domain}</p>
@@ -41,11 +41,11 @@ export default async function TocCoursePage({ params }: PageProps) {
         </div>
       </section>
 
-      <div className="max-w-6xl mx-auto px-6 py-12">
+      <div className="max-w-6xl mx-auto px-6 py-8">
         <LiveTrainerPointers days={c.days} hours={c.hours} />
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 pb-20 grid lg:grid-cols-[minmax(0,1fr)_320px] gap-14">
+      <div className="max-w-6xl mx-auto px-6 pb-12 grid lg:grid-cols-[minmax(0,1fr)_320px] gap-14">
         <div className="space-y-14">
           <section>
             <h2 className="font-heading text-[26px] font-bold tracking-[-0.02em] text-gray-900 mb-5">What you will be able to do</h2>

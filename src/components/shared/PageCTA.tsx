@@ -35,7 +35,7 @@ export default function PageCTA({
   footnote,
 }: PageCTAProps) {
   return (
-    <section className="py-16 lg:py-24 relative overflow-hidden">
+    <section className="py-10 lg:py-14 relative overflow-hidden">
       {/* Flat closing panel, separated by its surface and a top hairline. */}
       <div className="absolute inset-0 bg-gray-50" aria-hidden="true" />
       <div className="absolute inset-x-0 top-0 h-px bg-gray-200" aria-hidden="true" />

@@ -42,7 +42,7 @@ export default function CredentialsPage() {
         </div>
       </section>
 
-      <section className="px-6 pb-14">
+      <section className="px-6 pb-10">
         <dl className="max-w-[900px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
           {stats.map(s => (
             <div key={s.label} className="rounded-[18px] bg-[#f5f5f7] px-5 py-6 text-center">
@@ -56,14 +56,14 @@ export default function CredentialsPage() {
         </p>
       </section>
 
-      <section className="px-6 pb-20 lg:pb-[100px]">
+      <section className="px-6 pb-12 lg:pb-[100px]">
         <div className="max-w-[900px] mx-auto">
           <h2 className="display-section text-center mb-10">Year by year.</h2>
           <CredentialTimeline items={credentials} />
         </div>
       </section>
 
-      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-14">
+      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-10">
         <div className="max-w-[900px] mx-auto">
           <h2 className="display-section text-center mb-10">Instructor background.</h2>
           <ol className="space-y-5">
@@ -81,7 +81,7 @@ export default function CredentialsPage() {
       </section>
 
       {other.length > 0 && (
-        <section className="px-6 py-10 lg:py-14">
+        <section className="px-6 py-10 lg:py-10">
           <div className="max-w-[900px] mx-auto">
             <h2 className="display-section text-center mb-3">Other credentials.</h2>
             <p className="text-center text-[15px] text-[#6e6e73] mb-10">Not on the Microsoft transcript. Each has its own certificate.</p>

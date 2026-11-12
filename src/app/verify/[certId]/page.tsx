@@ -77,7 +77,7 @@ export default async function VerifyPage({ params }: Props) {
 
   if (!cert) {
     return (
-      <main className="min-h-screen bg-[#f5f0eb] flex items-center justify-center px-4 py-20">
+      <main className="min-h-screen bg-[#f5f0eb] flex items-center justify-center px-4 py-12">
         <ScrollReveal>
           <div className="max-w-lg w-full bg-white rounded-2xl shadow-xl p-10 text-center border border-red-100">
             <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-red-50 flex items-center justify-center">
@@ -116,7 +116,7 @@ export default async function VerifyPage({ params }: Props) {
   const academyCourse = isAcademy ? configCourses.find(c => c.id === cert.workshopSlug) : undefined
 
   return (
-    <main className="min-h-screen bg-[#f5f0eb] py-12 sm:py-20 px-4 scroll-smooth">
+    <main className="min-h-screen bg-[#f5f0eb] py-8 sm:py-12 px-4 scroll-smooth">
       <div className="max-w-4xl mx-auto">
         <ScrollReveal>
           <div className="inline-flex items-center gap-2 bg-green-50 border border-green-200 rounded-full px-4 py-2 mb-6">
