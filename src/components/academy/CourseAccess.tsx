@@ -2,14 +2,19 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, Lock, Maximize, Pause, Play, PlayCircle, Volume2, VolumeX, X } from 'lucide-react'
+import { Check, Loader2, Lock, Maximize, Pause, Play, PlayCircle, Volume2, VolumeX, X } from 'lucide-react'
 import { useLearnerAuth } from '@/hooks/useLearnerAuth'
 import LearnerAuthModal from './LearnerAuthModal'
+import { OfferPill } from './Offer'
 
 // Everything a visitor who does not own the course can do on its page:
 // watch a preview lesson (no sign-in), or buy the full course (sign-in, then pay).
 
 export interface Price { usd: number; inr: number }
+/** A course shown as discounted: the percent off, and the regular price it is taken from. */
+export interface Offer { percent: number; regular: Price }
+/** A coupon code the buyer has typed in, and what the course costs with it (zero is free). */
+export interface AppliedCoupon { code: string; percent: number; price: Price }
 const usd = (n: number) => `$${n.toFixed(2)}`
 const inr = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`
 
@@ -31,7 +36,14 @@ function loadRazorpay(): Promise<boolean> {
 
 // ---------------------------------------------------------------- buying
 
-interface BuyApi { buy: () => void; busy: boolean; price: Price; india: boolean; setIndia: (v: boolean) => void }
+interface BuyApi {
+  buy: () => void; busy: boolean; price: Price; india: boolean; setIndia: (v: boolean) => void
+  offer: Offer | null
+  coupon: AppliedCoupon | null
+  /** Check a code with the server. Returns the reason when it cannot be used. */
+  applyCoupon: (code: string) => Promise<string | null>
+  clearCoupon: () => void
+}
 const BuyContext = createContext<BuyApi | null>(null)
 export const useBuy = () => useContext(BuyContext)
 
@@ -40,23 +52,37 @@ export const useBuy = () => useContext(BuyContext)
  * locked lessons and the end of a preview all start the same thing:
  * sign in if needed, then pay, then open the course.
  */
-export function CourseBuyProvider({ slug, price, children }: { slug: string; price: Price; children: React.ReactNode }) {
+export function CourseBuyProvider({ slug, price, offer = null, children }: { slug: string; price: Price; offer?: Offer | null; children: React.ReactNode }) {
   const router = useRouter()
   const { isLoggedIn, refreshSession } = useLearnerAuth()
   const [authOpen, setAuthOpen] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [india, setIndia] = useState(false)
+  const [coupon, setCoupon] = useState<AppliedCoupon | null>(null)
   useEffect(() => setIndia(looksLikeIndia()), [])
+
+  const applyCoupon = useCallback(async (code: string) => {
+    try {
+      const r = await fetch('/api/lms/coupon', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, code }) })
+      const j = await r.json().catch(() => ({}))
+      if (!r.ok || !j.code) return j.error || 'We could not check that code. Please try again.'
+      setCoupon({ code: j.code, percent: j.percent, price: j.price })
+      return null
+    } catch {
+      return 'We could not reach the server. Check your connection and try again.'
+    }
+  }, [slug])
 
   const pay = useCallback(async () => {
     setBusy(true)
     setError('')
     try {
-      const res = await fetch('/api/lms/buy', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, india }) })
+      const res = await fetch('/api/lms/buy', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, india, coupon: coupon?.code }) })
       if (res.status === 401) { setAuthOpen(true); setBusy(false); return }
       const j = await res.json().catch(() => ({}))
-      if (j.owned) { router.push(`/studio/${slug}/learn`); return }
+      if (j.owned) { router.push(`/studio/${slug}/learn`); router.refresh(); return }
+      if (j.couponRejected) setCoupon(null)
       if (!res.ok || !j.checkout) { setError(j.error || 'We could not start the payment. Please try again.'); setBusy(false); return }
       if (!(await loadRazorpay())) { setError('The payment window could not load. Check your connection and try again.'); setBusy(false); return }
 
@@ -65,7 +91,7 @@ export function CourseBuyProvider({ slug, price, children }: { slug: string; pri
         key: c.keyId, order_id: c.orderId, amount: c.amount, currency: c.currency,
         name: 'Gennoor Tech', image: 'https://www.gennoor.com/logos/gennoor-tech-linkedin-profile-400x400.png', description: c.description,
         prefill: { name: c.name, email: c.email },
-        theme: { color: '#ec4899' },
+        theme: { color: '#0071e3' },
         modal: { ondismiss: () => setBusy(false) },
         handler: async (r: Record<string, string>) => {
           try {
@@ -86,12 +112,12 @@ export function CourseBuyProvider({ slug, price, children }: { slug: string; pri
       setError('We could not reach the server. Check your connection and try again.')
       setBusy(false)
     }
-  }, [slug, india, router])
+  }, [slug, india, coupon, router])
 
   const buy = useCallback(() => (isLoggedIn ? pay() : setAuthOpen(true)), [isLoggedIn, pay])
 
   return (
-    <BuyContext.Provider value={{ buy, busy, price, india, setIndia }}>
+    <BuyContext.Provider value={{ buy, busy, price, india, setIndia, offer, coupon, applyCoupon, clearCoupon: () => setCoupon(null) }}>
       {children}
       {error && (
         <div role="alert" className="fixed inset-x-0 bottom-6 z-50 flex justify-center px-4">
@@ -123,11 +149,78 @@ export function CurrencyNote({ className = '' }: { className?: string }) {
   )
 }
 
+/** The price in the buyer's currency. With an offer or a coupon, the higher price is struck through beside it. */
+export function PriceLine({ className = '' }: { className?: string }) {
+  const b = useBuy()
+  if (!b) return null
+  const show = (p: Price) => (b.india ? inr(p.inr) : usd(p.usd))
+  const now = b.coupon ? b.coupon.price : b.price
+  const was = b.coupon ? b.price : b.offer?.regular
+  // With neither an offer nor a code, the button already says the price
+  if (!was) return null
+  return (
+    <div className={`flex flex-wrap items-center gap-x-3 gap-y-1.5 ${className}`}>
+      <span className="text-[30px] font-bold leading-none tracking-tight text-white tabular-nums">{now.usd === 0 ? 'Free' : show(now)}</span>
+      {was && <s className="text-[17px] text-[#8d9bb0] tabular-nums">{show(was)}</s>}
+      {b.coupon
+        ? <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-[3px] text-[12.5px] font-semibold text-white"><Check className="w-3.5 h-3.5" strokeWidth={3} />{b.coupon.percent}% off with your code</span>
+        : b.offer && <OfferPill percent={b.offer.percent} />}
+    </div>
+  )
+}
+
+/** "Have a coupon code?": opens a small box to type one in. Made for the dark parts of the course page. */
+export function CouponBox({ className = '' }: { className?: string }) {
+  const b = useBuy()
+  const [open, setOpen] = useState(false)
+  const [code, setCode] = useState('')
+  const [checking, setChecking] = useState(false)
+  const [problem, setProblem] = useState('')
+  if (!b) return null
+
+  if (b.coupon) {
+    return (
+      <p className={`text-[13px] text-[#aab6c8] ${className}`}>
+        Code <b className="font-semibold text-white">{b.coupon.code}</b> applied: {b.coupon.percent >= 100 ? 'the course is free' : `${b.coupon.percent}% off`}.{' '}
+        <button type="button" onClick={() => { b.clearCoupon(); setCode(''); setOpen(false) }} className="underline underline-offset-2 hover:text-white">Remove</button>
+      </p>
+    )
+  }
+  if (!open) {
+    return <button type="button" onClick={() => setOpen(true)} className={`text-[13px] text-[#8d9bb0] underline underline-offset-2 hover:text-white ${className}`}>Have a coupon code?</button>
+  }
+  const apply = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!code.trim() || checking) return
+    setChecking(true); setProblem('')
+    const why = await b.applyCoupon(code)
+    setChecking(false)
+    if (why) setProblem(why)
+  }
+  return (
+    <form onSubmit={apply} className={className}>
+      <div className="flex items-center gap-2">
+        <input
+          value={code} onChange={(e) => { setCode(e.target.value.toUpperCase()); setProblem('') }} autoFocus maxLength={24}
+          aria-label="Coupon code" placeholder="Coupon code" autoComplete="off" spellCheck={false}
+          className="w-44 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-[14px] font-medium tracking-wide text-white placeholder:font-normal placeholder:tracking-normal placeholder:text-[#8d9bb0] focus:border-[#5aa9f3] focus:ring-0"
+        />
+        <button type="submit" disabled={!code.trim() || checking} className="inline-flex items-center gap-1.5 rounded-full border border-white/30 px-4 py-2 text-[13.5px] font-semibold text-white hover:bg-white/10 disabled:opacity-50">
+          {checking && <Loader2 className="w-3.5 h-3.5 animate-spin" />}Apply
+        </button>
+      </div>
+      {problem && <p role="alert" className="mt-2 text-[13px] text-[#ffb4ab]">{problem}</p>}
+    </form>
+  )
+}
+
 /** The main button: "Buy the full course · $9.99". */
 export function BuyButton({ className = '', label }: { className?: string; label?: string }) {
   const b = useBuy()
   if (!b) return null
-  const shown = b.india ? inr(b.price.inr) : usd(b.price.usd)
+  const free = b.coupon?.price.usd === 0
+  const now = b.coupon ? b.coupon.price : b.price
+  const shown = free ? 'Free' : b.india ? inr(now.inr) : usd(now.usd)
   return (
     <button
       type="button"
@@ -136,7 +229,7 @@ export function BuyButton({ className = '', label }: { className?: string; label
       className={`inline-flex items-center justify-center gap-2 px-7 py-3 bg-primary-600 hover:bg-[#0077ed] text-white text-sm font-semibold rounded-full transition-colors disabled:opacity-60 ${className}`}
     >
       {b.busy && <Loader2 className="w-4 h-4 animate-spin" />}
-      {label || 'Buy the full course'} · {shown}
+      {free ? 'Get the full course' : label || 'Buy the full course'} · {shown}
     </button>
   )
 }
@@ -270,7 +363,7 @@ function PreviewPlayer({ slug, id, title, all, onPick, onClose }: { slug: string
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-3 sm:p-6" role="dialog" aria-modal="true" aria-label={`Preview: ${title}`} onClick={onClose}>
-      <div className="w-full max-w-4xl max-h-full overflow-y-auto rounded-2xl bg-[#0f1824] text-white shadow-2xl" style={{ scrollbarColor: "#ec4899 transparent", scrollbarWidth: "thin" }} onClick={(e) => e.stopPropagation()}>
+      <div className="w-full max-w-4xl max-h-full overflow-y-auto rounded-2xl bg-[#0f1824] text-white shadow-2xl" style={{ scrollbarColor: "#1a8cf0 transparent", scrollbarWidth: "thin" }} onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between gap-3 px-4 py-3">
           <div className="min-w-0">
             <div className="text-[11.5px] font-semibold uppercase tracking-wider text-[#8d9bb0]">Preview</div>
@@ -302,7 +395,7 @@ function PreviewPlayer({ slug, id, title, all, onPick, onClose }: { slug: string
             </div>
           )}
         </div>
-        {/* Controls: always on screen, with a pink slider to move through the lesson */}
+        {/* Controls: always on screen, with a slider in the site's blue to move through the lesson */}
         <div className="flex items-center gap-3 px-4 pt-3">
           <button type="button" onClick={toggle} aria-label={playing ? 'Pause' : 'Play'} className="p-2 rounded-full bg-white/10 hover:bg-white/20 shrink-0">
             {playing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
@@ -328,18 +421,21 @@ function PreviewPlayer({ slug, id, title, all, onPick, onClose }: { slug: string
         </div>
         <style>{`
           input[type="range"].preview-seek { -webkit-appearance: none; appearance: none; height: 22px; background: transparent; cursor: pointer; }
-          input[type="range"].preview-seek::-webkit-slider-runnable-track { height: 6px; border-radius: 999px; background: linear-gradient(to right, #ec4899 var(--done), rgba(255,255,255,.28) var(--done)); }
+          input[type="range"].preview-seek::-webkit-slider-runnable-track { height: 6px; border-radius: 999px; background: linear-gradient(to right, #1a8cf0 var(--done), rgba(255,255,255,.28) var(--done)); }
           input[type="range"].preview-seek::-moz-range-track { height: 6px; border-radius: 999px; background: rgba(255,255,255,.28); }
-          input[type="range"].preview-seek::-moz-range-progress { height: 6px; border-radius: 999px; background: #ec4899; }
-          input[type="range"].preview-seek::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; margin-top: -6px; border-radius: 50%; background: #ec4899; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.5); }
-          input[type="range"].preview-seek::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #ec4899; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.5); }
-          input[type="range"].preview-seek:focus-visible { outline: 2px solid #f9a8d4; outline-offset: 4px; border-radius: 999px; }
+          input[type="range"].preview-seek::-moz-range-progress { height: 6px; border-radius: 999px; background: #1a8cf0; }
+          input[type="range"].preview-seek::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; margin-top: -6px; border-radius: 50%; background: #1a8cf0; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.5); }
+          input[type="range"].preview-seek::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #1a8cf0; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.5); }
+          input[type="range"].preview-seek:focus-visible { outline: 2px solid #7dbcf7; outline-offset: 4px; border-radius: 999px; }
           input[type="range"].preview-seek:disabled { opacity: .5; cursor: default; }
         `}</style>
         {b && (
           <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
             <p className="text-[13.5px] text-[#aab6c8]">You are watching a free preview. No sign-in needed.</p>
-            <BuyButton className="!px-5 !py-2" />
+            <div className="flex items-center gap-3">
+              {b.offer && !b.coupon && <OfferPill percent={b.offer.percent} />}
+              <BuyButton className="!px-5 !py-2" />
+            </div>
           </div>
         )}
         {/* The other previews, so they can all be watched from here */}
@@ -355,9 +451,9 @@ function PreviewPlayer({ slug, id, title, all, onPick, onClose }: { slug: string
                     aria-current={p.id === id ? 'true' : undefined}
                     className={`w-full flex items-start gap-2.5 rounded-lg px-3 py-2 text-left text-[13.5px] leading-snug transition-colors ${p.id === id ? 'bg-white/15 text-white' : 'text-[#c9d2e0] hover:bg-white/10'}`}
                   >
-                    <span className={`shrink-0 tabular-nums ${p.id === id ? 'text-[#f9a8d4]' : 'text-[#8d9bb0]'}`}>{i + 1}</span>
+                    <span className={`shrink-0 tabular-nums ${p.id === id ? 'text-[#7dbcf7]' : 'text-[#8d9bb0]'}`}>{i + 1}</span>
                     <span className="min-w-0 flex-1">{p.title}</span>
-                    {p.id === id && <span className="shrink-0 text-[11px] font-semibold text-[#f9a8d4]">Playing</span>}
+                    {p.id === id && <span className="shrink-0 text-[11px] font-semibold text-[#7dbcf7]">Playing</span>}
                   </button>
                 </li>
               ))}

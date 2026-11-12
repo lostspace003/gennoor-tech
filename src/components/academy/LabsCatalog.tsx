@@ -7,6 +7,7 @@ import { FilterBar, Pagination, usePage, type SortKey } from './CatalogControls'
 import type { LmsCourseCard } from '@/lib/lms'
 import PromoPlayer from './PromoPlayer'
 import { Stars } from './Stars'
+import { OfferRibbon } from './Offer'
 import { EMPTY_CUSTOM, TRACKS, mergedOptions, type CustomTaxonomy } from '@/lib/lms-taxonomy'
 
 export default function LabsCatalog({ courses, custom = EMPTY_CUSTOM }: { courses: LmsCourseCard[]; custom?: CustomTaxonomy }) {
@@ -158,6 +159,7 @@ export default function LabsCatalog({ courses, custom = EMPTY_CUSTOM }: { course
                               <div className="w-full h-full flex items-center justify-center text-white/80 text-3xl font-bold tracking-tight">{c.code}</div>
                             )}
                             <span className="absolute left-3 top-3 rounded-full bg-black/55 backdrop-blur px-3 py-1 text-[12px] font-medium text-white">{c.vendor}</span>
+                            {c.offer && <OfferRibbon percent={c.offer.percent} />}
                           </>
                         )}
                       </div>
@@ -187,9 +189,12 @@ export default function LabsCatalog({ courses, custom = EMPTY_CUSTOM }: { course
                           {c.lectures} lessons{c.hours ? `, ${c.hours} hours` : ''}
                         </p>
                         {/* What it costs, and what can be watched before paying */}
-                        <div className="mt-4 pt-4 border-t border-[#eef0f4] flex items-center justify-between gap-3">
+                        <div className="mt-4 pt-4 border-t border-[#eef0f4] flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
                           {c.priceUsd ? (
-                            <span className="text-[20px] font-bold tracking-tight text-gray-900 tabular-nums">${c.priceUsd.toFixed(2)}</span>
+                            <span className="flex items-baseline gap-2">
+                              <span className="text-[20px] font-bold tracking-tight text-gray-900 tabular-nums">${c.priceUsd.toFixed(2)}</span>
+                              {c.offer && <s className="text-[14px] text-[#86868b] tabular-nums">${c.offer.regularUsd.toFixed(2)}</s>}
+                            </span>
                           ) : (
                             <span className="text-[15px] font-semibold text-emerald-700">Free</span>
                           )}

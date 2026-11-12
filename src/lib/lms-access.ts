@@ -102,11 +102,73 @@ export async function priceOf(slug: string): Promise<CoursePrice | null> {
 export const formatUsd = (n: number) => `$${n.toFixed(2)}`
 export const formatInr = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`
 
+// ---------------------------------------------------------------- offers
+
+/**
+ * An offer shows a course as discounted: the price people pay stays the course's
+ * price, and a higher regular price is shown struck through beside it.
+ *
+ * Each course's offer is switched on or off on the staff Payments page. Until
+ * someone does, certification and project courses carry an offer of 30, 40 or
+ * 50 percent (fixed per course, so it does not change between visits) and
+ * every other course carries none.
+ */
+export interface OfferSetting { on: boolean; percent: number }
+export interface CourseOffer { percent: number; regular: CoursePrice }
+
+const OFFER_CHOICES = [30, 40, 50]
+const OFFERS_BLOB = 'lms/offers.json'
+let offerCache: { at: number; offers: Record<string, OfferSetting> } | null = null
+
+export async function getOfferSettings(force = false): Promise<Record<string, OfferSetting>> {
+  if (!force && offerCache && Date.now() - offerCache.at < 60_000) return offerCache.offers
+  let offers: Record<string, OfferSetting> = {}
+  try {
+    const raw = await readBlob(OFFERS_BLOB)
+    if (raw) offers = JSON.parse(raw.toString('utf-8'))
+  } catch {
+    // storage unreachable: the standard offers apply
+  }
+  offerCache = { at: Date.now(), offers }
+  return offers
+}
+
+export async function saveOfferSetting(slug: string, setting: OfferSetting): Promise<void> {
+  const offers = { ...(await getOfferSettings(true)), [slug]: setting }
+  await writeBlob(OFFERS_BLOB, JSON.stringify(offers), 'application/json')
+  offerCache = { at: Date.now(), offers }
+}
+
+/** The offer setting of a course: what staff chose, or the standard one for its kind. */
+export async function offerSettingOf(course: Pick<LmsCourse, 'slug' | 'kind'>): Promise<OfferSetting> {
+  const s = (await getOfferSettings())[course.slug]
+  if (s) return { on: !!s.on, percent: s.percent }
+  return {
+    on: course.kind === 'certification' || course.kind === 'project',
+    percent: OFFER_CHOICES[hash(`${course.slug}:offer`) % OFFER_CHOICES.length],
+  }
+}
+
+/** The regular price that goes with a price and a percent off. */
+export function regularPrice(price: CoursePrice, percent: number): CoursePrice {
+  const keep = 1 - percent / 100
+  return { usd: Math.round((price.usd / keep) * 100) / 100, inr: Math.round(price.inr / keep) }
+}
+
+/** The offer to show on a course, or null when it has none (or is free). */
+export async function offerOf(course: Pick<LmsCourse, 'slug' | 'kind'>, price?: CoursePrice | null): Promise<CourseOffer | null> {
+  const p = price === undefined ? await priceOf(course.slug) : price
+  if (!p) return null
+  const s = await offerSettingOf(course)
+  if (!s.on || !(s.percent >= 5 && s.percent <= 90)) return null
+  return { percent: s.percent, regular: regularPrice(p, s.percent) }
+}
+
 // ---------------------------------------------------------------- purchases
 
 const tables = new Map<string, TableClient>()
 const ready = new Set<string>()
-async function table(name: string): Promise<TableClient> {
+export async function table(name: string): Promise<TableClient> {
   let t = tables.get(name)
   if (!t) {
     t = TableClient.fromConnectionString(getStorage().conn, name)
@@ -118,7 +180,7 @@ async function table(name: string): Promise<TableClient> {
   }
   return t
 }
-const key = (email: string) => email.trim().toLowerCase()
+export const key = (email: string) => email.trim().toLowerCase()
 
 export interface Purchase {
   email: string
@@ -131,6 +193,8 @@ export interface Purchase {
   orderId: string
   paymentId: string
   at: string
+  /** The coupon code used, when there was one */
+  coupon?: string
 }
 
 export async function hasPurchased(email: string, slug: string): Promise<boolean> {
@@ -150,6 +214,7 @@ export async function listPurchases(): Promise<Purchase[]> {
       email: String(e.partitionKey), slug: String(e.rowKey), name: String(e.name || ''), courseTitle: String(e.courseTitle || ''),
       amount: Number(e.amount || 0), currency: e.currency === 'INR' ? 'INR' : 'USD',
       orderId: String(e.orderId || ''), paymentId: String(e.paymentId || ''), at: String(e.at || ''),
+      coupon: e.coupon ? String(e.coupon) : undefined,
     })
   }
   return out.sort((a, b) => b.at.localeCompare(a.at))
@@ -164,7 +229,7 @@ export async function purchasedSlugs(email: string): Promise<string[]> {
 }
 
 // An order is opened when someone presses Buy and is settled when Razorpay confirms the payment.
-export interface CourseOrder { orderId: string; email: string; name: string; slug: string; amount: number; currency: 'USD' | 'INR'; status: 'open' | 'paid'; at: string }
+export interface CourseOrder { orderId: string; email: string; name: string; slug: string; amount: number; currency: 'USD' | 'INR'; status: 'open' | 'paid'; at: string; coupon?: string }
 
 export async function saveOrder(o: CourseOrder): Promise<void> {
   await (await table('LmsOrders')).upsertEntity({ partitionKey: 'order', rowKey: o.orderId, ...o }, 'Replace')
@@ -176,6 +241,7 @@ export async function getOrder(orderId: string): Promise<CourseOrder | null> {
     return {
       orderId, email: String(e.email), name: String(e.name || ''), slug: String(e.slug), amount: Number(e.amount),
       currency: e.currency === 'INR' ? 'INR' : 'USD', status: e.status === 'paid' ? 'paid' : 'open', at: String(e.at || ''),
+      coupon: e.coupon ? String(e.coupon) : undefined,
     }
   } catch (e: any) {
     if (e?.statusCode === 404) return null
@@ -195,10 +261,16 @@ export async function settleOrder(orderId: string, paymentId: string): Promise<P
   const purchase: Purchase = {
     email: key(order.email), name: order.name, slug: order.slug, courseTitle: course?.title || order.slug,
     amount: order.amount, currency: order.currency, orderId, paymentId, at: new Date().toISOString(),
+    ...(order.coupon ? { coupon: order.coupon } : {}),
   }
-  await (await table('LmsPurchases')).upsertEntity({ partitionKey: purchase.email, rowKey: purchase.slug, ...purchase }, 'Replace')
+  await recordPurchase(purchase)
   await saveOrder({ ...order, status: 'paid' })
   return purchase
+}
+
+/** Write a purchase: from here on the learner owns the course. */
+export async function recordPurchase(purchase: Purchase): Promise<void> {
+  await (await table('LmsPurchases')).upsertEntity({ partitionKey: key(purchase.email), rowKey: purchase.slug, ...purchase, email: key(purchase.email) }, 'Replace')
 }
 
 // ---------------------------------------------------------------- the rule
@@ -210,10 +282,16 @@ export async function hasFullAccess(email: string, slug: string): Promise<boolea
 }
 
 /** Every published course with its price, for the staff page. */
-export async function coursePriceList(): Promise<Array<{ slug: string; code: string; title: string; price: CoursePrice | null; custom: boolean; previews: number }>> {
+export async function coursePriceList(): Promise<Array<{ slug: string; code: string; title: string; kind: string; price: CoursePrice | null; custom: boolean; previews: number; offer: OfferSetting; regular: CoursePrice | null }>> {
   const settings = await getPriceSettings(true)
+  await getOfferSettings(true)
   const courses = await listLmsCourses()
-  return Promise.all(courses.map(async (c) => ({
-    slug: c.slug, code: c.code, title: c.title, price: await priceOf(c.slug), custom: !!settings[c.slug], previews: previewIds(c).length,
-  })))
+  return Promise.all(courses.map(async (c) => {
+    const price = await priceOf(c.slug)
+    const offer = await offerSettingOf(c)
+    return {
+      slug: c.slug, code: c.code, title: c.title, kind: c.kind || 'course', price, custom: !!settings[c.slug], previews: previewIds(c).length,
+      offer, regular: price && offer.on ? regularPrice(price, offer.percent) : null,
+    }
+  }))
 }
