@@ -15,19 +15,44 @@ import { readBlob, writeBlob } from '@/lib/social/studio'
 
 // ---------------------------------------------------------------- previews
 
-/** Never more than this many preview lessons in a course, whatever the course file says. */
+/** How many lessons of every course are free previews. */
 export const PREVIEW_MAX = 6
-/** A course that marks no previews at all gets its first lessons as previews. */
-const PREVIEW_DEFAULT = 4
 
 const lectures = (course: LmsCourse): LmsLecture[] =>
   course.sections.flatMap((s) => s.items).filter((i): i is LmsLecture => i.type === 'lecture')
 
-/** The ids of the lessons anyone may watch, in course order. */
+/** A fixed number from a piece of text (FNV-1a). The same text always gives the same number. */
+function hash(text: string): number {
+  let h = 0x811c9dc5
+  for (let i = 0; i < text.length; i++) {
+    h ^= text.charCodeAt(i)
+    h = Math.imul(h, 0x01000193)
+  }
+  return h >>> 0
+}
+
+/**
+ * The ids of the lessons anyone may watch, in course order.
+ *
+ * Nobody has to choose them. If the course file marks previews, those are used.
+ * Otherwise six are picked for the course: its first lesson (the introduction),
+ * and five drawn from across the rest. The draw is random-looking but fixed for
+ * each course, so every visitor sees the same six and reloading the page cannot
+ * be used to watch the whole course. It changes only if lessons are added or removed.
+ */
 export function previewIds(course: LmsCourse): string[] {
   const all = lectures(course)
   const marked = all.filter((l) => l.preview)
-  return (marked.length ? marked.slice(0, PREVIEW_MAX) : all.slice(0, PREVIEW_DEFAULT)).map((l) => l.id)
+  if (marked.length) return marked.slice(0, PREVIEW_MAX).map((l) => l.id)
+  if (all.length <= PREVIEW_MAX) return all.map((l) => l.id)
+  const [first, ...rest] = all
+  const drawn = rest
+    .map((l) => ({ id: l.id, rank: hash(`${course.slug}:${l.id}`) }))
+    .sort((a, b) => a.rank - b.rank)
+    .slice(0, PREVIEW_MAX - 1)
+    .map((x) => x.id)
+  const chosen = new Set([first.id, ...drawn])
+  return all.filter((l) => chosen.has(l.id)).map((l) => l.id)
 }
 
 export const isPreview = (course: LmsCourse, itemId: string) => previewIds(course).includes(itemId)
