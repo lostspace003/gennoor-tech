@@ -1,19 +1,13 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { getToken } from 'next-auth/jwt'
+import { CRM_USERS } from './src/lib/crm/users'
 
 // Single middleware for protected app surfaces. NOTE: a second middleware at
 // src/middleware.ts was silently shadowed by this file for months — keep ONE
 // middleware, here at the repo root.
-const AUTHORIZED_EMAILS = [
-  'admin@gennoor.com',
-  'jalalkhan@gennoor.com',
-  'yusufchaudhary@gennoor.com',
-  'aditya@gennoor.com',
-  'deepanshu@gennoor.com',
-  'zaid@gennoor.com',
-  'sales@gennoor.com',
-]
+// The list of people lives in src/lib/crm/users.ts (one place for the whole site).
+const AUTHORIZED_EMAILS = CRM_USERS
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname

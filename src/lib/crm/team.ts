@@ -1,7 +1,7 @@
 // Who signs the outreach. Mail always LEAVES as sales@gennoor.com (delivery
 // rule), but the person working the lead is the one the lead should reply to
 // and call — so every email carries their name, direct number and their own
-// gennoor.com address. Keep this in sync with CRM_USERS in ./access.ts.
+// gennoor.com address. The people with access are listed in ./users.ts.
 //
 // Client-safe: no server-only imports (the CRM UI reads it too).
 
@@ -25,10 +25,7 @@ const ADMIN_SIGNATURE: Omit<TeamMember, 'email'> = {
 
 // Sales team: own number first, office line second.
 const SALES: Array<{ email: string; name: string; phone: string }> = [
-  { email: 'deepanshu@gennoor.com', name: 'Deepanshu', phone: '+91-95715 72343' },
-  { email: 'aditya@gennoor.com', name: 'Aditya', phone: '+91-93890 06543' },
   { email: 'yusufchaudhary@gennoor.com', name: 'Yusuf Chaudhary', phone: '+91-9930804666' },
-  { email: 'zaid@gennoor.com', name: 'Zaid', phone: '+91-7208353380' },
 ]
 
 const DIRECTORY: TeamMember[] = [

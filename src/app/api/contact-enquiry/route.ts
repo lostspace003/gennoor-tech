@@ -117,7 +117,7 @@ export async function POST(request: Request) {
           ${message ? `<tr><td style="padding:6px 10px;border:1px solid #e2e8f0;color:#64748b">Message</td><td style="padding:6px 10px;border:1px solid #e2e8f0">${escapeHtml(message)}</td></tr>` : ''}
           <tr><td style="padding:6px 10px;border:1px solid #e2e8f0;color:#64748b">Submitted</td><td style="padding:6px 10px;border:1px solid #e2e8f0">${escapeHtml(formatIstCst(submittedAt) || submittedAt)}</td></tr>
         </table>
-        <p style="margin:16px 0 0"><a href="https://www.gennoor.com/crm/queue" style="display:inline-block;background:#2563EB;color:#fff;text-decoration:none;padding:9px 20px;border-radius:8px;font-size:14px">Open the Work Queue →</a></p>`,
+        <p style="margin:16px 0 0"><a href="https://www.gennoor.com/crm/queue" style="display:inline-block;background:#2563EB;color:#fff;text-decoration:none;padding:9px 20px;border-radius:8px;font-size:14px">Open the CRM →</a></p>`,
         { preheader: `Contact: ${name}`, senderEmail: fromAddress }
       ),
     })

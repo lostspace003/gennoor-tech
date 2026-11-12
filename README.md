@@ -29,11 +29,54 @@ Live at [gennoor.com](https://www.gennoor.com).
 
 Every public form records where the visitor came from (campaign tag, referrer, landing page) and saves it to the CRM.
 
+## AI Weekend (`/ai-weekend`)
+
+A live two-day workshop on the last Saturday and Sunday of every month. The public page shows the next dates by itself and moves on to the following month once a weekend has started.
+
+- **Everything on the page** (name, fee ₹499 against a regular ₹1,999, 1,000 seats, times, the two days, questions) is in `src/data/ai-weekend.ts`.
+- **Registrations** are kept apart from CRM leads, in the blob `crm-data/weekend/registrations.json`. Each person gets a confirmation email and `admin@` gets a notice. The form closes for the month when the seats are taken.
+- **Staff desk** `/admin/weekend`, two tabs. **People**: who registered for each month, where they came from, payment (set by hand until online payment is added), which emails each person has had, Excel download. **Emails**: the weekend's own five emails, each previewed before sending:
+  1. *Invitation* to people you paste in (up to 200 at a time; anyone already registered or invited is skipped).
+  2. *How to pay* to those who have not paid. Once the payment details are saved, it is also sent automatically when someone registers.
+  3. *Reminder* to everyone registered.
+  4. *Joining link* to those who have paid.
+  5. *The kit* to those who have paid, after the weekend.
+  The text is in `src/lib/weekend-emails.ts`. These are separate from the CRM email series, and weekend registrations are not added to CRM leads.
+- **Not built yet:** online payment. There is no payment provider in this repository.
+
 ## CRM (`/crm`, staff only)
 
-Dashboard · Leads (search is semantic, backed by Qdrant) · Pipeline · Inbox (Microsoft 365 mail) · Enquiries (status, notes, source counts) · Documents · Queue · Scheduler (meetings via Microsoft Bookings/Graph) · Team · Bot log. A morning digest email is sent Monday to Saturday at 06:30 IST.
+Built around one job: get a lead, send them the email series, answer when they reply.
+
+| Page | What you do there |
+|---|---|
+| **Today** `/crm/queue` | The whole job, top to bottom: 1 replies to answer, 2 new leads to pick up, 3 emails due to send, 4 leads that are waiting. |
+| **Leads** `/crm/leads` | The list. Filter by organization, step or owner. Add a lead by hand, **Import** a lead sheet, or **Find on LinkedIn**. |
+| **Replies** `/crm/inbox` | Mail from leads, read from the Microsoft 365 mailboxes. |
+| **Meetings** `/crm/scheduler` | Teams meetings booked with leads; move or cancel them. |
+| **Email series** `/crm/emails` | The nine emails, when each goes out, and how each looks. |
+| **Call guide** `/crm/playbook` | What to say on a call, how to answer push-back, and the ten-slide presentation (`src/lib/crm/playbook.ts`). |
+| More | Website enquiries · Files · Team (managers) · GennoorCare (managers). |
+
+**A lead has one step:** New → Emailing → Talking → Proposal → Customer, or Closed. Sending the first email moves it to Emailing; booking a meeting moves it to Talking; the rest is set by hand on the lead page. A lead nobody holds is *unassigned*; a lead not worth working is *archived* (restorable).
+
+**The lead sheet** has eight columns: Name, Email, Phone, Organization, Designation, Country, LinkedIn, Notes. Only Name is required. Download it from Leads. Common heading names are recognised; a lead already in the CRM is updated, never added twice.
+
+**The email series** is nine fixed emails over about four months (`src/lib/crm/sequence.ts` for the plan, `src/lib/crm/sequence-emails.ts` for the text). Each is previewed before it is sent, can carry one personal line, leaves as `sales@gennoor.com` with `admin@` and the sender copied, and is never sent twice to the same lead. Email 2 attaches the Excel catalogue. Every email tells the reader to reply "stop"; use **Stop the emails** on the lead when they do.
+
+**LinkedIn** runs through the LinkedIn hub's saved sign-in and shares its daily limits. *Find on LinkedIn* searches people and adds the ticked ones as leads. On a lead, *Connect* and *Message* send one prepared text at a time, started by a person.
+
+**Who has access** is one list: `src/lib/crm/users.ts`. The sign-in check, the route guard, the API and the screens all read it.
+
+AI is used in one place only: *Write a draft* when replying to a lead (Azure AI Foundry). The series emails are fixed text.
+
+Email 4 carries an animated picture (`public/email/less-classroom-time.gif`, rebuilt with `python scripts/email-gif.py`). Its first frame is the finished picture, because Outlook on Windows shows only that frame.
+
+A morning digest email is sent Monday to Saturday at 06:30 IST. Checks: `npx tsx scripts/crm-flow-test.ts` (add `--out <folder>` to write each email as an HTML file).
 
 ## Admin centre (`/admin`, staff only)
+
+The menu is grouped by the job being done: Home (Dashboard, Work history, Costs) · Sales (CRM, AI Weekend, Events, Tech calls) · LinkedIn (hub, Autopilot, Connection) · Content (Social studio, Blog studio, Cert videos) · Learners (Learning Studio, Community, Blog comments, GennoorCare chats) · Settings (Mailboxes). The Dashboard's own sections stay folded away unless you are on the Dashboard.
 
 Every "i" button explains its control in plain words. Side-by-side panels in the Social studio, Blog studio and LinkedIn hub have a draggable divider (arrow keys work too) and remember their width.
 
@@ -47,7 +90,7 @@ The menu on the left is open by default (collapse it with the round button; on p
 | **Social studio** `/admin/social` | Draft LinkedIn posts, polls and webinar announcements from a topic, notes and attached sources (links, PDFs, Word, images). Edit in a LinkedIn-style card, revise with AI, generate or animate images, build motion graphics (GIF/MP4), run the AI agent team, approve, then publish to your profile or the company page. Published posts can be edited and updated or re-posted. Every visual carries the Gennoor logo and website. AI cost is shown per draft and per month. |
 | **Blog studio** `/admin/blog` | Write articles by hand or let the AI team research and write them in the blog's exact format with tl;dr, takeaways, FAQs, sources, category and tags (existing or new). **Approve & publish** opens the GitHub pull request, merges it automatically (a Merge button is there if GitHub needs a nudge), waits for the site to go live, then shares the article on the company page, after which your profile reposts it with a short note (switchable to its own post). Every share gets a meaningful first comment from its author. A **daily blog autopilot** does all of this by itself every day: research, write, review (revising up to twice), approve, publish and share; if a draft still fails review it is held for you instead. |
 | **LinkedIn autopilot** `/admin/autopilot` | Researches what the industry is discussing, writes four posts a day (seven days a week), and publishes each at its slot unless you posted it first. The company page posts first, your profile reposts it with a short note (or posts its own version, a setting on the page), and every post gets a meaningful first comment. Safeguards: quality gate, banned-topic screen, retries, no double posts, missed-window skip, token-expiry alerts, review-only mode, and one switch to turn it off. Weekday and weekend slots are editable. |
-| **LinkedIn hub** `/admin/linkedin-hub` | Feed, people, inbox, companies and jobs through a saved LinkedIn login, with daily safety limits and an activity log. Tick-box dropdowns for places (19 countries, cities in brackets) and profile sections; people results shown as a clean table with clickable names. The **Prospecting** tab finds work emails (Vibe Prospecting) and every people table downloads as Excel. Searches take plain words (pasted profile, company and job links work too), with quick-start examples and "i" tips on every field. Results are shown as clean headings and bullets, can be copied with formatting kept, and can be emailed to any address. |
+| **LinkedIn hub** `/admin/linkedin-hub` | Home has one search box (people, companies, posts, jobs, messages); the status and today's limits stay at the top of every tab; people results can be ticked and added to the CRM. Feed, people, inbox, companies and jobs through a saved LinkedIn login, with daily safety limits and a history. Tick-box dropdowns for places (19 countries, cities in brackets) and profile sections; people results shown as a clean table with clickable names. The **Prospecting** tab finds work emails (Vibe Prospecting) and every people table downloads as Excel. Searches take plain words (pasted profile, company and job links work too), with quick-start examples and "i" tips on every field. Results are shown as clean headings and bullets, can be copied with formatting kept, and can be emailed to any address. |
 | **LinkedIn connection** `/admin/linkedin` | Connect your profile and the company page, and share blog posts (each share gets a first comment). Warns before either login expires. |
 | **Learning Studio** `/admin/lms` | Import and manage Learning Studio courses. |
 | **Comments / Community** | Moderate blog comments and learner community posts and reviews. |
@@ -70,7 +113,7 @@ One scheduled heartbeat (`autopilot.yml`, every 15 minutes) drives all of it. Ea
 ```
 Browser ──> Next.js app (Azure App Service)
               ├─ Azure Blob/Table Storage    CRM data, drafts, spend ledger, LMS content
-              ├─ Qdrant                      CRM lead search and course index
+              ├─ Qdrant                      course index
               ├─ Azure Communication Email   transactional email
               ├─ Microsoft Graph             mail, meetings, Bookings
               ├─ Azure AI Foundry            chat, web search, image generation
@@ -172,6 +215,32 @@ Add several keys and the one marked *In use* runs first; if it runs out of credi
 - Course and quiz text is markdown; see [`docs/lms-course-format.md`](docs/lms-course-format.md).
 - The credentials list lives in `src/data/credentials.ts`.
 - Every LinkedIn post (written by hand, by AI, by the autopilot, or the blog-share posts) is formatted by `src/lib/linkedin-format.ts`: bold Unicode opening line, short paragraphs, quiet `▪` bullets, no emoji except an occasional 💡 (plus `⚙` / `🔒`), and one tidy hashtag line. The "Format for LinkedIn" button in the Social studio applies it on demand, and it is applied again automatically just before publishing.
+
+## Sales material: what to say, and the rules
+
+The email series in the CRM is the written pitch. Calls and presentations follow the same order.
+
+**The pitch, in order**
+1. The Learning Studio is open to their team today: full courses, labs, quizzes, a certificate.
+2. Sample courses to open, and the Excel catalogue.
+3. Training built around their organization, on our platform or one set up for them (custom voice and digital presenter, an assistant, a question board).
+4. Less classroom time: lessons and labs alone, trainer time for questions.
+5. Claude: certification preparation, team training, automation.
+6. Support after the training: a doubt desk answered by a trainer.
+
+**Rules for anything sent to a lead**
+- No prices. Cost depends on team size and scope; give a range on a call, after asking how many people, which teams, on site or remote, and when.
+- No customer names without written consent. No invented numbers.
+- Claude Partner Network: only "Gennoor is Certified in the Claude Partner Network." Badge unaltered, PNG in email, linked to claude.com/partners. Full rules: `Gennoor-CPN-Certified-Kit/cpn/PRESENTATION-GUIDE.md`.
+- One next step per email or call.
+
+**A call:** ask permission, let them talk for most of it (team size, teams, location, timeline, what blocks them), link one offering to what they said, book the next step from the lead's Meeting tab.
+
+**A presentation (about 10 slides):** their situation in their words · the cost of standing still · the outcome · how we deliver · the recommended programme · proof · credentials · plan and timeline · investment range · next step with a date.
+
+**To confirm before relying on it**
+- The emails say classroom time can fall by "about 60%" as an aim, and describe a custom learning platform, a custom voice and digital presenter, and a doubt desk. The public website does not yet describe these, so a lead who looks will not find them there.
+- The emails call the Learning Studio "at no charge". The content rules below say not to describe courses as free because they may become paid. Decide which holds, and change `sequence-emails.ts` or the rule.
 
 ## More documentation
 

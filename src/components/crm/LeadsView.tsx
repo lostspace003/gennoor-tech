@@ -2,16 +2,18 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as XLSX from 'xlsx'
-import { useRouter } from 'next/navigation'
-import { Search, Upload, Download, Trash2, Brain, Mail, X, Hand, Undo2, Archive, UserPlus, Sparkles, Columns3, Wand2 } from 'lucide-react'
-import { Lead, LeadStatus, PipelineStage, ProcessStatus, PIPELINE_STAGES, COMPANY_SIZES, BUSINESS_FUNCTIONS, LEAD_INTERESTS, DECISION_ROLES } from '@/lib/crm/types'
-import { StatusBadge, StageBar, timeAgo, api, STAGE_LABELS, Spinner, InfoTip, MultiSelect, PriorityBadge, normPriority } from './shared'
-import { qualificationGaps } from '@/lib/crm/lead-text'
+import { Search, Upload, Download, Trash2, X, Hand, Undo2, Archive, UserPlus, Send, Linkedin, Mail } from 'lucide-react'
+import { Lead, LEAD_STEPS, STEP_LABELS } from '@/lib/crm/types'
+import { LEAD_COLUMNS, mapHeaders, rowToLead, looksLikeEmail, leadToRow } from '@/lib/crm/import'
+import { sequenceProgress, stepNumber } from '@/lib/crm/sequence'
+import { CRM_USERS, shortName } from '@/lib/crm/users'
+import { StatusBadge, timeAgo, api, Spinner, MultiSelect, Pagination } from './shared'
 import { useCrm } from './CrmContext'
+import SendStepModal from './SendStep'
+import FindOnLinkedIn from './FindOnLinkedIn'
 
-const CRM_TEAM = ['admin@gennoor.com', 'jalalkhan@gennoor.com', 'yusufchaudhary@gennoor.com', 'aditya@gennoor.com', 'deepanshu@gennoor.com', 'zaid@gennoor.com', 'sales@gennoor.com']
-
-const PAGE_SIZES = [10, 25, 50, 100]
+const PER_PAGE = 25
+type Scope = 'all' | 'pool' | 'mine' | 'archived'
 
 interface Props {
   leads: Lead[]
@@ -21,862 +23,431 @@ interface Props {
   notify: (msg: string, isError?: boolean) => void
 }
 
-interface ParsedUpload {
-  valid: Partial<Lead>[]
-  warnings: string[]
-  skipped: number
-}
+interface ParsedUpload { rows: Partial<Lead>[]; notes: string[]; skipped: number; file: string }
 
-// Map a spreadsheet row to a lead. Only Name is required; blanks are fine.
-function rowToLead(row: Record<string, any>): Partial<Lead> | null {
-  const pick = (...keys: string[]) => {
-    for (const k of keys) {
-      const v = row[k]
-      if (v !== undefined && v !== null && String(v).trim() && String(v).trim().toUpperCase() !== 'NA') {
-        return String(v).trim()
-      }
-    }
-    return ''
-  }
-  const name = pick('Name', 'Contact', 'Contact Name', 'Full Name')
-  if (!name) return null
-  return {
-    name,
-    email: pick('Email', 'Email Address', 'E-mail').toLowerCase(),
-    phone: pick('Phone', 'Contact Number', 'Mobile', 'Phone Number'),
-    company: pick('Company', 'Company / Org', 'Organization', 'Org'),
-    designation: pick('Designation', 'Title', 'Role'),
-    linkedin: pick('LinkedIn', 'LinkedIn URL', 'Linkedin'),
-    website: pick('Website', 'Company Website'),
-    priority: pick('Priority'),
-    leadType: pick('Lead Type', 'Type'),
-    companySize: pick('Company Size', 'Size', 'Org Size'),
-    businessFunction: pick('Function', 'Business Function', 'Department'),
-    interest: pick('Interest', 'Interested In', 'Requirement'),
-    decisionRole: pick('Decision Role', 'Role Type', 'Buying Role'),
-    sector: pick('Sector / Segment', 'Sector', 'Segment', 'Industry'),
-    region: pick('Region'),
-    country: pick('Country'),
-    city: pick('City'),
-    notes: pick('Notes', 'Comments', 'Remarks'),
-  }
+/** "Email 3 of 9 in 4 days", "Email 2 due", "Finished"… one phrase for the series. */
+export function seriesLabel(lead: Lead): { text: string; due: boolean } {
+  if (lead.status !== 'new' && lead.status !== 'contacted') return { text: '', due: false }
+  const p = sequenceProgress(lead)
+  if (p.stopped) return { text: 'Emails stopped', due: false }
+  if (p.finished) return { text: 'Series finished', due: false }
+  if (!lead.email) return { text: 'No email address', due: false }
+  const n = stepNumber(p.next!.id)
+  if (p.sentIds.length === 0) return { text: 'Ready for email 1', due: true }
+  return p.due ? { text: `Email ${n} due`, due: true } : { text: `Email ${n} in ${p.daysUntil}d`, due: false }
 }
 
 export default function LeadsView({ leads, canManage, onOpenLead, onReload, notify }: Props) {
-  const { userEmail, isManager } = useCrm()
-  const router = useRouter()
-  const [poolFilter, setPoolFilter] = useState<'all' | 'pool' | 'mine' | 'dumped'>('all')
-  const [searchTerm, setSearchTerm] = useState('')
-  const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'week' | 'month' | 'custom'>('all')
-  const [dateFrom, setDateFrom] = useState('')
-  const [dateTo, setDateTo] = useState('')
-  const [processFilter, setProcessFilter] = useState<string[]>([])
-  const [stageFilter, setStageFilter] = useState<string[]>([])
-  const [statusFilter, setStatusFilter] = useState<string[]>([])
-  const [priorityFilter, setPriorityFilter] = useState<string[]>([])
-  const [sizeFilter, setSizeFilter] = useState<string[]>([])
-  const [functionFilter, setFunctionFilter] = useState<string[]>([])
-  const [interestFilter, setInterestFilter] = useState<string[]>([])
-  const [roleFilter, setRoleFilter] = useState<string[]>([])
-  const [sourceFilter, setSourceFilter] = useState<string[]>([])
-  // Finds the thin rows: research trusts the qualification fields as facts, so
-  // leads missing them get a generic profile no matter how good the prompts are.
-  const [gapsOnly, setGapsOnly] = useState(false)
+  const { userEmail } = useCrm()
+  const me = userEmail.toLowerCase()
+  const [scope, setScope] = useState<Scope>('all')
+  const [search, setSearch] = useState('')
+  const [orgFilter, setOrgFilter] = useState<string[]>([])
+  const [stepFilter, setStepFilter] = useState<string[]>([])
   const [ownerFilter, setOwnerFilter] = useState<string[]>([])
   const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(25)
   const [selected, setSelected] = useState<string[]>([])
-  const [moreFilters, setMoreFilters] = useState(false)
-  // a filter hidden under "More filters" must never be silently active
-  const secondaryActive = [statusFilter, processFilter, sizeFilter, functionFilter, interestFilter, roleFilter, sourceFilter].some((f) => f.length > 0)
   const [busy, setBusy] = useState('')
   const [upload, setUpload] = useState<ParsedUpload | null>(null)
   const [adding, setAdding] = useState(false)
+  const [finding, setFinding] = useState(false)
+  const [sendTo, setSendTo] = useState<Lead[] | null>(null)
+  const fileRef = useRef<HTMLInputElement>(null)
 
-  // Two deep-links land here, both consumed once and cleaned out of the URL so
-  // a refresh doesn't replay them:
-  //   ?new=1      — the shell header's "New lead" shortcut opens the add modal
-  //   ?scope=mine — closing the multi-lead view returns the list to My leads
+  // Deep links, used once then cleaned from the address bar:
+  //   ?new=1        open the Add lead window
+  //   ?scope=pool   show unassigned leads
   useEffect(() => {
-    if (typeof window === 'undefined') return
     const params = new URLSearchParams(window.location.search)
     let touched = false
-    if (params.get('new') === '1') {
-      setAdding(true)
-      params.delete('new')
-      touched = true
-    }
-    if (params.get('scope') === 'mine') {
-      setPoolFilter('mine')
-      setPage(1)
-      setSelected([])
-      params.delete('scope')
-      touched = true
-    }
+    if (params.get('new') === '1') { setAdding(true); params.delete('new'); touched = true }
+    const s = params.get('scope')
+    if (s === 'pool' || s === 'mine' || s === 'archived') { setScope(s); params.delete('scope'); touched = true }
     if (touched) {
       const qs = params.toString()
       window.history.replaceState(null, '', window.location.pathname + (qs ? `?${qs}` : ''))
     }
   }, [])
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const resetPage = () => setPage(1)
-
-  // Stage is workable straight from the list for pool leads, own leads, or any lead if manager.
-  const canSetStage = (lead: Lead) => !lead.dumped && (isManager || !lead.owner || lead.owner.toLowerCase() === userEmail.toLowerCase())
-  const setStage = async (leadId: string, s: PipelineStage) => {
-    try {
-      await api('/api/admin/leads/update-stage', { method: 'POST', body: JSON.stringify({ leadId, stage: s }) })
-      await onReload()
-      notify(`Stage set to ${STAGE_LABELS[s]}`)
-    } catch (e: any) { notify(e.message, true) }
+  const live = useMemo(() => leads.filter((l) => !l.dumped), [leads])
+  const counts = {
+    all: live.length,
+    pool: live.filter((l) => !l.owner).length,
+    mine: live.filter((l) => l.owner?.toLowerCase() === me).length,
+    archived: leads.length - live.length,
   }
 
+  // Organizations, most leads first, for the filter
+  const orgs = useMemo(() => {
+    const tally = new Map<string, number>()
+    for (const l of live) {
+      const name = l.company?.trim()
+      if (name) tally.set(name, (tally.get(name) || 0) + 1)
+    }
+    return [...tally.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+  }, [live])
+
   const filtered = useMemo(() => {
-    const term = searchTerm.toLowerCase()
-    let result = leads
-    // Ownership scope: dumped leads only show in their own tab
-    if (poolFilter === 'dumped') result = result.filter((l) => l.dumped)
-    else {
-      result = result.filter((l) => !l.dumped)
-      if (poolFilter === 'pool') result = result.filter((l) => !l.owner)
-      if (poolFilter === 'mine') result = result.filter((l) => l.owner?.toLowerCase() === userEmail.toLowerCase())
-    }
-    result = result.filter(
-      (l) =>
-        !term ||
-        l.name.toLowerCase().includes(term) ||
-        l.company.toLowerCase().includes(term) ||
-        l.email.toLowerCase().includes(term) ||
-        l.sector.toLowerCase().includes(term) ||
-        l.country.toLowerCase().includes(term)
-    )
-    if (dateFilter === 'custom') {
-      const from = dateFrom ? new Date(dateFrom).getTime() : 0
-      const to = dateTo ? new Date(dateTo).getTime() + 86_400_000 : Infinity
-      result = result.filter((l) => {
-        const t = new Date(l.createdAt || l.lastActivity).getTime()
-        return t >= from && t < to
-      })
-    } else if (dateFilter !== 'all') {
-      const now = new Date()
-      const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
-      const cutoff = dateFilter === 'today' ? dayStart : dateFilter === 'week' ? dayStart - 6 * 86_400_000 : dayStart - 29 * 86_400_000
-      result = result.filter((l) => new Date(l.createdAt || l.lastActivity).getTime() >= cutoff)
-    }
-    if (processFilter.length) result = result.filter((l) => processFilter.includes(l.processStatus))
-    if (stageFilter.length) result = result.filter((l) => stageFilter.includes(l.stage))
-    if (statusFilter.length) result = result.filter((l) => statusFilter.includes(l.status))
-    if (priorityFilter.length) result = result.filter((l) => priorityFilter.includes(normPriority(l.priority) || 'none'))
-    if (sizeFilter.length) result = result.filter((l) => sizeFilter.includes(l.companySize || 'none'))
-    if (functionFilter.length) result = result.filter((l) => functionFilter.includes(l.businessFunction || 'none'))
-    if (interestFilter.length) result = result.filter((l) => interestFilter.includes(l.interest || 'none'))
-    if (roleFilter.length) result = result.filter((l) => roleFilter.includes(l.decisionRole || 'none'))
-    if (sourceFilter.length) result = result.filter((l) => sourceFilter.includes(l.source || 'none'))
-    if (ownerFilter.length) result = result.filter((l) => ownerFilter.includes(l.owner ? l.owner.toLowerCase() : 'pool'))
-    if (gapsOnly) result = result.filter((l) => qualificationGaps(l).length > 0)
-    return result
-  }, [leads, searchTerm, dateFilter, dateFrom, dateTo, processFilter, stageFilter, statusFilter, priorityFilter, sizeFilter, functionFilter, interestFilter, roleFilter, sourceFilter, poolFilter, gapsOnly, ownerFilter, userEmail])
+    const term = search.trim().toLowerCase()
+    let out = scope === 'archived' ? leads.filter((l) => l.dumped) : live
+    if (scope === 'pool') out = out.filter((l) => !l.owner)
+    if (scope === 'mine') out = out.filter((l) => l.owner?.toLowerCase() === me)
+    if (term) out = out.filter((l) => [l.name, l.company, l.email, l.designation, l.country].some((v) => (v || '').toLowerCase().includes(term)))
+    if (orgFilter.length) out = out.filter((l) => orgFilter.includes(l.company?.trim() || ''))
+    if (stepFilter.length) out = out.filter((l) => stepFilter.includes(l.status))
+    if (ownerFilter.length) out = out.filter((l) => ownerFilter.includes(l.owner ? l.owner.toLowerCase() : 'pool'))
+    return out
+  }, [leads, live, scope, search, orgFilter, stepFilter, ownerFilter, me])
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
-  const safePage = Math.min(page, totalPages)
-  const pageLeads = filtered.slice((safePage - 1) * pageSize, safePage * pageSize)
+  const pages = Math.max(1, Math.ceil(filtered.length / PER_PAGE))
+  const safePage = Math.min(page, pages)
+  const pageLeads = filtered.slice((safePage - 1) * PER_PAGE, safePage * PER_PAGE)
+  const chosen = leads.filter((l) => selected.includes(l.id))
+  const filtersOn = !!(search || orgFilter.length || stepFilter.length || ownerFilter.length)
+  const reset = () => { setPage(1); setSelected([]) }
 
-  const poolAction = async (action: 'claim' | 'release' | 'dump' | 'restore' | 'assign', assignee?: string) => {
-    if (selected.length === 0) return
+  const hold = async (action: 'claim' | 'release' | 'dump' | 'restore' | 'assign', assignee?: string) => {
+    if (!selected.length) return
     let reason: string | undefined
     if (action === 'dump') {
-      reason = prompt('Why dump these leads? (e.g. vague, duplicate, wrong fit)') || undefined
+      reason = prompt('Why archive these leads? (for example: wrong fit, duplicate, no response)') || undefined
       if (reason === undefined) return
     }
     setBusy(action)
     try {
       const res = await api<{ done: number; skipped: string[] }>('/api/admin/leads/claim', {
-        method: 'POST',
-        body: JSON.stringify({ leadIds: selected, action, reason, assignee }),
+        method: 'POST', body: JSON.stringify({ leadIds: selected, action, reason, assignee }),
       })
       await onReload()
-      const skippedNote = res.skipped?.length ? ` · skipped: ${res.skipped.slice(0, 3).join('; ')}${res.skipped.length > 3 ? '…' : ''}` : ''
-      notify(`${res.done} lead(s) ${action === 'claim' ? 'picked up' : action === 'release' ? 'released to pool' : action === 'dump' ? 'dumped' : action === 'restore' ? 'restored' : `assigned to ${assignee?.split('@')[0]}`}${skippedNote}`, res.done === 0)
+      const what = action === 'claim' ? 'picked up' : action === 'release' ? 'released' : action === 'dump' ? 'archived' : action === 'restore' ? 'restored' : `given to ${shortName(assignee)}`
+      notify(`${res.done} lead${res.done === 1 ? '' : 's'} ${what}${res.skipped?.length ? `. Skipped: ${res.skipped.slice(0, 2).join('; ')}` : ''}`, res.done === 0)
       setSelected([])
-    } catch (e: any) {
-      notify(e.message, true)
-    } finally {
-      setBusy('')
-    }
+    } catch (e: any) { notify(e.message, true) } finally { setBusy('') }
   }
 
-  const setProcess = async (status: ProcessStatus) => {
-    if (selected.length === 0) return
-    setBusy('process')
-    try {
-      await api('/api/admin/leads/update-status', {
-        method: 'POST',
-        body: JSON.stringify({ leadIds: selected, processStatus: status }),
-      })
-      await onReload()
-      notify(`${selected.length} lead(s) ${status === 'active' ? 'started' : status}`)
-      setSelected([])
-    } catch (e: any) {
-      notify(e.message, true)
-    } finally {
-      setBusy('')
-    }
-  }
-
-  const deleteSelected = async () => {
-    if (selected.length === 0) return
-    if (!confirm(`Delete ${selected.length} lead(s)? This cannot be undone.`)) return
+  const remove = async () => {
+    if (!selected.length || !confirm(`Delete ${selected.length} lead(s) for good? This cannot be undone.`)) return
     setBusy('delete')
     try {
-      const params = selected.map((id) => `id=${encodeURIComponent(id)}`).join('&')
-      await api(`/api/admin/leads?${params}`, { method: 'DELETE' })
+      await api(`/api/admin/leads?${selected.map((id) => `id=${encodeURIComponent(id)}`).join('&')}`, { method: 'DELETE' })
       await onReload()
       notify(`Deleted ${selected.length} lead(s)`)
       setSelected([])
-    } catch (e: any) {
-      notify(e.message, true)
-    } finally {
-      setBusy('')
-    }
+    } catch (e: any) { notify(e.message, true) } finally { setBusy('') }
   }
 
-  // Multi-format import: spreadsheets parse locally (AI maps unfamiliar
-  // columns); PDF/DOCX extract text server-side; MD/TXT read directly —
-  // then AI pulls structured leads out of the text. Everything lands in
-  // one preview before anything is saved.
-  const handleFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files || [])
-    if (files.length === 0) return
-    const valid: Partial<Lead>[] = []
-    const warnings: string[] = []
-    let skipped = 0
-
-    const extractFromText = async (text: string, label: string) => {
-      setBusy('aimap')
-      notify(`Extracting leads from ${label} with AI...`)
-      const res = await api<{ leads: any[]; truncated: boolean }>('/api/admin/leads/extract-leads', {
-        method: 'POST',
-        body: JSON.stringify({ text }),
-      })
-      if (res.truncated) warnings.push(`${label}: very long document — only the first ~44k characters were scanned`)
-      for (const l of res.leads) {
-        if (!l.name) continue
-        valid.push({
-          name: String(l.name), email: String(l.email || '').toLowerCase(), phone: String(l.phone || ''),
-          company: String(l.company || ''), designation: String(l.designation || ''),
-          linkedin: String(l.linkedin || ''), website: String(l.website || ''),
-          country: String(l.country || ''), city: String(l.city || ''), notes: String(l.notes || ''),
-        })
-      }
-      warnings.unshift(`${label}: AI extracted ${res.leads.length} lead(s) — review before importing`)
-    }
-
+  // Read the sheet in the browser. No guessing: headings are matched against
+  // the lead sheet's columns and their common names; anything else is ignored.
+  const readFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (fileRef.current) fileRef.current.value = ''
+    if (!file) return
     try {
-      for (const file of files) {
-        const ext = (file.name.split('.').pop() || '').toLowerCase()
-        if (['md', 'txt'].includes(ext)) {
-          await extractFromText(await file.text(), file.name)
-        } else if (['pdf', 'docx'].includes(ext)) {
-          setBusy('aimap')
-          const form = new FormData()
-          form.append('file', file)
-          const r = await fetch('/api/admin/leads/extract-file', { method: 'POST', body: form })
-          const d = await r.json()
-          if (!r.ok) { warnings.unshift(`${file.name}: ${d.error}`); continue }
-          await extractFromText(d.text, file.name)
-        } else if (['xlsx', 'xls', 'csv'].includes(ext)) {
-          await parseSpreadsheet(file, valid, warnings, (n) => { skipped += n })
-        } else {
-          warnings.unshift(`${file.name}: unsupported format .${ext} (use xlsx, csv, pdf, docx, md or txt)`)
+      const workbook = XLSX.read(new Uint8Array(await file.arrayBuffer()), { type: 'array' })
+      const rows: Partial<Lead>[] = []
+      const notes: string[] = []
+      let skipped = 0
+      for (const sheetName of workbook.SheetNames) {
+        if (/how to use|instructions|read ?me/i.test(sheetName)) continue
+        const sheet = workbook.Sheets[sheetName]
+        const grid = XLSX.utils.sheet_to_json<any[]>(sheet, { header: 1, defval: '' })
+        // The heading row is the first one that names a column we know
+        const headerIdx = grid.findIndex((r) => Object.keys(mapHeaders(r.map(String))).length >= 1 && r.filter((c) => String(c).trim()).length >= 2)
+        if (headerIdx === -1) { if (grid.length) notes.push(`Sheet "${sheetName}": no recognisable headings, skipped`); continue }
+        const data = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, { defval: '', range: headerIdx })
+        const map = mapHeaders(Object.keys(data[0] || {}))
+        const missing = (['Email', 'Organization'] as const).filter((c) => !map[c])
+        if (missing.length) notes.push(`Sheet "${sheetName}": no ${missing.join(' or ')} column found`)
+        for (const row of data) {
+          if (!Object.values(row).some((v) => String(v).trim())) continue
+          const lead = rowToLead(row, map)
+          if (!lead) { skipped++; continue }
+          if (lead.email && !looksLikeEmail(lead.email)) notes.push(`${lead.name}: "${lead.email}" does not look like an email address`)
+          rows.push(lead)
         }
       }
-      // De-dupe across everything parsed in this upload (email, else name+company)
+      // One row per person within the file (by email, else name + organization)
       const seen = new Set<string>()
-      const deduped = valid.filter((l) => {
-        const key = l.email ? `e:${l.email}` : `nc:${(l.name || '').toLowerCase()}|${(l.company || '').toLowerCase()}`
+      const unique = rows.filter((l) => {
+        const key = l.email ? `e:${l.email}` : `n:${(l.name || '').toLowerCase()}|${(l.company || '').toLowerCase()}`
         if (seen.has(key)) return false
         seen.add(key)
         return true
       })
-      if (deduped.length < valid.length) warnings.unshift(`${valid.length - deduped.length} duplicate row(s) removed within this upload`)
-      setUpload({ valid: deduped, warnings: warnings.slice(0, 50), skipped })
-    } catch (e: any) {
-      notify(e.message || 'Import failed', true)
-    } finally {
-      setBusy('')
-      if (fileInputRef.current) fileInputRef.current.value = ''
+      if (unique.length < rows.length) notes.unshift(`${rows.length - unique.length} repeated row(s) in the file were merged`)
+      setUpload({ rows: unique, notes: notes.slice(0, 30), skipped, file: file.name })
+    } catch {
+      notify(`Could not read ${file.name}. Save it as .xlsx or .csv and try again.`, true)
     }
   }
 
-  const parseSpreadsheet = (file: File, valid: Partial<Lead>[], warnings: string[], addSkipped: (n: number) => void) =>
-    new Promise<void>((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onerror = () => reject(new Error(`Could not read ${file.name}`))
-    reader.onload = async (e) => {
-      try {
-        const workbook = XLSX.read(new Uint8Array(e.target?.result as ArrayBuffer), { type: 'array' })
-        let skipped = 0
-
-        for (const sheetName of workbook.SheetNames) {
-          if (/instructions|read me|pivot|summary|dashboard/i.test(sheetName)) continue
-          const grid = XLSX.utils.sheet_to_json<any[]>(workbook.Sheets[sheetName], { header: 1, defval: '' })
-          if (grid.length === 0) continue
-
-          // Header row = first row with 3+ text cells (handles files with title rows above)
-          const headerIdx = grid.findIndex((r) => r.filter((c) => typeof c === 'string' && c.trim()).length >= 3)
-          if (headerIdx === -1) continue
-          const rows = XLSX.utils.sheet_to_json<Record<string, any>>(workbook.Sheets[sheetName], { defval: '', range: headerIdx })
-          const dataRows = rows.filter((r) => Object.values(r).some((v) => String(v).trim()))
-          if (dataRows.length === 0) continue
-
-          // Pass 1: template/known-alias mapping
-          let leadsFromSheet = dataRows.map((row) => rowToLead(row))
-          const hitRate = leadsFromSheet.filter(Boolean).length / dataRows.length
-
-          // Pass 2: sheet doesn't look like our template — ask AI to map columns
-          if (hitRate < 0.5) {
-            setBusy('aimap')
-            notify(`"${sheetName}" doesn't match the template — asking AI to map the columns...`)
-            try {
-              const headers = Object.keys(dataRows[0])
-              const res = await api<{ mapping: Record<string, string | null>; note: string; confidence: string }>(
-                '/api/admin/leads/map-columns',
-                { method: 'POST', body: JSON.stringify({ headers, samples: dataRows.slice(0, 3).map((r) => headers.map((h) => r[h])) }) }
-              )
-              const m = res.mapping
-              const pick = (row: Record<string, any>, field: string) => {
-                const src = m[field]
-                const v = src ? String(row[src] ?? '').trim() : ''
-                return v.toUpperCase() === 'NA' ? '' : v
-              }
-              leadsFromSheet = dataRows.map((row) => {
-                const name = pick(row, 'Name')
-                if (!name) return null
-                return {
-                  name,
-                  email: pick(row, 'Email').toLowerCase(),
-                  phone: pick(row, 'Phone'),
-                  company: pick(row, 'Company'),
-                  designation: pick(row, 'Designation'),
-                  linkedin: pick(row, 'LinkedIn'),
-                  website: pick(row, 'Website'),
-                  priority: pick(row, 'Priority'),
-                  leadType: pick(row, 'Lead Type'),
-                  companySize: pick(row, 'Company Size'),
-                  businessFunction: pick(row, 'Function'),
-                  interest: pick(row, 'Interest'),
-                  decisionRole: pick(row, 'Decision Role'),
-                  sector: pick(row, 'Sector / Segment'),
-                  region: pick(row, 'Region'),
-                  country: pick(row, 'Country'),
-                  city: pick(row, 'City'),
-                  notes: pick(row, 'Notes'),
-                } as Partial<Lead>
-              })
-              const used = Object.entries(m).filter(([, v]) => v).map(([f, v]) => `${v}→${f}`).join(', ')
-              warnings.unshift(`${sheetName}: AI-mapped columns (${res.confidence} confidence): ${used}${res.note ? ` · ${res.note}` : ''}`)
-            } catch (err: any) {
-              warnings.unshift(`${sheetName}: AI mapping failed (${err.message}) — rows imported only where standard columns matched`)
-            } finally {
-              setBusy('')
-            }
-          }
-
-          leadsFromSheet.forEach((lead, i) => {
-            if (!lead) {
-              skipped++
-              if (warnings.length < 50) warnings.push(`${sheetName} row ${headerIdx + i + 2}: no Name — skipped`)
-              return
-            }
-            if (lead.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email)) {
-              warnings.push(`${sheetName} row ${headerIdx + i + 2}: "${lead.email}" doesn't look like an email — kept as-is`)
-            }
-            valid.push(lead)
-          })
-        }
-        addSkipped(skipped)
-        resolve()
-      } catch {
-        reject(new Error(`Could not read ${file.name}. Save it as .xlsx/.csv and try again.`))
-      }
-    }
-    reader.readAsArrayBuffer(file)
-  })
-
   const confirmImport = async () => {
-    if (!upload || upload.valid.length === 0) return
+    if (!upload?.rows.length) return
     setBusy('import')
     try {
-      const result = await api<{ added: number; updated: number }>('/api/admin/leads/bulk-upload', {
-        method: 'POST',
-        body: JSON.stringify({ leads: upload.valid }),
-      })
+      const res = await api<{ added: number; updated: number }>('/api/admin/leads/bulk-upload', { method: 'POST', body: JSON.stringify({ leads: upload.rows }) })
       await onReload()
-      notify(`Imported ${result.added} new lead(s)${result.updated ? `, refreshed ${result.updated}` : ''}`)
+      notify(`${res.added} new lead${res.added === 1 ? '' : 's'} added${res.updated ? `, ${res.updated} already here and updated` : ''}`)
       setUpload(null)
-    } catch (e: any) {
-      notify(e.message, true)
-    } finally {
-      setBusy('')
-    }
+      setScope('pool')
+    } catch (e: any) { notify(e.message, true) } finally { setBusy('') }
+  }
+
+  const exportLeads = () => {
+    const rows = filtered.map((l) => ({
+      ...leadToRow(l),
+      Step: STEP_LABELS[l.status],
+      'Emails sent': l.sequence?.sent.length || 0,
+      Owner: l.owner ? shortName(l.owner) : '',
+      'Last activity': l.lastActivity?.slice(0, 10),
+    }))
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), 'Leads')
+    XLSX.writeFile(wb, `gennoor-leads-${new Date().toISOString().slice(0, 10)}.xlsx`)
+    notify(`Exported ${rows.length} lead(s)`)
   }
 
   return (
     <div>
-      {/* Filter bar */}
+      {/* Add leads + find them */}
       <div className="bg-white border-b border-gray-200 px-3 sm:px-4 py-2.5 space-y-2.5">
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="relative flex-1 min-w-64 max-w-md">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="relative flex-1 min-w-52 max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
-              type="text"
-              placeholder="Search name, company, email, sector, country..."
-              value={searchTerm}
-              onChange={(e) => { setSearchTerm(e.target.value); resetPage() }}
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); reset() }}
+              placeholder="Search name, organization or email"
+              className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             />
           </div>
-          <select value={dateFilter} onChange={(e) => { setDateFilter(e.target.value as any); resetPage() }} className="text-sm border border-gray-200 rounded-lg px-2 py-2 text-gray-700">
-            <option value="all">All time</option>
-            <option value="today">Added today</option>
-            <option value="week">This week</option>
-            <option value="month">This month</option>
-            <option value="custom">Custom dates…</option>
-          </select>
-          {dateFilter === 'custom' && (
-            <span className="flex items-center gap-1">
-              <input type="date" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); resetPage() }} className="text-xs border border-gray-200 rounded-lg px-2 py-2 text-gray-700" title="From date" />
-              <span className="text-xs text-gray-400">→</span>
-              <input type="date" value={dateTo} onChange={(e) => { setDateTo(e.target.value); resetPage() }} className="text-xs border border-gray-200 rounded-lg px-2 py-2 text-gray-700" title="To date" />
-            </span>
+          <MultiSelect label="Organization" options={orgs.slice(0, 200).map(([name, n]) => ({ value: name, label: `${name} (${n})` }))} values={orgFilter} onChange={(v) => { setOrgFilter(v); reset() }} />
+          <MultiSelect label="Step" options={LEAD_STEPS.map((s) => ({ value: s, label: STEP_LABELS[s] }))} values={stepFilter} onChange={(v) => { setStepFilter(v); reset() }} />
+          <MultiSelect label="Owner" options={[{ value: 'pool', label: 'Unassigned' }, ...CRM_USERS.map((u) => ({ value: u, label: shortName(u) }))]} values={ownerFilter} onChange={(v) => { setOwnerFilter(v); reset() }} />
+          {filtersOn && (
+            <button onClick={() => { setSearch(''); setOrgFilter([]); setStepFilter([]); setOwnerFilter([]); reset() }} className="text-xs text-primary-600 hover:underline">Clear filters</button>
           )}
-          <MultiSelect
-            label="Priority"
-            options={[{ value: 'high', label: 'High' }, { value: 'medium', label: 'Medium' }, { value: 'low', label: 'Low' }, { value: 'none', label: 'Not set' }]}
-            values={priorityFilter}
-            onChange={(v) => { setPriorityFilter(v); resetPage() }}
-          />
-          <MultiSelect
-            label="Stage"
-            options={PIPELINE_STAGES.map((s, i) => ({ value: s, label: `${i + 1}. ${STAGE_LABELS[s]}` }))}
-            values={stageFilter}
-            onChange={(v) => { setStageFilter(v); resetPage() }}
-          />
-          {/*
-            Anyone can filter by owner and see how a colleague's book is
-            moving — who holds what, which stage, what's stalled. Read-only by
-            construction: the existing owner rules still gate every write, so
-            seeing someone's leads never grants the ability to work them.
-          */}
-          <MultiSelect
-            label="Owner"
-            options={[
-              { value: 'pool', label: 'Pool (unclaimed)' },
-              ...CRM_TEAM.map((u) => ({ value: u, label: u.split('@')[0] })),
-            ]}
-            values={ownerFilter}
-            onChange={(v) => { setOwnerFilter(v); resetPage() }}
-          />
-          <button
-            type="button"
-            onClick={() => setMoreFilters((v) => !v)}
-            aria-expanded={moreFilters || secondaryActive}
-            className={`text-sm border rounded-lg px-3 py-2 ${moreFilters || secondaryActive ? 'border-primary-300 bg-primary-50 text-primary-700' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}`}
-          >
-            {moreFilters || secondaryActive ? 'Fewer filters' : 'More filters'}
-          </button>
-          {(moreFilters || secondaryActive) && (
-            <div className="basis-full flex flex-wrap items-center gap-3">
-            <MultiSelect
-              label="Status"
-              options={(['new', 'contacted', 'qualified', 'proposal', 'negotiation', 'won', 'lost'] as LeadStatus[]).map((s) => ({ value: s, label: s[0].toUpperCase() + s.slice(1) }))}
-              values={statusFilter}
-              onChange={(v) => { setStatusFilter(v); resetPage() }}
-            />
-            <MultiSelect
-              label="Process"
-              options={[{ value: 'active', label: 'Active' }, { value: 'paused', label: 'Paused' }, { value: 'stopped', label: 'Stopped' }]}
-              values={processFilter}
-              onChange={(v) => { setProcessFilter(v); resetPage() }}
-            />
-            <MultiSelect
-              label="Size"
-              options={[...COMPANY_SIZES.map((s) => ({ value: s, label: s })), { value: 'none', label: 'Not set' }]}
-              values={sizeFilter}
-              onChange={(v) => { setSizeFilter(v); resetPage() }}
-            />
-            <MultiSelect
-              label="Function"
-              options={[...BUSINESS_FUNCTIONS.map((s) => ({ value: s, label: s })), { value: 'none', label: 'Not set' }]}
-              values={functionFilter}
-              onChange={(v) => { setFunctionFilter(v); resetPage() }}
-            />
-            <MultiSelect
-              label="Interest"
-              options={[...LEAD_INTERESTS.map((s) => ({ value: s, label: s })), { value: 'none', label: 'Not set' }]}
-              values={interestFilter}
-              onChange={(v) => { setInterestFilter(v); resetPage() }}
-            />
-            <MultiSelect
-              label="Role"
-              options={[...DECISION_ROLES.map((s) => ({ value: s, label: s })), { value: 'none', label: 'Not set' }]}
-              values={roleFilter}
-              onChange={(v) => { setRoleFilter(v); resetPage() }}
-            />
-            <MultiSelect
-              label="Source"
-              options={[...new Set(leads.map((l) => l.source).filter(Boolean))].sort().map((s) => ({ value: s, label: s }))}
-              values={sourceFilter}
-              onChange={(v) => { setSourceFilter(v); resetPage() }}
-            />
-            </div>
-          )}
-          <div className="ml-auto flex items-center gap-2">
-            <button
-              onClick={() => setAdding(true)}
-              className="px-3 py-2 bg-primary-600 text-white text-sm rounded-lg hover:bg-primary-700 flex items-center gap-2"
-              title="Add a single lead manually — it will be saved under your name"
-            >
+          <div className="ml-auto flex flex-wrap items-center gap-2">
+            <button onClick={() => setAdding(true)} className="px-3 py-2 bg-primary-600 text-white text-sm rounded-lg hover:bg-primary-700 flex items-center gap-1.5">
               <UserPlus className="w-4 h-4" /> Add lead
             </button>
-            <details className="relative">
-              <summary className="list-none cursor-pointer after:!content-none px-3 py-2 border border-gray-200 text-sm rounded-lg hover:bg-gray-50 text-gray-700 select-none [&::-webkit-details-marker]:hidden">Tools</summary>
-              <div
-                onClick={(e) => { e.currentTarget.closest('details')?.removeAttribute('open') }}
-                className="absolute right-0 mt-1 w-60 bg-white border border-gray-200 rounded-xl shadow-lg p-1.5 z-30 flex flex-col [&>button]:w-full [&>button]:justify-start [&>button]:border-0 [&>button]:py-2 [&>a]:w-full [&>a]:justify-start [&>a]:border-0 [&>a]:py-2"
-              >
-            <button
-              onClick={async () => {
-                // Empty-only, same discipline as AI priority: anything a human
-                // typed is left alone. Scope = selection, else current filter.
-                const scope = selected.length ? filtered.filter((l) => selected.includes(l.id)) : filtered
-                const targets = scope.filter((l) => qualificationGaps(l).length > 0).map((l) => l.id)
-                if (targets.length === 0) { notify('Nothing to fill — every lead in scope is already qualified', true); return }
-                setBusy('enrich')
-                try {
-                  const res = await api<{ updated: number; note?: string }>('/api/admin/leads/enrich', {
-                    method: 'POST', body: JSON.stringify({ leadIds: targets.slice(0, 40) }),
-                  })
-                  await onReload()
-                  notify(res.updated ? `AI filled blank fields on ${res.updated} lead(s) — existing values untouched` : (res.note || 'Nothing could be inferred confidently'), !res.updated)
-                } catch (e: any) { notify(e.message, true) } finally { setBusy('') }
-              }}
-              disabled={busy === 'enrich'}
-              className="px-3 py-2 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50 flex items-center gap-2 disabled:opacity-50"
-              title="Fills ONLY blank qualification fields (sector, size, function, interest, decision role) from title, company and notes. Research trusts these as facts, so filling them is what stops proposals reading generic. Never overwrites what you typed."
-            >
-              <Wand2 className="w-4 h-4" /> {busy === 'enrich' ? 'Filling…' : `AI qualify${(() => { const scope = selected.length ? filtered.filter((l) => selected.includes(l.id)) : filtered; const n = scope.filter((l) => qualificationGaps(l).length > 0).length; return n ? ` (${n} thin)` : '' })()}`}
+            <input ref={fileRef} type="file" accept=".xlsx,.xls,.csv" onChange={readFile} className="hidden" />
+            <button onClick={() => fileRef.current?.click()} className="px-3 py-2 border border-gray-300 text-gray-800 text-sm rounded-lg hover:bg-gray-50 flex items-center gap-1.5" title="Upload an Excel or CSV lead sheet">
+              <Upload className="w-4 h-4" /> Import
             </button>
-            {canManage && (
-              <button
-                onClick={async () => {
-                  // Empty-only: leads with a priority are never touched. Scope with the
-                  // date filter (today/week/month/custom) or a manual selection.
-                  const scope = selected.length ? filtered.filter((l) => selected.includes(l.id)) : filtered
-                  const targets = scope.filter((l) => !(l.priority || '').trim()).map((l) => l.id)
-                  if (targets.length === 0) { notify('Nothing to score — every lead in scope already has a priority', true); return }
-                  setBusy('prioritize')
-                  try {
-                    const res = await api<{ updated: number }>('/api/admin/leads/prioritize', { method: 'POST', body: JSON.stringify({ leadIds: targets.slice(0, 60) }) })
-                    await onReload()
-                    notify(`AI set priority on ${res.updated} lead(s) — existing priorities untouched`)
-                  } catch (e: any) { notify(e.message, true) } finally { setBusy('') }
-                }}
-                disabled={busy === 'prioritize'}
-                className="px-3 py-2 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50 flex items-center gap-2 disabled:opacity-50"
-                title="AI fills ONLY empty priorities. Scope it with the date filter (today / week / month / custom dates) or by selecting leads."
-              >
-                <Sparkles className="w-4 h-4" /> {busy === 'prioritize' ? 'Prioritizing…' : `AI priority${(() => { const scope = selected.length ? filtered.filter((l) => selected.includes(l.id)) : filtered; const n = scope.filter((l) => !(l.priority || '').trim()).length; return n ? ` (${n} empty)` : '' })()}`}
-              </button>
-            )}
-            <button
-              onClick={() => {
-                const rows = filtered.map((l) => ({
-                  Name: l.name, Email: l.email, Phone: l.phone, Company: l.company,
-                  Designation: l.designation, LinkedIn: l.linkedin, Website: l.website,
-                  Priority: l.priority, 'Lead Type': l.leadType,
-                  'Company Size': l.companySize || '', Function: l.businessFunction || '',
-                  Interest: l.interest || '', 'Decision Role': l.decisionRole || '',
-                  'Sector / Segment': l.sector,
-                  Region: l.region, Country: l.country, City: l.city,
-                  Stage: l.stage, Status: l.status, Process: l.processStatus,
-                  Owner: l.owner || 'pool', 'Value (INR)': l.value || '',
-                  'Emails Sent': l.emailHistory.filter((e) => e.status === 'sent').length,
-                  'Last Activity': l.lastActivity?.slice(0, 10), Notes: l.notes,
-                }))
-                const wb = XLSX.utils.book_new()
-                XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), 'Leads')
-                XLSX.writeFile(wb, `gennoor-leads-${new Date().toISOString().slice(0, 10)}.xlsx`)
-                notify(`Exported ${rows.length} lead(s)`)
-              }}
-              className="px-3 py-2 border border-gray-200 text-sm rounded-lg hover:bg-gray-50 flex items-center gap-2"
-              title="Download the currently filtered leads as Excel"
-            >
-              <Download className="w-4 h-4" /> Export ({filtered.length})
+            <button onClick={() => setFinding(true)} className="px-3 py-2 border border-gray-300 text-gray-800 text-sm rounded-lg hover:bg-gray-50 flex items-center gap-1.5" title="Search LinkedIn and add people as leads">
+              <Linkedin className="w-4 h-4" /> Find on LinkedIn
             </button>
-            <a href="/api/admin/template" className="px-3 py-2 border border-gray-200 text-sm rounded-lg hover:bg-gray-50 flex items-center gap-2">
-              <Download className="w-4 h-4" /> Template
+            <a href="/api/admin/template" className="px-2 py-2 text-xs text-gray-500 hover:text-primary-600 flex items-center gap-1" title="Download the empty lead sheet to fill in">
+              <Download className="w-3.5 h-3.5" /> Lead sheet
             </a>
-              </div>
-            </details>
-            {canManage && (
-              <>
-                <input ref={fileInputRef} type="file" accept=".xlsx,.xls,.csv,.pdf,.docx,.md,.txt" multiple onChange={handleFile} className="hidden" />
-                <button onClick={() => fileInputRef.current?.click()} disabled={busy === 'aimap'} className="px-3 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 flex items-center gap-2 disabled:opacity-60" title="Excel, CSV, PDF, Word, Markdown or text — multiple files at once. AI maps or extracts what doesn't match the template.">
-                  <Upload className="w-4 h-4" /> {busy === 'aimap' ? 'AI processing...' : 'Import leads'}
-                </button>
-              </>
-            )}
+            <button onClick={exportLeads} className="px-2 py-2 text-xs text-gray-500 hover:text-primary-600 flex items-center gap-1" title="Download the leads shown below as Excel">
+              <Download className="w-3.5 h-3.5" /> Export
+            </button>
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-between gap-2">
-          {/* Pool scope chips */}
           <div className="flex items-center gap-1.5">
-            <InfoTip text="All active = every working lead. Pool = unclaimed, anyone can pick up. My leads = claimed by you (locked to you until released). Dumped = parked as vague/duplicate, restorable." />
             {([
-              ['all', `All active (${leads.filter((l) => !l.dumped).length})`],
-              ['pool', `Pool — pick up (${leads.filter((l) => !l.dumped && !l.owner).length})`],
-              ['mine', `My leads (${leads.filter((l) => !l.dumped && l.owner?.toLowerCase() === userEmail.toLowerCase()).length})`],
-              ['dumped', `Dumped (${leads.filter((l) => l.dumped).length})`],
-            ] as Array<[typeof poolFilter, string]>).map(([key, label]) => (
+              ['all', `All (${counts.all})`],
+              ['pool', `Unassigned (${counts.pool})`],
+              ['mine', `Mine (${counts.mine})`],
+              ['archived', `Archived (${counts.archived})`],
+            ] as Array<[Scope, string]>).map(([key, label]) => (
               <button
                 key={key}
-                onClick={() => { setPoolFilter(key); resetPage(); setSelected([]) }}
-                className={`px-2.5 py-1 text-xs rounded-full border transition-colors ${poolFilter === key ? (key === 'dumped' ? 'bg-gray-700 text-white border-gray-700' : 'bg-primary-600 text-white border-primary-600') : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+                onClick={() => { setScope(key); reset() }}
+                className={`px-2.5 py-1 text-xs rounded-full border transition-colors ${scope === key ? 'bg-primary-600 text-white border-primary-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
               >
                 {label}
               </button>
             ))}
           </div>
-          <div className="flex items-center gap-2">
-            {/* Data-quality scope: research treats these fields as facts, so a
-                thin row produces a generic profile however good the prompts are. */}
-            {(() => {
-              const thin = leads.filter((l) => !l.dumped && qualificationGaps(l).length > 0).length
-              if (!thin && !gapsOnly) return null
-              return (
-                <button
-                  onClick={() => { setGapsOnly((g) => !g); resetPage(); setSelected([]) }}
-                  className={`px-2.5 py-1 text-xs rounded-full border transition-colors ${gapsOnly ? 'bg-amber-500 text-white border-amber-500' : 'border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100'}`}
-                  title="Leads missing sector, size, function, interest or decision role. Research weighs these above anything it infers — fill them and the profile sharpens."
-                >
-                  Missing qualification ({thin})
-                </button>
-              )
-            })()}
-            <div className="text-xs text-gray-500">Showing {filtered.length} of {leads.length} leads</div>
-          </div>
+          <div className="text-xs text-gray-500">{filtered.length} lead{filtered.length === 1 ? '' : 's'}</div>
         </div>
       </div>
 
-      {/* Bulk actions */}
+      {/* What to do with the ticked leads */}
       {selected.length > 0 && (
-        <div className="bg-primary-50 px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-2">
-          <span className="text-sm text-primary-700 font-medium flex items-center gap-1.5">{selected.length} selected
-            <InfoTip text="Open opens every selected lead as tabs on one CRM page — close a tab to drop that lead, close the page to come back to My leads. Pick up = claim for yourself. Release = back to the pool. Dump = park as vague/duplicate (with reason). Start/Pause/Stop = outreach process. Assign & Delete are manager-only." />
-          </span>
-          <div className="flex flex-wrap items-center gap-2">
-            {/* Open the whole selection as one multi-lead workspace */}
-            <button
-              onClick={() => {
-                const qs = selected.slice(0, 12).map((id) => `id=${encodeURIComponent(id)}`).join('&')
-                if (selected.length > 12) notify('Opening the first 12 selected leads')
-                router.push(`/crm/leads/multi?${qs}`)
-              }}
-              disabled={!!busy}
-              className="px-3 py-1.5 bg-gray-900 text-white text-xs rounded hover:bg-black flex items-center gap-1.5 disabled:opacity-50"
-              title="Open the selected leads as tabs on one page"
-            >
-              <Columns3 className="w-3.5 h-3.5" /> Open {selected.length} lead{selected.length === 1 ? '' : 's'}
+        <div className="bg-primary-50 px-3 sm:px-4 py-2 flex flex-wrap items-center gap-2 sticky top-0 z-20">
+          <span className="text-sm text-primary-700 font-medium mr-1">{selected.length} selected</span>
+          {scope === 'archived' ? (
+            <button onClick={() => hold('restore')} disabled={!!busy} className="px-3 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 flex items-center gap-1.5 disabled:opacity-50">
+              <Undo2 className="w-3.5 h-3.5" /> Restore
             </button>
-            {/* Pool actions */}
-            {poolFilter === 'dumped' ? (
-              <button onClick={() => poolAction('restore')} disabled={!!busy} className="px-3 py-1.5 bg-green-600 text-white text-xs rounded hover:bg-green-700 flex items-center gap-1.5 disabled:opacity-50">
-                <Undo2 className="w-3.5 h-3.5" /> Restore to pool
+          ) : (
+            <>
+              <button onClick={() => setSendTo(chosen)} disabled={!!busy} className="px-3 py-1.5 bg-primary-600 text-white text-xs rounded-lg hover:bg-primary-700 flex items-center gap-1.5 disabled:opacity-50">
+                <Send className="w-3.5 h-3.5" /> Send next email
               </button>
-            ) : (
-              <>
-                <button onClick={() => poolAction('claim')} disabled={!!busy} className="px-3 py-1.5 bg-primary-600 text-white text-xs rounded hover:bg-primary-700 flex items-center gap-1.5 disabled:opacity-50">
-                  <Hand className="w-3.5 h-3.5" /> Pick up
-                </button>
-                <button onClick={() => poolAction('release')} disabled={!!busy} className="px-3 py-1.5 border border-primary-300 text-primary-700 text-xs rounded hover:bg-primary-50 flex items-center gap-1.5 disabled:opacity-50">
-                  <Undo2 className="w-3.5 h-3.5" /> Release
-                </button>
-                <button onClick={() => poolAction('dump')} disabled={!!busy} className="px-3 py-1.5 border border-gray-300 text-gray-600 text-xs rounded hover:bg-gray-100 flex items-center gap-1.5 disabled:opacity-50">
-                  <Archive className="w-3.5 h-3.5" /> Dump
-                </button>
-                {canManage && (
-                  <select
-                    defaultValue=""
-                    onChange={(e) => { if (e.target.value) { poolAction('assign', e.target.value); e.target.value = '' } }}
-                    disabled={!!busy}
-                    className="px-2 py-1.5 border border-gray-300 text-gray-700 text-xs rounded bg-white disabled:opacity-50"
-                  >
-                    <option value="" disabled>Assign to…</option>
-                    {CRM_TEAM.map((u) => <option key={u} value={u}>{u.split('@')[0]}</option>)}
-                  </select>
-                )}
-              </>
-            )}
-            <div className="flex items-center rounded overflow-hidden border border-gray-200">
-              <button onClick={() => setProcess('active')} disabled={!!busy} className="px-3 py-1.5 bg-green-600 text-white text-xs hover:bg-green-700 disabled:opacity-50">Start</button>
-              <button onClick={() => setProcess('paused')} disabled={!!busy} className="px-3 py-1.5 bg-amber-500 text-white text-xs hover:bg-amber-600 disabled:opacity-50">Pause</button>
-              <button onClick={() => setProcess('stopped')} disabled={!!busy} className="px-3 py-1.5 bg-red-600 text-white text-xs hover:bg-red-700 disabled:opacity-50">Stop</button>
-            </div>
-            {canManage && (
-              <button onClick={deleteSelected} disabled={!!busy} className="px-3 py-1.5 bg-gray-700 text-white text-xs rounded hover:bg-gray-800 flex items-center gap-1.5 disabled:opacity-50">
-                <Trash2 className="w-3.5 h-3.5" /> Delete
+              <button onClick={() => hold('claim')} disabled={!!busy} className="px-3 py-1.5 border border-primary-300 bg-white text-primary-700 text-xs rounded-lg hover:bg-primary-50 flex items-center gap-1.5 disabled:opacity-50">
+                <Hand className="w-3.5 h-3.5" /> Pick up
               </button>
-            )}
-            <button onClick={() => setSelected([])} className="px-3 py-1.5 border border-gray-300 text-gray-600 text-xs rounded hover:bg-gray-50">Clear</button>
-          </div>
+              <button onClick={() => hold('release')} disabled={!!busy} className="px-3 py-1.5 border border-gray-300 bg-white text-gray-700 text-xs rounded-lg hover:bg-gray-50 flex items-center gap-1.5 disabled:opacity-50">
+                <Undo2 className="w-3.5 h-3.5" /> Release
+              </button>
+              {canManage && (
+                <select
+                  defaultValue=""
+                  onChange={(e) => { if (e.target.value) { hold('assign', e.target.value); e.target.value = '' } }}
+                  disabled={!!busy}
+                  className="px-2 py-1.5 border border-gray-300 text-gray-700 text-xs rounded-lg bg-white disabled:opacity-50"
+                >
+                  <option value="" disabled>Give to…</option>
+                  {CRM_USERS.map((u) => <option key={u} value={u}>{shortName(u)}</option>)}
+                </select>
+              )}
+              <button onClick={() => hold('dump')} disabled={!!busy} className="px-3 py-1.5 border border-gray-300 bg-white text-gray-700 text-xs rounded-lg hover:bg-gray-50 flex items-center gap-1.5 disabled:opacity-50">
+                <Archive className="w-3.5 h-3.5" /> Archive
+              </button>
+            </>
+          )}
+          {canManage && (
+            <button onClick={remove} disabled={!!busy} className="px-3 py-1.5 text-red-600 text-xs rounded-lg hover:bg-red-50 flex items-center gap-1.5 disabled:opacity-50">
+              <Trash2 className="w-3.5 h-3.5" /> Delete
+            </button>
+          )}
+          <button onClick={() => setSelected([])} className="ml-auto text-xs text-gray-500 hover:text-gray-800">Clear</button>
         </div>
       )}
 
-      {/* Table */}
+      {/* The list */}
       <div className="bg-white overflow-x-auto">
-        <table className="w-full min-w-[760px]">
+        <table className="w-full min-w-[720px]">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-4 py-3 text-left w-10">
+              <th className="px-4 py-2.5 text-left w-10">
                 <input
                   type="checkbox"
                   className="rounded"
+                  aria-label="Select all on this page"
                   checked={pageLeads.length > 0 && pageLeads.every((l) => selected.includes(l.id))}
                   onChange={(e) => setSelected(e.target.checked ? [...new Set([...selected, ...pageLeads.map((l) => l.id)])] : selected.filter((id) => !pageLeads.some((l) => l.id === id)))}
                 />
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Lead</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Company</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Priority</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Stage</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Status</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Owner</th>
+              {['Lead', 'Organization', 'Step', 'Email series', 'Owner'].map((h) => (
+                <th key={h} className="px-4 py-2.5 text-left text-xs font-medium text-gray-500">{h}</th>
+              ))}
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {pageLeads.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-6 py-16 text-center text-gray-400 text-sm">
-                  {leads.length === 0 ? 'No leads yet. Download the template, fill it, and upload it here.' : 'No leads match the current filters.'}
+                <td colSpan={6} className="px-6 py-14 text-center text-sm text-gray-400">
+                  {leads.length === 0
+                    ? 'No leads yet. Press Add lead, Import a lead sheet, or Find on LinkedIn.'
+                    : 'No leads match. Clear the filters to see more.'}
                 </td>
               </tr>
             )}
-            {pageLeads.map((lead) => (
-              <tr key={lead.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => onOpenLead(lead.id)}>
-                <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                  <input
-                    type="checkbox"
-                    className="rounded"
-                    checked={selected.includes(lead.id)}
-                    onChange={(e) => setSelected(e.target.checked ? [...selected, lead.id] : selected.filter((id) => id !== lead.id))}
-                  />
-                </td>
-                <td className="px-4 py-3">
-                  <div className="text-sm font-medium text-gray-900">{lead.name}</div>
-                  <div className="text-xs text-gray-500">{lead.email || <span className="text-amber-500">no email</span>}</div>
-                  <div className="text-[11px] text-gray-400 mt-0.5 flex items-center gap-2">
-                    <span>{timeAgo(lead.lastActivity)}</span>
-                    {lead.aiResearch && <span className="inline-flex items-center gap-1"><Brain className="w-3 h-3" /> researched</span>}
-                    {lead.emailHistory.length > 0 && <span className="inline-flex items-center gap-1 text-primary-600"><Mail className="w-3 h-3" /> {lead.emailHistory.length}</span>}
-                  </div>
-                </td>
-                <td className="px-4 py-3 max-w-[260px]">
-                  <div className="text-sm text-gray-900">{lead.company || '—'}</div>
-                  <div className="text-xs text-gray-500 truncate" title={lead.designation}>{lead.designation}</div>
-                  <div className="text-[11px] text-gray-400">{[lead.city, lead.country].filter(Boolean).join(', ') || lead.region || ''}</div>
-                </td>
-                <td className="px-4 py-3"><PriorityBadge priority={lead.priority} /></td>
-                <td className="px-4 py-3"><StageBar stage={lead.stage} onSelect={canSetStage(lead) ? (s) => setStage(lead.id, s) : undefined} /></td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-1.5">
-                    <StatusBadge status={lead.status} />
-                    {lead.processStatus !== 'active' && (
-                      <span className={`text-[10px] rounded-full px-1.5 py-0.5 ${lead.processStatus === 'paused' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`} title={`Process ${lead.processStatus}`}>{lead.processStatus}</span>
-                    )}
-                  </div>
-                </td>
-                <td className="px-4 py-3">
-                  {lead.dumped ? (
-                    <span className="text-[11px] bg-gray-200 text-gray-600 rounded-full px-2 py-0.5" title={lead.dumped.reason}>dumped</span>
-                  ) : lead.owner ? (
-                    <span className={`text-[11px] rounded-full px-2 py-0.5 ${lead.owner.toLowerCase() === userEmail.toLowerCase() ? 'bg-primary-100 text-primary-700 font-medium' : 'bg-gray-100 text-gray-600'}`}>
-                      {lead.owner.toLowerCase() === userEmail.toLowerCase() ? 'me' : lead.owner.split('@')[0]}
-                    </span>
-                  ) : (
-                    <span className="text-[11px] bg-green-50 text-green-700 border border-green-200 rounded-full px-2 py-0.5">pool</span>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {/* Pagination */}
-        <div className="px-3 sm:px-4 py-2.5 border-t border-gray-200 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-3 text-sm text-gray-600">
-            <span>
-              {filtered.length === 0 ? 0 : (safePage - 1) * pageSize + 1}–{Math.min(safePage * pageSize, filtered.length)} of {filtered.length}
-            </span>
-            <select value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); resetPage() }} className="border border-gray-200 rounded px-1.5 py-1 text-xs">
-              {PAGE_SIZES.map((n) => <option key={n} value={n}>{n} / page</option>)}
-            </select>
-          </div>
-          <div className="flex items-center gap-1">
-            <button onClick={() => setPage(Math.max(1, safePage - 1))} disabled={safePage === 1} className="px-3 py-1 border border-gray-200 rounded text-sm disabled:opacity-40 hover:bg-gray-50">Prev</button>
-            {Array.from({ length: Math.min(7, totalPages) }, (_, i) => {
-              let p: number
-              if (totalPages <= 7) p = i + 1
-              else if (safePage <= 4) p = i + 1
-              else if (safePage >= totalPages - 3) p = totalPages - 6 + i
-              else p = safePage - 3 + i
+            {pageLeads.map((lead) => {
+              const series = seriesLabel(lead)
               return (
-                <button key={p} onClick={() => setPage(p)} className={`px-3 py-1 rounded text-sm ${safePage === p ? 'bg-primary-600 text-white' : 'border border-gray-200 hover:bg-gray-50'}`}>
-                  {p}
-                </button>
+                <tr key={lead.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => onOpenLead(lead.id)}>
+                  <td className="px-4 py-2.5" onClick={(e) => e.stopPropagation()}>
+                    <input
+                      type="checkbox"
+                      className="rounded"
+                      aria-label={`Select ${lead.name}`}
+                      checked={selected.includes(lead.id)}
+                      onChange={(e) => setSelected(e.target.checked ? [...selected, lead.id] : selected.filter((id) => id !== lead.id))}
+                    />
+                  </td>
+                  <td className="px-4 py-2.5 max-w-[240px]">
+                    <div className="text-sm font-medium text-gray-900 truncate">{lead.name}</div>
+                    <div className="text-xs text-gray-500 truncate">{lead.email || <span className="text-amber-600">no email</span>}</div>
+                  </td>
+                  <td className="px-4 py-2.5 max-w-[240px]">
+                    <div className="text-sm text-gray-900 truncate">{lead.company || <span className="text-gray-300">not set</span>}</div>
+                    <div className="text-xs text-gray-500 truncate">{[lead.designation, lead.country].filter(Boolean).join(' · ')}</div>
+                  </td>
+                  <td className="px-4 py-2.5">
+                    {lead.dumped ? <span className="text-[11px] bg-gray-200 text-gray-600 rounded-full px-2 py-0.5" title={lead.dumped.reason}>Archived</span> : <StatusBadge status={lead.status} />}
+                  </td>
+                  <td className="px-4 py-2.5">
+                    {series.text ? (
+                      <span className={`text-xs inline-flex items-center gap-1 ${series.due ? 'text-primary-700 font-medium' : 'text-gray-500'}`}>
+                        <Mail className="w-3 h-3" /> {series.text}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-gray-400">{timeAgo(lead.lastActivity)}</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-2.5">
+                    {lead.owner ? (
+                      <span className={`text-[11px] rounded-full px-2 py-0.5 ${lead.owner.toLowerCase() === me ? 'bg-primary-100 text-primary-700 font-medium' : 'bg-gray-100 text-gray-600'}`}>
+                        {lead.owner.toLowerCase() === me ? 'me' : shortName(lead.owner)}
+                      </span>
+                    ) : (
+                      <span className="text-[11px] text-gray-400">unassigned</span>
+                    )}
+                  </td>
+                </tr>
               )
             })}
-            <button onClick={() => setPage(Math.min(totalPages, safePage + 1))} disabled={safePage === totalPages} className="px-3 py-1 border border-gray-200 rounded text-sm disabled:opacity-40 hover:bg-gray-50">Next</button>
-          </div>
+          </tbody>
+        </table>
+        <div className="px-3 sm:px-4 py-2.5 border-t border-gray-200">
+          <Pagination page={safePage} total={filtered.length} perPage={PER_PAGE} onPage={setPage} />
         </div>
       </div>
 
-      {/* Manual add-lead modal — anyone can add; the lead is saved under their name */}
-      {adding && (
-        <AddLeadModal
-          userEmail={userEmail}
-          onClose={() => setAdding(false)}
-          onAdded={async () => { setAdding(false); await onReload() }}
-          notify={notify}
-        />
-      )}
+      {adding && <AddLeadModal userEmail={userEmail} onClose={() => setAdding(false)} onAdded={async () => { setAdding(false); await onReload() }} notify={notify} />}
 
-      {/* Upload preview modal */}
+      {finding && <FindOnLinkedIn onClose={() => setFinding(false)} onAdded={async () => { await onReload() }} notify={notify} />}
+
+      {sendTo && <SendStepModal leads={sendTo} notify={notify} onClose={() => setSendTo(null)} onSent={async () => { setSendTo(null); setSelected([]); await onReload() }} />}
+
+      {/* Check the sheet before anything is saved */}
       {upload && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl w-full max-w-2xl max-h-[85vh] flex flex-col">
-            <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Import preview</h3>
-              <button onClick={() => setUpload(null)} className="p-2 hover:bg-gray-100 rounded"><X className="w-5 h-5 text-gray-500" /></button>
-            </div>
-            <div className="px-6 py-4 overflow-y-auto flex-1 space-y-4">
-              <div className="grid grid-cols-3 gap-3 text-center">
-                <div className="bg-green-50 rounded-lg p-3"><div className="text-2xl font-bold text-green-700">{upload.valid.length}</div><div className="text-xs text-green-700">ready to import</div></div>
-                <div className="bg-amber-50 rounded-lg p-3"><div className="text-2xl font-bold text-amber-700">{upload.warnings.length}</div><div className="text-xs text-amber-700">warnings</div></div>
-                <div className="bg-red-50 rounded-lg p-3"><div className="text-2xl font-bold text-red-700">{upload.skipped}</div><div className="text-xs text-red-700">skipped (no name)</div></div>
+          <div className="bg-white rounded-xl w-full max-w-3xl max-h-[88vh] flex flex-col">
+            <div className="px-5 py-3.5 border-b border-gray-200 flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-semibold text-gray-900">Check before importing</h3>
+                <p className="text-xs text-gray-500">{upload.file} · {upload.rows.length} lead{upload.rows.length === 1 ? '' : 's'} found{upload.skipped ? ` · ${upload.skipped} row(s) without a name skipped` : ''}</p>
               </div>
-              <p className="text-xs text-gray-500">Only a Name is required — blank fields are fine and can be completed later. Existing leads (same email, or same name + company) are refreshed, never duplicated.</p>
-              {upload.warnings.length > 0 && (
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-800 space-y-1 max-h-40 overflow-y-auto">
-                  {upload.warnings.map((w, i) => <div key={i}>{w}</div>)}
+              <button onClick={() => setUpload(null)} className="p-2 hover:bg-gray-100 rounded" aria-label="Close"><X className="w-5 h-5 text-gray-500" /></button>
+            </div>
+            <div className="px-5 py-4 overflow-y-auto flex-1 space-y-3">
+              {upload.rows.length === 0 ? (
+                <p className="text-sm text-gray-600">
+                  No leads were found. The sheet needs a <strong>Name</strong> column. <a href="/api/admin/template" className="text-primary-600 underline">Download the lead sheet</a> and copy your leads into it.
+                </p>
+              ) : (
+                <div className="border border-gray-200 rounded-lg overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead className="bg-gray-50">
+                      <tr>{['Name', 'Email', 'Organization', 'Designation', 'Country'].map((h) => <th key={h} className="px-3 py-2 text-left font-medium text-gray-500">{h}</th>)}</tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {upload.rows.slice(0, 8).map((l, i) => (
+                        <tr key={i}>
+                          <td className="px-3 py-1.5 text-gray-900">{l.name}</td>
+                          <td className="px-3 py-1.5 text-gray-600">{l.email || <span className="text-amber-600">blank</span>}</td>
+                          <td className="px-3 py-1.5 text-gray-600">{l.company || <span className="text-amber-600">blank</span>}</td>
+                          <td className="px-3 py-1.5 text-gray-600">{l.designation}</td>
+                          <td className="px-3 py-1.5 text-gray-600">{l.country}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {upload.rows.length > 8 && <div className="px-3 py-1.5 text-[11px] text-gray-400 bg-gray-50">and {upload.rows.length - 8} more</div>}
                 </div>
               )}
+              {upload.notes.length > 0 && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-800 space-y-1 max-h-36 overflow-y-auto">
+                  {upload.notes.map((w, i) => <div key={i}>{w}</div>)}
+                </div>
+              )}
+              <p className="text-xs text-gray-500">
+                New leads arrive unassigned. Anyone already in the CRM (same email, or same name and organization) is updated, never added twice, and blank cells do not erase anything.
+              </p>
             </div>
-            <div className="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+            <div className="px-5 py-3.5 border-t border-gray-200 flex justify-end gap-2">
               <button onClick={() => setUpload(null)} className="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-sm">Cancel</button>
-              <button onClick={confirmImport} disabled={busy === 'import' || upload.valid.length === 0} className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 text-sm disabled:opacity-50">
-                {busy === 'import' ? <Spinner label="Importing..." /> : `Import ${upload.valid.length} lead(s)`}
+              <button onClick={confirmImport} disabled={busy === 'import' || upload.rows.length === 0} className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 text-sm disabled:opacity-50">
+                {busy === 'import' ? <Spinner label="Importing…" /> : `Import ${upload.rows.length} lead${upload.rows.length === 1 ? '' : 's'}`}
               </button>
             </div>
           </div>
@@ -886,88 +457,52 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
   )
 }
 
-// Single-lead manual entry. The creator becomes the owner by default so the
-// lead lands in "My leads"; managers can release it to the pool or reassign.
+// One lead, typed in. Saved under the person who adds it.
 function AddLeadModal({ userEmail, onClose, onAdded, notify }: {
   userEmail: string
   onClose: () => void
   onAdded: () => Promise<void>
   notify: (msg: string, isError?: boolean) => void
 }) {
-  const [form, setForm] = useState({
-    name: '', email: '', phone: '', company: '', designation: '',
-    priority: '', companySize: '', businessFunction: '', interest: '', decisionRole: '',
-    sector: '', country: '', city: '', linkedin: '', website: '', notes: '',
-  })
+  const [form, setForm] = useState({ name: '', email: '', phone: '', company: '', designation: '', country: '', linkedin: '', notes: '' })
   const [saving, setSaving] = useState(false)
-  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
-    setForm((f) => ({ ...f, [k]: e.target.value }))
-  const inputCls = 'w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent'
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setForm((f) => ({ ...f, [k]: e.target.value }))
+  const cls = 'w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent'
 
   const save = async () => {
     if (!form.name.trim()) { notify('Name is required', true); return }
     setSaving(true)
     try {
-      await api('/api/admin/leads', {
-        method: 'POST',
-        body: JSON.stringify({ ...form, email: form.email.trim().toLowerCase(), owner: userEmail, source: 'manual' }),
-      })
-      notify(`Lead "${form.name.trim()}" added under your name`)
+      await api('/api/admin/leads', { method: 'POST', body: JSON.stringify({ ...form, name: form.name.trim(), email: form.email.trim().toLowerCase(), owner: userEmail, source: 'Added by hand' }) })
+      notify(`${form.name.trim()} added to your leads`)
       await onAdded()
     } catch (e: any) { notify(e.message, true) } finally { setSaving(false) }
   }
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl w-full max-w-xl max-h-[88vh] flex flex-col">
+      <div className="bg-white rounded-xl w-full max-w-lg max-h-[88vh] flex flex-col">
         <div className="px-5 py-3.5 border-b border-gray-200 flex items-center justify-between shrink-0">
-          <div>
-            <h3 className="text-base font-semibold text-gray-900">Add lead manually</h3>
-            <p className="text-[11px] text-gray-500">Saved under <span className="font-medium">{userEmail.split('@')[0]}</span> — a manager can release it to the pool or reassign it.</p>
-          </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded"><X className="w-5 h-5 text-gray-500" /></button>
+          <h3 className="text-base font-semibold text-gray-900">Add a lead</h3>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded" aria-label="Close"><X className="w-5 h-5 text-gray-500" /></button>
         </div>
         <div className="p-5 overflow-y-auto space-y-2.5">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <input value={form.name} onChange={set('name')} className={inputCls} placeholder="Name *" autoFocus />
-            <select value={form.priority} onChange={set('priority')} className={inputCls}>
-              <option value="">Priority — not set</option>
-              <option value="High">High</option>
-              <option value="Medium">Medium</option>
-              <option value="Low">Low</option>
-            </select>
-            <select value={form.companySize} onChange={set('companySize')} className={inputCls}>
-              <option value="">Company size — not set</option>
-              {COMPANY_SIZES.map((s) => <option key={s} value={s}>{s}</option>)}
-            </select>
-            <select value={form.businessFunction} onChange={set('businessFunction')} className={inputCls}>
-              <option value="">Function — not set</option>
-              {BUSINESS_FUNCTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
-            </select>
-            <select value={form.interest} onChange={set('interest')} className={inputCls}>
-              <option value="">Interest — not set</option>
-              {LEAD_INTERESTS.map((s) => <option key={s} value={s}>{s}</option>)}
-            </select>
-            <select value={form.decisionRole} onChange={set('decisionRole')} className={inputCls}>
-              <option value="">Decision role — not set</option>
-              {DECISION_ROLES.map((s) => <option key={s} value={s}>{s}</option>)}
-            </select>
-            <input value={form.email} onChange={set('email')} className={inputCls} placeholder="Email" type="email" />
-            <input value={form.phone} onChange={set('phone')} className={inputCls} placeholder="Phone" />
-            <input value={form.company} onChange={set('company')} className={inputCls} placeholder="Company" />
-            <input value={form.designation} onChange={set('designation')} className={inputCls} placeholder="Designation" />
-            <input value={form.sector} onChange={set('sector')} className={inputCls} placeholder="Sector / segment" />
-            <input value={form.country} onChange={set('country')} className={inputCls} placeholder="Country" />
-            <input value={form.city} onChange={set('city')} className={inputCls} placeholder="City" />
-            <input value={form.linkedin} onChange={set('linkedin')} className={inputCls} placeholder="LinkedIn URL" />
+            <input value={form.name} onChange={set('name')} className={cls} placeholder="Name (required)" autoFocus />
+            <input value={form.company} onChange={set('company')} className={cls} placeholder="Organization" />
+            <input value={form.email} onChange={set('email')} className={cls} placeholder="Email" type="email" />
+            <input value={form.phone} onChange={set('phone')} className={cls} placeholder="Phone" />
+            <input value={form.designation} onChange={set('designation')} className={cls} placeholder="Designation" />
+            <input value={form.country} onChange={set('country')} className={cls} placeholder="Country" />
           </div>
-          <input value={form.website} onChange={set('website')} className={inputCls} placeholder="Company website" />
-          <textarea value={form.notes} onChange={set('notes')} rows={3} className={inputCls} placeholder="Notes (context, where you met them, what they need...)" />
+          <input value={form.linkedin} onChange={set('linkedin')} className={cls} placeholder="LinkedIn profile link" />
+          <textarea value={form.notes} onChange={set('notes')} rows={3} className={cls} placeholder="Notes: where you met, what they need" />
+          <p className="text-[11px] text-gray-400">These are the same {LEAD_COLUMNS.length} fields as the lead sheet. Only the name is required.</p>
         </div>
         <div className="px-5 py-3.5 border-t border-gray-200 flex justify-end gap-2 shrink-0">
           <button onClick={onClose} className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50">Cancel</button>
-          <button onClick={save} disabled={saving || !form.name.trim()} className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm hover:bg-primary-700 disabled:opacity-50 flex items-center gap-2">
-            <UserPlus className="w-4 h-4" /> {saving ? 'Saving…' : 'Add lead'}
+          <button onClick={save} disabled={saving || !form.name.trim()} className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm hover:bg-primary-700 disabled:opacity-50">
+            {saving ? 'Saving…' : 'Add lead'}
           </button>
         </div>
       </div>

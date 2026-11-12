@@ -1,16 +1,9 @@
 import NextAuth from 'next-auth'
 import MicrosoftEntraID from 'next-auth/providers/microsoft-entra-id'
+import { CRM_USERS } from '@/lib/crm/users'
 
-// Authorized emails for the CRM system
-const AUTHORIZED_EMAILS = [
-  'admin@gennoor.com',
-  'jalalkhan@gennoor.com',
-  'yusufchaudhary@gennoor.com',
-  'aditya@gennoor.com',
-  'deepanshu@gennoor.com',
-  'zaid@gennoor.com',
-  'sales@gennoor.com',
-]
+// The list of people lives in src/lib/crm/users.ts (one place for the whole site).
+const AUTHORIZED_EMAILS = CRM_USERS
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [

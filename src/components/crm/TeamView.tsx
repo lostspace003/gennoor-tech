@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
-import { Users, Brain, Mail, Calendar, Activity, ShieldAlert } from 'lucide-react'
+import { Users, Linkedin, Mail, StickyNote, Activity, ShieldAlert } from 'lucide-react'
 import { Lead, LeadActivity } from '@/lib/crm/types'
 import { formatDateTime, timeAgo, DateRangeFilter, DateRange, rangeBounds, rangeLabel } from './shared'
 
@@ -10,9 +10,9 @@ interface MemberStats {
   email: string
   today: number
   inRange: number
-  researched: number
   emails: number
-  followups: number
+  linkedin: number
+  notes: number
   owned: number
   lastActivity?: LeadActivity & { leadId: string; leadName: string }
   recent: Array<LeadActivity & { leadId: string; leadName: string }>
@@ -31,7 +31,7 @@ export default function TeamView({ leads, isManager }: { leads: Lead[]; isManage
 
     const get = (email: string): MemberStats => {
       if (!members.has(email)) {
-        members.set(email, { email, today: 0, inRange: 0, researched: 0, emails: 0, followups: 0, owned: 0, recent: [] })
+        members.set(email, { email, today: 0, inRange: 0, emails: 0, linkedin: 0, notes: 0, owned: 0, recent: [] })
       }
       return members.get(email)!
     }
@@ -46,9 +46,9 @@ export default function TeamView({ leads, isManager }: { leads: Lead[]; isManage
         if (t >= dayStart.getTime()) m.today++
         if (t < fromMs || t > toMs) continue
         m.inRange++
-        if (a.type === 'research') m.researched++
         if (a.type === 'email') m.emails++
-        if (a.type === 'followup') m.followups++
+        if (a.type === 'linkedin') m.linkedin++
+        if (a.type === 'note') m.notes++
         if (m.recent.length < 50) m.recent.push(entry)
       }
     }
@@ -64,7 +64,7 @@ export default function TeamView({ leads, isManager }: { leads: Lead[]; isManage
     return (
       <div className="p-8 max-w-md mx-auto text-center">
         <ShieldAlert className="w-8 h-8 text-amber-500 mx-auto mb-3" />
-        <p className="text-sm text-gray-600">The Team view is available to managers only (admin, Jalal, Yusuf).</p>
+        <p className="text-sm text-gray-600">The Team page is for managers.</p>
       </div>
     )
   }
@@ -74,7 +74,7 @@ export default function TeamView({ leads, isManager }: { leads: Lead[]; isManage
       <div className="flex items-center gap-2 flex-wrap">
         <Users className="w-4 h-4 text-primary-500" />
         <h2 className="text-base font-semibold text-gray-900">Team activity</h2>
-        <span className="text-xs text-gray-400">computed from every action recorded on leads</span>
+        <span className="text-xs text-gray-400">from what each person did on their leads</span>
         <div className="ml-auto">
           <DateRangeFilter
             value={range}
@@ -104,10 +104,10 @@ export default function TeamView({ leads, isManager }: { leads: Lead[]; isManage
               </div>
             </div>
             <div className="px-4 py-2.5 grid grid-cols-4 gap-2 text-center border-b border-gray-100">
-              <Stat icon={Users} label="owned" value={m.owned} />
-              <Stat icon={Brain} label="research" value={m.researched} />
+              <Stat icon={Users} label="leads held" value={m.owned} />
               <Stat icon={Mail} label="emails" value={m.emails} />
-              <Stat icon={Calendar} label="invites" value={m.followups} />
+              <Stat icon={Linkedin} label="LinkedIn" value={m.linkedin} />
+              <Stat icon={StickyNote} label="notes" value={m.notes} />
             </div>
             <div className="max-h-48 overflow-y-auto divide-y divide-gray-50">
               {m.recent.length === 0 && <p className="px-4 py-3 text-xs text-gray-400">No actions {rangeLabel(range)}.</p>}

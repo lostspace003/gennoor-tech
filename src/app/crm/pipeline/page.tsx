@@ -1,11 +1,6 @@
-'use client'
+import { redirect } from 'next/navigation'
 
-import { useRouter } from 'next/navigation'
-import { useCrm } from '@/components/crm/CrmContext'
-import { PipelineView } from '@/components/crm/OtherViews'
-
-export default function PipelinePage() {
-  const router = useRouter()
-  const { leads } = useCrm()
-  return <PipelineView leads={leads} onOpenLead={(id) => router.push(`/crm/leads/${encodeURIComponent(id)}`)} />
+// This page was folded into Today. Old links and bookmarks land there.
+export default function Moved() {
+  redirect('/crm/queue')
 }

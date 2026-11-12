@@ -2,95 +2,55 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Lead, LeadStatus, PipelineStage, PIPELINE_STAGES } from '@/lib/crm/types'
+import { LeadStatus, LEAD_STEPS, STEP_LABELS, STEP_HINTS } from '@/lib/crm/types'
 import { IST, istInstant, leadTimeZone, formatInZone } from '@/lib/crm/timezones'
 
-// Where the relationship stands. The stored keys are older names, kept so no data needs moving.
-export const STAGE_LABELS: Record<PipelineStage, string> = {
-  diagnose: 'Prospect',
-  train: 'Talking',
-  poc: 'Scoping',
-  development: 'Delivering',
-  sustain: 'Customer',
-}
-
-// What kind of offering a match is (training, automation), shown on AI matches.
-export const OFFER_KIND_LABELS: Record<string, string> = {
-  train: 'Training',
-  development: 'Automation',
-  poc: 'Automation',
-  diagnose: 'Advice',
-  sustain: 'Support',
-}
-
-/**
- * Lead status is a *progression*, not seven unrelated categories, so it reads
- * as one: a neutral chip while the lead is in play, the accent once there's a
- * live commercial motion, and a semantic colour only at the two terminal
- * states. The leading dot darkens along the way, which is what separates
- * adjacent steps — earlier these relied on unrelated hues, and once the
- * palette collapsed to one accent, new/qualified and proposal/negotiation
- * became indistinguishable chips.
- */
+// One chip says where a lead stands. Neutral while it is being worked, the
+// accent once there is a live conversation, a semantic colour at the two ends.
 export const STATUS_COLORS: Record<LeadStatus, string> = {
   new: 'bg-gray-100 text-gray-600',
-  contacted: 'bg-gray-100 text-gray-700',
-  qualified: 'bg-gray-100 text-gray-900',
+  contacted: 'bg-gray-100 text-gray-800',
+  qualified: 'bg-primary-100 text-primary-700',
   proposal: 'bg-primary-100 text-primary-700',
   negotiation: 'bg-primary-100 text-primary-700',
   won: 'bg-green-100 text-green-700',
-  lost: 'bg-red-100 text-red-700',
+  lost: 'bg-red-50 text-red-700',
 }
 
 const STATUS_DOTS: Record<LeadStatus, string> = {
   new: 'bg-gray-300',
-  contacted: 'bg-gray-400',
-  qualified: 'bg-gray-600',
-  proposal: 'bg-primary-400',
+  contacted: 'bg-gray-500',
+  qualified: 'bg-primary-400',
+  proposal: 'bg-primary-600',
   negotiation: 'bg-primary-600',
   won: 'bg-green-600',
-  lost: 'bg-red-600',
+  lost: 'bg-red-500',
 }
 
 export function StatusBadge({ status }: { status: LeadStatus }) {
   return (
-    <span
-      className={`inline-flex items-center gap-1.5 px-2 py-0.5 text-xs rounded-full capitalize ${STATUS_COLORS[status] || STATUS_COLORS.new}`}
-    >
+    <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 text-xs rounded-full whitespace-nowrap ${STATUS_COLORS[status] || STATUS_COLORS.new}`}>
       <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${STATUS_DOTS[status] || STATUS_DOTS.new}`} />
-      {status}
+      {STEP_LABELS[status] || status}
     </span>
   )
 }
 
-export function ProcessDot({ status }: { status: Lead['processStatus'] }) {
-  const color = status === 'active' ? 'bg-green-500' : status === 'paused' ? 'bg-amber-500' : 'bg-red-500'
+/** The step as a dropdown: the one control that moves a lead along. */
+export function StepSelect({ value, onChange, disabled }: { value: LeadStatus; onChange: (s: LeadStatus) => void; disabled?: boolean }) {
   return (
-    <span className="inline-flex items-center gap-1.5">
-      <span className={`w-2 h-2 rounded-full ${color}`} />
-      <span className="text-xs text-gray-600 capitalize">{status}</span>
-    </span>
-  )
-}
-
-export function StageBar({ stage, onSelect }: { stage: PipelineStage; onSelect?: (s: PipelineStage) => void }) {
-  const currentIdx = PIPELINE_STAGES.indexOf(stage)
-  return (
-    <div className="flex items-center gap-2">
-      <div className="flex w-20 h-2 rounded-full overflow-hidden bg-gray-100" role="progressbar" aria-label={`Stage ${currentIdx + 1} of 5`}>
-        {PIPELINE_STAGES.map((s, idx) => (
-          <button
-            key={s}
-            type="button"
-            disabled={!onSelect}
-            onClick={(e) => { e.stopPropagation(); onSelect?.(s) }}
-            className={`flex-1 transition-colors ${idx <= currentIdx ? 'bg-primary-600' : 'bg-gray-200'} ${idx > 0 ? 'border-l border-white' : ''} ${onSelect ? 'hover:bg-primary-700 cursor-pointer' : 'cursor-default'}`}
-            title={`${idx + 1}. ${STAGE_LABELS[s]}${onSelect ? ' — click to set' : ''}`}
-          />
-        ))}
-      </div>
-      <span className="text-xs text-gray-600 whitespace-nowrap"><span className="font-semibold text-gray-800">{currentIdx + 1}/5</span> {STAGE_LABELS[stage]}</span>
-    </div>
+    <select
+      value={value}
+      disabled={disabled}
+      onChange={(e) => onChange(e.target.value as LeadStatus)}
+      onClick={(e) => e.stopPropagation()}
+      title={STEP_HINTS[value]}
+      className="text-xs border border-gray-300 rounded-lg px-2 py-1.5 bg-white text-gray-800 hover:border-primary-400 disabled:opacity-60"
+    >
+      {LEAD_STEPS.map((s) => (
+        <option key={s} value={s}>{STEP_LABELS[s]}</option>
+      ))}
+    </select>
   )
 }
 
@@ -448,23 +408,6 @@ export function DateRangeFilter({ value, onChange, presets = [{ days: 1, label: 
       )}
     </span>
   )
-}
-
-// Lead priority helpers — free-text priority normalised to three buckets
-export function normPriority(p: string | undefined): 'high' | 'medium' | 'low' | '' {
-  const v = (p || '').trim().toLowerCase()
-  if (!v) return ''
-  if (v.startsWith('h') || v === '1' || v === 'p1' || v.includes('urgent')) return 'high'
-  if (v.startsWith('m') || v === '2' || v === 'p2') return 'medium'
-  if (v.startsWith('l') || v === '3' || v === 'p3') return 'low'
-  return 'medium'
-}
-
-export function PriorityBadge({ priority }: { priority: string | undefined }) {
-  const p = normPriority(priority)
-  if (!p) return <span className="text-[11px] text-gray-300">—</span>
-  const cls = p === 'high' ? 'bg-red-50 text-red-700 border-red-200' : p === 'medium' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-gray-50 text-gray-600 border-gray-200'
-  return <span className={`text-[11px] border rounded-full px-2 py-0.5 capitalize ${cls}`}>{p}</span>
 }
 
 export function Spinner({ label }: { label?: string }) {

@@ -34,6 +34,7 @@ export const siteConfig = {
         title: 'Claude',
         links: [
           { name: 'Claude Partner Network', href: '/claude' },
+          { name: 'AI Weekend (monthly, live)', href: '/ai-weekend' },
           { name: 'Claude workshop recap', href: '/workshops/claude-cowork' },
         ],
       },

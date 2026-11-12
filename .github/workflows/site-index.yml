@@ -33,18 +33,3 @@ jobs:
           done
           echo "::error::Index did not finish within 20 minutes"
           exit 1
-
-      # The CRM lead index rides the same monthly schedule. Leads change far
-      # more often than the site, but the copilot degrades gracefully when a
-      # lead isn't indexed yet (it falls back to the full snapshot), so monthly
-      # is enough — and a manager can trigger it any time from the CRM.
-      - name: Re-sync CRM lead vectors
-        continue-on-error: true
-        run: |
-          STATUS=$(curl -s -o /tmp/leads.json -w "%{http_code}" -X POST --max-time 600 \
-            -H "x-cron-secret: ${{ secrets.CRM_CRON_SECRET }}" \
-            "https://gennoor-tech.azurewebsites.net/api/admin/leads/vector-sync?full=1")
-          cat /tmp/leads.json
-          if [ "$STATUS" != "200" ]; then
-            echo "::warning::Lead vector sync returned $STATUS (site index still succeeded)"
-          fi

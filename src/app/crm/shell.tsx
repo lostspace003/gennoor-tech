@@ -5,23 +5,22 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { SessionProvider, useSession, signOut } from 'next-auth/react'
 import {
-  LayoutGrid, Users, TrendingUp, Inbox, Calendar, FolderOpen, Mail,
+  Users, Inbox, Calendar, FolderOpen, Mail, MessageSquare, Phone,
   LogOut, RefreshCw, Menu, X, AlertCircle, Zap, UsersRound, MessageCircle,
   PanelLeftClose, PanelLeftOpen, ChevronDown,
 } from 'lucide-react'
 import { CrmProvider, useCrm } from '@/components/crm/CrmContext'
-import CrmCopilot from '@/components/crm/CrmCopilot'
 
-// The four everyday screens are always shown; the rest sit under "More".
+// The everyday screens, in the order the work happens. The rest sit under "More".
 const NAV = [
   { href: '/crm/queue', label: 'Today', icon: Zap },
   { href: '/crm/leads', label: 'Leads', icon: Users },
-  { href: '/crm/pipeline', label: 'Pipeline', icon: TrendingUp },
-  { href: '/crm/inbox', label: 'Inbox', icon: Inbox },
-  { href: '/crm/enquiries', label: 'Enquiries', icon: Mail },
-  { href: '/crm/dashboard', label: 'Dashboard', icon: LayoutGrid, more: true },
-  { href: '/crm/scheduler', label: 'Scheduler', icon: Calendar, more: true },
-  { href: '/crm/documents', label: 'Sales Library', icon: FolderOpen, more: true },
+  { href: '/crm/inbox', label: 'Replies', icon: Inbox },
+  { href: '/crm/scheduler', label: 'Meetings', icon: Calendar },
+  { href: '/crm/emails', label: 'Email series', icon: Mail },
+  { href: '/crm/playbook', label: 'Call guide', icon: Phone },
+  { href: '/crm/enquiries', label: 'Website enquiries', icon: MessageSquare, more: true },
+  { href: '/crm/documents', label: 'Files', icon: FolderOpen, more: true },
   { href: '/crm/team', label: 'Team', icon: UsersRound, managerOnly: true, more: true },
   { href: '/crm/botlog', label: 'GennoorCare', icon: MessageCircle, managerOnly: true, more: true },
 ] as Array<{ href: string; label: string; icon: any; managerOnly?: boolean; more?: boolean }>
@@ -117,7 +116,7 @@ function Frame({ children }: { children: React.ReactNode }) {
   }, [pathname])
 
   const active = NAV.find((n) => pathname?.startsWith(n.href))
-  const title = pathname?.match(/^\/crm\/leads\/./) ? 'Lead Workspace' : active?.label || 'CRM'
+  const title = pathname?.match(/^\/crm\/leads\/./) ? 'Lead' : active?.label || 'CRM'
 
   // `rail` = desktop icon-only mode. The mobile drawer always shows labels.
   const sidebarContent = (rail: boolean) => (
@@ -134,7 +133,7 @@ function Frame({ children }: { children: React.ReactNode }) {
         {NAV.filter((item) => (!item.managerOnly || isManager) && (rail || !item.more || moreOpen || pathname?.startsWith(item.href))).map((item) => {
           const isActive = pathname?.startsWith(item.href)
           const badge =
-            item.href === '/crm/leads' ? leads.length :
+            item.href === '/crm/leads' ? leads.filter((l) => !l.dumped).length :
             item.href === '/crm/inbox' && inboxUnseen > 0 ? inboxUnseen : null
           return (
             <Link
@@ -243,8 +242,7 @@ function Frame({ children }: { children: React.ReactNode }) {
         </div>
       )}
 
-      {/* Main column — `relative` so the GennoorBot floater anchors to the
-          workspace's bottom-left instead of sitting on top of the sidebar */}
+      {/* Main column */}
       <div className="relative flex-1 flex flex-col overflow-hidden min-w-0">
         <header className="h-[52px] bg-white border-b border-[#e8e8ed] px-3 sm:px-6 flex items-center justify-between gap-2 shrink-0">
           <div className="flex items-center gap-2 min-w-0">
@@ -297,8 +295,6 @@ function Frame({ children }: { children: React.ReactNode }) {
 
         <main className="flex-1 overflow-y-auto min-w-0">{children}</main>
 
-        {/* GennoorBot lives here: bottom-left of the workspace, above content */}
-        <CrmCopilot />
       </div>
     </div>
   )

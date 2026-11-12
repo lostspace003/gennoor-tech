@@ -8,7 +8,7 @@ import RouteProgress from '@/components/portal/RouteProgress'
 import {
   LayoutDashboard, Linkedin, Sparkles, GraduationCap, MessageSquare, Users, PhoneCall, Mail, Menu, X, ExternalLink, Wallet, PenLine, Bot, Network, History,
   ChevronLeft, ChevronRight, PanelLeftOpen, BarChart3, TrendingUp, Activity, BookOpen, Send, Calendar, Settings, HardDrive, Search, Globe, Lock, LogOut, Briefcase, MessageCircle,
-  Film,
+  Film, CalendarDays,
 } from 'lucide-react'
 
 // The dashboard's own sections now live here, nested under "Dashboard" (a menu inside the menu). The page and this menu
@@ -28,32 +28,37 @@ const DASH_GROUPS = [
   ] },
 ]
 
+// Grouped by the job being done, so each group is short and its pages belong together:
+// run the business, sell, work LinkedIn, publish content, look after learners, settings.
 const GROUPS = [
-  { title: 'Overview', items: [
+  { title: 'Home', items: [
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, dash: true },
-    { href: '/admin/sessions', label: 'Sessions', icon: History },
-    { href: '/admin/costs', label: 'Cost centre', icon: Wallet },
+    { href: '/admin/sessions', label: 'Work history', icon: History },
+    { href: '/admin/costs', label: 'Costs', icon: Wallet },
   ] },
-  { title: 'CRM', items: [
-    { href: '/crm', label: 'CRM system', icon: Briefcase },
-    { href: '/crm/botlog', label: 'GennoorCare chats', icon: MessageCircle },
+  { title: 'Sales', items: [
+    { href: '/crm', label: 'CRM', icon: Briefcase },
+    { href: '/admin/weekend', label: 'AI Weekend', icon: CalendarDays },
+    { href: '/admin/events', label: 'Events', icon: Calendar },
+    { href: '/admin/tech-calls', label: 'Tech calls', icon: PhoneCall },
   ] },
-  { title: 'Publishing', items: [
+  { title: 'LinkedIn', items: [
+    { href: '/admin/linkedin-hub', label: 'LinkedIn hub', icon: Network },
+    { href: '/admin/autopilot', label: 'Autopilot', icon: Bot },
+    { href: '/admin/linkedin', label: 'Connection', icon: Linkedin },
+  ] },
+  { title: 'Content', items: [
     { href: '/admin/social', label: 'Social studio', icon: Sparkles },
     { href: '/admin/blog', label: 'Blog studio', icon: PenLine },
-    { href: '/admin/autopilot', label: 'LinkedIn autopilot', icon: Bot },
-    { href: '/admin/video-series', label: 'Cert video series', icon: Film },
-    { href: '/admin/linkedin-hub', label: 'LinkedIn hub', icon: Network },
-    { href: '/admin/linkedin', label: 'LinkedIn connection', icon: Linkedin },
-    { href: '/admin/events', label: 'Events', icon: Calendar },
+    { href: '/admin/video-series', label: 'Cert videos', icon: Film },
   ] },
-  { title: 'Learning', items: [
+  { title: 'Learners', items: [
     { href: '/admin/lms', label: 'Learning Studio', icon: GraduationCap },
-    { href: '/admin/comments', label: 'Comments', icon: MessageSquare },
     { href: '/admin/community', label: 'Community', icon: Users },
+    { href: '/admin/comments', label: 'Blog comments', icon: MessageSquare },
+    { href: '/crm/botlog', label: 'GennoorCare chats', icon: MessageCircle },
   ] },
-  { title: 'Inbox', items: [
-    { href: '/admin/tech-calls', label: 'Tech calls', icon: PhoneCall },
+  { title: 'Settings', items: [
     { href: '/admin/mailboxes', label: 'Mailboxes', icon: Mail },
   ] },
 ]
@@ -95,7 +100,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const [collapsed, setCollapsed] = useState(false) // desktop: icons only
   const [tab, setTab] = useState('overview')
   const [badges, setBadges] = useState<Record<string, number>>({})
-  const [dashOpen, setDashOpen] = useState(true)
+  // The dashboard's sixteen sections stay folded away unless you are on the dashboard
+  const [dashOpen, setDashOpen] = useState(false)
   const [openGroup, setOpenGroup] = useState('analytics')
 
   useEffect(() => { try { setCollapsed(localStorage.getItem('admin-rail') === 'collapsed') } catch { /* default open */ } }, [])
@@ -109,7 +115,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   }, [])
   // Opening /admin?tab=x straight from a link highlights that tab before the page has reported in.
   useEffect(() => {
-    if (path !== '/admin') return
+    if (path !== '/admin') { setDashOpen(false); return }
     const q = new URLSearchParams(window.location.search).get('tab')
     if (q) { setTab(q); const g = DASH_GROUPS.find(x => x.tabs.some(y => y.key === q)); if (g) setOpenGroup(g.key) }
     setDashOpen(true)

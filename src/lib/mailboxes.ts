@@ -40,9 +40,6 @@ export const MAILBOXES: MailboxInfo[] = [
 
   { address: 'jalalkhan@gennoor.com', group: 'Team', purpose: 'Jalal', uses: ['receives'], usedFor: 'Personal mailbox. CRM user.' },
   { address: 'yusufchaudhary@gennoor.com', group: 'Team', purpose: 'Yusuf', uses: ['receives'], usedFor: 'Personal mailbox. CRM user.' },
-  { address: 'aditya@gennoor.com', group: 'Team', purpose: 'Aditya', uses: ['receives'], usedFor: 'Personal mailbox.' },
-  { address: 'zaid@gennoor.com', group: 'Team', purpose: 'Zaid', uses: ['receives'], usedFor: 'Personal mailbox.' },
-  { address: 'deepanshu@gennoor.com', group: 'Team', purpose: 'Deepanshu', uses: ['receives'], usedFor: 'Personal mailbox.' },
   { address: 'jalalceo@gennoor.com', group: 'Team', purpose: 'Jalal (CEO)', uses: ['receives'], usedFor: 'Personal mailbox.' },
 
   { address: 'marketing@gennoor.com', group: 'Spare', purpose: 'Marketing', uses: ['ready'], usedFor: 'Not used yet.',
