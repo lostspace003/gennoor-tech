@@ -1,0 +1,16 @@
+{
+  "_about": "What is said in the Gennoor AI Weekend film. One entry is one breath of narration. `pad` is the silence after it, in seconds. No dates and no price: both change, and the page carries them.",
+  "lead": 1.0,
+  "tail": 3.0,
+  "lines": [
+    { "id": "w01", "text": "What could you build with Claude in one weekend?", "pad": 1.1 },
+    { "id": "w02", "text": "Come and see. Two live sessions. One Saturday, one Sunday.", "pad": 1.2 },
+    { "id": "w03", "text": "On day one, we set Claude up to know your work. A context file, so the answers stop being generic.", "pad": 0.5 },
+    { "id": "w04", "text": "A weekly report, in minutes. And a workspace where Claude reads your files, and drafts directly.", "pad": 1.2 },
+    { "id": "w05", "text": "On day two, we automate a task you repeat every week. We build a small working app, just by describing it.", "pad": 0.5 },
+    { "id": "w06", "text": "And we build your first agent. Give it a goal, and it researches, drafts, and checks its own work.", "pad": 1.2 },
+    { "id": "w07", "text": "Everything is built live, step by step. Then you get the complete kit, so you can repeat it yourself.", "pad": 1.2 },
+    { "id": "w08", "text": "The AI Weekend. Live, online, the last weekend of every month.", "pad": 0.7 },
+    { "id": "w09", "text": "Reserve your seat. The link is on the screen.", "pad": 0 }
+  ]
+}

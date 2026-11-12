@@ -4,10 +4,11 @@ import { ClaudePartnerHero } from '@/components/ClaudePartner'
 import CourseCarousel from '@/components/home/CourseCarousel'
 import { allCards } from '@/lib/catalogue'
 import WalkthroughVideo from '@/components/WalkthroughVideo'
-import HeroCarousel, { type HeroSlide } from '@/components/home/HeroCarousel'
 import CertPromoButton from '@/components/home/CertPromoButton'
 import WeekendStrip from '@/components/home/WeekendStrip'
-import { listLmsCourses, toCard } from '@/lib/lms'
+import FilmPlayer from '@/components/home/FilmPlayer'
+import WeekendFilm from '@/components/home/WeekendFilm'
+import films from '@/data/films.json'
 import { CloudAiIllustration, ExamplesIllustration, PlatformIllustration, TrainingIllustration } from '@/components/illustrations/Illustrations'
 
 // Preview links are signed for 2 hours; rebuild the page well inside that.
@@ -33,26 +34,6 @@ const PILLARS = [
 
 export default async function HomePage() {
   const catalogue = await allCards()
-  const courses = (await listLmsCourses()).map(toCard).filter(c => c.promoUrl || c.thumbnailUrl).slice(0, 2)
-
-  const heroSlides: HeroSlide[] = [
-    {
-      id: 'walkthrough',
-      title: 'How the Learning Studio works',
-      caption: 'From the first click to your first lesson',
-      href: '/studio',
-      src: '/videos/learning-studio-walkthrough.mp4',
-      poster: '/videos/learning-studio-walkthrough-poster.jpg',
-    },
-    ...courses.filter(c => c.promoUrl).map(c => ({
-      id: c.slug,
-      title: c.title,
-      caption: `${c.lectures} lessons${c.hours ? `, ${c.hours} hours` : ''}`,
-      href: `/studio/${c.slug}`,
-      src: c.promoUrl as string,
-      poster: c.thumbnailUrl || undefined,
-    })),
-  ]
 
   return (
     <>
@@ -62,25 +43,29 @@ export default async function HomePage() {
       {/* ===== The AI Weekend, first thing on the page ===== */}
       <WeekendStrip />
 
-      {/* ===== Hero: the Claude Partner Network first ===== */}
-      <section className="hero-backdrop bg-white px-6 pt-8 lg:pt-10 pb-10 lg:pb-12">
-        <div className="max-w-[1180px] mx-auto grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] gap-12 lg:gap-14 items-center">
+      {/* ===== Hero: what we do, as a film. The film is the centre of the page; the words beside it are few. ===== */}
+      <section className="hero-backdrop bg-white px-4 sm:px-6 pt-6 lg:pt-8 pb-8 lg:pb-10">
+        <div className="max-w-[1180px] mx-auto grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] gap-8 lg:gap-10 items-center">
           <div className="text-center lg:text-left">
             <div className="lg:[&>div]:items-start"><ClaudePartnerHero /></div>
-            <h1 className="display-hero mt-10 lg:!text-left">
+            <h1 className="display-hero mt-6 lg:!text-left lg:!text-[clamp(40px,4.4vw,62px)]">
               Learn what the job actually asks for.
             </h1>
-            <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.5] text-[#6e6e73] max-w-[620px] mx-auto lg:mx-0 mt-6">
-              Certification courses, project-based courses and interactive courses, all in the Learning Studio.
+            <p className="text-[clamp(17px,1.5vw,20px)] leading-[1.5] text-[#6e6e73] max-w-[560px] mx-auto lg:mx-0 mt-4">
+              Certification courses, real projects and live training. Watch what we do in a minute and a half.
             </p>
-            <div className="flex flex-col sm:flex-row gap-5 sm:gap-[22px] justify-center lg:justify-start items-center mt-10">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-[22px] justify-center lg:justify-start items-center mt-7">
               <Link href="/studio" className="pill-primary">Explore the Learning Studio</Link>
               <Link href="/contact" className="link-arrow">Talk to us ›</Link>
             </div>
           </div>
-          <HeroCarousel slides={heroSlides} />
+          {/* On a phone the film comes first: it is what the page is about */}
+          <FilmPlayer className="order-first lg:order-none" src={films.overview.src} poster={films.overview.poster} title={`Gennoor Tech: ${films.overview.title}`} transcript={films.overview.transcript} seconds={films.overview.seconds} />
         </div>
       </section>
+
+      {/* ===== The AI Weekend, with its own film ===== */}
+      <WeekendFilm />
 
       {/* ===== How the Learning Studio works ===== */}
       <section className="bg-[#f5f5f7] px-6 py-10 lg:py-14">

@@ -4,6 +4,8 @@ import { WEEKEND, DAYS, FOR_YOU, INCLUDED, HOW_YOU_LEARN, KIT, TOOLS, FAQS, next
 import RegisterForm, { StickyRegister } from './RegisterForm'
 import { getRegistrations } from '@/lib/weekend'
 import { razorpayConfigured } from '@/lib/razorpay'
+import FilmPlayer from '@/components/home/FilmPlayer'
+import films from '@/data/films.json'
 
 // The dates roll forward and the seat count moves, so the page is rebuilt every few minutes.
 export const revalidate = 300
@@ -94,6 +96,13 @@ export default async function AiWeekendPage() {
               </ol>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* The weekend in one minute: the film says what is built on each day */}
+      <section className={`${wrap} mt-6`} aria-label="The weekend in one minute">
+        <div className="mx-auto max-w-4xl">
+          <FilmPlayer tone="gold" src={films.weekend.src} poster={films.weekend.poster} title={films.weekend.title} transcript={films.weekend.transcript} seconds={films.weekend.seconds} />
         </div>
       </section>
 
