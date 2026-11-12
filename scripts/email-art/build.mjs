@@ -35,8 +35,20 @@ const TILES = {
   team: 'users', automation: 'zap', calendar: 'calendar-clock', person: 'user-round-plus', stop: 'circle-x',
 }
 const GOLD = new Set(['catalogue'])
+// Art tiles: the badge or mark of one certification or course, used where an email names it.
+// The AI-103 one is the certification badge from its course page; the Claude ones are our own
+// tiles in Claude's colour with each certification's code (they are not official badges).
+const ARTS = {
+  'ai-103': { img: 'badge-ai-103', size: '118%', pos: '50% 42%' },
+  'ai-500': { img: 'thumb-ai-500', size: '273%', pos: '13.7% 51%' },
+  claude: { claude: true },
+  'ccas-f': { claude: true, code: 'CCAS-F' }, 'ccdv-f': { claude: true, code: 'CCDV-F' },
+  'ccar-f': { claude: true, code: 'CCAR-F' }, 'ccar-p': { claude: true, code: 'CCAR-P' },
+  project: { icon: 'rocket', bg: 'linear-gradient(145deg,#2fbf85,#12724c)' },
+  certification: { icon: 'award', bg: 'linear-gradient(145deg,#3b9cff,#0b5fc4)' },
+}
 // Icons drawn inside the scenes themselves
-const SCENE_ICONS = ['play', 'sparkles', 'volume-2', 'graduation-cap', 'users', 'workflow', 'wrench', 'file-text', 'circle-check', 'rocket', 'bookmark-check', 'building-2', 'monitor-play', 'flask-conical']
+const SCENE_ICONS = ['award', 'play', 'sparkles', 'volume-2', 'graduation-cap', 'users', 'workflow', 'wrench', 'file-text', 'circle-check', 'rocket', 'bookmark-check', 'building-2', 'monitor-play', 'flask-conical']
 
 /** The inside of a lucide icon as SVG markup. */
 function lucide(name) {
@@ -57,6 +69,7 @@ const art = {
     clip: existsSync(path.join(WORK, 'clip')) ? readdirSync(path.join(WORK, 'clip')).sort().map((f) => fileUrl(path.join(WORK, 'clip', f))) : [],
     'thumb-ai-103': fileUrl(path.join(WORK, 'thumb-ai-103.jpg')),
     'thumb-ai-500': fileUrl(path.join(WORK, 'thumb-ai-500.jpg')),
+    'badge-ai-103': fileUrl(path.join(WORK, 'badge-ai-103.jpg')),
   },
 }
 
@@ -75,7 +88,12 @@ if (doing('icons')) {
     await open(`scene=icon&name=${icon}${GOLD.has(file) ? '&tone=gold' : ''}`)
     await (await page.$('#tile')).screenshot({ path: path.join(OUT, `icon-${file}.png`), omitBackground: true })
   }
-  console.log(`${Object.keys(TILES).length} icon tiles`)
+  for (const [file, a] of Object.entries(ARTS)) {
+    if (a.img && !existsSync(path.join(WORK, `${a.img}.jpg`))) { console.log(`art-${file}: skipped, run fetch-assets.ts first`); continue }
+    await open(`scene=art&a=${encodeURIComponent(JSON.stringify(a))}`)
+    await (await page.$('#tile')).screenshot({ path: path.join(OUT, `art-${file}.png`), omitBackground: true })
+  }
+  console.log(`${Object.keys(TILES).length} icon tiles, ${Object.keys(ARTS).length} art tiles`)
 }
 
 const FPS = 10

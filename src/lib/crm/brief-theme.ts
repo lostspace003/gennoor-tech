@@ -29,6 +29,12 @@ export type BriefIcon =
   | 'project' | 'module' | 'result' | 'open' | 'quiz' | 'team' | 'automation' | 'calendar' | 'person' | 'stop'
 export type BriefPicture = 'video' | 'courses' | 'custom' | 'time' | 'claude' | 'build' | 'chat' | 'platform'
 
+/** The badge or mark of one certification or course, where an email names it. */
+export type BriefArt = 'ai-103' | 'ai-500' | 'claude' | 'ccas-f' | 'ccdv-f' | 'ccar-f' | 'ccar-p' | 'project' | 'certification'
+const art = (name: BriefArt, size = 44) => `<img src="${ART}/art-${name}.png" width="${size}" height="${size}" alt="" style="display:block;border:0"/>`
+/** A row or tile shows its own art when it has one, otherwise a plain icon. */
+const mark = (x: { icon: BriefIcon; art?: BriefArt }, size = 44) => (x.art ? art(x.art, size) : icon(x.icon, size))
+
 const icon = (name: BriefIcon, size = 44) => `<img src="${ART}/icon-${name}.png" width="${size}" height="${size}" alt="" style="display:block;border:0"/>`
 
 /** The small gold label, the hook, and one sentence under it. */
@@ -44,12 +50,12 @@ export function briefPicture(name: BriefPicture, alt: string, href: string): str
 }
 
 /** Three tiles side by side: an icon, two or three words, and a few more under them. */
-export function briefTiles(tiles: { icon: BriefIcon; title: string; line: string }[]): string {
+export function briefTiles(tiles: { icon: BriefIcon; art?: BriefArt; title: string; line: string }[]): string {
   const width = Math.floor(100 / tiles.length)
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:22px 0 4px"><tr>${tiles
     .map(
       (t) => `<td width="${width}%" valign="top" style="padding:0 8px 0 0">
-        ${icon(t.icon)}
+        ${mark(t)}
         <p style="margin:10px 0 2px;font-size:15px;line-height:1.3;font-weight:700;color:${C.text}">${t.title}</p>
         <p style="margin:0;font-size:13px;line-height:1.4;color:${C.muted}">${t.line}</p>
       </td>`
@@ -58,12 +64,12 @@ export function briefTiles(tiles: { icon: BriefIcon; title: string; line: string
 }
 
 /** Rows that each go somewhere: an icon, a title, a few words, and an arrow. */
-export function briefLinks(rows: { icon: BriefIcon; title: string; line: string; href: string }[]): string {
+export function briefLinks(rows: { icon: BriefIcon; art?: BriefArt; title: string; line: string; href: string }[]): string {
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:18px 0 0">${rows
     .map(
       (r) => `<tr><td style="padding:0 0 10px">
         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="${C.panel}" style="background:${C.panel};border:1px solid ${C.line};border-radius:14px"><tr>
-          <td width="68" valign="middle" style="padding:12px 0 12px 14px">${icon(r.icon)}</td>
+          <td width="68" valign="middle" style="padding:12px 0 12px 14px"><a href="${r.href}" style="text-decoration:none">${mark(r)}</a></td>
           <td valign="middle" style="padding:12px 8px 12px 0">
             <a href="${r.href}" style="text-decoration:none;font-size:16px;line-height:1.3;font-weight:700;color:${C.text}">${r.title}</a>
             <p style="margin:2px 0 0;font-size:13px;line-height:1.4;color:${C.muted}">${r.line}</p>
@@ -73,6 +79,20 @@ export function briefLinks(rows: { icon: BriefIcon; title: string; line: string;
       </td></tr>`
     )
     .join('')}</table>`
+}
+
+/** A row of badges, each with a short name under it and its own link: one per certification. */
+export function briefBadges(heading: string, badges: { art: BriefArt; name: string; href: string }[]): string {
+  const width = Math.floor(100 / badges.length)
+  return `<p style="margin:22px 0 10px;font-size:12px;font-weight:700;letter-spacing:1.6px;color:${C.muted};text-transform:uppercase">${heading}</p>
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr>${badges
+    .map(
+      (b) => `<td width="${width}%" align="center" valign="top" style="padding:0 4px">
+        <a href="${b.href}" style="text-decoration:none">${art(b.art, 64).replace('display:block', 'display:block;margin:0 auto')}
+        <span style="display:block;margin-top:8px;font-size:13px;line-height:1.3;font-weight:600;color:${C.text}">${b.name}</span></a>
+      </td>`
+    )
+    .join('')}</tr></table>`
 }
 
 /** The one button of the email. */
