@@ -14,5 +14,27 @@
     "captions": "/videos/gennoor-ai-weekend.vtt",
     "seconds": 63,
     "transcript": "What could you build with Claude in one weekend? Come and see. Two live sessions. One Saturday, one Sunday. On day one, we set Claude up to know your work. A context file, so the answers stop being generic. A weekly report, in minutes. And a workspace where Claude reads your files, and drafts directly. On day two, we automate a task you repeat every week. We build a small working app, just by describing it. And we build your first agent. Give it a goal, and it researches, drafts, and checks its own work. Everything is built live, step by step. Then you get the complete kit, so you can repeat it yourself. The AI Weekend. Live, online, the last weekend of every month. Reserve your seat. The link is on the screen."
+  },
+  "weekendReel": {
+    "title": "The Gennoor AI Weekend",
+    "src": "/media/videos/gennoor-ai-weekend-reel.mp4",
+    "poster": "/videos/gennoor-ai-weekend-reel-poster.jpg",
+    "captions": "/videos/gennoor-ai-weekend-reel.vtt",
+    "seconds": 63,
+    "transcript": "What could you build with Claude in one weekend? Come and see. Two live sessions. One Saturday, one Sunday. On day one, we set Claude up to know your work. A context file, so the answers stop being generic. A weekly report, in minutes. And a workspace where Claude reads your files, and drafts directly. On day two, we automate a task you repeat every week. We build a small working app, just by describing it. And we build your first agent. Give it a goal, and it researches, drafts, and checks its own work. Everything is built live, step by step. Then you get the complete kit, so you can repeat it yourself. The AI Weekend. Live, online, the last weekend of every month. Reserve your seat. The link is on the screen.",
+    "cover": "/videos/gennoor-ai-weekend-reel-cover.jpg",
+    "width": 1080,
+    "height": 1920
+  },
+  "overviewReel": {
+    "title": "What we do",
+    "src": "/media/videos/gennoor-what-we-do-reel.mp4",
+    "poster": "/videos/gennoor-what-we-do-reel-poster.jpg",
+    "captions": "/videos/gennoor-what-we-do-reel.vtt",
+    "seconds": 95,
+    "transcript": "Imagine a world where anyone can learn the skills that work asks for. And prove them. That is what we are building. Most training ends when the slides end. We think it should end when you can do the work. So every course is built the same way. Short video lessons. Labs you run yourself, with a guide for every step. An assistant inside the lesson, that answers from the course. A quiz in every module. And a certificate at the end. Prepare for a certification. Build a real project. Or learn one useful skill in an hour. For Claude, there is a guide and a practice exam for every certification. For your team, we go further. We learn your work, build the course around it, and teach it live. And we teach automation. One process your team runs, and a course built on it, so they can automate it themselves. We can even set up a learning platform for your company. Your courses. Your people. Your name. And if you want to see it work first, we build a prototype. On the last weekend of every month, there is the AI Weekend. Two live sessions. Six working demos, built in front of you. Train. Innovate. Build. Start with a preview lesson. Nothing to sign up for.",
+    "cover": "/videos/gennoor-what-we-do-reel-cover.jpg",
+    "width": 1080,
+    "height": 1920
   }
 }

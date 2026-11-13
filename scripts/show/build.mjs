@@ -5,6 +5,8 @@
  *   node scripts/show/build.mjs deck overview              cuts out every piece for PowerPoint (.work/deck), then run deck.py
  *   node scripts/show/build.mjs film overview              the film without sound (.work/overview.silent.mp4), then run mix.py
  *   node scripts/show/build.mjs film weekend 12 20         only seconds 12 to 20 of it, to check a passage quickly
+ *   node scripts/show/build.mjs film weekend-reel          the same film drawn tall (1080 x 1920) for Instagram, LinkedIn and phones
+ *   node scripts/show/build.mjs film overview-reel         "What we do" drawn tall, the same way
  *
  * Needs Chrome and ffmpeg on this machine, the course pictures that scripts/catalog/extract-site-data.ts
  * and scripts/email-art/fetch-assets.ts save, and (for a film) the narration timing that voice.py writes.
@@ -22,6 +24,10 @@ const WORK = path.join(HERE, '.work')
 const CHROME = process.env.CHROME || 'C:/Program Files/Google/Chrome/Application/chrome.exe'
 const FFMPEG = process.env.FFMPEG || (existsSync('C:/Users/losts/ffmpeg/bin/ffmpeg.exe') ? 'C:/Users/losts/ffmpeg/bin/ffmpeg.exe' : 'ffmpeg')
 const [cmd = 'stills', show = 'overview', ...rest] = process.argv.slice(2)
+// A show is 1280 x 720 and has its own narration unless it says otherwise here.
+// The two "reel" shows are the films drawn tall: same words, same voice, their own scenes.
+const SHOWS = { 'weekend-reel': { size: [720, 1280], voice: 'weekend' }, 'overview-reel': { size: [720, 1280], voice: 'overview' } }
+const { size: [W, H] = [1280, 720], voice = show } = SHOWS[show] || {}
 mkdirSync(WORK, { recursive: true })
 const url = (p) => pathToFileURL(p).href
 
@@ -55,10 +61,10 @@ async function logoOnDark() {
 
 const pic = (...parts) => { const p = path.join(...parts); return existsSync(p) ? url(p) : '' }
 const catalog = path.join(ROOT, 'scripts', 'catalog')
-const timingFile = path.join(WORK, `${show}.timing.json`)
+const timingFile = path.join(WORK, `${voice}.timing.json`)
 /** Before the voice is recorded: a stand-in clock, 0.42 seconds a word, so scenes can be looked at. */
 function standInTiming() {
-  const spec = JSON.parse(readFileSync(path.join(HERE, 'narration', `${show}.json`), 'utf8'))
+  const spec = JSON.parse(readFileSync(path.join(HERE, 'narration', `${voice}.json`), 'utf8'))
   let t = spec.lead || 1
   const lines = spec.lines.map((l) => {
     const words = l.text.split(/\s+/).map((w, i) => ({ w, start: t + i * 0.42, end: t + i * 0.42 + 0.36 }))
@@ -77,6 +83,7 @@ const art = {
   },
   data: JSON.parse(readFileSync(path.join(catalog, 'catalog-data.json'), 'utf8')),
   timing: existsSync(timingFile) ? JSON.parse(readFileSync(timingFile, 'utf8')) : standInTiming(),
+  size: [W, H],
 }
 for (const [k, v] of Object.entries(art.files)) if (!v) console.warn(`missing picture: ${k} (run scripts/catalog/extract-site-data.ts)`)
 
@@ -86,7 +93,7 @@ page.on('console', (m) => { if (m.type() === 'warning' || m.type() === 'error') 
 page.on('pageerror', (e) => console.log(`  [page error] ${e.message}`))
 await page.evaluateOnNewDocument((a) => { window.ART = a }, art)
 const open = async (mode, scale, extra = '') => {
-  await page.setViewport({ width: 1280, height: 720, deviceScaleFactor: scale })
+  await page.setViewport({ width: W, height: H, deviceScaleFactor: scale })
   await page.goto(`${url(path.join(HERE, 'stage.html'))}?show=${show}&mode=${mode}${extra}`, { waitUntil: 'load' })
   await page.evaluate(() => Promise.all([document.fonts.ready, ...[...document.images].map((i) => i.decode().catch(() => {}))]))
 }
@@ -95,22 +102,24 @@ const open = async (mode, scale, extra = '') => {
 if (cmd === 'stills') {
   const dir = path.join(WORK, 'stills')
   mkdirSync(dir, { recursive: true })
-  await open('deck', 1)
+  // A tall show is photographed at its full size (1080 x 1920), so a still can be used as a cover picture
+  await open('deck', H > W ? 1.5 : 1)
   const scenes = await page.evaluate(() => window.deck().map((s) => s.id))
   const files = []
   for (const id of scenes.filter((s) => rest.length === 0 || rest.includes(s))) {
     await page.evaluate((s) => window.ground1(s, true), id)
     const file = path.join(dir, `${show}-${id}.png`)
-    await page.screenshot({ path: file, clip: { x: 0, y: 0, width: 1280, height: 720 } })
+    await page.screenshot({ path: file, clip: { x: 0, y: 0, width: W, height: H } })
     files.push(file)
   }
-  // contact sheets, two scenes across, so several can be looked at in one picture
-  for (let i = 0; i < files.length; i += 4) {
-    const group = files.slice(i, i + 4)
-    const rows = Math.ceil(group.length / 2)
-    const sheet = await sharp({ create: { width: 1280 * 2 + 12, height: 720 * rows + 12 * (rows - 1), channels: 3, background: '#30343c' } })
-      .composite(group.map((f, k) => ({ input: f, left: (k % 2) * 1292, top: Math.floor(k / 2) * 732 }))).png().toBuffer()
-    await sharp(sheet).resize({ width: 1800 }).jpeg({ quality: 86 }).toFile(path.join(dir, `${show}-sheet-${1 + i / 4}.jpg`))
+  // contact sheets, so several scenes can be looked at in one picture: two across, or six across for a tall show
+  const across = H > W ? 6 : 2, per = H > W ? 6 : 4
+  for (let i = 0; i < files.length; i += per) {
+    const group = await Promise.all(files.slice(i, i + per).map((f) => sharp(f).resize({ width: W }).toBuffer()))
+    const rows = Math.ceil(group.length / across)
+    const sheet = await sharp({ create: { width: W * across + 12 * (across - 1), height: H * rows + 12 * (rows - 1), channels: 3, background: '#30343c' } })
+      .composite(group.map((input, k) => ({ input, left: (k % across) * (W + 12), top: Math.floor(k / across) * (H + 12) }))).png().toBuffer()
+    await sharp(sheet).resize({ width: H > W ? 2000 : 1800 }).jpeg({ quality: 86 }).toFile(path.join(dir, `${show}-sheet-${1 + i / per}.jpg`))
   }
   console.log(`${files.length} stills in ${dir}`)
 }
@@ -127,7 +136,7 @@ if (cmd === 'deck') {
     await page.evaluate((id) => window.ground1(id, false), s.id)
     await page.evaluate(() => { document.documentElement.style.background = '#060914' })
     s.bg = `${s.id}.jpg`
-    await page.screenshot({ path: path.join(dir, s.bg), type: 'jpeg', quality: 90, clip: { x: 0, y: 0, width: 1280, height: 720 } })
+    await page.screenshot({ path: path.join(dir, s.bg), type: 'jpeg', quality: 90, clip: { x: 0, y: 0, width: W, height: H } })
     await page.evaluate(() => { document.documentElement.style.background = 'transparent' })
     for (const p of s.pieces) {
       await page.evaluate((a, b) => window.isolate(a, b), s.id, p.id)
@@ -157,7 +166,7 @@ if (cmd === 'film') {
   const started = Date.now()
   for (let f = 0; f < frames; f++) {
     await page.evaluate((t) => window.seek(t), from + f / FPS)
-    const shot = await page.screenshot({ type: 'jpeg', quality: 96, optimizeForSpeed: true, clip: { x: 0, y: 0, width: 1280, height: 720 } })
+    const shot = await page.screenshot({ type: 'jpeg', quality: 96, optimizeForSpeed: true, clip: { x: 0, y: 0, width: W, height: H } })
     if (!ff.stdin.write(shot)) await new Promise((r) => ff.stdin.once('drain', r))
     if (f % 300 === 0) console.log(`  ${f}/${frames} frames, ${((Date.now() - started) / 1000).toFixed(0)}s`)
   }

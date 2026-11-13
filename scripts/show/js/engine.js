@@ -16,6 +16,11 @@ const Q = new URLSearchParams(location.search)
 const MODE = Q.get('mode') || 'deck'
 const show = window.SHOWS[Q.get('show') || 'overview']
 const stage = document.getElementById('stage')
+// The picture is 1280 x 720 unless the show is a tall one (720 x 1280: Instagram, phones)
+const [W, H] = ART.size || [1280, 720]
+const TALL = H > W
+stage.style.width = `${W}px`
+stage.style.height = `${H}px`
 const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v))
 const outCubic = (p) => 1 - Math.pow(1 - p, 3)
 const outBack = (p) => { const c = 1.9; return 1 + (c + 1) * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2) }
@@ -99,7 +104,7 @@ if (MODE === 'deck') {
       pieces: s.pieces.map((p) => {
         const r = p.el.getBoundingClientRect(), pad = +(p.el.dataset.pad ?? 44)
         const x0 = Math.max(0, Math.floor(r.left - pad)), y0 = Math.max(0, Math.floor(r.top - pad))
-        const x1 = Math.min(1280, Math.ceil(r.right + pad)), y1 = Math.min(720, Math.ceil(r.bottom + pad))
+        const x1 = Math.min(W, Math.ceil(r.right + pad)), y1 = Math.min(H, Math.ceil(r.bottom + pad))
         return { id: p.id, x: x0, y: y0, w: x1 - x0, h: y1 - y0, beat: p.beat, order: p.order, fx: p.fx, href: p.el.dataset.href || '', alt: p.el.dataset.alt || p.el.innerText.replace(/\s+/g, ' ').trim().slice(0, 240), spin: p.el.dataset.spin ? +p.el.dataset.spin : 0 }
       }).filter((p) => p.w > 0 && p.h > 0),
     }
@@ -160,8 +165,9 @@ if (MODE === 'film') {
   // What is being said, written small at the foot of the picture: the film is understood with the sound off
   const cap = document.createElement('div')
   cap.id = 'cap'
-  cap.style.cssText = 'position:absolute;left:0;right:0;bottom:30px;z-index:999;display:flex;justify-content:center;pointer-events:none'
-  cap.innerHTML = '<span style="max-width:900px;padding:9px 20px;border-radius:14px;background:rgba(4,8,18,.66);border:1px solid rgba(255,255,255,.1);font:500 19px/1.35 var(--body);color:#eef3ff;text-align:center"></span>'
+  // On a tall picture the words sit higher: the lowest part is where Instagram and LinkedIn put their own caption and buttons
+  cap.style.cssText = `position:absolute;left:0;right:0;bottom:${TALL ? 300 : 30}px;z-index:999;display:flex;justify-content:center;pointer-events:none`
+  cap.innerHTML = `<span style="max-width:${TALL ? 600 : 900}px;padding:${TALL ? '11px 20px' : '9px 20px'};border-radius:14px;background:rgba(4,8,18,${TALL ? 0.74 : 0.66});border:1px solid rgba(255,255,255,.1);font:500 ${TALL ? 25 : 19}px/1.35 var(--body);color:#eef3ff;text-align:center"></span>`
   if (Q.get('captions') !== '0') stage.appendChild(cap)
   const said = []
   for (const l of ART.timing?.lines || []) {

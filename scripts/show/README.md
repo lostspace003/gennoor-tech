@@ -1,4 +1,4 @@
-# The Gennoor show: one set of scenes, three results
+# The Gennoor show: one set of scenes, the presentation and the films
 
 The scenes in this folder are drawn once, as HTML, and become:
 
@@ -7,12 +7,14 @@ The scenes in this folder are drawn once, as HTML, and become:
 | The presentation | `public/Gennoor-Tech-Catalog/Gennoor-Tech-Overview.pptx` | A live conversation. Everything arrives on a mouse click, every section links to its page on the website. |
 | The film "What we do" | `public/videos/gennoor-what-we-do.mp4` | The centre of the home page. About a minute and a half, with voice and music. |
 | The AI Weekend film | `public/videos/gennoor-ai-weekend.mp4` | The home page and the AI Weekend page. About a minute. |
+| Both films, tall | The website's media store: `/media/videos/gennoor-what-we-do-reel.mp4`, `/media/videos/gennoor-ai-weekend-reel.mp4` | Instagram Reels, LinkedIn on a phone, WhatsApp status. 1080 x 1920, each with a cover picture (`public/videos/…-reel-cover.jpg`). |
 
 ## What is in the folder
 
 | File | What it holds |
 |---|---|
 | `js/scenes-overview.js`, `js/scenes-weekend.js` | The scenes: what is on screen, in what order it arrives, and what to say |
+| `js/scenes-overview-reel.js`, `js/scenes-weekend-reel.js` | The same scenes laid out again for an upright screen |
 | `narration/*.json` | What the voice says in each film, line by line |
 | `css/stage.css`, `js/kit.js` | The look: colours, type, icons, the logo ring, windows |
 | `js/engine.js` | How things move, in a film and in the presentation |
@@ -41,6 +43,29 @@ Numbers and course pictures come from the website: run
    it lists any line the listening check was not happy with.
 2. Picture: edit the scene; `node scripts/show/build.mjs film <film>` (add two numbers, such as `12 20`, to draw only those seconds).
 3. `python scripts/show/music.py <film>` (only if the length changed), then `python scripts/show/mix.py <film>`.
+
+## The tall films (Instagram, LinkedIn, phones)
+
+A tall film is the same film held upright: the same words, the same voice and music, and its
+own layout of every scene. Nothing is recorded again.
+
+    node scripts/show/build.mjs stills weekend-reel     look at .work/stills/ (the cover picture is made from these)
+    node scripts/show/build.mjs film weekend-reel
+    python scripts/show/mix.py weekend-reel
+    node scripts/show/upload-reels.mjs                   puts the tall films in the website's media store
+
+and the same with `overview-reel`. The tall films are too large for the repository: they are
+written to `.work/reels/` and reached on the website as `/media/videos/<name>.mp4`. When a scene or a line of a film changes, change its tall
+scene too and run these again.
+
+- What Instagram takes for a Reel: MP4 with H.264 picture and AAC sound, 9:16 at 1080 x 1920,
+  30 pictures a second, up to 3 minutes. The files written here are that. LinkedIn takes the
+  same file (it allows up to 10 minutes) and also the wide films.
+- The apps cover part of the picture with their own header, caption and buttons. Everything a
+  viewer must read sits between 180 and 866 down and 48 and 632 across (of 720 x 1280); the
+  words being spoken are written just under that. The drawing at the top of
+  `js/scenes-weekend-reel.js` shows it.
+- The cover picture keeps everything inside the middle 3:4, which is what the profile grid shows.
 
 ## To add a scene
 
